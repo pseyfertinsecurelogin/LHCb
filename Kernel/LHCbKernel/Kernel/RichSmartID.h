@@ -431,40 +431,37 @@ namespace LHCb
 
   public:
 
-    /// Equality operator
-    inline constexpr bool operator==( const LHCb::RichSmartID& id ) const noexcept
-    {
-      return ( key() == id.key() );
-    }
-
-    /// Inequality operator
-    inline constexpr bool operator!=( const LHCb::RichSmartID& id ) const noexcept
-    {
-      return ( key() != id.key() );
-    }
-
-    /// > operator
-    inline constexpr bool operator>( const LHCb::RichSmartID& id ) const noexcept
-    {
-      return ( key() >  id.key() );
-    }
-
     /// < operator
-    inline constexpr bool operator<( const LHCb::RichSmartID& id ) const noexcept
+    inline constexpr friend bool operator<( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept
     {
-      return ( key() <  id.key() );
+      return lhs.key() <  rhs.key();
+    }
+    /// Equality operator
+    inline constexpr friend bool operator==( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept
+    {
+      return lhs.key() == rhs.key();
+    }
+    /// > operator
+    inline constexpr friend bool operator>( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept
+    {
+      return lhs.key() >  rhs.key();
     }
 
-    /// >= operator
-    inline constexpr bool operator>=( const LHCb::RichSmartID& id ) const noexcept
-    {
-      return ( key() >= id.key() );
-    }
 
     /// <= operator
-    inline constexpr bool operator<=( const LHCb::RichSmartID& id ) const noexcept
+    inline constexpr friend bool operator<=( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept
     {
-      return ( key() <= id.key() );
+      return !( lhs > rhs );
+    }
+    /// Inequality operator
+    inline constexpr friend bool operator!=( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept
+    {
+      return !( lhs == rhs );
+    }
+    /// >= operator
+    inline constexpr friend bool operator>=( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept
+    {
+      return !( lhs < rhs );
     }
 
   private: // HPD specific setters

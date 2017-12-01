@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -37,9 +36,6 @@
  *  @author Vanya Belyaev
  *  @date   2015-10-12
  *
- *  Version           $Revision$
- *  Last mofidication $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace 
@@ -162,6 +158,26 @@ namespace
       ( 0 < v2.cov2() ? v2.cov2 () * c2 * c2 : 0.0 ) ;
     //
     return Gaudi::Math::ValueWithError ( vv , s_zero ( e2 ) ? 0.0 : e2 ) ;
+  }
+  // ==========================================================================
+  /** double quadratic interpolation using 4-points.
+   *  It is suitable for x1<x<x2 
+   */
+  inline 
+  Gaudi::Math::ValueWithError _quadratic2_ 
+  ( const double                       x  , 
+    const double                       x0 , 
+    const double                       x1 , 
+    const double                       x2 , 
+    const double                       x3 , 
+    const Gaudi::Math::ValueWithError& v0 , 
+    const Gaudi::Math::ValueWithError& v1 , 
+    const Gaudi::Math::ValueWithError& v2 ,
+    const Gaudi::Math::ValueWithError& v3 )
+  {
+    return 0.5 * 
+      ( _quadratic_ ( x , x0 , x1 , x2 , v0 , v1 , v2 ) + 
+        _quadratic_ ( x , x1 , x2 , x3 , v1 , v2 , v3 ) ) ;
   }
   // ==========================================================================
   // qubic interpolation 
@@ -551,15 +567,43 @@ Gaudi::Math::HistoInterpolation::interpolate_1D
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ib , nbins , x , xc ) ;
     //
-    const double x0 = ax->GetBinCenter ( ix[0] ) ;
-    const double x1 = ax->GetBinCenter ( ix[1] ) ;
-    const double x2 = ax->GetBinCenter ( ix[2] ) ;
+    const bool four_bins = 4 <= nbins ;
+    // left  is ok
+    const bool ok_left   = 3     <= ib      || ( 2      == ib     && x > xc ) ;
+    // right is ok 
+    const bool ok_right  = nbins >= ib + 2  || ( nbins  == ib + 1 && x < xc ) ;
     //
-    return _quadratic_ 
-      ( x , x0 , x1 , x2 , 
-        _bin_ ( h1 , ix[0] , density ) , 
-        _bin_ ( h1 , ix[1] , density ) , 
-        _bin_ ( h1 , ix[2] , density ) ) ;
+    return  
+      // use 4-points (left)
+      four_bins && ok_left && ok_right && x < xc ?
+      _quadratic2_ ( x , 
+                     ax->GetBinCenter( ix[0] - 1 ) , 
+                     ax->GetBinCenter( ix[0]     ) ,        
+                     ax->GetBinCenter( ix[1]     ) ,      
+                     ax->GetBinCenter( ix[2]     ) , 
+                     _bin_ ( h1 , ix[0] - 1 , density ) , 
+                     _bin_ ( h1 , ix[0]     , density ) , 
+                     _bin_ ( h1 , ix[1]     , density ) , 
+                     _bin_ ( h1 , ix[2]     , density ) ) :
+      // use 4-points (right) 
+      four_bins && ok_left && ok_right && x > xc ?
+      _quadratic2_ ( x , 
+                     ax->GetBinCenter( ix[0]     ) , 
+                     ax->GetBinCenter( ix[1]     ) ,        
+                     ax->GetBinCenter( ix[2]     ) ,      
+                     ax->GetBinCenter( ix[2]+1   ) , 
+                     _bin_ ( h1 , ix[0]     , density ) , 
+                     _bin_ ( h1 , ix[1]     , density ) , 
+                     _bin_ ( h1 , ix[2]     , density ) , 
+                     _bin_ ( h1 , ix[2] + 1 , density ) ) :
+      // use 3-points 
+      _quadratic_ ( x , 
+                    ax->GetBinCenter( ix[0]     ) ,        
+                    ax->GetBinCenter( ix[1]     ) ,      
+                    ax->GetBinCenter( ix[2]     ) , 
+                    _bin_ ( h1 , ix[0]     , density ) , 
+                    _bin_ ( h1 , ix[1]     , density ) , 
+                    _bin_ ( h1 , ix[2]     , density ) ) ;
   }
   //
   // CORRECT QUBIC INTERPOLATION IN X 

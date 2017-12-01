@@ -13,6 +13,13 @@ for i,v in DecoderDB.iteritems():
             v.Active=False
 
 DecoderDB["MuonRec"].Active=False
+DecoderDB["createODIN"].Active=False
+#DecoderDB["OdinTimeDecoder/ToolSvc.OdinTimeDecoder"].Active=True
+from Configurables import EventClockSvc, OdinTimeDecoder, ODINDecodeTool
+ecs = EventClockSvc()
+ecs.addTool(OdinTimeDecoder, 'EventTimeDecoder')
+ecs.EventTimeDecoder.addTool(ODINDecodeTool)
+ecs.EventTimeDecoder.ODINDecodeTool.RawEventLocations = ['Crazy/RawEvent']
 
 DecodeRawEvent().OverrideInputs=999
 from Configurables import GaudiSequencer
