@@ -47,17 +47,21 @@ SolidCons::SolidCons( const std::string & name  ,
                       double StartPhiAngle      ,
                       double DeltaPhiAngle      ,
                       int    CoverModel         )
-  : SolidBase                ( name               )
-  , m_cons_zHalfLength       ( ZHalfLength        )
-  , m_cons_outerRadiusMinusZ ( OuterRadiusMinusZ  )
-  , m_cons_outerRadiusPlusZ  ( OuterRadiusPlusZ   )
-  , m_cons_innerRadiusMinusZ ( InnerRadiusMinusZ  )
-  , m_cons_innerRadiusPlusZ  ( InnerRadiusPlusZ   )
-  , m_cons_startPhiAngle     ( StartPhiAngle      )
-  , m_cons_deltaPhiAngle     ( DeltaPhiAngle      )
-  , m_cons_coverModel        ( CoverModel         )
+  : SolidBase                  ( name               )
+  , m_cons_zHalfLength         ( ZHalfLength        )
+  , m_cons_outerRadiusMinusZ   ( OuterRadiusMinusZ  )
+  , m_cons_outerRadiusPlusZ    ( OuterRadiusPlusZ   )
+  , m_cons_innerRadiusMinusZ   ( InnerRadiusMinusZ  )
+  , m_cons_innerRadiusPlusZ    ( InnerRadiusPlusZ   )
+  , m_cons_startPhiAngle       ( StartPhiAngle      )
+  , m_cons_deltaPhiAngle       ( DeltaPhiAngle      )
+  , m_cons_coverModel          ( CoverModel         )
+  , m_cons_outerRadiusMinusZSq ( std::pow(OuterRadiusMinusZ,2) )
+  , m_cons_outerRadiusPlusZSq  ( std::pow(OuterRadiusPlusZ,2)  )
+  , m_cons_innerRadiusMinusZSq ( std::pow(InnerRadiusMinusZ,2) )
+  , m_cons_innerRadiusPlusZSq  ( std::pow(InnerRadiusPlusZ,2)  )
 {
-  ///
+  //
   if( 0 >= zHalfLength()                                )
     { throw SolidException("SolidCons ::ZHalfLength       is not positive!");}
   if( 0 >= outerRadiusAtMinusZ()                        )
@@ -109,8 +113,8 @@ void SolidCons::setBP()
     innerRadiusAtMinusZ() < innerRadiusAtPlusZ()  ?
     innerRadiusAtMinusZ() : innerRadiusAtPlusZ()  ;
 
-  const auto cphi1 = cos(phi1); const auto sphi1 = sin(phi1);
-  const auto cphi2 = cos(phi2); const auto sphi2 = sin(phi2);
+  const auto cphi1 = std::cos(phi1); const auto sphi1 = std::sin(phi1);
+  const auto cphi2 = std::cos(phi2); const auto sphi2 = std::sin(phi2);
 
   { // evaluate xmin & xmax
     boost::container::static_vector<double,12> values;
@@ -123,32 +127,32 @@ void SolidCons::setBP()
 
     // special cases
     if( phi1 <=    0*Gaudi::Units::degree &&    0*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back (   rhoMax () ) ;
-        values.push_back (   rhoMin    )  ;
-      }
+    {
+      values.push_back (   rhoMax () ) ;
+      values.push_back (   rhoMin    )  ;
+    }
     if( phi1 <=  360*Gaudi::Units::degree &&  360*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back (   rhoMax () ) ;
-        values.push_back (   rhoMin    ) ;
-      }
-
+    {
+      values.push_back (   rhoMax () ) ;
+      values.push_back (   rhoMin    ) ;
+    }
+    
     // special cases
     if( phi1 <=  180*Gaudi::Units::degree &&  180*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
+    {
+      values.push_back ( - rhoMax () ) ;
+      values.push_back ( - rhoMin    ) ;
+    }
     if( phi1 <= -180*Gaudi::Units::degree && -180*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
-
+    {
+      values.push_back ( - rhoMax () ) ;
+      values.push_back ( - rhoMin    ) ;
+    }
+    
     auto minmax = std::minmax_element( values.begin(), values.end() );
     setXMax ( *minmax.second );
     setXMin ( *minmax.first );
-
+    
   }
 
   { // evaluate ymin & ymax
@@ -162,22 +166,22 @@ void SolidCons::setBP()
 
     // special cases
     if( phi1 <=   90*Gaudi::Units::degree &&   90*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back (   rhoMax () ) ;
-        values.push_back (   rhoMin    ) ;
-      }
-
+    {
+      values.push_back (   rhoMax () ) ;
+      values.push_back (   rhoMin    ) ;
+    }
+    
     // special cases
     if( phi1 <=  -90*Gaudi::Units::degree &&  -90*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
+    {
+      values.push_back ( - rhoMax () ) ;
+      values.push_back ( - rhoMin    ) ;
+    }
     if( phi1 <=  270*Gaudi::Units::degree &&  270*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
+    {
+      values.push_back ( - rhoMax () ) ;
+      values.push_back ( - rhoMin    ) ;
+    }
 
     auto minmax = std::minmax_element( values.begin(), values.end() );
     setYMax ( *minmax.second );
