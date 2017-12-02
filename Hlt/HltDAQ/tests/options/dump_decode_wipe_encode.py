@@ -19,7 +19,7 @@ encoders=GaudiSequencer("Encode",Members=[])
 from Configurables import IODataManager
 IODataManager().DisablePFNWarning=True
 
-for atype in ["Dec","Sel","Vertex"]: #can't do track just yet, can be added easily, though later
+for atype in ["Dec","Sel"]: #can't do track just yet, can be added easily, though later
     bank="Hlt"+atype+"Reports"
     dump.RawBanks.append(bank)
     #exec("from Configurables import "+bank+"Decoder")
