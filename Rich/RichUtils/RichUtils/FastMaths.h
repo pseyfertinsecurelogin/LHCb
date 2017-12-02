@@ -27,6 +27,7 @@
 #include "vdt/sincos.h"
 #include "vdt/sqrt.h"
 #include "vdt/asin.h"
+#include "vdt/tan.h"
 
 namespace Rich
 {
@@ -384,6 +385,11 @@ namespace Rich
     inline float  fast_approx_isqrt( const float  x ) noexcept { return vdt::fast_approx_isqrtf(x); }
     /// Fast approximate inverse sqrt
     inline double fast_approx_isqrt( const double x ) noexcept { return vdt::fast_approx_isqrt(x); }
+
+    /// Fast tan
+    inline float  fast_tan( const float  x ) noexcept { return vdt::fast_tanf(x); }
+    /// Fast tan
+    inline double fast_tan( const double x ) noexcept { return vdt::fast_tan(x); }
 
     /// Fast atan2
     inline float  fast_atan2( const float  y, const float  x ) noexcept { return vdt::fast_atan2f(y,x); }
