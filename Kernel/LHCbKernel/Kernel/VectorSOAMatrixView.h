@@ -44,9 +44,9 @@ struct Matrix {
     }
   }
 
-  void operator+= (const Matrix<PRECISION, N>& m) {
+  void copy (const std::array<PRECISION, N>& v) {
     for (unsigned i=0; i<N; ++i) {
-      (*this)[i] += m[i];
+      (*this)[i] = v[i];
     }
   }
 
@@ -54,6 +54,12 @@ struct Matrix {
   void copy (const __GAUDITYPE& gm) {
     for (unsigned i=0; i<N; ++i) {
       (*this)[i] = gm.Array()[i];
+    }
+  }
+
+  void operator+= (const Matrix<PRECISION, N>& m) {
+    for (unsigned i=0; i<N; ++i) {
+      (*this)[i] += m[i];
     }
   }
 
@@ -95,6 +101,7 @@ struct TrackSymMatrix : public Matrix<PRECISION, 15> {
   TrackSymMatrix () = default;
   TrackSymMatrix (PRECISION* m_basePointer) : Matrix<PRECISION, 15>(m_basePointer) {}
 
+  void copy (const std::array<PRECISION, 15>& v) { Matrix<PRECISION, 15>::copy(v); }
   void copy (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::copy(static_cast<Matrix<PRECISION, 15>>(v)); }
   void operator+= (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::operator+=(static_cast<Matrix<PRECISION, 15>>(v)); }
   
