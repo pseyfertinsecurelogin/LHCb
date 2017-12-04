@@ -6,6 +6,7 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/Property.h"
+#include "GaudiKernel/IRegistry.h"
 
 // STL include files
 #include <memory>
@@ -15,7 +16,6 @@
 #include "LHCbOutputStreamAgent.h"
 
 // forward declarations
-class IRegistry;
 class IConversionSvc;
 struct IDataManagerSvc;
 class DataStoreItem;

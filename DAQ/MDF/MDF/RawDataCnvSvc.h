@@ -1,4 +1,3 @@
-// $Id: RawDataCnvSvc.h,v 1.13 2009-01-23 13:12:16 frankb Exp $
 //  ====================================================================
 //  RawDataCnvSvc.h
 //  --------------------------------------------------------------------
@@ -13,13 +12,11 @@
 #include "GaudiKernel/ConversionSvc.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiUtils/IIODataManager.h"
+#include "GaudiKernel/IRegistry.h"
 #include "MDF/MDFIO.h"
 
 // C++ include files
 #include <map>
-
-// Forward declarations
-class IRegistry;
 
 /*
  *    LHCb namespace declaration
@@ -114,9 +111,6 @@ namespace LHCb  {
       *  @return Initialized reference to service object
       */
     RawDataCnvSvc(CSTR nam, ISvcLocator* loc);
-
-    /// Standard destructor
-    virtual ~RawDataCnvSvc()  {}
 
     /// Service initialization
     StatusCode initialize() override;

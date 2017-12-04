@@ -50,10 +50,17 @@ struct Iterator {
     }
   }
 
-  void printState () {
-    std::cout << "Iterator state" << std::endl
-      // << " backend " << ((unsigned) (backend - store->backends.begin()))
-      << ", vector " << vector << std::endl;
+  friend inline std::ostream& operator<< (
+    std::ostream& cout,
+    const Iterator& iterator
+  ) {
+    if (iterator.store != nullptr) {
+      cout << "Iterator to store " << &(*(iterator.store)) << " backend " << &(*(iterator.backend))
+           << " vector " << iterator.vector << " element " << iterator.element << std::endl;
+    } else {
+      cout << "Uninitialized Iterator" << std::endl;
+    }
+    return cout;
   }
 
   /**
@@ -123,10 +130,17 @@ struct ReverseIterator {
     vectorCapacity = store->vectorCapacity;
   }
 
-  void printState () {
-    std::cout << "ReverseIterator state" << std::endl
-      // << " backend " << ((unsigned) (backend - store->backends.begin()))
-      << ", vector " << vector << std::endl;
+  friend inline std::ostream& operator<< (
+    std::ostream& cout,
+    const ReverseIterator& iterator
+  ) {
+    if (iterator.store != nullptr) {
+      cout << "ReverseIterator to store " << &(*(iterator.store)) << " backend " << &(*(iterator.backend))
+           << " vector " << iterator.vector << std::endl;
+    } else {
+      cout << "Uninitialized ReverseIterator" << std::endl;
+    }
+    return cout;
   }
 
   /**
