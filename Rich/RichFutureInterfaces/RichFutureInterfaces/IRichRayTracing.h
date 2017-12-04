@@ -28,13 +28,15 @@
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
 
+// RichUtils
+#include "RichUtils/RichSIMDTypes.h"
+#include "RichUtils/RichSIMDRayTracing.h"
+
 // forward decs
 namespace LHCb
 {
   class RichTrackSegment;
 }
-class DeRichSphMirror;
-class DeRichPD;
 
 namespace Rich
 {
@@ -64,28 +66,18 @@ namespace Rich
       /// Interface ID
       DeclareInterfaceID( IRayTracing, 1, 0 );
 
-    public: // vector methods
+    public: // types
 
-      /// Return type for the vectorised raytracing
-      class Result
-      {
-      public:
-        /// Ray tracing status code
-        LHCb::RichTraceMode::RayTraceResult result{ LHCb::RichTraceMode::RayTraceFailed };
-        /// Detection point
-        Gaudi::XYZPoint detectionPoint; 
-        /// Channel ID for detection point
-        LHCb::RichSmartID smartID;     
-        /// Pointer to the associated primary mirror detector element
-        const DeRichSphMirror * primaryMirror   { nullptr };
-        /// Pointer to the associated secondary mirror detector element
-        const DeRichSphMirror * secondaryMirror { nullptr };
-        /// Pointer to the associated DeRichPD object (if available)
-        const DeRichPD        * photonDetector  { nullptr };
-      public:
-        /// Container of results
-        using Vector = std::vector<Result>;
-      };
+      // SIMD types
+      using FP         = Rich::SIMD::DefaultScalarFP; ///< Default scalar floating point type
+      using SIMDFP     = SIMD::FP<FP>;                ///< Default vector floating point type
+      using SIMDVector = SIMD::Vector<FP>;            ///< Default vector Vector class
+      using SIMDPoint  = SIMD::Point<FP>;             ///< Default vector Point class
+
+      /// SIMD Result class
+      using Result = Rich::RayTracingUtils::SIMDResult;
+
+    public: // vector methods
 
       /** For a given detector, ray-traces a given set of directions from a given point to
        *  the photo detectors.
@@ -99,7 +91,7 @@ namespace Rich
        */
       virtual Result::Vector
       traceToDetector ( const Gaudi::XYZPoint& startPoint,
-                        const std::vector<Gaudi::XYZVector>& startDirs,
+                        SIMD::STDVector<SIMDVector>&& startDirs,
                         const LHCb::RichTrackSegment& trSeg,
                         const LHCb::RichTraceMode mode = LHCb::RichTraceMode() ) const = 0;
 

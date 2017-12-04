@@ -7,6 +7,8 @@
        name   = "LHCbID"
        desc   = "LHCb wide channel identifier"
        author = "Marco Cattaneo"
+       final  = "TRUE"
+       defaultdestructor = "FALSE"
        virtual= "FALSE">
 
        <import name="Kernel/VeloChannelID"/>
@@ -70,7 +72,7 @@
          desc  = "Constructor from VeloChannelID " >
           <arg const="TRUE" name="chanID" type="VeloChannelID" />
           <code>
-  m_lhcbID = (Velo &lt;&lt; detectorTypeBits) + chanID;
+  m_lhcbID = (channelIDtype::Velo &lt;&lt; detectorTypeBits) + chanID;
           </code>
        </constructor>
 
@@ -80,7 +82,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Velo identifier">
          <code>
-  return (Velo == detectorType());
+  return channelIDtype::Velo == detectorType();
          </code>
        </method>
 
@@ -90,7 +92,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Velo R identifier">
          <code>
-  return (isVelo() ? veloID().isRType(): false);
+  return isVelo() &amp;&amp; veloID().isRType();
          </code>
        </method>
 
@@ -101,7 +103,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Velo Phi identifier">
          <code>
-  return (isVelo() ? veloID().isPhiType(): false);
+  return isVelo() &amp;&amp; veloID().isPhiType();
          </code>
        </method>
 
@@ -111,7 +113,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Velo Pile up identifier">
          <code>
-  return (isVelo() ? veloID().isPileUp(): false);
+  return isVelo() &amp;&amp; veloID().isPileUp();
          </code>
        </method>
 
@@ -129,7 +131,7 @@
          desc  = "Constructor from VPChannelID, VP corresponding to pixel solution for upgrade" >
           <arg const="TRUE" name="chanID" type="VPChannelID" />
           <code>
-  m_lhcbID = (VP &lt;&lt; detectorTypeBits) + chanID;
+  m_lhcbID = (channelIDtype::VP &lt;&lt; detectorTypeBits) + chanID;
           </code>
        </constructor>
 
@@ -139,7 +141,7 @@
          const = 'TRUE'
          desc  = "return true if this is a VP identifier">
          <code>
-  return (VP == detectorType());
+  return channelIDtype::VP == detectorType();
          </code>
        </method>
 
@@ -149,7 +151,7 @@
          const = 'TRUE'
          desc  = "return the VPChannelID">
 	 <code>
-  return ( isVP() ? LHCb::VPChannelID(m_lhcbID &amp; IDMask) : LHCb::VPChannelID(0xF0000000));
+  return LHCb::VPChannelID( isVP()? m_lhcbID &amp; IDMask : 0xF0000000 );
          </code>
        </method>
 
@@ -157,9 +159,9 @@
          desc     = "Constructor from STChannelID " >
           <arg const="TRUE" name="chanID" type="STChannelID" />
           <code>
-  unsigned int stType = TT;
-  if ( chanID.isIT() ) stType = IT;
-  if ( chanID.isUT() ) stType = UT;
+  unsigned int stType = channelIDtype::TT;
+  if ( chanID.isIT() ) stType = channelIDtype::IT;
+  if ( chanID.isUT() ) stType = channelIDtype::UT;
   m_lhcbID = (stType &lt;&lt; detectorTypeBits) + chanID;
         </code>
       </constructor>
@@ -170,7 +172,7 @@
          const = 'TRUE'
          desc  = "return true if this is a TT Silicon Tracker identifier">
          <code>
-  return (TT == detectorType());
+  return channelIDtype::TT == detectorType();
          </code>
        </method>
 
@@ -180,7 +182,7 @@
          const = 'TRUE'
          desc  = "return true if this is a UT Silicon Tracker identifier">
          <code>
-  return (UT == detectorType());
+  return channelIDtype::UT == detectorType();
          </code>
        </method>
 
@@ -190,7 +192,7 @@
          const = 'TRUE'
          desc  = "return true if this is a IT Silicon Tracker identifier">
          <code>
-  return (IT == detectorType());
+  return channelIDtype::IT == detectorType();
          </code>
        </method>
 
@@ -200,7 +202,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Silicon Tracker identifier (i.e. TT, IT or UT)">
          <code>
-  return ( isTT() || isUT() || isIT() );
+  return isTT() || isUT() || isIT();
          </code>
        </method>
 
@@ -210,7 +212,7 @@
          const = 'TRUE'
          desc  = "return the STChannelID">
 	 <code>
-  return ( isST() ? LHCb::STChannelID(m_lhcbID &amp; IDMask ) : LHCb::STChannelID(0xF0000000));
+  return LHCb::STChannelID( isST() ? m_lhcbID &amp; IDMask : 0xF0000000);
          </code>
        </method>
 
@@ -218,7 +220,7 @@
          desc     = "Constructor from OTChannelID" >
         <arg const="TRUE" name="chanID" type="OTChannelID" />
         <code>
-  m_lhcbID = (OT &lt;&lt; detectorTypeBits) + chanID;
+  m_lhcbID = (channelIDtype::OT &lt;&lt; detectorTypeBits) + chanID;
         </code>
        </constructor>
 
@@ -228,7 +230,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Outer Tracker identifier">
          <code>
-  return (OT == detectorType());
+  return (channelIDtype::OT == detectorType());
          </code>
        </method>
 
@@ -238,7 +240,7 @@
          const = 'TRUE'
          desc="return the OTChannelID">
 	 <code>
-  return (isOT() ? LHCb::OTChannelID(m_lhcbID &amp; IDMask) : LHCb::OTChannelID(0xF0000000 ));
+  return LHCb::OTChannelID( isOT() ? m_lhcbID &amp; IDMask : 0xF0000000 );
          </code>
        </method>
 
@@ -275,7 +277,7 @@
          <arg const="TRUE" name="chanID" type="RichSmartID" />
          <code>
   // Set the type to be RICH
-  setDetectorType( Rich );
+  setDetectorType( channelIDtype::Rich );
   // Save the data bits
   setID( chanID.dataBitsOnly() );
   // Save the MaPMT/HPD flag in bit 27
@@ -291,7 +293,7 @@
          const = 'TRUE'
          desc  = 'return true if this is a Rich identifier'>
          <code>
-  return (Rich == detectorType());
+  return Rich == detectorType();
          </code>
        </method>
 
@@ -331,7 +333,7 @@
           initList = "m_lhcbID(0)" >
           <arg const="TRUE" name="chanID" type="CaloCellID" />
          <code>
-  setDetectorType( Calo );
+  setDetectorType( channelIDtype::Calo );
   setID( chanID.all() );
          </code>
        </constructor>
@@ -342,7 +344,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Calo identifier">
          <code>
-  return (Calo == detectorType());
+  return channelIDtype::Calo == detectorType();
          </code>
        </method>
 
@@ -361,7 +363,7 @@
           initList = "m_lhcbID(0)" >
           <arg const="TRUE" name="chanID" type="MuonTileID" />
          <code>
-  setDetectorType( Muon );
+  setDetectorType( channelIDtype::Muon );
   setID( int(chanID) );
          </code>
        </constructor>
@@ -372,7 +374,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Muon identifier">
          <code>
-  return (Muon == detectorType());
+  return channelIDtype::Muon == detectorType();
          </code>
        </method>
 
@@ -390,7 +392,7 @@
          desc     = "Constructor from FTChannelID" >
         <arg const="TRUE" name="chanID" type="FTChannelID" />
         <code>
-  m_lhcbID = ((unsigned int)FT &lt;&lt; detectorTypeBits) + chanID;
+  m_lhcbID = ((unsigned int)channelIDtype::FT &lt;&lt; detectorTypeBits) + chanID;
         </code>
        </constructor>
 
@@ -400,7 +402,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Fibre Tracker identifier">
          <code>
-  return (FT == detectorType());
+  return channelIDtype::FT == detectorType();
          </code>
        </method>
 
@@ -418,7 +420,7 @@
          desc  = "Constructor from HCCellID, HC standing for Herschel" >
           <arg const="TRUE" name="cellID" type="HCCellID" />
           <code>
-  m_lhcbID = (HC &lt;&lt; detectorTypeBits) + cellID;
+  m_lhcbID = (channelIDtype::HC &lt;&lt; detectorTypeBits) + cellID;
           </code>
        </constructor>
 
@@ -428,7 +430,7 @@
          const = 'TRUE'
          desc  = "return true if this is a HC identifier">
          <code>
-  return (HC == detectorType());
+  return channelIDtype::HC == detectorType();
          </code>
        </method>
 
@@ -460,17 +462,17 @@
         desc    = "General ID: returns detector ID = internal unsigned int">
         <code>
   switch ( detectorType() ) {
-    case VP:    return vpID().channelID();
-    case Velo:  return veloID().channelID();
-    case TT:    //C++17 [[fall-through]]
-    case UT:    //C++17 [[fall-through]]
-    case IT:    return stID().channelID();
-    case OT:    return otID().channelID();
-    case Rich:  return richID().key();
-    case Calo:  //C++17 [[ fall-through ]]
-    case Muon:  return m_lhcbID &amp; IDMask;
-    case FT:    return ftID().channelID();
-    case HC:    return hcID().cellID();
+    case channelIDtype::VP:    return vpID().channelID();
+    case channelIDtype::Velo:  return veloID().channelID();
+    case channelIDtype::TT:    //C++17 [[fall-through]]
+    case channelIDtype::UT:    //C++17 [[fall-through]]
+    case channelIDtype::IT:    return stID().channelID();
+    case channelIDtype::OT:    return otID().channelID();
+    case channelIDtype::Rich:  return richID().key();
+    case channelIDtype::Calo:  //C++17 [[ fall-through ]]
+    case channelIDtype::Muon:  return m_lhcbID &amp; IDMask;
+    case channelIDtype::FT:    return ftID().channelID();
+    case channelIDtype::HC:    return hcID().cellID();
     default:    return 0;
   }
         </code>

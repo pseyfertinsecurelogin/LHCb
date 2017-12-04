@@ -17,6 +17,12 @@
 #include "GaudiKernel/SerializeSTL.h"
 #include "GaudiKernel/DataObject.h"
 
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
+
+// Vc
+#include <Vc/common/alignedbase.h>
+
 // Forward declarations
 class IJobOptionsSvc;
 class DeRich;
@@ -47,7 +53,8 @@ namespace Rich
     //-----------------------------------------------------------------------------
 
     template <class PBASE>
-    class CommonBase : public PBASE
+    class CommonBase : public PBASE,
+                       public Vc::AlignedBase<Vc::VectorAlignment>
     {
 
     public:

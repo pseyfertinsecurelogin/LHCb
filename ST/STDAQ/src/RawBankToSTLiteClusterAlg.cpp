@@ -147,7 +147,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
    if ((*iterBank)->magic() != RawBank::MagicPattern) {
       Warning( "wrong magic pattern "+ std::to_string((*iterBank)->sourceID()),
-               StatusCode::SUCCESS,2);
+               StatusCode::SUCCESS,2).ignore();
       counter("skipped Banks") += tBanks.size();
       continue;
     }

@@ -88,6 +88,26 @@ struct ISolid : extend_interfaces<IInterface>,
    */
   virtual ISolid* reset()  = 0;
 
+  /** Tests whether or not the given line (defined as a point and 
+   *  a direction) intersects or not with the given solid.
+   *  - Line is parametrized with parameter \a t :
+   *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
+   *      - \f$ \vec{p} \f$ is a point on the line
+   *      - \f$ \vec{v} \f$ is a vector along the line
+   *  @param Point initial point for the line
+   *  @param Vector vector along the line
+   *  @return the number of intersection points
+   */
+  virtual bool testForIntersection( const Gaudi::XYZPoint & Point      ,
+                                    const Gaudi::XYZVector& Vector     ) const = 0;
+
+  virtual bool testForIntersection( const Gaudi::Polar3DPoint & Point  ,
+                                    const Gaudi::Polar3DVector& Vector ) const = 0;
+  
+  virtual bool testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
+                                    const Gaudi::RhoZPhiVector& Vector ) const = 0;
+
+
   /** calculate the intersection points("ticks") of the solid objects
    *  with given line.
    *  - Line is parametrized with parameter \a t :
@@ -182,7 +202,7 @@ inline std::ostream& operator<<( std::ostream&  os , const ISolid&  solid  )
  */
 // ============================================================================
 inline std::ostream& operator<<( std::ostream&  os , const ISolid*  solid  )
-{ return ((0 == solid) ? (os<<"ISolid* points to NULL"):(os<<(*solid)));}
+{ return ( !solid ? (os<<"ISolid* points to NULL") : (os<<(*solid)) ); }
 
 // ============================================================================
 /** output operator to Gaudi stream
@@ -202,7 +222,7 @@ inline MsgStream&    operator<<( MsgStream&     os , const ISolid&  solid  )
  */
 // ============================================================================
 inline MsgStream&    operator<<( MsgStream&     os , const ISolid*  solid  )
-{ return ((0 == solid) ? (os<<"ISolid* points to NULL"):(os<<(*solid)));}
+{ return ( !solid ? (os<<"ISolid* points to NULL") : (os<<(*solid)) ); }
 
 // ============================================================================
 // The End

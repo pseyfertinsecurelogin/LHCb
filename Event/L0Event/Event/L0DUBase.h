@@ -98,9 +98,9 @@ namespace L0DUBase{
     }
 
   namespace RAMBCID{
-    static const unsigned int Max = 255;
-    static const unsigned int ConditionOrder = 18;
-    static const unsigned int MaxNumber = 4;
+    constexpr unsigned int Max = 255;
+    constexpr unsigned int ConditionOrder = 18;
+    constexpr unsigned int MaxNumber = 4;
     static const std::string  Name = "RamBCID";
   }
 

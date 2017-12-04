@@ -23,6 +23,12 @@
 // RichDet
 #include "RichDet/DeRichLocations.h"
 
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
+
+// Vc
+#include <Vc/common/alignedbase.h>
+
 class DeRichSystem;
 
 // Some defines for debug/verbose messages...
@@ -40,7 +46,8 @@ class DeRichSystem;
  *  @author Chris Jones
  *  @date   2009-07-26
  */
-class DeRichBase : public DetectorElement
+class DeRichBase : public DetectorElement,
+                   public Vc::AlignedBase<Vc::VectorAlignment>
 {
 
 public:

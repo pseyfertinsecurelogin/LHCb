@@ -31,7 +31,7 @@ const CLID& DeRichBeamPipe::classID()
 //=========================================================================
 //  initialize
 //=========================================================================
-StatusCode DeRichBeamPipe::initialize ( )
+StatusCode DeRichBeamPipe::initialize()
 {
   // Which Rich ?
   if      ( name().find("Rich1") != std::string::npos )
@@ -66,10 +66,10 @@ StatusCode DeRichBeamPipe::initialize ( )
         // make the cone object
         const auto cname = 
           ( Rich::Rich1 == m_rich ? "LocalRich1Cone" : "LocalRich2Cone" );
-        m_localCone.reset( new SolidCons( cname, 
-                                          coneSolid->zHalfLength(),
-                                          coneSolid->outerRadiusAtMinusZ(),
-                                          coneSolid->outerRadiusAtPlusZ() ) );
+        m_localCone = std::make_unique<SolidCons>( cname, 
+                                                   coneSolid->zHalfLength(),
+                                                   coneSolid->outerRadiusAtMinusZ(),
+                                                   coneSolid->outerRadiusAtPlusZ() );
 
         // beam pipe size tolerance factor for 'fast' check
         const auto tolF = ( Rich::Rich1 == m_rich ? 2.0 : 1.75 );

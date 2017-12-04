@@ -9,6 +9,8 @@ gaudi_depends_on_subdirs(GaudiKernel
                          Kernel/VectorClass)
 
 find_package(Boost)
+find_package(VDT)
+
 find_package(ROOT COMPONENTS MathCore GenVector)
 
 find_path(RANGES_V3_INCLUDE_DIR NAMES range/v3/all.hpp)
@@ -19,8 +21,8 @@ endif()
 gaudi_add_library(DetDescLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS DetDesc
-                  INCLUDE_DIRS ROOT Boost ${RANGES_V3_INCLUDE_DIR}
-                  LINK_LIBRARIES ROOT GaudiKernel GaudiUtilsLib LHCbMathLib)
+                  INCLUDE_DIRS VDT ROOT Boost ${RANGES_V3_INCLUDE_DIR}
+                  LINK_LIBRARIES VDT ROOT GaudiKernel GaudiUtilsLib LHCbMathLib)
 
 gaudi_add_dictionary(DetDesc
                      dict/DetDescDict.h
