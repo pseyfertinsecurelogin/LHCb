@@ -57,7 +57,7 @@ decoder = DecoderDB['HltSelReportsDecoder/Hlt2SelReportsDecoder']
 decoder.Properties['OutputLevel'] = LEVEL
 
 stripper = HltSelReportsStripper()
-stripper.InputHltSelReportsLocation = decoder.listOutputs()[1]
+stripper.InputHltSelReportsLocation = decoder.Outputs["OutputHltSelReportsLocation"]
 stripper.OutputHltSelReportsLocation = 'Hlt2/SelReportsFiltered'
 stripper.OutputHltObjectSummariesLocation = (
     str(stripper.OutputHltSelReportsLocation) + '/Candidates')
@@ -87,8 +87,9 @@ writer.OutputLevel = LEVEL
 
 decoder2 = decoder.clone('HltSelReportsDecoder/SecondDecoder')
 # decoder2.Inputs = {'RawEventLocations': ['DAQ/RawEvent']}
-decoder2.Outputs = {'OutputHltSelReportsLocation': 'Hlt2/SelReportsFilteredFromRaw',
-                    'OutputHltObjectSummariesLocation': 'Hlt2/SelReportsFilteredFromRaw/Candidates'}
+decoder2.Outputs = {
+    'OutputHltSelReportsLocation': 'Hlt2/SelReportsFilteredFromRaw',
+    'OutputHltObjectSummariesLocation': 'Hlt2/SelReportsFilteredFromRaw/Candidates'}
 decoder2.Properties['OutputLevel'] = LEVEL
 
 
@@ -176,16 +177,16 @@ while True:
     raw = TES['DAQ/RawEventOriginal']
     inp = TES[str(stripper.InputHltSelReportsLocation)]
     out = TES[str(stripper.OutputHltSelReportsLocation)]
-    out2 = TES[decoder2.listOutputs()[0]]
+    out2 = TES[decoder2.Outputs["OutputHltSelReportsLocation"]]
     inpc = TES[str(stripper.InputHltSelReportsLocation) + '/Candidates']
     outc = TES[str(stripper.OutputHltSelReportsLocation) + '/Candidates']
-    out2c = TES[decoder2.listOutputs()[1]]
+    out2c = TES[decoder2.Outputs["OutputHltObjectSummariesLocation"]]
     if not inp:  # we didn't have SelReports to process
         continue
 
     # Some stats
     print('N selections (input, stripped, persisted):      ',
-          inp.size(), out.selReports().size(), out2.size())
+          inp.size(), out.size(), out2.size())
     print('N HltObjectSummary (input, stripped, persisted):',
           inpc.size(), outc.size(), out2c.size())
     print('Hlt2 SelReports bank size (input, stripped):    ',
@@ -209,8 +210,7 @@ while True:
 
     # Check that the persistence works (the SelReports which are written
     # and decoding are the same as the originals)
-    for report in out2:
-        report = out2[n]
+    for name, report in out2.selReports().items():
         original = inp.selReport(name)
         assert_equal(
             hos_to_pod(original), hos_to_pod(report),
