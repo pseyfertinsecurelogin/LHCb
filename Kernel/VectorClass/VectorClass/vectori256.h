@@ -167,7 +167,7 @@ public:
     Vec128b get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
-    constexpr static int size() {
+    static int size() {
         return 256;
     }
 };
@@ -406,7 +406,7 @@ public:
         return _mm256_extracti128_si256(ymm,1);
 #endif
     }
-    constexpr static int size() {
+    static int size() {
         return 32;
     }
 };
@@ -1166,7 +1166,7 @@ public:
     Vec8s get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
-    constexpr static int size() {
+    static int size() {
         return 16;
     }
 };
@@ -1891,7 +1891,7 @@ public:
     Vec4i get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
-    constexpr static int size() {
+    static int size() {
         return 8;
     }
 };
@@ -2633,7 +2633,7 @@ public:
     Vec2q get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
-    constexpr static int size() {
+    static int size() {
         return 4;
     }
 };

@@ -223,7 +223,7 @@ public:
     Vec4fb get_high() const {
         return _mm256_extractf128_ps(ymm,1);
     }
-    constexpr static int size () {
+    static int size () {
         return 8;
     }
 };
@@ -437,7 +437,7 @@ public:
     Vec2db get_high() const {
         return _mm256_extractf128_pd(ymm,1);
     }
-    constexpr static int size () {
+    static int size () {
         return 4;
     }
 };
@@ -670,7 +670,7 @@ public:
     Vec4f get_high() const {
         return _mm256_extractf128_ps(ymm,1);
     }
-    constexpr static int size () {
+    static int size () {
         return 8;
     }
 };
@@ -1463,7 +1463,7 @@ public:
     Vec2d get_high() const {
         return _mm256_extractf128_pd(ymm,1);
     }
-    constexpr static int size () {
+    static int size () {
         return 4;
     }
 };

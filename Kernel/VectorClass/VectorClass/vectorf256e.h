@@ -212,7 +212,7 @@ public:
     Vec4fb get_high() const {
         return y1;
     }
-    constexpr static int size () {
+    static int size () {
         return 8;
     }
 };
@@ -394,7 +394,7 @@ public:
     Vec2db get_high() const {
         return y1;
     }
-    constexpr static int size () {
+    static int size () {
         return 4;
     }
 };
@@ -611,7 +611,7 @@ public:
     Vec4f get_high() const {
         return y1;
     }
-    constexpr static int size () {
+    static int size () {
         return 8;
     }
 };
@@ -1207,7 +1207,7 @@ public:
     Vec2d get_high() const {
         return y1;
     }
-    constexpr static int size () {
+    static int size () {
         return 4;
     }
 };

@@ -145,7 +145,7 @@ public:
     bool operator [] (uint32_t index) const {
         return get_bit(index) != 0;
     }
-    constexpr static int size() {
+    static int size() {
         return 128;
     }
 };
@@ -417,7 +417,7 @@ public:
     int8_t operator [] (uint32_t index) const {
         return extract(index);
     }
-    constexpr static int size() {
+    static int size() {
         return 16;
     }
 };
@@ -1235,7 +1235,7 @@ public:
     int16_t operator [] (uint32_t index) const {
         return extract(index);
     }
-    constexpr static int size() {
+    static int size() {
         return 8;
     }
 };
@@ -2046,7 +2046,7 @@ public:
     int32_t operator [] (uint32_t index) const {
         return extract(index);
     }
-    constexpr static int size() {
+    static int size() {
         return 4;
     }
 };
@@ -2916,7 +2916,7 @@ public:
     int64_t operator [] (uint32_t index) const {
         return extract(index);
     }
-    constexpr static int size() {
+    static int size() {
         return 2;
     }
 };

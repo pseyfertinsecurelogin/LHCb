@@ -76,13 +76,13 @@ private:
       };
     }
 
-    template<class vectype>
+    template<class vectype, size_t width>
     std::array<vectype, 3> fetchVectorQ (const vectype& indices) const {
-      return fetchVectorQ_helper(indices, std::make_index_sequence<vectype::size()>{});
+      return fetchVectorQ_helper(indices, std::make_index_sequence<width>{});
     }
 
 public:
-    template<class vectype>
+    template<class vectype, size_t width>
     std::array<vectype, 3> horizontallyVectorizedFieldVectorClosestPoint (
       const std::array<vectype, 3>& point
     ) const {
@@ -109,7 +109,7 @@ public:
         const vectype scaleFactor {m_scaleFactor};
         
         const vectype index = cond_multiplier * (Nxyz[0] * (Nxyz[1] * k + j) + i);
-        const std::array<vectype, 3> q = fetchVectorQ<vectype>(index);
+        const std::array<vectype, 3> q = fetchVectorQ<vectype, width>(index);
 
 
         bf[0] = cond_multiplier * scaleFactor * q[0];
@@ -120,7 +120,7 @@ public:
       return bf;
     }
 
-    template<class vectype>
+    template<class vectype, size_t width>
     std::array<vectype, 3> horizontallyVectorizedFieldVector (
       const std::array<vectype, 3>& point
     ) const {
@@ -179,8 +179,8 @@ public:
         // bf  = h000*m_Q[ijk000]+h100*m_Q[ijk000+1] ;
         const vectype h000 = hx0 * hy0 * hz0;
         const vectype h100 = hx1 * hy0 * hz0;
-        q1 = fetchVectorQ<vectype>(ijk000);
-        q2 = fetchVectorQ<vectype>(ijk000 + 1);
+        q1 = fetchVectorQ<vectype, width>(ijk000);
+        q2 = fetchVectorQ<vectype, width>(ijk000 + 1);
         bf[0] = h000 * q1[0] + h100 * q2[0];
         bf[1] = h000 * q1[1] + h100 * q2[1];
         bf[2] = h000 * q1[2] + h100 * q2[2];
@@ -190,8 +190,8 @@ public:
         // bf += h001*m_Q[ijk001]+h101*m_Q[ijk001+1] ;
         const vectype h001 = hx0 * hy0 * hz1;
         const vectype h101 = hx1 * hy0 * hz1;
-        q1 = fetchVectorQ<vectype>(ijk001);
-        q2 = fetchVectorQ<vectype>(ijk001 + 1);
+        q1 = fetchVectorQ<vectype, width>(ijk001);
+        q2 = fetchVectorQ<vectype, width>(ijk001 + 1);
         bf[0] += h001 * q1[0] + h101 * q2[0];
         bf[1] += h001 * q1[1] + h101 * q2[1];
         bf[2] += h001 * q1[2] + h101 * q2[2];
@@ -201,8 +201,8 @@ public:
         // bf += h010*m_Q[ijk010]+h110*m_Q[ijk010+1] ;
         const vectype h010 = hx0 * hy1 * hz0;
         const vectype h110 = hx1 * hy1 * hz0;
-        q1 = fetchVectorQ<vectype>(ijk010);
-        q2 = fetchVectorQ<vectype>(ijk010 + 1);
+        q1 = fetchVectorQ<vectype, width>(ijk010);
+        q2 = fetchVectorQ<vectype, width>(ijk010 + 1);
         bf[0] += h010 * q1[0] + h110 * q2[0];
         bf[1] += h010 * q1[1] + h110 * q2[1];
         bf[2] += h010 * q1[2] + h110 * q2[2];
@@ -212,8 +212,8 @@ public:
         // bf += h011*m_Q[ijk011]+h111*m_Q[ijk011+1] ;
         const vectype h011 = hx0 * hy1 * hz1;
         const vectype h111 = hx1 * hy1 * hz1;
-        q1 = fetchVectorQ<vectype>(ijk011);
-        q2 = fetchVectorQ<vectype>(ijk011 + 1);
+        q1 = fetchVectorQ<vectype, width>(ijk011);
+        q2 = fetchVectorQ<vectype, width>(ijk011 + 1);
         bf[0] += h011 * q1[0] + h111 * q2[0];
         bf[1] += h011 * q1[1] + h111 * q2[1];
         bf[2] += h011 * q1[2] + h111 * q2[2];
@@ -243,15 +243,15 @@ public:
 
 // Instantiate horizontally vectorized entrypoints
 #if defined(__SSE__)
-template std::array<Vec2d, 3> LHCb::MagneticFieldGrid::horizontallyVectorizedFieldVector<Vec2d>(
+template std::array<Vec2d, 3> LHCb::MagneticFieldGrid::horizontallyVectorizedFieldVector<Vec2d, 2>(
   const std::array<Vec2d, 3>&) const;
 #endif
 #if defined(__AVX__)
-template std::array<Vec4d, 3> LHCb::MagneticFieldGrid::horizontallyVectorizedFieldVector<Vec4d>(
+template std::array<Vec4d, 3> LHCb::MagneticFieldGrid::horizontallyVectorizedFieldVector<Vec4d, 4>(
   const std::array<Vec4d, 3>&) const;
 #endif
 #if defined(__AVX512F__)
-template std::array<Vec8d, 3> LHCb::MagneticFieldGrid::horizontallyVectorizedFieldVector<Vec8d>(
+template std::array<Vec8d, 3> LHCb::MagneticFieldGrid::horizontallyVectorizedFieldVector<Vec8d, 8>(
   const std::array<Vec8d, 3>&) const;
 #endif
 

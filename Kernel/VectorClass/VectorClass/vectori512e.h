@@ -142,7 +142,7 @@ public:
     Vec256b get_high() const {
         return z1;
     }
-    constexpr static int size () {
+    static int size () {
         return 512;
     }
 };
@@ -302,7 +302,7 @@ public:
     bool operator [] (uint32_t index) const {
         return extract(index);
     }
-    constexpr static int size () {
+    static int size () {
         return 16;
     }
 };
@@ -563,7 +563,7 @@ public:
     bool operator [] (uint32_t index) const {
         return extract(index);
     }
-    constexpr static int size () {
+    static int size () {
         return 8;
     }
 };
@@ -788,7 +788,7 @@ public:
     Vec8i get_high() const {
         return Vec8i(z1);
     }
-    constexpr static int size () {
+    static int size () {
         return 16;
     }
 };
@@ -1327,7 +1327,7 @@ public:
     Vec4q get_high() const {
         return Vec4q(z1);
     }
-    constexpr static int size () {
+    static int size () {
         return 8;
     }
 };
