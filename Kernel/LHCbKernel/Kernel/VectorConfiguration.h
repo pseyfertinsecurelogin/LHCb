@@ -49,7 +49,8 @@ namespace LHCb {
 namespace Vector {
 
 // Vectype selector
-template <class T, size_t W> struct Vectype { using type = T; using booltype = bool; };
+template<class T, size_t W> struct Vectype {};
+template<class T> struct Vectype<T, 1> { using type = T; using booltype = bool; };
 #if defined(__AVX512F__)
 template<> struct Vectype<double, 8> { using type = Vec8d; using booltype = Vec8db; };
 template<> struct Vectype<float, 16> { using type = Vec16f; using booltype = Vec16fb; };
