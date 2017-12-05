@@ -14,6 +14,9 @@
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMText.hpp>
 
+#ifndef DECLARE_CONVERTER
+#define DECLARE_CONVERTER( x ) DECLARE_CONVERTER_FACTORY( x )
+#endif
 
 // Forward and external declarations
 class ISvcLocator;
