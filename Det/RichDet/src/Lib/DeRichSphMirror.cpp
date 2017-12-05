@@ -292,8 +292,6 @@ StatusCode DeRichSphMirror::updateGeometry()
       surfName = "Seg"+mirNumString;
     }
 
-    bool foundSurface( false );
-
     // get the surface catalog
     SmartDataPtr<DataObject> rich2SurfCat(dataSvc(),surfLocation);
     if (!rich2SurfCat)
@@ -310,27 +308,16 @@ StatusCode DeRichSphMirror::updateGeometry()
     }
 
     // find the surface in the registry
-    IRegistry* storeReg = nullptr;
-    for ( auto child = rich2Reg->begin();
-          (child != rich2Reg->end() && !foundSurface); ++child )
-    {
-      // child is a const_iterator of vector<IRegistry*>
-      const auto pos3 = (*child)->name().find(sphMirrorName);
-      if ( std::string::npos != pos3 )
-      {
-        const auto pos4 = (*child)->name().find(surfName);
-        if ( std::string::npos != pos4 )
-        {
-          storeReg = (*child);
-          foundSurface = true;
-        }
-      }
-    }
+    auto iStore = std::find_if( rich2Reg->begin(), rich2Reg->end(),
+                                [&](const auto& child)  {
+      return child->name().find(sphMirrorName) != std::string::npos &&
+             child->name().find(surfName) != std::string::npos;
+    } );
 
     // get the surface, get the tabulated properties and find REFLECTIVITY
-    if ( foundSurface )
+    if ( iStore!=rich2Reg->end() )
     {
-      SmartDataPtr<DataObject> obj (dataSvc(), storeReg->identifier());
+      SmartDataPtr<DataObject> obj (dataSvc(), (*iStore)->identifier());
       DataObject * pObj = obj;
       if ( pObj )
       {
