@@ -16,9 +16,9 @@ class L0ProcessorDataDecoder : public extends<GaudiTool, IL0ProcessorDataDecoder
 
   StatusCode initialize ()  override;
   StatusCode finalize ()  override;
-  bool   setL0ProcessorData(std::vector<std::string> dataLocs ) override;
-  bool   setL0ProcessorData(std::vector<LHCb::L0ProcessorDatas*> datass ) override;
-  bool   setL0ProcessorData(std::string dataLoc ) override;
+  bool   setL0ProcessorData(const std::vector<std::string>& dataLocs ) override;
+  bool   setL0ProcessorData(const std::vector<LHCb::L0ProcessorDatas*>& datass ) override;
+  bool   setL0ProcessorData(const std::string& dataLoc ) override;
   bool   setL0ProcessorData(LHCb::L0ProcessorDatas* datas ) override;
   unsigned long digit( const std::array<unsigned int,L0DUBase::Index::Size>& data,int bx=0) override;
   double value( const std::array<unsigned int,L0DUBase::Index::Size>& base,int bx=0) override;

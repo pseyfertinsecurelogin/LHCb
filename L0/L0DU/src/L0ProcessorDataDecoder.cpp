@@ -42,7 +42,7 @@ StatusCode L0ProcessorDataDecoder::finalize ()
 }
 
 // ============================================================================
-bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<LHCb::L0ProcessorDatas*> datass){
+bool L0ProcessorDataDecoder::setL0ProcessorData(const std::vector<LHCb::L0ProcessorDatas*>& datass){
   m_dataContainer.clear();
   m_ok=true;
   for(LHCb::L0ProcessorDatas* datas : datass) {
@@ -64,10 +64,10 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<LHCb::L0ProcessorDat
 
 // ============================================================================
 bool L0ProcessorDataDecoder::setL0ProcessorData(LHCb::L0ProcessorDatas* datas){
-  return setL0ProcessorData( { datas } );
+  return setL0ProcessorData( std::vector<LHCb::L0ProcessorDatas*>{ datas } );
 }
 
-bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<std::string> dataLocs){
+bool L0ProcessorDataDecoder::setL0ProcessorData(const std::vector<std::string>& dataLocs){
   m_dataContainer.clear();
   m_ok=true;
   // check whether the fiber receives HC data
@@ -104,7 +104,7 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<std::string> dataLoc
 }
 
 // ============================================================================
-bool L0ProcessorDataDecoder::setL0ProcessorData(std::string dataLoc ){
+bool L0ProcessorDataDecoder::setL0ProcessorData( const std::string& dataLoc ){
   return setL0ProcessorData( std::vector<std::string>{ dataLoc } );
 }
 
