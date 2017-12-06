@@ -24,12 +24,6 @@
  */
 template <class DeType> class XmlUserConditionCnv : public XmlBaseConditionCnv {
 
-  /// The type of this object
-  typedef XmlUserConditionCnv<DeType> MyType;
-  /// Friend needed for instantiation
-  friend class CnvFactory<MyType>;
-
-
  public:
 
   /**
@@ -39,16 +33,10 @@ template <class DeType> class XmlUserConditionCnv : public XmlBaseConditionCnv {
   XmlUserConditionCnv (ISvcLocator* svc);
 
   /**
-   * Default destructor
-   */
-  virtual ~XmlUserConditionCnv() {};
-
-  /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
   static const CLID& classID() { return DeType::classID(); }
-
 
  protected:
 

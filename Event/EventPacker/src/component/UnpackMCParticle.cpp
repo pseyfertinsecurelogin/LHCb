@@ -16,7 +16,7 @@
 // 2005-03-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( UnpackMCParticle )
+DECLARE_COMPONENT( UnpackMCParticle )
 
 //=============================================================================
 // Standard constructor, initializes variables

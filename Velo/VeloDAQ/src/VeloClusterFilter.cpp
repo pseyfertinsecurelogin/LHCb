@@ -68,7 +68,7 @@ bool VeloClusterFilter::filter_t::operator()(LHCb::VeloChannelID id) const {
 
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( VeloClusterFilter )
+DECLARE_COMPONENT( VeloClusterFilter )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================

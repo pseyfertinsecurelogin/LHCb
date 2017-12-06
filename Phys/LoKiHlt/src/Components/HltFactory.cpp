@@ -55,10 +55,6 @@ namespace LoKi
       , public virtual LoKi::Hybrid::IHltFactory
       , public virtual LoKi::Hybrid::IHltAntiFactory
     {
-      // ======================================================================
-      // friend factory forn instantiation
-      friend struct ToolFactory<LoKi::Hybrid::HltFactory> ;
-      // ======================================================================
     public:
       // ======================================================================
       /// finalization   of the tool
@@ -162,23 +158,11 @@ namespace LoKi
       /// set the C++ function
       void set ( const LoKi::Types::HLT_Func& cut ) override
       { LoKi::Hybrid::Base::_set ( m_hlt_func , cut ) ; }
-      // ======================================================================
-    protected:
-      // ======================================================================
       /// constrcutor
       HltFactory
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      HltFactory () ;                    // the default constructor is disabled
-      // the copy constructor is disabled
-      HltFactory ( const HltFactory& )  ;   // the copy constructor is disabled
-      // the assignement operator  is disabled
-      HltFactory& operator=( const HltFactory& )  ;           // no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -238,7 +222,7 @@ inline StatusCode LoKi::Hybrid::HltFactory::_get
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,HltFactory)
+DECLARE_COMPONENT( LoKi::Hybrid::HltFactory )
 // ============================================================================
 // Standard constructor
 // ============================================================================

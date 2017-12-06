@@ -18,7 +18,7 @@ namespace {
 }
 // ====================================================================
 
-DECLARE_TOOL_FACTORY( STLayerSelector )
+DECLARE_COMPONENT( STLayerSelector )
 
 // ====================================================================
 

@@ -24,7 +24,7 @@
 // 07/2007: Adlene Hicheur, added B field integral testing Ntuple
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( MagFieldReader )
+DECLARE_COMPONENT( MagFieldReader )
 
 //=============================================================================
 // Standard constructor, initializes variables

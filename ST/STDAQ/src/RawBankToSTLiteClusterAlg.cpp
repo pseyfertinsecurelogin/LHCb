@@ -63,7 +63,7 @@ namespace {
 // 2016-10-07 : Sebastien Ponce
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( RawBankToSTLiteClusterAlg )
+DECLARE_COMPONENT( RawBankToSTLiteClusterAlg )
 
 RawBankToSTLiteClusterAlg::RawBankToSTLiteClusterAlg(const std::string& name,
                                                      ISvcLocator* pSvcLocator) :

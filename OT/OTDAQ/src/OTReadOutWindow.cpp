@@ -13,7 +13,7 @@
  */
 
 // Declaration of the tool Factory
-DECLARE_TOOL_FACTORY( OTReadOutWindow )
+DECLARE_COMPONENT( OTReadOutWindow )
 
 
 StatusCode OTReadOutWindow::initialize()

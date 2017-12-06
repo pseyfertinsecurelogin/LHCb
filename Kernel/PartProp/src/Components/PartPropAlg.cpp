@@ -29,11 +29,7 @@ namespace LHCb
      */
     class PartPropAlg : public Algorithm
     {
-      // ======================================================================
-      /// friend factory for algorithm instantiation
-      friend class AlgFactory<LHCb::Example::PartPropAlg> ;  //     the factory
-      // ======================================================================
-    public :
+    public:
       // ======================================================================
       /// standard algorithm initialization
       StatusCode  initialize () override
@@ -53,27 +49,11 @@ namespace LHCb
       }
       /// algorithm execution
       StatusCode  execute    () override;
-      // ======================================================================
-    protected:
-      // ======================================================================
-      /** standard constructor
-       *  @param name algorithm instance name
-       *  @param pSvc pointer to the service locator
-       */
-      PartPropAlg
-      ( const std::string& name ,      //               algorithm instance name
-        ISvcLocator*       pSvc )      //        pointer to the service locator
-        : Algorithm ( name , pSvc )
-      {}
+
+      using Algorithm::Algorithm;
       // ======================================================================
       /// locate the new particle property service
       const LHCb::IParticlePropertySvc* ppSvc() const ;
-      // ======================================================================
-      /// the copy constructor is disabled
-      PartPropAlg ( const PartPropAlg& ) = delete;// copy constructor is disabled
-      /// assignement operator is disbaled
-      PartPropAlg& operator=( const PartPropAlg& ) = delete; // no assignement
-      // ======================================================================
     private:
       // ======================================================================
       /// the pointer to new particle property service
@@ -241,7 +221,7 @@ StatusCode LHCb::Example::PartPropAlg::execute()
 }
 // ============================================================================
 /// Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb::Example,PartPropAlg)
+DECLARE_COMPONENT( LHCb::Example::PartPropAlg )
 // ============================================================================
 // The END
 // ============================================================================

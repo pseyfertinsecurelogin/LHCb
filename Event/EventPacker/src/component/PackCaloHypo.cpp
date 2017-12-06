@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PackCaloHypo )
+DECLARE_COMPONENT( PackCaloHypo )
 
 //=============================================================================
 // Standard constructor, initializes variables

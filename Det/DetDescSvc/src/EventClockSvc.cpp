@@ -8,7 +8,7 @@
 // local
 #include "EventClockSvc.h"
 
-DECLARE_SERVICE_FACTORY( EventClockSvc )
+DECLARE_COMPONENT( EventClockSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : EventClockSvc

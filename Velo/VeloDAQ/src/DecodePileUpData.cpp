@@ -19,7 +19,7 @@ using namespace VeloTELL1;
 //----------------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( DecodePileUpData )
+DECLARE_COMPONENT( DecodePileUpData )
 
 //=============================================================================
 // Standard constructor, initializes variables

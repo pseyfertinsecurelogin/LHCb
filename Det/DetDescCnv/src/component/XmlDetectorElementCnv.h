@@ -1,5 +1,3 @@
-///  $ID: $
-
 #ifndef DETDESCCNV_XMLCNVSVC_XMLDECNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLDECNV_H
 
@@ -17,22 +15,14 @@
  */
 class XmlDetectorElementCnv : public XmlBaseDetElemCnv {
 
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlDetectorElementCnv>;
-
-protected:
-
+public:
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
   XmlDetectorElementCnv(ISvcLocator* svcs);
 
-  /**
-   * Default destructor
-   */
-  virtual ~XmlDetectorElementCnv() {}
-
+protected:
   /** This fills the current object for specific child.
    * Implements the abstract method in XmlBaseDetElemCnv
    * @param childElement the specific child processed here
@@ -47,4 +37,3 @@ protected:
 };
 
 #endif // DETDESCCNV_XMLDECNV_H
-

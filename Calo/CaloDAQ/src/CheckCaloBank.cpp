@@ -10,7 +10,7 @@
 // ============================================================================
 
 // MANDATORY!!!
-DECLARE_ALGORITHM_FACTORY( CheckCaloBank )
+DECLARE_COMPONENT( CheckCaloBank )
 
 //=============================================================================
 // Standard creator, initializes variables

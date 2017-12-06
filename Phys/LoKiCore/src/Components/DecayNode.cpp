@@ -21,16 +21,9 @@ namespace LoKi
    */
   class DecayNode : public extends<LoKi::DecayBase,Decays::IDecayNode>
   {
-    // ========================================================================
-    /// the friend factory for instantiation
-    friend struct ToolFactory<LoKi::DecayNode> ;                  // the factory
-    // ========================================================================
-    /** forward to baseclass constructor
-     */
-    using base_class::base_class;
-    // ========================================================================
   public:
-    // ========================================================================
+    /** forward to baseclass constructor */
+    using base_class::base_class;
     /** build the node form the node descriptor
      *
      *  @code
@@ -47,19 +40,13 @@ namespace LoKi
      */
     Decays::Node node ( const std::string& descriptor ) const override
     { return LoKi::DecayBase::node ( descriptor ) ; }
-    // ========================================================================
-    /// the copy constructor is disabled
-    DecayNode ( const DecayNode& ) = delete;        // the copy constructor is disabled
-    /// the assignement operator is disabled
-    DecayNode& operator=( const DecayNode& ) = delete ;       // no assignement operator
-    // ========================================================================
   } ; //                                                 end of class DecayNode
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
 //                                                the factory for instantiation
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi,DecayNode)
+DECLARE_COMPONENT( LoKi::DecayNode )
 // ============================================================================
 
 

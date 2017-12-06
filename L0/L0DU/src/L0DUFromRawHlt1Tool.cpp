@@ -49,7 +49,7 @@ namespace {
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0DUFromRawHlt1Tool )
+DECLARE_COMPONENT( L0DUFromRawHlt1Tool )
 
 //=============================================================================
 // Standard constructor, initializes variables

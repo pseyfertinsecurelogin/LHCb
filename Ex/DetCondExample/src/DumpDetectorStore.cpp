@@ -10,7 +10,7 @@
 #include "GaudiKernel/SmartIF.h"
 
 /// Instantiation of a static factory to create instances of this algorithm
-DECLARE_ALGORITHM_FACTORY( DumpDetectorStore )
+DECLARE_COMPONENT( DumpDetectorStore )
 
 //----------------------------------------------------------------------------
 

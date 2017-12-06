@@ -193,6 +193,6 @@ void ChargedProtoParticleMapper::addPath( const std::string & path )
 
 // ============================================================================
 
-DECLARE_TOOL_FACTORY(ChargedProtoParticleMapper)
+DECLARE_COMPONENT( ChargedProtoParticleMapper )
 
 // ============================================================================

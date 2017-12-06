@@ -18,7 +18,7 @@
  *  @date   2008-07-03
  */
 
-DECLARE_SERVICE_FACTORY( MultipleMagneticFieldSvc )
+DECLARE_COMPONENT( MultipleMagneticFieldSvc )
 
 //=============================================================================
 // Standard constructor, initializes variables

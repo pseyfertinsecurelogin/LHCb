@@ -14,7 +14,7 @@
 #include "Kernel/STRawBankMap.h"
 #include "Kernel/ISTReadoutTool.h"
 
-DECLARE_ALGORITHM_FACTORY( STRawBankMonitor )
+DECLARE_COMPONENT( STRawBankMonitor )
 
 using namespace LHCb;
 

@@ -103,6 +103,6 @@ StatusCode PackProtoParticle::execute()
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PackProtoParticle )
+DECLARE_COMPONENT( PackProtoParticle )
 
 //=============================================================================

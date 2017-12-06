@@ -17,7 +17,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DummyDetectorElement>  XmlDummyDetectorElementCnv;
-DECLARE_CONVERTER_FACTORY(XmlDummyDetectorElementCnv)
+DECLARE_CONVERTER( XmlDummyDetectorElementCnv )
 
 //=============================================================================
 // Standard constructor, initializes variables

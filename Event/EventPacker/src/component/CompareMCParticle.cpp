@@ -10,7 +10,7 @@
 // 2005-03-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( CompareMCParticle )
+DECLARE_COMPONENT( CompareMCParticle )
 
 //=============================================================================
 // Standard constructor, initializes variables

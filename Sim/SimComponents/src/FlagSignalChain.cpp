@@ -14,7 +14,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( FlagSignalChain )
+DECLARE_COMPONENT( FlagSignalChain )
 
 //==============================================================================
 // Set from signal flag

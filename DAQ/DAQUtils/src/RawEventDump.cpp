@@ -13,7 +13,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(RawEventDump)
+DECLARE_COMPONENT( RawEventDump )
 
 //=============================================================================
 // Standard constructor, initializes variables

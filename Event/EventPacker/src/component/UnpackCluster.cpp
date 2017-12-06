@@ -11,7 +11,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackCluster )
+DECLARE_COMPONENT( UnpackCluster )
 
 //=============================================================================
 // Standard constructor, initializes variables

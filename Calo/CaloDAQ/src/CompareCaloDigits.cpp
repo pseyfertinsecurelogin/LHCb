@@ -16,7 +16,7 @@
 // 2003-11-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( CompareCaloDigits )
+DECLARE_COMPONENT( CompareCaloDigits )
 
 //=============================================================================
 // Standard constructor, initializes variables

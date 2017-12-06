@@ -11,7 +11,7 @@ using namespace LHCb;
 // 2014-03-06 : Karol Hennessy, Kurt Rinnert
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY(VPSuperPixelBankEncoder)
+DECLARE_COMPONENT( VPSuperPixelBankEncoder )
 
 //=============================================================================
 // Constructor

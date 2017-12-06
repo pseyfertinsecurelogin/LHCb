@@ -10,4 +10,4 @@
 /// instances of this service
 /// =======================================================================
 typedef XmlUserDetElemCnv<DeVelo>         XmlDeVeloCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeVeloCnv )
+DECLARE_CONVERTER( XmlDeVeloCnv )

@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY(CheckMCEventTool)
+DECLARE_COMPONENT( CheckMCEventTool )
 
 StatusCode CheckMCEventTool::check()
 {

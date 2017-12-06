@@ -11,7 +11,7 @@
  */
 // ============================================================================
 
-DECLARE_ALGORITHM_FACTORY( CaloZSupAlg )
+DECLARE_COMPONENT( CaloZSupAlg )
 
 
 namespace details {

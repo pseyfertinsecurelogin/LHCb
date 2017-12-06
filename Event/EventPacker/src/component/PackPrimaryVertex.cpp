@@ -25,8 +25,8 @@ private:
   int m_version ;
 } ;
 
-DECLARE_ALGORITHM_FACTORY( PackPrimaryVertices )
-DECLARE_ALGORITHM_FACTORY( UnpackPrimaryVertices )
+DECLARE_COMPONENT( PackPrimaryVertices )
+DECLARE_COMPONENT( UnpackPrimaryVertices )
 
 //=============================================================================
 // better move this to a separate file, to keep it a bit clean

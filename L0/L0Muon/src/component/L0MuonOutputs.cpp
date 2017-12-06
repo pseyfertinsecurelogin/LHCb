@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0MuonOutputs )
+DECLARE_COMPONENT( L0MuonOutputs )
 
 
 //=============================================================================

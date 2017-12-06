@@ -1758,6 +1758,6 @@ void RawDataFormatTool::dumpRawBank( const LHCb::RawBank & bank,
 
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( RawDataFormatTool )
+DECLARE_COMPONENT( RawDataFormatTool )
 
 //-----------------------------------------------------------------------------

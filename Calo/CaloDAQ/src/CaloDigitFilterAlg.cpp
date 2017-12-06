@@ -6,7 +6,7 @@
 #include "CaloDigitFilterAlg.h"
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( CaloDigitFilterAlg )
+DECLARE_COMPONENT( CaloDigitFilterAlg )
 
 
 

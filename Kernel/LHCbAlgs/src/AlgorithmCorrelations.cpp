@@ -14,7 +14,7 @@
 
 // Declaration of the Tool Factory
 
-DECLARE_TOOL_FACTORY( AlgorithmCorrelations )
+DECLARE_COMPONENT( AlgorithmCorrelations )
 
 //=============================================================================
 // Standard constructor, initializes variables

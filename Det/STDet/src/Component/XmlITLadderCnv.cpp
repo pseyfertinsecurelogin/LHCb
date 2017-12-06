@@ -7,4 +7,4 @@
 #include "STDet/DeITLadder.h"
 
 typedef XmlUserDetElemCnv<DeITLadder >        XmlITLadderCnv;
-DECLARE_CONVERTER_FACTORY(XmlITLadderCnv)
+DECLARE_CONVERTER( XmlITLadderCnv )

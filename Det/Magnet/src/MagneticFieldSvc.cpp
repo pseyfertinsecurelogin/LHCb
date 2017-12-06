@@ -24,7 +24,7 @@
  *  Updated and further developed - Marco Cattaneo
  */
 
-DECLARE_SERVICE_FACTORY( MagneticFieldSvc )
+DECLARE_COMPONENT( MagneticFieldSvc )
 
 //=============================================================================
 // Standard constructor, initializes variables

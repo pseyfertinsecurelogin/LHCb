@@ -16,7 +16,7 @@ using namespace Rich::DAQ;
 
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( RawBufferToRichDigitsAlg )
+DECLARE_COMPONENT( RawBufferToRichDigitsAlg )
 
 // Standard constructor, initializes variables
 RawBufferToRichDigitsAlg::RawBufferToRichDigitsAlg( const std::string& name,

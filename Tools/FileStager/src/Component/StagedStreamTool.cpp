@@ -31,7 +31,7 @@ using std::string;
 using std::vector;
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( StagedStreamTool )
+DECLARE_COMPONENT( StagedStreamTool )
 
 //=============================================================================
 // Standard constructor, initializes variables

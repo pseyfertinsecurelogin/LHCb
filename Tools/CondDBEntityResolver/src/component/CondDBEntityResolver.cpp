@@ -68,7 +68,7 @@ using isstream = basic_isstream<char>;
 //-----------------------------------------------------------------------------
 
 // Factory implementation
-DECLARE_TOOL_FACTORY(CondDBEntityResolver)
+DECLARE_COMPONENT( CondDBEntityResolver )
 
 //=============================================================================
 // Standard constructor, initializes variables

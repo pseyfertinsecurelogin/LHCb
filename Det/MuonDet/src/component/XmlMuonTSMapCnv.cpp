@@ -73,7 +73,7 @@ private:
 // Instantiation of a static factory class used by clients to create
 // instances of this service
 // -----------------------------------------------------------------------
-DECLARE_CONVERTER_FACTORY(XmlMuonTSMapCnv)
+DECLARE_CONVERTER( XmlMuonTSMapCnv )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : XmlMuonMuonTSMapCnv

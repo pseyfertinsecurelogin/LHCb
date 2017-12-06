@@ -38,7 +38,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( HltVertexReportsDecoder )
+DECLARE_COMPONENT( HltVertexReportsDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables

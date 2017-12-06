@@ -34,10 +34,6 @@ namespace LoKi
    */
   class GenFilter : public LoKi::FilterAlg
   {
-    // ========================================================================
-    /// friend factory for instantiation
-    friend class AlgFactory<LoKi::GenFilter> ;
-    // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute
@@ -58,8 +54,6 @@ namespace LoKi
       return StatusCode::SUCCESS ;
     }
     // ========================================================================
-  protected:
-    // ========================================================================
     /** standard constructor
      *  @see LoKi::FilterAlg
      *  @see GaudiAlgorithm
@@ -72,11 +66,6 @@ namespace LoKi
     GenFilter
     ( const std::string& name ,    // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
-    // ========================================================================
-    /// the copy constructor is disabled
-    GenFilter ( const GenFilter& ) = delete; // the copy constructor is disabled
-    /// the assignement operator is disabled
-    GenFilter& operator=( const GenFilter& ) = delete ; // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -185,7 +174,7 @@ StatusCode LoKi::GenFilter::execute () // the main method: execute
 }
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,GenFilter)
+DECLARE_COMPONENT( LoKi::GenFilter )
 // ============================================================================
 // The END
 // ============================================================================

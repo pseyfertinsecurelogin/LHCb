@@ -11,7 +11,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( FastL0DUFilter )
+DECLARE_COMPONENT( FastL0DUFilter )
 
 
 //=============================================================================

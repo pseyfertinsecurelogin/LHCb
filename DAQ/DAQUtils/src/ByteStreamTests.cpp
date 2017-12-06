@@ -16,7 +16,7 @@ using namespace DAQEventTests;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(DAQEventTests,ByteStreamTests)
+DECLARE_COMPONENT( DAQEventTests::ByteStreamTests )
 
 //=============================================================================
 // Standard constructor, initializes variables

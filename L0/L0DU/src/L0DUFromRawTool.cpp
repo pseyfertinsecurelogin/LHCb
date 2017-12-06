@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0DUFromRawTool )
+DECLARE_COMPONENT( L0DUFromRawTool )
 
 namespace {
     static const std::string MuonCU0_Status= "MuonCU0(Status)";

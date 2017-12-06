@@ -8,9 +8,6 @@
 
 class DumpHepMC : public GaudiAlgorithm
 {
-  // factory for instantiation
-  friend class AlgFactory<DumpHepMC> ;
-
 public:
 
   /// the actual type of container with addresses
@@ -24,8 +21,6 @@ public:
    */
   StatusCode execute() override;
 
-protected:
-
   /** standard constructor
    *  @see GaudiAlgorithm
    *  @see      Algorithm
@@ -36,11 +31,6 @@ protected:
    */
   DumpHepMC ( const std::string& name ,
               ISvcLocator*       isvc ) ;
-
-  // copy constructor      is disabled
-  DumpHepMC           ( const DumpHepMC& ) = delete;
-  // assignment operator  is disabled
-  DumpHepMC& operator=( const DumpHepMC& ) = delete;
 
 private:
 

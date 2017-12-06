@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( L0Pattern )
+DECLARE_COMPONENT( L0Pattern )
 
 //=============================================================================
 // Standard constructor, initializes variables

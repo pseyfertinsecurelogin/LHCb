@@ -112,4 +112,4 @@ LHCb::HltObjectSummary* HltSelReportsStripper::cloneSummary(
   return clone;
 }
 
-DECLARE_ALGORITHM_FACTORY(HltSelReportsStripper)
+DECLARE_COMPONENT( HltSelReportsStripper )

@@ -76,4 +76,4 @@ namespace LHCbAlgsTest
 
 }
 
-DECLARE_NAMESPACE_SERVICE_FACTORY( LHCbAlgsTest, CreateFakeRecHeader )
+DECLARE_COMPONENT( LHCbAlgsTest::CreateFakeRecHeader )

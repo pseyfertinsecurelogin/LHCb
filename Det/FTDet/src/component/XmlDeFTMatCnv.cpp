@@ -7,7 +7,7 @@
 #include "FTDet/DeFTMat.h"
 
 typedef XmlUserDetElemCnv<DeFTMat>       XmlDeFTMatCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeFTMatCnv )
+DECLARE_CONVERTER( XmlDeFTMatCnv )
 
 #endif //XMLDEFTMATCNV_H
 

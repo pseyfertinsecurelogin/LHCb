@@ -64,4 +64,4 @@ namespace LHCb  {
   };
 }
 
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb,RawEventCopy)
+DECLARE_COMPONENT( LHCb::RawEventCopy )

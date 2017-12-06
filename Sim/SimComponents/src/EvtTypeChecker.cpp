@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(EvtTypeChecker)
+DECLARE_COMPONENT( EvtTypeChecker )
 
 //=============================================================================
 // Standard constructor, initializes variables

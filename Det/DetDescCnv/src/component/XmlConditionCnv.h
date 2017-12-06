@@ -1,5 +1,3 @@
-///  $ID: $
-
 #ifndef DETDESCCNV_XMLCNVSVC_XMLCONDITIONCNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLCONDITIONCNV_H
 
@@ -14,23 +12,14 @@
  * @author Sebastien Ponce
  */
 class XmlConditionCnv : public XmlBaseConditionCnv {
-
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlConditionCnv>;
-
-protected:
-
+public:
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
   XmlConditionCnv(ISvcLocator* svcs);
 
-  /**
-   * Default destructor
-   */
-  virtual ~XmlConditionCnv() {}
-
+protected:
   /** This fills the current object for specific child.
    * Implements the abstract method in XmlConditionCnv
    * @param childElement the specific child processed here
@@ -45,4 +34,3 @@ protected:
 };
 
 #endif // DETDESCCNV_XMLCONDITIONCNV_H
-

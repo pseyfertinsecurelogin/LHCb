@@ -6,6 +6,6 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeRichBeamPipe>  XmlDeRichBeamPipeCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeRichBeamPipeCnv )
+DECLARE_CONVERTER( XmlDeRichBeamPipeCnv )
 
 #endif // XMLDERICHBEAMPIPECNV_H

@@ -11,7 +11,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( DataObjectVersionFilter )
+DECLARE_COMPONENT( DataObjectVersionFilter )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -12,7 +12,7 @@
 #include "LHCbRecordStream.h"
 
 // Define the algorithm factory for the standard output data writer
-DECLARE_ALGORITHM_FACTORY(LHCbRecordStream)
+DECLARE_COMPONENT( LHCbRecordStream )
 
 // Standard Constructor
 LHCbRecordStream::LHCbRecordStream(const std::string& name, ISvcLocator* pSvcLocator)

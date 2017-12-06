@@ -5,7 +5,7 @@
 #include "Event/MCFun.h"
 
 
-DECLARE_TOOL_FACTORY ( MCParticleSelector )
+DECLARE_COMPONENT( MCParticleSelector )
 
 StatusCode MCParticleSelector::initialize()
 {

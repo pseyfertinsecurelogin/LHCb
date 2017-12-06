@@ -41,7 +41,6 @@ public:
   /// Get the COOL Database service (used to connect to the databases).
   cool::IDatabaseSvc& databaseSvc() override;
 
-protected:
   /// Standard constructor
   COOLConfSvc(const std::string& name, ISvcLocator* svcloc);
 
@@ -84,9 +83,6 @@ private:
   /// How long to keep retrying before giving up (in seconds).
   /// Passed to CORAL when loaded.
   int m_retrialTimeOut;
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<COOLConfSvc>;
 
 };
 #endif // COMPONENT_COOLCONFSVC_H

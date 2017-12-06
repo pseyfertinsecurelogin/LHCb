@@ -13,7 +13,7 @@ using namespace LHCb;
 // 22/03/2002 : David Hutchcroft
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( MuonRec )
+DECLARE_COMPONENT( MuonRec )
 
 //=============================================================================
 // Standard constructor, initializes variables

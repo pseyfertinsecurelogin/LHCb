@@ -12,7 +12,7 @@
  * 2006-02-17 : Olivier Deschamps
  */
 
-DECLARE_TOOL_FACTORY( L0ProcessorDataDecoder )
+DECLARE_COMPONENT( L0ProcessorDataDecoder )
 
 // ============================================================================
 L0ProcessorDataDecoder::L0ProcessorDataDecoder

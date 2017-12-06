@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0DUConfigProvider )
+DECLARE_COMPONENT( L0DUConfigProvider )
 
 namespace {
   static const std::vector<std::string> s_dataFlags =

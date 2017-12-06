@@ -25,10 +25,6 @@ namespace LoKi
     : public              LoKi::DecayBase
     , public virtual Decays::IMCDecay
   {
-    // ========================================================================
-    /// the friend factory for instantiation
-    friend struct ToolFactory<LoKi::MCDecay> ;                    // the factory
-    // ========================================================================
   protected:
     // ========================================================================
     typedef Decays::Trees::Types_<const LHCb::MCParticle*>::Invalid   Invalid ;
@@ -46,9 +42,6 @@ namespace LoKi
     /// build the node form the node descriptor
     Decays::Node node ( const std::string& descriptor ) const override
     { return LoKi::DecayBase::node ( descriptor ) ; }
-    // ========================================================================
-  protected:
-    // ========================================================================
     /** constructor form the type, name and parent
      *  @param type the tool type (?)
      *  @param name the instance name
@@ -63,11 +56,6 @@ namespace LoKi
       declareInterface<Decays::IMCDecay>   ( this ) ;
       declareInterface<Decays::IDecayNode> ( this ) ;
     }
-    // ========================================================================
-    /// the copy constructor is disabled
-    MCDecay ( const MCDecay& ) = delete;    // the copy constructor is disabled
-    /// the assignement operator is disabled
-    MCDecay& operator=( const MCDecay& ) = delete;   // no assignement operator
     // ========================================================================
   private:
     // ========================================================================
@@ -124,7 +112,7 @@ Decays::IMCDecay::Tree LoKi::MCDecay::tree ( const std::string& decay ) const
 // ============================================================================
 //                                                the factory for instantiation
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi,MCDecay)
+DECLARE_COMPONENT( LoKi::MCDecay )
 // ============================================================================
 
 // ============================================================================

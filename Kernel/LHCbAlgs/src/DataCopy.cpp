@@ -45,35 +45,15 @@ namespace Gaudi
    */
   class DataCopy : public GaudiAlgorithm
   {
-    // ========================================================================
-    friend class AlgFactory<Gaudi::DataCopy> ;
-    // ========================================================================
   public:
-    // ========================================================================
     /// standard initialization
     StatusCode initialize ()  override;
     /// the only one essential method
     StatusCode execute ()  override; // the only one essential method
-    // ========================================================================
-  protected:
-    // ========================================================================
     /// standard constructor
     DataCopy ( const std::string& name ,
-               ISvcLocator*       pSvc ) ;              // standard constructor
-    /// virtual destructor
-    virtual ~DataCopy() ;                               //   virtual destructor
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    DataCopy () ;                        // the default constructor is disabled
-    /// the copy constructor is disabled
-    DataCopy ( const DataCopy& ) ;       //    the copy constructor is disabled
-    /// the assignement operator is disabled
-    DataCopy& operator=( const DataCopy& ); //                   no assignement
-    // ========================================================================
+               ISvcLocator*       pSvc ) ;
   protected:
-    // ========================================================================
     inline std::string _TESLocation
     ( const std::string & location     ,
       const bool          useRootInTES ) const
@@ -104,10 +84,6 @@ namespace Gaudi
                :
                rootInTES() + location );
     }
-    // ========================================================================
-  private:
-    // ========================================================================
-
     // ========================================================================
   private:
     // ========================================================================
@@ -152,26 +128,10 @@ namespace Gaudi
    */
   class DataLink : public Gaudi::DataCopy
   {
-    // ========================================================================
-    friend class AlgFactory<Gaudi::DataLink> ;
-    // ========================================================================
-  protected:
-    // ========================================================================
+  public:
     /// standard constructor
     DataLink ( const std::string& name ,
-               ISvcLocator*       pSvc ) ;              // standard constructor
-    /// virtual destructor
-    virtual ~DataLink() ;                               //   virtual destructor
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    DataLink () ;                        // the default constructor is disabled
-    /// the copy constructor is disabled
-    DataLink ( const DataLink& ) ;       //    the copy constructor is disabled
-    /// the assignement operator is disabled
-    DataLink& operator=( const DataLink& ); //                   no assignement
-    // ========================================================================
+               ISvcLocator*       pSvc ) ;
   } ;
 } //                                                     end of namespace Gaudi
 // ============================================================================
@@ -201,10 +161,6 @@ Gaudi::DataCopy::DataCopy
   declareProperty
     ( "NeverFail" , m_never_fail , "Never fail" );
 }
-// ============================================================================
-// virtual & protected desctructor
-// ============================================================================
-Gaudi::DataCopy::~DataCopy(){}
 // ============================================================================
 // update handler for property "What"
 // ============================================================================
@@ -275,7 +231,7 @@ StatusCode Gaudi::DataCopy::execute()
   if ( sc.isFailure() )
   {
     setFilterPassed ( false ) ;
-    return Warning  ( "Unable copy/link " + m_what + " -> " + m_target , 
+    return Warning  ( "Unable copy/link " + m_what + " -> " + m_target ,
                       m_never_fail ? ok : sc ) ;
   }
   //
@@ -292,12 +248,8 @@ Gaudi::DataLink::DataLink
   m_copy = false ;
 }
 // ============================================================================
-// virtual & protected desctructor
-// ============================================================================
-Gaudi::DataLink::~DataLink(){}
-// ============================================================================
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,DataCopy)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,DataLink)
+DECLARE_COMPONENT( Gaudi::DataCopy )
+DECLARE_COMPONENT( Gaudi::DataLink )
 // ============================================================================
 // The END
 // ============================================================================

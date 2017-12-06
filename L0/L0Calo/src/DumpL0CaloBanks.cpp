@@ -7,7 +7,7 @@
 // local
 #include "DumpL0CaloBanks.h"
 
-DECLARE_ALGORITHM_FACTORY( DumpL0CaloBanks )
+DECLARE_COMPONENT( DumpL0CaloBanks )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpL0CaloBanks

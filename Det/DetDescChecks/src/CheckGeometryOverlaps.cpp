@@ -103,10 +103,6 @@ namespace DetDesc
    */
   class CheckOverlap : public GaudiAlgorithm
   {
-    // ========================================================================
-    /// the friend factory to instantiate the algorithm
-    friend class AlgFactory<DetDesc::CheckOverlap> ;
-    // ========================================================================
   public:
     // ========================================================================
     /** standard algorithm initialization
@@ -127,8 +123,6 @@ namespace DetDesc
      */
     StatusCode finalize   ()  override;
     // ========================================================================
-  protected:
-    // ========================================================================
     /** Standard constructor
      *  @param name name of the algorithm
      *  @param svcloc pointer to Service Locator
@@ -136,8 +130,6 @@ namespace DetDesc
     CheckOverlap
     ( const std::string& name   ,
       ISvcLocator*       svcloc ) ;
-    /// destructor (protected and virtual)
-    virtual ~CheckOverlap(){};
     // ========================================================================
   private:
     // ========================================================================
@@ -489,11 +481,9 @@ StatusCode DetDesc::CheckOverlap::finalize   ()
 }
 // ============================================================================
 /// the factory, nesessary for instantiation
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(DetDesc,CheckOverlap)
+DECLARE_COMPONENT( DetDesc::CheckOverlap )
 // ============================================================================
 
 // ============================================================================
 // The END
 // ============================================================================
-
-

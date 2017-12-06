@@ -9,7 +9,7 @@
 #include "CondDBLogger.h"
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBLogger)
+DECLARE_COMPONENT( CondDBLogger )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBLogger

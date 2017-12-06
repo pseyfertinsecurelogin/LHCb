@@ -8,7 +8,7 @@
 #include "IOVListHelpers.h"
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBLayeringSvc)
+DECLARE_COMPONENT( CondDBLayeringSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBLayeringSvc

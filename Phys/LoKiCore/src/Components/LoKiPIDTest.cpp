@@ -24,10 +24,6 @@ namespace LoKi
    */
   class PIDTest : public GaudiAlgorithm
   {
-    // ========================================================================
-    /// the friend factory for instantiation
-    friend class AlgFactory<LoKi::PIDTest> ;
-    // ========================================================================
   public:
     // ========================================================================
     /// standard initialzation
@@ -64,19 +60,9 @@ namespace LoKi
       }
       return StatusCode::SUCCESS ;
     }
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// standard constructor
-    PIDTest ( const std::string& name , ISvcLocator*       pSvc )
-      : GaudiAlgorithm ( name , pSvc )
-    {}
-    // ========================================================================
-    /// copy constructror is disabled
-    PIDTest( const PIDTest& ) = delete;                      //     no copy constructor
-    /// assignement is disabled
-    PIDTest& operator=( const PIDTest& ) = delete;           // no assignement operator
-    // ========================================================================
+
+    using GaudiAlgorithm::GaudiAlgorithm;
+
   private:
     // ========================================================================
     /// The pointer to particle property sevice
@@ -88,7 +74,7 @@ namespace LoKi
 // ============================================================================
 // Declaration of the Algorithm Factory
 // ============================================================================
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,PIDTest)
+DECLARE_COMPONENT( LoKi::PIDTest )
 // ============================================================================
 // The END
 // ============================================================================

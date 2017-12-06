@@ -6,4 +6,4 @@
 #include "OTDet/DeOTLayer.h"
 
 typedef XmlUserDetElemCnv<DeOTLayer>       XmlOTLayerCnv;
-DECLARE_CONVERTER_FACTORY(XmlOTLayerCnv)
+DECLARE_CONVERTER( XmlOTLayerCnv )

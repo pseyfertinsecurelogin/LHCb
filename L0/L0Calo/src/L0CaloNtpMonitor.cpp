@@ -24,7 +24,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( L0CaloNtpMonitor )
+DECLARE_COMPONENT( L0CaloNtpMonitor )
 
 //=============================================================================
 // Standard constructor, initializes variables

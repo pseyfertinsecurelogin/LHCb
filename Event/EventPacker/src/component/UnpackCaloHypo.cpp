@@ -54,6 +54,6 @@ StatusCode UnpackCaloHypo::execute()
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackCaloHypo )
+DECLARE_COMPONENT( UnpackCaloHypo )
 
 //=============================================================================

@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( CaloTriggerAdcsFromRawAlg )
+DECLARE_COMPONENT( CaloTriggerAdcsFromRawAlg )
 
 //=============================================================================
 // Standard constructor, initializes variables

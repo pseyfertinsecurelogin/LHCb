@@ -10,7 +10,7 @@
 // 2005-10-19 : Alessia Satta
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( MuonDAQTest )
+DECLARE_COMPONENT( MuonDAQTest )
 
 //=============================================================================
 // Initialization

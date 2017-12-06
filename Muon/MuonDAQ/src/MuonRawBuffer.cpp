@@ -17,7 +17,7 @@
 // 2005-10-18 : Alessia Satta
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( MuonRawBuffer )
+DECLARE_COMPONENT( MuonRawBuffer )
 
 using namespace LHCb;
 

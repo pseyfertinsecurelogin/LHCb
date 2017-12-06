@@ -1,5 +1,3 @@
-// $Id: XmlTabulatedPropertyCnv.h,v 1.4 2005-03-24 16:21:18 cattanem Exp $
-
 #ifndef     DETDESCCNV_XMLTABULATEDPROPERTYCNV_H
 #define     DETDESCCNV_XMLTABULATEDPROPERTYCNV_H 1
 
@@ -20,9 +18,6 @@ template <class TYPE> class CnvFactory;
  */
 class XmlTabulatedPropertyCnv : public XmlGenericCnv {
 
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlTabulatedPropertyCnv>;
-
  public:
 
   /**
@@ -30,9 +25,6 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @return the classID for this type
    */
   static const CLID& classID() { return TabulatedProperty::classID(); }
-
-
- protected:
 
   /**
    * Constructor for this converter
@@ -44,6 +36,8 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * Default destructor
    */
   virtual ~XmlTabulatedPropertyCnv();
+
+ protected:
 
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
@@ -111,4 +105,3 @@ private:
 
 
 #endif   // DETDESCCNV_XMLTABULATEDPROPERTYCNV_H
-

@@ -21,7 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PropagateFSRs )
+DECLARE_COMPONENT( PropagateFSRs )
 
 //=============================================================================
 // Standard constructor, initializes variables

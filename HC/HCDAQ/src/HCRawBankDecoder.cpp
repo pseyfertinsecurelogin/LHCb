@@ -22,7 +22,7 @@
 
 using namespace Gaudi::Utils::Histos;
 
-DECLARE_ALGORITHM_FACTORY(HCRawBankDecoder)
+DECLARE_COMPONENT( HCRawBankDecoder )
 
 //=============================================================================
 // Constructor

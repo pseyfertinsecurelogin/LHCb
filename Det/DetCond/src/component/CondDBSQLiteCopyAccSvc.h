@@ -23,8 +23,6 @@ public:
   /// Return the connection string used to connect to the database.
   const std::string &connectionString() const override;
 
-
-protected:
   /// Standard constructor
   CondDBSQLiteCopyAccSvc( const std::string& name, ISvcLocator* svcloc );
 
@@ -45,9 +43,5 @@ private:
   /// Needed to avoid interference with the connection string set by CondDBAccessSvc
   /// standard options (we need to overwrite it).
   std::string m_sqlite_connstring;
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<CondDBSQLiteCopyAccSvc>;
-
 };
 #endif // COMPONENT_CONDDBSQLITECOPYACCSVC_H

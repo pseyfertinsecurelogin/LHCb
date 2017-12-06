@@ -23,7 +23,7 @@ std::atomic<T>& operator+=( std::atomic<T>& x, T inc ) {
 
 using namespace LHCb;
 
-DECLARE_ALGORITHM_FACTORY( HltLumiSummaryDecoder )
+DECLARE_COMPONENT( HltLumiSummaryDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables

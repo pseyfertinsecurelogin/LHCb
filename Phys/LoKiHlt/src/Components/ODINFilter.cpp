@@ -103,7 +103,7 @@ bool LoKi::ODINFilter::operator() (const LHCb::ODIN& odin) const // the main met
 }
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,ODINFilter)
+DECLARE_COMPONENT( LoKi::ODINFilter )
 // ============================================================================
 // The END
 // ============================================================================

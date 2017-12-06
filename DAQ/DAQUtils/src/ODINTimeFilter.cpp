@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( ODINTimeFilter )
+DECLARE_COMPONENT( ODINTimeFilter )
 
 //=============================================================================
 // Standard constructor, initializes variables

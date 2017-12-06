@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackRecVertex )
+DECLARE_COMPONENT( UnpackRecVertex )
 
 //=============================================================================
 // Standard constructor, initializes variables

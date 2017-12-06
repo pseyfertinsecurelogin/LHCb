@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PackCluster )
+DECLARE_COMPONENT( PackCluster )
 
 //=============================================================================
 // Standard constructor, initializes variables

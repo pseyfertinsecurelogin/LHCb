@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(DAQEventTests,DummyRawEventCreator)
+DECLARE_COMPONENT( DAQEventTests::DummyRawEventCreator )
 
 #ifndef ODIN_VERSION
 #define ODIN_VERSION 3

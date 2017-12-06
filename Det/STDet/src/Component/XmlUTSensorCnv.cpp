@@ -5,4 +5,4 @@
 #include "STDet/DeUTSensor.h"
 
 typedef XmlUserDetElemCnv<DeUTSensor >        XmlUTSensorCnv;
-DECLARE_CONVERTER_FACTORY(XmlUTSensorCnv)
+DECLARE_CONVERTER( XmlUTSensorCnv )

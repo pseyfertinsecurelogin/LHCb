@@ -19,7 +19,7 @@ constexpr static int s_nbSipmPerTELL40 = FTRawBank::NbSiPMPerTELL40;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( FTRawBankEncoder )
+DECLARE_COMPONENT( FTRawBankEncoder )
 
 //=============================================================================
 // Initialization

@@ -4,7 +4,7 @@
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
 
-DECLARE_SERVICE_FACTORY(DQFilterSvc)
+DECLARE_COMPONENT( DQFilterSvc )
 
 DQFilterSvc::DQFilterSvc(const std::string & name, ISvcLocator *svc)
 : base_class(name, svc)

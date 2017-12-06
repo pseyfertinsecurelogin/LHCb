@@ -983,6 +983,6 @@ packAP2RelatedInfoRelationContainer( const PackParticlesAndVertices::Part2InfoRe
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PackParticlesAndVertices )
+DECLARE_COMPONENT( PackParticlesAndVertices )
 
 //=============================================================================

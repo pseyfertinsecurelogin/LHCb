@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( OdinTimeDecoder )
+DECLARE_COMPONENT( OdinTimeDecoder )
 
 #define ON_DEBUG if ( UNLIKELY( msgLevel(MSG::DEBUG) ) )
 #define DEBUG_MSG ON_DEBUG debug()

@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( CaloReadoutTool )
+DECLARE_COMPONENT( CaloReadoutTool )
 
 
 //=============================================================================

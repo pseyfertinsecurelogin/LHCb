@@ -9,7 +9,7 @@
 #include "Event/L0DUBase.h"
 #include "Event/ODIN.h"
 
-DECLARE_ALGORITHM_FACTORY( L0CaloCompare )
+DECLARE_COMPONENT( L0CaloCompare )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloCompare

@@ -6,4 +6,4 @@
 /// instances of this service
 /// =======================================================================
 typedef XmlUserDetElemCnv<DeVP> XmlDeVPCnv;
-DECLARE_CONVERTER_FACTORY(XmlDeVPCnv)
+DECLARE_CONVERTER( XmlDeVPCnv )

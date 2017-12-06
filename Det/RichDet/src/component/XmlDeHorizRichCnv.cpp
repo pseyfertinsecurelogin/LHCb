@@ -6,6 +6,6 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeHorizRich>  XmlDeHorizRichCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeHorizRichCnv )
+DECLARE_CONVERTER( XmlDeHorizRichCnv )
 
 #endif // XMLDEHORIZRICHCNV_H
