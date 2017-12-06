@@ -29,7 +29,7 @@ namespace {
 //
 // 31/01/2012: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(DetCondTest, DQScanTest)
+DECLARE_COMPONENT( DetCondTest::DQScanTest )
 
 namespace DetCondTest {
 // ============================================================================

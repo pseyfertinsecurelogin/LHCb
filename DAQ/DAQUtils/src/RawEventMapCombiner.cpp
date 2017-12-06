@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(RawEventMapCombiner)
+DECLARE_COMPONENT( RawEventMapCombiner )
 
 using namespace LHCb;
 //=============================================================================

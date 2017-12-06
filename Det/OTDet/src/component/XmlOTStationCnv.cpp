@@ -6,4 +6,4 @@
 #include "OTDet/DeOTStation.h"
 
 typedef XmlUserDetElemCnv<DeOTStation>       XmlOTStationCnv;
-DECLARE_CONVERTER_FACTORY(XmlOTStationCnv)
+DECLARE_CONVERTER( XmlOTStationCnv )

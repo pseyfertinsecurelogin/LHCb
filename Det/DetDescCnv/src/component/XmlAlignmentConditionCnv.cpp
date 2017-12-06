@@ -12,6 +12,6 @@
 #include "DetDescCnv/XmlUserConditionCnv.h"
 
 typedef  XmlUserConditionCnv<AlignmentCondition>  XmlAlignmentConditionCnv;
-DECLARE_CONVERTER_FACTORY(XmlAlignmentConditionCnv)
+DECLARE_CONVERTER( XmlAlignmentConditionCnv )
 
 #endif // XMLALIGNMENTCONDITION_H

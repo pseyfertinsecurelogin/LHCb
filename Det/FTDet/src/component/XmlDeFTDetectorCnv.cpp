@@ -7,6 +7,6 @@
 #include "FTDet/DeFTDetector.h"
 
 typedef XmlUserDetElemCnv<DeFTDetector>       XmlDeFTDetectorCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeFTDetectorCnv )
+DECLARE_CONVERTER( XmlDeFTDetectorCnv )
 
 #endif //XMLDEFTDETECTORCNV_H

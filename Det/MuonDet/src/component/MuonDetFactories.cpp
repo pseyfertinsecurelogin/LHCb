@@ -15,7 +15,7 @@ typedef XmlUserDetElemCnv<DeMuonRegion> XmlDeMuonRegion;
 #include "MuonDet/DeMuonDetector.h"
 typedef XmlUserDetElemCnv<DeMuonDetector> XmlDeMuonDetector;
 
-DECLARE_CONVERTER_FACTORY(XmlMuonGridCnv)
-DECLARE_CONVERTER_FACTORY(XmlDeMuonChamber)
-DECLARE_CONVERTER_FACTORY(XmlDeMuonRegion)
-DECLARE_CONVERTER_FACTORY(XmlDeMuonDetector)
+DECLARE_CONVERTER( XmlMuonGridCnv )
+DECLARE_CONVERTER( XmlDeMuonChamber )
+DECLARE_CONVERTER( XmlDeMuonRegion )
+DECLARE_CONVERTER( XmlDeMuonDetector )

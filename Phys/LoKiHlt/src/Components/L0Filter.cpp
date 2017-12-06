@@ -118,7 +118,7 @@ bool LoKi::L0Filter::operator()(const LHCb::L0DUReport& l0) const  // the main m
 }
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,L0Filter)
+DECLARE_COMPONENT( LoKi::L0Filter )
 // ============================================================================
 // The END
 // ============================================================================

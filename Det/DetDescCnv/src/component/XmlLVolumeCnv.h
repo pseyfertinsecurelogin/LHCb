@@ -28,9 +28,6 @@ template <class TYPE> class CnvFactory;
  */
 class XmlLVolumeCnv : public XmlGenericCnv {
 
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlLVolumeCnv>;
-
  public:
 
   /**
@@ -38,9 +35,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @return the classID for this type
    */
   static const CLID& classID () { return CLID_LVolume; }
-
-
- protected:
 
   /**
    * Constructor for this converter
@@ -52,6 +46,8 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * Default destructor
    */
   virtual ~XmlLVolumeCnv();
+
+ protected:
 
   /** This creates the transient representation of an object from the
    * DOMElement representing it, then fills it and process it.

@@ -26,7 +26,7 @@
 //              - complete rewrite
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( DecodeVeloRawBuffer )
+DECLARE_COMPONENT( DecodeVeloRawBuffer )
 
 //=============================================================================
 // Standard constructor, initializes variables

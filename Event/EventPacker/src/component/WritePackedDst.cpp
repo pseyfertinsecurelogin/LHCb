@@ -355,6 +355,6 @@ void WritePackedDst::storeInBlob( PackedBank& pBnk, const void* data, unsigned i
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( WritePackedDst )
+DECLARE_COMPONENT( WritePackedDst )
 
 //=============================================================================

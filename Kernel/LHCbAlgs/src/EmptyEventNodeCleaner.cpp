@@ -104,6 +104,6 @@ void EmptyEventNodeCleaner::cleanNodes( DataObject * obj,
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( EmptyEventNodeCleaner )
+DECLARE_COMPONENT( EmptyEventNodeCleaner )
 
 //=============================================================================

@@ -7,4 +7,4 @@
 #include "STDet/DeTTLayer.h"
 
 typedef XmlUserDetElemCnv<DeTTLayer >        XmlTTLayerCnv;
-DECLARE_CONVERTER_FACTORY(XmlTTLayerCnv)
+DECLARE_CONVERTER( XmlTTLayerCnv )

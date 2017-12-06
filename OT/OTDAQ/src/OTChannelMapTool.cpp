@@ -51,7 +51,7 @@ private:
 //=============================================================================
 // Declaration in the Tool Factory
 //=============================================================================
-DECLARE_TOOL_FACTORY( OTChannelMapTool )
+DECLARE_COMPONENT( OTChannelMapTool )
 
 //=============================================================================
 // Initialisation. Check parameters

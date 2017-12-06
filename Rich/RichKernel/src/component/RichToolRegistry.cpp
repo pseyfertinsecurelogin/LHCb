@@ -11,7 +11,7 @@
 // local
 #include "RichToolRegistry.h"
 
-DECLARE_NAMESPACE_TOOL_FACTORY( Rich, ToolRegistry )
+DECLARE_COMPONENT( Rich::ToolRegistry )
 
 // Standard constructor
 Rich::ToolRegistry::ToolRegistry( const std::string& type,

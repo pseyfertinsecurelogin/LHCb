@@ -15,7 +15,7 @@
 // RICH DAQ
 using namespace Rich::DAQ;
 
-DECLARE_TOOL_FACTORY( RawBufferToSmartIDsTool )
+DECLARE_COMPONENT( RawBufferToSmartIDsTool )
 
 // Standard constructor
   RawBufferToSmartIDsTool::RawBufferToSmartIDsTool( const std::string& type,

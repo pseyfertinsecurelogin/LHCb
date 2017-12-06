@@ -103,7 +103,7 @@ namespace {
                                                MuonLayout(12,2)));
 }
 
-DECLARE_ALGORITHM_FACTORY( L0MuonAlg )
+DECLARE_COMPONENT( L0MuonAlg )
 
 L0MuonAlg::L0MuonAlg(const std::string& name,
                      ISvcLocator* pSvcLocator)

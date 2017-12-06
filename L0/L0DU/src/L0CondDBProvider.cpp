@@ -14,7 +14,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0CondDBProvider )
+DECLARE_COMPONENT( L0CondDBProvider )
 
 
 //=============================================================================

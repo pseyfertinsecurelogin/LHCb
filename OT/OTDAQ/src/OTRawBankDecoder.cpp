@@ -374,7 +374,7 @@ namespace OTRawBankDecoderHelpers {
 //using namespace LHCb;
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( OTRawBankDecoder )
+DECLARE_COMPONENT( OTRawBankDecoder )
 
 
 //=============================================================================

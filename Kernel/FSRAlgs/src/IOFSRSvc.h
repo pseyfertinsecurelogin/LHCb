@@ -118,8 +118,6 @@ public:
 
 private:
 
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<IOFSRSvc>;
   SmartIF<IIncidentSvc> m_incSvc;
   SmartIF<Gaudi::IIODataManager> m_ioDataManager; ///the pointer to the data manager service
   ///type of incident to regard as begin event

@@ -24,7 +24,7 @@ using namespace STDAQ;
 
 // ----------------------------------------------------------------------------
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( STPedestalDecoding )
+DECLARE_COMPONENT( STPedestalDecoding )
 
 //=============================================================================
 // Standard constructor, initializes variables

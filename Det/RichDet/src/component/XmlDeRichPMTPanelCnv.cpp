@@ -6,6 +6,6 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeRichPMTPanel>  XmlDeRichPMTPanelCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeRichPMTPanelCnv )
+DECLARE_CONVERTER( XmlDeRichPMTPanelCnv )
 
 #endif // XMLDERICHPMTPANELCNV_CPP

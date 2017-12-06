@@ -3,4 +3,4 @@
 #include "DetDescCnv/XmlUserConditionCnv.h"
 
 typedef  XmlUserConditionCnv<VeloAlignCond>  XmlVeloAlignCondCnv;
-DECLARE_CONVERTER_FACTORY(XmlVeloAlignCondCnv)
+DECLARE_CONVERTER( XmlVeloAlignCondCnv )

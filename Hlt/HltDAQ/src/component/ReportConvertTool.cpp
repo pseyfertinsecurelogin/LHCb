@@ -1040,7 +1040,7 @@ namespace {
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( ReportConvertTool )
+DECLARE_COMPONENT( ReportConvertTool )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -48,10 +48,6 @@ namespace LoKi
       : public            GaudiTool
       , virtual public IMCParticleSelector
     {
-      // ======================================================================
-      // friend factory for instantiation
-      friend struct ToolFactory<LoKi::Hybrid::MCParticleSelector> ;
-      // ======================================================================
     public:
       // ======================================================================
       /// initialization of the tool
@@ -62,9 +58,6 @@ namespace LoKi
       /// Test if filter is satisfied (functor interface)
       virtual bool operator()  ( const LHCb::MCParticle* p ) const
       { return m_mccut.fun ( p ) ; }
-      // ======================================================================
-    protected:
-      // ======================================================================
       /// Standard constructor
       MCParticleSelector
       ( const std::string& type,
@@ -81,12 +74,6 @@ namespace LoKi
         declareProperty
           ( "Factory" , m_factory , "Type/Name for C++/Python Hybrid MC-Factory" ) ;
       } ;
-      // ======================================================================
-      /// the copy constructor is disabled
-      MCParticleSelector           ( const MCParticleSelector& ) = delete;
-      /// the assignement operator is disabled
-      MCParticleSelector& operator=( const MCParticleSelector& ) = delete;
-      // ======================================================================
     private:
       // ======================================================================
       // selection criteria itself
@@ -104,7 +91,7 @@ namespace LoKi
 // ============================================================================
 // Declaration of the Tool Factory
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,MCParticleSelector)
+DECLARE_COMPONENT( LoKi::Hybrid::MCParticleSelector )
 // ============================================================================
 // initialization of the tool
 // ============================================================================

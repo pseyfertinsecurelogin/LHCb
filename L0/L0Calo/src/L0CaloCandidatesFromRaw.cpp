@@ -16,7 +16,7 @@
 // 2003-12-15 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( L0CaloCandidatesFromRaw )
+DECLARE_COMPONENT( L0CaloCandidatesFromRaw )
 
 //=============================================================================
 // Standard constructor, initializes variables

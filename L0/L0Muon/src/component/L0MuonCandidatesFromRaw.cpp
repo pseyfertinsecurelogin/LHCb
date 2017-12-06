@@ -19,7 +19,7 @@
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/DataObject.h"
 
-DECLARE_ALGORITHM_FACTORY( L0MuonCandidatesFromRaw )
+DECLARE_COMPONENT( L0MuonCandidatesFromRaw )
 
 L0MuonCandidatesFromRaw::L0MuonCandidatesFromRaw(const std::string& name,
                                          ISvcLocator* pSvcLocator) 

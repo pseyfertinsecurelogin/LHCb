@@ -61,6 +61,6 @@ StatusCode ApplicationVersionFilter::execute()
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( ApplicationVersionFilter )
+DECLARE_COMPONENT( ApplicationVersionFilter )
 
 //=============================================================================

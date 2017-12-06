@@ -38,7 +38,7 @@
 #include "IOVListHelpers.h"
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBAccessSvc)
+DECLARE_COMPONENT( CondDBAccessSvc )
 
 // Utility function
 namespace {

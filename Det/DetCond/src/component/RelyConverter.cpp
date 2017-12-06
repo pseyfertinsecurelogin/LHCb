@@ -31,7 +31,7 @@
 // Instantiation of a static factory class used by clients to create
 // instances of this service
 // -----------------------------------------------------------------------
-DECLARE_CONVERTER_FACTORY(RelyConverter)
+DECLARE_CONVERTER( RelyConverter )
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -40,10 +40,6 @@ RelyConverter::RelyConverter(ISvcLocator* svc):
   CondDBGenericCnv(svc,RelyConverter::classID()),
   m_detPersSvc(NULL)
 {}
-//=============================================================================
-// Destructor
-//=============================================================================
-RelyConverter::~RelyConverter() {}
 
 //=========================================================================
 // Initialization

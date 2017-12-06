@@ -21,7 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( L0DUMultiTrends )
+DECLARE_COMPONENT( L0DUMultiTrends )
 
 //=============================================================================
 // Standard constructor, initializes variables

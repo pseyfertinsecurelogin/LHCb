@@ -14,7 +14,7 @@
 
 using namespace LHCb;
 
-DECLARE_TOOL_FACTORY( TTReadoutTool )
+DECLARE_COMPONENT( TTReadoutTool )
 
 TTReadoutTool::TTReadoutTool(const std::string& type,
                             const std::string& name,

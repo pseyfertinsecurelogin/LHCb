@@ -20,7 +20,7 @@
 #include "StagedIODataManager.h"
 
 
-DECLARE_NAMESPACE_SERVICE_FACTORY(Gaudi,StagedIODataManager)
+DECLARE_COMPONENT( Gaudi::StagedIODataManager )
 
 namespace Gaudi {
 

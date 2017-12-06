@@ -146,9 +146,6 @@ private:
   /// Removes an item from the list of head items.
   inline void removeFromHead(Item *item);
 
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<UpdateManagerSvc>;
-
   // Properties
   Gaudi::Property<std::string> m_dataProviderName
     {this, "DataProviderSvc", "DetectorDataSvc", "Name of the Data Provider"};

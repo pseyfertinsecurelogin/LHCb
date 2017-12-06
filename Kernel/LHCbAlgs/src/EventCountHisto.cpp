@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( EventCountHisto )
+DECLARE_COMPONENT( EventCountHisto )
 
 
 //=============================================================================

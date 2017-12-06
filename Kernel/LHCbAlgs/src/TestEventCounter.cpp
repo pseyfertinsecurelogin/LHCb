@@ -10,7 +10,7 @@ using namespace LHCbAlgsTests;
 //
 // 11/06/2012: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_ALGORITHM_FACTORY(TestEventCounter)
+DECLARE_COMPONENT( TestEventCounter )
 
 // ============================================================================
 // Standard constructor, initializes variables

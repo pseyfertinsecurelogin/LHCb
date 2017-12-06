@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackTrack )
+DECLARE_COMPONENT( UnpackTrack )
 
 //=============================================================================
 // Standard constructor, initializes variables

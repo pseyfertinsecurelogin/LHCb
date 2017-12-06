@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0CaloCandidatesFromRawBank )
+DECLARE_COMPONENT( L0CaloCandidatesFromRawBank )
 
 struct SortL0CaloByEt { 
   bool operator() (const LHCb::L0CaloCandidate * c1 , 

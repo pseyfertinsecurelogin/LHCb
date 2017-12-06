@@ -129,7 +129,7 @@ constexpr sortByCLID sortByCLID_{};
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( HltSelReportsWriter )
+DECLARE_COMPONENT( HltSelReportsWriter )
 
 //=============================================================================
 // Initialization

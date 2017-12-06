@@ -7,4 +7,4 @@
 #include "STDet/DeITDetector.h"
 
 typedef XmlUserDetElemCnv<DeITDetector>       XmlITDetectorCnv;
-DECLARE_CONVERTER_FACTORY(XmlITDetectorCnv)
+DECLARE_CONVERTER( XmlITDetectorCnv )

@@ -16,7 +16,7 @@
 //  Compute LLT quantities from Calorimeter full information
 //
 
-DECLARE_ALGORITHM_FACTORY( LLTCaloAlg )
+DECLARE_COMPONENT( LLTCaloAlg )
 
 //=============================================================================
 // Constructor

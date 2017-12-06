@@ -63,8 +63,8 @@ StatusCode TESMerger<T>::execute()
 }
 
 typedef TESMerger<LHCb::ProtoParticle> TESMergerProtoParticle;
-DECLARE_ALGORITHM_FACTORY( TESMergerProtoParticle )
+DECLARE_COMPONENT( TESMergerProtoParticle )
 typedef TESMerger<LHCb::Track> TESMergerTrack;
-DECLARE_ALGORITHM_FACTORY( TESMergerTrack )
+DECLARE_COMPONENT( TESMergerTrack )
 typedef TESMerger<LHCb::Particle> TESMergerParticle;
-DECLARE_ALGORITHM_FACTORY( TESMergerParticle )
+DECLARE_COMPONENT( TESMergerParticle )

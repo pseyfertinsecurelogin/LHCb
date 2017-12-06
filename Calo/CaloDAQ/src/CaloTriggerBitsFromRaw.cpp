@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( CaloTriggerBitsFromRaw )
+DECLARE_COMPONENT( CaloTriggerBitsFromRaw )
 
 //=============================================================================
 // Standard constructor, initializes variables

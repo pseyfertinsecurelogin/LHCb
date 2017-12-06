@@ -11,7 +11,7 @@
 #include "Event/ODIN.h"
 
 // Declare Algorithm
-DECLARE_ALGORITHM_FACTORY( L0CaloMonit )
+DECLARE_COMPONENT( L0CaloMonit )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloMonit

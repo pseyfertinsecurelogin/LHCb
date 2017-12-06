@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( CaloDigitFilterTool )
+DECLARE_COMPONENT( CaloDigitFilterTool )
 
 
 //=============================================================================

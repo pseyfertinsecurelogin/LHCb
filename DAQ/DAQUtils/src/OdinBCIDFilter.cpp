@@ -23,7 +23,7 @@ bool apply(OdinBCIDFilter_details::Comparator_t cmp, long bx, long mask, long va
 }
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( OdinBCIDFilter )
+DECLARE_COMPONENT( OdinBCIDFilter )
 
 //=============================================================================
 // Initialization

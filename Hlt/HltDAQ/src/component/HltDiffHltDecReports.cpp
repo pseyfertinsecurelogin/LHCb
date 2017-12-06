@@ -21,7 +21,7 @@ private:
 // 2009-05-26 : Gerhard Raven
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( HltDiffHltDecReports )
+DECLARE_COMPONENT( HltDiffHltDecReports )
 
 //=============================================================================
 // Standard constructor, initializes variables

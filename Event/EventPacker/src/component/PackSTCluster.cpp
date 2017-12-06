@@ -1,6 +1,6 @@
 #include "PackSTCluster.h"
 
-DECLARE_ALGORITHM_FACTORY( PackSTCluster )
+DECLARE_COMPONENT( PackSTCluster )
 
 PackSTCluster::PackSTCluster(const std::string& name, ISvcLocator* svcLocator)
   : GaudiAlgorithm(name , svcLocator)

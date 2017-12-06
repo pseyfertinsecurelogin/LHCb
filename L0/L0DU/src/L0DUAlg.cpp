@@ -19,7 +19,7 @@ using namespace Gaudi::Units;
 // and produce L0DUReport on TES AND/OR rawBank
 //
 //-----------------------------------------------------------------------------
-DECLARE_ALGORITHM_FACTORY( L0DUAlg )
+DECLARE_COMPONENT( L0DUAlg )
 
 //=============================================================================
 // Standard constructor, initializes variables

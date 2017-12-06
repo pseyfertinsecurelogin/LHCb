@@ -135,5 +135,4 @@ namespace LHCb
 
     return { bf_V[0], bf_V[1], bf_V[2] };
   }
-
 }

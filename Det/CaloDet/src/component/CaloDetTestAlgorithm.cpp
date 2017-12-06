@@ -20,7 +20,7 @@
 /** Declaration of the Algorithm Factory
  */
 // ============================================================================
-DECLARE_ALGORITHM_FACTORY(CaloDetTestAlgorithm)
+DECLARE_COMPONENT( CaloDetTestAlgorithm )
 // ============================================================================
 /** Standard constructor
  *  @param   name   algorithm name 

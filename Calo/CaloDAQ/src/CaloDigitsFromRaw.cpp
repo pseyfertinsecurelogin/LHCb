@@ -6,7 +6,7 @@
 // local
 #include "CaloDigitsFromRaw.h"
 
-DECLARE_ALGORITHM_FACTORY( CaloDigitsFromRaw )
+DECLARE_COMPONENT( CaloDigitsFromRaw )
 
 namespace {
 

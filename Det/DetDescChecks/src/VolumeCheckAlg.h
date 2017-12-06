@@ -114,12 +114,7 @@ namespace DetDesc
    */
   class VolumeCheck : public GaudiHistoAlg
   {
-    // ========================================================================
-    /// friend factory for instantiation
-    friend class AlgFactory<DetDesc::VolumeCheck>;
-    // ========================================================================
-public:
-    // ========================================================================
+  public:
     /** standard algorithm initialization
      *  @see IAlgorithm
      *  @return status code
@@ -130,9 +125,6 @@ public:
      *  @return status code
      */
     StatusCode execute    ()  override;
-    // ========================================================================
-  protected:
-    // ========================================================================
     /** Standard constructor
      *  @param name name of the algorithm
      *  @param svcloc pointer to Service Locator
@@ -140,18 +132,6 @@ public:
     VolumeCheck
     ( const std::string& name   ,
       ISvcLocator*       svcloc ) ;
-    /// destructor (protected and virtual)
-    virtual ~VolumeCheck();
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// default constructor   is private
-    VolumeCheck ();
-    /// copy    constructor   is private
-    VolumeCheck ( const VolumeCheck& );
-    /// assignement operator  is private
-    VolumeCheck& operator= ( const VolumeCheck& );
-    // ========================================================================
   private:
     // ========================================================================
     // volume name

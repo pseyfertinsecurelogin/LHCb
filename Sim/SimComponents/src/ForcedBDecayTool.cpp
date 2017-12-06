@@ -9,7 +9,7 @@
 using namespace LHCb;
 
 // Declaration of the Algorithm Factory
-DECLARE_TOOL_FACTORY( ForcedBDecayTool )
+DECLARE_COMPONENT( ForcedBDecayTool )
 
 //=============================================================================
 const MCParticle* ForcedBDecayTool::forcedB() {

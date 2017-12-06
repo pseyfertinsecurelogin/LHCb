@@ -14,7 +14,7 @@
 // 2005-01-04 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( CaloFillPrsSpdRawBuffer )
+DECLARE_COMPONENT( CaloFillPrsSpdRawBuffer )
 
 //=============================================================================
 // Standard constructor, initializes variables

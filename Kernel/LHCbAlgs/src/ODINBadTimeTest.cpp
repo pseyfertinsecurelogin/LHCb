@@ -14,7 +14,7 @@
 //
 // 18/10/2011: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCbAlgsTests, ODINBadTimeTest)
+DECLARE_COMPONENT( LHCbAlgsTests::ODINBadTimeTest )
 
 namespace LHCbAlgsTests {
 // ============================================================================

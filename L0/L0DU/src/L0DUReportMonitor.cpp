@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( L0DUReportMonitor )
+DECLARE_COMPONENT( L0DUReportMonitor )
 
 
 //=============================================================================

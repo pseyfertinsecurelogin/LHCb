@@ -31,7 +31,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( TurboPrescaler )
+DECLARE_COMPONENT( TurboPrescaler )
 
 
 TurboPrescaler::TurboPrescaler( const std::string& name,

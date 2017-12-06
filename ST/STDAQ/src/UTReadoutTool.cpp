@@ -14,7 +14,7 @@
 
 using namespace LHCb;
 
-DECLARE_TOOL_FACTORY( UTReadoutTool )
+DECLARE_COMPONENT( UTReadoutTool )
 
 UTReadoutTool::UTReadoutTool(const std::string& type,
                             const std::string& name,

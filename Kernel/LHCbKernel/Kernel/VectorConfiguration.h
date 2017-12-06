@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include "VectorClass/vectorclass.h"
 
 /**
  * @brief      Helper static methods to expose the SIMD
@@ -43,3 +44,31 @@ struct VectorConfiguration {
     return VectorConfiguration::bytewidth() / sizeof(PRECISION);
   }
 };
+
+namespace LHCb {
+namespace Vector {
+
+// Vectype selector
+template<class T, size_t W> struct Vectype {};
+template<class T> struct Vectype<T, 1> { using type = T; using booltype = bool; };
+#if defined(__AVX512F__)
+template<> struct Vectype<double, 8> { using type = Vec8d; using booltype = Vec8db; };
+template<> struct Vectype<float, 16> { using type = Vec16f; using booltype = Vec16fb; };
+template<> struct Vectype<int, 16> { using type = Vec16i; using booltype = Vec16ib; };
+template<> struct Vectype<unsigned, 16> { using type = Vec16ui; using booltype = Vec16ib; };
+#endif
+#if defined(__AVX__)
+template<> struct Vectype<double, 4> { using type = Vec4d; using booltype = Vec4db; };
+template<> struct Vectype<float, 8> { using type = Vec8f; using booltype = Vec8fb; };
+template<> struct Vectype<int, 8> { using type = Vec8i; using booltype = Vec8ib; };
+template<> struct Vectype<unsigned, 8> { using type = Vec8ui; using booltype = Vec8ib; };
+#endif
+#if defined(__SSE__)
+template<> struct Vectype<double, 2> { using type = Vec2d; using booltype = Vec2db; };
+template<> struct Vectype<float, 4> { using type = Vec4f; using booltype = Vec4fb; };
+template<> struct Vectype<int, 4> { using type = Vec4i; using booltype = Vec4ib; };
+template<> struct Vectype<unsigned, 4> { using type = Vec4ui; using booltype = Vec4ib; };
+#endif
+
+}
+}

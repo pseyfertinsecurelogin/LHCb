@@ -68,8 +68,6 @@ public:
    */
   void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const override;
 
-protected:
-
   /// Standard constructor
   CondDBLayeringSvc( const std::string& name, ISvcLocator* svcloc );
 
@@ -87,9 +85,6 @@ private:
   /// Enable/disable direct mapping from the database structure to the transient
   /// store using XML persistency format (enabled by default).
   bool m_xmlDirectMapping;
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<CondDBLayeringSvc>;
 
   /// Internal implementation helper to generalize the channel type.
   template <typename Channel>

@@ -6,6 +6,6 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeRich2>  XmlDeRich2Cnv;
-DECLARE_CONVERTER_FACTORY( XmlDeRich2Cnv )
+DECLARE_CONVERTER( XmlDeRich2Cnv )
 
 #endif // XMLDERICH2CNV_H

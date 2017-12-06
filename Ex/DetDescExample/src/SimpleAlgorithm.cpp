@@ -23,7 +23,7 @@
 
 using namespace Gaudi::Units;
 
-DECLARE_ALGORITHM_FACTORY( SimpleAlgorithm )
+DECLARE_COMPONENT( SimpleAlgorithm )
 
 /////////////////////////
 // Default constructor //

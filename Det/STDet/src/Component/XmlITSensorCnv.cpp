@@ -7,4 +7,4 @@
 #include "STDet/DeITSensor.h"
 
 typedef XmlUserDetElemCnv<DeITSensor >        XmlITSensorCnv;
-DECLARE_CONVERTER_FACTORY(XmlITSensorCnv)
+DECLARE_CONVERTER( XmlITSensorCnv )

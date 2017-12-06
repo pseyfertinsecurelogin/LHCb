@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( CaloMergeTAE )
+DECLARE_COMPONENT( CaloMergeTAE )
 
 //=============================================================================
 // Standard constructor, initializes variables

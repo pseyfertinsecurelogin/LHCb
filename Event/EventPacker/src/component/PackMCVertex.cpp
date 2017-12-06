@@ -15,7 +15,7 @@
 // 2005-03-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( PackMCVertex )
+DECLARE_COMPONENT( PackMCVertex )
 
 //=============================================================================
 // Standard constructor, initializes variables

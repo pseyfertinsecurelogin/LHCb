@@ -2,7 +2,7 @@
 
 #include "UnpackVeloCluster.h"
 
-DECLARE_ALGORITHM_FACTORY( UnpackVeloCluster )
+DECLARE_COMPONENT( UnpackVeloCluster )
 
 UnpackVeloCluster::UnpackVeloCluster(const std::string& name, ISvcLocator* svcLocator)
   : GaudiAlgorithm(name , svcLocator)

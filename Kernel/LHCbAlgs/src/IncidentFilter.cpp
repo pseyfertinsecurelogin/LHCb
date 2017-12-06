@@ -44,9 +44,6 @@ namespace Gaudi
    */
   class IncidentFilter : public extends<GaudiAlgorithm, IIncidentListener>
   {
-    // ========================================================================
-    friend class AlgFactory<Gaudi::IncidentFilter> ;
-    // ========================================================================
   public:
     // ========================================================================
     /// standard initialization
@@ -55,25 +52,12 @@ namespace Gaudi
     StatusCode finalize   ()  override;
     /// the only one essential method
     StatusCode execute ()  override; // the only one essential method
-    // ========================================================================
-  public:
-    // ========================================================================
     // handle the incident
     void handle ( const Incident& inc ) override;
-    // ========================================================================
-  protected:
-    // ========================================================================
     /// standard constructor
     IncidentFilter
     ( const std::string& name ,
-      ISvcLocator*       pSvc ) ;                       // standard constructor
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the copy constructor is disabled
-    IncidentFilter  ( const IncidentFilter& ) = delete; //  no copy constructor
-    /// the assignement operator is disabled
-    IncidentFilter& operator=( const IncidentFilter& )= delete;//no assignement
+      ISvcLocator*       pSvc ) ;
     // ========================================================================
   protected:
     // ========================================================================
@@ -116,12 +100,8 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class IncidentVeto : public IncidentFilter
+  struct IncidentVeto : IncidentFilter
   {
-    // ========================================================================
-    friend class AlgFactory<Gaudi::IncidentVeto> ;
-    // ========================================================================
-  public:
     // ========================================================================
     /// standard constructor
     IncidentVeto
@@ -278,8 +258,8 @@ Gaudi::IncidentVeto::IncidentVeto
 // ============================================================================
 // Factories
 // ============================================================================
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,IncidentFilter)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,IncidentVeto)
+DECLARE_COMPONENT( Gaudi::IncidentFilter )
+DECLARE_COMPONENT( Gaudi::IncidentVeto )
 
 // ============================================================================
 //                                                                      The END

@@ -4,7 +4,7 @@
 // Local
 #include "L0HCAlg.h"
 
-DECLARE_ALGORITHM_FACTORY(L0HCAlg)
+DECLARE_COMPONENT( L0HCAlg )
 
 //=============================================================================
 // Initialization

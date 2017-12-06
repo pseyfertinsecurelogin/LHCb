@@ -11,7 +11,7 @@
 #include "CondDBSQLiteCopyAccSvc.h"
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBSQLiteCopyAccSvc)
+DECLARE_COMPONENT( CondDBSQLiteCopyAccSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBSQLiteCopyAccSvc

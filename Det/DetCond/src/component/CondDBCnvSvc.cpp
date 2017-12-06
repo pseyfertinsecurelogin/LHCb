@@ -8,7 +8,7 @@
 #include "GaudiKernel/IDataProviderSvc.h"
 
 /// Instantiation of a static factory to create instances of this service
-DECLARE_SERVICE_FACTORY(CondDBCnvSvc)
+DECLARE_COMPONENT( CondDBCnvSvc )
 
 //----------------------------------------------------------------------------
 

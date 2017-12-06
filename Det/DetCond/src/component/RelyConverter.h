@@ -18,10 +18,6 @@ template <class TYPE> class CnvFactory;
  *  @date   2004-12-03
  */
 class RelyConverter: public CondDBGenericCnv {
-
-  /// Friend needed for instantiation
-  friend class CnvFactory<RelyConverter>;
-
 public:
 
   /// Operations that can be performed by delegation
@@ -100,10 +96,8 @@ public:
    */
   static const CLID& classID () { return CLID_Any; }
 
-protected:
   /// Standard constructor
   RelyConverter(ISvcLocator* svc);
-  virtual ~RelyConverter( ); ///< Destructor
 
 private:
 
