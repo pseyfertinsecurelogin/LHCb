@@ -326,12 +326,10 @@ namespace LHCb
                                    TYPE & phi ) const
     {
       // create vector in track reference frame
-      const auto rotDir = m_rotation * direction;
-      // extract components
-      const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
+      const auto r = m_rotation * direction;
       // compute theta and phi directly from the vector components
-      phi   = Rich::Maths::fast_atan2( y, x );
-      theta = Rich::Maths::fast_atan2( (TYPE)std::sqrt( (x*x) + (y*y) ), z );
+      phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
+      theta = Rich::Maths::fast_atan2( (TYPE)std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
       // correct phi to range 0 - 2PI
       constexpr TYPE twopi = (TYPE)(2.0*M_PI);
       if ( phi < 0 ) { phi += twopi; }
@@ -351,12 +349,10 @@ namespace LHCb
                                    TYPE & phi ) const
     {
       // create vector in track reference frame
-      const auto rotDir = m_rotationSIMD * direction;
-      // extract components
-      const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
+      const auto r = m_rotationSIMD * direction;
       // compute theta and phi directly from the vector components
-      phi   = Rich::Maths::fast_atan2( y, x );
-      theta = Rich::Maths::fast_atan2( std::sqrt( (x*x) + (y*y) ), z );
+      phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
+      theta = Rich::Maths::fast_atan2( std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
       // correct phi to range 0 - 2PI
       phi( phi < TYPE::Zero() ) += TYPE( 2.0*M_PI );
     }
