@@ -57,7 +57,7 @@ decoder = DecoderDB['HltSelReportsDecoder/Hlt2SelReportsDecoder']
 decoder.Properties['OutputLevel'] = LEVEL
 
 stripper = HltSelReportsStripper()
-stripper.InputHltSelReportsLocation = decoder.listOutputs()[0]
+stripper.InputHltSelReportsLocation = decoder.Outputs["OutputHltSelReportsLocation"]
 stripper.OutputHltSelReportsLocation = 'Hlt2/SelReportsFiltered'
 stripper.OutputHltObjectSummariesLocation = (
     str(stripper.OutputHltSelReportsLocation) + '/Candidates')
@@ -87,8 +87,9 @@ writer.OutputLevel = LEVEL
 
 decoder2 = decoder.clone('HltSelReportsDecoder/SecondDecoder')
 # decoder2.Inputs = {'RawEventLocations': ['DAQ/RawEvent']}
-decoder2.Outputs = {'OutputHltSelReportsLocation':
-                    'Hlt2/SelReportsFilteredFromRaw'}
+decoder2.Outputs = {
+    'OutputHltSelReportsLocation': 'Hlt2/SelReportsFilteredFromRaw',
+    'OutputHltObjectSummariesLocation': 'Hlt2/SelReportsFilteredFromRaw/Candidates'}
 decoder2.Properties['OutputLevel'] = LEVEL
 
 
@@ -176,10 +177,10 @@ while True:
     raw = TES['DAQ/RawEventOriginal']
     inp = TES[str(stripper.InputHltSelReportsLocation)]
     out = TES[str(stripper.OutputHltSelReportsLocation)]
-    out2 = TES[decoder2.listOutputs()[0]]
+    out2 = TES[decoder2.Outputs["OutputHltSelReportsLocation"]]
     inpc = TES[str(stripper.InputHltSelReportsLocation) + '/Candidates']
     outc = TES[str(stripper.OutputHltSelReportsLocation) + '/Candidates']
-    out2c = TES[decoder2.listOutputs()[0] + '/Candidates']
+    out2c = TES[decoder2.Outputs["OutputHltObjectSummariesLocation"]]
     if not inp:  # we didn't have SelReports to process
         continue
 
