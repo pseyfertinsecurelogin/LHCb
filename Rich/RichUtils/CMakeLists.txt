@@ -27,8 +27,8 @@ gaudi_add_library(RichUtils
 gaudi_add_dictionary(RichUtils
                      dict/RichUtilsDict.h
                      dict/RichUtilsDict.xml
-                     INCLUDE_DIRS Vc Eigen AIDA Boost
-                     LINK_LIBRARIES Boost DAQEventLib GaudiUtilsLib LHCbKernel RichUtils
+                     INCLUDE_DIRS VDT Vc Eigen AIDA Boost
+                     LINK_LIBRARIES VDT Boost DAQEventLib GaudiUtilsLib LHCbKernel RichUtils
                      OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
