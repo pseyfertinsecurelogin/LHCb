@@ -15,9 +15,12 @@ find_package(ROOT COMPONENTS MathCore GenVector)
 find_package(VDT)
 find_package(Eigen)
 find_package(pyanalysis)
+find_package(Vc)
+
 # hide warnings from some external projects
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
-                           ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS})
+                           ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS}
+                           ${Vc_INCLUDE_DIR})
 
 find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
 if(NOT CPP_GSL_INCLUDE_DIR)
@@ -27,16 +30,20 @@ endif()
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
+                  INCLUDE_DIRS Vc Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
                   LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel)
+
+target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )
 
 gaudi_add_dictionary(LHCbMath
                      dict/LHCbMathDict.h
                      dict/LHCbMathDict.xml
-                     INCLUDE_DIRS Boost GSL ROOT
+                     INCLUDE_DIRS Vc Boost GSL ROOT
                      LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiKernel LHCbMathLib
-                     OPTIONS "-U__MINGW32__")
+                     OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
 
+# Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
+#        To be removed once Vc is updated.
 
 # Determine if AVX2 is supported
 set(AVX2_BUILD_FLAGS " -mavx ")
