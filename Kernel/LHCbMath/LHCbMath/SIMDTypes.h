@@ -6,6 +6,7 @@
 #include <array>
 #include <type_traits>
 #include <cstdint>
+#include <utility>
 
 // Vc
 // simdize.h causes problems so include by hand the includes in Vc/Vc
@@ -149,17 +150,28 @@ namespace LHCb
     /// Default scalar unsigned int type
     using DefaultScalarUInt = UInt32::EntryType;
 
-   //------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------
     // Containers for SIMD types
     //------------------------------------------------------------------------------------------------
     
-    /// SIMD Vector
+    /// SIMD Vector. std::vector with alignment respecting allocator.
     template < typename TYPE >
     using STDVector = std::vector< TYPE, Vc::Allocator<TYPE> >;
 
-    /// SIMD 'Array' (same size as Vc vectors
+    /// SIMD 'Array' (same size as Vc vectors)
     template < typename TYPE, typename FPTYPE = FP<DefaultScalarFP> >
     using STDArray = std::array< TYPE, FPTYPE::Size >;
+
+    //------------------------------------------------------------------------------------------------
+    // Utility methods
+    //------------------------------------------------------------------------------------------------
     
+    /// 'Static' cast between different SIMD types
+    template < typename TO, typename FROM >
+    inline decltype(auto) simd_cast( FROM && from )
+    {
+      return Vc::simd_cast<TO>( std::forward<FROM>(from) );
+    }
+
   }
 }

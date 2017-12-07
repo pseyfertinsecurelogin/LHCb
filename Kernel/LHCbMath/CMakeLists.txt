@@ -30,16 +30,16 @@ endif()
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Vc Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
-                  LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel)
+                  INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
+                  LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel)
 
 target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )
 
 gaudi_add_dictionary(LHCbMath
                      dict/LHCbMathDict.h
                      dict/LHCbMathDict.xml
-                     INCLUDE_DIRS Vc Boost GSL ROOT
-                     LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiKernel LHCbMathLib
+                     INCLUDE_DIRS VDT Vc Boost GSL ROOT
+                     LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiKernel LHCbMathLib
                      OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
