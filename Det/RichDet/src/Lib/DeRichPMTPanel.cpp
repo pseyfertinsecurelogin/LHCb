@@ -793,8 +793,8 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
 
   if ( any_of(nums.aModuleWithLens) )
   {
-    aPmtCol = Vc::simd_cast<SIMDINT32>( abs( (xp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
-    aPmtRow = Vc::simd_cast<SIMDINT32>( abs( (yp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
+    aPmtCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
+    aPmtRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
     aPmtNum = getLensPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
 
@@ -805,15 +805,15 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
   const auto am = antim && gmask;
   if ( any_of(am) )
   {
-    aPmtCol(am) = Vc::simd_cast<SIMDINT32>( abs( (xp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0])*m_GrandPmtPitchInvSIMD ) );
-    aPmtRow(am) = Vc::simd_cast<SIMDINT32>( abs( (yp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1])*m_GrandPmtPitchInvSIMD ) );
+    aPmtCol(am) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0])*m_GrandPmtPitchInvSIMD ) );
+    aPmtRow(am) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1])*m_GrandPmtPitchInvSIMD ) );
     aPmtNum(am) = getGrandPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
   const auto bm = antim && !gmask;
   if ( any_of(bm) )
   {
-    aPmtCol(bm) = Vc::simd_cast<SIMDINT32>( abs( (xp-m_RichPmtModuleActiveAreaHalfSizeSIMD[0])*m_PmtPitchInvSIMD ) );
-    aPmtRow(bm) = Vc::simd_cast<SIMDINT32>( abs( (yp-m_RichPmtModuleActiveAreaHalfSizeSIMD[1])*m_PmtPitchInvSIMD ) );
+    aPmtCol(bm) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-m_RichPmtModuleActiveAreaHalfSizeSIMD[0])*m_PmtPitchInvSIMD ) );
+    aPmtRow(bm) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-m_RichPmtModuleActiveAreaHalfSizeSIMD[1])*m_PmtPitchInvSIMD ) );
     aPmtNum(bm) = getPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
 
@@ -837,7 +837,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
     ypi[i] = sc_inPmtAnode.y();
   }
 
-  const auto mm = Vc::simd_cast<SIMDFP::MaskType>(nums.aModuleWithLens);
+  const auto mm = LHCb::SIMD::simd_cast<SIMDFP::MaskType>(nums.aModuleWithLens);
   if ( any_of(mm) )
   {
     xpi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
@@ -849,15 +849,15 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
 
   if ( any_of(gmask) )
   {
-    aPmtPixelCol(gmask) = Vc::simd_cast<SIMDINT32>( abs((xpi - m_GrandPmtAnodeXEdgeSIMD)*m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD));
-    aPmtPixelRow(gmask) = Vc::simd_cast<SIMDINT32>( abs((ypi - m_GrandPmtAnodeYEdgeSIMD)*m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD));
+    aPmtPixelCol(gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((xpi - m_GrandPmtAnodeXEdgeSIMD)*m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD));
+    aPmtPixelRow(gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((ypi - m_GrandPmtAnodeYEdgeSIMD)*m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD));
     aPmtPixelCol( gmask && aPmtPixelCol >=  m_GrandPmtPixelsInColSIMD ) = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
     aPmtPixelRow( gmask && aPmtPixelRow >=  m_GrandPmtPixelsInRowSIMD ) = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
   }
   if ( any_of(!gmask) )
   {
-    aPmtPixelCol(!gmask) = Vc::simd_cast<SIMDINT32>( abs((xpi - m_PmtAnodeXEdgeSIMD)*m_PmtAnodeEffectiveXPixelSizeInvSIMD));
-    aPmtPixelRow(!gmask) = Vc::simd_cast<SIMDINT32>( abs((ypi - m_PmtAnodeYEdgeSIMD)*m_PmtAnodeEffectiveYPixelSizeInvSIMD));
+    aPmtPixelCol(!gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((xpi - m_PmtAnodeXEdgeSIMD)*m_PmtAnodeEffectiveXPixelSizeInvSIMD));
+    aPmtPixelRow(!gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((ypi - m_PmtAnodeYEdgeSIMD)*m_PmtAnodeEffectiveYPixelSizeInvSIMD));
     aPmtPixelCol( !gmask && aPmtPixelCol >= m_PmtPixelsInColSIMD ) = m_PmtPixelsInColSIMD - SIMDINT32::One();
     aPmtPixelRow( !gmask && aPmtPixelRow >= m_PmtPixelsInRowSIMD ) = m_PmtPixelsInRowSIMD - SIMDINT32::One();
   }
@@ -991,7 +991,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
   smartID.fill( m_panelID );
 
   // set results to outside panel
-  res( Vc::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) = 
+  res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) = 
     SIMDRayTResult::Results(LHCb::RichTraceMode::OutsidePDPanel);
 
   // are we in the panel ?
@@ -999,7 +999,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
   if ( any_of(mask) )
   {
     // Set res flag for those in mask to InPDPanel
-    res( Vc::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) = 
+    res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) = 
       SIMDRayTResult::Results(LHCb::RichTraceMode::InPDPanel);
 
     // set hit position to plane intersection in global frame

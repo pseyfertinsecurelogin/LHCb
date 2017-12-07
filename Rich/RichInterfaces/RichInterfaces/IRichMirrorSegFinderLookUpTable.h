@@ -362,7 +362,7 @@ namespace Rich
           auto xtmp = ( x - m_minXSIMD ) * m_incXSIMD;
           // Underflow protection
           xtmp.setZero(mask);
-          auto xi = Vc::simd_cast<SIMDIndices::IndexType>( xtmp );
+          auto xi = LHCb::SIMD::simd_cast<SIMDIndices::IndexType>( xtmp );
           // Overflow protection
           xi( xi >= SIMDIndices::IndexType(NXBINS) ) = SIMDIndices::IndexType(NXBINS-1);
           // return
@@ -388,7 +388,7 @@ namespace Rich
           auto ytmp = ( y - m_minYSIMD ) * m_incYSIMD;
           // Underflow protection
           ytmp.setZero(mask);
-          auto yi = Vc::simd_cast<SIMDIndices::IndexType>( ytmp );
+          auto yi = LHCb::SIMD::simd_cast<SIMDIndices::IndexType>( ytmp );
           // Overflow protection
           yi( yi >= SIMDIndices::IndexType(NYBINS) ) = SIMDIndices::IndexType(NYBINS-1);
           // return

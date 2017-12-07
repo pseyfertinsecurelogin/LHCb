@@ -114,7 +114,7 @@ public:
     auto Y = CoC1.Y();
     auto Z = CoC1.Z();
     // mask for side 2
-    const auto m = Vc::simd_cast<MaskType>(sides == Sides(Rich::secondSide));
+    const auto m = LHCb::SIMD::simd_cast<MaskType>(sides == Sides(Rich::secondSide));
     // update values for side 2
     X(m) = CoC2.X();
     Y(m) = CoC2.Y();
@@ -191,7 +191,7 @@ public:
     auto C = P1.C();
     auto D = P1.D();
     // mask for side 2
-    const auto m = Vc::simd_cast<MaskType>(sides == Sides(Rich::secondSide));
+    const auto m = LHCb::SIMD::simd_cast<MaskType>(sides == Sides(Rich::secondSide));
     // update values for side 2
     A(m) = P2.A();
     B(m) = P2.B();
@@ -244,11 +244,11 @@ public:
     // Is there a better way to do ??
     if ( Rich::Rich1 == rich() )
     {
-      sides( Vc::simd_cast<Sides::MaskType>( y < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+      sides( LHCb::SIMD::simd_cast<Sides::MaskType>( y < TYPE::Zero() ) ) = Sides( Rich::secondSide );
     }
     else
     {
-      sides( Vc::simd_cast<Sides::MaskType>( x < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+      sides( LHCb::SIMD::simd_cast<Sides::MaskType>( x < TYPE::Zero() ) ) = Sides( Rich::secondSide );
     }
     return sides;
   }
