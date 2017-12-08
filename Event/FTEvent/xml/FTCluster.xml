@@ -14,7 +14,6 @@
            final  = "TRUE"
            defaultdestructor = "FALSE"
            serializers="FALSE">
-      <import   name = "Kernel/FastClusterContainer"/>
       <import   name = "Kernel/FTChannelID" />
       <location name = "Default"   place="Raw/FT/Clusters"   />
 
@@ -23,11 +22,11 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int fractionBit, 
-			       int size, std::vector&lt;LHCb::FTChannelID&gt; ids,int isLarge, 
-			       float charge"
-                   initList = "m_fraction(fraction), m_fractionBit(fractionBit), m_size(size), m_isLarge(isLarge),
-			       m_charge(charge), m_ids(ids)">
+                   argList  = "LHCb::FTChannelID&amp; id, float fraction, 
+                               bool fractionBit, std::vector&lt;LHCb::FTChannelID&gt; channelIDs, 
+                               int isLarge, float charge" 
+                   initList = "m_fraction(fraction), m_fractionBit(fractionBit), m_isLarge(isLarge),
+                               m_charge(charge), m_channelIDs(channelIDs)">
         <code> this->setKey(id); </code>
       </constructor>
 
@@ -39,23 +38,26 @@
                  desc   = "Retrieve the FTChannelID, key of the object"
                  type   = "const LHCb::FTChannelID&amp;"
                  access = "PUBLIC"
-		 const  = "TRUE" >
+                 const  = "TRUE" >
         <code> return key(); </code>
+      </method>
+
+      <method    name   = "size"
+                 desc   = "Number of cells in this cluster"
+                 type   = "int"
+                 access = "PUBLIC"
+                 const  = "TRUE" >
+        <code> return m_channelIDs.size(); </code>
       </method>
 
       <attribute name   = "fraction"
                  desc   = "Fractional part of the channel ID, when barycentre is computed. between -0.25 and 0.75"
-                 type   = "double"
+                 type   = "float"
                  access = "PUBLIC"/>
 
       <attribute name   = "fractionBit"
                  desc   = "The fraction of channel as the integer value (0 or 1)"
-                 type   = "int"
-                 access = "PUBLIC"/>
-
-      <attribute name   = "size"
-                 desc   = "Number of cells in this cluster"
-                 type   = "int"
+                 type   = "bool"
                  access = "PUBLIC"/>
 
       <attribute name   = "isLarge"
@@ -68,7 +70,7 @@
                  type   = "float"
                  access = "PUBLIC"/>
 
-      <attribute name   = "ids"
+      <attribute name   = "channelIDs"
                  desc   = "all FTChannelIDs corresponding to this cluster"
                  type   = "std::vector&lt;LHCb::FTChannelID&gt;"
                  setMeth= "FALSE"

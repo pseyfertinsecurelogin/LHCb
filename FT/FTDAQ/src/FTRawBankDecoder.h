@@ -22,12 +22,8 @@ struct FTRawBankDecoder : Gaudi::Functional::Transformer< FTLiteClusters( const 
 
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
 
-  // for MC, following properties have to be same as cluster creator, 
-  // otherwise unexpected consequences might be seen
+  // for MC, following property has to be same as cluster creator, 
   // not sure how to ensure this (TODO)
-  Gaudi::Property<bool> m_remakeClusters{ this, "RemakeClusters", true,
-      "combine double adjacent edges and make missing fragments in large clusters"} ;
-
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4,
       "Maximal cluster width"};
 

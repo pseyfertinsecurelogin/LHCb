@@ -26,8 +26,6 @@ public:
 
 private:
   Gaudi::Property<std::string> m_inputLocation  {this, "InputLocation"  , LHCb::FTClusterLocation::Default };
-  Gaudi::Property<std::string> m_outputLocation {this, "OutputLocation" , LHCb::RawEventLocation::Default };
-  
-
+  Gaudi::Property<std::string> m_outputLocation {this, "OutputLocation" , LHCb::RawEventLocation::Default  };
 };
 #endif // FTRAWBANKENCODER_H

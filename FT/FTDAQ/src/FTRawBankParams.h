@@ -10,7 +10,8 @@ namespace FTRawBank {
     sizeShift     = 8,
   };
   
-  static constexpr uint16_t nbClusMaximum   = 10;  // 4 bits ??
+  static constexpr uint16_t nbClusMaximum   = 15;  // 4 bits ??
+  static constexpr uint16_t nbClusFFMaximum = 10;  // 4 bits ??
   static constexpr uint16_t fractionMaximum = 1;   // 1 bits allocted
   static constexpr uint16_t cellMaximum     = 127; // 0 to 127; coded on 7 bits
   static constexpr uint16_t sizeMaximum     = 1;   // 2 bits allocated

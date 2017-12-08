@@ -35,36 +35,36 @@
                access = "PUBLIC" />
       
       <attribute type    = 'bitfield'
-		 name    = 'liteCluster'
-		 desc    = 'Lite Cluster'
-		 setMeth = "FALSE"
-		 getMeth = "FALSE">
-	
-	<bitfield   name    = 'channelID'
-		    length  = '20'
-		    desc    = 'channelID'
+                 name    = 'liteCluster'
+                 desc    = 'Lite Cluster'
+                 setMeth = "FALSE"
+                 getMeth = "FALSE">
+        
+        <bitfield   name    = 'channelID'
+                    length  = '20'
+                    desc    = 'channelID'
                     setMeth = "FALSE"
-		    getMeth = "FALSE"/>
-	
-	<bitfield name    = 'fraction'
-		  length  = '1'
-		  desc    = 'Fractional position'
-		  setMeth = "FALSE"
-		  getMeth = "FALSE"/>
-	
-	<bitfield name    = 'size'
-		  length  = '4'
-		  desc    = 'number of cells in the cluster'
-		  setMeth = "FALSE"
-		  getMeth = "FALSE"/>
+                    getMeth = "FALSE"/>
+        
+        <bitfield name    = 'fraction'
+                  length  = '1'
+                  desc    = 'Fractional position'
+                  setMeth = "FALSE"
+                  getMeth = "FALSE"/>
+        
+        <bitfield name    = 'pseudoSize'
+                  length  = '4'
+                  desc    = 'number of cells in the cluster'
+                  setMeth = "TRUE"
+                  getMeth = "TRUE"/>
       </attribute>
       
       <constructor desc    = "Constructor" 
-                   argList = 'LHCb::FTChannelID chan, int fraction, int size'>
+                   argList = 'LHCb::FTChannelID chan, bool fraction, int pseudoSize'>
         <code>
           m_liteCluster = (chan &lt;&lt; channelIDBits) +
           (fraction &lt;&lt; fractionBits) +
-          (size &lt;&lt; sizeBits);
+          (pseudoSize &lt;&lt; pseudoSizeBits);
         </code>
       </constructor>
 
@@ -89,20 +89,11 @@
       </method>
 
       <method name   = "fractionBit"
-              type   = "int"
+              type   = "bool"
               access = "PUBLIC"
               desc   = "returns the fraction of channel as the integer value (0 or 1)"
               const  = "TRUE">
         <code> return (m_liteCluster &amp; fractionMask ) &gt;&gt; fractionBits ; </code>
-      </method>
-
-      <method name   = "size"
-              type   = "int"
-              access = "PUBLIC"
-              desc   = "returns 4 if size is less or equal to maxsize; 
-			0 if larger than 2*maxsize; true size for other cases"
-              const  = "TRUE">
-        <code> return (m_liteCluster &amp; sizeMask ) &gt;&gt; sizeBits ; </code>
       </method>
 
     </class>

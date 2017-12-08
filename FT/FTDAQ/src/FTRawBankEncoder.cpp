@@ -51,29 +51,36 @@ StatusCode FTRawBankEncoder::execute() {
   for (auto &b : m_sipmData ) for (auto &pm : b ) pm.clear();
 
   for ( const auto& cluster : *clusters ) {
+
+    if(cluster->isLarge() > 1)continue;
+        
     LHCb::FTChannelID id = cluster->channelID();
 
-    unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   //== Temp, assumes 1 TELL40 per quarter.
+    unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   
+    //== Temp, assumes 1 TELL40 per quarter.
 
     if ( m_sipmData.size() <= bankNumber ) {
-      info() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
+      error() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
     unsigned int sipmNumber = id.sipm() + 4*id.mat() + 16 * id.module();
     if ( m_sipmData[bankNumber].size() <= sipmNumber ) {
-      info() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
+      error() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
 
     auto& data = m_sipmData[bankNumber][sipmNumber];
-    if (id.module()>0 && data.size() > FTRawBank::nbClusMaximum+1 ) continue; 
-
+    
+    if ( (id.module() > 0  && data.size() > FTRawBank::nbClusFFMaximum) ||
+         (id.module() == 0 && data.size() > FTRawBank::nbClusMaximum) ) continue; 
+    
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
+    
     data.push_back( ( id.channel()          << FTRawBank::cellShift ) |
                     ( cluster->fractionBit() << FTRawBank::fractionShift ) |
                     ( cluster->isLarge()     << FTRawBank::sizeShift )
-                   );
+                    );
     ++data[0]; // counts the number of clusters (in the header)
     if ( msgLevel( MSG::VERBOSE ) ) {
       verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d code %4.4x",
@@ -81,23 +88,24 @@ StatusCode FTRawBankEncoder::execute() {
                            cluster->isLarge(), data.back() ) << endmsg;
     }
   }
-
+  
+  
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
   for ( unsigned int iBank = 0; m_sipmData.size() > iBank; ++iBank ) {
     if( msgLevel( MSG::VERBOSE ) ) verbose() << "*** Bank " << iBank << endmsg;
     auto words = std::accumulate( m_sipmData[iBank].begin(), m_sipmData[iBank].end(),
                                   0, [](int w, std::vector<uint16_t>& d) {
-                                     return w  + d.size();
-    });
+                                    return w  + d.size();
+                                  });
     std::vector<unsigned int> bank; bank.reserve((words+1)/2);
     boost::optional<unsigned int> buf;
     for ( const auto& pm : m_sipmData[iBank] ) {
       for ( const auto& data : pm ) {
         if (!buf) {
-            buf = data;
+          buf = data;
         } else {
-            bank.emplace_back( *buf | ( static_cast<unsigned int>(data) << 16 ) );
-            buf = boost::none;
+          bank.emplace_back( *buf | ( static_cast<unsigned int>(data) << 16 ) );
+          buf = boost::none;
         }
       }
     }
