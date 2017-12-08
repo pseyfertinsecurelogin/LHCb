@@ -182,7 +182,7 @@ int main()
       const FPF e = fast_exp(x);
       const FPF l = fast_log( FPF( tru(e[0],fp) ) );
       std::cout << std::setprecision(ifp) << "SIMD(f) fast_exp("<<x[0]<<") = " 
-                << std::setprecision(fp) << tru(e[0],fp)<< std::endl;
+                << std::setprecision(fp) << tru(e[0],fp) << std::endl;
       std::cout << std::setprecision(fp) << "SIMD(f) fast_log("<<e[0]<<") = " 
                 << std::setprecision(fp) << l[0] << std::endl;
     }

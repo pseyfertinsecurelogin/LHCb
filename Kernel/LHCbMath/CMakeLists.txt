@@ -178,6 +178,35 @@ if(GAUDI_BUILD_TESTS)
                        INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
 
+  gaudi_add_executable(TestMathSpeedSSE4
+                       tests/MathSpeedTests/main_sse4.cpp
+                       INCLUDE_DIRS ROOT Vc GSL VDT src
+                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+  target_link_libraries( TestMathSpeedSSE4 -lrt )
+  set_property(SOURCE tests/MathSpeedTests/main_sse4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes -msse4.2 " )
+
+  gaudi_add_executable(TestMathSpeedAVX
+                       tests/MathSpeedTests/main_avx.cpp
+                       INCLUDE_DIRS ROOT Vc GSL VDT src
+                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+  target_link_libraries( TestMathSpeedAVX -lrt )
+  set_property(SOURCE tests/MathSpeedTests/main_avx.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes -mavx " )
+
+  gaudi_add_executable(TestMathSpeedAVX2
+                       tests/MathSpeedTests/main_avx2.cpp
+                       INCLUDE_DIRS ROOT Vc GSL VDT src
+                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+  target_link_libraries( TestMathSpeedAVX2 -lrt )
+  set_property(SOURCE tests/MathSpeedTests/main_avx2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
+
+  gaudi_add_executable(TestMathSpeedAVX2FMA
+                       tests/MathSpeedTests/main_avx2fma.cpp
+                       INCLUDE_DIRS ROOT Vc GSL VDT src
+                       LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
+  target_link_libraries( TestMathSpeedAVX2FMA -lrt )
+  set_property(SOURCE tests/MathSpeedTests/main_avx2fma.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
+
+
 endif()
 
 gaudi_install_python_modules()
