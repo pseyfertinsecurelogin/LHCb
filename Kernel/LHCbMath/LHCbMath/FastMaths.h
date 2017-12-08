@@ -76,11 +76,11 @@ namespace LHCb
       const LHCb::SIMD::FPF PX9logf  (  3.3333331174E-1f );
       const LHCb::SIMD::FPF LOGF_UPPER_LIMIT ( MAXNUMF );
       const LHCb::SIMD::FPF LOGF_LOWER_LIMIT ( 0 );
-      // for sin cos
+      // for sin cos tan
       const LHCb::SIMD::FPF DP1F     ( 0.78515625               );
       const LHCb::SIMD::FPF DP2F     ( 2.4187564849853515625e-4 );
       const LHCb::SIMD::FPF DP3F     ( 3.77489497744594108e-8   );
-
+      
       /// Converts a float to an int
       inline LHCb::SIMD::UInt32 float2uint32( const LHCb::SIMD::FPF& x ) noexcept
       {
@@ -195,7 +195,64 @@ namespace LHCb
         return z.y;
       }
 
+      /// Get the sign mask
+      inline LHCb::SIMD::UInt32 getSignMask( const LHCb::SIMD::FPF& x ) noexcept
+      {
+        using namespace LHCb::SIMD;
+        union { FPF y; UInt32 i; } z = { x };
+        return z.i & UInt32(0x80000000);
+      }
+
+      /// Makes an XOR of a float and a unsigned long
+      inline LHCb::SIMD::FPF spXORuint32( const LHCb::SIMD::FPF& x, const LHCb::SIMD::UInt32& i )
+      {
+        using namespace LHCb::SIMD;
+        union { FPF y; UInt32 i; } z = { x };
+        z.i ^= i;
+        return z.y;
+      }
+
     } // details
+
+    //------------------------------------------------------------------------------
+
+    /** fast tan for SIMD float type
+     *  Based on VDT fast_tanf */
+    inline LHCb::SIMD::FPF fast_tan( const LHCb::SIMD::FPF& x ) noexcept
+    {
+      using namespace LHCb::SIMD;
+
+      auto z = details::reduce2quadrant(x);
+
+      const auto zz = z.first * z.first;
+
+      FPF res = ( (((((   FPF(9.38540185543E-3f)  * zz
+                        + FPF(3.11992232697E-3f)) * zz
+                        + FPF(2.44301354525E-2f)) * zz
+                        + FPF(5.34112807005E-2f)) * zz
+                        + FPF(1.33387994085E-1f)) * zz
+                        + FPF(3.33331568548E-1f)) * zz * z.first
+                  + z.first );
+      res( zz < FPF(1.0e-14f) ) = z.first;
+
+      // A no branching way to say: if j&2 res = -1/res. You can!!!
+      z.second  &= 2;
+      z.second >>= 1;
+      const auto alt = simd_cast<FPF>( (z.second) ^ UInt32::One() );
+
+      const auto m = x == FPF::Zero();
+
+      res(m) += FPF::One();
+
+      // one coeff is one and one is 0!
+      res = simd_cast<FPF>(z.second) * (-FPF::One()/res) + alt * res; 
+
+      const auto sign_mask = details::getSignMask(x);
+      auto a = details::spXORuint32( res, sign_mask );
+      a.setZero(m);
+
+      return a;
+    }
 
     //------------------------------------------------------------------------------
 
