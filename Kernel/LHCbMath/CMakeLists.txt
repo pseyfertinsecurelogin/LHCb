@@ -207,6 +207,13 @@ if(GAUDI_BUILD_TESTS)
   set_property(SOURCE tests/MathSpeedTests/main_avx2fma.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
 
 
+  # Fixes for GCC7.
+  if( BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_GREATER "6.99")
+    set_property(TARGET TestMathSpeedAVX     APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
+    set_property(TARGET TestMathSpeedAVX2    APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
+    set_property(TARGET TestMathSpeedAVX2FMA APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
+  endif()
+
 endif()
 
 gaudi_install_python_modules()
