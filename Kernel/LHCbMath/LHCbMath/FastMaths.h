@@ -42,13 +42,14 @@ namespace LHCb
       // Some SIMD constants
       const LHCb::SIMD::FPF MAXNUMF  ( 3.4028234663852885981170418348451692544e38f );
       // numbers
-      const LHCb::SIMD::FPF HALF     ( 0.5    );               ///< 1/2
-      const LHCb::SIMD::FPF THREEHALVES ( 1.5 );               ///< 3/2
-      const LHCb::SIMD::FPF TAN_PIO8F( 0.4142135623730950 );   ///< tan(pi/8)
-      const LHCb::SIMD::FPF PIO4F    ( M_PI_4 );               ///< pi/4
-      const LHCb::SIMD::FPF PIO2F    ( M_PI_2 );               ///< pi/2
-      const LHCb::SIMD::FPF PIF      ( M_PI   );               ///< pi
-      const LHCb::SIMD::FPF ONEOPIO4F( 4.0/M_PI );             ///< 4/pi
+      const LHCb::SIMD::FPF HALF        ( 0.5 );                ///< 1/2
+      const LHCb::SIMD::FPF TWO         ( 2.0 );                ///< 2
+      const LHCb::SIMD::FPF THREEHALVES ( 1.5 );                ///< 3/2
+      const LHCb::SIMD::FPF TAN_PIO8F   ( 0.4142135623730950 ); ///< tan(pi/8)
+      const LHCb::SIMD::FPF PIO4F       ( M_PI_4 );             ///< pi/4
+      const LHCb::SIMD::FPF PIO2F       ( M_PI_2 );             ///< pi/2
+      const LHCb::SIMD::FPF PIF         ( M_PI   );             ///< pi
+      const LHCb::SIMD::FPF ONEOPIO4F   ( 4.0/M_PI );           ///< 4/pi
       // For exp
       const LHCb::SIMD::FPF LOG2EF   (  1.44269504088896341f ); ///< log2(e)
       const LHCb::SIMD::FPF C1F      (  0.693359375f       );
@@ -204,7 +205,8 @@ namespace LHCb
       }
 
       /// Makes an XOR of a float and a unsigned long
-      inline LHCb::SIMD::FPF spXORuint32( const LHCb::SIMD::FPF& x, const LHCb::SIMD::UInt32& i )
+      inline LHCb::SIMD::FPF spXORuint32( const LHCb::SIMD::FPF& x, 
+                                          const LHCb::SIMD::UInt32& i )
       {
         using namespace LHCb::SIMD;
         union { FPF y; UInt32 i; } z = { x };
@@ -212,64 +214,58 @@ namespace LHCb
         return z.y;
       }
 
+      /// Makes an OR of a float and a unsigned long
+      inline LHCb::SIMD::FPF spORuint32( const LHCb::SIMD::FPF& x, 
+                                         const LHCb::SIMD::UInt32& i )
+      {
+        using namespace LHCb::SIMD;
+        union { FPF y; UInt32 i; } z = { x };
+        z.i |= i;
+        return z.y;
+      }
+
     } // details
 
     //------------------------------------------------------------------------------
 
-    /** fast tan for SIMD float type
-     *  Based on VDT fast_tanf */
-    inline LHCb::SIMD::FPF fast_tan( const LHCb::SIMD::FPF& x ) noexcept
+    /** fast asin for SIMD float type
+     *  Based on VDT fast_asinf */
+    inline LHCb::SIMD::FPF fast_asin( LHCb::SIMD::FPF x ) noexcept
     {
       using namespace LHCb::SIMD;
 
-      auto z = details::reduce2quadrant(x);
-
-      const auto zz = z.first * z.first;
-
-      FPF res = ( (((((   FPF(9.38540185543E-3f)  * zz
-                        + FPF(3.11992232697E-3f)) * zz
-                        + FPF(2.44301354525E-2f)) * zz
-                        + FPF(5.34112807005E-2f)) * zz
-                        + FPF(1.33387994085E-1f)) * zz
-                        + FPF(3.33331568548E-1f)) * zz * z.first
-                  + z.first );
-      res( zz < FPF(1.0e-14f) ) = z.first;
-
-      // A no branching way to say: if j&2 res = -1/res. You can!!!
-      z.second  &= 2;
-      z.second >>= 1;
-      const auto alt = simd_cast<FPF>( (z.second) ^ UInt32::One() );
-
-      const auto m = x == FPF::Zero();
-
-      res(m) += FPF::One();
-
-      // one coeff is one and one is 0!
-      res = simd_cast<FPF>(z.second) * (-FPF::One()/res) + alt * res; 
-
       const auto sign_mask = details::getSignMask(x);
-      auto a = details::spXORuint32( res, sign_mask );
-      a.setZero(m);
+      const auto a         = abs(x);
+      
+      const auto m = ( a > details::HALF );
 
-      return a;
+      x      = a;
+      auto z = x * x;
+      if ( any_of(m) )
+      {
+        z(m) = details::HALF * ( FPF::One() - a );
+        x(m) = std::sqrt(z);
+      }
+
+      z = ((((   FPF(4.2163199048E-2f)  * z
+               + FPF(2.4181311049E-2f)) * z
+               + FPF(4.5470025998E-2f)) * z
+               + FPF(7.4953002686E-2f)) * z
+               + FPF(1.6666752422E-1f)) * z * x 
+               + x;
+
+      z(m) = details::PIO2F - ( details::TWO * z );
+
+      return details::spORuint32(z,sign_mask);
     }
 
     //------------------------------------------------------------------------------
 
-    /** fast inverse sqrt for SIMD float type
-     *  Based on VDT fast_isqrtf */
-    inline LHCb::SIMD::FPF fast_isqrt( const LHCb::SIMD::FPF& x ) noexcept
+    /** fast acos for SIMD float type
+     *  Based on VDT fast_acosf */
+    inline LHCb::SIMD::FPF fast_acos( const LHCb::SIMD::FPF& x ) noexcept
     {
-      // use two iterations
-      return details::fast_isqrtf_general<2>(x);
-    }
-
-    /** fast approximate inverse sqrt for SIMD float type
-     *  Based on VDT fast_approx_isqrtf */
-    inline LHCb::SIMD::FPF fast_approx_isqrt( const LHCb::SIMD::FPF& x ) noexcept
-    {
-      // use only 1 iteration
-      return details::fast_isqrtf_general<1>(x);
+      return details::PIO2F - fast_asin(x);
     }
 
     //------------------------------------------------------------------------------
@@ -422,6 +418,64 @@ namespace LHCb
 
     //------------------------------------------------------------------------------
 
+    /** fast tan for SIMD float type
+     *  Based on VDT fast_tanf */
+    inline LHCb::SIMD::FPF fast_tan( const LHCb::SIMD::FPF& x ) noexcept
+    {
+      using namespace LHCb::SIMD;
+
+      auto z = details::reduce2quadrant(x);
+
+      const auto zz = z.first * z.first;
+
+      FPF res = ( (((((   FPF(9.38540185543E-3f)  * zz
+                        + FPF(3.11992232697E-3f)) * zz
+                        + FPF(2.44301354525E-2f)) * zz
+                        + FPF(5.34112807005E-2f)) * zz
+                        + FPF(1.33387994085E-1f)) * zz
+                        + FPF(3.33331568548E-1f)) * zz * z.first
+                  + z.first );
+      res( zz < FPF(1.0e-14f) ) = z.first;
+
+      // A no branching way to say: if j&2 res = -1/res. You can!!!
+      z.second  &= 2;
+      z.second >>= 1;
+      const auto alt = simd_cast<FPF>( (z.second) ^ UInt32::One() );
+
+      const auto m = x == FPF::Zero();
+
+      res(m) += FPF::One();
+
+      // one coeff is one and one is 0!
+      res = simd_cast<FPF>(z.second) * (-FPF::One()/res) + alt * res; 
+
+      const auto sign_mask = details::getSignMask(x);
+      auto a = details::spXORuint32( res, sign_mask );
+      a.setZero(m);
+
+      return a;
+    }
+
+    //------------------------------------------------------------------------------
+
+    /** fast inverse sqrt for SIMD float type
+     *  Based on VDT fast_isqrtf */
+    inline LHCb::SIMD::FPF fast_isqrt( const LHCb::SIMD::FPF& x ) noexcept
+    {
+      // use two iterations
+      return details::fast_isqrtf_general<2>(x);
+    }
+
+    /** fast approximate inverse sqrt for SIMD float type
+     *  Based on VDT fast_approx_isqrtf */
+    inline LHCb::SIMD::FPF fast_approx_isqrt( const LHCb::SIMD::FPF& x ) noexcept
+    {
+      // use only 1 iteration
+      return details::fast_isqrtf_general<1>(x);
+    }
+
+    //------------------------------------------------------------------------------
+
     // Shortcuts to VDT for scalars. 
     // For consistency across all scalar and SIMD types
 
@@ -466,7 +520,7 @@ namespace LHCb
     inline float fast_acos( const double x ) noexcept { return vdt::fast_acos(x); }
 
     /// Fast asin
-     using namespace LHCb::SIMD; inline float fast_asin( const float  x ) noexcept { return vdt::fast_asinf(x); }
+    inline float fast_asin( const float  x ) noexcept { return vdt::fast_asinf(x); }
     /// Fast asin
     inline float fast_asin( const double x ) noexcept { return vdt::fast_asin(x); }
 
