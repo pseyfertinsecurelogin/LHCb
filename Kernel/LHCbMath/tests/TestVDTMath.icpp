@@ -59,8 +59,8 @@ int main()
   if ( cpulevel < complevel ) 
   {
     std::cout << "CPU level " << cpulevel 
-              << " does not support compilation level " << complevel << ". Test will not be run."
-              << std::endl;
+              << " does not support compilation level " << complevel 
+              << ". Test will not be run." << std::endl;
     return 77; 
   }
 
@@ -200,13 +200,17 @@ int main()
       fast_sincos( angle, sinang, cosang );
       const float sina = sinang[0];
       const float cosa = cosang[0];
+      const FPF asina = fast_asin(sinang);
+      const FPF acosa = fast_acos(sinang);
       std::cout << std::setprecision(ifp) << "SIMD(f) fast_cossin("<<angle[0]<<") = " 
                 << std::setprecision(fp) << tru(sina,fp) << " " << tru(cosa,fp) << std::endl;
       // not implemented yet for SIMD types ...
-      //std::cout << std::setprecision(fp) << "SIMD(f) fast_asin("<<sina<<") = " 
-      //          << std::setprecision(fp) << fast_asin(sinang) << std::endl;
-      // std::cout << std::setprecision(fp) << "SIMD(f) fast_acos("<<cosang<<") = " 
-      ///          << std::setprecision(fp) << fast_acos(cosang) << std::endl;
+      std::cout << std::setprecision(fp) << "SIMD(f) fast_asin("<<sina<<") = " 
+                << std::setprecision(fp) << asina[0] 
+                << " " << vdt::fast_asinf(sina)
+                << std::endl;
+      std::cout << std::setprecision(fp) << "SIMD(f) fast_acos("<<cosa<<") = " 
+                << std::setprecision(fp) << acosa[0] << std::endl;
       
     }
 

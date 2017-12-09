@@ -27,8 +27,8 @@ class Data
 public:
   using Vector = typename LHCb::SIMD::STDVector<Data>;
 public:
-  float  xs, ys;
-  FloatV xv, yv;
+  float  xs, ys, zs;
+  FloatV xv, yv, zv;
   float  absxs, absys;
   FloatV absxv, absyv;
 public:
@@ -39,13 +39,16 @@ public:
     // Distributions
     static std::uniform_real_distribution<float> x(-30,30);
     static std::uniform_real_distribution<float> absx(1e-10,1000);
+    static std::uniform_real_distribution<float> z(-1,1);
     // lambda for random
     auto    f = []() { return    x(gen); };
     auto absf = []() { return absx(gen); };
+    auto   zf = []() { return    z(gen); };
     // fill the data
     // make first entries same as scalar for comparison
     xv[0]    = xs    = f();
     yv[0]    = ys    = f();
+    zv[0]    = zs    = zf();
     absxv[0] = absxs = absf();
     absyv[0] = absys = absf();
     // fill the rest with different random values
@@ -53,6 +56,7 @@ public:
     {
       xv[i]    = f();
       yv[i]    = f();  
+      zv[i]    = zf();
       absxv[i] = absf();
       absyv[i] = absf();
     }
@@ -409,6 +413,38 @@ int main ( int /*argc*/, char** /*argv*/ )
     asm volatile ("" : "+x"(timeScVDTAtan2));
     asm volatile ("" : "+x"(timeVcSTDAtan2));
     asm volatile ("" : "+x"(timeVcVDTAtan2));
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    
+    std::cout << "testing asin functions..." << std::endl;
+    
+    // STD scalar asin
+    auto timeScSTDAsin = solve<float>( data, []( const auto & d ) { return std::asin(d.zs); } );
+    std::cout << "Scalar STD asin " << timeScSTDAsin << std::endl;
+    
+    // VDT scalar log
+    auto timeScVDTAsin = solve<float>( data, []( const auto & d ) { return vdt::fast_asinf(d.zs); } );
+    std::cout << "Scalar VDT asin " << timeScVDTAsin << std::endl;
+
+    // STD(Vc) SIMD log
+    auto timeVcSTDAsin = solve<FloatV>( data, []( const auto & d ) { return std::asin(d.zv); } );
+    std::cout << "SIMD   STD asin " << timeVcSTDAsin 
+              << " ( " << timeVcSTDAsin/FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size*timeScSTDAsin/timeVcSTDAsin << " )"
+              << std::endl;
+    
+    // STD(Vc) SIMD log
+    auto timeVcVDTAsin = solve<FloatV>( data, []( const auto & d ) { return fast_asin(d.zv); } );
+    std::cout << "SIMD   VDT asin " << timeVcVDTAsin 
+              << " ( " << timeVcVDTAsin/FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size*timeScVDTAsin/timeVcVDTAsin << " )"
+              << std::endl;
+    
+    // make sure we are not optimized away
+    asm volatile ("" : "+x"(timeScSTDAsin));
+    asm volatile ("" : "+x"(timeScVDTAsin));
+    asm volatile ("" : "+x"(timeVcSTDAsin));
+    asm volatile ("" : "+x"(timeVcVDTAsin));
     
     // ---------------------------------------------------------------------------------------------------------------------
     
