@@ -313,7 +313,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20171030-3" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20170323" )
+            self.__set_tag__(["LHCBCOND"], "cond-20171211" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             self.__set_init_time__(datetime(2015, 12, 13, 12, 8)) # End of fill 4720
 
