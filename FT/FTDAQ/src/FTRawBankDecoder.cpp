@@ -80,6 +80,12 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                              StatusCode::FAILURE);
       }
 
+      if( module > 5 ) {
+        warning() << "Skipping cluster(s) for non-existing module " << module << endmsg;
+        first += nClus;
+        continue;
+      }
+
       std::transform( first, first+nClus,
                       std::back_inserter(clus),
                       [&](short int c) -> LHCb::FTLiteCluster {
