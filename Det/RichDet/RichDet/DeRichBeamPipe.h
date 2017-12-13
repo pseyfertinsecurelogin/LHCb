@@ -241,9 +241,10 @@ private:
     const auto beamx  = ( m_m[0] * beamz ) + m_c[0];
     const auto beamy  = ( m_m[1] * beamz ) + m_c[1];
     const auto beamR2 = ( m_m[2] * beamz ) + m_c[2];
-    const auto dist2  = ( std::pow(beamx-p.x(),2) +
-                          std::pow(beamy-p.y(),2) +
-                          std::pow(beamz-p.z(),2) );
+    const auto dx     = beamx - p.x();
+    const auto dy     = beamy - p.y();
+    const auto dz     = beamz - p.z();
+    const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
     return ( dist2 < beamR2 );
   }
 
@@ -260,10 +261,10 @@ private:
     const auto beamx  = ( m_mSIMD[0] * beamz ) + m_cSIMD[0];
     const auto beamy  = ( m_mSIMD[1] * beamz ) + m_cSIMD[1];
     const auto beamR2 = ( m_mSIMD[2] * beamz ) + m_cSIMD[2];
-    const auto xdiff  = beamx - p.x();
-    const auto ydiff  = beamy - p.y();
-    const auto zdiff  = beamz - p.z();
-    const auto dist2  = ( (xdiff*xdiff) + (ydiff*ydiff) + (zdiff*zdiff) );
+    const auto dx     = beamx - p.x();
+    const auto dy     = beamy - p.y();
+    const auto dz     = beamz - p.z();
+    const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
     return ( dist2 < beamR2 );
   }
 

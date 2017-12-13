@@ -42,6 +42,13 @@ namespace Rich
     /// Interface ID
     DeclareInterfaceID( IParticleProperties, 1, 0 );
 
+  public:
+
+    /// Scalar type to use
+    using ScType = float;
+
+  public:
+
     /** Calculates 'beta' for given particle hypothesis and track momentum
      *
      *  @param ptot    Track segment momentum
@@ -49,7 +56,7 @@ namespace Rich
      *
      *  @return The value of beta
      */
-    virtual double beta( const double ptot,
+    virtual ScType beta( const ScType ptot,
                          const Rich::ParticleIDType id ) const = 0;
 
     /** Calculates the nominal mass for a given particle type
@@ -58,7 +65,7 @@ namespace Rich
      *
      *  @return the nominal mass for the given particle hypothesis
      */
-    virtual double mass( const Rich::ParticleIDType id ) const = 0;
+    virtual ScType mass( const Rich::ParticleIDType id ) const = 0;
 
     /** calculates the nominal mass squared for a given particle hypothesis
      *
@@ -66,7 +73,7 @@ namespace Rich
      *
      *  @return the nominal mass squared for the given particle hypothesis
      */
-    virtual double massSq( const Rich::ParticleIDType id ) const = 0;
+    virtual ScType massSq( const Rich::ParticleIDType id ) const = 0;
 
     /** Calculates the threshold momentum for a given mass hypothesis
      *  in a given radiator
@@ -77,7 +84,7 @@ namespace Rich
      *  @return The momentum threshold value, below which no Cherenkov radiation
      *          can be emitted
      */
-    virtual double thresholdMomentum( const Rich::ParticleIDType id,
+    virtual ScType thresholdMomentum( const Rich::ParticleIDType id,
                                       const Rich::RadiatorType rad ) const = 0;
 
     /** Calculates the threshold momentum for a given mass hypothesis
@@ -89,7 +96,7 @@ namespace Rich
      *  @return The momentum threshold value, below which no Cherenkov radiation
      *          can be emitted
      */
-    virtual double thresholdMomentum( const Rich::ParticleIDType id,
+    virtual ScType thresholdMomentum( const Rich::ParticleIDType id,
                                       const LHCb::RichTrackSegment& trSeg ) const = 0;
 
     /// Vector of the mass hypotheses to be considered

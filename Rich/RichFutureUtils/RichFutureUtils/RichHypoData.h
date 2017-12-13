@@ -50,6 +50,9 @@ namespace Rich
 
     public: // definitions
 
+      /// Data Type
+      using Type = TYPE;
+
       /// Definition of internal data array type
       using DataArray = Rich::ParticleArray<TYPE>;
 

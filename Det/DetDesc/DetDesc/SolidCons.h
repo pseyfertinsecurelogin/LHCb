@@ -199,14 +199,14 @@ public:
   /** inner radius squared at minus Z
    *  @return inner radius squared at minus Z
    */
-  inline double  innerRadiusSqrAtMinusZ () const noexcept
-  { return std::pow(m_cons_innerRadiusMinusZ,2) ; }
+  inline double innerRadiusSqrAtMinusZ () const noexcept
+  { return m_cons_innerRadiusMinusZSq ; }
 
   /** outer radius squared at minus Z
    *  @return outer radius squared at minus Z
    */
-  inline double  outerRadiusSqrAtMinusZ () const noexcept
-  { return std::pow(m_cons_outerRadiusMinusZ,2) ; }
+  inline double outerRadiusSqrAtMinusZ () const noexcept
+  { return m_cons_outerRadiusMinusZSq ; }
 
   /** inner radius at minus Z
    *  @return inner radius at minus Z
@@ -224,13 +224,13 @@ public:
    *  @return inner radius squared at plus Z
    */
   inline double  innerRadiusSqrAtPlusZ  () const noexcept
-  { return std::pow(m_cons_innerRadiusPlusZ,2)  ; }
+  { return m_cons_innerRadiusPlusZSq ; }
 
   /** outer radius squared at plus Z
    *  @return outer radius squared at plus Z
    */
   inline double  outerRadiusSqrAtPlusZ  () const noexcept
-  { return std::pow(m_cons_outerRadiusPlusZ,2)  ; }
+  { return m_cons_outerRadiusPlusZSq ; }
 
   /** inner radius at plus Z
    *  @return inner radius at plus Z
@@ -370,16 +370,21 @@ private:
 
 private:
 
-  double                  m_cons_zHalfLength       ;
-  double                  m_cons_outerRadiusMinusZ ;
-  double                  m_cons_outerRadiusPlusZ  ;
-  double                  m_cons_innerRadiusMinusZ ;
-  double                  m_cons_innerRadiusPlusZ  ;
-  double                  m_cons_startPhiAngle     ;
-  double                  m_cons_deltaPhiAngle     ;
+  double                  m_cons_zHalfLength       {0};
+  double                  m_cons_outerRadiusMinusZ {0};
+  double                  m_cons_outerRadiusPlusZ  {0};
+  double                  m_cons_innerRadiusMinusZ {0};
+  double                  m_cons_innerRadiusPlusZ  {0};
+  double                  m_cons_startPhiAngle     {0};
+  double                  m_cons_deltaPhiAngle     {0};
   ///
-  int                     m_cons_coverModel        ;
-  bool                    m_noPhiGap               ;
+  int                     m_cons_coverModel        {0};
+  bool                    m_noPhiGap               {0};
+  // cache squares
+  double                  m_cons_outerRadiusMinusZSq {0};
+  double                  m_cons_outerRadiusPlusZSq  {0};
+  double                  m_cons_innerRadiusMinusZSq {0};
+  double                  m_cons_innerRadiusPlusZSq  {0};
 
   std::unique_ptr<ISolid> m_cover;
 };

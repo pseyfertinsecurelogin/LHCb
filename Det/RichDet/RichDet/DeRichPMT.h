@@ -155,7 +155,7 @@ private:
 
   bool m_PmtLensFlag{false};
   FType m_PmtLensRoc2{0};
-  FType m_PmtLensMagnificationRatio{0};
+  FType m_PmtLensMagRatio{0};
 
   int m_moduleNum{0}; ///< Module number
   int m_copyNum{0};   ///< Copy number
