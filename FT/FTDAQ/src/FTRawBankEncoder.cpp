@@ -79,13 +79,13 @@ StatusCode FTRawBankEncoder::execute() {
     
     data.push_back( ( id.channel()          << FTRawBank::cellShift ) |
                     ( cluster->fractionBit() << FTRawBank::fractionShift ) |
-                    ( cluster->isLarge()     << FTRawBank::sizeShift )
+                    ( cluster->lastEdge()     << FTRawBank::sizeShift )
                     );
     ++data[0]; // counts the number of clusters (in the header)
     if ( msgLevel( MSG::VERBOSE ) ) {
-      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d code %4.4x",
+      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d lastEdge %1d code %4.4x",
                            bankNumber, sipmNumber, id.channel(), cluster->fraction(),
-                           cluster->isLarge(), data.back() ) << endmsg;
+                           cluster->isLarge(), cluster->lastEdge(), data.back() ) << endmsg;
     }
   }
   

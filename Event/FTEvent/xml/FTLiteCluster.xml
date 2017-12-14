@@ -81,7 +81,7 @@
       </method>
 
       <method name   = "fraction"
-              type   = "double"
+              type   = "float"
               access = "PUBLIC"
               desc   = "returns the fraction of channel"
               const  = "TRUE">
