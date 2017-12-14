@@ -81,7 +81,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       }
 
       if( module > 5 ) {
-        Warning() << "Skipping cluster(s) for non-existing module " << module << endmsg;
+        Warning("Skipping cluster(s) for non-existing module " +
+                std::to_string(module) ).ignore();
         first += nClus;
         continue;
       }
