@@ -13,7 +13,6 @@
   <class name = "IPrintMCDecayTreeTool"       />
   <class name = "Rich::MC::IMCTrackInfoTool"  />
   <class name = "Rich::MC::IMCTruthTool"      />
-  <class name = "Rich::Rec::MC::IMCTruthTool" />
   <class name = "ISiDepositedCharge"          />
   <class name = "ITrackGhostClassification"   />
   <class name = "IVisPrimVertTool"            />
