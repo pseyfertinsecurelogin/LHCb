@@ -1,10 +1,8 @@
+
 //------------------------------------------------------------------------------------
 /** @file IRichMCTruthTool.h
  *
  *  Header file for tool interface : Rich::IMCTruthTool
- *
- *  CVS Log :-
- *  $Id: IRichMCTruthTool.h,v 1.2 2008-03-25 15:49:35 jonrob Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2003-07-31
@@ -32,6 +30,7 @@ namespace LHCb
   class MCParticle;
   class MCRichHit;
   class MCRichDigitSummary;
+  class Track;
 }
 namespace Rich
 {
@@ -62,6 +61,19 @@ namespace Rich
        */
       DeclareInterfaceID( IMCTruthTool, 1, 0 );
 
+      /** Find best MCParticle association for a given reconstructed Track
+       *
+       *  @param track Pointer to a Track
+       *  @param minWeight The minimum association weight to accept for a MCParticle
+       *
+       *  @return Pointer to MCParticle
+       *  @retval NULL  No Monte Carlo association was possible
+       *  @retval !NULL Association was successful
+       */
+      virtual const LHCb::MCParticle *
+      mcParticle ( const LHCb::Track * track,
+                   const double minWeight = 0.5 ) const = 0;
+      
       /** get the MCRichHits associated to a given MCParticle
        *
        *  @param mcp Pointer to an MCParticle
