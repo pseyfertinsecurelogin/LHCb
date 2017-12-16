@@ -542,6 +542,58 @@ void convert_records( TAR& in, const std::string& oname, bool repack=false ) {
     if (error) fs::remove( oname );
 }
 
+void create_cdb(const std::string& base_path, const std::string& oname) {
+    int ofd = open( oname.c_str(),
+                    O_RDWR  | O_CREAT | O_EXCL,
+                    S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+    bool error = ofd < 0;
+    if (error) {
+        std::cerr << " failure to open file : " << errno << " = "
+                  << strerror( errno ) << std::endl;
+        return;
+    }
+    struct cdb_make ocdb;
+    cdb_make_start( &ocdb, ofd );
+
+    fs::path base(base_path);
+    for (auto& entry : boost::make_iterator_range(fs::recursive_directory_iterator(base), {})) {
+        if (fs::is_regular_file(entry.status())) {
+            std::string p = entry.path().string();
+            std::string original_key{p.substr(base_path.size() + 1, p.size())};
+            std::string key{original_key};
+            if (key.compare(0,16,"ConfigTreeNodes/")==0)  key.replace(0,18, "TN" );
+            else if (key.compare(0,16,"PropertyConfigs/")==0)  key.replace(0,18 ,"PC");
+            else if (key.compare(0,8,"Aliases/")==0)           key.replace(0,7,"AL");
+            else {
+                std::cerr << " unrecognized key type " << key << std::endl;
+                error = true;
+                continue;
+            }
+            std::cout <<  " adding    " << original_key << " -> " << key << std::endl;
+
+            // Read the entire file
+            fs::ifstream file(entry.path());
+            std::stringstream ss;
+            ss << file.rdbuf();//read the file
+            file.close();
+            std::string value = ss.str();
+
+            auto val = make_cdb_record( value, 0, std::time(nullptr) );
+            if ( cdb_make_add( &ocdb,
+                               reinterpret_cast<const unsigned char*>( key.data() ),
+                               key.size(), val.data(), val.size() ) != 0 ) {
+                std::cerr << " failure to put key " << key << " : " << errno << " = "
+                     << strerror( errno ) << std::endl;
+                error = true;
+            }
+        }
+    }
+
+    cdb_make_finish( &ocdb );
+    close(ofd);
+    if (error) fs::remove( oname );
+}
+
 namespace po = boost::program_options;
 
 template <typename DB>
@@ -560,26 +612,27 @@ int main(int argc, char* argv[]) {
                        ("list-keys", "list keys")
                        ("list-records", "list keys and records")
                        ("extract-records", "extract records")
+                       ("create-cdb", "create cdb from records")
                        ("convert-to-cdb", "convert to cdb")
-                       ("input-file",  po::value<std::string>()->default_value("config.cdb"),"input file");
                        ("repack-only", "do not reformat records")
+                       ("file",  po::value<std::string>()->default_value("config.cdb"),"file");
     po::positional_options_description p;
-    p.add("input-file", -1);
+    p.add("file", -1);
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
     po::notify(vm);
 
-    std::string fname = vm["input-file"].as<std::string>();
+    std::string fname = vm["file"].as<std::string>();
     std::cerr << "opening " << fname << std::endl;
 
-    if (boost::algorithm::ends_with(fname,".cdb")) {
+    if (vm.count("create-cdb")) {
+        create_cdb(".", fname);
+    } else if (boost::algorithm::ends_with(fname,".cdb")) {
         CDB db(fname) ;
         if (!db.ok()) return 1;
         dispatch(vm,db);
-
-    }
-    if (boost::algorithm::ends_with(fname,".tar")) {
+    } else if (boost::algorithm::ends_with(fname,".tar")) {
         TAR db(fname) ;
         if (!db.ok()) return 1;
         dispatch(vm,db);
