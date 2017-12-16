@@ -23,6 +23,7 @@ Then sequences must be pushed back in the sequencial order.'
      <import name='GaudiKernel/GaudiException' />
      <import name='Kernel/LHCbID' />
      <import name='vector' std='TRUE' />
+     <import name="algorithm" std="TRUE" />
 
      <typedef 
        type = "std::vector&lt; unsigned int &gt; "
@@ -263,6 +264,8 @@ Then sequences must be pushed back in the sequencial order.'
           if( len &gt; 0xFFFFL )
              throw GaudiException( "requested initialize with bank too large HltSelRepRBHits","HltSelRepRBHits",StatusCode::FAILURE );
           m_location = new unsigned int[len];
+          // Initialize the potential padding bytes for reproducibility
+          std::fill_n(m_location, nSeq/2 + 1, 0);
           m_location[0] = 0L;
           // set number of sequences
           m_location[0] += nSeq;

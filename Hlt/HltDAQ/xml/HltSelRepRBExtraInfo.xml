@@ -26,6 +26,7 @@ Info can only be read and stored sequencially.'
      <import name='GaudiKernel/GaudiException' />
      <import name='vector' std='TRUE' />
      <import name='utility' std='TRUE' />
+     <import name="algorithm" std="TRUE" />
 
      <typedef
         type   = 'std::pair&lt; unsigned short,float &gt;'
@@ -366,7 +367,11 @@ Info can only be read and stored sequencially.'
             if( nObj ) len += (nObj-1)/4;
             if( nAllInfo ) len += 1 + (nAllInfo-1)/2 + nAllInfo;
             if( len  &gt; 0xFFFFL )return false;
-            m_location = new unsigned int[len];           
+            m_location = new unsigned int[len];
+            // Initialize the potential padding bytes for reproducibility
+            std::fill_n(m_location, len, 0);
+            // TODO: Make this more efficient by only initializing the padding
+            // bytes. I (RM) don't know which are the padding bytes.
             m_location[0] =   (len &lt;&lt; 16);
             m_location[1] =  0;
             m_infoLoc = 1;
