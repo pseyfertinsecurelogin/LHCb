@@ -163,6 +163,11 @@ StatusCode HltPackedDataDecoder::execute() {
 
   std::vector<int32_t> linkLocationIDs;
 
+  if (m_enableChecksum) {
+    m_checksum->reset();
+    debug() << "Control checksum " << m_checksum->checksum("") << endmsg;
+  }
+
   // Do the actual loading of the objects
   while (!m_buffer.eof()) {
     // Load the metadata

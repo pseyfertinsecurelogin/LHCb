@@ -35,8 +35,8 @@ public:
   void processObject(const T& object, const std::string& key = "");
 
   /// Obtain the current value of a checksum
-  int checksum(const std::string& key = "") const {
-    return m_result.at(key).checksum();
+  int checksum(const std::string& key = "") {
+    return m_result[key].checksum();
   }
 
   /// Obtain the current value of all checksums
@@ -46,6 +46,13 @@ public:
       result.emplace(x.first, x.second.checksum());
     }
     return result;
+  }
+
+  /// Reset the checksums
+  void reset() {
+    for (auto& x: m_result) {
+      x.second.reset(0);
+    }
   }
 
 private:
