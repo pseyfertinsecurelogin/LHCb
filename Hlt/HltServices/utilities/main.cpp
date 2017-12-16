@@ -508,8 +508,7 @@ void extract_records(TAR& db) {
     }
 }
 
-// TODO: add option to 'repack' the content of ConfigTreeNode and PropertyConfig...
-void convert_records( TAR& in, const std::string& oname ) {
+void convert_records( TAR& in, const std::string& oname, bool repack=false ) {
     int ofd = open( oname.c_str(),
                     O_RDWR  | O_CREAT | O_EXCL,
                     S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
@@ -523,8 +522,10 @@ void convert_records( TAR& in, const std::string& oname ) {
         if (key.compare(0,16,"PropertyConfigs/")==0)  key.replace(0,18 ,"PC");
         if (key.compare(0,8,"Aliases/")==0)           key.replace(0,7,"AL");
         auto v = record.value();
-        if      (key.compare(0,2,"TN")==0) { v = convert<ConfigTreeNode>(v); }
-        else if (key.compare(0,2,"PC")==0) { v = convert<PropertyConfig>(v); }
+        if (!repack) {
+            if      (key.compare(0,2,"TN")==0) { v = convert<ConfigTreeNode>(v); }
+            else if (key.compare(0,2,"PC")==0) { v = convert<PropertyConfig>(v); }
+        }
 
         auto val = make_cdb_record( v, record.uid(), record.time() );
         if ( cdb_make_add( &ocdb,
@@ -561,6 +562,7 @@ int main(int argc, char* argv[]) {
                        ("extract-records", "extract records")
                        ("convert-to-cdb", "convert to cdb")
                        ("input-file",  po::value<std::string>()->default_value("config.cdb"),"input file");
+                       ("repack-only", "do not reformat records")
     po::positional_options_description p;
     p.add("input-file", -1);
 
@@ -581,7 +583,9 @@ int main(int argc, char* argv[]) {
         TAR db(fname) ;
         if (!db.ok()) return 1;
         dispatch(vm,db);
-        if (vm.count("convert-to-cdb"))  convert_records(db, fname.substr(0,fname.size()-3)+"cdb" );
+        if (vm.count("convert-to-cdb"))
+            convert_records(db, fname.substr(0,fname.size()-3)+"cdb",
+                            vm.count("repack-only") > 0);
     }
     return 0;
 }
