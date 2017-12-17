@@ -206,7 +206,7 @@ namespace Rich
     /// Get the look up index for a given SIMD x (no range checks)
     inline decltype(auto) xIndex( const SIMDFP & x ) const noexcept
     {
-      return Vc::simd_cast<SIMDIn>( ( x - this->m_minXSIMD ) * this->m_incXinvSIMD );
+      return LHCb::SIMD::simd_cast<SIMDIn>( ( x - this->m_minXSIMD ) * this->m_incXinvSIMD );
     }
 
   public:
@@ -298,7 +298,7 @@ namespace Rich
     /// Get the look up index for a given SIMD x (no range checks)
     inline decltype(auto) xIndex( const SIMDFP & x ) const noexcept
     {
-      return Vc::simd_cast<SIMDIn>( x * this->m_incXinvSIMD );
+      return LHCb::SIMD::simd_cast<SIMDIn>( x * this->m_incXinvSIMD );
     }
 
   public:

@@ -21,14 +21,14 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
 gaudi_add_library(RichUtils
                   src/*.cpp
                   PUBLIC_HEADERS RichUtils
-                  INCLUDE_DIRS Eigen AIDA Boost VDT Kernel/LHCbKernel Event/DAQEvent ${RANGES_V3_INCLUDE_DIR}
+                  INCLUDE_DIRS Vc Eigen AIDA Boost VDT Kernel/LHCbKernel Event/DAQEvent ${RANGES_V3_INCLUDE_DIR}
                   LINK_LIBRARIES Boost VDT DAQEventLib GaudiUtilsLib LHCbKernel)
 
 gaudi_add_dictionary(RichUtils
                      dict/RichUtilsDict.h
                      dict/RichUtilsDict.xml
-                     INCLUDE_DIRS Eigen AIDA Boost
-                     LINK_LIBRARIES Boost DAQEventLib GaudiUtilsLib LHCbKernel RichUtils
+                     INCLUDE_DIRS VDT Vc Eigen AIDA Boost
+                     LINK_LIBRARIES VDT Boost DAQEventLib GaudiUtilsLib LHCbKernel RichUtils
                      OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.

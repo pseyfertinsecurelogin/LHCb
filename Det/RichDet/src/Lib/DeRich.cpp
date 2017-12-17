@@ -400,7 +400,7 @@ DeRich::rayTrace( const Rich::SIMD::Sides & sides,
   
   // merge results2 into the returned results
 
-  const auto fm2 = Vc::simd_cast<SIMDFP::MaskType>(m2);
+  const auto fm2 = LHCb::SIMD::simd_cast<SIMDFP::MaskType>(m2);
   SIMDFP hx(hitPosition.x()), hy(hitPosition.y()), hz(hitPosition.z());
   hx(fm2) = hitPosition2.x();
   hy(fm2) = hitPosition2.y();
