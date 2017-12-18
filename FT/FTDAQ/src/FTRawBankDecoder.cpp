@@ -48,7 +48,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
     if ( msgLevel(MSG::VERBOSE) ) verbose() << "source " << source
                                             << " station " << station << " layer " << layer
-                                            << " quarter " << quarter << " size " << size 
+                                            << " quarter " << quarter << " size " << size
                                             << endmsg;
     if ( bank->version() != 2 &&  bank->version() != 3) {
       error() << "** Unsupported FT bank version " << bank->version()
@@ -97,7 +97,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
             
             if( !cSize2 ){ //next cluster is not last fragment
-              clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },  
+              clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
                                 fraction, 4 );
               
               if ( msgLevel( MSG::VERBOSE ) ) {
@@ -111,8 +111,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               
               unsigned int diff = (channel2 - channel);
               
-              if( UNLIKELY( diff > 128 ) ) { 
-                error()<<"something went terribly wrong here first fragment: " << channel 
+              if( UNLIKELY( diff > 128 ) ) {
+                error()<<"something went terribly wrong here first fragment: " << channel
                        <<" second fragment: "  << channel2 << endmsg;
                 throw GaudiException("There is an inconsistency between Encoder and Decoder!",
                                      "FTRawBankDecoder",
@@ -127,7 +127,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                                   fraction, 0 ); //pseudoSize=0
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
-                  verbose() << format( "first edge cluster %4d frac %3d size %3d code %4.4x", 
+                  verbose() << format( "first edge cluster %4d frac %3d size %3d code %4.4x",
                                        channel, fraction, cSize, c ) << endmsg;
                   
 
@@ -135,7 +135,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 
                 for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
                   // all middle clusters will have same size as the first cluster, so use same fraction 
-                  clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel+i }, 
+                  clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel+i },
                                     fraction, 0 );
                   
                   if ( msgLevel( MSG::VERBOSE ) ) {
@@ -145,15 +145,15 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 }
                 
                 //add the last edge 
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel2 },  
+                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel2 },
                                   fraction2, 0 );
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
-                  verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x", 
+                  verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
                                         channel2, fraction2, cSize2, c2 ) << endmsg;
                 }
               }
-              else{//big cluster size upto size 8            
+              else{//big cluster size upto size 8
                 unsigned int firstChan  =  channel - int( (m_clusterMaxWidth-1)/2 );
                 unsigned int widthClus  =  2 * diff - 1 + fraction2  ;
                 
@@ -173,14 +173,14 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             }//last edge foud
           }//not the last cluster
           else{ //last cluster, so nothing we can do
-            clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },  
+            clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
                               fraction, 4 );
             
             if ( msgLevel( MSG::VERBOSE ) ) {
               verbose() << format( "size<=4  channel %4d frac %3d size %3d code %4.4x",
                                    channel, fraction, cSize, c ) << endmsg;
             }
-          }//last cluster added  
+          }//last cluster added
         }//end loop over clusters in one sipm
       }//bank version == 3
       else{
