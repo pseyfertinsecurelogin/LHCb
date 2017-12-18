@@ -52,7 +52,7 @@ StatusCode FTRawBankEncoder::execute() {
 
   for ( const auto& cluster : *clusters ) {
 
-    if(cluster->isLarge() > 1)continue;
+    if(cluster->isLarge() > 1) continue;
         
     LHCb::FTChannelID id = cluster->channelID();
 

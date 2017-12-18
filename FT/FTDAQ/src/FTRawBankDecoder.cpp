@@ -111,25 +111,26 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               
               unsigned int diff = (channel2 - channel);
               
+              if( UNLIKELY( diff > 128 ) ) { 
+                error()<<"something went terribly wrong here first fragment: " << channel 
+                       <<" second fragment: "  << channel2 << endmsg;
+                throw GaudiException("There is an inconsistency between Encoder and Decoder!",
+                                     "FTRawBankDecoder",
+                                     StatusCode::FAILURE);
+              }
               // fragemted clusters, size > 2*max size
               // only edges were saved, add middles now 
               if(diff  > m_clusterMaxWidth){
                 
                 //add the first edge cluster
                 clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
-                                  fraction, 0 );
+                                  fraction, 0 ); //pseudoSize=0
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
                   verbose() << format( "first edge cluster %4d frac %3d size %3d code %4.4x", 
                                        channel, fraction, cSize, c ) << endmsg;
                   
-                  if(diff>128) {
-                    error()<<"something went terribly wrong here first fragment: " << channel 
-                           <<" second fragment: "  << channel2 << endmsg;
-                    throw GaudiException("Something is wrong with raw bank parameters!",
-                                         "FTRawBankDecoder",
-                                         StatusCode::FAILURE);
-                  }
+
                 }
                 
                 for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
@@ -143,7 +144,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                   }
                 }
                 
-                //add the second edge cluster
+                //add the last edge 
                 clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel2 },  
                                   fraction2, 0 );
                 
@@ -165,7 +166,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
                   verbose() << format( "combined cluster %4d frac %3d size %3d code %4.4x", 
-                                     channel, fraction, cSize, c ) << endmsg;
+                                       channel, fraction, cSize, c ) << endmsg;
                 }
               }//end if adjacent clusters
               ++it;
@@ -183,22 +184,22 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         }//end loop over clusters in one sipm
       }//bank version == 3
       else{
-      //normal clustering without any modification to clusters
+      //normal clustering without any modification to clusters, should work for encoder=2
       std::transform( first, first+nClus,
                       std::back_inserter(clus),
                       [&](short int c) -> LHCb::FTLiteCluster {
                         unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
                           int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
                           int cSize        = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-
+                          
                           if ( msgLevel( MSG::VERBOSE ) ) {
                             verbose() << format( " channel %4d frac %3d size %3d code %4.4x",
                                                  channel, fraction, cSize, c ) << endmsg;
                           }
-        
+                          
                           return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
                               fraction, cSize };
-                        } );
+                      } );
       }
       first += nClus;
     }//end loop over sipms
@@ -207,7 +208,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   // Sort clusters
   std::sort(clus.begin(), clus.end(),
             [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){ return lhs.channelID() < rhs.channelID(); });
-
+  
   return clus;
 }
 
