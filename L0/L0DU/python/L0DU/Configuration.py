@@ -501,7 +501,7 @@ class L0Conf(LHCbConfigurableUser) :
             DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/MuonBCSU"]   = "L0MuonCandidatesFromRaw/"+L0MuonFromRawAlgName+rootintes
         DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/Calo"]       = "L0CaloCandidatesFromRaw/"+L0CaloFromRawAlgName+rootintes
         DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/FullCalo"]   = "L0CaloCandidatesFromRaw/"+L0CaloFromRawAlgName+rootintes
-        DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/L0DUReport"] = "L0DUFromRawAlg/"+L0DUFromRawAlgName+rootintes
+        DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/L0DUReport"] = "L0DUDecoder/"+L0DUFromRawAlgName+rootintes
 
     def __apply_configuration__(self):
         """
