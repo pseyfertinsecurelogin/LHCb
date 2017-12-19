@@ -1,7 +1,6 @@
 // Include files
 #include "GaudiKernel/Property.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ThreadGaudi.h"
 
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
