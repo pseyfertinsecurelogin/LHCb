@@ -44,13 +44,14 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             algoName = m.group(1)
             # take care of the case where several algos have same name (problem being that names are cut when too long)
             if (algoName not in counters):
-                counters[algoName] = []
+                counters[algoName] = {}
             # loop through counters (note +1 as we skip header lines of the block)
             for i in range(int(m.group(2))):
                 # note the horrible hack to handle the fact that /Event/ is sometimes omited at the beginning of paths
                 # on top master and future branch behave differently on that, so in order to keep a common reference,
                 # we have to remove /Event/
-                counters[algoName].append([v.strip() for v in lines[n+i+1].strip().replace('/Event/','').split('|') if v.strip() != ""])
+                items = [v.strip() for v in lines[n+i+1].strip().replace('/Event/','').split('|') if v.strip() != ""]
+                counters[algoName][items[0]] = items[1:]
             n += i+1
         return counters
 
@@ -60,20 +61,20 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if (ref == value):
             return True
         sensibility = 0.0001
-        if len(ref) != 7:
+        if len(ref) != 6:
             # special case where no mean/max are given and only 6 columns are present
             # these lines look like :
-            #  |*"Accepted events"  | 10 | 10 |(  100.000 +- 10.0000  )%| ------- | ------- |
-            if len(ref) == 6 and ref[-1] == '-------':
+            #  | 10 | 10 |(  100.000 +- 10.0000  )%| ------- | ------- |
+            if len(ref) == 5 and ref[-1] == '-------':
                 # check only number and sum
-                if ref[1] != value[1]: return False
-                if _floatDiffer(ref[2], value[2], sensibility): return False
+                if ref[0] != value[0]: return False
+                if _floatDiffer(ref[1], value[1], sensibility): return False
                 return True
             else:
                 return False
         # more in depth check, parsing numbers and comparing with given sensibility
-        refName, refNb, refSum, refMean, refRMS, refMin, refMax = ref
-        valName, valNb, valSum, valMean, valRMS, valMin, valMax = value
+        refNb, refSum, refMean, refRMS, refMin, refMax = ref
+        valNb, valSum, valMean, valRMS, valMin, valMax = value
         if refNb != valNb: return False
         if _floatDiffer(refSum, valSum, sensibility): return False
         if _floatDiffer(refMean, valMean, sensibility): return False
@@ -81,6 +82,38 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if _floatDiffer(refMin, valMin, sensibility): return False
         if _floatDiffer(refMax, valMax, sensibility): return False
         return True
+
+    def _compareCutSets(self, refCounters, stdoutCounters):
+        """
+        Compares 2 set of counter names that may be incomplete and thus cut befoer the end !
+        outputs a tuple containing:
+            - the set of counters in ref and not in stdout, may be empty
+            - the set of counters in stdout and not in ref, may be empty
+            - a list of matching counters with pairs containing the name as seen in ref and the name as seen in stdout
+        """
+        onlyref = set([])
+        donestdout = set([])
+        counterPairs = []
+        # go through names in ref and try to find them in stdout
+        for refName in refCounters:
+            # try full name first
+            if refName in stdoutCounters:
+                counterPairs.append((refName, refName))
+                donestdout.add(refName)
+                continue
+            # suppose one of the 2 names was cut
+            found = False
+            for stdoutName in stdoutCounters:
+                if stdoutName.startswith(refName) or refName.startswith(stdoutName):
+                    counterPairs.append((refName, stdoutName))
+                    donestdout.add(stdoutName)
+                    found = True
+                    break
+            if found:
+                continue
+            else:
+                onlyref.add(refName)
+        return onlyref, stdoutCounters-donestdout, counterPairs
 
     def _compareCounters(self, stdout, causes, result, counter_preproc):
         """
@@ -113,15 +146,18 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             return
         msg = ''
         for algoName in refAlgoNames:
-            if len(refCounters[algoName]) != len(newCounters[algoName]):
-                msg += '    Different number of counters for algo %s\n' % algoName
-                msg += '      Expected to check %d, found %d of them\n' % (len(refCounters[algoName]), len(newCounters[algoName]))
-                msg += '      Reference list : %s\n' % str([a[0] for a in refCounters[algoName]])
-                msg += '      New list : %s\n' % str([a[0] for a in newCounters[algoName]])
+            onlyref, onlystdout, counterPairs = self._compareCutSets(set(refCounters[algoName]), set(newCounters[algoName]))
+            if onlyref or onlystdout:
+                msg += '    Different set of counters for algo %s\n' % algoName
+                msg += '      Ref has %d counters, found %d of them in stdout\n' % (len(refCounters[algoName]), len(newCounters[algoName]))
+                if onlyref:
+                    msg += '      Counters in ref and not in stdout : %s\n' % str(sorted(list(onlyref)))
+                if onlystdout:
+                    msg += '      Counters in stdout and not in ref : %s\n' % str(sorted(list(onlystdout)))
                 continue
-            for n in range(len(refCounters[algoName])):
-                if not self._compareCounterLine(refCounters[algoName][n], newCounters[algoName][n]):
-                    msg += '(%s ref) %s\n(%s new) %s\n' % (algoName, ' | '.join(refCounters[algoName][n]), algoName, ' | '.join(newCounters[algoName][n]))
+            for counterNameRef, counterNameStdout in counterPairs:
+                if not self._compareCounterLine(refCounters[algoName][counterNameRef], newCounters[algoName][counterNameStdout]):
+                    msg += '(%s ref) %s\n(%s new) %s\n' % (algoName, ' | '.join([counterNameRef]+refCounters[algoName][counterNameRef]), algoName, ' | '.join([counterNameStdout]+newCounters[algoName][counterNameStdout]))
         if msg:
             causes.append("Wrong Counters")
             if type(result) == dict:
