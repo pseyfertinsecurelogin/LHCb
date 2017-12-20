@@ -211,6 +211,9 @@ StatusCode DeRichPMT::getPMTParameters()
   // Default initialise some DePD base parameters
   setPmtIsGrandFlag( PmtIsGrand() );
 
+  // cache to local matrix
+  m_toLocM = geometry()->toLocalMatrix();
+
   return sc;
 }
 
@@ -300,7 +303,7 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
 
   // for now assume negligible refraction effect at the QW.
 
-  if ( photoCathodeSide )
+  if ( UNLIKELY(photoCathodeSide) )
   {
     const Gaudi::XYZPoint aPhCathHit( aLocalHit.x(), aLocalHit.y(), zPh );
     detectPoint = ( geometry()->toGlobalMatrix() * 
