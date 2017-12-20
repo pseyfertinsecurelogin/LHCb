@@ -10,7 +10,7 @@ def _floatDiffer(ref, val, sensibility):
         return abs(val) > sensibility
     else:
         return abs(ref-val)/max(abs(ref),abs(val)) > sensibility
-        
+
 class LHCbTest(GaudiTesting.QMTTest.QMTTest):
     '''Extension of the original QMTTest of Gaudi adding checking of the counters'''
 
@@ -21,7 +21,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         super(LHCbTest, self).validateWithReference(stdout, stderr, result, causes, preproc)
         # check the counters
         self._compareCounters(stdout, causes, result, counter_preproc)
-        
+
     def _extractCounters(self, s, counter_preproc=None):
         """
         Extract all counter lines from a string containing log lines.
@@ -60,6 +60,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         # rough check
         if (ref == value):
             return True
+        if len(ref) != len(value):
+            return False
         sensibility = 0.0001
         if len(ref) != 6:
             # special case where no mean/max are given and only 6 columns are present
@@ -164,4 +166,3 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 result["CountersMismatch"]=msg
             else:
                 result["CountersMismatch"]=result.Quote(msg)
-
