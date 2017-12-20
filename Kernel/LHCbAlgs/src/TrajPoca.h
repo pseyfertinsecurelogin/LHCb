@@ -21,16 +21,13 @@
  *  @author Steve Schaffner (babar implementation)
  *  @author Edwin Bos, Jeroen van Tilburg, Eduardo Rodrigues
  *  @date   2005-11-23
- */
+ **/
 
 class TrajPoca : public extends<GaudiTool,ITrajPoca> {
-
 public:
 
   /// Default constructor
-  TrajPoca( const std::string& type,
-            const std::string& name,
-            const IInterface* parent );
+  using extends<GaudiTool,ITrajPoca>::extends;
 
   /// Find points along trajectories at which the distance between the
   /// trajectories is at its minimum. The precision parameter is the desired
@@ -53,18 +50,6 @@ public:
                        double precision ) const override;
 
 private:
-
-  struct cache_t {
-    Gaudi::XYZPoint p1, p2;
-    Gaudi::XYZVector dp1dmu1, dp2dmu2;
-    Gaudi::XYZVector d2p1dmu12, d2p2dmu22;
-  };
-
-  enum step_status_t { ok = 0, parallel, nearly_parallel, beyond_maxdist };
-
-  step_status_t stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, RestrictRange range1,
-                                const LHCb::Trajectory& traj2, double& mu2, RestrictRange range2,
-                                double precision, cache_t& cache, double maxExtrapTolerance, double maxDist ) const;
 
   // jobOptions
   Gaudi::Property<int> m_maxnOscillStep { this,  "MaxnOscillStep", 5 };
