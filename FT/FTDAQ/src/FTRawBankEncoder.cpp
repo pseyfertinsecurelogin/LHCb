@@ -22,16 +22,6 @@ constexpr static int s_nbSipmPerTELL40 = FTRawBank::NbSiPMPerTELL40;
 DECLARE_ALGORITHM_FACTORY( FTRawBankEncoder )
 
 //=============================================================================
-// Initialization
-//=============================================================================
-StatusCode FTRawBankEncoder::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-
-  return StatusCode::SUCCESS;
-}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode FTRawBankEncoder::execute() {
@@ -120,13 +110,3 @@ StatusCode FTRawBankEncoder::execute() {
   }
   return StatusCode::SUCCESS;
 }
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode FTRawBankEncoder::finalize() {
-
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
-}
-
-//=============================================================================

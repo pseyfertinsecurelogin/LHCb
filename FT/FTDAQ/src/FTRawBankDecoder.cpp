@@ -83,6 +83,13 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                              StatusCode::FAILURE);
       }
       
+      if( module > 5 ){
+        Warning("Skipping cluster(s) for non-existing module " +
+                std::to_string(module) ).ignore();
+        first += nClus;
+        continue;
+      }
+      
       if(bank->version() == 3){
         auto it = first;
         for( ;  it< first+nClus;++it ){

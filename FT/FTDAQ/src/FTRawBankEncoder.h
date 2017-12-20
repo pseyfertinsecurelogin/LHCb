@@ -20,9 +20,7 @@ public:
   //FTRawBankEncoder( const std::string& name, ISvcLocator* pSvcLocator );
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
 
 private:
   Gaudi::Property<std::string> m_inputLocation  {this, "InputLocation"  , LHCb::FTClusterLocation::Default };
