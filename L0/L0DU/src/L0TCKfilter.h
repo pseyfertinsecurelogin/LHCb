@@ -17,11 +17,7 @@ public:
   /// Standard constructor
   L0TCKfilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0TCKfilter( ); ///< Destructor
-
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
 

@@ -1,4 +1,3 @@
-// $Id: L0Filter.h,v 1.6 2010-05-26 10:46:21 odescham Exp $
 #ifndef L0FILTER_H
 #define L0FILTER_H 1
 
@@ -52,8 +51,6 @@ class L0Filter : public L0AlgBase {
 public:
   /// Standard constructor
   L0Filter( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~L0Filter( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

@@ -1,4 +1,3 @@
-// $Id: FastL0DUFilter.h,v 1.1 2008-12-08 18:03:28 odescham Exp $
 #ifndef FASTL0DUFILTER_H
 #define FASTL0DUFILTER_H 1
 
@@ -19,13 +18,9 @@ public:
   /// Standard constructor
   FastL0DUFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~FastL0DUFilter( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
-
-protected:
 
 private:
   int m_source;
@@ -38,8 +33,6 @@ private:
   bool m_useDecInBank;
   unsigned long m_count;
   unsigned long m_sel;
-
-
 
 };
 #endif // FASTL0DUFILTER_H

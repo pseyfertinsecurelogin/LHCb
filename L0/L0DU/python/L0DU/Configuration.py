@@ -152,7 +152,7 @@ class L0Conf(LHCbConfigurableUser) :
         # L0Calo, L0Muon and L0DU decoding algorithms
         l0calo = decodeL0Calo()
         l0muon = decodeL0Muon()
-        l0du   = decodeL0DU()
+        l0du   = decodeL0DU(WriteOnTES = writeOnTes)
         
         # Write on TES
         if writeOnTes is not None:     
@@ -301,8 +301,8 @@ class L0Conf(LHCbConfigurableUser) :
 
         if self.getProp("ReplayL0DU"):
             # Decode the l0du to produce the processor data (input to simulation)
-            decoding = decodeL0DU()
-            decoding.WriteProcData = True 
+            # Do not write the L0DU report 
+            decoding = decodeL0DU( WriteProcData = True, WriteOnTES = False)
             decoding.ProcessorDataLocation  = "Trig/L0/L0DUData"
             # Emulate the l0du from the processor data
             emulation = emulateL0DU()        
@@ -408,13 +408,6 @@ class L0Conf(LHCbConfigurableUser) :
         if self.getProp("FastL0DUDecoding"):
             #log.info("Using Fast decoding for L0DU (rootInTES: %s)"%(rootintes))
             l0du   = decodeL0DU(rootintes)
-            from Configurables import  L0DUDecoder
-            l0du.addTool(L0DUDecoder,name = "L0DUDecoder")
-            l0du.L0DUDecoder.FillDataMap         = False
-            l0du.L0DUDecoder.EncodeProcessorData = False
-            l0du.L0DUDecoder.Emulate             = False
-            l0du.L0DUDecoder.StatusOnTES         = False
-            l0du.WriteProcData                   = False
 
         # Ensure that TCK is recognized when decoding the L0DU
         if self.getProp("EnsureKnownTCK"):
@@ -508,7 +501,7 @@ class L0Conf(LHCbConfigurableUser) :
             DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/MuonBCSU"]   = "L0MuonCandidatesFromRaw/"+L0MuonFromRawAlgName+rootintes
         DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/Calo"]       = "L0CaloCandidatesFromRaw/"+L0CaloFromRawAlgName+rootintes
         DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/FullCalo"]   = "L0CaloCandidatesFromRaw/"+L0CaloFromRawAlgName+rootintes
-        DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/L0DUReport"] = "L0DUFromRawAlg/"+L0DUFromRawAlgName+rootintes
+        DataOnDemandSvc().AlgMap[rootintes+"Trig/L0/L0DUReport"] = "L0DUDecoder/"+L0DUFromRawAlgName+rootintes
 
     def __apply_configuration__(self):
         """
@@ -560,8 +553,7 @@ class L0Conf(LHCbConfigurableUser) :
             single = L0DUConfigProvider('ToolSvc.L0DUConfig')
             for p,v in orig.getValuedProperties().items() : setattr(single,p,v)
             single.TCK = L0TCK
-            from Configurables import L0DUDecoder, L0DUFromRawAlg
-            l0du   = decodeL0DU()
+            l0du = decodeL0DU()
             l0du.L0DUConfigProviderType = 'L0DUConfigProvider'
             from Configurables import L0DUAlg
             L0DUAlg('L0DU').L0DUConfigProviderType = 'L0DUConfigProvider'

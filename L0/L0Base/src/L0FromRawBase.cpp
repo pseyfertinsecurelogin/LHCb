@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "Event/RawEvent.h"
@@ -17,15 +17,10 @@
 //=============================================================================
 L0FromRawBase::L0FromRawBase( const std::string& name,
                               ISvcLocator* pSvcLocator)
-  : Decoder::AlgBase ( name , pSvcLocator ),
-    m_statusOnTES  ( true )
+: Decoder::AlgBase ( name , pSvcLocator )
 {
   m_rawEventLocations= {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default };
   initRawEventSearch();
-  
-  declareProperty("WriteProcData"  , m_writeProcData   = false);
-  declareProperty("WriteOnTES"  , m_writeOnTES   = true);
-  declareProperty("L0Context"   , m_l0context   = "");
   m_useRootInTES = IgnoreRootInTES;
 }
 //=============================================================================
@@ -33,30 +28,22 @@ L0FromRawBase::L0FromRawBase( const std::string& name,
 //=============================================================================
 StatusCode L0FromRawBase::selectRawEventLocation(std::string &location)
 {
-  
-  for (std::vector<std::string>::iterator it_rawEventLocations = m_rawEventLocations.begin(); 
-       it_rawEventLocations < m_rawEventLocations.end(); 
-       ++it_rawEventLocations) {
 
-    if (exist<LHCb::RawEvent>( *it_rawEventLocations , IgnoreRootInTES )) {
+  for (const auto & loc : m_rawEventLocations) {
+    if (exist<LHCb::RawEvent>( loc, IgnoreRootInTES )) {
       m_useRootInTES = IgnoreRootInTES;
-      location = *it_rawEventLocations;
+      location = loc;
       break;
     }
-
-    if (exist<LHCb::RawEvent>( *it_rawEventLocations , UseRootInTES )) {
+    if (exist<LHCb::RawEvent>( loc , UseRootInTES )) {
       m_useRootInTES = UseRootInTES;
-      location = *it_rawEventLocations;
+      location = loc;
       break;
     }
-
   }
 
   m_statusOnTES = (location==LHCb::RawEventLocation::Default);
 
-  if (location.empty()) { 
-    return Error("No valid raw event location found",StatusCode::FAILURE,50);
-  }
-
-  return StatusCode::SUCCESS;
+  return location.empty() ? Error("No valid raw event location found",StatusCode::FAILURE,50)
+                          : StatusCode::SUCCESS;
 }

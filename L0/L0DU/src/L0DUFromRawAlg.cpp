@@ -61,7 +61,7 @@ StatusCode L0DUFromRawAlg::initialize() {
     else if ( UNLIKELY (msgLevel(MSG::DEBUG) ) )
       debug() << "Propagate rawEventLocation to decoder tool" << Gaudi::Utils::toString(rawEventLocations())  << endmsg;
 
-    if ( m_fromRaw->_setProperty("StatusOnTES",Gaudi::Utils::toString(m_statusOnTES)).isFailure() )
+    if ( m_fromRaw->_setProperty("StatusOnTES",Gaudi::Utils::toString(statusOnTES())).isFailure() )
       return Error("Unable to set StatusOnTES in L0DUFromRawTool",StatusCode::SUCCESS,50);
   }
   return StatusCode::SUCCESS;
@@ -79,7 +79,7 @@ StatusCode L0DUFromRawAlg::execute() {
   }
 
   // L0DUReport on TES
-  if( m_writeOnTES ){
+  if( writeOnTES() ){
     // put the report and processor data on TES
     LHCb::L0DUReport* report = new LHCb::L0DUReport( m_fromRaw->report() );
     put (report , dataLocation( m_L0DUReportLocation) , IgnoreRootInTES);
@@ -89,10 +89,10 @@ StatusCode L0DUFromRawAlg::execute() {
 
   // Clone Processor Data and put it on TES
   // WARNING : PROCESSOR DATA ARE NOT CONTEXT DEPENDANT
-  if( m_writeProcData) {
+  if( writeProcData() ) {
     LHCb::L0ProcessorDatas* datas = new LHCb::L0ProcessorDatas();
     put (datas  , m_procDataLocation , IgnoreRootInTES);
-    for(const auto& it : * m_fromRaw->L0ProcessorDatas() ) {
+    for(const auto& it : *m_fromRaw->L0ProcessorDatas() ) {
       datas->insert (new LHCb::L0ProcessorData( *it ));
     }
   }

@@ -30,12 +30,13 @@ public:
 
 private:
 
-  std::string m_configName;
-  std::string m_configType;
-
   IL0DUConfigProvider*   m_confTool = nullptr;
   IL0CondDBProvider*     m_conddb   = nullptr;
-  mutable std::atomic<LHCb::L0DUConfig*> m_config = { nullptr };
-  bool m_ensureKnownTCK = false;
+  mutable std::atomic<const LHCb::L0DUConfig*> m_config = { nullptr };
+
+  Gaudi::Property<bool> m_ensureKnownTCK   { this, "EnsureKnownTCK", false };
+  Gaudi::Property<std::string> m_configName{ this, "L0DUConfigProviderName", "L0DUConfig" };
+  Gaudi::Property<std::string> m_configType{ this, "L0DUConfigProviderType", "L0DUMultiConfigProvider" };
+
 };
 #endif // L0DUFROMRAWHLT1TOOL_H

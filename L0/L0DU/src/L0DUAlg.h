@@ -26,11 +26,8 @@ class L0DUAlg : public L0AlgBase {
 public:
   /// Standard constructor
   L0DUAlg( const std::string& name, ISvcLocator* pSvcLocator );
-  virtual ~L0DUAlg( ); ///< Destructor
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
   // I/O Locations

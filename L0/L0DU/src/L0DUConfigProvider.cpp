@@ -1,7 +1,8 @@
-#include "boost/assign/list_of.hpp"
+#include <numeric>
 // from Gaudi
 #include "GaudiKernel/StateMachine.h"
 #include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/STLExtensions.h"
 
 // local
 #include "L0DUConfigProvider.h"
@@ -21,27 +22,59 @@
 DECLARE_COMPONENT( L0DUConfigProvider )
 
 namespace {
-  static const std::vector<std::string> s_dataFlags =
-    (boost::assign::list_of(std::string("name")),"data","operator");
-  static const std::vector<std::string> s_condFlags =
-    (boost::assign::list_of(std::string("name")),"data","comparator","threshold","index","reported","bx");
-  static const std::vector<std::string> s_chanFlags =
-    (boost::assign::list_of(std::string("name")),"condition","rate","enable","disable","mask","index");
-  static const std::vector<std::string> s_trigFlags =
-    (boost::assign::list_of(std::string("name")),"channel","index","type");
+  static const std::vector<std::string> s_dataFlags = { "name", "data","operator" };
+  static const std::vector<std::string> s_condFlags = { "name", "data","comparator","threshold","index","reported","bx" };
+  static const std::vector<std::string> s_chanFlags = { "name", "condition", "rate", "enable","disable","mask","index" };
+  static const std::vector<std::string> s_trigFlags = { "name", "channel", "index", "type" };
   // define the allowed operator and comparators
-  static const std::vector<std::string> s_comparators=  (boost::assign::list_of( std::string(">") ),"<","==","!=");
+  static const std::vector<std::string> s_comparators = { ">", "<", "==", "!=" };
   // pair(operator,dimension)
   static const std::vector<std::pair<std::string, unsigned int> >
-  s_operators = boost::assign::list_of(std::make_pair("+", 2))
-    (std::make_pair("-", 2))
-    (std::make_pair("&", 2))
-    (std::make_pair("^", 2));
+  s_operators = { std::make_pair("+", 2), std::make_pair("-", 2),
+                  std::make_pair("&", 2), std::make_pair("^", 2) };
   // index of the predefined triggers
-  static const std::map<std::string,int> s_tIndices = boost::assign::map_list_of(std::string("L0Ecal"), 0)
-                                                                                (std::string("L0Hcal"), 1)
-                                                                                (std::string("L0Muon"), 2)
-                                                                                (std::string("Other"),  3);
+  static const std::map<std::string,int> s_tIndices = { { std::string("L0Ecal"), 0 },
+                                                        { std::string("L0Hcal"), 1 },
+                                                        { std::string("L0Muon"), 2 },
+                                                        { std::string("Other"),  3 } };
+
+   // Try to find, in the Haystack, the Needle - ignore case
+  bool contains_ci(boost::string_ref haystack, boost::string_ref needle)
+  {
+     auto it = std::search( begin(haystack), end(haystack),
+                            begin(needle),   end(needle),
+                 [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+     );
+     return it != end(haystack);
+  }
+
+  bool icompare(std::string const& a, std::string const& b)
+  {
+      return a.size()==b.size() &&
+             std::equal(b.begin(), b.end(), a.begin(),
+                        [](char ch1, char ch2)
+                        { return std::toupper(ch1) == std::toupper(ch2); });
+  }
+
+  std::vector<std::string>
+  triggerNameFromData( const std::vector<std::string>& dataList ){
+    std::vector<std::string> name;
+    // The actual trigger->data association definition
+    // 1st pass for the main trigger : L0Muon, L0Ecal, L0Hcal
+    for(const auto& id : dataList) {
+      auto id_matches = [&id](const char* cs) { return id.compare(0,4,cs) == 0; };
+      if (id_matches("Muon") || id_matches("DiMu") ){
+        name.push_back( "L0Muon" ) ;
+      } else if( id_matches("Elec") || id_matches("Phot") || id_matches("Loca") || id_matches("Glob") ){
+        name.push_back( "L0Ecal" );
+      } else if( id_matches("Hadr") ){
+        name.push_back( "L0Hcal" );
+      }
+    }
+    if( name.empty() ) name.push_back( "Other" );
+    return name;
+  }
+
 }
 //=============================================================================
 // Standard constructor, initializes variables
@@ -49,10 +82,8 @@ namespace {
 L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
                             const std::string& name,
                             const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+: base_class ( type, name , parent )
 {
-  declareInterface<IL0DUConfigProvider>(this);
-
   declareProperty( "constData"               , m_constData  )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
   declareProperty( "Data"                    , m_data       )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
   declareProperty( "Conditions"              , m_conditions )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
@@ -69,7 +100,7 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
   declareProperty( "FullDescription"         , m_detail  = false)->declareUpdateHandler(&L0DUConfigProvider::handler,this);
   // TCK from name
   int idx = name.find_last_of(".")+1;
-  std::string nam = name.substr(idx,std::string::npos);
+  std::string nam = name.substr(idx);
   if ( (nam == LHCb::L0DUTemplateConfig::Name) | (nam == "L0DUConfig")) {
       m_template = true;
   } else {
@@ -77,10 +108,8 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
       nam = (index != std::string::npos ) ? nam.substr( index ) : "0x0000";
   }
 
-
   declareProperty( "TCK"                     , m_tck  = m_template ? format("0x%04X" , LHCb::L0DUTemplateConfig::TCKValue )
                    : nam )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
-
 
  // expert usage
   declareProperty("ForceConditionOrdering" , m_forceOrder = false)->declareUpdateHandler(&L0DUConfigProvider::handler,this);
@@ -90,10 +119,6 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
     m_detail = true;
     m_check = true;
   }
-
-  // The BXs the firmware can use in the algorithm
-  m_knownBXs.push_back(0);
-  m_knownBXs.push_back(-1);
 }
 
 
@@ -105,7 +130,7 @@ StatusCode L0DUConfigProvider::finalize(){
   info() <<  "--------------- TCK = " << format("0x%04X" , m_tckopts) << "------------------"<<endmsg;
   configChecker();
   reset();
-  return GaudiTool::finalize();
+  return base_class::finalize();
 }
 
 //=============================================================================
@@ -113,12 +138,11 @@ StatusCode L0DUConfigProvider::finalize(){
 //=============================================================================
 StatusCode L0DUConfigProvider::initialize(){
   if ( msgLevel(MSG::DEBUG) ) debug() << "Initialize L0DUConfigProvider" << endmsg;
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if(sc.isFailure())return sc;
 
   //get condDB tool
   m_condDB = tool<IL0CondDBProvider>("L0CondDBProvider");
-
   return update();
 }
 
@@ -126,7 +150,7 @@ void L0DUConfigProvider::handler(Property& ) {
     if (!m_template && FSMState() >= Gaudi::StateMachine::INITIALIZED ) {
         // on-the-fly update of properties only allowed for template!
         error() << "only template L0DUConfig can be updated after  Initialize has been called" << endmsg;
-        throw GaudiException("L0DUConfig: update of properties only allowd for template","",StatusCode::FAILURE);
+        throw GaudiException("L0DUConfig: update of properties only allowed for template","",StatusCode::FAILURE);
     }
     m_uptodate=false;
 }
@@ -146,7 +170,6 @@ void L0DUConfigProvider::reset() {
   m_pData = 0;
   m_cData = 0;
 
-
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Deleting " <<  m_conditionsMap.size() << " L0DUElementaryConditions* " << endmsg;
   for(auto& i : m_conditionsMap) delete i.second;
@@ -157,35 +180,20 @@ void L0DUConfigProvider::reset() {
   for(auto& i : m_channelsMap) delete i.second;
   m_channelsMap.clear();
 
-
-  //delete m_config;
-  for(auto it = m_configs.begin();it!=m_configs.end();++it){
-    LHCb::L0DUConfigs* configs = it->second;
-    if( !configs ) continue;
-    configs->release();
-  }
   m_config = nullptr;
   m_configs.clear();
 }
 
 StatusCode L0DUConfigProvider::update() {
   int index = m_tck.rfind("0x") + 2 ;
-  std::string tck = m_tck.substr( index, m_tck.length() );
-  std::istringstream is( tck.c_str() );
-  is >> std::hex >> m_tckopts  ;
+  m_tckopts = std::stoi(m_tck.substr(index),nullptr,16);
 
   // init
-  m_condOrder.clear();
-  m_condMax.clear();
   int num = L0DUBase::NumberOf::Data + L0DUBase::NumberOf::Compounds; // incl. BCID
-  m_condOrder.reserve( num );
-  for(int i=0;i<num;++i){
-    std::vector<LHCb::L0DUElementaryCondition*> temp;
-    m_condOrder.push_back(temp);
-    m_condMax.push_back( 0 );
-  }
-
-
+  m_condOrder.clear();
+  m_condOrder.resize(num);
+  m_condMax.clear();
+  m_condMax.resize(num,0);
 
   info() <<  "--------------- TCK = " << format("0x%04X" , m_tckopts) << "------------------"<<endmsg;
 
@@ -196,7 +204,7 @@ StatusCode L0DUConfigProvider::update() {
   //=====================================
   if(m_def == "")m_def = "No Description";
   if(m_template)m_def += " (L0DUConfig.Template)";
-  else if(m_channels.size()   == 0  || m_conditions.size() == 0) {
+  else if(m_channels.empty() || m_conditions.empty() ) {
     Warning("Configuration (TCK = " + format("0x%04X" , m_tckopts )  + ") is empty",StatusCode::SUCCESS).ignore();
   }
 
@@ -207,8 +215,8 @@ StatusCode L0DUConfigProvider::update() {
     return StatusCode::FAILURE;
   }
 
-  std::string slot = ( "" == rootInTES() ) ? "T0" : rootInTES() ;
-  if( slot == "") slot = "T0";
+  std::string slot = ( rootInTES().empty()  ? "T0" : rootInTES() );
+  if( slot.empty() ) slot = "T0";
 
   // The main method
   createConfig(slot);
@@ -228,8 +236,8 @@ void L0DUConfigProvider::createConfig(std::string slot){
 
   m_config->setDefinition( m_def);
 
-  if(m_recipe == ""){
-    std::stringstream recipe("");
+  if (m_recipe.empty()) {
+    std::stringstream recipe;
     recipe << "Undefined recipe name for TCK=" <<  format("0x%04X" , m_tckopts ) ;
     m_config->setRecipe( recipe.str() );
   }else{
@@ -239,24 +247,26 @@ void L0DUConfigProvider::createConfig(std::string slot){
   m_config->setData( m_dataMap );
   m_config->setConditions( m_conditionsMap );
   m_config->setChannels( m_channelsMap );
-  if(m_triggersMap.size() !=0)m_config->setTriggers( m_triggersMap);
+  if (!m_triggersMap.empty()) m_config->setTriggers( m_triggersMap);
   auto it = m_configs.find( slot );
   if(it == m_configs.end()){
-    m_configs[slot] = new LHCb::L0DUConfigs();
-    m_configs[slot]->addRef();
+    auto configs = new LHCb::L0DUConfigs();
+    configs->addRef();
+    auto ret = m_configs.emplace(slot, configs);
+    assert(ret.second);
+    it = ret.first;
   }
-  if( !m_FOIx.empty() )m_config->setMuonFOIx( m_FOIx );
-  if( !m_FOIy.empty() )m_config->setMuonFOIy( m_FOIy );
+  if ( !m_FOIx.empty() ) m_config->setMuonFOIx( m_FOIx );
+  if ( !m_FOIy.empty() ) m_config->setMuonFOIy( m_FOIy );
 
-  m_configs[slot]->insert( m_config );
+  it->second->insert( m_config );
   //=====================================
   printConfig(*m_config,slot);
 }
 
 
-
 void L0DUConfigProvider::printConfig(const LHCb::L0DUConfig& config,std::string slot) const {
-  if( slot == "") slot = "T0";
+  if( slot.empty() ) slot = "T0";
   info() << "**** L0DU Config loading : L0TCK = " << format("0x%04X" , config.tck()) << " for slot "
          << slot << " ==> OK " << endmsg;
   if ( msgLevel(MSG::DEBUG) ) {
@@ -273,7 +283,6 @@ void L0DUConfigProvider::printConfig(const LHCb::L0DUConfig& config,std::string 
 }
 
 
-
 //-----------------
 // Predefined data
 //-----------------
@@ -281,13 +290,12 @@ void L0DUConfigProvider::printConfig(const LHCb::L0DUConfig& config,std::string 
 void L0DUConfigProvider::predefinedData( ) {
   using namespace L0DUBase;
 
-  int max = NumberOf::Data;
-  for(int i = 0 ; i < max ; ++i){
-    std::string name = PredefinedData::Name[i];
-    LHCb::L0DUElementaryData* data = new LHCb::L0DUElementaryData(i,LHCb::L0DUElementaryData::Predefined,name);
-    m_dataMap[name]= data;
+  for(unsigned i = 0 ; i < NumberOf::Data ; ++i){
+    const std::string& name = PredefinedData::Name[i];
+    auto data = std::make_unique<LHCb::L0DUElementaryData>(i,LHCb::L0DUElementaryData::Predefined,name);
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Predefined Data : " << data->description() << endmsg;
+    m_dataMap[name]= data.release();
     m_pData++;
   }
 }
@@ -299,95 +307,72 @@ void L0DUConfigProvider::predefinedData( ) {
 //---------------
 
 void L0DUConfigProvider::constantData(){
-  for(std::map<std::string,int>::const_iterator idata = m_constData.begin();idata!=m_constData.end();++idata){
-    LHCb::L0DUElementaryData* data =
-      new LHCb::L0DUElementaryData(m_pData+m_cData,LHCb::L0DUElementaryData::Constant,idata->first);
-    data->setDigit( idata->second  );
-    m_dataMap[idata->first]=data ;
+  for(const auto& idata : m_constData) {
+    auto data = std::make_unique<LHCb::L0DUElementaryData>(m_pData+m_cData,LHCb::L0DUElementaryData::Constant,idata.first);
+    data->setDigit( idata.second  );
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Constant Data : " << data->summary() << endmsg;
+    m_dataMap[idata.first]=data.release() ;
     m_cData++;
   }
 }
 
 
 //===============================================================
-std::vector<std::string> L0DUConfigProvider::Parse(std::string flag, std::vector<std::string> config ){
+std::vector<std::string> L0DUConfigProvider::Parse(const std::string& flag, const std::vector<std::string>& config ){
 
-  std::pair <std::string,std::string> separators = *(m_sepMap.begin());
+  const std::pair<std::string,std::string>& separators = *begin(m_sepMap);
   if(m_sepMap.size() != 1)
     warning() << "A single pair of separators must be defined - will use the first : "
               << separators.first << "data" << separators.second << endmsg;
 
   std::vector<std::string> values;
-  for(std::vector<std::string>::iterator iconfig= config.begin(); iconfig != config.end(); iconfig++){
-    std::string val;
-    // produce case-insensitive result
-    std::string conf(*iconfig);
-    std::string uConf(conf);
-    std::string uFlag(flag);
-    std::transform( conf.begin() , conf.end() , uConf.begin () , ::toupper ) ;
-    std::transform( flag.begin() , flag.end() , uFlag.begin () , ::toupper ) ;
-    int index = uConf.find( uFlag );
-    if(index != -1 ){
+  for(const auto& iconfig : config) {
+    if (contains_ci(iconfig,flag)) {
       if( msgLevel(MSG::VERBOSE) )
-        verbose() << "Flag '" << flag << "' found in the data string '" << *iconfig << "'" << endmsg;
+        verbose() << "Flag '" << flag << "' found in the data string '" << iconfig << "'" << endmsg;
 
       // loop over separators
-      int id = iconfig->find(separators.first);
+      int id = iconfig.find(separators.first);
       if( id < 0){
-        error() << "Unable to parse the tag " << *iconfig
+        error() << "Unable to parse the tag " << iconfig
                 << " due to a missing separator (" <<separators.first<<"..."<<separators.second<<")"<< endmsg;
         values.clear();
         return values;
       }
       while(id >= 0){
-        int from = iconfig->find(separators.first,id);
-        int to   = iconfig->find(separators.second,from+1);
-        if(from != -1 && to != -1){
-          val = iconfig->substr(from+1, to-from-1);
+        auto from = iconfig.find(separators.first,id);
+        auto to   = iconfig.find(separators.second,from+1);
+        if(from != std::string::npos && to != std::string::npos){
+          auto val = iconfig.substr(from+1, to-from-1);
           if( msgLevel(MSG::VERBOSE) )
             verbose() << "parsed value = '" << val << "'" <<endmsg;
-          values.push_back( val );
-          id = iconfig->find(separators.first,to+1);
-        }
-        else{
+          values.push_back( std::move(val) );
+          id = iconfig.find(separators.first,to+1);
+        } else{
           id = -1;
-          error() << "Unable to parse the tag " << *iconfig
+          error() << "Unable to parse the tag " << iconfig
                   << " due to a missing separator (" <<separators.first<<"..."<<separators.second<<")"<< endmsg;
           values.clear();
           return values;
         }
-
       }
     }
   }
   return values;
 }
 
-
-
-
-
 //===============================================================
 StatusCode L0DUConfigProvider::createData(){
   //===== create compound data
   int id = m_dataMap.size();
-  for(ConfigIterator iconfig = m_data.begin(); iconfig != m_data.end() ; ++iconfig){
-  std::vector<std::string> values;
+  for(auto iconfig = m_data.begin(); iconfig != m_data.end() ; ++iconfig){
+    std::vector<std::string> values;
 
     // check all tags exist
-    for(std::vector<std::string>::iterator itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
-      bool ok = false;
-      for(std::vector<std::string>::const_iterator iflag = s_dataFlags.begin();iflag!=s_dataFlags.end();iflag++){
-        std::string uTag(*itag);
-        std::string uFlag(*iflag);
-        std::transform( itag->begin() , itag->end() , uTag.begin () , ::toupper ) ;
-        std::transform( iflag->begin() , iflag->end() , uFlag.begin () , ::toupper ) ;
-        int index = (uTag).find( uFlag );
-        if( index > -1)ok=true;
-      }
-      if( !ok ){
+    for(auto itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
+      if( std::none_of( s_dataFlags.begin(), s_dataFlags.end(),
+                        [&](const std::string& df) { return contains_ci(*itag,df); } ) ) {
         error() << "Description tag : '" << *itag << "' is unknown for the new DATA defined via options (num =  "
                 << iconfig-m_data.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new data description are : " << s_dataFlags << endmsg;
@@ -407,16 +392,15 @@ StatusCode L0DUConfigProvider::createData(){
 
       return StatusCode::FAILURE;
     }
-    std::string dataName = *(values.begin()); // The NAME
+    std::string dataName = values.front(); // The NAME
 
     // Check the data already exist or not
-    LHCb::L0DUElementaryData::Map::iterator it = m_dataMap.find( dataName );
-    if( it != m_dataMap.end() ){
+    auto it = m_dataMap.find( dataName );
+    if ( it != m_dataMap.end() ) {
       warning() << "One L0DUElementaryData  with name : '" << dataName
                 <<"' already exists - Please check your settings" << endmsg;
       return StatusCode::FAILURE;
     }
-
 
     //  The operator
     // -------------
@@ -427,23 +411,20 @@ StatusCode L0DUConfigProvider::createData(){
       return StatusCode::FAILURE;
     }
 
-    std::string op =  *(values.begin()); // The OPERATOR
+    std::string op =  values.front(); // The OPERATOR
 
-    bool ok = false;
-    unsigned int dim = 0;
-    for(std::vector<std::pair<std::string,unsigned int> >::const_iterator iop = s_operators.begin();iop!=s_operators.end();++iop){
-      if( op == iop->first){ok=true;dim=iop->second;break;}
-    }
-    if(!ok){
+    auto iop = std::find_if(s_operators.begin(), s_operators.end(),
+                            [&](const auto& o) { return o.first == op; });
+    if (iop==s_operators.end()) {
       fatal() << "requested operator "<< op <<" is not allowed " << endmsg;
       info() << "allowed operators are : " << endmsg;
-      for(std::vector<std::pair<std::string, unsigned int> >::const_iterator  it2 = s_operators.begin();
-          it2!=s_operators.end();it2++){
-        info() << "--> " << it2->first << endmsg;
+      for(const auto& it2 : s_operators) {
+        info() << "--> " << it2.first << endmsg;
       }
       return StatusCode::FAILURE;
     }
 
+    unsigned int dim = iop->second;
 
     // the operands
     //--------------
@@ -454,29 +435,24 @@ StatusCode L0DUConfigProvider::createData(){
       return StatusCode::FAILURE;
     }
 
-    for(std::vector<std::string>::iterator iop = operands.begin() ; iop != operands.end() ; iop++){
-      LHCb::L0DUElementaryData::Map::iterator icheck = m_dataMap.find( *iop );
-      if( icheck == m_dataMap.end() ){
-        error() << "new compound Data is based on an unknown Data '" << *iop
+    auto jop = std::find_if( begin(operands), end(operands),
+                             [&](const std::string& op)
+                             { return m_dataMap.find(op)==m_dataMap.end(); } );
+    if (jop!=end(operands)) {
+        error() << "new compound Data is based on an unknown Data '" << *jop
                 << "' ... check  your settings " << endmsg;
         return StatusCode::FAILURE;
-      }
     }
 
-
     // create Compound Data
-    LHCb::L0DUElementaryData* data = new LHCb::L0DUElementaryData(id, dataName,op,operands); // compound constructor
-    m_dataMap[dataName]=data;
-    id++;
+    auto data = std::make_unique<LHCb::L0DUElementaryData>(id, dataName,op,operands); // compound constructor
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Created Data : " << data->description() << endmsg;
-
+    m_dataMap[dataName]=data.release();
+    id++;
   }
   return StatusCode::SUCCESS;
 }
-
-
-
 
 
 //===============================================================
@@ -485,24 +461,14 @@ StatusCode L0DUConfigProvider::createConditions(){
   StatusCode sc = createData();
   if(sc.isFailure())return sc;
 
-
   int id = m_conditionsMap.size();
-  for(ConfigIterator iconfig = m_conditions.begin(); iconfig != m_conditions.end() ; ++iconfig){
-    std::vector<std::string> values;
+  for(auto iconfig = m_conditions.begin(); iconfig != m_conditions.end() ; ++iconfig){
 
     // check all tags exist
-    for(std::vector<std::string>::iterator itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
-      bool ok = false;
-      for(std::vector<std::string>::const_iterator iflag = s_condFlags.begin();iflag!=s_condFlags.end();iflag++){
-        std::string uTag(*itag);
-        std::string uFlag(*iflag);
-        std::transform( itag->begin() , itag->end() , uTag.begin () , ::toupper ) ;
-        std::transform( iflag->begin() , iflag->end() , uFlag.begin () , ::toupper ) ;
-        int index = (uTag).find( uFlag );
-        if( index > -1)ok=true;
-      }
-      if( !ok ){
-        error() << "Description tag : '" << *itag << "' is unknown for the new CONDITION defined via options (num =  "
+    for(const auto&  tag : *iconfig) {
+      if ( std::none_of( begin(s_condFlags), end(s_condFlags),
+                         [&](const std::string& s) { return contains_ci(tag,s); } ) ) {
+        error() << "Description tag : '" << tag << "' is unknown for the new CONDITION defined via options (num =  "
                 << iconfig-m_conditions.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new CONDITION description are : " << s_condFlags << endmsg;
         return StatusCode::FAILURE;
@@ -511,7 +477,7 @@ StatusCode L0DUConfigProvider::createConditions(){
 
     // The Condition name
     //--------------------
-    values = Parse("name", *iconfig);
+    std::vector<std::string> values = Parse("name", *iconfig);
     if(values.size() != 1){
       error() << "The CONDITION defined via option (num = " << iconfig-m_conditions.begin()
               << ") should have an unique name (found " << values.size() << ")" << endmsg;
@@ -521,10 +487,10 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::string conditionName = *(values.begin()); // The NAME
+    std::string conditionName = values.front(); // The NAME
 
   // Check the condition already exist or not (if yes overwrite it)
-    LHCb::L0DUElementaryCondition::Map::iterator ic = m_conditionsMap.find( conditionName );
+    auto ic = m_conditionsMap.find( conditionName );
     if( ic != m_conditionsMap.end() ){
       warning() << "One L0DUElementaryCondition with name : '" << conditionName
                 <<"' already exists  - Please check your settings" << endmsg;
@@ -541,17 +507,15 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::string data =  *(values.begin()); // The dataName
+    std::string data =  values.front(); // The dataName
     // check for aliases
     auto it=L0DUBase::PredefinedData::Alias.find(data);
-    if( it != L0DUBase::PredefinedData::Alias.end()) data = it->second;  
+    if( it != L0DUBase::PredefinedData::Alias.end()) data = it->second;
 
     // Special case : create RAM(BCID) data on-the-fly
     if( data.rfind("RAM") != std::string::npos && data.rfind("(BCID)") != std::string::npos ){
       int idData = m_dataMap.size();
-      LHCb::L0DUElementaryData* ramData =
-        new LHCb::L0DUElementaryData(idData, LHCb::L0DUElementaryData::RAMBcid, data ) ;
-      m_dataMap[data]=ramData;
+      m_dataMap[data]= new LHCb::L0DUElementaryData(idData, LHCb::L0DUElementaryData::RAMBcid, data ) ;
       // TEMP
       int ind = data.rfind("(BCID)");
       std::string vsn = data.substr(0,ind);
@@ -559,31 +523,29 @@ StatusCode L0DUConfigProvider::createConditions(){
         debug() <<"RAM(BCID) L0DU DATA for RAM vsn = " << vsn << " HAS BEEN DEFINED" <<endmsg;
       //check the RAM version exists
       const std::vector<int> ram = m_condDB->RAMBCID( vsn );
-      if( ram.size() == 0){
+      if ( ram.empty() ) {
         fatal() << "RAM(BCID) versions '" << vsn << "' is not registered" << endmsg;
         return StatusCode::FAILURE;
       }
     }
-
-
-
-
     // Check data consistency
-    LHCb::L0DUElementaryData::Map::iterator idata = m_dataMap.find( data );
+    auto idata = m_dataMap.find( data );
     if( m_dataMap.end() == idata ){
       fatal() << " Can not set-up the '" << conditionName
               << "' L0DU Elementary Condition, "
               << " because the required L0DU Data '" << data
               << "' is not defined." << endmsg;
       info() << " The predefined L0DU Data are : " << endmsg;
-      for (LHCb::L0DUElementaryData::Map::iterator idata = m_dataMap.begin() ;
-           idata != m_dataMap.end() ;idata++){
-        std::string knownName=idata->second->name();
-        std::string knownAlias="";
-        for( std::map<std::string,std::string>::const_iterator ia = L0DUBase::PredefinedData::Alias.begin() ;
-             ia !=  L0DUBase::PredefinedData::Alias.end();ia++){
-          if ( ia->second == knownName) knownAlias = " ( aka "+ia->first +" )";
-        }
+      for (const auto& idata : m_dataMap ) {
+        const std::string& knownName=idata.second->name();
+        auto ia = std::find_if( L0DUBase::PredefinedData::Alias.begin(),
+                                L0DUBase::PredefinedData::Alias.end(),
+                                [&](const std::pair<std::string,std::string>& alias) {
+                                    return alias.second == knownName;
+                                } );
+        std::string knownAlias = (ia != L0DUBase::PredefinedData::Alias.end()
+                                        ? " ( aka "+ia->first +" )"
+                                        : "" ) ;
         info() <<  " -->  "<< knownName  <<  knownAlias << endmsg;
       }
       return StatusCode::FAILURE;
@@ -598,13 +560,8 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::string comp =  *(values.begin()); // The COMPARATOR
-
-    bool ok = false;
-    for(std::vector<std::string>::const_iterator icomp = s_comparators.begin();icomp!=s_comparators.end();++icomp){
-      if( comp == *icomp){ok=true;break;}
-    }
-    if(!ok){
+    std::string comp =  values.front(); // The COMPARATOR
+    if(std::find(s_comparators.begin(),s_comparators.end(),comp)==s_comparators.end()){
       fatal() << "requested comparator "<< comp <<" is not allowed " << endmsg;
       info() << "Allowes comparators are : " << s_comparators << endmsg;
       return StatusCode::FAILURE;
@@ -619,29 +576,23 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::string cut =  *(values.begin()); // The THRESHOLD
-    std::stringstream str("");
-    str << cut;
-    unsigned long threshold;
-    str >> threshold ;
-
+    unsigned long threshold = std::stoul( values.front() ); // The THRESHOLD
 
     // report  (facultatif)
     //----------
     std::vector<std::string> reports = Parse("reported", *iconfig);
-    bool reported = true;
     if( reports.size() > 1 ){
       error() << "Should be an unique report for the new CONDITION : "
               << conditionName << " (found "<< reports.size() << ")" << endmsg;
       return StatusCode::FAILURE;
-    }else if(reports.size() == 1 ){
-      std::string report = *(reports.begin());
-      std::string uReport(report);
-      std::transform( report.begin() , report.end() , uReport.begin () , ::toupper ) ;
-      if( uReport == "FALSE" ){
+    }
+    bool reported = true;
+    if (!reports.empty()) {
+      const std::string& report = reports.front();
+      if( icompare(report,"FALSE") ){
         reported = false;
         info() << "The condition '" << conditionName << "' is NOT to be reported in L0DUReport " << endmsg;
-      }else if( uReport != "TRUE"){
+      }else if( !icompare(report,"TRUE")){
         error() << "the CONDITION '" << conditionName << "' report should be True or False" << endmsg;
         return StatusCode::FAILURE;
       }
@@ -652,23 +603,17 @@ StatusCode L0DUConfigProvider::createConditions(){
 
     // the index (facultatif)
     //----------
-    int index = id;
     values = Parse("index", *iconfig);
-    if(values.size() > 0){
-      std::string sid =  *(values.begin()); // The INDEX
-      std::stringstream str("");
-      str << sid;
-      str >> index;
-    }
-    else if(values.size() > 1){
+    if(values.size() > 1){
       error() << "Should be an unique index for the new CONDITION : "
               << conditionName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
     }
+    int  index = ( values.empty() ? id : std::stoi( values.front())); // The INDEX
     // check the index is not already used
-    for(LHCb::L0DUElementaryCondition::Map::iterator ii = m_conditionsMap.begin(); ii!=m_conditionsMap.end();ii++){
-      if(index == ii->second->index() ){
-        error() << "The bit index " << index << " is already assigned to the Condition " << ii->second->name() << endmsg;
+    for(const auto& ii : m_conditionsMap) {
+      if(index == ii.second->index() ) {
+        error() << "The bit index " << index << " is already assigned to the Condition " << ii.second->name() << endmsg;
         return StatusCode::FAILURE;
       }
     }
@@ -676,16 +621,15 @@ StatusCode L0DUConfigProvider::createConditions(){
     // the BX (facultative)
     //---------------------
     values = Parse("bx", *iconfig);
-    int bx=0;
     if(values.size() > 1){
       error() << "Should be an unique BX for the CONDITION : "
               << conditionName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
-    }else if(values.size() == 1){
-      std::string sbx =  *(values.begin()); // The BX
-      std::stringstream str("");
-      str << sbx;
-      str >> bx;
+    }
+
+    int bx=0;
+    if(values.size() == 1){
+      bx = std::stoi( values.front() ); // The BX
       if( (std::find(m_knownBXs.begin(),m_knownBXs.end(), bx ) == m_knownBXs.end() ))
         Warning("'"+conditionName+"' : L0DU firmware can only be configured for BX="+Gaudi::Utils::toString(m_knownBXs)
                 ,StatusCode::SUCCESS,5).ignore();
@@ -707,10 +651,8 @@ StatusCode L0DUConfigProvider::createConditions(){
 
   }
   //
-  if( !conditionOrdering() )return StatusCode::FAILURE;
-
-  return StatusCode::SUCCESS;
-
+  return conditionOrdering() ? StatusCode::SUCCESS
+                             : StatusCode::FAILURE;
 }
 
 
@@ -721,22 +663,13 @@ StatusCode L0DUConfigProvider::createChannels(){
   if(sc.isFailure())return sc;
 
   int id = m_channelsMap.size();
-  for(ConfigIterator iconfig = m_channels.begin(); iconfig != m_channels.end() ; ++iconfig){
-    std::vector<std::string> values;
+  for(auto iconfig = m_channels.begin(); iconfig != m_channels.end() ; ++iconfig){
 
     // check all tags exist
-    for(std::vector<std::string>::iterator itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
-      bool ok = false;
-      for(std::vector<std::string>::const_iterator iflag = s_chanFlags.begin();iflag!=s_chanFlags.end();iflag++){
-        std::string uTag(*itag);
-        std::string uFlag(*iflag);
-        std::transform( itag->begin() , itag->end() , uTag.begin () , ::toupper ) ;
-        std::transform( iflag->begin() , iflag->end() , uFlag.begin () , ::toupper ) ;
-        int index = (uTag).find( uFlag );
-        if( index > -1)ok=true;
-      }
-      if( !ok ){
-        error() << "Description tag : '" << *itag << "' is unknown for the new CHANNEL defined via options (num =  "
+    for(const auto& tag : *iconfig) {
+      if (std::none_of( begin(s_chanFlags), end(s_chanFlags),
+                        [&](const std::string& s) { return contains_ci(tag,s); } ) ) {
+        error() << "Description tag : '" << tag << "' is unknown for the new CHANNEL defined via options (num =  "
                 << iconfig-m_channels.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new CHANNEL description are : " << s_chanFlags << endmsg;
         return StatusCode::FAILURE;
@@ -745,7 +678,7 @@ StatusCode L0DUConfigProvider::createChannels(){
 
     // The Channel name
     //------------------
-    values = Parse("name", *iconfig);
+    std::vector<std::string> values = Parse("name", *iconfig);
     if(values.size() != 1){
       error() << "The CHANNEL defined via option (num = " << iconfig-m_channels.begin()
               << ") should have an unique name (found " << values.size() << ")" << endmsg;
@@ -755,10 +688,10 @@ StatusCode L0DUConfigProvider::createChannels(){
       return StatusCode::FAILURE;
     }
 
-    std::string channelName = *(values.begin()); // The NAME
+    std::string channelName = values.front(); // The NAME
 
     // Check if the channel already exists
-    LHCb::L0DUChannel::Map::iterator ic = m_channelsMap.find(channelName);
+    auto ic = m_channelsMap.find(channelName);
     if( ic != m_channelsMap.end() ){
       warning() << "One L0DUChannel with name = : '" << channelName <<"' already exists "
                 << " - Please check your settings" << endmsg;
@@ -775,11 +708,7 @@ StatusCode L0DUConfigProvider::createChannels(){
       return StatusCode::FAILURE;
     }
 
-    std::string srate =  *(values.begin()); // The rate
-    std::stringstream str("");
-    str << srate;
-    double rate;
-    str>> rate;
+    double rate = std::stod(values.front()); // The rate
 
     if(rate<0. || rate > 100.){
       error() << "The channel accept rate " << rate << " (%) rate should be between 0 and 100" << endmsg;
@@ -802,10 +731,8 @@ StatusCode L0DUConfigProvider::createChannels(){
       return StatusCode::FAILURE;
     }else if( enables.size() == 1){
       Warning("L0DUChannel flag 'Enable' is deprecated - please move to 'Mask' instead",StatusCode::SUCCESS).ignore();
-      std::string item(*(enables.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( uItem == "FALSE" ){
+      const std::string& item = enables.front();
+      if( icompare(item,"FALSE") ){
         type = LHCb::L0DUDecision::Disable;
       }else{
         error() << "Decision type for channel '" << channelName << "' is badly defined -  Please check your setting" << endmsg;
@@ -813,34 +740,30 @@ StatusCode L0DUConfigProvider::createChannels(){
       }
     }else if( disables.size() == 1){
       Warning("L0DUChannel flag 'Disable' is deprecated - please move to 'Mask' instead",StatusCode::SUCCESS).ignore();
-      std::string item(*(disables.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( uItem == "TRUE" ){
+      const std::string& item = disables.front();
+      if( icompare(item,"TRUE") ){
         type = LHCb::L0DUDecision::Disable;
       }else{
         error() << "Decision type for channel '" << channelName << "' is badly defined -  Please check your setting" << endmsg;
         return StatusCode::FAILURE;
       }
     }else if( masks.size() == 1){
-      std::string item(*(masks.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( uItem == "1" || uItem == "0X1" || uItem == "001" || uItem == "Physics" ){
+      const std::string& item = masks.front();
+      if( item == "1" || icompare(item,"0X1") || item == "001" || icompare(item,"Physics") ){
         type = LHCb::L0DUDecision::Physics;
-      }else if( uItem == "2" || uItem == "0X2" || uItem == "010" || uItem == "Beam1" ){
+      }else if( item == "2" || icompare(item,"0X2") || item == "010" || icompare(item,"Beam1") ){
         type = LHCb::L0DUDecision::Beam1;
-      }else if( uItem == "4" || uItem == "0X4" || uItem == "100" || uItem == "Beam2" ){
+      }else if( item == "4" || icompare(item,"0X4") || item == "100" || icompare(item,"Beam2") ){
         type = LHCb::L0DUDecision::Beam2;
-      } else if( uItem == "011" || uItem == "3" || uItem == "0x3" ){
+      } else if( item == "011" || item == "3" || icompare(item,"0x3") ){
         type = 3;
-      } else if( uItem == "101" || uItem == "5" || uItem == "0x5" ){
+      } else if( item == "101" || item == "5" || icompare(item,"0x5") ){
         type = 5;
-      } else if( uItem == "110" || uItem == "6" || uItem == "0x6" ){
+      } else if( item == "110" || item == "6" || icompare(item,"0x6") ){
         type = 6;
-      } else if( uItem == "111" || uItem == "7" || uItem == "0x7" ){
+      } else if( item == "111" || item == "7" || icompare(item,"0x7") ){
         type = 7;
-      } else if( uItem == "000" || uItem == "0" || uItem == "0x0" ){
+      } else if( item == "000" || item == "0" || icompare(item,"0x0") ){
         type = 0;
       }else {
         error() << "Decision type for channel '" << channelName << "' is badly defined -  Please check your setting" << endmsg;
@@ -853,65 +776,53 @@ StatusCode L0DUConfigProvider::createChannels(){
 
     // the index (facultatif)
     // ---------
-    int index = id;
     values = Parse("index", *iconfig);
-    if(values.size() > 0){
-      std::string id =  *(values.begin()); // The INDEX
-      std::stringstream str("");
-      str << id;
-      str >> index;
-    }
-    else if(values.size() > 1){
+    if (values.size()>1) {
       error() << "Should be an unique index for the new CHANNEL : "
               << channelName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
     }
+    int index = ( values.empty() ? id : std::stoi( values.front() ) ); // The INDEX
     // check the index is not already used
-    for(LHCb::L0DUChannel::Map::iterator ii = m_channelsMap.begin(); ii!=m_channelsMap.end();ii++){
-      if(index == (ii->second)->index() ){
-        error() << "The bit index " << index << " is already assigned to the Channel " << (ii->second)->name() << endmsg;
+    for (const auto& ii : m_channelsMap) {
+      if(index == ii.second->index() ){
+        error() << "The bit index " << index << " is already assigned to the Channel " << ii.second->name() << endmsg;
         return StatusCode::FAILURE;
       }
     }
 
-
     // create channel
-    auto channel = std::unique_ptr<LHCb::L0DUChannel>(new LHCb::L0DUChannel(index,  channelName , irate , type ) );
+    auto channel = std::make_unique<LHCb::L0DUChannel>( index,  channelName , irate , type );
 
     // The conditions
     // --------------
     values = Parse("condition", *iconfig);
-
-    if(values.size() == 0 ){
+    if ( values.empty() ){
       error() << "The channel " << channelName << " has no ElementaryCondition" << endmsg;
       return StatusCode::FAILURE;
     }
 
-
     // add Elementary Condition(s)
-    for(std::vector<std::string>::iterator icond = values.begin() ;icond != values.end() ; icond++){
+    for(const auto& icond : values) {
       // Find required Elementary Condition
-      LHCb::L0DUElementaryCondition::Map::iterator ic = m_conditionsMap.find( *icond );
-      LHCb::L0DUChannel::Map::iterator icc = m_channelsMap.find( *icond );
+      auto ic = m_conditionsMap.find( icond );
+      auto icc = m_channelsMap.find( icond );
       if( m_conditionsMap.end() != ic && m_channelsMap.end() != icc){
         error() << "An ElementaryCondition and a Channel have the same name - please check your setting " << endmsg;
         return StatusCode::FAILURE;
       }
       if( m_conditionsMap.end() == ic ){
         // check if the name  is a previously defined channel
-        if( m_channelsMap.end() != icc && *icond != channelName ){
-          // YES it is - add all the conditions from this channel
-          LHCb::L0DUElementaryCondition::Map condFromChanMap = (icc->second)->elementaryConditions();
-          for(LHCb::L0DUElementaryCondition::Map::iterator iccc = condFromChanMap.begin();
-              iccc!=condFromChanMap.end();iccc++){
-            channel->addElementaryCondition ( iccc->second ) ;
-          }
-        } else{
+        if( m_channelsMap.end() == icc || icond == channelName ){
           fatal() << " Can not set-up the '" <<  channelName
                   << "' L0DU Channel "
-                  << " because the required '" << *icond
+                  << " because the required '" << icond
                   << "' is neither a  defined ElementaryCondition nor a defined Channel." << endmsg;
           return StatusCode::FAILURE;
+        }
+        // YES it is - add all the conditions from this channel
+        for(const auto& iccc : icc->second->elementaryConditions()) {
+          channel->addElementaryCondition ( iccc.second ) ;
         }
       } else {
         channel->addElementaryCondition ( ic->second ) ;
@@ -928,7 +839,6 @@ StatusCode L0DUConfigProvider::createChannels(){
 }
 
 
-
 //===============================================================
 StatusCode L0DUConfigProvider::createTriggers(){
 
@@ -936,36 +846,25 @@ StatusCode L0DUConfigProvider::createTriggers(){
   StatusCode sc = createChannels();
   if(sc.isFailure())return sc;
 
-
-  if(m_channels.size()   == 0  || m_conditions.size() == 0)return StatusCode::SUCCESS;
+  if(m_channels.empty() || m_conditions.empty())return StatusCode::SUCCESS;
 
   // pre-defined triggers
   predefinedTriggers();
 
   // Additional user-defined triggers
   int id = m_triggersMap.size();
-  for(ConfigIterator iconfig = m_triggers.begin(); iconfig != m_triggers.end() ; ++iconfig){
+  for(auto  iconfig = m_triggers.begin(); iconfig != m_triggers.end() ; ++iconfig){
 
     // check all tags exist
-    for(std::vector<std::string>::iterator itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
-      bool ok = false;
-      for(std::vector<std::string>::const_iterator iflag = s_trigFlags.begin();iflag!=s_trigFlags.end();iflag++){
-        std::string uTag(*itag);
-        std::string uFlag(*iflag);
-        std::transform( itag->begin() , itag->end() , uTag.begin () , ::toupper ) ;
-        std::transform( iflag->begin() , iflag->end() , uFlag.begin () , ::toupper ) ;
-        int index = (uTag).find( uFlag );
-        if( index > -1)ok=true;
-      }
-      if( !ok ){
-        error() << "Description tag : '" << *itag << "' is unknown for the new TRIGGER set defined via options (num =  "
+    for(const auto& tag : *iconfig) {
+      if( std::none_of( s_trigFlags.begin(), s_trigFlags.end(),
+                        [&](const std::string& s) { return contains_ci(tag,s); }) ){
+        error() << "Description tag : '" << tag << "' is unknown for the new TRIGGER set defined via options (num =  "
                 << iconfig-m_triggers.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new TRIGGER description are : " << s_trigFlags << endmsg;
         return StatusCode::FAILURE;
       }
     }
-
-
 
     // The Trigger name
     //------------------
@@ -979,12 +878,10 @@ StatusCode L0DUConfigProvider::createTriggers(){
       return StatusCode::FAILURE;
     }
 
-
-    std::string triggerName = *(values.begin()); // The NAME
-
+    std::string triggerName = values.front(); // The NAME
 
     // Check if the triggers set already exists
-    LHCb::L0DUTrigger::Map::iterator ic = m_triggersMap.find(triggerName);
+    auto ic = m_triggersMap.find(triggerName);
     if( ic != m_triggersMap.end() ){
       warning() << "A L0DU SubTrigger with name  '" << triggerName <<"' already exists "
                 << " (NB : 'L0Ecal', 'L0Hcal', 'L0Muon' and 'Other' SubTrigger names are predefined)"
@@ -995,50 +892,41 @@ StatusCode L0DUConfigProvider::createTriggers(){
 
     // the index (facultatif)
     // ---------
-    int index = id;
     values = Parse("index", *iconfig);
-    if(values.size() > 0){
-      std::string id =  *(values.begin()); // The INDEX
-      std::stringstream str("");
-      str << id;
-      str >> index;
-    }
-    else if(values.size() > 1){
+    if(values.size() > 1) {
       error() << "Should be an unique index for the new SubTrigger: "
               << triggerName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
     }
+    int index = ( values.empty() ? id : std::stoi( values.front() ) ); // The INDEX
     // check the index is not already used
-    for(LHCb::L0DUTrigger::Map::iterator ii = m_triggersMap.begin(); ii!=m_triggersMap.end();ii++){
-      if(index == (ii->second)->index() ){
+    auto ii = std::find_if( m_triggersMap.begin(), m_triggersMap.end(),
+                            [index](typename LHCb::L0DUTrigger::Map::const_reference tm)
+                            { return tm.second->index() == index; } );
+    if (ii!=m_triggersMap.end()) {
         error() << "The bit index " << index << " is already assigned to the SubTrigger " << ii->second->name() << endmsg;
         return StatusCode::FAILURE;
-      }
     }
-
 
     // The decision type (facultatif)
     // -----------------
-    std::vector<std::string> types    = Parse("type"    , *iconfig);
+    std::vector<std::string> types = Parse("type", *iconfig);
     int mask = LHCb::L0DUDecision::Physics;
-    if(types.size() > 0){
-      std::string item(*(types.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( item == "PHYSICS" )mask = LHCb::L0DUDecision::Physics;
-      else if( item == "BEAM1" )mask = LHCb::L0DUDecision::Beam1;
-      else if( item == "BEAM2" )mask = LHCb::L0DUDecision::Beam2;
-      else{
+    if(!types.empty()){
+      const std::string& item = types.front();
+      if ( icompare(item,"PHYSICS") ) mask = LHCb::L0DUDecision::Physics;
+      else if ( icompare(item,"BEAM1") ) mask = LHCb::L0DUDecision::Beam1;
+      else if ( icompare(item,"BEAM2") ) mask = LHCb::L0DUDecision::Beam2;
+      else {
         error() << "Trigger type '" << item << "' is not valid (must be PHYSICS, BEAM1 or BEAM2)" << endmsg;
         return StatusCode::FAILURE;
       }
     }
 
     // create trigger
-    auto trigger = std::unique_ptr<LHCb::L0DUTrigger>(new LHCb::L0DUTrigger(index,  triggerName , mask) );
+    auto trigger = std::make_unique<LHCb::L0DUTrigger>(index,  triggerName , mask);
 
-
-     // The channels
+    // The channels
     // --------------
     std::vector<std::string> channels = Parse("channel", *iconfig);
 
@@ -1047,41 +935,31 @@ StatusCode L0DUConfigProvider::createTriggers(){
       return StatusCode::FAILURE;
     }
 
-
-
-
-
-
     // check all requested channels exists
-    for(std::vector<std::string>::iterator ichan = channels.begin() ;ichan != channels.end() ; ichan++){
-      LHCb::L0DUChannel::Map::iterator ic  = m_channelsMap.find( *ichan );
-      LHCb::L0DUTrigger::Map::iterator icc = m_triggersMap.find( *ichan );
+    for(const auto& chan : channels ) {
+      auto ic  = m_channelsMap.find( chan );
+      auto icc = m_triggersMap.find( chan );
       if( m_triggersMap.end() != icc && m_channelsMap.end() != ic){
         error() << "A Channel  and a SubTrigger have the same name - please check your setting " << endmsg;
         return StatusCode::FAILURE;
       }
       if( m_channelsMap.end() == ic ){
-        if( m_triggersMap.end() != icc && *ichan != triggerName ){
-          LHCb::L0DUChannel::Map chanFromTrigMap = icc->second->channels();
-          for(LHCb::L0DUChannel::Map::iterator iccc = chanFromTrigMap.begin(); iccc!=chanFromTrigMap.end();iccc++){
-            trigger->addChannel( iccc->second );
-          }
-        } else {
+        if( m_triggersMap.end() == icc || chan == triggerName ){
           fatal() << " Can not set-up the '" <<  triggerName
                   << "' L0DU SubTrigger "
-                  << " because the required '" << *ichan
+                  << " because the required '" << chan
                   << "' is neither a  defined Channel nor a defined SubTrigger." << endmsg;
           return StatusCode::FAILURE;
         }
+        for( const auto& ccc : icc->second->channels()) trigger->addChannel( ccc.second );
       } else {
         trigger->addChannel ( ic->second );
       }
     }
 
     // check all channels->decisionType match the trigger->decisionType
-    const LHCb::L0DUChannel::Map& chans = trigger->channels();
-    for( LHCb::L0DUChannel::Map::const_iterator ic = chans.begin() ; ic != chans.end() ; ++ic){
-      LHCb::L0DUChannel* chan = ic->second;
+    for( const auto& c : trigger->channels() ) {
+      LHCb::L0DUChannel* chan = c.second;
       if( ( chan->decisionType() & trigger->decisionType() ) == 0 ){
         warning() << "The channel '" << LHCb::L0DUDecision::Name[chan->decisionType() ] << "|" << chan->name()
                   << "' associated to  subTrigger '"
@@ -1110,23 +988,21 @@ void L0DUConfigProvider::predefinedTriggers(){
   }
 
   // Associate one channel to one (or several) trigger(s) according to elementary data (physics decisionType only)
-  for(  LHCb::L0DUChannel::Map::iterator ic  = m_channelsMap.begin() ; ic != m_channelsMap.end() ; ic++){
-    LHCb::L0DUChannel* channel = ic->second;
+  for( const auto& c : m_channelsMap ) {
+    LHCb::L0DUChannel* channel = c.second;
     if( (channel->decisionType() & LHCb::L0DUDecision::Physics) ==0 )continue;
     // loop over conditions
     std::vector<std::string> dataList;
-    for( LHCb::L0DUElementaryCondition::Map::const_iterator ie = channel->elementaryConditions().begin();
-         ie != channel->elementaryConditions().end() ; ie++){
-      const LHCb::L0DUElementaryCondition* condition = ie->second;
+    for( const auto& ie : channel->elementaryConditions() ) {
+      const LHCb::L0DUElementaryCondition* condition = ie.second;
       const LHCb::L0DUElementaryData* data = condition->data();
       if( !getDataList( data->name() , dataList ) )
         Warning("Cannot associate the data name '" + data->name() +"' to any (list of) L0DUElementaryData").ignore();
     }
-    std::vector<std::string> name = triggerNameFromData( dataList );
-    for( std::vector<std::string>::iterator it = name.begin() ; it != name.end() ; it++){
-      LHCb::L0DUTrigger::Map::iterator imap = m_triggersMap.find( *it );
+    for( const auto& n :  triggerNameFromData( dataList ) ) {
+      auto imap = m_triggersMap.find( n );
       if( imap == m_triggersMap.end()){
-        error() << " Unknow trigger name '" << *it << "'" << endmsg;
+        error() << " Unknow trigger name '" << n << "'" << endmsg;
         continue;
       }
       imap->second->addChannel( channel );
@@ -1134,54 +1010,31 @@ void L0DUConfigProvider::predefinedTriggers(){
   }
 }
 
-bool L0DUConfigProvider::getDataList(const std::string dataName, std::vector<std::string>& dataList){
-  LHCb::L0DUElementaryData::Map::iterator it = m_dataMap.find( dataName );
-  if( it == m_dataMap.end() )return false;
+bool L0DUConfigProvider::getDataList(const std::string& dataName, std::vector<std::string>& dataList){
+  auto it = m_dataMap.find( dataName );
+  if ( it == m_dataMap.end() ) return false;
+
   LHCb::L0DUElementaryData* data = it->second;
-  bool ok = true;
   if( LHCb::L0DUElementaryData::Predefined == data->type() ){
     dataList.push_back( data->name() );
-    return ok;
-  }else if(  LHCb::L0DUElementaryData::Compound == data->type() ){
-    for(std::vector<std::string>::const_iterator op = data->componentsName().begin() ; op != data->componentsName().end(); op++ ){
-      ok = ok && getDataList( *op , dataList );
-    }
+    return true;
+  }
+  bool ok = true;
+  if ( LHCb::L0DUElementaryData::Compound == data->type() ) {
+    ok = std::accumulate( data->componentsName().begin(),  data->componentsName().end(),
+                          ok, [&](bool b, const std::string& op) { return b && this->getDataList(op,dataList); } );
   }
   return ok;
 }
 
-std::vector<std::string> L0DUConfigProvider::triggerNameFromData( std::vector<std::string> dataList ){
-
-  std::vector<std::string> name;
-
-  // The actual trigger->data association definition
-
-  // 1st pass for the main trigger : L0Muon, L0Ecal, L0Hcal
-  bool hasTrigger = false;
-  for(std::vector<std::string>::iterator id = dataList.begin() ; id != dataList.end() ; id++){
-    std::string dataName = id->substr(0,4);
-    if( dataName == "Muon" || dataName == "DiMu" ){
-      name.push_back( "L0Muon" ) ;
-      hasTrigger = true;
-    } else if( dataName == "Elec" || dataName == "Phot" || dataName == "Loca" || dataName == "Glob" ){
-      name.push_back( "L0Ecal" );
-      hasTrigger = true;
-    } else if( dataName == "Hadr" ){
-      name.push_back( "L0Hcal" );
-      hasTrigger = true;
-    }
-  }
-  if( !hasTrigger)name.push_back( "Other" );
-  return name;
-}
 
 
 bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition){
   using namespace L0DUBase;
 
-  if (NULL == condition)return false;
+  if (!condition) return false;
   const LHCb::L0DUElementaryData* data = condition->data();
-  if (NULL == data)return false;
+  if (!data) return false;
 
   // check the data consistency
   std::vector<std::string> dataList;
@@ -1192,10 +1045,10 @@ bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition
 
   int compoundID = CompoundData::None;
   int dataID = -1;
-  for(std::vector<std::string>::iterator il = dataList.begin() ; il != dataList.end() ; ++il){
-    LHCb::L0DUElementaryData::Map::iterator it = m_dataMap.find( *il );
-    if( it == m_dataMap.end() ){
-      warning() << "data '" << *il <<"' associated to condition '"<< condition->name() << "' not found" << endmsg;
+  for(const auto& il : dataList) {
+    auto it = m_dataMap.find( il );
+    if( it == m_dataMap.end() ) {
+      warning() << "data '" << il <<"' associated to condition '"<< condition->name() << "' not found" << endmsg;
       return false;
     }
 
@@ -1233,7 +1086,7 @@ bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition
     return false;
   }
   //  if( condition->threshold() == 0 && condition->comparator() == ">" ){ // special case for empty register
-  //  std::vector<LHCb::L0DUElementaryCondition*>::iterator it = m_condOrder[order].begin();
+  //  auto it = m_condOrder[order].begin();
   //  m_condOrder[order].insert(it, condition);
   //}else{
   m_condOrder[ order ].push_back( condition );
@@ -1246,12 +1099,8 @@ bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition
 bool L0DUConfigProvider::conditionOrdering(){
   unsigned int iorder = 0;
   m_reOrder = false;
-  for( std::vector<std::vector<LHCb::L0DUElementaryCondition*> >::iterator
-         it = m_condOrder.begin() ; m_condOrder.end() != it; ++it){
-    std::vector<LHCb::L0DUElementaryCondition*> conds = *it;
-    for(std::vector<LHCb::L0DUElementaryCondition*>::iterator itt = conds.begin(); itt != conds.end() ; ++itt){
-      LHCb::L0DUElementaryCondition* condition = *itt;
-
+  for( const auto& conds : m_condOrder) {
+    for(const auto& condition : conds) {
       if ( msgLevel(MSG::DEBUG) )
         debug() << "Configuration "<< format("0x%04X" , m_tckopts )
                 << " Condition '" << condition->name()
@@ -1283,13 +1132,13 @@ bool L0DUConfigProvider::conditionOrdering(){
   // set the reportBit
   unsigned int reportBit = 0;
   for(unsigned int ib = 0 ; ib < m_conditionsMap.size(); ++ib){
-    for(LHCb::L0DUElementaryCondition::Map::iterator i=m_conditionsMap.begin();i!=m_conditionsMap.end();i++){
-      LHCb::L0DUElementaryCondition* iCond = i->second;
-      if( iCond->id() != ib )continue;
-      if( iCond->reported() ){
+    for(auto& i : m_conditionsMap) {
+      LHCb::L0DUElementaryCondition* iCond = i.second;
+      if ( iCond->id() != ib ) continue;
+      if ( iCond->reported() ) {
         iCond->setReportBit( reportBit );
         reportBit++;
-      }else{
+      } else {
         iCond->setReportBit( 0 );
       }
     }
@@ -1297,23 +1146,22 @@ bool L0DUConfigProvider::conditionOrdering(){
   m_reported = reportBit;
 
   // check all indices & all reportBits are unique
-  for(LHCb::L0DUElementaryCondition::Map::iterator i=m_conditionsMap.begin();i!=m_conditionsMap.end();i++){
-    LHCb::L0DUElementaryCondition* iCond = i->second;
-    for(LHCb::L0DUElementaryCondition::Map::iterator j=m_conditionsMap.begin();j!=m_conditionsMap.end();j++){
-      LHCb::L0DUElementaryCondition* jCond = j->second;
-      if( iCond == jCond )continue;
-      if( iCond->id() == jCond->id() ){
+  for(auto& i : m_conditionsMap) {
+    LHCb::L0DUElementaryCondition* iCond = i.second;
+    for (auto& j : m_conditionsMap) {
+      LHCb::L0DUElementaryCondition* jCond = j.second;
+      if ( iCond == jCond ) continue;
+      if ( iCond->id() == jCond->id() ){
         error() << "The condition index MUST be unique : " << iCond->name() << "/" <<jCond->name() <<endmsg;
         return false;
       }
-      if( !iCond->reported() || !jCond->reported() )continue;
-      if( iCond->reportBit() == jCond->reportBit() ){
+      if ( !iCond->reported() || !jCond->reported() ) continue;
+      if ( iCond->reportBit() == jCond->reportBit() ){
         error() << "The condition reportBit MUST be unique : " << iCond->name() << "/" <<jCond->name() <<endmsg;
         return false;
       }
     }
   }
-
   return true;
 }
 
@@ -1321,7 +1169,7 @@ bool L0DUConfigProvider::conditionOrdering(){
 
 bool L0DUConfigProvider::configChecker(){
 
-  if(m_conditionsMap.size() == 0 && m_channelsMap.size() == 0)return true;
+  if(m_conditionsMap.empty() && m_channelsMap.empty())return true;
 
   using namespace L0DUBase;
   // check number of channels
@@ -1359,9 +1207,8 @@ bool L0DUConfigProvider::configChecker(){
   // check number of conditions / type
   unsigned int k = 0;
   double maxRate = -1.;
-  std::string tCheck="";
-  for( std::vector<std::vector<LHCb::L0DUElementaryCondition*> >::iterator it = m_condOrder.begin();m_condOrder.end()!=it;++it){
-    std::vector<LHCb::L0DUElementaryCondition*> conds = *it;
+  std::string tCheck;
+  for( const auto& conds : m_condOrder ) {
     double ctRate = 0.;
     if( conds.size() == 0){k++;continue;}
 
@@ -1369,9 +1216,9 @@ bool L0DUConfigProvider::configChecker(){
     if(ctRate >= maxRate){
       tCheck = ( ctRate > maxRate ) ? "" : tCheck + "&";
       maxRate = ctRate;
-      const LHCb::L0DUElementaryCondition* cond = *(conds.begin());
-      const LHCb::L0DUElementaryData* data= (NULL != cond) ? cond->data() : NULL;
-      std::string nData = (NULL != data ) ? data->name() : "???";
+      const LHCb::L0DUElementaryCondition* cond = conds.front();
+      const LHCb::L0DUElementaryData* data= ( cond ? cond->data() : nullptr );
+      std::string nData = ( data ? data->name() : "???" );
       tCheck += "["+nData+ " : " +Gaudi::Utils::toString(conds.size())+"/"+Gaudi::Utils::toString(m_condMax[k])+"]";
     }
 
@@ -1408,22 +1255,18 @@ bool L0DUConfigProvider::configChecker(){
     if( ! m_forceOrder ) info() << "ordering has been restored : "<< endmsg;
     else info() << "ordering has NOT been applied : " << endmsg;
     int kk = 0;
-    for( std::vector<std::vector<LHCb::L0DUElementaryCondition*> >::iterator it = m_condOrder.begin();m_condOrder.end()!=it;++it){
-      std::vector<LHCb::L0DUElementaryCondition*> conds = *it;
-      for(std::vector<LHCb::L0DUElementaryCondition*>::iterator itt = conds.begin();itt!=conds.end();++itt){
-        int bx=(*itt)->bx();
-        info() << " condition = '" << (*itt)->name() << "' index = " << (*itt)->id()
-               << " |   hardware  " <<kk<< " |  reported ? "<< (*itt)->reported() << " (reportBit  "<< (*itt)->reportBit() << ")";
+    for( const auto& conds : m_condOrder) {
+      for(const auto& itt : conds ) {
+        int bx=itt->bx();
+        info() << " condition = '" << itt->name() << "' index = " << itt->id()
+               << " |   hardware  " <<kk++ << " |  reported ? "<< itt->reported() << " (reportBit  "<< itt->reportBit() << ")";
         if(bx !=0 ) info() << " applied to BX=["<< bx << "]";
         info()<< endmsg;
-        kk++;
       }
     }
   }
 
-
   std::string order = "OK" ;
-
 
   if( m_reOrder){
     order = "SWAP";
@@ -1434,7 +1277,7 @@ bool L0DUConfigProvider::configChecker(){
       order += " (restored)" ;
     }
   }
-  for( LHCb::L0DUElementaryCondition::Map::iterator ic=m_conditionsMap.begin();m_conditionsMap.end() != ic;ic++){
+  for( auto ic=m_conditionsMap.begin();m_conditionsMap.end() != ic;ic++){
     if( (std::find(m_knownBXs.begin(),m_knownBXs.end(), ic->second->bx() ) == m_knownBXs.end() ))ok=false;
   }
   if( ok )info() << "The configuration "<< format("0x%04X" , m_tckopts ) <<" matches the hardware limitations " << endmsg;
@@ -1443,9 +1286,11 @@ bool L0DUConfigProvider::configChecker(){
   info() << "- Usage : #Conditions : " <<m_conditionsMap.size() << " ["  << format("%3.1f", 100.*cdRate) << "% ]; order : " << order
          << " ; reported  : " << m_reported<<"/" << m_conditionsMap.size() << endmsg;
   info() << "- Usage : #Conditions/type (max)  :"<< tCheck << endmsg;
-  for( LHCb::L0DUElementaryCondition::Map::iterator ic=m_conditionsMap.begin();m_conditionsMap.end() != ic;ic++){
-    std::string stamp =( (std::find(m_knownBXs.begin(),m_knownBXs.end(), ic->second->bx() ) == m_knownBXs.end() )) ? "Warning" : "Info   ";
-    if( ic->second != NULL && ic->second->bx() != 0)info()<<"- "<< stamp <<" : the condition '" << ic->first << "' relies on BX=["<<Gaudi::Utils::toString(ic->second->bx())<<"]"<<endmsg;
+  for ( const auto& ic : m_conditionsMap ) {
+    if( ic.second && ic.second->bx() != 0) {
+      auto  stamp =( (std::find(m_knownBXs.begin(),m_knownBXs.end(), ic.second->bx() ) == m_knownBXs.end() )) ? "Warning" : "Info   ";
+      info()<<"- "<< stamp <<" : the condition '" << ic.first << "' relies on BX=["<<Gaudi::Utils::toString(ic.second->bx())<<"]"<<endmsg;
+    }
   }
   return ok;
 }

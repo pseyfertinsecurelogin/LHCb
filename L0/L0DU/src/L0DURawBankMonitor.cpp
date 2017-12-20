@@ -56,10 +56,6 @@ L0DURawBankMonitor::L0DURawBankMonitor( const std::string& name,
 
   setHistoDir( name );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0DURawBankMonitor::~L0DURawBankMonitor() {}
 
 //=============================================================================
 // Initialization
@@ -650,7 +646,7 @@ GaudiAlg::HistoID L0DURawBankMonitor::toHistoID(std::string unit){
   int index = unit.find_first_of("/");
   std::string pref = unit.substr(0,index);
   if( unit.find("Status/Calo/1")!= std::string::npos)return HistoID( pref + "/Calo/StatusBit" );
-  else  if( unit.find("Calo/1") != std::string::npos )return HistoID( pref + "/Calo/Electron" );
+  else if( unit.find("Calo/1") != std::string::npos )return HistoID( pref + "/Calo/Electron" );
   else if( unit.find("Calo/2")!= std::string::npos)return HistoID( pref + "/Calo/Photon" );
   else if( unit.find("Calo/3")!= std::string::npos)return HistoID( pref + "/Calo/LocalPi0" );
   else if( unit.find("Calo/4")!= std::string::npos)return HistoID( pref + "/Calo/GlobalPi0" );

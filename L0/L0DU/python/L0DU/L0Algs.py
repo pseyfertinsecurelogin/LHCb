@@ -100,10 +100,16 @@ def decodeL0MuonSeq(suffix=''):
     return [ decodeL0Muon(suffix) ] 
 
 ## L0DU algorithm
-def decodeL0DU(suffix=''):
+def decodeL0DU(suffix='',WriteProcData = False, WriteOnTES = True):
     """ Returns the algorithm to decode the L0DU data."""
-    from Configurables import L0DUDecoder
-    return L0DUDecoder(L0DUFromRawAlgName+suffix)
+    if ( WriteProcData or not WriteOnTES ) :
+       from Configurables import L0DUFromRawAlg
+       decoding = L0DUFromRawAlg(L0DUFromRawAlgName+suffix)
+       decoding.WriteProcData = WriteProcData
+       decoding.WriteOnTES = WriteOnTES
+    else :
+       from Configurables import L0DUDecoder
+       return L0DUDecoder(L0DUFromRawAlgName+suffix)
 
 ## L0DU sequence
 def decodeL0DUSeq(suffix=''):

@@ -375,16 +375,16 @@ StatusCode L0MuonAlg::execute()
     m_outputTool->setVersion(m_version, m_mode, m_compression);
 
     // Fill the Raw Event container
-    if ( m_writeBanks ) {
+    if ( writeBanks() ) {
       if( msgLevel(MSG::DEBUG) ) debug() << "Fill RawEvent ..." << endmsg;
       sc = m_outputTool->writeRawBanks();
       if ( sc.isFailure() ) return sc;
     }
 
     // Write on TES
-    if ( m_writeOnTES) {
+    if ( writeOnTES() ) {
       if( msgLevel(MSG::DEBUG) ) debug() << "Write on TES ..." << endmsg;
-      sc = m_outputTool->writeOnTES(m_l0context);
+      sc = m_outputTool->writeOnTES(l0context());
       if ( sc.isFailure() ) return sc;
     }
 

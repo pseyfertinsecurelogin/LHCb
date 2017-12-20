@@ -22,7 +22,7 @@
 DECLARE_COMPONENT( L0MuonCandidatesFromRaw )
 
 L0MuonCandidatesFromRaw::L0MuonCandidatesFromRaw(const std::string& name,
-                                         ISvcLocator* pSvcLocator) 
+                                         ISvcLocator* pSvcLocator)
   : L0FromRawBase(name, pSvcLocator)
   , m_outputTool(NULL)
 {
@@ -50,7 +50,7 @@ StatusCode L0MuonCandidatesFromRaw::initialize()
 
   //   IChronoStatSvc * svc = chronoSvc();
   //   svc->chronoStart("L0MuonCandidatesFromRaw Initialize");
-  
+
   L0Muon::RegisterFactory::selectInstance(1);
   L0Muon::RegisterFactory* rfactory = L0Muon::RegisterFactory::instance();
   if ( ! rfactory->filledFromXML() ) {
@@ -62,21 +62,21 @@ StatusCode L0MuonCandidatesFromRaw::initialize()
   } else {
     info() << "MuonTrigger already build from xml"<< endmsg;
   }
-  
+
   //   svc->chronoStop("L0MuonCandidatesFromRaw Initialize");
   //   svc->chronoDelta("L0MuonCandidatesFromRaw Initialize",IChronoStatSvc::KERNEL);
   //   svc->chronoPrint("L0MuonCandidatesFromRaw Initialize");
-  
+
   // L0MuonOutputs tool
   m_outputTool =  tool<L0MuonOutputs>( "L0MuonOutputs"  , "OutputTool" , this );
   m_outputTool->setDecodingMode();
-  
+
   m_totEvent = 0;
   m_totBx = 0;
   m_errorEvent = 0;
 
   m_enableTAE = !m_disableTAE;
-  
+
   // TAE slots names
   if (m_enableTAE){
     m_tae_items[-7] = "Prev7/";
@@ -109,8 +109,8 @@ StatusCode L0MuonCandidatesFromRaw::initialize()
       debug()<<"=> only the 1st part of the L0MuonCtrlCand bank will be used (suitable for HLT & MC)"<<endmsg;
     }
   }
-  
-  return StatusCode::SUCCESS;			  					  		      
+
+  return StatusCode::SUCCESS;
 }
 
 StatusCode L0MuonCandidatesFromRaw::execute()
@@ -119,24 +119,24 @@ StatusCode L0MuonCandidatesFromRaw::execute()
 
   //   IChronoStatSvc * svc = chronoSvc();
   //   svc->chronoStart("L0MuonCandidatesFromRaw Execute");
-  
+
   StatusCode sc;
 
   // Scan the list of input location and select the first existing one.
   std::string rawEventLocation;
-  if ( selectRawEventLocation(rawEventLocation).isFailure() ) 
+  if ( selectRawEventLocation(rawEventLocation).isFailure() )
     return Error("No valid raw event location found",StatusCode::SUCCESS,50);
-  
+
   // TAE mode
   int tae_size = 0;
-  if (m_enableTAE) 
+  if (m_enableTAE)
   {
     LHCb::ODIN* odin = getIfExists<LHCb::ODIN>(LHCb::ODINLocation::Default,IgnoreRootInTES);
     if ( NULL != odin ) {
       // TAE size from odin
       tae_size = int(odin->timeAlignmentEventWindow());
-    } 
-    else 
+    }
+    else
     {
       Warning("ODIN not found at "+LHCb::ODINLocation::Default+", TAE mode requested but not used" ,
               StatusCode::FAILURE,50).ignore();
@@ -150,30 +150,30 @@ StatusCode L0MuonCandidatesFromRaw::execute()
 
     // Decode Raw banks
     m_outputTool->setMode(m_mode);
-    sc = m_outputTool->decodeRawBanks( taeInTes+rawEventLocation , m_useRootInTES , m_statusOnTES);
-    if ( sc.isFailure() ) 
-    { 
+    sc = m_outputTool->decodeRawBanks( taeInTes+rawEventLocation , useRootInTES() , statusOnTES() );
+    if ( sc.isFailure() )
+    {
       Warning("Error from decodeRawBanks - skip this time slice"
               ,StatusCode::SUCCESS,50).ignore();
       sc = m_outputTool->releaseRegisters();
-      if ( sc.isFailure() ) 
+      if ( sc.isFailure() )
       {
         return Warning("Fail to release registers - skip the rest of event"
                        ,StatusCode::SUCCESS,50);
       }
       continue;
     }
-    
+
     // Print Errors
     if (msgLevel(MSG::DEBUG)) {
       m_outputTool->errors(debug());
     }
-  
+
     // Write on TES
-    if ( m_writeOnTES) {
+    if ( writeOnTES() ) {
       if( msgLevel(MSG::VERBOSE) ) verbose() << "Write on TES ..." << endmsg;
-      sc = m_outputTool->writeOnTES(m_l0context , taeInTes);
-      if ( sc.isFailure() ) { 
+      sc = m_outputTool->writeOnTES(l0context() , taeInTes);
+      if ( sc.isFailure() ) {
         Warning("Error from writeOnTES - skip this time slice"
                 ,StatusCode::SUCCESS,50).ignore();
         sc = m_outputTool->releaseRegisters();
@@ -184,12 +184,12 @@ StatusCode L0MuonCandidatesFromRaw::execute()
         continue;
       }
     }
-  
+
     // Fill the container for the L0DU (L0ProcessorData)
-    if ( m_writeProcData) {
+    if ( writeProcData() ) {
       if( msgLevel(MSG::VERBOSE) ) verbose() << "Fill L0ProcessorData ..." << endmsg;
       sc = m_outputTool->writeL0ProcessorData();
-      if ( sc.isFailure() ) { 
+      if ( sc.isFailure() ) {
         Warning("Error from writeL0ProcessorData - skip this time slice"
                 ,StatusCode::SUCCESS,50).ignore();
         sc = m_outputTool->releaseRegisters();
@@ -215,14 +215,14 @@ StatusCode L0MuonCandidatesFromRaw::execute()
     ++ntae;
   } // End of loop over time slots
   if (ntae==0) return Error("No valid time slice found",StatusCode::SUCCESS,50);
-  
+
   //   svc->chronoStop("L0MuonCandidatesFromRaw Execute");
   //   svc->chronoDelta("L0MuonCandidatesFromRaw Execute", IChronoStatSvc::KERNEL);
 
   ++m_totEvent;
 
   return StatusCode::SUCCESS;
-  
+
 }
 
 
@@ -241,6 +241,6 @@ StatusCode L0MuonCandidatesFromRaw::finalize()
     m_outputTool->statTot(info());
     info() << "- ------------------------------------------------------------------"<<endmsg;
   }
-  
+
   return L0FromRawBase::finalize();  // must be called after all other actions
 }
