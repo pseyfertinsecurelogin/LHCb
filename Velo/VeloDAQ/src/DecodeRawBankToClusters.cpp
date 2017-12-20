@@ -1,6 +1,6 @@
 // $Id: DecodeRawBankToClusters.cpp,v 1.17 2010-03-17 18:33:19 krinnert Exp $
 
-#include <vector>
+#include <boost/container/small_vector.hpp>
 #include <algorithm>
 #include <sstream>
 
@@ -44,7 +44,7 @@ int VeloDAQ::decodeRawBankToClustersV2(
         vcid);
 
     
-    const std::vector<SiADCWord>& adcWords = padci->second;
+    const boost::container::small_vector<SiADCWord,10>& adcWords = padci->second;
 
     int firstStrip = static_cast<int>(stripNumber);
 
@@ -119,7 +119,7 @@ int VeloDAQ::decodeRawBankToClustersV3(
         vcid);
 
     
-    const std::vector<SiADCWord>& adcWords = padci->second;
+    const boost::container::small_vector<SiADCWord,10>& adcWords = padci->second;
 
     int firstStrip = static_cast<int>(stripNumber);
 

@@ -9,6 +9,7 @@
 #include "Event/STSummary.h"
 #include "Event/STCluster.h"
 
+#include <boost/container/small_vector.hpp>
 #include <vector>
 #include <string>
 
@@ -55,11 +56,11 @@ private:
 
   void createCluster(const STClusterWord& aWord,
                      const STTell1Board* aBoard,
-                     const std::vector<SiADCWord>& adcValues,
+                     const boost::container::small_vector<SiADCWord,10>& adcValues,
                      const STDAQ::version& bankVersion,
                      LHCb::STClusters& clusCont) const;
  
-  double mean(const std::vector<SiADCWord>& adcValues) const;
+  double mean(const boost::container::small_vector<SiADCWord,10>& adcValues) const;
    
   LHCb::STLiteCluster word2LiteCluster(const STClusterWord aWord, 
 				       const LHCb::STChannelID chan,
