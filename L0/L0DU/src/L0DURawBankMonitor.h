@@ -46,12 +46,8 @@ public:
   /// Standard constructor
   L0DURawBankMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0DURawBankMonitor( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
   void bookHistos();

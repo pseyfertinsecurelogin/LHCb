@@ -19,9 +19,6 @@ template <class TYPE> class CnvFactory;
  */
 class XmlIsotopeCnv : public XmlGenericCnv {
 
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlIsotopeCnv>;
-
 public:
 
   /**
@@ -29,9 +26,6 @@ public:
    * @return the classID for this type
    */
   static const CLID& classID() { return CLID_Isotope; }
-
-
-protected:
 
   /**
    * Constructor for this converter
@@ -43,6 +37,8 @@ protected:
    * Default destructor
    */
   virtual ~XmlIsotopeCnv();
+
+protected:
 
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
@@ -88,4 +84,3 @@ private:
 // ============================================================================
 #endif // DETDESCCNV_XMLCNVSVC_XMLISOTOPECNV_H
 // ============================================================================
-

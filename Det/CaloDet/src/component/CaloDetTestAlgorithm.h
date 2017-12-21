@@ -19,17 +19,11 @@
 
 class CaloDetTestAlgorithm : public GaudiAlgorithm
 {
-  /// friend factory for instantiation
-  friend class AlgFactory<CaloDetTestAlgorithm>;
-
 public:
-
   /** standard algorithm initialization
    *  @return status code
    */
   StatusCode initialize() override;
-
-protected:
 
   /** Standard constructor
    *  @param   name   algorithm name
@@ -40,7 +34,6 @@ protected:
 
 private:
   std::string m_DetData;
-
 };
 
 // ============================================================================

@@ -14,21 +14,19 @@
 class L0ETC : public GaudiTupleAlg {
 public:
   /// Standard constructor
-  L0ETC( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiTupleAlg::GaudiTupleAlg;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
 
-protected:
-
 private:
   /// ETC name
-  std::string m_collectionName;
+  Gaudi::Property<std::string> m_collectionName{ this, "CollectionName", "<not set>"};
   /// L0 channels
   std::vector<std::string> m_l0channels ;
 
-  long m_events ; ///< Number of events
+  long m_events = 0; ///< Number of events
 
 };
 #endif // L0ETC_H

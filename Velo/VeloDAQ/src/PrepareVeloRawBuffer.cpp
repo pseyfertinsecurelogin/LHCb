@@ -23,7 +23,7 @@
 // 2006-02-15 : David Jones, Kurt Rinnert: complete rewrite for 1MHz raw buffer
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( PrepareVeloRawBuffer )
+DECLARE_COMPONENT( PrepareVeloRawBuffer )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -11,7 +11,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( RateFromCondDB )
+DECLARE_COMPONENT( RateFromCondDB )
 
 //=============================================================================
 // Standard constructor, initializes variables

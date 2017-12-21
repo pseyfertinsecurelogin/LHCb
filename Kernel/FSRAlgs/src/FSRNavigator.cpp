@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( FSRNavigator )
+DECLARE_COMPONENT( FSRNavigator )
 
 //=============================================================================
 // Standard constructor, initializes variables

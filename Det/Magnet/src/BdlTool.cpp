@@ -15,7 +15,7 @@
 // Instantiation of a static factory class used by clients to create
 // instances of this tool
 
-DECLARE_TOOL_FACTORY( BdlTool )
+DECLARE_COMPONENT( BdlTool )
 
 // Standard Constructor
 BdlTool::BdlTool( const std::string& type,

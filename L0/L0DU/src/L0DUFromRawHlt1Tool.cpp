@@ -49,7 +49,7 @@ namespace {
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0DUFromRawHlt1Tool )
+DECLARE_COMPONENT( L0DUFromRawHlt1Tool )
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -57,7 +57,7 @@ DECLARE_TOOL_FACTORY( L0DUFromRawHlt1Tool )
 L0DUFromRawHlt1Tool::L0DUFromRawHlt1Tool( const std::string& type,
                                           const std::string& name,
                                           const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<IL0DUFromRawTool>(this);
   declareProperty( "RawLocations"           , m_rawLocations  = { LHCb::RawEventLocation::Trigger ,  LHCb::RawEventLocation::Default } );
@@ -70,7 +70,7 @@ L0DUFromRawHlt1Tool::L0DUFromRawHlt1Tool( const std::string& type,
 //=========================================================================
 StatusCode L0DUFromRawHlt1Tool::initialize ( ) {
   if ( msgLevel(MSG::DEBUG) ) debug() << "Initialize" << endmsg;
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if(sc.isFailure())return sc;
 
   m_confTool = tool<IL0DUConfigProvider>(m_configType , m_configName);
@@ -93,7 +93,7 @@ StatusCode L0DUFromRawHlt1Tool::initialize ( ) {
 
 StatusCode L0DUFromRawHlt1Tool::finalize ( ) {
   m_processorDatas.clear();
-  return GaudiTool::finalize();
+  return base_class::finalize();
 }
 
 //=========================================================================

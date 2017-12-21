@@ -64,7 +64,7 @@ namespace {
 
 extern char** environ;
 
-DECLARE_SERVICE_FACTORY( FileStagerSvc )
+DECLARE_COMPONENT( FileStagerSvc )
 
 //=============================================================================
 FileStagerSvc::FileStagerSvc( const string& name, ISvcLocator* svcLoc )

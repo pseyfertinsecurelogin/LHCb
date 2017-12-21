@@ -59,10 +59,10 @@ namespace LHCb
     Point position( double arclength ) const override;
 
     /// First derivative of the trajectory at arclength from the starting point
-    Vector direction( double arclength=0 ) const override;
+    Vector direction( double arclength ) const override;
 
     /// Second derivative of the trajectory at arclength from the starting point
-    Vector curvature( double arclength=0 ) const override;
+    Vector curvature( double arclength ) const override;
 
     /// Create a parabolic approximation to the trajectory
     /// at arclength from the starting point
@@ -79,13 +79,13 @@ namespace LHCb
     /// expansion reaches the given tolerance.
     double distTo1stError( double arclength,
                            double tolerance,
-                           int pathDirection = +1 ) const override;
+                           int pathDirection ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the
     /// expansion reaches the given tolerance.
     double distTo2ndError( double arclength,
                            double tolerance,
-                           int pathDirection = +1 ) const override;
+                           int pathDirection ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because LineTraj is parameterized in

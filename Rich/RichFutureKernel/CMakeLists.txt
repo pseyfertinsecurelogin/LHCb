@@ -13,6 +13,9 @@ gaudi_depends_on_subdirs(GaudiAlg
 find_package(AIDA)
 find_package(Boost)
 find_package(VDT)
+find_package(Vc)
+
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})     
 
 gaudi_add_library(RichFutureKernel
                   src/*.cpp

@@ -795,7 +795,7 @@ std::string LHCb::ParticlePropertySvc::cc ( const std::string& decay ) const
 }
 // ============================================================================
 // Instantiation of a static factory class used by clients to create
-DECLARE_NAMESPACE_SERVICE_FACTORY(LHCb,ParticlePropertySvc)
+DECLARE_COMPONENT( LHCb::ParticlePropertySvc )
 // ============================================================================
 // The END
 // ============================================================================

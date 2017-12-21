@@ -22,6 +22,19 @@ constexpr static int s_nbSipmPerTELL40 = FTRawBank::NbSiPMPerTELL40;
 DECLARE_COMPONENT( FTRawBankEncoder )
 
 //=============================================================================
+// Initialization
+//=============================================================================
+StatusCode FTRawBankEncoder::initialize() {
+  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
+  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+
+  //== create the vector of vectors of vectors with the proper size...
+  m_sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
+
+  return StatusCode::SUCCESS;
+}
+
+//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode FTRawBankEncoder::execute() {

@@ -134,7 +134,8 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 
   const auto & detelems = childIDetectorElements();
 
-  for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it )
+  Int iModNum(0);
+  for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it, ++iModNum )
   {
     if ( std::string::npos != (*det_it)->name().find("MAPMT_MODULE:") )
     {
@@ -149,12 +150,12 @@ StatusCode DeRichPMTPanel::geometryUpdate()
       }
 
       // save to list of PMT Modules
-      m_DePMTModules.push_back( dePMTModule );
+      m_DePMTModules.push_back( dePMTModule->geometry() );
       const auto aCurrentModuleCopyNumber = getModuleCopyNumber( dePMTModule->name() );
 
       const auto aNumPmtInCurrentRichModule = (Int) dePMTModule->childIDetectorElements().size();
-      std::vector<DeRichPMT*>        DePmtsInCurModule     (aNumPmtInCurrentRichModule,nullptr);
-      std::vector<IDetectorElement*> DePmtAnodesInCurModule(aNumPmtInCurrentRichModule,nullptr);
+      std::vector<DeRichPMT*>           DePmtsInCurModule     (aNumPmtInCurrentRichModule,nullptr);
+      std::vector<const IGeometryInfo*> DePmtAnodesInCurModule(aNumPmtInCurrentRichModule,nullptr);
 
       // register UMS dependency.
       updMgrSvc()->registerCondition( this, dePMTModule->geometry(), &DeRichPMTPanel::geometryUpdate );
@@ -188,6 +189,11 @@ StatusCode DeRichPMTPanel::geometryUpdate()
               // CRJ - These should be set by the DePMT class itself....
               dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT(aCurrentModuleCopyNumber)  );
+              auto id = m_panelID;
+              id.setPD_PMT(iModNum,curPmtNum);
+              dePMT->setPDSmartID(id);
+              // curPmtNum is SmartID pdInCol
+              // iModNum is pdCol
 
               DePmtsInCurModule[curPmtNum] = dePMT;
 
@@ -202,11 +208,10 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 
                     if ( dePmtAnode )
                     {
-                      //  IDetectorElement* dePmtAnode = (IDetectorElement*) (*det_it_pm_an);
                       // register UMS dependency
                       updMgrSvc()->registerCondition( this, dePmtAnode->geometry(),
                                                       &DeRichPMTPanel::geometryUpdate );
-                      DePmtAnodesInCurModule[curPmtNum] = dePmtAnode;
+                      DePmtAnodesInCurModule[curPmtNum] = dePmtAnode->geometry();
                     }
                     else
                     {
@@ -214,11 +219,11 @@ StatusCode DeRichPMTPanel::geometryUpdate()
                           << (*det_it_pm_an)->name() << endmsg;
                       return StatusCode::FAILURE;
                     }
-                  }// end test anode name
+                  } // end test anode name
 
-                } // end loop over  anodes in a pmt. We assume there is only 1 det elem inside a pmt
-                // which is the anode.
-              }// end test on pt child det elem
+                } // end loop over anodes in a pmt. We assume there is only 1 det elem inside a pmt
+                  // which is the anode.
+              } // end test on pt child det elem
 
             }
             else
@@ -257,6 +262,8 @@ StatusCode DeRichPMTPanel::geometryUpdate()
   Gaudi::XYZPoint  aPon(0,0,0);
   Int sign = 0;
 
+  using GP = Gaudi::XYZPoint;
+
   if ( rich() == Rich::Rich1 )
   {
 
@@ -266,34 +273,30 @@ StatusCode DeRichPMTPanel::geometryUpdate()
     {
       const auto aPmtR1P0DetPlaneDirCos = firstRich->param<std::vector<double> >("Rich1TopPmtDetectorPlaneDirCos");
       const auto aPmtR1P0DetPlanePoint  = firstRich->param<std::vector<double> >("Rich1TopPmtDetPlanePoint");
-      aOffset = fabs( m_PmtModulePlaneHalfSizeR1[1] );
+      aOffset = fabs( m_PmtModulePlaneHalfSizeR1SIMD[1][0] );
       aDir = { aPmtR1P0DetPlaneDirCos[0], aPmtR1P0DetPlaneDirCos[1], aPmtR1P0DetPlaneDirCos[2] };
       aPon = { aPmtR1P0DetPlanePoint[0],  aPmtR1P0DetPlanePoint[1],  aPmtR1P0DetPlanePoint[2]  };
-      m_xyHalfSize[0] = fabs( m_PmtModulePlaneHalfSizeR1[0] );
-      m_xyHalfSize[1] = fabs( m_PmtModulePlaneHalfSizeR1[1] );
+      m_xyHalfSizeSIMD[0] = fabs( m_PmtModulePlaneHalfSizeR1SIMD[0][0] );
+      m_xyHalfSizeSIMD[1] = fabs( m_PmtModulePlaneHalfSizeR1SIMD[1][0] );
     }
     else if ( side () == Rich::bottom )
     {
       const auto aPmtR1P1DetPlaneDirCos = firstRich->param<std::vector<double> >("Rich1BotPmtDetectorPlaneDirCos");
       const auto aPmtR1P1DetPlanePoint  = firstRich->param<std::vector<double> >("Rich1BotPmtDetPlanePoint");
-      aOffset = fabs( m_PmtModulePlaneHalfSizeR1[3] );
+      aOffset = fabs( m_PmtModulePlaneHalfSizeR1SIMD[3][0] );
       aDir = { aPmtR1P1DetPlaneDirCos[0], aPmtR1P1DetPlaneDirCos[1], aPmtR1P1DetPlaneDirCos[2] };
       aPon = { aPmtR1P1DetPlanePoint[0],  aPmtR1P1DetPlanePoint[1],  aPmtR1P1DetPlanePoint[2]  };
-      m_xyHalfSize[0] = fabs( m_PmtModulePlaneHalfSizeR1[2] );
-      m_xyHalfSize[1] = fabs( m_PmtModulePlaneHalfSizeR1[3] );
+      m_xyHalfSizeSIMD[0] = fabs( m_PmtModulePlaneHalfSizeR1SIMD[2][0] );
+      m_xyHalfSizeSIMD[1] = fabs( m_PmtModulePlaneHalfSizeR1SIMD[3][0] );
     }
 
     m_detectionPlane = Gaudi::Plane3D(aDir, aPon);
 
     // Also create a plane at the exterior surface of the pmt quartz window.
-    const auto aZShiftR1 = firstRich->param<double> ("Rich1PmtDetPlaneZInPmtPanel");
-    const Gaudi::XYZPoint localpointP(0.0,0.0,aZShiftR1-m_RichPmtQuartzThickness);
-    const Gaudi::XYZPoint localpointQ(0.0,100.0,aZShiftR1-m_RichPmtQuartzThickness);
-    const Gaudi::XYZPoint localpointR(50.0,50.0,aZShiftR1-m_RichPmtQuartzThickness);
-    const Gaudi::XYZPoint globalpointP(geometry()->toGlobal(localpointP));
-    const Gaudi::XYZPoint globalpointQ(geometry()->toGlobal(localpointQ));
-    const Gaudi::XYZPoint globalpointR(geometry()->toGlobal(localpointR));
-    m_detectionPlane_exterior = Gaudi::Plane3D(globalpointP,globalpointQ,globalpointR);
+    const auto z = firstRich->param<double> ("Rich1PmtDetPlaneZInPmtPanel") - m_RichPmtQuartzThickness;
+    m_detectionPlane_exterior = Gaudi::Plane3D( geometry()->toGlobal( GP( 0,   0, z ) ),
+                                                geometry()->toGlobal( GP( 0, 100, z ) ),
+                                                geometry()->toGlobal( GP( 50, 50, z ) ) );
 
   }
   else // if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
@@ -304,39 +307,32 @@ StatusCode DeRichPMTPanel::geometryUpdate()
     // the actual detection plane using the Z Shift wrt the current panel.
     const auto aZShiftR2 = firstRich->param<double> ("Rich2PmtDetPlaneZInPmtPanel");
     // create three random points on the detection plane, which can define the plane.
-    const Gaudi::XYZPoint localpointA(0.0,0.0,aZShiftR2);
-    const Gaudi::XYZPoint localpointB(0.0,100.0,aZShiftR2);
-    const Gaudi::XYZPoint localpointC(50.0,50.0,aZShiftR2);
-    const Gaudi::XYZPoint globalpointA(geometry()->toGlobal(localpointA));
-    const Gaudi::XYZPoint globalpointB(geometry()->toGlobal(localpointB));
-    const Gaudi::XYZPoint globalpointC(geometry()->toGlobal(localpointC));
-    m_detectionPlane = Gaudi::Plane3D(globalpointA,globalpointB,globalpointC);
+    m_detectionPlane = Gaudi::Plane3D( geometry()->toGlobal( GP(  0,   0, aZShiftR2 ) ),
+                                       geometry()->toGlobal( GP(  0, 100, aZShiftR2 ) ),
+                                       geometry()->toGlobal( GP( 50,  50, aZShiftR2 ) ) );
 
     // Also create  a  second plane at the exterior surface of the PmtQuartzWindow.
-    const Gaudi::XYZPoint localpointP(0.0,0.0,aZShiftR2-m_RichPmtQuartzThickness);
-    const Gaudi::XYZPoint localpointQ(0.0,100.0,aZShiftR2-m_RichPmtQuartzThickness);
-    const Gaudi::XYZPoint localpointR(50.0,50.0,aZShiftR2-m_RichPmtQuartzThickness);
-    const Gaudi::XYZPoint globalpointP(geometry()->toGlobal(localpointP));
-    const Gaudi::XYZPoint globalpointQ(geometry()->toGlobal(localpointQ));
-    const Gaudi::XYZPoint globalpointR(geometry()->toGlobal(localpointR));
-    m_detectionPlane_exterior = Gaudi::Plane3D(globalpointP,globalpointQ,globalpointR);
+    const auto z = aZShiftR2 - m_RichPmtQuartzThickness;
+    m_detectionPlane_exterior = Gaudi::Plane3D( geometry()->toGlobal( GP(  0,   0, z ) ),
+                                                geometry()->toGlobal( GP(  0, 100, z ) ),
+                                                geometry()->toGlobal( GP( 50,  50, z ) ) );
 
-    aPon = globalpointA;
+    aPon = geometry()->toGlobal( GP( 0, 0, aZShiftR2 ) );
 
     // determine which panel
     const RowCol rci = ( side() == Rich::left ? RowCol{0,1} : RowCol{2,3} );
 
     sign = ( side() == Rich::left ? 1 : -1 );
 
-    auto aOffsetX = ( !m_Rich2UseGrandModule ? fabs( m_PmtModulePlaneHalfSizeR2[rci[0]]      ) :
-                      !m_Rich2UseMixedModule ? fabs( m_GrandPmtModulePlaneHalfSizeR2[rci[0]] ) :
-                                               fabs( m_MixedPmtModulePlaneHalfSizeR2[rci[0]] ) );
-    auto aOffsetY = ( !m_Rich2UseGrandModule ? fabs( m_PmtModulePlaneHalfSizeR2[rci[1]]      ) :
-                      !m_Rich2UseMixedModule ? fabs( m_GrandPmtModulePlaneHalfSizeR2[rci[1]] ) :
-                                               fabs( m_MixedPmtModulePlaneHalfSizeR2[rci[1]] ) );
+    auto aOffsetX = ( !m_Rich2UseGrandModule ? fabs( m_PmtModulePlaneHalfSizeR2SIMD[rci[0]][0] ) :
+                      !m_Rich2UseMixedModule ? fabs( m_GrandPmtModulePlaneHalfSizeR2SIMD[rci[0]][0] ) :
+                                               fabs( m_MixedPmtModulePlaneHalfSizeR2SIMD[rci[0]][0] ) );
+    auto aOffsetY = ( !m_Rich2UseGrandModule ? fabs( m_PmtModulePlaneHalfSizeR2SIMD[rci[1]][0] ) :
+                      !m_Rich2UseMixedModule ? fabs( m_GrandPmtModulePlaneHalfSizeR2SIMD[rci[1]][0] ) :
+                                               fabs( m_MixedPmtModulePlaneHalfSizeR2SIMD[rci[1]][0] ) );
     aOffset = aOffsetX;
-    m_xyHalfSize[0] = aOffsetX;
-    m_xyHalfSize[1] = aOffsetY;
+    m_xyHalfSizeSIMD[0] = aOffsetX;
+    m_xyHalfSizeSIMD[1] = aOffsetY;
 
   }
   m_localOffset = aOffset;
@@ -371,6 +367,105 @@ StatusCode DeRichPMTPanel::geometryUpdate()
   }
   _ri_debug << "Max PD Copy Number = " <<  m_maxPDCopyN << endmsg;
 
+  // Define function pointers
+
+  if ( Rich::Rich1 == rich() )   
+  { 
+    if ( m_Rich1PmtLensPresence )
+    {
+      m_getModuleNumsSIMD = ( side() == Rich::top ? 
+                              &DeRichPMTPanel::getModuleNums_R1Up_Lens_SIMD :
+                              &DeRichPMTPanel::getModuleNums_R1Dn_Lens_SIMD );
+    }
+    else
+    {
+      m_getModuleNumsSIMD = ( side() == Rich::top ? 
+                              &DeRichPMTPanel::getModuleNums_R1Up_NoLens_SIMD :
+                              &DeRichPMTPanel::getModuleNums_R1Dn_NoLens_SIMD );
+    }
+  }
+  else
+  {
+    if ( !m_Rich2UseGrandModule )
+    {
+      m_getModuleNumsSIMD = ( side() == Rich::left ?
+                              &DeRichPMTPanel::getModuleNums_R2Le_Small_SIMD :
+                              &DeRichPMTPanel::getModuleNums_R2Ri_Small_SIMD );
+    }
+    else
+    {
+      if ( !m_Rich2UseMixedModule )
+      {
+        m_getModuleNumsSIMD = ( side() == Rich::left ?
+                                &DeRichPMTPanel::getModuleNums_R2Le_Grand_SIMD :
+                                &DeRichPMTPanel::getModuleNums_R2Ri_Grand_SIMD);
+      }
+      else
+      {
+        m_getModuleNumsSIMD = ( side() == Rich::left ?
+                                &DeRichPMTPanel::getModuleNums_R2Le_Mixed_SIMD :
+                                &DeRichPMTPanel::getModuleNums_R2Ri_Mixed_SIMD );
+      }
+    }
+  }
+
+  // make SIMD caches for various quantities
+
+  m_Rich1LensDemagnificationFactorSIMD = m_Rich1LensDemagnificationFactor;
+  m_GrandPmtAnodeXEdgeSIMD             = m_GrandPmtAnodeXEdge;
+  m_GrandPmtAnodeYEdgeSIMD             = m_GrandPmtAnodeYEdge;
+  m_PmtAnodeXEdgeSIMD                  = m_PmtAnodeXEdge;
+  m_PmtAnodeYEdgeSIMD                  = m_PmtAnodeYEdge;
+
+  for ( const auto i : {0,1} )
+  {
+    m_NumGrandPmtInRowColSIMD[i] = m_NumGrandPmtInRowCol[i];
+    m_NumPmtInRowColSIMD[i]      = m_NumPmtInRowCol[i];
+  }
+  for ( const auto i : {0,1,2,3} )
+  {
+    m_RichPmtNumModulesInRowColSIMD[i]      = m_RichPmtNumModulesInRowCol[i];
+    m_RichPmtModuleCopyNumBeginPanelSIMD[i] = m_RichPmtModuleCopyNumBeginPanel[i];
+    m_RichPmtModuleCopyNumEndPanelSIMD[i]   = m_RichPmtModuleCopyNumEndPanel[i];
+  }
+  for ( const auto i : m_Rich2MixedModuleArrayColumnSize )
+  {
+    m_Rich2MixedModuleArrayColumnSizeSIMD.emplace_back( i );
+  }
+
+  // transform does not like direct assignent from scalar version :(
+  {
+    double xx{0}, xy{0}, xz{0}, dx{0}, yx{0}, yy{0};
+    double yz{0}, dy{0}, zx{0}, zy{0}, zz{0}, dz{0};
+
+    // Set to local matrix
+    geometry()->toLocalMatrix().GetComponents( xx, xy, xz, 
+                                               dx, yx, yy, 
+                                               yz, dy, zx, 
+                                               zy, zz, dz );
+    m_toLocalMatrixSIMD.SetComponents( xx, xy, xz, 
+                                       dx, yx, yy, 
+                                       yz, dy, zx, 
+                                       zy, zz, dz );
+    // and to global
+    geometry()->toGlobalMatrix().GetComponents( xx, xy, xz, 
+                                                dx, yx, yy, 
+                                                yz, dy, zx, 
+                                                zy, zz, dz );
+    m_toGlobalMatrixSIMD.SetComponents( xx, xy, xz, 
+                                        dx, yx, yy, 
+                                        yz, dy, zx, 
+                                        zy, zz, dz );
+
+  }
+
+  m_localPlaneNormalSIMD = m_localPlaneNormal;
+
+  {
+    const auto & p = m_localPlane;
+    m_localPlaneSIMD = Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>( p.A(), p.B(), p.C(), p.D() );
+  }
+
   return sc;
 }
 
@@ -378,9 +473,10 @@ bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint,
                               LHCb::RichSmartID& id ) const
 {
   id = m_panelID; // sets RICH, panel and type
-  const auto a = findPMTArraySetup(globalPoint);
+  const Rich::SIMD::Point<FP> simdp( globalPoint );
+  const auto a = findPMTArraySetupSIMD(simdp);
   // get PMT module number in panel
-  setRichPmtSmartID( PmtModuleNumInPanelFromModuleNumAlone(a[0]), a[1], a[2], a[3], id );
+  setRichPmtSmartID( PmtModuleNumInPanelFromModuleNumAlone((a[0])[0]), (a[1])[0], (a[2])[0], (a[3])[0], id );
   //setRichPmtSmartID( a[0], a[1], a[2], a[3], id );
   return true;
 }
@@ -398,8 +494,8 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
   // keep some the RICH1 papameters inside the if block
   if ( rich() == Rich::Rich1 )
   {
-    m_PmtModulePlaneHalfSizeR1 = 
-      toarray<double,4>( firstRich->param<std::vector<double> >("Rich1PMTModulePlaneHalfSize") );
+    m_PmtModulePlaneHalfSizeR1SIMD = 
+      toarray<SIMDFP,4>( firstRich->param<std::vector<double> >("Rich1PMTModulePlaneHalfSize") );
     const auto aRich1PmtNumModulesInRow = firstRich->param<int> ("Rich1NumberOfModulesInRow" );
     const auto aRich1PmtNumModulesInCol = firstRich->param<int> ("Rich1NumberOfModulesInCol" );
     m_RichPmtNumModulesInRowCol[0] = aRich1PmtNumModulesInRow;
@@ -421,10 +517,10 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     }
   }
   
-  m_PmtModulePlaneHalfSizeR2 = 
-    toarray<double,4>( firstRich->param<std::vector<double> >("Rich2PMTModulePlaneHalfSize") );
+  m_PmtModulePlaneHalfSizeR2SIMD = 
+    toarray<SIMDFP,4>( firstRich->param<std::vector<double> >("Rich2PMTModulePlaneHalfSize") );
   const auto PmtModulePitch = firstRich->param<double>("RichPmtModulePitch");
-  m_PmtModulePitchInv = ( fabs(PmtModulePitch)>0 ? 1.0/PmtModulePitch : 0.0 );
+  m_PmtModulePitchInvSIMD = ( fabs(PmtModulePitch)>0 ? 1.0/PmtModulePitch : 0.0 );
   const auto aRich2PmtNumModulesInRow = firstRich->param<int> ( "Rich2NumberOfModulesInRow" );
   const auto aRich2PmtNumModulesInCol = firstRich->param<int> ( "Rich2NumberOfModulesInCol" );
   m_RichPmtNumModulesInRowCol[2] = aRich2PmtNumModulesInRow;
@@ -437,11 +533,11 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     toarray<Int,4>( firstRich->param<std::vector<int> > ("RichPmtModuleNumBeginInPanels") );
   m_RichPmtModuleCopyNumEndPanel =
     toarray<Int,4>( firstRich->param<std::vector<int> > ("RichPmtModuleNumEndInPanels") );
-  m_RichPmtModuleActiveAreaHalfSize=
-    toarray<double,2>( firstRich->param<std::vector<double> >("RichPMTModuleActiveAreaHalfSize") );
+  m_RichPmtModuleActiveAreaHalfSizeSIMD =
+    toarray<SIMDFP,2>( firstRich->param<std::vector<double> >("RichPMTModuleActiveAreaHalfSize") );
   
   const auto PmtPitch = firstRich->param<double>("RichPmtPitch");
-  m_PmtPitchInv = ( fabs(PmtPitch)>0 ? 1.0/PmtPitch : 0.0 );
+  m_PmtPitchInvSIMD = ( fabs(PmtPitch)>0 ? 1.0/PmtPitch : 0.0 );
   
   m_NumPmtInRowCol[0]  = firstRich->param<int> ("RichPmtNumInModuleRow");
   m_NumPmtInRowCol[1]  = firstRich->param<int> ("RichPmtNumInModuleCol");
@@ -460,18 +556,18 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
   m_PmtAnodeXSize = firstRich->param<double>("RichPmtAnodeXSize");
   m_PmtAnodeYSize = firstRich->param<double>("RichPmtAnodeYSize");
   
-  m_PmtPixelGap = firstRich->param<double>("RichPmtPixelGap" );
-  m_PmtPixelsInRow = firstRich->param<int>("RichPmtNumPixelCol" );
-  m_PmtPixelsInCol = firstRich->param<int>("RichPmtNumPixelRow" );
+  m_PmtPixelGap = firstRich->param<double>("RichPmtPixelGap");
+  m_PmtPixelsInRowSIMD = firstRich->param<int>("RichPmtNumPixelCol");
+  m_PmtPixelsInColSIMD = firstRich->param<int>("RichPmtNumPixelRow");
   m_PmtAnodeXEdge = -0.5*(m_PmtAnodeXSize+m_PmtPixelGap);
   m_PmtAnodeYEdge = -0.5*(m_PmtAnodeYSize+m_PmtPixelGap);
   m_AnodeXPixelSize = firstRich->param<double> ("RichPmtPixelXSize");
   m_AnodeYPixelSize = firstRich->param<double> ("RichPmtPixelYSize");
   const auto PmtAnodeEffectiveXPixelSize = m_AnodeXPixelSize+m_PmtPixelGap;
   const auto PmtAnodeEffectiveYPixelSize = m_AnodeYPixelSize+m_PmtPixelGap;
-  m_PmtAnodeEffectiveXPixelSizeInv = 1.0/PmtAnodeEffectiveXPixelSize;
-  m_PmtAnodeEffectiveYPixelSizeInv = 1.0/PmtAnodeEffectiveYPixelSize;
-  m_PmtMasterLateralSize = firstRich->param<double>("RichPmtMasterLateralSize" );
+  m_PmtAnodeEffectiveXPixelSizeInvSIMD = 1.0/PmtAnodeEffectiveXPixelSize;
+  m_PmtAnodeEffectiveYPixelSizeInvSIMD = 1.0/PmtAnodeEffectiveYPixelSize;
+  m_PmtMasterLateralSize = firstRich->param<double>("RichPmtMasterLateralSize");
   const auto Rich1TotNumPmts = firstRich->param<int>("Rich1TotNumPmt");
   const auto Rich2TotNumPmts = firstRich->param<int>("Rich2TotNumPmt");
   m_totNumPMTs = Rich1TotNumPmts + Rich2TotNumPmts;
@@ -484,16 +580,16 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     if ( firstRich->exists("Rich2GrandPMTModulePlaneHalfSize") )
     {
       
-      m_GrandPmtModulePlaneHalfSizeR2 = toarray<double,4>( firstRich->param<std::vector<double> >("Rich2GrandPMTModulePlaneHalfSize") );
+      m_GrandPmtModulePlaneHalfSizeR2SIMD = toarray<SIMDFP,4>( firstRich->param<std::vector<double> >("Rich2GrandPMTModulePlaneHalfSize") );
       const auto GrandPmtModulePitch = firstRich->param<double>("RichGrandPmtModulePitch");
-      m_GrandPmtModulePitchInv = ( fabs(GrandPmtModulePitch)>0 ? 1.0/GrandPmtModulePitch : 0.0 );
-      m_RichGrandPmtModuleActiveAreaHalfSize =
-        toarray<double,2>( firstRich->param<std::vector<double> >("RichGrandPMTModuleActiveAreaHalfSize") );
+      m_GrandPmtModulePitchInvSIMD = ( fabs(GrandPmtModulePitch)>0 ? 1.0/GrandPmtModulePitch : 0.0 );
+      m_RichGrandPmtModuleActiveAreaHalfSizeSIMD =
+        toarray<SIMDFP,2>( firstRich->param<std::vector<double> >("RichGrandPMTModuleActiveAreaHalfSize") );
       const auto GrandPmtPitch = firstRich->param<double>("RichGrandPmtPitch");
-      m_GrandPmtPitchInv = ( fabs(GrandPmtPitch)>0 ? 1.0/GrandPmtPitch : 0.0 );
+      m_GrandPmtPitchInvSIMD = ( fabs(GrandPmtPitch)>0 ? 1.0/GrandPmtPitch : 0.0 );
       
       m_Rich2TotNumGrandModules=  firstRich->param<int> ("Rich2TotNumGrandModules" );
-      m_Rich2TotNumStdModules=0;
+      m_Rich2TotNumStdModules = 0;
       m_totNumPmtModuleInRich = aRich1NumModules + m_Rich2TotNumGrandModules;
       m_NumPmtModuleInRich[2] = m_Rich2TotNumGrandModules/2; //rich2left
       m_NumPmtModuleInRich[3] = m_Rich2TotNumGrandModules/2; //rich2right
@@ -503,16 +599,16 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
       m_GrandPmtAnodeYSize = firstRich->param<double>("RichGrandPmtAnodeYSize");
       
       m_GrandPmtPixelGap = firstRich->param<double>("RichGrandPmtPixelGap" );
-      m_GrandPmtPixelsInRow = firstRich->param<int>("RichGrandPmtNumPixelCol" );
-      m_GrandPmtPixelsInCol = firstRich->param<int>("RichGrandPmtNumPixelRow" );
+      m_GrandPmtPixelsInRowSIMD = firstRich->param<int>("RichGrandPmtNumPixelCol" );
+      m_GrandPmtPixelsInColSIMD = firstRich->param<int>("RichGrandPmtNumPixelRow" );
       m_GrandPmtAnodeXEdge = -0.5*(m_GrandPmtAnodeXSize+m_GrandPmtPixelGap);
       m_GrandPmtAnodeYEdge = -0.5*(m_GrandPmtAnodeYSize+m_GrandPmtPixelGap);
       m_GrandAnodeXPixelSize = firstRich->param<double> ("RichGrandPmtPixelXSize" );
       m_GrandAnodeYPixelSize = firstRich->param<double> ("RichGrandPmtPixelYSize" );
       const auto GrandPmtAnodeEffectiveXPixelSize = m_GrandAnodeXPixelSize+m_GrandPmtPixelGap;
       const auto GrandPmtAnodeEffectiveYPixelSize = m_GrandAnodeYPixelSize+m_GrandPmtPixelGap;
-      m_GrandPmtAnodeEffectiveXPixelSizeInv = 1.0/GrandPmtAnodeEffectiveXPixelSize;
-      m_GrandPmtAnodeEffectiveYPixelSizeInv = 1.0/GrandPmtAnodeEffectiveYPixelSize;
+      m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD = 1.0/GrandPmtAnodeEffectiveXPixelSize;
+      m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD = 1.0/GrandPmtAnodeEffectiveYPixelSize;
       m_GrandPmtMasterLateralSize = firstRich->param<double>("RichGrandPmtMasterLateralSize" );
       m_GrandNumPmtInRichModule = firstRich->param<int> ("RichTotNumGrandPmtInModule");
       
@@ -524,15 +620,15 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
       {
         if ( firstRich->exists("Rich2MixedPMTModulePlaneHalfSize") )
         {
-          m_MixedPmtModulePlaneHalfSizeR2 = 
-            toarray<double,4>( firstRich->param<std::vector<double> >("Rich2MixedPMTModulePlaneHalfSize") );
-          m_MixedStdPmtModulePlaneHalfSizeR2 = 
-            toarray<double,4>( firstRich->param<std::vector<double> >("Rich2MixedStdPMTModulePlaneHalfSize") );
+          m_MixedPmtModulePlaneHalfSizeR2SIMD = 
+            toarray<SIMDFP,4>( firstRich->param<std::vector<double> >("Rich2MixedPMTModulePlaneHalfSize") );
+          m_MixedStdPmtModulePlaneHalfSizeR2SIMD = 
+            toarray<SIMDFP,4>( firstRich->param<std::vector<double> >("Rich2MixedStdPMTModulePlaneHalfSize") );
           m_Rich2TotNumStdModules = firstRich->param<int> ("Rich2TotNumStdModules" );
           m_totNumPmtModuleInRich = aRich1NumModules + m_Rich2TotNumGrandModules+m_Rich2TotNumStdModules;
           m_NumPmtModuleInRich[2] = (m_Rich2TotNumGrandModules+m_Rich2TotNumStdModules)/2; //rich2left
           m_NumPmtModuleInRich[3] = (m_Rich2TotNumGrandModules+m_Rich2TotNumStdModules)/2; //rich2right
-          m_Rich2TotNumStdPmts = firstRich->param<int>  ( "Rich2TotNumStdPmt"    );
+          m_Rich2TotNumStdPmts = firstRich->param<int>( "Rich2TotNumStdPmt" );
           if ( firstRich->exists("Rich2MixedNumModulesArraySetup") )
           {
             m_Rich2MixedModuleArrayColumnSize = firstRich ->param<std::vector<int> >("Rich2MixedNumModulesArraySetup");
@@ -551,30 +647,31 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
   // setup the Lens Flag.
   m_totNumPmtModuleInRich1 = firstRich->param<int> ("Rich1TotNumModules" );
   
-  m_Rich1PmtLensPresence = 0;
+  m_Rich1PmtLensPresence = false;
   m_Rich1PmtLensModuleCol.clear();
   
   if ( exists("Rich1PmtLensPresence") )
   {
-    m_Rich1PmtLensPresence = firstRich->param<int>("Rich1PmtLensPresence");
+    m_Rich1PmtLensPresence = ( 0 < firstRich->param<int>("Rich1PmtLensPresence") );
   }
   
-  if ( m_Rich1PmtLensPresence >= 1 ) {
+  if ( m_Rich1PmtLensPresence )
+  {
     
     m_Rich1PmtLensModuleCol = firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumns");
-    m_PmtMasterWithLensLateralSize = firstRich->param<double>("RichLensPmtMasterLateralSize" );
+    m_PmtMasterWithLensLateralSizeSIMD = firstRich->param<double>("RichLensPmtMasterLateralSize" );
     const auto PmtModuleWithLensPitch = firstRich->param<double>("RichLensPmtModulePitch");
-    m_PmtModuleWithLensPitchInv = ( fabs(PmtModuleWithLensPitch)>0 ? 1.0/PmtModuleWithLensPitch : 0.0 );
+    m_PmtModuleWithLensPitchInvSIMD = ( fabs(PmtModuleWithLensPitch)>0 ? 1.0/PmtModuleWithLensPitch : 0.0 );
     m_PmtLensPitch=firstRich->param<double>("RichLensPmtPitch");
-    m_Rich1PmtPanelWithLensXSize = toarray<double,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneXEdge") );
-    m_Rich1PmtPanelWithLensYSize = toarray<double,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneYEdge") );
+    m_Rich1PmtPanelWithLensXSizeSIMD = toarray<SIMDFP,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneXEdge") );
+    m_Rich1PmtPanelWithLensYSizeSIMD = toarray<SIMDFP,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneYEdge") );
     
-    m_Rich1PmtPanelWithLensColSize = toarray<Int,2>( firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumnsSize")  );
+    m_Rich1PmtPanelWithLensColSizeSIMD = toarray<SIMDINT32,2>( firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumnsSize")  );
     
-    m_RichNumLensPmtinModuleRowCol[0] =  firstRich->param<int> ( "RichLensPmtNumInModuleRow" );
-    m_RichNumLensPmtinModuleRowCol[1] =  firstRich->param<int> ( "RichLensPmtNumInModuleCol" );
+    m_RichNumLensPmtinModuleRowColSIMD[0] = firstRich->param<int>( "RichLensPmtNumInModuleRow" );
+    m_RichNumLensPmtinModuleRowColSIMD[1] = firstRich->param<int>( "RichLensPmtNumInModuleCol" );
     const auto Rich1LensMagnificationFactor = firstRich->param<double> ("RichPmtLensMagnficationFactor" );
-    m_Rich1LensDemagnificationFactor = ( fabs(Rich1LensMagnificationFactor)>0 ?
+    m_Rich1LensDemagnificationFactor = ( fabs(Rich1LensMagnificationFactor) > 0 ?
                                          1.0/Rich1LensMagnificationFactor : 0.0 );
     
     Rich1SetupPMTModulesWithLens();
@@ -592,8 +689,8 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
 void DeRichPMTPanel::Rich1SetupPMTModulesWithLens()
 {
 
-  const auto aRowR1 =  2*m_RichPmtNumModulesInRowCol[0];
-  const auto aColR1 =  m_RichPmtNumModulesInRowCol[1];
+  const auto aRowR1 = 2*m_RichPmtNumModulesInRowCol[0];
+  const auto aColR1 = m_RichPmtNumModulesInRowCol[1];
   m_RichPmtModuleLensFlag.clear();
   m_RichPmtModuleLensFlag.reserve(aRowR1*aColR1);
   m_RichPmtModuleLensFlag.resize(aRowR1*aColR1);
@@ -649,315 +746,188 @@ void DeRichPMTPanel::RichSetupMixedSizePmtModules()
         }
       }
 
-    }// end loop over modules in rich2
+    } // end loop over modules in rich2
 
   } // end if rich2useGrandModule
 
 }
 
-DeRichPMTPanel::Int 
-DeRichPMTPanel::getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const
+//=========================================================================
+// Gets the PMT information (SIMD)
+//=========================================================================
+DeRichPMTPanel::ArraySetupSIMD 
+DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint,
+                                       const Rich::SIMD::Point<FP>& aLocalPoint ) const
 {
-  Int aMNum = -1;
+  using GP = Gaudi::XYZPoint;
+    
+  ArraySetupSIMD aCh{{}};
 
-  // set the closest Row Col.
-  // This means if the row col exceeds the edges set them to those at the closest edge.
+  const auto x = aLocalPoint.x();
+  const auto y = aLocalPoint.y();
 
-  if ( MRow < 0 ) MRow = 0;
-  if ( MCol < 0 ) MCol = 0;
-
-  if ( Rich::Rich1 == rich() )
+  ModuleNumbersSIMD nums;
+  getModuleNumsSIMD( x, y, nums );
+  
+  if ( UNLIKELY( any_of( nums.aModuleNum < SIMDINT32::Zero() ) ) )
   {
-    if ( MRow >= m_RichPmtNumModulesInRowCol[1] ) MRow = m_RichPmtNumModulesInRowCol[1]-1;
-    if ( MCol >= m_RichPmtNumModulesInRowCol[0] ) MCol = m_RichPmtNumModulesInRowCol[0]-1;
-    aMNum = MCol + ( MRow*m_RichPmtNumModulesInRowCol[0] );
+    error() << "DeRichPmtPanel : findPMTArraySetupSIMD : Problem getting PMT numbers" << endmsg;
+    return aCh;
   }
-  else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
+  
+  // Scalar loop
+  SIMDFP xp,yp;
+  for ( std::size_t i = 0; i < SIMDINT32::Size; ++i )
   {
-    if ( MRow >= m_RichPmtNumModulesInRowCol[3] ) MRow = m_RichPmtNumModulesInRowCol[3]-1;
-    if ( MCol >= m_RichPmtNumModulesInRowCol[2] ) MCol = m_RichPmtNumModulesInRowCol[2]-1;
-    aMNum = MRow + ( MCol*m_RichPmtNumModulesInRowCol[3] );
+    const auto sc_inModule = 
+      m_DePMTModules[nums.aModuleNumInPanel[i]]->toLocalMatrix() * GP{ aGlobalPoint.x()[i],
+                                                                       aGlobalPoint.y()[i],
+                                                                       aGlobalPoint.z()[i] };
+    xp[i] = sc_inModule.x();
+    yp[i] = sc_inModule.y();
   }
+  
+  SIMDINT32 aPmtCol = -SIMDINT32::One();
+  SIMDINT32 aPmtRow = -SIMDINT32::One();
+  auto &    aPmtNum = aCh[1];
 
-  aMNum += m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
-
-  return aMNum;
-}
-
-DeRichPMTPanel::ArraySetup 
-DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
-{
-  ArraySetup aCh{{}};
-
-  const auto inPanel = geometry()->toLocal(aGlobalPoint);
-  const auto x =  inPanel.x();
-  const auto y =  inPanel.y();
-
-  Int aModuleCol        = -1;
-  Int aModuleRow        = -1;
-  Int aModuleNum        = -1;
-  Int aModuleNumInPanel = -1;
-  Int aModuleWithLens   = 0;
-
-  if ( Rich::Rich1 == rich() )
+  if ( any_of(nums.aModuleWithLens) )
   {
-    if ( side() == Rich::top )
-    {
-      if ( m_Rich1PmtLensPresence )
-      {
-        if ( x > m_Rich1PmtPanelWithLensXSize[0] &&
-             x < m_Rich1PmtPanelWithLensXSize[1] )
-        {
-          aModuleCol = ((Int) (fabs( (x-m_Rich1PmtPanelWithLensXSize[0])*m_PmtModulePitchInv ))) + m_Rich1PmtPanelWithLensColSize[2];
-          aModuleRow = ((Int) (fabs( (y-m_PmtModulePlaneHalfSizeR1[1])  *m_PmtModulePitchInv )));
-        }
-        else if ( x < m_Rich1PmtPanelWithLensXSize[0] )
-        {
-          aModuleCol = (Int) (fabs( (x-m_Rich1PmtPanelWithLensXSize[2])*m_PmtModuleWithLensPitchInv ));
-          aModuleRow = (Int) (fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ));
-          aModuleWithLens=1;
-        }
-        else if ( x > m_Rich1PmtPanelWithLensXSize[1] )
-        {
-          aModuleCol = ( (Int) (fabs( (x-m_Rich1PmtPanelWithLensXSize[4])*m_PmtModuleWithLensPitchInv )))
-            + m_Rich1PmtPanelWithLensColSize[0] + m_Rich1PmtPanelWithLensColSize[2] ;
-          aModuleRow = (Int) (fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ));
-          aModuleWithLens=1;
-        }
-      }
-      else
-      {
-        aModuleCol = (Int) (fabs( (x-m_PmtModulePlaneHalfSizeR1[0])*m_PmtModulePitchInv));
-        aModuleRow = (Int) (fabs( (y-m_PmtModulePlaneHalfSizeR1[1])*m_PmtModulePitchInv));
-      }
-
-      aModuleNum        = getPmtModuleNumFromRowCol(aModuleRow,aModuleCol);
-      aModuleNumInPanel = aModuleNum-m_RichPmtModuleCopyNumBeginPanel[0];
-
-    }
-    else //if ( side() == Rich::bottom)
-    {
-      if ( m_Rich1PmtLensPresence )
-      {
-
-        if ( x > m_Rich1PmtPanelWithLensXSize[0] && x < m_Rich1PmtPanelWithLensXSize[1] )
-        {
-          aModuleCol = ((Int)(fabs( (x-m_Rich1PmtPanelWithLensXSize[1])*m_PmtModulePitchInv ))) + m_Rich1PmtPanelWithLensColSize[1];
-          aModuleRow = ((Int)(fabs( (y-m_PmtModulePlaneHalfSizeR1[3])*m_PmtModulePitchInv)));
-        }
-        else if ( x > m_Rich1PmtPanelWithLensXSize[1] )
-        {
-          aModuleCol = (Int) (fabs( (x-m_Rich1PmtPanelWithLensXSize[5])*m_PmtModuleWithLensPitchInv ));
-          aModuleRow = (Int) (fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ));
-          aModuleWithLens=1;
-        }
-        else if ( x <  m_Rich1PmtPanelWithLensXSize[0] )
-        {
-          aModuleCol = ( (Int) (fabs( (x-m_Rich1PmtPanelWithLensXSize[3])*m_PmtModuleWithLensPitchInv )))
-            + m_Rich1PmtPanelWithLensColSize[0]+ m_Rich1PmtPanelWithLensColSize[1] ;
-          aModuleRow = (Int) (fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ));
-          aModuleWithLens=1;
-        }
-
-      }
-      else
-      {
-        aModuleCol = (Int) ( fabs( (x-m_PmtModulePlaneHalfSizeR1[2])*m_PmtModulePitchInv));
-        aModuleRow = (Int) ( fabs( (y-m_PmtModulePlaneHalfSizeR1[3])*m_PmtModulePitchInv));
-      }
-
-      aModuleNum        = getPmtModuleNumFromRowCol(aModuleRow,aModuleCol);
-      aModuleNumInPanel = aModuleNum-m_RichPmtModuleCopyNumBeginPanel[1];
-    }
-  }
-  else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
-  {
-    if ( side() == Rich::left )
-    {
-      if ( ( !m_Rich2UseGrandModule ) )
-      {
-        aModuleCol = (Int) (fabs( (x-m_PmtModulePlaneHalfSizeR2[0])*m_PmtModulePitchInv));
-        aModuleRow = (Int) (fabs( (y-m_PmtModulePlaneHalfSizeR2[1])*m_PmtModulePitchInv));
-      }
-      else
-      {
-        if ( !m_Rich2UseMixedModule )
-        {
-          aModuleCol = (Int) (fabs( (x-m_GrandPmtModulePlaneHalfSizeR2[0])*m_GrandPmtModulePitchInv));
-          aModuleRow = (Int) (fabs( (y-m_GrandPmtModulePlaneHalfSizeR2[1])*m_GrandPmtModulePitchInv));
-        }
-        else
-        {
-          if ( fabs(y) <  fabs(m_MixedStdPmtModulePlaneHalfSizeR2[1]) )
-          {
-            aModuleCol = (Int) (fabs( (x-m_MixedStdPmtModulePlaneHalfSizeR2[0])*m_PmtModulePitchInv));
-            aModuleRow = (Int) (fabs( (y-m_MixedStdPmtModulePlaneHalfSizeR2[1])*m_PmtModulePitchInv));
-            aModuleRow += m_Rich2MixedModuleArrayColumnSize[0];
-          }
-          else
-          {
-            aModuleCol = (Int) (fabs( (x-m_MixedPmtModulePlaneHalfSizeR2[0])*m_GrandPmtModulePitchInv ));
-            if ( y < m_MixedStdPmtModulePlaneHalfSizeR2[1] )
-            {
-              aModuleRow = (Int) (fabs( (y-m_MixedPmtModulePlaneHalfSizeR2[1])*m_GrandPmtModulePitchInv));
-            }
-            else if (y >= fabs(m_MixedStdPmtModulePlaneHalfSizeR2[1]))
-            {
-              aModuleRow = (Int) (fabs( (y- (fabs(m_MixedStdPmtModulePlaneHalfSizeR2 [1])))*m_GrandPmtModulePitchInv));
-              aModuleRow +=  ( m_Rich2MixedModuleArrayColumnSize[0] + m_Rich2MixedModuleArrayColumnSize[1]);
-            }
-
-          }
-
-        } // end check on UseMixed module.
-
-      } // end check on any GrandModule use
-
-      aModuleNum        = getPmtModuleNumFromRowCol(aModuleRow,aModuleCol);
-      aModuleNumInPanel = aModuleNum-m_RichPmtModuleCopyNumBeginPanel[2];
-    }  // end of rich2 side left
-
-    else //if ( side() == Rich::right )
-    {
-      if ( !m_Rich2UseGrandModule )
-      {
-        aModuleCol = (Int) (fabs( (x-m_PmtModulePlaneHalfSizeR2[2])*m_PmtModulePitchInv ) );
-        aModuleRow = (Int) (fabs( (y-m_PmtModulePlaneHalfSizeR2[3])*m_PmtModulePitchInv ) );
-      }
-      else
-      {
-        if ( !m_Rich2UseMixedModule )
-        {
-          aModuleCol = (Int) (fabs( (x-m_GrandPmtModulePlaneHalfSizeR2[2])*m_GrandPmtModulePitchInv));
-          aModuleRow = (Int) (fabs( (y-m_GrandPmtModulePlaneHalfSizeR2[3])*m_GrandPmtModulePitchInv));
-        }
-        else
-        {
-          if ( fabs(y) < fabs( m_MixedStdPmtModulePlaneHalfSizeR2[3]) )
-          {
-            aModuleCol = (Int) (fabs( (x-m_MixedStdPmtModulePlaneHalfSizeR2[2])*m_PmtModulePitchInv));
-            aModuleRow = (Int) (fabs( (y-m_MixedStdPmtModulePlaneHalfSizeR2[3])*m_PmtModulePitchInv));
-            aModuleRow += m_Rich2MixedModuleArrayColumnSize[0];
-          }
-          else
-          {
-            aModuleCol = (Int) (fabs( (x-m_MixedPmtModulePlaneHalfSizeR2[2])*m_GrandPmtModulePitchInv ));
-            if ( y > m_MixedStdPmtModulePlaneHalfSizeR2 [3] )
-            {
-              aModuleRow = (Int) (fabs( (y-m_MixedPmtModulePlaneHalfSizeR2[3])*m_GrandPmtModulePitchInv));
-            }
-            else if ( y <= (-1.0*m_MixedStdPmtModulePlaneHalfSizeR2[3] ) )
-            {
-              aModuleRow = (Int) ( fabs( (y+m_MixedStdPmtModulePlaneHalfSizeR2[3]) * m_GrandPmtModulePitchInv ) );
-              aModuleRow += ( m_Rich2MixedModuleArrayColumnSize[0] + m_Rich2MixedModuleArrayColumnSize[1] );
-            }
-
-          }
-
-        } // end check on mixed module
-
-      } // end check on any GrandModule use
-
-      aModuleNum        = getPmtModuleNumFromRowCol(aModuleRow,aModuleCol);
-      aModuleNumInPanel = aModuleNum-m_RichPmtModuleCopyNumBeginPanel[3];
-    } // end rich2 side right
+    aPmtCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
+    aPmtRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
+    aPmtNum = getLensPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
 
+  const auto antim = !nums.aModuleWithLens;
+  const SIMDINT32::MaskType r2mask( rich() == Rich::Rich2 );
+  const auto gmask = r2mask && ModuleIsWithGrandPMT(nums.aModuleNum);
 
-  if ( aModuleNum >-1 )
+  const auto am = antim && gmask;
+  if ( any_of(am) )
   {
-    const auto inModule = ( ((m_DePMTModules[aModuleNumInPanel])->
-                             geometry()->toLocalMatrix())*aGlobalPoint );
-
-    const auto xp = inModule.x();
-    const auto yp = inModule.y();
-    Int aPmtCol = -1;
-    Int aPmtRow = -1;
-    Int aPmtNum = -1;
-
-    if ( aModuleWithLens == 0 )
-    {
-      if ( ( rich() == Rich::Rich2 ) && ( ModuleIsWithGrandPMT(aModuleNum)) )
-      {
-        aPmtCol = (Int) (fabs ((xp-m_RichGrandPmtModuleActiveAreaHalfSize[0])*m_GrandPmtPitchInv));
-        aPmtRow = (Int) (fabs ((yp-m_RichGrandPmtModuleActiveAreaHalfSize[1])*m_GrandPmtPitchInv));
-        aPmtNum = getGrandPmtNumFromRowCol(aPmtRow,aPmtCol);
-      }
-      else
-      {
-        aPmtCol = (Int) (fabs ((xp-m_RichPmtModuleActiveAreaHalfSize[0])*m_PmtPitchInv));
-        aPmtRow = (Int) (fabs ((yp-m_RichPmtModuleActiveAreaHalfSize[1])*m_PmtPitchInv));
-        aPmtNum = getPmtNumFromRowCol(aPmtRow,aPmtCol);
-      }
-    }
-    else
-    {
-      aPmtCol = (Int) (fabs ((xp-(0.5*m_PmtMasterWithLensLateralSize))*m_PmtModuleWithLensPitchInv));
-      aPmtRow = (Int) (fabs ((yp-(0.5*m_PmtMasterWithLensLateralSize))*m_PmtModuleWithLensPitchInv));
-      aPmtNum = getLensPmtNumFromRowCol(aPmtRow,aPmtCol);
-    }
-
-
-    if ( aPmtNum > -1 )
-    {
-      aCh[0] = aModuleNum;
-      aCh[1] = aPmtNum;
-
-      const auto inPmtAnode = ( (m_DePMTAnodes [aModuleNumInPanel] [aPmtNum ]) ->
-                                geometry() ->toLocalMatrix() *aGlobalPoint );
-
-      auto xpi = inPmtAnode.x();
-      auto ypi = inPmtAnode.y();
-
-      if ( aModuleWithLens > 0 )
-      {
-        xpi = xpi*m_Rich1LensDemagnificationFactor;
-        ypi = ypi*m_Rich1LensDemagnificationFactor;
-      }
-      Int aPmtPixelCol = 0;
-      Int aPmtPixelRow = 0;
-
-      if ( rich() == Rich::Rich2 && ModuleIsWithGrandPMT(aModuleNum) ) 
-      {
-        aPmtPixelCol = (Int) (fabs ((xpi - m_GrandPmtAnodeXEdge)*m_GrandPmtAnodeEffectiveXPixelSizeInv));
-        aPmtPixelRow = (Int) (fabs ((ypi - m_GrandPmtAnodeYEdge)*m_GrandPmtAnodeEffectiveYPixelSizeInv));
-
-        if ( aPmtPixelCol >=  m_GrandPmtPixelsInCol ) { aPmtPixelCol = m_GrandPmtPixelsInCol-1; }
-        if ( aPmtPixelRow >=  m_GrandPmtPixelsInRow ) { aPmtPixelRow = m_GrandPmtPixelsInRow-1; }
-      }
-      else 
-      {
-        aPmtPixelCol = (Int) (fabs ((xpi - m_PmtAnodeXEdge)*m_PmtAnodeEffectiveXPixelSizeInv));
-        aPmtPixelRow = (Int) (fabs ((ypi - m_PmtAnodeYEdge)*m_PmtAnodeEffectiveYPixelSizeInv));
-        if ( aPmtPixelCol >=  m_PmtPixelsInCol ) { aPmtPixelCol = m_PmtPixelsInCol-1; }
-        if ( aPmtPixelRow >=  m_PmtPixelsInRow ) { aPmtPixelRow = m_PmtPixelsInRow-1; }
-      }
-
-      if ( aPmtPixelCol < 0 ) { aPmtPixelCol = 0; }
-      if ( aPmtPixelRow < 0 ) { aPmtPixelRow = 0; }
-
-      aCh[2] = aPmtPixelCol;
-      aCh[3] = aPmtPixelRow;
-
-    }
-    else
-    {
-      error() << "DeRichPmtPanel : Inadmissible PMT number. Rich side Module Col Row pmt col row  "
-              <<rich()<<"   "<< side() << "   "<< aModuleCol <<"  "
-              <<aModuleRow<<"  "<<aPmtCol<<"   "<<aPmtRow<< endmsg;
-    }
-
+    aPmtCol(am) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0])*m_GrandPmtPitchInvSIMD ) );
+    aPmtRow(am) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1])*m_GrandPmtPitchInvSIMD ) );
+    aPmtNum(am) = getGrandPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
-  else
+  const auto bm = antim && !gmask;
+  if ( any_of(bm) )
   {
-    error() << "DeRichPmtPanel : Inadmissible PMT Module number. Rich side Module Col Row   "
-            << rich() <<"   "<< side() << "   "<< aModuleCol <<"  "<<aModuleRow<<endmsg;
+    aPmtCol(bm) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-m_RichPmtModuleActiveAreaHalfSizeSIMD[0])*m_PmtPitchInvSIMD ) );
+    aPmtRow(bm) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-m_RichPmtModuleActiveAreaHalfSizeSIMD[1])*m_PmtPitchInvSIMD ) );
+    aPmtNum(bm) = getPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
+
+  if ( UNLIKELY( any_of( aPmtNum < SIMDINT32::Zero() ) ) )
+  {
+    error() << "DeRichPmtPanel : findPMTArraySetupSIMD : Problem getting PMT numbers" << endmsg;
+    return aCh;
+  }
+
+  aCh[0] = nums.aModuleNum;
+
+  // Scalar loop
+  SIMDFP xpi,ypi;
+  for ( std::size_t i = 0; i < SIMDINT32::Size; ++i )
+  {
+    const auto sc_inPmtAnode = 
+      (m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]])->toLocalMatrix() * GP{ aGlobalPoint.x()[i],
+                                                                                    aGlobalPoint.y()[i],
+                                                                                    aGlobalPoint.z()[i] };
+    xpi[i] = sc_inPmtAnode.x();
+    ypi[i] = sc_inPmtAnode.y();
+  }
+
+  const auto mm = LHCb::SIMD::simd_cast<SIMDFP::MaskType>(nums.aModuleWithLens);
+  if ( any_of(mm) )
+  {
+    xpi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
+    ypi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
+  }
+
+  auto & aPmtPixelCol = aCh[2];
+  auto & aPmtPixelRow = aCh[3];
+
+  if ( any_of(gmask) )
+  {
+    aPmtPixelCol(gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((xpi - m_GrandPmtAnodeXEdgeSIMD)*m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD));
+    aPmtPixelRow(gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((ypi - m_GrandPmtAnodeYEdgeSIMD)*m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD));
+    aPmtPixelCol( gmask && aPmtPixelCol >=  m_GrandPmtPixelsInColSIMD ) = m_GrandPmtPixelsInColSIMD - SIMDINT32::One();
+    aPmtPixelRow( gmask && aPmtPixelRow >=  m_GrandPmtPixelsInRowSIMD ) = m_GrandPmtPixelsInRowSIMD - SIMDINT32::One();
+  }
+  if ( any_of(!gmask) )
+  {
+    aPmtPixelCol(!gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((xpi - m_PmtAnodeXEdgeSIMD)*m_PmtAnodeEffectiveXPixelSizeInvSIMD));
+    aPmtPixelRow(!gmask) = LHCb::SIMD::simd_cast<SIMDINT32>( abs((ypi - m_PmtAnodeYEdgeSIMD)*m_PmtAnodeEffectiveYPixelSizeInvSIMD));
+    aPmtPixelCol( !gmask && aPmtPixelCol >= m_PmtPixelsInColSIMD ) = m_PmtPixelsInColSIMD - SIMDINT32::One();
+    aPmtPixelRow( !gmask && aPmtPixelRow >= m_PmtPixelsInRowSIMD ) = m_PmtPixelsInRowSIMD - SIMDINT32::One();
+  }
+
+  aPmtPixelCol.setZero( aPmtPixelCol < SIMDINT32::Zero() );
+  aPmtPixelRow.setZero( aPmtPixelRow < SIMDINT32::Zero() );
 
   return aCh;
 }
 
-/// Returns the intersection point with the detector plane given a vector and a point.
+//=========================================================================
+// returns the (SIMD) intersection point with the detection plane
+//=========================================================================
+DeRichPMTPanel::SIMDRayTResult::Results
+DeRichPMTPanel::detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
+                                   const Rich::SIMD::Vector<FP>& vGlobal,
+                                   Rich::SIMD::Point<FP>& hitPosition,
+                                   SIMDRayTResult::SmartIDs& smartID,
+                                   SIMDRayTResult::PDs& PDs,
+                                   const LHCb::RichTraceMode mode ) const
+{
+  // results to return
+  SIMDRayTResult::Results res;
+
+  // define a dummy point and fill correctly later.
+  Rich::SIMD::Point<FP> panelIntersection(0,0,0); 
+
+  // panel intersection
+  const auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
+  if ( UNLIKELY( none_of(mask) ) ) { return res; }
+
+  // set hit position to plane intersection in global frame
+  hitPosition = m_toGlobalMatrixSIMD * panelIntersection;
+
+  // get the PMT info (SIMD)
+  const auto aC = findPMTArraySetupSIMD(hitPosition,panelIntersection);
+
+  // get PMT module number in panel
+  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
+
+  // in panel mask
+  const auto pmask = isInPmtPanel(panelIntersection);
+
+  // Resort to a scalar loop at this point. To be improved...
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    if ( mask[i] )
+    {
+      // get the DePMT object
+      const auto pmt = m_DePMTs[ pdNumInPanel[i] ][ aC[1][i] ];
+      PDs[i] = pmt;
+      
+      // Set the SmartID to the PD ID
+      smartID[i] = pmt->pdSmartID();
+      // set the pixel parts
+      setRichPmtSmartIDPix( aC[2][i], aC[3][i], smartID[i] );
+      
+      // set final status
+      res[i] = ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ? 
+                 pmask[i] ? LHCb::RichTraceMode::InPDPanel : LHCb::RichTraceMode::OutsidePDPanel :
+                 LHCb::RichTraceMode::InPDPanel );
+    }
+  }
+  
+  return res;
+}
+
+//=========================================================================
+// Returns the intersection point with the detector plane given a vector and a point.
+//=========================================================================
 LHCb::RichTraceMode::RayTraceResult
 DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                                const Gaudi::XYZVector& vGlobal,
@@ -966,125 +936,165 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                                const DeRichPD*& pd,
                                const LHCb::RichTraceMode mode ) const
 {
-  // define a dummy point and fill correctly later.
-  Gaudi::XYZPoint panelIntersection(0,0,0);  
+  // Use the SIMD method
+  // Note this will not be as efficient as properly using the SIMD methods,
+  // but eventually the scalar calls should be fully depreciated anyway so this
+  // is just a short term placeholder.
 
-  auto sc = getPanelInterSection(pGlobal,vGlobal,panelIntersection);
-  if ( !sc ) { return LHCb::RichTraceMode::RayTraceFailed; }
+  using VcP = Rich::SIMD::Point<FP>;
+  using VcV = Rich::SIMD::Vector<FP>;
 
-  // set hit position to plane intersection in global frame
-  hitPosition = geometry()->toGlobal(panelIntersection);
+  // form some temporary objects
+  SIMDRayTResult::SmartIDs simdIDs; 
+  simdIDs.fill(smartID);
+  VcP simdHitPoint(hitPosition);
+  SIMDRayTResult::PDs PDs;
+  PDs.fill(pd);
 
-  // get the PMT info
-  const auto aC = findPMTArraySetup(hitPosition);
+  // Call the SIMD method
+  const auto simdRes = detPlanePointSIMD( VcP(pGlobal), VcV(vGlobal),
+                                          simdHitPoint, simdIDs, PDs, mode );
 
-  // get PMT module number in panel
-  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
-
-  // sets RICH, panel and type
-  smartID = m_panelID;
-
-  // set in the smartID
-  setRichPmtSmartID( pdNumInPanel, aC[1], aC[2], aC[3], smartID );
-  //setRichPmtSmartID( aC[0], aC[1], aC[2], aC[3], smartID );
-
-  // Set PD pointer to nearest PD
-  pd = m_DePMTs[pdNumInPanel][aC[1]];
- 
-  // return final status
-  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ? 
-           isInPmtPanel(panelIntersection) ? LHCb::RichTraceMode::InPDPanel : LHCb::RichTraceMode::OutsidePDPanel :
-           LHCb::RichTraceMode::InPDPanel );
+  // copy results back to scalars. All entries are the same so use [0]
+  hitPosition = { simdHitPoint.x()[0], simdHitPoint.y()[0], simdHitPoint.z()[0] };
+  pd = PDs[0];
+  smartID = simdIDs[0];
+                                      
+  // return
+  return LHCb::RichTraceMode::RayTraceResult(simdRes[0]);
 }
 
-LHCb::RichTraceMode::RayTraceResult
-DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                               const Gaudi::XYZPoint& pGlobal,
-                               Gaudi::XYZPoint& windowPointGlobal,
-                               LHCb::RichSmartID& smartID,
-                               const DeRichPD*& pd,
-                               const LHCb::RichTraceMode mode ) const
+//=========================================================================
+// find an intersection with the PMT window (SIMD)
+//=========================================================================
+DeRichPMTPanel::SIMDRayTResult::Results
+DeRichPMTPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
+                                   const Rich::SIMD::Vector<FP>& vGlobal,
+                                   Rich::SIMD::Point<FP>& hitPosition,
+                                   SIMDRayTResult::SmartIDs& smartID,
+                                   SIMDRayTResult::PDs& PDs,
+                                   const LHCb::RichTraceMode mode ) const
 {
-  // define a dummy point and fill correctly later.
-  Gaudi::XYZPoint panelIntersection(0,0,0); 
+  using GP = Gaudi::XYZPoint;
 
-  auto sc = getPanelInterSection(pGlobal,vGlobal,panelIntersection);
-  if ( !sc ) { return LHCb::RichTraceMode::RayTraceFailed; }
+  // results to return
+  SIMDRayTResult::Results res;
+
+  // define a dummy point and fill correctly later.
+  Rich::SIMD::Point<FP> panelIntersection(0,0,0); 
+
+  // panel intersection
+  auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
+  if ( UNLIKELY( none_of(mask) ) ) { return res; }
 
   // sets RICH, panel and type
-  smartID = m_panelID;
+  smartID.fill( m_panelID );
 
-  // the return status. Default to outside panel.
-  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::OutsidePDPanel;
+  // set results to outside panel
+  res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) = 
+    SIMDRayTResult::Results(LHCb::RichTraceMode::OutsidePDPanel);
 
   // are we in the panel ?
-  if ( isInPmtPanel(panelIntersection) )
+  mask &= isInPmtPanel(panelIntersection);
+  if ( any_of(mask) )
   {
-    // set acceptance to in panel
-    res = LHCb::RichTraceMode::InPDPanel;
+    // Set res flag for those in mask to InPDPanel
+    res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) = 
+      SIMDRayTResult::Results(LHCb::RichTraceMode::InPDPanel);
 
     // set hit position to plane intersection in global frame
-    windowPointGlobal = geometry()->toGlobal(panelIntersection);
-
+    hitPosition = m_toGlobalMatrixSIMD * panelIntersection;
+    
     // check PD acceptance ?
     if ( mode.detPlaneBound() != LHCb::RichTraceMode::IgnorePDAcceptance )
     {
 
-      // get the PMT info
-      const auto aC = findPMTArraySetup(windowPointGlobal);
+      // get the PMT info (SIMD)
+      const auto aC = findPMTArraySetupSIMD(hitPosition,panelIntersection);
 
-      // get module in panel number
+        // get module in panel number
       const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
-
-      // set in the smartID
-      setRichPmtSmartID( aModuleNumInPanel, aC[1], aC[2], aC[3], smartID );
-      //setRichPmtSmartID( aC[0], aC[1], aC[2], aC[3], smartID );
-      
-      // get the DePMT object
-      const auto pmt = m_DePMTs[aModuleNumInPanel][aC[1]];
-      pd = pmt;
-      
-      // coordinate in the PMT
-      const auto coordinPmt = ( pmt->geometry()->toLocalMatrix() * windowPointGlobal );
 
       // large PMT flag
       const auto flagGrandPmt = ModuleIsWithGrandPMT(aC[0]);
+      
+      // Resort to a scalar loop at this point. To be improved...
+      for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+      {
+        // skip those already failed
+        if ( mask[i] )
+        {
 
-      // check PMT acceptance
-      if ( isInPmt( ( pmt->PmtLensFlag() ? DemagnifyFromLens(coordinPmt) : coordinPmt ), flagGrandPmt ) &&
-           isInPmtAnodeLateralAcc(coordinPmt,flagGrandPmt) )
-      { res = LHCb::RichTraceMode::InPDTube; }
+          // get the DePMT object
+          const auto pmt = m_DePMTs[ aModuleNumInPanel[i] ][ aC[1][i] ];
+          PDs[i] = pmt;
+          
+          // Set the SmartID to the PD ID
+          smartID[i] = pmt->pdSmartID();
+          // set the pixel parts
+          setRichPmtSmartIDPix( aC[2][i], aC[3][i], smartID[i] );
+          
+          // coordinate in the PMT
+          const auto coordinPmt = pmt->geometry()->toLocalMatrix() * GP{ hitPosition.x()[i],
+                                                                         hitPosition.y()[i],
+                                                                         hitPosition.z()[i] };
+          
+          // check PMT acceptance
+          if ( isInPmt( ( pmt->PmtLensFlag() ? 
+                          DemagnifyFromLens(coordinPmt) : coordinPmt ), flagGrandPmt[i] ) &&
+               isInPmtAnodeLateralAcc(coordinPmt,flagGrandPmt[i]) )
+          { res[i] = LHCb::RichTraceMode::InPDTube; }
+
+        } // mask OK
+
+      } // scalar loop
 
     }
 
   }
 
+  // return
   return res;
 }
 
-bool DeRichPMTPanel::getPanelInterSection ( const Gaudi::XYZPoint& pGlobal,
-                                            const Gaudi::XYZVector& vGlobal ,
-                                            Gaudi::XYZPoint& panelIntersection ) const
+//=========================================================================
+// Returns the intersection with the PD window
+//=========================================================================
+LHCb::RichTraceMode::RayTraceResult
+DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
+                               const Gaudi::XYZVector& vGlobal,
+                               Gaudi::XYZPoint& windowPointGlobal,
+                               LHCb::RichSmartID& smartID,
+                               const DeRichPD*& pd,
+                               const LHCb::RichTraceMode mode ) const
 {
-  bool sc = true;
 
-  const auto vInPanel = geometry()->toLocalMatrix() * vGlobal;
+  // Use the SIMD method
+  // Note this will not be as efficient as properly using the SIMD methods,
+  // but eventually the scalar calls should be fully depreciated anyway so this
+  // is just a short term placeholder.
 
-  // find the intersection with the detection plane
-  const auto scalar = vInPanel.Dot(m_localPlaneNormal);
+  using VcP = Rich::SIMD::Point<FP>;
+  using VcV = Rich::SIMD::Vector<FP>;
 
-  if ( UNLIKELY( fabs(scalar) < 1e-5 ) ) { sc = false; }
-  else
-  {
-    // transform point to the PMTPanel coordsystem.
-    const auto pInPanel = geometry()->toLocal(pGlobal);
+  // form some temporary objects
+  SIMDRayTResult::SmartIDs simdIDs; 
+  simdIDs.fill(smartID);
+  VcP simdHitPoint(windowPointGlobal);
+  SIMDRayTResult::PDs PDs;
+  PDs.fill(pd);
 
-    // get panel intersection point
-    const auto distance = -m_localPlane.Distance(pInPanel) / scalar;
-    panelIntersection = pInPanel + (distance*vInPanel);
-  }
+  // Call the SIMD method
+  const auto simdRes = PDWindowPointSIMD( VcP(pGlobal), VcV(vGlobal),
+                                          simdHitPoint, simdIDs, PDs, mode );
 
-  return sc;
+  // copy results back to scalars. All entries are the same so use [0]
+  windowPointGlobal = { simdHitPoint.x()[0], simdHitPoint.y()[0], simdHitPoint.z()[0] };
+  pd = PDs[0];
+  smartID = simdIDs[0];
+                                      
+  // return
+  return LHCb::RichTraceMode::RayTraceResult(simdRes[0]);
 }
 
 Rich::DAQ::PDPanelIndex DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
@@ -1109,7 +1119,6 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::PDPanelIndex PmtNumber 
   if ( PmtNumber.data() < m_totNumPMTs )
   {
     const auto Mnum = (unsigned int) (PmtNumber.data()/m_NumPmtInRichModule);
-    //info() << "dePMT in " << PmtNumber << " " << Mnum << endmsg;
     const auto MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
     const auto Pnum = PmtNumber.data() - ( Mnum * m_NumPmtInRichModule );
 
@@ -1150,9 +1159,9 @@ DeRichPMTPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
   {
     for ( Int iP = 0; iP < m_NumPmtInRichModule; ++iP )
     {
-      for ( Int iPx = 0; iPx < m_PmtPixelsInRow; ++iPx )
+      for ( Int iPx = 0; iPx < m_PmtPixelsInRowSIMD[0]; ++iPx )
       {
-        for ( Int iPy = 0; iPy < m_PmtPixelsInCol; ++iPy )
+        for ( Int iPy = 0; iPy < m_PmtPixelsInColSIMD[0]; ++iPy )
         {
           readoutChannels.emplace_back( rich(), side(), iP, iM, iPy, iPx, m_pdType );
         }

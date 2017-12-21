@@ -7,13 +7,13 @@
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/IRegistry.h"
 
 // forward declarations
 namespace LHCb {
   class LumiFSR;
   class LumiIntegral;
 }
-class IRegistry;
 
 
 /** @class IFSRNavigator IFSRNavigator.h

@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCbAlgsTests,RunChangeTest)
+DECLARE_COMPONENT( LHCbAlgsTests::RunChangeTest )
 
 using namespace LHCb;
 using namespace LHCbAlgsTests;

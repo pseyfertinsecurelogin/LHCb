@@ -82,15 +82,14 @@ namespace LHCb
     std::ostream& print(std::ostream&) const;
 
   private:
-     typedef std::pair<std::unique_ptr<Trajectory>,double> Elem; // Traj, global mu for start for Traj
-     std::deque<Elem>                 m_traj; // note: (we assume that) we OWN the Trajectory*!
+     //                   trajectory                  global mu for start of Traj
+     std::deque<std::pair<std::unique_ptr<Trajectory>,double>> m_traj;
 
      // global -> local mapping
      std::pair<const Trajectory*, double> loc(double mu) const;
 
      // generic forwarding to local trajectories
-     template <typename FUN> auto local(double mu, FUN fun) const
-     -> typename std::result_of<FUN(const LHCb::Trajectory*,double)>::type
+     template <typename FUN> decltype(auto) local(double mu, FUN fun) const
      {
         auto j = loc(mu);
         return fun(j.first,j.second);

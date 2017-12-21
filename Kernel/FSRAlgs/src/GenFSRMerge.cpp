@@ -1,7 +1,6 @@
 // Include files
 
 // from Gaudi
-#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiAlg/IGenericTool.h"
 
@@ -21,7 +20,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( GenFSRMerge )
+DECLARE_COMPONENT( GenFSRMerge )
 
 //=============================================================================
 // Standard constructor, initializes variables

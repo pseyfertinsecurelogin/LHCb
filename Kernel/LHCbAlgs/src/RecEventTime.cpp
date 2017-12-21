@@ -20,4 +20,4 @@ Gaudi::Time RecEventTime::getTime() const
   return ( h ? h->gpsTime() * 1000 : Gaudi::Time::epoch() );
 }
 
-DECLARE_TOOL_FACTORY(RecEventTime)
+DECLARE_COMPONENT( RecEventTime )

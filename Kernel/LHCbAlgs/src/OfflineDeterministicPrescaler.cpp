@@ -59,7 +59,7 @@ inline uint32_t mixString(uint32_t state, const std::string& extra)
 }
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( OfflineDeterministicPrescaler )
+DECLARE_COMPONENT( OfflineDeterministicPrescaler )
 
 OfflineDeterministicPrescaler::OfflineDeterministicPrescaler(const std::string& name, 
                                                              ISvcLocator* pSvcLocator)

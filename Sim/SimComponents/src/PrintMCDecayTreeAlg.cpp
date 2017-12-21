@@ -13,7 +13,7 @@
 // Implementation file for class : PrintMCDecayTreeAlg
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( PrintMCDecayTreeAlg )
+DECLARE_COMPONENT( PrintMCDecayTreeAlg )
 
 
 //=============================================================================

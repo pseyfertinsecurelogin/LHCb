@@ -25,7 +25,7 @@ inline bool restrictToRange(double& l, const LHCb::Trajectory& t)
 
 }
 
-DECLARE_TOOL_FACTORY( TrajPoca )
+DECLARE_COMPONENT( TrajPoca )
 
 //=============================================================================
 /// Standard constructor, initializes variables

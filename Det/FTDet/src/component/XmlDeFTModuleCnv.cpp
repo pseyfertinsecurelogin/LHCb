@@ -7,6 +7,6 @@
 #include "FTDet/DeFTModule.h"
 
 typedef XmlUserDetElemCnv<DeFTModule>       XmlDeFTModuleCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeFTModuleCnv )
+DECLARE_CONVERTER( XmlDeFTModuleCnv )
 
 #endif //XMLDEFTMODULECNV_H

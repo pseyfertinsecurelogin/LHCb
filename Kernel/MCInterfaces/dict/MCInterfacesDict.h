@@ -5,9 +5,6 @@
 #include "MCInterfaces/IRichMCTrackInfoTool.h"
 #include "MCInterfaces/IRichMCTruthTool.h"
 
-// Previously in RichRecBase
-#include "MCInterfaces/IRichRecMCTruthTool.h"
-
 // Previously in TrackMCInterfaces
 #include "MCInterfaces/IIdealStateCreator.h"
 #include "MCInterfaces/ITrackGhostClassification.h"

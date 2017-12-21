@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 // local
 #include "L0CaloCandidatesFromRaw.h"
 
@@ -7,7 +7,7 @@
 #include "Event/L0CaloCandidate.h"
 #include "Event/L0ProcessorData.h"
 
-// Local 
+// Local
 #include "L0Candidate.h"
 
 //-----------------------------------------------------------------------------
@@ -16,17 +16,17 @@
 // 2003-12-15 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( L0CaloCandidatesFromRaw )
+DECLARE_COMPONENT( L0CaloCandidatesFromRaw )
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 L0CaloCandidatesFromRaw::L0CaloCandidatesFromRaw( const std::string& name,
                                                   ISvcLocator* pSvcLocator)
-  : L0FromRawBase ( name , pSvcLocator ) 
+  : L0FromRawBase ( name , pSvcLocator )
   , m_convertTool(NULL)
-{ 
-  
+{
+
 }
 
 //=============================================================================
@@ -38,12 +38,12 @@ L0CaloCandidatesFromRaw::~L0CaloCandidatesFromRaw() {}
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode L0CaloCandidatesFromRaw::initialize() {
-  StatusCode sc = L0FromRawBase::initialize(); 
-  if ( sc.isFailure() ) return sc;  
+  StatusCode sc = L0FromRawBase::initialize();
+  if ( sc.isFailure() ) return sc;
 
   if( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  m_convertTool = 
+  m_convertTool =
     tool< L0CaloCandidatesFromRawBank >( "L0CaloCandidatesFromRawBank" ) ;
 
   return StatusCode::SUCCESS;
@@ -65,11 +65,11 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
   LHCb::RawBankReadoutStatus readoutStatus( LHCb::RawBank::L0Calo ) ;
   readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::OK ) ;
   readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::OK ) ;
-  
+
   // Scan the list of input location and select the first existing one.
   // no need to do this any longer, the base class takes care of it
   //std::string rawEventLocation;
-  //if ( selectRawEventLocation(rawEventLocation).isFailure() ) 
+  //if ( selectRawEventLocation(rawEventLocation).isFailure() )
   //  return Error("No valid raw event location found",StatusCode::SUCCESS,50);
 
   LHCb::L0CaloCandidates * outFull = new LHCb::L0CaloCandidates( ) ;
@@ -78,85 +78,85 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
   if ( writeOnTES() ) {
     put( outFull , nameFull , IgnoreRootInTES ) ;
     put( out, name , IgnoreRootInTES ) ;
-    if ( msgLevel( MSG::DEBUG ) ) 
-      debug() << "L0CaloCandidatesFromRawBank Registered output in TES" 
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << "L0CaloCandidatesFromRawBank Registered output in TES"
               << endmsg ;
   }
-  
+
   LHCb::RawEvent* rawEvt = findFirstRawEvent();
-  if ( !rawEvt ) 
+  if ( !rawEvt )
     return Error("No valid raw event location found",StatusCode::SUCCESS,50);
-  
-  const std::vector<LHCb::RawBank*>& banks = 
+
+  const std::vector<LHCb::RawBank*>& banks =
     rawEvt -> banks( LHCb::RawBank::L0Calo );
   // check presence of error bank
-  const std::vector< LHCb::RawBank* > * errBanks = 
+  const std::vector< LHCb::RawBank* > * errBanks =
     &rawEvt -> banks( LHCb::RawBank::L0CaloError ) ;
-  
-  if ( ( 0 != errBanks ) && ( 0 != errBanks -> size() ) ) 
+
+  if ( ( 0 != errBanks ) && ( 0 != errBanks -> size() ) )
   {
     std::vector< LHCb::RawBank * >::const_iterator it ;
-    for ( it = errBanks->begin() ; errBanks -> end() != it ; ++it ) 
+    for ( it = errBanks->begin() ; errBanks -> end() != it ; ++it )
     {
-      readoutStatus.addStatus( (*it) -> sourceID() , 
+      readoutStatus.addStatus( (*it) -> sourceID() ,
                                LHCb::RawBankReadoutStatus::ErrorBank ) ;
     }
   }
-  
-  if ( 0 == banks.size() ) 
+
+  if ( 0 == banks.size() )
   {
     Error( "L0Calo Bank has not been found" ).ignore() ;
     readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing ) ;
-    readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Missing ) ;      
-  } 
-  else 
+    readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Missing ) ;
+  }
+  else
   {
     int sourceZero( 0 ) , sourceOne( 0 ) ;
-    
+
     // convert the banks to two arrays of ints.
     data.reserve( banks.size() ) ;
-    for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = banks.begin(); 
-          banks.end() != itBnk; ++itBnk ) 
+    for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = banks.begin();
+          banks.end() != itBnk; ++itBnk )
     {
-      if ( LHCb::RawBank::MagicPattern != (*itBnk) -> magic() ) 
+      if ( LHCb::RawBank::MagicPattern != (*itBnk) -> magic() )
       {
         Error( "L0Calo Bank source has bad magic pattern" ).ignore() ;
-        readoutStatus.addStatus( (*itBnk) -> sourceID() , 
+        readoutStatus.addStatus( (*itBnk) -> sourceID() ,
                                  LHCb::RawBankReadoutStatus::Corrupted ) ;
         continue ;
       }
 
       data.push_back( std::vector< unsigned int >( (*itBnk) -> begin< unsigned int >() ,
                                                    (*itBnk) -> end< unsigned int >() ) ) ;
-      
+
       if ( 0 == (*itBnk) -> sourceID() ) ++sourceZero ;
       else ++sourceOne ;
     }
     // Version of the bank
     version = banks.front() -> version() ;
-    if ( 0 == sourceZero ) 
+    if ( 0 == sourceZero )
       readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing ) ;
-    if ( 0 == sourceOne ) 
+    if ( 0 == sourceOne )
       readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Missing ) ;
-    if ( 1 < sourceZero ) 
+    if ( 1 < sourceZero )
       readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::NonUnique ) ;
-    if ( 1 < sourceOne ) 
+    if ( 1 < sourceOne )
       readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::NonUnique ) ;
   }
-  
-  m_convertTool -> convertRawBankToTES( data, outFull , out , version , 
-                                        readoutStatus ) ;  
+
+  m_convertTool -> convertRawBankToTES( data, outFull , out , version ,
+                                        readoutStatus ) ;
 
 
-  if ( writeOnTES() && m_statusOnTES ) {
+  if ( writeOnTES() && statusOnTES() ) {
     // Now put the status on TES also
-    LHCb::RawBankReadoutStatuss * statuss = 
-      getOrCreate< LHCb::RawBankReadoutStatuss , LHCb::RawBankReadoutStatuss > 
+    LHCb::RawBankReadoutStatuss * statuss =
+      getOrCreate< LHCb::RawBankReadoutStatuss , LHCb::RawBankReadoutStatuss >
       ( LHCb::RawBankReadoutStatusLocation::Default ) ;
-    
-    LHCb::RawBankReadoutStatus * status = 
+
+    LHCb::RawBankReadoutStatus * status =
       statuss -> object( readoutStatus.key() ) ;
-    
+
     if ( !status ) {
       status = new LHCb::RawBankReadoutStatus( readoutStatus ) ;
       statuss -> insert( status ) ;
@@ -167,19 +167,19 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
           status -> addStatus( i.first , i.second ) ;
         }
       }
-    }    
+    }
   }
-  
+
   if ( writeProcData() ) {
     // Write processor data for L0DU if requested
-    // Save the candidates in CaloProcessor data location (for L0DU) 
+    // Save the candidates in CaloProcessor data location (for L0DU)
     LHCb::L0ProcessorDatas* L0Calo = new LHCb::L0ProcessorDatas() ;
     put( L0Calo, LHCb::L0ProcessorDataLocation::L0Calo ) ;
 
     for (auto it = out -> begin() ; it != out -> end() ; ++it ) {
       L0Candidate cand( (*it) ) ;
       cand.saveCandidate( fiberType( (*it) -> type() ) , L0Calo ) ;
-    }    
+    }
   }
 
   if ( !writeOnTES() ) {

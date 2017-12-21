@@ -69,7 +69,7 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside (  const Gaudi::XYZPoint& point ) const override;
+  bool isInside ( const Gaudi::XYZPoint       & point ) const override;
   bool isInside ( const Gaudi::Polar3DPoint   & point ) const override;
   bool isInside ( const Gaudi::RhoZPhiPoint   & point ) const override;
   /** -\# retrieve the pointer to "simplified" solid - "cover"
@@ -107,6 +107,23 @@ public:
    *  @return reference to the stream
    */
   MsgStream&     printOut ( MsgStream&                   )    const override;
+
+  /** Tests whether or not the given line (defined as a point and 
+   *  a direction) intersects or not with the given solid.
+   *  - Line is parametrized with parameter \a t :
+   *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
+   *      - \f$ \vec{p} \f$ is a point on the line
+   *      - \f$ \vec{v} \f$ is a vector along the line
+   *  @param Point initial point for the line
+   *  @param Vector vector along the line
+   *  @return the number of intersection points
+   */
+  bool testForIntersection( const Gaudi::XYZPoint & Point      ,
+                            const Gaudi::XYZVector& Vector     ) const override;
+  bool testForIntersection( const Gaudi::Polar3DPoint & Point  ,
+                            const Gaudi::Polar3DVector& Vector ) const override;
+  bool testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
+                            const Gaudi::RhoZPhiVector& Vector ) const override;
 
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -179,82 +196,106 @@ public:
                                   const ISolid::Tick& tickMax,
                                   ISolid::Ticks& ticks   ) const override;
 
+  /** inner radius squared at minus Z
+   *  @return inner radius squared at minus Z
+   */
+  inline double innerRadiusSqrAtMinusZ () const noexcept
+  { return m_cons_innerRadiusMinusZSq ; }
+
+  /** outer radius squared at minus Z
+   *  @return outer radius squared at minus Z
+   */
+  inline double outerRadiusSqrAtMinusZ () const noexcept
+  { return m_cons_outerRadiusMinusZSq ; }
+
   /** inner radius at minus Z
    *  @return inner radius at minus Z
    */
-  inline double  innerRadiusAtMinusZ () const
+  inline double  innerRadiusAtMinusZ () const noexcept
   { return m_cons_innerRadiusMinusZ ; }
 
   /** outer radius at minus Z
    *  @return outer radius at minus Z
    */
-  inline double  outerRadiusAtMinusZ () const
+  inline double  outerRadiusAtMinusZ () const noexcept
   { return m_cons_outerRadiusMinusZ ; }
+
+  /** inner radius squared at plus Z
+   *  @return inner radius squared at plus Z
+   */
+  inline double  innerRadiusSqrAtPlusZ  () const noexcept
+  { return m_cons_innerRadiusPlusZSq ; }
+
+  /** outer radius squared at plus Z
+   *  @return outer radius squared at plus Z
+   */
+  inline double  outerRadiusSqrAtPlusZ  () const noexcept
+  { return m_cons_outerRadiusPlusZSq ; }
 
   /** inner radius at plus Z
    *  @return inner radius at plus Z
    */
-  inline double  innerRadiusAtPlusZ  () const
+  inline double  innerRadiusAtPlusZ  () const noexcept
   { return m_cons_innerRadiusPlusZ  ; }
 
   /** outer radius at plus Z
    *  @return outer radius at plus Z
    */
-  inline double  outerRadiusAtPlusZ  () const
+  inline double  outerRadiusAtPlusZ  () const noexcept
   { return m_cons_outerRadiusPlusZ  ; }
 
   /** half length
    *  @return half length
    */
-  inline double  zHalfLength         () const
+  inline double  zHalfLength         () const noexcept
   { return m_cons_zHalfLength       ; }
 
   /** start phi angle
    *  @return  start phi angle
    */
-  inline double  startPhiAngle       () const
+  inline double  startPhiAngle       () const noexcept
   { return m_cons_startPhiAngle     ; }
 
   /** delta phi
    *  @return delta phi
    */
-  inline double  deltaPhiAngle       () const
+  inline double  deltaPhiAngle       () const noexcept
   { return m_cons_deltaPhiAngle     ; }
 
   /** inner diameter at minus Z
    *  @return inner diameter at minus Z
    */
-  inline double  innerDiameterAtMinusZ () const
+  inline double  innerDiameterAtMinusZ () const noexcept
   { return m_cons_innerRadiusMinusZ * 2 ; }
 
   /** outer radius at minus Z
    *  @return outer radius at minus Z
    */
-  inline double  outerDiameterAtMinusZ () const
+  inline double  outerDiameterAtMinusZ () const noexcept
   { return m_cons_outerRadiusMinusZ * 2 ; }
 
   /**inner radius at plus Z
    * @return inner radius at plus Z
    */
-  inline double  innerDiameterAtPlusZ  () const
+  inline double  innerDiameterAtPlusZ  () const noexcept
   { return m_cons_innerRadiusPlusZ  * 2 ; }
 
   /** outer radius at plus Z
    *  @return outer radius at plus Z
    */
-  inline double  outerDiameterAtPlusZ  () const
+  inline double  outerDiameterAtPlusZ  () const noexcept
   { return m_cons_outerRadiusPlusZ  * 2 ; }
 
   /** full length
    *  @return full length
    */
-  inline double  zLength               () const
+  inline double  zLength               () const noexcept
   { return m_cons_zHalfLength       * 2 ; }
 
   /** end phi angle
    *  @return end phi angle
    */
-  inline double  endPhiAngle           () const
+  inline double  endPhiAngle           () const noexcept
   { return m_cons_startPhiAngle + m_cons_deltaPhiAngle ; }
 
 protected:
@@ -273,7 +314,7 @@ protected:
 
 
   /// gap in phi ?
-  bool noPhiGap() const { return m_noPhiGap ; }
+  bool noPhiGap() const noexcept { return m_noPhiGap ; }
 
   /// check if phi is in phi range
   inline bool insidePhi ( const double phi /* [-pi,pi] */ ) const ;
@@ -289,7 +330,7 @@ protected:
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const override { return 4 ; }
+  Ticks::size_type maxNumberOfTicks() const noexcept override { return 4 ; }
 
 protected:
 
@@ -311,6 +352,10 @@ private:
   bool isInsideImpl(const aPoint& point) const;
 
   template<class aPoint, class aVector>
+  bool testForIntersectionImpl( const aPoint  & Point,
+                                const aVector & Vector ) const;
+
+  template<class aPoint, class aVector>
   unsigned int intersectionTicksImpl( const aPoint  & Point,
                                       const aVector & Vector,
                                       const ISolid::Tick& tickMin,
@@ -325,16 +370,21 @@ private:
 
 private:
 
-  double                  m_cons_zHalfLength       ;
-  double                  m_cons_outerRadiusMinusZ ;
-  double                  m_cons_outerRadiusPlusZ  ;
-  double                  m_cons_innerRadiusMinusZ ;
-  double                  m_cons_innerRadiusPlusZ  ;
-  double                  m_cons_startPhiAngle     ;
-  double                  m_cons_deltaPhiAngle     ;
+  double                  m_cons_zHalfLength       {0};
+  double                  m_cons_outerRadiusMinusZ {0};
+  double                  m_cons_outerRadiusPlusZ  {0};
+  double                  m_cons_innerRadiusMinusZ {0};
+  double                  m_cons_innerRadiusPlusZ  {0};
+  double                  m_cons_startPhiAngle     {0};
+  double                  m_cons_deltaPhiAngle     {0};
   ///
-  int                     m_cons_coverModel        ;
-  bool                    m_noPhiGap               ;
+  int                     m_cons_coverModel        {0};
+  bool                    m_noPhiGap               {0};
+  // cache squares
+  double                  m_cons_outerRadiusMinusZSq {0};
+  double                  m_cons_outerRadiusPlusZSq  {0};
+  double                  m_cons_innerRadiusMinusZSq {0};
+  double                  m_cons_innerRadiusPlusZSq  {0};
 
   std::unique_ptr<ISolid> m_cover;
 };

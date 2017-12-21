@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( CaloTriggerAdcsFromCaloRaw )
+DECLARE_COMPONENT( CaloTriggerAdcsFromCaloRaw )
 
 
 //=============================================================================

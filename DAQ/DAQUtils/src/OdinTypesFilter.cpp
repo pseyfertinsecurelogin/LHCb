@@ -49,7 +49,7 @@ namespace {
 }
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( OdinTypesFilter )
+DECLARE_COMPONENT( OdinTypesFilter )
 
 
 //=============================================================================

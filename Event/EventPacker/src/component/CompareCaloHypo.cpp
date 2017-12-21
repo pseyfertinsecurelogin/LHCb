@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( CompareCaloHypo )
+DECLARE_COMPONENT( CompareCaloHypo )
 
 //=============================================================================
 // Standard constructor, initializes variables

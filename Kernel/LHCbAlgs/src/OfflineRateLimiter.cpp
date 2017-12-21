@@ -9,7 +9,7 @@
 // 2011-08-05 : Patrick Koppenburg
 //-----------------------------------------------------------------------------
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( OfflineRateLimiter )
+DECLARE_COMPONENT( OfflineRateLimiter )
 
 //=============================================================================
 // Standard constructor, initializes variables

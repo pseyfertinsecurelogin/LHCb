@@ -148,7 +148,7 @@ namespace OTDAQ {
 }
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( OTRawBankEncoder )
+DECLARE_COMPONENT( OTRawBankEncoder )
 
 OTRawBankEncoder::OTRawBankEncoder( const std::string& type,
                                     const std::string& name,

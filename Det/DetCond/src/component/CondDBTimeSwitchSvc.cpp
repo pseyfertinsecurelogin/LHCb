@@ -16,7 +16,7 @@
 
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBTimeSwitchSvc)
+DECLARE_COMPONENT( CondDBTimeSwitchSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBTimeSwitchSvc

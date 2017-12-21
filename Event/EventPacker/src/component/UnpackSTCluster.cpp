@@ -2,7 +2,7 @@
 
 #include "UnpackSTCluster.h"
 
-DECLARE_ALGORITHM_FACTORY( UnpackSTCluster )
+DECLARE_COMPONENT( UnpackSTCluster )
 
 UnpackSTCluster::UnpackSTCluster(const std::string& name, ISvcLocator* svcLocator)
   : GaudiAlgorithm(name , svcLocator)

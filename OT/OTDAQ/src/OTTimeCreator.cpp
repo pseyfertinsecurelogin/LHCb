@@ -22,7 +22,7 @@
 using namespace LHCb;
  
 // Declaration of the tool Factory
-DECLARE_ALGORITHM_FACTORY( OTTimeCreator )
+DECLARE_COMPONENT( OTTimeCreator )
 
 
 //=============================================================================

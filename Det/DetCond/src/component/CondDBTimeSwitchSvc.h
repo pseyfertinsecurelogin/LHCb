@@ -18,7 +18,7 @@ class IDetDataSvc;
  *  @author Marco Clemencic
  *  @date   2006-07-10
  */
-class CondDBTimeSwitchSvc: public extends1<Service, ICondDBReader> {
+class CondDBTimeSwitchSvc: public extends<Service, ICondDBReader> {
 public:
   /// Initialize COOL (CondDB) Access Layer Service
   StatusCode initialize() override;
@@ -73,7 +73,6 @@ public:
   void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const override;
 
 
-protected:
   /// Standard constructor
   CondDBTimeSwitchSvc( const std::string& name, ISvcLocator* svcloc );
 
@@ -159,9 +158,6 @@ private:
   /// Enable/disable direct mapping from the database structure to the transient
   /// store using XML persistency format (enabled by default).
   bool m_xmlDirectMapping;
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<CondDBTimeSwitchSvc>;
 
   /// Internal implementation helper to generalize the channel type.
   template <typename Channel>

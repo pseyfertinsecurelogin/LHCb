@@ -182,7 +182,6 @@ public:
   /// Dump the cache (debug)
   void dumpCache() const override;
 
-protected:
   /// Standard constructor
   CondDBAccessSvc(const std::string& name, ISvcLocator* svcloc);
 
@@ -320,9 +319,6 @@ private:
   /// The value is retrieved from the database when requested the first time
   /// in the RUNNING state.
   const cool::ValidityKey &i_latestHeartBeat();
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<CondDBAccessSvc>;
 
   /// AttributeListSpecification used to sore XML strings
   static std::unique_ptr<cool::RecordSpecification> s_XMLstorageSpec;

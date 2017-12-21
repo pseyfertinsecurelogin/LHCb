@@ -56,7 +56,7 @@ namespace {
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_ALGORITHM_FACTORY( L0DUDecoder )
+DECLARE_COMPONENT( L0DUDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -67,9 +67,6 @@ L0DUDecoder::L0DUDecoder( const std::string& name,
                KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger ,  LHCb::RawEventLocation::Default ) },
                KeyValue{ "L0DUReportLocation", LHCb::L0DUReportLocation::Default } )
 {
-  declareProperty( "L0DUConfigProviderName", m_configName="L0DUConfig");
-  declareProperty( "L0DUConfigProviderType", m_configType="L0DUMultiConfigProvider");
-  declareProperty( "EnsureKnownTCK"       , m_ensureKnownTCK );
 }
 
 //=========================================================================
@@ -136,19 +133,25 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   int nm              = (*data & 0x00003000) >> 12;
   int np              = (*data & 0x0000C000) >> 14;
   unsigned int tck    = (*data & 0xFFFF0000) >> 16;
-  if (m_ensureKnownTCK && !tck) {
+  if (m_ensureKnownTCK.value() && !tck) {
       throw GaudiException("TCK not recognized. Run with L0Conf().EnsureKnownTCK=False to ignore this error",
                            name(),StatusCode::FAILURE);
   }
   report.setTck( tck );
 
-  LHCb::L0DUConfig *config = m_config;
-  if (!config || config->tck()!= tck ) {
+  const LHCb::L0DUConfig *config = m_config;
+  if ( !config || config->tck()!= tck ) {
     config = m_confTool->config( tck , "T0");
     m_config = config;
   }
 
-  report.setConfiguration( config );
+  if ( UNLIKELY(!config) ) {
+    std::stringstream s;
+    s << " Unable to load the configuration for tck = " <<  format("0x%04X", tck) << " --> Incomplete L0DUReport" ;
+    Warning(s.str(), StatusCode::SUCCESS).ignore();
+  } else {
+    report.setConfiguration( config );
+  }
 
   //== PGA3-block header
   ++data;

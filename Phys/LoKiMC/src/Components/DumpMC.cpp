@@ -46,10 +46,6 @@ namespace LoKi
    */
   class DumpMC : public GaudiAlgorithm
   {
-    // ========================================================================
-    /// the friend factory (needed for instantiations
-    friend class AlgFactory<LoKi::DumpMC> ;
-    // ========================================================================
   public:
     // ========================================================================
     /// standard initialization of the algorithm
@@ -63,9 +59,6 @@ namespace LoKi
     }
     /// the only one essential method : execution of the algorithm
     StatusCode execute()   override;
-    // ========================================================================
-  protected:
-    // ========================================================================
     /** The standard constructor
      *  @param name algorithm instance name
      *  @param svc  Service Locator
@@ -93,11 +86,6 @@ namespace LoKi
       declareProperty
         ( "Mode" , m_mode , "Printout mode, see LoKi::DecayChainBase::Mode" ) ;
     }
-    // ========================================================================
-    /// copy constructor is disabled
-    DumpMC ( const DumpMC& right ) = delete;             // no copy constructor
-    /// assignment operator is disabled
-    DumpMC& operator=( const DumpMC& right ) = delete;        // no assignement
     // ========================================================================
   private:
     // ========================================================================
@@ -179,8 +167,7 @@ StatusCode LoKi::DumpMC::execute()
 }
 // ============================================================================
 /// Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,DumpMC)
+DECLARE_COMPONENT( LoKi::DumpMC )
 // ============================================================================
 // The END
 // ============================================================================
-

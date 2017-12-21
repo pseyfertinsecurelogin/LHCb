@@ -11,7 +11,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLARE_SERVICE_FACTORY(IOFSRSvc)
+DECLARE_COMPONENT( IOFSRSvc )
 
 using namespace std;
 

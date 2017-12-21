@@ -21,7 +21,7 @@
 #include "HltPackedDataDecoder.h"
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(HltPackedDataDecoder)
+DECLARE_COMPONENT( HltPackedDataDecoder )
 
 
 HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,

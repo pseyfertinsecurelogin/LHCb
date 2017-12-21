@@ -22,30 +22,32 @@
 class L0Pattern : public GaudiTupleAlg{
 public:
   /// Standard constructor
-  L0Pattern( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiTupleAlg::GaudiTupleAlg;
 
-  virtual ~L0Pattern( ); ///< Destructor
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
   void encode(unsigned int data ,  const std::array<unsigned int, L0DUBase::Index::Size> &base);
 
 
   // Tools
-  IL0DUConfigProvider* m_config;
-  IL0DUEmulatorTool*   m_emulator;
-  IL0DUFromRawTool*    m_fromRaw;
-  LHCb::L0ProcessorDatas* m_datas;
-  unsigned long m_bcid;
+  IL0DUConfigProvider* m_config = nullptr;
+  IL0DUEmulatorTool*   m_emulator = nullptr;
+  IL0DUFromRawTool*    m_fromRaw = nullptr;
+  LHCb::L0ProcessorDatas* m_datas = nullptr;
+  unsigned long m_bcid = 0;
   //
-  std::string m_emulatorTool;
-  std::string m_fromRawTool;
-  std::string m_configTool;
-  std::vector<std::string> m_list;
-  bool m_setbcid;
+  Gaudi::Property<std::string> m_emulatorTool
+  { this, "L0DUEmulatorTool"  ,"L0DUEmulatorTool" };
+  Gaudi::Property<std::string> m_fromRawTool
+  { this, "L0DUFromRawTool"   , "L0DUFromRawTool" };
+  Gaudi::Property<std::string> m_configTool
+  { this, "L0DUConfigTool"    , "L0PatternConfig" };
+  Gaudi::Property<std::vector<std::string>> m_list
+  { this, "TCKList"           };
+  Gaudi::Property<bool> m_setbcid
+  { this, "resetBCID", true};
 
 
 };

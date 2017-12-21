@@ -50,9 +50,6 @@ namespace LoKi
     // ========================================================================
     /// the specific finalization
     StatusCode finalize ()  override;
-    // ========================================================================
-  protected:
-    // ========================================================================
     /// constructor
     DecayBase
     ( const std::string& type   ,                   // the actual tool type (?)
@@ -101,11 +98,6 @@ namespace LoKi
     // ========================================================================
     const std::string& defaultNode () const { return m_default_node ; }
     const std::string& defaultTree () const { return m_default_tree ; }
-    // ========================================================================
-    /// copy constructor is disabled
-    DecayBase ( const DecayBase& ) = delete;             // no copy constructor
-    /// assignement operator is disabled
-    DecayBase& operator=( const DecayBase& ) = delete;        // no assignement
     // ========================================================================
   private:
     // ========================================================================

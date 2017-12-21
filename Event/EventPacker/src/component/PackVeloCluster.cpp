@@ -1,6 +1,6 @@
 #include "PackVeloCluster.h"
 
-DECLARE_ALGORITHM_FACTORY( PackVeloCluster )
+DECLARE_COMPONENT( PackVeloCluster )
 
 PackVeloCluster::PackVeloCluster(const std::string& name, ISvcLocator* svcLocator)
   : GaudiAlgorithm(name , svcLocator)

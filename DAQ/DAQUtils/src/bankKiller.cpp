@@ -9,7 +9,7 @@
  */
 // ============================================================================
 
-DECLARE_ALGORITHM_FACTORY( bankKiller )
+DECLARE_COMPONENT( bankKiller )
 
 //=============================================================================
 // Standard creator, initializes variables

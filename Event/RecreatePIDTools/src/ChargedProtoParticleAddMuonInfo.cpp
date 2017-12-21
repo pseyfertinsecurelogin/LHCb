@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( ChargedProtoParticleAddMuonInfo )
+DECLARE_COMPONENT( ChargedProtoParticleAddMuonInfo )
 
 //=============================================================================
 // Standard constructor, initializes variables

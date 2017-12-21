@@ -7,6 +7,6 @@
 #include "FTDet/DeFTStation.h"
 
 typedef XmlUserDetElemCnv<DeFTStation>       XmlDeFTStationCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeFTStationCnv )
+DECLARE_CONVERTER( XmlDeFTStationCnv )
 
 #endif //XMLDEFTSTATIONCNV_H

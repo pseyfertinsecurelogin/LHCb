@@ -67,10 +67,6 @@ namespace LoKi
                                        LoKi::Hybrid::ICoreFactory,
                                        LoKi::Hybrid::ICoreAntiFactory>
     {
-      // ======================================================================
-      // friend factory forn instantiation
-      friend struct ToolFactory<LoKi::Hybrid::CoreFactory> ;
-      // ======================================================================
     public:
       // ======================================================================
       /// finalization   of the tool
@@ -195,19 +191,11 @@ namespace LoKi
       /// set: void  -> vector<double>
       void set ( const LoKi::Types::XSources& cut ) override
       { LoKi::Hybrid::Base::_set ( m_xsource , cut ) ; }
-      // ======================================================================
-    protected:
-      // ======================================================================
       /// constrcutor
       CoreFactory
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
-      // ======================================================================
-      // the copy constructor is disabled
-      CoreFactory ( const CoreFactory& ) = delete;  // the copy constructor is disabled
-      // the assignement operator  is disabled
-      CoreFactory& operator=( const CoreFactory& ) = delete;         // no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -265,7 +253,7 @@ inline StatusCode LoKi::Hybrid::CoreFactory::_get
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,CoreFactory)
+DECLARE_COMPONENT( LoKi::Hybrid::CoreFactory )
 // ============================================================================
 // Standard constructor
 // ============================================================================

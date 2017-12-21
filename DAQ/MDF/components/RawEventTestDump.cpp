@@ -126,4 +126,4 @@ namespace LHCb  {
   };
 }
 
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb,RawEventTestDump)
+DECLARE_COMPONENT( LHCb::RawEventTestDump )

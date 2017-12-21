@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PrepareVeloFullRawBuffer )
+DECLARE_COMPONENT( PrepareVeloFullRawBuffer )
 
 typedef std::map<unsigned int, std::pair<unsigned int, unsigned int*> > DATA_REPO;
 typedef DATA_REPO::const_iterator DR_IT;

@@ -170,11 +170,11 @@ LoKi::HDRFilter::HDRFilter
   {
       std::string s ( nam , 5 ) ;
       if ( !_ok_ ( s       , loc ) )
-    { Error    ( "Inconsistent setting of name&location/2"      ) ;  }
+      { Error    ( "Inconsistent setting of name&location/2"      ).ignore() ;  }
       if ( !_ok_ ( code()  , loc ) )
-    { Error    ( "Inconsistent setting of code&location/2"      ) ;  }
+      { Error    ( "Inconsistent setting of code&location/2"      ).ignore() ;  }
       if ( !_ok_ ( s       , code() , loc ) )
-    { Warning  ( "Inconsistent setting of name&code&location/2" ) ;  }
+      { Warning  ( "Inconsistent setting of name&code&location/2" ).ignore() ;  }
     } else if ( !_hlt1_ ( nam      )   &&
                 !_hlt1_ ( this->code ()     )   &&
                 !_hlt1_ ( loc  )   &&
@@ -183,11 +183,11 @@ LoKi::HDRFilter::HDRFilter
                 !_hlt2_ ( loc  ) ) { /* stripping case? */ }
     else {
       if ( !_ok_ ( this->code () , loc ) )
-    { Error    ( "Inconsistent setting of code&location      " ) ;  }
+      { Error    ( "Inconsistent setting of code&location      " ).ignore() ;  }
       if ( !_ok_ ( nam  , loc ) )
-    { Warning  ( "Inconsistent setting of name&location      " ) ;  }
+      { Warning  ( "Inconsistent setting of name&location      " ).ignore() ;  }
       if ( !_ok_ ( nam , this->code() , loc ) )
-    { Warning  ( "Inconsistent setting of name&code&location " ) ;  }
+      { Warning  ( "Inconsistent setting of name&code&location " ).ignore() ;  }
   }
   });
 
@@ -223,7 +223,7 @@ bool LoKi::HDRFilter::operator()(const LHCb::HltDecReports& hdr) const // the ma
 }
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,HDRFilter)
+DECLARE_COMPONENT( LoKi::HDRFilter )
 // ============================================================================
 // The END
 // ============================================================================

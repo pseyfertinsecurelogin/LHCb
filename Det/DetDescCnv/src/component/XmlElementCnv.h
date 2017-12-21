@@ -20,10 +20,6 @@ template <class TYPE> class CnvFactory;
  * @author Pere Mato
  */
 class XmlElementCnv : public XmlGenericCnv {
-
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlElementCnv>;
-
 public:
 
   /**
@@ -31,9 +27,6 @@ public:
    * @return the classID for this type
    */
   static const CLID& classID () { return CLID_Element; }
-
-
-protected:
 
   /**
    * Constructor for this converter
@@ -46,6 +39,7 @@ protected:
    */
   virtual ~XmlElementCnv();
 
+protected:
   /** Creates the transient representation of an object from a DOMElement.
    *  Overrides the default method in XmlGenericCnv
    *  @param element the DOMElement to be used to builds the object
@@ -107,4 +101,3 @@ private:
 // ============================================================================
 #endif // DETDESCCNV_XMLCNVSVC_XMLELEMENTCNV_H
 // ============================================================================
-

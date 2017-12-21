@@ -32,7 +32,7 @@ using namespace LHCb;
 // 2004-08-01 : M. Needham
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( STClustersToRawBankAlg )
+DECLARE_COMPONENT( STClustersToRawBankAlg )
 
 STClustersToRawBankAlg::STClustersToRawBankAlg( const std::string& name,
                                                       ISvcLocator* pSvcLocator )

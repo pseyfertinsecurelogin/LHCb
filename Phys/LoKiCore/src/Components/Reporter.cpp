@@ -44,10 +44,6 @@ namespace LoKi
    */
   class Reporter : public extends< GaudiTool, LoKi::IReporter >
   {
-    // ========================================================================
-    /// friend factory for instantiation
-    friend struct ToolFactory<LoKi::Reporter>;
-    // ========================================================================
   public:
     // ========================================================================
     StatusCode Error
@@ -128,9 +124,6 @@ namespace LoKi
       // finalize the base class
       return base_class::finalize();
     }
-    // ========================================================================
-  protected:
-    // ========================================================================
     /** Standard constructor for AlgTools
      *  @see AlgTool
      *  @param type   tool type
@@ -153,12 +146,6 @@ namespace LoKi
                "Unable to set Property 'PropertiesPrint'", sc    ) ;
       //
     }
-    // ========================================================================
-    /// copy  constructor is disabled
-    Reporter ( const Reporter& ) = delete;             // copy  constructor is disabled
-    /// assignement operator is disabled
-    Reporter& operator= ( const Reporter& ) = delete;        // no assignement operator
-    // ========================================================================
   private:
     // ========================================================================
     /// get the correct algorithm context
@@ -178,7 +165,7 @@ namespace LoKi
 } // end of namespace LoKi
 // ============================================================================
 /// the factory for instantiation
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi,Reporter)
+DECLARE_COMPONENT( LoKi::Reporter )
 // ============================================================================
 // The END
 // ============================================================================

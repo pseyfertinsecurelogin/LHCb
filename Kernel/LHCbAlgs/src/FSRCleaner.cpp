@@ -36,6 +36,6 @@ StatusCode FSRCleaner::finalize()
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( FSRCleaner )
+DECLARE_COMPONENT( FSRCleaner )
 
 //=============================================================================

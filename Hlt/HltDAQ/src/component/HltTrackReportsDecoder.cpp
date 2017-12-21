@@ -52,7 +52,7 @@ std::vector<std::string> prefix(const std::string& prefix, const StringContainer
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( HltTrackReportsDecoder )
+DECLARE_COMPONENT( HltTrackReportsDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables

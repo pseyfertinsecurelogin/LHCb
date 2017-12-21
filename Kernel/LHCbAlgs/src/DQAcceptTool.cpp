@@ -12,7 +12,7 @@
 //
 // 09/02/2012: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_TOOL_FACTORY(DQAcceptTool)
+DECLARE_COMPONENT( DQAcceptTool )
 
 #define ON_DEBUG if (UNLIKELY(msgLevel(MSG::DEBUG)))
 #define DEBUG_MSG ON_DEBUG debug()

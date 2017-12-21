@@ -126,6 +126,6 @@ TrackToMCParticleRelations::operator()( const LHCb::Tracks& tks,
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( TrackToMCParticleRelations )
+DECLARE_COMPONENT( TrackToMCParticleRelations )
 
 //-----------------------------------------------------------------------------

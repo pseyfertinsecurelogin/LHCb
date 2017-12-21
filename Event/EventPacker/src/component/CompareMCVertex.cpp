@@ -13,7 +13,7 @@
 // 2005-03-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( CompareMCVertex )
+DECLARE_COMPONENT( CompareMCVertex )
 
 //=============================================================================
 // Standard constructor, initializes variables

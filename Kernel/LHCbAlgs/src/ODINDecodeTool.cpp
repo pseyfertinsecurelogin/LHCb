@@ -48,7 +48,7 @@ class ODINDecodeTool final : public ODINCodecBaseTool
 #include "Event/RawEvent.h"
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( ODINDecodeTool )
+DECLARE_COMPONENT( ODINDecodeTool )
 
 //=============================================================================
 // Standard constructor, initializes variables

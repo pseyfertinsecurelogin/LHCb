@@ -6,6 +6,11 @@
 #include <iostream>
 #include "boost/format.hpp"
 
+#ifdef major
+// prevent gcc 7.2 warning about macro "major legacy definition in sys/types.h
+#undef major
+#endif
+
 class ConfigTreeNodeAlias final {
 public:
     typedef ConfigTreeNode::digest_type  digest_type;

@@ -47,7 +47,7 @@ private:
 #include "Event/RawEvent.h"
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( ODINEncodeTool )
+DECLARE_COMPONENT( ODINEncodeTool )
 
 //=============================================================================
 // Standard constructor, initializes variables

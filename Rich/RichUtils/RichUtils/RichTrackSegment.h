@@ -36,9 +36,7 @@
 #include "GaudiKernel/Transform3DTypes.h"
 
 // VDT
-#include "vdt/sincos.h"
 #include "vdt/sqrt.h"
-#include "vdt/atan2.h"
 
 // Vc
 #include <Vc/common/alignedbase.h>
@@ -298,22 +296,6 @@ namespace LHCb
 
     // ------------------------------------------------------------------------------------------------------
 
-  private:
-
-    /// atan2 for double
-    inline double myatan2( const double x, const double y ) const noexcept { return vdt::fast_atan2(x,y);  }
-
-    /// atan2 for float
-    inline float  myatan2( const float x,  const float y  ) const noexcept { return vdt::fast_atan2f(x,y); }
-
-    /// sincos for double
-    inline void mysincos( const double x, double & s, double & c ) const noexcept { vdt::fast_sincos(x,s,c); }
-
-    /// sincos for float
-    inline void mysincos( const float  x, float  & s, float  & c ) const noexcept { vdt::fast_sincosf(x,s,c); }
-
-    // ------------------------------------------------------------------------------------------------------
-
   public:
 
     /// Provides read-only access to the radiator intersections
@@ -344,12 +326,10 @@ namespace LHCb
                                    TYPE & phi ) const
     {
       // create vector in track reference frame
-      const auto rotDir = m_rotation * direction;
-      // extract components
-      const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
+      const auto r = m_rotation * direction;
       // compute theta and phi directly from the vector components
-      phi   = myatan2( y, x );
-      theta = myatan2( (TYPE)std::sqrt( (x*x) + (y*y) ), z );
+      phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
+      theta = Rich::Maths::fast_atan2( (TYPE)std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
       // correct phi to range 0 - 2PI
       constexpr TYPE twopi = (TYPE)(2.0*M_PI);
       if ( phi < 0 ) { phi += twopi; }
@@ -369,12 +349,10 @@ namespace LHCb
                                    TYPE & phi ) const
     {
       // create vector in track reference frame
-      const auto rotDir = m_rotationSIMD * direction;
-      // extract components
-      const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
+      const auto r = m_rotationSIMD * direction;
       // compute theta and phi directly from the vector components
-      phi   = Rich::SIMD::Maths::fast_atan2( y, x );
-      theta = Rich::SIMD::Maths::fast_atan2( std::sqrt( (x*x) + (y*y) ), z );
+      phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
+      theta = Rich::Maths::fast_atan2( std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
       // correct phi to range 0 - 2PI
       phi( phi < TYPE::Zero() ) += TYPE( 2.0*M_PI );
     }
@@ -387,16 +365,16 @@ namespace LHCb
      *  @return The vector at the given theta and phi angles to this track segment
      */
     template < typename TYPE >
-    inline decltype(auto) vectorAtThetaPhi ( const TYPE theta,
-                                             const TYPE phi ) const
+    inline decltype(auto) vectorAtThetaPhi ( const TYPE& theta,
+                                             const TYPE& phi ) const
     {
       TYPE sinTheta(0), cosTheta(0), sinPhi(0), cosPhi(0);
-      mysincos( theta, sinTheta, cosTheta );
-      mysincos( phi,   sinPhi,   cosPhi   );
+      Rich::Maths::fast_sincos( theta, sinTheta, cosTheta );
+      Rich::Maths::fast_sincos( phi,   sinPhi,   cosPhi   );
       return vectorAtCosSinThetaPhi( cosTheta, sinTheta, cosPhi, sinPhi );
     }
 
-    /** Creates a vector at an given angle and azimuth to the track segment
+    /** Creates a vector at an given angle and azimuth to the track segment (scalar)
      *
      *  @param cosTheta Cosine of the angle between this track segment and the created vector
      *  @param sinTheta Sine   of the angle between this track segment and the created vector
@@ -405,15 +383,36 @@ namespace LHCb
      *
      *  @return The vector at the given theta and phi angles to this track segment
      */
-    template< typename THETA, typename PHI >
+    template< typename THETA, typename PHI,
+              typename std::enable_if< std::is_arithmetic<THETA>::value &&
+                                       std::is_arithmetic<PHI>  ::value >::type * = nullptr >
     inline decltype(auto) vectorAtCosSinThetaPhi ( const THETA cosTheta,
                                                    const THETA sinTheta,
-                                                   const PHI cosPhi,
-                                                   const PHI sinPhi ) const noexcept
+                                                   const PHI   cosPhi,
+                                                   const PHI   sinPhi ) const noexcept
     {
       return m_rotation2 * Gaudi::XYZVector( sinTheta*cosPhi,
                                              sinTheta*sinPhi,
                                              cosTheta );
+    }
+
+    /** Creates a vector at an given angle and azimuth to the track segment (SIMD)
+     *
+     *  @param cosTheta Cosine of the angle between this track segment and the created vector
+     *  @param sinTheta Sine   of the angle between this track segment and the created vector
+     *  @param cosPhi   Cosine of the azimuthal angle of the vector to this track segment
+     *  @param sinPhi   Sine   of the azimuthal angle of the vector to this track segment
+     *
+     *  @return The vector at the given theta and phi angles to this track segment
+     */
+    inline decltype(auto) vectorAtCosSinThetaPhi ( const SIMDFP& cosTheta,
+                                                   const SIMDFP& sinTheta,
+                                                   const SIMDFP& cosPhi,
+                                                   const SIMDFP& sinPhi ) const noexcept
+    {
+      return m_rotation2SIMD * SIMDVector( sinTheta*cosPhi,
+                                           sinTheta*sinPhi,
+                                           cosTheta );
     }
 
     /** Calculates the path lenth of a track segment.

@@ -24,14 +24,6 @@
 // Local
 #include "RichDet/DeRichBase.h"
 
-// LHCbMath
-//#include "LHCbMath/Line.h"
-//#include "LHCbMath/GeomFun.h"
-
-// Vc
-#include <Vc/Vc>
-#include <Vc/common/alignedbase.h>
-
 // External declarations
 extern const CLID CLID_DERichBeamPipe;
 
@@ -42,8 +34,7 @@ extern const CLID CLID_DERichBeamPipe;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  * @date   2006-11-27
  */
-class DeRichBeamPipe : public DeRichBase,
-                       public Vc::AlignedBase<Vc::VectorAlignment>
+class DeRichBeamPipe : public DeRichBase
 {
 
 private:
@@ -139,30 +130,16 @@ public:
     auto inter = isCloseBy(start,end);
     
     // If close enough, run full test
-    if ( inter )
+    if ( UNLIKELY( inter ) )
     {
       // get point and direction in local coordinates
       const auto pLocal = geometry()->toLocalMatrix()*start;
       const auto vLocal = geometry()->toLocalMatrix()*(end-start);
       // run full intersection test
-      ISolid::Ticks ticks;
-      inter = 0 != m_localCone->intersectionTicks( pLocal, vLocal, ticks );
+      inter = m_localCone->testForIntersection( pLocal, vLocal );
     }
     
-    // // test against running the full test always
-    // {
-    //   const auto pLocal = geometry()->toLocal(start);
-    //   const auto vLocal = geometry()->toLocalMatrix()*(end-start);
-    //   ISolid::Ticks ticks;
-    //   const bool testinter = ( 0 != m_localCone->intersectionTicks(pLocal,vLocal,ticks) );
-    //   if ( testinter != inter )
-    //   {
-    //     info() << " -> Mis-match : " << testinter << " " << inter
-    //            << " " << pLocal << " " << vLocal << endmsg;
-    //   }
-    //   //else { info() << " Beam OK !!" << endmsg; }
-    // }
-    
+    // return
     return inter;
   }
 
@@ -182,7 +159,7 @@ public:
    */
   template < typename POINT,
              typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline typename POINT::Scalar::mask_type
+  inline decltype(auto)
   testForIntersection( const POINT& start,
                        const POINT& end,
                        typename POINT::Scalar::mask_type mask ) const
@@ -196,7 +173,7 @@ public:
     if ( UNLIKELY( any_of(mask) ) )
     {
       // get point and direction in local coordinates
-      const auto pL = m_toLocalMatrixSIMD * start;
+      const auto pL = m_toLocalMatrixSIMD * start;      
       const auto vL = m_toLocalMatrixSIMD * (end-start);
       // run full intersection test
       // For the moment run this scalar ... Vectorising SolidCons is for later on ...
@@ -204,14 +181,14 @@ public:
       {
         if ( mask[i] )
         {
-          ISolid::Ticks ticks;
-          mask[i] = 0 != m_localCone->intersectionTicks( Gaudi::XYZPoint { pL.X()[i], pL.Y()[i], pL.Z()[i] },
-                                                         Gaudi::XYZVector{ vL.X()[i], vL.Y()[i], vL.Z()[i] }, 
-                                                         ticks );
+          mask[i] = 
+            m_localCone->testForIntersection( Gaudi::XYZPoint { pL.X()[i], pL.Y()[i], pL.Z()[i] },
+                                              Gaudi::XYZVector{ vL.X()[i], vL.Y()[i], vL.Z()[i] } );
         }
       }
     }
 
+    // return
     return mask;
   }
 
@@ -230,12 +207,12 @@ private:
                   0.5 * ( p1.y() + p2.y() ),
                   0.5 * ( p1.z() + p2.z() ) );
   }
-
+  
   /// Scalar Test if the given start and end points are 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
   inline bool isCloseBy( const POINT& start,
-                                   const POINT& end ) const
+                         const POINT& end ) const
   {
     return ( isCloseBy(start) || isCloseBy(end) );
   }
@@ -243,8 +220,8 @@ private:
   /// SIMD Test if the given start and end points are 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline typename POINT::Scalar::mask_type isCloseBy( const POINT& start,
-                                                      const POINT& end ) const
+  inline decltype(auto) isCloseBy( const POINT& start,
+                                   const POINT& end ) const
   {
     auto mask = isCloseBy(start);
     if ( !all_of(mask) ) { mask |= isCloseBy(end); }
@@ -254,8 +231,7 @@ private:
   /// Scalar Test if the given point is 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline bool 
-  isCloseBy( const POINT& p ) const
+  inline bool isCloseBy( const POINT& p ) const
   {
     // Get the closest z coord in the beam pipe
     const auto beamz  = ( p.z() > m_endPGlo.z()   ? m_endPGlo.z()   :
@@ -265,17 +241,17 @@ private:
     const auto beamx  = ( m_m[0] * beamz ) + m_c[0];
     const auto beamy  = ( m_m[1] * beamz ) + m_c[1];
     const auto beamR2 = ( m_m[2] * beamz ) + m_c[2];
-    const auto dist2  = ( std::pow(beamx-p.x(),2) +
-                          std::pow(beamy-p.y(),2) +
-                          std::pow(beamz-p.z(),2) );
+    const auto dx     = beamx - p.x();
+    const auto dy     = beamy - p.y();
+    const auto dz     = beamz - p.z();
+    const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
     return ( dist2 < beamR2 );
   }
 
   /// SIMD Test if the given point is 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline typename POINT::Scalar::mask_type
-  isCloseBy( const POINT& p ) const
+  inline decltype(auto) isCloseBy( const POINT& p ) const
   {
     // Get the closest z coord in the beam pipe
     auto beamz = p.z();
@@ -285,26 +261,26 @@ private:
     const auto beamx  = ( m_mSIMD[0] * beamz ) + m_cSIMD[0];
     const auto beamy  = ( m_mSIMD[1] * beamz ) + m_cSIMD[1];
     const auto beamR2 = ( m_mSIMD[2] * beamz ) + m_cSIMD[2];
-    const auto xdiff  = beamx - p.x();
-    const auto ydiff  = beamy - p.y();
-    const auto zdiff  = beamz - p.z();
-    const auto dist2  = ( (xdiff*xdiff) + (ydiff*ydiff) + (zdiff*zdiff) );
+    const auto dx     = beamx - p.x();
+    const auto dy     = beamy - p.y();
+    const auto dz     = beamz - p.z();
+    const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
     return ( dist2 < beamR2 );
   }
 
 private: // data
 
   /// SIMD Global position on the z axis for the start of the beampipe
-  Rich::SIMD::Point<float> m_startPGloSIMD;
+  Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> m_startPGloSIMD;
 
   /// SIMD Global position on the z axis for the end of the beampipe
-  Rich::SIMD::Point<float> m_endPGloSIMD;
+  Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> m_endPGloSIMD;
 
   /// SIMD parameters for y = mx +c scaling of cone axis (x,y) and R^2 as a function of z
-  std::array<Rich::SIMD::FP<float>,3> m_mSIMD, m_cSIMD;
+  std::array<Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>,3> m_mSIMD, m_cSIMD;
 
-  /// SIMD to local transformation
-  Rich::SIMD::Transform3D<float> m_toLocalMatrixSIMD;
+  /// SIMD 'toLocal' transformation
+  Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toLocalMatrixSIMD;
 
 private: // data
 

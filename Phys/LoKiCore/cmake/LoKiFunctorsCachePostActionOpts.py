@@ -38,7 +38,7 @@ def post_action_for_cpp ( ) :
 
     removed = []
     for key in dod.AlgMap :
-        if 0 <= key.find('Raw/UT') :
+        if 0 <= key.find('Raw/UT') or 0 <= key.find('Rec/UT') :
             removed.append ( key )
             log.warning('# VB:   REMOVE UT decoding from DataOnDemand!')
     dct = dod.AlgMap

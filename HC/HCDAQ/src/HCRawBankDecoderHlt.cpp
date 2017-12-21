@@ -7,7 +7,7 @@
 // Local
 #include "HCRawBankDecoderHlt.h"
 
-DECLARE_ALGORITHM_FACTORY(HCRawBankDecoderHlt)
+DECLARE_COMPONENT( HCRawBankDecoderHlt )
 
 //=============================================================================
 // Constructor

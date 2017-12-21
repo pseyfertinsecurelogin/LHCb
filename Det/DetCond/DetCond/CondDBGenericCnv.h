@@ -14,6 +14,10 @@
 
 #include "CoolKernel/types.h"
 
+#ifndef DECLARE_CONVERTER
+#define DECLARE_CONVERTER( x ) DECLARE_CONVERTER_FACTORY( x )
+#endif
+
 // Forward and external declarations
 class ISvcLocator;
 class DataObject;

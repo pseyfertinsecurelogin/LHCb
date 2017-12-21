@@ -49,7 +49,7 @@ namespace LoKi
 }  // namespace LoKi
 
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi, HDRFilterTool)
+DECLARE_COMPONENT( LoKi::HDRFilterTool )
 
 LoKi::HDRFilterTool::HDRFilterTool
 ( const std::string& type   ,   // tool type (?)

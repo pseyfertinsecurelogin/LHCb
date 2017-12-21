@@ -1,5 +1,3 @@
-// $Id: XmlCatalogCnv.h,v 1.5 2009-04-17 12:25:18 cattanem Exp $
-
 #ifndef DETDESCCNV_XMLCATALOGCNV_H
 #define DETDESCCNV_XMLCATALOGCNV_H
 
@@ -25,9 +23,6 @@ template <class TYPE> class CnvFactory;
  */
 class XmlCatalogCnv : public XmlGenericCnv {
 
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlCatalogCnv>;
-
 public:
 
   /**
@@ -35,9 +30,6 @@ public:
    * @return the classID for this type
    */
   static const CLID& classID();
-
-
-protected:
 
   /**
    * Constructor for this converter
@@ -50,6 +42,7 @@ protected:
    */
   virtual ~XmlCatalogCnv();
 
+protected:
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
    * @param element the DOMElement to be used to builds the object
@@ -119,4 +112,3 @@ private:
 };
 
 #endif // DETDESCCNV_XMLCNVSVC_XMLCATALOGCNV_H
-

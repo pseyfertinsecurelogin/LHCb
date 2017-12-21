@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-//DECLARE_ALGORITHM_FACTORY( Calo2Dview );
+//DECLARE_COMPONENT( Calo2Dview );
 
 //==============================================================================
 

@@ -128,7 +128,7 @@ namespace LocalHelpers
 using namespace LHCb;
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( OTMultiBXRawBankDecoder )
+DECLARE_COMPONENT( OTMultiBXRawBankDecoder )
 
 
 //=============================================================================

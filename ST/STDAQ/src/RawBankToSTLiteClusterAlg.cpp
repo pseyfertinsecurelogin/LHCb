@@ -63,7 +63,7 @@ namespace {
 // 2016-10-07 : Sebastien Ponce
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( RawBankToSTLiteClusterAlg )
+DECLARE_COMPONENT( RawBankToSTLiteClusterAlg )
 
 RawBankToSTLiteClusterAlg::RawBankToSTLiteClusterAlg(const std::string& name,
                                                      ISvcLocator* pSvcLocator) :
@@ -147,7 +147,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
    if ((*iterBank)->magic() != RawBank::MagicPattern) {
       Warning( "wrong magic pattern "+ std::to_string((*iterBank)->sourceID()),
-               StatusCode::SUCCESS,2);
+               StatusCode::SUCCESS,2).ignore();
       counter("skipped Banks") += tBanks.size();
       continue;
     }

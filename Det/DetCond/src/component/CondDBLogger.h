@@ -117,12 +117,10 @@ public:
    */
   void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const override;
 
-protected:
-
   /// Standard constructor
   CondDBLogger( const std::string& name, ISvcLocator* svcloc );
 
-  virtual ~CondDBLogger( ); ///< Destructor
+  ~CondDBLogger( ); ///< Destructor
 
 private:
 
@@ -139,9 +137,6 @@ private:
 
   /// Path to the file that will contain the log.
   std::string m_logFileName;
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<CondDBLogger>;
 
 };
 #endif // COMPONENT_CONDDBLAYERINGSVC_H

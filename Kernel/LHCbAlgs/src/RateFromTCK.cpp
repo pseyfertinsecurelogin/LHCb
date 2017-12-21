@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( RateFromTCK )
+DECLARE_COMPONENT( RateFromTCK )
 
 //=============================================================================
 // Initialize

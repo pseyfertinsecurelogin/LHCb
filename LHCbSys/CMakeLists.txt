@@ -61,7 +61,6 @@ gaudi_depends_on_subdirs(Associators/AssociatorsBase
                          FT/FTDAQ
                          GaudiConf
                          GaudiConfUtils
-                         GaudiMTTools
                          GaudiObjDesc
                          HC/HCDAQ
                          Hlt/HltDAQ

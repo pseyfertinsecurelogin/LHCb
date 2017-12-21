@@ -28,7 +28,7 @@ using namespace STDAQ;
 
 // ----------------------------------------------------------------------------
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( STFullDecoding )
+DECLARE_COMPONENT( STFullDecoding )
 
 //=============================================================================
 // Standard constructor, initializes variables

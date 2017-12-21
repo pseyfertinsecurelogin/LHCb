@@ -11,7 +11,7 @@
 // 2008-07-22 : Jaap Panman (using the calo as template)
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( HltLumiWriter )
+DECLARE_COMPONENT( HltLumiWriter )
 
 //=============================================================================
 // Initialization

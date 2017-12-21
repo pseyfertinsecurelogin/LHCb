@@ -143,6 +143,6 @@ void TrackClustersMapper::addPath( const std::string & path )
 
 // ============================================================================
 
-DECLARE_TOOL_FACTORY(TrackClustersMapper)
+DECLARE_COMPONENT( TrackClustersMapper )
 
 // ============================================================================

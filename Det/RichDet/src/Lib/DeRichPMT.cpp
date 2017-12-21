@@ -18,9 +18,8 @@
 #include "RichDet/DeRich.h"
 #include "RichDet/DeRichSystem.h"
 
-// VDT
-#include "vdt/sincos.h"
-#include "vdt/atan2.h"
+// RichUtils
+#include "RichUtils/FastMaths.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRichPMT
@@ -160,10 +159,10 @@ StatusCode DeRichPMT::getPMTParameters()
     {
       //m_GrandPmtAnodeXSize     = deRich->param<double>( "RichGrandPmtAnodeXSize" );
       //m_GrandPmtAnodeYSize     = deRich->param<double>( "RichGrandPmtAnodeYSize" );
-      const auto GrandPmtAnodeZSize     = deRich->param<double>( "RichGrandPmtAnodeZSize" );
-      const auto GrandPmtPixelXSize     = deRich->param<double>( "RichGrandPmtPixelXSize" );
-      const auto GrandPmtPixelYSize     = deRich->param<double>( "RichGrandPmtPixelYSize" );
-      const auto GrandPmtPixelGap       = deRich->param<double>( "RichGrandPmtPixelGap" );
+      const auto GrandPmtAnodeZSize  = deRich->param<double>( "RichGrandPmtAnodeZSize" );
+      const auto GrandPmtPixelXSize  = deRich->param<double>( "RichGrandPmtPixelXSize" );
+      const auto GrandPmtPixelYSize  = deRich->param<double>( "RichGrandPmtPixelYSize" );
+      const auto GrandPmtPixelGap    = deRich->param<double>( "RichGrandPmtPixelGap" );
       m_GrandPmtEdgePixelXSize = deRich->param<double>( "RichGrandPmtEdgePixelXSize");
       m_GrandPmtEdgePixelYSize = deRich->param<double>( "RichGrandPmtEdgePixelYSize");
       m_GrandPmtEffectivePixelXSize = GrandPmtPixelXSize + GrandPmtPixelGap;
@@ -193,11 +192,11 @@ StatusCode DeRichPMT::getPMTParameters()
 
   if ( exists("RichPmtLensMagnficationFactor") ) 
   {
-    m_PmtLensMagnificationRatio = deRich->param<double>("RichPmtLensMagnficationFactor"  );
+    m_PmtLensMagRatio = deRich->param<double>("RichPmtLensMagnficationFactor"  );
   }
   else
   {
-    m_PmtLensMagnificationRatio = 1.0;
+    m_PmtLensMagRatio = 1.0;
   }
 
   if ( exists("RichPmtLensRadiusofCurvature") )
@@ -266,18 +265,21 @@ Gaudi::XYZPoint
 DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const
 {
 
-  const auto aPhCaRsq_Coord = ( std::pow(aPhCathCoord.x(),2) + std::pow(aPhCathCoord.y(),2) );
+  const auto x = aPhCathCoord.x();
+  const auto y = aPhCathCoord.y();
+  const auto aPhCaRsq_Coord = ( (x*x) + (y*y) );
   const auto aPhCaR_Coord   = ( aPhCaRsq_Coord > 0.0 ? std::sqrt(aPhCaRsq_Coord) : 0.0 );
-  const auto aPhCaRsq_Phi   = vdt::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
+  const auto aPhCaRsq_Phi   = Rich::Maths::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
   const auto aXSignLocal    = ( aPhCathCoord.x() > 0 ? 1 : -1 );
   const auto aYSignLocal    = ( aPhCathCoord.y() > 0 ? 1 : -1 );
 
   double sinphi(0), cosphi(0);
-  vdt::fast_sincos( aPhCaRsq_Phi, sinphi, cosphi );
-  const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*cosphi) * aXSignLocal;
-  const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*sinphi) * aYSignLocal;
+  Rich::Maths::fast_sincos( aPhCaRsq_Phi, sinphi, cosphi );
+  const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagRatio)*cosphi) * aXSignLocal;
+  const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagRatio)*sinphi) * aYSignLocal;
 
-  const auto Rsq = std::pow(aPhCaR_Coord*m_PmtLensMagnificationRatio,2);
+  //const auto Rsq = std::pow(aPhCaR_Coord*m_PmtLensMagnificationRatio,2);
+  const auto Rsq = aPhCaRsq_Coord * m_PmtLensMagRatio * m_PmtLensMagRatio;
 
   const auto aLensRecZStd = aPhCathCoord.z() + std::sqrt( m_PmtLensRoc2 - Rsq );
 

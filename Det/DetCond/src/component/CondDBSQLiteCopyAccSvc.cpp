@@ -1,7 +1,6 @@
 // Include files
 #include "GaudiKernel/Property.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ThreadGaudi.h"
 
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
@@ -11,7 +10,7 @@
 #include "CondDBSQLiteCopyAccSvc.h"
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBSQLiteCopyAccSvc)
+DECLARE_COMPONENT( CondDBSQLiteCopyAccSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBSQLiteCopyAccSvc

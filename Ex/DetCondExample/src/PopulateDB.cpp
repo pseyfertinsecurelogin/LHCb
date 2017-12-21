@@ -38,7 +38,7 @@ using namespace Gaudi::Units;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PopulateDB )
+DECLARE_COMPONENT( PopulateDB )
 
 static std::string fix_dtd(std::string orig)
 {

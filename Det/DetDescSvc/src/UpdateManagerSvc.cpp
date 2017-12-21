@@ -22,7 +22,7 @@
 
 #include "ConditionParser.h"
 
-DECLARE_SERVICE_FACTORY( UpdateManagerSvc )
+DECLARE_COMPONENT( UpdateManagerSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UpdateManagerSvc

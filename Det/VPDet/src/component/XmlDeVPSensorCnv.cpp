@@ -6,4 +6,4 @@
 /// instances of this service
 /// =======================================================================
 typedef XmlUserDetElemCnv<DeVPSensor> XmlDeVPSensorCnv;
-DECLARE_CONVERTER_FACTORY(XmlDeVPSensorCnv)
+DECLARE_CONVERTER( XmlDeVPSensorCnv )

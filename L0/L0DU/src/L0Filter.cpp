@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Event
 #include "Event/L0DUReport.h"
@@ -13,7 +13,7 @@
 //
 //  configuration properties:
 //
-//   * FILTERING DECISION : 
+//   * FILTERING DECISION :
 //      - TriggerBit : the decision bit to be used  L0 / TimingTrigger bit / Force bit [def = L0 ]
 //
 //   * IF TriggerBit = "L0"
@@ -36,11 +36,11 @@
 //
 //     - orSubTriggers : select the list of subTriggers  [ def = {} ]
 //            TCK-independent predefined subTriggers :    'L0Ecal'/'L0Hcal'/'L0Muon'/'Other'
-//            syntax :  orSubTrigger += { "L0Ecal" };  
+//            syntax :  orSubTrigger += { "L0Ecal" };
 //
 //     - if orChannels and orSubTriggers are EMPTIES : filter on global decision ( ==>  orChannels += {"ALL" : {"ANY"} };
 //
-//   
+//
 //
 //
 //    + Revert : revert the filtering (default: event is ACCEPTED according to the filtering criteria )
@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( L0Filter )
+DECLARE_COMPONENT( L0Filter )
 
 
 //=============================================================================
@@ -69,10 +69,6 @@ L0Filter::L0Filter( const std::string& name,
   declareProperty("L0DecisionMask" , m_mask = LHCb::L0DUDecision::Physics ); // L0 decision type (Physics/Beam1/Beam2)
   declareProperty("Revert"         , m_revert = false );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0Filter::~L0Filter() {} 
 
 //=============================================================================
 // Initialization
@@ -84,14 +80,14 @@ StatusCode L0Filter::initialize() {
 
   if( "Timing" == m_trig){
     info() << "Will require that L0DU 'Timing Trigger Bit' is fired " << endmsg;
-  }else if( "Force" == m_trig) { 
+  }else if( "Force" == m_trig) {
     info() << "Will require that the L0DU 'Force Bit' is fired " << endmsg;
   }else if( "L0" == m_trig){
     info() << "Will require that : " << endmsg;
 
     if ( !m_l0channels.empty()) {
       info() << " - any of : " << endmsg;
-      for (std::map<std::string, std::vector<std::string> >::const_iterator c = m_l0channels.begin() ; 
+      for (std::map<std::string, std::vector<std::string> >::const_iterator c = m_l0channels.begin() ;
             c != m_l0channels.end() ; ++c ) {
         info() << "         -  TKC = " << (*c).first << ": Channels = " << (*c).second << "  " << endmsg;
       }
@@ -101,12 +97,12 @@ StatusCode L0Filter::initialize() {
 
     if ( !m_l0triggers.empty()) {
       info() << " - any of : ["  ;
-      for ( std::vector<std::string>::const_iterator c = m_l0triggers.begin() ; 
+      for ( std::vector<std::string>::const_iterator c = m_l0triggers.begin() ;
             c != m_l0triggers.end() ; ++c ) {
         info() << *c << " " ;
-      } 
+      }
       info() << "] L0 trigger(s) is passed "<< endmsg;
-    } 
+    }
 
     if( m_l0triggers.empty() && m_l0channels.empty() )
       info() << " - trigger decision type " << LHCb::L0DUDecision::Name[ m_mask ] << " is passed " << endmsg;
@@ -124,7 +120,7 @@ StatusCode L0Filter::initialize() {
   info() << "---- > TO " << def << " THE EVENT" << endmsg;
 
   return StatusCode::SUCCESS;
-} 
+}
 
 //=============================================================================
 // Main execution
@@ -152,13 +148,13 @@ StatusCode L0Filter::execute() {
   std::ostringstream sTck("");
   sTck <<  format("0x%04X" , tck );
 
-  
+
 
   // Timing Trigger decision
   if( "Timing" == m_trig  ){
     if( l0->timingTriggerBit() )setFilterPassed( accept );
   }
-  
+
   // Force decision
   if( "Force" == m_trig  ){
     if( l0->forceBit() )setFilterPassed( accept );
@@ -170,7 +166,7 @@ StatusCode L0Filter::execute() {
 
   if ( !m_l0channels.empty()) {
 
-    for ( std::map<std::string,std::vector<std::string> >::const_iterator cc = m_l0channels.begin() ; 
+    for ( std::map<std::string,std::vector<std::string> >::const_iterator cc = m_l0channels.begin() ;
           cc != m_l0channels.end() ; ++cc ) {
 
       std::string              sT  = (*cc).first;  // TCK
@@ -186,8 +182,8 @@ StatusCode L0Filter::execute() {
 
       for ( std::vector<std::string>::const_iterator c = sCs.begin(); c != sCs.end() ; ++c ) {
         std::string ch = *c;
-        
-        if( (toUpper( ch ).find("ANY") != std::string::npos || toUpper( ch ).find("ALL") !=  std::string::npos ) 
+
+        if( (toUpper( ch ).find("ANY") != std::string::npos || toUpper( ch ).find("ALL") !=  std::string::npos )
             && l0->decision(m_mask ) ){
           setFilterPassed(accept);
           if ( msgLevel(MSG::VERBOSE)) verbose() << "Triggered event pass anyway" << endmsg ;
@@ -201,32 +197,32 @@ StatusCode L0Filter::execute() {
           setFilterPassed( accept );
           if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is accepted by " << ch << " Channel" << endmsg ;
         } else {
-          if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is not accepted by " << ch << " Channel" << endmsg ; 
+          if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is not accepted by " << ch << " Channel" << endmsg ;
         }
       }
     }
   }
-  
+
   if ( !m_l0triggers.empty()) {
-    for ( std::vector<std::string>::const_iterator c = m_l0triggers.begin() ; 
+    for ( std::vector<std::string>::const_iterator c = m_l0triggers.begin() ;
           c != m_l0triggers.end() ; ++c ) {
       if (l0->triggerDecisionByName(*c)){
         setFilterPassed( accept );
-          if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is accepted by " 
+          if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is accepted by "
                                                  << *c << " SubTrigger" << endmsg ;
-      } else if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is not accepted by " 
-                                                    << *c << " SubTrigger" << endmsg ; 
+      } else if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is not accepted by "
+                                                    << *c << " SubTrigger" << endmsg ;
     }
-  }  
+  }
 
   if ( m_l0triggers.empty() && m_l0channels.empty() ){
     if( l0->decision(m_mask) ){
-      if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is accepted by L0 decision " 
+      if ( msgLevel(MSG::VERBOSE)) verbose() << "Event is accepted by L0 decision "
                                              << LHCb::L0DUDecision::Name[m_mask] <<endmsg ;
       setFilterPassed( accept );
     } else {
       setFilterPassed( !accept );
-      if( msgLevel(MSG::VERBOSE) ) verbose() << "Event is rejected by L0 decision " 
+      if( msgLevel(MSG::VERBOSE) ) verbose() << "Event is rejected by L0 decision "
                 << LHCb::L0DUDecision::Name[m_mask] <<endmsg ;
     }
   }
@@ -240,9 +236,9 @@ StatusCode L0Filter::execute() {
     counter("L0Filter reject") += 1;
     if ( msgLevel(MSG::DEBUG))debug() << "Event is " << rej  << endmsg ;
   }
-  if(filterPassed())m_sel++; 
+  if(filterPassed())m_sel++;
 
-  return StatusCode::SUCCESS; 
+  return StatusCode::SUCCESS;
 }
 
 //=============================================================================
@@ -267,12 +263,12 @@ std::string L0Filter::toUpper(std::string str){
 
 bool L0Filter::isAnother(std::string tck){
   bool other = true;
-  for ( std::map<std::string,std::vector<std::string> >::const_iterator cc = m_l0channels.begin() ; 
-        cc != m_l0channels.end() ; ++cc ) {  
+  for ( std::map<std::string,std::vector<std::string> >::const_iterator cc = m_l0channels.begin() ;
+        cc != m_l0channels.end() ; ++cc ) {
     if( tck == (*cc).first ){
       other = false;
       break;
-    } 
+    }
   }
   return other;
 }

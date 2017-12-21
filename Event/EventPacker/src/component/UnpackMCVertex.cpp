@@ -14,7 +14,7 @@
 // 2005-03-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( UnpackMCVertex )
+DECLARE_COMPONENT( UnpackMCVertex )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -20,12 +20,8 @@ public:
   /// Standard constructor
   L0DataNtp( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0DataNtp( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
   std::string rename(std::string name);

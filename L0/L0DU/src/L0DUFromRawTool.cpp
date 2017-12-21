@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0DUFromRawTool )
+DECLARE_COMPONENT( L0DUFromRawTool )
 
 namespace {
     static const std::string MuonCU0_Status= "MuonCU0(Status)";
@@ -194,15 +194,15 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
 
 
   // check whether error bank has been produced
-  const std::vector<LHCb::RawBank*>* errBanks = &rawEvt->banks(   LHCb::RawBank::L0DUError );
-  if( errBanks != 0 && errBanks->size() !=0 ){
+  const std::vector<LHCb::RawBank*>& errBanks = rawEvt->banks(   LHCb::RawBank::L0DUError );
+  if( !errBanks.empty() ){
     if(m_warn)Warning("L0DUError bank has been found ...",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::ErrorBank );
   }
 
    if ( msgLevel( MSG::DEBUG) )
      debug() << "Number of L0DU bank(s) found : " << m_banks->size() << endmsg; // should be == 1 for L0DU
-  if( 0 == m_banks->size() ) {
+  if( m_banks->empty() ) {
     if(m_warn)Warning("READOUTSTATUS : no L0DU bank found in rawEvent",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
     return false;

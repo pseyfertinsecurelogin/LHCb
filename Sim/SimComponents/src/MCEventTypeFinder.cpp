@@ -27,7 +27,7 @@ bool vec2set(const std::vector<long unsigned int>& avec, LHCb::EventTypeSet& ase
 }
 }
 
-DECLARE_TOOL_FACTORY( MCEventTypeFinder )
+DECLARE_COMPONENT( MCEventTypeFinder )
 
 //=============================================================================
 

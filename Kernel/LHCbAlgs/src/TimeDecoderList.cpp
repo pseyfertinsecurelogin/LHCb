@@ -39,4 +39,4 @@ Gaudi::Time TimeDecoderList::getTime() const
   return Gaudi::Time::epoch();
 }
 
-DECLARE_TOOL_FACTORY(TimeDecoderList)
+DECLARE_COMPONENT( TimeDecoderList )

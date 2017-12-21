@@ -75,10 +75,6 @@ namespace DetDesc
    */
   class MaterialBudget : public GaudiHistoAlg
   {
-    // ========================================================================
-    /// friend factory for instantiation
-    friend class AlgFactory<DetDesc::MaterialBudget>;
-    // ========================================================================
   public:
     // ========================================================================
     /** standard initialization of the algorithm
@@ -93,9 +89,6 @@ namespace DetDesc
      *  @return status code
      */
     StatusCode execute    ()  override;
-    // ========================================================================
-  protected:
-    // ========================================================================
     /** Standard constructor
      *  @param name name of the algorithm
      *  @param svc service locator
@@ -103,8 +96,6 @@ namespace DetDesc
     MaterialBudget
     ( const std::string& name ,
       ISvcLocator*       svc  ) ;
-    /// destructor (virtual and protected)
-    virtual ~MaterialBudget () ;
     // ========================================================================
   private:
     // ========================================================================
@@ -114,15 +105,6 @@ namespace DetDesc
     StatusCode makeGridShots   () ;
     /// make  psrap shots
     StatusCode makePsrapShots  () ;
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// default constructor    is private
-    MaterialBudget() ;
-    ///  copy  constructor     is  private
-    MaterialBudget ( const MaterialBudget& );
-    ///  assignement operator  is  private
-    MaterialBudget* operator= ( const MaterialBudget& );
     // ========================================================================
   private:
     // ========================================================================

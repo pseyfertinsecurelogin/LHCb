@@ -143,7 +143,7 @@ private:
   bool                                             m_activateSuperGuard;
 };
 
-DECLARE_AUDITOR_FACTORY( FPEAuditor )
+DECLARE_COMPONENT( FPEAuditor )
 
 FPEAuditor::FPEAuditor( const std::string& name, ISvcLocator* pSvcLocator)
   : Auditor ( name , pSvcLocator )

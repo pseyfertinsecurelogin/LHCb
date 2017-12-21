@@ -14,7 +14,7 @@ private:
   bool m_rescaleWeights ;
 } ;
 
-DECLARE_ALGORITHM_FACTORY( PVToRecConverter )
+DECLARE_COMPONENT( PVToRecConverter )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PVToRecConverter

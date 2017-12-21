@@ -8,7 +8,7 @@
 // 2005-01-10 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( CaloL0DataProvider )
+DECLARE_COMPONENT( CaloL0DataProvider )
 
 //=============================================================================
 // Standard constructor, initializes variables
