@@ -51,25 +51,25 @@ equalStates(const LHCb::Tracks& tracks, const LHCb::Tracks& reftracks){
       auto states = Tr->states();
       auto refstates = refTr->states();
       for(unsigned int i=0;i<nstates;++i) {
-        bool result = (states[i]->location() == refstates[i]->location());
+        bool result = (states[i].location() == refstates[i].location());
         if(!result){
-          std::cout << states[i]->location() << std::endl;
-          std::cout << refstates[i]->location() << std::endl;
+          std::cout << states[i].location() << std::endl;
+          std::cout << refstates[i].location() << std::endl;
         }
-        result &= (states[i]->stateVector() == refstates[i]->stateVector());
+        result &= (states[i].stateVector() == refstates[i].stateVector());
         if(!result){
-          std::cout << states[i]->stateVector() << std::endl;
-          std::cout << refstates[i]->stateVector() << std::endl;
+          std::cout << states[i].stateVector() << std::endl;
+          std::cout << refstates[i].stateVector() << std::endl;
         }
         // check for approximate equivalence of covariance matrix
-        double* cov = states[i]->covariance().Array();
-        double* refcov = refstates[i]->covariance().Array();
+        double* cov = states[i].covariance().Array();
+        double* refcov = refstates[i].covariance().Array();
         for(unsigned int ic=0;ic<15;++ic){
           result &= (fabs(cov[ic]-refcov[ic]) < 0.001*fabs(refcov[ic]));
         }
         if(!result){
-          std::cout << states[i]->covariance() << std::endl;
-          std::cout << refstates[i]->covariance() << std::endl;
+          std::cout << states[i].covariance() << std::endl;
+          std::cout << refstates[i].covariance() << std::endl;
         }
         if (!result) return result;
       } // end loop over states
