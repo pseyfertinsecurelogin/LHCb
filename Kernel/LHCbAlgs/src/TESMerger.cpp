@@ -64,7 +64,5 @@ StatusCode TESMerger<T>::execute()
 
 typedef TESMerger<LHCb::ProtoParticle> TESMergerProtoParticle;
 DECLARE_COMPONENT( TESMergerProtoParticle )
-typedef TESMerger<LHCb::Track> TESMergerTrack;
-DECLARE_COMPONENT( TESMergerTrack )
 typedef TESMerger<LHCb::Particle> TESMergerParticle;
 DECLARE_COMPONENT( TESMergerParticle )

@@ -167,7 +167,7 @@ State & Track::closestState( double z )
   if ( iter == m_states.end() )
     throw GaudiException( "No state closest to z","Track.cpp",
                           StatusCode::FAILURE );
-  return *(*iter);
+  return *iter;
 }
 
 //=============================================================================
@@ -176,7 +176,8 @@ State & Track::closestState( double z )
 const State & Track::closestState( double z ) const
 {
   if ( m_fitResult && !m_fitResult->nodes().empty() ) {
-    auto iter = std::min_element( m_fitResult->nodes().begin(),m_fitResult->nodes().end(),
+    auto iter = std::min_element( m_fitResult->nodes().begin(),
+                                  m_fitResult->nodes().end(),
                                   TrackFunctor::distanceAlongZ(z) );
     if ( iter == m_fitResult->nodes().end() )
       throw GaudiException( "No state closest to z","Track.cpp",
@@ -188,7 +189,7 @@ const State & Track::closestState( double z ) const
     if ( iter == m_states.end() )
       throw GaudiException( "No state closest to z","Track.cpp",
                             StatusCode::FAILURE );
-    return *(*iter);
+    return *iter;
   }
 }
 
@@ -198,7 +199,8 @@ const State & Track::closestState( double z ) const
 const State & Track::closestState( const Gaudi::Plane3D& plane ) const
 {
   if ( m_fitResult && !m_fitResult->nodes().empty() ) {
-    auto iter = std::min_element( m_fitResult->nodes().begin(),m_fitResult->nodes().end(),
+    auto iter = std::min_element( m_fitResult->nodes().begin(),
+                                  m_fitResult->nodes().end(),
                                   TrackFunctor::distanceToPlane(plane) );
     if ( iter == m_fitResult->nodes().end() )
       throw GaudiException( "No state closest to z","Track.cpp",
@@ -210,7 +212,7 @@ const State & Track::closestState( const Gaudi::Plane3D& plane ) const
     if ( iter == m_states.end() )
       throw GaudiException( "No state closest to plane","Track.cpp",
                             StatusCode::FAILURE );
-    return *(*iter);
+    return *iter;
   }
 }
 
@@ -228,9 +230,9 @@ bool Track::hasStateAt( const LHCb::State::Location& location ) const
 State* Track::stateAt( const LHCb::State::Location& location )
 {
   auto iter = std::find_if( m_states.begin(),m_states.end(),
-                            [&](const LHCb::State* s)
-                            { return s->checkLocation(location); } );
-  return iter != m_states.end() ? *iter : nullptr;
+                            [&](const LHCb::State& s)
+                            { return s.checkLocation(location); } );
+  return iter != m_states.end() ? &(*iter) : nullptr;
 }
 
 //=============================================================================
@@ -239,9 +241,9 @@ State* Track::stateAt( const LHCb::State::Location& location )
 const State* Track::stateAt( const LHCb::State::Location& location ) const
 {
   auto iter = std::find_if( m_states.begin(),m_states.end(),
-                            [&](const LHCb::State* s)
-                            { return s->checkLocation(location); } );
-  return iter != m_states.end() ? *iter : nullptr;
+                            [&](const LHCb::State& s)
+                            { return s.checkLocation(location); } );
+  return iter != m_states.end() ? &(*iter) : nullptr;
 }
 
 //=============================================================================
@@ -249,19 +251,18 @@ const State* Track::stateAt( const LHCb::State::Location& location ) const
 //=============================================================================
 void Track::addToStates( const State& state )
 {
-  auto local = state.clone();
   const int order = ( checkFlag(Track::Flags::Backward) ? -1 : 1 );
   auto ipos = std::upper_bound(m_states.begin(),
                                m_states.end(),
-                               local,
+                               state,
                                TrackFunctor::orderByZ(order));
-  m_states.insert(ipos,local);
+  m_states.emplace(ipos, state);
 }
 
 //=============================================================================
 // Add a list of states to the list associated to the Track. This takes ownership.
 //=============================================================================
-void Track::addToStates( span<State* const> states, LHCb::Tag::State::AssumeUnordered_tag)
+void Track::addToStates( span<const State> states, LHCb::Tag::State::AssumeUnordered_tag)
 {
   auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
@@ -279,7 +280,7 @@ void Track::addToStates( span<State* const> states, LHCb::Tag::State::AssumeUnor
 //=============================================================================
 // Add a set of sorted states by increasing Z to the track. Track takes ownership
 //=============================================================================
-void Track::addToStates( span<State* const> states, LHCb::Tag::State::AssumeSorted_tag)
+void Track::addToStates( span<const State> states, LHCb::Tag::State::AssumeSorted_tag)
 {
   // debug assert checking whether it's correctly sorted or not
   assert( ( checkFlag(Track::Flags::Backward) ?
@@ -304,14 +305,6 @@ void Track::removeFromLhcbIDs( const LHCbID& value )
 {
   auto pos = std::lower_bound( m_lhcbIDs.begin(), m_lhcbIDs.end(), value ) ;
   if (pos!=m_lhcbIDs.end() && *pos==value) m_lhcbIDs.erase( pos ) ;
-}
-
-//=============================================================================
-// Remove a State from the list of States associated to the Track
-//=============================================================================
-void Track::removeFromStates( State* state )
-{
-  TrackFunctor::deleteFromList(m_states,state);
 }
 
 //=============================================================================
@@ -390,31 +383,10 @@ void Track::reset()
   setLikelihood ( 999 );
 
   m_lhcbIDs.clear();
-  std::for_each( m_states.begin(), m_states.end(), TrackFunctor::deleteObject() );
   m_states.clear();
   m_ancestors.clear();
   m_extraInfo.clear();
   m_fitResult.reset();
-}
-
-//=============================================================================
-// Clone the track keeping the key
-//=============================================================================
-Track* Track::cloneWithKey( ) const
-{
-  Track* tr = new Track( this -> key() );
-  tr -> copy( *this );
-  return tr;
-}
-
-//=============================================================================
-// Clone the track
-//=============================================================================
-Track* Track::clone() const
-{
-  Track* tr = new Track();
-  tr -> copy( *this );
-  return tr;
 }
 
 //=============================================================================
@@ -430,11 +402,7 @@ void Track::copy( const Track& track )
   m_lhcbIDs = track.lhcbIDs();
 
   // copy the states
-  clearStates();
-  m_states.reserve( track.states().size() ) ;
-  std::transform( track.states().begin(), track.states().end(),
-                  std::back_inserter(m_states),
-                  [](const LHCb::State* s) { return s->clone(); });
+  m_states = track.states();
 
   // copy the track fit info
   m_fitResult.reset( track.m_fitResult ? track.m_fitResult->clone()
@@ -451,8 +419,6 @@ void Track::copy( const Track& track )
 //=============================================================================
 void Track::clearStates()
 {
-  std::for_each( m_states.begin(),
-                 m_states.end(),TrackFunctor::deleteObject() );
   m_states.clear();
 }
 
@@ -604,11 +570,11 @@ std::ostream& LHCb::Track::fillStream(std::ostream& os) const
        << " pt : " << (float) firstState().pt() <<std::endl
        << " " << nStates() << " states at z =";
     for ( const auto& s : states() ) {
-      if (s) os << " " << s->z();
+      os << " " << s.z();
     }
     os << "  :-" << std::endl;
     for ( const auto& s : states() ) {
-      os << " " << *s;
+      os << " " << s;
     }
     os << std::endl;
   } else {
