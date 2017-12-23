@@ -11,6 +11,8 @@
 // local
 #include "TrajPoca.h"
 
+DECLARE_COMPONENT( TrajPoca )
+
 namespace {
 
 inline bool restrictToRange(double& l, const LHCb::Trajectory& t)
@@ -23,20 +25,118 @@ inline bool restrictToRange(double& l, const LHCb::Trajectory& t)
   return oldl != l;
 }
 
+
+struct cache_t {
+  Gaudi::XYZPoint p1, p2;
+  Gaudi::XYZVector dp1dmu1, dp2dmu2;
+  Gaudi::XYZVector d2p1dmu12, d2p2dmu22;
+};
+
+enum class step_status_t { ok = 0, parallel, nearly_parallel, beyond_maxdist };
+
+const char* status_msg(step_status_t status) {
+  switch (status) {
+      case step_status_t::parallel: return "The Trajectories are parallel.";
+      case step_status_t::nearly_parallel: return  "The Trajectories are very nearly parallel.";
+      case step_status_t::beyond_maxdist: return "Stepped further than MaxDist.";
+      case step_status_t::ok: return "OK, nothing to report";
+  }
+  __builtin_unreachable();
 }
 
-DECLARE_COMPONENT( TrajPoca )
-
 //=============================================================================
-/// Standard constructor, initializes variables
+//
 //=============================================================================
-TrajPoca::TrajPoca( const std::string& type,
-                    const std::string& name,
-                    const IInterface* parent )
-: base_class ( type, name , parent )
+step_status_t stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, ITrajPoca::RestrictRange restrictRange1,
+                              const LHCb::Trajectory& traj2, double& mu2, ITrajPoca::RestrictRange restrictRange2,
+                              double tolerance,
+                              cache_t& cache,
+                              double maxExtrapTolerance, double maxDist )
 {
-  declareInterface<ITrajPoca>(this);
+  // a bunch of ugly, unitialized member variables
+  traj1.expansion(mu1, cache.p1, cache.dp1dmu1, cache.d2p1dmu12);
+  traj2.expansion(mu2, cache.p2, cache.dp2dmu2, cache.d2p2dmu22);
+  const Gaudi::XYZVector d(cache.p1 - cache.p2);
+  // if the distance between points is below 1e-4 mm, we consider the
+  // minimisation to be converged
+  if (UNLIKELY(d.mag2() < std::pow(1e-4 * Gaudi::Units::mm, 2))) {
+    return step_status_t::ok;
+  }
+  std::array<double, 3> mat = { // keep all terms up to order mu1, mu2, mu1 * mu2
+    cache.dp1dmu1.mag2() + d.Dot(cache.d2p1dmu12), -cache.dp2dmu2.Dot(cache.dp1dmu1),
+    cache.dp2dmu2.mag2() - d.Dot(cache.d2p2dmu22),
+  };
+  ROOT::Math::CholeskyDecomp<double, 2> decomp(&mat[0]);
+  if (UNLIKELY(!decomp)) {
+    // singular, or not pos. def; try again neglecting curvature
+    mat[0] = cache.dp1dmu1.mag2(),
+    mat[2] = cache.dp2dmu2.mag2();
+    decomp = ROOT::Math::CholeskyDecomp<double, 2>(&mat[0]);
+    if (UNLIKELY(!decomp)) {
+      // singular, or not pos. def; give up
+      return step_status_t::parallel;
+    }
+  }
+  {
+    // check product of eigenvalues of mat; if too small, trajectories are very
+    // nearly parallel
+    decltype(mat) lmat;
+    decomp.getL(&lmat[0]);
+    if (UNLIKELY(lmat[0] * lmat[2] < 1e-8)) return step_status_t::nearly_parallel;
+  }
+  const std::array<double, 2> rhs = { -d.Dot(cache.dp1dmu1), d.Dot(cache.dp2dmu2) };
+  std::array<double, 2> dmu = rhs;
+  decomp.Solve(dmu);
+
+  int pathDir1 = (dmu[0] > 0) ? 1 : -1;
+  int pathDir2 = (dmu[1] > 0) ? 1 : -1;
+
+  // Don't try going further than worst parabolic approximation will
+  // allow. The tolerance is set by 'deltadoca', the expected
+  // improvement in the doca. We bound this by tolerance from below
+  // and maxExtrapTolerance from above.
+  double deltadoca = std::sqrt(std::abs(rhs[0] * dmu[0]) + std::abs(rhs[1] * dmu[1])); // std::abs only because of machine precision issues.
+  double extraptolerance = std::min(std::max(deltadoca, tolerance), maxExtrapTolerance);
+  static constexpr double smudge = 1.01; // Factor to push just over border of piecewise traj (essential!)
+  double distToErr1 = smudge * traj1.distTo2ndError(mu1, extraptolerance, pathDir1);
+  double distToErr2 = smudge * traj2.distTo2ndError(mu2, extraptolerance, pathDir2);
+
+  // Factor to push just over border of piecewise traj (essential!)
+  if (UNLIKELY(0 < distToErr1 && distToErr1 < std::abs(dmu[0]))) {
+    // choose solution for which dmu[0] steps just over border
+    dmu[0] = distToErr1 * pathDir1;
+    // now recalculate dmu[1], given dmu[0]:
+    dmu[1] = (rhs[1] - dmu[0] *  mat[1]) / mat[2];
+  }
+
+  if (UNLIKELY(0 < distToErr2 && distToErr2 < std::abs(dmu[0]))) {
+    // choose solution for which dmu[1] steps just over border
+    dmu[1] = distToErr2 * pathDir2;
+    // now recalculate dmu[0], given dmu[1]:
+    dmu[0] = (rhs[0] - dmu[1] * mat[1]) / mat[0];
+    // if still not okay,
+    if (UNLIKELY(0 < distToErr1 && distToErr1 < std::abs(dmu[0]))) {
+      dmu[0] = distToErr1 * pathDir1;
+    }
+  }
+
+  mu1 += dmu[0], mu2 += dmu[1];
+
+  // these do not make any sense here. either we need to merge them with the lines above that restrict to the validity of the
+  // expansion, or we need to move them out of here entirely.
+  if (UNLIKELY(bool(restrictRange1))) restrictToRange(mu1, traj1);
+  if (UNLIKELY(bool(restrictRange2))) restrictToRange(mu2, traj2);
+
+  // another check for parallel trajectories
+  if (UNLIKELY(std::min(std::abs(mu1), std::abs(mu2)) > maxDist)) return step_status_t::beyond_maxdist;
+
+  return step_status_t::ok;
 }
+
+//=============================================================================
+
+}
+
 
 //=============================================================================
 // Find mus along trajectories having a distance smaller than tolerance
@@ -69,11 +169,9 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
                                        traj2, mu2, restrictRange2,
                                        precision, workspace,
                                        m_maxExtrapTolerance, m_maxDist );
-    if (UNLIKELY(step_status!=ok)) {
+    if (UNLIKELY(step_status!=step_status_t::ok)) {
       if  (UNLIKELY(msgLevel(MSG::DEBUG))) {
-          debug() << ( step_status==parallel ? "The Trajectories are parallel."
-                     : step_status==nearly_parallel ? "The Trajectories are very nearly parallel."
-                     : "Stepped further than MaxDist." ) << endmsg;
+         debug() << status_msg( step_status ) << endmsg;
       }
       status = StatusCode::FAILURE;
       break; // Parallel Trajectories in stepTowardPoca
@@ -154,8 +252,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
 //=============================================================================
 //
 //=============================================================================
-StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
-                               double& mu,
+StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj, double& mu,
                                RestrictRange restrictRange,
                                const Gaudi::XYZPoint& pt,
                                Gaudi::XYZVector& distance,
@@ -163,116 +260,8 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
 {
   // this does not work for non-linear Trajectories!
   mu = traj.muEstimate( pt ) ;
-  if(restrictRange) restrictToRange( mu, traj ) ;
+  if (restrictRange) restrictToRange( mu, traj ) ;
   distance = traj.position( mu ) - pt;
   return StatusCode::SUCCESS;
 }
 
-//=============================================================================
-//
-//=============================================================================
-auto TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
-                               double& mu1,
-                               RestrictRange restrictRange1,
-                               const LHCb::Trajectory& traj2,
-                               double& mu2,
-                               RestrictRange restrictRange2,
-                               double tolerance,
-                               cache_t& cache,
-                               double maxExtrapTolerance,
-                               double maxDist ) const -> step_status_t
-{
-  // a bunch of ugly, unitialized member variables
-  traj1.expansion(mu1, cache.p1, cache.dp1dmu1, cache.d2p1dmu12);
-  traj2.expansion(mu2, cache.p2, cache.dp2dmu2, cache.d2p2dmu22);
-  const Gaudi::XYZVector d(cache.p1 - cache.p2);
-  // if the distance between points is below 1e-4 mm, we consider the
-  // minimisation to be converged
-  if (UNLIKELY(d.mag2() < std::pow(1e-4 * Gaudi::Units::mm, 2))) {
-    return ok;
-  }
-  std::array<double, 3> mat = { // keep all terms up to order mu1, mu2, mu1 * mu2
-    cache.dp1dmu1.mag2() + d.Dot(cache.d2p1dmu12), -cache.dp2dmu2.Dot(cache.dp1dmu1),
-    cache.dp2dmu2.mag2() - d.Dot(cache.d2p2dmu22),
-  };
-  ROOT::Math::CholeskyDecomp<double, 2> decomp(&mat[0]);
-  if (UNLIKELY(!decomp)) {
-    // singular, or not pos. def; try again neglecting curvature
-    mat[0] = cache.dp1dmu1.mag2(),
-    mat[2] = cache.dp2dmu2.mag2();
-    decomp = ROOT::Math::CholeskyDecomp<double, 2>(&mat[0]);
-    if (UNLIKELY(!decomp)) {
-      // singular, or not pos. def; give up
-      if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-        debug() << "The Trajectories are parallel." << endmsg;
-      }
-      return parallel;
-    }
-  }
-  {
-    // check product of eigenvalues of mat; if too small, trajectories are very
-    // nearly parallel
-    decltype(mat) lmat;
-    decomp.getL(&lmat[0]);
-    if (UNLIKELY(lmat[0] * lmat[2] < 1e-8)) {
-      if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-        debug() << "The Trajectories are very nearly parallel." << endmsg;
-      }
-      return nearly_parallel;
-    }
-  }
-  const std::array<double, 2> rhs = { -d.Dot(cache.dp1dmu1), d.Dot(cache.dp2dmu2) };
-  std::array<double, 2> dmu = rhs;
-  decomp.Solve(dmu);
-
-  int pathDir1 = (dmu[0] > 0) ? 1 : -1;
-  int pathDir2 = (dmu[1] > 0) ? 1 : -1;
-
-  // Don't try going further than worst parabolic approximation will
-  // allow. The tolerance is set by 'deltadoca', the expected
-  // improvement in the doca. We bound this by tolerance from below
-  // and maxExtrapTolerance from above.
-  double deltadoca = std::sqrt(std::abs(rhs[0] * dmu[0]) + std::abs(rhs[1] * dmu[1])); // std::abs only because of machine precision issues.
-  double extraptolerance = std::min(std::max(deltadoca, tolerance), maxExtrapTolerance);
-  static constexpr double smudge = 1.01; // Factor to push just over border of piecewise traj (essential!)
-  double distToErr1 = smudge * traj1.distTo2ndError(mu1, extraptolerance, pathDir1);
-  double distToErr2 = smudge * traj2.distTo2ndError(mu2, extraptolerance, pathDir2);
-
-  // Factor to push just over border of piecewise traj (essential!)
-  if (UNLIKELY(0 < distToErr1 && distToErr1 < std::abs(dmu[0]))) {
-    // choose solution for which dmu[0] steps just over border
-    dmu[0] = distToErr1 * pathDir1;
-    // now recalculate dmu[1], given dmu[0]:
-    dmu[1] = (rhs[1] - dmu[0] *  mat[1]) / mat[2];
-  }
-
-  if (UNLIKELY(0 < distToErr2 && distToErr2 < std::abs(dmu[0]))) {
-    // choose solution for which dmu[1] steps just over border
-    dmu[1] = distToErr2 * pathDir2;
-    // now recalculate dmu[0], given dmu[1]:
-    dmu[0] = (rhs[0] - dmu[1] * mat[1]) / mat[0];
-    // if still not okay,
-    if (UNLIKELY(0 < distToErr1 && distToErr1 < std::abs(dmu[0]))) {
-      dmu[0] = distToErr1 * pathDir1;
-    }
-  }
-
-  mu1 += dmu[0], mu2 += dmu[1];
-
-  // these do not make any sense here. either we need to merge them with the lines above that restrict to the validity of the
-  // expansion, or we need to move them out of here entirely.
-  if (UNLIKELY(bool(restrictRange1))) restrictToRange(mu1, traj1);
-  if (UNLIKELY(bool(restrictRange2))) restrictToRange(mu2, traj2);
-
-  // another check for parallel trajectories
-  if (UNLIKELY(std::min(std::abs(mu1), std::abs(mu2)) > maxDist)) {
-    if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-      debug() << "Stepped further than MaxDist." << endmsg;
-    }
-    return beyond_maxdist;
-  }
-
-  return ok;
-}
-
-//=============================================================================
