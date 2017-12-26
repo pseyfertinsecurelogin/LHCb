@@ -107,6 +107,7 @@ def decodeL0DU(suffix='',WriteProcData = False, WriteOnTES = True):
        decoding = L0DUFromRawAlg(L0DUFromRawAlgName+suffix)
        decoding.WriteProcData = WriteProcData
        decoding.WriteOnTES = WriteOnTES
+       return decoding
     else :
        from Configurables import L0DUDecoder
        return L0DUDecoder(L0DUFromRawAlgName+suffix)
