@@ -14,8 +14,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  */
 // ============================================================================
-// initialize the static variable
-std::atomic<unsigned long> DetDesc::IntersectionErrors::s_code = { StatusCode::SUCCESS };
+// initialize the static variableq
+std::atomic<unsigned long> DetDesc::IntersectionErrors::s_code{static_cast<unsigned long>( StatusCode::SUCCESS )};
 // ============================================================================
 // initialize the static variable
 std::atomic<DetDesc::IGeometryErrorSvc*> DetDesc::IntersectionErrors::s_service = {nullptr} ;
@@ -46,7 +46,7 @@ unsigned long DetDesc::IntersectionErrors::errors() { return s_errors ; }
 // ============================================================================
 // get the static error code
 // ============================================================================
-StatusCode DetDesc::IntersectionErrors::code() { return s_code.load(); }
+StatusCode DetDesc::IntersectionErrors::code() { return StatusCode{s_code.load()}; }
 // ============================================================================
 // set the static pointer to Geoemtry Error Service
 // ============================================================================

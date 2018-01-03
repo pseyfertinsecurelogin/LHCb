@@ -31,6 +31,7 @@ public:
   inline XmlCnvException( const std::string    & message                       ,
                           const GaudiException & ge                            ,
                           const StatusCode     & sc      = StatusCode::FAILURE );
+  inline XmlCnvException( const std::string& message, const Status sc ): XmlCnvException( message, StatusCode{sc} ) {}
   inline XmlCnvException( const XmlCnvException& ) ;
   ///
   virtual inline ~XmlCnvException() throw();

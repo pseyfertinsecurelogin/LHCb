@@ -28,13 +28,7 @@ DetectorElementException::clone() const
 //////////////////////////////////////////////////////////////////////////////
 std::ostream& DetectorElementException::printOut( std::ostream& os ) const
 {
-  os << " \t" << tag() << " \t " << message() ;
-  switch( code() )
-  {
-  case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
-  case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
-  default                  : os << "\t StatusCode=" << code() ;  break ;
-  }
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code();
   if ( 0 != m_dee_DetectorElement )
   {
     os << "\t for DetectorElement=" ;
@@ -48,13 +42,7 @@ std::ostream& DetectorElementException::printOut( std::ostream& os ) const
 //////////////////////////////////////////////////////////////////////////////
 MsgStream&    DetectorElementException::printOut( MsgStream& os  ) const
 {
-  os << " \t" << tag() << " \t " << message() ;
-  switch( code() )
-  {
-  case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
-  case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
-  default                  : os << "\t StatusCode=" << code() ;  break ;
-  }
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code();
   if ( 0 != m_dee_DetectorElement )
   {
     os << "\t for DetectorElement=" ;

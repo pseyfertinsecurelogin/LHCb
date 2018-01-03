@@ -182,7 +182,7 @@ StatusCode LoKi::Hybrid::Base::finalize  ()
       const int result =  PyRun_SimpleString ( line.c_str() ) ;
       if ( 0 != result )
       {
-        Warning ( "Error code from PyRun_SimpleString" , 1000 + result ).ignore() ;
+        Warning ( "Error code from PyRun_SimpleString" , StatusCode{static_cast<unsigned long>( 1000 + result )} ).ignore() ;
         warning() << "The problematic code is \n" << line << endmsg ;
         if ( PyErr_Occurred() ) { PyErr_Print() ; }
       }

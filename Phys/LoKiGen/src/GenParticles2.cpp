@@ -150,7 +150,7 @@ double PolarizationAngle::operator() ( const HepMC::GenParticle* p ) const
   if ( 0 == p )
   {
     Error ( "HepMC::GenParticle* points to NULL") ;
-    return StatusCode::FAILURE ;  //                                 RETURN
+    return 1.0 ;  //                                 RETURN
   }
   //
   Decays::IGenDecay::iTree::Collection vct ;
