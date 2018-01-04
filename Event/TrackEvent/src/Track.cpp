@@ -46,17 +46,14 @@ TrackFitResult* Track::fitResult()
 //=============================================================================
 void Track::setFitResult(LHCb::TrackFitResult* absfit)
 {
-  if ( m_fitResult != absfit )
-  {
-    delete m_fitResult ;
-    m_fitResult = absfit ;
-  }
+  if ( m_fitResult != absfit ) delete std::exchange( m_fitResult, absfit );
 }
 
 //=============================================================================
 // Move assignement operator
 //=============================================================================
-LHCb::Track& Track::operator=(LHCb::Track&& track) {
+LHCb::Track& Track::operator=(LHCb::Track&& track)
+{
   setChi2PerDoF( track.chi2PerDoF() );
   setNDoF( track.nDoF() );
   setLikelihood( track.likelihood() );
@@ -69,11 +66,7 @@ LHCb::Track& Track::operator=(LHCb::Track&& track) {
   m_states = std::move(track.m_states);
 
   // copy the track fit info
-  if ( track.m_fitResult ) {
-    delete m_fitResult;
-    m_fitResult = track.m_fitResult;
-    track.m_fitResult = nullptr;
-  }
+  std::swap (m_fitResult, track.m_fitResult);
 
   setExtraInfo( track.extraInfo() );
 
@@ -432,10 +425,8 @@ void Track::copy( const Track& track )
                   [](const LHCb::State* s) { return s->clone(); });
 
   // copy the track fit info
-  if ( track.m_fitResult ) {
-    delete m_fitResult;
-    m_fitResult = track.m_fitResult->clone();
-  }
+  delete std::exchange( m_fitResult, track.m_fitResult ? track.m_fitResult->clone()
+                                                       : nullptr );
 
   setExtraInfo( track.extraInfo() );
 
