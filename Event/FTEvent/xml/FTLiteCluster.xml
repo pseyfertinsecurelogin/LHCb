@@ -89,7 +89,7 @@
       </method>
 
       <method name   = "fractionBit"
-              type   = "bool"
+              type   = "int"
               access = "PUBLIC"
               desc   = "returns the fraction of channel as the integer value (0 or 1)"
               const  = "TRUE">

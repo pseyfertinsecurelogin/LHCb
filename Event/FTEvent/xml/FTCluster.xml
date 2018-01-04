@@ -23,7 +23,7 @@
 
       <constructor desc     = "Constructor"
                    argList  = "LHCb::FTChannelID&amp; id, float fraction, 
-                               bool fractionBit, std::vector&lt;LHCb::FTChannelID&gt; channelIDs, 
+                               int fractionBit, std::vector&lt;LHCb::FTChannelID&gt; channelIDs, 
                                int isLarge, bool lastEdge, float charge" 
                    initList = "m_fraction(fraction), m_fractionBit(fractionBit), m_isLarge(isLarge),
                                m_lastEdge(lastEdge),m_charge(charge), m_channelIDs(channelIDs)">
@@ -57,7 +57,7 @@
 
       <attribute name   = "fractionBit"
                  desc   = "The fraction of channel as the integer value (0 or 1)"
-                 type   = "bool"
+                 type   = "int"
                  access = "PUBLIC"/>
 
       <attribute name   = "isLarge"
