@@ -281,7 +281,6 @@ DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) co
   const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagRatio)*cosphi) * aXSignLocal;
   const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagRatio)*sinphi) * aYSignLocal;
 
-  //const auto Rsq = std::pow(aPhCaR_Coord*m_PmtLensMagnificationRatio,2);
   const auto Rsq = aPhCaRsq_Coord * m_PmtLensMagRatio * m_PmtLensMagRatio;
 
   const auto aLensRecZStd = aPhCathCoord.z() + std::sqrt( m_PmtLensRoc2 - Rsq );
