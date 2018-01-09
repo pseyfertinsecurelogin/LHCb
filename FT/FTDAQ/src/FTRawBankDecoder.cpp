@@ -201,11 +201,11 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                           
                           if ( msgLevel( MSG::VERBOSE ) ) {
                             verbose() << format( " channel %4d frac %3d size %3d code %4.4x",
-                                                 channel, fraction, cSize, c ) << endmsg;
+                                                 channel, fraction, ( cSize ? 0 : 4 ), c ) << endmsg;
                           }
                           
                           return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
-                              fraction, cSize };
+                              fraction, ( cSize ? 0 : 4 ) };
                       } );
       }
       first += nClus;
