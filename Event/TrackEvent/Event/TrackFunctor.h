@@ -28,105 +28,68 @@
  *
  */
 
+
 namespace TrackFunctor
 {
+    namespace details {
+        template <typename T>
+        struct deref : T {
+            constexpr deref(T&& t) : T(std::forward<T>(t)) {};
+            using T::operator();
+            template <typename TPtr>
+            bool operator()(TPtr* p1, TPtr* p2) const
+            { return T::operator()(*p1,*p2); }
 
-//=============================================================================
-// Class to test if the z of a class T is < than a certain value
-//=============================================================================
-  class less_z final {
-    double m_z;
-  public:
-    explicit less_z( double z ):m_z(z) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t ) const
-    { return t.z() < m_z; }
-    template <typename T> bool operator()( const T* t ) const
-    { return (*this)(*t); }
-  };
+            // for backwards compatibility...
+            [[deprecated("please remove ()")]]
+            const deref& operator()() const { return *this; }
+        };
 
-//=============================================================================
-// Class to test if the z of a class T is > than a certain value
-//=============================================================================
-  class greater_z final  {
-    double m_z;
-  public:
-    explicit greater_z( double z ):m_z(z) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t ) const
-    { return t.z() > m_z; }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+        template <typename T>
+        constexpr deref<T> add_deref( T&& t ) {
+            return { std::forward<T>(t) };
+        }
+    }
 
 //=============================================================================
 // Compare the distance along z to the specified z-value, of 2 objects
 //=============================================================================
-  class distanceAlongZ final  {
-    double m_z0;
-  public:
-    explicit distanceAlongZ( double z0 = 0.):m_z0(z0) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return ( (std::abs(t1.z()-m_z0) < std::abs(t2.z()-m_z0)) ); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+constexpr auto distanceAlongZ = [](double z0 = 0.) {
+    return details::add_deref( [=](const auto& t1, const auto& t2) {
+        return ( (std::abs(t1.z()-z0) < std::abs(t2.z()-z0)) );
+    } );
+};
 
 //=============================================================================
 // Compare the distance of 2 objects to a plane
 //=============================================================================
-  class distanceToPlane final {
-    Gaudi::Plane3D m_plane;
-  public:
-    explicit distanceToPlane(const Gaudi::Plane3D& plane):m_plane(plane) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    {
-      auto d1 = std::abs(m_plane.Distance(t1.position()));
-      auto d2 = std::abs(m_plane.Distance(t2.position()));
+constexpr auto distanceToPlane = [](const Gaudi::Plane3D& plane) {
+    return details::add_deref( [=](const auto& t1, const auto& t2) {
+      auto d1 = std::abs(plane.Distance(t1.position()));
+      auto d2 = std::abs(plane.Distance(t2.position()));
       return d1 < d2;
-    }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+    } );
+};
 
 //=============================================================================
 // Class for sorting class T by z in order (+1/-1)
 //=============================================================================
-  class orderByZ final{
-    int m_order;
-  public:
-    explicit orderByZ( int order = +1):m_order(order) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return m_order*t1.z() < m_order*t2.z(); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
-
+constexpr auto orderByZ = []( int order = +1 ) {
+    return details::add_deref( [=](const auto& t1, const auto& t2 )
+                       { return order*t1.z() < order*t2.z(); } );
+};
 
 //=============================================================================
 // Class for sorting class T by increasing z
 //=============================================================================
-  struct increasingByZ final {
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return t1.z() < t2.z(); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+constexpr auto increasingByZ = details::add_deref(
+        [](const auto& t1, const auto& t2) { return t1.z() < t2.z() ; }  );
 
 //=============================================================================
 // Class for sorting class T by decreasing z
 //=============================================================================
-  struct decreasingByZ final {
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return t1.z() > t2.z(); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+constexpr auto decreasingByZ = details::add_deref(
+        [](const auto& t1, const auto& t2) { return t1.z() > t2.z() ; }  );
 
 //=============================================================================
 // Helper class for checking the existence of a value of a member function
