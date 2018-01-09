@@ -3,6 +3,8 @@
 
 // Include files
 // -------------
+#include <type_traits>
+#include <functional>
 
 // from GaudiKernel
 #include "GaudiKernel/Plane3DTypes.h"
@@ -10,7 +12,6 @@
 // from TrackEvent
 #include "Event/Track.h"
 #include "Event/TrackFitResult.h"
-
 
 /** @namespace TrackFunctor
  *
@@ -37,40 +38,39 @@ namespace TrackFunctor
     double m_z;
   public:
     explicit less_z( double z ):m_z(z) {}
-    template <class T>
-    bool operator()( const T* t ) const
-    {
-      return t -> z() < m_z;
-    }
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t ) const
+    { return t.z() < m_z; }
+    template <typename T> bool operator()( const T* t ) const
+    { return (*this)(*t); }
   };
 
 //=============================================================================
 // Class to test if the z of a class T is > than a certain value
 //=============================================================================
-  class greater_z final {
+  class greater_z final  {
     double m_z;
   public:
     explicit greater_z( double z ):m_z(z) {}
-    template <class T>
-    bool operator()( const T* t ) const
-    {
-      return t -> z() > m_z;
-    }
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t ) const
+    { return t.z() > m_z; }
+    template <typename T> bool operator()( const T* t1, const T* t2 ) const
+    { return operator()(*t1,*t2); }
   };
 
 //=============================================================================
-// Compare the distance along z of 2 objects
+// Compare the distance along z to the specified z-value, of 2 objects
 //=============================================================================
-  class distanceAlongZ final {
+  class distanceAlongZ final  {
     double m_z0;
   public:
     explicit distanceAlongZ( double z0 = 0.):m_z0(z0) {}
-    template <class T>
-    bool operator()( const T* t1,
-                     const T* t2 ) const
-    {
-      return ( (std::abs(t1->z()-m_z0) < std::abs(t2->z()-m_z0)) );
-    }
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t1, const T& t2 ) const
+    { return ( (std::abs(t1.z()-m_z0) < std::abs(t2.z()-m_z0)) ); }
+    template <typename T> bool operator()( const T* t1, const T* t2 ) const
+    { return operator()(*t1,*t2); }
   };
 
 //=============================================================================
@@ -80,29 +80,29 @@ namespace TrackFunctor
     Gaudi::Plane3D m_plane;
   public:
     explicit distanceToPlane(const Gaudi::Plane3D& plane):m_plane(plane) {}
-    template <class T>
-    bool operator()( const T* t1,
-                     const T* t2 ) const
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t1, const T& t2 ) const
     {
-      auto d1 = std::abs(m_plane.Distance(t1->position()));
-      auto d2 = std::abs(m_plane.Distance(t2->position()));
-      return (d1 < d2);
+      auto d1 = std::abs(m_plane.Distance(t1.position()));
+      auto d2 = std::abs(m_plane.Distance(t2.position()));
+      return d1 < d2;
     }
+    template <typename T> bool operator()( const T* t1, const T* t2 ) const
+    { return operator()(*t1,*t2); }
   };
 
 //=============================================================================
 // Class for sorting class T by z in order (+1/-1)
 //=============================================================================
-  class orderByZ final {
+  class orderByZ final{
     int m_order;
   public:
     explicit orderByZ( int order = +1):m_order(order) {}
-    template <class T>
-    bool operator()( const T* t1,
-                     const T* t2 ) const
-    {
-      return (m_order)*t1->z() < (m_order)*t2->z();
-    }
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t1, const T& t2 ) const
+    { return m_order*t1.z() < m_order*t2.z(); }
+    template <typename T> bool operator()( const T* t1, const T* t2 ) const
+    { return operator()(*t1,*t2); }
   };
 
 
@@ -110,30 +110,28 @@ namespace TrackFunctor
 // Class for sorting class T by increasing z
 //=============================================================================
   struct increasingByZ final {
-    template <class T>
-    bool operator()( const T* t1,
-                     const T* t2 ) const
-    {
-      return t1->z() < t2->z();
-    }
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t1, const T& t2 ) const
+    { return t1.z() < t2.z(); }
+    template <typename T> bool operator()( const T* t1, const T* t2 ) const
+    { return operator()(*t1,*t2); }
   };
 
 //=============================================================================
 // Class for sorting class T by decreasing z
 //=============================================================================
   struct decreasingByZ final {
-    template <class T>
-    bool operator()( const T* t1,
-                     const T* t2 ) const
-    {
-      return t1->z() > t2->z();
-    }
+    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    bool operator()( const T& t1, const T& t2 ) const
+    { return t1.z() > t2.z(); }
+    template <typename T> bool operator()( const T* t1, const T* t2 ) const
+    { return operator()(*t1,*t2); }
   };
 
 //=============================================================================
 // Helper class for checking the existence of a value of a member function
 //=============================================================================
-  template <class T, typename E>
+  template <typename T, typename E>
   class HasKey  {
   public:
     // A predicate (unary bool function):
@@ -147,16 +145,16 @@ namespace TrackFunctor
   public:
     HasKey(ptr_memfun check, E key ):
       m_pmf(check),m_key(key) {}
+    bool operator()( const T& t ) const
+    { return (t.*m_pmf)(m_key); }
     bool operator()( const T* t ) const
-    {
-      return (t ->* m_pmf) (m_key);
-    }
+    { return (*this)(*t); }
   };
 
 //=============================================================================
 // Class to delete an element from a vector
 //=============================================================================
-  template <class T>
+  template <typename T>
   void deleteFromList( std::vector<T*>& List, const T* value )
   {
     auto it = std::find( List.begin(), List.end(), value );
@@ -174,16 +172,16 @@ namespace TrackFunctor
 
 //=============================================================================
 // Retrieve the reference to the state closest to the given object
-// e.g.: closestState( aTrack, TrackFunctor::distanceAlongZ<State>(z) )
-//       closestState( aTrack, TrackFunctor::distanceToPlane<State>(aPlane) )
+// e.g.: closestState( aTrack, TrackFunctor::distanceAlongZ(z) )
+//       closestState( aTrack, TrackFunctor::distanceToPlane(aPlane) )
 //=============================================================================
-  template <class T>
-  LHCb::State& closestState( LHCb::Track& track, const T& t )
+  template <typename Fun>
+  LHCb::State& closestState( LHCb::Track& track, const Fun& fun )
   {
-    const std::vector<LHCb::State*>& allstates = track.states();
-    auto iter = std::min_element( allstates.begin(), allstates.end(), t );
+    auto& allstates = track.states();
+    auto iter = std::min_element( allstates.begin(), allstates.end(), fun );
     if ( iter == allstates.end() )
-      throw GaudiException( "No state closest to z","TrackFunctor.h",
+      throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
     return *(*iter);
   }
@@ -191,13 +189,13 @@ namespace TrackFunctor
 //=============================================================================
 // Retrieve the const reference to the state closest to the given object
 //=============================================================================
-  template <class T>
-  const LHCb::State& closestState( const LHCb::Track& track, const T& t )
+  template <typename Fun>
+  const LHCb::State& closestState( const LHCb::Track& track, const Fun& fun )
   {
-    const std::vector<LHCb::State*>& allstates = track.states();
-    auto iter = std::min_element( allstates.begin(), allstates.end(), t );
+    const auto& allstates = track.states();
+    auto iter = std::min_element( allstates.begin(), allstates.end(), fun );
     if ( iter == allstates.end() )
-      throw GaudiException( "No state closest to z","TrackFunctor.h",
+      throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
     return *(*iter);
   }
@@ -206,32 +204,32 @@ namespace TrackFunctor
 // Retrieve the number of LHCbIDs that fulfill a predicate
 // (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
-  template <class T>
-  unsigned int nLHCbIDs( const LHCb::Track& track, const T& pred )
+  template <typename Predicate>
+  unsigned int nLHCbIDs( const LHCb::Track& track, const Predicate& pred )
   {
-    const std::vector<LHCb::LHCbID>& ids = track.lhcbIDs();
-    return std::count_if( ids.begin(), ids.end(), pred );
+    const auto& ids = track.lhcbIDs();
+    return std::count_if( ids.begin(), ids.end(), std::cref(pred) );
   }
 
 //=============================================================================
 // Retrieve the number of Measurements that fulfill a predicate
 // (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
-  template <class Container, class T>
-  unsigned int nMeasurements( const Container& meas, const T& pred )
+  template <typename Container, typename Predicate>
+  unsigned int nMeasurements( const Container& meas, const Predicate& pred )
   {
-    return std::count_if( meas.begin(), meas.end(), pred );
+    return std::count_if( meas.begin(), meas.end(), std::cref(pred) );
   }
 
 //=============================================================================
 // Retrieve the number of Measurements that fulfill a predicate
 // (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
-  template <class T>
-  unsigned int nMeasurements( const LHCb::Track& track, const T& pred )
+  template <typename Predicate>
+  unsigned int nMeasurements( const LHCb::Track& track, const Predicate& pred )
   {
     const LHCb::TrackFitResult* fit = track.fitResult() ;
-    return fit ? nMeasurements( fit->measurements(), pred ) : 0 ;
+    return fit ? nMeasurements( fit->measurements(), std::cref(pred) ) : 0 ;
   }
 
 }
