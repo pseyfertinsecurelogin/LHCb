@@ -60,7 +60,7 @@
       </attribute>
       
       <constructor desc    = "Constructor" 
-                   argList = 'LHCb::FTChannelID chan, bool fraction, int pseudoSize'>
+                   argList = 'LHCb::FTChannelID chan, int fraction, int pseudoSize'>
         <code>
           m_liteCluster = (chan &lt;&lt; channelIDBits) +
           (fraction &lt;&lt; fractionBits) +
