@@ -816,6 +816,7 @@
        desc    = 'Sets the list of LHCbIDs associated to this track. The input vector must be sorted.'
        argList = 'const LHCbIDContainer&amp; value'>
 <code>
+  assert( std::is_sorted(begin(m_lhcbIDs),end(m_lhcbIDs)) );
   m_lhcbIDs = value ;
 </code>
       </method>
@@ -825,6 +826,7 @@
        desc    = 'Sets the list of LHCbIDs associated to this track. The input vector must be sorted.' >
        <arg name = "value" type = "LHCbIDContainer&amp;" inout = "BOTH"/>
 <code>
+  assert( std::is_sorted(begin(m_lhcbIDs),end(m_lhcbIDs)) );
   m_lhcbIDs = std::move(value) ;
 </code>
       </method>
