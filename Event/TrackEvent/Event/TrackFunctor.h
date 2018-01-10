@@ -31,22 +31,60 @@
 
 namespace TrackFunctor
 {
-    namespace details {
-        template <typename T>
-        struct deref : T {
-            constexpr deref(T&& t) : T(std::forward<T>(t)) {};
-            using T::operator();
-            template <typename TPtr>
-            bool operator()(TPtr* p1, TPtr* p2) const
-            { return T::operator()(*p1,*p2); }
+    namespace details
+    {
+        template <typename Callable>
+        struct deref : Callable {
+
+            // as we inherit from the type of the passed-in callable,
+            // construct it from the passed-in callable
+            template <typename Fun, typename = std::enable_if_t<std::is_constructible<Callable,Fun>::value>>
+            constexpr deref(Fun&& g) : Callable{ std::forward<Fun>(g) } {}
+
+
+            // make the call operator of 'original' callable
+            // available
+            using Callable::operator();
+
+            // add a call operator which first dereferences
+            // its arguments prior to invoking the 'orignal'
+            // callable
+
+            // binary
+            template <typename Ptr>
+            auto operator()(Ptr* p1, Ptr* p2) const
+            { return Callable::operator()(*p1, *p2); }
+
+            // unary
+            template <typename Ptr>
+            auto operator()(Ptr* p) const
+            { return Callable::operator()(*p); }
 
             // for backwards compatibility...
             [[deprecated("please remove ()")]]
             const deref& operator()() const { return *this; }
         };
 
+        // Given some 'callable' which takes one or two arguments,
+        // (of the same type), return another, "decorated" callable which
+        // can _also_ be called with pointers to the (one or) two
+        // arguments.
+        //
+        // For example (see https://godbolt.org/g/S5epFA,
+        // or the unit test in this package)
+        //
+        // bool cmp() {
+        //
+        //     auto g = add_deref( [](int i, int j) { return i<j; } );
+        //
+        //     int a = 3;
+        //     int b = 5;
+        //
+        //     return g(a,b) == g(&a,&b); // evaluates to true
+        // }
+        //
         template <typename T>
-        constexpr deref<T> add_deref( T&& t ) {
+        constexpr deref<std::decay_t<T>> add_deref( T&& t ) {
             return { std::forward<T>(t) };
         }
     }
