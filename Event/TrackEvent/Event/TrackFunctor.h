@@ -38,8 +38,11 @@ namespace TrackFunctor
 
             // as we inherit from the type of the passed-in callable,
             // construct it from the passed-in callable
-            template <typename Fun, typename = std::enable_if_t<std::is_constructible<Callable,Fun>::value>>
-            constexpr deref(Fun&& g) : Callable{ std::forward<Fun>(g) } {}
+            // F is a template parameter so we can perfectly forward
+            // the callable, but then F must be constrained to avoid
+            // hijacking the copy/move constructor!
+            template <typename F, typename = std::enable_if_t<std::is_constructible<Callable,F>::value>>
+            constexpr deref(F&& g) : Callable{ std::forward<F>(g) } {}
 
 
             // make the call operator of 'original' callable
@@ -51,8 +54,8 @@ namespace TrackFunctor
             // callable
 
             // binary
-            template <typename Ptr>
-            auto operator()(Ptr* p1, Ptr* p2) const
+            template <typename Ptr1, typename Ptr2>
+            auto operator()(Ptr1* p1, Ptr2* p2) const
             { return Callable::operator()(*p1, *p2); }
 
             // unary
@@ -60,9 +63,6 @@ namespace TrackFunctor
             auto operator()(Ptr* p) const
             { return Callable::operator()(*p); }
 
-            // for backwards compatibility...
-            [[deprecated("please remove ()")]]
-            const deref& operator()() const { return *this; }
         };
 
         // Given some 'callable' which takes one or two arguments,
@@ -120,14 +120,18 @@ constexpr auto orderByZ = []( int order = +1 ) {
 //=============================================================================
 // Class for sorting class T by increasing z
 //=============================================================================
-constexpr auto increasingByZ = details::add_deref(
+constexpr auto increasingByZ = []() {
+    return details::add_deref(
         [](const auto& t1, const auto& t2) { return t1.z() < t2.z() ; }  );
+};
 
 //=============================================================================
 // Class for sorting class T by decreasing z
 //=============================================================================
-constexpr auto decreasingByZ = details::add_deref(
+constexpr auto decreasingByZ = []() {
+    return details::add_deref(
         [](const auto& t1, const auto& t2) { return t1.z() > t2.z() ; }  );
+};
 
 //=============================================================================
 // Helper class for checking the existence of a value of a member function
