@@ -162,9 +162,9 @@ LoKi::HDRFilter::HDRFilter
   // DAMN: this isn't going to (always) work: what if Location is set first - and the test fails,
   //       and then afterwards code() is updated by the property mgr?
   const Property& prop = getProperty ( "Location" );
-  const_cast<Property&>(prop).declareUpdateHandler( [=](Property& prop) {
+  const_cast<Property&>(prop).declareUpdateHandler( [=](Property&) {
     const auto& nam = this->name();
-    const auto& loc = dynamic_cast<DataObjectHandleProperty&>(prop).value().objKey();
+    const auto& loc = inputLocation();
   /// the special name
     if ( special_case ( nam ) )
   {
