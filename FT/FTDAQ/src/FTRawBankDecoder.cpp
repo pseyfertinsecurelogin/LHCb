@@ -91,8 +91,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       }
       
       if(bank->version() == 3){
-        auto it = first;
-        for( ;  it< first+nClus;++it ){
+       
+        for( auto it = first ;  it< first+nClus;++it ){
           short int c      = *it;
           unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
           int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;

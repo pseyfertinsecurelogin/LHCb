@@ -35,10 +35,10 @@ StatusCode FTRawBankEncoder::execute() {
   int codingVersion = 3;
 
   //== create the vector of vectors of vectors with the proper size...
-  std::vector<std::vector<std::vector<uint16_t> > > m_sipmData;
-  m_sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
+  std::vector<std::vector<std::vector<uint16_t> > > sipmData;
+  sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
 
-  for (auto &b : m_sipmData ) for (auto &pm : b ) pm.clear();
+  for (auto &b : sipmData ) for (auto &pm : b ) pm.clear();
 
   for ( const auto& cluster : *clusters ) {
 
@@ -49,17 +49,17 @@ StatusCode FTRawBankEncoder::execute() {
     unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   
     //== Temp, assumes 1 TELL40 per quarter.
 
-    if ( m_sipmData.size() <= bankNumber ) {
+    if ( sipmData.size() <= bankNumber ) {
       error() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
     unsigned int sipmNumber = id.sipm() + 4*id.mat() + 16 * id.module();
-    if ( m_sipmData[bankNumber].size() <= sipmNumber ) {
+    if ( sipmData[bankNumber].size() <= sipmNumber ) {
       error() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
 
-    auto& data = m_sipmData[bankNumber][sipmNumber];
+    auto& data = sipmData[bankNumber][sipmNumber];
     
     if ( (id.module() > 0  && data.size() > FTRawBank::nbClusFFMaximum) ||
          (id.module() == 0 && data.size() > FTRawBank::nbClusMaximum) ) continue; 
@@ -81,15 +81,15 @@ StatusCode FTRawBankEncoder::execute() {
   
   
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
-  for ( unsigned int iBank = 0; m_sipmData.size() > iBank; ++iBank ) {
+  for ( unsigned int iBank = 0; sipmData.size() > iBank; ++iBank ) {
     if( msgLevel( MSG::VERBOSE ) ) verbose() << "*** Bank " << iBank << endmsg;
-    auto words = std::accumulate( m_sipmData[iBank].begin(), m_sipmData[iBank].end(),
+    auto words = std::accumulate( sipmData[iBank].begin(), sipmData[iBank].end(),
                                   0, [](int w, std::vector<uint16_t>& d) {
                                     return w  + d.size();
                                   });
     std::vector<unsigned int> bank; bank.reserve((words+1)/2);
     boost::optional<unsigned int> buf;
-    for ( const auto& pm : m_sipmData[iBank] ) {
+    for ( const auto& pm : sipmData[iBank] ) {
       for ( const auto& data : pm ) {
         if (!buf) {
           buf = data;
