@@ -10,7 +10,7 @@ struct odd_t {
 
 constexpr auto odd = odd_t{};
 
-constexpr auto add(int i) { return [=](int j) { return j+i; };  }
+auto add(int i) { return [=](int j) { return j+i; };  }
 
 BOOST_AUTO_TEST_CASE( test_deref )
 {
