@@ -341,9 +341,8 @@ class genClasses(genSrcUtils.genSrcUtils):
             elif what == 'addTo'     : s += ' \n{\n  m_%s.push_back(value);\n}\n\n' % rel['name']
             elif what == 'clear'     : s += ' \n{\n  m_%s.clear();\n}\n\n' % rel['name']
             elif what == 'removeFrom':
-                s += ' \n{\n  SmartRefVector<%s>::iterator iter =\n' % rel['type']
-                s += '    std::remove(m_%s.begin(), m_%s.end(), value);\n' % (rel['name'], rel['name'])
-                s += '  m_%s.erase(iter, m_%s.end());\n}\n\n' % (rel['name'], rel['name'])
+                s += ' \n{\n  auto i = std::remove(m_%s.begin(), m_%s.end(), value);\n' % (rel['name'], rel['name'])
+                s += '  m_%s.erase(i, m_%s.end());\n}\n\n' % (rel['name'], rel['name'])
         return s
 #--------------------------------------------------------------------------------
     def genGetSetBitfieldMethod(self, bf, what, attAtt, scopeName):
