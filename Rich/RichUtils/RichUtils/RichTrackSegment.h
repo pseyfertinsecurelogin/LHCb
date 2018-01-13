@@ -247,9 +247,9 @@ namespace LHCb
                       const StateErrors& entryErrs = StateErrors{}, ///< The segment errors at the entry point
                       const StateErrors& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
                       )
-      : m_radIntersections ( std::forward<INTERS>(inters) ),
-        m_radiator         ( rad                      ),
+      : m_radiator         ( rad                      ),
         m_rich             ( rich                     ),
+        m_radIntersections ( std::forward<INTERS>(inters) ),
         m_errorsEntry      ( entryErrs                ),
         m_errorsMiddle     ( Rich::Rich1Gas == rad ? exitErrs : entryErrs ), // CRJ : Is this best ?
         m_errorsExit       ( exitErrs                 ),
@@ -274,11 +274,11 @@ namespace LHCb
                       const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
                       const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
                       )
-      : m_radIntersections ( std::forward<INTERS>(inters) ),
+      : m_radiator         ( rad                      ),
+        m_rich             ( rich                     ),
+        m_radIntersections ( std::forward<INTERS>(inters) ),
         m_middlePoint      ( middP                    ),
         m_middleMomentum   ( middV                    ),
-        m_radiator         ( rad                      ),
-        m_rich             ( rich                     ),
         m_errorsEntry      ( entryErrors              ),
         m_errorsMiddle     ( middleErrors             ),
         m_errorsExit       ( exitErrors               ),
@@ -680,6 +680,9 @@ namespace LHCb
 
   private:  // private data
 
+    Rich::RadiatorType m_radiator = Rich::InvalidRadiator; ///< Rich radiator
+    Rich::DetectorType m_rich     = Rich::InvalidDetector; ///< Rich detector
+
     /// The raw intersections with the radiator volumes
     Rich::RadIntersection::Vector m_radIntersections{1};
 
@@ -688,9 +691,6 @@ namespace LHCb
 
     /// The momentum vector at the segment middle point in the radiator volume
     Gaudi::XYZVector m_middleMomentum;
-
-    Rich::RadiatorType m_radiator = Rich::InvalidRadiator; ///< Rich radiator
-    Rich::DetectorType m_rich     = Rich::InvalidDetector; ///< Rich detector
 
     StateErrors m_errorsEntry;     ///< Errors for the entry state
     StateErrors m_errorsMiddle;    ///< Errors for the middle state
@@ -702,22 +702,6 @@ namespace LHCb
      *        without the need for this variable.
      */
     double m_avPhotonEnergy = 4.325;
-
-  private: // Some variables for internal caching of information for speed
-
-    /** Rotation matrix used to calculate the theta and phi angles between
-     *  this track segment and a given direction. */
-    Gaudi::Rotation3D m_rotation;
-
-    /** Rotation matrix used to create vectors at a given theta and phi angle
-     *  to this track segment. */
-    Gaudi::Rotation3D m_rotation2;
-
-    Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
-    Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
-    double m_invMidFrac1{0};      ///< Cached fraction 1
-    double m_midFrac2{0};         ///< Cached fraction 2
-    double m_pathLength{0};       ///< Segment path length
 
   private: // SIMD data caches
 
@@ -741,6 +725,22 @@ namespace LHCb
 
     /// SIMD rotations
     SIMDRotation3D m_rotationSIMD, m_rotation2SIMD; 
+
+  private: // Some variables for internal caching of information for speed
+
+    /** Rotation matrix used to calculate the theta and phi angles between
+     *  this track segment and a given direction. */
+    Gaudi::Rotation3D m_rotation;
+
+    /** Rotation matrix used to create vectors at a given theta and phi angle
+     *  to this track segment. */
+    Gaudi::Rotation3D m_rotation2;
+
+    Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
+    Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
+    double m_invMidFrac1{0};      ///< Cached fraction 1
+    double m_midFrac2{0};         ///< Cached fraction 2
+    double m_pathLength{0};       ///< Segment path length
 
   };
 
