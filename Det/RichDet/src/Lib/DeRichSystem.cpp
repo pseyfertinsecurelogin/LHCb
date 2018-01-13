@@ -358,7 +358,8 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   {
 
     // get data
-    const LHCb::RichSmartID             pdID ( *iSoft  );
+    const LHCb::RichSmartID32         pdID32 ( *iSoft  ); // needed for 32->64 bit support
+    const LHCb::RichSmartID           pdID   ( pdID32  ); // handles correct format conversion
     const Rich::DAQ::HPDHardwareID    hardID ( *iHard  );
     const Rich::DAQ::Level1HardwareID L1ID   ( *iL1    );
     const Rich::DAQ::Level0ID         L0ID   ( *iL0    );
