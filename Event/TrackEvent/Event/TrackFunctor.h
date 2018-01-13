@@ -135,14 +135,13 @@ constexpr auto decreasingByZ = []() {
 
 //=============================================================================
 // Helper class for checking the existence of a value of a member function
+// example:
+// HasKey<Track> isBackward(&Track::checkFlag,Track::Backwards)
+// if (isBackward(track)) ...
 //=============================================================================
   template <typename T, typename E>
   class HasKey  {
   public:
-    // A predicate (unary bool function):
-    // example:
-    // HasKey<Track> isBackward(&Track::checkFlag,Track::Backwards)
-    // if (isBackward(track)) ...
     typedef bool (T::* ptr_memfun) (E) const;
   private:
     ptr_memfun m_pmf;
@@ -184,7 +183,7 @@ constexpr auto decreasingByZ = []() {
   LHCb::State& closestState( LHCb::Track& track, const Fun& fun )
   {
     auto& allstates = track.states();
-    auto iter = std::min_element( allstates.begin(), allstates.end(), fun );
+    auto iter = std::min_element( allstates.begin(), allstates.end(), std::cref(fun) );
     if ( iter == allstates.end() )
       throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
@@ -207,7 +206,6 @@ constexpr auto decreasingByZ = []() {
 
 //=============================================================================
 // Retrieve the number of LHCbIDs that fulfill a predicate
-// (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
   template <typename Predicate>
   unsigned int nLHCbIDs( const LHCb::Track& track, const Predicate& pred )
@@ -218,7 +216,6 @@ constexpr auto decreasingByZ = []() {
 
 //=============================================================================
 // Retrieve the number of Measurements that fulfill a predicate
-// (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
   template <typename Container, typename Predicate>
   unsigned int nMeasurements( const Container& meas, const Predicate& pred )
@@ -228,7 +225,6 @@ constexpr auto decreasingByZ = []() {
 
 //=============================================================================
 // Retrieve the number of Measurements that fulfill a predicate
-// (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
   template <typename Predicate>
   unsigned int nMeasurements( const LHCb::Track& track, const Predicate& pred )
