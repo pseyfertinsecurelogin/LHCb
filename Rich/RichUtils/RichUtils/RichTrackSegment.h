@@ -95,11 +95,11 @@ namespace LHCb
     /** Returns the average photon energy for the given RICH radiator
      *  @param[in] rad The radiator type
      *  @return The average photon energy */
-    inline double avPhotEn( const Rich::RadiatorType rad ) const
+    inline float avPhotEn( const Rich::RadiatorType rad ) const
     {
-      return ( Rich::Rich1Gas == rad ? 4.25 :  // C4F10
-               Rich::Rich2Gas == rad ? 4.40 :  // CF4
-               3.00                        );  // Aerogel 
+      return ( Rich::Rich1Gas == rad ? 4.25f :  // C4F10
+               Rich::Rich2Gas == rad ? 4.40f :  // CF4
+               3.00f                        );  // Aerogel 
     }
 
   public: // helper classes
@@ -468,7 +468,7 @@ namespace LHCb
     /// Returns the z coordinate at a given fractional distance along segment
     template< typename TYPE,
               typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline TYPE zCoordAt( const TYPE fraction ) const
+    inline TYPE zCoordAt( const TYPE& fraction ) const
     {
       return fraction*exitPointSIMD().z() + (TYPE::One()-fraction)*entryPointSIMD().z();
     }
@@ -489,7 +489,7 @@ namespace LHCb
     /// Zero gives the entry point, one gives the exit point
     template< typename TYPE,
               typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline SIMDPoint bestPoint( const TYPE fractDist ) const
+    inline SIMDPoint bestPoint( const TYPE& fractDist ) const
     {
       auto p = middlePointSIMD() + (m_exitMidVSIMD*((fractDist-m_midFrac2SIMD)/m_midFrac2SIMD));
       const auto mask = zCoordAt(fractDist) < middlePointSIMD().z();
@@ -641,13 +641,13 @@ namespace LHCb
     }
 
     /// Returns the average observable photon energy
-    inline double avPhotonEnergy() const noexcept
+    inline float avPhotonEnergy() const noexcept
     {
       return m_avPhotonEnergy;
     }
 
     /// Sets the average observable photon energy
-    inline void setAvPhotonEnergy( const double energy ) noexcept
+    inline void setAvPhotonEnergy( const float energy ) noexcept
     {
       m_avPhotonEnergy = energy;
     }
@@ -701,13 +701,13 @@ namespace LHCb
      *  @todo Quick fix. Need to review to if this can be done in a better way
      *        without the need for this variable.
      */
-    double m_avPhotonEnergy = 4.325;
+    float m_avPhotonEnergy = 4.325;
 
   private: // SIMD data caches
 
     /// SIMD Entry Point
     SIMDPoint m_entryPointSIMD;
-    
+ 
     /// SIMD Exit Point
     SIMDPoint m_exitPointSIMD;
 
