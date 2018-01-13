@@ -17,9 +17,7 @@ class CaloDataProvider : public extends<CaloReadoutTool, ICaloDataProvider> {
 
 public:
   /// Standard constructor
-  CaloDataProvider( const std::string& type,
-                     const std::string& name,
-                     const IInterface* parent);
+  using extends::extends;
 
 
   StatusCode initialize() override;

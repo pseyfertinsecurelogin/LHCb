@@ -27,5 +27,15 @@ namespace details {
     StatusCode parse(source_t& result, const std::string& input );
     //-------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------
+    enum class DetectorName_t { Ecal = 0, Hcal, Prs, Spd, Unknown };
+    const std::string& toString(DetectorName_t);
+    inline std::ostream& toStream(const DetectorName_t& name, std::ostream& os) {
+        return os << std::quoted(toString(name),'\'');
+    }
+    StatusCode parse(DetectorName_t& result, const std::string& input );
+
+    DetectorName_t alg_name_to_detector( const std::string& s);
+
 }
 

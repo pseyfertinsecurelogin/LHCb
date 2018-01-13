@@ -32,9 +32,7 @@ public:
   StatusCode finalize() override;
   // =========================================================================
   /// Inform that a new incident has occurred
-  virtual void handle(const Incident& /* inc */ ) override {
-    m_getRaw = true;
-  }
+  void handle(const Incident& /* inc */ ) override { m_getRaw = true; }
   // =========================================================================
 
   int    adc(LHCb::CaloCellID id,int def=0) override;
@@ -81,12 +79,12 @@ private:
   CaloVector<LHCb::CaloDigit> m_digits;
   DeCalorimeter*   m_calo = nullptr;
   //
-  std::string  m_detectorName;
+  const details::DetectorName_t  m_detectorName;
   std::string m_raw;
   Gaudi::Property<details::source_t> m_data { this, "InputDataType", details::source_t::from_digit };
   std::string m_adcLoc;
   std::string m_digLoc;
-  std::string m_loc;
+  Gaudi::Property<std::string> m_loc { this, "InputDataLocation" };
   std::vector<int> m_readSources;
   LHCb::CaloDigits* m_digCont = nullptr;
   LHCb::CaloAdcs* m_adcCont = nullptr;

@@ -18,12 +18,6 @@ CaloEnergyFromRaw::CaloEnergyFromRaw( const std::string& type,
                                       const IInterface* parent )
   : base_class ( type, name , parent )
 {
-  declareInterface<ICaloEnergyFromRaw>(this);
-
-  // set default detectorName
-  int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = ( name.compare(index,3, "Prs") == 0 
-                     ? "Prs" : name.substr( index, 4 ) );
   clear();
 }
 
@@ -36,23 +30,27 @@ StatusCode CaloEnergyFromRaw::initialize ( ) {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << " Det = "<< m_detectorName << endmsg;
 
-  if ( "Ecal" == m_detectorName ) {
+  switch (m_detectorName.value()) {
+  case details::DetectorName_t::Ecal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
     m_packedType = LHCb::RawBank::EcalPacked;
     m_shortType  = LHCb::RawBank::EcalE;
     m_errorType = LHCb::RawBank::EcalPackedError;
-  } else if ( "Hcal" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Hcal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
     m_packedType = LHCb::RawBank::HcalPacked;
     m_shortType  = LHCb::RawBank::HcalE;
     m_errorType = LHCb::RawBank::HcalPackedError;
-  } else if ( "Prs" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Prs:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
     m_packedType = LHCb::RawBank::PrsPacked;
     m_shortType  = LHCb::RawBank::PrsE;
     m_errorType = LHCb::RawBank::PrsPackedError;
-  } else {
-    error() << "Unknown detector name " << m_detectorName << endmsg;
+    break;
+  default :
+    error() << "Unknown detector name " << toString(m_detectorName) << endmsg;
     return StatusCode::FAILURE;
   }
 
@@ -81,17 +79,17 @@ void CaloEnergyFromRaw::cleanData(int feb ) {
 
   if(m_calo->isPinCard(feb)){
     m_pinData.erase( std::remove_if( m_pinData.begin(), m_pinData.end(),
-                                     [&](const LHCb::CaloAdc& adc) 
+                                     [&](const LHCb::CaloAdc& adc)
                                      { return m_calo->cellParam( adc.cellID() ).cardNumber() == feb; }),
                      m_pinData.end());
   }else{
     m_data.erase( std::remove_if( m_data.begin(), m_data.end(),
-                                  [&](const LHCb::CaloAdc& adc) 
+                                  [&](const LHCb::CaloAdc& adc)
                                   { return m_calo->cellParam( adc.cellID() ).cardNumber() == feb; }),
                   m_data.end() );
 
     m_digits.erase( std::remove_if( m_digits.begin(), m_digits.end(),
-                                    [&](const LHCb::CaloDigit& dig) 
+                                    [&](const LHCb::CaloDigit& dig)
                                     { return m_calo->cellParam( dig.cellID() ).cardNumber() == feb; } ),
                     m_digits.end() );
   }
@@ -412,7 +410,7 @@ bool CaloEnergyFromRaw::getData ( const LHCb::RawBank& bank ){
         int adc = ( lastData >> offset ) & 0x3FF;
         unsigned int num = ( lastData >> (offset+10) ) & 0x3F;
 
-        LHCb::CaloCellID id = ( num < chanID.size() ? chanID[ num ] 
+        LHCb::CaloCellID id = ( num < chanID.size() ? chanID[ num ]
                                                     : LHCb::CaloCellID{} );
 
         // event dump
@@ -454,9 +452,9 @@ bool CaloEnergyFromRaw::getDigits ( ) {
   m_digits.clear();
   m_digits.reserve(m_data.size());
   double pedShift = m_calo->pedestalShift();
-  std::transform( m_data.begin(), m_data.end(), 
+  std::transform( m_data.begin(), m_data.end(),
                   std::back_inserter(m_digits),
-                  [&](const LHCb::CaloAdc& cadc) -> LHCb::CaloDigit { 
+                  [&](const LHCb::CaloAdc& cadc) -> LHCb::CaloDigit {
                      LHCb::CaloCellID id = cadc.cellID();
                      int adc = cadc.adc();
                      double e = ( double(adc) - pedShift ) * m_calo->cellGain( id );
