@@ -13,6 +13,10 @@ include(GaudiObjDesc)
 
 god_build_headers(xml/*.xml)
 
+gaudi_add_unit_test(test_deref tests/src/test_deref.cpp
+                    LINK_LIBRARIES GaudiKernel TrackEvent
+                    TYPE Boost)
+
 gaudi_add_library(TrackEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
