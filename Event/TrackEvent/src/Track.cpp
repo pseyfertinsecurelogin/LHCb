@@ -61,14 +61,13 @@ LHCb::Track& Track::operator=(LHCb::Track&& track)
   setFlags( track.flags() );
   m_lhcbIDs = std::move(track.m_lhcbIDs);
 
-  // copy the states
-  clearStates();
-  m_states = std::move(track.m_states);
+  // "copy" the states, avoiding real copy
+  std::swap( m_states, track.m_states );
 
   // copy the track fit info
-  std::swap (m_fitResult, track.m_fitResult);
+  std::swap( m_fitResult, track.m_fitResult );
 
-  setExtraInfo( track.extraInfo() );
+  m_extraInfo = std::move( track.extraInfo() );
 
   // copy the ancestors
   m_ancestors = std::move(track.m_ancestors);
@@ -269,17 +268,10 @@ void Track::addToStates( const StateContainer& states )
   // The 'if' is ugly, but more efficient than using 'orderByZ'.
   if (checkFlag(Track::Flags::Backward)) {
     // it's already sorted in most cases
-    if( ! std::is_sorted(states.begin(), states.end(), TrackFunctor::decreasingByZ())) {
-      std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
-    }
-
+    std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
     std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ()) ;
   } else {
-    // it's already sorted in most cases
-    if( ! std::is_sorted(states.begin(), states.end(), TrackFunctor::increasingByZ())) {
-      std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
-    }
-
+    std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
     std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
   }
 }

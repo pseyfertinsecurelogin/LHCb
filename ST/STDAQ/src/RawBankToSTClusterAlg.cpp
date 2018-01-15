@@ -212,13 +212,13 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
     for (auto iterDecoder = decoder.posAdcBegin(); iterDecoder != decoder.posAdcEnd(); ++iterDecoder){
       if (!recover){
        createCluster(iterDecoder->first,aBoard,
-                     iterDecoder->second,bankVersion, clusCont);
+                     LHCb::make_span(iterDecoder->second),bankVersion, clusCont);
       }
       else {
 	// check that this cluster is ok to be recovered
         if (errorBank != 0 && canBeRecovered(errorBank,iterDecoder->first, pcn) == true){
          createCluster(iterDecoder->first,aBoard,
-                        iterDecoder->second,bankVersion, clusCont);
+                       LHCb::make_span(iterDecoder->second),bankVersion, clusCont);
 	}
       }
     } // iterDecoder
@@ -230,7 +230,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
 void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
                                            const STTell1Board* aBoard,
-                                           const boost::container::small_vector_base<SiADCWord>& adcValues,
+                                           const LHCb::span<const SiADCWord>& adcValues,
                                            const STDAQ::version& bankVersion,
                                            STClusters& clusCont) const{
   // stream the neighbour sum
@@ -302,7 +302,7 @@ LHCb::STSummary RawBankToSTClusterAlg::createSummaryBlock(const RawEvent& rawEvt
                    errorBanks.size(), bankList, missing, recoveredBanks);
 }
 
-double RawBankToSTClusterAlg::mean(const boost::container::small_vector_base<SiADCWord>& adcValues) const
+double RawBankToSTClusterAlg::mean(const LHCb::span<const SiADCWord>& adcValues) const
 {
   double sum = 0;
   double totCharge = 0;

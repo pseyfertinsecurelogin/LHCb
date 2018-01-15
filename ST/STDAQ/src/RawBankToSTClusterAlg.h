@@ -5,6 +5,7 @@
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
 #include "GaudiAlg/Transformer.h"
+#include "Kernel/STLExtensions.h"
 
 #include "Event/STSummary.h"
 #include "Event/STCluster.h"
@@ -56,11 +57,11 @@ private:
 
   void createCluster(const STClusterWord& aWord,
                      const STTell1Board* aBoard,
-                     const boost::container::small_vector_base<SiADCWord>& adcValues,
+                     const LHCb::span<const SiADCWord>& adcValues,
                      const STDAQ::version& bankVersion,
                      LHCb::STClusters& clusCont) const;
 
-  double mean(const boost::container::small_vector_base<SiADCWord>& adcValues) const;
+  double mean(const LHCb::span<const SiADCWord>& adcValues) const;
 
   LHCb::STLiteCluster word2LiteCluster(const STClusterWord aWord,
 				       const LHCb::STChannelID chan,
