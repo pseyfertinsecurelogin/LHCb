@@ -34,9 +34,7 @@ StatusCode FTRawBankEncoder::execute() {
   // Incremented to deal with new numbering scheme
   int codingVersion = 3;
 
-  //== create the vector of vectors of vectors with the proper size...
-  //std::vector<std::vector<std::vector<uint16_t> > > sipmData;
-  //sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
+  //== create the array of arrays of vectors with the proper size...
   std::array< std::array< std::vector<uint16_t>, s_nbSipmPerTELL40>, s_nbBanks> sipmData{};
   
   for (auto &b : sipmData ) for (auto &pm : b ) pm.clear();
