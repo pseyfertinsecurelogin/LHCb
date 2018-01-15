@@ -28,116 +28,120 @@
  *
  */
 
+
 namespace TrackFunctor
 {
+    namespace details
+    {
+        template <typename Callable>
+        struct deref : Callable {
 
-//=============================================================================
-// Class to test if the z of a class T is < than a certain value
-//=============================================================================
-  class less_z final {
-    double m_z;
-  public:
-    explicit less_z( double z ):m_z(z) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t ) const
-    { return t.z() < m_z; }
-    template <typename T> bool operator()( const T* t ) const
-    { return (*this)(*t); }
-  };
+            // as we inherit from the type of the passed-in callable,
+            // construct it from the passed-in callable
+            // F is a template parameter so we can perfectly forward
+            // the callable, but then F must be constrained to avoid
+            // hijacking the copy/move constructor!
+            template <typename F, typename = std::enable_if_t<std::is_constructible<Callable,F>::value>>
+            constexpr deref(F&& g) : Callable{ std::forward<F>(g) } {}
 
-//=============================================================================
-// Class to test if the z of a class T is > than a certain value
-//=============================================================================
-  class greater_z final  {
-    double m_z;
-  public:
-    explicit greater_z( double z ):m_z(z) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t ) const
-    { return t.z() > m_z; }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+
+            // make the call operator of 'original' callable
+            // available
+            using Callable::operator();
+
+            // add a call operator which first dereferences
+            // its arguments prior to invoking the 'orignal'
+            // callable
+
+            // binary
+            template <typename Ptr1, typename Ptr2>
+            auto operator()(Ptr1* p1, Ptr2* p2) const
+            { return Callable::operator()(*p1, *p2); }
+
+            // unary
+            template <typename Ptr>
+            auto operator()(Ptr* p) const
+            { return Callable::operator()(*p); }
+
+        };
+
+        // Given some 'callable' which takes one or two arguments,
+        // (of the same type), return another, "decorated" callable which
+        // can _also_ be called with pointers to the (one or) two
+        // arguments.
+        //
+        // For example (see https://godbolt.org/g/S5epFA,
+        // or the unit test in this package)
+        //
+        // bool cmp() {
+        //
+        //     auto g = add_deref( [](int i, int j) { return i<j; } );
+        //
+        //     int a = 3;
+        //     int b = 5;
+        //
+        //     return g(a,b) == g(&a,&b); // evaluates to true
+        // }
+        //
+        template <typename T>
+        constexpr deref<std::decay_t<T>> add_deref( T&& t ) {
+            return { std::forward<T>(t) };
+        }
+    }
 
 //=============================================================================
 // Compare the distance along z to the specified z-value, of 2 objects
 //=============================================================================
-  class distanceAlongZ final  {
-    double m_z0;
-  public:
-    explicit distanceAlongZ( double z0 = 0.):m_z0(z0) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return ( (std::abs(t1.z()-m_z0) < std::abs(t2.z()-m_z0)) ); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+constexpr auto distanceAlongZ = [](double z0 = 0.) {
+    return details::add_deref( [=](const auto& t1, const auto& t2) {
+        return ( (std::abs(t1.z()-z0) < std::abs(t2.z()-z0)) );
+    } );
+};
 
 //=============================================================================
 // Compare the distance of 2 objects to a plane
 //=============================================================================
-  class distanceToPlane final {
-    Gaudi::Plane3D m_plane;
-  public:
-    explicit distanceToPlane(const Gaudi::Plane3D& plane):m_plane(plane) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    {
-      auto d1 = std::abs(m_plane.Distance(t1.position()));
-      auto d2 = std::abs(m_plane.Distance(t2.position()));
+constexpr auto distanceToPlane = [](const Gaudi::Plane3D& plane) {
+    return details::add_deref( [=](const auto& t1, const auto& t2) {
+      auto d1 = std::abs(plane.Distance(t1.position()));
+      auto d2 = std::abs(plane.Distance(t2.position()));
       return d1 < d2;
-    }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+    } );
+};
 
 //=============================================================================
 // Class for sorting class T by z in order (+1/-1)
 //=============================================================================
-  class orderByZ final{
-    int m_order;
-  public:
-    explicit orderByZ( int order = +1):m_order(order) {}
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return m_order*t1.z() < m_order*t2.z(); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
-
+constexpr auto orderByZ = []( int order = +1 ) {
+    return details::add_deref( [=](const auto& t1, const auto& t2 )
+                       { return order*t1.z() < order*t2.z(); } );
+};
 
 //=============================================================================
 // Class for sorting class T by increasing z
 //=============================================================================
-  struct increasingByZ final {
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return t1.z() < t2.z(); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+constexpr auto increasingByZ = []() {
+    return details::add_deref(
+        [](const auto& t1, const auto& t2) { return t1.z() < t2.z() ; }  );
+};
 
 //=============================================================================
 // Class for sorting class T by decreasing z
 //=============================================================================
-  struct decreasingByZ final {
-    template <typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
-    bool operator()( const T& t1, const T& t2 ) const
-    { return t1.z() > t2.z(); }
-    template <typename T> bool operator()( const T* t1, const T* t2 ) const
-    { return operator()(*t1,*t2); }
-  };
+constexpr auto decreasingByZ = []() {
+    return details::add_deref(
+        [](const auto& t1, const auto& t2) { return t1.z() > t2.z() ; }  );
+};
 
 //=============================================================================
 // Helper class for checking the existence of a value of a member function
+// example:
+// HasKey<Track> isBackward(&Track::checkFlag,Track::Backwards)
+// if (isBackward(track)) ...
 //=============================================================================
   template <typename T, typename E>
   class HasKey  {
   public:
-    // A predicate (unary bool function):
-    // example:
-    // HasKey<Track> isBackward(&Track::checkFlag,Track::Backwards)
-    // if (isBackward(track)) ...
     typedef bool (T::* ptr_memfun) (E) const;
   private:
     ptr_memfun m_pmf;
@@ -179,7 +183,7 @@ namespace TrackFunctor
   LHCb::State& closestState( LHCb::Track& track, const Fun& fun )
   {
     auto& allstates = track.states();
-    auto iter = std::min_element( allstates.begin(), allstates.end(), fun );
+    auto iter = std::min_element( allstates.begin(), allstates.end(), std::cref(fun) );
     if ( iter == allstates.end() )
       throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
@@ -202,7 +206,6 @@ namespace TrackFunctor
 
 //=============================================================================
 // Retrieve the number of LHCbIDs that fulfill a predicate
-// (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
   template <typename Predicate>
   unsigned int nLHCbIDs( const LHCb::Track& track, const Predicate& pred )
@@ -213,7 +216,6 @@ namespace TrackFunctor
 
 //=============================================================================
 // Retrieve the number of Measurements that fulfill a predicate
-// (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
   template <typename Container, typename Predicate>
   unsigned int nMeasurements( const Container& meas, const Predicate& pred )
@@ -223,7 +225,6 @@ namespace TrackFunctor
 
 //=============================================================================
 // Retrieve the number of Measurements that fulfill a predicate
-// (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
   template <typename Predicate>
   unsigned int nMeasurements( const LHCb::Track& track, const Predicate& pred )
