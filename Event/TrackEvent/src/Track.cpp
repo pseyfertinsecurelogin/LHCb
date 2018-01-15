@@ -277,6 +277,22 @@ void Track::addToStates( const StateContainer& states )
 }
 
 //=============================================================================
+// Add a set of sorted states by increasing Z to the track. Track takes ownership
+//=============================================================================
+void Track::addSortedForwardToStates( const StateContainer& states )
+{
+  // debug assert to check whether it's correctly ordered by z
+  assert(!checkFlag(Track::Flags::Backward)
+         && "not forward; hint: use the general function above");
+  // debug assert checking whether it's correctly sorted or not
+  assert(std::is_sorted(states.begin(), states.end(), TrackFunctor::increasingByZ())
+         && "states are not correctly sorted; hint: use the general function above");
+
+  auto pivot = m_states.insert(m_states.end(), states.begin(), states.end());
+  std::inplace_merge(m_states.begin(), pivot, m_states.end(), TrackFunctor::increasingByZ());
+}
+
+//=============================================================================
 // Remove an LHCbID from the list of LHCbIDs associated to the Track
 //=============================================================================
 void Track::removeFromLhcbIDs( const LHCbID& value )

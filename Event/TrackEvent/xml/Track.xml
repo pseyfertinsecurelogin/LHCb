@@ -706,6 +706,12 @@
       </method>
 
       <method
+        name    = 'addSortedForwardToStates'
+        desc    = 'Add a set of sorted states by increasing Z to the track. Track takes ownership.'>
+        <arg type = 'const StateContainer' name='states' />
+      </method>
+
+      <method
         name    = 'removeFromStates'
         desc    = 'Remove a State from the list of states associated to the track'
         argList = 'LHCb::State* value'>
