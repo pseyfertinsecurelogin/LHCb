@@ -35,9 +35,7 @@ StatusCode FTRawBankEncoder::execute() {
   int codingVersion = 3;
 
   //== create the array of arrays of vectors with the proper size...
-  std::array< std::array< std::vector<uint16_t>, s_nbSipmPerTELL40>, s_nbBanks> sipmData{};
-  
-  for (auto &b : sipmData ) for (auto &pm : b ) pm.clear();
+  std::array< std::array< std::vector<uint16_t>, s_nbSipmPerTELL40>, s_nbBanks> sipmData{{}};
 
   for ( const auto& cluster : *clusters ) {
 
