@@ -41,7 +41,7 @@ std::ostream& LHCb::Particle::fillStream(std::ostream& s) const
     << "extraInfo       : [";
   for ( const auto & i : extraInfo() )
   {
-    if ( i.first < (int)LHCb::Particle::LastGlobal )
+    if ( i.first < (int)LHCb::Particle::additionalInfo::LastGlobal )
     {
       const auto info =
         static_cast<LHCb::Particle::additionalInfo>(i.first);
@@ -53,7 +53,7 @@ std::ostream& LHCb::Particle::fillStream(std::ostream& s) const
     }
   }
   s << " ]";
-  const std::string testLocation = 
+  const std::string testLocation =
     ( parent() && parent()->registry() ?
       parent()->registry()->identifier() : "" );
   if ( !testLocation.empty() ) { s << std::endl << "TES=" << testLocation; }

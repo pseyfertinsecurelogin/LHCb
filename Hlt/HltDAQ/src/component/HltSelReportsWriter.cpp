@@ -394,7 +394,7 @@ StatusCode HltSelReportsWriter::execute() {
       hitsSubBank_99.push_back( vect );
 
       HltSelRepRawBank hltSelReportsBank_99;
-      hltSelReportsBank_99.push_back( HltSelRepRBEnums::kHitsID, hitsSubBank_99.location(), hitsSubBank_99.size() );
+      hltSelReportsBank_99.push_back( HltSelRepRBEnums::SubBankIDs::kHitsID, hitsSubBank_99.location(), hitsSubBank_99.size() );
       hitsSubBank_99.deleteBank();
 
       std::vector< unsigned int > bankBody_99( &(hltSelReportsBank_99.location()[0]),
@@ -413,27 +413,27 @@ StatusCode HltSelReportsWriter::execute() {
   // order of sub-banks in the main bank is arbitrary
 
   //    lhcbids
-  hltSelReportsBank.push_back( HltSelRepRBEnums::kHitsID, hitsSubBank.location(), hitsSubBank.size() );
+  hltSelReportsBank.push_back( HltSelRepRBEnums::SubBankIDs::kHitsID, hitsSubBank.location(), hitsSubBank.size() );
   hitsSubBank.deleteBank();
 
   //    object types
   objTypSubBank.saveSize();
-  hltSelReportsBank.push_back( HltSelRepRBEnums::kObjTypID, objTypSubBank.location(), objTypSubBank.size() );
+  hltSelReportsBank.push_back( HltSelRepRBEnums::SubBankIDs::kObjTypID, objTypSubBank.location(), objTypSubBank.size() );
   objTypSubBank.deleteBank();
 
   // their substructure
   substrSubBank.saveSize();
-  hltSelReportsBank.push_back( HltSelRepRBEnums::kSubstrID, substrSubBank.location(), substrSubBank.size() );
+  hltSelReportsBank.push_back( HltSelRepRBEnums::SubBankIDs::kSubstrID, substrSubBank.location(), substrSubBank.size() );
   substrSubBank.deleteBank();
 
   sanityCheck(stdInfoSubBank );
   // std info
   stdInfoSubBank.saveSize();
-  hltSelReportsBank.push_back( HltSelRepRBEnums::kStdInfoID, stdInfoSubBank.location(), stdInfoSubBank.size() );
+  hltSelReportsBank.push_back( HltSelRepRBEnums::SubBankIDs::kStdInfoID, stdInfoSubBank.location(), stdInfoSubBank.size() );
   stdInfoSubBank.deleteBank();
 
   // extra info
-  hltSelReportsBank.push_back( HltSelRepRBEnums::kExtraInfoID, extraInfoSubBank.location(), extraInfoSubBank.size() );
+  hltSelReportsBank.push_back( HltSelRepRBEnums::SubBankIDs::kExtraInfoID, extraInfoSubBank.location(), extraInfoSubBank.size() );
   extraInfoSubBank.deleteBank();
 
   // insert the bank into the RawEvent
@@ -475,11 +475,11 @@ StatusCode HltSelReportsWriter::execute() {
   if ( msgLevel(MSG::VERBOSE) ){
     // print created bank and subbanks inside
     verbose() << hltSelReportsBank << endmsg;
-    verbose() << HltSelRepRBHits( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kHitsID ) ) << endmsg;
-    verbose() << HltSelRepRBObjTyp( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kObjTypID ) ) << endmsg;
-    verbose() << HltSelRepRBSubstr( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kSubstrID ) ) << endmsg;
-    verbose() << HltSelRepRBStdInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kStdInfoID ) ) << endmsg;
-    verbose() << HltSelRepRBExtraInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kExtraInfoID ) ) << endmsg;
+    verbose() << HltSelRepRBHits( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kHitsID ) ) << endmsg;
+    verbose() << HltSelRepRBObjTyp( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kObjTypID ) ) << endmsg;
+    verbose() << HltSelRepRBSubstr( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kSubstrID ) ) << endmsg;
+    verbose() << HltSelRepRBStdInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kStdInfoID ) ) << endmsg;
+    verbose() << HltSelRepRBExtraInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kExtraInfoID ) ) << endmsg;
   }
 
   // delete the main bank

@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // local
 #include "RawBankReadoutStatusFilter.h"
@@ -28,7 +28,7 @@ RawBankReadoutStatusFilter::RawBankReadoutStatusFilter( const std::string& name,
 //=============================================================================
 // Destructor
 //=============================================================================
-RawBankReadoutStatusFilter::~RawBankReadoutStatusFilter() {} 
+RawBankReadoutStatusFilter::~RawBankReadoutStatusFilter() {}
 
 //=============================================================================
 // Initialization
@@ -50,31 +50,31 @@ StatusCode RawBankReadoutStatusFilter::execute() {
   if(msgLevel(MSG::DEBUG)) debug() << "==> Execute" << endmsg;
 
   setFilterPassed(!m_invert); // accept by default
-  int value = LHCb::RawBankReadoutStatus::OK;
+  int value = LHCb::RawBankReadoutStatus::Status::OK;
 
   if(m_type == LHCb::RawBank::LastType){
     return Warning( "No BankType requested in RawBankReadoutStatusFilter -> filterPassed = true", StatusCode::SUCCESS, 0);
   }
-  
-  
+
+
 
   LHCb::RawBankReadoutStatus* status = NULL;
   LHCb::RawBankReadoutStatuss* statuss = getIfExists<LHCb::RawBankReadoutStatuss>(LHCb::RawBankReadoutStatusLocation::Default);
   if(NULL != statuss){
-    status = statuss->object( LHCb::RawBank::BankType(m_type) );  
+    status = statuss->object( LHCb::RawBank::BankType(m_type) );
   } else {
-    Warning("No Readout status container found at "+ LHCb::RawBankReadoutStatusLocation::Default 
-            + " for the bank " + Gaudi::Utils::toString(m_type),StatusCode::SUCCESS).ignore();    
-    value = LHCb::RawBankReadoutStatus::MissingStatus;
+    Warning("No Readout status container found at "+ LHCb::RawBankReadoutStatusLocation::Default
+            + " for the bank " + Gaudi::Utils::toString(m_type),StatusCode::SUCCESS).ignore();
+    value = LHCb::RawBankReadoutStatus::Status::MissingStatus;
   }
   if(NULL != status){
     value = status->status();
-  }else{ 
-    Warning("No Readout status found for bankType "+ Gaudi::Utils::toString(m_type),StatusCode::SUCCESS).ignore(); 
-    value = LHCb::RawBankReadoutStatus::MissingStatus;
+  }else{
+    Warning("No Readout status found for bankType "+ Gaudi::Utils::toString(m_type),StatusCode::SUCCESS).ignore();
+    value = LHCb::RawBankReadoutStatus::Status::MissingStatus;
   }
 
-  int decision = value & m_mask;  
+  int decision = value & m_mask;
   if(decision !=0 )setFilterPassed(m_invert); // reject by default
   if(filterPassed())counter("Accepted events")+=1;
   else counter("Rejected events")+=1;

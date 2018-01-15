@@ -1,4 +1,4 @@
-#ifndef STDECODINGBASEALG_H 
+#ifndef STDECODINGBASEALG_H
 #define STDECODINGBASEALG_H 1
 
 #include "GaudiKernel/DataObjectHandle.h"
@@ -13,9 +13,9 @@
 #include <string>
 
 /** @class STDecodingBaseAlg STDecodingBaseAlg.h
- *  
+ *
  *  Algorithm to create STClusters from RawEvent object
- * 
+ *
  *  @author M. Needham
  *  @author S. Ponce
  */
@@ -39,22 +39,22 @@ public:
   STDecodingBaseAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;    ///< Algorithm initialization
-   
+
 
 protected:
 
 
  LHCb::RawBank::BankType bankType() const;
 
- bool forceVersion() const;  
+ bool forceVersion() const;
 
  unsigned int pcnVote(const std::vector<LHCb::RawBank* >& banks) const;
 
- bool checkDataIntegrity(STDecoder& decoder, const STTell1Board* aBoard, 
+ bool checkDataIntegrity(STDecoder& decoder, const STTell1Board* aBoard,
                          const unsigned int bankSize, const STDAQ::version& bankVersion) const;
 
  /** list of boards missing in action */
- std::vector<unsigned int> missingInAction(const std::vector<LHCb::RawBank*>& banks) const; 
+ std::vector<unsigned int> missingInAction(const std::vector<LHCb::RawBank*>& banks) const;
 
  /// Decodes error banks
  std::unique_ptr<LHCb::STTELL1BoardErrorBanks> decodeErrors(const LHCb::RawEvent& raw) const;
@@ -63,8 +63,8 @@ protected:
  bool recoverMode() const;
 
  /** can be recovered recover **/
- bool canBeRecovered(const LHCb::STTELL1BoardErrorBank* bank, 
-                     const STClusterWord& word, 
+ bool canBeRecovered(const LHCb::STTELL1BoardErrorBank* bank,
+                     const STClusterWord& word,
                      const unsigned int pcn) const;
 
  /// compute the spill offset
@@ -83,16 +83,16 @@ protected:
 
  int m_forcedVersion;
  bool m_checkValidSpill;
- LHCb::RawBank::BankType m_errorType; 
- LHCb::RawBank::BankType m_bankType; 
- 
+ LHCb::RawBank::BankType m_errorType;
+ LHCb::RawBank::BankType m_bankType;
+
 private:
 
   std::string toSpill(const std::string& location) const;
   LHCb::STCluster::Spill m_spillOffset;
-  
+
   std::string m_errorBankString;
- 
+
   bool m_recoverMode;
 
 };
@@ -119,21 +119,21 @@ inline bool STDecodingBaseAlg::recoverMode() const{
 #include "Kernel/LHCbConstants.h"
 #include "Event/STTELL1Error.h"
 
-inline bool STDecodingBaseAlg::canBeRecovered(const LHCb::STTELL1BoardErrorBank* bank, 
+inline bool STDecodingBaseAlg::canBeRecovered(const LHCb::STTELL1BoardErrorBank* bank,
                                               const STClusterWord& word,
                                               const unsigned int pcn) const{
 
   STDAQ::PPRepresentation ppRep = STDAQ::PPRepresentation(STDAQ::StripRepresentation(word.channelID()));
   unsigned int pp, beetle, port, strip;
-  ppRep.decompose(pp, beetle, port, strip); // split up the word 
+  ppRep.decompose(pp, beetle, port, strip); // split up the word
   const LHCb::STTELL1Error* errorInfo = bank->ppErrorInfo(pp);
   bool ok = false;
   if (errorInfo != 0 ){
-    if (errorInfo->linkInfo(beetle, port,pcn) == LHCb::STTELL1Error::kNone){
+    if (errorInfo->linkInfo(beetle, port,pcn) == LHCb::STTELL1Error::FailureMode::kNone){
       ok = true;
     }
   }
-  return ok ; 
+  return ok ;
 }
 
 inline LHCb::STCluster::Spill STDecodingBaseAlg::spill() const{
@@ -141,4 +141,4 @@ inline LHCb::STCluster::Spill STDecodingBaseAlg::spill() const{
 }
 
 
-#endif // STDECODINGBASEALG_H 
+#endif // STDECODINGBASEALG_H

@@ -294,7 +294,7 @@ StatusCode DeVeloPhiType::pointToChannel(const Gaudi::XYZPoint& point,
   // set VeloChannelID....
   channel.setSensor(sensor);
   channel.setStrip(closestStrip);
-  channel.setType(LHCb::VeloChannelID::PhiType);
+  channel.setType(LHCb::VeloChannelID::sensorType::PhiType);
 
   if (UNLIKELY(m_verbose)) {
     msg() << MSG::VERBOSE << "pointToChannel; local phi " << localPoint.phi()/Gaudi::Units::degree

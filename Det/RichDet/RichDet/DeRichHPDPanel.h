@@ -125,7 +125,7 @@ public:
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;
-  
+
   /// Access the DeRichPD object for a given PD RichSmartID
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 
@@ -246,5 +246,5 @@ DeRichHPDPanel::checkPanelAcc( const Gaudi::XYZPoint & point ) const
                     std::make_pair(point.x(),point.y()) );
   return ( ( fabs(uv.first)  >= fabs(m_panelColumnSideEdge) ||
              fabs(uv.second) >= m_panelStartColPos ) ?
-           LHCb::RichTraceMode::OutsidePDPanel : LHCb::RichTraceMode::InPDPanel );
+           LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel : LHCb::RichTraceMode::RayTraceResult::InPDPanel );
 }

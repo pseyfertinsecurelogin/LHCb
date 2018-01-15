@@ -58,7 +58,7 @@ StatusCode PVToRecConverter::execute()
     // it would have been nice to have a constructor from a VertexBase!
     auto recvertex = new LHCb::RecVertex( pv->position() ) ;
     recvertex->VertexBase::operator=( *pv ) ;
-    recvertex->setTechnique(LHCb::RecVertex::Primary) ;
+    recvertex->setTechnique(LHCb::RecVertex::RecVertexType::Primary) ;
     // add the daughters
     for( const auto& trk : pv->tracks() ) {
       auto trkinmap = idToTracks.find( trk.id() ) ;

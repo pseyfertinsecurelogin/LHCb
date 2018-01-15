@@ -355,7 +355,7 @@ StatusCode L0DUReportMonitor::execute() {
         }
       }
       if( !ok )continue;
-      if( data->type() == LHCb::L0DUElementaryData::Constant)continue;
+      if( data->type() == LHCb::L0DUElementaryData::Type::Constant)continue;
       moniData.push_back( data->name() );
       std::ostringstream dUnit("");
       if( !m_generic ){
@@ -364,7 +364,7 @@ StatusCode L0DUReportMonitor::execute() {
         dUnit << base.str() + "/L0Data/" << moniData.size();
       }
       std::ostringstream dName("");
-      if(data->type() == LHCb::L0DUElementaryData::Compound)
+      if(data->type() == LHCb::L0DUElementaryData::Type::Compound)
         dName << " L0 compound  data ";
       else
         dName << " L0 predefined  data ";

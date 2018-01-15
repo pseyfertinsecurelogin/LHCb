@@ -292,7 +292,7 @@ void L0DUConfigProvider::predefinedData( ) {
 
   for(unsigned i = 0 ; i < NumberOf::Data ; ++i){
     const std::string& name = PredefinedData::Name[i];
-    auto data = std::make_unique<LHCb::L0DUElementaryData>(i,LHCb::L0DUElementaryData::Predefined,name);
+    auto data = std::make_unique<LHCb::L0DUElementaryData>(i,LHCb::L0DUElementaryData::Type::Predefined,name);
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Predefined Data : " << data->description() << endmsg;
     m_dataMap[name]= data.release();
@@ -308,7 +308,7 @@ void L0DUConfigProvider::predefinedData( ) {
 
 void L0DUConfigProvider::constantData(){
   for(const auto& idata : m_constData) {
-    auto data = std::make_unique<LHCb::L0DUElementaryData>(m_pData+m_cData,LHCb::L0DUElementaryData::Constant,idata.first);
+    auto data = std::make_unique<LHCb::L0DUElementaryData>(m_pData+m_cData,LHCb::L0DUElementaryData::Type::Constant,idata.first);
     data->setDigit( idata.second  );
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Constant Data : " << data->summary() << endmsg;
@@ -515,7 +515,7 @@ StatusCode L0DUConfigProvider::createConditions(){
     // Special case : create RAM(BCID) data on-the-fly
     if( data.rfind("RAM") != std::string::npos && data.rfind("(BCID)") != std::string::npos ){
       int idData = m_dataMap.size();
-      m_dataMap[data]= new LHCb::L0DUElementaryData(idData, LHCb::L0DUElementaryData::RAMBcid, data ) ;
+      m_dataMap[data]= new LHCb::L0DUElementaryData(idData, LHCb::L0DUElementaryData::Type::RAMBcid, data ) ;
       // TEMP
       int ind = data.rfind("(BCID)");
       std::string vsn = data.substr(0,ind);
@@ -1015,12 +1015,12 @@ bool L0DUConfigProvider::getDataList(const std::string& dataName, std::vector<st
   if ( it == m_dataMap.end() ) return false;
 
   LHCb::L0DUElementaryData* data = it->second;
-  if( LHCb::L0DUElementaryData::Predefined == data->type() ){
+  if( LHCb::L0DUElementaryData::Type::Predefined == data->type() ){
     dataList.push_back( data->name() );
     return true;
   }
   bool ok = true;
-  if ( LHCb::L0DUElementaryData::Compound == data->type() ) {
+  if ( LHCb::L0DUElementaryData::Type::Compound == data->type() ) {
     ok = std::accumulate( data->componentsName().begin(),  data->componentsName().end(),
                           ok, [&](bool b, const std::string& op) { return b && this->getDataList(op,dataList); } );
   }
@@ -1053,7 +1053,7 @@ bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition
     }
 
     LHCb::L0DUElementaryData* elData = it->second;
-    if( elData->type() != LHCb::L0DUElementaryData::Predefined )continue;
+    if( elData->type() != LHCb::L0DUElementaryData::Type::Predefined )continue;
     dataID = elData->id();
 
     if( dataID <0 || dataID >= (int)NumberOf::Data){
@@ -1069,13 +1069,13 @@ bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition
   //
   unsigned int max   =  0;
   int order = -1;
-  if( LHCb::L0DUElementaryData::RAMBcid  == data->type() ){
+  if( LHCb::L0DUElementaryData::Type::RAMBcid  == data->type() ){
     order = L0DUBase::RAMBCID::ConditionOrder;
     max   = L0DUBase::RAMBCID::MaxNumber;
-  }else if( LHCb::L0DUElementaryData::Compound == data->type() && compoundID != CompoundData::None){
+  }else if( LHCb::L0DUElementaryData::Type::Compound == data->type() && compoundID != CompoundData::None){
     order = CompoundData::ConditionOrder[ compoundID ];
     max   = CompoundData::MaxNumber[compoundID];
-  }else if( LHCb::L0DUElementaryData::Predefined == data->type() && dataID != -1 ){
+  }else if( LHCb::L0DUElementaryData::Type::Predefined == data->type() && dataID != -1 ){
     order = PredefinedData::ConditionOrder[ dataID ];
     max   = PredefinedData::MaxNumber[ dataID ];
   }

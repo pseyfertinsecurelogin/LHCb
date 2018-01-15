@@ -115,7 +115,7 @@ LHCb::STChannelID LHCb::TTNames::stringToChannel(const std::string& name)
       layer = 2;
     }
     else {
-      return STChannelID(LHCb::STChannelID::typeTT, station , 0u , 0u , 0u, 0u);
+      return STChannelID(LHCb::STChannelID::detType::typeTT, station , 0u , 0u , 0u, 0u);
     }
   }
 
@@ -127,7 +127,7 @@ LHCb::STChannelID LHCb::TTNames::stringToChannel(const std::string& name)
       layer = 1;
     }
     else {
-      return STChannelID(LHCb::STChannelID::typeTT, station , 0u , 0u , 0u, 0u);
+      return STChannelID(LHCb::STChannelID::detType::typeTT, station , 0u , 0u , 0u, 0u);
     }
   }
 
@@ -158,7 +158,7 @@ LHCb::STChannelID LHCb::TTNames::stringToChannel(const std::string& name)
     sector = toInt(sectorName);
   }
 
-  return LHCb::STChannelID(LHCb::STChannelID::typeTT, station, layer,
+  return LHCb::STChannelID(LHCb::STChannelID::detType::typeTT, station, layer,
                            region, sector, strip);
 }
 

@@ -135,7 +135,7 @@ std::pair<bool,float> LHCb::RecVertex::trackWeight( const LHCb::Track* track ) c
 std::ostream& LHCb::RecVertex::fillStream(std::ostream& s) const
 {
   VertexBase::fillStream(s);
-  s << "{ " 
+  s << "{ "
     << "technique :	" << technique() << std::endl
     << " tracks :	[ ";
   for ( const auto& tk : tracks() ) { s << tk << " "; }
@@ -143,19 +143,19 @@ std::ostream& LHCb::RecVertex::fillStream(std::ostream& s) const
   s << "weights : [ ";
   for ( const auto& w : weights() ) { s << w << " "; }
   s << "]" << std::endl;
-  const std::string testLocation = 
+  const std::string testLocation =
     ( parent() && parent()->registry() ?
       parent()->registry()->identifier() : "" );
   if ( !testLocation.empty() ) { s << "TES=" << testLocation; }
   return s << " }";
 }
 
-bool LHCb::RecVertex::isPrimary() const 
+bool LHCb::RecVertex::isPrimary() const
 {
-  return ( Primary == technique() ); 
+  return RecVertexType::Primary == technique();
 }
 
-LHCb::RecVertex* LHCb::RecVertex::clone() const 
+LHCb::RecVertex* LHCb::RecVertex::clone() const
 {
-  return new RecVertex(*this); 
+  return new RecVertex(*this);
 }

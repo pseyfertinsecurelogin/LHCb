@@ -80,7 +80,7 @@
         desc="How the vertex was made"
         name="type"
         type="MCVertexType"
-        init="MCVertex::Unknown"
+        init="MCVertex::MCVertexType::Unknown"
        />
        <relation
         desc="Pointer to parent particle that decay or otherwise end in this vertex"
@@ -99,7 +99,7 @@
         name="isPrimary"
         type="bool"
        >
-         <code> return m_type == MCVertex::ppCollision ; </code>
+         <code> return m_type == MCVertex::MCVertexType::ppCollision ; </code>
        </method>
        <method
         const="TRUE"
@@ -108,8 +108,8 @@
         type="bool"
        >
          <code>
-  return ((m_type == MCVertex::DecayVertex) ||
-          (m_type == MCVertex::OscillatedAndDecay))  ;
+  return ((m_type == MCVertex::MCVertexType::DecayVertex) ||
+          (m_type == MCVertex::MCVertexType::OscillatedAndDecay))  ;
        </code>
        </method>
        <method

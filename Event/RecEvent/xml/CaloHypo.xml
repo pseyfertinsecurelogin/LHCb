@@ -131,7 +131,7 @@
  name = "hypothesis"
  desc = "The hypothesis's ID"
  type = "LHCb::CaloHypo::Hypothesis"
- init = "CaloHypo::Undefined"
+ init = "CaloHypo::Hypothesis::Undefined"
  dictalias = "int"
 />
 

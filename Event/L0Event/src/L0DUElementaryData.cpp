@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 #include <utility>
 #include <string>
 #include <map>
@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 void LHCb::L0DUElementaryData::evaluate(int bx){
-  if( LHCb::L0DUElementaryData::Compound != m_type)return;                        // not a compound  to be evaluated
+  if( LHCb::L0DUElementaryData::Type::Compound != m_type)return;                        // not a compound  to be evaluated
   if( m_evaluated && m_digit.find(bx)!= m_digit.end() )return;                    // already evaluated
   if( m_componentsName.size() != m_components.size() ){m_evaluated=false;return;} // wrong setting
 
@@ -22,11 +22,11 @@ void LHCb::L0DUElementaryData::evaluate(int bx){
     LHCb::L0DUElementaryData* d1 = m_components[0];
     LHCb::L0DUElementaryData* d2 = m_components[1];
     if( d1 == NULL || d2 == NULL){m_evaluated=false;return;} // missing data
-    bool hasData  = (d1->hasData(bx) && d2->hasData(bx)); 
+    bool hasData  = (d1->hasData(bx) && d2->hasData(bx));
     if( !hasData){m_evaluated=false;return;} // incomplete data
     unsigned int dd1=d1->digit( bx );
     unsigned int dd2=d2->digit( bx );
-    if      ( "+" == m_operator )m_digit[bx] = dd1 + dd2 ; 
+    if      ( "+" == m_operator )m_digit[bx] = dd1 + dd2 ;
     else if ( "-" == m_operator )m_digit[bx] = ( dd1 > dd2 ) ? dd1 - dd2 : 0;
     else if ( "&" == m_operator )m_digit[bx] = dd1 & dd2 ;
     else if ( "^" == m_operator )m_digit[bx] = dd1 ^ dd2 ;
@@ -62,7 +62,7 @@ std::string LHCb::L0DUElementaryData::description(int bx){
   std::ostringstream s(" ");
   s << " " << m_name ;
   if( bx != 0 )s << " [BX="<<bx<<"] ";
-  if(m_type == LHCb::L0DUElementaryData::Compound)s << " = [" << m_operator << "](" << m_componentsName << ")" ;
+  if(m_type == LHCb::L0DUElementaryData::Type::Compound)s << " = [" << m_operator << "](" << m_componentsName << ")" ;
   return s.str();
 
 }

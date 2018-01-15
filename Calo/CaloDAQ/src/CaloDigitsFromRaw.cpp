@@ -131,7 +131,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
         int card =  m_spdTool->deCalo()->cardNumber( cells );
         int tell1=  m_spdTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_spdTool->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
     }
     std::stable_sort ( digits->begin(), digits->end(),
@@ -155,7 +155,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
         int card =  m_spdTool->deCalo()->cardNumber( cells );
         int tell1=  m_spdTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_spdTool->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
 
     }
@@ -189,7 +189,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
         int card =  m_energyTool->deCalo()->cardNumber( itD.cellID() );
         int tell1=  m_energyTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_energyTool->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
 
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
@@ -221,7 +221,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
         int card =  m_energyTool->deCalo()->cardNumber( itA.cellID() );
         int tell1=  m_energyTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_energyTool->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << "ID " << itA.cellID() << " ADC value " << itA.adc() << endmsg;
@@ -254,7 +254,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
           int card =  m_energyTool->deCalo()->cardNumber( itA.cellID() );
           int tell1=  m_energyTool->deCalo()->cardToTell1( card);
           LHCb::RawBankReadoutStatus& status = m_energyTool->status();
-          status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+          status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
         }
 
         if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )

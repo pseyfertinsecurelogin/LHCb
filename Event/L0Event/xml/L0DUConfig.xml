@@ -10,17 +10,17 @@
       name="L0DUTemplateConfig"
       author="O. Deschamps">
       <attribute
-        desc="default name of the Template configuration" 
-        name="Name" 
-        type="static const std::string" 
+        desc="default name of the Template configuration"
+        name="Name"
+        type="static const std::string"
         init='"Template"'/>
       <attribute
-        desc="fake TCK value of the Template configuration" 
-        name="TCKValue" 
-        type="static const long" 
+        desc="fake TCK value of the Template configuration"
+        name="TCKValue"
+        type="static const long"
         init="0x10000"/>
     </namespace>
-    
+
     <class
      author="Olivier Deschamps"
      desc="This class represents the keyed L0DU Configuration"
@@ -30,16 +30,16 @@
      >
       <base   name = "KeyedObject&lt;unsigned int&gt;" />
       &KeyedObject;
-      
+
       <location name = "Default"   place = "Trig/L0/L0DUConfig"  />
       <location name = "Emulated"  place = "Emu/L0/L0DUConfig"  />
-      
-      
+
+
       <import name="Event/L0DUElementaryData"/>
       <import name="Event/L0DUElementaryCondition"/>
       <import name="Event/L0DUChannel"/>
       <import name="Event/L0DUTrigger"/>
-      <import name="Event/L0DUTemplateConfig"/> 
+      <import name="Event/L0DUTemplateConfig"/>
       <import name="string" std="TRUE"/>
       <import name="algorithm" std="TRUE"/>
       <import name="numeric" std="TRUE"/>
@@ -64,8 +64,8 @@
         > <code/> </constructor>
 
 
-      <constructor 
-        desc     = "Copy Constructor" 
+      <constructor
+        desc     = "Copy Constructor"
         argList  = "LHCb::L0DUConfig rh"
         initList = "Base(rh.key() ), m_recipe(rh.recipe()),m_definition(rh.definition() ), m_data(rh.data() ), m_conditions (rh.conditions() ), m_channels(rh.channels() ),m_triggers(rh.triggers()),m_completed(rh.completed()) "
         > <code/> </constructor>
@@ -75,9 +75,9 @@
       <attribute name = "definition" desc = " L0DU Channel key definition"  type = "std::string"/>
       <attribute name = "data" desc = " L0DU Elementary condition" type = "LHCb::L0DUElementaryData::Map" nonconstaccessor='TRUE' />
       <attribute name = "conditions" desc = " L0DU Elementary condition" type = "LHCb::L0DUElementaryCondition::Map"  nonconstaccessor='TRUE'/>
-      <attribute name = "channels" desc = " L0DU channels" type = "LHCb::L0DUChannel::Map"  nonconstaccessor='TRUE'/>      
-      <attribute name = "triggers" desc = "Set of L0DU channels" type = "LHCb::L0DUTrigger::Map"  nonconstaccessor='TRUE'/>      
-      <attribute name = "completed" desc = "Complete Configuration (i.e. contain Processor Data Value -> ready for emulation)" type = "bool"  nonconstaccessor='TRUE'/>      
+      <attribute name = "channels" desc = " L0DU channels" type = "LHCb::L0DUChannel::Map"  nonconstaccessor='TRUE'/>
+      <attribute name = "triggers" desc = "Set of L0DU channels" type = "LHCb::L0DUTrigger::Map"  nonconstaccessor='TRUE'/>
+      <attribute name = "completed" desc = "Complete Configuration (i.e. contain Processor Data Value -> ready for emulation)" type = "bool"  nonconstaccessor='TRUE'/>
       <attribute name = "muonFOIx"  desc = "Muon FOI x" type= "std::vector&lt;int&gt;" />
       <attribute name = "muonFOIy"  desc = "Muon FOI y" type= "std::vector&lt;int&gt;" />
 
@@ -101,24 +101,24 @@
       <method name  = "summary" desc = "L0DUConfig full summary after processing" type  = "std::string" > </method>
 
 
-      <method name  = "numberOfChannels" 
-	      desc = "Count the number channels with a given decisionType (default ANY)" 
-	      type  = "int" 
+      <method name  = "numberOfChannels"
+	      desc = "Count the number channels with a given decisionType (default ANY)"
+	      type  = "int"
 	      argList="int mask=L0DUDecision::Any"
               const="TRUE">
         <code>
           return std::count_if( m_channels.begin(), m_channels.end(),
                                 [&amp;](LHCb::L0DUChannel::Map::const_reference c) {
               const auto&amp; channel = c.second;
-              if( mask == 0 &amp;&amp; channel->decisionType() == 0) return true; 
+              if( mask == 0 &amp;&amp; channel->decisionType() == 0) return true;
               else if( ( channel->decisionType() &amp; mask ) == 0) return false;
               else return true;
           } );
         </code>
       </method>
-      <method name  = "numberOfTriggers" 
-	      desc = "Count the number trigger with a given decisionType (default ANY)" 
-	      type  = "int" 
+      <method name  = "numberOfTriggers"
+	      desc = "Count the number trigger with a given decisionType (default ANY)"
+	      type  = "int"
 	      argList="int mask=L0DUDecision::Any"
               const="TRUE">
         <code>
@@ -174,7 +174,7 @@
       <method name  = "emulated" desc = "return true when all channels are emulated" type  = "bool"         const="TRUE">
         <code>
           return std::all_of( m_channels.begin(), m_channels.end(),
-                              [](LHCb::L0DUChannel::Map::const_reference i) {
+                              [](const auto&amp; i) {
               return i.second->emulated();
           });
         </code>
@@ -183,8 +183,8 @@
       <method name  = "clearDataValue" desc = "clear all ElementaryData operands" type  = "void" >
         <code>
           std::for_each( m_data.begin(), m_data.end(),
-              [](LHCb::L0DUElementaryData::Map::reference i) {
-                    if( i.second->type() != L0DUElementaryData::Constant) i.second->clear();
+              [](const auto&amp; i) {
+                    if( i.second->type() != L0DUElementaryData::Type::Constant) i.second->clear();
           });
           resetEmulated();
         </code>
@@ -200,9 +200,9 @@
       </method>
 
 
-      <method name  = "emulatedDecision" 
-              desc = "global emulated decision (incl. downscaling) for a given decision" 
-              type  = "bool" 
+      <method name  = "emulatedDecision"
+              desc = "global emulated decision (incl. downscaling) for a given decision"
+              type  = "bool"
               argList = "int mask=L0DUDecision::Physics"
               const="TRUE">
         <code>
@@ -211,9 +211,9 @@
       </method>
 
 
-      <method name  = "emulatedDecisionValue" 
-              desc = "global emulated decision (incl. downscaling)" 
-              type  = "int" 
+      <method name  = "emulatedDecisionValue"
+              desc = "global emulated decision (incl. downscaling)"
+              type  = "int"
               const="TRUE">
         <code>
           return std::accumulate( m_channels.begin(), m_channels.end(), 0,
@@ -226,10 +226,10 @@
       </method>
 
 
-      <method name  = "emulatedPreDecision" 
-              desc = "global emulated decision (without downscaling)" 
+      <method name  = "emulatedPreDecision"
+              desc = "global emulated decision (without downscaling)"
               type  = "bool"
-              argList = "int mask=L0DUDecision::Physics" 
+              argList = "int mask=L0DUDecision::Physics"
               const="TRUE">
         <code>
           return (emulatedPreDecisionValue() &amp; mask) != 0;
@@ -258,12 +258,12 @@
 
 
       <method
-        name="triggerByChannelName" 
+        name="triggerByChannelName"
         argList="std::string name"
         desc="return the  trigger(s) the channel belongs to"
-        type="std::vector&lt;std::string&gt;" 
+        type="std::vector&lt;std::string&gt;"
         const="TRUE">
-        <code> 
+        <code>
           std::vector&lt;std::string&gt; list;
           for(const auto&amp; i : m_triggers) {
               const auto&amp; channels = i.second-&gt;channels();
@@ -280,11 +280,11 @@
 
 
       <method
-        name="elementaryCondition" 
+        name="elementaryCondition"
         argList="std::string channelName, std::string dataName"
         desc="return the  elementaryCondition from channel and data names"
         type="const LHCb::L0DUElementaryCondition*" >
-        <code> 
+        <code>
          const LHCb::L0DUChannel* channel = channels()[channelName];
          if( !channel ) return nullptr;
          const LHCb::L0DUElementaryCondition::Map&amp; conds = channel->elementaryConditions();

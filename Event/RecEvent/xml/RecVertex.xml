@@ -60,7 +60,7 @@
       <enum
         desc="Describe how the vertex was made (NEED MORE)"
         name="RecVertexType"
-        value="Unknown=0, Vertex2D, Vertex3D, V0, Primary=LHCb::VertexBase::Primary, LastRec=10000"
+        value="Unknown=0, Vertex2D, Vertex3D, V0, Primary=LHCb::VertexBase::VertexType::Primary, LastRec=10000"
         access="PUBLIC"
 	/>
 
@@ -74,13 +74,13 @@
         argList="int key"
 	explicit = "TRUE"
         desc="create a vertex with a selected key"
-        initList = "VertexBase(key),m_technique(RecVertex::Unknown)"
+        initList = "VertexBase(key),m_technique(RecVertex::RecVertexType::Unknown)"
 	/>
 
       <constructor
         argList="const Gaudi::XYZPoint&amp; point"
         desc="Constructor from a point"
-	initList="VertexBase(point),m_technique(RecVertex::Unknown)"
+	initList="VertexBase(point),m_technique(RecVertex::RecVertexType::Unknown)"
 	/>
 
       <method
@@ -105,7 +105,7 @@
         name="technique"
         desc="How the vertex was made"
         type="RecVertexType"
-        init="RecVertex::Unknown"
+        init="RecVertex::RecVertexType::Unknown"
       />
 
       <attribute

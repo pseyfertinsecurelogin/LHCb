@@ -87,7 +87,7 @@ StatusCode DeRich::initialize ( )
     if ( m_Rich2PhotoDetectorArrayConfig >= 1 )
     {
       m_Rich2UseGrandPmt = true;
-      if( m_Rich2PhotoDetectorArrayConfig == 2 ) {   
+      if( m_Rich2PhotoDetectorArrayConfig == 2 ) {
         m_Rich2UseMixedPmt = true;
       }
     }
@@ -216,7 +216,7 @@ Rich::MirrorSegPosition DeRich::sphMirrorSegPos( const int mirrorNumber ) const
     mirrorPos.setRow( row );
     mirrorPos.setColumn( mirrorNumber % m_sphMirrorSegCols );
   }
-  else 
+  else
   {
     error() << "No position information for mirrors" << endmsg;
   }
@@ -272,9 +272,9 @@ void DeRich::loadPDPanels()
   for ( const auto panel : Rich::sides() )
   {
     const std::string pName = panelName(panel);
-    
+
     DeRichPDPanel* phdePanel = nullptr;
-    
+
     if      ( RichPhotoDetConfig() == Rich::HPDConfig )
     {
       SmartDataPtr<DeRichHPDPanel> aHpdPanel( dataSvc(), pName );
@@ -285,14 +285,14 @@ void DeRich::loadPDPanels()
       SmartDataPtr<DeRichPMTPanel> aPmtPanel( dataSvc(), pName );
       phdePanel = aPmtPanel;
     }
-    
+
     if ( !phdePanel )
     {
       std::ostringstream mess;
       mess << "Failed to load DeRichPDPanel at " << pName;
       throw GaudiException( mess.str(), "DeRich::PhDetPanel", StatusCode::FAILURE );
     }
-  
+
     m_PDPanels[panel] = phdePanel;
   }
 }
@@ -328,7 +328,7 @@ DeRich::rayTrace( const Rich::Side side,
                   const LHCb::RichTraceMode mode ) const
 {
   // are we configured to test individual PD acceptance or just interset the plane ?
-  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDTubes ?
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDTubes ?
            // Full PD acceptance
            pdPanel(side) -> PDWindowPoint( pGlobal, vGlobal,
                                            hitPosition, smartID, dePD, mode ) :
@@ -351,7 +351,7 @@ DeRich::rayTrace( const Rich::Side side,
                   const LHCb::RichTraceMode mode ) const
 {
   // are we configured to test individual PD acceptance or just interset the plane ?
-  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDTubes ?
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDTubes ?
            // Full PD acceptance
            pdPanel(side) -> PDWindowPointSIMD( pGlobal, vGlobal,
                                                hitPosition, smartID, PDs, mode ) :
@@ -378,26 +378,26 @@ DeRich::rayTrace( const Rich::SIMD::Sides & sides,
 
   // If all sides are the same, shortcut to a single call
   // hopefully the most common situation ...
-  if      ( all_of(m1) ) { return rayTrace( Rich::firstSide, pGlobal, vGlobal, 
+  if      ( all_of(m1) ) { return rayTrace( Rich::firstSide, pGlobal, vGlobal,
                                             hitPosition, smartID, PDs, mode ); }
-  else if ( all_of(m2) ) { return rayTrace( Rich::secondSide, pGlobal, vGlobal, 
+  else if ( all_of(m2) ) { return rayTrace( Rich::secondSide, pGlobal, vGlobal,
                                             hitPosition, smartID, PDs, mode ); }
- 
+
   // we have a mixture... So must run both and merge..
   // Is there a better way to handle this ... ?
-  
+
   // copy input objects for second call
   auto hitPosition2 = hitPosition;
   auto smartID2     = smartID;
   auto PDs2         = PDs;
-  
+
   // call for the first side
-  auto res1 = rayTrace( Rich::firstSide, pGlobal, vGlobal, 
+  auto res1 = rayTrace( Rich::firstSide, pGlobal, vGlobal,
                         hitPosition, smartID, PDs, mode );
   // call for the second side
-  auto res2 = rayTrace( Rich::secondSide, pGlobal, vGlobal, 
+  auto res2 = rayTrace( Rich::secondSide, pGlobal, vGlobal,
                         hitPosition2, smartID2, PDs2, mode );
-  
+
   // merge results2 into the returned results
 
   const auto fm2 = LHCb::SIMD::simd_cast<SIMDFP::MaskType>(m2);

@@ -73,7 +73,7 @@ StatusCode DeUTSector::initialize()
 
     // build the id
     const STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeUT,parentID.station(),parentID.layer(),
+    STChannelID chan(STChannelID::detType::typeUT,parentID.station(),parentID.layer(),
                      parentID.detRegion(),  id(), 0);
     setElementID(chan);
 
@@ -83,8 +83,8 @@ StatusCode DeUTSector::initialize()
     // see if stereo
     const unsigned int layer = chan.layer();
     m_isStereo = false;
-    if ( (chan.station() == UTNames::UTa && layer == 2) ||
-         (chan.station() == UTNames::UTb && layer == 1))  m_isStereo = true;
+    if ( (chan.station() == UTNames::Station::UTa && layer == 2) ||
+         (chan.station() == UTNames::Station::UTb && layer == 1))  m_isStereo = true;
 
     // get the attached sensors
     std::vector<DeUTSensor*> sensors = getChildren<DeUTSector>();

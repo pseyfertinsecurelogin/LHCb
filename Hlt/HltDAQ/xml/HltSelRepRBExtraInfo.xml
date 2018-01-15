@@ -191,16 +191,16 @@ Info can only be read and stored sequencially.'
 	   const='TRUE'
 	   >
 	<code>
-	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::kNoBank); 
-	  //empty bank is OK: if( !numberOfObj() )return ((unsigned int)HltSelRepRBEnums::kEmptyBank); 
-	  if( !size() )return ((unsigned int)HltSelRepRBEnums::kZeroAllocatedSize); 
+	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kNoBank); 
+	  //empty bank is OK: if( !numberOfObj() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kEmptyBank); 
+	  if( !size() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kZeroAllocatedSize); 
           unsigned int s=size();
 
 	  unsigned int iteraInfo=0;
 	  for(unsigned int itera=0;itera!=numberOfObj(); ){
           
             unsigned int iWord = 1 + itera/4;
-	    if( iWord &gt;= s ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
+	    if( iWord &gt;= s ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
 
             unsigned int nInfo = sizeInfo( itera );
              ++itera;
@@ -208,18 +208,18 @@ Info can only be read and stored sequencially.'
              for(unsigned int i=0;i!=nInfo;++i){
 
                 unsigned int iWord1 = m_infoLoc + ( iteraInfo / 2 );
-	        if( iWord1 &gt;= s ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
+	        if( iWord1 &gt;= s ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
 
 
                 unsigned int iWord2 = m_floatLoc +  iteraInfo;
-	        if( iWord2 &gt;= s ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
+	        if( iWord2 &gt;= s ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
 
                 ++iteraInfo;
 
              }
 
 	  }
-          return ((unsigned int)HltSelRepRBEnums::kBankIsOK);
+          return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kBankIsOK);
 	</code>
       </method>
 

@@ -2,16 +2,16 @@
 
 namespace LHCb
 {
-    
+
     HitPattern::HitPattern( const std::vector<LHCbID>& ids  ) {
 
       for (const auto& id: ids ) {
   	  switch( id.detectorType() ) {
-		case LHCbID::Velo:
+		case LHCbID::channelIDtype::Velo:
 		{
 		    LHCb::VeloChannelID veloid = id.veloID() ;
-		    unsigned int station = (veloid.sensor()%64)/2 ; 
-		    unsigned int side    = (veloid.sensor()%2) ; 
+		    unsigned int station = (veloid.sensor()%64)/2 ;
+		    unsigned int side    = (veloid.sensor()%2) ;
 		    unsigned int type    = (veloid.sensor()/64) ;
 		    // now deal with the PU sensors. we reserve the first two
 		    // bits for those. if you leave these lines away it will
@@ -19,24 +19,24 @@ namespace LHCb
 		    // bitsets.
 		    station += 2*(1-type/2) ;
 		    type     = type%2 ;
-		 
+
 		    switch( side+2*type ) {
 		    case 0:
 		      m_veloRA.set(station) ;
 		      break ;
 		    case 1:
-		      m_veloRC.set(station) ; 
+		      m_veloRC.set(station) ;
 		      break;
 		    case 2:
 		      m_veloPhiA.set(station) ;
 		      break;
 		    case 3:
 		      m_veloPhiC.set(station) ;
-		      
+
 		    }
 		}
 		break ;
-                case LHCbID::VP:
+                case LHCbID::channelIDtype::VP:
 		{
 		  // FIXME: WH: the problem is that we have some
 		  // interesting logic to cpmpute velo holes, which
@@ -51,21 +51,21 @@ namespace LHCb
 		    m_veloPhiA.set(station) ;
 		    break ;
 		  case 1:
-		    m_veloRC.set(station) ; 
+		    m_veloRC.set(station) ;
 		    m_veloPhiC.set(station) ;
 		    break;
-		  }		    
+		  }
 		}
 		break ;
-		case LHCbID::UT:
-		case LHCbID::TT:
+		case LHCbID::channelIDtype::UT:
+		case LHCbID::channelIDtype::TT:
 		{
 		    LHCb::STChannelID stid = id.stID() ;
 		    unsigned int uniquelayer = (stid.station()-1)*2 + stid.layer()-1 ;
 		    m_tt.set(uniquelayer) ;
 		}
 		break ;
-	        case LHCbID::IT:
+	        case LHCbID::channelIDtype::IT:
 		{
 		    LHCb::STChannelID stid = id.stID() ;
 		    unsigned int uniquelayer = (stid.station()-1)*4 + stid.layer()-1 ;
@@ -75,11 +75,11 @@ namespace LHCb
 		      m_itTopBottom.set(uniquelayer);
 		}
 		break ;
-		case LHCbID::OT:
+		case LHCbID::channelIDtype::OT:
 		{
 		    LHCb::OTChannelID otid = id.otID() ;
 		    unsigned int uniquelayer = (otid.station()-1)*4 + otid.layer() ;
-		    
+
 		    if ((otid.quarter()==0 || otid.quarter()==2) && otid.module()==9)
 		      if (otid.straw() > 32)
 			m_ot1stMonoLayer.set(uniquelayer);
@@ -92,13 +92,13 @@ namespace LHCb
 			m_ot2ndMonoLayer.set(uniquelayer);
 		}
 		break ;
-		case LHCbID::FT:
+		case LHCbID::channelIDtype::FT:
 		{
 		   // we could also fill in OT, but it doesn't really matter now
 		   m_itAC.set(id.ftID().layer());
 		}
 		break ;
-		case LHCbID::Muon:
+		case LHCbID::channelIDtype::Muon:
 		{
 		    m_muon.set( id.muonID().station() ) ;
 		}
@@ -106,8 +106,8 @@ namespace LHCb
 	    }
 	}
     }
-    
-    
+
+
     std::ostream& HitPattern::fillStream(std::ostream& s) const
     {
 	s << "veloRA:             " << m_veloRA << std::endl
@@ -122,9 +122,9 @@ namespace LHCb
 	  << "Muon:     " << m_muon << std::endl ;
 	return s ;
     }
-    
+
     // collapses the T layer pattern to a station pattern
-    inline std::bitset<3> hitStations( const std::bitset<LHCb::HitPattern::NumT>& layers ) 
+    inline std::bitset<3> hitStations( const std::bitset<LHCb::HitPattern::Number::NumT>& layers )
     {
 	unsigned long pat = layers.to_ulong() ;
 	std::bitset<3> rc ;
@@ -133,7 +133,7 @@ namespace LHCb
 	rc.set(2, (pat & 0xF00) !=0 ) ;
 	return rc ;
     }
-    
+
     // return the first bit that is set. returns N if no bits are set.
     template<size_t N>
     int firstbitset(std::bitset<N> mask) {
@@ -141,7 +141,7 @@ namespace LHCb
 	for( ; n<int(N) && !mask.test(n) ; ++n) {}
 	return n ;
     }
-    
+
     // return the last bit that is set. returns -1 if no bits are set.
     template<size_t N>
     int lastbitset(std::bitset<N> mask) {
@@ -149,30 +149,30 @@ namespace LHCb
 	for( ; n>=0 && !mask.test(n) ; --n) {}
 	return n ;
     }
-    
+
     size_t HitPattern::numVeloStationsOverlap() const {
-	return (( m_veloRA | m_veloPhiA ) & 
+	return (( m_veloRA | m_veloPhiA ) &
 		( m_veloRC | m_veloPhiC )).count() ;
-    } 
-    
+    }
+
     size_t HitPattern::numITStationsOverlap() const {
 	return ( hitStations( m_itAC ) & hitStations( m_itTopBottom ) ).count() ;
     }
-    
+
     size_t HitPattern::numITOTStationsOverlap() const {
 	return ( hitStations( it() ) & hitStations( ot() ) ).count() ;
     }
-    
+
     size_t HitPattern::numVeloHoles() const {
-	std::bitset<NumVelo> veloPhi = m_veloPhiA | m_veloPhiC ;
-	std::bitset<NumVelo> veloR   = m_veloRA | m_veloRC ;
-	std::bitset<NumVelo> velo = veloPhi | veloR ;
+	std::bitset<Number::NumVelo> veloPhi = m_veloPhiA | m_veloPhiC ;
+	std::bitset<Number::NumVelo> veloR   = m_veloRA | m_veloRC ;
+	std::bitset<Number::NumVelo> velo = veloPhi | veloR ;
 	size_t rc(0) ;
 	if( velo.any() ) {
 	    // don't count missing hits in first or last R/phi pair
 	    int firstbit = firstbitset(velo) ;
 	    int lastbit  = lastbitset(velo) ;
-	    for( int n=firstbit+1; n<lastbit; ++n) 
+	    for( int n=firstbit+1; n<lastbit; ++n)
 		rc += (veloPhi.test(n) ? 0 : 1) + (veloR.test(n) ? 0 : 1) ;
 	    //std::bitset<NumVelo> mask = velo ;
 	    //for( int n=firstbit+1; n<lastbit; ++n) mask.set(n) ;
@@ -180,16 +180,16 @@ namespace LHCb
 	}
 	return rc ;
     }
-    
+
     size_t HitPattern::numTHoles() const {
-	std::bitset<NumT> layers = 
+	std::bitset<Number::NumT> layers =
 	    m_itAC | m_itTopBottom |
 	    m_ot1stMonoLayer | m_ot2ndMonoLayer;
 	size_t rc(0) ;
 	if(layers.any()) {
 	    int firstbit = firstbitset(layers) ;
 	    int lastbit  = lastbitset(layers) ;
-	    for( int n=firstbit+1; n<lastbit; ++n) 
+	    for( int n=firstbit+1; n<lastbit; ++n)
 		rc += layers.test(n) ? 0 : 1 ;
 	}
 	return rc ;
@@ -197,7 +197,7 @@ namespace LHCb
 
 
     bool HitPattern::operator==(const HitPattern& hitPat) const{
-    
+
       return (m_veloRA == hitPat.veloRA() &&
 	      m_veloRC == hitPat.veloRC() &&
 	      m_veloPhiA == hitPat.veloPhiA() &&

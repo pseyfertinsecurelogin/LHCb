@@ -250,9 +250,9 @@ StatusCode DeVeloRType::pointToChannel(const Gaudi::XYZPoint& point,
   channel.setSensor(sensor);
   channel.setStrip(closestStrip);
   if(isR()) {
-    channel.setType(LHCb::VeloChannelID::RType);
+    channel.setType(LHCb::VeloChannelID::sensorType::RType);
   } else if( isPileUp() ) {
-    channel.setType(LHCb::VeloChannelID::PileUpType);
+    channel.setType(LHCb::VeloChannelID::sensorType::PileUpType);
   }
   // calculate pitch....
   pitch = rPitch(channel.strip());
@@ -896,9 +896,9 @@ bool DeVeloRType::distToM2Line(double const & x, double const & y,
     vID.setSensor(this->sensorNumber());
     vID.setStrip(strip);
     if(isR()) {
-      vID.setType(LHCb::VeloChannelID::RType);
+      vID.setType(LHCb::VeloChannelID::sensorType::RType);
     } else if( isPileUp() ) {
-      vID.setType(LHCb::VeloChannelID::PileUpType);
+      vID.setType(LHCb::VeloChannelID::sensorType::PileUpType);
     }
     dist = std::sqrt(dist2);
     return true;

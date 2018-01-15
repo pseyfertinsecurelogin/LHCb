@@ -26,5 +26,5 @@ bool LHCb::MCParticle::hasOscillated() const
 {
   return std::any_of( endVertices().begin(), endVertices().end(),
                       []( const auto & v )
-                      { return v->type() == LHCb::MCVertex::OscillatedAndDecay; } );
+                      { return v->type() == LHCb::MCVertex::MCVertexType::OscillatedAndDecay; } );
 }

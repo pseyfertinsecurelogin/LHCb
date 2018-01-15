@@ -242,7 +242,7 @@ StatusCode L0DUEmulatorTool::fillData(){
       data->setDigit( ramBcid  );
       data->setScaleAndSaturation(m_condDB->scale(L0DUBase::Type::Digit) , L0DUBase::RAMBCID::Max  );
     }
-    if( data->type() != LHCb::L0DUElementaryData::Compound )continue;
+    if( data->type() != LHCb::L0DUElementaryData::Type::Compound )continue;
     StatusCode sc = dataTree(data, dataMap);
     if(sc.isFailure())return sc;
   }
@@ -272,7 +272,7 @@ void L0DUEmulatorTool::setDataValue(LHCb::L0DUElementaryData* l0Data,
 }
 //===========================================================================================================
 StatusCode  L0DUEmulatorTool::dataTree(LHCb::L0DUElementaryData* data, LHCb::L0DUElementaryData::Map dataMap   ){
-  if( data->type() != LHCb::L0DUElementaryData::Compound )return StatusCode::SUCCESS;
+  if( data->type() != LHCb::L0DUElementaryData::Type::Compound )return StatusCode::SUCCESS;
   for( const auto& iop : data->componentsName() ) {
     if( dataMap.find(iop) == dataMap.end() )
       return Warning("dataTree: the data '"+iop+"' is not defined in the L0DUConfig data map",StatusCode::FAILURE);

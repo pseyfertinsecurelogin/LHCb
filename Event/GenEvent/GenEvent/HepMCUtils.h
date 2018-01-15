@@ -108,7 +108,7 @@ void HepMCUtils::RemoveDaughters( HepMC::GenParticle * theParticle ) {
 
   if ( 0 == EV ) return ;
 
-  theParticle -> set_status( LHCb::HepMCEvent::StableInProdGen ) ;
+  theParticle -> set_status( LHCb::HepMCEvent::statusType::StableInProdGen ) ;
   HepMC::GenEvent * theEvent = theParticle -> parent_event() ;
 
   std::vector< HepMC::GenVertex * > tempList ;

@@ -31,7 +31,7 @@
       <constructor 
       	desc     = "Constructor from a Measurement" 
       	argList  = "LHCb::Measurement* meas"
-      	initList = "m_type(HitOnTrack),m_refIsSet(false), m_measurement(meas), m_residual(0.0), m_errResidual(0.0), m_errMeasure(0.0), m_projectionMatrix()">
+      	initList = "m_type(Type::HitOnTrack),m_refIsSet(false), m_measurement(meas), m_residual(0.0), m_errResidual(0.0), m_errMeasure(0.0), m_projectionMatrix()">
         <code>
   m_refVector.setZ(meas-&gt;z()) ;
         </code>
@@ -40,7 +40,7 @@
       <constructor 
       	desc     = "Constructor from a z-position"
       	argList  = "double z"
-      	initList = "m_type(Reference),m_refIsSet(false), m_measurement(0), m_residual(0.0), m_errResidual(0.0), m_errMeasure(0.0), m_projectionMatrix()">
+      	initList = "m_type(Type::Reference),m_refIsSet(false), m_measurement(0), m_residual(0.0), m_errResidual(0.0), m_errMeasure(0.0), m_projectionMatrix()">
         <code>
   m_refVector.setZ(z) ;
         </code>
@@ -49,7 +49,7 @@
       <constructor 
       	desc     = "Constructor from a z-position and a location"
       	argList  = "double z, LHCb::State::Location location"
-      	initList = "m_type(Reference),m_state(location),m_refIsSet(false), m_measurement(0), m_residual(0.0), m_errResidual(0.0), m_errMeasure(0.0), m_projectionMatrix()">
+      	initList = "m_type(Type::Reference),m_state(location),m_refIsSet(false), m_measurement(0), m_residual(0.0), m_errResidual(0.0), m_errMeasure(0.0), m_projectionMatrix()">
         <code>
   m_refVector.setZ(z) ;
         </code>
@@ -234,7 +234,7 @@
         desc    = 'Retrieve unbiased residual '>
         <code>
   double r = residual();
-  return (type() == HitOnTrack) ? (r * errMeasure2() / (m_errResidual*m_errResidual)) : r;
+  return (type() == Type::HitOnTrack) ? (r * errMeasure2() / (m_errResidual*m_errResidual)) : r;
         </code>
       </method>
 
@@ -245,7 +245,7 @@
         desc    = 'Retrieve error on unbiased residual '>
         <code>
   double errRes = errResidual();
-  return (type() == HitOnTrack) ? (errMeasure2() / errRes) : errRes;
+  return (type() == Type::HitOnTrack) ? (errMeasure2() / errRes) : errRes;
         </code>
       </method>
 

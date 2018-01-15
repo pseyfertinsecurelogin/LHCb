@@ -23,7 +23,7 @@
     >
   <desc> *
   *
-  *  The class represents the cluster in calorimeter as a 
+  *  The class represents the cluster in calorimeter as a
   *  collection of connected and tagged cells.
   *
   *</desc>
@@ -34,7 +34,7 @@
   <import name = "GaudiKernel/SharedObjectsContainer"/>
   &KeyedObject;
   <base   name = "KeyedObject&lt;int&gt;" />
-  
+
   <location name = "Default"   place = "Rec/Calo/Clusters"          />
   <location name = "Ecal"      place = "Rec/Calo/EcalClusters"      />
   <location name = "Hcal"      place = "Rec/Calo/HcalClusters"      />
@@ -44,21 +44,21 @@
   <location name = "HcalHlt"      place = "Hlt/Calo/HcalClusters"      />
   <location name = "EcalSplitHlt" place = "Hlt/Calo/EcalSplitClusters" />
   <location name = "EcalHlt1"      place = "Hlt1/Calo/EcalClusters"      />
-  
-  <typedef 
+
+  <typedef
       type   = "SharedObjectsContainer&lt;LHCb::CaloCluster&gt;"
       def    = "Selection"
       desc   = "For defining SharedObjectContainer"
       access = "PUBLIC"
       />
-  
-  <typedef 
+
+  <typedef
       type = "Gaudi::NamedRange_&lt;ConstVector&gt;"
       def  = "Range"
       desc = "For accessing a list of CaloClusters which is either a SharedObjectContainer, a KeyedContainer or a ConstVector"
       access = "PUBLIC"
       />
-  
+
   <typedef
       def    = "Base"
       type   = "KeyedObject&lt;int&gt;"
@@ -66,51 +66,51 @@
       access = "PROTECTED"
       />
   &KeyedObject;
-  
-  <enum 
-      desc="CaloCluster type" 
-      name="Type" 
+
+  <enum
+      desc="CaloCluster type"
+      name="Type"
       value=" Undefined = 0, Invalid, CellularAutomaton, Area3x3, Area2x3x3"
       access="PUBLIC"
       />
-  
+
   <typedef
       def    = "Entry"
       type   = "LHCb::CaloClusterEntry"
       desc   = "The shortcut for CaloClusterEntry class"
       access = "PUBLIC"
       />
-  
+
   <typedef
       def    = "Entries"
       type   = "std::vector&lt;LHCb::CaloClusterEntry&gt;"
       desc   = "Container with references to digits"
       access = "PUBLIC"
-      /> 
-  
+      />
+
   <typedef
       def    = "Digits"
       type   = "LHCb::CaloCluster::Entries"
       desc   = "The shortcut for container of CaloClusterEntry object"
       access = "PUBLIC"
       />
-  
+
   <typedef
       def    = "Position"
       type   = "LHCb::CaloPosition"
       desc   = "The shortcut for CaloPosition type"
       access = "PUBLIC"
       />
-  
+
 <constructor
  desc     = "Default constructor"
- initList = "Base (    ) , m_type ( LHCb::CaloCluster::Undefined ) , m_seed() , m_entries() , m_position () "
+ initList = "Base (    ) , m_type ( LHCb::CaloCluster::Type::Undefined ) , m_seed() , m_entries() , m_position () "
 > <code/> </constructor>
 
-<constructor 
- desc     = "Copy Constructor" 
+<constructor
+ desc     = "Copy Constructor"
  argList  = "LHCb::CaloCluster right"
- initList = "Base() , m_type( right.type() ) , m_seed( right.seed() ) , m_entries( right.entries() ) , m_position( right.position() ) " 
+ initList = "Base() , m_type( right.type() ) , m_seed( right.seed() ) , m_entries( right.entries() ) , m_position( right.position() ) "
 > <code/> </constructor>
 
 <attribute
@@ -131,7 +131,7 @@
  type = "std::vector&lt;LHCb::CaloClusterEntry&gt;"
  nonconstaccessor="TRUE"
 />
-                              
+
 <attribute
  name = "position"
  desc = "Cluster parameters: the position and the spread"

@@ -163,11 +163,11 @@
     #pragma warning(disable:2259) // non-pointer conversion from "int" to "short" may lose significant bits
     #pragma warning(push)
   #endif
-      m_processingList=m_processingList^mRAW;
+      m_processingList=m_processingList^processingListMasks::mRAW;
   #ifdef __INTEL_COMPILER         // End disable ICC remark
     #pragma warning(pop)
   #endif
-      m_flag=RAW;
+      m_flag=processingStages::RAW;
       m_rawADCValue=value;
      </code>
    </method>
@@ -183,11 +183,11 @@
     #pragma warning(disable:2259) // non-pointer conversion from "int" to "short" may lose significant bits
     #pragma warning(push)
   #endif
-      m_processingList=m_processingList^mFIR;
+      m_processingList=m_processingList^processingListMasks::mFIR;
   #ifdef __INTEL_COMPILER         // End disable ICC remark
     #pragma warning(pop)
   #endif
-      m_flag=FIR;
+      m_flag=processingStages::FIR;
       m_ADCFIRcorrection=value;
      </code>
    </method>
@@ -203,11 +203,11 @@
     #pragma warning(disable:2259) // non-pointer conversion from "int" to "short" may lose significant bits
     #pragma warning(push)
   #endif
-      m_processingList=m_processingList^mPedestalSubtracted;
+      m_processingList=m_processingList^processingListMasks::mPedestalSubtracted;
   #ifdef __INTEL_COMPILER         // End disable ICC remark
     #pragma warning(pop)
   #endif
-      m_flag=PedestalSubtracted;
+      m_flag=processingStages::PedestalSubtracted;
       m_subtractedPedestal=value;
      </code>
    </method>
@@ -223,11 +223,11 @@
     #pragma warning(disable:2259) // non-pointer conversion from "int" to "short" may lose significant bits
     #pragma warning(push)
   #endif
-      m_processingList=m_processingList^mCMSubtracted;
+      m_processingList=m_processingList^processingListMasks::mCMSubtracted;
   #ifdef __INTEL_COMPILER         // End disable ICC remark
     #pragma warning(pop)
   #endif
-      m_flag=CMSubtracted;
+      m_flag=processingStages::CMSubtracted;
       m_subtractedCM=value;
      </code>
    </method>
@@ -251,10 +251,10 @@
    >
     <code>
      switch(m_flag){
-      case RAW: return ("RAW"); break;
-      case FIR: return ("FIR"); break;
-      case PedestalSubtracted: return ("PedestalSubtracted"); break;
-      case CMSubtracted: return ("CMSubtracted"); break;
+      case processingStages::RAW: return "RAW"; break;
+      case processingStages::FIR: return "FIR"; break;
+      case processingStages::PedestalSubtracted: return "PedestalSubtracted"; break;
+      case processingStages::CMSubtracted: return "CMSubtracted"; break;
       default: return (" " ); break;
      }
     </code>
@@ -269,10 +269,10 @@
     <arg type="int" name="stage"/>
      <code>
       switch(stage){
-       case RAW: return (m_rawADCValue); break;
-       case FIR: return (m_ADCFIRcorrection); break;
-       case PedestalSubtracted: return (m_subtractedPedestal); break;
-       case CMSubtracted: return (m_subtractedCM); break;
+       case processingStages::RAW: return m_rawADCValue; break;
+       case processingStages::FIR: return m_ADCFIRcorrection; break;
+       case processingStages::PedestalSubtracted: return m_subtractedPedestal; break;
+       case processingStages::CMSubtracted: return m_subtractedCM; break;
        default: return 0.0; break;
       }
      </code>
@@ -297,10 +297,10 @@
    >
     <code>
      int temp=0;
-     if(m_processingList&amp;mRAW) temp+=1;
-     if(m_processingList&amp;mFIR) temp+=10;
-     if(m_processingList&amp;mPedestalSubtracted) temp+=100;
-     if(m_processingList&amp;mCMSubtracted) temp+=1000;
+     if(m_processingList&amp;processingListMasks::mRAW) temp+=1;
+     if(m_processingList&amp;processingListMasks::mFIR) temp+=10;
+     if(m_processingList&amp;processingListMasks::mPedestalSubtracted) temp+=100;
+     if(m_processingList&amp;processingListMasks::mCMSubtracted) temp+=1000;
      return temp;
     </code>
    </method>

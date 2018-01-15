@@ -10,10 +10,10 @@ UnpackSTCluster::UnpackSTCluster(const std::string& name, ISvcLocator* svcLocato
 }
 
 // explicit comparison for cluster sorting (hidden in anonymous namespace)
-namespace 
+namespace
 {
   template < class TYPE >
-  inline bool compareKeys( const TYPE * a, const TYPE * b ) 
+  inline bool compareKeys( const TYPE * a, const TYPE * b )
   {
     return ( a->key() < b->key() );
   }
@@ -82,10 +82,10 @@ StatusCode UnpackSTCluster::execute() {
                                                   double(packedCluster.sum),
                                                   packedCluster.sourceID,
                                                   packedCluster.tell1Channel,
-                                                  LHCb::STCluster::Central );
+                                                  LHCb::STCluster::Spill::Central );
       if ( msgLevel(MSG::VERBOSE) )
         verbose() << " Unpacked " << sCl->channelID() << endmsg;
-      try 
+      try
       {
         out->insert( sCl, sCl->channelID() );
       }

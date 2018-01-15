@@ -15,29 +15,29 @@ namespace {
   } ); }
 
   static const std::array<LHCb::RecSummary::DataTypes,23> s_rsum_map = {
-       LHCb::RecSummary::nLongTracks,
-       LHCb::RecSummary::nDownstreamTracks,
-       LHCb::RecSummary::nUpstreamTracks,
-       LHCb::RecSummary::nVeloTracks,
-       LHCb::RecSummary::nTTracks,
-       LHCb::RecSummary::nBackTracks,
-       LHCb::RecSummary::nTracks,
-       LHCb::RecSummary::nRich1Hits,
-       LHCb::RecSummary::nRich2Hits,
-       LHCb::RecSummary::nVeloClusters,
-       LHCb::RecSummary::nITClusters,
-       LHCb::RecSummary::nTTClusters,
-       LHCb::RecSummary::nUTClusters,
-       LHCb::RecSummary::nOTClusters,
-       LHCb::RecSummary::nFTClusters,
-       LHCb::RecSummary::nSPDhits,
-       LHCb::RecSummary::nMuonCoordsS0,
-       LHCb::RecSummary::nMuonCoordsS1,
-       LHCb::RecSummary::nMuonCoordsS2,
-       LHCb::RecSummary::nMuonCoordsS3,
-       LHCb::RecSummary::nMuonCoordsS4,
-       LHCb::RecSummary::nMuonTracks,
-       LHCb::RecSummary::nPVs
+       LHCb::RecSummary::DataTypes::nLongTracks,
+       LHCb::RecSummary::DataTypes::nDownstreamTracks,
+       LHCb::RecSummary::DataTypes::nUpstreamTracks,
+       LHCb::RecSummary::DataTypes::nVeloTracks,
+       LHCb::RecSummary::DataTypes::nTTracks,
+       LHCb::RecSummary::DataTypes::nBackTracks,
+       LHCb::RecSummary::DataTypes::nTracks,
+       LHCb::RecSummary::DataTypes::nRich1Hits,
+       LHCb::RecSummary::DataTypes::nRich2Hits,
+       LHCb::RecSummary::DataTypes::nVeloClusters,
+       LHCb::RecSummary::DataTypes::nITClusters,
+       LHCb::RecSummary::DataTypes::nTTClusters,
+       LHCb::RecSummary::DataTypes::nUTClusters,
+       LHCb::RecSummary::DataTypes::nOTClusters,
+       LHCb::RecSummary::DataTypes::nFTClusters,
+       LHCb::RecSummary::DataTypes::nSPDhits,
+       LHCb::RecSummary::DataTypes::nMuonCoordsS0,
+       LHCb::RecSummary::DataTypes::nMuonCoordsS1,
+       LHCb::RecSummary::DataTypes::nMuonCoordsS2,
+       LHCb::RecSummary::DataTypes::nMuonCoordsS3,
+       LHCb::RecSummary::DataTypes::nMuonCoordsS4,
+       LHCb::RecSummary::DataTypes::nMuonTracks,
+       LHCb::RecSummary::DataTypes::nPVs
   };
   static const std::array<LHCb::ProtoParticle::additionalInfo,72> s_proto_map = {
       LHCb::ProtoParticle::additionalInfo::IsPhoton,//381
@@ -1438,17 +1438,17 @@ void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const
 
   LHCb::State first, last;
   if( object->type() == LHCb::Track::Types::Long ){
-    if( object->hasStateAt(LHCb::State::ClosestToBeam) ) first = *(object->stateAt(LHCb::State::ClosestToBeam));
+    if( object->hasStateAt(LHCb::State::Location::ClosestToBeam) ) first = *(object->stateAt(LHCb::State::Location::ClosestToBeam));
     else first = *(object->states().front());
     //
-    if( object->hasStateAt(LHCb::State::BegRich2) ) last = *(object->stateAt(LHCb::State::BegRich2));
+    if( object->hasStateAt(LHCb::State::Location::BegRich2) ) last = *(object->stateAt(LHCb::State::Location::BegRich2));
     else last = *(object->states().back());
   }
   else if( object->type() == LHCb::Track::Types::Downstream ){
-    if( object->hasStateAt(LHCb::State::FirstMeasurement) ) first = *(object->stateAt(LHCb::State::FirstMeasurement));
+    if( object->hasStateAt(LHCb::State::Location::FirstMeasurement) ) first = *(object->stateAt(LHCb::State::Location::FirstMeasurement));
     else first = *(object->states().front());
     //
-    if( object->hasStateAt(LHCb::State::BegRich2) ) last = *(object->stateAt(LHCb::State::BegRich2));
+    if( object->hasStateAt(LHCb::State::Location::BegRich2) ) last = *(object->stateAt(LHCb::State::Location::BegRich2));
     else last = *(object->states().back());
   }
   else{

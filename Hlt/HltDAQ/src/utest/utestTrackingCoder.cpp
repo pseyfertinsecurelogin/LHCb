@@ -138,10 +138,10 @@ struct ExampleTracks {
     //std::cout << std::endl;
 
 
-    LHCb::State newYork(v,cov,200.,LHCb::State::EndVelo);
+    LHCb::State newYork(v,cov,200.,LHCb::State::Location::EndVelo);
     tr->addToStates(newYork);
 
-    LHCb::State Michigan(v,cov,220.,LHCb::State::ClosestToBeam);
+    LHCb::State Michigan(v,cov,220.,LHCb::State::Location::ClosestToBeam);
     tr->addToStates(Michigan);
 
     m_tracks.add(tr);

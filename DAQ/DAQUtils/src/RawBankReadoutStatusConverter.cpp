@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 #include "Event/RawBankReadoutStatus.h"
 #include "Event/RawBankReadoutStatus.h"
@@ -28,9 +28,9 @@ RawBankReadoutStatusConverter::RawBankReadoutStatusConverter( const std::string&
  declareProperty( "System"    , m_system="UNSET");
 }
 //=============================================================================
-// Destructor 
+// Destructor
 //=============================================================================
-RawBankReadoutStatusConverter::~RawBankReadoutStatusConverter() {} 
+RawBankReadoutStatusConverter::~RawBankReadoutStatusConverter() {}
 
 //=============================================================================
 // Initialization
@@ -45,7 +45,7 @@ StatusCode RawBankReadoutStatusConverter::initialize() {
   m_mask = 0x0;
   for( std::vector<std::string>::iterator i = m_flags.begin() ; m_flags.end() != i ; ++ i){
     int word  = 1;
-    while( word <= LHCb::RawBankReadoutStatus::Unknown ){      
+    while( word <= LHCb::RawBankReadoutStatus::Status::Unknown ){
       LHCb::RawBankReadoutStatus::Status stat = (LHCb::RawBankReadoutStatus::Status) word;
       std::ostringstream label("");
       label << stat;
@@ -69,16 +69,16 @@ StatusCode RawBankReadoutStatusConverter::execute() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
   if(m_types.empty())return StatusCode::SUCCESS;
-  
+
   // Access RawBankReadoutStatus
   LHCb::RawBankReadoutStatuss* rStats = getIfExists<LHCb::RawBankReadoutStatuss>(LHCb::RawBankReadoutStatusLocation::Default);
-  if( rStats == NULL || rStats->empty() ) return StatusCode::SUCCESS;  
-  
+  if( rStats == NULL || rStats->empty() ) return StatusCode::SUCCESS;
+
   // Access procStatus
   LHCb::ProcStatus* pStat = getOrCreate<LHCb::ProcStatus,LHCb::ProcStatus>(LHCb::ProcStatusLocation::Default);
 
   // loop over rStats
-  for(LHCb::RawBankReadoutStatuss::iterator it = rStats->begin() ; it != rStats->end() ; ++it ){    
+  for(LHCb::RawBankReadoutStatuss::iterator it = rStats->begin() ; it != rStats->end() ; ++it ){
     LHCb::RawBankReadoutStatus* rStat = *it;
     LHCb::RawBank::BankType type = rStat->key();
     std::string typeName = LHCb::RawBank::typeName( type );
@@ -87,13 +87,13 @@ StatusCode RawBankReadoutStatusConverter::execute() {
       if( *inam != typeName)continue;
       int status = rStat->status();
       bool aborted = (status & m_mask) != 0;
-      if ( msgLevel(MSG::DEBUG) ) debug() << m_system << " : " << status << " / " << m_mask  << " -> " << reason( status,typeName) 
+      if ( msgLevel(MSG::DEBUG) ) debug() << m_system << " : " << status << " / " << m_mask  << " -> " << reason( status,typeName)
                                           << " abort ? " << aborted << endmsg;
-      if(status != LHCb::RawBankReadoutStatus::OK){
-        pStat->addAlgorithmStatus(this->name(),m_system ,reason(status,typeName) , status , aborted);     
+      if(status != LHCb::RawBankReadoutStatus::Status::OK){
+        pStat->addAlgorithmStatus(this->name(),m_system ,reason(status,typeName) , status , aborted);
         counter(m_system + " readoutStatus : create a procStatus")+=1;
-        if( aborted) counter(m_system + " readoutStatus : abort proccessing" )+=1;        
-      }      
+        if( aborted) counter(m_system + " readoutStatus : abort proccessing" )+=1;
+      }
     }
   }
   return StatusCode::SUCCESS;
@@ -103,7 +103,7 @@ std::string RawBankReadoutStatusConverter::reason(int status,std::string typeNam
   std::ostringstream tag("");
   tag << "Bank = " << typeName << " - ReadoutStatus = " << status << " : | ";
   unsigned int word = 1;
-  while( word <= LHCb::RawBankReadoutStatus::Unknown ){
+  while( word <= LHCb::RawBankReadoutStatus::Status::Unknown ){
     LHCb::RawBankReadoutStatus::Status stat = (LHCb::RawBankReadoutStatus::Status) word;
     if( (status & word) != 0 )tag << stat << " | ";
     word *= 2;

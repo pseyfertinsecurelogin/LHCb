@@ -105,7 +105,7 @@ bool L0DUFromRawHlt1Tool::decodeBank( int iBank ) {
   m_report.clear();
 
   m_roStatus = LHCb::RawBankReadoutStatus( LHCb::RawBank::L0DU );
-  m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::OK);
+  m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::OK);
 
   LHCb::RawEvent* raw = nullptr;
   for ( const auto& loc : m_rawLocations ) {
@@ -120,30 +120,30 @@ bool L0DUFromRawHlt1Tool::decodeBank( int iBank ) {
 
   //== Any error bank?
   if ( raw->banks( LHCb::RawBank::L0DUError ).size() != 0 ) {
-    m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::ErrorBank );
+    m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::ErrorBank );
   }
   //== Get the normal data bank. Check that it exists and is alone.
   std::vector<LHCb::RawBank*> l0Banks = raw->banks( LHCb::RawBank::L0DU );
   if ( l0Banks.empty() ) {
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
     return false;
   }
   if( 1 < l0Banks.size() ){
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::NonUnique);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::NonUnique);
     return false;
   }
   LHCb::RawBank* bank = l0Banks[iBank];
   // Check Magic pattern
   if( LHCb::RawBank::MagicPattern != bank->magic() ) {
     Error("Bad MagicPattern",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::BadMagicPattern);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::BadMagicPattern);
     return false;
   }
   // rawBank header :
   unsigned int* data = bank->data();
   m_size   = bank->size();  // Bank size is in bytes
   m_vsn    = bank->version();
-  m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::OK);
+  m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::OK);
 
   m_report.setBankVersion( m_vsn );
   if ( 2 != m_vsn ) {
@@ -264,7 +264,7 @@ bool L0DUFromRawHlt1Tool::decodeBank( int iBank ) {
     info() << "READOUTSTATUS : the total expected size " << allSize
            << " does NOT match the bank size " << m_size << " <** POSSIBLE DATA CORRUPTION **>"
            << endmsg;
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Corrupted );
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Corrupted );
   }
 
   if ( (0x7F & m_bcid2) != m_bcid3){

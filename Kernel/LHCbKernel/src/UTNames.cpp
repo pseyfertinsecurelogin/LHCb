@@ -114,7 +114,7 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
       layer = 2;
     }
     else {
-      return STChannelID(LHCb::STChannelID::typeUT, station , 0u , 0u , 0u, 0u);
+      return STChannelID(LHCb::STChannelID::detType::typeUT, station , 0u , 0u , 0u, 0u);
     }
   }
 
@@ -126,7 +126,7 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
       layer = 1;
     }
     else {
-      return STChannelID(LHCb::STChannelID::typeUT, station , 0u , 0u , 0u, 0u);
+      return STChannelID(LHCb::STChannelID::detType::typeUT, station , 0u , 0u , 0u, 0u);
     }
   }
 
@@ -157,14 +157,14 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
     sector = toInt(sectorName);
   }
 
-  return LHCb::STChannelID(LHCb::STChannelID::typeUT, station, layer,
+  return LHCb::STChannelID(LHCb::STChannelID::detType::typeUT, station, layer,
                            region, sector, strip);
 }
 
 unsigned int LHCb::UTNames::findStationType(const std::string& testname,
                                             const std::vector<std::string>& names)
 {
-  auto n = std::find_if( std::begin(names), std::end(names), 
+  auto n = std::find_if( std::begin(names), std::end(names),
                          [&](const std::string& s) {
       return testname.find(s) != std::string::npos;
   });
@@ -174,7 +174,7 @@ unsigned int LHCb::UTNames::findStationType(const std::string& testname,
 unsigned int LHCb::UTNames::findRegionType(const std::string& testname,
                                            const std::vector<std::string>& names)
 {
-  auto n = std::find_if( std::begin(names), std::end(names), 
+  auto n = std::find_if( std::begin(names), std::end(names),
                          [&](const std::string& s) {
       return testname.find(s) != std::string::npos;
   });

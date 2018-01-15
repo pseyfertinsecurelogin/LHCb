@@ -191,7 +191,7 @@ StatusCode CaloZSupAlg::execute() {
         int card =  m_adcTool->deCalo()->cardNumber( id );
         int tell1=  m_adcTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_adcTool->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
     }
 
@@ -210,7 +210,7 @@ StatusCode CaloZSupAlg::execute() {
         int card =  m_adcTool->deCalo()->cardNumber( id );
         int tell1=  m_adcTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_adcTool->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
 
     }

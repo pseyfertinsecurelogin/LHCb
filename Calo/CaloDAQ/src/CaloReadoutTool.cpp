@@ -109,7 +109,7 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
 
   // check whether the associated Error Bank is present or not
-  for( const auto& b : rawEvt->banks( m_errorType )) m_status.addStatus( b->sourceID() , LHCb::RawBankReadoutStatus::ErrorBank );
+  for( const auto& b : rawEvt->banks( m_errorType )) m_status.addStatus( b->sourceID() , LHCb::RawBankReadoutStatus::Status::ErrorBank );
 
   // check banks integrity + Magic pattern
   std::vector<int> sources; sources.reserve(m_banks->size());
@@ -118,17 +118,17 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
     sources.push_back( b->sourceID() );
     if( LHCb::RawBank::MagicPattern != b->magic() ) {
       Error("Bad MagicPattern for sourceID " + Gaudi::Utils::toString( b->sourceID()),StatusCode::SUCCESS).ignore();
-      m_status.addStatus( b->sourceID() , LHCb::RawBankReadoutStatus::BadMagicPattern);
+      m_status.addStatus( b->sourceID() , LHCb::RawBankReadoutStatus::Status::BadMagicPattern);
     }
   }
 
   if(m_packed){  // TELL1 format : 1 source per TELL1
     for(const auto& t : m_calo->tell1Params() ) {
       bool ok= std::any_of( sources.begin(), sources.end(), [&](int n) { return t.number()==n; } );
-      m_status.addStatus( t.number()  , ok ? LHCb::RawBankReadoutStatus::OK : LHCb::RawBankReadoutStatus::Missing);
+      m_status.addStatus( t.number()  , ok ? LHCb::RawBankReadoutStatus::Status::OK : LHCb::RawBankReadoutStatus::Status::Missing);
     }
   } else { // Offline format : single source 0
-    m_status.addStatus( 0 , sources.empty() ? LHCb::RawBankReadoutStatus::Missing : LHCb::RawBankReadoutStatus::OK);
+    m_status.addStatus( 0 , sources.empty() ? LHCb::RawBankReadoutStatus::Status::Missing : LHCb::RawBankReadoutStatus::Status::OK);
   }
 
   return true;
@@ -214,9 +214,9 @@ void CaloReadoutTool::checkCtrl(int ctrl,int sourceID){
 
   if( 0 != (0x1& ctrl) || 0 != (0x20& ctrl) || 0 != (0x40& ctrl)){
     if(msgLevel(MSG::DEBUG))debug() << "Tell1 error bits have been detected in data" << endmsg;
-    if( 0 != (0x1  & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Error );
-    if( 0 != (0x20 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Sync  );
-    if( 0 != (0x40 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Link  );
+    if( 0 != (0x1  & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Tell1Error );
+    if( 0 != (0x20 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Tell1Sync  );
+    if( 0 != (0x40 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Tell1Link  );
   }
 }
 
@@ -225,7 +225,7 @@ bool CaloReadoutTool::checkSrc(int source) {
   bool read = ( it != m_readSources.end() );
   if ( read ) {
     Warning("Another bank with same sourceID " + Gaudi::Utils::toString( source ) + " has already been read").ignore();
-    m_status.addStatus(source, LHCb::RawBankReadoutStatus::NonUnique );
+    m_status.addStatus(source, LHCb::RawBankReadoutStatus::Status::NonUnique );
   } else {
     m_readSources.push_back(source);
   }

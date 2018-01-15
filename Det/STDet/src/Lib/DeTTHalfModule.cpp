@@ -60,7 +60,7 @@ StatusCode DeTTHalfModule::initialize() {
 
     m_parent = getParent<DeTTHalfModule>();
     const STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeTT, parentID.station(), parentID.layer(), m_detRegion,m_firstSector,0);
+    STChannelID chan(STChannelID::detType::typeTT, parentID.station(), parentID.layer(), m_detRegion,m_firstSector,0);
     setElementID(chan);
     m_sectors = getChildren<DeTTHalfModule>();
   }

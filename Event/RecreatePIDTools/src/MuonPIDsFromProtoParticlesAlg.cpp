@@ -120,7 +120,7 @@ StatusCode MuonPIDsFromProtoParticlesAlg::execute()
       }
 
       // does this proto have any Muon info in it ?
-      if ( (*iP)->hasInfo(ProtoParticle::MuonPIDStatus) )
+      if ( (*iP)->hasInfo(ProtoParticle::additionalInfo::MuonPIDStatus) )
       {
         if ( msgLevel(MSG::VERBOSE) )
         {
@@ -139,20 +139,20 @@ StatusCode MuonPIDsFromProtoParticlesAlg::execute()
         // copy info
 
         // history word
-        pid->setStatus( static_cast<unsigned int>((*iP)->info(ProtoParticle::MuonPIDStatus,0)) );
+        pid->setStatus( static_cast<unsigned int>((*iP)->info(ProtoParticle::additionalInfo::MuonPIDStatus,0)) );
 
         // Track Pointer
         pid->setIDTrack( track );
 
         // PID info
-        pid->setMuonLLMu( (*iP)->info(ProtoParticle::MuonMuLL,    0) );
-        pid->setMuonLLBg( (*iP)->info(ProtoParticle::MuonBkgLL,   0) );
-        pid->setNShared ( static_cast<int>((*iP)->info(ProtoParticle::MuonNShared, 0)) );
-        pid->setChi2Corr( (*iP)->info(ProtoParticle::MuonChi2Corr,    0) );
-        pid->setMuonMVA1( (*iP)->info(ProtoParticle::MuonMVA1,    0) );        
-        pid->setMuonMVA2( (*iP)->info(ProtoParticle::MuonMVA2,    0) );
-        pid->setMuonMVA3( (*iP)->info(ProtoParticle::MuonMVA3,    0) );
-        pid->setMuonMVA4( (*iP)->info(ProtoParticle::MuonMVA4,    0) );
+        pid->setMuonLLMu( (*iP)->info(ProtoParticle::additionalInfo::MuonMuLL,    0) );
+        pid->setMuonLLBg( (*iP)->info(ProtoParticle::additionalInfo::MuonBkgLL,   0) );
+        pid->setNShared ( static_cast<int>((*iP)->info(ProtoParticle::additionalInfo::MuonNShared, 0)) );
+        pid->setChi2Corr( (*iP)->info(ProtoParticle::additionalInfo::MuonChi2Corr,    0) );
+        pid->setMuonMVA1( (*iP)->info(ProtoParticle::additionalInfo::MuonMVA1,    0) );
+        pid->setMuonMVA2( (*iP)->info(ProtoParticle::additionalInfo::MuonMVA2,    0) );
+        pid->setMuonMVA3( (*iP)->info(ProtoParticle::additionalInfo::MuonMVA3,    0) );
+        pid->setMuonMVA4( (*iP)->info(ProtoParticle::additionalInfo::MuonMVA4,    0) );
 
         // Work around for old MuonPID data objects without IsMuonLoose
         if ( !pid->IsMuonLoose()  && pid->IsMuon() ) { pid->setIsMuonLoose(true); }
@@ -180,7 +180,7 @@ StatusCode MuonPIDsFromProtoParticlesAlg::execute()
   }
   else
   {
-    Warning( "No ProtoParticles at '" + m_protoPloc + 
+    Warning( "No ProtoParticles at '" + m_protoPloc +
              "' -> Empty MuonPIDs created at '" + m_muonPIDloc + "'" ).ignore();
   }
 

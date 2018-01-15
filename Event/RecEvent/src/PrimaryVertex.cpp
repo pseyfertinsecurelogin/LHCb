@@ -8,7 +8,7 @@ namespace LHCb
 
   struct LHCbIDAdder
   {
-    unsigned int operator()(const unsigned int& lhs, const LHCb::LHCbID& rhs) 
+    unsigned int operator()(const unsigned int& lhs, const LHCb::LHCbID& rhs)
     {
       return lhs + rhs.lhcbID() ;
     }
@@ -42,7 +42,7 @@ namespace LHCb
     // initial value of an "empty" hash from deep within the implementation...
     uint32_t hash = BloomFilterImpl::__doFNV1a<uint32_t>::hashinit;
     const uint32_t* it = begin ;
-    const uint32_t maxval =  LHCb::LHCbID::TT << detectorTypeBits ;
+    const uint32_t maxval =  LHCb::LHCbID::channelIDtype::TT << detectorTypeBits ;
     while( it < end && *it < maxval ) { hash = hashobj(*it, hash); ++it; }
     return hash ;
   }
@@ -108,10 +108,10 @@ namespace LHCb
   {
     // subtract all the tracks from the cached chi2 sums
     int nremoved(0) ;
-    for( const auto& track : tracksToRemove ) 
+    for( const auto& track : tracksToRemove )
     {
       const auto it = find(uniqueVeloSegmentID(*track)) ;
-      if ( it != m_tracks.end() ) 
+      if ( it != m_tracks.end() )
       {
         auto& trk = *it ;
         const auto w =  trk.weight() ;
@@ -127,7 +127,7 @@ namespace LHCb
       }
     }
 
-    if ( nremoved > 0 ) 
+    if ( nremoved > 0 )
     {
       setNDoF( this->nDoF() - 2*nremoved ) ;
       const bool success = fit() ;
@@ -147,7 +147,7 @@ namespace LHCb
     auto   W  = m_sumhalfD2Chi2DX2 ;
     auto   WX = m_sumhalfDChi2DX ;
     auto chi2 = m_sumchi2 ;
-    for( const auto& track : tracksToRemove ) 
+    for( const auto& track : tracksToRemove )
     {
       const auto it = find(uniqueVeloSegmentID(*track)) ;
       if( it != m_tracks.end() )
@@ -198,7 +198,7 @@ namespace LHCb
     // subtract all the tracks
     auto W  = m_sumhalfD2Chi2DX2 ;
     auto WX = m_sumhalfDChi2DX ;
-    for( const auto& track : tracksToRemove ) 
+    for( const auto& track : tracksToRemove )
     {
       const auto it = find(track) ;
       if ( it != m_tracks.end() )
@@ -235,10 +235,10 @@ namespace LHCb
 
   void PrimaryVertex::updateTukeyWeights(double maxchi2)
   {
-    const Vector3 pos( position().x(), 
+    const Vector3 pos( position().x(),
                        position().y(),
                        position().z() - m_refZ );
-    for( auto& track : m_tracks ) 
+    for( auto& track : m_tracks )
     {
       const auto chi2   = track.chi2(pos) ;
       const auto weight = chi2 < maxchi2 ? std::pow( 1.0 - (chi2/maxchi2), 2 ) : 0 ;
