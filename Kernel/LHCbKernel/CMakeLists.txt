@@ -13,6 +13,12 @@ find_package(ROOT)
 find_package(VDT)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
+find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
+if(NOT CPP_GSL_INCLUDE_DIR)
+       message(FATAL "required headers from C++ GSL missing")
+endif()
+
+
 include(GaudiObjDesc)
 
 god_build_headers(xml/*.xml
@@ -42,6 +48,8 @@ gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
 
+gaudi_add_unit_test(test_STLExtensions tests/src/test_STLExtensions.cpp
+                    LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_PlatformInfo tests/src/test_PlatformInfo.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 set_property(SOURCE tests/src/test_PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
