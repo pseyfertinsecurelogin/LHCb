@@ -11,7 +11,7 @@
             author      = "Olivier Callot"
             desc        = "Lite cluster, all information on 32 bits for fast container"
             location    = "Raw/FT/LiteClusters"
-            final  = "TRUE"
+            final       = "TRUE"
             defaultdestructor = "FALSE"
             serializers = "FALSE" >
 
@@ -23,29 +23,48 @@
                type   = "LHCb::FTChannelID"
                def    = "chan_type"
                access = "PUBLIC" />
-
+      
       <typedef desc   = "finding policy"
-                type   = "SiDataFunctor::CompareByChannel &lt; LHCb::FTLiteCluster &gt;"
-                def    = "findPolicy"
-                access = "PUBLIC " /> 
-
+               type   = "SiDataFunctor::CompareByChannel &lt; LHCb::FTLiteCluster &gt;"
+               def    = "findPolicy"
+               access = "PUBLIC " /> 
+      
       <typedef desc   = "fast container of Lite Cluster"
                type   = "FastClusterContainer&lt;LHCb::FTLiteCluster,int&gt;"
                def    = "FTLiteClusters"
                access = "PUBLIC" />
-
-      <attribute type='bitfield' name='liteCluster' desc='Lite Cluster'             setMeth="FALSE" getMeth="FALSE">
-        <bitfield name='channelID' length='20' desc='channelID'                     setMeth="FALSE" getMeth="FALSE"/>
-        <bitfield name='fraction'  length='1' desc='Fractional position'            setMeth="FALSE" getMeth="FALSE"/>
-        <bitfield name='size'      length='1' desc='number of cells in the cluster' setMeth="FALSE" getMeth="FALSE"/>
+      
+      <attribute type    = 'bitfield'
+                 name    = 'liteCluster'
+                 desc    = 'Lite Cluster'
+                 setMeth = "FALSE"
+                 getMeth = "FALSE">
+        
+        <bitfield   name    = 'channelID'
+                    length  = '20'
+                    desc    = 'channelID'
+                    setMeth = "FALSE"
+                    getMeth = "FALSE"/>
+        
+        <bitfield name    = 'fraction'
+                  length  = '1'
+                  desc    = 'Fractional position'
+                  setMeth = "FALSE"
+                  getMeth = "FALSE"/>
+        
+        <bitfield name    = 'pseudoSize'
+                  length  = '4'
+                  desc    = 'number of cells in the cluster'
+                  setMeth = "TRUE"
+                  getMeth = "TRUE"/>
       </attribute>
-
+      
       <constructor desc    = "Constructor" 
-                   argList = 'LHCb::FTChannelID chan, int fraction, int size'>
+                   argList = 'LHCb::FTChannelID chan, int fraction, int pseudoSize'>
         <code>
           m_liteCluster = (chan &lt;&lt; channelIDBits) +
           (fraction &lt;&lt; fractionBits) +
-          (size &lt;&lt; sizeBits);
+          (pseudoSize &lt;&lt; pseudoSizeBits);
         </code>
       </constructor>
 
@@ -62,7 +81,7 @@
       </method>
 
       <method name   = "fraction"
-              type   = "double"
+              type   = "float"
               access = "PUBLIC"
               desc   = "returns the fraction of channel"
               const  = "TRUE">
@@ -75,14 +94,6 @@
               desc   = "returns the fraction of channel as the integer value (0 or 1)"
               const  = "TRUE">
         <code> return (m_liteCluster &amp; fractionMask ) &gt;&gt; fractionBits ; </code>
-      </method>
-
-      <method name   = "isLarge"
-              type   = "bool"
-              access = "PUBLIC"
-              desc   = "returns true if size is larger than 5"
-              const  = "TRUE">
-        <code> return (m_liteCluster &amp; sizeMask ) &gt;&gt; sizeBits ; </code>
       </method>
 
     </class>

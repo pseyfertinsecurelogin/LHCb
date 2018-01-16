@@ -5,7 +5,8 @@
 
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
-  <package name="FTEvent">
+  <package name   = "FTEvent">
+
     <class name   = "FTCluster"
            id     = "14003"
            author = "Olivier Callot,Eric Cogneras"
@@ -21,8 +22,11 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int size, float charge"
-                   initList = "m_fraction(fraction), m_size(size), m_charge(charge)">
+                   argList  = "LHCb::FTChannelID&amp; id, float fraction, 
+                               int fractionBit, std::vector&lt;LHCb::FTChannelID&gt; channelIDs, 
+                               int isLarge, bool lastEdge, float charge" 
+                   initList = "m_fraction(fraction), m_fractionBit(fractionBit), m_isLarge(isLarge),
+                               m_lastEdge(lastEdge),m_charge(charge), m_channelIDs(channelIDs)">
         <code> this->setKey(id); </code>
       </constructor>
 
@@ -34,24 +38,50 @@
                  desc   = "Retrieve the FTChannelID, key of the object"
                  type   = "const LHCb::FTChannelID&amp;"
                  access = "PUBLIC"
-		 const  = "TRUE" >
+                 const  = "TRUE" >
         <code> return key(); </code>
       </method>
 
-      <attribute name   = "fraction"
-                 desc   = "Fractional part of the channel ID, when barycentre si computed. between -0.25 and 0.75"
-                 type   = "double"
-                 access = "PUBLIC"/>
-
-      <attribute name   = "size"
+      <method    name   = "size"
                  desc   = "Number of cells in this cluster"
                  type   = "int"
+                 access = "PUBLIC"
+                 const  = "TRUE" >
+        <code> return m_channelIDs.size(); </code>
+      </method>
+
+      <attribute name   = "fraction"
+                 desc   = "Fractional part of the channel ID, when barycentre is computed. between -0.25 and 0.75"
+                 type   = "float"
+                 access = "PUBLIC"/>
+
+      <attribute name   = "fractionBit"
+                 desc   = "The fraction of channel as the integer value (0 or 1)"
+                 type   = "int"
+                 access = "PUBLIC"/>
+
+      <attribute name   = "isLarge"
+                 desc   = "size category of the cluster: 0 lt 4, 1 lt 8, 2 others  "
+                 type   = "int"
+                 access = "PUBLIC"/>
+
+      <attribute name   = "lastEdge"
+                 desc   = "Last fragmenmet of fragmented cluster"
+                 type   = "bool"
                  access = "PUBLIC"/>
 
       <attribute name   = "charge"
                  desc   = "Total charge in ADC count"
                  type   = "float"
                  access = "PUBLIC"/>
+
+      <attribute name   = "channelIDs"
+                 desc   = "all FTChannelIDs corresponding to this cluster"
+                 type   = "std::vector&lt;LHCb::FTChannelID&gt;"
+                 setMeth= "FALSE"
+                 access = "PUBLIC"/>
+
+
 
     </class>
   </package>
