@@ -9,6 +9,7 @@ from Gaudi.Configuration import *
 from LHCbKernel.Configuration import *
 from Configurables import ( DDDBConf )
 from Configurables import ( XMLSummary )
+from multiprocessing import cpu_count
 
 class LHCbApp(LHCbConfigurableUser):
     __slots__ = {
@@ -28,6 +29,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,"Persistency"   : None
        ,"IgnoreDQFlags" : True
        ,"EnableHive"    : False
+       ,"ThreadPoolSize": cpu_count()
        ,"OnlineMode"    : False
         }
 
@@ -48,6 +50,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,'Persistency'  : """ Overwrite the default persistency with something else. """
        ,'IgnoreDQFlags': """ If False, process only events with good DQ. Default is True (process all events)"""
        ,'EnableHive'   : """ If True, use HiveEventLoopMgr (deafult False) """
+       ,'ThreadPoolSize': """ If EnableHive is set, size of the thread pool (default cpu_count) """
        ,'OnlineMode'  : """ Set to True for online jobs like monitoring. Default is False """
        }
 
@@ -238,11 +241,8 @@ class LHCbApp(LHCbConfigurableUser):
             whiteboard.EventSlots = 10
 
         # initialize hive settings if not already set
-        from multiprocessing import cpu_count
-        for k, v in (('ThreadPoolSize', cpu_count()),):
-            if not scheduler.isPropertySet(k):
-                setattr(scheduler, k, v)
-
+        if not eventloopmgr.isPropertySet('ThreadPoolSize'):
+            eventloopmgr.ThreadPoolSize = self.getProp("ThreadPoolSize")
         ApplicationMgr().ExtSvc.insert(0, whiteboard)
         ApplicationMgr().EventLoop = eventloopmgr
 
