@@ -230,7 +230,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
 void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
                                            const STTell1Board* aBoard,
-                                           const LHCb::span<const SiADCWord>& adcValues,
+                                           const LHCb::span<const SiADCWord> adcValues,
                                            const STDAQ::version& bankVersion,
                                            STClusters& clusCont) const{
   // stream the neighbour sum
@@ -302,7 +302,7 @@ LHCb::STSummary RawBankToSTClusterAlg::createSummaryBlock(const RawEvent& rawEvt
                    errorBanks.size(), bankList, missing, recoveredBanks);
 }
 
-double RawBankToSTClusterAlg::mean(const LHCb::span<const SiADCWord>& adcValues) const
+double RawBankToSTClusterAlg::mean(const LHCb::span<const SiADCWord> adcValues) const
 {
   double sum = 0;
   double totCharge = 0;
