@@ -12,7 +12,6 @@
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( CaloDataProviderFromTES )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -20,29 +19,30 @@ CaloDataProviderFromTES::CaloDataProviderFromTES( const std::string& type,
                                   const std::string& name,
                                   const IInterface* parent )
   : base_class ( type, name , parent )
+  , m_detectorName( details::alg_name_to_detector( name ) )
 {
-  declareInterface<ICaloDataProvider>(this);
-
-  declareProperty("InputDataLocation" , m_loc = "" );
-  // set default detectorName
-  int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = ( name.compare(index,3, "Prs") == 0 ? "Prs"
-                 : ( name.compare(index,3, "Spd") == 0 ? "Spd"
-                 :   name.substr( index, 4 ) ) );
   //
-  if ( "Ecal" == m_detectorName ) {
+  switch (m_detectorName) {
+  case details::DetectorName_t::Ecal :
     m_digLoc = LHCb::CaloDigitLocation::Ecal;
     m_adcLoc = LHCb::CaloAdcLocation::Ecal;
-  } else if ( "Hcal" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Hcal :
     m_digLoc = LHCb::CaloDigitLocation::Hcal;
     m_adcLoc = LHCb::CaloAdcLocation::Hcal;
-  } else if ( "Prs" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Prs :
     m_digLoc = LHCb::CaloDigitLocation::Prs;
     m_adcLoc = LHCb::CaloAdcLocation::Prs;
-  } else if ( "Spd" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Spd :
     m_digLoc = LHCb::CaloDigitLocation::Spd;
     m_adcLoc = LHCb::CaloAdcLocation::Spd;
+    break;
+  case details::DetectorName_t::Unknown :
+    ; // allow for genconf to work ;-(
   }
+
 }
 
 //=============================================================================
@@ -62,22 +62,23 @@ StatusCode CaloDataProviderFromTES::initialize ( ) {
   IIncidentSvc* inc = incSvc() ;
   if ( inc ) inc -> addListener  ( this , IncidentType::BeginEvent ) ;
 
-
-  if ( "Ecal" == m_detectorName ) {
+  switch (m_detectorName) {
+  case details::DetectorName_t::Ecal :
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
-  } else if ( "Hcal" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Hcal :
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
-  } else if ( "Prs" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Prs :
+  case details::DetectorName_t::Spd :  // Prs FE for SPD
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
-  } else if ( "Spd" == m_detectorName ) {
-    m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs ); // Prs FE for SPD
-  } else {
-    error() << "Unknown detector name " << m_detectorName << endmsg;
-    return StatusCode::FAILURE;
+    break;
+  default :
+    throw std::invalid_argument("unknown detector: " + name() );
   }
 
   //
-  if( m_loc.empty() ){
+  if( m_loc.value().empty() ){
     switch (m_data.value()) {
       case details::source_t::from_adc   : m_loc = m_adcLoc; break;
       case details::source_t::from_digit : m_loc = m_digLoc; break;
@@ -103,16 +104,16 @@ bool CaloDataProviderFromTES::getBanks( ) {
   m_getRaw = false;
   counter("Call for ADC containers") += 1;
   if( fromDigit() ){
-    m_digCont = getIfExists<LHCb::CaloDigits>(evtSvc(),m_loc);
+    m_digCont = getIfExists<LHCb::CaloDigits>(evtSvc(),m_loc.value());
     if( m_digCont ){
       m_ok = true;
-      if ( msgLevel( MSG::DEBUG) )debug() << "Found container " << m_loc << " Content size " << m_digCont->size() << endmsg;
+      if ( msgLevel( MSG::DEBUG) )debug() << "Found container " << m_loc.value() << " Content size " << m_digCont->size() << endmsg;
     }else m_ok = false;
   }else if( fromAdc() ){
-    m_adcCont = getIfExists<LHCb::CaloAdcs>(evtSvc(),m_loc);
+    m_adcCont = getIfExists<LHCb::CaloAdcs>(evtSvc(),m_loc.value());
     if( m_adcCont ){
       m_ok = true;
-      if ( msgLevel( MSG::DEBUG) )debug() << "Found container " << m_loc << " Content size " << m_adcCont->size() << endmsg;
+      if ( msgLevel( MSG::DEBUG) )debug() << "Found container " << m_loc.value() << " Content size " << m_adcCont->size() << endmsg;
     }else m_ok = false;
   }
   if(!m_ok)counter("No container found") += 1;

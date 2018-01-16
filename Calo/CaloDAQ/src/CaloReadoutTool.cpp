@@ -14,7 +14,6 @@
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( CaloReadoutTool )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -22,18 +21,11 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
                   const std::string& name,
                   const IInterface* parent )
   : base_class( type, name , parent )
+  , m_detectorName{  this, "DetectorName", details::alg_name_to_detector( name ) }
 {
-  declareInterface<ICaloReadoutTool>(this);
-
-  declareProperty( "DetectorName"   , m_detectorName );
-  declareProperty( "PackedIsDefault", m_packedIsDefault );
-  declareProperty( "DetectorSpecificHeader", m_extraHeader );
-  declareProperty( "CleanWhenCorruption", m_cleanCorrupted );
-  declareProperty( "PrintStat", m_stat );
-  //new for decoders, initialize search path, and then call the base method
+  // new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Calo, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-
 }
 
 //=========================================================================
@@ -41,7 +33,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
 //=========================================================================
 StatusCode CaloReadoutTool::initialize(){
 
-  StatusCode sc = Decoder::ToolBase::initialize();
+  StatusCode sc = base_class::initialize();
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
@@ -53,7 +45,7 @@ StatusCode CaloReadoutTool::initialize(){
 StatusCode CaloReadoutTool::finalize() {
   IIncidentSvc* inc = incSvc() ;
   if ( inc ) { inc -> removeListener  ( this ) ; }
-  return GaudiTool::finalize();
+  return base_class::finalize();
 }
 
 bool CaloReadoutTool::getCaloBanksFromRaw( ) {
@@ -96,7 +88,7 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
     if ( !m_banks || 0 == m_banks->size() ){
       if ( msgLevel( MSG::DEBUG) )debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
-      counter("No " + m_detectorName + " bank found") += 1;
+      counter("No " + toString(m_detectorName) + " bank found") += 1;
       return false;
     }else{
       if( !m_packedIsDefault){

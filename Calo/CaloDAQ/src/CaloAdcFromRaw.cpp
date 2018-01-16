@@ -34,38 +34,38 @@ constexpr const T& clamp( const T& v, const T& lo, const T& hi) noexcept
 CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
                                 ISvcLocator* pSvcLocator)
 : GaudiAlgorithm ( name , pSvcLocator )
+, m_detectorName( details::alg_name_to_detector( name ) )
 {
-  // set default detectorName
-  int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = ( name.compare(index, 3, "Prs") == 0 ? "Prs"
-                   : name.compare(index, 3, "Spd") == 0 ? "Spd"
-                   : name.substr( index, 4 ) );
-
- if( "Ecal" == m_detectorName ) {
+ switch (m_detectorName) {
+ case details::DetectorName_t::Ecal :
    m_location      = LHCb::CaloAdcLocation::Ecal    ;
    m_l0Location    = LHCb::L0CaloAdcLocation::Ecal  ;
    m_l0BitLocation = "";
    m_caloName    = DeCalorimeterLocation::Ecal;
    m_offset = +256;
- }else if( "Hcal" == m_detectorName ) {
+   break;
+ case details::DetectorName_t::Hcal:
    m_location    = LHCb::CaloAdcLocation::Hcal    ;
    m_l0Location  = LHCb::L0CaloAdcLocation::Hcal ;
    m_l0BitLocation = "";
    m_caloName = DeCalorimeterLocation::Hcal;
    m_offset = +256;
- }else if( "Prs" == m_detectorName ) {
+   break;
+ case details::DetectorName_t::Prs:
    m_location       = LHCb::CaloAdcLocation::Prs ;
    m_l0Location     = "";
    m_l0BitLocation  = LHCb::L0PrsSpdHitLocation::Prs;
    m_caloName = DeCalorimeterLocation::Prs;
    m_offset = 0;
- }else if( "Spd" == m_detectorName ) {
+   break;
+ case details::DetectorName_t::Spd:
    m_location       = "";
    m_l0Location     = "";
    m_l0BitLocation  = LHCb::L0PrsSpdHitLocation::Spd;
    m_caloName = DeCalorimeterLocation::Spd;
    m_offset = 0;
- }else{
+   break;
+ default:
    m_location = "";
    m_l0Location = "";
    m_l0BitLocation = "";
@@ -83,11 +83,11 @@ StatusCode CaloAdcFromRaw::initialize() {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialize" << endmsg;
 
   // get detector elements
-  if( m_caloName.empty() ) return Error("Unknown calo detector name " + m_detectorName,StatusCode::FAILURE);
+  if( m_caloName.empty() ) return Error("Unknown calo detector name ",StatusCode::FAILURE);
   m_calo  = getDet<DeCalorimeter>( m_caloName );
   // get data provider tools
-  m_data = tool<ICaloDataProvider>("CaloDataProvider", m_detectorName + "DataProvider",this);
-  m_l0data = tool<ICaloL0DataProvider>("CaloL0DataProvider",m_detectorName + "L0DataProvider",this);
+  m_data = tool<ICaloDataProvider>("CaloDataProvider", toString(m_detectorName) + "DataProvider",this);
+  m_l0data = tool<ICaloL0DataProvider>("CaloL0DataProvider", toString(m_detectorName) + "L0DataProvider",this);
 
   return StatusCode::SUCCESS;
 }

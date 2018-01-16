@@ -18,10 +18,6 @@ CaloTriggerAdcsFromRaw::CaloTriggerAdcsFromRaw( const std::string& type,
                                                 const IInterface* parent )
   : base_class ( type, name , parent )
 {
-  declareInterface<ICaloTriggerAdcsFromRaw>(this);
-  // define default detector name
-  int index = name.find_first_of(".",0) +1 ; // return -1+1=0 if '.' not found --> OK !!
-  m_detectorName = name.substr( index, 4 );
   // clear data
   clear();
 }
@@ -36,18 +32,21 @@ StatusCode CaloTriggerAdcsFromRaw::initialize ( ) {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
 
-  if ( "Ecal" == m_detectorName ) {
+  switch (m_detectorName) {
+  case details::DetectorName_t::Ecal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
     m_packedType = LHCb::RawBank::EcalPacked;
     m_shortType  = LHCb::RawBank::EcalTrig;
     m_errorType = LHCb::RawBank::EcalPackedError;
-  } else if ( "Hcal" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Hcal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
     m_packedType = LHCb::RawBank::HcalPacked;
     m_shortType  = LHCb::RawBank::HcalTrig;
     m_errorType = LHCb::RawBank::HcalPackedError;
-  } else {
-    error() << "Unknown detector name '" << m_detectorName
+    break;
+  default:
+    error() << "Unknown detector name '" << toString(m_detectorName)
             << "'. Set it by option 'DetectorName', should be Ecal or Hcal" << endmsg;
     return StatusCode::FAILURE;
   }
@@ -74,7 +73,7 @@ void CaloTriggerAdcsFromRaw::cleanData(int feb ) {
     m_pinData.erase( std::remove_if( m_pinData.begin(), m_pinData.end(),
                                      [&](const LHCb::L0CaloAdc& adc) {
                                        return m_calo->cellParam( adc.cellID() ).cardNumber() == feb;
-                                     }), 
+                                     }),
                      m_pinData.end());
   }else{
     m_data.erase( std::remove_if( m_data.begin(), m_data.end(),
@@ -260,7 +259,7 @@ bool CaloTriggerAdcsFromRaw::getData ( const LHCb::RawBank& bank ){
             }
 
 
-            LHCb::CaloCellID id = ( bitNum < chanID.size() ? chanID[ bitNum ] 
+            LHCb::CaloCellID id = ( bitNum < chanID.size() ? chanID[ bitNum ]
                                                            : LHCb::CaloCellID() );
             int adc = ( lastData >> offset ) & 0xFF;
 
