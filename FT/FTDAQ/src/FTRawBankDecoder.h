@@ -21,5 +21,11 @@ struct FTRawBankDecoder : Gaudi::Functional::Transformer< FTLiteClusters( const 
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
+
+  // for MC, following property has to be same as cluster creator, 
+  // not sure how to ensure this (TODO)
+  Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4,
+      "Maximal cluster width"};
+
 };
 #endif // FTRAWBANKDECODER_H

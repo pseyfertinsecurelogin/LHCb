@@ -1,7 +1,7 @@
 #ifndef SIRAWBANKDECODER_H 
 #define SIRAWBANKDECODER_H 1
 
-#include <vector>
+#include <boost/container/small_vector.hpp>
 
 #include "SiDAQ/SiHeaderWord.h"
 #include "SiDAQ/SiADCWord.h"
@@ -107,7 +107,7 @@ public:
    *  @author Kurt Rinnert
    *  @date   2006-02-22
    */
-  typedef std::pair<CLUSTERWORD,std::vector<SiADCWord> > SiDecodedCluster;
+  typedef std::pair<CLUSTERWORD,boost::container::small_vector<SiADCWord, 10> > SiDecodedCluster;
 
   // decoding iterators
 

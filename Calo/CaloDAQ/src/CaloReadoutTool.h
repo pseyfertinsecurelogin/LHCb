@@ -11,6 +11,7 @@
 #include "CaloDAQ/ICaloReadoutTool.h"
 #include "DAQKernel/DecoderToolBase.h"
 
+#include "details.h"
 
 
 
@@ -81,8 +82,8 @@ protected:
   void checkCtrl(int word, int sourceID);
   bool checkSrc(int source);
 
-  std::string  m_detectorName;
-  bool m_packedIsDefault = false;
+  Gaudi::Property<details::DetectorName_t> m_detectorName{ this, "DetectorName", details::DetectorName_t::Unknown };
+  Gaudi::Property<bool> m_packedIsDefault { this, "PackedIsDefault",false };
   const std::vector<LHCb::RawBank*>* m_banks = nullptr;
   DeCalorimeter*   m_calo = nullptr;
   LHCb::RawBank::BankType m_packedType;
@@ -91,14 +92,14 @@ protected:
   bool m_getRaw = true;
 
 
-  bool m_extraHeader = false;
+  Gaudi::Property<bool> m_extraHeader { this, "DetectorSpecificHeader", false };
   bool m_packed = false;
-  bool m_cleanCorrupted = false;
+  Gaudi::Property<bool> m_cleanCorrupted {this, "CleanWhenCorruption", false };
   LHCb::RawBankReadoutStatus m_status;
   std::vector<int> m_readSources;
   bool m_ok = false;
 private:
   bool m_first = true;
-  bool m_stat = false;
+  Gaudi::Property<bool> m_stat { this, "PrintStat", false };
 };
 #endif // CALODAQ_CALOREADOUTTOOL_H

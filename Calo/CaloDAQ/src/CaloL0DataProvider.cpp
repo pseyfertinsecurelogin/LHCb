@@ -14,18 +14,11 @@ DECLARE_COMPONENT( CaloL0DataProvider )
 // Standard constructor, initializes variables
 //=============================================================================
 CaloL0DataProvider::CaloL0DataProvider( const std::string& type,
-                                      const std::string& name,
-                                      const IInterface* parent )
+                                        const std::string& name,
+                                        const IInterface* parent )
 : CaloReadoutTool ( type, name , parent )
 {
 
-  declareInterface<ICaloL0DataProvider>(this);
-
-  // set default detectorName
-  int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = ( name.compare(index,3,"Prs") == 0 ? "Prs"
-                   : name.compare(index,3,"Spd") == 0 ? "Spd"
-                   : name.substr( index, 4 ) );
 }
 //=========================================================================
 //  Initialisation, according to the name -> detector
@@ -36,28 +29,33 @@ StatusCode CaloL0DataProvider::initialize ( ) {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
 
-  if ( "Ecal" == m_detectorName ) {
+  switch(m_detectorName) {
+  case details::DetectorName_t::Ecal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
     m_packedType = LHCb::RawBank::EcalPacked;
     m_shortType  = LHCb::RawBank::EcalTrig;
     m_errorType = LHCb::RawBank::EcalPackedError;
-  } else if ( "Hcal" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Hcal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
     m_packedType = LHCb::RawBank::HcalPacked;
     m_shortType  = LHCb::RawBank::HcalTrig;
     m_errorType = LHCb::RawBank::HcalPackedError;
-  } else if ( "Prs" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Prs:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
     m_packedType = LHCb::RawBank::PrsPacked;
     m_shortType  = LHCb::RawBank::PrsTrig;
     m_errorType = LHCb::RawBank::PrsPackedError;
-  } else if ( "Spd" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Spd:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs ); // Prs FE for SPD
     m_packedType = LHCb::RawBank::PrsPacked;
     m_shortType  = LHCb::RawBank::PrsTrig;
     m_errorType = LHCb::RawBank::PrsPackedError;
-  } else {
-    error() << "Unknown detector name " << m_detectorName << endmsg;
+    break;
+  default:
+    error() << "Unknown detector name " << toString(m_detectorName) << endmsg;
     return StatusCode::FAILURE;
   }
 
@@ -155,7 +153,7 @@ bool CaloL0DataProvider::decodeTell1 (int source) {
 
     if(checkSrc( sourceID ))continue;
 
-    decoded = ( ( "Spd" == m_detectorName || "Prs" == m_detectorName ) ?
+    decoded = ( ( details::DetectorName_t::Spd == m_detectorName || details::DetectorName_t::Prs == m_detectorName ) ?
                 decodePrsTriggerBank( *bank) : decodeBank ( *bank ) );
     if( !decoded ){
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -355,7 +353,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
           LHCb::CaloCellID spdId( (lastID+kk) & 0x3FFF );
 
 
-          if ( "Spd" == m_detectorName)
+          if ( details::DetectorName_t::Spd == m_detectorName)
             fillL0ADC(spdId,(spdData&1),sourceID);
           else
             fillL0ADC(id,(prsData&1),sourceID);
@@ -395,7 +393,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
 
         if( 0 != spdId ){
-          if ( "Spd" == m_detectorName) {
+          if ( details::DetectorName_t::Spd == m_detectorName) {
             if( (item&2) != 0 ){
               LHCb::CaloCellID id ( spdId );   // SPD
               fillL0ADC(id,1,sourceID);
@@ -485,7 +483,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
 
         if ( 0 != id.index() ){
-          if ( "Spd" == m_detectorName) {
+          if ( details::DetectorName_t::Spd == m_detectorName) {
             LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
             fillL0ADC(spdId,isSpd,sourceID);
          }

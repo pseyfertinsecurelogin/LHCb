@@ -1,6 +1,3 @@
-// $Id: DecodeRawBankToClusters.cpp,v 1.17 2010-03-17 18:33:19 krinnert Exp $
-
-#include <vector>
 #include <algorithm>
 #include <sstream>
 
@@ -10,7 +7,7 @@
 #include "DecodeRawBankToClusters.h"
 
 int VeloDAQ::decodeRawBankToClustersV2(
-    const SiDAQ::buffer_word* bank, 
+    const SiDAQ::buffer_word* bank,
     const DeVeloSensor* sensor,
     const bool assumeChipChannels,
     LHCb::VeloClusters& clusters,
@@ -43,8 +40,8 @@ int VeloDAQ::decodeRawBankToClustersV2(
         padci->first.hasHighThreshold(),
         vcid);
 
-    
-    const std::vector<SiADCWord>& adcWords = padci->second;
+
+    const auto& adcWords = padci->second;
 
     int firstStrip = static_cast<int>(stripNumber);
 
@@ -84,11 +81,11 @@ int VeloDAQ::decodeRawBankToClustersV2(
 
 // decoding of bank version 3, treating isp rounding like the TELL1
 int VeloDAQ::decodeRawBankToClustersV3(
-    const SiDAQ::buffer_word* bank, 
+    const SiDAQ::buffer_word* bank,
     const DeVeloSensor* sensor,
     const bool assumeChipChannels,
     LHCb::VeloClusters& clusters,
-    int& byteCount, 
+    int& byteCount,
     std::string& errorMsg,
     bool ignoreErrors )
 {
@@ -118,8 +115,8 @@ int VeloDAQ::decodeRawBankToClustersV3(
         padci->first.hasHighThreshold(),
         vcid);
 
-    
-    const std::vector<SiADCWord>& adcWords = padci->second;
+
+    const auto& adcWords = padci->second;
 
     int firstStrip = static_cast<int>(stripNumber);
 
@@ -146,21 +143,21 @@ int VeloDAQ::decodeRawBankToClustersV3(
 		       static_cast<unsigned int>(adcWords[i].adc())) );
     }
 
-    
+
     // DEBUG: check for "this should never happen"
     LHCb::VeloCluster* clu =  clusters.object(vcid);
     if ( clu ) {
       std::ostringstream errmsg;
-      errmsg << "Cluster of size " << clu->size() << " already in container. " 
-          << "Strip = " << vcid.strip() << ", sensor = " << vcid.sensor()  
+      errmsg << "Cluster of size " << clu->size() << " already in container. "
+          << "Strip = " << vcid.strip() << ", sensor = " << vcid.sensor()
           << ". This inidicates a TELL1 problem." << std::endl;
-      errorMsg = errmsg.str();  
+      errorMsg = errmsg.str();
       continue;
     }
 
     // got all we need, now append new cluster
     clusters.insert(new LHCb::VeloCluster(lc,adcs),vcid);
-    
+
   }
 
   // fetch number of decoded bytes, including 4 byte header, without

@@ -11,6 +11,8 @@
 #include "CaloDAQ/ICaloDataProvider.h"
 #include "CaloDAQ/ICaloL0DataProvider.h"
 
+#include "details.h"
+
 /** @class CaloAdcFromRaw CaloAdcFromRaw.h
  *
  *
@@ -27,7 +29,7 @@ public:
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  std::string m_detectorName;
+  details::DetectorName_t m_detectorName;
   std::string m_caloName;
   Gaudi::Property<std::string> m_location { this, "AdcLocation" };
   Gaudi::Property<std::string> m_l0Location { this, "L0AdcLocation" };

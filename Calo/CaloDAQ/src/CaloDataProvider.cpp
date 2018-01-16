@@ -11,22 +11,6 @@
 
 DECLARE_COMPONENT( CaloDataProvider )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-CaloDataProvider::CaloDataProvider( const std::string& type,
-                                      const std::string& name,
-                                      const IInterface* parent )
-  : base_class ( type, name , parent )
-{
-  declareInterface<ICaloDataProvider>(this);
-
-  // set default detectorName
-  int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = ( name.compare(index,3,"Prs") == 0 ? "Prs"
-                   : name.compare(index,3,"Spd") == 0 ? "Spd"
-                   : name.substr( index,4 ) );
-}
 
 
 //=========================================================================
@@ -38,28 +22,33 @@ StatusCode CaloDataProvider::initialize ( ) {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
 
-  if ( "Ecal" == m_detectorName ) {
+  switch(m_detectorName) {
+  case details::DetectorName_t::Ecal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
     m_packedType = LHCb::RawBank::EcalPacked;
     m_shortType  = LHCb::RawBank::EcalE;
     m_errorType = LHCb::RawBank::EcalPackedError;
-  } else if ( "Hcal" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Hcal:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
     m_packedType = LHCb::RawBank::HcalPacked;
     m_shortType  = LHCb::RawBank::HcalE;
     m_errorType = LHCb::RawBank::HcalPackedError;
-  } else if ( "Prs" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Prs:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
     m_packedType = LHCb::RawBank::PrsPacked;
     m_shortType  = LHCb::RawBank::PrsE;
     m_errorType = LHCb::RawBank::PrsPackedError;
-  } else if ( "Spd" == m_detectorName ) {
+    break;
+  case details::DetectorName_t::Spd:
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Spd ); // Prs FE for SPD
     m_packedType = LHCb::RawBank::PrsPacked;
     m_shortType  = LHCb::RawBank::PrsTrig;
     m_errorType = LHCb::RawBank::PrsPackedError;
-  } else {
-    error() << "Unknown detector name " << m_detectorName << endmsg;
+    break;
+  default:
+    error() << "Unknown detector name " << toString(m_detectorName) << endmsg;
     return StatusCode::FAILURE;
   }
 
@@ -208,7 +197,7 @@ bool CaloDataProvider::decodeTell1 (int source) {
 
     if(checkSrc( sourceID ))continue;
 
-    decoded = ("Spd" == m_detectorName ? decodePrsTriggerBank( *itB )
+    decoded = ( details::DetectorName_t::Spd == m_detectorName ? decodePrsTriggerBank( *itB )
                                        : decodeBank ( *itB ) );
     if( !decoded ){
       Error("Error when decoding bank " + Gaudi::Utils::toString( sourceID)  + " -> incomplete data - May be corrupted").ignore();

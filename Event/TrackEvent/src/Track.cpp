@@ -46,11 +46,33 @@ TrackFitResult* Track::fitResult()
 //=============================================================================
 void Track::setFitResult(LHCb::TrackFitResult* absfit)
 {
-  if ( m_fitResult != absfit )
-  {
-    delete m_fitResult ;
-    m_fitResult = absfit ;
-  }
+  if ( m_fitResult != absfit ) delete std::exchange( m_fitResult, absfit );
+}
+
+//=============================================================================
+// Move assignement operator
+//=============================================================================
+LHCb::Track& Track::operator=(LHCb::Track&& track)
+{
+  setChi2PerDoF( track.chi2PerDoF() );
+  setNDoF( track.nDoF() );
+  setLikelihood( track.likelihood() );
+  setGhostProbability( track.ghostProbability() );
+  setFlags( track.flags() );
+  m_lhcbIDs = std::move(track.m_lhcbIDs);
+
+  // "copy" the states, avoiding real copy
+  std::swap( m_states, track.m_states );
+
+  // copy the track fit info
+  std::swap( m_fitResult, track.m_fitResult );
+
+  m_extraInfo = std::move( track.extraInfo() );
+
+  // copy the ancestors
+  m_ancestors = std::move(track.m_ancestors);
+
+  return *this;
 }
 
 //=============================================================================
@@ -241,15 +263,16 @@ void Track::addToStates( const State& state )
 //=============================================================================
 void Track::addToStates( const StateContainer& states )
 {
-  auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
+  auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
   // The 'if' is ugly, but more efficient than using 'orderByZ'.
   if (checkFlag(Track::Flags::Backward)) {
-    std::sort(pivot,m_states.end(),TrackFunctor::decreasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::decreasingByZ()) ;
+    // it's already sorted in most cases
+    std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
+    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ()) ;
   } else {
-    std::sort(pivot,m_states.end(),TrackFunctor::increasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::increasingByZ());
+    std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
+    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
   }
 }
 
@@ -394,10 +417,8 @@ void Track::copy( const Track& track )
                   [](const LHCb::State* s) { return s->clone(); });
 
   // copy the track fit info
-  if ( track.m_fitResult ) {
-    delete m_fitResult;
-    m_fitResult = track.m_fitResult->clone();
-  }
+  delete std::exchange( m_fitResult, track.m_fitResult ? track.m_fitResult->clone()
+                                                       : nullptr );
 
   setExtraInfo( track.extraInfo() );
 
