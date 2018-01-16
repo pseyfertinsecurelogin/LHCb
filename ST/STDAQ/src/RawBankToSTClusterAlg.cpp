@@ -26,7 +26,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBufferToSTClusterAlg
 //
-// 2004-01-07 : Matthew Needham   
+// 2004-01-07 : Matthew Needham
 // 2016-10-07 : Sebastien Ponce
 //-----------------------------------------------------------------------------
 
@@ -69,7 +69,7 @@ StatusCode RawBankToSTClusterAlg::initialize() {
   // return
   return StatusCode::SUCCESS;
 }
-    
+
 std::tuple<LHCb::STClusters,LHCb::STSummary>
 RawBankToSTClusterAlg::operator()(const LHCb::ODIN& odin, const LHCb::RawEvent& rawEvt) const {
   // make a new digits container
@@ -212,13 +212,13 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
     for (auto iterDecoder = decoder.posAdcBegin(); iterDecoder != decoder.posAdcEnd(); ++iterDecoder){
       if (!recover){
        createCluster(iterDecoder->first,aBoard,
-                     iterDecoder->second,bankVersion, clusCont);
+                     LHCb::make_span(iterDecoder->second),bankVersion, clusCont);
       }
       else {
 	// check that this cluster is ok to be recovered
         if (errorBank != 0 && canBeRecovered(errorBank,iterDecoder->first, pcn) == true){
          createCluster(iterDecoder->first,aBoard,
-                        iterDecoder->second,bankVersion, clusCont);
+                       LHCb::make_span(iterDecoder->second),bankVersion, clusCont);
 	}
       }
     } // iterDecoder
@@ -230,11 +230,11 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
 void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
                                            const STTell1Board* aBoard,
-                                           const std::vector<SiADCWord>& adcValues,
+                                           const LHCb::span<const SiADCWord>& adcValues,
                                            const STDAQ::version& bankVersion,
                                            STClusters& clusCont) const{
   // stream the neighbour sum
-  std::vector<SiADCWord>::const_iterator iterADC = adcValues.begin();
+  auto iterADC = adcValues.begin();
   char neighbour = *iterADC;
   ++iterADC;
 
@@ -270,7 +270,7 @@ void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
 
   if (!clusCont.object(nearestChan.first)) {
     clusCont.insert(newCluster.release(),nearestChan.first);
-  }   
+  }
   else {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "Cluster already exists not inserted: " << aBoard->boardID()<< " " <<  aWord.channelID() << endmsg;
@@ -302,7 +302,7 @@ LHCb::STSummary RawBankToSTClusterAlg::createSummaryBlock(const RawEvent& rawEvt
                    errorBanks.size(), bankList, missing, recoveredBanks);
 }
 
-double RawBankToSTClusterAlg::mean(const std::vector<SiADCWord>& adcValues) const
+double RawBankToSTClusterAlg::mean(const LHCb::span<const SiADCWord>& adcValues) const
 {
   double sum = 0;
   double totCharge = 0;
@@ -310,7 +310,7 @@ double RawBankToSTClusterAlg::mean(const std::vector<SiADCWord>& adcValues) cons
   for (unsigned int i = 1; i < adcValues.size() ; ++i){
     sum += adcValues[i].adc()*(i-1);
     totCharge += adcValues[i].adc();
-  } // i                                                                                        
+  } // i
   return (sum/totCharge);
 }
 
@@ -324,7 +324,7 @@ StatusCode RawBankToSTClusterAlg::finalize() {
     eff = 1.0 - (failed/processed);
   }
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;
-    
+
   return MultiTransformer::finalize();
 }
 
