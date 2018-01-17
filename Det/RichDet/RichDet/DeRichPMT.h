@@ -92,12 +92,18 @@ public:
   /// Access the PD ID
   inline LHCb::RichSmartID pdSmartID() const noexcept { return m_pdSmartID; }
 
+  /// Shortcut to the 'to local' matrix
+  inline const Gaudi::Transform3D & toLocalMatrix() const noexcept
+  {
+    return m_toLocM;
+    //return geometry()->toLocalMatrix();
+  }
+
 private:
 
-  // CRJ Use float not double to reduce memory footprint
-  //using FType = double;
+  /// Floating point to use internal. Use float for reduced memory footprint.
   using FType = float;
-
+  /// int type
   using IPix = LHCb::RichSmartID::DataType;
 
 private:
@@ -149,6 +155,12 @@ private:
   //       Also, data members should be arranged so most commonly 
   //       accessed are listed first.
 
+  /// PD SmartID
+  LHCb::RichSmartID m_pdSmartID;
+
+  /// Cache 'to local' matrix
+  Gaudi::Transform3D m_toLocM;
+
   FType m_zShift{0};
 
   FType m_PmtQwZSize{0};
@@ -182,8 +194,5 @@ private:
   IDetectorElement * m_dePmtAnode = nullptr;
 
   Rich::DetectorType m_rich = Rich::InvalidDetector;
-
-  /// PD SmartID
-  LHCb::RichSmartID m_pdSmartID;
 
 };

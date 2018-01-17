@@ -95,11 +95,11 @@ namespace LHCb
     /** Returns the average photon energy for the given RICH radiator
      *  @param[in] rad The radiator type
      *  @return The average photon energy */
-    inline double avPhotEn( const Rich::RadiatorType rad ) const
+    inline float avPhotEn( const Rich::RadiatorType rad ) const
     {
-      return ( Rich::Rich1Gas == rad ? 4.25 :  // C4F10
-               Rich::Rich2Gas == rad ? 4.40 :  // CF4
-               3.00                        );  // Aerogel 
+      return ( Rich::Rich1Gas == rad ? 4.25f :  // C4F10
+               Rich::Rich2Gas == rad ? 4.40f :  // CF4
+               3.00f                        );  // Aerogel 
     }
 
   public: // helper classes
@@ -247,9 +247,9 @@ namespace LHCb
                       const StateErrors& entryErrs = StateErrors{}, ///< The segment errors at the entry point
                       const StateErrors& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
                       )
-      : m_radIntersections ( std::forward<INTERS>(inters) ),
-        m_radiator         ( rad                      ),
+      : m_radiator         ( rad                      ),
         m_rich             ( rich                     ),
+        m_radIntersections ( std::forward<INTERS>(inters) ),
         m_errorsEntry      ( entryErrs                ),
         m_errorsMiddle     ( Rich::Rich1Gas == rad ? exitErrs : entryErrs ), // CRJ : Is this best ?
         m_errorsExit       ( exitErrs                 ),
@@ -274,11 +274,11 @@ namespace LHCb
                       const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
                       const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
                       )
-      : m_radIntersections ( std::forward<INTERS>(inters) ),
+      : m_radiator         ( rad                      ),
+        m_rich             ( rich                     ),
+        m_radIntersections ( std::forward<INTERS>(inters) ),
         m_middlePoint      ( middP                    ),
         m_middleMomentum   ( middV                    ),
-        m_radiator         ( rad                      ),
-        m_rich             ( rich                     ),
         m_errorsEntry      ( entryErrors              ),
         m_errorsMiddle     ( middleErrors             ),
         m_errorsExit       ( exitErrors               ),
@@ -468,7 +468,7 @@ namespace LHCb
     /// Returns the z coordinate at a given fractional distance along segment
     template< typename TYPE,
               typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline TYPE zCoordAt( const TYPE fraction ) const
+    inline TYPE zCoordAt( const TYPE& fraction ) const
     {
       return fraction*exitPointSIMD().z() + (TYPE::One()-fraction)*entryPointSIMD().z();
     }
@@ -489,7 +489,7 @@ namespace LHCb
     /// Zero gives the entry point, one gives the exit point
     template< typename TYPE,
               typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline SIMDPoint bestPoint( const TYPE fractDist ) const
+    inline SIMDPoint bestPoint( const TYPE& fractDist ) const
     {
       auto p = middlePointSIMD() + (m_exitMidVSIMD*((fractDist-m_midFrac2SIMD)/m_midFrac2SIMD));
       const auto mask = zCoordAt(fractDist) < middlePointSIMD().z();
@@ -641,13 +641,13 @@ namespace LHCb
     }
 
     /// Returns the average observable photon energy
-    inline double avPhotonEnergy() const noexcept
+    inline float avPhotonEnergy() const noexcept
     {
       return m_avPhotonEnergy;
     }
 
     /// Sets the average observable photon energy
-    inline void setAvPhotonEnergy( const double energy ) noexcept
+    inline void setAvPhotonEnergy( const float energy ) noexcept
     {
       m_avPhotonEnergy = energy;
     }
@@ -680,6 +680,9 @@ namespace LHCb
 
   private:  // private data
 
+    Rich::RadiatorType m_radiator = Rich::InvalidRadiator; ///< Rich radiator
+    Rich::DetectorType m_rich     = Rich::InvalidDetector; ///< Rich detector
+
     /// The raw intersections with the radiator volumes
     Rich::RadIntersection::Vector m_radIntersections{1};
 
@@ -688,9 +691,6 @@ namespace LHCb
 
     /// The momentum vector at the segment middle point in the radiator volume
     Gaudi::XYZVector m_middleMomentum;
-
-    Rich::RadiatorType m_radiator = Rich::InvalidRadiator; ///< Rich radiator
-    Rich::DetectorType m_rich     = Rich::InvalidDetector; ///< Rich detector
 
     StateErrors m_errorsEntry;     ///< Errors for the entry state
     StateErrors m_errorsMiddle;    ///< Errors for the middle state
@@ -701,29 +701,13 @@ namespace LHCb
      *  @todo Quick fix. Need to review to if this can be done in a better way
      *        without the need for this variable.
      */
-    double m_avPhotonEnergy = 4.325;
-
-  private: // Some variables for internal caching of information for speed
-
-    /** Rotation matrix used to calculate the theta and phi angles between
-     *  this track segment and a given direction. */
-    Gaudi::Rotation3D m_rotation;
-
-    /** Rotation matrix used to create vectors at a given theta and phi angle
-     *  to this track segment. */
-    Gaudi::Rotation3D m_rotation2;
-
-    Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
-    Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
-    double m_invMidFrac1{0};      ///< Cached fraction 1
-    double m_midFrac2{0};         ///< Cached fraction 2
-    double m_pathLength{0};       ///< Segment path length
+    float m_avPhotonEnergy = 4.325;
 
   private: // SIMD data caches
 
     /// SIMD Entry Point
     SIMDPoint m_entryPointSIMD;
-    
+ 
     /// SIMD Exit Point
     SIMDPoint m_exitPointSIMD;
 
@@ -741,6 +725,22 @@ namespace LHCb
 
     /// SIMD rotations
     SIMDRotation3D m_rotationSIMD, m_rotation2SIMD; 
+
+  private: // Some variables for internal caching of information for speed
+
+    /** Rotation matrix used to calculate the theta and phi angles between
+     *  this track segment and a given direction. */
+    Gaudi::Rotation3D m_rotation;
+
+    /** Rotation matrix used to create vectors at a given theta and phi angle
+     *  to this track segment. */
+    Gaudi::Rotation3D m_rotation2;
+
+    Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
+    Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
+    double m_invMidFrac1{0};      ///< Cached fraction 1
+    double m_midFrac2{0};         ///< Cached fraction 2
+    double m_pathLength{0};       ///< Segment path length
 
   };
 

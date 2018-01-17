@@ -1035,9 +1035,9 @@ DeRichPMTPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
           setRichPmtSmartIDPix( aC[2][i], aC[3][i], smartID[i] );
           
           // coordinate in the PMT
-          const auto coordinPmt = pmt->geometry()->toLocalMatrix() * GP{ hitPosition.x()[i],
-                                                                         hitPosition.y()[i],
-                                                                         hitPosition.z()[i] };
+          const auto coordinPmt = pmt->toLocalMatrix() * GP{ hitPosition.x()[i],
+                                                             hitPosition.y()[i],
+                                                             hitPosition.z()[i] };
           
           // check PMT acceptance
           if ( isInPmt( ( pmt->PmtLensFlag() ? 

@@ -32,16 +32,16 @@ namespace LHCb
   public:
 
     /// Type for internal key
-    typedef uint32_t KeyType;
+    using KeyType = std::uint32_t;
 
     /// Vector of RichSmartIDs
-    typedef std::vector<LHCb::RichSmartID> Vector;
+    using Vector = std::vector<LHCb::RichSmartID>;
 
     /// Numerical type for bit packing
-    typedef uint32_t BitPackType;
+    using BitPackType = std::uint32_t;
 
     /// Type for values in data fields
-    typedef uint32_t DataType;
+    using DataType = std::uint32_t;
 
     /// Number of bits
     static constexpr const BitPackType NBits = 32;
