@@ -57,11 +57,11 @@ private:
 
   void createCluster(const STClusterWord& aWord,
                      const STTell1Board* aBoard,
-                     const LHCb::span<const SiADCWord>& adcValues,
+                     const LHCb::span<const SiADCWord> adcValues,
                      const STDAQ::version& bankVersion,
                      LHCb::STClusters& clusCont) const;
 
-  double mean(const LHCb::span<const SiADCWord>& adcValues) const;
+  double mean(const LHCb::span<const SiADCWord> adcValues) const;
 
   LHCb::STLiteCluster word2LiteCluster(const STClusterWord aWord,
 				       const LHCb::STChannelID chan,
