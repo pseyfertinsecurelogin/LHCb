@@ -8671,6 +8671,26 @@ double Gaudi::Math::PS2DPol::operator ()
   return m_positive ( x , y ) * m_psx ( x ) * m_psy ( y ) ;
 }
 // ============================================================================
+// helper function to make calculations
+// ============================================================================
+double Gaudi::Math::PS2DPol::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  double       result = 0 ;
+  const Gaudi::Math::Bernstein2D& b2d = m_positive.bernstein() ;
+  for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= nY() ; ++iy )
+    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; } 
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
+  const double scaley = ( nY () + 1 ) / ( ymax () - ymin () ) ;
+  //
+  return result * scalex * scaley ;
+}
+// ============================================================================
 // get the helper integral
 // ============================================================================
 namespace
@@ -8811,16 +8831,7 @@ double Gaudi::Math::PS2DPol::integral
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = _integral_ ( m_psx , b2d.basicX ( i ) , x_low , x_high , m_workspace ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx  ,  fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::PS2DPol::integrateY
@@ -8850,18 +8861,9 @@ double Gaudi::Math::PS2DPol::integrateY
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
-  { fx[i] = m_psx ( x ) , b2d.basicX ( i ) ( x ) ; }
+  { fx[i] = m_psx ( x ) * b2d.basicX ( i ) ( x ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx  ,  fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::PS2DPol::integrateX
@@ -8894,16 +8896,7 @@ double Gaudi::Math::PS2DPol::integrateX
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = _integral_ ( m_psx , b2d.basicX ( i ) , x_low , x_high , m_workspace ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx  ,  fy ) ;
 }
 // ============================================================================
 
@@ -8945,6 +8938,27 @@ double Gaudi::Math::PS2DPolSym::operator ()
   return m_positive ( x , y ) * m_ps ( x ) * m_ps ( y ) ;
 }
 // ============================================================================
+// helper function to make calculations
+// ============================================================================
+double Gaudi::Math::PS2DPolSym::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  double       result = 0 ;
+  const Gaudi::Math::Bernstein2DSym& b2d = m_positive.bernstein() ;
+  for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
+  {
+    result   += b2d.par ( ix , ix ) * fx[ix] * fy[ix] ;
+    for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
+    { result += b2d.par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
+  const double scaley = scalex ;
+  //
+  return result * scalex * scaley ;
+}
+// ============================================================================
 double Gaudi::Math::PS2DPolSym::integral
 ( const double xlow , const double xhigh ,
   const double ylow , const double yhigh ) const
@@ -8980,19 +8994,7 @@ double Gaudi::Math::PS2DPolSym::integral
   for  ( unsigned short i = 0 ; i <= n ; ++i )
   { fx[i] = _integral_ ( m_ps , b2d.basic( i )  , x_low , x_high , m_workspace ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= n ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= n ; ++iy )
-    {
-      result +=
-        ix == iy ? b2d.par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5      * b2d.par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  const double scale = ( n + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  return result * scale * scale ;
+  return  calculate  (  fx  ,   fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::PS2DPolSym::integrateY
@@ -9024,19 +9026,7 @@ double Gaudi::Math::PS2DPolSym::integrateY
   for  ( unsigned short i = 0 ; i <= n ; ++i )
   { fx[i] = m_ps ( x ) , b2d.basic( i ) ( x )  ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= n ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= n ; ++iy )
-    {
-      result +=
-        ix == iy ? b2d.par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5      * b2d.par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  const double scale = ( n + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  return result * scale * scale ;
+  return  calculate  (  fx  ,   fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::PS2DPolSym::integrateX
@@ -9106,6 +9096,24 @@ double Gaudi::Math::ExpoPS2DPol::operator ()
   return m_positive ( x , y ) * my_exp ( m_tau * x ) * m_psy ( y ) ;
 }
 // ============================================================================
+double Gaudi::Math::ExpoPS2DPol::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  double       result = 0 ;
+  const Gaudi::Math::Bernstein2D& b2d = m_positive.bernstein() ;
+  for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= nY() ; ++iy )
+    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; } 
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
+  const double scaley = ( nY () + 1 ) / ( ymax () - ymin () ) ;
+  //
+  return result * scalex * scaley ;
+}
+// ============================================================================
 double Gaudi::Math::ExpoPS2DPol::integral
 ( const double xlow , const double xhigh ,
   const double ylow , const double yhigh ) const
@@ -9142,16 +9150,7 @@ double Gaudi::Math::ExpoPS2DPol::integral
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tau , x_low , x_high ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx  , fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::ExpoPS2DPol::integrateY
@@ -9184,16 +9183,7 @@ double Gaudi::Math::ExpoPS2DPol::integrateY
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = b2d.basicX ( i ) ( x ) * my_exp (  m_tau * x ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx  , fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::ExpoPS2DPol::integrateX
@@ -9227,16 +9217,7 @@ double Gaudi::Math::ExpoPS2DPol::integrateX
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tau , x_low , x_high ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx  , fy ) ;
 }
 // ============================================================================
 
@@ -9294,6 +9275,24 @@ double Gaudi::Math::Expo2DPol::operator ()
   return m_positive ( x , y ) * my_exp ( m_tauX * x ) * my_exp ( m_tauY * y ) ;
 }
 // ============================================================================
+double Gaudi::Math::Expo2DPol::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  double       result = 0 ;
+  const Gaudi::Math::Bernstein2D& b2d = m_positive.bernstein() ;
+  for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= nY() ; ++iy )
+    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; } 
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
+  const double scaley = ( nY () + 1 ) / ( ymax () - ymin () ) ;
+  //
+  return result * scalex * scaley ;
+}
+// ============================================================================
 double Gaudi::Math::Expo2DPol::integral
 ( const double xlow , const double xhigh ,
   const double ylow , const double yhigh ) const
@@ -9330,16 +9329,7 @@ double Gaudi::Math::Expo2DPol::integral
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] =  Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tauX , x_low , x_high  ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPol::integrateY
@@ -9372,16 +9362,7 @@ double Gaudi::Math::Expo2DPol::integrateY
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] =  my_exp ( m_tauX * x ) * b2d.basicX ( i ) ( x ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPol::integrateX
@@ -9414,16 +9395,7 @@ double Gaudi::Math::Expo2DPol::integrateX
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] =  Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tauX , x_low , x_high  ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  const double scaley = ( ny + 1 ) / ( m_positive.ymax() - m_positive.ymin() ) ;
-  return result * scalex * scaley ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 
@@ -9463,6 +9435,25 @@ double Gaudi::Math::Expo2DPolSym::operator ()
   return m_positive ( x , y ) * my_exp ( m_tau * ( x + y ) ) ;
 }
 // ============================================================================
+double Gaudi::Math::Expo2DPolSym::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  double       result = 0 ;
+  const Gaudi::Math::Bernstein2DSym& b2d = m_positive.bernstein() ;
+  for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
+  {
+    result   += b2d.par ( ix , ix ) * fx[ix] * fy[ix] ;
+    for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
+    { result += b2d.par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
+  const double scaley = scalex ;
+  //
+  return result * scalex * scaley ;
+}
+// ============================================================================
 double Gaudi::Math::Expo2DPolSym::integral
 ( const double xlow , const double xhigh ,
   const double ylow , const double yhigh ) const
@@ -9499,20 +9490,7 @@ double Gaudi::Math::Expo2DPolSym::integral
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = Gaudi::Math::integrate ( b2d.basic ( i ) , m_tau , x_low , x_high ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    {
-      result +=
-        ix == iy ? b2d.par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5      * b2d.par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  // return result ;
-  const double scale = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  return result * scale * scale ;
+  return calculate ( fx ,  fy  ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateY
@@ -9545,19 +9523,7 @@ double Gaudi::Math::Expo2DPolSym::integrateY
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
   { fx[i] = my_exp ( m_tau * x ) * b2d.basic ( i ) ( x ) ; }
   //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= nx ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= ny ; ++iy )
-    {
-      result +=
-        ix == iy ? b2d.par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5      * b2d.par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  const double scale = ( nx + 1 ) / ( m_positive.xmax() - m_positive.xmin() ) ;
-  return result * scale * scale ;
+  return calculate ( fx ,  fy  ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateX
