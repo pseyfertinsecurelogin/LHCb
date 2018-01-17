@@ -59,6 +59,9 @@ namespace LHCb
     /// Retrieve const  vector of channel IDs
     const std::vector<VPChannelID>& pixels() const noexcept { return m_pixels; }
 
+    /// classID method, needed for MC linking. Returns the CLID of VPCluster for backward compatibility
+    static inline CLID classID() { return 4504; } //CLID_VPCluster
+
   private:
     float m_fx;         ///< inter-pixel fraction in x coordinate
     float m_fy;         ///< inter-pixel fraction in y coordinate
