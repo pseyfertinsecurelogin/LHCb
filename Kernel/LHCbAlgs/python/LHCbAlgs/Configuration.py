@@ -30,6 +30,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,"IgnoreDQFlags" : True
        ,"EnableHive"    : False
        ,"ThreadPoolSize": cpu_count()
+       ,"EnableHLTEventLoopMgr" : False
        ,"OnlineMode"    : False
         }
 
@@ -51,6 +52,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,'IgnoreDQFlags': """ If False, process only events with good DQ. Default is True (process all events)"""
        ,'EnableHive'   : """ If True, use HiveEventLoopMgr (deafult False) """
        ,'ThreadPoolSize': """ If EnableHive is set, size of the thread pool (default cpu_count) """
+       ,'EnableHLTEventLoopMgr' : """ Use HLTEventLoopMgr instead of the HiveSlimEventLoopMgr and AvalancheScheduler """
        ,'OnlineMode'  : """ Set to True for online jobs like monitoring. Default is False """
        }
 
@@ -231,21 +233,26 @@ class LHCbApp(LHCbConfigurableUser):
 
     def setupHive(self):
         '''Enable Hive event loop manager'''
-        from Configurables import (HiveWhiteBoard, HiveSlimEventLoopMgr,
-                                   AvalancheSchedulerSvc, UpdateManagerSvc)
-        scheduler    = AvalancheSchedulerSvc()
+        from Configurables import HiveWhiteBoard
         whiteboard   = HiveWhiteBoard("EventDataSvc")
-        eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
-        # make sure number of event slots are consistent
         if not whiteboard.isPropertySet('EventSlots'):
             whiteboard.EventSlots = 10
+        ApplicationMgr().ExtSvc.insert(0, whiteboard)
 
+        ApplicationMgr().ExtSvc.insert(0, whiteboard)
+        if self.getProp("EnableHLTEventLoopMgr"):
+            from Configurables import HLTEventLoopMgr
+            eventloopmgr = HLTEventLoopMgr()
+        else:
+            from Configurables import HiveSlimEventLoopMgr, AvalancheSchedulerSvc
+            scheduler = AvalancheSchedulerSvc()
+            eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
         # initialize hive settings if not already set
         if not eventloopmgr.isPropertySet('ThreadPoolSize'):
             eventloopmgr.ThreadPoolSize = self.getProp("ThreadPoolSize")
-        ApplicationMgr().ExtSvc.insert(0, whiteboard)
         ApplicationMgr().EventLoop = eventloopmgr
 
+        from Configurables import UpdateManagerSvc
         UpdateManagerSvc().WithoutBeginEvent = True
 
     def __apply_configuration__(self):
