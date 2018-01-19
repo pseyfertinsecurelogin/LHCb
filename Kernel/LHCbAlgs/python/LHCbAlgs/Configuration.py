@@ -238,8 +238,6 @@ class LHCbApp(LHCbConfigurableUser):
         if not whiteboard.isPropertySet('EventSlots'):
             whiteboard.EventSlots = 10
         ApplicationMgr().ExtSvc.insert(0, whiteboard)
-
-        ApplicationMgr().ExtSvc.insert(0, whiteboard)
         if self.getProp("EnableHLTEventLoopMgr"):
             from Configurables import HLTEventLoopMgr
             eventloopmgr = HLTEventLoopMgr()
@@ -248,8 +246,7 @@ class LHCbApp(LHCbConfigurableUser):
             scheduler = AvalancheSchedulerSvc()
             eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
         # initialize hive settings if not already set
-        if not eventloopmgr.isPropertySet('ThreadPoolSize'):
-            eventloopmgr.ThreadPoolSize = self.getProp("ThreadPoolSize")
+        self.propagateProperty('ThreadPoolSize', eventloopmgr)
         ApplicationMgr().EventLoop = eventloopmgr
 
         from Configurables import UpdateManagerSvc
