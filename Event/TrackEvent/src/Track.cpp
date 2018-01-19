@@ -261,7 +261,7 @@ void Track::addToStates( const State& state )
 //=============================================================================
 // Add a list of states to the list associated to the Track. This takes ownership.
 //=============================================================================
-void Track::addToStates( const StateContainer& states )
+void Track::addToStates( const StateContainer& states, LHCb::Tag::AssumeStatesUnordered)
 {
   auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
@@ -279,7 +279,7 @@ void Track::addToStates( const StateContainer& states )
 //=============================================================================
 // Add a set of sorted states by increasing Z to the track. Track takes ownership
 //=============================================================================
-void Track::addSortedForwardToStates( const StateContainer& states )
+void Track::addToStates( const StateContainer& states, LHCb::Tag::AssumeStatesSortedIncreasingZ)
 {
   // debug assert to check whether it's correctly ordered by z
   assert(!checkFlag(Track::Flags::Backward)
