@@ -4607,6 +4607,11 @@ namespace Gaudi
       /// get nX & nY
       unsigned short nX () const { return m_positive.nX () ; }
       unsigned short nY () const { return m_positive.nY () ; }
+      /// xmin/xmax/ymin/ymax
+      double xmin () const {  return  m_positive.xmin () ; }
+      double xmax () const {  return  m_positive.xmax () ; }
+      double ymin () const {  return  m_positive.ymin () ; }
+      double ymax () const {  return  m_positive.ymax () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -4645,6 +4650,12 @@ namespace Gaudi
       const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
       const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }
       // ====================================== ===============================
+    private: // helper functions to make the calculations
+      // ======================================================================
+      /// helper function to make calculations
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// the actual (positive) bernstein polynomial in 2D
@@ -4701,6 +4712,15 @@ namespace Gaudi
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
       // ======================================================================
+      /// get nX & nY
+      unsigned short nX   () const { return m_positive.nX   () ; }
+      unsigned short nY   () const { return m_positive.nY   () ; }
+      /// xmin/xmax/ymin/ymax
+      double         xmin () const { return m_positive.xmin () ; }
+      double         xmax () const { return m_positive.xmax () ; }
+      double         ymin () const { return m_positive.ymin () ; }
+      double         ymax () const { return m_positive.ymax () ; }
+      // ======================================================================
     public:
       // ======================================================================
       /** get the integral over 2D-region
@@ -4738,6 +4758,12 @@ namespace Gaudi
       const Gaudi::Math::Positive2DSym& positive    () const { return m_positive ; }
       const Gaudi::Math::Positive2DSym& polynom     () const { return m_positive ; }
       // ====================================== ===============================
+    private: // helper functions to make the calculations
+      // ======================================================================
+      /// helper function to make calculations
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// the actual (positive) bernstein polynomial in 2D
@@ -4798,9 +4824,15 @@ namespace Gaudi
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
       /// get nX & nY
-      unsigned short nX () const { return m_positive.nX () ; }
-      unsigned short nY () const { return m_positive.nY () ; }
+      unsigned short nX   () const { return m_positive.nX   () ; }
+      unsigned short nY   () const { return m_positive.nY   () ; }
+      /// xmin/xmax/ymin/ymax
+      double         xmin () const { return m_positive.xmin () ; }
+      double         xmax () const { return m_positive.xmax () ; }
+      double         ymin () const { return m_positive.ymin () ; }
+      double         ymax () const { return m_positive.ymax () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -4844,6 +4876,12 @@ namespace Gaudi
       const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
       const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }
       // ====================================== ===============================
+    private: // helper functions to make the calculations
+      // ======================================================================
+      /// helper function to make calculations
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// the actual (positive) bernstein polynomial in 2D
@@ -4898,9 +4936,15 @@ namespace Gaudi
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
       /// get nX & nY
-      unsigned short nX () const { return m_positive.nX () ; }
-      unsigned short nY () const { return m_positive.nY () ; }
+      unsigned short nX   () const { return m_positive.nX   () ; }
+      unsigned short nY   () const { return m_positive.nY   () ; }
+      /// xmin/xmax/ymin/ymax
+      double         xmin () const { return m_positive.xmin () ; }
+      double         xmax () const { return m_positive.xmax () ; }
+      double         ymin () const { return m_positive.ymin () ; }
+      double         ymax () const { return m_positive.ymax () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -4944,6 +4988,12 @@ namespace Gaudi
       const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
       const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }
       // ====================================== ===============================
+    private: // helper functions to make the calculations
+      // ======================================================================
+      /// helper function to make calculations
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// the actual (positive) bernstein polynomial in 2D
@@ -4990,9 +5040,15 @@ namespace Gaudi
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
       /// get nX & nY
-      unsigned short n  () const { return m_positive.nX () ; }
-      unsigned short nX () const { return m_positive.nX () ; }
-      unsigned short nY () const { return m_positive.nY () ; }
+      unsigned short n    () const { return m_positive.nX   () ; }
+      /// get nX & nY
+      unsigned short nX   () const { return m_positive.nX   () ; }
+      unsigned short nY   () const { return m_positive.nY   () ; }
+      /// xmin/xmax/ymin/ymax
+      double         xmin () const { return m_positive.xmin () ; }
+      double         xmax () const { return m_positive.xmax () ; }
+      double         ymin () const { return m_positive.ymin () ; }
+      double         ymax () const { return m_positive.ymax () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -5034,6 +5090,12 @@ namespace Gaudi
       const Gaudi::Math::Positive2DSym& positive () const { return m_positive ; }
       const Gaudi::Math::Positive2DSym& polynom  () const { return m_positive ; }
       // ====================================== ===============================
+    private: // helper functions to make the calculations
+      // ======================================================================
+      /// helper function to make calculations
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// the actual (positive) bernstein polynomial in 2D
