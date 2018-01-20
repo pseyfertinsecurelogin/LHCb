@@ -197,7 +197,7 @@ constexpr auto decreasingByZ = []() {
   const LHCb::State& closestState( const LHCb::Track& track, const Fun& fun )
   {
     const auto& allstates = track.states();
-    auto iter = std::min_element( allstates.begin(), allstates.end(), fun );
+    auto iter = std::min_element( allstates.begin(), allstates.end(), std::cref(fun) );
     if ( iter == allstates.end() )
       throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
