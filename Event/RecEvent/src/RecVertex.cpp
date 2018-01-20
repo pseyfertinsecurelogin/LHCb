@@ -23,7 +23,7 @@ void LHCb::RecVertex::removeFromTracks(const LHCb::Track* track)
   // each track a default weight of 1
   if ( !m_tracks.empty() && m_weights.empty() )
   {
-    m_weights = std::vector<float>( m_tracks.size(), 1.0 );
+    m_weights.resize( m_tracks.size(), 1.0 );
   }
 
   // At this point, the two vectors *must* have the same size
@@ -58,7 +58,7 @@ LHCb::RecVertex::tracksWithWeights() const
         iTk != m_tracks.end() && iW != m_weights.end();
         ++iTk, ++iW )
   {
-    twV.emplace_back( TrackWithWeight( iTk->target(), *iW ) );
+    twV.emplace_back( iTk->target(), *iW );
   }
   return twV;
 }
