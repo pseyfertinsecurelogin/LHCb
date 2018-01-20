@@ -8,7 +8,7 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 #include "Trajectory.h"
-#include "TaggedBool.h"
+#include "GaudiKernel/TaggedBool.h"
 
 
 /** @class ITrajPoca ITrajPoca.h
@@ -24,7 +24,7 @@ struct ITrajPoca : extend_interfaces<IAlgTool> {
 
   DeclareInterfaceID(ITrajPoca, 3, 0 );
 
-  using RestrictRange = xplicit::tagged_bool<struct RestrictRange_tag>;
+  using RestrictRange = Gaudi::tagged_bool<struct RestrictRange_tag>;
 
   /// Find points along trajectories at which the distance between the
   /// trajectories is at its minimum. The precision parameter is the desired
