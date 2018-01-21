@@ -68,9 +68,7 @@ DeOTModule::DeOTModule(const std::string& name) :
   m_halfXPitch(0.0),
   m_monoXZero{0.0,0.0},
   m_calibrationName( "Calibration" ),
-  m_calibration(),
   m_statusName( "Status" ),
-  m_status(),
   m_monoDx(1,0.0)
 {
   /// Constructor
@@ -457,7 +455,7 @@ StatusCode DeOTModule::cacheInfo()
       std::array<Gaudi::XYZPoint,2> points ;
       points[0] = globalPoint( x0 + monosign*monoDx[0]/2, y0, z0 ) ;
       points[1] = globalPoint( x0 + monosign*monoDx[1]/2, y1, z0 ) ;
-      m_trajFirstWire[mono].reset( new LHCb::OTWireTrajImp<1>( points, points.front().y(), points.back().y() ) ) ;
+      m_trajFirstWire[mono] = std::make_unique<LHCb::OTWireTrajImp<1>>( points, points.front().y(), points.back().y() ) ;
     } else {
       // we need the range in global coordinates. ignore the wire displacements for the range.
       const double y0global = globalPoint( x0, y0, z0 ).y() ;
@@ -477,7 +475,7 @@ StatusCode DeOTModule::cacheInfo()
 	points[2*iseg]   = globalPoint( x0 + monosign*monoDx[2*iseg]/2, segy0+iseg*segdy,z0) ;
 	points[2*iseg+1] = globalPoint( x0 + monosign*monoDx[2*iseg+1]/2, segy0+(iseg+1)*segdy, z0 ) ;
       }
-      m_trajFirstWire[mono].reset( new LHCb::OTWireTrajImp<3>( points, y0global, y1global ) ) ;
+      m_trajFirstWire[mono] = std::make_unique<LHCb::OTWireTrajImp<3>>( points, y0global, y1global ) ;
     }
   }
 
