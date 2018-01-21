@@ -5,7 +5,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
-#include "GaudiKernel/AnyDataHandle.h"
+#include "GaudiKernel/DataObjectHandle.h"
 #include "VeloEvent/VeloDecodeStatus.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
@@ -104,10 +104,10 @@ private:
 private:
 
   /// data handler for writing lite clusters to the transient event store
-  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = { LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Writer, this };
+  DataObjectWriteHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = { this,"VeloLiteClustersLocation", LHCb::VeloLiteClusterLocation::Default };
 
   /// data handler for writing clusters to the transient event store
-  DataObjectHandle<LHCb::VeloClusters> m_clusters = { LHCb::VeloClusterLocation::Default, Gaudi::DataHandle::Writer, this};
+  DataObjectWriteHandle<LHCb::VeloClusters> m_clusters = { this, "VeloClusterLocation", LHCb::VeloClusterLocation::Default  };
 
   bool m_decodeToVeloLiteClusters;
   bool m_decodeToVeloClusters;
