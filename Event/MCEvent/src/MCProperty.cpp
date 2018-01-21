@@ -1,4 +1,3 @@
-// $Id: MCProperty.cpp,v 1.2 2005-12-05 16:50:59 cattanem Exp $
 // Include files
 
 // local
@@ -14,7 +13,7 @@
 //=========================================================================
 //  Returns the second member of the pair with the specified key, or zero
 //=========================================================================
-int LHCb::MCProperty::property ( const LHCb::MCParticle* part) {
+int LHCb::MCProperty::property ( const LHCb::MCParticle* part) const {
   if ( !part ) return 0;
   const int key = part->key();
   int indx(0);
@@ -23,14 +22,14 @@ int LHCb::MCProperty::property ( const LHCb::MCParticle* part) {
 }
 
 //=========================================================================
-//  
+//
 //=========================================================================
-bool LHCb::MCProperty::findIndex ( int key, int& index) {
+bool LHCb::MCProperty::findIndex ( int key, int& index) const {
 
   // binary search
   int iF = 0;
   int iL = m_property.size() - 1;
-  while ( iF <= iL ) 
+  while ( iF <= iL )
   {
     const int iM = (iF + iL ) / 2;
     const int tmpKey = m_property[iM].first;
@@ -38,7 +37,9 @@ bool LHCb::MCProperty::findIndex ( int key, int& index) {
     if ( key == tmpKey ) {
       index = iM;
       return true;
-    } else if ( key < tmpKey ) {
+    }
+
+    if ( key < tmpKey ) {
       iL = iM-1;
     } else {
       iF = iM+1;
@@ -52,7 +53,7 @@ bool LHCb::MCProperty::findIndex ( int key, int& index) {
 //  Insert the pair (MCParticle->key,value) at the appropriate place.
 //  l Replace if key exists
 //=========================================================================
-void LHCb::MCProperty::setProperty ( const LHCb::MCParticle* part, int value ) 
+void LHCb::MCProperty::setProperty ( const LHCb::MCParticle* part, int value )
 {
   if ( !part ) return;
   const int key = part->key();
@@ -60,8 +61,8 @@ void LHCb::MCProperty::setProperty ( const LHCb::MCParticle* part, int value )
   if ( findIndex( key, iF ) )
   {
     m_property[iF].second = value;
-  } 
-  else 
+  }
+  else
   {
     m_property.push_back( std::pair<int,int>( 0, 0 ) );
     int iL = m_property.size() - 1;

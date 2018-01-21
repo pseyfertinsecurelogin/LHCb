@@ -50,7 +50,10 @@ long VisPrimVertTool::countVisTracks( const LHCb::MCVertex* pv ) const {
 
   LHCb::MCParticles* MCPartCtnr = get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default);
 
-  MCTrackInfo trInfo( evtSvc(), msgSvc() );
+  SmartDataPtr<LHCb::MCProperty> flags( evtSvc(), LHCb::MCPropertyLocation::TrackInfo );
+  if (!flags) error() << "*** Flag container " << LHCb::MCPropertyLocation::TrackInfo
+                      << " not found." << endmsg;
+  MCTrackInfo trInfo( flags );
 
   long countTracks = 0;
 
