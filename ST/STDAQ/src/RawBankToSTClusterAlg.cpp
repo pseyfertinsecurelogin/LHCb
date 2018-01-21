@@ -212,13 +212,13 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
     for (auto iterDecoder = decoder.posAdcBegin(); iterDecoder != decoder.posAdcEnd(); ++iterDecoder){
       if (!recover){
        createCluster(iterDecoder->first,aBoard,
-                     LHCb::make_span(iterDecoder->second),bankVersion, clusCont);
+                     iterDecoder->second,bankVersion, clusCont);
       }
       else {
 	// check that this cluster is ok to be recovered
         if (errorBank != 0 && canBeRecovered(errorBank,iterDecoder->first, pcn) == true){
          createCluster(iterDecoder->first,aBoard,
-                       LHCb::make_span(iterDecoder->second),bankVersion, clusCont);
+                       iterDecoder->second,bankVersion, clusCont);
 	}
       }
     } // iterDecoder
