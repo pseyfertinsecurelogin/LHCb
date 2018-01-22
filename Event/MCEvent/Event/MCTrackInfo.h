@@ -247,6 +247,20 @@ private:
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
 
+inline MCTrackInfo make_MCTrackInfo( IDataProviderSvc* eventSvc,
+                              IMessageSvc* msgSvc ) {
+  SmartDataPtr<LHCb::MCProperty> flags( eventSvc,
+                                        LHCb::MCPropertyLocation::TrackInfo );
+  if ( ! flags )
+  {
+    MsgStream msg( msgSvc, "MCTrackInfo" );
+    msg << MSG::ERROR
+        << "*** Flag container " << LHCb::MCPropertyLocation::TrackInfo
+        << " not found." << endmsg;
+  }
+  return { flags };
+}
+
 
 inline MCTrackInfo::MCTrackInfo(IDataProviderSvc* eventSvc,
                                 IMessageSvc* msgSvc )
