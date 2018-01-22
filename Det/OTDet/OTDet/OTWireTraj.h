@@ -115,8 +115,7 @@ namespace LHCb
     }
 
     std::unique_ptr<OTWireTraj> cloneOTWireTraj() const override {
-	  return std::unique_ptr<OTWireTrajImp<N>>(new OTWireTrajImp<N>{*this});
-	  //C++14 cling ...  return std::make_unique<OTWireTrajImp<N>>(*this);
+	  return std::make_unique<OTWireTrajImp<N>>(*this);
     }
 
     Index numSegments() const override { return N ; }
@@ -124,8 +123,7 @@ namespace LHCb
     public: // implementation for member functions of the interface
 
     std::unique_ptr<Trajectory> clone() const override {
-      return std::unique_ptr<Trajectory>(new OTWireTrajImp<N>(*this)) ;
-      //C++14 cline ... return std::make_unique<OTWireTrajImp<N>>(*this);
+      return std::make_unique<OTWireTrajImp<N>>(*this);
     }
 
     /// trajectory is parameterized along y

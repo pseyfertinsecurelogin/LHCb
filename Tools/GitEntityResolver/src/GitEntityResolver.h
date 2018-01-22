@@ -66,7 +66,7 @@ public:
   /// Find the URL and returns an auto_ptr to an input stream interface of an
   /// object that can be used to read from the file the URL is pointing to.
   /// Returns an empty pointer if the URL cannot be resolved.
-  using open_result_t = typename std::result_of<decltype ( &IFileAccess::open )( IFileAccess&, std::string )>::type;
+  using open_result_t = std::unique_ptr<std::istream>;
   open_result_t open( const std::string& url ) override { return i_open( url ).first; }
 
   /// @see IFileAccess::protocols
