@@ -190,9 +190,11 @@ bool STReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
 
 STTell1Board* STReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
   // find by board id
-  auto iter = std::find_if( m_boards.begin(), m_boards.end(),
-                            [&](const auto& b) { return b->sameID(aBoardID); } );
-  return iter != m_boards.end() ? iter->get() : nullptr;
+  try {
+    return m_boardsMap.at(aBoardID);
+  } catch (std::out_of_range &e) {
+    return nullptr;
+  }
 }
 
 STTell1Board* STReadoutTool::findByOrder(const unsigned int aValue) const{

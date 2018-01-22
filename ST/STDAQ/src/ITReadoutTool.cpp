@@ -113,6 +113,10 @@ StatusCode ITReadoutTool::createBoards() {
 
      m_boards.push_back(std::move(aBoard));
 
+     if (m_boardsMap.find( anID ) == m_boardsMap.end()) {
+       m_boardsMap[anID] = m_boards.back().get();
+     }
+
    } // boards per region
   } // iterS
 
