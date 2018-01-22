@@ -107,125 +107,44 @@ LHCb::STLiteCluster::STLiteClusters RawBankToSTLiteClusterAlg::operator()(const 
 StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
                                                   STLiteCluster::STLiteClusters& fCont) const {
   std::unique_ptr<LHCb::STTELL1BoardErrorBanks> errorBanks = nullptr;
-  bool errorBanksFailed = false;
 
   const std::vector<RawBank* >&  tBanks = rawEvt.banks(bankType());
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if ( !missing.empty() ){
-    counter("lost Banks") += missing.size() ;
+    //counter("lost Banks") += missing.size() ;
     if (tBanks.empty()){
-      ++counter("no banks found");
+      //++counter("no banks found");
       return StatusCode::SUCCESS;
     }
   }
 
-  const unsigned int pcn = pcnVote(tBanks);
-  if ( msgLevel(MSG::DEBUG) ) debug() << "PCN was voted to be " << pcn << endmsg;
-  if (pcn == STDAQ::inValidPcn) {
-    counter("skipped Banks") += tBanks.size();
-    return Warning("PCN vote failed", StatusCode::SUCCESS,2);
-  }
-
   const bool isUT = (detType() == "UT");
 
-  // loop over the banks of this type..
-
-  for (auto iterBank =  tBanks.begin(); iterBank != tBanks.end() ; ++iterBank){
-
-    ++counter("# valid banks");
-
+  for (auto& bank : tBanks){
+    //++counter("# valid banks");
     // get the board and data
-    STTell1Board* aBoard = readoutTool()->findByBoardID(STTell1ID((*iterBank)->sourceID()));
-    if (!aBoard && !m_skipErrors){
-      Warning( "Invalid source ID --> skip bank"+ std::to_string((*iterBank)->sourceID()),
+    if (bank->magic() != RawBank::MagicPattern) {
+      Warning( "wrong magic pattern "+ std::to_string(bank->sourceID()),
                StatusCode::SUCCESS,2).ignore();
-      ++counter("skipped Banks");
+      //counter("skipped Banks") += tBanks.size();
       continue;
     }
-
-   ++counter("# valid source ID");
-
-   if ((*iterBank)->magic() != RawBank::MagicPattern) {
-      Warning( "wrong magic pattern "+ std::to_string((*iterBank)->sourceID()),
+    STTell1Board* aBoard = readoutTool()->findByBoardID(STTell1ID(bank->sourceID()));
+    if (!aBoard) {
+      Warning( "Invalid source ID --> skip bank"+ std::to_string(bank->sourceID()),
                StatusCode::SUCCESS,2).ignore();
-      counter("skipped Banks") += tBanks.size();
+      //counter("skipped Banks") += tBanks.size();
       continue;
     }
-
-    // make a SmartBank of shorts...
-    STDecoder decoder((*iterBank)->data());
-
-    bool recover = false;
-    if (decoder.hasError() && !m_skipErrors){
-
-      if (!recoverMode()){
-        Warning( "bank has errors, skip sourceID " + std::to_string((*iterBank)->sourceID()),
-                 StatusCode::SUCCESS, 2).ignore();
-        ++counter("skipped Banks");
-        continue;
-      }else{
-        // flag that need to recover....
-        recover = true;
-        ++counter("recovered banks" +  std::to_string((*iterBank)->sourceID()));
-      }
-    }
-
-    // ok this is a bit ugly.....
-    STTELL1BoardErrorBank* errorBank = nullptr;
-    if (recover) {
-      if (!errorBanks.get() && !errorBanksFailed) {
-        try {
-          errorBanks = decodeErrors(rawEvt);
-        } catch (GaudiException &e) {
-          errorBanksFailed = true;
-          warning() << e.what() << endmsg;
-        }
-      }
-      if (errorBanks.get()) {
-        errorBank = errorBanks->object((*iterBank)->sourceID());
-      }
-    }
-
-    if (errorBank) {
-      const unsigned bankpcn = decoder.header().pcn();
-      if (pcn != bankpcn && !m_skipErrors){
-          debug() << "Expected " << pcn << " found " << bankpcn << endmsg;
-        if ( msgLevel(MSG::DEBUG) )
-        Warning("PCNs out of sync sourceID "+ std::to_string((*iterBank)->sourceID())
-                , StatusCode::SUCCESS,2).ignore();
-        ++counter("skipped Banks");
-        continue;
-      }
-    } // errorbank == 0
-
     const STDAQ::version bankVersion = STDAQ::version(forceVersion() ? m_forcedVersion
-                                                                     : (*iterBank)->version() );
-
-    // check the integrity of the bank --> always skip if not ok
-    if (!m_skipErrors && !checkDataIntegrity(decoder, aBoard , (*iterBank)->size() , bankVersion)) continue;
-
+                                                                     : bank->version() );
+    STDecoder decoder(bank->data());
     // read in the first half of the bank
     for (auto iterDecoder = decoder.posBegin();iterDecoder != decoder.posEnd(); ++iterDecoder){
-
-      if (!recover){
         createCluster(aBoard,bankVersion ,*iterDecoder, fCont, isUT);
-      }else{
-        if (errorBank && canBeRecovered(errorBank,*iterDecoder, pcn)){
-          createCluster(aBoard, bankVersion, *iterDecoder, fCont, isUT);
-        } // errorbank
-      } // recover == false
-
     } //decoder
-
   } // iterBank
 
-  // sort and remove any duplicates
-  std::stable_sort(fCont.begin(),fCont.end(), Less_by_Channel());
-  auto iter =  std::unique(fCont.begin(), fCont.end(), Equal_Channel());
-  if (iter != fCont.end()){
-    fCont.resize(iter - fCont.begin());
-    return Warning("Removed duplicate clusters in the decoding", StatusCode::SUCCESS, 100);
-  }
   return StatusCode::SUCCESS;
 }
 

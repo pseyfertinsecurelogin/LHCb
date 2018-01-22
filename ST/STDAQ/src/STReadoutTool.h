@@ -116,6 +116,7 @@ protected:
   unsigned int m_nBoard = 0;
   unsigned int m_nServiceBox;
   std::vector<std::unique_ptr<STTell1Board>> m_boards;
+  std::map<STTell1ID, STTell1Board*> m_boardsMap;
   std::vector<std::string> m_serviceBoxes;
   std::vector<unsigned int> m_firstBoardInRegion;
 
