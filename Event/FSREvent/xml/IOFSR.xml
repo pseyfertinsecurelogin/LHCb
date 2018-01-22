@@ -116,7 +116,7 @@
         desc="Is the FSR reliable? This time, OK wrt streaming. Fill during merging."
         name="statusFlag"
         type="LHCb::IOFSR::StatusFlag"
-        init="LHCb::IOFSR::UNCHECKED"
+        init="LHCb::IOFSR::StatusFlag::UNCHECKED"
        />
 
 

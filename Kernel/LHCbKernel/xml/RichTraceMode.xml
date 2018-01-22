@@ -52,8 +52,8 @@
                  desc     = "Default Constructor"
                  initList = "m_data(0)" >
                 <code>
-                  setDetPlaneBound ( LHCb::RichTraceMode::IgnorePDAcceptance );
-                  setDetPrecision  ( LHCb::RichTraceMode::FlatPDs            );
+                  setDetPlaneBound ( LHCb::RichTraceMode::DetectorPlaneBoundary::IgnorePDAcceptance );
+                  setDetPrecision  ( LHCb::RichTraceMode::DetectorPrecision::FlatPDs            );
                 </code>
         </constructor>
 
@@ -62,7 +62,7 @@
                 explicit = "TRUE"
                 initList = "m_data(0)" >
                 <arg const="TRUE" name="bound"                                     inout="BYVALUE" type="LHCb::RichTraceMode::DetectorPlaneBoundary" />
-                <arg const="TRUE" name="detPrec = LHCb::RichTraceMode::FlatPDs"    inout="BYVALUE" type="LHCb::RichTraceMode::DetectorPrecision" />
+                <arg const="TRUE" name="detPrec = LHCb::RichTraceMode::DetectorPrecision::FlatPDs"    inout="BYVALUE" type="LHCb::RichTraceMode::DetectorPrecision" />
                 <arg const="TRUE" name="forcedSide = false"                        inout="BYVALUE" type="bool" />
                 <arg const="TRUE" name="respectOuter = false"                      inout="BYVALUE" type="bool" />
                 <arg const="TRUE" name="respectMirrSegs = false"                   inout="BYVALUE" type="bool" />

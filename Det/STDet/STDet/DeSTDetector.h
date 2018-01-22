@@ -254,9 +254,9 @@ inline const std::string& DeSTDetLocation::location(const std::string& type){
 }
 
 inline unsigned int DeSTDetLocation::detType(const std::string& type){
-  return ( type == "TT" ? LHCb::STChannelID::typeTT :
-           type == "IT" ? LHCb::STChannelID::typeIT :
-                          LHCb::STChannelID::typeUT );
+  return ( type == "TT" ? LHCb::STChannelID::detType::typeTT :
+           type == "IT" ? LHCb::STChannelID::detType::typeIT :
+                          LHCb::STChannelID::detType::typeUT );
 }
 
 #include "STDet/DeSTSector.h"

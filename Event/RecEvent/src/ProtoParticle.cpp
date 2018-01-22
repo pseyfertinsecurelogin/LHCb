@@ -62,13 +62,13 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeCombinedInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo( LHCb::ProtoParticle::CombDLLe  );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CombDLLmu );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CombDLLpi );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CombDLLk  );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CombDLLp  );
-  erased += this->eraseInfo( LHCb::ProtoParticle::NoPID     );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CombDLLd  );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CombDLLe  );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CombDLLmu );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CombDLLpi );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CombDLLk  );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CombDLLp  );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::NoPID     );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CombDLLd  );
   return erased;
 }
 
@@ -77,14 +77,14 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeRichInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLe );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLmu );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLpi );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLk );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLp );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLbt );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLd );
-  erased += this->eraseInfo( LHCb::ProtoParticle::RichPIDStatus );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLe );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLmu );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLpi );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLk );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLp );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLbt );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichDLLd );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::RichPIDStatus );
   // Set RichPID pointer to NULL
   this->setRichPID(nullptr);
   // Invalidate Combined DLL information since information has changed
@@ -97,16 +97,16 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeMuonInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo( LHCb::ProtoParticle::InAccMuon );
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMuLL );
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonBkgLL );
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonNShared );
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonChi2Corr);
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA1);
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA2);
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA3);
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA4);
-  erased += this->eraseInfo( LHCb::ProtoParticle::MuonPIDStatus );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::InAccMuon );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonMuLL );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonBkgLL );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonNShared );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonChi2Corr);
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA1);
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA2);
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA3);
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA4);
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::MuonPIDStatus );
   // Set MuonPID pointer to NULL
   this->setMuonPID(nullptr);
   // Invalidate Combined DLL information since information has changed
@@ -119,20 +119,20 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeCaloEcalInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo( LHCb::ProtoParticle::InAccEcal );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloTrajectoryL );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloChargedSpd );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloChargedPrs );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloChargedEcal );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloElectronMatch );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloTrMatch );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloEcalE );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloEcalChi2 );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloClusChi2 );
-  erased += this->eraseInfo( LHCb::ProtoParticle::EcalPIDe );
-  erased += this->eraseInfo( LHCb::ProtoParticle::EcalPIDmu );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::InAccEcal );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloTrajectoryL );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloChargedSpd );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloChargedPrs );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloChargedEcal );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloElectronMatch );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloTrMatch );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloEcalE );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloEcalChi2 );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloClusChi2 );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::EcalPIDe );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::EcalPIDmu );
   // removed associated CaloHypos
-  erased += this->clearCalo( LHCb::CaloHypo::EmCharged );
+  erased += this->clearCalo( LHCb::CaloHypo::Hypothesis::EmCharged );
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
@@ -143,13 +143,13 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeCaloBremInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo( LHCb::ProtoParticle::InAccBrem );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloNeutralSpd );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloNeutralPrs );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloNeutralEcal );
-  erased += this->eraseInfo( LHCb::ProtoParticle::CaloBremMatch );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::InAccBrem );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloNeutralSpd );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloNeutralPrs );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloNeutralEcal );
+  erased += this->eraseInfo( LHCb::ProtoParticle::additionalInfo::CaloBremMatch );
   // remove associated Hypos
-  erased += this->clearCalo( LHCb::CaloHypo::Photon );
+  erased += this->clearCalo( LHCb::CaloHypo::Hypothesis::Photon );
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
@@ -160,8 +160,8 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeCaloSpdInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo(LHCb::ProtoParticle::InAccSpd);
-  erased += this->eraseInfo(LHCb::ProtoParticle::CaloSpdE);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::InAccSpd);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::CaloSpdE);
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
@@ -172,9 +172,9 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeCaloPrsInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo(LHCb::ProtoParticle::InAccPrs);
-  erased += this->eraseInfo(LHCb::ProtoParticle::CaloPrsE);
-  erased += this->eraseInfo(LHCb::ProtoParticle::PrsPIDe);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::InAccPrs);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::CaloPrsE);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::PrsPIDe);
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
@@ -185,10 +185,10 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeCaloHcalInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo(LHCb::ProtoParticle::InAccHcal);
-  erased += this->eraseInfo(LHCb::ProtoParticle::CaloHcalE);
-  erased += this->eraseInfo(LHCb::ProtoParticle::HcalPIDe);
-  erased += this->eraseInfo(LHCb::ProtoParticle::HcalPIDmu);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::InAccHcal);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::CaloHcalE);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::HcalPIDe);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::HcalPIDmu);
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
@@ -199,7 +199,7 @@ LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::removeVeloInfo()
 {
   LHCb::ProtoParticle::ExtraInfo::size_type erased = 0;
-  erased += this->eraseInfo(LHCb::ProtoParticle::VeloCharge);
+  erased += this->eraseInfo(LHCb::ProtoParticle::additionalInfo::VeloCharge);
   return erased;
 }
 
@@ -207,7 +207,7 @@ LHCb::ProtoParticle::additionalInfo
 LHCb::ProtoParticle::convertExtraInfo(const std::string& name)
 {
   auto enumval = LHCb::ProtoParticle::additionalInfoToType(name);
-  if(enumval == LHCb::ProtoParticle::LastGlobal) {
+  if(enumval == LHCb::ProtoParticle::additionalInfo::LastGlobal) {
     // 'name' wasn't known
     throw GaudiException( "Unknown enum name " + name,
         "*LHCb::ProtoParticle*", StatusCode::FAILURE );

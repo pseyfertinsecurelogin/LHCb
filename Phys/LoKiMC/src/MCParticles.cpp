@@ -635,16 +635,16 @@ double ProperLifeTime::operator() ( const LHCb::MCParticle* p ) const
   // get the first vertex as "endVertex"
   const LHCb::MCVertex* endVertex = p->endVertices()[0] ;
   // try to find the decay vertex
-  if ( !endVertex || ( LHCb::MCVertex::DecayVertex        != endVertex->type() &&
-                       LHCb::MCVertex::OscillatedAndDecay != endVertex->type() ) )
+  if ( !endVertex || ( LHCb::MCVertex::MCVertexType::DecayVertex        != endVertex->type() &&
+                       LHCb::MCVertex::MCVertexType::OscillatedAndDecay != endVertex->type() ) )
   {
     for ( const LHCb::MCVertex* ev :  p->endVertices() )
     {
 
       if      ( !ev ) { continue ; } // CONTINUE
-      else if ( LHCb::MCVertex::DecayVertex         == ev->type() ) { endVertex = ev ; break ; } // BREAK
-      else if ( LHCb::MCVertex::OscillatedAndDecay  == ev->type() ) { endVertex = ev ; break ; } // BREAK
-      else if ( LHCb::MCVertex::HadronicInteraction == ev->type() ) { endVertex = ev ; }         // ???
+      else if ( LHCb::MCVertex::MCVertexType::DecayVertex         == ev->type() ) { endVertex = ev ; break ; } // BREAK
+      else if ( LHCb::MCVertex::MCVertexType::OscillatedAndDecay  == ev->type() ) { endVertex = ev ; break ; } // BREAK
+      else if ( LHCb::MCVertex::MCVertexType::HadronicInteraction == ev->type() ) { endVertex = ev ; }         // ???
     }
   }
   //
@@ -1562,92 +1562,92 @@ bool MCReconstructibleAs::operator() ( const LHCb::MCParticle* p ) const
 std::ostream& MCReconstructibleAs::fillStream( std::ostream& s ) const
 { return s << "MCRECAS[\"" << IMCReconstructible::text ( m_cat ) << "\"]" ; }
 // ============================================================================
-/*  constructor from the function and child selector 
+/*  constructor from the function and child selector
  *  @param fun    the function to be used
  *  @param index  the index of daughter particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc&   fun   ,
-  const LoKi::MCChild::Selector& child , 
+  const LoKi::MCChild::Selector& child ,
   const double                   bad   )
   : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
   , m_fun   ( fun   )
   , m_child ( child )
   , m_bad   ( bad   )
-{ 
+{
   Assert ( m_child.valid() , "Child selector is invalid!" ) ;
 }
 // ============================================================================
-/* constructor from the function and child selector 
+/* constructor from the function and child selector
  *  @param fun    the function to be used
- *  @param child  the selector of the proper   child 
+ *  @param child  the selector of the proper   child
  *  @param bad    the value to be returned for invalid particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc& fun   ,
-  const LoKi::MCTypes::MCCuts& child , 
+  const LoKi::MCTypes::MCCuts& child ,
   const double                 bad   )
   : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
   , m_fun   ( fun   )
   , m_child ( child )
   , m_bad   ( bad   )
-{ 
+{
   Assert ( m_child.valid() , "Child selector is invalid!" ) ;
 }
 // ============================================================================
-/* constructor from the function and child selector 
+/* constructor from the function and child selector
  *  @param fun    the function to be used
- *  @param child  the selector of the proper   child 
+ *  @param child  the selector of the proper   child
  *  @param bad    the value to be returned for invalid particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc& fun   ,
-  const std::string&           child , 
+  const std::string&           child ,
   const double                 bad   )
   : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
   , m_fun   ( fun   )
   , m_child ( child )
   , m_bad   ( bad   )
-{ 
+{
   Assert ( m_child.valid() , "Child selector is invalid!" ) ;
 }
 // ============================================================================
-/* constructor from the function and child selector 
+/* constructor from the function and child selector
  *  @param fun    the function to be used
- *  @param child  the selector of the proper   child 
+ *  @param child  the selector of the proper   child
  *  @param bad    the value to be returned for invalid particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc&   fun   ,
-  const Decays::IMCDecay::iTree& child , 
+  const Decays::IMCDecay::iTree& child ,
   const double                   bad   )
   : LoKi::AuxFunBase () // can't be reconstructed in C++
   , m_fun   ( fun   )
   , m_child ( child )
   , m_bad   ( bad   )
-{ 
+{
   Assert ( m_child.valid() , "Child selector is invalid!" ) ;
 }
 // ============================================================================
-/* constructor from the function and child selector 
+/* constructor from the function and child selector
  *  @param fun    the function to be used
- *  @param child  the selector of the proper   child 
+ *  @param child  the selector of the proper   child
  *  @param bad    the value to be returned for invalid particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc& fun   ,
-  const Decays::iNode&         child , 
+  const Decays::iNode&         child ,
   const double                 bad   )
-  : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) ) 
+  : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
   , m_fun   ( fun   )
   , m_child ( child )
   , m_bad   ( bad   )
-{ 
+{
   Assert ( m_child.valid() , "Child selector is invalid!" ) ;
 }
 // ============================================================================
@@ -2248,9 +2248,9 @@ bool FromDecays::operator() ( const LHCb::MCParticle* p ) const
   {
     switch ( vertex->type() )
     {
-    case LHCb::MCVertex::ppCollision        : break ;
-    case LHCb::MCVertex::DecayVertex        : break ;
-    case LHCb::MCVertex::OscillatedAndDecay : break ;
+    case LHCb::MCVertex::MCVertexType::ppCollision        : break ;
+    case LHCb::MCVertex::MCVertexType::DecayVertex        : break ;
+    case LHCb::MCVertex::MCVertexType::OscillatedAndDecay : break ;
     default:                                  return false ; // RETURN
     }
     const LHCb::MCParticle* mother = vertex->mother() ;
@@ -2291,9 +2291,9 @@ bool FromInteractions::operator() ( const LHCb::MCParticle* p ) const
   {
     switch ( vertex->type() )
     {
-    case LHCb::MCVertex::ppCollision        : break ;
-    case LHCb::MCVertex::DecayVertex        : break ;
-    case LHCb::MCVertex::OscillatedAndDecay : break ;
+    case LHCb::MCVertex::MCVertexType::ppCollision        : break ;
+    case LHCb::MCVertex::MCVertexType::DecayVertex        : break ;
+    case LHCb::MCVertex::MCVertexType::OscillatedAndDecay : break ;
     default:                                  return true ; // RETURN
     }
     const LHCb::MCParticle* mother = vertex->mother() ;

@@ -1189,8 +1189,8 @@ template <> bool Decays::Trees::Stable_<const LHCb::MCParticle*>::operator()
     //
     switch ( mcv->type() )
     {
-    case LHCb::MCVertex::DecayVertex        : return false ;
-    case LHCb::MCVertex::OscillatedAndDecay : return false ;
+    case LHCb::MCVertex::MCVertexType::DecayVertex        : return false ;
+    case LHCb::MCVertex::MCVertexType::OscillatedAndDecay : return false ;
     default                                 : continue     ;
     }
     //

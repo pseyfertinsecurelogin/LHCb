@@ -45,7 +45,7 @@ StatusCode DeUTLayer::initialize()
   else {
     m_parent = getParent<DeUTLayer>();
     STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeUT, parentID.station(), id(), 0, 0, 0);
+    STChannelID chan(STChannelID::detType::typeUT, parentID.station(), id(), 0, 0, 0);
     setElementID(chan);
     m_modules = getChildren<DeUTLayer>();
     flatten();

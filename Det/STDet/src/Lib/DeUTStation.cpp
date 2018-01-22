@@ -41,7 +41,7 @@ StatusCode DeUTStation::initialize()
     // and the parent
     m_parent = getParent<parent_type>();
 
-    STChannelID aChan(STChannelID::typeUT, this->id(),0,0,0,0);
+    STChannelID aChan(STChannelID::detType::typeUT, this->id(),0,0,0,0);
     setElementID(aChan);
     m_nickname = UTNames().StationToString(aChan);
 

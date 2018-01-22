@@ -53,7 +53,7 @@
         desc="Is the FSR reliable? This also allows FSR counting to be explicitly verified in production"
         name="statusFlag"
         type="LHCb::EventCountFSR::StatusFlag"
-        init="LHCb::EventCountFSR::UNCHECKED"
+        init="LHCb::EventCountFSR::StatusFlag::UNCHECKED"
        />
 
 

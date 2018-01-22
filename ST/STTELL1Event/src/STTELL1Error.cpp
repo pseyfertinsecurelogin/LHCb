@@ -12,7 +12,7 @@
 std::ostream& LHCb::STTELL1Error::fillStream(std::ostream& s) const
 {
 
-  s  << "Tell1 Sent " << sentWords() << " "  << " words " << std::endl; 
+  s  << "Tell1 Sent " << sentWords() << " "  << " words " << std::endl;
 
   if (ErrorBankLength() == 0x14){
     s << "PP FPGA has error info :"  << std::endl ;
@@ -20,17 +20,17 @@ std::ostream& LHCb::STTELL1Error::fillStream(std::ostream& s) const
     s  << " |Sync RAM Full (bits): " << std::bitset<6>(SyncRAMFull()) << std::endl;
     s  << " |TLK Link Loss (bits): (bits) " <<  std::bitset<6>(tlkLnkLoss()) << std::endl;
     s  << "(Event Info) |Sync Evt Size Err. (bits): " <<  std::bitset<6>(SyncEvtSizeError()) << std::endl;
-    s  << " |Opt. Link Disable (bits): " <<  std::bitset<6>(OptLnkDisable()) << std::endl;  
+    s  << " |Opt. Link Disable (bits): " <<  std::bitset<6>(OptLnkDisable()) << std::endl;
     s  << " |Opt. Link NoEvent (bits): " <<  std::bitset<6>(OptLnkNoEvt()) << std::endl;
-    if( SyncRAMFull() != 0) s << "Sync RAM Full ERROR! " 
- 					       << ", Value: " << std::bitset<6>(SyncRAMFull()) << std::endl; 
-    if( tlkLnkLoss() != 0) s << "TLK Link loss ERROR! " 
+    if( SyncRAMFull() != 0) s << "Sync RAM Full ERROR! "
+ 					       << ", Value: " << std::bitset<6>(SyncRAMFull()) << std::endl;
+    if( tlkLnkLoss() != 0) s << "TLK Link loss ERROR! "
 					     << ", Value: " << std::bitset<6>(tlkLnkLoss()) << std::endl;
-    if( SyncEvtSizeError() != 0) s << "Sync Event size ERROR !" 
+    if( SyncEvtSizeError() != 0) s << "Sync Event size ERROR !"
 					     << ", Value: " << std::bitset<6>(SyncEvtSizeError()) << std::endl;
-    if( OptLnkNoEvt() != 0)  s<< "Optical Link no Event ERROR! " 
+    if( OptLnkNoEvt() != 0)  s<< "Optical Link no Event ERROR! "
 				   << ", Value: " <<  std::bitset<6>(OptLnkNoEvt()) << std::endl ;
- 
+
 
     s << "(Event Info) Reserved bit (bits): " << std::bitset<1>(R2())
       << " |PCN Error (bits):" << std::bitset<1>(pcnError())
@@ -60,7 +60,7 @@ std::ostream& LHCb::STTELL1Error::fillStream(std::ostream& s) const
 
   // optional nsz and pedestal bank words
   if(hasNZS() == true){
-    s << "NSZ bank length: " << nzsBankLength()  << std::endl;       
+    s << "NSZ bank length: " << nzsBankLength()  << std::endl;
   }
   if (hasPed() == true) {
     s << "Pedestal bank length: " << PedBankLength() << std::endl;
@@ -80,14 +80,14 @@ std::ostream& LHCb::STTELL1Error::fillStream(std::ostream& s) const
 }
 
 bool LHCb::STTELL1Error::badLink ( const unsigned int beetle,
-                                   const unsigned int port, 
+                                   const unsigned int port,
                                    const unsigned int testpcn ) const{
 
-  return (linkInfo(beetle,port,testpcn) == STTELL1Error::kNone ? false : true); 
+  return (linkInfo(beetle,port,testpcn) == STTELL1Error::FailureMode::kNone ? false : true);
 }
 
-bool  LHCb::STTELL1Error::addLinkInfo (const unsigned int key,  
-                                   const LHCb::STTELL1Error::FailureMode& mode ) { 
+bool  LHCb::STTELL1Error::addLinkInfo (const unsigned int key,
+                                   const LHCb::STTELL1Error::FailureMode& mode ) {
   return m_badLinks.insert( key , mode ).second ;
 }
 
@@ -99,26 +99,26 @@ double LHCb::STTELL1Error::fractionOK(const unsigned int pcn) const{
       if (!badLink(iLink,iPort,pcn)) ++goodLinks;
     } // port
   }  // link
-  return goodLinks/double(totalNumberOfPorts); 
-} 
+  return goodLinks/double(totalNumberOfPorts);
+}
 
-LHCb::STTELL1Error::FailureMode LHCb::STTELL1Error::linkInfo(const unsigned int beetle, 
-                                                             const unsigned int port, 
+LHCb::STTELL1Error::FailureMode LHCb::STTELL1Error::linkInfo(const unsigned int beetle,
+                                                             const unsigned int port,
                                                              const unsigned int testpcn) const
 {
 
   // if link is not in error we have nothhing to do
-  if (hasErrorInfo() == false) return STTELL1Error::kNone;
- 
+  if (hasErrorInfo() == false) return STTELL1Error::FailureMode::kNone;
+
   const unsigned int key = linkID(beetle,port);
   LHCb::STTELL1Error::FailureInfo::iterator i = m_badLinks.find( key ) ;
-  if (m_badLinks.end() !=i) { 
+  if (m_badLinks.end() !=i) {
     return i->second;
   }
 
   // we have to look at the pcn
   const unsigned int pcn = findPCN(beetle);
-  return (pcn != testpcn ? STTELL1Error::kWrongPCN : STTELL1Error::kNone); 
+  return (pcn != testpcn ? STTELL1Error::FailureMode::kWrongPCN : STTELL1Error::FailureMode::kNone);
 }
 
 unsigned int LHCb::STTELL1Error::findPCN(const unsigned int beetle) const{
@@ -131,7 +131,7 @@ unsigned int LHCb::STTELL1Error::findPCN(const unsigned int beetle) const{
       case 3: return pcnBeetle3();
       case 4: return pcnBeetle4();
       case 5: return pcnBeetle5();
-      default : return 200u; // 
+      default : return 200u; //
     }
 }
 
@@ -141,34 +141,34 @@ void LHCb::STTELL1Error::fillErrorInfo() {
   for (unsigned int iLink = 0; iLink < nBeetle ; ++iLink){
     if ( !correctPatterns() )
       {
-        flagBadLinks(iLink,kCorruptedBank);
+        flagBadLinks(iLink,FailureMode::kCorruptedBank);
       }
     else if ( OptLnkDisable() >> iLink & 1 ) {
-      flagBadLinks(iLink,kOptLinkDisabled);      
-    }   
+      flagBadLinks(iLink,FailureMode::kOptLinkDisabled);
+    }
     else  if ( tlkLnkLoss() >> iLink & 1 ) {
-      flagBadLinks(iLink, kTlkLinkLoss);      
-    }   
+      flagBadLinks(iLink, FailureMode::kTlkLinkLoss);
+    }
     else if (OptLnkNoEvt() >> iLink & 1) {
-      flagBadLinks(iLink, kOptLinkNoEvent);
-     } 
+      flagBadLinks(iLink, FailureMode::kOptLinkNoEvent);
+     }
     else if (SyncRAMFull() >> iLink & 1) {
-      flagBadLinks(iLink, kSyncRAMFull);
+      flagBadLinks(iLink, FailureMode::kSyncRAMFull);
     }
     else if (SyncEvtSizeError() >> iLink & 1) {
-      flagBadLinks(iLink, kSyncEvtSize);
+      flagBadLinks(iLink, FailureMode::kSyncEvtSize);
     }
     else if (OptLnkNoClock() >> iLink & 1){
-      flagBadLinks(iLink, kOptLinkNoClock);
+      flagBadLinks(iLink, FailureMode::kOptLinkNoClock);
     }
     else {
       // pseudo error = 1 word per port
       for (unsigned int iPort = 0 ; iPort < nPort; ++iPort ){
 	const unsigned int link = linkID(iLink,iPort);
-        if ( HeaderPseudoError() >> link & 1) addLinkInfo(link, kPseudoHeader); 
-      } // iport 
+        if ( HeaderPseudoError() >> link & 1) addLinkInfo(link, FailureMode::kPseudoHeader);
+      } // iport
     } // if
-  } // iOLink  
+  } // iOLink
 
 }
 
@@ -176,7 +176,7 @@ bool LHCb::STTELL1Error::correctPatterns() const
 {
   if ( ! ((m_word4 & 0xFF) == 0) && (((m_word4 & 0xFF00) / 0x100) == 0x8e) )
     return false;
-  
+
   if ( ! ((m_word4 & 0xFF) == 0) && (((m_word4 & 0xFF00) / 0x100) == 0x8e) )
     return false;
 
@@ -188,17 +188,17 @@ bool LHCb::STTELL1Error::correctPatterns() const
     if ( ! ((m_word12 & 0xFF) == 3) && (((m_word12 & 0xFF00) / 0x100) == 0x8e) )
       return false;
   }
-  
+
 
   if (hasPed())
   {
     if ( ! ((m_word13 & 0xFF) == 4) && (((m_word13 & 0xFF00) / 0x100) == 0x8e) )
       return false;
   }
-  
+
 
   return true;
-    
+
   /*
   bool isOK(true);
 
@@ -214,7 +214,7 @@ bool LHCb::STTELL1Error::correctPatterns() const
   if (hasNZS())
     // testing word12 NZS bank
     isOK *= ((m_word12 & 0xFF) == 3) * (((m_word12 & 0xFF00) / 0x100) == 0x8e);
-  
+
 
   if (hasPed())
     // testing word13 Pedestal bank
@@ -232,14 +232,14 @@ unsigned int LHCb::STTELL1Error::pcnVote() const{
     unsigned int iPort = 0;
     bool good = true;
     while (iPort < nPort && good){
-      const unsigned int key = linkID(iLink,iPort);       
+      const unsigned int key = linkID(iLink,iPort);
       LHCb::STTELL1Error::FailureInfo::iterator i = m_badLinks.find( key ) ;
-      if (i != m_badLinks.end()) good = false; 
+      if (i != m_badLinks.end()) good = false;
       ++iPort;
     }  // port
     if (good == true){
       // we are allowed to vote [the US system]
-      pcns[findPCN(iLink)] += 1;     
+      pcns[findPCN(iLink)] += 1;
     }
   }  // link
 

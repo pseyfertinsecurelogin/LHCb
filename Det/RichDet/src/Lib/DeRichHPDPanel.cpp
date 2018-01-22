@@ -41,7 +41,7 @@ const CLID CLID_DeRichHPDPanel = 12010;  // User defined
 
 // Standard Constructor
 DeRichHPDPanel::DeRichHPDPanel(const std::string & name) :
-  DeRichPDPanel ( name ) 
+  DeRichPDPanel ( name )
 {
   // Set the PD type to HPD
   m_pdType = LHCb::RichSmartID::HPDID;
@@ -79,7 +79,7 @@ StatusCode DeRichHPDPanel::initialize()
   m_DeSiSensors.clear();
   for ( const auto * detelem : childIDetectorElements() )
   {
-    if ( std::string::npos != detelem->name().find("HPD:") ) 
+    if ( std::string::npos != detelem->name().find("HPD:") )
     {
 
       // get HPD
@@ -103,8 +103,8 @@ StatusCode DeRichHPDPanel::initialize()
         // save to list of sensors
         m_DeSiSensors.push_back( deHPD->childIDetectorElements().front() );
         // register UMS dependency
-        updMgrSvc()->registerCondition( this, 
-                                        deHPD->childIDetectorElements().front()->geometry(), 
+        updMgrSvc()->registerCondition( this,
+                                        deHPD->childIDetectorElements().front()->geometry(),
                                         &DeRichHPDPanel::geometryUpdate );
       }
       else
@@ -158,13 +158,13 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   auto inSiliconY = inSilicon.y();
 
   // for points too close to the silicon edge subtarct 1/1000 of a mm
-  if ( (fabs(inSiliconX)+0.001*Gaudi::Units::mm) > m_siliconHalfLengthX ) 
+  if ( (fabs(inSiliconX)+0.001*Gaudi::Units::mm) > m_siliconHalfLengthX )
   {
     const auto signX = ( inSiliconX > 0.0 ? 1 : -1 );
     inSiliconX -= signX*0.001*Gaudi::Units::mm;
   }
 
-  if ( (fabs(inSiliconY)+0.001*Gaudi::Units::mm) > m_siliconHalfLengthY ) 
+  if ( (fabs(inSiliconY)+0.001*Gaudi::Units::mm) > m_siliconHalfLengthY )
   {
     const auto signY = ( inSiliconY > 0.0 ? 1 : -1 );
     inSiliconY -= signY*0.001*Gaudi::Units::mm;
@@ -178,7 +178,7 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
             << dePD(HPDNumber)->name() << endmsg;
     return false;
   }
-  
+
   // pixel 0,0 is at min x and max y (top left corner)
   const auto pixelColumn = (unsigned int)((m_siliconHalfLengthX+inSiliconX)/m_pixelSize);
   const auto pixelRow    = (unsigned int)((m_siliconHalfLengthY-inSiliconY)/m_pixelSize);
@@ -269,8 +269,8 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
 
   // find the intersection with the detection plane
   const auto scalar = vInPanel.Dot(m_localPlaneNormal);
-  if ( UNLIKELY( fabs(scalar) < 1e-50 ) ) 
-  { return LHCb::RichTraceMode::RayTraceFailed; }
+  if ( UNLIKELY( fabs(scalar) < 1e-50 ) )
+  { return LHCb::RichTraceMode::RayTraceResult::RayTraceFailed; }
   const auto scalar_inv = 1.0 / scalar;
 
   // transform point to the HPDPanel coordinate system
@@ -282,7 +282,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
 
   // Set HPD column and row numbers in smart ID
   if ( !findHPDColAndPos(panelIntersection,smartID) )
-  { return LHCb::RichTraceMode::RayTraceFailed; }
+  { return LHCb::RichTraceMode::RayTraceResult::RayTraceFailed; }
 
   // Find the correct DeRichHPD
   const auto * HPD = deHPD( _pdNumber(smartID) );
@@ -294,10 +294,10 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
   panelIntersection = pInPanel + distance*vInPanel;
 
   // default acceptance is inside an HPD
-  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::InPDTube;
+  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::RayTraceResult::InPDTube;
 
   // how are the checks to be done ?
-  if ( mode.detPrecision() != LHCb::RichTraceMode::FullPDs )
+  if ( mode.detPrecision() != LHCb::RichTraceMode::DetectorPrecision::FullPDs )
   {
     // do it quickly using a simplified HPD acceptance (window description)
 
@@ -315,14 +315,14 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
-        res = LHCb::RichTraceMode::OutsidePDPanel;
+        res = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel;
       }
     }
 
     // If we are approximating the HPDs as flat circles, or if we are outside an HPD
     // just using the panel intersection point
-    if ( mode.detPrecision() == LHCb::RichTraceMode::FlatPDs ||
-         res                 != LHCb::RichTraceMode::InPDTube )
+    if ( mode.detPrecision() == LHCb::RichTraceMode::DetectorPrecision::FlatPDs ||
+         res                 != LHCb::RichTraceMode::RayTraceResult::InPDTube )
     {
       // set the window point to panel intersection point
       windowPointGlobal = geometry()->toGlobal( panelIntersection );
@@ -344,13 +344,13 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
     // Overwise slower but fully detailed checks using full HPD windows
 
     // Check for shadowing effects by HPD kapton shields
-    if ( UNLIKELY( mode.hpdKaptonShadowing() && 
+    if ( UNLIKELY( mode.hpdKaptonShadowing() &&
                    HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
     {
       // set final point using panel intersection
       windowPointGlobal = geometry()->toGlobal( panelIntersection );
       // set acceptance flag to outside the HPDPanel
-      res = LHCb::RichTraceMode::OutsidePDPanel;
+      res = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel;
     }
     else
     {
@@ -394,7 +394,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
         // check if the HPD is active or dead
         if ( !m_deRichS->pdIsActive(smartID) )
         {
-          res = LHCb::RichTraceMode::OutsidePDPanel;
+          res = LHCb::RichTraceMode::RayTraceResult::OutsidePDPanel;
         }
 
       } // found intersection with HPD window
@@ -467,7 +467,7 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
 
   // find the intersection with the detection plane
   const auto scalar = vInPanel.Dot(m_localPlaneNormal);
-  if ( fabs(scalar) < 1e-5 ) return LHCb::RichTraceMode::RayTraceFailed;
+  if ( fabs(scalar) < 1e-5 ) return LHCb::RichTraceMode::RayTraceResult::RayTraceFailed;
 
   // transform point to the HPDPanel coordsystem.
   const auto pInPanel = geometry()->toLocal(pGlobal);
@@ -486,8 +486,8 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
   pd = dePD(smartID);
 
   // return final acceptance
-  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ?
-           checkPanelAcc(panelIntersection) : LHCb::RichTraceMode::InPDPanel );
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::DetectorPlaneBoundary::RespectPDPanel ?
+           checkPanelAcc(panelIntersection) : LHCb::RichTraceMode::RayTraceResult::InPDPanel );
 }
 
 //=========================================================================
@@ -500,7 +500,7 @@ bool DeRichHPDPanel::findHPDColAndPos ( const Gaudi::XYZPoint& inPanel,
 
   const auto u = ( Rich::Rich1 == rich() ? inPanel.y() : inPanel.x() );
   const auto v = ( Rich::Rich1 == rich() ? inPanel.x() : inPanel.y() );
-  
+
   // work out nearest column
   auto HPDCol = (long int)((u-m_panelColumnSideEdge)*m_OneOverHPDColPitch);
   if      ( HPDCol >= (long int)nPDColumns() ) { OK = false; HPDCol = nPDColumns()-1; }
@@ -550,7 +550,7 @@ const DeRichPD* DeRichHPDPanel::dePD( const Rich::DAQ::PDPanelIndex PDNumber ) c
 //=========================================================================
 //  generate the transfroms for global <-> local frames
 //=========================================================================
-StatusCode DeRichHPDPanel::geometryUpdate() 
+StatusCode DeRichHPDPanel::geometryUpdate()
 {
   MsgStream msg ( msgSvc(), "DeRichHPDPanel" );
 
@@ -623,13 +623,13 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   const auto & startColPos = param<std::vector<double> >("StartColumnPosition");
   // work in u,v coordinates: u is across a column, v is along
   double HPD00u(0.0), HPD00v(0.0),  HPD10v(0.0);
-  if ( Rich::Rich1 == rich() ) 
+  if ( Rich::Rich1 == rich() )
   {
     HPD00u = startColPos[1];
     HPD00v = startColPos[0];
     HPD10v = startColPos[2];
   }
-  else 
+  else
   {
     HPD00u = startColPos[0];
     HPD00v = startColPos[1];
@@ -666,7 +666,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   const auto* pvHPDSMaster0 = pvHPDMaster0->lvolume()->pvolume(0);
   if ( pvHPDSMaster0->name().find("HPDSMaster") == std::string::npos )
   {
-    msg << MSG::FATAL << "Cannot find HPDSMaster volume : " 
+    msg << MSG::FATAL << "Cannot find HPDSMaster volume : "
         << pvHPDSMaster0->name() << endmsg;
     return StatusCode::FAILURE;
   }
@@ -676,7 +676,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   if ( pvSilicon0 == nullptr ) // multiple HPD volumes
   {
     pvSilicon0 = pvHPDSMaster0->lvolume()->pvolume(10);
-    if ( pvSilicon0 == nullptr || 
+    if ( pvSilicon0 == nullptr ||
          pvSilicon0->name().find("pvRichHPDSiDet") == std::string::npos )
     {
       msg << MSG::FATAL << "Cannot find pvRichHPDSiDet volume ";
@@ -758,7 +758,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
     msg << MSG::VERBOSE << "Local z coord of det plane " << m_detPlaneZ << endmsg;
     msg << MSG::VERBOSE << "Detection plane local2 " << m_localPlane2 << endmsg;
   }
-  
+
   if ( msgLevel(MSG::DEBUG,msg) )
     msg << MSG::DEBUG << "Found " << m_DeHPDs.size() << " DeRichHPDs" << endmsg;
 
@@ -769,15 +769,15 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   if ( Rich::Rich1 == rich() )
   {
     const int sign = ( side() == Rich::top ? 1 : -1 );
-    localTranslation =  ROOT::Math::Translation3D( centreGlobal.x(), 
-                                                   sign*localOffset(), 
+    localTranslation =  ROOT::Math::Translation3D( centreGlobal.x(),
+                                                   sign*localOffset(),
                                                    -detectPlaneZcoord() );
   }
   else
   {
     const int sign = ( side() == Rich::left ? 1 : -1 );
-    localTranslation = ROOT::Math::Translation3D( sign*localOffset(), 
-                                                  centreGlobal.y(), 
+    localTranslation = ROOT::Math::Translation3D( sign*localOffset(),
+                                                  centreGlobal.y(),
                                                   -detectPlaneZcoord() );
   }
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();

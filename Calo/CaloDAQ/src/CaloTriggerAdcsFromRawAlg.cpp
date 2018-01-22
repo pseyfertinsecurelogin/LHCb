@@ -67,7 +67,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
       int card =  m_l0AdcTool->deCalo()->cardNumber( il0Adc.cellID() );
       int tell1=  m_l0AdcTool->deCalo()->cardToTell1( card);
       LHCb::RawBankReadoutStatus& status = m_l0AdcTool->status();
-      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
     }
   }
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -93,7 +93,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
       int card =  m_l0AdcTool->deCalo()->cardNumber( il0PinAdc.cellID() );
       int tell1=  m_l0AdcTool->deCalo()->cardToTell1( card);
       LHCb::RawBankReadoutStatus& status = m_l0AdcTool->status();
-      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
     }
 
     }

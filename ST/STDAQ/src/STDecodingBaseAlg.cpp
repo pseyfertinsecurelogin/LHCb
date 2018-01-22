@@ -304,7 +304,7 @@ std::string STDecodingBaseAlg::toSpill(const std::string& location) const{
 void STDecodingBaseAlg::computeSpillOffset(const std::string& location) {
   // convert spill to offset in time
   std::string spill = toSpill(location);
-  m_spillOffset = (spill.size() > 4u ? LHCb::STCluster::SpillToType(spill) : LHCb::STCluster::Central);
+  m_spillOffset = (spill.size() > 4u ? LHCb::STCluster::SpillToType(spill) : LHCb::STCluster::Spill::Central);
 }
 
 bool STDecodingBaseAlg::validSpill(const LHCb::ODIN& odin) const{

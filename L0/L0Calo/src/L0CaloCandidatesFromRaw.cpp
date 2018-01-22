@@ -63,8 +63,8 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
   std::vector<std::vector<unsigned int> > data;
 
   LHCb::RawBankReadoutStatus readoutStatus( LHCb::RawBank::L0Calo ) ;
-  readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::OK ) ;
-  readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::OK ) ;
+  readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::OK ) ;
+  readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Status::OK ) ;
 
   // Scan the list of input location and select the first existing one.
   // no need to do this any longer, the base class takes care of it
@@ -99,15 +99,15 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
     for ( it = errBanks->begin() ; errBanks -> end() != it ; ++it )
     {
       readoutStatus.addStatus( (*it) -> sourceID() ,
-                               LHCb::RawBankReadoutStatus::ErrorBank ) ;
+                               LHCb::RawBankReadoutStatus::Status::ErrorBank ) ;
     }
   }
 
   if ( 0 == banks.size() )
   {
     Error( "L0Calo Bank has not been found" ).ignore() ;
-    readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing ) ;
-    readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Missing ) ;
+    readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing ) ;
+    readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Status::Missing ) ;
   }
   else
   {
@@ -122,7 +122,7 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
       {
         Error( "L0Calo Bank source has bad magic pattern" ).ignore() ;
         readoutStatus.addStatus( (*itBnk) -> sourceID() ,
-                                 LHCb::RawBankReadoutStatus::Corrupted ) ;
+                                 LHCb::RawBankReadoutStatus::Status::Corrupted ) ;
         continue ;
       }
 
@@ -135,13 +135,13 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
     // Version of the bank
     version = banks.front() -> version() ;
     if ( 0 == sourceZero )
-      readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing ) ;
+      readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing ) ;
     if ( 0 == sourceOne )
-      readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Missing ) ;
+      readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Status::Missing ) ;
     if ( 1 < sourceZero )
-      readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::NonUnique ) ;
+      readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::NonUnique ) ;
     if ( 1 < sourceOne )
-      readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::NonUnique ) ;
+      readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Status::NonUnique ) ;
   }
 
   m_convertTool -> convertRawBankToTES( data, outFull , out , version ,

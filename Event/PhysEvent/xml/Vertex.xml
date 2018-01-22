@@ -45,7 +45,7 @@
       <enum
         desc="Describe how the vertex was made (NEED MORE)"
         name="CreationMethod"
-        value="Unknown=0, Primary=LHCb::VertexBase::Primary, Unconstrained, MassConstrained, LastGlobal=10000"
+        value="Unknown=0, Primary=LHCb::VertexBase::VertexType::Primary, Unconstrained, MassConstrained, LastGlobal=10000"
         access="PUBLIC"
 	/>
 
@@ -67,13 +67,13 @@
 	argList="int key"
 	explicit = "TRUE"
         desc="create a vertex with a selected key"
-        initList = "VertexBase( key ), m_technique(Vertex::Unknown)"
+        initList = "VertexBase( key ), m_technique(Vertex::CreationMethod::Unknown)"
 	/>
 
       <constructor
         argList="const Gaudi::XYZPoint&amp; point"
         desc="Constructor from a point. Needed by some tools. @to-do Find a way to remove this implicit conversion!"
-	initList="VertexBase(point), m_technique(Vertex::Unknown)"
+	initList="VertexBase(point), m_technique(Vertex::CreationMethod::Unknown)"
 	/>
 
       <method
@@ -92,7 +92,7 @@
         name="technique"
         desc="How the vertex was made"
         type="CreationMethod"
-        init="Vertex::Unknown"
+        init="Vertex::CreationMethod::Unknown"
 	/>
 
       <method
@@ -103,7 +103,7 @@
         override="TRUE"
       >
         <code>
-          return Primary == m_technique ;
+          return Vertex::CreationMethod::Primary == m_technique ;
         </code>
       </method>
 

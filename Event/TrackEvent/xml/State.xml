@@ -86,7 +86,7 @@
         desc    = 'Default constructor'
         initList = "m_flags(0), m_stateVector(), m_covariance(), m_z(0.0)">
         <code>
-        setLocation( State::LocationUnknown );
+        setLocation( State::Location::LocationUnknown );
         </code>
       </constructor>
 

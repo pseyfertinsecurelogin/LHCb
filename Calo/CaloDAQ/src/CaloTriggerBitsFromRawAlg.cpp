@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 #include "Event/L0PrsSpdHit.h"
 
@@ -22,10 +22,10 @@ CaloTriggerBitsFromRawAlg::CaloTriggerBitsFromRawAlg( const std::string& name,
                                                       ISvcLocator* pSvcLocator)
 : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("OutputData"  , m_outputData  );  
+  declareProperty("OutputData"  , m_outputData  );
   declareProperty( "Extension"  ,  m_extension = "" );
   declareProperty( "StatusOnTES"   , m_statusOnTES = true);
-  
+
 
   m_toolType  = "CaloTriggerBitsFromRaw";
   m_toolName = name + "Tool";
@@ -44,7 +44,7 @@ StatusCode CaloTriggerBitsFromRawAlg::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
 
   m_l0BitTool = tool<ICaloTriggerBitsFromRaw>( m_toolType, m_toolName , this);
@@ -70,7 +70,7 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
       auto l0Bit = std::make_unique<LHCb::L0PrsSpdHit>( iCell );
       newL0Bits->insert( l0Bit.get() ) ;
       l0Bit.release();
-    }catch(GaudiException &exc) { 
+    }catch(GaudiException &exc) {
       counter("Duplicate l0Bit") += 1;
       std::ostringstream os;
       os << "Duplicate l0Bit for channel " << iCell << " " << std::endl;
@@ -78,12 +78,12 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
       int card =  m_l0BitTool->deCalo()->cardNumber( iCell );
       int tell1=  m_l0BitTool->deCalo()->cardToTell1( card);
       LHCb::RawBankReadoutStatus& status = m_l0BitTool->status();
-      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
     }
   }
-  
+
   if (m_statusOnTES) m_l0BitTool->putStatusOnTES();
-  if (UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if (UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << " L0PrsSpdHits container size " << newL0Bits->size() << endmsg;
   return StatusCode::SUCCESS;
 }

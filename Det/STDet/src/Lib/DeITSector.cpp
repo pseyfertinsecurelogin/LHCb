@@ -51,7 +51,7 @@ StatusCode DeITSector::initialize() {
 
     // see if stereo
     m_isStereo = false;
-    if (elementID().layer() == ITNames::V || elementID().layer() == ITNames::U) m_isStereo = true;
+    if (elementID().layer() == ITNames::Layer::V || elementID().layer() == ITNames::Layer::U) m_isStereo = true;
 
     // build the id
     setID(parentID.sector());

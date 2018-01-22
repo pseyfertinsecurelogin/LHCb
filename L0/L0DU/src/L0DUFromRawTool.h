@@ -137,17 +137,17 @@ inline void L0DUFromRawTool::dataMap(const std::string& name, unsigned int data,
     auto it=L0DUBase::PredefinedData::Alias.find(name);
     // add the alias in the embededd map
     if( it != L0DUBase::PredefinedData::Alias.end()){
-      std::string alias = it->second;  
+      std::string alias = it->second;
       m_dataMap[alias]=std::make_pair(data,scale);
     }
-  } 
+  }
 }
 
 inline bool L0DUFromRawTool::nextData(){
   if( NULL == ++m_data){ //@FIXME: I suspect there is a '*' missing here... i.e. if (!*++m_data)
     Error("READOUTSTATUS : No more data in bank --> CORRUPTION",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Corrupted );
-    m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Incomplete);
+    m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Status::Corrupted );
+    m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Status::Incomplete);
     return false;
   }
   if ( msgLevel( MSG::VERBOSE) )verbose() << "data = " <<  format("0x%04X", *m_data) << endmsg;

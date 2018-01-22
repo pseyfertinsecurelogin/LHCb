@@ -26,7 +26,7 @@ IOFSRSvc::IOFSRSvc(const std::string& name, ISvcLocator* svc )
     m_eventCount(0),
     m_navigatorTool(0),
     m_fileRecordSvc(0),
-    m_trace(LHCb::IOFSR::UNCHECKED),
+    m_trace(LHCb::IOFSR::StatusFlag::UNCHECKED),
     m_merged(false)
 {
   declareProperty("BeginEventIncident", m_beginIncident = IncidentType::BeginEvent);
@@ -404,12 +404,12 @@ StatusCode IOFSRSvc::mergeIOFSRs()
       << ", seen " << m_seenByMap.size() << ", read " << m_readFromMap.size()
       << ", write " << m_writtenToMap.size() << endmsg;
   //check if any traces have failed
-  if (m_trace==LHCb::IOFSR::UNCHECKED)
+  if (m_trace==LHCb::IOFSR::StatusFlag::UNCHECKED)
   {
 
     for ( iofsr = ioFSRs.begin(); iofsr != ioFSRs.end(); ++iofsr )
     {
-      if (iofsr->second->statusFlag() != LHCb::IOFSR::UNCHECKED && iofsr->second->statusFlag() != LHCb::IOFSR::VERIFIED)
+      if (iofsr->second->statusFlag() != LHCb::IOFSR::StatusFlag::UNCHECKED && iofsr->second->statusFlag() != LHCb::IOFSR::StatusFlag::VERIFIED)
       {
         m_trace=iofsr->second->statusFlag();
         break;
@@ -451,7 +451,7 @@ std::string IOFSRSvc::address2GUID(const std::string& address)
 //Does the accounting all add up OK?
 bool IOFSRSvc::traceCounts()
 {
-  if (traceCountsFlag()==LHCb::IOFSR::VERIFIED) return true;
+  if (traceCountsFlag()==LHCb::IOFSR::StatusFlag::VERIFIED) return true;
   warning() << "IOFSRs don't add up, " << traceCountsFlag() << endmsg;
   return false;
 }
@@ -461,17 +461,17 @@ bool IOFSRSvc::traceCounts()
 LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
 {
   if (m_overrideStatus) return m_defaultStatus;
-  if (!m_hasinput) return LHCb::IOFSR::VERIFIED;
+  if (!m_hasinput) return LHCb::IOFSR::StatusFlag::VERIFIED;
 
   debug() << "Tracing IOFSRs" << endmsg;
 
   if (!m_merged)
   {
     error() << "You did not merge the FSRs yet, so the tracing cannot be done, call merge before trace" << endmsg;
-    return LHCb::IOFSR::ERROR;
+    return LHCb::IOFSR::StatusFlag::ERROR;
   }
 
-  if (m_trace!=LHCb::IOFSR::UNCHECKED) return m_trace;
+  if (m_trace!=LHCb::IOFSR::StatusFlag::UNCHECKED) return m_trace;
   //check that all files have been fully read
   for(LHCb::IOFSR::FileEventMap::iterator it=m_writtenToMap.begin(); it!=m_writtenToMap.end(); ++it)
   {
@@ -481,15 +481,15 @@ LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
     if (j == m_readFromMap.end() )
     {
       error() << "Cannot find read record to verify all events read from " << it->first << endmsg;
-      m_trace=LHCb::IOFSR::ERROR;
+      m_trace=LHCb::IOFSR::StatusFlag::ERROR;
     }
     else if (it->second == j->second) continue;
-    else if (it->second > j->second) m_trace=LHCb::IOFSR::EVENTSKIPPED;
-    else if (it->second < j->second) m_trace=LHCb::IOFSR::EVENTDOUBLED;
+    else if (it->second > j->second) m_trace=LHCb::IOFSR::StatusFlag::EVENTSKIPPED;
+    else if (it->second < j->second) m_trace=LHCb::IOFSR::StatusFlag::EVENTDOUBLED;
     break;
   }
 
-  if (m_trace!=LHCb::IOFSR::UNCHECKED) return m_trace;
+  if (m_trace!=LHCb::IOFSR::StatusFlag::UNCHECKED) return m_trace;
 
   debug() << "Tracing provenance, OK" << endmsg;
   //check that the seen counts are the sum of the daughter counts right now.
@@ -499,7 +499,7 @@ LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
 
   if(m_writtenToMap.size()==0)
   {
-    m_trace=LHCb::IOFSR::ERROR;
+    m_trace=LHCb::IOFSR::StatusFlag::ERROR;
     error() << "No writtenToMap, implies no IOFSRs found on parent files" << endmsg;
     return m_trace;
 
@@ -516,7 +516,7 @@ LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
       LHCb::IOFSR::FileEventMap::iterator j = m_writtenToMap.find(pp[it]);
       if (j == m_writtenToMap.end() )
       {
-        m_trace=LHCb::IOFSR::ERROR;
+        m_trace=LHCb::IOFSR::StatusFlag::ERROR;
         error() << "Cannot find write record to verify all events read from " << pp[it] << endmsg;
         break;
       }
@@ -525,13 +525,13 @@ LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
     }
   }
 
-  if (m_trace!=LHCb::IOFSR::UNCHECKED) return m_trace;
+  if (m_trace!=LHCb::IOFSR::StatusFlag::UNCHECKED) return m_trace;
   debug() << "Traced parents, OK" << endmsg;
 
-  if (expected > m_eventCount) m_trace=LHCb::IOFSR::EVENTSKIPPED;
-  else if (expected < m_eventCount) m_trace=LHCb::IOFSR::EVENTDOUBLED;
+  if (expected > m_eventCount) m_trace=LHCb::IOFSR::StatusFlag::EVENTSKIPPED;
+  else if (expected < m_eventCount) m_trace=LHCb::IOFSR::StatusFlag::EVENTDOUBLED;
 
-  if (m_trace!=LHCb::IOFSR::UNCHECKED) return m_trace;
+  if (m_trace!=LHCb::IOFSR::StatusFlag::UNCHECKED) return m_trace;
   debug() << "Event count OK" << endmsg;
 
   //check for input file duplication, double loop
@@ -548,7 +548,7 @@ LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
         warning() << "A file was processed twice." << endmsg;
         warning() << pp[itp] << " is a parent _and_ was used to create "
             << it->first << endmsg;
-        m_trace=LHCb::IOFSR::FILEDOUBLED;
+        m_trace=LHCb::IOFSR::StatusFlag::FILEDOUBLED;
       }
       LHCb::IOFSR::ProvenanceMap::iterator jt=it;
       ++jt;
@@ -560,15 +560,15 @@ LHCb::IOFSR::StatusFlag IOFSRSvc::traceCountsFlag()
         warning() << "A file was processed twice." << endmsg;
         warning() << pp[itp] << " was used to create both ["
             << it->first << "," << jt->first << "]" << endmsg;
-        m_trace=LHCb::IOFSR::FILEDOUBLED;
+        m_trace=LHCb::IOFSR::StatusFlag::FILEDOUBLED;
       }
 
     }
 
   }
-  if (m_trace!=LHCb::IOFSR::UNCHECKED) return m_trace;
+  if (m_trace!=LHCb::IOFSR::StatusFlag::UNCHECKED) return m_trace;
   debug() << "File duplication checked" << endmsg;
-  m_trace=LHCb::IOFSR::VERIFIED;
+  m_trace=LHCb::IOFSR::StatusFlag::VERIFIED;
 
   debug() << "Final result " << m_trace << endmsg;
 

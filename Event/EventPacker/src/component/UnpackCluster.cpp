@@ -29,10 +29,10 @@ DECLARE_COMPONENT( UnpackCluster )
 //=============================================================================
 // explicit comparison for cluster sorting (hidden in anonymous namespace)
 //=============================================================================
-namespace 
+namespace
 {
   template < class TYPE >
-  inline bool compareKeys( const TYPE * a, const TYPE * b ) 
+  inline bool compareKeys( const TYPE * a, const TYPE * b )
   {
     return ( a->key() < b->key() );
   }
@@ -68,7 +68,7 @@ StatusCode UnpackCluster::execute()
   m_utClus = nullptr;
   m_itClus = nullptr;
 
-  // Force creation of non-upgrade locatons. 
+  // Force creation of non-upgrade locatons.
   // Temporary, need to check if all works fine with these removed.
   vClus();
   ttClus();
@@ -85,7 +85,7 @@ StatusCode UnpackCluster::execute()
   // Fill the clusters
   for ( const auto& clu : dst->clusters() )
   {
-    
+
     const int det = clu.id >> 29;
     int id        = clu.id & 0x1FFFFFFF;
     LHCb::VeloCluster::ADCVector adcs;
@@ -107,7 +107,7 @@ StatusCode UnpackCluster::execute()
       LHCb::VeloCluster* vCl = new LHCb::VeloCluster( vl, adcs );
       if ( msgLevel(MSG::VERBOSE) )
         verbose() << " Unpacked " << vCl->channelID() << endmsg;
-      try 
+      try
       {
         vClus()->insert( vCl, vCl->channelID() );
       }
@@ -134,10 +134,10 @@ StatusCode UnpackCluster::execute()
                                                     double(clu.sum),
                                                     clu.sourceID,
                                                     clu.tell1Channel,
-                                                    LHCb::STCluster::Central );
+                                                    LHCb::STCluster::Spill::Central );
         if ( msgLevel(MSG::VERBOSE) )
           verbose() << " Unpacked " << sCl->channelID() << endmsg;
-        try 
+        try
         {
           if ( 2 == det )
           {

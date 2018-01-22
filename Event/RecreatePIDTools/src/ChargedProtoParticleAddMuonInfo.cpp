@@ -61,11 +61,11 @@ StatusCode ChargedProtoParticleAddMuonInfo::execute()
   LHCb::ProtoParticles * protos = getIfExists<LHCb::ProtoParticles>(m_protoPath);
   if ( !protos )
   {
-    return Warning( "No existing ProtoParticle container at " +  
+    return Warning( "No existing ProtoParticle container at " +
                     m_protoPath + " thus do nothing.",
                     StatusCode::SUCCESS );
   }
-  
+
   // Load the MuonPIDs
   const bool muonSc = getMuonData();
   if ( !muonSc ) { return StatusCode::SUCCESS; }
@@ -111,13 +111,13 @@ void ChargedProtoParticleAddMuonInfo::updateMuon( LHCb::ProtoParticle * proto ) 
               << endmsg;
 
   // Store History
-  proto->addInfo( LHCb::ProtoParticle::MuonPIDStatus, muonPID->Status() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonPIDStatus, muonPID->Status() );
 
   // store acceptance flag for those in acceptance (lack of flag signifies
   // track was outside acceptance)
   if ( muonPID->InAcceptance() )
   {
-    proto->addInfo( LHCb::ProtoParticle::InAccMuon, true );
+    proto->addInfo( LHCb::ProtoParticle::additionalInfo::InAccMuon, true );
   }
 
   // reference to MuonPID object
@@ -134,14 +134,14 @@ void ChargedProtoParticleAddMuonInfo::updateMuon( LHCb::ProtoParticle * proto ) 
   }
 
   // Store the PID info
-  proto->addInfo( LHCb::ProtoParticle::MuonMuLL,     muonPID->MuonLLMu() );
-  proto->addInfo( LHCb::ProtoParticle::MuonBkgLL,    muonPID->MuonLLBg() );
-  proto->addInfo( LHCb::ProtoParticle::MuonNShared,  muonPID->nShared()  );
-  proto->addInfo( LHCb::ProtoParticle::MuonChi2Corr, muonPID->chi2Corr() );
-  proto->addInfo( LHCb::ProtoParticle::MuonMVA1,     muonPID->muonMVA1() ); 
-  proto->addInfo( LHCb::ProtoParticle::MuonMVA2,     muonPID->muonMVA2() );
-  proto->addInfo( LHCb::ProtoParticle::MuonMVA3,     muonPID->muonMVA3() );
-  proto->addInfo( LHCb::ProtoParticle::MuonMVA4,     muonPID->muonMVA4() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonMuLL,     muonPID->MuonLLMu() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonBkgLL,    muonPID->MuonLLBg() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonNShared,  muonPID->nShared()  );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonChi2Corr, muonPID->chi2Corr() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA1,     muonPID->muonMVA1() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA2,     muonPID->muonMVA2() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA3,     muonPID->muonMVA3() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::MuonMVA4,     muonPID->muonMVA4() );
 
   // print full ProtoParticle content
   if ( msgLevel(MSG::VERBOSE) ) verbose() << *proto << endmsg;
@@ -161,7 +161,7 @@ bool ChargedProtoParticleAddMuonInfo::getMuonData()
   if ( !muonpids )
   {
     Warning( "No MuonPIDs at '" + m_muonPath +
-             "' -> ProtoParticles will not be changed.", 
+             "' -> ProtoParticles will not be changed.",
              StatusCode::SUCCESS, 1 ).ignore();
     return false;
   }
@@ -193,7 +193,7 @@ bool ChargedProtoParticleAddMuonInfo::getMuonData()
       // Bug in old (u)DSTs. Try and work around using track keys ...
       // Eventually to be removed
       if ( !protos ) { protos = get<LHCb::ProtoParticles>(m_protoPath); }
-      for ( auto * proto : *protos ) 
+      for ( auto * proto : *protos )
       {
         if ( proto->track() &&
              proto->track()->key() == M->key() )

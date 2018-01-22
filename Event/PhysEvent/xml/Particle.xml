@@ -220,7 +220,7 @@
         const="TRUE"
         >
         <code>
-          return info( LHCb::Particle::ConfLevel, -1. ) ;
+          return info( LHCb::Particle::additionalInfo::ConfLevel, -1. ) ;
         </code>
       </method>
       <method
@@ -231,7 +231,7 @@
         const="FALSE"
         >
         <code>
-          addInfo( LHCb::Particle::ConfLevel, cl ) ;
+          addInfo( LHCb::Particle::additionalInfo::ConfLevel, cl ) ;
         </code>
       </method>
       <method
@@ -241,7 +241,7 @@
         const="TRUE"
         >
         <code>
-          return info( LHCb::Particle::Weight, 1. ) ;
+          return info( LHCb::Particle::additionalInfo::Weight, 1. ) ;
         </code>
       </method>
       <method
@@ -252,7 +252,7 @@
         const="FALSE"
         >
         <code>
-          addInfo( LHCb::Particle::Weight, w ) ;
+          addInfo( LHCb::Particle::additionalInfo::Weight, w ) ;
         </code>
       </method>
       <attribute

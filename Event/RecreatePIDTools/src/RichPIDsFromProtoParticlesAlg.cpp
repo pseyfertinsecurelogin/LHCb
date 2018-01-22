@@ -49,7 +49,7 @@ StatusCode RichPIDsFromProtoParticlesAlg::initialize()
   const StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
 
-  info() << "Creating RichPIDs '" << m_richPIDloc 
+  info() << "Creating RichPIDs '" << m_richPIDloc
          << "' from ProtoParticles at '"
          << m_protoPloc << "'" << endmsg;
 
@@ -94,7 +94,7 @@ StatusCode RichPIDsFromProtoParticlesAlg::execute()
         }
 
         // does this proto have any Rich info in it ?
-        if ( proto->hasInfo(ProtoParticle::RichPIDStatus) )
+        if ( proto->hasInfo(ProtoParticle::additionalInfo::RichPIDStatus) )
         {
 
           // new RichPID
@@ -109,19 +109,19 @@ StatusCode RichPIDsFromProtoParticlesAlg::execute()
           // copy info
 
           // history word
-          pid->setPidResultCode( static_cast<unsigned int>(proto->info(ProtoParticle::RichPIDStatus,0)) );
+          pid->setPidResultCode( static_cast<unsigned int>(proto->info(ProtoParticle::additionalInfo::RichPIDStatus,0)) );
 
           // Track Pointer
           pid->setTrack( track );
 
           // DLLs
-          pid->setParticleDeltaLL(Rich::Electron,       (float)proto->info(ProtoParticle::RichDLLe, 0));
-          pid->setParticleDeltaLL(Rich::Muon,           (float)proto->info(ProtoParticle::RichDLLmu,0));
-          pid->setParticleDeltaLL(Rich::Pion,           (float)proto->info(ProtoParticle::RichDLLpi,0));
-          pid->setParticleDeltaLL(Rich::Kaon,           (float)proto->info(ProtoParticle::RichDLLk, 0));
-          pid->setParticleDeltaLL(Rich::Proton,         (float)proto->info(ProtoParticle::RichDLLp, 0));
-          pid->setParticleDeltaLL(Rich::Deuteron,       (float)proto->info(ProtoParticle::RichDLLd, 0));
-          pid->setParticleDeltaLL(Rich::BelowThreshold, (float)proto->info(ProtoParticle::RichDLLbt,0));
+          pid->setParticleDeltaLL(Rich::Electron,       (float)proto->info(ProtoParticle::additionalInfo::RichDLLe, 0));
+          pid->setParticleDeltaLL(Rich::Muon,           (float)proto->info(ProtoParticle::additionalInfo::RichDLLmu,0));
+          pid->setParticleDeltaLL(Rich::Pion,           (float)proto->info(ProtoParticle::additionalInfo::RichDLLpi,0));
+          pid->setParticleDeltaLL(Rich::Kaon,           (float)proto->info(ProtoParticle::additionalInfo::RichDLLk, 0));
+          pid->setParticleDeltaLL(Rich::Proton,         (float)proto->info(ProtoParticle::additionalInfo::RichDLLp, 0));
+          pid->setParticleDeltaLL(Rich::Deuteron,       (float)proto->info(ProtoParticle::additionalInfo::RichDLLd, 0));
+          pid->setParticleDeltaLL(Rich::BelowThreshold, (float)proto->info(ProtoParticle::additionalInfo::RichDLLbt,0));
 
         } // has rich info
 

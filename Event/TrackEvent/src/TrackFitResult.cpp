@@ -169,7 +169,7 @@ unsigned int LHCb::TrackFitResult::nOutliers() const
 {
   return std::count_if( nodes().begin(), nodes().end(),
                         [](const Node* node) {
-                            return node->type() == LHCb::Node::Outlier;
+                            return node->type() == LHCb::Node::Type::Outlier;
   } );
 }
 
@@ -200,7 +200,7 @@ unsigned int LHCb::TrackFitResult::nActiveMeasurements( const LHCb::Measurement:
 {
   return std::count_if( nodes().begin(), nodes().end(),
                         [&](const Node* node) {
-    return node->type() == LHCb::Node::HitOnTrack &&
+    return node->type() == LHCb::Node::Type::HitOnTrack &&
            node->measurement().type() == type;
   });
 }

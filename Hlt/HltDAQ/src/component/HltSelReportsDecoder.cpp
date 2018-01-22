@@ -113,7 +113,7 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
     auto  pBank99 = new unsigned int[hltselreportsRawBank0->size()];
     HltSelRepRawBank hltSelReportsBank99( pBank99 ); // bank assumes ownership!
     std::copy( hltselreportsRawBank0->begin<unsigned int>(), hltselreportsRawBank0->end<unsigned int>(), pBank99);
-    HltSelRepRBHits hitsSubBank99( hltSelReportsBank99.subBankFromID( HltSelRepRBEnums::kHitsID ) );
+    HltSelRepRBHits hitsSubBank99( hltSelReportsBank99.subBankFromID( HltSelRepRBEnums::SubBankIDs::kHitsID ) );
 
     // Populate map with line name and number of candidates
     LHCb::HltObjectSummary summary;
@@ -181,11 +181,11 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
                    return std::copy( bank->begin<unsigned int>(), bank->end<unsigned int>(), p);
   } );
 
-  HltSelRepRBHits hitsSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kHitsID ) );
-  HltSelRepRBObjTyp objTypSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kObjTypID ) );
-  HltSelRepRBSubstr substrSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kSubstrID ) );
-  HltSelRepRBStdInfo stdInfoSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kStdInfoID ) );
-  HltSelRepRBExtraInfo extraInfoSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kExtraInfoID ) );
+  HltSelRepRBHits hitsSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kHitsID ) );
+  HltSelRepRBObjTyp objTypSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kObjTypID ) );
+  HltSelRepRBSubstr substrSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kSubstrID ) );
+  HltSelRepRBStdInfo stdInfoSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kStdInfoID ) );
+  HltSelRepRBExtraInfo extraInfoSubBank( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kExtraInfoID ) );
 
 
   // ----------------------------------------- integrity checks -------------------------
@@ -281,11 +281,11 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
   if ( msgLevel(MSG::VERBOSE) ){
     // print created bank and subbanks inside
     verbose() << hltSelReportsBank << endmsg;
-    verbose() << HltSelRepRBHits( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kHitsID ) ) << endmsg;
-    verbose() << HltSelRepRBObjTyp( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kObjTypID ) ) << endmsg;
-    verbose() << HltSelRepRBSubstr( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kSubstrID ) ) << endmsg;
-    verbose() << HltSelRepRBStdInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kStdInfoID ) ) << endmsg;
-    verbose() << HltSelRepRBExtraInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kExtraInfoID ) ) << endmsg;
+    verbose() << HltSelRepRBHits( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kHitsID ) ) << endmsg;
+    verbose() << HltSelRepRBObjTyp( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kObjTypID ) ) << endmsg;
+    verbose() << HltSelRepRBSubstr( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kSubstrID ) ) << endmsg;
+    verbose() << HltSelRepRBStdInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kStdInfoID ) ) << endmsg;
+    verbose() << HltSelRepRBExtraInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::SubBankIDs::kExtraInfoID ) ) << endmsg;
   }
 
   if( errors ){

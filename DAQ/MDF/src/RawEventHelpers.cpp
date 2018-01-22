@@ -693,7 +693,7 @@ bool LHCb::isTAERawEvent(RawEvent* raw)  {
   //== Check ODIN event type to see if this is TAE
   auto& oBnks = raw->banks(RawBank::ODIN);
   return std::any_of( oBnks.begin(), oBnks.end(), [](const RawBank* bank) {
-    return  bank->begin<OnlineRunInfo>()->triggerType == ODIN::TimingTrigger ||
+    return  bank->begin<OnlineRunInfo>()->triggerType == ODIN::TriggerType::TimingTrigger ||
          bank->begin<OnlineRunInfo>()->TAEWindow   != 0              ;
   } );
 }

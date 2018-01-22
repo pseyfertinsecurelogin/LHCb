@@ -98,19 +98,19 @@ namespace OdinTypesFilter_details {
 
     using  odin_trigger_type_t =
          odin_type_t<LHCb::ODIN::TriggerType,
-                     (LHCb::ODIN::TriggerTypeMask >> LHCb::ODIN::TriggerTypeBits)>;
+                     (LHCb::ODIN::Word8Masks::TriggerTypeMask >> LHCb::ODIN::Word8Bits::TriggerTypeBits)>;
 
     using  odin_readout_type_t =
         odin_type_t<LHCb::ODIN::ReadoutTypes,
-                    (LHCb::ODIN::ReadoutTypeMask >> LHCb::ODIN::ReadoutTypeBits)>;
+                    (LHCb::ODIN::Word8Masks_v4::ReadoutTypeMask >> LHCb::ODIN::Word8Bits_v4::ReadoutTypeBits)>;
 
     using odin_bx_type_t =
         odin_type_t<LHCb::ODIN::BXTypes,
-                    (LHCb::ODIN::BXTypeMask >> LHCb::ODIN::BXTypeBits)>;
+                    (LHCb::ODIN::Word8Masks::BXTypeMask >> LHCb::ODIN::Word8Bits::BXTypeBits)>;
 
     using odin_calibration_type_t =
         odin_type_t<LHCb::ODIN::CalibrationTypes,
-                    (LHCb::ODIN::CalibrationTypeMask >> LHCb::ODIN::CalibrationTypeBits)>;
+                    (LHCb::ODIN::Word8Masks::CalibrationTypeMask >> LHCb::ODIN::Word8Bits::CalibrationTypeBits)>;
 
     //=======================================================
 }

@@ -233,13 +233,13 @@
         name="triggerType"
         desc="Trigger Type @see enum LHCb::ODIN::TriggerType"
         type="TriggerType"
-        init="PhysicsTrigger" />
+        init="TriggerType::PhysicsTrigger" />
 
       <attribute
         name="readoutType"
         desc="Readout Type (@see enum LHCb::ODIN::ReadoutTypes). Meaningful only if bank version &lt; 5."
         type="ReadoutTypes"
-        init="ZeroSuppressed" />
+        init="ReadoutTypes::ZeroSuppressed" />
 
       <attribute
         name="forceBit"
@@ -251,7 +251,7 @@
         name="bunchCrossingType"
         desc="Bunch Crossing Type (BXType, @see enum LHCb::ODIN::BXTypes)"
         type="BXTypes"
-        init="NoBeam" />
+        init="BXTypes::NoBeam" />
 
       <attribute
         name="bunchCurrent"
@@ -287,7 +287,7 @@
         name="calibrationType"
         desc="Calibration Type (@see enum LHCb::ODIN::CalibrationTypes). Meaningful only if bank version &gt;= 5."
         type="CalibrationTypes"
-        init="A" />
+        init="CalibrationTypes::A" />
 
 	<constructor
 		desc     = "Copy constructor. Creates a new ODIN object with the same information"
@@ -314,7 +314,7 @@
       <method type="bool" name="isFlagging" const="TRUE"
       	desc="">
       	<code>
-      	  return eventType() &amp; FlaggingModeMask;
+      	  return eventType() &amp; EventTypeMasks::FlaggingModeMask;
         </code>
       </method>
     </class>

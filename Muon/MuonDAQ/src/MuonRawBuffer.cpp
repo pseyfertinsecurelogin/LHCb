@@ -878,7 +878,7 @@ StatusCode MuonRawBuffer::checkBankSize(const LHCb::RawBank* rawdata)
   if(bank_size<12){
     err()<< " muon bank "<<tell1Number<<" is too short "<<
       bank_size<<endmsg;
-    m_status.addStatus(tell1Number,RawBankReadoutStatus::Incomplete);
+    m_status.addStatus(tell1Number,RawBankReadoutStatus::Status::Incomplete);
     return StatusCode::FAILURE;
   }
   //how many pads ?
@@ -893,7 +893,7 @@ StatusCode MuonRawBuffer::checkBankSize(const LHCb::RawBank* rawdata)
   if((bank_size-skip*4)<0){
     err()<<"bank_size "<<bank_size<<" pad size to read "<<nPads*4<<endmsg;
     err()<< "so muon bank "<<tell1Number<<" is too short in pad part "<<endmsg;
-    m_status.addStatus(tell1Number,RawBankReadoutStatus::Incomplete);
+    m_status.addStatus(tell1Number,RawBankReadoutStatus::Status::Incomplete);
     return StatusCode::FAILURE;
   }
 
@@ -911,7 +911,7 @@ StatusCode MuonRawBuffer::checkBankSize(const LHCb::RawBank* rawdata)
     if(bank_size-read_data*2<pp_cnt*2){
       err()<<"bank_size "<<bank_size<<"read data "<<read_data<<" hit size to read "<<pp_cnt*2<<endmsg;
       err()<< "so muon bank "<<tell1Number<<" is too short in hit part "<<endmsg;
-      m_status.addStatus(tell1Number,RawBankReadoutStatus::Incomplete);
+      m_status.addStatus(tell1Number,RawBankReadoutStatus::Status::Incomplete);
       //break;
 
       return StatusCode::FAILURE;
@@ -1037,7 +1037,7 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
     if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
       verbose()<<" no muon banks in event"<<endmsg;
     for(int i=0;i<  static_cast<int>(MuonDAQHelper_maxTell1Number);i++){
-      m_status.addStatus( i,RawBankReadoutStatus::Missing);
+      m_status.addStatus( i,RawBankReadoutStatus::Status::Missing);
     }
     m_checkTell1HeaderResult=false;
     return StatusCode::SUCCESS;
@@ -1049,16 +1049,16 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
   for(const auto& mb : b) {
 
     unsigned int tell1Number=mb->sourceID();
-    m_status.addStatus( tell1Number,RawBankReadoutStatus::OK);
+    m_status.addStatus( tell1Number,RawBankReadoutStatus::Status::OK);
 
-    if (mb->size()==0)  m_status.addStatus( tell1Number,RawBankReadoutStatus::Empty);
+    if (mb->size()==0)  m_status.addStatus( tell1Number,RawBankReadoutStatus::Status::Empty);
     auto iList=std::find(tell1InEvent.begin(), tell1InEvent.end(),tell1Number );
     if(iList!=tell1InEvent.end()){
       m_checkTell1HeaderResult=false;
       m_checkTell1HeaderPerformed=true;
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) ) verbose()<<" failed "<<endmsg;
       foundError=true;
-      m_status.addStatus( tell1Number,RawBankReadoutStatus::NonUnique);
+      m_status.addStatus( tell1Number,RawBankReadoutStatus::Status::NonUnique);
       break;
       //return StatusCode::FAILURE;
     }
@@ -1067,8 +1067,8 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
 
   //set missing bank readout status
   for(int i=0;i< static_cast<int>( MuonDAQHelper_maxTell1Number);i++){
-    if(m_status.status(i)==LHCb::RawBankReadoutStatus::Unknown){
-      m_status.addStatus( i,RawBankReadoutStatus::Missing);
+    if(m_status.status(i)==LHCb::RawBankReadoutStatus::Status::Unknown){
+      m_status.addStatus( i,RawBankReadoutStatus::Status::Missing);
     }
   }
   if(foundError){
@@ -1091,7 +1091,7 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
              << endmsg;
       m_checkTell1HeaderResult=false;
       m_checkTell1HeaderPerformed=true;
-      m_status.addStatus( (*ibad)->sourceID(), RawBankReadoutStatus::Tell1Error );
+      m_status.addStatus( (*ibad)->sourceID(), RawBankReadoutStatus::Status::Tell1Error );
       return StatusCode::FAILURE; // return m_checkTell1HeaderResult;
   }
   if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )

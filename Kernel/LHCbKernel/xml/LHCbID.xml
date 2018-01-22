@@ -293,7 +293,7 @@
          const = 'TRUE'
          desc  = 'return true if this is a Rich identifier'>
          <code>
-  return Rich == detectorType();
+  return channelIDtype::Rich == detectorType();
          </code>
        </method>
 

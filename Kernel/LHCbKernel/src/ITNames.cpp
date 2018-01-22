@@ -15,7 +15,7 @@ std::string LHCb::ITNames::SectorToString(const LHCb::STChannelID& chan) {
 
 std::string LHCb::ITNames::channelToString(const LHCb::STChannelID& chan) {
   return UniqueSectorToString(chan) + "Strip" + std::to_string(chan.strip());
-}  
+}
 
 std::vector<std::string> LHCb::ITNames::stations() {
 
@@ -36,12 +36,12 @@ std::vector<std::string> LHCb::ITNames::allStations() {
 std::vector<std::string> LHCb::ITNames::allBoxes() {
 
   auto stationVec = stations();
-  auto boxVec = boxes(); 
+  auto boxVec = boxes();
   std::vector<std::string> tVector; tVector.reserve(boxVec.size()*stationVec.size());
   for (const auto& iS : stationVec ) {
      for (const auto& iB : boxVec ) {
        tVector.emplace_back( iS + iB) ;
-     } 
+     }
   }
   return tVector;
 }
@@ -49,7 +49,7 @@ std::vector<std::string> LHCb::ITNames::allBoxes() {
 std::vector<std::string> LHCb::ITNames::allLayers() {
 
   auto layerVec = layers();
-  auto boxVec = allBoxes(); 
+  auto boxVec = allBoxes();
   std::vector<std::string> tVector; tVector.reserve(boxVec.size()*layerVec.size());
   for (const auto& iB : boxVec ) {
      for (const auto& iL : layerVec ) {
@@ -82,15 +82,15 @@ LHCb::STChannelID LHCb::ITNames::stringToChannel(const std::string& name)  {
   // convert string to channel
 
   // get the station, layer and box
-  const std::vector<std::string> thestations = stations(); 
+  const std::vector<std::string> thestations = stations();
   const unsigned int station = findStationType(name, thestations);
- 
-  const std::vector<std::string> thelayers = layers(); 
+
+  const std::vector<std::string> thelayers = layers();
   const unsigned int layer = findLayerType(name, thelayers );
 
-  const std::vector<std::string> theboxes = boxes(); 
+  const std::vector<std::string> theboxes = boxes();
   const unsigned int box = findBoxType(name, theboxes);
- 
+
   // sector and strip is different
   unsigned int strip; unsigned int sector;
   std::string::size_type startSector = name.find("Sector");
@@ -109,39 +109,39 @@ LHCb::STChannelID LHCb::ITNames::stringToChannel(const std::string& name)  {
     }
   }
   else {
-    std::string stripName = name.substr(startStrip+5); 
+    std::string stripName = name.substr(startStrip+5);
     strip = toInt(stripName);
     std::string sectorName = name.substr(startSector+6,startStrip - startSector - 6);
-    sector = toInt(sectorName); 
+    sector = toInt(sectorName);
   }
 
-  return LHCb::STChannelID(LHCb::STChannelID::typeIT, station, layer,
+  return LHCb::STChannelID(LHCb::STChannelID::detType::typeIT, station, layer,
                            box, sector, strip);
 }
 
-unsigned int LHCb::ITNames::findStationType(const std::string& testname, 
+unsigned int LHCb::ITNames::findStationType(const std::string& testname,
                                           const std::vector<std::string>& names) {
 
-  auto n = std::find_if( std::begin(names), std::end(names), 
+  auto n = std::find_if( std::begin(names), std::end(names),
                          [&](const std::string& s ) {
                              return testname.find(s) != std::string::npos;
   });
   return n != std::end(names)  ?  (unsigned int)StationToType(*n) : 0 ;
 }
 
-unsigned int LHCb::ITNames::findLayerType(const std::string& testname, 
+unsigned int LHCb::ITNames::findLayerType(const std::string& testname,
                                           const std::vector<std::string>& names) {
-  auto n = std::find_if( std::begin(names), std::end(names), 
+  auto n = std::find_if( std::begin(names), std::end(names),
                          [&](const std::string& s ) {
                              return testname.find(s) != std::string::npos;
   });
   return n != std::end(names)  ?  (unsigned int)LayerToType(*n) : 0 ;
 }
 
-unsigned int LHCb::ITNames::findBoxType(const std::string& testname, 
+unsigned int LHCb::ITNames::findBoxType(const std::string& testname,
                                           const std::vector<std::string>& names) {
 
-  auto n = std::find_if( std::begin(names), std::end(names), 
+  auto n = std::find_if( std::begin(names), std::end(names),
                          [&](const std::string& s ) {
                              return testname.find(s) != std::string::npos;
   });
@@ -156,7 +156,7 @@ unsigned int LHCb::ITNames::toInt(const std::string& str) {
   }
   catch(std::invalid_argument& e){
     outValue = 0;
-    std::cerr << "ERROR " << e.what() << "** " << str << " **" << std::endl; 
+    std::cerr << "ERROR " << e.what() << "** " << str << " **" << std::endl;
   }
   return outValue;
 }

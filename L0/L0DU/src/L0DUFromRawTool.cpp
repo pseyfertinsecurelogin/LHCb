@@ -180,13 +180,13 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
   m_banks = nullptr;
 
   m_roStatus = LHCb::RawBankReadoutStatus( LHCb::RawBank::L0DU );
-  m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::OK);
+  m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::OK);
 
   LHCb::RawEvent* rawEvt = findFirstRawEvent() ;
   // if not existing complain
   if( !rawEvt ){
     Warning("rawEvent not found in  '" + Gaudi::Utils::toString(m_rawEventLocations) +"' locations", StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
     return false;
   }
 
@@ -197,20 +197,20 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
   const std::vector<LHCb::RawBank*>& errBanks = rawEvt->banks(   LHCb::RawBank::L0DUError );
   if( !errBanks.empty() ){
     if(m_warn)Warning("L0DUError bank has been found ...",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::ErrorBank );
+    m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::ErrorBank );
   }
 
    if ( msgLevel( MSG::DEBUG) )
      debug() << "Number of L0DU bank(s) found : " << m_banks->size() << endmsg; // should be == 1 for L0DU
   if( m_banks->empty() ) {
     if(m_warn)Warning("READOUTSTATUS : no L0DU bank found in rawEvent",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
     return false;
   }
   if( 1 != m_banks->size() ){
     std::stringstream msg("");
     if(m_warn)Warning("READOUSTATUS : more than one L0DU bank has been found in the RawEvent",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::NonUnique);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::NonUnique);
   }
   return true;
 }
@@ -242,14 +242,14 @@ bool L0DUFromRawTool::decoding(int ibank){
   LHCb::RawBank* bank = *itB+ibank;
   if(!bank){
     Error("Bank point to NULL ",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
     return false;
   }
 
   // Check Magic pattern
   if( LHCb::RawBank::MagicPattern != bank->magic() ) {
     Error("Bad MagicPattern",StatusCode::SUCCESS).ignore();
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::BadMagicPattern);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::BadMagicPattern);
     return false;
   }
 
@@ -263,7 +263,7 @@ bool L0DUFromRawTool::decoding(int ibank){
   m_vsn  = bank->version();
   m_report.setBankVersion( m_vsn );
   m_source = bank->sourceID();
-  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::OK);
+  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Status::OK);
 
   int nm        = 0 ;
   int np        = 0 ;
@@ -334,7 +334,7 @@ bool L0DUFromRawTool::decoding(int ibank){
       std::stringstream tck("");
       tck << "Unable to load the configuration for tck = " <<  format("0x%04X", m_tck) << " --> Incomplete L0DUReport" ;
       Warning(tck.str(), StatusCode::SUCCESS).ignore();
-      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Unknown);
+      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Unknown);
     }else{
       m_report.setConfiguration(config);
     }
@@ -393,7 +393,7 @@ bool L0DUFromRawTool::decoding(int ibank){
     config = m_confTool->config( m_tck , m_slot );
     if( !config){
       std::stringstream tck;
-      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Unknown);
+      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Unknown);
       tck << " Unable to load the configuration for tck = " <<  format("0x%04X", m_tck) << " --> Incomplete L0DUReport" ;
       Warning(tck.str(), StatusCode::SUCCESS).ignore();
     }else{
@@ -414,7 +414,7 @@ bool L0DUFromRawTool::decoding(int ibank){
       if( 8 != nmu ){
         msg << "READOUTSTATUS : muons are supposed to be NON 0-suppressed but the bank content indicates "
             << nmu << " muons only (will assume 8 muons for decoding)";
-        m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Corrupted);
+        m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Corrupted);
         Warning(msg.str() , StatusCode::SUCCESS).ignore();
       }
       nmu = 8;
@@ -534,8 +534,8 @@ bool L0DUFromRawTool::decoding(int ibank){
 
     // NOT IMPLEMENTED IN TELL1 F/W TO BE CHANGED IN EDMS !!!!
     //if( 0x1 & m_status){
-    //  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Tell1Error );
-    //  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Tell1Sync );
+    //  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Status::Tell1Error );
+    //  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Status::Tell1Sync );
     //}
 
     if( m_vsn == 1 ){
@@ -606,7 +606,7 @@ bool L0DUFromRawTool::decoding(int ibank){
       Error( "READOUTSTATUS : the total expected size "
              " does NOT match the bank size __________________  <** POSSIBLE DATA CORRUPTION **>",
              StatusCode::SUCCESS).ignore();
-      m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Corrupted );
+      m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Status::Corrupted );
     }
 
     if ( (0x7F & m_bcid2) == m_bcid3){
@@ -817,7 +817,7 @@ bool L0DUFromRawTool::decoding(int ibank){
   }  else{
     Error(" Unknown bank version ",StatusCode::SUCCESS).ignore();
     if ( msgLevel( MSG::DEBUG) )debug() << " Unknown bank version : " << m_vsn << endmsg;
-    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Corrupted);
+    m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Corrupted);
     return false;
   }
 

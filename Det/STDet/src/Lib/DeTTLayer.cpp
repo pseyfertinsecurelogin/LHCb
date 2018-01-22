@@ -47,7 +47,7 @@ StatusCode DeTTLayer::initialize() {
   else {
     m_parent = getParent<DeTTLayer>();
     STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeTT, parentID.station(), id(), 0, 0, 0);
+    STChannelID chan(STChannelID::detType::typeTT, parentID.station(), id(), 0, 0, 0);
     setElementID(chan);
     m_modules = getChildren<DeTTLayer>();
     flatten();

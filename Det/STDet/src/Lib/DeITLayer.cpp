@@ -43,7 +43,7 @@ StatusCode DeITLayer::initialize() {
   else {
     m_parent = getParent<DeITLayer>();
     STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeIT, parentID.station(), id(), parentID.detRegion(), 0, 0);
+    STChannelID chan(STChannelID::detType::typeIT, parentID.station(), id(), parentID.detRegion(), 0, 0);
     setElementID(chan);
     m_nickname = ITNames().UniqueLayerToString(chan);
     m_ladders = getChildren<DeITLayer>();

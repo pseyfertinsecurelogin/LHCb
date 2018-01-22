@@ -63,11 +63,11 @@ StatusCode ChargedProtoParticleAddRichInfo::execute()
   LHCb::ProtoParticles * protos = getIfExists<ProtoParticles>(m_protoPath);
   if ( !protos )
   {
-    return Warning( "No existing ProtoParticle container at " +  
+    return Warning( "No existing ProtoParticle container at " +
                     m_protoPath + " thus do nothing.",
                     StatusCode::SUCCESS );
   }
-  
+
   // Load the RichPIDs
   const bool richSc = getRichData();
   if ( !richSc ) { return StatusCode::SUCCESS; }
@@ -93,7 +93,7 @@ void ChargedProtoParticleAddRichInfo::updateRICH( ProtoParticle * proto ) const
 
   // Does this track have a RICH PID result ?
   TrackToRichPID::const_iterator iR = m_richMap.find( proto->track() );
-  if ( m_richMap.end() == iR ) 
+  if ( m_richMap.end() == iR )
   {
     if ( msgLevel(MSG::VERBOSE) )
       verbose() << " -> NO associated RichPID object found" << endmsg;
@@ -111,16 +111,16 @@ void ChargedProtoParticleAddRichInfo::updateRICH( ProtoParticle * proto ) const
   proto->setRichPID( richPID );
 
   // Store the raw RICH PID info
-  proto->addInfo( LHCb::ProtoParticle::RichDLLe,   richPID->particleDeltaLL(Rich::Electron) );
-  proto->addInfo( LHCb::ProtoParticle::RichDLLmu,  richPID->particleDeltaLL(Rich::Muon) );
-  proto->addInfo( LHCb::ProtoParticle::RichDLLpi,  richPID->particleDeltaLL(Rich::Pion) );
-  proto->addInfo( LHCb::ProtoParticle::RichDLLk,   richPID->particleDeltaLL(Rich::Kaon) );
-  proto->addInfo( LHCb::ProtoParticle::RichDLLp,   richPID->particleDeltaLL(Rich::Proton) );
-  proto->addInfo( LHCb::ProtoParticle::RichDLLbt,  richPID->particleDeltaLL(Rich::BelowThreshold) );
-  proto->addInfo( LHCb::ProtoParticle::RichDLLd,   richPID->particleDeltaLL(Rich::Deuteron) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLe,   richPID->particleDeltaLL(Rich::Electron) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLmu,  richPID->particleDeltaLL(Rich::Muon) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLpi,  richPID->particleDeltaLL(Rich::Pion) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLk,   richPID->particleDeltaLL(Rich::Kaon) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLp,   richPID->particleDeltaLL(Rich::Proton) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLbt,  richPID->particleDeltaLL(Rich::BelowThreshold) );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichDLLd,   richPID->particleDeltaLL(Rich::Deuteron) );
 
   // Store History
-  proto->addInfo( LHCb::ProtoParticle::RichPIDStatus, richPID->pidResultCode() );
+  proto->addInfo( LHCb::ProtoParticle::additionalInfo::RichPIDStatus, richPID->pidResultCode() );
 
 }
 
@@ -137,7 +137,7 @@ bool ChargedProtoParticleAddRichInfo::getRichData()
   if ( !richpids )
   {
     Warning( "No RichPIDs at '" + m_richPath +
-             "' -> ProtoParticles will not be changed.", 
+             "' -> ProtoParticles will not be changed.",
              StatusCode::SUCCESS, 1 ).ignore();
     return false;
   }
@@ -152,7 +152,7 @@ bool ChargedProtoParticleAddRichInfo::getRichData()
     {
       m_richMap[ pid->track() ] = pid;
       if ( msgLevel(MSG::VERBOSE) )
-        verbose() << "RichPID key=" << pid->key() 
+        verbose() << "RichPID key=" << pid->key()
                   << " has Track key=" << pid->track()->key()
                   << " " << pid->track() << endmsg;
     }

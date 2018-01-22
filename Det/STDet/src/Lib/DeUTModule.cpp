@@ -50,7 +50,7 @@ StatusCode DeUTModule::initialize()
 
     m_parent = getParent<DeUTModule>();
     const STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeUT, parentID.station(), parentID.layer(), m_detRegion, m_firstSector, 0);
+    STChannelID chan(STChannelID::detType::typeUT, parentID.station(), parentID.layer(), m_detRegion, m_firstSector, 0);
     setElementID(chan);
     m_sectors = getChildren<DeUTModule>();
   }

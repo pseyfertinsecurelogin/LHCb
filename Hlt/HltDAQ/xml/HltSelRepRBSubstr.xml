@@ -67,13 +67,13 @@ Never write into into the bank with iterator not at its end-of-the bank position
 	type = 'unsigned int'
 	name = 'iterator'
 	desc = 'internal iterator - gives current position in number of shorts'
-	init = 'kInitialPosition' 
+	init = 'InitialPositionOfIterator::kInitialPosition' 
         setMeth = 'FALSE'
         />
 
      <constructor
         argList='unsigned int* pBankBody'
-        initList='m_location(pBankBody),m_iterator(kInitialPosition)'
+        initList='m_location(pBankBody),m_iterator(InitialPositionOfIterator::kInitialPosition)'
         desc='takes pointer to the memory location of the subbank body as input'
 	/>
 
@@ -163,15 +163,15 @@ Never write into into the bank with iterator not at its end-of-the bank position
 	   const='TRUE'
 	   >
 	<code>
-	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::kNoBank); 
-	  //empty bank is OK: if( !numberOfObj() )return ((unsigned int)HltSelRepRBEnums::kEmptyBank); 
-	  if( !allocatedSize() )return ((unsigned int)HltSelRepRBEnums::kZeroAllocatedSize); 
+	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kNoBank); 
+	  //empty bank is OK: if( !numberOfObj() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kEmptyBank); 
+	  if( !allocatedSize() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kZeroAllocatedSize); 
           unsigned int s=allocatedSize();
-          unsigned int itera = kInitialPosition;
+          unsigned int itera = InitialPositionOfIterator::kInitialPosition;
           for( unsigned int iSub=0;iSub!=numberOfObj();++iSub){
              unsigned int iWord = itera / 2;
              unsigned int iPart = itera % 2;
-             if( iWord&gt;= s ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
+             if( iWord&gt;= s ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
              unsigned short nW;
              if( iPart ){
                 nW = (unsigned short)( ( m_location[iWord] &amp; 0xFFFF0000L ) &gt;&gt; 16 );
@@ -184,8 +184,8 @@ Never write into into the bank with iterator not at its end-of-the bank position
           unsigned int iWord = itera / 2; 
           unsigned int iPart = itera % 2;
           if( !iPart )--iWord;
-          if( iWord&gt;= s ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
-          return ((unsigned int)HltSelRepRBEnums::kBankIsOK);
+          if( iWord&gt;= s ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
+          return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kBankIsOK);
 	</code>
       </method>
 
@@ -233,7 +233,7 @@ Never write into into the bank with iterator not at its end-of-the bank position
         desc='reset iterator to the initial position'
         >
         <code>
-          m_iterator = kInitialPosition;
+          m_iterator = InitialPositionOfIterator::kInitialPosition;
         </code>
       </method>
 
@@ -245,7 +245,7 @@ Never write into into the bank with iterator not at its end-of-the bank position
         >
         <code>
           unsigned int s=allocatedSize();
-          unsigned int itera = kInitialPosition;
+          unsigned int itera = InitialPositionOfIterator::kInitialPosition;
           for( unsigned int iSub=0;iSub!=numberOfObj();++iSub){
              unsigned int iWord = itera / 2;
              unsigned int iPart = itera % 2;
@@ -281,8 +281,8 @@ Never write into into the bank with iterator not at its end-of-the bank position
 
           // allocate new bank if neccessary
           if( !m_location ){
-            unsigned int len = kDefaultAllocation;
-	    len = (nL&lt;(len-2))?len:(len+kDefaultAllocation);
+            unsigned int len = DefaultAllocation::kDefaultAllocation;
+	    len = (nL&lt;(len-2))?len:(len+DefaultAllocation::kDefaultAllocation);
             if( len &gt; 0xFFFFL )return false;
 	    initialize( len );
           }
@@ -291,8 +291,8 @@ Never write into into the bank with iterator not at its end-of-the bank position
           unsigned int aSize = allocatedSize();
           unsigned int nSize = (m_iterator + 1 + nL)/2+2;
           if( nSize &gt; aSize ){
-            unsigned int len = aSize + kDefaultAllocation;
-            len= ( nSize&lt;len ) ? len : (nSize+kDefaultAllocation) ;
+            unsigned int len = aSize + DefaultAllocation::kDefaultAllocation;
+            len= ( nSize&lt;len ) ? len : (nSize+DefaultAllocation::kDefaultAllocation) ;
             if( len &gt; 0xFFFFL )return false;
             unsigned int* newLocation = new unsigned int[len];
             for(unsigned int i=0;i!=aSize;++i){ newLocation[i]=m_location[i]; }
@@ -363,11 +363,11 @@ Never write into into the bank with iterator not at its end-of-the bank position
       <method
         name ='initialize'
         type ='void'
-	argList='unsigned int len=kDefaultAllocation'
+	argList='unsigned int len=DefaultAllocation::kDefaultAllocation'
         desc ='create a new bank with given allocation len and initialize it (does not delete old bank if any)'
         >
         <code>
-            if( len &lt; 1 )len = kDefaultAllocation;
+            if( len &lt; 1 )len = DefaultAllocation::kDefaultAllocation;
             m_location = new unsigned int[len]; 
             m_location[0] =   (len &lt;&lt; 16);
             rewind();
@@ -391,7 +391,7 @@ Never write into into the bank with iterator not at its end-of-the bank position
              &lt;&lt; ic &lt;&lt; (" "+HltSelRepRBEnums::IntegrityCodesToString( ic ))
              &lt;&lt;  std::endl;
           if( 0==ic ){ 
-            unsigned int itera = ((unsigned int)kInitialPosition);
+            unsigned int itera = ((unsigned int)InitialPositionOfIterator::kInitialPosition);
             for(unsigned int iSub=0;iSub!=numberOfObj();++iSub){
                unsigned int iWord = itera / 2;
                unsigned int iPart = itera % 2;

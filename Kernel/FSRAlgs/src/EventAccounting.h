@@ -59,7 +59,7 @@ protected:
 
   bool m_overrideStatus; ///override status at end of job with default. Set by OverrideStatus.
   std::string m_defaultStatusStr = {"UNCHECKED"}; ///status to start with if nothing else is known, Set by DefaultStatus
-  LHCb::EventCountFSR::StatusFlag m_defaultStatus = { LHCb::EventCountFSR::UNCHECKED }; ///status to start with if nothing else is known, cast from DefaultStatus
+  LHCb::EventCountFSR::StatusFlag m_defaultStatus = { LHCb::EventCountFSR::StatusFlag::UNCHECKED }; ///status to start with if nothing else is known, cast from DefaultStatus
 
 private:
   mutable SmartIF<IIncidentSvc> m_incSvc ;                      // the incident service

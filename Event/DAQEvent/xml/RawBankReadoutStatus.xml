@@ -86,7 +86,7 @@
         const  = "TRUE">
         <code>
           auto it = m_status.find(source);
-          return it != m_status.end() ? it->second : long(Unknown);
+          return it != m_status.end() ? it->second : long(Status::Unknown);
         </code>
       </method>
 
@@ -110,7 +110,7 @@
         type   = "long"
         const  = "TRUE" >
         <code>
-          return m_status.empty() ? long(Unknown)
+          return m_status.empty() ? long(Status::Unknown)
                                   : std::accumulate( m_status.begin(), m_status.end(), 0L,
                                                      [](long s, const std::pair&lt;int,long&gt;&amp; p)
                                                      { return s | p.second; } );

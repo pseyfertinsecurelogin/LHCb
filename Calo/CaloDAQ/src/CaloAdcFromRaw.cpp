@@ -132,7 +132,7 @@ StatusCode CaloAdcFromRaw::execute() {
         int card =  m_data->deCalo()->cardNumber( id );
         int tell1=  m_data->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_data->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
     }
   }
@@ -166,7 +166,7 @@ StatusCode CaloAdcFromRaw::execute() {
         int card =  m_data->deCalo()->cardNumber( id );
         int tell1=  m_data->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_data->status();
-        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
       }
     }
   }
@@ -197,7 +197,7 @@ StatusCode CaloAdcFromRaw::execute() {
           int card =  m_data->deCalo()->cardNumber( id );
           int tell1=  m_data->deCalo()->cardToTell1( card);
           LHCb::RawBankReadoutStatus& status = m_data->status();
-          status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+          status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
         }
       }
     }

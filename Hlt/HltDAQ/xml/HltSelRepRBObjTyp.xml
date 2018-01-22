@@ -56,7 +56,7 @@ by the CLID before using this insertor.
 	type = 'unsigned int'
 	name = 'iterator'
 	desc = 'internal iterator - gives current position in number of long word'
-	init = 'kInitialPosition' 
+	init = 'InitialPositionOfIterator::kInitialPosition' 
         setMeth = 'FALSE'
         />
 
@@ -70,7 +70,7 @@ by the CLID before using this insertor.
 
      <constructor
         argList='unsigned int* pBankBody'
-        initList='m_location(pBankBody),m_iterator(kInitialPosition),m_objiterator(0)'
+        initList='m_location(pBankBody),m_iterator(InitialPositionOfIterator::kInitialPosition),m_objiterator(0)'
         desc='takes pointer to the memory location of the subbank body as input'
 	/>
 
@@ -151,11 +151,11 @@ by the CLID before using this insertor.
 	   const='TRUE'
 	   >
 	<code>
-	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::kNoBank); 
-	  //empty bank is OK: if( !numberOfObjTyp() )return ((unsigned int)HltSelRepRBEnums::kEmptyBank); 
-	  if( !allocatedSize() )return ((unsigned int)HltSelRepRBEnums::kZeroAllocatedSize); 
-          if( numberOfObjTyp() > ( allocatedSize() - 1 ) )return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
-          return ((unsigned int)HltSelRepRBEnums::kBankIsOK);
+	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kNoBank); 
+	  //empty bank is OK: if( !numberOfObjTyp() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kEmptyBank); 
+	  if( !allocatedSize() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kZeroAllocatedSize); 
+          if( numberOfObjTyp() > ( allocatedSize() - 1 ) )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
+          return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kBankIsOK);
 	</code>
       </method>
 
@@ -185,7 +185,7 @@ by the CLID before using this insertor.
         desc='reset iterator to the initial position'
         >
         <code>
-          m_iterator = kInitialPosition;
+          m_iterator = InitialPositionOfIterator::kInitialPosition;
           m_objiterator = 0;
         </code>
       </method>
@@ -213,7 +213,7 @@ by the CLID before using this insertor.
 
           // allocate new bank if neccessary
           if( !m_location ){
-            unsigned int len = kDefaultAllocation;
+            unsigned int len = DefaultAllocation::kDefaultAllocation;
 	    initialize( len );
           }
 
@@ -221,7 +221,7 @@ by the CLID before using this insertor.
           unsigned int aSize = allocatedSize();
           unsigned int nSize = m_iterator + 1; // presume we may need to add new id
           if( nSize &gt; aSize ){
-            unsigned int len = aSize + kDefaultAllocation;
+            unsigned int len = aSize + DefaultAllocation::kDefaultAllocation;
             unsigned int* newLocation = new unsigned int[len];
             for(unsigned int i=0;i!=aSize;++i){ newLocation[i]=m_location[i]; }
             delete[] m_location;            
@@ -275,11 +275,11 @@ by the CLID before using this insertor.
       <method
         name ='initialize'
         type ='void'
-	argList='unsigned int len=kDefaultAllocation'
+	argList='unsigned int len=DefaultAllocation::kDefaultAllocation'
         desc ='create a new bank with given allocation len and initialize it (does not delete old bank if any)'
         >
         <code>
-            if( len &lt; 1 )len = kDefaultAllocation;
+            if( len &lt; 1 )len = DefaultAllocation::kDefaultAllocation;
             m_location = new unsigned int[len]; 
             m_location[0] =  (len &lt;&lt; 16);
             m_location[1] =0;
@@ -307,7 +307,7 @@ by the CLID before using this insertor.
           if( 0==ic ){ 
             unsigned int iold=0;
             for(unsigned int iObjTyp=0;iObjTyp!=numberOfObjTyp();++iObjTyp){
-               unsigned int iWord = kInitialPosition + iObjTyp;
+               unsigned int iWord = InitialPositionOfIterator::kInitialPosition + iObjTyp;
                unsigned int nObj =   ( m_location[iWord] &amp; 0xFFFFL );
                unsigned int clid =  ( ( m_location[iWord] &amp; 0xFFFF0000L ) &gt;&gt; 16 );
                s &lt;&lt; "  " &lt;&lt; iObjTyp 

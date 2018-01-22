@@ -43,7 +43,7 @@
       <constructor 
         desc="non-default constructor (for compound data)" 
         argList   = "int id,  const std::string name, const std::string op , const std::vector&lt;std::string&gt; names"
-        initList  = "m_id(id),m_type(Compound),m_name(name),m_scale(1.),m_saturation(0),m_evaluated(false),m_operator(op)">
+        initList  = "m_id(id),m_type(Type::Compound),m_name(name),m_scale(1.),m_saturation(0),m_evaluated(false),m_operator(op)">
         <code> 
           m_componentsName=names;
         </code>
@@ -58,7 +58,7 @@
       <attribute name = "evaluated"  desc = " L0DU data evaluation status" type = "bool" init="false" setMeth="FALSE" getMeth='FALSE'/>
       <attribute name = "operator"       desc = " Operator symbol"         type = " std::string" getMeth="FALSE" init='""'/>
       <attribute name = "componentsName" 
-                 desc = " Compount components name"  
+                 desc = " Compound components name"  
                  type = " std::vector&lt;std::string&gt;"
                  nonconstaccessor='TRUE' />
       <attribute name = "components" 
@@ -75,7 +75,7 @@
 
       <method name = "clear" desc = "clear data and reset status" type="void">
         <code>
-          if( m_type == Constant)return;
+          if( m_type == Type::Constant)return;
           m_components.clear();
           m_digit.clear();
           m_evaluated=false;
@@ -105,13 +105,13 @@
 
       <method name = "scale" desc = "get digit scale" type = "double" > 
         <code>
-          if(m_type==Compound)evaluate();  
+          if(m_type==Type::Compound)evaluate();  
           return m_scale;
         </code>
       </method>
       <method name = "saturation" desc = "get digit saturation" type = "unsigned int" > 
         <code>
-          if(m_type==Compound)evaluate();  
+          if(m_type==Type::Compound)evaluate();  
           return m_saturation;
         </code>
       </method>
@@ -119,8 +119,8 @@
       <method name = "setDigit" desc = "set digit value for a given bx, scale and saturation" type  = "void" 
               argList    = "const unsigned int value, double scale, unsigned int saturation, int bx=0" >
         <code> 
-	  if(m_type != Compound)m_evaluated=true;
-	  setDigit(value,bx);
+          if(m_type != Type::Compound)m_evaluated=true;
+          setDigit(value,bx);
           setScaleAndSaturation(scale,saturation);
         </code>
       </method>
@@ -129,9 +129,9 @@
       <method name = "setDigit" desc = "set digit value for given bx" type  = "void" 
               argList    = "const unsigned int value, int bx=0" >
         <code> 
-	  if(m_type != Compound)m_evaluated=true;
-          if(m_type==Constant)m_digit[0]=value;
-          if(m_type==RAMBcid)m_digit[0]=value-bx;
+          if(m_type != Type::Compound)m_evaluated=true;
+          if(m_type==Type::Constant)m_digit[0]=value;
+          if(m_type==Type::RAMBcid)m_digit[0]=value-bx;
           m_digit[bx] = value;
         </code>
       </method>
@@ -139,7 +139,7 @@
       <method name = "setDigit" desc = "set digit map" type  = "void" 
               argList    = "const std::map&lt;int,unsigned int&gt; map" >
         <code> 
-	  if(m_type != Compound)m_evaluated=true;
+          if(m_type != Type::Compound)m_evaluated=true;
           m_digit = map;
         </code>
       </method>
@@ -147,12 +147,10 @@
       <method name  = "digit" desc = "get digit value for given bx" type  = "unsigned int" argList   = "int bx=0" >
         <code> 
           // check if compound data
-          if( m_type == Compound )evaluate(bx);  // evaluate compound
-          else if( m_type == Constant )m_digit[bx]=m_digit[0]; // constant for any BX
-          else if( m_type == RAMBcid )m_digit[bx]=m_digit[0]+bx; // RAMBcid bx shift
-          if(m_digit.end() == m_digit.find(bx) ){
-              return 0.;
-          }
+          if( m_type == Type::Compound )evaluate(bx);  // evaluate compound
+          else if( m_type == Type::Constant )m_digit[bx]=m_digit[0]; // constant for any BX
+          else if( m_type == Type::RAMBcid )m_digit[bx]=m_digit[0]+bx; // RAMBcid bx shift
+          if(m_digit.end() == m_digit.find(bx) ) return 0.;
           return m_digit[bx] ;
         </code>
       </method>

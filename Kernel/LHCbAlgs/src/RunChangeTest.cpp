@@ -32,17 +32,17 @@ RunChangeTest::RunChangeTest( const std::string& name,
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode RunChangeTest::initialize() 
+StatusCode RunChangeTest::initialize()
 {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-  
+
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
   m_eventTimeDecoder = tool<IEventTimeDecoder>("OdinTimeDecoder",this,true);
-  
+
   m_incSvc = svc<IIncidentSvc>("IncidentSvc", true);
   m_incSvc->addListener(this, "RunChange");
-  
+
   return sc;
 }
 
@@ -70,7 +70,7 @@ StatusCode RunChangeTest::execute()
   switch (++m_counter) {
   case 1: // run 1, flagging
     odin->setRunNumber(1);
-    odin->setEventType(ODIN::FlaggingModeMask);
+    odin->setEventType(ODIN::EventTypeMasks::FlaggingModeMask);
     break;
   case 2: // run 1, filtering
     odin->setRunNumber(1);
@@ -82,11 +82,11 @@ StatusCode RunChangeTest::execute()
     break;
   case 4: // run 3, flagging
     odin->setRunNumber(3);
-    odin->setEventType(ODIN::FlaggingModeMask);
+    odin->setEventType(ODIN::EventTypeMasks::FlaggingModeMask);
     break;
   case 5: // run 4, flagging
     odin->setRunNumber(4);
-    odin->setEventType(ODIN::FlaggingModeMask);
+    odin->setEventType(ODIN::EventTypeMasks::FlaggingModeMask);
     break;
   case 6: // run 5, filtering
     odin->setRunNumber(5);
@@ -94,7 +94,7 @@ StatusCode RunChangeTest::execute()
     break;
   case 7: // run 5, flagging
     odin->setRunNumber(5);
-    odin->setEventType(ODIN::FlaggingModeMask);
+    odin->setEventType(ODIN::EventTypeMasks::FlaggingModeMask);
     break;
   default: // run 5, filtering
     odin->setRunNumber(5);

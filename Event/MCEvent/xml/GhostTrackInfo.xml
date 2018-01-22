@@ -70,7 +70,7 @@
         name="classification"
         type="Classification" 
         setMeth = "TRUE"
-        init="None"
+        init="Classification::None"
    />   
 
    <method

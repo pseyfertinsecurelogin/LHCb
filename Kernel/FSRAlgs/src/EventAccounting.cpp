@@ -92,7 +92,7 @@ StatusCode EventAccounting::finalize() {
 
   //if more than one file is written, the count is unreliable
   if (m_count_files.size()!=1)
-    m_eventFSR->setStatusFlag(LHCb::EventCountFSR::UNRELIABLE);
+    m_eventFSR->setStatusFlag(LHCb::EventCountFSR::StatusFlag::UNRELIABLE);
 
   //this can be overwritten with options for production
   if (m_overrideStatus)

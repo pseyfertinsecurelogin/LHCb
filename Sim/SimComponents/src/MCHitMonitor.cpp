@@ -32,7 +32,7 @@ DECLARE_COMPONENT( MCHitMonitor )
 //_________________________________________________
 /// MCHitMonitor
 ///
-/// An MCHitMonitor is a Gaudi top level Algorithm that checks the 
+/// An MCHitMonitor is a Gaudi top level Algorithm that checks the
 /// output of the event tracks fitter
 
 
@@ -51,20 +51,20 @@ MCHitMonitor::MCHitMonitor(const std::string& name,
   this->declareProperty("tMin", m_TMin =  0.0*Gaudi::Units::ns);
   this->declareProperty("eMax", m_EMax =  1.0*Gaudi::Units::MeV);
   this->declareProperty("maxPath", m_MaxPath = 5.0*Gaudi::Units::cm);
-  this->declareProperty("minPathLength", m_minPathLength = 0.1*Gaudi::Units::mm); 
+  this->declareProperty("minPathLength", m_minPathLength = 0.1*Gaudi::Units::mm);
   this->declareProperty("nToCollect", m_nToCollect = 20000);
 
 }
 
 StatusCode MCHitMonitor::initialize()
 {
-  // initialize  
-  
+  // initialize
+
   StatusCode sc = GaudiHistoAlg::initialize();
   if (sc.isFailure()){
     return Error("Failed to initialize", sc);
   }
-  
+
   m_selector = tool<IMCParticleSelector>(m_selectorName, m_selectorName, this);
 
   // initialize histograms
@@ -72,14 +72,14 @@ StatusCode MCHitMonitor::initialize()
 
   m_energyVec.reserve(m_nToCollect);
 
-  return StatusCode::SUCCESS;  
+  return StatusCode::SUCCESS;
 }
 
 void MCHitMonitor::initHistograms()
 {
   /// Intialize histograms
-  std::string tPath = this->histoPath()+"/"; 
-  
+  std::string tPath = this->histoPath()+"/";
+
  // make histograms per stations
  IHistogram1D* aHisto1D = nullptr;
  IHistogram2D* aHisto2D = nullptr;
@@ -104,16 +104,16 @@ void MCHitMonitor::initHistograms()
    aHisto1D  = book(300+iStation,"lossHisto"+std::to_string(300+iStation),
                     0., m_EMax,250);
 
-   m_EnergyLossHistos.push_back(aHisto1D);   
+   m_EnergyLossHistos.push_back(aHisto1D);
 
  }//loop stations
 
 }
- 
+
 StatusCode MCHitMonitor::execute()
 {
   /// Executes MCHitMonitor for one event.
- 
+
   const LHCb::MCHits* hitsCont = get<LHCb::MCHits>(m_MCHitPath);
 
   plot((double)hitsCont->size(),1 ,"num hits", 0.,5000, 100);
@@ -132,7 +132,7 @@ StatusCode MCHitMonitor::finalize(){
   const double halfWidth = ModeFunctions::halfSampleWidth(m_energyVec.begin(), m_energyVec.end());
   info() << "*** Summary ***" << endmsg;
   info() << "#hits per event: " << counter("numberHits").flagMean() << endmsg;
-  info() << "Mean beta * gamma: " << counter("betaGamma").flagMean() << endmsg; 
+  info() << "Mean beta * gamma: " << counter("betaGamma").flagMean() << endmsg;
   info() << "Most Probable deposited charge: " << shorth << endmsg;
   info() << "Half Sample width " << halfWidth << endmsg;
 
@@ -150,10 +150,10 @@ StatusCode MCHitMonitor::fillHistograms(const LHCb::MCHit* aHit) const{
 
   const LHCb::MCVertex* vertex = aParticle->originVertex();
   if (vertex){
-    if (vertex->type() == LHCb::MCVertex::DeltaRay) ++counter("DeltaRay");
+    if (vertex->type() == LHCb::MCVertex::MCVertexType::DeltaRay) ++counter("DeltaRay");
   }
 
-  // p 
+  // p
   plot(aParticle->p()/Gaudi::Units::GeV, 4, "pMag", 0.,100, 200);
 
 
@@ -168,7 +168,7 @@ StatusCode MCHitMonitor::fillHistograms(const LHCb::MCHit* aHit) const{
   if (iStation<0) {
      err() << "failed to get station number for z " << mcHitPoint.z() << endmsg;
      return StatusCode::FAILURE;
-  } 
+  }
 
   if (m_selector->accept(aHit->mcParticle()) == true){
 
@@ -177,7 +177,7 @@ StatusCode MCHitMonitor::fillHistograms(const LHCb::MCHit* aHit) const{
 
     // dE/dX
     m_timeOfFlightHistos[iStation]->fill(aHit->time()/Gaudi::Units::ns,1.0);
- 
+
   }
 
   // scatter plot of x-y of hit
@@ -186,9 +186,9 @@ StatusCode MCHitMonitor::fillHistograms(const LHCb::MCHit* aHit) const{
 
 
   if (aHit->pathLength() > m_minPathLength) m_energyVec.push_back(aHit->energy());
- 
+
   counter("betaGamma") += aParticle->beta()*aParticle->gamma() ;
- 
+
   return StatusCode::SUCCESS;
 
 }
@@ -200,7 +200,7 @@ int MCHitMonitor::getStationID(const double z) const {
   double zBest = 99999.;
   double zDiff;
   for (unsigned int iPos = 0; iPos< m_Zstations.size(); ++iPos){
-    zDiff = fabs(m_Zstations[iPos] - z);  
+    zDiff = fabs(m_Zstations[iPos] - z);
     if (zDiff<zBest){
       zBest = zDiff;
       iStation = (int)iPos;

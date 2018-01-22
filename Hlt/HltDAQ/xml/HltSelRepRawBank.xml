@@ -86,7 +86,7 @@ Sub-banks immediately follow the header.'
         >
         <code>
           noBank();
-          if( iBank&gt;HltSelRepRBEnums::kMaxBankID )
+          if( iBank&gt;HltSelRepRBEnums::SubBankIDs::kMaxBankID )
              throw GaudiException( "sub-bank index out of range in HltSelRepRawBank","HltSelRepRawBank",StatusCode::FAILURE );
         </code>
       </method>
@@ -99,7 +99,7 @@ Sub-banks immediately follow the header.'
           >
         <code>
           noBank();
-          return (unsigned int)( m_location[kSubBankIDs] &amp; 0x7L );
+          return (unsigned int)( m_location[Header::kSubBankIDs] &amp; 0x7L );
         </code>
       </method>
           
@@ -112,11 +112,11 @@ Sub-banks immediately follow the header.'
           const='TRUE'
           >
         <code>
-          if( !m_location )return (unsigned int)(HltSelRepRBEnums::kUnknownID);
+          if( !m_location )return (unsigned int)(HltSelRepRBEnums::SubBankIDs::kUnknownID);
           for( unsigned int iBank=0;iBank!=numberOfSubBanks();++iBank ){
              if( subBankID(iBank)==idSubBank )return iBank;
           }
-          return (unsigned int)(HltSelRepRBEnums::kUnknownID);
+          return (unsigned int)(HltSelRepRBEnums::SubBankIDs::kUnknownID);
         </code>
       </method>
           
@@ -131,7 +131,7 @@ Sub-banks immediately follow the header.'
           validateIndex(iBank);
           unsigned int bits = (iBank+1)*3; 
           unsigned int mask = 0x7L &lt;&lt; bits;
-          return (unsigned int)(( m_location[kSubBankIDs] &amp; mask ) &gt;&gt; bits);
+          return (unsigned int)(( m_location[Header::kSubBankIDs] &amp; mask ) &gt;&gt; bits);
         </code>
       </method>
 
@@ -146,9 +146,9 @@ Sub-banks immediately follow the header.'
         <code>
           validateIndex(iBank);
           if( iBank ){
-             return m_location[kSubBankLocations+iBank-1];
+             return m_location[Header::kSubBankLocations+iBank-1];
           } else {
-             return (unsigned int)kHeaderSize;
+             return (unsigned int)Header::kHeaderSize;
           }
         </code>
       </method>
@@ -163,7 +163,7 @@ Sub-banks immediately follow the header.'
           >
         <code>
           validateIndex(iBank);
-          return m_location[kSubBankLocations+iBank];
+          return m_location[Header::kSubBankLocations+iBank];
         </code>
       </method>
 
@@ -239,7 +239,7 @@ Sub-banks immediately follow the header.'
           >
         <code>          
           noBank();
-          return m_location[kAllocatedSize];
+          return m_location[Header::kAllocatedSize];
         </code>
       </method>
 
@@ -251,7 +251,7 @@ Sub-banks immediately follow the header.'
          >
         <code>
           noBank();
-          m_location[kAllocatedSize] = size();
+          m_location[Header::kAllocatedSize] = size();
         </code>
       </method>
 
@@ -264,7 +264,7 @@ Sub-banks immediately follow the header.'
         <code>
           noBank();
           if( numberOfSubBanks() )return subBankEnd(numberOfSubBanks()-1);
-          return kHeaderSize;
+          return Header::kHeaderSize;
         </code>
       </method>
 
@@ -277,7 +277,7 @@ Sub-banks immediately follow the header.'
            const='TRUE'
            >
         <code>
-          if( iPtr &lt; ((unsigned int)kHeaderSize) )
+          if( iPtr &lt; ((unsigned int)Header::kHeaderSize) )
           throw GaudiException( "Internal pointer out of range in HltSelRepRawBank","HltSelRepRawBank",StatusCode::FAILURE );
           if( iPtr &gt; allocatedSize() ) 
           throw GaudiException( "Internal pointer out of range in HltSelRepRawBank","HltSelRepRawBank",StatusCode::FAILURE );
@@ -291,20 +291,20 @@ Sub-banks immediately follow the header.'
 	   const='TRUE'
 	   >
 	<code>
-	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::kNoBank); 
-	  if( !numberOfSubBanks() )return ((unsigned int)HltSelRepRBEnums::kEmptyBank); 
-	  if( !allocatedSize() )return ((unsigned int)HltSelRepRBEnums::kZeroAllocatedSize); 
+	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kNoBank); 
+	  if( !numberOfSubBanks() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kEmptyBank); 
+	  if( !allocatedSize() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kZeroAllocatedSize); 
 	  for( unsigned int iBank=0; iBank!=numberOfSubBanks(); ++iBank ){
 	       unsigned int ie1 = subBankEnd( iBank );
-               if( ie1 &lt; ((unsigned int)kHeaderSize) ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
-	       if( ie1 &gt; (allocatedSize()+1) ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
+               if( ie1 &lt; ((unsigned int)Header::kHeaderSize) ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
+	       if( ie1 &gt; (allocatedSize()+1) ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
 	       unsigned int id1 = subBankID( iBank );
 	       for( unsigned int jBank=iBank+1; jBank!=numberOfSubBanks(); ++jBank ){
-	            if( ie1 &gt; subBankEnd( jBank ) ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfSequence);
-	            if( id1 == subBankID( jBank ) ) return ((unsigned int)HltSelRepRBEnums::kDuplicateBankIDs);
+	            if( ie1 &gt; subBankEnd( jBank ) ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfSequence);
+	            if( id1 == subBankID( jBank ) ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kDuplicateBankIDs);
                }
 	  } 
-          return ((unsigned int)HltSelRepRBEnums::kBankIsOK);
+          return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kBankIsOK);
 	</code>
       </method>
 	   
@@ -319,16 +319,16 @@ Sub-banks immediately follow the header.'
         >
         <code>
 
-          if( idSubBank &gt; HltSelRepRBEnums::kMaxBankID )
+          if( idSubBank &gt; HltSelRepRBEnums::SubBankIDs::kMaxBankID )
           throw GaudiException( "Adding illegal sub-bank ID in HltSelRepRawBank","HltSelRepRawBank",StatusCode::FAILURE );
 
-          if( indexSubBank(idSubBank) != HltSelRepRBEnums::kUnknownID )
+          if( indexSubBank(idSubBank) != HltSelRepRBEnums::SubBankIDs::kUnknownID )
           throw GaudiException( "Adding sub-bank which is already there in HltSelRepRawBank","HltSelRepRawBank",StatusCode::FAILURE );
 
           // allocate new bank if neccessary
           if( !m_location ){
-            unsigned int len = kDefaultAllocation;
-            len=((sizeSubBank+kHeaderSize)&lt;len)?len:(sizeSubBank+len);
+            unsigned int len = DefaultAllocation::kDefaultAllocation;
+            len=((sizeSubBank+Header::kHeaderSize)&lt;len)?len:(sizeSubBank+len);
             initialize( len );
           }
 
@@ -336,28 +336,28 @@ Sub-banks immediately follow the header.'
           unsigned int aSize = allocatedSize();
           unsigned int nSize = size() + sizeSubBank;
           if( nSize &gt; aSize ){
-            unsigned int len = aSize + kDefaultAllocation;
-            len= ( nSize&lt;len ) ? len : (nSize+kDefaultAllocation) ;
+            unsigned int len = aSize + DefaultAllocation::kDefaultAllocation;
+            len= ( nSize&lt;len ) ? len : (nSize+DefaultAllocation::kDefaultAllocation) ;
             unsigned int* newLocation = new unsigned int[len];
             std::copy_n(m_location,size(),newLocation);
             delete[] m_location;            
             m_location=newLocation;  
-            m_location[kAllocatedSize] =len;
+            m_location[Header::kAllocatedSize] =len;
           }
 
           // add the bank -------------------------------------
           // increment number of banks (don't need to worry about exceeding the size since
           //  sub-bank id range takes care of it)
-          unsigned int iBank = m_location[kSubBankIDs] &amp; 0x7L;
-          m_location[kSubBankIDs] =  (m_location[kSubBankIDs] &amp; ~0x7L) | (iBank+1) ;
+          unsigned int iBank = m_location[Header::kSubBankIDs] &amp; 0x7L;
+          m_location[Header::kSubBankIDs] =  (m_location[Header::kSubBankIDs] &amp; ~0x7L) | (iBank+1) ;
           // set its id
           unsigned int bits = (iBank+1)*3; 
           unsigned int mask = 0x7L &lt;&lt; bits;
-          m_location[kSubBankIDs] = ( m_location[kSubBankIDs] &amp; ~mask ) | ( idSubBank &lt;&lt; bits ); 
+          m_location[Header::kSubBankIDs] = ( m_location[Header::kSubBankIDs] &amp; ~mask ) | ( idSubBank &lt;&lt; bits ); 
           // get its location 
           unsigned int locBank = subBankBegin(iBank);
           // set its end()
-          m_location[kSubBankLocations+iBank] =  locBank + sizeSubBank;
+          m_location[Header::kSubBankLocations+iBank] =  locBank + sizeSubBank;
           // copy content
           std::copy_n(pSubBank,sizeSubBank,m_location+locBank);
         </code>
@@ -380,22 +380,22 @@ Sub-banks immediately follow the header.'
         desc ='clear bank content without deleting'
         >
         <code>
-          std::fill_n(m_location, kHeaderSize, 0);
-          m_location[kSubBankIDs]=0;
-          m_location[kSubBankLocations + numberOfSubBanks() ]=kHeaderSize;
+          std::fill_n(m_location, Header::kHeaderSize, 0);
+          m_location[Header::kSubBankIDs]=0;
+          m_location[Header::kSubBankLocations + numberOfSubBanks() ]=Header::kHeaderSize;
         </code>
       </method>
 
       <method
         name ='initialize'
         type ='void'
-	argList='unsigned int len=kDefaultAllocation'
+	argList='unsigned int len=DefaultAllocation::kDefaultAllocation'
         desc ='create a new bank with given allocation len and initialize it (does not delete old bank if any)'
         >
         <code>
-            if( len &lt; kHeaderSize )len = kDefaultAllocation;
+            if( len &lt; Header::kHeaderSize )len = DefaultAllocation::kDefaultAllocation;
             m_location = new unsigned int[len]; 
-            m_location[kAllocatedSize] =len;
+            m_location[Header::kAllocatedSize] =len;
             clear();
         </code>
       </method>

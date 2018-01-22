@@ -8,9 +8,9 @@ namespace LHCb
   {
     // compute the id
     m_id = PrimaryVertex::uniqueVeloSegmentID(track) ;
-    
+
     // get the state
-    const LHCb::State* closestToBeam = track.stateAt(LHCb::State::ClosestToBeam) ;
+    const LHCb::State* closestToBeam = track.stateAt(LHCb::State::Location::ClosestToBeam) ;
     LHCb::State state = closestToBeam ? *closestToBeam : track.firstState() ;
     state.linearTransportTo( refz ) ;
 
@@ -19,11 +19,11 @@ namespace LHCb
     m_weight = weight ;
     m_invcov = state.covariance().Sub<Gaudi::SymMatrix2x2>(0,0) ;
     m_invcov.Invert() ;
-    
+
     // initialize the non-persisted stuff
     initCache() ;
   }
-  
+
   void PrimaryVertexTrack::initCache()
   {
     // The following can all be written out, omitting the zeros, once
@@ -35,6 +35,6 @@ namespace LHCb
     Vector2 res = m_state.Sub<Vector2>(0) ;
     m_halfD2Chi2DX2 = ROOT::Math::Similarity(H, m_invcov ) ;
     m_halfDChi2DX   = (H * m_invcov) * res ;
-    m_chi2          = ROOT::Math::Similarity(res,m_invcov) ; 
+    m_chi2          = ROOT::Math::Similarity(res,m_invcov) ;
   }
 }

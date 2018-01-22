@@ -236,17 +236,17 @@ Then sequences must be pushed back in the sequencial order.'
 	   const='TRUE'
 	   >
 	<code>
-	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::kNoBank); 
-	  //empty bank if OK: if( !numberOfSeq() )return ((unsigned int)HltSelRepRBEnums::kEmptyBank); 
+	  if( !m_location )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kNoBank); 
+	  //empty bank if OK: if( !numberOfSeq() )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kEmptyBank); 
 	  for( unsigned int iSeq=0; iSeq!=numberOfSeq(); ++iSeq ){
 	       unsigned int ie1 = seqEnd( iSeq );
-               if( ie1 &lt; hitsLocation() ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
-               if( m_length &amp;&amp; ( ie1 &gt; (m_length+1) ) )return ((unsigned int)HltSelRepRBEnums::kPtrOutOfRange);
+               if( ie1 &lt; hitsLocation() ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
+               if( m_length &amp;&amp; ( ie1 &gt; (m_length+1) ) )return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfRange);
 	       for( unsigned int jSeq=iSeq+1; jSeq!=numberOfSeq(); ++jSeq ){
-	            if( ie1 &gt; seqEnd( jSeq ) ) return ((unsigned int)HltSelRepRBEnums::kPtrOutOfSequence);
+	            if( ie1 &gt; seqEnd( jSeq ) ) return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kPtrOutOfSequence);
                }
 	  } 
-          return ((unsigned int)HltSelRepRBEnums::kBankIsOK);
+          return ((unsigned int)HltSelRepRBEnums::IntegrityCodes::kBankIsOK);
 	</code>
       </method>
 

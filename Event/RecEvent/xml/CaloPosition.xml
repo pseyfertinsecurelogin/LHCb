@@ -111,7 +111,7 @@
  type   = "double"
  const  = "TRUE"
  access = "PUBLIC">
- <code> return parameters()( X ) ;   </code>
+ <code> return parameters()( CaloPosition::Index::X ) ;   </code>
 </method>
 
 <method
@@ -120,7 +120,7 @@
  type   = "double"
  const  = "TRUE"
  access = "PUBLIC">
- <code> return parameters()( Y ); </code>
+ <code> return parameters()( CaloPosition::Index::Y ); </code>
 </method>
 
 <method
@@ -129,7 +129,7 @@
  type   = "double"
  const  = "TRUE"
  access = "PUBLIC">
- <code>  return parameters()( E ); </code>
+ <code>  return parameters()( CaloPosition::Index::E ); </code>
  </method>
       
 
