@@ -29,11 +29,7 @@ class DeBcm: public DetectorElement {
 
 public:
 
-  DeBcm();
-
-  DeBcm(int nStation);
-
-  ~DeBcm();
+  DeBcm(int nStation = 0);
 
   inline static const CLID& classID(){
     return CLID_DeBcm;

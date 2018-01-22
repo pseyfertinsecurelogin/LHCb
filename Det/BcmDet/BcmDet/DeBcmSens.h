@@ -15,11 +15,8 @@ class DeBcmSens: public DetectorElement {
 
 public:
 
-  DeBcmSens();
+  DeBcmSens(int nSensor = 0);
 
-  DeBcmSens(int nSensor);
-
-  ~DeBcmSens();
 
   inline static const CLID& classID(){
     return CLID_DEBcmSens;
