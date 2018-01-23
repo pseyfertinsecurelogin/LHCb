@@ -19,7 +19,7 @@
  */
 class VisPrimVertTool : public extends<GaudiTool, IVisPrimVertTool> {
 public:
-  using base_class::base_class;
+  using extends::extends;
 
   long countVertices() const override;
   bool isVisible(const LHCb::MCVertex* pv ) const override

@@ -24,19 +24,12 @@ DECLARE_COMPONENT( VisPrimVertTool )
 //-----------------------------------------------------------------------------
 
 bool VisPrimVertTool::isB( const LHCb::MCVertex* pv ) const {
-  if ( !pv->isPrimary() ){
-    Error("Input vertex is not a primary").ignore() ;
-  }
-
+  if ( !pv->isPrimary() ) Error("Input vertex is not a primary").ignore() ;
   LHCb::MCParticles* MCPartCtnr = get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default);
-
-  for ( LHCb::MCParticles::const_iterator MCPiter = MCPartCtnr->begin();
-        MCPartCtnr->end() != MCPiter; MCPiter++ ) {
-    if ( (*MCPiter)->primaryVertex() == pv ) {
-      if ( (*MCPiter)->particleID().hasBottom()  ) return true ;
-    }
-  }
-  return false;
+  return std::any_of(  MCPartCtnr->begin(), MCPartCtnr->end(),
+                       [&](const LHCb::MCParticle* p) {
+                           return p->primaryVertex()==pv && p->particleID().hasBottom();
+                       });
 } // isB
 
 //=============================================================================
@@ -44,33 +37,15 @@ bool VisPrimVertTool::isB( const LHCb::MCVertex* pv ) const {
 // Count number of visible tracks per collision
 //-----------------------------------------------------------------------------
 long VisPrimVertTool::countVisTracks( const LHCb::MCVertex* pv ) const {
-  if ( !pv->isPrimary() ){
-    Error("Input vertex is not a primary").ignore() ;
-  }
-
+  if ( !pv->isPrimary() ) Error("Input vertex is not a primary").ignore() ;
   LHCb::MCParticles* MCPartCtnr = get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default);
-
-  SmartDataPtr<LHCb::MCProperty> flags( evtSvc(), LHCb::MCPropertyLocation::TrackInfo );
-  if (!flags) error() << "*** Flag container " << LHCb::MCPropertyLocation::TrackInfo
-                      << " not found." << endmsg;
-  MCTrackInfo trInfo( flags );
-
-  long countTracks = 0;
-
-  for ( LHCb::MCParticles::const_iterator MCPiter = MCPartCtnr->begin();
-        MCPartCtnr->end() != MCPiter; ++MCPiter) {
-
-    if ( (*MCPiter)->primaryVertex() == pv ) {
-      if (m_veloAndSeed) {
-        if (trInfo.hasVeloAndT(*MCPiter)){
-          ++countTracks;
-        }
-      } else if (trInfo.hasVelo(*MCPiter)){
-        ++countTracks;
-      }
-    }
-  }
-  return countTracks;
+  const MCTrackInfo trInfo = make_MCTrackInfo( evtSvc(), msgSvc() );
+  return std::count_if( MCPartCtnr->begin(), MCPartCtnr->end(),
+                        [&](const LHCb::MCParticle* p) {
+                            if (p->primaryVertex() != pv) return false;
+                            if (trInfo.hasVelo(p)) return true;
+                            return m_veloAndSeed && trInfo.hasVeloAndT(p) ;
+                        } );
 } // countVisTracks
 
 //=============================================================================
@@ -78,12 +53,8 @@ long VisPrimVertTool::countVisTracks( const LHCb::MCVertex* pv ) const {
 // Count Visible Primary Vertices
 //-----------------------------------------------------------------------------
 long VisPrimVertTool::countVertices() const {
-  long nVertices = 0; // number of VISIBLE PVs
   LHCb::MCHeader* mch = get<LHCb::MCHeader>(LHCb::MCHeaderLocation::Default);
-  for ( SmartRefVector< LHCb::MCVertex >::const_iterator ipv = mch->primaryVertices().begin() ;
-        ipv != mch->primaryVertices().end() ; ++ipv ){
-    if (isVisible(*ipv)) ++nVertices;
-  }
-  return nVertices;
+  return std::count_if( mch->primaryVertices().begin(), mch->primaryVertices().end(),
+                        [&](const LHCb::MCVertex* pv) { return isVisible(pv); } );
 
 } // countVertices
