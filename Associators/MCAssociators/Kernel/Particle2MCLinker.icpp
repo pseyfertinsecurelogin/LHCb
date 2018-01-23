@@ -177,6 +177,7 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
       }
       propString = propString + "\"]";
       sc = prop->setProperty( "InputData", propString);
+      prop->setProperty( "RootInTES", "/Event/AllStreams/");
       if( sc.isSuccess() ) {
         std::string err = "Property InputData set to " + propString + " in algo "
           + alg->name();
