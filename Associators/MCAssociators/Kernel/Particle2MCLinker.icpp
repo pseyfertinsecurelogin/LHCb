@@ -134,6 +134,14 @@ Object2MCLinker<SOURCE>::locateAlgorithm( const std::string& algType,
   return StatusCode::SUCCESS ;
 }
 template <class SOURCE>
+std::string Object2MCLinker<SOURCE>::getGaudiRootInTES()
+{
+  return
+    m_myGaudiAlg ? (m_myGaudiAlg->getProperty("RootInTES")).toString() :
+    m_myGaudiTool ? (m_myGaudiTool->getProperty("RootInTES")).toString() :
+    std::string();
+}
+template <class SOURCE>
 StatusCode
 Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
                                   const std::vector<std::string>& inputData)
@@ -177,7 +185,8 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
       }
       propString = propString + "\"]";
       sc = prop->setProperty( "InputData", propString);
-      prop->setProperty( "RootInTES", "/Event/AllStreams/");
+      const std::string rit(getGaudiRootInTES());
+      if (!rit.empty()) prop->setProperty("RootInTES", rit);
       if( sc.isSuccess() ) {
         std::string err = "Property InputData set to " + propString + " in algo "
           + alg->name();
