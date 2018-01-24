@@ -185,8 +185,6 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
       }
       propString = propString + "\"]";
       sc = prop->setProperty( "InputData", propString);
-      const std::string rit(getGaudiRootInTES());
-      if (!rit.empty()) prop->setProperty("RootInTES", rit);
       if( sc.isSuccess() ) {
         std::string err = "Property InputData set to " + propString + " in algo "
           + alg->name();
@@ -198,6 +196,22 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
           m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
           m_myGaudiTool ? m_myGaudiTool->Error( err, sc) :
           sc;
+      }
+      const std::string rit(getGaudiRootInTES());
+      if (!rit.empty()) {
+      sc = prop->setProperty("RootInTES", rit);
+        if( sc.isSuccess() ) {
+          std::string err = "Property RootInTES set to " + rit + " in algo "
+            + alg->name();
+          if( m_myGaudiAlg ) m_myGaudiAlg->debug() << err;
+          else if( m_myGaudiTool ) m_myGaudiTool->debug() << err;
+        } else {
+          std::string err = "Unable to set Property RootInTES to " + rit + "in algo " + alg->name();
+          return
+            m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
+            m_myGaudiTool ? m_myGaudiTool->Error( err, sc) :
+            sc;
+        }
       }
     } else {
       std::string err = "Unable to get IProperty pointer for algo " + alg->name();
