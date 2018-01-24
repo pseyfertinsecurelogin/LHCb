@@ -19,13 +19,6 @@
 #include "OTDet/WalkRelation.h"
 #include "OTDet/OTWireTraj.h"
 
-namespace LHCb
-{
-  class Trajectory;
-}
-
-class MsgStream;
-
 /** @class DeOTModule DeOTModule.h "OTDet/DeOTModule.h"
  *
  *  This is the detector element class for a Outer Tracker Module. It
@@ -74,7 +67,7 @@ class MsgStream;
  *  @date   05-03-2003
  */
 
-namespace LHCb{ class Trajectory; }
+class MsgStream;
 
 static const CLID CLID_DeOTModule = 8105;
 
@@ -284,19 +277,19 @@ public:
   /** Get trajectory representing the most left wire in (first=0) monolayer
    * @return trajectory
    */
-  std::unique_ptr<LHCb::Trajectory> trajectoryFirstWire(int monolayer=0) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectoryFirstWire(int monolayer=0) const;
 
   /** Get trajectory representing the most right wire in (second=1) monolayer
    * @return trajectory
    */
-  std::unique_ptr<LHCb::Trajectory> trajectoryLastWire(int monolayer=1) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectoryLastWire(int monolayer=1) const;
 
   /** Get trajectory representing the wire identified by the LHCbID.
    * The offset is zero for all OT Trajectories
    * @return trajectory
    */
-  std::unique_ptr<LHCb::Trajectory> trajectory( const LHCb::OTChannelID& aChan,
-                                                double = 0 /*offset*/ ) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectory( const LHCb::OTChannelID& aChan,
+                                                        double = 0 /*offset*/ ) const;
 
 
   /** Trajectory parameterized along y-axis */

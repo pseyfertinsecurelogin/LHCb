@@ -5,7 +5,7 @@
 #include "GaudiKernel/SystemOfUnits.h"
 using namespace LHCb;
 
-std::unique_ptr<Trajectory> ParabolaTraj::clone() const
+std::unique_ptr<Trajectory<double>> ParabolaTraj::clone() const
 {
         return std::make_unique<ParabolaTraj>(*this);
 }
@@ -27,19 +27,19 @@ ParabolaTraj::ParabolaTraj( const Point& point,
 }
 
 /// Point on the trajectory at arclength from the starting point
-Trajectory::Point ParabolaTraj::position( double arclength ) const
+Trajectory<double>::Point ParabolaTraj::position( double arclength ) const
 {
   return m_pos + arclength * (m_dir + 0.5 * arclength * m_curv);
 }
 
 /// First derivative of the trajectory at arclength from the starting point
-Trajectory::Vector ParabolaTraj::direction( double arclength ) const
+Trajectory<double>::Vector ParabolaTraj::direction( double arclength ) const
 {
   return m_dir + arclength * m_curv;
 }
 
 /// Second derivative of the trajectory at arclength from the starting point
-Trajectory::Vector ParabolaTraj::curvature( double /* arclength */) const
+Trajectory<double>::Vector ParabolaTraj::curvature( double /* arclength */) const
 {
   return m_curv;
 }

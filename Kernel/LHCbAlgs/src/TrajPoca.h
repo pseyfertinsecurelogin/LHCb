@@ -33,8 +33,8 @@ public:
   /// trajectories is at its minimum. The precision parameter is the desired
   /// numerical accuracy of mu1 and mu2. If the restrictrange flag is true, mu
   /// is restricted to the range of the trajectory.
-  StatusCode minimize( const LHCb::Trajectory& traj1, double& mu1, RestrictRange range1,
-                       const LHCb::Trajectory& traj2, double& mu2, RestrictRange range2,
+  StatusCode minimize( const LHCb::Trajectory<double>& traj1, double& mu1, RestrictRange range1,
+                       const LHCb::Trajectory<double>& traj2, double& mu2, RestrictRange range2,
                        Gaudi::XYZVector& distance,
                        double precision ) const override;
 
@@ -42,7 +42,7 @@ public:
   /// is minimum. The precision parameter is the desired numerical accuracy of
   /// the expansion parameter mu. If the restrictrange flag is true, mu is
   /// restricted to the range of the trajectory.
-  StatusCode minimize( const LHCb::Trajectory& traj,
+  StatusCode minimize( const LHCb::Trajectory<double>& traj,
                        double& mu,
                        RestrictRange restrictRange,
                        const Gaudi::XYZPoint& pt,

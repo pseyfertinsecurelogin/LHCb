@@ -161,8 +161,9 @@ std::vector<LHCb::STChannelID> DeSTDetector::disabledBeetles() const{
   return disabledBeetles;
 }
 
-std::unique_ptr<LHCb::Trajectory> DeSTDetector::trajectory(const LHCb::LHCbID& id,
-                                                         const double offset) const
+std::unique_ptr<LHCb::Trajectory<double>>
+DeSTDetector::trajectory(const LHCb::LHCbID& id,
+                         const double offset) const
 {
   // look up the trajectory
   if ( !id.isST()){
@@ -179,7 +180,8 @@ std::unique_ptr<LHCb::Trajectory> DeSTDetector::trajectory(const LHCb::LHCbID& i
   return aSector->trajectory(id.stID(), offset);
 }
 
-std::unique_ptr<LHCb::Trajectory> DeSTDetector::trajectoryFirstStrip(const LHCb::LHCbID& id) const
+std::unique_ptr<LHCb::Trajectory<double>>
+DeSTDetector::trajectoryFirstStrip(const LHCb::LHCbID& id) const
 {
   if ( !id.isST()){
      throw GaudiException( "The LHCbID is not of ST type!",
@@ -196,7 +198,8 @@ std::unique_ptr<LHCb::Trajectory> DeSTDetector::trajectoryFirstStrip(const LHCb:
   return aSector->trajectoryFirstStrip();
 }
 
-std::unique_ptr<LHCb::Trajectory> DeSTDetector::trajectoryLastStrip(const LHCb::LHCbID& id) const
+std::unique_ptr<LHCb::Trajectory<double>>
+DeSTDetector::trajectoryLastStrip(const LHCb::LHCbID& id) const
 {
   if ( !id.isST()){
     throw GaudiException( "The LHCbID is not of ST type!",

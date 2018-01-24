@@ -43,7 +43,6 @@ namespace VeloDet {
 bool DeVeloPhiType::m_staticDataInvalid = true;
 
 std::vector<std::pair<double,double> > DeVeloPhiType::m_stripLines;
-//std::vector<std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> > DeVeloPhiType::m_stripLimits;
 
 /** @file DeVeloPhiType.cpp
  *
@@ -556,7 +555,7 @@ void DeVeloPhiType::BuildRoutingLineMap(){
 }
 //==============================================================================
 // Return a trajectory (for track fit) from strip + offset
-std::unique_ptr<LHCb::Trajectory> DeVeloPhiType::trajectory(const LHCb::VeloChannelID& id,
+std::unique_ptr<LHCb::Trajectory<double>> DeVeloPhiType::trajectory(const LHCb::VeloChannelID& id,
                                                             double offset) const {
   // Trajectory is a line
   unsigned int strip=id.strip();
@@ -574,9 +573,8 @@ std::unique_ptr<LHCb::Trajectory> DeVeloPhiType::trajectory(const LHCb::VeloChan
     lEnd.second += (lEnd.second-lNextEnd.second)*offset;
   }
   // transform to global coordinates, and create trajectory
-  return std::unique_ptr<LHCb::Trajectory>{
-    new LHCb::LineTraj(localToGlobal(lEnd.first),
-                       localToGlobal(lEnd.second))
+  return std::unique_ptr<LHCb::Trajectory<double>>{
+    new LHCb::LineTraj<double>(localToGlobal(lEnd.first), localToGlobal(lEnd.second))
   };
 }
 

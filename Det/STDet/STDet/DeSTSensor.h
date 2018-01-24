@@ -83,8 +83,8 @@ public:
   /** trajectory
    * @return trajectory for the fit
    */
-  std::unique_ptr<LHCb::Trajectory> trajectory(unsigned int strip,
-                                               double offset) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectory(unsigned int strip,
+                                                       double offset) const;
 
 
   /** plane corresponding to the sector
@@ -195,7 +195,7 @@ private:
   double m_vMinLocal;
   double m_vMaxLocal;
 
-  std::unique_ptr<LHCb::Trajectory> m_midTraj;
+  std::unique_ptr<LHCb::Trajectory<double>> m_midTraj;
 
   bool m_xInverted;
   bool m_yInverted;

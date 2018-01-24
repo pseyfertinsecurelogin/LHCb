@@ -15,7 +15,7 @@ DECLARE_COMPONENT( TrajPoca )
 
 namespace {
 
-inline bool restrictToRange(double& l, const LHCb::Trajectory& t)
+inline bool restrictToRange(double& l, const LHCb::Trajectory<double>& t)
 {
   const auto minmax = std::minmax( { t.beginRange(), t.endRange() } ) ;
   //C++17: use std::clamp instead...
@@ -43,12 +43,13 @@ const char* status_msg(step_status_t status) {
   }
   __builtin_unreachable();
 }
+}
 
 //=============================================================================
 //
 //=============================================================================
-step_status_t stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, ITrajPoca::RestrictRange restrictRange1,
-                              const LHCb::Trajectory& traj2, double& mu2, ITrajPoca::RestrictRange restrictRange2,
+step_status_t stepTowardPoca( const LHCb::Trajectory<double>& traj1, double& mu1, ITrajPoca::RestrictRange restrictRange1,
+                              const LHCb::Trajectory<double>& traj2, double& mu2, ITrajPoca::RestrictRange restrictRange2,
                               double tolerance,
                               cache_t& cache,
                               double maxExtrapTolerance, double maxDist )
@@ -134,21 +135,11 @@ step_status_t stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, ITrajP
 }
 
 //=============================================================================
-
-}
-
-
-//=============================================================================
 // Find mus along trajectories having a distance smaller than tolerance
 //=============================================================================
-StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
-                               double& mu1,
-                               RestrictRange restrictRange1,
-                               const LHCb::Trajectory& traj2,
-                               double& mu2,
-                               RestrictRange restrictRange2,
-                               Gaudi::XYZVector& distance,
-                               double precision ) const
+StatusCode TrajPoca::minimize( const LHCb::Trajectory<double>& traj1, double& mu1, ITrajPoca::RestrictRange restrictRange1,
+                               const LHCb::Trajectory<double>& traj2, double& mu2, ITrajPoca::RestrictRange restrictRange2,
+                               Gaudi::XYZVector& distance, double precision ) const
 {
   StatusCode status = StatusCode::SUCCESS;
 
@@ -178,7 +169,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     }
 
     distance = traj1.position( mu1 ) - traj2.position( mu2 );
-    delta2    = distance.Mag2();
+    delta2   = distance.Mag2();
     double step1 = mu1 - prevflt1;
     double step2 = mu2 - prevflt2;
     int pathDir1 = ( step1 > 0. ) ? 1 : -1;
@@ -252,7 +243,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
 //=============================================================================
 //
 //=============================================================================
-StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj, double& mu,
+StatusCode TrajPoca::minimize( const LHCb::Trajectory<double>& traj, double& mu,
                                RestrictRange restrictRange,
                                const Gaudi::XYZPoint& pt,
                                Gaudi::XYZVector& distance,
@@ -264,4 +255,3 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj, double& mu,
   distance = traj.position( mu ) - pt;
   return StatusCode::SUCCESS;
 }
-

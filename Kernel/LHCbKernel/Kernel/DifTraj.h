@@ -20,12 +20,14 @@ namespace LHCb
 {
 
   template<unsigned int N>
-  struct DifTraj : Trajectory {
+  struct DifTraj : Trajectory<double> {
 
     enum { kSize = N };
 
     /// Constructor - defer to Trajectory
-    using Trajectory::Trajectory;
+    using Trajectory<double>::Trajectory;
+    using Trajectory<double>::Vector;
+    using Trajectory<double>::Point;
 
     typedef ROOT::Math::SMatrix<double,3,N> Derivative;
     typedef ROOT::Math::SVector<double,N>   Parameters;
