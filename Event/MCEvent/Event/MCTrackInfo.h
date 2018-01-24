@@ -1,4 +1,3 @@
-// $Id: MCTrackInfo.h,v 1.5 2009-06-09 06:07:44 cattanem Exp $
 #ifndef MCEVENT_MCTRACKINFO_H
 #define MCEVENT_MCTRACKINFO_H 1
 
@@ -22,7 +21,7 @@ namespace LHCb
  *
  *  @date   2004-01-08
  */
-class MCTrackInfo
+class MCTrackInfo final
 {
 
 public:
@@ -75,11 +74,12 @@ public:
     };
 
   /// Standard constructor
+  MCTrackInfo( const LHCb::MCProperty& flags ) : m_flags(&flags ) { }
+
+  /// Deprecated constructor
+  [[deprecated("please fetch LHCb::MCProperty from LHCb::MCPropertyLocation::TrackInfo, and pass it to the MCTrackInfo constructor instead")]]
   MCTrackInfo( IDataProviderSvc* eventSvc,
                IMessageSvc* msgSvc );
-
-  ///< Destructor
-  ~MCTrackInfo( ) = default;
 
   //== Main accessors: Velo, TT, T and Velo+T for cluster and acceptance
 
@@ -237,8 +237,7 @@ public:
 
 private:
 
-
-  LHCb::MCProperty * m_flags = nullptr;
+  const LHCb::MCProperty * m_flags = nullptr;
 
 };
 
@@ -248,13 +247,27 @@ private:
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
 
+inline MCTrackInfo make_MCTrackInfo( IDataProviderSvc* eventSvc,
+                              IMessageSvc* msgSvc ) {
+  SmartDataPtr<LHCb::MCProperty> flags( eventSvc,
+                                        LHCb::MCPropertyLocation::TrackInfo );
+  if ( ! flags )
+  {
+    MsgStream msg( msgSvc, "MCTrackInfo" );
+    msg << MSG::ERROR
+        << "*** Flag container " << LHCb::MCPropertyLocation::TrackInfo
+        << " not found." << endmsg;
+  }
+  return { flags };
+}
+
 
 inline MCTrackInfo::MCTrackInfo(IDataProviderSvc* eventSvc,
-                                IMessageSvc* msgSvc ) 
+                                IMessageSvc* msgSvc )
 {
   SmartDataPtr<LHCb::MCProperty> flags( eventSvc,
                                         LHCb::MCPropertyLocation::TrackInfo );
-  if ( ! flags ) 
+  if ( ! flags )
   {
     MsgStream msg( msgSvc, "MCTrackInfo" );
     msg << MSG::ERROR
@@ -265,18 +278,18 @@ inline MCTrackInfo::MCTrackInfo(IDataProviderSvc* eventSvc,
 }
 
 inline bool MCTrackInfo::testMask(const LHCb::MCParticle* part ,
-                                  const unsigned int mask ) const  
+                                  const unsigned int mask ) const
 {
   return !m_flags ? false : mask == (mask & m_flags->property( part ));
 }
 
-inline unsigned int MCTrackInfo::nbVeloR( const LHCb::MCParticle* part ) const 
+inline unsigned int MCTrackInfo::nbVeloR( const LHCb::MCParticle* part ) const
 {
   const unsigned int word = m_flags->property( part ) & MCTrackInfo::maskMultVeloR;
   return word >> MCTrackInfo::multVeloR;
 }
 
-inline unsigned int MCTrackInfo::nbVeloPhi( const LHCb::MCParticle* part ) const 
+inline unsigned int MCTrackInfo::nbVeloPhi( const LHCb::MCParticle* part ) const
 {
   const unsigned int word = m_flags->property( part ) & MCTrackInfo::maskMultVeloPhi;
   return word >> MCTrackInfo::multVeloPhi;
