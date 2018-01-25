@@ -7,7 +7,7 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
-#include "TaggedBool.h"
+#include "GaudiKernel/TaggedBool.h"
 
 #include <utility>
 #include <memory>
@@ -15,8 +15,6 @@
 
 namespace LHCb
 {
-  using DirNormalized = xplicit::tagged_bool<struct DirNormalized_tag>;
-
   /** @class Trajectory Trajectory.h
    *
    * This is the base class for the trajectory classes. 'mu' is the expansion
@@ -28,8 +26,8 @@ namespace LHCb
    */
   template<typename FTYPE = double>
   class Trajectory {
-
   public:
+    using DirNormalized = Gaudi::tagged_bool<struct DirNormalized_tag>;
     using Range  = std::pair<FTYPE, FTYPE>;
     using Point  = typename ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<FTYPE>,
                                                          ROOT::Math::DefaultCoordinateSystemTag>; ///< 3D cartesian point

@@ -46,10 +46,10 @@ namespace LHCb
 
   template<typename FTYPE>
   class LineTraj: public Trajectory<FTYPE> {
-
   public:
-
+    using DirNormalized = typename Trajectory<FTYPE>::DirNormalized;
     using Trajectory<FTYPE>::Trajectory;
+
     using Vector = typename Trajectory<FTYPE>::Vector;
     using Point  = typename Trajectory<FTYPE>::Point;
     using Range  = typename Trajectory<FTYPE>::Range;
