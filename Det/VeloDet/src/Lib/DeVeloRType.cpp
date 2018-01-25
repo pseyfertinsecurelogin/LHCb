@@ -679,7 +679,7 @@ std::unique_ptr<LHCb::Trajectory<double>> DeVeloRType::trajectory(const LHCb::Ve
   }
 
   // put into trajectory
-  return std::unique_ptr<LHCb::Trajectory<double>>{ new LHCb::CircleTraj(gOrigin,gBegin-gOrigin,gEnd-gOrigin,radius) };
+  return std::make_unique<LHCb::CircleTraj>(gOrigin, gBegin-gOrigin, gEnd-gOrigin, radius);
 }
 
 StatusCode DeVeloRType::updateStripRCache()

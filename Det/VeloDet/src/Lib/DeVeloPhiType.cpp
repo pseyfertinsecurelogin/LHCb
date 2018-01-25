@@ -573,9 +573,8 @@ std::unique_ptr<LHCb::Trajectory<double>> DeVeloPhiType::trajectory(const LHCb::
     lEnd.second += (lEnd.second-lNextEnd.second)*offset;
   }
   // transform to global coordinates, and create trajectory
-  return std::unique_ptr<LHCb::Trajectory<double>>{
-    new LHCb::LineTraj<double>(localToGlobal(lEnd.first), localToGlobal(lEnd.second))
-  };
+  return std::make_unique<LHCb::LineTraj<double>>(localToGlobal(lEnd.first),
+                                                  localToGlobal(lEnd.second));
 }
 
 StatusCode DeVeloPhiType::updatePhiCache()
