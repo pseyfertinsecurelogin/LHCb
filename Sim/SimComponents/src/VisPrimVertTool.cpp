@@ -43,8 +43,8 @@ long VisPrimVertTool::countVisTracks( const LHCb::MCVertex* pv ) const {
   return std::count_if( MCPartCtnr->begin(), MCPartCtnr->end(),
                         [&](const LHCb::MCParticle* p) {
                             if (p->primaryVertex() != pv) return false;
-                            if (trInfo.hasVelo(p)) return true;
-                            return m_veloAndSeed && trInfo.hasVeloAndT(p) ;
+                            return m_veloAndSeed ? trInfo.hasVeloAndT(p)
+                                                 : trInfo.hasVelo(p);
                         } );
 } // countVisTracks
 
