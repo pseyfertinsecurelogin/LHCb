@@ -74,7 +74,7 @@ class DDDBConf(ConfigurableUser):
                    }
     _propertyDocDct = {
                        'DbRoot' : """ Root file of the detector description """,
-                       'DataType' : """ Symbolic name for the data type. Allowed values: ["2017", "2016", "2015", "2013", "2012", "2011", "2010", "2009","2008","Upgrade"] """,
+                       'DataType' : """ Symbolic name for the data type. Allowed values: ["2018", "2017", "2016", "2015", "2013", "2012", "2011", "2010", "2009","2008","Upgrade"] """,
                        'Simulation' : """ Boolean flag to select the simulation or real-data configuration """,
                        'AutoTags'  : """ Perform automatic resolution of CondDB tags """,
                        'InitialTime' : """ How to set the initial time. None/'Safe' uses a list of dummy times for each year and sets that time. 'Now' uses the current time. Sepcifying a number assumes that is a time in utc.""",
@@ -282,6 +282,18 @@ class DDDBConf(ConfigurableUser):
             log.warning("EventClockSvc().InitialTime already set to %s UTC (requested %s UTC)",
                         t.isoformat(), utcDatetime.isoformat())
 
+    def __2018_conf__(self):
+        """
+        Default configuration for 2018 data
+        """
+        # Set the tags
+        self.__set_tag__(["DDDB"],     "dddb-20171030-3" )
+        if not self.getProp("Simulation"):
+            self.__set_tag__(["LHCBCOND"], "cond-20170724" )
+            self.__set_tag__(["CALIBOFF"], "head-2015604" )
+            # set initialization time to a safe default
+            self.__set_init_time__(datetime(2018, 12, 31, 23, 59))
+
     def __2017_conf__(self):
         """
         Default configuration for 2017 data
@@ -289,7 +301,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20171030-3" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20170510" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170724" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
             self.__set_init_time__(datetime(2017, 11, 26, 13, 30)) # End of fill 6417
@@ -391,7 +403,8 @@ class DDDBConf(ConfigurableUser):
         # Need also to change connection string to DDDB
         CondDB().PartitionConnectionString = {"DDDB":"sqlite_file:$SQLITEDBPATH/DDDB_upgrade.db/DDDB"}
 
-    __data_types_handlers__ =  { "2017": __2017_conf__,
+    __data_types_handlers__ =  { "2018": __2018_conf__,
+                                 "2017": __2017_conf__,
                                  "2016": __2016_conf__,
                                  "2015": __2015_conf__,
                                  "2013": __2013_conf__,
