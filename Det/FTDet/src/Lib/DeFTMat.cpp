@@ -56,16 +56,26 @@ StatusCode DeFTMat::initialize(){
   m_sizeY = box->ysize();
   m_sizeZ = box->zsize();
 
-  // Get the global z position of the mat at the point closest to the mirror
-  Gaudi::XYZPoint mirrorPoint =
-      geometry()->toGlobal( Gaudi::XYZPoint( 0,-0.5*m_sizeY,0) );
-  m_globalZ = mirrorPoint.z();
+  // Get the central points of the fibres at the mirror and at the SiPM locations
+  m_mirrorPoint = geometry()->toGlobal( Gaudi::XYZPoint( 0,-0.5*m_sizeY,0) );
+  m_sipmPoint   = geometry()->toGlobal( Gaudi::XYZPoint( 0,+0.5*m_sizeY,0) );
+
+  // Define the global z position to be at the point closest to the mirror
+  m_globalZ = m_mirrorPoint.z();
 
   // Make the plane for the mat
   const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
   const Gaudi::XYZPoint g2 = geometry() -> toGlobal( Gaudi::XYZPoint(1.,0.,0.) );
   const Gaudi::XYZPoint g3 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,1.,0.) );
   m_plane = Gaudi::Plane3D(g1,g2,g3 );
+
+  // Get the slopes in units of local delta x
+  m_ddx = Gaudi::XYZVector(g2 - g1);
+
+  // Get the slopes in units of delta y (needed by PrFTHit, mind the sign)
+  Gaudi::XYZVector deltaY( g1 - g3 );
+  m_dxdy = deltaY.x() / deltaY.y();
+  m_dzdy = deltaY.z() / deltaY.y();
 
   return StatusCode::SUCCESS;
 }
@@ -171,16 +181,10 @@ std::unique_ptr<LHCb::Trajectory> DeFTMat::trajectory(const LHCb::FTChannelID ch
     const double frac) const {
   double localX = localXfromChannel( channelID, frac );
 
-  // Use this piece of code instead as soon as Gauss is compliant with c++1y
-  //auto to_global = [g=geometry()](double x, double y, double z)
-  //    { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
-  //return std::make_unique<LHCb::LineTraj>( to_global(localX, -0.5*m_sizeY, 0.),
-  //                                         to_global(localX, +0.5*m_sizeY, 0.) );
+  Gaudi::XYZVector delta(m_ddx*localX);
+  return std::unique_ptr<LHCb::Trajectory>(new LHCb::LineTraj(m_mirrorPoint+delta,
+                                                              m_sipmPoint+delta ));
 
-  // c++11 code:
-  auto to_global = [&](double x, double y, double z) { return geometry()->toGlobal(Gaudi::XYZPoint(x,y,z));};
-  return std::unique_ptr<LHCb::Trajectory>(new LHCb::LineTraj(to_global(localX, -0.5*m_sizeY, 0.),
-                                                              to_global(localX, +0.5*m_sizeY, 0.) ));
 }
 
 // Get the endpoints of the line defined by the hit
@@ -188,14 +192,7 @@ std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> DeFTMat::endPoints(
     const LHCb::FTChannelID channelID, const double frac) const{
   double localX = localXfromChannel( channelID, frac );
 
-  // Use this piece of code instead as soon as Gauss is compliant with c++1y
-  //auto to_global = [g=geometry()](double x, double y, double z)
-  //    { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
-
-  // c++11 code:
-  auto to_global = [&](double x, double y, double z) { return geometry()->toGlobal(Gaudi::XYZPoint(x,y,z));};
-
-
-  return std::make_pair<Gaudi::XYZPoint>( to_global(localX, -0.5*m_sizeY, 0.),
-                                          to_global(localX, +0.5*m_sizeY, 0.) );
+  Gaudi::XYZVector delta(m_ddx*localX);
+  return std::make_pair<Gaudi::XYZPoint>( m_mirrorPoint+delta,
+                                          m_sipmPoint+delta );
 }
