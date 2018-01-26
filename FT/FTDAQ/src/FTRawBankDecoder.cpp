@@ -43,7 +43,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   FTLiteClusters clus;
   int totSize = 0;
   for ( const LHCb::RawBank* bank : banks) { totSize += bank->size();}
-  clus.reserve(0.4 * totSize);
+  clus.reserve(4 * totSize / 10);
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
 
@@ -232,6 +232,16 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   assert( std::is_sorted(clus.begin(), clus.end(),
          [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){
          return lhs.channelID() < rhs.channelID(); }) ) ;
+
+  // sort clusters according to PrFTHits
+  //loop over stations, layers, quadrants
+  //   if( quadrant == 0 or 2 ) # quadrant & 1 == 0
+  //     find range of hits in quadrant
+  //       swap hits
+  //   if( (layer&1==0 and (quadrant == 0 or 3)) or (layer&1==1 and (quadrant == 1 or 2))
+  //   loop over modules
+  //      find range of hits in module
+  //         swap hits
 
   return clus;
 }
