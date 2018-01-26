@@ -1025,7 +1025,7 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
   if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
     verbose()<<" check headers consistency "<<endmsg;
 
-  if( m_checkTell1HeaderPerformed)return m_checkTell1HeaderResult;
+  if( m_checkTell1HeaderPerformed ) return StatusCode{m_checkTell1HeaderResult};
   m_checkTell1HeaderPerformed=true;
   if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
     verbose()<<" check headers consistency not yet done"<<endmsg;

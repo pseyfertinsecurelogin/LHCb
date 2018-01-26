@@ -55,14 +55,7 @@ std::ostream& LogVolumeException::printOut
 ( std::ostream& os             ) const
 {
   /// print THIS exception
-  os << " \t" << tag() << " \t " << message() ;
-  switch( code() )
-    {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
-    default                  : os << "\t StatusCode=" << code() ;  break ;
-    }
-  os << std::endl ;
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code() << std::endl ;
   /// print the logvol
   os << " Exception logvol: "
      << m_logvol
@@ -81,14 +74,7 @@ MsgStream&    LogVolumeException::printOut
 ( MsgStream&    os             ) const
 {
   /// print THIS exception
-  os << " " << tag() << " \t " << message() ;
-  switch( code() )
-    {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
-    default                  : os << "\t StatusCode=" << code() ;  break ;
-    }
-  os << endmsg ;
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code() << endmsg ;
   /// print the logvol
   os << " Exception logvol: "
      << m_logvol

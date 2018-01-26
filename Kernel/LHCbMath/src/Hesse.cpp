@@ -388,12 +388,12 @@ StatusCode
 Gaudi::Math::GSL::invert_LU_1 ( gsl_matrix* matrix , gsl_matrix* result )
 {
   //
-  if ( 0 == matrix )                        { return 10 ; }
-  if ( 0 == result )                        { return 11 ; }
-  if ( matrix -> size1 != matrix -> size2 ) { return 12 ; }
-  if ( result -> size1 != result -> size2 ) { return 13 ; }
-  if ( result -> size1 != matrix -> size1 ) { return 14 ; }
-  if ( result -> size2 != matrix -> size2 ) { return 15 ; }
+  if ( 0 == matrix )                        { return StatusCode{10} ; }
+  if ( 0 == result )                        { return StatusCode{11} ; }
+  if ( matrix -> size1 != matrix -> size2 ) { return StatusCode{12} ; }
+  if ( result -> size1 != result -> size2 ) { return StatusCode{13} ; }
+  if ( result -> size1 != matrix -> size1 ) { return StatusCode{14} ; }
+  if ( result -> size2 != matrix -> size2 ) { return StatusCode{15} ; }
   //
   // Make LU decomposition of input matrix
   //
@@ -435,12 +435,12 @@ Gaudi::Math::GSL::invert_LU_2 ( const gsl_matrix* matrix ,
                                 gsl_matrix*       result )
 {
   //
-  if ( !matrix )                            { return 10 ; }
-  if ( !result )                            { return 11 ; }
-  if ( matrix -> size1 != matrix -> size2 ) { return 12 ; }
-  if ( result -> size1 != result -> size2 ) { return 13 ; }
-  if ( result -> size1 != matrix -> size1 ) { return 14 ; }
-  if ( result -> size2 != matrix -> size2 ) { return 15 ; }
+  if ( !matrix )                            { return StatusCode{10} ; }
+  if ( !result )                            { return StatusCode{11} ; }
+  if ( matrix -> size1 != matrix -> size2 ) { return StatusCode{12} ; }
+  if ( result -> size1 != result -> size2 ) { return StatusCode{13} ; }
+  if ( result -> size1 != matrix -> size1 ) { return StatusCode{14} ; }
+  if ( result -> size2 != matrix -> size2 ) { return StatusCode{15} ; }
   //
   // make the intermediate matrix
   //

@@ -23,16 +23,8 @@ PVolumeException::PVolumeException( const std::string&     name      ,
 std::ostream& PVolumeException::printOut( std::ostream& os             ) const
 {
   ///
-  os << " \t" << tag() << " \t " << message() ;
-  ///
-  switch( code() )
-    {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
-    default                  : os << "\t StatusCode=" << code() ;  break ;
-    }
-  ///
-  os << " \t" << m_pve_pvolume << std::endl ;
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code()
+     << " \t" << m_pve_pvolume << std::endl ;
   ///
   return ( 0 != previous() ) ? previous()->printOut( os ) : os ;
   ///
@@ -41,16 +33,8 @@ std::ostream& PVolumeException::printOut( std::ostream& os             ) const
 MsgStream&    PVolumeException::printOut( MsgStream&    os             ) const
 {
   ///
-  os << " \t" << tag() << " \t " << message() ;
-  ///
-  switch( code() )
-    {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
-    default                  : os << "\t StatusCode=" << code() ;  break ;
-    }
-  ///
-  os << " \t" << m_pve_pvolume << endmsg;
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code()
+     << " \t" << m_pve_pvolume << endmsg;
   ///
   return ( 0 != previous() ) ? previous()->printOut( os ) : os ;
   ///

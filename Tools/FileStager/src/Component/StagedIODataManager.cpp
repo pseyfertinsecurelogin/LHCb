@@ -19,12 +19,17 @@
 // local
 #include "StagedIODataManager.h"
 
+#ifdef STATUSCODE_ENUM_DECL
+STATUSCODE_ENUM_DECL( Gaudi::IDataConnection::IoStatus )
+STATUSCODE_ENUM_IMPL( Gaudi::IDataConnection::IoStatus )
+#endif
 
 DECLARE_COMPONENT( Gaudi::StagedIODataManager )
 
 namespace Gaudi {
 
-enum { S_OK = StatusCode::SUCCESS, S_ERROR=StatusCode::FAILURE };
+static const auto S_OK    = StatusCode::SUCCESS;
+static const auto S_ERROR = StatusCode::FAILURE;
 
 static std::set<std::string>    s_badFiles;
 

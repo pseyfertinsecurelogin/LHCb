@@ -35,6 +35,7 @@ namespace DetDesc
     /// set the static error code
     static void              setCode
     ( const StatusCode& sc , const ILVolume*   volume ) ;
+    static inline void setCode( unsigned long sc, const ILVolume* volume ) { setCode( StatusCode{sc}, volume ); }
     /// get the static error code
     // [[deprecated("can not be guaranteed to give the expected results in a multithreaded environment")]]
     static StatusCode code    ()  ;

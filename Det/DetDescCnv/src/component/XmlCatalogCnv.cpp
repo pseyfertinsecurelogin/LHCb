@@ -236,7 +236,7 @@ StatusCode XmlCatalogCnv::i_fillObj (xercesc::DOMElement* childElement,
         << " isString : " << xmlAddr->ipar()[0] << endmsg;
     xmlAddr->release();
     xmlAddr = 0;
-    StatusCode stcod = ERROR_ADDING_TO_TS;
+    StatusCode stcod{ERROR_ADDING_TO_TS};
     throw XmlCnvException
       ("Error adding registry entry to detector transient store", stcod);
   }

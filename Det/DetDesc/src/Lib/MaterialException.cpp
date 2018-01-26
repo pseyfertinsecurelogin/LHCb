@@ -1,5 +1,3 @@
-// $Id: MaterialException.cpp,v 1.8 2009-04-17 08:54:24 cattanem Exp $
-///
 /// GaudiKernbel
 #include "GaudiKernel/MsgStream.h"
 /// DetDesc
@@ -25,16 +23,8 @@ MaterialException::MaterialException( const std::string   &  message      ,
 std::ostream& MaterialException::printOut( std::ostream& os ) const
 {
   ///
-  os << "\t" << tag() << " \t" << message() ;
-  ///
-  switch( code() )
-    {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"                    ;  break ;
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"                    ;  break ;
-    default                  : os << "\t StatusCode=" << std::setw(7) << code() ;  break ;
-    }
-  ///
-  os << m_me_mat << std::endl ;
+  os << "\t" << tag() << " \t" << message() << "\t StatusCode=" << std::setw(7) << code()
+     << m_me_mat << std::endl ;
   ///
   return previous() ? ( previous()->printOut( os ) ) :  os  ;
   ///
@@ -43,24 +33,10 @@ std::ostream& MaterialException::printOut( std::ostream& os ) const
 MsgStream&    MaterialException::printOut( MsgStream&    os ) const
 {
   ///
-  os << "\t" << tag() << " \t" << message() ;
-  ///
-  switch( code() )
-    {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"                    ;  break ;
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"                    ;  break ;
-    default                  : os << "\t StatusCode=" << std::setw(7) << code() ;  break ;
-    }
-  ///
-  os << m_me_mat << endmsg ;
+  os << "\t" << tag() << " \t" << message() << "\t StatusCode=" << std::setw(7) << code()
+     << m_me_mat << endmsg ;
   ///
   return previous() ? ( previous()->printOut( os ) ) : os   ;
   ///
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-

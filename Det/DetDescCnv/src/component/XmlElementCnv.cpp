@@ -203,7 +203,7 @@ StatusCode XmlElementCnv::i_fillObj (xercesc::DOMElement*        childElement ,
     if (stcod.isFailure()) {
       log << MSG::ERROR << "Failed to retrieve isotoperef "
           << entryName << endmsg;
-      stcod = CANT_RETRIEVE_OBJECT;
+      stcod = StatusCode{CANT_RETRIEVE_OBJECT};
       itemObj->release();
       std::string msg = "Can't retrieve material ";
       msg += entryName + " ";
@@ -226,8 +226,7 @@ StatusCode XmlElementCnv::i_fillObj (xercesc::DOMElement*        childElement ,
       dataObj->addIsotope(is, m_itemFraction, false);
     } else {
       itemObj->release();
-      StatusCode sc;
-      sc.setCode (INVALID_CLASS_ID);
+      StatusCode sc{INVALID_CLASS_ID};
       std::string msg =
         "Wrong element or mixture composite, invalid combination";
       throw XmlCnvException(msg.c_str(),sc);

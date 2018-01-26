@@ -222,12 +222,12 @@ StatusCode STReadoutTool::validate() const{
 
   // validate the map - every sector must go somewhere !
   const DeSTDetector::Sectors& dSectors = m_tracker->sectors();
-  return std::none_of(std::begin(dSectors), std::end(dSectors),
+  return StatusCode{std::none_of(std::begin(dSectors), std::end(dSectors),
                       [this](const DeSTSector *s) {
                              STChannelID chan = s->elementID();
                              auto chanPair = offlineChanToDAQ(chan,0.0);
                              return chanPair.first == STTell1ID(STTell1ID::nullBoard, false);
-                       } );
+                       } )};
 }
 
 std::vector<LHCb::STChannelID> STReadoutTool::sectorIDs(const STTell1ID board) const{

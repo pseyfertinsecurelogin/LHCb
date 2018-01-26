@@ -194,7 +194,7 @@ StatusCode LoKi::ErrorReport::Print
   { std::cerr << "\t" << "StatusCode=SUCCESS"     ; }
   else if ( st.isRecoverable () )
   { std::cerr << "\t" << "StatusCode=RECOVERABLE" ; }
-  else if ( StatusCode::FAILURE != st.getCode()  )
+  else if ( StatusCode::FAILURE != st  )
   { std::cerr << "\t" << "StatusCode=FAILURE/" << st.getCode() ; }
   else
   { std::cerr << "\t" << "StatusCode=FAILURE"     ; }

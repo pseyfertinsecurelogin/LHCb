@@ -119,10 +119,10 @@ StatusCode LHCb::MDFIO::commitRawBanks(RawEvent*         raw,
     log << MSG::ERROR << "Got unknown exception when writing data." << endmsg;
   }
   m_writeErrors++;
-  return StatusCode::FAILURE;  
+  return StatusCode::FAILURE;
 }
 
-StatusCode 
+StatusCode
 LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, const std::string& location)
 {
   SmartDataPtr<RawEvent> raw(m_evtSvc,location);
@@ -170,7 +170,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
 
     // prepare the bank containing information for each BX
     // Maximum +-7 crossings, due to hardware limitation of derandomisers = 15 consecutive BX
-    int sizeCtrlBlock = 3 * 15; 
+    int sizeCtrlBlock = 3 * 15;
     std::vector<int> ctrlData;
     ctrlData.reserve(sizeCtrlBlock);
     size_t offset = 0;
@@ -181,7 +181,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
       if ( rawEvt ) {
         theRawEvents.push_back( rawEvt );
         ctrlData.push_back( n );               // BX offset
-        ctrlData.push_back( offset );          // offset in buffer, after end of this bank 
+        ctrlData.push_back( offset );          // offset in buffer, after end of this bank
         if ( centerMDF == 0 || n == 0 ) {
           const _V& bnks = raw->banks(RawBank::DAQ);
           for(_V::const_iterator i=bnks.begin(); i != bnks.end(); ++i)  {
@@ -191,7 +191,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
             }
           }
         }
-        size_t l = rawEventLengthTAE(rawEvt); 
+        size_t l = rawEventLengthTAE(rawEvt);
         ctrlData.push_back(l);                 // size of this BX information
         offset += l;
         if( UNLIKELY(msg.level() <= MSG::DEBUG) )
@@ -252,7 +252,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
         msg << MSG::ERROR << "Failed write data to output device." << endmsg;
       }
       if( UNLIKELY(msg.level() <= MSG::DEBUG) )
-        msg << MSG::DEBUG << "Wrote TAE event of length:" << total 
+        msg << MSG::DEBUG << "Wrote TAE event of length:" << total
             << " bytes from " << theRawEvents.size() << " Bxs" << endmsg;
       privateBank.removeBank( ctrlBank );
       privateBank.removeBank( hdrBank );
@@ -291,7 +291,7 @@ RawBank* LHCb::MDFIO::createDummyMDFHeader( RawEvent* raw, size_t len ) {
 }
 
 /// Direct I/O with valid existing raw buffers
-StatusCode 
+StatusCode
 LHCb::MDFIO::commitRawBuffer(const void*       data,
                              size_t            len,
                              int               type,
@@ -326,7 +326,7 @@ LHCb::MDFIO::commitRawBuffer(const void*       data,
 }
 
 /// Direct I/O with valid existing raw buffers
-StatusCode 
+StatusCode
 LHCb::MDFIO::commitRawBuffer(int               type,
                              int               compTyp,
                              int               chksumTyp,
@@ -340,13 +340,13 @@ LHCb::MDFIO::commitRawBuffer(int               type,
 }
 
 /// Write MDF record from serialization buffer
-StatusCode 
-LHCb::MDFIO::writeDataSpace(int           compTyp, 
-                            int           chksumTyp, 
-                            void* const   ioDesc, 
-                            RawBank*      hdr, 
-                            char* const   data, 
-                            size_t        len)  
+StatusCode
+LHCb::MDFIO::writeDataSpace(int           compTyp,
+                            int           chksumTyp,
+                            void* const   ioDesc,
+                            RawBank*      hdr,
+                            char* const   data,
+                            size_t        len)
 {
   MDFHeader* h = (MDFHeader*)hdr->data();
   int    bnkSize = hdr->totalSize();
@@ -400,7 +400,7 @@ bool LHCb::MDFIO::checkSumOk(int checksum, const char* src, int datSize, bool pr
       if ( chk2 != checksum )  {
         if ( prt )  {
           MsgStream log(m_msgSvc, m_parent);
-          log << MSG::ERROR << "Data corruption. [Invalid checksum] expected:" 
+          log << MSG::ERROR << "Data corruption. [Invalid checksum] expected:"
             << std::hex << checksum << " got:" << std::hex << chk << endmsg;
         }
         return false;
@@ -410,7 +410,7 @@ bool LHCb::MDFIO::checkSumOk(int checksum, const char* src, int datSize, bool pr
   return true;
 }
 
-MDFDescriptor 
+MDFDescriptor
 LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
 {
   int  rawSize    = sizeof(MDFHeader);
@@ -481,7 +481,7 @@ LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
         log0 << MSG::ERROR << "Cannot allocate sufficient space for decompression." << endmsg;
         return MDFDescriptor(0,-1);
       }
-      else if ( sc == 0 ) {
+      else if ( sc.isFailure() ) {
         MsgStream log(m_msgSvc, m_parent);
         log << MSG::INFO << "Cannot read more data (Compressed record). End-of-File reached." << endmsg;
         return MDFDescriptor(0,-1);
@@ -523,7 +523,7 @@ LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
       }
       return std::pair<char*, int>(data, bnkSize+datSize);
     }
-    else if ( sc == 0 ) {
+    else if ( sc.isFailure() ) {
       MsgStream log(m_msgSvc, m_parent);
       log << MSG::INFO << "Cannot read more data (Uncompressed record). End-of-File reached." << endmsg;
       return MDFDescriptor(0,-1);
@@ -538,7 +538,7 @@ LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
   return MDFDescriptor(0,-1);
 }
 
-MDFDescriptor 
+MDFDescriptor
 LHCb::MDFIO::readBanks(const MDFHeader& h, void* const ioDesc, bool dbg)  {
   int rawSize   = sizeof(MDFHeader);
   unsigned int checksum  = h.checkSum();
@@ -590,7 +590,7 @@ LHCb::MDFIO::readBanks(const MDFHeader& h, void* const ioDesc, bool dbg)  {
             }
             m_spaceActions++;
             b = (RawBank*)data;
-            b->setMagic(); 
+            b->setMagic();
             b->setType(RawBank::DAQ);
             b->setSize(rawSize+hdrSize);
             b->setVersion(DAQ_STATUS_BANK);
@@ -600,7 +600,7 @@ LHCb::MDFIO::readBanks(const MDFHeader& h, void* const ioDesc, bool dbg)  {
             bptr = (char*)b->data();
             hdr = (MDFHeader*)bptr;
           }
-          ::memcpy(bptr+rawSize, m_tmp.data()+rawSize, hdrSize); 
+          ::memcpy(bptr+rawSize, m_tmp.data()+rawSize, hdrSize);
           if ( m_ignoreChecksum )  {
             hdr->setChecksum(0);
           }
@@ -625,7 +625,7 @@ NoSpace:
         log0 << MSG::ERROR << "Cannot allocate sufficient space for decompression." << endmsg;
         return MDFDescriptor(0,-1);
       }
-      else if ( sc == 0 ) {
+      else if ( sc.isFailure() ) {
         MsgStream log(m_msgSvc, m_parent);
         log << MSG::INFO << "Cannot read more data (Compressed record). End-of-File reached." << endmsg;
         return MDFDescriptor(0,-1);
@@ -645,7 +645,7 @@ NoSpace:
       }
       return std::pair<char*, int>(data, bnkSize+h.size());
     }
-    else if ( sc == 0 ) {
+    else if ( sc.isFailure() ) {
       MsgStream log(m_msgSvc, m_parent);
       log << MSG::INFO << "Cannot read more data (Uncompressed record). End-of-File reached." << endmsg;
       return MDFDescriptor(0,-1);
@@ -671,7 +671,7 @@ MDFDescriptor LHCb::MDFIO::readBanks(void* const ioDesc, bool dbg)   {
     }
     return readBanks(h,ioDesc,dbg);
   }
-  else if ( sc == 0 ) {
+  else if ( sc.isFailure() ) {
     MsgStream log(m_msgSvc, m_parent);
     log << MSG::INFO << "Cannot read more data  (Header). End-of-File reached." << endmsg;
     return MDFDescriptor(0,-1);
@@ -683,13 +683,13 @@ MDFDescriptor LHCb::MDFIO::readBanks(void* const ioDesc, bool dbg)   {
 }
 
 /// Read raw char buffer from input stream
-StatusCode 
+StatusCode
 LHCb::MDFIO::readBuffer(void* const /* ioDesc */, void* const /* data */, size_t /* len */)  {
   throw std::runtime_error("LHCb::MDFIO::readBuffer: "\
     "This is a default implementation which should never be called!");
 }
 
-StatusCode 
+StatusCode
 LHCb::MDFIO::writeBuffer(void* const /* ioDesc */, const void* /* data */, size_t /* len */)  {
   throw std::runtime_error("LHCb::MDFIO::writeBuffer: "\
     "This is a default implementation which should never be called!");
@@ -698,7 +698,7 @@ LHCb::MDFIO::writeBuffer(void* const /* ioDesc */, const void* /* data */, size_
 // Pass raw banks to RawEvent object
 StatusCode LHCb::MDFIO::adoptBanks(RawEvent* evt,
                                    const std::vector<RawBank*>& bnks,
-                                   bool copy_banks)  
+                                   bool copy_banks)
 {
   if ( evt )  {
     // MsgStream log(m_msgSvc, m_parent);

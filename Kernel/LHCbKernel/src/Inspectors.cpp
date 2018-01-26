@@ -187,8 +187,8 @@ LHCb::Inspector::inspect
       /// get the algorithm by name
       IAlgorithm* alg = 0 ;
       StatusCode sc = m_algMgr->getAlgorithm ( item.name() , alg ) ;
-      if ( sc.isFailure() ) { return 510 + sc.getCode() ; }      // RETURN
-      if ( 0 == alg       ) { return 503                ; }      // RETURN
+      if ( sc.isFailure() ) { return StatusCode{510 + sc.getCode()} ; }      // RETURN
+      if ( 0 == alg       ) { return StatusCode{503               } ; }      // RETURN
       //
       // start the recursion here!!
       sc = inspect  ( alg , stream , level + 1 ) ;

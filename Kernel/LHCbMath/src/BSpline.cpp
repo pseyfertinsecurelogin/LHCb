@@ -217,12 +217,12 @@ namespace
       _deboor_ ( k-1 , order , i     , x , knots , pars ) *       tau   ;
   }
   // ==========================================================================
-  unsigned short _insert_ 
-  ( const double         x     , 
+  unsigned short _insert_
+  ( const double         x     ,
     const unsigned short n     ,
     std::vector<double>& knots ,
-    std::vector<double>& pars  , 
-    const unsigned short d     ) 
+    std::vector<double>& pars  ,
+    const unsigned short d     )
   {
     const double tf = knots.front ()  ;
     const double tb = knots.back  ()  ;
@@ -230,9 +230,9 @@ namespace
     if ( x < tf && !s_equal ( x, tf ) ) { return 0 ; }
     if ( x > tb && !s_equal ( x, tb ) ) { return 0 ; }
     //
-    std::vector<double>::iterator il = 
+    std::vector<double>::iterator il =
       std::lower_bound ( knots.begin () , knots.end   () , x , s_less ) ;
-    std::vector<double>::iterator iu = 
+    std::vector<double>::iterator iu =
       std::upper_bound ( il             , knots.end   () , x , s_less ) ;
     const unsigned short nt = iu -  il ;
     //
@@ -240,13 +240,13 @@ namespace
     //
     unsigned short l = ( iu - knots.begin() ) - 1 ;
     //
-    //  add knot n-times 
+    //  add knot n-times
     for  ( unsigned  short i = 0 ; i < n  ; ++i , ++l )
     {
       const unsigned short f =   l  - d  + 1  ;
       //
       pars .insert  ( pars.begin() + l , pars[l] ) ;
-      for ( unsigned short j = l ; j >= f ; --j ) 
+      for ( unsigned short j = l ; j >= f ; --j )
       {
         const long double tj    = knots [ j ] ;
         const long double dt    = knots [ j + d ] - tj ;
@@ -408,27 +408,27 @@ Gaudi::Math::BSpline::BSpline
 // ============================================================================
 
 // ============================================================================
-/*  Constructor from the list of knots and list of parameters 
- *  The spline order will be calculated automatically 
- *  @param knots  non-empty vector of poinst/knots 
- *  @param pars   non-empty vector of parameters 
- *  - vector of points is not requires to be ordered 
- *  - min/max value will be used as interval boundaries 
+/*  Constructor from the list of knots and list of parameters
+ *  The spline order will be calculated automatically
+ *  @param knots  non-empty vector of poinst/knots
+ *  @param pars   non-empty vector of parameters
+ *  - vector of points is not requires to be ordered
+ *  - min/max value will be used as interval boundaries
  *  - duplicated knots will be ignored
- *  - extra knots will added at the end of interval 
+ *  - extra knots will added at the end of interval
  */
 // ============================================================================
-Gaudi::Math::BSpline::BSpline 
-( const Gaudi::Math::BSpline& b   , 
-  const double                xmn , 
+Gaudi::Math::BSpline::BSpline
+( const Gaudi::Math::BSpline& b   ,
+  const double                xmn ,
   const double                xmx )
-  : m_knots ( b.m_knots ) 
-  , m_pars  ( b.m_pars  ) 
-  , m_order ( b.m_order ) 
-  , m_inner ( 0      )  
-  , m_xmin  ( std::min ( xmn , xmx ) )  
-  , m_xmax  ( std::min ( xmn , xmx ) )  
-  , m_jlast ( 0      ) 
+  : m_knots ( b.m_knots )
+  , m_pars  ( b.m_pars  )
+  , m_order ( b.m_order )
+  , m_inner ( 0      )
+  , m_xmin  ( std::min ( xmn , xmx ) )
+  , m_xmax  ( std::min ( xmn , xmx ) )
+  , m_jlast ( 0      )
     //
 {
   //
@@ -438,27 +438,27 @@ Gaudi::Math::BSpline::BSpline
   if      ( b.xmin() < m_xmin || s_equal (  b.xmin() , m_xmin ) ) { /* ok */ }
   else if ( b.xmax() > m_xmax || s_equal (  b.xmax() , m_xmax ) ) { /* ok */ }
   else {
-    throw GaudiException ("Invalid xmin/xmax  settings", "Gaudi::Math::BSpline" , 821 ) ; 
+    throw GaudiException ("Invalid xmin/xmax  settings", "Gaudi::Math::BSpline" , StatusCode{821} ) ;
   }
   //
   // ==========================================================================
-  std::vector<double>::iterator il = 
+  std::vector<double>::iterator il =
     std::lower_bound ( m_knots.begin () , m_knots.end () , m_xmin , s_less ) ;
-  std::vector<double>::iterator iu = 
+  std::vector<double>::iterator iu =
     std::upper_bound ( il               , m_knots.end () , m_xmin , s_less ) ;
   //
   const unsigned short nxmin = iu - il ;
-  if ( nxmin < m_order + 1 ) 
+  if ( nxmin < m_order + 1 )
   { _insert_ ( m_xmin , 1 + m_order - nxmin , m_knots , m_pars , m_order ) ; }
   //
   il = std::lower_bound ( m_knots.begin () , m_knots.end () , m_xmax , s_less ) ;
   iu = std::upper_bound ( il               , m_knots.end () , m_xmax , s_less ) ;
   //
   const unsigned short nxmax = iu - il ;
-  if ( nxmax < m_order + 1 ) 
+  if ( nxmax < m_order + 1 )
   { _insert_ ( m_xmax , 1 + m_order - nxmax , m_knots , m_pars , m_order ) ; }
   //
-  // range of knots   
+  // range of knots
   il = std::lower_bound ( m_knots.begin ()  , m_knots.end () , m_xmin , s_less ) ;
   iu = std::upper_bound ( il                , m_knots.end () , m_xmax , s_less ) ;
   //
@@ -467,13 +467,13 @@ Gaudi::Math::BSpline::BSpline
   //
   m_knots.erase ( m_knots.begin() + i2 , m_knots.end   ()      ) ;
   m_knots.erase ( m_knots.begin()      , m_knots.begin () + i1 ) ;
-  
+
   m_inner                  = ( i2 - i1 ) -  2 *  ( m_order + 1 ) ;
   const unsigned  short np = ( i2 - i1 ) -  m_order - 1 ;
   const unsigned  short fp =  i1 ;
   //
-  m_pars = std::vector<double>( m_pars.begin() + fp      , 
-                                m_pars.begin() + fp + np ) ;                              
+  m_pars = std::vector<double>( m_pars.begin() + fp      ,
+                                m_pars.begin() + fp + np ) ;
   //
   // integration cache:
   //
@@ -484,8 +484,8 @@ Gaudi::Math::BSpline::BSpline
   m_knots_i.back  () = m_xmax ;
 }
 // ============================================================================(
-Gaudi::Math::BSpline::BSpline 
-( const Gaudi::Math::Bernstein& b ) 
+Gaudi::Math::BSpline::BSpline
+( const Gaudi::Math::Bernstein& b )
   : Gaudi::Math::BSpline ( {{ b.xmin() , b.xmax() }} , b.pars() )
 {}
 // ============================================================================
@@ -901,15 +901,15 @@ Gaudi::Math::BSpline Gaudi::Math::BSpline::derivative () const
 // ============================================================================
 
 // ============================================================================
-// Greville's abscissas 
+// Greville's abscissas
 // ============================================================================
-std::vector<double> Gaudi::Math::BSpline::greville_abscissas () const 
+std::vector<double> Gaudi::Math::BSpline::greville_abscissas () const
 {
   std::vector<double> ga ( npars() ) ;
   const unsigned short Na = npars()  ;
   //
   const unsigned short o  = order() ? order() : 1 ;
-  for ( unsigned short i  = 0 ; i < Na ; ++i ) 
+  for ( unsigned short i  = 0 ; i < Na ; ++i )
   {
     for ( unsigned short j = i ; j < i + o ;  ++j ) { ga[i] += m_knots[j+1] ; }
     ga[i] /= o ;
@@ -919,7 +919,7 @@ std::vector<double> Gaudi::Math::BSpline::greville_abscissas () const
 // ============================================================================
 // Greville's abscissa
 // ============================================================================
-double Gaudi::Math::BSpline::greville_abscissa ( const unsigned short i ) const 
+double Gaudi::Math::BSpline::greville_abscissa ( const unsigned short i ) const
 {
   //
   const unsigned short o =  order() ? order() : 1 ;
@@ -930,24 +930,24 @@ double Gaudi::Math::BSpline::greville_abscissa ( const unsigned short i ) const
   return ga ;
 }
 // ============================================================================
-/*  calculate q-norm of the spline 
+/*  calculate q-norm of the spline
  *  where q-norm is defined as:
  *  \f$ \left| f \right|_{q} = \left( \sum_i \left|c_i\right|^q\right)^{\frac{1}{q}} \f$
- *  
- *  - q_inv = 0.0 ->  \f$ max_k    \left|c_k\right|  \f$ 
+ *
+ *  - q_inv = 0.0 ->  \f$ max_k    \left|c_k\right|  \f$
  *  - q_inv = 0.5 ->  \f$ \sqrt{ \sum_k  c_k^2 }     \f$
- *  - q_inv = 1.0 ->  \f$ \sum_k \left| c_k \right|  \f$ 
+ *  - q_inv = 1.0 ->  \f$ \sum_k \left| c_k \right|  \f$
  */
 // ============================================================================
-double Gaudi::Math::BSpline::norm   ( const double q_inv ) const 
-{ 
-  return LHCb::Math::p_norm ( m_pars.begin() , m_pars.end() , q_inv ) ; 
+double Gaudi::Math::BSpline::norm   ( const double q_inv ) const
+{
+  return LHCb::Math::p_norm ( m_pars.begin() , m_pars.end() , q_inv ) ;
 }
 // ============================================================================
 // scale all coefficients with 2**i
 // ============================================================================
 Gaudi::Math::BSpline
-Gaudi::Math::BSpline::ldexp ( const short i )  const 
+Gaudi::Math::BSpline::ldexp ( const short i )  const
 {
   if ( 0 == i ) { return *this ; }
   Gaudi::Math::BSpline result ( *this ) ;
@@ -956,23 +956,23 @@ Gaudi::Math::BSpline::ldexp ( const short i )  const
   return result ;
 }
 // ============================================================================
-/* insert new (unique) knot into the list of knots 
- * @param t new knot  to be inserted 
- * @return true if knot is indeed inserted 
+/* insert new (unique) knot into the list of knots
+ * @param t new knot  to be inserted
+ * @return true if knot is indeed inserted
  */
 // ============================================================================
-bool Gaudi::Math::BSpline::insert ( const double t ) 
+bool Gaudi::Math::BSpline::insert ( const double t )
 {
   //
   if ( t < xmin () || s_equal ( t  , xmin () ) ) { return false ; }
   if ( t > xmax () || s_equal ( t  , xmax () ) ) { return false ; }
   //
-  std::vector<double>::iterator il = 
+  std::vector<double>::iterator il =
     std::lower_bound ( m_knots.begin () , m_knots.end   () , t , s_less ) ;
-  std::vector<double>::iterator iu = 
+  std::vector<double>::iterator iu =
     std::upper_bound ( il               , m_knots.end   () , t , s_less ) ;
   //
-  // such not is laready in the list! 
+  // such not is laready in the list!
   if ( iu != il ) { return false ; }
   //
   return _insert_ ( t , 1 , m_knots , m_pars , m_order ) ;
@@ -2367,21 +2367,21 @@ double Gaudi::Math::Spline2DSym::integrateX ( const double y ) const
 
 
 // ============================================================================
-// CONVEX   ULLS 
+// CONVEX   ULLS
 // ============================================================================
-namespace 
+namespace
 {
   // =========================================================================
   /// calculate the convex hull
-  template <class COMPARE> 
-  inline Gaudi::Math::BSpline _convex_hull_ 
+  template <class COMPARE>
+  inline Gaudi::Math::BSpline _convex_hull_
   ( const Gaudi::Math::Bernstein& p , COMPARE cmp )
   {
     const std::vector<double>& bpars = p.pars() ;
     //
     std::vector<double> knots ;
     //
-    if ( 2 >= bpars.size() ) // special case 
+    if ( 2 >= bpars.size() ) // special case
     {
       knots.push_back ( p.xmin ()        ) ;
       knots.push_back ( p.xmax ()        ) ;
@@ -2394,7 +2394,7 @@ namespace
     knots . push_back ( 0        ) ;
     pars  . push_back ( bpars[0] ) ;
     unsigned short icurr = 1 ;
-    while (  icurr < N ) 
+    while (  icurr < N )
     {
       const double pl = pars .back() ;
       const double kl = knots.back() ;
@@ -2402,7 +2402,7 @@ namespace
       double xi = double ( icurr ) / ( N  -  1 ) ;
       double is = ( bpars[ icurr ] - pl ) / ( xi - kl ) ;
       //
-      for ( unsigned short j = icurr + 1 ; j < N ; ++j ) 
+      for ( unsigned short j = icurr + 1 ; j < N ; ++j )
       {
         //
         const double xj = double ( j ) / ( N  -  1 ) ;
@@ -2415,7 +2415,7 @@ namespace
       ++icurr ;
     }
     //
-    std::transform ( knots.begin() , knots.end() ,  
+    std::transform ( knots.begin() , knots.end() ,
                      knots.begin() , [&p]( const double t ) { return p.x(t) ; }  );
     //
     return Gaudi::Math::BSpline ( knots ,  pars ) ;
@@ -2423,21 +2423,21 @@ namespace
   // ======================================================================
 }
 // ========================================================================
-/*  calculate the convex hull for Bernstein Polynomial 
+/*  calculate the convex hull for Bernstein Polynomial
  *  @param p  bernstein Polynomial
- *  @return   the spline object that represents upper convex hull 
+ *  @return   the spline object that represents upper convex hull
  */
 // ========================================================================
 Gaudi::Math::BSpline
-Gaudi::Math::upper_convex_hull   ( const Gaudi::Math::Bernstein& p ) 
+Gaudi::Math::upper_convex_hull   ( const Gaudi::Math::Bernstein& p )
 { return _convex_hull_ (  p , LHCb::Math::GreaterOrEqual<double>() ) ; }
 // ========================================================================
-/** calculate the convex hull for Bernstein Polynomial 
+/** calculate the convex hull for Bernstein Polynomial
  *  @param p  bernstein Polynomial
- *  @return   the spline object that represents lower convex hull 
+ *  @return   the spline object that represents lower convex hull
  */
 Gaudi::Math::BSpline
-Gaudi::Math::lower_convex_hull ( const Gaudi::Math::Bernstein& p ) 
+Gaudi::Math::lower_convex_hull ( const Gaudi::Math::Bernstein& p )
 { return _convex_hull_ (  p , LHCb::Math::LessOrEqual<double>() ) ; }
 // ========================================================================
 /*  get control polygon  for Bernstein polynomial
@@ -2446,40 +2446,40 @@ Gaudi::Math::lower_convex_hull ( const Gaudi::Math::Bernstein& p )
  */
 // ========================================================================
 Gaudi::Math::BSpline
-Gaudi::Math::control_polygon   ( const Gaudi::Math::Bernstein& p ) 
+Gaudi::Math::control_polygon   ( const Gaudi::Math::Bernstein& p )
 {
   const std::vector<double>& pars = p.pars() ;
   //
-  if ( 1 >= pars.size() ) 
+  if ( 1 >= pars.size() )
   { return Gaudi::Math::BSpline( {{ p.xmin() , p.xmax() }}  , pars ) ; }
   //
   const long double dx = ( p.xmax() - p.xmin() ) / ( pars.size() - 1 ) ;
   std::vector<double>        knots ( pars.size() ) ;
   const unsigned short N =   knots.size() ;
-  for ( unsigned short i = 0 ; i < N ; ++i ) 
+  for ( unsigned short i = 0 ; i < N ; ++i )
   { knots[i] = ( i * dx  + p.xmin() ) ; } ;
   return Gaudi::Math::BSpline ( knots , pars ) ;
 }
 
 
 // ============================================================================
-/*  get control polygon  basic spline 
- *  @param p  Basis spline 
+/*  get control polygon  basic spline
+ *  @param p  Basis spline
  *  @return   the spline object that represents the control polygon
  */
 // ============================================================================
 Gaudi::Math::BSpline
-Gaudi::Math::control_polygon   ( const Gaudi::Math::BSpline& p ) 
+Gaudi::Math::control_polygon   ( const Gaudi::Math::BSpline& p )
 { return Gaudi::Math::BSpline ( p.greville_abscissas() , p.pars() ) ; }
 // ============================================================================
 
-namespace 
+namespace
 {
   // ==========================================================================
-  inline std::vector<double> 
-  _crossing_points_1_ ( const Gaudi::Math::BSpline& b ) 
+  inline std::vector<double>
+  _crossing_points_1_ ( const Gaudi::Math::BSpline& b )
   {
-    std::vector<double> cps ; 
+    std::vector<double> cps ;
     //
     const std::vector<double>&  bpars = b.pars();
     cps.reserve( bpars.size() ) ;
@@ -2492,14 +2492,14 @@ namespace
     //
     const unsigned short N = bpars.size() ;
     //
-    for ( unsigned short j = 1  ; j < N ;  ++j ) 
+    for ( unsigned short j = 1  ; j < N ;  ++j )
     {
       //
       const double pj = bpars[j  ] ;
       const double pi = bpars[j-1] ;
       //
       const double xj = b.greville_abscissa ( j ) ;
-      if ( s_zero ( pj )|| s_equal ( pj + norm , norm ) ) 
+      if ( s_zero ( pj )|| s_equal ( pj + norm , norm ) )
       { cps.push_back ( xj ) ; continue ;   }
       //
       if ( s_zero ( pi ) || s_equal ( pi + norm , norm ) ) { continue ; }
@@ -2507,7 +2507,7 @@ namespace
       const signed char sj = LHCb::Math::signum ( pj ) ;
       const signed char si = LHCb::Math::signum ( pi ) ;
       //
-      if ( 0 > si * sj ) // there is root here! 
+      if ( 0 > si * sj ) // there is root here!
       {
         const double xi =  b.greville_abscissa ( j - 1 ) ;
         const double cp = ( xj * pi - xi * pj ) / ( pi - pj ) ;
@@ -2518,10 +2518,10 @@ namespace
     return cps ;
   }
   // =================================================================================
-  inline std::vector<double> 
+  inline std::vector<double>
   _crossing_points_2_ ( const Gaudi::Math::BSpline& b )
   {
-    std::vector<double> cps ; 
+    std::vector<double> cps ;
     //
     const std::vector<double>&  bpars = b.pars();
     cps.reserve( bpars.size() ) ;
@@ -2531,12 +2531,12 @@ namespace
     //
     const unsigned short N = bpars.size() ;
     //
-    // find first non-zero 
+    // find first non-zero
     std::vector<double>::const_iterator         _i1 =
       std::find_if_not ( bpars. cbegin () , bpars. cend () , tiny ) ;
-    // 
+    //
     if ( bpars. cend () == _i1 ) { return b.greville_abscissas() ; }
-    // find last non-zero 
+    // find last non-zero
     std::vector<double>::const_reverse_iterator _i2 =
       std::find_if_not ( bpars.crbegin () , bpars.crend () , tiny ) ;
     if ( bpars.crend () == _i2 ) { return b.greville_abscissas() ; }
@@ -2551,7 +2551,7 @@ namespace
     //
     std::vector<double>::const_iterator i = begin ;
     std::vector<double>::const_iterator j = begin ;
-    while ( j != end ) 
+    while ( j != end )
     {
       j = std::find_if_not ( i + 1 , end , tiny ) ;
       if ( end == j ) { break ; }
@@ -2562,8 +2562,8 @@ namespace
       const signed char sj = LHCb::Math::signum ( pj ) ;
       const signed char si = LHCb::Math::signum ( pi ) ;
       //
-      // there is root here! 
-      if ( si * sj < 0 ) 
+      // there is root here!
+      if ( si * sj < 0 )
       {
         const double xi = b.greville_abscissa ( i - bpars.begin() ) ;
         const double xj = b.greville_abscissa ( j - bpars.begin() ) ;
@@ -2585,64 +2585,64 @@ namespace
  *  @return abscissas of crossing points of the control  polygon
  */
 // ============================================================================
-std::vector<double> 
-Gaudi::Math::crossing_points 
-( const Gaudi::Math::BSpline& b   , 
-  const bool                  all )  
-{  
-  return ( all || 1>= b.degree()  ) ? 
+std::vector<double>
+Gaudi::Math::crossing_points
+( const Gaudi::Math::BSpline& b   ,
+  const bool                  all )
+{
+  return ( all || 1>= b.degree()  ) ?
     _crossing_points_1_ ( b ) :
     _crossing_points_2_ ( b ) ;
 }
 // ============================================================================
-/*  calculate the value of spline defined by vector of knot and vector of 
+/*  calculate the value of spline defined by vector of knot and vector of
  *  points using de-boor-cox algorithm
  *  @see https://en.wikipedia.org/wiki/De_Boor%27s_algorithm
- *  @param x     (INPUT) value of x 
- *  @param order (INPUT) the order of spline 
- *  @param knots (INPUT) the vector of knots 
- *  @param pars  (INPUT) the vector of control points 
- *  @return the valeu of b-spline at point x 
+ *  @param x     (INPUT) value of x
+ *  @param order (INPUT) the order of spline
+ *  @param knots (INPUT) the vector of knots
+ *  @param pars  (INPUT) the vector of control points
+ *  @return the valeu of b-spline at point x
  */
 // ============================================================================
 double Gaudi::Math::deboor
-( const double               x     ,      
-  const unsigned short       order , 
-  const std::vector<double>& knots , 
-  const std::vector<double>& pars  ) 
+( const double               x     ,
+  const unsigned short       order ,
+  const std::vector<double>& knots ,
+  const std::vector<double>& pars  )
 {
   //
   const double tf = knots.front ()  ;
   const double tb = knots.back  ()  ;
-  if ( x < tf || x > tb    ||  
+  if ( x < tf || x > tb    ||
        s_equal ( x , tf )  ||
        s_equal ( x , tb )   ) { return 0 ; }
   //
   const unsigned short j = find_i ( knots.begin () , knots.end   () , x ) - knots.begin() ;
   //
-  return _deboor_ ( order , order , j , x , knots , pars ) ;  
+  return _deboor_ ( order , order , j , x , knots , pars ) ;
 }
 // ============================================================================
-/* insert new knot at position x in the spline, defined by 
+/* insert new knot at position x in the spline, defined by
  *  knot vector knots, vector of control points pars and the order
- *  Boehm's algorithm is used 
+ *  Boehm's algorithm is used
  *  @see W.Boehm, ``Inserting new knots into B-spline curves'',
- *       Computer-Aided Design, 12, no.4, (1980) 199 
+ *       Computer-Aided Design, 12, no.4, (1980) 199
  *  @see http://dx.doi.org/10.1016/0010-4485(80)90154-2
  *  @see http://www.sciencedirect.com/science/article/pii/0010448580901542
- *  @param x     (INPUT)  position of new knot 
- *  @param knots (UPDATE) vector of knots 
- *  @param pars  (UPDATE) vector of control points 
- *  @param order (INPUT)  degree/order of spline 
- *  @param num   (INPUT)  inser knot "num"-times 
- *  @return multiplicity of inserted knot  
+ *  @param x     (INPUT)  position of new knot
+ *  @param knots (UPDATE) vector of knots
+ *  @param pars  (UPDATE) vector of control points
+ *  @param order (INPUT)  degree/order of spline
+ *  @param num   (INPUT)  inser knot "num"-times
+ *  @return multiplicity of inserted knot
  */
 // ============================================================================
-unsigned short 
-Gaudi::Math::boehm ( const double         x     , 
+unsigned short
+Gaudi::Math::boehm ( const double         x     ,
                      std::vector<double>& knots ,
-                     std::vector<double>& pars  , 
-                     const unsigned short order , 
+                     std::vector<double>& pars  ,
+                     const unsigned short order ,
                      const unsigned short num   )
 { return _insert_  ( x , num , knots , pars , order ) ; }
 // ============================================================================
@@ -2652,95 +2652,95 @@ Gaudi::Math::boehm ( const double         x     ,
 // ============================================================================
 #include <gsl/gsl_linalg.h>
 // ============================================================================
-/* create the interpolation spline 
- *  @param xy (INPUT)   vector of data 
- *  @param bs (UPDATE) the spline 
- *  @return status code 
+/* create the interpolation spline
+ *  @param xy (INPUT)   vector of data
+ *  @param bs (UPDATE) the spline
+ *  @return status code
  */
 // ============================================================================
 StatusCode
-Gaudi::Math::Interpolation::bspline 
+Gaudi::Math::Interpolation::bspline
 ( const std::vector<double>& x  ,
   const std::vector<double>& y  ,
-  Gaudi::Math::BSpline&      bs ) 
+  Gaudi::Math::BSpline&      bs )
 {
-  // 
-  if  ( x.size() != y.size() ) { return 100 ; }         // RETURN 100 
+  //
+  if  ( x.size() != y.size() ) { return StatusCode{100} ; }         // RETURN 100
   const unsigned  short N = x.size() ;
-  // mismatch for number of input parameters 
-  if ( N != bs.npars()       ) { return 101 ; }         // RETURN 101 
+  // mismatch for number of input parameters
+  if ( N != bs.npars()       ) { return StatusCode{101} ; }         // RETURN 101
   //
   std::vector< std::pair<double,double> > xy { N } ;
-  for ( unsigned short i = 0 ; i < N ;   ++i ) 
+  for ( unsigned short i = 0 ; i < N ;   ++i )
   { xy[i] = std::make_pair ( x[i] , y[i] ) ; }
   return bspline ( xy , bs ) ;
 }
 // ============================================================================
-/* create the interpolation spline 
- *  @param xy (INPUT)   vector of data 
- *  @param bs (UPPDATE) the spline 
- *  @return status code 
+/* create the interpolation spline
+ *  @param xy (INPUT)   vector of data
+ *  @param bs (UPPDATE) the spline
+ *  @return status code
  */
 // ============================================================================
-StatusCode 
-Gaudi::Math::Interpolation::bspline 
+StatusCode
+Gaudi::Math::Interpolation::bspline
 ( std::vector< std::pair<double,double> > xy ,
-  Gaudi::Math::BSpline&                   bs ) 
-{  
+  Gaudi::Math::BSpline&                   bs )
+{
   const unsigned  short N = xy.size() ;
-  // mismatch for number of input parameters 
-  if ( N != bs.npars() ) { return 110 ; }             // RETURN 110 
+  // mismatch for number of input parameters
+  if ( N != bs.npars() ) { return StatusCode{110} ; }             // RETURN 110
   //
   std::sort (  xy.begin() , xy.end() ) ;
   //
   gsl_matrix      * m = gsl_matrix_alloc ( N , N );
-  // 
+  //
   const double xmin = bs.xmin () ;
   const double xmax = bs.xmax () ;
   //
-  for ( unsigned short i = 0 ; i < N ; ++i ) 
-  { for ( unsigned short j = 0 ; j < N ; ++j ) 
+  for ( unsigned short i = 0 ; i < N ; ++i )
+  { for ( unsigned short j = 0 ; j < N ; ++j )
     {
       double xj =  xy[j].first ;
-      if      ( s_equal ( xj , xmin ) ) 
+      if      ( s_equal ( xj , xmin ) )
       { xj = LHCb::Math::next_double ( xmin , +s_ulps ) ; }
-      else if ( s_equal ( xj , xmax ) ) 
+      else if ( s_equal ( xj , xmax ) )
       { xj = LHCb::Math::next_float ( xmax , -s_ulps ) ; }
       //
       const double bij = bs.bspline ( i , xj ) ;
-      if  ( i == j && s_zero ( bij ) ) 
-      { gsl_matrix_free  ( m ) ; { return 111 ; } }  // RETURN 111 
-      gsl_matrix_set (  m , j , i , bij  ) ; 
-    } 
+      if  ( i == j && s_zero ( bij ) )
+      { gsl_matrix_free  ( m ) ; { return StatusCode{111} ; } }  // RETURN 111
+      gsl_matrix_set (  m , j , i , bij  ) ;
+    }
   }
   //
   gsl_vector      *x = gsl_vector_alloc      ( N ) ;
-  for (  unsigned short i = 0 ; i < N ; ++i ) 
+  for (  unsigned short i = 0 ; i < N ; ++i )
   { gsl_vector_set ( x , i , xy[i].second ) ;  }
   //
   gsl_permutation *p = gsl_permutation_alloc ( N  );
   //
-  // make LU decomposition 
+  // make LU decomposition
   int       signum = 0 ;
-  const int e1     = gsl_linalg_LU_decomp ( m , p , &signum  );
+  const unsigned int e1     = gsl_linalg_LU_decomp ( m , p , &signum  );
   if ( e1 )
   {
     gsl_permutation_free ( p ) ;
     gsl_matrix_free      ( m ) ;
     gsl_vector_free      ( x ) ;
-    return 120 + e1 ;                       // RETURN 120 + e 
+    return StatusCode{120 + e1} ;                       // RETURN 120 + e
   }
   //
-  const int e2 = gsl_linalg_LU_svx ( m , p , x ) ;
+  const unsigned int e2 = gsl_linalg_LU_svx ( m , p , x ) ;
   if ( e2 )
   {
     gsl_permutation_free ( p ) ;
     gsl_matrix_free      ( m ) ;
     gsl_vector_free      ( x ) ;
-    return 130 + e2 ;                        // RETURN 130 + e
+    return StatusCode{130 + e2} ;                        // RETURN 130 + e
   }
   //
-  for (  unsigned short i = 0 ; i < N ; ++i ) 
+  for (  unsigned short i = 0 ; i < N ; ++i )
   { bs.setPar ( i , gsl_vector_get ( x , i ) ) ; }
   //
   gsl_permutation_free ( p ) ;

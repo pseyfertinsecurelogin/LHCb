@@ -107,7 +107,7 @@ StatusCode XmlMixtureCnv::i_createObj (xercesc::DOMElement* element,
   // We do not assume that most of the mixtures have
   // composites by fraction of mass
   m_mixMode = MM_undefined;
-  
+
   // Now we have to process more material attributes if any
   std::string temperatureAttribute =
     dom2Std (element->getAttribute (temperatureString));
@@ -161,12 +161,12 @@ StatusCode XmlMixtureCnv::i_fillObj (xercesc::DOMElement* childElement,
                                      DataObject* refpObject,
                                      IOpaqueAddress* address) {
   MsgStream log(msgSvc(), "XmlMixtureCnv" );
-  
+
   // gets the object
   Mixture* dataObj = static_cast<Mixture*> (refpObject);
   // gets the element's name
   const XMLCh* tagName = childElement->getNodeName();
-  
+
   // dispatches, based on the name
   if (0 == xercesc::XMLString::compareString(tabpropsString, tagName)) {
     if( log.level() <= MSG::VERBOSE )
@@ -175,16 +175,16 @@ StatusCode XmlMixtureCnv::i_fillObj (xercesc::DOMElement* childElement,
     const std::string addr = dom2Std (childElement->getAttribute (addressString));
     long linkID = dataObj->linkMgr()->addLink(addr, nullptr);
     SmartRef<TabulatedProperty> ref(dataObj, linkID);
-    dataObj->tabulatedProperties().push_back(ref); 
+    dataObj->tabulatedProperties().push_back(ref);
   } else if (0 == xercesc::XMLString::compareString(componentString, tagName)) {
     StatusCode stcod;
-        
+
     // builds the entry name
     std::string nameAttribute =
       dom2Std (childElement->getAttribute (nameString));
     std::string entryName = "/dd/Materials/" + nameAttribute;
-    
-    // Check if path is a relative path, if it has ../ 
+
+    // Check if path is a relative path, if it has ../
     int dotsPos = entryName.find_first_of("..");
     if (-1 != dotsPos) {
       // get rid of the ".." to get the absolute path
@@ -204,7 +204,7 @@ StatusCode XmlMixtureCnv::i_fillObj (xercesc::DOMElement* childElement,
       log << MSG::VERBOSE << "Converter for " << address->par()[1]
           << " retrieved successfully " << ((Material *)itemObj)->name()
           << endmsg;
-    
+
     // Get now the natoms or fraction mass from the attributes
     // The default in the DTD is "-1" for both, so it can be used
     // to detect which is the one that is provided.
@@ -212,7 +212,7 @@ StatusCode XmlMixtureCnv::i_fillObj (xercesc::DOMElement* childElement,
     std::string natom = dom2Std (childElement->getAttribute (natomsString));
     std::string fract =
       dom2Std (childElement->getAttribute (fractionmassString));
-    
+
     if( log.level() <= MSG::VERBOSE )
       log << MSG::VERBOSE << "MixMode has value " << m_mixMode << endmsg;
     if (m_mixMode == MM_undefined) {
@@ -236,7 +236,7 @@ StatusCode XmlMixtureCnv::i_fillObj (xercesc::DOMElement* childElement,
       std::string msg = "Material references for material ";
       msg += address->par()[1];
       msg += " are not consistent.";
-      StatusCode st = CORRUPTED_DATA;
+      StatusCode st{CORRUPTED_DATA};
       throw XmlCnvException(msg.c_str(),st);
     }
     try {
@@ -251,17 +251,16 @@ StatusCode XmlMixtureCnv::i_fillObj (xercesc::DOMElement* childElement,
         }
       } else if (CLID_Mixture == itemObj->clID()) {
         Mixture* mc = dynamic_cast<Mixture*>(itemObj);
-        dataObj->addMixture(mc, m_itemFraction, false); 
+        dataObj->addMixture(mc, m_itemFraction, false);
       } else {
         if( log.level() <= MSG::VERBOSE ) log << MSG::VERBOSE
               << "XmlCnvException due clID inconsistency" << endmsg;
         // This should not happen
         itemObj->release();
-        StatusCode sc;
-        sc.setCode( INVALID_CLASS_ID );
-        std::string msg = 
+        StatusCode sc{INVALID_CLASS_ID};
+        std::string msg =
           "Wrong element or mixture composite, invalid combination";
-        throw XmlCnvException(msg.c_str(),sc);      
+        throw XmlCnvException(msg.c_str(),sc);
       }
     } catch (const GaudiException& ge) {
       throw XmlCnvException("XmlMixtureCnv::endElement: Gaudi exception ",ge);
@@ -288,10 +287,10 @@ StatusCode XmlMixtureCnv::i_processObj (DataObject* refpObject,
   // gets the object
   Mixture* dataObj = static_cast<Mixture*> (refpObject);
   // Material is (hopefully) converted so
-  // in case of mixture we have to compute some stuff    
+  // in case of mixture we have to compute some stuff
 
   if (CLID_Mixture == address->clID()) {
-    StatusCode sc = dataObj->compute(); 
+    StatusCode sc = dataObj->compute();
     if( !sc.isSuccess() ) {
       MsgStream log(msgSvc(), "XmlMixtureCnv" );
       log << MSG::WARNING
@@ -301,7 +300,7 @@ StatusCode XmlMixtureCnv::i_processObj (DataObject* refpObject,
     }
     m_mixMode = MM_undefined;
   }
-  
+
   // returns
   return StatusCode::SUCCESS;
 } // end i_processObj

@@ -5,7 +5,7 @@
 //  Package    : MDF
 //
 //  Description: The LHCb::RawDataSelector component is able
-//               to produce a list of event references given 
+//               to produce a list of event references given
 //               a set of "selection criteria".
 //
 //  Author     : M.Frank
@@ -20,7 +20,8 @@
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiUtils/IIODataManager.h"
 
-enum { S_OK = StatusCode::SUCCESS, S_ERROR=StatusCode::FAILURE };
+static const auto S_OK = StatusCode::SUCCESS;
+static const auto S_ERROR = StatusCode::FAILURE;
 
 using namespace LHCb;
 
@@ -80,8 +81,8 @@ StatusCode RawDataSelector::initialize()  {
   // Retrieve conversion service handling event iteration
   status = Service::service(m_ioMgrName, m_ioMgr);
   if( !status.isSuccess() ) {
-    log << MSG::ERROR 
-        << "Unable to localize interface IID_IIODataManager from service:" 
+    log << MSG::ERROR
+        << "Unable to localize interface IID_IIODataManager from service:"
         << m_ioMgrName << endmsg;
     return status;
   }
@@ -96,13 +97,13 @@ StatusCode RawDataSelector::initialize()  {
     log << MSG::DEBUG << "Selection CLID:" << m_rootCLID << endmsg;
   if ( !m_trgMask.empty() ) {
     log << MSG::INFO << "Trigger mask: " << std::hex;
-    for(size_t i=0; i<m_trgMask.size(); ++i) 
+    for(size_t i=0; i<m_trgMask.size(); ++i)
       log << "0x" << std::setw(8) << std::setfill('0') << m_trgMask[i] << " ";
     log << endmsg;
   }
   if ( !m_vetoMask.empty() ) {
     log << MSG::INFO << "Trigger mask: " << std::hex;
-    for(size_t i=0; i<m_vetoMask.size(); ++i) 
+    for(size_t i=0; i<m_vetoMask.size(); ++i)
       log << "0x" << std::setw(8) << std::setfill('0') << m_vetoMask[i] << " ";
     log << endmsg;
   }
@@ -177,7 +178,7 @@ StatusCode RawDataSelector::releaseContext(Context*& ctxt) const  {
   return S_ERROR;
 }
 
-StatusCode 
+StatusCode
 RawDataSelector::createAddress(const Context& ctxt, IOpaqueAddress*& pAddr) const   {
   const LoopContext* pctxt = dynamic_cast<const LoopContext*>(&ctxt);
   if ( pctxt ) {
@@ -193,7 +194,7 @@ RawDataSelector::createAddress(const Context& ctxt, IOpaqueAddress*& pAddr) cons
   return S_ERROR;
 }
 
-StatusCode 
+StatusCode
 RawDataSelector::resetCriteria(const std::string& criteria,Context& context) const    {
   MsgStream log(msgSvc(), name());
   LoopContext* ctxt = dynamic_cast<LoopContext*>(&context);
