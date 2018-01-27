@@ -191,7 +191,7 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
         if( m_myGaudiAlg ) m_myGaudiAlg->debug() << err;
         else if( m_myGaudiTool ) m_myGaudiTool->debug() << err;
       } else {
-        std::string err = "Unable to set Property InputData to " + propString + "in algo " + alg->name();
+        std::string err = "Unable to set Property InputData to " + propString + " in algo " + alg->name();
         return
           m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
           m_myGaudiTool ? m_myGaudiTool->Error( err, sc) :
@@ -206,7 +206,7 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
           if( m_myGaudiAlg ) m_myGaudiAlg->debug() << err;
           else if( m_myGaudiTool ) m_myGaudiTool->debug() << err;
         } else {
-          std::string err = "Unable to set Property RootInTES to " + rit + "in algo " + alg->name();
+          std::string err = "Unable to set Property RootInTES to " + rit + " in algo " + alg->name();
           return
             m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
             m_myGaudiTool ? m_myGaudiTool->Error( err, sc) :
