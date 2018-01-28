@@ -203,8 +203,6 @@ class DstConf(LHCbConfigurableUser):
                     DigiConf().addMCCaloInfo(writer)
 
                     if dType == "XDST":
-                        # Digitisation summaries
-                        DigiConf().addMCDigitSummaries(writer)
                         # Add the MCHits (from Gauss) and links to them (from Boole)
                         SimConf().addSubDetSimInfo(writer)
                         DigiConf().addMCHitLinks(writer)
@@ -213,6 +211,8 @@ class DstConf(LHCbConfigurableUser):
                     if dType in ["XDST", "LDST"]:
                         # Links from Digits to MCParticles
                         DigiConf().addMCParticleLinks(writer)
+                        # Digitisation summaries
+                        DigiConf().addMCDigitSummaries(writer)
 
 
     def _doWriteROOT( self, items, optItems ):
