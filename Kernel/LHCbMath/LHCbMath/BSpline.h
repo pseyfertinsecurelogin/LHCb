@@ -1363,9 +1363,9 @@ namespace Gaudi
     private:
       // ======================================================================
       /// 2D-spline
-      mutable Gaudi::Math::GenericSpline2DSym m_spline ; // 2D-spline
+      Gaudi::Math::GenericSpline2DSym m_spline ; // 2D-spline
       /// parameter sphere
-      Gaudi::Math::NSphere         m_sphere  ; // parameter sphere
+      Gaudi::Math::NSphere            m_sphere  ; // parameter sphere
       // ======================================================================
     };
     // ========================================================================
