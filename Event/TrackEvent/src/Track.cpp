@@ -261,18 +261,39 @@ void Track::addToStates( const State& state )
 //=============================================================================
 // Add a list of states to the list associated to the Track. This takes ownership.
 //=============================================================================
-void Track::addToStates( const StateContainer& states )
+void Track::addToStates( const StateContainer& states, LHCb::Tag::State::AssumeUnordered_tag)
 {
-  auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
+  auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
   // The 'if' is ugly, but more efficient than using 'orderByZ'.
   if (checkFlag(Track::Flags::Backward)) {
     // it's already sorted in most cases
-    std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
-    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ()) ;
+    std::sort(pivot,m_states.end(),TrackFunctor::decreasingByZ());
+    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::decreasingByZ()) ;
   } else {
-    std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
-    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
+    std::sort(pivot,m_states.end(),TrackFunctor::increasingByZ());
+    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::increasingByZ());
+  }
+}
+
+//=============================================================================
+// Add a set of sorted states by increasing Z to the track. Track takes ownership
+//=============================================================================
+void Track::addToStates( const StateContainer& states, LHCb::Tag::State::AssumeSorted_tag)
+{
+  // debug assert checking whether it's correctly sorted or not
+  assert( ( checkFlag(Track::Flags::Backward) ?
+              std::is_sorted(states.begin(), states.end(), TrackFunctor::decreasingByZ())
+            : std::is_sorted(states.begin(), states.end(), TrackFunctor::increasingByZ())
+          )
+          && "states are not correctly sorted;"
+             "hint: use the general addToStates function assuming unordered states");
+
+  auto pivot = m_states.insert(m_states.end(), states.begin(), states.end());
+  if (UNLIKELY(checkFlag(Track::Flags::Backward))) {
+    std::inplace_merge(m_states.begin(), pivot, m_states.end(),TrackFunctor::decreasingByZ());
+  } else {
+    std::inplace_merge(m_states.begin(), pivot, m_states.end(),TrackFunctor::increasingByZ());
   }
 }
 
