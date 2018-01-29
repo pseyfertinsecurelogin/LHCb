@@ -265,53 +265,6 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     iClusFirst = partitionPoint;
   }
 
-  // sort clusters according to PrFTHits
-  //   loop over stations, layers, quadrants
-  /*auto iClusFirst = clus.begin();
-  for( unsigned int iSta = 1; iSta < 4; ++iSta ) {
-    auto thisStation = [&iSta](const LHCb::FTLiteCluster cluster)
-        { return cluster.channelID().station() == iSta; };
-    auto iClusLastS = std::partition_point(iClusFirst,clus.end(),thisStation);
-    for( unsigned int iLay = 0; iLay < 4; ++iLay ) {
-      auto thisLayer = [&iLay](const LHCb::FTLiteCluster cluster)
-          { return cluster.channelID().layer() == iLay; };
-      auto iClusLastL = std::partition_point(iClusFirst,iClusLastS,thisLayer);
-      for( unsigned int iQua = 0; iQua < 4; ++iQua) {
-        auto thisQuarter = [&iQua](const LHCb::FTLiteCluster cluster)
-            { return cluster.channelID().quarter() == iQua; };
-        auto iClusLastQ = std::partition_point(iClusFirst,iClusLastL,thisQuarter);
-
-        // if quadrant==0 or 3 for even layers or quadrant==1 or 2 for odd layers
-        if( ((iLay&1)==0) ^ (iQua>>1) ^ (iQua&1) ) {
-          auto iClusFirstM = iClusFirst; // copy
-          for( unsigned int iMod = 0; iMod < 6; ++iMod ) {
-            auto thisModule = [&iMod](const LHCb::FTLiteCluster cluster)
-                  { return cluster.channelID().module() == iMod; };
-            auto iClusLastM = std::partition_point(iClusFirstM,iClusLastQ,thisModule);
-            //std::cout<< "Reverse module " << iSta << " " << iLay << " " << iQua << " " << iMod << " : "
-            //    << "diff = " << iClusLastM - iClusFirstM
-            //    << std::endl;
-            std::reverse(iClusFirstM, iClusLastM);  // swap clusters in module
-            iClusFirstM = iClusLastM;
-          }
-        }
-
-        if( (iQua & 1) == 0 ) { // quadrant==0 or 2
-          //std::cout<< "Reverse quadrant " << iSta << " " << iLay << " " << iQua << " : "
-          //    << "diff = " << iClusLastQ - iClusFirst << std::endl;
-          std::reverse(iClusFirst, iClusLastQ);  // swap clusters in quadrant
-        }
-        iClusFirst = iClusLastQ;
-      }
-    }
-  }*/
-
-  /*for( auto myIt = clus.begin(); myIt<clus.end(); ++myIt) {
-    std::cout << (*myIt).channelID() << std::endl;
-  }*/
-
-
-
   return clus;
 }
 
