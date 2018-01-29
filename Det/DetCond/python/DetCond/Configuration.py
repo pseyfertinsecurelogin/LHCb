@@ -450,8 +450,10 @@ class CondDB(ConfigurableUser):
         # special case for online
         if self.getProp('UseDBSnapshot') : self._configureDBSnapshot()
 
-        # In the Online/Upgrade/Simulation environment, LoadCALIBDB should be defaulted to HLT1
-        if self.getProp("Online") or self.getProp('Upgrade') or self.getProp('Simulation'):
+        from DDDB.Configuration import GIT_CONDDBS
+
+        # In the Online/Upgrade/Simulation/GitCondDB environment, LoadCALIBDB should be defaulted to HLT1
+        if self.getProp("Online") or self.getProp('Upgrade') or self.getProp('Simulation') or GIT_CONDDBS:
             self._properties["LoadCALIBDB"].setDefault("HLT1")
         # Set up environment variables for loading CALIBOFF layers, must be before loading any tags
         LoadCALIBDB = self.getProp('LoadCALIBDB')
