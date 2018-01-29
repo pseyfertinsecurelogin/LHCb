@@ -45,8 +45,11 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   for ( const LHCb::RawBank* bank : banks) { totSize += bank->size();}
   clus.reserve(4 * totSize / 10);
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
+  // Store partition points for quadrants for faster sorting
+  std::vector<FTLiteClusters::iterator> partitionPoints;
+  partitionPoints.reserve(48); // 48 quadrants
 
+  if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
   for ( const LHCb::RawBank* bank : banks) {
     int source       = bank->sourceID();
     unsigned station = source/16 + 1u; // JvT: this should be done by a mapping!
@@ -226,6 +229,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       }
       first += nClus;
     }//end loop over sipms
+    partitionPoints.push_back(clus.begin()+clus.size());
   }//end loop over rawbanks
   
   // Assert that clusters are sorted
@@ -233,15 +237,80 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
          [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){
          return lhs.channelID() < rhs.channelID(); }) ) ;
 
+  // sort clusters according to PrFTHits (loop over quadrants)
+  auto iClusFirst = clus.begin();
+  for( auto partitionPoint : partitionPoints ) {
+    if( iClusFirst != partitionPoint ) { // container must not be empty
+      auto chanID = (*iClusFirst).channelID(); // FTChannelID first cluster
+      unsigned int iQua = chanID.quarter();
+
+      // Swap clusters within modules
+      // if quadrant==0 or 3 for even layers or quadrant==1 or 2 for odd layers
+      if( ((chanID.layer()&1)==0) ^ (iQua>>1) ^ (iQua&1) ) {
+        auto iClusFirstM = iClusFirst; // copy
+        for( unsigned int iMod = 0; iMod < 6; ++iMod ) {
+          auto thisModule = [&iMod](const LHCb::FTLiteCluster cluster)
+                               { return cluster.channelID().module() == iMod; };
+          auto iClusLastM = std::partition_point(iClusFirstM,partitionPoint,thisModule);
+          std::reverse(iClusFirstM, iClusLastM);  // swap clusters in module
+          iClusFirstM = iClusLastM;
+        }
+      }
+
+      // Swap clusters within full quadrant
+      if( (iQua & 1) == 0 ) { // quadrant==0 or 2
+        std::reverse(iClusFirst, partitionPoint);  // swap clusters in quadrant
+      }
+    }
+    iClusFirst = partitionPoint;
+  }
+
   // sort clusters according to PrFTHits
-  //loop over stations, layers, quadrants
-  //   if( quadrant == 0 or 2 ) # quadrant & 1 == 0
-  //     find range of hits in quadrant
-  //       swap hits
-  //   if( (layer&1==0 and (quadrant == 0 or 3)) or (layer&1==1 and (quadrant == 1 or 2))
-  //   loop over modules
-  //      find range of hits in module
-  //         swap hits
+  //   loop over stations, layers, quadrants
+  /*auto iClusFirst = clus.begin();
+  for( unsigned int iSta = 1; iSta < 4; ++iSta ) {
+    auto thisStation = [&iSta](const LHCb::FTLiteCluster cluster)
+        { return cluster.channelID().station() == iSta; };
+    auto iClusLastS = std::partition_point(iClusFirst,clus.end(),thisStation);
+    for( unsigned int iLay = 0; iLay < 4; ++iLay ) {
+      auto thisLayer = [&iLay](const LHCb::FTLiteCluster cluster)
+          { return cluster.channelID().layer() == iLay; };
+      auto iClusLastL = std::partition_point(iClusFirst,iClusLastS,thisLayer);
+      for( unsigned int iQua = 0; iQua < 4; ++iQua) {
+        auto thisQuarter = [&iQua](const LHCb::FTLiteCluster cluster)
+            { return cluster.channelID().quarter() == iQua; };
+        auto iClusLastQ = std::partition_point(iClusFirst,iClusLastL,thisQuarter);
+
+        // if quadrant==0 or 3 for even layers or quadrant==1 or 2 for odd layers
+        if( ((iLay&1)==0) ^ (iQua>>1) ^ (iQua&1) ) {
+          auto iClusFirstM = iClusFirst; // copy
+          for( unsigned int iMod = 0; iMod < 6; ++iMod ) {
+            auto thisModule = [&iMod](const LHCb::FTLiteCluster cluster)
+                  { return cluster.channelID().module() == iMod; };
+            auto iClusLastM = std::partition_point(iClusFirstM,iClusLastQ,thisModule);
+            //std::cout<< "Reverse module " << iSta << " " << iLay << " " << iQua << " " << iMod << " : "
+            //    << "diff = " << iClusLastM - iClusFirstM
+            //    << std::endl;
+            std::reverse(iClusFirstM, iClusLastM);  // swap clusters in module
+            iClusFirstM = iClusLastM;
+          }
+        }
+
+        if( (iQua & 1) == 0 ) { // quadrant==0 or 2
+          //std::cout<< "Reverse quadrant " << iSta << " " << iLay << " " << iQua << " : "
+          //    << "diff = " << iClusLastQ - iClusFirst << std::endl;
+          std::reverse(iClusFirst, iClusLastQ);  // swap clusters in quadrant
+        }
+        iClusFirst = iClusLastQ;
+      }
+    }
+  }*/
+
+  /*for( auto myIt = clus.begin(); myIt<clus.end(); ++myIt) {
+    std::cout << (*myIt).channelID() << std::endl;
+  }*/
+
+
 
   return clus;
 }
