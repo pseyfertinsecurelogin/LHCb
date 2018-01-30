@@ -235,7 +235,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   // Assert that clusters are sorted
   assert( std::is_sorted(clus.begin(), clus.end(),
          [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){
-         return lhs.channelID() < rhs.channelID(); }) ) ;
+         return lhs.channelID() < rhs.channelID(); }) &&
+      "Clusters from the RawBanks not sorted. Should be sorted by construction.") ;
 
   // sort clusters according to PrFTHits (loop over quadrants)
   auto iClusFirst = clus.begin();
