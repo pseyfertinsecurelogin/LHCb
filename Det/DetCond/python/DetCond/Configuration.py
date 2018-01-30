@@ -538,6 +538,10 @@ class CondDB(ConfigurableUser):
         if LoadCALIBDB is "OFFLINE":
         # CALIBOFF not needed for the upgrade
             parttypes += [("CALIBOFF", CondDBAccessSvc)]
+        else:
+            # ignore CALIBOFF tag if we do not need CALIBOFF
+            if 'CALIBOFF' in tags:
+                del tags['CALIBOFF']
 
         for (p ,t) in parttypes:
             partition[p] = getAnyDBReader(p, t)
