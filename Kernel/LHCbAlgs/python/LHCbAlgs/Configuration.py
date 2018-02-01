@@ -134,8 +134,10 @@ class LHCbApp(LHCbConfigurableUser):
         if hasattr( self, "DDDBtag" ):
             CondDB().Tags [ "DDDB" ] = self.getProp("DDDBtag")
         if hasattr( self, "CondDBtag" ):
-            CondDB().Tags [ "LHCBCOND" ] = self.getProp("CondDBtag")
-            CondDB().Tags [ "SIMCOND"  ] = self.getProp("CondDBtag")
+            if not self.getProp("Simulation"):
+                CondDB().Tags [ "LHCBCOND" ] = self.getProp("CondDBtag")
+            else:
+                CondDB().Tags [ "SIMCOND"  ] = self.getProp("CondDBtag")
         if hasattr( self, "DQFLAGStag" ):
             CondDB().Tags [ "DQFLAGS" ] = self.getProp("DQFLAGStag")
         # Set up a time decoder for real data (Simulation uses FakeEventTime)
