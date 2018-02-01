@@ -718,37 +718,63 @@ namespace Gaudi
       // ======================================================================
     } ;
     // =========================================================================
-    /** @class Spline2D
-     *  Non-negative spline in 2D
+    /** @class GenericSpline2D
+     *  GenericSpline in 2D
      */
-    class GAUDI_API  Spline2D
+    class GAUDI_API  GenericSpline2D
     {
       // ======================================================================
     public:
       // ======================================================================
-      Spline2D ( const BSpline& xspline = BSpline() ,
-                 const BSpline& yspline = BSpline() ) ;
+      GenericSpline2D ( const BSpline& xspline = BSpline() ,
+                        const BSpline& yspline = BSpline() ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value
-      double operator () ( const double x , const double y ) const ;
+      /// get the value  
+      double operator () ( const double x , const double y ) const 
+      { return evaluate  ( x , y ) ; }      
+      /// get the value  
+      double evaluate    ( const double x , const double y ) const ;
       // ======================================================================
     public:
       // ======================================================================
       /// get number of parameters
-      std::size_t npars () const { return m_sphere.nPhi () ; }
+      std::size_t npars () const { return m_pars.size() ; }
       /// set k-parameter
       bool setPar       ( const unsigned int k , const double value )
-      { return m_sphere.setPhase ( k , value ) ; }
+      { return setParameter ( k , value ) ; }
       /// set k-parameter
-      bool setParameter ( const unsigned int k , const double value )
-      { return setPar   ( k , value ) ; }
+      bool setParameter ( const unsigned int k , const double value ) ;
+      /// set (i,j) paramter 
+      bool setPar       ( const unsigned short i ,
+                          const unsigned short j , const double value ) 
+      { return setPar ( index ( i , j ) , value ) ; }
       /// get the parameter value
       double  par       ( const unsigned int k ) const
-      { return m_sphere.par ( k ) ; }
+      { return k < m_pars.size() ? m_pars[k] : 0.0 ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get (i,j)-parameter 
+      double  par       ( const unsigned short i ,  
+                          const unsigned short j ) const 
+      { return par ( index ( i  , j ) ) ; }      
+      // ======================================================================
+      // get all parameters
+      const std::vector<double>& pars() const { return m_pars ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      unsigned int index ( const unsigned short i , 
+                           const unsigned short j ) const 
+      {
+        const unsigned short nx = m_xspline.npars() ;
+        const unsigned short ny = m_yspline.npars() ;        
+        return
+          i >= nx ? -1 :
+          j >= ny ? -1 :
+          1u * i * ny  + j ;  
+      }
       // ======================================================================
     public:
       // ======================================================================
@@ -764,6 +790,38 @@ namespace Gaudi
       double         xinner () const { return m_xspline.inner () ; }
       double         yinner () const { return m_yspline.inner () ; }
       // ======================================================================
+    public: // few useful methdod 
+      // ======================================================================
+      /// simple  manipulations with polynoms: shift it!
+      GenericSpline2D& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
+      GenericSpline2D& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      GenericSpline2D& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      GenericSpline2D& operator /= ( const double a ) ;
+      // negate it 
+      GenericSpline2D  operator-()  const ;
+      // ======================================================================
+    public:  // for python
+      // ======================================================================
+      /// Sum of GenericSpline polynomial and a constant
+      GenericSpline2D __add__   ( const double value ) const ;
+      /// Sum of GenericSpline polynomial and a constant
+      GenericSpline2D __radd__  ( const double value ) const ;
+      /// Product of GenericSpline polynomial and a constant
+      GenericSpline2D __mul__   ( const double value ) const ;
+      /// Product of GenericSpline polynomial and a constant
+      GenericSpline2D __rmul__  ( const double value ) const ;
+      /// Subtract a constant from Benrstein polynomial
+      GenericSpline2D __sub__   ( const double value ) const ;
+      /// Constant minus GenericSpline polynomial
+      GenericSpline2D __rsub__  ( const double value ) const ;
+      /// Divide Benrstein polynomial by a constant
+      GenericSpline2D __div__   ( const double value ) const ;
+      /// Negate GenericSpline polynomial
+      GenericSpline2D __neg__   () const ;
+     // ======================================================================
     public: // generic integrals
       // ======================================================================
       /** get the integral over 2D-region
@@ -819,8 +877,12 @@ namespace Gaudi
       // get x-spline
       const  Gaudi::Math::BSpline& xspline () const { return m_xspline ; }
       const  Gaudi::Math::BSpline& yspline () const { return m_yspline ; }
-      /// get the parameter sphere
-      const  Gaudi::Math::NSphere& sphere  () const { return m_sphere ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      // make the calcualtions 
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
       // ======================================================================
     private:
       // ======================================================================
@@ -828,62 +890,134 @@ namespace Gaudi
       mutable Gaudi::Math::BSpline m_xspline ; // x-spline
       /// Y-spline
       mutable Gaudi::Math::BSpline m_yspline ; // y-spline
-      /// parameter sphere
-      Gaudi::Math::NSphere m_sphere  ; // parameter sphere
-      // ======================================================================
-    private:
-      // ======================================================================
-      mutable   std::vector<double>  m_xcache ; // x-cache
-      mutable   std::vector<double>  m_ycache ; // y-cache
+      /// parameters 
+      std::vector<double>  m_pars ;
       // ======================================================================
     };
+    // ========================================================================
+    ///  Spline plus      constant
+    inline GenericSpline2D operator+( const GenericSpline2D& p , const double v )
+    { return GenericSpline2D ( p ) += v ; } //  GenericSpline plus constant
+    ///  Spline multiply  constant
+    inline GenericSpline2D operator*( const GenericSpline2D& p , const double v )
+    { return GenericSpline2D ( p ) *= v ; } //  GenericSpline plus constant
+    ///  Spline minus constant
+    inline GenericSpline2D operator-( const GenericSpline2D& p , const double v )
+    { return GenericSpline2D ( p ) -= v ; } //  GenericSpline plus constant
+    ///  Spline divide constant
+    inline GenericSpline2D operator/( const GenericSpline2D& p , const double v )
+    { return GenericSpline2D ( p ) /= v ; } //  GenericSpline plus constant
+    ///  Spline plus  GenericSpline
+    inline GenericSpline2D operator+( const double v , const GenericSpline2D& p ) { return p +   v  ; }
+    ///  Spline times GenericSpline
+    inline GenericSpline2D operator*( const double v , const GenericSpline2D& p ) { return p *   v  ; }
+    ///  Constant minus GenericSpline
+    inline GenericSpline2D operator-( const double v , const GenericSpline2D& p ) { return v + (-p) ; }
     // =========================================================================
-    /** @class Spline2DSym
-     *  Non-negative symmetric spline in 2D
+    /** @class GenericSpline2DSym
+     *  GenericSpline in 2D
      */
-    class GAUDI_API  Spline2DSym
+    class GAUDI_API GenericSpline2DSym
     {
       // ======================================================================
     public:
       // ======================================================================
-      Spline2DSym ( const BSpline& xspline = BSpline() ) ;
+      GenericSpline2DSym ( const BSpline& xspline = BSpline() ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value
-      double operator () ( const double x , const double y ) const ;
+      /// get the value  
+      double operator () ( const double x , const double y ) const 
+      { return evaluate  ( x , y ) ; }      
+      /// get the value  
+      double evaluate    ( const double x , const double y ) const ;
       // ======================================================================
     public:
       // ======================================================================
       /// get number of parameters
-      std::size_t npars () const { return m_sphere.nPhi () ; }
+      std::size_t npars () const { return m_pars.size() ; }
       /// set k-parameter
       bool setPar       ( const unsigned int k , const double value )
-      { return m_sphere.setPhase ( k , value ) ; }
+      { return setParameter ( k , value ) ; }
       /// set k-parameter
-      bool setParameter ( const unsigned int k , const double value )
-      { return setPar   ( k , value ) ; }
+      bool setParameter ( const unsigned int k , const double value ) ;
+      /// set (i,j) paramter 
+      bool setPar       ( const unsigned short i ,
+                          const unsigned short j , const double value ) 
+      { return setPar ( index ( i , j ) , value ) ; }
       /// get the parameter value
       double  par       ( const unsigned int k ) const
-      { return m_sphere.par ( k ) ; }
+      { return k < m_pars.size() ? m_pars[k] : 0.0 ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get (i,j)-parameter 
+      double  par       ( const unsigned short i ,  
+                          const unsigned short j ) const 
+      { return par ( index ( i  , j ) ) ; }      
+      // ======================================================================
+      // get all parameters
+      const std::vector<double>& pars() const { return m_pars ; }
+      // ======================================================================
+    private : 
+      // ======================================================================
+      ///  convert (l,m)-index into single k-index
+      unsigned int index ( const unsigned short l , 
+                           const unsigned short m ) const 
+      {
+        const unsigned short n = m_spline.npars() ;
+        return
+          m >  l ? index ( m , l )  :
+          l >= n ? -1               :  // NB !!
+          1u * l * ( l + 1 ) / 2 + m ;
+      }
       // ======================================================================
     public:
       // ======================================================================
       /// get lower/upper edges
       double         xmin   () const { return m_spline.xmin  () ; }
       double         xmax   () const { return m_spline.xmax  () ; }
-      double         ymin   () const { return xmin  () ; }
-      double         ymax   () const { return xmax  () ; }
+      double         ymin   () const { return m_spline.xmin  () ; }
+      double         ymax   () const { return m_spline.xmax  () ; }
       // spline order
       double         xorder () const { return m_spline.order () ; }
-      double         yorder () const { return xorder () ; }
+      double         yorder () const { return m_spline.order () ; }
       // inner knots
       double         xinner () const { return m_spline.inner () ; }
-      double         yinner () const { return xinner () ; }
+      double         yinner () const { return m_spline.inner () ; }
       // ======================================================================
-    public: // generic integration
+    public: // few useful methdod 
+      // ======================================================================
+      /// simple  manipulations with polynoms: shift it!
+      GenericSpline2DSym& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
+      GenericSpline2DSym& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      GenericSpline2DSym& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      GenericSpline2DSym& operator /= ( const double a ) ;
+      // negate it 
+      GenericSpline2DSym  operator-()  const ;
+      // ======================================================================
+    public:  // for python
+      // ======================================================================
+      /// Sum of GenericSpline polynomial and a constant
+      GenericSpline2DSym __add__   ( const double value ) const ;
+      /// Sum of GenericSpline polynomial and a constant
+      GenericSpline2DSym __radd__  ( const double value ) const ;
+      /// Product of GenericSpline polynomial and a constant
+      GenericSpline2DSym __mul__   ( const double value ) const ;
+      /// Product of GenericSpline polynomial and a constant
+      GenericSpline2DSym __rmul__  ( const double value ) const ;
+      /// Subtract a constant from Benrstein polynomial
+      GenericSpline2DSym __sub__   ( const double value ) const ;
+      /// Constant minus GenericSpline polynomial
+      GenericSpline2DSym __rsub__  ( const double value ) const ;
+      /// Divide Benrstein polynomial by a constant
+      GenericSpline2DSym __div__   ( const double value ) const ;
+      /// Negate GenericSpline polynomial
+      GenericSpline2DSym __neg__   () const ;
+     // ======================================================================
+    public: // generic integrals
       // ======================================================================
       /** get the integral over 2D-region
        *  @param xlow  low  edge in x
@@ -910,40 +1044,328 @@ namespace Gaudi
         ( const double x    ,
           const double ylow , const double yhigh ) const ;
       // ======================================================================
-    public: // specific integration
+    public: // specific integrals
       // ======================================================================
       /** get the integral over 2D-region
-       *  \f[ x_{min}< x < x_{max}, y_{min}<y<y_{max}\f]
+       *  \f[ x_{min}<x<x_{max}, y_{min}<y<y_{max}\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
       double integral   () const ;
       /** get the integral over X  for given Y
        *  @param y  (INPU) y-value
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
        */
       double integrateX ( const double y ) const ;
       /** get the integral over Y  for given X
        *  @param x  (INPU) y-value
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
       double integrateY ( const double x ) const ;
       // ======================================================================
-    public: // ingeredients
+    public: // ingredients
       // =====================================================================
       // get x-spline
-      const  Gaudi::Math::BSpline& xspline () const { return m_spline   ; }
-      const  Gaudi::Math::BSpline& yspline () const { return xspline () ; }
-      /// get the parameter sphere
-      const  Gaudi::Math::NSphere& sphere  () const { return m_sphere ; }
+      const  Gaudi::Math::BSpline& xspline () const { return m_spline ; }
+      const  Gaudi::Math::BSpline& yspline () const { return m_spline ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      // make the calcualtions 
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
       // ======================================================================
     private:
       // ======================================================================
       /// X-spline
       mutable Gaudi::Math::BSpline m_spline ; // x-spline
-      /// parameter sphere
-      Gaudi::Math::NSphere         m_sphere  ; // parameter sphere
+      /// parameters 
+      std::vector<double>  m_pars ;
+      // ======================================================================
+    };
+    // ========================================================================
+    ///  Spline plus      constant
+    inline GenericSpline2DSym operator+( const GenericSpline2DSym& p , const double v )
+    { return GenericSpline2DSym ( p ) += v ; } //  GenericSpline plus constant
+    ///  Spline multiply  constant
+    inline GenericSpline2DSym operator*( const GenericSpline2DSym& p , const double v )
+    { return GenericSpline2DSym ( p ) *= v ; } //  GenericSpline plus constant
+    ///  Spline minus constant
+    inline GenericSpline2DSym operator-( const GenericSpline2DSym& p , const double v )
+    { return GenericSpline2DSym ( p ) -= v ; } //  GenericSpline plus constant
+    ///  Spline divide constant
+    inline GenericSpline2DSym operator/( const GenericSpline2DSym& p , const double v )
+    { return GenericSpline2DSym ( p ) /= v ; } //  GenericSpline plus constant
+    ///  Spline plus  GenericSpline
+    inline GenericSpline2DSym operator+( const double v , const GenericSpline2DSym& p ) { return p +   v  ; }
+    ///  Spline times GenericSpline
+    inline GenericSpline2DSym operator*( const double v , const GenericSpline2DSym& p ) { return p *   v  ; }
+    ///  Constant minus GenericSpline
+    inline GenericSpline2DSym operator-( const double v , const GenericSpline2DSym& p ) { return v + (-p) ; }
+    // =========================================================================
+    /** @class Spline2D
+     *  Non-negative spline in 2D
+     */
+    class GAUDI_API  Spline2D
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      Spline2D ( const BSpline& xspline = BSpline() ,
+                 const BSpline& yspline = BSpline() ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const 
+      { return evaluate ( x , y ) ; }
+      double evaluate   ( const double x , const double y ) const 
+      { return m_spline ( x , y ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_sphere.nPhi () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value ) 
+      { return m_sphere.setPhase ( k , value ) ? updateSpline() : false ; }
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const
+      { return m_sphere.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
+      /// get all parameters (phases on sphere)
+      const std::vector<double>& pars  () const { return m_sphere.pars () ; }
+      /// get bernstein coefficients
+      const std::vector<double>& bpars () const { return m_spline.pars () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get lower/upper edges
+      double         xmin   () const { return m_spline.xmin   () ; }
+      double         xmax   () const { return m_spline.xmax   () ; }
+      double         ymin   () const { return m_spline.ymin   () ; }
+      double         ymax   () const { return m_spline.ymax   () ; }
+      // spline order
+      double         xorder () const { return m_spline.xorder () ; }
+      double         yorder () const { return m_spline.yorder () ; }
+      // inner knots
+      double         xinner () const { return m_spline.xinner () ; }
+      double         yinner () const { return m_spline.yinner () ; }
+      // ======================================================================
+    public: // generic integrals
+      // ======================================================================
+      /** get the integral over 2D-region
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
+       */
+      double integral   ( const double xlow , const double xhigh ,
+                          const double ylow , const double yhigh ) const 
+      { return m_spline.integral ( xlow , xhigh , ylow , yhigh ) ; }
+      /** get the integral over X  for given Y
+       *  @param y  (INPU) y-value
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       */
+      double integrateX
+        ( const double y     ,
+          const double xlow  , 
+          const double xhigh ) const 
+      { return m_spline.integrateX ( y , xlow , xhigh ) ; }
+      /** get the integral over Y  for given X
+       *  @param x  (INPU) y-value
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
+       */
+      double integrateY
+        ( const double x     ,
+          const double ylow  , 
+          const double yhigh ) const 
+      { return m_spline.integrateY ( x , ylow , yhigh ) ; }
+      // ======================================================================
+    public: // specific integrals
+      // ======================================================================
+      /** get the integral over 2D-region
+       *  \f[ x_{min}<x<x_{max}, y_{min}<y<y_{max}\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
+       */
+      double integral   () const { return 1 ; }
+      /** get the integral over X  for given Y
+       *  @param y  (INPU) y-value
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       */
+      double integrateX ( const double y ) const 
+      { return m_spline.integrateX ( y  ) ; }      
+      /** get the integral over Y  for given X
+       *  @param x  (INPU) y-value
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
+       */
+      double integrateY ( const double x ) const 
+      { return m_spline.integrateY ( x  ) ; }
+      // ======================================================================
+    public: // ingredients
+      // =====================================================================
+      /// get 2D-spline
+      const  Gaudi::Math::GenericSpline2D&  spline () const { return m_spline ; }
+      /// get 2D-spline
+      const  Gaudi::Math::GenericSpline2D& bspline () const { return m_spline ; }
+      /// get x-spline
+      const  Gaudi::Math::BSpline&         xspline () const { return m_spline.xspline() ; }
+      /// get y-spline
+      const  Gaudi::Math::BSpline&         yspline () const { return m_spline.yspline() ; }
+      /// get the parameter sphere
+      const  Gaudi::Math::NSphere& sphere  () const { return m_sphere ; }
       // ======================================================================
     private:
       // ======================================================================
-      mutable   std::vector<double>  m_xcache ; // x-cache
-      mutable   std::vector<double>  m_ycache ; // y-cache
+      /// update spline coefficients
+      bool updateSpline () ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the 2D-spline itself 
+      Gaudi::Math::GenericSpline2D m_spline ;
+      /// parameter sphere
+      Gaudi::Math::NSphere         m_sphere ; // parameter sphere
+      // ======================================================================
+    };
+    // =========================================================================
+    /** @class Spline2DSym
+     *  Non-negative symmetric spline in 2D
+     */
+    class GAUDI_API  Spline2DSym
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      Spline2DSym ( const BSpline& xspline = BSpline() ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const 
+      { return evaluate  ( x , y ) ; }        
+      double evaluate    ( const double x , const double y ) const 
+      { return  m_spline ( x , y ) ; }      
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_sphere.nPhi () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value )
+      { return m_sphere.setPhase ( k , value ) ? updateSpline() : false ; }
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const
+      { return m_sphere.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get lower/upper edges
+      double         xmin   () const { return m_spline.xmin   () ; }
+      double         xmax   () const { return m_spline.xmax   () ; }
+      double         ymin   () const { return m_spline.ymin   () ; }
+      double         ymax   () const { return m_spline.ymax   () ; }
+      // spline order
+      double         xorder () const { return m_spline.xorder () ; }
+      double         yorder () const { return m_spline.yorder () ; }
+      // inner knots
+      double         xinner () const { return m_spline.xinner () ; }
+      double         yinner () const { return m_spline.yinner () ; }
+      // ======================================================================
+    public: // generic integration
+      // ======================================================================
+      /** get the integral over 2D-region
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
+       */
+      double integral   ( const double xlow , const double xhigh ,
+                          const double ylow , const double yhigh ) const 
+      { return m_spline.integral ( xlow , xhigh , ylow , yhigh ) ; }
+      /** get the integral over X  for given Y
+       *  @param y  (INPU) y-value
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       */
+      double integrateX
+        ( const double y     ,
+          const double xlow  , 
+          const double xhigh ) const 
+      { return m_spline.integrateX ( y , xlow , xhigh ) ; }      
+      /** get the integral over Y  for given X
+       *  @param x  (INPU) y-value
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
+       */
+      double integrateY
+        ( const double x     ,
+          const double ylow  , 
+          const double yhigh ) const 
+      { return m_spline.integrateY ( x , ylow , yhigh ) ; }      
+      // ======================================================================
+    public: // specific integration
+      // ======================================================================
+      /** get the integral over 2D-region
+       *  \f[ x_{min}< x < x_{max}, y_{min}<y<y_{max}\f]
+       */
+      double integral   () const { return  1 ; }
+      /** get the integral over X  for given Y
+       *  @param y  (INPU) y-value
+       */
+      double integrateX ( const double y ) const 
+      { return m_spline.integrateX ( y ) ; }      
+      /** get the integral over Y  for given X
+       *  @param x  (INPU) y-value
+       */
+      double integrateY ( const double x ) const 
+      { return m_spline.integrateY ( x ) ; }      
+      // ======================================================================
+    public: // ingeredients
+      // =====================================================================
+      // get x-spline
+      const  Gaudi::Math::BSpline& xspline () const { return m_spline.xspline() ; }
+      // get y-spline
+      const  Gaudi::Math::BSpline& yspline () const { return m_spline.yspline() ; }
+      // get 2D-spline 
+      const  Gaudi::Math::GenericSpline2DSym&  spline () const { return m_spline  ; }
+      // get 2D-spline 
+      const  Gaudi::Math::GenericSpline2DSym& bspline () const { return m_spline  ; }
+      /// get the parameter sphere
+      const  Gaudi::Math::NSphere& sphere  () const { return m_sphere ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      ///  update spline  coefficients 
+      bool updateSpline () ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// 2D-spline
+      Gaudi::Math::GenericSpline2DSym m_spline ; // 2D-spline
+      /// parameter sphere
+      Gaudi::Math::NSphere            m_sphere  ; // parameter sphere
       // ======================================================================
     };
     // ========================================================================
