@@ -1,5 +1,5 @@
 // $Id: AlgorithmCorrelations.cpp,v 1.6 2009-04-15 09:48:14 pkoppenb Exp $
-// Include files 
+// Include files
 #include <boost/format.hpp>
 #include <math.h>
 
@@ -71,21 +71,21 @@ StatusCode AlgorithmCorrelations::reset(){
 
   // minimize?
   if ( m_minimize ) warning() << "Will only print non-zero efficient algorithms in table" << endmsg ;
-  
-  if ( m_decimals >= 0 ) info() << "Will print efficiencies with " << m_decimals 
+
+  if ( m_decimals >= 0 ) info() << "Will print efficiencies with " << m_decimals
                                 << " decimals (percent)" << endmsg ;
   else info() << "Will print efficiencies with automatic precision" << endmsg ;
 
   //  int i1 = 0 ;
-  
+
   m_conditionResults.reserve( m_conditionAlgorithms.size() );
   for ( const auto & alg : m_conditionAlgorithms )
   {
     m_conditionResults.emplace_back( alg );
   }
-  
+
   m_testResults.reserve( m_algorithmsToTest.size() );
-  m_AlgoMatrices.reserve( m_algorithmsToTest.size() * 
+  m_AlgoMatrices.reserve( m_algorithmsToTest.size() *
                           m_conditionAlgorithms.size() );
   for ( const auto & alg1 : m_algorithmsToTest )
   {
@@ -95,7 +95,7 @@ StatusCode AlgorithmCorrelations::reset(){
     for ( const auto & alg2 : m_conditionAlgorithms )
     {
       m_AlgoMatrices.emplace_back( alg1, alg2 ) ;
-      if (msgLevel(MSG::DEBUG)) 
+      if (msgLevel(MSG::DEBUG))
         debug() << "Pushed back pair " << alg1 << ", " << alg2 << endmsg ;
     }
   }
@@ -135,14 +135,14 @@ StatusCode AlgorithmCorrelations::addResults()
   {
     for ( const auto & ar2 : m_conditionResults )
     {
-      if ( isrm == m_AlgoMatrices.end() ) 
+      if ( isrm == m_AlgoMatrices.end() )
       {
-        return Error( "Reached end of matrices" );      
+        return Error( "Reached end of matrices" );
       }
       std::string a1, a2;
       isrm->getAlgorithms(a1,a2);
       if ( ( a1 != ar1.algo() ) || ( a2 != ar2.algo() )){
-        err() << "Confused! I see " << a1 << " and " << a2 << " and expect " 
+        err() << "Confused! I see " << a1 << " and " << a2 << " and expect "
               << ar1.algo() << " and " << ar2.algo() << endmsg ;
         return StatusCode::FAILURE;
       }
@@ -157,7 +157,7 @@ StatusCode AlgorithmCorrelations::addResults()
       } else {
         isrm->addConditionalResult(ar1.result(),ar2.result());
         verbose() << "Added result " << ar1.result() << " " << ar2.result()
-                  << " for " << a1 << " " << a2 << " and have now " << 
+                  << " for " << a1 << " " << a2 << " and have now " <<
           isrm->getConditionalFraction() << " of " << isrm->getFullStatistics() << endmsg ;
       }
       ++isrm;
@@ -168,16 +168,16 @@ StatusCode AlgorithmCorrelations::addResults()
 //=============================================================================
 // Fill a result - entry point
 //=============================================================================
-StatusCode AlgorithmCorrelations::fillResult(const std::string& algo, 
+StatusCode AlgorithmCorrelations::fillResult(const std::string& algo,
                                              const bool& result)
 {
-  return ( fillResult(algo,result,m_conditionResults) &&
-           fillResult(algo,result,m_testResults) );
+  return StatusCode{ fillResult(algo,result,m_conditionResults) &&
+                     fillResult(algo,result,m_testResults) };
 }
 //=============================================================================
 // Fill a result
 //=============================================================================
-StatusCode AlgorithmCorrelations::fillResult(const std::string& algo, 
+StatusCode AlgorithmCorrelations::fillResult(const std::string& algo,
                                              const bool& result,
                                              std::vector<AlgoResult>& Results)
 {
@@ -203,7 +203,7 @@ StatusCode AlgorithmCorrelations::fillResult(const std::string& algo,
   } else {
     if (msgLevel(MSG::VERBOSE)) verbose() << "Algorithm " << algo << " has not been found" << endmsg ;
   }
-  
+
   return StatusCode::SUCCESS;
 }
 //=============================================================================
@@ -212,7 +212,7 @@ StatusCode AlgorithmCorrelations::fillResult(const std::string& algo,
 StatusCode AlgorithmCorrelations::algorithms(const strings& algos)
 {
   m_algorithmsToTest = algos ;
-  m_algorithmsToTest.insert(m_algorithmsToTest.begin(),"ALWAYS");  
+  m_algorithmsToTest.insert(m_algorithmsToTest.begin(),"ALWAYS");
   return reset();
 }
 //=============================================================================
@@ -227,11 +227,11 @@ StatusCode AlgorithmCorrelations::algorithmsRow(const strings& algos)
 //=============================================================================
 StatusCode AlgorithmCorrelations::testAlgos(const strings& algos) const
 {
-  for ( auto i1 = algos.begin() ; i1!= algos.end(); ++i1 ) 
+  for ( auto i1 = algos.begin() ; i1!= algos.end(); ++i1 )
   {
-    for ( auto i2 = algos.begin() ; i1!= i2; ++i2 ) 
+    for ( auto i2 = algos.begin() ; i1!= i2; ++i2 )
     {
-      if ( *i1 == *i2 ) 
+      if ( *i1 == *i2 )
       {
         err() << "Duplicate instance of ``" << *i1 << "''" << endmsg ;
         err() << "Fix you options" << endmsg ;
@@ -263,7 +263,7 @@ StatusCode  AlgorithmCorrelations::printList() {
       always() << " is accepted with "<< rate % y12 ;
       always() << " probability when " << algo % a2 ;
       always() << " is true\n" ;
-    }  
+    }
   }
   always() << endmsg; ;
   return StatusCode::SUCCESS;
@@ -271,7 +271,7 @@ StatusCode  AlgorithmCorrelations::printList() {
 //=============================================================================
 //  Print a table
 //=============================================================================
-StatusCode AlgorithmCorrelations::printTable(void) 
+StatusCode AlgorithmCorrelations::printTable(void)
 {
 
   const unsigned int nalgow = happyAlgorithms() ;
@@ -283,17 +283,17 @@ StatusCode AlgorithmCorrelations::printTable(void)
   const unsigned int namelength =  name().length() ;
   const double halflength = ((double)nl - namelength )/2. ;
   const unsigned int nlh = (halflength>0 ? int(halflength) : 0 );
-  if (msgLevel(MSG::VERBOSE)) verbose() << name() << " namelength: " << namelength 
-                                        << " decimals: " << decimals 
+  if (msgLevel(MSG::VERBOSE)) verbose() << name() << " namelength: " << namelength
+                                        << " decimals: " << decimals
                                         << " longest: " << m_longestName
-                                        << " nl: " << nl 
-                                        << " halflength: " << halflength 
-                                        << " nlh: " << nlh 
+                                        << " nl: " << nl
+                                        << " halflength: " << halflength
+                                        << " nlh: " << nlh
                                         << endmsg ;
   std::string halfspace = "";
   if ( nlh > 0 ) halfspace = std::string(nlh,' ');
   if (msgLevel(MSG::DEBUG)) debug() << "Will print table with " << nl << " " << nlh << endmsg ;
-  
+
   const std::string hyphenline(nl, '-');
   const std::string equalline(nl, '=');
   const std::string crosses = std::string("  ")+std::string(4+decimals, '*') ;
@@ -317,13 +317,13 @@ StatusCode AlgorithmCorrelations::printTable(void)
   always() << equalline << "\n"  ;
   always() << "    " << algo % "Algorithm" << "   Eff.  " ;
 
-  if (!m_useNumbers) always() << std::string(decimals,' ');    // don't ask why I need this        
+  if (!m_useNumbers) always() << std::string(decimals,' ');    // don't ask why I need this
 
   unsigned int i = 0 ;
   for ( const auto & a : m_conditionAlgorithms )
   {
     if ( a == "ALWAYS" ) continue ;
-    if ( ( isEffective(a) )|| (!m_minimize)) 
+    if ( ( isEffective(a) )|| (!m_minimize))
     {
       if ( m_useNumbers ){
         ++i;
@@ -333,7 +333,7 @@ StatusCode AlgorithmCorrelations::printTable(void)
       }
     }
   }
-  
+
   always() << "\n" ;
   always() << hyphenline ;
   unsigned int ia1 = 0 ;
@@ -350,7 +350,7 @@ StatusCode AlgorithmCorrelations::printTable(void)
     /*
      * efficiency row
      */
-    if ( a2 == "ALWAYS" ) { 
+    if ( a2 == "ALWAYS" ) {
       if ( addline ){
         always() << "\n" << hyphenline ;
         addline = false ;
@@ -359,7 +359,7 @@ StatusCode AlgorithmCorrelations::printTable(void)
         always() << "\n" << "    " << algo % "Efficiency" << crosses << " |";
         addline = true ;
       } else {
-        if ( doprint ) { 
+        if ( doprint ) {
           ++ia1 ;               // increment
           always() << "\n" ;
           always() << smallnumber % ia1 << algo % a1 ;
@@ -378,7 +378,7 @@ StatusCode AlgorithmCorrelations::printTable(void)
         if ( a1 == "ALWAYS" ) y12 = 100.0*srm.getFullStatistics()/(double)m_nEvents ;
         if ( y12 < 0 ) always() << crosses ;
         else always() << percent % y12 << "%" ;
-      } 
+      }
     }
   }
   always() << "\n" << equalline << "\n" ;
@@ -398,7 +398,7 @@ StatusCode AlgorithmCorrelations::printTable(void)
 
   if (msgLevel(MSG::VERBOSE)) {
     printList() ;
-    
+
     for ( const auto & srm : m_AlgoMatrices )
     {
       std::string a1, a2;
@@ -407,25 +407,25 @@ StatusCode AlgorithmCorrelations::printTable(void)
                 << " " << m_nEvents << " " << algoRate(a1) << " " << algoRate(a2) << endmsg ;
     }
   }
-  
+
   return StatusCode::SUCCESS;
 }
 
 //=============================================================================
 //  number of algos that did something
 //=============================================================================
-int AlgorithmCorrelations::happyAlgorithms(void) const 
+int AlgorithmCorrelations::happyAlgorithms(void) const
 {
-  
-  if ( !m_minimize ) return m_conditionAlgorithms.size() ;  
+
+  if ( !m_minimize ) return m_conditionAlgorithms.size() ;
   int nalgow = 0 ;
   std::string firstalgo = "" ;
   for ( const auto & a : m_conditionAlgorithms )
   {
     if (( isEffective(a) ) && ( a != "ALWAYS" )) ++nalgow ;
     if (msgLevel(MSG::VERBOSE)) verbose() << "Algorithm " << a << " says: " << isEffective(a) << endmsg ;
-  } 
-  return nalgow;  
+  }
+  return nalgow;
 }
 
 //=============================================================================
@@ -460,14 +460,14 @@ bool AlgorithmCorrelations::isEffective(const std::string& name ) const
 //=============================================================================
 //  Algo did something
 //=============================================================================
-double AlgorithmCorrelations::algoRate(const std::string& name ) const 
+double AlgorithmCorrelations::algoRate(const std::string& name ) const
 {
   for ( const auto & srm : m_AlgoMatrices )
   {
     std::string a1, a2;
     srm.getAlgorithms( a1, a2 );
     if (( a1==name ) && ( a2=="ALWAYS")) return srm.getConditionalFraction() ;   // standard efficiency
-    if (( a2==name ) && ( a1=="ALWAYS")) 
+    if (( a2==name ) && ( a1=="ALWAYS"))
     {
       return ( m_nEvents>0 ? (double)srm.getFullStatistics()/(double)m_nEvents : 0 );
     }

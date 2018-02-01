@@ -54,7 +54,7 @@ StatusCode Rich::CommonBase<PBASE>::initialize()
   m_toolReg =
     this -> template tool < IToolRegistry > ( "Rich::ToolRegistry",
                                               m_regName );
-  m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); 
+  m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" );
 
   // Printout from initialize
   if ( this -> msgLevel(MSG::DEBUG) )
@@ -279,14 +279,14 @@ Rich::CommonBase<PBASE>::propagateJobOptions( const std::string & from_name,
             // Search them to see if option is already set
             for ( const auto& prop_to : *to_props )
             {
-              if ( prop_from->name() == prop_to->name() ) 
-              { 
+              if ( prop_from->name() == prop_to->name() )
+              {
                 if (this->msgLevel(MSG::VERBOSE))
-                  this->verbose() << " " << to_name 
-                                  << "  -> Already has this option -> Not Setting" 
+                  this->verbose() << " " << to_name
+                                  << "  -> Already has this option -> Not Setting"
                                   << endmsg;
-                okToCopy = false; 
-                break; 
+                okToCopy = false;
+                break;
               }
             }
           }
@@ -304,7 +304,7 @@ Rich::CommonBase<PBASE>::propagateJobOptions( const std::string & from_name,
             this->Error( "Cannot set option '" + prop_from->name() +
                          "' for '" + to_name + "'" ).ignore();
           }
-          sc = sc && add_sc;
+          if ( sc ) sc = add_sc;
         }
 
       } // in list of properties to copy

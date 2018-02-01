@@ -147,7 +147,7 @@ StatusCode GeometryInfoPlus::initialize()
           << endmsg;
   }
 
-  return registerCondition() && registerSupportGI() && ums->update(this);
+  return StatusCode{registerCondition() && registerSupportGI() && ums->update(this)};
 }
 //=============================================================================
 bool GeometryInfoPlus::hasLVolume() const

@@ -145,7 +145,7 @@ ProtoParticlePacker::unpack( const PackedData       & pproto,
   {
 
     if ( parent().msgLevel(MSG::VERBOSE) )
-      parent().verbose() << "UnPacking ProtoParticle " << pproto.key 
+      parent().verbose() << "UnPacking ProtoParticle " << pproto.key
                          << " Ver=" << (int)ver << endmsg;
 
     int hintID(0), key(0);
@@ -271,7 +271,7 @@ StatusCode ProtoParticlePacker::check( const Data & dataA,
   const DataPacking::DataChecks ch(parent());
 
   bool isOK = true;
-  
+
   // key
   isOK &= ch.compareInts( "Key", dataA.key(), dataB.key() );
 
@@ -304,7 +304,7 @@ StatusCode ProtoParticlePacker::check( const Data & dataA,
       if ( isOK )
       {
         if ( ( iE.second->second == 0 && iE.second->second != iE.first->second ) ||
-             ( iE.second->second != 0 && 
+             ( iE.second->second != 0 &&
                1.e-7 < fabs( ( iE.second->second - iE.first->second ) / iE.second->second ) ) ) isOK = false;
       }
     }
@@ -314,22 +314,22 @@ StatusCode ProtoParticlePacker::check( const Data & dataA,
 
   if ( !isOK || MSG::DEBUG >= parent().msgLevel() )
   {
-    parent().info() << "===== ProtoParticle key " << dataA.key() 
+    parent().info() << "===== ProtoParticle key " << dataA.key()
                     << " Check OK = " << isOK
                     << endmsg;
     parent().info() << format( "Old   track %8x  richPID %8X  muonPID%8x  nCaloHypo%4d nExtra%4d",
-                               dataA.track(), dataA.richPID(), dataA.muonPID(), 
+                               dataA.track(), dataA.richPID(), dataA.muonPID(),
                                dataA.calo().size(), dataA.extraInfo().size() )
                     << endmsg;
     parent().info() << format( "Test  track %8x  richPID %8X  muonPID%8x  nCaloHypo%4d nExtra%4d",
-                               dataB.track(), dataB.richPID(), dataB.muonPID(), 
+                               dataB.track(), dataB.richPID(), dataB.muonPID(),
                                dataB.calo().size(), dataB.extraInfo().size() )
                     << endmsg;
     for ( auto iC = std::make_pair(dataA.calo().begin(),dataB.calo().begin());
           iC.first != dataA.calo().end() && iC.second != dataB.calo().end();
           ++iC.first, ++iC.second )
     {
-      parent().info() << format( "   old CaloHypo %8x   new %8x", iC.first->target(), iC.second->target() )  
+      parent().info() << format( "   old CaloHypo %8x   new %8x", iC.first->target(), iC.second->target() )
                       << endmsg;
     }
     for ( auto iE = std::make_pair(dataA.extraInfo().begin(),dataB.extraInfo().begin());
@@ -340,7 +340,7 @@ StatusCode ProtoParticlePacker::check( const Data & dataA,
                                  iE.first->first, iE.first->second, iE.second->first, iE.second->second )
                       << endmsg;
     }
-   
+
   }
 
   return ( isOK ? StatusCode::SUCCESS : StatusCode::FAILURE );
@@ -359,12 +359,12 @@ ProtoParticlePacker::check( const DataVector & dataA,
                    << endmsg;
     return StatusCode::FAILURE;
   }
-  
+
   for ( auto it = std::make_pair( dataA.begin(), dataB.begin() );
         it.first != dataA.end() && it.second != dataB.end();
         ++it.first, ++it.second )
   {
-    sc = sc && check( **it.first, **it.second );
+    if ( sc ) sc = check( **it.first, **it.second );
   }
 
   return sc;

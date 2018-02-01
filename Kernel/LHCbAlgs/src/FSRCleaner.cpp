@@ -30,7 +30,7 @@ StatusCode FSRCleaner::finalize()
   const StatusCode sc = EmptyEventNodeCleaner::execute();
 
   // return, try to avoid shortcutting the usual finalize
-  return ( EmptyEventNodeCleaner::finalize() && sc );
+  return StatusCode{ EmptyEventNodeCleaner::finalize() && sc };
 }
 
 //=============================================================================
