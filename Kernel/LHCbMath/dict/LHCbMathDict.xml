@@ -132,6 +132,8 @@
   <class name    = "Gaudi::Math::Positive3DMix"    />
   <class name    = "Gaudi::Math::Positive3DSym"    />
 
+  <class name    = "Gaudi::Math::GenericSpline2D"  />
+  <class name    = "Gaudi::Math::GenericSpline2DSym"/>
   <class name    = "Gaudi::Math::Spline2D"         />
   <class name    = "Gaudi::Math::Spline2DSym"      />
 
