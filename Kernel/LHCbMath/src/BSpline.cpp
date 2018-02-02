@@ -1585,26 +1585,63 @@ bool Gaudi::Math::ConvexSpline::updateCoefficients  ()
   return update ;
 }
 // ============================================================================
+
+
+
 // ============================================================================
-// 2D-spline
+// Generic2D-spline
 // ============================================================================
-// ============================================================================
-Gaudi::Math::Spline2D::Spline2D
+Gaudi::Math::GenericSpline2D::GenericSpline2D
 ( const Gaudi::Math::BSpline& xspline ,
   const Gaudi::Math::BSpline& yspline )
   : m_xspline ( xspline        )
   , m_yspline ( yspline        )
-  , m_sphere  ( xspline.npars() * yspline.npars() - 1 )
-  , m_xcache  ( xspline.npars() , 0 )
-  , m_ycache  ( yspline.npars() , 0 )
+  , m_pars    ( xspline.npars() * yspline.npars() )
 {
   for ( unsigned i = 0 ; i < m_xspline.npars() ; ++i ) { m_xspline.setPar ( i , 0 ) ; }
   for ( unsigned i = 0 ; i < m_yspline.npars() ; ++i ) { m_yspline.setPar ( i , 0 ) ; }
 }
 // ===========================================================================
+// set k-parameter
+// ===========================================================================
+bool Gaudi::Math::GenericSpline2D::setParameter
+( const unsigned int k , const double value ) 
+{
+  if ( k >= m_pars.size() )    { return false  ; }
+  const double v = m_pars[k] ;
+  if ( s_equal ( v , value ) ) { return false ; }
+  //
+  m_pars[k] = value ;
+  return true ;
+}
+// ===========================================================================
+// make the calcualtions 
+// ===========================================================================
+double Gaudi::Math::GenericSpline2D::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  const unsigned int NX = fx.size() ;
+  const unsigned int NY = fy.size() ;
+  //
+  double result = 0.0 ;
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix ) 
+  {
+    const double vx = fx[ix] ;
+    for ( unsigned short iy = 0 ; iy < NY ; ++iy ) 
+    {
+      const double vy = fy[iy] ;
+      const double p  = par ( ix , iy ) ;
+      result += p *vx * vy ;  
+    }
+  }
+  return result * ( m_xspline.order() + 1 ) * ( m_yspline.order() + 1 ) ;
+}
+// ===========================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::Spline2D::operator () ( const double x , const double y ) const
+double Gaudi::Math::GenericSpline2D::evaluate 
+  ( const double x , const double y ) const
 {
   //
   if ( x < xmin() || y < ymin() || x > xmax() || y > ymax() ) { return 0 ; }
@@ -1617,8 +1654,14 @@ double Gaudi::Math::Spline2D::operator () ( const double x , const double y ) co
     !s_equal ( y , ymax ()) ? y :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
+  const unsigned short NX = m_xspline.npars() ;
+  const unsigned short NY = m_yspline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
   // fill x-cache
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     m_xspline.setPar ( ix , 1.0 ) ;
     //
@@ -1630,13 +1673,13 @@ double Gaudi::Math::Spline2D::operator () ( const double x , const double y ) co
       resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[ix] = resx ;
+    fx[ix] = resx ;
     //
     m_xspline.setPar ( ix , 0.0 ) ;
   }
   //
   // fill y-cache
-  for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
     m_yspline.setPar ( iy , 1.0 ) ;
     //
@@ -1648,28 +1691,12 @@ double Gaudi::Math::Spline2D::operator () ( const double x , const double y ) co
       resy /= ( tip - ti ) ;
     }
     //
-    m_ycache[iy] = resy ;
+    fy[iy] = resy ;
     //
     m_yspline.setPar ( iy , 0.0 ) ;
   }
   //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned k = ix * m_ycache.size() + iy ;
-      result += m_sphere.x2 ( k ) * vx * vy ;
-    }
-  }
-  //
-  return result * ( m_xspline.order() + 1 ) * ( m_yspline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /*  get the integral over 2D-region
@@ -1679,7 +1706,7 @@ double Gaudi::Math::Spline2D::operator () ( const double x , const double y ) co
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::Spline2D::integral
+double Gaudi::Math::GenericSpline2D::integral
 ( const double xlow  ,
   const double xhigh ,
   const double ylow  ,
@@ -1712,8 +1739,14 @@ double Gaudi::Math::Spline2D::integral
     !s_equal ( yhigh , ymax ()) ? yhigh :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
+  const unsigned short NX = m_xspline.npars() ;
+  const unsigned short NY = m_yspline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
   // fill x-cache
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     m_xspline.setPar ( ix , 1.0 ) ;
     //
@@ -1725,13 +1758,13 @@ double Gaudi::Math::Spline2D::integral
       resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[ix] = resx ;
+    fx[ix] = resx ;
     //
     m_xspline.setPar ( ix , 0.0 ) ;
   }
   //
   // fill y-cache
-  for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
     m_yspline.setPar ( iy , 1.0 ) ;
     //
@@ -1743,37 +1776,21 @@ double Gaudi::Math::Spline2D::integral
       resy /= ( tip - ti ) ;
     }
     //
-    m_ycache[iy] = resy ;
+    fy[iy] = resy ;
     //
     m_yspline.setPar ( iy , 0.0 ) ;
   }
   //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned k = ix * m_ycache.size () + iy ;
-      result += m_sphere.x2 ( k ) * vx * vy ;
-    }
-  }
-  //
-  return result * ( m_xspline.order() + 1 ) * ( m_yspline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
-/*  get the integral over X  for given Y
+/*  get the integral over Y  for given X
  *  @param x  (INPUT) x-value
  *  @param ylow  low  edge in y
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::Spline2D::integrateY
+double Gaudi::Math::GenericSpline2D::integrateY
 ( const double x    ,
   const double ylow , const double yhigh ) const
 {
@@ -1795,8 +1812,14 @@ double Gaudi::Math::Spline2D::integrateY
     !s_equal ( yhigh , ymax ()) ? yhigh :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
+  const unsigned short NX = m_xspline.npars() ;
+  const unsigned short NY = m_yspline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
   // fill x-cache
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     m_xspline.setPar ( ix , 1.0 ) ;
     //
@@ -1808,13 +1831,13 @@ double Gaudi::Math::Spline2D::integrateY
       resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[ix] = resx ;
+    fx[ix] = resx ;
     //
     m_xspline.setPar ( ix , 0.0 ) ;
   }
   //
   // fill y-cache
-  for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
     m_yspline.setPar ( iy , 1.0 ) ;
     //
@@ -1826,37 +1849,21 @@ double Gaudi::Math::Spline2D::integrateY
       resy /= ( tip - ti ) ;
     }
     //
-    m_ycache[iy] = resy ;
+    fy[iy] = resy ;
     //
     m_yspline.setPar ( iy , 0.0 ) ;
   }
   //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned k = ix * m_ycache.size () + iy ;
-      result += m_sphere.x2 ( k ) * vx * vy ;
-    }
-  }
-  //
-  return result * ( m_xspline.order() + 1 ) * ( m_yspline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
-/*  get the integral over Y  for given C
+/*  get the integral over X for the given Y
  *  @param y  (INPUT) y-value
  *  @param xlow  low  eadge in x
  *  @param xhigh high edge in x
  */
 // ============================================================================
-double Gaudi::Math::Spline2D::integrateX
+double Gaudi::Math::GenericSpline2D::integrateX
 ( const double y    ,
   const double xlow , const double xhigh ) const
 {
@@ -1878,8 +1885,14 @@ double Gaudi::Math::Spline2D::integrateX
     !s_equal ( y     , ymax ()) ? y     :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
+  const unsigned short NX = m_xspline.npars() ;
+  const unsigned short NY = m_yspline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
   // fill x-cache
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     m_xspline.setPar ( ix , 1.0 ) ;
     //
@@ -1891,13 +1904,13 @@ double Gaudi::Math::Spline2D::integrateX
       resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[ix] = resx ;
+    fx [ix] = resx ;
     //
     m_xspline.setPar ( ix , 0.0 ) ;
   }
   //
   // fill y-cache
-  for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
     m_yspline.setPar ( iy , 1.0 ) ;
     //
@@ -1909,28 +1922,12 @@ double Gaudi::Math::Spline2D::integrateX
       resy /= ( tip - ti ) ;
     }
     //
-    m_ycache[iy] = resy ;
+    fy [iy] = resy ;
     //
     m_yspline.setPar ( iy , 0.0 ) ;
   }
   //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned k = ix * m_ycache.size () + iy ;
-      result += m_sphere.x2 ( k ) * vx * vy ;
-    }
-  }
-  //
-  return result * ( m_xspline.order() + 1 ) * ( m_yspline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /*  get the integral over 2D-region
@@ -1941,14 +1938,14 @@ double Gaudi::Math::Spline2D::integrateX
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::Spline2D::integral   () const { return 1 ; }
+double Gaudi::Math::GenericSpline2D::integral   () const 
+{ return std::accumulate ( m_pars.begin() , m_pars.end() ,  0.0 ) ; }
 // ============================================================================
 /*  get the integral over X  for given Y
  *  @param x  (INPUT) x-value
  */
 // ============================================================================
-double Gaudi::Math::Spline2D::integrateY
-( const double x ) const
+double Gaudi::Math::GenericSpline2D::integrateY ( const double x ) const
 {
   //
   if      ( x < xmin() || x > xmax()           ) { return 0 ; }
@@ -1957,8 +1954,14 @@ double Gaudi::Math::Spline2D::integrateY
     !s_equal ( x     , xmax ()) ? x :
     LHCb::Math::next_double ( xmax() , -s_ulps ) ;
   //
+  const unsigned short NX = m_xspline.npars() ;
+  const unsigned short NY = m_yspline.npars() ;
+  //
+  std::vector<double>  fx ( NX ,  0 ) ;
+  std::vector<double>  fy ( NY ,  1.0 / ( m_yspline.order() + 1 ) ) ;
+  //
   // fill x-cache
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     m_xspline.setPar ( ix , 1.0 ) ;
     //
@@ -1970,39 +1973,19 @@ double Gaudi::Math::Spline2D::integrateY
       resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[ix] = resx ;
+    fx [ix] = resx ;
     //
     m_xspline.setPar ( ix , 0.0 ) ;
   }
   //
-  // fill y-cache
-  //
-  std::fill ( m_ycache.begin() , m_ycache.end() , 1 ) ;
-  //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned k = ix * m_ycache.size () + iy ;
-      result += m_sphere.x2 ( k ) * vx * vy ;
-    }
-  }
-  //
-  return result * ( m_xspline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /*  get the integral over X  for given Y
  *  @param y  (INPUT) y-value
  */
 // ============================================================================
-double Gaudi::Math::Spline2D::integrateX
+double Gaudi::Math::GenericSpline2D::integrateX
 ( const double y    ) const
 {
   //
@@ -2012,11 +1995,15 @@ double Gaudi::Math::Spline2D::integrateX
     !s_equal ( y     , ymax ()) ? y     :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
+  const unsigned short NX = m_xspline.npars() ;
+  const unsigned short NY = m_yspline.npars() ;
+  //
   // fill x-cache
-  std::fill ( m_xcache.begin() , m_xcache.end() , 1 ) ;
+  std::vector<double>  fx ( NX ,  1.0 / ( m_xspline.order() +  1 ) ) ;
+  std::vector<double>  fy ( NY ,  0.0 ) ;
   //
   // fill y-cache
-  for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
     m_yspline.setPar ( iy , 1.0 ) ;
     //
@@ -2028,47 +2015,157 @@ double Gaudi::Math::Spline2D::integrateX
       resy /= ( tip - ti ) ;
     }
     //
-    m_ycache[iy] = resy ;
+    fy[iy] = resy ;
     //
     m_yspline.setPar ( iy , 0.0 ) ;
   }
   //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned k = ix * m_ycache.size () + iy ;
-      result += m_sphere.x2 ( k ) * vx * vy ;
-    }
-  }
-  //
-  return result * ( m_yspline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
+Gaudi::Math::GenericSpline2D&
+Gaudi::Math::GenericSpline2D::operator += ( const double a ) 
+{ 
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ; 
+}
+// ============================================================================
+Gaudi::Math::GenericSpline2D&
+Gaudi::Math::GenericSpline2D::operator -= ( const double a ) 
+{ 
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ; 
+}
+// ============================================================================
+Gaudi::Math::GenericSpline2D&
+Gaudi::Math::GenericSpline2D::operator *= ( const double a ) 
+{ 
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::GenericSpline2D&
+Gaudi::Math::GenericSpline2D::operator /= ( const double a ) 
+{ 
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+// negate it 
+// ============================================================================
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::operator-() const 
+{
+  GenericSpline2D b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__add__   ( const double value ) const 
+{ return  (*this) + value ; }
+// ============================================================================
+// Sum of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__radd__ ( const double value ) const 
+{ return  (*this) + value ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__sub__   ( const double value ) const 
+{ return  (*this) - value ; }
+// ============================================================================
+// Constant minus GenericSpline polynomial
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__rsub__  ( const double value ) const 
+{ return  value - (*this) ; }
+// ============================================================================
+// Product of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__mul__  ( const double value ) const 
+{ return  (*this) * value ; }
+// ============================================================================
+// Product of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__rmul__ ( const double value ) const 
+{ return  (*this) * value ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__div__  ( const double value ) const 
+{ return  (*this) / value ; }
+// ============================================================================
+// Negate GenericSpline polynomial
+// ============================================================================
+Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D::__neg__  () const { return  -(*this) ; }
+// ============================================================================
+
 
 // ============================================================================
-// symmetric  2D-spline
+// Generic2DSym-spline
 // ============================================================================
-Gaudi::Math::Spline2DSym::Spline2DSym
-( const Gaudi::Math::BSpline&  spline )
-  : m_spline ( spline             )
-  , m_sphere ( spline.npars() * ( spline.npars()  + 1 ) / 2 - 1  )
-  , m_xcache ( spline.npars() , 0 )
-  , m_ycache ( spline.npars() , 0 )
+Gaudi::Math::GenericSpline2DSym::GenericSpline2DSym
+( const Gaudi::Math::BSpline& spline )
+  : m_spline ( spline        )
+  , m_pars   ( spline.npars() * ( spline.npars() + 1 ) / 2 )
 {
   for ( unsigned i = 0 ; i < m_spline.npars() ; ++i ) { m_spline.setPar ( i , 0 ) ; }
 }
 // ===========================================================================
+// set k-parameter
+// ===========================================================================
+bool Gaudi::Math::GenericSpline2DSym::setParameter
+( const unsigned int k , const double value ) 
+{
+  if ( k >= m_pars.size() )    { return false  ; }
+  const double v = m_pars[k] ;
+  if ( s_equal ( v , value ) ) { return false ; }
+  //
+  m_pars[k] = value ;
+  return true ;
+}
+// ===========================================================================
+// make the calcualtions 
+// ===========================================================================
+double Gaudi::Math::GenericSpline2DSym::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  //
+  const unsigned int NX = fx.size() ;
+  // const unsigned int NY = fy.size() ;
+  //
+  double result = 0.0 ;
+  for  ( unsigned short ix = 0 ; ix < NX  ; ++ix )
+  {
+    result   += par ( ix , ix ) * fx[ix] * fy[ix] ;
+    for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
+    { result += par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
+  }
+  //
+  const unsigned int scale = ( m_spline.order() + 1 ) ;
+  //
+  return result * scale * scale ;
+}
+// ===========================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::Spline2DSym::operator () ( const double x , const double y ) const
+double Gaudi::Math::GenericSpline2DSym::evaluate 
+( const double x , const double y ) const
 {
   //
   if ( x < xmin() || y < ymin() || x > xmax() || y > ymax() ) { return 0 ; }
@@ -2081,52 +2178,49 @@ double Gaudi::Math::Spline2DSym::operator () ( const double x , const double y )
     !s_equal ( y , ymax ()) ? y :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
-  // fill x&y-caches
-  for ( unsigned short i = 0 ; i < m_xcache.size() ; ++i )
+  const unsigned short NX = m_spline.npars() ;
+  const unsigned short NY = m_spline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
+  // fill x-cache
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
-    m_spline.setPar ( i , 1.0 ) ;
+    m_spline.setPar ( ix , 1.0 ) ;
     //
     double resx  = m_spline ( xarg ) ;
-    double resy  = m_spline ( yarg ) ;
-    //
-    if ( 0 < resx || 0 < resy )
+    if ( 0 < resx )
     {
-      const double ti  = knot ( m_spline.knots() , i                        ) ;
-      const double tip = knot ( m_spline.knots() , i + m_spline.order() + 1 ) ;
-      //
-      if ( 0 < resx ) { resx /= ( tip - ti ) ; }
-      if ( 0 < resy ) { resy /= ( tip - ti ) ; }
-      //
+      const double ti  = knot ( m_spline.knots() , ix                        ) ;
+      const double tip = knot ( m_spline.knots() , ix + m_spline.order() + 1 ) ;
+      resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[i] = resx ;
-    m_ycache[i] = resy ;
+    fx[ix] = resx ;
     //
-    m_spline.setPar ( i , 0.0 ) ;
+    m_spline.setPar ( ix , 0.0 ) ;
   }
   //
-  // get the final value
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  // fill y-cache
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
+    m_spline.setPar ( iy , 1.0 ) ;
     //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+    double resy  = m_spline ( yarg ) ;
+    if ( 0 < resy )
     {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned int k =
-        ( ix < iy ) ? ( iy * ( iy + 1 ) / 2 + ix ) : ( ix * ( ix + 1 ) / 2 + iy ) ;
-      //
-      result += ( ix == iy ) ?
-        m_sphere.x2 ( k ) * vx * vy       :
-        m_sphere.x2 ( k ) * vx * vy * 0.5 ;
+      const double ti  = knot ( m_spline.knots() , iy                        ) ;
+      const double tip = knot ( m_spline.knots() , iy + m_spline.order() + 1 ) ;
+      resy /= ( tip - ti ) ;
     }
+    //
+    fy[iy] = resy ;
+    //
+    m_spline.setPar ( iy , 0.0 ) ;
   }
   //
-  return result * ( ( m_spline.order() + 1 ) * ( m_spline.order() + 1 ) ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /*  get the integral over 2D-region
@@ -2136,7 +2230,7 @@ double Gaudi::Math::Spline2DSym::operator () ( const double x , const double y )
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::Spline2DSym::integral
+double Gaudi::Math::GenericSpline2DSym::integral
 ( const double xlow  ,
   const double xhigh ,
   const double ylow  ,
@@ -2149,11 +2243,17 @@ double Gaudi::Math::Spline2DSym::integral
   else if ( xhigh < xmin () || yhigh < ymin () ) { return 0 ; }
   else if ( xlow  > xmax () || ylow  > ymax () ) { return 0 ; }
   else if ( s_equal ( xlow , xhigh ) || s_equal ( ylow , yhigh ) ) { return 0 ; }
+  //
+  else if ( s_equal ( xlow  , xmin() ) &&
+            s_equal ( xhigh , xmax() ) &&
+            s_equal ( ylow  , ymin() ) &&
+            s_equal ( yhigh , ymax() ) ) { return integral() ; }
   // adjust
   else if ( xlow  < xmin () ) { return integral ( xmin() , xhigh   , ylow   , yhigh  ) ; }
   else if ( xhigh > xmax () ) { return integral ( xlow   , xmax () , ylow   , yhigh  ) ; }
   else if ( ylow  < ymin () ) { return integral ( xlow   , xhigh   , ymin() , yhigh  ) ; }
   else if ( yhigh > ymax () ) { return integral ( xlow   , xhigh   , ylow   , ymax() ) ; }
+  //
   //
   const double xarg =
     !s_equal ( xhigh , xmax ()) ? xhigh :
@@ -2163,69 +2263,68 @@ double Gaudi::Math::Spline2DSym::integral
     !s_equal ( yhigh , ymax ()) ? yhigh :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
-  // fill x&y-caches
-  for ( unsigned short i = 0 ; i < m_xcache.size() ; ++i )
+  const unsigned short NX = m_spline.npars() ;
+  const unsigned short NY = m_spline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
+  // fill x-cache
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
-    m_spline.setPar ( i , 1.0 ) ;
+    m_spline.setPar ( ix , 1.0 ) ;
     //
     double resx  = m_spline.integral ( xlow , xarg ) ;
-    double resy  = m_spline.integral ( ylow , yarg ) ;
-    //
-    if ( 0 < resx || 0 < resy )
+    if ( 0 < resx )
     {
-      //
-      const double ti  = knot ( m_spline.knots() , i                        ) ;
-      const double tip = knot ( m_spline.knots() , i + m_spline.order() + 1 ) ;
-      //
-      if ( 0 < resx ) { resx /= ( tip - ti ) ; }
-      if ( 0 < resy ) { resy /= ( tip - ti ) ; }
+      const double ti  = knot ( m_spline.knots() , ix                        ) ;
+      const double tip = knot ( m_spline.knots() , ix + m_spline.order() + 1 ) ;
+      resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[i] = resx ;
-    m_ycache[i] = resy ;
+    fx[ix] = resx ;
     //
-    m_spline.setPar ( i , 0.0 ) ;
+    m_spline.setPar ( ix , 0.0 ) ;
   }
   //
-  // get the final value
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  // fill y-cache
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
+    m_spline.setPar ( iy , 1.0 ) ;
     //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+    double resy  = m_spline.integral ( ylow ,  yarg ) ;
+    if ( 0 < resy )
     {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned int k =
-        ( ix < iy ) ? ( iy * ( iy + 1 ) / 2 + ix ) : ( ix * ( ix + 1 ) / 2 + iy ) ;
-      //
-      result += ( ix == iy ) ?
-        m_sphere.x2 ( k ) * vx * vy       :
-        m_sphere.x2 ( k ) * vx * vy * 0.5 ;
+      const double ti  = knot ( m_spline.knots() , iy                        ) ;
+      const double tip = knot ( m_spline.knots() , iy + m_spline.order() + 1 ) ;
+      resy /= ( tip - ti ) ;
     }
+    //
+    fy[iy] = resy ;
+    //
+    m_spline.setPar ( iy , 0.0 ) ;
   }
   //
-  return result * ( ( m_spline.order() + 1 ) * ( m_spline.order() + 1 ) )  ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
-/*  get the integral over X  for given Y
+/*  get the integral over Y  for given X
  *  @param x  (INPUT) x-value
  *  @param ylow  low  edge in y
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::Spline2DSym::integrateY
+double Gaudi::Math::GenericSpline2DSym::integrateY
 ( const double x    ,
   const double ylow , const double yhigh ) const
 {
   //
   if      ( x < xmin() || x > xmax()           ) { return 0 ; }
+  else if ( s_equal ( ylow  , ymin() ) &&
+            s_equal ( yhigh , ymax() ) ) { return integrateY ( x ) ; }
   else if ( yhigh <  ylow ) { return - integrateY ( x , yhigh , ylow ) ; }
   else if ( s_equal ( ylow , yhigh )           ) { return 0 ; }
-  else if ( yhigh <= ymin() ||  ylow > ymax()  ) { return 0 ; }
+  else if ( yhigh <  ymin() ||  ylow >  ymax() ) { return 0 ; }
   else if ( ylow  <  ymin() ) { return integrateY ( x , ymin() , yhigh  ) ; }
   else if ( yhigh >  ymax() ) { return integrateY ( x , ylow   , ymax() ) ; }
   //
@@ -2237,75 +2336,90 @@ double Gaudi::Math::Spline2DSym::integrateY
     !s_equal ( yhigh , ymax ()) ? yhigh :
     LHCb::Math::next_double ( ymax() , -s_ulps ) ;
   //
-  // fill x&y-caches
-  for ( unsigned short i = 0 ; i < m_xcache.size() ; ++i )
+  const unsigned short NX = m_spline.npars() ;
+  const unsigned short NY = m_spline.npars() ;
+  //
+  std::vector<double>  fx ( NX , 0 ) ;
+  std::vector<double>  fy ( NY , 0 ) ;
+  //
+  // fill x-cache
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
-    m_spline.setPar ( i , 1.0 ) ;
+    m_spline.setPar ( ix , 1.0 ) ;
     //
-    double resx  = m_spline          (        xarg ) ;
-    double resy  = m_spline.integral ( ylow , yarg ) ;
-    if ( 0 < resx || 0 < resy )
+    double resx  = m_spline ( xarg ) ;
+    if ( 0 < resx )
     {
-      const double ti  = knot ( m_spline.knots() , i                        ) ;
-      const double tip = knot ( m_spline.knots() , i + m_spline.order() + 1 ) ;
-      if ( 0 < resx ) { resx /= ( tip - ti ) ; }
-      if ( 0 < resy ) { resy /= ( tip - ti ) ; }
+      const double ti  = knot ( m_spline.knots() , ix                        ) ;
+      const double tip = knot ( m_spline.knots() , ix + m_spline.order() + 1 ) ;
+      resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[i] = resx ;
-    m_ycache[i] = resy ;
+    fx[ix] = resx ;
     //
-    m_spline.setPar ( i , 0.0 ) ;
+    m_spline.setPar ( ix , 0.0 ) ;
   }
   //
-  //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
+  // fill y-cache
+  for ( unsigned short iy = 0 ; iy < NY ; ++iy )
   {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
+    m_spline.setPar ( iy , 1.0 ) ;
     //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
+    double resy  = m_spline.integral ( ylow ,  yarg ) ;
+    if ( 0 < resy )
     {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned int k =
-        ( ix < iy ) ? ( iy * ( iy + 1 ) / 2 + ix ) : ( ix * ( ix + 1 ) / 2 + iy ) ;
-      //
-      result += ( ix == iy ) ?
-        m_sphere.x2 ( k ) * vx * vy       :
-        m_sphere.x2 ( k ) * vx * vy * 0.5 ;
+      const double ti  = knot ( m_spline.knots() , iy                        ) ;
+      const double tip = knot ( m_spline.knots() , iy + m_spline.order() + 1 ) ;
+      resy /= ( tip - ti ) ;
     }
+    //
+    fy[iy] = resy ;
+    //
+    m_spline.setPar ( iy , 0.0 ) ;
   }
   //
-  return result * ( m_spline.order() + 1 ) * ( m_spline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
+
 // ============================================================================
-/*  get the integral over Y  for given Y
+/*  get the integral over X for the given Y
  *  @param y  (INPUT) y-value
  *  @param xlow  low  eadge in x
  *  @param xhigh high edge in x
  */
 // ============================================================================
-double Gaudi::Math::Spline2DSym::integrateX
+double Gaudi::Math::GenericSpline2DSym::integrateX
 ( const double y    ,
   const double xlow , const double xhigh ) const
-{ return integrateY ( y , xlow , xhigh ) ; }
+{ return  integrateY ( y , xlow , xhigh ) ; }
 // ============================================================================
-//  get the integral over 2D-region
+/*  get the integral over 2D-region
+ *  \f[ x_{min}<x<x_{max}, y_{min}<y<y_{max}\f]
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ */
 // ============================================================================
-double Gaudi::Math::Spline2DSym::integral () const { return 1 ; }
+double Gaudi::Math::GenericSpline2DSym::integral   () const 
+{ 
+  const unsigned short  NX = m_spline.npars() ;
+  double result = 0 ;
+  for  ( unsigned short ix = 0 ; ix < NX ; ++ix )
+  {
+    result   += par ( ix , ix ) ;
+    for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
+    { result += 2 * par ( ix , iy ) ; } 
+  }
+  //
+  return result ;
+}
 // ============================================================================
-
-
-// ============================================================================
-/*  get the integral over Y  for given X
+/*  get the integral over X  for given Y
  *  @param x  (INPUT) x-value
  */
 // ============================================================================
-double Gaudi::Math::Spline2DSym::integrateY
-( const double x ) const
+double Gaudi::Math::GenericSpline2DSym::integrateY ( const double x ) const
 {
   //
   if      ( x < xmin() || x > xmax()           ) { return 0 ; }
@@ -2314,60 +2428,196 @@ double Gaudi::Math::Spline2DSym::integrateY
     !s_equal ( x     , xmax ()) ? x :
     LHCb::Math::next_double ( xmax() , -s_ulps ) ;
   //
-  // fill x&y-caches
-  for ( unsigned short i = 0 ; i < m_xcache.size() ; ++i )
+  const unsigned short NX = m_spline.npars() ;
+  const unsigned short NY = m_spline.npars() ;
+  //
+  std::vector<double>  fx ( NX ,  0 ) ;
+  std::vector<double>  fy ( NY ,  1.0 / ( m_spline.order() + 1 ) ) ;
+  //
+  // fill x-cache
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
-    m_spline.setPar ( i , 1.0 ) ;
+    m_spline.setPar ( ix , 1.0 ) ;
     //
-    double resx  = m_spline          (        xarg ) ;
+    double resx  = m_spline ( xarg ) ;
     if ( 0 < resx )
     {
-      const double ti  = knot ( m_spline.knots() , i                        ) ;
-      const double tip = knot ( m_spline.knots() , i + m_spline.order() + 1 ) ;
-      if ( 0 < resx ) { resx /= ( tip - ti ) ; }
+      const double ti  = knot ( m_spline.knots() , ix                        ) ;
+      const double tip = knot ( m_spline.knots() , ix + m_spline.order() + 1 ) ;
+      resx /= ( tip - ti ) ;
     }
     //
-    m_xcache[i] = resx ;
-    m_ycache[i] = 1    ;
+    fx [ix] = resx ;
     //
-    m_spline.setPar ( i , 0.0 ) ;
+    m_spline.setPar ( ix , 0.0 ) ;
   }
   //
-  //
-  double         result = 0 ;
-  for ( unsigned short ix = 0 ; ix < m_xcache.size() ; ++ix )
-  {
-    const double vx   = m_xcache[ix] ;
-    if ( s_zero ( vx ) ) { continue ; }       // CONTINUE
-    //
-    for ( unsigned short iy = 0 ; iy < m_ycache.size() ; ++iy )
-    {
-      const double vy = m_ycache[iy] ;
-      if ( s_zero ( vy ) ) { continue ; }     // CONTINUE
-      //
-      const unsigned int k =
-        ( ix < iy ) ? ( iy * ( iy + 1 ) / 2 + ix ) : ( ix * ( ix + 1 ) / 2 + iy ) ;
-      //
-      result += ( ix == iy ) ?
-        m_sphere.x2 ( k ) * vx * vy       :
-        m_sphere.x2 ( k ) * vx * vy * 0.5 ;
-    }
-  }
-  //
-  return result * ( m_spline.order() + 1 ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /*  get the integral over X  for given Y
- *  @param x  (INPUT) x-value
+ *  @param y  (INPUT) y-value
  */
 // ============================================================================
-double Gaudi::Math::Spline2DSym::integrateX ( const double y ) const
-{ return integrateY ( y ) ; }
+double Gaudi::Math::GenericSpline2DSym::integrateX
+( const double y    ) const { return integrateY (  y ) ; }
+
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym&
+Gaudi::Math::GenericSpline2DSym::operator += ( const double a ) 
+{ 
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ; 
+}
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym&
+Gaudi::Math::GenericSpline2DSym::operator -= ( const double a ) 
+{ 
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ; 
+}
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym&
+Gaudi::Math::GenericSpline2DSym::operator *= ( const double a ) 
+{ 
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym&
+Gaudi::Math::GenericSpline2DSym::operator /= ( const double a ) 
+{ 
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+// negate it 
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::operator-() const 
+{
+  GenericSpline2DSym b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__add__   ( const double value ) const 
+{ return  (*this) + value ; }
+// ============================================================================
+// Sum of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__radd__ ( const double value ) const 
+{ return  (*this) + value ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__sub__   ( const double value ) const 
+{ return  (*this) - value ; }
+// ============================================================================
+// Constant minus GenericSpline polynomial
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__rsub__  ( const double value ) const 
+{ return  value - (*this) ; }
+// ============================================================================
+// Product of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__mul__  ( const double value ) const 
+{ return  (*this) * value ; }
+// ============================================================================
+// Product of GenericSpline polynomial and a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__rmul__ ( const double value ) const 
+{ return  (*this) * value ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__div__  ( const double value ) const 
+{ return  (*this) / value ; }
+// ============================================================================
+// Negate GenericSpline polynomial
+// ============================================================================
+Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym::__neg__  () const { return  -(*this) ; }
 // ============================================================================
 
 
+
+
+
+
+
+
 // ============================================================================
-// CONVEX   ULLS
+// Positive 2D spline 
+// ============================================================================
+Gaudi::Math::Spline2D::Spline2D 
+( const Gaudi::Math::BSpline& xspline ,
+  const Gaudi::Math::BSpline& yspline ) 
+  : m_spline  ( xspline , yspline ) 
+  , m_sphere  ( xspline.npars() * yspline.npars() - 1 ) 
+{
+  updateSpline() ;
+}
+// =============================================================================
+// update spline coefficients
+// =============================================================================
+bool Gaudi::Math::Spline2D::updateSpline()  
+{
+  //
+  bool update = false ;
+  for ( unsigned int ix = 0 ; ix < m_sphere.nX() ; ++ix )
+  {
+    const bool updated = m_spline.setPar ( ix , m_sphere.x2 ( ix ) ) ;
+    update = updated || update ;
+  }
+  //
+  return update ;
+}
+
+// ============================================================================
+// Positive symmetric 2D spline 
+// ============================================================================
+Gaudi::Math::Spline2DSym::Spline2DSym 
+( const Gaudi::Math::BSpline&  spline )
+  : m_spline ( spline ) 
+  , m_sphere ( spline.npars() * ( spline.npars() + 1 ) / 2 - 1  )
+{
+  updateSpline() ;
+}
+// =============================================================================
+// update spline coefficients
+// =============================================================================
+bool Gaudi::Math::Spline2DSym::updateSpline()  
+{
+  //
+  bool update = false ;
+  for ( unsigned int ix = 0 ; ix < m_sphere.nX() ; ++ix )
+  {
+    const bool updated = m_spline.setPar ( ix , m_sphere.x2 ( ix ) ) ;
+    update = updated || update ;
+  }
+  // 
+  if ( update ) { m_spline /= m_spline.integral() ; }
+  //
+  return update ;
+}
+
+// ============================================================================
+// CONVEX  HULLS 
 // ============================================================================
 namespace
 {
