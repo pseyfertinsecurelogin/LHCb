@@ -368,9 +368,11 @@ class CDB
     std::vector<std::string> files( const SELECTOR& selector )
     {
         std::vector<std::string> keys;
-        for (auto key_value : m_icdb ) {
-            if ( selector( key_value.string_key() ) ) {
-                keys.emplace_back( key_value.string_key() );
+        if ( m_icdb ) {
+            for (auto key_value : m_icdb ) {
+                if ( selector( key_value.string_key() ) ) {
+                    keys.emplace_back( key_value.string_key() );
+                }
             }
         }
         if ( m_ocdb ) { // then also check write cache...
