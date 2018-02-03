@@ -31,9 +31,9 @@ namespace LHCbTests { namespace GenericTool {
       auto sc = ::Algorithm::initialize();
       if ( !sc ) return sc;
       info() << "getting the tools..." << endmsg;
-      sc = m_gt1.retrieve() &&
-           m_gt2a.retrieve() &&
-           m_gt2b.retrieve();
+      sc = StatusCode{m_gt1.retrieve() &&
+                      m_gt2a.retrieve() &&
+                      m_gt2b.retrieve()};
       return sc;
     }
     StatusCode execute() override {

@@ -134,7 +134,7 @@ void VertexPacker::unpack( const PackedDataVector & pverts,
                            DataVector             & verts ) const
 {
   verts.reserve( pverts.data().size() );
-  
+
   for ( const auto & pvert : pverts.data() )
   {
     // make and save new pid in container
@@ -156,7 +156,7 @@ StatusCode VertexPacker::check( const DataVector & dataA,
   auto iA(dataA.begin()), iB(dataB.begin());
   for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
   {
-    sc = sc && check( **iA, **iB );
+    if ( sc ) sc = check( **iA, **iB );
   }
 
   // Return final status
@@ -197,10 +197,10 @@ StatusCode VertexPacker::check( const Data & dataA,
   // If comparison not OK, print full information
   if ( !ok )
   {
-    const std::string loc = ( dataA.parent() && dataA.parent()->registry() ? 
+    const std::string loc = ( dataA.parent() && dataA.parent()->registry() ?
                               dataA.parent()->registry()->identifier() : "Not in TES" );
     parent().warning() << "Problem with Vertex data packing :-" << endmsg
-                       << "  Original Vertex key=" << dataA.key() 
+                       << "  Original Vertex key=" << dataA.key()
                        << " in '" << loc << "'" << endmsg
                        << dataA << endmsg
                        << "  Unpacked Vertex" << endmsg

@@ -472,7 +472,7 @@ StatusCode TrackPacker::check( const DataVector & dataA,
   {
     LHCb::Track* oTrack = (*itOld++);
     LHCb::Track* tTrack = (*itTest++);
-    sc = sc && check( *oTrack, *tTrack );
+    if ( sc ) sc = check( *oTrack, *tTrack );
   }
 
   return sc;

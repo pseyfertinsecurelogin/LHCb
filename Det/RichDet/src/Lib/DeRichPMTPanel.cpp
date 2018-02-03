@@ -53,8 +53,6 @@ const CLID& DeRichPMTPanel::classID()
 //=========================================================================
 StatusCode DeRichPMTPanel::initialize()
 {
-  StatusCode sc = StatusCode::SUCCESS;
-
   // store the name of the panel, without the /dd/Structure part
   const auto pos = name().find("Rich");
   setMyName( std::string::npos != pos ? name().substr(pos) : "DeRichPMTPanel_NO_NAME" );
@@ -68,9 +66,7 @@ StatusCode DeRichPMTPanel::initialize()
   updMgrSvc()->registerCondition( this, geometry(), &DeRichPMTPanel::geometryUpdate );
 
   // trigger first UMS update
-  sc = sc && updMgrSvc()->update(this);
-
-  return sc;
+  return updMgrSvc()->update(this);
 }
 
 //=========================================================================

@@ -185,7 +185,7 @@ StatusCode MuonPIDPacker::check( const DataVector & dataA,
   auto iA(dataA.begin()), iB(dataB.begin());
   for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
   {
-    sc = sc && check( **iA, **iB );
+    if ( sc ) sc = check( **iA, **iB );
   }
 
   // Return final status

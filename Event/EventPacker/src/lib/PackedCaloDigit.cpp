@@ -10,7 +10,7 @@
 
 using namespace LHCb;
 
-void CaloDigitPacker::pack( const DataVector & digs, 
+void CaloDigitPacker::pack( const DataVector & digs,
                             PackedDataVector & pdigs ) const
 {
   if ( isSupportedVer(pdigs.packingVersion()) )
@@ -28,7 +28,7 @@ void CaloDigitPacker::pack( const DataVector & digs,
   }
 }
 
-void CaloDigitPacker::unpack( const PackedDataVector & pdigs, 
+void CaloDigitPacker::unpack( const PackedDataVector & pdigs,
                               DataVector             & digs ) const
 {
   if ( isSupportedVer(pdigs.packingVersion()) )
@@ -45,7 +45,7 @@ void CaloDigitPacker::unpack( const PackedDataVector & pdigs,
   }
 }
 
-StatusCode CaloDigitPacker::check( const DataVector & dataA, 
+StatusCode CaloDigitPacker::check( const DataVector & dataA,
                                    const DataVector & dataB ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
@@ -54,7 +54,7 @@ StatusCode CaloDigitPacker::check( const DataVector & dataA,
   auto iA(dataA.begin()), iB(dataB.begin());
   for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
   {
-    sc = sc && check( **iA, **iB );
+    if ( sc ) sc = check( **iA, **iB );
   }
   // Return final status
   return sc;
@@ -82,7 +82,7 @@ StatusCode CaloDigitPacker::check( const Data & dataA, const Data & dataB ) cons
   if ( !ok ){ const std::string loc = ( dataA.parent() && dataA.parent()->registry() ?
                               dataA.parent()->registry()->identifier() : "Not in TES" );
     parent().warning() << "Problem with CaloDigit data packing :-" << endmsg
-                       << "  Original Digit key=" << dataA.key() 
+                       << "  Original Digit key=" << dataA.key()
                        << " in '" << loc << "'" << endmsg
                        << dataA << endmsg
                        << "  Unpacked Digit" << endmsg

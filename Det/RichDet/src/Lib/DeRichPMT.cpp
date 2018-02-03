@@ -45,7 +45,6 @@ const CLID& DeRichPMT::classID()
 
 StatusCode DeRichPMT::initialize()
 {
-  StatusCode sc = StatusCode::SUCCESS;
   MsgStream msg( msgSvc(), "DeRichPMT" );
 
   // store the name of the PMT, without the /dd/Structure part
@@ -86,7 +85,7 @@ StatusCode DeRichPMT::initialize()
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
 
   // Trigger first update
-  sc = sc && ( updMgrSvc()->update(this) );
+  StatusCode sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
 
   return sc;
@@ -124,7 +123,7 @@ StatusCode DeRichPMT::getPMTParameters()
   if ( !deRich ) { return StatusCode::FAILURE; }
 
   const std::string effnumPixCond = "RichPmtTotNumPixel";
-  m_effNumActivePixs = ( deRich->exists(effnumPixCond) ? 
+  m_effNumActivePixs = ( deRich->exists(effnumPixCond) ?
                          (FType)deRich->param<int>(effnumPixCond) : 64.0 );
 
   // CRJ - To reduce PMT memory size do not load parameters not used yet ...
@@ -174,23 +173,23 @@ StatusCode DeRichPMT::getPMTParameters()
 
   }
   m_Rich2UseGrandPmt = false;
-  if ( Rich2PmtArrayConfig >= 1 ) 
+  if ( Rich2PmtArrayConfig >= 1 )
   {
     m_Rich2UseGrandPmt = true;
-    if ( Rich2PmtArrayConfig == 2 ) 
+    if ( Rich2PmtArrayConfig == 2 )
     {
       m_Rich2UseMixedPmt = true;
     }
   }
 
   const FType Rich1Rich2ZDivideLimit = 6000.0;
-  
+
   // Which RICH are we in ?
   const Gaudi::XYZPoint atestPoint(0.0,0.0,0.0);
   const auto atestGlobalPoint = geometry()->toGlobalMatrix() * atestPoint ;
   m_rich = ( atestGlobalPoint.z() > Rich1Rich2ZDivideLimit ? Rich::Rich2 : Rich::Rich1 );
 
-  if ( exists("RichPmtLensMagnficationFactor") ) 
+  if ( exists("RichPmtLensMagnficationFactor") )
   {
     m_PmtLensMagRatio = deRich->param<double>("RichPmtLensMagnficationFactor"  );
   }
@@ -203,7 +202,7 @@ StatusCode DeRichPMT::getPMTParameters()
   {
     m_PmtLensRoc2 = std::pow( deRich->param<double>("RichPmtLensRadiusofCurvature"), 2 );
   }
-  else 
+  else
   {
     m_PmtLensRoc2 = std::pow( 100000.0, 2 );
   }
@@ -264,7 +263,7 @@ StatusCode DeRichPMT::updateGeometry()
 
 //=============================================================================
 
-Gaudi::XYZPoint 
+Gaudi::XYZPoint
 DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const
 {
 
@@ -294,7 +293,7 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
                                 Gaudi::XYZPoint& detectPoint,
                                 bool photoCathodeSide ) const
 {
-  const auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), 
+  const auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(),
                                                                smartID.pixelRow(),
                                                                smartID.rich() );
 
@@ -305,15 +304,15 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
   if ( UNLIKELY(photoCathodeSide) )
   {
     const Gaudi::XYZPoint aPhCathHit( aLocalHit.x(), aLocalHit.y(), zPh );
-    detectPoint = ( geometry()->toGlobalMatrix() * 
+    detectPoint = ( geometry()->toGlobalMatrix() *
                     ( m_PmtLensFlag ? RichPmtLensReconFromPhCath(aPhCathHit) : aPhCathHit ) );
   }
   else
   {
     const auto zQwExt = zPh + m_PmtQwZSize;
     const Gaudi::XYZPoint aQWExtHit ( aLocalHit.x(), aLocalHit.y(), zQwExt );
-    detectPoint = ( geometry()->toGlobalMatrix() * 
-                    ( m_PmtLensFlag ? RichPmtLensReconFromPhCath(aQWExtHit) : aQWExtHit ) );       
+    detectPoint = ( geometry()->toGlobalMatrix() *
+                    ( m_PmtLensFlag ? RichPmtLensReconFromPhCath(aQWExtHit) : aQWExtHit ) );
   }
 
   return true;

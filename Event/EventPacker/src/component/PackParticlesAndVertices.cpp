@@ -176,12 +176,12 @@ StatusCode PackParticlesAndVertices::execute()
         if ( m_deleteInput ) toBeDeleted.push_back( rverts );
         if ( rverts->empty() ) continue;
         if ( msgLevel( MSG::DEBUG ) )
-          debug () << format( "%4d RecVertices in ", rverts->size() ) 
+          debug () << format( "%4d RecVertices in ", rverts->size() )
                    << name << endmsg;
         packARecVertexContainer( rverts, *prverts );
       }
       if ( msgLevel( MSG::DEBUG ) )
-        debug() << "Stored " << prverts->vertices().size() << " packed RecVertices" 
+        debug() << "Stored " << prverts->vertices().size() << " packed RecVertices"
                 << endmsg;
     }
   }
@@ -205,7 +205,7 @@ StatusCode PackParticlesAndVertices::execute()
         if ( m_deleteInput ) toBeDeleted.push_back( rels );
         if ( rels->relations().empty() ) continue;
         if ( msgLevel( MSG::DEBUG ) )
-          debug () << format( "%4d relations in ", rels->relations().size() ) 
+          debug () << format( "%4d relations in ", rels->relations().size() )
                    << name << endmsg;
         packAP2PRelationContainer( rels, *prels );
       }
@@ -239,7 +239,7 @@ StatusCode PackParticlesAndVertices::execute()
         packAP2IntRelationContainer( partIds, *pPartIds );
       }
       if ( msgLevel( MSG::DEBUG ) )
-        debug() << "Stored " << pPartIds->relations().size() 
+        debug() << "Stored " << pPartIds->relations().size()
                 << " packed Particle2Ints" << endmsg;
     }
   }
@@ -303,7 +303,7 @@ StatusCode PackParticlesAndVertices::execute()
         packAProtoParticleContainer( protos, *pprotos );
       }
       if ( msgLevel( MSG::DEBUG ) )
-        debug() << "Stored " << pprotos->protos().size() << " packed ProtoParticles" 
+        debug() << "Stored " << pprotos->protos().size() << " packed ProtoParticles"
                 << endmsg;
     }
   }
@@ -388,7 +388,7 @@ StatusCode PackParticlesAndVertices::execute()
         packATrackContainer( tracks, *ptracks );
       }
       if ( msgLevel( MSG::DEBUG ) )
-        debug() << "Stored " << ptracks->tracks().size() << " packed Tracks" 
+        debug() << "Stored " << ptracks->tracks().size() << " packed Tracks"
                 << endmsg;
     }
   }
@@ -414,7 +414,7 @@ StatusCode PackParticlesAndVertices::execute()
         if ( m_deleteInput ) toBeDeleted.push_back( rels );
         if ( rels->relations().empty() ) continue;
         if ( msgLevel( MSG::DEBUG ) )
-          debug () << format( "%4d relations in ", rels->relations().size() ) << name 
+          debug () << format( "%4d relations in ", rels->relations().size() ) << name
                    << endmsg;
         packAP2PRelationContainer( rels, *prels );
       }
@@ -443,7 +443,7 @@ StatusCode PackParticlesAndVertices::execute()
         if ( m_deleteInput ) toBeDeleted.push_back( rels );
         if ( rels->relations().empty() ) continue;
         if ( msgLevel( MSG::DEBUG ) )
-          debug () << format( "%4d relations in ", rels->relations().size() ) << name 
+          debug () << format( "%4d relations in ", rels->relations().size() ) << name
                    << endmsg;
         packAP2PRelationContainer( rels, *prels );
       }
@@ -464,9 +464,9 @@ StatusCode PackParticlesAndVertices::execute()
     {
       const StatusCode ssc = evtSvc()->unregisterObject( it );
       if ( ssc.isSuccess() ) { delete it; it = nullptr; }
-      sc = sc && ssc;
+      if ( sc ) sc = ssc;
     }
-    if ( sc.isFailure() ) 
+    if ( sc.isFailure() )
     { return Error( "Failed to delete input data as requested", sc ); }
   }
 
@@ -845,7 +845,7 @@ packATrackContainer( const LHCb::Tracks* tracks,
 //=========================================================================
 //  Pack a container of vertices in the PackedVertices object
 //=========================================================================
-void 
+void
 PackParticlesAndVertices::
 packAVertexContainer ( const LHCb::Vertices* verts,
                        LHCb::PackedVertices& pverts ) const
@@ -898,7 +898,7 @@ packAVertexContainer ( const LHCb::Vertices* verts,
 //=========================================================================
 //  Pack a container of RecVertex
 //=========================================================================
-void 
+void
 PackParticlesAndVertices::
 packARecVertexContainer( const LHCb::RecVertices* rVerts,
                          LHCb::PackedRecVertices& pRVerts ) const

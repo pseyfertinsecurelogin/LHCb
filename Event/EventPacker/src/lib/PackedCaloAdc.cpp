@@ -26,7 +26,7 @@ void CaloAdcPacker::pack( const DataVector & adcs, PackedDataVector & padcs ) co
   }
 }
 
-void CaloAdcPacker::unpack( const PackedDataVector & padcs, 
+void CaloAdcPacker::unpack( const PackedDataVector & padcs,
                             DataVector             & adcs ) const
 {
   if ( isSupportedVer(padcs.packingVersion()) )
@@ -43,7 +43,7 @@ void CaloAdcPacker::unpack( const PackedDataVector & padcs,
   }
 }
 
-StatusCode CaloAdcPacker::check( const DataVector & dataA, 
+StatusCode CaloAdcPacker::check( const DataVector & dataA,
                                  const DataVector & dataB ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
@@ -52,7 +52,7 @@ StatusCode CaloAdcPacker::check( const DataVector & dataA,
   auto iA(dataA.begin()), iB(dataB.begin());
   for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
   {
-    sc = sc && check( **iA, **iB );
+    if ( sc ) sc = check( **iA, **iB );
   }
   // Return final status
   return sc;
@@ -81,7 +81,7 @@ StatusCode CaloAdcPacker::check( const Data & dataA,
   if ( !ok ){ const std::string loc = ( dataA.parent() && dataA.parent()->registry() ?
                               dataA.parent()->registry()->identifier() : "Not in TES" );
     parent().warning() << "Problem with CaloAdc data packing :-" << endmsg
-                       << "  Original Adc key=" << dataA.key() 
+                       << "  Original Adc key=" << dataA.key()
                        << " in '" << loc << "'" << endmsg
                        << dataA << endmsg
                        << "  Unpacked Adc" << endmsg

@@ -91,7 +91,7 @@ StatusCode LumiMergeFSR::finalize() {
   // integrate all FSRs in one go
   const StatusCode mergeSC = merge();
   m_fileRecordSvc.reset();
-  return ( mergeSC && GaudiAlgorithm::finalize() ); // must be called after all other actions
+  return StatusCode{ mergeSC && GaudiAlgorithm::finalize() }; // must be called after all other actions
 }
 
 //=========================================================================
