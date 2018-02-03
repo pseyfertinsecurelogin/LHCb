@@ -182,6 +182,12 @@ public:
   std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> endPoints(
       const LHCb::FTChannelID channelID, const double frac) const;
 
+  /** Get the global slope of the mat in dx/dy */
+  double dxdy() const { return m_dxdy; }
+
+  /** Get the global slope of the mat in dz/dy */
+  double dzdy() const { return m_dzdy; }
+
   /** Flag if there is a gap on the left of this channel */
   bool hasGapLeft( const LHCb::FTChannelID thisChannel ) const {
     return ( thisChannel.channel() == 0u ||
@@ -215,6 +221,12 @@ private :
   double m_sizeX;                  ///< Width in x of the mat
   double m_sizeY;                  ///< Length in y of the fibre in the mat
   double m_sizeZ;                  ///< Thickness of the fibre mat (nominal: 1.3 mm)
+
+  Gaudi::XYZPoint m_mirrorPoint;
+  Gaudi::XYZPoint m_sipmPoint;
+  Gaudi::XYZVector m_ddx;
+  double m_dxdy;
+  double m_dzdy;
 
 }; // end of class
 

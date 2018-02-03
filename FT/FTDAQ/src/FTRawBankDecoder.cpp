@@ -35,10 +35,21 @@ FTLiteClusters
 FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
   const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
+
+  // Simple loop over the banks to determine total number of clusters
+  // Bank size is half the number of clusters and includes headers
+  // The scaling by 0.4 is obtained empirically.
+  // In the future, the #clusters should be encoded in raw bank.
   FTLiteClusters clus;
+  int totSize = 0;
+  for ( const LHCb::RawBank* bank : banks) { totSize += bank->size();}
+  clus.reserve(4 * totSize / 10);
+
+  // Store partition points for quadrants for faster sorting
+  std::vector<FTLiteClusters::iterator> partitionPoints;
+  partitionPoints.reserve(48); // 48 quadrants
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
-
   for ( const LHCb::RawBank* bank : banks) {
     int source       = bank->sourceID();
     unsigned station = source/16 + 1u; // JvT: this should be done by a mapping!
@@ -61,6 +72,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
     auto first = bank->begin<short int>();
     auto last  = bank->end<short int>();
+
     while( first != last ) {
       int sipmHeader = *first++;
       if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
@@ -104,7 +116,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
             
             if( !cSize2 ){ //next cluster is not last fragment
-              clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
+              clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+                                                   module, mat, sipm, channel },
                                 fraction, 4 );
               
               if ( msgLevel( MSG::VERBOSE ) ) {
@@ -130,7 +143,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               if(diff  > m_clusterMaxWidth){
                 
                 //add the first edge cluster
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
+                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+                                                     module, mat, sipm, channel },
                                   fraction, 0 ); //pseudoSize=0
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
@@ -141,8 +155,10 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 }
                 
                 for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
-                  // all middle clusters will have same size as the first cluster, so use same fraction 
-                  clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel+i },
+                  // all middle clusters will have same size as the first cluster,
+                  // so use same fraction
+                  clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module,
+                                                       mat, sipm, channel+i },
                                     fraction, 0 );
                   
                   if ( msgLevel( MSG::VERBOSE ) ) {
@@ -152,7 +168,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 }
                 
                 //add the last edge 
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel2 },
+                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+                                                     module, mat, sipm, channel2 },
                                   fraction2, 0 );
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
@@ -168,7 +185,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 int frac                      = (widthClus-1)%2;
                 
                 //add the new cluster = cluster1+cluster2
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, clusChanPosition},
+                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module,
+                                                     mat, sipm, clusChanPosition},
                                   frac, widthClus );
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
@@ -180,7 +198,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             }//last edge foud
           }//not the last cluster
           else{ //last cluster, so nothing we can do
-            clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
+            clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+                                                 module, mat, sipm, channel },
                               fraction, 4 );
             
             if ( msgLevel( MSG::VERBOSE ) ) {
@@ -191,31 +210,62 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         }//end loop over clusters in one sipm
       }//bank version == 3
       else{
-      //normal clustering without any modification to clusters, should work for encoder=2
-      std::transform( first, first+nClus,
-                      std::back_inserter(clus),
-                      [&](short int c) -> LHCb::FTLiteCluster {
+        //normal clustering without any modification to clusters, should work for encoder=2
+        std::transform( first, first+nClus,
+                        std::back_inserter(clus),
+                        [&](short int c) -> LHCb::FTLiteCluster {
                         unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
-                          int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
-                          int cSize        = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
+                        int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
+                        int cSize        = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
                           
-                          if ( msgLevel( MSG::VERBOSE ) ) {
-                            verbose() << format( " channel %4d frac %3d size %3d code %4.4x",
-                                                 channel, fraction, ( cSize ? 0 : 4 ), c ) << endmsg;
-                          }
+                        if ( msgLevel( MSG::VERBOSE ) ) {
+                          verbose() << format( " channel %4d frac %3d size %3d code %4.4x",
+                                               channel, fraction, ( cSize ? 0 : 4 ), c ) << endmsg;
+                        }
                           
-                          return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
-                              fraction, ( cSize ? 0 : 4 ) };
+                        return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
+                                  fraction, ( cSize ? 0 : 4 ) };
                       } );
       }
       first += nClus;
     }//end loop over sipms
+    partitionPoints.push_back(clus.begin()+clus.size());
   }//end loop over rawbanks
   
-  // Sort clusters
-  std::sort(clus.begin(), clus.end(),
-            [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){ return lhs.channelID() < rhs.channelID(); });
-  
+  // Assert that clusters are sorted
+  assert( std::is_sorted(clus.begin(), clus.end(),
+         [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){
+         return lhs.channelID() < rhs.channelID(); }) &&
+      "Clusters from the RawBanks not sorted. Should be sorted by construction.") ;
+
+  // sort clusters according to PrFTHits (loop over quadrants)
+  auto iClusFirst = clus.begin();
+  for( auto partitionPoint : partitionPoints ) {
+    if( iClusFirst != partitionPoint ) { // container must not be empty
+      auto chanID = (*iClusFirst).channelID(); // FTChannelID first cluster
+      unsigned int iQua = chanID.quarter();
+
+      // Swap clusters within modules
+      // if quadrant==0 or 3 for even layers or quadrant==1 or 2 for odd layers
+      if( ((chanID.layer()&1)==0) ^ (iQua>>1) ^ (iQua&1) ) {
+        auto iClusFirstM = iClusFirst; // copy
+        for( unsigned int iMod = 0; iMod < 6; ++iMod ) {
+          auto thisModule = [&iMod](const LHCb::FTLiteCluster cluster)
+                               { return cluster.channelID().module() == iMod; };
+          auto iClusLastM = std::partition_point(iClusFirstM,partitionPoint,thisModule);
+          std::reverse(iClusFirstM, iClusLastM);  // swap clusters in module
+          iClusFirstM = iClusLastM;
+        }
+      }
+
+      // Swap clusters within full quadrant
+      if( (iQua & 1) == 0 ) { // quadrant==0 or 2
+        std::reverse(iClusFirst, partitionPoint);  // swap clusters in quadrant
+      }
+    }
+    iClusFirst = partitionPoint;
+  }
+
   return clus;
 }
 
