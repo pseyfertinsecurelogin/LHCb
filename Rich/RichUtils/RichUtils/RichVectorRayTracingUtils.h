@@ -43,20 +43,21 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename FTYPE,
-               typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
-                                                   !std::is_arithmetic<typename VECTOR::Scalar>::value && 
+    template < typename POSITION, typename DIRECTION, typename COC, typename FTYPE,
+               typename = typename std::enable_if< !std::is_arithmetic<typename  POSITION::Scalar>::value && 
+                                                   !std::is_arithmetic<typename DIRECTION::Scalar>::value && 
+                                                   !std::is_arithmetic<typename       COC::Scalar>::value && 
                                                    !std::is_arithmetic<FTYPE>::value >::type >
-    inline decltype(auto) intersectSpherical ( const POINT& position,
-                                               const VECTOR& direction,
-                                               const POINT& CoC,
+    inline decltype(auto) intersectSpherical ( const POSITION& position,
+                                               const DIRECTION& direction,
+                                               const COC& CoC,
                                                const FTYPE radius,
-                                               POINT& intersection )
+                                               POSITION& intersection )
     {
       const FTYPE two(2.0), four(4.0), half(0.5);
       // for line sphere intersection look at http://www.realtimerendering.com/int/
       const FTYPE      a = direction.Mag2();
-      const VECTOR delta = position - CoC;
+      const auto   delta = position - CoC;
       const FTYPE      b = two * direction.Dot( delta );
       const FTYPE      c = delta.Mag2() - radius*radius;
       FTYPE        discr = b*b - four*a*c;
@@ -90,18 +91,19 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename FTYPE,
-               typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
-                                                   !std::is_arithmetic<typename VECTOR::Scalar>::value && 
+    template < typename POSITION, typename DIRECTION, typename COC, typename FTYPE,
+               typename = typename std::enable_if< !std::is_arithmetic<typename  POSITION::Scalar>::value && 
+                                                   !std::is_arithmetic<typename DIRECTION::Scalar>::value && 
+                                                   !std::is_arithmetic<typename       COC::Scalar>::value && 
                                                    !std::is_arithmetic<FTYPE>::value >::type > 
-    inline decltype(auto) reflectSpherical ( POINT& position,
-                                             VECTOR& direction,
-                                             const POINT& CoC,
+    inline decltype(auto) reflectSpherical ( POSITION& position,
+                                             DIRECTION& direction,
+                                             const COC& CoC,
                                              const FTYPE radius )
     {
       const FTYPE two(2.0), four(4.0), half(0.5);
       const FTYPE      a = direction.Mag2();
-      const VECTOR delta = position - CoC;
+      const auto   delta = position - CoC;
       const FTYPE      b = two * direction.Dot( delta );
       const FTYPE      c = delta.Mag2() - radius*radius;
       FTYPE        discr = b*b - four*a*c;
@@ -114,7 +116,7 @@ namespace Rich
       position += dist * direction;
       // reflect the vector
       // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
-      const VECTOR normal = position - CoC;
+      const auto normal = position - CoC;
       direction -= ( two * normal.Dot(direction) / normal.Mag2() ) * normal;
       // return the mask indicating which results should be used
       return OK;
@@ -136,11 +138,10 @@ namespace Rich
                typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
                                                    !std::is_arithmetic<typename VECTOR::Scalar>::value && 
                                                    !std::is_arithmetic<typename PLANE::Scalar>::value >::type >
-    inline typename FTYPE::mask_type
-    intersectPlane ( const POINT& position,
-                     const VECTOR& direction,
-                     const PLANE& plane,
-                     POINT& intersection )
+    inline decltype(auto) intersectPlane ( const POINT& position,
+                                           const VECTOR& direction,
+                                           const PLANE& plane,
+                                           POINT& intersection )
     {
       const typename FTYPE::mask_type OK(true);
       const FTYPE scalar   = direction.Dot( plane.Normal() );
@@ -166,10 +167,9 @@ namespace Rich
                typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
                                                    !std::is_arithmetic<typename VECTOR::Scalar>::value && 
                                                    !std::is_arithmetic<typename PLANE::Scalar>::value >::type >
-    inline typename FTYPE::mask_type
-    reflectPlane ( POINT& position,
-                   VECTOR& direction,
-                   const PLANE& plane )
+    inline decltype(auto) reflectPlane ( POINT& position,
+                                         VECTOR& direction,
+                                         const PLANE& plane )
     {
       const typename POINT::Scalar two(2.0);
       const typename FTYPE::mask_type OK(true);
