@@ -32,11 +32,11 @@ namespace Gaudi { namespace Parsers {
 #include "GaudiAlg/SplittingTransformer.h"
 
 class UnpackRawEvent : public Gaudi::Functional::SplittingTransformer<
-                                 std::vector<std::vector<const LHCb::RawBank*>>(const LHCb::RawEvent&)
+                                 std::vector<LHCb::RawBank::ConstVector>(const LHCb::RawEvent&)
                               > {
 public:
     UnpackRawEvent( const std::string& name, ISvcLocator* locator );
-    std::vector<std::vector<const LHCb::RawBank*>> operator()(const LHCb::RawEvent& evt) const override;
+    std::vector<LHCb::RawBank::ConstVector> operator()(const LHCb::RawEvent& evt) const override;
 private:
     Gaudi::Property<std::vector<LHCb::RawBank::BankType>> m_types { this, "BankTypes" };
 };
@@ -46,10 +46,10 @@ UnpackRawEvent::UnpackRawEvent( const std::string& name, ISvcLocator* locator)
                                        { "RawBankLocations", { } } )
 {}
 
-std::vector<std::vector<const LHCb::RawBank*>>
+std::vector<LHCb::RawBank::ConstVector>
 UnpackRawEvent::operator()(const LHCb::RawEvent& evt) const
 {
-    std::vector<std::vector<const LHCb::RawBank*>> banks;
+    std::vector<LHCb::RawBank::ConstVector> banks;
     banks.reserve( m_types.size() );
     //TODO: move the mapping done in 'RawEvent::banks' to this code, and
     //      remove it from 'RawEvent' itself, which allows 'RawEvent' to
