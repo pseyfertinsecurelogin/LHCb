@@ -76,10 +76,6 @@ VeloClusterFilter::VeloClusterFilter( const std::string& name,
                                       ISvcLocator* pSvcLocator )
 : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("InputClusterLocation", m_inputClusterDh);
-  declareProperty("InputLiteClusterLocation", m_inputLiteClusterDh);
-  declareProperty("OutputClusterLocation",m_outputClusterDh );
-  declareProperty("OutputLiteClusterLocation",m_outputLiteClusterDh );
 }
 
 //=============================================================================

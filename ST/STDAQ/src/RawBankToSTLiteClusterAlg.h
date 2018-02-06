@@ -4,7 +4,6 @@
 #include "STDecodingBaseAlg.h"
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
-#include "GaudiKernel/AnyDataHandle.h"
 #include "GaudiAlg/Transformer.h"
 
 #include "Event/STLiteCluster.h"

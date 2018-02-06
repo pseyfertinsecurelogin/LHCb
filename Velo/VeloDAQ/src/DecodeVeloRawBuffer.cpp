@@ -38,8 +38,6 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
   declareProperty("DecodeToVeloLiteClusters",m_decodeToVeloLiteClusters=true);
   declareProperty("DecodeToVeloClusters",m_decodeToVeloClusters=false);
   declareProperty("DumpVeloClusters",m_dumpVeloClusters=false);
-  declareProperty("VeloLiteClustersLocation",m_liteClusters);
-  declareProperty("VeloClusterLocation",m_clusters);
   declareProperty("AssumeChipChannelsInRawBuffer",m_assumeChipChannelsInRawBuffer=false);
   declareProperty("ForceBankVersion",m_forcedBankVersion=0);// there is no version 0, so this means bank version is not enforced
   declareProperty("ErrorCount",m_errorCount=0);
