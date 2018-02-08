@@ -46,7 +46,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   clus.reserve(4 * totSize / 10);
 
   // Store partition points for quadrants for faster sorting
-  std::vector<FTLiteClusters::iterator> partitionPoints;
+  std::vector<int> partitionPoints;
   partitionPoints.reserve(48); // 48 quadrants
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
@@ -229,7 +229,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       }
       first += nClus;
     }//end loop over sipms
-    partitionPoints.push_back(clus.begin()+clus.size());
+    partitionPoints.push_back(clus.size());
   }//end loop over rawbanks
   
   // Assert that clusters are sorted
@@ -240,7 +240,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
   // sort clusters according to PrFTHits (loop over quadrants)
   auto iClusFirst = clus.begin();
-  for( auto partitionPoint : partitionPoints ) {
+  for( auto pPoint : partitionPoints ) {
+    auto partitionPoint = std::next(clus.begin(),pPoint);
     if( iClusFirst != partitionPoint ) { // container must not be empty
       auto chanID = (*iClusFirst).channelID(); // FTChannelID first cluster
       unsigned int iQua = chanID.quarter();
