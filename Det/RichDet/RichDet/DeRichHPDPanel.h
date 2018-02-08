@@ -110,18 +110,18 @@ public:
 
   // Returns the SIMD intersection point with an HPD window given a vector and a point.
   SIMDRayTResult::Results
-  PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                     const Rich::SIMD::Vector<FP>& vGlobal,
-                     Rich::SIMD::Point<FP>& hitPosition,
+  PDWindowPointSIMD( const SIMDPoint& pGlobal,
+                     const SIMDVector& vGlobal,
+                     SIMDPoint& hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the SIMD intersection point with the detector plane given a vector and a point.
   SIMDRayTResult::Results
-  detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                     const Rich::SIMD::Vector<FP>& vGlobal,
-                     Rich::SIMD::Point<FP>& hitPosition,
+  detPlanePointSIMD( const SIMDPoint& pGlobal,
+                     const SIMDVector& vGlobal,
+                     SIMDPoint& hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;

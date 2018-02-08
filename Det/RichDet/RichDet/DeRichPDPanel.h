@@ -43,7 +43,7 @@ class DeRichPDPanel : public DeRichBase
 public:
 
   /// Standard constructor
-  DeRichPDPanel( const std::string & name = "" );
+  explicit DeRichPDPanel( const std::string & name = "" );
 
   /// Destructor
   virtual ~DeRichPDPanel( ) = default;
@@ -58,6 +58,9 @@ public:
 
   /// Access the PD type
   inline LHCb::RichSmartID::IDType pdType() const noexcept { return m_pdType; }
+
+  /// Access the RichSmartID for this panel
+  inline LHCb::RichSmartID panelID() const noexcept { return m_panelID; }
 
   /// The number of PD columns in this panel
   inline unsigned int nPDColumns() const noexcept { return m_PDColumns; }
@@ -107,9 +110,9 @@ public:
    *  @retval true  Conversion to photocathode was OK
    *  @retval false Impossible conversion to photocathode
    */
-  bool detectionPoint( const LHCb::RichSmartID smartID,
-                       Gaudi::XYZPoint& detectPoint,
-                       bool photoCathodeSide = false ) const
+  inline bool detectionPoint( const LHCb::RichSmartID smartID,
+                              Gaudi::XYZPoint& detectPoint,
+                              const bool photoCathodeSide = false ) const
   {
     return this->dePD(smartID)->detectionPoint(smartID,detectPoint,photoCathodeSide);
   }
@@ -128,6 +131,21 @@ public:
   {
     return m_PDPanelToGlobalTransform;
   }
+
+public:
+
+  /// type for SIMD ray tracing result
+  using SIMDRayTResult = Rich::RayTracingUtils::SIMDResult;
+  /// scalar FP type for SIMD objects
+  using FP             = Rich::SIMD::DefaultScalarFP;
+  /// SIMD float type
+  using SIMDFP         = Rich::SIMD::FP<FP>; 
+  /// SIMD Int32 type
+  using SIMDINT32      = Rich::SIMD::Int32;
+  /// SIMD Point
+  using SIMDPoint      = Rich::SIMD::Point<FP>;
+  /// SIMD Vector
+  using SIMDVector     = Rich::SIMD::Vector<FP>;
   
 public: // virtual methods. Derived classes must implement these
 
@@ -187,15 +205,6 @@ public: // virtual methods. Derived classes must implement these
                  const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const = 0;
 
-  /// type for SIMD ray tracing result
-  using SIMDRayTResult = Rich::RayTracingUtils::SIMDResult;
-  /// scalar FP type for SIMD objects
-  using FP             = Rich::SIMD::DefaultScalarFP;
-  /// SIMD float type
-  using SIMDFP         = Rich::SIMD::FP<FP>; 
-  /// SIMD Int32 type
-  using SIMDINT32      = Rich::SIMD::Int32;
-
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point (SIMD)
    *
@@ -213,9 +222,9 @@ public: // virtual methods. Derived classes must implement these
    *  @return Status of intersection
    */
   virtual SIMDRayTResult::Results
-  PDWindowPointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
-                     const Rich::SIMD::Vector<FP> & vGlobal,
-                     Rich::SIMD::Point<FP> & hitPosition,
+  PDWindowPointSIMD( const SIMDPoint & pGlobal,
+                     const SIMDVector & vGlobal,
+                     SIMDPoint & hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const = 0;
@@ -236,9 +245,9 @@ public: // virtual methods. Derived classes must implement these
    * @return Intersection status
    */
   virtual SIMDRayTResult::Results
-  detPlanePointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
-                     const Rich::SIMD::Vector<FP> & vGlobal,
-                     Rich::SIMD::Point<FP> & hitPosition,
+  detPlanePointSIMD( const SIMDPoint & pGlobal,
+                     const SIMDVector & vGlobal,
+                     SIMDPoint & hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const = 0;
@@ -279,11 +288,16 @@ public: // virtual methods. Derived classes must implement these
 
 protected:
 
-  /// Set the RICH type
-  void setRich( const Rich::DetectorType rich ) noexcept { m_rich = rich; }
-
-  /// Set the side type
-  void setSide( const Rich::Side side ) noexcept { m_side = side; }
+  /// Set the Rich and side
+  void setRichSide( const Rich::DetectorType rich,
+                    const Rich::Side side ) noexcept
+  {
+    // set the Rich and Side enums
+    m_rich = rich; 
+    m_side = side;
+    // cache the panel ID
+    m_panelID = LHCb::RichSmartID( rich, side, pdType() );
+  }
 
 protected: // Parameters that must be properly configured in the derived classes
 
@@ -304,6 +318,9 @@ protected: // Parameters that must be properly configured in the derived classes
   Gaudi::Transform3D m_PDPanelToGlobalTransform; ///< local (PD plane) to global transform
 
 private:
+
+  /// SmartID for this panel
+  LHCb::RichSmartID m_panelID;
 
   Rich::DetectorType m_rich = Rich::InvalidDetector; ///< The RICH detector type
   Rich::Side m_side = Rich::InvalidSide;             ///< The RICH PD panel (up, down, left or right)

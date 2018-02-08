@@ -113,10 +113,16 @@ public:
     return geometry()->toGlobal( m_pvWindow->toMother({0,0,m_winOutR}) );
   }
 
-  // @brief Converts a RichSmartID to a point in global coordinates.
+  // (Scalar) Converts a RichSmartID to a point in global coordinates.
   bool detectionPoint ( const LHCb::RichSmartID smartID,
                         Gaudi::XYZPoint& detectPoint,
                         bool photoCathodeSide = false ) const override final;
+
+  // (SIMD) Converts RichSmartIDs to an SIMD point in global coordinates.
+  DeRichPD::SIMDFP::MaskType 
+  detectionPoint ( const SmartIDs& smartID,
+                   SIMDPoint& detectPoint,
+                   bool photoCathodeSide = false ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the HPD channel

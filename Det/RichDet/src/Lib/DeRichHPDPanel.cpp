@@ -198,9 +198,9 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
 // find an intersection with the HPD window (SIMD)
 //=========================================================================
 DeRichHPDPanel::SIMDRayTResult::Results
-DeRichHPDPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                                   const Rich::SIMD::Vector<FP>& vGlobal,
-                                   Rich::SIMD::Point<FP>& hitPosition,
+DeRichHPDPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
+                                   const SIMDVector& vGlobal,
+                                   SIMDPoint& hitPosition,
                                    SIMDRayTResult::SmartIDs& smartID,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
@@ -227,9 +227,9 @@ DeRichHPDPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
 // returns the (SIMD) intersection point with the detection plane
 //=========================================================================
 DeRichHPDPanel::SIMDRayTResult::Results
-DeRichHPDPanel::detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                                   const Rich::SIMD::Vector<FP>& vGlobal,
-                                   Rich::SIMD::Point<FP>& hitPosition,
+DeRichHPDPanel::detPlanePointSIMD( const SIMDPoint& pGlobal,
+                                   const SIMDVector& vGlobal,
+                                   SIMDPoint& hitPosition,
                                    SIMDRayTResult::SmartIDs& smartID,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
@@ -523,10 +523,10 @@ bool DeRichHPDPanel::findHPDColAndPos ( const Gaudi::XYZPoint& inPanel,
 //=========================================================================
 // sensitiveVolumeID
 //=========================================================================
-int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
+int DeRichHPDPanel::sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const
 {
   // Create a RichSmartID for this RICH and panel
-  LHCb::RichSmartID id( rich(), side() );
+  LHCb::RichSmartID id( panelID() );
   // set the remaining fields from the position
   return ( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) );
 }
@@ -563,13 +563,13 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   // Work out what Rich/panel I am
   if ( name().find("Rich1") != std::string::npos )
   {
-    setRich( Rich::Rich1 );
-    setSide( centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
+    setRichSide( Rich::Rich1,
+                 centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
   }
   else if ( name().find("Rich2") != std::string::npos )
   {
-    setRich( Rich::Rich2 );
-    setSide( centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
+    setRichSide( Rich::Rich2,
+                 centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
   }
   if ( rich() == Rich::InvalidDetector ||
        side() == Rich::InvalidSide )

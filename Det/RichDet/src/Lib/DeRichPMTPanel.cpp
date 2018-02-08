@@ -185,7 +185,7 @@ StatusCode DeRichPMTPanel::geometryUpdate()
               // CRJ - These should be set by the DePMT class itself....
               dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT(aCurrentModuleCopyNumber)  );
-              auto id = m_panelID;
+              auto id = panelID();
               id.setPD_PMT(iModNum,curPmtNum);
               dePMT->setPDSmartID(id);
               // curPmtNum is SmartID pdInCol
@@ -468,8 +468,8 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint,
                               LHCb::RichSmartID& id ) const
 {
-  id = m_panelID; // sets RICH, panel and type
-  const Rich::SIMD::Point<FP> simdp( globalPoint );
+  id = panelID(); // sets RICH, panel and type
+  const SIMDPoint simdp( globalPoint );
   const auto a = findPMTArraySetupSIMD(simdp);
   // get PMT module number in panel
   setRichPmtSmartID( PmtModuleNumInPanelFromModuleNumAlone((a[0])[0]), (a[1])[0], (a[2])[0], (a[3])[0], id );
@@ -752,18 +752,15 @@ void DeRichPMTPanel::RichSetupMixedSizePmtModules()
 // Gets the PMT information (SIMD)
 //=========================================================================
 DeRichPMTPanel::ArraySetupSIMD
-DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint,
-                                       const Rich::SIMD::Point<FP>& aLocalPoint ) const
+DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint,
+                                       const SIMDPoint& aLocalPoint ) const
 {
   using GP = Gaudi::XYZPoint;
 
   ArraySetupSIMD aCh{{}};
 
-  const auto x = aLocalPoint.x();
-  const auto y = aLocalPoint.y();
-
   ModuleNumbersSIMD nums;
-  getModuleNumsSIMD( x, y, nums );
+  getModuleNumsSIMD( aLocalPoint.x(), aLocalPoint.y(), nums );
 
   if ( UNLIKELY( any_of( nums.aModuleNum < SIMDINT32::Zero() ) ) )
   {
@@ -772,13 +769,13 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
   }
 
   // Scalar loop
-  SIMDFP xp,yp;
+  SIMDFP xp, yp;
   for ( std::size_t i = 0; i < SIMDINT32::Size; ++i )
   {
-    const auto sc_inModule =
-      m_DePMTModules[nums.aModuleNumInPanel[i]]->toLocalMatrix() * GP{ aGlobalPoint.x()[i],
-                                                                       aGlobalPoint.y()[i],
-                                                                       aGlobalPoint.z()[i] };
+    const auto & m = m_DePMTModules[nums.aModuleNumInPanel[i]]->toLocalMatrix();
+    const auto sc_inModule = m * GP{ aGlobalPoint.x()[i],
+                                     aGlobalPoint.y()[i],
+                                     aGlobalPoint.z()[i] };
     xp[i] = sc_inModule.x();
     yp[i] = sc_inModule.y();
   }
@@ -787,7 +784,7 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
   SIMDINT32 aPmtRow = -SIMDINT32::One();
   auto &    aPmtNum = aCh[1];
 
-  if ( any_of(nums.aModuleWithLens) )
+  if ( UNLIKELY( any_of(nums.aModuleWithLens) ) )
   {
     aPmtCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (xp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
     aPmtRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (yp-(SIMDFP(0.5)*m_PmtMasterWithLensLateralSizeSIMD))*m_PmtModuleWithLensPitchInvSIMD ) );
@@ -822,19 +819,19 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
   aCh[0] = nums.aModuleNum;
 
   // Scalar loop
-  SIMDFP xpi,ypi;
+  SIMDFP xpi, ypi;
   for ( std::size_t i = 0; i < SIMDINT32::Size; ++i )
   {
-    const auto sc_inPmtAnode =
-      (m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]])->toLocalMatrix() * GP{ aGlobalPoint.x()[i],
-                                                                                    aGlobalPoint.y()[i],
-                                                                                    aGlobalPoint.z()[i] };
+    const auto & m = (m_DePMTAnodes[nums.aModuleNumInPanel[i]][aPmtNum[i]])->toLocalMatrix();
+    const auto sc_inPmtAnode = m * GP{ aGlobalPoint.x()[i],
+                                       aGlobalPoint.y()[i],
+                                       aGlobalPoint.z()[i] };
     xpi[i] = sc_inPmtAnode.x();
     ypi[i] = sc_inPmtAnode.y();
   }
 
   const auto mm = LHCb::SIMD::simd_cast<SIMDFP::MaskType>(nums.aModuleWithLens);
-  if ( any_of(mm) )
+  if ( UNLIKELY( any_of(mm) ) )
   {
     xpi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
     ypi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
@@ -868,9 +865,9 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
 // returns the (SIMD) intersection point with the detection plane
 //=========================================================================
 DeRichPMTPanel::SIMDRayTResult::Results
-DeRichPMTPanel::detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                                   const Rich::SIMD::Vector<FP>& vGlobal,
-                                   Rich::SIMD::Point<FP>& hitPosition,
+DeRichPMTPanel::detPlanePointSIMD( const SIMDPoint& pGlobal,
+                                   const SIMDVector& vGlobal,
+                                   SIMDPoint& hitPosition,
                                    SIMDRayTResult::SmartIDs& smartID,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
@@ -879,7 +876,7 @@ DeRichPMTPanel::detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
   SIMDRayTResult::Results res;
 
   // define a dummy point and fill correctly later.
-  Rich::SIMD::Point<FP> panelIntersection(0,0,0);
+  SIMDPoint panelIntersection(0,0,0);
 
   // panel intersection
   const auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
@@ -937,18 +934,15 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
   // but eventually the scalar calls should be fully depreciated anyway so this
   // is just a short term placeholder.
 
-  using VcP = Rich::SIMD::Point<FP>;
-  using VcV = Rich::SIMD::Vector<FP>;
-
   // form some temporary objects
   SIMDRayTResult::SmartIDs simdIDs;
   simdIDs.fill(smartID);
-  VcP simdHitPoint(hitPosition);
+  SIMDPoint simdHitPoint(hitPosition);
   SIMDRayTResult::PDs PDs;
   PDs.fill(pd);
 
   // Call the SIMD method
-  const auto simdRes = detPlanePointSIMD( VcP(pGlobal), VcV(vGlobal),
+  const auto simdRes = detPlanePointSIMD( SIMDPoint(pGlobal), SIMDVector(vGlobal),
                                           simdHitPoint, simdIDs, PDs, mode );
 
   // copy results back to scalars. All entries are the same so use [0]
@@ -964,9 +958,9 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
 // find an intersection with the PMT window (SIMD)
 //=========================================================================
 DeRichPMTPanel::SIMDRayTResult::Results
-DeRichPMTPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                                   const Rich::SIMD::Vector<FP>& vGlobal,
-                                   Rich::SIMD::Point<FP>& hitPosition,
+DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
+                                   const SIMDVector& vGlobal,
+                                   SIMDPoint& hitPosition,
                                    SIMDRayTResult::SmartIDs& smartID,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
@@ -977,14 +971,14 @@ DeRichPMTPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
   SIMDRayTResult::Results res;
 
   // define a dummy point and fill correctly later.
-  Rich::SIMD::Point<FP> panelIntersection(0,0,0);
+  SIMDPoint panelIntersection(0,0,0);
 
   // panel intersection
   auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
   if ( UNLIKELY( none_of(mask) ) ) { return res; }
 
   // sets RICH, panel and type
-  smartID.fill( m_panelID );
+  smartID.fill( panelID() );
 
   // set results to outside panel
   res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) =
@@ -1070,18 +1064,15 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
   // but eventually the scalar calls should be fully depreciated anyway so this
   // is just a short term placeholder.
 
-  using VcP = Rich::SIMD::Point<FP>;
-  using VcV = Rich::SIMD::Vector<FP>;
-
   // form some temporary objects
   SIMDRayTResult::SmartIDs simdIDs;
   simdIDs.fill(smartID);
-  VcP simdHitPoint(windowPointGlobal);
+  SIMDPoint simdHitPoint(windowPointGlobal);
   SIMDRayTResult::PDs PDs;
   PDs.fill(pd);
 
   // Call the SIMD method
-  const auto simdRes = PDWindowPointSIMD( VcP(pGlobal), VcV(vGlobal),
+  const auto simdRes = PDWindowPointSIMD( SIMDPoint(pGlobal), SIMDVector(vGlobal),
                                           simdHitPoint, simdIDs, PDs, mode );
 
   // copy results back to scalars. All entries are the same so use [0]
@@ -1191,20 +1182,20 @@ bool DeRichPMTPanel::setRichAndSide()
   // Work out what Rich/panel I am
   if ( name().find("Rich1") != std::string::npos )
   {
-    setRich( Rich::Rich1 );
-    setSide( centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
+    setRichSide( Rich::Rich1,
+                 centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
   }
   // Rich2
   else if ( name().find("Rich2") != std::string::npos )
   {
-    setRich( Rich::Rich2 );
-    setSide( centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
+    setRichSide( Rich::Rich2,
+                 centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
   }
   // Single Rich
   else if ( name().find("Rich/") != std::string::npos )
   {
-    setRich( Rich::Rich );
-    setSide( centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
+    setRichSide( Rich::Rich,
+                 centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
   }
   // problem
   else
@@ -1220,8 +1211,6 @@ bool DeRichPMTPanel::setRichAndSide()
   }
   else
   {
-    // cache the panel ID
-    m_panelID = LHCb::RichSmartID( rich(), side(), m_pdType );
     // cache the panel idex
     m_CurPanelNum = ( rich() == Rich::Rich1 ?
                       ( side() == Rich::top  ? 0 : 1 ) :

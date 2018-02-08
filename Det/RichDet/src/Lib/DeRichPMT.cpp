@@ -128,8 +128,6 @@ StatusCode DeRichPMT::getPMTParameters()
 
   // CRJ - To reduce PMT memory size do not load parameters not used yet ...
 
-  //m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
-  //m_PmtAnodeYSize = deRich->param<double> ("RichPmtAnodeYSize" );
   const auto PmtAnodeZSize = deRich->param<double> ("RichPmtAnodeZSize" );
   const auto PmtAnodeLocationInPmt = deRich->param<double>("RichPmtSiliconDetectorLocalZlocation" );
   const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
@@ -156,8 +154,6 @@ StatusCode DeRichPMT::getPMTParameters()
     Rich2PmtArrayConfig = deRich->param<int>("Rich2PMTArrayConfig");
     if ( deRich->exists ("RichGrandPmtAnodeXSize" ) )
     {
-      //m_GrandPmtAnodeXSize     = deRich->param<double>( "RichGrandPmtAnodeXSize" );
-      //m_GrandPmtAnodeYSize     = deRich->param<double>( "RichGrandPmtAnodeYSize" );
       const auto GrandPmtAnodeZSize  = deRich->param<double>( "RichGrandPmtAnodeZSize" );
       const auto GrandPmtPixelXSize  = deRich->param<double>( "RichGrandPmtPixelXSize" );
       const auto GrandPmtPixelYSize  = deRich->param<double>( "RichGrandPmtPixelYSize" );
@@ -166,8 +162,6 @@ StatusCode DeRichPMT::getPMTParameters()
       m_GrandPmtEdgePixelYSize = deRich->param<double>( "RichGrandPmtEdgePixelYSize");
       m_GrandPmtEffectivePixelXSize = GrandPmtPixelXSize + GrandPmtPixelGap;
       m_GrandPmtEffectivePixelYSize = GrandPmtPixelYSize + GrandPmtPixelGap;
-      //m_GrandPmtEdgePixelXDiff = m_GrandPmtEdgePixelXSize - GrandPmtPixelXSize;
-      //m_GrandPmtEdgePixelYDiff = m_GrandPmtEdgePixelYSize - GrandPmtPixelYSize;
       m_GrandPmtAnodeHalfThickness = GrandPmtAnodeZSize/2.0;
     }
 
@@ -316,6 +310,36 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
   }
 
   return true;
+}
+
+//===============================================================================================
+
+DeRichPD::SIMDFP::MaskType
+DeRichPMT::detectionPoint( const SmartIDs& smartID,
+                           SIMDPoint& detectPoint,
+                           bool photoCathodeSide ) const 
+{
+  SIMDFP::MaskType ok{{}};
+
+  // Just use a scalar loop here...
+  SIMDFP X(0), Y(0), Z(0);
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    Gaudi::XYZPoint p{0,0,0};
+    ok[i] = detectionPoint( smartID[i], p, photoCathodeSide );
+    if ( ok[i] )
+    {
+      X[i] = p.X();
+      Y[i] = p.Y();
+      Z[i] = p.Z();
+    }
+  }
+  detectPoint = { X, Y, Z };
+
+  // To Do, implement a full SIMD version
+
+
+  return ok;
 }
 
 //===============================================================================================

@@ -849,16 +849,43 @@ bool DeRichHPD::testKaptonShadowing( const Gaudi::XYZPoint&  pInPanel,
 }
 
 //=========================================================================
-// Converts a RichSmartID to a point in global coordinates.
+// (Scalar) Converts a RichSmartID to a point in global coordinates.
 //=========================================================================
-bool DeRichHPD::detectionPoint ( const LHCb::RichSmartID smartID,
-                                 Gaudi::XYZPoint& detectPoint,
-                                 bool photoCathodeSide ) const
+bool DeRichHPD::detectionPoint( const LHCb::RichSmartID smartID,
+                                Gaudi::XYZPoint& detectPoint,
+                                bool photoCathodeSide ) const
 {
   detectPoint = pointOnSilicon(smartID);
   return ( ( m_isFieldON || m_UseHpdMagDistortions ) ?
            magnifyToGlobalMagnetON  ( detectPoint, photoCathodeSide ) :
            magnifyToGlobalMagnetOFF ( detectPoint, photoCathodeSide ) );
+}
+
+//=========================================================================
+// (SIMD) Converts a RichSmartID to a point in global coordinates.
+//=========================================================================
+DeRichPD::SIMDFP::MaskType
+DeRichHPD::detectionPoint( const SmartIDs& smartID,
+                           SIMDPoint& detectPoint,
+                           bool photoCathodeSide ) const 
+{
+  SIMDFP::MaskType ok{{}};
+  // Just use a scalar loop here...
+  // No need to optimise performance for HPDs...
+  SIMDFP X(0), Y(0), Z(0);
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    Gaudi::XYZPoint p{0,0,0};
+    ok[i] = detectionPoint( smartID[i], p, photoCathodeSide );
+    if ( ok[i] )
+    {
+      X[i] = p.X();
+      Y[i] = p.Y();
+      Z[i] = p.Z();
+    }
+  }
+  detectPoint = { X, Y, Z };
+  return ok;
 }
 
 //=========================================================================

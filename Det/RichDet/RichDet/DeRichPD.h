@@ -21,6 +21,9 @@
 #include "RichDet/Rich1DTabFunc.h"
 #include "RichDet/Rich1DTabProperty.h"
 
+// RichUtils
+#include "RichUtils/RichSIMDTypes.h"
+
 //=============================================================================
 /** @class DeRichPD DeRichPD.h RichDet/DeRichPD.h
  *
@@ -53,6 +56,17 @@ public:
     return m_pdQuantumEffFunc.get();
   }
 
+public:
+
+  /// scalar FP type for SIMD objects
+  using FP         = Rich::SIMD::DefaultScalarFP;
+  /// SIMD float type
+  using SIMDFP     = Rich::SIMD::FP<FP>; 
+  /// SIMD Point
+  using SIMDPoint  = Rich::SIMD::Point<FP>;
+  /// Type for SmartIDs container.
+  using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID>;
+
 public: // virtual methods to be implemented by derived classes
 
   /** @brief Converts a RichSmartID to a point in global coordinates.
@@ -64,6 +78,7 @@ public: // virtual methods to be implemented by derived classes
    *  @param[in]  smartID     The RichSmartID pixel channel ID
    *  @param[out] detectPoint The position in global coordinates
    *  @param[in]  photoCathodeSide Set to false to include refraction on PD window
+   *
    *  @return StatusCode indicating if the conversion was successful or not
    *  @retval true  Conversion was successful
    *  @retval false Conversion failed
@@ -71,6 +86,23 @@ public: // virtual methods to be implemented by derived classes
   virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
                                 Gaudi::XYZPoint& detectPoint,
                                 bool photoCathodeSide = false ) const = 0;
+
+  /** @brief Converts an 'SIMD' array of RichSmartIDs to an SIMD point in 
+   *         global coordinates.
+   *
+   *  The point can be given either on the inside of the PD window (photocathode) if
+   *  photoCathodeSide=true or on the outside including refraction correction if
+   *  photoCathodeSide=false
+   *
+   *  @param[in]  smartID     The RichSmartID pixel channel IDs
+   *  @param[out] detectPoint The SIMD position(s) in global coordinates
+   *  @param[in]  photoCathodeSide Set to false to include refraction on PD window
+   *
+   *  @return Mask indicating if the conversion was successful or not for each scalar entry
+   */
+  virtual SIMDFP::MaskType detectionPoint ( const SmartIDs& smartID,
+                                            SIMDPoint& detectPoint,
+                                            bool photoCathodeSide = false ) const = 0;
 
 public:
 

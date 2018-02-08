@@ -37,7 +37,8 @@ public:
   /// Standard constructor
   DeRichPMTPanel( const std::string & name = ""  );
 
-  virtual ~DeRichPMTPanel( ) = default; ///< Destructor
+  /// Destructor
+  virtual ~DeRichPMTPanel( ) = default; 
 
   /**
    * Retrieves reference to class identifier
@@ -45,7 +46,9 @@ public:
    */
   const CLID& clID() const override final { return classID(); }
 
+  /// return the class ID
   static const CLID& classID();
+
   /**
    * This is where most of the geometry is read and variables initialised
    *
@@ -85,18 +88,18 @@ public:
 
   // Returns the SIMD intersection point with an HPD window given a vector and a point.
   SIMDRayTResult::Results
-  PDWindowPointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
-                     const Rich::SIMD::Vector<FP> & vGlobal,
-                     Rich::SIMD::Point<FP> & hitPosition,
+  PDWindowPointSIMD( const SIMDPoint & pGlobal,
+                     const SIMDVector & vGlobal,
+                     SIMDPoint & hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the SIMD intersection point with the detector plane given a vector and a point.
   SIMDRayTResult::Results
-  detPlanePointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
-                     const Rich::SIMD::Vector<FP> & vGlobal,
-                     Rich::SIMD::Point<FP> & hitPosition,
+  detPlanePointSIMD( const SIMDPoint & pGlobal,
+                     const SIMDVector & vGlobal,
+                     SIMDPoint& hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;
@@ -295,14 +298,14 @@ private:
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
-  inline ArraySetupSIMD findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint ) const
+  inline ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint ) const
   {
     const auto inPanel = m_toLocalMatrixSIMD * aGlobalPoint;
     return findPMTArraySetupSIMD( aGlobalPoint, inPanel );
   } 
   
-  ArraySetupSIMD findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint,
-                                        const Rich::SIMD::Point<FP>& aLocalPoint ) const;
+  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint,
+                                        const SIMDPoint& aLocalPoint ) const;
 
 private:
 
@@ -539,7 +542,7 @@ private:
              fabs(aPointInPmt.y()) < aPmtH );
   }
 
-  inline decltype(auto) isInPmtPanel( const Rich::SIMD::Point<FP>& aPointInPanel ) const noexcept
+  inline decltype(auto) isInPmtPanel( const SIMDPoint& aPointInPanel ) const noexcept
   {
     return ( abs(aPointInPanel.x()) < m_xyHalfSizeSIMD[0] &&
              abs(aPointInPanel.y()) < m_xyHalfSizeSIMD[1] ); 
@@ -548,9 +551,9 @@ private:
 private:
   
   /// Gets the intercestion with the panel (SIMD)
-  inline decltype(auto) getPanelInterSection ( const Rich::SIMD::Point<FP>& pGlobal,
-                                               const Rich::SIMD::Vector<FP>& vGlobal ,
-                                               Rich::SIMD::Point<FP>& panelIntersection ) const
+  inline decltype(auto) getPanelInterSection ( const SIMDPoint& pGlobal,
+                                               const SIMDVector& vGlobal,
+                                               SIMDPoint& panelIntersection ) const
   {
     // transform to the panel
     const auto vInPanel = m_toLocalMatrixSIMD * vGlobal;
@@ -701,9 +704,6 @@ private:
   Rich::SIMD::STDVector<SIMDINT32> m_Rich2MixedModuleArrayColumnSizeSIMD;
 
 private:
-
-  /// SmartID for this panel
-  LHCb::RichSmartID m_panelID;
 
   /// Index for this panel
   Int m_CurPanelNum{-1};
