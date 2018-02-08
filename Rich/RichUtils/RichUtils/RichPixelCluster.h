@@ -68,20 +68,24 @@ namespace Rich
     explicit PDPixelCluster( const SmartIDVector::size_type resSize )
     { m_ids.reserve(resSize); }
 
-    /// Constructor from a single channel (one pixel cluster)
-    explicit PDPixelCluster( const LHCb::RichSmartID & id )
-      : m_side(id.panel()), m_rich(id.rich()), m_ids(1,id) { }
+    /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
+    explicit PDPixelCluster( const LHCb::RichSmartID & id,
+                             const DeRichPD * dePD = nullptr )
+      : m_side(id.panel()), m_rich(id.rich()), m_ids(1,id), m_dePD{dePD} 
+    { }
 
     /// Copy Constructor from a vector of RichSmartIDs
-    explicit PDPixelCluster( const SmartIDVector & ids ) 
-      : m_ids(ids)
+    explicit PDPixelCluster( const SmartIDVector & ids,
+                             const DeRichPD * dePD = nullptr ) 
+      : m_ids(ids), m_dePD{dePD}
     {
       updateCachedEnums();
     }
 
     /// Move Constructor from a vector of RichSmartIDs
-    explicit PDPixelCluster( SmartIDVector && ids ) 
-      : m_ids(std::move(ids))
+    explicit PDPixelCluster( SmartIDVector && ids,
+                             const DeRichPD * dePD = nullptr ) 
+      : m_ids(std::move(ids)), m_dePD{dePD}
     {
       updateCachedEnums();
     }
@@ -95,7 +99,7 @@ namespace Rich
     inline       SmartIDVector&& smartIDs()       && noexcept { return std::move(m_ids); }
 
     /// The primary (seed) channel ID
-    inline LHCb::RichSmartID primaryID() const
+    inline LHCb::RichSmartID primaryID() const noexcept
     {
       return ( !smartIDs().empty() ? smartIDs().front() : LHCb::RichSmartID() );
     }
@@ -131,7 +135,7 @@ namespace Rich
   public:
 
     /// Add a channel to this cluster
-    inline void addChannel( const LHCb::RichSmartID& id )
+    inline void addChannel( const LHCb::RichSmartID& id ) noexcept
     {
       m_ids.emplace_back(id);
       updateCachedEnums();
@@ -154,7 +158,7 @@ namespace Rich
   private:
 
     /// Update the cached RICH and panel enums
-    inline void updateCachedEnums()
+    inline void updateCachedEnums() noexcept
     {
       m_side = primaryID().panel();
       m_rich = primaryID().rich();
