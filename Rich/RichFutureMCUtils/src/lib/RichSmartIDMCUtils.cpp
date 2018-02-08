@@ -20,6 +20,42 @@ SmartIDUtils( const LHCb::MCRichDigitSummarys & histories )
   }
 }
 
+std::vector<LHCb::MCRichDigitHistoryCode>
+SmartIDUtils::mcDigitHistoryCodes( const Rich::PDPixelCluster& cluster ) const
+{
+ std::vector<LHCb::MCRichDigitHistoryCode> codes;
+ // Loop over the cluster smart IDs
+ for ( const auto& S : cluster.smartIDs() )
+ {
+   // get the summaries for this channel
+   const auto tmp = mcDigitHistoryCodes(S);
+   // reserve and add to the final vector
+   codes.reserve( codes.size() + tmp.size() );
+   codes.insert( codes.end(), tmp.begin(), tmp.end() );
+ }
+ return codes;
+}
+
+std::vector<LHCb::MCRichDigitHistoryCode>
+SmartIDUtils::mcDigitHistoryCodes( const LHCb::RichSmartID id  ) const
+{
+  std::vector<LHCb::MCRichDigitHistoryCode> codes;
+  // Does this hit have an entry in the pixel summary map
+  const auto iEn = m_sumMap.find( id );
+  if ( iEn != m_sumMap.end() )
+  {
+    // reserve size
+    codes.reserve( (*iEn).second.size() );
+    // Loop over the associated summaries
+    for ( const auto* sum : (*iEn).second )
+    {
+      // add to the vector
+      codes.push_back( sum->history() );
+    }
+  }
+  return codes;
+}
+
 LHCb::MCParticle::ConstVector 
 SmartIDUtils::mcParticles( const Rich::PDPixelCluster& cluster ) const
 {

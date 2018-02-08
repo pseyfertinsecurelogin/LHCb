@@ -1,11 +1,15 @@
 
 #pragma once
 
+// STL
+#include <vector>
+
 // Kernel
 #include "Kernel/RichSmartID.h"
 
 // Event model
 #include "Event/MCRichDigitSummary.h"
+#include "Event/MCRichDigitHistoryCode.h"
 
 // Kernel
 #include "Kernel/RichRadiatorType.h"
@@ -41,6 +45,14 @@ namespace Rich
           /// Returns a vector of the MCParticles associated to a given RichSmartID
           LHCb::MCParticle::ConstVector 
           mcParticles( const LHCb::RichSmartID id ) const;
+
+          /// Returns a vector of MCRichDigitHistoryCodes associated to a given cluster
+          std::vector<LHCb::MCRichDigitHistoryCode>
+          mcDigitHistoryCodes( const Rich::PDPixelCluster& cluster ) const;
+
+          /// Returns a vector of MCRichDigitHistoryCodes associated to a given RichSmartID
+          std::vector<LHCb::MCRichDigitHistoryCode>
+          mcDigitHistoryCodes( const LHCb::RichSmartID id ) const;
 
           /// Is the RichSmartID due to true MC Cherenkov radiation from given radiator medium ?
           const LHCb::MCParticle * 
