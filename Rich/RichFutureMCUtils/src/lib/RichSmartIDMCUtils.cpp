@@ -125,16 +125,16 @@ const LHCb::MCParticle *
 SmartIDUtils::trueCherenkovRadiation( const Rich::PDPixelCluster& cluster,
                                       const Rich::RadiatorType rad ) const
 {
+  const LHCb::MCParticle * mcP = nullptr;
   for ( const auto S : cluster.smartIDs() )
   {
-    const auto * mcP = trueCherenkovRadiation(S,rad);
-    if ( nullptr != mcP ) return mcP;
+    mcP = trueCherenkovRadiation(S,rad);
+    if ( mcP ) break;
   }
-  return nullptr;
-  
+  return mcP;
 }
 
-bool SmartIDUtils::isBackground ( const LHCb::RichSmartID id ) const
+bool SmartIDUtils::isBackground( const LHCb::RichSmartID id ) const
 {
   bool isback = true;
 
