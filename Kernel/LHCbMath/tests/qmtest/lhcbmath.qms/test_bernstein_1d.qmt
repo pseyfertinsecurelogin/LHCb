@@ -12,6 +12,7 @@ Check for Bernstein integrals         is OK
 Check for Bernstein elevate/reduce    is OK
 Check for Bernstein quotient/reminder is OK
 Check for BernsteinEven               is OK
+Check for Positive constant           is OK
 Check for Positive                    is OK
 Check for PositiveEven                is OK
 Check for Monothonic(x2)              is OK
