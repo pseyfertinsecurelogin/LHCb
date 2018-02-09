@@ -126,6 +126,15 @@ public:
     return m_globalToPDPanelTransform;
   }
 
+  /** Get the global to local (PD panel) transform. The local frame is defined with an offset
+   *  to accommodate both detector panels in one histogram and the x=0 in Rich1 and y=0 in
+   *  Rich2 are aligned with the global x=0 and y=0.
+   */
+  inline const Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP>& globalToPDPanelMatrixSIMD() const noexcept
+  {
+    return m_globalToPDPanelTransformSIMD;
+  }
+
   /// Get the transform from the local to global frame. See comments at the globalToPDPanelMatrix method
   inline const Gaudi::Transform3D& PDPanelToGlobalMatrix() const noexcept
   {
@@ -316,6 +325,8 @@ protected: // Parameters that must be properly configured in the derived classes
 
   Gaudi::Transform3D m_globalToPDPanelTransform; ///< global to PD plane (local) transform
   Gaudi::Transform3D m_PDPanelToGlobalTransform; ///< local (PD plane) to global transform
+
+  Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_globalToPDPanelTransformSIMD;
 
 private:
 

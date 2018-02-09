@@ -485,7 +485,17 @@ StatusCode DeRichPMTPanel::geometryUpdate()
                                         dx, yx, yy,
                                         yz, dy, zx,
                                         zy, zz, dz );
-
+    
+    // panel
+    m_globalToPDPanelTransform.GetComponents( xx, xy, xz,
+                                               dx, yx, yy,
+                                               yz, dy, zx,
+                                               zy, zz, dz );
+    m_globalToPDPanelTransformSIMD.SetComponents( xx, xy, xz,
+                                                  dx, yx, yy,
+                                                  yz, dy, zx,
+                                                  zy, zz, dz );
+    
   }
 
   m_localPlaneNormalSIMD = m_localPlaneNormal;
@@ -1035,7 +1045,7 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
   SIMDRayTResult::Results res;
 
   // define a dummy point and fill correctly later.
-  SIMDPoint panelIntersection(0,0,0);
+  SIMDPoint panelIntersection( 0, 0, rich() == Rich::Rich1 ? 0 : 10000 );
 
   // panel intersection
   auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
