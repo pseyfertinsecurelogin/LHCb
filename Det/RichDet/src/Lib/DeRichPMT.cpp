@@ -85,8 +85,8 @@ StatusCode DeRichPMT::initialize()
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
 
   // Trigger first update
-  StatusCode sc = updMgrSvc()->update(this);
-  if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
+  const auto sc = updMgrSvc()->update(this);
+  if ( !sc ) { fatal() << "UMS updates failed" << endmsg; }
 
   return sc;
 }
@@ -128,21 +128,21 @@ StatusCode DeRichPMT::getPMTParameters()
 
   // CRJ - To reduce PMT memory size do not load parameters not used yet ...
 
-  const auto PmtAnodeZSize = deRich->param<double> ("RichPmtAnodeZSize" );
+  const auto PmtAnodeZSize = deRich->param<double>("RichPmtAnodeZSize" );
   const auto PmtAnodeLocationInPmt = deRich->param<double>("RichPmtSiliconDetectorLocalZlocation" );
-  const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
-  const auto PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
-  const auto PmtPixelGap = deRich->param<double> ( "RichPmtPixelGap" );
+  const auto PmtPixelXSize = deRich->param<double>("RichPmtPixelXSize");
+  const auto PmtPixelYSize = deRich->param<double>("RichPmtPixelYSize");
+  const auto PmtPixelGap = deRich->param<double>("RichPmtPixelGap");
   m_PmtEffectivePixelXSize = PmtPixelXSize + PmtPixelGap;
   m_PmtEffectivePixelYSize = PmtPixelYSize + PmtPixelGap;
   m_PmtAnodeHalfThickness = PmtAnodeZSize/2.0;
-  m_PmtNumPixCol = deRich->param<int> ("RichPmtNumPixelCol");
-  m_PmtNumPixRow = deRich->param<int> ("RichPmtNumPixelRow");
+  m_PmtNumPixCol = deRich->param<int>("RichPmtNumPixelCol");
+  m_PmtNumPixRow = deRich->param<int>("RichPmtNumPixelRow");
   m_PmtNumPixColFrac = (m_PmtNumPixCol-1) * 0.5;
   m_PmtNumPixRowFrac = (m_PmtNumPixRow-1) * 0.5;
 
-  m_PmtQwZSize   = deRich->param<double> ( "RichPmtQuartzZSize" );
-  const auto QwToAnodeZDist = deRich->param<double> ( "RichPmtQWToSiMaxDist" );
+  m_PmtQwZSize   = deRich->param<double>("RichPmtQuartzZSize" );
+  const auto QwToAnodeZDist = deRich->param<double>("RichPmtQWToSiMaxDist");
 
   m_zShift = QwToAnodeZDist + PmtAnodeLocationInPmt;
 
@@ -152,7 +152,7 @@ StatusCode DeRichPMT::getPMTParameters()
   {
 
     Rich2PmtArrayConfig = deRich->param<int>("Rich2PMTArrayConfig");
-    if ( deRich->exists ("RichGrandPmtAnodeXSize" ) )
+    if ( deRich->exists("RichGrandPmtAnodeXSize") )
     {
       const auto GrandPmtAnodeZSize  = deRich->param<double>( "RichGrandPmtAnodeZSize" );
       const auto GrandPmtPixelXSize  = deRich->param<double>( "RichGrandPmtPixelXSize" );
@@ -319,7 +319,8 @@ DeRichPMT::detectionPoint( const SmartIDs& smartID,
                            SIMDPoint& detectPoint,
                            bool photoCathodeSide ) const 
 {
-  SIMDFP::MaskType ok{{}};
+  // return status
+  SIMDFP::MaskType ok(false);
 
   // Just use a scalar loop here...
   SIMDFP X(0), Y(0), Z(0);
@@ -336,15 +337,14 @@ DeRichPMT::detectionPoint( const SmartIDs& smartID,
   }
   detectPoint = { X, Y, Z };
 
-  // To Do, implement a full SIMD version
-
+  // To Do, implement a full SIMD version instead
 
   return ok;
 }
 
 //===============================================================================================
 
-Gaudi::XYZPoint DeRichPMT::detPointOnAnode ( const LHCb::RichSmartID& smartID ) const
+Gaudi::XYZPoint DeRichPMT::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 {
   return ( m_dePmtAnode->geometry()->toGlobal( getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(),
                                                                                      smartID.pixelRow(),

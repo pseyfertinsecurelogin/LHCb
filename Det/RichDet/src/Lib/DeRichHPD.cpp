@@ -869,7 +869,9 @@ DeRichHPD::detectionPoint( const SmartIDs& smartID,
                            SIMDPoint& detectPoint,
                            bool photoCathodeSide ) const 
 {
-  SIMDFP::MaskType ok{{}};
+  // return status
+  SIMDFP::MaskType ok(false);
+
   // Just use a scalar loop here...
   // No need to optimise performance for HPDs...
   SIMDFP X(0), Y(0), Z(0);
