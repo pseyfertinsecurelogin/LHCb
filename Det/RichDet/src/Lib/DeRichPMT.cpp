@@ -109,7 +109,7 @@ DetectorElement * DeRichPMT::getFirstRich()
     SmartDataPtr<DetectorElement> deRich( dataSvc(), firstRichLoc );
     if ( deRich ) { de = deRich; }
   }
-  if ( !de ) { error() << "Could not load DeRich for DeRichPMTPanel" << endmsg; }
+  if ( !de ) { error() << "Could not load DeRich for DeRichPMT" << endmsg; }
   return de;
 }
 
@@ -221,14 +221,14 @@ void DeRichPMT::setPmtIsGrandFlag( const bool isGrand )
   {
     if ( isGrand )
     {
-      const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
-      const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
+      const auto GrandPmtPixelXSize = deRich->param<double>("RichGrandPmtPixelXSize");
+      const auto GrandPmtPixelYSize = deRich->param<double>("RichGrandPmtPixelYSize");
       m_pixelArea = GrandPmtPixelXSize * GrandPmtPixelYSize;
     }
     else
     {
-      const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
-      const auto PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
+      const auto PmtPixelXSize = deRich->param<double>("RichPmtPixelXSize");
+      const auto PmtPixelYSize = deRich->param<double>("RichPmtPixelYSize");
       m_pixelArea = PmtPixelXSize * PmtPixelYSize;
     }
     m_effPixelArea = m_pixelArea; // PMTs have no demagnification

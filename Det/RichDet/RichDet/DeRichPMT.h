@@ -106,6 +106,24 @@ public:
     //return geometry()->toLocalMatrix();
   }
 
+  /// Shortcut to the 'to global' matrix
+  inline const Gaudi::Transform3D & toGlobalMatrix() const noexcept
+  {
+    return geometry()->toGlobalMatrix();
+  }
+
+  /// Set the zeroInPanelLocal position
+  inline void setZeroInPanelLocal( const Gaudi::XYZPoint & p ) noexcept
+  {
+    m_zeroInPanelLocal = p;
+  }
+
+  /// Access the zeroInPanelLocal position
+  inline const Gaudi::XYZPoint & zeroInPanelLocal() const noexcept
+  {
+    return m_zeroInPanelLocal;
+  }
+
 private:
 
   /// Floating point to use internal. Use float for reduced memory footprint.
@@ -169,6 +187,10 @@ private:
 
   /// Cache 'to local' matrix
   Gaudi::Transform3D m_toLocM;
+
+  /* Cache the point where {0,0,0} in this PD local frame appears
+   * in the local frame of its parent PD panel */
+  Gaudi::XYZPoint m_zeroInPanelLocal;
 
   FType m_zShift{0};
 

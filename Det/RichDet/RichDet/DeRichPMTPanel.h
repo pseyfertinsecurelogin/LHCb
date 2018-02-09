@@ -529,8 +529,19 @@ private:
     return ( aFlagGrandPMT && rich() == Rich::Rich2 ?
              ( ( xp < fabs( m_GrandPmtAnodeXEdge ) ) &&
                ( yp < fabs( m_GrandPmtAnodeYEdge ) ) ) :
-             ( ( xp < fabs( m_PmtAnodeXEdge ) ) &&
-               ( yp < fabs( m_PmtAnodeYEdge ) ) ) );
+             ( ( xp < fabs( m_PmtAnodeXEdge      ) ) &&
+               ( yp < fabs( m_PmtAnodeYEdge      ) ) ) );
+  }
+
+  inline decltype(auto) isInPmtAnodeLateralAcc( const SIMDFP X, const SIMDFP Y,
+                                                const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
+  {
+    SIMDFP gxe(m_PmtAnodeXEdge);
+    SIMDFP gye(m_PmtAnodeYEdge);
+    gxe(aFlagGrandPMT) = SIMDFP(m_GrandPmtAnodeXEdge);
+    gye(aFlagGrandPMT) = SIMDFP(m_GrandPmtAnodeYEdge);
+
+    return ( X < abs(gxe) && Y < abs(gye) );
   }
 
   inline bool isInPmt( const Gaudi::XYZPoint& aPointInPmt, 
@@ -542,10 +553,34 @@ private:
              fabs(aPointInPmt.y()) < aPmtH );
   }
 
+  inline decltype(auto) isInPmt( const SIMDFP X, const SIMDFP Y,
+                                 const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
+  {
+    SIMDFP aPmtH ( m_PmtMasterLateralSize*0.5 );
+    aPmtH(aFlagGrandPMT) = SIMDFP(m_GrandPmtMasterLateralSize*0.5);
+    return ( X < aPmtH &&  Y < aPmtH );
+  }
+
   inline decltype(auto) isInPmtPanel( const SIMDPoint& aPointInPanel ) const noexcept
   {
     return ( abs(aPointInPanel.x()) < m_xyHalfSizeSIMD[0] &&
              abs(aPointInPanel.y()) < m_xyHalfSizeSIMD[1] ); 
+  }
+
+  inline decltype(auto) checkPDAcceptance( const SIMDFP X, const SIMDFP Y,
+                                           const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
+  {
+    const auto fX = abs(X);
+    const auto fY = abs(Y);
+    return ( isInPmt               ( fX, fY, aFlagGrandPMT ) && 
+             isInPmtAnodeLateralAcc( fX, fY, aFlagGrandPMT ) );
+  }
+
+  inline bool checkPDAcceptance( const Gaudi::XYZPoint& aPointInPmt, 
+                                 const bool aFlagGrandPMT ) const noexcept
+  {
+    return ( isInPmt               ( aPointInPmt, aFlagGrandPMT ) && 
+             isInPmtAnodeLateralAcc( aPointInPmt, aFlagGrandPMT ) );
   }
 
 private:
@@ -711,11 +746,17 @@ private:
   /// Container for the PMT Module geometry() pointers
   IGeomInfoV m_DePMTModules{1,nullptr};
 
+  /// Position of module local {0,0,0} in panel local coordinates
+  std::vector<Gaudi::XYZPoint> m_DePMTModulesZeroPtn;
+
   ///< Container for the PMTs, sorted by panel
   std::vector<DRiPMTV> m_DePMTs{1,DRiPMTV(2,nullptr)};
 
   /// Container for the PMTAnodes geometry() pointers
   std::vector<IGeomInfoV> m_DePMTAnodes{1,IGeomInfoV(2,nullptr)};
+
+  /// Position of anode local {0,0,0} in panel local coordinates
+  std::vector< std::vector<Gaudi::XYZPoint> > m_DePMTAnodesZeroPtn;
 
   /// Total number of PMT
   unsigned int m_totNumPMTs{0};
