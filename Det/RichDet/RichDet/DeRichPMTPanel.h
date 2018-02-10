@@ -567,13 +567,13 @@ private:
              abs(aPointInPanel.y()) < m_xyHalfSizeSIMD[1] ); 
   }
 
-  inline decltype(auto) checkPDAcceptance( const SIMDFP X, const SIMDFP Y,
+  inline decltype(auto) checkPDAcceptance( SIMDFP X, SIMDFP Y,
                                            const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
   {
-    const auto fX = abs(X);
-    const auto fY = abs(Y);
-    return ( isInPmt               ( fX, fY, aFlagGrandPMT ) && 
-             isInPmtAnodeLateralAcc( fX, fY, aFlagGrandPMT ) );
+    X = abs(X);
+    Y = abs(Y);
+    return ( isInPmt               ( X, Y, aFlagGrandPMT ) && 
+             isInPmtAnodeLateralAcc( X, Y, aFlagGrandPMT ) );
   }
 
   inline bool checkPDAcceptance( const Gaudi::XYZPoint& aPointInPmt, 
@@ -584,25 +584,25 @@ private:
   }
 
 private:
-  
-  /// Gets the intercestion with the panel (SIMD)
-  inline decltype(auto) getPanelInterSection ( const SIMDPoint& pGlobal,
-                                               const SIMDVector& vGlobal,
-                                               SIMDPoint& panelIntersection ) const
+
+  /// Gets the intersection with the panel (SIMD) in global panel coordinates
+  inline decltype(auto) getPanelInterSection( const SIMDPoint& pGlobal,
+                                              const SIMDVector& vGlobal,
+                                              SIMDPoint& panelIntersection ) const noexcept
   {
-    // transform to the panel
-    const auto vInPanel = m_toLocalMatrixSIMD * vGlobal;
     // find the intersection with the detection plane
-    auto scalar = vInPanel.Dot(m_localPlaneNormalSIMD);
+    auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
+
     // check norm
     const auto sc = abs(scalar) > SIMDFP(1e-5);
+
     // Protect against /0
     scalar(!sc) = SIMDFP::One();
-    // transform point to the PMTPanel coordsystem.
-    const auto pInPanel = m_toLocalMatrixSIMD * pGlobal;
+
     // get panel intersection point
-    const auto distance = -m_localPlaneSIMD.Distance(pInPanel) / scalar;
-    panelIntersection = pInPanel + ( distance * vInPanel );
+    const auto distance = -m_detectionPlaneSIMD.Distance(pGlobal) / scalar;
+    panelIntersection = pGlobal + ( distance * vGlobal );
+
     // return
     return sc;
   }
@@ -667,11 +667,11 @@ private:
   /// SIMD 'toLocal' transformation
   Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toLocalMatrixSIMD;
 
-  /// SIMD local plane normal
-  Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> m_localPlaneNormalSIMD;
+  /// SIMD detection plane normal (global coordis)
+  Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> m_detectionPlaneNormalSIMD;
 
-  /// SIMD local plane
-  Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> m_localPlaneSIMD;
+  /// SIMD detection plane
+  Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> m_detectionPlaneSIMD;
 
   /// (X,Y) panel half sizes for this panel
   XYArraySIMD m_xyHalfSizeSIMD = {{}};
@@ -783,12 +783,6 @@ private:
   std::vector<int>  m_Rich1PmtLensModuleCol;
   std::vector<bool> m_RichPmtModuleLensFlag;
   Int m_totNumPmtModuleInRich1{0};
-
-  Gaudi::Plane3D m_localPlane;
-  Gaudi::XYZVector m_localPlaneNormal;
- 
-  Gaudi::Plane3D m_detectionPlane_exterior;
-  // Access info related to PMT Lens flag
 
   double m_PmtLensPitch{0};
   double m_Rich1LensDemagnificationFactor{0};

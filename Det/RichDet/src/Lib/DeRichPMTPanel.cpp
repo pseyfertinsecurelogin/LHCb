@@ -321,12 +321,6 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 
     m_detectionPlane = Gaudi::Plane3D(aDir, aPon);
 
-    // Also create a plane at the exterior surface of the pmt quartz window.
-    const auto z = firstRich->param<double> ("Rich1PmtDetPlaneZInPmtPanel") - m_RichPmtQuartzThickness;
-    m_detectionPlane_exterior = Gaudi::Plane3D( geometry()->toGlobal( GP( 0,   0, z ) ),
-                                                geometry()->toGlobal( GP( 0, 100, z ) ),
-                                                geometry()->toGlobal( GP( 50, 50, z ) ) );
-
   }
   else // if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
   {
@@ -339,12 +333,6 @@ StatusCode DeRichPMTPanel::geometryUpdate()
     m_detectionPlane = Gaudi::Plane3D( geometry()->toGlobal( GP(  0,   0, aZShiftR2 ) ),
                                        geometry()->toGlobal( GP(  0, 100, aZShiftR2 ) ),
                                        geometry()->toGlobal( GP( 50,  50, aZShiftR2 ) ) );
-
-    // Also create  a  second plane at the exterior surface of the PmtQuartzWindow.
-    const auto z = aZShiftR2 - m_RichPmtQuartzThickness;
-    m_detectionPlane_exterior = Gaudi::Plane3D( geometry()->toGlobal( GP(  0,   0, z ) ),
-                                                geometry()->toGlobal( GP(  0, 100, z ) ),
-                                                geometry()->toGlobal( GP( 50,  50, z ) ) );
 
     aPon = geometry()->toGlobal( GP( 0, 0, aZShiftR2 ) );
 
@@ -379,10 +367,6 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();
   m_PDPanelToGlobalTransform = m_globalToPDPanelTransform.Inverse();
-
-  m_localPlane = geometry()->toLocalMatrix() * m_detectionPlane;
-
-  m_localPlaneNormal = m_localPlane.Normal();
 
   // loop over all PD smartIDs to work out the largest copy number for this panel
   m_maxPDCopyN = Rich::DAQ::PDPanelIndex(0);
@@ -446,6 +430,8 @@ StatusCode DeRichPMTPanel::geometryUpdate()
   m_PmtAnodeXEdgeSIMD                  = m_PmtAnodeXEdge;
   m_PmtAnodeYEdgeSIMD                  = m_PmtAnodeYEdge;
 
+  m_detectionPlaneNormalSIMD = m_detectionPlane.Normal();
+
   for ( const auto i : {0,1} )
   {
     m_NumGrandPmtInRowColSIMD[i] = m_NumGrandPmtInRowCol[i];
@@ -498,11 +484,9 @@ StatusCode DeRichPMTPanel::geometryUpdate()
     
   }
 
-  m_localPlaneNormalSIMD = m_localPlaneNormal;
-
   {
-    const auto & p = m_localPlane;
-    m_localPlaneSIMD = Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>( p.A(), p.B(), p.C(), p.D() );
+    const auto & p = m_detectionPlane;
+    m_detectionPlaneSIMD = Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>( p.A(), p.B(), p.C(), p.D() );
   }
 
   return sc;
@@ -946,16 +930,13 @@ DeRichPMTPanel::detPlanePointSIMD( const SIMDPoint& pGlobal,
   // results to return
   SIMDRayTResult::Results res;
 
-  // define a dummy point and fill correctly later.
-  SIMDPoint panelIntersection(0,0,0);
-
-  // panel intersection
-  const auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
+  // panel intersection in global coords
+  const auto mask = getPanelInterSection( pGlobal, vGlobal, hitPosition );
   if ( UNLIKELY( none_of(mask) ) ) { return res; }
 
-  // set hit position to plane intersection in global frame
-  hitPosition = m_toGlobalMatrixSIMD * panelIntersection;
-
+  // set hit position to plane intersection in local frame
+  const auto panelIntersection = m_toLocalMatrixSIMD * hitPosition;
+ 
   // get the PMT info (SIMD)
   const auto aC = findPMTArraySetupSIMD(hitPosition,panelIntersection);
 
@@ -1044,12 +1025,12 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
   // results to return
   SIMDRayTResult::Results res;
 
-  // define a dummy point and fill correctly later.
-  SIMDPoint panelIntersection( 0, 0, rich() == Rich::Rich1 ? 0 : 10000 );
-
-  // panel intersection
-  auto mask = getPanelInterSection( pGlobal, vGlobal, panelIntersection );
+  // panel intersection in global
+  auto mask = getPanelInterSection( pGlobal, vGlobal, hitPosition );
   if ( UNLIKELY( none_of(mask) ) ) { return res; }
+
+  // transform to local
+  const auto panelIntersection = m_toLocalMatrixSIMD * hitPosition;
 
   // sets RICH, panel and type
   smartID.fill( panelID() );
@@ -1065,9 +1046,6 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
     // Set res flag for those in mask to InPDPanel
     res( LHCb::SIMD::simd_cast<SIMDRayTResult::Results::MaskType>(mask) ) =
       SIMDRayTResult::Results(LHCb::RichTraceMode::RayTraceResult::InPDPanel);
-
-    // set hit position to plane intersection in global frame
-    hitPosition = m_toGlobalMatrixSIMD * panelIntersection;
 
     // check PD acceptance ?
     if ( mode.detPlaneBound() != LHCb::RichTraceMode::DetectorPlaneBoundary::IgnorePDAcceptance )
