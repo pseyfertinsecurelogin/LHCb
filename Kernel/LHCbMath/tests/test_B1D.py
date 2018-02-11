@@ -166,7 +166,15 @@ print 'Check for BernsteinEven               is OK'
 ## 7)  check for Positive
 BP = ROOT.Gaudi.Math.Positive
 
-b = BP ( 5 , 0 , 3 )
+b  = BP ( 5 , 0 , 3 )
+c  = 1.0 / ( b.xmax() - b.xmin() ) 
+for i in  range(100) :
+    x = random.uniform ( b.xmin() , b.xmax() )
+    y = b(x)
+    check_equality ( y , c , 'Invalid positive polynom value:' )
+
+print 'Check for Positive constant           is OK'
+
 for i in range ( b.npars() ) : b.setPar ( i , random.uniform ( -10 , 10 ) )
 
 for i in range(500) :
