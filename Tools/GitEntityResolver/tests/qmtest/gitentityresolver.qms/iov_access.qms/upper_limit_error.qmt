@@ -56,10 +56,14 @@ LoadDDDB             INFO Database {repository} tag {tag}[{short_id}]
 '''.format(**info),
 id='reported_tag')
 
-findReferenceBlock('''
-UpdateManagerSvc    ERROR ToolSvc.GitDDDB	Database not up-to-date. Latest known update is at 2016-12-31 23:00:00.0 UTC, event time is 2017-06-16 08:30:00.0 UTC	 StatusCode=FAILURE
+# deal with an inconsistency fixed in https://gitlab.cern.ch/gaudi/Gaudi/merge_requests/514
+ref = '''
+UpdateManagerSvc    ERROR ToolSvc.GitDDDB \t Database not up-to-date. Latest known update is at 2016-12-31 23:00:00.0 UTC, event time is 2017-06-16 08:30:00.0 UTC\t StatusCode=FAILURE
 UpdateManagerSvc    FATAL ***** The update failed. I schedule a stop of the run *****
-''', id='update_failure')
+'''
+if 'DDDB\tDatabase' in stdout:
+    ref = ref.replace('DDDB \t Database', 'DDDB\tDatabase')
+findReferenceBlock(ref, id='update_failure')
 
 </text></argument>
 <argument name="prerequisites"><set>
