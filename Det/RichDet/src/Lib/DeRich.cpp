@@ -372,16 +372,18 @@ DeRich::rayTrace( const Rich::SIMD::Sides & sides,
                   SIMDRayTResult::PDs& PDs,
                   const LHCb::RichTraceMode mode ) const
 {
-  // Side masks
-  const auto m1 = ( sides == Rich::SIMD::Sides(Rich::firstSide)  );
-  const auto m2 = ( sides == Rich::SIMD::Sides(Rich::secondSide) );
-
   // If all sides are the same, shortcut to a single call
   // hopefully the most common situation ...
-  if      ( all_of(m1) ) { return rayTrace( Rich::firstSide, pGlobal, vGlobal,
-                                            hitPosition, smartID, PDs, mode ); }
-  else if ( all_of(m2) ) { return rayTrace( Rich::secondSide, pGlobal, vGlobal,
-                                            hitPosition, smartID, PDs, mode ); }
+
+  // side 1 mask
+  const auto m1 = ( sides == Rich::SIMD::Sides(Rich::firstSide)  );
+  if ( all_of(m1) ) { return rayTrace( Rich::firstSide, pGlobal, vGlobal,
+                                       hitPosition, smartID, PDs, mode ); }
+
+  // side 2 mask
+  const auto m2 = ( sides == Rich::SIMD::Sides(Rich::secondSide) );
+  if ( all_of(m2) ) { return rayTrace( Rich::secondSide, pGlobal, vGlobal,
+                                       hitPosition, smartID, PDs, mode ); }
 
   // we have a mixture... So must run both and merge..
   // Is there a better way to handle this ... ?
