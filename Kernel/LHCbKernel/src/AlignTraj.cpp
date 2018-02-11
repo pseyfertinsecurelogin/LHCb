@@ -69,17 +69,9 @@ AlignTraj::derivative( double arclength ) const
     diag(d,0,3) = 1;
     // next, the derivatives wrt. rx, ry, and rz:
     Vector v = position(arclength)-m_pivot;
-    //FIXME: Set{X,Y,Z} return void instead of reference to *this.
-    //       so we are forced to introduce an explicit temporary
-    //       and uglify the code...
-    //       Lorenzo promised to fix this in the next ROOT release (i.e.
-    //          once we use post 5.18 releases this can be simplified)
-    Vector temp = m_ry(m_rz(v)); temp.SetX(0);
-    column(d,3)=(m_rx*ROOT::Math::RotationX(M_PI_2))(temp);
-    temp = m_rz(v); temp.SetY(0);
-    column(d,4)=m_rx((m_ry*ROOT::Math::RotationY(M_PI_2))(temp));
-    temp = v; temp.SetZ(0);
-    column(d,5)=m_rx(m_ry((m_rz*ROOT::Math::RotationZ(M_PI_2))(temp)));
+    column(d,3)=(m_rx*ROOT::Math::RotationX(M_PI_2))( m_ry(m_rz(v)).SetX(0) );
+    column(d,4)=m_rx((m_ry*ROOT::Math::RotationY(M_PI_2))( m_rz(v).SetY(0) ));
+    column(d,5)=m_rx(m_ry((m_rz*ROOT::Math::RotationZ(M_PI_2))( v.SetZ(0) ))); // note: this changes v, unlike the previous two lines -- so this should be last...
     return d;
 }
 
