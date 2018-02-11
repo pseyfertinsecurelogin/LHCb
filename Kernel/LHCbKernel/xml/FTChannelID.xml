@@ -100,6 +100,15 @@
               desc    = "Return the SiPM number within the module (0-15)">
         <code> return (m_channelID &amp; (matMask + sipmMask)) &gt;&gt; sipmBits; </code>
       </method>
+      
+      <method type    = "unsigned int"
+              name    = "die"
+              argList = ""
+              const   = "TRUE"
+              desc    = "Return the die number (0 or 1)">
+        <code> return (m_channelID &amp; 0x40) &gt;&gt; 6; </code>
+      </method>
+      
 
       <method type    = "bool" 
               name    = "isX"

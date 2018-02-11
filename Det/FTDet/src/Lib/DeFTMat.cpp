@@ -40,6 +40,7 @@ StatusCode DeFTMat::initialize(){
   m_airGap = (double)param<double>("airGap");
   m_deadRegion = (double)param<double>("deadRegion");
   m_channelPitch = (double)param<double>("channelPitch");
+  m_halfChannelPitch = 0.5*m_channelPitch;
   m_dieGap = (double)param<double>("dieGap");
   m_nChannelsInSiPM = (int)param<int>("nChannelsInSiPM");
   m_nSiPMsInMat = (int)param<int>("nSiPMsInMat");
@@ -62,6 +63,9 @@ StatusCode DeFTMat::initialize(){
 
   // Define the global z position to be at the point closest to the mirror
   m_globalZ = m_mirrorPoint.z();
+
+  // Define the global length in y of the mat
+  m_globaldy = m_sipmPoint.y()-m_mirrorPoint.y();
 
   // Make the plane for the mat
   const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );

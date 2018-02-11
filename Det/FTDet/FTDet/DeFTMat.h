@@ -158,6 +158,15 @@ public:
   /** Get the local x from a channelID and its fraction */
   double localXfromChannel(const LHCb::FTChannelID channelID, const double frac) const;
 
+  /** Get the local x from a channelID and its fraction */
+  double localXfromChannel(const LHCb::FTChannelID channelID,
+                           const int frac) const {
+    double uFromChannel = m_uBegin + (2*channelID.channel()+1+frac)*m_halfChannelPitch;
+    if( channelID.die() ) uFromChannel += m_dieGap;
+    uFromChannel += channelID.sipm() * m_sipmPitch;
+    return uFromChannel;
+  }
+
   /** Calculate the distance between a global point and FTChannelID + fraction
    *  @param channelID is the FTChannelID of the cluster
    *  @param frac is the fraction of the cluster centre of gravity
@@ -182,13 +191,25 @@ public:
   std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> endPoints(
       const LHCb::FTChannelID channelID, const double frac) const;
 
+  /** Get begin positions of a hit (channelID + integer fraction)
+   *  @param channelID input FTChannelID
+   *  @param frac input fraction
+   */
+  Gaudi::XYZPoint endPoint(const LHCb::FTChannelID channelID,
+                           const int frac) const {
+    return Gaudi::XYZPoint( m_mirrorPoint + m_ddx * localXfromChannel( channelID, frac ) );
+  }
+
   /** Get the global slope of the mat in dx/dy */
   double dxdy() const { return m_dxdy; }
 
   /** Get the global slope of the mat in dz/dy */
   double dzdy() const { return m_dzdy; }
 
-  /** Flag if there is a gap on the left of this channel */
+  /** Get the global height of the mat in y */
+  double globaldy() const { return m_globaldy; }
+
+ /** Flag if there is a gap on the left of this channel */
   bool hasGapLeft( const LHCb::FTChannelID thisChannel ) const {
     return ( thisChannel.channel() == 0u ||
         int(thisChannel.channel()) == m_nChannelsInDie ) ;
@@ -216,6 +237,7 @@ private :
   double m_deadRegion;             ///< dead region
   double m_dieGap;                 ///< gap between channel 63 and 64
   double m_channelPitch;           ///< readout channel pitch (250 micron)
+  double m_halfChannelPitch;       ///< half of the readout channel pitch (125 micron)
   double m_sipmPitch;              ///< pitch between SiPMs in mat
   double m_diePitch;               ///< pitch between dies in SiPM
   double m_sizeX;                  ///< Width in x of the mat
@@ -227,6 +249,7 @@ private :
   Gaudi::XYZVector m_ddx;
   double m_dxdy;
   double m_dzdy;
+  double m_globaldy;
 
 }; // end of class
 
