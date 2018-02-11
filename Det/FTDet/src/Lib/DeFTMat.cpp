@@ -65,7 +65,7 @@ StatusCode DeFTMat::initialize(){
   m_globalZ = m_mirrorPoint.z();
 
   // Define the global length in y of the mat
-  m_globaldy = m_mirrorPoint.y()-m_sipmPoint.y();
+  m_globaldy = m_sipmPoint.y()-m_mirrorPoint.y();
 
   // Make the plane for the mat
   const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
