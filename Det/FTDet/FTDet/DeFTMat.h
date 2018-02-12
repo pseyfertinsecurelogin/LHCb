@@ -94,19 +94,19 @@ public:
   }
 
   /** Returns the pitch between two channels (250 micron) */
-  double channelPitch() const { return m_channelPitch; }
+  float channelPitch() const { return m_channelPitch; }
 
   /** Returns the width of the fibre mat */
-  double fibreMatWidth() const { return m_sizeX; }
+  float fibreMatWidth() const { return m_sizeX; }
 
   /** Get the length of the fibre in this mat */
-  double fibreLength() const { return m_sizeY; }
+  float fibreLength() const { return m_sizeY; }
 
   /** Returns the thickness of the fibre mat (1.3 mm) */
-  double fibreMatThickness() const { return m_sizeZ; }
+  float fibreMatThickness() const { return m_sizeZ; }
 
   /** Returns the global z position of the module */
-  double globalZ() const { return m_globalZ; }
+  float globalZ() const { return m_globalZ; }
 
   /** Returns the xy-plane at z-middle the layer */
   const Gaudi::Plane3D& plane() const { return m_plane; }
@@ -116,14 +116,14 @@ public:
    *  @param frac returns the corresponding fraction in the range 0-1.
    *  @return channel returns the corresponding readout channel
    */
-  LHCb::FTChannelID calculateChannelAndFrac(double localX, double& frac) const;
+  LHCb::FTChannelID calculateChannelAndFrac(float localX, float& frac) const;
 
   /** Get the list of SiPM channels between two channels
    *  @param provide first and last channels
    *  Fills a vector of FTChannelIDs, and a vector of the
    *  corresponding left edges (along x) in the local frame.
    */
-  std::vector<std::pair<LHCb::FTChannelID, double>>
+  std::vector<std::pair<LHCb::FTChannelID, float>>
     calculateChannels(LHCb::FTChannelID thisChannel,
                       LHCb::FTChannelID endChannel) const ;
 
@@ -134,8 +134,8 @@ public:
    *  Fills a vector of FTChannelIDs, and a vector of the
    *  corresponding left edges (along x) in the local frame.
    */
-  std::vector<std::pair<LHCb::FTChannelID, double>>
-    calculateChannels(const double localEntry, const double localExit,
+  std::vector<std::pair<LHCb::FTChannelID, float>>
+    calculateChannels(const float localEntry, const float localExit,
                       const unsigned int numOfAdditionalChannels ) const;
 
   /** Get the list of SiPM channels in the mat
@@ -144,27 +144,36 @@ public:
    *  Fills a vector of FTChannelIDs, and a vector of the
    *  corresponding left edges (along x) in the local frame.
    */
-  std::vector<std::pair<LHCb::FTChannelID, double>>
+  std::vector<std::pair<LHCb::FTChannelID, float>>
     calculateChannels() const;
 
   /** Get the distance from the hit to the SiPM
    *  @param localPoint is the position of the half module in local coordinates
    *  @return the distance to the SiPM
    */
-  double distanceToSiPM( const Gaudi::XYZPoint& localPoint ) const {
+  float distanceToSiPM( const Gaudi::XYZPoint& localPoint ) const {
     return 0.5 * m_sizeY - localPoint.y();
   };
 
   /** Get the local x from a channelID and its fraction */
-  double localXfromChannel(const LHCb::FTChannelID channelID, const double frac) const;
+  float localXfromChannel(const LHCb::FTChannelID channelID, const float frac) const;
+
+  /** Get the local x from a channelID and its fraction */
+  float localXfromChannel(const LHCb::FTChannelID channelID,
+                          const int frac) const {
+    float uFromChannel = m_uBegin + (2*channelID.channel()+1+frac)*m_halfChannelPitch;
+    if( channelID.die() ) uFromChannel += m_dieGap;
+    uFromChannel += channelID.sipm() * m_sipmPitch;
+    return uFromChannel;
+  }
 
   /** Calculate the distance between a global point and FTChannelID + fraction
    *  @param channelID is the FTChannelID of the cluster
    *  @param frac is the fraction of the cluster centre of gravity
    *  @return distance in mm
    */
-  double distancePointToChannel(const Gaudi::XYZPoint& globalPoint,
-      const LHCb::FTChannelID channelID, const double frac ) const;
+  float distancePointToChannel(const Gaudi::XYZPoint& globalPoint,
+      const LHCb::FTChannelID channelID, const float frac ) const;
 
   /** Get the trajectory defined by the begin and end positions of a hit
    *   (channelID + fraction)
@@ -172,23 +181,35 @@ public:
    *  @param frac input fraction
    */
   std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::FTChannelID channelID,
-      const double frac) const;
+      const float frac) const;
 
   /** Get the line defined by the begin and end positions of a hit
    *   (channelID + fraction)
    *  @param channelID input FTChannelID
    *  @param frac input fraction
    */
-  std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> endPoints(
-      const LHCb::FTChannelID channelID, const double frac) const;
+  std::pair<Gaudi::XYZPointF,Gaudi::XYZPointF> endPoints(
+      const LHCb::FTChannelID channelID, const float frac) const;
+
+  /** Get begin positions of a hit (channelID + integer fraction)
+   *  @param channelID input FTChannelID
+   *  @param frac input fraction
+   */
+  Gaudi::XYZPointF endPoint(const LHCb::FTChannelID channelID,
+                            const int frac) const {
+    return Gaudi::XYZPointF( m_mirrorPoint + m_ddx * localXfromChannel( channelID, frac ) );
+  }
 
   /** Get the global slope of the mat in dx/dy */
-  double dxdy() const { return m_dxdy; }
+  float dxdy() const { return m_dxdy; }
 
   /** Get the global slope of the mat in dz/dy */
-  double dzdy() const { return m_dzdy; }
+  float dzdy() const { return m_dzdy; }
 
-  /** Flag if there is a gap on the left of this channel */
+  /** Get the global height of the mat in y */
+  float globaldy() const { return m_globaldy; }
+
+ /** Flag if there is a gap on the left of this channel */
   bool hasGapLeft( const LHCb::FTChannelID thisChannel ) const {
     return ( thisChannel.channel() == 0u ||
         int(thisChannel.channel()) == m_nChannelsInDie ) ;
@@ -209,24 +230,27 @@ private :
   int m_nSiPMsInMat;               ///< number of SiPM arrays per mat
   int m_nDiesInSiPM;               ///< number of dies per SiPM
 
-  Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the module
-  double m_globalZ;                ///< Global z position of module closest to y-axis
-  double m_uBegin;                 ///< start in local u-coordinate of sensitive SiPM
-  double m_airGap;                 ///< air gap
-  double m_deadRegion;             ///< dead region
-  double m_dieGap;                 ///< gap between channel 63 and 64
-  double m_channelPitch;           ///< readout channel pitch (250 micron)
-  double m_sipmPitch;              ///< pitch between SiPMs in mat
-  double m_diePitch;               ///< pitch between dies in SiPM
-  double m_sizeX;                  ///< Width in x of the mat
-  double m_sizeY;                  ///< Length in y of the fibre in the mat
-  double m_sizeZ;                  ///< Thickness of the fibre mat (nominal: 1.3 mm)
+  Gaudi::Plane3D m_plane;         ///< xy-plane in the z-middle of the module
+  Gaudi::XYZPointF m_sipmPoint;   ///< Location of end of fibres at x=z=0
+  float m_globalZ;                ///< Global z position of module closest to y-axis
+  float m_airGap;                 ///< air gap
+  float m_deadRegion;             ///< dead region
+  float m_channelPitch;           ///< readout channel pitch (250 micron)
+  float m_diePitch;               ///< pitch between dies in SiPM
+  float m_sizeX;                  ///< Width in x of the mat
+  float m_sizeY;                  ///< Length in y of the fibre in the mat
+  float m_sizeZ;                  ///< Thickness of the fibre mat (nominal: 1.3 mm)
 
-  Gaudi::XYZPoint m_mirrorPoint;
-  Gaudi::XYZPoint m_sipmPoint;
-  Gaudi::XYZVector m_ddx;
-  double m_dxdy;
-  double m_dzdy;
+  // Parameters needed for decoding
+  Gaudi::XYZPointF m_mirrorPoint; ///< Location of end of fibres at x=z=0
+  Gaudi::XYZVectorF m_ddx;        ///< Global direction vector for a local displacement in unit x
+  float m_uBegin;                 ///< start in local u-coordinate of sensitive SiPM
+  float m_halfChannelPitch;       ///< half of the readout channel pitch (125 micron)
+  float m_dieGap;                 ///< gap between channel 63 and 64
+  float m_sipmPitch;              ///< pitch between SiPMs in mat
+  float m_dxdy;                   ///< Global slope dx/dy for a fibre mat
+  float m_dzdy;                   ///< Global slope dz/dy for a fibre mat
+  float m_globaldy;               ///< Length of a fibre projected along global y
 
 }; // end of class
 

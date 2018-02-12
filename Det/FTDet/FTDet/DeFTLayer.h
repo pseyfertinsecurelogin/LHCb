@@ -38,25 +38,25 @@ public:
   unsigned int layerID() const { return m_layerID;}
 
   /** Returns the global z position of the layer */
-  double globalZ() const { return m_globalZ; }
+  float globalZ() const { return m_globalZ; }
 
   /** Returns the xy-plane at z-middle the layer */
   const Gaudi::Plane3D& plane() const { return m_plane; }
 
   /** Returns the stereo angle of the layer */
-  double stereoAngle() const { return m_stereoAngle; }
+  float stereoAngle() const { return m_stereoAngle; }
 
   /** Returns the dx/dy of the layer (ie. tan(m_stereoAngle)) */
-  double dxdy() const { return m_dxdy; }
+  float dxdy() const { return m_dxdy; }
 
   /** Returns the dz/dy of the layer (ie. tan of the beam angle) */
-  double dzdy() const { return m_dzdy; }
+  float dzdy() const { return m_dzdy; }
 
   /** Returns the size of the layer in x */
-  double sizeX() const { return m_sizeX; }
+  float sizeX() const { return m_sizeX; }
 
   /** Returns the size of the layer in y */
-  double sizeY() const { return m_sizeY; }
+  float sizeY() const { return m_sizeY; }
 
   /** Const method to return the quarter for a given XYZ point
    * @param  aPoint the given point
@@ -94,13 +94,13 @@ private:
   boost::container::static_vector<DeFTModule*,24> m_modules;
 
   unsigned int m_layerID;          ///< layer ID number
-  double m_globalZ;                ///< Global z position of layer closest to y-axis
+  float m_globalZ;                ///< Global z position of layer closest to y-axis
   Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the layer
-  double m_dzdy;                   ///< dz/dy of the layer (tan of the beam angle)
-  double m_stereoAngle;            ///< stereo angle of the layer
-  double m_dxdy;                   ///< dx/dy of the layer (ie. tan(m_stereoAngle))
-  double m_sizeX;                  ///< Size of the layer in x
-  double m_sizeY;                  ///< Size of the layer in y
+  float m_dzdy;                   ///< dz/dy of the layer (tan of the beam angle)
+  float m_stereoAngle;            ///< stereo angle of the layer
+  float m_dxdy;                   ///< dx/dy of the layer (ie. tan(m_stereoAngle))
+  float m_sizeX;                  ///< Size of the layer in x
+  float m_sizeY;                  ///< Size of the layer in y
 
 };
 
