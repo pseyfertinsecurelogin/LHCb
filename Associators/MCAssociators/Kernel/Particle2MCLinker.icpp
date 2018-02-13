@@ -200,13 +200,14 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
       if (!rit.empty()) {
         std::string check;  // check current RootInTES, if it exists
         sc = prop->getProperty("RootInTES", check);
-        if (sc.isSuccess() && check.compare(rit) != 0) {
+        if (sc.isSuccess() && !check.empty() && check.compare(rit) != 0) {  // if and only if RootInTES is already set and different from parent, throw warning
           std::string p_name = m_myGaudiAlg ? m_myGaudiAlg->name() : m_myGaudiTool ? m_myGaudiTool->name() : std::string(" Oops, parent instance could not be found! ");
           std::string err = "Algo " + alg->name() + " has RootInTES " + check + " which is different from its parent: " + rit + "\n" +
                             "Replacing it! Consider setting it inside " + p_name;
           sc = m_myGaudiAlg ? m_myGaudiAlg->Warning(err, StatusCode::RECOVERABLE) :
                m_myGaudiTool ? m_myGaudiTool->Warning(err, StatusCode::RECOVERABLE) :
-               StatusCode::RECOVERABLE;  // not sure if we want to say something in this case
+               StatusCode::RECOVERABLE;
+          sc.ignore();  // ignore warning status code
         }
         sc = prop->setProperty("RootInTES", rit);
         if( sc.isSuccess() ) {
