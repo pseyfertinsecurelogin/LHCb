@@ -213,8 +213,8 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
         if( sc.isSuccess() ) {
           std::string err = "Property RootInTES set to " + rit + " in algo " +
                             alg->name();
-          if( m_myGaudiAlg ) m_myGaudiAlg->debug() << err;
-          else if( m_myGaudiTool ) m_myGaudiTool->debug() << err;
+          if( m_myGaudiAlg ) m_myGaudiAlg->debug() << err << endmsg;
+          else if( m_myGaudiTool ) m_myGaudiTool->debug() << err << endmsg;
         } else {
           std::string err = "Unable to set Property RootInTES to " + rit + " in algo " + alg->name();
           return m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
