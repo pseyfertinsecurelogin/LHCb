@@ -136,9 +136,10 @@ Object2MCLinker<SOURCE>::locateAlgorithm( const std::string& algType,
 template <class SOURCE>
 std::string Object2MCLinker<SOURCE>::getGaudiRootInTES()
 {
-  return m_myGaudiAlg ? m_myGaudiAlg->getProperty("RootInTES") :
-         m_myGaudiTool ? m_myGaudiTool->getProperty("RootInTES") :
-         std::string{};
+  return
+    m_myGaudiAlg ? (m_myGaudiAlg->getProperty("RootInTES")).toString() :
+    m_myGaudiTool ? (m_myGaudiTool->getProperty("RootInTES")).toString() :
+    std::string();
 }
 template <class SOURCE>
 StatusCode
