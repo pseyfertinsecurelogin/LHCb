@@ -3,7 +3,7 @@
 
 // Include files
 #include "Kernel/DifTraj.h"
-#include "VectorClass/vectorclass.h"
+
 #ifdef _WIN32
 // Avoid conflict of Windows macro with std::max
   #ifndef NOMINMAX
