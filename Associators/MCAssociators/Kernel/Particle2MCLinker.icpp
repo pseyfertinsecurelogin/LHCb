@@ -136,10 +136,9 @@ Object2MCLinker<SOURCE>::locateAlgorithm( const std::string& algType,
 template <class SOURCE>
 std::string Object2MCLinker<SOURCE>::getGaudiRootInTES()
 {
-  return
-    m_myGaudiAlg ? (m_myGaudiAlg->getProperty("RootInTES")).toString() :
-    m_myGaudiTool ? (m_myGaudiTool->getProperty("RootInTES")).toString() :
-    std::string();
+  return m_myGaudiAlg ? m_myGaudiAlg->rootInTES() :
+         m_myGaudiTool ? m_myGaudiTool->rootInTES() :
+         std::string{};
 }
 template <class SOURCE>
 StatusCode
@@ -199,18 +198,27 @@ Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg,
       }
       const std::string rit(getGaudiRootInTES());
       if (!rit.empty()) {
-      sc = prop->setProperty("RootInTES", rit);
+        std::string check;  // check current RootInTES, if it exists
+        sc = prop->getProperty("RootInTES", check);
+        if (sc.isSuccess() && check.compare(rit) != 0) {
+          std::string p_name = m_myGaudiAlg ? m_myGaudiAlg->name() : m_myGaudiTool ? m_myGaudiTool->name() : std::string(" Oops, parent instance could not be found! ");
+          std::string err = "Algo " + alg->name() + " has RootInTES " + check + " which is different from its parent: " + rit + "\n" +
+                            "Replacing it! Consider setting it inside " + p_name;
+          sc = m_myGaudiAlg ? m_myGaudiAlg->Warning(err, StatusCode::RECOVERABLE) :
+               m_myGaudiTool ? m_myGaudiTool->Warning(err, StatusCode::RECOVERABLE) :
+               StatusCode::RECOVERABLE;  // not sure if we want to say something in this case
+        }
+        sc = prop->setProperty("RootInTES", rit);
         if( sc.isSuccess() ) {
-          std::string err = "Property RootInTES set to " + rit + " in algo "
-            + alg->name();
+          std::string err = "Property RootInTES set to " + rit + " in algo " +
+                            alg->name();
           if( m_myGaudiAlg ) m_myGaudiAlg->debug() << err;
           else if( m_myGaudiTool ) m_myGaudiTool->debug() << err;
         } else {
           std::string err = "Unable to set Property RootInTES to " + rit + " in algo " + alg->name();
-          return
-            m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
-            m_myGaudiTool ? m_myGaudiTool->Error( err, sc) :
-            sc;
+          return m_myGaudiAlg ? m_myGaudiAlg->Error( err, sc) :
+                 m_myGaudiTool ? m_myGaudiTool->Error( err, sc) :
+                 sc;
         }
       }
     } else {
