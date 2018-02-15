@@ -171,7 +171,7 @@ public:
     return m_nominalPlanesSIMD[side];
   }
 
- /**
+  /**
    * Returns the nominal flat mirror plane for this Rich
    *
    * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)

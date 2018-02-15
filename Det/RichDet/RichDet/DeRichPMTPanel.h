@@ -37,7 +37,8 @@ public:
   /// Standard constructor
   DeRichPMTPanel( const std::string & name = ""  );
 
-  virtual ~DeRichPMTPanel( ) = default; ///< Destructor
+  /// Destructor
+  virtual ~DeRichPMTPanel( ) = default; 
 
   /**
    * Retrieves reference to class identifier
@@ -45,7 +46,9 @@ public:
    */
   const CLID& clID() const override final { return classID(); }
 
+  /// return the class ID
   static const CLID& classID();
+
   /**
    * This is where most of the geometry is read and variables initialised
    *
@@ -85,18 +88,18 @@ public:
 
   // Returns the SIMD intersection point with an HPD window given a vector and a point.
   SIMDRayTResult::Results
-  PDWindowPointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
-                     const Rich::SIMD::Vector<FP> & vGlobal,
-                     Rich::SIMD::Point<FP> & hitPosition,
+  PDWindowPointSIMD( const SIMDPoint & pGlobal,
+                     const SIMDVector & vGlobal,
+                     SIMDPoint & hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the SIMD intersection point with the detector plane given a vector and a point.
   SIMDRayTResult::Results
-  detPlanePointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
-                     const Rich::SIMD::Vector<FP> & vGlobal,
-                     Rich::SIMD::Point<FP> & hitPosition,
+  detPlanePointSIMD( const SIMDPoint & pGlobal,
+                     const SIMDVector & vGlobal,
+                     SIMDPoint& hitPosition,
                      SIMDRayTResult::SmartIDs& smartID,
                      SIMDRayTResult::PDs& PDs,
                      const LHCb::RichTraceMode mode ) const override final;
@@ -295,14 +298,14 @@ private:
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
-  inline ArraySetupSIMD findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint ) const
+  inline ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint ) const
   {
     const auto inPanel = m_toLocalMatrixSIMD * aGlobalPoint;
     return findPMTArraySetupSIMD( aGlobalPoint, inPanel );
   } 
   
-  ArraySetupSIMD findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint,
-                                        const Rich::SIMD::Point<FP>& aLocalPoint ) const;
+  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint,
+                                        const SIMDPoint& aLocalPoint ) const;
 
 private:
 
@@ -526,8 +529,19 @@ private:
     return ( aFlagGrandPMT && rich() == Rich::Rich2 ?
              ( ( xp < fabs( m_GrandPmtAnodeXEdge ) ) &&
                ( yp < fabs( m_GrandPmtAnodeYEdge ) ) ) :
-             ( ( xp < fabs( m_PmtAnodeXEdge ) ) &&
-               ( yp < fabs( m_PmtAnodeYEdge ) ) ) );
+             ( ( xp < fabs( m_PmtAnodeXEdge      ) ) &&
+               ( yp < fabs( m_PmtAnodeYEdge      ) ) ) );
+  }
+
+  inline decltype(auto) isInPmtAnodeLateralAcc( const SIMDFP X, const SIMDFP Y,
+                                                const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
+  {
+    SIMDFP gxe(m_PmtAnodeXEdge);
+    SIMDFP gye(m_PmtAnodeYEdge);
+    gxe(aFlagGrandPMT) = SIMDFP(m_GrandPmtAnodeXEdge);
+    gye(aFlagGrandPMT) = SIMDFP(m_GrandPmtAnodeYEdge);
+
+    return ( X < abs(gxe) && Y < abs(gye) );
   }
 
   inline bool isInPmt( const Gaudi::XYZPoint& aPointInPmt, 
@@ -539,32 +553,56 @@ private:
              fabs(aPointInPmt.y()) < aPmtH );
   }
 
-  inline decltype(auto) isInPmtPanel( const Rich::SIMD::Point<FP>& aPointInPanel ) const noexcept
+  inline decltype(auto) isInPmt( const SIMDFP X, const SIMDFP Y,
+                                 const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
+  {
+    SIMDFP aPmtH ( m_PmtMasterLateralSize*0.5 );
+    aPmtH(aFlagGrandPMT) = SIMDFP(m_GrandPmtMasterLateralSize*0.5);
+    return ( X < aPmtH &&  Y < aPmtH );
+  }
+
+  inline decltype(auto) isInPmtPanel( const SIMDPoint& aPointInPanel ) const noexcept
   {
     return ( abs(aPointInPanel.x()) < m_xyHalfSizeSIMD[0] &&
              abs(aPointInPanel.y()) < m_xyHalfSizeSIMD[1] ); 
   }
 
-private:
-  
-  /// Gets the intercestion with the panel (SIMD)
-  inline decltype(auto) getPanelInterSection ( const Rich::SIMD::Point<FP>& pGlobal,
-                                               const Rich::SIMD::Vector<FP>& vGlobal ,
-                                               Rich::SIMD::Point<FP>& panelIntersection ) const
+  inline decltype(auto) checkPDAcceptance( SIMDFP X, SIMDFP Y,
+                                           const SIMDFP::MaskType aFlagGrandPMT ) const noexcept
   {
-    // transform to the panel
-    const auto vInPanel = m_toLocalMatrixSIMD * vGlobal;
+    X = abs(X);
+    Y = abs(Y);
+    return ( isInPmt               ( X, Y, aFlagGrandPMT ) && 
+             isInPmtAnodeLateralAcc( X, Y, aFlagGrandPMT ) );
+  }
+
+  inline bool checkPDAcceptance( const Gaudi::XYZPoint& aPointInPmt, 
+                                 const bool aFlagGrandPMT ) const noexcept
+  {
+    return ( isInPmt               ( aPointInPmt, aFlagGrandPMT ) && 
+             isInPmtAnodeLateralAcc( aPointInPmt, aFlagGrandPMT ) );
+  }
+
+private:
+
+  /// Gets the intersection with the panel (SIMD) in global panel coordinates
+  inline decltype(auto) getPanelInterSection( const SIMDPoint& pGlobal,
+                                              const SIMDVector& vGlobal,
+                                              SIMDPoint& panelIntersection ) const noexcept
+  {
     // find the intersection with the detection plane
-    auto scalar = vInPanel.Dot(m_localPlaneNormalSIMD);
+    auto scalar = vGlobal.Dot( m_detectionPlaneNormalSIMD );
+
     // check norm
     const auto sc = abs(scalar) > SIMDFP(1e-5);
+
     // Protect against /0
     scalar(!sc) = SIMDFP::One();
-    // transform point to the PMTPanel coordsystem.
-    const auto pInPanel = m_toLocalMatrixSIMD * pGlobal;
+
     // get panel intersection point
-    const auto distance = -m_localPlaneSIMD.Distance(pInPanel) / scalar;
-    panelIntersection = pInPanel + ( distance * vInPanel );
+    const auto distance = -m_detectionPlaneSIMD.Distance(pGlobal) / scalar;
+    panelIntersection = pGlobal + ( distance * vGlobal );
+
     // return
     return sc;
   }
@@ -629,11 +667,11 @@ private:
   /// SIMD 'toLocal' transformation
   Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toLocalMatrixSIMD;
 
-  /// SIMD local plane normal
-  Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> m_localPlaneNormalSIMD;
+  /// SIMD detection plane normal (global coordis)
+  Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> m_detectionPlaneNormalSIMD;
 
-  /// SIMD local plane
-  Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> m_localPlaneSIMD;
+  /// SIMD detection plane
+  Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> m_detectionPlaneSIMD;
 
   /// (X,Y) panel half sizes for this panel
   XYArraySIMD m_xyHalfSizeSIMD = {{}};
@@ -702,20 +740,23 @@ private:
 
 private:
 
-  /// SmartID for this panel
-  LHCb::RichSmartID m_panelID;
-
   /// Index for this panel
   Int m_CurPanelNum{-1};
 
   /// Container for the PMT Module geometry() pointers
   IGeomInfoV m_DePMTModules{1,nullptr};
 
+  /// Position of module local {0,0,0} in panel local coordinates
+  std::vector<Gaudi::XYZPoint> m_DePMTModulesZeroPtn;
+
   ///< Container for the PMTs, sorted by panel
   std::vector<DRiPMTV> m_DePMTs{1,DRiPMTV(2,nullptr)};
 
   /// Container for the PMTAnodes geometry() pointers
   std::vector<IGeomInfoV> m_DePMTAnodes{1,IGeomInfoV(2,nullptr)};
+
+  /// Position of anode local {0,0,0} in panel local coordinates
+  std::vector< std::vector<Gaudi::XYZPoint> > m_DePMTAnodesZeroPtn;
 
   /// Total number of PMT
   unsigned int m_totNumPMTs{0};
@@ -742,12 +783,6 @@ private:
   std::vector<int>  m_Rich1PmtLensModuleCol;
   std::vector<bool> m_RichPmtModuleLensFlag;
   Int m_totNumPmtModuleInRich1{0};
-
-  Gaudi::Plane3D m_localPlane;
-  Gaudi::XYZVector m_localPlaneNormal;
- 
-  Gaudi::Plane3D m_detectionPlane_exterior;
-  // Access info related to PMT Lens flag
 
   double m_PmtLensPitch{0};
   double m_Rich1LensDemagnificationFactor{0};

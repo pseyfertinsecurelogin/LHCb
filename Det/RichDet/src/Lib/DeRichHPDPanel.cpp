@@ -198,9 +198,9 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
 // find an intersection with the HPD window (SIMD)
 //=========================================================================
 DeRichHPDPanel::SIMDRayTResult::Results
-DeRichHPDPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                                   const Rich::SIMD::Vector<FP>& vGlobal,
-                                   Rich::SIMD::Point<FP>& hitPosition,
+DeRichHPDPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
+                                   const SIMDVector& vGlobal,
+                                   SIMDPoint& hitPosition,
                                    SIMDRayTResult::SmartIDs& smartID,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
@@ -227,9 +227,9 @@ DeRichHPDPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
 // returns the (SIMD) intersection point with the detection plane
 //=========================================================================
 DeRichHPDPanel::SIMDRayTResult::Results
-DeRichHPDPanel::detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
-                                   const Rich::SIMD::Vector<FP>& vGlobal,
-                                   Rich::SIMD::Point<FP>& hitPosition,
+DeRichHPDPanel::detPlanePointSIMD( const SIMDPoint& pGlobal,
+                                   const SIMDVector& vGlobal,
+                                   SIMDPoint& hitPosition,
                                    SIMDRayTResult::SmartIDs& smartID,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
@@ -523,10 +523,10 @@ bool DeRichHPDPanel::findHPDColAndPos ( const Gaudi::XYZPoint& inPanel,
 //=========================================================================
 // sensitiveVolumeID
 //=========================================================================
-int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
+int DeRichHPDPanel::sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const
 {
   // Create a RichSmartID for this RICH and panel
-  LHCb::RichSmartID id( rich(), side() );
+  LHCb::RichSmartID id( panelID() );
   // set the remaining fields from the position
   return ( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) );
 }
@@ -563,13 +563,13 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   // Work out what Rich/panel I am
   if ( name().find("Rich1") != std::string::npos )
   {
-    setRich( Rich::Rich1 );
-    setSide( centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
+    setRichSide( Rich::Rich1,
+                 centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
   }
   else if ( name().find("Rich2") != std::string::npos )
   {
-    setRich( Rich::Rich2 );
-    setSide( centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
+    setRichSide( Rich::Rich2,
+                 centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
   }
   if ( rich() == Rich::InvalidDetector ||
        side() == Rich::InvalidSide )
@@ -782,6 +782,23 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   }
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();
   m_PDPanelToGlobalTransform = m_globalToPDPanelTransform.Inverse();
+
+   // transform does not like direct assignent from scalar version :(
+  {
+    double xx{0}, xy{0}, xz{0}, dx{0}, yx{0}, yy{0};
+    double yz{0}, dy{0}, zx{0}, zy{0}, zz{0}, dz{0};
+
+    // panel
+    m_globalToPDPanelTransform.GetComponents( xx, xy, xz,
+                                              dx, yx, yy,
+                                              yz, dy, zx,
+                                              zy, zz, dz );
+    m_globalToPDPanelTransformSIMD.SetComponents( xx, xy, xz,
+                                                  dx, yx, yy,
+                                                  yz, dy, zx,
+                                                  zy, zz, dz );
+    
+  }
 
   return StatusCode::SUCCESS;
 }

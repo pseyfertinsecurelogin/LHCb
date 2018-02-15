@@ -39,9 +39,10 @@ class DeRichPMT : public DeRichPD
 public:
 
   /// Standard constructor
-  DeRichPMT ( const std::string & name = "" );
+  explicit DeRichPMT ( const std::string & name = "" );
 
-  virtual ~DeRichPMT( ) = default; ///< Destructor
+  /// Destructor
+  virtual ~DeRichPMT( ) = default; 
 
   /**
    * Retrieves reference to class identifier
@@ -67,6 +68,12 @@ public:
   bool detectionPoint ( const LHCb::RichSmartID smartID,
                         Gaudi::XYZPoint& detectPoint,
                         bool photoCathodeSide = false ) const override final;
+
+  // (SIMD) Converts RichSmartIDs to an SIMD point in global coordinates.
+  DeRichPD::SIMDFP::MaskType 
+  detectionPoint ( const SmartIDs& smartID,
+                   SIMDPoint& detectPoint,
+                   bool photoCathodeSide = false ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
@@ -99,6 +106,24 @@ public:
     //return geometry()->toLocalMatrix();
   }
 
+  /// Shortcut to the 'to global' matrix
+  inline const Gaudi::Transform3D & toGlobalMatrix() const noexcept
+  {
+    return geometry()->toGlobalMatrix();
+  }
+
+  /// Set the zeroInPanelLocal position
+  inline void setZeroInPanelLocal( const Gaudi::XYZPoint & p ) noexcept
+  {
+    m_zeroInPanelLocal = p;
+  }
+
+  /// Access the zeroInPanelLocal position
+  inline const Gaudi::XYZPoint & zeroInPanelLocal() const noexcept
+  {
+    return m_zeroInPanelLocal;
+  }
+
 private:
 
   /// Floating point to use internal. Use float for reduced memory footprint.
@@ -116,16 +141,18 @@ private:
 
 private:
 
-  inline Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const IPix fracPixelCol,
-                                                       const IPix fracPixelRow ) const
+  inline Gaudi::XYZPoint
+  getAnodeHitCoordFromPixelNum( const IPix fracPixelCol,
+                                const IPix fracPixelRow ) const noexcept
   {
     const auto xh = ( (FType)fracPixelCol - m_PmtNumPixColFrac ) * m_PmtEffectivePixelXSize;
     const auto yh = ( (FType)fracPixelRow - m_PmtNumPixRowFrac ) * m_PmtEffectivePixelYSize;
     return { xh, yh, m_PmtAnodeHalfThickness };
   }
   
-  inline  Gaudi::XYZPoint getAnodeHitCoordFromGrandPixelNum( const IPix fracPixelCol,
-                                                             const IPix fracPixelRow ) const
+  inline Gaudi::XYZPoint
+  getAnodeHitCoordFromGrandPixelNum( const IPix fracPixelCol,
+                                     const IPix fracPixelRow ) const noexcept
   {
     const auto aXEffPixel = ( fracPixelCol==0 || fracPixelCol==(m_PmtNumPixCol-1) ?  
                               m_GrandPmtEdgePixelXSize : m_GrandPmtEffectivePixelXSize );
@@ -139,7 +166,7 @@ private:
   inline Gaudi::XYZPoint 
   getAnodeHitCoordFromMultTypePixelNum( const IPix fracPixelCol,
                                         const IPix fracPixelRow,
-                                        const Rich::DetectorType rich ) const
+                                        const Rich::DetectorType rich ) const noexcept
   {
     return ( rich == Rich::Rich2 && PmtIsGrand() ?
              getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow ) :
@@ -160,6 +187,10 @@ private:
 
   /// Cache 'to local' matrix
   Gaudi::Transform3D m_toLocM;
+
+  /* Cache the point where {0,0,0} in this PD local frame appears
+   * in the local frame of its parent PD panel */
+  Gaudi::XYZPoint m_zeroInPanelLocal;
 
   FType m_zShift{0};
 

@@ -174,7 +174,7 @@ namespace Rich
       const typename POINT::Scalar two(2.0);
       const typename FTYPE::mask_type OK(true);
       // Plane normal
-      const VECTOR normal  = plane.Normal();
+      const VECTOR normal ( plane.Normal() );
       // compute distance to the plane
       const FTYPE scalar   = direction.Dot(normal);
       const FTYPE distance = -(plane.Distance(position)) / scalar;
@@ -187,3 +187,4 @@ namespace Rich
   }
 
 }
+

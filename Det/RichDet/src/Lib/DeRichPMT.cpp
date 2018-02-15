@@ -85,8 +85,8 @@ StatusCode DeRichPMT::initialize()
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
 
   // Trigger first update
-  StatusCode sc = updMgrSvc()->update(this);
-  if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
+  const auto sc = updMgrSvc()->update(this);
+  if ( !sc ) { fatal() << "UMS updates failed" << endmsg; }
 
   return sc;
 }
@@ -109,7 +109,7 @@ DetectorElement * DeRichPMT::getFirstRich()
     SmartDataPtr<DetectorElement> deRich( dataSvc(), firstRichLoc );
     if ( deRich ) { de = deRich; }
   }
-  if ( !de ) { error() << "Could not load DeRich for DeRichPMTPanel" << endmsg; }
+  if ( !de ) { error() << "Could not load DeRich for DeRichPMT" << endmsg; }
   return de;
 }
 
@@ -128,23 +128,21 @@ StatusCode DeRichPMT::getPMTParameters()
 
   // CRJ - To reduce PMT memory size do not load parameters not used yet ...
 
-  //m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
-  //m_PmtAnodeYSize = deRich->param<double> ("RichPmtAnodeYSize" );
-  const auto PmtAnodeZSize = deRich->param<double> ("RichPmtAnodeZSize" );
+  const auto PmtAnodeZSize = deRich->param<double>("RichPmtAnodeZSize" );
   const auto PmtAnodeLocationInPmt = deRich->param<double>("RichPmtSiliconDetectorLocalZlocation" );
-  const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
-  const auto PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
-  const auto PmtPixelGap = deRich->param<double> ( "RichPmtPixelGap" );
+  const auto PmtPixelXSize = deRich->param<double>("RichPmtPixelXSize");
+  const auto PmtPixelYSize = deRich->param<double>("RichPmtPixelYSize");
+  const auto PmtPixelGap = deRich->param<double>("RichPmtPixelGap");
   m_PmtEffectivePixelXSize = PmtPixelXSize + PmtPixelGap;
   m_PmtEffectivePixelYSize = PmtPixelYSize + PmtPixelGap;
   m_PmtAnodeHalfThickness = PmtAnodeZSize/2.0;
-  m_PmtNumPixCol = deRich->param<int> ("RichPmtNumPixelCol");
-  m_PmtNumPixRow = deRich->param<int> ("RichPmtNumPixelRow");
+  m_PmtNumPixCol = deRich->param<int>("RichPmtNumPixelCol");
+  m_PmtNumPixRow = deRich->param<int>("RichPmtNumPixelRow");
   m_PmtNumPixColFrac = (m_PmtNumPixCol-1) * 0.5;
   m_PmtNumPixRowFrac = (m_PmtNumPixRow-1) * 0.5;
 
-  m_PmtQwZSize   = deRich->param<double> ( "RichPmtQuartzZSize" );
-  const auto QwToAnodeZDist = deRich->param<double> ( "RichPmtQWToSiMaxDist" );
+  m_PmtQwZSize   = deRich->param<double>("RichPmtQuartzZSize" );
+  const auto QwToAnodeZDist = deRich->param<double>("RichPmtQWToSiMaxDist");
 
   m_zShift = QwToAnodeZDist + PmtAnodeLocationInPmt;
 
@@ -154,10 +152,8 @@ StatusCode DeRichPMT::getPMTParameters()
   {
 
     Rich2PmtArrayConfig = deRich->param<int>("Rich2PMTArrayConfig");
-    if ( deRich->exists ("RichGrandPmtAnodeXSize" ) )
+    if ( deRich->exists("RichGrandPmtAnodeXSize") )
     {
-      //m_GrandPmtAnodeXSize     = deRich->param<double>( "RichGrandPmtAnodeXSize" );
-      //m_GrandPmtAnodeYSize     = deRich->param<double>( "RichGrandPmtAnodeYSize" );
       const auto GrandPmtAnodeZSize  = deRich->param<double>( "RichGrandPmtAnodeZSize" );
       const auto GrandPmtPixelXSize  = deRich->param<double>( "RichGrandPmtPixelXSize" );
       const auto GrandPmtPixelYSize  = deRich->param<double>( "RichGrandPmtPixelYSize" );
@@ -166,8 +162,6 @@ StatusCode DeRichPMT::getPMTParameters()
       m_GrandPmtEdgePixelYSize = deRich->param<double>( "RichGrandPmtEdgePixelYSize");
       m_GrandPmtEffectivePixelXSize = GrandPmtPixelXSize + GrandPmtPixelGap;
       m_GrandPmtEffectivePixelYSize = GrandPmtPixelYSize + GrandPmtPixelGap;
-      //m_GrandPmtEdgePixelXDiff = m_GrandPmtEdgePixelXSize - GrandPmtPixelXSize;
-      //m_GrandPmtEdgePixelYDiff = m_GrandPmtEdgePixelYSize - GrandPmtPixelYSize;
       m_GrandPmtAnodeHalfThickness = GrandPmtAnodeZSize/2.0;
     }
 
@@ -227,14 +221,14 @@ void DeRichPMT::setPmtIsGrandFlag( const bool isGrand )
   {
     if ( isGrand )
     {
-      const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
-      const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
+      const auto GrandPmtPixelXSize = deRich->param<double>("RichGrandPmtPixelXSize");
+      const auto GrandPmtPixelYSize = deRich->param<double>("RichGrandPmtPixelYSize");
       m_pixelArea = GrandPmtPixelXSize * GrandPmtPixelYSize;
     }
     else
     {
-      const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
-      const auto PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
+      const auto PmtPixelXSize = deRich->param<double>("RichPmtPixelXSize");
+      const auto PmtPixelYSize = deRich->param<double>("RichPmtPixelYSize");
       m_pixelArea = PmtPixelXSize * PmtPixelYSize;
     }
     m_effPixelArea = m_pixelArea; // PMTs have no demagnification
@@ -320,7 +314,37 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
 
 //===============================================================================================
 
-Gaudi::XYZPoint DeRichPMT::detPointOnAnode ( const LHCb::RichSmartID& smartID ) const
+DeRichPD::SIMDFP::MaskType
+DeRichPMT::detectionPoint( const SmartIDs& smartID,
+                           SIMDPoint& detectPoint,
+                           bool photoCathodeSide ) const 
+{
+  // return status
+  SIMDFP::MaskType ok(false);
+
+  // Just use a scalar loop here...
+  SIMDFP X(0), Y(0), Z(0);
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    Gaudi::XYZPoint p{0,0,0};
+    ok[i] = detectionPoint( smartID[i], p, photoCathodeSide );
+    if ( ok[i] )
+    {
+      X[i] = p.X();
+      Y[i] = p.Y();
+      Z[i] = p.Z();
+    }
+  }
+  detectPoint = { X, Y, Z };
+
+  // To Do, implement a full SIMD version instead
+
+  return ok;
+}
+
+//===============================================================================================
+
+Gaudi::XYZPoint DeRichPMT::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 {
   return ( m_dePmtAnode->geometry()->toGlobal( getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(),
                                                                                      smartID.pixelRow(),
