@@ -50,7 +50,7 @@ namespace bankKiller_details {
         v.reserve(vs.size());
         try { std::transform( vs.begin(), vs.end(), std::back_inserter(v),
                               [](const std::string& s) {
-                                  InnerType t;
+                                  InnerType t{};
                                   auto sc = parse(t,s);
                                   if (!sc) throw GaudiException("Bad Parse","", sc);
                                   return t;
