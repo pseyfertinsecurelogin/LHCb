@@ -81,13 +81,13 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID& smartID ) const;
 
-  inline int pmtModuleNumber() const noexcept { return m_moduleNum; }
+  //inline int pmtModuleNumber() const noexcept { return m_moduleNum; }
 
-  inline int pmtCopyNumber() const noexcept { return m_copyNum; }
+  //inline int pmtCopyNumber() const noexcept { return m_copyNum; }
 
-  inline void setPmtLensFlag( const bool aflag ) noexcept { m_PmtLensFlag = aflag; }
+  //inline void setPmtLensFlag( const bool aflag ) noexcept { m_PmtLensFlag = aflag; }
 
-  inline bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
+  //inline bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
   
   void setPmtIsGrandFlag( const bool isGrand );
 
@@ -99,11 +99,13 @@ public:
   /// Access the PD ID
   inline LHCb::RichSmartID pdSmartID() const noexcept { return m_pdSmartID; }
 
+  /// Access the RICH
+  inline Rich::DetectorType rich() const noexcept { return m_rich; }
+
   /// Shortcut to the 'to local' matrix
   inline const Gaudi::Transform3D & toLocalMatrix() const noexcept
   {
     return m_toLocM;
-    //return geometry()->toLocalMatrix();
   }
 
   /// Shortcut to the 'to global' matrix
@@ -149,6 +151,16 @@ private:
     const auto yh = ( (FType)fracPixelRow - m_PmtNumPixRowFrac ) * m_PmtEffectivePixelYSize;
     return { xh, yh, m_PmtAnodeHalfThickness };
   }
+
+  inline SIMDPoint
+  getAnodeHitCoordFromPixelNum( const SIMDUINT& fracPixelCol,
+                                const SIMDUINT& fracPixelRow ) const noexcept
+  {
+    using namespace LHCb::SIMD;
+    const auto xh = ( simd_cast<SIMDFP>(fracPixelCol) - SIMDFP(m_PmtNumPixColFrac) ) * SIMDFP(m_PmtEffectivePixelXSize);
+    const auto yh = ( simd_cast<SIMDFP>(fracPixelRow) - SIMDFP(m_PmtNumPixRowFrac) ) * SIMDFP(m_PmtEffectivePixelYSize);
+    return { xh, yh, SIMDFP(m_PmtAnodeHalfThickness) };
+  }
   
   inline Gaudi::XYZPoint
   getAnodeHitCoordFromGrandPixelNum( const IPix fracPixelCol,
@@ -162,6 +174,24 @@ private:
     const auto yh = ( (FType)fracPixelRow - m_PmtNumPixRowFrac ) * aYEffPixel;
     return { xh, yh, m_GrandPmtAnodeHalfThickness };
   }
+
+  inline SIMDPoint
+  getAnodeHitCoordFromGrandPixelNum( const SIMDUINT& fracPixelCol,
+                                     const SIMDUINT& fracPixelRow ) const noexcept
+  {
+    const auto xmask = simd_cast<SIMDFP::MaskType>( fracPixelCol == SIMDUINT::Zero() || 
+                                                    fracPixelCol == SIMDUINT(m_PmtNumPixCol-1) );
+    const auto ymask = simd_cast<SIMDFP::MaskType>( fracPixelRow == SIMDUINT::Zero() || 
+                                                    fracPixelRow == SIMDUINT(m_PmtNumPixRow-1) );
+    auto aXEffPixel   = SIMDFP(m_GrandPmtEffectivePixelXSize);
+    aXEffPixel(xmask) = SIMDFP(m_GrandPmtEdgePixelXSize);
+    auto aYEffPixel   = SIMDFP(m_GrandPmtEffectivePixelYSize);
+    aYEffPixel(ymask) = SIMDFP(m_GrandPmtEdgePixelYSize);
+
+    const auto xh = ( simd_cast<SIMDFP>(fracPixelCol) - SIMDFP(m_PmtNumPixColFrac) ) * aXEffPixel;
+    const auto yh = ( simd_cast<SIMDFP>(fracPixelRow) - SIMDFP(m_PmtNumPixRowFrac) ) * aYEffPixel;
+    return { xh, yh, SIMDFP(m_GrandPmtAnodeHalfThickness) };
+  }
   
   inline Gaudi::XYZPoint 
   getAnodeHitCoordFromMultTypePixelNum( const IPix fracPixelCol,
@@ -172,8 +202,18 @@ private:
              getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow ) :
              getAnodeHitCoordFromPixelNum     ( fracPixelCol, fracPixelRow ) );
   }
+
+  inline SIMDPoint
+  getAnodeHitCoordFromMultTypePixelNum( const SIMDUINT& fracPixelCol,
+                                        const SIMDUINT& fracPixelRow,
+                                        const Rich::DetectorType rich ) const noexcept
+  {
+    return ( rich == Rich::Rich2 && PmtIsGrand() ?
+             getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow ) :
+             getAnodeHitCoordFromPixelNum     ( fracPixelCol, fracPixelRow ) );
+  }
   
-  Gaudi::XYZPoint RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const;
+  //Gaudi::XYZPoint RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const;
   
 private:
 
@@ -188,6 +228,9 @@ private:
   /// Cache 'to local' matrix
   Gaudi::Transform3D m_toLocM;
 
+  /// SIMD To global transform
+  Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toGlobalMatrixSIMD;
+
   /* Cache the point where {0,0,0} in this PD local frame appears
    * in the local frame of its parent PD panel */
   Gaudi::XYZPoint m_zeroInPanelLocal;
@@ -196,12 +239,12 @@ private:
 
   FType m_PmtQwZSize{0};
 
-  bool m_PmtLensFlag{false};
-  FType m_PmtLensRoc2{0};
-  FType m_PmtLensMagRatio{0};
+  //bool m_PmtLensFlag{false};
+  //FType m_PmtLensRoc2{0};
+  //FType m_PmtLensMagRatio{0};
 
-  int m_moduleNum{0}; ///< Module number
-  int m_copyNum{0};   ///< Copy number
+  //int m_moduleNum{0}; ///< Module number
+  //int m_copyNum{0};   ///< Copy number
 
   FType m_PmtEffectivePixelXSize{0};
   FType m_PmtEffectivePixelYSize{0};
@@ -216,14 +259,15 @@ private:
   FType m_GrandPmtEffectivePixelXSize{0};
   FType m_GrandPmtEffectivePixelYSize{0};
   FType m_GrandPmtAnodeHalfThickness{0};
-  bool m_Rich2UseGrandPmt{false};
-  bool m_Rich2UseMixedPmt{false};
 
+  //bool m_Rich2UseGrandPmt{false};
+  //bool m_Rich2UseMixedPmt{false};
   bool m_PmtIsGrand{false};
 
   /// The PMT Anode detector element
   IDetectorElement * m_dePmtAnode = nullptr;
 
+  /// The RICH this PMT is in
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
 };

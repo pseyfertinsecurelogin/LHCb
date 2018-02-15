@@ -146,7 +146,7 @@ private: // setup methods
   StatusCode getPanelGeometryInfo();
 
   /// Setup for Lens Flag
-  void Rich1SetupPMTModulesWithLens();
+  //void Rich1SetupPMTModulesWithLens();
 
   void RichSetupMixedSizePmtModules();
 
@@ -284,28 +284,27 @@ private:
     return aMNum;
   }
 
-  inline SIMDINT32 getLensPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
-  {
-    // for values outside the range, set the closest value to the
-    // corresponding edges.
-    PRow.setZero( PRow < SIMDINT32::Zero() );
-    PRow( PRow >= m_RichNumLensPmtinModuleRowColSIMD[1] ) = m_RichNumLensPmtinModuleRowColSIMD[1] - SIMDINT32::One();
-    PCol.setZero( PCol < SIMDINT32::Zero() );
-    PCol( PCol >= m_RichNumLensPmtinModuleRowColSIMD[0] ) = m_RichNumLensPmtinModuleRowColSIMD[0] - SIMDINT32::One();
-    return ( PCol + ( PRow*m_RichNumLensPmtinModuleRowColSIMD[0] ) );
-  }
+  // inline SIMDINT32 getLensPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
+  // {
+  //   // for values outside the range, set the closest value to the
+  //   // corresponding edges.
+  //   PRow.setZero( PRow < SIMDINT32::Zero() );
+  //   PRow( PRow >= m_RichNumLensPmtinModuleRowColSIMD[1] ) = m_RichNumLensPmtinModuleRowColSIMD[1] - SIMDINT32::One();
+  //   PCol.setZero( PCol < SIMDINT32::Zero() );
+  //   PCol( PCol >= m_RichNumLensPmtinModuleRowColSIMD[0] ) = m_RichNumLensPmtinModuleRowColSIMD[0] - SIMDINT32::One();
+  //   return ( PCol + ( PRow*m_RichNumLensPmtinModuleRowColSIMD[0] ) );
+  // }
 
   /// setup flags for grand Modules
   Int getModuleCopyNumber( const std::string& aModuleName );
 
-  inline ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint ) const
-  {
-    const auto inPanel = m_toLocalMatrixSIMD * aGlobalPoint;
-    return findPMTArraySetupSIMD( aGlobalPoint, inPanel );
-  } 
+  //inline ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint ) const
+  // {
+  //  const auto inPanel = m_toLocalMatrixSIMD * aGlobalPoint;
+  //  return findPMTArraySetupSIMD( aGlobalPoint, inPanel );
+  // } 
   
-  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aGlobalPoint,
-                                        const SIMDPoint& aLocalPoint ) const;
+  ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) const;
 
 private:
 
@@ -316,7 +315,7 @@ private:
     SIMDINT32           aModuleRow        = -SIMDINT32::One();
     SIMDINT32           aModuleNum        = -SIMDINT32::One();
     SIMDINT32           aModuleNumInPanel = -SIMDINT32::One();
-    SIMDINT32::MaskType aModuleWithLens   { false };
+    //SIMDINT32::MaskType aModuleWithLens   { false };
   };
 
   /// Function pointer for the getModuleNums method to use depending on settings
@@ -328,33 +327,33 @@ private:
     (this->*m_getModuleNumsSIMD)( x, y, nums );
   }
 
-  void getModuleNums_R1Up_Lens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
-  {
+  // void getModuleNums_R1Up_Lens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  // {
     
-    nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[0]) * m_PmtModulePitchInvSIMD ) ) 
-      + m_Rich1PmtPanelWithLensColSizeSIMD[2];
-    nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[1]) * m_PmtModulePitchInvSIMD ) );
+  //   nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[0]) * m_PmtModulePitchInvSIMD ) ) 
+  //     + m_Rich1PmtPanelWithLensColSizeSIMD[2];
+  //   nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[1]) * m_PmtModulePitchInvSIMD ) );
 
-    const auto m1 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x < m_Rich1PmtPanelWithLensXSizeSIMD[0] );
-    if ( any_of(m1) )
-    {
-      nums.aModuleCol(m1) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[2])*m_PmtModuleWithLensPitchInvSIMD ) );
-      nums.aModuleRow(m1) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
-    }
+  //   const auto m1 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x < m_Rich1PmtPanelWithLensXSizeSIMD[0] );
+  //   if ( any_of(m1) )
+  //   {
+  //     nums.aModuleCol(m1) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[2])*m_PmtModuleWithLensPitchInvSIMD ) );
+  //     nums.aModuleRow(m1) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
+  //   }
 
-    const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[1] );
-    if ( any_of(m2) )
-    {
-      nums.aModuleCol(m2) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[4])*m_PmtModuleWithLensPitchInvSIMD ) ) 
-        + m_Rich1PmtPanelWithLensColSizeSIMD[0] + m_Rich1PmtPanelWithLensColSizeSIMD[2];
-      nums.aModuleRow(m2) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
-    }
+  //   const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[1] );
+  //   if ( any_of(m2) )
+  //   {
+  //     nums.aModuleCol(m2) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[4])*m_PmtModuleWithLensPitchInvSIMD ) ) 
+  //       + m_Rich1PmtPanelWithLensColSizeSIMD[0] + m_Rich1PmtPanelWithLensColSizeSIMD[2];
+  //     nums.aModuleRow(m2) = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
+  //   }
     
-    nums.aModuleWithLens = m1 || m2;
+  //   nums.aModuleWithLens = m1 || m2;
     
-    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
-  }
+  //   nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+  //   nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
+  // }
   
   void getModuleNums_R1Up_NoLens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
   {
@@ -364,33 +363,33 @@ private:
     nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];  
   }
   
-  void getModuleNums_R1Dn_Lens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
-  {
+  // void getModuleNums_R1Dn_Lens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  // {
     
-    nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[1])*m_PmtModulePitchInvSIMD ) )
-      + m_Rich1PmtPanelWithLensColSizeSIMD[1];
-    nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[3])*m_PmtModulePitchInvSIMD)    );
+  //   nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[1])*m_PmtModulePitchInvSIMD ) )
+  //     + m_Rich1PmtPanelWithLensColSizeSIMD[1];
+  //   nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[3])*m_PmtModulePitchInvSIMD)    );
     
-    const auto m1 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[1] );
-    if ( any_of(m1) )
-    {
-      nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[5])*m_PmtModuleWithLensPitchInvSIMD ) );
-      nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
-    }
+  //   const auto m1 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[1] );
+  //   if ( any_of(m1) )
+  //   {
+  //     nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[5])*m_PmtModuleWithLensPitchInvSIMD ) );
+  //     nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
+  //   }
     
-    const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x < m_Rich1PmtPanelWithLensXSizeSIMD[0] );
-    if ( any_of(m2) )
-    {
-      nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[3])*m_PmtModuleWithLensPitchInvSIMD ))
-        + m_Rich1PmtPanelWithLensColSizeSIMD[0]+ m_Rich1PmtPanelWithLensColSizeSIMD[1] ;
-      nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ));
-    }
+  //   const auto m2 = LHCb::SIMD::simd_cast<SIMDINT32::MaskType>( x < m_Rich1PmtPanelWithLensXSizeSIMD[0] );
+  //   if ( any_of(m2) )
+  //   {
+  //     nums.aModuleCol = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[3])*m_PmtModuleWithLensPitchInvSIMD ))
+  //       + m_Rich1PmtPanelWithLensColSizeSIMD[0]+ m_Rich1PmtPanelWithLensColSizeSIMD[1] ;
+  //     nums.aModuleRow = LHCb::SIMD::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ));
+  //   }
   
-    nums.aModuleWithLens = m1 || m2;
+  //   nums.aModuleWithLens = m1 || m2;
   
-    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
-  }
+  //   nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+  //   nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
+  // }
 
   void getModuleNums_R1Dn_NoLens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
   {
@@ -607,24 +606,24 @@ private:
     return sc;
   }
 
-  inline bool isCurrentPmtModuleWithLens(const Int aModuleNum) const noexcept
-  {
-    return ( aModuleNum < m_totNumPmtModuleInRich1 ?
-             m_RichPmtModuleLensFlag[aModuleNum] : false );
-  }
+  // inline bool isCurrentPmtModuleWithLens(const Int aModuleNum) const noexcept
+  // {
+  //   return ( aModuleNum < m_totNumPmtModuleInRich1 ?
+  //            m_RichPmtModuleLensFlag[aModuleNum] : false );
+  // }
   
-  inline bool isCurrentPmtWithLens( const Int aPMTNum ) const noexcept
-  {
-    const Int aModuleNum = aPMTNum/m_NumPmtInRichModule;
-    return isCurrentPmtModuleWithLens(aModuleNum);
-  }
+  // inline bool isCurrentPmtWithLens( const Int aPMTNum ) const noexcept
+  // {
+  //   const Int aModuleNum = aPMTNum/m_NumPmtInRichModule;
+  //   return isCurrentPmtModuleWithLens(aModuleNum);
+  // }
 
-  inline Gaudi::XYZPoint DemagnifyFromLens( const Gaudi::XYZPoint& aLensPoint ) const noexcept
-  {
-    return { aLensPoint.x() * m_Rich1LensDemagnificationFactor,
-             aLensPoint.y() * m_Rich1LensDemagnificationFactor,
-             aLensPoint.z() };
-  }
+  // inline Gaudi::XYZPoint DemagnifyFromLens( const Gaudi::XYZPoint& aLensPoint ) const noexcept
+  // {
+  //   return { aLensPoint.x() * m_Rich1LensDemagnificationFactor,
+  //            aLensPoint.y() * m_Rich1LensDemagnificationFactor,
+  //            aLensPoint.z() };
+  // }
 
   inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept
   {
@@ -676,17 +675,17 @@ private:
   /// (X,Y) panel half sizes for this panel
   XYArraySIMD m_xyHalfSizeSIMD = {{}};
 
-  std::array<SIMDFP,2> m_Rich1PmtPanelWithLensXSizeSIMD = {{}};
-  std::array<SIMDFP,2> m_Rich1PmtPanelWithLensYSizeSIMD = {{}};
+  //std::array<SIMDFP,2> m_Rich1PmtPanelWithLensXSizeSIMD = {{}};
+  //std::array<SIMDFP,2> m_Rich1PmtPanelWithLensYSizeSIMD = {{}};
 
-  std::array<SIMDINT32,2> m_Rich1PmtPanelWithLensColSizeSIMD = {{}};
+  //std::array<SIMDINT32,2> m_Rich1PmtPanelWithLensColSizeSIMD = {{}};
 
   SIMDFP m_PmtModulePitchInvSIMD = SIMDFP::Zero();
 
   std::array<SIMDFP,4> m_PmtModulePlaneHalfSizeR1SIMD = {{}};
   std::array<SIMDFP,4> m_PmtModulePlaneHalfSizeR2SIMD = {{}};
 
-  SIMDFP m_PmtModuleWithLensPitchInvSIMD = SIMDFP::Zero();
+  //SIMDFP m_PmtModuleWithLensPitchInvSIMD = SIMDFP::Zero();
 
   std::array<SIMDINT32,4> m_RichPmtNumModulesInRowColSIMD = {{}};
 
@@ -697,9 +696,9 @@ private:
 
   std::array<SIMDFP,4> m_MixedStdPmtModulePlaneHalfSizeR2SIMD = {{}};
 
-  SIMDFP m_PmtMasterWithLensLateralSizeSIMD = SIMDFP::Zero();
+  //SIMDFP m_PmtMasterWithLensLateralSizeSIMD = SIMDFP::Zero();
 
-  std::array<SIMDINT32,2> m_RichNumLensPmtinModuleRowColSIMD = {{}};
+  //std::array<SIMDINT32,2> m_RichNumLensPmtinModuleRowColSIMD = {{}};
 
   std::array<SIMDFP,2> m_RichGrandPmtModuleActiveAreaHalfSizeSIMD = {{}};
 
@@ -713,7 +712,7 @@ private:
 
   std::array<SIMDINT32,2> m_NumPmtInRowColSIMD = {{}};
 
-  SIMDFP m_Rich1LensDemagnificationFactorSIMD = SIMDFP::Zero();
+  //SIMDFP m_Rich1LensDemagnificationFactorSIMD = SIMDFP::Zero();
 
   SIMDFP m_GrandPmtAnodeXEdgeSIMD = SIMDFP::Zero();
   SIMDFP m_GrandPmtAnodeYEdgeSIMD = SIMDFP::Zero();
@@ -768,43 +767,46 @@ private:
   std::array<Int,4> m_NumPmtModuleInRich = {{}};
   Int m_NumPmtInRichModule{0};
   Int m_totNumPmtModuleInRich{0};
-  double m_PmtAnodeXSize{0};
-  double m_PmtAnodeYSize{0};
-  double m_PmtPixelGap{0};
+  //double m_PmtAnodeXSize{0};
+  //double m_PmtAnodeYSize{0};
+  //double m_PmtPixelGap{0};
   double m_PmtAnodeXEdge{0};
   double m_PmtAnodeYEdge{0};
-  double m_AnodeXPixelSize{0};
-  double m_AnodeYPixelSize{0};
+  //double m_AnodeXPixelSize{0};
+  //double m_AnodeYPixelSize{0};
   double m_PmtMasterLateralSize{0};
-  double m_RichPmtQuartzThickness{0};
-  double m_RichPmtQuartzLocalZInPmt{0};
+  //double m_RichPmtQuartzThickness{0};
+  //double m_RichPmtQuartzLocalZInPmt{0};
 
-  bool m_Rich1PmtLensPresence{false};
-  std::vector<int>  m_Rich1PmtLensModuleCol;
-  std::vector<bool> m_RichPmtModuleLensFlag;
-  Int m_totNumPmtModuleInRich1{0};
+  //bool m_Rich1PmtLensPresence{false};
+  //std::vector<int>  m_Rich1PmtLensModuleCol;
+  //std::vector<bool> m_RichPmtModuleLensFlag;
+  
+  //Int m_totNumPmtModuleInRich1{0};
 
-  double m_PmtLensPitch{0};
-  double m_Rich1LensDemagnificationFactor{0};
+  //double m_PmtLensPitch{0};
+  //double m_Rich1LensDemagnificationFactor{0};
 
-  bool  m_Rich2UseGrandModule{false};
-  Int   m_Rich2ArrayConfig{0};
-  bool  m_Rich2UseMixedModule{false};
+  bool m_Rich2UseGrandModule{false};
+  Int  m_Rich2ArrayConfig{0};
+  bool m_Rich2UseMixedModule{false};
 
-  double m_GrandPmtAnodeXSize{0};
-  double m_GrandPmtAnodeYSize{0};
-  double m_GrandPmtPixelGap{0};
+  //double m_GrandPmtAnodeXSize{0};
+  //double m_GrandPmtAnodeYSize{0};
+  //double m_GrandPmtPixelGap{0};
   double m_GrandPmtAnodeXEdge{0};
   double m_GrandPmtAnodeYEdge{0};
-  double m_GrandAnodeXPixelSize{0};
-  double m_GrandAnodeYPixelSize{0};
+  //double m_GrandAnodeXPixelSize{0};
+  //double m_GrandAnodeYPixelSize{0};
   double m_GrandPmtMasterLateralSize{0};
-  Int m_GrandNumPmtInRichModule{0};
+  //Int m_GrandNumPmtInRichModule{0};
   std::array<Int,2> m_NumGrandPmtInRowCol = {{}};
-  Int m_Rich2TotNumGrandPmts{0};
-  Int m_Rich2TotNumStdPmts{0};
-  Int m_Rich2TotNumGrandModules{0};
-  Int m_Rich2TotNumStdModules{0};
+
+  //Int m_Rich2TotNumGrandPmts{0};
+  //Int m_Rich2TotNumStdPmts{0};
+  //Int m_Rich2TotNumGrandModules{0};
+  
+  //Int m_Rich2TotNumStdModules{0};
 
   std::vector<int> m_Rich2MixedModuleArrayColumnSize{3,0};
   std::vector<bool> m_ModuleIsWithGrandPMT;
