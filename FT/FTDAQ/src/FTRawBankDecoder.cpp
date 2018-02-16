@@ -52,15 +52,19 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
   for ( const LHCb::RawBank* bank : banks) {
     int source       = bank->sourceID();
-    unsigned station = source/16 + 1u; // JvT: this should be done by a mapping!
-    unsigned layer   = (source & 12) /4;  // JvT: this should be done by a mapping!
-    unsigned quarter = source & 3; // JvT: this should be done by a mapping!
+		unsigned uniqueQuarter = m_ftReadoutTool->uniqueQuarter(source);
     auto size        = bank->size(); // in bytes, multiple of 4
 
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << "source " << source
-                                            << " station " << station << " layer " << layer
-                                            << " quarter " << quarter << " size " << size
-                                            << endmsg;
+		if ( msgLevel(MSG::VERBOSE) )
+			{
+				verbose() << "source " << source					
+									<< " uniqueQuarter " << uniqueQuarter 
+									<< " = (" << m_ftReadoutTool->station(source)
+									<< " " << m_ftReadoutTool->layer(source)
+									<< " " << m_ftReadoutTool->quarter(source)
+									<< ")"
+									<< " size " << size << endmsg;
+			}
     if ( bank->version() != 2 &&  bank->version() != 3) {
       error() << "** Unsupported FT bank version " << bank->version()
               << " for source " << source << " size " << size << " bytes."
@@ -78,8 +82,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
       unsigned modulesipm = sipmHeader >> FTRawBank::sipmShift ;
       unsigned module     = modulesipm >> FTRawBank::sipmShift ;
-      unsigned mat        = (modulesipm & 15 ) >> 2; // hardcoded: this should be replaced by mapping
-      unsigned sipm       = modulesipm & 3;          // hardcoded: this should be replaced by mapping
+      unsigned mat        = m_ftReadoutTool->mat (modulesipm);
+      unsigned sipm       = m_ftReadoutTool->sipm(modulesipm);
       int nClus           = sipmHeader & FTRawBank::nbClusMaximum ;
 
       if (UNLIKELY( msgLevel(MSG::VERBOSE) && nClus > 0) )
@@ -116,7 +120,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
             
             if( !cSize2 ){ //next cluster is not last fragment
-              clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+              clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
                                                    module, mat, sipm, channel },
                                 fraction, 4 );
               
@@ -143,7 +147,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               if(diff  > m_clusterMaxWidth){
                 
                 //add the first edge cluster
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+                clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
                                                      module, mat, sipm, channel },
                                   fraction, 0 ); //pseudoSize=0
                 
@@ -157,7 +161,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
                   // all middle clusters will have same size as the first cluster,
                   // so use same fraction
-                  clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module,
+                  clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter, module,
                                                        mat, sipm, channel+i },
                                     fraction, 0 );
                   
@@ -168,7 +172,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 }
                 
                 //add the last edge 
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+                clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
                                                      module, mat, sipm, channel2 },
                                   fraction2, 0 );
                 
@@ -185,7 +189,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 int frac                      = (widthClus-1)%2;
                 
                 //add the new cluster = cluster1+cluster2
-                clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter, module,
+                clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter, module,
                                                      mat, sipm, clusChanPosition},
                                   frac, widthClus );
                 
@@ -198,7 +202,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             }//last edge foud
           }//not the last cluster
           else{ //last cluster, so nothing we can do
-            clus.emplace_back(LHCb::FTChannelID{ station, layer, quarter,
+            clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
                                                  module, mat, sipm, channel },
                               fraction, 4 );
             
@@ -223,7 +227,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                                                channel, fraction, ( cSize ? 0 : 4 ), c ) << endmsg;
                         }
                           
-                        return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
+                        return  { LHCb::FTChannelID{ 0, 0, uniqueQuarter, module, mat, sipm, channel },
                                   fraction, ( cSize ? 0 : 4 ) };
                       } );
       }

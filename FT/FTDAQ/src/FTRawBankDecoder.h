@@ -7,6 +7,10 @@
 #include "GaudiAlg/Transformer.h"
 #include "GaudiAlg/FunctionalUtilities.h"
 
+#include "IFTReadoutTool.h"
+
+using namespace Gaudi::Functional;
+
 using FTLiteClusters = FastClusterContainer<LHCb::FTLiteCluster,int>;
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
@@ -15,13 +19,16 @@ using FTLiteClusters = FastClusterContainer<LHCb::FTLiteCluster,int>;
  *  @author Olivier Callot
  *  @date   2012-05-11
  */
-struct FTRawBankDecoder : Gaudi::Functional::Transformer< FTLiteClusters( const LHCb::RawEvent& ) >
+class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEvent& ) >
 {
+ public:
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
 
+ private:
+	IFTReadoutTool* m_ftReadoutTool = nullptr;
   // for MC, following property has to be same as cluster creator, 
   // not sure how to ensure this (TODO)
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4,
