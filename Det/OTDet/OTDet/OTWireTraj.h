@@ -13,11 +13,11 @@ namespace LHCb
 {
 
   /// Interface class
-  class OTWireTraj : public Trajectory
+  class OTWireTraj : public Trajectory<double>
   {
   public:
     typedef unsigned int Index ;
-    OTWireTraj(const double beginyrange, const double endyrange) : Trajectory(beginyrange,endyrange) {}
+    OTWireTraj(const double beginyrange, const double endyrange) : Trajectory<double>(beginyrange,endyrange) {}
     virtual void applyTranslation( const Vector& vec ) = 0 ;
     virtual std::unique_ptr<OTWireTraj> cloneOTWireTraj() const = 0 ;
     virtual void indexAndMu(double y, unsigned int& index, double& localmu) const = 0 ;
@@ -122,7 +122,7 @@ namespace LHCb
 
     public: // implementation for member functions of the interface
 
-    std::unique_ptr<Trajectory> clone() const override {
+    std::unique_ptr<Trajectory<double>> clone() const override {
       return std::make_unique<OTWireTrajImp<N>>(*this);
     }
 

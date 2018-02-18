@@ -9,6 +9,7 @@
 
 #include "Kernel/STChannelID.h"
 #include "Kernel/LHCbConstants.h"
+#include "Kernel/PiecewiseTrajectory.h"
 #include "STDet/DeSTBaseElement.h"
 #include "STDet/DeSTSensor.h"
 
@@ -28,14 +29,7 @@
  \li  <a href="http://ckm.physik.unizh.ch/software"><b>ST Software page</b></a><p>
 */
 
-
-namespace LHCb{
-  class Trajectory;
-  class PiecewiseTrajectory;
-}
-
 class DeSTSensor;
-
 
 class DeSTSector : public DeSTBaseElement  {
 
@@ -249,20 +243,20 @@ public:
   /** trajectory
    * @return trajectory for the fit
    */
-  std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::STChannelID& aChan,
+  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::STChannelID& aChan,
                                              const double offset) const;
 
   /** trajectory
    * @return trajectory of the first strip
    */
-  std::unique_ptr<LHCb::Trajectory> trajectoryFirstStrip() const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectoryFirstStrip() const;
 
   /** trajectory
    * @return trajectory of the last strip
    */
-  std::unique_ptr<LHCb::Trajectory> trajectoryLastStrip() const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectoryLastStrip() const;
 
-  /** Trajectory parameterized along y-axis */
+  /** Trajectory<double> parameterized along y-axis */
   void trajectory(unsigned int strip, double offset, double& dxdy, double& dzdy,
                   double& xAtYEq0, double& zAtYEq0, double& ybegin, double& yend) const ;
 
@@ -481,7 +475,7 @@ private:
   StatusCode updateStatusCondition();
   StatusCode updateNoiseCondition();
   void toEnumMap(const std::map<int,int>& input, DeSTSector::StatusMap& output);
-  std::unique_ptr<LHCb::Trajectory> createTraj(const unsigned int strip, const double offset ) const;
+  std::unique_ptr<LHCb::Trajectory<double>> createTraj(const unsigned int strip, const double offset ) const;
   void setStatusCondition( const std::string& type, const unsigned int entry,
                            const DeSTSector::Status& newStatus );
 

@@ -187,8 +187,9 @@ OTChannelID DeOTDetector::nextChannelRight(const OTChannelID aChannel) const {
                                                               nextRight );
 }
 
-std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryFirstWire(const LHCb::LHCbID& id,
-                                                                  int monolayer) const {
+std::unique_ptr<LHCb::Trajectory<double>>
+DeOTDetector::trajectoryFirstWire(const LHCb::LHCbID& id,
+                                  int monolayer) const {
   if (UNLIKELY(!id.isOT())) {
     throw GaudiException("The LHCbID is not of OT type!", "DeOTDetector.cpp",
                          StatusCode::FAILURE);
@@ -203,8 +204,9 @@ std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryFirstWire(const LHCb::
   return aModule->trajectoryFirstWire(monolayer);
 }
 
-std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryLastWire(const LHCb::LHCbID& id,
-                                                                 int monolayer) const {
+std::unique_ptr<LHCb::Trajectory<double>>
+DeOTDetector::trajectoryLastWire(const LHCb::LHCbID& id,
+                                 int monolayer) const {
   if (UNLIKELY(!id.isOT())) {
     throw GaudiException("The LHCbID is not of OT type!", "DeOTDetector.cpp",
 			 StatusCode::FAILURE);
@@ -221,8 +223,9 @@ std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryLastWire(const LHCb::L
 
 /// Returns a Trajectory representing the wire identified by the LHCbID
 /// The offset is zero for all OT Trajectories
-std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectory(const LHCb::LHCbID& id,
-                                                         const double /*offset*/) const {
+std::unique_ptr<LHCb::Trajectory<double>>
+DeOTDetector::trajectory(const LHCb::LHCbID& id,
+                         const double /*offset*/) const {
   if (UNLIKELY(!id.isOT())) {
     throw GaudiException("The LHCbID is not of OT type!", "DeOTDetector.cpp",
 			 StatusCode::FAILURE);

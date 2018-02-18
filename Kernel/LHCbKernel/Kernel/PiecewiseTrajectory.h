@@ -20,7 +20,7 @@ namespace LHCb
    * @date   20/04/2007
    *
    */
-  class PiecewiseTrajectory : public Trajectory {
+  class PiecewiseTrajectory : public Trajectory<double> {
   public:
     template <typename ITER>
     PiecewiseTrajectory(ITER begin,ITER end) : Trajectory(0,0) {
@@ -34,7 +34,7 @@ namespace LHCb
     PiecewiseTrajectory(const PiecewiseTrajectory& rhs);
 
     // clone thyself...
-    std::unique_ptr<Trajectory> clone() const override;
+    std::unique_ptr<Trajectory<double>> clone() const override;
 
     /// Point on the trajectory at mu
     Point position( double mu ) const override;
@@ -70,23 +70,23 @@ namespace LHCb
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). .
-    using Trajectory::arclength;
+    using Trajectory<double>::arclength;
     double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
     // functions specific to a PieceWiseTrajectory
     // note: we _will_ assume ownership of the passed Trajectory!
-    void append(Trajectory*);
-    void prepend(Trajectory*);
+    void append(Trajectory<double>*);
+    void prepend(Trajectory<double>*);
     unsigned int numberOfPieces() const { return m_traj.size(); }
 
     std::ostream& print(std::ostream&) const;
 
   private:
      //                   trajectory                  global mu for start of Traj
-     std::deque<std::pair<std::unique_ptr<Trajectory>,double>> m_traj;
+     std::deque<std::pair<std::unique_ptr<Trajectory<double>>,double>> m_traj;
 
      // global -> local mapping
-     std::pair<const Trajectory*, double> loc(double mu) const;
+     std::pair<const Trajectory<double>*, double> loc(double mu) const;
 
      // generic forwarding to local trajectories
      template <typename FUN> decltype(auto) local(double mu, FUN fun) const
@@ -95,7 +95,7 @@ namespace LHCb
         return fun(j.first,j.second);
      }
 
-     typedef double (LHCb::Trajectory::*distFun)(double,double,int) const;
+     typedef double (LHCb::Trajectory<double>::*distFun)(double,double,int) const;
 
      double distToError( double s, double tolerance, int pathDirection,
                          distFun fun) const;

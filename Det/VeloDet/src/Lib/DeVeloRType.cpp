@@ -637,7 +637,7 @@ unsigned int DeVeloRType::RoutLineToStrip(unsigned int routLine, unsigned int ro
 //==============================================================================
 // Return a trajectory (for track fit) from strip + offset
 //==============================================================================
-std::unique_ptr<LHCb::Trajectory> DeVeloRType::trajectory(const LHCb::VeloChannelID& id,
+std::unique_ptr<LHCb::Trajectory<double>> DeVeloRType::trajectory(const LHCb::VeloChannelID& id,
                                                           double offset) const {
   // r type is a circle
   double z = 0.;
@@ -679,7 +679,7 @@ std::unique_ptr<LHCb::Trajectory> DeVeloRType::trajectory(const LHCb::VeloChanne
   }
 
   // put into trajectory
-  return std::unique_ptr<LHCb::Trajectory>{ new LHCb::CircleTraj(gOrigin,gBegin-gOrigin,gEnd-gOrigin,radius) };
+  return std::make_unique<LHCb::CircleTraj>(gOrigin, gBegin-gOrigin, gEnd-gOrigin, radius);
 }
 
 StatusCode DeVeloRType::updateStripRCache()
