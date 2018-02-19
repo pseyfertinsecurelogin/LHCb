@@ -37,13 +37,24 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
 	//	StatusCode validate() const;
 
 	/// get station,layer,quarter
-	//	unsigned int region (const LHCb::FTChannelID aChan) const override;
-	unsigned int station(const LHCb::FTChannelID aChan) const override;
-	unsigned int layer  (const LHCb::FTChannelID aChan) const override;
-	unsigned int quarter(const LHCb::FTChannelID aChan) const override;
-	unsigned int uniqueQuarter(const LHCb::FTChannelID aChan) const override;
-	unsigned int mat    (const LHCb::FTChannelID aChan) const override;
-	unsigned int sipm   (const LHCb::FTChannelID aChan) const override;
+	//	unsigned int region (const LHCb::FTChannelID aChan) const overrider
+	//	unsigned int station(const LHCb::FTChannelID aChan) const override;
+	//	unsigned int layer  (const LHCb::FTChannelID aChan) const override;
+	//	unsigned int quarter(const LHCb::FTChannelID aChan) const override;
+	//	unsigned int uniqueQuarter(const LHCb::FTChannelID aChan) const override;
+	//	unsigned int module (const LHCb::FTChannelID aChan) const override;
+	//	unsigned int mat    (const LHCb::FTChannelID aChan) const override;
+	//	unsigned int sipm   (const LHCb::FTChannelID aChan) const override;
+
+	//Build FTChannelID from information
+	LHCb::FTChannelID station      (const unsigned int aChan) const override;
+	LHCb::FTChannelID layer        (const unsigned int aChan) const override;
+	LHCb::FTChannelID quarter      (const unsigned int aChan) const override;
+	LHCb::FTChannelID uniqueQuarter(const unsigned int aChan) const override;
+	LHCb::FTChannelID module       (const unsigned int aChan) const override;
+	LHCb::FTChannelID mat          (const unsigned int aChan) const override;
+	LHCb::FTChannelID sipm         (const unsigned int aChan) const override;
+
 	
 	unsigned int nBoard() const override;
 

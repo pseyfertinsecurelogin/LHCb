@@ -51,21 +51,21 @@ StatusCode FTReadoutTool::initialize() {
 StatusCode FTReadoutTool::createBoards() {	
 	clear();	
 	// load conditions
-	Condition* rInfo = getDet<Condition>(m_conditionLocation);
+	//	Condition* rInfo = getDet<Condition>(m_conditionLocation);
 	
 	// vector of layer types
-	const std::vector<std::string>& stations =
-		rInfo->param<std::vector<std::string> >("stations");
+	//	const std::vector<std::string>& stations =
+	//		rInfo->param<std::vector<std::string> >("stations");
 	
 	// vector of layer types
 	
-	m_hybridsPerBoard = rInfo->param<int>("hybridsPerBoard");
-	unsigned int nBoardPerStation = rInfo->param<int>("nBoard");
+	//	m_hybridsPerBoard = rInfo->param<int>("hybridsPerBoard");
+	//	unsigned int nBoardPerStation = rInfo->param<int>("nBoard");
 	//	unsigned int nStripsPerHybrid =  FTDAQ::nStripsPerBoard/m_hybridsPerBoard;
-	m_nBoard = nBoardPerStation*stations.size();
+	//	m_nBoard = nBoardPerStation*stations.size();
 	
 	
-	unsigned int iReg = 0;
+	//	unsigned int iReg = 0;
 	/*
 	for (auto iterS = stations.begin(); iterS != stations.end(); ++iterS, ++iReg){
 		m_firstBoardInRegion.push_back(m_boards.size());
@@ -124,17 +124,28 @@ void FTReadoutTool::clear() {
 
 //    //Main readout functions
 // Propagate methods from FTChannelID
-unsigned int FTReadoutTool::station(const LHCb::FTChannelID aChan) const{return aChan.station();}
-unsigned int FTReadoutTool::layer  (const LHCb::FTChannelID aChan) const{return aChan.layer  ();}
-unsigned int FTReadoutTool::quarter(const LHCb::FTChannelID aChan) const{return aChan.quarter();}
-unsigned int FTReadoutTool::uniqueQuarter(const LHCb::FTChannelID aChan) const {return aChan.uniqueQuarter();}
-unsigned int FTReadoutTool::mat    (const LHCb::FTChannelID aChan) const {return aChan.mat ();}//LoHenry: temp. Depends on the module ID
-unsigned int FTReadoutTool::sipm   (const LHCb::FTChannelID aChan) const {return aChan.sipm();}//LoHenry: temp. Depends on the module ID
+//unsigned int FTReadoutTool::station(const LHCb::FTChannelID aChan) const{return aChan.station();}
+//unsigned int FTReadoutTool::layer  (const LHCb::FTChannelID aChan) const{return aChan.layer  ();}
+//unsigned int FTReadoutTool::quarter(const LHCb::FTChannelID aChan) const{return aChan.quarter();}
+//unsigned int FTReadoutTool::uniqueQuarter(const LHCb::FTChannelID aChan) const {return aChan.uniqueQuarter();}
+//unsigned int FTReadoutTool::module (const LHCb::FTChannelID aChan) const {return aChan.module ();}//LoHenry: temp. Depends on the module ID
+//unsigned int FTReadoutTool::mat    (const LHCb::FTChannelID aChan) const {return aChan.mat ();}//LoHenry: temp. Depends on the module ID
+//unsigned int FTReadoutTool::sipm   (const LHCb::FTChannelID aChan) const {return aChan.sipm();}//LoHenry: temp. Depends on the module ID
+
+// Build a FTChannelID from info
+LHCb::FTChannelID FTReadoutTool::station      (const unsigned int aChan) const{return LHCb::FTChannelID(aChan,0,0,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::layer        (const unsigned int aChan) const{return LHCb::FTChannelID(0,aChan,0,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::quarter      (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,aChan,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int aChan) const{return LHCb::FTChannelID(0,0,aChan,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::module       (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,0,aChan,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::mat          (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,0,0,aChan,0,0);}
+LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,0,0,0,aChan,0);}
 
 unsigned int FTReadoutTool::nBoard() const{return 0;}
 
 //    //Input/Output
 /// printout
+
 void FTReadoutTool::printMapping() const
 {
 	// dump out the readout mapping

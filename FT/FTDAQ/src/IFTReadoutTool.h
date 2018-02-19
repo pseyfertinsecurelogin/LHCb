@@ -7,6 +7,8 @@
 #include <vector>
 #include "Event/FTCluster.h"
 
+#include "Kernel/FTChannelID.h"
+
 //namespace LHCb{
 //	class FTChannelID;
 //}
@@ -31,13 +33,21 @@ struct IFTReadoutTool: extend_interfaces< IAlgTool >{
 	
 	/// get station,layer,quarter
 	//	virtual unsigned int region (const LHCb::FTChannelID aChan) const = 0;
-	virtual unsigned int station(const LHCb::FTChannelID aChan) const = 0;
-	virtual unsigned int layer  (const LHCb::FTChannelID aChan) const = 0;
-	virtual unsigned int quarter(const LHCb::FTChannelID aChan) const = 0 ;
-	virtual unsigned int uniqueQuarter(const LHCb::FTChannelID aChan) const = 0 ;
-	virtual unsigned int mat    (const LHCb::FTChannelID aChan) const = 0;
-	virtual unsigned int sipm   (const LHCb::FTChannelID aChan) const = 0;	
-	
+	//	virtual unsigned int station(const LHCb::FTChannelID aChan) const = 0;
+	//	virtual unsigned int layer  (const LHCb::FTChannelID aChan) const = 0;
+	//	virtual unsigned int quarter(const LHCb::FTChannelID aChan) const = 0 ;
+	//	virtual unsigned int uniqueQuarter(const LHCb::FTChannelID aChan) const = 0 ;
+	//	virtual unsigned int module (const LHCb::FTChannelID aChan) const = 0;
+	//	virtual unsigned int mat    (const LHCb::FTChannelID aChan) const = 0;
+	//	virtual unsigned int sipm   (const LHCb::FTChannelID aChan) const = 0;	
+	virtual LHCb::FTChannelID station      (const unsigned int aChan) const = 0;
+	virtual LHCb::FTChannelID layer        (const unsigned int aChan) const = 0;
+	virtual LHCb::FTChannelID quarter      (const unsigned int aChan) const = 0;
+	virtual LHCb::FTChannelID uniqueQuarter(const unsigned int aChan) const = 0;
+	virtual LHCb::FTChannelID module       (const unsigned int aChan) const = 0;
+	virtual LHCb::FTChannelID mat          (const unsigned int aChan) const = 0;
+	virtual LHCb::FTChannelID sipm         (const unsigned int aChan) const = 0;
+
 	/// convert FTChannelID to DAQ ChannelID
 	//  virtual FTDAQ::chanPair offlineChanToDAQ(const LHCb::FTChannelID aOfflineChan,
 	//                                           double isf) const = 0 ;
