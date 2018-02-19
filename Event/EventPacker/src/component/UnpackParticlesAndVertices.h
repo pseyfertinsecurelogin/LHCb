@@ -117,20 +117,32 @@ UnpackParticlesAndVertices::unpackP2PRelations( const std::string & location )
       {
         int srcLink(0), srcKey(0);
         m_pack.indexAndKey64( prels->sources()[kk], srcLink, srcKey );
-        if ( srcLink != prevSrcLink )
+        if ( srcLink != prevSrcLink || !srcContainer )
         {
           prevSrcLink = srcLink;
           const std::string & srcName = prels->linkMgr()->link( srcLink )->path();
-          srcContainer = get<FROMCONT>( srcName );
+          // srcContainer = get<FROMCONT>( srcName );
+          srcContainer = getIfExists<FROMCONT>( srcName );
+          if ( !srcContainer) 
+          {
+            Error("Unpack('" + location + "'): missing source '" + srcName + "', skip link").ignore() ;
+            continue ;
+          } 
         }
         FROM* from = srcContainer->object( srcKey );
         int dstLink(0), dstKey(0);
         m_pack.indexAndKey64( prels->dests()[kk], dstLink, dstKey );
-        if ( dstLink != prevDstLink )
+        if ( dstLink != prevDstLink || !dstContainer )
         {
           prevDstLink = dstLink;
           const std::string & dstName = prels->linkMgr()->link( dstLink )->path();
-          dstContainer = get<DataObject>( dstName );
+          // dstContainer = get<DataObject>( dstName );
+          dstContainer = getIfExists<DataObject>( dstName );
+          if ( !dstContainer) 
+          {
+            Error("Unpack('" + location + "'): missing destination '" + dstName + "', skip link").ignore() ;
+            continue ;
+          }          
         }
         TOCONT * _to = dynamic_cast<TOCONT*>(dstContainer);
         TO* to = ( _to ? _to->object(dstKey) : nullptr );
@@ -179,20 +191,30 @@ UnpackParticlesAndVertices::unpackP2PWeightedRelations( const std::string & loca
       {
         int srcLink(0), srcKey(0);
         m_pack.indexAndKey64( prels->sources()[kk], srcLink, srcKey );
-        if ( srcLink != prevSrcLink )
+        if ( srcLink != prevSrcLink || !srcContainer )
         {
           prevSrcLink = srcLink;
           const std::string & srcName = prels->linkMgr()->link( srcLink )->path();
-          srcContainer = get<FROMCONT>( srcName );
+          srcContainer = getIfExists<FROMCONT>( srcName );
+          if ( !srcContainer ) 
+          {
+            Error("Unpack('" + location + "'): missing source '" + srcName + "', skip link").ignore() ;
+            continue ;            
+          }
         }
         FROM* from = srcContainer->object( srcKey );
         int dstLink(0), dstKey(0);
         m_pack.indexAndKey64( prels->dests()[kk], dstLink, dstKey );
-        if ( dstLink != prevDstLink )
+        if ( dstLink != prevDstLink || !dstContainer )
         {
           prevDstLink = dstLink;
           const std::string & dstName = prels->linkMgr()->link( dstLink )->path();
-          dstContainer = get<DataObject>( dstName );
+          dstContainer = getIfExists<DataObject>( dstName );
+          if ( !dstContainer ) 
+          {
+            Error("Unpack('" + location + "'): missing destination '" + dstName + "', skip link").ignore() ;
+            continue ;            
+          }
         }
         const WEIGHT wgt = prels->weights()[kk];
         TOCONT * _to = dynamic_cast<TOCONT*>(dstContainer);
