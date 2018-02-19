@@ -313,6 +313,7 @@ protected:
                    const std::string& algName,
                    IAlgorithm*& alg,
                    const std::vector<std::string>& inputData);
+  std::string getGaudiRootInTES();
   StatusCode
   setAlgInputData( IAlgorithm*& alg,
                    const std::vector<std::string>& inputData);

@@ -17,10 +17,9 @@
   <class name="std::vector<LHCb::HCCellID>"/>
   <class name="std::pair<LHCb::HCCellID,int>"/>
   <class name="std::vector<std::pair<LHCb::HCCellID,int> >"/>
-  <class name="LHCb::Trajectory"/>
+  <class pattern="LHCb::Trajectory<*>"/>
   <class name="LHCb::AlignTraj"/>
   <class name="LHCb::CircleTraj"/>
-  <class name="LHCb::LineTraj"/>
   <class name="LHCb::ParabolaTraj"/>
   <class name="LHCb::PlatformInfo"/>
   <class name="MuonLayout"/>

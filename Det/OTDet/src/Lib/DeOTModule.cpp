@@ -491,7 +491,7 @@ StatusCode DeOTModule::cacheInfo()
   // works for piecewise trajectories.
   m_dp0di = (g4[0]-g3[0]).unit() * m_xPitch ;
   for( int imono=0; imono<2; ++imono) {
-    const LHCb::Trajectory* traj = m_trajFirstWire[imono].get() ;
+    const LHCb::Trajectory<double>* traj = m_trajFirstWire[imono].get() ;
     // For the 3-segment pieces we use the midpoints of the first and last segment:
     double mu1 = 5./6. * traj->beginRange() + 1./6. * traj->endRange() ;
     double mu2 = 1./6. * traj->beginRange() + 5./6. * traj->endRange() ;
@@ -653,12 +653,14 @@ StatusCode DeOTModule::monoalignCallback() {
   return cacheInfo() ;
 }
 
-std::unique_ptr<LHCb::Trajectory> DeOTModule::trajectoryFirstWire(int monolayer) const {
+std::unique_ptr<LHCb::Trajectory<double>>
+DeOTModule::trajectoryFirstWire(int monolayer) const {
   /// Default is 0 -> straw 1
   return m_trajFirstWire[monolayer]->cloneOTWireTraj();
 }
 
-std::unique_ptr<LHCb::Trajectory> DeOTModule::trajectoryLastWire(int monolayer) const {
+std::unique_ptr<LHCb::Trajectory<double>>
+DeOTModule::trajectoryLastWire(int monolayer) const {
   /// Default is 1 -> straw 64(s3)/128
   auto traj = m_trajFirstWire[monolayer]->cloneOTWireTraj() ;
   traj->applyTranslation( (m_nStraws/2-1)*m_dp0di ) ;
@@ -667,8 +669,9 @@ std::unique_ptr<LHCb::Trajectory> DeOTModule::trajectoryLastWire(int monolayer) 
 
 /// Returns a Trajectory representing the wire identified by the LHCbID
 /// The offset is zero for all OT Trajectories
-std::unique_ptr<LHCb::Trajectory> DeOTModule::trajectory(const OTChannelID& aChan,
-                                                       const double /*offset*/) const {
+std::unique_ptr<LHCb::Trajectory<double>>
+DeOTModule::trajectory(const OTChannelID& aChan,
+                       const double /*offset*/) const {
   if (!contains(aChan)) {
     throw GaudiException("Failed to make trajectory!", "DeOTModule.cpp",
 			 StatusCode::FAILURE);

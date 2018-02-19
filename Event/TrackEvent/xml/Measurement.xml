@@ -95,7 +95,7 @@
         access  = 'PROTECTED' />
 
       <attribute
-        type    = 'std::unique_ptr &lt; LHCb::Trajectory &gt;'
+        type    = 'std::unique_ptr &lt; LHCb::Trajectory &lt; double &gt; &gt;'
         name    = 'trajectory'
         desc    = 'the trajectory representing the measurement (owner)'
         access  = 'PROTECTED'
@@ -181,7 +181,7 @@
       </method>
 
       <method
-        type    = 'const LHCb::Trajectory&amp;'
+        type    = 'const LHCb::Trajectory &lt; double &gt; &amp;'
         name    = 'trajectory'
         desc    = 'Retrieve the trajectory representing the measurement'
         const   = 'TRUE'>
@@ -193,7 +193,7 @@
       <method
         name    = 'setTrajectory'
         desc    = 'Set the trajectory'>
-        <arg type = 'std::unique_ptr &lt; LHCb::Trajectory &gt;' name='traj' const='FALSE'/>
+        <arg type = 'std::unique_ptr &lt; LHCb::Trajectory &lt; double &gt; &gt;' name='traj' const='FALSE'/>
         <code>  m_trajectory = std::move(traj) ; </code>
       </method>
       

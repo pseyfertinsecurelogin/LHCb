@@ -21,19 +21,19 @@ namespace LHCb
    * @date   09/01/2006
    */
 
-  class ParabolaTraj: public Trajectory {
+  class ParabolaTraj: public Trajectory<double> {
 
   public:
 
     // clone thyself...
-    std::unique_ptr<Trajectory> clone() const override;
+    std::unique_ptr<Trajectory<double>> clone() const override;
 
     /// Constructor from a (middle) point, a (unit) direction vector,
     /// a curvature vector and the pair of begin- and endpoints.
     ParabolaTraj( const Point& middle,
                   const Vector& dir,
                   const Vector& curv,
-                  const Trajectory::Range& range );
+                  const Trajectory<double>::Range& range );
 
     /// Point on the trajectory at arclength from the starting point
     Point position( double arclength ) const override;
@@ -70,7 +70,7 @@ namespace LHCb
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because ParabolaTraj is parameterized in
     /// arclength.
-    using Trajectory::arclength;
+    using Trajectory<double>::arclength;
     double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
   private:

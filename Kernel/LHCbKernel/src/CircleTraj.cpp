@@ -17,7 +17,7 @@ using namespace LHCb;
 using namespace ROOT::Math;
 using namespace Gaudi;
 
-std::unique_ptr<Trajectory> CircleTraj::clone() const
+std::unique_ptr<Trajectory<double>> CircleTraj::clone() const
 {
   return std::make_unique<CircleTraj>(*this);
 }
@@ -26,7 +26,7 @@ CircleTraj::CircleTraj( const Point& origin,
                         const Vector& dir1,
                         const Vector& dir2,
                         double radius)
-  : Trajectory(0.,radius*std::asin((dir1.unit()).Cross(dir2.unit()).r())),
+  : Trajectory<double>(0.,radius*std::asin((dir1.unit()).Cross(dir2.unit()).r())),
     m_origin(origin),
     m_normal(dir1.Cross(dir2).unit()),
     m_dirStart(dir1.unit()),
@@ -38,7 +38,7 @@ CircleTraj::CircleTraj( const Point& origin,
                         const Vector& normal,
                         const Vector& origin2point,
                         const Range& range)
-  : Trajectory(range),
+  : Trajectory<double>(range),
     m_origin(origin),
     m_normal(normal.unit()),
     m_dirStart(origin2point-origin2point.Dot(m_normal)*m_normal),
@@ -47,19 +47,19 @@ CircleTraj::CircleTraj( const Point& origin,
 {}
 
 /// Point on the trajectory at arclength from the starting point
-Trajectory::Point CircleTraj::position( double s ) const
+Trajectory<double>::Point CircleTraj::position( double s ) const
 {
   return m_origin + m_radius*AxisAngle(m_normal,s / m_radius)(m_dirStart);
 }
 
 /// First derivative of the trajectory at arclength from the starting point
-Trajectory::Vector CircleTraj::direction( double s ) const
+Trajectory<double>::Vector CircleTraj::direction( double s ) const
 {
   return m_normal.Cross(AxisAngle(m_normal,s / m_radius)(m_dirStart));
 }
 
 /// Second derivative of the trajectory at arclength from the starting point
-Trajectory::Vector CircleTraj::curvature( double s ) const
+Trajectory<double>::Vector CircleTraj::curvature( double s ) const
 {
   return (-1.0 / m_radius)*AxisAngle(m_normal,s / m_radius)(m_dirStart);
 }

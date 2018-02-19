@@ -69,7 +69,7 @@ public:
                                      int& nOffset) const;
 
   /// Return a trajectory (for track fit) from strip + offset
-  virtual std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::VeloChannelID& id, const double offset) const = 0;
+  virtual std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::VeloChannelID& id, const double offset) const = 0;
 
   /** Residual of 3-d point to a VeloChannelID
    *

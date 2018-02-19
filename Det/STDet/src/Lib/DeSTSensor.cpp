@@ -145,15 +145,15 @@ bool DeSTSensor::localInActive( const Gaudi::XYZPoint& point,
 }
 
 
-std::unique_ptr<LHCb::Trajectory> DeSTSensor::trajectory(const unsigned int strip,
-                                                       const double offset) const {
+std::unique_ptr<LHCb::Trajectory<double>> DeSTSensor::trajectory(const unsigned int strip,
+                                                                 const double offset) const {
 
   const double arclen = (offset + strip - m_firstStrip)*m_pitch ;
 
   Gaudi::XYZPoint midPoint = m_midTraj->position( arclen +
                                                     m_midTraj->beginRange());
 
-  return std::unique_ptr<LHCb::Trajectory>(new LineTraj(midPoint,m_direction,m_range, true));
+  return std::make_unique< LineTraj<double> >(midPoint, m_direction, m_range, Trajectory<double>::DirNormalized{true} );
 }
 
 
@@ -192,7 +192,7 @@ StatusCode DeSTSensor::cacheInfo()
   // trajectory of middle
   const Gaudi::XYZPoint g3 = globalPoint(xLower, 0., 0.);
   const Gaudi::XYZPoint g4 = globalPoint(xUpper, 0., 0.);
-  m_midTraj.reset( new LineTraj(g3,g4) );
+  m_midTraj = std::make_unique<LineTraj<double>>(g3,g4);
 
   // range ---> strip Length
   m_range = std::make_pair(-0.5*m_stripLength,0.5*m_stripLength);

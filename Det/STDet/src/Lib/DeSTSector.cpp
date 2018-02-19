@@ -578,7 +578,7 @@ double DeSTSector::toElectron(const double& val,
   return val * m_electronsPerADC[aStrip-1];
 }
 
-std::unique_ptr<LHCb::Trajectory>
+std::unique_ptr<LHCb::Trajectory<double>>
 DeSTSector::trajectory(const STChannelID& aChan, const double offset) const
 {
 
@@ -593,18 +593,18 @@ DeSTSector::trajectory(const STChannelID& aChan, const double offset) const
   return createTraj(aChan.strip(), offset);
 }
 
-std::unique_ptr<LHCb::Trajectory> DeSTSector::trajectoryFirstStrip() const
+std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::trajectoryFirstStrip() const
 {
   return createTraj(m_firstStrip,0.);
 }
 
-std::unique_ptr<LHCb::Trajectory> DeSTSector::trajectoryLastStrip() const
+std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::trajectoryLastStrip() const
 {
   return createTraj(nStrip(), 0.);
 }
 
-std::unique_ptr<LHCb::Trajectory> DeSTSector::createTraj(const unsigned int strip,
-                                                       const double offset) const{
+std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::createTraj(const unsigned int strip,
+                                                                 const double offset) const{
 
   // collect the individual traj
   const Sensors& theSensors = sensors();
