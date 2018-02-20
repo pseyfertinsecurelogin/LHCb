@@ -124,13 +124,13 @@ namespace Rich
     public:
 
       /// Get the L1IngressHeader
-      inline const L1IngressHeader& ingressHeader() const & noexcept { return m_ingressHeader; }
+      inline const L1IngressHeader&       ingressHeader() const & noexcept { return m_ingressHeader; }
       /// Read access to the PD data for this Ingress
-      inline const L1InToPDMap &               pdData() const & noexcept { return m_pdData; }
+      inline const L1InToPDMap &                 pdData() const & noexcept { return m_pdData; }
       /// Write access to the PD data for this Ingress
-      inline       L1InToPDMap &               pdData()       & noexcept { return m_pdData; }
+      inline       L1InToPDMap &                 pdData()       & noexcept { return m_pdData; }
       /// Set the L1IngressHeader
-      inline void setIngressHeader( const L1IngressHeader& head ) { m_ingressHeader = head; }
+      inline void setIngressHeader( const L1IngressHeader& head ) noexcept { m_ingressHeader = head; }
   
     public:
 

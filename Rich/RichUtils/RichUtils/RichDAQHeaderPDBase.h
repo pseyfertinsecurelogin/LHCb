@@ -65,7 +65,7 @@ namespace Rich
     public:
 
       /// Default constructor
-      HeaderPDBase( )= default;
+      HeaderPDBase() = default;
 
     public: // methods
 
