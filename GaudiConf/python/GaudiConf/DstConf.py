@@ -567,7 +567,7 @@ class DstConf(LHCbConfigurableUser):
         # and fails otherwise. Here we prevent the unpacking from being
         # triggered if this isn't a Turbo job
         if not self.getProp("Turbo"):
-            pvmapper.VetoStreams = ["/Event/Turbo"]
+            pvmapper.VetoStreams.append("/Event/Turbo")
 
         # Cluster upacking
         clusmapper = TrackClustersMapper("UnpackTkClustersMapper")
