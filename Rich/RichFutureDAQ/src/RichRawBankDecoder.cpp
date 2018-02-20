@@ -551,7 +551,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
               // Compare Event IDs for errors
               bool OK = ( hpdIsSuppressed ? true :
                           !m_checkRICHEventsIDs || ingressWord.eventID() == hpdBank->eventID() );
-              if ( !OK )
+              if ( UNLIKELY( !OK ) )
               {
                 std::ostringstream mess;
                 mess << "EventID Mismatch : HPD L0ID="
@@ -584,7 +584,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
                   // Do data integrity checks
                   OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,this) );
-                  if ( !OK )
+                  if ( UNLIKELY( !OK ) )
                   {
                     std::ostringstream mess;
                     mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
@@ -594,7 +594,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                   }
 
                   // Is all 'OK' but header is in extended mode ?
-                  if ( OK && isExtend )
+                  if ( UNLIKELY( isExtend && OK ) )
                   {
                     std::ostringstream mess;
                     mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
@@ -1031,7 +1031,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     {
       // Read the smartID direct from the banks
       const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
-      if ( !id.isValid() )
+      if ( UNLIKELY( !id.isValid() ) )
       {
         Warning( "Invalid RichSmartID read from FlatList data format" ).ignore();
       }
@@ -1097,7 +1097,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
             // Set the PD ID
             pdInfo->setPdID( pdID );
             // set the header
-            PDInfo::Header header;
+            //PDInfo::Header header;
             // CRJ - Comment out until decide what to do about maPMT Level0 IDs ...
             //           const Level0ID l0id = m_richSys->level0ID(id);
             //           if ( ! header.setL0ID( l0id ) )
@@ -1106,7 +1106,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
             //             mess << "Failed to set L0ID " << l0id;
             //             Warning( mess.str() ).ignore();
             //           }
-            pdInfo->setHeader( header );
+            //pdInfo->setHeader( header );
             // reserve size (guess) in hit vector
             pdInfo->smartIDs().reserve(16);
             // Add to active PD count for current rich
