@@ -71,7 +71,16 @@ namespace Rich
     /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
     explicit PDPixelCluster( const LHCb::RichSmartID & id,
                              const DeRichPD * dePD = nullptr )
-      : m_side(id.panel()), m_rich(id.rich()), m_ids(1,id), m_dePD{dePD} 
+      : m_rich(id.rich()), m_side(id.panel()), m_ids(1,id), m_dePD{dePD} 
+    { }
+
+    /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
+    /// In addition pass in the rich and side enum, to avoid re-computing them from the ID 
+    explicit PDPixelCluster( const Rich::DetectorType rich,
+                             const Rich::Side side, 
+                             const LHCb::RichSmartID & id,
+                             const DeRichPD * dePD = nullptr )
+      : m_rich(rich), m_side(side), m_ids(1,id), m_dePD{dePD} 
     { }
 
     /// Copy Constructor from a vector of RichSmartIDs
@@ -85,7 +94,7 @@ namespace Rich
     /// Move Constructor from a vector of RichSmartIDs
     explicit PDPixelCluster( SmartIDVector && ids,
                              const DeRichPD * dePD = nullptr ) 
-      : m_ids(std::move(ids)), m_dePD{dePD}
+      : m_ids( std::forward<SmartIDVector>(ids) ), m_dePD{dePD}
     {
       updateCachedEnums();
     }
@@ -166,11 +175,11 @@ namespace Rich
 
   private:
 
-    /// Cache the RICH Side enum
-    Rich::Side m_side = Rich::InvalidSide;
-
     /// Cache the detector enum
     Rich::DetectorType m_rich = Rich::InvalidDetector;
+
+    /// Cache the RICH Side enum
+    Rich::Side m_side = Rich::InvalidSide;
 
     /// The vector of RichSmartIDs for this cluster
     SmartIDVector m_ids;
