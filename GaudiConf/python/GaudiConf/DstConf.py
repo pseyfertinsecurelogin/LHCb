@@ -563,6 +563,11 @@ class DstConf(LHCbConfigurableUser):
 
         # Packed Particles and Vertices
         pvmapper = ParticlesAndVerticesMapper("UnpackPsAndVsMapper")
+        # Turbo unpacking requires a job configured for Turbo data processing,
+        # and fails otherwise. Here we prevent the unpacking from being
+        # triggered if this isn't a Turbo job
+        if not self.getProp("Turbo"):
+            pvmapper.VetoStreams.append("/Event/Turbo")
 
         # Cluster upacking
         clusmapper = TrackClustersMapper("UnpackTkClustersMapper")

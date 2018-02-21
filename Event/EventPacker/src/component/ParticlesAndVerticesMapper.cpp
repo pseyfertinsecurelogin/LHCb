@@ -1,5 +1,6 @@
 
 // Include files
+#include <algorithm>
 #include <iterator>
 // local
 #include "ParticlesAndVerticesMapper.h"
@@ -18,6 +19,7 @@ ParticlesAndVerticesMapper( const std::string& type,
   declareProperty( "UnpackerType",
                    m_unpackerType = "UnpackParticlesAndVertices" );
   declareProperty( "UnpackerOutputLevel", m_unpackersOutputLevel = -1 );
+  declareProperty( "VetoStreams", m_vetoStreams );
   //setProperty( "OutputLevel", 1 );
 }
 
@@ -104,7 +106,8 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
   // The stream TES root
   const std::string streamR = streamRoot(path);
 
-  if ( !m_streamsDone[streamR] )
+  if ( !m_streamsDone[streamR] &&
+       std::find(m_vetoStreams.begin(), m_vetoStreams.end(), streamR) == m_vetoStreams.end() )
   {
     m_streamsDone[streamR] = true;
     LOG_VERBOSE << "ParticlesAndVerticesMapper::updateNodeTypeMap '" << path << "'" << endmsg;
