@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 using namespace Rich::Future;
+using namespace Rich::Future::DAQ;
 using namespace Rich::DAQ;
 
 // private namespace
@@ -96,6 +97,9 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent,
 
   // Get the banks for the Rich
   const auto & richBanks = rawEvent.banks( LHCb::RawBank::Rich );
+
+  // reserve top level size
+  decodedData.reserve( richBanks.size() );
 
   // Loop over data banks
   for ( const auto * bank : richBanks )
@@ -402,7 +406,13 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   {
 
     // Get Ingress map to decode into for this L1 board
-    auto & ingressMap = decodedData[L1ID];
+    decodedData.emplace_back( std::piecewise_construct, 
+                              std::forward_as_tuple(L1ID), 
+                              std::forward_as_tuple() );
+    auto & ingressMap = decodedData.back().second;
+
+    // reserve size
+    ingressMap.reserve( Rich::DAQ::NumIngressPerL1 );
 
     // Loop over bank, find headers and produce a data bank for each
     // Fill data into RichSmartIDs
@@ -415,7 +425,10 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
       _ri_debug << " Ingress " << ingressWord << endmsg;
 
       // Get data for this ingress
-      auto & ingressInfo = ingressMap[ingressWord.ingressID()];
+      ingressMap.emplace_back( std::piecewise_construct, 
+                               std::forward_as_tuple(ingressWord.ingressID()), 
+                               std::forward_as_tuple() );
+      auto & ingressInfo = ingressMap.back().second;
 
       // Set ingress header in decoded data map
       ingressInfo.setIngressHeader( ingressWord );
@@ -456,6 +469,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
       {
         // Ingress is OK, so read HPD data
 
+        // reserve size
+        ingressInfo.pdData().reserve( inputs.size() );
+
         // Loop over active HPDs
         for ( const auto& HPD : inputs )
         {
@@ -476,23 +492,28 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
             Warning( mess.str(), StatusCode::SUCCESS, 0 ).ignore();
           }
 
-          // Try to add a new HPDInfo to map
-          const Level1Input l1Input(ingressWord.ingressID(),HPD);
-          const auto hpdInsert =
-            ingressInfo.pdData().emplace( l1Input,
-                                          PDInfo( LHCb::RichSmartID(),
-                                                  hpdBank->primaryHeaderWord(),
-                                                  hpdBank->extendedHeaderWords(),
-                                                  hpdBank->footerWords() ) );
-          // disable test (gives wrong warnings in TAE events)
-          //if ( !p.second )
-          //{
-          //  std::ostringstream mess;
-          //  mess << "Found multiple data blocks L1=" << L1ID << " input=" << l1Input;
-          //  Warning( mess.str() );
-          //}
-          auto & hpdInfo = hpdInsert.first->second;
+          // Is the PD in extended mode
+          const bool isExtend = hpdBank->isExtended();
 
+          // Try to add a new HPDInfo to container
+          if ( !isExtend )
+          {
+            ingressInfo.pdData().emplace_back( std::piecewise_construct, 
+                                               std::forward_as_tuple( ingressWord.ingressID(), HPD ), 
+                                               std::forward_as_tuple( LHCb::RichSmartID(),
+                                                                      hpdBank->primaryHeaderWord() ) );
+          }
+          else
+          {
+            ingressInfo.pdData().emplace_back( std::piecewise_construct, 
+                                               std::forward_as_tuple( ingressWord.ingressID(), HPD ),  
+                                               std::forward_as_tuple( LHCb::RichSmartID(),
+                                                                      hpdBank->primaryHeaderWord(),
+                                                                      hpdBank->extendedHeaderWords(),
+                                                                      hpdBank->footerWords() ) );
+          }
+          auto & hpdInfo = ingressInfo.pdData().back().second;
+         
           // Only try and decode this HPD if ODIN test was OK
           if ( odinOK && !hpdIsSuppressed )
           {
@@ -530,7 +551,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
               // Compare Event IDs for errors
               bool OK = ( hpdIsSuppressed ? true :
                           !m_checkRICHEventsIDs || ingressWord.eventID() == hpdBank->eventID() );
-              if ( !OK )
+              if ( UNLIKELY( !OK ) )
               {
                 std::ostringstream mess;
                 mess << "EventID Mismatch : HPD L0ID="
@@ -562,8 +583,8 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                   hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
 
                   // Do data integrity checks
-                  OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,warning()) );
-                  if ( !OK )
+                  OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,this) );
+                  if ( UNLIKELY( !OK ) )
                   {
                     std::ostringstream mess;
                     mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
@@ -573,7 +594,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                   }
 
                   // Is all 'OK' but header is in extended mode ?
-                  if ( OK && hpdBank->nHeaderWords() > 1 )
+                  if ( UNLIKELY( isExtend && OK ) )
                   {
                     std::ostringstream mess;
                     mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
@@ -698,13 +719,15 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
     }
 
     // Get Ingress map to decode into for this L1 board
-    IngressMap & ingressMap = decodedData[L1ID];
+    decodedData.emplace_back( L1ID, IngressMap() );
+    auto & ingressMap = decodedData.back().second;
 
     // This data version does not have ingress info, so just put all data into ingress 0
     const L1IngressID ingressNum(0);
 
     // Get data for this ingress
-    auto & ingressInfo = ingressMap[ingressNum];
+    if ( ingressMap.empty() ) { ingressMap.emplace_back( ingressNum, IngressInfo() ); }
+    auto & ingressInfo = ingressMap.back().second;
 
     // Make up L1 input numbers
     Level1Input l1Input(0);
@@ -725,14 +748,15 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
                                         m_richSys->richSmartID( hpdBank->level0ID() ) );
 
       // decode to smartIDs
-      auto & hpdInfo = (ingressInfo.pdData())[ l1Input ];
+      ingressInfo.pdData().emplace_back( l1Input, PDInfo() );
+      auto & hpdInfo = ingressInfo.pdData().back().second;
       hpdInfo.setPdID(hpdID);
       ++l1Input;
       auto & newids = hpdInfo.smartIDs();
       const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
 
       // Do data integrity checks
-      const bool OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,warning()) );
+      const bool OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,this) );
       if ( !OK || msgLevel(MSG::VERBOSE) )
       {
         // printout decoded RichSmartIDs
@@ -908,7 +932,8 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         }
 
         // Get Ingress map to decode into for this L1 board
-        auto & ingressMap = decodedData[L1ID];
+        decodedData.emplace_back( L1ID, IngressMap() );
+        auto & ingressMap = decodedData.back().second;
 
         // L1 input number
         const Level1Input l1Input = ( m_useFakeHPDID ?
@@ -917,10 +942,12 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         if ( m_useFakeHPDID ) ++fake_l1Input;
 
         // Ingress info
-        auto & ingressInfo = ingressMap[l1Input.ingressID()];
+        ingressMap.emplace_back( l1Input.ingressID(), IngressInfo() );
+        auto & ingressInfo = ingressMap.back().second;
 
         // get HPD data
-        auto & hpdInfo = (ingressInfo.pdData())[ l1Input ];
+        ingressInfo.pdData().emplace_back( l1Input, PDInfo() );
+        auto & hpdInfo = ingressInfo.pdData().back().second;
         hpdInfo.setPdID(hpdID);
         auto & newids = hpdInfo.smartIDs();
 
@@ -969,7 +996,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
 
 void
 RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
-                                         Rich::DAQ::L1Map & decodedData ) const
+                                         L1Map & decodedData ) const
 {
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
@@ -980,14 +1007,23 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
 
   // various counts
   DetectorArray<unsigned int> decodedHits{{0,0}};
-  DetectorArray< std::set<LHCb::RichSmartID> > pdSet;
 
   // If we have some words to process, start the decoding
   if ( bankSize > 0 )
   {
 
     // Get Ingress map to decode into for this L1 board
-    IngressMap & ingressMap = decodedData[L1ID];
+    decodedData.emplace_back( std::piecewise_construct, 
+                              std::forward_as_tuple(L1ID), 
+                              std::forward_as_tuple() );
+    auto & ingressMap = decodedData.back().second;
+
+    // reserve size
+    ingressMap.reserve( Rich::DAQ::NumIngressPerL1 );
+
+    // cache the last PD info
+    PDInfo * last_pdInfo = nullptr;
+    LHCb::RichSmartID last_pdID;
 
     // Loop over bank, Fill data into RichSmartIDs
     int lineC(0);
@@ -995,7 +1031,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     {
       // Read the smartID direct from the banks
       const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
-      if ( !id.isValid() )
+      if ( UNLIKELY( !id.isValid() ) )
       {
         Warning( "Invalid RichSmartID read from FlatList data format" ).ignore();
       }
@@ -1006,44 +1042,98 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
         // Get the L1 input from the DB
         const auto l1Input = m_richSys->level1InputNum(id);
 
+        // The ingress info to fill
+        IngressInfo * ingressInfo = nullptr;
+
         // Do we have an entry for this Ingress ID ?
-        if ( ingressMap.find(l1Input.ingressID()) == ingressMap.end() )
+        const auto inIt = std::find_if( ingressMap.begin(), ingressMap.end(),
+                                        [&l1Input]( const auto & i )
+                                        { return l1Input.ingressID() == i.first; } );
+        if ( UNLIKELY( inIt == ingressMap.end() ) )
         {
-          auto & info = ingressMap[l1Input.ingressID()];
+          ingressMap.emplace_back( std::piecewise_construct, 
+                                   std::forward_as_tuple(l1Input.ingressID()), 
+                                   std::forward_as_tuple() );
+          ingressInfo = &(ingressMap.back().second);
           L1IngressHeader iHeader;
           iHeader.setIngressID( l1Input.ingressID() );
-          info.setIngressHeader(iHeader);
+          ingressInfo->setIngressHeader(iHeader);
+          // reserve size (guess as we don't know here...)
+          ingressInfo->pdData().reserve(32);
         }
-        auto & ingressInfo = ingressMap[l1Input.ingressID()];
-        auto & pdMap       = ingressInfo.pdData();
-
-        // Does this PD have an entry
-        if ( pdMap.find(l1Input) == pdMap.end() )
+        else
         {
-          pdMap[l1Input] = PDInfo();
-          // Set the PD ID
-          pdMap[l1Input].setPdID( id.pdID() );
-          // set the header
-          PDInfo::Header header;
-          // CRJ - Comment out until decide what to do about maPMT Level0 IDs ...
-          //           const Level0ID l0id = m_richSys->level0ID(id);
-          //           if ( ! header.setL0ID( l0id ) )
-          //           {
-          //             std::ostringstream mess;
-          //             mess << "Failed to set L0ID " << l0id;
-          //             Warning( mess.str() ).ignore();
-          //           }
-          pdMap[l1Input].setHeader( header );
+          // use existing entry
+          ingressInfo = &(inIt->second);
         }
-        auto & pdInfo = pdMap[l1Input];
+
+        // the PD data map
+        auto & pdMap = ingressInfo->pdData();
+
+        // The PD info object to fill
+        PDInfo * pdInfo = nullptr;
+
+        // The PD ID
+        const auto pdID = id.pdID();
+
+        // The RICH
+        const auto rich = id.rich();
+
+        // Has PD changed ?
+        if ( pdID != last_pdID || !last_pdInfo )
+        {
+
+          // Does this PD have an entry ?
+          const auto pdIt = std::find_if( pdMap.begin(), pdMap.end(),
+                                          [&l1Input]( const auto& i ) 
+                                          { return l1Input == i.first; } );
+          if ( UNLIKELY( pdIt == pdMap.end() ) )
+          {
+            // make a new entry
+            pdMap.emplace_back( std::piecewise_construct, 
+                                std::forward_as_tuple( l1Input ),
+                                std::forward_as_tuple(         ) );
+            pdInfo = &(pdMap.back().second);
+            // Set the PD ID
+            pdInfo->setPdID( pdID );
+            // set the header
+            //PDInfo::Header header;
+            // CRJ - Comment out until decide what to do about maPMT Level0 IDs ...
+            //           const Level0ID l0id = m_richSys->level0ID(id);
+            //           if ( ! header.setL0ID( l0id ) )
+            //           {
+            //             std::ostringstream mess;
+            //             mess << "Failed to set L0ID " << l0id;
+            //             Warning( mess.str() ).ignore();
+            //           }
+            //pdInfo->setHeader( header );
+            // reserve size (guess) in hit vector
+            pdInfo->smartIDs().reserve(16);
+            // Add to active PD count for current rich
+            decodedData.addToActivePDs( rich );
+          }
+          else
+          {
+            // use found entry
+            pdInfo = &(pdIt->second);
+          }
+
+          // update the PD cache
+          last_pdID   = pdID;
+          last_pdInfo = pdInfo;
+
+        }
+        else
+        {
+          // use last PD cache
+          pdInfo = last_pdInfo;
+        }
 
         // add the hit to the list
-        pdInfo.smartIDs().emplace_back( id );
+        pdInfo->smartIDs().emplace_back( id );
 
-        // count the hits and hpds
-        const auto rich = id.rich();
+        // count the hits 
         ++decodedHits[rich];
-        pdSet[rich].insert( id.pdID() );
 
       }
     }
@@ -1052,8 +1142,6 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
 
   // Add to the total number of decoded hits
   decodedData.addToTotalHits( decodedHits );
-  for ( const auto rich : { Rich::Rich1, Rich::Rich2 } )
-  { decodedData.addToActivePDs( rich, pdSet[rich].size() ); }
 
 }
 

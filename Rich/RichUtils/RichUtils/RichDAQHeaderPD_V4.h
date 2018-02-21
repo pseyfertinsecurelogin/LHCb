@@ -109,6 +109,10 @@ namespace Rich
           readFromDataStream(data);
         }
 
+        /// Constructor from primary header word
+        RichDAQHeaderPD( const WordType primWord )
+          : HeaderPDBase(primWord) { }
+
         /// Constructor from raw header word(s)
         RichDAQHeaderPD( const WordType                            primWord,
                          const HeaderPDBase::ExtendedHeaderWords & exWords )

@@ -67,11 +67,11 @@ namespace Rich
     template< class Version, class Header, class Footer >
     bool HPDDataBankImp<Version,Header,Footer>::
     checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
-                        MsgStream & os ) const
+                        const CommonMessagingBase * msgBase ) const
     {
       bool OK(true);
       // does this footer have a parity word ?
-      if ( this->footer().hasParityWord() )
+      if ( UNLIKELY( this->footer().hasParityWord() ) )
       {
         // yes, so compare to that "decoded" from the data
 
@@ -79,21 +79,24 @@ namespace Rich
         const auto decodedfoot = this->createParityWord(ids);
 
         // compare to expected
-        if ( !this->footer().testParityWord(decodedfoot) )
+        if ( UNLIKELY( !this->footer().testParityWord(decodedfoot) ) )
         {
-          os << MSG::ERROR << "Parity word indicates an error :-" << endmsg;
-          os <<   " -> decoded from data | " << asHex(decodedfoot.data()) << " |";
-          {for ( int iCol = 31; iCol >= 0; --iCol )
-            {
-              os << " " << isBitOn( decodedfoot.data(), iCol );
-            }}
-          os << endmsg;
-          os <<   " -> from footer word  | " << asHex(this->footer().parityWord().data()) << " |";
-          {for ( int iCol = 31; iCol >= 0; --iCol )
-            {
-              os << " " << isBitOn( this->footer().parityWord().data(), iCol );
-            }}
-          os << endmsg;
+          // message stream
+          auto & err = msgBase->error();
+          // print
+          err << "Parity word indicates an error :-" << endmsg;
+          err <<   " -> decoded from data | " << asHex(decodedfoot.data()) << " |";
+          for ( int iCol = 31; iCol >= 0; --iCol )
+          {
+            err  << " " << isBitOn( decodedfoot.data(), iCol );
+          }
+          err  << endmsg;
+          err  <<   " -> from footer word  | " << asHex(this->footer().parityWord().data()) << " |";
+          for ( int iCol = 31; iCol >= 0; --iCol )
+          {
+            err  << " " << isBitOn( this->footer().parityWord().data(), iCol );
+          }
+          err << endmsg;
 
           // set flag to bad
           OK = false;

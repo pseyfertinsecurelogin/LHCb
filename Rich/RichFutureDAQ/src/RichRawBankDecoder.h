@@ -19,7 +19,7 @@
 #include "GaudiAlg/Transformer.h"
 
 // Rich Utils
-#include "RichUtils/RichDecodedData.h"
+#include "RichFutureUtils/RichDecodedData.h"
 #include "RichUtils/RichMap.h"
 #include "RichUtils/RichHashMap.h"
 
@@ -58,9 +58,9 @@ namespace Rich
        *  @date   2016-09-21
        */
       class RawBankDecoder final :
-        public Transformer< Rich::DAQ::L1Map( const LHCb::RawEvent&, 
-                                              const LHCb::ODIN& ),
-                            Traits::BaseClass_t<AlgBase> >
+      public Transformer< Rich::Future::DAQ::L1Map( const LHCb::RawEvent&, 
+                                                    const LHCb::ODIN& ),
+                          Traits::BaseClass_t<AlgBase> >
       {
         
       public:
@@ -72,8 +72,8 @@ namespace Rich
         StatusCode initialize() override;
         
         /// Algorithm execution via transform
-        Rich::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent,
-                                     const LHCb::ODIN& odin ) const override;
+        Rich::Future::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent,
+                                             const LHCb::ODIN& odin ) const override;
         
       private:
         
@@ -97,28 +97,28 @@ namespace Rich
         /// Decode a RawBank into RichSmartID identifiers
         void decodeToSmartIDs( const LHCb::RawBank & bank,
                                const LHCb::ODIN& odin,
-                               Rich::DAQ::L1Map & decodedData ) const;
+                               Rich::Future::DAQ::L1Map & decodedData ) const;
         
         /// Decode a RawBank into RichSmartID identifiers
         /// Version with DC06 and DC04 compatibility
         void decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
+                                      Rich::Future::DAQ::L1Map & decodedData ) const;
         
         /// Decode a RawBank into RichSmartID identifiers
         /// Version compatible with 2006 testbeam
         void decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
+                                      Rich::Future::DAQ::L1Map & decodedData ) const;
         
         /// Decode a RawBank into RichSmartID identifiers
         /// Version compatible with first 2007 "final" L1 firmware
         void decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                                     const LHCb::ODIN& odin,
-                                    Rich::DAQ::L1Map & decodedData ) const;
+                                    Rich::Future::DAQ::L1Map & decodedData ) const;
         
         /// Decode a RawBank into RichSmartID identifiers
         /// MaPMT0 version
         void decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
+                                      Rich::Future::DAQ::L1Map & decodedData ) const;
         
         /// Check if a given L1 ID should be decoded
         inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID ) const

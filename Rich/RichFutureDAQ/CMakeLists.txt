@@ -8,6 +8,7 @@ gaudi_depends_on_subdirs(Det/RichDet
                          Event/DigiEvent
                          Rich/RichFutureKernel
                          Rich/RichDAQKernel
+                         Rich/RichFutureUtils
                          Rich/RichUtils)
 
 find_package(Boost)
@@ -19,5 +20,5 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})
 
 gaudi_add_module(RichFutureDAQ
                  src/*.cpp
-                 INCLUDE_DIRS Rich/RichFutureKernel Event/DAQEvent Event/DAQEvent RichUtils RichDAQKernel
-                 LINK_LIBRARIES RichDetLib DAQEventLib RichFutureKernel RichDAQKernel)
+                 INCLUDE_DIRS Rich/RichFutureKernel Rich/RichUtils Rich/RichFutureUtils Rich/RichDAQKernel Event/DAQEvent Event/DAQEvent 
+                 LINK_LIBRARIES RichDetLib DAQEventLib RichFutureKernel RichDAQKernel RichUtils RichFutureUtils)
