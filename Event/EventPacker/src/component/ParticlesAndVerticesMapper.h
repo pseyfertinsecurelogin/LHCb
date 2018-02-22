@@ -106,6 +106,9 @@ private:
   /// Outputlevel for unpackers created
   int m_unpackersOutputLevel;
 
+  // List of streams we should ignore paths under, e.g. `['/Event/Something']`
+  std::vector<std::string> m_vetoStreams;
+
 };
 
 #endif // SRC_ParticlesAndVerticesMapper_H
