@@ -101,6 +101,9 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent,
   // reserve top level size
   decodedData.reserve( richBanks.size() );
 
+  // Bank decoder cache
+  PDBanks banks;
+
   // Loop over data banks
   for ( const auto * bank : richBanks )
   {
@@ -110,7 +113,7 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent,
       // Decode this bank
       try
       {
-        decodeToSmartIDs( *bank, odin, decodedData );
+        decodeToSmartIDs( *bank, odin, decodedData, banks );
       }
       catch ( const GaudiException & expt )
       {
@@ -145,7 +148,8 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent,
 
 void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
                                        const LHCb::ODIN& odin,
-                                       L1Map & decodedData ) const
+                                       L1Map & decodedData,
+                                       PDBanks & banks ) const
 {
 
   // Check magic code for general data corruption
@@ -185,18 +189,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
       if      ( version == LHCb5    ||
                 version == FlatList  )
       {
-        decodeToSmartIDs_2007(bank,odin,decodedData);
-      }
-      else if ( version == LHCb3 ||
-                version == LHCb4  ) // RICH 2006 Testbeam
-      {
-        decodeToSmartIDs_2006TB(bank,decodedData);
-      }
-      else if ( version == LHCb0 ||
-                version == LHCb1 ||
-                version == LHCb2  )  // DC04 or DC06
-      {
-        decodeToSmartIDs_DC0406(bank,decodedData);
+        decodeToSmartIDs_2007(bank,odin,decodedData,banks);
       }
       else if ( MaPMT0 == version )
       {
@@ -217,12 +210,22 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
 
 //=============================================================================
 
-std::unique_ptr<const Rich::DAQ::HPDDataBank> 
+const Rich::DAQ::HPDDataBank *
 RawBankDecoder::createDataBank( const LongType * dataStart,
-                                const unsigned int dataSize,
-                                const BankVersion version ) const
+                                const BankVersion version,
+                                PDBanks & banks ) const
 {
-  std::unique_ptr<const Rich::DAQ::HPDDataBank> dataBank;
+  Rich::DAQ::HPDDataBank * dataBank = nullptr;
+
+  // If bank version is different to cache, force a reset
+  if ( UNLIKELY( version != banks.version ) )
+  {
+    banks.lhcb_nonZS .reset( nullptr );
+    banks.lhcb_ZS    .reset( nullptr );
+    banks.alice_nonZS.reset( nullptr );
+    banks.alice_ZS   .reset( nullptr );
+    banks.version = version;
+  }
 
   if ( LHCb5 == version )
   {
@@ -236,127 +239,43 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     {
       if ( UNLIKELY(isAlice) )
       {
-        dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppAlice>( dataStart );
+        if ( !banks.alice_ZS.get() )
+        { banks.alice_ZS = std::make_unique<RichDAQ_LHCb5::ZeroSuppAlice>(); }
+        dataBank = banks.alice_ZS.get();
       }
       else
       {
-        dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppLHCb>( dataStart );
+        if ( !banks.lhcb_ZS.get() )
+        { banks.lhcb_ZS = std::make_unique<RichDAQ_LHCb5::ZeroSuppLHCb>(); }
+        dataBank = banks.lhcb_ZS.get();
       }
     }
     else
     {
       if ( UNLIKELY(isAlice) )
       {
-        dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppAlice>( dataStart );
+        if ( !banks.alice_nonZS.get() )
+        { banks.alice_nonZS = std::make_unique<RichDAQ_LHCb5::NonZeroSuppAlice>(); }
+        dataBank = banks.alice_nonZS.get();
       }
       else
       {
-        dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppLHCb>( dataStart );
+        if ( !banks.lhcb_nonZS.get() )
+        { banks.lhcb_nonZS = std::make_unique<RichDAQ_LHCb5::NonZeroSuppLHCb>(); }
+        dataBank = banks.lhcb_nonZS.get();
       }
     }
-
-  }
-  else if ( LHCb4 == version )
-  {
-
-    // Quick check of header for HPD data type
-    const bool isZS    = RichDAQ_LHCb4::Header::zeroSuppressed(dataStart);
-    const bool isAlice = RichDAQ_LHCb4::Header::aliceMode(dataStart);
-
-    // Decide to zero suppress or not depending on number of hits
-    if ( isZS )
-    {
-      if ( UNLIKELY(isAlice) )
-      {
-        Warning ( "LHCb4 data format does not support ZS Alice mode data" ).ignore();
-      }
-      else
-      {
-        dataBank = std::make_unique<RichDAQ_LHCb4::ZeroSuppLHCb>( dataStart );
-      }
-    }
-    else
-    {
-      if ( UNLIKELY(isAlice) )
-      {
-        dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppAlice>( dataStart );
-      }
-      else
-      {
-        dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppLHCb>( dataStart );
-      }
-    }
-
-  }
-  else if ( LHCb3 == version )
-  {
-
-    // Quick check of header for HPD data type
-    const bool isZS    = RichDAQ_LHCb3::Header::zeroSuppressed(dataStart);
-    const bool isAlice = RichDAQ_LHCb3::Header::aliceMode(dataStart);
-
-    // Decide to zero suppress or not depending on number of hits
-    if ( isZS )
-    {
-      if ( UNLIKELY(isAlice) )
-      {
-        Warning ( "LHCb3 data format does not support ZS Alice mode data" ).ignore();
-      }
-      else
-      {
-        dataBank = std::make_unique<RichDAQ_LHCb3::ZeroSuppLHCb>( dataStart );
-      }
-    }
-    else
-    {
-      if ( UNLIKELY(isAlice) )
-      {
-        dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppAlice>( dataStart );
-      }
-      else
-      {
-        dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppLHCb>( dataStart );
-      }
-    }
-
-  }
-  else if ( LHCb2 == version )
-  {
-
-    // Quick check of header for HPD data type
-    const bool isZS = RichDAQ_LHCb2::Header::zeroSuppressed(dataStart);
-
-    // Decide to zero suppress or not depending on number of hits
-    if ( isZS )
-    {
-      dataBank = std::make_unique<RichDAQ_LHCb2::ZeroSuppLHCb>( dataStart, dataSize );
-    }
-    else
-    {
-      dataBank = std::make_unique<RichDAQ_LHCb2::NonZeroSuppLHCb>( dataStart );
-    }
-
-  }
-  else if ( LHCb1 == version )
-  {
-
-    // Quick check of header for HPD data type
-    const bool isZS = RichDAQ_LHCb1::Header::zeroSuppressed(dataStart);
     
-    // Decide to zero suppress or not depending on number of hits
-    if ( isZS )
-    {
-      dataBank = std::make_unique<RichDAQ_LHCb1::ZeroSuppLHCb>( dataStart, dataSize );
-    }
-    else
-    {
-      dataBank = std::make_unique<RichDAQ_LHCb1::NonZeroSuppLHCb>( dataStart );
-    }
+    // reset for the new data block
+    dataBank->reset( dataStart );
 
   }
   else if ( FlatList == version )
   {
-    dataBank = std::make_unique<RichDAQ_FlatList::Data>( dataStart );
+    if ( !banks.lhcb_ZS.get() )
+    { banks.lhcb_ZS = std::make_unique<RichDAQ_FlatList::Data>(); }
+    dataBank = banks.lhcb_ZS.get();
+    dataBank->reset( dataStart );
   }
   else
   {
@@ -380,7 +299,8 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
 
 void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                                             const LHCb::ODIN& odin,
-                                            L1Map & decodedData ) const
+                                            L1Map & decodedData,
+                                            PDBanks & banks ) const
 {
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
@@ -479,8 +399,8 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
           // Create data bank and decode into RichSmartIDs
           const auto hpdBank 
             ( createDataBank( &bank.data()[lineC], // pointer to start of data
-                              0, // Not needed here (to be removed). Must be 0 though
-                              version ) );
+                              version, 
+                              banks ) );
 
           // is this HPD suppressed ?
           const bool hpdIsSuppressed = hpdBank->suppressed();
@@ -686,307 +606,6 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   _ri_debug << "Decoded " << boost::format("%2i") % (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
   _ri_debug << " PDs from Level1 Bank ID = "
             << boost::format("%2i") % L1ID.data();
-  _ri_debug << " : Size " << boost::format("%4i") % (bank.size()/4) << " words : Version "
-            << version << endmsg;
-
-}
-
-//=============================================================================
-
-void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
-                                              L1Map & decodedData ) const
-{
-
-  // Get L1 ID
-  const Level1HardwareID L1ID ( bank.sourceID() );
-
-  // counts
-  DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
-
-  // Data bank size in words
-  const auto bankSize = bank.size() / 4;
-
-  // Get bank version
-  const auto version = bankVersion( bank );
-
-  if ( bankSize > 0 )
-  {
-
-    // ... otherwise, must have at least 2 entries
-    if ( bankSize < 2 )
-    {
-      Exception( "Non-empty RICH Bank size is less than 2 !" );
-    }
-
-    // Get Ingress map to decode into for this L1 board
-    decodedData.emplace_back( L1ID, IngressMap() );
-    auto & ingressMap = decodedData.back().second;
-
-    // This data version does not have ingress info, so just put all data into ingress 0
-    const L1IngressID ingressNum(0);
-
-    // Get data for this ingress
-    if ( ingressMap.empty() ) { ingressMap.emplace_back( ingressNum, IngressInfo() ); }
-    auto & ingressInfo = ingressMap.back().second;
-
-    // Make up L1 input numbers
-    Level1Input l1Input(0);
-
-    // Loop over bank, find headers and produce a data bank for each
-    // Fill data into RichSmartIDs
-    int lineC(0);
-    while ( lineC < bankSize )
-    {
-
-      // Create data bank and decode into RichSmartIDs
-      const auto hpdBank ( createDataBank( &bank.data()[lineC], // pointer to start of data
-                                           0, // Not needed here (to be removed). Must be 0 though
-                                           version ) );
-
-      // get HPD RichSmartID
-      const LHCb::RichSmartID hpdID = ( m_useFakeHPDID ? s_fakeHPDID :
-                                        m_richSys->richSmartID( hpdBank->level0ID() ) );
-
-      // decode to smartIDs
-      ingressInfo.pdData().emplace_back( l1Input, PDInfo() );
-      auto & hpdInfo = ingressInfo.pdData().back().second;
-      hpdInfo.setPdID(hpdID);
-      ++l1Input;
-      auto & newids = hpdInfo.smartIDs();
-      const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
-
-      // Do data integrity checks
-      const bool OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,this) );
-      if ( !OK || msgLevel(MSG::VERBOSE) )
-      {
-        // printout decoded RichSmartIDs
-        verbose() << " Decoded RichSmartIDs :-" << endmsg;
-        for ( const auto& ID : newids ) { verbose() << "   " << ID << endmsg; }
-      }
-      if ( !OK && m_purgeHPDsFailIntegrity ) { newids.clear(); }
-
-      // is data OK
-      if ( OK )
-      {
-
-        // apply suppression of high occupancy HPDs
-        if ( hpdHitCount < m_maxHPDOc )
-        {
-          const auto rich = hpdID.rich();
-          ++nHPDbanks[rich];
-          decodedHits[rich] += hpdHitCount;
-        }
-        else
-        {
-          std::ostringstream hpd;
-          hpd << hpdID.panelID();
-          Warning( "Forced suppression of HPD "+hpd.str(), StatusCode::SUCCESS, 0 ).ignore();
-          newids.clear();
-        }
-
-      }
-      else if ( m_verboseErrors )
-      {
-        // decoding error ....
-        error() << "Corruption in decoding -> Data is rejected for HPD " << hpdID << endmsg;
-
-        error() << " -> Dump of offending raw L1 data :-" << endmsg;
-        dumpRawBank( bank, error() );
-
-        error() << " -> Badly decoded HPD :-" << endmsg;
-        error() << *hpdBank << endmsg;
-      }
-
-      // Increment line number to next data block
-      lineC += hpdBank->nTotalWords();
-
-    } // bank while loop
-
-  } // data bank not empty
-
-  // Add to the total number of decoded hits
-  decodedData.addToTotalHits( decodedHits );
-  decodedData.addToActivePDs( nHPDbanks   );
-
-  // debug printout
-  _ri_debug << "Decoded " << boost::format("%2i") % (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
-  _ri_debug << " PDs from Level1 Bank "
-            << boost::format("%2i") % L1ID.data();
-  _ri_debug << " : Size " << boost::format("%4i") % (bank.size()/4) << " words : Version "
-            << version << endmsg;
-
-}
-
-//=============================================================================
-
-void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
-                                              L1Map & decodedData ) const
-{
-
-  // Get L1 ID
-  const Level1HardwareID base_L1ID ( bank.sourceID() );
-
-  // Get max data size for LHCb mode
-  const ShortType maxDataSize = MaxDataSize;
-
-  // HPD count
-  DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
-
-  // Data bank size in words
-  const auto bankSize = bank.size() / 4;
-
-  // Get bank version
-  const auto version = bankVersion( bank );
-
-  // Header type
-  typedef RichDAQHeaderV1::RichDAQHeaderPD MyHeader;
-
-  // Is this an empty bank ?
-  if ( bankSize > 0 )
-  {
-
-    // ... otherwise, must have at least 2 entries
-    if ( bankSize < 2 )
-    {
-      Exception( "Non-empty RICH Bank size is less than 2 !" );
-    }
-
-    // Make up L1 input numbers when using fake HPDIDs
-    Level1Input fake_l1Input(0);
-
-    // Loop over bank, find headers and produce a data bank for each
-    // Fill data into RichSmartIDs
-    int lineC(0);
-    while ( lineC < bankSize )
-    {
-
-      // Find HPD bank start
-      const MyHeader header ( &bank.data()[lineC] );
-
-      // Is this a true header
-      if ( header.startPD() )
-      {
-
-        _ri_verbo << " Found HPD header at line " << lineC << " of " << bankSize << endmsg;
-
-        // Store start line for header
-        const int lineHeader = lineC;
-
-        // Find last line of block
-        int lineLast = lineC;
-        if ( header.zeroSuppressed() )
-        {
-          // For ZS blocks, have to search for the hext header to define the block length
-
-          bool cont = true;
-          while ( cont && lineC < bankSize )
-          {
-            ++lineC;
-            // Test if this is the last line of data or a new header word
-            if ( lineC == bankSize || MyHeader(&bank.data()[lineC]).startPD() )
-            {
-              lineLast = lineC-1;
-              cont = false;
-            }
-          }
-
-          _ri_verbo << "  -> Bank is zero surpressed : ends at " << lineLast << endmsg;
-
-        }
-        else
-        {
-          // non-ZS blocks have fixed length, so skip straight to the end
-
-          lineC   += 1 + maxDataSize; // data block + header
-          lineLast = lineC - 1;
-
-          _ri_verbo << "  -> Bank is non zero surpressed : ends at " << lineLast << endmsg;
-
-        }
-
-        // Check data size
-        const unsigned int dataSize = lineLast-lineHeader;
-        if ( dataSize < 1 )
-        {
-          std::ostringstream message;
-          message << "Invalid HPD data block size : " << dataSize;
-          Exception( message.str() );
-        }
-
-        // Create data bank and decode into RichSmartIDs
-        const auto hpdBank ( createDataBank( &bank.data()[lineHeader],
-                                             dataSize,
-                                             version ) );
-
-        // get HPD RichSmartID
-        const LHCb::RichSmartID hpdID = ( m_useFakeHPDID ? s_fakeHPDID :
-                                          m_richSys->richSmartID( hpdBank->level0ID() ) );
-
-        // L1 ID
-        const auto L1ID = m_richSys->level1HardwareID(hpdID);
-        if ( L1ID != base_L1ID )
-        {
-          error() << "L1ID Mis-match" << endmsg;
-          error() << "  -> base : " << base_L1ID << endmsg;
-          error() << "  -> HPD  : " << L1ID << endmsg;
-        }
-
-        // Get Ingress map to decode into for this L1 board
-        decodedData.emplace_back( L1ID, IngressMap() );
-        auto & ingressMap = decodedData.back().second;
-
-        // L1 input number
-        const Level1Input l1Input = ( m_useFakeHPDID ?
-                                      fake_l1Input :
-                                      m_richSys->level1InputNum(hpdID) );
-        if ( m_useFakeHPDID ) ++fake_l1Input;
-
-        // Ingress info
-        ingressMap.emplace_back( l1Input.ingressID(), IngressInfo() );
-        auto & ingressInfo = ingressMap.back().second;
-
-        // get HPD data
-        ingressInfo.pdData().emplace_back( l1Input, PDInfo() );
-        auto & hpdInfo = ingressInfo.pdData().back().second;
-        hpdInfo.setPdID(hpdID);
-        auto & newids = hpdInfo.smartIDs();
-
-        // get hit count
-        const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
-
-        // apply suppression of high occupancy HPDs
-        if ( hpdHitCount < m_maxHPDOc )
-        {
-          const auto rich = hpdID.rich();
-          ++nHPDbanks[rich];
-          decodedHits[rich] += hpdHitCount;
-        }
-        else
-        {
-          std::ostringstream hpd;
-          hpd << hpdID.panelID();
-          Warning( "Suppressed HPD in "+hpd.str(), StatusCode::SUCCESS, 0 ).ignore();
-          newids.clear();
-        }
-
-      }
-      else // Not a data header line
-      {
-        ++lineC;
-      }
-
-    } // bank while loop
-
-  } // data bank not empty
-
-  // Add to the total number of decoded hits
-  decodedData.addToTotalHits( decodedHits );
-  decodedData.addToActivePDs( nHPDbanks   );
-
-  // debug printout
-  _ri_debug << "Decoded " << boost::format("%2i") % (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
-  _ri_debug << " PDs from Level1 Bank "
-            << boost::format("%2i") % base_L1ID.data();
   _ri_debug << " : Size " << boost::format("%4i") % (bank.size()/4) << " words : Version "
             << version << endmsg;
 

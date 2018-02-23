@@ -124,6 +124,9 @@ namespace Rich
       virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
                                        const CommonMessagingBase * msgBase ) const = 0;
 
+      /// reset for a new data block
+      virtual void reset( const LongType * data,
+                          const ShortType  dataSize = 0 ) = 0;
     };
 
     //-----------------------------------------------------------------------------
@@ -196,11 +199,11 @@ namespace Rich
         init( data, dataSize );
       }
 
-    protected:
+    public:
 
       /// Reset object to decode a new data stream
-      inline void reset( const LongType * data,
-                         const ShortType  dataSize = 0 )
+      void reset( const LongType * data,
+                  const ShortType  dataSize = 0 ) override
       {
         // reset header and footer to default size if needed
         m_header.reset();
@@ -302,7 +305,7 @@ namespace Rich
       /// Clean up data representation
       inline void cleanUp()
       {
-        if ( m_internalData && m_data )
+        if ( UNLIKELY( m_internalData && m_data ) )
         {
           delete[] m_data;
           m_data = nullptr;
