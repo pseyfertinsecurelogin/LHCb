@@ -11,6 +11,9 @@
 
 #pragma once
 
+// STL
+#include <algorithm>
+
 // local
 #include "RichDAQKernel/RichHPDDataBank.h"
 #include "RichDAQKernel/RichZSPacked_V2.h"
@@ -85,9 +88,10 @@ namespace Rich
         /** Reset for a new block of raw data
          *  @param data     Pointer to the start of the data block
          */
-        inline void reset( const LongType * data )
+        void reset( const LongType * data,
+                    const ShortType  dataSize = 0 ) override
         {
-          HPDDataBankImp<Version,Header,Footer>::reset( data, MaxDataSizeALICE );
+          HPDDataBankImp<Version,Header,Footer>::reset( data, std::max(MaxDataSizeALICE,dataSize) );
         }
 
         /// Destructor

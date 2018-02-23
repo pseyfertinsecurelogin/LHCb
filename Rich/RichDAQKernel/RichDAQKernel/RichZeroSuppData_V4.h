@@ -92,10 +92,11 @@ namespace Rich
         /** Reset for a new block of raw data
          *  @param data     Pointer to the start of the data block
          */
-        inline void reset( const LongType * data )
+        void reset( const LongType * data,
+                    const ShortType  dataSize = 0 ) override
         {
           m_tooBig = false;
-          HPDDataBankImp<Version,Header,Footer>::reset( data );
+          HPDDataBankImp<Version,Header,Footer>::reset( data, dataSize );
         }
 
         /// Destructor
