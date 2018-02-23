@@ -110,7 +110,7 @@ Track::ConstNodeRange Track::nodes() const
 }
 
 //=============================================================================
-// Get the measurements on the track. Node that it does not return a
+// Get the measurements on the track. Note that it does not return a
 // reference. This is because I want to remove this container from
 // fitresult.
 //=============================================================================
@@ -261,7 +261,7 @@ void Track::addToStates( const State& state )
 //=============================================================================
 // Add a list of states to the list associated to the Track. This takes ownership.
 //=============================================================================
-void Track::addToStates( const StateContainer& states, LHCb::Tag::State::AssumeUnordered_tag)
+void Track::addToStates( span<State* const> states, LHCb::Tag::State::AssumeUnordered_tag)
 {
   auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
@@ -279,7 +279,7 @@ void Track::addToStates( const StateContainer& states, LHCb::Tag::State::AssumeU
 //=============================================================================
 // Add a set of sorted states by increasing Z to the track. Track takes ownership
 //=============================================================================
-void Track::addToStates( const StateContainer& states, LHCb::Tag::State::AssumeSorted_tag)
+void Track::addToStates( span<State* const> states, LHCb::Tag::State::AssumeSorted_tag)
 {
   // debug assert checking whether it's correctly sorted or not
   assert( ( checkFlag(Track::Flags::Backward) ?
@@ -328,7 +328,7 @@ bool Track::addToLhcbIDs( const LHCb::LHCbID& value )
 //=============================================================================
 // Add LHCbIDs to track
 //=============================================================================
-bool Track::addSortedToLhcbIDs( const LHCbIDContainer& ids )
+bool Track::addSortedToLhcbIDs( span<const LHCbID> ids )
 {
   LHCbIDContainer result; result.reserve( ids.size() + m_lhcbIDs.size() ) ;
   std::set_union( ids.begin(), ids.end(),
@@ -348,7 +348,7 @@ namespace {
 struct counting_inserter {
     size_t count = 0;
     counting_inserter& operator++() { return *this; } // nop
-    counting_inserter& operator*() { return *this; } // redirect to self, so that out op= is called
+    counting_inserter& operator*() { return *this; } // redirect to self, so that our op= is called
     counting_inserter& operator=(const LHCbID&) { ++count; return *this; } // raison d'etre
 };
 
