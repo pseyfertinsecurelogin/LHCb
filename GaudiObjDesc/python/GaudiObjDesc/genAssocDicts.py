@@ -9,7 +9,7 @@ class genAssocDicts(importUtils.importUtils,genClassDicts.genClassDicts):
         genClassDicts.genClassDicts.__init__(self,godRoot,dictOutput,srcOutput)
 #--------------------------------------------------------------------------------
     def genPackageDict(self,godPackage):
-        if godPackage.has_key('assoc'):
+        if 'assoc' in godPackage:
             assocNum = 0
             for assoc in godPackage['assoc']:
                 assocAtt = assoc['attrs']

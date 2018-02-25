@@ -71,7 +71,7 @@ class gparser:
                     if not i%2 :
                         line2 += word
                     else:
-                        if dict.has_key(word):
+                        if word in dict:
                             dword = dict[word]
                             if len(dword):
                                 if indent : dword = dword.replace('\n','\n%s'%(' '*indent))
