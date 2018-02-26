@@ -4,22 +4,22 @@
 #include "Event/RawEvent.h"
 
 // local
-#include "FTRawBankDecoder.h"
+#include "FTNewRawBankDecoder.h"
 #include "FTRawBankParams.h"
 
 //-----------------------------------------------------------------------------
-// Implementation file for class : FTRawBankDecoder
+// Implementation file for class : FTNewRawBankDecoder
 //
 // 2012-05-11 : Olivier Callot
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_COMPONENT( FTRawBankDecoder )
+DECLARE_COMPONENT( FTNewRawBankDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
+FTNewRawBankDecoder::FTNewRawBankDecoder( const std::string& name,
                                     ISvcLocator* pSvcLocator)
 : Transformer ( name , pSvcLocator,
                 KeyValue{ "RawEventLocations",
@@ -28,7 +28,7 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
                 KeyValue{ "OutputLocation", LHCb::FTLiteClusterLocation::Default } )
 { }
 
-StatusCode FTRawBankDecoder::initialize()
+StatusCode FTNewRawBankDecoder::initialize()
 {
   StatusCode sc = Transformer::initialize();
   m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
@@ -40,18 +40,18 @@ StatusCode FTRawBankDecoder::initialize()
 // Main execution
 //=============================================================================
 FTLiteClusters
-FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
+FTNewRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
   const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
 
   // Simple loop over the banks to determine total number of clusters
   // Bank size is half the number of clusters and includes headers
-  // The scaling by 0.4 is obtained empirically.
+  // No 0.4 scaling
   // In the future, the #clusters should be encoded in raw bank.
   FTLiteClusters clus;
   int totSize = 0;
   for ( const LHCb::RawBank* bank : banks) { totSize += bank->size();}
-  clus.reserve(4 * totSize / 10);
+  clus.reserve(totSize);
 
   // Store partition points for quadrants for faster sorting
   std::vector<int> partitionPoints;
@@ -59,8 +59,13 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
   for ( const LHCb::RawBank* bank : banks) {
-    LHCb::FTChannelID source       = bank->sourceID();
-    unsigned uniqueQuarter = source.uniqueQuarter();
+    // This source, at the contrary of the former one, contains also enough information
+    // to know which SiPM.
+    LHCb::FTChannelID source = bank->sourceID();
+    unsigned uniqueQuarter   = source.uniqueQuarter();
+    unsigned module          = source.module();
+    unsigned sipmInModule    = source.sipmInModule();
+    
     auto size        = bank->size(); // in bytes, multiple of 4
 
     if ( msgLevel(MSG::VERBOSE) )
@@ -71,6 +76,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                   << " "    << source.layer()
                   << " "    << source.quarter()
                   << ")"
+                  << " module " << module
+                  << " siPM " << sipmInModule
                   << " size " << size << endmsg;
       }
     if ( bank->version() != 2 &&  bank->version() != 3) {
@@ -78,7 +85,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               << " for source " << source << " size " << size << " bytes."
               << endmsg;
       throw GaudiException("Unsupported FT bank version",
-                           "FTRawBankDecoder",
+                           "FTNewRawBankDecoder",
                            StatusCode::FAILURE);
     }
 
@@ -89,7 +96,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       int sipmHeader = *first++;
       if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
       unsigned modulesipm = sipmHeader >> FTRawBank::sipmShift ;
-       unsigned module     = modulesipm >> FTRawBank::sipmShift ;
+      unsigned module     = modulesipm >> FTRawBank::sipmShift ;
       LHCb::FTChannelID chanModuleSiPM = m_ftReadoutTool->sipm(modulesipm);
       unsigned mat        = chanModuleSiPM.mat ();
       unsigned sipm       = chanModuleSiPM.sipm();
@@ -104,7 +111,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                   << ", #clusters in bank=" << std::distance(first,last) << endmsg;
 
         throw GaudiException("Inconsistent size of rawbank",
-                             "FTRawBankDecoder",
+                             "FTNewRawBankDecoder",
                              StatusCode::FAILURE);
       }
       
@@ -148,7 +155,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 error()<<"something went terribly wrong here first fragment: " << channel
                        <<" second fragment: "  << channel2 << endmsg;
                 throw GaudiException("There is an inconsistency between Encoder and Decoder!",
-                                     "FTRawBankDecoder",
+                                     "FTNewRawBankDecoder",
                                      StatusCode::FAILURE);
               }
               // fragemted clusters, size > 2*max size

@@ -23,71 +23,54 @@
 
 class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
  public:
-	using base_class::base_class;	
+  using base_class::base_class;  
 
-	//Ctor
-	FTReadoutTool(const std::string& type,
-				  const std::string& name,
-				  const IInterface* parent);
+  //Ctor
+  FTReadoutTool(const std::string& type,
+          const std::string& name,
+          const IInterface* parent);
 
-	/// init
-	StatusCode initialize() override;
-	
-	/// validate
-	//	StatusCode validate() const;
+  /// init
+  //  StatusCode initialize() override;
+  
+  /// validate
+  //  StatusCode validate() const;
 
-	/// get station,layer,quarter
-	//	unsigned int region (const LHCb::FTChannelID aChan) const overrider
-	//	unsigned int station(const LHCb::FTChannelID aChan) const override;
-	//	unsigned int layer  (const LHCb::FTChannelID aChan) const override;
-	//	unsigned int quarter(const LHCb::FTChannelID aChan) const override;
-	//	unsigned int uniqueQuarter(const LHCb::FTChannelID aChan) const override;
-	//	unsigned int module (const LHCb::FTChannelID aChan) const override;
-	//	unsigned int mat    (const LHCb::FTChannelID aChan) const override;
-	//	unsigned int sipm   (const LHCb::FTChannelID aChan) const override;
+  //Build FTChannelID from information
+  LHCb::FTChannelID station      (const unsigned int aChan) const override;
+  LHCb::FTChannelID layer        (const unsigned int aChan) const override;
+  LHCb::FTChannelID quarter      (const unsigned int aChan) const override;
+  LHCb::FTChannelID uniqueQuarter(const unsigned int aChan) const override;
+  LHCb::FTChannelID module       (const unsigned int aChan) const override;
+  LHCb::FTChannelID mat          (const unsigned int aChan) const override;
+  LHCb::FTChannelID sipm         (const unsigned int aChan) const override;
 
-	//Build FTChannelID from information
-	LHCb::FTChannelID station      (const unsigned int aChan) const override;
-	LHCb::FTChannelID layer        (const unsigned int aChan) const override;
-	LHCb::FTChannelID quarter      (const unsigned int aChan) const override;
-	LHCb::FTChannelID uniqueQuarter(const unsigned int aChan) const override;
-	LHCb::FTChannelID module       (const unsigned int aChan) const override;
-	LHCb::FTChannelID mat          (const unsigned int aChan) const override;
-	LHCb::FTChannelID sipm         (const unsigned int aChan) const override;
+  
+  unsigned int nBoard() const override;
 
-	
-	unsigned int nBoard() const override;
+  /// printout
+  void printMapping() const override;
+  
+  /// write an xml file
+  StatusCode writeMappingToXML() const override;
 
-	/** Add the mapping of source ID to board number for FT */
-	//  const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
-	
-	/** Add the mapping of board number to source ID for FT */
-	//  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const override;
-	
-	/// printout
-	void printMapping() const override;
-	
-	/// write an xml file
-	StatusCode writeMappingToXML() const override;
-
-	std::string m_conditionLocation;
-	
+  std::string m_conditionLocation;
+  
  private:
-	void clear();
-	StatusCode createBoards();
+  void clear();
+  StatusCode createBoards();
 
-	//	unsigned int m_nRegionA     = 512;
-	unsigned int m_firstStation = 512;
+  //  unsigned int m_nRegionA     = 512;
+  unsigned int m_firstStation = 512;
 
-	unsigned int m_passedHeaders;//LoH
+  unsigned int m_passedHeaders;//LoH
 
-	bool m_printMapping = false;
-	
-	Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
-	unsigned int m_hybridsPerBoard;
-	unsigned int m_nBoard;
-	//	std::vector<std::unique_ptr<FTTell40Board> > m_boards;
-	std::vector<std::unique_ptr<FTTell40ID> > m_boards;
+  bool m_printMapping = false;
+  
+  Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
+  unsigned int m_hybridsPerBoard;
+  unsigned int m_nBoard;
+  std::vector<std::unique_ptr<FTTell40ID> > m_boards;
 };
 
 #endif // _FTReadoutTool_H

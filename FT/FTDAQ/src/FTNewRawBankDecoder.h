@@ -1,5 +1,5 @@
-#ifndef FTRAWBANKDECODER_H
-#define FTRAWBANKDECODER_H 1
+#ifndef FTNEWRAWBANKDECODER_H
+#define FTNEWRAWBANKDECODER_H 1
 
 // Include files
 // from Gaudi
@@ -19,7 +19,7 @@ using FTLiteClusters = FastClusterContainer<LHCb::FTLiteCluster,int>;
  *  @author Olivier Callot
  *  @date   2012-05-11
  */
-class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEvent& ) >
+class FTNewRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEvent& ) >
 {
  public:
   /// Standard constructor
@@ -37,4 +37,4 @@ class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEven
       "Maximal cluster width"};
 
 };
-#endif // FTRAWBANKDECODER_H
+#endif // FTNEWRAWBANKDECODER_H
