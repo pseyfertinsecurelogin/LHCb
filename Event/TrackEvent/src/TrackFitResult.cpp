@@ -52,7 +52,7 @@ void TrackFitResult::addToMeasurements( const LHCb::Measurement& meas )
 //=============================================================================
 // Add a list of measurement to the list associated to the Track. This takes ownership.
 //=============================================================================
-void TrackFitResult::addToMeasurements( MeasurementContainer& measurements )
+void TrackFitResult::addToMeasurements( span<LHCb::Measurement* const> measurements )
 {
   m_measurements.insert( m_measurements.end(), measurements.begin(), measurements.end() ) ;
 }
