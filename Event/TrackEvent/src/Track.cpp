@@ -30,7 +30,7 @@ using namespace LHCb;
 //=============================================================================
 const TrackFitResult* Track::fitResult() const
 {
-  return m_fitResult ;
+  return m_fitResult.get() ;
 }
 
 //=============================================================================
@@ -38,7 +38,7 @@ const TrackFitResult* Track::fitResult() const
 //=============================================================================
 TrackFitResult* Track::fitResult()
 {
-  return m_fitResult ;
+  return m_fitResult.get() ;
 }
 
 //=============================================================================
@@ -46,7 +46,7 @@ TrackFitResult* Track::fitResult()
 //=============================================================================
 void Track::setFitResult(LHCb::TrackFitResult* absfit)
 {
-  if ( m_fitResult != absfit ) delete std::exchange( m_fitResult, absfit );
+  if ( m_fitResult.get() != absfit ) m_fitResult.reset( absfit );
 }
 
 //=============================================================================
@@ -82,7 +82,7 @@ Track::ConstNodeRange Track::nodes() const
 {
   if ( !m_fitResult ) { return Track::ConstNodeRange() ; }
   //
-  const LHCb::TrackFitResult* _result = m_fitResult ;
+  const LHCb::TrackFitResult* _result = m_fitResult.get() ;
   // cast the const container to a container of const pointers
   const LHCb::TrackFitResult::NodeContainer& nodes_ = _result->nodes() ;
   //
@@ -394,8 +394,7 @@ void Track::reset()
   m_states.clear();
   m_ancestors.clear();
   m_extraInfo.clear();
-  delete m_fitResult ;
-  m_fitResult = nullptr;
+  m_fitResult.reset();
 }
 
 //=============================================================================
@@ -438,8 +437,8 @@ void Track::copy( const Track& track )
                   [](const LHCb::State* s) { return s->clone(); });
 
   // copy the track fit info
-  delete std::exchange( m_fitResult, track.m_fitResult ? track.m_fitResult->clone()
-                                                       : nullptr );
+  m_fitResult.reset( track.m_fitResult ? track.m_fitResult->clone()
+                                       : nullptr );
 
   setExtraInfo( track.extraInfo() );
 

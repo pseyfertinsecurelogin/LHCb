@@ -261,7 +261,7 @@
 	desc     = "Constructor with assigned key"
 	argList  = "int key "
 	explicit = "TRUE"
-	initList = "KeyedObject&lt;int&gt;( key ), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_fitResult(nullptr) ">
+	initList = "KeyedObject&lt;int&gt;( key ), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0) ">
       </constructor>
 
    <constructor
@@ -279,7 +279,7 @@
                     std::vector&lt;LHCb::LHCbID&gt; ids,
                     const LHCb::State&amp; aState"
 	explicit = "TRUE"
-	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_lhcbIDs(std::move(ids)), m_fitResult(nullptr), m_ancestors()">
+	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_lhcbIDs(std::move(ids))">
       <code>
       addToStates(aState);
       setHistory(history);
@@ -294,7 +294,7 @@
 	argList  = "const LHCb::Track::History&amp; history, const LHCb::Track::Types&amp; trackType,
                     const LHCb::Track::PatRecStatus&amp; patStatus"
 	explicit = "TRUE"
-	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0),  m_fitResult(nullptr), m_ancestors()">
+	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0)">
       <code>
       setHistory(history);
       setType(trackType);
@@ -304,7 +304,7 @@
 
     <constructor
        desc     = "Copy constructor"
-       initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_fitResult(nullptr), m_ancestors()">
+       initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0)">
          <arg const="TRUE" name="track" type="LHCb::Track"/>
        <code>
          this -&gt; copy( track );
@@ -315,7 +315,6 @@
         desc = 'Track destructor'>
         <code>
          std::for_each( m_states.begin(), m_states.end(), [](auto&amp; i) { delete i; } );
-         delete m_fitResult ;
         </code>
       </destructor>
 
@@ -423,7 +422,7 @@
         setMeth   = 'FALSE' />
 
       <attribute
-	type      = 'LHCb::TrackFitResult*'
+	type    = 'std::unique_ptr&lt;TrackFitResult&gt;'
         name      = 'fitResult'
         desc      = 'Transient data related to track fit (nodes, material, etc)'
         access    = 'PRIVATE'
@@ -892,13 +891,13 @@
       </method>
 
       <method
-	type    = 'TrackFitResult*'
+	type    = 'LHCb::TrackFitResult*'
         name    = 'fitResult'
         desc    = 'get pointer to the object holding the trackfit data.'>
       </method>
 
       <method
-	type    = 'const TrackFitResult*'
+	type      = 'const LHCb::TrackFitResult*'
 	name    = 'fitResult'
 	desc    = 'get const pointer to the object holding the trackfit data.'
 	const   = 'TRUE'>
