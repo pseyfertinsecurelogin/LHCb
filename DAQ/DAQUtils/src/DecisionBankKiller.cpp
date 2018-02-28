@@ -21,7 +21,7 @@ DecisionBankKiller::DecisionBankKiller(const std::string& name, ISvcLocator* pSv
         m_alwaysKeepBanksSet[i] = 1;
       }
     }
-  });
+  }).useUpdateHandler();
   declareProperty("LineFilter", m_lineFilterTool, "LoKi Tool to execute line filter");
 }
 
