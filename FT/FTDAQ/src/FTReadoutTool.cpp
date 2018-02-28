@@ -25,28 +25,6 @@ FTReadoutTool::FTReadoutTool(const std::string& type,
            m_conditionLocation  = "/dd/Conditions/ReadoutConf/FT/ReadoutMap" );
 }
 
-//Initialisation
-StatusCode FTReadoutTool::initialize() {  
-  // initialization phase...
-  StatusCode sc = FTReadoutTool::initialize();
-  if (sc.isFailure()){
-    return Error("Failed to initialize", sc);
-  }
-  
-  registerCondition(m_conditionLocation,
-            &FTReadoutTool::createBoards);
-  sc = runUpdate(); // force update
-  if (sc.isFailure()) return Error ( "Failed first UMS update for readout tool", sc );
-  
-  if (m_printMapping == true){
-    printMapping();
-  }
-
-  m_passedHeaders = 0;
-
-  return StatusCode::SUCCESS;
-}
-
 // Build a FTChannelID from info
 LHCb::FTChannelID FTReadoutTool::station      (const unsigned int aChan) const{return LHCb::FTChannelID(aChan,0,0,0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::layer        (const unsigned int aChan) const{return LHCb::FTChannelID(0,aChan,0,0,0,0,0);}
