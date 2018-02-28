@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTNewRawBankDecoder
 //
-// 2012-05-11 : Olivier Callot
+// 2018-02-25 : Louis Henry
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
@@ -31,9 +31,9 @@ FTNewRawBankDecoder::FTNewRawBankDecoder( const std::string& name,
 StatusCode FTNewRawBankDecoder::initialize()
 {
   StatusCode sc = Transformer::initialize();
-  m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
-  m_ftReadoutTool->initialize();
-  return StatusCode::SUCCESS;
+  //  m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
+  //  m_ftReadoutTool->initialize();
+  return sc;
 }
 
 //=============================================================================

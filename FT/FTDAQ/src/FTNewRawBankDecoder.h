@@ -13,17 +13,17 @@ using namespace Gaudi::Functional;
 
 using FTLiteClusters = FastClusterContainer<LHCb::FTLiteCluster,int>;
 
-/** @class FTRawBankDecoder FTRawBankDecoder.h
+/** @class FTNewRawBankDecoder FTNewRawBankDecoder.h
  *  Decode the FT raw bank into FTLiteClusters
  *
- *  @author Olivier Callot
- *  @date   2012-05-11
+ *  @author Louis Henry
+ *  @date   2018-02-25
  */
 class FTNewRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEvent& ) >
 {
  public:
   /// Standard constructor
-  FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
+  FTNewRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;
   
