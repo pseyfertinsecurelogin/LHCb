@@ -31,9 +31,9 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
 StatusCode FTRawBankDecoder::initialize()
 {
   StatusCode sc = Transformer::initialize();
-  m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
-  m_ftReadoutTool->initialize();
-  return StatusCode::SUCCESS;
+  //  m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
+  //  m_ftReadoutTool->initialize();
+  return sc;
 }
 
 //=============================================================================
@@ -54,9 +54,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   clus.reserve(4 * totSize / 10);
 
   // Store partition points for quadrants for faster sorting
-  std::vector<int> partitionPoints;
-  partitionPoints.reserve(48); // 48 quadrants
-
+  boost::static_vector<int,FTRawBank::nStations*FTRawBank::nLayers*FTRawBank::nQuarters*FTRawBank::nTell40PerQuarter> partitionPoints;
+  
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
   for ( const LHCb::RawBank* bank : banks) {
     LHCb::FTChannelID source       = bank->sourceID();
@@ -89,7 +88,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       int sipmHeader = *first++;
       if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
       unsigned modulesipm = sipmHeader >> FTRawBank::sipmShift ;
-       unsigned module     = modulesipm >> FTRawBank::sipmShift ;
+      unsigned module     = modulesipm >> FTRawBank::sipmShift ;
       LHCb::FTChannelID chanModuleSiPM = m_ftReadoutTool->sipm(modulesipm);
       unsigned mat        = chanModuleSiPM.mat ();
       unsigned sipm       = chanModuleSiPM.sipm();
@@ -151,7 +150,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                                      "FTRawBankDecoder",
                                      StatusCode::FAILURE);
               }
-              // fragemted clusters, size > 2*max size
+              // fragmented clusters, size > 2*max size
               // only edges were saved, add middles now 
               if(diff  > m_clusterMaxWidth){
                 
@@ -257,11 +256,12 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     auto partitionPoint = std::next(clus.begin(),pPoint);
     if( iClusFirst != partitionPoint ) { // container must not be empty
       auto chanID = (*iClusFirst).channelID(); // FTChannelID first cluster
-      unsigned int iQua = chanID.quarter();
+      //      unsigned int iQua = chanID.quarter();
+      unsigned int iQua = chanID.uniqueQuarter();
 
       // Swap clusters within modules
       // if quadrant==0 or 3 for even layers or quadrant==1 or 2 for odd layers
-      if( ((chanID.layer()&1)==0) ^ (iQua>>1) ^ (iQua&1) ) {
+      if( (((iQua >> 2)&1)==0) ^ ((iQua & 3)>>1) ^ (iQua & 1) ) {
         auto iClusFirstM = iClusFirst; // copy
         for( unsigned int iMod = 0; iMod < 6; ++iMod ) {
           auto thisModule = [&iMod](const LHCb::FTLiteCluster cluster)
