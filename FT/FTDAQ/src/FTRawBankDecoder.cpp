@@ -7,6 +7,8 @@
 #include "FTRawBankDecoder.h"
 #include "FTRawBankParams.h"
 
+#include "boost/container/static_vector.hpp"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTRawBankDecoder
 //
@@ -53,8 +55,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   for ( const LHCb::RawBank* bank : banks) { totSize += bank->size();}
   clus.reserve(4 * totSize / 10);
 
-  // Store partition points for quadrants for faster sorting
-  boost::static_vector<int,FTRawBank::nStations*FTRawBank::nLayers*FTRawBank::nQuarters*FTRawBank::nTell40PerQuarter> partitionPoints;
+  // Store partition points for Tell40 for faster sorting
+  boost::container::static_vector<int,FTRawBank::nStations*FTRawBank::nLayers*FTRawBank::nQuarters*FTRawBank::nTell40PerQuarter> partitionPoints;
   
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
   for ( const LHCb::RawBank* bank : banks) {
