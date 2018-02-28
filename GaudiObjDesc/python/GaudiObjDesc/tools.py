@@ -178,8 +178,7 @@ class tools:
             if not (self.isFundamentalT(p['type']) or self.isPointerT(p['type'])) : s += '&'
         elif p['inout'] in ['INOUT','BOTH'] : s += p['type'] + '&'
         s += ' '
-        if p.has_key('name') : s += p['name']
-        else : s += 'value'
+        s += p.get('name','value')
         return s
 #--------------------------------------------------------------------------------
     def genParamsFromElem(self, pDict):
@@ -212,7 +211,7 @@ class tools:
     def getLongestName( self, dict ):
         lname = 0
         for d in dict :
-            if d.has_key('attrs') and len(d['attrs']['name']) > lname :
+            if 'attrs' in d and len(d['attrs']['name']) > lname :
                 lname = len(d['attrs']['name'])
         return lname
 #--------------------------------------------------------------------------------
