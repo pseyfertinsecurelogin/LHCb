@@ -9,7 +9,7 @@ gaudi_depends_on_subdirs(GaudiConf
                          Kernel/XMLSummaryBase)
 
 find_package(Boost COMPONENTS regex)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
 
 find_package(PythonLibs)
 find_package(Xrootd) # runtime, only for the tests
