@@ -64,7 +64,7 @@ namespace LHCb
   }; // class VPLightCluster
 
   /// lightweight container for VPLightCluster
-  typedef boost::container::flat_map<unsigned, VPLightCluster> VPLightClusters;
+  typedef std::vector<VPLightCluster> VPLightClusters;
 
   inline std::ostream& operator<<( std::ostream& str, const VPLightCluster& obj ) { return obj.fillStream( str ); }
 
