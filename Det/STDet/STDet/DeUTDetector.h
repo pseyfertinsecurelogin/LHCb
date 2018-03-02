@@ -58,11 +58,16 @@ public:
   */
   DeSTBaseElement* findTopLevelElement(const std::string& nickname) const override;
 
+  DeSTSector* getSector(const LHCb::STChannelID) const override;
+
+  void setOffset();
+
 private:
 
   /** make flat list of lowest descendents  and also layers */
   void flatten();
-
+  /** offsets on the "flatten" list of sectors in order to have quicker access */
+  std::vector<size_t> m_offset;
 };
 
 #endif // _DEUTDETECTOR_H

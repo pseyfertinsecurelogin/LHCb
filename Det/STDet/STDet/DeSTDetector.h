@@ -154,6 +154,15 @@ public:
   DeSTSector* findSector(const LHCb::STChannelID aChannel) const;
 
   /**
+  *  get the sector corresponding to the input channel
+  * @param  aChannel channel
+  * @return sector
+  */
+  virtual DeSTSector* getSector(const LHCb::STChannelID aChannel) const {
+    return findSector(aChannel); // redefined for DeUTDetector
+  };
+
+  /**
   *  short cut to pick up the wafer corresponding to a given nickname
   * @param nickname
   * @return sector
