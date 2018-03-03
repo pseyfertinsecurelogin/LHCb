@@ -128,29 +128,29 @@ private:
    { this, "Tempdir", "", "The base of the temporary directory "
                           "where the files will be staged" };
    Gaudi::Property<size_t> m_stageNFiles
-   { this,  "StageNFiles",  2, "The number of files to stage" };
+   { this, "StageNFiles", 2, "The number of files to stage" };
    Gaudi::Property<size_t> m_tries
-   { this,  "DiskspaceTries",  10, "The number of times to retry "
+   { this, "DiskspaceTries", 10, "The number of times to retry "
                     "whether there is sufficient diskspace" };
    Gaudi::Property<size_t> m_copyTries
-   { this,  "CopyTries", 5, "Retry copying if it fails." };
+   { this, "CopyTries", 5, "Retry copying if it fails." };
    boost::filesystem::path m_tempdir;
    bool m_initialized = false;
    Gaudi::Property<bool> m_retry
-   { this,  "RetryStaging", false, "Retry staging once it's failed." };
+   { this, "RetryStaging", false, "Retry staging once it's failed." };
    Gaudi::Property<bool> m_stageLocalFiles
-   { this,  "StageLocalFiles", false, "Stage files beginning with file:." };
+   { this, "StageLocalFiles", false, "Stage files beginning with file:." };
    // Gaudi::Property<std::string> m_dataManagerName
    // { this, "DataManagerName","Gaudi::StagedIODataManager/IODataManager" ,
    //                  "Name of the IODataManager to use for proper disconnection." };
    Gaudi::Property<std::string> m_garbageCommand
-   { this,  "GarbageCollectorCommand", "garbage.exe" ,
+   { this, "GarbageCollectorCommand", "garbage.exe" ,
                     "Command for the garbage collector." };
    Gaudi::Property<bool> m_checkLocalGarbage
-   { this,  "CheckForLocalGarbageCollector", true,
+   { this, "CheckForLocalGarbageCollector", true,
                     "Check if the garbage collector command is in the local directory." };
    Gaudi::Property<bool> m_keepFiles
-   { "KeepFiles",  false, "Keep staged files" };
+   { this, "KeepFiles", false, "Keep staged files" };
 
    // Helper Methods
    void stage();
