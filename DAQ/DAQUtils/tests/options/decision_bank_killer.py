@@ -5,6 +5,7 @@ Here we test that DecisionBankKiller selects what we expect.
 """
 from __future__ import print_function
 import re
+from pprint import pformat
 
 from Gaudi.Configuration import DEBUG, VERBOSE, INFO
 from Configurables import ApplicationMgr, EventSelector, GaudiSequencer
@@ -31,7 +32,7 @@ ALL_RAWBANKS = [LHCb.RawBank.typeName(i)
 RAW_BANK_TYPES = [(i, LHCb.RawBank.typeName(i))
                   for i in range(LHCb.RawBank.LastType)]
 DEFAULT_TURBO_BANKS = [
-    'ODIN', 'HltLumiSummary', 'DAQ', 'DstData', 'HltRoutingBits',
+    'DstData',
     'HltDecReports', 'HltSelReports', 'HltVertexReports', 'HltTrackReports',
     'L0DU', 'L0Calo', 'L0PU', 'L0PUFull', 'L0Muon', 'L0CaloFull',
     'L0MuonCtrlAll', 'L0MuonProcCand', 'L0MuonProcData'
@@ -41,13 +42,13 @@ DEFAULT_TURBO_BANKS = [
 svc = HltLinePersistenceSvc()
 # Banks for decisions that are not set here are set later (on the first event)
 # to DEFAULT_TURBO_BANKS.
-svc.RawBankTypes = {
-    # Lumi-like line
-    'Hlt2Lumi': ['ODIN', 'HltLumiSummary', 'HltRoutingBits', 'DAQ'],
+non_default_raw_bank_types = {
     # Full-like line
-    'Hlt2Topo3BodyDecision': list(set(ALL_RAWBANKS) - set(['DstData'])),
-    # Let's try to keep some Muon banks for a muon line and Rich for D0
+    # does not influence what is kept since it is filtered by the stream filter
+    'Hlt2DiMuonBDecision': list(set(ALL_RAWBANKS) - set(['DstData'])),
+    # Let's try to keep some Muon banks for a muon line and Rich for charm
     'Hlt2DiMuonBTurboDecision': DEFAULT_TURBO_BANKS + ['Muon'],
+    'Hlt2CharmHadDspToPimPipPipTurboDecision': DEFAULT_TURBO_BANKS + ['Rich'],
     'Hlt2CharmHadD02KmPipTurboDecision': DEFAULT_TURBO_BANKS + ['Rich'],
     # Very important line, so let's keep everything
     'Hlt2CharmHadDpToKmPipPip_ForKPiAsymTurboDecision': ALL_RAWBANKS,
@@ -88,10 +89,11 @@ killer = DecisionBankKiller('Killer')
 killer.InputHltDecReportsLocation = decoder.listOutputs()[0]
 killer.ILinePersistenceSvc = svc.getFullName()
 killer.LineFilter.Code = stream_filter.Code
+assert set(killer.AlwaysKeepBanks) == set(['ODIN', 'HltRoutingBits', 'DAQ'])
 
 def decreport_pass(name, report):
     """Return whether the decreport would pass the filter above."""
-    return (report.decision() and
+    return (bool(report.decision()) and
             report.executionStage() & 0x80 == 0x80 and
             re.match(r'^Hlt2.*(?<!TurboCalib)Decision$', name))
 
@@ -136,8 +138,10 @@ svc_instance = gaudi.service(svc.getFullName(), 'IProperty')
 killer_instance = gaudi.algorithm(killer.getFullName())
 killer_instance.Enable = False
 first_event = True
-raw_bank_types = svc.RawBankTypes
+raw_bank_types = non_default_raw_bank_types
 
+all_decisions = []
+all_requests = []
 
 # for i in range(100):
 while True:
@@ -155,7 +159,7 @@ while True:
         # print(svc_instance.getProperty('RawBankTypes').toString())
         types = {name: DEFAULT_TURBO_BANKS for name in hdr.decisionNames()
                  if 'Turbo' in name}
-        types.update(raw_bank_types)
+        types.update(non_default_raw_bank_types)
         raw_bank_types = types
         svc_instance.setProperty('RawBankTypes', repr(types))
         # Now that we've configured the service, enable the killer
@@ -164,21 +168,44 @@ while True:
         # don't do any check on the first event
         continue
 
+    decisions = {name: (report.decision(), decreport_pass(name, report))
+                 for name, report in hdr.decReports()}
+    all_decisions.append(decisions)
+
     sizes = rawbank_sizes(raw)
     sizes2 = rawbank_sizes(raw2)
 
     # # Some stats
-    # fired = set(name for name, d in hdr.decReports() if d.decision())
-    # print(fired)
+    fired = set(name for name, d in hdr.decReports() if d.decision())
+    print('              ',fired)
     # print('Original raw event banks:', sorted(sizes.items()))
     # print('Modified raw event banks:', sorted(sizes2.items()))
 
     # Check that what we keep matches the expectation
     requests = [set(raw_bank_types[name]) for name, report in hdr.decReports()
                 if decreport_pass(name, report)]
-    requests = set.union(*requests) if requests else set()
-    result = set(sizes2.keys())
-    expected = requests & set(sizes.keys())
+    requests += [set(killer.AlwaysKeepBanks)]
+    requests = set.union(*requests)
+    all_requests.append(requests)
+    result = sizes2
+    expected = {banktype: size for banktype, size in sizes.items()
+                if banktype in requests}
+    print(sizes2.keys())
     assert_equal(expected, result,
                  'The kept banks {} do not match the expectation {}.'
                  .format(result, expected))
+
+# Based on the fake test case defined by non_default_raw_bank_types, and the
+# stream filter, we expect to see 5 combinations of possible set of requested
+# raw banks. Given enough input data we have to see all 5.
+combinations_tested = set(map(frozenset, all_requests))
+if len(combinations_tested) != 5:
+    raise RuntimeError('Only these combinations were tested, expected {}:\n{}'
+                       .format(5, pformat(combinations_tested)))
+
+# make sure we see at least one of each line alone
+# expected = set(non_default_raw_bank_types.keys())
+# result = (expected &
+#           set([name for name, (dec, passes) in all_decisions.items() if passes]))
+# assert_equal(expected, result,
+#              'Not all non-default lines were seen: {}'.format(expected))
