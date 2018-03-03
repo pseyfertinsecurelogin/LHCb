@@ -30,25 +30,25 @@ namespace LHCb {
 namespace Math {
 namespace detail {
 namespace avx2 {
-    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
-    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
-    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+    extern void similarity_5_1(span<const double,15> Ci, span<const double, 5> Fi, span<double, 1> Ti);
+    extern void similarity_5_5(span<const double,15> Ci, span<const double,25> Fi, span<double,15> Ti);
+    extern void similarity_5_7(span<const double,15> Ci, span<const double,35> Fi, span<double,28> Ti);
 }
 namespace avx {
-    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
-    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
-    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+    extern void similarity_5_1(span<const double,15> Ci, span<const double, 5> Fi, span<double, 1> Ti);
+    extern void similarity_5_5(span<const double,15> Ci, span<const double,25> Fi, span<double,15> Ti);
+    extern void similarity_5_7(span<const double,15> Ci, span<const double,35> Fi, span<double,28> Ti);
 }
 namespace sse3 {
-    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
-    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
-    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+    extern void similarity_5_1(span<const double,15> Ci, span<const double, 5> Fi, span<double, 1> Ti);
+    extern void similarity_5_5(span<const double,15> Ci, span<const double,25> Fi, span<double,15> Ti);
+    extern void similarity_5_7(span<const double,15> Ci, span<const double,35> Fi, span<double,28> Ti);
 }
 namespace generic {
-    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
-    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
-    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
-    extern void similarity_2_5(gsl::span<const double, 3> Ci, gsl::span<const double,10> Fi, gsl::span<double,15> Ti);
+    extern void similarity_5_1(span<const double,15> Ci, span<const double, 5> Fi, span<double, 1> Ti);
+    extern void similarity_5_5(span<const double,15> Ci, span<const double,25> Fi, span<double,15> Ti);
+    extern void similarity_5_7(span<const double,15> Ci, span<const double,35> Fi, span<double,28> Ti);
+    extern void similarity_2_5(span<const double, 3> Ci, span<const double,10> Fi, span<double,15> Ti);
 }
 }
 }
