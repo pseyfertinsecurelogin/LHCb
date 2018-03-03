@@ -4,8 +4,6 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
-#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 
 // from Event
