@@ -23,6 +23,7 @@ using namespace LHCb;
  *
  */
 
+
 DeUTDetector::DeUTDetector( const std::string& name ) :
   DeSTDetector( name )
 {
@@ -109,22 +110,33 @@ void DeUTDetector::setOffset() {
   uint curr_region = 0;
   uint topoffset = 0;
 
+  assert(m_stations.size() == NBSTATION
+         && "setOffset of UTDetector assumes a wrong number of station");
+
   // add one offset for each region of each module of each layer of each station
-  m_offset.reserve(16);
+  int ir = 0;
   for (auto ptrstation: m_stations) {
     for (auto ptrlayer: dynamic_cast<DeUTStation*>(ptrstation)->layers()) {
+
+      assert(dynamic_cast<DeUTStation*>(ptrstation)->layers().size() == NBLAYER
+             && "setOffset of UTDetector assumes a wrong number of layers per station");
+
+      int curr_nbreg = ir;
       for(const auto& ptrmodule: ptrlayer->modules())
       {
         const auto& vecptrsectors = ptrmodule->sectors();
-        if(beginit or curr_region != ptrmodule->detRegion()) {
+        // add an offset only if we are on a new region
+        if(beginit || curr_region != ptrmodule->detRegion()) {
           curr_region = ptrmodule->detRegion();
           beginit = false;
-          m_offset.push_back(topoffset);
+          m_offset[ir] = topoffset;
+          ir++;
         }
 
         // move the total to the last offset
         topoffset += vecptrsectors.size();
       }
+      assert((ir - curr_nbreg) == NBREGION && "setOffset of UTDetector assumes a wrong number of region per layer");
     }
   }
 }
@@ -132,7 +144,7 @@ void DeUTDetector::setOffset() {
 inline DeSTSector* DeUTDetector::getSector(const LHCb::STChannelID cid) const {
 
   // helper to get index according to station/layer/region
-  constexpr std::array<std::array<std::array<uint, 3>, 2>, 2> get_idx_offset {{
+  constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset {{
       {{ {0, 1, 2}, {3,  4,  5} }},
       {{ {6, 7, 8}, {9, 10, 11} }}
     }};

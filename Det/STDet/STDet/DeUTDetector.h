@@ -20,6 +20,12 @@ class DeSTSector;
 
 static const CLID CLID_DeUTDetector = 9301;
 
+namespace {
+  constexpr int NBSTATION = 2;
+  constexpr int NBLAYER   = 2; // nbr layers per station
+  constexpr int NBREGION  = 3; // nbr regions per layer
+}
+
 class DeUTDetector : public DeSTDetector  {
 
 public:
@@ -67,7 +73,7 @@ private:
   /** make flat list of lowest descendents  and also layers */
   void flatten();
   /** offsets on the "flatten" list of sectors in order to have quicker access */
-  std::vector<size_t> m_offset;
+  std::array<size_t, NBSTATION * NBLAYER * NBREGION> m_offset;
 };
 
 #endif // _DEUTDETECTOR_H
