@@ -293,7 +293,7 @@ class TurboConf(LHCbConfigurableUser):
 
         packing = self._persistrecopacking(datatype, rootintes)
         # CALO objects are treated specially in 2015 and 2016
-        if datatype <= 2017:
+        if datatype < 2017:
             self._register_unpackers()
             self._register_raw_event_links()
         if unpack or persistreco:
