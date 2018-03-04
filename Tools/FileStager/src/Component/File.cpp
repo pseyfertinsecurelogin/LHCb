@@ -12,6 +12,7 @@
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 
@@ -41,7 +42,7 @@ namespace {
    using std::stringstream;
    using std::endl;
 
-   boost::uintmax_t get_size( const string& command, const unsigned int lineno,
+   boost::uintmax_t get_size( const string& command, int lineno,
                               const unsigned int matchno );
 }
 
@@ -63,7 +64,7 @@ bool File::exists() const
       try {
          size();
       } catch( const GaudiException& e ) {
-         m_errorMessage = e.message();
+         m_errorMessages = {e.message(), e.tag()};
          return false;
       }
    }
@@ -94,6 +95,18 @@ boost::uintmax_t  File::size() const
          }
          command << " " << matches[1] << " \"stat " << matches.suffix() << "\" 2>&1";
          m_size = get_size( command.str(), size_line, 1);
+      } else if ( args[0] == "scp" ) {
+         stringstream command;
+         boost::regex re_ssh{"(^[a-zA-z0-9\\.-]+):"};
+         boost::smatch matches;
+         boost::match_flag_type flags = boost::match_default;
+         boost::regex_search( m_remote.begin(), m_remote.end(), matches, re_ssh, flags );
+         command << "ssh -oStrictHostKeyChecking=no -oForwardX11=no -oForwardX11Trusted=no -oForwardAgent=no -q";
+         if (args.size() > 6) {
+            command << " -P " << args.back();
+         }
+         command << " " << matches[1] << " \"stat -c '%s' " << matches.suffix() << "\" 2>&1";
+         m_size = get_size( command.str(), 0, 0);
       } else if ( args[0] == "cp" ) {
          struct stat buf;
          int r = ::stat(m_remote.c_str(), &buf);
@@ -114,8 +127,7 @@ boost::uintmax_t  File::size() const
 
 namespace {
 
-#ifndef WIN32
-boost::uintmax_t get_size( const string& command, const unsigned int lineno,
+boost::uintmax_t get_size( const string& command, int lineno,
                            const unsigned int matchno ) {
    FILE* pipe = 0;
    vector< string > lines;
@@ -137,7 +149,7 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
       boost::match_flag_type flags = boost::match_default;
       boost::smatch match;
       boost::regex re( "(\\d+)" );
-      if (lineno >= lines.size()) {
+      if (lineno >= 0 && boost::numeric_cast<unsigned int>(lineno) >= lines.size()) {
          string error = "Invalid output from " + command;
          stringstream s;
          s << "Could not get size from command output line "
@@ -147,8 +159,10 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
             s << *it << endl;
          }
          throw GaudiException( error, s.str(), StatusCode::FAILURE );
+      } else if (lineno == -1) {
+         lineno = boost::numeric_cast<int>(lines.size()) - 1;
       }
-      const std::string& line = lines[ lineno ];
+      const std::string& line = lines[lineno];
       std::vector<std::string> numbers;
       std::string::const_iterator start = line.begin(), end = line.end();
       while ( boost::regex_search(start, end, match, re, flags ) ) {
@@ -174,10 +188,5 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
       }
    }
 }
-#else
-boost::uintmax_t get_size( const string& , const unsigned int, const unsigned int ) {
-   return 0;
-}
-#endif
 
 } // anonymous namespace

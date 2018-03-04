@@ -44,7 +44,7 @@ StagedStreamTool::StagedStreamTool( const std::string& type,
    m_stagerSvc = 0;
    m_catalog = 0;
 
-   m_regex.assign("(?:DATA(?:FILE)?)='((?:((?:PFN)|(?:LFN)):)((?:\\w+:)*/{0,2}[a-zA-Z0-9_/:?&\\.=\\-+]+))'");
+   m_regex.assign("(?:DATA(?:FILE)?)='((?:(?<type>PFN|LFN):)?(?<desc>(?:\\w+:)*/{0,2}[a-zA-Z0-9_/:?&\\.=\\-+]+))'");
    declareProperty( "CatalogSvc", m_catalogSvc = "Gaudi::MultiFileCatalog/FileCatalog" );
 }
 
@@ -144,10 +144,10 @@ StagedStreamTool::extractFilename( const std::string& descriptor )
    boost::match_flag_type flags = boost::match_default;
    if ( boost::regex_search( descriptor.begin(), descriptor.end(), match, m_regex, flags ) ) {
       if ( match.size() >= 1 ) {
-         if ( match.str( 2 ) == "PFN" ) {
-            return Descriptor( PFN, match.str( 1 ) );
-         } else if ( match.str( 2 ) == "LFN" ) {
+         if ( match["type"].matched && match["type"].str() == "LFN" ) {
             return Descriptor( LFN, match.str( 1 ) );
+         } else {
+            return Descriptor( PFN, match.str( 1 ) );
          }
       } else {
          error() << "could not extract filename from descriptor: "
