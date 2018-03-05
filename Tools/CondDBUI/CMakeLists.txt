@@ -30,7 +30,8 @@ find_package(XercesC)
 find_package(pygraphics)
 find_package(pytools)
 
-include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${COOL_INCLUDE_DIRS})
+include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${COOL_INCLUDE_DIRS}
+                           ${PYTHON_INCLUDE_DIRS})
 
 gaudi_add_library(CondDBUIHelperLib src/helper/*.cpp
                   INCLUDE_DIRS PythonLibs COOL CORAL
