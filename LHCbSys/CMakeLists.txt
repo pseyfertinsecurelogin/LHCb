@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v43r1)
+gaudi_subdir(LHCbSys v50r0)
 
 gaudi_depends_on_subdirs(Associators/AssociatorsBase
                          Associators/MCAssociators
