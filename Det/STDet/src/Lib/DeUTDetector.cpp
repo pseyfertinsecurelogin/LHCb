@@ -120,8 +120,9 @@ void DeUTDetector::setOffset() {
 
       assert(dynamic_cast<DeUTStation*>(ptrstation)->layers().size() == NBLAYER
              && "setOffset of UTDetector assumes a wrong number of layers per station");
-
+#ifndef NDEBUG
       int curr_nbreg = ir;
+#endif
       for(const auto& ptrmodule: ptrlayer->modules())
       {
         const auto& vecptrsectors = ptrmodule->sectors();
