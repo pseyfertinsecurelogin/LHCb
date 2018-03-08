@@ -26,6 +26,13 @@
 
 namespace ConfigCDBAccessSvc_details  {
    class CDB;
+
+   enum class Mode { ReadOnly, ReadWrite };
+   StatusCode parse(Mode& result, const std::string& input);
+   const std::string& toString(const Mode&);
+   std::ostream& toStream(const Mode& mode, std::ostream& os) { return os << std::quoted(toString(mode),'\''); }
+   std::ostream& operator<<(std::ostream& os, const Mode& mode) { return toStream(mode,os); }
+
 }
 
 class ConfigCDBAccessSvc : public extends<Service,IConfigAccessSvc> {
@@ -52,9 +59,9 @@ private:
 
   ConfigCDBAccessSvc_details::CDB*  file() const;
 
-  Gaudi::Property<std::string> m_name{ this, "File" } ;   ///< filename of tar file from which to read configurations
+  Gaudi::Property<std::string> m_name{ this, "File" } ;   ///< filename of file from which to read configurations
   // todo: use custom type instead of std::string
-  Gaudi::Property<std::string>         m_mode{ this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
+  Gaudi::Property<ConfigCDBAccessSvc_details::Mode>   m_mode{ this, "Mode", ConfigCDBAccessSvc_details::Mode::ReadOnly };   ///< which flags to specify when opening the tar file
   Gaudi::Property<std::string>         m_incident { this, "CloseIncident" };   ///< the incident to
   mutable std::mutex                                       m_file_mtx;
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
