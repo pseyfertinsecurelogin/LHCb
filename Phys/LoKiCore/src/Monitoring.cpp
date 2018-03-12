@@ -5,7 +5,6 @@
 // ============================================================================
 #include "GaudiKernel/IAlgContextSvc.h"
 #include "GaudiKernel/IStatSvc.h"
-#include "GaudiKernel/ICounterSvc.h"
 #include "GaudiKernel/StatEntity.h"
 #include "GaudiKernel/Stat.h"
 // ============================================================================
@@ -128,54 +127,6 @@ StatEntity* LoKi::Monitoring::getCounter
   return counter ;
 }
 // ============================================================================
-/*  get the counter by name using ICounterSvc
- *  @see ICounterSvc
- *  @param csvc the counter service
- *  @param group the counter group
- *  @param name the counter name
- *  @return the counter
- */
-// ============================================================================
-StatEntity* LoKi::Monitoring::getCounter
-( ICounterSvc*       csvc     ,
-  const std::string& group    ,
-  const std::string& name     )
-{
-  if ( 0 == csvc ) // try to get it for LoKi
-  {
-    const LoKi::Services& svcs = LoKi::Services::instance() ;
-    csvc = svcs.cntSvc() ;
-  }
-  //
-  if ( 0 == csvc )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Monitoring::getCounter("
-        + Gaudi::Utils::toString ( name ) + "): invalid ICounterSvc" ) ;
-    return 0 ;                                                    // RETURN
-  }
-  // get the counter
-  Stat stat ( csvc , group , name ) ;
-  //
-  const StatEntity* counter = stat.entity() ;
-  //
-  if ( 0 == counter )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Monitoring::getCounter("
-        + Gaudi::Utils::toString ( name ) + "): invalid StatEntity" ) ;
-    return 0 ;                                                    // RETURN
-  }
-  //
-  LoKi::Report::Print
-    ( "LoKi::Monitoring::getCounter("
-      + Gaudi::Utils::toString ( name ) + ")"
-      + " success with ICounterSvc"  ,
-      StatusCode::SUCCESS , MSG::DEBUG  ) ;
-  //
-  return const_cast<StatEntity*> ( counter ) ;                    // RETURN
-}
-// ============================================================================
 /*  get the counter by name using IAlgContextSvc
  *  @param name the counter name
  *  @param csvc context service
@@ -205,13 +156,9 @@ StatEntity* LoKi::Monitoring::getCounter
   return getCounter ( alg , name ) ;
 }
 // ============================================================================
-/*  get the counter by name using IStatSvc/ICounter or IAlgContextSvc
- *  @param ICounterSvc
- *  @param IStatSvc
- *  @param IAlgContextSvc
+/*  get the counter by name using IStatSvc or IAlgContextSvc
  *  @param flag  local/global flag
  *  @param name  the counter name
- *  @param group the counter grop
  *  @return the counter
  */
 // ============================================================================
@@ -220,10 +167,7 @@ StatEntity* LoKi::Monitoring::getCounter
   const std::string& name )
 { return getCounter ( flag , "" , name ) ; }
 // ============================================================================
-/*  get the counter by name using IStatSvc/ICounter or IAlgContextSvc
- *  @param ICounterSvc
- *  @param IStatSvc
- *  @param IAlgContextSvc
+/*  get the counter by name using IStatSvc or IAlgContextSvc
  *  @param flag  local/global flag
  *  @param name  the counter name
  *  @param group the counter grop
@@ -235,14 +179,11 @@ StatEntity* LoKi::Monitoring::getCounter
   const std::string& group ,
   const std::string& name  )
 {
-  ICounterSvc *   const counter = nullptr ;
   IStatSvc*       const stat    = nullptr ;
   IAlgContextSvc* const context = nullptr ;
   //
   switch ( flag )
   {
-  case CounterSvc :
-    return getCounter ( counter , group , name ) ;
   case StatSvc    :
     return group.empty() ?
       getCounter ( stat    ,               name  ) :

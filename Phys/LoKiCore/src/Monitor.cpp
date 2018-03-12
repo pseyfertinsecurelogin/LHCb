@@ -196,8 +196,6 @@ std::string Gaudi::Utils::toCpp ( const LoKi::CounterDef& o )
     s += "LoKi::Monitoring::ContextSvc" ;  break ;
   case LoKi::Monitoring::StatSvc :
     s += "LoKi::Monitoring::StatSvc"    ;  break ;
-  case LoKi::Monitoring::CounterSvc :
-    s += "LoKi::Monitoring::CounterSvc" ;  break ;
   default:
     s += toCpp ( (int) o.flag()  )      ;  break ;
   }

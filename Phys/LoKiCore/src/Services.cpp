@@ -55,8 +55,6 @@ StatusCode LoKi::Services::releaseAll()
   // release services
   m_chronoSvc.reset();
   // release services
-  m_cntSvc.reset();
-  // release services
   m_statSvc.reset();
   // release services
   m_histoSvc.reset();
@@ -160,13 +158,6 @@ IDataProviderSvc* LoKi::Services::evtSvc     () const
 IStatSvc* LoKi::Services::statSvc     () const
 {
   return svc(m_statSvc,  m_lokiSvc,"IStatSvc* points to NULL, return NULL" );
-}
-// ===========================================================================
-// accessor to Counter Service
-// ===========================================================================
-ICounterSvc* LoKi::Services::cntSvc     () const
-{
-  return svc(m_cntSvc, m_lokiSvc, "ICounterSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Chrono Service

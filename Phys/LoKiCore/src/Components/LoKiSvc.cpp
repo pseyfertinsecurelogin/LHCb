@@ -18,7 +18,6 @@
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/IStatSvc.h"
-#include "GaudiKernel/ICounterSvc.h"
 #include "GaudiKernel/IChronoSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/ServiceLocatorHelper.h"
@@ -278,28 +277,6 @@ public:
     return m_statSvc ;
   }
   // ==========================================================================
-  /** get the pointer to Counter service
-   *  @return pointer to Counter Service
-   *  @see ICounterSvc
-   */
-  ICounterSvc* cntSvc () const
-  {
-    if ( m_cntSvc ) { return m_cntSvc ; }
-    // locate the service
-    StatusCode sc = service ( "CounterSvc" , m_cntSvc , true ) ;
-    if ( sc.isFailure() )
-    {
-      m_cntSvc = 0 ;
-      LOKI_EXCEPTION( "LoKiSvc: 'CounterSvc' could not be located" , sc ) ;
-    }
-    if ( 0 == m_cntSvc )
-    {
-      LOKI_EXCEPTION( "LoKiSvc: ICounterSvc* points to NULL"       , sc ) ;
-    }
-    //
-    return m_cntSvc ;
-  }
-  // ==========================================================================
   /** get the pointer to Chrono service
    *  @return pointer to Chrono Service
    *  @see IChronoSvc
@@ -442,7 +419,6 @@ public:
     if ( m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; }
     if ( m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; }
     if ( m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; }
-    if ( m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; }
     if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; }
     if ( m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; }
     //
@@ -486,7 +462,6 @@ public:
     if ( m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; }
     if ( m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; }
     if ( m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; }
-    if ( m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; }
     if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; }
     if ( m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; }
     //
@@ -566,9 +541,6 @@ public:
     // IStatSvc
     else if ( IStatSvc::interfaceID             () == iid && statSvc     () )
     { return statSvc     ()     -> queryInterface ( iid , ppI ) ; }
-    // ICounterSvc
-    else if ( ICounterSvc::interfaceID          () == iid && cntSvc      () )
-    { return cntSvc      ()     -> queryInterface ( iid , ppI ) ; }
     // IChronoSvc
     else if ( IChronoSvc::interfaceID           () == iid && chronoSvc   () )
     { return chronoSvc   ()     -> queryInterface ( iid , ppI ) ; }
@@ -612,7 +584,6 @@ public:
     if ( m_evtSvc      ) { m_evtSvc      -> release() ; }
     if ( m_rndmSvc     ) { m_rndmSvc     -> release() ; }
     if ( m_statSvc     ) { m_statSvc     -> release() ; }
-    if ( m_cntSvc      ) { m_cntSvc      -> release() ; }
     if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; }
     if ( m_updateSvc   ) { m_updateSvc   -> release() ; }
   }
@@ -635,8 +606,6 @@ private:
   mutable IRndmGenSvc*          m_rndmSvc = nullptr     ;        //       random numbers
   /// statistics service
   mutable IStatSvc*             m_statSvc = nullptr     ;        //           statistics
-  /// counters
-  mutable ICounterSvc*          m_cntSvc = nullptr      ;        //             counters
   /// chrono
   mutable IChronoSvc*           m_chronoSvc = nullptr   ;        //               chrono
   /// update
