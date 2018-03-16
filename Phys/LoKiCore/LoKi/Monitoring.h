@@ -23,7 +23,6 @@
 /// forward declarations
 // ============================================================================
 class IStatSvc       ;
-class ICounterSvc    ;
 class IAlgContextSvc ;
 class GaudiAlgorithm ;
 class GaudiTool      ;
