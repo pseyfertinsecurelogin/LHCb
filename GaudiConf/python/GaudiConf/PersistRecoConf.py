@@ -234,6 +234,7 @@ standardDescriptors['2017'] = _od_rename(
     {'Hlt2DownstreamPIDMuonSegments': 'Hlt2MuonPIDSegments',
      'Hlt2LongMuonPIDs': 'Hlt2MuonPIDs'}
 )
+standardDescriptors['2018'] = standardDescriptors['2017'].copy()
 
 
 standardOutputs = {}
@@ -274,7 +275,7 @@ standardOutputs['2015']["Hlt2DownstreamRichPIDs"] = (
 # We have 2012 descriptors only for running the unit tests
 standardOutputs['2012'] = standardOutputs['2016'].copy()
 
-# In 2017 we unpack into a prefixed location /Event/Turbo
+# In 2017 and 2018 we unpack into a prefixed location /Event/Turbo
 standardOutputs["2017"] = {
     "Hlt2LongProtos":           "/Event/Turbo/Long/Protos",
     "Hlt2DownstreamProtos":     "/Event/Turbo/Downstream/Protos",
@@ -305,6 +306,7 @@ standardOutputs["2017"] = {
     "Hlt2CaloPrsAdcs":          "/Event/Turbo/Raw/Prs/Adcs",
     "Hlt2CaloSpdAdcs":          "/Event/Turbo/Raw/Spd/Adcs"
 }
+standardOutputs['2018'] = standardOutputs['2017'].copy()
 
 
 # We need to register the locations of (non-reconstructed) data
@@ -319,8 +321,8 @@ externalLocations = {}
 externalLocations['2012'] = list(_externalLocations)
 externalLocations['2015'] = list(_externalLocations)
 externalLocations['2016'] = list(externalLocations['2015'])
-# Digits are handled explicitly in 2017
-externalLocations['2017'] = []
+# Digits are handled explicitly in 2017 and 2018
+externalLocations['2017'] = externalLocations['2018'] = []
 
 
 class PersistRecoPacking(object):
