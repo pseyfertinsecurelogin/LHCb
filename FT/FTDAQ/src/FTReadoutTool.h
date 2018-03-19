@@ -37,13 +37,13 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   //  StatusCode validate() const;
 
   //Build FTChannelID from information
-  LHCb::FTChannelID station      (const unsigned int aChan) const override;
-  LHCb::FTChannelID layer        (const unsigned int aChan) const override;
-  LHCb::FTChannelID quarter      (const unsigned int aChan) const override;
-  LHCb::FTChannelID uniqueQuarter(const unsigned int aChan) const override;
-  LHCb::FTChannelID module       (const unsigned int aChan) const override;
-  LHCb::FTChannelID mat          (const unsigned int aChan) const override;
-  LHCb::FTChannelID sipm         (const unsigned int aChan) const override;
+  LHCb::FTChannelID station      (const unsigned int a) const override;
+  LHCb::FTChannelID layer        (const unsigned int a) const override;
+  LHCb::FTChannelID quarter      (const unsigned int a) const override;
+  LHCb::FTChannelID uniqueQuarter(const unsigned int a) const override;
+  LHCb::FTChannelID module       (const unsigned int a) const override;
+  LHCb::FTChannelID mat          (const unsigned int a) const override;
+  LHCb::FTChannelID sipm         (const unsigned int a) const override;
 
   
   unsigned int nBoard() const override;

@@ -26,13 +26,13 @@ FTReadoutTool::FTReadoutTool(const std::string& type,
 }
 
 // Build a FTChannelID from info
-LHCb::FTChannelID FTReadoutTool::station      (const unsigned int aChan) const{return LHCb::FTChannelID(aChan,0,0,0,0,0,0);}
-LHCb::FTChannelID FTReadoutTool::layer        (const unsigned int aChan) const{return LHCb::FTChannelID(0,aChan,0,0,0,0,0);}
-LHCb::FTChannelID FTReadoutTool::quarter      (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,aChan,0,0,0,0);}
-LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int aChan) const{return LHCb::FTChannelID(0,0,aChan,0,0,0,0);}
-LHCb::FTChannelID FTReadoutTool::module       (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,0,aChan,0,0,0);}
-LHCb::FTChannelID FTReadoutTool::mat          (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,0,0,aChan,0,0);}
-LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int aChan) const{return LHCb::FTChannelID(0,0,0,0,0,aChan,0);}
+LHCb::FTChannelID FTReadoutTool::station      (const unsigned int a) const{return LHCb::FTChannelID(a,0,0,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::layer        (const unsigned int a) const{return LHCb::FTChannelID(0,a,0,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::quarter      (const unsigned int a) const{return LHCb::FTChannelID(0,0,a,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int a) const{return LHCb::FTChannelID(0,0,a,0,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::module       (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,a,0,0,0);}
+LHCb::FTChannelID FTReadoutTool::mat          (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,a,0,0);}
+LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,0,a,0);}
 
 unsigned int FTReadoutTool::nBoard() const{return 0;}
 
