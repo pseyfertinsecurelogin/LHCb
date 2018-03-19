@@ -11,7 +11,7 @@
 
 using namespace LHCb;
 
-DECLARE_TOOL_FACTORY( FTReadoutTool )
+DECLARE_COMPONENT( FTReadoutTool )
 
 //    //Main initialisation/destruction methods
 // Constructor
