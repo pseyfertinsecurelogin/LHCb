@@ -4,22 +4,22 @@
 #include "Event/RawEvent.h"
 
 // local
-#include "FTNewRawBankDecoder.h"
+#include "FTRawBankDecoder.h"
 #include "FTRawBankParams.h"
 
 //-----------------------------------------------------------------------------
-// Implementation file for class : FTNewRawBankDecoder
+// Implementation file for class : FTRawBankDecoder
 //
 // 2018-02-25 : Louis Henry
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_COMPONENT( FTNewRawBankDecoder )
+DECLARE_COMPONENT( FTRawBankDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-FTNewRawBankDecoder::FTNewRawBankDecoder( const std::string& name,
+FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
                                     ISvcLocator* pSvcLocator)
 : Transformer ( name , pSvcLocator,
                 KeyValue{ "RawEventLocations",
@@ -28,7 +28,7 @@ FTNewRawBankDecoder::FTNewRawBankDecoder( const std::string& name,
                 KeyValue{ "OutputLocation", LHCb::FTLiteClusterLocation::Default } )
 { }
 
-StatusCode FTNewRawBankDecoder::initialize()
+StatusCode FTRawBankDecoder::initialize()
 {
   StatusCode sc = Transformer::initialize();
   //  m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
@@ -40,7 +40,7 @@ StatusCode FTNewRawBankDecoder::initialize()
 // Main execution
 //=============================================================================
 FTLiteClusters
-FTNewRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
+FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
   const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
 
@@ -85,7 +85,7 @@ FTNewRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               << " for source " << source << " size " << size << " bytes."
               << endmsg;
       throw GaudiException("Unsupported FT bank version",
-                           "FTNewRawBankDecoder",
+                           "FTRawBankDecoder",
                            StatusCode::FAILURE);
     }
 
@@ -111,7 +111,7 @@ FTNewRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                   << ", #clusters in bank=" << std::distance(first,last) << endmsg;
 
         throw GaudiException("Inconsistent size of rawbank",
-                             "FTNewRawBankDecoder",
+                             "FTRawBankDecoder",
                              StatusCode::FAILURE);
       }
       
@@ -155,7 +155,7 @@ FTNewRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 error()<<"something went terribly wrong here first fragment: " << channel
                        <<" second fragment: "  << channel2 << endmsg;
                 throw GaudiException("There is an inconsistency between Encoder and Decoder!",
-                                     "FTNewRawBankDecoder",
+                                     "FTRawBankDecoder",
                                      StatusCode::FAILURE);
               }
               // fragemted clusters, size > 2*max size
