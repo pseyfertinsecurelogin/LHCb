@@ -108,8 +108,9 @@ int main()
               << std::setprecision(dp) << vdt::fast_log(e) << std::endl;
     // sqrt
     const double xx{tru(ran_sqrt(gen),idp)};
-    std::cout << std::setprecision(idp) << "vdt::fast_isqrt("<<xx<<") = " 
-              << std::setprecision(dp) << vdt::fast_isqrt(xx) << std::endl;
+    (void) xx;
+    //std::cout << std::setprecision(idp) << "vdt::fast_isqrt("<<xx<<") = " 
+    //          << std::setprecision(dp) << vdt::fast_isqrt(xx) << std::endl;
     // sin cos
     const double angle{tru(ran_sincos(gen),idp)};
     double cosang(0), sinang(0);
@@ -144,8 +145,9 @@ int main()
               << std::setprecision(fp) << vdt::fast_logf(e) << std::endl;
     // isqrt
     const float xx{tru((float)ran_sqrt(gen),ifp)};
-    std::cout << std::setprecision(ifp) << "vdt::fast_isqrtf("<<xx<<") = " 
-              << std::setprecision(fp) << vdt::fast_isqrtf(xx) << std::endl;
+    (void) xx;
+    //std::cout << std::setprecision(ifp) << "vdt::fast_isqrtf("<<xx<<") = " 
+    //          << std::setprecision(fp) << vdt::fast_isqrtf(xx) << std::endl;
     // sin cos
     const float angle{tru((float)ran_sincos(gen),ifp)};
     float cosang(0), sinang(0);
@@ -189,9 +191,10 @@ int main()
     // isqrt
     {
       const FPF xx( tru((float)ran_sqrt(gen),ifp) );
-      const FPF x = fast_isqrt(xx);
-      std::cout << std::setprecision(ifp) << "SIMD(f) fast_isqrt("<<xx[0]<<") = " 
-                << std::setprecision(fp) << x[0] << std::endl;
+      (void) xx;
+      //const FPF x = fast_isqrt(xx);
+      //std::cout << std::setprecision(ifp) << "SIMD(f) fast_isqrt("<<xx[0]<<") = " 
+      //          << std::setprecision(fp) << x[0] << std::endl;
     }
     // sin cos
     {
