@@ -6,6 +6,7 @@ gaudi_subdir(PhysEvent v11r28)
 gaudi_depends_on_subdirs(Event/RecEvent
                          GaudiKernel
                          GaudiObjDesc
+                         Kernel/PartProp
                          Kernel/LHCbKernel
                          Kernel/LHCbMath)
 

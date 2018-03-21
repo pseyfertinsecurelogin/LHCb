@@ -1,6 +1,7 @@
 #ifndef PROPERTYCONFIG_H
 #define PROPERTYCONFIG_H 1
 #include <string>
+#include <tuple> // for std::tie
 #include <vector>
 #include <iostream>
 #include <numeric>

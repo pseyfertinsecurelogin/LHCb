@@ -36,6 +36,11 @@
 
 #include "vectori512e.h"
 
+#ifndef VECTORF256_H
+#warning Neither vectorf256e.h nor vectorf256.h included. Skipping auto detection and falling back to vectorf256e.h
+#include "vectorf256e.h"
+#endif
+
 #ifdef VCL_NAMESPACE
 namespace VCL_NAMESPACE {
 #endif

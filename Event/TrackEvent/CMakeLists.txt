@@ -20,11 +20,11 @@ gaudi_add_unit_test(test_deref tests/src/test_deref.cpp
 gaudi_add_library(TrackEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
-                  INCLUDE_DIRS GSL Boost
+                  INCLUDE_DIRS GSL Boost Kernel/LHCbKernel
                   LINK_LIBRARIES GSL Boost LHCbKernel)
 
 god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS GSL Boost
+                     INCLUDE_DIRS GSL Boost Kernel/LHCbKernel
                      LINK_LIBRARIES GSL Boost LHCbKernel TrackEvent)
 

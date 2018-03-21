@@ -1,7 +1,7 @@
 #pragma once
 
 #include <array>
-#include "VectorConfiguration.h"
+#include "Kernel/VectorConfiguration.h"
 #include "Math/SVector.h"
 
 #include "LHCbMath/MatrixManip.h"

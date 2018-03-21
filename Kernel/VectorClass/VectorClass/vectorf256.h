@@ -38,9 +38,14 @@
 #else
 #define VECTORF256_H  2
 
-#if INSTRSET < 7   // AVX required
-#error Please compile for the AVX instruction set or higher
+#include "instrset.h"
+
+#ifndef INSTRSET
+#error INSTRSET undefined
 #endif
+#if INSTRSET < 7   // AVX required
+#warning Please compile for the AVX instruction set or higher
+#else
 
 #include "vectorf128.h"  // Define 128-bit vectors
 
@@ -3337,5 +3342,7 @@ static inline Vec4db to_Vec4db(uint8_t x) {
 #ifdef VCL_NAMESPACE
 }
 #endif
+
+#endif // AVX required
 
 #endif // VECTORF256_H

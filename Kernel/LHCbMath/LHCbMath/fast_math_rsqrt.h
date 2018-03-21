@@ -15,6 +15,10 @@
 #include <altivec.h>
 #endif  // __ALTIVEC
 
+#include "LHCbMath/FastMathAccuracyTags.h"
+#include "LHCbMath/SIMDTypes.h"
+#include "VectorClass/vectorclass.h"
+
 /**
  * Scalar helpers (vectorization-ready)
  */

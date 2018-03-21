@@ -1,4 +1,7 @@
+#ifndef LHCbKernel_LineTraj_impl_H
+#define LHCbKernel_LineTraj_impl_H 1
 #include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/LineTraj.h"
 
 namespace LHCb {
   /// Constructor from a begin and an end point
@@ -85,3 +88,5 @@ namespace LHCb {
     return 10*Gaudi::Units::km;
   }
 }
+
+#endif // LHCbKernel_LineTraj_impl_H

@@ -17,6 +17,9 @@
 // Local
 #include "RichFutureKernel/RichCommonBase.h"
 
+// Gaudi
+#include "GaudiKernel/Property.h"
+
 // RichUtils
 #include "RichUtils/RichHashMap.h"
 #include "RichUtils/RichHistoID.h"

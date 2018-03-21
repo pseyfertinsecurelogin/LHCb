@@ -3,6 +3,7 @@
 
 // Include files
 #include "Kernel/VPChannelID.h"
+#include "GaudiKernel/ClassID.h"
 #include <boost/container/flat_map.hpp>
 #include <ostream>
 #include <vector>

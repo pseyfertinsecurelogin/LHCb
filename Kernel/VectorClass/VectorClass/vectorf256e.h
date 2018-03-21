@@ -19,6 +19,8 @@
 * (c) Copyright 2012-2017 GNU General Public License http://www.gnu.org/licenses
 *****************************************************************************/
 
+#include "vectori256e.h"
+
 // check combination of header files
 #ifdef VECTORF256_H
 #if    VECTORF256_H != 1

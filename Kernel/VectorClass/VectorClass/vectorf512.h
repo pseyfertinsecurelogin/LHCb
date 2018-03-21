@@ -26,6 +26,8 @@
 * (c) Copyright 2014-2017 GNU General Public License http://www.gnu.org/licenses
 *****************************************************************************/
 
+#include "vectori512.h"
+
 // check combination of header files
 #if defined (VECTORF512_H)
 #if    VECTORF512_H != 2
@@ -34,7 +36,14 @@
 #else
 #define VECTORF512_H  2
 
-#include "vectori512.h"
+#include "instrset.h"
+
+#ifndef INSTRSET
+#error INSTRSET undefined
+#endif
+#if INSTRSET < 9   // AVX required
+#warning Please compile for the AVX512 instruction set or higher
+#else
 
 #ifdef VCL_NAMESPACE
 namespace VCL_NAMESPACE {
@@ -2483,5 +2492,7 @@ static inline Vec8db to_Vec8db(uint8_t x) {
 #ifdef VCL_NAMESPACE
 }
 #endif
+
+#endif // INSTRSET
 
 #endif // VECTORF512_H

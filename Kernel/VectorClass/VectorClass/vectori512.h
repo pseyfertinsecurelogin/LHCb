@@ -40,10 +40,11 @@
 #error Please put header file vectori512.h before vectorf512.h
 #endif
 
+#include "instrset.h"
 
 #if INSTRSET < 9   // AVX512 required
-#error Wrong instruction set for vectori512.h, AVX512 required or use vectori512e.h
-#endif
+#warning Wrong instruction set for vectori512.h, AVX512 required or use vectori512e.h
+#else
 
 #include "vectori256.h"
 
@@ -2833,5 +2834,7 @@ static inline Vec8qb to_Vec8qb(uint8_t x) {
 #ifdef VCL_NAMESPACE
 }
 #endif
+
+#endif // INSTRSET < 9
 
 #endif // VECTORI512_H

@@ -36,7 +36,7 @@ gaudi_export(LIBRARY LHCbFastMath)
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
+                  INCLUDE_DIRS ${Vc_INCLUDE_DIR} VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
                   LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel LHCbFastMath)
 
 target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )

@@ -22,6 +22,7 @@
       &DataObject;
       <base name="DataObject"/>
       <import name="GaudiKernel/VectorMap"/>
+      <import name="map" std="TRUE"/>
 
       <enum
 	 desc="lookup table for fraction and cross-section keys"

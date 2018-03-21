@@ -1,6 +1,8 @@
 #ifndef ASSOCIATORS_LOCATION_H
 #define ASSOCIATORS_LOCATION_H
 
+#include <string>
+
 namespace Links {
 inline std::string location(const std::string& location)
 {

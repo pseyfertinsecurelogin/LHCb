@@ -15,11 +15,11 @@ god_build_headers(xml/*.xml)
 gaudi_add_library(MCEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
-                  INCLUDE_DIRS Event/EventBase
+                  INCLUDE_DIRS Event/EventBase Kernel/PartProp
                   LINK_LIBRARIES LHCbKernel PartPropLib)
 
 god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS Event/EventBase
+                     INCLUDE_DIRS Event/EventBase Kernel/PartProp
                      LINK_LIBRARIES LHCbKernel PartPropLib MCEvent)
 
