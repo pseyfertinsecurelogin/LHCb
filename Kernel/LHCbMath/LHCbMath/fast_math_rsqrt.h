@@ -17,7 +17,11 @@
 
 #include "LHCbMath/FastMathAccuracyTags.h"
 #include "LHCbMath/SIMDTypes.h"
+#ifndef LHCB_MATH_RSQRT_IMPL
+#ifdef __SSE2__
 #include "VectorClass/vectorclass.h"
+#endif
+#endif
 
 /**
  * Scalar helpers (vectorization-ready)
