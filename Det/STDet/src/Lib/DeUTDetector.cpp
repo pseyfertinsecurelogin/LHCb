@@ -7,6 +7,7 @@
 #include "STDet/DeUTSector.h"
 
 #include "Kernel/UTNames.h"
+#include <cassert>
 
 using namespace LHCb;
 
@@ -21,6 +22,7 @@ using namespace LHCb;
  *  @date   2012-07-10
  *
  */
+
 
 DeUTDetector::DeUTDetector( const std::string& name ) :
   DeSTDetector( name )
@@ -45,6 +47,7 @@ StatusCode DeUTDetector::initialize()
   else {
     // make a flat list of sectors
     flatten();
+    setOffset();
     if ( !m_sectors.empty() ) {
       setNstrip(m_sectors.front()->nStrip()* m_sectors.size());
       m_sMap.reserve(m_sectors.size());
@@ -92,15 +95,76 @@ DeSTBaseElement* DeUTDetector::findTopLevelElement(const std::string& nickname) 
 void DeUTDetector::flatten()
 {
   m_sectors.reserve(1200);
-  std::vector<DeSTStation*>::iterator iterStation = m_stations.begin();
-  for (; iterStation != m_stations.end() ; ++iterStation){
-    DeUTStation* tStation =  dynamic_cast<DeUTStation*>(*iterStation);
-    DeUTStation::Children::const_iterator iterLayer = tStation->layers().begin();
-    for (;iterLayer != tStation->layers().end(); ++iterLayer){
-      DeUTLayer* tLayer = *iterLayer;
-      m_layers.push_back(tLayer);
-      const DeSTLayer::Sectors& tSectors = tLayer->sectors();
-      m_sectors.insert(m_sectors.begin(),tSectors.begin(),tSectors.end());
+  for (auto ptrstation: m_stations) {
+    for (auto ptrlayer: dynamic_cast<DeUTStation*>(ptrstation)->layers()) {
+      m_layers.push_back(ptrlayer);
+      const auto& vecptrsectors = ptrlayer->sectors();
+      m_sectors.insert(m_sectors.end(), vecptrsectors.begin(), vecptrsectors.end());
     }
   }
+}
+
+void DeUTDetector::setOffset() {
+
+  bool beginit = true;
+  uint curr_region = 0;
+  uint topoffset = 0;
+
+  assert(m_stations.size() == NBSTATION
+         && "setOffset of UTDetector assumes a wrong number of station");
+
+  // add one offset for each region of each module of each layer of each station
+  int ir = 0;
+  for (auto ptrstation: m_stations) {
+    for (auto ptrlayer: dynamic_cast<DeUTStation*>(ptrstation)->layers()) {
+
+      assert(dynamic_cast<DeUTStation*>(ptrstation)->layers().size() == NBLAYER
+             && "setOffset of UTDetector assumes a wrong number of layers per station");
+#ifndef NDEBUG
+      int curr_nbreg = ir;
+#endif
+      for(const auto& ptrmodule: ptrlayer->modules())
+      {
+        const auto& vecptrsectors = ptrmodule->sectors();
+        // add an offset only if we are on a new region
+        if(beginit || curr_region != ptrmodule->detRegion()) {
+          curr_region = ptrmodule->detRegion();
+          beginit = false;
+          m_offset[ir] = topoffset;
+          ir++;
+        }
+
+        // move the total to the last offset
+        topoffset += vecptrsectors.size();
+      }
+      assert((ir - curr_nbreg) == NBREGION && "setOffset of UTDetector assumes a wrong number of region per layer");
+    }
+  }
+}
+
+inline DeSTSector* DeUTDetector::getSector(const LHCb::STChannelID cid) const {
+
+  // helper to get index according to station/layer/region
+  constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset {{
+      {{ {0, 1, 2}, {3,  4,  5} }},
+      {{ {6, 7, 8}, {9, 10, 11} }}
+    }};
+
+  uint istation = cid.station()-1;
+  uint ilayer  = cid.layer()-1;
+  uint iregion = cid.detRegion()-1;
+  uint isector = cid.sector()-1;
+
+  // get index offset corresponding to the station/layer/region we want
+  auto idx_offset = get_idx_offset[istation][ilayer][iregion];
+
+  DeSTSector* res = m_sectors[m_offset[idx_offset] + isector];
+
+  // debug check to be sure we find the same sector as findSector
+  assert( [&] () {
+      auto goodsector = m_sMap.find(cid.uniqueSector())->second;
+      return goodsector == res;
+    }() && "getSector was not able to find the same UT Sector as findSector" );
+
+  return res;
 }
