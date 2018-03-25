@@ -909,8 +909,20 @@ LoKi::Kinematics::transverse
 // ========================================================================
 
 
-
-
+// ============================================================================
+/*  Boost LorentzVector into rest-frame of another Lorentz vector 
+ *  @param what   the vextro to be bosted 
+ *  @param frame  the 4-vector of the frame 
+ *  @return boosted vector 
+ */
+// ============================================================================
+LoKi::LorentzVector LoKi::Kinematics::boost 
+( const LoKi::LorentzVector& what  ,
+  const LoKi::LorentzVector& frame )
+{
+  const ROOT::Math::Boost b { frame.BoostToCM() } ;
+  return b ( what ) ;
+}
 // ============================================================================
 // The END
 // ============================================================================

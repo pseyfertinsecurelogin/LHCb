@@ -31,7 +31,10 @@
   <function pattern = "LoKi::Kinematics::*"    />
   <function pattern = "LoKi::Particles::*"     />
 
-  <class name       = "LoKi::Kinematics::MissingParticle"/>
+
+  <class pattern   = "LoKi::Kinematics::*"                />
+  <class name      = "LoKi::Kinematics::MissingParticle" />
+  <class name      = "LoKi::Kinematics::Polarization"     />
 
   <function name    = "Gaudi::Utils::toCpp"    />
 

@@ -4,7 +4,7 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include <type_traits>
+#include <complex>
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -120,13 +120,13 @@ namespace LoKi
      *  @date 2008-0725
      */
     template <unsigned int I, unsigned int J>
-    struct G_          { enum { value =  0 } ; } ;
+    struct G_          : std::integral_constant<int, 0> {}; 
     /// the proper template specialzation for diagonal elements
     template <unsigned int I>
-    struct G_<I,I>     { enum { value = -1 } ; } ;
+    struct G_<I,I>     : std::integral_constant<int,-1> {}; 
     /// the proper template specialzation for time component
     template <>
-    struct G_<T,T>     { enum { value =  1 } ; } ;
+    struct G_<T,T>     : std::integral_constant<int, 1> {}; 
     // ========================================================================
     /** struct G
      *
@@ -372,11 +372,40 @@ namespace LoKi
                          Delta_<J,K>::value * Delta_<I,L>::value ) } ;
     } ;
     // ========================================================================
+    namespace detail 
+    {
+      // ====================================================================
+      template <class TYPE>
+      struct _TYPES
+      {
+        typedef long double iTYPE ;
+        typedef      double rTYPE ;
+      };
+      template <class TYPE> 
+      struct _TYPES< std::complex<TYPE> >
+      {
+        typedef std::complex<double> iTYPE ;
+        typedef std::complex<double> rTYPE ;
+      } ;
+      template <class COORDINATES>
+      struct LVTYPES 
+      {
+        typedef typename _TYPES<typename COORDINATES::Scalar>::iTYPE iTYPE ;
+        typedef typename _TYPES<typename COORDINATES::Scalar>::rTYPE rTYPE ;          
+        typedef ROOT::Math::LorentzVector<COORDINATES>               vTYPE ;
+      } ;  
+      // ====================================================================
+    }
+    // ========================================================================
     /** @struct Epsilon
      *  Simple implementation of 4D Antisymmetric Levi-Civita symbols
      *   \f$ \epsilon_{\mu\nu\lambda\delta} \f$ and some related operations
      *
-     *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$
+     *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$, that gives  
+     *  - \f$ x == epsilon ( t , y , z ) \f$ 
+     *  - \f$ y == epsilon ( t , z , x ) \f$ 
+     *  - \f$ z == epsilon ( t , x , y ) \f$ 
+     *  - \f$ t == epsilon ( x , y , z ) \f$ 
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-0725
@@ -409,11 +438,10 @@ namespace LoKi
        *  @return the value of Levi-Civita symbol
        */
       inline int operator()
-        ( const size_t i ,
-          const size_t j ,
-          const size_t k ,
-          const size_t l ) const
-      { return epsilon ( i , j , k , l ) ; }
+      ( const unsigned short i ,
+        const unsigned short j ,
+        const unsigned short k ,
+        const unsigned short l ) const { return epsilon ( i , j , k , l ) ; }
       // ======================================================================
       /** evaluate the tensor product: e*v
        *
@@ -445,9 +473,9 @@ namespace LoKi
        *  @return the product (component)
        */
       inline double operator ()
-        ( const size_t               mu     ,
-          const size_t               nu     ,
-          const size_t               lambda ,
+        ( const unsigned short       mu     ,
+          const unsigned short       nu     ,
+          const unsigned short       lambda ,
           const LoKi::LorentzVector& v      ) const
       { return epsilon ( mu , nu , lambda , v ) ; }
       // ======================================================================
@@ -482,8 +510,8 @@ namespace LoKi
        *  @return the product (component)
        */
       inline double operator()
-        ( const size_t               mu ,
-          const size_t               nu ,
+        ( const unsigned short       mu ,
+          const unsigned short       nu ,
           const LoKi::LorentzVector& v1 ,
           const LoKi::LorentzVector& v2 ) const
       { return epsilon ( mu , nu , v1 , v2 ) ; }
@@ -514,7 +542,7 @@ namespace LoKi
        *  @return the product (component)
        */
       inline double operator()
-        ( const size_t               mu ,
+        ( const unsigned short       mu ,
           const LoKi::LorentzVector& v1 ,
           const LoKi::LorentzVector& v2 ,
           const LoKi::LorentzVector& v3 ) const
@@ -688,8 +716,9 @@ namespace LoKi
        *  @param l the last   index
        *  @return the value of Levi-Civita symbol
        */
-      constexpr inline int epsilon ( const size_t i , const size_t j ,
-                                     const size_t k , const size_t l ) const
+      static constexpr inline int epsilon 
+      ( const unsigned short i , const unsigned short j ,
+        const unsigned short k , const unsigned short l ) 
       {
         /// the regular cases
         if (  i <  j && j <  k && k <  l && l <  4 ) { return 1 ; } // RETURN
@@ -702,6 +731,8 @@ namespace LoKi
         /// here we can go only if some of number >=4, return 0..
         return 0 ;
       }
+      // =====================================================================
+    public: // various tensor products 
       // ======================================================================
       /** evaluate the tensor product e*v1
        *
@@ -709,13 +740,8 @@ namespace LoKi
        *  \epsilon_{\mu\nu\lambda\kappa}v_1^{\kappa} \f$
        *
        *  @code
-       *
-       *   const LorentzVector& v = ... ;
-       *
-       *   Epsilon e ;
-       *
-       *   const double t_XYE = e.e_1<X,Y,E>( v )
-       *
+       *  const LorentzVector& v = ... ;
+       *  const double t_XYE = Epsilon::epsilon(X,Y,E, v )
        *  @endcode
        *
        *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$
@@ -725,28 +751,13 @@ namespace LoKi
        *  @param v the input vector
        *  @return the product (component)
        */
-      inline double epsilon
-      ( const size_t               mu     ,
-        const size_t               nu     ,
-        const size_t               lambda ,
-        const LoKi::LorentzVector& v      ) const
-      {
-        //
-        if ( mu == nu || nu == lambda || lambda == mu ) { return 0 ; }
-        if ( mu >  nu     ) { return -epsilon ( nu , mu     , lambda , v ) ; }
-        if ( nu >  lambda ) { return -epsilon ( mu , lambda , nu     , v ) ; }
-        //
-        // take into account Minkowski metric:
-        const double x = -v.Px () ;
-        const double y = -v.Py () ;
-        const double z = -v.Pz () ;
-        const double e =  v.E  () ;
-        //
-        return -x * epsilon ( 0  , mu , nu     , lambda )   //  3 permutations
-          +     y * epsilon ( mu ,  1 , nu     , lambda )   //  2 permutations
-          -     z * epsilon ( mu , nu ,  2     , lambda )   //  1 permutation
-          +     e * epsilon ( mu , nu , lambda ,      3 ) ; // no permitations
-      }
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      epsilon
+      ( const unsigned short                          mu     ,
+        const unsigned short                          nu     ,
+        const unsigned short                          lambda ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v1     ) ;
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product
        *
@@ -755,14 +766,9 @@ namespace LoKi
        *       v_1^{\lambda}v_2^{\kappa} \f$
        *
        *  @code
-       *
-       *   const LorentzVector& v1 = ... ;
-       *   const LorentzVector& v2 = ... ;
-       *
-       *   Epsilon e ;
-       *
-       *   const double v_XY = e.e_2<X,Y>( v1 , v2 )
-       *
+       *  const LorentzVector& v1 = ... ;
+       *  const LorentzVector& v2 = ... ;
+       *  const double v_XY = Epsion::epsilon ( X , Y , v1 , v2 )
        *  @endcode
        *
        *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$
@@ -775,11 +781,13 @@ namespace LoKi
        *  @param v2 the second vector
        *  @return the product (component)
        */
-      double epsilon
-      ( const size_t               mu ,
-        const size_t               nu ,
-        const LoKi::LorentzVector& v1 ,
-        const LoKi::LorentzVector& v2 ) const ;
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      epsilon
+      ( const unsigned short                          mu ,
+        const unsigned short                          nu ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v2 ) ;
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -792,9 +800,7 @@ namespace LoKi
        *   const LorentzVector& v2 = ... ;
        *   const LorentzVector& v3 = ... ;
        *
-       *   Epsilon e ;
-       *
-       *   const double v_X = e ( Epsilon::X , v1 , v2 , v3 )
+       *   const double v_X = Epsilon::epsilon ( Epsilon::X , v1 , v2 , v3 )
        *
        *  @endcode
        *
@@ -808,11 +814,13 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product (component)
        */
-      double epsilon
-      ( const size_t                i ,
-        const LoKi::LorentzVector& v1 ,
-        const LoKi::LorentzVector& v2 ,
-        const LoKi::LorentzVector& v3 ) const ;
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      epsilon
+        ( const unsigned short                          mu ,
+          const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
+          const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
+          const ROOT::Math::LorentzVector<COORDINATES>& v3 ) ;
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -825,10 +833,7 @@ namespace LoKi
        *   const LorentzVector& v1 = ... ;
        *   const LorentzVector& v2 = ... ;
        *   const LorentzVector& v3 = ... ;
-       *
-       *   Epsilon e ;
-       *
-       *   const LorentzVector v = e ( v1 , v2 , v3 )
+       *   const LorentzVector v = Epsilon::epsilon ( v1 , v2 , v3 )
        *
        *  @endcode
        *
@@ -841,10 +846,12 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product vector
        */
-      LorentzVector epsilon
-      ( const LoKi::LorentzVector& v1 ,
-        const LoKi::LorentzVector& v2 ,
-        const LoKi::LorentzVector& v3 ) const ;
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::vTYPE
+      epsilon
+      ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v3 ) ;
       // ======================================================================
       /** evaluate the tensor product: e*v1*v2*v3*v4
        *
@@ -876,11 +883,13 @@ namespace LoKi
        *  @param v4 the fourth vector
        *  @return the tensor product
        */
-      double epsilon
-      ( const LoKi::LorentzVector& v1 ,
-        const LoKi::LorentzVector& v2 ,
-        const LoKi::LorentzVector& v3 ,
-        const LoKi::LorentzVector& v4 ) const ;
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      epsilon
+      ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v3 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& v4 ) ;
       // ======================================================================
       /** evaluate the tensor product: (e*a1*a2*a3)*(e*b1*b2*b3)
        *
@@ -902,9 +911,7 @@ namespace LoKi
        *   const LorentzVector& b2 = ... ;
        *   const LorentzVector& b3 = ... ;
        *
-       *   Epsilon e ;
-       *
-       *   const double r = e.epsilon ( a1 , a2 , a3 , b1 , b2 , b3 ) ;
+       *   const double r = Epsilon::epsilon ( a1 , a2 , a3 , b1 , b2 , b3 ) ;
        *
        *  @endcode
        *
@@ -913,8 +920,8 @@ namespace LoKi
        *     \epsilon^{\alpha\beta\gamma\kappa}
        *     \epsilon_{\mu\mu\rho\kappa} = -
        *  \begin{Vmatrix}
-       *   \delta^{\alpha}_{\mu} & \delta^{\alpha}_{\nu} & \delta^{\alpha}_{\rho} \\
-       *   \delta^{\beta}_{\mu}  & \delta^{\beta}_{\nu}  & \delta^{\beta}_{\rho}  \\
+       *   \delta^{\alpha}_{\mu} & \delta^{\alpha}_{\nu} & \delta^{\alpha}_{\rho} \ \
+       *   \delta^{\beta}_{\mu}  & \delta^{\beta}_{\nu}  & \delta^{\beta}_{\rho}  \ \
        *   \delta^{\gamma}_{\mu} & \delta^{\gamma}_{\nu} & \delta^{\gamma}_{\rho}
        *  \end{Vmatrix}
        * \f]
@@ -929,13 +936,15 @@ namespace LoKi
        *  @param b3 the sixth  vector
        *  @return the tensor product
        */
-      double epsilon
-      ( const LoKi::LorentzVector& a1 ,
-        const LoKi::LorentzVector& a2 ,
-        const LoKi::LorentzVector& a3 ,
-        const LoKi::LorentzVector& b1 ,
-        const LoKi::LorentzVector& b2 ,
-        const LoKi::LorentzVector& b3 ) const ;
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      epsilon
+      ( const ROOT::Math::LorentzVector<COORDINATES>& a1 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& a2 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& a3 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& b1 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& b2 ,
+        const ROOT::Math::LorentzVector<COORDINATES>& b3 ) ;        
       // ======================================================================
     public:
       // ======================================================================
@@ -960,10 +969,12 @@ namespace LoKi
        *  @param c the third  vector
        *  @return the magnitude of 4-normal
        */
-      double mag2
-      ( const LoKi::LorentzVector& a ,
-        const LoKi::LorentzVector& b ,
-        const LoKi::LorentzVector& c  ) const ;
+      template <class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      mag2
+      ( const ROOT::Math::LorentzVector<COORDINATES>& a ,
+        const ROOT::Math::LorentzVector<COORDINATES>& b ,
+        const ROOT::Math::LorentzVector<COORDINATES>& c ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -975,25 +986,16 @@ namespace LoKi
        *  @code
        *
        *   const LorentzVector& v = ... ;
-       *
-       *   Epsilon e ;
-       *
-       *   const double t_XYE = e.e_1<Epsilon::X,Epsilon::Y,Epsilon::E>( v )
+       *   const double t_XYE = Epsilon::e_3<Epsilon::X,Epsilon::Y,Epsilon::E>( v )
        *
        *  @endcode
        *
        *  @param v the input vector
        *  @return the product (component)
        */
-      template <unsigned int I, unsigned int J, unsigned int K>
-      inline double e_3 ( const LoKi::LorentzVector& v ) const
-      {
-        // take Minkowski metric into account
-        return  - v.Px () * Epsilon_<I,J,K,X>::value
-                - v.Py () * Epsilon_<I,J,K,Y>::value
-                - v.Pz () * Epsilon_<I,J,K,Z>::value
-                + v.E  () * Epsilon_<I,J,K,E>::value ;
-      }
+      template <unsigned int I, unsigned int J, unsigned int K, class  COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      e_3 ( const ROOT::Math::LorentzVector<COORDINATES>& v ) ;
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product
        *
@@ -1004,10 +1006,7 @@ namespace LoKi
        *
        *   const LorentzVector& v1 = ... ;
        *   const LorentzVector& v2 = ... ;
-       *
-       *   Epsilon e ;
-       *
-       *   const double v_XY = e.e_2<Epsilon::X,Epsilon::Y>( v1 , v2 )
+       *   const double v_XY = Epsilon::e_2<Epsilon::X,Epsilon::Y>( v1 , v2 )
        *
        *  @endcode
        *
@@ -1015,38 +1014,10 @@ namespace LoKi
        *  @param v2 the second vector
        *  @return the product (component)
        */
-      template <unsigned int I, unsigned int J>
-      inline double e_2
-      ( const LoKi::LorentzVector& v1 ,
-        const LoKi::LorentzVector& v2 ) const
-      {
-
-        const double x1 = -v1.Px () ;
-        const double y1 = -v1.Py () ;
-        const double z1 = -v1.Pz () ;
-        const double e1 =  v1.E  () ;
-
-        const double x2 = -v2.Px () ;
-        const double y2 = -v2.Py () ;
-        const double z2 = -v2.Pz () ;
-        const double e2 =  v2.E  () ;
-
-        return x1 * y2 * Epsilon_<I,J,X,Y>::value
-          +    x1 * z2 * Epsilon_<I,J,X,Z>::value
-          +    x1 * e2 * Epsilon_<I,J,X,E>::value
-          //
-          +    y1 * x2 * Epsilon_<I,J,Y,X>::value
-          +    y1 * z2 * Epsilon_<I,J,Y,Z>::value
-          +    y1 * e2 * Epsilon_<I,J,Y,E>::value
-          //
-          +    z1 * x2 * Epsilon_<I,J,Z,X>::value
-          +    z1 * y2 * Epsilon_<I,J,Z,Y>::value
-          +    z1 * e2 * Epsilon_<I,J,Z,E>::value
-          //
-          +    e1 * x2 * Epsilon_<I,J,E,X>::value
-          +    e1 * y2 * Epsilon_<I,J,E,Y>::value
-          +    e1 * z2 * Epsilon_<I,J,E,Z>::value ;
-      }
+      template <unsigned int I, unsigned int J, class COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE 
+      e_2 ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
+            const ROOT::Math::LorentzVector<COORDINATES>& v2 ) ;
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -1058,10 +1029,7 @@ namespace LoKi
        *   const LorentzVector& v1 = ... ;
        *   const LorentzVector& v2 = ... ;
        *   const LorentzVector& v3 = ... ;
-       *
-       *   Epsilon e ;
-       *
-       *   const double v_X = e.e_1<Epsilon::X>( v1 , v2 , v3 )
+       *   const double v_X = Epsilon::e_1<Epsilon::X>( v1 , v2 , v3 )
        *
        *  @endcode
        *
@@ -1070,55 +1038,11 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product (component)
        */
-      template <unsigned int I>
-      inline double e_1
-      ( const LoKi::LorentzVector& v1 ,
-        const LoKi::LorentzVector& v2 ,
-        const LoKi::LorentzVector& v3 ) const
-      {
-        const double x1 = -v1.Px () ;
-        const double y1 = -v1.Py () ;
-        const double z1 = -v1.Pz () ;
-        const double e1 =  v1.E  () ;
-
-        const double x2 = -v2.Px () ;
-        const double y2 = -v2.Py () ;
-        const double z2 = -v2.Pz () ;
-        const double e2 =  v2.E  () ;
-
-        const double x3 = -v3.Px () ;
-        const double y3 = -v3.Py () ;
-        const double z3 = -v3.Pz () ;
-        const double e3 =  v3.E  () ;
-
-        return x1 * y2 * z3 * Epsilon_<I,X,Y,Z>::value
-          +    x1 * y2 * e3 * Epsilon_<I,X,Y,E>::value
-          +    x1 * z2 * y3 * Epsilon_<I,X,Z,Y>::value
-          +    x1 * z2 * e3 * Epsilon_<I,X,Z,E>::value
-          +    x1 * e2 * y3 * Epsilon_<I,X,E,Y>::value
-          +    x1 * e2 * z3 * Epsilon_<I,X,E,Z>::value
-          //
-          +    y1 * x2 * z3 * Epsilon_<I,Y,X,Z>::value
-          +    y1 * x2 * e3 * Epsilon_<I,Y,X,E>::value
-          +    y1 * z2 * x3 * Epsilon_<I,Y,Z,X>::value
-          +    y1 * z2 * e3 * Epsilon_<I,Y,Z,E>::value
-          +    y1 * e2 * x3 * Epsilon_<I,Y,E,X>::value
-          +    y1 * e2 * z3 * Epsilon_<I,Y,E,Z>::value
-          //
-          +    z1 * x2 * y3 * Epsilon_<I,Z,X,Y>::value
-          +    z1 * x2 * e3 * Epsilon_<I,Z,X,E>::value
-          +    z1 * y2 * x3 * Epsilon_<I,Z,Y,X>::value
-          +    z1 * y2 * e3 * Epsilon_<I,Z,Y,E>::value
-          +    z1 * e2 * x3 * Epsilon_<I,Z,E,X>::value
-          +    z1 * e2 * y3 * Epsilon_<I,Z,E,Y>::value
-          //
-          +    e1 * x2 * y3 * Epsilon_<I,E,X,Y>::value
-          +    e1 * x2 * z3 * Epsilon_<I,E,X,Z>::value
-          +    e1 * y2 * x3 * Epsilon_<I,E,Y,X>::value
-          +    e1 * y2 * z3 * Epsilon_<I,E,Y,Z>::value
-          +    e1 * z2 * x3 * Epsilon_<I,E,Z,X>::value
-          +    e1 * z2 * y3 * Epsilon_<I,E,Z,Y>::value  ;
-      }
+      template <unsigned int I, class COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE 
+      e_1 ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
+            const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
+            const ROOT::Math::LorentzVector<COORDINATES>& v3 ) ;
       // ======================================================================
     };
     // ========================================================================
@@ -1126,7 +1050,11 @@ namespace LoKi
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END
+// LoKiCore  
+// ============================================================================
+#include "LoKi/Tensors.icpp"
+// ============================================================================
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_TENSORS_H
 // ============================================================================
