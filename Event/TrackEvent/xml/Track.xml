@@ -53,6 +53,7 @@
       <import name="GaudiKernel/SharedObjectsContainer"/>
       <import name="Event/TrackFitResult"/>
       <import name="Kernel/STLExtensions"/>
+      <import name="llvm/ADT/SmallVector"/>
 
       <enum
         name   = 'History'
@@ -417,7 +418,7 @@
         setMeth   = 'FALSE' />
 
       <attribute
-        type      = 'std::vector&lt;LHCb::State&gt;'
+        type      = 'llvm::SmallVector&lt;LHCb::State,10&gt;'
         name      = 'states'
         desc      = 'Container with pointers to all the states'
         access    = 'PRIVATE'

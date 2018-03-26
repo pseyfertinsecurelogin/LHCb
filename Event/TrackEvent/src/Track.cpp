@@ -256,7 +256,8 @@ void Track::addToStates( const State& state )
                                m_states.end(),
                                state,
                                TrackFunctor::orderByZ(order));
-  m_states.emplace(ipos, state);
+  //m_states.emplace(ipos, state);
+  m_states.insert(ipos, state);
 }
 
 //=============================================================================
