@@ -260,7 +260,7 @@ void Track::addToStates( const State& state )
 }
 
 //=============================================================================
-// Add a list of states to the list associated to the Track. This takes ownership.
+// Add a list of states to the list associated to the Track.
 //=============================================================================
 void Track::addToStates( span<const State> states, LHCb::Tag::State::AssumeUnordered_tag)
 {
@@ -278,7 +278,7 @@ void Track::addToStates( span<const State> states, LHCb::Tag::State::AssumeUnord
 }
 
 //=============================================================================
-// Add a set of sorted states by increasing Z to the track. Track takes ownership
+// Add a set of sorted states by increasing Z to the track.
 //=============================================================================
 void Track::addToStates( span<const State> states, LHCb::Tag::State::AssumeSorted_tag)
 {
