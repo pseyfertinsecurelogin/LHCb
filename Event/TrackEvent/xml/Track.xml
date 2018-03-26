@@ -734,14 +734,14 @@
 
      <method
         name    = 'addToStates'
-        desc    = 'Add a set of states to the track. Track takes ownership.'>
+        desc    = 'Add a set of states to the track.'>
         <arg type = 'span&lt;const State&gt;' inout='BYVALUE' name='states' />
         <arg type = ' LHCb::Tag::State::AssumeUnordered_tag = { } ' inout='BYVALUE' name=' '/>
       </method>
 
       <method
         name    = 'addToStates'
-        desc    = 'Add a set of sorted states by increasing Z to the track. Track takes ownership.'>
+        desc    = 'Add a set of sorted states by increasing Z to the track.'>
         <arg type = 'span&lt;const State&gt;' inout= 'BYVALUE' name='states' />
         <arg type = ' LHCb::Tag::State::AssumeSorted_tag ' inout='BYVALUE' name=' '/>
       </method>
