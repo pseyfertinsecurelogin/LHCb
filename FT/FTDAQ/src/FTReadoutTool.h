@@ -13,6 +13,10 @@
 #include "Kernel/FTChannelID.h"
 #include "IFTReadoutTool.h"
 
+#include "DetDesc/Condition.h"
+#include "DetDesc/ConditionInfo.h"
+
+
 /** @class FTReadoutTool FTReadoutTool.h
  *
  *  Concrete class for things related to the Readout - Tell40 Board
@@ -30,9 +34,10 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
           const std::string& name,
           const IInterface* parent);
 
-  /// init
-  //  StatusCode initialize() override;
-  
+  /// init & finish
+  StatusCode initialize() override;
+  StatusCode finalize() override;
+
   /// validate
   //  StatusCode validate() const;
 
@@ -53,6 +58,9 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   
   /// write an xml file
   StatusCode writeMappingToXML() const override;
+  std::string footer() const;
+  std::string header(const std::string& conString) const;
+  std::string strip(const std::string& conString) const;
 
   std::string m_conditionLocation;
   
@@ -67,10 +75,24 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
 
   bool m_printMapping = false;
   
-  Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
   unsigned int m_hybridsPerBoard;
   unsigned int m_nBoard;
   std::vector<std::unique_ptr<FTTell40ID> > m_boards;
+
+  Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
+  Gaudi::Property<bool> m_writeXML { this, "writeMappingToXML", true };
+  Gaudi::Property<std::string> m_footer { this, "footer", "</DDDB>"};
+  Gaudi::Property<std::string> m_startTag { this, "startTag", "<condition"};
+  std::ofstream m_outputFile;
+
+  Gaudi::Property<std::string> m_author { this, "author", "Louis Henry"};
+  Gaudi::Property<std::string> m_tag { this, "tag", "None"};
+  Gaudi::Property<std::string> m_desc { this, "description", "BlahBlahBlah"};
+  Gaudi::Property<bool> m_removeCondb { this, "removeCondb", false};
+  Gaudi::Property<unsigned int> m_precision { this, "precision", 16u};
+  Gaudi::Property<unsigned int> m_depth { this, "depths", 3u };
+
+
 };
 
 #endif // _FTReadoutTool_H

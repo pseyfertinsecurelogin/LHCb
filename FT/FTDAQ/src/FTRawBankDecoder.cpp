@@ -31,9 +31,26 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
 StatusCode FTRawBankDecoder::initialize()
 {
   StatusCode sc = Transformer::initialize();
-  //  m_ftReadoutTool = tool<IFTReadoutTool>("FTReadoutTool",this);
-  //  m_ftReadoutTool->initialize();
-  return sc;
+  if (sc.isFailure()) return Error("Failed to initialize", sc);
+  
+  return StatusCode::SUCCESS;
+}
+
+StatusCode FTRawBankDecoder::finalize()
+{
+  //  StatusCode sc = readoutTool()->finalize();
+  //  if (sc.isFailure()) return Error("Failed to finalize the readout tool", sc);
+  return Transformer::finalize();
+}
+
+IFTReadoutTool* FTRawBankDecoder::getReadoutTool() const {
+  m_readoutTool = this -> template tool<IFTReadoutTool>("FTReadoutTool","FTReadoutTool");
+  return m_readoutTool;
+}
+
+
+IFTReadoutTool* FTRawBankDecoder::readoutTool() const {
+  return m_readoutTool != 0 ? m_readoutTool : getReadoutTool();
 }
 
 //=============================================================================
@@ -61,7 +78,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   for ( const LHCb::RawBank* bank : banks) {
     // This source, at the contrary of the former one, contains also enough information
     // to know which SiPM.
-    LHCb::FTChannelID source = bank->sourceID();
+    LHCb::FTChannelID source       = readoutTool()->uniqueQuarter(bank->sourceID());
     unsigned uniqueQuarter   = source.uniqueQuarter();
     unsigned module          = source.module();
     unsigned sipmInModule    = source.sipmInModule();
@@ -97,7 +114,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
       unsigned modulesipm = sipmHeader >> FTRawBank::sipmShift ;
       unsigned module     = modulesipm >> FTRawBank::sipmShift ;
-      LHCb::FTChannelID chanModuleSiPM = m_ftReadoutTool->sipm(modulesipm);
+      LHCb::FTChannelID chanModuleSiPM = readoutTool()->sipm(modulesipm);
       unsigned mat        = chanModuleSiPM.mat ();
       unsigned sipm       = chanModuleSiPM.sipm();
       int nClus           = sipmHeader & FTRawBank::nbClusMaximum ;

@@ -1,5 +1,5 @@
-#ifndef FTNEWRAWBANKDECODER_H
-#define FTNEWRAWBANKDECODER_H 1
+#ifndef FTRAWBANKDECODER_H
+#define FTRAWBANKDECODER_H 1
 
 // Include files
 // from Gaudi
@@ -16,25 +16,28 @@ using FTLiteClusters = FastClusterContainer<LHCb::FTLiteCluster,int>;
 /** @class FTRawBankDecoder FTRawBankDecoder.h
  *  Decode the FT raw bank into FTLiteClusters
  *
- *  @author Louis Henry
- *  @date   2018-02-25
+ *  @author Olivier Callot
+ *  @date   2012-05-11
  */
 class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEvent& ) >
 {
  public:
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-
   StatusCode initialize() override;
+  StatusCode finalize() override;
+
+  inline IFTReadoutTool* getReadoutTool() const;
+  inline IFTReadoutTool* readoutTool() const;
   
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
 
  private:
-  IFTReadoutTool* m_ftReadoutTool = nullptr;
+  mutable IFTReadoutTool* m_readoutTool = 0;
   // for MC, following property has to be same as cluster creator, 
   // not sure how to ensure this (TODO)
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4,
       "Maximal cluster width"};
 
 };
-#endif // FTNEWRAWBANKDECODER_H
+#endif // FTRAWBANKDECODER_H

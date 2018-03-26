@@ -40,11 +40,13 @@ StatusCode FTRawBankEncoder::execute() {
   for ( const auto& cluster : *clusters ) {
 
     if(cluster->isLarge() > 1) continue;
-        
+    
     LHCb::FTChannelID id = cluster->channelID();
-
-    unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   
-    //== Temp, assumes 1 TELL40 per quarter.
+    //    int module = id.module();
+    //    unsigned int bankNumber = (module==1 || module ==2) + ((module==3 || module==4)<<1) + FTRawBank::nTELL40PerQuarter*(id.quarter() + 4*id.layer() + 16*(id.station()-1u));
+    unsigned int bankNumber = FTRawBank::nTELL40PerQuarter*(id.quarter() + 4*id.layer() + 16*(id.station()-1u));
+    //    debug() << "LoH: " << bankNumber << ": " << id.module() << " " << id.quarter() << " " << id.layer() << " " << id.station()-1u << endmsg;
+    //== Temp, will only work with 1 TELL40/quarter.
 
     if ( sipmData.size() <= bankNumber ) {
       error() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
