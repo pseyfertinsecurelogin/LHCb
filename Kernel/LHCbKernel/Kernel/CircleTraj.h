@@ -100,8 +100,8 @@ namespace LHCb
     Point  m_origin;
     Vector m_normal;
     Vector m_dirStart;
-    double m_radius;
-    double m_cbrt6radius2;
+    double m_radius = 0.;
+    double m_cbrt6radius2 = 0.;
 
   }; // class CircleTraj
 
