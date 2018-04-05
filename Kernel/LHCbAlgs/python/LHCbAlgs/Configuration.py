@@ -243,12 +243,12 @@ class LHCbApp(LHCbConfigurableUser):
         if self.getProp("EnableHLTEventLoopMgr"):
             from Configurables import HLTEventLoopMgr
             eventloopmgr = HLTEventLoopMgr()
+            self.propagateProperty('ThreadPoolSize', eventloopmgr)
         else:
             from Configurables import HiveSlimEventLoopMgr, AvalancheSchedulerSvc
             scheduler = AvalancheSchedulerSvc()
             eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
-        # initialize hive settings if not already set
-        self.propagateProperty('ThreadPoolSize', eventloopmgr)
+            self.propagateProperty('ThreadPoolSize', scheduler)
         ApplicationMgr().EventLoop = eventloopmgr
 
         from Configurables import UpdateManagerSvc
