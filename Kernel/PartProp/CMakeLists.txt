@@ -6,6 +6,11 @@ gaudi_subdir(PartProp v1r21)
 gaudi_depends_on_subdirs(GaudiKernel
                          Kernel/LHCbMath)
 
+find_package(Boost)
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+
+
 gaudi_add_library(PartPropLib
                   src/*.cpp
                   PUBLIC_HEADERS Kernel
