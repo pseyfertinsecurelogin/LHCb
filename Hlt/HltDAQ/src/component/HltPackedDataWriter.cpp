@@ -113,6 +113,11 @@ StatusCode HltPackedDataWriter::execute() {
 
   m_buffer.clear();
 
+  if (m_enableChecksum) {
+    m_checksum->reset();
+    debug() << "Control checksum " << m_checksum->checksum("") << endmsg;
+  }
+
   for (const auto& containerPath: m_packedContainers) {
     const auto* dataObject = getIfExists<DataObject>(containerPath);
     if (!dataObject) {
