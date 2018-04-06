@@ -1,255 +1,209 @@
 #ifndef LHCbKernel_ParticleID_H
 #define LHCbKernel_ParticleID_H 1
-// ============================================================================
-// Include files
-// ============================================================================
 #include <iosfwd>
 #include <string>
 #include <cmath>
 #include <tuple>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
+// GaudiKernel.
 #include "GaudiKernel/Kernel.h"
-// ============================================================================
-// LHCbMath 
-// ============================================================================
+#include "GaudiKernel/HashMap.h"
+// LHCbMath.
 #include "LHCbMath/Digit.h"
-// ============================================================================
-namespace LHCb 
-{
-  // ==========================================================================
+
+namespace LHCb {
   /** @class ParticleID ParticleID.h
    *
-   * Holds PDG+LHCb extension particle code, following the <a
-   * href="http://pdg.lbl.gov/2006/reviews/montecarlorpp.pdf">PDG particle
-   * numbering scheme</a>. Based on HepPDT class 
+   * Holds PDG + LHCb extension particle code, following the PDG
+   * particle numbering scheme
+   * (pdg.lbl.gov/2017/reviews/rpp2017-rev-monte-carlo-numbering.pdf). Specific
+   * conventions followed by Pythia 8 for beyond the standard model
+   * physics and color-octet quarkonia have been introduced.
    *
+   * Nuclei with the PDG 2017 convention (following the 2006 Monte
+   * Carlo nuclear code scheme) have the numbering +/- 10LZZZAAAI. Where
+   * AAA is A - the total baryon number,
+   * ZZZ is Z - the total number of protons,
+   * L is the total number of strange quarks, and
+   * I is the isomer number where I = 0 corresponds to the ground state.
+   * Backwards compatability with the old heavy ion scheme has also been kept.
+   *
+   * @date 19/02/2002
    * @author Gloria Corti
-   * created Mon Dec  1 12:25:08 2008
+   * @date 22/03/2018
+   * @author Philip Ilten
    */
-  class GAUDI_API ParticleID final
-  {
+  class GAUDI_API ParticleID final {
   public:
-    // ========================================================================
-    /// PID digits (base 10) are: n nr nl nq1 ne2 nq3 nj
-    enum Location {
-      nj=1 ,
-      nq3  ,
-      nq2  ,
-      nq1  ,
-      nl   ,
-      nr   ,
-      n    ,
-      n8   ,
-      n9   ,
-      n10
-    } ;
-    /// Quark PDG codes
-    enum Quark { 
-      down=1           ,
-      up               ,
-      strange          ,
-      charm            ,
-      bottom           ,
-      top              ,
-      bottom_prime     ,
-      top_prime        ,
+    /// PDG ID digits (base 10) are: n nr nl nq1 ne2 nq3 nj.
+    enum Location {nj=1, nq3, nq2, nq1, nl, nr, n, n8, n9, n10};
+    /// Quark PDG IDs.
+    enum Quark {down=1, up, strange, charm, bottom, top, bottom_prime,
+		top_prime, first = down, last = top_prime};
 
-      first = down     ,
-      last = top_prime
-    } ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// Constructor with PDG code
-    explicit ParticleID(int pid) : m_pid( pid ) {}
-    /// Copy Constructor
-    ParticleID(const ParticleID& orig) : m_pid ( orig.m_pid ) {}
-    /// Default Constructor
+    // Constructors and destructors.
+    /// Constructor with PDG code.
+    explicit ParticleID(int pid) { setPid(pid); }
+    /// Copy constructor.
+    ParticleID(const ParticleID& o) : m_pid ( o.m_pid ), m_extra ( o.m_extra ),
+      m_n( o.m_n ), m_nr( o.m_nr ), m_nl( o.m_nl ), m_nq1( o.m_nq1 ),
+      m_nq2( o.m_nq2 ), m_nq3( o.m_nq3 ), m_nj( o.m_nj ) {}
+    /// Default constructor.
     ParticleID() = default;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// Fill the ASCII output stream
-    std::ostream& fillStream ( std::ostream& s ) const;
-    /// string representation 
-    std::string   toString () const ;
-    /// Equality operator
-    bool operator ==( const ParticleID& other ) const
-    { return m_pid == other.m_pid ; }
-    /// Non-Equality operator
-    bool operator !=( const ParticleID& other ) const
-    { return m_pid != other.m_pid ; }
-    /// Comparison operator
-    bool operator < ( const ParticleID& other ) const
-    {
-      const unsigned int i1 = abspid()       ;
-      const unsigned int i2 = other.abspid() ; 
-      return std::tie( i1, m_pid ) < std::tie( i2, other.m_pid );
+
+    // Access the raw PID.
+    /// Retrieve the PDG ID.
+    int pid() const { return m_pid ; }
+    /// Absolute value of the PDG ID.
+    unsigned int abspid () const { return 0 > m_pid ? -m_pid : m_pid; }
+    /// Update the PDG ID.
+    void setPid(int value);
+
+    // Methods to return particle type properties.
+    /// Return if the PID is valid.
+    bool isValid() const;
+    /// Return if the PID is from the standard model.
+    bool isSM() const;
+    /// Return if the PID is for a meson.
+    bool isMeson() const;
+    /// Return if the PID is for a baryon.
+    bool isBaryon() const;
+    /// Return if the PID is for a di-quark.
+    bool isDiQuark() const;
+    /// Return if the PID is for a hadron.
+    bool isHadron() const;
+    /// Return if the PID is for a lepton.
+    bool isLepton() const;
+    /// Return if the PID is for a nucleus.
+    bool isNucleus() const;
+    /// Return if the PID is for a bare quark.
+    bool isQuark() const;
+    /// Return if the PID is a particle with quarks, but not a nucleus.
+    bool hasQuarks() const;
+    /// Return if the PID is a particle containing a specified quark flavor.
+    bool hasQuark(const Quark &q) const;
+    /// Return if the PID is a particle with an up quark.
+    bool hasUp() const { return hasQuark(up); }
+    /// Return if the PID is a particle with a down quark.
+    bool hasDown() const { return hasQuark(down); }
+    /// Return if the PID is a particle with a down quark.
+    bool hasStrange() const { return hasQuark(strange); }
+    /// Return if the PID is a particle with a charm quark.
+    bool hasCharm() const { return hasQuark(charm); }
+    /// Return if the PID is a particle with a bottom quark.
+    bool hasBottom() const { return hasQuark(bottom); }
+    /// Return if the PID is a particle with a top quark.
+    bool hasTop() const { return hasQuark(top); }
+    /// Return if the PID is a particle with a bottom' quark.
+    bool hasBottomPrime() const { return hasQuark(bottom_prime); }
+    /// Return if the PID is a particle with a top' quark.
+    bool hasTopPrime() const { return hasQuark (top_prime); }
+
+    // Methods to return particle spin and charge properties.
+    /// Return three times the charge, in units of e+, valid for all particles.
+    int threeCharge() const;
+    /// Return 2J+1, where J is the total spin, valid for all particles.
+    int jSpin() const;
+    /// Return 2S+1, where S is the spin, valid only for mesons.
+    int sSpin() const;
+    /// Return 2L+1, where L is the orbital angular momentum, valid
+    /// only for mesons.
+    int lSpin() const;
+    /// Return the atomic number for a nucleus.
+    int Z() const;
+    /// Return the nucleon number for a nucleus.
+    int A() const;
+    /// Return the number of strange quarks for a nucleus.
+    int nLambda() const;
+
+    // Technical methods.
+    /// Return the fundemental ID. This is 0 for nuclie, mesons,
+    /// baryons, and di-quarks. Otherwise, this is the first two
+    /// digits of the PDG ID.
+    int fundamentalID() const {
+      return !m_extra && !(m_nl + m_nq1 + m_nq2) ? 10*m_nq3 + m_nj : 0;
     }
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// Retrieve const  PDG code
-    int          pid    () const { return m_pid ; }
-    /// Absolute value of PDG code
-    unsigned int abspid () const { return 0 > m_pid ? -m_pid : m_pid ; }
-    /// Update  PDG code
-    void setPid ( int value ) { m_pid = value; }
-    // ========================================================================
-  public:
-    // ========================================================================    
-    /// Classification of particles
-    bool isValid    () const ;
-    /// Classification of particles
-    bool isMeson    () const ;
-    /// Classification of particles
-    bool isBaryon   () const ;
-    /// Classification of particles
-    bool isDiQuark  () const ;
-    /// Classification of particles
-    bool isHadron   () const 
-    { return hasQuarks () && ( isMeson () || isBaryon () ) ; }
-    /// Classification of particles
-    bool isLepton   () const ;
-    /// Classification of particles
-    bool isNucleus  () const;
-    /// Quark contents
-    bool hasUp      () const { return hasQuark ( up      ) ; }
-    /// Quark contents
-    bool hasDown    () const { return hasQuark ( down    ) ; }
-    /// Quark contents
-    bool hasStrange () const { return hasQuark ( strange ) ; }
-    /// Quark contents
-    bool hasCharm   () const { return hasQuark ( charm   ) ; }
-    /// Quark contents
-    bool hasBottom  () const { return hasQuark ( bottom  ) ; }
-    /// Quark contents
-    bool hasTop     () const { return hasQuark ( top     ) ; }
-    /// Quark contents
-    bool hasBottomPrime () const { return hasQuark ( bottom_prime ) ; }
-    /// Quark contents
-    bool hasTopPrime    () const { return hasQuark ( top_prime    ) ; }
-    /// Quark contents
-    bool hasQuark   ( const Quark& q ) const;
-    /// Is a single quark of any type
-    bool isQuark    () const ;
-    /// Contains quarks but not a nucleus
-    bool hasQuarks  () const ;
-    /// Atomic number if a nucleus
-    int  Z          () const ;
-    /// Nucleon number if a nucleus
-    int  A          () const ;
-    /// nLambda if this is a nucleus
-    int  nLambda    () const ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// Three times the charge (in positron charge units)
-    int threeCharge () const;
-    /// Returns 2J+1, where J is the total spin
-    int jSpin       () const;
-    /// Returns 2S+1, where S is the spin
-    int sSpin       () const;
-    /// Returns 2L+1, where L is the orbital angular momentum
-    int lSpin       () const;
-    // ========================================================================
-  public: // some semitechnical stuff 
-    // ========================================================================
-    /** First two digits if it is a 'fundamental ' particle.
-     *  Will return digits for quarks, leptons, higgs, etc. 
-     *  but 0 for mesons, baryons
-     */
-    int fundamentalID() const { 
-      if( ( 1 == digit_<n10>() ) && ( 0 == digit_<n9>() ) ) { return 0; }
-      return 0 == digits_<nq2,nr>() ? abspid()%10000 : 0 ; 
+    /// Return the digit for a given PDG ID digit location.
+    unsigned short digit(const Location &loc) const {
+      return Gaudi::Math::digit(abspid(), loc - 1); }
+    /// Return everything beyond the 7th PDG ID digit.
+    int extraBits() const { return m_extra; }    
+    /// Return the digit for a given PDG ID digit location.
+    template <Location L> int digit_() const {
+      Gaudi::Math::Digit<unsigned int,L-1> _eval;
+      return _eval(abspid());
     }
-    /// Value of digit in specified location
-    unsigned short digit ( const Location& loc) const
-    { return Gaudi::Math::digit ( abspid(), loc - 1  ) ; }
-    /// Everything behind the 7th digit (e.g. outside the numbering scheme)
-    int extraBits () const { return abspid() / 10000000 ; }    
-    // ========================================================================
-  public: // pure technical stuff 
-    // ========================================================================
-    /// get the digit at the given (fixed) location 
-    template <Location L>
-    int digit_() const 
-    {
-      Gaudi::Math::Digit<unsigned int,L-1> _eval ;
-      return _eval ( abspid() ) ;
-    } 
-    /// get the digits at the given fixed range 
-    template <Location L1,Location L2>
-    int digits_() const 
-    {
-      Gaudi::Math::Digits<unsigned int,L1-1,L2-1> _eval ;
-      return _eval ( abspid() ) ;
-    } 
-    // ========================================================================
-  public:
-    // ========================================================================
-    // print the quark to the stream 
-    static std::ostream& printQuark    ( const long    q , 
-                                         std::ostream& s ) ;
-    // convert the quark to the  string
-    static std::string   printQuark    ( const long    q ) ;
-    // print the location to the stream 
-    static std::ostream& printLocation ( const long    l , 
-                                         std::ostream& s ) ;
-    // convert the location to the  string
-    static std::string   printLocation ( const long    l ) ;
-    // ========================================================================
+    /// Return the digits between two PDG ID digit locations.
+    template <Location L1,Location L2> int digits_() const {
+      Gaudi::Math::Digits<unsigned int,L1-1,L2-1> _eval;
+      return _eval(abspid());
+    }
+
+    // Representation methods.
+    /// Equality operator.
+    bool operator ==(const ParticleID &o) const { return m_pid == o.m_pid; }
+    /// Non-equality operator.
+    bool operator !=(const ParticleID &o) const { return m_pid != o.m_pid ; }
+    /// Comparison operator.
+    bool operator <(const ParticleID &o) const {
+      const unsigned int i1(abspid()), i2(o.abspid()); 
+      return std::tie(i1, m_pid) < std::tie(i2, o.m_pid);
+    }
+    /// Fill a stream with the PID.
+    std::ostream &fillStream(std::ostream &s) const;
+    /// Return the PID stream representation as a string.
+    std::string toString() const;
+    /// Fill a stream with the PID digit enumeration. 
+    static std::ostream& printLocation(const long l, std::ostream &s);
+    /// Return the PID digit enumeration stream representation as a string.
+    static std::string printLocation(const long l);
+    /// Fill a stream with the PID quark enumeration.
+    static std::ostream &printQuark(const long q, std::ostream &s); 
+    /// Return the PID quark enumeration stream representation as a string.
+    static std::string printQuark(const long q);
+
   private:
-    // ========================================================================
-    /// PDG Code 
-    int m_pid = 0; // PDG code
-    // ========================================================================
-  }; // class ParticleID
-  // ==========================================================================
-  /// the output streamer operator 
-  inline std::ostream& operator<< ( std::ostream&              s , 
-                                    const LHCb::ParticleID&    o ) 
-  { return o.fillStream ( s ) ; }
-  /// the nice representation of 'Location' enum
-  inline std::ostream& operator<< ( std::ostream&              s , 
-                                    LHCb::ParticleID::Location l ) 
-  { return LHCb::ParticleID::printLocation ( l , s ) ; }
-  /// the nice representation of 'Quark' enum
-  inline std::ostream& operator<< ( std::ostream&              s , 
-                                    LHCb::ParticleID::Quark    q ) 
-  { return LHCb::ParticleID::printQuark ( q , s ) ; }
-  // ==========================================================================
-} //                                                      end of namespace LHCb
-// ============================================================================
-#include "GaudiKernel/HashMap.h"
-// ============================================================================
-namespace GaudiUtils 
-{
-  // ==========================================================================
-  // Hash functions for maps
-  template <> struct Hash<LHCb::ParticleID>
-  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
-  template <> struct Hash<const LHCb::ParticleID>
-  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
-  template <> struct Hash<LHCb::ParticleID&>
-  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
-  template <> struct Hash<const LHCb::ParticleID&>
-  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
-  // ==========================================================================
+    // Internal members.
+    /// PDG ID.
+    int m_pid = 0;
+    /// PDG ID digits, which can be modified for special cases.
+    unsigned int m_extra, m_n, m_nr, m_nl, m_nq1, m_nq2, m_nq3, m_nj;
+  };
+
+  // Inline stream operators.
+  /// Stream operator for the PID.
+  inline std::ostream& operator<<
+  (std::ostream &s, const LHCb::ParticleID &o) {
+    return o.fillStream(s); }
+  /// Stream operator for the PDG digit enumeration.
+  inline std::ostream& operator<<
+  (std::ostream &s, LHCb::ParticleID::Location l) {
+    return LHCb::ParticleID::printLocation(l, s); }
+  /// Stream operator for the PDG quark enumeration.
+  inline std::ostream& operator<<
+  (std::ostream &s, LHCb::ParticleID::Quark q) {
+    return LHCb::ParticleID::printQuark(q, s); }
 }
-// ============================================================================
-namespace std
-{
-  // ==========================================================================
-  inline 
-  LHCb::ParticleID abs ( const LHCb::ParticleID& p )  
-  { return LHCb::ParticleID ( p.abspid() ) ; }
-  // ==========================================================================
+
+// Hash functions for maps of ParticleIDs.
+namespace GaudiUtils  {
+  template<> struct Hash<LHCb::ParticleID> { 
+    inline size_t operator()(const LHCb::ParticleID &s) const {
+      return (size_t)s.pid(); } };
+  template<> struct Hash<const LHCb::ParticleID> { 
+    inline size_t operator()(const LHCb::ParticleID &s) const {
+      return (size_t)s.pid(); } };
+  template<> struct Hash<LHCb::ParticleID&> { 
+    inline size_t operator()(const LHCb::ParticleID &s) const {
+      return (size_t)s.pid(); } };
+  template<> struct Hash<const LHCb::ParticleID&> { 
+    inline size_t operator()(const LHCb::ParticleID &s) const {
+      return (size_t)s.pid(); } };
 }
-// ============================================================================
+
+namespace std {
+  /// Return the absolute value for a PID.
+  inline LHCb::ParticleID abs(const LHCb::ParticleID &p) {
+    return LHCb::ParticleID(p.abspid()); }
+}
+
 #endif ///LHCbKernel_ParticleID_H
-// ============================================================================
-// The END 
-// ============================================================================

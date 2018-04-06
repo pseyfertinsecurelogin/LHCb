@@ -1,4 +1,3 @@
-# setting LC_ALL to "C"
 NAME3            PDG:      123, Q:   0, mass:     503 MeV,  ctau:    2.9979 cm
 NAME2            PDG:      122, Q:  -1, mass:     502 MeV,  ctau:    2.9979 cm
 NAME1            PDG:      121, Q:  +1, mass:     501 MeV,  ctau:    2.9979 cm
@@ -65,7 +64,7 @@ LHCb.ParticleID(4)
  hasQuarks    False
  isQuark      True
  threeCharge  2
- jSpin        0
+ jSpin        2
  sSpin        0
  lSpin        0
  fundamental  4
@@ -95,8 +94,8 @@ LHCb.ParticleID(2212)
  lSpin        0
  fundamental  0
  extra        0
- A            1
- Z            1
+ A            0
+ Z            0
  nLambda      0
 LHCb.ParticleID(1000020040)
  isValid      True
@@ -115,7 +114,7 @@ LHCb.ParticleID(1000020040)
  hasQuarks    False
  isQuark      False
  threeCharge  6
- jSpin        0
+ jSpin        1
  sSpin        0
  lSpin        0
  fundamental  0
@@ -140,7 +139,7 @@ LHCb.ParticleID(1000822080)
  hasQuarks    False
  isQuark      False
  threeCharge  246
- jSpin        0
+ jSpin        1
  sSpin        0
  lSpin        0
  fundamental  0
@@ -165,11 +164,11 @@ LHCb.ParticleID(450000000)
  hasQuarks    False
  isQuark      False
  threeCharge  3
- jSpin        0
+ jSpin        1
  sSpin        0
  lSpin        0
  fundamental  0
- extra        45
+ extra        100
  A            2
  Z            1
  nLambda      0
