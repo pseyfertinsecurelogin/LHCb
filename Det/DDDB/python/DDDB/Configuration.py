@@ -304,7 +304,7 @@ class DDDBConf(ConfigurableUser):
             self.__set_tag__(["LHCBCOND"], "cond-20170724" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
-            self.__set_init_time__(datetime(2017, 11, 26, 13, 30)) # End of fill 6417
+            self.__set_init_time__(datetime(2017, 11, 26, 10, 30)) # End of fill 6417
 
     def __2016_conf__(self):
         """
