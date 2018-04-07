@@ -439,23 +439,33 @@ namespace LoKi
                               { return cut(v) ? std::max(r,fun(v)) : r; } );
     }
     // ========================================================================
+    // FoundN-family of algorithms
+    // ========================================================================
+    /** @typedef INDICES  
+     *  container to keep "exceptional" indices"
+     */
+    typedef std::set<std::ptrdiff_t> INDICES  ;
+    // ========================================================================
     template <class OBJECT,class PREDICATE1,class PREDICATE2>
-    inline bool _found_2( OBJECT            first  ,
-                          OBJECT            last   ,
-                          const PREDICATE1& cut1   ,
-                          const PREDICATE2& cut2   ,
-                          OBJECT            except )
+    inline bool _found_2( OBJECT            first                ,
+                          OBJECT            last                 ,
+                          const PREDICATE1& cut1                 ,
+                          const PREDICATE2& cut2                 ,
+                          const INDICES&    except  = INDICES()  )
     {
-      const int num = last - first ;
-      for ( int i = 0 ; i < num ; ++i ) {
-        if ( first + i == except ) { continue ; }                   // CONTINUE
-        if ( !cut1( *( first + i ) ) ) { continue ; }               // CONTINUE
-        for ( int j = 0 ; j < num ; ++j ) {
-          if ( first + j == except ) { continue ; }                 // CONTINUE
-          if ( i != j && cut2( *( first + j ) ) ) { return true ; } // RETURN
+      const std::ptrdiff_t num = last - first ;
+      if  ( num < 2 ) { return false ; }                      // RETURN  
+      for ( std::ptrdiff_t i = 0 ; i  < num ; ++i )
+      {
+        if ( except.end() != except.find ( i ) )  { continue ; }
+        if ( !cut1 ( * ( first + i ) ) )                      { continue  ; }
+        for  ( std::ptrdiff_t j = 0 ; j < num ; ++j )
+        {
+          if ( except.end() != except.find ( j ) ) { continue ; }
+          if  ( i != j &&  cut2 ( *(first + j ) ) ) { return true ; }
         }
       }
-      return false ;                                                // RETURN
+      return false ;
     }
     // ========================================================================
     /** simple algorithm to check the presence of at least
@@ -473,25 +483,32 @@ namespace LoKi
                          const PREDICATE1& cut1  ,
                          const PREDICATE2& cut2  )
     {
-      return _found_2 ( first , last , cut1 , cut2 , last ) ;
+      return _found_2 ( first , last , cut1 , cut2 ) ;
     }
     // ========================================================================
     template <class OBJECT, class PREDICATE1, class PREDICATE2, class PREDICATE3>
-    inline bool _found_3( OBJECT            first  ,
-                          OBJECT            last   ,
-                          const PREDICATE1& cut1   ,
-                          const PREDICATE2& cut2   ,
-                          const PREDICATE3& cut3   ,
-                          OBJECT            except )
+    inline bool _found_3( OBJECT            first                ,
+                          OBJECT            last                 ,
+                          const PREDICATE1& cut1                 ,
+                          const PREDICATE2& cut2                 ,
+                          const PREDICATE3& cut3                 ,
+                          const INDICES&    except  = INDICES()  )
     {
-      for ( auto f1 = first ; f1 != last ; ++f1 ) {
-        if ( f1 == except ) { continue ; }
+      //
+      if  ( last - first  < 3 ) { return false ; }                      // RETURN
+      //
+      for ( auto f1 = first ; f1 != last ; ++f1 )
+      {
+        const std::ptrdiff_t index = f1 - first ;
+        if  ( except.end() != except.find ( index ) ) { continue ; }
+        INDICES updated ( except ) ;
+        updated.insert ( index ) ;
         if       ( cut1 ( *f1 ) &&
-                   _found_2 ( first , last , cut2 , cut3 , f1 ) ) { return true ; }
+                   _found_2 ( first , last , cut2 , cut3 , updated ) ) { return true ; }
         else if  ( cut2 ( *f1 ) &&
-                   _found_2 ( first , last , cut1 , cut3 , f1 ) ) { return true ; }
+                   _found_2 ( first , last , cut1 , cut3 , updated ) ) { return true ; }
         else if  ( cut3 ( *f1 ) &&
-                   _found_2 ( first , last , cut1 , cut2 , f1 ) ) { return true ; }
+                   _found_2 ( first , last , cut1 , cut2 , updated ) ) { return true ; }
       }
       return false ;
     }
@@ -513,7 +530,7 @@ namespace LoKi
                          const PREDICATE2& cut2  ,
                          const PREDICATE3& cut3  )
     {
-      return _found_3 ( first , last , cut1 , cut2 , cut3 , last ) ;
+      return _found_3 ( first , last , cut1 , cut2 , cut3 ) ;
     }
     // ========================================================================
     template <class OBJECT,
@@ -525,19 +542,27 @@ namespace LoKi
                           const PREDICATE2& cut2   ,
                           const PREDICATE3& cut3   ,
                           const PREDICATE4& cut4   ,
-                          OBJECT            except )
-    {
-      for ( auto f1 = first ; f1 != last ; ++f1 ) {
-        if ( f1 == except ) { continue ; }
+                          const INDICES&    except  = INDICES()  )
+    {      
+      //
+      if  ( last - first  < 4 ) { return false ; }                      // RETURN
+      //
+      for ( auto f1 = first ; f1 != last ; ++f1 )
+      {
+        //
+        const std::ptrdiff_t index = f1 - first ;
+        if  ( except.end() != except.find ( index ) ) { continue ; }
+        INDICES updated ( except ) ;
+        updated.insert ( index ) ;
         //
         if       ( cut1 ( *f1 ) &&
-                   _found_3 ( first , last , cut2 , cut3 , cut4 , f1 ) ) { return true ; }
+                   _found_3 ( first , last , cut2 , cut3 , cut4 , updated ) ) { return true ; }
         else if  ( cut2 ( *f1 ) &&
-                   _found_3 ( first , last , cut1 , cut3 , cut4 , f1 ) ) { return true ; }
+                   _found_3 ( first , last , cut1 , cut3 , cut4 , updated ) ) { return true ; }
         else if  ( cut3 ( *f1 ) &&
-                   _found_3 ( first , last , cut1 , cut2 , cut4 , f1 ) ) { return true ; }
+                   _found_3 ( first , last , cut1 , cut2 , cut4 , updated ) ) { return true ; }
         else if  ( cut4 ( *f1 ) &&
-                   _found_3 ( first , last , cut1 , cut2 , cut3 , f1 ) ) { return true ; }
+                   _found_3 ( first , last , cut1 , cut2 , cut3 , updated ) ) { return true ; }
       }
       return false ;
     }
@@ -563,7 +588,7 @@ namespace LoKi
                           const PREDICATE3& cut3  ,
                           const PREDICATE4& cut4  )
     {
-      return _found_4 ( first , last , cut1 , cut2 , cut3 , cut4 , last ) ;
+      return _found_4 ( first , last , cut1 , cut2 , cut3 , cut4 ) ;
     }
     // ========================================================================
     template <class OBJECT,
@@ -577,22 +602,29 @@ namespace LoKi
       const PREDICATE3& cut3   ,
       const PREDICATE4& cut4   ,
       const PREDICATE5& cut5   ,
-      OBJECT            except )
+      const INDICES&    except  = INDICES()  )
     {
+      //
+      if  ( last - first  < 4 ) { return false ; }                      // RETURN
+      //
       for ( OBJECT f1 = first ; f1 != last ; ++f1 )
       {
-        if ( f1 == except ) { continue ; }
+        //
+        const std::ptrdiff_t index = f1 - first ;
+        if  ( except.end() != except.find ( index ) ) { continue ; }
+        INDICES updated ( except ) ;
+        updated.insert ( index ) ;
         //
         if       ( cut1 ( *f1 ) &&
-                   _found_4 ( first , last , cut2 , cut3 , cut4 , cut5 , f1 ) ) { return true ; }
+                   _found_4 ( first , last , cut2 , cut3 , cut4 , cut5 , updated ) ) { return true ; }
         else if  ( cut2 ( *f1 ) &&
-                   _found_4 ( first , last , cut1 , cut3 , cut4 , cut5 , f1 ) ) { return true ; }
+                   _found_4 ( first , last , cut1 , cut3 , cut4 , cut5 , updated ) ) { return true ; }
         else if  ( cut3 ( *f1 ) &&
-                   _found_4 ( first , last , cut1 , cut2 , cut4 , cut5 , f1 ) ) { return true ; }
+                   _found_4 ( first , last , cut1 , cut2 , cut4 , cut5 , updated ) ) { return true ; }
         else if  ( cut4 ( *f1 ) &&
-                   _found_4 ( first , last , cut1 , cut2 , cut3 , cut5 , f1 ) ) { return true ; }
+                   _found_4 ( first , last , cut1 , cut2 , cut3 , cut5 , updated ) ) { return true ; }
         else if  ( cut5 ( *f1 ) &&
-                   _found_4 ( first , last , cut1 , cut2 , cut3 , cut4 , f1 ) ) { return true ; }
+                   _found_4 ( first , last , cut1 , cut2 , cut3 , cut4 , updated ) ) { return true ; }
       }
       return false ;
     }
@@ -622,32 +654,56 @@ namespace LoKi
       const PREDICATE5& cut5   )
     {
       return _found_5
-        ( first , last , cut1 , cut2 , cut3 , cut4 , cut5 , last ) ;
+        ( first , last , cut1 , cut2 , cut3 , cut4 , cut5 ) ;
     }
     // ========================================================================
+    template <class OBJECT, class PREDICATE>
+    inline bool _found_N_
+    ( OBJECT first                                 ,
+      OBJECT last                                  ,
+      const std::vector<const PREDICATE*>& cuts    ,
+      const INDICES&                       except  )
+    {
+      //
+      const std::size_t size = last - first ;
+      if ( size  < cuts.size() + except.size() ) { return false ; }
+      //
+      for ( auto f = first ; last != f ; ++f )
+      {
+        const size_t index = f - first ;
+        if ( except.end() != except.find ( index ) ) { continue ; }
+        //
+        auto icut = std::find_if( cuts.begin(), cuts.end(),
+                                  [&](const PREDICATE* cut) { return (*cut)(*f); } );
+        //
+        if ( cuts.end() == icut ) continue;
+        if ( 1 == cuts.size()  ) { return true ; }              // TRUE
+        //
+        INDICES updated { except } ;
+        updated.insert ( index )   ;
+        std::vector<const PREDICATE*> _cuts { cuts } ;
+        _cuts.erase ( _cuts.begin() + ( icut - cuts.begin() ) ) ;
+        //
+        return _found_N_ ( first , last , _cuts , updated ) ;
+      }
+      return false ;
+    }
+    // =======================================================================
     template <class OBJECT, class PREDICATE>
     inline bool _found_N
     ( OBJECT first                          ,
       OBJECT last                           ,
       const std::vector<PREDICATE>& cuts    ,
-      const std::set<size_t>&       indices )
+      const INDICES&    except = INDICES()  )
     {
-      for ( auto f = first ; last != f ; ++f ) {
-        const size_t index = f - first ;
-        if ( indices.end() != indices.find ( index ) ) { continue ; }
-        auto icut = std::find_if( cuts.begin(), cuts.end(),
-                                  [&](const PREDICATE& cut) { return cut(*f); } );
-        if (icut==cuts.end()) continue;
-
-        if ( 1 == cuts.size()  ) { return true ; }              // TRUE
-        auto  _indices = indices ;
-        _indices.insert ( index ) ;
-        auto _cuts =  cuts;
-        _cuts.erase ( _cuts.begin() + ( icut - cuts.begin() ) ) ;
-        return _found_N ( first , last , _cuts , _indices ) ;
-      }
-      return false ;
-    }
+      const std::size_t size = last - first ;
+      if ( size  < cuts.size() + except.size() ) { return false ; }
+      //
+      std::vector<const PREDICATE*> _cuts; _cuts.reserve ( cuts.size() ) ;
+      for ( typename std::vector<PREDICATE>::const_iterator i = cuts.begin() ; cuts.end() != i ; ++i )
+      { _cuts.push_back ( &(*i ) ) ; }
+      return _found_N_ ( first , last , _cuts , except ) ;
+    }    
     // ========================================================================
     /** find "N" different elements in the sequence which satisfy to N
      *  various predicates
@@ -662,31 +718,31 @@ namespace LoKi
                          const std::vector<PREDICATE>& cuts    )
     {
       if ( static_cast<std::size_t>(std::distance( first, last )) < cuts.size() )  return false;
-
-      switch (cuts.size()) {
-          case 0 : return false;
-          case 1 : return last != std::find_if( first , last , cuts.front() );
-          case 2 : return found_2( first , last , cuts.front() , cuts.back() );
-          case 3 : return found_3( first , last ,
-                                   *( cuts.begin ()     ) ,
-                                   *( cuts.begin () + 1 ) ,
-                                   *( cuts.begin () + 2 ) ) ;
-          case 4 : return found_4( first , last ,
-                                   *( cuts.begin ()     ) ,
-                                   *( cuts.begin () + 1 ) ,
-                                   *( cuts.begin () + 2 ) ,
-                                   *( cuts.begin () + 3 ) ) ;
-          case 5 : return found_5( first , last ,
-                                   *( cuts.begin ()     ) ,
-                                   *( cuts.begin () + 1 ) ,
-                                   *( cuts.begin () + 2 ) ,
-                                   *( cuts.begin () + 3 ) ,
-                                   *( cuts.begin () + 4 ) ) ;
-          default : { std::set<size_t> indices ;
-                      return _found_N ( first , last , cuts , indices );
-          }
+      
+      switch (cuts.size())
+      {
+      case 0 : return false;
+      case 1 : return last != std::find_if( first , last , cuts.front() );
+      case 2 : return found_2( first , last , cuts.front() , cuts.back() );
+      case 3 : return found_3( first , last ,
+                               *( cuts.begin ()     ) ,
+                               *( cuts.begin () + 1 ) ,
+                               *( cuts.begin () + 2 ) ) ;
+      // case 4 : return found_4( first , last ,
+      //                          *( cuts.begin ()     ) ,
+      //                          *( cuts.begin () + 1 ) ,
+      //                          *( cuts.begin () + 2 ) ,
+      //                          *( cuts.begin () + 3 ) ) ;
+      // case 5 : return found_5( first , last ,
+      //                          *( cuts.begin ()     ) ,
+      //                          *( cuts.begin () + 1 ) ,
+      //                          *( cuts.begin () + 2 ) ,
+      //                          *( cuts.begin () + 3 ) ,
+      //                          *( cuts.begin () + 4 ) ) ;
+      default : return _found_N ( first , last , cuts ) ;
+      }
+      return false ;
     }
-  }
     // ========================================================================
   } //                                              end of namespace LoKi::Algs
   // ==========================================================================
