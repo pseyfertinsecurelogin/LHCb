@@ -126,12 +126,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                   std::to_string(module) ).ignore();
           continue;
         }
-        warning() << "LoH: Africa: " << module << " " << mat << " " << relsipm << " " << channel << " " << fraction << " " << cSize << endmsg;
-        
         //not the last cluster
         if( !cSize &&  it < (last-1) && (((*(it+1) >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum) == sipm)){
-          warning() << "LoH: Not the last" << endmsg;
-          //          warning() << "LoH: Not last cluster" << endmsg;
           short int c2      = *(it+1);          
           bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
           
@@ -148,10 +144,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           else {//fragmented cluster, last edge found
             unsigned channel2 = ( c2 >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
             int fraction2     = ( c2 >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
-            warning() << "LoH: Not the last: " << channel << " " << channel2 << endmsg;
-            
             unsigned int diff = (channel2 - channel);
-            //            warning() << "LoH: Last edge found (diff=" << diff << ")" << endmsg;
             
             if( UNLIKELY( diff > 128 ) ) {
               error()<<"something went terribly wrong here first fragment: " << channel
@@ -169,8 +162,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                     module, mat, relsipm, channel },
                 fraction, 0 ); //pseudoSize=0
               
-              if ( msgLevel( MSG::WARNING ) ) {
-                warning() << format( "first edge cluster %4d frac %3d size %3d code %4.4x",
+              if ( msgLevel( MSG::VERBOSE ) ) {
+                verbose() << format( "first edge cluster %4d frac %3d size %3d code %4.4x",
                                      channel, fraction, cSize, c ) << endmsg;                               
               }
               
@@ -181,8 +174,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                       mat, relsipm, channel+i },
                   fraction, 0 );
                 
-                if ( msgLevel( MSG::WARNING ) ) {
-                  warning() << format( "middle cluster %4d frac %3d size %3d code %4.4x", 
+                if ( msgLevel( MSG::VERBOSE ) ) {
+                  verbose() << format( "middle cluster %4d frac %3d size %3d code %4.4x", 
                                        channel+i, fraction, cSize, c )<< " added " <<diff << endmsg;
                 }
               }
@@ -192,13 +185,12 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                     module, mat, relsipm, channel2 },
                 fraction2, 0 );
               
-              if ( msgLevel( MSG::WARNING ) ) {
-                warning() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
+              if ( msgLevel( MSG::VERBOSE ) ) {
+                verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
                                       channel2, fraction2, cSize2, c2 ) << endmsg;
               }
             }
             else{//big cluster size upto size 8
-              warning() << "LoH: Big cluster"<< endmsg;
               unsigned int firstChan  =  channel - int( (m_clusterMaxWidth-1)/2 );
               unsigned int widthClus  =  2 * diff - 1 + fraction2  ;
               
@@ -234,9 +226,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         //      unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
         unsigned modulesipm = c >> FTRawBank::clusSipmShift ;//todo
         LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
-        warning() << "LoH: " << source << " " << modulesipm << endmsg;
-        unsigned module     = chanModuleSiPM.module() + 16 * readoutTool()->moduleShift(source+modulesipm);//Problem: this is a relative module. We need to get the absolute one.
-        //      unsigned module     = chanModuleSiPM.module();//Problem: this is a relative module. We need to get the absolute one.
+        unsigned module     = chanModuleSiPM.module() + 16 * readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
         
         unsigned sipm    = ( c >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum;
@@ -250,15 +240,12 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     }//end loop over sipms
     partitionPoints.push_back(clus.size());
   }//end loop over rawbanks
-  warning() << "LoH: Finished the loop" << endmsg;
   // Assert that clusters are sorted
   assert( std::is_sorted(clus.begin(), clus.end(),
                          [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){
                            return lhs.channelID() < rhs.channelID(); }) &&
           "Clusters from the RawBanks not sorted. Should be sorted by construction.") ;
   
-  for (auto clu : clus)
-    warning() << "LoH: Clusters: " << clu.channelID() << " " << clu.fraction()  << endmsg;
   // sort clusters according to PrFTHits (loop over TELL40)
   // right now it is inefficient because it loops over 6 modules when it
   // should loop over 2 maximum.
@@ -290,7 +277,6 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     }
     iClusFirst = partitionPoint;
   }  
-  warning() << "LoH: Finished decoding" << endmsg;
   return clus;
 }
 
