@@ -142,7 +142,15 @@ void DeUTDetector::setOffset() {
   }
 }
 
-inline DeSTSector* DeUTDetector::getSector(const LHCb::STChannelID cid) const {
+DeSTSector* DeUTDetector::getSector(const LHCb::STChannelID chan) const {
+  return getSector(chan.station(), chan.layer(), chan.detRegion(), chan.sector(), chan.uniqueSector());
+}
+
+DeSTSector* DeUTDetector::getSector(unsigned int station,
+                                    unsigned int layer,
+                                    unsigned int region,
+                                    unsigned int sector,
+                                    unsigned int uniqueSector) const {
 
   // helper to get index according to station/layer/region
   constexpr std::array<std::array<std::array<uint, NBREGION>, NBLAYER>, NBSTATION> get_idx_offset {{
@@ -150,19 +158,14 @@ inline DeSTSector* DeUTDetector::getSector(const LHCb::STChannelID cid) const {
       {{ {6, 7, 8}, {9, 10, 11} }}
     }};
 
-  uint istation = cid.station()-1;
-  uint ilayer  = cid.layer()-1;
-  uint iregion = cid.detRegion()-1;
-  uint isector = cid.sector()-1;
-
   // get index offset corresponding to the station/layer/region we want
-  auto idx_offset = get_idx_offset[istation][ilayer][iregion];
+  auto idx_offset = get_idx_offset[station-1][layer-1][region-1];
 
-  DeSTSector* res = m_sectors[m_offset[idx_offset] + isector];
+  DeSTSector* res = m_sectors[m_offset[idx_offset] + sector-1];
 
   // debug check to be sure we find the same sector as findSector
   assert( [&] () {
-      auto goodsector = m_sMap.find(cid.uniqueSector())->second;
+      auto goodsector = m_sMap.find(uniqueSector)->second;
       return goodsector == res;
     }() && "getSector was not able to find the same UT Sector as findSector" );
 

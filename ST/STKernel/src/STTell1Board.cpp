@@ -18,6 +18,7 @@ STTell1Board::STTell1Board(const STTell1ID aBoard,
 {
   // constructer
   m_sectorsVector.reserve(8);
+  m_sectorsVectorOpt.reserve(8);
 }
 
 void STTell1Board::addSector(STChannelID aOfflineChan, unsigned int orientation,
@@ -25,6 +26,7 @@ void STTell1Board::addSector(STChannelID aOfflineChan, unsigned int orientation,
  // add sector to vector
  m_orientation.push_back(orientation);
  m_sectorsVector.push_back(aOfflineChan);
+ m_sectorsVectorOpt.push_back({aOfflineChan.station(), aOfflineChan.layer(), aOfflineChan.detRegion(), aOfflineChan.sector(), aOfflineChan.uniqueSector(), (unsigned int)aOfflineChan});
  m_serviceBoxVector.push_back(serviceBox);
 }
 
@@ -42,14 +44,30 @@ bool STTell1Board::isInside(const STChannelID aOfflineChan,
   return iSector != m_sectorsVector.size();
 }
 
-
 STTell1Board::chanPair STTell1Board::DAQToOffline(const unsigned int fracStrip,
                                                   const STDAQ::version& version,
-                               const STDAQ::StripRepresentation aDAQChan) const{
+                                                  const STDAQ::StripRepresentation aDAQChan) const{
+  auto full = DAQToOfflineFull(fracStrip, version, aDAQChan);
+  auto& fullChan = std::get<0>(full);
+  auto& strip = std::get<1>(full);
+  auto& interStrip = std::get<2>(full);
+  
+  return { STChannelID(STChannelID{fullChan.chanID}.type(),
+                       fullChan.station,
+                       fullChan.layer,
+                       fullChan.detRegion,
+                       fullChan.sector,
+                       strip), interStrip};
+}
+
+std::tuple<STTell1Board::ExpandedChannelID, unsigned int, int>
+STTell1Board::DAQToOfflineFull(const unsigned int fracStrip,
+                               const STDAQ::version& version,
+                               unsigned int aDAQChan) const{
 
   // convert a DAQ channel to offline !
-  const unsigned int index = aDAQChan.value()/m_nStripsPerHybrid;
-  unsigned int strip =  aDAQChan.value() - (index*m_nStripsPerHybrid);
+  const unsigned int index = aDAQChan/m_nStripsPerHybrid;
+  unsigned int strip =  aDAQChan - (index*m_nStripsPerHybrid);
 
   int interstrip = fracStrip;
 
@@ -65,31 +83,7 @@ STTell1Board::chanPair STTell1Board::DAQToOffline(const unsigned int fracStrip,
     ++strip;
   }
 
-
-  // hack for TED run
-  /*
-  STChannelID chan = STChannelID(STChannelID::typeIT, ITNames::IT3,
-                                 ITNames::X1, ITNames::Top, 1, 0);
-
-  if (m_sectorsVector[index] == chan){
-    if (strip <= 128){
-      strip = strip + 128;
-    }
-    else if(strip >128 && strip <= 256){
-      strip = strip - 128;
-    }
-    else {
-      // nothing
-    }
-  }
-
-  */
-  return { STChannelID(m_sectorsVector[index].type(),
-                     m_sectorsVector[index].station(),
-                     m_sectorsVector[index].layer(),
-                     m_sectorsVector[index].detRegion(),
-                     m_sectorsVector[index].sector(),
-                     strip), interstrip};
+  return { m_sectorsVectorOpt[index], strip, interstrip };
 }
 
 

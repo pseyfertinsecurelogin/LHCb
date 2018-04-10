@@ -1,0 +1,8 @@
+!-----------------------------------------------------------------------------
+! Package     : UT/UTDAQ
+! Responsible : Greig Cowan ? was responsible for ST
+! Purpose     : Encode and decode Raw banks for UT
+!-----------------------------------------------------------------------------
+
+! 2018-04-10 - Sebastien Ponce
+ - initial version : extracted UT code form the generic ST one

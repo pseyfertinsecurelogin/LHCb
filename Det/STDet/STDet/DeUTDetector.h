@@ -65,6 +65,11 @@ public:
   DeSTBaseElement* findTopLevelElement(const std::string& nickname) const override;
 
   DeSTSector* getSector(const LHCb::STChannelID) const override;
+  DeSTSector* getSector(unsigned int station,
+                        unsigned int layer,
+                        unsigned int region,
+                        unsigned int sector,
+                        unsigned int uniqueSector) const;
 
   void setOffset();
 
