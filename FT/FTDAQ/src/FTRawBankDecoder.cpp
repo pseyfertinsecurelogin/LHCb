@@ -116,11 +116,10 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
         unsigned module     = chanModuleSiPM.module() + readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
-        unsigned sipm    = ( c >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum;
+        unsigned sipm       = chanModuleSiPM.sipm();
         unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
         int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-        unsigned relsipm = sipm - 4*mat - 16*module;
         if( module > 5 ){
           Warning("Skipping cluster(s) for non-existing module " +
                   std::to_string(module) ).ignore();
@@ -133,7 +132,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           
           if( !cSize2 ){ //next cluster is not last fragment
             clus.emplace_back(LHCb::FTChannelID{ 0 ,0 ,uniqueQuarter,
-                  module, mat, relsipm, channel },
+                  module, mat, sipm, channel },
               fraction, 4 );
             
             if ( msgLevel( MSG::VERBOSE ) ) {
@@ -159,7 +158,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               
               //add the first edge cluster
               clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
-                    module, mat, relsipm, channel },
+                    module, mat, sipm, channel },
                 fraction, 0 ); //pseudoSize=0
               
               if ( msgLevel( MSG::VERBOSE ) ) {
@@ -171,7 +170,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 // all middle clusters will have same size as the first cluster,
                 // so use same fraction
                 clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter, module,
-                      mat, relsipm, channel+i },
+                      mat, sipm, channel+i },
                   fraction, 0 );
                 
                 if ( msgLevel( MSG::VERBOSE ) ) {
@@ -182,7 +181,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 
               //add the last edge 
               clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
-                    module, mat, relsipm, channel2 },
+                    module, mat, sipm, channel2 },
                 fraction2, 0 );
               
               if ( msgLevel( MSG::VERBOSE ) ) {
@@ -199,7 +198,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               
               //add the new cluster = cluster1+cluster2
               clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter, module,
-                    mat, relsipm, clusChanPosition},
+                    mat, sipm, clusChanPosition},
                 frac, widthClus );
               
               if ( msgLevel( MSG::VERBOSE ) ) {
@@ -212,7 +211,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         }//not the last cluster
         else{ //last cluster, so nothing we can do
           clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
-                module, mat, relsipm, channel },
+                module, mat, sipm, channel },
             fraction, 4 );
           
           if ( msgLevel( MSG::VERBOSE ) ) {
