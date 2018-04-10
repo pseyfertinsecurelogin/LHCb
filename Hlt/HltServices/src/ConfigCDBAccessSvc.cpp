@@ -32,6 +32,14 @@ namespace fs = boost::filesystem;
 
 namespace {
 
+ConfigTreeNodeAlias make_ConfigTreeNodeAlias( boost::string_ref ref, boost::string_ref alias ) {
+    std::stringstream str;
+    str << "Ref: " << ref << "\nAlias: " << alias << '\n';
+    ConfigTreeNodeAlias a;
+    str >> a;
+    return a;
+}
+
 std::string propertyConfigPath( const PropertyConfig::digest_type& digest )
 { return "PC/" + digest.str(); }
 
@@ -53,15 +61,12 @@ struct PrefixFilenameSelector
     std::string prefix;
 };
 
-std::string toString( boost::string_ref sr )
-{
-    return { sr.data(), sr.size() };
-}
-
 uint8_t read8( std::istream& s )
 {
-    union { unsigned int ui; int i; } ;
-    i = s.get(); // stream will typically return an 'int', as it is a 'char' stream
+    static_assert(sizeof(std::istream::char_type)==sizeof(uint8_t),"");
+    std::istream::char_type c;  s.get(c);
+    // if ( UNLIKELY(!s) ) throw std::runtime_error("error reading a character from stream");
+    uint8_t ui; std::memcpy( &ui, &c, sizeof(uint8_t) );
     return ui;
 }
 
@@ -198,7 +203,7 @@ public:
                      || cdb_make_add( &m_db, static_cast<const unsigned char*>(record.key),  record.keylen,
                                              static_cast<const unsigned char*>(record.data), record.datalen ) != 0 ) {
             m_error = true;
-            throw std::runtime_error( "Failed to put key " + toString( record.string_key()) );
+            throw std::runtime_error( "Failed to put key " + record.string_key().to_string() );
          }
     }
 
@@ -215,7 +220,7 @@ public:
 };
 
 template <typename T>
-bool unpack(T& t, cdb_record data) {
+boost::optional<T> unpack( cdb_record data) {
     io::stream<io::array_source> value( static_cast<const char*>(data.data), data.datalen );
     // 12 bytes of header information...
     {
@@ -248,9 +253,9 @@ bool unpack(T& t, cdb_record data) {
         throw std::runtime_error( "unpack: unknown compression flag");
     }
     s.push( value );
+    T t;
     s >> t;
-    assert( value.tellg() == static_cast<unsigned>(data.datalen) );
-    return true;
+    return boost::make_optional( value.tellg() == static_cast<unsigned>(data.datalen), std::move(t) );
 }
 
 int compress( std::string& str )
@@ -316,6 +321,23 @@ auto make_unique_listener(std::string incident, Fun&& fun)
 
 namespace ConfigCDBAccessSvc_details {
 
+StatusCode parse(ConfigCDBAccessSvc_details::Mode& result, const std::string& input) {
+    for (auto i : { Mode::ReadOnly, Mode::ReadWrite } ) {
+        if ( input == toString(i) ) { result = i ; return StatusCode::SUCCESS; }
+    }
+    return StatusCode::FAILURE;
+}
+
+static const std::array<std::string,2> mode_string{ "ReadOnly", "ReadWrite" };
+
+const std::string& toString(const Mode& mode) {
+    switch(mode) {
+        case Mode::ReadOnly:  return mode_string[0];
+        case Mode::ReadWrite: return mode_string[1];
+        default: throw std::runtime_error("unknown CDB file mode");
+    }
+}
+
 class CDB
 {
   public:
@@ -341,7 +363,7 @@ class CDB
     }
 
     template <typename T>
-    bool readObject( T& t, boost::string_ref key )
+    boost::optional<T> read( boost::string_ref key )
     {
         // first check input database -- if it is available
         if ( m_icdb ) {
@@ -349,19 +371,20 @@ class CDB
             if ( i != m_icdb.end() ) {
                 auto data = *i;
                 if ( data.string_key() != key ) throw std::runtime_error( "Key Mismatch!" );
-                return unpack(t,data);
+                return unpack<T>(data);
             }
         }
         // not in input -- when writing, must check write cache!
         if ( m_ocdb ) {
-            auto i = m_write_cache.find( toString(key) );
+            auto i = m_write_cache.find( key.to_string() );
             if ( i != m_write_cache.end() ) {
                 std::stringstream s( i->second );
+                T t;
                 s >> t;
-                return true;
+                return t;
             }
         }
-        return false;
+        return {};
     }
 
     template <typename SELECTOR>
@@ -395,17 +418,16 @@ class CDB
     {
         if ( !m_ocdb || m_error ) return false;
         // first, look in input database
-        std::string rd;
-        if ( readObject( rd, key ) ) {
-            bool ok = (rd == is.str());
-            if ( !ok ) {
+        auto rd = read<std::string>(key);
+        if (rd) {
+            if ( rd.get() != is.str() ) {
                 m_error = true;
                 throw std::runtime_error("CDB append error -- hash collision with file??");
             }
-            return ok;
+            return true;
         }
         // if not there, look in write cache
-        auto i = m_write_cache.find( toString(key) );
+        auto i = m_write_cache.find( key.to_string() );
         if ( i != m_write_cache.end() ) {
             bool ok = ( i->second == is.str() );
             if ( !ok ) {
@@ -415,7 +437,7 @@ class CDB
             return ok;
         }
         // aha, this is an as yet unknown key... insert it!
-        m_write_cache.emplace( toString(key), is.str() );
+        m_write_cache.emplace( key.to_string(), is.str() );
         m_ocdb->insert( key, make_cdb_record( is.str(), getUid(), std::time(nullptr) ) );
         return true;
     }
@@ -430,8 +452,10 @@ class CDB
     mutable uid_t m_myUid = 0;
     bool m_error = false;
 };
+
 }
-using namespace ConfigCDBAccessSvc_details;
+using ConfigCDBAccessSvc_details::CDB;
+using ConfigCDBAccessSvc_details::Mode;
 
 // Factory implementation
 DECLARE_COMPONENT( ConfigCDBAccessSvc )
@@ -457,6 +481,7 @@ StatusCode ConfigCDBAccessSvc::initialize()
     return status;
 }
 
+// TODO: return a shared_ptr which keeps the file alive for the duration of the read/write...
 ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
 {
     if ( UNLIKELY(!m_file) ) {
@@ -472,14 +497,9 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
             }
             name = def + "/config.cdb";
         }
-        // todo: use Parse and toStream to make mode instead of m_mode a property...
-        if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" ) {
-            error() << "invalid mode: " << m_mode.value() << endmsg;
-            return nullptr;
-        }
-        info() << " opening " << name << " in mode " << m_mode.value() << endmsg;
+        info() << " opening " << name << " in mode " << toString(m_mode) << endmsg;
         try {
-            m_file = std::make_unique<CDB>( name, ( m_mode == "ReadWrite"
+            m_file = std::make_unique<CDB>( name, ( m_mode == Mode::ReadWrite
                                                   ? ( std::ios::in | std::ios::out )
                                                   :   std::ios::in ) );
         } catch (const std::runtime_error& err) {
@@ -519,42 +539,33 @@ template <typename T>
 boost::optional<T> ConfigCDBAccessSvc::read( boost::string_ref path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
-    if ( !file() ) {
-        if (msgLevel(MSG::DEBUG)) debug() << "no open file!" << endmsg;
-        return {};
-    }
-    T c;
-    if ( !file()->readObject( c, path ) ) {
-        if ( msgLevel( MSG::DEBUG ) )
-            debug() << "file " << path << " not found in container " << file()->name()
-                    << endmsg;
-        return {};
-    }
-    return c;
+    auto f = file();
+    return f ? f->read<T>(path) : boost::optional<T>{} ;
 }
 
 template <typename T>
 bool ConfigCDBAccessSvc::write( boost::string_ref path, const T& object ) const
 {
-    if (!file()) {
+    auto f = file();
+    if ( !f ) {
         debug() << "no open file!" << endmsg;
         return false;
     }
-    auto current = read<T>( path );
+    auto current = f->read<T>( path );
     if ( current ) {
         if ( object == current.get() ) return true;
         error() << " object @ " << path
                 << "  already exists, but contents are different..." << endmsg;
         return false;
     }
-    if ( m_mode.value() == "ReadOnly" ) {
-        error() << "attempted write, but file has been opened ReadOnly" << endmsg;
+    if ( m_mode.value() != Mode::ReadWrite ) {
+        error() << "attempted write, but file has not been opened ReadWrite" << endmsg;
         return false;
     }
     std::stringstream s;
     s << object;
     try {
-        return file() && file()->append( path, s );
+        return f->append( path, s );
     } catch (std::runtime_error& err) {
         error() << "failure during write: " << err.what() << endmsg;
         return false;
@@ -587,27 +598,20 @@ boost::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
     return readConfigTreeNode( ref );
 }
 
-std::vector<ConfigTreeNodeAlias> ConfigCDBAccessSvc::configTreeNodeAliases(
-    const ConfigTreeNodeAlias::alias_type& alias )
+std::vector<ConfigTreeNodeAlias>
+ConfigCDBAccessSvc::configTreeNodeAliases( const ConfigTreeNodeAlias::alias_type& alias )
 {
     std::vector<ConfigTreeNodeAlias> x;
 
-    if ( !file() ) return x;
-    static const std::string basename { "AL" };
-    for ( const auto& i : file()->files( PrefixFilenameSelector( basename + "/" + alias.major() ) )) {
-        // TODO: this can be more efficient...
+    auto f = file();
+    if ( !f ) return x;
+    for ( const auto& i : f->files( PrefixFilenameSelector( "AL/" + alias.major() ) )) {
         if ( msgLevel( MSG::DEBUG ) )
             debug() << " configTreeNodeAliases: adding file " << i << endmsg;
-        std::string ref;
-        file()->readObject( ref, i );
-        std::stringstream str;
-        str << "Ref: " << ref << '\n'
-            << "Alias: " << i.substr( basename.size() + 1 ) << '\n';
-        ConfigTreeNodeAlias a;
-        str >> a;
+        x.push_back( make_ConfigTreeNodeAlias( f->read<std::string>( i ).value(),
+                                               i.substr( 3 ) ) ); // strip leading "AL/"
         if ( msgLevel( MSG::DEBUG ) )
-            debug() << " configTreeNodeAliases: content:" << a << endmsg;
-        x.push_back( a );
+            debug() << " configTreeNodeAliases: content:" << x.back() << endmsg;
     }
     return x;
 }
@@ -633,7 +637,13 @@ ConfigCDBAccessSvc::writeConfigTreeNode( const ConfigTreeNode& config )
 ConfigTreeNodeAlias::alias_type
 ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
 {
-    // verify that we're pointing at something existing
+    auto f = file();
+    if ( !f ) {
+        error() << " container file not found during attempted write of "
+                << alias ;
+        return ConfigTreeNodeAlias::alias_type();
+    }
+    // verify that we're pointing at an existing ConfigTreeNode
     if ( !readConfigTreeNode( alias.ref() ) ) {
         error() << " Alias points at non-existing entry " << alias.ref()
                 << "... refusing to create." << endmsg;
@@ -641,7 +651,7 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
     }
     // now write alias...
     fs::path fnam = configTreeNodeAliasPath( alias.alias() );
-    auto x = read<std::string>( fnam.string() );
+    auto x = f->read<std::string>( fnam.string() );
     if (x) {
         //@TODO: decide policy: in which cases do we allow overwrites of existing
         //labels?
@@ -651,20 +661,16 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
         // class,
         // or into ConfigTreeNodeAlias itself
         if ( ConfigTreeNodeAlias::digest_type::createFromStringRep( *x ) ==
-             alias.ref() )
+             alias.ref() ) {
             return alias.alias();
+        }
         error() << " Alias already exists, but contents differ... refusing to change"
                 << endmsg;
         return ConfigTreeNodeAlias::alias_type();
     }
     std::stringstream s;
     s << alias.ref();
-    if ( !file() ) {
-        error() << " container file not found during attempted write of "
-                << fnam.string() << endmsg;
-        return ConfigTreeNodeAlias::alias_type();
-    }
-    if ( !file()->append( fnam.string(), s ) ) {
+    if ( !f->append( fnam.string(), s ) ) {
         error() << " failed to write " << fnam.string() << endmsg;
         return ConfigTreeNodeAlias::alias_type();
     }

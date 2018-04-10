@@ -42,6 +42,7 @@ bool createPFN( string& remote, string& command, bool stageLocal )
    }
 
    re = "^((?:rfio)|(?:castor):)//(?:\\w\\.\\w\\.\\w:\\d+/+castor)";
+   boost::regex re_ssh{"^(ssh://)([a-zA-z0-9\\.-]+)(?::(\\d)+)?"};
    if ( regex_search( remote.begin(), remote.end(), match, re, flags ) ) {
       boost::iterator_range< string::iterator >
          range( match[ 1 ].first, match[ 1 ].second );
@@ -62,13 +63,16 @@ bool createPFN( string& remote, string& command, bool stageLocal )
       // xrootd needs no changes, command is xrdcp
       command = "xrdcp -s";
       return true;
-   } else if ( ( result = ba::find_first( remote, "srm:" ) ) ) {
-      // srm does not need changes, command is lcg-cp
-      command = "lcg-cp -V lhcb";
-      return true;
    } else if ( ( result = ba::find_first( remote, "dcap:" ) ) ) {
       // gsidcap or dcap needs no changes, command is dccp
       command = "dccp -A";
+      return true;
+   } else if ( regex_search( begin(remote), end(remote), match, re_ssh, flags ) ) {
+      command = "scp -oStrictHostKeyChecking=no -oForwardX11=no -oForwardX11Trusted=no -oForwardAgent=no -q";
+      if (match[3].length() > 0) {
+         command += " -P " + match.str(3);
+      }
+      remote = match[2].str() + string(match[0].second, end(remote));
       return true;
    } else if ( ( result = ba::find_first( remote, "/castor" ) ) ) {
       // castor file, no protocol specification
@@ -86,27 +90,5 @@ bool createPFN( string& remote, string& command, bool stageLocal )
    } else {
       return false;
    }
-}
-
-//=============================================================================
-bool createLFN( string& remote, string& command )
-{
-   // The input are only lfns which are not in the catalog.
-
-   boost::iterator_range< string::iterator > result;
-   if ( ( result = ba::find_first( remote, "gfal:" ) ) ) {
-      // strip gfal
-      ba::erase_range( remote, result );
-   }
-
-   // Add /grid to start of lfn path
-   if ( remote.substr( 0, 5 ) != "/grid" ) {
-      remote = "/grid" + remote;
-   }
-   // add lfn: to remote
-   remote = "lfn:" + remote;
-
-   command = "lcg-cp -V lhcb";
-   return true;
 }
 }

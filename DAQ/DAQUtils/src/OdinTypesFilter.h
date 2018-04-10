@@ -68,7 +68,7 @@ namespace OdinTypesFilter_details {
         v.reserve(vs.size());
         try { std::transform( vs.begin(), vs.end(), std::back_inserter(v),
                               [](const std::string& s) {
-                                  odin_type_t<Type,Max> t;
+                                  odin_type_t<Type,Max> t{};
                                   auto sc = parse(t,s);
                                   if (!sc) throw GaudiException("Bad Parse","", sc);
                                   return t;

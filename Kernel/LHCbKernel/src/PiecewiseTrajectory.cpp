@@ -4,7 +4,7 @@
 namespace {
   class dist2point {
   public:
-    dist2point (const LHCb::Trajectory::Point& p) : m_p(p), m_dist2(-1),m_mu(0) {;}
+    dist2point (const LHCb::Trajectory<double>::Point& p) : m_p(p), m_dist2(-1),m_mu(0) {;}
     template <typename T> void operator()(const T& t)
     {
       // make sure mu isn't beyond the local traj valid range...
@@ -20,7 +20,7 @@ namespace {
     }
     double muEstimate() const { return m_mu; }
   private:
-    const LHCb::Trajectory::Point& m_p;
+    const LHCb::Trajectory<double>::Point& m_p;
     double m_dist2,m_mu;
   };
   struct order2mu {
@@ -31,34 +31,36 @@ namespace {
   };
 }
 
-std::unique_ptr<LHCb::Trajectory> LHCb::PiecewiseTrajectory::clone() const
+std::unique_ptr<LHCb::Trajectory<double>> LHCb::PiecewiseTrajectory::clone() const
 {
-  return std::unique_ptr<LHCb::Trajectory>(new LHCb::PiecewiseTrajectory(*this));
+  return std::unique_ptr<LHCb::Trajectory<double>>(new LHCb::PiecewiseTrajectory(*this));
 }
 
 LHCb::PiecewiseTrajectory::PiecewiseTrajectory(const PiecewiseTrajectory& rhs)
-  :LHCb::Trajectory(rhs)
+  :LHCb::Trajectory<double>(rhs)
 {
-  for ( const auto& i : rhs.m_traj ) append(i.first->clone().release());
+  for ( const auto& i : rhs.m_traj ) {
+    append(i.first->clone().release());
+  }
 }
 
 void
-LHCb::PiecewiseTrajectory::append(LHCb::Trajectory *t)
+LHCb::PiecewiseTrajectory::append(LHCb::Trajectory<double> *t)
 {
-  m_traj.emplace_back(std::unique_ptr<LHCb::Trajectory>{t},endRange());
+  m_traj.emplace_back(std::unique_ptr<LHCb::Trajectory<double>>{t},endRange());
   setRange(beginRange(),endRange()+t->endRange()-t->beginRange());
 }
 
 void
-LHCb::PiecewiseTrajectory::prepend(LHCb::Trajectory *t)
+LHCb::PiecewiseTrajectory::prepend(LHCb::Trajectory<double> *t)
 {
   auto newBeginRange = beginRange()-(t->endRange()-t->beginRange());
-  m_traj.emplace_front(std::unique_ptr<LHCb::Trajectory>{t},newBeginRange);
+  m_traj.emplace_front(std::unique_ptr<LHCb::Trajectory<double>>{t},newBeginRange);
   setRange(newBeginRange,endRange());
 }
 
 // pair of (local traj, local mu)
-std::pair<const LHCb::Trajectory*,double>
+std::pair<const LHCb::Trajectory<double>*,double>
 LHCb::PiecewiseTrajectory::loc(double mu) const
 {
   assert(!m_traj.empty());
@@ -69,21 +71,21 @@ LHCb::PiecewiseTrajectory::loc(double mu) const
   return {i->first.get(),i->first->beginRange()+(mu-i->second)};
 }
 
-LHCb::Trajectory::Point
+LHCb::Trajectory<double>::Point
 LHCb::PiecewiseTrajectory::position(double s) const
 {
-  return local(s,[](const LHCb::Trajectory* traj, double t) { return traj->position(t); } );
+  return local(s,[](const LHCb::Trajectory<double>* traj, double t) { return traj->position(t); } );
 }
 
-LHCb::Trajectory::Vector
+LHCb::Trajectory<double>::Vector
 LHCb::PiecewiseTrajectory::direction(double s) const{
-  return local(s,[](const LHCb::Trajectory* traj, double t) { return traj->direction(t); } );
+  return local(s,[](const LHCb::Trajectory<double>* traj, double t) { return traj->direction(t); } );
 }
 
-LHCb::Trajectory::Vector
+LHCb::Trajectory<double>::Vector
 LHCb::PiecewiseTrajectory::curvature(double s) const
 {
-  return local(s,[](const LHCb::Trajectory* traj, double t) { return traj->curvature(t); } );
+  return local(s,[](const LHCb::Trajectory<double>* traj, double t) { return traj->curvature(t); } );
 }
 
 void
@@ -92,7 +94,7 @@ LHCb::PiecewiseTrajectory::expansion( double s,
                                       Vector& dp,
                                       Vector& ddp ) const
 {
-  local(s, [&]( const LHCb::Trajectory* traj, double t ) {
+  local(s, [&]( const LHCb::Trajectory<double>* traj, double t ) {
       traj->expansion(t,p,dp,ddp);
   });
 }
@@ -109,7 +111,7 @@ LHCb::PiecewiseTrajectory::distTo1stError( double s,
                                            double tolerance,
                                            int pathDirection) const
 {
-  return distToError(s,tolerance,pathDirection,&Trajectory::distTo1stError);
+  return distToError(s,tolerance,pathDirection,&Trajectory<double>::distTo1stError);
 }
 
 double
@@ -117,7 +119,7 @@ LHCb::PiecewiseTrajectory::distTo2ndError( double s,
                                            double tolerance,
                                            int pathDirection) const
 {
-  return distToError(s,tolerance,pathDirection,&Trajectory::distTo2ndError);
+  return distToError(s,tolerance,pathDirection,&Trajectory<double>::distTo2ndError);
 }
 
 double

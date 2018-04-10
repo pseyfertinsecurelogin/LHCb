@@ -19,7 +19,7 @@
 #include "GaudiAlg/Transformer.h"
 
 // Rich Utils
-#include "RichUtils/RichDecodedData.h"
+#include "RichFutureUtils/RichDecodedData.h"
 #include "RichUtils/RichMap.h"
 #include "RichUtils/RichHashMap.h"
 
@@ -58,9 +58,9 @@ namespace Rich
        *  @date   2016-09-21
        */
       class RawBankDecoder final :
-        public Transformer< Rich::DAQ::L1Map( const LHCb::RawEvent&, 
-                                              const LHCb::ODIN& ),
-                            Traits::BaseClass_t<AlgBase> >
+      public Transformer< Rich::Future::DAQ::L1Map( const LHCb::RawEvent&, 
+                                                    const LHCb::ODIN& ),
+                          Traits::BaseClass_t<AlgBase> >
       {
         
       public:
@@ -72,8 +72,8 @@ namespace Rich
         StatusCode initialize() override;
         
         /// Algorithm execution via transform
-        Rich::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent,
-                                     const LHCb::ODIN& odin ) const override;
+        Rich::Future::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent,
+                                             const LHCb::ODIN& odin ) const override;
         
       private:
         
@@ -82,6 +82,25 @@ namespace Rich
         {
           return static_cast< Rich::DAQ::BankVersion > ( bank.version() );
         }
+
+        /// Simple class to cache the HPDDataBank objects
+        class PDBanks
+        {
+        public: // the cached PD decoders
+          /// Non-zero suppressed decoder (LHCb mode)
+          std::unique_ptr<Rich::DAQ::HPDDataBank> lhcb_nonZS;
+          ///     zero suppressed decoder (LHCb mode)
+          std::unique_ptr<Rich::DAQ::HPDDataBank> lhcb_ZS;
+          /// Non-zero suppressed decoder (ALICE mode)
+          std::unique_ptr<Rich::DAQ::HPDDataBank> alice_nonZS;
+          ///     zero suppressed decoder (ALICE mode)
+          std::unique_ptr<Rich::DAQ::HPDDataBank> alice_ZS;
+        public:
+          /// The bank type the current decoders are for
+          Rich::DAQ::BankVersion version;
+        };
+
+      private:
         
         /** Creates a bank data from the given raw block of data
          *
@@ -89,36 +108,30 @@ namespace Rich
          *  @param dataSize  The length of the data block (excluding header HPD word)
          *  @param version   The RICH DAQ data bank version
          */
-        std::unique_ptr<const Rich::DAQ::HPDDataBank> 
+        const Rich::DAQ::HPDDataBank *
           createDataBank( const Rich::DAQ::LongType * dataStart,
-                          const unsigned int dataSize,
-                          const Rich::DAQ::BankVersion version ) const;
+                          const Rich::DAQ::BankVersion version,
+                          PDBanks & banks ) const;
+
+      private:
         
         /// Decode a RawBank into RichSmartID identifiers
         void decodeToSmartIDs( const LHCb::RawBank & bank,
                                const LHCb::ODIN& odin,
-                               Rich::DAQ::L1Map & decodedData ) const;
-        
-        /// Decode a RawBank into RichSmartID identifiers
-        /// Version with DC06 and DC04 compatibility
-        void decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
-        
-        /// Decode a RawBank into RichSmartID identifiers
-        /// Version compatible with 2006 testbeam
-        void decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
+                               Rich::Future::DAQ::L1Map & decodedData,
+                               PDBanks & banks ) const;
         
         /// Decode a RawBank into RichSmartID identifiers
         /// Version compatible with first 2007 "final" L1 firmware
         void decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                                     const LHCb::ODIN& odin,
-                                    Rich::DAQ::L1Map & decodedData ) const;
+                                    Rich::Future::DAQ::L1Map & decodedData,
+                                    PDBanks & banks ) const;
         
         /// Decode a RawBank into RichSmartID identifiers
         /// MaPMT0 version
         void decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
+                                      Rich::Future::DAQ::L1Map & decodedData ) const;
         
         /// Check if a given L1 ID should be decoded
         inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID ) const

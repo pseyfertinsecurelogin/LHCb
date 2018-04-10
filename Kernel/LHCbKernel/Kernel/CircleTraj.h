@@ -22,12 +22,19 @@ namespace LHCb
    *
    */
 
-  class CircleTraj : public Trajectory {
+  class CircleTraj : public Trajectory<double> {
 
   public:
 
     // clone thyself...
-    std::unique_ptr<Trajectory> clone() const override;
+    std::unique_ptr<Trajectory<double>> clone() const override;
+
+    using Trajectory<double>::Trajectory;
+    using Vector = typename Trajectory<double>::Vector;
+    using Point  = typename Trajectory<double>::Point;
+    using Range  = typename Trajectory<double>::Range;
+
+    CircleTraj() = default;
 
     /// Constructor from a center, the normal which defines the plane
     /// of the circle, a vector from the center to a point on the circle,
@@ -39,7 +46,7 @@ namespace LHCb
     CircleTraj( const Point& origin,// center of circle
                 const Vector& normal, // direction of end
                 const Vector& origin2point, // direction of start
-                const Trajectory::Range& range); // valid range, in radius*deltaphi
+                const Trajectory<double>::Range& range); // valid range, in radius*deltaphi
 
     /// Constructor from a center, the directions of the
     /// start and end of the traj wrt. the center, and the radius.
@@ -85,7 +92,7 @@ namespace LHCb
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because CircleTraj is parameterized in
     /// arclength.
-    using Trajectory::arclength;
+    using Trajectory<double>::arclength;
     double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
   private :
@@ -93,8 +100,8 @@ namespace LHCb
     Point  m_origin;
     Vector m_normal;
     Vector m_dirStart;
-    double m_radius;
-    double m_cbrt6radius2;
+    double m_radius = 0.;
+    double m_cbrt6radius2 = 0.;
 
   }; // class CircleTraj
 

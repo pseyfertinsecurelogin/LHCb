@@ -12,31 +12,22 @@
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
+#include "GaudiKernel/detected.h"
 
 namespace PolyEval { ///< routines to evaluate polynomials
     namespace PolyEvalImpl { ///< implementation details
-	/// check if range or container T has a size() method
-	template <typename T>
-	class has_size {
-	    private:
-		typedef char Yes;
-		typedef Yes No[2];
+       /// check if range or container T has a size() method
+       template <typename T>
+       using _has_size = decltype( size_t{std::declval<const T&>().size()}, std::true_type{} );
+       template <typename T>
+       using has_size = Gaudi::cpp17::detected_or_t<std::false_type, _has_size, T>;
 
-		template<typename C> static auto Test(void*)
-		    -> decltype(size_t{std::declval<C const>().size()}, Yes{});
 
-		template<typename> static No& Test(...);
-
-	    public:
-		static constexpr bool const value = sizeof(Test<T>(nullptr)) == sizeof(Yes);
-	};
-
-	/// check if iterator type T is a random access iterator
-	template <typename T>
-	struct is_random_access_iterator :
-	    std::is_same<typename std::iterator_traits<T>::iterator_category,
-	    std::random_access_iterator_tag>
-	{};
+       /// check if iterator type T is a random access iterator
+       template <typename T>
+       using is_random_access_iterator =
+           std::is_same<typename std::iterator_traits<T>::iterator_category,
+                        std::random_access_iterator_tag>;
     }
 
     /** @brief evaluate polynomial with given coefficients
@@ -120,7 +111,7 @@ namespace PolyEval { ///< routines to evaluate polynomials
      * @date 2015-02-04
      */
     template<class FLT, class SZ>
-    inline FLT eval(const FLT x, SZ n, const FLT* c) noexcept 
+    inline FLT eval(const FLT x, SZ n, const FLT* c) noexcept
     {
 	// a smart compiler will turn the switch statement in the loop
 	// below into a computed goto into a hand-unrolled loop; for short

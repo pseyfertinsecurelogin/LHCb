@@ -27,11 +27,17 @@ if(NOT CPP_GSL_INCLUDE_DIR)
    message(FATAL "required headers from C++ GSL missing")
 endif()
 
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_library(LHCbFastMath STATIC src/fast/rsqrt.cpp)
+install(TARGETS LHCbFastMath DESTINATION lib OPTIONAL)
+gaudi_export(LIBRARY LHCbFastMath)
+
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
                   INCLUDE_DIRS Vc VDT Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
-                  LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel)
+                  LINK_LIBRARIES VDT Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel LHCbFastMath)
 
 target_link_libraries( LHCbMathLib "${Vc_LIB_DIR}/libVc.a" )
 
@@ -219,4 +225,6 @@ endif()
 gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
+
+gaudi_add_unit_test(TestFastMath tests/TestFastMath.cpp LINK_LIBRARIES LHCbMathLib rt)
 

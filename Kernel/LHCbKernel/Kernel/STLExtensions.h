@@ -89,4 +89,17 @@ namespace LHCb
 
 }
 
+// gsl::span has no `front` or `back`
+// whereas range::span does -- so until we get a version of range::v3 which
+// includes range::span, we provide some free standing functions to provide
+// `front` and `back`...
+namespace gsl {
+   template <typename T, std::ptrdiff_t N>
+   decltype(auto) front(span<T,N> s) { return *s.begin(); }
+
+   template <typename T, std::ptrdiff_t N>
+   decltype(auto) back (span<T,N> s) { return *s.rbegin(); }
+}
+
+
 #endif // LHCBKERNEL_STLExtensions

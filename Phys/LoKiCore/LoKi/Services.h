@@ -17,7 +17,6 @@ namespace LHCb { class IParticlePropertySvc ; }
 #include "GaudiKernel/IHistogramSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/ICounterSvc.h"
 #include "GaudiKernel/IStatSvc.h"
 #include "GaudiKernel/IChronoSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
@@ -71,8 +70,6 @@ namespace LoKi
     IRndmGenSvc*          randSvc     () const ;
     /// accessor to Statistical Service
     IStatSvc*             statSvc     () const ;
-    /// accessor to Counter Service
-    ICounterSvc*          cntSvc      () const ;
     /// accessor to Chrono Service
     IChronoSvc*           chronoSvc   () const ;
     /// accessor to Chrono Service
@@ -135,8 +132,6 @@ namespace LoKi
     mutable SmartIF<IDataProviderSvc>  m_evtSvc     ; // the event data service
     /// The statistical service
     mutable SmartIF<IStatSvc>          m_statSvc    ; // the statistical service
-    /// The counter service
-    mutable SmartIF<ICounterSvc>       m_cntSvc     ; // the counter service
     /// The chrono
     mutable SmartIF<IChronoSvc>        m_chronoSvc  ; // the chrono service
     /// The update

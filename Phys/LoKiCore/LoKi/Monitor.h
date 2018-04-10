@@ -18,7 +18,6 @@
 class IHistogramSvc  ;
 class IAlgContextSvc ;
 class IStatSvc       ;
-class ICounterSvc    ;
 class GaudiTool      ;
 class GaudiAlgorithm ;
 class StatEntity     ;
@@ -37,7 +36,6 @@ namespace LoKi
      *   - ContextSvc : the counter is retrieved from the corresponding
      *                  GauidiAlgorithm using Context Service
      *   - StatSvc    : the counter is retrieved from Stat Service
-     *   - CounterSvc : the counter is retrieved from Counter Service
      *
      *  @see StatEntity
      *  @see Stat
@@ -45,13 +43,11 @@ namespace LoKi
      *  @see GaudiAlgorithm
      *  @see GaudiCommon
      *  @see IStatSvc
-     *  @see ICounterSvc
      */
     enum Flag
       {
         ContextSvc = 0 , //  local counter through IAlgContext -> GaudiAlgorithm  ,
         StatSvc        , // global counter through IStatSvc  ,
-        CounterSvc       // global counter through ICounterSvc
       };
     // ========================================================================
     /** get the (global) counter by name using IStatSvc
@@ -82,18 +78,6 @@ namespace LoKi
     StatEntity* getCounter
     ( GaudiTool*         tool ,
       const std::string& name ) ;
-    /** get the counter by name using ICounterSvc
-     *  @see ICounterSvc
-     *  @param csvc the counter service
-     *  @param group the counter group
-     *  @param name the counter name
-     *  @return the counter
-     */
-    GAUDI_API
-    StatEntity* getCounter
-    ( ICounterSvc*       csvc     ,
-      const std::string& group    ,
-      const std::string& name     ) ;
     /** get the counter by name using IAlgContextSvc
      *  @param name the counter name
      *  @param csvc context service
@@ -104,9 +88,6 @@ namespace LoKi
     ( const IAlgContextSvc* csvc ,
       const std::string&    name ) ;
     /** get the counter by name using IStatSvc/ICounter or IAlgContextSvc
-     *  @param ICounterSvc
-     *  @param IStatSvc
-     *  @param IAlgContextSvc
      *  @param flag  local/global flag
      *  @param group the counter grop
      *  @param name  the counter name
@@ -118,9 +99,6 @@ namespace LoKi
       const std::string& group ,
       const std::string& name  ) ;
     /** get the counter by name using IStatSvc/ICounter or IAlgContextSvc
-     *  @param ICounterSvc
-     *  @param IStatSvc
-     *  @param IAlgContextSvc
      *  @param flag  local/global flag
      *  @param name  the counter name
      *  @return the counter

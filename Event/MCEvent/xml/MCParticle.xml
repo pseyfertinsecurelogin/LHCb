@@ -196,6 +196,8 @@
                 init = "0"
                 type = "bitfield">
       <bitfield desc="Flag to indicate if this particle was produced as part of the signal decay tree" length="1" name="fromSignal" />
+      <bitfield desc="Reserved flags to extend fromSignal in the future (currently not used!)" length="3" name="_reservedFlags" />
+      <bitfield desc="Flag to indicate if this particle is in the ReDecay part of the event" length="1" name="fromReDecay" />
       </attribute>
 
      </class>

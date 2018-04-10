@@ -18,6 +18,7 @@ class TurboConf(LHCbConfigurableUser):
 
     __slots__ = {
         "DataType":    "",
+        "Simulation": False,
         "PersistReco": False,
         "RunPackedDataDecoder": False,
         "RunPersistRecoUnpacking": False,
@@ -26,6 +27,7 @@ class TurboConf(LHCbConfigurableUser):
 
     _propertyDocDct = {
        "DataType":    "Flag for backward compatibility with old data",
+       "Simulation": "Flag set to True when running over simulated data",
        "PersistReco": "Setup PersistReco (overrides some Turbo defaults)",
        "RunPackedDataDecoder": "If True, decode the raw data bank containing PersistReco data",
        "RunPersistRecoUnpacking": "If True, unpack the PersistReco containers",
@@ -73,27 +75,29 @@ class TurboConf(LHCbConfigurableUser):
         for alg in packing.unpackers():
             DataOnDemandSvc().AlgMap[alg.OutputName] = alg
 
-    def _register_pr_links(self, packing, rootintes):
+    def _register_pr_links(self, packing, rootintes, datatype, simulation):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
         from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
         from Configurables import TESMerger_LHCb__Track_ as TESMergerTrack
         from Configurables import GaudiSequencer
         from Configurables import Gaudi__DataLink as DataLink
 
+        mergedProtosLoc = 'Hlt2/Protos/Charged'
         mergeProtos = TESMergerProtoParticle("MergeProtos")
         mergeProtos.inputLocations = [
             packing.outputs["Hlt2LongProtos"],
             packing.outputs["Hlt2DownstreamProtos"],
         ]
-        mergeProtos.outputLocation = join(rootintes, 'Hlt2/Protos/Charged')
+        mergeProtos.outputLocation = join(rootintes, mergedProtosLoc)
         DataOnDemandSvc().AlgMap[mergeProtos.outputLocation] = mergeProtos
 
+        mergedTracksLoc = 'Hlt2/TrackFitted/Charged'
         mergeTracks = TESMergerTrack("MergeTracks")
         mergeTracks.inputLocations = [
             packing.outputs["Hlt2LongTracks"],
             packing.outputs["Hlt2DownstreamTracks"],
         ]
-        mergeTracks.outputLocation = join(rootintes, 'Hlt2/TrackFitted/Charged')
+        mergeTracks.outputLocation = join(rootintes, mergedTracksLoc)
         DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
@@ -117,6 +121,25 @@ class TurboConf(LHCbConfigurableUser):
                            What=packing.outputs['Hlt2RecVertices'],
                            Target=join(rootintes, 'Rec/Vertex/Primary'))
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
+        
+        # 2016 MC is a bit special, as the relations tables are made for the
+        # merged protos container in Tesla and this is *expected* to be under
+        # /Event, not /Event/Turbo, so we have to make sure the container exists
+        # there
+        if simulation and datatype == 2016:
+            assert rootintes.startswith('/Event/Turbo')
+            linkMergedProtos = DataLink('LinkHltMergedProtos',
+                                        What=mergeProtos.outputLocation,
+                                        Target=join('/Event', mergedProtosLoc)
+                                        )
+            DataOnDemandSvc().AlgMap[linkMergedProtos.Target] = linkMergedProtos
+            
+            # Just in case, we do the same for the merged tracks
+            linkMergedTracks = DataLink('LinkHltMergedTracks',
+                                        What=mergeTracks.outputLocation,
+                                        Target=join('/Event', mergedTracksLoc)
+                                        )
+            DataOnDemandSvc().AlgMap[linkMergedTracks.Target] = linkMergedTracks
 
     def _register_tes_root_links(self, rootintes):
         """Link /Event/<stream>/Turbo/p{Phys,Rec} to under /Event/<stream>.
@@ -237,6 +260,7 @@ class TurboConf(LHCbConfigurableUser):
         self._check_configuration()
 
         datatype = int(self.getProp('DataType'))
+        simulation = self.getProp('Simulation')
         rootintes = self.getProp('RootInTES')
         persistreco = self.getProp('PersistReco')
         decode = self.getProp('RunPackedDataDecoder')
@@ -269,10 +293,10 @@ class TurboConf(LHCbConfigurableUser):
 
         packing = self._persistrecopacking(datatype, rootintes)
         # CALO objects are treated specially in 2015 and 2016
-        if datatype <= 2017:
+        if datatype < 2017:
             self._register_unpackers()
             self._register_raw_event_links()
         if unpack or persistreco:
             self._register_pr_unpackers(packing)
-            self._register_pr_links(packing, rootintes)
+            self._register_pr_links(packing, rootintes, datatype, simulation)
             self._register_tes_root_links(rootintes)

@@ -7,6 +7,7 @@
 
 #include "Kernel/STChannelID.h"
 #include "Kernel/LHCbID.h"
+#include "Kernel/Trajectory.h"
 
 #include "DetDesc/DetectorElement.h"
 #include "STDet/DeSTBaseElement.h"
@@ -28,10 +29,6 @@
 class DeSTStation;
 class DeSTSector;
 class DeSTLayer;
-
-namespace LHCb{
-  class Trajectory;
-}
 
 namespace DeSTDetLocation {
 
@@ -157,6 +154,15 @@ public:
   DeSTSector* findSector(const LHCb::STChannelID aChannel) const;
 
   /**
+  *  get the sector corresponding to the input channel
+  * @param  aChannel channel
+  * @return sector
+  */
+  virtual DeSTSector* getSector(const LHCb::STChannelID aChannel) const {
+    return findSector(aChannel); // redefined for DeUTDetector
+  };
+
+  /**
   *  short cut to pick up the wafer corresponding to a given nickname
   * @param nickname
   * @return sector
@@ -179,17 +185,18 @@ public:
   /** get the trajectory
    @return trajectory
   */
-  std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::LHCbID& id, const double offset) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::LHCbID& id,
+                                                       const double offset) const;
 
   /** get the trajectory representing the first strip
    @return trajectory
   */
-  std::unique_ptr<LHCb::Trajectory> trajectoryFirstStrip(const LHCb::LHCbID& id) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectoryFirstStrip(const LHCb::LHCbID& id) const;
 
   /** get the trajectory representing the last strip
    @return trajectory
   */
-  std::unique_ptr<LHCb::Trajectory> trajectoryLastStrip(const LHCb::LHCbID& id) const;
+  std::unique_ptr<LHCb::Trajectory<double>> trajectoryLastStrip(const LHCb::LHCbID& id) const;
 
   /** get the number of strips in detector*/
   unsigned int nStrip() const;

@@ -253,7 +253,7 @@ namespace LoKi
      *  GCut cut = ... ;
      *
      *  // Create the monitored predicate using the generic counter
-     *  // either local counter, or the counter from IStatSvc or ICounterSvc
+     *  // either local counter, or the counter from IStatSvc
      *  StatEntity* counter = ... ; ///< the generic counter
      *  GCut mon = COUNTER ( cut , counter ) ;
      *
@@ -1001,7 +1001,7 @@ namespace LoKi
      *  GFun fun = ... ;
      *
      *  // Create the monitored function using the generic counter
-     *  // either local counter, or the counter from IStatSvc or ICounterSvc
+     *  // either local counter, or the counter from IStatSvc
      *  StatEntity* counter = ... ; ///< the generic counter
      *  GFun mon = STAT ( fun , counter ) ;
      *

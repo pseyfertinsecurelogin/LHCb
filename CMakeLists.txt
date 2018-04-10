@@ -18,12 +18,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${CLHEP_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
 
 # Declare project name and version
-# For clang builds, use
-# USE Gaudi mr284
-# Otherwise
-# USE Gaudi v28r2
-gaudi_project(LHCb v43r1
-              USE Gaudi v29r1
+gaudi_project(LHCb v50r0
+              USE Gaudi v30r2
               DATA Gen/DecFiles
                    Det/SQLDDDB VERSION v7r*
                    FieldMap

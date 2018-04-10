@@ -29,13 +29,11 @@ class genNamespaces(genSrcUtils.genSrcUtils):
         self.parseImport(dict, self.include, self.stdIncludes, self.forwardDeclLHCb, self.forwardDeclGlob, forwardIncl)
 #--------------------------------------------------------------------------------
     def genAuthor(self,godNamespace):
-        s = 'unknown'
-        if godNamespace.has_key('author') : s = godNamespace['author']
-        return s
+        return godNamespace.get('author','unknown')
 #--------------------------------------------------------------------------------
     def genClasses(self,godNamespace):
         s = ''
-        if godNamespace.has_key('class'):
+        if 'class' in godNamespace:
             self.log.error( ':ERROR: <class> element not implemented for namespaces yet' )
         return s
 #--------------------------------------------------------------------------------

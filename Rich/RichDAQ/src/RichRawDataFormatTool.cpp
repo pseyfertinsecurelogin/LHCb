@@ -1100,7 +1100,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                   hpdHitCount = hpdBank->fillRichSmartIDs( newids, pdID );
 
                   // Do data integrity checks
-                  OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,warning()) );
+                  OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,this) );
                   if ( !OK )
                   {
                     std::ostringstream mess;
@@ -1325,7 +1325,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
       const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, pdID );
 
       // Do data integrity checks
-      const bool OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,warning()) );
+      const bool OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,this) );
       if ( !OK || msgLevel(MSG::VERBOSE) )
       {
         // printout decoded RichSmartIDs

@@ -13,6 +13,7 @@
 
       <import name='Measurement' />
       <import name='Event/ChiSquare.h' />
+      <import name="Kernel/STLExtensions"/>
       <import name='Node' soft='FORWARDONLY' />
       <import name='LHCbID' soft='FORWARDONLY' />
       
@@ -231,7 +232,7 @@
       <method
         name    = 'addToMeasurements'
         desc    = 'Add a set of measurements to the track. Track takes ownership.'>
-        <arg type = 'MeasurementContainer' name='measurements' />
+        <arg type = 'span&lt;LHCb::Measurement* const&gt;' inout='BYVALUE'  name='measurements' />
       </method>
 
       <method

@@ -6,6 +6,7 @@
 // ============================================================================
 // STL
 // ============================================================================
+#include <cmath>
 #include <numeric>
 // ============================================================================
 // GaudiKernel
@@ -1038,16 +1039,49 @@ namespace LoKi
                                               const double          energy )
     { return LoKi::LorentzVector ( v3.X() , v3.Y() , v3.Z() , energy ) ; }
     // ========================================================================
-    /** easy creation of 4-momentum from 3-momenutm and energy
+    /** easy creation of 4-momentum from 3-momentum and energy
      *  @param energy (INPUT) the energy
      *  @param v3     (INPUT) 3-momentum
      *  @return 4-momentum
-     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-05
      */
     inline LoKi::LorentzVector fourMomentum ( const double          energy ,
                                               const LoKi::Vector3D& v3     )
-    { return LoKi::LorentzVector ( v3.X() , v3.Y() , v3.Z() , energy ) ; }
+    { return LoKi::LorentzVector ( v3.X() , v3.Y() , v3.Z() , energy ) ; }    
+    // ========================================================================
+    /** easy creation of 4-momentum from 3-momentum and mass 
+     *  @param v3 (INPUT) 3-momentum
+     *  @param m  (INPUT) the mass 
+     *  @return 4-momentum
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     */    
+    inline LoKi::LorentzVector v4FromV3 ( const LoKi::Vector3D& v3 ,
+                                          const double          m  )
+    {
+      const double energy = 0 <= m ? 
+        std::sqrt ( v3.Mag2()  + m * m ) : - std::sqrt ( v3.Mag2()  + m * m ) ;
+      return fourMomentum ( v3 , energy ) ;
+    }
+    // ========================================================================
+    /** easy creation of 4-momentum from 3-momentum and mass 
+     *  @param v3 (INPUT) 3-momentum
+     *  @param m  (INPUT) the mass 
+     *  @return 4-momentum
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     */    
+    inline LoKi::LorentzVector v4FromV3 ( const double          m  , 
+                                          const LoKi::Vector3D& v3 )
+    { return v4FromV3 ( v3  , m ) ; }
+    // ========================================================================
+    /** boost Lorentz vector into  rest-frame of another Lorentz vector 
+     *  @param what   the vextro to be bosted 
+     *  @param frame  the 4-vector of the frame 
+     *  @return boosted vector 
+     */
+    GAUDI_API LoKi::LorentzVector boost 
+    ( const LoKi::LorentzVector& what  ,
+      const LoKi::LorentzVector& frame ) ;  
     // ========================================================================
   } //                                        end of namespace LoKi::Kinematics
   // ==========================================================================

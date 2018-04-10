@@ -196,13 +196,13 @@ class godII(object):
 
     def findLongestName(self,godPackage):
         lname = 0
-        if self.gAssocDicts and godPackage.has_key('assoc') :
+        if self.gAssocDicts and 'assoc' in godPackage :
             lname = len(godPackage['attrs']['name'])+22
-        if godPackage.has_key('class') :
+        if 'class' in godPackage :
             classLName = self.tools.getLongestName(godPackage['class'])
             if self.gClasses     : lname = max(lname, classLName+2)
             if self.gClassDicts : lname = max(lname, classLName+9)
-        if self.gNamespaces and godPackage.has_key('namespace') :
+        if self.gNamespaces and 'namespace' in godPackage :
             lname = max(lname, self.tools.getLongestName(godPackage['namespace'])+2)
         return lname
 
@@ -255,17 +255,17 @@ class godII(object):
 
             lname = self.findLongestName(godPackage)
 
-            if godPackage.has_key('assoc') and self.gAssocDicts :
+            if 'assoc' in godPackage and self.gAssocDicts :
                 self._log.debug( '  Generating Dictionaries for Associations' )
                 gAssocDicts.doit(godPackage)
                 self._log.debug( '  - Done' )
 
-            if godPackage.has_key('namespace') and self.gNamespaces :
+            if 'namespace' in godPackage and self.gNamespaces :
                 self._log.debug( '  Generating Namespaces' )
                 gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname)
                 self._log.debug( '  - Done' )
 
-            if godPackage.has_key('class'):
+            if 'class' in godPackage:
                 if self.gClasses :
                     self._log.debug( '  Generating Header Files' )
                     gClasses.doit(package,godPackage['class'],self.srcOutput,lname,self.allocatorType)

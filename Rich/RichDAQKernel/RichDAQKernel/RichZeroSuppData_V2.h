@@ -83,8 +83,8 @@ namespace Rich
          *  @param data     Pointer to the start of the data block
          *  @param dataSize The size of the data block (excluding header HPD word)
          */
-        inline void reset( const LongType * data,
-                           const ShortType dataSize )
+        void reset( const LongType * data,
+                    const ShortType dataSize ) override
         {
           m_tooBig = false;
           HPDDataBankImp<Version,Header,Footer>::reset( data, dataSize );

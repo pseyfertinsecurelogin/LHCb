@@ -27,3 +27,8 @@ gaudi_add_module(STDAQ
                  INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent Si/SiDAQ
                  LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
 
+gaudi_add_library(STDAQLib
+                  src/Lib/*.cpp
+                  PUBLIC_HEADERS STDAQ
+                  INCLUDE_DIRS Boost Event/RawEvent
+                  LINK_LIBRARIES DAQEventLib)

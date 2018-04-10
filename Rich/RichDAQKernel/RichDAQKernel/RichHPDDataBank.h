@@ -17,6 +17,7 @@
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/CommonMessaging.h"
 #include "GaudiKernel/GaudiException.h"
 
 // Utils
@@ -95,6 +96,12 @@ namespace Rich
       /// Read access to footer
       virtual const FooterPDBase::FooterWords & footerWords() const = 0;
 
+      /// Is the data in 'extended' mode
+      inline bool isExtended() const noexcept 
+      {
+        return ( !extendedHeaderWords().empty() || !footerWords().empty() );
+      }
+
       /// Is the data from this HPD suppressed
       virtual bool suppressed() const = 0;
 
@@ -115,8 +122,11 @@ namespace Rich
 
       /// perform any data quality checks that can be done (such as parity word etc.)
       virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
-                                       MsgStream & os ) const = 0;
+                                       const CommonMessagingBase * msgBase ) const = 0;
 
+      /// reset for a new data block
+      virtual void reset( const LongType * data,
+                          const ShortType  dataSize = 0 ) = 0;
     };
 
     //-----------------------------------------------------------------------------
@@ -189,11 +199,11 @@ namespace Rich
         init( data, dataSize );
       }
 
-    protected:
+    public:
 
       /// Reset object to decode a new data stream
-      inline void reset( const LongType * data,
-                         const ShortType  dataSize = 0 )
+      void reset( const LongType * data,
+                  const ShortType  dataSize = 0 ) override
       {
         // reset header and footer to default size if needed
         m_header.reset();
@@ -243,7 +253,7 @@ namespace Rich
       }
 
       /// Read access to extended header words
-      virtual const HeaderPDBase::ExtendedHeaderWords & extendedHeaderWords() const override final;
+      const HeaderPDBase::ExtendedHeaderWords & extendedHeaderWords() const override final;
 
       /// Read access to primary header word
       HeaderPDBase::WordType primaryHeaderWord() const override final;
@@ -256,8 +266,8 @@ namespace Rich
        *  @param ids     Vector of RichSmartIDs to fill
        *  @param hpdID   RichSmartID for the HPD
        */
-      virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                          const LHCb::RichSmartID hpdID ) const override = 0;
+      ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                  const LHCb::RichSmartID hpdID ) const override = 0;
 
       /// Returns the L0ID
       Level0ID level0ID() const override final;
@@ -281,21 +291,21 @@ namespace Rich
        *
        *  @param rawData The raw data bank to fill
        */
-      virtual void fillRAWBank( RAWBank & rawData ) const override;
+      void fillRAWBank( RAWBank & rawData ) const override;
 
       /// Creates the parity word from the list of hoit pixels
       typename Footer::WordType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
 
       /// perform any data quality checks that can be done (such as parity word etc.)
-      virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
-                                       MsgStream & os ) const override;
+      bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
+                               const CommonMessagingBase * msgBase ) const override;
 
     private: // methods
 
       /// Clean up data representation
       inline void cleanUp()
       {
-        if ( m_internalData && m_data )
+        if ( UNLIKELY( m_internalData && m_data ) )
         {
           delete[] m_data;
           m_data = nullptr;

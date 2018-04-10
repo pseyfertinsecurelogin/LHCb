@@ -380,6 +380,7 @@ Sub-banks immediately follow the header.'
         desc ='clear bank content without deleting'
         >
         <code>
+          // Initialize the potential padding bytes for reproducibility
           std::fill_n(m_location, Header::kHeaderSize, 0);
           m_location[Header::kSubBankIDs]=0;
           m_location[Header::kSubBankLocations + numberOfSubBanks() ]=Header::kHeaderSize;

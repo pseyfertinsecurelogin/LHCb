@@ -66,6 +66,8 @@ public:
   using SIMDPoint  = Rich::SIMD::Point<FP>;
   /// Type for SmartIDs container.
   using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID>;
+  /// SIMD uint32 type
+  using SIMDUINT   = Rich::SIMD::UInt32;
 
 public: // virtual methods to be implemented by derived classes
 

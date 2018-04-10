@@ -580,13 +580,6 @@ namespace LoKi
           ( c , LoKi::Monitoring::getCounter ( s , n ) ) ; }
       static Fun __monitor__
       ( const Func&              c ,
-        ICounterSvc*             s ,
-        const std::string&       g ,
-        const std::string&       n )
-      { return LoKi::monitor
-          ( c , LoKi::Monitoring::getCounter ( s , g , n ) ) ; }
-      static Fun __monitor__
-      ( const Func&              c ,
         IAlgContextSvc*          s ,
         const std::string&       n )
       { return LoKi::monitor
@@ -919,13 +912,6 @@ namespace LoKi
                                 const std::string&       n )
       { return LoKi::monitor
           ( c , LoKi::Monitoring::getCounter ( s , n ) ) ; }
-      static Cut __monitor__
-      ( const Cuts&              c ,
-        ICounterSvc*             s ,
-        const std::string&       g ,
-        const std::string&       n )
-      { return LoKi::monitor
-          ( c , LoKi::Monitoring::getCounter ( s , g , n ) ) ; }
       static Cut __monitor__
       ( const Cuts&              c ,
         IAlgContextSvc*          s ,
