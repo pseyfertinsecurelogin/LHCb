@@ -7,6 +7,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
+#include "IFTReadoutTool.h"
 
 /** @class FTRawBankEncoder FTRawBankEncoder.h
  *  Encode the FTCLusters into raw banks
@@ -20,9 +21,14 @@ public:
   //FTRawBankEncoder( const std::string& name, ISvcLocator* pSvcLocator );
   using GaudiAlgorithm::GaudiAlgorithm;
 
+  inline IFTReadoutTool* getReadoutTool() const;
+  inline IFTReadoutTool* readoutTool() const;
+
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
+  mutable IFTReadoutTool* m_readoutTool = 0;
+
   Gaudi::Property<std::string> m_inputLocation  {this, "InputLocation"  , LHCb::FTClusterLocation::Default };
   Gaudi::Property<std::string> m_outputLocation {this, "OutputLocation" , LHCb::RawEventLocation::Default  };
 };

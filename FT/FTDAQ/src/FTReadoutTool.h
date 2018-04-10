@@ -36,10 +36,12 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
 
   /// init & finish
   StatusCode initialize() override;
+  StatusCode readFile() override;
   StatusCode finalize() override;
-
+  
   /// validate
-  //  StatusCode validate() const;
+  void clear() const;
+  StatusCode validate() const;
 
   //Build FTChannelID from information
   LHCb::FTChannelID station      (const unsigned int a) const override;
@@ -49,12 +51,19 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   LHCb::FTChannelID module       (const unsigned int a) const override;
   LHCb::FTChannelID mat          (const unsigned int a) const override;
   LHCb::FTChannelID sipm         (const unsigned int a) const override;
-
   
-  unsigned int nBoard() const override;
+  //Build information from FTChannelID
+  unsigned int bankNumber(LHCb::FTChannelID id) const override;
+  unsigned int moduleShift(LHCb::FTChannelID id) const override;
+  
+  //Getters
+  unsigned int nTell40PerQuarter() const override;
+  unsigned int nStations() const override;
+  unsigned int nLayers() const override;
+  unsigned int nQuarters() const override;
+  unsigned int nTell40
+() const override;
 
-  /// printout
-  void printMapping() const override;
   
   /// write an xml file
   StatusCode writeMappingToXML() const override;
@@ -68,16 +77,22 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   void clear();
   StatusCode createBoards();
 
-  //  unsigned int m_nRegionA     = 512;
-  unsigned int m_firstStation = 512;
-
   unsigned int m_passedHeaders;//LoH
 
-  bool m_printMapping = false;
+  unsigned int m_nStations;
+  unsigned int m_nLayers;
+  unsigned int m_nQuarters;
+  unsigned int m_nTell40PerQuarter;
+  unsigned int m_nTell40;
+
+  std::vector<int> m_idTell40ByMatT1T2;
+  std::vector<int> m_idTell40ByMatT3;
+
+  std::vector<int> m_moduleShiftsT1T2;
+  std::vector<int> m_moduleShiftsT3;
   
-  unsigned int m_hybridsPerBoard;
-  unsigned int m_nBoard;
-  std::vector<std::unique_ptr<FTTell40ID> > m_boards;
+  std::vector<int> m_FTTell40UniqueQuarter;
+  std::vector<int> m_idFTTell40WithinQuadrant;
 
   Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
   Gaudi::Property<bool> m_writeXML { this, "writeMappingToXML", true };
