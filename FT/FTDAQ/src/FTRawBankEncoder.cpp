@@ -9,6 +9,8 @@
 #include "FTRawBankEncoder.h"
 #include "FTRawBankParams.h"
 
+#include "boost/container/static_vector.hpp"
+
 constexpr static int s_nbBanks = FTRawBank::NbBanks;
 constexpr static int s_nbSipmPerTell40 = FTRawBank::NbSiPMPerTell40;
 
@@ -51,6 +53,7 @@ StatusCode FTRawBankEncoder::execute() {
   //== create the array of arrays of vectors with the proper size...  
   //== The 0.4 is empirical
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
+  //  std::array<boost::container::static_vector<uint16_t,((unsigned int) s_nbSipmPerTell40*4)>, s_nbBanks> sipmData;
   for (auto& data: sipmData)
     data.reserve((unsigned int) 0.4*48);
   //Stores the number of clusters per sipm
@@ -70,6 +73,7 @@ StatusCode FTRawBankEncoder::execute() {
     //    }
 
     auto& data = sipmData[bankNumber];
+    //    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+absSipmNumber - 16 * readoutTool()->moduleShift(id);;
     unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+relSipmNumber;
     nClustersPerSipm[indexSipm]++;
     //Todo

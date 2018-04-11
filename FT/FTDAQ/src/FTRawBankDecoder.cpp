@@ -112,7 +112,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       unsigned short int c      = *it;
       if (c==0) continue;//padding at the end
       if(bank->version() == 4){
-        unsigned modulesipm = c >> FTRawBank::clusSipmShift ;//todo
+        unsigned modulesipm = c >> FTRawBank::clusSipmShift ;
         LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
         unsigned module     = chanModuleSiPM.module() + readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
@@ -126,7 +126,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           continue;
         }
         //not the last cluster
-        if( !cSize &&  it < (last-1) && (((*(it+1) >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum) == sipm)){
+        if( !cSize &&  it < (last-1) && ((( (*(it+1) >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum) - 4*mat - 16*module) == sipm)){
           short int c2      = *(it+1);          
           bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
           
