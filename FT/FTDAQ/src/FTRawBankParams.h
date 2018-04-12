@@ -4,8 +4,8 @@
 
 namespace FTRawBank {
   enum shifts {
-    sipmShift     = 4,  // for the header: SiPM Number + number of clusters
-    clusSipmShift = 9,
+    //    sipmShift     = 4,  // for the header: SiPM Number + number of clusters
+    sipmShift     = 9,
     cellShift     = 0,
     fractionShift = 7,
     sizeShift     = 8,

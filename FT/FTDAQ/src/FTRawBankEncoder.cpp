@@ -54,8 +54,8 @@ StatusCode FTRawBankEncoder::execute() {
   //== The 0.4 is empirical
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
   //  std::array<boost::container::static_vector<uint16_t,((unsigned int) s_nbSipmPerTell40*4)>, s_nbBanks> sipmData;
-  for (auto& data: sipmData)
-    data.reserve((unsigned int) 0.4*48);
+  //  for (auto& data: sipmData)
+  //    data.reserve((unsigned int) 0.4*48);
   //Stores the number of clusters per sipm
   std::array<int,s_nbBanks*s_nbSipmPerTell40> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
@@ -73,8 +73,8 @@ StatusCode FTRawBankEncoder::execute() {
     //    }
 
     auto& data = sipmData[bankNumber];
-    //    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+absSipmNumber - 16 * readoutTool()->moduleShift(id);;
-    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+relSipmNumber;
+    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+absSipmNumber - 16 * readoutTool()->moduleShift(id);;
+    //    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+relSipmNumber;
     nClustersPerSipm[indexSipm]++;
     //Todo
     if ( (id.module() > 0  && nClustersPerSipm[indexSipm] > FTRawBank::nbClusFFMaximum) ||
@@ -88,7 +88,7 @@ StatusCode FTRawBankEncoder::execute() {
     data.push_back(( id.channel()           << FTRawBank::cellShift ) |
                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
                    ( cluster->lastEdge()    << FTRawBank::sizeShift ) |
-                   ( absSipmNumber          << FTRawBank::clusSipmShift)
+                   ( absSipmNumber          << FTRawBank::sipmShift)
                    );
     if ( msgLevel( MSG::VERBOSE ) ) {
       verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d lastEdge %1d code %4.4x",

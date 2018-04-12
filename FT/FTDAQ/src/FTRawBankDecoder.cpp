@@ -76,7 +76,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   // In the future, the #clusters should be encoded in raw bank.
   FTLiteClusters clus;
   int totSize = 0;
-  clus.reserve(banks.size());
+  //  clus.reserve(banks.size());
   
   // Store partition points for Tell40 for faster sorting
   boost::container::static_vector<int,FTRawBank::NbBanks> partitionPoints;
@@ -112,7 +112,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       unsigned short int c      = *it;
       if (c==0) continue;//padding at the end
       if(bank->version() == 4){
-        unsigned modulesipm = c >> FTRawBank::clusSipmShift ;
+        unsigned modulesipm = c >> FTRawBank::sipmShift ;
         LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
         unsigned module     = chanModuleSiPM.module() + readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
@@ -126,7 +126,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           continue;
         }
         //not the last cluster
-        if( !cSize &&  it < (last-1) && ((( (*(it+1) >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum) - 4*mat - 16*module) == sipm)){
+        if( !cSize &&  it < (last-1) && ((( (*(it+1) >> FTRawBank::sipmShift ) & FTRawBank::sipmMaximum) - 4*mat - 16*module) == sipm)){
           short int c2      = *(it+1);          
           bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
           
@@ -223,12 +223,12 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       else{
         short int c      = *it;
         //      unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
-        unsigned modulesipm = c >> FTRawBank::clusSipmShift ;//todo
+        unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
         LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
         unsigned module     = chanModuleSiPM.module() + 16 * readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
         
-        unsigned sipm    = ( c >> FTRawBank::clusSipmShift ) & FTRawBank::sipmMaximum;
+        unsigned sipm    = ( c >> FTRawBank::sipmShift ) & FTRawBank::sipmMaximum;
         unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
         int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
