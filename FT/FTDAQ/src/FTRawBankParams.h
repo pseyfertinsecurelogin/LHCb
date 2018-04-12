@@ -4,11 +4,14 @@
 
 namespace FTRawBank {
   enum shifts {
-    //    sipmShift     = 4,  // for the header: SiPM Number + number of clusters
+    //    sipmShift     = 9,
+    //    cellShift     = 0,
+    //    fractionShift = 7,
+    //    sizeShift     = 8,
     sipmShift     = 9,
-    cellShift     = 0,
-    fractionShift = 7,
-    sizeShift     = 8,
+    cellShift     = 2,
+    fractionShift = 1,
+    sizeShift     = 0,
   };
 
   static constexpr uint16_t nStations         =  3;

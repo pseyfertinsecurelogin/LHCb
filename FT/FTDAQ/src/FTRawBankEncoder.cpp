@@ -85,10 +85,10 @@ StatusCode FTRawBankEncoder::execute() {
     // So each data is [Sipm & number of clusters][clus1][clus2]...
     //    if ( data.empty() ) data.push_back( absSipmNumber << FTRawBank::sipmShift );
     
-    data.push_back(( id.channel()           << FTRawBank::cellShift ) |
+    data.push_back(( absSipmNumber          << FTRawBank::sipmShift) |
+                   ( id.channel()           << FTRawBank::cellShift ) |
                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
-                   ( cluster->lastEdge()    << FTRawBank::sizeShift ) |
-                   ( absSipmNumber          << FTRawBank::sipmShift)
+                   ( cluster->lastEdge()    << FTRawBank::sizeShift )                   
                    );
     if ( msgLevel( MSG::VERBOSE ) ) {
       verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d lastEdge %1d code %4.4x",

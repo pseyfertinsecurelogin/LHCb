@@ -112,7 +112,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       unsigned short int c      = *it;
       if (c==0) continue;//padding at the end
       if(bank->version() == 4){
-        unsigned modulesipm = c >> FTRawBank::sipmShift ;
+        unsigned modulesipm = c >> FTRawBank::sipmShift;
         LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
         unsigned module     = chanModuleSiPM.module() + readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
@@ -228,7 +228,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         unsigned module     = chanModuleSiPM.module() + 16 * readoutTool()->moduleShift(source+modulesipm);
         unsigned mat        = chanModuleSiPM.mat ();
         
-        unsigned sipm    = ( c >> FTRawBank::sipmShift ) & FTRawBank::sipmMaximum;
+        unsigned sipm    = ( c >> FTRawBank::sipmShift     ) & FTRawBank::sipmMaximum;
         unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
         int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
