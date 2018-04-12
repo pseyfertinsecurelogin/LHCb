@@ -52,7 +52,8 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   LHCb::FTChannelID mat          (const unsigned int a) const override;
   LHCb::FTChannelID sipm         (const unsigned int a) const override;
   
-  //Build information from FTChannelID
+  //First FTChannelID <-> banknumber
+  LHCb::FTChannelID channelIDShift(unsigned int bankNumber) const override;
   unsigned int bankNumber(LHCb::FTChannelID id) const override;
   unsigned int moduleShift(LHCb::FTChannelID id) const override;
   
@@ -61,8 +62,7 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   unsigned int nStations() const override;
   unsigned int nLayers() const override;
   unsigned int nQuarters() const override;
-  unsigned int nTell40
-() const override;
+  unsigned int nTell40() const override;
 
   
   /// write an xml file
@@ -93,6 +93,7 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   
   std::vector<int> m_FTTell40UniqueQuarter;
   std::vector<int> m_idFTTell40WithinQuadrant;
+  std::vector<int> m_FTTell40FirstChannel;
 
   Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
   Gaudi::Property<bool> m_writeXML { this, "writeMappingToXML", true };

@@ -61,6 +61,11 @@ LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int a) const{retur
 
 // Build a bank number from ID and conversely
 
+LHCb::FTChannelID FTReadoutTool::channelIDShift(unsigned int bankNumber) const
+{
+  return LHCb::FTChannelID(m_FTTell40FirstChannel[bankNumber]);
+}
+
 unsigned int FTReadoutTool::bankNumber(LHCb::FTChannelID id) const
 {
   unsigned int bankNumber = m_nTell40PerQuarter*(id.quarter() + 4*id.layer() + 16*(id.station()-1u));
@@ -187,6 +192,7 @@ StatusCode FTReadoutTool::readFile()
   //Get the unique quarters
   m_FTTell40UniqueQuarter = rInfo->param<std::vector<int> >("FTTell40UniqueQuarter");
   m_idFTTell40WithinQuadrant = rInfo->param<std::vector<int> >("idFTTell40WithinQuadrant");
+  m_FTTell40FirstChannel = rInfo->param<std::vector<int> >("FTTell40FirstChannel");
   
   StatusCode sc = validate();
   if (sc.isFailure() ){
