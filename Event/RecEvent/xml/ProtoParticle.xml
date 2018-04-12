@@ -150,6 +150,7 @@
         <enumval name="ProbNNk"         value="703"  desc="The ANN probability for the kaon hypothesis"/>
         <enumval name="ProbNNp"         value="704"  desc="The ANN probability for the proton hypothesis"/>
         <enumval name="ProbNNghost"     value="705"  desc="The ANN probability for the ghost hypothesis"/>
+        <enumval name="ProbNNd"         value="706"  desc="The ANN probability for the deuteron hypothesis"/>
 
         <enumval name="LastGlobal"      value="10000"  desc="The last official flag value. Private user variables should use flags greater than this value"/>
 
