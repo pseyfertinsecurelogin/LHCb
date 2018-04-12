@@ -51,6 +51,7 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   LHCb::FTChannelID module       (const unsigned int a) const override;
   LHCb::FTChannelID mat          (const unsigned int a) const override;
   LHCb::FTChannelID sipm         (const unsigned int a) const override;
+  LHCb::FTChannelID channel      (const unsigned int a) const override;
   
   //First FTChannelID <-> banknumber
   LHCb::FTChannelID channelIDShift(unsigned int bankNumber) const override;

@@ -58,6 +58,7 @@ LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int a) const{retur
 LHCb::FTChannelID FTReadoutTool::module       (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,a,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::mat          (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,a,0,0);}
 LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,0,a,0);}
+LHCb::FTChannelID FTReadoutTool::channel      (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,0,0,a);}
 
 // Build a bank number from ID and conversely
 

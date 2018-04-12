@@ -44,6 +44,7 @@ struct IFTReadoutTool: extend_interfaces< IAlgTool >{
   virtual LHCb::FTChannelID module       (const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID mat          (const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID sipm         (const unsigned int aChan) const = 0;
+  virtual LHCb::FTChannelID channel      (const unsigned int aChan) const = 0;
   
   virtual LHCb::FTChannelID channelIDShift(const unsigned int bankNumber ) const = 0;
   virtual unsigned int bankNumber        (LHCb::FTChannelID id    ) const = 0;
