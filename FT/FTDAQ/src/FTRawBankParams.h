@@ -24,7 +24,8 @@ namespace FTRawBank {
   static constexpr uint16_t fractionMaximum = 1;   // 1 bits allocted
   static constexpr uint16_t cellMaximum     = 127; // 0 to 127; coded on 7 bits
   static constexpr uint16_t sizeMaximum     = 1;   // 1 bits allocated
-  static constexpr uint16_t sipmMaximum     = 127; // 7 bits
+  //  static constexpr uint16_t sipmMaximum     = 127; // 7 bits
+  static constexpr uint16_t sipmMaximum     = 3; // 2 bits
 
   enum BankProperties {
     NbBanks = 144,

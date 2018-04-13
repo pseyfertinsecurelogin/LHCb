@@ -57,6 +57,7 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   LHCb::FTChannelID channelIDShift(unsigned int bankNumber) const override;
   unsigned int bankNumber(LHCb::FTChannelID id) const override;
   unsigned int moduleShift(LHCb::FTChannelID id) const override;
+  unsigned int matShift   (LHCb::FTChannelID id) const override;
   
   //Getters
   unsigned int nTell40PerQuarter() const override;

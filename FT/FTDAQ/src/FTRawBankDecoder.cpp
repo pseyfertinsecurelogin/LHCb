@@ -35,33 +35,9 @@ StatusCode FTRawBankDecoder::initialize()
 {
   StatusCode sc = Transformer::initialize();
   if (sc.isFailure()) return Error("Failed to initialize", sc);
-  
+  m_readoutTool = this -> template tool<IFTReadoutTool>("FTReadoutTool","FTReadoutTool");
   return StatusCode::SUCCESS;
 }
-
-//StatusCode FTRawBankDecoder::finalize()
-//{
-  //  StatusCode sc = readoutTool()->finalize();
-  //  if (sc.isFailure()) return Error("Failed to finalize the readout tool", sc);
-//  return Transformer::finalize();
-//}
-
-
-
-//=============================================================================
-// Initializer of the ReadoutTool (taken from STCommonBase)
-//=============================================================================
-
-IFTReadoutTool* FTRawBankDecoder::getReadoutTool() const {
-  m_readoutTool = this -> template tool<IFTReadoutTool>("FTReadoutTool","FTReadoutTool");
-  return m_readoutTool;
-}
-
-
-IFTReadoutTool* FTRawBankDecoder::readoutTool() const {
-  return m_readoutTool != 0 ? m_readoutTool : getReadoutTool();
-}
-
 
 //=============================================================================
 // Main execution
@@ -81,164 +57,48 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   // Store partition points for Tell40 for faster sorting
   boost::container::static_vector<int,FTRawBank::NbBanks> partitionPoints;
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
-  unsigned int iBank = 0;
-  for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
-    LHCb::FTChannelID source       = readoutTool()->uniqueQuarter(bank->sourceID());
-    unsigned uniqueQuarter = source.uniqueQuarter();
-    auto size        = bank->size(); // in bytes, multiple of 4
-
-    if ( msgLevel(MSG::DEBUG) )
-      {
-        debug() << "source " << source          
-                << " = (" << source.station()
-                << " "    << source.layer()
-                << " "    << source.quarter()
-                << ")"
-                << " size " << size << endmsg;
-      }
-    if ( bank->version() != 4) {
-      error() << "** Unsupported FT bank version " << bank->version()
-              << " for source " << source << " size " << size << " bytes."
+  
+  //Testing the bank version
+  unsigned int version = banks[0]->version();
+  if (version != 4)
+    {
+      error() << "** Unsupported FT bank version " << version
               << endmsg;
       throw GaudiException("Unsupported FT bank version",
                            "FTRawBankDecoder",
                            StatusCode::FAILURE);
+      
     }
-    //Todo: We do not take advantage of the specific structure
-    auto first = bank->begin<short int>();
-    auto last  = bank->end<short int>();
-    auto it    = first;
-    for ( auto it = first ; it != last ; it++) {//loop over clusters      
-      unsigned short int c      = *it;
-      if (c==0) continue;//padding at the end
-      if(bank->version() == 4){
-        unsigned modulesipm = c >> FTRawBank::sipmShift;
-        LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
-        unsigned module     = chanModuleSiPM.module() + readoutTool()->moduleShift(source+modulesipm);
-        unsigned mat        = chanModuleSiPM.mat ();
-        unsigned sipm       = chanModuleSiPM.sipm();
-        unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
+  //Body of the decoder
+  if (version == 4){
+    for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
+      LHCb::FTChannelID source       = m_readoutTool->channelIDShift(bank->sourceID());
+      //      if ( msgLevel(MSG::DEBUG) )
+      //        {
+      //          debug() << "source " << source          
+      //                  << " = (" << source.station()
+      //                  << " "    << source.layer()
+      //                  << " "    << source.quarter()
+      //                  << ")"
+      //                  << " size " << bank->size() << endmsg;
+      //        }
+      auto first = bank->begin<short int>();
+      auto last  = bank->end<short int>();
+      for ( auto it = first ; it != last ; it++) {//loop over clusters      
+        unsigned short int c      = *it;
+        if (c==0) continue;//padding at the end
+        //        unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
+        unsigned modulesipm = c >> FTRawBank::cellShift ;//todo
+        LHCb::FTChannelID chanModuleSiPM = m_readoutTool->channel(modulesipm);
+        chanModuleSiPM.addToChannel(source);
         int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-        if( module > 5 ){
-          Warning("Skipping cluster(s) for non-existing module " +
-                  std::to_string(module) ).ignore();
-          continue;
-        }
-        //not the last cluster
-        if( !cSize &&  it < (last-1) && ((( (*(it+1) >> FTRawBank::sipmShift ) & FTRawBank::sipmMaximum) - 4*mat - 16*module) == sipm)){
-          short int c2      = *(it+1);          
-          bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-          
-          if( !cSize2 ){ //next cluster is not last fragment
-            clus.emplace_back(LHCb::FTChannelID{ 0 ,0 ,uniqueQuarter,
-                  module, mat, sipm, channel },
-              fraction, 4 );
-            
-            if ( msgLevel( MSG::VERBOSE ) ) {
-              verbose() << format( "size<=4  channel %4d frac %3d size %3d code %4.4x",
-                                   channel, fraction, cSize, c ) << endmsg;
-            }
-          }
-          else {//fragmented cluster, last edge found
-            unsigned channel2 = ( c2 >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
-            int fraction2     = ( c2 >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
-            unsigned int diff = (channel2 - channel);
-            
-            if( UNLIKELY( diff > 128 ) ) {
-              error()<<"something went terribly wrong here first fragment: " << channel
-                     <<" second fragment: "  << channel2 << endmsg;
-              throw GaudiException("There is an inconsistency between Encoder and Decoder!",
-                                   "FTRawBankDecoder",
-                                   StatusCode::FAILURE);
-            }
-            // fragmented clusters, size > 2*max size
-            // only edges were saved, add middles now 
-            if(diff  > m_clusterMaxWidth){
-              
-              //add the first edge cluster
-              clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
-                    module, mat, sipm, channel },
-                fraction, 0 ); //pseudoSize=0
-              
-              if ( msgLevel( MSG::VERBOSE ) ) {
-                verbose() << format( "first edge cluster %4d frac %3d size %3d code %4.4x",
-                                     channel, fraction, cSize, c ) << endmsg;                               
-              }
-              
-              for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
-                // all middle clusters will have same size as the first cluster,
-                // so use same fraction
-                clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter, module,
-                      mat, sipm, channel+i },
-                  fraction, 0 );
-                
-                if ( msgLevel( MSG::VERBOSE ) ) {
-                  verbose() << format( "middle cluster %4d frac %3d size %3d code %4.4x", 
-                                       channel+i, fraction, cSize, c )<< " added " <<diff << endmsg;
-                }
-              }
-                
-              //add the last edge 
-              clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
-                    module, mat, sipm, channel2 },
-                fraction2, 0 );
-              
-              if ( msgLevel( MSG::VERBOSE ) ) {
-                verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
-                                      channel2, fraction2, cSize2, c2 ) << endmsg;
-              }
-            }
-            else{//big cluster size upto size 8
-              unsigned int firstChan  =  channel - int( (m_clusterMaxWidth-1)/2 );
-              unsigned int widthClus  =  2 * diff - 1 + fraction2  ;
-              
-              unsigned int clusChanPosition = firstChan + (widthClus-1)/2;
-              int frac                      = (widthClus-1)%2;
-              
-              //add the new cluster = cluster1+cluster2
-              clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter, module,
-                    mat, sipm, clusChanPosition},
-                frac, widthClus );
-              
-              if ( msgLevel( MSG::VERBOSE ) ) {
-                verbose() << format( "combined cluster %4d frac %3d size %3d code %4.4x", 
-                                     channel, fraction, cSize, c ) << endmsg;
-              }
-            }//end if adjacent clusters
-            ++it;
-          }//last edge found          
-        }//not the last cluster
-        else{ //last cluster, so nothing we can do
-          clus.emplace_back(LHCb::FTChannelID{ 0,0,uniqueQuarter,
-                module, mat, sipm, channel },
-            fraction, 4 );
-          
-          if ( msgLevel( MSG::VERBOSE ) ) {
-            verbose() << format( "size<=4  channel %4d frac %3d size %3d code %4.4x",
-                                 channel, fraction, cSize, c ) << endmsg;            
-          }
-        }//last cluster added
-      }//bank ;version == 4
-      else{
-        short int c      = *it;
-        //      unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
-        unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
-        LHCb::FTChannelID chanModuleSiPM = m_readoutTool->sipm(modulesipm);
-        unsigned module     = chanModuleSiPM.module() + 16 * readoutTool()->moduleShift(source+modulesipm);
-        unsigned mat        = chanModuleSiPM.mat ();
-        
-        unsigned sipm    = ( c >> FTRawBank::sipmShift     ) & FTRawBank::sipmMaximum;
-        unsigned channel = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
-        int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
-        bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-        
-        clus.push_back({LHCb::FTChannelID{ 0, 0, uniqueQuarter, module, mat, sipm, channel },
-              fraction, ( cSize ? 0 : 4 )});
-      }
-    }//end loop over sipms
-    partitionPoints.push_back(clus.size());
-  }//end loop over rawbanks
+        clus.emplace_back(chanModuleSiPM,
+                          fraction, ( cSize ? 0 : 4 ));
+      }//end loop over sipms
+      partitionPoints.push_back(clus.size());
+    }//end loop over rawbanks
+  }//version == 4  
   // Assert that clusters are sorted
   assert( std::is_sorted(clus.begin(), clus.end(),
                          [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){

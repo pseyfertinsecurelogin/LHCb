@@ -53,8 +53,7 @@ unsigned int FTReadoutTool::nQuarters() const {return m_nQuarters;}
 LHCb::FTChannelID FTReadoutTool::station      (const unsigned int a) const{return LHCb::FTChannelID(a,0,0,0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::layer        (const unsigned int a) const{return LHCb::FTChannelID(0,a,0,0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::quarter      (const unsigned int a) const{return LHCb::FTChannelID(0,0,a,0,0,0,0);}
-//LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int a) const{return LHCb::FTChannelID(1,0,a/FTRawBank::nTELL40PerQuarter,0,0,0,0);}//Temp
-LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int a) const{return LHCb::FTChannelID(0,0,m_FTTell40UniqueQuarter[a],0,0,0,0);}//Temp
+LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int a) const{return LHCb::FTChannelID(0,0,m_FTTell40UniqueQuarter[a],0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::module       (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,a,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::mat          (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,a,0,0);}
 LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,0,a,0);}
@@ -79,6 +78,12 @@ unsigned int FTReadoutTool::moduleShift(LHCb::FTChannelID id) const
   return (id.station()!=3)?
     m_moduleShiftsT1T2[m_idTell40ByMatT1T2[id.module()*4+id.mat()]]:
     m_moduleShiftsT3  [m_idTell40ByMatT3  [id.module()*4+id.mat()]];
+}
+
+unsigned int FTReadoutTool::matShift(LHCb::FTChannelID id) const
+{
+  return (id.station()!=3 || id.module()!=3 || id.mat() < 2)?
+    0:2;
 }
 
 //    //Input/Output

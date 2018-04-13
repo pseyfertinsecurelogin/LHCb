@@ -52,29 +52,18 @@ StatusCode FTRawBankEncoder::execute() {
 
   //== create the array of arrays of vectors with the proper size...  
   //== The 0.4 is empirical
+  //== TODO: reserve
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
-  //  std::array<boost::container::static_vector<uint16_t,((unsigned int) s_nbSipmPerTell40*4)>, s_nbBanks> sipmData;
-  //  for (auto& data: sipmData)
-  //    data.reserve((unsigned int) 0.4*48);
-  //Stores the number of clusters per sipm
   std::array<int,s_nbBanks*s_nbSipmPerTell40> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
     if(cluster->isLarge() > 1) continue;
     
     LHCb::FTChannelID id = cluster->channelID();
     unsigned int bankNumber = readoutTool()->bankNumber(id);
-    unsigned int absSipmNumber  = id.sipm() + 4*id.mat() + 16 * id.module();
-    unsigned int relSipmNumber  = absSipmNumber - 16 * readoutTool()->moduleShift(id);
-    
-    //Todo
-    //    if ( sipmData[bankNumber].size() <= relSipmNumber ) {
-    //      error() << "Invalid SiPM number " << relSipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
-    //      return StatusCode::FAILURE;
-    //    }
+    unsigned int linkID  = (id - readoutTool()->channelIDShift(bankNumber)) >> 7;
 
     auto& data = sipmData[bankNumber];
-    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+absSipmNumber - 16 * readoutTool()->moduleShift(id);;
-    //    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+relSipmNumber;
+    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+linkID;
     nClustersPerSipm[indexSipm]++;
     //Todo
     if ( (id.module() > 0  && nClustersPerSipm[indexSipm] > FTRawBank::nbClusFFMaximum) ||
@@ -85,14 +74,14 @@ StatusCode FTRawBankEncoder::execute() {
     // So each data is [Sipm & number of clusters][clus1][clus2]...
     //    if ( data.empty() ) data.push_back( absSipmNumber << FTRawBank::sipmShift );
     
-    data.push_back(( absSipmNumber          << FTRawBank::sipmShift) |
+    data.push_back(( linkID                 << FTRawBank::sipmShift) |
                    ( id.channel()           << FTRawBank::cellShift ) |
                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
                    ( cluster->lastEdge()    << FTRawBank::sizeShift )                   
                    );
     if ( msgLevel( MSG::VERBOSE ) ) {
       verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d lastEdge %1d code %4.4x",
-                           bankNumber, absSipmNumber, id.channel(), cluster->fraction(),
+                           bankNumber, linkID, id.channel(), cluster->fraction(),
                            cluster->isLarge(), cluster->lastEdge(), data.back() ) << endmsg;
     }
   }
@@ -100,11 +89,9 @@ StatusCode FTRawBankEncoder::execute() {
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
   for ( unsigned int iBank = 0; sipmData.size() > iBank; ++iBank ) {
     if( msgLevel( MSG::VERBOSE ) ) verbose() << "*** Bank " << iBank << endmsg;
-    //    auto words = std::accumulate( sipmData[iBank].begin(), sipmData[iBank].end(),0);//number of clusters
     auto words = sipmData[iBank].size();
     
     std::vector<unsigned int> bank; bank.reserve((words+1)/2);
-    LHCb::FTChannelID bankID = readoutTool()->uniqueQuarter(iBank);
     boost::optional<unsigned int> buf;
     for ( const auto& cluster : sipmData[iBank] ) {
       if (!buf) {
