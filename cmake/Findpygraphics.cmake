@@ -26,18 +26,14 @@ set(PYGRAPHICS_PYTHON_PATH
 
 mark_as_advanced(PYGRAPHICS_FOUND PYGRAPHICS_PYTHON_PATH)
 
-if(NOT DEFINED DESIRED_QT_VERSION)
-  set(DESIRED_QT_VERSION 4)
-endif()
-
 # Provides functions to compile .qrc and .ui files into Python modules.
 
 find_package(PythonInterp QUIET REQUIRED)
 
-find_program(pyrcc_cmd NAMES pyrcc${DESIRED_QT_VERSION}
+find_program(pyrcc_cmd NAMES pyrcc5
              HINT ${pyqt5_home}/bin)
 mark_as_advanced(pyrcc_cmd)
-set(pyuic_cmd ${PYTHON_EXECUTABLE} -m PyQt${DESIRED_QT_VERSION}.uic.pyuic)
+set(pyuic_cmd ${PYTHON_EXECUTABLE} -m PyQt5.uic.pyuic)
 
 get_filename_component(PYGRAPHICS_BINARY_PATH ${pyrcc_cmd} PATH)
 

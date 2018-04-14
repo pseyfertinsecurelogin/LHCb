@@ -3,26 +3,15 @@
 #
 #  Definition of the browser MainWindow class.
 
-from .Qt import (Qt, QObject,
-                 pyqtSignal, pyqtSlot,
-                 QDateTime,
-                 QRegExp,
-                 QDialog,
-                 QFileDialog,
-                 QProgressDialog,
-                 QDialogButtonBox,
-                 QMessageBox,
-                 QValidator,
-                 QRegExpValidator,
-                 QHeaderView,
-                 QItemSelectionModel,
-                 QTextDocument)
+from PyQt5.Qt import (Qt, QObject, pyqtSignal, pyqtSlot, QDateTime, QRegExp,
+                      QDialog, QFileDialog, QProgressDialog, QDialogButtonBox,
+                      QMessageBox, QValidator, QRegExpValidator, QHeaderView,
+                      QItemSelectionModel, QTextDocument)
 
-from Models import (NodeFieldsModel, NodeFieldsDelegate,
-                    CondDBTagsListModel, GlobalTagsListModel,
-                    CondDBNodesListModel, CondDBPayloadFieldModel,
-                    AddConditionsStackModel, CondDBSelectionsModel,
-                    ChildTagDelegate, ChildTagsModel)
+from Models import (NodeFieldsModel, NodeFieldsDelegate, CondDBTagsListModel,
+                    GlobalTagsListModel, CondDBNodesListModel,
+                    CondDBPayloadFieldModel, AddConditionsStackModel,
+                    CondDBSelectionsModel, ChildTagDelegate, ChildTagsModel)
 
 from Ui_NewDatabaseDialog import Ui_NewDatabaseDialog
 from Ui_OpenDatabaseDialog import Ui_OpenDatabaseDialog
@@ -37,38 +26,33 @@ from Ui_NewTagDialog import Ui_NewTagDialog
 
 import os
 
-__all__ = ["NewDatabaseDialog", "OpenDatabaseDialog", "NewNodeDialog",
-           "DumpToFilesDialog", "ProgressDialog", "AddConditionDialog",
-           "FindDialog", "CreateSliceDialog", "SelectTagDialog",
-           "NewTagDialog"]
-
-# PyQt4-5 compatibility
-if hasattr(QFileDialog, 'getOpenFileNameAndFilter'):
-    # obsolete PyQt4 method
-    getOpenFileName = QFileDialog.getOpenFileNameAndFilter
-    getSaveFileName = QFileDialog.getSaveFileNameAndFilter
-else:
-    getOpenFileName = QFileDialog.getOpenFileName
-    getSaveFileName = QFileDialog.getSaveFileName
+__all__ = [
+    "NewDatabaseDialog", "OpenDatabaseDialog", "NewNodeDialog",
+    "DumpToFilesDialog", "ProgressDialog", "AddConditionDialog", "FindDialog",
+    "CreateSliceDialog", "SelectTagDialog", "NewTagDialog"
+]
 
 
 ## Simple validator for COOL database name
 class DBNameValidator(QRegExpValidator):
     ## Set the regular expression for valid COOL database name
     def __init__(self, parent):
-        super(DBNameValidator, self).__init__(QRegExp("[A-Z][A-Z0-9_]{0,7}"), parent)
+        super(DBNameValidator, self).__init__(
+            QRegExp("[A-Z][A-Z0-9_]{0,7}"), parent)
         self.isAcceptable = False
+
     ## Call the validate method QRegExpValidator and remember the result
     def validate(self, input, pos):
         res = QRegExpValidator.validate(self, input, pos)
         self.isAcceptable = res[0] == QValidator.Acceptable
         return res
 
+
 ## Dialog to collect information to create a new database.
 class NewDatabaseDialog(QDialog, Ui_NewDatabaseDialog):
     ## Constructor.
     #  Initializes the base class and defines some internal structures.
-    def __init__(self, parent = None, flags = Qt.Dialog):
+    def __init__(self, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(NewDatabaseDialog, self).__init__(parent, flags)
         # Prepare the GUI.
@@ -79,31 +63,39 @@ class NewDatabaseDialog(QDialog, Ui_NewDatabaseDialog):
         self.dbNameValidator.validate(self.partitionComboBox.currentText(), 0)
         # Ensure that the Ok button is in the correct state
         self.checkValid()
+
     ## Slot used to execute a dialog to select the filename
     def openFileDialog(self):
-        name, _ = getSaveFileName(self, "Database file", os.getcwd(), "*.db")
+        name, _ = QFileDialog.getSaveFileName(self, "Database file",
+                                              os.getcwd(), "*.db")
         if name:
             self.filenameEdit.setText(name)
+
     ## Check if the inputs are suitable for a connection string
     def validInputs(self):
-        return bool(self.filenameEdit.text()) and self.dbNameValidator.isAcceptable
+        return bool(
+            self.filenameEdit.text()) and self.dbNameValidator.isAcceptable
+
     ## Return the current connection string implied by the content of the dialog
     def connectionString(self):
         if self.validInputs():
-            cs = "sqlite_file:%s/%s" % (self.filenameEdit.text(), self.partitionComboBox.currentText())
+            cs = "sqlite_file:%s/%s" % (self.filenameEdit.text(),
+                                        self.partitionComboBox.currentText())
         else:
             cs = ""
         return cs
+
     ## Slot to set the state of the Ok button depending on the data inserted
     def checkValid(self):
-        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.validInputs())
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(
+            self.validInputs())
 
 
 ## Dialog to collect the information to open a database.
 class OpenDatabaseDialog(QDialog, Ui_OpenDatabaseDialog):
     ## Constructor.
     #  Initializes the base class and defines some internal structures.
-    def __init__(self, parent = None, flags = Qt.Dialog):
+    def __init__(self, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(OpenDatabaseDialog, self).__init__(parent, flags)
         # Prepare the GUI.
@@ -114,36 +106,47 @@ class OpenDatabaseDialog(QDialog, Ui_OpenDatabaseDialog):
         self.dbNameValidator.validate(self.partitionComboBox.currentText(), 0)
         # Ensure that the Ok button is in the correct state
         self.checkValid()
+
     ## Slot used to execute a dialog to select the filename
     def openFileDialog(self):
-        name, _ = getOpenFileName(self, "Database file", os.getcwd(), "*.db")
+        name, _ = QFileDialog.getOpenFileName(self, "Database file",
+                                              os.getcwd(), "*.db")
         if name:
             self.filenameEdit.setText(name)
+
     ## Check if the inputs are suitable for a connection string
     def validInputs(self):
         valid = False
         currIndex = self.tabWidget.currentIndex()
         if currIndex == 0:
-            valid = bool(self.filenameEdit.text()) and self.dbNameValidator.isAcceptable
+            valid = bool(
+                self.filenameEdit.text()) and self.dbNameValidator.isAcceptable
         elif currIndex == 1:
             valid = bool(self.connStringEdit.text())
         return valid
+
     ## Return the current connection string implied by the content of the dialog
     def connectionString(self):
         if self.validInputs():
             if self.tabWidget.currentIndex() == 0:
-                cs = "sqlite_file:%s/%s" % (self.filenameEdit.text(), self.partitionComboBox.currentText())
+                cs = "sqlite_file:%s/%s" % (
+                    self.filenameEdit.text(),
+                    self.partitionComboBox.currentText())
             else:
                 cs = self.connStringEdit.text()
         else:
             cs = ""
         return cs
+
     ## Return the status of the check box for read-only or read/write access
     def readOnly(self):
         return self.readOnlyCheckBox.isChecked()
+
     ## Slot to set the state of the Ok button depending on the data inserted
     def checkValid(self):
-        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.validInputs())
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(
+            self.validInputs())
+
 
 ## Simple validator to check if the node name specified is allowed
 class NodeNameValidator(QValidator):
@@ -154,10 +157,13 @@ class NodeNameValidator(QValidator):
         self.lastState = QValidator.Intermediate
         self.folders = set()
         self.foldersets = set()
+
     def setCreateParents(self, create):
         self._createParents = create
+
     def createParents(self):
         return self._createParents
+
     def validate(self, input, pos):
         path = unicode(input).rstrip("/")
         state = QValidator.Acceptable
@@ -169,9 +175,9 @@ class NodeNameValidator(QValidator):
             state = QValidator.Intermediate
         else:
             # check the parent
-            parent = path.rsplit('/',1)[0]
-            if parent: # empty parent means it is based at '/', so it's ok
-                if parent in self.folders: # the parent cannot be a folder
+            parent = path.rsplit('/', 1)[0]
+            if parent:  # empty parent means it is based at '/', so it's ok
+                if parent in self.folders:  # the parent cannot be a folder
                     state = QValidator.Invalid
                 elif not self._createParents and parent not in self.foldersets:
                     # the parent has to be a folderset if we do not want to create the parents
@@ -179,18 +185,20 @@ class NodeNameValidator(QValidator):
         self.lastState = state
         return state, pos
 
+
 ## Dialog to create a new node.
 class NewNodeDialog(QDialog, Ui_NewNodeDialog):
-    def __init__(self, parent = None, flags = Qt.Dialog):
+    def __init__(self, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(NewNodeDialog, self).__init__(parent, flags)
         # Prepare the GUI.
         self.setupUi(self)
         self.validator = NodeNameValidator(self)
         self.validator.setCreateParents(self.createParentsCheckBox.isChecked())
-        self.createParentsCheckBox.toggled.connect(self.validator.setCreateParents)
+        self.createParentsCheckBox.toggled.connect(
+            self.validator.setCreateParents)
         self.nodeNameComboBox.setValidator(self.validator)
-        self.fieldsModel = NodeFieldsModel(parent = self.fieldsView)
+        self.fieldsModel = NodeFieldsModel(parent=self.fieldsView)
         self.fieldsView.setModel(self.fieldsModel)
         self.fieldsDelegate = NodeFieldsDelegate(self)
         self.fieldsView.setItemDelegateForColumn(1, self.fieldsDelegate)
@@ -199,6 +207,7 @@ class NewNodeDialog(QDialog, Ui_NewNodeDialog):
         self.editFieldsBtn.setChecked(False)
         self.fieldsGB.hide()
         self.checkValid()
+
     ## Set the list of folders and foldersets for the combo box
     def setNodes(self, folders, foldersets):
         nodes = list(folders) + list(foldersets)
@@ -207,15 +216,19 @@ class NewNodeDialog(QDialog, Ui_NewNodeDialog):
         self.nodeNameComboBox.addItems(nodes)
         self.validator.folders = set(folders)
         self.validator.foldersets = set(foldersets)
+
     ## Set the value of the text field
     def setText(self, text):
         self.nodeNameComboBox.setEditText(text)
+
     ## Get the value of the text field
     def text(self):
         return self.nodeNameComboBox.currentText()
+
     ## Get the value of the description field field
     def description(self):
         return self.descriptionEdit.text()
+
     ## Get the type of node that has been selected
     def getType(self):
         if self.multiVersBtn.isChecked():
@@ -224,15 +237,20 @@ class NewNodeDialog(QDialog, Ui_NewNodeDialog):
             return "SingleVersion"
         else:
             return "FolderSet"
+
     ## Get the list of defined fields for the folder
     def fields(self):
         return self.fieldsModel.fields
+
     ## Check if the inputs are suitable for a connection string
     def validInputs(self):
         return self.validator.lastState == QValidator.Acceptable
+
     ## Slot to set the state of the Ok button depending on the data inserted
     def checkValid(self):
-        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.validInputs())
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(
+            self.validInputs())
+
     ## Slot to handle the toggling of the folderset radio button
     def foldersetButtonToggled(self, state):
         self.editFieldsBtn.setDisabled(state)
@@ -240,20 +258,23 @@ class NewNodeDialog(QDialog, Ui_NewNodeDialog):
             self.fieldsGB.hide()
         else:
             self.fieldsGB.setVisible(self.editFieldsBtn.isChecked())
+
     ## Slot used to add a new field to the field view
     def addField(self):
         self.fieldsModel.insertRow(self.fieldsModel.rowCount())
+
     ## Slot used to remove a field from the field view
     def removeField(self):
         if self.fieldsView.selectionModel().hasSelection():
             index = self.fieldsView.selectionModel().currentIndex()
             self.fieldsModel.removeRow(index.row())
 
+
 ## Dialog to dump a snapshot to files.
 class DumpToFilesDialog(QDialog, Ui_DumpToFilesDialog):
     ## Constructor.
     #  Initializes the base class and defines some internal structures.
-    def __init__(self, parent = None, flags = Qt.Dialog):
+    def __init__(self, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(DumpToFilesDialog, self).__init__(parent, flags)
         # Prepare the GUI.
@@ -265,14 +286,18 @@ class DumpToFilesDialog(QDialog, Ui_DumpToFilesDialog):
         # Initialize fields
         self.destDir.setText(os.getcwd())
         self.pointInTime.setDateTime(QDateTime.currentDateTime())
+
     ## Open a directory selection dialog
     def selectDirectory(self):
-        name = QFileDialog.getExistingDirectory(self, "Destination directory", os.getcwd())
+        name = QFileDialog.getExistingDirectory(self, "Destination directory",
+                                                os.getcwd())
         if name:
             self.destDir.setText(name)
+
     ## Show or hide local tags in the tag combo box
     def showLocalTags(self, show):
         pass
+
 
 ## Small extension to the standard QProgressDialog to show only string up to a
 #  limited size.
@@ -287,29 +312,34 @@ class ProgressDialog(QProgressDialog):
         else:
             QProgressDialog.setLabelText(self, text)
 
+
 _xml_template_empty = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE DDDB SYSTEM "conddb:/DTD/structure.dtd">
 <DDDB>
 </DDDB>
 """
 
+
 ## Editor of conditions payloads
 class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
     ## Constructor.
-    def __init__(self, data, parent = None, flags = Qt.Dialog, externalEditor = None):
+    def __init__(self, data, parent=None, flags=Qt.Dialog,
+                 externalEditor=None):
         # Base class constructor.
         super(EditConditionPayloadDialog, self).__init__(parent, flags)
         # Prepare the GUI.
         self.setupUi(self)
         if not data:
-            raise RuntimeError("Cannot start EditConditionPayloadDialog with empty data")
+            raise RuntimeError(
+                "Cannot start EditConditionPayloadDialog with empty data")
         self.data = dict(data)
         self._field = None
         self._externalEditor = externalEditor
         if not self._externalEditor:
             self.externalEditorButton.hide()
         else:
-            self.externalEditorButton.setText("Open in %s" % self._externalEditor)
+            self.externalEditorButton.setText(
+                "Open in %s" % self._externalEditor)
         # useful to protect the updateData method when selectField is selected
         self._selectingField = False
         keys = self.data.keys()
@@ -317,24 +347,27 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
         self.fields.addItems(keys)
         self.fields.setEnabled(len(keys) > 1)
         self.selectField(keys[0])
+
     ## Fill the editor text from a file
     def importFromFile(self):
-        filename, _ = getOpenFileName(self)
+        filename, _ = QFileDialog.getOpenFileName(self)
         if filename:
             data = open(str(filename)).read()
             self.editor.setPlainText(data)
+
     ## Save the current content of the text box to a file
     def exportToFile(self):
-        filename, _ = getSaveFileName(self)
+        filename, _ = QFileDialog.getSaveFileName(self)
         if filename:
             xmlFile = open(str(filename), 'w')
             xmlFile.write(str(self.editor.toPlainText()))
             xmlFile.close()
+
     ## Save the content of the editor to a temporary file and open it with an
     #  external editor.
     def openInExternalEditor(self):
         import tempfile
-        fd, name = tempfile.mkstemp(suffix = ".xml")
+        fd, name = tempfile.mkstemp(suffix=".xml")
         os.fdopen(fd, "w").write(str(self.editor.toPlainText()))
         try:
             from subprocess import Popen
@@ -343,17 +376,20 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
             self.editor.setPlainText(data)
         finally:
             os.remove(name)
+
     ## insert text at the current cursor position in the editor
     def _insertText(self, text, *args):
         if args:
             text = text % args
         self.editor.textCursor().insertText(text)
+
     ## Insert a default condition tag at the current cursor position
     def insertCondition(self):
         class_id = 5
         name = "##_CONDITION_NAME_HERE_##"
         text = '<condition classID="%d" name="%s">\n\n</condition>'
         self._insertText(text, class_id, name)
+
     ## Insert a default alignment condition tag at the current cursor position
     def insertAlignmentCondition(self):
         name = "##_CONDITION_NAME_HERE_##"
@@ -363,6 +399,7 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
 <paramVector name="pivotXYZ" type="double">0 0 0</paramVector>
 </condition>"""
         self._insertText(text, name)
+
     ## Insert a default param tag at the current cursor position
     def insertParam(self):
         name = "##_PARAM_NAME_HERE_##"
@@ -370,6 +407,7 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
         value = ''
         text = '<param name="%s" type="%s">%s</param>'
         self._insertText(text, name, type_id, value)
+
     ## Insert a default paramvector tag at the current cursor position
     def insertParamVector(self):
         name = "##_PARAM_NAME_HERE_##"
@@ -377,6 +415,7 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
         value = ''
         text = '<paramVector name="%s" type="%s">%s</paramVector>'
         self._insertText(text, name, type_id, value)
+
     ## Change the content of the edit box when another field is selected
     def selectField(self, field):
         self._field = field = str(field)
@@ -385,38 +424,41 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
                 idx = self.fields.findText(field)
                 self.fields.setCurrentIndex(idx)
             self.editor.setDocumentTitle(field)
-            self._selectingField = True # protect the updateData function
+            self._selectingField = True  # protect the updateData function
             if self.data[field]:
                 self.editor.setPlainText(self.data[field])
             else:
                 # if the data is empty, use the template
                 self.editor.setPlainText(_xml_template_empty)
             self._selectingField = False
+
     ## Update the internal buffer with the content of the editor box
     def updateData(self):
         if not self._selectingField:
             self.data[self._field] = str(self.editor.toPlainText())
+
 
 ## Dialog to prepare the insertion of new conditions
 class AddConditionDialog(QDialog, Ui_AddConditionDialog):
     #folderChanged = pyqtSignal('QString')
     ## Constructor.
     #  Initializes the base class and defines some internal structures.
-    def __init__(self, parent = None, flags = Qt.Dialog, externalEditor = None):
+    def __init__(self, parent=None, flags=Qt.Dialog, externalEditor=None):
         # Base class constructor.
         super(AddConditionDialog, self).__init__(parent, flags)
         self.db = parent.db
-        self.folderModel = CondDBNodesListModel(self.db, parent = self,
-                                                nodeType = CondDBNodesListModel.FOLDER)
-        self.fieldsModel = CondDBPayloadFieldModel(self.db, parent = self)
-        self.conditionsStack = AddConditionsStackModel(parent = self)
-        self._externalEditor = externalEditor # to be passed to the edit dialog
+        self.folderModel = CondDBNodesListModel(
+            self.db, parent=self, nodeType=CondDBNodesListModel.FOLDER)
+        self.fieldsModel = CondDBPayloadFieldModel(self.db, parent=self)
+        self.conditionsStack = AddConditionsStackModel(parent=self)
+        self._externalEditor = externalEditor  # to be passed to the edit dialog
         # Prepare the GUI.
         self.setupUi(self)
         self.folder.setModel(self.folderModel)
         self.fields.setModel(self.fieldsModel)
         self.conditionsStackView.setModel(self.conditionsStack)
-        self.conditionsStackView.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        self.conditionsStackView.horizontalHeader().setResizeMode(
+            QHeaderView.ResizeToContents)
         self.folder.setCurrentIndex(-1)
         self.until.setMaxChecked(True)
         self.since.setToNow()
@@ -425,10 +467,13 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
         self._updateBuffer()
         # Bind signals and slots
         self.folder.currentIndexChanged[str].connect(self.fieldsModel.setPath)
-        self.fieldsModel.setCurrentIndex.connect(self.fields.selectionModel().setCurrentIndex)
+        self.fieldsModel.setCurrentIndex.connect(
+            self.fields.selectionModel().setCurrentIndex)
         self.utc.stateChanged.connect(self.conditionsStack.setShowUTC)
-        self.conditionsStackView.selectionModel().selectionChanged.connect(self.changedSelection)
-        self.conditionsStack.conflictsChanged.connect(self.buttonBox.button(QDialogButtonBox.Ok).setDisabled)
+        self.conditionsStackView.selectionModel().selectionChanged.connect(
+            self.changedSelection)
+        self.conditionsStack.conflictsChanged.connect(
+            self.buttonBox.button(QDialogButtonBox.Ok).setDisabled)
         # Use a consistent DisplayFormat
         self.conditionsStack.setShowUTC(self.utc.checkState())
         self.conditionsStack.setDisplayFormat(self.since.displayFormat())
@@ -454,10 +499,11 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
     ## Set the value of the folder field.
     def setFolder(self, folder):
         try:
-            self.folder.setCurrentIndex(self.folderModel.nodes.index(str(folder)))
+            self.folder.setCurrentIndex(
+                self.folderModel.nodes.index(str(folder)))
             self._updateBuffer()
         except ValueError:
-            pass # This may happen when the user selected a folderset
+            pass  # This may happen when the user selected a folderset
 
     ## Set the value of the folder field.
     def getFolder(self):
@@ -473,6 +519,7 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
         if value != self.getShowUTC():
             self.utc.setChecked(value)
             self.conditionsStack.setShowUTC(value)
+
     ## ShowUTC property
     def getShowUTC(self):
         return self.utc.checkState()
@@ -494,17 +541,21 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
 
     ## Add the edited condition to the stack
     def addCondition(self):
-        self.conditionsStack.addCondition(since   = self.since.toValidityKey(),
-                                          until   = self.until.toValidityKey(),
-                                          channel = self.getChannel(),
-                                          data    = self.buffer)
+        self.conditionsStack.addCondition(
+            since=self.since.toValidityKey(),
+            until=self.until.toValidityKey(),
+            channel=self.getChannel(),
+            data=self.buffer)
+
     ## Remove the selected condition from the stack
     def removeCondition(self):
         selection = self.conditionsStackView.selectedIndexes()
         self.conditionsStack.removeConditions(selection)
+
     ## Move the selected condition up in the stack
     def moveUp(self):
-        selection = set([i.row() for i in self.conditionsStackView.selectedIndexes()])
+        selection = set(
+            [i.row() for i in self.conditionsStackView.selectedIndexes()])
         if len(selection) == 1:
             row = selection.pop()
             self.conditionsStack.moveUp(row)
@@ -512,11 +563,13 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
             if row >= 0:
                 index = self.conditionsStack.index(row, 0)
                 selmodel = self.conditionsStackView.selectionModel()
-                selmodel.select(index,
-                                QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows)
+                selmodel.select(index, QItemSelectionModel.ClearAndSelect
+                                | QItemSelectionModel.Rows)
+
     ## Move the selected condition down in the stack
     def moveDown(self):
-        selection = set([i.row() for i in self.conditionsStackView.selectedIndexes()])
+        selection = set(
+            [i.row() for i in self.conditionsStackView.selectedIndexes()])
         if len(selection) == 1:
             row = selection.pop()
             self.conditionsStack.moveDown(row)
@@ -524,8 +577,9 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
             if row < self.conditionsStack.rowCount():
                 index = self.conditionsStack.index(row, 0)
                 selmodel = self.conditionsStackView.selectionModel()
-                selmodel.select(index,
-                                QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows)
+                selmodel.select(index, QItemSelectionModel.ClearAndSelect
+                                | QItemSelectionModel.Rows)
+
     def changedSelection(self, newSelection, oldSelection):
         rows = self.conditionsStackView.selectedIndexes()
         count = len(rows)
@@ -538,21 +592,24 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
             self.since.setValidityKey(cond.since)
             self.until.setValidityKey(cond.until)
             self.setChannel(cond.channel)
-            self.buffer = dict(cond.data) # I make a copy for safety
+            self.buffer = dict(cond.data)  # I make a copy for safety
+
     ## Display the condition editor
     def editCondition(self):
-        d = EditConditionPayloadDialog(self.buffer, self,
-                                       externalEditor = self._externalEditor)
+        d = EditConditionPayloadDialog(
+            self.buffer, self, externalEditor=self._externalEditor)
         d.selectField(self.fieldsModel.getFieldName())
         if d.exec_():
             self.buffer.update(d.data)
 
+
 ## Simple "find" dialog.
 class FindDialog(QDialog, Ui_FindDialog):
     find = pyqtSignal('QString', 'QTextDocument::FindFlags', bool)
+
     ## Constructor.
     #  Initializes the base class and defines some internal structures.
-    def __init__(self, parent = None, flags = Qt.Dialog):
+    def __init__(self, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(FindDialog, self).__init__(parent, flags)
         # Prepare the GUI.
@@ -566,6 +623,7 @@ class FindDialog(QDialog, Ui_FindDialog):
     ## Text property
     def setText(self, value):
         self._text = str(value)
+
     ## Text property
     def text(self):
         return self._text
@@ -577,6 +635,7 @@ class FindDialog(QDialog, Ui_FindDialog):
         else:
             self._findFlags ^= self._findFlags & bit
         self._updateCheckBoxes()
+
     ## Helper function to check the status of a bit of findFlags
     def _getFlagBit(self, bit):
         return bool(self._findFlags & bit)
@@ -591,6 +650,7 @@ class FindDialog(QDialog, Ui_FindDialog):
     ## CaseSensitive property
     def setCaseSensitive(self, value):
         self._setFlagBit(QTextDocument.FindCaseSensitively, value)
+
     ## CaseSensitive property
     def getCaseSensitive(self):
         return self._getFlagBit(QTextDocument.FindCaseSensitively)
@@ -598,6 +658,7 @@ class FindDialog(QDialog, Ui_FindDialog):
     ## WholeWord property
     def setWholeWord(self, value):
         self._setFlagBit(QTextDocument.FindWholeWords, value)
+
     ## WholeWord property
     def getWholeWord(self):
         return self._getFlagBit(QTextDocument.FindWholeWords)
@@ -605,6 +666,7 @@ class FindDialog(QDialog, Ui_FindDialog):
     ## BackwardSearch property
     def setBackwardSearch(self, value):
         self._setFlagBit(QTextDocument.FindBackward, value)
+
     ## BackwardSearch property
     def getBackwardSearch(self):
         return self._getFlagBit(QTextDocument.FindBackward)
@@ -615,10 +677,13 @@ class FindDialog(QDialog, Ui_FindDialog):
             self._findFlags = value
         else:
             self._findFlags = QTextDocument.FindFlags()
-            for bit in (QTextDocument.FindBackward, QTextDocument.FindCaseSensitively, QTextDocument.FindWholeWords):
+            for bit in (QTextDocument.FindBackward,
+                        QTextDocument.FindCaseSensitively,
+                        QTextDocument.FindWholeWords):
                 if value & int(bit):
                     self._findFlags |= bit
         self._updateCheckBoxes()
+
     ## FindFlags property
     def getFindFlags(self):
         return self._findFlags
@@ -627,6 +692,7 @@ class FindDialog(QDialog, Ui_FindDialog):
     def setWrappedSearch(self, value):
         self._wrappedSearch = value
         self.wrappedSearch.setChecked(value)
+
     ## WrappedSearch property
     def getWrappedSearch(self):
         return self._wrappedSearch
@@ -635,10 +701,11 @@ class FindDialog(QDialog, Ui_FindDialog):
     def doFind(self):
         self.find.emit(self._text, self._findFlags, self._wrappedSearch)
 
+
 ## Dialog to create a snapshot of the database
 class CreateSliceDialog(QDialog, Ui_CreateSliceDialog):
     ## Constructor.
-    def __init__(self, parent = None, flags = Qt.Dialog):
+    def __init__(self, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(CreateSliceDialog, self).__init__(parent, flags)
         # Prepare the GUI.
@@ -652,61 +719,73 @@ class CreateSliceDialog(QDialog, Ui_CreateSliceDialog):
         #   tags
         self.tagsModel = CondDBTagsListModel(self)
         self.tags.setModel(self.tagsModel)
-        self.tags.selectionModel().selectionChanged.connect(self.tagsModelSelectionChanged)
+        self.tags.selectionModel().selectionChanged.connect(
+            self.tagsModelSelectionChanged)
         #   paths
-        self.pathModel = CondDBNodesListModel(parent.db, self, needRoot = True)
+        self.pathModel = CondDBNodesListModel(parent.db, self, needRoot=True)
         self.path.setModel(self.pathModel)
         #   selections
         self.selectionsModel = CondDBSelectionsModel(self)
         self.selectionsModel.setDisplayFormat(self.since.displayFormat())
         self.selections.setModel(self.selectionsModel)
-        self.selections.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        self.selections.horizontalHeader().setResizeMode(
+            QHeaderView.ResizeToContents)
         self.utc.setChecked(self.selectionsModel.showUTC())
         self.utc.stateChanged.connect(self.selectionsModel.setShowUTC)
-        self.selections.selectionModel().selectionChanged.connect(self.selModelSelectionChanged)
+        self.selections.selectionModel().selectionChanged.connect(
+            self.selModelSelectionChanged)
         # UI tuning
         self.since.setMaxEnabled(False)
         # Force a default initial selection
         self.path.setCurrentIndex(0)
         self.tagsModel.setPath(self.pathModel.nodes[0])
-        self.tags.selectionModel().select(self.tagsModel.index(0),
-                                          QItemSelectionModel.ClearAndSelect)
+        self.tags.selectionModel().select(
+            self.tagsModel.index(0), QItemSelectionModel.ClearAndSelect)
         self.since.setToMinimum()
         self.until.setMaxChecked(True)
         # Ensure UI consistency
         self.checkValidData()
         self.selModelSelectionChanged()
         self.tagsModelSelectionChanged()
+
     ## Slot to set the state of the Ok button depending on the data inserted
     def checkValidData(self):
-        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.validInputs())
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(
+            self.validInputs())
+
     ## Check if the inputs are suitable for a connection string
     def validInputs(self):
-        return bool(self.filename.text() and
-                    self.dbNameValidator.isAcceptable and
-                    self.selectionsModel.rowCount())
+        return bool(self.filename.text() and self.dbNameValidator.isAcceptable
+                    and self.selectionsModel.rowCount())
+
     ## Return the current connection string implied by the content of the dialog
     def connectionString(self):
         if self.validInputs():
-            cs = "sqlite_file:%s/%s" % (self.filename.text(), self.partition.currentText())
+            cs = "sqlite_file:%s/%s" % (self.filename.text(),
+                                        self.partition.currentText())
         else:
             cs = ""
         return cs
+
     ## Slot reacting to a change in the selection in the selections list to
     #  enable/disable the remove button
     def selModelSelectionChanged(self):
         rows = self.selections.selectionModel().selectedRows()
         self.removeButton.setEnabled(len(rows) == 1)
+
     ## Slot reacting to a change in the selection in the tags list to
     #  enable/disable the add button
     def tagsModelSelectionChanged(self):
         count = len(self.tags.selectedIndexes())
         self.addButton.setEnabled(count != 0)
+
     ## Slot used to execute a dialog to select the filename
     def openFileDialog(self):
-        name, _ = getSaveFileName(self, "Database file", os.getcwd(), "*.db")
+        name, _ = QFileDialog.getSaveFileName(self, "Database file",
+                                              os.getcwd(), "*.db")
         if name:
             self.filename.setText(name)
+
     ## Add the data for a PyCoolCopy.Selection to the list of selections
     def addSelection(self):
         path = str(self.path.currentText())
@@ -717,40 +796,46 @@ class CreateSliceDialog(QDialog, Ui_CreateSliceDialog):
             tags.append(str(self.tagsModel.tags()[i.row()][0]))
         self.selectionsModel.addSelection(path, since, until, tags)
         self.checkValidData()
+
     ## Remove an entry from the list of selections
     def removeSelection(self):
         rows = self.selections.selectionModel().selectedRows()
         if len(rows) == 1:
             self.selectionsModel.removeSelection(rows[0].row())
         self.checkValidData()
+
     ## Slot triggered by a change in the node path combobox.
     def currentPathSelected(self, path):
         self.tags.selectionModel().clear()
         self.tagsModel.setPath(path)
 
+
 ## Simple dialog to select a tag from a list
 class SelectTagDialog(QDialog, Ui_SelectTagDialog):
     ## Constructor.
-    def __init__(self, path, parent = None, flags = Qt.Dialog):
+    def __init__(self, path, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(SelectTagDialog, self).__init__(parent, flags)
         self._path = path
         # Prepare the GUI.
         self.setupUi(self)
-        self.tagModel = CondDBTagsListModel(path = self._path)
+        self.tagModel = CondDBTagsListModel(path=self._path)
         self.tag.setModel(self.tagModel)
+
     ## Returns the selected tag.
     def getSelected(self):
         return str(self.tag.currentText())
+
     ## Executes the dialog and return the selected tag or None if canceled.
     def run(self):
         if self.exec_():
             return self.getSelected()
         return None
 
+
 class NewTagDialog(QDialog, Ui_NewTagDialog):
     ## Constructor.
-    def __init__(self, db, path, parent = None, flags = Qt.Dialog):
+    def __init__(self, db, path, parent=None, flags=Qt.Dialog):
         # Base class constructor.
         super(NewTagDialog, self).__init__(parent, flags)
         self._path = path
@@ -764,21 +849,27 @@ class NewTagDialog(QDialog, Ui_NewTagDialog):
         self.setChildTagsPartVisible(self._isFolderSet)
         if self._isFolderSet:
             self.childTagsDelegate = ChildTagDelegate(self, self._path)
-            self.childTagsModel = ChildTagsModel(self._db , self._path, self)
+            self.childTagsModel = ChildTagsModel(self._db, self._path, self)
             self.childTags.setModel(self.childTagsModel)
             self.childTags.setItemDelegateForColumn(1, self.childTagsDelegate)
-            self.childTags.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+            self.childTags.horizontalHeader().setResizeMode(
+                QHeaderView.ResizeToContents)
         # Ensure consistency of the UI
         self.checkValidData()
+
     def checkValidData(self):
         ok = bool(self.tag.text())
         self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(ok)
+
     def setChildTagsPartVisible(self, visible):
         for w in [self.childTags, self.childTagsLabel, self.fillChildTagsBtn]:
             w.setVisible(visible)
         s = self.size()
-        s.setHeight(1) # with this, the height will be adapted to fit the visible widgets
+        s.setHeight(
+            1
+        )  # with this, the height will be adapted to fit the visible widgets
         self.resize(s)
+
     def fillChildTags(self):
         d = SelectTagDialog(self._path, self)
         d.tagLabel.setText("&Tag to use")

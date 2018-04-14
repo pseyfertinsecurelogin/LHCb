@@ -7,23 +7,27 @@ from subprocess import check_output
 from CondDBUI import Tag
 from GitCondDB.GitAccess import Tree
 
+
 class COOLNodeFacade(object):
     '''
     Helper class for the cases where we had to use directly COOL Folder or
     FolderSet instances rather than the CondDB accessor.
     '''
+
     def __init__(self, db, path):
         '''
         Initialize a node from a CondDB and a path.
         '''
         self.db = db
         self.path = path
+
     def listFolders(self):
         '''
         Get list of sub-folders of a node.
         '''
         for n in self.db._tree.get(self.path).leaves():
             yield '/'.join(['', self.path, n])
+
     def listFolderSets(self):
         '''
         Get list of sub-foldersets of a node.
@@ -32,16 +36,19 @@ class COOLNodeFacade(object):
         leaves = set(subtree.leaves())
         for n in [n for n in subtree.entries() if n not in leaves]:
             yield '/'.join(['', self.path, n])
+
     def isLeaf(self):
         '''
         True for leaf nodes, False otherwise.
         '''
         return self.db._tree.get(self.path) is None
+
     def versioningMode(self):
         '''
         On Git CondDB everything is MULTI_VERSION.
         '''
         return 1  # cool.FolderVersioning.MULTI_VERSION
+
     def fullPath(self):
         '''
         Full path to the current node (with leading '/' to match COOL
@@ -59,7 +66,11 @@ class CondDB(object):
     and retrieval of XML strings, etc.
     '''
 
-    def __init__(self, connectionString='', create_new_db=False, defaultTag=None, readOnly=True):
+    def __init__(self,
+                 connectionString='',
+                 create_new_db=False,
+                 defaultTag=None,
+                 readOnly=True):
         """
         Establishes the connection to the COOL database and store the object.
         inputs:
@@ -84,25 +95,30 @@ class CondDB(object):
         if self.connectionString == '':
             print "CONDDBUI: WARNING: no database opened"
         else:
-            self.openDatabase(self.connectionString, create_new_db, self.readOnly)
+            self.openDatabase(self.connectionString, create_new_db,
+                              self.readOnly)
         if defaultTag is None:
             self.defaultTag = 'HEAD' if self._is_bare else '<files>'
 
     ## Return representation string for the CondDB instance.
     def __repr__(self):
-        rep_str = self.__class__.__name__ + "(%r" %  self.connectionString
+        rep_str = self.__class__.__name__ + "(%r" % self.connectionString
         if self.defaultTag != "HEAD":
             rep_str += ", defaultTag=%r" % self.defaultTag
         if not self.readOnly:
             rep_str += ", readOnly=False"
         return rep_str + ")"
+
     #---------------------------------------------------------------------------------#
 
     #=================#
     # Database Access #
     #=================#
 
-    def openDatabase(self, connectionString, create_new_db=False, readOnly=True):
+    def openDatabase(self,
+                     connectionString,
+                     create_new_db=False,
+                     readOnly=True):
         '''
         Closes the current database and connects to a new one. Creates it if asked to.
         inputs:
@@ -128,9 +144,8 @@ class CondDB(object):
             self._is_bare = False
         else:
             # non bare, so try for bare if readOnly
-            if (self.readOnly and
-                    os.path.isdir(os.path.join(self.connectionString,
-                                               'objects'))):
+            if (self.readOnly and os.path.isdir(
+                    os.path.join(self.connectionString, 'objects'))):
                 self._path = self.connectionString
                 self._is_bare = True
         if self._path is None:
@@ -164,7 +179,6 @@ class CondDB(object):
         self._is_bare = False
         self._tree_ = None
         self.readOnly = False
-
 
     #---------------------------------------------------------------------------------#
 
@@ -229,7 +243,7 @@ class CondDB(object):
         import CondDBCompression
         from PyCool import cool
         _payl = o.payload()
-#        if (payl and 'data' in payl.keys()):
+        #        if (payl and 'data' in payl.keys()):
         if (_payl):
             payl = cool.Record(_payl.specification())
             for key in _payl:
@@ -238,8 +252,7 @@ class CondDB(object):
                     payl[key] = CondDBCompression.decompress(xmlString)
         return payl
 
-
-    def getPayload(self, path, when, channelID = 0, tag = ''):
+    def getPayload(self, path, when, channelID=0, tag=''):
         '''
         Retrieve the payload of the condition object valid at a given time.
         inputs:
@@ -255,13 +268,13 @@ class CondDB(object):
             dictionary; the contents of the attribute list
         '''
         assert self._path, 'No database connected!'
-        return {'data':
-                GitCondDB.Payload.get_payload(self._path,
-                                              path.lstrip('/'),
-                                              when,
-                                              tag or self.defaultTag)[0]}
+        return {
+            'data':
+            GitCondDB.Payload.get_payload(self._path, path.lstrip('/'), when,
+                                          tag or self.defaultTag)[0]
+        }
 
-    def getXMLString(self, path, when, channelID = 0, tag = '', payloadKey = 'data'):
+    def getXMLString(self, path, when, channelID=0, tag='', payloadKey='data'):
         '''
         Retrieve the XML string of the condition object valid at a given time.
         inputs:
@@ -287,7 +300,7 @@ class CondDB(object):
         else:
             return xmlString
 
-    def getPayloadList(self, path, fromTime, toTime, channelID = 0, tag = ''):
+    def getPayloadList(self, path, fromTime, toTime, channelID=0, tag=''):
         '''
         Retrieve the payload of the condition objects valid during a given time interval.
         inputs:
@@ -306,15 +319,20 @@ class CondDB(object):
             The first two integers are the since and until values of the interval of validity. The
             third integer is the channel ID, and the last integer is the insertion time.
         '''
-        payloads = GitCondDB.Payload.get_payloads(self._path,
-                                                  path.lstrip('/'),
-                                                  fromTime, toTime,
-                                                  tag or self.defaultTag)
-        return [[{'data': payload}, since, until, 0, None]
-                for payload, (since, until) in payloads]
+        payloads = GitCondDB.Payload.get_payloads(self._path, path.lstrip('/'),
+                                                  fromTime, toTime, tag
+                                                  or self.defaultTag)
+        return [[{
+            'data': payload
+        }, since, until, 0, None] for payload, (since, until) in payloads]
 
-
-    def getXMLStringList(self, path, fromTime, toTime, channelID = 0, tag = '', payloadKey = 'data'):
+    def getXMLStringList(self,
+                         path,
+                         fromTime,
+                         toTime,
+                         channelID=0,
+                         tag='',
+                         payloadKey='data'):
         '''
         Retrieve the payload of the condition objects valid during a given time interval.
         inputs:
@@ -338,14 +356,14 @@ class CondDB(object):
         raise NotImplementedError()
         assert self.db != None, "No database connected !"
         try:
-            objList = self.getPayloadList(path, fromTime, toTime, channelID, tag)
+            objList = self.getPayloadList(path, fromTime, toTime, channelID,
+                                          tag)
             for i in range(len(objList)):
                 objList[i][0] = objList[i][0][payloadKey]
         except Exception, details:
             raise Exception, details
         else:
             return objList
-
 
     def getChildNodes(self, path):
         '''
@@ -359,12 +377,12 @@ class CondDB(object):
         assert self.db != None, "No database connected !"
         if self.db.existsFolderSet(path):
             folderSet = self.db.getFolderSet(path)
-            nodeList = list(folderSet.listFolders()) + list(folderSet.listFolderSets())
+            nodeList = list(folderSet.listFolders()) + list(
+                folderSet.listFolderSets())
             nodeList.sort()
             return nodeList
         else:
-            raise Exception, "FolderSet %s not found"%path
-
+            raise Exception, "FolderSet %s not found" % path
 
     def getAllChildNodes(self, path):
         '''
@@ -380,7 +398,7 @@ class CondDB(object):
         if self.db.existsFolderSet(path):
             folderSet = self.db.getFolderSet(path)
             # Get the lists of folders and foldersets
-            folderList    = list(folderSet.listFolders())
+            folderList = list(folderSet.listFolders())
             folderSetList = list(folderSet.listFolderSets())
             # Merge the lists
             nodeList = folderList + folderSetList
@@ -391,13 +409,13 @@ class CondDB(object):
             nodeList.sort()
             return nodeList
         else:
-            raise Exception, "FolderSet %s not found"%path
+            raise Exception, "FolderSet %s not found" % path
 
     @property
     def _tree(self):
         if not self._tree_:
-            self._tree_ = Tree(GitCondDB.GitAccess.listFiles(self._path,
-                                                             self.defaultTag))
+            self._tree_ = Tree(
+                GitCondDB.GitAccess.listFiles(self._path, self.defaultTag))
             # prune subtrees with IOVs
             with_iovs = []
             for root, dirs, files in self._tree_.walk():
@@ -437,7 +455,7 @@ class CondDB(object):
         self._tree.get(node)
         return COOLNodeFacade(self, node)
 
-    def payloadToMd5(self, path = '/', tag = '', initialMd5Sum = None):
+    def payloadToMd5(self, path='/', tag='', initialMd5Sum=None):
         '''
         Computes the md5 sum for the payload stored under the given node.
         inputs:
@@ -458,7 +476,7 @@ class CondDB(object):
         import hashlib
         return payloadToHash(hashlib.md5(), path, tag)
 
-    def payloadToHash(self, initialHashSum = None, path = '/', tag = ''):
+    def payloadToHash(self, initialHashSum=None, path='/', tag=''):
         '''
         Computes the hash sum with chosen algorithm for the payload(s) stored under the given node.
         inputs:
@@ -480,8 +498,8 @@ class CondDB(object):
 
         import logging
 
-        _log = logging.getLogger( "CondDBUI.CondDB.payloadToHash" )
-        _log.setLevel( logging.INFO )
+        _log = logging.getLogger("CondDBUI.CondDB.payloadToHash")
+        _log.setLevel(logging.INFO)
 
         from PyCool import cool
         assert self.db != None, "No database connected !"
@@ -495,7 +513,7 @@ class CondDB(object):
         _log.info("Building nodes list to hash ...")
         if self.db.existsFolderSet(path):
             nodes = self.getAllChildNodes(path)
-            nodesToCheck = [n for n in nodes if self.resolveTag(n,tag)]
+            nodesToCheck = [n for n in nodes if self.resolveTag(n, tag)]
         else:
             nodesToCheck = [path]
 
@@ -521,7 +539,8 @@ class CondDB(object):
                         objIter = folder.browseObjects(cool.ValidityKeyMin,
                                                        cool.ValidityKeyMax,
                                                        cool.ChannelSelection(),
-                                                       self.resolveTag(folder,tag))
+                                                       self.resolveTag(
+                                                           folder, tag))
                     except Exception, details:
                         raise Exception, details
                 else:
@@ -532,7 +551,7 @@ class CondDB(object):
                     except Exception, details:
                         raise Exception, details
                 # Fill the hash checksum
-                _log.debug("\tHashing '%s' ..."%nodeName)
+                _log.debug("\tHashing '%s' ..." % nodeName)
                 for obj in objIter:
                     for k in payload.keys():
                         hashSumObj.update((self.payload(obj))[k])
@@ -556,10 +575,12 @@ class CondDB(object):
         assert self._path, "No database connected!"
         from collections import OrderedDict
         git_path = path.lstrip('/')
+
         def get_id(tag):
             'get blob id for a file in a tag'
             from GitCondDB.GitAccess import rev_parse
             return rev_parse(self._path, '{}:{}'.format(tag, git_path))
+
         local_tags = OrderedDict()
         for tag in ['HEAD'] + GitCondDB.GitAccess.listTags(self._path, True):
             blob_id = get_id(tag)
@@ -570,16 +591,17 @@ class CondDB(object):
         # prune tags not including the path
         if None in local_tags:
             del local_tags[None]
+
         def make_tag(tag, parents):
             'make a Tag instance with the parent tags'
             res = Tag('_auto_' + tag, path)
             res.parents = [Tag(p, '/') for p in parents]
             return res
+
         tags = [make_tag(tag, parents) for tag, parents in local_tags.items()]
         if not self._is_bare:
             tags.insert(0, Tag('<files>', path))
         return tags
-
 
     def createTagRelation(self, path, parentTag, tag):
         '''
@@ -597,20 +619,21 @@ class CondDB(object):
         from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         if type(path) is str:
             if self.db.existsFolder(path):
                 node = self.db.getFolder(path)
-                if node.versioningMode() == cool.FolderVersioning.SINGLE_VERSION:
-                    raise Exception, "Folder %s is Single Version"%path
+                if node.versioningMode(
+                ) == cool.FolderVersioning.SINGLE_VERSION:
+                    raise Exception, "Folder %s is Single Version" % path
             elif self.db.existsFolderSet(path):
                 node = self.db.getFolderSet(path)
             else:
-                raise Exception, "Node %s was not found"%path
-        else: node = path
-        if not Helpers.createTagRelation(node,parentTag, tag):
+                raise Exception, "Node %s was not found" % path
+        else:
+            node = path
+        if not Helpers.createTagRelation(node, parentTag, tag):
             raise Exception, "cool::ReservedHeadTag"
-
 
     def deleteTagRelation(self, path, parentTag):
         '''
@@ -626,20 +649,20 @@ class CondDB(object):
         from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         if type(path) is str:
             if self.db.existsFolder(path):
                 node = self.db.getFolder(path)
             elif self.db.existsFolderSet(path):
                 node = self.db.getFolderSet(path)
             else:
-                raise Exception, "Node %s was not found"%path
-        else: node = path
-        if not Helpers.deleteTagRelation(node,parentTag):
+                raise Exception, "Node %s was not found" % path
+        else:
+            node = path
+        if not Helpers.deleteTagRelation(node, parentTag):
             raise Exception, "cool::ReservedHeadTag"
 
-
-    def generateUniqueTagName(self, baseName, reservedNames = []):
+    def generateUniqueTagName(self, baseName, reservedNames=[]):
         """
         Generate a random tag name based on a given one.
         inputs:
@@ -657,16 +680,18 @@ class CondDB(object):
         raise NotImplementedError()
         assert self.db != None, "No database connected !"
         # Create the list of ASCII codes for alpha numeric characters
-        alphaNumList = range(0x30, 0x3a) + range(0x41, 0x5b) + range(0x61, 0x7b)
+        alphaNumList = range(0x30, 0x3a) + range(0x41, 0x5b) + range(
+            0x61, 0x7b)
         tagName = ''
-        while tagName == '' or tagName in reservedNames or self.db.existsTag(tagName):
+        while tagName == '' or tagName in reservedNames or self.db.existsTag(
+                tagName):
             tagName = '_auto_' + baseName + '-'
             for i in range(6):
                 # Append the 6 alpha-numeric characters
-                tagName += '%c'%random.choice(alphaNumList)
+                tagName += '%c' % random.choice(alphaNumList)
         return tagName
 
-    def tagLeafNode(self, path, tagName, description = ''):
+    def tagLeafNode(self, path, tagName, description=''):
         '''
         Apply a new tag to the head of the given folder.
         inputs:
@@ -680,22 +705,21 @@ class CondDB(object):
         raise NotImplementedError()
         from PyCool import cool
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         if self.db.existsFolder(path):
             folder = self.db.getFolder(path)
         else:
             raise cool.FolderNotFound
 
         if folder.versioningMode() == cool.FolderVersioning.SINGLE_VERSION:
-            raise Exception, "Folder %s is Single Version"%path
+            raise Exception, "Folder %s is Single Version" % path
         else:
             try:
                 folder.tagCurrentHead(tagName, description)
             except Exception, details:
                 raise Exception, details
 
-
-    def recursiveTag(self, path, tagName, description = '', reserved = None):
+    def recursiveTag(self, path, tagName, description='', reserved=None):
         '''
         Tag the given node and recursively tag the child nodes and their HEAD revisions
         with randomly generated tags.
@@ -712,7 +736,7 @@ class CondDB(object):
         raise NotImplementedError()
         from PyCool import cool
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         if reserved != None:
             reservedTags = reserved[:]
         else:
@@ -733,19 +757,21 @@ class CondDB(object):
                     # Apply the tag to the HEAD revision of the folder and link it
                     # to the parent tag.
                     folder = self.db.getFolder(nodeName)
-                    if folder.versioningMode() == cool.FolderVersioning.MULTI_VERSION:
+                    if folder.versioningMode(
+                    ) == cool.FolderVersioning.MULTI_VERSION:
                         folder.tagCurrentHead(auto_tag, description)
                         try:
-                            self.createTagRelation(folder,tagName, auto_tag)
+                            self.createTagRelation(folder, tagName, auto_tag)
                         except Exception, details:
                             raise Exception, details
                 else:
                     # Start recursion for the foldersets and create a tag relation with
                     # the parent.
-                    self.recursiveTag(nodeName, auto_tag, description, reservedTags)
+                    self.recursiveTag(nodeName, auto_tag, description,
+                                      reservedTags)
                     folderSet = self.db.getFolderSet(nodeName)
                     try:
-                        self.createTagRelation(folderSet,tagName, auto_tag)
+                        self.createTagRelation(folderSet, tagName, auto_tag)
                     except Exception, details:
                         raise Exception, details
         elif self.db.existsFolder(path):
@@ -753,12 +779,11 @@ class CondDB(object):
             if node.versioningMode() == cool.FolderVersioning.MULTI_VERSION:
                 node.tagCurrentHead(tagName, description)
         else:
-            raise Exception, "Node %s was not found"%path
+            raise Exception, "Node %s was not found" % path
         # To exit the recursion correctly, we need to return from this function...
         return
 
-
-    def tagWithAncestorTag(self, path, ancestorTag, description = ''):
+    def tagWithAncestorTag(self, path, ancestorTag, description=''):
         '''
         Recursively tag (with automatically generated tag names) the given node and
         associate the tags with the ancestor tag given.
@@ -776,17 +801,17 @@ class CondDB(object):
         raise NotImplementedError()
         from PyCool import cool
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         # Check if the ancestor tag really exists.
         if not self.db.existsTag(ancestorTag):
-            raise Exception, "Tag %s was not found"%ancestorTag
+            raise Exception, "Tag %s was not found" % ancestorTag
         # Retrieve the node
         node = self.getCOOLNode(path)
         if node is None:
-            raise Exception, "Node %s was not found"%path
+            raise Exception, "Node %s was not found" % path
         # Check if the node is already related to the ancestor tag
         try:
-            relatedTag = self.resolveTag(node,ancestorTag)
+            relatedTag = self.resolveTag(node, ancestorTag)
         except Exception:
             # The node is not related to the ancestor tag. We are checking if
             # its parent is (it *has* to be).
@@ -799,18 +824,19 @@ class CondDB(object):
             parentNode = self.db.getFolderSet(parentPath)
 
             try:
-                parentTag = self.resolveTag(parentNode,ancestorTag)
+                parentTag = self.resolveTag(parentNode, ancestorTag)
             except cool.NodeRelationNotFound:
                 # The parent folderset doesn't know about the ancestor tag: this
                 # means we don't know how to deal with its other child nodes.
-                raise Exception, "No relation found between node %s and tag %s"%(parentPath, ancestorTag)
+                raise Exception, "No relation found between node %s and tag %s" % (
+                    parentPath, ancestorTag)
             else:
                 # The parent contains a relation to the ancestor tag.
                 # Create (recursively if needed) a new tag.
                 auto_tag = self.generateUniqueTagName(ancestorTag)
                 self.recursiveTag(path, auto_tag, description)
                 # Associate with parent tag
-                self.createTagRelation(node,parentTag, auto_tag)
+                self.createTagRelation(node, parentTag, auto_tag)
         else:
             # The node is already related to the ancestor tag. If the node is a folder,
             # it means that we have to delete the old relation and create a new one.
@@ -825,14 +851,14 @@ class CondDB(object):
                 finally:
                     os.path.sep = sep
                 parentNode = self.db.getFolderSet(parentPath)
-                parentTag = self.resolveTag(parentNode,ancestorTag)
+                parentTag = self.resolveTag(parentNode, ancestorTag)
                 # delete the relation between the related tag and the ancestor tag by
                 # deleting the relation to the parent tag.
                 self.deleteTagRelation(node, parentTag)
                 # Create a new tag and connect it to the parent tag
                 auto_tag = self.generateUniqueTagName(ancestorTag)
                 node.tagCurrentHead(auto_tag, description)
-                self.createTagRelation(node,parentTag, auto_tag)
+                self.createTagRelation(node, parentTag, auto_tag)
             else:
                 # We get all the child nodes, and to avoid the problem of child tags
                 # already related to the ancestor tag, we call tagWithAncestorTag
@@ -843,8 +869,7 @@ class CondDB(object):
         # To exit the recursion correctly, we need to return from this function...
         return
 
-
-    def deleteTag(self, path, tagName, delete_relations = True):
+    def deleteTag(self, path, tagName, delete_relations=True):
         '''
         Delete a tag from the database, and its relations if asked for.
         inputs:
@@ -858,17 +883,17 @@ class CondDB(object):
         '''
         raise NotImplementedError()
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         # Retrieve the node
         if self.db.existsFolder(path):
             node = self.db.getFolder(path)
         elif self.db.existsFolderSet(path):
             node = self.db.getFolderSet(path)
         else:
-            raise Exception, "Node %s was not found"%path
+            raise Exception, "Node %s was not found" % path
 
         if tagName not in list(node.listTags()):
-            raise Exception, "Tag %s was not found"%tagName
+            raise Exception, "Tag %s was not found" % tagName
 
         # Get the tag object to be able to access parent tags
         tagList = self.getTagList(path)
@@ -892,7 +917,7 @@ class CondDB(object):
                     self.deleteTagRelation(path, parentTag.name)
             node.deleteTag(tagName)
 
-    def isTagReady(self, tagName, path = "/"):
+    def isTagReady(self, tagName, path="/"):
         """
         Check if the given tag name is usable at the level of the specified path.
         inputs:
@@ -903,26 +928,26 @@ class CondDB(object):
             none
         """
         raise NotImplementedError()
-        if tagName.upper() in ['','HEAD']:
-            return True # HEAD tags are always valid
+        if tagName.upper() in ['', 'HEAD']:
+            return True  # HEAD tags are always valid
         if self.db.existsFolderSet(path):
             # the path points to a folderset, I check the tag in all its subnodes
             nodes = self.getChildNodes(path)
             try:
                 for n in nodes:
                     f = self.getCOOLNode(n)
-                    self.resolveTag(f,tagName)
+                    self.resolveTag(f, tagName)
             except:
                 return False
         else:
             try:
                 f = self.db.getFolder(path)
-                self.resolveTag(f,tagName)
+                self.resolveTag(f, tagName)
             except:
                 return False
         return True
 
-    def cloneTag(self, path, src_tag, dest_tag, exclude = []):
+    def cloneTag(self, path, src_tag, dest_tag, exclude=[]):
         """
         Create a copy of the tag src_tag with the name dest_tag on folderset
         path.
@@ -933,18 +958,21 @@ class CondDB(object):
         if self.readOnly:
             raise "Cannot write on a database opened in read-only mode"
         if self.db.existsFolderSet(path):
-            for n in [ self.getCOOLNode(p) for p in self.getChildNodes(path) if p not in exclude ]:
+            for n in [
+                    self.getCOOLNode(p) for p in self.getChildNodes(path)
+                    if p not in exclude
+            ]:
                 try:
-                    local_tag = self.resolveTag(n,src_tag)
+                    local_tag = self.resolveTag(n, src_tag)
                     #print "%s: %s"%(n.fullPath(),local_tag)
-                    self.createTagRelation(n,dest_tag,local_tag)
+                    self.createTagRelation(n, dest_tag, local_tag)
                 except RuntimeError, x:
-                    print "Warning: %s"%x
+                    print "Warning: %s" % x
         else:
             if self.db.existsFolder(path):
                 print "Warning: cloneTag not supported for folders"
             else:
-                raise "Node '%s' does not exist"%path
+                raise "Node '%s' does not exist" % path
 
     def _moveTagOnNodes_recursion(self, nodes_tags, path, basetag, nodestree):
         """
@@ -961,39 +989,40 @@ class CondDB(object):
         currnode = self.getCOOLNode(path)
         if path in nodes_tags:
             try:
-                tag = self.resolveTag(currnode,nodes_tags[path])
+                tag = self.resolveTag(currnode, nodes_tags[path])
             except:
                 tag = nodes_tags[path]
 
-        if nodestree: # if it has children
+        if nodestree:  # if it has children
             for n in nodestree:
-                nodes_tags[n] = self._moveTagOnNodes_recursion(nodes_tags,n,basetag,nodestree[n])
+                nodes_tags[n] = self._moveTagOnNodes_recursion(
+                    nodes_tags, n, basetag, nodestree[n])
 
             # the base node is the only node allowed to have
             # the tag in the nodes_tags dictionary
             if tag is None:
                 tag = self.generateUniqueTagName(basetag)
-                self.cloneTag(path,basetag,tag,nodestree.keys())
+                self.cloneTag(path, basetag, tag, nodestree.keys())
 
             for n in nodestree:
                 x = self.getCOOLNode(n)
 
                 try:
                     # try to delete an already present relation
-                    self.deleteTagRelation(x,tag)
+                    self.deleteTagRelation(x, tag)
                 except:
                     # if there is not such a relation, ignore the failure
                     pass
-                self.createTagRelation(x,tag, nodes_tags[n])
+                self.createTagRelation(x, tag, nodes_tags[n])
         else:
             # Do a recursive tag if we want HEAD
             if tag is None or tag.upper() == "HEAD":
                 tag = self.generateUniqueTagName(basetag)
-                self.recursiveTag(path,tag)
+                self.recursiveTag(path, tag)
         # return the local tag
         return tag
 
-    def moveTagOnNodes(self,basepath,tag,nodes_tags):
+    def moveTagOnNodes(self, basepath, tag, nodes_tags):
         """
         Move (or create) the tag "tag" on the folderset basepath using the tags
         specified in nodes_tags (dictionary) for the sub-folder[set]s.
@@ -1013,7 +1042,7 @@ class CondDB(object):
         for n in nodes_tags:
             ns = n.strip('/').split('/')
             if not ns[0:len(bp)] == bp:
-                raise "Error: node '%s' is not under '%s'"%(n,basepath)
+                raise "Error: node '%s' is not under '%s'" % (n, basepath)
             d = nodes_to_modify
             base = basepath
             for dirname in ns[len(bp):]:
@@ -1027,9 +1056,10 @@ class CondDB(object):
                 base = dirname
 
         nodes_tags[basepath] = tag
-        self._moveTagOnNodes_recursion(nodes_tags,basepath,tag,nodes_to_modify)
+        self._moveTagOnNodes_recursion(nodes_tags, basepath, tag,
+                                       nodes_to_modify)
 
-    def moveTagOnLocalTag(self,basepath,tag,local_tag):
+    def moveTagOnLocalTag(self, basepath, tag, local_tag):
         """
         Move (or create) the tag "tag" on the folderset basepath using the tag
         specified as local_tag.
@@ -1037,17 +1067,17 @@ class CondDB(object):
         the local_tag can be resolved, then calls moveTagOnNodes.
         """
         raise NotImplementedError()
-        nodes = self.findNodesWithTag(local_tag, base = basepath, leaves = False)
+        nodes = self.findNodesWithTag(local_tag, base=basepath, leaves=False)
         if not nodes:
             # nothing to do
-            print "Warning: Tag '%s' not found"%local_tag
+            print "Warning: Tag '%s' not found" % local_tag
             return
         nodes_tags = {}
         for n in nodes:
             nodes_tags[n] = local_tag
-        self.moveTagOnNodes(basepath,tag,nodes_tags)
+        self.moveTagOnNodes(basepath, tag, nodes_tags)
 
-    def findTagRelation(self,node,tag):
+    def findTagRelation(self, node, tag):
         """
         Return the local tag associated with the parent tag given.
         """
@@ -1066,7 +1096,7 @@ class CondDB(object):
         # we have only global tags in Git
         return tag
 
-    def findNodesWithTag(self, tag, base = "/", leaves = True):
+    def findNodesWithTag(self, tag, base="/", leaves=True):
         """
         Find all the nodes that have a local tag associated with provided parent tag.
 
@@ -1076,9 +1106,9 @@ class CondDB(object):
         """
         raise NotImplementedError()
         # this finds all the leaves in which a tag can be resolved
-        l = filter(lambda p: self.isMultiVersionFolder(p) and
-                             self.resolveTag(p,tag),
-                   self.getAllChildNodes(base))
+        l = filter(
+            lambda p: self.isMultiVersionFolder(p) and self.resolveTag(p, tag),
+            self.getAllChildNodes(base))
 
         if leaves:
             # enough
@@ -1092,7 +1122,7 @@ class CondDB(object):
 
         base_count = len(base)
 
-        newlist = [] # where to put the extracted bases
+        newlist = []  # where to put the extracted bases
         # compare one element with all the others until we exaust the list
         while l:
             current = l[0]
@@ -1106,10 +1136,11 @@ class CondDB(object):
                 elem_split = elem.split('/')[base_count:]
                 # find common part between current and elem
                 i = 0
-                m = min(len(elem_split),len(curr_split))
-                while i < m and elem_split[i] == curr_split[i]: i += 1
-                if i: # check if they have any element in common
-                    candidate = '/'.join(base+curr_split[:i])
+                m = min(len(elem_split), len(curr_split))
+                while i < m and elem_split[i] == curr_split[i]:
+                    i += 1
+                if i:  # check if they have any element in common
+                    candidate = '/'.join(base + curr_split[:i])
                     # here we define the other constraints:
                     #   - it can be a folder (probably overkilling as a check)
                     #   - otherwise the tag must be defined in all the children
@@ -1121,7 +1152,6 @@ class CondDB(object):
 
             newlist.append(current)
         return newlist
-
 
     #---------------------------------------------------------------------------------#
 
@@ -1142,11 +1172,16 @@ class CondDB(object):
         try:
             dbsvc.dropDatabase(connectionString)
         except Exception, details:
-            raise Exception, "Impossible to drop the database: %s"%details
+            raise Exception, "Impossible to drop the database: %s" % details
 
     dropDatabase = classmethod(dropDatabase)
 
-    def createNode(self, path, description = '', storageType = "XML", versionMode = "MULTI", storageKeys = {'data':'String16M'}):
+    def createNode(self,
+                   path,
+                   description='',
+                   storageType="XML",
+                   versionMode="MULTI",
+                   storageKeys={'data': 'String16M'}):
         '''
         Creates a new node (folder or folderset) in the database.
         inputs:
@@ -1171,12 +1206,12 @@ class CondDB(object):
         raise NotImplementedError()
         from PyCool import cool
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         if storageType == 'NODE':
             try:
                 self.db.createFolderSet(path, description, True)
             except Exception, details:
-                raise Exception, "Impossible to create the folderset: %s"%details
+                raise Exception, "Impossible to create the folderset: %s" % details
         else:
             recordSpec = cool.RecordSpecification()
             if type(storageKeys) is list:
@@ -1189,9 +1224,11 @@ class CondDB(object):
                                   getattr(cool.StorageType, storageKeys[key]))
 
             if versionMode == 'MULTI':
-                folderSpec = cool.FolderSpecification(cool.FolderVersioning.MULTI_VERSION, recordSpec)
+                folderSpec = cool.FolderSpecification(
+                    cool.FolderVersioning.MULTI_VERSION, recordSpec)
             else:
-                folderSpec = cool.FolderSpecification(cool.FolderVersioning.SINGLE_VERSION, recordSpec)
+                folderSpec = cool.FolderSpecification(
+                    cool.FolderVersioning.SINGLE_VERSION, recordSpec)
 
             # WARNING: this folderdesc stuff is VERY important for LHCb: it tells the CondDB conversion
             #          service which type of converter to call. In this case (storage_type = 7), it calls
@@ -1201,10 +1238,9 @@ class CondDB(object):
             try:
                 self.db.createFolder(path, folderSpec, folderDesc, True)
             except Exception, details:
-                raise Exception, "Impossible to create the folder: %s"%details
+                raise Exception, "Impossible to create the folder: %s" % details
 
-
-    def storeXMLString(self, path, data, since, until, channelID = 0):
+    def storeXMLString(self, path, data, since, until, channelID=0):
         '''
         Adds a new condition object to the database.
         inputs:
@@ -1221,15 +1257,16 @@ class CondDB(object):
         '''
         raise NotImplementedError()
         if type(data) is str:
-            data = { 'data': data }
-        objDict = {'payload': data,
-                   'since':   since,
-                   'until':   until,
-                   'channel': channelID}
+            data = {'data': data}
+        objDict = {
+            'payload': data,
+            'since': since,
+            'until': until,
+            'channel': channelID
+        }
         self.storeXMLStringList(path, [objDict])
 
-
-    def storeXMLStringList(self, path, XMLList, writeDuplicate = True):
+    def storeXMLStringList(self, path, XMLList, writeDuplicate=True):
         '''
         Allows to store a list of XML string into a given folder.
         inputs:
@@ -1245,7 +1282,7 @@ class CondDB(object):
         raise NotImplementedError()
         from PyCool import cool
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         if self.db.existsFolder(path):
             folder = self.db.getFolder(path)
             # Create a payload object with the correct specifications
@@ -1274,20 +1311,22 @@ class CondDB(object):
                     try:
                         dbobj = folder.findObject(since, channelID)
                         dbpayload = dict(self.payload(dbobj))
-                        for key in payloadKeys:#NB: Only works with the case of only one key
+                        for key in payloadKeys:  #NB: Only works with the case of only one key
                             if payload[key] == str(dbpayload[key]):
-                                print "identical content for path %s, no overwriting" %path
+                                print "identical content for path %s, no overwriting" % path
                                 doWrite = False
-                    except: pass
-                if doWrite: self.storeObject(folder, since, until, payload, cool.ChannelId(channelID))
+                    except:
+                        pass
+                if doWrite:
+                    self.storeObject(folder, since, until, payload,
+                                     cool.ChannelId(channelID))
 
             # Write the data to the DB
             folder.flushStorageBuffer()
         else:
-            raise Exception, "Folder %s was not found"%path
+            raise Exception, "Folder %s was not found" % path
 
-
-    def deleteNode(self, path, delete_subnodes = False):
+    def deleteNode(self, path, delete_subnodes=False):
         """
         Delete a node from the database permanently.
         inputs:
@@ -1302,7 +1341,7 @@ class CondDB(object):
         """
         raise NotImplementedError()
         assert self.db != None, "No database connected !"
-        assert not self.readOnly , "The database is in Read Only mode."
+        assert not self.readOnly, "The database is in Read Only mode."
         # Deal first with the full tree deletion
         if delete_subnodes and self.db.existsFolderSet(path):
             subnodeList = self.getAllChildNodes(path)
@@ -1312,18 +1351,22 @@ class CondDB(object):
                 try:
                     self.db.dropNode(node)
                 except Exception, details:
-                    raise Exception, "Impossible to delete node %s: %s"%(node, details)
+                    raise Exception, "Impossible to delete node %s: %s" % (
+                        node, details)
         # In all cases, try to delete the given node
         try:
             self.db.dropNode(path)
         except Exception, details:
-            raise Exception, "Impossible to delete node %s: %s"%(path, details)
+            raise Exception, "Impossible to delete node %s: %s" % (path,
+                                                                   details)
 
     def existsFolder(self, path):
-        return path in self.getAllNodes() and self._tree.get(path.lstrip('/')) is None
+        return path in self.getAllNodes() and self._tree.get(
+            path.lstrip('/')) is None
 
     def existsFolderSet(self, path):
-        return path in self.getAllNodes() and self._tree.get(path.lstrip('/')) is not None
+        return path in self.getAllNodes() and self._tree.get(
+            path.lstrip('/')) is not None
 
     def getChannelsWithNames(self, path):
         return {0: ''}

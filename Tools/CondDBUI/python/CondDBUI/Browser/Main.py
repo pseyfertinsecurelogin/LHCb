@@ -13,14 +13,13 @@ __pit_environment__ = isdir(__pit_special_dir__)
 if __pit_environment__:
     env["CORAL_DBLOOKUP_PATH"] = env["CORAL_AUTH_PATH"] = __pit_special_dir__
 
-
 __default_option_files__ = [
-    "$SQLDDDBROOT/options/SQLDDDB.py",
-    "$VETRAROOT/options/Velo/VeloCondDB.py"
-    ]
+    "$SQLDDDBROOT/options/SQLDDDB.py", "$VETRAROOT/options/Velo/VeloCondDB.py"
+]
 
 import logging
 import sys
+
 
 ## Imports an options file to find the configured conditions databases.
 #  @return A dictionary associating names (of the services) to connection strings.
@@ -36,12 +35,14 @@ def getStandardConnectionStrings(optionFiles):
             # Ignore errors from the parser (e.g. file not found)
             logging.info("Problems importing %s: %s", o, x)
     for name in allConfigurables:
-        if hasattr(allConfigurables[name],"ConnectionString"):
+        if hasattr(allConfigurables[name], "ConnectionString"):
             data[name] = allConfigurables[name].ConnectionString
     # If we are at the PIT (we can use Oracle)
     if __pit_environment__:
-        for c in [ "CondDB/DDDB", "CondDB/LHCBCOND", "CondDB/SIMCOND", "CondDBOnline/ONLINE",
-                   "CondDBPrivate/PRIVATE" ]:
+        for c in [
+                "CondDB/DDDB", "CondDB/LHCBCOND", "CondDB/SIMCOND",
+                "CondDBOnline/ONLINE", "CondDBPrivate/PRIVATE"
+        ]:
             data[c] = c
     try:
         from DDDB.Configuration import GIT_CONDDBS
@@ -50,12 +51,13 @@ def getStandardConnectionStrings(optionFiles):
         pass
     return data
 
+
 ## Initialize and start the application.
 #  If an argument is passed on the command line, it is used to open the corresponding database
 #  retrieved from the options file.
 #  @see getStandardConnectionStrings()
 def main(argv=None):
-    from .Qt import QApplication
+    from PyQt5.Qt import QApplication
     from MainWindow import MainWindow
 
     try:
@@ -69,7 +71,7 @@ def main(argv=None):
     # Initializes the Qt application
     app = QApplication(argv)
     app.setApplicationName(app.objectName())
-    app.setApplicationVersion("%s (%s)" % (__versionNumber__, __versionDate__) )
+    app.setApplicationVersion("%s (%s)" % (__versionNumber__, __versionDate__))
     app.setOrganizationName("LHCb")
     app.setOrganizationDomain("lhcb.cern.ch")
     # @FIXME: I need a flexible way of defining the default style (command line, settings, ...)
@@ -80,23 +82,31 @@ def main(argv=None):
     argv = map(str, app.arguments())
 
     from optparse import OptionParser
-    parser = OptionParser(usage = "%prog [Qt-options] [options] [database]")
-    parser.add_option("--rw", action = "store_true",
-                      help = "Open the database specified in the command line in read/write mode")
-    parser.add_option("--options", action = "append",
-                      dest = "option_files",
-                      help = "Option files to be used to detect the standard databases (can be specified multiple times")
-    parser.add_option("--verbose", action = "store_true",
-                      help = "Increase verbosity")
-    parser.set_defaults(rw = False,
-                        option_files = __default_option_files__)
+    parser = OptionParser(usage="%prog [Qt-options] [options] [database]")
+    parser.add_option(
+        "--rw",
+        action="store_true",
+        help=
+        "Open the database specified in the command line in read/write mode")
+    parser.add_option(
+        "--options",
+        action="append",
+        dest="option_files",
+        help=
+        "Option files to be used to detect the standard databases (can be specified multiple times"
+    )
+    parser.add_option(
+        "--verbose", action="store_true", help="Increase verbosity")
+    parser.set_defaults(rw=False, option_files=__default_option_files__)
 
     opts, args = parser.parse_args(argv[1:])
 
-    logging.basicConfig(level = opts.verbose and logging.INFO or logging.WARNING)
+    logging.basicConfig(level=opts.verbose and logging.INFO or logging.WARNING)
 
     if len(args) > 1:
-        parser.error("Only one database can be specified on the command line (see --help).")
+        parser.error(
+            "Only one database can be specified on the command line (see --help)."
+        )
 
     mw = MainWindow()
     mw.setDefaultDatabases(getStandardConnectionStrings(opts.option_files))
@@ -106,9 +116,9 @@ def main(argv=None):
         db = args[0]
         readOnly = not opts.rw
         if db in mw.defaultDatabases:
-            mw.openStandardDatabase(db, readOnly = readOnly)
+            mw.openStandardDatabase(db, readOnly=readOnly)
         else:
-            mw.openDatabase(db, readOnly = readOnly)
+            mw.openDatabase(db, readOnly=readOnly)
 
     mw.show()
 

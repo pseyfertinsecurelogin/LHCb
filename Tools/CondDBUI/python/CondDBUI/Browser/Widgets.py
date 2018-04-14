@@ -1,10 +1,7 @@
-from .Qt import (QObject, pyqtSignal, pyqtSlot,
-                 QDateTime, QDate, QTime,
-                 Qt, QMetaObject,
-                 QMessageBox,
-                 QWidget, QHBoxLayout, QDateTimeEdit,
-                 QSizePolicy, QAction, QCheckBox,
-                 QPlainTextEdit, QTextDocument, QTextCursor, QFont)
+from PyQt5.Qt import (QObject, pyqtSignal, pyqtSlot, QDateTime, QDate, QTime,
+                      Qt, QMetaObject, QMessageBox, QWidget, QHBoxLayout,
+                      QDateTimeEdit, QSizePolicy, QAction, QCheckBox,
+                      QPlainTextEdit, QTextDocument, QTextCursor, QFont)
 
 from Utils import valKeyToDateTime, dateTimeToValKey
 
@@ -22,12 +19,12 @@ class TimePointEdit(QWidget):
     maxChecked = pyqtSignal()
     maxUnchecked = pyqtSignal()
 
-    def __init__(self, parent = None):
-        super(TimePointEdit,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(TimePointEdit, self).__init__(parent)
 
         self._layout = QHBoxLayout(self)
         self._layout.setObjectName("layout")
-        self._layout.setContentsMargins(0,0,0,0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
 
         self._edit = QDateTimeEdit(self)
         self._edit.setObjectName("edit")
@@ -48,16 +45,14 @@ class TimePointEdit(QWidget):
         self._utc.setObjectName("utc")
         self._utc.setText("UTC")
         self._utc.setChecked(True)
-        self._utc.setSizePolicy(QSizePolicy.Minimum,
-                                QSizePolicy.Minimum)
+        self._utc.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self._layout.addWidget(self._utc)
 
         self._max = QCheckBox(self)
         self._max.setObjectName("max")
         self._max.setText("Max")
         self._max.setChecked(False)
-        self._max.setSizePolicy(QSizePolicy.Minimum,
-                                QSizePolicy.Minimum)
+        self._max.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self._layout.addWidget(self._max)
 
         self.actionSet_to_minimum = QAction(self)
@@ -83,9 +78,7 @@ class TimePointEdit(QWidget):
         QMetaObject.connectSlotsByName(self)
 
         # propagate edit field signals:
-        for signal in ["timeChanged",
-                       "dateChanged",
-                       "dateTimeChanged"]:
+        for signal in ["timeChanged", "dateChanged", "dateTimeChanged"]:
             getattr(self._edit, signal).connect(getattr(self, signal))
         self._edit.dateTimeChanged.connect(self.emitValidityKeyChange)
 
@@ -203,11 +196,13 @@ class TimePointEdit(QWidget):
     def setToMinimum(self):
         spec = self._edit.timeSpec()
         self.setDateTime(self.minimumDateTime().toTimeSpec(spec))
+
     ## Slot used to set the value equal to the maximum possible according to the
     #  current constraints.
     def setToMaximum(self):
         spec = self._edit.timeSpec()
         self.setDateTime(self.maximumDateTime().toTimeSpec(spec))
+
     ## Slot used to set the value equal to the current time or to the closest
     #  limit if it is out of bounds.
     def setToNow(self):
@@ -219,14 +214,15 @@ class TimePointEdit(QWidget):
             t = self.minimumDateTime()
         self.setDateTime(t.toTimeSpec(spec))
 
+
 ## Simple customization of a QPlainTextEdit.
 #  The extensions to a QPlainTextEdit are a "find" dialog (activated with Ctrl+F
 #  or the contextual menu) and the possibility to switch to/from fixed width
 #  font (via contextual menu).
 class SearchableTextEdit(QPlainTextEdit):
     ## Contructor.
-    def __init__(self, parent = None):
-        super(SearchableTextEdit,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(SearchableTextEdit, self).__init__(parent)
 
         from Dialogs import FindDialog
         self.findDialog = FindDialog(self)
@@ -273,8 +269,9 @@ class SearchableTextEdit(QPlainTextEdit):
             self.moveCursor(where)
             found = self.find(text, flags)
         if not found:
-            QMessageBox.information(self, "Not found",
-                                    "String '%s' not found in the document." % text)
+            QMessageBox.information(
+                self, "Not found",
+                "String '%s' not found in the document." % text)
 
     ## FixedWidthFont property
     def setFixedWidthFont(self, value):
@@ -289,6 +286,7 @@ class SearchableTextEdit(QPlainTextEdit):
                 self.setFont(font)
             if self.actionFixedWidthFont.isChecked() != value:
                 self.actionFixedWidthFont.setChecked(value)
+
     ## FixedWidthFont property
     def isFixedWidthFont(self):
         return self.actionFixedWidthFont.isChecked()

@@ -1,11 +1,7 @@
-from .Qt import (QObject,
-                 QAbstractItemModel, QAbstractListModel, QAbstractTableModel,
-                 QModelIndex,
-                 Qt, pyqtSignal, pyqtSlot,
-                 QIcon, QApplication, QItemSelectionModel,
-                 QItemDelegate,
-                 QComboBox, QLineEdit,
-                 QBrush, QFont)
+from PyQt5.Qt import (QObject, QAbstractItemModel, QAbstractListModel,
+                      QAbstractTableModel, QModelIndex, Qt, pyqtSignal,
+                      pyqtSlot, QIcon, QApplication, QItemSelectionModel,
+                      QItemDelegate, QComboBox, QLineEdit, QBrush, QFont)
 
 from PyCool import cool
 
@@ -13,41 +9,48 @@ from Utils import *
 
 from CondDBUI import CondDB
 
-__all__ = ["setModelsIcons",
-           "tagsGlobalCache",
-           "CondDBNodesListModel",
-           "CondDBStructureModel",
-           "CondDBTagsListModel",
-           "CondDBIoVModel",
-           "CondDBPayloadFieldModel",
-           "NodeFieldsModel",
-           "AddConditionsStackModel",
-           "CondDBSelectionsModel",
-           "ChildTagDelegate",
-           "ChildTagsModel",
-           ]
+__all__ = [
+    "setModelsIcons",
+    "tagsGlobalCache",
+    "CondDBNodesListModel",
+    "CondDBStructureModel",
+    "CondDBTagsListModel",
+    "CondDBIoVModel",
+    "CondDBPayloadFieldModel",
+    "NodeFieldsModel",
+    "AddConditionsStackModel",
+    "CondDBSelectionsModel",
+    "ChildTagDelegate",
+    "ChildTagsModel",
+]
+
 #import logging
 #logging.basicConfig(level=logging.INFO)
 #_log = logging.getLogger(__name__)
 
+
 ## Class to keep a cache of the tags in the current database
 class TagsCache(QObject):
     tagsCacheUpdated = pyqtSignal([], ['QString'])
+
     ## Constructor
     def __init__(self):
         super(TagsCache, self).__init__()
         self.db = None
         self.cache = {}
+
     ## Invalidate the whole cache and use the new database.
     def setDB(self, db):
         self.db = db
         self.cache = {}
         self._allTags = None
         self.tagsCacheUpdated.emit()
+
     ## Tell if a path may have tags (i.e. it is a multi-version folder or a folderset)
     def mayHaveTags(self, path):
-        return (self.db.isMultiVersionFolder(path) or
-                self.db.existsFolderSet(path))
+        return (self.db.isMultiVersionFolder(path)
+                or self.db.existsFolderSet(path))
+
     ## Get the list of tags for a path
     def getTags(self, path):
         if self.db:
@@ -60,6 +63,7 @@ class TagsCache(QObject):
                 else:
                     self.cache[path] = []
         return self.cache.get(path, [])
+
     ## Get all the known tags in the database
     def getAllTagNames(self):
         if self.db:
@@ -73,6 +77,7 @@ class TagsCache(QObject):
                 self._allTags = tags
             return self._allTags
         return []
+
     ## Invalidate the cache for a single path
     def invalidate(self, path):
         if path in self.cache:
@@ -81,21 +86,24 @@ class TagsCache(QObject):
             qpath = str(path)
             self.tagsCacheUpdated.emit(qpath)
 
+
 tagsGlobalCache = TagsCache()
 
 icons = {}
+
 
 ## Function to set the icons used by the models.
 def setModelsIcons(dict):
     global icons
     icons = dict
 
+
 ## Class to manage the hierarchy of items in CondDBStructureModel.
 class CondDBStructureItem(object):
     ## Constructor.
     #  @param parent: parent item (used for quick navigation)
     #  @param node: COOL node object
-    def __init__(self, db, parent, name, node, channel = None):
+    def __init__(self, db, parent, name, node, channel=None):
         self.db = db
 
         self.parent = parent
@@ -110,7 +118,8 @@ class CondDBStructureItem(object):
 
         self.leaf = node.isLeaf()
         if self.leaf:
-            self.singleVersion = node.versioningMode() == cool.FolderVersioning.SINGLE_VERSION
+            self.singleVersion = node.versioningMode(
+            ) == cool.FolderVersioning.SINGLE_VERSION
         else:
             self.singleVersion = False
         self.index = None
@@ -135,7 +144,7 @@ class CondDBStructureItem(object):
         if self._children is None:
             self._children = []
             if self.channel is not None:
-                return self._children # no children for a channel inside a folder
+                return self._children  # no children for a channel inside a folder
             _bc = BusyCursor()
             if self.leaf:
                 # If the COOL node is a Folder, the children are the channels.
@@ -145,33 +154,34 @@ class CondDBStructureItem(object):
                 #        (I do not know if it is a problem with PyROOT or a missing
                 #        dictionary in PyCool).
                 channels = self.db.getChannelsWithNames(self.node.fullPath())
-                if (len(channels) == 1) and (0 in channels) and (not channels[0]):
+                if (len(channels) == 1) and (0 in channels) and (
+                        not channels[0]):
                     # If we have only the default channel, no need to show it
                     return self._children
 
                 for c in channels:
-                    self._children.append(CondDBStructureItem(db = self.db,
-                                                              parent = self,
-                                                              name = channels[c] or str(c),
-                                                              node = self.node,
-                                                              channel = c))
+                    self._children.append(
+                        CondDBStructureItem(
+                            db=self.db,
+                            parent=self,
+                            name=channels[c] or str(c),
+                            node=self.node,
+                            channel=c))
             else:
                 # The children are the sub-nodes
 
                 for f in self.node.listFolderSets():
                     node = self.db.getCOOLNode(f)
                     name = basename(f)
-                    self._children.append(CondDBStructureItem(db = self.db,
-                                                              parent = self,
-                                                              name = name,
-                                                              node = node))
+                    self._children.append(
+                        CondDBStructureItem(
+                            db=self.db, parent=self, name=name, node=node))
                 for f in self.node.listFolders():
                     node = self.db.getCOOLNode(f)
                     name = basename(f)
-                    self._children.append(CondDBStructureItem(db = self.db,
-                                                              parent = self,
-                                                              name = name,
-                                                              node = node))
+                    self._children.append(
+                        CondDBStructureItem(
+                            db=self.db, parent=self, name=name, node=node))
         return self._children
 
     # ## Number of columns for the children: 1 if FolderSet, 2 if we have many channels, 0 otherwise.
@@ -217,8 +227,8 @@ class CondDBStructureModel(QAbstractItemModel):
     ## Constructor.
     #  @param db: CondDBUI.CondDB instance to use
     #  @param parent: parent widget
-    def __init__(self, db = None, parent = None):
-        super(CondDBStructureModel,self).__init__(parent)
+    def __init__(self, db=None, parent=None):
+        super(CondDBStructureModel, self).__init__(parent)
         self.root = None
         self.connectDB(db)
 
@@ -229,10 +239,8 @@ class CondDBStructureModel(QAbstractItemModel):
             self.root.release()
         self.db = db
         if db:
-            self.root = CondDBStructureItem(db = db,
-                                            parent = None,
-                                            name = "",
-                                            node = db.getCOOLNode("/"))
+            self.root = CondDBStructureItem(
+                db=db, parent=None, name="", node=db.getCOOLNode("/"))
             self.root.index = QModelIndex()
         else:
             self.root = None
@@ -287,7 +295,7 @@ class CondDBStructureModel(QAbstractItemModel):
         return None
 
     ## Header for the structure view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
             return 'Name'
         return None
@@ -305,7 +313,7 @@ class CondDBStructureModel(QAbstractItemModel):
             try:
                 row = cnames.index(n)
                 c = item.children[row]
-                if not c.index: # This means that the tree was not expanded
+                if not c.index:  # This means that the tree was not expanded
                     c.index = self.createIndex(row, 0, c)
                 item = c
             except ValueError:
@@ -321,9 +329,9 @@ class CondDBNodesListModel(QAbstractListModel):
     FOLDER = 0x1
     FOLDERSET = 0x2
     ALL = FOLDER | FOLDERSET
-    def __init__(self, db = None, parent = None,
-                 nodeType = ALL, needRoot = False):
-        super(CondDBNodesListModel,self).__init__(parent)
+
+    def __init__(self, db=None, parent=None, nodeType=ALL, needRoot=False):
+        super(CondDBNodesListModel, self).__init__(parent)
         self._nodes = None
         self.db = None
         self.nodeType = nodeType
@@ -349,7 +357,8 @@ class CondDBNodesListModel(QAbstractListModel):
         if self._nodes is None:
             self._nodes = self.db.getAllNodes()
             if not self.needRoot:
-                self._nodes.pop(0) # remove "/" (which is always the first one)
+                self._nodes.pop(
+                    0)  # remove "/" (which is always the first one)
             # if a filtering criterion is defined, we filter the list
             if self.nodeType == self.FOLDER:
                 self._nodes = filter(self.db.existsFolder, self._nodes)
@@ -369,24 +378,27 @@ class CondDBNodesListModel(QAbstractListModel):
         return None
 
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
             return 'Name'
         return None
 
+
 ## Model class to retrieve the available tags in a folder.
 class CondDBTagsListModel(QAbstractListModel):
     setViewEnabled = pyqtSignal(bool)
+
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, path = None, parent = None):
+    def __init__(self, path=None, parent=None):
         global tagsGlobalCache
-        super(CondDBTagsListModel,self).__init__(parent)
+        super(CondDBTagsListModel, self).__init__(parent)
         self._path = path
         self._tags = None
         self._hideAutoTags = True
         self.setPath(path)
-        tagsGlobalCache.tagsCacheUpdated['QString'].connect(self._refreshedCachePath)
+        tagsGlobalCache.tagsCacheUpdated['QString'].connect(
+            self._refreshedCachePath)
         tagsGlobalCache.tagsCacheUpdated.connect(self._refreshedCache)
 
     ## Property hideAutoTags
@@ -420,12 +432,13 @@ class CondDBTagsListModel(QAbstractListModel):
         global tagsGlobalCache
         self.beginResetModel()
         if path is not None:
-            path = str(path) # Convert to Python string since we may get QString
+            path = str(
+                path)  # Convert to Python string since we may get QString
         self._path = path
-        self._tags = None # Invalidate the internal cache
+        self._tags = None  # Invalidate the internal cache
         self.endResetModel()
-        self.setViewEnabled.emit(bool(path and
-                                      tagsGlobalCache.db.existsFolder(path)))
+        self.setViewEnabled.emit(
+            bool(path and tagsGlobalCache.db.existsFolder(path)))
 
     ## Slot to receive the notification of changes in the cache of tags
     def _refreshedCachePath(self, path):
@@ -477,7 +490,7 @@ class CondDBTagsListModel(QAbstractListModel):
         return None
 
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
             return 'Tag'
         return None
@@ -493,12 +506,13 @@ class CondDBTagsListModel(QAbstractListModel):
             i = -1
         return i
 
+
 ## Model class to retrieve the available tags in a database.
 class GlobalTagsListModel(QAbstractListModel):
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, parent = None):
-        super(GlobalTagsListModel,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(GlobalTagsListModel, self).__init__(parent)
         self.db = None
         ## Tags to display
         self._tags = None
@@ -548,27 +562,32 @@ class GlobalTagsListModel(QAbstractListModel):
         return None
 
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
             return 'Tag'
         return None
 
+
 ## Base class for functionalities shared by all the models handling IoVs
 class BaseIoVModel(QAbstractTableModel):
     setViewEnabled = pyqtSignal(bool)
-    setCurrentIndex = pyqtSignal('QModelIndex', 'QItemSelectionModel::SelectionFlags')
+    setCurrentIndex = pyqtSignal('QModelIndex',
+                                 'QItemSelectionModel::SelectionFlags')
+
     #dataChanged = pyqtSignal('QModelIndex', 'QModelIndex')
     ## Constructor
-    def __init__(self, parent = None):
-        super(BaseIoVModel,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(BaseIoVModel, self).__init__(parent)
         # Property ShowUTC
         self._showUTC = True
         # Property DisplayFormat
         self._format = None
+
     ## Value of the property ShowUTC.
     #  If set to True, the string returned for as data for the IoV table is UTC.
     def showUTC(self):
         return self._showUTC
+
     ## Set the property ShowUTC.
     #  If set to True, the string returned for as data for the IoV table is UTC.
     def setShowUTC(self, value):
@@ -577,14 +596,17 @@ class BaseIoVModel(QAbstractTableModel):
             rows, cols = self.rowCount(), self.columnCount()
             if rows and cols:
                 # Notify the view that the data has changed.
-                self.dataChanged.emit(self.index(0,0),
-                                      self.index(rows-1, cols-1))
+                self.dataChanged.emit(
+                    self.index(0, 0), self.index(rows - 1, cols - 1))
+
     ## Format to use to display the IoV limits in the table.
     def displayFormat(self):
         return self._format
+
     ## Set the format to use to display the IoV limits in the table.
     def setDisplayFormat(self, format):
         self._format = format
+
     ## Return the string representation of a validity key
     def validityKeyToString(self, valkey):
         if valkey == cool.ValidityKeyMax:
@@ -595,6 +617,7 @@ class BaseIoVModel(QAbstractTableModel):
                 dt = dt.toLocalTime()
             s = dt.toString(self.displayFormat())
         return s
+
 
 ## Model class for the list of IOVs
 #  @todo: Re-implement using hasChildren, fetchMore and canFetchMore. http://doc.trolltech.com/4.4/model-view-model-subclassing.html#lazy-population-of-model-data
@@ -612,10 +635,12 @@ class CondDBIoVModel(BaseIoVModel):
     INSERTION_TIME = 3
     ## Definition of the HEAD tag
     HEAD = "HEAD"
+
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, db = None, path = None, channel = None, tag = None, parent = None):
-        super(CondDBIoVModel,self).__init__(parent)
+    def __init__(self, db=None, path=None, channel=None, tag=None,
+                 parent=None):
+        super(CondDBIoVModel, self).__init__(parent)
 
         # "_since" is the value requested by the user,
         # "_actualSince" is the one in the cache
@@ -701,12 +726,11 @@ class CondDBIoVModel(BaseIoVModel):
             tag = self.tag()
             if tag != self.HEAD:
                 tag = self.db.resolveTag(self._folder, tag)
-            objects = self.db.getPayloadList(self._path,
-                                             self._actualUntil, newUntil,
-                                             self._channel, tag)
+            objects = self.db.getPayloadList(self._path, self._actualUntil,
+                                             newUntil, self._channel, tag)
             self._allIoVs.extend((s, u, p, i) for p, s, u, _, i in objects)
             # set actual limits of the content of the cache
-            if self._allIoVs: # we may not have found anything
+            if self._allIoVs:  # we may not have found anything
                 self._actualUntil = self._allIoVs[-1][self.UNTIL]
                 # this is needed when there was no IoV in the cache
                 self._actualSince = self._allIoVs[0][self.SINCE]
@@ -724,13 +748,13 @@ class CondDBIoVModel(BaseIoVModel):
             # Note: we use "self._actualSince - 1" and not "self._actualSince"
             # because COOL returns also the object that includes the upper limit,
             # but we already have it.
-            objects = self.db.getPayloadList(self._path,
-                                             newSince, self._actualSince - 1,
+            objects = self.db.getPayloadList(self._path, newSince,
+                                             self._actualSince - 1,
                                              self._channel, tag)
             tmp = [(s, u, p, i) for p, s, u, _, i in objects]
             self._allIoVs = tmp + self._allIoVs
             # set actual limits of the content of the cache
-            if self._allIoVs: # we may not have found anything
+            if self._allIoVs:  # we may not have found anything
                 self._actualSince = self._allIoVs[0][self.SINCE]
                 # this is needed when there was no IoV in the cache
                 self._actualUntil = self._allIoVs[-1][self.UNTIL]
@@ -742,14 +766,13 @@ class CondDBIoVModel(BaseIoVModel):
                 if newSize == 0:
                     deltaSize = 0
                 else:
-                    deltaSize = newSize - 1 # avoid that the indexes go out of bounds
+                    deltaSize = newSize - 1  # avoid that the indexes go out of bounds
             else:
                 deltaSize = newSize - oldSize
             self._sinceIndex += deltaSize
             self._untilIndex += deltaSize
             self._selectedIndex += deltaSize
             #print "prepend",self._sinceIndex,self._untilIndex,self._selectedIndex
-
 
     ## Get all the IoVs in the cache.
     def allIoVs(self):
@@ -760,7 +783,7 @@ class CondDBIoVModel(BaseIoVModel):
                 # Looks complicated but it is just a way to re-use the _appenIoVs method
                 self._actualUntil = self._since
                 self._appendIoVs(self._until)
-                if self._allIoVs: # we may not have found anything
+                if self._allIoVs:  # we may not have found anything
                     self._actualSince = self._allIoVs[0][self.SINCE]
                 else:
                     self._actualSince = self._since
@@ -798,7 +821,9 @@ class CondDBIoVModel(BaseIoVModel):
                     self._untilIndex -= 1
             if old != (self._sinceIndex, self._untilIndex):
                 # we have to move the selected index to match the displacement
-                self.setSelected(min(self._sinceIndex - old[0] + oldSelected, self._untilIndex))
+                self.setSelected(
+                    min(self._sinceIndex - old[0] + oldSelected,
+                        self._untilIndex))
                 # notify view
                 # FIXME: Should be done better
                 self.beginResetModel()
@@ -844,12 +869,12 @@ class CondDBIoVModel(BaseIoVModel):
     ## Set the folder for which to get the tags.
     @pyqtSlot(str)
     def setPath(self, path):
-        if path is not None: # Needed to use this function as a slot accepting QString
+        if path is not None:  # Needed to use this function as a slot accepting QString
             path = str(path)
         if path != self._path:
             self._cleanCache()
             self._path = self._folder = None
-            self._tag = self.db.defaultTag # To avoid that we pick up an old tag (coming from another path)
+            self._tag = self.db.defaultTag  # To avoid that we pick up an old tag (coming from another path)
             if path and self.db.existsFolder(path):
                 self._path = path
                 self._folder = self.db.getCOOLNode(path)
@@ -866,12 +891,12 @@ class CondDBIoVModel(BaseIoVModel):
         self.setChannel(channel)
 
     ## Number of IOV in the range.
-    def rowCount(self, parent = None):
-        self.allIoVs() # trigger the filling of the cache
+    def rowCount(self, parent=None):
+        self.allIoVs()  # trigger the filling of the cache
         return self._untilIndex - self._sinceIndex + 1
 
     ## Number of columns in the table.
-    def columnCount(self, parent = None):
+    def columnCount(self, parent=None):
         return 2
 
     ## Name of the tag at a given index.
@@ -887,7 +912,7 @@ class CondDBIoVModel(BaseIoVModel):
         return None
 
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return ("Since", "Until")[section]
@@ -909,13 +934,14 @@ class CondDBIoVModel(BaseIoVModel):
 
     ## Set the current selection.
     #  Emit the setCurrentIndex signal if the parameter "emit" is set to True.
-    def setSelected(self, index, emit = True):
+    def setSelected(self, index, emit=True):
         if self._allIoVs:
             self._selectedIndex = index
             if emit:
-                self.setCurrentIndex.emit(self.index(self._selectedIndex, 0),
-                                          QItemSelectionModel.ClearAndSelect |
-                                          QItemSelectionModel.Rows)
+                self.setCurrentIndex.emit(
+                    self.index(self._selectedIndex, 0),
+                    QItemSelectionModel.ClearAndSelect
+                    | QItemSelectionModel.Rows)
 
     ## Slot used to notify the model that the selection in the view has changed.
     def selectionChanged(self, index, oldIndex):
@@ -924,16 +950,20 @@ class CondDBIoVModel(BaseIoVModel):
     ## Get the payload of the currently selected IoV.
     def getPayload(self):
         if self._allIoVs and self._selectedIndex is not None:
-            return self._allIoVs[self._selectedIndex + self._sinceIndex][self.PAYLOAD]
+            return self._allIoVs[self._selectedIndex
+                                 + self._sinceIndex][self.PAYLOAD]
         return None
+
 
 ## Model class to retrieve the available fields in a folder.
 class CondDBPayloadFieldModel(QAbstractListModel):
     setViewEnabled = pyqtSignal(bool)
-    setCurrentIndex = pyqtSignal('QModelIndex', 'QItemSelectionModel::SelectionFlags')
+    setCurrentIndex = pyqtSignal('QModelIndex',
+                                 'QItemSelectionModel::SelectionFlags')
+
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, db = None, path = None, parent = None):
+    def __init__(self, db=None, path=None, parent=None):
         super(CondDBPayloadFieldModel, self).__init__(parent)
         self.db = None
         self._path = None
@@ -945,7 +975,7 @@ class CondDBPayloadFieldModel(QAbstractListModel):
 
     ## Set the CondDBUI.CondDB instance to use (triggering a refresh of the caches)
     def connectDB(self, db):
-        self.setPath(None) # trigger a clean up of the cache
+        self.setPath(None)  # trigger a clean up of the cache
         self.db = db
 
     ## Get the current folder.
@@ -956,7 +986,7 @@ class CondDBPayloadFieldModel(QAbstractListModel):
     @pyqtSlot(str)
     def setPath(self, path):
         self.beginResetModel()
-        if path is not None: # Needed to use this function as a slot accepting QString
+        if path is not None:  # Needed to use this function as a slot accepting QString
             path = str(path)
         self._path = path
         if path and self.db.existsFolder(path):
@@ -983,18 +1013,18 @@ class CondDBPayloadFieldModel(QAbstractListModel):
         return None
 
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
             return 'Name'
         return None
 
     ## Set the current selection.
     #  Emit the setCurrentIndex signal if the parameter "emit" is set to True.
-    def setSelectedField(self, row, emit = True):
+    def setSelectedField(self, row, emit=True):
         self._selected = row
         if emit:
-            self.setCurrentIndex.emit(self.index(self._selected),
-                                      QItemSelectionModel.ClearAndSelect)
+            self.setCurrentIndex.emit(
+                self.index(self._selected), QItemSelectionModel.ClearAndSelect)
 
     ## Slot used to notify the model that the selection in the view has changed.
     @pyqtSlot('QModelIndex', 'QModelIndex')
@@ -1011,32 +1041,35 @@ class CondDBPayloadFieldModel(QAbstractListModel):
     def getFieldNames(self):
         return self._fields
 
+
 ## List of supported COOL storage types
 __cool_storage_types__ = [
-                          "Bool",
-                          # "Char",   # not (yet?) supported
-                          "UChar",
-                          "Int16",
-                          "UInt16",
-                          "Int32",
-                          "UInt32",
-                          "UInt63",
-                          "Int64",
-                          # "UInt64", # not (yet?) supported
-                          "Float",
-                          "Double",
-                          "String255",
-                          "String4k",
-                          "String64k",
-                          "String16M",
-                          "Blob64k",
-                          "Blob16M",
-                          ]
+    "Bool",
+    # "Char",   # not (yet?) supported
+    "UChar",
+    "Int16",
+    "UInt16",
+    "Int32",
+    "UInt32",
+    "UInt63",
+    "Int64",
+    # "UInt64", # not (yet?) supported
+    "Float",
+    "Double",
+    "String255",
+    "String4k",
+    "String64k",
+    "String16M",
+    "Blob64k",
+    "Blob16M",
+]
 __default_field__ = ("data", "String16M")
+
 
 class NodeFieldsDelegate(QItemDelegate):
     def __init__(self, parent):
         super(NodeFieldsDelegate, self).__init__(parent)
+
     def createEditor(self, parent, option, index):
         if index.column() == 1:
             editor = QComboBox(parent)
@@ -1044,34 +1077,42 @@ class NodeFieldsDelegate(QItemDelegate):
         else:
             editor = QLineEdit(parent)
         return editor
+
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.EditRole)
         if index.column() == 1:
-            editor.setCurrentIndex(__cool_storage_types__.index(str(value.toString())))
+            editor.setCurrentIndex(
+                __cool_storage_types__.index(str(value.toString())))
         else:
             editor.setText(value.toString())
+
     def setModelData(self, editor, model, index):
         if index.column() == 1:
             value = editor.currentText()
         else:
             value = editor.text()
         model.setData(index, value, Qt.EditRole)
+
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
+
 
 ## Class for the management of the list of fields used to create a new node.
 class NodeFieldsModel(QAbstractTableModel):
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, parent = None):
-        super(NodeFieldsModel,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(NodeFieldsModel, self).__init__(parent)
         self.fields = [__default_field__]
+
     ## Number of fields in the range.
-    def rowCount(self, parent = None):
+    def rowCount(self, parent=None):
         return len(self.fields)
+
     ## Number of columns in the table.
-    def columnCount(self, parent = None):
+    def columnCount(self, parent=None):
         return 2
+
     ## Name of the tag at a given index.
     def data(self, index, role):
         if index.isValid():
@@ -1080,19 +1121,22 @@ class NodeFieldsModel(QAbstractTableModel):
             elif role == Qt.ToolTipRole:
                 return None
         return None
+
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return ("Name", "Type")[section]
             else:
                 return None
         return None
+
     ## Flags for the item (to make the item editable)
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
         return QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable
+
     ## Handle the changes in the data
     def setData(self, index, value, role):
         if (index.isValid() and role == Qt.EditRole):
@@ -1102,36 +1146,41 @@ class NodeFieldsModel(QAbstractTableModel):
             self.dataChanged.emit(index, index)
             return True
         return False
-    def insertRow(self, position, parent = QModelIndex()):
+
+    def insertRow(self, position, parent=QModelIndex()):
         return self.insertRows(position, 1, parent)
-    def insertRows(self, position, rows, parent = QModelIndex()):
-        self.beginInsertRows(QModelIndex(), position, position+rows-1)
+
+    def insertRows(self, position, rows, parent=QModelIndex()):
+        self.beginInsertRows(QModelIndex(), position, position + rows - 1)
         # find the highest number used in a field with name "field_%d"
         # so that the new fields will start for that id +1 to avoid conflicts
         id = -1
-        for n,_t in self.fields:
+        for n, _t in self.fields:
             if n.startswith("field_"):
                 try:
                     nid = int(n[6:])
                     if nid > id:
                         id = nid
-                except: # ignore conversion errors
+                except:  # ignore conversion errors
                     pass
         id += 1
         count = rows
         while count > 0:
             count -= 1
-            self.fields.insert(position, ("field_%d" % (id + count),
-                                          __default_field__[1]))
+            self.fields.insert(position, ("field_%d" %
+                                          (id + count), __default_field__[1]))
         self.endInsertRows()
         return True
-    def removeRow(self, position, parent = QModelIndex()):
+
+    def removeRow(self, position, parent=QModelIndex()):
         return self.removeRows(position, 1, parent)
-    def removeRows(self, position, rows, parent = QModelIndex()):
-        self.beginRemoveRows(QModelIndex(), position, position+rows-1)
-        del self.fields[position:position+rows]
+
+    def removeRows(self, position, rows, parent=QModelIndex()):
+        self.beginRemoveRows(QModelIndex(), position, position + rows - 1)
+        del self.fields[position:position + rows]
         self.endRemoveRows()
         return True
+
 
 ## Simple class to hold the data in the AddConditionsStackModel.
 class ConditionStackItem(object):
@@ -1144,28 +1193,35 @@ class ConditionStackItem(object):
         self.channel = channel
         self.data = dict(data)
 
+
 ## Class for the management of the list conditions in the AddConditions dialog.
 class AddConditionsStackModel(BaseIoVModel):
     conflictsChanged = pyqtSignal(bool)
+
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(AddConditionsStackModel, self).__init__(parent)
         self.conditions = []
         # list of conditions (indexes) with conflicts
         self.conflicts = set()
+
     ## Number of fields in the range.
-    def rowCount(self, parent = None):
+    def rowCount(self, parent=None):
         return len(self.conditions)
+
     ## Number of columns in the table.
-    def columnCount(self, parent = None):
+    def columnCount(self, parent=None):
         return 3
+
     ## Get one of the conditions in the stack
     def __getitem__(self, item):
         return self.conditions[item]
+
     ## iterate on the conditions of the stack
     def __iter__(self):
         return self.conditions.__iter__()
+
     ## Name of the tag at a given index.
     def data(self, index, role):
         if index.isValid():
@@ -1191,21 +1247,23 @@ class AddConditionsStackModel(BaseIoVModel):
                     font.setItalic(True)
                     return font
         return None
+
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return ("Since", "Until", "Channel")[section]
             else:
                 return None
         return None
+
     ## Check for conflicts and fill the conflicts list:
     def _checkConflicts(self):
         count = len(self.conditions)
         new_conflicts = set()
-        for i in range(count-1):
+        for i in range(count - 1):
             ci = self.conditions[i]
-            for j in range(i+1, count):
+            for j in range(i + 1, count):
                 cj = self.conditions[j]
                 # There is an overlap if the intersection of two intervals is not empty
                 s = max(ci.since, cj.since)
@@ -1220,21 +1278,24 @@ class AddConditionsStackModel(BaseIoVModel):
             self.conflicts = new_conflicts
             #self.layoutChanged.emit()
         return result
+
     ## Add a new condition object to the stack
     def addCondition(self, since, until, channel, data):
-        condition = ConditionStackItem(since = since, until = until,
-                                       channel = channel, data = data)
+        condition = ConditionStackItem(
+            since=since, until=until, channel=channel, data=data)
         position = self.rowCount()
         self.beginInsertRows(QModelIndex(), position, position)
         self.conditions.append(condition)
         self._checkConflicts()
         self.endInsertRows()
+
     ## Remove a condition object from the stack
     def removeCondition(self, position):
         self.beginRemoveRows(QModelIndex(), position, position)
         del self.conditions[position]
         self._checkConflicts()
         self.endRemoveRows()
+
     ## Remove all the conditions in the selection (a QModelIndexList).
     def removeConditions(self, selection):
         positions = list(set([i.row() for i in selection]))
@@ -1245,36 +1306,44 @@ class AddConditionsStackModel(BaseIoVModel):
                 del self.conditions[positions.pop()]
             self._checkConflicts()
             self.endRemoveRows()
+
     def moveUp(self, row):
         if row > 0 and row < len(self.conditions):
             self.layoutAboutToBeChanged.emit()
-            self.conditions.insert(row-1, self.conditions.pop(row))
+            self.conditions.insert(row - 1, self.conditions.pop(row))
             self.layoutChanged.emit()
+
     def moveDown(self, row):
-        if row >= 0 and row < (len(self.conditions)-1):
+        if row >= 0 and row < (len(self.conditions) - 1):
             self.layoutAboutToBeChanged.emit()
-            self.conditions.insert(row+1, self.conditions.pop(row))
+            self.conditions.insert(row + 1, self.conditions.pop(row))
             self.layoutChanged.emit()
+
 
 ## Model for the list of selections for the CondDB slice
 class CondDBSelectionsModel(BaseIoVModel):
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(CondDBSelectionsModel, self).__init__(parent)
         self.selections = []
+
     ## Number of fields in the range.
-    def rowCount(self, parent = None):
+    def rowCount(self, parent=None):
         return len(self.selections)
+
     ## Number of columns in the table.
-    def columnCount(self, parent = None):
+    def columnCount(self, parent=None):
         return 4
+
     ## Get one of the conditions in the stack
     def __getitem__(self, item):
         return self.selections[item]
+
     ## iterate on the conditions of the stack
     def __iter__(self):
         return self.selections.__iter__()
+
     ## Name of the tag at a given index.
     def data(self, index, role):
         if index.isValid():
@@ -1287,14 +1356,16 @@ class CondDBSelectionsModel(BaseIoVModel):
                 else:
                     return self.validityKeyToString(s[c])
         return None
+
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return ("Path", "Since", "Until", "Tags")[section]
             else:
                 return None
         return None
+
     ## Add a new condition object to the stack
     def addSelection(self, path, since, until, tags):
         # Search where to insert the selection in the list
@@ -1302,8 +1373,8 @@ class CondDBSelectionsModel(BaseIoVModel):
         count = len(self.selections)
         match = False
         while i < count and self.selections[i][0] <= path:
-            if (self.selections[i][1:3] == (since, until) and
-                self.selections[i][0] == path):
+            if (self.selections[i][1:3] == (since, until)
+                    and self.selections[i][0] == path):
                 match = True
                 break
             i += 1
@@ -1312,14 +1383,15 @@ class CondDBSelectionsModel(BaseIoVModel):
             self.beginInsertRows(QModelIndex(), i, i)
             tags = list(tags)
             tags.sort()
-            self.selections.insert(i,(path, since, until, tags))
+            self.selections.insert(i, (path, since, until, tags))
             self.endInsertRows()
         else:
             # we already have the path+IoV, let's just update the tags
             tags = list(set(tags + self.selections[i][3]))
             tags.sort()
             self.selections[i] = (path, since, until, tags)
-            self.dataChanged.emit(self.index(i,0), self.index(i,3))
+            self.dataChanged.emit(self.index(i, 0), self.index(i, 3))
+
     ## Remove a condition object from the stack
     def removeSelection(self, row):
         self.beginRemoveRows(QModelIndex(), row, row)
@@ -1332,26 +1404,31 @@ class ChildTagDelegate(QItemDelegate):
     def __init__(self, parent, root):
         super(ChildTagDelegate, self).__init__(parent)
         self.root = str(root)
+
     def createEditor(self, parent, option, index):
         path = self.root + "/" + str(index.model().key(index.row()))
         editor = QComboBox(parent)
         editor.setModel(CondDBTagsListModel(path, editor))
         return editor
+
     def setEditorData(self, editor, index):
         value = str(index.model().data(index, Qt.EditRole).toString())
         editor.setCurrentIndex(editor.model().findPosOfTag(value))
+
     def setModelData(self, editor, model, index):
         value = editor.currentText()
         model.setData(index, value, Qt.EditRole)
+
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
+
 
 ## Handle the list of nodes and tags.
 #  Poor-man implementation of an ordered map
 class ChildTagsModel(QAbstractTableModel):
     ## Constructor.
     #  Initializes some internal data.
-    def __init__(self, db, path, parent = None):
+    def __init__(self, db, path, parent=None):
         super(ChildTagsModel, self).__init__(parent)
         self._data = []
         self._db = db
@@ -1362,6 +1439,7 @@ class ChildTagsModel(QAbstractTableModel):
         for n in db.getChildNodes(path):
             n = n.rsplit("/", 1)[-1]
             self._data.append((n, "HEAD"))
+
     def setFromParentTag(self, tag):
         self.beginResetModel()
         newData = []
@@ -1369,21 +1447,24 @@ class ChildTagsModel(QAbstractTableModel):
             path = self._path + "/" + n
             try:
                 f = self._db.getCOOLNode(path)
-                self._db.resolveTag(f,tag)
+                self._db.resolveTag(f, tag)
                 newData.append((n, tag))
             except:
                 newData.append((n, "HEAD"))
         self._data = newData
         self.endResetModel()
+
     ## Mapping interface: __len__
     def __len__(self):
         return len(self._data)
+
     ## Mapping interface: __getitem__
     def __getitem__(self, key):
         for k, v in self._data:
             if k == key:
                 return v
         raise KeyError, key
+
     ## Mapping interface: __setitem__
     def __setitem__(self, key, value):
         i = 0
@@ -1394,6 +1475,7 @@ class ChildTagsModel(QAbstractTableModel):
             self._data[i] = (key, value)
         else:
             self._data.insert(i, (key, value))
+
     ## Mapping interface: __delitem__
     def __delitem__(self, key):
         i = 0
@@ -1404,26 +1486,36 @@ class ChildTagsModel(QAbstractTableModel):
             del self._data[i]
         else:
             raise KeyError, key
+
     def key(self, i):
         return self._data[i][0]
+
     def value(self, i):
         return self._data[i][1]
+
     def keys(self):
         return [i[0] for i in self._data]
+
     def values(self):
         return [i[1] for i in self._data]
+
     def items(self):
         return self._data
+
     def iter(self):
         return self.__iter__()
+
     def __iter__(self):
         return self.keys().__iter__()
+
     ## Number of entries in the range.
-    def rowCount(self, parent = None):
+    def rowCount(self, parent=None):
         return len(self)
+
     ## Number of columns in the table.
-    def columnCount(self, parent = None):
+    def columnCount(self, parent=None):
         return 2
+
     ## Name of the tag at a given index.
     def data(self, index, role):
         if index.isValid():
@@ -1432,14 +1524,16 @@ class ChildTagsModel(QAbstractTableModel):
             elif role == Qt.ToolTipRole:
                 return None
         return None
+
     ## Header for the view (not used).
-    def headerData(self, section, orientation ,role):
+    def headerData(self, section, orientation, role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return ("Child", "Tag")[section]
             else:
                 return None
         return None
+
     ## Flags for the item (to make the item editable)
     def flags(self, index):
         if not index.isValid():
@@ -1448,6 +1542,7 @@ class ChildTagsModel(QAbstractTableModel):
         if index.column() == 1:
             flags |= Qt.ItemIsEditable
         return flags
+
     ## Handle the changes in the data
     def setData(self, index, value, role):
         if (index.isValid() and role == Qt.EditRole):
