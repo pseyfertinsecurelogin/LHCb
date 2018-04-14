@@ -73,15 +73,6 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   if (version == 4){
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
       LHCb::FTChannelID source       = m_readoutTool->channelIDShift(bank->sourceID());
-      //      if ( msgLevel(MSG::DEBUG) )
-      //        {
-      //          debug() << "source " << source          
-      //                  << " = (" << source.station()
-      //                  << " "    << source.layer()
-      //                  << " "    << source.quarter()
-      //                  << ")"
-      //                  << " size " << bank->size() << endmsg;
-      //        }
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
       for ( auto it = first ; it != last ; it++) {//loop over clusters      
@@ -89,11 +80,13 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         if (c==0) continue;//padding at the end
         //        unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
         unsigned modulesipm = c >> FTRawBank::cellShift ;//todo
-        LHCb::FTChannelID chanModuleSiPM = m_readoutTool->channel(modulesipm);
-        chanModuleSiPM.addToChannel(source);
+        //        LHCb::FTChannelID chanModuleSiPM = m_readoutTool->channel(modulesipm);
+        //        LHCb::FTChannelID chanModuleSiPM = LHCb::FTChannelID(0,0,0,0,0,0,modulesipm);
+        //        chanModuleSiPM.addToChannel(source);
         int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-        clus.emplace_back(chanModuleSiPM,
+        //        clus.emplace_back(chanModuleSiPM,
+        clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,modulesipm+source),
                           fraction, ( cSize ? 0 : 4 ));
       }//end loop over sipms
       partitionPoints.push_back(clus.size());
