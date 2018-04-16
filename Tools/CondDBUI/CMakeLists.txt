@@ -1,7 +1,7 @@
 ################################################################################
 # Package: CondDBUI
 ################################################################################
-gaudi_subdir(CondDBUI v3r36)
+gaudi_subdir(CondDBUI)
 
 gaudi_depends_on_subdirs(Det/DDDB Tools/CondDBEntityResolver)
 
@@ -15,20 +15,17 @@ find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)
 find_package(PythonLibs)
 
-# Force Qt5 whichever is the default
-set(DESIRED_QT_VERSION 5)
-
-if(DESIRED_QT_VERSION STREQUAL "5")
-  find_package(Qt5 COMPONENTS Gui)
-else()
-  find_package(Qt)
-endif()
-message(STATUS "CondDBBrowser using Qt${DESIRED_QT_VERSION}")
+find_package(Qt5 COMPONENTS Gui)
 
 find_package(ROOT)
 find_package(XercesC)
 find_package(pygraphics)
 find_package(pytools)
+find_library(xkbcommon_lib NAMES libxkbcommon.so.0)
+if(xkbcommon_lib)
+  get_filename_component(xkbcommon_dir "${xkbcommon_lib}" DIRECTORY)
+  gaudi_env(PREPEND LD_LIBRARY_PATH "${xkbcommon_dir}")
+endif()
 
 include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${COOL_INCLUDE_DIRS}
                            ${PYTHON_INCLUDE_DIRS})
@@ -51,7 +48,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
 "# generated file, do not edit
 __versionNumber__ = '${subdir_version}'
 __versionDate__ = '${today}'
-__qt_version__ = '${DESIRED_QT_VERSION}'
 ")
 install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
         DESTINATION python/CondDBUI/Browser)

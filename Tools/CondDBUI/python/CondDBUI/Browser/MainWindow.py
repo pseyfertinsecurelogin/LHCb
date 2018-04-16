@@ -3,19 +3,11 @@
 #
 #  Definition of the browser MainWindow class.
 
-from .Qt import (Qt, QObject,
-                 pyqtSlot, pyqtSignal,
-                 QDateTime,
-                 QSettings,
-                 QSize, QPoint,
-                 PYQT_VERSION_STR, qVersion,
-                 QApplication, QMainWindow, QMessageBox,
-                 QHeaderView,
-                 QLabel, QIcon,
-                 QMenu, QAction,
-                 QTextDocument,
-                 QTextCursor,
-                 QStyle, QStyleFactory)
+from PyQt5.Qt import (Qt, QObject, pyqtSlot, pyqtSignal, QDateTime, QSettings,
+                      QSize, QPoint, PYQT_VERSION_STR, qVersion, QApplication,
+                      QMainWindow, QMessageBox, QHeaderView, QLabel, QIcon,
+                      QMenu, QAction, QTextDocument, QTextCursor, QStyle,
+                      QStyleFactory)
 
 from Ui_MainWindow import Ui_MainWindow
 
@@ -30,6 +22,7 @@ from CondDBUI.Browser.Models import tagsGlobalCache
 
 import os
 
+
 ## Class containing the logic of the application.
 class MainWindow(QMainWindow, Ui_MainWindow):
     # Signals
@@ -41,15 +34,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ## Constructor.
     #  Initialises the base class and defines some internal structures.
-    def __init__(self, parent = None, flags = Qt.Widget):
+    def __init__(self, parent=None, flags=Qt.Widget):
         # Base class constructor.
         super(MainWindow, self).__init__(parent, flags)
         # Application and organization names
         app = QApplication.instance()
         self.appName = str(app.applicationName())
-        self.appOrg  = str(app.organizationName())
+        self.appOrg = str(app.organizationName())
         # Preconfigured databases
-        self.defaultDatabases = {} # action
+        self.defaultDatabases = {}  # action
         # Icons for the model (property)
         self._icons = None
         # Current selected (path, channel) in the database
@@ -62,7 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Maximum number of entries in the list of recent databases
         self.maxRecentEntries = 10
         # External editor, to be passed to the add condition dialog
-        self._externalEditor = "emacs" # set in readSettings
+        self._externalEditor = "emacs"  # set in readSettings
         # Prepare the GUI.
         self.setupUi(self)
         # --- Part of the initialization that require the GUI objects. ---
@@ -70,12 +63,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle(self.appName)
         # Connect the models
         self.models = {
-                       "tree": CondDBStructureModel(),
-                       "nodes": CondDBNodesListModel(),
-                       "tags": CondDBTagsListModel(),
-                       "iovs": CondDBIoVModel(),
-                       "fields": CondDBPayloadFieldModel(),
-                       }
+            "tree": CondDBStructureModel(),
+            "nodes": CondDBNodesListModel(),
+            "tags": CondDBTagsListModel(),
+            "iovs": CondDBIoVModel(),
+            "fields": CondDBPayloadFieldModel(),
+        }
         setModelsIcons(self.icons)
         self.hierarchyTreeView.setModel(self.models["tree"])
         self.pathComboBox.setModel(self.models["nodes"])
@@ -86,7 +79,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.openedDB.connect(m.connectDB)
         self.openedDB.connect(tagsGlobalCache.setDB)
 
-        self.hierarchyTreeView.selectionModel().currentChanged.connect(self.selectedItem)
+        self.hierarchyTreeView.selectionModel().currentChanged.connect(
+            self.selectedItem)
 
         # special settings for the tags model
         tagsmodel = self.models["tags"]
@@ -104,12 +98,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         iovsmodel.setViewEnabled.connect(self.iovView.setEnabled)
         self.iovView.setEnabled(False)
         hh = self.iovView.horizontalHeader()
-        if hasattr(hh, 'setSectionResizeMode'): # Qt5
-            hh.setSectionResizeMode(QHeaderView.ResizeToContents)
-        else: # Qt4
-            hh.setResizeMode(QHeaderView.ResizeToContents)
-        self.iovView.selectionModel().currentChanged.connect(iovsmodel.selectionChanged)
-        iovsmodel.setCurrentIndex.connect(self.iovView.selectionModel().setCurrentIndex)
+        hh.setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.iovView.selectionModel().currentChanged.connect(
+            iovsmodel.selectionChanged)
+        iovsmodel.setCurrentIndex.connect(
+            self.iovView.selectionModel().setCurrentIndex)
         self.iovUTCCheckBox.stateChanged.connect(iovsmodel.setShowUTC)
         iovsmodel.setShowUTC(self.iovUTCCheckBox.checkState())
         # Use a consistent DisplayFormat
@@ -123,13 +116,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         fieldsmodel.setViewEnabled.connect(self.payloadGroupBox.setVisible)
         self.payloadGroupBox.setVisible(False)
 
-        self.fieldsView.selectionModel().currentChanged.connect(fieldsmodel.selectionChanged)
-        fieldsmodel.setCurrentIndex.connect(self.fieldsView.selectionModel().setCurrentIndex)
+        self.fieldsView.selectionModel().currentChanged.connect(
+            fieldsmodel.selectionChanged)
+        fieldsmodel.setCurrentIndex.connect(
+            self.fieldsView.selectionModel().setCurrentIndex)
 
         # Filter panel
         # Default startup values for the IOV filter.
         self.sinceFilterWidget.setMaxEnabled(False)
-        self.sinceFilterWidget.setDateTime(QDateTime.currentDateTime().addMonths(-1))
+        self.sinceFilterWidget.setDateTime(
+            QDateTime.currentDateTime().addMonths(-1))
         #iovsmodel.setSince(self.sinceFilterWidget.toValidityKey())
         self.untilFilterWidget.setMaxChecked(True)
         #iovsmodel.setUntil(self.untilFilterWidget.toValidityKey())
@@ -210,20 +206,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         settings.beginGroup("BrowsePanel")
         self.browsePanel.setVisible(settings.value("Visible", True, type=bool))
-        self.browsePanel.setFloating(settings.value("Floating", False, type=bool))
+        self.browsePanel.setFloating(
+            settings.value("Floating", False, type=bool))
         self.browsePanel.resize(settings.value("Size", QSize(250, 655)))
         self.browsePanel.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("FilterPanel")
         self.filterPanel.setVisible(settings.value("Visible", True, type=bool))
-        self.filterPanel.setFloating(settings.value("Floating", False, type=bool))
+        self.filterPanel.setFloating(
+            settings.value("Floating", False, type=bool))
         self.filterPanel.resize(settings.value("Size", QSize(270, 655)))
         self.filterPanel.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("DataView")
-        self.dataView.setFixedWidthFont(settings.value("FixedWidthFont", False, type=bool))
+        self.dataView.setFixedWidthFont(
+            settings.value("FixedWidthFont", False, type=bool))
         settings.endGroup()
 
         settings.beginGroup("FindDialog")
@@ -234,7 +233,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         d.setWrappedSearch(settings.value("WrappedSearch", True, type=bool))
         settings.endGroup()
 
-        self.iovUTCCheckBox.setChecked(settings.value("IOVs/UTC", True, type=bool))
+        self.iovUTCCheckBox.setChecked(
+            settings.value("IOVs/UTC", True, type=bool))
 
         size = settings.beginReadArray("Recent")
         for i in range(size):
@@ -275,7 +275,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ## Slot called by the actions in the menu "Database->Standard".
     #  It can also be called passing the name of one of those databases.
     @pyqtSlot()
-    def openStandardDatabase(self, name = None, readOnly = True):
+    def openStandardDatabase(self, name=None, readOnly=True):
         if name is None:
             sender = self.sender()
         else:
@@ -287,7 +287,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                      "the list of known database." % name)
                 return
         # Open the database using the connection string in the action
-        self.openDatabase(str(sender.data()), readOnly = readOnly)
+        self.openDatabase(str(sender.data()), readOnly=readOnly)
 
     ## Slot called by the actions in the menu "Database->Recent"
     def openRecentDatabase(self):
@@ -300,9 +300,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if dd.exec_():
             connString = str(dd.connectionString())
             # Create an empty database
-            CondDB(connString, readOnly = False, create_new_db = True)
+            CondDB(connString, readOnly=False, create_new_db=True)
             # and open it in read/write mode
-            self.openDatabase(connString, readOnly = False)
+            self.openDatabase(connString, readOnly=False)
 
     ## Open the "open database" dialog box
     def openDatabaseDialog(self):
@@ -347,13 +347,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     #
     #  @param connString connection string
     #  @param readOnly flag to select if the database has to be opened in read-only mode or in read/write mode
-    def openDatabase(self, connString, readOnly = True):
+    def openDatabase(self, connString, readOnly=True):
         try:
             # Clean the central view to avoid that old data stays there
             self.dataView.clear()
             if connString:
                 try:
-                    self.db = openDB(connString, readOnly = readOnly)
+                    self.db = openDB(connString, readOnly=readOnly)
                 except Exception as x:
                     msg = ''.join(x.args)
                     if msg.startswith("Database not found:"):
@@ -416,7 +416,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def aboutDialog(self):
         app = QApplication.instance()
         message = '''<p><b>%s</b><br/>%s</p>
-        <p>Browser for the LHCb-COOL condition database.</p>
+        <p>Browser for the LHCb COOL and Git condition database.</p>
         <p>This is build on top of the Python API to LHCb-COOL: CondDBUI,
         and the Python API to COOL: PyCool.</p>
         <p>The Graphical Library is PyQt %s, based on Qt %s</p>
@@ -441,8 +441,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.actionAdd_condition.setEnabled(not self.db.readOnly)
                 # Nodes can be deleted only if the database is in r/w mode and
                 # they are Folders or empty FolderSets
-                self.actionDelete_node.setEnabled(not self.db.readOnly
-                                                  and (item.leaf or not item.children))
+                self.actionDelete_node.setEnabled(
+                    not self.db.readOnly and (item.leaf or not item.children))
                 # Tags manipulation should be enabled only for FolderSets
                 # and multi-version folders
                 taggable = (not self.db.readOnly
@@ -494,11 +494,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self._icons is None:
             self._icons = {}
             style = QApplication.instance().style()
-            for iconName, iconId in [ ("folderset", QStyle.SP_DirIcon),
-                                      ("folder", QStyle.SP_FileIcon),
-                                      ("up", QStyle.SP_ArrowUp),
-                                      ("down", QStyle.SP_ArrowDown),
-                                      ]:
+            for iconName, iconId in [
+                ("folderset", QStyle.SP_DirIcon),
+                ("folder", QStyle.SP_FileIcon),
+                ("up", QStyle.SP_ArrowUp),
+                ("down", QStyle.SP_ArrowDown),
+            ]:
                 self._icons[iconName] = style.standardIcon(iconId)
         return self._icons
 
@@ -520,7 +521,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ## Show a critical dialog with the latest exception traceback.
     #  @param source string representing the function that trapped the exception.
-    def exceptionDialog(self, source = None):
+    def exceptionDialog(self, source=None):
         import traceback
         if source:
             msg = "Called from '%s':\n" % source
@@ -532,14 +533,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ## Helper function useful to force a refresh of the models and the selection
     #  of node if specified.
-    def _refreshModels(self, selectPath = None):
+    def _refreshModels(self, selectPath=None):
         # trigger a refresh of the caches in the models
         self.openedDB.emit(self.db)
         self._selectPath(selectPath)
 
     ## Helper function to select a path in both the combo box and the hierarchy
     #  view.
-    def _selectPath(self, selectPath = None):
+    def _selectPath(self, selectPath=None):
         if selectPath:
             #  select the specified path
             i = self.pathComboBox.findText(selectPath)
@@ -564,21 +565,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if d.exec_():
             if d.getType() == "FolderSet":
                 storageType = "NODE"
-                storageKeys = None # ignored
-                versionMode = None # ignored
+                storageKeys = None  # ignored
+                versionMode = None  # ignored
             else:
-                storageType = "XML" # actually it is not used
+                storageType = "XML"  # actually it is not used
                 storageKeys = {}
-                for k,v in d.fields():
+                for k, v in d.fields():
                     storageKeys[str(k)] = v
-                versionMode = {"MultiVersion": "MULTI",
-                               "SingleVersion": "SIGLE"}[d.getType()]
+                versionMode = {
+                    "MultiVersion": "MULTI",
+                    "SingleVersion": "SIGLE"
+                }[d.getType()]
             path = str(d.text())
-            self.db.createNode(path = path,
-                               description = str(d.description()),
-                               storageType = storageType,
-                               versionMode = versionMode,
-                               storageKeys = storageKeys)
+            self.db.createNode(
+                path=path,
+                description=str(d.description()),
+                storageType=storageType,
+                versionMode=versionMode,
+                storageKeys=storageKeys)
             # Now that the node has been created, we have to notify the models.
             # FIXME: this is the easiest solution to implement, but not optimal
             self._refreshModels(path)
@@ -590,8 +594,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message = """<p>Are you sure you want to delete the node?</p>
             <p><center><tt>%s</tt><center></p>
             <p><font color="red">The action cannot be undone.</font></p>""" % path
-            answer = QMessageBox.question(self, "Delete node?",
-                                          message,
+            answer = QMessageBox.question(self, "Delete node?", message,
                                           QMessageBox.Yes | QMessageBox.No,
                                           QMessageBox.No)
             if answer == QMessageBox.Yes:
@@ -605,8 +608,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ## Helper to show a dialog about
     def _unimplemented(self):
-        QMessageBox.information(self, "Unimplemented",
-                                "Sorry, the function you selected is not implemented yet.")
+        QMessageBox.information(
+            self, "Unimplemented",
+            "Sorry, the function you selected is not implemented yet.")
 
     ## Dump a snapshot of the current database to files
     def dumpToFiles(self):
@@ -618,14 +622,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             monitor.setWindowTitle("Dumping to files")
             monitor.setMinimumDuration(0)
             try:
-                DumpToFiles(database = self.db,
-                            time = d.pointInTime.toValidityKey(),
-                            tag = str(d.tag.currentText()),
-                            srcs = ['/'],
-                            destroot = str(d.destDir.text()),
-                            force = d.overwrite.isChecked(),
-                            addext = False,
-                            monitor = monitor)
+                DumpToFiles(
+                    database=self.db,
+                    time=d.pointInTime.toValidityKey(),
+                    tag=str(d.tag.currentText()),
+                    srcs=['/'],
+                    destroot=str(d.destDir.text()),
+                    force=d.overwrite.isChecked(),
+                    addext=False,
+                    monitor=monitor)
                 if monitor.wasCanceled():
                     monitor.reset()
                     QMessageBox.information(self, "Dump to files canceled",
@@ -645,8 +650,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             d.partition.lineEdit().setText(partName)
         if d.exec_():
             try:
-                selectionList = [PyCoolCopy.Selection(path, since, until, tags = tags)
-                                 for path, since, until, tags in d.selectionsModel.selections]
+                selectionList = [
+                    PyCoolCopy.Selection(path, since, until, tags=tags) for
+                    path, since, until, tags in d.selectionsModel.selections
+                ]
                 connStr = str(d.connectionString())
                 copyTool = PyCoolCopy.PyCoolCopy(self.db.db)
                 # reduce the verbosity of PyCoolCopy
@@ -657,14 +664,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     copyTool.append(connStr, selectionList)
                 else:
                     # FIXME : https://sft.its.cern.ch/jira/browse/ROOT-5603
-                    targetDb = CondDB(connStr,create_new_db=True,readOnly=False).db
+                    targetDb = CondDB(
+                        connStr, create_new_db=True, readOnly=False).db
                     copyTool.copy(targetDb, selectionList)
             except:
                 self.exceptionDialog()
 
     ## Add a new condition to the selected folder+channel
     def addCondition(self):
-        d = AddConditionDialog(self, externalEditor = self._externalEditor)
+        d = AddConditionDialog(self, externalEditor=self._externalEditor)
         d.setShowUTC(self.iovUTCCheckBox.checkState())
         folder, channel = self._path
         d.setLocation(folder, channel)
@@ -677,10 +685,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 _bc = BusyCursor()
                 data = []
                 for cond in d.conditionsStack:
-                    data.append({"since": cond.since,
-                                 "until": cond.until,
-                                 "channel": int(cond.channel),
-                                 "payload": cond.data})
+                    data.append({
+                        "since": cond.since,
+                        "until": cond.until,
+                        "channel": int(cond.channel),
+                        "payload": cond.data
+                    })
                 folder = d.getFolder()
                 self.db.storeXMLStringList(folder, data)
                 self._refreshModels(folder)
@@ -720,9 +730,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             <p><center><tt>%s</tt><center></p>
             <p>from the node</p>
             <p><center><tt>%s</tt><center></p>
-            <p><font color="red">The action cannot be undone.</font></p>""" % (tag, path)
-            answer = QMessageBox.question(self, "Delete tag?",
-                                          message,
+            <p><font color="red">The action cannot be undone.</font></p>""" % (
+                tag, path)
+            answer = QMessageBox.question(self, "Delete tag?", message,
                                           QMessageBox.Yes | QMessageBox.No,
                                           QMessageBox.No)
             if answer == QMessageBox.Yes:
@@ -733,6 +743,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Now that the node has been deleted, we have to notify the models.
                 # FIXME: this is the easiest solution to implement, but not optimal
                 self._refreshModels(path)
+
     ## Display context menu for the tree view
     def showHierarchyContextMenu(self, position):
         index = self.hierarchyTreeView.indexAt(position)
@@ -754,6 +765,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ## Copy the current selected path to the clipboard.
     def copyPathToClipboard(self):
         QApplication.clipboard().setText(self._path[0])
+
     ## Copy the current connection string to the clipboard.
     def copyConnStrToClipboard(self):
         QApplication.clipboard().setText(self._connectionString)
