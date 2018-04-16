@@ -78,14 +78,9 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       for ( auto it = first ; it != last ; it++) {//loop over clusters      
         unsigned short int c      = *it;
         if (c==0) continue;//padding at the end
-        //        unsigned modulesipm = c >> FTRawBank::sipmShift ;//todo
-        unsigned modulesipm = c >> FTRawBank::cellShift ;//todo
-        //        LHCb::FTChannelID chanModuleSiPM = m_readoutTool->channel(modulesipm);
-        //        LHCb::FTChannelID chanModuleSiPM = LHCb::FTChannelID(0,0,0,0,0,0,modulesipm);
-        //        chanModuleSiPM.addToChannel(source);
+        unsigned modulesipm = c >> FTRawBank::cellShift ;
         int fraction     = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize       = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-        //        clus.emplace_back(chanModuleSiPM,
         clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,modulesipm+source),
                           fraction, ( cSize ? 0 : 4 ));
       }//end loop over sipms
@@ -99,6 +94,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       auto last  = bank->end<short int>();
       for( auto it = first ;  it != last; it++ ){
         short int c         = *it;
+        if (c==0) continue;//padding at the end
         unsigned modulesipm = c >> FTRawBank::cellShift;
         unsigned sipm       = ( c >> FTRawBank::sipmShift     ) & FTRawBank::sipmMaximum;
         unsigned channel    = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
@@ -113,6 +109,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           if( !cSize2 ){ //next cluster is not last fragment
             clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm),
                               fraction, 4 );
+            warning() << "LoH: Pia1: " << clus[clus.size()-1].channelID() << endmsg;
           }
           else {//fragmented cluster, last edge found
             unsigned channel2 = ( c2 >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
@@ -133,16 +130,20 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               //add the first edge cluster
               clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm),
                                 fraction, 0 );//pseudoSize=0
+              warning() << "LoH: Pia2: " << clus[clus.size()-1].channelID() << endmsg;
               
               for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
                 // all middle clusters will have same size as the first cluster,
                 // so use same fraction
                 clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm+i),
                                   fraction, 0 );
+                warning() << "LoH: Pia3: " << clus[clus.size()-1].channelID() << endmsg;
               }              
               //add the last edge 
               clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm+diff),
                                 fraction2, 0 );
+              warning() << "LoH: Pia4: " << clus[clus.size()-1].channelID() << endmsg;
+
               if ( msgLevel( MSG::VERBOSE ) ) {
                 verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
                                       channel2, fraction2, cSize2, c2 ) << endmsg;
@@ -158,6 +159,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               //add the new cluster = cluster1+cluster2
               clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm-channel+clusChanPosition),
                                 frac, widthClus );
+              warning() << "LoH: Pia5: " << clus[clus.size()-1].channelID() << endmsg;
               
             }//end if adjacent clusters
             ++it;
@@ -166,6 +168,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         else{ //last cluster, so nothing we can do
           clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm),
                             fraction, 4 );
+          warning() << "LoH: Pia6: " << clus[clus.size()-1].channelID() << endmsg;
         }//last cluster added
       }//end loop over clusters in one sipm
     }//end loop over rawbanks        
