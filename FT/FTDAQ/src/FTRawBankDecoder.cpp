@@ -93,7 +93,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
       for( auto it = first ;  it != last; it++ ){
-        short int c         = *it;
+        unsigned short int c         = *it;
         if (c==0) continue;//padding at the end
         unsigned modulesipm = c >> FTRawBank::cellShift;
         unsigned sipm       = ( c >> FTRawBank::sipmShift     ) & FTRawBank::sipmMaximum;
@@ -101,15 +101,16 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         int fraction        = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         bool cSize          = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
 
-        short int c2         = *(it+1);
+        unsigned short int c2         = *(it+1);
         unsigned modulesipm2 = c2 >> FTRawBank::cellShift;
         //not the last cluster        
         //        if( !cSize &&  it<last-1 && (((c2 >> FTRawBank::sipmShift) & FTRawBank::sipmMaximum) == sipm) && () ){
+        LHCb::FTChannelID firstChannel = source+modulesipm;
         if( !cSize &&  it<last-1 && ((modulesipm >> (FTRawBank::sipmShift - FTRawBank::cellShift)) == (modulesipm2 >> (FTRawBank::sipmShift - FTRawBank::cellShift))) ){
           bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
           
           if( !cSize2 ){ //next cluster is not last fragment
-            clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm),
+            clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,firstChannel),
                               fraction, 4 );
           }
           else {//fragmented cluster, last edge found
@@ -129,34 +130,29 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             // only edges were saved, add middles now 
             if(diff  > m_clusterMaxWidth){
               //add the first edge cluster
-              clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm),
+              clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,firstChannel),
                                 fraction, 0 );//pseudoSize=0
               
               for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
                 // all middle clusters will have same size as the first cluster,
                 // so use same fraction
-                clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm+i),
+                clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,firstChannel+i),
                                   fraction, 0 );
-              }              
+              }
               //add the last edge 
-              clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm+diff),
+              clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,firstChannel+diff),
                                 fraction2, 0 );
-
+              
               if ( msgLevel( MSG::VERBOSE ) ) {
                 verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
                                       channel2, fraction2, cSize2, c2 ) << endmsg;
               }
             }
             else{//big cluster size upto size 8
-              unsigned int firstChan  =  channel - int( (m_clusterMaxWidth-1)/2 );
               unsigned int widthClus  =  2 * diff - 1 + fraction2  ;
-              
-              unsigned int clusChanPosition = firstChan + (widthClus-1)/2;
-              int frac                      = (widthClus-1)%2;
-              
               //add the new cluster = cluster1+cluster2
-              clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,source+modulesipm-channel+clusChanPosition),
-                                frac, widthClus );
+              clus.emplace_back(LHCb::FTChannelID(0,0,0,0,0,0,firstChannel- int( (m_clusterMaxWidth-1)/2) + (widthClus-1)/2),
+                                (widthClus-1)%2, widthClus );
               
             }//end if adjacent clusters
             ++it;
