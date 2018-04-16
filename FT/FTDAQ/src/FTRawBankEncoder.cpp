@@ -48,7 +48,7 @@ StatusCode FTRawBankEncoder::execute() {
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
 
   // Incremented to deal with new numbering scheme
-  int codingVersion = 4;
+  int codingVersion = 5;
 
   //== create the array of arrays of vectors with the proper size...  
   //== The 0.4 is empirical
