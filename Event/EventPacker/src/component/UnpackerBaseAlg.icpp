@@ -14,6 +14,7 @@ Unpack<PACKER>::Unpack( const std::string& name,
   declareProperty( "InputName" , m_inputName  = PACKER::packedLocation()   );
   declareProperty( "OutputName", m_outputName = PACKER::unpackedLocation() );
   declareProperty( "AlwaysCreateOutput",        m_alwaysOutput = false     );
+  //setProperty( "OutputLevel", MSG::VERBOSE );
 }
 
 template < class PACKER >
@@ -77,8 +78,9 @@ StatusCode Unpack<PACKER>::execute()
       if ( msgLevel(MSG::DEBUG) )
       {
         debug() << "Created " << data->size() << " data objects at '" << m_outputName << endmsg;
-        debug() << " Packed Version   = " << (int)pdata->version() << endmsg;
-        debug() << " Unpacked Version = " << (int)data->version() << endmsg;
+        debug() << " Packed Data Version    = " << (unsigned int)pdata->version() << endmsg;
+        debug() << " Packed Packing Version = " << (unsigned int)pdata->packingVersion() << endmsg;
+        debug() << " Unpacked Data Version  = " << (unsigned int)data->version() << endmsg;
       }
 
     } // input OK

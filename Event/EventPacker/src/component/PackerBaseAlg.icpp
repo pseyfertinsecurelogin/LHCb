@@ -19,6 +19,7 @@ Pack<PACKER>::Pack( const std::string& name,
   declareProperty( "DeleteInput",                m_deleteInput   = false     );
   declareProperty( "EnableCheck",                m_enableCheck   = false     );
   declareProperty( "ClearRegistry",              m_clearRegistry = true      );
+  //setProperty( "OutputLevel", MSG::VERBOSE );
 }
 
 template < class PACKER >
@@ -84,8 +85,9 @@ StatusCode Pack<PACKER>::execute()
       if ( msgLevel(MSG::DEBUG) )
       {
         debug() << "Created " << pdata->data().size() << " data objects at '" << m_outputName << endmsg;
-        debug() << " Unpacked Version = " << (int)data->version() << endmsg;
-        debug() << " Packed Version   = " << (int)pdata->version() << endmsg;
+        debug() << " Unpacked Data Version  = " << (unsigned int)data->version() << endmsg;
+        debug() << " Packed Data Version    = " << (unsigned int)pdata->version() << endmsg;
+        debug() << " Packed Packing Version = " << (unsigned int)pdata->packingVersion() << endmsg;
       }
 
       // Packing checks
@@ -93,7 +95,12 @@ StatusCode Pack<PACKER>::execute()
       {
         // make new unpacked output data object
         auto * unpacked = new typename PACKER::DataVector();
+
+        // save in TES
         put( unpacked, m_inputName+"_PackingCheck" );
+
+        // give same version as original
+        unpacked->setVersion( data->version() );
 
         // unpack
         m_packer.unpack( *pdata, *unpacked );

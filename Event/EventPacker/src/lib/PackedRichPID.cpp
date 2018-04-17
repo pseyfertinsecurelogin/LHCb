@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedRichPID.h"
 
@@ -101,7 +100,7 @@ void RichPIDPacker::unpack( const PackedData       & ppid,
 }
 
 void RichPIDPacker::unpack( const PackedDataVector & ppids,
-                            DataVector       & pids ) const
+                            DataVector             & pids ) const
 {
   const auto ver = ppids.packingVersion();
   if ( isSupportedVer(ver) )
@@ -116,6 +115,15 @@ void RichPIDPacker::unpack( const PackedDataVector & ppids,
       else           { pids.add( pid ); }
       // Fill data from packed object
       unpack( ppid, *pid, ppids, pids );
+    }
+    // Check for 'RichFuture' bug where original RichPID version was not 
+    // properly propagated to the packed data objects
+    // Easy to detect if packing version > 3 and data version = 0 
+    if ( ver > 3 && 0 == pids.version() )
+    {
+      parent().Warning( "Incorrect data version 0 for packing version > 3."
+                        " Correcting data to version 2.", StatusCode::SUCCESS ).ignore();
+      pids.setVersion(2);
     }
   }
 }
