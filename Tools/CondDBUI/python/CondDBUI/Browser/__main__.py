@@ -7,5 +7,5 @@ __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
 
 import sys
 from CondDBUI.Browser.Main import main
-sys.argv[0] = "CondDBBrowser" # Set the name of the application
+sys.argv[0] = "CondDBBrowser"  # Set the name of the application
 sys.exit(main(sys.argv))

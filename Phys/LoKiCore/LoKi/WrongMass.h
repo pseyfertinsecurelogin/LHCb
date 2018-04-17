@@ -171,12 +171,17 @@ namespace LoKi
                                    PREDICATE           cut    ,
                                    LoKi::LorentzVector result = LoKi::LorentzVector() )
     {
-      using arg_v = decltype(*first);
-      return std::accumulate(first,last,result,
-                             [&](LoKi::LorentzVector lv, arg_v part) {
-                                if (cut(part)) lv += wrongMass(part->momentum(),*begin);
-                                return lv;
-                             } );
+      using arg_p = decltype(*first);
+      using arg_m = decltype(*begin);
+      return std::inner_product(first, last,
+				begin,
+				result,
+				std::plus<LoKi::LorentzVector>{},
+				[&cut](arg_p part, arg_m m) {
+				  return cut(part) ? wrongMass(part->momentum(),m)
+				    : LoKi::LorentzVector{} ; }
+				);
+
     }
     // ========================================================================
   } // end of namespace LoKi::Kinematics
