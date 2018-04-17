@@ -100,7 +100,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   //Testing the bank version
   unsigned int version = banks[0]->version();
   if ( msgLevel(MSG::DEBUG) ) debug() << "Bank version " << version << endmsg;
-  if (version < 1 && version > 5) {
+  if (version < 2 && version > 5) {
       error() << "** Unsupported FT bank version " << version << endmsg;
       throw GaudiException("Unsupported FT bank version",
                            "FTRawBankDecoder", StatusCode::FAILURE);
