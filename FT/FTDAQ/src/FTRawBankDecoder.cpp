@@ -16,11 +16,15 @@
 // 2012-05-11 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-namespace {
-
+namespace {  
 unsigned channelInTell40(short int c) {
-    return ( c >> FTRawBank::cellShift     );
+  return ( c >> FTRawBank::cellShift     );
 }
+  
+unsigned getSipm(short int c){
+  return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
+}
+
 int fraction(short int c) {
     return ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
 }
@@ -327,9 +331,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         //not the last cluster        
         // if( !cSize &&  it<last-1 && (((c2 >> FTRawBank::sipmShift) & FTRawBank::sipmMaximum) == sipm) && () ){
         LHCb::FTChannelID firstChannel = source+modulesipm;
-        if( !cSize1 &&  it<last-1 &&
-            ((modulesipm >> (FTRawBank::sipmShift - FTRawBank::cellShift)) ==
-                (modulesipm2 >> (FTRawBank::sipmShift - FTRawBank::cellShift))) ){
+        if( !cSize1 &&  it<last-1 && (getSipm(modulesipm) == getSipm(modulesipm2)))
+          {
           bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
           
           if( !cSize2 ){ //next cluster is not last fragment
@@ -401,14 +404,14 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                      [](auto first, auto last) {
                          if (first==last) return;
                          auto chanID = first->channelID(); // FTChannelID first cluster
-                         unsigned int iQua = chanID.quarter();
+                         unsigned int iUQua = chanID.uniqueQuarter();
                          // Swap clusters within modules
                          // if quadrant==0 or 3 for even layers or quadrant==1 or 2 for odd layers
-                         if( ((chanID.layer()&1)==0) ^ (iQua>>1) ^ (iQua&1) ) {
+                         if( (((iUQua >> 2)&1)==0) ^ ((iUQua & 3)>>1) ^ (iUQua & 1) ) {
                            reverse_each_module(first,last);
                          }
                          // Swap clusters within full quadrant
-                         if( (iQua & 1) == 0 ) { // quadrant==0 or 2
+                         if( (iUQua & 1) == 0 ) { // quadrant==0 or 2
                            std::reverse(first, last);  // swap clusters in quadrant
                          }
   });
