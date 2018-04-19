@@ -25,9 +25,14 @@ unsigned getSipm(short int c){
   return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
 }
 
+int cell(short int c) {
+  return ( c >> FTRawBank::cellShift ) & FTRawBank::cellMaximum;
+}
+
 int fraction(short int c) {
     return ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
 }
+
 bool cSize(short int c) {
     return ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
 }
@@ -314,9 +319,10 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       partitionPoints.push_back(clus.size());
     }//end loop over rawbanks
   }//version == 4  
-  else if (version == 5) {
+  else if (version == 5) {    
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
-      LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
+      LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());      
+      //Define the work flow
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
       for( auto it = first ;  it != last; ++it ){
@@ -324,63 +330,65 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         if (c==0) continue;//padding at the end
         unsigned modulesipm = channelInTell40(c);
         int fraction1       = fraction(c);
-        bool cSize1         = cSize(c);
-
+        bool cSize1         = cSize(c);                
+        
         unsigned short int c2         = *(it+1);
         unsigned modulesipm2 = channelInTell40(c2);
-        //not the last cluster        
-        // if( !cSize &&  it<last-1 && (((c2 >> FTRawBank::sipmShift) & FTRawBank::sipmMaximum) == sipm) && () ){
         LHCb::FTChannelID firstChannel = source+modulesipm;
+        //Define the Lambda functions
+        //    //Basic make cluster
+        auto make_cluster = [&](unsigned chan, int fraction, int size) {
+          clus.emplace_back( chan,
+                             fraction, size );
+        };//End lambda make_cluster
+        
+        //    //Make clusters between two channels
+        auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
+          unsigned int delta = (cell(c2) - cell(c));
+          
+          if( UNLIKELY( delta > 128 ) ) {
+            this->error()<<"something went terribly wrong here first fragment: " << cell(c)
+                         <<" second fragment: "  << cell(c2) << endmsg;
+            throw GaudiException("There is an inconsistency between Encoder and Decoder!",
+                                 "FTRawBankDecoder",
+                                 StatusCode::FAILURE);
+          }
+          // fragmented clusters, size > 2*max size
+          // only edges were saved, add middles now
+          if ( delta  > m_clusterMaxWidth ) {
+            //add the first edge cluster, and then the middle clusters
+            for(unsigned int  i = 0; i < delta ; i+= m_clusterMaxWidth){
+              // all middle clusters will have same size as the first cluster,
+              // so re-use the fraction
+              make_cluster( firstChannel+i, fraction(c), 0 );
+            }
+            //add the last edge
+            make_cluster  ( firstChannel+cell(c2)-cell(c), fraction(c2), 0 );
+          } else { //big cluster size upto size 8
+
+            unsigned int widthClus  =  2 * delta - 1 + fraction(c2);            
+            //add the new cluster = cluster1+cluster2
+            make_cluster( firstChannel + (widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ), (widthClus-1)%2, widthClus );
+          }//end if adjacent clusters
+        };//End lambda make_clusters
+        
+        // Workflow
+        //        //not the last cluster
         if( !cSize1 &&  it<last-1 && (getSipm(modulesipm) == getSipm(modulesipm2)))
           {
-          bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-          
-          if( !cSize2 ){ //next cluster is not last fragment
-            clus.emplace_back(firstChannel,fraction1, 4 );
-          }
-          else {//fragmented cluster, last edge found
-            unsigned modulesipm2 = channelInTell40( c2 );
+            bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
             
-            unsigned int diff = (modulesipm2 - modulesipm);
-            
-            if( UNLIKELY( diff > 128 ) ) {
-              error()<<"something went terribly wrong here first fragment: " << modulesipm
-                     <<" second fragment: "  << modulesipm2 << endmsg;
-              throw GaudiException("There is an inconsistency between Encoder and Decoder!",
-                                   "FTRawBankDecoder",
-                                   StatusCode::FAILURE);
+            if( !cSize2 ){ //next cluster is not last fragment
+              make_cluster(firstChannel,fraction1, 4 );
             }
-            // fragmented clusters, size > 2*max size
-            // only edges were saved, add middles now 
-            if(diff  > m_clusterMaxWidth){
-              //add the first edge cluster
-              clus.emplace_back(firstChannel,fraction1, 0 );//pseudoSize=0
-              
-              for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
-                // all middle clusters will have same size as the first cluster,
-                // so use same fraction
-                clus.emplace_back(firstChannel+i, fraction1, 0 );
-              }
-              //add the last edge 
-              clus.emplace_back(firstChannel+diff, fraction(c2), 0 );
-              
-              if ( msgLevel( MSG::VERBOSE ) ) {
-                verbose() << format(  "last edge cluster %4d frac %3d size %3d code %4.4x",
-                                      modulesipm2, fraction(c2), cSize2, c2 ) << endmsg;
-              }
-            }
-            else{//big cluster size upto size 8
-              unsigned int widthClus  =  2 * diff - 1 + fraction(c2)  ;
-              //add the new cluster = cluster1+cluster2
-              clus.emplace_back(firstChannel- int( (m_clusterMaxWidth-1)/2) + (widthClus-1)/2,
-                                (widthClus-1)%2, widthClus );
-              
-            }//end if adjacent clusters
-            ++it;
-          }//last edge found
-        }//not the last cluster
+            else {//fragmented cluster, last edge found
+              make_clusters(firstChannel,c,c2);
+              ++it;
+            }//last edge found
+          }//not the last cluster
+        
         else{ //last cluster, so nothing we can do
-          clus.emplace_back(source+modulesipm, fraction1, 4 );
+          make_cluster(source+modulesipm, fraction1, 4 );
         }//last cluster added
       }//end loop over clusters in one sipm
     }//end loop over rawbanks        
