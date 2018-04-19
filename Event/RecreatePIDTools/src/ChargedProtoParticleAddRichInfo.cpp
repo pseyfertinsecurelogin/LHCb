@@ -47,6 +47,7 @@ ChargedProtoParticleAddRichInfo( const std::string& name,
   // ProtoParticles
   declareProperty( "ProtoParticleLocation", m_protoPath );
 
+  //setProperty( "OutputLevel", MSG::DEBUG );
 }
 
 //=============================================================================
@@ -143,7 +144,9 @@ bool ChargedProtoParticleAddRichInfo::getRichData()
   }
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Successfully loaded " << richpids->size()
-            << " RichPIDs from " << m_richPath << endmsg;
+            << " RichPIDs from " << m_richPath 
+            << " Version " << (unsigned int)richpids->version()
+            << endmsg;
 
   // refresh the reverse mapping
   for ( const LHCb::RichPID * pid : *richpids )
