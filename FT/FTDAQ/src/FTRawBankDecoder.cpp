@@ -374,24 +374,22 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         
         // Workflow
         //        //not the last cluster
-        if( !cSize1 &&  it<last-1 && (getSipm(modulesipm) == getSipm(modulesipm2)))
-          {
-            bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-            
-            if( !cSize2 ){ //next cluster is not last fragment
-              make_cluster(firstChannel,fraction1, 4 );
-            }
-            else {//fragmented cluster, last edge found
+        bool cSize2       = cSize(c2);
+        if( !cSize2 ){ //next cluster is not last fragment
+          make_cluster(firstChannel,fraction1, 4 );
+        }
+        else{
+          if( !cSize1 &&  it<last-1 && (getSipm(modulesipm) == getSipm(modulesipm2)))
+            {
               make_clusters(firstChannel,c,c2);
               ++it;
-            }//last edge found
-          }//not the last cluster
-        
-        else{ //last cluster, so nothing we can do
-          make_cluster(source+modulesipm, fraction1, 4 );
-        }//last cluster added
-      }//end loop over clusters in one sipm
-    }//end loop over rawbanks        
+            }
+          else {//fragmented cluster, last edge found
+            make_cluster(source+modulesipm, fraction1, 4 );
+          }//last edge found
+        }
+      }
+    }//end loop over rawbanks
   }//version ==5
 
   assert( partitionPoints.back() == static_cast<int>(clus.size()) );
