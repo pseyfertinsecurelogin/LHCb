@@ -18,11 +18,12 @@
 
 namespace {  
 unsigned channelInTell40(short int c) {
-  return ( c >> FTRawBank::cellShift     );
+  return ( c >> FTRawBank::cellShift);
 }
   
 unsigned getSipm(short int c){
-  return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
+  //  return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
+  return ((c >> FTRawBank::sipmShift) & FTRawBank::sipmMaximum); 
 }
 
 int cell(short int c) {
@@ -329,20 +330,18 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         unsigned short int c = *it;
         if (c==0) continue;//padding at the end
         unsigned modulesipm = channelInTell40(c);
-        int fraction1       = fraction(c);
-        bool cSize1         = cSize(c);                
-        
-        unsigned short int c2         = *(it+1);
-        unsigned modulesipm2 = channelInTell40(c2);
-        LHCb::FTChannelID firstChannel = source+modulesipm;
-        //Define the Lambda functions
+        LHCb::FTChannelID channel = source+modulesipm;
+        //Define the Lambda functions        
         //    //Basic make cluster
         auto make_cluster = [&](unsigned chan, int fraction, int size) {
           clus.emplace_back( chan,
                              fraction, size );
         };//End lambda make_cluster
-        
-        //    //Make clusters between two channels
+        //        //Allows to remove last cluster
+        auto removeLastCluster = [&](){
+          clus.pop_back();
+        };
+        //    //Make clusters between two channels        
         auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
           unsigned int delta = (cell(c2) - cell(c));
           
@@ -357,7 +356,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           // only edges were saved, add middles now
           if ( delta  > m_clusterMaxWidth ) {
             //add the first edge cluster, and then the middle clusters
-            for(unsigned int  i = 0; i < delta ; i+= m_clusterMaxWidth){
+            for(unsigned int  i = 0; i < delta ; i+= m_clusterMaxWidth){              
+              if (i==0)continue;
               // all middle clusters will have same size as the first cluster,
               // so re-use the fraction
               make_cluster( firstChannel+i, fraction(c), 0 );
@@ -365,28 +365,22 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             //add the last edge
             make_cluster  ( firstChannel+cell(c2)-cell(c), fraction(c2), 0 );
           } else { //big cluster size upto size 8
-
             unsigned int widthClus  =  2 * delta - 1 + fraction(c2);            
-            //add the new cluster = cluster1+cluster2
-            make_cluster( firstChannel + (widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ), (widthClus-1)%2, widthClus );
+            //add the new cluster = cluster1+cluster2, and remove the one that was formed before.
+            removeLastCluster();
+            make_cluster( firstChannel + (widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ), (widthClus-1)%2, widthClus );            
           }//end if adjacent clusters
         };//End lambda make_clusters
         
         // Workflow
-        //        //not the last cluster
-        bool cSize2       = cSize(c2);
-        if( !cSize2 ){ //next cluster is not last fragment
-          make_cluster(firstChannel,fraction1, 4 );
-        }
-        else{
-          if( !cSize1 &&  it<last-1 && (getSipm(modulesipm) == getSipm(modulesipm2)))
-            {
-              make_clusters(firstChannel,c,c2);
-              ++it;
-            }
-          else {//fragmented cluster, last edge found
-            make_cluster(source+modulesipm, fraction1, 4 );
-          }//last edge found
+        if (!cSize(c) || it == first)//No previous cluster or no size flag.
+          make_cluster(channel,fraction(c),4);
+        else{//Flagged and not the first one.
+          unsigned c2 = *(it-1);
+          if (cSize(c2) || (getSipm(c) != getSipm(c2)))//Not the same SiPM or flag size
+            make_cluster(channel,fraction(c),4);
+          else
+            make_clusters(source+channelInTell40(c2),c2,c);
         }
       }
     }//end loop over rawbanks
