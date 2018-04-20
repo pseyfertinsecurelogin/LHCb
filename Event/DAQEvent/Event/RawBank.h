@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "Kernel/STLExtensions.h"
 
 /** @class LHCb::RawBank RawBank.h
   *
@@ -25,23 +26,24 @@
   * @author Helder Lopes
   * @author Markus Frank
   * created Tue Oct 04 14:45:20 2005
-  * 
+  *
   */
-namespace LHCb 
+namespace LHCb
 {
   class RawBankSubClass;
-  
+
   class RawBank  {
     /// Need to declare some friend to avoid compiler warnings
     friend class RawBankSubClass;
   private:
     /// Default Constructor
-    RawBank() {}
+    RawBank() = default;
 
     /// Default Destructor
-    ~RawBank() {}
+    ~RawBank() = default;
 
-  public:   
+
+  public:
 
 
 
@@ -86,7 +88,7 @@ namespace LHCb
                    OTRaw,           // 32
                    OTError,         // 33
                    EcalPackedError, // 34
-                   HcalPackedError, // 35  
+                   HcalPackedError, // 35
                    PrsPackedError,  // 36
                    L0CaloFull,      // 37
                    L0CaloError,     // 38
@@ -114,7 +116,7 @@ namespace LHCb
                    DstData,         // 60
                    DstAddress,      // 61
                    FileID,          // 62
-                   VP,              // 63   
+                   VP,              // 63
                    FTCluster,       // 64
                    VL,              // 65
                    UT,              // 66
@@ -130,7 +132,7 @@ namespace LHCb
 
     /// Get any bank type as a string
     static std::string typeName(LHCb::RawBank::BankType e);
-    
+
     /// Get this bank type as a string
     inline std::string typeName(){return LHCb::RawBank::typeName( type() ); }
 
@@ -153,17 +155,17 @@ namespace LHCb
     void setSize(size_t val)        {    m_length = (val&0xFFFF)+hdrSize();    }
 
     /// Access the full (padded) size of the bank
-    int totalSize() const           { 
+    int totalSize() const           {
       typedef unsigned int T;
       return m_length%sizeof(T)==0 ? m_length : (m_length/sizeof(T)+1)*sizeof(T);
     }
-    /// Return bankType of this bank 
+    /// Return bankType of this bank
     BankType type() const           {    return BankType(int(m_type));              }
 
     /// Set the bank type
     void setType(BankType val)      {    m_type = (unsigned char)(char(val)&0xFF);  }
 
-    /// Return version of this bank 
+    /// Return version of this bank
     int version() const             {    return m_version;                          }
 
     /// Set the version information of this bank
@@ -181,17 +183,20 @@ namespace LHCb
     /// Return pointer to begining of data body of the bank (const data access)
     const unsigned int* data() const {   return &m_data[0];         }
 
-    /// Begin iterator 
-    template <typename T> T* begin(){    return (T*)m_data;         }
+    /// Begin iterator
+    template <typename T> T* begin(){    return reinterpret_cast<T*>(m_data);         }
 
-    /// End iterator 
-    template <typename T> T* end()  {    return ((T*)m_data) + size()/sizeof(T);  }
+    /// End iterator
+    template <typename T> T* end()  {    return begin<T>() + size()/sizeof(T);  }
 
     /// Begin iterator over const iteration
-    template <typename T> const T* begin() const {return (T*)m_data;}
+    template <typename T> const T* begin() const {return reinterpret_cast<const T*>(m_data);}
 
     /// End iterator of const iteration
-    template <typename T>  const T* end() const  {return ((T*)m_data) + size()/sizeof(T);  }
+    template <typename T>  const T* end() const  {return begin<T>() + size()/sizeof(T);  }
+
+    /// return a range of 'const T'
+    template <typename T>  LHCb::span<const T> range() const { return { begin<T>(), end<T>() }; }
 
   private:
     /// Magic word (by definition 0xCBCB)
