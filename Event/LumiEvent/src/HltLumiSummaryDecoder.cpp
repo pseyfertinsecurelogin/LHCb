@@ -64,22 +64,15 @@ HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
   LHCb::HltLumiSummary hltLumiSummary;
 
   // Get the buffers associated with the HltLumiSummary
-  const auto& banks = event.banks( RawBank::HltLumiSummary );
   // Now copy the information from all banks (normally there should only be one)
-  for (const auto& ibank : banks ) {
+  for ( const auto& ibank : event.banks( RawBank::HltLumiSummary ) ) {
     // get now the raw data
-    const unsigned int* idata = ibank->data() ;
-
-    // The data part
-    const unsigned int* begin = idata ;
-    const unsigned int* end   = idata + ibank->size()/sizeof( unsigned int ) ;
-    for( const unsigned int* itW = begin; end != itW; itW++ ) {
+    for( const unsigned w : ibank->range<unsigned int>() ) {
       // decode the info
-      int iKey = (*itW >> 16);
-      int iVal = (*itW & 0xFFFF);
-      if ( MSG::VERBOSE >= msgLevel() ) {
-        verbose() << format ( " %8x %11d %11d %11d ", *itW, *itW, iKey, iVal )
-                  << endmsg;
+      int iKey = (w >> 16);
+      int iVal = (w & 0xFFFF);
+      if ( msgLevel(MSG::VERBOSE) ) {
+        verbose() << format ( " %8x %11d %11d %11d ", w, w, iKey, iVal ) << endmsg;
       }
       // add this counter
       hltLumiSummary.addInfo( iKey, iVal);
