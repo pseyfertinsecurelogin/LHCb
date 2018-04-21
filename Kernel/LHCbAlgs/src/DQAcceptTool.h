@@ -10,7 +10,7 @@
 // Implemented interfaces
 #include "Kernel/IAccept.h" // IAccept
 
-class Condition;
+struct Condition;
 
 /** @class DQAcceptTool DQAcceptTool.h src/DQAcceptTool.h
   *
@@ -25,8 +25,6 @@ public:
 
   /// Standard constructor
   DQAcceptTool(const std::string& type, const std::string& name, const IInterface* parent);
-
-  virtual ~DQAcceptTool() = default; ///< Destructor
 
   /// Initialize the tool.
   StatusCode initialize() override;

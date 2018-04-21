@@ -4,7 +4,7 @@
 // LHCb
 #include "DAQKernel/DecoderHistoAlgBase.h"
 
-class Condition;
+struct Condition;
 
 /** @class HCRawBankDecoderHlt.h
  *
@@ -34,7 +34,7 @@ class HCRawBankDecoderHlt : public Decoder::HistoAlgBase {
   unsigned int m_crateF = 1;
 
   /// Masking flag for each channel.
-  
+
   enum { nChannels = 64 };
   std::bitset<2*nChannels> m_masked;
   /// Station number for each channel.

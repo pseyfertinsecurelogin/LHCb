@@ -1,4 +1,4 @@
-#include <string> 
+#include <string>
 
 #include "DetDesc/Condition.h"
 
@@ -7,18 +7,7 @@
 
 //---------------------------------------------------------------------------
 
-/// Default constructor
-Condition::Condition() : ParamValidDataObject() {}
-
-//---------------------------------------------------------------------------
-
-/// Copy constructor
-Condition::Condition (const Condition& obj)
-  : IValidity(), ParamValidDataObject (obj) {}
-
-//---------------------------------------------------------------------------
-
-/// Update using another instance of this class: deep copy all 
+/// Update using another instance of this class: deep copy all
 /// contents, except for the properties of a generic DataObject
 void Condition::update ( ValidDataObject& obj )
 {
@@ -30,7 +19,7 @@ void Condition::update ( ValidDataObject& obj )
 //=========================================================================
 //  Prepare an XML string representing the condition
 //=========================================================================
-std::string Condition::toXml(std::string name, bool header, int precision) const{
+std::string Condition::toXml(boost::string_ref name, bool header, int precision) const{
   std::ostringstream xml;
   if (header) {
     // XML header
@@ -41,34 +30,26 @@ std::string Condition::toXml(std::string name, bool header, int precision) const
     // condition open
   }
   xml << "<condition classID=\"" << this->clID() << "\" name=\"";
-  
+
   if (name.empty()) {
-    if (registry()){
-      name = registry()->name();
-    } else {
-      name = "Condition";
-    }
+      name = ( registry() ? registry()->name() : "Condition" );
   }
-  if ( name[0] == '/' ) {
-    name = name.substr(1);
-  }
+  if ( name.front() == '/' ) name.remove_prefix(1);
+
   xml << name << "\">";
 
-  std::vector<std::string> pars;
-  std::vector<std::string>::const_iterator i;
   // loop over parameters
-  pars = paramNames();
-  for ( i = pars.begin(); i != pars.end(); ++i ){
-    xml << paramToString(*i, precision);
+  for ( const auto& i : paramNames() ) {
+    xml << paramToString(i, precision);
   }
-  
+
   // condition close
   xml << "</condition>";
   if (header) {
     // DDDB close
     xml << "</DDDB>";
   }
-  
+
   return xml.str();
 }
 //---------------------------------------------------------------------------

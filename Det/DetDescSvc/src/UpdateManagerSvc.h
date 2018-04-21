@@ -32,7 +32,7 @@
 template <class TYPE> class SvcFactory;
 class IIncidentSvc;
 class IEventProcessor;
-class Condition;
+struct Condition;
 
 /** @class UpdateManagerSvc UpdateManagerSvc.h
  *

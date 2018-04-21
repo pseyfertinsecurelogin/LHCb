@@ -1,6 +1,7 @@
 #ifndef DETDESC_CONDITION_H
 #define DETDESC_CONDITION_H 1
 
+#include "boost/utility/string_ref.hpp"
 #include <string>
 
 // Base classes
@@ -19,15 +20,10 @@
  *  @author Sebastien Ponce
  *  @author Andrea Valassi
  */
-class Condition : public ParamValidDataObject {
-
- public:
+struct Condition : ParamValidDataObject {
 
   /// Default constructor
-  Condition();
-
-  /// Copy constructor
-  Condition (const Condition& obj);
+  Condition() = default;
 
   /// Update using another ValidDataObject: deep copy all contents,
   /// except for the properties of a generic DataObject
@@ -35,10 +31,7 @@ class Condition : public ParamValidDataObject {
   void update ( ValidDataObject& obj) override;
 
   /// Prepare an XML string representing the condition.
-  virtual std::string toXml(std::string name = "", bool header = false, int precision = 16) const;
-
-
- public:
+  virtual std::string toXml(boost::string_ref name = {}, bool header = false, int precision = 16) const;
 
   /**
    * This method initializes the condition. It should be overridden
@@ -46,8 +39,6 @@ class Condition : public ParamValidDataObject {
    * user code easily in the initialization of a condition.
    */
   virtual StatusCode initialize();
-
- public:
 
   // Re-implemented from DataObject
 

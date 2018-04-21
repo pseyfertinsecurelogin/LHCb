@@ -18,7 +18,7 @@ struct IReadOut;
 struct ISlowControl;
 struct IFastControl;
 
-class Condition;
+struct Condition;
 class ParamValidDataObject;
 
 /** the unique interface identifier

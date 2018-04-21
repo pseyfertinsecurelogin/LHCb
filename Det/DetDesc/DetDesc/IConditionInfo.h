@@ -4,9 +4,9 @@
 #include "GaudiKernel/IInterface.h"
 // Forward declarations
 struct IDetectorElement;
-class Condition;
+struct Condition;
 
-/** the unique interface identifier 
+/** the unique interface identifier
  * ( unique interface identifier , major & minor versions)
  */
 static const InterfaceID IID_IConditionInfo( "IConditionInfo" , 2 , 0 );
@@ -17,18 +17,18 @@ static const InterfaceID IID_IConditionInfo( "IConditionInfo" , 2 , 0 );
     An abstract interface to get the condition information of
     a detector element.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
 struct IConditionInfo : virtual IInterface
 {
-  
-  /** retrieve the uniqie interface identifier 
-   *  @return the unique interface identifier 
+
+  /** retrieve the uniqie interface identifier
+   *  @return the unique interface identifier
    */
   static const InterfaceID& interfaceID() { return IID_IConditionInfo; }
-  
+
   /// Get a pointer to the detector element to which the ConditionInfo belongs
   virtual IDetectorElement* detElem() const = 0 ;
 
