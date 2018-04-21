@@ -71,21 +71,29 @@ namespace LHCb
      * @version 1.0
      */
     struct Bank final {
-      int           m_len;      // Bank length
-      char          m_owns;     //! transient data member: ownership flag
-      unsigned int* m_buff;     //[m_len]
+      int           m_len  = 0;      // Bank length
+      char          m_owns = 1;     //! transient data member: ownership flag
+      unsigned int* m_buff = nullptr;     //[m_len]
+      /// Default constructor
+      Bank() = default;
       /// Initializing constructor
       Bank(int len, char owns, unsigned int* b) : m_len(len), m_owns(owns), m_buff(b) {}
-      /// Default constructor
-      Bank() : Bank(0,1,nullptr) {}
       /// Copy constructor
-      Bank(const Bank& c) : m_len(c.m_len), m_owns(c.m_owns), m_buff(c.m_buff) { }
+      [[deprecated("copy ctor should not exist...")]]
+      Bank(const Bank& ) = default;
+      Bank(Bank&& rhs) {
+          m_len=rhs.m_len;
+          m_owns = std::exchange( rhs.m_owns, false );
+          m_buff=rhs.m_buff;
+      }
       /// Assignment operator
-      Bank& operator=(const Bank& c)  {
-        m_len  = c.m_len;
-        m_owns = c.m_owns;
-        m_buff = c.m_buff;
-        return *this;
+      [[deprecated("copy assignement should not exist...")]]
+      Bank& operator=(const Bank&) = default;
+      Bank& operator=(Bank&& rhs) {
+          m_len=rhs.m_len;
+          m_owns=std::exchange( rhs.m_owns, false );
+          m_buff=rhs.m_buff;
+          return *this;
       }
       /// Access to memory buffer
       unsigned int* buffer()    {   return m_buff;          }

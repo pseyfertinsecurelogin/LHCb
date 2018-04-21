@@ -12,7 +12,7 @@ namespace {
 }
 
 // Default Constructor
-LHCb::RawEvent::RawEvent() 
+LHCb::RawEvent::RawEvent()
 : m_mapped(false)
 {
 }
@@ -20,9 +20,8 @@ LHCb::RawEvent::RawEvent()
 // Default Destructor
 LHCb::RawEvent::~RawEvent() {
   for(Bank& b : m_banks) {
-    if ( b.ownsMemory() && b.buffer() ) delete [] b.buffer();
+    if ( b.ownsMemory() ) delete [] b.buffer();
   }
-  m_banks.clear();
 }
 
 size_t LHCb::RawEvent::paddedBankLength(size_t len)   {
@@ -43,14 +42,14 @@ const std::vector<LHCb::RawBank*>& LHCb::RawEvent::mapBanks(RawBank::BankType ba
 }
 
 // For offline use only: copy data into a set of banks, adding bank header internally.
-void LHCb::RawEvent::addBank( int srcID, 
-                              LHCb::RawBank::BankType typ, 
-                              int vsn, 
+void LHCb::RawEvent::addBank( int srcID,
+                              LHCb::RawBank::BankType typ,
+                              int vsn,
                               const std::vector<unsigned int>& data)  {
   adoptBank( createBank(srcID, typ, vsn, data.size()*sizeof(unsigned int), &(*data.begin())), true );
 }
 
-LHCb::RawBank* LHCb::RawEvent::createBank( int srcID, 
+LHCb::RawBank* LHCb::RawEvent::createBank( int srcID,
                                            LHCb::RawBank::BankType typ,
                                            int vsn,
                                            size_t len,
