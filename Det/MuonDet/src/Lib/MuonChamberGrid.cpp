@@ -8,7 +8,10 @@
 #include "MuonDet/MuonFrontEndID.h"
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
+#include <cassert>
+#include "boost/lexical_cast.hpp"
+#include "boost/utility/string_ref.hpp"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonChamberGrid
@@ -19,10 +22,10 @@
 //=============================================================================
 StatusCode MuonChamberGrid::initialize(){
 
-  char patt[400]; int Ngrid(0);
-  sprintf(patt,"%s",(this->name()).c_str());
-  sscanf(patt,"/G%d",&Ngrid);
-  m_number_of_grid = Ngrid;
+  boost::string_ref n = this->name();
+  assert( n.starts_with( "/G" ) );
+  n.remove_prefix(2);
+  m_number_of_grid = boost::lexical_cast<int>( n.data(), n.size() );
 
   m_x_pad_rdout1     = param< std::vector<double> >("xrd1");
   m_y_pad_rdout1     = param< std::vector<double> >("yrd1");
@@ -41,9 +44,6 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
   using GaudiUtils::operator<<; // for streaming std::vector
 
   std::vector< std::pair< MuonFrontEndID,std::array<float,4> > > keepTemporary;
-  std::pair< MuonFrontEndID,std::array<float,4> > tmpPair;
-  std::vector<double> x_rdout;
-  std::vector<double> y_rdout;
   double ParallelCutOff=0.0001;
 
   bool debug = false;
@@ -76,13 +76,8 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
     int PhNx,PhNy;
 
     //Readout choice
-    if(iRd) {
-      x_rdout = m_x_pad_rdout2;
-      y_rdout = m_y_pad_rdout2;
-    } else {
-      x_rdout = m_x_pad_rdout1;
-      y_rdout = m_y_pad_rdout1;
-    }
+    const std::vector<double>& x_rdout = ( iRd ? m_x_pad_rdout2 : m_x_pad_rdout1 );
+    const std::vector<double>& y_rdout = ( iRd ? m_y_pad_rdout2 : m_y_pad_rdout1 );
 
     //Physical channels settings related to the grid/readout
     PhNx = x_rdout.size();
@@ -153,16 +148,8 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
                        << nxChaExit<<std::endl;
 
     for (unsigned int Xloop=nxChaEntry;Xloop<=nxChaExit;Xloop++){
-      if(Xloop==nxChaEntry){
-        xBegin= xstart;
-      } else {
-        xBegin = retLenght(Xloop,x_rdout);
-      }
-      if(Xloop==nxChaExit){
-        xEnd= xstop;
-      }else{
-        xEnd = retLenght(Xloop+1,x_rdout);
-      }
+      xBegin = (Xloop==nxChaEntry ? xstart : retLenght(Xloop,x_rdout) );
+      xEnd   = (Xloop==nxChaExit  ? xstop  : retLenght(Xloop+1,x_rdout) );
 
       if(debug) std::cout<< "Linear Parameters bef p flag. Xbeg "
                          <<xBegin<<"; xEnd: "
@@ -195,7 +182,6 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
       for(inyLo = 0; inyLo < PhNy; inyLo++) {
         if(yBegin - tmpYLenght > ParallelCutOff) {
           tmpYLenght += y_rdout[inyLo];
-          //	  tmpYBegin =  inyLo+1;
           tmpYBegin =  inyLo;
         } else {
           break;
@@ -205,7 +191,6 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
       for(inyLo = 0; inyLo < PhNy; inyLo++) {
         if(yEnd - tmpYLenght > ParallelCutOff) {
           tmpYLenght += y_rdout[inyLo];
-          //	  tmpYEnd =  inyLo+1;
           tmpYEnd =  inyLo;
         } else {
           break;
@@ -304,17 +289,14 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
   return keepTemporary;
 }
 
-double MuonChamberGrid::retLenght(int nLx,  std::vector<double> my_list){
-  double lenght(0);
+double MuonChamberGrid::retLenght(int nLx, const std::vector<double>& my_list){
   int VctSize = my_list.size();
   if(nLx > VctSize) {
     nLx = VctSize;
     std::cout<<"MuonChamberGrid:: Vector index Out Of Range."<<std::endl;
   }
-  for(int inxLo = 0; inxLo < nLx; inxLo++) {
-    lenght += my_list[inxLo];
-  }
-  return lenght;
+  return std::accumulate( begin(my_list), std::next(begin(my_list),nLx),
+                          double{0} );
 }
 
 StatusCode MuonChamberGrid::getPCCenter(MuonFrontEndID fe,

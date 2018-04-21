@@ -27,40 +27,24 @@ public:
   std::vector< std::pair<MuonFrontEndID, std::array<float,4> > > listOfPhysChannels(double x_enter,double y_enter,
 										   double x_exit,double y_exit);
 
-  double retLenght(int nLx,  std::vector<double> my_list);
+  double retLenght(int nLx,  const std::vector<double>& my_list);
 
   // Class ID of this class
-  inline static  const CLID& classID() {
-    return CLID_MuonChamberGrid;
-  };
+  static  const CLID& classID() { return CLID_MuonChamberGrid; };
 
-  inline unsigned int getNGrid(){
-    return m_number_of_grid;
-  }
+  unsigned int getNGrid(){ return m_number_of_grid; }
 
-  inline std::vector<int> getReadoutGrid(){
-    return m_readoutType;
-  }
+  const std::vector<int>& getReadoutGrid() { return m_readoutType; }
 
-  inline std::vector<int> getMapGrid(){
-    return m_mapType;
-  }
+  const std::vector<int>& getMapGrid() { return m_mapType; }
 
-  inline int getGrid1SizeX(){
-    return m_x_pad_rdout1.size();
-  }
+  int getGrid1SizeX(){ return m_x_pad_rdout1.size(); }
 
-  inline int getGrid1SizeY(){
-    return m_y_pad_rdout1.size();
-  }
+  int getGrid1SizeY(){ return m_y_pad_rdout1.size(); }
 
-  inline int getGrid2SizeX(){
-    return m_x_pad_rdout2.size();
-  }
+  int getGrid2SizeX(){ return m_x_pad_rdout2.size(); }
 
-  inline int getGrid2SizeY(){
-    return m_y_pad_rdout2.size();
-  }
+  int getGrid2SizeY(){ return m_y_pad_rdout2.size(); }
 
 
   StatusCode getPCCenter(MuonFrontEndID fe,
