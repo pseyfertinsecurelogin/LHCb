@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/IRegistry.h"
@@ -19,22 +19,12 @@
 DECLARE_COMPONENT( FSRNavigator )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FSRNavigator::FSRNavigator( const std::string& type,
-                                const std::string& name,
-                                const IInterface* parent )
-  : base_class ( type, name , parent )
-{
-  declareInterface<IFSRNavigator>(this);
-}
-//=============================================================================
 // Initialisation
 //=============================================================================
 StatusCode FSRNavigator::initialize() {
 
   StatusCode sc = base_class::initialize(); // must be executed first
-  if ( !sc ) return sc ; 
+  if ( !sc ) return sc ;
 
   // get the File Records service
   m_fileRecordSvc = service("FileRecordDataSvc", true);
@@ -66,48 +56,48 @@ std::vector< std::string > FSRNavigator::navigate(std::string rootname, std::str
 void FSRNavigator::explore(IRegistry* pObj, std::string tag, std::vector< std::string >& addresses) {
   // add the addresses which contain the tag to the list and search through the leaves
   if ( msgLevel(MSG::DEBUG) ) debug() << "Exploring Registry Object: " << endmsg;
-  if ( 0 != pObj )    
+  if ( pObj )
   {
     if ( msgLevel(MSG::VERBOSE) ) verbose() << "Object is not null" << endmsg;
-    std::string name = pObj->name();
+    const auto& name = pObj->name();
     if ( msgLevel(MSG::VERBOSE) ) verbose() << "Object is " << name << "and I'm looking for " << tag << endmsg;
-    std::string::size_type f = name.find(tag);
+    auto f = name.find(tag);
     std::string id = pObj->identifier();
-    
+
     // add this address to the list
     if ( f != std::string::npos ) addresses.push_back(id);
 
     // search through the leaves
     SmartIF<IDataManagerSvc> mgr(m_fileRecordSvc);
-    if ( mgr )    
+    if ( mgr )
     {
       if ( msgLevel(MSG::VERBOSE) ) verbose() << "Getting the leaves " << endmsg;
       typedef std::vector<IRegistry*> Leaves;
       Leaves leaves;
       StatusCode sc = mgr->objectLeaves(pObj, leaves);
-      if ( sc.isSuccess() )  
+      if ( sc.isSuccess() )
       {
         if ( msgLevel(MSG::VERBOSE) ) verbose() << "Found some leaves, moving to iterate over " << leaves.size() << endmsg;
-        for ( Leaves::const_iterator iLeaf=leaves.begin(); iLeaf != leaves.end(); iLeaf++ )   
+        for ( auto iLeaf=leaves.begin(); iLeaf != leaves.end(); iLeaf++ )
         {
-          
+
           if (!(*iLeaf) )
           {
             if ( msgLevel(MSG::VERBOSE) ) verbose() << "Leaf is Null " << endmsg;
             continue;
           }
-          
-          
-          // it is important to redefine leafRoot->registry() way back from the identifier 
-          std::string leafId = (*iLeaf)->identifier();
+
+
+          // it is important to redefine leafRoot->registry() way back from the identifier
+          const auto& leafId = (*iLeaf)->identifier();
           SmartDataPtr<DataObject> leafRoot(m_fileRecordSvc, leafId);
           if (!(leafRoot) )
           {
             if ( msgLevel(MSG::VERBOSE) ) verbose() << "LeafRoot is Null " << endmsg;
             continue;
           }
-          
-          
+
+
           explore(leafRoot->registry(), tag, addresses);
         }
       }

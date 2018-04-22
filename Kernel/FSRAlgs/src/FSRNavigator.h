@@ -19,9 +19,7 @@
 class FSRNavigator : public extends<GaudiTool, IFSRNavigator> {
 public:
   /// Standard constructor
-  FSRNavigator( const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent);
+  using extends::extends;
 
   StatusCode initialize() override;
   StatusCode finalize() override;
