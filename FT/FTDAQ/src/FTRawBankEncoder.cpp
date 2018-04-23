@@ -61,7 +61,6 @@ StatusCode FTRawBankEncoder::execute() {
     LHCb::FTChannelID id = cluster->channelID();
     unsigned int bankNumber = readoutTool()->bankNumber(id);
     unsigned int linkID  = (id - readoutTool()->channelIDShift(bankNumber)) >> 7;
-
     auto& data = sipmData[bankNumber];
     unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+linkID;
     nClustersPerSipm[indexSipm]++;
@@ -109,6 +108,6 @@ StatusCode FTRawBankEncoder::execute() {
       }
     }
     event->addBank( iBank, LHCb::RawBank::FTCluster, codingVersion, bank );    
-  }
-  return StatusCode::SUCCESS;
+  } 
+ return StatusCode::SUCCESS;
 }

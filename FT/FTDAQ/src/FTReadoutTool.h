@@ -47,7 +47,6 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   LHCb::FTChannelID station      (const unsigned int a) const override;
   LHCb::FTChannelID layer        (const unsigned int a) const override;
   LHCb::FTChannelID quarter      (const unsigned int a) const override;
-  LHCb::FTChannelID uniqueQuarter(const unsigned int a) const override;
   LHCb::FTChannelID module       (const unsigned int a) const override;
   LHCb::FTChannelID mat          (const unsigned int a) const override;
   LHCb::FTChannelID sipm         (const unsigned int a) const override;
@@ -56,8 +55,6 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   //First FTChannelID <-> banknumber
   LHCb::FTChannelID channelIDShift(unsigned int bankNumber) const override;
   unsigned int bankNumber(LHCb::FTChannelID id) const override;
-  unsigned int moduleShift(LHCb::FTChannelID id) const override;
-  unsigned int matShift   (LHCb::FTChannelID id) const override;
   
   //Getters
   unsigned int nTell40PerQuarter() const override;
@@ -79,8 +76,6 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   void clear();
   StatusCode createBoards();
 
-  unsigned int m_passedHeaders;//LoH
-
   unsigned int m_nStations;
   unsigned int m_nLayers;
   unsigned int m_nQuarters;
@@ -90,11 +85,11 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   std::vector<int> m_idTell40ByMatT1T2;
   std::vector<int> m_idTell40ByMatT3;
 
-  std::vector<int> m_moduleShiftsT1T2;
-  std::vector<int> m_moduleShiftsT3;
-  
-  std::vector<int> m_FTTell40UniqueQuarter;
-  std::vector<int> m_idFTTell40WithinQuadrant;
+  std::vector<int> m_FTTell40Station;
+  std::vector<int> m_FTTell40Layer;
+  std::vector<int> m_FTTell40Quarter;
+  std::vector<int> m_FTTell40FirstModule;
+  std::vector<int> m_FTTell40FirstMat;
   std::vector<int> m_FTTell40FirstChannel;
 
   Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
