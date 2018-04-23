@@ -312,9 +312,9 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
+      if (*(last-1) == 0) last--;//Remove padding at the end
       for ( auto it = first ; it != last ; ++it) { //loop over clusters
         unsigned short int c = *it;
-        if (c==0) continue; //padding at the end
         clus.emplace_back(source+channelInTell40(c), fraction(c), ( cSize(c) ? 0 : 4 ));
       }//end loop over sipms
       partitionPoints.push_back(clus.size());
@@ -326,9 +326,9 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       //Define the work flow
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
+      if (*(last-1) == 0) last--;//Remove padding at the end
       for( auto it = first ;  it != last; ++it ){
         unsigned short int c = *it;
-        if (c==0) continue;//padding at the end
         unsigned modulesipm = channelInTell40(c);
         LHCb::FTChannelID channel = source+modulesipm;
         //Define the Lambda functions        
