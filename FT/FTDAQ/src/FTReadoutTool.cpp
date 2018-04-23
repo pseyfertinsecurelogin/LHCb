@@ -195,7 +195,6 @@ StatusCode FTReadoutTool::readFile()
                                                          0,
                                                          0
                                                          ));
-      warning() << "LoH: " << m_FTTell40FirstChannel[i] << endmsg;
     }
   StatusCode sc = validate();
   if (sc.isFailure() ){
