@@ -133,7 +133,8 @@ def MakeDBFromFiles(source, db, includes, excludes, basepath = "",
                     remove_extension = False, verbose = False,
                     since = None,
                     until = None,
-                    writeDuplicate = True):
+                    writeDuplicate = True,
+                    truncate = True):
     """
     Copy the content of a directory into a CondDB instance.
     writeDuplicate is set to False for the ONLINE to avoid writing out duplicate contents
@@ -197,7 +198,10 @@ def MakeDBFromFiles(source, db, includes, excludes, basepath = "",
 
                     path = os.path.relpath(nodes[folderset][folder][key][channel], source)
                     last_path = None
-                    for p_path, iov in get_iovs(source, path, tag='', for_iov=(since, until)):
+                    for p_path, iov in get_iovs(source, path, tag='',
+                                                for_iov=(since, until),
+                                                **({'bounds': (since, until)}
+                                                   if truncate else {})):
                         if iov[0] == iov[1] or last_path == p_path:
                             continue
                         last_path = p_path

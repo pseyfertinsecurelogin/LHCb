@@ -276,7 +276,8 @@ def _get_iovs(tree, repository, path, tag, bounds, for_iov):
                                    (max(since, bounds[0]), bounds[1]), for_iov):
                 yield entry
 
-def get_iovs(repository, path, tag='HEAD', for_iov=(IOV_MIN, IOV_MAX)):
+def get_iovs(repository, path, tag='HEAD', for_iov=(IOV_MIN, IOV_MAX),
+             bounds=(IOV_MIN, IOV_MAX)):
     '''
     Return a generator over all the entries (payload and IOV) at a given path
     in a Git CondDB.
@@ -284,5 +285,5 @@ def get_iovs(repository, path, tag='HEAD', for_iov=(IOV_MIN, IOV_MAX)):
     from GitCondDB.GitAccess import Tree, listFiles
     tree = Tree(listFiles(repository, tag, path))
     for entry in _get_iovs(tree, repository, path, tag,
-                           (IOV_MIN, IOV_MAX), for_iov):
+                           bounds, for_iov):
         yield entry
