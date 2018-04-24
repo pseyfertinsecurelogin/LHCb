@@ -13,8 +13,8 @@
 
 using namespace Gaudi::Functional;
 
-//using FTLiteClusters = FastClusterContainer<LHCb::FTLiteCluster,int>;
-using FTLiteClusters = LHCb::Container::MultiIndexedContainer< LHCb::FTLiteCluster, FTRawBank::nTotQuarters >;
+using FTLiteClusters = LHCb::Container::MultiIndexedContainer< LHCb::FTLiteCluster,
+                                                               FTRawBank::nTotQuarters >;
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
  *  Decode the FT raw bank into FTLiteClusters

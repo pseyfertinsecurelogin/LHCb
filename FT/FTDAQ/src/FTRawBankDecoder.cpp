@@ -292,13 +292,14 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       first += nClus;
     }//end loop over sipms
   }//end loop over rawbanks
+  clus.setOffsets();
   }
 
   //Body of the decoder
   if (version == 4){
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40s
       LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
-      auto last  = bank->end<short int>();
+      auto last = bank->end<short int>();
       if (*(last-1) == 0) --last;//Remove padding at the end
 
       auto r = ranges::make_iterator_range(bank->begin<short int>(), last )
@@ -310,7 +311,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   }//version == 4  
   else if (version == 5) {
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
-      LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());      
+      LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
       if (*(last-1) == 0) --last;//Remove padding at the end
@@ -321,7 +322,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         // Define the Lambda functions
         // Basic make cluster
         auto make_cluster = [&clus, &bank](unsigned chan, int fraction, int size) {
-          clus.addHit(std::make_tuple(chan, fraction, size), bank->sourceID() );
+          clus.addHit(std::make_tuple(chan, fraction, size), bank->sourceID()/3 );
         };//End lambda make_cluster
 
         // Make clusters between two channels
@@ -368,6 +369,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         }
       }
     }//end loop over rawbanks
+    clus.setOffsets();
   }//version ==5
 
   if ( msgLevel(MSG::VERBOSE) ) {
@@ -382,6 +384,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
          return lhs.channelID() < rhs.channelID(); }) &&
       "Clusters from the RawBanks not sorted. Should be sorted by construction.") ;
 
+  // sort clusters according to PrFTHits (loop over quadrants)
   for_each_quadrant( clus,
                      [](auto first, auto last, auto iUQua) {
                          if (first==last) return;

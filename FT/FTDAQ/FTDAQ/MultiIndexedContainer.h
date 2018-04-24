@@ -276,7 +276,7 @@ public:
       m_offsets[subDetectorId].first = m_offsets[subDetectorId].second = m_hits.size();
     }
 
-    m_hits.insert ( std::next ( begin ( m_hits ), m_offsets[subDetectorId].first ),
+    m_hits.insert ( std::next ( begin ( m_hits ), m_offsets[subDetectorId].second ),
                     std::forward<I> ( b ), std::forward<I> ( e ) );
 
     // Add number of entries to the end offset
