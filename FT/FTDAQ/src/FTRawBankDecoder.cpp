@@ -17,11 +17,12 @@
 
 namespace {  
 unsigned channelInTell40(short int c) {
-  return ( c >> FTRawBank::cellShift     );
+  return ( c >> FTRawBank::cellShift);
 }
   
 unsigned getSipm(short int c){
-  return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
+  //  return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
+  return ((c >> FTRawBank::sipmShift) & FTRawBank::sipmMaximum); 
 }
 
 int cell(short int c) {
@@ -295,10 +296,10 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
   //Body of the decoder
   if (version == 4){
-    for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
+    for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40s
       LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
       auto last  = bank->end<short int>();
-      if( *(last-1)==0 ) last--; // remove zero padding at the end
+      if (*(last-1) == 0) --last;//Remove padding at the end
 
       auto r = ranges::make_iterator_range(bank->begin<short int>(), last )
               | ranges::view::transform( [&source](unsigned short int c) -> LHCb::FTLiteCluster
@@ -307,30 +308,23 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       clus.insert(r.begin(),r.end(), bank->sourceID()/3);
     }//end loop over rawbanks
   }//version == 4  
-  /*else if (version == 5) {
+  else if (version == 5) {
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
       LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());      
-      //Define the work flow
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
-      if( *(last-1)==0 ) last--; // remove zero padding at the end
-      for( auto it = first ;  it != last; ++it ){
+      if (*(last-1) == 0) --last;//Remove padding at the end
+      for( auto it = first ;  it != last; ++it ){ // loop over the clusters
         unsigned short int c = *it;
         unsigned modulesipm = channelInTell40(c);
-        int fraction1       = fraction(c);
-        bool cSize1         = cSize(c);                
-        
-        unsigned short int c2         = *(it+1);
-        unsigned modulesipm2 = channelInTell40(c2);
-        LHCb::FTChannelID firstChannel = source+modulesipm;
-        //Define the Lambda functions
-        //    //Basic make cluster
-        auto make_cluster = [&](unsigned chan, int fraction, int size) {
-          clus.emplace_back( chan,
-                             fraction, size );
+        LHCb::FTChannelID channel = source+modulesipm;
+        // Define the Lambda functions
+        // Basic make cluster
+        auto make_cluster = [&clus, &bank](unsigned chan, int fraction, int size) {
+          clus.addHit(std::make_tuple(chan, fraction, size), bank->sourceID() );
         };//End lambda make_cluster
-        
-        //    //Make clusters between two channels
+
+        // Make clusters between two channels
         auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
           unsigned int delta = (cell(c2) - cell(c));
           
@@ -345,7 +339,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           // only edges were saved, add middles now
           if ( delta  > m_clusterMaxWidth ) {
             //add the first edge cluster, and then the middle clusters
-            for(unsigned int  i = 0; i < delta ; i+= m_clusterMaxWidth){
+            for(unsigned int  i = m_clusterMaxWidth; i < delta ; i+= m_clusterMaxWidth){
               // all middle clusters will have same size as the first cluster,
               // so re-use the fraction
               make_cluster( firstChannel+i, fraction(c), 0 );
@@ -353,35 +347,29 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             //add the last edge
             make_cluster  ( firstChannel+cell(c2)-cell(c), fraction(c2), 0 );
           } else { //big cluster size upto size 8
-
             unsigned int widthClus  =  2 * delta - 1 + fraction(c2);            
-            //add the new cluster = cluster1+cluster2
-            make_cluster( firstChannel + (widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ), (widthClus-1)%2, widthClus );
+            // Replace the last cluster by the merged cluster
+            auto lastCluster = const_cast<LHCb::FTLiteCluster&>(clus.range().back());
+            lastCluster = LHCb::FTLiteCluster(firstChannel + (widthClus-1)/2 -
+                                              int( (m_clusterMaxWidth-1)/2 ),
+                                              (widthClus-1)%2, widthClus  );
           }//end if adjacent clusters
         };//End lambda make_clusters
         
         // Workflow
-        //        //not the last cluster
-        if( !cSize1 &&  it<last-1 && (getSipm(modulesipm) == getSipm(modulesipm2)))
-          {
-            bool cSize2       = ( c2 >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-            
-            if( !cSize2 ){ //next cluster is not last fragment
-              make_cluster(firstChannel,fraction1, 4 );
-            }
-            else {//fragmented cluster, last edge found
-              make_clusters(firstChannel,c,c2);
-              ++it;
-            }//last edge found
-          }//not the last cluster
-        
-        else{ //last cluster, so nothing we can do
-          make_cluster(source+modulesipm, fraction1, 4 );
-        }//last cluster added
-      }//end loop over clusters in one sipm
-    }//end loop over rawbanks        
+        if (!cSize(c) || it == first)//No previous cluster or no size flag.
+          make_cluster(channel,fraction(c),4);
+        else{//Flagged and not the first one.
+          unsigned c2 = *(it-1);
+          if (cSize(c2) || (getSipm(c) != getSipm(c2)))//Not the same SiPM or flag size
+            make_cluster(channel,fraction(c),4);
+          else
+            make_clusters(source+channelInTell40(c2),c2,c);
+        }
+      }
+    }//end loop over rawbanks
   }//version ==5
-  */
+
   if ( msgLevel(MSG::VERBOSE) ) {
       for ( const auto& c : clus.range() )
         verbose() << format( " channel %4d frac %3d size %3d ",

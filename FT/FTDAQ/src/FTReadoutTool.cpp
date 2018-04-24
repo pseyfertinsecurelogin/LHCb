@@ -53,7 +53,6 @@ unsigned int FTReadoutTool::nQuarters() const {return m_nQuarters;}
 LHCb::FTChannelID FTReadoutTool::station      (const unsigned int a) const{return LHCb::FTChannelID(a,0,0,0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::layer        (const unsigned int a) const{return LHCb::FTChannelID(0,a,0,0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::quarter      (const unsigned int a) const{return LHCb::FTChannelID(0,0,a,0,0,0,0);}
-LHCb::FTChannelID FTReadoutTool::uniqueQuarter(const unsigned int a) const{return LHCb::FTChannelID(0,0,m_FTTell40UniqueQuarter[a],0,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::module       (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,a,0,0,0);}
 LHCb::FTChannelID FTReadoutTool::mat          (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,a,0,0);}
 LHCb::FTChannelID FTReadoutTool::sipm         (const unsigned int a) const{return LHCb::FTChannelID(0,0,0,0,0,a,0);}
@@ -71,19 +70,6 @@ unsigned int FTReadoutTool::bankNumber(LHCb::FTChannelID id) const
   unsigned int bankNumber = m_nTell40PerQuarter*(id.quarter() + 4*id.layer() + 16*(id.station()-1u));
   unsigned int shift = (id.station()!=3)?m_idTell40ByMatT1T2[id.module()*4+id.mat()]:m_idTell40ByMatT3[id.module()*4+id.mat()];
   return bankNumber + shift;
-}
-
-unsigned int FTReadoutTool::moduleShift(LHCb::FTChannelID id) const
-{
-  return (id.station()!=3)?
-    m_moduleShiftsT1T2[m_idTell40ByMatT1T2[id.module()*4+id.mat()]]:
-    m_moduleShiftsT3  [m_idTell40ByMatT3  [id.module()*4+id.mat()]];
-}
-
-unsigned int FTReadoutTool::matShift(LHCb::FTChannelID id) const
-{
-  return (id.station()!=3 || id.module()!=3 || id.mat() < 2)?
-    0:2;
 }
 
 //    //Input/Output
@@ -187,19 +173,29 @@ StatusCode FTReadoutTool::readFile()
   m_nTell40PerQuarter = rInfo->param<int>("nTell40PerQuarter");
   m_nTell40           = rInfo->param<int>("nTell40");
 
-  //Get the Tell40 IDs per mat
+  //Get the readout map  
   m_idTell40ByMatT1T2 = rInfo->param<std::vector<int> >("idTell40ByMatT1T2");
   m_idTell40ByMatT3   = rInfo->param<std::vector<int> >("idTell40ByMatT3");
 
-  //Get the module shifts in function of Tell40ID
-  m_moduleShiftsT1T2 = rInfo->param<std::vector<int> >("moduleShiftsT1T2");
-  m_moduleShiftsT3   = rInfo->param<std::vector<int> >("moduleShiftsT3");
-
-  //Get the unique quarters
-  m_FTTell40UniqueQuarter = rInfo->param<std::vector<int> >("FTTell40UniqueQuarter");
-  m_idFTTell40WithinQuadrant = rInfo->param<std::vector<int> >("idFTTell40WithinQuadrant");
-  m_FTTell40FirstChannel = rInfo->param<std::vector<int> >("FTTell40FirstChannel");
+  m_FTTell40Station      = rInfo->param<std::vector<int> >("FTTell40Station");
+  m_FTTell40Layer        = rInfo->param<std::vector<int> >("FTTell40Layer");
+  m_FTTell40Quarter      = rInfo->param<std::vector<int> >("FTTell40Quarter");
+  m_FTTell40FirstModule  = rInfo->param<std::vector<int> >("FTTell40FirstModule");
+  m_FTTell40FirstMat     = rInfo->param<std::vector<int> >("FTTell40FirstMat");
   
+  //Construct the first channel attribute  
+  m_FTTell40FirstChannel.reserve(m_nTell40);
+  for (unsigned int i = 0 ; i < m_nTell40 ; i++)
+    {
+      m_FTTell40FirstChannel.push_back(LHCb::FTChannelID(m_FTTell40Station[i],
+                                                         m_FTTell40Layer  [i],
+                                                         m_FTTell40Quarter[i],
+                                                         m_FTTell40FirstModule[i],
+                                                         m_FTTell40FirstMat[i],
+                                                         0,
+                                                         0
+                                                         ));
+    }
   StatusCode sc = validate();
   if (sc.isFailure() ){
     return Error("Failed to validate mapping",StatusCode::FAILURE);

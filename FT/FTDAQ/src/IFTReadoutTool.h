@@ -40,7 +40,6 @@ struct IFTReadoutTool: extend_interfaces< IAlgTool >{
   virtual LHCb::FTChannelID station      (const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID layer        (const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID quarter      (const unsigned int aChan) const = 0;
-  virtual LHCb::FTChannelID uniqueQuarter(const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID module       (const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID mat          (const unsigned int aChan) const = 0;
   virtual LHCb::FTChannelID sipm         (const unsigned int aChan) const = 0;
@@ -48,8 +47,6 @@ struct IFTReadoutTool: extend_interfaces< IAlgTool >{
 
   virtual LHCb::FTChannelID channelIDShift(const unsigned int bankNumber ) const = 0;
   virtual unsigned int bankNumber        (LHCb::FTChannelID id    ) const = 0;
-  virtual unsigned int matShift          (LHCb::FTChannelID id    ) const = 0;
-  virtual unsigned int moduleShift       (LHCb::FTChannelID id    ) const = 0;
 
   /// write an xml file
   virtual StatusCode writeMappingToXML() const = 0;
