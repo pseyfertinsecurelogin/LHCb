@@ -18,6 +18,8 @@ namespace FTRawBank {
   static constexpr uint16_t nLayers           =  4;
   static constexpr uint16_t nQuarters         =  4;
   static constexpr uint16_t nTell40PerQuarter =  3;
+  static constexpr uint16_t nTotQuarters      =  nStations*nLayers*nQuarters;
+
   
   static constexpr uint16_t nbClusMaximum   = 15;  // 4 bits ??
   static constexpr uint16_t nbClusFFMaximum = 10;  // 4 bits ??
