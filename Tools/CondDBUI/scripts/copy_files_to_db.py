@@ -52,9 +52,15 @@ def main():
                       type="int",
                       help="end of interval of validity [default: cool.ValidityKeyMax]",
                       default=None)
+    parser.add_option('--truncate', action='store_true',
+                      help='limit IOV to the specified range (default)')
+    parser.add_option('--no-truncate', action='store_false', dest='truncate',
+                      help='use IOV boundaries from filesystem even if they '
+                      'extend beyond the requested IOV')
 #    parser.add_option("-k", "--keep-db",
 #                      action="store_false", dest="drop",
 #                      help="keep the existing database and merge with the new files (default)")
+    parser.set_defaults(truncate=True)
 
     (options, args) = parser.parse_args()
     if len(args) != 0 or not options.source or not options.dest:
@@ -67,12 +73,12 @@ def main():
     includes = []
     if options.includeFile:
         includes = [ l.strip() for l in open(options.includeFile).xreadlines() ]
-        
+
     CondDBUI.Admin.MakeDBFromFiles(options.source, db,
                                    includes = includes, excludes = [],
                                    verbose = True,
                                    since = options.since, until = options.until
-                                   )
-    
+                                   truncate = options.truncate)
+
 if __name__ == '__main__':
     main()
