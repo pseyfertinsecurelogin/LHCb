@@ -71,11 +71,11 @@ StatusCode DeRichHPD::initialize ( )
     msg << MSG::DEBUG << "Initialize " << myName() << endmsg;
 
   // store the name of the HPD, without the /dd/Structure part
-  const std::string::size_type pos = name().find("HPD:");
+  const auto pos = name().find("HPD:");
   setMyName( std::string::npos != pos ? name().substr(pos) : "DeRichHPD_NO_NAME" );
 
   // extract HPD number from detector element name
-  const std::string::size_type pos2 = name().find(":");
+  const auto pos2 = name().find(":");
   if ( std::string::npos == pos2 )
   {
     msg << MSG::FATAL << "An HPD without a number!" << endmsg;
@@ -236,7 +236,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
 }
 
 //=========================================================================
-//  getParameters
+// getParameters
 //=========================================================================
 StatusCode DeRichHPD::getParameters()
 {
@@ -245,6 +245,13 @@ StatusCode DeRichHPD::getParameters()
   {
     error() << "Could not load DeRich1" << endmsg;
     return StatusCode::FAILURE;
+  }
+
+  // Which RICH are we in ?
+  {
+    const auto atestGP = geometry()->toGlobalMatrix() * Gaudi::XYZPoint{0,0,0};
+    m_rich = ( atestGP.z() > 6000.0 ? Rich::Rich2 : Rich::Rich1 );
+    _ri_debug << "In " << rich() << endmsg;
   }
 
   const auto pixXsize = deRich1->param<double>("RichHpdPixelXsize");
