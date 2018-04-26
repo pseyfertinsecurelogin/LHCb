@@ -51,7 +51,7 @@ public:
    *  For a given photon momentum (eV) returns the PD Quantum Efficiency percentage.
    *  @return pointer to the interpolation function for QuantumEff(PhotMom)
    */
-  inline const Rich::TabulatedProperty1D* pdQuantumEff() const
+  inline const Rich::TabulatedProperty1D* pdQuantumEff() const noexcept
   {
     return m_pdQuantumEffFunc.get();
   }
@@ -108,28 +108,33 @@ public: // virtual methods to be implemented by derived classes
 
 public:
 
+  /// Access the RICH
+  inline Rich::DetectorType rich()        const noexcept { return m_rich; }
+
   /// Access the actual physical area of the pixels in the PD (in mm^2)
-  inline double pixelArea() const noexcept { return m_pixelArea; }
+  inline float pixelArea()                const noexcept { return m_pixelArea; }
 
   /// Access the effective pixel area (in mm^2) including any demagnification factors
-  inline double effectivePixelArea() const noexcept { return m_effPixelArea; }
+  inline float effectivePixelArea()       const noexcept { return m_effPixelArea; }
 
   /// Access the effective number of active pixels
-  inline double effectiveNumActivePixels() const noexcept { return m_effNumActivePixs; }
+  inline float effectiveNumActivePixels() const noexcept { return m_effNumActivePixs; }
 
 protected: // to be initialised by derived classes
+
+  /// The RICH this PD is in
+  Rich::DetectorType m_rich = Rich::InvalidDetector;
   
   /// Interpolated property for HPD quantum efficiency
   std::shared_ptr<const Rich::TabulatedProperty1D> m_pdQuantumEffFunc;
 
   /// The pixel area (in mm^2)
-  double m_pixelArea{0};
+  float m_pixelArea{0};
 
   /// The effective pixel area (in mm^2) including any demagnification factors
-  double m_effPixelArea{0};
+  float m_effPixelArea{0};
 
   /// The effective number of active pixels (including acceptance effects).
-  double m_effNumActivePixs{0};
+  float m_effNumActivePixs{0};
   
 };
-
