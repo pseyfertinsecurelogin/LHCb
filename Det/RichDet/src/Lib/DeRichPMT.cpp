@@ -63,8 +63,6 @@ StatusCode DeRichPMT::initialize()
     msg << MSG::FATAL << "A PMT without a copy number" << endmsg;
     return StatusCode::FAILURE;
   }
-  //m_moduleNum = atoi( s1.substr(0,pos3).c_str() );
-  //m_copyNum   = atoi( s1.substr(pos3+7).c_str() );
 
   m_dePmtAnode = ( !childIDetectorElements().empty() ?
                    childIDetectorElements().front() : nullptr );
@@ -118,9 +116,12 @@ StatusCode DeRichPMT::getPMTParameters()
   const auto * deRich = getFirstRich();
   if ( !deRich ) { return StatusCode::FAILURE; }
 
-  const std::string effnumPixCond = "RichPmtTotNumPixel";
-  m_effNumActivePixs = ( deRich->exists(effnumPixCond) ?
-                         (FType)deRich->param<int>(effnumPixCond) : 64.0 );
+  {
+    const std::string effnumPixCond = "RichPmtTotNumPixel";
+    const auto cExists = deRich->exists(effnumPixCond);
+    m_effNumActivePixs = ( cExists ? (FType)deRich->param<int>(effnumPixCond) : 64.0 );
+    _ri_debug << "EffNumPixs = " << cExists << " | " << m_effNumActivePixs << endmsg;
+  }
 
   // CRJ - To reduce PMT memory size do not load parameters not used yet ...
 
@@ -128,14 +129,14 @@ StatusCode DeRichPMT::getPMTParameters()
   const auto PmtAnodeLocationInPmt = deRich->param<double>("RichPmtSiliconDetectorLocalZlocation" );
   const auto PmtPixelXSize = deRich->param<double>("RichPmtPixelXSize");
   const auto PmtPixelYSize = deRich->param<double>("RichPmtPixelYSize");
-  const auto PmtPixelGap = deRich->param<double>("RichPmtPixelGap");
+  const auto PmtPixelGap   = deRich->param<double>("RichPmtPixelGap");
   m_PmtEffectivePixelXSize = PmtPixelXSize + PmtPixelGap;
   m_PmtEffectivePixelYSize = PmtPixelYSize + PmtPixelGap;
-  m_PmtAnodeHalfThickness = PmtAnodeZSize * 0.5;
-  m_PmtNumPixCol = deRich->param<int>("RichPmtNumPixelCol");
-  m_PmtNumPixRow = deRich->param<int>("RichPmtNumPixelRow");
-  m_PmtNumPixColFrac = (m_PmtNumPixCol-1) * 0.5;
-  m_PmtNumPixRowFrac = (m_PmtNumPixRow-1) * 0.5;
+  m_PmtAnodeHalfThickness  = PmtAnodeZSize * 0.5;
+  m_PmtNumPixCol           = deRich->param<int>("RichPmtNumPixelCol");
+  m_PmtNumPixRow           = deRich->param<int>("RichPmtNumPixelRow");
+  m_PmtNumPixColFrac       = (m_PmtNumPixCol-1) * 0.5;
+  m_PmtNumPixRowFrac       = (m_PmtNumPixRow-1) * 0.5;
 
   m_PmtQwZSize  = deRich->param<double>("RichPmtQuartzZSize" );
   const auto QwToAnodeZDist = deRich->param<double>("RichPmtQWToSiMaxDist");
@@ -161,38 +162,13 @@ StatusCode DeRichPMT::getPMTParameters()
     }
   }
 
-  //m_Rich2UseGrandPmt = false;
-  // if ( Rich2PmtArrayConfig >= 1 )
-  // {
-  //   //m_Rich2UseGrandPmt = true;
-  //   if ( Rich2PmtArrayConfig == 2 )
-  //   {
-  //     m_Rich2UseMixedPmt = true;
-  //   }
-  // }
-
   // Which RICH are we in ?
-  const auto atestGP = toGlobalMatrix() * Gaudi::XYZPoint{0,0,0} ;
-  const FType Rich1Rich2ZDivideLimit = 6000.0;
-  m_rich = ( atestGP.z() > Rich1Rich2ZDivideLimit ? Rich::Rich2 : Rich::Rich1 );
-
-  // if ( exists("RichPmtLensMagnficationFactor") )
-  // {
-  //   m_PmtLensMagRatio = deRich->param<double>("RichPmtLensMagnficationFactor"  );
-  // }
-  // else
-  // {
-  //   m_PmtLensMagRatio = 1.0;
-  // }
-
-  // if ( exists("RichPmtLensRadiusofCurvature") )
-  // {
-  //   m_PmtLensRoc2 = std::pow( deRich->param<double>("RichPmtLensRadiusofCurvature"), 2 );
-  // }
-  // else
-  // {
-  //   m_PmtLensRoc2 = std::pow( 100000.0, 2 );
-  // }
+  {
+    const auto atestGP = toGlobalMatrix() * Gaudi::XYZPoint{0,0,0};
+    const FType Rich1Rich2ZDivideLimit = 6000.0;
+    m_rich = ( atestGP.z() > Rich1Rich2ZDivideLimit ? Rich::Rich2 : Rich::Rich1 );
+    _ri_debug << "In " << rich() << endmsg;
+  }
 
   // Default initialise some DePD base parameters
   setPmtIsGrandFlag( PmtIsGrand() );
@@ -264,32 +240,6 @@ StatusCode DeRichPMT::updateGeometry()
 {
   return getPMTParameters();
 }
-
-//=============================================================================
-
-// Gaudi::XYZPoint
-// DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const
-// {
-
-//   const auto x = aPhCathCoord.x();
-//   const auto y = aPhCathCoord.y();
-//   const auto aPhCaRsq_Coord = ( (x*x) + (y*y) );
-//   const auto aPhCaR_Coord   = ( aPhCaRsq_Coord > 0.0 ? std::sqrt(aPhCaRsq_Coord) : 0.0 );
-//   const auto aPhCaRsq_Phi   = Rich::Maths::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
-//   const auto aXSignLocal    = ( aPhCathCoord.x() > 0 ? 1 : -1 );
-//   const auto aYSignLocal    = ( aPhCathCoord.y() > 0 ? 1 : -1 );
-
-//   double sinphi(0), cosphi(0);
-//   Rich::Maths::fast_sincos( aPhCaRsq_Phi, sinphi, cosphi );
-//   const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagRatio)*cosphi) * aXSignLocal;
-//   const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagRatio)*sinphi) * aYSignLocal;
-
-//   const auto Rsq = aPhCaRsq_Coord * m_PmtLensMagRatio * m_PmtLensMagRatio;
-
-//   const auto aLensRecZStd = aPhCathCoord.z() + std::sqrt( m_PmtLensRoc2 - Rsq );
-
-//   return { aLensRecXLocal, aLensRecYLocal, aLensRecZStd };
-// }
 
 //=============================================================================
 
