@@ -1,4 +1,4 @@
-#ifndef CALOINTERFACES_ICALOCLUSTERIZATION_H 
+#ifndef CALOINTERFACES_ICALOCLUSTERIZATION_H
 #define CALOINTERFACES_ICALOCLUSTERIZATION_H 1
 
 // Include files
@@ -19,7 +19,7 @@ class DeCalorimeter;
 
 
 /** @class ICaloClusterization ICaloClusterization.h CaloInterfaces/ICaloClusterization.h
- *  
+ *
  *
  *  @author Victor Egorychev
  *  @date   2008-04-03
@@ -38,11 +38,11 @@ struct  ICaloClusterization : extend_interfaces<IAlgTool>
    * @ return vector of pointers of Calo clusters
    */
   virtual unsigned int clusterize
-  ( std::vector<LHCb::CaloCluster*>&      clusters   , 
-    const LHCb::CaloDigits*               digits     , 
-    const DeCalorimeter*                  detector   , 
-    const std::vector<LHCb::CaloCellID>&  seeds      , 
-    const unsigned int                    level      ) = 0 ;
+  ( std::vector<LHCb::CaloCluster*>&      clusters   ,
+    const LHCb::CaloDigits*               digits     ,
+    const DeCalorimeter*                  detector   ,
+    const std::vector<LHCb::CaloCellID>&  seeds      ,
+    const unsigned int                    level      ) const = 0 ;
   // ==========================================================================
   /**  The main clusterization method
    * @ param pointer to CaloDigit
@@ -52,11 +52,11 @@ struct  ICaloClusterization : extend_interfaces<IAlgTool>
    * @ return vector of pointers of Calo clusters
    */
   virtual unsigned int clusterize
-  ( std::vector<LHCb::CaloCluster*>&      clusters   , 
-    const LHCb::CaloDigits*               digits     , 
-    const DeCalorimeter*                  detector   , 
-    const LHCb::CaloCellID&               seed       , 
-    const unsigned int                    level      ) = 0 ;
+  ( std::vector<LHCb::CaloCluster*>&      clusters   ,
+    const LHCb::CaloDigits*               digits     ,
+    const DeCalorimeter*                  detector   ,
+    const LHCb::CaloCellID&               seed       ,
+    const unsigned int                    level      ) const = 0 ;
   // ==========================================================================
   /**  The main clusterization method
    * @ param pointer to CaloDigit
@@ -64,9 +64,9 @@ struct  ICaloClusterization : extend_interfaces<IAlgTool>
    * @ return vector of pointers of Calo clusters
    */
   virtual unsigned int clusterize
-  ( std::vector<LHCb::CaloCluster*>&      clusters   , 
-    const LHCb::CaloDigits*               digits     , 
-    const DeCalorimeter*                  detector   ) = 0 ;
+  ( std::vector<LHCb::CaloCluster*>&      clusters   ,
+    const LHCb::CaloDigits*               digits     ,
+    const DeCalorimeter*                  detector   ) const = 0 ;
 
   // ==========================================================================
   /**  The main clusterization method
@@ -81,7 +81,7 @@ struct  ICaloClusterization : extend_interfaces<IAlgTool>
     const CaloVector<LHCb::CaloDigit*>&    data     ,
     const DeCalorimeter*                  detector   ,
     const std::vector<LHCb::CaloCellID>&  seeds      ,
-    const unsigned int                    level      ) = 0 ;
+    const unsigned int                    level      ) const = 0 ;
 
 };
 #endif // CALOINTERFACES_ICALOCLUSTERIZATION_H
