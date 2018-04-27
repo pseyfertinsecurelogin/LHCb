@@ -40,10 +40,13 @@ class DeRichPD : public DeRichBase
 public:
 
   /// Standard constructor
-  explicit DeRichPD( const std::string & name = "" );
+  explicit DeRichPD( const std::string & name = "" ) : DeRichBase ( name ) { }
 
   /// Destructor
   virtual ~DeRichPD( ) = default;
+
+  /// Common initialisation
+  StatusCode initialize() override;
 
 public:
 
@@ -120,10 +123,12 @@ public:
   /// Access the effective number of active pixels
   inline float effectiveNumActivePixels() const noexcept { return m_effNumActivePixs; }
 
-protected: // to be initialised by derived classes
-
+private: 
+  
   /// The RICH this PD is in
   Rich::DetectorType m_rich = Rich::InvalidDetector;
+  
+protected: // to be initialised by derived classes
   
   /// Interpolated property for HPD quantum efficiency
   std::shared_ptr<const Rich::TabulatedProperty1D> m_pdQuantumEffFunc;

@@ -83,8 +83,12 @@ StatusCode DeRichHPD::initialize ( )
   }
   m_number = atoi( name().substr(pos2+1).c_str() );
 
-  StatusCode sc = getParameters();
-  if ( sc.isFailure() ) return sc;
+  // Common DePD init
+  auto sc = DeRichPD::initialize();
+  if ( !sc ) return sc;
+
+  sc = getParameters();
+  if ( !sc ) return sc;
 
   // get the pointer to the silicon sensor detector element
   m_deSiSensor = ( !childIDetectorElements().empty() ?
@@ -245,13 +249,6 @@ StatusCode DeRichHPD::getParameters()
   {
     error() << "Could not load DeRich1" << endmsg;
     return StatusCode::FAILURE;
-  }
-
-  // Which RICH are we in ?
-  {
-    const auto atestGP = geometry()->toGlobalMatrix() * Gaudi::XYZPoint{0,0,0};
-    m_rich = ( atestGP.z() > 6000.0 ? Rich::Rich2 : Rich::Rich1 );
-    _ri_debug << "In " << rich() << endmsg;
   }
 
   const auto pixXsize = deRich1->param<double>("RichHpdPixelXsize");

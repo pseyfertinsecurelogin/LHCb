@@ -64,6 +64,10 @@ StatusCode DeRichPMT::initialize()
     return StatusCode::FAILURE;
   }
 
+  // Common DePD init
+  auto sc = DeRichPD::initialize();
+  if ( !sc ) return sc;
+
   m_dePmtAnode = ( !childIDetectorElements().empty() ?
                    childIDetectorElements().front() : nullptr );
   if ( !m_dePmtAnode )
@@ -79,7 +83,7 @@ StatusCode DeRichPMT::initialize()
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
 
   // Trigger first update
-  const auto sc = updMgrSvc()->update(this);
+  sc = updMgrSvc()->update(this);
   if ( !sc ) { fatal() << "UMS updates failed" << endmsg; }
 
   return sc;
@@ -160,14 +164,6 @@ StatusCode DeRichPMT::getPMTParameters()
       m_GrandPmtEffectivePixelYSize = GrandPmtPixelYSize + GrandPmtPixelGap;
       m_GrandPmtAnodeHalfThickness  = GrandPmtAnodeZSize * 0.5;
     }
-  }
-
-  // Which RICH are we in ?
-  {
-    const auto atestGP = toGlobalMatrix() * Gaudi::XYZPoint{0,0,0};
-    const FType Rich1Rich2ZDivideLimit = 6000.0;
-    m_rich = ( atestGP.z() > Rich1Rich2ZDivideLimit ? Rich::Rich2 : Rich::Rich1 );
-    _ri_debug << "In " << rich() << endmsg;
   }
 
   // Default initialise some DePD base parameters

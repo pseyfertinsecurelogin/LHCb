@@ -59,8 +59,7 @@ public:
   /**
    * This is where most of the geometry is read and variables initialised
    * @return Status of initialisation
-   * @retval StatusCode::FAILURE Initialisation failed, program should
-   * terminate
+   * @retval StatusCode::FAILURE Initialisation failed, program should terminate
    */
   StatusCode initialize() override final;
 

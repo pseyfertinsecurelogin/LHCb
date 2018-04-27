@@ -179,7 +179,7 @@ protected:
 
 private:
 
-  std::string m_myname = "";     ///< The name of this detector element
+  std::string m_myname = "";              ///< The name of this detector element
   std::unique_ptr<MsgStream> m_msgStream; ///< Message Stream Object
   DeRichSystem* m_deRichS = nullptr;      ///< Pointer to the overall RICH system object
 
