@@ -110,19 +110,17 @@ StatusCode TransportSvc::finalize()
       for ( auto i = m_skip.begin() ; m_skip.end() != i ; ++i )
       {
         {
+          std::ostringstream ost;
+          i->second.first.printFormatted( ost , "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" );
           boost::format fmt2 ( "   | %1$-55.55s | mm | %2$-65.65s |" ) ;
-          fmt2 % logVol ( i->first , 55 ) ;
-          fmt2 % Gaudi::Utils::formatAsTableRow
-            ( i->second.first  , false ,
-              "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
+          fmt2 % logVol ( i->first , 55 ) % ost.str();
           msgStream() << fmt2.str() << std::endl ;
         }
         {
+          std::ostringstream ost;
+          i->second.second.printFormatted( ost , "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" );
           boost::format fmt2 ( "   | %1$-55.55s | X0 | %2$-65.65s |" ) ;
-          fmt2 % logVol ( i->first , 55 ) ;
-          fmt2 % Gaudi::Utils::formatAsTableRow
-            ( i->second.second  , false ,
-              "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
+          fmt2 % logVol ( i->first , 55 ) % ost.str();
           msgStream() << fmt2.str() << std::endl ;
         }
       }
@@ -142,19 +140,17 @@ StatusCode TransportSvc::finalize()
       for ( Map::const_iterator i = m_recover.begin() ; m_recover.end() != i ; ++i )
       {
         {
+          std::ostringstream ost;
+          i->second.first.printFormatted( ost , "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" );
           boost::format fmt2 ( "   | %1$-55.55s | mm | %2$-65.65s |" ) ;
-          fmt2 % logVol ( i->first , 55 ) ;
-          fmt2 % Gaudi::Utils::formatAsTableRow
-            ( i->second.first  , false ,
-              "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
+          fmt2 % logVol ( i->first , 55 ) % ost.str() ;
           msgStream() << fmt2.str() << std::endl ;
         }
         {
+          std::ostringstream ost;
+          i->second.second.printFormatted( ost ,  "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
           boost::format fmt2 ( "   | %1$-55.55s | X0 | %2$-65.65s |" ) ;
-          fmt2 % logVol ( i->first , 55 ) ;
-          fmt2 % Gaudi::Utils::formatAsTableRow
-            ( i->second.second  , false ,
-              "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
+          fmt2 % logVol ( i->first , 55 ) %ost.str() ;
           msgStream() << fmt2.str() << std::endl ;
         }
       }
