@@ -59,8 +59,7 @@ public:
   /**
    * This is where most of the geometry is read and variables initialised
    * @return Status of initialisation
-   * @retval StatusCode::FAILURE Initialisation failed, program should
-   * terminate
+   * @retval StatusCode::FAILURE Initialisation failed, program should terminate
    */
   StatusCode initialize() override final;
 
@@ -80,14 +79,6 @@ public:
    *  @return The detection point on the anode in global coordinates
    */
   Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID& smartID ) const;
-
-  //inline int pmtModuleNumber() const noexcept { return m_moduleNum; }
-
-  //inline int pmtCopyNumber() const noexcept { return m_copyNum; }
-
-  //inline void setPmtLensFlag( const bool aflag ) noexcept { m_PmtLensFlag = aflag; }
-
-  //inline bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
   
   void setPmtIsGrandFlag( const bool isGrand );
 
@@ -98,9 +89,6 @@ public:
 
   /// Access the PD ID
   inline LHCb::RichSmartID pdSmartID() const noexcept { return m_pdSmartID; }
-
-  /// Access the RICH
-  inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   /// Shortcut to the 'to local' matrix
   inline const Gaudi::Transform3D & toLocalMatrix() const noexcept
@@ -213,8 +201,6 @@ private:
              getAnodeHitCoordFromPixelNum     ( fracPixelCol, fracPixelRow ) );
   }
   
-  //Gaudi::XYZPoint RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const;
-  
 private:
 
   // CRJ - To minimise memory footprint do not define data members
@@ -239,13 +225,6 @@ private:
 
   FType m_PmtQwZSize{0};
 
-  //bool m_PmtLensFlag{false};
-  //FType m_PmtLensRoc2{0};
-  //FType m_PmtLensMagRatio{0};
-
-  //int m_moduleNum{0}; ///< Module number
-  //int m_copyNum{0};   ///< Copy number
-
   FType m_PmtEffectivePixelXSize{0};
   FType m_PmtEffectivePixelYSize{0};
   FType m_PmtAnodeHalfThickness{0};
@@ -260,14 +239,9 @@ private:
   FType m_GrandPmtEffectivePixelYSize{0};
   FType m_GrandPmtAnodeHalfThickness{0};
 
-  //bool m_Rich2UseGrandPmt{false};
-  //bool m_Rich2UseMixedPmt{false};
   bool m_PmtIsGrand{false};
 
   /// The PMT Anode detector element
   IDetectorElement * m_dePmtAnode = nullptr;
-
-  /// The RICH this PMT is in
-  Rich::DetectorType m_rich = Rich::InvalidDetector;
 
 };

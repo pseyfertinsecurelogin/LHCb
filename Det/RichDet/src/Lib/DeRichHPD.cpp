@@ -71,11 +71,11 @@ StatusCode DeRichHPD::initialize ( )
     msg << MSG::DEBUG << "Initialize " << myName() << endmsg;
 
   // store the name of the HPD, without the /dd/Structure part
-  const std::string::size_type pos = name().find("HPD:");
+  const auto pos = name().find("HPD:");
   setMyName( std::string::npos != pos ? name().substr(pos) : "DeRichHPD_NO_NAME" );
 
   // extract HPD number from detector element name
-  const std::string::size_type pos2 = name().find(":");
+  const auto pos2 = name().find(":");
   if ( std::string::npos == pos2 )
   {
     msg << MSG::FATAL << "An HPD without a number!" << endmsg;
@@ -83,8 +83,12 @@ StatusCode DeRichHPD::initialize ( )
   }
   m_number = atoi( name().substr(pos2+1).c_str() );
 
-  StatusCode sc = getParameters();
-  if ( sc.isFailure() ) return sc;
+  // Common DePD init
+  auto sc = DeRichPD::initialize();
+  if ( !sc ) return sc;
+
+  sc = getParameters();
+  if ( !sc ) return sc;
 
   // get the pointer to the silicon sensor detector element
   m_deSiSensor = ( !childIDetectorElements().empty() ?
@@ -236,7 +240,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
 }
 
 //=========================================================================
-//  getParameters
+// getParameters
 //=========================================================================
 StatusCode DeRichHPD::getParameters()
 {
