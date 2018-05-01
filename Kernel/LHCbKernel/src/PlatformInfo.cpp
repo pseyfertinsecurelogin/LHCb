@@ -64,6 +64,9 @@ namespace
       "x86_64-centos7-clang50-opt",
       "x86_64-centos7-clang50-dbg",
       "x86_64+avx2+fma-centos7-gcc7-opt",
+      "x86_64-slc6-gcc7-opt",
+      "x86_64-slc6-gcc7-dbg",
+      "x86_64-centos7-gcc7-do0",
   };
 
   const std::string invalid_platform = "invalid";
