@@ -14,7 +14,7 @@
 #include "GaudiKernel/ToolHandle.h"
 #include "Kernel/IAccept.h"
 
-class Condition;
+struct Condition;
 class IIncidentSvc;
 
 /** @class DQFilter

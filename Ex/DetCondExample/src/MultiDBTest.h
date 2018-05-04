@@ -5,7 +5,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-class Condition;
+struct Condition;
 class AlignmentCondition;
 
 /** @class MultiDBTest MultiDBTest.h
@@ -20,12 +20,8 @@ public:
   /// Standard constructor
   MultiDBTest( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MultiDBTest( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
 

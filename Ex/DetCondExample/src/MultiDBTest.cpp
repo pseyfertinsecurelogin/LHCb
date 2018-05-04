@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 #include "DetDesc/Condition.h"
 #include "DetDesc/AlignmentCondition.h"
@@ -24,10 +24,6 @@ MultiDBTest::MultiDBTest( const std::string& name,
   : GaudiAlgorithm ( name , pSvcLocator ),
   m_cond1(NULL),m_cond2(NULL),m_align1(NULL)
 {}
-//=============================================================================
-// Destructor
-//=============================================================================
-MultiDBTest::~MultiDBTest() {}
 
 //=============================================================================
 // Initialization
@@ -37,7 +33,7 @@ StatusCode MultiDBTest::initialize() {
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
   debug() << "==> Initialize" << endmsg;
-  
+
   try {
 
     info() << "*** register conditions ***" << endmsg;
@@ -58,10 +54,10 @@ StatusCode MultiDBTest::initialize() {
 StatusCode MultiDBTest::execute() {
 
   info() << "*************** execute(): process new event ***************" << endmsg;
-  
+
   info() << "Cond1: " << m_cond1->validSince() << " -> " << m_cond1->validTill() << endmsg;
   info() << "       DB = " << m_cond1->paramAsString("Database") << endmsg;
-  
+
   info() << "Cond2: " << m_cond2->validSince() << " -> " << m_cond2->validTill() << endmsg;
   info() << "       DB = " << m_cond2->paramAsString("Database") << endmsg;
 

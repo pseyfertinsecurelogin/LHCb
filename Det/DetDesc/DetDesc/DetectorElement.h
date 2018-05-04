@@ -16,7 +16,6 @@
 
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SmartRef.h"
-#include "GaudiKernel/CommonMessaging.h"
 
 #include "DetDesc/Condition.h"
 #include "DetDesc/Services.h"
@@ -46,7 +45,7 @@ class IUpdateManagerSvc;
  *  @author Juan Palacios
 */
 
-class DetectorElement: public CommonMessaging<ParamValidDataObject>,
+class DetectorElement: public ParamValidDataObject,
                        virtual public IDetectorElement {
 
   friend class DataObjectFactory<DetectorElement> ;
@@ -79,7 +78,7 @@ public:
 
   const std::string& name () const override;
 
-  SmartIF<ISvcLocator>& serviceLocator() const override { return m_services->svcLocator(); }
+  IMessageSvc* msgSvc() const { return m_services->msgSvc(); }
 
   /// Check if the condition called 'name' is in the list of conditionrefs.
   bool hasCondition(const std::string &name) const override;
@@ -138,40 +137,40 @@ public:
 
   // another way to access: "pseudo-conversion"
   // cast to         IGeometryInfo*
-  inline operator       IGeometryInfo*() override;
+  operator       IGeometryInfo*() override { return m_de_iGeometry.get(); }
 
   // cast to   const IGeometryInfo*
-  inline operator const IGeometryInfo*() const override;
+  operator const IGeometryInfo*() const override { return m_de_iGeometry.get(); }
 
   // cast to         IAligment*
-  inline operator       IAlignment*   () override;
+  operator       IAlignment*   () override { return m_de_iAlignment.get(); }
 
   // cast to   const IAlignment*
-  inline operator const IAlignment*   () const override;
+  operator const IAlignment*   () const override { return m_de_iAlignment.get(); }
 
   // cast to         ICalibration*
-  inline operator       ICalibration* () override;
+  operator       ICalibration* () override { return m_de_iCalibration.get(); }
 
   // cast to   const ICalibration*
-  inline operator const ICalibration* () const override;
+  operator const ICalibration* () const override { return m_de_iCalibration.get(); }
 
   // cast to         IReadOut*
-  inline operator       IReadOut*     () override;
+  operator       IReadOut*     () override { return m_de_iReadOut.get(); }
 
   // cast to   const IReadOut*
-  inline operator const IReadOut*     () const override;
+  operator const IReadOut*     () const override { return m_de_iReadOut.get(); }
 
   // cast to         ISlowControl*
-  inline operator       ISlowControl* () override;
+  operator       ISlowControl* () override { return m_de_iSlowControl.get(); }
 
   // cast to   const ISlowControl*
-  inline operator const ISlowControl* () const override;
+  operator const ISlowControl* () const override { return m_de_iSlowControl.get(); }
 
   // cast to         IFastControl*
-  inline operator       IFastControl* () override;
+  inline operator       IFastControl* () override { return m_de_iFastControl.get(); }
 
   // cast to   const IFastControl*
-  inline operator const IFastControl* () const override;
+  inline operator const IFastControl* () const override { return m_de_iFastControl.get(); }
 
   // cast to         IGeometryInfo&
   // (potentially could throw DetectorElementException)
@@ -263,10 +262,8 @@ public:
   /// Used to create a link with a given name to the condition at 'path' in the detector data store.
   void createCondition(std::string &name, std::string &path);
 
-  //-- N. Gilardi; 2005.07.08 ---------------------------------------------
   /// Returns list of existing parameter vectors as a vector of their names
   virtual std::vector<std::string> conditionNames() const;
-  //-----------------------------------------------------------------------
 
   ///
   /// specific
@@ -411,43 +408,6 @@ inline IFastControl* DetectorElement::fastControl() {
   return m_de_iFastControl.get() ;
 }
 // "pseudo-casting" //////////////////////////////////////////////////////////
-inline DetectorElement::operator const IGeometryInfo*() const {
-  return m_de_iGeometry.get()    ;
-}
-inline DetectorElement::operator IGeometryInfo*() {
-  return m_de_iGeometry.get()    ;
-}
-
-inline DetectorElement::operator const IAlignment* () const {
-  return m_de_iAlignment.get()   ;
-}
-inline DetectorElement::operator IAlignment* () {
-  return m_de_iAlignment.get()   ;
-}
-inline DetectorElement::operator const ICalibration* () const {
-  return m_de_iCalibration.get() ;
-}
-inline DetectorElement::operator ICalibration* () {
-  return m_de_iCalibration.get() ;
-}
-inline DetectorElement::operator const IReadOut* () const {
-  return m_de_iReadOut.get()     ;
-}
-inline DetectorElement::operator IReadOut* () {
-  return m_de_iReadOut.get()     ;
-}
-inline DetectorElement::operator const ISlowControl* () const {
-  return m_de_iSlowControl.get() ;
-}
-inline DetectorElement::operator ISlowControl* () {
-  return m_de_iSlowControl.get() ;
-}
-inline DetectorElement::operator const IFastControl* () const {
-  return m_de_iFastControl.get() ;
-}
-inline DetectorElement::operator IFastControl* () {
-  return m_de_iFastControl.get() ;
-}
 //////////////////////////////////////////////////////////////////////////////
 inline DetectorElement::operator const IGeometryInfo&()    const
 {

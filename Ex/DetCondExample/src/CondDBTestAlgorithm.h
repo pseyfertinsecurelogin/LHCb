@@ -7,7 +7,7 @@
 
 // Forward declarations
 class DataObject;
-class Condition;
+struct Condition;
 class IDetDataSvc;
 class AlignmentCondition;
 

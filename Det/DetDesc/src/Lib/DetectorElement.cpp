@@ -31,7 +31,6 @@
 DetectorElement::DetectorElement( const std::string&   /* name */ )
 : m_services{ DetDesc::services() }
 {
-  setUpMessaging();
 }
 
 DetectorElement::~DetectorElement() = default;

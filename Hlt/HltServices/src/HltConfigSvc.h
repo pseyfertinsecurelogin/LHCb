@@ -24,7 +24,7 @@ StatusCode parse( std::map<TCK,std::string>& result, const std::string& input );
 #include "GaudiAlg/IGenericTool.h"
 #include "GaudiKernel/ToolHandle.h"
 
-class Condition;
+struct Condition;
 
 /** @class HltConfig HltConfig.h
  *
