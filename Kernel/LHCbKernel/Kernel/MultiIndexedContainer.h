@@ -11,6 +11,8 @@
 #include <range/v3/algorithm.hpp>
 #include <range/v3/view.hpp>
 
+#include "GaudiKernel/Range.h"
+
 namespace LHCb
 {
 namespace Container

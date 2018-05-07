@@ -4,7 +4,7 @@
 // Additional classes to be added to automatically generated lcgdict
 
 // Include files
-#include "Kernel/FastClusterContainer.h"
+#include "Kernel/MultiIndexedContainer.h"
 #include "Event/FTLiteCluster.h"
 // end include files
 
@@ -17,7 +17,7 @@
 namespace {
   struct _Instantiations {
     // begin instantiations
-    FastClusterContainer<LHCb::FTLiteCluster, int> _;
+    LHCb::Container::MultiIndexedContainer<LHCb::FTLiteCluster, 48> _;
     // end instantiations
   };
 }

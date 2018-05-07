@@ -57,7 +57,7 @@ void reverse_each_module(Iter first, Iter last) {
 template <typename Container, typename Fun >
 void for_each_quadrant( Container& c, Fun&& f)
 {
-  for( uint16_t iQuarter = 0; iQuarter < DeFTDetector::nQuarters; ++iQuarter ) {
+  for( uint16_t iQuarter = 0; iQuarter < c.nSubDetectors(); ++iQuarter ) {
     auto range = c.range_(iQuarter);
     f(range.first,range.second, iQuarter);
   }

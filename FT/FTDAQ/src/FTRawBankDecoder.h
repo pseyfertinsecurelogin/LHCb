@@ -6,16 +6,15 @@
 #include "Event/FTLiteCluster.h"
 #include "GaudiAlg/Transformer.h"
 #include "GaudiAlg/FunctionalUtilities.h"
-#include "FTDAQ/MultiIndexedContainer.h"
+#include "Kernel/MultiIndexedContainer.h"
 #include "FTRawBankParams.h"
-#include "FTDet/DeFTDetector.h"
 
 #include "IFTReadoutTool.h"
 
 using namespace Gaudi::Functional;
 
-using FTLiteClusters = LHCb::Container::MultiIndexedContainer< LHCb::FTLiteCluster,
-                                                               DeFTDetector::nQuarters >;
+using FTLiteClusters = LHCb::FTLiteCluster::FTLiteClusters;
+
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
  *  Decode the FT raw bank into FTLiteClusters
