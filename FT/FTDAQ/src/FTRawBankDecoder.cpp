@@ -16,6 +16,10 @@
 //-----------------------------------------------------------------------------
 
 namespace {  
+unsigned quarterFromChannel(LHCb::FTChannelID id) {
+  return id.uniqueQuarter() - 16u;
+}
+
 unsigned channelInTell40(short int c) {
   return ( c >> FTRawBank::cellShift);
 }
@@ -298,31 +302,32 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   //Body of the decoder
   if (version == 4){
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40s
-      LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
+      LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto last = bank->end<short int>();
       if (*(last-1) == 0) --last;//Remove padding at the end
 
       auto r = ranges::make_iterator_range(bank->begin<short int>(), last )
-              | ranges::view::transform( [&source](unsigned short int c) -> LHCb::FTLiteCluster
-                                        { return { source+channelInTell40(c),
+              | ranges::view::transform( [&offset](unsigned short int c) -> LHCb::FTLiteCluster
+                                        { return { offset+channelInTell40(c),
                                                    fraction(c), ( cSize(c) ? 0 : 4 ) };} );
-      clus.insert(r.begin(),r.end(), bank->sourceID()/3);
+      clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
     }//end loop over rawbanks
   }//version == 4  
   else if (version == 5) {
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
-      LHCb::FTChannelID source = m_readoutTool->channelIDShift(bank->sourceID());
+      LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
+      auto quarter = quarterFromChannel(offset);
       auto first = bank->begin<short int>();
       auto last  = bank->end<short int>();
       if (*(last-1) == 0) --last;//Remove padding at the end
       for( auto it = first ;  it != last; ++it ){ // loop over the clusters
         unsigned short int c = *it;
         unsigned modulesipm = channelInTell40(c);
-        LHCb::FTChannelID channel = source+modulesipm;
+        LHCb::FTChannelID channel = offset+modulesipm;
         // Define the Lambda functions
         // Basic make cluster
-        auto make_cluster = [&clus, &bank](unsigned chan, int fraction, int size) {
-          clus.addHit(std::make_tuple(chan, fraction, size), bank->sourceID()/3 );
+        auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
+          clus.addHit(std::make_tuple(chan, fraction, size), quarter );
         };//End lambda make_cluster
 
         // Make clusters between two channels
@@ -365,7 +370,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           if (cSize(c2) || (getSipm(c) != getSipm(c2)))//Not the same SiPM or flag size
             make_cluster(channel,fraction(c),4);
           else
-            make_clusters(source+channelInTell40(c2),c2,c);
+            make_clusters(offset+channelInTell40(c2),c2,c);
         }
       }
     }//end loop over rawbanks
