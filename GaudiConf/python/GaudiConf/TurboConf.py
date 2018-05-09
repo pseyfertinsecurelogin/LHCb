@@ -198,8 +198,7 @@ class TurboConf(LHCbConfigurableUser):
         """
         tes_root = '/Event'
         turbo_root = join(tes_root, 'Turbo')
-        # TODO add 2018 here once it's supported by PersistRecoConf
-        unified_datatypes = [2017]
+        unified_datatypes = [2017, 2018]
         if datatype in unified_datatypes:
             packed_root = unpacked_root = rootintes
         else:
