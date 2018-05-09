@@ -15,7 +15,7 @@ find_package(Boost)
 gaudi_add_module(FTDAQ
                  src/*.cpp
                  INCLUDE_DIRS Boost Event/FTEvent
-                 LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib DetDescLib)
+                 LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib DetDescLib FTDAQLib)
 
 gaudi_add_library(FTDAQLib
                   src/Lib/*.cpp

@@ -2,35 +2,38 @@
 #include "../FTRawBankParams.h"
 #include "Event/RawBank.h"
 #include <boost/optional.hpp>
+#include <numeric>      // std::accumulate
 
 boost::optional<unsigned int>
 LHCb::FTDAQ::nbFTClusters(const std::vector<RawBank *> &banks,
                           unsigned int maxNbClusters,
                           unsigned int clusterMaxWidth) {
   unsigned int nbClusters = 0;
-  // first rough count of FT clusters banks
-  // we ignore for now the cluster group encoding specific to version 3
-  for (auto &bank : banks) {
-    auto first = bank->begin<short int>();
-    auto last = bank->end<short int>();
-    while (first != last) {
-      int sipmHeader = *first++;
-      int nClus = sipmHeader & FTRawBank::nbClusMaximum;
-      nbClusters += nClus;
-      // maybe clusters are already too numerous ?
-      if (nbClusters > maxNbClusters) {
-        return {};
-      }
-      first += nClus;
-    }
-  }
 
-  // Now deal with FT bank version 3.
-  // For these, the previous count is missing clusters, as only the edges
-  // of cluster groups were counted.
   // Note that we check only the version of the first bank, supposing they
   // all have a consistent version
-  if ((*begin(banks))->version() == 3) {
+  int bankversion = (*begin(banks))->version() ;
+
+  if( bankversion == 2 ) {
+    // first rough count of FT clusters banks
+    // we ignore for now the cluster group encoding specific to version 3
+    for (auto &bank : banks) {
+      auto first = bank->begin<short int>();
+      auto last = bank->end<short int>();
+      while (first != last) {
+        int sipmHeader = *first++;
+        int nClus = sipmHeader & FTRawBank::nbClusMaximum;
+        nbClusters += nClus;
+        // maybe clusters are already too numerous ?
+        if (nbClusters > maxNbClusters) {
+          return {};
+        }
+        first += nClus;
+      }
+    }
+  } else if ( bankversion == 3) {
+    // For these, the previous count is missing clusters, as only the edges
+    // of cluster groups were counted.
     for (auto &bank : banks) {
       auto first = bank->begin<short int>();
       auto last = bank->end<short int>();
@@ -67,6 +70,16 @@ LHCb::FTDAQ::nbFTClusters(const std::vector<RawBank *> &banks,
         first += nClus;
       }
     }
+  } else { // bankversion == 4 or bankversion == 5
+    nbClusters += std::accumulate(banks.begin(), banks.end(), 0u,
+                                  [](unsigned int sum, auto& bank)
+                                  { return sum + bank->size(); } );
+    // Bank size is given in bytes. There are 2 bytes per cluster.
+    // Note that this overestimates slightly the number of clusters
+    // due to bank padding. For v5, it further overestimates the
+    // number of clusters due to the merging of clusters.
+    nbClusters /= 2;
   }
+
   return nbClusters;
 }

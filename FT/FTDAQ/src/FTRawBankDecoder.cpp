@@ -121,7 +121,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     // Bank size is half the number of clusters and includes headers
     clus.reserve(4 * totSize / 10);
   } else {
-    clus.reserve(totSize);
+    // Bank size is given in bytes. There are 2 bytes per cluster.
+    clus.reserve(totSize/2);
   }
   
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
