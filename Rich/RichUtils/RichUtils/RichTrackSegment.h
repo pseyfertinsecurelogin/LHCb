@@ -143,11 +143,22 @@ namespace LHCb
                    const double errTY2, ///< error on y slope squared
                    const double errP2   ///< error on momentum squared
                    )
-        : m_errX2  ( fabsf((float)(errX2))  ),
-          m_errY2  ( fabsf((float)(errY2))  ),
-          m_errTX2 ( fabsf((float)(errTX2)) ),
-          m_errTY2 ( fabsf((float)(errTY2)) ),
-          m_errP2  ( fabsf((float)(errP2))  ) { }
+        : StateErrors( (float)errX2,
+                       (float)errY2,
+                       (float)errTX2,
+                       (float)errTY2,
+                       (float)errP2 ) { }
+
+      /// Constructor from a State object
+      template< typename STATE >
+      StateErrors( const STATE& state )
+        : StateErrors( (float)state.errX2(),
+                       (float)state.errY2(),
+                       (float)state.errTx2(),
+                       (float)state.errTy2(),
+                       (float)state.errP2() ) { }
+
+    public:
 
       inline float errX2()  const noexcept { return m_errX2;  }  ///< Access the x error squared
       inline float errY2()  const noexcept { return m_errY2;  }  ///< Access the y error squared
@@ -155,11 +166,13 @@ namespace LHCb
       inline float errTY2() const noexcept { return m_errTY2; }  ///< Access the ty error squared
       inline float errP2()  const noexcept { return m_errP2;  }  ///< Access the P error squared
 
-      inline float errX()  const noexcept { return std::sqrt(errX2());  }  ///< Access the x error
-      inline float errY()  const noexcept { return std::sqrt(errY2());  }  ///< Access the y error
-      inline float errTX() const noexcept { return std::sqrt(errTX2()); }  ///< Access the tx error
-      inline float errTY() const noexcept { return std::sqrt(errTY2()); }  ///< Access the ty error
-      inline float errP()  const noexcept { return std::sqrt(errP2());  }  ///< Access the P error
+      inline float errX()   const noexcept { return std::sqrt(errX2());  }  ///< Access the x error
+      inline float errY()   const noexcept { return std::sqrt(errY2());  }  ///< Access the y error
+      inline float errTX()  const noexcept { return std::sqrt(errTX2()); }  ///< Access the tx error
+      inline float errTY()  const noexcept { return std::sqrt(errTY2()); }  ///< Access the ty error
+      inline float errP()   const noexcept { return std::sqrt(errP2());  }  ///< Access the P error
+
+    public:
 
       ///< send to std::ostream
       inline friend std::ostream& operator << ( std::ostream& s,
