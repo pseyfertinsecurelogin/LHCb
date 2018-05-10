@@ -301,7 +301,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   }
 
   //Body of the decoder
-  if (version == 4){
+  if (version == 4 or (version==5 and m_forceVersion4 )){
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40s
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto last = bank->end<short int>();
