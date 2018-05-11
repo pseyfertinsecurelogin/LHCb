@@ -1,5 +1,5 @@
-#ifndef MAGNET_MagneticFieldGridReader
-#define MAGNET_MagneticFieldGridReader
+
+#pragma once
 
 #include <vector>
 #include <string>
@@ -35,4 +35,3 @@ private:
   mutable MsgStream m_msg ;
 } ;
 
-#endif
