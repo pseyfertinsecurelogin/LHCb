@@ -3,9 +3,8 @@ Utils for payloads manipulations in Git CondDBs.
 '''
 import os
 import re
-import logging
 from hashlib import sha1
-from GitCondDB.IOVs import IOV_MIN, IOV_MAX, get_iovs
+from GitCondDB.IOVs import get_iovs
 
 
 SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
