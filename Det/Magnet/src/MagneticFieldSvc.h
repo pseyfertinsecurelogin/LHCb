@@ -1,5 +1,5 @@
-#ifndef MAGNETICFIELDSVC_H
-#define MAGNETICFIELDSVC_H 1
+
+#pragma once
 
 // Include files
 #include "Kernel/ILHCbMagnetSvc.h"
@@ -103,7 +103,6 @@ private:
 
   SmartIF<IUpdateManagerSvc> m_updMgrSvc; ///< Pointer to UpdateManagerSvc
 
-  MagneticFieldGridReader m_magFieldGridReader ;
   LHCb::MagneticFieldGrid m_magFieldGrid ;
 
   bool m_isDown = false; ///< Cache the field polarity
@@ -124,4 +123,3 @@ private:
   
 };
 
-#endif  // MAGNETICFIELDSVC_H

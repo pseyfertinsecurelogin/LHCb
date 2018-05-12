@@ -16,9 +16,9 @@
 struct GridQuadrant
 {
   std::vector<Gaudi::XYZVector> Q ;
-  double zOffset ;
-  double Dxyz[3] ;
-  size_t Nxyz[3] ;
+  double zOffset {0};
+  double Dxyz[3] {{}};
+  size_t Nxyz[3] {{}};
 } ;
 
 
@@ -35,14 +35,19 @@ StatusCode MagneticFieldGridReader::readFiles( const std::vector<std::string>& f
 
   GridQuadrant quadrants[4] ;
   StatusCode sc = StatusCode::SUCCESS ;
-  for(int iquad=0; iquad<4 && sc.isSuccess() ; ++iquad )
+  for ( int iquad=0; iquad<4 && sc.isSuccess() ; ++iquad )
+  {
     sc = readQuadrant( filenames[iquad], quadrants[iquad] ) ;
+  }
 
   // check that the quadrants are consistent
-  if( sc.isSuccess() ) {
-    for(int iquad=1; iquad<4; ++iquad ) {
+  if( sc.isSuccess() ) 
+  {
+    for ( int iquad=1; iquad<4; ++iquad ) 
+    {
       assert( quadrants[0].zOffset == quadrants[iquad].zOffset ) ;
-      for(size_t icoord = 0; icoord<3; ++icoord) {
+      for ( size_t icoord = 0; icoord<3; ++icoord ) 
+      {
         assert( quadrants[0].Dxyz[icoord] == quadrants[iquad].Dxyz[icoord] ) ;
         assert( quadrants[0].Nxyz[icoord] == quadrants[iquad].Nxyz[icoord] ) ;
       }
@@ -244,10 +249,10 @@ StatusCode MagneticFieldGridReader::readQuadrant( const std::string& filename,
     char* token = strtok( line, " " );
     int ip = 0;
     do{
-      if ( token ) { sPar[ip] = token; token = strtok( NULL, " " );}
+      if ( token ) { sPar[ip] = token; token = strtok( nullptr, " " );}
       else continue;
       ip++;
-    } while ( token != NULL );
+    } while ( token != nullptr );
     long int npar = atoi( sPar[1].c_str() );
 
     // Skip the header till GEOMETRY
@@ -266,10 +271,10 @@ StatusCode MagneticFieldGridReader::readQuadrant( const std::string& filename,
     token = strtok( line, " " );
     int ig = 0;
     do{
-      if ( token ) { sGeom[ig] = token; token = strtok( NULL, " " );}
+      if ( token ) { sGeom[ig] = token; token = strtok( nullptr, " " );}
       else continue;
       ig++;
-    } while (token != NULL);
+    } while (token != nullptr);
 
     // Grid dimensions are given in cm in CDF file. Convert to CLHEP units
 
@@ -279,7 +284,7 @@ StatusCode MagneticFieldGridReader::readQuadrant( const std::string& filename,
     quad.Nxyz[0] = atoi( sGeom[3].c_str() );
     quad.Nxyz[1] = atoi( sGeom[4].c_str() );
     quad.Nxyz[2] = atoi( sGeom[5].c_str() );
-    quad.zOffset   = atof( sGeom[6].c_str() ) * Gaudi::Units::cm;
+    quad.zOffset = atof( sGeom[6].c_str() ) * Gaudi::Units::cm;
 
     // Number of lines with data to be read
     long int nlines = ( npar - 7 ) / 3;
@@ -295,10 +300,10 @@ StatusCode MagneticFieldGridReader::readQuadrant( const std::string& filename,
       if ( line[0] == '#' ) continue;
       std::string sFx, sFy, sFz;
       char* token = strtok( line, " " );
-      if ( token ) { sFx = token; token = strtok( NULL, " " );} else continue;
-      if ( token ) { sFy = token; token = strtok( NULL, " " );} else continue;
-      if ( token ) { sFz = token; token = strtok( NULL, " " );} else continue;
-      if ( token != NULL ) continue;
+      if ( token ) { sFx = token; token = strtok( nullptr, " " );} else continue;
+      if ( token ) { sFy = token; token = strtok( nullptr, " " );} else continue;
+      if ( token ) { sFz = token; token = strtok( nullptr, " " );} else continue;
+      if ( token != nullptr ) continue;
 
       // Field values are given in gauss in CDF file. Convert to CLHEP units
       double fx = std::stod( sFx ) * Gaudi::Units::gauss ;

@@ -31,8 +31,7 @@ DECLARE_COMPONENT( MagneticFieldSvc )
 //=============================================================================
 MagneticFieldSvc::MagneticFieldSvc( const std::string& name,
                                     ISvcLocator* svc )
-: base_class( name, svc ),
-  m_magFieldGridReader(*msgSvc())
+: base_class( name, svc )
 {
   const char * fmroot = std::getenv("FIELDMAPROOT");
   if ( fmroot ) {
@@ -86,10 +85,11 @@ StatusCode MagneticFieldSvc::initialize()
     log << MSG::WARNING << "using constant magnetic field with field vector "
         << m_constFieldVector << " (Tesla)" << endmsg;
 
-    m_magFieldGridReader.fillConstantField( { m_constFieldVector[0] * Gaudi::Units::tesla,
-                                              m_constFieldVector[1] * Gaudi::Units::tesla,
-                                              m_constFieldVector[2] * Gaudi::Units::tesla },
-                                            m_magFieldGrid ) ;
+    MagneticFieldGridReader reader( *msgSvc() );
+    reader.fillConstantField( { m_constFieldVector[0] * Gaudi::Units::tesla,
+                                m_constFieldVector[1] * Gaudi::Units::tesla,
+                                m_constFieldVector[2] * Gaudi::Units::tesla },
+                              m_magFieldGrid ) ;
 
     // register anyway with UpdateManagerSvc, so clients can register callbacks
     // transparently, even if they are never going to be called
@@ -149,10 +149,11 @@ StatusCode MagneticFieldSvc::initializeWithCondDB()
         << m_mapFileNames << endmsg;
 
     m_mapFromOptions = true;
+    MagneticFieldGridReader reader( *msgSvc() );
     const StatusCode sc =
       ( m_mapFileNames.size() == 1 ?
-        m_magFieldGridReader.readDC06File( m_mapFileNames.front(), m_magFieldGrid ) :
-        m_magFieldGridReader.readFiles   ( m_mapFileNames,         m_magFieldGrid ) ) ;
+        reader.readDC06File( m_mapFileNames.front(), m_magFieldGrid ) :
+        reader.readFiles   ( m_mapFileNames,         m_magFieldGrid ) ) ;
     if ( sc.isFailure() ) return sc;
   } else {
     m_updMgrSvc->registerCondition( this, MagnetCondLocations::FieldMapFilesUp,
@@ -163,7 +164,7 @@ StatusCode MagneticFieldSvc::initializeWithCondDB()
 
 
   // Scaling factor. If not over-ridden by options, get it from Options
-  if(m_forcedScaleFactor < 9998. )
+  if ( m_forcedScaleFactor < 9998. )
   {
     log << MSG::WARNING
         << "Requested condDB but using manually set signed scale factor = "
@@ -200,7 +201,7 @@ StatusCode MagneticFieldSvc::initializeWithoutCondDB()
 
   double scaleFactor = m_forcedScaleFactor;;
 
-  if( m_forcedScaleFactor > 9998. )
+  if ( m_forcedScaleFactor > 9998. )
   {
     scaleFactor = 1.;
     if( UNLIKELY(log.level() <= MSG::DEBUG) )
@@ -210,10 +211,11 @@ StatusCode MagneticFieldSvc::initializeWithoutCondDB()
   m_magFieldGrid.setScaleFactor( scaleFactor ) ;
 
   // update the field
+  MagneticFieldGridReader reader( *msgSvc() );
   const StatusCode sc =
     ( m_mapFileNames.size() == 1 ?
-      m_magFieldGridReader.readDC06File( m_mapFileNames.front(), m_magFieldGrid ) :
-      m_magFieldGridReader.readFiles   ( m_mapFileNames,         m_magFieldGrid ) );
+      reader.readDC06File( m_mapFileNames.front(), m_magFieldGrid ) :
+      reader.readFiles   ( m_mapFileNames,         m_magFieldGrid ) );
 
   return sc ;
 }
@@ -268,9 +270,10 @@ StatusCode MagneticFieldSvc::i_updateConditions()
       // update the cache
       m_mapFileNames = files ;
       // update the field
+      MagneticFieldGridReader reader( *msgSvc() );
       sc = ( m_mapFileNames.size() == 1 ?
-             m_magFieldGridReader.readDC06File( m_mapFileNames.front(), m_magFieldGrid ) :
-             m_magFieldGridReader.readFiles   ( m_mapFileNames,         m_magFieldGrid ) ) ;
+             reader.readDC06File( m_mapFileNames.front(), m_magFieldGrid ) :
+             reader.readFiles   ( m_mapFileNames,         m_magFieldGrid ) ) ;
       if ( UNLIKELY(log.level() <= MSG::DEBUG) )
         log << MSG::DEBUG << "Field map files updated: " << m_mapFileNames << endmsg;
     }
