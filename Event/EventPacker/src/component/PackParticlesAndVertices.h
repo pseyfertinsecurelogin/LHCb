@@ -1,6 +1,8 @@
 #ifndef PACKPARTICLESANDVERTICES_H
 #define PACKPARTICLESANDVERTICES_H 1
 
+#include <sstream>
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/SmartIF.h"
@@ -148,6 +150,29 @@ private:
   void packAP2RelatedInfoRelationContainer( const Part2InfoRelations * rels,
                                             LHCb::PackedRelatedInfoRelations& prels,
                                             const std::string & location ) const;
+
+  /// Get an objects location in the TES
+  inline std::string objectLocation( const DataObject & pObj ) const
+  {
+    return ( pObj.registry() ? pObj.registry()->identifier() : "" );
+  }
+
+  /// Copy data object version
+  template< typename INPUT, typename OUTPUT >
+  void saveVersion( const INPUT& in, OUTPUT& out ) const
+  {
+    const int i_ver = in.version();
+    const int o_ver = out.version();
+    // sanity check
+    if ( UNLIKELY( o_ver != 0 && o_ver != i_ver ) )
+    {
+      std::ostringstream mess;
+      mess << objectLocation(in) << " version " << i_ver 
+           << " != current packed version " << o_ver;
+      Warning( mess.str() ).ignore(); 
+    }
+    out.setVersion(i_ver);
+  }
 
 private:
 

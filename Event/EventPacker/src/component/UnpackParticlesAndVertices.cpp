@@ -110,6 +110,7 @@ StatusCode UnpackParticlesAndVertices::execute()
             return StatusCode::SUCCESS;
           }
           pids = new LHCb::MuonPIDs();
+          pids->setVersion( ppids->version() );
           put( pids, containerName );
           ++nbPartContainer;
         }
@@ -159,6 +160,7 @@ StatusCode UnpackParticlesAndVertices::execute()
             return StatusCode::SUCCESS;
           }
           pids = new LHCb::RichPIDs();
+          pids->setVersion( ppids->version() );
           put( pids, containerName );
           ++nbPartContainer;
         }
@@ -258,6 +260,7 @@ StatusCode UnpackParticlesAndVertices::execute()
             return StatusCode::SUCCESS;
           }
           parts = new LHCb::Particles();
+          parts->setVersion( pparts->version() );
           put( parts, containerName );
           ++nbPartContainer;
         }
@@ -307,6 +310,7 @@ StatusCode UnpackParticlesAndVertices::execute()
             return StatusCode::SUCCESS;
           }
           verts = new LHCb::Vertices();
+          verts->setVersion( pverts->version() );
           put( verts, containerName );
           ++nbVertContainer;
         }
@@ -355,6 +359,7 @@ StatusCode UnpackParticlesAndVertices::execute()
             return StatusCode::SUCCESS;
           }
           fts = new LHCb::FlavourTags();
+          fts->setVersion( pfts->version() );
           put( fts, containerName );
           ++nbFTContainer;
         }
@@ -404,6 +409,7 @@ StatusCode UnpackParticlesAndVertices::execute()
             return StatusCode::SUCCESS;
           }
           recVerts = new LHCb::RecVertices();
+          recVerts->setVersion( pRecVerts->version() );
           put( recVerts, containerName );
           ++nbRecVertContainer;
         }
@@ -481,6 +487,7 @@ StatusCode UnpackParticlesAndVertices::execute()
         
         // Create a new unpacked object at the TES location and save
         RELATION * rels = new RELATION();
+        rels->setVersion( prels->version() );
         put( rels, containerName );
 
         // Loop over the relations saved at this container location

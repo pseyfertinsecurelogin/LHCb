@@ -121,8 +121,14 @@ void RichPIDPacker::unpack( const PackedDataVector & ppids,
     // Easy to detect if packing version > 3 and data version = 0 
     if ( ver > 3 && 0 == pids.version() )
     {
-      parent().Warning( "Incorrect data version 0 for packing version > 3."
-                        " Correcting data to version 2.", StatusCode::SUCCESS ).ignore();
+      // only warn if the packed location is not empty. This is because its
+      // possible for the HLT to create a default container with V0 but packing V4.
+      if ( !ppids.data().empty() )
+      {
+        parent().Warning( "Incorrect data version 0 for packing version > 3."
+                          " Correcting data to version 2.", StatusCode::SUCCESS ).ignore();
+      }
+      // reset to V2
       pids.setVersion(2);
     }
   }
