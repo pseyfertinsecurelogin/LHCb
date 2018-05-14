@@ -107,6 +107,7 @@ UnpackParticlesAndVertices::unpackP2PRelations( const std::string & location )
       int indx = prel.container >> 32;
       const std::string & containerName = prels->linkMgr()->link( indx )->path() + m_postFix;
       rels = new RELATION();
+      rels->setVersion( prels->version() );
       put( rels, containerName );
       ++nbRelContainer;
       FROMCONT * srcContainer = nullptr;
@@ -181,6 +182,7 @@ UnpackParticlesAndVertices::unpackP2PWeightedRelations( const std::string & loca
       int indx = prel.container >> 32;
       const std::string & containerName = prels->linkMgr()->link( indx )->path() + m_postFix;
       rels = new RELATION();
+      rels->setVersion( prels->version() );
       put( rels, containerName );
       ++nbRelContainer;
       FROMCONT * srcContainer = nullptr;
@@ -248,13 +250,13 @@ UnpackParticlesAndVertices::unpackP2IntRelations( const std::string & location )
   LHCb::PackedRelations* prels = getIfExists<LHCb::PackedRelations>( location );
   if ( nullptr != prels )
   {
-    for ( std::vector<LHCb::PackedRelation>::iterator itR = prels->relations().begin();
-          prels->relations().end() != itR; ++itR )
+    for ( auto itR = prels->relations().begin(); prels->relations().end() != itR; ++itR )
     {
       const LHCb::PackedRelation& prel = *itR;
       const int indx = prel.container >> 32;
       const std::string & containerName = prels->linkMgr()->link(indx)->path() + m_postFix;
       RELATION * rels = new RELATION();
+      rels->setVersion( prels->version() );
       put( rels, containerName );
       ++nbRelContainer;
       FROMCONT * srcContainer = nullptr;
