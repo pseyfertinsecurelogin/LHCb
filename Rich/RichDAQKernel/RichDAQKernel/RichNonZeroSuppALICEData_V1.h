@@ -38,6 +38,9 @@ namespace Rich
     namespace RichNonZeroSuppALICEDataV1
     {
 
+      /// Import HPD sepcific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @class RichNonZeroSuppALICEData RichNonZeroSuppALICEData_V1.h
        *
        *  The RICH HPD non zero suppressed data format for ALICE mode.

@@ -92,9 +92,9 @@ namespace Rich {
         ids.reserve( 96 );
 
         // Fill with active channels
-        for ( Rich::DAQ::ShortType iRow = 0; iRow < Rich::DAQ::MaxDataSizeALICE; ++iRow )
+        for ( Rich::DAQ::ShortType iRow = 0; iRow < MaxDataSizeALICE; ++iRow )
         {
-          for ( Rich::DAQ::ShortType iCol = 0; iCol < Rich::DAQ::MaxDataSize; ++iCol )
+          for ( Rich::DAQ::ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
           {
             if ( isPixelActive(iRow,iCol) )
             {

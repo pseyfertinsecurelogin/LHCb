@@ -43,7 +43,7 @@ namespace Rich
 
       /// Default constructor
       RichFlatFormatSmartIDData()
-        : HPDDataBankImp<Version,Header,Footer>( MaxDataSize )
+        : HPDDataBankImp<Version,Header,Footer>( HPD::MaxDataSize )
       { }
 
       /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
@@ -66,7 +66,7 @@ namespace Rich
                                                           0 // filled by buildData call below in main body
                                                           ),
                                                   Footer ( ),
-                                                  0, MaxDataSize )
+                                                  0, HPD::MaxDataSize )
       {
         buildData( digits );
       }
@@ -77,7 +77,7 @@ namespace Rich
        */
       explicit RichFlatFormatSmartIDData( const LongType * data )
         : HPDDataBankImp<Version,Header,Footer> ( data,       // start of data
-                                                  MaxDataSize // max data bloxk size
+                                                  HPD::MaxDataSize // max data block size
                                                   )
       { }
 

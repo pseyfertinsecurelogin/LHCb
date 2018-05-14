@@ -55,9 +55,9 @@ namespace Rich
     createParityWord( const LHCb::RichSmartID::Vector & ids ) const
     {
       ShortType parity(0);
-      std::vector<unsigned int> hC(BitsPerDataWord,0);
+      std::vector<unsigned int> hC(HPD::BitsPerDataWord,0);
       for ( const auto& id : ids ) { ++hC[id.pixelCol()]; }
-      for ( unsigned int i = 0; i<BitsPerDataWord; ++i )
+      for ( unsigned int i = 0; i<HPD::BitsPerDataWord; ++i )
       {
         if ( hC[i]%2 == 1 ) { setBit(parity,i); }
       }

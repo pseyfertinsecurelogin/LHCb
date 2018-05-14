@@ -187,7 +187,7 @@ namespace Rich
       /// Returns the number of active HPDs (0-9) in this particular ingress
       inline ShortType numActiveHPDs() const
       {
-        const std::bitset<NumL1InputsPerIngress> bits(activeHPDbits());
+        const std::bitset<HPD::NumL1InputsPerIngress> bits(activeHPDbits());
         return bits.count();
       }
 

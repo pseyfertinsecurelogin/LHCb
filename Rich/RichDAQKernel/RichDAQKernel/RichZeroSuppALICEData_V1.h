@@ -39,6 +39,9 @@ namespace Rich
     namespace RichZeroSuppALICEDataV1
     {
 
+      /// Import HPD sepcific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @class RichZeroSuppALICEData RichZeroSuppALICEData.h
        *
        *  The RICH HPD zero suppressed data format.

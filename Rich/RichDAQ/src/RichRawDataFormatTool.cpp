@@ -77,7 +77,7 @@ StatusCode RawDataFormatTool::initialize()
   { Warning("Decoding for RICH2 disabled",StatusCode::SUCCESS).ignore(); }
 
   // if suppression is less than max possible number of (ALICE) hits, print a message.
-  if ( m_maxHPDOc < BitsPerDataWord * MaxDataSizeALICE )
+  if ( m_maxHPDOc < HPD::BitsPerDataWord * HPD::MaxDataSizeALICE )
     info() << "Will suppress PDs with more than " << m_maxHPDOc << " digits" << endmsg;
 
   // messages if optional features are enabled
@@ -918,6 +918,8 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
 void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                                                L1Map & decodedData ) const
 {
+  using namespace Rich::DAQ::HPD;
+
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
@@ -1268,6 +1270,7 @@ void RawDataFormatTool::suppressHotPixels( const LHCb::RichSmartID& pdID,
 void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
                                                  L1Map & decodedData ) const
 {
+  using namespace Rich::DAQ::HPD;
 
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
@@ -1403,6 +1406,8 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
 void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
                                                  L1Map & decodedData ) const
 {
+  // import HPD parameters
+  using namespace Rich::DAQ::HPD;
 
   // Get L1 ID
   const Level1HardwareID base_L1ID ( bank.sourceID() );
@@ -1689,7 +1694,7 @@ const Rich::DAQ::L1Map & RawDataFormatTool::dummyMap() const
   {
     // create an ingressmap for each L1 board
     Rich::DAQ::IngressMap ingressMap;
-    for ( unsigned int input = 0; input < Rich::DAQ::NumIngressPerL1; ++input )
+    for ( unsigned int input = 0; input < Rich::DAQ::HPD::NumIngressPerL1; ++input )
     {
       L1IngressHeader header;
       header.setIngressID( L1IngressID(input) );

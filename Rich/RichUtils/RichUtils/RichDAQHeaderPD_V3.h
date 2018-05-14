@@ -35,6 +35,9 @@ namespace Rich
     namespace RichDAQHeaderV3
     {
 
+      /// Import HPD specific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @namespace Rich::DAQ::RichDAQHeaderV3::RichDAQHeaderPDCode
        *
        *  Namespace for definitions related to RichDAQHeaderV3::RichDAQHeaderPD

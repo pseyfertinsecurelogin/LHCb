@@ -34,9 +34,9 @@ namespace
     Rich::DAQ::Level1HardwareID                    obj_8;
     Rich::DAQ::L1IngressID                         obj_9;
     Rich::DAQ::L1InputWithinIngress                obj_10;
-    Rich::DAQ::Level1Input                         obj_11;
-    Rich::DAQ::HPDHardwareID                       obj_12;
-    Rich::DAQ::HPDL1InputID                        obj_13;
+    Rich::DAQ::HPD::Level1Input                    obj_11;
+    Rich::DAQ::PDHardwareID                        obj_12;
+    Rich::DAQ::HPD::L1InputID                      obj_13;
     Rich::DAQ::PDCopyNumber                        obj_14;
     Rich::DAQ::Level1CopyNumber                    obj_15;
     Rich::DAQ::PDPanelIndex                        obj_16;

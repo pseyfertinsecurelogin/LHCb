@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHNONZEROSUPPDATA_V3_H
-#define RICHDAQ_RICHNONZEROSUPPDATA_V3_H 1
+#pragma once
 
 // local
 #include "RichDAQKernel/RichHPDDataBank.h"
@@ -38,6 +37,9 @@ namespace Rich
      */
     namespace RichNonZeroSuppDataV3
     {
+
+      /// Import HPD specific parameters
+      using namespace Rich::DAQ::HPD;
 
       /** @class RichNonZeroSuppData RichNonZeroSuppData_V3.h
        *
@@ -132,5 +134,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHNONZEROSUPPDATA_V3_H

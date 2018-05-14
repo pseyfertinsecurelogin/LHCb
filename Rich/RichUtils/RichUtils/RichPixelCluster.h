@@ -369,19 +369,19 @@ namespace Rich
   public:
 
     /// Maximum number of pixel columns
-    inline int nPixelCols() const noexcept { return Rich::DAQ::NumPixelColumns; }
+    inline int nPixelCols() const noexcept { return Rich::DAQ::HPD::NumPixelColumns; }
 
     /// Number of pixel rows (either 32 for LHCbmode or 256 for ALICE mode)
     inline int nPixelRows() const noexcept
     {
-      return ( aliceMode() ? Rich::DAQ::MaxDataSizeALICE : Rich::DAQ::MaxDataSize );
+      return ( aliceMode() ? Rich::DAQ::HPD::MaxDataSizeALICE : Rich::DAQ::HPD::MaxDataSize );
     }
 
     /// Returns the 'correct' row number for the given RichSmartID (either LHCb or ALICE mode)
     inline int rowNumber( const LHCb::RichSmartID& id ) const noexcept
     {
       return ( !aliceMode() ? id.pixelRow() :
-               ((Rich::DAQ::NumAlicePixelsPerLHCbPixel*id.pixelRow())+id.pixelSubRow()) );
+               ((Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel*id.pixelRow())+id.pixelSubRow()) );
     }
 
     /// Returns the 'correct' column number for the given RichSmartID (either LHCb or ALICE mode)
@@ -485,13 +485,13 @@ namespace Rich
      *  @attention Hardcoding number of rows here to ALICE mode.
      *             In LHCb mode only the first Rich::DAQ::MaxDataSize are then used.
      */
-    bool m_data[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
+    bool m_data[Rich::DAQ::HPD::MaxDataSizeALICE][Rich::DAQ::HPD::NumPixelColumns];
 
     /** Assigned cluster for each pixel (row,col)
      *  @attention Hardcoding number of rows here to ALICE mode.
      *             In LHCb mode only the first Rich::DAQ::MaxDataSize are then used.
      */
-    PDPixelClusters::Cluster * m_clusters[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
+    PDPixelClusters::Cluster * m_clusters[Rich::DAQ::HPD::MaxDataSizeALICE][Rich::DAQ::HPD::NumPixelColumns];
 
   };
 

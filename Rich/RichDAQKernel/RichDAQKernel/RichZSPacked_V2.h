@@ -31,6 +31,9 @@ namespace Rich
     namespace RichZSPacked_V2
     {
 
+      /// Import HPD specific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @class RichZSPacked RichZSPacked_V2.h
        *
        *  Utility class representing 2 groups of address and

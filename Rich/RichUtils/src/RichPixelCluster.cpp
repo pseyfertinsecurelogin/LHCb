@@ -54,7 +54,7 @@ initialise( PDPixelClusters * clus,
     // implicitly reset as required.
     memset ( m_data, 0,
              aliceMode() ? sizeof(m_data) :
-             (sizeof(m_data)/Rich::DAQ::NumAlicePixelsPerLHCbPixel) );
+             (sizeof(m_data)/Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel) );
 
     // set the hit pixels as "on"
     for ( const auto S : smartIDs )

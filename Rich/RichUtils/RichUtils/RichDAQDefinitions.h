@@ -46,41 +46,53 @@ namespace Rich
 
     //---------------------------------------------------------------------------------
 
-    /// Maximum data block size (LHCb mode)
-    static const ShortType MaxDataSize = 32;
+    /// HPD Specific Paramters
+    namespace HPD
+    {
+      
+      /// Maximum data block size (LHCb mode)
+      static const ShortType MaxDataSize = 32;
 
-    /// Number of Alice pixels per LHCb pixel
-    static const ShortType NumAlicePixelsPerLHCbPixel = 8;
+      /// Number of Alice pixels per LHCb pixel
+      static const ShortType NumAlicePixelsPerLHCbPixel = 8;
 
-    /// Maximum data block size (ALICE mode)
-    static const ShortType MaxDataSizeALICE = MaxDataSize * NumAlicePixelsPerLHCbPixel;
+      /// Maximum data block size (ALICE mode)
+      static const ShortType MaxDataSizeALICE = MaxDataSize * NumAlicePixelsPerLHCbPixel;
 
-    /// Number of bits per data word
-    static const ShortType BitsPerDataWord = 32;
+      /// Number of bits per data word
+      static const ShortType BitsPerDataWord = 32;
+      
+      /// Number of Ingress's per L1 board
+      static const ShortType NumIngressPerL1 = 4;
 
-    /// Number of Ingress's per L1 board
-    static const ShortType NumIngressPerL1 = 4;
+      /** @brief Number of L1 inputs per ingress.
+       *  Allow for 12 here even though the UKL1 boards only have 9, to allow the decoding
+       *  to work for some prototype boards which do have 12 inputs */
+      static const ShortType NumL1InputsPerIngress = 12;
+      
+      /// Total number of inputs to an L1 board
+      static const ShortType MaxL1Inputs = NumIngressPerL1 * NumL1InputsPerIngress;
 
-    /** @brief Number of L1 inputs per ingress.
-     *  Allow for 12 here even though the UKL1 boards only have 9, to allow the decoding
-     *  to work for some prototype boards which do have 12 inputs */
-    static const ShortType NumL1InputsPerIngress = 12;
+      /// Maximum ZS address value
+      static const ShortType MaxZSAddress = 255;
+      
+      /// Number of pixel columns in the HPD chip
+      static const ShortType NumPixelColumns = 32;
+      
+      /// Number of pixel rows in the HPD chip
+      static const ShortType NumPixelRows    = 32;
+      
+      /// Size of HPD (LHCb) pixel in mm
+      static const double PixelSize = 0.5;
 
-    /// Total number of inputs to an L1 board
-    static const ShortType MaxL1Inputs = NumIngressPerL1 * NumL1InputsPerIngress;
+    }
 
-    /// Maximum ZS address value
-    static const ShortType MaxZSAddress = 255;
+    /// PMT Specific parameters
+    namespace PMT
+    {
 
-    /// Number of pixel columns in the HPD chip
-    static const ShortType NumPixelColumns = 32;
-
-    /// Number of pixel rows in the HPD chip
-    static const ShortType NumPixelRows    = 32;
-
-    /// Size of HPD (LHCb) pixel in mm
-    static const double PixelSize = 0.5;
-
+    }
+      
     //---------------------------------------------------------------------------------
 
     //---------------------------------------------------------------------------------
@@ -179,7 +191,7 @@ namespace Rich
 
     /** @class Level0ID RichUtils/RichDAQDefinitions.h
      *
-     *  Contains the Level 0 board number plus one bit identifying one of the two HPDs
+     *  Contains the Level 0 board number plus one bit identifying one of the two PDs
      *
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
@@ -188,43 +200,43 @@ namespace Rich
     {
     public :
       // Define the number of bits for each field
-      static const IndexType  BitsHPD =  1;  ///< Number of bits for HPD ID
-      static const IndexType  BitsL0  =  10; ///< Number of bits for L0 ID
+      static const IndexType  BitsPD =  1;  ///< Number of bits for PD ID
+      static const IndexType  BitsL0 =  10; ///< Number of bits for L0 ID
       // Create the shift registers
-      static const IndexType  ShiftHPD = 0;
-      static const IndexType  ShiftL0  = ShiftHPD + BitsHPD;
+      static const IndexType  ShiftPD = 0;
+      static const IndexType  ShiftL0 = ShiftPD + BitsPD;
       // Create the Masks
-      static const ShortType  MaskHPD = ((1 << BitsHPD)-1) << ShiftHPD;
+      static const ShortType  MaskPD  = ((1 << BitsPD)-1) << ShiftPD;
       static const ShortType  MaskL0  = ((1 << BitsL0)-1) << ShiftL0;
       // Create the max values that can be stored in each field
-      static const ShortType  MaxHPD = ( 1 << BitsHPD ) - 1;
-      static const ShortType  MaxL0  = ( 1 << BitsL0 ) - 1;
+      static const ShortType  MaxPD   = ( 1 << BitsPD ) - 1;
+      static const ShortType  MaxL0   = ( 1 << BitsL0 ) - 1;
     public :
       /// Default Constructor
       Level0ID() = default;
       /// Constructor from bit packed word
       explicit Level0ID ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
-      /** Constructor from L0 and HPD number
+      /** Constructor from L0 and PD number
        *  @param l0num  L0 board number
-       *  @param hpdnum HPD bit number (0 or 1)
+       *  @param pdnum PD bit number (0 or 1)
        */
       explicit Level0ID ( const ShortType l0num,
-                          const ShortType hpdnum ) noexcept
+                          const ShortType pdnum ) noexcept
       {
-        setHPD ( hpdnum );
-        setL0  ( l0num  );
+        setPD ( pdnum );
+        setL0 ( l0num );
       }
-      /// Return the HPD number (0 or 1)
-      inline ShortType hpd() const noexcept
+      /// Return the PD number (0 or 1)
+      inline ShortType pd() const noexcept
       {
-        return ( (data() & MaskHPD) >> ShiftHPD );
+        return ( (data() & MaskPD) >> ShiftPD );
       }
-      /// Set the HPD number (0 or 1)
-      inline bool setHPD( const ShortType hpd ) noexcept
+      /// Set the PD number (0 or 1)
+      inline bool setPD( const ShortType pd ) noexcept
       {
-        return ( dataInRange(hpd,MaxHPD) ?
-                 set( hpd, ShiftHPD, MaskHPD ) : false );
+        return ( dataInRange(pd,MaxPD) ?
+                 set( pd, ShiftPD, MaskPD ) : false );
       }
       /// Return the L0 board number
       inline ShortType l0() const noexcept
@@ -450,135 +462,141 @@ namespace Rich
         : NumericType<ShortType>(id) { }
     };
 
-    /** @class Level1Input RichUtils/RichDAQDefinitions.h
-     *
-     *  The Level 1 board input number.
-     *
-     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-     *  @date   11/11/2005
-     */
-    class Level1Input final : public NumericType<ShortType>
+    namespace HPD
     {
-    public :
-      /// Default Constructor
-      Level1Input() = default;
-      /// Constructor with value
-      explicit Level1Input ( const ShortType id ) noexcept
-        : NumericType<ShortType>(id) { }
-      /// Constructor from an Ingress ID and Ingress input number
-      Level1Input( const L1IngressID ingress,       ///< The ingress ID
-                   const L1InputWithinIngress input ///< Input number within an ingress
-                   )
-        : NumericType<ShortType>( ingress.data()*NumL1InputsPerIngress + input.data() )
-      { }
-      /// Returns the input number within a given ingress (0-8)
-      inline L1InputWithinIngress l1InputWithinIngress() const
+      /** @class Level1Input RichUtils/RichDAQDefinitions.h
+       *
+       *  The HPD Level 1 board input number.
+       *
+       *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+       *  @date   11/11/2005
+       */
+      class Level1Input final : public NumericType<ShortType>
       {
-        return L1InputWithinIngress( data() % NumL1InputsPerIngress );
-      }
-      /// Returns the L1 ingress number
-      inline L1IngressID ingressID() const
-      {
-        return L1IngressID ( data() / NumL1InputsPerIngress );
-      }
-    };
+      public :
+        /// Default Constructor
+        Level1Input() = default;
+        /// Constructor with value
+        explicit Level1Input ( const ShortType id ) noexcept
+          : NumericType<ShortType>(id) { }
+        /// Constructor from an Ingress ID and Ingress input number
+        Level1Input( const L1IngressID ingress,       ///< The ingress ID
+                     const L1InputWithinIngress input ///< Input number within an ingress
+          )
+          : NumericType<ShortType>( ingress.data()*NumL1InputsPerIngress + input.data() )
+        { }
+        /// Returns the input number within a given ingress (0-8)
+        inline L1InputWithinIngress l1InputWithinIngress() const
+        {
+          return L1InputWithinIngress( data() % NumL1InputsPerIngress );
+        }
+        /// Returns the L1 ingress number
+        inline L1IngressID ingressID() const
+        {
+          return L1IngressID ( data() / NumL1InputsPerIngress );
+        }
+      };
+    }
 
-    /** @class HPDHardwareID RichUtils/RichDAQDefinitions.h
+    /** @class PDHardwareID RichUtils/RichDAQDefinitions.h
      *
-     *  The (numeric) HPD hardware ID. Unique to each HPD and can be
+     *  The (numeric) PD hardware ID. Unique to each PD and can be
      *  used to locate its physical properties, such as Q.E. curves.
      *
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class HPDHardwareID final : public NumericType<LongType>
+    class PDHardwareID final : public NumericType<LongType>
     {
     public :
       /// Default Constructor
-      HPDHardwareID() = default;
+      PDHardwareID() = default;
       /// Constructor with value
-      explicit HPDHardwareID ( const LongType id ) noexcept
+      explicit PDHardwareID ( const LongType id ) noexcept
         : NumericType<LongType>(id) { }
     };
 
-    /** @class HPDL1InputID RichUtils/RichDAQDefinitions.h
-     *
-     *  The HPD Level1 input ID. The Level1 board number and the input
-     *  number on that board for a given HPD bit-packed into a single word.
-     *
-     *  The most significant 8 bits gives the L1 board number.
-     *  The least significant 8 bits gives the L1 board input number.
-     *
-     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-     *  @date   11/11/2005
-     */
-    class HPDL1InputID final : public NumericType<ShortType>
+    namespace HPD
     {
-    public :
-      // Define the number of bits for each field
-      static const IndexType  BitsIn =  8; ///< Number of bits for input number
-      static const IndexType  BitsB  =  8; ///< Number of bits for board number
-      // Create the shift registers
-      static const IndexType  ShiftIn = 0;
-      static const IndexType  ShiftB  = ShiftIn + BitsIn;
-      // Create the Masks
-      static const ShortType  MaskIn = ((1 << BitsIn)-1) << ShiftIn;
-      static const ShortType  MaskB  = ((1 << BitsB) -1) << ShiftB ;
-      // Create the max values that can be stored in each field
-      static const ShortType  MaxIn = ( 1 << BitsIn ) - 1;
-      static const ShortType  MaxB  = ( 1 << BitsB ) - 1;
-    public :
-      /// Default Constructor
-      HPDL1InputID() = default;
-      /// Constructor from bit packed word
-      explicit HPDL1InputID ( const ShortType id ) noexcept
-        : NumericType<ShortType>(id) { }
-      /// Constructor from a L1 ID and input number
-      HPDL1InputID ( const Level1HardwareID l1ID,    ///< The L1 board hardware ID
-                     const Level1Input input ///< L1 input number
-                     )
+      /** @class L1InputID RichUtils/RichDAQDefinitions.h
+       *
+       *  The HPD Level1 input ID. The Level1 board number and the input
+       *  number on that board for a given HPD bit-packed into a single word.
+       *
+       *  The most significant 8 bits gives the L1 board number.
+       *  The least significant 8 bits gives the L1 board input number.
+       *
+       *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+       *  @date   11/11/2005
+       */
+      class L1InputID final : public NumericType<ShortType>
       {
-        setBoardNumber(l1ID);
-        setInputNumber(input);
-      }
-      /// Return the Level1 board number
-      inline Level1HardwareID boardNumber() const noexcept
-      {
-        return Level1HardwareID( (data() & MaskB) >> ShiftB );
-      }
-      /// Set the Level1 board number
-      inline bool setBoardNumber( const Level1HardwareID board ) noexcept
-      {
-        return ( dataInRange(board.data(),MaxB) ?
-                 set( board.data(), ShiftB, MaskB ) : false );
-      }
-      /// Return the input number
-      inline Level1Input inputNumber() const noexcept
-      {
-        return Level1Input( (data() & MaskIn) >> ShiftIn );
-      }
-      /// Set the input number
-      inline bool setInputNumber( const Level1Input input ) noexcept
-      {
-        return ( dataInRange(input.data(),MaxIn) ?
-                 set( input.data(), ShiftIn, MaskIn ) : false );
-      }
-    private: // methods
-      /// Set the data value for a given mask and shift value
-      inline bool set( const ShortType value,
-                       const IndexType shift,
-                       const ShortType  mask ) noexcept
-      {
-        setData( ((value << shift) & mask) | (data() & ~mask) );
-        return true;
-      }
-      /// tests whether a given value is in range for a given data field
-      inline bool dataInRange( const ShortType value,
-                               const ShortType max ) const noexcept
-      {
-        return ( value <= max );
-      }
-    };
+      public :
+        // Define the number of bits for each field
+        static const IndexType  BitsIn  = 8; ///< Number of bits for input number
+        static const IndexType  BitsB   = 8; ///< Number of bits for board number
+        // Create the shift registers
+        static const IndexType  ShiftIn = 0;
+        static const IndexType  ShiftB  = ShiftIn + BitsIn;
+        // Create the Masks
+        static const ShortType  MaskIn  = ((1 << BitsIn)-1) << ShiftIn;
+        static const ShortType  MaskB   = ((1 << BitsB) -1) << ShiftB ;
+        // Create the max values that can be stored in each field
+        static const ShortType  MaxIn   = ( 1 << BitsIn ) - 1;
+        static const ShortType  MaxB    = ( 1 << BitsB ) - 1;
+      public :
+        /// Default Constructor
+        L1InputID() = default;
+        /// Constructor from bit packed word
+        explicit L1InputID ( const ShortType id ) noexcept
+          : NumericType<ShortType>(id) { }
+        /// Constructor from a L1 ID and input number
+        L1InputID ( const Level1HardwareID l1ID,    ///< The L1 board hardware ID
+                    const Level1Input input ///< L1 input number
+          )
+        {
+          setBoardNumber(l1ID);
+          setInputNumber(input);
+        }
+        /// Return the Level1 board number
+        inline Level1HardwareID boardNumber() const noexcept
+        {
+          return Level1HardwareID( (data() & MaskB) >> ShiftB );
+        }
+        /// Set the Level1 board number
+        inline bool setBoardNumber( const Level1HardwareID board ) noexcept
+        {
+          return ( dataInRange(board.data(),MaxB) ?
+                   set( board.data(), ShiftB, MaskB ) : false );
+        }
+        /// Return the input number
+        inline Level1Input inputNumber() const noexcept
+        {
+          return Level1Input( (data() & MaskIn) >> ShiftIn );
+        }
+        /// Set the input number
+        inline bool setInputNumber( const Level1Input input ) noexcept
+        {
+          return ( dataInRange(input.data(),MaxIn) ?
+                   set( input.data(), ShiftIn, MaskIn ) : false );
+        }
+      private: // methods
+        /// Set the data value for a given mask and shift value
+        inline bool set( const ShortType value,
+                         const IndexType shift,
+                         const ShortType  mask ) noexcept
+        {
+          setData( ((value << shift) & mask) | (data() & ~mask) );
+          return true;
+        }
+        /// tests whether a given value is in range for a given data field
+        inline bool dataInRange( const ShortType value,
+                                 const ShortType max ) const noexcept
+        {
+          return ( value <= max );
+        }
+      };
+    }
 
     /** @class PDCopyNumber RichUtils/RichDAQDefinitions.h
      *
@@ -598,8 +616,6 @@ namespace Rich
       explicit PDCopyNumber ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
     };
-    /// Temporary alias (to be removed)
-    using HPDCopyNumber = PDCopyNumber;
 
     /** @class PDPanelIndex RichUtils/RichDAQDefinitions.h
      *
@@ -638,27 +654,21 @@ namespace Rich
     //--------------------------------------------------------------------------------------
 
     /// Local definition of a RawBank constructed from 32bit ints
-    //using RAWBank           = std::vector< LongType >;
     typedef std::vector< LongType > RAWBank;
 
-    /// Vector of HPD Hardware IDs
-    //using HPDHardwareIDs    = std::vector< HPDHardwareID >;
-    typedef std::vector< HPDHardwareID > HPDHardwareIDs;
+    /// Vector of PD Hardware IDs
+    typedef std::vector< PDHardwareID > PDHardwareIDs;
 
     /// Vector of Level 0 IDs
-    //using Level0IDs         = std::vector< Level0ID >;
     typedef std::vector< Level0ID > Level0IDs;
 
     /// Vector of Level 1 hardware IDs
-    //using Level1HardwareIDs = std::vector< Level1HardwareID >;
     typedef std::vector< Level1HardwareID > Level1HardwareIDs;
 
     /// Vector of Level 1 logical IDs
-    //using Level1LogicalIDs  = std::vector< Level1LogicalID >;
     typedef std::vector< Level1LogicalID > Level1LogicalIDs;
 
     /// Vector of L1InputWithinIngress
-    //using L1IngressInputs   = std::vector< L1InputWithinIngress >;
     typedef std::vector< L1InputWithinIngress > L1IngressInputs;
 
     //--------------------------------------------------------------------------------------
@@ -774,43 +784,43 @@ namespace std
   { inline size_t operator() ( const Rich::DAQ::L1InputWithinIngress id ) const { return (size_t)id.data(); } } ;
 
   /// Level1Input hash function
-  template <> struct hash<Rich::DAQ::Level1Input>
-  { inline size_t operator() ( Rich::DAQ::Level1Input id ) const { return (size_t)id.data(); } } ;
+  template <> struct hash<Rich::DAQ::HPD::Level1Input>
+  { inline size_t operator() ( Rich::DAQ::HPD::Level1Input id ) const { return (size_t)id.data(); } } ;
   /// Level1Input hash function
-  template <> struct hash<Rich::DAQ::Level1Input&>
-  { inline size_t operator() ( Rich::DAQ::Level1Input id ) const { return (size_t)id.data(); } } ;
+  template <> struct hash<Rich::DAQ::HPD::Level1Input&>
+  { inline size_t operator() ( Rich::DAQ::HPD::Level1Input id ) const { return (size_t)id.data(); } } ;
   /// Level1Input hash function
-  template <> struct hash<const Rich::DAQ::Level1Input>
-  { inline size_t operator() ( const Rich::DAQ::Level1Input id ) const { return (size_t)id.data(); } } ;
+  template <> struct hash<const Rich::DAQ::HPD::Level1Input>
+  { inline size_t operator() ( const Rich::DAQ::HPD::Level1Input id ) const { return (size_t)id.data(); } } ;
   /// Level1Input hash function
-  template <> struct hash<const Rich::DAQ::Level1Input&>
-  { inline size_t operator() ( const Rich::DAQ::Level1Input id ) const { return (size_t)id.data(); } } ;
+  template <> struct hash<const Rich::DAQ::HPD::Level1Input&>
+  { inline size_t operator() ( const Rich::DAQ::HPD::Level1Input id ) const { return (size_t)id.data(); } } ;
 
-  /// HPDHardwareID hash function
-  template <> struct hash<Rich::DAQ::HPDHardwareID>
-  { inline size_t operator() ( Rich::DAQ::HPDHardwareID id ) const { return (size_t)id.data(); } } ;
-  /// HPDHardwareID hash function
-  template <> struct hash<Rich::DAQ::HPDHardwareID&>
-  { inline size_t operator() ( Rich::DAQ::HPDHardwareID id ) const { return (size_t)id.data(); } } ;
-  /// HPDHardwareID hash function
-  template <> struct hash<const Rich::DAQ::HPDHardwareID>
-  { inline size_t operator() ( const Rich::DAQ::HPDHardwareID id ) const { return (size_t)id.data(); } } ;
-  /// HPDHardwareID hash function
-  template <> struct hash<const Rich::DAQ::HPDHardwareID&>
-  { inline size_t operator() ( const Rich::DAQ::HPDHardwareID id ) const { return (size_t)id.data(); } } ;
+  /// PDHardwareID hash function
+  template <> struct hash<Rich::DAQ::PDHardwareID>
+  { inline size_t operator() ( Rich::DAQ::PDHardwareID id ) const { return (size_t)id.data(); } } ;
+  /// PDHardwareID hash function
+  template <> struct hash<Rich::DAQ::PDHardwareID&>
+  { inline size_t operator() ( Rich::DAQ::PDHardwareID id ) const { return (size_t)id.data(); } } ;
+  /// PDHardwareID hash function
+  template <> struct hash<const Rich::DAQ::PDHardwareID>
+  { inline size_t operator() ( const Rich::DAQ::PDHardwareID id ) const { return (size_t)id.data(); } } ;
+  /// PDHardwareID hash function
+  template <> struct hash<const Rich::DAQ::PDHardwareID&>
+  { inline size_t operator() ( const Rich::DAQ::PDHardwareID id ) const { return (size_t)id.data(); } } ;
 
-  /// HPDL1InputID hash function
-  template <> struct hash<Rich::DAQ::HPDL1InputID>
-  { inline size_t operator() ( Rich::DAQ::HPDL1InputID id ) const { return (size_t)id.data(); } } ;
-  /// HPDL1InputID hash function
-  template <> struct hash<Rich::DAQ::HPDL1InputID&>
-  { inline size_t operator() ( Rich::DAQ::HPDL1InputID id ) const { return (size_t)id.data(); } } ;
-  /// HPDL1InputID hash function
-  template <> struct hash<const Rich::DAQ::HPDL1InputID>
-  { inline size_t operator() ( const Rich::DAQ::HPDL1InputID id ) const { return (size_t)id.data(); } } ;
-  /// HPDL1InputID hash function
-  template <> struct hash<const Rich::DAQ::HPDL1InputID&>
-  { inline size_t operator() ( const Rich::DAQ::HPDL1InputID id ) const { return (size_t)id.data(); } } ;
+  /// L1InputID hash function
+  template <> struct hash<Rich::DAQ::HPD::L1InputID>
+  { inline size_t operator() ( Rich::DAQ::HPD::L1InputID id ) const { return (size_t)id.data(); } } ;
+  /// L1InputID hash function
+  template <> struct hash<Rich::DAQ::HPD::L1InputID&>
+  { inline size_t operator() ( Rich::DAQ::HPD::L1InputID id ) const { return (size_t)id.data(); } } ;
+  /// L1InputID hash function
+  template <> struct hash<const Rich::DAQ::HPD::L1InputID>
+  { inline size_t operator() ( const Rich::DAQ::HPD::L1InputID id ) const { return (size_t)id.data(); } } ;
+  /// L1InputID hash function
+  template <> struct hash<const Rich::DAQ::HPD::L1InputID&>
+  { inline size_t operator() ( const Rich::DAQ::HPD::L1InputID id ) const { return (size_t)id.data(); } } ;
 
   /// PDCopyNumber hash function
   template <> struct hash<Rich::DAQ::PDCopyNumber>
@@ -909,43 +919,43 @@ namespace GaudiUtils
   { inline size_t operator() ( const Rich::DAQ::L1InputWithinIngress id ) const noexcept { return (size_t)id.data(); } } ;
 
   /// Level1Input Hash function
-  template <> struct Hash<Rich::DAQ::Level1Input>
-  { inline size_t operator() ( Rich::DAQ::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
+  template <> struct Hash<Rich::DAQ::HPD::Level1Input>
+  { inline size_t operator() ( Rich::DAQ::HPD::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
   /// Level1Input Hash function
-  template <> struct Hash<Rich::DAQ::Level1Input&>
-  { inline size_t operator() ( Rich::DAQ::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
+  template <> struct Hash<Rich::DAQ::HPD::Level1Input&>
+  { inline size_t operator() ( Rich::DAQ::HPD::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
   /// Level1Input Hash function
-  template <> struct Hash<const Rich::DAQ::Level1Input>
-  { inline size_t operator() ( const Rich::DAQ::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
+  template <> struct Hash<const Rich::DAQ::HPD::Level1Input>
+  { inline size_t operator() ( const Rich::DAQ::HPD::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
   /// Level1Input Hash function
-  template <> struct Hash<const Rich::DAQ::Level1Input&>
-  { inline size_t operator() ( const Rich::DAQ::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
+  template <> struct Hash<const Rich::DAQ::HPD::Level1Input&>
+  { inline size_t operator() ( const Rich::DAQ::HPD::Level1Input id ) const noexcept { return (size_t)id.data(); } } ;
 
-  /// HPDHardwareID Hash function
-  template <> struct Hash<Rich::DAQ::HPDHardwareID>
-  { inline size_t operator() ( Rich::DAQ::HPDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDHardwareID Hash function
-  template <> struct Hash<Rich::DAQ::HPDHardwareID&>
-  { inline size_t operator() ( Rich::DAQ::HPDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDHardwareID Hash function
-  template <> struct Hash<const Rich::DAQ::HPDHardwareID>
-  { inline size_t operator() ( const Rich::DAQ::HPDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDHardwareID Hash function
-  template <> struct Hash<const Rich::DAQ::HPDHardwareID&>
-  { inline size_t operator() ( const Rich::DAQ::HPDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDHardwareID Hash function
+  template <> struct Hash<Rich::DAQ::PDHardwareID>
+  { inline size_t operator() ( Rich::DAQ::PDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDHardwareID Hash function
+  template <> struct Hash<Rich::DAQ::PDHardwareID&>
+  { inline size_t operator() ( Rich::DAQ::PDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDHardwareID Hash function
+  template <> struct Hash<const Rich::DAQ::PDHardwareID>
+  { inline size_t operator() ( const Rich::DAQ::PDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDHardwareID Hash function
+  template <> struct Hash<const Rich::DAQ::PDHardwareID&>
+  { inline size_t operator() ( const Rich::DAQ::PDHardwareID id ) const noexcept { return (size_t)id.data(); } } ;
 
-  /// HPDL1InputID Hash function
-  template <> struct Hash<Rich::DAQ::HPDL1InputID>
-  { inline size_t operator() ( Rich::DAQ::HPDL1InputID id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDL1InputID Hash function
-  template <> struct Hash<Rich::DAQ::HPDL1InputID&>
-  { inline size_t operator() ( Rich::DAQ::HPDL1InputID id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDL1InputID Hash function
-  template <> struct Hash<const Rich::DAQ::HPDL1InputID>
-  { inline size_t operator() ( const Rich::DAQ::HPDL1InputID id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDL1InputID Hash function
-  template <> struct Hash<const Rich::DAQ::HPDL1InputID&>
-  { inline size_t operator() ( const Rich::DAQ::HPDL1InputID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// L1InputID Hash function
+  template <> struct Hash<Rich::DAQ::HPD::L1InputID>
+  { inline size_t operator() ( Rich::DAQ::HPD::L1InputID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// L1InputID Hash function
+  template <> struct Hash<Rich::DAQ::HPD::L1InputID&>
+  { inline size_t operator() ( Rich::DAQ::HPD::L1InputID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// L1InputID Hash function
+  template <> struct Hash<const Rich::DAQ::HPD::L1InputID>
+  { inline size_t operator() ( const Rich::DAQ::HPD::L1InputID id ) const noexcept { return (size_t)id.data(); } } ;
+  /// L1InputID Hash function
+  template <> struct Hash<const Rich::DAQ::HPD::L1InputID&>
+  { inline size_t operator() ( const Rich::DAQ::HPD::L1InputID id ) const noexcept { return (size_t)id.data(); } } ;
 
   /// PDCopyNumber Hash function
   template <> struct Hash<Rich::DAQ::PDCopyNumber>
@@ -992,9 +1002,9 @@ namespace Rich
     using L1ToSmartIDsPair = std::pair< const Level1HardwareID, LHCb::RichSmartID::Vector >;
 
     /// Mapping from Level1 ID to list of PD RichSmartIDs
-    using L1ToHardIDs = GaudiUtils::HashMap< const Level1HardwareID, HPDHardwareIDs >;
+    using L1ToHardIDs = GaudiUtils::HashMap< const Level1HardwareID, PDHardwareIDs >;
     /// Pair type in a L1ToHardIDs
-    using L1ToHardIDsPair = std::pair< const Level1HardwareID, HPDHardwareIDs >;
+    using L1ToHardIDsPair = std::pair< const Level1HardwareID, PDHardwareIDs >;
 
   }
 }

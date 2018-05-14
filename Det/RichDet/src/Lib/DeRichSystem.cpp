@@ -35,11 +35,6 @@
 
 const CLID CLID_DERichSystem = 12005;  // User defined
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeRichSystem::DeRichSystem( const std::string & name ) : DeRichBase(name) { }
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichSystem::classID() { return CLID_DERichSystem; }
 
@@ -53,10 +48,9 @@ StatusCode DeRichSystem::initialize()
   _ri_debug << "Initialize " << name() << endmsg;
 
   // get the version number
-  if ( exists("systemVersion") )
-    m_version = param<int>("systemVersion");
+  if ( exists("systemVersion") ) { m_version = param<int>("systemVersion"); }
   _ri_debug << "System version:" << systemVersion() << endmsg;
-
+  
   // get rich detectors
   std::vector<std::string> deRichLocs = getDeRichLocations();
 
@@ -123,24 +117,6 @@ StatusCode DeRichSystem::initialize()
 }
 
 //=========================================================================
-// Check and fill a map
-//=========================================================================
-template < class SOURCE, class TARGET, class MAP >
-bool DeRichSystem::safeMapFill( const SOURCE& source, const TARGET& target, MAP& map )
-{
-  auto p = map.insert(typename MAP::value_type(source,target));
-  if ( !p.second )
-  {
-    error() << "Error filling map '" << System::typeinfoName(typeid(map))
-            << "' source " << System::typeinfoName(typeid(source)) << "=" << source
-            << " already has an entry for target " << System::typeinfoName(typeid(target))
-            << " OLD=" << map[source] << " NEW=" << target
-            << endmsg;
-  }
-  return p.second;
-}
-
-//=========================================================================
 //  buildPDMappings
 //=========================================================================
 StatusCode DeRichSystem::buildPDMappings()
@@ -172,9 +148,8 @@ StatusCode DeRichSystem::buildPDMappings()
   m_smartid2copyNumber.clear();
   m_copyNumber2smartid.clear();
   m_l1H2CopyN.clear();
-  m_l1LogToHard.clear();
+  m_l1LogToHard = {{}};
   m_l1HardToLog.clear();
-  m_firstL1CopyN = 0;
 
   // Fill the maps for each RICH
   for ( const auto rich : Rich::detectors() )
@@ -235,8 +210,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   // load conditions
   _ri_debug << "Loading Conditions from " <<  m_detNumConds[rich] << endmsg;
   const auto numbers = condition(m_detNumConds[rich]);
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << m_detNumConds[rich] << " since:" << numbers->validSince().format(true)
+  _ri_debug << m_detNumConds[rich] << " since:" << numbers->validSince().format(true)
             << " till:" << numbers->validTill().format(true) << endmsg;
 
   SmartRef<Condition> inactives;
@@ -360,10 +334,10 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     // get data
     const LHCb::RichSmartID32         pdID32 ( *iSoft  ); // needed for 32->64 bit support
     const LHCb::RichSmartID           pdID   ( pdID32  ); // handles correct format conversion
-    const Rich::DAQ::HPDHardwareID    hardID ( *iHard  );
+    const Rich::DAQ::PDHardwareID    hardID ( *iHard  );
     const Rich::DAQ::Level1HardwareID L1ID   ( *iL1    );
     const Rich::DAQ::Level0ID         L0ID   ( *iL0    );
-    const Rich::DAQ::Level1Input      L1IN   ( *iL1In  );
+    const Rich::DAQ::HPD::Level1Input L1IN   ( *iL1In  );
     const Rich::DAQ::PDCopyNumber     copyN  ( *icopyN );
 
     // debug printout
@@ -495,11 +469,12 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
   // L1 Logical ID to Copy Numbers
   // Create on the fly here. Should add to CondDB really ...
+  unsigned int firstL1CopyN{0};
   for ( const auto & L1HID : m_l1IDs )
   {
     if ( m_l1H2CopyN.find(L1HID) == m_l1H2CopyN.end() )
     {
-      m_l1H2CopyN[L1HID] = Rich::DAQ::Level1CopyNumber(m_firstL1CopyN++);
+      m_l1H2CopyN[L1HID] = Rich::DAQ::Level1CopyNumber(firstL1CopyN++);
       _ri_debug << "L1 Copy Number " << m_l1H2CopyN[L1HID]
                 << " -> HardwareID=" << L1HID << " LogicalID=" << level1LogicalID(L1HID)
                 << endmsg;
@@ -515,12 +490,12 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 //=========================================================================
 //  hardwareID
 //=========================================================================
-const Rich::DAQ::HPDHardwareID
+const Rich::DAQ::PDHardwareID
 DeRichSystem::hardwareID( const LHCb::RichSmartID& smartID ) const
 {
   // See if this RichSmartID is known
   const auto id = m_soft2hard.find( smartID.pdID() );
-  if ( m_soft2hard.end() == id )
+  if ( UNLIKELY( m_soft2hard.end() == id ) )
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID " << smartID.pdID();
@@ -537,11 +512,11 @@ DeRichSystem::hardwareID( const LHCb::RichSmartID& smartID ) const
 //  richSmartID
 //=========================================================================
 const LHCb::RichSmartID
-DeRichSystem::richSmartID( const Rich::DAQ::HPDHardwareID& hID ) const
+DeRichSystem::richSmartID( const Rich::DAQ::PDHardwareID& hID ) const
 {
   // See if this PD hardware ID is known
   const auto id = m_hard2soft.find( hID );
-  if ( m_hard2soft.end() == id )
+  if ( UNLIKELY( m_hard2soft.end() == id ) )
   {
     throw GaudiException( "Unknown PD hardware ID " + (std::string)hID,
                           "DeRichSystem::richSmartID",
@@ -560,7 +535,7 @@ DeRichSystem::richSmartID( const Rich::DAQ::Level0ID& l0ID ) const
 {
   // See if this Level0 hardware ID is known
   const auto id = m_l0hard2soft.find( l0ID );
-  if ( m_l0hard2soft.end() == id )
+  if ( UNLIKELY( m_l0hard2soft.end() == id ) )
   {
     throw GaudiException( "Unknown Level0 hardware ID " + (std::string)l0ID,
                           "DeRichSystem::richSmartID",
@@ -579,7 +554,7 @@ DeRichSystem::level0ID( const LHCb::RichSmartID& smartID ) const
 {
   // See if this RichSmartID is known
   const auto id = m_smartid2L0.find( smartID.pdID() );
-  if ( m_smartid2L0.end() == id )
+  if ( UNLIKELY( m_smartid2L0.end() == id ) )
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID " << smartID.pdID();
@@ -600,7 +575,7 @@ DeRichSystem::level1HardwareID( const LHCb::RichSmartID& smartID ) const
 {
   // See if this RichSmartID is known
   const auto id = m_smartid2L1.find( smartID.pdID() );
-  if ( m_smartid2L1.end() == id )
+  if ( UNLIKELY( m_smartid2L1.end() == id ) )
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID " << smartID.pdID();
@@ -616,12 +591,12 @@ DeRichSystem::level1HardwareID( const LHCb::RichSmartID& smartID ) const
 // level1InputNum
 // Obtain the Level1 input number for a given RichSmartID
 //=========================================================================
-const Rich::DAQ::Level1Input
+const Rich::DAQ::HPD::Level1Input
 DeRichSystem::level1InputNum( const LHCb::RichSmartID& smartID ) const
 {
   // See if this RichSmartID is known
   const auto id = m_smartid2L1In.find( smartID.pdID() );
-  if ( m_smartid2L1In.end() == id )
+  if ( UNLIKELY( m_smartid2L1In.end() == id ) )
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID " << smartID.pdID();
@@ -638,11 +613,11 @@ DeRichSystem::level1InputNum( const LHCb::RichSmartID& smartID ) const
 // level0ID
 //=========================================================================
 const Rich::DAQ::Level0ID
-DeRichSystem::level0ID( const Rich::DAQ::HPDHardwareID& hardID ) const
+DeRichSystem::level0ID( const Rich::DAQ::PDHardwareID& hardID ) const
 {
   // See if this hardware ID is known
   const auto id = m_hardid2L0.find( hardID );
-  if ( m_hardid2L0.end() == id )
+  if ( UNLIKELY( m_hardid2L0.end() == id ) )
   {
     throw GaudiException ( "Unknown PD hardware ID" + (std::string)hardID,
                            "DeRichSystem::level0ID",
@@ -657,11 +632,11 @@ DeRichSystem::level0ID( const Rich::DAQ::HPDHardwareID& hardID ) const
 //  level1HardwareID
 //=========================================================================
 const Rich::DAQ::Level1HardwareID
-DeRichSystem::level1HardwareID( const Rich::DAQ::HPDHardwareID& hardID ) const
+DeRichSystem::level1HardwareID( const Rich::DAQ::PDHardwareID& hardID ) const
 {
   // See if this hardware ID is known
   const auto id = m_hardid2L1.find( hardID );
-  if ( m_hardid2L1.end() == id )
+  if ( UNLIKELY( m_hardid2L1.end() == id ) )
   {
     throw GaudiException( "Unknown PD hardware ID" + (std::string)hardID,
                           "DeRichSystem::level1HardwareID",
@@ -676,12 +651,12 @@ DeRichSystem::level1HardwareID( const Rich::DAQ::HPDHardwareID& hardID ) const
 //  level1InputNum
 /// Obtain the Level1 input number for a given PD hardware ID
 //=========================================================================
-const Rich::DAQ::Level1Input
-DeRichSystem::level1InputNum( const Rich::DAQ::HPDHardwareID& hardID ) const
+const Rich::DAQ::HPD::Level1Input
+DeRichSystem::level1InputNum( const Rich::DAQ::PDHardwareID& hardID ) const
 {
   // See if this hardware ID is known
   const auto id = m_hardid2L1In.find( hardID );
-  if ( m_hardid2L1In.end() == id )
+  if ( UNLIKELY( m_hardid2L1In.end() == id ) )
   {
     throw GaudiException( "Unknown PD hardware ID" + (std::string)hardID,
                           "DeRichSystem::level1InputNum",
@@ -700,7 +675,7 @@ DeRichSystem::richSmartID( const Rich::DAQ::PDCopyNumber& copyNumber ) const
 {
   // See if this Level0 hardware ID is known
   const auto id = m_copyNumber2smartid.find( copyNumber );
-  if ( m_copyNumber2smartid.end() == id )
+  if ( UNLIKELY( m_copyNumber2smartid.end() == id ) )
   {
     throw GaudiException( "Unknown PD Copy Number " + (std::string)copyNumber,
                           "DeRichSystem::richSmartID",
@@ -719,7 +694,7 @@ DeRichSystem::copyNumber( const LHCb::RichSmartID& smartID ) const
 {
   // See if this RichSmartID is known
   const auto id = m_smartid2copyNumber.find( smartID.pdID() );
-  if ( m_smartid2copyNumber.end() == id )
+  if ( UNLIKELY( m_smartid2copyNumber.end() == id ) )
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID " << smartID.pdID();
@@ -740,7 +715,7 @@ DeRichSystem::l1PDSmartIDs( const Rich::DAQ::Level1HardwareID& l1ID ) const
 {
   // See if this L1 ID is known
   const auto id = m_l12smartids.find( l1ID );
-  if ( m_l12smartids.end() == id )
+  if ( UNLIKELY( m_l12smartids.end() == id ) )
   {
     throw GaudiException( "Unknown RICH Level1 board ID " + (std::string)l1ID,
                           "DeRichSystem::l1PDSmartIDs", StatusCode::FAILURE );
@@ -753,12 +728,12 @@ DeRichSystem::l1PDSmartIDs( const Rich::DAQ::Level1HardwareID& l1ID ) const
 //=========================================================================
 //  l1PDHardIDs
 //=========================================================================
-const Rich::DAQ::HPDHardwareIDs &
+const Rich::DAQ::PDHardwareIDs &
 DeRichSystem::l1PDHardIDs( const Rich::DAQ::Level1HardwareID& l1ID ) const
 {
   // See if this L1 ID is known
   const auto id = m_l12hardids.find( l1ID );
-  if ( m_l12hardids.end() == id )
+  if ( UNLIKELY( m_l12hardids.end() == id ) )
   {
     throw GaudiException( "Unknown RICH Level1 board ID " + (std::string)l1ID,
                           "DeRichSystem::l1PDHardIDs", StatusCode::FAILURE );
@@ -776,7 +751,7 @@ DeRichSystem::richDetector( const Rich::DAQ::Level1HardwareID& l1ID ) const
 {
   // See if this L1 ID is known
   const auto rich = m_l1ToRich.find( l1ID );
-  if ( m_l1ToRich.end() == rich )
+  if ( UNLIKELY( m_l1ToRich.end() == rich ) )
   {
     throw GaudiException( "Unknown RICH Level1 board ID " + (std::string)l1ID,
                           "DeRichSystem::richDetector()", StatusCode::FAILURE );
@@ -794,7 +769,7 @@ DeRichSystem::level1HardwareID( const Rich::DetectorType rich,
                                 const Rich::DAQ::Level1LogicalID& logID ) const
 {
   const auto iID = m_l1LogToHard[rich].find(logID);
-  if ( m_l1LogToHard[rich].end() == iID )
+  if ( UNLIKELY( m_l1LogToHard[rich].end() == iID ) )
   {
     throw GaudiException( "Unknown L1 logical ID " + (std::string)logID,
                           "DeRichSystem::level1HardwareID",
@@ -810,7 +785,7 @@ const Rich::DAQ::Level1HardwareID
 DeRichSystem::level1HardwareID( const Rich::DAQ::Level0ID& l0ID ) const
 {
   const auto iID = m_l0ToL1.find(l0ID);
-  if ( m_l0ToL1.end() == iID )
+  if ( UNLIKELY( m_l0ToL1.end() == iID ) )
   {
     throw GaudiException( "Unknown L0 ID " + (std::string)l0ID,
                           "DeRichSystem::level1HardwareID",
@@ -826,7 +801,7 @@ const Rich::DAQ::Level1LogicalID
 DeRichSystem::level1LogicalID( const Rich::DAQ::Level1HardwareID& hardID ) const
 {
   const auto iID = m_l1HardToLog.find(hardID);
-  if ( m_l1HardToLog.end() == iID )
+  if ( UNLIKELY( m_l1HardToLog.end() == iID ) )
   {
     throw GaudiException( "Unknown L1 hardware ID " + (std::string)hardID,
                           "DeRichSystem::level1LogicalID",
@@ -838,13 +813,13 @@ DeRichSystem::level1LogicalID( const Rich::DAQ::Level1HardwareID& hardID ) const
 //=========================================================================
 // Access the PD hardware ID for the given L1 hardwareID and input number
 //=========================================================================
-const Rich::DAQ::HPDHardwareID
+const Rich::DAQ::PDHardwareID
 DeRichSystem::pdHardwareID( const Rich::DAQ::Level1HardwareID& L1HardID,
-                            const Rich::DAQ::Level1Input& L1Input ) const
+                            const Rich::DAQ::HPD::Level1Input& L1Input ) const
 {
   const L1HardIDAndInput key(L1HardID,L1Input);
   const auto iID = m_L1HardIDAndInputToPDHardID.find(key);
-  if ( m_L1HardIDAndInputToPDHardID.end() == iID )
+  if ( UNLIKELY( m_L1HardIDAndInputToPDHardID.end() == iID ) )
   {
     throw GaudiException( "Unknown L1 hardware ID " + (std::string)L1HardID +
                           " and L1 input " + (std::string)L1Input + " pair",
@@ -861,7 +836,7 @@ const Rich::DAQ::Level1CopyNumber
 DeRichSystem::copyNumber( const Rich::DAQ::Level1HardwareID& hardID ) const
 {
   const auto iCN = m_l1H2CopyN.find(hardID);
-  if ( m_l1H2CopyN.end() == iCN )
+  if ( UNLIKELY( m_l1H2CopyN.end() == iCN ) )
   {
     throw GaudiException( "Unknown L1 Hardware ID " + (std::string)hardID,
                           "DeRichSystem::copyNumber",
@@ -878,7 +853,7 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
 {
   std::string loc;
 
-  if ( UNLIKELY( smartID.idType() == LHCb::RichSmartID::MaPMTID ) )
+  if ( smartID.idType() == LHCb::RichSmartID::MaPMTID )
   {
     if ( deRich(smartID.rich())->exists("PMTPanelDetElemLocations") )
     {
@@ -889,32 +864,20 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
     {
       if ( smartID.rich() == Rich::Rich1 )
       {
-        if ( smartID.panel() == Rich::top )
-        {
-          loc = DeRichLocations::Rich1Panel0;
-        }
-        else
-        {
-          loc = DeRichLocations::Rich1Panel1;
-        }
+        loc = ( smartID.panel() == Rich::top ?
+                DeRichLocations::Rich1Panel0 : DeRichLocations::Rich1Panel1 );
       }
       else
       {
-        if ( smartID.panel() == Rich::left )
-        {
-          loc = DeRichLocations::Rich2Panel0;
-        }
-        else
-        {
-          loc = DeRichLocations::Rich2Panel1;
-        }
+        loc = ( smartID.panel() == Rich::left ?
+                DeRichLocations::Rich2Panel0 : DeRichLocations::Rich2Panel1 );
       }
     }
 
     const auto aM = smartID.pdCol();
     const auto aP = smartID.pdNumInCol();
-    const auto ast_aM = boost::lexical_cast<std::string>(aM);
-    const auto ast_aP = boost::lexical_cast<std::string>(aP);
+    const auto ast_aM = std::to_string(aM);
+    const auto ast_aP = std::to_string(aP);
     return ( loc+"/MAPMT_MODULE:"+ast_aM+"/MAPMT:"+ast_aP );
 
   }
@@ -930,25 +893,13 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
     {
       if ( smartID.rich() == Rich::Rich1 )
       {
-        if ( smartID.panel() == Rich::top )
-        {
-          loc = DeRichLocations::Rich1Panel0;
-        }
-        else
-        {
-          loc = DeRichLocations::Rich1Panel1;
-        }
+        loc = ( smartID.panel() == Rich::top ?
+                DeRichLocations::Rich1Panel0 : DeRichLocations::Rich1Panel1 );
       }
       else
       {
-        if ( smartID.panel() == Rich::left )
-        {
-          loc = DeRichLocations::Rich2Panel0;
-        }
-        else
-        {
-          loc = DeRichLocations::Rich2Panel1;
-        }
+        loc = ( smartID.panel() == Rich::left ?
+                DeRichLocations::Rich2Panel0 : DeRichLocations::Rich2Panel1 );
       }
     }
 
