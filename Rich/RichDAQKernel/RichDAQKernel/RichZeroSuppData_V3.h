@@ -12,7 +12,7 @@
 #pragma once
 
 // local
-#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichPDDataBank.h"
 #include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
@@ -45,7 +45,7 @@ namespace Rich
        *  @date   2003-11-07
        */
       template< class Version, class Header, class Footer >
-      class RichZeroSuppData : public HPDDataBankImp<Version,Header,Footer>,
+      class RichZeroSuppData : public PDDataBankImp<Version,Header,Footer>,
                                public LHCb::MemPoolAlloc<RichZeroSuppDataV3::RichZeroSuppData<Version,Header,Footer> >
       {
 
@@ -53,7 +53,7 @@ namespace Rich
 
         /// Default constructor
         RichZeroSuppData()
-          : HPDDataBankImp<Version,Header,Footer>( MaxDataSize )
+          : PDDataBankImp<Version,Header,Footer>( MaxDataSize )
         { }
 
         /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
@@ -63,11 +63,11 @@ namespace Rich
          */
         explicit RichZeroSuppData( const Level0ID l0ID,
                                    const LHCb::RichSmartID::Vector & digits )
-          : HPDDataBankImp<Version,Header,Footer> ( Header ( true,  // Is ZS
-                                                             false, // Not ALICE mode
-                                                             l0ID,  // L0 ID
-                                                             0      // Filled by buildData call below in main body
-                                                             ),
+          : PDDataBankImp<Version,Header,Footer> ( Header ( true,  // Is ZS
+                                                            false, // Not ALICE mode
+                                                            l0ID,  // L0 ID
+                                                            0      // Filled by buildData call below in main body
+                                                     ),
                                                     Footer ( ),
                                                     0, MaxDataSize )
         {
@@ -79,9 +79,9 @@ namespace Rich
          *  @param data     Pointer to the start of the data block
          */
         explicit RichZeroSuppData( const LongType * data )
-          : HPDDataBankImp<Version,Header,Footer> ( data,          // start of data
-                                                    MaxDataSize  // max data block size
-                                                    )
+          : PDDataBankImp<Version,Header,Footer> ( data,          // start of data
+                                                   MaxDataSize  // max data block size
+                                                 )
         { }
 
         /** Reset for a new block of raw data
@@ -91,7 +91,7 @@ namespace Rich
                     const ShortType  /* dataSize */ = 0 ) override
         {
           m_tooBig = false;
-          HPDDataBankImp<Version,Header,Footer>::reset( data );
+          PDDataBankImp<Version,Header,Footer>::reset( data );
         }
 
         /// Destructor

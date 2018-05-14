@@ -210,12 +210,12 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
 
 //=============================================================================
 
-const Rich::DAQ::HPDDataBank *
+const Rich::DAQ::PDDataBank *
 RawBankDecoder::createDataBank( const LongType * dataStart,
                                 const BankVersion version,
                                 PDBanks & banks ) const
 {
-  Rich::DAQ::HPDDataBank * dataBank = nullptr;
+  Rich::DAQ::PDDataBank * dataBank = nullptr;
 
   // If bank version is different to cache, force a reset
   if ( UNLIKELY( version != banks.version ) )

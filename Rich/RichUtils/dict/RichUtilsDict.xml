@@ -34,11 +34,9 @@
   <class name  = "Rich::DAQ::L1IngressID"              />
   <class name  = "Rich::DAQ::L1IngressHeader"          />
   <class name  = "Rich::DAQ::L1InputWithinIngress"     />
-  <class name  = "Rich::DAQ::HPD::Level1Input"         />
   <class name  = "Rich::DAQ::PDHardwareID"             />
   <class name  = "Rich::DAQ::PDCopyNumber"             />
   <class name  = "Rich::DAQ::PDPanelIndex"             />
-  <class name  = "Rich::DAQ::HPD::L1InputID"           />
   <class name  = "Rich::DAQ::PDHardwareIDs"            />
   <class name  = "Rich::DAQ::Level0IDs"                />
   <class name  = "Rich::DAQ::Level1HardwareIDs"        />
@@ -55,6 +53,9 @@
   <class name  = "Rich::DAQ::IngressMap"               />
   <class name  = "Rich::DAQ::L1Map"                    />
 
+  <class name  = "Rich::DAQ::HPD::Level1Input"         />
+  <class name  = "Rich::DAQ::HPD::L1InputID"           />
+
   <variable name = "Rich::DAQ::HPD::MaxDataSize" />
   <variable name = "Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel" />
   <variable name = "Rich::DAQ::HPD::MaxDataSizeALICE" />
@@ -65,7 +66,9 @@
   <variable name = "Rich::DAQ::HPD::MaxZSAddress" />
   <variable name = "Rich::DAQ::HPD::NumPixelColumns" />
   <variable name = "Rich::DAQ::HPD::NumPixelRows" />
-  <variable name = "Rich::DAQ::HPD::PixelSize" />
+
+  <variable name = "Rich::DAQ::PMT::NumPixelColumns" />
+  <variable name = "Rich::DAQ::PMT::NumPixelRows" />
 
   <function name  = "Rich::RayTracingUtils::intersectPlane" />
   <function name  = "Rich::RayTracingUtils::intersectSpherical" />

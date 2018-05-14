@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHRAWBUFFERTOSMARTIDSTOOL_H
-#define RICHDAQ_RICHRAWBUFFERTOSMARTIDSTOOL_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IIncidentListener.h"
@@ -20,7 +19,7 @@
 #include "RichKernel/RichToolBase.h"
 
 // Rich::DAQ utility classes
-#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichPDDataBank.h"
 
 // Utils
 #include "RichUtils/RichHashMap.h"
@@ -149,5 +148,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHRAWBUFFERTOSMARTIDSTOOL_H

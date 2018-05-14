@@ -12,7 +12,7 @@
 #pragma once
 
 // local
-#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichPDDataBank.h"
 #include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
@@ -35,7 +35,7 @@ namespace Rich
      *  @date   2003-11-07
      */
     template< class Version, class Header, class Footer >
-    class RichFlatFormatSmartIDData : public HPDDataBankImp<Version,Header,Footer>,
+    class RichFlatFormatSmartIDData : public PDDataBankImp<Version,Header,Footer>,
                                       public LHCb::MemPoolAlloc<RichFlatFormatSmartIDData<Version,Header,Footer> >
     {
 
@@ -43,7 +43,7 @@ namespace Rich
 
       /// Default constructor
       RichFlatFormatSmartIDData()
-        : HPDDataBankImp<Version,Header,Footer>( HPD::MaxDataSize )
+        : PDDataBankImp<Version,Header,Footer>( HPD::MaxDataSize )
       { }
 
       /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
@@ -57,14 +57,14 @@ namespace Rich
                                           const LHCb::RichSmartID::Vector & digits,
                                           const bool extendedFormat = false,
                                           const LHCb::ODIN * odin = nullptr )
-        : HPDDataBankImp<Version,Header,Footer> ( Header( true,  // Not ZS
-                                                          false, // Not ALICE mode
-                                                          extendedFormat, // data format
-                                                          false, // No GT inhibit
-                                                          l0ID,  // The L0 ID
-                                                          EventID( odin ? odin->eventNumber() : 0 ), // Event ID
-                                                          0 // filled by buildData call below in main body
-                                                          ),
+        : PDDataBankImp<Version,Header,Footer> ( Header( true,  // Not ZS
+                                                         false, // Not ALICE mode
+                                                         extendedFormat, // data format
+                                                         false, // No GT inhibit
+                                                         l0ID,  // The L0 ID
+                                                         EventID( odin ? odin->eventNumber() : 0 ), // Event ID
+                                                         0 // filled by buildData call below in main body
+                                                   ),
                                                   Footer ( ),
                                                   0, HPD::MaxDataSize )
       {
@@ -76,8 +76,8 @@ namespace Rich
        *  @param data Pointer to the start of the data block
        */
       explicit RichFlatFormatSmartIDData( const LongType * data )
-        : HPDDataBankImp<Version,Header,Footer> ( data,       // start of data
-                                                  HPD::MaxDataSize // max data block size
+        : PDDataBankImp<Version,Header,Footer> ( data,       // start of data
+                                                 HPD::MaxDataSize // max data block size
                                                   )
       { }
 

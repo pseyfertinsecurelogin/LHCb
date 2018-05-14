@@ -15,7 +15,7 @@
 #include <algorithm>
 
 // local
-#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichPDDataBank.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
@@ -50,7 +50,7 @@ namespace Rich
        *  @date   2003-11-07
        */
       template< class Version, class Header, class Footer >
-      class RichNonZeroSuppData : public HPDDataBankImp<Version,Header,Footer>,
+      class RichNonZeroSuppData : public PDDataBankImp<Version,Header,Footer>,
                                   public LHCb::MemPoolAlloc<RichNonZeroSuppDataV1::RichNonZeroSuppData<Version,Header,Footer> >
       {
 
@@ -58,7 +58,7 @@ namespace Rich
 
         /// Default constructor
         RichNonZeroSuppData()
-          : HPDDataBankImp<Version,Header,Footer> ( MaxDataSize ) { }
+          : PDDataBankImp<Version,Header,Footer> ( MaxDataSize ) { }
 
         /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
          *
@@ -67,9 +67,9 @@ namespace Rich
          */
         explicit RichNonZeroSuppData( const Level0ID l0ID,
                                       const LHCb::RichSmartID::Vector & digits )
-          : HPDDataBankImp<Version,Header,Footer> ( Header( false, l0ID, digits.size() ),
-                                                    Footer(),
-                                                    0, MaxDataSize, MaxDataSize )
+          : PDDataBankImp<Version,Header,Footer> ( Header( false, l0ID, digits.size() ),
+                                                   Footer(),
+                                                   0, MaxDataSize, MaxDataSize )
         {
           for ( const auto& dig : digits )
           {
@@ -82,9 +82,9 @@ namespace Rich
          *  @param data Pointer to the start of the data block
          */
         explicit RichNonZeroSuppData( const LongType * data )
-          : HPDDataBankImp<Version,Header,Footer> ( data, // start of data
-                                                    MaxDataSize, // max data block size
-                                                    MaxDataSize )
+          : PDDataBankImp<Version,Header,Footer> ( data, // start of data
+                                                   MaxDataSize, // max data block size
+                                                   MaxDataSize )
         { }
 
         /** Reset for a new block of raw data
@@ -94,7 +94,7 @@ namespace Rich
                     const ShortType  dataSize = 0 ) override
         {
           
-          HPDDataBankImp<Version,Header,Footer>::reset( data, std::max(MaxDataSize,dataSize) );
+          PDDataBankImp<Version,Header,Footer>::reset( data, std::max(MaxDataSize,dataSize) );
         }
 
         /// Destructor
@@ -110,7 +110,7 @@ namespace Rich
         inline void setPixelActive( const ShortType row,
                                     const ShortType col ) noexcept
         {
-          HPDDataBankImp<Version,Header,Footer>::setBit( this->data()[row], col );
+          PDDataBankImp<Version,Header,Footer>::setBit( this->data()[row], col );
         }
 
         /// Is a given pixel active ?

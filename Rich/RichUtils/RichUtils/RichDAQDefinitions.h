@@ -51,39 +51,36 @@ namespace Rich
     {
       
       /// Maximum data block size (LHCb mode)
-      static const ShortType MaxDataSize = 32;
+      static constexpr ShortType MaxDataSize = 32;
 
       /// Number of Alice pixels per LHCb pixel
-      static const ShortType NumAlicePixelsPerLHCbPixel = 8;
+      static constexpr ShortType NumAlicePixelsPerLHCbPixel = 8;
 
       /// Maximum data block size (ALICE mode)
-      static const ShortType MaxDataSizeALICE = MaxDataSize * NumAlicePixelsPerLHCbPixel;
+      static constexpr ShortType MaxDataSizeALICE = MaxDataSize * NumAlicePixelsPerLHCbPixel;
 
       /// Number of bits per data word
-      static const ShortType BitsPerDataWord = 32;
+      static constexpr ShortType BitsPerDataWord = 32;
       
       /// Number of Ingress's per L1 board
-      static const ShortType NumIngressPerL1 = 4;
+      static constexpr ShortType NumIngressPerL1 = 4;
 
       /** @brief Number of L1 inputs per ingress.
        *  Allow for 12 here even though the UKL1 boards only have 9, to allow the decoding
        *  to work for some prototype boards which do have 12 inputs */
-      static const ShortType NumL1InputsPerIngress = 12;
+      static constexpr ShortType NumL1InputsPerIngress = 12;
       
       /// Total number of inputs to an L1 board
-      static const ShortType MaxL1Inputs = NumIngressPerL1 * NumL1InputsPerIngress;
+      static constexpr ShortType MaxL1Inputs = NumIngressPerL1 * NumL1InputsPerIngress;
 
       /// Maximum ZS address value
-      static const ShortType MaxZSAddress = 255;
+      static constexpr ShortType MaxZSAddress = 255;
       
       /// Number of pixel columns in the HPD chip
-      static const ShortType NumPixelColumns = 32;
+      static constexpr ShortType NumPixelColumns = 32;
       
       /// Number of pixel rows in the HPD chip
-      static const ShortType NumPixelRows    = 32;
-      
-      /// Size of HPD (LHCb) pixel in mm
-      static const double PixelSize = 0.5;
+      static constexpr ShortType NumPixelRows    = 32;
 
     }
 
@@ -91,8 +88,14 @@ namespace Rich
     namespace PMT
     {
 
-    }
+      /// Number of pixel columns in the HPD chip
+      static constexpr ShortType NumPixelColumns = 8;
       
+      /// Number of pixel rows in the HPD chip
+      static constexpr ShortType NumPixelRows    = 8;
+
+    }
+
     //---------------------------------------------------------------------------------
 
     //---------------------------------------------------------------------------------
@@ -200,17 +203,17 @@ namespace Rich
     {
     public :
       // Define the number of bits for each field
-      static const IndexType  BitsPD =  1;  ///< Number of bits for PD ID
-      static const IndexType  BitsL0 =  10; ///< Number of bits for L0 ID
+      static constexpr IndexType  BitsPD  = 1;  ///< Number of bits for PD ID
+      static constexpr IndexType  BitsL0  = 10; ///< Number of bits for L0 ID
       // Create the shift registers
-      static const IndexType  ShiftPD = 0;
-      static const IndexType  ShiftL0 = ShiftPD + BitsPD;
+      static constexpr IndexType  ShiftPD = 0;
+      static constexpr IndexType  ShiftL0 = ShiftPD + BitsPD;
       // Create the Masks
-      static const ShortType  MaskPD  = ((1 << BitsPD)-1) << ShiftPD;
-      static const ShortType  MaskL0  = ((1 << BitsL0)-1) << ShiftL0;
+      static constexpr ShortType  MaskPD  = ((1 << BitsPD)-1) << ShiftPD;
+      static constexpr ShortType  MaskL0  = ((1 << BitsL0)-1) << ShiftL0;
       // Create the max values that can be stored in each field
-      static const ShortType  MaxPD   = ( 1 << BitsPD ) - 1;
-      static const ShortType  MaxL0   = ( 1 << BitsL0 ) - 1;
+      static constexpr ShortType  MaxPD   = ( 1 << BitsPD ) - 1;
+      static constexpr ShortType  MaxL0   = ( 1 << BitsL0 ) - 1;
     public :
       /// Default Constructor
       Level0ID() = default;
@@ -533,17 +536,17 @@ namespace Rich
       {
       public :
         // Define the number of bits for each field
-        static const IndexType  BitsIn  = 8; ///< Number of bits for input number
-        static const IndexType  BitsB   = 8; ///< Number of bits for board number
+        static constexpr IndexType  BitsIn  = 8; ///< Number of bits for input number
+        static constexpr IndexType  BitsB   = 8; ///< Number of bits for board number
         // Create the shift registers
-        static const IndexType  ShiftIn = 0;
-        static const IndexType  ShiftB  = ShiftIn + BitsIn;
+        static constexpr IndexType  ShiftIn = 0;
+        static constexpr IndexType  ShiftB  = ShiftIn + BitsIn;
         // Create the Masks
-        static const ShortType  MaskIn  = ((1 << BitsIn)-1) << ShiftIn;
-        static const ShortType  MaskB   = ((1 << BitsB) -1) << ShiftB ;
+        static constexpr ShortType  MaskIn  = ((1 << BitsIn)-1) << ShiftIn;
+        static constexpr ShortType  MaskB   = ((1 << BitsB) -1) << ShiftB ;
         // Create the max values that can be stored in each field
-        static const ShortType  MaxIn   = ( 1 << BitsIn ) - 1;
-        static const ShortType  MaxB    = ( 1 << BitsB ) - 1;
+        static constexpr ShortType  MaxIn   = ( 1 << BitsIn ) - 1;
+        static constexpr ShortType  MaxB    = ( 1 << BitsB ) - 1;
       public :
         /// Default Constructor
         L1InputID() = default;
@@ -551,8 +554,8 @@ namespace Rich
         explicit L1InputID ( const ShortType id ) noexcept
           : NumericType<ShortType>(id) { }
         /// Constructor from a L1 ID and input number
-        L1InputID ( const Level1HardwareID l1ID,    ///< The L1 board hardware ID
-                    const Level1Input input ///< L1 input number
+        L1InputID ( const Level1HardwareID l1ID, ///< The L1 board hardware ID
+                    const Level1Input input      ///< L1 input number
           )
         {
           setBoardNumber(l1ID);

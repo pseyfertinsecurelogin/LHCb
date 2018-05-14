@@ -254,14 +254,14 @@ RawDataFormatTool::printL1Stats( const L1TypeCount & count,
 
 // Create data bank of correct version
 // This function knows which bank objects to create for each version number
-const HPDDataBank *
+const PDDataBank *
 RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
                                    const BankVersion version,
                                    const LHCb::ODIN * odin ) const
 {
 
   // pointer to HPD data block
-  HPDDataBank * dataBank = nullptr;
+  PDDataBank * dataBank = nullptr;
 
   // Check bank is not empty
   if ( smartIDs.empty() )
@@ -285,12 +285,12 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb5::NonZeroSuppLHCb( l0ID, smartIDs,
+      dataBank = (PDDataBank*) new RichDAQ_LHCb5::NonZeroSuppLHCb( l0ID, smartIDs,
                                                                     m_extendedFormat, odin );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -305,11 +305,11 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb4::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb4::NonZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -324,11 +324,11 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb3::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb3::NonZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -341,11 +341,11 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb2::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb2::NonZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -355,18 +355,18 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     // Decide to zero suppress or not depending on number of hits
     if ( m_zeroSupp && smartIDs.size() < m_zeroSuppresCut )
     {
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb1::ZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb1::ZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb1::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb1::NonZeroSuppLHCb( l0ID, smartIDs );
     }
 
   }
   else if ( FlatList == version )
   {
 
-    dataBank = (HPDDataBank*) new RichDAQ_FlatList::Data( l0ID, smartIDs );
+    dataBank = (PDDataBank*) new RichDAQ_FlatList::Data( l0ID, smartIDs );
 
   }
   else
@@ -390,12 +390,12 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
   return dataBank;
 }
 
-const HPDDataBank *
+const PDDataBank *
 RawDataFormatTool::createDataBank( const LongType * dataStart,
                                    const unsigned int dataSize,
                                    const BankVersion version ) const
 {
-  HPDDataBank * dataBank = nullptr;
+  PDDataBank * dataBank = nullptr;
 
   if ( LHCb5 == version )
   {
@@ -667,8 +667,8 @@ void RawDataFormatTool::fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs
         if ( version != MaPMT0 )
         {
           // Get raw data bank for this HPD, and fill into RAWBank
-          std::unique_ptr<const HPDDataBank> hpdData ( createDataBank( HPD.second.smartIDs(),
-                                                                       version, odin() ) );
+          std::unique_ptr<const PDDataBank> hpdData ( createDataBank( HPD.second.smartIDs(),
+                                                                      version, odin() ) );
           if ( hpdData.get() )
           {
             hpdData->fillRAWBank( dataBank );
