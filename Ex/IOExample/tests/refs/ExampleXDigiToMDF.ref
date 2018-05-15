@@ -1,0 +1,96 @@
+# setting LC_ALL to "C"
+# Running /cvmfs/lhcb.cern.ch/lib/lhcb/GAUDI/GAUDI_v30r2/InstallArea/x86_64-centos7-gcc62-opt/scripts/gaudirun.py with arguments ['/home/chasse/LHCbaddtest/Ex/IOExample/tests/options/ExampleXDigiToMDF.py']
+# --> Including file '/home/chasse/LHCbaddtest/Ex/IOExample/tests/options/ExampleXDigiToMDF.py'
+# <-- End of file '/home/chasse/LHCbaddtest/Ex/IOExample/tests/options/ExampleXDigiToMDF.py'
+# applying configuration of LHCbApp
+# /***** User LHCbApp/LHCbApp ************************************************************************
+# |-Persistency           = None
+# |-XMLSummary            = None
+# |-EnableHLTEventLoopMgr = False
+# |-DataType              = 'Upgrade'  (default: '2012')
+# |-TimeStamp             = False
+# |-ThreadPoolSize        = 40
+# |-SkipEvents            = 0
+# |-EvtMax                = 10  (default: -1)
+# |-CondDBtag             = 'sim-20170301-vc-md100'  (default: '')
+# |-DQFLAGStag            = ''
+# |-IgnoreDQFlags         = True
+# |-Monitors              = []  (default: [])
+# |-OutputLevel           = 3
+# |-Detectors             = []  (default: [])
+# |-LocalDataTypes        = []  (default: [])
+# |-EnableHive            = False
+# |-Simulation            = True  (default: False)
+# |-DDDBtag               = 'dddb-20170301'  (default: '')
+# |-OnlineMode            = False
+# \----- (End of User LHCbApp/LHCbApp) ---------------------------------------------------------------
+# applying configuration of DDDBConf
+# /***** User DDDBConf/DDDBConf **********************************************************************
+# |-IgnoreHeartBeat     = True
+# |-EnableRunStampCheck = False
+# |-InitialTime         = 'Safe'
+# |-Simulation          = True  (default: False)
+# |-DataType            = 'Upgrade'  (default: '2012')
+# |-AutoTags            = False
+# |-DbRoot              = 'git:/lhcb.xml'
+# |-OnlineMode          = False
+# \----- (End of User DDDBConf/DDDBConf) -------------------------------------------------------------
+# skipping configuration of XMLSummary
+# applying configuration of CondDB
+# /***** User CondDB/CondDB **************************************************************************
+# |-Upgrade                    = True  (default: False)
+# |-EnableRunStampCheck        = False
+# |-DBSnapshotDirectory        = '/group/online/hlt/conditions'
+# |-LatestLocalTagsByDataType  = []  (default: [])
+# |-Online                     = False
+# |-LogFile                    = ''
+# |-SQLiteLocalCopiesDir       = ''
+# |-EnableRunChangeHandler     = False
+# |-RunChangeHandlerConditions = {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']}
+# |                            (default: {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']})
+# |-Tags                       = {'DDDB': 'dddb-20170301', 'SIMCOND': 'sim-20170301-vc-md100'}  (default: {})
+# |-LoadCALIBDB                = 'HLT1'
+# |-AllLocalTagsByDataType     = []  (default: [])
+# |-UseOracle                  = False
+# |-RunStampCondition          = ''
+# |-PartitionConnectionString  = {}  (default: {})
+# |-LocalTags                  = {}  (default: {})
+# |-IgnoreHeartBeat            = True
+# |-Overrides                  = []  (default: [])
+# |-Simulation                 = True  (default: False)
+# |-QueryGranularity           = 0
+# |-LatestGlobalTagByDataType  = ''
+# |-UseDBSnapshot              = False
+# |-DisableLFC                 = False
+# |-HeartBeatCondition         = '/Conditions/Online/LHCb/Tick'
+# |-LatestGlobalTagByDataTypes = []  (default: [])
+# |-UseLatestTags              = []  (default: [])
+# |-OverwriteSQLiteLocalCopy   = False
+# \----- (End of User CondDB/CondDB) -----------------------------------------------------------------
+ApplicationMgr    SUCCESS 
+====================================================================================================================================
+                                                   Welcome to Brunel version v60r0
+                                          running on hltperf-quanta02-e52630v4 on Mon May 14 09:41:44 2018
+====================================================================================================================================
+ApplicationMgr       INFO Application Manager Configured successfully
+ToolSvc.GitDDDB      INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DDDB.git'
+ToolSvc.GitDDDB      INFO using commit 'upgrade/dddb-20170301' corresponding to d277f5e21d6fa797f89330eb6205859971e46fe9
+ToolSvc.GitSIMCOND   INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/SIMCOND.git'
+ToolSvc.GitSIMCOND   INFO using commit 'upgrade/sim-20170301-vc-md100' corresponding to 5f8531f8a9a85d86a13c350dcbe32ef37b2dac5e
+DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc
+DetectorDataSvc   SUCCESS Detector description database: git:/lhcb.xml
+MDFWriter            INFO Initialize MDFWriter
+MDFWriter            INFO Received event request connection.
+EventPersistenc...   INFO Added successfully Conversion service:RootCnvSvc
+EventSelector        INFO Stream:EventSelector.DataStreamTool_1 Def:DATAFILE='root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/SciFi-v61/Boole-13104012-100ev-20170301.digi' SVC='Gaudi::RootEvtSelector' OPT='READ'
+HistogramPersis...WARNING Histograms saving not required.
+ApplicationMgr       INFO Application Manager Initialized successfully
+ApplicationMgr       INFO Application Manager Started successfully
+EventSelector     SUCCESS Reading Event record 1. Record number within stream 1: 1
+ApplicationMgr       INFO Application Manager Stopped successfully
+MDFWriter            INFO Size:  959504 Output:file://testmdf.mdf MD5 sum:78ec1e10aa2cd4277839d0259f24c4de
+EventLoopMgr         INFO Histograms converted successfully according to request.
+ToolSvc              INFO Removing all tools created by ToolSvc
+RootCnvSvc           INFO Disconnected data IO:2616734E-8502-E711-90A5-5CF9DD33C028 [root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/SciFi-v61/Boole-13104012-100ev-20170301.digi]
+ApplicationMgr       INFO Application Manager Finalized successfully
+ApplicationMgr       INFO Application Manager Terminated successfully
