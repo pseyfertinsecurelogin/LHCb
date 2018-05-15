@@ -14,7 +14,7 @@
 #include "RichUtils/RichHypoData.h"
 #include "RichUtils/RichObjPtn.h"
 #include "RichUtils/RichSmartIDCnv.h"
-#include "RichUtils/RichHPDIdentifier.h"
+#include "RichUtils/RichPDIdentifier.h"
 #include "RichUtils/RichDAQL0Header.h"
 #include "RichUtils/RichRayTracingUtils.h"
 #include "RichUtils/RichHypoData.h"

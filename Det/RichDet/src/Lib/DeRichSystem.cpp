@@ -15,7 +15,7 @@
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
 // RichUtils
-#include "RichUtils/RichHPDIdentifier.h"
+#include "RichUtils/RichPDIdentifier.h"
 
 // LHCbKernel
 #include "Kernel/RichSmartID32.h"
@@ -270,7 +270,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     inacts.reserve(inactsHuman.size());
     for ( const auto inpd : inactsHuman )
     {
-      const LHCb::RichSmartID ID( Rich::DAQ::HPDIdentifier(inpd).smartID() );
+      const LHCb::RichSmartID ID( Rich::DAQ::PDIdentifier(inpd).smartID() );
       _ri_debug << "Inactive SmartID " << inpd << " : " << ID << endmsg;
       if ( ID.isValid() )
       {
