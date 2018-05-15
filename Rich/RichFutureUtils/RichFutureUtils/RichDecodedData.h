@@ -118,7 +118,8 @@ namespace Rich
         
       };
       
-      /// Map for RICH PD data, sorted by PD number
+      /** Map for RICH PD data, sorted by PD number
+       *  @todo Convert this to a PMT version once available or make generic... */
       using L1InToPDMap = std::vector< std::pair< Rich::DAQ::HPD::Level1Input, PDInfo > >;
 
       /** @class IngressInfo RichUtils/RichDecodedData.h
