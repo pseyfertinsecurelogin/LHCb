@@ -5,6 +5,7 @@
 
 // local
 #include "FTRawBankDecoder.h"
+#include "FTDAQ/FTDAQHelper.h"
 
 #include "range/v3/view/transform.hpp"
 #include "range/v3/iterator_range.hpp"
@@ -100,7 +101,8 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
   const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
   
-  FTLiteClusters clus;
+  // Estimate total number of clusters from bank sizes
+  FTLiteClusters clus( LHCb::FTDAQ::nbFTClusters(banks) );
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Number of raw banks " << banks.size() << endmsg;
   if( banks.empty() ) return clus;
@@ -114,18 +116,6 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                            "FTRawBankDecoder", StatusCode::FAILURE);
   }
 
-  // Simple loop over the banks to determine total number of clusters
-  int totSize = 0;
-  for ( const LHCb::RawBank* bank : banks) { totSize += bank->size();}
-  if( version==2 || version == 3) {
-    // Bank size is half the number of clusters and includes headers
-    clus.reserve(4 * totSize / 10);
-  } else {
-    // Bank size is given in bytes. There are 2 bytes per cluster.
-    clus.reserve(totSize/2);
-  }
-  
-  if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
   if( version==2 || version ==3 ) {
   for ( const LHCb::RawBank* bank : banks) {
     int source       = bank->sourceID();
