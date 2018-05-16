@@ -2,7 +2,7 @@
 //---------------------------------------------------------------------------------
 /** @file IRichSmartIDTool.h
  *
- *  Header file for tool interface : Rich::ISmartIDTool
+ *  Header file for tool interface : Rich::Future::ISmartIDTool
  *
  *  @author Antonis Papanestis  a.papanestis@rl.ac.uk
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
@@ -14,25 +14,19 @@
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/Point3DTypes.h"
 
 // LHCbKernel
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
+#include "Kernel/FastAllocVector.h"
 
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-// from MathCore
-#include "GaudiKernel/Point3DTypes.h"
-
 // RichUtils
 #include "RichUtils/RichSIMDTypes.h"
-
-// forward decs
-namespace Rich
-{
-  class PDPixelCluster;
-}
+#include "RichUtils/RichPixelCluster.h"
 
 namespace Rich
 {
@@ -79,8 +73,8 @@ namespace Rich
       virtual bool globalPosition ( const LHCb::RichSmartID& smartid,
                                     Gaudi::XYZPoint& detectPoint ) const = 0;
 
-      /** Finds the average position of a cluster of RichSmartIDs, in global LHCb coordinates
-       *  on the PD entrance window.
+      /** Finds the average position of a cluster of RichSmartIDs, 
+       *  in global LHCb coordinates on the PD entrance window.
        *
        *  @param[in]  cluster      The RichSmartID cluster
        *  @param[out] detectPoint  The detection point in global coordinates
@@ -91,6 +85,19 @@ namespace Rich
        */
       virtual bool globalPosition ( const Rich::PDPixelCluster& cluster,
                                     Gaudi::XYZPoint& detectPoint ) const = 0;
+
+      /** Finds the global positions, in global LHCb coordinates, for the
+       *  given vector of PD clusters on the PD entrance window.
+       * 
+       *  @param[in]  clusters        The RichSmartID clusters
+       *  @param[in]  ignoreClusters  Flag to turn off the full cluster treatment
+       *                              only the primary ID will be used.
+       *
+       *  @return The vector of positions.
+       */
+      virtual LHCb::STL::Vector<Gaudi::XYZPoint> 
+      globalPositions( const Rich::PDPixelCluster::Vector& clusters,
+                       const bool ignoreClusters = false ) const = 0;
 
       /** @brief Converts an PD RichSmartID identification into a position in
        *  global LHCb coordinates.
