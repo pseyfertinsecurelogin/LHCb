@@ -6,7 +6,7 @@
   <class name  = "Rich::PDPixelCluster"                />
   <class name  = "Rich::PDPixelClusters"               />
 
-  <class name  = "Rich::DAQ::HPDIdentifier"            />
+  <class name  = "Rich::DAQ::PDIdentifier"             />
 
   <class name  = "Rich::SmartIDGlobalOrdering"         />
 
