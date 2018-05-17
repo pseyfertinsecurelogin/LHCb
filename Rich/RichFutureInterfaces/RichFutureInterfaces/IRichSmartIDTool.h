@@ -175,6 +175,23 @@ namespace Rich
        */
       virtual SIMDPoint globalToPDPanel ( const Rich::DetectorType rich,
                                           const SIMDPoint& globalPoint ) const = 0;
+
+      /** Converts a SIMD position in global coordinates to the local coordinate system
+       *  of the appropriate PD panel
+       *
+       *  The panel Rich::Left has positive x and panel Rich::Right has negative
+       *  x coordinates. Only the x and y coordinates are valid. z coordinate
+       *  is set to 0.
+       *
+       *  @param[in] rich         The RICH detector
+       *  @param[in] side         The panel
+       *  @param[in] globalPoint  The global coordinate to convert
+       *
+       *  @return The local position on the PD panel
+       */
+      virtual SIMDPoint globalToPDPanel ( const Rich::DetectorType rich,
+                                          const Rich::Side side,
+                                          const SIMDPoint& globalPoint ) const = 0;
       
     };
 
