@@ -268,7 +268,7 @@ DeRichPMT::detectionPoint( const SmartIDs& smartID,
                            bool photoCathodeSide ) const 
 {
   // return status
-  SIMDFP::MaskType ok(false);
+  SIMDFP::MaskType ok(true);
 
   // // Just use a scalar loop here...
   // SIMDFP X(0), Y(0), Z(0);
