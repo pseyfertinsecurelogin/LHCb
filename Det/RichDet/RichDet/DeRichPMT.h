@@ -36,7 +36,7 @@ class DeRichPMT : public DeRichPD
 public:
 
   /// Standard constructor
-  explicit DeRichPMT ( const std::string & name = "" );
+  explicit DeRichPMT ( const std::string & name = "" ) : DeRichPD ( name ) { }
 
   /// Destructor
   virtual ~DeRichPMT( ) = default; 

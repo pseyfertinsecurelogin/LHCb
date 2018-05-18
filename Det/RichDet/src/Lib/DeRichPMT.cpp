@@ -29,11 +29,6 @@
 const CLID CLID_DeRichPMT = 12025;  // User defined
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeRichPMT::DeRichPMT( const std::string & name ) : DeRichPD ( name ) { }
-
-//=============================================================================
 
 const CLID& DeRichPMT::classID() { return CLID_DeRichPMT; }
 
