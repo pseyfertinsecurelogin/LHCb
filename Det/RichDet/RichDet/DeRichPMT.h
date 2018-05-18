@@ -17,9 +17,6 @@
 // RichDet
 #include "RichDet/DeRichPD.h"
 
-// GSL
-#include "gsl/gsl_math.h"
-
 // External declarations
 extern const CLID CLID_DERichPMT;
 
