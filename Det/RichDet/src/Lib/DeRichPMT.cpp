@@ -216,6 +216,10 @@ void DeRichPMT::setPmtIsGrandFlag( const bool isGrand )
     m_effPixelArea = m_pixelArea; // PMTs have no demagnification
   }
   else { error() << "Could not load First Rich" << endmsg; }
+  if ( PmtIsGrand() && rich() == Rich::Rich1 )
+  {
+    warning() << "Setting RICH1 PMT 'Grand'" << endmsg;
+  }
 }
 
 //=============================================================================
@@ -244,8 +248,7 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
                                 bool photoCathodeSide ) const
 {
   auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(),
-                                                         smartID.pixelRow(),
-                                                         smartID.rich() );
+                                                         smartID.pixelRow() );
   aLocalHit.SetZ( aLocalHit.Z() + m_zShift );
   
   // for now assume negligible refraction effect at the QW.
@@ -296,7 +299,7 @@ DeRichPMT::detectionPoint( const SmartIDs& smartID,
   }
 
   // make local hit
-  auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( col, row, rich() );
+  auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( col, row );
   aLocalHit.SetZ( SIMDFP(m_zShift) + aLocalHit.Z() );
 
   // for now assume negligible refraction effect at the QW.
@@ -316,8 +319,7 @@ DeRichPMT::detectionPoint( const SmartIDs& smartID,
 Gaudi::XYZPoint DeRichPMT::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 {
   return ( m_dePmtAnode->geometry()->toGlobal( getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(),
-                                                                                     smartID.pixelRow(),
-                                                                                     smartID.rich() ) ) );
+                                                                                     smartID.pixelRow() ) ) );
 }
 
 //=============================================================================
