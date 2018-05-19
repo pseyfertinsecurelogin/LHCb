@@ -117,7 +117,7 @@ namespace Rich
     inline       SmartIDVector&& secondaryIDs()       && noexcept { return std::move(m_secondaryIDs); }
 
     /// The primary (seed) channel ID
-    inline const LHCb::RichSmartID& primaryID() const    noexcept { return m_primaryID; }
+    inline LHCb::RichSmartID        primaryID() const    noexcept { return m_primaryID; }
 
     /// The RICH detector for this cluster
     inline Rich::DetectorType            rich() const    noexcept { return m_rich; }
