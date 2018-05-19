@@ -73,7 +73,7 @@ namespace Rich
 
     /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
     explicit PDPixelCluster( const LHCb::RichSmartID & id,
-                             const DeRichPD * dePD = nullptr )
+                             const DeRichPD *        dePD = nullptr )
       : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_dePD{dePD} 
     { }
 
@@ -82,7 +82,7 @@ namespace Rich
     explicit PDPixelCluster( const Rich::DetectorType rich,
                              const Rich::Side         side, 
                              const LHCb::RichSmartID &  id,
-                             const DeRichPD *          dePD = nullptr )
+                             const DeRichPD *         dePD = nullptr )
       : m_rich(rich), m_side(side), m_primaryID(id), m_dePD{dePD} 
     { }
 
@@ -117,27 +117,27 @@ namespace Rich
     inline       SmartIDVector&& secondaryIDs()       && noexcept { return std::move(m_secondaryIDs); }
 
     /// The primary (seed) channel ID
-    inline LHCb::RichSmartID primaryID() const noexcept { return m_primaryID; }
+    inline const LHCb::RichSmartID& primaryID() const    noexcept { return m_primaryID; }
 
     /// The RICH detector for this cluster
-    inline Rich::DetectorType     rich() const noexcept { return m_rich; }
+    inline Rich::DetectorType            rich() const    noexcept { return m_rich; }
 
     /// The RICH panel for this cluster
-    inline Rich::Side            panel() const noexcept { return m_side; }
+    inline Rich::Side                   panel() const    noexcept { return m_side; }
 
     /// The RICH panel SmartID for this cluster
-    inline LHCb::RichSmartID   panelID() const noexcept { return primaryID().panelID(); }
+    inline LHCb::RichSmartID          panelID() const    noexcept { return primaryID().panelID(); }
 
     /// The RICH PD SmartID for this cluster
-    inline LHCb::RichSmartID      pdID() const noexcept { return primaryID().pdID(); }
+    inline LHCb::RichSmartID             pdID() const    noexcept { return primaryID().pdID(); }
+
+    /// Access the DeRichPD object
+    inline const DeRichPD *              dePD() const    noexcept { return m_dePD; }
 
   public:
 
     /// Set the DeRichPD pointer
     inline void setDePD( const DeRichPD * dePD ) noexcept { m_dePD = dePD; }
-
-    /// Access the DeRichPD object
-    inline const DeRichPD * dePD() const noexcept { return m_dePD; }
 
   public:
 
