@@ -87,7 +87,11 @@ PDPixelClustersBuilder::mergeClusters( PDPixelClusters::Cluster *& clus1,
                                        PDPixelClusters::Cluster *& clus2 )
 {
   // add pixels in clus2 to clus1
-  for ( const auto id : clus2->pixels().smartIDs() )
+  // primary ID
+  const auto p2 = clus2->pixels().primaryID();
+  setCluster( p2, rowNumber(p2), colNumber(p2), clus1 );
+  // secondary pixels
+  for ( const auto id : clus2->pixels().secondaryIDs() )
   {
     setCluster( id, rowNumber(id), colNumber(id), clus1 );
   }
@@ -133,8 +137,11 @@ splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters )
   // loop over the clusters to break up
   for ( auto C : clusters )
   {
-    // loop over the smartIDs for this cluster
-    for ( const auto & S : C->pixels().smartIDs() )
+    // primary ID
+    const auto p2 = C->pixels().primaryID();
+    setCluster( p2, rowNumber(p2), colNumber(p2), createNewCluster() );
+    // secondary IDs
+    for ( const auto & S : C->pixels().secondaryIDs() )
     {
       // for each ID, make a single channel new cluster
       setCluster( S, rowNumber(S), colNumber(S), createNewCluster() );
@@ -188,8 +195,15 @@ PDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
   // loop over clusters
   for ( const auto& c : clusters() )
   {
-    // loop over hits in this cluster
-    for ( const auto& i : c->pixels().smartIDs() )
+    // primary ID
+    if ( c->pixels().primaryID() == id )
+    {
+      // found the cluster...
+      clus = c.get();
+      break;
+    }
+    // now try the secondary IDs
+    for ( const auto& i : c->pixels().secondaryIDs() )
     {
       if ( i == id )
       {

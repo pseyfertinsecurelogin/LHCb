@@ -67,64 +67,69 @@ namespace Rich
 
     /// Constructor with reserved size
     explicit PDPixelCluster( const SmartIDVector::size_type resSize )
-    { m_ids.reserve(resSize); }
+    {
+      if ( resSize > 1 ) { m_secondaryIDs.reserve(resSize-1); }
+    }
 
     /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
     explicit PDPixelCluster( const LHCb::RichSmartID & id,
                              const DeRichPD * dePD = nullptr )
-      : m_rich(id.rich()), m_side(id.panel()), m_ids(1,id), m_dePD{dePD} 
+      : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_dePD{dePD} 
     { }
 
     /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
     /// In addition pass in the rich and side enum, to avoid re-computing them from the ID 
     explicit PDPixelCluster( const Rich::DetectorType rich,
-                             const Rich::Side side, 
-                             const LHCb::RichSmartID & id,
-                             const DeRichPD * dePD = nullptr )
-      : m_rich(rich), m_side(side), m_ids(1,id), m_dePD{dePD} 
+                             const Rich::Side         side, 
+                             const LHCb::RichSmartID &  id,
+                             const DeRichPD *          dePD = nullptr )
+      : m_rich(rich), m_side(side), m_primaryID(id), m_dePD{dePD} 
     { }
 
-    /// Copy Constructor from a vector of RichSmartIDs
-    explicit PDPixelCluster( const SmartIDVector & ids,
-                             const DeRichPD * dePD = nullptr ) 
-      : m_ids(ids), m_dePD{dePD}
-    {
-      updateCachedEnums();
-    }
+    /// Constructor from a single channel (one pixel cluster), and vector of secondary IDs
+    /// and optional DePD pointer.
+    /// In addition pass in the rich and side enum, to avoid re-computing them from the ID 
+    explicit PDPixelCluster( const Rich::DetectorType rich,
+                             const Rich::Side         side, 
+                             const LHCb::RichSmartID &  id,
+                             SmartIDVector &&       secIDs,
+                             const DeRichPD *         dePD = nullptr )
+      : m_rich(rich), m_side(side), m_primaryID(id), m_dePD{dePD},
+        m_secondaryIDs( std::forward<SmartIDVector>(secIDs) )
+    { }
 
-    /// Move Constructor from a vector of RichSmartIDs
-    explicit PDPixelCluster( SmartIDVector && ids,
-                             const DeRichPD * dePD = nullptr ) 
-      : m_ids( std::forward<SmartIDVector>(ids) ), m_dePD{dePD}
-    {
-      updateCachedEnums();
-    }
+    /// Constructor from a single channel (one pixel cluster), and vector of secondary IDs
+    /// and optional DePD pointer.
+    /// In addition pass in the rich and side enum, to avoid re-computing them from the ID 
+    explicit PDPixelCluster( const LHCb::RichSmartID &  id,
+                             SmartIDVector &&       secIDs,
+                             const DeRichPD *         dePD = nullptr )
+      : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_dePD{dePD},
+        m_secondaryIDs( std::forward<SmartIDVector>(secIDs) )
+    { }
 
   public:
 
-    /// const access to the list of PD pixels
-    inline const SmartIDVector & smartIDs() const  & noexcept { return m_ids; }
+    /// const access to the list of secondary PD pixels
+    inline const SmartIDVector & secondaryIDs() const  & noexcept { return m_secondaryIDs; }
 
-    /// move access to the list of PD pixels
-    inline       SmartIDVector&& smartIDs()       && noexcept { return std::move(m_ids); }
+    /// move access to the list of secondary PD pixels
+    inline       SmartIDVector&& secondaryIDs()       && noexcept { return std::move(m_secondaryIDs); }
 
     /// The primary (seed) channel ID
-    inline LHCb::RichSmartID primaryID() const noexcept
-    {
-      return ( !smartIDs().empty() ? smartIDs().front() : LHCb::RichSmartID() );
-    }
+    inline LHCb::RichSmartID primaryID() const noexcept { return m_primaryID; }
 
     /// The RICH detector for this cluster
-    inline Rich::DetectorType   rich() const noexcept { return m_rich; }
+    inline Rich::DetectorType     rich() const noexcept { return m_rich; }
 
     /// The RICH panel for this cluster
-    inline Rich::Side          panel() const noexcept { return m_side; }
+    inline Rich::Side            panel() const noexcept { return m_side; }
 
     /// The RICH panel SmartID for this cluster
-    inline LHCb::RichSmartID panelID() const noexcept { return primaryID().panelID(); }
+    inline LHCb::RichSmartID   panelID() const noexcept { return primaryID().panelID(); }
 
     /// The RICH PD SmartID for this cluster
-    inline LHCb::RichSmartID    pdID() const noexcept { return primaryID().pdID(); }
+    inline LHCb::RichSmartID      pdID() const noexcept { return primaryID().pdID(); }
 
   public:
 
@@ -137,18 +142,31 @@ namespace Rich
   public:
 
     /// Number of channels in this cluster
-    inline decltype(auto) size() const noexcept { return smartIDs().size(); }
+    inline decltype(auto) size() const noexcept 
+    {
+      return ( primaryID().isValid() ? 1u + secondaryIDs().size() : 0u );
+    }
 
     /// Is the cluster empty ?
-    inline bool         empty() const noexcept { return smartIDs().empty(); }
+    inline bool empty() const noexcept 
+    {
+      return ( !primaryID().isValid() && secondaryIDs().empty() );
+    }
 
   public:
 
     /// Add a channel to this cluster
     inline void addChannel( const LHCb::RichSmartID& id ) noexcept
     {
-      m_ids.emplace_back(id);
-      updateCachedEnums();
+      if ( !primaryID().isValid() ) 
+      {
+        m_primaryID = id;
+        updateCachedEnums();
+      }
+      else                
+      {
+        m_secondaryIDs.emplace_back(id);
+      }
     }
 
   public:
@@ -157,12 +175,13 @@ namespace Rich
     friend inline std::ostream& operator << ( std::ostream& s,
                                               const PDPixelCluster & cluster )
     {
-      return s << "[ " 
-               << cluster.rich() << " "
-               << Rich::text(cluster.rich(),cluster.panel()) << " "
-               << (void*)cluster.dePD() << " "
-               << cluster.smartIDs()
-               << " ]";
+      s << "[ " 
+        << cluster.rich() << " "
+        << Rich::text(cluster.rich(),cluster.panel()) << " "
+        << (void*)cluster.dePD() << " "
+        << cluster.primaryID();
+      if ( !cluster.secondaryIDs().empty() ) { s << " " << cluster.secondaryIDs(); }
+      return s << " ]";
     }
 
   private:
@@ -182,11 +201,14 @@ namespace Rich
     /// Cache the RICH Side enum
     Rich::Side m_side = Rich::InvalidSide;
 
-    /// The vector of RichSmartIDs for this cluster
-    SmartIDVector m_ids;
+    /// Primary ID for this cluster
+    LHCb::RichSmartID m_primaryID;
 
     /// Pointer to associated DeRichPD object
     const DeRichPD * m_dePD = nullptr;
+
+    /// The vector of 'secondary' RichSmartIDs for this cluster
+    SmartIDVector m_secondaryIDs;
 
   };
 
@@ -277,7 +299,7 @@ namespace Rich
       /// Shortcut to the cluster size
       inline LHCb::RichSmartID::Vector::size_type size() const noexcept
       {
-        return pixels().smartIDs().size();
+        return pixels().size();
       }
 
     private:
