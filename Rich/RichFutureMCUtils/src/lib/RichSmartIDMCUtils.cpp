@@ -23,9 +23,11 @@ SmartIDUtils( const LHCb::MCRichDigitSummarys & histories )
 std::vector<LHCb::MCRichDigitHistoryCode>
 SmartIDUtils::mcDigitHistoryCodes( const Rich::PDPixelCluster& cluster ) const
 {
- std::vector<LHCb::MCRichDigitHistoryCode> codes;
- // Loop over the cluster smart IDs
- for ( const auto& S : cluster.smartIDs() )
+ // primary ID
+ // get the summaries for this channel
+ auto codes = mcDigitHistoryCodes(cluster.primaryID());
+ // now secondary IDs
+ for ( const auto& S : cluster.secondaryIDs() )
  {
    // get the summaries for this channel
    const auto tmp = mcDigitHistoryCodes(S);
@@ -59,10 +61,11 @@ SmartIDUtils::mcDigitHistoryCodes( const LHCb::RichSmartID id  ) const
 LHCb::MCParticle::ConstVector 
 SmartIDUtils::mcParticles( const Rich::PDPixelCluster& cluster ) const
 {
-  LHCb::MCParticle::ConstVector mcParts;
+  // Get the MCps for the primary ID
+  auto mcParts = mcParticles( cluster.primaryID() );
 
-  // Loop over the cluster smart IDs
-  for ( const auto& S : cluster.smartIDs() )
+  // now loop over the cluster secondary smart IDs
+  for ( const auto& S : cluster.secondaryIDs() )
   {
     // Get the MCPs for this channel
     const auto tmp_vect = mcParticles(S);
@@ -76,6 +79,7 @@ SmartIDUtils::mcParticles( const Rich::PDPixelCluster& cluster ) const
     }
   }
 
+  // return
   return mcParts;
 }
 
@@ -125,12 +129,18 @@ const LHCb::MCParticle *
 SmartIDUtils::trueCherenkovRadiation( const Rich::PDPixelCluster& cluster,
                                       const Rich::RadiatorType rad ) const
 {
-  const LHCb::MCParticle * mcP = nullptr;
-  for ( const auto S : cluster.smartIDs() )
+  // primary ID
+  auto mcP = trueCherenkovRadiation( cluster.primaryID(), rad );
+  if ( !mcP )
   {
-    mcP = trueCherenkovRadiation(S,rad);
-    if ( mcP ) break;
+    // now try the secondary IDs
+    for ( const auto S : cluster.secondaryIDs() )
+    {
+      mcP = trueCherenkovRadiation(S,rad);
+      if ( mcP ) break;
+    }
   }
+  // return
   return mcP;
 }
 
@@ -174,8 +184,9 @@ bool SmartIDUtils::isCherenkovRadiation( const LHCb::RichSmartID id,
 bool SmartIDUtils::isCherenkovRadiation( const Rich::PDPixelCluster& cluster,
                                          const Rich::RadiatorType rad ) const
 {
-  return std::any_of( cluster.smartIDs().begin(),
-                      cluster.smartIDs().end(),
-                      [&rad,this]( const auto& S ) 
-                      { return this->isCherenkovRadiation(S,rad); } );
+  return ( isCherenkovRadiation( cluster.primaryID(), rad ) ||
+           std::any_of( cluster.secondaryIDs().begin(),
+                        cluster.secondaryIDs().end(),
+                        [&rad,this]( const auto& S ) 
+                        { return this->isCherenkovRadiation(S,rad); } ) );
 }
