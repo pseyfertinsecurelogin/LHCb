@@ -47,7 +47,8 @@ Helper::trueRecPhoton( const LHCb::MCParticle & mcPart,
       if ( mcP ) break;
     }
   }
-  return nullptr;
+  // return found pointer
+  return mcP;
 }
 
 const LHCb::MCParticle * 
@@ -81,13 +82,13 @@ Helper::trueCherenkovPhoton( const LHCb::Track & track,
   trueMCPs.reserve( tkMCPs.size() );
 
   // save to vector functor
-  auto saveMCP = [&]( const auto tkMCP, const auto S )
+  auto saveMCP = [&]( const auto tkMCP, const auto id )
     {
       // Is this true Cherenkov radiation ?
-      if ( trueCherenkovRadiation(S,rad) )
+      if ( trueCherenkovRadiation(id,rad) )
       {
         // get the MCPs for this smartID
-        const auto clMCPs = mcParticles(S);
+        const auto clMCPs = mcParticles(id);
         // loop over the cluster MCPs
         for ( const auto clMCP : clMCPs )
         {
