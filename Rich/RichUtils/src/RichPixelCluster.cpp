@@ -165,8 +165,27 @@ PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
 }
 
 //=========================================================================================
-//   Methods for the cluster class
+//   Methods for the cluster classs
 //=========================================================================================
+
+void PDPixelCluster::addChannel( const LHCb::RichSmartID id ) noexcept
+{
+  if ( !primaryID().isValid() ) 
+  {
+    // primary ID is not set, so use this one
+    m_primaryID = id;
+    // Update the cached RICH and panel emuns
+    updateCachedEnums();
+  }
+  else                
+  {
+    // add to secondary IDs 
+    // If first time reserve rough guess at size.
+    if ( m_secondaryIDs.empty() ) { m_secondaryIDs.reserve(3); }
+    // add to the seconary list
+    m_secondaryIDs.emplace_back(id);
+  }
+}
 
 void
 PDPixelClusters::suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
@@ -185,7 +204,7 @@ PDPixelClusters::suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
 }
 
 const PDPixelClusters::Cluster *
-PDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
+PDPixelClusters::getCluster( const LHCb::RichSmartID id ) const
 {
   // should look to implement this better sometime...
 
