@@ -66,14 +66,14 @@ namespace Rich
        *              Users should check for validity using the method
        *              RichSmartID::isvalid()
        */
-      inline const LHCb::RichSmartID& pdID()  const & noexcept { return m_pdID; }
+      inline const LHCb::RichSmartID   pdID() const & noexcept { return m_pdID; }
       /// Access the Header words
       inline const Header&           header() const & noexcept { return m_header; }
       /// Access the Footer words
       inline const Footer&           footer() const & noexcept { return m_footer; }
 
       /// set the Level1Input
-      inline void setPdID( const LHCb::RichSmartID& input ) noexcept { m_pdID   = input;  }
+      inline void setPdID( const LHCb::RichSmartID input )  noexcept { m_pdID   = input;  }
       /// Set the Header
       inline void setHeader( const Header & header )        noexcept { m_header = header; }
       /// Set the footer
