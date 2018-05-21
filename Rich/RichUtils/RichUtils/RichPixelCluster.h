@@ -256,28 +256,22 @@ namespace Rich
       explicit Cluster( const std::int16_t id ) : m_clusterID(id) { }
 
       /// Get cluster ID
-      inline std::int16_t id() const noexcept
-      {
-        return m_clusterID;
-      }
+      inline std::int16_t id() const noexcept { return m_clusterID; }
 
       /// Add a pixel to this cluster
-      inline void addPixel( const LHCb::RichSmartID id )
-      {
-        m_cluster.addChannel( id );
-      }
+      inline void addPixel( const LHCb::RichSmartID id ) noexcept { m_cluster.addChannel(id); }
 
       /// Get read access to cluster data
-      inline const Rich::PDPixelCluster & pixels() const noexcept
-      {
-        return m_cluster;
-      }
+      inline const Rich::PDPixelCluster &  pixels() const &  noexcept { return m_cluster; }
+
+      /// Get read/write access to cluster data
+      inline       Rich::PDPixelCluster &  pixels()       &  noexcept { return m_cluster; }
+
+      /// Get move access to cluster data
+      inline       Rich::PDPixelCluster && pixels()       && noexcept { return std::move(m_cluster); }
 
       /// Shortcut to the cluster size
-      inline decltype(auto) size() const noexcept
-      {
-        return pixels().size();
-      }
+      inline decltype(auto) size() const noexcept { return pixels().size(); }
 
     private:
 
@@ -300,10 +294,13 @@ namespace Rich
   public:
     
     /// Read access to the vector of clusters
-    inline const Cluster::List & clusters() const noexcept { return m_allclus; }
+    inline const Cluster::List &  clusters() const &  noexcept { return m_allclus; }
     
     /// Write access to the vector of clusters
-    inline       Cluster::List & clusters()       noexcept { return m_allclus; }
+    inline       Cluster::List &  clusters()       &  noexcept { return m_allclus; }
+
+    /// Move access to the vector of clusters
+    inline       Cluster::List && clusters()       && noexcept { return std::move(m_allclus); }
     
     /// Create a new vector of suppressed RichSmartIDs
     void suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
@@ -317,9 +314,6 @@ namespace Rich
     /// Create and return a new cluster with the given ID
     inline Cluster * createNewCluster( const std::int16_t id )
     {
-      //auto * clus = new PDPixelClusters::Cluster(id);
-      //m_allclus.emplace_back( clus );
-      //return clus;
       m_allclus.emplace_back( id );
       return &m_allclus.back();
     }
