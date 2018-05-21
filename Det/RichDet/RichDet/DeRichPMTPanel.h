@@ -180,7 +180,10 @@ private:
     
     // if need be correct the pdCol (for data when it was incorrectly filled)
     // this is temporary, can be removed when no longer needed...
-    if ( pdCol >= m_DePMTs.size() ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone(pdCol); }
+    if ( UNLIKELY( pdCol >= m_DePMTs.size() ) ) 
+    {
+      pdCol = PmtModuleNumInPanelFromModuleNumAlone(pdCol);
+    }
     
     // return the pointer from the array
     return m_DePMTs[pdCol][pdInCol];
