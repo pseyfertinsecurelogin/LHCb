@@ -17,6 +17,7 @@
 #include <ostream>
 #include <memory>
 #include <cstdint>
+#include <algorithm>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -231,30 +232,12 @@ namespace Rich
 
     public: // definitions
 
+      /// Collection of clusters
+      using Vector         = LHCb::STL::Vector< Cluster >;
       /// Collection of cluster pointers
-      using PtnVector      = LHCb::STL::List< Cluster* >;
+      using PtnVector      = LHCb::STL::Vector< Cluster* >;
       /// Collection of cluster smart pointers (i.e. for ownership with memory management)
-      using SmartPtnVector = LHCb::STL::List< std::unique_ptr<Cluster> >;
-
-    public: // Constructors etc.
-
-      /// Default Constructor
-      Cluster() = default;
-
-      /// Default destructor
-      ~Cluster() = default;
-
-      /// Default Copy Constructor
-      Cluster( const Cluster& ) = default;
-
-      /// Default Copy operator
-      Cluster& operator=( const Cluster& ) = default;
-
-      /// Default Move Constructor
-      Cluster( Cluster&& ) = default;
-
-      /// Default Move operator
-      Cluster& operator=( Cluster&& ) = default;
+      using SmartPtnVector = LHCb::STL::Vector< std::unique_ptr<Cluster> >;
 
     public: // methods
 
@@ -280,7 +263,7 @@ namespace Rich
       }
 
       /// Shortcut to the cluster size
-      inline LHCb::RichSmartID::Vector::size_type size() const noexcept
+      inline decltype(auto) size() const noexcept
       {
         return pixels().size();
       }
@@ -297,20 +280,28 @@ namespace Rich
 
   public: // methods
 
-    /// Constructor
+    /// Default Constructor
     PDPixelClusters() = default;
 
-    /// Destructor
-    ~PDPixelClusters() = default;
-
+    /// Reserve size
+    inline void reserve( const std::size_t size ) noexcept
+    {
+      // limit max reserve size
+      const std::size_t max_size = 10u;
+      m_allclus.reserve( std::max(size,max_size) );
+    }
+    
+    /// Reset for a new PD
+    inline void clear() noexcept { m_allclus.clear(); }
+    
   public:
-
+    
     /// Read access to the vector of clusters
     inline const Cluster::SmartPtnVector & clusters() const noexcept { return m_allclus; }
-
+    
     /// Write access to the vector of clusters
     inline       Cluster::SmartPtnVector & clusters()       noexcept { return m_allclus; }
-
+    
     /// Create a new vector of suppressed RichSmartIDs
     void suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
                       const unsigned int maxSize ) const;
@@ -365,8 +356,14 @@ namespace Rich
   public:
     
     /// Initialise for a new PD
-    virtual void initialise( PDPixelClusters & clus,
-                             const PDPixelCluster::SmartIDVector & smartIDs ) = 0;
+    virtual void initialise( const PDPixelCluster::SmartIDVector & smartIDs ) = 0;
+
+  public:
+
+    /// Const Access the data for this builder
+    const PDPixelClusters & data() const noexcept { return m_pdClus; }
+    /// Access the data for this builder
+    PDPixelClusters       & data()       noexcept { return m_pdClus; }
 
   public:
 
@@ -417,7 +414,7 @@ namespace Rich
     /// Create a new cluster with given ID
     inline decltype(auto) createNewCluster()
     {
-      return m_hpdClus->createNewCluster( ++m_lastID );
+      return m_pdClus.createNewCluster( ++m_lastID );
     }
 
     /** Create a new cluster with given ID
@@ -485,7 +482,7 @@ namespace Rich
   protected:
 
     /// The list of clusters to fill
-    PDPixelClusters * m_hpdClus{nullptr};
+    PDPixelClusters m_pdClus;
 
     /// working variable, storing the last used cluster ID
     std::int16_t m_lastID{0};
@@ -526,13 +523,14 @@ namespace Rich
       m_nPixCols = Rich::DAQ::HPD::NumPixelColumns;
       // init data arays
       allocate();
+      // reserve size
+      m_pdClus.reserve(10);
     }
 
   public:
 
     /// Initialise for a new PD
-    void initialise( PDPixelClusters & clus,
-                     const PDPixelCluster::SmartIDVector & smartIDs ) override;
+    void initialise( const PDPixelCluster::SmartIDVector & smartIDs ) override;
 
   private:
     
@@ -592,13 +590,14 @@ namespace Rich
       m_nPixCols = Rich::DAQ::PMT::NumPixelColumns;
       // init data arays
       allocate();
+      // reserve size
+      m_pdClus.reserve(5);
     }
 
   public:
 
     /// Initialise for a new PD
-    void initialise( PDPixelClusters & clus,
-                     const PDPixelCluster::SmartIDVector & smartIDs ) override;
+    void initialise( const PDPixelCluster::SmartIDVector & smartIDs ) override;
     
   };
 

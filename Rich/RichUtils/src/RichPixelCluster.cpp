@@ -26,11 +26,10 @@ using namespace Rich;
 
 void
 HPDPixelClustersBuilder::
-initialise( PDPixelClusters & clus,
-            const PDPixelCluster::SmartIDVector & smartIDs )
+initialise( const PDPixelCluster::SmartIDVector & smartIDs )
 {
-  // Update the pixel cluster object to work on
-  m_hpdClus = &clus;
+  // clear the pixel data
+  m_pdClus.clear();
   // reset the first cluster ID to 0
   m_lastID  = 0;
 
@@ -63,14 +62,12 @@ initialise( PDPixelClusters & clus,
 
 void
 PMTPixelClustersBuilder::
-initialise( PDPixelClusters & clus,
-            const PDPixelCluster::SmartIDVector & smartIDs )
+initialise( const PDPixelCluster::SmartIDVector & smartIDs )
 {
-  // Update the pixel cluster object to work on
-  m_hpdClus = &clus;
+  // clear the pixel data
+  m_pdClus.clear();
   // reset the first cluster ID to 0
   m_lastID  = 0;
-
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
   {
@@ -154,13 +151,13 @@ splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters )
 void
 PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
 {
-  const auto iF = std::find_if( m_hpdClus->clusters().begin(),
-                                m_hpdClus->clusters().end(),
+  const auto iF = std::find_if( m_pdClus.clusters().begin(),
+                                m_pdClus.clusters().end(),
                                 [clus]( const auto & c )
                                 { return c.get() == clus; } );
-  if ( iF != m_hpdClus->clusters().end() )
+  if ( iF != m_pdClus.clusters().end() )
   {
-    m_hpdClus->clusters().erase( iF );
+    m_pdClus.clusters().erase( iF );
   }
 }
 
