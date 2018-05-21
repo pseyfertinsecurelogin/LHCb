@@ -154,7 +154,7 @@ PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
   const auto iF = std::find_if( m_pdClus.clusters().begin(),
                                 m_pdClus.clusters().end(),
                                 [clus]( const auto & c )
-                                { return c.get() == clus; } );
+                                { return &c == clus; } );
   if ( iF != m_pdClus.clusters().end() )
   {
     m_pdClus.clusters().erase( iF );
@@ -162,7 +162,7 @@ PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
 }
 
 //=========================================================================================
-//   Methods for the cluster classs
+// Methods for the cluster classs
 //=========================================================================================
 
 void PDPixelCluster::addChannel( const LHCb::RichSmartID id ) noexcept
@@ -212,19 +212,19 @@ PDPixelClusters::getCluster( const LHCb::RichSmartID id ) const
   for ( const auto& c : clusters() )
   {
     // primary ID
-    if ( c->pixels().primaryID() == id )
+    if ( c.pixels().primaryID() == id )
     {
       // found the cluster...
-      clus = c.get();
+      clus = &c;
       break;
     }
     // now try the secondary IDs
-    for ( const auto& i : c->pixels().secondaryIDs() )
+    for ( const auto& i : c.pixels().secondaryIDs() )
     {
       if ( i == id )
       {
         // found the cluster...
-        clus = c.get();
+        clus = &c;
         break;
       }
     }
@@ -239,7 +239,7 @@ MsgStream& PDPixelClusters::fillStream( MsgStream& os ) const
 {
   for ( const auto& clus : clusters() )
   {
-    os << "ID=" << clus->id() << " " << clus->pixels();
+    os << "ID=" << clus.id() << " " << clus.pixels();
   }
   return os;
 }

@@ -233,7 +233,7 @@ namespace Rich
     public: // definitions
 
       /// Collection of clusters
-      using Vector         = LHCb::STL::Vector< Cluster >;
+      using List           = LHCb::STL::List< Cluster >;
       /// Collection of cluster pointers
       using PtnVector      = LHCb::STL::Vector< Cluster* >;
       /// Collection of cluster smart pointers (i.e. for ownership with memory management)
@@ -282,14 +282,6 @@ namespace Rich
 
     /// Default Constructor
     PDPixelClusters() = default;
-
-    /// Reserve size
-    inline void reserve( const std::size_t size ) noexcept
-    {
-      // limit max reserve size
-      const std::size_t max_size = 10u;
-      m_allclus.reserve( std::max(size,max_size) );
-    }
     
     /// Reset for a new PD
     inline void clear() noexcept { m_allclus.clear(); }
@@ -297,10 +289,10 @@ namespace Rich
   public:
     
     /// Read access to the vector of clusters
-    inline const Cluster::SmartPtnVector & clusters() const noexcept { return m_allclus; }
+    inline const Cluster::List & clusters() const noexcept { return m_allclus; }
     
     /// Write access to the vector of clusters
-    inline       Cluster::SmartPtnVector & clusters()       noexcept { return m_allclus; }
+    inline       Cluster::List & clusters()       noexcept { return m_allclus; }
     
     /// Create a new vector of suppressed RichSmartIDs
     void suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
@@ -314,9 +306,11 @@ namespace Rich
     /// Create and return a new cluster with the given ID
     inline Cluster * createNewCluster( const std::int16_t id )
     {
-      auto * clus = new PDPixelClusters::Cluster(id);
-      m_allclus.emplace_back( clus );
-      return clus;
+      //auto * clus = new PDPixelClusters::Cluster(id);
+      //m_allclus.emplace_back( clus );
+      //return clus;
+      m_allclus.emplace_back( id );
+      return &m_allclus.back();
     }
 
   public:
@@ -332,7 +326,7 @@ namespace Rich
   private: // data
 
     /// Vector of all created clusters
-    Cluster::SmartPtnVector m_allclus;
+    Cluster::List m_allclus;
 
   };
 
@@ -523,8 +517,6 @@ namespace Rich
       m_nPixCols = Rich::DAQ::HPD::NumPixelColumns;
       // init data arays
       allocate();
-      // reserve size
-      m_pdClus.reserve(10);
     }
 
   public:
@@ -590,8 +582,6 @@ namespace Rich
       m_nPixCols = Rich::DAQ::PMT::NumPixelColumns;
       // init data arays
       allocate();
-      // reserve size
-      m_pdClus.reserve(5);
     }
 
   public:
