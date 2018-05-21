@@ -69,7 +69,7 @@ namespace Rich
     /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
     explicit PDPixelCluster( const LHCb::RichSmartID   id,
                              const DeRichPD *        dePD = nullptr )
-      : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_dePD{dePD} 
+      : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_empty(false), m_dePD{dePD} 
     { }
 
     /// Constructor from a single channel (one pixel cluster) and optional DePD pointer
@@ -78,7 +78,7 @@ namespace Rich
                              const Rich::Side         side, 
                              const LHCb::RichSmartID    id,
                              const DeRichPD *         dePD = nullptr )
-      : m_rich(rich), m_side(side), m_primaryID(id), m_dePD{dePD} 
+      : m_rich(rich), m_side(side), m_primaryID(id), m_empty(false), m_dePD{dePD} 
     { }
 
     /// Constructor from a single channel (one pixel cluster), and vector of secondary IDs
@@ -89,7 +89,7 @@ namespace Rich
                              const LHCb::RichSmartID    id,
                              SmartIDVector &&       secIDs,
                              const DeRichPD *         dePD = nullptr )
-      : m_rich(rich), m_side(side), m_primaryID(id), m_dePD{dePD},
+      : m_rich(rich), m_side(side), m_primaryID(id), m_empty(false), m_dePD{dePD},
         m_secondaryIDs( std::forward<SmartIDVector>(secIDs) )
     { }
 
@@ -99,7 +99,7 @@ namespace Rich
     explicit PDPixelCluster( const LHCb::RichSmartID    id,
                              SmartIDVector &&       secIDs,
                              const DeRichPD *         dePD = nullptr )
-      : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_dePD{dePD},
+      : m_rich(id.rich()), m_side(id.panel()), m_primaryID(id), m_empty(false), m_dePD{dePD},
         m_secondaryIDs( std::forward<SmartIDVector>(secIDs) )
     { }
 
@@ -134,19 +134,27 @@ namespace Rich
     /// Set the DeRichPD pointer
     inline void setDePD( const DeRichPD * dePD ) noexcept { m_dePD = dePD; }
 
+    /// Clear this cluster
+    inline void clear() noexcept
+    {
+      m_empty     = true;
+      m_primaryID = LHCb::RichSmartID();
+      m_rich      = Rich::InvalidDetector;
+      m_side      = Rich::InvalidSide;
+      m_dePD      = nullptr;
+      m_secondaryIDs.clear();
+    }
+
   public:
 
     /// Number of channels in this cluster
     inline decltype(auto) size() const noexcept 
     {
-      return ( primaryID().isValid() ? 1u + secondaryIDs().size() : 0u );
+      return ( !empty() ? 1u + secondaryIDs().size() : 0u );
     }
 
     /// Is the cluster empty ?
-    inline bool empty() const noexcept 
-    {
-      return ( !primaryID().isValid() && secondaryIDs().empty() );
-    }
+    inline bool empty() const noexcept { return m_empty; }
 
   public:
 
@@ -187,6 +195,9 @@ namespace Rich
 
     /// Primary ID for this cluster
     LHCb::RichSmartID m_primaryID;
+
+    /// Flag to indicate if this cluster is empty or not
+    bool m_empty { true };
 
     /// Pointer to associated DeRichPD object
     const DeRichPD * m_dePD = nullptr;
@@ -405,7 +416,7 @@ namespace Rich
       clus->addPixel(id);
     }
 
-    /// Create a new cluster with given ID
+    /// Create a new cluster with unique ID
     inline decltype(auto) createNewCluster()
     {
       return m_pdClus.createNewCluster( ++m_lastID );

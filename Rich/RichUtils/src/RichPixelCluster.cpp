@@ -167,19 +167,21 @@ PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
 
 void PDPixelCluster::addChannel( const LHCb::RichSmartID id ) noexcept
 {
-  if ( !primaryID().isValid() ) 
+  if ( empty() ) 
   {
     // primary ID is not set, so use this one
     m_primaryID = id;
     // Update the cached RICH and panel emuns
     updateCachedEnums();
+    // set as no longer empty
+    m_empty = false;
   }
   else                
   {
     // add to secondary IDs 
     // If first time reserve rough guess at size.
-    if ( m_secondaryIDs.empty() ) { m_secondaryIDs.reserve(3); }
-    // add to the seconary list
+    if ( m_secondaryIDs.empty() ) { m_secondaryIDs.reserve(8); }
+    // add to the secondary ID list
     m_secondaryIDs.emplace_back(id);
   }
 }
