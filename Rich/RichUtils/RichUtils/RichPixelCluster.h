@@ -244,7 +244,7 @@ namespace Rich
     public: // definitions
 
       /// Collection of clusters
-      using List           = LHCb::STL::List< Cluster >;
+      using Collection     = LHCb::STL::Vector< Cluster >;
       /// Collection of cluster pointers
       using PtnVector      = LHCb::STL::Vector< Cluster* >;
       /// Collection of cluster smart pointers (i.e. for ownership with memory management)
@@ -273,6 +273,13 @@ namespace Rich
       /// Shortcut to the cluster size
       inline decltype(auto) size() const noexcept { return pixels().size(); }
 
+      /// Clear this cluster
+      inline void clear() noexcept
+      {
+        m_clusterID = -1;
+        m_cluster.clear();
+      }
+      
     private:
 
       /// Cluster ID
@@ -287,20 +294,23 @@ namespace Rich
 
     /// Default Constructor
     PDPixelClusters() = default;
-    
+ 
     /// Reset for a new PD
     inline void clear() noexcept { m_allclus.clear(); }
+
+    /// Reserve size
+    inline void reserve( const std::size_t n ) noexcept { m_allclus.reserve(n); }
     
   public:
     
     /// Read access to the vector of clusters
-    inline const Cluster::List &  clusters() const &  noexcept { return m_allclus; }
+    inline const Cluster::Collection &  clusters() const &  noexcept { return m_allclus; }
     
     /// Write access to the vector of clusters
-    inline       Cluster::List &  clusters()       &  noexcept { return m_allclus; }
+    inline       Cluster::Collection &  clusters()       &  noexcept { return m_allclus; }
 
     /// Move access to the vector of clusters
-    inline       Cluster::List && clusters()       && noexcept { return std::move(m_allclus); }
+    inline       Cluster::Collection && clusters()       && noexcept { return std::move(m_allclus); }
     
     /// Create a new vector of suppressed RichSmartIDs
     void suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
@@ -331,7 +341,7 @@ namespace Rich
   private: // data
 
     /// Vector of all created clusters
-    Cluster::List m_allclus;
+    Cluster::Collection m_allclus;
 
   };
 
@@ -351,7 +361,7 @@ namespace Rich
 
     // default constructor
     PDPixelClustersBuilder() = default;
-
+    
   public:
     
     /// Initialise for a new PD

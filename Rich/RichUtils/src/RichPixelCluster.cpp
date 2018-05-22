@@ -21,17 +21,21 @@
 using namespace Rich;
 
 //=========================================================================================
-//   Methods for the builders
+// Methods for the builders
 //=========================================================================================
 
 void
 HPDPixelClustersBuilder::
 initialise( const PDPixelCluster::SmartIDVector & smartIDs )
 {
-  // clear the pixel data
-  m_pdClus.clear();
   // reset the first cluster ID to 0
   m_lastID  = 0;
+  // clear the pixel data
+  m_pdClus.clear();
+  // reserve size in data container for max possible clusters.
+  // Neccessary to avoid reallocation later on that would
+  // invalidate iterators etc.
+  m_pdClus.reserve( smartIDs.size() );
 
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
@@ -64,10 +68,14 @@ void
 PMTPixelClustersBuilder::
 initialise( const PDPixelCluster::SmartIDVector & smartIDs )
 {
-  // clear the pixel data
-  m_pdClus.clear();
   // reset the first cluster ID to 0
   m_lastID  = 0;
+  // clear the pixel data
+  m_pdClus.clear();
+  // reserve size in data container for max possible clusters.
+  // Neccessary to avoid reallocation later on that would
+  // invalidate iterators etc.
+  m_pdClus.reserve( smartIDs.size() );
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
   {
@@ -92,7 +100,7 @@ PDPixelClustersBuilder::mergeClusters( PDPixelClusters::Cluster *& clus1,
   {
     setCluster( id, rowNumber(id), colNumber(id), clus1 );
   }
-  // delete clus2 and remove from vector
+  // delete clus2
   removeCluster( clus2 );
   // invalidate the now deleted cluster
   clus2 = nullptr;
@@ -117,7 +125,7 @@ MsgStream& PDPixelClustersBuilder::fillStream ( MsgStream & os ) const
     os << boost::format( " r %3i | " ) % row ;
     for ( std::int16_t col = 0; col < nPixelCols(); ++col )
     {
-      const auto * clus = getCluster(row,col);
+      const auto clus = getCluster(row,col);
       if ( clus ) { os << boost::format("%2i ") % clus->id(); }
       else        { os << " . "; }
     }
@@ -157,7 +165,10 @@ PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
                                 { return &c == clus; } );
   if ( iF != m_pdClus.clusters().end() )
   {
-    m_pdClus.clusters().erase( iF );
+    // for list, remove
+    //m_pdClus.clusters().erase( iF );
+    // for vector, just make empty
+    (*iF).clear();
   }
 }
 
@@ -198,7 +209,7 @@ PDPixelClusters::suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
   for ( const auto& S : cache_ids )
   {
     const auto * c = getCluster(S);
-    if ( c && c->size() <= maxSize ) { smartIDs.push_back(S); }
+    if ( c && c->size() <= maxSize ) { smartIDs.emplace_back(S); }
   }
 }
 
