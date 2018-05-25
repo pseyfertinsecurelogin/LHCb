@@ -25,9 +25,8 @@ unsigned channelInTell40(short int c) {
   return ( c >> FTRawBank::cellShift);
 }
   
-unsigned getSipm(short int c){
-  //  return (c >> (FTRawBank::sipmShift - FTRawBank::cellShift)); 
-  return ((c >> FTRawBank::sipmShift) & FTRawBank::sipmMaximum); 
+unsigned getLinkInBank(short int c){
+  return ((c >> FTRawBank::sipmShift));
 }
 
 int cell(short int c) {
@@ -313,8 +312,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       if (*(last-1) == 0) --last;//Remove padding at the end
       for( auto it = first ;  it != last; ++it ){ // loop over the clusters
         unsigned short int c = *it;
-        unsigned modulesipm = channelInTell40(c);
-        LHCb::FTChannelID channel = offset+modulesipm;
+        LHCb::FTChannelID channel = offset + channelInTell40(c);
         // Define the Lambda functions
         // Basic make cluster
         auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
@@ -342,26 +340,25 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               make_cluster( firstChannel+i, fraction(c), 0 );
             }
             //add the last edge
-            make_cluster  ( firstChannel+cell(c2)-cell(c), fraction(c2), 0 );
+            make_cluster  ( firstChannel+delta, fraction(c2), 0 );
           } else { //big cluster size upto size 8
             unsigned int widthClus  =  2 * delta - 1 + fraction(c2);            
-            // Replace the last cluster by the merged cluster
-            auto lastCluster = const_cast<LHCb::FTLiteCluster&>(clus.range().back());
-            lastCluster = LHCb::FTLiteCluster(firstChannel + (widthClus-1)/2 -
-                                              int( (m_clusterMaxWidth-1)/2 ),
-                                              (widthClus-1)%2, widthClus  );
+            make_cluster( firstChannel+(widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ),
+                          (widthClus-1)%2, widthClus );
           }//end if adjacent clusters
         };//End lambda make_clusters
         
         // Workflow
-        if (!cSize(c) || it == first)//No previous cluster or no size flag.
+        if( !cSize(c) || it+1 == last )//No size flag or last cluster
           make_cluster(channel,fraction(c),4);
         else{//Flagged and not the first one.
           unsigned c2 = *(it-1);
-          if (cSize(c2) || (getSipm(c) != getSipm(c2)))//Not the same SiPM or flag size
+          if( cSize(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {
+            make_clusters(channel,c,c2);
+            ++it;
+          } else {
             make_cluster(channel,fraction(c),4);
-          else
-            make_clusters(offset+channelInTell40(c2),c2,c);
+          }
         }
       }
     }//end loop over rawbanks

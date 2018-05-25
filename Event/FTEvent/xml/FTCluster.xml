@@ -24,9 +24,9 @@
       <constructor desc     = "Constructor"
                    argList  = "LHCb::FTChannelID&amp; id, float fraction, 
                                int fractionBit, std::vector&lt;LHCb::FTChannelID&gt; channelIDs, 
-                               int isLarge, bool lastEdge, float charge" 
+                               int isLarge, float charge" 
                    initList = "m_fraction(fraction), m_fractionBit(fractionBit), m_isLarge(isLarge),
-                               m_lastEdge(lastEdge),m_charge(charge), m_channelIDs(channelIDs)">
+                               m_charge(charge), m_channelIDs(channelIDs)">
         <code> this->setKey(id); </code>
       </constructor>
 
@@ -63,11 +63,6 @@
       <attribute name   = "isLarge"
                  desc   = "size category of the cluster: 0 lt 4, 1 lt 8, 2 others  "
                  type   = "int"
-                 access = "PUBLIC"/>
-
-      <attribute name   = "lastEdge"
-                 desc   = "Last fragmenmet of fragmented cluster"
-                 type   = "bool"
                  access = "PUBLIC"/>
 
       <attribute name   = "charge"

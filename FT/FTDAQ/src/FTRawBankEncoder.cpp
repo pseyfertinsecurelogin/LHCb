@@ -51,8 +51,6 @@ StatusCode FTRawBankEncoder::execute() {
   int codingVersion = 5;
 
   //== create the array of arrays of vectors with the proper size...  
-  //== The 0.4 is empirical
-  //== TODO: reserve
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
   std::array<int,s_nbBanks*s_nbSipmPerTell40> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
@@ -76,12 +74,12 @@ StatusCode FTRawBankEncoder::execute() {
     data.push_back(( linkID                 << FTRawBank::sipmShift) |
                    ( id.channel()           << FTRawBank::cellShift ) |
                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
-                   ( cluster->lastEdge()    << FTRawBank::sizeShift )                   
+                   ( (cluster->isLarge()>0) << FTRawBank::sizeShift )
                    );
     if ( msgLevel( MSG::VERBOSE ) ) {
-      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d lastEdge %1d code %4.4x",
+      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %2d code %4.4x",
                            bankNumber, linkID, id.channel(), cluster->fraction(),
-                           cluster->isLarge(), cluster->lastEdge(), data.back() ) << endmsg;
+                           cluster->isLarge(), data.back() ) << endmsg;
     }
   }
   
