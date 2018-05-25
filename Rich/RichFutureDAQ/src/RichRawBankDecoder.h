@@ -83,18 +83,18 @@ namespace Rich
           return static_cast< Rich::DAQ::BankVersion > ( bank.version() );
         }
 
-        /// Simple class to cache the HPDDataBank objects
+        /// Simple class to cache the PDDataBank objects
         class PDBanks
         {
         public: // the cached PD decoders
           /// Non-zero suppressed decoder (LHCb mode)
-          std::unique_ptr<Rich::DAQ::HPDDataBank> lhcb_nonZS;
+          std::unique_ptr<Rich::DAQ::PDDataBank> lhcb_nonZS;
           ///     zero suppressed decoder (LHCb mode)
-          std::unique_ptr<Rich::DAQ::HPDDataBank> lhcb_ZS;
+          std::unique_ptr<Rich::DAQ::PDDataBank> lhcb_ZS;
           /// Non-zero suppressed decoder (ALICE mode)
-          std::unique_ptr<Rich::DAQ::HPDDataBank> alice_nonZS;
+          std::unique_ptr<Rich::DAQ::PDDataBank> alice_nonZS;
           ///     zero suppressed decoder (ALICE mode)
-          std::unique_ptr<Rich::DAQ::HPDDataBank> alice_ZS;
+          std::unique_ptr<Rich::DAQ::PDDataBank> alice_ZS;
         public:
           /// The bank type the current decoders are for
           Rich::DAQ::BankVersion version;
@@ -108,7 +108,7 @@ namespace Rich
          *  @param dataSize  The length of the data block (excluding header HPD word)
          *  @param version   The RICH DAQ data bank version
          */
-        const Rich::DAQ::HPDDataBank *
+        const Rich::DAQ::PDDataBank *
           createDataBank( const Rich::DAQ::LongType * dataStart,
                           const Rich::DAQ::BankVersion version,
                           PDBanks & banks ) const;

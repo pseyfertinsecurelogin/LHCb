@@ -103,7 +103,7 @@ namespace Rich
     };
 
     /// Map for RICH PD data, sorted by PD number
-    using L1InToPDMap = Rich::Map< Rich::DAQ::Level1Input, PDInfo >;
+    using L1InToPDMap = Rich::Map< Rich::DAQ::HPD::Level1Input, PDInfo >;
 
     /** @class IngressInfo RichUtils/RichDecodedData.h
      *  Information for each L1 ingress

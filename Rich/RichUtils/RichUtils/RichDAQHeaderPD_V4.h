@@ -38,6 +38,9 @@ namespace Rich
     namespace RichDAQHeaderV4
     {
 
+      /// Import HPD specific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @class RichDAQHeaderPD RichDAQHeaderPD_V4.h
        *
        *  Utility class representing the header word for a Level0/HPD data block.

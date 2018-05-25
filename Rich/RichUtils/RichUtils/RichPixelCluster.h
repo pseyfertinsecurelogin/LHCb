@@ -16,6 +16,7 @@
 #include <list>
 #include <ostream>
 #include <memory>
+#include <cstdint>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -136,10 +137,10 @@ namespace Rich
   public:
 
     /// Number of channels in this cluster
-    inline SmartIDVector::size_type size() const noexcept { return smartIDs().size(); }
+    inline decltype(auto) size() const noexcept { return smartIDs().size(); }
 
     /// Is the cluster empty ?
-    inline bool empty() const noexcept { return smartIDs().empty(); }
+    inline bool         empty() const noexcept { return smartIDs().empty(); }
 
   public:
 
@@ -253,10 +254,10 @@ namespace Rich
     public: // methods
 
       /// Constructor from ID
-      explicit Cluster( const int id ) : m_clusterID(id) { }
+      explicit Cluster( const std::int16_t id ) : m_clusterID(id) { }
 
       /// Get cluster ID
-      inline int id() const noexcept
+      inline std::int16_t id() const noexcept
       {
         return m_clusterID;
       }
@@ -282,7 +283,7 @@ namespace Rich
     private:
 
       /// Cluster ID
-      int m_clusterID{-1};
+      std::int16_t m_clusterID{-1};
 
       /// list of pixels in this cluster. Initialize with reserved size 3 (rough guess).
       PDPixelCluster m_cluster{3};
@@ -315,7 +316,7 @@ namespace Rich
     const Cluster * getCluster( const LHCb::RichSmartID & id ) const;
 
     /// Create and return a new cluster with the given ID
-    inline Cluster * createNewCluster( const int id )
+    inline Cluster * createNewCluster( const std::int16_t id )
     {
       auto * clus = new PDPixelClusters::Cluster(id);
       m_allclus.emplace_back( clus );
@@ -342,50 +343,44 @@ namespace Rich
   //-----------------------------------------------------------------------------
   /** @class PDPixelClustersBuilder RichPixelCluster.h
    *
-   *  Utility class used to build a set of clusters
+   *  Utility base class used to build a set of clusters
    *
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class PDPixelClustersBuilder final
+  class PDPixelClustersBuilder
   {
 
   public:
 
-    /// Default Constructor
-    PDPixelClustersBuilder( )
-    {
-      memset ( m_data,     0, sizeof(m_data)     );
-      memset ( m_clusters, 0, sizeof(m_clusters) );
-    }
+    // default constructor
+    PDPixelClustersBuilder() = default;
 
   public:
-
+    
     /// Initialise for a new PD
-    void initialise( PDPixelClusters * clus,
-                     const PDPixelCluster::SmartIDVector & smartIDs );
+    virtual void initialise( PDPixelClusters & clus,
+                             const PDPixelCluster::SmartIDVector & smartIDs ) = 0;
 
   public:
 
     /// Maximum number of pixel columns
-    inline int nPixelCols() const noexcept { return Rich::DAQ::NumPixelColumns; }
+    inline decltype(auto) nPixelCols() const noexcept { return m_nPixCols; }
 
-    /// Number of pixel rows (either 32 for LHCbmode or 256 for ALICE mode)
-    inline int nPixelRows() const noexcept
+    /// Number of pixel rows
+    inline decltype(auto) nPixelRows() const noexcept { return m_nPixRows; }
+
+    /// Returns the 'correct' row number for the given RichSmartID 
+    inline decltype(auto) rowNumber( const LHCb::RichSmartID& id ) const noexcept
     {
-      return ( aliceMode() ? Rich::DAQ::MaxDataSizeALICE : Rich::DAQ::MaxDataSize );
+      return ( !id.pixelSubRowDataIsValid() ?
+               id.pixelRow() :
+               ((Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel*id.pixelRow())+id.pixelSubRow()) );
     }
-
-    /// Returns the 'correct' row number for the given RichSmartID (either LHCb or ALICE mode)
-    inline int rowNumber( const LHCb::RichSmartID& id ) const noexcept
-    {
-      return ( !aliceMode() ? id.pixelRow() :
-               ((Rich::DAQ::NumAlicePixelsPerLHCbPixel*id.pixelRow())+id.pixelSubRow()) );
-    }
-
-    /// Returns the 'correct' column number for the given RichSmartID (either LHCb or ALICE mode)
-    inline int colNumber( const LHCb::RichSmartID& id ) const noexcept
+    
+    /// Returns the 'correct' column number for the given RichSmartID
+    inline decltype(auto) colNumber( const LHCb::RichSmartID& id ) const noexcept
     {
       return id.pixelCol();
     }
@@ -396,25 +391,26 @@ namespace Rich
     void splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters );
 
     /// Get cluster for given pixel
-    inline PDPixelClusters::Cluster * getCluster( const int row,
-                                                  const int col ) const noexcept
+    inline decltype(auto) getCluster( const std::int16_t row,
+                                      const std::int16_t col ) const noexcept
     {
-      return ( isOn(row,col) ? (m_clusters[row])[col] : nullptr );
+      return ( isOn(row,col) ? (m_clusters)[ index(row,col) ] : nullptr );
     }
 
     /// Set cluster for given pixel
     inline void setCluster( const LHCb::RichSmartID & id,
-                            const int row, const int col,
+                            const std::int16_t row, 
+                            const std::int16_t col,
                             PDPixelClusters::Cluster * clus ) noexcept
     {
       // Set the pointer to the cluster for this (row,col)
-      (m_clusters[row])[col] = clus;
+      (m_clusters)[ index(row,col) ] = clus;
       // save this hit to the list of pixels for this cluster
       clus->addPixel(id);
     }
 
     /// Create a new cluster with given ID
-    inline PDPixelClusters::Cluster * createNewCluster()
+    inline decltype(auto) createNewCluster()
     {
       return m_hpdClus->createNewCluster( ++m_lastID );
     }
@@ -428,6 +424,113 @@ namespace Rich
     PDPixelClusters::Cluster * mergeClusters( PDPixelClusters::Cluster *& clus1,
                                               PDPixelClusters::Cluster *& clus2 );
 
+  public:
+
+    /// Print in a human readable way
+    MsgStream& fillStream( MsgStream& os ) const;
+
+  protected: // methods
+    
+    /// Allocate storage
+    inline void allocate() 
+    {
+      const auto S = nPixelRows() * nPixelCols();
+      m_data    .reset( new                      bool[S] );
+      memset ( m_data.get(),     0, S );
+      m_clusters.reset( new PDPixelClusters::Cluster*[S] );
+      memset ( m_clusters.get(), 0, S );
+    }
+
+    /// get index from row and col numbers
+    inline std::int16_t index( const std::int16_t row,
+                               const std::int16_t col ) const noexcept
+    {
+      return ( row * nPixelCols() ) + col;
+    }
+
+    /// Set given col and row on
+    inline void setOn( const std::int16_t row, 
+                       const std::int16_t col ) noexcept
+    {
+      (m_data)[ index(row,col) ] = true;
+    }
+
+    /// Check if given row and col is on
+    inline bool isOn( const std::int16_t row, 
+                      const std::int16_t col ) const noexcept
+
+    {
+      return ( row >= 0 && row < nPixelRows() &&
+               col >= 0 && col < nPixelCols() &&
+               (m_data)[ index(row,col) ] );
+    }
+
+    /// Remove a cluster
+    void removeCluster( PDPixelClusters::Cluster * clus );
+
+  public:
+    
+    /// Overload output to MsgStream
+    friend inline MsgStream& operator << ( MsgStream& os,
+                                           const PDPixelClustersBuilder & b )
+    { 
+      return b.fillStream(os);
+    }
+
+  protected:
+
+    /// The list of clusters to fill
+    PDPixelClusters * m_hpdClus{nullptr};
+
+    /// working variable, storing the last used cluster ID
+    std::int16_t m_lastID{0};
+
+    /// Number of rows
+    std::int16_t m_nPixRows{0};
+
+    /// Number of columns
+    std::int16_t m_nPixCols{0};
+
+    /// Raw input data (row,col) (false means no hit, true means hit)
+    std::unique_ptr<bool[]> m_data;
+
+    /// Assigned cluster for each pixel (row,col)
+    std::unique_ptr<PDPixelClusters::Cluster*[]> m_clusters;
+
+  };
+
+  //-----------------------------------------------------------------------------
+  /** @class HPDPixelClustersBuilder RichPixelCluster.h
+   *
+   *  Utility class used to build a set of clusters for HPDs
+   *
+   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+   *  @date   15/05/2018
+   */
+  //-----------------------------------------------------------------------------
+  class HPDPixelClustersBuilder final : public PDPixelClustersBuilder
+  {
+
+  public:
+
+    /// Construct for HPDs
+    HPDPixelClustersBuilder()
+    {
+      // Set sizes for LHCb mode HPDs
+      m_nPixRows = Rich::DAQ::HPD::MaxDataSize;
+      m_nPixCols = Rich::DAQ::HPD::NumPixelColumns;
+      // init data arays
+      allocate();
+    }
+
+  public:
+
+    /// Initialise for a new PD
+    void initialise( PDPixelClusters & clus,
+                     const PDPixelCluster::SmartIDVector & smartIDs ) override;
+
+  private:
+    
     /** Are we in LHCb or ALICE mode ?
      *  @return Boolean indicating data mode
      *  @retval TRUE  ALICE mode
@@ -438,61 +541,60 @@ namespace Rich
     /** Set the mode (LHCb or ALICE)
      *  @param mode Boolean indicating if we are in ALICE(true) or LHCb(false) mode
      */
-    inline void setAliceMode( const bool mode ) noexcept { m_aliceMode = mode; }
-
-  public:
-
-    /// Print in a human readable way
-    MsgStream& fillStream( MsgStream& os ) const;
-
-    /// Overload output to MsgStream
-    friend inline MsgStream& operator << ( MsgStream& os,
-                                           const PDPixelClustersBuilder & b )
-    { return b.fillStream(os); }
-
-  private: // methods
-
-    /// Set given col and row on
-    inline void setOn( const int row, const int col ) noexcept
+    inline void setAliceMode( const bool mode ) noexcept 
     {
-      (m_data[row])[col] = true;
+      // do we need to re-allocate ?
+      const bool reallocate = m_aliceMode != mode;
+      if ( reallocate )
+      {
+        // set flag
+        m_aliceMode = mode;
+        // set data size
+        m_nPixRows = ( m_aliceMode ?
+                       Rich::DAQ::HPD::MaxDataSizeALICE :
+                       Rich::DAQ::HPD::MaxDataSize );
+        // reallocate storage
+        allocate();
+      }
     }
-
-    /// Check if given row and col is on
-    inline bool isOn( const int row, const int col ) const noexcept
-
-    {
-      return ( row>=0 && row<nPixelRows() &&
-               col>=0 && col<nPixelCols() &&
-               (m_data[row])[col] );
-    }
-
-    /// Remove a cluster
-    void removeCluster( PDPixelClusters::Cluster * clus );
 
   private:
 
-    /// The list of clusters to fill
-    PDPixelClusters * m_hpdClus{nullptr};
-
-    /// working variable, storing the last used cluster ID
-    int m_lastID{0};
-
     /// Are we in ALICE mode ?
     bool m_aliceMode{false};
+    
+  };
 
-    /** Raw input data (row,col) (false means no hit, true means hit)
-     *  @attention Hardcoding number of rows here to ALICE mode.
-     *             In LHCb mode only the first Rich::DAQ::MaxDataSize are then used.
-     */
-    bool m_data[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
+  //-----------------------------------------------------------------------------
+  /** @class PMTPixelClustersBuilder RichPixelCluster.h
+   *
+   *  Utility class used to build a set of clusters for PMTs
+   *
+   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+   *  @date   15/05/2018
+   */
+  //-----------------------------------------------------------------------------
+  class PMTPixelClustersBuilder final : public PDPixelClustersBuilder
+  {
 
-    /** Assigned cluster for each pixel (row,col)
-     *  @attention Hardcoding number of rows here to ALICE mode.
-     *             In LHCb mode only the first Rich::DAQ::MaxDataSize are then used.
-     */
-    PDPixelClusters::Cluster * m_clusters[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
+  public:
 
+    /// Construct for PMTs
+    PMTPixelClustersBuilder()
+    {
+      // Set sizes for LHCb mode PMTs
+      m_nPixRows = Rich::DAQ::PMT::NumPixelRows;
+      m_nPixCols = Rich::DAQ::PMT::NumPixelColumns;
+      // init data arays
+      allocate();
+    }
+
+  public:
+
+    /// Initialise for a new PD
+    void initialise( PDPixelClusters & clus,
+                     const PDPixelCluster::SmartIDVector & smartIDs ) override;
+    
   };
 
 }

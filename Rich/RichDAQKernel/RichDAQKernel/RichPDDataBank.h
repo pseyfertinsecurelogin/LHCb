@@ -1,8 +1,8 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichHPDDataBank.h
+/** @file RichPDDataBank.h
  *
- *  Header file for RICH DAQ utility class : Rich::DAQ::HPDDataBank
+ *  Header file for RICH DAQ utility class : Rich::DAQ::PDDataBank
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2004-12-17
@@ -31,7 +31,7 @@ namespace Rich
   {
 
     //-----------------------------------------------------------------------------
-    /** @class HPDDataBank RichHPDDataBank.h
+    /** @class PDDataBank RichPDDataBank.h
      *
      *  Abstract base class for all Rich HPD data bank implementations.
      *  Provides the interface for encoding and decoding.
@@ -40,7 +40,7 @@ namespace Rich
      *  @date   2004-12-18
      */
     //-----------------------------------------------------------------------------
-    class HPDDataBank
+    class PDDataBank
     {
 
     public:
@@ -56,7 +56,7 @@ namespace Rich
                                           const LHCb::RichSmartID hpdID ) const = 0;
 
       /// Destructor
-      virtual ~HPDDataBank() = default;
+      virtual ~PDDataBank() = default;
 
     public:
 
@@ -114,7 +114,7 @@ namespace Rich
        *  @param os   Output stream
        *  @param data HPD data bank to print
        */
-      friend MsgStream & operator << ( MsgStream & os, const HPDDataBank & data )
+      friend MsgStream & operator << ( MsgStream & os, const PDDataBank & data )
       {
         data.fillMsgStream(os);
         return os;
@@ -130,7 +130,7 @@ namespace Rich
     };
 
     //-----------------------------------------------------------------------------
-    /** @class HPDDataBankImp RichHPDDataBank.h
+    /** @class PDDataBankImp RichPDDataBank.h
      *
      *  Implementation base class for all Rich HPD data bank implementations.
      *  Provides some core functionality
@@ -140,18 +140,18 @@ namespace Rich
      */
     //-----------------------------------------------------------------------------
     template< class Version, class Header, class Footer >
-    class HPDDataBankImp : public HPDDataBank
+    class PDDataBankImp : public PDDataBank
     {
 
     public:
 
       /// Default Constructor
-      HPDDataBankImp( const ShortType maxDataSize = 1 )
+      PDDataBankImp( const ShortType maxDataSize = 1 )
         : m_data         ( new LongType[maxDataSize] ),
           m_maxDataSize  ( maxDataSize ),
           m_internalData ( true )
       {
-        for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[i] = 0;
+        for ( ShortType i = 0; i < maxDataSize; ++i ) { m_data[i] = 0; }
         // memset ( m_data, 0, sizeof(m_data) );
         // for ( ShortType i = 0; i < maxDataSize; ++i )
         // { std::cout << i << " " << m_data[i] << std::endl; }
@@ -167,11 +167,11 @@ namespace Rich
        *  @param maxDataSize Max possible data size
        *  @param dataSize Initialisation size for data bank
        */
-      HPDDataBankImp( const Header &        header,
-                      const Footer &        footer,
-                      const LongType        dataInit,
-                      const ShortType       maxDataSize,
-                      const ShortType       dataSize = 0 )
+      PDDataBankImp( const Header &        header,
+                     const Footer &        footer,
+                     const LongType        dataInit,
+                     const ShortType       maxDataSize,
+                     const ShortType       dataSize = 0 )
         : m_header       ( header                    ),
           m_data         ( new LongType[maxDataSize] ),
           m_footer       ( footer                    ),
@@ -190,9 +190,9 @@ namespace Rich
        *  @param maxDataSize Max possible data size
        *  @param dataSize    Initialisation size for data bank (excluding header)
        */
-      HPDDataBankImp( const LongType * data,
-                      const ShortType  maxDataSize,
-                      const ShortType  dataSize = 0 )
+      PDDataBankImp( const LongType * data,
+                     const ShortType  maxDataSize,
+                     const ShortType  dataSize = 0 )
         : m_maxDataSize  ( maxDataSize ),
           m_internalData ( false       )
       {
@@ -224,7 +224,7 @@ namespace Rich
     public:
 
       /// Destructor
-      virtual ~HPDDataBankImp() { cleanUp(); }
+      virtual ~PDDataBankImp() { cleanUp(); }
 
     public:
 
@@ -320,7 +320,7 @@ namespace Rich
         if ( m_dataSize > maxDataSize()-1 )
         {
           throw GaudiException("Attempt to fill more than MAX data words",
-                               "*Rich::DAQ::HPDDataBankImp*", StatusCode::SUCCESS );
+                               "*Rich::DAQ::PDDataBankImp*", StatusCode::SUCCESS );
         }
         m_data[m_dataSize++] = data;
       }

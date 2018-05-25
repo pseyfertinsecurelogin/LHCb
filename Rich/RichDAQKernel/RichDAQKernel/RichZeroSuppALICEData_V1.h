@@ -15,7 +15,7 @@
 #include <algorithm>
 
 // local
-#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichPDDataBank.h"
 #include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
@@ -39,6 +39,9 @@ namespace Rich
     namespace RichZeroSuppALICEDataV1
     {
 
+      /// Import HPD sepcific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @class RichZeroSuppALICEData RichZeroSuppALICEData.h
        *
        *  The RICH HPD zero suppressed data format.
@@ -48,7 +51,7 @@ namespace Rich
        *  @date   2003-11-07
        */
       template< class Version, class Header, class Footer >
-      class RichZeroSuppALICEData : public HPDDataBankImp<Version,Header,Footer>,
+      class RichZeroSuppALICEData : public PDDataBankImp<Version,Header,Footer>,
                                     public LHCb::MemPoolAlloc<RichZeroSuppALICEDataV1::RichZeroSuppALICEData<Version,Header,Footer> >
       {
 
@@ -56,7 +59,7 @@ namespace Rich
 
         /// Default constructor
         RichZeroSuppALICEData()
-          : HPDDataBankImp<Version,Header,Footer>( MaxDataSize )
+          : PDDataBankImp<Version,Header,Footer>( MaxDataSize )
         { }
 
         /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
@@ -68,16 +71,16 @@ namespace Rich
                                         const LHCb::RichSmartID::Vector & digits,
                                         const bool extendedFormat = false,
                                         const LHCb::ODIN * odin = nullptr )
-          : HPDDataBankImp<Version,Header,Footer> ( Header ( true,  // Is ZS
-                                                             true,  // ALICE mode
-                                                             extendedFormat, // data format
-                                                             false, // No GT inhibit
-                                                             l0ID,  // L0 ID
-                                                             EventID( odin ? odin->eventNumber() : 0 ), // Event ID
-                                                             0      // Filled by buildData call below in main body
-                                                             ),
-                                                    Footer ( ),
-                                                    0, MaxDataSize )
+          : PDDataBankImp<Version,Header,Footer> ( Header ( true,  // Is ZS
+                                                            true,  // ALICE mode
+                                                            extendedFormat, // data format
+                                                            false, // No GT inhibit
+                                                            l0ID,  // L0 ID
+                                                            EventID( odin ? odin->eventNumber() : 0 ), // Event ID
+                                                            0      // Filled by buildData call below in main body
+                                                     ),
+                                                   Footer ( ),
+                                                   0, MaxDataSize )
         {
           buildData( digits );
         }
@@ -87,7 +90,7 @@ namespace Rich
          *  @param data Pointer to the start of the data block
          */
         explicit RichZeroSuppALICEData( const LongType * data )
-          : HPDDataBankImp<Version,Header,Footer> ( data,        // start of data
+          : PDDataBankImp<Version,Header,Footer> ( data,        // start of data
                                                     MaxDataSize  // max data block size
                                                     )
         { }
@@ -99,7 +102,7 @@ namespace Rich
                     const ShortType  dataSize = 0 ) override
         {
           m_tooBig = false;
-          HPDDataBankImp<Version,Header,Footer>::reset( data, dataSize );
+          PDDataBankImp<Version,Header,Footer>::reset( data, dataSize );
         }
 
         /// Destructor

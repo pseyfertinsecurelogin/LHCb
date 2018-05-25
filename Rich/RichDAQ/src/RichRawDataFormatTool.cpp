@@ -77,7 +77,7 @@ StatusCode RawDataFormatTool::initialize()
   { Warning("Decoding for RICH2 disabled",StatusCode::SUCCESS).ignore(); }
 
   // if suppression is less than max possible number of (ALICE) hits, print a message.
-  if ( m_maxHPDOc < BitsPerDataWord * MaxDataSizeALICE )
+  if ( m_maxHPDOc < HPD::BitsPerDataWord * HPD::MaxDataSizeALICE )
     info() << "Will suppress PDs with more than " << m_maxHPDOc << " digits" << endmsg;
 
   // messages if optional features are enabled
@@ -254,14 +254,14 @@ RawDataFormatTool::printL1Stats( const L1TypeCount & count,
 
 // Create data bank of correct version
 // This function knows which bank objects to create for each version number
-const HPDDataBank *
+const PDDataBank *
 RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
                                    const BankVersion version,
                                    const LHCb::ODIN * odin ) const
 {
 
   // pointer to HPD data block
-  HPDDataBank * dataBank = nullptr;
+  PDDataBank * dataBank = nullptr;
 
   // Check bank is not empty
   if ( smartIDs.empty() )
@@ -285,12 +285,12 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb5::NonZeroSuppLHCb( l0ID, smartIDs,
+      dataBank = (PDDataBank*) new RichDAQ_LHCb5::NonZeroSuppLHCb( l0ID, smartIDs,
                                                                     m_extendedFormat, odin );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -305,11 +305,11 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb4::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb4::NonZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -324,11 +324,11 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb3::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb3::NonZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -341,11 +341,11 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     if ( !m_zeroSupp || zsData->tooBig() )
     {
       delete zsData;
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb2::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb2::NonZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*)zsData;
+      dataBank = (PDDataBank*)zsData;
     }
 
   }
@@ -355,18 +355,18 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
     // Decide to zero suppress or not depending on number of hits
     if ( m_zeroSupp && smartIDs.size() < m_zeroSuppresCut )
     {
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb1::ZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb1::ZeroSuppLHCb( l0ID, smartIDs );
     }
     else
     {
-      dataBank = (HPDDataBank*) new RichDAQ_LHCb1::NonZeroSuppLHCb( l0ID, smartIDs );
+      dataBank = (PDDataBank*) new RichDAQ_LHCb1::NonZeroSuppLHCb( l0ID, smartIDs );
     }
 
   }
   else if ( FlatList == version )
   {
 
-    dataBank = (HPDDataBank*) new RichDAQ_FlatList::Data( l0ID, smartIDs );
+    dataBank = (PDDataBank*) new RichDAQ_FlatList::Data( l0ID, smartIDs );
 
   }
   else
@@ -390,12 +390,12 @@ RawDataFormatTool::createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
   return dataBank;
 }
 
-const HPDDataBank *
+const PDDataBank *
 RawDataFormatTool::createDataBank( const LongType * dataStart,
                                    const unsigned int dataSize,
                                    const BankVersion version ) const
 {
-  HPDDataBank * dataBank = nullptr;
+  PDDataBank * dataBank = nullptr;
 
   if ( LHCb5 == version )
   {
@@ -667,8 +667,8 @@ void RawDataFormatTool::fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs
         if ( version != MaPMT0 )
         {
           // Get raw data bank for this HPD, and fill into RAWBank
-          std::unique_ptr<const HPDDataBank> hpdData ( createDataBank( HPD.second.smartIDs(),
-                                                                       version, odin() ) );
+          std::unique_ptr<const PDDataBank> hpdData ( createDataBank( HPD.second.smartIDs(),
+                                                                      version, odin() ) );
           if ( hpdData.get() )
           {
             hpdData->fillRAWBank( dataBank );
@@ -918,6 +918,8 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
 void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                                                L1Map & decodedData ) const
 {
+  using namespace Rich::DAQ::HPD;
+
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
@@ -1268,6 +1270,7 @@ void RawDataFormatTool::suppressHotPixels( const LHCb::RichSmartID& pdID,
 void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
                                                  L1Map & decodedData ) const
 {
+  using namespace Rich::DAQ::HPD;
 
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
@@ -1403,6 +1406,8 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
 void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
                                                  L1Map & decodedData ) const
 {
+  // import HPD parameters
+  using namespace Rich::DAQ::HPD;
 
   // Get L1 ID
   const Level1HardwareID base_L1ID ( bank.sourceID() );
@@ -1689,7 +1694,7 @@ const Rich::DAQ::L1Map & RawDataFormatTool::dummyMap() const
   {
     // create an ingressmap for each L1 board
     Rich::DAQ::IngressMap ingressMap;
-    for ( unsigned int input = 0; input < Rich::DAQ::NumIngressPerL1; ++input )
+    for ( unsigned int input = 0; input < Rich::DAQ::HPD::NumIngressPerL1; ++input )
     {
       L1IngressHeader header;
       header.setIngressID( L1IngressID(input) );

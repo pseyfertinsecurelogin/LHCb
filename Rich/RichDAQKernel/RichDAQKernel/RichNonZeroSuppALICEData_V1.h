@@ -15,7 +15,7 @@
 #include <algorithm>
 
 // local
-#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichPDDataBank.h"
 #include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
@@ -38,6 +38,9 @@ namespace Rich
     namespace RichNonZeroSuppALICEDataV1
     {
 
+      /// Import HPD sepcific parameters
+      using namespace Rich::DAQ::HPD;
+
       /** @class RichNonZeroSuppALICEData RichNonZeroSuppALICEData_V1.h
        *
        *  The RICH HPD non zero suppressed data format for ALICE mode.
@@ -46,7 +49,7 @@ namespace Rich
        *  @date   2003-11-07
        */
       template< class Version, class Header, class Footer >
-      class RichNonZeroSuppALICEData : public HPDDataBankImp<Version,Header,Footer>,
+      class RichNonZeroSuppALICEData : public PDDataBankImp<Version,Header,Footer>,
                                        public LHCb::MemPoolAlloc< RichNonZeroSuppALICEDataV1::RichNonZeroSuppALICEData<Version,Header,Footer> >
       {
 
@@ -54,7 +57,7 @@ namespace Rich
 
         /// Default constructor
         RichNonZeroSuppALICEData() :
-          HPDDataBankImp<Version,Header,Footer> ( MaxDataSizeALICE )
+          PDDataBankImp<Version,Header,Footer> ( MaxDataSizeALICE )
         { }
 
         /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
@@ -64,13 +67,13 @@ namespace Rich
          */
         explicit RichNonZeroSuppALICEData( const Level0ID l0ID,
                                            const LHCb::RichSmartID::Vector & digits )
-          : HPDDataBankImp<Version,Header,Footer> ( Header ( false, // Non-ZS
-                                                             true,  // Is ALICE mode
-                                                             l0ID,
-                                                             0 // filled by buildData call
-                                                             ),
-                                                    Footer(),
-                                                    0, MaxDataSizeALICE )
+          : PDDataBankImp<Version,Header,Footer> ( Header ( false, // Non-ZS
+                                                            true,  // Is ALICE mode
+                                                            l0ID,
+                                                            0 // filled by buildData call
+                                                     ),
+                                                   Footer(),
+                                                   0, MaxDataSizeALICE )
         {
           buildData( digits );
         }
@@ -80,9 +83,9 @@ namespace Rich
          *  @param data Pointer to the start of the data block
          */
         explicit RichNonZeroSuppALICEData( const LongType * data )
-          : HPDDataBankImp<Version,Header,Footer> ( data, // start of data
-                                                    MaxDataSizeALICE,
-                                                    MaxDataSizeALICE )
+          : PDDataBankImp<Version,Header,Footer> ( data, // start of data
+                                                   MaxDataSizeALICE,
+                                                   MaxDataSizeALICE )
         { }
 
         /** Reset for a new block of raw data
@@ -91,7 +94,7 @@ namespace Rich
         void reset( const LongType * data,
                     const ShortType  dataSize = 0 ) override
         {
-          HPDDataBankImp<Version,Header,Footer>::reset( data, std::max(MaxDataSizeALICE,dataSize) );
+          PDDataBankImp<Version,Header,Footer>::reset( data, std::max(MaxDataSizeALICE,dataSize) );
         }
 
         /// Destructor

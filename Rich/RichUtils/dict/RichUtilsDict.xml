@@ -6,7 +6,7 @@
   <class name  = "Rich::PDPixelCluster"                />
   <class name  = "Rich::PDPixelClusters"               />
 
-  <class name  = "Rich::DAQ::HPDIdentifier"            />
+  <class name  = "Rich::DAQ::PDIdentifier"             />
 
   <class name  = "Rich::SmartIDGlobalOrdering"         />
 
@@ -34,12 +34,10 @@
   <class name  = "Rich::DAQ::L1IngressID"              />
   <class name  = "Rich::DAQ::L1IngressHeader"          />
   <class name  = "Rich::DAQ::L1InputWithinIngress"     />
-  <class name  = "Rich::DAQ::Level1Input"              />
-  <class name  = "Rich::DAQ::HPDHardwareID"            />
+  <class name  = "Rich::DAQ::PDHardwareID"             />
   <class name  = "Rich::DAQ::PDCopyNumber"             />
   <class name  = "Rich::DAQ::PDPanelIndex"             />
-  <class name  = "Rich::DAQ::HPDL1InputID"             />
-  <class name  = "Rich::DAQ::HPDHardwareIDs"           />
+  <class name  = "Rich::DAQ::PDHardwareIDs"            />
   <class name  = "Rich::DAQ::Level0IDs"                />
   <class name  = "Rich::DAQ::Level1HardwareIDs"        />
   <class name  = "Rich::DAQ::Level1LogicalIDs"         />
@@ -55,17 +53,22 @@
   <class name  = "Rich::DAQ::IngressMap"               />
   <class name  = "Rich::DAQ::L1Map"                    />
 
-  <variable name = "Rich::DAQ::MaxDataSize" />
-  <variable name = "Rich::DAQ::NumAlicePixelsPerLHCbPixel" />
-  <variable name = "Rich::DAQ::MaxDataSizeALICE" />
-  <variable name = "Rich::DAQ::BitsPerDataWord" />
-  <variable name = "Rich::DAQ::NumIngressPerL1" />
-  <variable name = "Rich::DAQ::NumL1InputsPerIngress" />
-  <variable name = "Rich::DAQ::MaxL1Inputs" />
-  <variable name = "Rich::DAQ::MaxZSAddress" />
-  <variable name = "Rich::DAQ::NumPixelColumns" />
-  <variable name = "Rich::DAQ::NumPixelRows" />
-  <variable name = "Rich::DAQ::PixelSize" />
+  <class name  = "Rich::DAQ::HPD::Level1Input"         />
+  <class name  = "Rich::DAQ::HPD::L1InputID"           />
+
+  <variable name = "Rich::DAQ::HPD::MaxDataSize" />
+  <variable name = "Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel" />
+  <variable name = "Rich::DAQ::HPD::MaxDataSizeALICE" />
+  <variable name = "Rich::DAQ::HPD::BitsPerDataWord" />
+  <variable name = "Rich::DAQ::HPD::NumIngressPerL1" />
+  <variable name = "Rich::DAQ::HPD::NumL1InputsPerIngress" />
+  <variable name = "Rich::DAQ::HPD::MaxL1Inputs" />
+  <variable name = "Rich::DAQ::HPD::MaxZSAddress" />
+  <variable name = "Rich::DAQ::HPD::NumPixelColumns" />
+  <variable name = "Rich::DAQ::HPD::NumPixelRows" />
+
+  <variable name = "Rich::DAQ::PMT::NumPixelColumns" />
+  <variable name = "Rich::DAQ::PMT::NumPixelRows" />
 
   <function name  = "Rich::RayTracingUtils::intersectPlane" />
   <function name  = "Rich::RayTracingUtils::intersectSpherical" />

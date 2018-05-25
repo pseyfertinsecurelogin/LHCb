@@ -1,6 +1,6 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichHPDIdentifier.h
+/** @file RichPDIdentifier.h
  *
  *  Header file for Rich::DAQ::HPDIdentifier
  *
@@ -19,7 +19,7 @@ namespace Rich
   namespace DAQ
   {
 
-    /** @class HPDIdentifier RichHPDIdentifier.h RichUtils/RichHPDIdentifier.h
+    /** @class PDIdentifier RichPDIdentifier.h RichUtils/RichPDIdentifier.h
      *
      *  Simple class to convert a human readable HPD number into and
      *  from a RichSmartID
@@ -27,7 +27,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   27/04/2007
      */
-    class HPDIdentifier final
+    class PDIdentifier final
     {
 
     public:
@@ -39,10 +39,10 @@ namespace Rich
        *              and DD is the number in column.
        *              For the PMT case RPMMMNN is Rich, Panel, Module and Number
        */
-      explicit HPDIdentifier( const int data = -1 ) : m_data(data) { }
+      explicit PDIdentifier( const int data = -1 ) : m_data(data) { }
 
       /// Constructor from a RichSmartID
-      explicit HPDIdentifier( const LHCb::RichSmartID id )
+      explicit PDIdentifier( const LHCb::RichSmartID id )
       {
         if ( LHCb::RichSmartID::HPDID == id.idType() )
         {

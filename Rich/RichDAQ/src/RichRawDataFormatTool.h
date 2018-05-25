@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHRAWDATAFORMATTOOL_H
-#define RICHDAQ_RICHRAWDATAFORMATTOOL_H 1
+#pragma once
 
 // STD
 #include <sstream>
@@ -184,9 +183,9 @@ namespace Rich
        *  @param version  The RICH DAQ data bank version
        *  @param odin     Pointer to the ODIN data object
        */
-      const HPDDataBank * createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
-                                          const Rich::DAQ::BankVersion version,
-                                          const LHCb::ODIN * odin = nullptr ) const;
+      const PDDataBank * createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
+                                         const Rich::DAQ::BankVersion version,
+                                         const LHCb::ODIN * odin = nullptr ) const;
 
       /** Creates a bank data from the given raw block of data
        *
@@ -196,9 +195,9 @@ namespace Rich
        *  @param dataSize  The length of the data block (excluding header HPD word)
        *  @param version   The RICH DAQ data bank version
        */
-      const HPDDataBank * createDataBank( const Rich::DAQ::LongType * dataStart,
-                                          const unsigned int dataSize,
-                                          const Rich::DAQ::BankVersion version ) const;
+      const PDDataBank * createDataBank( const Rich::DAQ::LongType * dataStart,
+                                         const unsigned int dataSize,
+                                         const Rich::DAQ::BankVersion version ) const;
 
       /// Initialise for each event
       inline void InitEvent()
@@ -419,5 +418,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHRAWDATAFORMATTOOL_H

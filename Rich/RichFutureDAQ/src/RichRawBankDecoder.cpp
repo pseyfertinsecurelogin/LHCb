@@ -52,7 +52,7 @@ StatusCode RawBankDecoder::initialize()
   { Warning("Decoding for RICH2 disabled",StatusCode::SUCCESS).ignore(); }
 
   // if suppression is less than max possible number of (ALICE) hits, print a message.
-  if ( m_maxHPDOc < BitsPerDataWord * MaxDataSizeALICE )
+  if ( m_maxHPDOc < HPD::BitsPerDataWord * HPD::MaxDataSizeALICE )
     info() << "Will suppress PDs with more than " << m_maxHPDOc << " digits" << endmsg;
 
   // messages if optional features are enabled
@@ -210,12 +210,12 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
 
 //=============================================================================
 
-const Rich::DAQ::HPDDataBank *
+const Rich::DAQ::PDDataBank *
 RawBankDecoder::createDataBank( const LongType * dataStart,
                                 const BankVersion version,
                                 PDBanks & banks ) const
 {
-  Rich::DAQ::HPDDataBank * dataBank = nullptr;
+  Rich::DAQ::PDDataBank * dataBank = nullptr;
 
   // If bank version is different to cache, force a reset
   if ( UNLIKELY( version != banks.version ) )
@@ -302,6 +302,8 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                                             L1Map & decodedData,
                                             PDBanks & banks ) const
 {
+  using namespace Rich::DAQ::HPD;
+
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
@@ -332,7 +334,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
     auto & ingressMap = decodedData.back().second;
 
     // reserve size
-    ingressMap.reserve( Rich::DAQ::NumIngressPerL1 );
+    ingressMap.reserve( NumIngressPerL1 );
 
     // Loop over bank, find headers and produce a data bank for each
     // Fill data into RichSmartIDs
@@ -617,6 +619,8 @@ void
 RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
                                          L1Map & decodedData ) const
 {
+  using namespace Rich::DAQ::HPD; // to be changed...
+
   // Get L1 ID
   const Level1HardwareID L1ID ( bank.sourceID() );
   _ri_debug << "FlatList Decoding L1 bank " << L1ID << endmsg;
@@ -638,7 +642,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     auto & ingressMap = decodedData.back().second;
 
     // reserve size
-    ingressMap.reserve( Rich::DAQ::NumIngressPerL1 );
+    ingressMap.reserve( NumIngressPerL1 );
 
     // cache the last PD info
     PDInfo * last_pdInfo = nullptr;

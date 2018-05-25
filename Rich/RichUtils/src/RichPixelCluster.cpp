@@ -21,22 +21,18 @@
 using namespace Rich;
 
 //=========================================================================================
-//   Methods for the builder
+//   Methods for the builders
 //=========================================================================================
 
 void
-PDPixelClustersBuilder::
-initialise( PDPixelClusters * clus,
+HPDPixelClustersBuilder::
+initialise( PDPixelClusters & clus,
             const PDPixelCluster::SmartIDVector & smartIDs )
 {
   // Update the pixel cluster object to work on
-  m_hpdClus = clus;
+  m_hpdClus = &clus;
   // reset the first cluster ID to 0
   m_lastID  = 0;
-
-  // Must pass a valid cluster object to fill
-  if ( UNLIKELY( !clus ) )
-  { throw Rich::Exception( "Must pass a pointer to a PDPixelClusters" ); }
 
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
@@ -47,14 +43,8 @@ initialise( PDPixelClusters * clus,
     // as this does not make sense (and likely not even technically possible from L1)
     setAliceMode( smartIDs.front().pixelSubRowDataIsValid() );
 
-    // Initialise the 'is set' array as required. If in LHCb mode, only reset the
-    // first 1/8 of the array, as this is all that is used.
-    // Note, do not reset m_clusters as this is only accesed for set clusters, so
-    // those that have m_data set on by the loop below, and thus m_clusters is
-    // implicitly reset as required.
-    memset ( m_data, 0,
-             aliceMode() ? sizeof(m_data) :
-             (sizeof(m_data)/Rich::DAQ::NumAlicePixelsPerLHCbPixel) );
+    // Initialise the 'is set' array as required.
+    memset ( m_data.get(), 0, nPixelRows() * nPixelCols() );
 
     // set the hit pixels as "on"
     for ( const auto S : smartIDs )
@@ -68,11 +58,28 @@ initialise( PDPixelClusters * clus,
     }
 
   }
-  else  // empty hit list... just reset.
-  {
-    setAliceMode(false);
-  }
 
+}
+
+void
+PMTPixelClustersBuilder::
+initialise( PDPixelClusters & clus,
+            const PDPixelCluster::SmartIDVector & smartIDs )
+{
+  // Update the pixel cluster object to work on
+  m_hpdClus = &clus;
+  // reset the first cluster ID to 0
+  m_lastID  = 0;
+
+  // use the smartIDs to set the active pixels
+  if ( !smartIDs.empty() )
+  {
+    // Initialise the 'is set' array as required.
+    memset ( m_data.get(), 0, nPixelRows() * nPixelCols() );
+    // set the hit pixels as "on"
+    for ( const auto S : smartIDs )
+    { setOn( rowNumber(S), colNumber(S) ); }
+  }
 }
 
 PDPixelClusters::Cluster *
@@ -97,17 +104,17 @@ MsgStream& PDPixelClustersBuilder::fillStream ( MsgStream & os ) const
 
   // column numbers
   os << " c     |";
-  for ( int col = 0; col < nPixelCols(); ++col )
+  for ( std::int16_t col = 0; col < nPixelCols(); ++col )
   {
     os << boost::format("%3i") % col ;
   }
   os << endmsg;
 
   // print out each row
-  for ( int row = 0; row < nPixelRows(); ++row )
+  for ( std::int16_t row = 0; row < nPixelRows(); ++row )
   {
     os << boost::format( " r %3i | " ) % row ;
-    for ( int col = 0; col < nPixelCols(); ++col )
+    for ( std::int16_t col = 0; col < nPixelCols(); ++col )
     {
       const auto * clus = getCluster(row,col);
       if ( clus ) { os << boost::format("%2i ") % clus->id(); }

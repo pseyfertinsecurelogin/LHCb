@@ -23,7 +23,7 @@ void L1IngressHeader::activeHPDInputs( L1IngressInputs & inputs ) const
   inputs.clear();
   inputs.reserve(numActiveHPDs());
   const auto hpdBits = activeHPDbits();
-  for ( auto i = 0u; i < NumL1InputsPerIngress; ++i )
+  for ( auto i = 0u; i < HPD::NumL1InputsPerIngress; ++i )
   {
     if ( isBitOn(hpdBits,i) ) inputs.emplace_back( i );
   }
@@ -33,7 +33,7 @@ void L1IngressHeader::inactiveHPDInputs( L1IngressInputs & inputs ) const
 {
   inputs.clear();
   const auto hpdBits = activeHPDbits();
-  for ( auto i = 0u; i < NumL1InputsPerIngress; ++i )
+  for ( auto i = 0u; i < HPD::NumL1InputsPerIngress; ++i )
   {
     if ( !isBitOn(hpdBits,i) ) inputs.emplace_back( i );
   }
@@ -44,7 +44,7 @@ std::ostream& L1IngressHeader::fillStream( std::ostream& os ) const
   os << "[ ID=" << ingressID() << " EvtID=" << eventID() 
      << " BXID=" << bxID() << " ActiveHPDs=";
   L1InputWithinIngress in(0);
-  for ( ; in < L1InputWithinIngress(NumL1InputsPerIngress); ++in )
+  for ( ; in < L1InputWithinIngress(HPD::NumL1InputsPerIngress); ++in )
   {
     os << isHPDActive(in);
   }

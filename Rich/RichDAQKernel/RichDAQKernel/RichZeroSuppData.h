@@ -9,12 +9,9 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHZEROSUPPDATA_H
-#define RICHDAQ_RICHZEROSUPPDATA_H 1
+#pragma once
 
 #include "RichDAQKernel/RichZeroSuppData_V1.h"
 #include "RichDAQKernel/RichZeroSuppData_V2.h"
 #include "RichDAQKernel/RichZeroSuppData_V3.h"
 #include "RichDAQKernel/RichZeroSuppData_V4.h"
-
-#endif // RICHDAQ_RICHZEROSUPPDATA_H

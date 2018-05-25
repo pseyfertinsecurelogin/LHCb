@@ -122,7 +122,7 @@ namespace Rich
     /// Returns the number of pixel columns per PD
     inline unsigned int _nPixelColsPerPD() const
     {
-      return ( Rich::DAQ::NumPixelColumns );
+      return ( Rich::DAQ::HPD::NumPixelColumns );
     }
 
     /// Returns the HPD column offset number
@@ -312,10 +312,10 @@ namespace Rich
   // Returns the number of pixel rows per PD (depending on data mode)
   inline unsigned int SmartIDGlobalOrdering::_nPixelRowsPerPD() const
   {
-    return ( pixelMode() == ALICEMode           ? Rich::DAQ::MaxDataSizeALICE :
-             pixelMode() == LHCbMode            ? Rich::DAQ::MaxDataSize      :
-             smartID().pixelSubRowDataIsValid() ? Rich::DAQ::MaxDataSizeALICE :
-             Rich::DAQ::MaxDataSize );
+    return ( pixelMode() == ALICEMode           ? Rich::DAQ::HPD::MaxDataSizeALICE :
+             pixelMode() == LHCbMode            ? Rich::DAQ::HPD::MaxDataSize      :
+             smartID().pixelSubRowDataIsValid() ? Rich::DAQ::HPD::MaxDataSizeALICE :
+             Rich::DAQ::HPD::MaxDataSize );
   }
 
   // Returns the PD column offset number
@@ -386,7 +386,7 @@ namespace Rich
   inline int SmartIDGlobalOrdering::_pixelRowNum() const
   {
     return ( smartID().pixelSubRowDataIsValid() ?
-             (Rich::DAQ::NumAlicePixelsPerLHCbPixel*smartID().pixelRow()) + smartID().pixelSubRow() :
+             (Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel*smartID().pixelRow()) + smartID().pixelSubRow() :
              smartID().pixelRow() );
   }
 
