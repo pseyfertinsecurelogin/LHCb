@@ -307,48 +307,41 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto quarter = quarterFromChannel(offset);
-      auto first = bank->begin<short int>();
+
+      // Define Lambda functions to be used in loop
+      auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
+        clus.addHit(std::make_tuple(chan, fraction, size), quarter );
+      };
+
+      // Make clusters between two channels
+      auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
+        unsigned int delta = (cell(c2) - cell(c));
+
+        // fragmented clusters, size > 2*max size
+        // only edges were saved, add middles now
+        if ( delta  > m_clusterMaxWidth ) {
+          //add the first edge cluster, and then the middle clusters
+          for(unsigned int  i = m_clusterMaxWidth; i < delta ; i+= m_clusterMaxWidth){
+            // all middle clusters will have same size as the first cluster,
+            // so re-use the fraction
+            make_cluster( firstChannel+i, fraction(c), 0 );
+          }
+          //add the last edge
+          make_cluster  ( firstChannel+delta, fraction(c2), 0 );
+        } else { //big cluster size upto size 8
+          unsigned int widthClus  =  2 * delta - 1 + fraction(c2);
+          make_cluster( firstChannel+(widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ),
+                        (widthClus-1)%2, widthClus );
+        }//end if adjacent clusters
+      };//End lambda make_clusters
+
+      // loop over clusters
+      auto it = bank->begin<short int>();
       auto last  = bank->end<short int>();
       if (*(last-1) == 0) --last;//Remove padding at the end
-      for( auto it = first ;  it != last; ++it ){ // loop over the clusters
+      for( ;  it != last; ++it ){ // loop over the clusters
         unsigned short int c = *it;
         LHCb::FTChannelID channel = offset + channelInTell40(c);
-        // Define the Lambda functions
-        // Basic make cluster
-        auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
-          clus.addHit(std::make_tuple(chan, fraction, size), quarter );
-        };//End lambda make_cluster
-
-        // Make clusters between two channels
-        auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
-          unsigned int delta = (cell(c2) - cell(c));
-          
-          if( UNLIKELY( delta > 128 ) ) {
-            this->error()<<"something went terribly wrong here first fragment: " << cell(c)
-                         <<" second fragment: "  << cell(c2) << endmsg;
-            throw GaudiException("There is an inconsistency between Encoder and Decoder!",
-                                 "FTRawBankDecoder",
-                                 StatusCode::FAILURE);
-          }
-          // fragmented clusters, size > 2*max size
-          // only edges were saved, add middles now
-          if ( delta  > m_clusterMaxWidth ) {
-            //add the first edge cluster, and then the middle clusters
-            for(unsigned int  i = m_clusterMaxWidth; i < delta ; i+= m_clusterMaxWidth){
-              // all middle clusters will have same size as the first cluster,
-              // so re-use the fraction
-              make_cluster( firstChannel+i, fraction(c), 0 );
-            }
-            //add the last edge
-            make_cluster  ( firstChannel+delta, fraction(c2), 0 );
-          } else { //big cluster size upto size 8
-            unsigned int widthClus  =  2 * delta - 1 + fraction(c2);            
-            make_cluster( firstChannel+(widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ),
-                          (widthClus-1)%2, widthClus );
-          }//end if adjacent clusters
-        };//End lambda make_clusters
-        
-        // Workflow
         if( !cSize(c) || it+1 == last )//No size flag or last cluster
           make_cluster(channel,fraction(c),4);
         else{//Flagged and not the first one.
