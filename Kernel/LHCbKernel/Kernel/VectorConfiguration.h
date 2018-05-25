@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint> // std::*int*_t
+#include <cstddef> // std::size_t
 #include <type_traits>
 #include "VectorClass/vectorclass.h"
 
@@ -56,30 +58,30 @@ struct UME_tag;
 struct builtin_tag;
 
 // Forward declaration of Vectype
-template <class T, size_t W, class Tag = VCL_tag>
+template <class T, std::size_t W, class Tag = VCL_tag>
 struct Vectype;
 
 // Helper
 namespace details {
-  template <class T, size_t W, class Tag, class Enable = void>
+  template <class T, std::size_t W, class Tag, class Enable = void>
   struct Vectype;
 
-  template <class T, size_t W, class Tag>
+  template <class T, std::size_t W, class Tag>
   struct Vectype<T, W, Tag, typename std::enable_if<sizeof(T) == 4>::type> {
     using scalar_t = T;
     using float_ = LHCb::SIMD::Vectype<float,         W, Tag>;
     using int_   = LHCb::SIMD::Vectype<std::int32_t,  W, Tag>;
     using uint_  = LHCb::SIMD::Vectype<std::uint32_t, W, Tag>;
-    static constexpr size_t cardinality = W;
+    static constexpr std::size_t cardinality = W;
   };
 
-  template <class T, size_t W, class Tag>
+  template <class T, std::size_t W, class Tag>
   struct Vectype<T, W, Tag, typename std::enable_if<sizeof(T) == 8>::type> {
     using scalar_t = T;
     using float_ = LHCb::SIMD::Vectype<double,        W, Tag>;
     using int_   = LHCb::SIMD::Vectype<std::int64_t,  W, Tag>;
     using uint_  = LHCb::SIMD::Vectype<std::uint64_t, W, Tag>;
-    static constexpr size_t cardinality = W;
+    static constexpr std::size_t cardinality = W;
   };
 } // namespace details
 
@@ -263,7 +265,7 @@ struct Vectype<double,        8, VCL_tag> : details::Vectype<double,        8, V
  */
 #ifdef VC_VC_
 namespace details {
-  template <size_t size>
+  template <std::size_t size>
   struct Vc_ABI;
 
 #if defined(__SSE2__)
@@ -307,7 +309,7 @@ struct Vectype<T, W, Vc_tag> : details::Vectype<T, W, Vc_Tag> {
 /**
  * intrin
  */
-template <class T, size_t W>
+template <class T, std::size_t W>
 struct Vectype<T, W, builtin_tag> : details::Vectype<T, W, builtin_tag> {
 #ifdef __clang__
   // clang does not support __vector_size__() with arbitrary expressions
