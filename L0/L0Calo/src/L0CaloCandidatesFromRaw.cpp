@@ -175,10 +175,19 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
     // Save the candidates in CaloProcessor data location (for L0DU)
     LHCb::L0ProcessorDatas* L0Calo = new LHCb::L0ProcessorDatas() ;
     put( L0Calo, LHCb::L0ProcessorDataLocation::L0Calo ) ;
-
     for (auto it = out -> begin() ; it != out -> end() ; ++it ) {
+      L0DUBase::Fiber::Type fiber=fiberType((*it)->type());
+      if( ! plugFiber( fiber ) )continue;
       L0Candidate cand( (*it) ) ;
       cand.saveCandidate( fiberType( (*it) -> type() ) , L0Calo ) ;
+    }
+    // add missing data in case of no candidate
+    for(unsigned int it=L0DUBase::Fiber::CaloSumEt;it!=L0DUBase::Fiber::Spare1;++it){
+      L0DUBase::Fiber::Type ifiber=(L0DUBase::Fiber::Type) it;
+      if( L0Calo->object(ifiber) != nullptr)continue;
+      if( ! plugFiber( ifiber ) )continue;
+      LHCb::L0ProcessorData* temp=new LHCb::L0ProcessorData(ifiber,0x10000);
+      L0Calo->add(temp);
     }
   }
 

@@ -57,5 +57,16 @@ private:
 
   std::string    m_extension;    ///< Adedd to default name, allows comparisons
   L0CaloCandidatesFromRawBank* m_convertTool;
+
+  // Fiber plug
+  Gaudi::Property<std::vector<int> > m_fibers {this, "PlugFibers"};
+  bool plugFiber(L0DUBase::Fiber::Type type){
+    if(m_fibers.size()==0)return true;
+    for(std::vector<int>::iterator ifiber=m_fibers.begin();m_fibers.end()!= ifiber;ifiber++){
+      if( (L0DUBase::Fiber::Type) *ifiber == type)return true;
+    }
+    return false;
+  }
+  
 };
 #endif // L0CALOCANDIDATESFROMRAW_H

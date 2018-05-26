@@ -30,6 +30,7 @@ private:
   IL0CondDBProvider* m_condDB = nullptr;
   bool   m_ok = false;
   bool   m_hasHC = false;
+  std::map<int,std::string> m_fiberSource;
 };
 
 #endif // L0DU_L0PROCESSORDATADECODER_H

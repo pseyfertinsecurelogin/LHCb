@@ -52,6 +52,9 @@ public:
     unsigned int word = 0x10000 |
 			( m_ID.index() << L0DUBase::Calo::Address::Shift) | 
 			( m_et << L0DUBase::Calo::Et::Shift ) ;
+    if( type == L0DUBase::Fiber::CaloSumEt || type ==  L0DUBase::Fiber::CaloSpdMult)
+      word = 0x10000 | m_et << L0DUBase::Calo::Sum::Shift;
+
     LHCb::L0ProcessorData * temp = new LHCb::L0ProcessorData ( type , word ) ;
     L0Calo -> add( temp );
   }
