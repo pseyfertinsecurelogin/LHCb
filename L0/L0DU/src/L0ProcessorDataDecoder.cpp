@@ -38,8 +38,10 @@ StatusCode L0ProcessorDataDecoder::finalize ()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "release L0ProcessoDataDecoder" << endmsg;
   m_dataContainer.clear();
-  for(std::map<int,std::string>::iterator it=m_fiberSource.begin();m_fiberSource.end()!=it;++it){
-    info() << "Fiber "<< it->first << " data is provided by : " << it->second <<endmsg;
+  if ( msgLevel(MSG::DEBUG) ){    
+    for(std::map<int,std::string>::iterator it=m_fiberSource.begin();m_fiberSource.end()!=it;++it){
+      debug() << "Fiber "<< it->first << " data is provided by : " << it->second <<endmsg;
+    }
   } 
   return base_class::finalize();
 }
