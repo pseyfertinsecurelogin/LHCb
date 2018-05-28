@@ -38,6 +38,11 @@ StatusCode L0ProcessorDataDecoder::finalize ()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "release L0ProcessoDataDecoder" << endmsg;
   m_dataContainer.clear();
+  if ( msgLevel(MSG::DEBUG) ){    
+    for(std::map<int,std::string>::iterator it=m_fiberSource.begin();m_fiberSource.end()!=it;++it){
+      debug() << "Fiber "<< it->first << " data is provided by : " << it->second <<endmsg;
+    }
+  } 
   return base_class::finalize();
 }
 
@@ -95,7 +100,14 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(const std::vector<std::string>& 
           ( itt->key() == L0DUBase::Fiber::CaloPi0Global ||  itt->key() == L0DUBase::Fiber::CaloPi0Local) ){
         if( msgLevel(MSG::VERBOSE) ) verbose() << "CaloPI0 fibers to be replaced by HC fibers " << loc << endmsg;
       }else{
+        if( !m_dataContainer.object( itt->key() ) ){
+          m_fiberSource[itt->key()]=loc;
           m_dataContainer.insert(itt);
+        } else {
+          std::ostringstream ss;
+          ss << "L0ProcessorData for fiber " << itt->key() << " already exists. Ignoring data from " << loc;
+          Warning(ss.str(), StatusCode::SUCCESS).ignore();
+        }
       }
     }
   }
