@@ -198,10 +198,10 @@ namespace Rich
         SIMDFP m_actSegF { SIMDFP::One() };
         
         /// Flag to indicate if unambiguous photons or not
-        SIMDFP::mask_type m_unambigPhot { false };
+        SIMDFP::MaskType m_unambigPhot { SIMDFP::MaskType::Zero() };
         
         /// Validity mask
-        SIMDFP::mask_type m_valid { false };
+        SIMDFP::MaskType m_valid { SIMDFP::MaskType::Zero() };
 
         /// RICH
         Rich::DetectorType m_rich { Rich::InvalidDetector };
