@@ -33,8 +33,7 @@ const CLID CLID_DeRichPMTPanel = 12020;  // User defined
 // Standard constructor, initializes variables
 //=============================================================================
 DeRichPMTPanel::DeRichPMTPanel( const std::string & name )
-  : DeRichPDPanel ( name ),
-    //m_RichPmtModuleLensFlag(350),
+  : DeRichPDPanel(name),
     m_ModuleIsWithGrandPMT(350)
 {
   // Set the PD type to PMT
@@ -1018,9 +1017,6 @@ DeRichPMTPanel::PDWindowPointSIMD( const SIMDPoint& pGlobal,
                                    SIMDRayTResult::PDs& PDs,
                                    const LHCb::RichTraceMode mode ) const
 {
-  using GP = Gaudi::XYZPoint;
-  using GV = Gaudi::XYZVector;
-
   // results to return
   SIMDRayTResult::Results res;
 
