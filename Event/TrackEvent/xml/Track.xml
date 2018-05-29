@@ -273,6 +273,13 @@
    </constructor>
 
   <constructor
+       desc     = "Move constructor"
+       initList = "KeyedObject&lt;int&gt;(key), m_chi2PerDoF(track.m_chi2PerDoF), m_nDoF(track.m_nDoF), m_likelihood(track.m_likelihood), m_ghostProbability(track.m_ghostProbability), m_flags(track.m_flags), m_lhcbIDs(std::move(track.m_lhcbIDs)), m_states(std::move(track.m_states)), m_fitResult(std::exchange(track.m_fitResult, nullptr)), m_extraInfo{std::move(track.m_extraInfo)},m_ancestors(std::move(track.m_ancestors))">
+     <arg const="FALSE" name="track" type="LHCb::Track&amp;"/>
+     <arg const="TRUE" name="key" type="int"/>
+   </constructor>
+
+  <constructor
 	desc     = "Constructor"
 	argList  = "const LHCb::Track::History&amp; history,
                     const LHCb::Track::Types&amp; trackType,  const LHCb::Track::PatRecStatus&amp; patStatus,
