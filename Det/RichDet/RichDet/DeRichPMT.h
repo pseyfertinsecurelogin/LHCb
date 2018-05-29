@@ -17,9 +17,6 @@
 // RichDet
 #include "RichDet/DeRichPD.h"
 
-// GSL
-#include "gsl/gsl_math.h"
-
 // External declarations
 extern const CLID CLID_DERichPMT;
 
@@ -39,7 +36,7 @@ class DeRichPMT : public DeRichPD
 public:
 
   /// Standard constructor
-  explicit DeRichPMT ( const std::string & name = "" );
+  explicit DeRichPMT ( const std::string & name = "" ) : DeRichPD ( name ) { }
 
   /// Destructor
   virtual ~DeRichPMT( ) = default; 
@@ -183,20 +180,18 @@ private:
   
   inline Gaudi::XYZPoint 
   getAnodeHitCoordFromMultTypePixelNum( const IPix fracPixelCol,
-                                        const IPix fracPixelRow,
-                                        const Rich::DetectorType rich ) const noexcept
+                                        const IPix fracPixelRow ) const noexcept
   {
-    return ( rich == Rich::Rich2 && PmtIsGrand() ?
+    return ( PmtIsGrand() ?
              getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow ) :
              getAnodeHitCoordFromPixelNum     ( fracPixelCol, fracPixelRow ) );
   }
 
   inline SIMDPoint
   getAnodeHitCoordFromMultTypePixelNum( const SIMDUINT& fracPixelCol,
-                                        const SIMDUINT& fracPixelRow,
-                                        const Rich::DetectorType rich ) const noexcept
+                                        const SIMDUINT& fracPixelRow ) const noexcept
   {
-    return ( rich == Rich::Rich2 && PmtIsGrand() ?
+    return ( PmtIsGrand() ?
              getAnodeHitCoordFromGrandPixelNum( fracPixelCol, fracPixelRow ) :
              getAnodeHitCoordFromPixelNum     ( fracPixelCol, fracPixelRow ) );
   }
