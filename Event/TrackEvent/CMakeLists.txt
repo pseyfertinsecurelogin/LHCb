@@ -18,6 +18,8 @@ gaudi_depends_on_subdirs(GaudiObjDesc
 
 find_package(Boost)
 find_package(GSL)
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 include(GaudiObjDesc)
 
