@@ -21,18 +21,21 @@
 using namespace Rich;
 
 //=========================================================================================
-//   Methods for the builders
+// Methods for the builders
 //=========================================================================================
 
 void
 HPDPixelClustersBuilder::
-initialise( PDPixelClusters & clus,
-            const PDPixelCluster::SmartIDVector & smartIDs )
+initialise( const PDPixelCluster::SmartIDVector & smartIDs )
 {
-  // Update the pixel cluster object to work on
-  m_hpdClus = &clus;
   // reset the first cluster ID to 0
   m_lastID  = 0;
+  // clear the pixel data
+  m_pdClus.clear();
+  // reserve size in data container for max possible clusters.
+  // Neccessary to avoid reallocation later on that would
+  // invalidate iterators etc.
+  m_pdClus.reserve( smartIDs.size() );
 
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
@@ -63,14 +66,16 @@ initialise( PDPixelClusters & clus,
 
 void
 PMTPixelClustersBuilder::
-initialise( PDPixelClusters & clus,
-            const PDPixelCluster::SmartIDVector & smartIDs )
+initialise( const PDPixelCluster::SmartIDVector & smartIDs )
 {
-  // Update the pixel cluster object to work on
-  m_hpdClus = &clus;
   // reset the first cluster ID to 0
   m_lastID  = 0;
-
+  // clear the pixel data
+  m_pdClus.clear();
+  // reserve size in data container for max possible clusters.
+  // Neccessary to avoid reallocation later on that would
+  // invalidate iterators etc.
+  m_pdClus.reserve( smartIDs.size() );
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
   {
@@ -87,11 +92,15 @@ PDPixelClustersBuilder::mergeClusters( PDPixelClusters::Cluster *& clus1,
                                        PDPixelClusters::Cluster *& clus2 )
 {
   // add pixels in clus2 to clus1
-  for ( const auto id : clus2->pixels().smartIDs() )
+  // primary ID
+  const auto p2 = clus2->pixels().primaryID();
+  setCluster( p2, rowNumber(p2), colNumber(p2), clus1 );
+  // secondary pixels
+  for ( const auto id : clus2->pixels().secondaryIDs() )
   {
     setCluster( id, rowNumber(id), colNumber(id), clus1 );
   }
-  // delete clus2 and remove from vector
+  // delete clus2
   removeCluster( clus2 );
   // invalidate the now deleted cluster
   clus2 = nullptr;
@@ -116,7 +125,7 @@ MsgStream& PDPixelClustersBuilder::fillStream ( MsgStream & os ) const
     os << boost::format( " r %3i | " ) % row ;
     for ( std::int16_t col = 0; col < nPixelCols(); ++col )
     {
-      const auto * clus = getCluster(row,col);
+      const auto clus = getCluster(row,col);
       if ( clus ) { os << boost::format("%2i ") % clus->id(); }
       else        { os << " . "; }
     }
@@ -133,8 +142,11 @@ splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters )
   // loop over the clusters to break up
   for ( auto C : clusters )
   {
-    // loop over the smartIDs for this cluster
-    for ( const auto & S : C->pixels().smartIDs() )
+    // primary ID
+    const auto p2 = C->pixels().primaryID();
+    setCluster( p2, rowNumber(p2), colNumber(p2), createNewCluster() );
+    // secondary IDs
+    for ( const auto & S : C->pixels().secondaryIDs() )
     {
       // for each ID, make a single channel new cluster
       setCluster( S, rowNumber(S), colNumber(S), createNewCluster() );
@@ -147,19 +159,43 @@ splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters )
 void
 PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
 {
-  const auto iF = std::find_if( m_hpdClus->clusters().begin(),
-                                m_hpdClus->clusters().end(),
+  const auto iF = std::find_if( m_pdClus.clusters().begin(),
+                                m_pdClus.clusters().end(),
                                 [clus]( const auto & c )
-                                { return c.get() == clus; } );
-  if ( iF != m_hpdClus->clusters().end() )
+                                { return &c == clus; } );
+  if ( iF != m_pdClus.clusters().end() )
   {
-    m_hpdClus->clusters().erase( iF );
+    // for list, remove
+    //m_pdClus.clusters().erase( iF );
+    // for vector, just make empty
+    (*iF).clear();
   }
 }
 
 //=========================================================================================
-//   Methods for the cluster class
+// Methods for the cluster classs
 //=========================================================================================
+
+void PDPixelCluster::addChannel( const LHCb::RichSmartID id ) noexcept
+{
+  if ( empty() ) 
+  {
+    // primary ID is not set, so use this one
+    m_primaryID = id;
+    // Update the cached RICH and panel emuns
+    updateCachedEnums();
+    // set as no longer empty
+    m_empty = false;
+  }
+  else                
+  {
+    // add to secondary IDs 
+    // If first time reserve rough guess at size.
+    if ( m_secondaryIDs.empty() ) { m_secondaryIDs.reserve(8); }
+    // add to the secondary ID list
+    m_secondaryIDs.emplace_back(id);
+  }
+}
 
 void
 PDPixelClusters::suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
@@ -173,12 +209,12 @@ PDPixelClusters::suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
   for ( const auto& S : cache_ids )
   {
     const auto * c = getCluster(S);
-    if ( c && c->size() <= maxSize ) { smartIDs.push_back(S); }
+    if ( c && c->size() <= maxSize ) { smartIDs.emplace_back(S); }
   }
 }
 
 const PDPixelClusters::Cluster *
-PDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
+PDPixelClusters::getCluster( const LHCb::RichSmartID id ) const
 {
   // should look to implement this better sometime...
 
@@ -188,13 +224,20 @@ PDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
   // loop over clusters
   for ( const auto& c : clusters() )
   {
-    // loop over hits in this cluster
-    for ( const auto& i : c->pixels().smartIDs() )
+    // primary ID
+    if ( c.pixels().primaryID() == id )
+    {
+      // found the cluster...
+      clus = &c;
+      break;
+    }
+    // now try the secondary IDs
+    for ( const auto& i : c.pixels().secondaryIDs() )
     {
       if ( i == id )
       {
         // found the cluster...
-        clus = c.get();
+        clus = &c;
         break;
       }
     }
@@ -209,7 +252,7 @@ MsgStream& PDPixelClusters::fillStream( MsgStream& os ) const
 {
   for ( const auto& clus : clusters() )
   {
-    os << "ID=" << clus->id() << " " << clus->pixels();
+    os << "ID=" << clus.id() << " " << clus.pixels();
   }
   return os;
 }

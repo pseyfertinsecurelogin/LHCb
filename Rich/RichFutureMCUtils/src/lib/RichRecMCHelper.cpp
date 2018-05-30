@@ -36,13 +36,19 @@ const LHCb::MCParticle *
 Helper::trueRecPhoton( const LHCb::MCParticle & mcPart,
                        const Rich::PDPixelCluster& cluster ) const
 {
-  // loop over the channels in the cluster
-  for ( const auto S : cluster.smartIDs() )
+  // Primary ID
+  auto mcP = trueRecPhoton( mcPart, cluster.primaryID() );
+  if ( !mcP )
   {
-    const auto * mcP = trueRecPhoton( mcPart, S );
-    if ( nullptr != mcP ) return mcP;
+    // now try secondary IDs
+    for ( const auto S : cluster.secondaryIDs() )
+    {
+      mcP = trueRecPhoton( mcPart, S );
+      if ( mcP ) break;
+    }
   }
-  return nullptr;
+  // return found pointer
+  return mcP;
 }
 
 const LHCb::MCParticle * 
@@ -75,18 +81,14 @@ Helper::trueCherenkovPhoton( const LHCb::Track & track,
   LHCb::MCParticle::ConstVector trueMCPs;
   trueMCPs.reserve( tkMCPs.size() );
 
-  // loop over the track MCPs
-  for ( const auto tkMCP : tkMCPs )
-  {
-    if ( !tkMCP ) continue;
-    // loop over cluster smartIDs
-    for ( const auto S : cluster.smartIDs() )
+  // save to vector functor
+  auto saveMCP = [&]( const auto tkMCP, const auto id )
     {
       // Is this true Cherenkov radiation ?
-      if ( trueCherenkovRadiation(S,rad) )
+      if ( trueCherenkovRadiation(id,rad) )
       {
         // get the MCPs for this smartID
-        const auto clMCPs = mcParticles(S);
+        const auto clMCPs = mcParticles(id);
         // loop over the cluster MCPs
         for ( const auto clMCP : clMCPs )
         {
@@ -101,7 +103,16 @@ Helper::trueCherenkovPhoton( const LHCb::Track & track,
           }
         }
       }
-    }
+    };
+
+  // loop over the track MCPs
+  for ( const auto tkMCP : tkMCPs )
+  {
+    if ( !tkMCP ) continue;
+    // save primary ID
+    saveMCP( tkMCP, cluster.primaryID() );
+    // loop over secondary IDs
+    for ( const auto S : cluster.secondaryIDs() ) { saveMCP( tkMCP, S ); }
   }
 
   return trueMCPs;
