@@ -19,7 +19,7 @@ struct IFTReadoutTool: extend_interfaces< IAlgTool >{
   
   virtual LHCb::FTChannelID channelIDShift(const unsigned int bankNumber ) const = 0;
   virtual unsigned int bankNumber        (LHCb::FTChannelID id    ) const = 0;
-  virtual unsigned int nTell40() const = 0;
+  virtual unsigned int nBanks() const = 0;
 };
 
 #endif // _IFTReadoutTool_H

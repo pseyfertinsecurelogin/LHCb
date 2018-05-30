@@ -12,7 +12,7 @@
 #include "boost/container/static_vector.hpp"
 
 constexpr static int s_nbBanks = FTRawBank::NbBanks;
-constexpr static int s_nbSipmPerTell40 = FTRawBank::NbSiPMPerTell40;
+constexpr static int s_nbSipmPerBank = FTRawBank::NbSiPMPerBank;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTRawBankEncoder
@@ -52,7 +52,8 @@ StatusCode FTRawBankEncoder::execute() {
 
   //== create the array of arrays of vectors with the proper size...  
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
-  std::array<int,s_nbBanks*s_nbSipmPerTell40> nClustersPerSipm = {0};
+  std::array<uint32_t, s_nbBanks> headerData{};
+  std::array<int,s_nbBanks*s_nbSipmPerBank> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
     if(cluster->isLarge() > 1) continue;
     
@@ -60,12 +61,15 @@ StatusCode FTRawBankEncoder::execute() {
     unsigned int bankNumber = readoutTool()->bankNumber(id);
     unsigned int linkID  = (id - readoutTool()->channelIDShift(bankNumber)) >> 7;
     auto& data = sipmData[bankNumber];
-    unsigned int indexSipm = (bankNumber)*s_nbSipmPerTell40+linkID;
+    unsigned int indexSipm = (bankNumber)*s_nbSipmPerBank+linkID;
     nClustersPerSipm[indexSipm]++;
-    //Todo
+
+    // Truncate clusters when maximum per SiPM is reached
     if ( (id.module() > 0  && nClustersPerSipm[indexSipm] > FTRawBank::nbClusFFMaximum) ||
-         (id.module() == 0 && nClustersPerSipm[indexSipm] > FTRawBank::nbClusMaximum) )
-        continue; 
+         (id.module() == 0 && nClustersPerSipm[indexSipm] > FTRawBank::nbClusMaximum) ) {
+      headerData[bankNumber] += ( 1u << linkID) ; // set the truncation bit
+      continue;
+    }
     
     // one extra word for sipm number + nbClus
     // So each data is [Sipm & number of clusters][clus1][clus2]...
@@ -84,11 +88,11 @@ StatusCode FTRawBankEncoder::execute() {
   }
   
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
-  for ( unsigned int iBank = 0; sipmData.size() > iBank; ++iBank ) {
+  for ( unsigned int iBank = 0; iBank < sipmData.size() ; ++iBank ) {
     if( msgLevel( MSG::VERBOSE ) ) verbose() << "*** Bank " << iBank << endmsg;
     auto words = sipmData[iBank].size();
-    
-    std::vector<unsigned int> bank; bank.reserve((words+1)/2);
+    std::vector<unsigned int> bank; bank.reserve((words+1)/2 + 1);
+    bank.emplace_back( headerData[iBank] ) ; // insert the header
     boost::optional<unsigned int> buf;
     for ( const auto& cluster : sipmData[iBank] ) {
       if (!buf) {

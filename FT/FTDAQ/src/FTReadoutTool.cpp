@@ -24,31 +24,31 @@ StatusCode FTReadoutTool::initialize(){
 // Build a bank number from ID and conversely
 LHCb::FTChannelID FTReadoutTool::channelIDShift(unsigned int bankNumber) const
 {
-  return m_FTTell40FirstChannel[ bankNumber ];
+  return m_FTBankFirstChannel[ bankNumber ];
 }
 
 unsigned int FTReadoutTool::bankNumber(LHCb::FTChannelID id) const
 {
-  auto it = std::find_if( m_FTTell40FirstChannel.begin(), m_FTTell40FirstChannel.end(),
+  auto it = std::find_if( m_FTBankFirstChannel.begin(), m_FTBankFirstChannel.end(),
                          [&id](const auto& firstChan){ return id < firstChan; });
-  return it - m_FTTell40FirstChannel.begin() - 1u;
+  return it - m_FTBankFirstChannel.begin() - 1u;
 }
 
 StatusCode FTReadoutTool::readFile()
 {
   Condition* rInfo = getDet<Condition>(m_conditionLocation);
   
-  std::vector<int> stations     = rInfo->param<std::vector<int> >("FTTell40Station");
-  std::vector<int> layers       = rInfo->param<std::vector<int> >("FTTell40Layer");
-  std::vector<int> quarters     = rInfo->param<std::vector<int> >("FTTell40Quarter");
-  std::vector<int> firstModules = rInfo->param<std::vector<int> >("FTTell40FirstModule");
-  std::vector<int> firstMats    = rInfo->param<std::vector<int> >("FTTell40FirstMat");
+  std::vector<int> stations     = rInfo->param<std::vector<int> >("FTBankStation");
+  std::vector<int> layers       = rInfo->param<std::vector<int> >("FTBankLayer");
+  std::vector<int> quarters     = rInfo->param<std::vector<int> >("FTBankQuarter");
+  std::vector<int> firstModules = rInfo->param<std::vector<int> >("FTBankFirstModule");
+  std::vector<int> firstMats    = rInfo->param<std::vector<int> >("FTBankFirstMat");
 
   //Construct the first channel attribute
   unsigned int nTell40s = stations.size();
-  m_FTTell40FirstChannel.reserve(nTell40s);
+  m_FTBankFirstChannel.reserve(nTell40s);
   for (unsigned int i = 0 ; i < nTell40s ; i++) {
-    m_FTTell40FirstChannel.emplace_back(stations[i],
+    m_FTBankFirstChannel.emplace_back(stations[i],
                                         layers[i],
                                         quarters[i],
                                         firstModules[i],

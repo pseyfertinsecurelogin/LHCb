@@ -25,11 +25,11 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
   unsigned int bankNumber(LHCb::FTChannelID id) const override;
   
   //Getters
-  unsigned int nTell40() const override { return m_FTTell40FirstChannel.size(); };
+  unsigned int nBanks() const override { return m_FTBankFirstChannel.size(); };
 
  private:
 
-  std::vector<LHCb::FTChannelID> m_FTTell40FirstChannel;
+  std::vector<LHCb::FTChannelID> m_FTBankFirstChannel;
 
   Gaudi::Property<std::string> m_conditionLocation { this, "conditionLocation",
     "/dd/Conditions/ReadoutConf/FT/ReadoutMap" };

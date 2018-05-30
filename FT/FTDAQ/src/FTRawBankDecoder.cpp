@@ -21,7 +21,7 @@ unsigned quarterFromChannel(LHCb::FTChannelID id) {
   return id.uniqueQuarter() - 16u;
 }
 
-unsigned channelInTell40(short int c) {
+unsigned channelInBank(short int c) {
   return ( c >> FTRawBank::cellShift);
 }
   
@@ -291,20 +291,21 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
   //Body of the decoder
   if (version == 4 or (version==5 and m_forceVersion4 )){
-    for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40s
+    for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
-      auto last = bank->end<short int>();
-      if (*(last-1) == 0) --last;//Remove padding at the end
+      auto first = bank->begin<short int>() + 2; // skip first 32b of the header
+      auto last  = bank->end<short int>();
+      if (*(last-1) == 0 && first < last) --last;//Remove padding at the end
 
-      auto r = ranges::make_iterator_range(bank->begin<short int>(), last )
+      auto r = ranges::make_iterator_range(first, last )
               | ranges::view::transform( [&offset](unsigned short int c) -> LHCb::FTLiteCluster
-                                        { return { offset+channelInTell40(c),
+                                        { return { offset+channelInBank(c),
                                                    fraction(c), ( cSize(c) ? 0 : 4 ) };} );
       clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
     }//end loop over rawbanks
   }//version == 4  
   else if (version == 5) {
-    for ( const LHCb::RawBank* bank : banks) {//Iterates over the Tell40
+    for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto quarter = quarterFromChannel(offset);
 
@@ -336,16 +337,17 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       };//End lambda make_clusters
 
       // loop over clusters
-      auto it = bank->begin<short int>();
+      auto it = bank->begin<short int>() + 2; // skip first 32b of header
       auto last  = bank->end<short int>();
       if (*(last-1) == 0) --last;//Remove padding at the end
-      for( ;  it != last; ++it ){ // loop over the clusters
+      for( ;  it < last; ++it ){ // loop over the clusters
         unsigned short int c = *it;
-        LHCb::FTChannelID channel = offset + channelInTell40(c);
-        if( !cSize(c) || it+1 == last )//No size flag or last cluster
+        LHCb::FTChannelID channel = offset + channelInBank(c);
+
+        if( !cSize(c) || it+1 == last ) //No size flag or last cluster
           make_cluster(channel,fraction(c),4);
-        else{//Flagged and not the first one.
-          unsigned c2 = *(it-1);
+        else{//Flagged or not the last one.
+          unsigned c2 = *(it+1);
           if( cSize(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {
             make_clusters(channel,c,c2);
             ++it;
