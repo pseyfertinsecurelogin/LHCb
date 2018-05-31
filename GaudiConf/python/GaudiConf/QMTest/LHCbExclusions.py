@@ -29,6 +29,10 @@ preprocessor = (
     RegexpReplacer(when = "Connected to database",
         orig = r'"[^"]*/([0-9A-Z_]{1,8})"',
         repl = r'"\1"') +
+    RegexpReplacer(  # hide eoslhcb SE directories
+        when = "eoslhcb.cern.ch",
+        orig = r'/lhcb/swtest/lhcb/|/lhcb/freezer/lhcb/|/lhcb/data/lhcb/',
+        repl = r'/lhcb//lhcb/') +
     LineSkipper(["EventSelector        INFO Stream:EventSelector.DataStreamTool",
                  "INFO Using TAG", "TimingAuditor.T", "RootDBase.open",
                  "INFO Opened magnetic field file",
