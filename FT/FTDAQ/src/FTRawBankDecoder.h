@@ -7,9 +7,8 @@
 #include "GaudiAlg/Transformer.h"
 #include "GaudiAlg/FunctionalUtilities.h"
 #include "Kernel/MultiIndexedContainer.h"
-#include "FTRawBankParams.h"
-
 #include "IFTReadoutTool.h"
+#include "FTRawBankParams.h"
 
 using namespace Gaudi::Functional;
 
@@ -27,16 +26,12 @@ class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEven
  public:
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-  StatusCode initialize() override;
-  //  StatusCode finalize() override;
-
-  inline IFTReadoutTool* getReadoutTool() const;
-  inline IFTReadoutTool* readoutTool() const;
   
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
 
  private:
-  mutable IFTReadoutTool* m_readoutTool = 0;
+  PublicToolHandle<IFTReadoutTool> m_readoutTool = { this, "FTReadoutTool", "FTReadoutTool" };
+
   // for MC, following property has to be same as cluster creator, 
   // not sure how to ensure this
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4,

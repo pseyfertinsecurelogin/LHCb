@@ -26,7 +26,7 @@ unsigned channelInBank(short int c) {
 }
   
 unsigned getLinkInBank(short int c){
-  return ((c >> FTRawBank::sipmShift));
+  return ((c >> FTRawBank::linkShift));
 }
 
 int cell(short int c) {
@@ -82,15 +82,6 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
                                                             LHCb::RawEventLocation::Default )},
                 KeyValue{ "OutputLocation", LHCb::FTLiteClusterLocation::Default } )
 { }
-
-
-StatusCode FTRawBankDecoder::initialize()
-{
-  StatusCode sc = Transformer::initialize();
-  if (sc.isFailure()) return Error("Failed to initialize", sc);
-  m_readoutTool = this -> template tool<IFTReadoutTool>("FTReadoutTool","FTReadoutTool");
-  return StatusCode::SUCCESS;
-}
 
 //=============================================================================
 // Main execution

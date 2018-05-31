@@ -12,7 +12,7 @@
 #include "boost/container/static_vector.hpp"
 
 constexpr static int s_nbBanks = FTRawBank::NbBanks;
-constexpr static int s_nbSipmPerBank = FTRawBank::NbSiPMPerBank;
+constexpr static int s_nbLinksPerBank = FTRawBank::NbLinksPerBank;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTRawBankEncoder
@@ -24,25 +24,10 @@ constexpr static int s_nbSipmPerBank = FTRawBank::NbSiPMPerBank;
 DECLARE_COMPONENT( FTRawBankEncoder )
 
 //=============================================================================
-// Initializer of the ReadoutTool (taken from STCommonBase)
-//=============================================================================
-
-IFTReadoutTool* FTRawBankEncoder::getReadoutTool() const {
-  m_readoutTool = this -> template tool<IFTReadoutTool>("FTReadoutTool","FTReadoutTool");
-  return m_readoutTool;
-}
-
-
-IFTReadoutTool* FTRawBankEncoder::readoutTool() const {
-  return m_readoutTool != 0 ? m_readoutTool : getReadoutTool();
-}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode FTRawBankEncoder::execute() {
 
-  //typedef FastClusterContainer<LHCb::FTLiteCluster,int> FTLiteClusters;
   LHCb::FTClusters* clusters = get<LHCb::FTClusters>( m_inputLocation );
   if ( msgLevel( MSG::DEBUG) ) debug() << "Retrieved " << clusters->size() << " clusters" << endmsg;
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
@@ -53,15 +38,15 @@ StatusCode FTRawBankEncoder::execute() {
   //== create the array of arrays of vectors with the proper size...  
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
   std::array<uint32_t, s_nbBanks> headerData{};
-  std::array<int,s_nbBanks*s_nbSipmPerBank> nClustersPerSipm = {0};
+  std::array<int,s_nbBanks*s_nbLinksPerBank> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
     if(cluster->isLarge() > 1) continue;
     
     LHCb::FTChannelID id = cluster->channelID();
-    unsigned int bankNumber = readoutTool()->bankNumber(id);
-    unsigned int linkID  = (id - readoutTool()->channelIDShift(bankNumber)) >> 7;
+    unsigned int bankNumber = m_readoutTool->bankNumber(id);
+    unsigned int linkID  = (id - m_readoutTool->channelIDShift(bankNumber)) >> 7;
     auto& data = sipmData[bankNumber];
-    unsigned int indexSipm = (bankNumber)*s_nbSipmPerBank+linkID;
+    unsigned int indexSipm = (bankNumber)*s_nbLinksPerBank+linkID;
     nClustersPerSipm[indexSipm]++;
 
     // Truncate clusters when maximum per SiPM is reached
@@ -71,11 +56,7 @@ StatusCode FTRawBankEncoder::execute() {
       continue;
     }
     
-    // one extra word for sipm number + nbClus
-    // So each data is [Sipm & number of clusters][clus1][clus2]...
-    //    if ( data.empty() ) data.push_back( absSipmNumber << FTRawBank::sipmShift );
-    
-    data.push_back(( linkID                 << FTRawBank::sipmShift) |
+    data.push_back(( linkID                 << FTRawBank::linkShift) |
                    ( id.channel()           << FTRawBank::cellShift ) |
                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
                    ( (cluster->isLarge()>0) << FTRawBank::sizeShift )

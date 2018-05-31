@@ -2,7 +2,6 @@
 #include "FTReadoutTool.h"
 
 #include "DetDesc/Condition.h"
-//#include "DetDesc/ConditionInfo.h"
 
 using namespace LHCb;
 
@@ -54,6 +53,5 @@ StatusCode FTReadoutTool::readFile()
                                         firstModules[i],
                                         firstMats[i], 0u, 0u );
   }
-
   return StatusCode::SUCCESS;
 }
