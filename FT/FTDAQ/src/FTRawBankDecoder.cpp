@@ -120,7 +120,9 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                            "FTRawBankDecoder", StatusCode::FAILURE);
   }
 
-  // Only initialize the readout tool for v4 and v5.
+  // Only initialize the readout tool for v4 and v5. These lines below
+  // can be removed when the old SIMCOND tags become obsolete or when
+  // v2 and v3 data is not used anymore.
   if( version > 3 ) {
     if( m_readoutTool.retrieve().isFailure())
       throw GaudiException("Could not initialize redoutTool",
