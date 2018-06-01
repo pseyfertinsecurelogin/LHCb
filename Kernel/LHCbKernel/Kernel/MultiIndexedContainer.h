@@ -270,7 +270,7 @@ public:
     assert( std::any_of( std::next ( begin(m_offsets), subDetectorId + 1 ),
                          std::end ( m_offsets ),
                          [](typename Offsets::value_type& offset){
-                           return offset.first != offset.second; });
+                           return offset.first != offset.second; })
             && "Values can only be inserted at the back; not in the middle.");
 
     // Only initialize offsets when they are not yet filled
