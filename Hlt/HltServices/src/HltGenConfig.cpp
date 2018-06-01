@@ -87,7 +87,7 @@ HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
     auto subs = seq->subAlgorithms();
     std::transform( begin(*subs), end(*subs),
                     std::back_inserter(depRefs),
-                    [&](const Gaudi::Algorithm*  dep) {
+                    [&](const auto dep) {
       debug() << "adding sub-algorithm " << dep->name() << " as dependant to " << obj.name() << endmsg;
       auto digest = generateConfig(*dep);
       if (digest.invalid())  {
