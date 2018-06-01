@@ -84,6 +84,20 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
 { }
 
 //=============================================================================
+// Initialize
+//=============================================================================
+StatusCode FTRawBankDecoder::initialize() {
+  StatusCode sc = Transformer::initialize(); // must be executed first
+  if ( sc.isFailure() ) return sc;
+
+  // Opt out for the default initialization, since v2 and v3 do not require
+  // m_readouttool. The complete initialize() can be removed when the old
+  // SIMCOND tags become obsolete or when v2 and v3 data is not used anymore.
+  m_readoutTool.disable();
+  return sc;
+}
+
+//=============================================================================
 // Main execution
 //=============================================================================
 FTLiteClusters
@@ -103,6 +117,13 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   if (version < 2 && version > 5) {
       error() << "** Unsupported FT bank version " << version << endmsg;
       throw GaudiException("Unsupported FT bank version",
+                           "FTRawBankDecoder", StatusCode::FAILURE);
+  }
+
+  // Only initialize the readout tool for v4 and v5.
+  if( version > 3 ) {
+    if( m_readoutTool.retrieve().isFailure())
+      throw GaudiException("Could not initialize redoutTool",
                            "FTRawBankDecoder", StatusCode::FAILURE);
   }
 

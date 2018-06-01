@@ -8,15 +8,17 @@ using namespace LHCb;
 DECLARE_COMPONENT( FTReadoutTool )
 
 StatusCode FTReadoutTool::initialize(){
-  StatusCode sc = base_class::initialize();
-  if (sc.isFailure()){
-    return Error("Failed to initialize", sc);
+  if( ! m_initialized ) {
+    StatusCode sc = base_class::initialize();
+    if (sc.isFailure()){
+      return Error("Failed to initialize", sc);
+    }
+
+    registerCondition( m_conditionLocation, &FTReadoutTool::readFile);
+    sc = runUpdate();
+    if (sc.isFailure()) return Error ( "Failed first UMS update for readout tool", sc );
+    m_initialized = true;
   }
-  
-  registerCondition( m_conditionLocation,
-                     &FTReadoutTool::readFile);
-  sc = runUpdate();
-  if (sc.isFailure()) return Error ( "Failed first UMS update for readout tool", sc );
   return StatusCode::SUCCESS;
 }
 

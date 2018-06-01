@@ -27,6 +27,8 @@ class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEven
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
   
+  StatusCode initialize() override;
+
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
 
  private:

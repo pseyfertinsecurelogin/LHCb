@@ -30,6 +30,7 @@ class FTReadoutTool : public extends<GaudiTool, IFTReadoutTool>{
  private:
 
   std::vector<LHCb::FTChannelID> m_FTBankFirstChannel;
+  bool m_initialized = false;
 
   Gaudi::Property<std::string> m_conditionLocation { this, "conditionLocation",
     "/dd/Conditions/ReadoutConf/FT/ReadoutMap" };
