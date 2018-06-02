@@ -79,6 +79,7 @@ namespace CaloDataType{
                     Saturation,
                     ClusterAsX,
                     ClusterAsY,
+                    isPhotonXGB,
                     Last // dummy end (59)
   };                
 
@@ -89,7 +90,7 @@ namespace CaloDataType{
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Ecal-based)
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Prs-based)  
     0x1,0x1,0x3,0x3, //4
-    0x1,0x1,0x1 //3
+    0x1,0x1,0x1,0x1 //4
   };
   static const  std::string Name[Last] = {
     "HypoE"     , // 0
@@ -151,7 +152,8 @@ namespace CaloDataType{
     "ClusterFrac",
     "Saturation",
     "ClusterAsX",
-    "ClusterAsY"
+    "ClusterAsY",
+    "isPhotonXGB",
   };
 }
 
