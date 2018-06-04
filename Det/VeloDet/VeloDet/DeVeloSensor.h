@@ -363,7 +363,7 @@ protected:
    *  @author Kurt Rinnert
    *  @date   2006-01-18
    */
-  struct ConvertIntToStripInfo : public std::unary_function<int, StripInfo>
+  struct ConvertIntToStripInfo
   {
     StripInfo operator() (int i) { return StripInfo(i); }
   };
