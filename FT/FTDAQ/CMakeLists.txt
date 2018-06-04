@@ -6,6 +6,8 @@ gaudi_subdir(FTDAQ v1r8)
 gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/FTEvent
                          DAQ/DAQKernel
+                         Det/DetDesc
+                         Det/FTDet
                          GaudiAlg)
 
 find_package(Boost)
@@ -13,7 +15,7 @@ find_package(Boost)
 gaudi_add_module(FTDAQ
                  src/*.cpp
                  INCLUDE_DIRS Boost Event/FTEvent
-                 LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib)
+                 LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib DetDescLib FTDAQLib)
 
 gaudi_add_library(FTDAQLib
                   src/Lib/*.cpp

@@ -15,7 +15,7 @@
             defaultdestructor = "FALSE"
             serializers = "FALSE" >
 
-      <import name="Kernel/FastClusterContainer"/>
+      <import name="Kernel/MultiIndexedContainer"/>
       <import name="Kernel/FTChannelID"/>
       <import name="Kernel/SiDataFunctor"/>
 
@@ -30,7 +30,7 @@
                access = "PUBLIC " /> 
       
       <typedef desc   = "fast container of Lite Cluster"
-               type   = "FastClusterContainer&lt;LHCb::FTLiteCluster,int&gt;"
+               type   = "LHCb::Container::MultiIndexedContainer&lt;LHCb::FTLiteCluster,48&gt;"
                def    = "FTLiteClusters"
                access = "PUBLIC" />
       

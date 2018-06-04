@@ -71,6 +71,8 @@ class DeFTDetector : public DetectorElement {
 
 public:
 
+  static constexpr uint16_t nQuarters = 48;
+
   /// Standard constructor
   using DetectorElement::DetectorElement;
 
@@ -150,6 +152,13 @@ public:
    */
   const DeFTMat* findMat( const LHCb::FTChannelID& id ) const;
 
+  /** Find the FT Quarter from the sequential number
+   *  @return Pointer to the relevant quarter
+   */
+  const DeFTQuarter* quarter( int iQuarter ) const {
+    return m_quarters[iQuarter];
+  };
+
   /**
    * Return a sensitive volume identifier for a given point in the
    * global reference frame. This function is vital for Gauss.
@@ -179,6 +188,9 @@ private: // private data members
   /// vector of pointers to stations
   std::array<DeFTStation*,3> m_stations{{nullptr, nullptr, nullptr}};
   unsigned int m_nStations;
+
+  /// flact vector of pointers to quarters for fast access
+  std::array<DeFTQuarter*,nQuarters> m_quarters;
 
   unsigned int m_nModulesT1;
   unsigned int m_nModulesT2;

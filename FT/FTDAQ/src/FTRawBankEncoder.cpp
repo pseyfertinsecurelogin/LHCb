@@ -9,8 +9,10 @@
 #include "FTRawBankEncoder.h"
 #include "FTRawBankParams.h"
 
+#include "boost/container/static_vector.hpp"
+
 constexpr static int s_nbBanks = FTRawBank::NbBanks;
-constexpr static int s_nbSipmPerTELL40 = FTRawBank::NbSiPMPerTELL40;
+constexpr static int s_nbLinksPerBank = FTRawBank::NbLinksPerBank;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTRawBankEncoder
@@ -26,74 +28,59 @@ DECLARE_COMPONENT( FTRawBankEncoder )
 //=============================================================================
 StatusCode FTRawBankEncoder::execute() {
 
-  //typedef FastClusterContainer<LHCb::FTLiteCluster,int> FTLiteClusters;
   LHCb::FTClusters* clusters = get<LHCb::FTClusters>( m_inputLocation );
   if ( msgLevel( MSG::DEBUG) ) debug() << "Retrieved " << clusters->size() << " clusters" << endmsg;
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
 
   // Incremented to deal with new numbering scheme
-  int codingVersion = 3;
+  int codingVersion = 5;
 
-  //== create the array of arrays of vectors with the proper size...
-  std::array< std::array< std::vector<uint16_t>, s_nbSipmPerTELL40>, s_nbBanks> sipmData{{}};
-
+  //== create the array of arrays of vectors with the proper size...  
+  std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
+  std::array<uint32_t, s_nbBanks> headerData{};
+  std::array<int,s_nbBanks*s_nbLinksPerBank> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
-
     if(cluster->isLarge() > 1) continue;
-        
+    
     LHCb::FTChannelID id = cluster->channelID();
+    unsigned int bankNumber = m_readoutTool->bankNumber(id);
+    unsigned int linkID  = (id - m_readoutTool->channelIDShift(bankNumber)) >> 7;
+    auto& data = sipmData[bankNumber];
+    unsigned int indexSipm = (bankNumber)*s_nbLinksPerBank+linkID;
+    nClustersPerSipm[indexSipm]++;
 
-    unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   
-    //== Temp, assumes 1 TELL40 per quarter.
-
-    if ( sipmData.size() <= bankNumber ) {
-      error() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
-      return StatusCode::FAILURE;
+    // Truncate clusters when maximum per SiPM is reached
+    if ( (id.module() > 0  && nClustersPerSipm[indexSipm] > FTRawBank::nbClusFFMaximum) ||
+         (id.module() == 0 && nClustersPerSipm[indexSipm] > FTRawBank::nbClusMaximum) ) {
+      headerData[bankNumber] += ( 1u << linkID) ; // set the truncation bit
+      continue;
     }
-    unsigned int sipmNumber = id.sipm() + 4*id.mat() + 16 * id.module();
-    if ( sipmData[bankNumber].size() <= sipmNumber ) {
-      error() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
-      return StatusCode::FAILURE;
-    }
-
-    auto& data = sipmData[bankNumber][sipmNumber];
     
-    if ( (id.module() > 0  && data.size() > FTRawBank::nbClusFFMaximum) ||
-         (id.module() == 0 && data.size() > FTRawBank::nbClusMaximum) ) continue; 
-    
-    // one extra word for sipm number + nbClus
-    if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
-    
-    data.push_back( ( id.channel()          << FTRawBank::cellShift ) |
-                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
-                    ( cluster->lastEdge()     << FTRawBank::sizeShift )
-                    );
-    ++data[0]; // counts the number of clusters (in the header)
+    data.push_back(( linkID                 << FTRawBank::linkShift) |
+                   ( id.channel()           << FTRawBank::cellShift ) |
+                   ( cluster->fractionBit() << FTRawBank::fractionShift ) |
+                   ( (cluster->isLarge()>0) << FTRawBank::sizeShift )
+                   );
     if ( msgLevel( MSG::VERBOSE ) ) {
-      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d lastEdge %1d code %4.4x",
-                           bankNumber, sipmNumber, id.channel(), cluster->fraction(),
-                           cluster->isLarge(), cluster->lastEdge(), data.back() ) << endmsg;
+      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %2d code %4.4x",
+                           bankNumber, linkID, id.channel(), cluster->fraction(),
+                           cluster->isLarge(), data.back() ) << endmsg;
     }
   }
   
-  
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
-  for ( unsigned int iBank = 0; sipmData.size() > iBank; ++iBank ) {
+  for ( unsigned int iBank = 0; iBank < sipmData.size() ; ++iBank ) {
     if( msgLevel( MSG::VERBOSE ) ) verbose() << "*** Bank " << iBank << endmsg;
-    auto words = std::accumulate( sipmData[iBank].begin(), sipmData[iBank].end(),
-                                  0, [](int w, std::vector<uint16_t>& d) {
-                                    return w  + d.size();
-                                  });
-    std::vector<unsigned int> bank; bank.reserve((words+1)/2);
+    auto words = sipmData[iBank].size();
+    std::vector<unsigned int> bank; bank.reserve((words+1)/2 + 1);
+    bank.emplace_back( headerData[iBank] ) ; // insert the header
     boost::optional<unsigned int> buf;
-    for ( const auto& pm : sipmData[iBank] ) {
-      for ( const auto& data : pm ) {
-        if (!buf) {
-          buf = data;
-        } else {
-          bank.emplace_back( *buf | ( static_cast<unsigned int>(data) << 16 ) );
-          buf = boost::none;
-        }
+    for ( const auto& cluster : sipmData[iBank] ) {
+      if (!buf) {
+        buf = cluster;
+      } else {
+        bank.emplace_back( *buf | ( static_cast<unsigned int>(cluster) << 16 ) );
+        buf = boost::none;
       }
     }
     if (buf) bank.emplace_back( *buf) ;
@@ -103,7 +90,7 @@ StatusCode FTRawBankEncoder::execute() {
         verbose() << format( "    at %5d data %8.8x", offset++, d ) << endmsg;
       }
     }
-    event->addBank( iBank, LHCb::RawBank::FTCluster, codingVersion, bank );
-  }
-  return StatusCode::SUCCESS;
+    event->addBank( iBank, LHCb::RawBank::FTCluster, codingVersion, bank );    
+  } 
+ return StatusCode::SUCCESS;
 }

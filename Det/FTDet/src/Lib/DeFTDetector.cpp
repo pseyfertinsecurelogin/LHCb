@@ -36,7 +36,8 @@ StatusCode DeFTDetector::initialize(){
     return StatusCode::FAILURE;
   }
 
-  // loop over stations and fill stations vector
+  // loop over stations and fill stations vector and quarters vector
+  unsigned int iQuarter = 0u;
   for (auto  iS = this->childBegin(); iS != this->childEnd(); ++iS) {
     auto* station = dynamic_cast<DeFTStation*>(*iS);
     if (station) {
@@ -44,6 +45,10 @@ StatusCode DeFTDetector::initialize(){
       if( stationID < 4 && stationID > 0) {
         m_stations[stationID-1u] = station;
         m_nStations++;
+        for( const auto layer : station->layers() ) {
+          for( const auto quarter : layer->quarters() )
+            m_quarters[iQuarter++] = quarter;
+        }
       }
     }
   }
