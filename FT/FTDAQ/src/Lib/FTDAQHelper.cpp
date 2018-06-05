@@ -18,10 +18,11 @@ unsigned int LHCb::FTDAQ::nbFTClusters(const std::vector<RawBank *> &banks ) {
     nbClusters *= 0.4;
   } else {
     // Bank size is given in bytes. There are 2 bytes per cluster.
+    // 4 bytes are removed for the header.
     // Note that this overestimates slightly the number of clusters
-    // due to bank padding. For v5, it further overestimates the
+    // due to bank padding in 32b. For v5, it further overestimates the
     // number of clusters due to the merging of clusters.
-    nbClusters /= 2;
+    nbClusters = nbClusters/2 - 2u;
   }
 
   return nbClusters ;
