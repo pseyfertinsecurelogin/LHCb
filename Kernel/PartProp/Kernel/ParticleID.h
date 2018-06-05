@@ -198,8 +198,7 @@ namespace LHCb
     // ========================================================================
     /// PDG ID.
     int m_pid { 0 } ;
-    /// PDG ID digits, which can be modified for special cases.
-    /// unsigned int m_extra, m_n, m_nr, m_nl, m_nq1, m_nq2, m_nq3, m_nj;
+    // ========================================================================
   };
   // ==========================================================================
   // Inline stream operators.
