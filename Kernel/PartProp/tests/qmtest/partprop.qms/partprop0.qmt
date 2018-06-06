@@ -5,6 +5,6 @@
     <text>../../python/PartProp/tests.py</text>
   </argument>
   <argument name="reference">
-    <text>../refs/partprop0.stdout</text>
+    <text>../refs/partprop0.ref</text>
   </argument>
 </extension>
