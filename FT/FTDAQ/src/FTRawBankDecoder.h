@@ -38,8 +38,8 @@ class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEven
   // not sure how to ensure this
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4,
       "Maximal cluster width"};
-  Gaudi::Property<bool> m_forceVersion4{ this, "ForceVersion4", false,
-      "Force to decode v5 raw banks as v4"};
+  Gaudi::Property<unsigned int> m_decodingVersion{ this, "DecodingVersion", 5,
+      "Set the decoding version"};
 
 };
 #endif // FTRAWBANKDECODER_H
