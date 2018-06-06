@@ -293,7 +293,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   }
 
   //Body of the decoder
-  if (m_decodingVersion == 4 ){
+  if (m_decodingVersion == 4u ){
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto first = bank->begin<short int>() + 2; // skip first 32b of the header
@@ -307,7 +307,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
     }//end loop over rawbanks
   }//version == 4  
-  else if (m_decodingVersion == 5) {
+  else if (m_decodingVersion == 5u) {
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto quarter = quarterFromChannel(offset);
