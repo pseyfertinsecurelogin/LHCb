@@ -27,7 +27,7 @@ namespace
   // ==========================================================================
   inline DATA decode ( const LHCb::ParticleID& pid ) 
   {
-    unsigned int m_extra = pid.extraBits   ()  ;
+    unsigned int m_extra = pid.abspid() /  10000000 ; 
     unsigned int m_n     = pid.digit_<LHCb::ParticleID::n>   ()  ;
     unsigned int m_nr    = pid.digit_<LHCb::ParticleID::nr>  ()  ;
     unsigned int m_nl    = pid.digit_<LHCb::ParticleID::nl>  ()  ;  
@@ -60,18 +60,18 @@ namespace
       m_nl = 1; m_nj = 1; 
     }
     // Technical photons.
-    else if (aid == 10022 || aid == 20022) { m_nl = 0; }
+    else if ( aid == 10022 || aid == 20022) { m_nl = 0; }
     // Old heavy ion convention for hydrogen-2 nucleus.
-    else if (m_extra == 45) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 1; 
+    else if ( m_extra == 45 ) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 1; 
       m_nq1 = 0; m_nq2 = 0; m_nq3 = 2; m_nj = 0; }
     // Old heavy ion convention for hydrogen-3 nucleus.
-    else if (m_extra == 46) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 1; 
+    else if ( m_extra == 46 ) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 1; 
       m_nq1 = 0; m_nq2 = 0; m_nq3 = 3; m_nj = 0; }
     // Old heavy ion convention for helium-4 nucleus.
-    else if (m_extra == 47) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 2; 
+    else if ( m_extra == 47 ) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 2; 
       m_nq1 = 0; m_nq2 = 0; m_nq3 = 4; m_nj = 0; }
     // Old heavy ion convention for helium-3 nucleus.
-    else if (m_extra == 49) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 2; 
+    else if ( m_extra == 49 ) { m_extra = 100; m_n = 0; m_nr = 0; m_nl = 2; 
       m_nq1 = 0; m_nq2 = 0; m_nq3 = 3; m_nj = 0; }
     // The EvtGen particles Xsd (30343), Xsu (30353), and Xss (30363)
     // which break the PDG conventions.
@@ -88,6 +88,18 @@ namespace
     return { m_extra , m_nj , m_nq3 , m_nq2 , m_nq1 , m_nl , m_nr , m_n };
   }
   // ==========================================================================
+}
+// ============================================================================
+// Return everything beyond the 7th PDG ID digit.
+// ============================================================================
+int LHCb::ParticleID::extraBits () const 
+{
+  const unsigned int m_extra = abspid() /  10000000 ; 
+  return 
+    45 == m_extra ? 100u :
+    46 == m_extra ? 100u :
+    47 == m_extra ? 100u :
+    49 == m_extra ? 100u : m_extra ;
 }
 // ============================================================================
 /*  Return the fundamental ID. 

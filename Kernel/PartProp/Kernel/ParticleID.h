@@ -149,7 +149,7 @@ namespace LHCb
   public: // technical methods 
     // ========================================================================
     /// Return everything beyond the 7th PDG ID digit.
-    int extraBits () const { return abspid() /  10000000 ; };
+    int extraBits () const ;
     /// Return the digit for a given PDG ID digit location.
     unsigned short digit ( const Location &loc ) const 
     { return Gaudi::Math::digit( abspid() , loc - 1 ) ; }
