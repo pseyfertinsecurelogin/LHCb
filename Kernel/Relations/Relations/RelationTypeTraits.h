@@ -23,11 +23,11 @@
 #include "Relations/Bases.h"
 // ============================================================================
 namespace Relations
-{  
+{
   // ==========================================================================
   /** @struct RelationTypeTraits RelationTypeTraits.h
    *
-   *  Type traits structure for definition of 
+   *  Type traits structure for definition of
    *  data types and operation
    *
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
@@ -37,42 +37,42 @@ namespace Relations
   struct RelationTypeTraits
   {
     // ========================================================================
-    /// the actual enum to distinguish the relation type 
+    /// the actual enum to distinguish the relation type
     enum Type { weighted = false } ;
     // ========================================================================
-    /// the actual type of the entry 
+    /// the actual type of the entry
     typedef typename Relations::Entry_<FROM,TO>           Entry      ;
-    /// type traits for "FROM" object 
+    /// type traits for "FROM" object
     typedef typename Entry::FromTypes         FromTypes  ;
-    /// type traits for "TO" object 
+    /// type traits for "TO" object
     typedef typename Entry::ToTypes           ToTypes    ;
-    ///   
+    ///
     typedef typename Entry::From_             From_      ;
     typedef typename Entry::From              From       ;
     ///
     typedef typename Entry::To_               To_        ;
     typedef typename Entry::To                To         ;
-    /// "less" function object for "From" objects 
+    /// "less" function object for "From" objects
     typedef typename Entry::LessF             LessF      ;
-    /// "less" function object for "To" objects 
+    /// "less" function object for "To" objects
     typedef typename Entry::LessT             LessT      ;
-    /// "equality" function object for "To" objects 
+    /// "equality" function object for "To" objects
     typedef typename Entry::EqualT            EqualT     ;
-    /// "less" function object for "From" objects 
-    typedef std::less<Entry>                  Less       ;
-    /** @struct LessByFrom 
+    /// "less" function object for "From" objects
+    typedef std::less<>                       Less       ;
+    /** @struct LessByFrom
      *  comparison/ordering criteria using only "From" field
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   27/01/2002
      */
-    struct LessByFrom: public std::binary_function<Entry,Entry,bool>
+    struct LessByFrom
     {
       /** comparison/ordering criteria
-       *  @param  entry1 the first entry 
-       *  @param  entry2 the second entry 
-       *  @return true if "From" field of the first entry is less 
+       *  @param  entry1 the first entry
+       *  @param  entry2 the second entry
+       *  @return true if "From" field of the first entry is less
        */
-      inline bool operator() ( const Entry& entry1 , 
+      inline bool operator() ( const Entry& entry1 ,
                                const Entry& entry2 ) const
       { return LessF() ( entry1.m_from ,  entry2.m_from ) ; };
     };
@@ -82,26 +82,26 @@ namespace Relations
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   27/01/2002
      */
-    struct EqualByTo: public std::binary_function<Entry,Entry,bool>
+    struct EqualByTo
     {
       /** comparison criteria
-       *  @param  entry1 the first entry 
-       *  @param  entry2 the secons entry 
-       *  @return true if "To" fields are equal 
+       *  @param  entry1 the first entry
+       *  @param  entry2 the secons entry
+       *  @return true if "To" fields are equal
        */
-      inline bool operator() ( const Entry& entry1 , 
+      inline bool operator() ( const Entry& entry1 ,
                                const Entry& entry2 ) const
       { return EqualT() ( entry1.m_to , entry2.m_to ) ; };
-    };    
+    };
     // ========================================================================
     /// definition of the internal storage
-    typedef std::vector<Entry>                Entries  ;    
+    typedef std::vector<Entry>                Entries  ;
     ///definition of the standard iterator types
-    typedef typename Entries::const_iterator  iterator ;    
-    /// the actual type fo Range 
+    typedef typename Entries::const_iterator  iterator ;
+    /// the actual type fo Range
     typedef Relations::Range_<Entries>        Range    ;
-    /** technical definitions, useful for  for implementation 
-     *  ordinary users should not use them 
+    /** technical definitions, useful for  for implementation
+     *  ordinary users should not use them
      */
     typedef typename Entries::iterator       IT  ;
     typedef typename Entries::const_iterator CIT ;

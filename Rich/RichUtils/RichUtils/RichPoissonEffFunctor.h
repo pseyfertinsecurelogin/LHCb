@@ -85,9 +85,6 @@ namespace Rich
   //--------------------------------------------------------------------------------
 
   class PoissonEffFunctor final
-    : public std::binary_function< const double,
-                                   const double,
-                                   PoissonEffFunctorResult >
   {
 
   public:

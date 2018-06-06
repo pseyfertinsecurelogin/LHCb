@@ -86,9 +86,6 @@ namespace Rich
   //------------------------------------------------------------------------------------
 
   class StatDivFunctor final
-    : public std::binary_function< const double,
-                                   const double,
-                                   StatDivFunctorResult >
   {
 
   public:
@@ -134,5 +131,5 @@ namespace Rich
   {
     return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error() ;
   }
-  
+
 }
