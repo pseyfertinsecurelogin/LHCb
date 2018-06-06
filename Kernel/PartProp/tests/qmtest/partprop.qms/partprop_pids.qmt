@@ -5,7 +5,7 @@
     <text>../scripts/pids.py</text>
   </argument>
   <argument name="reference">
-    <text>../refs/partprop_pids.stdout</text>
+    <text>../refs/partprop_pids.ref</text>
   </argument>
 <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
