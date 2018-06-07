@@ -113,15 +113,17 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
   // Testing the bank version
   unsigned int version = banks[0]->version();
-  if( msgLevel(MSG::DEBUG) ) debug() << "Bank version " << version << endmsg;
+  if( msgLevel(MSG::DEBUG) )
+    debug() << "Bank version=v" << version << " with decoding version=v"
+            <<  m_decodingVersion.toString() << endmsg;
 
   // Check if decoding version corresponds with bank version (only for first bank).
   // Special case for v5 data that is decoded as v4. This possibility is added
   // temporarily to test the tracking performance versus decoding speed.
-  if( version != m_decodingVersion or
-      (version==5u and m_decodingVersion==4u) ) {
+  if( version != m_decodingVersion and
+      !(version==5u and m_decodingVersion==4u) ) {
     error() << "Bank version=v" << version << " is not compatible with decoding "
-            << "version=v" <<  m_decodingVersion << endmsg;
+            << "version=v" <<  m_decodingVersion.toString() << endmsg;
     throw GaudiException("Wrong decoding version",
                          "FTRawBankDecoder", StatusCode::FAILURE);
   }
