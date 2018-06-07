@@ -117,6 +117,10 @@
       <field name = "m_datasvc"   />
     </class>
 
+    <class    name = "LoKi::TES::DataHandle" >
+      <field name = "m_algorithm" />
+      <field name = "m_datahandle"   />
+    </class>
 
     <function name    = "LoKi::tokenize" />
     

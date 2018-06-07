@@ -7,6 +7,7 @@
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/ToStream.h"
 #include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/AnyDataWrapper.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
@@ -121,6 +122,10 @@ std::ostream& LoKi::TES::Get::fillStream ( std::ostream& s ) const
 const std::string& LoKi::TES::Get::algName() const
 { return !algorithm() ? s_INVALID : algorithm()->name() ; }
 // ============================================================================
+
+
+
+// ============================================================================
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Exists::Exists
@@ -188,6 +193,47 @@ LoKi::TES::Contains::fillStream ( std::ostream& s ) const
   return s << " ) " ;
 }
 // ============================================================================
+
+
+// ============================================================================
+LoKi::TES::Size::Size
+( const std::string& location )
+  : LoKi::AuxFunBase ( std::tie ( location ) )
+  , LoKi::TES::DataHandle<DataObject> ( location )
+{
+}
+
+LoKi::TES::Size* LoKi::TES::Size::clone() const
+{ return new LoKi::TES::Size ( *this ) ; }
+
+double LoKi::TES::Size::operator() ( /* LoKi::TES::Size::argument */ ) const
+{
+  auto obj =  get();
+  auto container = dynamic_cast<ObjectContainerBase*>(obj);
+  if (container){
+    return container->numberOfObjects () ;
+  }
+  auto anydata =  dynamic_cast<AnyDataWrapperBase*>(obj);
+  if (anydata){
+    auto size = anydata->size();
+    if (!size){
+      return -1;
+    }
+    return *size;
+  }
+  return -1;
+}
+
+std::ostream&
+LoKi::TES::Size::fillStream ( std::ostream& s ) const
+{
+  s << " SIZE( " ;
+  Gaudi::Utils::toStream ( location() , s ) ;
+  return s << " ) " ;
+}
+// ============================================================================
+
+
 
 
 // ============================================================================

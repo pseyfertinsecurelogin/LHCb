@@ -10,10 +10,13 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/DataObject.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GetAlgs.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -89,12 +92,33 @@ namespace LoKi
       mutable LoKi::Interface<IDataProviderSvc> m_datasvc   ;  // the service
       // ======================================================================
     } ;
+
+    template <class TYPE>
+    class GAUDI_API DataHandle : public virtual LoKi::AuxFunBase
+    {
+    public:
+      explicit DataHandle ( const std::string& location) ;
+      explicit DataHandle ( const LoKi::TES::DataHandle<TYPE>& handle) ;
+      // ======================================================================
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      // ======================================================================
+      const LoKi::Interface<GaudiAlgorithm>&   algorithm () const
+      { return m_algorithm ; }
+      const std::string& location     () const { return m_location     ; }
+      decltype(auto) get() const { return m_datahandle.get(); };
+    protected:
+      LoKi::Interface<GaudiAlgorithm> getAlgSvc   () const;
+    private:
+      std::string m_location     ;
+      LoKi::Interface<GaudiAlgorithm> m_algorithm ;
+      DataObjectReadHandle<TYPE> m_datahandle;
+    } ;
+
     // ========================================================================
     /** @class Exists
      *  Simple checker of existence of object in TES
      *  @see LoKi::Cuts::EXISTS
      *  @see GaudiCommon<TYPE>::exists
-     *  The concept belong to Gerhard The Great Raven
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
@@ -125,7 +149,6 @@ namespace LoKi
      *  @see GaudiCommon<TYPE>::get
      *  @see ObjectContainerBase
      *  @see ObjectContainerBase::numberOfOjbects
-     *  The concept belong to Gerhard The Great Raven
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
@@ -150,6 +173,28 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
+
+    // ========================================================================
+    class GAUDI_API Size : public LoKi::Functor<void,double>
+                         , public LoKi::TES::DataHandle<DataObject>
+    {
+    public:
+      explicit Size ( const std::string& location ) ;
+      Size* clone() const override;
+      double operator() ( ) const override;
+      std::ostream& fillStream ( std::ostream& s ) const override;
+    } ;
+    // ======================================================================
+
+    // ========================================================================
+    /** @class HrcSumAdc
+     *  Simple query to sum contents of Herschel Digits for a station
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+
+
+
     // ========================================================================
     /** @class HrcSumAdc
      *  Simple query to sum contents of Herschel Digits for a station
@@ -288,9 +333,13 @@ namespace LoKi
     get_ ( const LoKi::TES::Get&  obj )
     {
       if      ( !(!obj.algorithm() ) )
-      { return obj.algorithm()->getIfExists<TYPE> ( obj.location () , obj.useRootInTES () ) ; }
+      {
+        return obj.algorithm()->getIfExists<TYPE> ( obj.location () , obj.useRootInTES () ) ;
+      }
       else if ( !(!obj.service  () ) )
-      { return SmartDataPtr<TYPE>                 ( obj.service  () , obj.location     () ) ; }
+      {
+        return SmartDataPtr<TYPE>                 ( obj.service  () , obj.location     () ) ; 
+      }
       //
       return 0 ;
     }
@@ -339,6 +388,8 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Contains                                      CONTAINS ;
+    typedef LoKi::TES::Size                                      SIZE ;
+
     // ========================================================================
     /** @typedef HRCSUMADC
      *  Function to find Herschel station sum digits
@@ -367,7 +418,6 @@ namespace LoKi
      *
      *  @see LoKi::Cuts::EXISTS
      *  @see GaudiCommon<TYPE>::exists
-     *  The concept belong to Gerhard The Great Raven
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
@@ -410,6 +460,48 @@ namespace LoKi
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
+
+
+template <class TYPE>
+LoKi::TES::DataHandle<TYPE>::DataHandle
+( const std::string& location )
+  : LoKi::AuxFunBase ( std::tie ( location ) )
+  , m_location     ( location     )
+  , m_algorithm (getAlgSvc())
+  , m_datahandle(this->location(), this->algorithm())
+{
+}
+
+template <class TYPE>
+LoKi::TES::DataHandle<TYPE>::DataHandle
+( const LoKi::TES::DataHandle<TYPE>& handle )
+  : LoKi::AuxFunBase ( handle )
+  , m_location     ( handle.location()     )
+  , m_algorithm (getAlgSvc())
+  , m_datahandle(this->location(), this->algorithm())
+{
+}
+
+template <class TYPE>
+LoKi::Interface<GaudiAlgorithm> LoKi::TES::DataHandle<TYPE>::getAlgSvc() const
+{
+  ILoKiSvc* l = lokiSvc() ;
+  Assert ( 0 != l   , "ILoKiSvc*       points to NULL!" ) ;
+  SmartIF<IAlgContextSvc> cntx ( l ) ;
+  LoKi::Interface<GaudiAlgorithm> algorithm;
+  if ( !(!cntx) )
+  { algorithm = Gaudi::Utils::getGaudiAlg ( cntx ) ; }
+  Assert ( !(!algorithm) , "No algorithm is located" ) ;
+  return algorithm;
+}
+
+template <class TYPE>
+std::ostream& LoKi::TES::DataHandle<TYPE>::fillStream ( std::ostream& s ) const
+{
+  s << " GET(" << "'" << location() << "'" ;
+  return s << ") " ;
+}
+
 // ============================================================================
 // The END
 // ============================================================================
