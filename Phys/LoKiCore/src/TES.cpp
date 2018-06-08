@@ -215,11 +215,7 @@ double LoKi::TES::Size::operator() ( /* LoKi::TES::Size::argument */ ) const
   }
   auto anydata =  dynamic_cast<AnyDataWrapperBase*>(obj);
   if (anydata){
-    auto size = anydata->size();
-    if (!size){
-      return -1;
-    }
-    return *size;
+    return anydata->size().value_or(-1);
   }
   return -1;
 }
