@@ -90,10 +90,10 @@ StatusCode FTRawBankDecoder::initialize() {
   StatusCode sc = Transformer::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;
 
-  // Opt out for the default initialization, since v2 and v3 do not require
-  // m_readouttool. The complete initialize() can be removed when the old
-  // SIMCOND tags become obsolete or when v2 and v3 data is not used anymore.
-  m_readoutTool.disable();
+  // For the v2 and v3 decoding versions, opt out for the default initialization
+  // of m_readouttool.
+  if( m_decodingVersion < 4u ) m_readoutTool.disable();
+
   return sc;
 }
 
@@ -111,25 +111,24 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     debug() << "Number of raw banks " << banks.size() << endmsg;
   if( banks.empty() ) return clus;
 
-  //Testing the bank version
+  // Testing the bank version
   unsigned int version = banks[0]->version();
-  if ( msgLevel(MSG::DEBUG) ) debug() << "Bank version " << version << endmsg;
-  if (version < 2 && version > 5) {
-      error() << "** Unsupported FT bank version " << version << endmsg;
-      throw GaudiException("Unsupported FT bank version",
-                           "FTRawBankDecoder", StatusCode::FAILURE);
+  if( msgLevel(MSG::DEBUG) )
+    debug() << "Bank version=v" << version << " with decoding version=v"
+            <<  m_decodingVersion.toString() << endmsg;
+
+  // Check if decoding version corresponds with bank version (only for first bank).
+  // Special case for v5 data that is decoded as v4. This possibility is added
+  // temporarily to test the tracking performance versus decoding speed.
+  if( version != m_decodingVersion and
+      !(version==5u and m_decodingVersion==4u) ) {
+    error() << "Bank version=v" << version << " is not compatible with decoding "
+            << "version=v" <<  m_decodingVersion.toString() << endmsg;
+    throw GaudiException("Wrong decoding version",
+                         "FTRawBankDecoder", StatusCode::FAILURE);
   }
 
-  // Only initialize the readout tool for v4 and v5. These lines below
-  // can be removed when the old SIMCOND tags become obsolete or when
-  // v2 and v3 data is not used anymore.
-  if( version > 3 ) {
-    if( m_readoutTool.retrieve().isFailure())
-      throw GaudiException("Could not initialize redoutTool",
-                           "FTRawBankDecoder", StatusCode::FAILURE);
-  }
-
-  if( version==2 || version ==3 ) {
+  if( m_decodingVersion==2u or m_decodingVersion==3u ) {
   for ( const LHCb::RawBank* bank : banks) {
     int source       = bank->sourceID();
     unsigned station = source/16 + 1u;
@@ -140,14 +139,6 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                                             << " station " << station << " layer " << layer
                                             << " quarter " << quarter << " size " << bank->size()
                                             << endmsg;
-    if ( bank->version() != 2 &&  bank->version() != 3) {
-      error() << "** Unsupported FT bank version " << bank->version()
-              << " for source " << source << " size " << bank->size() << " bytes."
-              << endmsg;
-      throw GaudiException("Unsupported FT bank version",
-                           "FTRawBankDecoder",
-                           StatusCode::FAILURE);
-    }
 
     auto first = bank->begin<short int>();
     auto last  = bank->end<short int>();
@@ -181,7 +172,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
         continue;
       }
 
-      if(bank->version() == 3){
+      if(m_decodingVersion == 3u){
 
         for( auto it = first ;  it< first+nClus;++it ){
           short int c      = *it;
@@ -304,7 +295,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
   }
 
   //Body of the decoder
-  if (version == 4 or (version==5 and m_forceVersion4 )){
+  if (m_decodingVersion == 4u ){
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto first = bank->begin<short int>() + 2; // skip first 32b of the header
@@ -318,7 +309,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
     }//end loop over rawbanks
   }//version == 4  
-  else if (version == 5) {
+  else if (m_decodingVersion == 5u) {
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
       auto quarter = quarterFromChannel(offset);
