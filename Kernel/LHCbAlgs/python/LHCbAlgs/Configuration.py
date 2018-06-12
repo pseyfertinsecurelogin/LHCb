@@ -247,6 +247,7 @@ class LHCbApp(LHCbConfigurableUser):
         else:
             from Configurables import HiveSlimEventLoopMgr, AvalancheSchedulerSvc
             scheduler = AvalancheSchedulerSvc()
+            scheduler.CheckDependencies = True
             eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
             self.propagateProperty('ThreadPoolSize', scheduler)
         ApplicationMgr().EventLoop = eventloopmgr
