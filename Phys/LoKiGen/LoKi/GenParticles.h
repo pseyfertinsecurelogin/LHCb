@@ -823,8 +823,8 @@ namespace LoKi
        *  @param range  "iterator range", see HepMC::IteratorRange
        *  @see HepMC::IteratorRange
        */
-      NInTree ( const LoKi::GenTypes::GCuts& cut                     ,
-                HepMC::IteratorRange range = HepMC::children ) ;
+      NInTree ( const LoKi::GenTypes::GCuts& cut                        ,
+                HepMC::IteratorRange         range = HepMC::descendants ) ;
       /// MANDATORY: clone function ("virtual constructor")
       NInTree* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -842,10 +842,170 @@ namespace LoKi
        */
       size_t count( HepMC::GenVertex* vertex ) const ;
       // ======================================================================
-    private:
+    protected: 
       // ======================================================================
       LoKi::GenTypes::GCut  m_cut   ;
       HepMC::IteratorRange  m_range ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class MaxTree
+     *  simple evaluator maximal valeu of certain functor in the tree
+     *
+     *  @warning current implementation is valid only for
+     *       HepMC::parents, HepMC::children,
+     *       HepMC::ancestors and HepMC::descendants
+     *
+     *  @see HepMC::IteratorRange
+     *  @see HepMC::parents
+     *  @see HepMC::GenParticle
+     *  @see HepMC::GenVertex
+     *  @see LoKi::Cuts::GABSID
+     *  @see LoKi::Extract::getParticles
+     *  @see LoKi::Cuts::GMAXTREE
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    class GAUDI_API MaxTree : public NInTree
+    {
+    public:
+      // ======================================================================
+      /** constructor
+       *  @param cut    predicate to be used for counting
+       *  @param range  "iterator range", see HepMC::IteratorRange
+       *  @see HepMC::IteratorRange
+       */
+      MaxTree ( const LoKi::GenTypes::GFunc& fun                        ,
+                const LoKi::GenTypes::GCuts& cut                        ,
+                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      /// MANDATORY: clone function ("virtual constructor")
+      MaxTree* clone() const  override;
+      /// MANDATORY: the only one essential method
+      double operator() ( const HepMC::GenParticle* p ) const  override;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      std::ostream& fillStream( std::ostream& s ) const  override;
+      // ======================================================================
+    protected :
+      // ======================================================================
+      LoKi::GenTypes::GFun  m_fun   ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class MinTree
+     *  simple evaluator minimal value of certain functor in the tree
+     *
+     *  @warning current implementation is valid only for
+     *       HepMC::parents, HepMC::children,
+     *       HepMC::ancestors and HepMC::descendants
+     *
+     *  @see HepMC::IteratorRange
+     *  @see HepMC::parents
+     *  @see HepMC::GenParticle
+     *  @see HepMC::GenVertex
+     *  @see LoKi::Cuts::GABSID
+     *  @see LoKi::Extract::getParticles
+     *  @see LoKi::Cuts::GMINTREE
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    class GAUDI_API MinTree : public MaxTree
+    {
+    public:
+      // ======================================================================
+      /** constructor
+       *  @param cut    predicate to be used for counting
+       *  @param range  "iterator range", see HepMC::IteratorRange
+       *  @see HepMC::IteratorRange
+       */
+      MinTree ( const LoKi::GenTypes::GFunc& fun                        ,
+                const LoKi::GenTypes::GCuts& cut                        ,
+                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      /// MANDATORY: clone function ("virtual constructor")
+      MinTree* clone() const  override;
+      /// MANDATORY: the only one essential method
+      double operator() ( const HepMC::GenParticle* p ) const  override;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      std::ostream& fillStream( std::ostream& s ) const  override;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class SumTree
+     *  simple evaluato of sum over  certain functor values in the tree
+     *
+     *  @warning current implementation is valid only for
+     *       HepMC::parents, HepMC::children,
+     *       HepMC::ancestors and HepMC::descendants
+     *
+     *  @see HepMC::IteratorRange
+     *  @see HepMC::parents
+     *  @see HepMC::GenParticle
+     *  @see HepMC::GenVertex
+     *  @see LoKi::Cuts::GABSID
+     *  @see LoKi::Extract::getParticles
+     *  @see LoKi::Cuts::GSUMTREE
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    class GAUDI_API SumTree : public MinTree
+    {
+    public:
+      // ======================================================================
+      /** constructor
+       *  @param cut    predicate to be used for counting
+       *  @param range  "iterator range", see HepMC::IteratorRange
+       *  @see HepMC::IteratorRange
+       */
+      SumTree ( const LoKi::GenTypes::GFunc& fun                        ,
+                const LoKi::GenTypes::GCuts& cut                        ,
+                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      /// MANDATORY: clone function ("virtual constructor")
+      SumTree* clone() const  override;
+      /// MANDATORY: the only one essential method
+      double operator() ( const HepMC::GenParticle* p ) const  override;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      std::ostream& fillStream( std::ostream& s ) const  override;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class MultTree
+     *  simple evaluator of the product over  certain functor values in the tree
+     *
+     *  @warning current implementation is valid only for
+     *       HepMC::parents, HepMC::children,
+     *       HepMC::ancestors and HepMC::descendants
+     *
+     *  @see HepMC::IteratorRange
+     *  @see HepMC::parents
+     *  @see HepMC::GenParticle
+     *  @see HepMC::GenVertex
+     *  @see LoKi::Cuts::GABSID
+     *  @see LoKi::Extract::getParticles
+     *  @see LoKi::Cuts::GMULTTREE
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    class GAUDI_API MultTree : public SumTree
+    {
+    public:
+      // ======================================================================
+      /** constructor
+       *  @param cut    predicate to be used for counting
+       *  @param range  "iterator range", see HepMC::IteratorRange
+       *  @see HepMC::IteratorRange
+       */
+      MultTree ( const LoKi::GenTypes::GFunc& fun                        ,
+                 const LoKi::GenTypes::GCuts& cut                        ,
+                 HepMC::IteratorRange         range = HepMC::descendants ) ;
+      /// MANDATORY: clone function ("virtual constructor")
+      MultTree* clone() const  override;
+      /// MANDATORY: the only one essential method
+      double operator() ( const HepMC::GenParticle* p ) const  override;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================

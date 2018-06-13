@@ -605,6 +605,39 @@ namespace LoKi
      */
     const auto GMESON = LoKi::GenParticles::IsMeson{};
     // ========================================================================
+    /** @typedef  GMAXTREE
+     *  find a maximal value of certain functor in the tree 
+     *  @code
+     *  auto fun = GMAXTREE ( GPT , "pi+" == GABSID ) ;
+     *  @endcode 
+     *  @see  LoKi::GenParticles::MaxTree  
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    typedef LoKi::GenParticles::MaxTree                              GMAXTREE ;
+    // ========================================================================
+    /** @typedef  GMINTREE
+     *  find a minimal value of certain functor in the tree 
+     *  @code
+     *  auto fun = GMINTREE ( GPT , "K+" == GABSID ) ;
+     *  @endcode 
+     *  @see  LoKi::GenParticles::MinTree  
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    typedef LoKi::GenParticles::MinTree                              GMINTREE ;
+    // ========================================================================
+    /** @typedef  GMULTTREE
+     *  accumulate product of value of certain functor in the tree 
+     *  @code
+     *  auto fun = GMULTTREE ( GPT , "mu+" == GABSID ) ;
+     *  @endcode 
+     *  @see  LoKi::GenParticles::MultTree  
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    typedef LoKi::GenParticles::MultTree                            GMULTTREE ;
+    // ========================================================================
     /** @typedef GMOMDIST
      *  The evaluator of euclidian distance with
      *  respect to the given 4-momentum, useful
@@ -1099,6 +1132,17 @@ namespace LoKi
      *  @date 2006-01-18
      */
     const auto GSTRANGE = LoKi::GenParticles::HasQuark{ LHCb::ParticleID::strange };
+    // ========================================================================
+    /** @typedef  GSUMTREE
+     *  find a sum over the certain functor in the tree 
+     *  @code
+     *  auto fun = GSUMTREE ( GPT , "K+" == GABSID ) ;
+     *  @endcode 
+     *  @see  LoKi::GenParticles::SumTree  
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-06-12
+     */
+    typedef LoKi::GenParticles::SumTree                              GSUMTREE ;
     // ========================================================================
     /** switch"
      *  The function evaluates the predicate and returns

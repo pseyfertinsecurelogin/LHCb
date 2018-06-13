@@ -234,6 +234,14 @@ GPT       = LoKi.GenParticles.TransverseMomentum ()
 ## @see LoKi::Cuts::GMOMENTUM
 GMOMT     = LoKi.GenParticles.TransverseMomentum
 
+## @see LoKi::Cuts::GMAXTREE
+GMAXTREE  = LoKi.GenParticles.MaxTree
+## @see LoKi::Cuts::GMINTREE
+GMINTREE  = LoKi.GenParticles.MinTree
+## @see LoKi::Cuts::GSUMTREE
+GSUMTREE  = LoKi.GenParticles.SumTree
+## @see LoKi::Cuts::GMULTTREE
+GMULTTREE = LoKi.GenParticles.MultTree
 
 ## @see LoKi::Cuts::GETA
 GETA      = LoKi.GenParticles.PseudoRapidity ()

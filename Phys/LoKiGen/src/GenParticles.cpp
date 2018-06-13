@@ -67,7 +67,7 @@ double
 BarCode::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
-    Error("Invalid HepMC::GenParticle, return 0 ");
+    Error("Invalid HepMC::GenParticle, return 0 ").ignore() ;
     return 0 ;                   // RETURN
   }
   return p -> barcode() ;    // RETURN
@@ -90,7 +90,7 @@ Identifier::clone() const
 double Identifier::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
-    Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ).ignore() ;
     return LoKi::Constants::InvalidID ;
   }
   return p->pdg_id() ;
@@ -110,7 +110,7 @@ Status* Status::clone() const { return new Status ( *this ) ; }
 double Status::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
-    Error ( "HepMC::GenParticle* points to NULL, return -1000 " ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return -1000 " ).ignore() ;
     return -1000 ;
   }
   return p->status() ;
@@ -135,7 +135,7 @@ AbsIdentifier* AbsIdentifier::clone() const
 double AbsIdentifier::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
-    Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ).ignore() ;
     return LoKi::Constants::InvalidID ;
   }
   return std::abs ( p->pdg_id() ) ;
@@ -158,7 +158,7 @@ ValidEndVertex* ValidEndVertex::clone() const
 bool ValidEndVertex::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
-    Error ( "HepMC::GenParticle* points to NULL, return 'false'" ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return 'false'" ).ignore() ;
     return false ;
   }
   return LoKi::valid ( p->end_vertex() ) ;
@@ -201,7 +201,7 @@ MomentumDistance* MomentumDistance::clone() const
 double MomentumDistance::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY(!p) ) {
-    Error("Invalid HepMC::GenParticle*, return (InvalidMomentum)^2") ;
+    Error("Invalid HepMC::GenParticle*, return (InvalidMomentum)^2").ignore() ;
     return LoKi::Constants::InvalidMomentum *
            LoKi::Constants::InvalidMomentum ;
   }
@@ -282,7 +282,7 @@ TransverseMomentumRel* TransverseMomentumRel::clone() const
 double TransverseMomentumRel::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
-    Error ( "Invalid HepMC::GenParticle*, return 'InvalidMomentum'") ;
+    Error ( "Invalid HepMC::GenParticle*, return 'InvalidMomentum'").ignore() ;
     return LoKi::Constants::InvalidMomentum ;
   }
   const double b2 = m_vct.mag2() ;
@@ -361,7 +361,7 @@ bool FromHepMCTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( " HepMC::GenParticle* points to NULL, return 'false' " ) ;
+    Error ( " HepMC::GenParticle* points to NULL, return 'false' " ).ignore() ;
     return false ;                                                  // RETURN
   }
   if ( m_vertices.empty() )
@@ -372,7 +372,7 @@ bool FromHepMCTree::operator() ( const HepMC::GenParticle* p ) const
   // loop over vertices
   for ( auto* vertex : m_vertices )
   {
-    if ( 0 == vertex ) { Warning("NULL vertex is detected, skip") ; continue ; }
+    if ( 0 == vertex ) { Warning("NULL vertex is detected, skip").ignore() ; continue ; }
     // explict loop over all descendants
     auto begin = vertex->particles_begin ( HepMC::descendants ) ;
     auto end   = vertex->particles_end   ( HepMC::descendants ) ;
@@ -406,7 +406,7 @@ bool IsAnAncestor::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p || 0 == m_particle )
   {
-    Error ( " HepMC::GenParticle* points to NULL, return 'false' " ) ;
+    Error ( " HepMC::GenParticle* points to NULL, return 'false' " ).ignore() ;
     return false ;                                                  // RETURN
   }
   HepMC::GenVertex* vertex = p->end_vertex() ;
@@ -437,7 +437,7 @@ bool HasQuark::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ("HepMC::GenParticle* point to NULL, returs 'false'");
+    Error ("HepMC::GenParticle* point to NULL, returs 'false'").ignore() ;
     return false ;
   }
   return LHCb::ParticleID( p -> pdg_id() ).hasQuark( quark() ) ;
@@ -474,7 +474,7 @@ bool IsCharged::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error("HepMC::GenParticle* point to NULL, returs 'false'");
+    Error("HepMC::GenParticle* point to NULL, returs 'false'").ignore() ;
     return false ;
   }
   return 0 != LHCb::ParticleID( p->pdg_id() ) .threeCharge() ;
@@ -492,7 +492,7 @@ bool IsNeutral::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error("HepMC::GenParticle* point to NULL, returs 'false'");
+    Error("HepMC::GenParticle* point to NULL, returs 'false'").ignore();
     return false ;
   }
   return 0 == LHCb::ParticleID( p->pdg_id() ) .threeCharge() ;
@@ -510,7 +510,7 @@ bool IsLepton::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* point to NULL, returs 'false'");
+    Error ( "HepMC::GenParticle* point to NULL, returs 'false'").ignore() ;
     return false ;
   }
   return LHCb::ParticleID( p->pdg_id() ) .isLepton() ;
@@ -528,7 +528,7 @@ bool IsMeson::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* point to NULL, returs 'false'");
+    Error ( "HepMC::GenParticle* point to NULL, returs 'false'").ignore() ;
     return false ;
   }
   return LHCb::ParticleID( p->pdg_id() ) .isMeson() ;
@@ -546,7 +546,7 @@ bool IsBaryon::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* point to NULL, returs 'false'");
+    Error ( "HepMC::GenParticle* point to NULL, returs 'false'").ignore();
     return false ;
   }
   return LHCb::ParticleID( p->pdg_id() ) .isBaryon() ;
@@ -564,7 +564,7 @@ bool IsHadron::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* point to NULL, returs 'false'");
+    Error ( "HepMC::GenParticle* point to NULL, returs 'false'").ignore();
     return false ;
   }
   return LHCb::ParticleID( p->pdg_id() ) .isHadron() ;
@@ -582,7 +582,7 @@ bool IsNucleus::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error("HepMC::GenParticle* point to NULL, returs 'false'");
+    Error("HepMC::GenParticle* point to NULL, returs 'false'").ignore() ;
     return false ;
   }
   return LHCb::ParticleID( p->pdg_id() ) .isNucleus() ;
@@ -609,7 +609,7 @@ double ProperLifeTime::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error(" Invalid HepMC::GenParticle, return 'InvalidTime'");
+    Error(" Invalid HepMC::GenParticle, return 'InvalidTime'").ignore() ;
     return LoKi::Constants::InvalidTime;                     // RETURN
   }
   // end-vertex
@@ -619,7 +619,7 @@ double ProperLifeTime::operator() ( const HepMC::GenParticle* p ) const
   const HepMC::GenVertex* origin = p->production_vertex() ;
   if ( 0 == origin )
   {
-    Error(" Invalid production_vertex, return 'InvalidTime'");
+    Error(" Invalid production_vertex, return 'InvalidTime'").ignore() ;
     return LoKi::Constants::InvalidTime;                     // RETURN
   }
   const double dist =
@@ -631,19 +631,19 @@ double ProperLifeTime::operator() ( const HepMC::GenParticle* p ) const
     LoKi::LorentzVector( p->momentum() ) .P() ;
   if ( 0 >= mass )
   {
-    Error (" Mass is invalid, return 'InvalidTime' ");
+    Error (" Mass is invalid, return 'InvalidTime' ").ignore() ;
     return  LoKi::Constants::InvalidTime ;              // RETURN
   }
   if ( 0 >= mom  )
   {
-    Error (" |Momentum| is invalid, return 'InvalidTime' ");
+    Error (" |Momentum| is invalid, return 'InvalidTime' ").ignore();
     return  LoKi::Constants::InvalidTime ;              // RETURN
   }
   const double betagamma   = mom / mass ;
   //
   if ( 0 >= betagamma  )
   {
-    Error (" betagamma is invalid, return 'InvalidTime' ");
+    Error (" betagamma is invalid, return 'InvalidTime' ").ignore() ;
     return  LoKi::Constants::InvalidTime ;              // RETURN
   }
   //
@@ -657,7 +657,7 @@ double NominalLifeTime::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( " Invalid HepMC::GenParticle, return 'InvalidTime'");
+    Error ( " Invalid HepMC::GenParticle, return 'InvalidTime'").ignore();
     return LoKi::Constants::InvalidTime;                     // RETURN
   }
   return LoKi::Particles::lifeTime ( LHCb::ParticleID ( p->pdg_id() ) ) ;
@@ -737,7 +737,7 @@ double ThreeCharge::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error(" Invalid Particle, return 'InvalidCharge'");
+    Error(" Invalid Particle, return 'InvalidCharge'").ignore();
     return LoKi::Constants::InvalidCharge;                     // RETURN
   }
   return LHCb::ParticleID( p->pdg_id() ).threeCharge() ;
@@ -787,7 +787,7 @@ double NInTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* points to NULL, return 0" ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return 0" ).ignore() ;
     return 0 ;                                                    // RETURN
   };
   if      ( HepMC::parents  == m_range || HepMC::ancestors   == m_range )
@@ -795,7 +795,7 @@ double NInTree::operator() ( const HepMC::GenParticle* p ) const
   else if ( HepMC::children == m_range || HepMC::descendants == m_range )
   { return count ( p -> end_vertex       () ) ; }
   //
-  Error ("Unimplemented case: HepMC::IteratorRange, return 0 ;") ;
+  Error ("Unimplemented case: HepMC::IteratorRange, return 0 ;").ignore() ;
   //
   return 0 ;
 }
@@ -808,6 +808,258 @@ std::ostream& NInTree::fillStream( std::ostream& s ) const
            << m_cut   << ","
            << m_range << ")" ;
 }
+// ============================================================================
+
+// ============================================================================
+/*  constructor
+ *  @param fun    function to be evaluated 
+ *  @param cut    predicate to be used for counting
+ *  @param range  "iterator range", see HepMC::IteratorRange
+ *  @see HepMC::IteratorRange
+ */
+// ============================================================================
+MaxTree::MaxTree 
+( const LoKi::GenTypes::GFunc& fun  ,
+  const LoKi::GenTypes::GCuts& cut   ,
+  HepMC::IteratorRange         range ) 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , range ) )
+  , NInTree ( cut , range ) 
+  , m_fun   ( fun )
+{}
+// ============================================================================
+// MANDATORY: clone function ("virtual constructor")
+// ============================================================================
+MaxTree* MaxTree::clone() const { return new MaxTree(*this); }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+double MaxTree::operator() ( const HepMC::GenParticle* p ) const
+{
+  if ( UNLIKELY( !p ) ) 
+  {
+    Error("Invalid HepMC::GenParticle, return -inf").ignore() ;
+    return LoKi::Constants::NegativeInfinity ;  // RETURN
+  }
+  //
+  HepMC::GenVertex* vertex = 
+    ( HepMC::parents  == m_range || HepMC::ancestors   == m_range ) ? 
+    p -> production_vertex() :
+    ( HepMC::children == m_range || HepMC::descendants == m_range ) ?
+    p -> end_vertex       () : nullptr ;
+  //
+  if ( UNLIKELY( !vertex ) ) 
+  {
+    Error("Invalid HepMC::GenVertex/range, return -inf").ignore() ;
+    return LoKi::Constants::NegativeInfinity ;  // RETURN
+  }
+  //
+  double result = LoKi::Constants::NegativeInfinity ;
+  //
+  return LoKi::Algs::max_value 
+    ( vertex->particles_begin( m_range ) ,
+      vertex->particles_end  ( m_range ) , m_fun , m_cut , result ) ;
+}
+// ============================================================================
+//  "SHORT" representation, @see LoKi::AuxFunBase
+// ============================================================================
+std::ostream& MaxTree::fillStream( std::ostream& s ) const
+{
+  return s << "GMAXTREE("
+           << m_fun   << ","
+           << m_cut   << ","
+           << m_range << ")" ;
+}
+// ============================================================================
+
+// ============================================================================
+/*  constructor
+ *  @param fun    function to be evaluated 
+ *  @param cut    predicate to be used for counting
+ *  @param range  "iterator range", see HepMC::IteratorRange
+ *  @see HepMC::IteratorRange
+ */
+// ============================================================================
+MinTree::MinTree 
+( const LoKi::GenTypes::GFunc& fun  ,
+  const LoKi::GenTypes::GCuts& cut   ,
+  HepMC::IteratorRange         range ) 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , range ) )
+  , MaxTree ( fun , cut , range ) 
+{}
+// ============================================================================
+// MANDATORY: clone function ("virtual constructor")
+// ============================================================================
+MinTree* MinTree::clone() const { return new MinTree(*this); }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+double MinTree::operator() ( const HepMC::GenParticle* p ) const
+{
+  if ( UNLIKELY( !p ) ) 
+  {
+    Error("Invalid HepMC::GenParticle, return +inf").ignore() ;
+    return LoKi::Constants::PositiveInfinity ;  // RETURN
+  }
+  //
+  HepMC::GenVertex* vertex = 
+    ( HepMC::parents  == m_range || HepMC::ancestors   == m_range ) ? 
+    p -> production_vertex() :
+    ( HepMC::children == m_range || HepMC::descendants == m_range ) ?
+    p -> end_vertex       () : nullptr ;
+  //
+  if ( UNLIKELY( !vertex ) ) 
+  {
+    Error("Invalid HepMC::GenVertex/range, return +inf").ignore() ;
+    return LoKi::Constants::PositiveInfinity ;  // RETURN
+  }
+  //
+  double result = LoKi::Constants::PositiveInfinity ;
+  //
+  return LoKi::Algs::min_value 
+    ( vertex->particles_begin( m_range ) ,
+      vertex->particles_end  ( m_range ) , m_fun , m_cut , result ) ;
+}
+// ============================================================================
+//  "SHORT" representation, @see LoKi::AuxFunBase
+// ============================================================================
+std::ostream& MinTree::fillStream( std::ostream& s ) const
+{
+  return s << "GMINTREE("
+           << m_fun   << ","
+           << m_cut   << ","
+           << m_range << ")" ;
+}
+// ============================================================================
+
+// ============================================================================
+/*  constructor
+ *  @param fun    function to be evaluated 
+ *  @param cut    predicate to be used for counting
+ *  @param range  "iterator range", see HepMC::IteratorRange
+ *  @see HepMC::IteratorRange
+ */
+// ============================================================================
+SumTree::SumTree 
+( const LoKi::GenTypes::GFunc& fun  ,
+  const LoKi::GenTypes::GCuts& cut   ,
+  HepMC::IteratorRange         range ) 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , range ) )
+  , MinTree ( fun , cut , range ) 
+{}
+// ============================================================================
+// MANDATORY: clone function ("virtual constructor")
+// ============================================================================
+SumTree* SumTree::clone() const { return new SumTree(*this); }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+double SumTree::operator() ( const HepMC::GenParticle* p ) const
+{
+  if ( UNLIKELY( !p ) ) 
+  {
+    Error("Invalid HepMC::GenParticle, return -inf").ignore() ;
+    return LoKi::Constants::NegativeInfinity ;  // RETURN
+  }
+  //
+  HepMC::GenVertex* vertex = 
+    ( HepMC::parents  == m_range || HepMC::ancestors   == m_range ) ? 
+    p -> production_vertex() :
+    ( HepMC::children == m_range || HepMC::descendants == m_range ) ?
+    p -> end_vertex       () : nullptr ;
+  //
+  if ( UNLIKELY( !vertex ) ) 
+  {
+    Error("Invalid HepMC::GenVertex/range, return -inf").ignore() ;
+    return LoKi::Constants::NegativeInfinity ;  // RETURN
+  }
+  //
+  double result = 0 ;
+  //
+  return LoKi::Algs::accumulate
+    ( vertex->particles_begin( m_range ) ,
+      vertex->particles_end  ( m_range ) , \
+      m_fun  , 
+      m_cut  , 
+      result , 
+      std::plus<double>() ) ;
+}
+// ============================================================================
+//  "SHORT" representation, @see LoKi::AuxFunBase
+// ============================================================================
+std::ostream& SumTree::fillStream( std::ostream& s ) const
+{
+  return s << "GSUMTREE("
+           << m_fun   << ","
+           << m_cut   << ","
+           << m_range << ")" ;
+}
+// ============================================================================
+
+
+// ============================================================================
+/*  constructor
+ *  @param fun    function to be evaluated 
+ *  @param cut    predicate to be used for counting
+ *  @param range  "iterator range", see HepMC::IteratorRange
+ *  @see HepMC::IteratorRange
+ */
+// ============================================================================
+MultTree::MultTree 
+( const LoKi::GenTypes::GFunc& fun  ,
+  const LoKi::GenTypes::GCuts& cut   ,
+  HepMC::IteratorRange         range ) 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , range ) )
+  , SumTree ( fun , cut , range ) 
+{}
+// ============================================================================
+// MANDATORY: clone function ("virtual constructor")
+// ============================================================================
+MultTree* MultTree::clone() const { return new MultTree(*this); }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+double MultTree::operator() ( const HepMC::GenParticle* p ) const
+{
+  if ( UNLIKELY( !p ) ) 
+  {
+    Error("Invalid HepMC::GenParticle, return -inf").ignore();
+    return LoKi::Constants::NegativeInfinity ;  // RETURN
+  }
+  //
+  HepMC::GenVertex* vertex = 
+    ( HepMC::parents  == m_range || HepMC::ancestors   == m_range ) ? 
+    p -> production_vertex() :
+    ( HepMC::children == m_range || HepMC::descendants == m_range ) ?
+    p -> end_vertex       () : nullptr ;
+  //
+  if ( UNLIKELY( !vertex ) ) 
+  {
+    Error("Invalid HepMC::GenVertex/range, return -inf").ignore() ;
+    return LoKi::Constants::NegativeInfinity ;  // RETURN
+  }
+  //
+  double result = 1.0 ;
+  //
+  return LoKi::Algs::accumulate
+    ( vertex->particles_begin( m_range ) ,
+      vertex->particles_end  ( m_range ) ,      \
+      m_fun  , 
+      m_cut  , 
+      result , 
+      std::multiplies<double>() ) ;
+}
+// ============================================================================
+//  "SHORT" representation, @see LoKi::AuxFunBase
+// ============================================================================
+std::ostream& MultTree::fillStream( std::ostream& s ) const
+{
+  return s << "GMULTTREE("
+           << m_fun   << ","
+           << m_cut   << ","
+           << m_range << ")" ;
+}
+// ============================================================================
+
 // ============================================================================
 /*  standard constructor
  *  @param cut cut to be checked
@@ -916,7 +1168,7 @@ bool DecNode::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* point to NULL, return false") ;
+    Error ( "HepMC::GenParticle* point to NULL, return false").ignore() ;
     return false ;
   }
   //
@@ -1001,7 +1253,7 @@ bool DecTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ( "HepMC::GenParticle* point to NULL, return false") ;
+    Error ( "HepMC::GenParticle* point to NULL, return false").ignore() ;
     return false ;
   }
   //
@@ -1015,7 +1267,7 @@ bool DecTree::operator() ( const HepMC::GenParticle* p ) const
   }
   if ( !valid() )
   {
-    Error ( "LoKi::GenParticles::DecTree::Tree  is invalid, return false") ;
+    Error ( "LoKi::GenParticles::DecTree::Tree  is invalid, return false").ignore() ;
     return false ;
   }
   // use the node for evaluation
@@ -1114,13 +1366,13 @@ double ChildFun::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ("HepMC::GenParticle* points to NULL, return NegativeInfinity") ;
+    Error ("HepMC::GenParticle* points to NULL, return NegativeInfinity").ignore() ;
     return LoKi::Constants::NegativeInfinity ;
   }
   const HepMC::GenParticle* c = m_child.child ( p ) ;
   if ( 0 == c )
   {
-    Error (" child HepMC::GenParticle* points to NULL, return NegativeInfinity") ;
+    Error (" child HepMC::GenParticle* points to NULL, return NegativeInfinity").ignore() ;
     return LoKi::Constants::NegativeInfinity ;
   }
   //
@@ -1216,13 +1468,13 @@ bool ChildCut::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
-    Error ("HepMC::GenParticle* points to NULL, return false") ;
+    Error ("HepMC::GenParticle* points to NULL, return false").ignore() ;
     return false ;
   }
   const HepMC::GenParticle* c = m_child.child ( p ) ;
   if ( 0 == c )
   {
-    Error (" child HepMC::GenParticle* points to NULL, return false") ;
+    Error (" child HepMC::GenParticle* points to NULL, return false").ignore() ;
     return false ;
   }
   //
@@ -1316,7 +1568,7 @@ bool IsID::operator() ( const HepMC::GenParticle* p ) const
   //
   if ( 0 == p )
   {
-    Error("Invalid Particle, return 'False'");
+    Error("Invalid Particle, return 'False'").ignore();
     return false ;                     // RETURN
   }
   //
@@ -1399,7 +1651,7 @@ bool IsNotID::operator() ( const HepMC::GenParticle* p ) const
   //
   if ( 0 == p )
   {
-    Error("Invalid Particle, return 'False'");
+    Error("Invalid Particle, return 'False'").ignore();
     return false ;                     // RETURN
   }
   return not_in_list ( p->pdg_id () ) ;
@@ -1487,7 +1739,7 @@ bool IsAbsID::operator() ( const HepMC::GenParticle* p ) const
   //
   if ( 0 == p )
   {
-    Error("Invalid Particle, return 'False'");
+    Error("Invalid Particle, return 'False'").ignore();
     return false ;                     // RETURN
   }
   //
@@ -1576,7 +1828,7 @@ bool IsNotAbsID::operator() ( const HepMC::GenParticle* p ) const
   //
   if ( 0 == p )
   {
-    Error("Invalid Particle, return 'False'");
+    Error("Invalid Particle, return 'False'").ignore();
     return false ;                     // RETURN
   }
   //
