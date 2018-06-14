@@ -41,6 +41,8 @@
 #endif
 #include "Event/ODIN.h"
 
+#include "RZip.h"
+
 static const char* s_checkLabel = "BankCheck    ERROR  ";
 
 using LHCb::RawEvent;
@@ -54,8 +56,6 @@ namespace {
     return (RawBank*)(last->size()%sizeof(int)==0 ? d : d+1);
   }
 }
-extern "C" void R__zip (int cxlevel, int *nin, const char *bufin, int *lout, char *bufout, int *nout);
-extern "C" void R__unzip(int *nin, const char *bufin, int *lout, char *bufout, int *nout);
 
 /// one-at-time hash function
 unsigned int LHCb::hash32Checksum(const void* ptr, size_t len) {
@@ -304,7 +304,7 @@ StatusCode LHCb::compressBuffer(int           algtype,
     case 9:
       in_len = src_len;
       out_len = tar_len;
-      ::R__zip(algtype, &in_len, src, &out_len, tar, &res_len);
+      ::R__zipMultipleAlgorithm(algtype, &in_len, src, &out_len, tar, &res_len, ROOT::kZLIB);
       if (res_len == 0 || size_t(res_len) >= src_len) {
         //this happens when the buffer cannot be compressed
         res_len = 0;
@@ -346,7 +346,7 @@ StatusCode LHCb::decompressBuffer(int           algtype,
     case 9:
       in_len = src_len;
       out_len = tar_len;
-      ::R__unzip(&in_len, src, &out_len, tar, &res_len);
+      ::R__unzip(&in_len, reinterpret_cast<unsigned char*>(const_cast<char*>(src)), &out_len, reinterpret_cast<unsigned char*>(tar), &res_len);
       if ( res_len > 0 )  {
         new_len = res_len;
         return StatusCode::SUCCESS;
