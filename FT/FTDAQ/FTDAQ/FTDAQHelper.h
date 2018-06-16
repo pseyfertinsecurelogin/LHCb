@@ -12,7 +12,6 @@ namespace FTDAQ {
 
 /**
  * counts number of FT clusters in the given raw banks
- * if count exceeds max, it gives up and returns no value
  */
 unsigned int nbFTClusters(const std::vector<RawBank *> &banks);
 
