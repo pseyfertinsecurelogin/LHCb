@@ -54,6 +54,7 @@ gaudi_depends_on_subdirs(Associators/AssociatorsBase
                          Event/RecreatePIDTools
                          Event/SwimmingEvent
                          Event/TrackEvent
+                         Event/ExperimentalTrackEvent
                          Event/VeloEvent
                          Ex/DetCondExample
                          Ex/DetDescExample
