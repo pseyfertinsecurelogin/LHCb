@@ -2,7 +2,7 @@
 #include "Event/State.h"
 #include "Kernel/LHCbID.h"
 #include <boost/container/small_vector.hpp>
-#include <gsl/span>
+#include "Kernel/STLExtensions.h"
 
 namespace experimental
 {
@@ -33,7 +33,7 @@ namespace experimental
       boost::container::small_vector<LHCb::LHCbID, 30> m_hits;
     public:
       Hits(const std::vector<LHCb::LHCbID>&);
-      Hits(const span<const LHCbID>);
+      Hits(const LHCb::span<const LHCb::LHCbID>);
     };
 
     class AdditionalStates
