@@ -1,0 +1,10 @@
+!-------------------------------------------------------------------------------
+! Package     : Event/ExperimentalTrackEvent
+! Responsible : Paul Seyfert
+! Purpose     : Package for experimenting with the tracking event model classes
+!-------------------------------------------------------------------------------
+
+! 2018-06-25 - Paul Seyfert
+ - Initial commit. NB: don't expect release notes to be maintained (sorry for
+   that. If anybody feels like ensuring complete release notes enter main
+   branches, that's welcome)
