@@ -5,6 +5,12 @@
 // Include files
 // ============================================================================
 #include "Gaudi/PluginService.h"
+#if GAUDI_PLUGIN_SERVICE_USE_V2
+#include "Gaudi/PluginServiceV1.h"
+#define LOKI_FUNCTOR_CACHE_PLUGIN_VERSION v1::
+#else
+#define LOKI_FUNCTOR_CACHE_PLUGIN_VERSION
+#endif
 // ============================================================================
 namespace LoKi
 {
@@ -13,7 +19,7 @@ namespace LoKi
   struct CacheFactory
   {
     typedef T CutType;
-    typedef ::Gaudi::PluginService::Factory<CutType*> Factory;
+    typedef ::Gaudi::PluginService:: LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*> Factory;
     static std::string id(unsigned int hash)
     {
       return "loki_functor_" + std::to_string(hash);
@@ -27,7 +33,7 @@ namespace LoKi
     struct CacheFactory: public ::LoKi::CacheFactory<T>
     {
       typedef T CutType;
-      typedef ::Gaudi::PluginService::Factory<CutType*> Factory;
+      typedef ::Gaudi::PluginService:: LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*> Factory;
       static typename Factory::ReturnType create();
     };
     // ========================================================================
@@ -40,6 +46,10 @@ namespace Gaudi
   // ==========================================================================
   namespace PluginService
   {
+#if GAUDI_PLUGIN_SERVICE_USE_V2
+   namespace v1
+   {
+#endif
     // ========================================================================
     namespace Details
     {
@@ -56,17 +66,27 @@ namespace Gaudi
       };
       // ======================================================================
     } //                         end of namespace Gaudi:PluginServiuce::Details
+#if GAUDI_PLUGIN_SERVICE_USE_V2
+   }
+#endif
     // ========================================================================
   } //                                    end of namespace Gaudi::PluginService
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
+#if GAUDI_PLUGIN_SERVICE_USE_V2
+#define DECLARE_LOKI_FUNCTOR(CutType, Hash) \
+  namespace { \
+    typedef LoKi::Details::CacheFactory<CutType, Hash> loki_cache_entry ## Hash; \
+    _PS_V1_DECLARE_COMPONENT_WITH_ID(loki_cache_entry ## Hash, loki_cache_entry ## Hash::id(Hash)) \
+  }
+#else
 #define DECLARE_LOKI_FUNCTOR(CutType, Hash) \
   namespace { \
     typedef LoKi::Details::CacheFactory<CutType, Hash> loki_cache_entry ## Hash; \
     DECLARE_COMPONENT_WITH_ID(loki_cache_entry ## Hash, loki_cache_entry ## Hash::id(Hash)) \
   }
-
+#endif
 // ============================================================================
 // The END
 // ============================================================================
