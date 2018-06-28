@@ -1,6 +1,11 @@
 #include "details.h"
 #include <algorithm>
+#include <regex>
 
+namespace {
+  const std::regex s_outTypeParse{"([\"']?)(?:(?:CALO)?(ADC|DIGIT)S?|(BOTH))\\1",
+                                  std::regex_constants::icase};
+}
 
 namespace details {
 
@@ -14,23 +19,14 @@ namespace details {
     StatusCode parse(OutputType_t& result, const std::string& input ) {
         std::string out( input );
         std::transform( input.begin() , input.end() , out.begin () , ::toupper ) ;
-        if (out == "BOTH" ) {
-           result.digitOnTES = true;
-           result.adcOnTES = true;
-           return StatusCode::SUCCESS;
-        }
-        if( out == "DIGITS" ||  out == "CALODIGITS" ||
-            out == "DIGIT"  ||  out == "CALODIGIT"  ) {
-           result.digitOnTES = true;
-           result.adcOnTES = false;
-           return StatusCode::SUCCESS;
-        }
-        if(out == "ADCS" ||  out == "CALOADCS" ||
-           out == "ADC"  ||  out == "CALOADC"  ) {
-            result.digitOnTES = false;
-            result.adcOnTES = true;
+
+        std::smatch m;
+        if ( std::regex_match(out, m, s_outTypeParse) ) {
+            result.digitOnTES = m[3] == "BOTH" || m[2] == "DIGIT";
+            result.adcOnTES = m[3] == "BOTH" || m[2] == "ADC";
             return StatusCode::SUCCESS;
         }
+
         return StatusCode::FAILURE;
     }
 
@@ -46,13 +42,15 @@ namespace details {
         std::string out( input );
         std::transform( input.begin() ,input.end() , out.begin () , ::toupper ) ;
 
-        if( out == "ADC" || out == "CALOADC" || out == "ADCS" || out == "CALOADCS") {
+        std::smatch m;
+        if ( std::regex_match(out, m, s_outTypeParse) ) {
+          if ( m[2] == "ADC" ) {
             result = source_t::from_adc;
             return StatusCode::SUCCESS;
-        }
-        if( out == "DIGIT" || out == "CALODIGIT" || out == "DIGITS" || out == "CALODIGITS")  {
+          } else if ( m[2] == "DIGIT" ) {
             result = source_t::from_digit;
             return StatusCode::SUCCESS;
+          }
         }
         return StatusCode::FAILURE;
     }
@@ -64,10 +62,16 @@ namespace details {
     }
 
     StatusCode parse(DetectorName_t& result, const std::string& input ) {
+        // remove optional quotes around the string
+        std::string out;
+        if (input.size() && input[0] == input[input.size()-1] && ( input[0] == '"' || input[0] == '\'' )) {
+          out = input.substr(1, input.size()-2);
+        } else out = input;
+
         result = DetectorName_t::Unknown;
         for (int i=0;i<4;++i) {
             auto dn = static_cast<DetectorName_t>( i );
-            if (toString(dn)==input) { result = dn; return StatusCode::SUCCESS; };
+            if (toString(dn)==out) { result = dn; return StatusCode::SUCCESS; };
         }
         return StatusCode::FAILURE;
     }
@@ -85,4 +89,3 @@ namespace details {
       return DetectorName_t::Unknown;
     }
 }
-

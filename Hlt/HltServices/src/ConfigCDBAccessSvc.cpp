@@ -27,6 +27,8 @@
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/IIncidentSvc.h"
 
+#include <regex>
+
 namespace io = boost::iostreams;
 namespace fs = boost::filesystem;
 
@@ -319,13 +321,19 @@ auto make_unique_listener(std::string incident, Fun&& fun)
 
 }
 
+namespace {
+  const std::regex s_optRegex{"(['\"]?)(?:Read(Only|Write))\\1"};
+}
+
 namespace ConfigCDBAccessSvc_details {
 
 StatusCode parse(ConfigCDBAccessSvc_details::Mode& result, const std::string& input) {
-    for (auto i : { Mode::ReadOnly, Mode::ReadWrite } ) {
-        if ( input == toString(i) ) { result = i ; return StatusCode::SUCCESS; }
-    }
-    return StatusCode::FAILURE;
+  std::smatch m;
+  if ( std::regex_match( input, m, s_optRegex ) ) {
+    result = ( m[2] == "Only" ) ? Mode::ReadOnly : Mode::ReadWrite;
+    return StatusCode::SUCCESS;
+  }
+  return StatusCode::FAILURE;
 }
 
 static const std::array<std::string,2> mode_string{ "ReadOnly", "ReadWrite" };
