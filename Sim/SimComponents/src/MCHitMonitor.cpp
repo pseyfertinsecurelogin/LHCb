@@ -117,7 +117,7 @@ StatusCode MCHitMonitor::execute()
   const LHCb::MCHits* hitsCont = get<LHCb::MCHits>(m_MCHitPath);
 
   plot((double)hitsCont->size(),1 ,"num hits", 0.,5000, 100);
-  counter("numberHits") += hitsCont->size();
+  m_numberHits_counter += hitsCont->size();
 
   // loop over hits fill some histograms
   for (const auto& ihit : *hitsCont) fillHistograms(ihit).ignore();
@@ -131,8 +131,8 @@ StatusCode MCHitMonitor::finalize(){
   const double shorth = ModeFunctions::shorth(m_energyVec.begin(), m_energyVec.end());
   const double halfWidth = ModeFunctions::halfSampleWidth(m_energyVec.begin(), m_energyVec.end());
   info() << "*** Summary ***" << endmsg;
-  info() << "#hits per event: " << counter("numberHits").flagMean() << endmsg;
-  info() << "Mean beta * gamma: " << counter("betaGamma").flagMean() << endmsg;
+  info() << "#hits per event: " << m_numberHits_counter.mean() << endmsg;
+  info() << "Mean beta * gamma: " << m_betaGamma_counter.mean() << endmsg;
   info() << "Most Probable deposited charge: " << shorth << endmsg;
   info() << "Half Sample width " << halfWidth << endmsg;
 
@@ -150,7 +150,7 @@ StatusCode MCHitMonitor::fillHistograms(const LHCb::MCHit* aHit) const{
 
   const LHCb::MCVertex* vertex = aParticle->originVertex();
   if (vertex){
-    if (vertex->type() == LHCb::MCVertex::MCVertexType::DeltaRay) ++counter("DeltaRay");
+    if (vertex->type() == LHCb::MCVertex::MCVertexType::DeltaRay) ++m_DeltaRay_counter;
   }
 
   // p
@@ -187,7 +187,7 @@ StatusCode MCHitMonitor::fillHistograms(const LHCb::MCHit* aHit) const{
 
   if (aHit->pathLength() > m_minPathLength) m_energyVec.push_back(aHit->energy());
 
-  counter("betaGamma") += aParticle->beta()*aParticle->gamma() ;
+  m_betaGamma_counter += aParticle->beta()*aParticle->gamma() ;
 
   return StatusCode::SUCCESS;
 

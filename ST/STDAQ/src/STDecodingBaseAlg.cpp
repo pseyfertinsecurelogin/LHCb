@@ -143,7 +143,7 @@ bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
     Warning("Inconsistant byte count", StatusCode::SUCCESS).ignore();
   }
 
-  if (!ok) ++counter("skipped Banks");
+  if (!ok) ++m_skippedBanks;
 
   return ok;
 }
@@ -180,8 +180,8 @@ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(co
    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
      debug() <<"event has no error banks " << endmsg;
  } else {
-    ++counter("events with error banks");
-    counter("total # error banks") += itf.size();
+    ++m_evtsWithErrorBanks;
+    m_totalErrorBanks += itf.size();
  }
 
  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -322,4 +322,3 @@ unsigned int STDecodingBaseAlg::byteSize(LHCb::span<const RawBank*> banks) const
                     return s + b->totalSize();
   });
 }
-

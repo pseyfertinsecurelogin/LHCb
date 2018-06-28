@@ -38,5 +38,6 @@ private:
   Gaudi::Property<std::string> m_configName{ this, "L0DUConfigProviderName", "L0DUConfig" };
   Gaudi::Property<std::string> m_configType{ this, "L0DUConfigProviderType", "L0DUMultiConfigProvider" };
 
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_rawbankSize{ this, "L0DU RawBank Size (Bytes)" };
 };
 #endif // L0DUFROMRAWHLT1TOOL_H

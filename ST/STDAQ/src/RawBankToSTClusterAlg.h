@@ -86,6 +86,12 @@ private:
 
   unsigned int m_nBits;
 
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_lostBanks{ this, "lost Banks" };
+  mutable Gaudi::Accumulators::Counter<> m_noBanksFound{ this, "no banks found" };
+  mutable Gaudi::Accumulators::Counter<> m_banksFound{ this, "# banks found" };
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_skippedBanks{ this, "skipped Banks" };
+  mutable Gaudi::Accumulators::Counter<> m_validBanks{ this, "# valid banks" };
+  mutable Gaudi::Accumulators::Counter<> m_validSourceID{ this, "# valid source ID" };
 
 };
 

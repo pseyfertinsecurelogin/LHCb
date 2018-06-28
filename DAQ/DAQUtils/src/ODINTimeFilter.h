@@ -32,6 +32,10 @@ private:
   bool check(int  val, std::pair<int,int> range);
   bool def(std::pair<double,double> range);
   bool def(std::pair<int,int> range);
+
+  mutable Gaudi::Accumulators::Counter<> m_eventCount{ this, "Event" };
+  mutable Gaudi::Accumulators::Counter<> m_filteredEventCount{ this, "Filtered Events" };
+
   std::pair<int,int> m_yRange;
   std::pair<int,int> m_mRange;
   std::pair<int,int> m_dRange;

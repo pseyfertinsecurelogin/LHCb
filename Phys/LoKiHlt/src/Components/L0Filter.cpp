@@ -86,6 +86,7 @@ namespace LoKi
     LoKi::Types::L0_Cut m_cut = { LoKi::BasicFunctors<const LHCb::L0DUReport*>::BooleanConstant( false ) } ; // the functor itself
     /// check the validity of L0DUReport
     bool        m_check = true   ;                // check the validity of L0DUReport
+    mutable Gaudi::Accumulators::BinomialCounter<> m_passed{ this, "#passed" };
     // ========================================================================
   };
   // ==========================================================================
@@ -111,7 +112,7 @@ bool LoKi::L0Filter::operator()(const LHCb::L0DUReport& l0) const  // the main m
   }
   //
   // some statistics
-  counter ("#passed" ) += result ;
+  m_passed += result ;
   //
   // set the filter:
   return result;

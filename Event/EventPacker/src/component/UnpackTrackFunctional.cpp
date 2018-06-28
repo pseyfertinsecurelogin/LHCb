@@ -40,7 +40,7 @@ LHCb::Tracks UnpackTrackFunctional::operator()( const LHCb::PackedTracks& dst ) 
   // Unpack the tracks
   packer.unpack( dst, newTracks );
 
-  counter("# Unpacked Tracks") += newTracks.size();
+  m_unpackedTracks += newTracks.size();
 
   return newTracks;
 }

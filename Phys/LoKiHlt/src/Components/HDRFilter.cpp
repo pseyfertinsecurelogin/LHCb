@@ -68,6 +68,7 @@ namespace LoKi
     // ========================================================================
     /// the functor itself
     LoKi::Types::HLT_Cut  m_cut = { LoKi::BasicFunctors<const LHCb::HltDecReports*>::BooleanConstant( false ) }  ;                         // the functor itself
+    mutable Gaudi::Accumulators::BinomialCounter<> m_passed{ this, "#passed" };
     // ========================================================================
   };
   // ==========================================================================
@@ -217,7 +218,7 @@ bool LoKi::HDRFilter::operator()(const LHCb::HltDecReports& hdr) const // the ma
   const bool result = m_cut ( &hdr ) ;
   //
   // some statistics
-  counter ("#passed" ) += result ;
+  m_passed += result ;
 
   return result;
 }
