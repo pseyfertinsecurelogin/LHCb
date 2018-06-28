@@ -1,9 +1,24 @@
 #pragma once
 #include "Event/State.h"
+#include "Event/Track.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
 #include <boost/container/small_vector.hpp>
 #include <vector>
+
+namespace LHCb
+{
+  namespace Converters
+  {
+    namespace TrackAfterFit
+    {
+      namespace experimental
+      {
+        struct fromLHCbTrack;
+      }
+    }
+  }
+}
 
 namespace experimental
 {
@@ -17,12 +32,12 @@ namespace experimental
 
     TrackAfterFit();
 
-    friend LHCb::Converters::TrackAfterFit::experimental;
+    friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
 
-    struct fromVectorLHCbTrack private : LHCb::State m_physicsstate;
-    LHCb::Track::Type                                m_type;
-    float                                            m_chisqperdof;
-    int                                              m_dof;
+    LHCb::State m_physicsstate;
+    LHCb::Track::Types m_type;
+    float m_chisqperdof;
+    int m_dof;
   };
   namespace TrackAfterFitExtension
   {
@@ -42,18 +57,21 @@ namespace experimental
     public:
       Hits( const std::vector<LHCb::LHCbID>& );
       Hits( const LHCb::span<const LHCb::LHCbID> );
+      friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
 
     class AdditionalStates
     {
     private:
-      LHCb::State              m_BegRich1;
-      LHCb::State              m_EndRich1;
-      LHCb::State              m_BegRich2;
+      LHCb::State m_BegRich1;
+      LHCb::State m_EndRich1;
+      LHCb::State m_BegRich2;
       std::vector<LHCb::State> m_moreStates;
 
     public:
-      AdditionalStates( LHCb::States::const_iterator it1, LHCb::States::const_iterator it2 );
+      AdditionalStates( decltype( std::declval<LHCb::Track>().states().begin() ) it1,
+                        decltype( std::declval<LHCb::Track>().states().begin() ) it2 );
+      friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
   } // namespace TrackAfterFitExtension
 } // namespace experimental

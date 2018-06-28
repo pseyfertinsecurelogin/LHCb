@@ -9,8 +9,8 @@ experimental::TrackAfterFitExtension::Hits::Hits( const LHCb::span<const LHCb::L
 {
 }
 
-experimental::TrackAfterFitExtension::AdditionalStates::AdditionalStates( LHCb::States::const_iterator it1,
-                                                                          LHCb::States::const_iterator it2 )
+      experimental::TrackAfterFitExtension::AdditionalStates::AdditionalStates( decltype(std::declval<LHCb::Track>().states().begin()) it1,
+                        decltype(std::declval<LHCb::Track>().states().begin()) it2)
     : m_moreStates( it1, it2 )
 {
 
@@ -18,7 +18,7 @@ experimental::TrackAfterFitExtension::AdditionalStates::AdditionalStates( LHCb::
       [this]( LHCb::State::Location location, LHCb::State& output ) {
         auto iter = std::find_if( this->m_moreStates.begin(), this->m_moreStates.end(),
                                   [&]( const LHCb::State* s ) { return s->checkLocation( location ); } );
-        if ( iter != m_states.end() ) {
+        if ( iter != m_moreStates.end() ) {
           auto retval = std::move( *iter );
           this->m_moreStates->erase( iter );
         }
