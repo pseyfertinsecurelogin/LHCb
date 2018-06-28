@@ -30,8 +30,6 @@ namespace experimental
   public:
     // FIXME: very initial
 
-    TrackAfterFit();
-
     friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
 
     LHCb::State m_physicsstate;
@@ -69,8 +67,8 @@ namespace experimental
       std::vector<LHCb::State> m_moreStates;
 
     public:
-      AdditionalStates( decltype( std::declval<LHCb::Track>().states().begin() ) it1,
-                        decltype( std::declval<LHCb::Track>().states().begin() ) it2 );
+      AdditionalStates( decltype( std::declval<const LHCb::Track>().states().begin() ) it1,
+                        decltype( std::declval<const LHCb::Track>().states().begin() ) it2 );
       friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
   } // namespace TrackAfterFitExtension
