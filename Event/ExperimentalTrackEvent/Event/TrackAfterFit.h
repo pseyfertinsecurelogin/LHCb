@@ -16,9 +16,9 @@ namespace LHCb
       {
         struct fromLHCbTrack;
       }
-    }
-  }
-}
+    } // namespace TrackAfterFit
+  }   // namespace Converters
+} // namespace LHCb
 
 namespace experimental
 {
@@ -32,18 +32,20 @@ namespace experimental
 
     friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
 
-    LHCb::State m_physicsstate;
+    LHCb::State        m_physicsstate;
     LHCb::Track::Types m_type;
-    float m_chisqperdof;
-    int m_dof;
+    float              m_chisqperdof;
+    int                m_dof;
   };
   namespace TrackAfterFitExtension
   {
     class Hits;
     class AdditionalStates;
+    class BackCompat;
 
     using AdditionalStatess = std::vector<AdditionalStates>;
     using Hitss             = std::vector<Hits>;
+    using BackCompats       = std::vector<BackCompat>;
 
     class Hits
     {
@@ -61,15 +63,24 @@ namespace experimental
     class AdditionalStates
     {
     private:
-      LHCb::State m_BegRich1;
-      LHCb::State m_EndRich1;
-      LHCb::State m_BegRich2;
+      LHCb::State              m_BegRich1;
+      LHCb::State              m_EndRich1;
+      LHCb::State              m_BegRich2;
       std::vector<LHCb::State> m_moreStates;
 
     public:
       AdditionalStates( decltype( std::declval<const LHCb::Track>().states().begin() ) it1,
                         decltype( std::declval<const LHCb::Track>().states().begin() ) it2 );
       friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
+    };
+
+    class BackCompat
+    {
+    private:
+      LHCb::Track* m_origin;
+
+    public:
+      BackCompat( LHCb::Track* t ) : m_origin( t ) {}
     };
   } // namespace TrackAfterFitExtension
 } // namespace experimental
