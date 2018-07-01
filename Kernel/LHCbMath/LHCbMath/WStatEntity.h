@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 #ifndef ANALYSIS_WSTATENTITY_H 
 #define ANALYSIS_WSTATENTITY_H 1
@@ -26,8 +25,8 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      /// empty constructor 
-      WStatEntity () ;
+      /// default empty constructor 
+      WStatEntity () = default ;
       /// constructor from StatEntity of values 
       WStatEntity ( const StatEntity& values ) ;
       // ======================================================================
@@ -42,7 +41,12 @@ namespace Gaudi
         ( const double value      ,  
           const double weight = 1 ) { return add ( value , weight ) ; }
       // ======================================================================
-      WStatEntity& operator+= ( const double value ) { return add ( value ) ; }
+      /// add  the entry to the counter (with trivial weight)
+      WStatEntity& operator+= ( const double       value ) { return add ( value ) ; }
+      /// add another counter:
+      WStatEntity& operator+= ( const WStatEntity& value ) ;
+      /// add another counter:
+      WStatEntity& operator+= ( const  StatEntity& value ) ;
       // ======================================================================
       // reset statistic 
       void reset() ;
@@ -80,21 +84,31 @@ namespace Gaudi
     private: /// the basic statistic 
       // ======================================================================
       /// sum_i weight_i*value_i
-      long double m_sum    ;  // sum_i weight_i*value_i
+      long double m_sum    { 0 } ;  // sum_i weight_i*value_i
       /// sum_i weight_i*value_i**2 
-      long double m_sum2   ;  // sum_i weight_i*value_i**2 
+      long double m_sum2   { 0 } ;  // sum_i weight_i*value_i**2 
       // ======================================================================     
     private: /// helper statistics 
       // ======================================================================
       /// statistic of values with non-zero weight 
-      StatEntity m_values  ;
+      StatEntity m_values  {  } ;
       /// statistic of weights 
-      StatEntity m_weights ;
+      StatEntity m_weights {  } ;
       // ======================================================================
     };
     // ========================================================================
     inline std::ostream& operator<<( std::ostream& s, const WStatEntity& e )
     { return e.fillStream ( s ) ; }
+    // ========================================================================
+    /// sum two counters 
+    inline WStatEntity operator+ ( WStatEntity a , const WStatEntity& b ) 
+    { a += b ; return a ; }
+    /// sum two counters 
+    inline WStatEntity operator+ ( WStatEntity a , const  StatEntity& b ) 
+    { a += b ; return a ; }
+    /// sum two counters 
+    inline WStatEntity operator+ ( const StatEntity&  a , const WStatEntity& b ) 
+    { return b + a ; }
     // ========================================================================
   } //                                         The end of namespace Gaudi::Math
   // ==========================================================================
