@@ -952,7 +952,8 @@ namespace LoKi
                                ChronoEntity*            t )
       { return t % c  ; }
       // ======================================================================
-      //
+    public : //  switch
+      // ======================================================================
       static Fun __switch__   ( const Cuts&  cut  ,
                                 const Func&  fun1 ,
                                 const Func&  fun2 )
@@ -976,7 +977,8 @@ namespace LoKi
                                 const Cuts&  cut2 )
       { return LoKi::Switch<TYPE,bool> ( cut , cut1 , cut2 ) ; }
       // ======================================================================
-      // scale
+    public : // scale
+      // ======================================================================
       static Cut __scale__ ( const Cuts&                     cuts ,
                              const LoKi::Functor<void,bool>& sf   )
       { return LoKi::scale ( cuts , sf ) ; }
@@ -1721,6 +1723,9 @@ namespace LoKi
     public:
       // ======================================================================
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal ;
+      typedef typename LoKi::BasicFunctors<TYPE>::Pipe          Pipe   ;
+      typedef typename LoKi::BasicFunctors<TYPE>::Map           Map    ;
+      typedef typename LoKi::BasicFunctors<TYPE>::FunVal        FunVal ;
       typedef LoKi::details::result_t<CutVal>                   result_type;
       // ======================================================================
     public:
@@ -1787,6 +1792,55 @@ namespace LoKi
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
       __rmod__    ( const CutVal&            c ,
                     ChronoEntity*            t ) { return t % c  ; }
+      // ======================================================================
+    public: //   switches 
+      // ======================================================================
+      using CutsOps_<std::vector<TYPE>>::__switch__ ;
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
+      __switch__ ( const CutVal& cut  , 
+                   const CutVal& fun1 , 
+                   const CutVal& fun2 ) 
+      { return LoKi::Switch<std::vector<TYPE>,bool> ( cut , fun1 , fun2 ) ; }
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,double>
+      __switch__ ( const CutVal& cut  , 
+                   const FunVal& fun1 , 
+                   const FunVal& fun2 ) 
+      { return LoKi::Switch<std::vector<TYPE>,double> ( cut , fun1 , fun2 ) ; }
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      __switch__ ( const CutVal& cut  , 
+                   const Pipe&   fun1 , 
+                   const Pipe&   fun2 ) 
+      { return LoKi::Switch<std::vector<TYPE>,std::vector<TYPE> > 
+          ( cut , fun1 , fun2 ) ; }
+      // ======================================================================
+      // need to be removed for TYPE==double
+      template <class T2 = TYPE, 
+                typename = std::enable_if_t<!std::is_same<T2,double>::value> > 
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<double> >
+      __switch__ ( const CutVal& cut  , 
+                   const Map&    fun1 , 
+                   const Map&    fun2 ) 
+      { return LoKi::Switch<std::vector<TYPE>,std::vector<double> > 
+          ( cut , fun1 , fun2 ) ; }
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
+      __switch__ ( const CutVal& cut  ,
+                   const typename LoKi::BasicFunctors<TYPE>::Predicate& fun1 , 
+                   const typename LoKi::BasicFunctors<TYPE>::Predicate& fun2 )
+      { return __switch__ ( cut , 
+                            LoKi::Functors::Select<TYPE> ( fun1 ) , 
+                            LoKi::Functors::Select<TYPE> ( fun2 ) ) ; }
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<double> >
+      __switch__ ( const CutVal& cut  ,
+                   const typename LoKi::BasicFunctors<TYPE>::Function&  fun1 , 
+                   const typename LoKi::BasicFunctors<TYPE>::Function&  fun2 )
+      { return __switch__ ( cut , 
+                            LoKi::Functors::Yields<TYPE,double> ( fun1 ) ,
+                            LoKi::Functors::Yields<TYPE,double> ( fun2 ) ) ; }
       // ======================================================================
      public:
       // ======================================================================
