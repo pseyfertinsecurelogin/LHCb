@@ -125,9 +125,9 @@
         <enumval name="IsPhoton"        value="381"  desc="Gamma/Pi0 separation variable (neutral)"/>
         <enumval name="IsNotE"          value="382"  desc="MLP-based neutralID - anti-electron ID (neutral)"/>
         <enumval name="IsNotH"          value="383"  desc="MLP-based neutralID - anti-hadron ID   (neutral)"/>
+        <enumval name="IsPhotonXGB"     value="384"  desc="XGBoost-based Gamma/Pi0 separation (neutral)"/>
         <enumval name="ClusterAsX"      value="390"  desc="Cluster Barycenter X"/>
         <enumval name="ClusterAsY"      value="391"  desc="Cluster Barycenter Y"/>
-
         <enumval name="VeloCharge"      value="400"  desc="The dE/dx charge from the VELO system"/>
 
         <enumval name="TrackChi2PerDof" value="500"  desc="The track fit Chi^2 per degree of freedom"/>
