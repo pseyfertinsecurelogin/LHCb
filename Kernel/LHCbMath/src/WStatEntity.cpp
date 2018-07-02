@@ -1,4 +1,3 @@
-// $ID:$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -26,9 +25,6 @@
  *  @see StatEntity
  *  @author  Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date 2014-04-07 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace 
@@ -37,15 +33,6 @@ namespace
   const LHCb::Math::Zero    <double> s_zero  {} ;
   // ==========================================================================
 }
-// ============================================================================
-// empty constructor 
-// ============================================================================
-Gaudi::Math::WStatEntity::WStatEntity()
-  : m_sum     ( 0 ) 
-  , m_sum2    ( 0 )
-  , m_values  (   )
-  , m_weights (   )
-{}
 // ============================================================================
 // constructor from StatEntity of values 
 // ============================================================================
@@ -155,6 +142,30 @@ std::string Gaudi::Math::WStatEntity::toString () const
   fillStream ( ost )  ;
   return ost.str () ;
 }
+// ============================================================================
+// add another counter:
+// ============================================================================
+Gaudi::Math::WStatEntity&
+Gaudi::Math::WStatEntity::operator+= 
+( const Gaudi::Math::WStatEntity& value ) 
+{
+  //
+  m_sum     += value.m_sum     ;
+  m_sum2    += value.m_sum2    ;
+  m_values  += value.m_values  ;
+  m_weights += value.m_weights ;
+  //
+  return *this ;
+}
+// ============================================================================
+// add another counter:
+// ============================================================================
+Gaudi::Math::WStatEntity&
+Gaudi::Math::WStatEntity::operator+= 
+( const StatEntity& value ) 
+{ (*this) += WStatEntity ( value ); return *this ; }
+
+
 // ============================================================================
 // The END 
 // ============================================================================
