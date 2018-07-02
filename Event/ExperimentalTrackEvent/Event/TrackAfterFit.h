@@ -77,10 +77,10 @@ namespace experimental
     class BackCompat
     {
     private:
-      LHCb::Track* m_origin;
+      const LHCb::Track* m_origin;
 
     public:
-      BackCompat( LHCb::Track* t ) : m_origin( t ) {}
+      BackCompat( const LHCb::Track* t ) : m_origin( t ) {}
     };
   } // namespace TrackAfterFitExtension
 } // namespace experimental
