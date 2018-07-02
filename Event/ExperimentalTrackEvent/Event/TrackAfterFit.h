@@ -23,7 +23,7 @@ namespace LHCb
 namespace experimental
 {
   class TrackAfterFit;
-  using TrackAfterFits = std::vector<TrackAfterFit>;
+  using TrackAfterFits = std::vector<TrackAfterFit>; // CRJ : Grammatically, this should be TracksAfterFit
 
   class TrackAfterFit
   {
@@ -34,8 +34,8 @@ namespace experimental
 
     LHCb::State        m_physicsstate;
     LHCb::Track::Types m_type;
-    float              m_chisqperdof;
-    int                m_dof;
+    float              m_chisqperdof{0};
+    int                m_dof{0};
   };
   namespace TrackAfterFitExtension
   {
@@ -52,7 +52,7 @@ namespace experimental
     private:
       // FIXME: separate containers for different containers?
       // FIXME: proper size
-      boost::container::small_vector<LHCb::LHCbID, 30> m_hits;
+      boost::container::small_vector<LHCb::LHCbID, 30> m_hits; // CRJ : better than just std::array ?
 
     public:
       Hits( const std::vector<LHCb::LHCbID>& );
@@ -69,15 +69,14 @@ namespace experimental
       std::vector<LHCb::State> m_moreStates;
 
     public:
-      AdditionalStates( decltype( std::declval<const LHCb::Track>().states().begin() ) it1,
-                        decltype( std::declval<const LHCb::Track>().states().begin() ) it2 );
+      AdditionalStates( std::vector<LHCb::State> && states );
       friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
 
     class BackCompat
     {
     private:
-      const LHCb::Track* m_origin;
+      const LHCb::Track * m_origin = nullptr;
 
     public:
       BackCompat( const LHCb::Track* t ) : m_origin( t ) {}
