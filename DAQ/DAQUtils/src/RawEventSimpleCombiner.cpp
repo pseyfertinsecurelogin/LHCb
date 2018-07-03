@@ -111,10 +111,16 @@ StatusCode RawEventSimpleCombiner::execute() {
   }
 
 
-
+  RawEvent* rawEventCopy;
+  if (m_enableIncrementalMode) {
+    // retrieve output location
+    rawEventCopy = getIfExists<RawEvent>(m_outputLocation);
+    if (rawEventCopy==NULL) return Error(" No RawEvent at " + m_outputLocation,StatusCode::SUCCESS, 20 );
+  } else{
   // create empty output RawEvent
-  auto rawEventCopy = std::make_unique< RawEvent>();
-
+    rawEventCopy = new RawEvent();
+  }
+  
   // Loop over locations I've found
   for (auto rawEvent=foundRawEvents.begin(); rawEvent!=foundRawEvents.end(); rawEvent++)
   {
@@ -140,12 +146,13 @@ StatusCode RawEventSimpleCombiner::execute() {
     }
   }
 
-
-  // put output RawEvent into its location
-  if( msgLevel(MSG::VERBOSE) ){ verbose() << " Saving Copied RawEvent into new locations " << endmsg;  }
-  put( rawEventCopy.release(), m_outputLocation );
-  if( msgLevel(MSG::VERBOSE) ){ verbose() << " Saved Copied RawEvent into new locations " << endmsg;  }
-
+  // if not incremental mode, put output RawEvent into its location
+  if (!m_enableIncrementalMode) {
+    if( msgLevel(MSG::VERBOSE) ){ verbose() << " Saving Copied RawEvent into new locations " << endmsg;  }
+    put( rawEventCopy, m_outputLocation );
+    if( msgLevel(MSG::VERBOSE) ){ verbose() << " Saved Copied RawEvent into new locations " << endmsg;  }
+  }
+  
   return StatusCode::SUCCESS;
 }
 

@@ -89,6 +89,7 @@ std::string LHCb::RawBank::typeName(LHCb::RawBank::BankType e){
   case LHCb::RawBank::HC              : return  "HC";
   case LHCb::RawBank::HltTrackReports : return  "HltTrackReports";    
   case LHCb::RawBank::HCError         : return  "HCError";
+  case LHCb::RawBank::VPRetinaCluster : return  "VPRetinaCluster";
   default                             : return  "Undefined_name";
   };
 }  
