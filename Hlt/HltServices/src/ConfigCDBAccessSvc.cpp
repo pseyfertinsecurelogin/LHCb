@@ -328,8 +328,7 @@ namespace {
 namespace ConfigCDBAccessSvc_details {
 
 StatusCode parse(ConfigCDBAccessSvc_details::Mode& result, const std::string& input) {
-  std::smatch m;
-  if ( std::regex_match( input, m, s_optRegex ) ) {
+  if ( std::smatch m; std::regex_match( input, m, s_optRegex ) ) {
     result = ( m[2] == "Only" ) ? Mode::ReadOnly : Mode::ReadWrite;
     return StatusCode::SUCCESS;
   }

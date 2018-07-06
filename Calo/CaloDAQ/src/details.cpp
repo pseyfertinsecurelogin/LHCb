@@ -1,6 +1,8 @@
 #include "details.h"
 #include <algorithm>
 #include <regex>
+#include <string_view>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace {
   const std::regex s_outTypeParse{"([\"']?)(?:(?:CALO)?(ADC|DIGIT)S?|(BOTH))\\1",
@@ -8,6 +10,7 @@ namespace {
 }
 
 namespace details {
+    using boost::iequals;
 
     const char* toString(const OutputType_t& out) {
         if (  out.adcOnTES &&  out.digitOnTES ) return "BOTH";
@@ -17,13 +20,10 @@ namespace details {
     }
 
     StatusCode parse(OutputType_t& result, const std::string& input ) {
-        std::string out( input );
-        std::transform( input.begin() , input.end() , out.begin () , ::toupper ) ;
-
-        std::smatch m;
-        if ( std::regex_match(out, m, s_outTypeParse) ) {
-            result.digitOnTES = m[3] == "BOTH" || m[2] == "DIGIT";
-            result.adcOnTES = m[3] == "BOTH" || m[2] == "ADC";
+        if ( std::smatch m; std::regex_match(input, m, s_outTypeParse) ) {
+            const bool both = iequals(m[3].str(), "BOTH");
+            result.digitOnTES = both || iequals(m[2].str(), "DIGIT");
+            result.adcOnTES = both || iequals(m[2].str(), "ADC");
             return StatusCode::SUCCESS;
         }
 
@@ -39,15 +39,11 @@ namespace details {
     }
 
     StatusCode parse(source_t& result, const std::string& input ) {
-        std::string out( input );
-        std::transform( input.begin() ,input.end() , out.begin () , ::toupper ) ;
-
-        std::smatch m;
-        if ( std::regex_match(out, m, s_outTypeParse) ) {
-          if ( m[2] == "ADC" ) {
+        if ( std::smatch m; std::regex_match(input, m, s_outTypeParse) ) {
+          if ( iequals(m[2].str(), "ADC") ) {
             result = source_t::from_adc;
             return StatusCode::SUCCESS;
-          } else if ( m[2] == "DIGIT" ) {
+          } else if ( iequals(m[2].str(), "DIGIT") ) {
             result = source_t::from_digit;
             return StatusCode::SUCCESS;
           }
@@ -63,10 +59,11 @@ namespace details {
 
     StatusCode parse(DetectorName_t& result, const std::string& input ) {
         // remove optional quotes around the string
-        std::string out;
+        std::string_view out{input};
         if (input.size() && input[0] == input[input.size()-1] && ( input[0] == '"' || input[0] == '\'' )) {
-          out = input.substr(1, input.size()-2);
-        } else out = input;
+          out.remove_prefix(1);
+          out.remove_suffix(1);
+        }
 
         result = DetectorName_t::Unknown;
         for (int i=0;i<4;++i) {
