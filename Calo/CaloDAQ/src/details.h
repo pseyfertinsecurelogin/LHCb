@@ -1,7 +1,7 @@
 #include <iomanip>
 #include <iostream>
 #include "GaudiKernel/StatusCode.h"
-
+#include <string_view>
 
 namespace details {
 
@@ -33,7 +33,7 @@ namespace details {
     inline std::ostream& toStream(const DetectorName_t& name, std::ostream& os) {
         return os << std::quoted(toString(name),'\'');
     }
-    StatusCode parse(DetectorName_t& result, const std::string& input );
+    StatusCode parse(DetectorName_t& result, std::string_view input);
 
     DetectorName_t alg_name_to_detector( const std::string& s);
 

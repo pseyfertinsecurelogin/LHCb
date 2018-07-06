@@ -1,7 +1,6 @@
 #include "details.h"
 #include <algorithm>
 #include <regex>
-#include <string_view>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace {
@@ -57,18 +56,17 @@ namespace details {
         return labels[ i>4 ? 4 : i ];
     }
 
-    StatusCode parse(DetectorName_t& result, const std::string& input ) {
+    StatusCode parse(DetectorName_t& result, std::string_view input ) {
         // remove optional quotes around the string
-        std::string_view out{input};
-        if (input.size() && input[0] == input[input.size()-1] && ( input[0] == '"' || input[0] == '\'' )) {
-          out.remove_prefix(1);
-          out.remove_suffix(1);
+        if (!input.empty() && ( input.front() == '"' || input.front() == '\'' ) && input.front() == input.back()) {
+          input.remove_prefix(1);
+          input.remove_suffix(1);
         }
 
         result = DetectorName_t::Unknown;
         for (int i=0;i<4;++i) {
             auto dn = static_cast<DetectorName_t>( i );
-            if (toString(dn)==out) { result = dn; return StatusCode::SUCCESS; };
+            if (toString(dn)==input) { result = dn; return StatusCode::SUCCESS; };
         }
         return StatusCode::FAILURE;
     }
