@@ -1,8 +1,15 @@
 #include "details.h"
 #include <algorithm>
+#include <regex>
+#include <boost/algorithm/string/predicate.hpp>
 
+namespace {
+  const std::regex s_outTypeParse{"([\"']?)(?:(?:CALO)?(ADC|DIGIT)S?|(BOTH))\\1",
+                                  std::regex_constants::icase};
+}
 
 namespace details {
+    using boost::iequals;
 
     const char* toString(const OutputType_t& out) {
         if (  out.adcOnTES &&  out.digitOnTES ) return "BOTH";
@@ -12,25 +19,13 @@ namespace details {
     }
 
     StatusCode parse(OutputType_t& result, const std::string& input ) {
-        std::string out( input );
-        std::transform( input.begin() , input.end() , out.begin () , ::toupper ) ;
-        if (out == "BOTH" ) {
-           result.digitOnTES = true;
-           result.adcOnTES = true;
-           return StatusCode::SUCCESS;
-        }
-        if( out == "DIGITS" ||  out == "CALODIGITS" ||
-            out == "DIGIT"  ||  out == "CALODIGIT"  ) {
-           result.digitOnTES = true;
-           result.adcOnTES = false;
-           return StatusCode::SUCCESS;
-        }
-        if(out == "ADCS" ||  out == "CALOADCS" ||
-           out == "ADC"  ||  out == "CALOADC"  ) {
-            result.digitOnTES = false;
-            result.adcOnTES = true;
+        if ( std::smatch m; std::regex_match(input, m, s_outTypeParse) ) {
+            const bool both = iequals(m[3].str(), "BOTH");
+            result.digitOnTES = both || iequals(m[2].str(), "DIGIT");
+            result.adcOnTES = both || iequals(m[2].str(), "ADC");
             return StatusCode::SUCCESS;
         }
+
         return StatusCode::FAILURE;
     }
 
@@ -43,16 +38,14 @@ namespace details {
     }
 
     StatusCode parse(source_t& result, const std::string& input ) {
-        std::string out( input );
-        std::transform( input.begin() ,input.end() , out.begin () , ::toupper ) ;
-
-        if( out == "ADC" || out == "CALOADC" || out == "ADCS" || out == "CALOADCS") {
+        if ( std::smatch m; std::regex_match(input, m, s_outTypeParse) ) {
+          if ( iequals(m[2].str(), "ADC") ) {
             result = source_t::from_adc;
             return StatusCode::SUCCESS;
-        }
-        if( out == "DIGIT" || out == "CALODIGIT" || out == "DIGITS" || out == "CALODIGITS")  {
+          } else if ( iequals(m[2].str(), "DIGIT") ) {
             result = source_t::from_digit;
             return StatusCode::SUCCESS;
+          }
         }
         return StatusCode::FAILURE;
     }
@@ -63,7 +56,13 @@ namespace details {
         return labels[ i>4 ? 4 : i ];
     }
 
-    StatusCode parse(DetectorName_t& result, const std::string& input ) {
+    StatusCode parse(DetectorName_t& result, std::string_view input ) {
+        // remove optional quotes around the string
+        if (!input.empty() && ( input.front() == '"' || input.front() == '\'' ) && input.front() == input.back()) {
+          input.remove_prefix(1);
+          input.remove_suffix(1);
+        }
+
         result = DetectorName_t::Unknown;
         for (int i=0;i<4;++i) {
             auto dn = static_cast<DetectorName_t>( i );
@@ -85,4 +84,3 @@ namespace details {
       return DetectorName_t::Unknown;
     }
 }
-
