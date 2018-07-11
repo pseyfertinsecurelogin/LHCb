@@ -1312,7 +1312,37 @@ for _t in ( cpp.DataObject      ,
     _t.tes         = tesLocation 
     _t.location    = tesLocation 
 
+
+# =============================================================================
+## Trivial function which returns the PDG mass for the given 'object'    
+def PDGM ( o ) :
+    """ Trivial function which returns the PDG mass for the given 'object'
     
+    >>> m = PDGM ( 'B0' )
+    >>> m = PDGM ( LHCb.ParticleID(22) )
+    >>> m = PGDM ( 22 )
+    >>> particle = ...
+    >>> m = PDGM ( particle    )
+    >>> mcparticle = ...
+    >>> m = PDGM ( mcparticle  )
+    >>> genparticle = ...
+    >>> m = PDGM ( genparticle )
+    
+    """
+    if   str == type ( o ) :
+        return LoKi.Particles.massFromName ( o )
+    elif LHCb.ParticleID == type ( o ) :
+        return LoKi.Particles.massFromPID  ( o )
+    elif hassattr ( o , "particleID" ) :
+        return LoKi.Particles.massFromPID  ( o.particleID() )
+    elif hassattr ( o , "pdg_id" ) :
+        return LoKi.Particles.massFromPID  ( LHCb.ParticleID ( o.pdg_id() ) ) 
+    
+    return PDGM ( LHCb.ParticleID( o ) ) 
+
+PDGM. __doc__ += '\n' + LoKi.Particles.massFromName . __doc__ 
+PDGM. __doc__ += '\n' + LoKi.Particles.massFromPID  . __doc__
+
 # =============================================================================
 if '__main__' == __name__ :
 
