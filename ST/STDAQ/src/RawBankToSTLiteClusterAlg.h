@@ -53,13 +53,6 @@ private:
   // add a single cluster to the output container
   void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
                      const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters& fCont, const bool isUT) const;
-
-  mutable Gaudi::Accumulators::SummingCounter<> m_lostBanks{ this, "lost Banks" };
-  mutable Gaudi::Accumulators::Counter<> m_noBanksFound{ this, "no banks found" };
-  mutable Gaudi::Accumulators::SummingCounter<> m_skippedBanks{ this, "skipped Banks" };
-  mutable Gaudi::Accumulators::Counter<> m_validBanks{ this, "# valid banks" };
-  mutable Gaudi::Accumulators::Counter<> m_validSourceID{ this, "# valid source ID" };
-
 };
 
 #include "Kernel/STTell1Board.h"
