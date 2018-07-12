@@ -168,6 +168,8 @@ DeSTSector* DeUTDetector::getSector(unsigned int station,
       auto goodsector = m_sMap.find(uniqueSector)->second;
       return goodsector == res;
     }() && "getSector was not able to find the same UT Sector as findSector" );
+  // avoid warning in non debug mode
+  (void)uniqueSector;
 
   return res;
 }

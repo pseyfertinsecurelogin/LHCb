@@ -52,7 +52,7 @@ STTell1Board::chanPair STTell1Board::DAQToOffline(const unsigned int fracStrip,
   auto& strip = std::get<1>(full);
   auto& interStrip = std::get<2>(full);
   
-  return { STChannelID(STChannelID{fullChan.chanID}.type(),
+  return { STChannelID(STChannelID{(int)fullChan.chanID}.type(),
                        fullChan.station,
                        fullChan.layer,
                        fullChan.detRegion,
