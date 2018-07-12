@@ -45,7 +45,7 @@ public:
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type& alias) override;
 
 private:
-  Gaudi::Property<std::vector<std::string>>             s_svcs { this, "ConfigAccessSvcs", {{"ConfigDBAccessSvc"}} };
+  Gaudi::Property<std::vector<std::string>>             s_svcs { this, "ConfigAccessSvcs", {{"ConfigCDBAccessSvc"}} };
   boost::ptr_vector<IConfigAccessSvc>  m_svcs;
 };
 #endif // CONFIGFILEACCESSSVC_H
