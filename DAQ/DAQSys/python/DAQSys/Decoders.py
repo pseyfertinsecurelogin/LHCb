@@ -63,6 +63,31 @@ Decoder("DecodePileUpData",
         conf=DecoderDB)
 
 
+#===========TT===========
+Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
+        active=True, banks=["TT"],
+        outputs={"clusterLocation":"Raw/TT/LiteClusters"},
+        inputs={"RawEventLocations":None},
+        conf=DecoderDB)
+
+Decoder("RawBankToSTLiteClusterAlg/createTTLiteClustersExpert",
+        active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
+        outputs={"clusterLocation":"Raw/TT/LiteClusters"},
+        inputs={"RawEventLocations" : None},
+        conf=DecoderDB)
+
+Decoder("RawBankToSTClusterAlg/createTTClusters",
+        active=True, banks=["TT"],
+        outputs={"clusterLocation":"Raw/TT/Clusters", "summaryLocation":"Rec/TT/Summary"},
+        inputs={"RawEventLocations" : None},
+        conf=DecoderDB)
+
+Decoder("RawBankToSTClusterAlg/createTTClustersExpert",
+        active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
+        outputs={"clusterLocation":"Raw/TT/Clusters", "summaryLocation":"Rec/TT/Summary"},
+        inputs={"RawEventLocations" : None},
+        conf=DecoderDB)
+
 #===========RICH===========
 
 Decoder("Rich::Future::RawBankDecoder/RichFutureDecode",
@@ -70,6 +95,35 @@ Decoder("Rich::Future::RawBankDecoder/RichFutureDecode",
         outputs={"DecodedDataLocation":None},
         inputs={"RawEventLocation":None},
         #required=["createODIN"],
+        conf=DecoderDB)
+
+#===========IT===========
+Decoder("RawBankToSTLiteClusterAlg/createITLiteClusters",
+        active=True, banks=["IT"],
+        outputs={"clusterLocation":"Raw/IT/LiteClusters"},
+        inputs={"RawEventLocations" : None},
+        properties={"DetType":"IT"},
+        conf=DecoderDB)
+
+Decoder("RawBankToSTLiteClusterAlg/createITLiteClustersExpert",
+        active=False, banks=["ITPedestal","ITFull","ITProcFull","ITError"],
+        outputs={"clusterLocation":"Raw/IT/LiteClusters"},
+        inputs={"RawEventLocations" : None},
+        properties={"DetType":"IT"},
+        conf=DecoderDB)
+
+Decoder("RawBankToSTClusterAlg/createITClusters",
+        active=True, banks=["IT"],
+        outputs={"clusterLocation":"Raw/IT/Clusters", "summaryLocation":"Rec/IT/Summary"},
+        inputs={"RawEventLocations" : None},
+        properties={"DetType":"IT"},
+        conf=DecoderDB)
+
+Decoder("RawBankToSTClusterAlg/createITClustersExpert",
+        active=False, banks=["ITPedestal","ITFull","ITProcFull","ITError"],
+        outputs={"clusterLocation":"Raw/IT/Clusters", "summaryLocation":"Rec/IT/Summary"},
+        inputs={"RawEventLocations" : None},
+        properties={"DetType":"IT"},
         conf=DecoderDB)
 
 #===========OT===========
@@ -368,6 +422,54 @@ Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
         outputs=__packing.packedLocations(),
         properties={"ContainerMap": __packing.packedToOutputLocationMap()},
         conf=DecoderDB)
+
+#UPGRADE ===========UT===========
+Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
+        active=True, banks=["UT"],
+        outputs={"clusterLocation":"Raw/UT/LiteClusters"},
+        inputs={"RawEventLocations" : None},
+        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
+        properties={"DetType":"UT"},
+        #required=["createODIN"],
+        conf=DecoderDB)
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
+Decoder("RawBankToSTLiteClusterAlg/createUTLiteClustersExpert",
+        active=False, banks=["UTPedestal","UTFull","UTError"],
+        outputs={"clusterLocation":"Raw/UT/LiteClusters"},
+        inputs={"RawEventLocations" : None},
+        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
+        properties={"DetType":"UT"},
+        #required=["createODIN"],
+        conf=DecoderDB)
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
+Decoder("RawBankToSTClusterAlg/createUTClusters",
+        active=True, banks=["UT"],
+        outputs={"clusterLocation":"Raw/UT/Clusters", "summaryLocation":"Rec/UT/Summary"},
+        inputs={"RawEventLocations" : None},
+        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
+        properties={"DetType":"UT"},
+        #required=["createODIN"],
+        conf=DecoderDB)
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
+Decoder("RawBankToSTClusterAlg/createUTClustersExpert",
+        active=False, banks=["UTPedestal","UTFull","UTError"],
+        outputs={"clusterLocation":"Raw/UT/Clusters", "summaryLocation":"Rec/UT/Summary"},
+        inputs={"RawEventLocations" : None},
+        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
+        properties={"DetType":"UT"},
+        #required=["createODIN"],
+        conf=DecoderDB)
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
+#Decoder("STOfflinePosition/ToolSvc.UTClusterPosition",
+#        active=False,
+#        properties={"DetType":"UT"},
+#        conf=DecoderDB)
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
 
 #UPGRADE ===========FT===========
 Decoder("FTRawBankDecoder/createFTClusters",
