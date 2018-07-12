@@ -27,3 +27,7 @@ gaudi_add_library(UTDAQLib
                   PUBLIC_HEADERS UTDAQ
                   INCLUDE_DIRS Boost Event/RawEvent DAQ/DAQUtils Event/DigiEvent Si/SiDAQ
                   LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
+
+gaudi_add_module(UTDAQ
+                 src/component/Components.cpp
+                 LINK_LIBRARIES UTDAQLib)

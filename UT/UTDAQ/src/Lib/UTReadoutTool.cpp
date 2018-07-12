@@ -9,8 +9,6 @@
 
 using namespace LHCb;
 
-DECLARE_COMPONENT( UTReadoutTool )
-
 UTReadoutTool::UTReadoutTool(const std::string& type,
                             const std::string& name,
                             const IInterface* parent)
