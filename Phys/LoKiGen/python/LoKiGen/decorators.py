@@ -158,6 +158,32 @@ def _decorate ( name = _name  ) :
 _decorated = _decorate ()                         ## ATTENTION 
 # =============================================================================
 
+## ============================================================================
+# /// Status code in HepMC::GenParticle
+#  enum statusType{ Unknown = 0,
+#                  StableInProdGen = 1,
+#                  DecayedByProdGen = 2,
+#                  DocumentationParticle = 3,
+#                  DecayedByDecayGen = 777,
+#                  DecayedByDecayGenAndProducedByProdGen = 888,
+#                  SignalInLabFrame = 889,
+#                  SignalAtRest = 998,
+#                  StableInDecayGen = 999
+#   };
+# @see  LHCb::HepMCEvent
+# @see  LHCb::HepMCEvent::statusType
+GUNKNOWNSTATUS                         = GSTATUS == LHCb.HepMCEvent.Unknown
+GSTABLEINPRODGEN                       = GSTATUS == LHCb.HepMCEvent.StableInProdGen
+GDECAYEDBYPRODGEN                      = GSTATUS == LHCb.HepMCEvent.DecayedByProdGen
+GDOCUMENTATION                         = GSTATUS == LHCb.HepMCEvent.DocumentationParticle
+GDOCUMENTATIONPARTICLE                 = GSTATUS == LHCb.HepMCEvent.DocumentationParticle
+GDECAYEDBYDECAYGEN                     = GSTATUS == LHCb.HepMCEvent.DecayedByDecayGen
+GDECAYEDBYDECAYGENANDPRODUCEDBYPRODGEN = GSTATUS == LHCb.HepMCEvent.DecayedByDecayGenAndProducedByProdGen
+GSIGNALINLABFRAME                      = GSTATUS == LHCb.HepMCEvent.SignalInLabFrame 
+GSIGNALATREST                          = GSTATUS == LHCb.HepMCEvent.SignalAtRest
+GSTABLEINDECAYGEN                      = GSTATUS == LHCb.HepMCEvent.StableInDecayGen
+
+
 # =============================================================================
 if '__main__' == __name__ :
     print 80*'*'
