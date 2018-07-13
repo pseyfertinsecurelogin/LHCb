@@ -227,6 +227,8 @@ void GenFSRJson::writeGeneratorCounters(LHCb::GenFSR* genFSR)
 
   LHCb::CrossSectionsFSR crossFSR;
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
+  LHCb::GenCountersFSR counterFSR;  
+  std::map<std::string,std::string> mapCounter = counterFSR.getFullNames();
 
   m_jsonFile << "   \"InteractionCounters\": [\n";
   
@@ -234,13 +236,14 @@ void GenFSRJson::writeGeneratorCounters(LHCb::GenFSR* genFSR)
   {
     key = icounter->first;
     if(key > 24) continue;
-    if(key == 6 || key == 7) continue;
-    name =  LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
-    fullName = mapCross[name];
+
+    name =  LHCb::GenCountersFSR::CounterKeyToString(key);
+    if(name == "BeforeFullEvt" || name == "AfterFullEvt") continue;
+    
     before = genFSR->getDenominator(key);
     after = genFSR->getGenCounterInfo(key).second;
-    if(before == 0) continue;
 
+    if(before == 0) continue;
     if(key >= 10)
     {
       int keycs = LHCb::CrossSectionsFSR::CrossSectionKeyToType("MBCrossSection");
@@ -249,7 +252,7 @@ void GenFSRJson::writeGeneratorCounters(LHCb::GenFSR* genFSR)
     else
       C = 1;
 
-    if(key == 2) after = genFSR->getGenCounterInfo(key+1).second;
+    if(name == "EvtGenerated") after = genFSR->getGenCounterInfo(key+1).second;
     else after = icounter->second.second;
     if(after == 0) continue;
 
@@ -259,7 +262,8 @@ void GenFSRJson::writeGeneratorCounters(LHCb::GenFSR* genFSR)
 
     fraction = genFSR->getEfficiency(after, before, C);
     error = genFSR->getEfficiencyError(after, before, C, flag);
-    
+    fullName = mapCross[name];    
+
     m_jsonFile << "      {\"descr\": \"" << fullName << "\",\n";
     m_jsonFile << "       \"type\": \"" << "counter" << "\",\n";
     m_jsonFile << "       \"value\": " << fraction << ",\n";
@@ -282,6 +286,8 @@ void GenFSRJson::writeCutEfficiencies(LHCb::GenFSR* genFSR)
   longlong after = 0, before = 0;  
   double fraction = 0, error = 0;
 
+  LHCb::GenCountersFSR counterFSR;
+  std::map<std::string,std::string> mapCounter = counterFSR.getFullNames();
   LHCb::CrossSectionsFSR crossFSR;
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
 
@@ -290,9 +296,12 @@ void GenFSRJson::writeCutEfficiencies(LHCb::GenFSR* genFSR)
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    if(key !=  7 && key != 27 && key != 94 && key != 96) continue;
-    name =  LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
-    fullName = mapCross[name];
+    name =  LHCb::GenCountersFSR::CounterKeyToString(key);
+    
+    if(name != "AfterFullEvt" && name != "AfterLevelCut" && 
+       name != "EvtSignal" && name != "EvtantiSignal" &&
+       name != "AfterPCut"  && name != "AfterantiPCut") continue;
+
     before = genFSR->getDenominator(key);
     if(before == 0) continue;
     after    = icounter->second.second;    
@@ -301,6 +310,9 @@ void GenFSRJson::writeCutEfficiencies(LHCb::GenFSR* genFSR)
     fraction = genFSR->getEfficiency(after, before);
     error = genFSR->getEfficiencyError(after, before);
     
+    name =  LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
+    fullName = mapCross[name];
+
     m_jsonFile << "      {\"descr\": \"" << fullName << "\",\n";
     m_jsonFile << "       \"type\": \"" << "counter" << "\",\n";
     m_jsonFile << "       \"value\": " << fraction << ",\n";
@@ -323,6 +335,7 @@ void GenFSRJson::writeGenHadronCounters(LHCb::GenFSR* genFSR)
   std::string name = "", fullName = "";
   longlong after = 0, before = 0;
   double fraction = 0, error = 0;
+  
   LHCb::CrossSectionsFSR crossFSR;
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
 
@@ -331,11 +344,10 @@ void GenFSRJson::writeGenHadronCounters(LHCb::GenFSR* genFSR)
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
+    
     // Generated Hadron Fractions   
     if((key>=30 && key<=40) || (key>=55 && key<=63) || (key>=75 && key<=77) || (key>=85 && key<=87))
     {
-      name = LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
-      fullName = mapCross[name];
       before = genFSR->getDenominator(key);
       if(before == 0) continue;
       // CHECK!!!!!!!!
@@ -345,6 +357,9 @@ void GenFSRJson::writeGenHadronCounters(LHCb::GenFSR* genFSR)
       
       fraction = genFSR->getEfficiency(after, before);
       error = genFSR->getEfficiencyError(after, before);
+
+      name = LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
+      fullName = mapCross[name];
 
       m_jsonFile << "      {\"descr\": \"" << fullName << "\",\n";
       m_jsonFile << "       \"type\": \"" << "counter" << "\",\n";
@@ -367,6 +382,7 @@ void GenFSRJson::writeAccHadronCounters(LHCb::GenFSR* genFSR)
   longlong after = 0, before = 0;
   double fraction = 0, error = 0;
   std::string name = "", fullName = "";
+  
   LHCb::CrossSectionsFSR crossFSR;  
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
 
@@ -376,8 +392,6 @@ void GenFSRJson::writeAccHadronCounters(LHCb::GenFSR* genFSR)
     // Accepted Hadron Fractions                                                   
     if ((key>=41 && key<=51) || (key>=64 && key<=72) || (key>=78 && key<=80) || (key>=88 && key<=90))
     {
-      name = LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
-      fullName = mapCross[name];
       before = genFSR->getDenominator(key);
       if(before == 0) continue;
       after = genFSR->getGenCounterInfo(key).second;
@@ -385,6 +399,9 @@ void GenFSRJson::writeAccHadronCounters(LHCb::GenFSR* genFSR)
 
       fraction = genFSR->getEfficiency(after, before);
       error    = genFSR->getEfficiencyError(after, before);
+
+      name = LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
+      fullName = mapCross[name];
       
       m_jsonFile << "      {\"descr\": \"" << fullName << "\",\n";
       m_jsonFile << "       \"type\": \"" << "counter" << "\",\n";
@@ -436,6 +453,9 @@ void GenFSRJson::writeGlobalStat(LHCb::GenFSR* genFSR)
   int key = 0;
   std::string name = "";
   longlong countEvtGen = 0, countEvtAcc = 0, countIntGen = 0, countIntAcc = 0;
+  
+  LHCb::GenCountersFSR counterFSR;  
+  std::map<std::string,std::string> mapCounter = counterFSR.getFullNames();
 
   m_jsonFile << "   \"globStat\": [\n";
   
@@ -444,10 +464,12 @@ void GenFSRJson::writeGlobalStat(LHCb::GenFSR* genFSR)
     key = icounter->first;    
     if(key > 5) continue;
 
-    if(key == 2) countEvtGen = icounter->second.second;
-    if(key == 3) countIntGen = icounter->second.second;
-    if(key == 4) countEvtAcc = icounter->second.second;
-    if(key == 5) countIntAcc = icounter->second.second;
+    name =  LHCb::GenCountersFSR::CounterKeyToString(key);
+
+    if(name == "EvtGenerated") countEvtGen = icounter->second.second;
+    if(name == "IntGenerated") countIntGen = icounter->second.second;
+    if(name == "EvtAccepted") countEvtAcc = icounter->second.second;
+    if(name == "IntAccepted") countIntAcc = icounter->second.second;
   }
   
   m_jsonFile << "      {\"descr\": \"Number of accepted events/generated events\",\n";
@@ -475,7 +497,7 @@ const std::string GenFSRJson::getCurrentTime()
   struct tm  tstruct;
   char time[80];
   tstruct = *localtime(&now);  
-  strftime(time, sizeof(time), "%Y-%m-%d.%X", &tstruct);
+  strftime(time, sizeof(time), "%c", &tstruct);
 
   return time; 
 }
