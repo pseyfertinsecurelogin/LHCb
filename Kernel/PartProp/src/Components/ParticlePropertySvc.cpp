@@ -350,6 +350,8 @@ namespace LHCb
     PidSet  m_replaced_pids  ;
     NameSet m_no_anti        ;
     // ========================================================================
+    Vector  m_modified       ;
+    // ========================================================================
   };
   // ==========================================================================
 } // end of namespace LHCb
@@ -415,10 +417,11 @@ StatusCode LHCb::ParticlePropertySvc::rebuild ()
     if ( sc.isFailure() ) { return sc ; }                            // RETURN
   }
   // parse the options/lines
+  m_modified.clear() ;
   for ( auto iline = m_particles.begin() ; m_particles.end() != iline ; ++iline )
   {
     sc = parseLine ( *iline ) ;
-    if ( sc.isFailure() ) { return sc ; }                            // RETURN
+    if ( sc.isFailure() ) { return sc ; } // RETURN
   }
   // sort the vector
   std::stable_sort ( m_vector.begin() , m_vector.end() ,
@@ -428,13 +431,22 @@ StatusCode LHCb::ParticlePropertySvc::rebuild ()
   if ( sc.isFailure() ) { return sc ; }                             // RETURN
   /// some debug printout
   MsgStream log ( msgSvc() , name() ) ;
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) ) log << MSG::DEBUG
-      << " All:   "   << m_vector   .size ()
-      << " By Name: " << m_nameMap  .size ()
-      << " By PID: "  << m_pidMap   .size ()
-      << " Total: "   << m_set      .size ()
-      << endmsg ;
-  //
+  if( UNLIKELY( log.level() <= MSG::DEBUG ) ) { 
+    log << MSG::DEBUG
+        << " All:   "   << m_vector   .size ()
+        << " By Name: " << m_nameMap  .size ()
+        << " By PID: "  << m_pidMap   .size ()
+        << " Total: "   << m_set      .size ()
+        << endmsg ; }
+  // =========================================================================
+  if ( !m_modified.empty() )
+  {
+    log << MSG::ALWAYS << " New/updated particles (from \"Particles\" property)" << std::endl ;
+    LHCb::ParticleProperties::printAsTable ( m_modified , log , this ) ;
+    log << endmsg ;
+    m_modified.clear() ;
+  }
+  // ==========================================================================
   if ( !m_by_charge.empty()  )
   {
     info() << " Charge   has beed redefined for "
@@ -499,8 +511,7 @@ void LHCb::ParticlePropertySvc::updateHandler ( Property& p  )
          << p << endmsg ;
   // rebuild the internal data
   StatusCode sc = rebuild () ;
-  if ( sc.isFailure() )
-  { throw GaudiException
+  if ( sc.isFailure() ) { throw GaudiException
       ( "Can't rebuild Particle Properties Data" ,
         "*ParticlePropertySvc*" , sc ) ; }
   // clear CC-map
@@ -602,6 +613,11 @@ StatusCode LHCb::ParticlePropertySvc::parseLine ( const std::string& line )
        >> p_charge >> p_mass   >> p_ltime
        >> p_evtgen >> p_pythia >> p_maxwid )
   {
+    /// Negative lifetime means the width in GeV-units 
+    if ( 0 > p_ltime ) 
+    { p_ltime = Gaudi::Units::hbar_Planck 
+        / std::abs ( p_ltime * Gaudi::Units::GeV ) / Gaudi::Units::s ; }
+    
     StatusCode sc = addParticle
       ( p_name                        ,
         LHCb::ParticleID ( p_pdg )    ,
@@ -674,6 +690,8 @@ StatusCode LHCb::ParticlePropertySvc::addParticle
   if ( m_vector.end() == std::find ( m_vector.begin() , m_vector.end() , newp ) )
   { m_vector.push_back ( newp ) ; }
   //
+  m_modified.push_back ( newp ) ;
+  //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
@@ -709,25 +727,29 @@ StatusCode LHCb::ParticlePropertySvc::setAntiParticles ()
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
+namespace 
+{
+  inline bool different ( const double a         , 
+                          const double b         , 
+                          const double p = 1.e-8 )
+  { return std::abs ( a - b ) > ( std::abs ( a ) + std::abs ( b ) ) * std::abs ( p ) ; } 
+  inline bool different ( const std::string& a   , 
+                          const std::string& b   ) { return a != b ;}
+}
+// ============================================================================
 bool LHCb::ParticlePropertySvc::diff
 ( const LHCb::ParticleProperty& n ,
   const LHCb::ParticleProperty& o )
 {
   bool d = false ;
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
-#endif
-  if ( n.charge   () != o.charge   () ) { m_by_charge.insert ( n.name () ) ; d = true ; }
-  if ( n.mass     () != o.mass     () ) { m_by_mass.insert   ( n.name () ) ; d = true ; }
-  if ( n.lifetime () != o.lifetime () ) { m_by_tlife.insert  ( n.name () ) ; d = true ; }
-  if ( n.maxWidth () != o.maxWidth () ) { m_by_width.insert  ( n.name () ) ; d = true ; }
-  if ( n.evtGen   () != o.evtGen   () ) { m_by_evtgen.insert ( n.name () ) ; d = true ; }
-  if ( n.pythia   () != o.pythia   () ) { m_by_pythia.insert ( n.name () ) ; d = true ; }
   //
-#ifdef __INTEL_COMPILER         // Re-enable ICC remark
-  #pragma warning(pop)
-#endif
+  if ( different ( n.charge   () , o.charge   () ) ) { m_by_charge . insert ( n.name () ) ; d = true ; }
+  if ( different ( n.mass     () , o.mass     () ) ) { m_by_mass   . insert ( n.name () ) ; d = true ; }
+  if ( different ( n.lifetime () , o.lifetime () ) ) { m_by_tlife  . insert ( n.name () ) ; d = true ; }
+  if ( different ( n.maxWidth () , o.maxWidth () ) ) { m_by_width  . insert ( n.name () ) ; d = true ; }
+  if ( different ( n.evtGen   () , o.evtGen   () ) ) { m_by_evtgen . insert ( n.name () ) ; d = true ; }
+  if ( different ( n.pythia   () , o.pythia   () ) ) { m_by_pythia . insert ( n.name () ) ; d = true ; }
+  //
   if ( d )
   {
     MsgStream log ( msgSvc () , name () ) ;

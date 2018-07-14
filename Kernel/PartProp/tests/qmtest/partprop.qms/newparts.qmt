@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"> 
+    <text>../../tests/scripts/newparts.py</text>
+  </argument>
+<argument name="validator"><text>
+block = """
+ApplicationMgr       INFO Application Manager Initialized successfully
+LHCb::ParticleP...   INFO Property triggers the update of internal Particle Property Data :  'Particles':[ 'chi_c1(1P) 0 20443 0.0 3.51066         7.835857e-22 chi_c1 20443 0 ' ]
+LHCb::ParticleP...SUCCESS  New/updated particles (from "Particles" property)
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ | #    |        Name       |     PdgID    |   Q  |        Mass       |    (c*)Tau/Gamma  |  MaxWidth  |        EvtGen        |  PythiaID  |     Antiparticle     |
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ | 582  | chi_c1(1P)        |        20443 |   0  |       3.51066 GeV |     840.00027 keV |      0     |        chi_c1        |    20443   |        self-cc       |
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+LHCb::ParticleP...   INFO Property triggers the update of internal Particle Property Data :  'Particles':[ 'chi_c1(1P) 0 20443 0.0 3.51066   -0.000840000273702 chi_c1 20443 0 ' ]
+LHCb::ParticleP...SUCCESS  New/updated particles (from "Particles" property)
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ | #    |        Name       |     PdgID    |   Q  |        Mass       |    (c*)Tau/Gamma  |  MaxWidth  |        EvtGen        |  PythiaID  |     Antiparticle     |
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ | 582  | chi_c1(1P)        |        20443 |   0  |       3.51066 GeV |     840.00027 keV |      0     |        chi_c1        |    20443   |        self-cc       |
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+"""
+findReferenceBlock(block)  
+</text></argument>
+</extension>
