@@ -44,6 +44,7 @@ import LoKiCore.decorators as _LoKiCore
 cpp      = _LoKiCore.cpp
 std      = _LoKiCore.std
 LoKi     = _LoKiCore.LoKi
+LHCb     = _LoKiCore.LHCb
 HepMC    = cpp.HepMC
 Gaudi    = cpp.Gaudi
 
