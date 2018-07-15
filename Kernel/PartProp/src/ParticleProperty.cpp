@@ -130,32 +130,34 @@ std::ostream& LHCb::ParticleProperty::fillStream ( std::ostream& s ) const
   #pragma warning(pop)
 #endif
   // mass
-  if ( mass () < 1 * Gaudi::Units::GeV )
-  { s << BF (", mass:%|8.5g| MeV") % ( mass () / Gaudi::Units::MeV  ) ; }
+  if (      mass () < 1 * Gaudi::Units::MeV )
+  { s << BF (", mass:%|9.6g| keV") % ( mass () / Gaudi::Units::keV  ) ; }
+  else if ( mass () < 1 * Gaudi::Units::GeV )
+  { s << BF (", mass:%|9.6g| MeV") % ( mass () / Gaudi::Units::MeV  ) ; }
   else
-  { s << BF (", mass:%|8.5g| GeV") % ( mass () / Gaudi::Units::GeV  ) ; }
+  { s << BF (", mass:%|9.6g| GeV") % ( mass () / Gaudi::Units::GeV  ) ; }
   // lifetime
   if      (   1 * Gaudi::Units::km         < ctau  () )
   { s <<     ", lifetime: infinity  "; }
   else if (   0 == lifeTime  () )                       {} // ATTENTION!!
-  else if (   1 * Gaudi::Units::meter      < ctau  () )
-  { s << BF (",  ctau:%|11.5g| m")   % ( ctau () / Gaudi::Units::meter      ) ; }
+  else if (   1 * Gaudi::Units::meter       < ctau  () )
+  { s << BF (",  ctau:%|12.6g| m")    % ( ctau () / Gaudi::Units::meter      ) ; }
   else if (   1 * Gaudi::Units::cm          < ctau  () )
-  { s << BF (",  ctau:%|10.5g| cm")  % ( ctau () / Gaudi::Units::cm         ) ; }
+  { s << BF (",  ctau:%|11.6g| cm")   % ( ctau () / Gaudi::Units::cm         ) ; }
   else if ( 0.5 * Gaudi::Units::mm          < ctau  () )
-  { s << BF (",  ctau:%|10.5g| mm")  % ( ctau () / Gaudi::Units::mm         ) ; }
+  { s << BF (",  ctau:%|11.6g| mm")   % ( ctau () / Gaudi::Units::mm         ) ; }
   else if ( 0.1 * Gaudi::Units::micrometer < ctau  () )
-  { s << BF (",  ctau:%|10.5g| um")  % ( ctau () / Gaudi::Units::micrometer ) ; }
+  { s << BF (",  ctau:%|11.6g| um")   % ( ctau () / Gaudi::Units::micrometer ) ; }
   else if ( 1   * Gaudi::Units::GeV        <= width () )
-  { s << BF (", width:%|9.5g| GeV")  % ( width () / Gaudi::Units::GeV        ) ; }
+  { s << BF (", width:%|10.6g| GeV")  % ( width () / Gaudi::Units::GeV        ) ; }
   else if ( 1   * Gaudi::Units::MeV        <= width () )
-  { s << BF (", width:%|9.5g| MeV")  % ( width () / Gaudi::Units::MeV        ) ; }
+  { s << BF (", width:%|10.6g| MeV")  % ( width () / Gaudi::Units::MeV        ) ; }
   else if ( 1   * Gaudi::Units::keV        <= width () )
-  { s << BF (", width:%|9.5g| keV")  % ( width () / Gaudi::Units::keV        ) ; }
+  { s << BF (", width:%|10.6g| keV")  % ( width () / Gaudi::Units::keV        ) ; }
   else if ( 1   * Gaudi::Units::eV         <= width () )
-  { s << BF (", width:%|9.5g| eV" )  % ( width () / Gaudi::Units::eV         ) ; }
+  { s << BF (", width:%|10.6g| eV" )  % ( width () / Gaudi::Units::eV         ) ; }
   else
-  { s << BF (", ltime:%|10.4g| ns")  % ( lifetime () / Gaudi::Units::ns      ) ; }
+  { s << BF (", ltime:%|12.6g| ns" )  % ( lifetime () / Gaudi::Units::ns      ) ; }
   // Evt Gen name
   if ( evtGen    () != name   () )
   { s << BF ( ", EvtGen: %|-10s|" ) % evtGen () ; }
@@ -210,21 +212,21 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
   fmt += "| %|-18.18s|"   ;  // the name
   fmt += "| %|12d| "      ;  // PDGID
   fmt += "| %|=4s| "      ;  // charge
-  fmt += "| %|9.6g|"      ;  // mass
+  fmt += "| %|13.8g|"     ;  // mass
   fmt +=   " %|-3s| "     ;  // unit
-  fmt += "| %|11.5g|"     ;  // lifetime/gamma/ctau
+  fmt += "| %|13.8g|"     ;  // lifetime/gamma/ctau
   fmt +=   " %|-3s| "     ;  // unit
   fmt += "| %|=10.4g| "   ;  // maxwidth
   fmt += "| %|=20.20s|"   ;  // evtgen name
-  fmt += " | %|=10d| |"    ;  // pythia ID
+  fmt += " | %|=10d| |"   ;  // pythia ID
   fmt += " %|=20.20d| |"  ;  // antiparticle
   //
   hdr += "| %|=18.18s|"   ;  // the name
   hdr += "| %|=12.12s| "  ;  // PDGID
   hdr += "| %|=4.4s| "    ;  // charge
-  hdr += "| %|=14.14s|"   ;  // mass
+  hdr += "| %|=18.18s|"   ;  // mass
   // hdr +=   "%|=5.5s|"     ;  // unit
-  hdr += "| %|=16.16s|"   ;  // lifetime/gamma/ctau
+  hdr += "| %|=18.18s|"   ;  // lifetime/gamma/ctau
   //hdr +=   "%|=5.5s|"     ;  // unit
   hdr += "| %|=10.10g| "  ;  // maxwidth
   hdr += "| %|=20.20s|"   ;  // evtgen name
@@ -290,7 +292,9 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
     //
     // mass
     if (       pp -> mass () < 1 * Gaudi::Units::keV )
-    { line % ( pp -> mass () / Gaudi::Units::eV )  % "eV"  ; }
+    { line % ( pp -> mass () / Gaudi::Units::eV  )  % "eV" ; }
+    else if  ( pp -> mass () < 1 * Gaudi::Units::MeV )
+    { line % ( pp -> mass () / Gaudi::Units::keV ) % "keV" ; }
     else if  ( pp -> mass () < 1 * Gaudi::Units::GeV )
     { line % ( pp -> mass () / Gaudi::Units::MeV ) % "MeV" ; }
     else if  ( pp -> mass () < 1 * Gaudi::Units::TeV )
