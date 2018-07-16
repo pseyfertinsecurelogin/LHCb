@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 
+#include "Kernel/IUTReadoutTool.h"
 #include "Kernel/STChannelID.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "Kernel/STTell1ID.h"
@@ -18,7 +19,7 @@
  *  Concret Class for things related to the Readout of the UT Tell1 Boards
  */
 
-class UTReadoutTool: public GaudiTool {
+class UTReadoutTool: public extends<GaudiTool, IUTReadoutTool> {
 
 public:
 
@@ -28,69 +29,69 @@ public:
                 const IInterface* parent);
 
   /// nBoard
-  unsigned int nBoard() const;
+  unsigned int nBoard() const override;
 
   ///return vector of Tell1IDs
-  std::vector<STTell1ID> boardIDs() const;
+  std::vector<STTell1ID> boardIDs() const override;
 
   /// convert ITChannelID to DAQ ChannelID
-  STDAQ::chanPair offlineChanToDAQ(const LHCb::STChannelID aOfflineChan, double isf) const;
+  STDAQ::chanPair offlineChanToDAQ(const LHCb::STChannelID aOfflineChan, double isf) const override;
 
   /// convert offline interStripFraction to DAQ interStripFraction
   double interStripToDAQ(const LHCb::STChannelID aOfflineChan,
                                  const STTell1ID aBoardID,
-                                 const double isf) const;
+                                 const double isf) const override;
 
   bool ADCOfflineToDAQ(const LHCb::STChannelID aOfflineChan,
                        const STTell1ID aBoardID,
-                       LHCb::STCluster::ADCVector& adcs) const;
+                       LHCb::STCluster::ADCVector& adcs) const override;
 
 
   /// find the Tell1 board given a board ID
-  STTell1Board* findByBoardID(const STTell1ID aBoardID) const;
+  STTell1Board* findByBoardID(const STTell1ID aBoardID) const override;
 
   /// find Tell1 board by storage order
-  STTell1Board* findByOrder(const unsigned int aValue) const;
+  STTell1Board* findByOrder(const unsigned int aValue) const override;
 
   /// Add the mapping of source ID to TELL1 board number
-  unsigned int SourceIDToTELLNumber(unsigned int sourceID) const;
+  unsigned int SourceIDToTELLNumber(unsigned int sourceID) const override;
 
   /** Add the mapping of source ID to board number for IT / TT / UT */
-  const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const;
+  const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
 
 
 
   
   
   /// list of the readout sector ids on the board
-  std::vector<LHCb::STChannelID> sectorIDs(const STTell1ID board) const;
+  std::vector<LHCb::STChannelID> sectorIDs(const STTell1ID board) const override;
 
   /// list of the readout sectors
-  std::vector<DeSTSector*> sectors(const STTell1ID board) const;
+  std::vector<DeSTSector*> sectors(const STTell1ID board) const override;
 
   /// service box
-  unsigned int nServiceBox() const;
+  unsigned int nServiceBox() const override;
 
   /// service box number
-  std::string serviceBox(const LHCb::STChannelID& aChan) const;
+  std::string serviceBox(const LHCb::STChannelID& aChan) const override;
 
   /// list of the readout sectors ids in a service box
-  std::vector<LHCb::STChannelID> sectorIDsOnServiceBox(const std::string& serviceBox) const;
+  std::vector<LHCb::STChannelID> sectorIDsOnServiceBox(const std::string& serviceBox) const override;
 
   /// list of the readout sectors in a service box
-  std::vector<DeSTSector*> sectorsOnServiceBox(const std::string& serviceBox) const;
+  std::vector<DeSTSector*> sectorsOnServiceBox(const std::string& serviceBox) const override;
 
   /// list of service boxes
-  const std::vector<std::string>& serviceBoxes() const;
+  const std::vector<std::string>& serviceBoxes() const override;
 
   /// Add the mapping of TELL1 board number to source ID
-  unsigned int TELLNumberToSourceID(unsigned int TELL) const;
+  unsigned int TELLNumberToSourceID(unsigned int TELL) const override;
 
   /// print mapping
-  void printMapping() const;
+  void printMapping() const override;
 
   /// write out the mapping as xml
-  StatusCode writeMappingToXML() const;
+  StatusCode writeMappingToXML() const override;
 
   StatusCode validate() const;
 

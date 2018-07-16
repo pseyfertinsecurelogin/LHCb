@@ -25,7 +25,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 gaudi_add_library(UTDAQLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS UTDAQ
-                  INCLUDE_DIRS Boost Event/RawEvent DAQ/DAQUtils Event/DigiEvent Si/SiDAQ
+                  INCLUDE_DIRS Boost Event/RawEvent DAQ/DAQUtils Event/DigiEvent Si/SiDAQ UT/UTKernel
                   LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
 
 gaudi_add_module(UTDAQ

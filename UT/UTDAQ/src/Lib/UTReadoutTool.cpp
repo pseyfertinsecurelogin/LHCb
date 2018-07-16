@@ -12,7 +12,7 @@ using namespace LHCb;
 UTReadoutTool::UTReadoutTool(const std::string& type,
                             const std::string& name,
                             const IInterface* parent)
-: GaudiTool( type, name, parent)
+: base_class( type, name, parent)
 {
   // constructor
   declareProperty( "conditionLocation",
