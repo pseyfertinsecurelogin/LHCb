@@ -34,13 +34,13 @@
 //=============================================================================
 // Destructor
 //=============================================================================
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 ST::CommonBase<PBASE>::~CommonBase() {}
 
 //=============================================================================
 // Initialisation
 //=============================================================================
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 StatusCode ST::CommonBase<PBASE>::initialize()
 {
   // Execute the base class initialize
@@ -66,7 +66,7 @@ StatusCode ST::CommonBase<PBASE>::initialize()
 //=============================================================================
 // Finalisation
 //=============================================================================
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 StatusCode ST::CommonBase<PBASE>::finalize()
 {
   // Printout from finalization
@@ -78,7 +78,7 @@ StatusCode ST::CommonBase<PBASE>::finalize()
 }
 //=============================================================================
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline void ST::CommonBase<PBASE>::commonInit(){
 
   m_tracker = 0; 
@@ -88,23 +88,21 @@ inline void ST::CommonBase<PBASE>::commonInit(){
   declareSTConfigProperty("ReadoutTool",m_readoutToolName, m_detType+"ReadoutTool" );
 }
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline void ST::CommonBase<PBASE>::setDetType(const std::string& aString){
  m_detType = aString;
 }
 
 #include "STDet/DeSTDetector.h"
-#include "Kernel/ISTReadoutTool.h"
 
-
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline DeSTDetector* ST::CommonBase<PBASE>::tracker() const {
   return m_tracker != 0 ? m_tracker : getTracker();
 }
 
 #include "STDet/DeSTSector.h"
 
-template <class PBASE> 
+template <class PBASE, class IReadoutTool> 
 inline DeSTSector* ST::CommonBase<PBASE>::findSector(const LHCb::STChannelID& 
                                                      aChannel) const{
 
@@ -115,29 +113,29 @@ inline DeSTSector* ST::CommonBase<PBASE>::findSector(const LHCb::STChannelID&
   return sector;
 }
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline DeSTDetector* ST::CommonBase<PBASE>::getTracker() const {
   m_tracker = this->template getDet<DeSTDetector>(DeSTDetLocation::location(m_detType));
   return m_tracker;
 }
 
-template <class PBASE>
-inline ISTReadoutTool* ST::CommonBase<PBASE>::readoutTool() const {
+template <class PBASE, class IReadoutTool>
+inline IReadoutTool* ST::CommonBase<PBASE>::readoutTool() const {
   return m_readoutTool != 0 ? m_readoutTool : getReadoutTool();
 }
 
-template <class PBASE>
-inline ISTReadoutTool* ST::CommonBase<PBASE>::getReadoutTool() const {
-  m_readoutTool = this -> template tool<ISTReadoutTool>(m_readoutToolName,m_readoutToolName);
+template <class PBASE, class IReadoutTool>
+inline IReadoutTool* ST::CommonBase<PBASE>::getReadoutTool() const {
+  m_readoutTool = this -> template tool<IReadoutTool>(m_readoutToolName,m_readoutToolName);
   return m_readoutTool;
 }
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 void ST::CommonBase<PBASE>::setForcedInit() {
   m_forcedInit = true;
 }
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline const std::string& ST::CommonBase<PBASE>::detType() const {
   return m_detType;
 }
@@ -147,60 +145,60 @@ inline const std::string& ST::CommonBase<PBASE>::detType() const {
 #include "Kernel/UTNames.h"
 #include "Kernel/STChannelID.h"
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::station(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().StationToString(chan) :
            m_detType == "IT" ? LHCb::ITNames().StationToString(chan) :
                                LHCb::UTNames().StationToString(chan) );
 } 
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::uniqueDetRegion(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().UniqueRegionToString(chan) :
            m_detType == "IT" ? LHCb::ITNames().UniqueBoxToString(chan) :
                                LHCb::UTNames().UniqueRegionToString(chan) );
 } 
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::uniqueLayer(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().UniqueLayerToString(chan) :
            m_detType == "IT" ? LHCb::ITNames().UniqueLayerToString(chan) :
                                LHCb::UTNames().UniqueLayerToString(chan) );
 } 
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::uniqueSector(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().UniqueSectorToString(chan) :
            m_detType == "IT" ? LHCb::ITNames().UniqueSectorToString(chan) :
                                LHCb::UTNames().UniqueSectorToString(chan) );
 } 
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::uniqueBeetle(const LHCb::STChannelID& chan) const{
   const DeSTSector* theSector = findSector(chan);
   return theSector->nickname() + "Beetle" + ST::toString(theSector->beetle(chan)); ;
 } 
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::uniquePort(const LHCb::STChannelID& chan) const{
   const unsigned int port = ((chan.strip()-1u)/LHCbConstants::nStripsInPort) + 1u;
   return uniqueBeetle(chan) + "Port" + ST::toString(port); ;
 } 
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE>::detectorType(const LHCb::STChannelID& chan) const{
   const DeSTSector* sector = tracker()->findSector(chan);
   return sector ? sector->type()  : "Unknown" ;
 } 
 
 #include "Kernel/STDetSwitch.h"
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline Property* ST::CommonBase<PBASE>::addToFlipList(Property* aProperty) const{
   m_toBeFlipped.push_back(aProperty);
   return aProperty;
 }
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline void ST::CommonBase<PBASE>::flip() const {
  // turn IT into TT or TT into IT
  for (Property* p : m_toBeFlipped ) {
@@ -210,18 +208,18 @@ inline void ST::CommonBase<PBASE>::flip() const {
  }
 }
 
-template <class PBASE> 
+template <class PBASE, class IReadoutTool> 
 void ST::CommonBase<PBASE>::flip(std::string& aString) const{
   STDetSwitch::flip(m_detType,aString);
 }
 
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline const std::vector<Property*>& ST::CommonBase<PBASE>::flipList() const{
  return m_toBeFlipped;
 }
 
 #include "Event/ProcStatus.h"
-template <class PBASE>
+template <class PBASE, class IReadoutTool>
 inline StatusCode ST::CommonBase<PBASE>::procFailure(const std::string& reason, const bool aborted) const{
 
    LHCb::ProcStatus* procStat =

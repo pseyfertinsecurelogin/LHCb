@@ -17,7 +17,6 @@
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/StatusCode.h"
 
-struct ISTReadoutTool;
 class DeSTDetector;
 class DeSTSector;
 
@@ -38,7 +37,7 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  template <class PBASE>
+  template <class PBASE, class IReadoutTool = ISTReadoutTool>
   class CommonBase : public PBASE
   {
 
@@ -76,7 +75,7 @@ namespace ST
    DeSTDetector* tracker() const;
 
    /** get the readout tool */
-   ISTReadoutTool* readoutTool() const;
+   IReadoutTool* readoutTool() const;
 
    /** force init of base class tool */
    void setForcedInit();
@@ -141,10 +140,10 @@ namespace ST
 
    DeSTDetector* getTracker() const;
 
-   ISTReadoutTool* getReadoutTool() const;
+   IReadoutTool* getReadoutTool() const;
 
    mutable DeSTDetector* m_tracker;
-   mutable ISTReadoutTool* m_readoutTool;
+   mutable IReadoutTool* m_readoutTool;
    std::string m_readoutToolName;
    std::string m_detType;
    bool m_forcedInit;
