@@ -7,15 +7,17 @@
 #include <map>
 
 // gaudi
-#include "Kernel/STAlgBase.h"
+#include "Kernel/STCommonBase.h"
 
 // event
+#include "Event/RawEvent.h"
 #include "Event/STCluster.h"
 #include "STClustersOnBoard.h"
 
 #include "Kernel/STDAQDefinitions.h"
 #include "Event/RawBank.h"
 #include "Event/BankWriter.h"
+#include "Kernel/ISTReadoutTool.h"
 
 /** @class STClustersToRawBankAlg STClustersToRawBankAlg.h
  *
@@ -31,15 +33,13 @@ class ISTDAQDataSvc;
 #include "STBoardToBankMap.h"
 namespace LHCb {class RawBank;}
 
-struct ISTReadoutTool;
-
-
-class STClustersToRawBankAlg : public ST::AlgBase {
+template <class IReadoutTool = ISTReadoutTool>
+class STClustersToRawBankAlgT : public ST::CommonBase<GaudiAlgorithm, IReadoutTool> {
 
 public:
 
   /// Standard constructor
-  STClustersToRawBankAlg(const std::string& name, ISvcLocator* pSvcLocator);
+  STClustersToRawBankAlgT(const std::string& name, ISvcLocator* pSvcLocator);
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute() override;       ///< Algorithm execution
@@ -65,9 +65,11 @@ private:
                  LHCb::BankWriter& bWriter,
                  const STTell1ID aBoardID);
 
+  Gaudi::Property<std::string> m_rawLocation{this, "rawLocation", LHCb::RawEventLocation::Default};
+  Gaudi::Property<int> m_maxClustersPerPPx{this, "maxClusters", 512};
+
   std::string m_clusterLocation;
   std::string m_summaryLocation;
-  std::string m_rawLocation;
 
   LHCb::RawBank::BankType m_bankType;
 
@@ -77,9 +79,12 @@ private:
   std::vector<STClustersOnBoard> m_clusVectors;
 
   unsigned int m_overflow = 0;
-  int m_maxClustersPerPPx;
   unsigned int m_maxClusterSize = 4;
   unsigned int m_pcn = 128;
 
 };
+
+// Declaration of the backward compatible STClustersToRawBankAlg class (not templated for the original ST case)
+using STClustersToRawBankAlg = STClustersToRawBankAlgT<>;
+
 #endif // STClustersToRawBankAlg
