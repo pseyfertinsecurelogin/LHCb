@@ -7,7 +7,7 @@
 // STD & STL
 // ============================================================================
 #include <utility>
-#include "boost/variant.hpp"
+#include <variant>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -455,7 +455,7 @@ namespace LoKi
     private:
       // ======================================================================
       using event_range = std::pair<event_type,event_type>;
-      boost::variant< event_range, event_list > m_evts;
+      std::variant< event_range, event_list > m_evts;
       // ======================================================================
     };
     // ========================================================================
@@ -493,7 +493,7 @@ namespace LoKi
     private:
       // ======================================================================
       using run_range = std::pair<run_type,run_type>;
-      boost::variant< run_range, run_list > m_runs;
+      std::variant< run_range, run_list > m_runs;
       // ======================================================================
     } ;
     // ========================================================================
@@ -538,7 +538,7 @@ namespace LoKi
     private:
       // ======================================================================
       using runevt_range = std::pair<runevt_type,runevt_type>;
-      boost::variant< runevt_range, runevt_list > m_runevts;
+      std::variant< runevt_range, runevt_list > m_runevts;
       // ======================================================================
     } ;
     // ========================================================================
@@ -570,7 +570,7 @@ namespace LoKi
       // ======================================================================
       using bx_range = std::pair<unsigned int, unsigned int>;
       using bx_vector = std::vector<unsigned int>;
-      boost::variant<bx_range,bx_vector> m_bxs;
+      std::variant<bx_range,bx_vector> m_bxs;
       // ======================================================================
     } ;
     // ========================================================================
