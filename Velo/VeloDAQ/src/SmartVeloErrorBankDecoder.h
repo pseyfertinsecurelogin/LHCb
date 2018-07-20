@@ -30,7 +30,7 @@ class SmartVeloErrorBankDecoder : public GaudiAlgorithm {
 public:
 
   /// iterator to the error bank body
-  typedef unsigned int* ErrorBankIT;
+  typedef const unsigned int* ErrorBankIT;
   typedef std::pair<ErrorBankIT, ErrorBankIT> ITPair;
   typedef std::map<unsigned int, ITPair> BANKS;
   typedef std::map<unsigned int, ITPair> SECTORS;

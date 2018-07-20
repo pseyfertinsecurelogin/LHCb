@@ -54,7 +54,7 @@ private:
    *
    * @see VeloLiteCluster
    */
-  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters(LHCb::span<const LHCb::RawBank*> banks,
 				  LHCb::VeloDecodeStatus* decStatus) const;
 
   /** Decode raw buffer to clusters
@@ -63,7 +63,7 @@ private:
    *
    * @see VeloCluster
    */
-  LHCb::VeloClusters decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,
+  LHCb::VeloClusters decodeToVeloClusters(LHCb::span<const LHCb::RawBank*> banks,
 				  LHCb::VeloDecodeStatus *decStatus);
 
   /** Write VeloClusters to stdout
@@ -94,7 +94,7 @@ private:
    */
   StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
                                  unsigned int nSensor,
-                                 const std::vector<LHCb::RawBank*>& banks,
+                                 LHCb::span<const LHCb::RawBank*> banks,
 				 LHCb::VeloDecodeStatus *decStatus);
 
   /// Add a fake lite cluster to the full cluster container

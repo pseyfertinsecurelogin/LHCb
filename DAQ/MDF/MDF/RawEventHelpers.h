@@ -1,4 +1,3 @@
-// $Id: RawEventHelpers.h,v 1.23 2008-09-25 13:07:46 frankb Exp $
 //  ====================================================================
 //  MDFIO.h
 //  --------------------------------------------------------------------
@@ -12,6 +11,7 @@
 // Framework include files
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/STLExtensions.h"
 
 // C++ includes
 #include <vector>
@@ -44,9 +44,9 @@ namespace LHCb  {
   /// Determine length of the sequential buffer from RawEvent object
   size_t rawEventLength(const RawEvent* evt);
   /// Determine length of the sequential buffer from vector of raw banks
-  size_t rawEventLength(const std::vector<RawBank*>& banks);
+  size_t rawEventLength(LHCb::span<const RawBank*> banks);
    /// Determine length of the sequential buffer from RawEvent object
-  size_t rawEventLengthTAE(const std::vector<RawBank*>& banks);
+  size_t rawEventLengthTAE(LHCb::span<const RawBank*> banks);
   /// Determine length of the sequential buffer from RawEvent object
   size_t rawEventLengthTAE(const RawEvent* evt);
 
@@ -71,7 +71,7 @@ namespace LHCb  {
   /// Copy RawEvent data from the object to sequential buffer
   StatusCode encodeRawBanks(const RawEvent* evt,char* const data, size_t len, bool skip_hdr_bank);
   /// Copy RawEvent data from bank vectors to sequential buffer
-  StatusCode encodeRawBanks(const std::vector<RawBank*>& banks, char* const data, 
+  StatusCode encodeRawBanks(LHCb::span<const RawBank*> banks, char* const data,
                             size_t size, bool skip_hdr_bank, size_t* length);
   /// Conditional decoding of raw buffer from MDF to raw event object
   StatusCode decodeRawBanks(const char* start, const char* end, RawEvent* raw, bool copy_banks);

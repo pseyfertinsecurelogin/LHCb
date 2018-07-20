@@ -131,29 +131,27 @@ StatusCode RawEventSelectiveCopy::execute() {
 
   // get input RawEvent
   RawEvent* rawEvent = getIfExists<RawEvent>(m_inputLocation.value());
-  if( rawEvent == NULL ){
+  if( !rawEvent ){
     return Error(" No RawEvent at " + m_inputLocation.value(),StatusCode::SUCCESS, 20 );
   }
 
 
   // create empty output RawEvent
-  RawEvent* rawEventCopy = new RawEvent();
+  auto rawEventCopy = std::make_unique<RawEvent>();
 
   // copy selected banks
-  for( std::vector<RawBank::BankType>::const_iterator ib = m_bankTypes.begin();
-       ib!=m_bankTypes.end();++ib){
+  for( auto ib = m_bankTypes.begin(); ib!=m_bankTypes.end();++ib){
 
-    const std::vector<RawBank*> banks= rawEvent->banks( *ib );
-    if( banks.size() > 0 ) {
-      for( std::vector<RawBank*>::const_iterator b=banks.begin();b!=banks.end();++b){
-        const RawBank & bank = **b;
-        rawEventCopy->adoptBank( rawEventCopy->createBank( bank.sourceID(), *ib, bank.version(), bank.size(),bank.data() ),
+    const auto& banks= rawEvent->banks( *ib );
+    if( !banks.empty() ) {
+      for( const RawBank* b : banks ) {
+        rawEventCopy->adoptBank( rawEventCopy->createBank( b->sourceID(), *ib, b->version(), b->size(),b->data() ),
                                  true );
         if( msgLevel(MSG::VERBOSE) ){
           verbose() << " Copied RawBank type= " << RawBank::typeName( *ib )
-                    << " version= " << bank.version()
-                    << " sourceID= " << bank.sourceID()
-                    << " size (bytes) = " << bank.size()
+                    << " version= " << b->version()
+                    << " sourceID= " << b->sourceID()
+                    << " size (bytes) = " << b->size()
                     << endmsg;
         }
       }
@@ -167,7 +165,7 @@ StatusCode RawEventSelectiveCopy::execute() {
 
   // put output RawEvent into its location
   if( msgLevel(MSG::DEBUG) ){ debug() << " Saving Copied RawEvent into new locations " << endmsg;  }
-  put( rawEventCopy, m_outputLocation.value() );
+  put( rawEventCopy.release(), m_outputLocation.value() );
 
   return StatusCode::SUCCESS;
 }

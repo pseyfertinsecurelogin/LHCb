@@ -73,40 +73,43 @@ namespace LHCb
     struct Bank final {
       int           m_len  = 0;      // Bank length
       char          m_owns = 1;     //! transient data member: ownership flag
-      unsigned int* m_buff = nullptr;     //[m_len]
+      const unsigned int* m_buff = nullptr;     //[m_len]
       /// Default constructor
       Bank() = default;
       /// Initializing constructor
-      Bank(int len, char owns, unsigned int* b) : m_len(len), m_owns(owns), m_buff(b) {}
+      Bank(int len, char owns, const unsigned int* b) : m_len(len), m_owns(owns), m_buff(b) {}
       /// Copy constructor
       [[deprecated("copy ctor should not exist...")]]
       Bank(const Bank& ) = default;
       Bank(Bank&& rhs) {
-          m_len=rhs.m_len;
-          m_owns = std::exchange( rhs.m_owns, false );
-          m_buff=rhs.m_buff;
+          m_len=   std::exchange( rhs.m_len, 0 );
+          m_owns = std::exchange( rhs.m_owns, 0 );
+          m_buff = std::exchange(rhs.m_buff, nullptr);
       }
-      /// Assignment operator
-      [[deprecated("copy assignement should not exist...")]]
-      Bank& operator=(const Bank&) = default;
+      /// Move Assignment operator
       Bank& operator=(Bank&& rhs) {
-          m_len=rhs.m_len;
-          m_owns=std::exchange( rhs.m_owns, false );
-          m_buff=rhs.m_buff;
+          m_len=std::exchange(rhs.m_len,0);
+          m_owns=std::exchange( rhs.m_owns, 0 );
+          m_buff=std::exchange(rhs.m_buff,nullptr);
           return *this;
       }
       /// Access to memory buffer
-      unsigned int* buffer()    {   return m_buff;          }
       const unsigned int* buffer() const { return m_buff;   }
       /// Access to ownership flag.
       bool ownsMemory()  const  {   return m_owns == 1;     }
     };
 
     /// Default Constructor
-    RawEvent();
+    RawEvent() = default;
 
     /// Default Destructor
-    virtual ~RawEvent();
+    ~RawEvent() override;
+
+    /// Move constructor
+    RawEvent(RawEvent&&) = default;
+
+    // Move assignemnt
+    RawEvent& operator=(RawEvent&&) = default;
 
     /// Retrieve class identifier (static)
     static const CLID& classID()      {  return CLID_RawEvent;        }
@@ -114,7 +117,7 @@ namespace LHCb
     const CLID& clID() const override {  return RawEvent::classID();  }
 
     /// accessor method to the vector of Raw banks for a given bank type
-    const std::vector<RawBank*> &  banks(RawBank::BankType bankType)  const {
+    LHCb::span<const RawBank*> banks(RawBank::BankType bankType)  const {
       // The optimizer should be able to deal with this...
       return m_mapped ? m_eventMap[bankType] : mapBanks(bankType);
     }
@@ -126,10 +129,10 @@ namespace LHCb
                  const std::vector<unsigned int>& data);
 
     /// For offline use only: copy data into a bank, adding bank header internally.
-    void addBank(RawBank* data);             // Pointer to data block (payload) of bank
+    void addBank(const RawBank* data);             // Pointer to data block (payload) of bank
 
     /// Take ownership of a bank, including the header
-    void adoptBank(RawBank* bank,            // Pointer to beginning of bank (i.e. bank header)
+    void adoptBank(const RawBank* bank,      // Pointer to beginning of bank (i.e. bank header)
                    bool     adopt_memory);   // Flag to adopt memory
 
     /// Remove bank identified by its pointer
@@ -140,7 +143,7 @@ namespace LHCb
       *
       *  @return Boolean value indicating success (=true) or failure(=false)
       */
-    bool removeBank(RawBank* bank);
+    bool removeBank(const RawBank* bank);
 
     /// Rawbank creator
     /** Create raw bank and fill values
@@ -172,11 +175,11 @@ namespace LHCb
      *
      * @return vector of mapped banks corresponding to bankType
      */
-    const std::vector<RawBank*> &  mapBanks(RawBank::BankType bankType) const;
+    LHCb::span<const RawBank*> mapBanks(RawBank::BankType bankType) const;
 
-    mutable std::map<RawBank::BankType,std::vector<RawBank*> > m_eventMap; //! transient Map with RawBanks (values) for each bank type
+    mutable std::map<RawBank::BankType,std::vector<const RawBank*> > m_eventMap; //! transient Map with RawBanks (values) for each bank type
     std::vector<Bank>                                          m_banks;    // Vector with persistent bank structure
-    mutable bool                                               m_mapped;   //! transient
+    mutable bool                                               m_mapped = false;   //! transient
   }; // class RawEvent
 } // namespace LHCb
 

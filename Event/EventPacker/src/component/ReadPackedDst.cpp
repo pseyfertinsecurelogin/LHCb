@@ -97,14 +97,14 @@ StatusCode ReadPackedDst::execute() {
     return Warning( "ODIN not found" );
   }
 
-  const std::vector<LHCb::RawBank*>& adds = dstEvent->banks( LHCb::RawBank::DstAddress );
-  for (std::vector<LHCb::RawBank*>::const_iterator itA = adds.begin(); adds.end() != itA; ++itA ) {
+  const auto& adds = dstEvent->banks( LHCb::RawBank::DstAddress );
+  for (auto itA = adds.begin(); adds.end() != itA; ++itA ) {
     std::string spars[3];
     unsigned long ipars[2];
     unsigned long clid;
     long styp;
     char* cptr;
-    unsigned int* iptr  = (*itA)->data();
+    const unsigned int* iptr  = (*itA)->data();
     clid = *iptr++;
     ipars[0] = *iptr++;
     ipars[1] = *iptr++;
@@ -136,10 +136,9 @@ StatusCode ReadPackedDst::execute() {
     */
   }
 
-  const std::vector<LHCb::RawBank*>& banks = dstEvent->banks( LHCb::RawBank::DstBank );
-  const std::vector<LHCb::RawBank*>& blobs = dstEvent->banks( LHCb::RawBank::DstData );
-  for (std::vector<LHCb::RawBank*>::const_iterator itB = banks.begin(); banks.end() != itB; ++itB ) {
-    LHCb::RawBank* bank = *itB;
+  const auto& banks = dstEvent->banks( LHCb::RawBank::DstBank );
+  const auto& blobs = dstEvent->banks( LHCb::RawBank::DstData );
+  for (const LHCb::RawBank* bank : banks ) {
     int version = bank->version();
     m_size      = bank->size()/4;   // in word
     m_data      = bank->data();
@@ -309,11 +308,8 @@ StatusCode ReadPackedDst::execute() {
         int sourceID = nextInt();
         if ( msgLevel(MSG::DEBUG) )
           debug() << "Read bank " << type << " source " << sourceID << " and add to " << name + m_postfix << endmsg;
-        const std::vector<LHCb::RawBank*>& myBanks = dstEvent->banks( (LHCb::RawBank::BankType)type );
-        for (std::vector<LHCb::RawBank*>::const_iterator itBnk = myBanks.begin(); myBanks.end() != itBnk; ++itBnk ) {
-          if ( (*itBnk)->sourceID() == sourceID ) {
-            rawEvent->addBank( *itBnk );
-          }
+        for (const LHCb::RawBank* bnk : dstEvent->banks( (LHCb::RawBank::BankType)type ) ) {
+          if ( bnk->sourceID() == sourceID ) rawEvent->addBank( bnk );
         }
       }
 
@@ -335,7 +331,7 @@ StatusCode ReadPackedDst::execute() {
 //=========================================================================
 template <class CLASS>
 void ReadPackedDst::getFromBlob( std::vector<CLASS>& vect,
-                                 const std::vector<LHCb::RawBank*>& blobs ) {
+                                 LHCb::span<const LHCb::RawBank*> blobs ) {
   unsigned int totSize = *m_data++;
   unsigned int nObj    = *m_data++;
   int blobNb           = *m_data++;
@@ -361,16 +357,14 @@ void ReadPackedDst::getFromBlob( std::vector<CLASS>& vect,
   int* temp = &*tempVect.begin();
 
   while ( totSize > 0 ) {
-    LHCb::RawBank* myBank = blobs[blobNb];
+    const LHCb::RawBank* myBank = blobs[blobNb];
     if ( myBank->sourceID() != blobNb ) {
-      myBank = 0;
-      for ( std::vector<LHCb::RawBank*>::const_iterator itB = blobs.begin(); blobs.end() != itB; ++itB ) {
-        if ( (*itB)->sourceID() == blobNb ) {
-          myBank = *itB;
-          break;
-        }
-      }
-      if ( 0 == myBank ) {
+      auto itB = std::find_if(blobs.begin(), blobs.end(),
+                              [blobNb](const LHCb::RawBank* bnk)
+                              { return bnk->sourceID() == blobNb; } );
+
+      myBank = ( itB != blobs.end() ? *itB : nullptr );
+      if ( !myBank ) {
         warning() << "Blob number " << blobNb << " not found." << endmsg;
         return;
       }

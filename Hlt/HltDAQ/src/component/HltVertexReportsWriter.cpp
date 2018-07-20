@@ -104,7 +104,8 @@ StatusCode HltVertexReportsWriter::execute() {
   }
 
   // delete any previously inserted vtx reports
-  for( const auto&  b : rawEvent->banks( RawBank::HltVertexReports ) ) {
+  const auto& bnks = rawEvent->banks( RawBank::HltVertexReports );
+  for( const auto&  b :  LHCb::RawBank::ConstVector{ bnks.begin(), bnks.end() }  ) {
     auto sourceID =  b->version() > 1 ? ( b->sourceID() >> kSourceID_BitShift ) : kSourceID_Hlt;
     if( m_sourceID != sourceID ) continue;
     rawEvent->removeBank(b);

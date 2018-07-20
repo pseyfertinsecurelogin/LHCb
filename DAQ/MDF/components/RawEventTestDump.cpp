@@ -68,7 +68,7 @@ namespace LHCb  {
       }
       for(int j=0; j<RawBank::LastType; ++j)  {
         RawBank::BankType i = RawBank::BankType(j);
-        const std::vector<RawBank*>& b = raw->banks(i);
+        const auto& b = raw->banks(i);
         int cnt, inc = (i == RawBank::Rich) ? 64 : 32;
         const int *p;
         if ( b.size() > 0 )  {
@@ -77,9 +77,8 @@ namespace LHCb  {
                  << " has " << b.size() << " bank(s) of type " << i
                  << " (" << RawEventPrintout::bankType(i) << ") " << endmsg;
           }
-          std::vector<RawBank*>::const_iterator itB;
           int k = 0;
-          for( itB = b.begin(); itB != b.end(); itB++, k++ ) {
+          for( auto itB = b.begin(); itB != b.end(); itB++, k++ ) {
             const RawBank* r = *itB;
             if ( dmp ) {
               info << "Bank:  [" << RawEventPrintout::bankHeader(r) << "] " << endmsg;

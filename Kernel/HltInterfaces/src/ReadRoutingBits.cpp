@@ -46,8 +46,7 @@ namespace Hlt
     }
     const unsigned int size = 3 ;
 
-    const std::vector<LHCb::RawBank*>& banks =
-      const_cast<LHCb::RawEvent*>(rawEvent)->banks(LHCb::RawBank::HltRoutingBits);
+    const auto& banks = rawEvent->banks(LHCb::RawBank::HltRoutingBits);
     if ( banks.empty() )
     {
       throw GaudiException("There is no routing bits banks. Please make sure you run the trigger",
@@ -58,15 +57,15 @@ namespace Hlt
       throw GaudiException("There are >1 routing bits banks. Please remove the original before re-running the trigger",
                            "Hlt::readRoutingBits", StatusCode::FAILURE);
     }
-    if ( LHCb::RawBank::MagicPattern != banks.front()->magic() )
+    if ( LHCb::RawBank::MagicPattern != banks[0]->magic() )
     {
       throw GaudiException("Wrong magic in HltRoutingBits","Hlt::readRoutingBits",StatusCode::FAILURE);
     }
-    //    std::cout << banks.front()->size() << std::endl ;
-    if ( banks.front()->size() != size*sizeof(unsigned int) )
+    //    std::cout << banks[0]->size() << std::endl ;
+    if ( banks[0]->size() != size*sizeof(unsigned int) )
     {
       throw GaudiException("RawBank wrong size","Hlt::readRoutingBits",StatusCode::FAILURE);
     }
-    return boost::dynamic_bitset<unsigned int>(banks.front()->begin<unsigned int>(), banks.front()->end<unsigned int>());
+    return boost::dynamic_bitset<unsigned int>(banks[0]->begin<unsigned int>(), banks[0]->end<unsigned int>());
   }
 }

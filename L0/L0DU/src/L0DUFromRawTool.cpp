@@ -177,7 +177,6 @@ bool L0DUFromRawTool::decodeBank(int ibank){
 // ---------------------------------------------
 bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
 
-  m_banks = nullptr;
 
   m_roStatus = LHCb::RawBankReadoutStatus( LHCb::RawBank::L0DU );
   m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::OK);
@@ -187,27 +186,29 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
   if( !rawEvt ){
     Warning("rawEvent not found in  '" + Gaudi::Utils::toString(m_rawEventLocations) +"' locations", StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
+    m_banks.clear();
     return false;
   }
 
-  m_banks= &rawEvt->banks(   LHCb::RawBank::L0DU );
+  const auto& lbanks = rawEvt->banks(   LHCb::RawBank::L0DU );
+  m_banks = { lbanks.begin(), lbanks.end() };
 
 
   // check whether error bank has been produced
-  const std::vector<LHCb::RawBank*>& errBanks = rawEvt->banks(   LHCb::RawBank::L0DUError );
+  const auto& errBanks = rawEvt->banks(   LHCb::RawBank::L0DUError );
   if( !errBanks.empty() ){
     if(m_warn)Warning("L0DUError bank has been found ...",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::ErrorBank );
   }
 
    if ( msgLevel( MSG::DEBUG) )
-     debug() << "Number of L0DU bank(s) found : " << m_banks->size() << endmsg; // should be == 1 for L0DU
-  if( m_banks->empty() ) {
+     debug() << "Number of L0DU bank(s) found : " << m_banks.size() << endmsg; // should be == 1 for L0DU
+  if( m_banks.empty() ) {
     if(m_warn)Warning("READOUTSTATUS : no L0DU bank found in rawEvent",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
     return false;
   }
-  if( 1 != m_banks->size() ){
+  if( 1 != m_banks.size() ){
     std::stringstream msg("");
     if(m_warn)Warning("READOUSTATUS : more than one L0DU bank has been found in the RawEvent",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::NonUnique);
@@ -238,8 +239,8 @@ bool L0DUFromRawTool::decoding(int ibank){
   // get bank -------------------
   //-----------------------------
   if( !getL0DUBanksFromRaw() )return false;
-  auto itB = m_banks->begin();
-  LHCb::RawBank* bank = *itB+ibank;
+  auto itB = m_banks.begin();
+  const LHCb::RawBank* bank = *itB+ibank;
   if(!bank){
     Error("Bank point to NULL ",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);

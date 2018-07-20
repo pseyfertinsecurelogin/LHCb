@@ -31,7 +31,7 @@ public:
 
     StatusCode initialize() override;
 
-    std::vector<const LHCb::RawBank*> selectRawBanks( const std::vector<LHCb::RawBank*>& banks ) const;
+    std::vector<const LHCb::RawBank*> selectRawBanks( LHCb::span<const LHCb::RawBank*> banks ) const;
 
     class element_t final {
         Gaudi::StringKey m_key;

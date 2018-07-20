@@ -126,9 +126,8 @@ StatusCode L0MuonOutputs::decodeRawBanks(LHCb::RawEvent* rawEvt, bool statusOnTE
   // L0Muon Error Banks
   //
   // ======================
-  const std::vector<LHCb::RawBank*>& errbanks = rawEvt->banks( LHCb::RawBank::L0MuonError );
-  for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = errbanks.begin(); errbanks.end() != itBnk; ++itBnk ) {
-    int srcID = (*itBnk)->sourceID();
+  for ( const LHCb::RawBank* bnk : rawEvt->banks( LHCb::RawBank::L0MuonError ) ) {
+    int srcID = bnk->sourceID();
     if( msgLevel(MSG::DEBUG) ) debug() << "L0MuonError bank found srcID="<<srcID<<endmsg;
     error_bank[srcID]=true;
   }
@@ -138,14 +137,14 @@ StatusCode L0MuonOutputs::decodeRawBanks(LHCb::RawEvent* rawEvt, bool statusOnTE
   // L0Muon(CtrlCand) Banks
   //
   // ======================
-  const std::vector<LHCb::RawBank*>& banks = rawEvt->banks( LHCb::RawBank::L0Muon );
+  const auto& banks = rawEvt->banks( LHCb::RawBank::L0Muon );
 
   if( msgLevel(MSG::VERBOSE) ) verbose() << "decodeRawBanks: "<<banks.size()<<" L0Muon banks found"<<endmsg;
 
   if (banks.size()==0) {
     ctrlCandStatus.addStatus(0,LHCb::RawBankReadoutStatus::Status::Missing);
   } else {
-    for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = banks.begin(); banks.end() != itBnk; ++itBnk ) {
+    for ( auto itBnk = banks.begin(); banks.end() != itBnk; ++itBnk ) {
       int srcID = (*itBnk)->sourceID();
       if (error_bank[srcID]) {
         ctrlCandStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::ErrorBank);
@@ -165,11 +164,9 @@ StatusCode L0MuonOutputs::decodeRawBanks(LHCb::RawEvent* rawEvt, bool statusOnTE
       int bankVersion  = (*itBnk)->version();
       m_version = bankVersion;
       std::vector<unsigned int> data;
-      unsigned int* body = (*itBnk)->data();
+      const unsigned int* body = (*itBnk)->data();
       rawBankSize+=size;
-      for ( int k = 0; size > k; ++k ) {
-        data.push_back( *body++ );
-      }
+      for ( int k = 0; k < size ; ++k ) data.push_back( *body++ );
       if (bankVersion==0)
       { // DC06
         if (srcID>0) continue;
@@ -220,36 +217,34 @@ StatusCode L0MuonOutputs::decodeRawBanks(LHCb::RawEvent* rawEvt, bool statusOnTE
   //
   // ======================
   if (m_mode>0) {
-    const std::vector<LHCb::RawBank*>& proccandbanks = rawEvt->banks( LHCb::RawBank::L0MuonProcCand );
+    const auto& proccandbanks = rawEvt->banks( LHCb::RawBank::L0MuonProcCand );
     if (proccandbanks.size()==0) {
       procCandStatus.addStatus(0,LHCb::RawBankReadoutStatus::Status::Missing);
     } else {
       m_procCandFlag =true;
-      for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = proccandbanks.begin(); proccandbanks.end() != itBnk; ++itBnk ) {
-        int srcID = (*itBnk)->sourceID();
+      for ( const LHCb::RawBank* bnk : proccandbanks ) {
+        int srcID = bnk->sourceID();
         if (error_bank[srcID]) {
           procCandStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::ErrorBank);
         }
-        if( LHCb::RawBank::MagicPattern != (*itBnk)->magic() ) {
+        if( LHCb::RawBank::MagicPattern != bnk->magic() ) {
           // report an error and return without decoding
           procCandStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::Corrupted);
           Error("L0MuonProcCand :  Magic pattern is wrong",StatusCode::FAILURE,50).ignore();
           continue;
         }
-        int size = (*itBnk)->size()/4;
+        int size = bnk->size()/4;
         if (size==0) {
           procCandStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::Empty);
           continue;
         }
         int decoding_status=0;
-        int bankVersion  = (*itBnk)->version();
+        int bankVersion  = bnk->version();
         m_version = bankVersion;
-        std::vector<unsigned int> data;
-        unsigned int* body = (*itBnk)->data();
+        std::vector<unsigned int> data; data.reserve(size);
+        const unsigned int* body = bnk->data();
         rawBankSize+=size;
-        for ( int k = 0; size > k; ++k ) {
-          data.push_back( *body++ );
-        }
+        for ( int k = 0; size > k; ++k ) data.push_back( *body++ );
         L0Muon::ProcCandCnv * procCand=m_procCand[procSourceID(srcID)];
         procCand->clearRef();
         procCand->submitL0EventNumber(m_l0EventNumber);
@@ -278,37 +273,35 @@ StatusCode L0MuonOutputs::decodeRawBanks(LHCb::RawEvent* rawEvt, bool statusOnTE
   //
   // ======================
   if (m_mode>0) {
-    const std::vector<LHCb::RawBank*>& procdatabanks = rawEvt->banks( LHCb::RawBank::L0MuonProcData );
+    const auto& procdatabanks = rawEvt->banks( LHCb::RawBank::L0MuonProcData );
     if (procdatabanks.size()==0) {
       if( msgLevel(MSG::DEBUG) ) debug()<<"decodeRawBanks: no banks in "<<LHCb::RawBank::L0MuonProcData<<endmsg;
       procDataStatus.addStatus(0,LHCb::RawBankReadoutStatus::Status::Missing);
     } else {
       m_procDataFlag =true;
-      for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = procdatabanks.begin(); procdatabanks.end() != itBnk; ++itBnk ) {
-        int srcID = (*itBnk)->sourceID();
+      for ( const LHCb::RawBank* bnk : procdatabanks ) {
+        int srcID = bnk->sourceID();
         if (error_bank[srcID]) {
           procDataStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::ErrorBank);
         }
-        if( LHCb::RawBank::MagicPattern != (*itBnk)->magic() ) {
+        if( LHCb::RawBank::MagicPattern != bnk->magic() ) {
           // report an error and return without decoding
           procDataStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::Corrupted);
           Error("L0MuonProcData :  Magic pattern is wrong",StatusCode::FAILURE,50).ignore();
           continue;
         }
-        int size = (*itBnk)->size()/4;
+        int size = bnk->size()/4;
         if (size==0) {
           procDataStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::Empty);
           continue;
         }
         int decoding_status=0;
-        int bankVersion  = (*itBnk)->version();
+        int bankVersion  = bnk->version();
         m_version = bankVersion;
-        std::vector<unsigned int> data;
-        unsigned int* body = (*itBnk)->data();
+        std::vector<unsigned int> data; data.reserve(size);
+        const unsigned int* body = bnk->data();
         rawBankSize+=size;
-        for ( int k = 0; size > k; ++k ) {
-          data.push_back( *body++ );
-        }
+        for ( int k = 0; size > k; ++k ) data.push_back( *body++ );
         decoding_status=m_procData[procSourceID(srcID)]->decodeBank(data,bankVersion);
         if (decoding_status>0) {
           procDataStatus.addStatus(srcID,LHCb::RawBankReadoutStatus::Status::OK);

@@ -54,7 +54,7 @@ namespace Decoder
 
     /** @brief Returns a std::vector of raw banks out of a first raw event containing those banks
      */
-    const std::vector< LHCb::RawBank * > & findFirstRawBank( const LHCb::RawBank::BankType ) const;
+    LHCb::span<const LHCb::RawBank *> findFirstRawBank( const LHCb::RawBank::BankType ) const;
 
     //get for one location
     LHCb::RawEvent* tryEventAt( const std::string& ) const;

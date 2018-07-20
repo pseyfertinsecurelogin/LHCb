@@ -4,14 +4,6 @@
 #include <vector>
 #include <algorithm>
 
-namespace {
-    template <typename T>
-    std::vector<const T*> constify_pointers(const std::vector<T*>& in) {
-        return { in.begin(), in.end() };
-    }
-}
-
-
 namespace Gaudi { namespace Parsers {
 
     template <typename Iterator, typename Skipper>
@@ -56,7 +48,9 @@ UnpackRawEvent::operator()(const LHCb::RawEvent& evt) const
     //      be const without mutable
     std::transform( m_types.begin(), m_types.end(), std::back_inserter(banks),
                     [&evt](LHCb::RawBank::BankType t)
-                    { return constify_pointers(evt.banks(t)); } );
+                    { const auto& bnks =  evt.banks(t);
+                      return LHCb::RawBank::ConstVector{ bnks.begin(), bnks.end() };
+                    } );
     return banks;
 }
 

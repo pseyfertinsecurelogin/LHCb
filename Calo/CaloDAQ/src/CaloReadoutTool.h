@@ -46,10 +46,10 @@ public:
     m_ok = getCaloBanksFromRaw();
     return m_ok;
   }
-  void setBanks(const std::vector<LHCb::RawBank*>& bank) override {
+  void setBanks(LHCb::span<const LHCb::RawBank*> bank) override {
     m_getRaw = false;
     clear();
-    m_banks = &bank;
+    m_banks = bank;
     m_ok = true;
   }
   //actual implementation MUST BE in the parent tool
@@ -84,7 +84,7 @@ protected:
 
   Gaudi::Property<details::DetectorName_t> m_detectorName{ this, "DetectorName", details::DetectorName_t::Unknown };
   Gaudi::Property<bool> m_packedIsDefault { this, "PackedIsDefault",false };
-  const std::vector<LHCb::RawBank*>* m_banks = nullptr;
+  LHCb::span<const LHCb::RawBank*> m_banks ;
   DeCalorimeter*   m_calo = nullptr;
   LHCb::RawBank::BankType m_packedType;
   LHCb::RawBank::BankType m_shortType;

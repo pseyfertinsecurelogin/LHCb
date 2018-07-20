@@ -93,7 +93,7 @@ void DecisionBankKiller::killBankType(LHCb::RawEvent *rawEvent,
                                       bool warningmsg) const {
   const std::string bankTypeName = LHCb::RawBank::typeName(bankType);
   // look for all banks of this type and remove them
-  std::vector<LHCb::RawBank*> banks = rawEvent->banks(bankType);
+  const auto& banks = rawEvent->banks(bankType);
   if (bankType == LHCb::RawBank::LastType || 0 == banks.size()) {
     if (warningmsg) {
       std::stringstream s("");
@@ -106,10 +106,12 @@ void DecisionBankKiller::killBankType(LHCb::RawEvent *rawEvent,
   if (msgLevel(MSG::DEBUG)) debug() << "All banks of type '" << bankTypeName
                                     << "'  are to be removed - banks size =  " << banks.size() << endmsg;
 
-  for (std::vector<LHCb::RawBank*>::const_iterator itB = banks.begin(); itB != banks.end(); ++itB) {
-    bool success = rawEvent -> removeBank(*itB);
+  // note that we need to _copy_ the list of banks, as the original will be modified
+  // due to calling removeBank while looping ...
+  for (const LHCb::RawBank* bnk : LHCb::RawBank::ConstVector{ banks.begin(), banks.end() } ) {
+    bool success = rawEvent -> removeBank(bnk);
     if (!success && warningmsg) {
-      if (msgLevel(MSG::DEBUG)) debug() << "The bank " << * itB << " of type '" << bankTypeName
+      if (msgLevel(MSG::DEBUG)) debug() << "The bank " << bnk << " of type '" << bankTypeName
                                         << "' has not been found to be removed " << endmsg;
       Warning("The bank of type '" + bankTypeName + "' has not been found", StatusCode::SUCCESS, 0).ignore();
     }

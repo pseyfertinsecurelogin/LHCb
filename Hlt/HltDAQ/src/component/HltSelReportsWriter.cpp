@@ -441,7 +441,7 @@ StatusCode HltSelReportsWriter::execute() {
 
   // delete any previously inserted sel reports with the same major sourceID
   const auto& hltselreportsRawBanks = rawEvent->banks( RawBank::HltSelReports );
-  for ( const auto&  b : hltselreportsRawBanks ) {
+  for ( const auto&  b : LHCb::RawBank::ConstVector{ hltselreportsRawBanks.begin(), hltselreportsRawBanks.end() } ) {
     auto sourceID = b->version()>1 ? ( b->sourceID() >> kSourceID_BitShift ) : kSourceID_Hlt;
     if( m_sourceID != sourceID ) continue;
     rawEvent->removeBank(b);

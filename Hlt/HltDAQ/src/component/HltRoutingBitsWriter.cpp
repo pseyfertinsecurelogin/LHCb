@@ -140,17 +140,17 @@ StatusCode HltRoutingBitsWriter::execute() {
    LHCb::RawEvent* rawEvent = get<LHCb::RawEvent>(m_raw_location);
 
    if (m_updateBank) {
-      std::vector<LHCb::RawBank*> banks = rawEvent->banks(LHCb::RawBank::HltRoutingBits);
+      const auto& banks = rawEvent->banks(LHCb::RawBank::HltRoutingBits);
       if (banks.size()!=1) {
          return Error(" Multiple RoutingBits RawBanks -- don't know which to update. Skipping... ",
                       StatusCode::SUCCESS, 20);
       }
-      LHCb::RawBank *bank = banks.front();
+      const LHCb::RawBank *bank = banks[0];
       if (bank->size()!=3*sizeof(unsigned int) ) {
          return Error(" RoutingBits RawBanks has unexpected size.. Skipping",
                       StatusCode::SUCCESS, 20);
       }
-      unsigned int *data = bank->data();
+      const unsigned int *data = bank->data();
       if (data[0]!=bits[0] || data[1]!=bits[1]) {
          Warning(" RoutingBits RawBanks: requested to update bank, but first two entries not the same" ,
                  StatusCode::SUCCESS, 20).ignore();
@@ -159,7 +159,7 @@ StatusCode HltRoutingBitsWriter::execute() {
          Warning(" RoutingBits RawBanks: requested to update bank, but non-zero third entry",
                  StatusCode::SUCCESS, 20).ignore();
       }
-      data[2] = bits[2];
+      const_cast<unsigned int*>(data)[2] = bits[2];
    } else {
       if (!rawEvent->banks( LHCb::RawBank::HltRoutingBits).empty()) {
          Warning(" Pre-existing RoutingBits bank in the event...",

@@ -99,7 +99,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
   std::vector<unsigned int> bankList;
   STSummary::RecoveredInfo recoveredBanks;
 
-  const std::vector<RawBank* >&  tBanks = rawEvt.banks(bankType());
+  const auto&  tBanks = rawEvt.banks(bankType());
 
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if (!missing.empty()){

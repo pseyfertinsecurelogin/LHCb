@@ -91,20 +91,19 @@ StatusCode RawEventSimpleCombiner::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-  std::vector<RawEvent*> foundRawEvents(0);
-  //const std::vector<std::string> & lookFor=m_inputLocations.value();
+  std::vector<const RawEvent*> foundRawEvents;
 
   // get input RawEvents
   for( std::vector<std::string>::const_iterator il=m_inputLocations.begin(); il!=m_inputLocations.end(); il++)
   {
-    RawEvent* rawEvent =getIfExists<RawEvent>(*il); //try with RootInTes
+    const RawEvent* rawEvent =getIfExists<RawEvent>(*il); //try with RootInTes
 
-    if( rawEvent==NULL )  //try without RootInTes
+    if( !rawEvent )  //try without RootInTes
     {
       rawEvent = getIfExists<RawEvent>(*il, false);
     }
 
-    if (rawEvent==NULL)
+    if (!rawEvent)
     {
       return Error(" No RawEvent at " + (*il),StatusCode::SUCCESS, 20 );
     }
@@ -114,28 +113,26 @@ StatusCode RawEventSimpleCombiner::execute() {
 
 
   // create empty output RawEvent
-  RawEvent* rawEventCopy = new RawEvent();
+  auto rawEventCopy = std::make_unique< RawEvent>();
 
   // Loop over locations I've found
-  for (std::vector<RawEvent*>::const_iterator rawEvent=foundRawEvents.begin(); rawEvent!=foundRawEvents.end(); rawEvent++)
+  for (auto rawEvent=foundRawEvents.begin(); rawEvent!=foundRawEvents.end(); rawEvent++)
   {
     //copy selected raw banks
-    for( std::vector<RawBank::BankType>::const_iterator ib = m_bankTypes.begin();ib!=m_bankTypes.end();++ib)
+    for( auto ib = m_bankTypes.begin();ib!=m_bankTypes.end();++ib)
     {
-
-      const std::vector<RawBank*> banks= (*rawEvent)->banks( *ib );
-      for( std::vector<RawBank*>::const_iterator b=banks.begin();b!=banks.end();++b)
+      for( const RawBank* b : (*rawEvent)->banks( *ib ) )
       {
-        if (*b == NULL) continue;
+        if (!b) continue;
 
-        //const RawBank & bank = **b;
-        rawEventCopy->adoptBank( rawEventCopy->createBank( (*b)->sourceID(), *ib, (*b)->version(), (*b)->size(),(*b)->data() ), true );
+        //const RawBank & bank = *b;
+        rawEventCopy->adoptBank( rawEventCopy->createBank( b->sourceID(), *ib, b->version(), b->size(),b->data() ), true );
         if( msgLevel(MSG::VERBOSE) )
         {
           verbose() << " Copied RawBank type=" << RawBank::typeName( *ib )
-                    << " version= " << (*b)->version()
-                    << " sourceID= " << (*b)->sourceID()
-                    << " size (bytes) = " << (*b)->size()
+                    << " version= " << b->version()
+                    << " sourceID= " << b->sourceID()
+                    << " size (bytes) = " << b->size()
                     << endmsg;
         }
 
@@ -146,7 +143,7 @@ StatusCode RawEventSimpleCombiner::execute() {
 
   // put output RawEvent into its location
   if( msgLevel(MSG::VERBOSE) ){ verbose() << " Saving Copied RawEvent into new locations " << endmsg;  }
-  put( rawEventCopy, m_outputLocation );
+  put( rawEventCopy.release(), m_outputLocation );
   if( msgLevel(MSG::VERBOSE) ){ verbose() << " Saved Copied RawEvent into new locations " << endmsg;  }
 
   return StatusCode::SUCCESS;

@@ -73,7 +73,7 @@ StatusCode STRawBankMonitor::execute(){
   }
   if( rawEvt == NULL ) return Error("Failed to find raw data");
 
-  const std::vector<RawBank*>& tBanks = rawEvt->banks(m_bankType);
+  const auto& tBanks = rawEvt->banks(m_bankType);
   for (auto iterBank = tBanks.begin(); iterBank != tBanks.end() ; ++iterBank){
 
     // board info....

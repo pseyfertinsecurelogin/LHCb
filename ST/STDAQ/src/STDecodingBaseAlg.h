@@ -5,6 +5,7 @@
 #include "Kernel/STAlgBase.h"
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STLExtensions.h"
 
 #include "Event/STCluster.h"
 #include "Event/ODIN.h"
@@ -48,13 +49,13 @@ protected:
 
  bool forceVersion() const;
 
- unsigned int pcnVote(const std::vector<LHCb::RawBank* >& banks) const;
+ unsigned int pcnVote(LHCb::span<const LHCb::RawBank* > banks) const;
 
  bool checkDataIntegrity(STDecoder& decoder, const STTell1Board* aBoard,
                          const unsigned int bankSize, const STDAQ::version& bankVersion) const;
 
  /** list of boards missing in action */
- std::vector<unsigned int> missingInAction(const std::vector<LHCb::RawBank*>& banks) const;
+ std::vector<unsigned int> missingInAction(LHCb::span<const LHCb::RawBank*> banks) const;
 
  /// Decodes error banks
  std::unique_ptr<LHCb::STTELL1BoardErrorBanks> decodeErrors(const LHCb::RawEvent& raw) const;
@@ -76,7 +77,7 @@ protected:
  /** return spill offset */
  LHCb::STCluster::Spill spill() const;
 
- unsigned int byteSize(const std::vector<LHCb::RawBank*>& banks) const;
+ unsigned int byteSize(LHCb::span<const LHCb::RawBank*> banks) const;
 
  bool m_skipErrors;
  std::string m_bankTypeString;

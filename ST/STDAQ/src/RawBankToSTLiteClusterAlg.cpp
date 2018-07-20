@@ -109,7 +109,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
   std::unique_ptr<LHCb::STTELL1BoardErrorBanks> errorBanks = nullptr;
   bool errorBanksFailed = false;
 
-  const std::vector<RawBank* >&  tBanks = rawEvt.banks(bankType());
+  const auto&  tBanks = rawEvt.banks(bankType());
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if ( !missing.empty() ){
     counter("lost Banks") += missing.size() ;

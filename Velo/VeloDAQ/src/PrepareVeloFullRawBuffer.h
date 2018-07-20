@@ -45,7 +45,7 @@ using namespace LHCb;
 class PrepareVeloFullRawBuffer : public GaudiTupleAlg {
 public:
 
-  typedef std::map<unsigned int, std::pair<unsigned int, unsigned int* > > DATA_REPO;
+  typedef std::map<unsigned int, std::pair<unsigned int, const unsigned int* > > DATA_REPO;
 
   enum parameters{
     ERROR_HEADER_1=1,
@@ -107,7 +107,7 @@ protected:
 
 private:
 
-  LHCb::RawEvent* m_rawEvent;          /// pointer to RawEvent container
+  const LHCb::RawEvent* m_rawEvent;          /// pointer to RawEvent container
   std::string m_rawEventLoc;           /// location of RawEvent container
   DATA_REPO m_fullData2Decode;         /// source id and ptr to the bank body - full
   DATA_REPO m_partialData2Decode;      /// source id and ptr to the bank body - partial
@@ -134,8 +134,8 @@ struct errorBankFinder{
     currentTell1 (tell1)
   { }
 
-  bool operator()(LHCb::RawBank* aBank) const{
-    return (aBank->sourceID())==static_cast<int>(currentTell1);
+  bool operator()(const LHCb::RawBank* aBank) const{
+    return aBank->sourceID()==static_cast<int>(currentTell1);
   }
 
 private:

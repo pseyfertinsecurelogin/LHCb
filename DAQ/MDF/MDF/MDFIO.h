@@ -159,7 +159,7 @@ namespace LHCb {
     virtual StatusCode writeDataSpace(int         compTyp, 
                                       int         chksumTyp, 
                                       void* const ioDesc,
-                                      RawBank*    hdr,
+                                      const RawBank* hdr,
                                       char* const data,
                                       size_t      len);
 
@@ -186,7 +186,7 @@ namespace LHCb {
       * @return  Status code indicating success or failure.
       */
     virtual StatusCode commitRawBanks(RawEvent*         raw,
-                                      RawBank*          hdr_bank,
+                                      const RawBank*    hdr_bank,
                                       int               compTyp,
                                       int               chksumTyp,
                                       void* const       ioDesc);

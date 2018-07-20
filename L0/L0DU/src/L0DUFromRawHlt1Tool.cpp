@@ -123,7 +123,7 @@ bool L0DUFromRawHlt1Tool::decodeBank( int iBank ) {
     m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::Status::ErrorBank );
   }
   //== Get the normal data bank. Check that it exists and is alone.
-  std::vector<LHCb::RawBank*> l0Banks = raw->banks( LHCb::RawBank::L0DU );
+  const auto& l0Banks = raw->banks( LHCb::RawBank::L0DU );
   if ( l0Banks.empty() ) {
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing);
     return false;
@@ -132,7 +132,7 @@ bool L0DUFromRawHlt1Tool::decodeBank( int iBank ) {
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::NonUnique);
     return false;
   }
-  LHCb::RawBank* bank = l0Banks[iBank];
+  const LHCb::RawBank* bank = l0Banks[iBank];
   // Check Magic pattern
   if( LHCb::RawBank::MagicPattern != bank->magic() ) {
     Error("Bad MagicPattern",StatusCode::SUCCESS).ignore();
@@ -140,7 +140,7 @@ bool L0DUFromRawHlt1Tool::decodeBank( int iBank ) {
     return false;
   }
   // rawBank header :
-  unsigned int* data = bank->data();
+  const unsigned int* data = bank->data();
   m_size   = bank->size();  // Bank size is in bytes
   m_vsn    = bank->version();
   m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::OK);

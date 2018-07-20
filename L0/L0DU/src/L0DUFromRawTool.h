@@ -73,7 +73,7 @@ private:
   IL0DUEmulatorTool*     m_emuTool = nullptr;
   IL0CondDBProvider*     m_condDB = nullptr;
   //
-  const std::vector<LHCb::RawBank*>* m_banks;
+  std::vector<const LHCb::RawBank*> m_banks;
   std::map<std::string, std::pair<unsigned int,double> > m_dataMap;
   unsigned int m_vsn = 0;
   unsigned int m_status;
@@ -94,7 +94,7 @@ private:
   unsigned int m_size = 0;
   LHCb::RawBankReadoutStatus m_roStatus;
   //
-  unsigned int* m_data = nullptr;
+  const unsigned int* m_data = nullptr;
   unsigned int  m_source = 0;
   bool m_warn;
   bool m_fill;

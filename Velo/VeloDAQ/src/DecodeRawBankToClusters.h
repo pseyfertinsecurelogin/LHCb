@@ -1,5 +1,4 @@
-// $Id: DecodeRawBankToClusters.h,v 1.5 2008-10-16 15:31:30 krinnert Exp $
-#ifndef VELODAQ_DECODERAWBANKTOCLUSTERS_H 
+#ifndef VELODAQ_DECODERAWBANKTOCLUSTERS_H
 #define VELODAQ_DECODERAWBANKTOCLUSTERS_H 1
 
 #include <string>
@@ -26,17 +25,17 @@ namespace VeloDAQ {
    *   @date   2006-02-17
    */
   int decodeRawBankToClustersV2(
-      const SiDAQ::buffer_word* bank, 
+      const SiDAQ::buffer_word* bank,
       const DeVeloSensor* sensor,
       const bool assumeChipChannels,
       LHCb::VeloClusters& clusters,
       int& byteCount,
-      bool ignoreErrors=false); 
-  
+      bool ignoreErrors=false);
+
   /**  Append  clusters to keyed container, bank version 3
    *   This function decodes the cluster position and adc counts
    *   from the  raw bank and appends the resulting VeloClusters to
-   *   to the keyed container provided by the client.  It is very similar to 
+   *   to the keyed container provided by the client.  It is very similar to
    *   the version 2 decoder.  However it treats the inter strip position
    *   computation and rounding axactly like the TELL1.
    *
@@ -51,12 +50,12 @@ namespace VeloDAQ {
    *   @date   2006-02-17
    */
   int decodeRawBankToClustersV3(
-      const SiDAQ::buffer_word* bank, 
+      const SiDAQ::buffer_word* bank,
       const DeVeloSensor* sensor,
       const bool assumeChipChannels,
       LHCb::VeloClusters& clusters,
       int& byteCount,
       std::string& errorMsg,
-      bool ignoreErrors=false); 
+      bool ignoreErrors=false);
 }
 #endif // VELODAQ_DECODERAWBANKTOCLUSTERS_H

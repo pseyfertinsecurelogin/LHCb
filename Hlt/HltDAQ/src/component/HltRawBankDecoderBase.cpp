@@ -14,7 +14,7 @@ unsigned int getTCK(const LHCb::RawBank* rb) {
     return 0u;
 }
 
-std::vector<const LHCb::RawBank*> selectRawBanks_(unsigned int sourceID, const std::vector<LHCb::RawBank*>& rawbanks )
+std::vector<const LHCb::RawBank*> selectRawBanks_(unsigned int sourceID, LHCb::span<const LHCb::RawBank*> rawbanks )
 {
   auto has_sourceID = [](int id) {
       return [id](const LHCb::RawBank* bank) {
@@ -64,7 +64,7 @@ StatusCode HltRawBankDecoderBase::initialize()
 }
 
 std::vector<const LHCb::RawBank*>
-HltRawBankDecoderBase::selectRawBanks(const std::vector<LHCb::RawBank*>& rawbanks ) const
+HltRawBankDecoderBase::selectRawBanks(LHCb::span<const LHCb::RawBank*> rawbanks ) const
 {
     return selectRawBanks_(m_sourceID, rawbanks);
 }

@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 #include <stdexcept>
 #include <exception>
 
@@ -24,10 +24,6 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( PrepareVeloFullRawBuffer )
 
-typedef std::map<unsigned int, std::pair<unsigned int, unsigned int*> > DATA_REPO;
-typedef DATA_REPO::const_iterator DR_IT;
-typedef std::pair<unsigned int, unsigned int* > DATA_PAIR;
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -43,10 +39,10 @@ PrepareVeloFullRawBuffer::PrepareVeloFullRawBuffer( const std::string& name,
     m_pedBankPresent ( false )
 {
 
-  declareProperty("RunWithODIN", m_runWithODIN=true); 
-  declareProperty("RawEventLocation", 
+  declareProperty("RunWithODIN", m_runWithODIN=true);
+  declareProperty("RawEventLocation",
                   m_rawEventLoc=LHCb::RawEventLocation::Default);
-  declareProperty("ADCLocation", 
+  declareProperty("ADCLocation",
                   m_veloADCDataLoc=VeloFullBankLocation::Default);
   declareProperty("ADCPartialLoc",
                   m_veloADCPartialDataLoc="Raw/Velo/PreparedPartialADC");
@@ -73,7 +69,7 @@ StatusCode PrepareVeloFullRawBuffer::initialize() {
 StatusCode PrepareVeloFullRawBuffer::execute() {
 
   if(msgLevel( MSG::DEBUG )) debug() << "==> Execute" << endmsg;
-  //  
+  //
   StatusCode rawEvtStatus=getRawEvent();
 
   if(rawEvtStatus.isSuccess()){
@@ -89,9 +85,9 @@ StatusCode PrepareVeloFullRawBuffer::execute() {
       resetMemory();
 
     }else if(m_roundRobin){
-      
+
       writeVeloFull();
-      
+
     }
 
   }else{
@@ -117,9 +113,9 @@ StatusCode PrepareVeloFullRawBuffer::getRawEvent()
   m_rawEvent = getIfExists<LHCb::RawEvent>(m_rawEventLoc);
   if( NULL == m_rawEvent ){
     return Error( " ==> There is no RawEvent at: " + m_rawEventLoc );
-  }else{  
+  }else{
     if(msgLevel( MSG::DEBUG )) debug()<< " ==> The RawEvent has been read-in from location: "
-           << m_rawEventLoc  <<endmsg;  
+           << m_rawEventLoc  <<endmsg;
   }
   //
   return ( StatusCode::SUCCESS );
@@ -129,12 +125,8 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
 {
   if(msgLevel( MSG::DEBUG )) debug()<< " ==> getRawBanks() " <<endmsg;
   // check if there is non-zero suppressed bank present
-  const std::vector<LHCb::RawBank*>& fullBanks=
-        m_rawEvent->banks(LHCb::RawBank::VeloFull);
-  const std::vector<LHCb::RawBank*>& errorBanks=
-        m_rawEvent->banks(LHCb::RawBank::VeloError);
-  std::vector<LHCb::RawBank*>::const_iterator bIt;
-  std::vector<LHCb::RawBank*>::const_iterator isError;
+  const auto& fullBanks= m_rawEvent->banks(LHCb::RawBank::VeloFull);
+  const auto& errorBanks= m_rawEvent->banks(LHCb::RawBank::VeloError);
 
   // if so get all info needed for decoding
   if(!fullBanks.empty()){
@@ -144,9 +136,9 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
     m_veloADCPartialData=new VeloFullBanks();
     //
 
-    for(bIt=fullBanks.begin(); bIt!=fullBanks.end(); bIt++){
+    for(auto bIt=fullBanks.begin(); bIt!=fullBanks.end(); bIt++){
 
-      LHCb::RawBank* aBank=(*bIt);
+      const LHCb::RawBank* aBank=(*bIt);
       // protection against wrong magic pattern
 
       if(LHCb::RawBank::MagicPattern!=aBank->magic()){
@@ -162,43 +154,39 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
 
       if(!m_ignoreErrorBanks)
       {
-        
+
         // handle the data sent out together with an error bank properly
-        isError=find_if(errorBanks.begin(), errorBanks.end(), errorBankFinder(sensor));
+        auto isError=std::find_if(errorBanks.begin(), errorBanks.end(), errorBankFinder(sensor));
         if(isError!=errorBanks.end())
         {
-        
-          DATA_PAIR data_info=std::make_pair(aBank->size(), aBank->data());
-          m_partialData2Decode[(aBank->sourceID())]=data_info;
 
-          DATA_PAIR eb_info=std::make_pair((*isError)->size(), (*isError)->data());
-          m_errorBanks2Check[(aBank->sourceID())]=eb_info;
+          m_partialData2Decode[(aBank->sourceID())]= { aBank->size(), aBank->data() };
+
+          m_errorBanks2Check[(aBank->sourceID())]= { (*isError)->size(), (*isError)->data() };
 
         }else{
-        
-          DATA_PAIR full_info=std::make_pair(aBank->size(), aBank->data());
-          m_fullData2Decode[(aBank->sourceID())]=full_info;
-        
+
+          m_fullData2Decode[(aBank->sourceID())]= { aBank->size(), aBank->data() };
+
         }
 
       }else{
-        
+
         // put all the nzs data in one container
-        DATA_PAIR full_info=std::make_pair(aBank->size(), aBank->data());
+        auto full_info=std::make_pair(aBank->size(), aBank->data());
         m_fullData2Decode[(aBank->sourceID())]=full_info;
 
       }
-        
+
     }
 
   }
 
   // check if there is pedestal bank present
-  const std::vector<LHCb::RawBank*>& pedBanks=
-    m_rawEvent->banks(LHCb::RawBank::VeloPedestal);
+  const auto& pedBanks= m_rawEvent->banks(LHCb::RawBank::VeloPedestal);
   // if so get informations about it
 
-  if(pedBanks.size()!=0){
+  if(!pedBanks.empty()){
 
     setPedBankFlag();
     m_veloPedestals=new VeloFullBanks();
@@ -207,20 +195,15 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
     if(msgLevel( MSG::DEBUG )) debug()<< "VeloPed bank detected of size: "
                          << pedBanks.size() <<endmsg;
 
-    for(bIt=pedBanks.begin(); bIt!=pedBanks.end(); bIt++){
-
-      LHCb::RawBank* aBank=(*bIt);
-      DATA_PAIR ped_info;
-      ped_info=std::make_pair(aBank->size(), aBank->data());
+    for(const LHCb::RawBank* aBank : pedBanks ) {
+      auto ped_info=std::make_pair(aBank->size(), aBank->data());
       m_pedestalData2Decode[aBank->sourceID()]=ped_info;
-
     }
 
   }
 
   // check if there is ODIN bank present
-  const std::vector<LHCb::RawBank*>& odinBank=
-    m_rawEvent->banks(LHCb::RawBank::ODIN);
+  const auto& odinBank= m_rawEvent->banks(LHCb::RawBank::ODIN);
   // cache the bank if present
 
   if(odinBank.empty()){
@@ -244,7 +227,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
 
   }
   //
-  return ( StatusCode::SUCCESS );
+  return StatusCode::SUCCESS;
 }
 //=============================================================================
 // /// ///////////////////////////////////////////////////////////////// /// //
@@ -258,20 +241,20 @@ void PrepareVeloFullRawBuffer::createOrderedSections()
   if(adcBankFlag()){
 
     int type_1=LHCb::RawBank::VeloFull;
-    DR_IT full_IT=m_fullData2Decode.begin();
+    auto full_IT=m_fullData2Decode.begin();
 
     for( ; full_IT!=m_fullData2Decode.end(); ++full_IT)
     {
 
-      VeloFullBank* aBank=new VeloFullBank((*full_IT).first, 
+      VeloFullBank* aBank=new VeloFullBank((*full_IT).first,
                                            (*full_IT).second.second, type_1);
       m_veloADCData->insert(aBank);
 
     }
 
-    DR_IT part_IT=m_partialData2Decode.begin();
-    
-    for( ; part_IT!=m_partialData2Decode.end(); ++part_IT)
+
+
+    for(auto part_IT=m_partialData2Decode.begin() ; part_IT!=m_partialData2Decode.end(); ++part_IT)
     {
 
       if(WORD2BYTE*FPGAx4==(*part_IT).second.first)
@@ -280,29 +263,29 @@ void PrepareVeloFullRawBuffer::createOrderedSections()
         //if (msgLevel( MSG::DEBUG )) debug()<< " --> source id: " << ((*part_IT).first) <<endmsg;
         info()<< " --> Will write partial data! " <<endmsg;
         info()<< " --> source id: " << ((*part_IT).first) <<endmsg;
-        
+
         VeloFullBank* aBank=new VeloFullBank((*part_IT).first,
                                              (*part_IT).second.second, type_1);
         m_veloADCPartialData->insert(aBank);
 
       }else{
-        
+
         // --> partial data decoding using information form the associated EB
 
       }
 
     }
-      
+
   }
   //
   if(pedBankFlag()){
 
     int type_2=LHCb::RawBank::VeloPedestal;
-    DR_IT ped_IT=m_pedestalData2Decode.begin();
-    
-    for( ; ped_IT!=m_pedestalData2Decode.end(); ++ped_IT)
+
+
+    for(auto ped_IT=m_pedestalData2Decode.begin(); ped_IT!=m_pedestalData2Decode.end(); ++ped_IT)
     {
-      
+
       VeloFullBank* aBank=new VeloFullBank((*ped_IT).first,
                                            (*ped_IT).second.second, type_2);
       m_veloPedestals->insert(aBank);
@@ -321,19 +304,19 @@ StatusCode PrepareVeloFullRawBuffer::writeVeloFull()
   if(adcBankFlag()||m_roundRobin){
 
     if(msgLevel( MSG::DEBUG )) debug()<< "Registered container with bank data of size: "
-          << m_veloADCData->size() << ", at" 
+          << m_veloADCData->size() << ", at"
           << m_veloADCDataLoc <<endmsg;
 
     put(m_veloADCData, m_veloADCDataLoc);
     put(m_veloADCPartialData, m_veloADCPartialDataLoc);
 
   }
-  //  
+  //
 
   if(pedBankFlag()){
 
     if(msgLevel( MSG::DEBUG )) debug()<< "Registered container with bank data of size: "
-          << m_veloPedestals->size() << ", at" 
+          << m_veloPedestals->size() << ", at"
           << m_veloPedestalsLoc <<endmsg;
 
     put(m_veloPedestals, m_veloPedestalsLoc);
@@ -351,7 +334,7 @@ void PrepareVeloFullRawBuffer::resetMemory()
   m_partialData2Decode.clear();
   m_pedestalData2Decode.clear();
   m_errorBanks2Check.clear();
-  
+
   if(adcBankFlag()) unsetADCBankFlag();
   if(pedBankFlag()) unsetPedBankFlag();
 }

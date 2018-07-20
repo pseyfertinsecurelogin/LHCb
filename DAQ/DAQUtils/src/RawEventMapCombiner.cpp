@@ -96,18 +96,16 @@ StatusCode RawEventMapCombiner::execute() {
   for( std::map<LHCb::RawBank::BankType, RawEvent*>::const_iterator ib = foundRawEvents.begin();ib!=foundRawEvents.end();++ib)
   {
 
-      const std::vector<RawBank*> banks= (ib->second)->banks( ib->first );
-      for( std::vector<RawBank*>::const_iterator b=banks.begin();b!=banks.end();++b)
+      for( const RawBank* bank : (ib->second)->banks( ib->first ) )
       {
-        if (*b == NULL) continue;
-        const RawBank & bank = **b;
-        rawEventCopy->adoptBank( rawEventCopy->createBank( bank.sourceID(), ib->first, bank.version(), bank.size(),bank.data() ), true );
+        if ( !bank ) continue;
+        rawEventCopy->adoptBank( rawEventCopy->createBank( bank->sourceID(), ib->first, bank->version(), bank->size(),bank->data() ), true );
         if( msgLevel(MSG::VERBOSE) )
         {
           verbose() << " Copied RawBank type=" << RawBank::typeName( ib->first )
-                    << " version= " << bank.version()
-                    << " sourceID= " << bank.sourceID()
-                    << " size (bytes) = " << bank.size()
+                    << " version= " << bank->version()
+                    << " sourceID= " << bank->sourceID()
+                    << " size (bytes) = " << bank->size()
                     << endmsg;
         }
 

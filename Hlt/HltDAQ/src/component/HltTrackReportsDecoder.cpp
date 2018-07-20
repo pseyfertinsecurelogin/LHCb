@@ -106,7 +106,8 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
     // ----------------------------------------------------------
     // get the bank from RawEvent
     // ----------------------------------------------------------
-    std::vector<RawBank*> hltTrackReportsRawBanks = rawEvent.banks( RawBank::HltTrackReports );
+    const auto& htr_banks = rawEvent.banks( RawBank::HltTrackReports );
+    std::vector<const RawBank*> hltTrackReportsRawBanks = { htr_banks.begin(), htr_banks.end() };
 
     // check for bad banks:
     hltTrackReportsRawBanks.erase(

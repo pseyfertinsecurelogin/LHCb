@@ -69,7 +69,7 @@ StatusCode FastL0DUFilter::execute() {
       Warning( "Inconsistent L0DU bank version" ).ignore();
       continue;
     }
-    unsigned int* data = bank->data();
+    const unsigned int* data = bank->data();
 
     data += 2;
     // get muon1

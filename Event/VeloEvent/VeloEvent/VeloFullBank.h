@@ -28,7 +28,7 @@ public:
   /// Standard constructor
   typedef std::vector<unsigned int> section;
   //
-  VeloFullBank(const int numberOfTELL1, unsigned int* inBank, const int type):
+  VeloFullBank(const int numberOfTELL1, const unsigned int* inBank, const int type):
     KeyedObject<int>(numberOfTELL1)
     {
       initialize(type);
@@ -54,7 +54,7 @@ private:
   {
     std::vector<section> sections;
   };
-  unsigned int* m_bank;
+  const unsigned int* m_bank;
   std::vector<PPFPGABlock> m_PPFPGABlocks;
   int m_NumberOfWordsInBlock;
   int m_NumberOfWordsInSection;
@@ -100,12 +100,12 @@ inline void VeloFullBank::writeSections()
     // to one PPFPGA processor
     PPFPGABlock aBlock;
     // set the pointer at the beginning of the PPFPGA block
-    unsigned int* dataPtr=m_bank+i*wordsInBlock;
+    const unsigned int* dataPtr=m_bank+i*wordsInBlock;
     for(int k=0; k<VeloTELL1::SectionsPerBlock; k++){
       // create section object, there are three sections
       // per one data block
       section sec;
-      unsigned int* secPtr=dataPtr+k;
+      const unsigned int* secPtr=dataPtr+k;
       int ii=0;
       while(ii<dataWords){
         sec.push_back((*(secPtr+ii)));
@@ -124,10 +124,10 @@ inline void VeloFullBank::writeEventInfos(const int type)
     int DataSection=VeloTELL1::PPFPGADataSection;
     //
     for(int PPFPGA=0; PPFPGA<VeloTELL1::NumberOfPPFPGA; PPFPGA++){
-      unsigned int* dataPtr=m_bank+(PPFPGA*DataBlock)+DataSection;
+      const unsigned int* dataPtr=m_bank+(PPFPGA*DataBlock)+DataSection;
       VeloTELL1::evtInfo anInfo;
       for(int k=0; k<VeloTELL1::EventInfoLength; k++){
-        unsigned int* infoPtr=dataPtr+k;
+        const unsigned int* infoPtr=dataPtr+k;
         anInfo.push_back(*(infoPtr));
       }
       m_infos.push_back(anInfo);
@@ -137,12 +137,12 @@ inline void VeloFullBank::writeEventInfos(const int type)
 //=============================================================================
 inline int VeloFullBank::NumberOfWordsInBlock() const
 {
-  return ( m_NumberOfWordsInBlock );
+  return m_NumberOfWordsInBlock;
 }
 //=============================================================================
 inline int VeloFullBank::NumberOfWordsInSection() const
 {
-  return ( m_NumberOfWordsInSection );
+  return m_NumberOfWordsInSection;
 }
 //=============================================================================
 inline VeloTELL1::allEvt& VeloFullBank::getEvtInfo()

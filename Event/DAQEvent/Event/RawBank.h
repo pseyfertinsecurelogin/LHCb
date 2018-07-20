@@ -134,7 +134,7 @@ namespace LHCb
     static std::string typeName(LHCb::RawBank::BankType e);
 
     /// Get this bank type as a string
-    inline std::string typeName(){return LHCb::RawBank::typeName( type() ); }
+    inline std::string typeName() const { return LHCb::RawBank::typeName( type() ); }
 
     /// Magic pattern for Raw bank headers
     enum RawPattern{ MagicPattern=0xCBCB };
