@@ -30,11 +30,9 @@ FTClusters =  FTRawBankDecoder("createFTClusters")
 DataOnDemandSvc().AlgMap["Raw/Velo/Clusters"]     = "DecodeVeloRawBuffer/createVeloClusters"
 DataOnDemandSvc().AlgMap["Raw/TT/Clusters"]       = "RawBankToSTClusterAlg/createTTClusters"
 DataOnDemandSvc().AlgMap["Raw/IT/Clusters"]       = "RawBankToSTClusterAlg/createITClusters"
-DataOnDemandSvc().AlgMap["Raw/UT/Clusters"]       = "RawBankToSTClusterAlg/createUTClusters"
 DataOnDemandSvc().AlgMap["Raw/Velo/LiteClusters"] = "DecodeVeloRawBuffer/createVeloLiteClusters"
 DataOnDemandSvc().AlgMap["Raw/TT/LiteClusters"]   = "RawBankToSTLiteClusterAlg/createTTLiteClusters"
 DataOnDemandSvc().AlgMap["Raw/IT/LiteClusters"]   = "RawBankToSTLiteClusterAlg/createITLiteClusters"
-DataOnDemandSvc().AlgMap["Raw/UT/LiteClusters"]   = "RawBankToSTLiteClusterAlg/createUTLiteClusters"
 DataOnDemandSvc().AlgMap["Raw/OT/Times"]          = "OTTimeCreator"
 
 #Error in original script! This was actually decoding somewhere else!
