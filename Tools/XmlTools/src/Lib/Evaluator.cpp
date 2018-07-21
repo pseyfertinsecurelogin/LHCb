@@ -10,16 +10,17 @@
 #include <string>
 #include <unordered_map>
 #include <ctype.h>
+#include <cstring>
 #include <errno.h>
 #include <stdlib.h>	// for strtod()
+#include <string_view>
+#include <variant>
 
-#include "boost/utility/string_ref.hpp"
-#include "boost/variant.hpp"
 
 #define EVAL XmlTools::Evaluator
-
 //---------------------------------------------------------------------------
-using FuncPtr = boost::variant<double(*)(),
+namespace {
+  using FuncPtr = std::variant<double(*)(),
                                double(*)(double),
                                double(*)(double,double),
                                double(*)(double,double,double),
@@ -27,12 +28,10 @@ using FuncPtr = boost::variant<double(*)(),
                                double(*)(double,double,double,double,double)>;
 
 
-using Item = boost::variant<boost::blank,double,   std::string, FuncPtr>;
-enum                      { UNKNOWN,     VARIABLE, EXPRESSION,  FUNCTION }; // must match order in boost::variant
-
-
-typedef const char * pchar;
-typedef std::unordered_map<std::string,Item> dic_type;
+  using Item = std::variant< double, std::string, FuncPtr>;
+  using dic_type = std::unordered_map<std::string,Item>;
+  using pchar = const char*;
+}
 
 struct EVAL::Struct final {
   dic_type theDictionary;
@@ -45,32 +44,36 @@ struct EVAL::Struct final {
 //---------------------------------------------------------------------------
 
 namespace {
+    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-    class InvokeFuncPtrWith : public boost::static_visitor<double> {
-        const double *p;
+    class InvokeFuncPtrWith {
+        const double *p; //TODO: C++20: use std::span
+        std::size_t n;
         template <typename F, std::size_t ... Is>
         double helper( F fun, std::index_sequence<Is...> ) const {
-            return fun( p[sizeof...(Is)-1-Is]... ); // reverse the arguments...
+            return fun( p[Is]... );
         }
     public:
-        InvokeFuncPtrWith(const double* pp) : p(pp) {}
+        InvokeFuncPtrWith(const double* pp, std::size_t npar) : p(pp), n(npar) {}
         template <typename... Args>
-        double operator()( double(*fun)(Args...) ) const {
+        std::optional<double> operator()( double(*fun)(Args...) ) const {
+            if (sizeof...(Args)!=n) return {};
             return helper( fun, std::index_sequence_for<Args...>{} );
         }
     };
 
-    inline boost::string_ref remove_blanks(boost::string_ref str) {
+    inline std::string_view remove_blanks(std::string_view str) {
         int n=str.size();
         int i=0;   while (i<n && isspace(str[i])) ++i;
         int j=n-1; while (j>i && isspace(str[j])) --j;
         return str.substr(i,j-i+1);
     }
 
-    inline std::string to_string(boost::string_ref str) {
-        return std::string( str.data(), str.size() );
+    inline std::string to_string(std::string_view str) {
+        return std::string{ str };
     }
-    inline std::string operator+(char s1, boost::string_ref s2) {
+    inline std::string operator+(char s1, std::string_view s2) {
         return s1+to_string(s2);
     }
 }
@@ -108,23 +111,17 @@ static int variable(const std::string & name, double & result,
  ***********************************************************************/
 {
   auto iter = dictionary.find(name);
-  if (iter == dictionary.end())
-    return EVAL::ERROR_UNKNOWN_VARIABLE;
-  const auto& item = iter->second;
-  switch (item.which()) {
-  case VARIABLE:
-    result = boost::get<double>(item);
-    return EVAL::OK;
-  case EXPRESSION: {
-    auto exp_begin = boost::get<std::string>(item).c_str();
-    auto exp_end   = std::next(exp_begin,strlen(exp_begin) - 1);
-    if (engine(exp_begin, exp_end, result, exp_end, dictionary) == EVAL::OK)
-      return EVAL::OK;
-  }
-  /* falls through */
-  default:
-    return EVAL::ERROR_CALCULATION_ERROR;
-  }
+  return iter!=dictionary.end() ? std::visit( overloaded{
+                                          [&](double x) { result = x; return EVAL::OK; },
+                                          [&](const std::string& s) {
+                                                auto exp_begin = s.c_str();
+                                                auto exp_end   = std::next(exp_begin,std::strlen(exp_begin) - 1);
+                                                return (engine(exp_begin, exp_end, result, exp_end, dictionary) == EVAL::OK) ?
+                                                            EVAL::OK : EVAL::ERROR_CALCULATION_ERROR;
+                                          },
+                                          [](auto&) { return EVAL::ERROR_CALCULATION_ERROR; }
+                                       }, iter->second )
+                                : EVAL::ERROR_UNKNOWN_VARIABLE;
 }
 
 static int function(const std::string & name, std::stack<double> & par,
@@ -145,21 +142,23 @@ static int function(const std::string & name, std::stack<double> & par,
  *                                                                     *
  ***********************************************************************/
 {
-  int npar = par.size();
+  auto npar = par.size();
   if (npar > MAX_N_PAR) return EVAL::ERROR_UNKNOWN_FUNCTION;
 
   auto iter = dictionary.find(sss[npar]+name);
   if (iter == dictionary.end()) return EVAL::ERROR_UNKNOWN_FUNCTION;
-  const auto& item = iter->second;
 
   double pp[MAX_N_PAR];
-  for(int i=0; i<npar; i++) { pp[i] = par.top(); par.pop(); }
+  for(unsigned i=0; i<npar; i++) { pp[npar-1-i] = par.top(); par.pop(); } // reverse the arguments
   errno = 0;
-  if (item.which()!=FUNCTION) return EVAL::ERROR_CALCULATION_ERROR;
-  const auto& fun = boost::get<FuncPtr>(item);
-  if ( fun.which()!=npar)     return EVAL::ERROR_CALCULATION_ERROR;
-  result = boost::apply_visitor( InvokeFuncPtrWith(pp), fun );
-  return (errno == 0) ? EVAL::OK : EVAL::ERROR_CALCULATION_ERROR;
+  auto status = std::visit( overloaded{ [&](const FuncPtr& f) {
+                                            auto r = std::visit( InvokeFuncPtrWith(pp,npar), f );
+                                            if (!r) return EVAL::ERROR_CALCULATION_ERROR;
+                                            result = r.value();
+                                            return EVAL::OK; },
+                                        [](auto&) { return EVAL::ERROR_CALCULATION_ERROR; }
+                                      }, iter->second );
+  return errno!=0 ? EVAL::ERROR_CALCULATION_ERROR : status;
 }
 
 static int operand(pchar begin, pchar end, double & result,
@@ -537,23 +536,10 @@ static void setItem(const char * prefix, const char * name,
 
   //   A D D   I T E M   T O   T H E   D I C T I O N A R Y
   auto item_name = prefix + to_string(nam);
-#if  __cplusplus > 201402L
-  // C++17
   auto r = s.theDictionary.insert_or_assign(item_name, std::move(item));
   s.theStatus = ( r.second          ? EVAL::OK
                 : item_name == name ? EVAL::WARNING_EXISTING_VARIABLE
                                     : EVAL::WARNING_EXISTING_FUNCTION );
-#else
-  auto iter = s.theDictionary.find(item_name);
-  if (iter != s.theDictionary.end()) {
-    iter->second = std::move(item);
-    s.theStatus = ( item_name == name ? EVAL::WARNING_EXISTING_VARIABLE
-                                      : EVAL::WARNING_EXISTING_FUNCTION );
-  }else{
-    s.theDictionary.insert( std::make_pair(item_name, std::move(item)) );
-    s.theStatus = EVAL::OK;
-  }
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -645,7 +631,7 @@ void Evaluator::setVariable(const char * name, const char * expression)
 //       so one could get clashes which were not there before.
 //       In addition, checks for existing function vs. variable would have
 //       to be changed, as those two are currently distinguished by the prefix.
-//       But that could easily be changed to use Item::which() instead.
+//       But that could easily be changed to use Item::index() instead.
 void Evaluator::setFunction(const char * name,
                             double (*fun)())
 { setItem("0", name, FuncPtr{fun}, *m_p); }
