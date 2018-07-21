@@ -9024,7 +9024,7 @@ double Gaudi::Math::PS2DPolSym::integrateY
   //
   std::vector<double> fx ( n + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= n ; ++i )
-  { fx[i] = m_ps ( x ) , b2d.basic( i ) ( x )  ; }
+  { fx[i] = m_ps ( x ) * b2d.basic( i ) ( x )  ; }
   //
   return  calculate  (  fx  ,   fy ) ;
 }
