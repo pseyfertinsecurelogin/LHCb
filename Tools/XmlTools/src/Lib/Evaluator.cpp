@@ -112,14 +112,14 @@ static int variable(const std::string & name, double & result,
 {
   auto iter = dictionary.find(name);
   return iter!=dictionary.end() ? std::visit( overloaded{
-                                          [&](double x) { result = x; return EVAL::OK; },
+                                          [&result](double x) { result = x; return EVAL::OK; },
                                           [&](const std::string& s) {
                                                 auto exp_begin = s.c_str();
                                                 auto exp_end   = std::next(exp_begin,std::strlen(exp_begin) - 1);
                                                 return (engine(exp_begin, exp_end, result, exp_end, dictionary) == EVAL::OK) ?
                                                             EVAL::OK : EVAL::ERROR_CALCULATION_ERROR;
                                           },
-                                          [](auto&) { return EVAL::ERROR_CALCULATION_ERROR; }
+                                          [](FuncPtr) { return EVAL::ERROR_CALCULATION_ERROR; }
                                        }, iter->second )
                                 : EVAL::ERROR_UNKNOWN_VARIABLE;
 }
@@ -151,12 +151,13 @@ static int function(const std::string & name, std::stack<double> & par,
   double pp[MAX_N_PAR];
   for(unsigned i=0; i<npar; i++) { pp[npar-1-i] = par.top(); par.pop(); } // reverse the arguments
   errno = 0;
-  auto status = std::visit( overloaded{ [&](const FuncPtr& f) {
-                                            auto r = std::visit( InvokeFuncPtrWith(pp,npar), f );
+  auto status = std::visit( overloaded{ [&result,eval=InvokeFuncPtrWith(pp,npar)](FuncPtr f) {
+                                            auto r = std::visit( eval, f );
                                             if (!r) return EVAL::ERROR_CALCULATION_ERROR;
                                             result = r.value();
                                             return EVAL::OK; },
-                                        [](auto&) { return EVAL::ERROR_CALCULATION_ERROR; }
+                                        [](double) { return EVAL::ERROR_CALCULATION_ERROR; },
+                                        [](const std::string&) { return EVAL::ERROR_CALCULATION_ERROR; }
                                       }, iter->second );
   return errno!=0 ? EVAL::ERROR_CALCULATION_ERROR : status;
 }
