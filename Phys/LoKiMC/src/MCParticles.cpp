@@ -935,9 +935,6 @@ double NinMCdownTree::operator() ( const LHCb::MCParticle* p ) const
   // the traversal is not possible
   if ( !p     ) { return number ; }
 
-  typedef SmartRefVector<LHCb::MCVertex>   EndVertices ;
-  typedef SmartRefVector<LHCb::MCParticle> Products    ;
-
   for ( const LHCb::MCVertex* vertex : p->endVertices() )
   {
     if ( !vertex ) { continue ; }

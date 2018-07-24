@@ -48,7 +48,6 @@ StatusCode DeSubSubCalorimeter::initialize(){
   if ( sc.isFailure() ) { return sc ; }
 
   typedef std::vector<std::string> Parameters;
-  typedef Parameters::iterator     Iterator;
   Parameters pars( paramNames() );
   /// cell size
   auto it = std::find( pars.begin() , pars.end () , std::string("CellSize") );

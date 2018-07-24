@@ -103,7 +103,6 @@ const DetectorElement * DeRichPMTPanel::getFirstDeRich() const
 StatusCode DeRichPMTPanel::geometryUpdate()
 {
   using GP = Gaudi::XYZPoint;
-  using GV = Gaudi::XYZVector;
 
   MsgStream msg ( msgSvc(), "DeRichPMTPanel" );
 
@@ -776,8 +775,6 @@ void DeRichPMTPanel::RichSetupMixedSizePmtModules()
 DeRichPMTPanel::ArraySetupSIMD
 DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint& aLocalPoint ) const
 {
-  using GP = Gaudi::XYZPoint;
-
   ArraySetupSIMD aCh{{}};
 
   ModuleNumbersSIMD nums;
