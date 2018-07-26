@@ -578,7 +578,6 @@ StatusCode LHCbOutputStream::decodeAlgorithms( StringArrayProperty& theNames,
 }
 
 bool LHCbOutputStream::isEventAccepted( ) const  {
-  typedef std::vector<Algorithm*>::iterator AlgIter;
   bool result = true;
 
   // Loop over all Algorithms in the accept list to see

@@ -223,7 +223,6 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
   // local typedefs for vector from Conditions
   typedef std::vector<LHCb::RichSmartID::KeyType> CondData;
-  typedef std::vector<std::string> L1Mapping;
 
   // number of PDs
   const unsigned int nPDs = numbers->param<int>(str_NumberOfPDs);
