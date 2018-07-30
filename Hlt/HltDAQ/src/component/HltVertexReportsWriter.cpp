@@ -146,17 +146,16 @@ StatusCode HltVertexReportsWriter::execute() {
 }
 
 //=============================================================================
-boost::optional<int> HltVertexReportsWriter::selectionNameToInt
+std::optional<int> HltVertexReportsWriter::selectionNameToInt
 (const IANNSvc& ann, const std::string& name) const
 {
-   boost::optional<IANNSvc::minor_value_type> v{};
-   if (m_sourceID == kSourceID_Hlt1) {
-      v = ann.value(Hlt1SelectionID,name);
-   } else if (m_sourceID == kSourceID_Hlt2) {
-      v = ann.value(Hlt2SelectionID,name);
-   } else if (m_sourceID == kSourceID_Hlt) {
-      v = ann.value(Hlt1SelectionID,name);
-      if (!v) ann.value(Hlt2SelectionID,name);
+   std::optional<IANNSvc::minor_value_type> v{};
+   switch (m_sourceID) {
+       case kSourceID_Hlt1: v = ann.value(Hlt1SelectionID,name); break;
+       case kSourceID_Hlt2: v = ann.value(Hlt2SelectionID,name); break;
+       case kSourceID_Hlt : v = ann.value(Hlt1SelectionID,name);
+                            if (!v) v = ann.value(Hlt2SelectionID,name);
+                            break;
    }
-   return v ? boost::optional<int>{ v->second } : boost::optional<int>{ } ;
+   return v ? std::optional<int>{ v->second } : std::optional<int>{ } ;
 }

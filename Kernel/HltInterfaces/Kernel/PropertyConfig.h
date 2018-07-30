@@ -4,19 +4,19 @@
 #include <vector>
 #include <iostream>
 #include <numeric>
+#include <string_view>
 #include "boost/operators.hpp"
-#include "boost/utility/string_ref.hpp"
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/INamedInterface.h"
 #include "GaudiKernel/IProperty.h"
 #include "LHCbMath/MD5.h"
 
-namespace LHCb { namespace Kernel {  namespace details {
+namespace {
     struct modify_fn {
       template <typename Properties>
-      Properties operator()(Properties props, boost::string_ref key, boost::string_ref value) const {
+      Properties operator()(Properties props, std::string_view key, std::string_view value) const {
           auto i = std::find_if( begin(props), end(props),
-                                 [&key](const auto& p) { return p.first == key; } );
+                                 [key](const auto& p) { return p.first == key; } );
           if (i==end(props)) {
               throw std::invalid_argument( "PropertyConfig: trying to update unknown property '"
                                            +std::string{begin(key),end(key)}+"'");
@@ -25,9 +25,9 @@ namespace LHCb { namespace Kernel {  namespace details {
           return props;
       }
       template <typename Properties>
-      Properties operator()(Properties props, boost::string_ref keyAndValue) const {
+      Properties operator()(Properties props, std::string_view keyAndValue) const {
           auto c = keyAndValue.find(':');
-          if (c == boost::string_ref::npos )
+          if (c == std::string_view::npos )
               throw std::invalid_argument( "PropertyConfig: keyAndValue must contain ':'");
           return (*this)(std::move(props),keyAndValue.substr(0,c),keyAndValue.substr(c+1));
       }
@@ -46,7 +46,7 @@ namespace LHCb { namespace Kernel {  namespace details {
 
     constexpr modify_fn modify{};
 
-}}}
+}
 
 class PropertyConfig final : public boost::equality_comparable<PropertyConfig> {
 public:
@@ -92,7 +92,7 @@ public:
 
     template <typename... Args>
     PropertyConfig copyAndModify(Args&&... args) const
-    { return { *this, LHCb::Kernel::details::modify(properties(),std::forward<Args>(args)...)} ;}
+    { return { *this, modify(properties(),std::forward<Args>(args)...)} ;}
 
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);

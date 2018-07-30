@@ -1,19 +1,17 @@
-#ifndef ANNSVC_H  
+#ifndef ANNSVC_H
 #define ANNSVC_H 1
 
 // Include files
 #include "Kernel/IANNSvc.h"
-//#include "GaudiKernel/VectorMap.h"
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/MsgStream.h"
 #include <string>
-//#include "GaudiKernel/ParsersFactory.h"
 
 namespace ANNSvcUtilities {
   template <typename KEY, typename VALUE> class bimap_t;
 }
 /** @class ANNSvc ANNSvc.h
- *  
+ *
  *  functionality:
  *     maps between 'Assigned Names and Numbers'
  *         and also 'Assigned Numbers and Names'
@@ -27,12 +25,11 @@ class ANNSvc : public extends1<Service, IANNSvc> {
 public:
   ANNSvc( const std::string& name, ISvcLocator* pSvcLocator,
           const std::vector<major_key_type>& majors );
-  ~ANNSvc() = default;
-  
+
   StatusCode finalize() override;
 
-  boost::optional<minor_value_type>  value(const major_key_type& major, const std::string& minor) const override;
-  boost::optional<minor_value_type>  value(const major_key_type& major, int minor) const override;
+  std::optional<minor_value_type>  value(const major_key_type& major, const std::string& minor) const override;
+  std::optional<minor_value_type>  value(const major_key_type& major, int minor) const override;
 
   bool                           hasMajor(const major_key_type& major) const override;
 
@@ -43,12 +40,12 @@ public:
 
 protected:
   // Call handleUndefined if an unknown key/value is requested...
-  //  default implementation just returns an unitialized boost::optional
-  virtual boost::optional<minor_value_type> handleUndefined(const major_key_type& major, int minor) const;
-  virtual boost::optional<minor_value_type> handleUndefined(const major_key_type& major, const std::string& minor) const;
+  //  default implementation just returns an unitialized std::optional
+  virtual std::optional<minor_value_type> handleUndefined(const major_key_type& major, int minor) const;
+  virtual std::optional<minor_value_type> handleUndefined(const major_key_type& major, const std::string& minor) const;
 
 private:
-  
+
   typedef ANNSvcUtilities::bimap_t<minor_key_type, minor_mapped_type> bimap_type;
   typedef GaudiUtils::VectorMap< major_key_type, bimap_type* > maps_type;
   maps_type   m_maps;

@@ -4,7 +4,6 @@
 // Include files
 #include <string>
 #include <memory>
-#include "boost/optional.hpp"
 #include "boost/filesystem/path.hpp"
 // from Gaudi
 #include "GaudiKernel/Service.h"
@@ -26,13 +25,13 @@ public:
 
   StatusCode initialize() override;    ///< Service initialization
 
-  boost::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
+  std::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
   PropertyConfig::digest_type      writePropertyConfig(const PropertyConfig& config) override;
 
-  boost::optional<ConfigTreeNode>  readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
+  std::optional<ConfigTreeNode>  readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
   ConfigTreeNode::digest_type      writeConfigTreeNode(const ConfigTreeNode& config) override;
 
-  boost::optional<ConfigTreeNode>  readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
+  std::optional<ConfigTreeNode>  readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
   ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias(const ConfigTreeNodeAlias&) override;
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;

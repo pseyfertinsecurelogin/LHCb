@@ -90,10 +90,10 @@ namespace {
                 return *this;
             }
          private:
-            const Property* find(boost::string_ref name) {
+            const Property* find(std::string_view name) {
                auto i = find_if(begin(*m_properties),
                                 end(*m_properties),
-                                [&](const Property* p) { return p->name()==name; } );
+                                [name](const Property* p) { return p->name()==name; } );
                return i!=end(*m_properties) ? *i : nullptr;
             }
             IJobOptionsSvc*                     m_jos;
@@ -486,7 +486,7 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
 //=============================================================================
 StatusCode
 PropertyConfigSvc::findTopKind(const ConfigTreeNode::digest_type& configID,
-                               boost::string_ref kind,
+                               std::string_view kind,
                                std::back_insert_iterator<std::vector<const PropertyConfig*> > configs) const
 {
     const ConfigTreeNode *node = resolveConfigTreeNode(configID);

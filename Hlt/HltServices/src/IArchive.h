@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <optional>
 #include "boost/iostreams/filtering_stream.hpp"
-#include "boost/optional.hpp"
 
 namespace {
 constexpr struct all_ {
@@ -34,11 +34,12 @@ public:
     return f;
   }
 
-  template <typename T> boost::optional<T> get(const std::string &name) const {
+  template <typename T> std::optional<T> get(const std::string &name) const {
     boost::iostreams::filtering_istream strm;
-    if (!setupStream(strm, name)) return boost::none;
+    if (!setupStream(strm, name)) return {};
     T t; strm >> t;
-    return boost::make_optional( !strm.fail() , std::move(t) );
+    if (strm.fail()) return {};
+    return t;
   }
 
   virtual bool operator!() const  = 0;

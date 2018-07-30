@@ -151,7 +151,7 @@ TCKANNSvc::i2s(unsigned int tck, const Gaudi::StringKey& major) const
     std::map<std::string,int> map;
     // or extend the PropertyConfig interface so it takes a property, invokes 'fromString' on it, and returns StatusCode ?
     // or an templated interface, which wraps a PropertyWithValue around it, then invokes the above, and drops the PropertyWithValue?
-    // boost::optional< map<string,int> > = config->assign< map<string,int> >( major );
+    // std::optional< map<string,int> > = config->assign< map<string,int> >( major );
     // PropertyWithValue<std::map<std::string,int>>{  major.str(), &map, false }.fromString( prop->second );
     // auto status = prp.fromString( prop->second );
     auto status = Gaudi::Parsers::parse(map , prop->second);

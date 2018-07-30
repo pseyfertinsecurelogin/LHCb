@@ -60,10 +60,10 @@ string ConfigArchiveAccessSvc::configTreeNodeAliasPath(
 }
 
 template <typename T>
-boost::optional<T> ConfigArchiveAccessSvc::read( const string& path ) const
+std::optional<T> ConfigArchiveAccessSvc::read( const string& path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
-    if ( !file() ) return boost::none;
+    if ( !file() ) return {};
     auto c = file()->get<T>(path);
     if ( !c &&  msgLevel( MSG::DEBUG ) ) {
         debug() << "file " << path << " not found in container " << endmsg;
@@ -74,9 +74,9 @@ boost::optional<T> ConfigArchiveAccessSvc::read( const string& path ) const
 template <typename T>
 bool ConfigArchiveAccessSvc::write( const string& path, const T& object ) const
 {
-    boost::optional<T> current = read<T>( path );
+    auto current = read<T>( path );
     if ( current ) {
-        if ( object == current.get() ) return true;
+        if ( object == current.value() ) return true;
         error() << " object @ " << path
                 << "  already exists, but contents are different..." << endmsg;
         return false;
@@ -90,29 +90,29 @@ bool ConfigArchiveAccessSvc::write( const string& path, const T& object ) const
     return file() && file()->append( path, s );
 }
 
-boost::optional<PropertyConfig>
+std::optional<PropertyConfig>
 ConfigArchiveAccessSvc::readPropertyConfig( const PropertyConfig::digest_type& ref )
 {
     return this->read<PropertyConfig>( propertyConfigPath( ref ) );
 }
 
-boost::optional<ConfigTreeNode>
+std::optional<ConfigTreeNode>
 ConfigArchiveAccessSvc::readConfigTreeNode( const ConfigTreeNode::digest_type& ref )
 {
     return this->read<ConfigTreeNode>( configTreeNodePath( ref ) );
 }
 
-boost::optional<ConfigTreeNode> ConfigArchiveAccessSvc::readConfigTreeNodeAlias(
+std::optional<ConfigTreeNode> ConfigArchiveAccessSvc::readConfigTreeNodeAlias(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
     string fnam = configTreeNodeAliasPath( alias );
-    boost::optional<string> sref = this->read<string>( fnam );
-    if ( !sref ) return boost::none;
+    auto sref = this->read<string>( fnam );
+    if ( !sref ) return {};
     ConfigTreeNode::digest_type ref =
         ConfigTreeNode::digest_type::createFromStringRep( *sref );
     if ( !ref.valid() ) {
         error() << "content of " << fnam << " not a valid ref" << endmsg;
-        return boost::none;
+        return {};
     }
     return readConfigTreeNode( ref );
 }
@@ -171,7 +171,7 @@ ConfigArchiveAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& ali
     }
     // now write alias...
     fs::path fnam = configTreeNodeAliasPath( alias.alias() );
-    boost::optional<string> x = read<string>( fnam.string() );
+    auto x = read<string>( fnam.string() );
     if ( !x ) {
         stringstream s;
         s << alias.ref();

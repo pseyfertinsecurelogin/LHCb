@@ -7,8 +7,8 @@
 
 //declaration of the parser
 namespace Gaudi { namespace Parsers {
-StatusCode parse(GaudiUtils::VectorMap<Gaudi::StringKey, int>& result, const std::string& input) ; 
-StatusCode parse(std::map<Gaudi::StringKey, int>& result, const std::string& input) ; 
+StatusCode parse(GaudiUtils::VectorMap<Gaudi::StringKey, int>& result, const std::string& input) ;
+StatusCode parse(std::map<Gaudi::StringKey, int>& result, const std::string& input) ;
   }
 }
 
@@ -22,7 +22,6 @@ StatusCode parse(std::map<Gaudi::StringKey, int>& result, const std::string& inp
 using std::map;
 using std::vector;
 using std::string;
-using boost::optional;
 
 namespace ANNSvcUtilities {
 
@@ -36,7 +35,7 @@ namespace ANNSvcUtilities {
     typedef GaudiUtils::VectorMap<KEY,VALUE>     k2v_type;
     typedef GaudiUtils::VectorMap<VALUE,KEY>     v2k_type;
     typedef SimpleProperty<std::map<KEY,VALUE> > property_type;
-    typedef optional<IANNSvc::minor_value_type>  result_type;
+    typedef std::optional<IANNSvc::minor_value_type>  result_type;
 
     bimap_t(const ANNSvc* parent);
 
@@ -91,7 +90,7 @@ namespace ANNSvcUtilities {
     if (m_map.find( value.first ) != m_map.end() ||
         m_invmap.find(value.second) != m_invmap.end() ) {
       if (m_parent) {
-        m_parent->error() << " Entry \"" << value.first 
+        m_parent->error() << " Entry \"" << value.first
                           << "\" -> \""<< value.second
                           <<"\" clashes with existing entry" << endmsg;
       }
@@ -150,20 +149,20 @@ ANNSvc::hasMajor(const IANNSvc::major_key_type& major) const {
   return m_maps.find(major)!=m_maps.end();
 }
 
-optional<IANNSvc::minor_value_type>
+std::optional<IANNSvc::minor_value_type>
 ANNSvc::handleUndefined(const IANNSvc::major_key_type&, int ) const {
-  return boost::none;
+  return {};
 }
 
-optional<IANNSvc::minor_value_type>
+std::optional<IANNSvc::minor_value_type>
 ANNSvc::handleUndefined(const IANNSvc::major_key_type&, const std::string& ) const {
-  return boost::none;
+  return {};
 }
 
-optional<IANNSvc::minor_value_type>
+std::optional<IANNSvc::minor_value_type>
 ANNSvc::value(const IANNSvc::major_key_type& major, const string& minor) const {
   auto i = m_maps.find(major);
-  if (i==m_maps.end()) return boost::none;
+  if (i==m_maps.end()) return {};
   auto x = i->second->value(minor);
   if (!x) {
     x = handleUndefined(major,minor);
@@ -172,10 +171,10 @@ ANNSvc::value(const IANNSvc::major_key_type& major, const string& minor) const {
   return x;
 }
 
-optional<IANNSvc::minor_value_type>
+std::optional<IANNSvc::minor_value_type>
 ANNSvc::value(const IANNSvc::major_key_type& major, int minor) const {
   auto i = m_maps.find(major);
-  if (i==m_maps.end()) return boost::none;
+  if (i==m_maps.end()) return {};
   auto x = i->second->key(minor);
   if (!x) {
     x = handleUndefined(major,minor);
@@ -207,17 +206,17 @@ ANNSvc::items(const IANNSvc::major_key_type& major) const {
 }
 
 // new functionality requested in task #48818
-GaudiUtils::VectorMap< IANNSvc::minor_value_type::first_type, IANNSvc::minor_value_type::second_type > 
+GaudiUtils::VectorMap< IANNSvc::minor_value_type::first_type, IANNSvc::minor_value_type::second_type >
 ANNSvc::item_map(const IANNSvc::major_key_type& major) const
 {
   //create the map to return
   GaudiUtils::VectorMap< IANNSvc::minor_value_type::first_type, IANNSvc::minor_value_type::second_type > r;
   auto i = m_maps.find(major);
-  if (i!=m_maps.end())  
+  if (i!=m_maps.end())
   {
     r.reserve( i->second->mapping().size() );
     r.merge(i->second->mapping());
-    
+
   }
   return r;
 }
@@ -243,7 +242,7 @@ ANNSvc::majors() const {
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ParsersFactory.h"
 // ============================================================================
-namespace Gaudi { 
+namespace Gaudi {
 namespace Parsers {
 StatusCode parse(GaudiUtils::VectorMap<Gaudi::StringKey, int>& result, const std::string& input)
 {
@@ -252,7 +251,7 @@ StatusCode parse(GaudiUtils::VectorMap<Gaudi::StringKey, int>& result, const std
 StatusCode parse(std::map<Gaudi::StringKey, int>& result, const std::string& input)
 {
     return Gaudi::Parsers::parse_(result, input);
-} 
+}
 // ============================================================================
 // END of parser
 // ============================================================================

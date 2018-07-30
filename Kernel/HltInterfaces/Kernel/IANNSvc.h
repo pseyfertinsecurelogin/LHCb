@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <optional>
 #include "Kernel/IANSvc.h"
-#include "boost/optional.hpp"
 #include "GaudiKernel/VectorMap.h"
 
 /** @class IANNSvc IANNSvc.h
@@ -35,7 +35,7 @@
 
 struct IANNSvc : extend_interfaces<IANSvc>  {
   /// Return the interface ID
-  DeclareInterfaceID(IANNSvc,4,0);
+  DeclareInterfaceID(IANNSvc,5,0);
 
   typedef IANSvc::major_key_type                      major_key_type;
   typedef IANSvc::minor_key_type                      minor_key_type;
@@ -43,9 +43,9 @@ struct IANNSvc : extend_interfaces<IANSvc>  {
   typedef std::pair<minor_key_type,minor_mapped_type> minor_value_type;
 
   /// the two main functions: map 'major/minor key' -> minor key, value
-  virtual boost::optional<minor_value_type>  value(const major_key_type& major, const std::string& minor) const = 0;
+  virtual std::optional<minor_value_type>  value(const major_key_type& major, const std::string& minor) const = 0;
   ///                     and map 'major/minor value' -> minor key, value
-  virtual boost::optional<minor_value_type>  value(const major_key_type& major, int minor) const = 0;
+  virtual std::optional<minor_value_type>  value(const major_key_type& major, int minor) const = 0;
 
   /// introspection, i.e. access to what is available: is a major present?
   bool hasMajor(const major_key_type& major) const override = 0;

@@ -68,21 +68,20 @@ private:
 
   const NameToNumberMap& tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major) const;
 
-  inline boost::optional<int> optionalValue(const Gaudi::StringKey& major, const std::string& key) const {
-    const auto p = m_hltANNSvc->value(major, key);
-    if (p)
+  inline std::optional<int> optionalValue(const Gaudi::StringKey& major, const std::string& key) const {
+    if ( const auto p = m_hltANNSvc->value(major, key); p ) {
       return p->second;
-    else
-      return boost::none;
+    } else {
+      return {};
+    }
   }
 
-  inline boost::optional<int> optionalFind(const NameToNumberMap& map, const std::string& key) const {
-    auto i = map.find(key);
-    // return (i == std::end(map)) ? boost::none : *i;
-    if (i == std::end(map))
-      return boost::none;
-    else
+  inline std::optional<int> optionalFind(const NameToNumberMap& map, const std::string& key) const {
+    if (auto i = map.find(key); i != std::end(map)) {
       return i->second;
+    } else {
+      return {};
+    }
   }
 
 };
