@@ -1,19 +1,6 @@
-#include "GaudiKernel/IEventTimeDecoder.h"
 #include "GaudiAlg/Transformer.h"
 #include "ODINCodec.h"
 #include "Event/RawEvent.h"
-#include "boost/optional.hpp"
-
-namespace details {
-    //@TODO/@FIXME: move this to a better place (IProperty?) so it can be re-used?
-    template <typename T>
-    boost::optional<T> getProperty(const IProperty& owner, const std::string& key) {
-        std::string value; T val;
-        return boost::make_optional(
-                owner.getProperty( key, value ) && Gaudi::Parsers::parse( val, value ),
-                val );
-    }
-}
 
 /** Trivial algorithm to create DAQ/ODIN object from ODIN RawEvent bank
  *
