@@ -19,9 +19,9 @@ namespace {
                                  [key](const auto& p) { return p.first == key; } );
           if (i==end(props)) {
               throw std::invalid_argument( "PropertyConfig: trying to update unknown property '"
-                                           +std::string{begin(key),end(key)}+"'");
+                                           +std::string{key}+"'");
           }
-          i->second = { begin(value), end(value) };
+          i->second = value;
           return props;
       }
       template <typename Properties>
@@ -45,7 +45,6 @@ namespace {
     };
 
     constexpr modify_fn modify{};
-
 }
 
 class PropertyConfig final : public boost::equality_comparable<PropertyConfig> {

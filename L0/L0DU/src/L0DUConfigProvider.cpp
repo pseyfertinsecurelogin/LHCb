@@ -1,4 +1,6 @@
+#include <array>
 #include <numeric>
+#include <string_view>
 // from Gaudi
 #include "GaudiKernel/StateMachine.h"
 #include "GaudiKernel/SystemOfUnits.h"
@@ -22,14 +24,14 @@
 DECLARE_COMPONENT( L0DUConfigProvider )
 
 namespace {
-  static const std::vector<std::string> s_dataFlags = { "name", "data","operator" };
-  static const std::vector<std::string> s_condFlags = { "name", "data","comparator","threshold","index","reported","bx" };
-  static const std::vector<std::string> s_chanFlags = { "name", "condition", "rate", "enable","disable","mask","index" };
-  static const std::vector<std::string> s_trigFlags = { "name", "channel", "index", "type" };
+  static const std::array<std::string,3> s_dataFlags = { "name", "data","operator" };
+  static const std::array<std::string,7> s_condFlags = { "name", "data","comparator","threshold","index","reported","bx" };
+  static const std::array<std::string,7> s_chanFlags = { "name", "condition", "rate", "enable","disable","mask","index" };
+  static const std::array<std::string,4> s_trigFlags = { "name", "channel", "index", "type" };
   // define the allowed operator and comparators
-  static const std::vector<std::string> s_comparators = { ">", "<", "==", "!=" };
+  static const std::array<std::string,4> s_comparators = { ">", "<", "==", "!=" };
   // pair(operator,dimension)
-  static const std::vector<std::pair<std::string, unsigned int> >
+  static const std::array<std::pair<std::string, unsigned int>, 4 >
   s_operators = { std::make_pair("+", 2), std::make_pair("-", 2),
                   std::make_pair("&", 2), std::make_pair("^", 2) };
   // index of the predefined triggers
@@ -39,7 +41,7 @@ namespace {
                                                         { std::string("Other"),  3 } };
 
    // Try to find, in the Haystack, the Needle - ignore case
-  bool contains_ci(boost::string_ref haystack, boost::string_ref needle)
+  bool contains_ci(std::string_view haystack, std::string_view needle)
   {
      auto it = std::search( begin(haystack), end(haystack),
                             begin(needle),   end(needle),
