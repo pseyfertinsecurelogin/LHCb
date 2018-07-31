@@ -245,7 +245,7 @@
    />
 
    <typedef
-        type   = "std::vector&lt;LHCb::State&gt;"
+        type   = "std::vector&lt;LHCb::State*&gt;"
         def    = "StateContainer"
         desc   = "Container for LHCb::States on track"
         access = "PUBLIC"
@@ -316,7 +316,6 @@
          this -&gt; copy( track );
        </code>
     </constructor>
-
     <constructor
        desc     = "Copy constructor"
        initList = "KeyedObject&lt;int&gt;(key), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_lhcbIDs(), m_states(), m_fitResult(), m_ancestors()">
@@ -326,6 +325,13 @@
          this -&gt; copy( track );
        </code>
     </constructor>
+
+      <destructor
+        desc = 'Track destructor'>
+        <code>
+         std::for_each( m_states.begin(), m_states.end(), [](auto&amp; i) { delete i; } );
+        </code>
+      </destructor>
 
       <attribute
         type   = 'double'
@@ -424,12 +430,12 @@
         setMeth   = 'FALSE' />
 
       <attribute
-        type      = 'std::vector&lt;LHCb::State&gt;'
+        type      = 'std::vector&lt;LHCb::State*&gt;'
         name      = 'states'
         desc      = 'Container with pointers to all the states'
         access    = 'PRIVATE'
         setMeth   = 'FALSE'
-	nonconstaccessor = 'TRUE' />
+        nonconstaccessor = 'TRUE' />
 
       <attribute
 	type    = 'std::unique_ptr&lt;TrackFitResult&gt;'
@@ -620,7 +626,7 @@
     throw GaudiException( &quot;first state not defined!&quot;,
                           &quot;Track.h&quot;,
                           StatusCode::FAILURE );
-  return m_states[0];
+  return *m_states[0];
         </code>
       </method>
       <method
@@ -634,7 +640,7 @@
     throw GaudiException( &quot;first state not defined!&quot;,
                           &quot;Track.h&quot;,
                           StatusCode::FAILURE );
-  return m_states[0];
+  return *m_states[0];
         </code>
       </method>
 
@@ -689,30 +695,6 @@
       </method>
 
       <method
-        type    = 'void'
-        name    = 'setQOverPInAllStates'
-        desc    = 'Sets POverQ for all states'>
-        <arg type = 'const float' name='qop' />
-        <code>
-  for (auto&amp; state : m_states) state.setQOverP(qop);
-        </code>
-      </method>
-
-      <method
-        type    = 'void'
-        name    = 'setQOverPAndErrInAllStates'
-        desc    = 'Sets POverQ adn ErrQOverP2 for all states'>
-        <arg type = 'const float' name='qop' />
-        <arg type = 'const float' name='err' />
-        <code>
-  for (auto&amp; state : m_states) {
-    state.setQOverP(qop);
-    state.setErrQOverP2(err);
-  }
-        </code>
-      </method>
-
-      <method
         type    = 'MeasurementContainer'
         name    = 'measurements'
         desc    = 'Retrieve vector with measurements on the track'
@@ -734,16 +716,22 @@
 
      <method
         name    = 'addToStates'
-        desc    = 'Add a set of states to the track.'>
-        <arg type = 'span&lt;const State&gt;' inout='BYVALUE' name='states' />
+        desc    = 'Add a set of states to the track. Track takes ownership. (note: const refers to the pointer, not the State!)'>
+        <arg type = 'span&lt;State* const&gt;' inout='BYVALUE' name='states' />
         <arg type = ' LHCb::Tag::State::AssumeUnordered_tag = { } ' inout='BYVALUE' name=' '/>
       </method>
 
       <method
         name    = 'addToStates'
-        desc    = 'Add a set of sorted states by increasing Z to the track.'>
-        <arg type = 'span&lt;const State&gt;' inout= 'BYVALUE' name='states' />
+        desc    = 'Add a set of sorted states by increasing Z to the track. Track takes ownership. (note: const refers to the pointer, not the State!)'>
+        <arg type = 'span&lt;State* const&gt;' inout= 'BYVALUE' name='states' />
         <arg type = ' LHCb::Tag::State::AssumeSorted_tag ' inout='BYVALUE' name=' '/>
+      </method>
+
+      <method
+        name    = 'removeFromStates'
+        desc    = 'Remove a State from the list of states associated to the track'
+        argList = 'LHCb::State* value'>
       </method>
 
       <method
@@ -936,6 +924,18 @@
         name    = 'reset'
         desc    = 'Clear the track before re-use' >
       </method>
+
+      <method
+        type    = 'LHCb::Track*'
+        name    = 'cloneWithKey'
+        desc    = 'Clone the track keeping the key (you take ownership of the pointer)'
+	const   = 'TRUE' />
+
+      <method
+        type    = 'LHCb::Track*'
+        name    = 'clone'
+        desc    = 'Clone the track (you take ownership of the pointer)'
+	const   = 'TRUE' />
 
       <method
         type    = 'void'

@@ -60,7 +60,7 @@ void encodeTracks( const LHCb::Tracks& tracks, std::vector<unsigned int>& rawBan
                               [](const LHCb::LHCbID& id) { return id.lhcbID(); } );
         // write states
         // check number of states on track
-        const std::vector<LHCb::State>& states = Tr->states();
+        const std::vector<LHCb::State*>& states = Tr->states();
 
         if (!writeStates) {
           // Do not write states to save disk space
@@ -71,17 +71,17 @@ void encodeTracks( const LHCb::Tracks& tracks, std::vector<unsigned int>& rawBan
         *out++ =  states.size();
 
         // loop over states and encode locations, parameters and covs
-        for ( const LHCb::State& state : states ) {
+        for ( const LHCb::State* state : states ) {
             // store the state location -- a bit of overkill to store this as 32 bit int...
-            *out++ = state.location();
-            *out++ = pac.position( state.z() );
-            const Gaudi::TrackVector& par = state.stateVector();
+            *out++ = state->location();
+            *out++ = pac.position( state->z() );
+            const Gaudi::TrackVector& par = state->stateVector();
             *out++ = pac.position( par[0] );
             *out++ = pac.position( par[1] );
             *out++ = pac.slope( par[2] );
             *out++ = pac.slope( par[3] );
 
-            double p = state.qOverP();
+            double p = state->qOverP();
             if (p!=0) p = 1./p;
             auto pp = pac.energy(p);
             *out++ =  pp;
@@ -98,9 +98,9 @@ void encodeTracks( const LHCb::Tracks& tracks, std::vector<unsigned int>& rawBan
 
             // get errors for scaling
             std::array<double, 5> err { {
-                std::sqrt( state.errX2() ),     std::sqrt( state.errY2() ),
-                std::sqrt( state.errTx2() ),    std::sqrt( state.errTy2() ),
-                std::sqrt( state.errQOverP2() ) } };
+                std::sqrt( state->errX2() ),     std::sqrt( state->errY2() ),
+                std::sqrt( state->errTx2() ),    std::sqrt( state->errTy2() ),
+                std::sqrt( state->errQOverP2() ) } };
             // first store the diagonal then row wise the rest
             *out++ = pac.position( err[0] );
             *out++ = pac.position( err[1] );
@@ -108,7 +108,7 @@ void encodeTracks( const LHCb::Tracks& tracks, std::vector<unsigned int>& rawBan
             *out++ = pac.slope( err[3] );
             *out++ = pac.energy( 1.e5 * fabs( p ) * err[4] ); //== 1.e5 * dp/p (*1.e2)
             for ( unsigned i = 1; i < 5; ++i ) for ( unsigned j = 0; j < i; ++j ) {
-                *out++ = pac.fraction( state.covariance()( i, j ) / err[i] / err[j] );
+                *out++ = pac.fraction( state->covariance()( i, j ) / err[i] / err[j] );
             }
         }//  end loop over states
     }

@@ -1436,59 +1436,69 @@ void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const
   const auto& used_map = (turbo ? s_track_unordered_map2_Turbo
                                 : s_track_unordered_map2 );
 
-  const LHCb::State *first = &object->states().front();
-  const LHCb::State *last = &object->states().back();
+  LHCb::State first, last;
   if( object->type() == LHCb::Track::Types::Long ){
-    if( object->hasStateAt(LHCb::State::Location::ClosestToBeam) ) first = object->stateAt(LHCb::State::Location::ClosestToBeam);
-    if( object->hasStateAt(LHCb::State::Location::BegRich2) ) last = object->stateAt(LHCb::State::Location::BegRich2);
-  } else if( object->type() == LHCb::Track::Types::Downstream ){
-    if( object->hasStateAt(LHCb::State::Location::FirstMeasurement) ) first = object->stateAt(LHCb::State::Location::FirstMeasurement);
-    if( object->hasStateAt(LHCb::State::Location::BegRich2) ) last = object->stateAt(LHCb::State::Location::BegRich2);
+    if( object->hasStateAt(LHCb::State::Location::ClosestToBeam) ) first = *(object->stateAt(LHCb::State::Location::ClosestToBeam));
+    else first = *(object->states().front());
+    //
+    if( object->hasStateAt(LHCb::State::Location::BegRich2) ) last = *(object->stateAt(LHCb::State::Location::BegRich2));
+    else last = *(object->states().back());
+  }
+  else if( object->type() == LHCb::Track::Types::Downstream ){
+    if( object->hasStateAt(LHCb::State::Location::FirstMeasurement) ) first = *(object->stateAt(LHCb::State::Location::FirstMeasurement));
+    else first = *(object->states().front());
+    //
+    if( object->hasStateAt(LHCb::State::Location::BegRich2) ) last = *(object->stateAt(LHCb::State::Location::BegRich2));
+    else last = *(object->states().back());
+  }
+  else{
+    first = *(object->states().front());
+    last = *(object->states().back());
   }
 
   for(const auto& track : used_map.at( findBestPrevious( used_map, m_version ) )) {
     switch( track.second.second )
     {
-      case 0: info->insert( track.first, float( first->z() ) ); break;
-      case 1: info->insert( track.first, float( first->x() ) ); break;
-      case 2: info->insert( track.first, float( first->y() ) ); break;
-      case 3: info->insert( track.first, float( first->tx() ) ); break;
-      case 4: info->insert( track.first, float( first->ty() ) ); break;
-      case 5: info->insert( track.first, float( first->qOverP() ) ); break;
+      case 0: info->insert( track.first, float( first.z() ) ); break;
+      case 1: info->insert( track.first, float( first.x() ) ); break;
+      case 2: info->insert( track.first, float( first.y() ) ); break;
+      case 3: info->insert( track.first, float( first.tx() ) ); break;
+      case 4: info->insert( track.first, float( first.ty() ) ); break;
+      case 5: info->insert( track.first, float( first.qOverP() ) ); break;
       case 6: info->insert( track.first, float( object->chi2PerDoF() ) ); break;
       case 7: info->insert( track.first, float( object->nDoF() ) ); break;
       case 8: info->insert( track.first, float( object->likelihood() ) ); break;
       case 9: info->insert( track.first, float( object->ghostProbability() ) ); break;
       case 10: info->insert( track.first, float( object->flags() ) ); break;
-      case 11: info->insert( track.first, float( last->z() ) ); break;
-      case 12: info->insert( track.first, float( last->x() ) ); break;
-      case 13: info->insert( track.first, float( last->y() ) ); break;
-      case 14: info->insert( track.first, float( last->tx() ) ); break;
-      case 15: info->insert( track.first, float( last->ty() ) ); break;
-      case 16: info->insert( track.first, float( last->qOverP() ) ); break;
+      case 11: info->insert( track.first, float( last.z() ) ); break;
+      case 12: info->insert( track.first, float( last.x() ) ); break;
+      case 13: info->insert( track.first, float( last.y() ) ); break;
+      case 14: info->insert( track.first, float( last.tx() ) ); break;
+      case 15: info->insert( track.first, float( last.ty() ) ); break;
+      case 16: info->insert( track.first, float( last.qOverP() ) ); break;
       case 17: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::CloneDist, -1000) ) ); break;
       case 18: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitMatchChi2, -1000) ) ); break;
       case 19: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitVeloChi2, -1000) ) ); break;
       case 20: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitTChi2, -1000) ) ); break;
       case 21: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitVeloNDoF, -1000) ) ); break;
       case 22: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitTNDoF, -1000) ) ); break;
-      case 23: info->insert( track.first, float( first->flags() ) ); break;
-      case 24: info->insert( track.first, float( last->flags() ) ); break;
-      case 25: info->insert( track.first, float( first->covariance()(0,0) ) ); break;
-      case 26: info->insert( track.first, float( first->covariance()(1,1) ) ); break;
-      case 27: info->insert( track.first, float( first->covariance()(2,2) ) ); break;
-      case 28: info->insert( track.first, float( first->covariance()(3,3) ) ); break;
-      case 29: info->insert( track.first, float( first->covariance()(4,4) ) ); break;
-      case 30: info->insert( track.first, float( first->covariance()(0,1) ) ); break;
-      case 31: info->insert( track.first, float( first->covariance()(0,2) ) ); break;
-      case 32: info->insert( track.first, float( first->covariance()(0,3) ) ); break;
-      case 33: info->insert( track.first, float( first->covariance()(0,4) ) ); break;
-      case 34: info->insert( track.first, float( first->covariance()(1,2) ) ); break;
-      case 35: info->insert( track.first, float( first->covariance()(1,3) ) ); break;
-      case 36: info->insert( track.first, float( first->covariance()(1,4) ) ); break;
-      case 37: info->insert( track.first, float( first->covariance()(2,3) ) ); break;
-      case 38: info->insert( track.first, float( first->covariance()(2,4) ) ); break;
-      case 39: info->insert( track.first, float( first->covariance()(3,4) ) ); break;
+      case 23: info->insert( track.first, float( first.flags() ) ); break;
+      case 24: info->insert( track.first, float( last.flags() ) ); break;
+      case 25: info->insert( track.first, float( first.covariance()(0,0) ) ); break;
+      case 26: info->insert( track.first, float( first.covariance()(1,1) ) ); break;
+      case 27: info->insert( track.first, float( first.covariance()(2,2) ) ); break;
+      case 28: info->insert( track.first, float( first.covariance()(3,3) ) ); break;
+      case 29: info->insert( track.first, float( first.covariance()(4,4) ) ); break;
+      case 30: info->insert( track.first, float( first.covariance()(0,1) ) ); break;
+      case 31: info->insert( track.first, float( first.covariance()(0,2) ) ); break;
+      case 32: info->insert( track.first, float( first.covariance()(0,3) ) ); break;
+      case 33: info->insert( track.first, float( first.covariance()(0,4) ) ); break;
+      case 34: info->insert( track.first, float( first.covariance()(1,2) ) ); break;
+      case 35: info->insert( track.first, float( first.covariance()(1,3) ) ); break;
+      case 36: info->insert( track.first, float( first.covariance()(1,4) ) ); break;
+      case 37: info->insert( track.first, float( first.covariance()(2,3) ) ); break;
+      case 38: info->insert( track.first, float( first.covariance()(2,4) ) ); break;
+      case 39: info->insert( track.first, float( first.covariance()(3,4) ) ); break;
     }
   }
 }
