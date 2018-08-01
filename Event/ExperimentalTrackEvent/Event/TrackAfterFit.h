@@ -41,6 +41,8 @@ namespace experimental
   namespace TrackAfterFitExtension
   {
     class Hits;
+    class Rich1States;
+    class Rich2States;
     class AdditionalStates;
     class BackCompat;
 
