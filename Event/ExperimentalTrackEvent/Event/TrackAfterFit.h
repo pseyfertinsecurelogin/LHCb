@@ -52,7 +52,7 @@ namespace experimental
     private:
       // FIXME: separate containers for different containers?
       // FIXME: proper size
-      boost::container::small_vector<LHCb::LHCbID, 30> m_hits; // CRJ : better than just std::array ?
+      boost::container::small_vector<LHCb::LHCbID, 30> m_hits;
 
     public:
       Hits( const std::vector<LHCb::LHCbID>& );
