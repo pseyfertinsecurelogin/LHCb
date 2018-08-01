@@ -151,7 +151,7 @@ namespace experimental
     };
   }
 
-  namespace Longtrack
+  namespace LongtrackData
   {
     SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
               // core methods
@@ -193,6 +193,8 @@ namespace experimental
 
     };
   }
+  typedef SOA::Container<std::vector, LongtrackData::LongtrackSkin> Longtracks;
+  typedef typename Longtracks::proxy Longtrack;
 
   namespace Downtrack
   {
