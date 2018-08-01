@@ -7,6 +7,8 @@
 #include <boost/container/small_vector.hpp>
 #include <vector>
 
+#include "SOAContainer/SOAContainer.h"
+
 namespace LHCb
 {
   namespace Converters
