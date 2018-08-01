@@ -46,7 +46,7 @@ Rich1States( std::vector<LHCb::State> & states )
   auto rearrange = [&]( const LHCb::State::Location location, LHCb::State& output ) {
     auto iter = std::find_if( states.begin(), states.end(),
                               [&]( const auto& s ) { return s.checkLocation( location ); } );
-    if ( iter != m_moreStates.end() ) {
+    if ( iter != states.end() ) {
       output = std::move( *iter );
       states.erase( iter );
     }
@@ -56,13 +56,13 @@ Rich1States( std::vector<LHCb::State> & states )
   rearrange( LHCb::State::EndRich1, m_EndRich1 );
 }
 
-experimental::TrackAfterFitExtension::Rich1States::
+experimental::TrackAfterFitExtension::Rich2States::
 Rich2States( std::vector<LHCb::State> & states )
 {
   auto rearrange = [&]( const LHCb::State::Location location, LHCb::State& output ) {
     auto iter = std::find_if( states.begin(), states.end(),
                               [&]( const auto& s ) { return s.checkLocation( location ); } );
-    if ( iter != m_moreStates.end() ) {
+    if ( iter != states.end() ) {
       output = std::move( *iter );
       states.erase( iter );
     }
@@ -70,6 +70,3 @@ Rich2States( std::vector<LHCb::State> & states )
 
   rearrange( LHCb::State::BegRich2, m_BegRich2 );
 }
-
-experimental::TrackAfterFitExtension::Rich2States::
-Rich2States( std::vector<LHCb::State> && states )
