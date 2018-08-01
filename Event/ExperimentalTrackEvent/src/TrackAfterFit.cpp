@@ -12,7 +12,7 @@ experimental::TrackAfterFitExtension::Hits::Hits( const LHCb::span<const LHCb::L
 
 experimental::TrackAfterFitExtension::AdditionalStates::
 AdditionalStates( std::vector<LHCb::State> && states )
-  : m_moreStates( std::forward< std::vector<LHCb::State> > ( states ) )
+  : m_moreStates( std::move ( states ) )
 {
 
   auto rearrange = [this]( const LHCb::State::Location location, LHCb::State& output )
