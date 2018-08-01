@@ -4,7 +4,7 @@
 #include "LHCbMath/MD5.h"
 #include <iostream>
 #include <vector>
-#include "boost/optional.hpp"
+#include <optional>
 #include "boost/operators.hpp"
 
 class ConfigTreeNode final : public boost::equality_comparable<ConfigTreeNode> {
@@ -44,14 +44,6 @@ public:
     { }
 
     ConfigTreeNode(const LeafRef& leaf, const NodeRefs& nodes, std::string label);
-
-    ConfigTreeNode *clone(boost::optional<const LeafRef&> newLeaf = boost::optional<const LeafRef&>(),
-                          boost::optional<const NodeRefs&> newNodes = boost::optional<const NodeRefs&>(),
-                          boost::optional<const std::string&> newLabel = boost::optional<const std::string&>()) const {
-        return new ConfigTreeNode( newLeaf  ? newLeaf.get()  : m_leaf,
-                                   newNodes ? newNodes.get() : m_nodes,
-                                   newLabel ? newLabel.get() : m_label );
-    }
 
     friend bool operator==(const ConfigTreeNode& lhs, const ConfigTreeNode& rhs) {
         return lhs.m_leaf  == rhs.m_leaf

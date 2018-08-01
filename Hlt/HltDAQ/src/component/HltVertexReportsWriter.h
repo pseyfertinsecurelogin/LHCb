@@ -1,9 +1,8 @@
-// $Id: HltVertexReportsWriter.h,v 1.2 2009-11-26 13:06:07 tskwarni Exp $
 #ifndef HLTVERTEXREPORTSWRITER_H
 #define HLTVERTEXREPORTSWRITER_H 1
 
 // Include files
-#include "boost/optional.hpp"
+#include <optional>
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
@@ -47,7 +46,7 @@ private:
 
   // ----------------------- methods
 
-  boost::optional<int> selectionNameToInt(const IANNSvc& ann, const std::string& name) const;
+  std::optional<int> selectionNameToInt(const IANNSvc& ann, const std::string& name) const;
 
   // ----------------------- data members
 

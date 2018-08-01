@@ -38,10 +38,10 @@ StatusCode ConfigStackAccessSvc::finalize()
     return Service::finalize();
 }
 
-boost::optional<PropertyConfig>
+std::optional<PropertyConfig>
 ConfigStackAccessSvc::readPropertyConfig( const PropertyConfig::digest_type& ref )
 {
-    boost::optional<PropertyConfig> x;
+    std::optional<PropertyConfig> x;
     for ( auto& i : m_svcs ) {
         x = i.readPropertyConfig( ref );
         debug() << "read of " << ref << " from " << i.name() << ": "
@@ -60,10 +60,10 @@ ConfigStackAccessSvc::writePropertyConfig( const PropertyConfig& config )
     return id;
 }
 
-boost::optional<ConfigTreeNode>
+std::optional<ConfigTreeNode>
 ConfigStackAccessSvc::readConfigTreeNode( const ConfigTreeNode::digest_type& ref )
 {
-    boost::optional<ConfigTreeNode> x;
+    std::optional<ConfigTreeNode> x;
     for ( auto& i : m_svcs ) {
         x = i.readConfigTreeNode( ref );
         debug() << "read of " << ref << " from " << i.name() << ": "
@@ -104,10 +104,10 @@ ConfigStackAccessSvc::writeConfigTreeNode( const ConfigTreeNode& config )
     return id;
 }
 
-boost::optional<ConfigTreeNode> ConfigStackAccessSvc::readConfigTreeNodeAlias(
+std::optional<ConfigTreeNode> ConfigStackAccessSvc::readConfigTreeNodeAlias(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
-    boost::optional<ConfigTreeNode> x;
+    std::optional<ConfigTreeNode> x;
     for ( auto& i : m_svcs ) {
         x = i.readConfigTreeNodeAlias( alias );
         debug() << "read of " << alias << " from " << i.name() << ": "

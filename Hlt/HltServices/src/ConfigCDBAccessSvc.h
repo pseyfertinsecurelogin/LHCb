@@ -4,9 +4,7 @@
 // Include files
 #include <string>
 #include <memory>
-
-// boost
-#include "boost/optional.hpp"
+#include <string_view>
 
 // from Gaudi
 #include "GaudiKernel/Service.h"
@@ -42,13 +40,13 @@ public:
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
 
-  boost::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
+  std::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
   PropertyConfig::digest_type      writePropertyConfig(const PropertyConfig& config) override;
 
-  boost::optional<ConfigTreeNode>  readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
+  std::optional<ConfigTreeNode>  readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
   ConfigTreeNode::digest_type      writeConfigTreeNode(const ConfigTreeNode& config) override;
 
-  boost::optional<ConfigTreeNode>  readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
+  std::optional<ConfigTreeNode>  readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
   ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias(const ConfigTreeNodeAlias&) override;
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;
@@ -67,8 +65,8 @@ private:
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
   std::unique_ptr<IIncidentListener> m_initListener;
 
-  template <typename T> boost::optional<T> read(boost::string_ref path) const;
-  template <typename T> bool write(boost::string_ref path,const T& object) const;
+  template <typename T> std::optional<T> read(std::string_view path) const;
+  template <typename T> bool write(std::string_view path,const T& object) const;
 
 };
 #endif // CONFIGTARFILEACCESSSVC_H

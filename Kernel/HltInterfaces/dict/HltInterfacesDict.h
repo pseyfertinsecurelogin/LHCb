@@ -18,8 +18,8 @@ namespace {
   struct _hltinterfaces_instantiations
   {
     std::vector<ConfigTreeNodeAlias> py_hlt_07;
-    boost::optional<ConfigTreeNode> py_hlt_08;
-    boost::optional<PropertyConfig> py_hlt_09;
+    std::optional<ConfigTreeNode> py_hlt_08;
+    std::optional<PropertyConfig> py_hlt_09;
     _hltinterfaces_instantiations(){}
   };
 }

@@ -10,7 +10,8 @@
 #include <mutex>
 #include <shared_mutex>
 #include <iterator>
-#include "boost/optional.hpp"
+#include <optional>
+#include <string_view>
 
 class StatusCode;
 namespace Gaudi { namespace Parsers {
@@ -155,7 +156,7 @@ private:
   std::unique_ptr<std::ostream>        m_os;
   Gaudi::Property<bool>                m_createGraphVizFile { this, "createGraphVizFile", false };
   Gaudi::Property<bool>                m_allowFlowChanges { this, "AllowFlowChanges",false};
-  mutable boost::optional<std::vector<std::string> > m_initialTopAlgs;
+  mutable std::optional<std::vector<std::string> > m_initialTopAlgs;
 
   void onCreate(const IAlgTool* tool) override;
 
@@ -164,7 +165,7 @@ private:
 
   StatusCode setTopAlgs(const ConfigTreeNode::digest_type& id) const;
   StatusCode findTopKind(const ConfigTreeNode::digest_type& configID,
-                         boost::string_ref kind,
+                         std::string_view kind,
                          std::back_insert_iterator<std::vector<const PropertyConfig*> > components) const;
   void createGraphVizFile(const PropertyConfig::digest_type& ref, const std::string& fname) const;
   ConfigTreeNode::digest_type resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) const;

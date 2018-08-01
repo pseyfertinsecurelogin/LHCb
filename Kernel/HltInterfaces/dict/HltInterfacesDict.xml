@@ -8,8 +8,8 @@
   <class name = "ConfigTreeNode" />
   <class name = "ConfigTreeNodeAlias" />
   <class name = "std::vector<ConfigTreeNodeAlias>" />
-  <class name = "boost::optional<ConfigTreeNode>" />
-  <class name = "boost::optional<PropertyConfig>" />
+  <class name = "std::optional<ConfigTreeNode>" />
+  <class name = "std::optional<PropertyConfig>" />
   <class name = "ConfigTreeNodeAlias::alias_type" />
   <class name = "IConfigTreeEditor" />
   <class name = "ILinePersistenceSvc" />

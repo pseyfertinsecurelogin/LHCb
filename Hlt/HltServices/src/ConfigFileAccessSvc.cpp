@@ -65,12 +65,12 @@ ConfigFileAccessSvc::configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_t
     return dir() / "Aliases" / alias.str();
 }
 
-boost::optional<PropertyConfig>
+std::optional<PropertyConfig>
 ConfigFileAccessSvc::readPropertyConfig(const PropertyConfig::digest_type& ref) {
    fs::path fnam = propertyConfigPath(ref);
    if (!fs::exists(fnam)) {
         debug() << "file " << fnam.string() << " does not exist" << endmsg;
-        return boost::optional<PropertyConfig>();
+        return {};
    }
    PropertyConfig c;
    fs::ifstream s( fnam );
@@ -78,12 +78,12 @@ ConfigFileAccessSvc::readPropertyConfig(const PropertyConfig::digest_type& ref) 
    return c;
 }
 
-boost::optional<ConfigTreeNode>
+std::optional<ConfigTreeNode>
 ConfigFileAccessSvc::readConfigTreeNode(const ConfigTreeNode::digest_type& ref) {
    fs::path fnam = configTreeNodePath(ref);
    if (!fs::exists(fnam)) {
         debug() << "file " << fnam.string() << " does not exist" << endmsg;
-        return boost::optional<ConfigTreeNode>();
+        return {};
    }
    ConfigTreeNode c;
    fs::ifstream s( fnam );
@@ -91,12 +91,12 @@ ConfigFileAccessSvc::readConfigTreeNode(const ConfigTreeNode::digest_type& ref) 
    return c;
 }
 
-boost::optional<ConfigTreeNode>
+std::optional<ConfigTreeNode>
 ConfigFileAccessSvc::readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type& alias) {
    fs::path fnam = configTreeNodeAliasPath(alias);
    if (!fs::exists(fnam)) {
         debug() << "file " << fnam.string() << " does not exist" << endmsg;
-        return boost::optional<ConfigTreeNode>();
+        return {};
    }
    std::string sref;
    fs::ifstream s( fnam );
@@ -104,7 +104,7 @@ ConfigFileAccessSvc::readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_ty
    ConfigTreeNode::digest_type ref = ConfigTreeNode::digest_type::createFromStringRep(sref);
    if (!ref.valid()) {
         error() << "content of " << fnam.string() << " not a valid ref" << endmsg;
-        return boost::optional<ConfigTreeNode>();
+        return {};
    }
    return readConfigTreeNode(ref);
 }

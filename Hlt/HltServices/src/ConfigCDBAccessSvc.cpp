@@ -23,6 +23,7 @@
 #include "boost/iostreams/stream.hpp"
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
+#include "boost/algorithm/string/predicate.hpp"
 
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/IIncidentSvc.h"
@@ -34,7 +35,7 @@ namespace fs = boost::filesystem;
 
 namespace {
 
-ConfigTreeNodeAlias make_ConfigTreeNodeAlias( boost::string_ref ref, boost::string_ref alias ) {
+ConfigTreeNodeAlias make_ConfigTreeNodeAlias( std::string_view ref, std::string_view alias ) {
     std::stringstream str;
     str << "Ref: " << ref << "\nAlias: " << alias << '\n';
     ConfigTreeNodeAlias a;
@@ -53,13 +54,13 @@ std::string configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alia
 
 struct DefaultFilenameSelector
 {
-    bool operator()( boost::string_ref ) const { return true; }
+    bool operator()( std::string_view ) const { return true; }
 };
 
 struct PrefixFilenameSelector
 {
     PrefixFilenameSelector( std::string  _prefix ) : prefix(std::move( _prefix )) { }
-    bool operator()( boost::string_ref fname ) const { return fname.starts_with(prefix); }
+    bool operator()( std::string_view fname ) const { return boost::algorithm::starts_with(fname,prefix); }
     std::string prefix;
 };
 
@@ -101,7 +102,7 @@ std::time_t read_time( std::istream& s )
 struct cdb_record {
     const void *key,*data;
     size_t keylen, datalen;
-    boost::string_ref string_key() const { return { static_cast<const char*>(key), keylen }; }
+    std::string_view string_key() const { return { static_cast<const char*>(key), keylen }; }
 };
 
 class icdb {
@@ -155,7 +156,7 @@ public:
     auto begin() { return iterator{ &m_db }; }
     auto end() const { return iterator{ }; }
 
-    auto find(boost::string_ref key) {
+    auto find(std::string_view key) {
         // Hrmpf: use inside knowledge of the (very stable) layout of the cdb structure...
         return cdb_find(&m_db, key.data(), key.size())>0 ?
                     iterator{ &m_db, cdb_datapos(&m_db) + cdb_datalen(&m_db) } :
@@ -197,7 +198,7 @@ public:
 
     const std::string& name() const { return m_name; }
 
-    void insert(boost::string_ref key, const std::vector<unsigned char>& data) {
+    void insert(std::string_view key, const std::vector<unsigned char>& data) {
         insert( cdb_record{ key.data(), data.data(), key.size(), data.size() });
     }
     void insert(cdb_record record) {
@@ -205,7 +206,7 @@ public:
                      || cdb_make_add( &m_db, static_cast<const unsigned char*>(record.key),  record.keylen,
                                              static_cast<const unsigned char*>(record.data), record.datalen ) != 0 ) {
             m_error = true;
-            throw std::runtime_error( "Failed to put key " + record.string_key().to_string() );
+            throw std::runtime_error( "Failed to put key " + std::string{record.string_key()} );
          }
     }
 
@@ -222,7 +223,7 @@ public:
 };
 
 template <typename T>
-boost::optional<T> unpack( cdb_record data) {
+std::optional<T> unpack( cdb_record data) {
     io::stream<io::array_source> value( static_cast<const char*>(data.data), data.datalen );
     // 12 bytes of header information...
     {
@@ -257,7 +258,8 @@ boost::optional<T> unpack( cdb_record data) {
     s.push( value );
     T t;
     s >> t;
-    return boost::make_optional( value.tellg() == static_cast<unsigned>(data.datalen), std::move(t) );
+    if (value.tellg() != static_cast<unsigned>(data.datalen) ) return {};
+    return t;
 }
 
 int compress( std::string& str )
@@ -370,7 +372,7 @@ class CDB
     }
 
     template <typename T>
-    boost::optional<T> read( boost::string_ref key )
+    std::optional<T> read( std::string_view key )
     {
         // first check input database -- if it is available
         if ( m_icdb ) {
@@ -383,7 +385,7 @@ class CDB
         }
         // not in input -- when writing, must check write cache!
         if ( m_ocdb ) {
-            auto i = m_write_cache.find( key.to_string() );
+            auto i = m_write_cache.find( std::string{key} );
             if ( i != m_write_cache.end() ) {
                 std::stringstream s( i->second );
                 T t;
@@ -421,20 +423,20 @@ class CDB
         return m_myUid;
     }
 
-    bool append( boost::string_ref key, std::stringstream& is )
+    bool append( std::string_view key, std::stringstream& is )
     {
         if ( !m_ocdb || m_error ) return false;
         // first, look in input database
         auto rd = read<std::string>(key);
         if (rd) {
-            if ( rd.get() != is.str() ) {
+            if ( rd.value() != is.str() ) {
                 m_error = true;
                 throw std::runtime_error("CDB append error -- hash collision with file??");
             }
             return true;
         }
         // if not there, look in write cache
-        auto i = m_write_cache.find( key.to_string() );
+        auto i = m_write_cache.find( std::string{key} );
         if ( i != m_write_cache.end() ) {
             bool ok = ( i->second == is.str() );
             if ( !ok ) {
@@ -444,7 +446,7 @@ class CDB
             return ok;
         }
         // aha, this is an as yet unknown key... insert it!
-        m_write_cache.emplace( key.to_string(), is.str() );
+        m_write_cache.emplace( key, is.str() );
         m_ocdb->insert( key, make_cdb_record( is.str(), getUid(), std::time(nullptr) ) );
         return true;
     }
@@ -453,8 +455,8 @@ class CDB
     const std::string& name() const { return m_icdb.name(); }
 
   private:
-    icdb                  m_icdb;
-    boost::optional<ocdb> m_ocdb;
+    icdb                m_icdb;
+    std::optional<ocdb> m_ocdb;
     std::unordered_map<std::string, std::string> m_write_cache; // write cache..
     mutable uid_t m_myUid = 0;
     bool m_error = false;
@@ -543,15 +545,15 @@ StatusCode ConfigCDBAccessSvc::finalize()
 }
 
 template <typename T>
-boost::optional<T> ConfigCDBAccessSvc::read( boost::string_ref path ) const
+std::optional<T> ConfigCDBAccessSvc::read( std::string_view path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
     auto f = file();
-    return f ? f->read<T>(path) : boost::optional<T>{} ;
+    return f ? f->read<T>(path) : std::optional<T>{} ;
 }
 
 template <typename T>
-bool ConfigCDBAccessSvc::write( boost::string_ref path, const T& object ) const
+bool ConfigCDBAccessSvc::write( std::string_view path, const T& object ) const
 {
     auto f = file();
     if ( !f ) {
@@ -560,7 +562,7 @@ bool ConfigCDBAccessSvc::write( boost::string_ref path, const T& object ) const
     }
     auto current = f->read<T>( path );
     if ( current ) {
-        if ( object == current.get() ) return true;
+        if ( object == current.value() ) return true;
         error() << " object @ " << path
                 << "  already exists, but contents are different..." << endmsg;
         return false;
@@ -579,28 +581,28 @@ bool ConfigCDBAccessSvc::write( boost::string_ref path, const T& object ) const
     }
 }
 
-boost::optional<PropertyConfig>
+std::optional<PropertyConfig>
 ConfigCDBAccessSvc::readPropertyConfig( const PropertyConfig::digest_type& ref )
 {
     return this->read<PropertyConfig>( propertyConfigPath( ref ) );
 }
 
-boost::optional<ConfigTreeNode>
+std::optional<ConfigTreeNode>
 ConfigCDBAccessSvc::readConfigTreeNode( const ConfigTreeNode::digest_type& ref )
 {
     return this->read<ConfigTreeNode>( configTreeNodePath( ref ) );
 }
 
-boost::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
+std::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
     std::string fnam = configTreeNodeAliasPath( alias );
     auto sref = this->read<std::string>( fnam );
-    if ( !sref ) return boost::none;
+    if ( !sref ) return {};
     auto ref = ConfigTreeNode::digest_type::createFromStringRep( *sref );
     if ( !ref.valid() ) {
         error() << "content of " << fnam << " not a valid ref" << endmsg;
-        return boost::none;
+        return {};
     }
     return readConfigTreeNode( ref );
 }
