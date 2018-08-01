@@ -8,7 +8,7 @@
 // ============================================================================
 #include <algorithm>
 #include <climits>
-#include "boost/optional.hpp"
+#include <optional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -619,7 +619,7 @@ namespace LoKi
           // ======================================================================
           /// the function
           LoKi::FunctorFromFunctor<TYPE,double> m_fun     ; // the function
-          boost::optional<LoKi::FunctorFromFunctor<TYPE,bool>>   m_cut     ; // the cut
+          std::optional<LoKi::FunctorFromFunctor<TYPE,bool>>   m_cut     ; // the cut
           double                                m_init    ; // init-value
           // ======================================================================
         };

@@ -9,7 +9,7 @@
 #include "DetDesc/IPVolume.h"
 #include "DetDesc/InstanceCounter.h"
 
-#include "boost/optional/optional.hpp"
+#include <optional>
 
 /// forward declarations
 class IDataProviderSvc;
@@ -255,7 +255,7 @@ private:
   // transformation matrix
   Gaudi::Transform3D          m_matrix;
   // pointer to inverse transformation matrix
-  boost::optional<Gaudi::Transform3D> m_imatrix;
+  std::optional<Gaudi::Transform3D> m_imatrix;
   // pointer to logical volume
   ILVolume* m_lvolume = nullptr;
   // reference to dataSvc

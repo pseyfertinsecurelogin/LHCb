@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <float.h>
 #include <map>
-#include "boost/optional.hpp"
+#include <optional>
 
 #include <xercesc/dom/DOMNodeList.hpp>
 #include "XmlLVolumeCnv.h"
@@ -1548,7 +1548,7 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
   }
 
   // the result
-  boost::optional<Gaudi::Transform3D> result;
+  std::optional<Gaudi::Transform3D> result;
 
   // gets the tag name for childElement
   const XMLCh* tagName = childElement->getNodeName();

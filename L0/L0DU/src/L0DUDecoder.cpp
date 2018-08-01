@@ -1,4 +1,5 @@
 // Include files
+#include <optional>
 
 // from Gaudi
 
@@ -41,7 +42,7 @@ namespace {
   static const std::string Sum_Et_Next2 = "Sum(Et,Next2)";
 
 
-  void encode_( boost::optional<std::map<std::string, std::pair<unsigned int, double>>>& map,
+  void encode_( std::optional<std::map<std::string, std::pair<unsigned int, double>>>& map,
                 LHCb::L0DUReport& report,
                 const std::string& name, unsigned int data , unsigned int scale = 1 ) {
     if ( map ) (*map)[name] = { data, scale };
@@ -91,7 +92,7 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
 
   LHCb::L0DUReport report;
 
-  boost::optional<std::map<std::string, std::pair<unsigned int,double>>> dataMap;
+  std::optional<std::map<std::string, std::pair<unsigned int,double>>> dataMap;
   if (msgLevel(MSG::DEBUG)) dataMap.emplace();
 
   auto encode = [&](auto&&... args) {

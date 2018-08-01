@@ -8,7 +8,7 @@
 #include <functional>
 #include <algorithm>
 #include <memory>
-#include "boost/optional.hpp"
+#include <optional>
 /* GaudiKernel includes */
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
@@ -492,26 +492,26 @@ private:
   /// Transformation from the  global reference system
   /// to the local reference system.
   /// Total matrix, including ideal alignment plus deltas.
-  boost::optional<Gaudi::Transform3D>        m_matrix;
+  std::optional<Gaudi::Transform3D>        m_matrix;
 
   /// Transformation from the  global reference system
   /// to the local reference system.
   /// Ideal geometry with no misalignments.
-  mutable boost::optional<Gaudi::Transform3D>   m_idealMatrix;
+  mutable std::optional<Gaudi::Transform3D>   m_idealMatrix;
 
-  mutable boost::optional<Gaudi::Transform3D> m_localIdealMatrix;
-  mutable boost::optional<Gaudi::Transform3D> m_localDeltaMatrix;
-
-  /** transformation FROM local reference system  to the global
-   *  reference system
-   */
+  mutable std::optional<Gaudi::Transform3D> m_localIdealMatrix;
+  mutable std::optional<Gaudi::Transform3D> m_localDeltaMatrix;
 
   /** transformation FROM local reference system  to the global
    *  reference system
    */
 
-  mutable boost::optional<Gaudi::Transform3D>    m_matrixInv;
-  mutable boost::optional<Gaudi::Transform3D> m_idealMatrixInv;
+  /** transformation FROM local reference system  to the global
+   *  reference system
+   */
+
+  mutable std::optional<Gaudi::Transform3D>    m_matrixInv;
+  mutable std::optional<Gaudi::Transform3D> m_idealMatrixInv;
 
   /// flag for support association
   bool                             m_gi_has_support = false ;

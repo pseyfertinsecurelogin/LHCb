@@ -394,12 +394,12 @@ void GeometryInfoPlus::clearMatrices()
   m_pvMatrices.clear();
   m_deltaMatrices.clear();
 
-  m_matrix           = boost::none;
-  m_idealMatrix      = boost::none;
-  m_localIdealMatrix = boost::none;
-  m_localDeltaMatrix = boost::none;
-  m_matrixInv        = boost::none;
-  m_idealMatrixInv   = boost::none;
+  m_matrix           = {};
+  m_idealMatrix      = {};
+  m_localIdealMatrix = {};
+  m_localDeltaMatrix = {};
+  m_matrixInv        = {};
+  m_idealMatrixInv   = {};
 
 }
 //=============================================================================
@@ -741,8 +741,8 @@ IGeometryInfo*  GeometryInfoPlus::reset()
   m_gi_lvolume = nullptr;
 
   /// reset matrices
-  m_matrix    = boost::none;
-  m_matrixInv = boost::none;
+  m_matrix    = {};
+  m_matrixInv = {};
 
   /// reset support
   m_gi_support      = nullptr;

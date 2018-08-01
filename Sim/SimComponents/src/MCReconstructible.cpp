@@ -84,8 +84,8 @@ bool MCReconstructible::accept_neutral( const LHCb::MCParticle* mcPart ) const
   const double z  = mcPart->originVertex()->position().z();
   double pz = mcPart->momentum().pz();
   if( pz < 0 )return false;
-  pz < 0 ? pz = std::min(pz, -LHCb::Math::lowTolerance) :
-               pz = std::max(pz, LHCb::Math::lowTolerance);
+  pz = ( pz < 0 ? std::min(pz, -LHCb::Math::lowTolerance) :
+                  std::max(pz, LHCb::Math::lowTolerance) );
 
   const double sx = mcPart->momentum().px()/pz;
   const double sy = mcPart->momentum().py()/pz;
@@ -140,8 +140,8 @@ MCReconstructible::reconstructible( const LHCb::MCParticle* mcPart ) const
       if ( isCharged ) {
         // n.b the order matters !
         auto cat = std::find_if( m_critMap.begin(), m_critMap.end(),
-                                 [&](const boost::optional<std::pair<IMCReconstructible::RecCategory,
-                                                     LHCb::MC::MCTrackGeomCriteria>>& crit)
+                                 [&](const std::optional<std::pair<IMCReconstructible::RecCategory,
+                                                                   LHCb::MC::MCTrackGeomCriteria>>& crit)
                                  { return crit->second.accepted(mcTkInfo(),mcPart); } );
         if (cat!=m_critMap.end()) return (*cat)->first;
       } else { // neutral
@@ -172,8 +172,8 @@ bool MCReconstructible:: isReconstructibleAs(
   const bool isCharged = mcPart->particleID().threeCharge() != 0;
   if (isCharged && category != Neutral && category != NotReconstructible){
     auto criteria = std::find_if( m_critMap.begin(), m_critMap.end(),
-                                 [&](const boost::optional<std::pair<IMCReconstructible::RecCategory,
-                                                                     LHCb::MC::MCTrackGeomCriteria>>& crit)
+                                 [&](const std::optional<std::pair<IMCReconstructible::RecCategory,
+                                                                   LHCb::MC::MCTrackGeomCriteria>>& crit)
                                  { return crit->first == category; } );
     if (criteria == m_critMap.end()) {
       Warning("Category not found - defaulting to false",StatusCode::SUCCESS);

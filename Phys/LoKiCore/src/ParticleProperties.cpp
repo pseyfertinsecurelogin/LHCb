@@ -4,6 +4,7 @@
 // STD&STL
 // ============================================================================
 #include <algorithm>
+#include <optional>
 #include <shared_mutex>
 // ============================================================================
 // GaudiKernel
@@ -27,7 +28,6 @@
 // Boost
 // ============================================================================
 #include "boost/lexical_cast.hpp"
-#include "boost/optional.hpp"
 #include "boost/container/flat_map.hpp"
 // ============================================================================
 
@@ -96,7 +96,7 @@ LHCb::ParticleID LoKi::Particles::pidFromName( const std::string& name )
                             std::make_pair( "p~-"   , LHCb::ParticleID ( -2212 ) ) };
 
   auto res = s_map.with_rlock( [&]( const Map& m )
-                               -> boost::optional<LHCb::ParticleID> {
+                               -> std::optional<LHCb::ParticleID> {
       auto i = m.find( name );
       if ( UNLIKELY( i == m.end() ) ) return {};
       return i->second ;
@@ -396,7 +396,7 @@ std::string  LoKi::Particles::nameFromPID ( const LHCb::ParticleID& pid )
                             std::make_pair( LHCb::ParticleID ( -2212 ) , "p~-"   ) };
 
   auto res = s_map.with_rlock( [&]( const Map& m )
-                               -> boost::optional<std::string> {
+                               -> std::optional<std::string> {
       auto i = m.find( pid );
       if ( UNLIKELY( i == m.end() ) ) return {};
       return i->second ;

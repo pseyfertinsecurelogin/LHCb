@@ -3,7 +3,7 @@
 #define       DETDESC_SOLIDCHILD_H 1
 /// STD and STL
 #include <functional>
-#include "boost/optional.hpp"
+#include <optional>
 // Geometry
 #include "GaudiKernel/Transform3DTypes.h"
 /// Detdesc
@@ -193,7 +193,7 @@ private:
 private:
   ///
   std::unique_ptr<ISolid>                      m_sc_solid   ; ///< own solid
-  mutable boost::optional<Gaudi::Transform3D>  m_sc_matrix  ; ///< position/rotation
+  mutable std::optional<Gaudi::Transform3D>  m_sc_matrix  ; ///< position/rotation
   bool                     m_sc_simple  ; ///< flag if "simple"
   ///
 };
