@@ -1,9 +1,9 @@
 #pragma once
+#include "Event/ExperimentalTags.h"
 #include "Event/State.h"
 #include "Event/Track.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/STLExtensions.h"
-#include "Event/ExperimentalTags.h"
 #include <boost/container/small_vector.hpp>
 #include <vector>
 
@@ -33,10 +33,10 @@ namespace experimental
 
     friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
 
-    LHCb::State        m_physicsstate;
+    LHCb::State m_physicsstate;
     LHCb::Track::Types m_type;
-    float              m_chisqperdof{0};
-    int                m_dof{0};
+    float m_chisqperdof{0};
+    int m_dof{0};
   };
   namespace TrackAfterFitExtension
   {
@@ -68,23 +68,23 @@ namespace experimental
     class Rich1States
     {
     private:
-      LHCb::State              m_BegRich1;
-      LHCb::State              m_EndRich1;
+      LHCb::State m_BegRich1;
+      LHCb::State m_EndRich1;
 
     public:
-      Rich1States( std::vector<LHCb::State> & states );
-      Rich1States( LHCb::State && Beg, LHCb::State && End );
+      Rich1States( std::vector<LHCb::State>& states );
+      Rich1States( LHCb::State&& Beg, LHCb::State&& End );
       friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
 
     class Rich2States
     {
     private:
-      LHCb::State              m_BegRich2;
+      LHCb::State m_BegRich2;
 
     public:
-      Rich2States( std::vector<LHCb::State> & states );
-      Rich2States( LHCb::State && Beg );
+      Rich2States( std::vector<LHCb::State>& states );
+      Rich2States( LHCb::State&& Beg );
       friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
 
@@ -94,15 +94,15 @@ namespace experimental
       std::vector<LHCb::State> m_moreStates;
 
     public:
-      AdditionalStates( std::vector<LHCb::State> && states, experimental::Tag::State::AssumeUnfiltered_tag = { } );
-      AdditionalStates( std::vector<LHCb::State> && states, experimental::Tag::State::AssumeFiltered_tag );
+      AdditionalStates( std::vector<LHCb::State>&& states, experimental::Tag::State::AssumeUnfiltered_tag = {} );
+      AdditionalStates( std::vector<LHCb::State>&& states, experimental::Tag::State::AssumeFiltered_tag );
       friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
     };
 
     class BackCompat
     {
     private:
-      const LHCb::Track * m_origin = nullptr;
+      const LHCb::Track* m_origin = nullptr;
 
     public:
       BackCompat( const LHCb::Track* t ) : m_origin( t ) {}
@@ -123,7 +123,7 @@ namespace experimental
               // backward compatibility methods
     );
     SOASKIN(VelotrackSkin, core, rich1, moreStates, origin) {
-      SOASKIN_INHERIT_DEFAULT_METHODS(VelotrackSkin);
+      SOASKIN_INHERIT_DEFAULT_METHODS( VelotrackSkin );
 
       // TODO very very important constructors!!!
 
@@ -144,7 +144,7 @@ namespace experimental
               // backward compatibility methods
     );
     SOASKIN(UpstreamtrackSkin, core, rich1, moreStates, origin) {
-      SOASKIN_INHERIT_DEFAULT_METHODS(UpstreamtrackSkin);
+      SOASKIN_INHERIT_DEFAULT_METHODS( UpstreamtrackSkin );
 
       // TODO very very important constructors!!!
 
@@ -168,8 +168,27 @@ namespace experimental
               // backward compatibility methods
     );
     SOASKIN(LongtrackSkin, core, rich1, rich2, moreStates, origin) {
-      SOASKIN_INHERIT_DEFAULT_METHODS(LongtrackSkin);
+      SOASKIN_INHERIT_DEFAULT_METHODS( LongtrackSkin );
 
+      LongtrackSkin( const LHCb::Track& t )
+      {
+        core.m_physicsstate = t.firstState();
+        core.m_type         = t.type();
+        core.m_chisqperdof  = t.chi2PerDoF();
+        core.m_dof          = t.nDoF();
+
+        std::vector<LHCb::State> states;
+        states.reserve( t.states().size() );
+        for ( auto s : t.states() ) {
+          states.emplace_back( *s );
+        }
+
+        rich1      = TrackAfterFitExtension::Rich1States( states );
+        rich2      = TrackAfterFitExtension::Rich12tates( states );
+        moreStates = TrackAfterFitExtension::AdditionalStates( std::move( states ) );
+
+        origin = &t;
+      }
       // TODO very very important constructors!!!
 
     };
@@ -192,7 +211,7 @@ namespace experimental
               // backward compatibility methods
     );
     SOASKIN(DowntrackSkin, core, rich1, rich2, moreStates, origin) {
-      SOASKIN_INHERIT_DEFAULT_METHODS(DowntrackSkin);
+      SOASKIN_INHERIT_DEFAULT_METHODS( DowntrackSkin );
 
       // TODO very very important constructors!!!
 
@@ -216,7 +235,7 @@ namespace experimental
               // backward compatibility methods
     );
     SOASKIN(SeedtrackSkin, core, rich1, rich2, moreStates, origin) {
-      SOASKIN_INHERIT_DEFAULT_METHODS(SeedtrackSkin);
+      SOASKIN_INHERIT_DEFAULT_METHODS( SeedtrackSkin );
 
       // TODO very very important constructors!!!
 
