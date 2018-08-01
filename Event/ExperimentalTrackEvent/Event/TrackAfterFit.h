@@ -176,12 +176,13 @@ namespace experimental
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( LongtrackSkin );
 
+        /// TODO: better to handle this by an external converter which avoids initializing the members
       LongtrackSkin( const LHCb::Track& t )
       {
-        core.m_physicsstate = t.firstState();
-        core.m_type         = t.type();
-        core.m_chisqperdof  = t.chi2PerDoF();
-        core.m_dof          = t.nDoF();
+        this->core().m_physicsstate = t.firstState();
+        this->core().m_type         = t.type();
+        this->core().m_chisqperdof  = t.chi2PerDoF();
+        this->core().m_dof          = t.nDoF();
 
         std::vector<LHCb::State> states;
         states.reserve( t.states().size() );
@@ -189,11 +190,11 @@ namespace experimental
           states.emplace_back( *s );
         }
 
-        rich1      = TrackAfterFitExtension::Rich1States( states );
-        rich2      = TrackAfterFitExtension::Rich12tates( states );
-        moreStates = TrackAfterFitExtension::AdditionalStates( std::move( states ) );
+        this->rich1()      = TrackAfterFitExtension::Rich1States( states );
+        this->rich2()      = TrackAfterFitExtension::Rich2States( states );
+        this->moreStates() = TrackAfterFitExtension::AdditionalStates( std::move( states ) );
 
-        origin = &t;
+        this->origin() = &t;
       }
       // TODO very very important constructors!!!
     };
