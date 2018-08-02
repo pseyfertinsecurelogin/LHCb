@@ -1,9 +1,9 @@
 // Include files
-#include "boost/optional.hpp"
 #include "Event/FTCluster.h"
 #include "Event/RawEvent.h"
 
 #include <numeric>
+#include <optional>
 
 // local
 #include "FTRawBankEncoder.h"
@@ -35,13 +35,13 @@ StatusCode FTRawBankEncoder::execute() {
   // Incremented to deal with new numbering scheme
   int codingVersion = 5;
 
-  //== create the array of arrays of vectors with the proper size...  
+  //== create the array of arrays of vectors with the proper size...
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
   std::array<uint32_t, s_nbBanks> headerData{};
   std::array<int,s_nbBanks*s_nbLinksPerBank> nClustersPerSipm = {0};
   for ( const auto& cluster : *clusters ) {
     if(cluster->isLarge() > 1) continue;
-    
+
     LHCb::FTChannelID id = cluster->channelID();
     unsigned int bankNumber = m_readoutTool->bankNumber(id);
     unsigned int linkID  = (id - m_readoutTool->channelIDShift(bankNumber)) >> 7;
@@ -55,7 +55,7 @@ StatusCode FTRawBankEncoder::execute() {
       headerData[bankNumber] += ( 1u << linkID) ; // set the truncation bit
       continue;
     }
-    
+
     data.push_back(( linkID                 << FTRawBank::linkShift) |
                    ( id.channel()           << FTRawBank::cellShift ) |
                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
@@ -67,20 +67,20 @@ StatusCode FTRawBankEncoder::execute() {
                            cluster->isLarge(), data.back() ) << endmsg;
     }
   }
-  
+
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
   for ( unsigned int iBank = 0; iBank < sipmData.size() ; ++iBank ) {
     if( msgLevel( MSG::VERBOSE ) ) verbose() << "*** Bank " << iBank << endmsg;
     auto words = sipmData[iBank].size();
     std::vector<unsigned int> bank; bank.reserve((words+1)/2 + 1);
     bank.emplace_back( headerData[iBank] ) ; // insert the header
-    boost::optional<unsigned int> buf;
+    std::optional<unsigned int> buf;
     for ( const auto& cluster : sipmData[iBank] ) {
       if (!buf) {
         buf = cluster;
       } else {
         bank.emplace_back( *buf | ( static_cast<unsigned int>(cluster) << 16 ) );
-        buf = boost::none;
+        buf = {};
       }
     }
     if (buf) bank.emplace_back( *buf) ;
@@ -90,7 +90,7 @@ StatusCode FTRawBankEncoder::execute() {
         verbose() << format( "    at %5d data %8.8x", offset++, d ) << endmsg;
       }
     }
-    event->addBank( iBank, LHCb::RawBank::FTCluster, codingVersion, bank );    
-  } 
+    event->addBank( iBank, LHCb::RawBank::FTCluster, codingVersion, bank );
+  }
  return StatusCode::SUCCESS;
 }

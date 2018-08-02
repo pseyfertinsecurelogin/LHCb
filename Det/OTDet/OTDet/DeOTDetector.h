@@ -1,7 +1,7 @@
 #ifndef OTDET_DEOTDETECTOR_H
 #define OTDET_DEOTDETECTOR_H 1
 
-#include "boost/optional.hpp"
+#include <optional>
 
 /// GaudiKernel
 #include "GaudiKernel/VectorMap.h"
@@ -317,7 +317,7 @@ public:
 
   /** get the calibrationholder */
   const Calibration* globalCalibration() const {
-    return m_calibration.get_ptr() ;
+    return m_calibration ? &m_calibration.value() : nullptr;
   }
 
   /** get the global T0 offset */
@@ -349,7 +349,7 @@ private:
   double m_maxDriftTime = 0.;           ///< maximum drift time
   double m_maxDriftTimeCor = 0.;        ///< magn. correction on maximum drift time
   double m_deadTime = 0.;               ///< deadtime
-  boost::optional<Calibration> m_calibration;     ///< holder for global calibration parameters (e.g. t0)
+  std::optional<Calibration> m_calibration;     ///< holder for global calibration parameters (e.g. t0)
 };
 
 // -----------------------------------------------------------------------------

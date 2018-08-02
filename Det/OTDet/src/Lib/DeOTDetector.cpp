@@ -54,7 +54,7 @@ StatusCode DeOTDetector::initialize()
 
   if( hasCondition("Calibration") ) {
     m_calibration.emplace( this->condition("Calibration") );
-    updMgrSvc()->registerCondition( m_calibration.get_ptr(),
+    updMgrSvc()->registerCondition( &m_calibration.value(),
 				    m_calibration->m_condition.path(),
 				    &DeOTDetector::Calibration::callback ) ;
   } else {

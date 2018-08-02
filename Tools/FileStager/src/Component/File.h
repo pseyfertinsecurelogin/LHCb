@@ -3,9 +3,9 @@
 
 // std
 #include <vector>
+#include <optional>
 
 // boost
-#include <boost/optional.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
@@ -141,7 +141,7 @@ private:
 
    bool m_staged;
    bool m_good;
-   mutable boost::optional< boost::uintmax_t > m_size;
+   mutable std::optional< boost::uintmax_t > m_size;
 
    mutable boost::mutex m_internalMutex;
    boost::mutex m_openMutex;

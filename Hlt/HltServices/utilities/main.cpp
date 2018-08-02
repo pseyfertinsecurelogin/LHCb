@@ -1,4 +1,3 @@
-//// TODO: use http://www.boost.org/doc/libs/1_55_0/libs/utility/doc/html/string_ref.html where ever possible!!!
 //// TODO: fold class CDB back into ConfigCDBAccessSvc...
 #include <iostream>
 #include <string>

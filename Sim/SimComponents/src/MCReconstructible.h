@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <array>
-#include "boost/optional.hpp"
+#include <optional>
 
 // Gaudi
 #include "GaudiKernel/IIncidentListener.h"
@@ -116,9 +116,9 @@ private: // data
   Gaudi::Property<std::vector<std::string>> m_chargedVeloCriteria {this, "ChargedVelo", {"hasVelo"}};
   Gaudi::Property<std::vector<std::string>> m_chargedTCriteria {this, "ChargedTtrack", {"hasT"}};
 
-  // the boost::optional is required to delay the construction...
-  std::array<boost::optional<std::pair<IMCReconstructible::RecCategory,
-                                       LHCb::MC::MCTrackGeomCriteria>>,5> m_critMap;
+  // the std::optional is required to delay the construction...
+  std::array<std::optional<std::pair<IMCReconstructible::RecCategory,
+                                     LHCb::MC::MCTrackGeomCriteria>>,5> m_critMap;
 
 };
 
