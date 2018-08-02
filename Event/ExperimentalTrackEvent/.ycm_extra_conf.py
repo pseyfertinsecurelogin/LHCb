@@ -41,12 +41,9 @@ flags = [
     '-Wall',
     '-Wextra',
     '-std=c++14',
-    '-stdlib=libc++',
     '-x',
     'c++',
     '-I', DirectoryOfThisScript(),
-    '-isystem', '/usr/local/include',
-    '-isystem', '/usr/include',
 ]
 if database is None:
     if cmtconfig is not None:
