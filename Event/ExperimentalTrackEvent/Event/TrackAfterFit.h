@@ -111,10 +111,13 @@ namespace experimental
     };
   } // namespace TrackAfterFitExtension
 
-  namespace Velotrack
+  namespace TrackData
   {
     SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
               // core methods
+              );
+    SOAFIELD( rich2, TrackAfterFitExtension::Rich2States, SOAFIELD_ACCESSORS( rich2 )
+              // rich2 access methods
               );
     SOAFIELD( rich1, TrackAfterFitExtension::Rich1States, SOAFIELD_ACCESSORS( rich1 )
               // rich1 access methods
@@ -128,50 +131,17 @@ namespace experimental
     SOASKIN( VelotrackSkin, core, rich1, moreStates, origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( VelotrackSkin );
-
+      //
       // TODO very very important constructors!!!
     };
-  }
 
-  namespace Upstreamtrack
-  {
-    SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
-              // core methods
-              );
-    SOAFIELD( rich1, TrackAfterFitExtension::Rich1States, SOAFIELD_ACCESSORS( rich1 )
-              // rich1 access methods
-              );
-    SOAFIELD( moreStates, TrackAfterFitExtension::AdditionalStates, SOAFIELD_ACCESSORS( moreStates )
-              // moreStates access methods
-              );
-    SOAFIELD( origin, TrackAfterFitExtension::BackCompat, SOAFIELD_ACCESSORS( origin )
-              // backward compatibility methods
-              );
     SOASKIN( UpstreamtrackSkin, core, rich1, moreStates, origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( UpstreamtrackSkin );
 
       // TODO very very important constructors!!!
     };
-  }
 
-  namespace LongtrackData
-  {
-    SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
-              // core methods
-              );
-    SOAFIELD( rich1, TrackAfterFitExtension::Rich1States, SOAFIELD_ACCESSORS( rich1 )
-              // rich1 access methods
-              );
-    SOAFIELD( rich2, TrackAfterFitExtension::Rich2States, SOAFIELD_ACCESSORS( rich2 )
-              // rich2 access methods
-              );
-    SOAFIELD( moreStates, TrackAfterFitExtension::AdditionalStates, SOAFIELD_ACCESSORS( moreStates )
-              // moreStates access methods
-              );
-    SOAFIELD( origin, TrackAfterFitExtension::BackCompat, SOAFIELD_ACCESSORS( origin )
-              // backward compatibility methods
-              );
     SOASKIN( LongtrackSkin, core, rich1, rich2, moreStates, origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( LongtrackSkin );
@@ -198,52 +168,12 @@ namespace experimental
       }
       // TODO very very important constructors!!!
     };
-  }
-  typedef SOA::Container<std::vector, LongtrackData::LongtrackSkin> Longtracks;
-  typedef typename Longtracks::proxy Longtrack;
-
-  namespace Downtrack
-  {
-    SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
-              // core methods
-              );
-    SOAFIELD( rich1, TrackAfterFitExtension::Rich1States, SOAFIELD_ACCESSORS( rich1 )
-              // rich1 access methods
-              );
-    SOAFIELD( rich2, TrackAfterFitExtension::Rich2States, SOAFIELD_ACCESSORS( rich2 )
-              // rich2 access methods
-              );
-    SOAFIELD( moreStates, TrackAfterFitExtension::AdditionalStates, SOAFIELD_ACCESSORS( moreStates )
-              // moreStates access methods
-              );
-    SOAFIELD( origin, TrackAfterFitExtension::BackCompat, SOAFIELD_ACCESSORS( origin )
-              // backward compatibility methods
-              );
     SOASKIN( DowntrackSkin, core, rich1, rich2, moreStates, origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( DowntrackSkin );
 
       // TODO very very important constructors!!!
     };
-  }
-
-  namespace Seedtrack
-  {
-    SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
-              // core methods
-              );
-    SOAFIELD( rich1, TrackAfterFitExtension::Rich1States, SOAFIELD_ACCESSORS( rich1 )
-              // rich1 access methods
-              );
-    SOAFIELD( rich2, TrackAfterFitExtension::Rich2States, SOAFIELD_ACCESSORS( rich2 )
-              // rich2 access methods
-              );
-    SOAFIELD( moreStates, TrackAfterFitExtension::AdditionalStates, SOAFIELD_ACCESSORS( moreStates )
-              // moreStates access methods
-              );
-    SOAFIELD( origin, TrackAfterFitExtension::BackCompat, SOAFIELD_ACCESSORS( origin )
-              // backward compatibility methods
-              );
     SOASKIN( SeedtrackSkin, core, rich1, rich2, moreStates, origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( SeedtrackSkin );
@@ -251,4 +181,14 @@ namespace experimental
       // TODO very very important constructors!!!
     };
   }
+  typedef SOA::Container<std::vector, TrackData::LongtrackSkin> Longtracks;
+  typedef typename Longtracks::proxy Longtrack;
+  typedef SOA::Container<std::vector, TrackData::VelotrackSkin> Velotracks;
+  typedef typename Velotracks::proxy Velotrack;
+  typedef SOA::Container<std::vector, TrackData::DowntrackSkin> Downtracks;
+  typedef typename Downtracks::proxy Downtrack;
+  typedef SOA::Container<std::vector, TrackData::SeedtrackSkin> Seedtracks;
+  typedef typename Seedtracks::proxy Seedtrack;
+  typedef SOA::Container<std::vector, TrackData::UpstreamtrackSkin> Upstreamtracks;
+  typedef typename Upstreamtracks::proxy Upstreamtrack;
 } // namespace experimental
