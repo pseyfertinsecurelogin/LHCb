@@ -28,9 +28,13 @@ def main():
     for xmlfile in xmlfiles:
         key = splitext(basename(xmlfile))[0]
         dom = minidom.parse(xmlfile)
-        products[key].update(join(opts.src_output, elem.getAttribute('name') + '.h')
+        #print [x.getAttribute('fileName') if x.hasAttribute('fileName') else x.getAttribute('name') for x in dom.getElementsByTagName('class') + dom.getElementsByTagName('namespace')]
+        products[key].update(join(opts.src_output,
+                                  elem.getAttribute('fileName') + '.h'
+                                  if elem.hasAttribute('fileName') else
+                                  elem.getAttribute('name') + '.h')
                              for elem in dom.getElementsByTagName('class') +
-                                         dom.getElementsByTagName('namespace'))
+                             dom.getElementsByTagName('namespace'))
 
     old_data = open(cmake_info).read() if exists(cmake_info) else ''
     data = ''
@@ -40,7 +44,6 @@ def main():
                  '    {1})\n').format(key, '\n    '.join(files))
     if data != old_data:
         open(cmake_info, 'w').write(data)
-
 
 if __name__ == '__main__':
     main()
