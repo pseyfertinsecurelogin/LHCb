@@ -262,7 +262,7 @@ class godII(object):
 
             if 'namespace' in godPackage and self.gNamespaces :
                 self._log.debug( '  Generating Namespaces' )
-                gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname)
+                gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname,self.allocatorType)
                 self._log.debug( '  - Done' )
 
             if 'class' in godPackage:
