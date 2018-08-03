@@ -33,11 +33,16 @@ class genNamespaces(genSrcUtils.genSrcUtils):
 #--------------------------------------------------------------------------------
     def genClasses(self, package, godPackage, outputDir, lname, allocatorType, nsname):
         s = ''
+        incs = ''
+        fwds = ''
         if 'class' in godPackage:
             self.log.debug( 'generating classes inside namespace' )
             gClassesNS = genClasses.genClasses(self.godRoot)
-            s += gClassesNS.doit(package, godPackage['class'], outputDir, lname, allocatorType, nsname=nsname)
-        return s
+            (s2, inc, fwd) = gClassesNS.doit(package, godPackage['class'], outputDir, lname, allocatorType, nsname=nsname)
+            s += s2
+            incs += inc
+            fwds += fwd
+        return (s, incs, fwds)
 #--------------------------------------------------------------------------------
     def doit(self,package,godNamespaces,outputDir,lname,allocatorType):
 
@@ -74,9 +79,9 @@ class genNamespaces(genSrcUtils.genSrcUtils):
             namespaceDict['attributes']       = self.genAttributes('all',godNamespace,1)
             namespaceDict['methods']          = self.genMethods('all',godNamespace)
             namespaceDict['methodDefs']       = self.genMethods('all',godNamespace,scoped_namespacename)
-            namespaceDict['classes']          = self.genClasses(package, godNamespace, outputDir, 1, allocatorType, godNamespace['attrs']['name'])
-            namespaceDict['includes']         = self.genIncludes()
-            namespaceDict['forwardDeclsLHCb'] = self.genForwardDeclsLHCb()
+            (namespaceDict['classes'], clincludes, clfwDeclGlob) = self.genClasses(package, godNamespace, outputDir, 1, allocatorType, godNamespace['attrs']['name'])
+            namespaceDict['includes']         = self.genIncludes() + clincludes
+            namespaceDict['forwardDeclsLHCb'] = self.genForwardDeclsLHCb() + clfwDeclGlob
             namespaceDict['forwardDeclsGlob'] = self.genForwardDeclsGlob()
             namespaceDict['forwardIncludes']  = self.genForwardIncludes(namespacename)
 
