@@ -4,9 +4,9 @@
 #include "GaudiKernel/IAlgTool.h"
 #include <vector>
 
+#include "Event/Track.h"
 
 namespace LHCb{
-  class Track;
   class LHCbID;
   class GhostTrackInfo;
 }

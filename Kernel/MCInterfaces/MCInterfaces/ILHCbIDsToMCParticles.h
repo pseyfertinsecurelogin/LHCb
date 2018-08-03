@@ -6,11 +6,11 @@
 #include <vector>
 #include <map>
 
+#include "Event/Track.h"
 
 namespace LHCb{
   class LHCbID;
   class MCParticle;
-  class Track;
 }
 
 

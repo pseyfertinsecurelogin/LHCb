@@ -16,7 +16,7 @@
       <import name="GaudiKernel/GenericVectorTypes"/>
       <import name="GaudiKernel/SymmetricMatrixTypes"/>
       <import name="vector" std="TRUE"/>
-      <import name='Track' soft='FORWARDONLY'/>
+      <import name='Event/Track'/>
 
       <typedef 
           type   = "Gaudi::Vector2"

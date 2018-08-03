@@ -5,13 +5,13 @@
 // -------------
 #include "GaudiKernel/IAlgTool.h"
 
+#include "Event/Track.h"
 // forward declarations
 namespace LHCb {
  class MCParticle;
  class MCHit;
  class State;
  class StateVector;
- class Track ; 
 }
 
 /** @class IIdealStateCreator IIdealStateCreator.h "TrackMCInterfaces/IIdealStateCreator.h"

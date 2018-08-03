@@ -31,7 +31,7 @@
       <import name='Event/TrackTypes'/>
       <import name='GaudiKernel/Vector4DTypes'/>
       <import name='Kernel/ParticleID'/>
-      <import name='Track' soft='FORWARDONLY'/>
+      <import name='Event/Track'/>
       <import name='LHCbMath/MatrixTransforms'/>
       <import name='LHCbMath/ValueWithError'/>
 
