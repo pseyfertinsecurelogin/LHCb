@@ -826,7 +826,9 @@ namespace {
         return s
 
 ##--------------------------------------------------------------------------------
-    def doit(self,package,godClasses,outputDir,lname,allocatorType = 'FROMXML'):
+    def doit(self,package,godClasses,outputDir,lname,allocatorType = 'FROMXML', nsname=''):
+
+        nstream = ''
 
         for godClass in godClasses:
 
@@ -843,7 +845,10 @@ namespace {
                 namespace = package.dict['packagenamespace']
                 godClass['attrs']['namespace'] = namespace
 
-            scoped_classname = namespace+'::'+classname
+            scoped_classname = namespace
+            if nsname:
+                scoped_classname += '::%s' % nsname
+            scoped_classname += '::%s' % classname
 
             fileName = '%s.h' % classname
 
@@ -893,14 +898,23 @@ namespace {
             classDict['registerAllocatorReleaser']    = self.genAllocatorReleaser(godClass, allocatorType)
 
             g = gparser.gparser()
-            g.parse(self.godRoot+'templates/header.tpl',classDict)
 
-            file = open(outputDir+os.sep+fileName,'w')
-            file.write(g.stream)
-            file.close()
+            if not nsname:
+
+                g.parse(self.godRoot+'templates/header.tpl',classDict)
+                file = open(outputDir+os.sep+fileName,'w')
+                file.write(g.stream)
+                file.close()
+
+            else:
+
+                g.parse(self.godRoot+'templates/classInNS.tpl',classDict)
+                nstream += g.stream
 
             mess += ' - Done'
             self.log.info( mess )
+
+        return nstream
 
 #================================================================================
 #import xparser
