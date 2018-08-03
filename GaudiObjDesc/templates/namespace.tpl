@@ -33,7 +33,7 @@ namespace @@@namespaceScope@@@
 {
   // Forward declarations
   @@@forwardDeclsLHCb@@@
-  namespace @@@namespacename@@@
+  @@@inline@@@namespace @@@namespacename@@@
   {
   @@@typedefs@@@
   @@@enums@@@
