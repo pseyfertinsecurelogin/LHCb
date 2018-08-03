@@ -914,7 +914,7 @@ namespace {
             mess += ' - Done'
             self.log.info( mess )
 
-        return nstream
+        return (nstream, classDict['includes'], classDict['forwardDeclsGlob'])
 
 #================================================================================
 #import xparser
