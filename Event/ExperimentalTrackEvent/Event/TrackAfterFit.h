@@ -113,21 +113,12 @@ namespace experimental
 
   namespace TrackData
   {
-    SOAFIELD( core, TrackAfterFit, SOAFIELD_ACCESSORS( core )
-              // core methods
-              );
-    SOAFIELD( rich2, TrackAfterFitExtension::Rich2States, SOAFIELD_ACCESSORS( rich2 )
-              // rich2 access methods
-              );
-    SOAFIELD( rich1, TrackAfterFitExtension::Rich1States, SOAFIELD_ACCESSORS( rich1 )
-              // rich1 access methods
-              );
-    SOAFIELD( moreStates, TrackAfterFitExtension::AdditionalStates, SOAFIELD_ACCESSORS( moreStates )
-              // moreStates access methods
-              );
-    SOAFIELD( origin, TrackAfterFitExtension::BackCompat, SOAFIELD_ACCESSORS( origin )
-              // backward compatibility methods
-              );
+    SOAFIELD_TRIVIAL( f_core, core, TrackAfterFit);
+    SOAFIELD_TRIVIAL( f_rich2, rich2, TrackAfterFitExtension::Rich2States);
+    SOAFIELD_TRIVIAL( f_rich1, rich1, TrackAfterFitExtension::Rich1States);
+    SOAFIELD_TRIVIAL( f_moreStates, moreStates, TrackAfterFitExtension::AdditionalStates);
+    SOAFIELD_TRIVIAL( f_origin, origin, TrackAfterFitExtension::BackCompat);
+
     SOASKIN( VelotrackSkin, core, rich1, moreStates, origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( VelotrackSkin );
