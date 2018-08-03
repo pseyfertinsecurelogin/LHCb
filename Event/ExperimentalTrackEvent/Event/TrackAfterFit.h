@@ -119,21 +119,21 @@ namespace experimental
     SOAFIELD_TRIVIAL( f_moreStates, moreStates, TrackAfterFitExtension::AdditionalStates);
     SOAFIELD_TRIVIAL( f_origin, origin, TrackAfterFitExtension::BackCompat);
 
-    SOASKIN( VelotrackSkin, core, rich1, moreStates, origin )
+    SOASKIN( VelotrackSkin, f_core, f_rich1, f_moreStates, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( VelotrackSkin );
       //
       // TODO very very important constructors!!!
     };
 
-    SOASKIN( UpstreamtrackSkin, core, rich1, moreStates, origin )
+    SOASKIN( UpstreamtrackSkin, f_core, f_rich1, f_moreStates, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( UpstreamtrackSkin );
 
       // TODO very very important constructors!!!
     };
 
-    SOASKIN( LongtrackSkin, core, rich1, rich2, moreStates, origin )
+    SOASKIN( LongtrackSkin, f_core, f_rich1, f_rich2, f_moreStates, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( LongtrackSkin );
 
@@ -159,13 +159,13 @@ namespace experimental
       }
       // TODO very very important constructors!!!
     };
-    SOASKIN( DowntrackSkin, core, rich1, rich2, moreStates, origin )
+    SOASKIN( DowntrackSkin, f_core, f_rich1, f_rich2, f_moreStates, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( DowntrackSkin );
 
       // TODO very very important constructors!!!
     };
-    SOASKIN( SeedtrackSkin, core, rich1, rich2, moreStates, origin )
+    SOASKIN( SeedtrackSkin, f_core, f_rich1, f_rich2, f_moreStates, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( SeedtrackSkin );
 
