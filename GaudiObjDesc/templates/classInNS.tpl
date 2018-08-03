@@ -1,6 +1,7 @@
 
 
   // Forward declarations2
+  @@@forwardDeclsLHCb@@@
   @@@classID@@@
   @@@classVersion@@@
   @@@locations@@@
