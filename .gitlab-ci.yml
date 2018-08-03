@@ -2,4 +2,4 @@ build:
   script:
     # trigger to lb-dev repo
     # requires the secret variable LBDEVTOKEN
-    - curl -X POST -F token=${LBDEVTOKEN} -F ref=master -F "variables[USEURL]=${CI_REPOSITORY_URL}" -F "variables[USECOMMIT]=${CI_COMMIT_SHA}" -F "variables[LBUSE]=LHCb" https://gitlab.cern.ch/api/v4/projects/43169/trigger/pipeline
+    - curl -X POST -F token=${LBDEVTOKEN} -F ref=master -F "variables[USEURL]=${CI_REPOSITORY_URL}" -F "variables[USECOMMIT]=${CI_COMMIT_SHA}" -F "variables[LBUSE]=LHCb" -F "variables[USEPATHS]=Event/ExperimentalTrackEvent:Kernel/SOAContainer" https://gitlab.cern.ch/api/v4/projects/43169/trigger/pipeline
