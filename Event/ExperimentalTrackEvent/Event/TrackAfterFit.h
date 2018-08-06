@@ -171,6 +171,15 @@ namespace experimental
 
       // TODO very very important constructors!!!
     };
+    SOASKIN( ForRich1PIDSkin, f_rich1, f_origin )
+    {
+      SOASKIN_INHERIT_DEFAULT_METHODS( ForRich1PIDSkin );
+    };
+    };
+    SOASKIN( ForRich2PIDSkin, f_rich2, f_origin )
+    {
+      SOASKIN_INHERIT_DEFAULT_METHODS( ForRich2PIDSkin );
+    };
   }
   typedef SOA::Container<std::vector, TrackData::LongtrackSkin> Longtracks;
   typedef typename Longtracks::proxy Longtrack;
@@ -182,4 +191,5 @@ namespace experimental
   typedef typename Seedtracks::proxy Seedtrack;
   typedef SOA::Container<std::vector, TrackData::UpstreamtrackSkin> Upstreamtracks;
   typedef typename Upstreamtracks::proxy Upstreamtrack;
+  // ForRich?PIDSkin only meant for views, not for hosting containers
 } // namespace experimental
