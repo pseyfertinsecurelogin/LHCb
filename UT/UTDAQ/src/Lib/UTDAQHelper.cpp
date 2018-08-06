@@ -4,7 +4,7 @@
 
 
 std::optional<unsigned int>
-LHCb::UTDAQ::nbUTClusters(const std::vector<RawBank *> &banks,
+LHCb::UTDAQ::nbUTClusters(LHCb::span<const RawBank *> banks,
                           unsigned int maxNbClusters) {
   size_t nbClusters = 0;
   for (auto &bank : banks) {
