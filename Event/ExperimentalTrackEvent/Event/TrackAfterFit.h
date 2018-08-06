@@ -175,7 +175,6 @@ namespace experimental
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( ForRich1PIDSkin );
     };
-    };
     SOASKIN( ForRich2PIDSkin, f_rich2, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( ForRich2PIDSkin );
