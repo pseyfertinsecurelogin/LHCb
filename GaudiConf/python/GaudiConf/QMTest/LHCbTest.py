@@ -14,6 +14,9 @@ def _floatDiffer(ref, val, sensibility):
 class LHCbTest(GaudiTesting.QMTTest.QMTTest):
     '''Extension of the original QMTTest of Gaudi adding checking of the counters'''
 
+    # default values found in the ref for old counters
+    oldCountersDefaults = [ "", "", "1.0000", "0.0000", "1.0000" , "1.0000" ]
+
     def validateWithReference(self, stdout=None, stderr=None, result=None,
                               causes=None, preproc=None, counter_preproc=None):
         '''Overwrite of the base class method by adding extra checks for counters'''
@@ -60,30 +63,37 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         # rough check
         if (ref == value):
             return True
-        if len(ref) != len(value):
-            return False
         sensibility = 0.0001
-        if len(ref) != 6:
-            # special case where no mean/max are given and only 6 columns are present
-            # these lines look like :
-            #  | 10 | 10 |(  100.000 +- 10.0000  )%| ------- | ------- |
-            if len(ref) == 5 and ref[-1] == '-------':
-                # check only number and sum
-                if ref[0] != value[0]: return False
-                if _floatDiffer(ref[1], value[1], sensibility): return False
-                return True
-            else:
-                return False
-        # more in depth check, parsing numbers and comparing with given sensibility
-        refNb, refSum, refMean, refRMS, refMin, refMax = ref
-        valNb, valSum, valMean, valRMS, valMin, valMax = value
-        if refNb != valNb: return False
-        if _floatDiffer(refSum, valSum, sensibility): return False
-        if _floatDiffer(refMean, valMean, sensibility): return False
-        if _floatDiffer(refRMS, valRMS, sensibility): return False
-        if _floatDiffer(refMin, valMin, sensibility): return False
-        if _floatDiffer(refMax, valMax, sensibility): return False
-        return True
+        # special case for efficiency counters
+        # these lines contain ')%' and look like look like :
+        #  | 10 | 10 |(  100.000 +- 10.0000  )%|...
+        if len(ref) >= 3 and ')%' in ref[2]:
+            # check only number and sum, the other numbers are only a combination of these
+            if ref[0] != value[0]: return False
+            if ref[1] != value[1]: return False
+            return True
+        else:
+            # first check count. No sensibility there and it's always present
+            if ref[0] != value[0]: return False
+            # now check number of values present
+            if len(ref) != len(value):
+                # in case we are missing some compared to the ref, it may be due
+                # to the transition to new counters and no update of the ref.
+                # In that case, the missing parts must all have predefined values
+                # in the ref, except the second one (sum) that should be equal to
+                # first one (count)
+                if len(ref) > len(value) and len(ref) == 6:
+                    if len(value) == 1 and ref[1] != ref[0]:
+                        return False
+                    for n in range(max(2, len(value)), 6):
+                        if ref[n] != self.oldCountersDefaults[n]:
+                            return False
+                else :
+                    return False
+            # and finally the rest of the values, with sensibility
+            for n in range(1, len(value)):
+                if _floatDiffer(ref[n], value[n], sensibility): return False
+            return True
 
     def _compareCutSets(self, refCounters, stdoutCounters):
         """
