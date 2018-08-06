@@ -165,7 +165,7 @@ namespace experimental
 
       // TODO very very important constructors!!!
     };
-    SOASKIN( SeedtrackSkin, f_core, f_rich1, f_rich2, f_moreStates, f_origin )
+    SOASKIN( SeedtrackSkin, f_core, f_rich2, f_moreStates, f_origin )
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( SeedtrackSkin );
 
