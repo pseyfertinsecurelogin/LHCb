@@ -51,8 +51,8 @@ StatusCode RawEventDump::execute() {
 
       if( !acceptBank(i) )continue;
 
-      const std::vector<RawBank*>& b = raw->banks(i);
-      if ( b.size() > 0 )
+      const auto& b = raw->banks(i);
+      if ( !b.empty() )
       {
         info() << "banks of type " << i << "("<< RawBank::typeName(i) << ") discovered in " << loc << endmsg;
 

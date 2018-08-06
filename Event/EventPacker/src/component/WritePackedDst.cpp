@@ -251,11 +251,8 @@ StatusCode WritePackedDst::execute()
     } else if ( LHCb::CLID_ODIN == myClID ) {
 
       //== Get the ODIN from raw data, and copy it!
-      const std::vector<LHCb::RawBank*>& odinBanks = evt->banks(LHCb::RawBank::ODIN);
-      if ( odinBanks.size() ) {
-        LHCb::RawBank* odin = *odinBanks.begin();
-        m_dst->addBank( odin );
-      }
+      const auto& odinBanks = evt->banks(LHCb::RawBank::ODIN);
+      if ( odinBanks.size() ) m_dst->addBank(*odinBanks.begin());
 
     } else if ( LHCb::CLID_RawEvent == myClID ) {
 
@@ -264,13 +261,12 @@ StatusCode WritePackedDst::execute()
       PackedBank bank( in );
       for ( unsigned int bnkTyp = LHCb::RawBank::L0Calo;
             LHCb::RawBank::LastType != bnkTyp; ++bnkTyp ) {
-        const std::vector<LHCb::RawBank*>& banks = in->banks( (LHCb::RawBank::BankType)bnkTyp );
-        for ( std::vector<LHCb::RawBank*>::const_iterator itB = banks.begin(); banks.end() != itB; ++itB ) {
+        for ( const LHCb::RawBank* bnk : in->banks( (LHCb::RawBank::BankType)bnkTyp ) ) {
           bank.storeInt( bnkTyp );
-          bank.storeInt( (*itB)->sourceID() );
+          bank.storeInt( bnk->sourceID() );
           if ( msgLevel(MSG::DEBUG) )
-            debug() << "Added bank type " << bnkTyp << " source " << (*itB)->sourceID() << endmsg;
-          m_dst->addBank( *itB );
+            debug() << "Added bank type " << bnkTyp << " source " << bnk->sourceID() << endmsg;
+          m_dst->addBank( bnk );
         }
       }
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
@@ -287,10 +283,10 @@ StatusCode WritePackedDst::execute()
   int len = 0;
   size_t i;
   for(len = 0, i = LHCb::RawBank::L0Calo; i < LHCb::RawBank::LastType; ++i)  {
-    const std::vector<LHCb::RawBank*>& banks = m_dst->banks( LHCb::RawBank::BankType(i) ) ;
-    for(std::vector<LHCb::RawBank*>::const_iterator j = banks.begin(); j != banks.end(); ++j)  {
-      len += (*j)->totalSize();
-    }
+    const auto& banks = m_dst->banks( LHCb::RawBank::BankType(i) ) ;
+    len = std::accumulate( banks.begin(), banks.end(), len,
+                           [](int l, const LHCb::RawBank* bnk)
+                           { return l + bnk->totalSize(); } );
   }
   LHCb::RawBank* hdrBank = m_dst->createBank( 0, LHCb::RawBank::DAQ, DAQ_STATUS_BANK,
                                               sizeof(LHCb::MDFHeader)+sizeof(LHCb::MDFHeader::Header1), 0);

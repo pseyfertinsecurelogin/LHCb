@@ -472,7 +472,7 @@ StatusCode MuonRawBuffer::getTile( const LHCb::RawEvent* raw,std::vector<LHCb::M
   storage.clear();
   if(!sc.isFailure()){
 
-    const std::vector<RawBank*>& b = raw->banks(RawBank::Muon);
+    const auto& b = raw->banks(RawBank::Muon);
     if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
       verbose()<<" tell1 "<<b.size()<<endmsg;
 
@@ -564,7 +564,7 @@ StatusCode MuonRawBuffer::getPads(const LHCb::RawEvent* raw,std::vector<LHCb::Mu
   if(!sc.isFailure()){
     pads.clear();
 
-    const std::vector<RawBank*>& b = raw->banks(RawBank::Muon);
+    const auto& b = raw->banks(RawBank::Muon);
 
     //first decode data and insert in buffer
     for(const auto& rb : b ) {
@@ -655,7 +655,7 @@ StatusCode MuonRawBuffer::decodeNZSupp(int tell1Number)
   LHCb::RawEvent* raw = findFirstRawEvent();
   if( !raw ) return Error("Failed to find raw data");
 
-  const std::vector<RawBank*>& b = raw->banks(RawBank::MuonFull);
+  const auto& b = raw->banks(RawBank::MuonFull);
   if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
     verbose()<<" tell1 "<<b.size()<<endmsg;
   if( b.empty() ) {
@@ -844,7 +844,7 @@ StatusCode MuonRawBuffer::getNZSupp( const LHCb::RawEvent* raw,
 
   initStatusNZS();
 
-  const std::vector<RawBank*>& b = raw->banks(RawBank::MuonFull);
+  const auto& b = raw->banks(RawBank::MuonFull);
   if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
     verbose()<<" tell1 "<<b.size()<<endmsg;
   if( b.empty()) {
@@ -1031,7 +1031,7 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
     verbose()<<" check headers consistency not yet done"<<endmsg;
 
 
-  const std::vector<RawBank*>& b = raw->banks(RawBank::Muon);
+  const auto& b = raw->banks(RawBank::Muon);
 
   if(b.empty()){
     if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
@@ -1080,10 +1080,8 @@ StatusCode MuonRawBuffer::checkAllHeaders(const LHCb::RawEvent* raw)
   //now check the fw version
 
   //compact data  in one container
-  int ReferenceVersion=b.front()->version();
-
   auto ibad = std::find_if( b.begin(), b.end(),
-                   [&](const RawBank* rb)
+                   [ReferenceVersion=b[0]->version()](const RawBank* rb)
                    { return rb->version()!=ReferenceVersion; } );
   if (ibad!=b.end()) {
       error()<<

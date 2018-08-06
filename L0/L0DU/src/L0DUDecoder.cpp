@@ -100,7 +100,7 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   };
 
   //== Get the normal data bank. Check that it exists and is alone.
-  const std::vector<LHCb::RawBank*> l0Banks = rawEvent.banks( LHCb::RawBank::L0DU );
+  const auto& l0Banks = rawEvent.banks( LHCb::RawBank::L0DU );
   if( l0Banks.size() != 1 ){
     // Note the StatusCode SUCCESS here despite the exception thrown. Details are given
     // in https://gitlab.cern.ch/lhcb/Rec/merge_requests/557 on why we need to do this
@@ -112,7 +112,7 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
     throw GaudiException( l0Banks.empty() ? "Missing raw bank" : "More than one raw bank",
                           name(), StatusCode::SUCCESS );
   }
-  const LHCb::RawBank* bank = l0Banks.front();
+  const LHCb::RawBank* bank = l0Banks[0];
   // Check Magic pattern
   if( LHCb::RawBank::MagicPattern != bank->magic() ) {
     throw GaudiException("Bad MagicPattern, corrupt bank", name(), StatusCode::FAILURE );

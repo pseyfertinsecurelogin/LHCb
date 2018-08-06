@@ -67,16 +67,14 @@ StatusCode STPedestalDecoding::execute()
   put(outputPedestals, m_outputLocation);
   
   // Pick up pedestal bank 
-  const std::vector<RawBank*>& itf = raw->banks(RawBank::BankType(m_bankType));
+  const auto& itf = raw->banks(RawBank::BankType(m_bankType));
   if (msgLevel(MSG::DEBUG)) {
     debug() << "Starting to decode " << itf.size() << detType() 
             << "Pedestal bank(s)" <<  endmsg;
   }
   
-  std::vector<RawBank*>::const_iterator itB = itf.begin();
-  for( ; itB != itf.end(); ++itB ) {
+  for( const LHCb::RawBank* p : itf ) {
     
-    const LHCb::RawBank* p = *itB;
     if (msgLevel(MSG::DEBUG)) {
       debug() << "Decoding bank of type " << detType() << "Pedestal (TELL1 ID: "
               << p->sourceID() << ", Size: " << p->size() << " bytes)"<< endmsg;
@@ -96,10 +94,7 @@ StatusCode STPedestalDecoding::execute()
     // Create an empty tell1 pedestal object  
     STTELL1Data::Data pedestals;
     pedestals.resize(noptlinks);
-    STTELL1Data::Data::iterator i = pedestals.begin();
-    for(; i!= pedestals.end(); ++i ) {
-      i->resize(nports*nstrips, 0);
-    }
+    for( auto& i : pedestals ) i.resize(nports*nstrips, 0);
 
     if( (unsigned int)p->size() != sizebankPedestal ){
       error() << "Wrong bank size for this type!! You should have "
@@ -111,8 +106,7 @@ StatusCode STPedestalDecoding::execute()
     unsigned int cntPP = 0; // PP-FPGA counter, goes from 0 to 3.    
    
     // Now loop over all WORDS in a bank
-    const unsigned int* w=p->begin<unsigned int>(); 
-    for( ; w != p->end<unsigned int>(); ++w ) {
+    for(const unsigned int* w=p->begin<unsigned int>() ; w != p->end<unsigned int>(); ++w ) {
  			
       if(cntWD == 192){	// Each 192 words we have a new PP-FPGA
         cntWD = 0;        

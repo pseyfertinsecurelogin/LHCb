@@ -7,6 +7,7 @@
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
+#include "Kernel/STLExtensions.h"
 #include "Event/RawEvent.h"
 #include "Event/RawBankReadoutStatus.h"
 #include "CaloDet/DeCalorimeter.h"
@@ -20,11 +21,11 @@
  */
 struct ICaloReadoutTool : extend_interfaces<IAlgTool> {
 
-  DeclareInterfaceID( ICaloReadoutTool, 5, 0 );
+  DeclareInterfaceID( ICaloReadoutTool, 6, 0 );
 
   virtual StatusCode  _setProperty(const std::string& p,const std::string& v)=0;
   virtual bool getBanks()=0;
-  virtual void setBanks(const std::vector<LHCb::RawBank*>& bank )=0;
+  virtual void setBanks(LHCb::span<const LHCb::RawBank*> bank )=0;
   virtual void clear()=0;
   virtual void cleanData(int feb)=0;
   virtual LHCb::RawBankReadoutStatus& status()=0;

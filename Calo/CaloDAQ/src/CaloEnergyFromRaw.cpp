@@ -120,11 +120,11 @@ const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs (int source) {
   bool decoded = false;
   bool found   = false;
   if(m_getRaw)getBanks();
-  if( !m_banks || m_banks->empty() ){
+  if( m_banks.empty() ){
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "The banks container is empty"<< endmsg;
   }else{
-    for( const auto& bank : *m_banks ) {
+    for( const auto& bank : m_banks ) {
       sourceID       = bank->sourceID();
       if( source >= 0 && source != sourceID )continue;
 

@@ -124,9 +124,9 @@ StatusCode DecodePileUpData::decode() {
 
   // NZS PU decode
   LHCb::RawBank::BankType type = LHCb::RawBank::BankType(PuTell1::LOPU_NZS);
-  const std::vector<LHCb::RawBank*> banksNZS = m_rawEvent->banks(type); //bank name not defined yet!
+  const auto& banksNZS = m_rawEvent->banks(type); //bank name not defined yet!
 
-  if ( banksNZS.size() != 0 )
+  if ( !banksNZS.empty() )
   {
     StatusCode nzsBinDecoder=decodePileUpBinaryNZS(banksNZS);
     nzsBinDecoder.ignore();
@@ -135,8 +135,8 @@ StatusCode DecodePileUpData::decode() {
   else Info(" NZS bank empty ").ignore();
 
   // ZS PU decode
-  const std::vector<LHCb::RawBank*> banks = m_rawEvent->banks(LHCb::RawBank::L0PU); 
-  if ( banks.size() != 0 )
+  const auto& banks = m_rawEvent->banks(LHCb::RawBank::L0PU);
+  if ( !banks.empty() )
   {
     StatusCode binDecoder=decodePileUpBinary(banks); 
     binDecoder.ignore();
@@ -148,22 +148,20 @@ StatusCode DecodePileUpData::decode() {
 }
 
 //==============================================================================
-StatusCode DecodePileUpData::decodePileUpBinary( const std::vector<LHCb::RawBank*> & banks ) 
+StatusCode DecodePileUpData::decodePileUpBinary( LHCb::span< const LHCb::RawBank*> banks ) 
 {
   // loop on PU banks, should be only 1
-  std::vector<LHCb::RawBank*>::const_iterator bi;
   int counter = 0;
-  for ( bi = banks.begin(); bi != banks.end(); bi++) 
+  for ( const LHCb::RawBank* aBank : banks )
   {
     
      if ( msgLevel(MSG::DEBUG) ) debug() << "************************ decodePileUpBinary ***********" << counter << "********" << endmsg;
-    LHCb::RawBank* aBank = *bi;
 
     // --> protect against corrupted banks
     if(LHCb::RawBank::MagicPattern!=aBank->magic()) continue;
 
-    unsigned int* data = aBank->data(); //point at the beginning of data body, header already skipped
-    unsigned int* dataPtr = data;
+    const unsigned int* data = aBank->data(); //point at the beginning of data body, header already skipped
+    const unsigned int* dataPtr = data;
 
     // fill in the data container
     unsigned int head = PuTell1::HEADERS_PER_SECTION; // skip the first 2 words (header) of the section
@@ -177,21 +175,20 @@ StatusCode DecodePileUpData::decodePileUpBinary( const std::vector<LHCb::RawBank
 } // end function
 
 //============================================================================
-StatusCode DecodePileUpData::decodePileUpBinaryNZS( const std::vector<LHCb::RawBank*> & banksNZS ) 
+StatusCode DecodePileUpData::decodePileUpBinaryNZS( LHCb::span<const LHCb::RawBank*> banksNZS )
 {
   // loop on PU non zero-supp banks, there should be only 1
-  for (std::vector<LHCb::RawBank*>::const_iterator bnzs = banksNZS.begin(); bnzs!= banksNZS.end(); bnzs++) 
+  for (const LHCb::RawBank* aBank : banksNZS )
   {
      if ( msgLevel(MSG::DEBUG) ) debug() << "************************ decodePileUpBinaryNZS *********************" << endmsg;
-    LHCb::RawBank* aBank = *bnzs;
 
     // --> protect against corrupted banks
     if(LHCb::RawBank::MagicPattern!=aBank->magic()) continue;
 
-    unsigned int* data = (aBank->data()); //point at the beginning of data body skipping the header
+    const unsigned int* data = (aBank->data()); //point at the beginning of data body skipping the header
     //loop on PP FPGA's
     for ( int PP = 0; PP < PuTell1::NUM_PP ; PP++ ){
-      unsigned int* PPbegin = data + PP*(PuTell1::WORDS_PER_PP); // point at the beginning of each PP body; 
+      const unsigned int* PPbegin = data + PP*(PuTell1::WORDS_PER_PP); // point at the beginning of each PP body;
 
       // initialize links
       bool linkIsGood[PuTell1::NUM_PPLINKS];
@@ -207,9 +204,9 @@ StatusCode DecodePileUpData::decodePileUpBinaryNZS( const std::vector<LHCb::RawB
 
           // get link format
           if ( word== PuTell1::WORD_WITH_FORMATINFO ){
-            unsigned int* word1Ptr = PPbegin + (PuTell1::NUM_PPLINKS)*word + link;
+            const unsigned int* word1Ptr = PPbegin + (PuTell1::NUM_PPLINKS)*word + link;
             int format = ( (*word1Ptr) >> PuTell1::FORMAT_BIT);
-            unsigned int* word1Ptr2 = PPbegin + (PuTell1::NUM_PPLINKS)*word + link+1;
+            const unsigned int* word1Ptr2 = PPbegin + (PuTell1::NUM_PPLINKS)*word + link+1;
             int format2 = ( (*word1Ptr2) >> PuTell1::FORMAT_BIT);
             if ( format && format2 ){
               linkIsGood[link] = true;
@@ -219,7 +216,7 @@ StatusCode DecodePileUpData::decodePileUpBinaryNZS( const std::vector<LHCb::RawB
           // get data but only for *good* links
           else if ( (word > PuTell1::BEGIN_OF_DATAWORDS) && (linkIsGood[link]) && (linkIsGood[link+1]) ){
             // use the Fill function avoiding the loop
-            unsigned int* datawordPtr = PPbegin + (PuTell1::NUM_PPLINKS)*word + link;
+            const unsigned int* datawordPtr = PPbegin + (PuTell1::NUM_PPLINKS)*word + link;
 
             // word can go from 4 to 36, but the Fill function uses a "scheme" with words from 2 to 33
             // moreover it's done to loop automatically on all the words from a ZS bank
@@ -264,17 +261,17 @@ void DecodePileUpData::inizializePUcontainer( PuTell1::DataTable PUcontainerBee 
 
 //=========================================================================
 void DecodePileUpData::Fill( unsigned int wordIt, unsigned int word_Tot, 
-                             unsigned int* data_Ptr, int step, 
+                             const unsigned int* data_Ptr, int step, 
                              PuTell1::DataTable PUcontainerBee ){
    if ( msgLevel(MSG::DEBUG) ) debug() << "******************** Fill() *********************************" << endmsg;
   while ( wordIt < word_Tot )
   {
-    unsigned int* wordPtr = data_Ptr + wordIt;
+    const unsigned int* wordPtr = data_Ptr + wordIt;
      if ( msgLevel(MSG::DEBUG) ) debug() << "*HARD* DEBUG - FILL  : wordPtr " << wordPtr << " " << binary(*wordPtr) << endmsg;
 
     //to take words from the 2nd section
     // step is 34 for the 0 supp bank, 35 for the non-0 supp
-    unsigned int* wordPtr2 = wordPtr + step;  
+    const unsigned int* wordPtr2 = wordPtr + step;  
      if ( msgLevel(MSG::DEBUG) ) debug() << "*HARD* DEBUG - FILL  : wordPtr2 " << wordPtr2 << " " << binary(*wordPtr2) << endmsg;     
     switch(wordIt){
       case 2:

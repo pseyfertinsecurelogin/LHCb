@@ -87,18 +87,15 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
   if ( !rawEvt )
     return Error("No valid raw event location found",StatusCode::SUCCESS,50);
 
-  const std::vector<LHCb::RawBank*>& banks =
-    rawEvt -> banks( LHCb::RawBank::L0Calo );
+  const auto& banks = rawEvt -> banks( LHCb::RawBank::L0Calo );
   // check presence of error bank
-  const std::vector< LHCb::RawBank* > * errBanks =
-    &rawEvt -> banks( LHCb::RawBank::L0CaloError ) ;
+  const auto& errBanks = rawEvt -> banks( LHCb::RawBank::L0CaloError ) ;
 
-  if ( ( 0 != errBanks ) && ( 0 != errBanks -> size() ) )
+  if (  ( !errBanks.empty() ) )
   {
-    std::vector< LHCb::RawBank * >::const_iterator it ;
-    for ( it = errBanks->begin() ; errBanks -> end() != it ; ++it )
+    for ( const auto* eb : errBanks )
     {
-      readoutStatus.addStatus( (*it) -> sourceID() ,
+      readoutStatus.addStatus( eb -> sourceID() ,
                                LHCb::RawBankReadoutStatus::Status::ErrorBank ) ;
     }
   }
@@ -115,25 +112,24 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
 
     // convert the banks to two arrays of ints.
     data.reserve( banks.size() ) ;
-    for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = banks.begin();
-          banks.end() != itBnk; ++itBnk )
+    for ( const auto& bnk : banks )
     {
-      if ( LHCb::RawBank::MagicPattern != (*itBnk) -> magic() )
+      if ( LHCb::RawBank::MagicPattern != bnk -> magic() )
       {
         Error( "L0Calo Bank source has bad magic pattern" ).ignore() ;
-        readoutStatus.addStatus( (*itBnk) -> sourceID() ,
+        readoutStatus.addStatus( bnk -> sourceID() ,
                                  LHCb::RawBankReadoutStatus::Status::Corrupted ) ;
         continue ;
       }
 
-      data.push_back( std::vector< unsigned int >( (*itBnk) -> begin< unsigned int >() ,
-                                                   (*itBnk) -> end< unsigned int >() ) ) ;
+      data.emplace_back(  bnk -> begin< unsigned int >() ,
+                          bnk -> end< unsigned int >() ) ;
 
-      if ( 0 == (*itBnk) -> sourceID() ) ++sourceZero ;
+      if ( 0 == bnk -> sourceID() ) ++sourceZero ;
       else ++sourceOne ;
     }
     // Version of the bank
-    version = banks.front() -> version() ;
+    version = banks[0] -> version() ;
     if ( 0 == sourceZero )
       readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::Missing ) ;
     if ( 0 == sourceOne )

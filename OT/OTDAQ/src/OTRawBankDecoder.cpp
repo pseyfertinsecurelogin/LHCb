@@ -576,8 +576,7 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
     m_detectordata->setRawEvent( &event );
 
     // Get the buffers associated with OT
-    const std::vector<LHCb::RawBank*>& OTBanks =
-      (const_cast<LHCb::RawEvent&>(event)).banks( LHCb::RawBank::OT );
+    const auto& OTBanks = event.banks( LHCb::RawBank::OT );
 
     // Report the number of banks
     if (msgLevel(MSG::DEBUG))
@@ -685,7 +684,7 @@ StatusCode OTRawBankDecoder::decode( OTDAQ::RawEvent& otrawevent ) const
   if( !event ) return Error("Failed to find raw data");
 
   // Get the buffers associated with OT
-  const std::vector<LHCb::RawBank*>& banks = event->banks(LHCb::RawBank::OT );
+  const auto& banks = event->banks(LHCb::RawBank::OT );
 
   // Reserve space in the otbankcontainer
   otrawevent.clear();

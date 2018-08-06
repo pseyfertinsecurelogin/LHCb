@@ -59,12 +59,12 @@ protected:
 
   //== Fill a vector of objects CLASS from the buffer and the blobs.
   template <class CLASS> void getFromBlob( std::vector<CLASS>& vect,
-                                           const std::vector<LHCb::RawBank*>& blobs );
+                                           LHCb::span<const LHCb::RawBank*> blobs );
 
 private:
   std::string   m_inputLocation;
   std::string   m_postfix;
-  unsigned int* m_data = nullptr;
+  const unsigned int* m_data = nullptr;
   int           m_size{0};
   ToolHandle<IGenericTool> m_odinDecoder;
   SmartIF<IAddressCreator> m_addrCreator;

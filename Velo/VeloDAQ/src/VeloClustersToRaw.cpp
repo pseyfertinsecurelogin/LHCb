@@ -258,15 +258,13 @@ bool VeloClustersToRaw::selfTest()
   bool passed = false;
 
   LHCb::VeloClusters clusters;
-  for (const auto& bo : m_rawEventOut->banks(LHCb::RawBank::Velo)) {
-
-    LHCb::RawBank* outBank = bo;
+  for (const auto* outBank : m_rawEventOut->banks(LHCb::RawBank::Velo)) {
 
     const DeVeloSensor* sensor = m_velo->sensor( outBank->sourceID() );
     int byteCount = 0;
     std::string errMsg;
 
-    VeloDAQ::decodeRawBankToClustersV3(static_cast<SiDAQ::buffer_word*>(outBank->data()),
+    VeloDAQ::decodeRawBankToClustersV3(static_cast<const SiDAQ::buffer_word*>(outBank->data()),
                                        sensor, false, clusters, byteCount, errMsg, false);
   }
 

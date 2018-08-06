@@ -183,21 +183,19 @@ StatusCode L0MuonFromRawTrans::decodeRawBanks(){
 
   //   const std::vector<LHCb::RawBank*>& banks = rawEvt->banks( LHCb::RawBank::L0Muon );
   //  const std::vector<LHCb::RawBank*>& banks = rawEvt->banks( LHCb::RawBank::TT );
-  const std::vector<LHCb::RawBank*>& banks = rawEvt->banks( LHCb::RawBank::L0MuonRaw );
-  if (banks.size()!=0) {
-    for ( std::vector<LHCb::RawBank*>::const_iterator itBnk = banks.begin(); banks.end() != itBnk; ++itBnk ) {
-      int srcID = (*itBnk)->sourceID();
-      int bankVersion  = (*itBnk)->version();
+  const auto& banks = rawEvt->banks( LHCb::RawBank::L0MuonRaw );
+  if (!banks.empty()) {
+    for ( const LHCb::RawBank* bnk : banks ) {
+      int srcID = bnk->sourceID();
+      int bankVersion  = bnk->version();
       m_version=bankVersion;
       std::vector<unsigned int> data;
-      unsigned int* body = (*itBnk)->data();
-      int size = (*itBnk)->size()/4;
+      const unsigned int* body = bnk->data();
+      int size = bnk->size()/4;
       if (msgLevel( MSG::DEBUG ))
         debug() << "decodeRawBanks: L0Muon bank (version "<< bankVersion <<" ) found"
                 <<", sourceID is "<< srcID <<", size is "<< size <<endmsg;
-      for ( int k = 0; size > k; ++k ) {
-        data.push_back( *body++ );
-      }
+      for ( int k = 0; size > k; ++k ) data.push_back( *body++ );
       if (srcID==0) {
         m_ctrlRaw[1]->decodeBank(data,bankVersion,m_l0EventNumber,m_l0_B_Id);
         if (m_dumpError) {

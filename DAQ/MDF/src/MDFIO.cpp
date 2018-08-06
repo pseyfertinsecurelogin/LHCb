@@ -31,10 +31,7 @@ MDFHeader* LHCb::MDFIO::getHeader()  {
       {
         SmartDataPtr<RawEvent> raw(m_evtSvc,"/Event/DAQ/RawEvent");
         if ( raw )  {
-          typedef std::vector<RawBank*> _V;
-          const _V& bnks = raw->banks(RawBank::DAQ);
-          for(_V::const_iterator i=bnks.begin(); i != bnks.end(); ++i)  {
-            RawBank* b = *i;
+          for(const auto* b :raw->banks(RawBank::DAQ) ) {
             if ( b->version() == DAQ_STATUS_BANK )  {
               return (MDFHeader*)b->data();
             }
@@ -75,7 +72,7 @@ std::pair<const char*,int> LHCb::MDFIO::getDataFromAddress() {
 }
 
 StatusCode LHCb::MDFIO::commitRawBanks(RawEvent*         raw,
-                                       RawBank*          hdr_bank,
+                                       const RawBank*    hdr_bank,
                                        int               compTyp,
                                        int               chksumTyp,
                                        void* const       ioDesc)
@@ -129,18 +126,15 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
   if ( raw )  {
     size_t len;
     bool isTAE = m_forceTAE || isTAERawEvent(raw);   // false in principle...unless TAE
-    typedef std::vector<RawBank*> _V;
     if ( !isTAE ) {
-      const _V& bnks = raw->banks(RawBank::DAQ);
-      for(_V::const_iterator i=bnks.begin(); i != bnks.end(); ++i)  {
-        RawBank* b = *i;
+      for(const auto* b : raw->banks(RawBank::DAQ) ) {
         if ( b->version() == DAQ_STATUS_BANK )  {
           return commitRawBanks(raw,b,compTyp,chksumTyp,ioDesc);
         }
       }
 
       len = rawEventLength(raw);
-      const _V& odin = raw->banks(RawBank::ODIN);
+      const auto& odin = raw->banks(RawBank::ODIN);
       RawBank* hdrBank = createDummyMDFHeader( raw, len );
       if ( odin.empty() )  {
         MsgStream log1(m_msgSvc, m_parent);
@@ -174,7 +168,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
     std::vector<int> ctrlData;
     ctrlData.reserve(sizeCtrlBlock);
     size_t offset = 0;
-    RawBank *centerMDF=0;
+    const RawBank *centerMDF=nullptr;
     for ( int n = -7; 7 >= n; ++n ) {
       std::string loc = rootFromBxOffset(n)+"/"+location;
       SmartDataPtr<RawEvent> rawEvt(m_evtSvc, loc);
@@ -182,14 +176,12 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
         theRawEvents.push_back( rawEvt );
         ctrlData.push_back( n );               // BX offset
         ctrlData.push_back( offset );          // offset in buffer, after end of this bank
-        if ( centerMDF == 0 || n == 0 ) {
-          const _V& bnks = raw->banks(RawBank::DAQ);
-          for(_V::const_iterator i=bnks.begin(); i != bnks.end(); ++i)  {
-            if ( (*i)->version() == DAQ_STATUS_BANK )  {
-              centerMDF = *i;
-              break;
-            }
-          }
+        if ( !centerMDF || n == 0 ) {
+          const auto& bnks = raw->banks(RawBank::DAQ);
+          auto i = std::find_if( bnks.begin(), bnks.end(),
+                                 [](const LHCb::RawBank* b)
+                                 { return b->version() == DAQ_STATUS_BANK ; } );
+          if (i!=bnks.end()) centerMDF = *i;
         }
         size_t l = rawEventLengthTAE(rawEvt);
         ctrlData.push_back(l);                 // size of this BX information
@@ -206,7 +198,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
     RawBank* hdrBank = createDummyMDFHeader(&privateBank, len);
     if ( centerMDF ) {
       MDFHeader::SubHeader inf = hdrBank->begin<MDFHeader>()->subHeader();
-      MDFHeader::SubHeader center = centerMDF->begin<MDFHeader>()->subHeader();
+      MDFHeader::SubHeader center = const_cast<RawBank*>(centerMDF)->begin<MDFHeader>()->subHeader();
       inf.H1->setTriggerMask(center.H1->triggerMask());
       inf.H1->setRunNumber(center.H1->runNumber());
       inf.H1->setOrbitNumber(center.H1->orbitNumber());
@@ -215,7 +207,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
     len += hdrBank->totalSize();
 
     // Prepare the input to add these two banks to an output buffer
-    std::vector<RawBank*> banks;
+    std::vector<const RawBank*> banks;
     banks.push_back( hdrBank );
     banks.push_back( ctrlBank );
 
@@ -344,7 +336,7 @@ StatusCode
 LHCb::MDFIO::writeDataSpace(int           compTyp,
                             int           chksumTyp,
                             void* const   ioDesc,
-                            RawBank*      hdr,
+                            const RawBank*      hdr,
                             char* const   data,
                             size_t        len)
 {

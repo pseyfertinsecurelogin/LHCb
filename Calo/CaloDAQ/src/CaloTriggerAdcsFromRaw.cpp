@@ -109,11 +109,11 @@ const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs (int source ) {
   bool found   = false;
   int sourceID  ;
   if(m_getRaw)getBanks();
-  if( NULL == m_banks || 0 == m_banks->size() ){
+  if( m_banks.empty() ){
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "The banks container is empty"<< endmsg;
   }else{
-    for( const auto& bank : *m_banks ) {
+    for( const LHCb::RawBank* bank : m_banks ) {
       sourceID       = bank->sourceID();
       if( source >= 0 && source != sourceID )continue;
       found = true;

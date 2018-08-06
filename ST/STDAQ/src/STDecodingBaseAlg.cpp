@@ -79,7 +79,7 @@ StatusCode STDecodingBaseAlg::initialize() {
   return StatusCode::SUCCESS;
 }
 
-unsigned int STDecodingBaseAlg::pcnVote(const std::vector<RawBank* >& banks) const{
+unsigned int STDecodingBaseAlg::pcnVote(LHCb::span<const RawBank* > banks) const{
 
   // make a majority vote to get the correct PCN in the event
   std::map<unsigned int, unsigned int> pcns;
@@ -148,7 +148,7 @@ bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
   return ok;
 }
 
-std::vector<unsigned int> STDecodingBaseAlg::missingInAction(const std::vector<RawBank* >& banks) const{
+std::vector<unsigned int> STDecodingBaseAlg::missingInAction(LHCb::span<const RawBank* > banks) const{
 
   std::vector<unsigned int> missing;
   if ( banks.size() != readoutTool()->nBoard()) {
@@ -171,10 +171,10 @@ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(co
  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
 
  // make an empty output vector
- std::unique_ptr<LHCb::STTELL1BoardErrorBanks> outputErrors = std::make_unique<STTELL1BoardErrorBanks>();
+ auto outputErrors = std::make_unique<STTELL1BoardErrorBanks>();
 
  // Pick up ITError bank
- const std::vector<LHCb::RawBank*>& itf = raw.banks(LHCb::RawBank::BankType(m_errorType));
+ const auto& itf = raw.banks(LHCb::RawBank::BankType(m_errorType));
 
  if (itf.empty()){
    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -316,7 +316,7 @@ bool STDecodingBaseAlg::validSpill(const LHCb::ODIN& odin) const{
 }
 
 
-unsigned int STDecodingBaseAlg::byteSize(const std::vector<RawBank*>& banks) const {
+unsigned int STDecodingBaseAlg::byteSize(LHCb::span<const RawBank*> banks) const {
   return std::accumulate(banks.begin(), banks.end(), 0u,
                          [](unsigned int s, const RawBank* b) {
                     return s + b->totalSize();

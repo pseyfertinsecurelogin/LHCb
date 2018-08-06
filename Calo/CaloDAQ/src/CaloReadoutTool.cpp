@@ -51,7 +51,7 @@ StatusCode CaloReadoutTool::finalize() {
 bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
   m_readSources.clear();
-  m_banks = nullptr;
+  m_banks = {};
 
   // Retrieve the RawEvent:
   LHCb::RawEvent* rawEvt = findFirstRawEvent() ;
@@ -67,26 +67,26 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
   m_packed =false;
   if( !m_packedIsDefault){
     if ( msgLevel( MSG::DEBUG) )debug() << "Banks of short type are requested as default" << endmsg;
-    m_banks= &rawEvt->banks(  m_shortType );
+    m_banks= rawEvt->banks(  m_shortType );
     m_status = LHCb::RawBankReadoutStatus( m_shortType);
   }else{
     if ( msgLevel( MSG::DEBUG) )debug() << "Banks of paked type are requested as default" << endmsg;
-    m_banks= &rawEvt->banks(  m_packedType );
+    m_banks= rawEvt->banks(  m_packedType );
     m_status = LHCb::RawBankReadoutStatus( m_packedType);
   }
 
-  if ( !m_banks || 0 == m_banks->size() ) {
+  if (  m_banks.empty() ) {
     if( !m_packedIsDefault){
       if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of short type has not been found ... try packed type" << endmsg;
-      m_banks = &rawEvt->banks( m_packedType );
+      m_banks = rawEvt->banks( m_packedType );
       m_status = LHCb::RawBankReadoutStatus( m_packedType);
     }else{
       if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of packed type has not been found ... try short type" << endmsg;
-      m_banks = &rawEvt->banks( m_shortType );
+      m_banks = rawEvt->banks( m_shortType );
       m_status = LHCb::RawBankReadoutStatus( m_shortType);
     }
 
-    if ( !m_banks || 0 == m_banks->size() ){
+    if ( m_banks.empty() ){
       if ( msgLevel( MSG::DEBUG) )debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
       counter("No " + toString(m_detectorName) + " bank found") += 1;
       return false;
@@ -112,8 +112,8 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
   for( const auto& b : rawEvt->banks( m_errorType )) m_status.addStatus( b->sourceID() , LHCb::RawBankReadoutStatus::Status::ErrorBank );
 
   // check banks integrity + Magic pattern
-  std::vector<int> sources; sources.reserve(m_banks->size());
-  for( const auto& b : *m_banks) {
+  std::vector<int> sources; sources.reserve(m_banks.size());
+  for( const auto& b : m_banks) {
     if(!b)continue;
     sources.push_back( b->sourceID() );
     if( LHCb::RawBank::MagicPattern != b->magic() ) {

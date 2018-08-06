@@ -105,21 +105,21 @@ StatusCode L0DURawBankMonitor::execute() {
   bool cOk = false;
   bool pOk = false;
 
-  LHCb::RawEvent* rawEvt = NULL;
-  for (std::vector<std::string>::iterator it = m_rawLocations.begin(); it < m_rawLocations.end();++it) {
-    rawEvt = getIfExists<LHCb::RawEvent>( *it );
-    if( NULL != rawEvt ) break;
+  const LHCb::RawEvent* rawEvt = nullptr;
+  for (const auto& rl : m_rawLocations ) {
+    rawEvt = getIfExists<LHCb::RawEvent>( rl );
+    if( rawEvt ) break;
   }
 
-  if( NULL == rawEvt ) {
+  if( !rawEvt ) {
     Warning("rawEvent not found at locations " + Gaudi::Utils::toString(m_rawLocations),StatusCode::SUCCESS).ignore();
   } else {
-    const std::vector<LHCb::RawBank*>* mBanks = &rawEvt->banks(   LHCb::RawBank::L0Muon );
-    const std::vector<LHCb::RawBank*>* cBanks = &rawEvt->banks(   LHCb::RawBank::L0Calo );
-    const std::vector<LHCb::RawBank*>* pBanks = &rawEvt->banks(   LHCb::RawBank::L0PU   );
-    if( mBanks->size() > 0 )mOk = true;
-    if( cBanks->size() > 0 )cOk = true;
-    if( pBanks->size() > 0 )pOk = true;
+    const auto& mBanks = rawEvt->banks(   LHCb::RawBank::L0Muon );
+    const auto& cBanks = rawEvt->banks(   LHCb::RawBank::L0Calo );
+    const auto& pBanks = rawEvt->banks(   LHCb::RawBank::L0PU   );
+    if( !mBanks.empty() )mOk = true;
+    if( !cBanks.empty() )cOk = true;
+    if( !pBanks.empty() )pOk = true;
   }
 
 

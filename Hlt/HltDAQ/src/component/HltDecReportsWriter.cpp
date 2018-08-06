@@ -61,7 +61,10 @@ StatusCode HltDecReportsWriter::execute()
     return Error(" No RawEvent at " + m_outputRawEventLocation.value(), StatusCode::SUCCESS, 20 );
   }
   // delete any previously inserted dec reports
-  for( const auto& b : rawEvent->banks( RawBank::HltDecReports ) ) {
+  // note that we need to _copy_ the list of banks, as the original will be modified while
+  // we're looping over the list...
+  const auto& bnks = rawEvent->banks( RawBank::HltDecReports );
+  for (const LHCb::RawBank* b : LHCb::RawBank::ConstVector{ bnks.begin(), bnks.end() } ) {
     auto sourceID =  b->version() > 1 ? ( b->sourceID() >> kSourceID_BitShift ) : kSourceID_Hlt;
     if( m_sourceID != sourceID )continue;
     rawEvent->removeBank(b);

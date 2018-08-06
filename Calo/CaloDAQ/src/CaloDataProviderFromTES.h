@@ -63,7 +63,7 @@ public:
   //
   StatusCode  _setProperty(const std::string& p,const std::string& v) override {return  setProperty(p,v);}
   //
-  void setBanks(const std::vector<LHCb::RawBank*>& /* bank */ ) override {} // harmless method
+  void setBanks(LHCb::span<const LHCb::RawBank*> /* bank */ ) override {} // harmless method
   LHCb::RawBankReadoutStatus& status() override {m_status=LHCb::RawBankReadoutStatus();return m_status; } // harmless method
   unsigned int nTell1s() override {return 0;} // harmless method
   void putStatusOnTES() override {return;} // harmless method

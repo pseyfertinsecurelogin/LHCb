@@ -31,7 +31,7 @@ public:
 
   StatusCode  _setProperty(const std::string& ,const std::string& ) override { return StatusCode::SUCCESS ; }
   bool getBanks() override { return true ; }
-  void setBanks(const std::vector<LHCb::RawBank*>& ) override { return ; }
+  void setBanks(LHCb::span<const LHCb::RawBank*> ) override { }
   void clear() override { m_data.clear() ; }
   void cleanData(int ) override { clear() ; }
   LHCb::RawBankReadoutStatus& status() override {

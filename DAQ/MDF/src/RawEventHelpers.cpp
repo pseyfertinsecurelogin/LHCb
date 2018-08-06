@@ -387,21 +387,20 @@ StatusCode LHCb::deepCopyRawEvent(RawEvent* source, RawEvent*& result)  {
 /// Determine length of the sequential buffer from RawEvent object
 size_t LHCb::rawEventLength(const RawEvent* evt)    {
   size_t  len = 0;
-  RawEvent* raw = const_cast<RawEvent*>(evt);
   for(size_t i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
-    len += rawEventLength(raw->banks(RawBank::BankType(i)));
+    len += rawEventLength(evt->banks(RawBank::BankType(i)));
   }
   return len;
 }
 
 /// Determine length of the sequential buffer from RawEvent object
-size_t LHCb::rawEventLength(const vector<RawBank*>& banks)    {
+size_t LHCb::rawEventLength(LHCb::span<const RawBank*> banks)    {
   return std::accumulate( banks.begin(), banks.end(), size_t{0},
                           [](size_t l, const RawBank* bank) { return l+bank->totalSize(); });
 }
 
 /// Determine length of the sequential buffer from RawEvent object
-size_t LHCb::rawEventLengthTAE(const vector<RawBank*>& banks)    {
+size_t LHCb::rawEventLengthTAE(LHCb::span<const RawBank*> banks)    {
   return std::accumulate( banks.begin(), banks.end(), size_t{0},
                           [](size_t l, const RawBank* bank) {
 			    return !(bank->type() == RawBank::DAQ && bank->version() == DAQ_STATUS_BANK)
@@ -412,9 +411,8 @@ size_t LHCb::rawEventLengthTAE(const vector<RawBank*>& banks)    {
 /// Determine length of the sequential buffer from RawEvent object
 size_t LHCb::rawEventLengthTAE(const RawEvent* evt)    {
   size_t i, len;
-  RawEvent* raw = const_cast<RawEvent*>(evt);
   for(len=0, i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
-    len += rawEventLengthTAE(raw->banks(RawBank::BankType(i)));
+    len += rawEventLengthTAE(evt->banks(RawBank::BankType(i)));
   }
   return len;
 }
@@ -422,9 +420,8 @@ size_t LHCb::rawEventLengthTAE(const RawEvent* evt)    {
 /// Determine number of banks from rawEvent object
 size_t LHCb::numberOfBanks(const RawEvent* evt)   {
   size_t count = 0;
-  RawEvent* raw = const_cast<RawEvent*>(evt);
   for(size_t i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
-    count += raw->banks(RawBank::BankType(i)).size();
+    count += evt->banks(RawBank::BankType(i)).size();
   }
   return count;
 }
@@ -432,9 +429,8 @@ size_t LHCb::numberOfBanks(const RawEvent* evt)   {
 /// Determine number of bank types from rawEvent object
 size_t LHCb::numberOfBankTypes(const RawEvent* evt) {
   size_t count = 0;
-  RawEvent* raw = const_cast<RawEvent*>(evt);
   for(size_t i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
-    if ( !raw->banks(RawBank::BankType(i)).empty() ) count++;
+    if ( !evt->banks(RawBank::BankType(i)).empty() ) count++;
   }
   return count;
 }
@@ -534,10 +530,10 @@ Error:  // Anyhow only end up here if no exception was thrown...
 
 /// Conditional decoding of raw buffer from MDF to raw event object
 StatusCode LHCb::decodeRawBanks(const char* start, const char* end, RawEvent* raw, bool copy_banks) {
-  const RawBank* prev = 0;
+  const RawBank* prev = nullptr;
   try {
     while (start < end)  {
-      RawBank* bank = (RawBank*)start;
+      const RawBank* bank = reinterpret_cast<const RawBank*>(start);
       checkRawBank(bank,true,true);  // Check bank sanity
       (copy_banks) ? raw->addBank(bank) : raw->adoptBank(bank, false);
       start += bank->totalSize();
@@ -557,12 +553,10 @@ StatusCode LHCb::decodeRawBanks(const char* start, const char* end, RawEvent* ra
 /// Copy RawEvent data from the object to sequential buffer
 StatusCode LHCb::encodeRawBanks(const RawEvent* evt, char* const data, size_t size, bool skip_hdr_bank)  {
   if ( data )  {
-    typedef vector<RawBank*> _BankV;
-    RawEvent* raw = const_cast<RawEvent*>(evt);
     size_t total, len, i;
     for(total=0, len=0, i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
       if ( i != RawBank::DAQ ) {
-	const _BankV& b = raw->banks(RawBank::BankType(i));
+	const auto& b = evt->banks(RawBank::BankType(i));
 	if(encodeRawBanks(b,data+total,size-total,skip_hdr_bank,&len).isSuccess())  {
 	  total += len;
 	  continue;
@@ -570,19 +564,17 @@ StatusCode LHCb::encodeRawBanks(const RawEvent* evt, char* const data, size_t si
 	return StatusCode::FAILURE;
       }
     }
-    return encodeRawBanks(raw->banks(RawBank::DAQ), data+total, size-total, skip_hdr_bank, &len);
+    return encodeRawBanks(evt->banks(RawBank::DAQ), data+total, size-total, skip_hdr_bank, &len);
   }
   return StatusCode::FAILURE;
 }
 
 /// Copy RawEvent data from bank vectors to sequential buffer
-StatusCode LHCb::encodeRawBanks(const vector<RawBank*>& banks, char* const data,
+StatusCode LHCb::encodeRawBanks(LHCb::span<const RawBank*> banks, char* const data,
                                 size_t size, bool skip_hdr_bank, size_t* length) {
-  typedef vector<RawBank*> _BankV;
-  RawBank* fid = 0;
+  const RawBank* fid = nullptr;
   size_t len = 0, s;
-  for(_BankV::const_iterator j=banks.begin(); j != banks.end(); ++j)  {
-    RawBank* b = (*j);
+  for(const auto* b: banks ) {
     if ( skip_hdr_bank )  {
       if ( b->type() == RawBank::DAQ )   {
 	if ( b->version() == DAQ_STATUS_BANK ) {
@@ -691,7 +683,7 @@ StatusCode LHCb::unpackTAE(const char* start, const char* end, const string& loc
 bool LHCb::isTAERawEvent(RawEvent* raw)  {
   if ( !raw ) return false;
   //== Check ODIN event type to see if this is TAE
-  auto& oBnks = raw->banks(RawBank::ODIN);
+  const auto& oBnks = raw->banks(RawBank::ODIN);
   return std::any_of( oBnks.begin(), oBnks.end(), [](const RawBank* bank) {
     return  bank->begin<OnlineRunInfo>()->triggerType == ODIN::TriggerType::TimingTrigger ||
          bank->begin<OnlineRunInfo>()->TAEWindow   != 0              ;

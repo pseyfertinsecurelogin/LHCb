@@ -74,36 +74,35 @@ StatusCode STFullDecoding::execute()
 
   // make container of TELL1 boards
   STTELL1Datas* outputData = new STTELL1Datas();
- 
+
   // put the object on the transient event store
   put(outputData, m_outputLocation);
 
   // make a container of eventInfo
-  STTELL1EventInfos* eventInfos = new STTELL1EventInfos(); 
+  STTELL1EventInfos* eventInfos = new STTELL1EventInfos();
   put(eventInfos,m_eventInfoLocation);
- 
+
   // Initialize some counters
   unsigned int L0EvtID = 0;
- 
-  // Pick up IT/TTFull bank 
-  const std::vector<RawBank*>& itf = raw->banks(RawBank::BankType(m_bankType));
+
+  // Pick up IT/TTFull bank
+  const auto& itf = raw->banks(RawBank::BankType(m_bankType));
   if (msgLevel(MSG::DEBUG)) {
     debug() << "Starting to decode " << itf.size() << detType()
             << "Full bank(s)" << endmsg;
   }
-  
-  std::vector<RawBank*>::const_iterator itB;
-  for( itB = itf.begin(); itB != itf.end(); ++itB ) {
 
-    // Create an empty tell1 data object 
+  for( auto itB = itf.begin(); itB != itf.end(); ++itB ) {
+
+    // Create an empty tell1 data object
     STTELL1Data::Data tell1Data;
     tell1Data.resize(noptlinks);
     for( STTELL1Data::Data::iterator i =tell1Data.begin();
-                                     i!=tell1Data.end(); ++i) {  
+                                     i!=tell1Data.end(); ++i) {
       i->resize(nports*nstrips, 0);
     }
- 
-    // Create an empty tell1 header object 
+
+    // Create an empty tell1 header object
     STTELL1Data::Data tell1Header;
     tell1Header.resize(noptlinks);
     std::vector< std::vector <int> >::iterator j=tell1Header.begin();

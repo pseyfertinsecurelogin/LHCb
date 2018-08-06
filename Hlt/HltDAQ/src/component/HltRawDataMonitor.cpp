@@ -147,8 +147,8 @@ StatusCode HltRawDataMonitor::fillRawBank()
   // get the bank from RawEvent
   // ----------------------------------------------------------
 
-  const std::vector<RawBank*> hltselreportsRawBanks = rawEvent->banks( RawBank::HltSelReports );
-  if( !hltselreportsRawBanks.size() ){
+  const auto& hltselreportsRawBanks = rawEvent->banks( RawBank::HltSelReports );
+  if( hltselreportsRawBanks.empty() ){
     return Warning( " No HltSelReports RawBank in RawEvent. Quiting. ",StatusCode::SUCCESS, 10 );
   }
   const RawBank* hltselreportsRawBank0 = *(hltselreportsRawBanks.begin());

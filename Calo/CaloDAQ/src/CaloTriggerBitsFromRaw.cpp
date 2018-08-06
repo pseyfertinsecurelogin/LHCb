@@ -104,11 +104,11 @@ const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int sou
   bool found   = false;
   int sourceID     ;
   if(m_getRaw)getBanks();
-  if( !m_banks || 0 == m_banks->size() ){
+  if( m_banks.empty() ){
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "The banks container is empty" << endmsg;
   }else{
-    for( const auto& itB : *m_banks) {
+    for( const auto& itB : m_banks) {
       sourceID       = itB->sourceID();
       if( source >= 0 && source != sourceID )continue;
       found = true;

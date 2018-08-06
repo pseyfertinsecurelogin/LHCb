@@ -68,13 +68,13 @@ bool HltRoutingBitsFilter::operator()(const LHCb::RawEvent& rawEvent) const {
                  StatusCode::SUCCESS,0).ignore();
     return m_passOnError;
   }
-  if (banks.front()->size()!=3*sizeof(unsigned int)) {
+  if (banks[0]->size()!=3*sizeof(unsigned int)) {
     counter("#unexpected HltRoutingBits rawbank size")++;
     Error("Unexpected HltRoutingBits rawbank size",
                  StatusCode::FAILURE,0).ignore();
     return m_passOnError;
   }
-  const unsigned int *data = banks.front()->data();
+  const unsigned int *data = banks[0]->data();
 
   bool veto = false;
   bool req  = false;

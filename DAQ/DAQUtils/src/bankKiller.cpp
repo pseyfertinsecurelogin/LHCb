@@ -99,7 +99,7 @@ void bankKiller::killBankType( LHCb::RawEvent* rawEvent,
                                bool warningmsg ) const {
   const std::string bankTypeName = LHCb::RawBank::typeName( bankType );
   // look for all banks of this type and remove them
-  std::vector<LHCb::RawBank*> banks = rawEvent->banks( bankType );
+  const auto& banks = rawEvent->banks( bankType );
   if( banks.empty() ){
     if (warningmsg) {
       std::stringstream s;
@@ -113,7 +113,9 @@ void bankKiller::killBankType( LHCb::RawEvent* rawEvent,
                                     << "'  are to be removed - banks size =  " << banks.size() << endmsg;
 
 
-  for(auto& bank : banks ) {
+  // note that we need to _copy_ the list of banks, as the original list will be modified
+  // by 'removeBank' while we're looping
+  for(auto& bank : LHCb::RawBank::ConstVector{ banks.begin(), banks.end()} ) {
     if (m_sourceKillMask != 0 &&
         m_sourceKill != (bank->sourceID() & m_sourceKillMask)) {
       continue;

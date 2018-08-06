@@ -188,9 +188,8 @@ bool CaloDataProvider::decodeTell1 (int source) {
   bool decoded = false;
   bool found  = false;
   if ( m_getRaw ) getBanks();
-  if ( !m_banks ) return false;
 
-  for( const auto& itB : *m_banks) {
+  for( const auto* itB : m_banks) {
     int sourceID       = itB->sourceID();
     if( source >= 0 && source != sourceID )continue;
     found = true;

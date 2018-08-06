@@ -91,7 +91,7 @@ LHCb::RawEvent* Decoder::CommonBase<PBASE>::findFirstRawEvent() const
   return nullptr;
 }
 template <class PBASE>
-const std::vector< LHCb::RawBank * > & 
+LHCb::span<const LHCb::RawBank * > 
 Decoder::CommonBase<PBASE>::findFirstRawBank(const LHCb::RawBank::BankType i) const
 {
   //try once with cached location
@@ -100,13 +100,9 @@ Decoder::CommonBase<PBASE>::findFirstRawBank(const LHCb::RawBank::BankType i) co
   for ( const auto& loc : m_rawEventLocations )
   {
       raw = this->tryEventAt(loc);
-      if ( raw && !raw->banks(i).empty() )
-      {
-          return raw->banks(i);
-      }
+      if ( raw && !raw->banks(i).empty() ) return raw->banks(i);
   }
   // return an empty vector
-  static const std::vector<LHCb::RawBank*> emptyRBVec;
-  return emptyRBVec;
+  return {};
 }
 #endif // DAQKERNEL_DECODERCOMMONBASE_ICPP

@@ -1,7 +1,7 @@
 #ifndef FTDAQHELPER_H
 #define FTDAQHELPER_H 1
 
-#include <vector>
+#include "Kernel/STLExtensions.h"
 
 namespace LHCb {
 
@@ -13,7 +13,7 @@ namespace FTDAQ {
 /**
  * counts number of FT clusters in the given raw banks
  */
-unsigned int nbFTClusters(const std::vector<RawBank *> &banks);
+unsigned int nbFTClusters(LHCb::span<const RawBank *> banks);
 
 } // namespace FTDAQ
 

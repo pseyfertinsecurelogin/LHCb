@@ -101,7 +101,7 @@ void ODINEncodeTool::execute()
     debug() << "Getting " << m_rawEventLocation << endmsg;
 
     // pointer for a pre-existing bank
-    LHCb::RawBank * old_bank = nullptr;
+    const LHCb::RawBank * old_bank = nullptr;
     // Check if have an ODIN bank already
     const auto & odinBanks = raw->banks(LHCb::RawBank::ODIN);
     if ( !odinBanks.empty() )

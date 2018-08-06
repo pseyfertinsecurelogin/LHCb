@@ -5,6 +5,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "Kernel/STLExtensions.h"
 
 // from TELL1 Kernel:
 #include "Tell1Kernel/VeloDecodeConf.h"
@@ -44,15 +45,15 @@ public:
   StatusCode decode();
   StatusCode getPileUpBank();
   StatusCode writePUBanks(LHCb::VeloClusters *, LHCb::VeloClusters *);
-  StatusCode decodePileUpBinary( const std::vector<LHCb::RawBank*> & banks );
-  StatusCode decodePileUpBinaryNZS( const std::vector<LHCb::RawBank*> & banks );
+  StatusCode decodePileUpBinary( LHCb::span<const LHCb::RawBank*> banks );
+  StatusCode decodePileUpBinaryNZS( LHCb::span<const LHCb::RawBank*>  banks );
   StatusCode findPileUpHitsBee( PuTell1::dataObject, int, int, LHCb::VeloClusters * );
   StatusCode findPileUpHitsBeeNZS( PuTell1::dataObject, int, int, LHCb::VeloClusters * );
 
   int SensorId( int );
   std::string binary ( unsigned int );
   void inizializePUcontainer( PuTell1::DataTable PUcontainerBee );
-  void Fill( unsigned int wordIt, unsigned int word_Tot, unsigned int* data_Ptr, int step, PuTell1::DataTable PUcontainerBee );
+  void Fill( unsigned int wordIt, unsigned int word_Tot, const unsigned int* data_Ptr, int step, PuTell1::DataTable PUcontainerBee );
 
 protected:
 

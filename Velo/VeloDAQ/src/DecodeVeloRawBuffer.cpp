@@ -134,7 +134,7 @@ StatusCode DecodeVeloRawBuffer::execute() {
     return StatusCode::SUCCESS;
   }
 
-  const std::vector<LHCb::RawBank*>& banks = rawEvent->banks(LHCb::RawBank::Velo);
+  const auto& banks = rawEvent->banks(LHCb::RawBank::Velo);
 
   // decode to lite clusters, if requested, bail out if something goes wrong
   if (m_decodeToVeloLiteClusters) {
@@ -160,7 +160,7 @@ StatusCode DecodeVeloRawBuffer::execute() {
 //=============================================================================
 
 LHCb::VeloLiteCluster::FastContainer DecodeVeloRawBuffer::
-decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+decodeToVeloLiteClusters(LHCb::span<const LHCb::RawBank*> banks,
 			 LHCb::VeloDecodeStatus *decStatus) const {
   LHCb::VeloLiteCluster::FastContainer fastCont;
 
@@ -241,7 +241,7 @@ decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
   return fastCont;
 }
 
-LHCb::VeloClusters DecodeVeloRawBuffer::decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,LHCb::VeloDecodeStatus* decStatus)
+LHCb::VeloClusters DecodeVeloRawBuffer::decodeToVeloClusters(LHCb::span<const LHCb::RawBank*> banks,LHCb::VeloDecodeStatus* decStatus)
 {
   LHCb::VeloClusters clusters;
 
@@ -409,7 +409,7 @@ void DecodeVeloRawBuffer::failEvent(const std::string &ErrorText,
 StatusCode DecodeVeloRawBuffer::
 replaceFullFromLite(LHCb::VeloClusters& clusters,
                     unsigned int nSensor,
-                    const std::vector<LHCb::RawBank*>& banks,
+                    LHCb::span<const LHCb::RawBank*> banks,
 		    LHCb::VeloDecodeStatus *decStatus) {
 
   unsigned int msgCount = 1;

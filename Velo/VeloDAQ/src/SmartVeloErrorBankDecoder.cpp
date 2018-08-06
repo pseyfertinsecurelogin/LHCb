@@ -13,10 +13,6 @@ DECLARE_COMPONENT( SmartVeloErrorBankDecoder )
 
 using namespace VeloTELL1;
 
-typedef unsigned int* ErrorBankIT;
-typedef std::pair<ErrorBankIT, ErrorBankIT> ITPair;
-typedef std::map<unsigned int, ITPair> BANKS;
-typedef std::map<unsigned int, ITPair> SECTORS;
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -133,17 +129,14 @@ StatusCode SmartVeloErrorBankDecoder::cacheErrorRawBanks()
   // check if there is error bank present
   m_cachedBanks.clear();
   m_bankLength.clear();
-  const std::vector<LHCb::RawBank*>& errorBank=
-    m_rawEvent->banks(LHCb::RawBank::VeloError);
-  std::vector<LHCb::RawBank*>::const_iterator bIt;
+  const auto& errorBank= m_rawEvent->banks(LHCb::RawBank::VeloError);
   // if so write out the banks
   if(errorBank.size()!=0){
     m_errorBank=new VeloErrorBanks();
     //
     if(m_isDebug) debug()<< " --> Error bank detected of size: " << errorBank.size() <<endmsg;
     ITPair data;
-    for(bIt=errorBank.begin(); bIt!=errorBank.end(); ++bIt){
-      LHCb::RawBank* aBank=(*bIt);
+    for(const LHCb::RawBank* aBank : errorBank ) {
 
       // --> protect against corrupted banks
       if(LHCb::RawBank::MagicPattern!=aBank->magic()) return ( StatusCode::FAILURE );
@@ -163,8 +156,8 @@ StatusCode SmartVeloErrorBankDecoder::cacheErrorRawBanks()
       }
       // get pointer to the bank data
       data.first=aBank->begin<unsigned int>();
-      unsigned int* inIT=aBank->begin<unsigned int>();
-      unsigned int* dat=aBank->data();
+      const unsigned int* inIT=aBank->begin<unsigned int>();
+      const unsigned int* dat=aBank->data();
       if(m_isDebug) debug()<< " --> src Id: " << tell1 <<endmsg;
       for(int step=0; step<6; ++step){
         if(m_isDebug) debug()<< " data ptr: " << step << " : " << (*(inIT+step)) <<endmsg;
@@ -188,9 +181,7 @@ StatusCode SmartVeloErrorBankDecoder::storeErrorRawBanks()
 {
   if(m_isDebug) debug()<< " ==> storeErrorRawBanks() " <<endmsg;
   //
-  std::map<unsigned int, ITPair>::iterator bankIT;
-  bankIT=m_cachedBanks.begin();
-  for( ; bankIT!=m_cachedBanks.end(); ++bankIT){
+  for(auto bankIT=m_cachedBanks.begin() ; bankIT!=m_cachedBanks.end(); ++bankIT){
     EvtInfo anEvtInfo(bankIT->first);
     allEvt evtInfoData;
     allError errorInfoData;
@@ -260,17 +251,15 @@ StatusCode SmartVeloErrorBankDecoder::storeErrorRawBanks()
   return ( StatusCode::SUCCESS );
 }
 //=============================================================================
-std::map<unsigned int, ITPair> SmartVeloErrorBankDecoder::errorDetector(
-                                 unsigned int tell1)
+SmartVeloErrorBankDecoder::SECTORS SmartVeloErrorBankDecoder::errorDetector( unsigned int tell1)
 {
   if(m_isDebug) debug()<< " ==> errorDetector() " <<endmsg;
   //
   unsigned int fpga=0;
   SECTORS sectors;
-  BANKS::const_iterator bankIT;
-  bankIT=m_cachedBanks.find(tell1);
+  auto bankIT=m_cachedBanks.find(tell1);
   if(bankIT!=m_cachedBanks.end()){
-    ITPair iTPair=bankIT->second;
+    auto iTPair=bankIT->second;
     ErrorBankIT iT=iTPair.first;
     // we can skip first four words - see note EDMS 694818
     iT+=INIT_SHIFT;
