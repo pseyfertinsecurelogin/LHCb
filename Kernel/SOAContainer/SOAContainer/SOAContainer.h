@@ -802,6 +802,9 @@ namespace SOA {
     class Container : public _ContainerImpl::Container<CONTAINER, SKIN, FIELDS...>
     {
         using _ContainerImpl::Container<CONTAINER, SKIN, FIELDS...>::Container;
+        public:
+        template <typename... ARGS>
+        using Storage = CONTAINER<ARGS...>;
     };
 } // namespace SOA
 
