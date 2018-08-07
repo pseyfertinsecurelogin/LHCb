@@ -61,9 +61,6 @@ namespace ST
       declareSTConfigProperty("ReadoutTool",m_readoutToolName, m_detType+"ReadoutTool" );
     }
 
-    /// Destructor
-    virtual ~CommonBase( );
-
     /** Initialization of the algorithm after creation
      *
      * @return The status of the initialization
@@ -71,14 +68,6 @@ namespace ST
      * @retval StatusCode::FAILURE Initialization failed
      */
     StatusCode initialize() override;
-
-    /** Finalization of the algorithm before deletion
-     *
-     * @return The status of the finalization
-     * @retval StatusCode::SUCCESS Finalization was successful
-     * @retval StatusCode::FAILURE Finalization failed
-     */
-   StatusCode finalize() override;
 
    /** get the top level detector element */
    DeSTDetector* tracker() const;
@@ -178,12 +167,6 @@ namespace ST
 // ============================================================================
 
 //=============================================================================
-// Destructor
-//=============================================================================
-template <class PBASE, class IReadoutTool>
-ST::CommonBase<PBASE, IReadoutTool>::~CommonBase() {}
-
-//=============================================================================
 // Initialisation
 //=============================================================================
 template <class PBASE, class IReadoutTool>
@@ -206,21 +189,6 @@ StatusCode ST::CommonBase<PBASE, IReadoutTool>::initialize()
   }
 
   return sc;
-}
-//=============================================================================
-
-//=============================================================================
-// Finalisation
-//=============================================================================
-template <class PBASE, class IReadoutTool>
-StatusCode ST::CommonBase<PBASE, IReadoutTool>::finalize()
-{
-  // Printout from finalization
-  if ( this -> msgLevel(MSG::DEBUG) )
-    this -> debug() << "Finalize" << endmsg;
-
-  // Finalise base class and return
-  return PBASE::finalize();
 }
 //=============================================================================
 
