@@ -47,6 +47,8 @@ class genClassDicts:
 
         for ns in godPackage['namespace']:
             ns_name = ns['attrs']['name']
+            if 'fileName' in ns['attrs']:
+                ns_name = ns['attrs']['fileName']
 
             includes_xml = '#include "%s%s.h"' % (self.srcOutputDir, ns_name)
             self.sIncludes = self.conc(self.sIncludes, includes_xml)

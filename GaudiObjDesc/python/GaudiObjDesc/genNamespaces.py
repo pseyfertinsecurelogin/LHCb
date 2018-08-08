@@ -1,5 +1,5 @@
 import time, os
-import genSrcUtils, tools, gparser
+import genSrcUtils, tools, gparser, genClasses
 import logging
 
 #================================================================================
@@ -31,13 +31,20 @@ class genNamespaces(genSrcUtils.genSrcUtils):
     def genAuthor(self,godNamespace):
         return godNamespace.get('author','unknown')
 #--------------------------------------------------------------------------------
-    def genClasses(self,godNamespace):
+    def genClasses(self, package, godPackage, outputDir, lname, allocatorType, nsname):
         s = ''
-        if 'class' in godNamespace:
-            self.log.error( ':ERROR: <class> element not implemented for namespaces yet' )
-        return s
+        incs = ''
+        fwds = ''
+        if 'class' in godPackage:
+            self.log.debug( 'generating classes inside namespace' )
+            gClassesNS = genClasses.genClasses(self.godRoot)
+            (s2, inc, fwd) = gClassesNS.doit(package, godPackage['class'], outputDir, lname, allocatorType, nsname=nsname)
+            s += s2
+            incs += inc
+            fwds += fwd
+        return (s, incs, fwds)
 #--------------------------------------------------------------------------------
-    def doit(self,package,godNamespaces,outputDir,lname):
+    def doit(self,package,godNamespaces,outputDir,lname,allocatorType):
 
         default_scope = package.dict['packagenamespace']
 
@@ -53,6 +60,8 @@ class genNamespaces(genSrcUtils.genSrcUtils):
             scoped_namespacename = scope+'::'+namespacename
 
             fileName = '%s.h' % namespacename
+            if 'fileName' in godNamespace['attrs']:
+                fileName = '%s.h' % godNamespace['attrs']['fileName']
 
             mess = 'File ' + fileName.ljust(lname)
 
@@ -61,20 +70,23 @@ class genNamespaces(genSrcUtils.genSrcUtils):
             namespaceDict['author']           = self.genAuthor(godNamespace)
             namespaceDict['today']            = time.ctime()
             namespaceDict['namespaceScope']   = scope
+            namespaceDict['inline']           = 'inline ' if\
+                                                godNamespace['attrs']['inline']\
+                                                == 'TRUE' else ''
             namespaceDict['typedefs']         = self.genTypedefs('all',godNamespace)
             namespaceDict['enums']            = self.genEnums('all',godNamespace)
             namespaceDict['enumOstreamOverloads'] = self.genEnumOstreamOverloads(godNamespace)
-            namespaceDict['classes']          = self.genClasses(godNamespace)
             namespaceDict['attributes']       = self.genAttributes('all',godNamespace,1)
             namespaceDict['methods']          = self.genMethods('all',godNamespace)
             namespaceDict['methodDefs']       = self.genMethods('all',godNamespace,scoped_namespacename)
-
-            namespaceDict['includes']         = self.genIncludes()
-            namespaceDict['forwardDeclsLHCb'] = self.genForwardDeclsLHCb()
+            (namespaceDict['classes'], clincludes, clfwDeclGlob) = self.genClasses(package, godNamespace, outputDir, 1, allocatorType, godNamespace['attrs']['name'])
+            namespaceDict['includes']         = self.genIncludes() + clincludes
+            namespaceDict['forwardDeclsLHCb'] = self.genForwardDeclsLHCb() + clfwDeclGlob
             namespaceDict['forwardDeclsGlob'] = self.genForwardDeclsGlob()
             namespaceDict['forwardIncludes']  = self.genForwardIncludes(namespacename)
 
             g = gparser.gparser()
+
             g.parse(self.godRoot+'templates/namespace.tpl',namespaceDict)
 
             file = open(outputDir+os.sep+fileName,'w')

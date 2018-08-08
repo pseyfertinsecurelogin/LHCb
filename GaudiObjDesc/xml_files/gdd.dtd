@@ -56,6 +56,8 @@
         author           CDATA                             #IMPLIED
         desc             CDATA                             #REQUIRED
         scope            CDATA                             #IMPLIED
+        fileName         CDATA                             #IMPLIED
+        inline           (TRUE | FALSE)                    "FALSE"
 >
 <!ELEMENT base EMPTY>
 <!ATTLIST base
