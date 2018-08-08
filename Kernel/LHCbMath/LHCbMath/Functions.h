@@ -1702,6 +1702,9 @@ namespace Gaudi
       BreitWigner ( const BreitWigner&  bw ) ;
       /// destructor
       virtual ~BreitWigner() = default;
+      // clone it 
+      virtual BreitWigner* clone()  const ;
+      // ======================================================================
     public:
       // ======================================================================
       /** calculate the Breit-Wigner shape
@@ -1806,10 +1809,26 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      // constructor from all parameters
+      /** constructor from all parameters with Jacksons' A7 formfactor 
+       *  @see Gaudi::Math::FormFactors::Jackson_A7
+       */
       Rho0  ( const double m0       = 770   ,     // MeV
               const double gam0     = 150   ,     // MeV
               const double pi_mass  = 139.6 ) ;   // MeV
+      // =========================================================================
+      /** constructor from all parameters using P-wave Blatt-Weisskopf formfactor
+       *  @param m0   mass 
+       *  @param gam0 width 
+       *  @param pi_mass mass of pion 
+       *  @param breakup the breakup parameter (inverse momenta)
+       */
+      Rho0  ( const double m0       ,     
+              const double gam0     ,     
+              const double pi_mass  ,
+              const double breakup  ) ;
+      // ======================================================================
+      // clone it 
+      Rho0* clone()  const override ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -1826,11 +1845,29 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      // constructor from all parameters
+      /** constructor from all parameters with Jacksons' A2 formfactor 
+       *  @see Gaudi::Math::FormFactors::Jackson_A2
+       */
       Kstar0  ( const double m0       = 770   ,     // MeV
                 const double gam0     = 150   ,     // MeV
                 const double k_mass   = 493.7 ,     // MeV
                 const double pi_mass  = 139.6 ) ;   // MeV
+      // ======================================================================
+      /** constructor from all parameters using P-wave Blatt-Weisskopf formfactor
+       *  @param m0   mass 
+       *  @param gam0 width 
+       *  @param k_mass mass of pion 
+       *  @param pi_mass mass of pion 
+       *  @param breakup the breakup parameter (inverse momenta)
+       */
+      Kstar0  ( const double m0       ,
+                const double gam0     ,
+                const double k_mass   ,
+                const double pi_mass  ,
+                const double breakup  ) ;
+      // ======================================================================
+      // clone it 
+      Kstar0* clone()  const override ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -1847,10 +1884,26 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      // constructor from all parameters
+      /** constructor from all parameters with Jacksons' A2 formfactor 
+       *  @see Gaudi::Math::FormFactors::Jackson_A2
+       */
       Phi0  ( const double m0       = 1019.5 ,     // MeV
               const double gam0     =    4.3 ,     // MeV
               const double k_mass   =  493.7 ) ;   // MeV
+      // ======================================================================
+      /** constructor from all parameters using P-wave Blatt-Weisskopf formfactor
+       *  @param m0   mass 
+       *  @param gam0 width 
+       *  @param k_mass mass of pion 
+       *  @param breakup the breakup parameter (inverse momenta)
+       */
+      Phi0  ( const double m0       ,     
+              const double gam0     ,     
+              const double k_mass   ,
+              const double breakup  ) ;   
+      // ======================================================================
+      // clone it 
+      Phi0* clone()  const override ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -1870,6 +1923,9 @@ namespace Gaudi
       /// constructor from all parameters
       Rho0FromEtaPrime  ( const Gaudi::Math::Rho0& rho   ,
                           const double eta_prime = 957.7 ) ;  // MeV
+      // ======================================================================
+      // clone it 
+      Rho0FromEtaPrime* clone()  const override ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1916,7 +1972,10 @@ namespace Gaudi
                 const double mA2   = 139.6 ,
                 const double mB1   = 493.7 ,
                 const double mB2   = 493.7 ) ;
+      /// destructor 
       virtual ~Flatte () = default;
+      /// clone it!
+      virtual  Flatte* clone() const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -2026,6 +2085,8 @@ namespace Gaudi
                 const double mB2   = 493.7 ) ;
       /// constructor  from Flatte
       Flatte2 ( const Flatte& flatte ) ;
+      /// clone it!
+      Flatte2* clone() const override ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3027,32 +3088,36 @@ namespace Gaudi
               const double                    m  ,
               const unsigned short            L2 ) ;
       // ======================================================================
+      // copy constrcutor 
+      // ======================================================================
+      BW23L ( const BW23L& right ) ;
+      // ======================================================================
     public:
       // ======================================================================
       /// calculate the shape
       double operator() ( const double x ) const ;
       /// get the amplitude
       std::complex<double>
-      amplitude ( const double x ) const { return m_bw.amplitude ( x ) ; }
+        amplitude ( const double x ) const { return m_bw->amplitude ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      double m0     () const { return m_bw . m0   () ; }
+      double m0     () const { return m_bw-> m0   () ; }
       double mass   () const { return        m0   () ; }
       double peak   () const { return        m0   () ; }
-      double gam0   () const { return m_bw . gam0 () ; }
+      double gam0   () const { return m_bw-> gam0 () ; }
       double gamma0 () const { return        gam0 () ; }
       double gamma  () const { return        gam0 () ; }
       double width  () const { return        gam0 () ; }
       // ======================================================================
     public:
       // ======================================================================
-      bool setM0     ( const double x ) { return m_bw.setM0     ( x ) ; }
-      bool setMass   ( const double x ) { return setM0          ( x ) ; }
-      bool setPeak   ( const double x ) { return setM0          ( x ) ; }
-      bool setGamma0 ( const double x ) { return m_bw.setGamma0 ( x ) ; }
-      bool setGamma  ( const double x ) { return setGamma0      ( x ) ; }
-      bool setWidth  ( const double x ) { return setGamma0      ( x ) ; }
+      bool setM0     ( const double x ) { return m_bw->setM0     ( x ) ; }
+      bool setMass   ( const double x ) { return setM0           ( x ) ; }
+      bool setPeak   ( const double x ) { return setM0           ( x ) ; }
+      bool setGamma0 ( const double x ) { return m_bw->setGamma0 ( x ) ; }
+      bool setGamma  ( const double x ) { return setGamma0       ( x ) ; }
+      bool setWidth  ( const double x ) { return setGamma0       ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -3062,7 +3127,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// calculate the current width
-      double gamma ( const double x ) const { return m_bw.gamma ( x ) ; }
+      double gamma ( const double x ) const { return m_bw->gamma ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -3072,10 +3137,17 @@ namespace Gaudi
       double integral ( const double low  ,
                         const double high ) const ;
       // ======================================================================
+    public:
+      // ======================================================================
+      ///  breit-wigner 
+      const Gaudi::Math::BreitWigner&   bretwigner () const { return *m_bw ; }
+      /// phase space 
+      const Gaudi::Math::PhaseSpace23L& phasespace () const { return m_ps  ; }
+      // ======================================================================
     private:
       // ======================================================================
       /// the breit wigner
-      Gaudi::Math::BreitWigner   m_bw        ;    // the breit wigner
+      std::unique_ptr<Gaudi::Math::BreitWigner>  m_bw ;    // the breit wigner
       /// the phase space
       Gaudi::Math::PhaseSpace23L m_ps        ;    // the phase space
       /// integration workspace
@@ -3121,6 +3193,9 @@ namespace Gaudi
                    const double         m     = 5366.0   ,     // MeV
                    const unsigned short L     = 1        ) ;
       // ======================================================================
+      // copy contructor 
+      Flatte23L ( const Flatte23L& right ) ;
+      // ======================================================================
     public:
       // ======================================================================
       /// get the value of Flatte function
@@ -3129,23 +3204,23 @@ namespace Gaudi
       // ======================================================================
       /// get the value of complex Flatte amplitude (pipi-channel)
       std::complex<double> amplitude ( const double x ) const
-      { return m_flatte.flatte_amp ( x ) ; }
+      { return m_flatte->flatte_amp ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      double m0     () const { return m_flatte . m0    () ; }
+      double m0     () const { return m_flatte-> m0    () ; }
       double mass   () const { return            m0    () ; }
       double peak   () const { return            m0    () ; }
-      double m0g1   () const { return m_flatte . m0g1  () ; }
-      double g2og1  () const { return m_flatte . g2og1 () ; }
+      double m0g1   () const { return m_flatte-> m0g1  () ; }
+      double g2og1  () const { return m_flatte-> g2og1 () ; }
       // ======================================================================
     public:
       // ======================================================================
-      bool setM0     ( const double x ) { return m_flatte . setM0    ( x ) ; }
+      bool setM0     ( const double x ) { return m_flatte-> setM0    ( x ) ; }
       bool setMass   ( const double x ) { return            setM0    ( x ) ; }
       bool setPeak   ( const double x ) { return            setM0    ( x ) ; }
-      bool setM0G1   ( const double x ) { return m_flatte . setM0G1  ( x ) ; }
-      bool setG2oG1  ( const double x ) { return m_flatte . setG2oG1 ( x ) ; }
+      bool setM0G1   ( const double x ) { return m_flatte-> setM0G1  ( x ) ; }
+      bool setG2oG1  ( const double x ) { return m_flatte-> setG2oG1 ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -3160,10 +3235,17 @@ namespace Gaudi
       virtual double integral ( const double low  ,
                                 const double high ) const ;
       // ======================================================================
+    public:
+      // ======================================================================
+      /// flatte shape 
+      const Gaudi::Math::Flatte&        flatte     () const { return *m_flatte ; }
+      /// phase space 
+      const Gaudi::Math::PhaseSpace23L& phasespace () const { return m_ps ; }
+      // ======================================================================
     private:
       // ======================================================================
       /// the actual Flatte function
-      Gaudi::Math::Flatte        m_flatte ; // the actual Flatte function
+      std::unique_ptr<Gaudi::Math::Flatte> m_flatte ; // the actual Flatte function
       /// phase space factor
       Gaudi::Math::PhaseSpace23L m_ps     ; // phase space factor
       // ======================================================================
