@@ -8,6 +8,10 @@ gaudi_depends_on_subdirs(GaudiKernel)
 # required for nosetests and lxml
 find_package(LibXml2)
 find_package(pytools)
+find_package(Boost)
+find_package(ROOT)
+
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 gaudi_install_python_modules()
 gaudi_install_scripts()
