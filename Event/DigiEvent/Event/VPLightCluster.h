@@ -22,16 +22,9 @@ namespace LHCb
   {
   public:
     /// Constructor
-    VPLightCluster( const float xfraction, const float yfraction, const float x, const float y, const float z,
+    VPLightCluster( const unsigned char xfraction, const unsigned char yfraction, const float x, const float y, const float z,
                     const unsigned vpID )
-        : m_fx( xfraction ), m_fy( yfraction ), m_x( x ), m_y( y ), m_z( z ), m_vpID( vpID ), m_pixels({m_vpID})
-    {
-    }
-    VPLightCluster( const float xfraction, const float yfraction, const float x, const float y, const float z,
-                    const unsigned vpID, std::vector<VPChannelID>&& pixels )
-        : m_fx( xfraction ), m_fy( yfraction ), m_x( x ), m_y( y ), m_z( z ), m_vpID( vpID ), m_pixels( pixels )
-    {
-    }
+      : m_fx( xfraction ), m_fy( yfraction ), m_x( x ), m_y( y ), m_z( z ), m_vpID( vpID ){}
 
     /// Return the cluster channelID = key
     VPChannelID channelID() const noexcept { return m_vpID; }
@@ -44,8 +37,8 @@ namespace LHCb
     }
 
     /// Retrieve const  inter-pixel fraction
-    float xfraction() const noexcept { return m_fx; }
-    float yfraction() const noexcept { return m_fy; }
+    unsigned char xfraction() const noexcept { return m_fx; }
+    unsigned char yfraction() const noexcept { return m_fy; }
 
     /// Retrieve const  global x coordinate
     float x() const noexcept { return m_x; }
@@ -56,25 +49,22 @@ namespace LHCb
     /// Retrieve const  global z coordinate
     float z() const noexcept { return m_z; }
 
-    /// Retrieve const  vector of channel IDs
-    const std::vector<VPChannelID>& pixels() const noexcept { return m_pixels; }
-
     /// classID method, needed for MC linking. Returns the CLID of VPCluster for backward compatibility
     static inline CLID classID() { return 4504; } //CLID_VPCluster
 
   private:
-    float m_fx;         ///< inter-pixel fraction in x coordinate
-    float m_fy;         ///< inter-pixel fraction in y coordinate
+    unsigned char m_fx;         ///< inter-pixel fraction in x coordinate
+    unsigned char m_fy;         ///< inter-pixel fraction in y coordinate
     float m_x;          ///< global x coordinate
     float m_y;          ///< global y coordinate
     float m_z;          ///< global z coordinate
     VPChannelID m_vpID; ///< channelID of cluster
-    std::vector<VPChannelID> m_pixels;
+    /* std::vector<VPChannelID> m_pixels; */
 
   }; // class VPLightCluster
 
   /// lightweight container for VPLightCluster
-  typedef boost::container::flat_map<unsigned, VPLightCluster> VPLightClusters;
+  typedef std::vector<VPLightCluster> VPLightClusters;
 
   inline std::ostream& operator<<( std::ostream& str, const VPLightCluster& obj ) { return obj.fillStream( str ); }
 

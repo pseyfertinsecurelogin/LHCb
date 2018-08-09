@@ -423,47 +423,6 @@ Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
         properties={"ContainerMap": __packing.packedToOutputLocationMap()},
         conf=DecoderDB)
 
-#UPGRADE ===========UT===========
-Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
-        active=True, banks=["UT"],
-        outputs={"clusterLocation":"Raw/UT/LiteClusters"},
-        inputs={"RawEventLocations" : None},
-        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
-        properties={"DetType":"UT"},
-        #required=["createODIN"],
-        conf=DecoderDB)
-#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
-
-Decoder("RawBankToSTLiteClusterAlg/createUTLiteClustersExpert",
-        active=False, banks=["UTPedestal","UTFull","UTError"],
-        outputs={"clusterLocation":"Raw/UT/LiteClusters"},
-        inputs={"RawEventLocations" : None},
-        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
-        properties={"DetType":"UT"},
-        #required=["createODIN"],
-        conf=DecoderDB)
-#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
-
-Decoder("RawBankToSTClusterAlg/createUTClusters",
-        active=True, banks=["UT"],
-        outputs={"clusterLocation":"Raw/UT/Clusters", "summaryLocation":"Rec/UT/Summary"},
-        inputs={"RawEventLocations" : None},
-        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
-        properties={"DetType":"UT"},
-        #required=["createODIN"],
-        conf=DecoderDB)
-#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
-
-Decoder("RawBankToSTClusterAlg/createUTClustersExpert",
-        active=False, banks=["UTPedestal","UTFull","UTError"],
-        outputs={"clusterLocation":"Raw/UT/Clusters", "summaryLocation":"Rec/UT/Summary"},
-        inputs={"RawEventLocations" : None},
-        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
-        properties={"DetType":"UT"},
-        #required=["createODIN"],
-        conf=DecoderDB)
-#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
-
 #Decoder("STOfflinePosition/ToolSvc.UTClusterPosition",
 #        active=False,
 #        properties={"DetType":"UT"},

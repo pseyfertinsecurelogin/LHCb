@@ -1,7 +1,7 @@
 ################################################################################
-# Package: STDAQ
+# Package: UTDAQ
 ################################################################################
-gaudi_subdir(STDAQ v4r9)
+gaudi_subdir(UTDAQ v1r0)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Det/DetDesc
@@ -22,8 +22,12 @@ find_package(ROOT)
 # hide warnings from some external projects
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
-gaudi_add_module(STDAQ
-                 src/*.cpp
-                 INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent Si/SiDAQ UT/UTKernel
-                 LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
+gaudi_add_library(UTDAQLib
+                  src/Lib/*.cpp
+                  PUBLIC_HEADERS UTDAQ
+                  INCLUDE_DIRS Boost Event/RawEvent DAQ/DAQUtils Event/DigiEvent Si/SiDAQ UT/UTKernel
+                  LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
 
+gaudi_add_module(UTDAQ
+                 src/component/Components.cpp
+                 LINK_LIBRARIES UTDAQLib)

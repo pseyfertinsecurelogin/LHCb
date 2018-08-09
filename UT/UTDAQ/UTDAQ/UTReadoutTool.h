@@ -1,44 +1,32 @@
-#ifndef _STReadoutTool_H
-#define _STReadoutTool_H
+#ifndef _UTREADOUTTOOL_H
+#define _UTREADOUTTOOL_H
 
-// STL
 #include <vector>
 #include <fstream>
 #include <string>
 
-// Gaudi
+#include "Kernel/IUTReadoutTool.h"
+#include "Kernel/STChannelID.h"
 #include "GaudiAlg/GaudiTool.h"
-
-// STDAQ
-#include "Kernel/ISTReadoutTool.h"
 #include "Kernel/STTell1ID.h"
 #include "Kernel/STDAQDefinitions.h"
-
-// ST
 #include "Kernel/STChannelID.h"
+#include "Kernel/STTell1Board.h"
+#include "Event/STCluster.h"
+#include "STDet/DeSTDetector.h"
 
+/**
+ *  Concret Class for things related to the Readout of the UT Tell1 Boards
+ */
 
-/** @class STReadoutTool STReadoutTool.h  STDAQ/STReadoutTool
- *
- *  Concret Class for things related to the Readout - Tell1 Board
- *
- *  @author M.Needham
- *  @date   13/3/2002
-*/
-
-class DeSTDetector;
-
-class STReadoutTool: public extends<GaudiTool, ISTReadoutTool> {
+class UTReadoutTool: public extends<GaudiTool, IUTReadoutTool> {
 
 public:
 
   /// Constructer
-  STReadoutTool(const std::string& type,
+  UTReadoutTool(const std::string& type,
                 const std::string& name,
                 const IInterface* parent);
-
-  /// init
-  StatusCode initialize() override;
 
   /// nBoard
   unsigned int nBoard() const override;
@@ -49,7 +37,7 @@ public:
   /// convert ITChannelID to DAQ ChannelID
   STDAQ::chanPair offlineChanToDAQ(const LHCb::STChannelID aOfflineChan, double isf) const override;
 
-/// convert offline interStripFraction to DAQ interStripFraction
+  /// convert offline interStripFraction to DAQ interStripFraction
   double interStripToDAQ(const LHCb::STChannelID aOfflineChan,
                                  const STTell1ID aBoardID,
                                  const double isf) const override;
@@ -65,6 +53,16 @@ public:
   /// find Tell1 board by storage order
   STTell1Board* findByOrder(const unsigned int aValue) const override;
 
+  /// Add the mapping of source ID to TELL1 board number
+  unsigned int SourceIDToTELLNumber(unsigned int sourceID) const override;
+
+  /** Add the mapping of source ID to board number for IT / TT / UT */
+  const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
+
+
+
+  
+  
   /// list of the readout sector ids on the board
   std::vector<LHCb::STChannelID> sectorIDs(const STTell1ID board) const override;
 
@@ -86,9 +84,6 @@ public:
   /// list of service boxes
   const std::vector<std::string>& serviceBoxes() const override;
 
-  /// Add the mapping of source ID to TELL1 board number
-  unsigned int SourceIDToTELLNumber(unsigned int sourceID) const override;
-
   /// Add the mapping of TELL1 board number to source ID
   unsigned int TELLNumberToSourceID(unsigned int TELL) const override;
 
@@ -103,6 +98,15 @@ public:
   /// finalize
   StatusCode finalize() override;
 
+  /// init
+  StatusCode initialize() override;
+
+  /// get region
+  unsigned int region(const LHCb::STChannelID aChan) const;
+
+  /** Add the mapping of board number to source ID for IT / TT / UT */
+  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const;
+
 protected:
 
   void clear();
@@ -113,7 +117,7 @@ protected:
 
 
   unsigned int m_hybridsPerBoard;
-  unsigned int m_nBoard = 0;
+  unsigned int m_nBoard{0};
   unsigned int m_nServiceBox;
   std::vector<std::unique_ptr<STTell1Board>> m_boards;
   std::map<STTell1ID, STTell1Board*> m_boardsMap;
@@ -122,7 +126,6 @@ protected:
 
   Gaudi::Property<bool> m_printMapping { this, "printMapping", false };
   DeSTDetector* m_tracker = nullptr;
-  std::string m_detType;
   std::string m_conditionLocation;
 
 private:
@@ -139,8 +142,20 @@ private:
   Gaudi::Property<unsigned int> m_precision { this, "precision", 16u};
   Gaudi::Property<unsigned int> m_depth { this, "depths", 3u };
 
+private:
+
+  StatusCode createBoards();
+  StatusCode createTell1Map();
+
+
+  unsigned int m_nRegionA = 512;
+  unsigned int m_firstStation = 512;
+
 };
 
 
 
-#endif // _STReadoutTool_H
+
+
+
+#endif // _UTREADOUTTOOL_H

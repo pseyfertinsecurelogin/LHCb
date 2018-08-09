@@ -18,11 +18,18 @@
  *  @date   5/01/2004
  */
 
-
 class STTell1Board final {
 
 public:
 
+  struct ExpandedChannelID {
+    unsigned int station;
+    unsigned int layer;
+    unsigned int detRegion;
+    unsigned int sector;
+    unsigned int uniqueSector;
+    unsigned int chanID;
+  };
   typedef std::pair<LHCb::STChannelID,int> chanPair;
 
   /// constructer
@@ -50,6 +57,12 @@ public:
   chanPair DAQToOffline(const unsigned int fracStrip,
 			const STDAQ::version& version,
                         const STDAQ::StripRepresentation aDAQChan) const;
+
+  /// construct LHCb::STChannelID from DAQ Channel
+  std::tuple<STTell1Board::ExpandedChannelID, unsigned int, int>
+  DAQToOfflineFull(const unsigned int fracStrip,
+                   const STDAQ::version& version,
+                   unsigned int aDAQChan) const;
 
   /// fill adc values offline
   void ADCToOffline(const unsigned int aDAQChan,
@@ -105,6 +118,7 @@ private:
   STTell1ID m_boardID;
   unsigned int m_nStripsPerHybrid;
   std::vector<LHCb::STChannelID> m_sectorsVector;
+  std::vector<ExpandedChannelID> m_sectorsVectorOpt;
   std::vector<int> m_orientation;
   std::vector<std::string> m_serviceBoxVector;
   std::string m_detType;

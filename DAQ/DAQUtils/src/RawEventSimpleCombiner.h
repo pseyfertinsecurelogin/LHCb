@@ -13,6 +13,8 @@
  *
  *  @author Rob Lambert
  *  @date   2013-04-03
+ *
+ *  2018-07-06 Added functionality that allows to add raw events to an existing one @rcenci  
  */
 class RawEventSimpleCombiner : public GaudiAlgorithm {
 public:
@@ -32,6 +34,9 @@ private:
   std::string              m_outputLocation; //where to put them, DEFAULT /Event/RawEvent
 
   std::vector<LHCb::RawBank::BankType> m_bankTypes;
+
+  Gaudi::Property<bool> m_enableIncrementalMode{ this, "EnableIncrementalMode",false, 
+      "Enable incremental mode, where raw events are added to output raw event (already created)"};
 
 };
 

@@ -126,6 +126,7 @@ namespace LHCb
                    HC,              // 70
                    HltTrackReports, // 71
                    HCError,         // 72
+                   VPRetinaCluster, // 73
                    // Add new types here. Don't forget to update also RawBank.cpp
                    LastType    // LOOP Marker; add new bank types ONLY before!
     };

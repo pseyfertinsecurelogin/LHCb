@@ -39,7 +39,7 @@ void TrackPacker::pack( const Data & track,
 
     //== Handle the states in the track
     ptrack.firstState = ptracks.states().size();
-    for ( const auto* S : track.states() ) { convertState( *S, ptracks ); }
+    for ( const auto& S : track.states() ) { convertState( S, ptracks ); }
     ptrack.lastState = ptracks.states().size();
     if ( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
     {
@@ -442,7 +442,7 @@ StatusCode TrackPacker::check( const Data & dataA,
 
   for ( kk = 0; (dataA.nStates() > kk) && (dataB.nStates() > kk); ++kk )
   {
-    compareStates( *dataA.states()[kk], *dataB.states()[kk] );
+    compareStates( dataA.states()[kk], dataB.states()[kk] );
   }
 
   return ( isOK ? StatusCode::SUCCESS : StatusCode::FAILURE );

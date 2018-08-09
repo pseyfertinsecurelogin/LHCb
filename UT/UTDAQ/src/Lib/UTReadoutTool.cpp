@@ -1,66 +1,63 @@
-// STDAQ
-#include "STReadoutTool.h"
-
+#include "UTDAQ/UTReadoutTool.h"
 #include "Kernel/STTell1Board.h"
 #include "Kernel/STTell1ID.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Event/STCluster.h"
-
-// IT
+#include "Kernel/STBoardMapping.h"
 #include "Kernel/STChannelID.h"
-#include "STDet/DeSTDetector.h"
-
 #include <algorithm>
-
-// STKernel
+#include "DetDesc/Condition.h"
 #include "Kernel/STXMLUtils.h"
-
-/** @file DeSTSector.cpp
-*
-*  Implementation of class :  DeSTSector
-*
-*    @author Matthew Needham
-*/
 
 using namespace LHCb;
 
-
-STReadoutTool::STReadoutTool(const std::string& type,
+UTReadoutTool::UTReadoutTool(const std::string& type,
                             const std::string& name,
                             const IInterface* parent)
-: base_class( type, name, parent )
+: base_class( type, name, parent)
 {
+  // constructor
+  declareProperty( "conditionLocation",
+                    m_conditionLocation  = "/dd/Conditions/ReadoutConf/UT/ReadoutMap");
   m_boards.reserve(100); // about correct
 }
 
 
-void STReadoutTool::clear() {
+void UTReadoutTool::clear() {
   // clear the boards
   m_boards.clear();
   m_nBoard = 0;
 }
 
-StatusCode STReadoutTool::initialize() {
-
+StatusCode UTReadoutTool::initialize() {
   // initialization phase...
-  StatusCode sc = base_class::initialize();
+  StatusCode sc = GaudiTool::initialize();
   if (sc.isFailure()){
     return Error("Failed to initialize", sc);
   }
 
   // tracker
-  m_tracker = getDet<DeSTDetector>(DeSTDetLocation::location(m_detType));
+  m_tracker = getDet<DeSTDetector>(DeSTDetLocation::location("UT"));
+
+  registerCondition(m_conditionLocation,
+                    &UTReadoutTool::createTell1Map);
+
+  registerCondition(m_conditionLocation,
+                    &UTReadoutTool::createBoards);
+
+  sc = runUpdate(); // force update
+  if (sc.isFailure()) return Error ( "Failed first UMS update for readout tool", sc );
+
+  if (m_printMapping) printMapping();
 
   return StatusCode::SUCCESS;
 }
 
-StatusCode STReadoutTool::finalize()  {
+StatusCode UTReadoutTool::finalize()  {
 
   if (m_writeXML) writeMappingToXML();
   return base_class::finalize();
 }
 
-StatusCode STReadoutTool::writeMappingToXML() const {
+StatusCode UTReadoutTool::writeMappingToXML() const {
 
   // load conditions
   Condition* rInfo = getDet<Condition>(m_conditionLocation);
@@ -87,16 +84,16 @@ StatusCode STReadoutTool::writeMappingToXML() const {
   return StatusCode::SUCCESS;
 }
 
-unsigned int STReadoutTool::nBoard() const {
+unsigned int UTReadoutTool::nBoard() const {
   // number of boards
   return m_nBoard;
 }
 
-unsigned int STReadoutTool::nServiceBox() const{
+unsigned int UTReadoutTool::nServiceBox() const{
   return m_serviceBoxes.size();
 }
 
-std::string STReadoutTool::serviceBox(const LHCb::STChannelID& aChan) const{
+std::string UTReadoutTool::serviceBox(const LHCb::STChannelID& aChan) const{
 
   // find the board
 
@@ -114,7 +111,7 @@ std::string STReadoutTool::serviceBox(const LHCb::STChannelID& aChan) const{
   return(  isFound ? m_boards[iBoard]->serviceBoxes()[waferIndex] : InValidBox);
 }
 
-std::vector<STTell1ID> STReadoutTool::boardIDs() const{
+std::vector<STTell1ID> UTReadoutTool::boardIDs() const{
   std::vector<STTell1ID> ids; ids.reserve(m_boards.size());
   std::transform( m_boards.begin(), m_boards.end(),
                   std::back_inserter(ids),
@@ -122,7 +119,7 @@ std::vector<STTell1ID> STReadoutTool::boardIDs() const{
   return ids;
 }
 
-STDAQ::chanPair STReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
+STDAQ::chanPair UTReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
                                                 double isf) const
 {
   // look up region start.....
@@ -148,7 +145,7 @@ STDAQ::chanPair STReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
 }
 
 
-double STReadoutTool::interStripToDAQ(const STChannelID aOfflineChan,
+double UTReadoutTool::interStripToDAQ(const STChannelID aOfflineChan,
                                       const STTell1ID aBoardID,
                                       const double isf) const
 {
@@ -172,7 +169,7 @@ double STReadoutTool::interStripToDAQ(const STChannelID aOfflineChan,
 }
 
 
-bool STReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
+bool UTReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
                                     const STTell1ID aBoardID,
                                     STCluster::ADCVector& adcs) const
 {
@@ -188,7 +185,7 @@ bool STReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
 }
 
 
-STTell1Board* STReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
+STTell1Board* UTReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
   // find by board id
   try {
     return m_boardsMap.at(aBoardID);
@@ -197,12 +194,12 @@ STTell1Board* STReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
   }
 }
 
-STTell1Board* STReadoutTool::findByOrder(const unsigned int aValue) const{
+STTell1Board* UTReadoutTool::findByOrder(const unsigned int aValue) const{
   // find by order
   return aValue< m_nBoard ? m_boards[aValue].get() : nullptr;
 }
 
-void STReadoutTool::printMapping() const{
+void UTReadoutTool::printMapping() const{
 
   // dump out the readout mapping
   std::cout << "print mapping for: " << name() << " tool\n";
@@ -211,16 +208,16 @@ void STReadoutTool::printMapping() const{
 }
 
 /// Add the mapping of source ID to TELL1 board number
-unsigned int STReadoutTool::SourceIDToTELLNumber(unsigned int sourceID) const {
+unsigned int UTReadoutTool::SourceIDToTELLNumber(unsigned int sourceID) const {
   return (this->SourceIDToTELLNumberMap().find(sourceID))->second;
 }
 
 /// Add the mapping of TELL1 board number to source ID
-unsigned int STReadoutTool::TELLNumberToSourceID(unsigned int TELL) const {
+unsigned int UTReadoutTool::TELLNumberToSourceID(unsigned int TELL) const {
   return (this->TELLNumberToSourceIDMap().find(TELL))->second;
 }
 
-StatusCode STReadoutTool::validate() const{
+StatusCode UTReadoutTool::validate() const{
 
   // validate the map - every sector must go somewhere !
   const DeSTDetector::Sectors& dSectors = m_tracker->sectors();
@@ -232,7 +229,7 @@ StatusCode STReadoutTool::validate() const{
                        } )};
 }
 
-std::vector<LHCb::STChannelID> STReadoutTool::sectorIDs(const STTell1ID board) const{
+std::vector<LHCb::STChannelID> UTReadoutTool::sectorIDs(const STTell1ID board) const{
 
   std::vector<LHCb::STChannelID> sectors; sectors.reserve(8);
   STTell1Board* theBoard = findByBoardID(board);
@@ -245,17 +242,17 @@ std::vector<LHCb::STChannelID> STReadoutTool::sectorIDs(const STTell1ID board) c
   return sectors;
 }
 
-std::vector<DeSTSector*> STReadoutTool::sectors(const STTell1ID board) const{
+std::vector<DeSTSector*> UTReadoutTool::sectors(const STTell1ID board) const{
 
   return m_tracker->findSectors(sectorIDs(board));
 }
 
-std::vector<DeSTSector*> STReadoutTool::sectorsOnServiceBox(const std::string& serviceBox) const{
+std::vector<DeSTSector*> UTReadoutTool::sectorsOnServiceBox(const std::string& serviceBox) const{
 
   return m_tracker->findSectors(sectorIDsOnServiceBox(serviceBox));
 }
 
-std::vector<LHCb::STChannelID> STReadoutTool::sectorIDsOnServiceBox(const std::string& serviceBox) const{
+std::vector<LHCb::STChannelID> UTReadoutTool::sectorIDsOnServiceBox(const std::string& serviceBox) const{
   // loop over all boards
   std::vector<LHCb::STChannelID> sectors; sectors.reserve(16);
   for (const auto& board : m_boards ) {
@@ -268,18 +265,18 @@ std::vector<LHCb::STChannelID> STReadoutTool::sectorIDsOnServiceBox(const std::s
   return sectors;
 }
 
-const std::vector<std::string>& STReadoutTool::serviceBoxes() const{
+const std::vector<std::string>& UTReadoutTool::serviceBoxes() const{
   return m_serviceBoxes;
 }
 
-std::string STReadoutTool::footer() const
+std::string UTReadoutTool::footer() const
 {
   std::string temp = m_footer;
   temp.insert(0, "</catalog>" );
   return temp;
 }
 
-std::string STReadoutTool::header(const std::string& conString) const
+std::string UTReadoutTool::header(const std::string& conString) const
 {
   // get the header
   std::string::size_type startpos = conString.find(m_startTag);
@@ -299,9 +296,123 @@ std::string STReadoutTool::header(const std::string& conString) const
   return temp;
 }
 
-std::string STReadoutTool::strip(const std::string& conString) const
+std::string UTReadoutTool::strip(const std::string& conString) const
 {
   std::string::size_type startpos = conString.find(m_startTag);
   std::string::size_type endpos = conString.find(m_footer);
   return conString.substr(startpos, endpos - startpos);
 }
+
+unsigned int UTReadoutTool::region(const STChannelID aChan) const{
+  // convert channel to region
+  return aChan.station() == 1 ?  aChan.layer() - 1 : m_nRegionA + aChan.layer() - 1;
+}
+
+// Add the mapping of source ID to TELL1 board number
+const  std::map<unsigned int, unsigned int>& UTReadoutTool::SourceIDToTELLNumberMap() const {
+  return STBoardMapping::UTSourceIDToNumberMap();
+}
+
+// Add the mapping of TELL1 board number to source ID
+const  std::map<unsigned int, unsigned int>& UTReadoutTool::TELLNumberToSourceIDMap() const {
+  return STBoardMapping::UTNumberToSourceIDMap();
+}
+
+StatusCode UTReadoutTool::createTell1Map()
+{
+  Condition* rInfo = getDet<Condition>(m_conditionLocation);
+  const std::vector<std::string> layers =  rInfo->param<std::vector<std::string> >("layers");
+
+  STBoardMapping::ClearUTMap();
+
+  unsigned int sourceIDBase = 0;
+  for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
+    std::string tell1Loc = layers[iReg]+"TELL1";
+    if ( rInfo->exists(tell1Loc) ) {
+      //      printf("Extracting TELL1 map from %s\n", tell1Loc.c_str());
+
+      const std::vector<int>& tell1 = rInfo->param<std::vector<int> >(tell1Loc);
+      for ( unsigned int i=0; i<tell1.size(); i++ ) {
+        STBoardMapping::AddUTMapEntry(sourceIDBase+i, tell1.at(i));
+      }
+    }
+    sourceIDBase += 64;
+  }
+
+  return StatusCode::SUCCESS;
+}
+
+
+
+StatusCode UTReadoutTool::createBoards() {
+
+  bool isUT = true;
+  clear();
+
+  // load conditions
+  Condition* rInfo = getDet<Condition>(m_conditionLocation);
+
+  // vector of layer types
+  // const std::vector<std::string>& layers = rInfo->paramAsStringVect("layers");
+  const std::vector<std::string> layers =  rInfo->param<std::vector<std::string> >("layers");
+  const std::vector<int>& nBoards = rInfo->paramAsIntVect("nBoardsPerLayer");
+
+  m_hybridsPerBoard = rInfo->param<int>("hybridsPerBoard");
+  m_nRegionA = rInfo->param<int>("nRegionsInUTa");
+  unsigned int nStripsPerHybrid =  STDAQ::nStripsPerBoard/m_hybridsPerBoard;
+
+  for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
+
+   m_firstBoardInRegion.push_back(m_boards.size());
+   m_nBoard += nBoards[iReg];
+
+   const std::vector<int>& tMap = rInfo->param<std::vector<int> >(layers[iReg]);
+   std::string orLoc = layers[iReg]+"HybridOrientation";
+   const std::vector<int>& orientation = rInfo->param<std::vector<int> >(orLoc);
+   const std::vector<std::string>& serviceBoxes = rInfo->param<std::vector<std::string> >(layers[iReg]+"ServiceBox");
+
+
+   unsigned int vecLoc = 0;
+   if ( iReg == 0){
+     STChannelID firstChan = STChannelID(tMap[0]);
+     m_firstStation = firstChan.station() ;
+   }
+
+   for (unsigned int iBoard = 0; iBoard < (unsigned int)nBoards[iReg]; ++iBoard){
+
+     // make new board
+     STTell1ID anID = STTell1ID(iReg,iBoard, isUT);
+     auto aBoard = std::make_unique<STTell1Board>(anID, nStripsPerHybrid, "UT");
+
+     for (unsigned iH = 0 ; iH < m_hybridsPerBoard; ++iH, ++vecLoc){
+       STChannelID sectorID((unsigned int)tMap[vecLoc]);
+       aBoard->addSector(sectorID, (unsigned int)orientation[vecLoc], serviceBoxes[vecLoc]);
+
+       // add to the list of service boxs if not already there
+       if (std::find(m_serviceBoxes.begin(), m_serviceBoxes.end(),
+                     serviceBoxes[vecLoc]) ==  m_serviceBoxes.end()) {
+	 m_serviceBoxes.push_back(serviceBoxes[vecLoc]);
+       }
+
+
+     } // iH
+
+     m_boards.push_back(std::move(aBoard));
+
+     if (m_boardsMap.find( anID ) == m_boardsMap.end()) {
+       m_boardsMap[anID] = m_boards.back().get();
+     }
+
+   } // boards per region
+  } // iterS
+
+  // validate the mapping --> all sectors should go somewhere !
+  StatusCode sc = validate();
+  if (sc.isFailure() ){
+    return Error("Failed to validate mapping",StatusCode::FAILURE);
+  }
+
+  return StatusCode::SUCCESS;
+}
+
+

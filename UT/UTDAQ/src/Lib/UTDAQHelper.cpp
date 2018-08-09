@@ -1,9 +1,10 @@
-#include "STDAQ/UTDAQHelper.h"
+#include "UTDAQ/UTDAQHelper.h"
 #include "Event/RawBank.h"
 #include "SiDAQ/SiHeaderWord.h"
 
+
 std::optional<unsigned int>
-LHCb::UTDAQ::nbUTClusters(const std::vector<RawBank *> &banks,
+LHCb::UTDAQ::nbUTClusters(LHCb::span<const RawBank *> banks,
                           unsigned int maxNbClusters) {
   size_t nbClusters = 0;
   for (auto &bank : banks) {

@@ -32,6 +32,7 @@ namespace LHCb
     static const std::string& Tracker  = "Tracker/RawEvent"; ///< Copy of IT, OT and TT banks
     static const std::string& HC       = "HC/RawEvent";      ///< Copy of Herschel banks
     static const std::string& Unstripped = "Unstripped/RawEvent"; ///< Miscellaneous banks not required by stripping lines.
+    static const std::string& VeloCluster = "VeloCluster/RawEvent";    ///< Copy of Velo Cluster banks
   }
 
   /** @class LHCb::RawEvent RawEvent.h
