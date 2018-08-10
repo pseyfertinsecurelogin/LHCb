@@ -133,7 +133,12 @@ void PackedDataChecksum::process(const std::string& key, const T& x) {
   m_result[key].process_bytes((void*)&x, sizeof(x));
   // Add to a "global" checksum, too
   m_result[""].process_bytes((void*)&x, sizeof(x));
+}
 
+// Specialization for pairs as they might be padded
+template<typename T1, typename T2>
+void PackedDataChecksum::process(const std::string& key, const std::pair<T1, T2>& x) {
+  processMany(key, x.first, x.second);
 }
 
 template <typename ...Args>
