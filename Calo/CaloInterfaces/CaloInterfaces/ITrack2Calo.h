@@ -9,6 +9,7 @@
 #include "GaudiKernel/IAlgTool.h"
 // from LHCb
 #include "Event/State.h"
+#include "Event/Track.h"
 #include "Event/CaloPosition.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Kernel/CaloCellID.h"
@@ -17,7 +18,6 @@
 // Forward declarations
 namespace LHCb
 {
-  class Track;
   class CaloHypo;
   class CaloCluster;
 }

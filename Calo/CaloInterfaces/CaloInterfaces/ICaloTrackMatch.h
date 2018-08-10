@@ -7,11 +7,14 @@
 #include <utility>
 // GaudiKernel 
 #include "GaudiKernel/IAlgTool.h"
+#include "Event/Track.h"
+
 namespace LHCb{
   class CaloPosition  ; // from CaloEvent package 
-  class Track         ; // from TrackEvent   package
   class State         ; // from TrackEvent   package
 }
+
+
 /** @class ICaloTrackMatch ICaloTrackMatch.h CaloInterfaces/ICaloTrackMatch.h
  *  
  *  The generic interface for matching of 

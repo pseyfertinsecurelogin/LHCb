@@ -11,9 +11,12 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-namespace LHCb
+namespace LHCb::Event
 {
-  class Track ;
+  inline namespace v1
+  {
+    class Track ;
+  }
 }
 // ============================================================================
 
@@ -34,7 +37,7 @@ struct IInAcceptance : extend_interfaces<IAlgTool>
    *  @param track track to be checked
    *  @return true if the track is in acceptance
    */
-  virtual bool inAcceptance ( const LHCb::Track* track ) const = 0 ;
+  virtual bool inAcceptance ( const LHCb::Event::Track* track ) const = 0 ;
 
 };
 

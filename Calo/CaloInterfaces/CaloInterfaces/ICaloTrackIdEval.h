@@ -10,10 +10,7 @@
 // ============================================================================
 // forward declaration
 // ============================================================================
-namespace LHCb
-{
-  class Track      ;
-}
+#include "Event/Track.h"
 // ============================================================================
 /** @class ICaloTrackIdEval ICaloTrackIdEval.h CaloInterfaces/ICaloTrackIdEval.h
  *  

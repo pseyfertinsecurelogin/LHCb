@@ -9,12 +9,10 @@
 #include "GaudiKernel/Plane3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
+#include "Event/Track.h"
 
 // forward declarations
 struct ICaloCosmicsTool;
-namespace LHCb {
-  class Track;
-}
 
 
 /** @class ICaloCosmicsTrackTool ICaloCosmicsTrackTool.h

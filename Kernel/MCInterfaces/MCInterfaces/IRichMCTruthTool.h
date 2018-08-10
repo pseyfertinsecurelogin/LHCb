@@ -21,6 +21,10 @@
 
 // Event Model
 #include "Event/MCRichHit.h"
+
+#include "Event/Track.h"
+
+
 namespace LHCb
 {
   class MCRichOpticalPhoton;
@@ -28,9 +32,7 @@ namespace LHCb
   class MCRichTrack;
   class MCRichDigit;
   class MCParticle;
-  class MCRichHit;
   class MCRichDigitSummary;
-  class Track;
 }
 namespace Rich
 {

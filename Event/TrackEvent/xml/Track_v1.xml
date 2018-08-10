@@ -2,9 +2,18 @@
 <!DOCTYPE gdd SYSTEM 'gdd.dtd'>
 <gdd>
   <package name='TrackEvent'>
+    <namespace
+        desc="Track v1 namespace"
+        name="v1"
+        author="Sascha"
+        fileName="Track_v1"
+        inline="TRUE"
+	scope="LHCb::Event"
+        >
+
+
 
 <!-- ==================== Track class definition ==================== -->
-
     <class
       name        = 'Track'
       author      = 'Jose Hernando, Eduardo Rodrigues'
@@ -13,6 +22,7 @@
       defaultdestructor = "FALSE"
       id          = '10010'
       location    = 'Rec/Track/Best'
+      namespace   = "LHCb::Event"
       keyedContTypeDef = "TRUE"
       stdVectorTypeDef = "TRUE">
 
@@ -44,7 +54,6 @@
       <import name='Event/Measurement' />
       <import name='Event/TrackTags' />
       <import name='Event/TrackParameters' />
-      <import name='Node' soft='FORWARDONLY' />
       <import name='Kernel/LHCbID' />
       <import name='GaudiKernel/Plane3DTypes' />
       <import name='GaudiKernel/GenericMatrixTypes' />
@@ -53,6 +62,7 @@
       <import name="GaudiKernel/SharedObjectsContainer"/>
       <import name="Event/TrackFitResult"/>
       <import name="Kernel/STLExtensions"/>
+      <import name='Node'/>
 
       <enum
         name   = 'History'
@@ -210,7 +220,7 @@
        </enum>
 
    <typedef
-     type = "SharedObjectsContainer&lt;LHCb::Track&gt;"
+       type = "SharedObjectsContainer&lt;Track&gt;"
      def  = "Selection"
      desc = "For defining SharedObjectContainer"
      access = "PUBLIC"
@@ -231,28 +241,28 @@
    />
 
    <typedef
-        type   = "std::vector&lt;LHCb::LHCbID&gt;"
+        type   = "std::vector&lt;LHCbID&gt;"
         def    = "LHCbIDContainer"
-        desc   = "Container for LHCb::LHCbIDs on track"
+        desc   = "Container for LHCbIDs on track"
         access = "PUBLIC"
    />
 
    <typedef
-        type   = "std::vector&lt;const LHCb::Measurement*&gt;"
+        type   = "std::vector&lt;const Measurement*&gt;"
         def    = "MeasurementContainer"
-        desc   = "Container for LHCb::Measurements on track"
+        desc   = "Container for Measurements on track"
         access = "PUBLIC"
    />
 
    <typedef
-        type   = "std::vector&lt;LHCb::State*&gt;"
+        type   = "std::vector&lt;State*&gt;"
         def    = "StateContainer"
-        desc   = "Container for LHCb::States on track"
+        desc   = "Container for States on track"
         access = "PUBLIC"
    />
 
    <typedef
-     type   = "Gaudi::Range_&lt;std::vector&lt;const LHCb::Node*&gt;&gt;"
+     type   = "Gaudi::Range_&lt;std::vector&lt;const Node*&gt;&gt;"
      def    = "ConstNodeRange"
      desc   = "Range of pointers to nodes on track. For non-const access, use fitresult."
      access = "PUBLIC"
@@ -268,22 +278,24 @@
    <constructor
        desc     = "Move constructor"
        initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(track.m_chi2PerDoF), m_nDoF(track.m_nDoF), m_likelihood(track.m_likelihood), m_ghostProbability(track.m_ghostProbability), m_flags(track.m_flags), m_lhcbIDs(std::move(track.m_lhcbIDs)), m_states(std::move(track.m_states)), m_fitResult(std::exchange(track.m_fitResult, nullptr)), m_extraInfo{std::move(track.m_extraInfo)},m_ancestors(std::move(track.m_ancestors))">
-     <arg const="FALSE" name="track" type="LHCb::Track&amp;"/>
+     <arg const="FALSE" name="track" type="Track&amp;"/>
+     <code>
+     </code>
    </constructor>
 
   <constructor
        desc     = "Move constructor"
        initList = "KeyedObject&lt;int&gt;(key), m_chi2PerDoF(track.m_chi2PerDoF), m_nDoF(track.m_nDoF), m_likelihood(track.m_likelihood), m_ghostProbability(track.m_ghostProbability), m_flags(track.m_flags), m_lhcbIDs(std::move(track.m_lhcbIDs)), m_states(std::move(track.m_states)), m_fitResult(std::exchange(track.m_fitResult, nullptr)), m_extraInfo{std::move(track.m_extraInfo)},m_ancestors(std::move(track.m_ancestors))">
-     <arg const="FALSE" name="track" type="LHCb::Track&amp;"/>
+     <arg const="FALSE" name="track" type="Track&amp;"/>
      <arg const="TRUE" name="key" type="int"/>
    </constructor>
 
   <constructor
 	desc     = "Constructor"
-	argList  = "const LHCb::Track::History&amp; history,
-                    const LHCb::Track::Types&amp; trackType,  const LHCb::Track::PatRecStatus&amp; patStatus,
-                    std::vector&lt;LHCb::LHCbID&gt; ids,
-                    const LHCb::State&amp; aState"
+	argList  = "const History&amp; history,
+                    const Types&amp; trackType,  const PatRecStatus&amp; patStatus,
+                    std::vector&lt;LHCbID&gt; ids,
+                    const State&amp; aState"
 	explicit = "TRUE"
 	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_lhcbIDs(std::move(ids))">
       <code>
@@ -297,8 +309,8 @@
 
   <constructor
 	desc     = "Constructor"
-	argList  = "const LHCb::Track::History&amp; history, const LHCb::Track::Types&amp; trackType,
-                    const LHCb::Track::PatRecStatus&amp; patStatus"
+	argList  = "const History&amp; history, const Types&amp; trackType,
+                    const PatRecStatus&amp; patStatus"
 	explicit = "TRUE"
 	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0)">
       <code>
@@ -311,7 +323,7 @@
     <constructor
        desc     = "Copy constructor"
        initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_fitResult(nullptr), m_ancestors()">
-         <arg const="TRUE" name="track" type="LHCb::Track"/>
+         <arg const="TRUE" name="track" type="Track"/>
        <code>
          this -&gt; copy( track );
        </code>
@@ -366,7 +378,7 @@
        init    = '0'
        access  = 'PRIVATE'>
        <bitfield
-         type      = 'LHCb::Track::Types'
+         type      = 'Types'
          name      = 'type'
          length    = '4'
          desc      = 'Track type'
@@ -374,7 +386,7 @@
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
        <bitfield
-         type      = 'LHCb::Track::History'
+         type      = 'History'
          name      = 'history'
          length    = '7'
          desc      = 'Specifies the pattern recognition algorithm that created the track'
@@ -382,7 +394,7 @@
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
        <bitfield
-         type      = 'LHCb::Track::FitHistory'
+         type      = 'FitHistory'
          name      = 'fitHistory'
          length    = '3'
          desc      = 'Specifies the fitting algorithm the fitted the track)'
@@ -390,7 +402,7 @@
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
        <bitfield
-         type      = 'LHCb::Track::PatRecStatus'
+         type      = 'PatRecStatus'
          name      = 'patRecStatus'
          length    = '2'
          desc      = 'Pattern recognition status of the track'
@@ -398,7 +410,7 @@
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
        <bitfield
-         type      = 'LHCb::Track::FitStatus'
+         type      = 'FitStatus'
          name      = 'fitStatus'
          length    = '2'
          desc      = 'Fitting status of the track'
@@ -406,7 +418,7 @@
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
        <bitfield
-         type      = 'LHCb::Track::Flags'
+         type      = 'Flags'
          name      = 'flag'
          length    = '10'
          desc      = 'Track flags'
@@ -423,14 +435,14 @@
       </attribute>
 
       <attribute
-        type      = 'std::vector&lt;LHCb::LHCbID&gt;'
+        type      = 'std::vector&lt;LHCbID&gt;'
         name      = 'lhcbIDs'
         desc      = 'Container of (sorted) LHCbIDs'
         access    = 'PRIVATE'
         setMeth   = 'FALSE' />
 
       <attribute
-        type      = 'std::vector&lt;LHCb::State*&gt;'
+        type      = 'std::vector&lt;State*&gt;'
         name      = 'states'
         desc      = 'Container with pointers to all the states'
         access    = 'PRIVATE'
@@ -454,7 +466,7 @@
         access  = "PRIVATE" />
 
       <relation
-        type         = 'LHCb::Track'
+        type         = 'Track'
         name         = 'ancestors'
         desc         = 'Ancestor tracks that created this one'
         access       = 'PRIVATE'
@@ -463,11 +475,11 @@
 	nonconstaccessor = 'TRUE' />
 
       <method
-          type    = 'LHCb::Track&amp;'
+          type    = 'Track&amp;'
           name    = 'operator='
           desc    = 'Move assignement operator'
           const   = 'FALSE'>
-        <arg type = 'LHCb::Track&amp;' name='track' />
+        <arg type = 'Track&amp;' name='track' />
       </method>
 
       <method
@@ -616,7 +628,7 @@
       </method>
 
       <method
-        type    = 'LHCb::State &amp;'
+        type    = 'State &amp;'
         name    = 'firstState'
         desc    = 'Retrieve the first state on the track'
         const   = 'FALSE'>
@@ -630,7 +642,7 @@
         </code>
       </method>
       <method
-        type    = 'const LHCb::State &amp;'
+        type    = 'const State &amp;'
         name    = 'firstState'
         desc    = 'Retrieve the first state on the track'
         const   = 'TRUE'>
@@ -711,27 +723,27 @@
       <method
         name    = 'addToStates'
         desc    = 'Add a State to the list of States associated to the track'>
-        <arg type = 'const LHCb::State' name=' state' />
+        <arg type = 'const State' name=' state' />
       </method>
 
      <method
         name    = 'addToStates'
         desc    = 'Add a set of states to the track. Track takes ownership. (note: const refers to the pointer, not the State!)'>
         <arg type = 'span&lt;State* const&gt;' inout='BYVALUE' name='states' />
-        <arg type = ' LHCb::Tag::State::AssumeUnordered_tag = { } ' inout='BYVALUE' name=' '/>
+        <arg type = ' Tag::State::AssumeUnordered_tag = { } ' inout='BYVALUE' name=' '/>
       </method>
 
       <method
         name    = 'addToStates'
         desc    = 'Add a set of sorted states by increasing Z to the track. Track takes ownership. (note: const refers to the pointer, not the State!)'>
         <arg type = 'span&lt;State* const&gt;' inout= 'BYVALUE' name='states' />
-        <arg type = ' LHCb::Tag::State::AssumeSorted_tag ' inout='BYVALUE' name=' '/>
+        <arg type = ' Tag::State::AssumeSorted_tag ' inout='BYVALUE' name=' '/>
       </method>
 
       <method
         name    = 'removeFromStates'
         desc    = 'Remove a State from the list of states associated to the track'
-        argList = 'LHCb::State* value'>
+        argList = 'State* value'>
       </method>
 
       <method
@@ -741,21 +753,21 @@
       </method>
 
       <method
-        type    = 'LHCb::State &amp;'
+        type    = 'State &amp;'
         name    = 'closestState'
         argList = 'double z'
         desc    = 'Retrieve the reference to the state closest to the given z-position'
         const   = 'FALSE' />
 
       <method
-        type    = 'const LHCb::State &amp;'
+        type    = 'const State &amp;'
         name    = 'closestState'
         argList = 'double z'
         desc    = 'Retrieve the reference to the state closest to the given z-position'
         const   = 'TRUE' />
 
       <method
-        type    = 'const LHCb::State &amp;'
+        type    = 'const State &amp;'
         name    = 'closestState'
         argList = 'const Gaudi::Plane3D plane'
         desc    = 'Retrieve the reference to the state closest to the given plane'
@@ -764,20 +776,20 @@
       <method
         type    = 'bool'
         name    = 'hasStateAt'
-        argList = 'const LHCb::State::Location&amp; location'
+        argList = 'const State::Location&amp; location'
         desc    = 'Check the existence of a state at a certain predefined location (see the Location enum in State.h)'
         const   = 'TRUE' />
 
       <method
-        type    = 'LHCb::State*'
+        type    = 'State*'
         name    = 'stateAt'
-        argList = 'const LHCb::State::Location&amp; location'
+        argList = 'const State::Location&amp; location'
         desc    = 'Retrieve the state at a certain predefined location (see the Location enum in State.h)' />
 
       <method
-        type    = 'const LHCb::State*'
+        type    = 'const State*'
         name    = 'stateAt'
-        argList = 'const LHCb::State::Location&amp; location'
+        argList = 'const State::Location&amp; location'
         desc    = 'Retrieve the const state at a certain predefined location (see the Location enum in State.h)'
         const   = 'TRUE' />
 
@@ -802,7 +814,7 @@
        name    = 'addToLhcbIDs'
        desc    = 'Add an LHCbID to the list of LHCbIDs associated to the track. Return true if LHCbID was not yet on track.'
        type    = 'bool'
-       argList = 'LHCb::LHCbID value'>
+       argList = 'LHCbID value'>
       </method>
 
      <method
@@ -893,9 +905,9 @@
       <method
         name    = 'addToAncestors'
         desc    = 'Add a track to the list of ancestors of this track'>
-        <arg type = 'const LHCb::Track ' name='ancestor' />
+        <arg type = 'const Track ' name='ancestor' />
         <code>
-  m_ancestors.push_back( const_cast&lt;LHCb::Track*&gt;(&amp;ancestor) );
+  m_ancestors.push_back( const_cast&lt;Track*&gt;(&amp;ancestor) );
         </code>
       </method>
 
@@ -903,17 +915,17 @@
 	type    = 'void'
         name    = 'setFitResult'
         desc    = 'Set pointer to object holding track fit data. Track becomes owner.'>
-	  <arg type = 'LHCb::TrackFitResult* ' name='trackfit' />
+	  <arg type = 'TrackFitResult* ' name='trackfit' />
       </method>
 
       <method
-	type    = 'LHCb::TrackFitResult*'
+	type    = 'TrackFitResult*'
         name    = 'fitResult'
         desc    = 'get pointer to the object holding the trackfit data.'>
       </method>
 
       <method
-	type      = 'const LHCb::TrackFitResult*'
+	type      = 'const TrackFitResult*'
 	name    = 'fitResult'
 	desc    = 'get const pointer to the object holding the trackfit data.'
 	const   = 'TRUE'>
@@ -926,13 +938,13 @@
       </method>
 
       <method
-        type    = 'LHCb::Track*'
+        type    = 'Track*'
         name    = 'cloneWithKey'
         desc    = 'Clone the track keeping the key (you take ownership of the pointer)'
 	const   = 'TRUE' />
 
       <method
-        type    = 'LHCb::Track*'
+        type    = 'Track*'
         name    = 'clone'
         desc    = 'Clone the track (you take ownership of the pointer)'
 	const   = 'TRUE' />
@@ -940,13 +952,13 @@
       <method
         type    = 'void'
         name    = 'copy'
-        argList = 'const LHCb::Track&amp; track'
+        argList = 'const Track&amp; track'
         desc    = 'Copy the info from the argument track into this track' />
 
       <method
         type    = 'bool'
         name    = 'checkType'
-        argList = 'const LHCb::Track::Types&amp; value'
+        argList = 'const Types&amp; value'
         desc    = 'Check the type of the track (see the Types enum)'
         const   = 'TRUE'>
         <code>
@@ -957,7 +969,7 @@
       <method
         type    = 'bool'
         name    = 'checkHistory'
-        argList = 'const LHCb::Track::History&amp; value'
+        argList = 'const History&amp; value'
         desc    = 'Check the history of the track (see the History enum)'
         const   = 'TRUE'>
         <code>
@@ -968,7 +980,7 @@
       <method
         type    = 'bool'
         name    = 'checkFitHistory'
-        argList = 'const LHCb::Track::FitHistory&amp; value'
+        argList = 'const FitHistory&amp; value'
         desc    = 'Check the fit history of the track (see the FitHistory enum)'
         const   = 'TRUE'>
         <code>
@@ -979,7 +991,7 @@
       <method
         type    = 'bool'
         name    = 'checkPatRecStatus'
-        argList = 'const LHCb::Track::PatRecStatus&amp; value'
+        argList = 'const PatRecStatus&amp; value'
         desc    = 'Check the pattern recognition status of the track (see the PatRecStatus enum)'
         const   = 'TRUE'>
         <code>
@@ -990,7 +1002,7 @@
       <method
         type    = 'bool'
         name    = 'checkFitStatus'
-        argList = 'const LHCb::Track::FitStatus&amp; value'
+        argList = 'const FitStatus&amp; value'
         desc    = 'Check the fitting status of the track (see the FitStatus enum)'
         const   = 'TRUE'>
         <code>
@@ -1012,7 +1024,7 @@
       <method
         type    = 'bool'
         name    = 'checkFlag'
-        argList = 'const LHCb::Track::Flags&amp; flag'
+        argList = 'const Flags&amp; flag'
         desc    = 'Check the status of the flag (see the Flags enum)'
         const   = 'TRUE'>
         <code>
@@ -1079,15 +1091,15 @@
       <method
         type    = 'bool'
         name    = 'isOnTrack'
-        argList = 'const LHCb::LHCbID value'
+        argList = 'const LHCbID value'
         desc    = 'Check whether the given LHCbID is on the track'
         const   = 'TRUE'>
       </method>
 
       <method
-        type    = 'const LHCb::Measurement*'
+        type    = 'const Measurement*'
         name    = 'measurement'
-        argList = 'const LHCb::LHCbID value'
+        argList = 'const LHCbID value'
         desc    = 'Return the measurement on the track corresponding to the input LHCbID. Call first the "isMeasurementOnTrack" method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking code, not for general use.)'
         const   = 'TRUE' />
 
@@ -1131,6 +1143,6 @@
 
 
     </class>
-
+    </namespace>
   </package>
 </gdd>
