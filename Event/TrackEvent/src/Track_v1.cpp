@@ -397,26 +397,6 @@ void Track::reset()
 }
 
 //=============================================================================
-// Clone the track keeping the key
-//=============================================================================
-Track* Track::cloneWithKey( ) const
-{
-  Track* tr = new Track( this -> key() );
-  tr -> copy( *this );
-  return tr;
-}
-
-//=============================================================================
-// Clone the track
-//=============================================================================
-Track* Track::clone() const
-{
-  Track* tr = new Track();
-  tr -> copy( *this );
-  return tr;
-}
-
-//=============================================================================
 // Copy the info from the argument track into this track
 //=============================================================================
 void Track::copy( const Track& track )

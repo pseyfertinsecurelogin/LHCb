@@ -331,7 +331,7 @@
     <constructor
        desc     = "Copy constructor"
        initList = "KeyedObject&lt;int&gt;(key), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_lhcbIDs(), m_states(), m_fitResult(), m_ancestors()">
-         <arg const="TRUE" name="track" type="LHCb::Track"/>
+         <arg const="TRUE" name="track" type="Track"/>
          <arg const="TRUE" name="key" type="int"/>
        <code>
          this -&gt; copy( track );
@@ -936,18 +936,6 @@
         name    = 'reset'
         desc    = 'Clear the track before re-use' >
       </method>
-
-      <method
-        type    = 'Track*'
-        name    = 'cloneWithKey'
-        desc    = 'Clone the track keeping the key (you take ownership of the pointer)'
-	const   = 'TRUE' />
-
-      <method
-        type    = 'Track*'
-        name    = 'clone'
-        desc    = 'Clone the track (you take ownership of the pointer)'
-	const   = 'TRUE' />
 
       <method
         type    = 'void'
