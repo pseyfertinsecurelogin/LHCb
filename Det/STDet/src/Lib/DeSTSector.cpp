@@ -608,36 +608,31 @@ std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::createTraj(const unsigned 
 
   // collect the individual traj
   const Sensors& theSensors = sensors();
-  Sensors::const_iterator iterS = theSensors.begin();
 
-  if (theSensors.size() == 1){
-    // can just return a line traj
+  if (theSensors.size() == 1){ // can just return a line traj
     return theSensors.front()->trajectory(strip,offset);
   }
   // return a piecewise traj
-  std::unique_ptr<STTraj> traj{ new STTraj() };
-  for (; iterS != theSensors.end(); ++iterS) {
+  auto traj = std::make_unique<STTraj>();
+  for (auto iterS = theSensors.begin(); iterS != theSensors.end(); ++iterS) {
     auto sensTraj = (*iterS)->trajectory(strip,offset);
     if (traj->numberOfPieces() == 0) {
-      traj->append(sensTraj.release());
-    }
-    else {
-
+      traj->append(std::move(sensTraj));
+    } else {
       const double d1 = (sensTraj->beginPoint()-traj->endPoint()).mag2();
       const double d2 = (sensTraj->endPoint()-traj->beginPoint()).mag2();
       if (d1 < d2) {
         double mu = sensTraj->muEstimate(traj->endPoint());
         sensTraj->setRange(mu,sensTraj->endRange());
-        traj->append(sensTraj.release());
-      }
-      else {
+        traj->append(std::move(sensTraj));
+      } else {
         const double mu = sensTraj->muEstimate(traj->beginPoint());
         sensTraj->setRange(sensTraj->beginRange(),mu);
-        traj->prepend(sensTraj.release());
+        traj->prepend(std::move(sensTraj));
       }
     }
   } // loop
-  return std::move(traj);
+  return traj;
 }
 
 StatusCode DeSTSector::cacheInfo()
