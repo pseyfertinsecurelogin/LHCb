@@ -29,8 +29,6 @@ namespace LHCb
 
     PiecewiseTrajectory() :Trajectory(0,0){}
 
-    ~PiecewiseTrajectory() = default;
-
     PiecewiseTrajectory(const PiecewiseTrajectory& rhs);
 
     // clone thyself...
@@ -75,8 +73,8 @@ namespace LHCb
 
     // functions specific to a PieceWiseTrajectory
     // note: we _will_ assume ownership of the passed Trajectory!
-    void append(Trajectory<double>*);
-    void prepend(Trajectory<double>*);
+    void append(std::unique_ptr<Trajectory<double>>);
+    void prepend(std::unique_ptr<Trajectory<double>>);
     unsigned int numberOfPieces() const { return m_traj.size(); }
 
     std::ostream& print(std::ostream&) const;
