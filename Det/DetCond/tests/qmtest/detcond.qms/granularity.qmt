@@ -27,6 +27,7 @@ MessageSvc().setDebug.append("HBTEST.Cache")
 
 CondDB().addAlternative(HBTEST, "/Conditions/Online/HeartBeatTest")
 CondDB().QueryGranularity = 1 * Units.hours
+CondDB().Tags["DDDB"] = "dddb-20171030-2"
 
 from Configurables import DetCondTest__TestConditionAlg
 alg = DetCondTest__TestConditionAlg()

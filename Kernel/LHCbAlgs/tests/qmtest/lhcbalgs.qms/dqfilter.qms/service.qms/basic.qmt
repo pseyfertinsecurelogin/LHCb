@@ -15,6 +15,7 @@ DDDBConf(DbRoot='conddb:/lhcb.xml')
 conddb = CondDB()
 conddb.addAlternative(path = "/Conditions/DQ", dbFile = "../data/DQFLAGS.db")
 conddb.addAlternative(path = "/Conditions/Online/LHCb/RunParameters", dbFile = "../data/DQFLAGS.db")
+conddb.Tags["DDDB"] = "dddb-20171030-2"
 
 ecs = EventClockSvc()
 ecs.addTool(FakeEventTime, "EventTimeDecoder")

@@ -22,6 +22,7 @@ dddbConf = DDDBConf()
 cdb = CondDB()
 cdb.PartitionConnectionString["DQFLAGS"] = "sqlite_file:../data/DQFLAGS.db/DQFLAGS"
 cdb.Tags["DQFLAGS"] = ""
+cdb.Tags["DDDB"] = "dddb-20171030-2"
 
 ecs = EventClockSvc(InitialTime=toTimeStampNS(datetime(2012,1,1,12)))
 ecs.addTool(FakeEventTime, "EventTimeDecoder")

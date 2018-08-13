@@ -26,6 +26,7 @@ for i in range(len(DBs)):
     readers.append("'%s':(%d,%d)"%(DBs[i].getFullName(),i*10,(i+1)*10))
 
 CondDB().addLayer(CondDBTimeSwitchSvc(Readers = readers, OutputLevel = DEBUG))
+CondDB().Tags["DDDB"] = "dddb-20171030-2"
 
 from Configurables import DetCondTest__TestConditionAlg
 alg = DetCondTest__TestConditionAlg()
