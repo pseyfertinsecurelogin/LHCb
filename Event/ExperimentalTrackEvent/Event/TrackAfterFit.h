@@ -148,7 +148,7 @@ namespace experimental
         std::vector<LHCb::State> states;
         states.reserve( t.states().size() );
         for ( auto s : t.states() ) {
-          states.emplace_back( *s );
+          states.emplace_back( s );
         }
 
         this->rich1()      = TrackAfterFitExtension::Rich1States( states );
