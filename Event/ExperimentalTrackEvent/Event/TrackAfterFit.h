@@ -179,6 +179,10 @@ namespace experimental
     {
       SOASKIN_INHERIT_DEFAULT_METHODS( ForRich2PIDSkin );
     };
+    SOASKIN( ForRichesPIDSkin, f_rich1, f_rich2, f_origin )
+    {
+      SOASKIN_INHERIT_DEFAULT_METHODS( ForRichesPIDSkin );
+    };
   }
   typedef SOA::Container<std::vector, TrackData::LongtrackSkin> Longtracks;
   typedef typename Longtracks::proxy Longtrack;
