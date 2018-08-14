@@ -78,6 +78,8 @@ namespace LHCb::Event
       public:
         Rich1States( std::vector<LHCb::State>& states );
         Rich1States( LHCb::State&& Beg, LHCb::State&& End );
+        const LHCb::State& entry() const { return m_BegRich1; }
+        const LHCb::State& exit() const { return m_EndRich1; }
         friend LHCb::Converters::TrackAfterFit::experimental::fromLHCbTrack;
       };
 
