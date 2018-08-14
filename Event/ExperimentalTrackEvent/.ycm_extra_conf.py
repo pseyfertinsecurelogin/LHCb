@@ -23,14 +23,14 @@ try:
     if os.path.exists(GetBuildDir(cmtconfig)):
         builddir = GetBuildDir(cmtconfig)
     if os.path.exists(os.path.join(GetBuildDir(cmtconfig),'compile_commands.json')):
-        database = ycm_core.CompilationDatabase(os.path.join(GetBuildDir(cmtconfig),'compile_commands.json'))
+        database = ycm_core.CompilationDatabase(GetBuildDir(cmtconfig))
 
 except KeyError:
     for cmtconfig in ['x86_64-centos7-gcc7-opt','x86_64-centos7-gcc7-dbg','x86_64-centos7-gcc62-opt','x86_64-centos7-gcc62-dbg']:
         if os.path.exists(GetBuildDir(cmtconfig)):
             builddir = GetBuildDir(cmtconfig)
         if os.path.exists(os.path.join(GetBuildDir(cmtconfig),'compile_commands.json')):
-            database = ycm_core.CompilationDatabase(os.path.join(GetBuildDir(cmtconfig),'compile_commands.json'))
+            database = ycm_core.CompilationDatabase(GetBuildDir(cmtconfig))
             break
     cmtconfig = None
 
@@ -40,10 +40,11 @@ except KeyError:
 flags = [
     '-Wall',
     '-Wextra',
-    '-std=c++14',
+    '-std=c++17',
     '-x',
     'c++',
     '-I', DirectoryOfThisScript(),
+    '-I', os.path.join(DirectoryOfThisScript(),'../..','Kernel/SOAContainer'),
 ]
 if database is None:
     if cmtconfig is not None:
@@ -51,9 +52,12 @@ if database is None:
     else:
         loc_cmtconfig = 'x86_64-centos7-gcc7-opt'
     flags += [
-            '-I', os.path.join('/cvmfs/lhcb.cern.ch/lib/lhcb/GAUDI/GAUDI_v30r2/InstallArea/', loc_cmtconfig, 'include'),
-            '-I', os.path.join('/cvmfs/lhcb.cern.ch/lib/lhcb/LHCB/LHCB_v44r3/InstallArea/', loc_cmtconfig, 'include'),
+            #'-I', os.path.join('/cvmfs/lhcb.cern.ch/lib/lhcb/GAUDI/GAUDI_v30r2/InstallArea/', loc_cmtconfig, 'include'),
+            '-I', os.path.join('/cvmfs/lhcbdev.cern.ch/nightlies/lhcb-head/Today/GAUDI/GAUDI_master/InstallArea/', loc_cmtconfig, 'include'),
+            #'-I', os.path.join('/cvmfs/lhcb.cern.ch/lib/lhcb/LHCB/LHCB_v44r3/InstallArea/', loc_cmtconfig, 'include'),
+            '-I', os.path.join('/cvmfs/lhcbdev.cern.ch/nightlies/lhcb-head/Today/LHCB/LHCB_HEAD/InstallArea/', loc_cmtconfig, 'include'),
             '-I', os.path.join('/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_93/cppgsl/b07383ea/', loc_cmtconfig),
+            '-I', os.path.join('/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_93/ROOT/6.12.06/', loc_cmtconfig, 'include'),
             ]
 
 SOURCE_EXTENSIONS = ['.cpp', '.cxx', '.cc', '.c', '.m', '.mm']
@@ -100,6 +104,17 @@ def GetCompilationInfoForFile(filename):
     # should be good enough.
     if IsHeaderFile(filename):
         basename = os.path.splitext(filename)[0]
+        for extension in SOURCE_EXTENSIONS:
+            replacement_file = basename + extension
+            if os.path.exists(replacement_file):
+                compilation_info = database.GetCompilationInfoForFile(
+                    replacement_file)
+                if compilation_info.compiler_flags_:
+                    return compilation_info
+        package = os.path.split(os.path.dirname(basename))[0]
+        root = os.path.split(basename)[1]
+        # hack for copy and paste and try with src directory
+        basename = os.path.join(package,'src',root)
         for extension in SOURCE_EXTENSIONS:
             replacement_file = basename + extension
             if os.path.exists(replacement_file):
