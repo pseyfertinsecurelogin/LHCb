@@ -7,7 +7,8 @@ gaudi_depends_on_subdirs(Event/RecEvent
                          GaudiAlg
                          Kernel/LHCbKernel
                          Kernel/LHCbMath
-                         Kernel/PartProp)
+                         Kernel/PartProp
+                         Kernel/PhysInterfaces)
 
 find_package(AIDA)
 find_package(Boost)
@@ -22,18 +23,18 @@ gaudi_add_library(LoKiCoreLib
                   src/*.cpp
                   PUBLIC_HEADERS LoKi
                   INCLUDE_DIRS ROOT AIDA Boost RELAX ROOT PythonLibs
-                  LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib RecEvent)
+                  LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib PhysInterfacesLib RecEvent)
 
 gaudi_add_module(LoKiCore
                  src/Components/*.cpp
                  INCLUDE_DIRS ROOT AIDA Boost RELAX ROOT PythonLibs
-                 LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib LoKiCoreLib)
+                 LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib PhysInterfacesLib LoKiCoreLib)
 
 gaudi_add_dictionary(LoKiCore
                      dict/LoKiCoreDict.h
                      dict/LoKiCore.xml
                      INCLUDE_DIRS ROOT AIDA Boost RELAX ROOT PythonLibs
-                     LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib LoKiCoreLib
+                     LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PhysInterfacesLib PartPropLib LoKiCoreLib
                      OPTIONS " -U__MINGW32__ ")
 
 if(GAUDI_BUILD_TESTS)

@@ -19,6 +19,15 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/Time.h"
+#include "GaudiKernel/IAlgContextSvc.h"
+// ============================================================================
+// GaudiAlgs
+// ============================================================================
+#include "GaudiAlg/GetAlgs.h"
+// ============================================================================
+// DaVinciInterfaces
+// ============================================================================
+#include "Kernel/GetIDVAlgorithm.h"
 // ============================================================================
 // local
 // ============================================================================
@@ -154,9 +163,10 @@ StatusCode LoKi::Hybrid::Base::initialize ()
   // force the loading/initialization of  LoKi Service
   svc<LoKi::ILoKiSvc>( "LoKiSvc" , true ) ;
   // Messages
-  if ( !m_use_python ) Print( "Python Functors are DISABLED", sc, MSG::ALWAYS ).ignore() ;
-  if ( !m_use_cache  ) Print( "C++ Cache Functors are DISABLED", sc, MSG::ALWAYS ).ignore() ;
+  if ( !m_use_python ) Print( "Python Functors are DISABLED"    , sc , MSG::ALWAYS ).ignore() ;
+  if ( !m_use_cache  ) Print( "C++ Cache Functors are DISABLED" , sc , MSG::ALWAYS ).ignore() ;
   // return
+  m_showCode = true ;
   return ( m_use_python || m_use_cache ? sc : Error( "No Functors enabled" ) );
 }
 // ============================================================================
@@ -401,49 +411,73 @@ std::string LoKi::Hybrid::Base::makeCode
   //
   std::ostringstream stream ;
   // start the code:
-  stream << "# " << std::string(78,'=') << '\n' ;
-  stream << "# python pseudomodule, generated for the tool '"
-         << name() << "'" << '\n' ;
-  stream << "# " << std::string(78,'=') << '\n' ;
-  stream << "# Arguments:\n" ;
-  stream << "# \tcode    = " << Gaudi::Utils::toString ( _code   )  << '\n' ;
-  stream << "# \tactor   = " << Gaudi::Utils::toString ( actor   )  << '\n' ;
-  stream << "# \tmodules = " << Gaudi::Utils::toString ( modules )  << '\n' ;
-  stream << "# \tlines   = " << Gaudi::Utils::toString ( lines   )  << '\n' ;
-  stream << "# \tcontext = " << Gaudi::Utils::toString ( addComment ( "\n" + context ) )  << '\n' ;
-  stream << "# " << std::string(78,'=') << '\n' ;
+  stream   << "# "             << std::string(78,'=')                                     << '\n'
+           << "# python pseudomodule, generated for the hybrid factory'" << name() << "'" << '\n' 
+           << "# \tat "        << Gaudi::Time::current().format(true)                     << '\n' 
+           << "# \tby "        << System::accountName()                                   << '\n'
+           << "# "             << std::string(78,'=')                                     << '\n' ;
+  // 
+  stream   << "# Arguments:\n" 
+           << "# \tcode    = " << Gaudi::Utils::toString ( _code   )  << '\n' 
+           << "# \tactor   = " << Gaudi::Utils::toString ( actor   )  << '\n' 
+           << "# \tmodules = " << Gaudi::Utils::toString ( modules )  << '\n' 
+           << "# \tlines   = " << Gaudi::Utils::toString ( lines   )  << '\n' 
+           << "# \tcontext = " << Gaudi::Utils::toString ( addComment ( "\n" + context ) )  << '\n' 
+           << "# "             << std::string(78,'=')                 << '\n' ;
+  //
   // define imported modules:
-  stream << "##        MODULES :\n" ;
-  for ( Strings::const_iterator imodule = modules.begin() ;
-        modules.end() != imodule ; ++imodule )
+  //
+  stream   << "##        MODULES :\n" ;
+  for ( const auto& module : modules ) { stream << "from " << module << " import *\n" ; }
+  stream   << "## End of MODULES\n" ;
+  //
+  stream   << "## The ACTOR :\n" ;
+  stream   << "_actor=" << actor << '\n' ;
+  //
+  const std::string ntab ("      " );
+  stream   << "_context = _actor.context () if hasattr ( _actor , 'context' ) else None \n" 
+           << "from LoKiCore.decorators import HybridContext, hybrid_context_deco       \n" 
+           << "_algo   = _context.  algo () if _context else None                       \n" 
+           << "_dvalgo = _context.dvalgo () if _context else None                       \n" 
+           << "with HybridContext ( algo = _algo , dvalgo = _dvalgo ) as context :      \n" 
+           << ntab << "hybrid_context_deco ( locals().copy() , context )                \n" ;
+  /// insert additional lines:
+  if ( !lines.empty() ) 
   {
-    stream << "from " << (*imodule) << " import *\n" ;
+    stream << ntab << "##        LINES :\n" ;
+    for ( const auto& l : lines ) { stream << ntab << l << '\n' ; }
+    stream << ntab << "hybrid_context_deco ( locals().copy() , context ) \n" 
+           << ntab << "## end of LINES  " << '\n' ;
   }
-  stream << "## End of MODULES\n" ;
-  stream << "## The ACTOR :\n" ;
-  stream << "_actor=" << actor << '\n' ;
-  // put additional lines:
-  stream << "##        LINES :\n" ;
-  for ( const auto& l : lines ) { stream << l << '\n' ; }
-  stream << "## end of LINES  " << '\n' ;
-  // put the context
-  stream << "##        CONTEXT :\n" ;
-  if ( !context.empty() ) { stream << context << '\n' ; }
-  stream << "## End of CONTEXT\n" ;
-  stream << "##        CODE :\n" ;
-  stream << "_code="  << _code    << '\n' ;
-  stream << "## End of CODE :\n" ;
-  stream << "sc=_actor.process('" << name() << "',_code)\n" ;
-  stream << "# " << std::string(78,'=') << '\n' ;
-  stream << "# The END\n" ;
-  stream << "# " << std::string(78,'=') << '\n' ;
+  /// insert preambulo
+  if ( !context.empty() ) 
+  {
+    std::string _context      = context ;
+    std::string::size_type p  = _context.find('\n') ;
+    while ( std::string::npos != p ) 
+    { _context.insert ( p + 1 , ntab ) ; p = _context.find('\n', p + 1 ) ; }
+    stream << ntab << "##        PREAMBULO :\n"   
+           << ntab << _context << '\n' 
+           << ntab << "## End of PREAMBULO  \n" 
+           << ntab << "hybrid_context_deco ( locals().copy() , context ) \n" ;
+  }
+  /// and finally the code 
+  stream   << ntab << "##        CODE :         \n" 
+           << ntab << "_code= " << _code    << '\n' 
+           << ntab << "## End of CODE           \n" ;
+  /// the most important line: send the created python object to C++
+  stream   << ntab << "sc = _actor.process( '" << name () << "' , _code ) \n" ;
+  //
+  stream   << "# " << std::string(78,'=') <<        '\n' 
+           << "#"  << std::string(60,' ') << "The END\n" 
+           << "# " << std::string(78,'=') <<        '\n' ;
   //
   std::string result = stream.str() ;
   if ( msgLevel ( MSG::DEBUG ) || showCode() )
   {
-    debug() << "Generated Python code:\n"
-            << result
-            << endmsg ;
+    info() << "Generated Python code:\n"
+           << result
+           << endmsg ;
   }
   ///
   return result ;
@@ -490,23 +524,23 @@ namespace
     std::set<std::string> morelines ;
     for ( const auto& ifunc : allfuncs ) {
       for ( auto& icode : ifunc.second ) {
-        for ( const auto& s : { std::make_pair("LoKiPhys",          "#include \"LoKi/LoKiPhys.h\""),
-                            //  std::make_pair("LoKiPhysMC",        "#include \"LoKi/LoKiPhysMC.h\""),
-                                std::make_pair("LoKiTrack",         "#include \"LoKi/LoKiTrack.h\""),
-                                std::make_pair("LoKiArrayFunctors", "#include \"LoKi/LoKiArrayFunctors.h\""),
-                                std::make_pair("LoKiProtoParticles","#include \"LoKi/LoKiProtoParticles.h\""),
-                                std::make_pair("LoKiHlt",           "#include \"LoKi/LoKiHlt.h\""),
-                                std::make_pair("LoKiNumbers",       "#include \"LoKi/LoKiNumbers.h\""),
-                                std::make_pair("LoKiTrigger",       "#include \"LoKi/LoKiTrigger.h\""),
-                                std::make_pair("LoKiCore",          "#include \"LoKi/LoKiCore.h\""),
-                                std::make_pair(".algorithms",       "#include \"LoKi/AlgFunctors.h\""),
-                                std::make_pair("ALG_",              "#include \"LoKi/AlgFunctors.h\""),
-                                std::make_pair("TC_",               "#include \"LoKi/LoKiTrigger.h\""),
-                                std::make_pair("TS_",               "#include \"LoKi/LoKiTrigger.h\""),
-                                std::make_pair("ODIN_",             "#include \"LoKi/LoKiHlt.h\""),
-                                std::make_pair("L0_",               "#include \"LoKi/LoKiHlt.h\""),
-                                std::make_pair("HDR_",              "#include \"LoKi/LoKiHlt.h\""),
-                                std::make_pair("HLT_",              "#include \"LoKi/LoKiHlt.h\"") } ) {
+        for ( const auto& s : { 
+            std::make_pair("LoKiPhys",          "#include \"LoKi/LoKiPhys.h\""  ) ,
+              std::make_pair("LoKiTrack",         "#include \"LoKi/LoKiTrack.h\"" ) ,
+              std::make_pair("LoKiArrayFunctors", "#include \"LoKi/LoKiArrayFunctors.h\""),
+              std::make_pair("LoKiProtoParticles","#include \"LoKi/LoKiProtoParticles.h\""),
+              std::make_pair("LoKiHlt",           "#include \"LoKi/LoKiHlt.h\""),
+              std::make_pair("LoKiNumbers",       "#include \"LoKi/LoKiNumbers.h\""),
+              std::make_pair("LoKiTrigger",       "#include \"LoKi/LoKiTrigger.h\""),
+              std::make_pair("LoKiCore",          "#include \"LoKi/LoKiCore.h\""),
+              std::make_pair(".algorithms",       "#include \"LoKi/AlgFunctors.h\""),
+              std::make_pair("ALG_",              "#include \"LoKi/AlgFunctors.h\""),
+              std::make_pair("TC_",               "#include \"LoKi/LoKiTrigger.h\""),
+              std::make_pair("TS_",               "#include \"LoKi/LoKiTrigger.h\""),
+              std::make_pair("ODIN_",             "#include \"LoKi/LoKiHlt.h\""),
+              std::make_pair("L0_",               "#include \"LoKi/LoKiHlt.h\""),
+              std::make_pair("HDR_",              "#include \"LoKi/LoKiHlt.h\""),
+              std::make_pair("HLT_",              "#include \"LoKi/LoKiHlt.h\"") } ) {
           if ( std::string::npos != icode.first.find ( s.first ) )
           { morelines.insert ( s.second ) ; }
         }
@@ -546,9 +580,10 @@ void LoKi::Hybrid::Base::writeCpp () const
   const unsigned int n_files = 0 < split ? (unsigned int) split : 0 ;
   //
   // total number of functors
-  auto ftotal = std::accumulate( m_allfuncs.begin(), m_allfuncs.end(), 0,
-                                 [](int i, const std::pair<std::string,FUNCTIONS>& fs)
-                                 { return i+fs.second.size(); } );
+  auto ftotal = std::accumulate
+    ( m_allfuncs.begin(), m_allfuncs.end(), 0,
+      [](int i, const std::pair<std::string,FUNCTIONS>& fs)
+      { return i+fs.second.size(); } );
   //
   // number of functors per file
   const unsigned int i_split =
@@ -593,7 +628,24 @@ void LoKi::Hybrid::Base::writeCpp () const
   //
 }
 // ============================================================================
-
+// build the universal context 
+LoKi::Context LoKi::Hybrid::Base::make_context () const 
+{
+  const IAlgContextSvc* cntx = svc<IAlgContextSvc> ( "AlgContextSvc", true ) ;
+  if ( nullptr == cntx ) 
+  {
+    Error("Can't get the context service!") ;
+    return LoKi::Context() ;
+  }
+  always() << "I am context: " 
+           << " ALGO   : " << Gaudi::Utils::toCpp (  Gaudi::Utils::getGaudiAlg     ( cntx )  ) 
+           << " DVALGO : " << Gaudi::Utils::toCpp (  Gaudi::Utils::getIDVAlgorithm ( cntx )  ) 
+           <<  endmsg ;  
+  return LoKi::Context ( Gaudi::Utils::getGaudiAlg     ( cntx ) ,
+                         Gaudi::Utils::getIDVAlgorithm ( cntx ) )  ;
+}
+// ============================================================================
+  
 // ============================================================================
 // The END
 // ============================================================================

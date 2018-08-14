@@ -13,7 +13,6 @@
 #include "LoKi/TES.h"
 // ============================================================================
 /** @file
- *
  *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
@@ -49,9 +48,10 @@ namespace LoKi
        *  @param useRootInTES flato to use/ignore root-in-tes
        */
       HasRecSummary
-      ( const int          key                 ,
-        const std::string& location     = ""   ,
-        const bool         useRootInTES = true ) ;
+        ( const GaudiAlgorithm* algorithm           , 
+          const int             key                 ,
+          const std::string&    location     = ""   ,
+          const bool            useRootInTES = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       HasRecSummary* clone () const override;
       /// MANDATORY: the only one essential method
@@ -85,10 +85,11 @@ namespace LoKi
        *  @param useRootInTES flato to use/ignore root-in-tes
        */
       RecSummary
-      ( const int          key                  ,
-        const int          bad                  ,
-        const std::string& location     = ""    ,
-        const bool         useRootInTES = true  ) ;
+        ( const GaudiAlgorithm* algorithm            , 
+          const int             key                  ,
+          const int             bad                  ,
+          const std::string&    location     = ""    ,
+          const bool            useRootInTES = true  ) ;
       /// MANDATORY: clone method ("virtual constructor")
       RecSummary* clone () const override;
       /// MANDATORY: the only one essential method

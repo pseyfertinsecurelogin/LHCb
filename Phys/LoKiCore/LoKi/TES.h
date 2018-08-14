@@ -55,30 +55,37 @@ namespace LoKi
        *  @param location     TES-location
        *  @param useRootInTES RootInTES-flag
        */
-      explicit Get ( const std::string& location            ,
-                     const bool         useRootInTES = true ) ;
+      Get ( const GaudiAlgorithm* algorithm           , 
+            const std::string&    location            ,
+            const bool            useRootInTES = true ) ;
       /// virtual destructor
       virtual ~Get() ;
       // ======================================================================
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
-      const LoKi::Interface<GaudiAlgorithm>&   algorithm () const
-      { return m_algorithm ; }
-      const LoKi::Interface<IDataProviderSvc>& service   () const
-      { return m_datasvc   ; }
-      const LoKi::Interface<IDataProviderSvc>& dataSvc   () const
-      { return m_datasvc   ; }
+    public:
+      // ======================================================================
+      /// get the algorithym
+      const LoKi::Interface<GaudiAlgorithm>& algorithm () const { return m_algorithm ; }
+      /// get algorithm name
+      const std::string& algName () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
       const std::string& location     () const { return m_location     ; }
       bool               useRootInTES () const { return m_useRootInTES ; }
-      /// get algorithm name
-      const std::string& algName      () const ;
       // ======================================================================
     protected:
       // ======================================================================
       void setLocation ( const std::string& value ) { m_location = value ; }
       /// acquire algorithm or service
-      void getAlgSvc   () const ;
+      /// void getAlgSvc   () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// notify that we need he context algorithm 
+      static bool context_algo () { return true ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -87,33 +94,49 @@ namespace LoKi
       /// "Root-in-TES" flag
       bool        m_useRootInTES ; // "Root-in-TES" flag
       /// the algorithm to be used
-      mutable LoKi::Interface<GaudiAlgorithm>   m_algorithm ;  // the algorithm
-      /// the service   to be used
-      mutable LoKi::Interface<IDataProviderSvc> m_datasvc   ;  // the service
+      mutable LoKi::Interface<GaudiAlgorithm> m_algorithm ; // the algorithm
       // ======================================================================
     } ;
-
+    // ========================================================================
+    /** @class DataHAndle
+     *  @author Sascha Stahl
+     */
     template <class TYPE>
     class GAUDI_API DataHandle : public virtual LoKi::AuxFunBase
     {
     public:
-      explicit DataHandle ( const std::string& location) ;
-      explicit DataHandle ( const LoKi::TES::DataHandle<TYPE>& handle) ;
       // ======================================================================
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      DataHandle  ( const GaudiAlgorithm* algorithm , 
+                    const std::string&    location  ) 
+        : LoKi::AuxFunBase ( std::tie ( algorithm , location ) )
+        , m_location       ( location  )
+        , m_algorithm      ( algorithm ) 
+        , m_datahandle     ( this->location() , this->algorithm() )
+      {}
+      // needed?
+      // explicit DataHandle ( const LoKi::TES::DataHandle<TYPE>& handle ) ;
+      // ======================================================================
+      std::ostream& fillStream ( std::ostream& s ) const  override
+      { return s << " GET(" << "'" << this->location() << "')" ; }
       // ======================================================================
       const LoKi::Interface<GaudiAlgorithm>&   algorithm () const
       { return m_algorithm ; }
       const std::string& location     () const { return m_location     ; }
+      // ======================================================================
       decltype(auto) get() const { return m_datahandle.get(); };
-    protected:
-      LoKi::Interface<GaudiAlgorithm> getAlgSvc   () const;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// notify that we need he context algorithm 
+      static bool context_algo () { return true ; }
+      // ======================================================================
     private:
-      std::string m_location     ;
-      LoKi::Interface<GaudiAlgorithm> m_algorithm ;
-      DataObjectReadHandle<TYPE> m_datahandle;
+      // ======================================================================
+      std::string                     m_location   ;
+      LoKi::Interface<GaudiAlgorithm> m_algorithm  ;
+      DataObjectReadHandle<TYPE>      m_datahandle ;
+      // =====================================================================
     } ;
-
     // ========================================================================
     /** @class Exists
      *  Simple checker of existence of object in TES
@@ -131,8 +154,9 @@ namespace LoKi
       /** constructor from TES location & "rootInTes"-flag
        *  @see GaudiCommon<TYPE>::exists
        */
-      explicit Exists ( const std::string& location            ,
-                        const bool         useRootInTes = true ) ;
+      Exists ( const GaudiAlgorithm* algorithm           , 
+               const std::string&    location            ,
+               const bool            useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Exists* clone() const override;
       /// MANDATORY: the only one essential method
@@ -161,8 +185,9 @@ namespace LoKi
        *  @see GaudiCommon<TYPE>::exists
        *  @see GaudiCommon<TYPE>::get
        */
-      explicit Contains ( const std::string& location            ,
-                          const bool         useRootInTes = true ) ;
+      explicit Contains ( const GaudiAlgorithm* algorithm           , 
+                          const std::string&    location            ,
+                          const bool            useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Contains* clone() const override;
       /** MANDATORY: the only one essential method
@@ -175,25 +200,22 @@ namespace LoKi
     } ;
 
     // ========================================================================
+    /** @class Size 
+     *  @author Sascha Stahl 
+     */
     class GAUDI_API Size : public LoKi::Functor<void,double>
                          , public LoKi::TES::DataHandle<DataObject>
     {
     public:
-      explicit Size ( const std::string& location ) ;
+      // ======================================================================
+      Size ( const GaudiAlgorithm*  algortihm , 
+             const std::string&     location  ) ;
       Size* clone() const override;
       double operator() ( ) const override;
       std::ostream& fillStream ( std::ostream& s ) const override;
+      // ======================================================================
     } ;
-    // ======================================================================
-
     // ========================================================================
-    /** @class HrcSumAdc
-     *  Simple query to sum contents of Herschel Digits for a station
-     *  @author Dan JOHNSON  daniel.johnson@cern.ch
-     *  @date 2016-05-17
-     */
-
-
 
     // ========================================================================
     /** @class HrcSumAdc
@@ -211,9 +233,10 @@ namespace LoKi
        *  @see GaudiCommon<TYPE>::exists
        *  @see GaudiCommon<TYPE>::get
        */
-      HrcSumAdc ( const std::string& location              ,
-                  const std::string& stationName           ,
-                  const bool         useRootInTes = true ) ;
+      HrcSumAdc ( const GaudiAlgorithm* algorithm           ,            
+                  const std::string&    location            ,
+                  const std::string&    stationName         ,
+                  const bool            useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       HrcSumAdc* clone() const override ;
       /** MANDATORY: the only one essential method
@@ -230,6 +253,7 @@ namespace LoKi
       std::string m_stationName         ; // the Herschel station name
       // ======================================================================
     } ;
+
     // ========================================================================
     /** @class Counter
      *  Simple accessor for counters in TES
@@ -245,15 +269,17 @@ namespace LoKi
       /** constructor from TES location, counter name,
        *  bad value and root-intes flag
        */
-      Counter ( const std::string& location              ,
-                const std::string& counter               ,
-                const double       bad                   ,
-                const bool         useRootInTes = true   ) ;
+      Counter ( const GaudiAlgorithm* algorithm             ,            
+                const std::string&    location              ,
+                const std::string&    counter               ,
+                const double          bad                   ,
+                const bool            useRootInTes = true   ) ;
       /** constructor from TES location, counter name,
        *  bad value and root-intes flag
        */
-      Counter ( const std::string& location              ,
-                const std::string& counter               ) ;
+      Counter ( const GaudiAlgorithm* algorithm             ,            
+                const std::string&    location              ,
+                const std::string&    counter               ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Counter* clone() const override;
       /** MANDATORY: the only one essential method
@@ -295,20 +321,24 @@ namespace LoKi
       /** constructor from TES location, counter name,
        *  bad value and root-intes flag
        */
-      Stat ( const std::string&       location              ,
+      Stat ( const GaudiAlgorithm* algorithm             ,            
+             const std::string&       location              ,
              const std::string&       counter               ,
              const std::string&       function              ,
              const double             bad                   ,
              const bool               useRootInTes = true   ) ;
-      Stat ( const std::string&       location              ,
+      Stat ( const GaudiAlgorithm* algorithm             ,            
+             const std::string&       location              ,
              const std::string&       counter               ,
              const StatEntityGetter&  function              ,
              const double             bad                   ,
              const bool               useRootInTes = true   ) ;
-      Stat ( const std::string&       location              ,
+      Stat ( const GaudiAlgorithm* algorithm             ,            
+             const std::string&       location              ,
              const std::string&       counter               ,
              const std::string&       function              ) ;
-      Stat ( const std::string&       location              ,
+      Stat ( const GaudiAlgorithm* algorithm             ,            
+             const std::string&       location              ,
              const std::string&       counter               ,
              const StatEntityGetter&  function              ) ;
       /// MANDATORY: clone method ("virtual constructor")
@@ -332,16 +362,10 @@ namespace LoKi
     const TYPE*
     get_ ( const LoKi::TES::Get&  obj )
     {
-      if      ( !(!obj.algorithm() ) )
-      {
-        return obj.algorithm()->getIfExists<TYPE> ( obj.location () , obj.useRootInTES () ) ;
-      }
-      else if ( !(!obj.service  () ) )
-      {
-        return SmartDataPtr<TYPE>                 ( obj.service  () , obj.location     () ) ; 
-      }
+      if ( !(!obj.algorithm() ) )
+      {  return obj.algorithm()->getIfExists<TYPE> ( obj.location () , obj.useRootInTES () ) ; }
       //
-      return 0 ;
+      return nullptr ;
     }
     // ========================================================================
     template <class TYPE>
@@ -351,11 +375,6 @@ namespace LoKi
     {
       if      ( !(!obj.algorithm () ) )
       { return obj.algorithm()->exist<TYPE> ( obj.location () , obj.useRootInTES () ) ; }
-      else if ( !(!obj.service   () ) )
-      {
-        SmartDataPtr<TYPE> o                ( obj.service  () , obj.location     () ) ;
-        return !(!o) ;
-      }
       //
       return false  ;
     }
@@ -388,23 +407,23 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Contains                                      CONTAINS ;
-    typedef LoKi::TES::Size                                      SIZE ;
-
+    typedef LoKi::TES::Size                                          SIZE     ;
     // ========================================================================
-    /** @typedef HRCSUMADC
-     *  Function to find Herschel station sum digits
-     *
-     *  @code
-     *
-     *    400 > HRCSUMADC ( "/Raw/HC/Sum", "B2" )
-     *
-     *  @endcode
-     *
-     *  @see LoKi::TES::HrcSumAdc
-     *  @author Dan JOHNSON  daniel.johnson@cern.ch
-     *  @date 2016-05-17
-     */
-    typedef LoKi::TES::HrcSumAdc                                    HRCSUMADC ;
+
+    // /** @typedef HRCSUMADC
+    //  *  Function to find Herschel station sum digits
+    //  *
+    //  *  @code
+    //  *
+    //  *    400 > HRCSUMADC ( "/Raw/HC/Sum", "B2" )
+    //  *
+    //  *  @endcode
+    //  *
+    //  *  @see LoKi::TES::HrcSumAdc
+    //  *  @author Dan JOHNSON  daniel.johnson@cern.ch
+    //  *  @date 2016-05-17
+    //  */
+    // typedef LoKi::TES::HrcSumAdc                                    HRCSUMADC ;
 
     // ========================================================================
     /** @typedef EXISTS
@@ -462,45 +481,17 @@ namespace LoKi
 } //                                                      end of namespace LoKi
 
 
-template <class TYPE>
-LoKi::TES::DataHandle<TYPE>::DataHandle
-( const std::string& location )
-  : LoKi::AuxFunBase ( std::tie ( location ) )
-  , m_location     ( location     )
-  , m_algorithm (getAlgSvc())
-  , m_datahandle(this->location(), this->algorithm())
-{
-}
 
-template <class TYPE>
-LoKi::TES::DataHandle<TYPE>::DataHandle
-( const LoKi::TES::DataHandle<TYPE>& handle )
-  : LoKi::AuxFunBase ( handle )
-  , m_location     ( handle.location()     )
-  , m_algorithm (getAlgSvc())
-  , m_datahandle(this->location(), this->algorithm())
-{
-}
+// template <class TYPE>
+// LoKi::TES::DataHandle<TYPE>::DataHandle
+// ( const LoKi::TES::DataHandle<TYPE>& handle )
+//   : LoKi::AuxFunBase ( handle )
+//   , m_location     ( handle.location()     )
+//   , m_algorithm (getAlgSvc())
+//   , m_datahandle(this->location(), this->algorithm())
+// {
+// }
 
-template <class TYPE>
-LoKi::Interface<GaudiAlgorithm> LoKi::TES::DataHandle<TYPE>::getAlgSvc() const
-{
-  ILoKiSvc* l = lokiSvc() ;
-  Assert ( 0 != l   , "ILoKiSvc*       points to NULL!" ) ;
-  SmartIF<IAlgContextSvc> cntx ( l ) ;
-  LoKi::Interface<GaudiAlgorithm> algorithm;
-  if ( !(!cntx) )
-  { algorithm = Gaudi::Utils::getGaudiAlg ( cntx ) ; }
-  Assert ( !(!algorithm) , "No algorithm is located" ) ;
-  return algorithm;
-}
-
-template <class TYPE>
-std::ostream& LoKi::TES::DataHandle<TYPE>::fillStream ( std::ostream& s ) const
-{
-  s << " GET(" << "'" << location() << "'" ;
-  return s << ") " ;
-}
 
 // ============================================================================
 // The END

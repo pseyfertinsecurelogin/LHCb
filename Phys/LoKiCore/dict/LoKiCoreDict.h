@@ -1,3 +1,4 @@
+
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H
 #define LOKI_LOKICOREDICT_H 1

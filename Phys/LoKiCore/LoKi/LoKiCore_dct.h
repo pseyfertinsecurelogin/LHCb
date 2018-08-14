@@ -24,6 +24,7 @@
 #include "LoKi/ICoreFactory.h"
 #include "LoKi/ICoreAntiFactory.h"
 #include "LoKi/CoreEngine.h"
+#include "LoKi/Context.h"
 #include "LoKi/iTree.h"
 #include "LoKi/IDecayNode.h"
 #include "LoKi/Listener.h"

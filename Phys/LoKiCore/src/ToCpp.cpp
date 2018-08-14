@@ -97,6 +97,11 @@ std::string Gaudi::Utils::toCpp ( const Gaudi::TimeSpan& v )
 std::string Gaudi::Utils::toCpp ( const LHCb::LHCbID& v ) 
 { return "LHCb::LHCbID("  + toCpp ( v.lhcbID() )+ ")" ; }
 // ============================================================================
+std::string Gaudi::Utils::toCpp ( const IDVAlgorithm*   /* a */ ) 
+{ return "context.advlgo()" ; }  
+std::string Gaudi::Utils::toCpp ( const GaudiAlgorithm* /* a */ ) 
+{ return "context.algo()"   ; } 
+// ============================================================================
 // The END
 // ============================================================================
 

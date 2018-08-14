@@ -2679,6 +2679,79 @@ def decorateFinder ( finder , opers ) :
 
     return finder 
 
+
+# =============================================================================
+# context.... 
+# =============================================================================
+class HybridContext(object):
+    def __init__ ( self , algo = None   , dvalgo = None ) :
+        self.__algo      =   algo
+        self.__dvalgo    = dvalgo
+        self.decorated   = set()
+        
+    def algo   ( self ) : return self.__algo 
+    def dvalgo ( self ) : return self.__dvalgo
+
+    def __enter__ ( self ) : return self
+    def __exit__  ( self , *_ ) :
+        while self.decorated :
+            o = self.decorated.pop()
+            if hasattr ( o , '_hybrid_old_init_' ) and \
+               hasattr ( o , '_hybrid_new_init_' ) :
+                o.__init__ = o._hybrid_old_init_ 
+                o.hybrid_decorated = False
+                
+def hybrid_context_deco ( objects_dct , context ) :
+
+    n_deco = 0 
+    for s , v in objects_dct.iteritems() :
+
+        vc = v.__class__ 
+        vt = v if issubclass ( vc , type ) else vc 
+
+        if hasattr ( vt , 'hybrid_decorated' ) :
+            ##print  'already decorated class %s/%s/%s' % ( s , v , vt )
+            if vt.hybrid_decorated : continue     ## CONTINUE
+            ##print  'decorate again class %s/%s/%s' % ( s , v , vt )            
+            vt.__init__ = vt._hybrid_new_init_ 
+            context.decorated.add ( vt )
+            continue                              ## CONTINUE 
+        
+        if hasattr ( vt , 'context_dvalgo' ) and vt.context_dvalgo() and context.dvalgo () : 
+
+            def _hybrid_new_init_ ( self , *args ) :
+                """New constructor, created for decorated ``Hybrid''object
+                """
+                if 1 == len ( args ) and isinstance ( args[0] , self.__class__ ) :
+                    ## no decoration for copy-constructor
+                    return self._hybrid_old_init_ ( *args )
+                return self._hybrid_old_init_ ( context.dvalgo () , *args )
+            
+        elif hasattr ( vt , 'context_algo' ) and vt.context_algo() and context.algo () : 
+            
+            def _hybrid_new_init_ ( self , *args ) :
+                """New constructor, created for decorated ``Hybrid''object
+                """
+                if 1 == len ( args ) and isinstance ( args[0] , self.__class__ ) :
+                    ## no decoration for copy-constructor
+                    return self._hybrid_old_init_ ( *args )
+                return self._hybrid_old_init_ ( context.algo () , *args )
+            
+        else :
+            ## print 'skip class %s/%s/%s' % ( s , v , vt )
+            continue 
+    
+        vt._hybrid_old_init_       =  vt.__init__
+        _hybrid_new_init_.__doc__ += '\n' + vt._hybrid_old_init_.__doc__
+        vt._hybrid_new_init_       = _hybrid_new_init_
+        vt.__init__                = _hybrid_new_init_  ## ATTENTION HERE! 
+        vt.hybrid_decorated        = True
+        context.decorated.add ( vt ) 
+        n_deco +=1 
+        print  'decorate class %s/%s/%s' % ( s , v , vt )
+            
+    return n_deco     
+        
 # =============================================================================
 ## import all dependent functions 
 # =============================================================================
