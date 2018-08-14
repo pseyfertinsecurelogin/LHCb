@@ -8,6 +8,8 @@ DDDBConf()
 DDDB = CondDBAccessSvc("DDDB")
 DDDB.ConnectionTimeOut = 5
 
+CondDB().Tags["DDDB"] = "dddb-20171030-2"
+
 #MessageSvc(OutputLevel = ERROR)
 
 import GaudiPython
