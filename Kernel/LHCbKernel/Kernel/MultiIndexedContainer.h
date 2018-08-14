@@ -18,17 +18,6 @@ namespace LHCb
 namespace Container
 {
 
-namespace details
-{
-  template<typename C, typename Tuple, size_t ... I>
-  auto emplace_tuple(C& c, Tuple&& t, std::index_sequence<I...>) -> typename C::reference
-  {
-    c.emplace_back ( std::get<I>(t)... );
-
-    return c.back ();
-  }
-}
-
 namespace
 {
 
@@ -285,26 +274,6 @@ public:
     m_offsets[subDetectorId].second += n;
   }
 
-  /*
-   * This implementation can be used when we have std::invoke available.
-   *
-		template<typename Tuple, typename ... LocArgs>
-		Hit& addHit(Tuple&& cargs, LocArgs&&... subDetectorElement)
-		{
-			static_assert((sizeof...(subDetectorElement) <= sizeof...(sizes)),
-					"The number of indices provided is strictly higher than the nesting for this subdetector.");
-
-			auto id = getUniqueDetectorElementId ( std::forward<LocArgs>(subDetectorElement)... );
-			m_ids.emplace_back ( id );
-			++m_nIds[id];
-			//constexpr auto nArguments = sizeof...(CtorArgs);
-
-			return std::invoke ( [this]( auto&&... args ) -> decltype(auto)
-			{	m_hits.emplace_back( std::forward<decltype(args)>(args)... );
-				return m_hits.back();}, std::forward<Tuple> ( cargs ) );
-		}
-   */
-
   /**
    * Function to create a single hit in (detectorElementId).
    * A reference to the hit created is returned.
@@ -317,18 +286,22 @@ public:
    * one should explicitly call setOffsets before further using the
    * hit manager.
    */
-  template<typename ... CtorArgs, typename ... LocArgs>
-  Hit& addHit(std::tuple<CtorArgs...>&& cargs, LocArgs&&... subDetectorElement)
+  template<typename Tuple, typename ... LocArgs>
+  Hit& addHit(Tuple&& cargs, LocArgs&&... subDetectorElement)
   {
-    auto id = getUniqueDetectorElementId ( std::forward<LocArgs>(subDetectorElement)... );
-#ifdef NDEBUG
-    m_ids.emplace_back ( id );
-#endif
-    m_nIds[ id ] += 1;
+		static_assert((sizeof...(subDetectorElement) <= sizeof...(sizes)),
+				"The number of indices provided is strictly higher than the nesting for this subdetector.");
 
-    return details::emplace_tuple ( m_hits, std::forward<std::tuple<CtorArgs...> > ( cargs ),
-        std::index_sequence_for < CtorArgs... > {} );
-  }
+		auto id = getUniqueDetectorElementId ( std::forward<LocArgs>(subDetectorElement)... );
+#ifndef NDEBUG
+		m_ids.emplace_back ( id );
+#endif
+		++m_nIds[id];
+
+		return std::apply( [this]( auto&&... args ) -> decltype(auto)
+		                    { return m_hits.emplace_back( std::forward<decltype(args)>(args)... ); },
+			                std::forward<Tuple>( cargs ) );
+	}
 
   void setOffsets(){
     // Set the offsets
