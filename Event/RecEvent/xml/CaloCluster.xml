@@ -20,6 +20,7 @@
     author           = "Vanya Belyaev Ivan.Belyaev@itep.ru"
     stdVectorTypeDef = "TRUE"
     defaultdestructor="FALSE"
+    final            = "TRUE"
     >
   <desc> *
   *
@@ -149,15 +150,6 @@
  <code> return position().e() ; </code>
 </method>
 
-<method
- desc    = "Cloning of the object ('virtual constructor') "
- name    = "clone"
- type    = "LHCb::CaloCluster*"
- const   = "TRUE"
- virtual = "TRUE"
- access  = "PUBLIC" >
-<code> return new LHCb::CaloCluster( *this );</code>
-</method>
 
 
 </class>

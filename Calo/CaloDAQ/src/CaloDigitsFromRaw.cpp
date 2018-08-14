@@ -178,7 +178,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
     put( digits, m_outputDigits.value() + m_extension.value() );
     for ( const auto& itD : m_energyTool->digits( ) ) {
       try {
-        std::unique_ptr<LHCb::CaloDigit> dig{ itD.clone() };
+        auto dig = std::make_unique<LHCb::CaloDigit>(itD);
         digits->insert( dig.get() );
         dig.release();
       } catch(GaudiException &exc) {
