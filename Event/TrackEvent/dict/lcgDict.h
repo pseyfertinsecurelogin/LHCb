@@ -20,6 +20,9 @@ namespace
     std::vector<const LHCb::Node*>        _i5;
     Gaudi::Range_<std::vector<const LHCb::Node*> >    _i6;
     std::vector<const LHCb::Measurement*> _i7;
+    SmartRefVector<LHCb::Track> _i8;
+    SmartRef<LHCb::Track> _i9;
+    LHCb::Track _i10;
     // end instantiations
   };
 }

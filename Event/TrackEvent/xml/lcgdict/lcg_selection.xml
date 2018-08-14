@@ -5,4 +5,7 @@
   <class name = "std::vector<const LHCb::Node*>" />
   <class name = "Gaudi::Range_<std::vector<const LHCb::Node*> >" />
   <class name = "std::vector<const LHCb::Measurement*>" />
+  <class name = "SmartRefVector<LHCb::Track>" />
+  <class name = "SmartRef<LHCb::Track>" />
+  <class name = "LHCb::Track" />
 </lcgdict>
