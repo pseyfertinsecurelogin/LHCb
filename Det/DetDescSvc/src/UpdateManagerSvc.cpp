@@ -116,25 +116,11 @@ StatusCode UpdateManagerSvc::initialize(){
     }
 
     // If a condition override with that name already exists, delete it
-#if  __cplusplus > 201402L
-    auto ret = m_conditionsOverides.insert_or_assign( name, std::move(cond) );
-    if (!ret.second) {
+    auto [dest,ok] = m_conditionsOverides.insert_or_assign( name, std::move(cond) );
+    if (!ok) {
       warning() << "Override condition for path '" << name
           << "' is defined more than once (I use the last one)." << endmsg;
     }
-    auto dest = ret.first;
-#else
-    auto dest = m_conditionsOverides.find(name);
-    if ( dest!=m_conditionsOverides.end() ) {
-      warning() << "Override condition for path '" << name
-          << "' is defined more than once (I use the last one)." << endmsg;
-      dest->second = std::move(cond);
-    } else {
-      auto ret = m_conditionsOverides.emplace( name, std::move(cond) );
-      assert( ret.second ); // we first did a 'find' and there was nothing, so this better be true...
-      dest = ret.first;
-    }
-#endif
     // Add the condition to internal list
     if( msgLevel(MSG::DEBUG) )
       debug() << "Added condition: " << name << "\n" << dest->second->printParams() << endmsg;
