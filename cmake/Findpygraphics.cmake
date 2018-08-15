@@ -18,8 +18,12 @@ if(pyqt5_home)
   set(pyqt5_python_path ${pyqt5_home}/lib/python${Python_config_version_twodigit}/site-packages)
 endif()
 
+# Add enum as it is needed by pyqt5
+set(enum34_python_path ${enum34_home}/lib/python${Python_config_version_twodigit}/site-packages)
+
 set(PYGRAPHICS_PYTHON_PATH
       ${pyqt5_python_path}
+      ${enum34_python_path}
       ${pygraphics_home}/lib/python${Python_config_version_twodigit}/site-packages
     CACHE PATH "Path to the pygraphics LCG package")
 
