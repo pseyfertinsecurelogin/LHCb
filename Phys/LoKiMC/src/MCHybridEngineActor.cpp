@@ -43,13 +43,13 @@ inline StatusCode LoKi::Hybrid::MCEngineActor::_add
   if ( !entry.first ) 
   {
     return LoKi::Report::Error
-      ("LoKi:Hybrid::MCEngineActor::addCut/Fun(): LoKi::Hybrid::ICoreAntiFactory* is invalid!") ;  
+      ("LoKi:Hybrid::MCEngineActor::addCut/Fun(): LoKi::IMCHybridTool* is invalid!") ;  
   }
   // one more check 
   if ( name != entry.first->name() )
   {
     return LoKi::Report::Error
-      ("LoKi:Hybrid::MCEngineActor::addCut/Fun() : mismatch in LoKi::Hybrid::ICoreAntiFactory name!") ;  
+      ("LoKi:Hybrid::MCEngineActor::addCut/Fun() : mismatch in LoKi::IMCHybridTool name!") ;  
   }
   // set the cut for the tool 
   entry.first->set ( cut ) ;

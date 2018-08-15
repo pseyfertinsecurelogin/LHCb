@@ -31,21 +31,28 @@ template <class TYPE>
 inline StatusCode LoKi::Hybrid::GenEngineActor::_add
 ( const std::string& name , const TYPE& cut ) const
 {
-  // check the tool
-  if ( !m_tool.validPointer() )
+  if ( m_stack.empty() ) 
   {
     return LoKi::Report::Error
-      ("LoKi:Hybrid::GenEngineActor::addCut/Fun(): LoKi::IGenHybridTool* is not connected!") ;
+      ("LoKi:Hybrid::GenEngineActor::addCut/Fun(): empty stack!") ;  
   }
-  // one more check
-  if ( name != m_tool->name() )
-  {
-    return LoKi::Report::Error
-      ("LoKi:Hybrid::GenEngineActor::addCut/Fun() : mismatch in LoKi::IGenHybridTool name!") ;
-  }
-  // set the cut for the tool
-  m_tool->set ( cut ) ;
   //
+  const Entry& entry = m_stack.top() ;
+  // check the tool
+  if ( !entry.first ) 
+  {
+    return LoKi::Report::Error
+      ("LoKi:Hybrid::GenEngineActor::addCut/Fun(): LoKi::IGenHybridTool* is invalid!") ;  
+  }
+  // one more check 
+  if ( name != entry.first->name() )
+  {
+    return LoKi::Report::Error
+      ("LoKi:Hybrid::GenEngineActor::addCut/Fun() : mismatch in LoKi::IGenHybndrTool name!") ;  
+  }
+  // set the cut for the tool 
+  entry.first->set ( cut ) ;
+  // 
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
@@ -59,41 +66,50 @@ LoKi::Hybrid::GenEngineActor& LoKi::Hybrid::GenEngineActor::instance()
 // ============================================================================
 // disconnect the tool
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngineActor::releaseTool
-( const LoKi::IGenHybridTool*       tool )
+StatusCode LoKi::Hybrid::GenEngineActor::disconnect
+( const LoKi::IGenHybridTool*  factory )
 {
-  if ( m_tool.getObject() != tool )
-  {
-    m_tool = nullptr ;
-    return LoKi::Report::Error
-      ("LoKi::Hybrid::GenEngineActor::releaseTool(): mismatch in tools " ) ;
-  }
-  // nullify the pointer
-  m_tool = nullptr ;
+  if ( m_stack.empty() ) 
+  { return LoKi::Report::Error ("LoKi:Hybrid::GenEngineActor::disconnect: empty stack!") ; }
   //
+  const Entry& entry = m_stack.top () ;
+  //
+  if ( entry.first == factory  ) { m_stack.pop() ; } /// remove the last entry
+  else
+  { return LoKi::Report::Error
+      ("LoKi::Hybrid::GenEngineActor::disconnect: mismatch in tools " ) ;
+  } 
+  ///
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
 // connect the hybrid tool for code translation
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngineActor::connectTool
-(       LoKi::IGenHybridTool*       tool )
+StatusCode LoKi::Hybrid::GenEngineActor::connect
+( const LoKi::IGenHybridTool* factory ,
+  const LoKi::Context&        context )
 {
-  //
-  LoKi::Report::Assert
-    ( !m_tool.validPointer() ,
-      "LoKi::Hybrid::GenEngineActor: double lock?" ) ;
-  //
-  // substitute the tool
-  m_tool =  tool ;
-  //
-  if ( !m_tool.validPointer() )
-  {
-    return LoKi::Report::Error
-      ( "LoKi::Hybrid::GenEngineActor::releaseTool(): Invalid LoKi::IHybridTool" ) ;
-  }
-  //
+  if ( !factory ) 
+  { return LoKi::Report::Error
+      ( "LoKi::Hybrid::GenEngineActor::connect: Invalid factory" ) ; }
+  m_stack.emplace ( factory , context ) ;
   return StatusCode::SUCCESS ;
+}
+// ============================================================================
+/* get the current context
+ *  contex is valid only inbetween <code>connect/disconnect</code>
+ *  @return the current active context 
+ */
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::GenEngineActor::context () const
+{
+  if ( m_stack.empty() ) 
+  {
+    LoKi::Report::Error ( "LoKi::Hybrid::GenEngineActor::context: empty stack" ) ;
+    return nullptr ;
+  }
+  const Entry& last = m_stack.top() ;
+  return &last.second ;
 }
 // ============================================================================
 // predicates

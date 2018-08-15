@@ -8,6 +8,7 @@
 // ============================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/IGenHybridTool.h"
+#include "LoKi/Context.h"
 // ============================================================================
 /** @file
  *
@@ -39,7 +40,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor : Lock
-      GenLock  ( IGenHybridTool* tool ) ; // contructor : Lock
+      GenLock  ( const IGenHybridTool* factory ,   // contructor : Lock
+                 const LoKi::Context&  context ) ;
       /// destructor : UnLock
       ~GenLock () ;               // destructor : UnLock
       // ======================================================================

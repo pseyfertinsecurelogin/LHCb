@@ -47,7 +47,7 @@ namespace LoKi
       StatusCode disconnect  ( const LoKi::IMCHybridTool* tool    ) ;
       // ======================================================================
       /** get the current context
-       *  contex is valid only inbetween <code>connect/disconnect</code>
+       *  contex is valid only in between <code>connect/disconnect</code>
        *  @return the current active context 
        */
       const LoKi::Context* context () const ;
