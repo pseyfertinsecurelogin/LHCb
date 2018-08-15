@@ -24,9 +24,6 @@
  *  @date 2004-06-29 
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 // helper method to descrease number of lines 
@@ -35,20 +32,27 @@ template <class TYPE>
 inline StatusCode LoKi::Hybrid::MCEngineActor::_add 
 ( const std::string& name , const TYPE& cut ) const 
 { 
-  // check the tool
-  if ( !m_tool.validPointer() ) 
+  if ( m_stack.empty() ) 
   {
     return LoKi::Report::Error
-      ("LoKi::Hybrid::MCEngineActor::addCut/Fun(): LoKi::IMCHybridTool* is not connected!") ;  
+      ("LoKi:Hybrid::MCEngineActor::addCut/Fun(): empty stack!") ;  
+  }
+  //
+  const Entry& entry = m_stack.top() ;
+  // check the tool
+  if ( !entry.first ) 
+  {
+    return LoKi::Report::Error
+      ("LoKi:Hybrid::MCEngineActor::addCut/Fun(): LoKi::Hybrid::ICoreAntiFactory* is invalid!") ;  
   }
   // one more check 
-  if ( name != m_tool->name() )
+  if ( name != entry.first->name() )
   {
     return LoKi::Report::Error
-      ("LoKi::Hybrid::MCEngineActor::addCut/Fun() : mismatch in LoKi::IMCHybridTool name!") ;  
+      ("LoKi:Hybrid::MCEngineActor::addCut/Fun() : mismatch in LoKi::Hybrid::ICoreAntiFactory name!") ;  
   }
   // set the cut for the tool 
-  m_tool -> set ( cut ) ;
+  entry.first->set ( cut ) ;
   // 
   return StatusCode::SUCCESS ;
 } 
@@ -63,41 +67,55 @@ LoKi::Hybrid::MCEngineActor& LoKi::Hybrid::MCEngineActor::instance()
 // ============================================================================
 // disconnect the tool 
 // ============================================================================
-StatusCode LoKi::Hybrid::MCEngineActor::releaseTool 
-( const LoKi::IMCHybridTool*       tool ) 
+StatusCode LoKi::Hybrid::MCEngineActor::disconnect
+( const LoKi::IMCHybridTool* factory ) 
 {
-  if ( m_tool.getObject() != tool ) 
-  {
-    m_tool = 0 ;
-    return LoKi::Report::Error
-      ("LoKi::Hybrid::MCEngineActor::releaseTool(): mismatch in tools " ) ;
-  } ;
-  // nullify the pointer 
-  m_tool = 0 ;
+  if ( m_stack.empty() ) 
+  { return LoKi::Report::Error ("LoKi:Hybrid::MCEngineActor::disconnect: empty stack!") ; }
   //
+  const Entry& entry = m_stack.top () ;
+  //
+  if ( entry.first == factory  ) { m_stack.pop() ; } /// remove the last entry
+  else
+  { return LoKi::Report::Error
+      ("LoKi::Hybrid::MCEngineActor::disconnect: mismatch in tools " ) ;
+  } 
+  ///
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
 // connect the hybrid tool for code translation 
 // ============================================================================
-StatusCode LoKi::Hybrid::MCEngineActor::connectTool 
-(       LoKi::IMCHybridTool*       tool )
+StatusCode LoKi::Hybrid::MCEngineActor::connect
+( const LoKi::IMCHybridTool* factory ,
+  const LoKi::Context&       context )
 {
   //
-  LoKi::Report::Assert 
-    ( !m_tool.validPointer() , "LoKi::Hybrid::MCEngineActor: double lock?" ) ;
-  //
-  // substitute the tool 
-  m_tool =  tool ;
-  // 
-  if ( !m_tool.validPointer() ) 
+  if ( !factory ) 
   {
     return LoKi::Report::Error
-      ( "LoKi::Hybrid::MCEngineActor::releaseTool(): Invalid LoKi::IHybridTool" ) ;
+      ( "LoKi::Hybrid::MCEngineActor::connect: Invalid factory" ) ;
   }
+  m_stack.emplace ( factory , context ) ;
   //
   return StatusCode::SUCCESS ;
 }
+// ============================================================================
+/* get the current context
+ *  contex is valid only inbetween <code>connect/disconnect</code>
+ *  @return the current active context 
+ */
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::MCEngineActor::context () const
+{
+  if ( m_stack.empty() ) 
+  {
+    LoKi::Report::Error ( "LoKi::Hybrid::MCEngineActor::context: empty stack" ) ;
+    return nullptr ;
+  }
+  const Entry& last = m_stack.top() ;
+  return &last.second ;
+}  
 // ============================================================================
 // predicates:
 // ============================================================================

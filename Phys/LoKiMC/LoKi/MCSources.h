@@ -287,7 +287,7 @@ namespace LoKi
      *  @see LoKi::MCParticles::SourceTES
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
      */
-    typedef LoKi::MCParticles::SourceTES                             MCSOURCE ;
+    typedef LoKi::MCVertices::SourceTES                             MCVSOURCE ;
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================

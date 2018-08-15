@@ -399,7 +399,7 @@ LoKi::Hybrid::MCTool::_get
   std::string code = makeCode
     ( m_modules , m_actor , pycode , m_lines , context ) ;
   // define and lock the scope:
-  LoKi::Hybrid::MCLock lock ( this ) ;      // ATTENTION: the scope is locked!!
+  LoKi::Hybrid::MCLock lock ( this , make_context() ) ; // ATTENTION: the scope is locked!!
   //
   // use the base class method
   StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
