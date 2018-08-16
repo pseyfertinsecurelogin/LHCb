@@ -16,7 +16,6 @@
       <import name='Event/Measurement' />
       <import name='Event/TrackParameters' />
       <import name='Event/TrackTypes' />
-      <import name='LHCbMath/ValueWithError' />
 
       &StlPtrVector;
 
