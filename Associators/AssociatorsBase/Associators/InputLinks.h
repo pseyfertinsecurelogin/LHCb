@@ -75,10 +75,7 @@ public:
       // otherwise the returned number is the index of the next target.
       const auto& refs = links.linkReference();
 
-      int srcKey = 0;
-      int refIndex = 0;
-      for (auto it = links.keyIndex().cbegin(); it != links.keyIndex().cend(); ++it) {
-         std::tie(srcKey, refIndex) = *it;
+      for ( auto [ srcKey, refIndex ] : links.keyIndex() ) {
          do {
             const auto& ref = refs[refIndex];
             const auto target = GetObject<Target>{}(links, ref.linkID(), ref.objectKey());
