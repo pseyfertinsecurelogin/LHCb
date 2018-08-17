@@ -41,13 +41,13 @@ namespace LoKi
      *  @date 2006-12-07
      */
     class GAUDI_API SourceTES
-      : public LoKi::Functors::Source<const LHCb::MCParticle        ,
+      : public LoKi::Functors::Source<LHCb::MCParticle              ,
                                       LHCb::MCParticle::ConstVector ,
                                       LHCb::MCParticle::Container   >
     {
       // ======================================================================
       typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Source   _Source ;
-      typedef LoKi::Functors::Source<const LHCb::MCParticle,
+      typedef LoKi::Functors::Source<LHCb::MCParticle,
         LHCb::MCParticle::ConstVector,LHCb::MCParticle::Container >  _Base   ;
       // ======================================================================
       static_assert(std::is_base_of<_Source,_Base>::value, "Invalid base") ;
