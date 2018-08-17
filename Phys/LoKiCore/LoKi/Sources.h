@@ -50,30 +50,26 @@ namespace LoKi
     template <class TYPE                           ,
               class TYPE2=std::vector<TYPE*>       ,
               class TYPE3=typename TYPE::Container >
-    class Source final 
+    class Source
       : public LoKi::Functor<void,TYPE2>
-      , public LoKi::TES::Get
-      
+      , public LoKi::TES::Get        
     {
-    private:
-      // ======================================================================
-      typedef  LoKi::Functor<void,TYPE2> Self      ;
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the context algorithm, path in TES and root-in-tes  flag
       Source
-        ( const GaudiAlgorithm* algorithm           ,
-          const std::string&    path                , 
-          const bool            useRootInTES = true ) 
+      ( const GaudiAlgorithm* algorithm           ,
+        const std::string&    path                , 
+        const bool            useRootInTES = true ) 
         : LoKi::AuxFunBase ( std::tie ( algorithm , path , useRootInTES ) )
         , LoKi::Functor<void,TYPE2> () 
         , LoKi::TES::Get   ( algorithm , path , useRootInTES ) 
       {}
       /// constructor from the service and path in TES
       Source
-        ( IDataProviderSvc*  svc   ,
-          const std::string& path  )
+      ( const IDataProviderSvc*  svc   ,
+        const std::string&       path  )
         : LoKi::AuxFunBase ( std::tie ( svc , path ) )
         , LoKi::Functor<void,TYPE2> () 
         , LoKi::TES::Get   ( svc , path ) 

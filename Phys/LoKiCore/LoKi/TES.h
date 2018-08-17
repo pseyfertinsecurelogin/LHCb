@@ -83,9 +83,12 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      const std::string& location     () const { return m_location     ; }
-      bool               useRootInTES () const 
-      { return m_algorithm ? m_useRootInTES : false ; }
+      /// path in TES 
+      const std::string& location     () const { return m_location    ; }
+      /// path in TES 
+      const std::string& path         () const { return   location () ; }
+      /// use root-in-tes?
+      bool               useRootInTES () const { return m_algorithm ? m_useRootInTES : false ; }
       // ======================================================================
     protected:
       // ======================================================================

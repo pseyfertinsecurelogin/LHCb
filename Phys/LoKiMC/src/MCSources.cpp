@@ -23,19 +23,14 @@
  *  @author Vanya BELYAEV ibelyav@physics.syr.edu
  *  @date 2006-12-07
  */
-namespace LoKi {
-
-namespace MCParticles {
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&           path ,
-  IDataProviderSvc*            svc  )
-  : LoKi::AuxFunBase ( std::tie ( path ) )
-  , SourceTES::_Source ()
-  , m_path       ( path      )
-  , m_dataSvc    ( svc       )
+LoKi::MCParticles::SourceTES::SourceTES
+( const IDataProviderSvc*      svc  ,
+  const std::string&           path )
+  : LoKi::AuxFunBase ( std::tie ( svc , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( true ) )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
@@ -43,14 +38,12 @@ SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&           path ,
+LoKi::MCParticles::SourceTES::SourceTES
+( const IDataProviderSvc*      svc  ,
   const LoKi::MCTypes::MCCuts& cuts ,
-  IDataProviderSvc*            svc  )
-  : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
-  , SourceTES::_Source ()
-  , m_path       ( path      )
-  , m_dataSvc    ( svc       )
+  const std::string&           path )
+  : LoKi::AuxFunBase ( std::tie ( svc , cuts , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( cuts      )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
@@ -58,13 +51,12 @@ SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&           path ,
+LoKi::MCParticles::SourceTES::SourceTES
+( const IDataProviderSvc*      svc  ,
   const Decays::iNode&         node ,
-  IDataProviderSvc*            svc  )
-  : SourceTES::_Source ()
-  , m_path       ( path      )
-  , m_dataSvc    ( svc       )
+  const std::string&           path )
+  : LoKi::AuxFunBase ( std::tie ( svc , "<NODE>" , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( DecNode ( node ) )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
@@ -72,13 +64,12 @@ SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&              path   ,
+LoKi::MCParticles::SourceTES::SourceTES
+( const IDataProviderSvc*         svc  ,
   const Decays::IMCDecay::Finder& finder ,
-  IDataProviderSvc*               svc  )
-  : SourceTES::_Source ()
-  , m_path       ( path      )
-  , m_dataSvc    ( svc       )
+  const std::string&              path )
+  : LoKi::AuxFunBase ( std::tie ( svc , "<FINDER>" , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
   , m_use_finder ( true      )
   , m_finder     ( finder    )
@@ -86,13 +77,12 @@ SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&              path  ,
-  const Decays::IMCDecay::iTree&  tree  ,
-  IDataProviderSvc*               svc   )
-  : SourceTES::_Source ()
-  , m_path       ( path      )
-  , m_dataSvc    ( svc       )
+LoKi::MCParticles::SourceTES::SourceTES
+( const IDataProviderSvc*         svc  ,
+  const Decays::IMCDecay::iTree&  tree ,
+  const std::string&              path )
+  : LoKi::AuxFunBase ( std::tie ( svc , "<TREE>" , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
   , m_use_finder ( true      )
   , m_finder     ( tree      )
@@ -100,13 +90,12 @@ SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&  path       ,
-  const std::string&  descriptor ,
-  IDataProviderSvc*   svc        )
-  : LoKi::AuxFunBase ( std::tie ( path , descriptor ) )
-  , m_path       ( path       )
-  , m_dataSvc    ( svc        )
+LoKi::MCParticles::SourceTES::SourceTES
+( const IDataProviderSvc* svc        ,
+  const std::string&      descriptor ,
+  const std::string&      path       )
+  : LoKi::AuxFunBase ( std::tie ( svc , descriptor , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
   , m_use_finder ( true       )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
@@ -116,7 +105,101 @@ SourceTES::SourceTES
   if ( gaudi() ) { buildFinder () ; }
 }
 // ============================================================================
-void SourceTES::buildFinder () const
+
+
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*        alg          ,
+  const std::string&           path         , 
+  const bool                   useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( alg , path , useRootInTES ) )
+  , SourceTES::_Base   ( alg , path , useRootInTES )
+  , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( true ) )
+  , m_use_finder ( false     )
+  , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*        alg          ,
+  const LoKi::MCTypes::MCCuts& cuts         ,
+  const std::string&           path         ,
+  const bool                   useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( alg , cuts , path ) )
+  , SourceTES::_Base   ( alg , path , useRootInTES )
+  , m_cut        ( cuts      )
+  , m_use_finder ( false     )
+  , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*        alg          ,
+  const Decays::iNode&         node         ,
+  const std::string&           path         ,
+  const bool                   useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( alg, "<NODE>" , path , useRootInTES ) )
+  , SourceTES::_Base   ( alg , path , useRootInTES )
+  , m_cut        ( DecNode ( node ) )
+  , m_use_finder ( false     )
+  , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*           alg          ,
+  const Decays::IMCDecay::Finder& finder       ,
+  const std::string&              path         ,
+  const bool                      useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( alg, "<FINDER>" , path , useRootInTES ) )
+  , SourceTES::_Base   ( alg , path , useRootInTES )
+  , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
+  , m_use_finder ( true      )
+  , m_finder     ( finder    )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*           alg          ,
+  const Decays::IMCDecay::iTree&  tree         ,
+  const std::string&              path         , 
+  const bool                      useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( alg, "<TREE>" , path , useRootInTES ) )
+  , SourceTES::_Base   ( alg , path , useRootInTES )
+  , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
+  , m_use_finder ( true      )
+  , m_finder     ( tree      )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCParticles::SourceTES::SourceTES
+( const GaudiAlgorithm* alg          ,
+  const std::string&    descriptor   ,
+  const std::string&    path         ,
+  const bool            useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( alg , descriptor , path , useRootInTES ) )
+  , SourceTES::_Base   ( alg , path , useRootInTES )
+  , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
+  , m_use_finder ( true       )
+  , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
+  , m_decay      ( descriptor )
+{
+  //
+  if ( gaudi() ) { buildFinder () ; }
+}
+// ============================================================================
+
+
+
+// ============================================================================
+void LoKi::MCParticles::SourceTES::buildFinder () const
 {
   //
   if ( !use_finder() || m_finder.valid() ) { return ; }
@@ -141,37 +224,32 @@ void SourceTES::buildFinder () const
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-SourceTES* SourceTES::clone() const { return new SourceTES ( *this ) ; }
+LoKi::MCParticles::SourceTES* 
+LoKi::MCParticles::SourceTES::clone() const { return new SourceTES ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-LHCb::MCParticle::ConstVector SourceTES::operator() () const {
+LHCb::MCParticle::ConstVector 
+LoKi::MCParticles::SourceTES::operator() () const {
   //
   LHCb::MCParticle::ConstVector result ;
   //
-  get ( m_path , result ) ;
+  get ( path() , result ) ;
   //
   return result ;
 }
 // ============================================================================
 // get the data from TES
 // ============================================================================
-std::size_t SourceTES::get ( const std::string&             location ,
-                             LHCb::MCParticle::ConstVector& output   ) const
+std::size_t 
+LoKi::MCParticles::SourceTES::get 
+( const std::string&             location ,
+  LHCb::MCParticle::ConstVector& output   ) const
 {
   //
-  if ( !m_dataSvc )
-  {
-    const LoKi::Services& svcs = LoKi::Services::instance() ;
-    m_dataSvc = svcs.evtSvc() ;
-    Assert ( m_dataSvc,
-             "Could not locate valid IDataProvidrSvc" ) ;
-  }
-  //
-  SmartDataPtr<LHCb::MCParticle::Container> events ( m_dataSvc , location ) ;
-  //
-  const LHCb::MCParticle::Container* parts = events ;
-  Assert ( nullptr != parts , "No valid data is found at location '"+location+"'") ;
+  const LHCb::MCParticle::Container* particles = 
+    LoKi::TES::get_<LHCb::MCParticle::Container>( *this ) ;
+  Assert ( particles , "No valid data is found at location '"+location+"'") ;
   //
   if ( m_use_finder )
   {
@@ -185,15 +263,16 @@ std::size_t SourceTES::get ( const std::string&             location ,
     //
     Assert   ( !(!m_finder)    , "Unable to validate the DecayFinder" ) ;
     // use finder!!
-    m_finder.findDecay ( parts->begin () ,
-                         parts->end   () ,
+    m_finder.findDecay ( particles->begin () ,
+                         particles->end   () ,
                          output          ) ;
   }
   else
   {
     // use cuts!
-    std::copy_if( parts->begin ()  , parts->end   ()  ,
-                  std::back_inserter ( output ) , std::cref(m_cut) ) ;
+    std::copy_if( particles->begin ()  , 
+                  particles->end   ()  ,
+                  std::back_inserter ( output ) , std::cref( m_cut ) ) ;
   }
   //
   return output.size() ;
@@ -201,21 +280,14 @@ std::size_t SourceTES::get ( const std::string&             location ,
 // ============================================================================
 // get the data from TES
 // ============================================================================
-std::size_t SourceTES::count ( const std::string&             location  ) const
+std::size_t 
+LoKi::MCParticles::SourceTES::count
+( const std::string& location  ) const
 {
   //
-  if ( !m_dataSvc )
-  {
-    const LoKi::Services& svcs = LoKi::Services::instance() ;
-    m_dataSvc = svcs.evtSvc() ;
-    Assert ( m_dataSvc,
-             "Could not locate valid IDataProvidrSvc" ) ;
-  }
-  //
-  SmartDataPtr<LHCb::MCParticle::Container> events ( m_dataSvc , location ) ;
-  //
-  const LHCb::MCParticle::Container* parts = events ;
-  Assert ( nullptr != parts , "No valid data is found at location '"+location+"'") ;
+  const LHCb::MCParticle::Container* particles = 
+    LoKi::TES::get_<LHCb::MCParticle::Container>( *this ) ;
+  Assert ( particles , "No valid data is found at location '"+location+"'") ;
   //
   if ( m_use_finder )
   {
@@ -230,25 +302,25 @@ std::size_t SourceTES::count ( const std::string&             location  ) const
     //
     Assert   ( !(!m_finder)    , "Unable to validate the DecayFinder" ) ;
     // use finder!!
-    m_finder.findDecay ( parts->begin () ,
-                         parts->end   () ,
+    m_finder.findDecay ( particles->begin () ,
+                         particles->end   () ,
                          output          ) ;
-
     return output.size() ;
   }
   //
   // use cuts!
   //
-  return LoKi::Algs::count_if ( parts->begin ()  ,
-                                parts->end   ()  , m_cut ) ;
+  return LoKi::Algs::count_if ( particles->begin ()  ,
+                                particles->end   ()  , std::cref ( m_cut ) ) ;
   //
 }
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& SourceTES::fillStream ( std::ostream& o ) const
+std::ostream& 
+LoKi::MCParticles::SourceTES::fillStream ( std::ostream& o ) const
 {
-  o << " MCSOURCE( '" << m_path << "' , " ;
+  o << " MCSOURCE( '" << path() << "' , " ;
   if  ( m_use_finder ) { o << m_finder ; }
   else                 { o << m_cut    ; }
   //
@@ -257,56 +329,157 @@ std::ostream& SourceTES::fillStream ( std::ostream& o ) const
 
 
 
+
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter ( const std::string&           path ,
-                         const LoKi::MCTypes::MCCuts& cuts )
-  : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
-  , m_source ( path , cuts )
+LoKi::MCParticles::TESCounter::TESCounter
+( const IDataProviderSvc*         svc  , 
+  const std::string&              path ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , path ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( svc  , path ) 
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter ( const std::string&           path ,
-                         const Decays::iNode&         node )
-  : m_source ( path , node )
+LoKi::MCParticles::TESCounter::TESCounter
+( const IDataProviderSvc*         svc  , 
+  const LoKi::MCTypes::MCCuts&    cuts ,
+  const std::string&              path ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , cuts , path ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( svc , cuts , path ) 
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter ( const std::string&              path ,
-                         const Decays::IMCDecay::Finder& finder )
-  : m_source ( path , finder )
+LoKi::MCParticles::TESCounter::TESCounter
+( const IDataProviderSvc*         svc  , 
+  const Decays::iNode&            node ,
+  const std::string&              path ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , "<NODE>", path ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( svc , node , path ) 
 {}
 // ============================================================================
-// constructor from the service, TES location and cuts
+// constructor from the service, TES location and finder 
 // ============================================================================
-TESCounter::TESCounter ( const std::string&              path ,
-                         const Decays::IMCDecay::iTree&  finder )
-  : m_source ( path , finder )
+LoKi::MCParticles::TESCounter::TESCounter
+( const IDataProviderSvc*         svc    , 
+  const Decays::IMCDecay::Finder& finder ,
+  const std::string&              path   ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , "<FINDER>", path ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( svc , finder , path ) 
 {}
 // ============================================================================
-// constructor from the service, TES location and cuts
+// constructor from the service, TES location and tree 
 // ============================================================================
-TESCounter::TESCounter ( const std::string&              path ,
-                         const std::string&              finder )
-  : LoKi::AuxFunBase ( std::tie ( path , finder ) )
-  , m_source ( path , finder )
+LoKi::MCParticles::TESCounter::TESCounter
+( const IDataProviderSvc*         svc    , 
+  const Decays::IMCDecay::iTree&  finder ,
+  const std::string&              path   ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , "<TREE>", path ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( svc , finder , path ) 
+{}
+// ============================================================================
+// constructor from the service, TES location
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const IDataProviderSvc*         svc        , 
+  const std::string&              descriptor ,
+  const std::string&              path       ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , descriptor , path ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( svc , descriptor , path ) 
+{}
+// ============================================================================
+// constructor from the own algorithm , TES location and cuts
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const GaudiAlgorithm*           algorithm     , 
+  const std::string&              path          , 
+  const bool                      useRootInTES  ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , path , useRootInTES ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( algorithm , path , useRootInTES ) 
+{}
+// ============================================================================
+// constructor from the own algortihm , TES location and cuts
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const GaudiAlgorithm*           algorithm     ,  
+  const LoKi::MCTypes::MCCuts&    cuts          ,
+  const std::string&              path          , 
+  const bool                      useRootInTES  ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , cuts , path, useRootInTES ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( algorithm , cuts , path , useRootInTES ) 
+{}
+// ============================================================================
+// constructor from the own algorithm , TES location and cuts
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const GaudiAlgorithm*           algorithm     , 
+  const Decays::iNode&            node          ,
+  const std::string&              path          , 
+  const bool                      useRootInTES  ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , "<NODE> " , path, useRootInTES ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( algorithm , node , path , useRootInTES ) 
+{}
+// ============================================================================
+// constructor from the own algorithm , TES location and finder 
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const GaudiAlgorithm*           algorithm     , 
+  const Decays::IMCDecay::Finder& finder        ,
+  const std::string&              path          , 
+  const bool                      useRootInTES  ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , "<FINDER> " , path, useRootInTES ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( algorithm , finder , path , useRootInTES ) 
+{}
+// ============================================================================
+// constructor from the own algorithm, TES location and tree 
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const GaudiAlgorithm*           algorithm     , 
+  const Decays::IMCDecay::iTree&  finder        ,
+  const std::string&              path          , 
+  const bool                      useRootInTES  ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , "<TREE> " , path, useRootInTES ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( algorithm , finder , path , useRootInTES ) 
+{}
+// ============================================================================
+// constructor from the algorithm , TES location
+// ============================================================================
+LoKi::MCParticles::TESCounter::TESCounter
+( const GaudiAlgorithm*           algorithm     , 
+  const std::string&              descriptor    ,
+  const std::string&              path          , 
+  const bool                      useRootInTES  ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , descriptor , path, useRootInTES ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( algorithm , descriptor , path , useRootInTES ) 
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-TESCounter* TESCounter::clone() const { return new TESCounter ( *this ) ; }
+LoKi::MCParticles::TESCounter* 
+LoKi::MCParticles::TESCounter::clone() const { return new TESCounter ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-double TESCounter::operator() (  ) const
+double LoKi::MCParticles::TESCounter::operator() (  ) const
 { return m_source.count ( m_source.path() ) ; }
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& TESCounter::fillStream ( std::ostream& o ) const
+std::ostream& LoKi::MCParticles::TESCounter::fillStream ( std::ostream& o ) const
 {
   o << " MCNUM( '" << m_source.path() << "' , " ;
   if  ( m_source.use_finder() ) { o << m_source.finder() ; }
@@ -314,61 +487,70 @@ std::ostream& TESCounter::fillStream ( std::ostream& o ) const
   //
   return o << " ) " ;
 }
-
-}
-
-namespace MCVertices {
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&           path ,
-  IDataProviderSvc*            svc  )
-  : LoKi::AuxFunBase ( std::tie ( path ) )
-  , SourceTES::_Source ()
-  , m_path       ( path      )
-  , m_dataSvc    ( svc       )
+LoKi::MCVertices::SourceTES::SourceTES
+( const IDataProviderSvc*         svc  , 
+  const std::string&              path ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , path ) )
+  , SourceTES::_Base   ( svc , path )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCVertex*>::BooleanConstant ( true ) )
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-SourceTES::SourceTES
-( const std::string&            path ,
-  const LoKi::MCTypes::MCVCuts& cuts ,
-  IDataProviderSvc*             svc  )
-  : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
-  , SourceTES::_Source ()
-  , m_path       ( path )
-  , m_dataSvc    ( svc  )
+LoKi::MCVertices::SourceTES::SourceTES
+( const IDataProviderSvc*         svc  , 
+  const LoKi::MCTypes::MCVCuts&   cuts ,
+  const std::string&              path ) 
+  : LoKi::AuxFunBase ( std::tie ( svc , cuts , path ) )
+  , SourceTES::_Base   ( svc , path )
+  , m_cut        ( cuts )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCVertices::SourceTES::SourceTES
+( const GaudiAlgorithm*           algorithm    ,
+  const std::string&              path         ,
+  const bool                      useRootInTES ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , path , useRootInTES ) )
+  , SourceTES::_Base   ( algorithm , path , useRootInTES )
+  , m_cut        ( LoKi::BasicFunctors<const LHCb::MCVertex*>::BooleanConstant ( true ) )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::MCVertices::SourceTES::SourceTES
+( const GaudiAlgorithm*           algorithm    , 
+  const LoKi::MCTypes::MCVCuts&   cuts         ,
+  const std::string&              path         ,
+  const bool                      useRootInTES ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , cuts , path , useRootInTES ) )
+  , SourceTES::_Base   ( algorithm , path , useRootInTES )
   , m_cut        ( cuts )
 {}
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-SourceTES* SourceTES::clone() const { return new SourceTES ( *this ) ; }
+LoKi::MCVertices::SourceTES* 
+LoKi::MCVertices::SourceTES::clone() const { return new SourceTES ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-LHCb::MCVertex::ConstVector SourceTES::operator() () const
+LHCb::MCVertex::ConstVector 
+LoKi::MCVertices::SourceTES::operator() () const
 {
-  if ( !m_dataSvc )
-  {
-    const LoKi::Services& svcs = LoKi::Services::instance() ;
-    m_dataSvc = svcs.evtSvc() ;
-    Assert ( m_dataSvc,
-             "Could not locate valid IDataProvidrSvc" ) ;
-  }
-  //
-  SmartDataPtr<LHCb::MCVertex::Container> events ( m_dataSvc , m_path ) ;
-  //
-  const LHCb::MCVertex::Container* parts = events ;
-  Assert ( parts , "No valid data is found at location '"+m_path+"'") ;
+  
+  const LHCb::MCVertex::Container* vertices = 
+    LoKi::TES::get_<LHCb::MCVertex::Container>( *this ) ;
+  Assert ( vertices , "No valid data is found at location '" + location() + "'") ;
   //
   LHCb::MCVertex::ConstVector result ;
   // use cuts!
-  std::copy_if( parts->begin ()  ,
-                parts->end   ()  ,
+  std::copy_if( vertices->begin ()  ,
+                vertices->end   ()  ,
                 std::back_inserter ( result ) , std::cref(m_cut) ) ;
   //
   return result ;
@@ -376,11 +558,9 @@ LHCb::MCVertex::ConstVector SourceTES::operator() () const
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& SourceTES::fillStream ( std::ostream& o ) const
-{ return o << " MCVSOURCE( '" << m_path << "', " << m_cut << " ) " ; }
-
-}
-}
+std::ostream& 
+LoKi::MCVertices::SourceTES::fillStream ( std::ostream& o ) const
+{ return o << " MCVSOURCE( '" << path () << "', " << m_cut << " ) " ; }
 // ============================================================================
 // The END
 // ============================================================================
