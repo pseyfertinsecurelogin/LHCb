@@ -73,13 +73,8 @@ StatusCode TestConditionAlg::initialize() {
 
   m_updateMonitors.reserve(m_condPaths.size());
   for (const auto& path: m_condPaths){
-#if __cplusplus > 201402L
     // C++ 17 version
     auto mon = &m_updateMonitors.emplace_back(msgStream(), path);
-#else
-    m_updateMonitors.emplace_back(msgStream(), path);
-    auto mon = &m_updateMonitors.back();
-#endif
     updMgrSvc()->registerCondition( mon, path, &CondUpdateMonitor::handler, m_conditions[path] );
     registerCondition<TestConditionAlg>( mon );
   }

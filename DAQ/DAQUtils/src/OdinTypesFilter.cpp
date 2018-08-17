@@ -13,37 +13,24 @@
 
 namespace {
     using namespace OdinTypesFilter_details;
+
+    static const auto s_And = std::string{"ODIN Filter ("}+toString(Log_t::And)+")";
+    static const auto s_Or  = std::string{"ODIN Filter ("}+toString(Log_t::Or)+")";
     const std::string& odin_filter_name( Log_t l ) {
-        static const auto s_And = std::string{"ODIN Filter ("}+toString(Log_t::And)+")";
-        static const auto s_Or  = std::string{"ODIN Filter ("}+toString(Log_t::Or)+")";
         switch (l) {
             case Log_t::And: return s_And;
             case Log_t::Or:  return s_Or;
         }
-        throw "IMPOSSIBLE";
-    }
-
-    template <size_t N> constexpr bool all(const bool (&bs)[N]) {
-        for (bool b: bs) if (!b) return false;
-        return true;
-    }
-    template <size_t N> constexpr bool any(const bool (&bs)[N]) {
-        for (bool b: bs) if (b) return true;
-        return false;
+        throw std::runtime_error(std::string{"IMPOSSIBLE: "}+__func__);
     }
 
     template <typename... Args>
     bool boolean_combine( Log_t op, Args&&... args ) {
         switch (op) {
-#if  __cplusplus > 201402L
            case Log_t::And : return ( ... && std::forward<Args>(args) );
            case Log_t::Or  : return ( ... || std::forward<Args>(args) );
-#else
-           case Log_t::And : return all({std::forward<Args>(args)...});
-           case Log_t::Or  : return any({std::forward<Args>(args)...});
-#endif
         }
-        throw "IMPOSSIBLE";
+        throw std::runtime_error(std::string{"IMPOSSIBLE: "}+__func__);
     }
 
 }
