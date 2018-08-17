@@ -59,6 +59,7 @@ namespace
 }
 // ============================================================================
 /*  constructor from TES location and root-in-tes flag
+ *  @param algorithm    own algorithm/context 
  *  @param location     TES-location
  *  @param useRootInTES RootInTES-flag
  */
@@ -71,6 +72,24 @@ LoKi::TES::Get::Get
   , m_location     ( location     )
   , m_useRootInTES ( useRootInTES )
   , m_algorithm    ( algorithm    )
+  , m_datasvc      ( nullptr      )
+{
+  // if ( gaudi() ) { getAlgSvc() ; }
+}
+// ============================================================================
+/*  constructor from TES location 
+ *  @param datasvc    data service 
+ *  @param location   TES-location
+ */
+// ============================================================================
+LoKi::TES::Get::Get
+( const IDataProviderSvc* datasvc  ,
+  const std::string&      location )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
+  , m_location     ( location     )
+  , m_useRootInTES ( false        )
+  , m_algorithm    ( nullptr      )
+  , m_datasvc      ( datasvc      )
 {
   // if ( gaudi() ) { getAlgSvc() ; }
 }
@@ -79,40 +98,16 @@ LoKi::TES::Get::Get
 // ============================================================================
 LoKi::TES::Get::~Get()
 { 
-  if ( m_algorithm && !gaudi() ) { m_algorithm.reset() ; }
+  if ( m_algorithm && !gaudi() ) { m_algorithm .reset() ; }
+  if ( m_datasvc   && !gaudi() ) { m_datasvc   .reset() ; }
 }
-// // ============================================================================
-// void LoKi::TES::Get::getAlgSvc() const
-// {
-//   //
-//   if ( !(!m_algorithm) || !(!m_datasvc)) { return ; }
-//   //
-//   // 1. locate algorithm
-//   //
-//   ILoKiSvc* l = lokiSvc() ;
-//   Assert ( 0 != l   , "ILoKiSvc*       points to NULL!" ) ;
-//   SmartIF<IAlgContextSvc> cntx ( l ) ;
-//   if ( !(!cntx) )
-//   { m_algorithm = Gaudi::Utils::getGaudiAlg ( cntx ) ; }
-//   //
-//   // 2. use data service only in case root-in-tes is not required
-//   //
-//   if ( !m_algorithm && !m_useRootInTES )
-//   {
-//     const LoKi::Services& svc = LoKi::Services::instance() ;
-//     m_datasvc = svc.evtSvc() ;
-//   }
-//   //
-//   Assert ( !(!m_algorithm) || !(!m_datasvc)  ,
-//            "Neither algorithm nor service is located" ) ;
-// }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
 std::ostream& LoKi::TES::Get::fillStream ( std::ostream& s ) const
 {
   s << " GET(" << "'" << location() << "'" ;
-  if ( !useRootInTES() ) { s << ", False" ; }
+  if ( m_algorithm && !useRootInTES() ) { s << ", False" ; }
   return s << ") " ;
 }
 // ============================================================================
@@ -133,6 +128,15 @@ LoKi::TES::Exists::Exists
   const bool            rootInTes )
   : LoKi::AuxFunBase ( std::tie ( algorithm , location , rootInTes ) )
   , LoKi::TES::Get ( algorithm , location , rootInTes )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Exists::Exists
+( const IDataProviderSvc* datasvc   ,
+  const std::string&      location  )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
+  , LoKi::TES::Get ( datasvc , location )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -168,6 +172,15 @@ LoKi::TES::Contains::Contains
   , LoKi::TES::Get ( algorithm , location , useRootInTes )
 {}
 // ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Contains::Contains
+( const IDataProviderSvc* datasvc  , 
+  const std::string&      location )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
+  , LoKi::TES::Get ( datasvc , location )
+{}
+// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::TES::Contains* LoKi::TES::Contains::clone() const
@@ -177,7 +190,6 @@ LoKi::TES::Contains* LoKi::TES::Contains::clone() const
 // ============================================================================
 double LoKi::TES::Contains::operator() ( /* LoKi::TES::Contains::argument */ ) const
 {
-  //
   const ObjectContainerBase *obj = 
     LoKi::TES::get_<ObjectContainerBase> ( *this ) ;
   if ( !obj ) { return -1 ; }
@@ -306,6 +318,31 @@ LoKi::TES::Counter::Counter
   , LoKi::TES::Contains ( algorithm , location )
   , m_counter ( counter )
   , m_bad     ( LoKi::Constants::NegativeInfinity )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Counter::Counter
+( const IDataProviderSvc* datasvc   , 
+  const std::string&      location  ,
+  const std::string&      counter   )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location , counter ) )
+  , LoKi::TES::Contains ( datasvc , location )
+  , m_counter ( counter )
+  , m_bad     ( LoKi::Constants::NegativeInfinity )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Counter::Counter
+( const IDataProviderSvc* datasvc , 
+  const std::string&    location  ,
+  const std::string&    counter   ,
+  const double          bad       )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location , counter , bad ) )
+  , LoKi::TES::Contains ( datasvc  , location )
+  , m_counter ( counter )
+  , m_bad     ( bad     )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -564,7 +601,32 @@ LoKi::TES::Stat::Stat
   , LoKi::TES::Counter ( algorithm , location , counter )
   , m_getter  ( std::make_shared<const  StatEntityGetter>(function) )
 {}
-
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Stat::Stat
+( const IDataProviderSvc* datasvc  ,
+  const std::string&      location ,
+  const std::string&      counter  ,
+  const std::string&      function ,
+  const double            bad      )
+  : LoKi::AuxFunBase (  std::tie ( datasvc , location , counter , 
+                                   function , bad ) )
+  , LoKi::TES::Counter ( datasvc , location , counter , bad  )
+  , m_getter  ( std::make_shared<const StatEntityGetter>(function) )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Stat::Stat
+( const IDataProviderSvc* datasvc   ,
+  const std::string&      location  ,
+  const std::string&      counter   ,
+  const std::string&      function  )
+  : LoKi::AuxFunBase (  std::tie ( datasvc , location , counter , function ) )
+  , LoKi::TES::Counter ( datasvc , location , counter )
+  , m_getter  ( std::make_shared<const  StatEntityGetter>(function) )
+{}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================

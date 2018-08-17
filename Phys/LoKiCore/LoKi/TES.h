@@ -12,6 +12,7 @@
 #include "GaudiKernel/StatEntity.h"
 #include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
@@ -52,12 +53,19 @@ namespace LoKi
     public:
       // =======================================================================
       /** constructor from TES location and root-in-tes flag
+       *  @param algorithm    own algorithm/context 
        *  @param location     TES-location
        *  @param useRootInTES RootInTES-flag
        */
-      Get ( const GaudiAlgorithm* algorithm           , 
-            const std::string&    location            ,
-            const bool            useRootInTES = true ) ;
+      Get ( const GaudiAlgorithm*   algorithm           , 
+            const std::string&      location            ,
+            const bool              useRootInTES = true ) ;
+      /** constructor from TES location 
+       *  @param datasvc    data service 
+       *  @param location   TES-location
+       */
+      Get ( const IDataProviderSvc* datasvc  , 
+            const std::string&      location ) ;
       /// virtual destructor
       virtual ~Get() ;
       // ======================================================================
@@ -67,25 +75,28 @@ namespace LoKi
     public:
       // ======================================================================
       /// get the algorithym
-      const LoKi::Interface<GaudiAlgorithm>& algorithm () const { return m_algorithm ; }
+      const LoKi::Interface<GaudiAlgorithm>&   algorithm () const { return m_algorithm ; }
+      /// get the algorithym
+      const LoKi::Interface<IDataProviderSvc>& datasvc   () const { return m_datasvc   ; }
       /// get algorithm name
       const std::string& algName () const ;
       // ======================================================================
     public:
       // ======================================================================
       const std::string& location     () const { return m_location     ; }
-      bool               useRootInTES () const { return m_useRootInTES ; }
+      bool               useRootInTES () const 
+      { return m_algorithm ? m_useRootInTES : false ; }
       // ======================================================================
     protected:
       // ======================================================================
       void setLocation ( const std::string& value ) { m_location = value ; }
-      /// acquire algorithm or service
-      /// void getAlgSvc   () const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// notify that we need he context algorithm 
-      static bool context_algo () { return true ; }
+      /// notify that we need the context algorithm 
+      static bool context_algo   () { return true ; }
+      /// notify that we need the context  service 
+      static bool context_evtsvc () { return true ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -95,10 +106,12 @@ namespace LoKi
       bool        m_useRootInTES ; // "Root-in-TES" flag
       /// the algorithm to be used
       mutable LoKi::Interface<GaudiAlgorithm> m_algorithm ; // the algorithm
+      /// the service   to be used
+      mutable LoKi::Interface<IDataProviderSvc> m_datasvc ;  // the service
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class DataHAndle
+    /** @class DataHandle
      *  @author Sascha Stahl
      */
     template <class TYPE>
@@ -154,9 +167,12 @@ namespace LoKi
       /** constructor from TES location & "rootInTes"-flag
        *  @see GaudiCommon<TYPE>::exists
        */
-      Exists ( const GaudiAlgorithm* algorithm           , 
-               const std::string&    location            ,
-               const bool            useRootInTes = true ) ;
+      Exists ( const GaudiAlgorithm*   algorithm           , 
+               const std::string&      location            ,
+               const bool              useRootInTes = true ) ;
+      /// constructor from TES location 
+      Exists ( const IDataProviderSvc* datasvc  , 
+               const std::string&      location ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Exists* clone() const override;
       /// MANDATORY: the only one essential method
@@ -176,8 +192,9 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
-    class GAUDI_API Contains : public LoKi::Functor<void,double>
-                             , public LoKi::TES::Get
+    class GAUDI_API Contains 
+      : public LoKi::Functor<void,double>
+      , public LoKi::TES::Get
     {
     public:
       // ======================================================================
@@ -185,9 +202,15 @@ namespace LoKi
        *  @see GaudiCommon<TYPE>::exists
        *  @see GaudiCommon<TYPE>::get
        */
-      explicit Contains ( const GaudiAlgorithm* algorithm           , 
-                          const std::string&    location            ,
-                          const bool            useRootInTes = true ) ;
+      explicit Contains
+        ( const GaudiAlgorithm*   algorithm           , 
+          const std::string&      location            ,
+          const bool              useRootInTes = true ) ;
+      /** constructor from TES location 
+       */
+      explicit Contains
+        ( const IDataProviderSvc* datasvc  , 
+          const std::string&      location ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Contains* clone() const override;
       /** MANDATORY: the only one essential method
@@ -198,13 +221,13 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
-
     // ========================================================================
     /** @class Size 
      *  @author Sascha Stahl 
      */
-    class GAUDI_API Size : public LoKi::Functor<void,double>
-                         , public LoKi::TES::DataHandle<DataObject>
+    class GAUDI_API Size
+      : public LoKi::Functor<void,double>
+      , public LoKi::TES::DataHandle<DataObject>
     {
     public:
       // ======================================================================
@@ -280,6 +303,19 @@ namespace LoKi
       Counter ( const GaudiAlgorithm* algorithm             ,            
                 const std::string&    location              ,
                 const std::string&    counter               ) ;
+      /** constructor from TES location, counter name,
+       *  bad value and root-intes flag
+       */
+      Counter ( const IDataProviderSvc* datasvc             ,            
+                const std::string&      location            ,
+                const std::string&      counter             ,
+                const double            bad                 ) ;
+      /** constructor from TES location, counter name,
+       *  bad value and root-intes flag
+       */
+      Counter ( const IDataProviderSvc* datasvc             ,            
+                const std::string&    location              ,
+                const std::string&    counter               ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Counter* clone() const override;
       /** MANDATORY: the only one essential method
@@ -321,26 +357,37 @@ namespace LoKi
       /** constructor from TES location, counter name,
        *  bad value and root-intes flag
        */
-      Stat ( const GaudiAlgorithm* algorithm             ,            
+      Stat ( const GaudiAlgorithm*    algorithm             ,            
              const std::string&       location              ,
              const std::string&       counter               ,
              const std::string&       function              ,
              const double             bad                   ,
              const bool               useRootInTes = true   ) ;
-      Stat ( const GaudiAlgorithm* algorithm             ,            
+      Stat ( const GaudiAlgorithm*    algorithm             ,            
              const std::string&       location              ,
              const std::string&       counter               ,
              const StatEntityGetter&  function              ,
              const double             bad                   ,
              const bool               useRootInTes = true   ) ;
-      Stat ( const GaudiAlgorithm* algorithm             ,            
+      Stat ( const GaudiAlgorithm*    algorithm             ,            
              const std::string&       location              ,
              const std::string&       counter               ,
              const std::string&       function              ) ;
-      Stat ( const GaudiAlgorithm* algorithm             ,            
+      Stat ( const GaudiAlgorithm*    algorithm             ,            
              const std::string&       location              ,
              const std::string&       counter               ,
-             const StatEntityGetter&  function              ) ;
+             const StatEntityGetter&  function              ) ;      
+      // ======================================================================
+      Stat ( const IDataProviderSvc*  datasvc               ,    
+             const std::string&       location              ,
+             const std::string&       counter               ,
+             const std::string&       function              ,
+             const double             bad                   ) ;
+      Stat ( const IDataProviderSvc*  datasvc               ,
+             const std::string&       location              ,
+             const std::string&       counter               ,
+             const std::string&       function              ) ;
+      // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       Stat* clone() const override;
       /** MANDATORY: the only one essential method
@@ -362,10 +409,13 @@ namespace LoKi
     const TYPE*
     get_ ( const LoKi::TES::Get&  obj )
     {
-      if ( !(!obj.algorithm() ) )
-      {  return obj.algorithm()->getIfExists<TYPE> ( obj.location () , obj.useRootInTES () ) ; }
-      //
+      // ======================================================================
+      if      ( obj.algorithm() )
+      { return obj.algorithm()->getIfExists<TYPE> ( obj.location () , obj.useRootInTES () ) ; }
+      else if ( obj.datasvc  () )
+      { return SmartDataPtr<TYPE>                 ( obj.datasvc  () , obj.location     () ) ; }
       return nullptr ;
+      // ======================================================================
     }
     // ========================================================================
     template <class TYPE>
@@ -373,10 +423,16 @@ namespace LoKi
     bool
     exists_ ( const LoKi::TES::Get&  obj )
     {
-      if      ( !(!obj.algorithm () ) )
+      // ======================================================================
+      if      ( obj.algorithm () )
       { return obj.algorithm()->exist<TYPE> ( obj.location () , obj.useRootInTES () ) ; }
-      //
+      else if ( obj.datasvc   () )
+      {
+        SmartDataPtr<TYPE> o                ( obj.datasvc  () , obj.location     () ) ;
+        return !(!o) ;
+      }
       return false  ;
+      // ======================================================================
     }
     // ========================================================================
   } //                                               end of namespace LoKi::TES

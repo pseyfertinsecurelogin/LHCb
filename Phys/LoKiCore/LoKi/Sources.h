@@ -19,6 +19,7 @@
 #include "LoKi/Assert.h"
 #include "LoKi/Services.h"
 #include "LoKi/Functor.h"
+#include "LoKi/TES.h"
 // ============================================================================
 /** @file LoKi/Sources.h
  *
@@ -46,10 +47,13 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2007-11-28
      */
-    template <class TYPE                            ,
-              class TYPE2=std::vector<TYPE*>        ,
-              class TYPE3= typename TYPE::Container >
-    class Source final : public LoKi::Functor<void,TYPE2>
+    template <class TYPE                           ,
+              class TYPE2=std::vector<TYPE*>       ,
+              class TYPE3=typename TYPE::Container >
+    class Source final 
+      : public LoKi::Functor<void,TYPE2>
+      , public LoKi::TES::Get
+      
     {
     private:
       // ======================================================================
@@ -57,75 +61,50 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      /// constructor from the service and path in TES
+      /// constructor from the context algorithm, path in TES and root-in-tes  flag
       Source
-      ( IDataProviderSvc*  svc   ,
-        const std::string& path  )
-        : LoKi::AuxFunBase ( std::tie ( path ) )
-        , m_svc  ( svc   )
-        , m_path ( path  )
+        ( const GaudiAlgorithm* algorithm           ,
+          const std::string&    path                , 
+          const bool            useRootInTES = true ) 
+        : LoKi::AuxFunBase ( std::tie ( algorithm , path , useRootInTES ) )
+        , LoKi::Functor<void,TYPE2> () 
+        , LoKi::TES::Get   ( algorithm , path , useRootInTES ) 
       {}
       /// constructor from the service and path in TES
       Source
-      ( const std::string& path     ,
-        IDataProviderSvc*  svc  = nullptr )
-        : LoKi::AuxFunBase ( std::tie ( path ) )
-        , m_svc  ( svc   )
-        , m_path ( path  )
-      {}
+        ( IDataProviderSvc*  svc   ,
+          const std::string& path  )
+        : LoKi::AuxFunBase ( std::tie ( svc , path ) )
+        , LoKi::Functor<void,TYPE2> () 
+        , LoKi::TES::Get   ( svc , path ) 
+      {}      
       /// copy constructor
       Source ( const Source& right )  = default;
-      /// MANDATORY: virtual destructor
-      ~Source() override
-      { if ( this->m_svc() && !this->gaudi() ) { this->m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
       Source* clone() const override { return new Source ( *this ) ; }
       /// MANATORY: the only one essenial method
       TYPE2 operator() ( ) const override
       {
-        /// locate the service if needed:
-        if ( !m_svc ) {
-          const LoKi::Services& svcs = LoKi::Services::instance() ;
-          IDataProviderSvc* evtSvc = svcs.evtSvc() ;
-          Assert ( 0 != evtSvc , "Could not extract EventDataService!" ) ;
-          m_svc = evtSvc ;
-        }
         /// get the data from TES:
-        SmartDataPtr<TYPE3> data ( m_svc , m_path ) ;
+        const TYPE3* data = LoKi::TES::get_<TYPE3>( *this ) ;
         /// check the validity:
-        Assert ( !(!data) , "No valid data is found at '" + m_path + "'" ) ;
+        Assert ( data , "No valid data is found at '" + this->path() + "'" ) ;
         /// return the valid data
         return { data->begin() , data->end() } ;
       }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the service
-      const LoKi::Interface<IDataProviderSvc>& evtSvc() const { return m_svc ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the data provider service
-      mutable LoKi::Interface<IDataProviderSvc> m_svc ; // data service
-      /// TES location of the data
-      std::string                               m_path ; // TES location of data
       // ======================================================================
     } ;
     // ========================================================================
   } //                                          end of namespace LoKi::Functors
   // ==========================================================================
   /** simple "source" function
-   *
    *  @code
-   *
-   *
-   *   std::vector<TYPE*> out = source<TYPE>
+   *  std::vector<TYPE*> out = source<TYPE>
    *
    *   // some 'tee'-action:
    *   const LoKi::Functor<TYPE,TYPE2>& fun = ...;
    *
    *   std::vector<TYPE> out = in >> tee ( fun ) ;
-   *
    *
    *  @endcode
    *
@@ -137,15 +116,21 @@ namespace LoKi
   template <class TYPE>
   inline
   LoKi::Functors::Source<TYPE>
-  source ( const std::string& path     ,
-           IDataProviderSvc*  svc  = 0 )
-  {
-    return LoKi::Functors::Source<TYPE>( path , svc ) ;
-  }
+  source ( const std::string&      path ,
+           const IDataProviderSvc* svc  )
+  { return LoKi::Functors::Source<TYPE>( svc , path ) ; }
   // ==========================================================================
-} //                                                      end of namespace LoKi
+  template <class TYPE>
+  inline
+  LoKi::Functors::Source<TYPE>
+  source ( const std::string&    path                ,
+           const GaudiAlgorithm* algorithm           ,
+           const bool            useRootInTES = true )
+  { return LoKi::Functors::Source<TYPE>( algorithm , path , useRootInTES ) ; }
+  // ==========================================================================
+} //                                                  The end of namespace LoKi
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_SOURCES_H
 // ============================================================================
