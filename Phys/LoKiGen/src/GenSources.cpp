@@ -21,67 +21,60 @@
 // constructor from the service, TES location and cuts
 // ============================================================================
 LoKi::GenParticles::SourceTES::SourceTES
-( const std::string&           path ,
-  IDataProviderSvc*            svc  ,
-  const LoKi::GenTypes::GCuts& cuts )
-  : m_path    ( path )
-  , m_dataSvc ( svc  )
-  , m_cut     ( cuts )
-{}
-// ============================================================================
-// constructor from the service, TES location and cuts
-// ============================================================================
-LoKi::GenParticles::SourceTES::SourceTES
-( const std::string&           path ,
+( const IDataProviderSvc*      svc  ,
   const LoKi::GenTypes::GCuts& cuts ,
-  IDataProviderSvc*            svc  )
-  : m_path    ( path )
-  , m_dataSvc ( svc  )
-  , m_cut     ( cuts )
-{}
-// ============================================================================
-// constructor from the service, TES location and cuts
-// ============================================================================
-LoKi::GenParticles::SourceTES::SourceTES
-( const LoKi::GenTypes::GCuts& cuts ,
-  const std::string&           path ,
-  IDataProviderSvc*            svc  )
-  : m_path    ( path )
-  , m_dataSvc ( svc  )
-  , m_cut     ( cuts )
-{}
-// ============================================================================
-// constructor from the service, TES location and cuts
-// ============================================================================
-LoKi::GenParticles::SourceTES::SourceTES
-( const LoKi::GenTypes::GCuts& cuts ,
-  IDataProviderSvc*            svc  ,
   const std::string&           path )
-  : m_path    ( path )
-  , m_dataSvc ( svc  )
-  , m_cut     ( cuts )
+  : LoKi::AuxFunBase   ( std::tie ( svc , cuts , path ) ) 
+  , SourceTES::_Base   ( svc , path ) 
+  , m_cut              ( cuts )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::GenParticles::SourceTES::SourceTES
+( const IDataProviderSvc*      svc  ,
+  const std::string&           path )
+  : LoKi::AuxFunBase   ( std::tie ( svc , path ) ) 
+  , SourceTES::_Base   ( svc , path ) 
+  , m_cut              ( LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant ( true ) )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::GenParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*        svc          ,
+  const LoKi::GenTypes::GCuts& cuts         ,
+  const std::string&           path         ,
+  const bool                   useRootInTES ) 
+  : LoKi::AuxFunBase   ( std::tie ( svc , cuts , path , useRootInTES ) ) 
+  , SourceTES::_Base   ( svc , path , useRootInTES ) 
+  , m_cut              ( cuts )
+{}
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::GenParticles::SourceTES::SourceTES
+( const GaudiAlgorithm*        svc          ,
+  const std::string&           path         , 
+  const bool                   useRootInTES ) 
+  : LoKi::AuxFunBase   ( std::tie ( svc , path , useRootInTES ) ) 
+  , SourceTES::_Base   ( svc , path , useRootInTES ) 
+  , m_cut              ( LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant ( true ) )
 {}
 // ============================================================================
 // MANDATORY: the only essential method:
 std::vector<const HepMC::GenParticle*>
 LoKi::GenParticles::SourceTES::operator() () const
 {
-  if ( !m_dataSvc )
-  {
-    const LoKi::Services& svcs = LoKi::Services::instance() ;
-    m_dataSvc = svcs.evtSvc() ;
-    Assert ( m_dataSvc.validPointer ( )               ,
-             "Could not locate valid IDataProvidrSvc" ) ;
-  }
-  SmartDataPtr<LHCb::HepMCEvent::Container> events
-    ( m_dataSvc , m_path ) ;
-  const LHCb::HepMCEvent::Container* evts = events ;
-  Assert ( 0 != evts , "No valid data is found at location '"+m_path+"'") ;
+  
+  const LHCb::HepMCEvent::Container* events = 
+    LoKi::TES::get_<LHCb::HepMCEvent::Container>( *this ) ;
+  Assert ( events , "No valid data is found at location '"+ path() +"'") ;
   std::vector<const HepMC::GenParticle*> particles ;
   particles.reserve ( 2000 ) ;
   //
   LoKi::Extract::getGenParticles
-    ( evts , std::back_inserter ( particles ) , m_cut.func () ) ;
+    ( events , std::back_inserter ( particles ) , m_cut.func () ) ;
   //
   return particles ;
 }
@@ -90,7 +83,7 @@ LoKi::GenParticles::SourceTES::operator() () const
 // ============================================================================
 std::ostream&
 LoKi::GenParticles::SourceTES::fillStream ( std::ostream& o ) const
-{ return o << "GSOURCE(" << m_path << "," << m_cut << ")" ; }
+{ return o << "GSOURCE(" << path () << "," << m_cut << ")" ; }
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================

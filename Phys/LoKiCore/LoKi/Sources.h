@@ -78,18 +78,20 @@ namespace LoKi
       Source ( const Source& right )  = default;
       /// MANDATORY: clone method ("virtual constructor")
       Source* clone() const override { return new Source ( *this ) ; }
-      /// MANATORY: the only one essenial method
-      TYPE2 operator() ( ) const override
-      {
-        /// get the data from TES:
-        const TYPE3* data = LoKi::TES::get_<TYPE3>( *this ) ;
-        /// check the validity:
-        Assert ( data , "No valid data is found at '" + this->path() + "'" ) ;
-        /// return the valid data
-        return { data->begin() , data->end() } ;
-      }
-      // ======================================================================
+      /// MANDATORY: the only one essenial method
+      TYPE2 operator() ( ) const override ;
     } ;
+    // ======================================================================
+    template <class TYPE, class TYPE2, class TYPE3>
+    TYPE2 Source<TYPE,TYPE2,TYPE3>::operator() ( ) const
+    {
+      /// get the data from TES:
+      const TYPE3* data = LoKi::TES::get_<TYPE3>( *this ) ;
+      /// check the validity:
+      Assert ( data , "No valid data is found at '" + this->path() + "'" ) ;
+      /// return the valid data
+      return { data->begin() , data->end() } ;
+    }
     // ========================================================================
   } //                                          end of namespace LoKi::Functors
   // ==========================================================================
