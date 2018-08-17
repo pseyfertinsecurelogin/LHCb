@@ -1,7 +1,4 @@
 #include "STDet/StatusMap.h"
-#if !(defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L)
-#include <boost/assign/list_of.hpp>
-#endif
 
 const Status::StatusToStringMap& Status::statusDescription() {
   static const Status::StatusToStringMap s_map = {{DeSTSector::OK, "OK"},

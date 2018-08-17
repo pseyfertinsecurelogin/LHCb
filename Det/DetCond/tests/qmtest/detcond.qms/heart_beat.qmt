@@ -20,6 +20,7 @@ HBTEST = CondDBAccessSvc("HBTEST", ConnectionString="sqlite_file:../data/HBTEST.
 HBTEST.HeartBeatCondition = "/Conditions/Online/HeartBeatTest/Tick"
 
 CondDB().addAlternative(HBTEST, "/Conditions/Online/HeartBeatTest")
+CondDB().Tags["DDDB"] = "dddb-20171030-2"
 
 from Configurables import DetCondTest__TestConditionAlg
 alg = DetCondTest__TestConditionAlg()

@@ -33,29 +33,29 @@ namespace {
 
 std::unique_ptr<LHCb::Trajectory<double>> LHCb::PiecewiseTrajectory::clone() const
 {
-  return std::unique_ptr<LHCb::Trajectory<double>>(new LHCb::PiecewiseTrajectory(*this));
+  return std::make_unique<LHCb::PiecewiseTrajectory>(*this);
 }
 
 LHCb::PiecewiseTrajectory::PiecewiseTrajectory(const PiecewiseTrajectory& rhs)
   :LHCb::Trajectory<double>(rhs)
 {
   for ( const auto& i : rhs.m_traj ) {
-    append(i.first->clone().release());
+    append(i.first->clone());
   }
 }
 
 void
-LHCb::PiecewiseTrajectory::append(LHCb::Trajectory<double> *t)
+LHCb::PiecewiseTrajectory::append(std::unique_ptr<LHCb::Trajectory<double>> t)
 {
-  m_traj.emplace_back(std::unique_ptr<LHCb::Trajectory<double>>{t},endRange());
-  setRange(beginRange(),endRange()+t->endRange()-t->beginRange());
+  const auto& i = m_traj.emplace_back(std::move(t),endRange()).first;
+  setRange(beginRange(),endRange()+i->endRange()-i->beginRange());
 }
 
 void
-LHCb::PiecewiseTrajectory::prepend(LHCb::Trajectory<double> *t)
+LHCb::PiecewiseTrajectory::prepend(std::unique_ptr<LHCb::Trajectory<double>> t)
 {
   auto newBeginRange = beginRange()-(t->endRange()-t->beginRange());
-  m_traj.emplace_front(std::unique_ptr<LHCb::Trajectory<double>>{t},newBeginRange);
+  m_traj.emplace_front(std::move(t),newBeginRange);
   setRange(newBeginRange,endRange());
 }
 

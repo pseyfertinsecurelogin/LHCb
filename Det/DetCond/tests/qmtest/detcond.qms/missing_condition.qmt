@@ -10,6 +10,7 @@ from Configurables import (DDDBConf, CondDB, EventClockSvc, FakeEventTime,
                            CondDBAccessSvc, CondDBTimeSwitchSvc)
 
 DDDBConf()
+CondDB().Tags["DDDB"] = "dddb-20171030-2"
 
 ecs = EventClockSvc()
 ecs.addTool(FakeEventTime,"EventTimeDecoder")

@@ -16,8 +16,3 @@ std::ostream& LHCb::CaloHypo::fillStream(std::ostream& s) const
   return s << "\n }";
 }
 
-LHCb::CaloHypo* LHCb::CaloHypo::clone() const
-{
-  CaloHypo* hypo = new CaloHypo( *this );
-  return hypo;
-}
