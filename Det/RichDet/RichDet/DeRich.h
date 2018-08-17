@@ -214,43 +214,38 @@ public:
   }
 
   /**
-   * Check on which side of this Rich lies this (x,y) point (Scalar)
+   * Check on which side of this Rich lies this (x,y) point
    *
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  template< typename TYPE,
-            typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
-  inline Rich::Side side( const TYPE x, const TYPE y ) const noexcept
+  template< typename TYPE >
+  inline decltype(auto) side( const TYPE x, const TYPE y ) const noexcept
   {
-    return ( Rich::Rich1 == rich()                 ?
-             ( y < 0 ? Rich::bottom : Rich::top  ) :
-             ( x < 0 ? Rich::right  : Rich::left ) );
-  }
-
-  /**
-   * Check on which side of this Rich lies this (x,y) point (SIMD)
-   *
-   * @param point A point in the global coordinate system
-   * @return The side for this point
-   */
-  template< typename TYPE,
-            typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-  inline Rich::SIMD::Sides side( const TYPE x, const TYPE y ) const noexcept
-  {
-    using namespace Rich::SIMD;
-    Sides sides( Rich::firstSide ); // R1 top or R2 left
-    // update as needed to R1 bottom or R2 right
-    // Is there a better way to do ??
-    if ( Rich::Rich1 == rich() )
+    if constexpr ( std::is_arithmetic<TYPE>::value )
     {
-      sides( LHCb::SIMD::simd_cast<Sides::MaskType>( y < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+      // Scalar
+      return ( Rich::Rich1 == rich()                 ?
+               ( y < 0 ? Rich::bottom : Rich::top  ) :
+               ( x < 0 ? Rich::right  : Rich::left ) );
     }
     else
     {
-      sides( LHCb::SIMD::simd_cast<Sides::MaskType>( x < TYPE::Zero() ) ) = Sides( Rich::secondSide );
-    }
-    return sides;
+      // SIMD
+      using namespace Rich::SIMD;
+      Sides sides( Rich::firstSide ); // R1 top or R2 left
+      // update as needed to R1 bottom or R2 right
+      // Is there a better way to do ??
+      if ( Rich::Rich1 == rich() )
+      {
+        sides( LHCb::SIMD::simd_cast<Sides::MaskType>( y < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+      }
+      else
+      {
+        sides( LHCb::SIMD::simd_cast<Sides::MaskType>( x < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+      }
+      return sides;
+    } 
   }
 
   /**

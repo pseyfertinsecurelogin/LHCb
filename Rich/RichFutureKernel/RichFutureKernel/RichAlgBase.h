@@ -17,33 +17,30 @@
 // local
 #include "RichFutureKernel/RichCommonBase.h"
 
-namespace Rich
+namespace Rich::Future
 {
-  namespace Future
+
+  //-----------------------------------------------------------------------------
+  /** @class AlgBase RichAlgBase.h RichFutureKernel/RichAlgBase.h
+   *
+   *  Abstract base class for RICH algorithms providing
+   *  some basic functionality.
+   *
+   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+   *  @date   05/04/2002
+   */
+  //-----------------------------------------------------------------------------
+
+  class AlgBase : public CommonBase<GaudiAlgorithm>
   {
 
-    //-----------------------------------------------------------------------------
-    /** @class AlgBase RichAlgBase.h RichFutureKernel/RichAlgBase.h
-     *
-     *  Abstract base class for RICH algorithms providing
-     *  some basic functionality.
-     *
-     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-     *  @date   05/04/2002
-     */
-    //-----------------------------------------------------------------------------
+  public:
 
-    class AlgBase : public CommonBase<GaudiAlgorithm>
-    {
+    /// Standard constructor
+    AlgBase( const std::string& name,
+             ISvcLocator* pSvcLocator )
+      : CommonBase<GaudiAlgorithm> ( name, pSvcLocator ) { }
 
-    public:
+  };
 
-      /// Standard constructor
-      AlgBase( const std::string& name,
-               ISvcLocator* pSvcLocator )
-        : CommonBase<GaudiAlgorithm> ( name, pSvcLocator ) { }
-
-    };
-
-  }
 }

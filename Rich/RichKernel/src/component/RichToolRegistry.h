@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_RICHTOOLREGISTRY_H
-#define RICHKERNEL_RICHTOOLREGISTRY_H 1
+#pragma once
 
 // STL
 #include <map>
@@ -88,5 +87,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHKERNEL_RICHTOOLREGISTRY_H

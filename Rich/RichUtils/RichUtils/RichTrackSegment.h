@@ -65,7 +65,7 @@ namespace LHCb
   {
 
   public:
-    
+
     /// Vector of track segments
     using Vector = Rich::SIMD::STDVector<RichTrackSegment>;
 
@@ -77,7 +77,7 @@ namespace LHCb
 
     /// SIMD Vector Type
     using SIMDVector = Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP>;
-    
+
   private:
 
     /** Add two points together
@@ -86,8 +86,8 @@ namespace LHCb
      *  @return The point represented by "p1+p2"
      */
     template < typename POINT >
-    inline POINT add_points ( const POINT & p1,
-                              const POINT & p2 ) const noexcept
+      inline POINT add_points ( const POINT & p1,
+                                const POINT & p2 ) const noexcept
     {
       return { p1.x()+p2.x(), p1.y()+p2.y(), p1.z()+p2.z() };
     }
@@ -99,7 +99,7 @@ namespace LHCb
     {
       return ( Rich::Rich1Gas == rad ? 4.25f :  // C4F10
                Rich::Rich2Gas == rad ? 4.40f :  // CF4
-               3.00f                        );  // Aerogel 
+               3.00f                        );  // Aerogel
     }
 
   public: // helper classes
@@ -129,7 +129,7 @@ namespace LHCb
                    const float errTX2 , ///< error on x slope squared
                    const float errTY2 , ///< error on y slope squared
                    const float errP2    ///< error on momentum squared
-                   )
+        )
         : m_errX2  ( fabsf(errX2)  ),
           m_errY2  ( fabsf(errY2)  ),
           m_errTX2 ( fabsf(errTX2) ),
@@ -142,7 +142,7 @@ namespace LHCb
                    const double errTX2, ///< error on x slope squared
                    const double errTY2, ///< error on y slope squared
                    const double errP2   ///< error on momentum squared
-                   )
+        )
         : StateErrors( (float)errX2,
                        (float)errY2,
                        (float)errTX2,
@@ -151,7 +151,7 @@ namespace LHCb
 
       /// Constructor from a State object
       template< typename STATE >
-      StateErrors( const STATE& state )
+        StateErrors( const STATE& state )
         : StateErrors( (float)state.errX2(),
                        (float)state.errY2(),
                        (float)state.errTx2(),
@@ -201,7 +201,7 @@ namespace LHCb
     {
     private:
       /// 9 elements (3x3 matrix) representing the rotation
-      std::array<SIMDFP,9> fM; 
+      std::array<SIMDFP,9> fM;
     public:
       /// Default Constructor
       SIMDRotation3D() { }
@@ -209,7 +209,7 @@ namespace LHCb
       SIMDRotation3D( const Gaudi::Rotation3D & rot )
       {
         std::array<Gaudi::Rotation3D::Scalar,9> m;
-        rot.GetComponents( m[0], m[1], m[2], 
+        rot.GetComponents( m[0], m[1], m[2],
                            m[3], m[4], m[5],
                            m[6], m[7], m[8] );
         for ( int i = 0; i < 9; ++i ) { fM[i] = m[i]; }
@@ -230,11 +230,11 @@ namespace LHCb
     inline void initTwoPoints() noexcept
     {
       // create middle state
-      setMiddleState ( add_points(entryPoint(),exitPoint())*0.5, 
+      setMiddleState ( add_points(entryPoint(),exitPoint())*0.5,
                        (entryMomentum()+exitMomentum())*0.5 );
       // Note the above calls updateCachedInfo() so no need to do it here.
     }
-    
+
     /// Helper method for three point constructor
     inline void initThreePoints() noexcept
     {
@@ -254,12 +254,12 @@ namespace LHCb
      *  Information is moved in this implementation.
      */
     template < class INTERS >
-    RichTrackSegment( INTERS && inters,              ///< The radiator intersections
-                      const Rich::RadiatorType rad,  ///< The radiator type
-                      const Rich::DetectorType rich, ///< The detector type
-                      const StateErrors& entryErrs = StateErrors{}, ///< The segment errors at the entry point
-                      const StateErrors& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
-                      )
+      RichTrackSegment( INTERS && inters,              ///< The radiator intersections
+                        const Rich::RadiatorType rad,  ///< The radiator type
+                        const Rich::DetectorType rich, ///< The detector type
+                        const StateErrors& entryErrs = StateErrors{}, ///< The segment errors at the entry point
+                        const StateErrors& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
+        )
       : m_radiator         ( rad                      ),
         m_rich             ( rich                     ),
         m_radIntersections ( std::forward<INTERS>(inters) ),
@@ -267,9 +267,9 @@ namespace LHCb
         m_errorsMiddle     ( Rich::Rich1Gas == rad ? exitErrs : entryErrs ), // CRJ : Is this best ?
         m_errorsExit       ( exitErrs                 ),
         m_avPhotonEnergy   ( avPhotEn(rad)            )
-    {
-      initTwoPoints();
-    }
+        {
+          initTwoPoints();
+        }
 
     /** Constructor that uses the supplied radiator intersections for the entry and exit points.
      *
@@ -278,15 +278,15 @@ namespace LHCb
      *  Information is moved in this implementation.
      */
     template < class INTERS >
-    RichTrackSegment( INTERS && inters,               ///< The radiator intersections
-                      const Gaudi::XYZPoint & middP,  ///< The mid point in the radiator
-                      const Gaudi::XYZVector & middV, ///< The momentum vector at the radiator mid point
-                      const Rich::RadiatorType rad,   ///< The radiator type
-                      const Rich::DetectorType rich,  ///< The detector type
-                      const StateErrors& entryErrors  = StateErrors{}, ///< The segment errors at the entry point
-                      const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
-                      const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
-                      )
+      RichTrackSegment( INTERS && inters,               ///< The radiator intersections
+                        const Gaudi::XYZPoint & middP,  ///< The mid point in the radiator
+                        const Gaudi::XYZVector & middV, ///< The momentum vector at the radiator mid point
+                        const Rich::RadiatorType rad,   ///< The radiator type
+                        const Rich::DetectorType rich,  ///< The detector type
+                        const StateErrors& entryErrors  = StateErrors{}, ///< The segment errors at the entry point
+                        const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
+                        const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
+        )
       : m_radiator         ( rad                      ),
         m_rich             ( rich                     ),
         m_radIntersections ( std::forward<INTERS>(inters) ),
@@ -296,9 +296,9 @@ namespace LHCb
         m_errorsMiddle     ( middleErrors             ),
         m_errorsExit       ( exitErrors               ),
         m_avPhotonEnergy   ( avPhotEn(rad)            )
-    {
-      initThreePoints();
-    }
+        {
+          initThreePoints();
+        }
 
     // ------------------------------------------------------------------------------------------------------
 
@@ -332,42 +332,36 @@ namespace LHCb
      *  @param theta The angle between input direction and the segment
      *  @param phi   The azimuthal angle of the direction around the segment
      */
-    template < typename VECTOR, typename TYPE,
-               typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    template < typename VECTOR, typename TYPE >
     inline void angleToDirection ( const VECTOR & direction,
                                    TYPE & theta,
                                    TYPE & phi ) const
     {
-      // create vector in track reference frame
-      const auto r = m_rotation * direction;
-      // compute theta and phi directly from the vector components
-      phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
-      theta = Rich::Maths::fast_atan2( (TYPE)std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
-      // correct phi to range 0 - 2PI
-      constexpr TYPE twopi = (TYPE)(2.0*M_PI);
-      if ( phi < 0 ) { phi += twopi; }
-    }
+      if constexpr ( std::is_arithmetic<TYPE>::value )
+      {
+        // scalar implementation
+    
+        // create vector in track reference frame
+        const auto r = m_rotation * direction;
+        // compute theta and phi directly from the vector components
+        phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
+        theta = Rich::Maths::fast_atan2( TYPE( std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ) ), r.z() );
+        // correct phi to range 0 - 2PI
+        constexpr TYPE twopi = TYPE(2.0*M_PI);
+        if ( phi < 0 ) { phi += twopi; }
+      }
+      else
+      {
+        // SIMD version
 
-    /** Calculates the theta and phi angles of a direction with respect to
-     *  the segment direction
-     *
-     *  @param direction Direction to which to calculate the angles for this segment
-     *  @param theta The angle between input direction and the segment
-     *  @param phi   The azimuthal angle of the direction around the segment
-     */
-    template < typename VECTOR, typename TYPE,
-               typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline void angleToDirection ( const VECTOR & direction,
-                                   TYPE & theta,
-                                   TYPE & phi ) const
-    {
-      // create vector in track reference frame
-      const auto r = m_rotationSIMD * direction;
-      // compute theta and phi directly from the vector components
-      phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
-      theta = Rich::Maths::fast_atan2( std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
-      // correct phi to range 0 - 2PI
-      phi( phi < TYPE::Zero() ) += TYPE( 2.0*M_PI );
+        // create vector in track reference frame
+        const auto r = m_rotationSIMD * direction;
+        // compute theta and phi directly from the vector components
+        phi   = Rich::Maths::fast_atan2( r.y(), r.x() );
+        theta = Rich::Maths::fast_atan2( std::sqrt( (r.x()*r.x()) + (r.y()*r.y()) ), r.z() );
+        // correct phi to range 0 - 2PI
+        phi( phi < TYPE::Zero() ) += TYPE( 2.0*M_PI );
+      }
     }
 
     /** Creates a vector at an given angle and azimuth to the track segment
@@ -378,8 +372,8 @@ namespace LHCb
      *  @return The vector at the given theta and phi angles to this track segment
      */
     template < typename TYPE >
-    inline decltype(auto) vectorAtThetaPhi ( const TYPE& theta,
-                                             const TYPE& phi ) const
+      inline decltype(auto) vectorAtThetaPhi ( const TYPE& theta,
+                                               const TYPE& phi ) const
     {
       TYPE sinTheta(0), cosTheta(0), sinPhi(0), cosPhi(0);
       Rich::Maths::fast_sincos( theta, sinTheta, cosTheta );
@@ -418,10 +412,10 @@ namespace LHCb
      *
      *  @return The vector at the given theta and phi angles to this track segment
      */
-    inline decltype(auto) vectorAtCosSinThetaPhi ( const SIMDFP& cosTheta,
-                                                   const SIMDFP& sinTheta,
-                                                   const SIMDFP& cosPhi,
-                                                   const SIMDFP& sinPhi ) const noexcept
+    inline decltype(auto) vectorAtCosSinThetaPhi ( const SIMDFP cosTheta,
+                                                   const SIMDFP sinTheta,
+                                                   const SIMDFP cosPhi,
+                                                   const SIMDFP sinPhi ) const noexcept
     {
       return m_rotation2SIMD * SIMDVector( sinTheta*cosPhi,
                                            sinTheta*sinPhi,
@@ -469,56 +463,54 @@ namespace LHCb
       return m_exitPointSIMD;
     }
 
-    // need to double check this is correct...
     /// Returns the z coordinate at a given fractional distance along segment
-    template< typename TYPE,
-              typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    template< typename TYPE >
     inline TYPE zCoordAt( const TYPE fraction ) const
     {
-      return fraction*exitPoint().z() + (1-fraction)*entryPoint().z();
-    }
-
-    /// Returns the z coordinate at a given fractional distance along segment
-    template< typename TYPE,
-              typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline TYPE zCoordAt( const TYPE& fraction ) const
-    {
-      return fraction*exitPointSIMD().z() + (TYPE::One()-fraction)*entryPointSIMD().z();
+      if constexpr ( std::is_arithmetic<TYPE>::value )
+      {
+        // scalar implementation
+        return fraction*exitPoint().z() + (1-fraction)*entryPoint().z();
+      }
+      else
+      {
+        // SIMD version
+        return fraction*exitPointSIMD().z() + (TYPE::One()-fraction)*entryPointSIMD().z();
+      }
     }
 
     /// Returns the best space point for segment at a given fractional distance along segment.
     /// Zero gives the entry point, one gives the exit point
-    template< typename TYPE,
-              typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline Gaudi::XYZPoint bestPoint( const TYPE fractDist ) const
+    template< typename TYPE >
+    inline decltype(auto) bestPoint( const TYPE fractDist ) const
     {
       // return the best point
-      return ( zCoordAt(fractDist) < middlePoint().z() ?
-               entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
-               middlePoint() + (m_exitMidV*((fractDist-m_midFrac2)/m_midFrac2)) );
+      if constexpr ( std::is_arithmetic<TYPE>::value )
+      {
+        // scalar implementation
+        return ( zCoordAt(fractDist) < middlePoint().z() ?
+                 entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
+                 middlePoint() + (m_exitMidV*((fractDist-m_midFrac2)/m_midFrac2)) );
+      }
+      else
+      {
+        // SIMD version
+        auto p = middlePointSIMD() + (m_exitMidVSIMD*((fractDist-m_midFrac2SIMD)/m_midFrac2SIMD));
+        const auto mask = zCoordAt(fractDist) < middlePointSIMD().z();
+        if ( any_of(mask) ) // need to decide if it helps to do this
+        {
+          const auto p2 = entryPointSIMD() + (fractDist*m_invMidFrac1SIMD*m_midEntryVSIMD);
+          // Need to fix GenVector to allow direct blending of those types..
+          SIMDFP x(p.x()), y(p.y()), z(p.z());
+          x(mask) = p2.x();
+          y(mask) = p2.y();
+          z(mask) = p2.z();
+          p = SIMDPoint( x, y, z );
+        }
+        return p;
+      }
     }
 
-    /// Returns the best space point for segment at a given fractional distance along segment.
-    /// Zero gives the entry point, one gives the exit point
-    template< typename TYPE,
-              typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline SIMDPoint bestPoint( const TYPE& fractDist ) const
-    {
-      auto p = middlePointSIMD() + (m_exitMidVSIMD*((fractDist-m_midFrac2SIMD)/m_midFrac2SIMD));
-      const auto mask = zCoordAt(fractDist) < middlePointSIMD().z();
-      if ( any_of(mask) ) // need to decide if it helps to do this
-      { 
-        const auto p2 = entryPointSIMD() + (fractDist*m_invMidFrac1SIMD*m_midEntryVSIMD);
-        // Need to fix GenVector to allow direct blending of those types..
-        SIMDFP x(p.x()), y(p.y()), z(p.z());
-        x(mask) = p2.x();
-        y(mask) = p2.y();
-        z(mask) = p2.z();
-        p = SIMDPoint( x, y, z );
-      }
-      return p;
-    }
-    
     /// Returns the best estimate of the average point in the radiator
     /// Equivalent to RichTrackSegment::bestPoint(0.5), but more efficient
     inline const Gaudi::XYZPoint& bestPoint() const noexcept
@@ -720,7 +712,7 @@ namespace LHCb
 
     /// SIMD Entry Point
     SIMDPoint m_entryPointSIMD;
- 
+
     /// SIMD Exit Point
     SIMDPoint m_exitPointSIMD;
 
@@ -728,7 +720,7 @@ namespace LHCb
     SIMDPoint m_middlePointSIMD;
 
     /// Entry to middle point vector
-    SIMDVector m_midEntryVSIMD;  
+    SIMDVector m_midEntryVSIMD;
 
     /// Middle to exit point vector
     SIMDVector m_exitMidVSIMD;
@@ -737,7 +729,7 @@ namespace LHCb
     SIMDFP m_midFrac2SIMD;     ///< Cached fraction 2
 
     /// SIMD rotations
-    SIMDRotation3D m_rotationSIMD, m_rotation2SIMD; 
+    SIMDRotation3D m_rotationSIMD, m_rotation2SIMD;
 
   private: // Some variables for internal caching of information for speed
 
@@ -763,5 +755,5 @@ namespace LHCb
     /// Default Location in TES for the track segments
     static const std::string Default = "Rec/Rich/TrackSegments/Default";
   }
-  
+
 } // end LHCb namespace
