@@ -211,8 +211,7 @@ inline StatusCode LoKi::Hybrid::HltFactory::_get
   std::string code =
     makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
   // define and lock the scope:
-  LoKi::Hybrid::HltLock lock ( this ) ;   ///< ATTENTION: the scope is locked!!
-  //
+  LoKi::Hybrid::HltLock lock ( this , make_context () ) ;   
   // use the base class method
   StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
   if ( sc.isFailure() )
