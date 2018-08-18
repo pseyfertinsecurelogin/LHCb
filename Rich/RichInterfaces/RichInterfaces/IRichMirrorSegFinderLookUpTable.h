@@ -474,17 +474,9 @@ namespace Rich::Future
       {
         return find( p.x() );
       }
-      /// Find the mirror for a given position (x,y) {Scalar)
-      template< typename TYPE,
-                typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+      /// Find the mirror for a given position (x,y)
+      template< typename TYPE >
       inline decltype(auto) find( const TYPE x, const TYPE /* y */ ) const noexcept
-      {
-        return find( x );
-      }
-      /// Find the mirror for a given position (x,y) {SIMD)
-      template< typename TYPE,
-                typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-      inline decltype(auto) find( const TYPE & x, const TYPE /* y */ ) const noexcept
       {
         return find( x );
       }
