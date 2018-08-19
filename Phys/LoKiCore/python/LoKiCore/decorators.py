@@ -2748,7 +2748,7 @@ def hybrid_context_deco ( objects_dct , context ) :
         vt.hybrid_decorated        = True
         context.decorated.add ( vt ) 
         n_deco +=1 
-        print  'decorate class %s/%s/%s' % ( s , v , vt )
+        ##print  'decorate class %s/%s/%s' % ( s , v , vt )
             
     return n_deco     
         
