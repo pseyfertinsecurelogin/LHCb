@@ -98,7 +98,7 @@ std::string Gaudi::Utils::toCpp ( const LHCb::LHCbID& v )
 { return "LHCb::LHCbID("  + toCpp ( v.lhcbID() )+ ")" ; }
 // ============================================================================
 std::string Gaudi::Utils::toCpp ( const IDVAlgorithm*   /* a */ ) 
-{ return "context.advlgo()" ; }  
+{ return "context.dvalgo()" ; }  
 std::string Gaudi::Utils::toCpp ( const GaudiAlgorithm* /* a */ ) 
 { return "context.algo()"   ; } 
 // ============================================================================

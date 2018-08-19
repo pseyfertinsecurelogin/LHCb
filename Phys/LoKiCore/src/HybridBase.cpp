@@ -41,6 +41,7 @@
 #include "boost/algorithm/string/replace.hpp"
 #include "boost/algorithm/string/predicate.hpp"
 #include "boost/algorithm/string/erase.hpp"
+#include "boost/algorithm/string/split.hpp"
 #include "boost/format.hpp"
 #include "boost/lexical_cast.hpp"
 // ============================================================================
@@ -95,11 +96,13 @@ namespace
   }
   // ==========================================================================
   /// Helper class to protect calls to Python code with the GIL.
-  struct PyGILGuard {
-    PyGILGuard(): gstate(PyGILState_Ensure()) {}
-    ~PyGILGuard() { PyGILState_Release(gstate); }
+  struct PyGILGuard 
+  {
+    PyGILGuard  ():  gstate( PyGILState_Ensure() ) {}
+    ~PyGILGuard () { PyGILState_Release(gstate); }
     PyGILState_STATE gstate;
   };
+  // ==========================================================================
 }
 // ============================================================================
 // Standard constructor
@@ -115,6 +118,7 @@ LoKi::Hybrid::Base::Base
                      "#include \"GaudiKernel/SystemOfUnits.h\""     ,
                      "#include \"GaudiKernel/PhysicalConstants.h\"" ,
                      "#include \"LoKi/Functors.h\""                 ,
+                     "#include \"LoKi/Context.h\""                  ,
                      "#include \"LoKi/CacheFactory.h\""             ,
                      "#include \"LoKi/FunctorCache.h\""             , } )
 {
@@ -311,33 +315,22 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
       std::string _text        ;
       std::string _msg         ;
       std::string _message     ;
-
-      if ( filename )
-      { info () << "Filename: " << toString ( *filename ) << endmsg ; }
-      if ( lineno   ) {
+      
+      if ( filename ) { info () << "Filename: " << toString ( *filename ) << endmsg ; }
+      if ( lineno   ) 
+      {
         info () << "Lineno  : " << toString ( *lineno ) << endmsg ;
         if ( PyInt_Check ( lineno.get() ) ) { _lineno = PyInt_AsLong ( lineno.get() ) ;  }
       }
-      if ( offset   ) {
+      if ( offset   ) 
+      {
         info () << "offset  : " << toString ( *offset ) << endmsg ;
         if ( PyInt_Check ( offset.get() ) ) { _offset = PyInt_AsLong ( offset.get() ) ;  }
       }
-      if ( text     ) {
-        _text = toString ( *text ) ;
-        info () << "text    : " << _text << endmsg ;
-      }
-      if ( msg      ) {
-        _msg  = toString ( *msg ) ;
-        info () << "msg     : " << _msg  << endmsg ;
-      }
-      if ( message  ) {
-        _message = toString ( *message ) ;
-        info () << "message : " << _message << endmsg ;
-      }
-      if ( prntfal  ) {
-        info () << "prntfal : " << toString( *prntfal )  << endmsg ;
-      }
-
+      if ( text     ) { _text    = toString ( *text    ) ; info () << "text    : " << _text    << endmsg ; }
+      if ( msg      ) { _msg     = toString ( *msg     ) ; info () << "msg     : " << _msg     << endmsg ; }
+      if ( message  ) { _message = toString ( *message ) ; info () << "message : " << _message << endmsg ; }
+      if ( prntfal  ) { info () << "prntfal : " << toString( *prntfal )  << endmsg ; }
       {
         MsgStream& stream = error ()  ;
         stream
@@ -354,10 +347,11 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
         { stream  << "      " << std::string(_offset,' ') << '^'      ; }
         stream<< endmsg ;
       }
-
       // restore for printout
       PyErr_Restore ( o1 , o2 , o3 ) ;
-    } else {
+    } 
+    else 
+    {
       // restore for printout
       PyErr_Restore ( o1 , o2 , o3 ) ;
     }
@@ -405,6 +399,26 @@ std::string LoKi::Hybrid::Base::makeCode
   boost::algorithm::replace_all ( _code , "\n"  , " " ) ;
   boost::algorithm::replace_all ( _code , "\\n" , " " ) ;
   boost::algorithm::trim        ( _code ) ;
+  {
+    std::string::size_type pos = _code.find ("&  ") ;
+    while ( std::string::npos != pos ) 
+    { _code.replace( pos , 3 , "& " ) ; pos = _code.find ("&  " , pos + 1 ) ; }
+  }
+  {
+    std::string::size_type pos = _code.find ("|  ") ;
+    while ( std::string::npos != pos ) 
+    { _code.replace( pos , 3 , "| " ) ; pos = _code.find ("|  " , pos + 1 ) ; }
+  }
+  {
+    std::string::size_type pos = _code.find ("  &") ;
+    while ( std::string::npos != pos ) 
+    { _code.replace( pos , 3 , " &" ) ; pos = _code.find ("  &" , pos + 1 ) ; }
+  }
+  {
+    std::string::size_type pos = _code.find ("  |") ;
+    while ( std::string::npos != pos ) 
+    { _code.replace( pos , 3 , " |" ) ; pos = _code.find ("  |" , pos + 1 ) ; }
+  }
   //
   // trim and remove the paired quotes:
   _code = trimCode ( _code ) ;
@@ -432,33 +446,51 @@ std::string LoKi::Hybrid::Base::makeCode
   stream   << "## End of MODULES\n" ;
   //
   stream   << "## The ACTOR :\n" ;
-  stream   << "_actor=" << actor << '\n' ;
-  //
-  const std::string ntab ("      " );
-  stream   << "_context = _actor.context () if hasattr ( _actor , 'context' ) else None \n" 
+  stream   << "_actor   = " << actor << '\n' ;
+  const std::string ntab ( 8 , ' ' ) ;
+  stream   << "_context = _actor.context  () if hasattr ( _actor , 'context' ) else None\n" 
            << "from LoKiCore.decorators import HybridContext, hybrid_context_deco       \n" 
-           << "_algo   = _context.  algo () if _context else None                       \n" 
-           << "_dvalgo = _context.dvalgo () if _context else None                       \n" 
+           << "_algo    = _context.  algo () if _context else None                      \n" 
+           << "_dvalgo  = _context.dvalgo () if _context else None                      \n" 
            << "with HybridContext ( algo = _algo , dvalgo = _dvalgo ) as context :      \n" 
            << ntab << "hybrid_context_deco ( locals().copy() , context )                \n" ;
   /// insert additional lines:
   if ( !lines.empty() ) 
   {
     stream << ntab << "##        LINES :\n" ;
-    for ( const auto& l : lines ) { stream << ntab << l << '\n' ; }
+    for ( const auto& l : lines ) 
+    { 
+      std::vector<std::string> _lines ;
+      boost::algorithm::split ( _lines , l , boost::is_any_of("\n") ) ;
+      for (  const  auto& ll : _lines ) 
+      { 
+        std::string lll = ll ;
+        boost::algorithm::replace_all ( lll , "\\t" , "\t" ) ;
+        boost::algorithm::replace_all ( lll , "\t"  , ntab ) ;
+        stream << ntab << lll << '\n' ; 
+      } 
+    }
     stream << ntab << "hybrid_context_deco ( locals().copy() , context ) \n" 
            << ntab << "## end of LINES  " << '\n' ;
   }
   /// insert preambulo
   if ( !context.empty() ) 
   {
-    std::string _context      = context ;
-    std::string::size_type p  = _context.find('\n') ;
-    while ( std::string::npos != p ) 
-    { _context.insert ( p + 1 , ntab ) ; p = _context.find('\n', p + 1 ) ; }
-    stream << ntab << "##        PREAMBULO :\n"   
-           << ntab << _context << '\n' 
-           << ntab << "## End of PREAMBULO  \n" 
+    std::string _context      = "\n" + context ;
+    boost::algorithm::replace_all ( _context , "\\n"    , "\n" ) ;
+    boost::algorithm::replace_all ( _context , "\\t"    , "\t" ) ;
+    boost::algorithm::replace_all ( _context , "\t"     , ntab ) ;
+    //
+    std::string::size_type pos = _context.find('\n') ;
+    while ( std::string::npos != pos ) 
+    { _context.insert ( pos + 1 , ntab ) ; pos = _context.find ( '\n' , pos + 1 ) ; }
+    //
+    // boost::algorithm::replace_all ( _context , "\n"     , "\n"+ntab ) ;
+    std::vector<std::string> context_ ;
+    boost::algorithm::split       ( context_ , _context , boost::is_any_of("\n") ) ;
+    stream << ntab << "##        PREAMBULO :\n" ;
+    for (  const  auto& ll : context_ ) { stream << ll << '\n' ; }
+    stream << ntab << "## End of PREAMBULO  \n" 
            << ntab << "hybrid_context_deco ( locals().copy() , context ) \n" ;
   }
   /// and finally the code 
@@ -468,9 +500,9 @@ std::string LoKi::Hybrid::Base::makeCode
   /// the most important line: send the created python object to C++
   stream   << ntab << "sc = _actor.process( '" << name () << "' , _code ) \n" ;
   //
-  stream   << "# " << std::string(78,'=') <<        '\n' 
-           << "#"  << std::string(60,' ') << "The END\n" 
-           << "# " << std::string(78,'=') <<        '\n' ;
+  stream   << "#"  << std::string ( 78 , '=' ) <<        '\n' 
+           << "##" << std::string ( 70 , ' ' ) << "The END\n" 
+           << "#"  << std::string ( 78 , '=' ) <<        '\n' ;
   //
   std::string result = stream.str() ;
   if ( msgLevel ( MSG::DEBUG ) || showCode() )
@@ -572,7 +604,6 @@ void LoKi::Hybrid::Base::writeCpp () const
   // Negative: write N-functors per file
   // Zero    : write one file
   //
-  //
   if ( !boost::conversion::try_lexical_convert ( split_, split ) ) { split = 0 ; }
   //
   //
@@ -637,10 +668,6 @@ LoKi::Context LoKi::Hybrid::Base::make_context () const
     Error("Can't get the context service!") ;
     return LoKi::Context() ;
   }
-  always() << "I am context: " 
-           << " ALGO   : " << Gaudi::Utils::toCpp (  Gaudi::Utils::getGaudiAlg     ( cntx )  ) 
-           << " DVALGO : " << Gaudi::Utils::toCpp (  Gaudi::Utils::getIDVAlgorithm ( cntx )  ) 
-           <<  endmsg ;  
   return LoKi::Context ( Gaudi::Utils::getGaudiAlg     ( cntx ) ,
                          Gaudi::Utils::getIDVAlgorithm ( cntx ) )  ;
 }

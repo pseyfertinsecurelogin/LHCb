@@ -188,9 +188,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the type/name for LoKi/Bender "hybrid" factory
-    std::string m_factory = { "<UNSPECIFIED>" } ; // the type/name for LoKi/Bender "hybrid" factory
+    std::string m_factory = { "<UNSPECIFIED>" } ;     // hybrid factory
     /// the filter/code criteria itself
-    std::string m_code = { "<unspecified>" };                // the filter/code criteria itself
+    std::string m_code = { "<unspecified>" }; // the filter/code criteria itself
     /// the preambulo itself
     std::vector<std::string> m_preambulo_ ;             // the preambulo itself
     /// the preambulo itself
@@ -207,7 +207,7 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-} //                                                      end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

@@ -215,15 +215,15 @@ namespace LoKi
     private:
       // ======================================================================
       /// "void   -> ..."
-      std::unique_ptr<LoKi::Types::FCuts>    m_fcut ;                     // predicate
-      std::unique_ptr<LoKi::Types::FFunc>    m_ffun ;                     //  function
+      std::unique_ptr<LoKi::Types::FCuts>    m_fcut    ; // predicate
+      std::unique_ptr<LoKi::Types::FFunc>    m_ffun    ; //  function
       /// "double -> ... "
-      std::unique_ptr<LoKi::Types::XCuts>    m_xcut ;                     // predicate
-      std::unique_ptr<LoKi::Types::XFunc>    m_xfun ;                     //  function
+      std::unique_ptr<LoKi::Types::XCuts>    m_xcut    ; // predicate
+      std::unique_ptr<LoKi::Types::XFunc>    m_xfun    ; //  function
       /// functional
-      std::unique_ptr<LoKi::Types::XMaps>    m_xmap ;                       // map/pipe
-      std::unique_ptr<LoKi::Types::XFunVals> m_xfunval ;              // funval/element
-      std::unique_ptr<LoKi::Types::XSources> m_xsource ;                      // source
+      std::unique_ptr<LoKi::Types::XMaps>    m_xmap    ; // map/pipe
+      std::unique_ptr<LoKi::Types::XFunVals> m_xfunval ; // funval/element
+      std::unique_ptr<LoKi::Types::XSources> m_xsource ; // source
       // ======================================================================
       Gaudi::Property<std::vector<std::string>> m_modules 
       { this, 
@@ -243,9 +243,9 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } //                                        The end of namespace LoKi::Hybrid
   // ==========================================================================
-} // end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
 // helper method to sdave many lines:
 // ============================================================================
@@ -257,15 +257,14 @@ inline StatusCode LoKi::Hybrid::CoreFactory::_get
   const std::string&                                context )
 {
   // prepare the actual python code
-  std::string code = 
-    makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
+  std::string code = makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
   /// define and lock the scope:
   LoKi::Hybrid::CoreLock lock ( this , make_context () ) ;  // ATTENTION: the scope is locked!!
   // use the base class method
   StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
   if ( sc.isFailure() )
   { return Error ( "Invalid object for the code '" + pycode + "' (hash: " +
-    std::to_string(LoKi::Cache::makeHash(code)) + ")" ) ; } // RETURN
+                   std::to_string( LoKi::Cache::makeHash ( code ) ) + ")" ) ; } // RETURN
   //
   return StatusCode::SUCCESS ;
 }
