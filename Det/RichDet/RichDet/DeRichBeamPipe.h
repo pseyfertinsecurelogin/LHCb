@@ -207,65 +207,62 @@ private:
                   0.5 * ( p1.y() + p2.y() ),
                   0.5 * ( p1.z() + p2.z() ) );
   }
-  
-  /// Scalar Test if the given start and end points are 'close' to the beampipe or not
-  template< typename POINT,
-            typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline bool isCloseBy( const POINT& start,
-                         const POINT& end ) const
-  {
-    return ( isCloseBy(start) || isCloseBy(end) );
-  }
 
-  /// SIMD Test if the given start and end points are 'close' to the beampipe or not
-  template< typename POINT,
-            typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  /// Test if the given start and end points are 'close' to the beampipe or not
+  template< typename POINT >
   inline decltype(auto) isCloseBy( const POINT& start,
                                    const POINT& end ) const
   {
-    auto mask = isCloseBy(start);
-    if ( !all_of(mask) ) { mask |= isCloseBy(end); }
-    return mask;
+    if constexpr ( std::is_arithmetic<typename POINT::Scalar>::value )
+    {
+      // scalar
+      return ( isCloseBy(start) || isCloseBy(end) );
+    }
+    else
+    {
+      // SIMD
+      auto mask = isCloseBy(start);
+      if ( !all_of(mask) ) { mask |= isCloseBy(end); }
+      return mask;
+    }
   }
 
-  /// Scalar Test if the given point is 'close' to the beampipe or not
-  template< typename POINT,
-            typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline bool isCloseBy( const POINT& p ) const
-  {
-    // Get the closest z coord in the beam pipe
-    const auto beamz  = ( p.z() > m_endPGlo.z()   ? m_endPGlo.z()   :
-                          p.z() < m_startPGlo.z() ? m_startPGlo.z() :
-                          p.z() );
-    // Get (beam pipe axis (x,y) and R^2 at this point in z position
-    const auto beamx  = ( m_m[0] * beamz ) + m_c[0];
-    const auto beamy  = ( m_m[1] * beamz ) + m_c[1];
-    const auto beamR2 = ( m_m[2] * beamz ) + m_c[2];
-    const auto dx     = beamx - p.x();
-    const auto dy     = beamy - p.y();
-    const auto dz     = beamz - p.z();
-    const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
-    return ( dist2 < beamR2 );
-  }
-
-  /// SIMD Test if the given point is 'close' to the beampipe or not
-  template< typename POINT,
-            typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  /// Test if the given point is 'close' to the beampipe or not
+  template< typename POINT >
   inline decltype(auto) isCloseBy( const POINT& p ) const
   {
-    // Get the closest z coord in the beam pipe
-    auto beamz = p.z();
-    beamz( beamz > m_endPGloSIMD.z()   ) = m_endPGloSIMD.z();
-    beamz( beamz < m_startPGloSIMD.z() ) = m_startPGloSIMD.z();
-    // Get beam pipe axis (x,y) and R^2 at this point in z position
-    const auto beamx  = ( m_mSIMD[0] * beamz ) + m_cSIMD[0];
-    const auto beamy  = ( m_mSIMD[1] * beamz ) + m_cSIMD[1];
-    const auto beamR2 = ( m_mSIMD[2] * beamz ) + m_cSIMD[2];
-    const auto dx     = beamx - p.x();
-    const auto dy     = beamy - p.y();
-    const auto dz     = beamz - p.z();
-    const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
-    return ( dist2 < beamR2 );
+    if constexpr ( std::is_arithmetic<typename POINT::Scalar>::value )
+    {
+      // Scalar - Get the closest z coord in the beam pipe
+      const auto beamz  = ( p.z() > m_endPGlo.z()   ? m_endPGlo.z()   :
+                            p.z() < m_startPGlo.z() ? m_startPGlo.z() :
+                            p.z() );
+      // Get (beam pipe axis (x,y) and R^2 at this point in z position
+      const auto beamx  = ( m_m[0] * beamz ) + m_c[0];
+      const auto beamy  = ( m_m[1] * beamz ) + m_c[1];
+      const auto beamR2 = ( m_m[2] * beamz ) + m_c[2];
+      const auto dx     = beamx - p.x();
+      const auto dy     = beamy - p.y();
+      const auto dz     = beamz - p.z();
+      const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
+      return ( dist2 < beamR2 );
+    }
+    else
+    {
+      // SIMD - Get the closest z coord in the beam pipe
+      auto beamz = p.z();
+      beamz( beamz > m_endPGloSIMD.z()   ) = m_endPGloSIMD.z();
+      beamz( beamz < m_startPGloSIMD.z() ) = m_startPGloSIMD.z();
+      // Get beam pipe axis (x,y) and R^2 at this point in z position
+      const auto beamx  = ( m_mSIMD[0] * beamz ) + m_cSIMD[0];
+      const auto beamy  = ( m_mSIMD[1] * beamz ) + m_cSIMD[1];
+      const auto beamR2 = ( m_mSIMD[2] * beamz ) + m_cSIMD[2];
+      const auto dx     = beamx - p.x();
+      const auto dy     = beamy - p.y();
+      const auto dz     = beamz - p.z();
+      const auto dist2  = ( (dx*dx) + (dy*dy) + (dz*dz) );
+      return ( dist2 < beamR2 );
+    }
   }
 
 private: // data

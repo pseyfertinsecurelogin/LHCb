@@ -23,114 +23,111 @@
 
 //===================================================================================
 
-namespace Rich
+namespace Rich::DAQ
 {
-  namespace DAQ
+
+  /** @namespace Rich::DAQ::RichNonZeroSuppDataV3
+   *
+   *  Namespace for version 3 of the RichNonZeroSuppData object.
+   *
+   *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
+   *  @date   2004-12-17
+   */
+  namespace RichNonZeroSuppDataV3
   {
 
-    /** @namespace Rich::DAQ::RichNonZeroSuppDataV3
+    /// Import HPD specific parameters
+    using namespace Rich::DAQ::HPD;
+
+    /** @class RichNonZeroSuppData RichNonZeroSuppData_V3.h
      *
-     *  Namespace for version 3 of the RichNonZeroSuppData object.
+     *  The RICH HPD non zero suppressed data format.
+     *  Second iteration of the format. Identical to version 1
+     *  apart from reversing the order the rows are encoded/decoded.
      *
-     *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
-     *  @date   2004-12-17
+     *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
+     *  @date   2003-11-07
+     *
+     *  @todo Update 8 bit words + 1 value
      */
-    namespace RichNonZeroSuppDataV3
+    template< class Version, class Header, class Footer >
+    class RichNonZeroSuppData : public PDDataBankImp<Version,Header,Footer>,
+                                public LHCb::MemPoolAlloc<RichNonZeroSuppDataV3::RichNonZeroSuppData<Version,Header,Footer> >
     {
 
-      /// Import HPD specific parameters
-      using namespace Rich::DAQ::HPD;
+    public:
 
-      /** @class RichNonZeroSuppData RichNonZeroSuppData_V3.h
+      /// Default constructor
+      RichNonZeroSuppData()
+        : PDDataBankImp<Version,Header,Footer>( MaxDataSize )
+      { }
+
+      /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
        *
-       *  The RICH HPD non zero suppressed data format.
-       *  Second iteration of the format. Identical to version 1
-       *  apart from reversing the order the rows are encoded/decoded.
-       *
-       *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
-       *  @date   2003-11-07
-       *
-       *  @todo Update 8 bit words + 1 value
+       *  @param l0ID   L0 board hardware identifier
+       *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
+       *  @param extendedFormat
+       *  @param odin   Pointer to the ODIN data object
        */
-      template< class Version, class Header, class Footer >
-      class RichNonZeroSuppData : public PDDataBankImp<Version,Header,Footer>,
-                                  public LHCb::MemPoolAlloc<RichNonZeroSuppDataV3::RichNonZeroSuppData<Version,Header,Footer> >
+      explicit RichNonZeroSuppData( const Level0ID l0ID,
+                                    const LHCb::RichSmartID::Vector & digits,
+                                    const bool extendedFormat = false,
+                                    const LHCb::ODIN * odin = nullptr )
+        : PDDataBankImp<Version,Header,Footer> ( Header( false, // Not ZS
+                                                         false, // Not ALICE mode
+                                                         extendedFormat, // data format
+                                                         false, // No GT inhibit
+                                                         l0ID,  // The L0 ID
+                                                         EventID( odin ? odin->eventNumber() : 0 ), // Event ID
+                                                         0 // filled by buildData call below in main body
+                                                   ),
+                                                 Footer(),
+                                                 0, MaxDataSize, MaxDataSize )
       {
+        buildData( digits );
+      }
 
-      public:
+      /** Constructor from a block of raw data
+       *
+       *  @param data Pointer to the start of the data block
+       */
+      explicit RichNonZeroSuppData( const LongType * data )
+        : PDDataBankImp<Version,Header,Footer> ( data, // start of data
+                                                 MaxDataSize // max data bloxk size
+          )
+      { }
 
-        /// Default constructor
-        RichNonZeroSuppData()
-          : PDDataBankImp<Version,Header,Footer>( MaxDataSize )
-        { }
+      /// Destructor
+      ~RichNonZeroSuppData() = default;
 
-        /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
-         *
-         *  @param l0ID   L0 board hardware identifier
-         *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
-         *  @param extendedFormat
-         *  @param odin   Pointer to the ODIN data object
-         */
-        explicit RichNonZeroSuppData( const Level0ID l0ID,
-                                      const LHCb::RichSmartID::Vector & digits,
-                                      const bool extendedFormat = false,
-                                      const LHCb::ODIN * odin = nullptr )
-          : PDDataBankImp<Version,Header,Footer> ( Header( false, // Not ZS
-                                                           false, // Not ALICE mode
-                                                           extendedFormat, // data format
-                                                           false, // No GT inhibit
-                                                           l0ID,  // The L0 ID
-                                                           EventID( odin ? odin->eventNumber() : 0 ), // Event ID
-                                                           0 // filled by buildData call below in main body
-                                                     ),
-                                                    Footer(),
-                                                    0, MaxDataSize, MaxDataSize )
-        {
-          buildData( digits );
-        }
+      // Fill a vector with RichSmartIDs for hit pixels
+      ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                  const LHCb::RichSmartID hpdID ) const override final;
 
-        /** Constructor from a block of raw data
-         *
-         *  @param data Pointer to the start of the data block
-         */
-        explicit RichNonZeroSuppData( const LongType * data )
-          : PDDataBankImp<Version,Header,Footer> ( data, // start of data
-                                                   MaxDataSize // max data bloxk size
-                                                    )
-        { }
+    private: // methods
 
-        /// Destructor
-        ~RichNonZeroSuppData() = default;
+      /// Build data array from vector of RichSmartIDs
+      void buildData( const LHCb::RichSmartID::Vector & digits );
 
-        // Fill a vector with RichSmartIDs for hit pixels
-        ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                    const LHCb::RichSmartID hpdID ) const override final;
+      /// Calculates number of 8-bit words in the data
+      ShortType calcEightBitword( const LHCb::RichSmartID::Vector & digits ) const;
 
-      private: // methods
+      /// Set a pixel as active
+      inline void setPixelActive( const ShortType row,
+                                  const ShortType col ) noexcept
+      {
+        this->setBit( this->data()[this->maxDataSize()-(row+1)], col );
+      }
 
-        /// Build data array from vector of RichSmartIDs
-        void buildData( const LHCb::RichSmartID::Vector & digits );
+      /// Is a given pixel active ?
+      inline bool isPixelActive( const ShortType row,
+                                 const ShortType col ) const noexcept
+      {
+        return this->isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
+      }
 
-        /// Calculates number of 8-bit words in the data
-        ShortType calcEightBitword( const LHCb::RichSmartID::Vector & digits ) const;
+    };
 
-        /// Set a pixel as active
-        inline void setPixelActive( const ShortType row,
-                                    const ShortType col ) noexcept
-        {
-          this->setBit( this->data()[this->maxDataSize()-(row+1)], col );
-        }
+  } // RichNonZeroSuppDataV3 namespace
 
-        /// Is a given pixel active ?
-        inline bool isPixelActive( const ShortType row,
-                                   const ShortType col ) const noexcept
-        {
-          return this->isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
-        }
-
-      };
-
-    } // RichNonZeroSuppDataV3 namespace
-
-  }
 }

@@ -8,26 +8,17 @@
 #include "Event/Track.h"
 #include "Event/MCParticle.h"
 
-// Relations 
-#include "Relations/IRelationWeighted2D.h" 
+// Relations
+#include "Relations/IRelationWeighted2D.h"
 #include "Relations/RelationWeighted2D.h"
 
-namespace Rich
+namespace Rich::Future::MC::Relations
 {
-  namespace Future
-  {
-    namespace MC
-    {
-      namespace Relations
-      {
 
-        /// Type for Track <-> MCparticle relations
-        using TkToMCPRels = LHCb::RelationWeighted2D<LHCb::Track*,LHCb::MCParticle*,double>;
+  /// Type for Track <-> MCparticle relations
+  using TkToMCPRels = LHCb::RelationWeighted2D<LHCb::Track*,LHCb::MCParticle*,double>;
 
-        /// Default TES location for Track <-> MCparticle relations
-        static const std::string TrackToMCParticles = "MC/Rich/TrackToMCParticleRelations";
+  /// Default TES location for Track <-> MCparticle relations
+  static const std::string TrackToMCParticles = "MC/Rich/TrackToMCParticleRelations";
 
-      }
-    }
-  }
 }

@@ -100,26 +100,19 @@ namespace Rich
     /** Reset the data for all mass hypotheses. Following this call all data
      *  fields will be flagged as invalid (i.e. unset)
      *
-     *  This implementation is for arithemtic types, and sets the value to 0
-     *
      *  @attention The data values themselves are unaffected
      */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<T>::value >::type
-    resetData() noexcept { resetData( 0 );  }
-
-    /** Reset the data for all mass hypotheses. Following this call all data
-     *  fields will be flagged as invalid (i.e. unset)
-     *
-     *  This implementation is for pointer types, and sets the value to nullptr
-     *
-     *  @attention The data values themselves are unaffected
-     */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_pointer<T>::value >::type
-    resetData() noexcept { resetData( nullptr ); }
+    inline void resetData() noexcept 
+    {
+      if      constexpr ( std::is_arithmetic<TYPE>::value )
+      {
+        resetData( 0 );
+      }
+      else if constexpr ( std::is_pointer<TYPE>::value )
+      {
+        resetData( nullptr ); 
+      }
+    }
     
     /** Reset data for given particle hypothesis. Following this call the
      *  data for the given mas hypothesis will be flagged as invalid (i.e. unset)
@@ -132,35 +125,22 @@ namespace Rich
       m_valid[type] = false; 
       m_data[type]  = value;
     }
-    
-    /** Reset data for given particle hypothesis. Following this call the
-     *  data for the given mas hypothesis will be flagged as invalid (i.e. unset)
-     *
-     *  This implementation is for arithemtic types, and sets the value to 0
-     *
-     *  @param type  The mass hypothesis to reset
-     */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<T>::value >::type
-    resetData( const Rich::ParticleIDType type ) noexcept
-    {
-      resetData( type, 0 );
-    }
 
     /** Reset data for given particle hypothesis. Following this call the
      *  data for the given mas hypothesis will be flagged as invalid (i.e. unset)
      *
-     *  This implementation is for pointer types, and sets the value to nullptr
-     *
      *  @param type  The mass hypothesis to reset
      */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_pointer<T>::value >::type
-    resetData( const Rich::ParticleIDType type ) noexcept
+    inline void resetData( const Rich::ParticleIDType type ) noexcept
     {
-      resetData( type, nullptr );
+      if      constexpr ( std::is_arithmetic<TYPE>::value )
+      {    
+        resetData( type, 0 );
+      }
+      else if constexpr ( std::is_pointer<TYPE>::value )
+      {
+        resetData( type, nullptr );
+      }
     }
 
     /** Const Accessor to data array

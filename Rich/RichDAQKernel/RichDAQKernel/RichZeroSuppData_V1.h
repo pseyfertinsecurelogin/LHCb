@@ -20,86 +20,83 @@
 
 // =================================================================================
 
-namespace Rich
+namespace Rich::DAQ
 {
-  namespace DAQ
+
+  /** @namespace Rich::DAQ::RichZeroSuppDataV1
+   *
+   *  Namespace for version 1 of the RichZeroSuppData object.
+   *
+   *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
+   *  @date   2004-12-17
+   */
+  namespace RichZeroSuppDataV1
   {
 
-    /** @namespace Rich::DAQ::RichZeroSuppDataV1
+    /// Import HPD sepcific parameters
+    using namespace Rich::DAQ::HPD;
+
+    /** @class RichZeroSuppData RichZeroSuppData_V1.h
      *
-     *  Namespace for version 1 of the RichZeroSuppData object.
+     *  The RICH HPD zero suppressed data format.
+     *  Second iteration of the format. Identical to version 0
+     *  apart from a new header word format.
      *
-     *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
-     *  @date   2004-12-17
+     *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
+     *  @date   2003-11-07
      */
-    namespace RichZeroSuppDataV1
+    template< class Version, class Header, class Footer >
+    class RichZeroSuppData : public PDDataBankImp<Version,Header,Footer>,
+                             public LHCb::MemPoolAlloc<RichZeroSuppDataV1::RichZeroSuppData<Version,Header,Footer> >
     {
 
-      /// Import HPD sepcific parameters
-      using namespace Rich::DAQ::HPD;
+    public:
 
-      /** @class RichZeroSuppData RichZeroSuppData_V1.h
+      /// Default constructor
+      RichZeroSuppData() : PDDataBankImp<Version,Header,Footer>( MaxDataSize ) { }
+
+      /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
        *
-       *  The RICH HPD zero suppressed data format.
-       *  Second iteration of the format. Identical to version 0
-       *  apart from a new header word format.
-       *
-       *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
-       *  @date   2003-11-07
+       *  @param l0ID   Level0 board Hardware identifier
+       *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
        */
-      template< class Version, class Header, class Footer >
-      class RichZeroSuppData : public PDDataBankImp<Version,Header,Footer>,
-                               public LHCb::MemPoolAlloc<RichZeroSuppDataV1::RichZeroSuppData<Version,Header,Footer> >
+      explicit RichZeroSuppData( const Level0ID l0ID,
+                                 const LHCb::RichSmartID::Vector & digits )
+        : PDDataBankImp<Version,Header,Footer> ( Header ( true, l0ID, digits.size() ),
+                                                 Footer ( ),
+                                                 0, MaxDataSize )
       {
+        buildData( digits );
+      }
 
-      public:
+      /** Constructor from a block of raw data
+       *
+       *  @param data     Pointer to the start of the data block
+       *  @param dataSize The size of the data block (excluding header HPD word)
+       */
+      explicit RichZeroSuppData( const LongType * data,
+                                 const ShortType dataSize )
+        : PDDataBankImp<Version,Header,Footer> ( data,      // start of data
+                                                 MaxDataSize,  // max data block size
+                                                 dataSize )
+      { }
 
-        /// Default constructor
-        RichZeroSuppData() : PDDataBankImp<Version,Header,Footer>( MaxDataSize ) { }
+      /// Destructor
+      virtual ~RichZeroSuppData() = default;
 
-        /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
-         *
-         *  @param l0ID   Level0 board Hardware identifier
-         *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
-         */
-        explicit RichZeroSuppData( const Level0ID l0ID,
-                                   const LHCb::RichSmartID::Vector & digits )
-          : PDDataBankImp<Version,Header,Footer> ( Header ( true, l0ID, digits.size() ),
-                                                   Footer ( ),
-                                                   0, MaxDataSize )
-        {
-          buildData( digits );
-        }
+      // Fill a vector with RichSmartIDs for hit pixels
+      ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                  const LHCb::RichSmartID hpdID ) const override final;
 
-        /** Constructor from a block of raw data
-         *
-         *  @param data     Pointer to the start of the data block
-         *  @param dataSize The size of the data block (excluding header HPD word)
-         */
-        explicit RichZeroSuppData( const LongType * data,
-                                   const ShortType dataSize )
-          : PDDataBankImp<Version,Header,Footer> ( data,      // start of data
-                                                   MaxDataSize,  // max data block size
-                                                   dataSize )
-        { }
+    private: // methods
 
-        /// Destructor
-        virtual ~RichZeroSuppData() = default;
+      /// Build data array from vector of RichSmartIDs
+      void buildData( const LHCb::RichSmartID::Vector & pdHits );
 
-        // Fill a vector with RichSmartIDs for hit pixels
-        ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                    const LHCb::RichSmartID hpdID ) const override final;
+    };
 
-      private: // methods
+  } // end V1 namespace
 
-        /// Build data array from vector of RichSmartIDs
-        void buildData( const LHCb::RichSmartID::Vector & pdHits );
-
-      };
-
-    } // end V1 namespace
-
-  }
 }
 
 // =================================================================================
