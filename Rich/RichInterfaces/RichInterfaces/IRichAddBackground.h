@@ -35,21 +35,17 @@ namespace Rich
   {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IAddBackground, 1, 0 );
 
   public:
-
     /// Data structure for returned additional backgrounds
-    using HPDBackgrounds = Rich::HashMap<LHCb::RichSmartID,LHCb::RichSmartID::Vector>;
+    using HPDBackgrounds = Rich::HashMap< LHCb::RichSmartID, LHCb::RichSmartID::Vector >;
 
   public:
-
     /// Compute a set of background hits
-    virtual StatusCode createBackgrounds( HPDBackgrounds & backgrounds,
-                                          const bool aliceMode = false ) const = 0;
-
+    virtual StatusCode createBackgrounds( HPDBackgrounds &backgrounds,
+                                          const bool      aliceMode = false ) const = 0;
   };
 
-}
+} // namespace Rich

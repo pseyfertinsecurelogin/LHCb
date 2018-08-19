@@ -10,8 +10,8 @@
 #pragma once
 
 // Gaudi
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
 
 // numberings
 #include "RichUtils/RichDAQDefinitions.h"
@@ -48,59 +48,58 @@ namespace Rich::DAQ
     {
 
     public: // definitions
-
       /// Number of bits for each address
       static const IndexType BitsAddress = 8;
       /// Number of bits for each bit field
-      static const IndexType BitsField   = 8;
+      static const IndexType BitsField = 8;
 
     private: // definitions
-
       // shift registers
-      static const IndexType ShiftField0    = 0;
-      static const IndexType ShiftAddress0  = ShiftField0   + BitsField;
-      static const IndexType ShiftField1    = ShiftAddress0 + BitsAddress;
-      static const IndexType ShiftAddress1  = ShiftField1   + BitsField;
+      static const IndexType ShiftField0   = 0;
+      static const IndexType ShiftAddress0 = ShiftField0 + BitsField;
+      static const IndexType ShiftField1   = ShiftAddress0 + BitsAddress;
+      static const IndexType ShiftAddress1 = ShiftField1 + BitsField;
 
       // The masks
-      static const LongType  MaskField0   = (LongType) ((1 << BitsField)-1)   << ShiftField0;
-      static const LongType  MaskAddress0 = (LongType) ((1 << BitsAddress)-1) << ShiftAddress0;
-      static const LongType  MaskField1   = (LongType) ((1 << BitsField)-1)   << ShiftField1;
-      static const LongType  MaskAddress1 = (LongType) ((1 << BitsAddress)-1) << ShiftAddress1;
+      static const LongType MaskField0   = ( LongType )( ( 1 << BitsField ) - 1 ) << ShiftField0;
+      static const LongType MaskAddress0 = ( LongType )( ( 1 << BitsAddress ) - 1 )
+                                           << ShiftAddress0;
+      static const LongType MaskField1   = ( LongType )( ( 1 << BitsField ) - 1 ) << ShiftField1;
+      static const LongType MaskAddress1 = ( LongType )( ( 1 << BitsAddress ) - 1 )
+                                           << ShiftAddress1;
 
       // the max value of address and bit-field storable
-      static const ShortType MaxField     = ( 1 << BitsField   ) - 1;
-      static const ShortType MaxAddress   = ( 1 << BitsAddress ) - 1;
+      static const ShortType MaxField   = ( 1 << BitsField ) - 1;
+      static const ShortType MaxAddress = ( 1 << BitsAddress ) - 1;
 
     public: // methods
-
       /// Copy Constructor
-      RichZSPacked( const RichZSPacked & word )
-        : m_data( word.data() ), m_aliceMode( word.aliceMode() ) {}
+      RichZSPacked( const RichZSPacked &word )
+        : m_data( word.data() ), m_aliceMode( word.aliceMode() )
+      {}
 
       /// Constructor from LongType
-      RichZSPacked( const LongType data  = 0,
-                    const bool aliceMode = false )
-        : m_data( data ), m_aliceMode( aliceMode ) { }
+      RichZSPacked( const LongType data = 0, const bool aliceMode = false )
+        : m_data( data ), m_aliceMode( aliceMode )
+      {}
 
       /// Constructor from address and field values
-      RichZSPacked( const ShortType address0 ,  ///< First address to store
-                    const ShortType field0   ,  ///< First bitfield to store
-                    const ShortType address1 ,  ///< Second address to store
-                    const ShortType field1   ,  ///< Second bitfield to store
-                    const bool aliceMode = false
-        )
-        : m_data ( 0 ), m_aliceMode( aliceMode )
+      RichZSPacked( const ShortType address0, ///< First address to store
+                    const ShortType field0,   ///< First bitfield to store
+                    const ShortType address1, ///< Second address to store
+                    const ShortType field1,   ///< Second bitfield to store
+                    const bool      aliceMode = false )
+        : m_data( 0 ), m_aliceMode( aliceMode )
       {
         /// &todo Setup ALICE mode encoding properly
-        setAddress0  ( address0 );
-        setBitField0 ( field0   );
-        setAddress1  ( address1 );
-        setBitField1 ( field1   );
+        setAddress0( address0 );
+        setBitField0( field0 );
+        setAddress1( address1 );
+        setBitField1( field1 );
       }
 
       /// Destructor
-      ~RichZSPacked( ) = default;
+      ~RichZSPacked() = default;
 
       /// Retrieve the full value
       inline LongType data() const noexcept { return m_data; }
@@ -137,34 +136,21 @@ namespace Rich::DAQ
       }
 
       /// Retrieve the first address
-      inline ShortType address0() const
-      {
-        return ( (data() & MaskAddress0) >> ShiftAddress0 );
-      }
+      inline ShortType address0() const { return ( ( data() & MaskAddress0 ) >> ShiftAddress0 ); }
 
       /// Retrieve the first address
-      inline ShortType address1() const
-      {
-        return ( (data() & MaskAddress1) >> ShiftAddress1 );
-      }
+      inline ShortType address1() const { return ( ( data() & MaskAddress1 ) >> ShiftAddress1 ); }
 
       /// Retrieve the first bit-field
-      inline ShortType bitField0() const
-      {
-        return ( (data() & MaskField0) >> ShiftField0 );
-      }
+      inline ShortType bitField0() const { return ( ( data() & MaskField0 ) >> ShiftField0 ); }
 
       /// Retrieve the second bit-field
-      inline ShortType bitField1() const
-      {
-        return ( (data() & MaskField1) >> ShiftField1 );
-      }
+      inline ShortType bitField1() const { return ( ( data() & MaskField1 ) >> ShiftField1 ); }
 
       /// Is this in alice mode or not ?
       inline bool aliceMode() const { return m_aliceMode; }
 
     public:
-
       /** Get address from row and column information
        *  @param row LHCb pixel row number (0-31)
        *  @param col LHCb pixel col number (0-31)
@@ -175,32 +161,27 @@ namespace Rich::DAQ
                                           const ShortType col,
                                           const ShortType subPix = 0 ) const
       {
-        return ( !aliceMode() ?
-                 ( (MaxDataSize-1-row)*4 + col/BitsField ) :
-                 ( 4*(NumAlicePixelsPerLHCbPixel-1-subPix) +
-                   4*(MaxDataSize-1-row)*NumAlicePixelsPerLHCbPixel +
-                   col/BitsField ) % (1+MaxZSAddress)
-          );
+        return ( !aliceMode() ? ( ( MaxDataSize - 1 - row ) * 4 + col / BitsField ) :
+                                ( 4 * ( NumAlicePixelsPerLHCbPixel - 1 - subPix ) +
+                                  4 * ( MaxDataSize - 1 - row ) * NumAlicePixelsPerLHCbPixel +
+                                  col / BitsField ) %
+                                  ( 1 + MaxZSAddress ) );
       }
 
       /** Get bit number from column information
        *  @param col The LHCb pixel column number
        *  @return the bit (0-7) for the column
        */
-      inline ShortType bitFromCol( const ShortType col ) const
-      {
-        return col%BitsField;
-      }
+      inline ShortType bitFromCol( const ShortType col ) const { return col % BitsField; }
 
       /** Get column information from address and bit number
        *  @param address The 8-bit address
        *  @param bit     The bit (0-7)
        *  @return The LHCb pixel column number
        */
-      inline ShortType colFromAddressAndBit( const ShortType address,
-                                             const ShortType bit ) const
+      inline ShortType colFromAddressAndBit( const ShortType address, const ShortType bit ) const
       {
-        return bit + BitsField*(address%4);
+        return bit + BitsField * ( address % 4 );
       }
 
       /** Get row information from address
@@ -212,9 +193,9 @@ namespace Rich::DAQ
                                        const ShortType aliceModeOffset = 0 ) const
       {
         return ( !aliceMode() ?
-                 ( MaxDataSize - 1 - ( address/4) ) :
-                 ( MaxDataSize - 1 - ( (address/(4*NumAlicePixelsPerLHCbPixel)) + aliceModeOffset*8 ) )
-          );
+                   ( MaxDataSize - 1 - ( address / 4 ) ) :
+                   ( MaxDataSize - 1 -
+                     ( ( address / ( 4 * NumAlicePixelsPerLHCbPixel ) ) + aliceModeOffset * 8 ) ) );
       }
 
       /** get the ALICE sub-pixel number (0-7) from address
@@ -224,43 +205,35 @@ namespace Rich::DAQ
       inline ShortType subPixelFromAddress( const ShortType address ) const
       {
         return ( !aliceMode() ? 0 :
-                 NumAlicePixelsPerLHCbPixel - 1 - ( address % (4*NumAlicePixelsPerLHCbPixel) ) / 4
-          );
+                                NumAlicePixelsPerLHCbPixel - 1 -
+                                  ( address % ( 4 * NumAlicePixelsPerLHCbPixel ) ) / 4 );
       }
 
     private: // methods
-
       /// Update the internal data
       inline void setData( const LongType data ) noexcept { m_data = data; }
 
       /// Set the data value for a given mask and shift value
-      inline void set( const ShortType value,
-                       const ShortType shift,
-                       const LongType  mask )
+      inline void set( const ShortType value, const ShortType shift, const LongType mask )
       {
-        setData( ((value << shift) & mask) | (data() & ~mask) );
+        setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
       }
 
       /// tests whether a given value is in range for a given data field
-      inline void dataInRange( const ShortType value,
-                               const ShortType max ) const
+      inline void dataInRange( const ShortType value, const ShortType max ) const
       {
         if ( value > max )
-        {
-          throw GaudiException( "Data out of range", "*RichZSPacked*", StatusCode::FAILURE );
-        }
+        { throw GaudiException( "Data out of range", "*RichZSPacked*", StatusCode::FAILURE ); }
       }
 
     private: // data
-
       /// The data word
-      LongType m_data  = 0;
+      LongType m_data = 0;
 
       /// Alice mode flag
       bool m_aliceMode = false;
-
     };
 
-  }
+  } // namespace RichZSPacked_V2
 
-}
+} // namespace Rich::DAQ

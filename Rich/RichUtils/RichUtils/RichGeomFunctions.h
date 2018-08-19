@@ -22,7 +22,7 @@ namespace Rich
 
   /** @namespace Rich::Geom
    *
-   *  Namespace for a collection of geomtrical utilities, such as useful functions 
+   *  Namespace for a collection of geomtrical utilities, such as useful functions
    *  not available in ROOT's MatchCore or MathMore
    *
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
@@ -38,15 +38,14 @@ namespace Rich
      *
      *  @return Angle between vectors (in radians)
      */
-    template< typename VECT >
-    inline decltype(auto) AngleBetween( const VECT & a,
-                                        const VECT & b )
+    template < typename VECT >
+    inline decltype( auto ) AngleBetween( const VECT &a, const VECT &b )
     {
       const auto dd  = a.Mag2() * b.Mag2();
-      const auto arg = ( dd > 0 ? a.Dot(b) * vdt::fast_isqrt(dd) : 999.9 );
-      return ( fabs(arg) < 1 ? LHCb::Math::fast_acos(arg) : 0.0 );
+      const auto arg = ( dd > 0 ? a.Dot( b ) * vdt::fast_isqrt( dd ) : 999.9 );
+      return ( fabs( arg ) < 1 ? LHCb::Math::fast_acos( arg ) : 0.0 );
     }
-    
-  }
-  
-}
+
+  } // namespace Geom
+
+} // namespace Rich

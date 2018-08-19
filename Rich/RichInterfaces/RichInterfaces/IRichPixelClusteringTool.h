@@ -40,7 +40,6 @@ namespace Rich::DAQ
   {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IPixelClusteringTool, 1, 0 );
 
@@ -52,9 +51,8 @@ namespace Rich::DAQ
      *
      *  @attention The user takes ownership of the returned object.
      */
-    virtual std::unique_ptr<const Rich::PDPixelClusters>
-    findClusters( const LHCb::RichSmartID::Vector & smartIDs ) const = 0;
-
+    virtual std::unique_ptr< const Rich::PDPixelClusters >
+    findClusters( const LHCb::RichSmartID::Vector &smartIDs ) const = 0;
   };
 
-}
+} // namespace Rich::DAQ

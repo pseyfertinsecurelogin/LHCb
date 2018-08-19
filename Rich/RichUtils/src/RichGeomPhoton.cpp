@@ -13,15 +13,17 @@
 // local
 #include "RichUtils/RichGeomPhoton.h"
 
-std::ostream & LHCb::RichGeomPhoton::fillStream ( std::ostream& s ) const
+std::ostream &
+LHCb::RichGeomPhoton::fillStream( std::ostream &s ) const
 {
   s << "{ "
     << " cherenkovTheta:\t" << CherenkovTheta() << std::endl
     << " cherenkovPhi:\t" << CherenkovPhi() << std::endl
     << " emissionPoint:\t" << emissionPoint() << std::endl
     << " detectionPoint:\t" << detectionPoint() << std::endl
-    << " sphMirReflectionPoint:\t"<<sphMirReflectionPoint() << std::endl
-    << " flatMirReflectionPoint:\t"<<flatMirReflectionPoint() << std::endl
+    << " sphMirReflectionPoint:\t" << sphMirReflectionPoint() << std::endl
+    << " flatMirReflectionPoint:\t" << flatMirReflectionPoint()
+    << std::endl
     //<< " primaryMirror:\t" << primaryMirror() << std::endl
     //<< " secondaryMirror:\t" << secondaryMirror() << std::endl
     << " smartID:\t" << smartID() << std::endl

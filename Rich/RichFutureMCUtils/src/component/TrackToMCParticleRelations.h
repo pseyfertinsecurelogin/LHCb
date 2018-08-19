@@ -8,8 +8,8 @@
 #include "GaudiAlg/Transformer.h"
 
 // Event
-#include "Event/Track.h"
 #include "Event/MCParticle.h"
+#include "Event/Track.h"
 
 // Linkers
 #include "Linker/LinkedTo.h"
@@ -34,28 +34,22 @@ namespace Rich::Future::MC
    *  @author Chris Jones
    *  @date   2016-12-07
    */
-  class TrackToMCParticleRelations final :
-    public Transformer< Relations::TkToMCPRels( const LHCb::Tracks&,
-                                                const LHCb::MCParticles& ),
-    Traits::BaseClass_t<AlgBase> >
+  class TrackToMCParticleRelations final
+    : public Transformer< Relations::TkToMCPRels( const LHCb::Tracks &, const LHCb::MCParticles & ),
+                          Traits::BaseClass_t< AlgBase > >
   {
 
   public:
-
     /// Standard constructor
-    TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator );
+    TrackToMCParticleRelations( const std::string &name, ISvcLocator *pSvcLocator );
 
     /// Algorithm execution via transform
     Rich::Future::MC::Relations::TkToMCPRels
-      operator()( const LHCb::Tracks& tks,
-                  const LHCb::MCParticles& mcps ) const override;
+    operator()( const LHCb::Tracks &tks, const LHCb::MCParticles &mcps ) const override;
 
   private:
-
     /// Allow more than one MCParticle per track ?
-    Gaudi::Property<bool> m_allowMultMPs { this, "AllowMultipleMCPsPerTrack", true };
-
+    Gaudi::Property< bool > m_allowMultMPs{ this, "AllowMultipleMCPsPerTrack", true };
   };
 
-}
-
+} // namespace Rich::Future::MC

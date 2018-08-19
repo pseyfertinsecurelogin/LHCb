@@ -29,43 +29,42 @@ namespace Rich
     {
 
       // ------------------------------------------------------------------------------------------------
-      template< class Version, class Header, class Footer >
-      void RichZeroSuppALICEData<Version,Header,Footer>::
-      buildData( const LHCb::RichSmartID::Vector & /* pdHits */ )
+      template < class Version, class Header, class Footer >
+      void RichZeroSuppALICEData< Version, Header, Footer >::buildData(
+        const LHCb::RichSmartID::Vector & /* pdHits */ )
       {
         // Encoding not yet supported for ALICE mode ZS data
       }
       // ------------------------------------------------------------------------------------------------
 
       // ------------------------------------------------------------------------------------------------
-      template< class Version, class Header, class Footer >
-      ShortType
-      RichZeroSuppALICEData<Version,Header,Footer>::
-      fillRichSmartIDs ( LHCb::RichSmartID::Vector & ids,
-                         const LHCb::RichSmartID hpdID ) const
+      template < class Version, class Header, class Footer >
+      ShortType RichZeroSuppALICEData< Version, Header, Footer >::fillRichSmartIDs(
+        LHCb::RichSmartID::Vector &ids,
+        const LHCb::RichSmartID    hpdID ) const
       {
         using namespace RichZSPacked_V2;
 
         // Number of data words
         const ShortType nDataWords = this->dataSize();
-        
+
         // Count hits made
-        ShortType nHits(0);
+        ShortType nHits( 0 );
 
         // Is the last word padded or not ?
-        const bool lastWordIsPadded = ( 1 == this->header().nEightBitBlocks()%2 );
+        const bool lastWordIsPadded = ( 1 == this->header().nEightBitBlocks() % 2 );
 
         // rough guess at number of hits
         ids.reserve( nDataWords * 5 );
 
-        int addressOffsetEven(-1), addressOffsetOdd(-1);
+        int addressOffsetEven( -1 ), addressOffsetOdd( -1 );
 
         // Loop over data fields
         for ( ShortType iData = 0; iData < nDataWords; ++iData )
         {
 
           // Get packed data data (in ALICE mode)
-          const RichZSPacked zsData( this->data()[iData], true );
+          const RichZSPacked zsData( this->data()[ iData ], true );
 
           // First data word
           // Get first address and bit field
@@ -73,31 +72,37 @@ namespace Rich
           const ShortType bits0    = zsData.bitField0();
 
           // update offsets
-          if      ( 0 == address0 ) { ++addressOffsetEven; }
-          else if ( 1 == address0 ) { ++addressOffsetOdd;  }
+          if ( 0 == address0 ) { ++addressOffsetEven; }
+          else if ( 1 == address0 )
+          {
+            ++addressOffsetOdd;
+          }
 
           // which offset to use depends on if address is even or odd
-          const int & addressOffset0 = ( this->isEven(address0) ? addressOffsetEven : addressOffsetOdd );
+          const int &addressOffset0 =
+            ( this->isEven( address0 ) ? addressOffsetEven : addressOffsetOdd );
 
           if ( bits0 != 0 )
           {
 
             for ( ShortType iB = 0; iB < RichZSPacked::BitsField; ++iB )
             {
-              if ( this->isBitOn(bits0,iB) )
+              if ( this->isBitOn( bits0, iB ) )
               {
-                ids.emplace_back( hpdID.rich(), hpdID.panel(),
-                                  hpdID.pdNumInCol(), hpdID.pdCol(),
-                                  zsData.rowFromAddress(address0,addressOffset0),
-                                  zsData.colFromAddressAndBit(address0,iB),
-                                  zsData.subPixelFromAddress(address0) );
+                ids.emplace_back( hpdID.rich(),
+                                  hpdID.panel(),
+                                  hpdID.pdNumInCol(),
+                                  hpdID.pdCol(),
+                                  zsData.rowFromAddress( address0, addressOffset0 ),
+                                  zsData.colFromAddressAndBit( address0, iB ),
+                                  zsData.subPixelFromAddress( address0 ) );
                 ++nHits;
               }
             }
           }
 
           // Second data word
-          const bool notLastWord = (iData < this->dataSize()-1);
+          const bool notLastWord = ( iData < this->dataSize() - 1 );
           if ( notLastWord || !lastWordIsPadded )
           {
             // Get second address and bit field
@@ -105,36 +110,42 @@ namespace Rich
             const ShortType bits1    = zsData.bitField1();
 
             // update offsets
-            if      ( 0 == address1 ) { ++addressOffsetEven; }
-            else if ( 1 == address1 ) { ++addressOffsetOdd;  }
+            if ( 0 == address1 ) { ++addressOffsetEven; }
+            else if ( 1 == address1 )
+            {
+              ++addressOffsetOdd;
+            }
 
             // which offset to use depends on if address is even or odd
-            const int & addressOffset1 = ( this->isEven(address1) ? addressOffsetEven : addressOffsetOdd );
+            const int &addressOffset1 =
+              ( this->isEven( address1 ) ? addressOffsetEven : addressOffsetOdd );
 
             if ( ( !lastWordIsPadded || address0 != address1 || notLastWord ) && bits1 != 0 )
             {
               for ( ShortType iB = 0; iB < RichZSPacked::BitsField; ++iB )
               {
-                if ( this->isBitOn(bits1,iB) )
+                if ( this->isBitOn( bits1, iB ) )
                 {
-                  ids.emplace_back( LHCb::RichSmartID( hpdID.rich(), hpdID.panel(),
-                                                       hpdID.pdNumInCol(), hpdID.pdCol(),
-                                                       zsData.rowFromAddress(address1,addressOffset1),
-                                                       zsData.colFromAddressAndBit(address1,iB),
-                                                       zsData.subPixelFromAddress(address1) ) );
+                  ids.emplace_back(
+                    LHCb::RichSmartID( hpdID.rich(),
+                                       hpdID.panel(),
+                                       hpdID.pdNumInCol(),
+                                       hpdID.pdCol(),
+                                       zsData.rowFromAddress( address1, addressOffset1 ),
+                                       zsData.colFromAddressAndBit( address1, iB ),
+                                       zsData.subPixelFromAddress( address1 ) ) );
                   ++nHits;
                 }
               }
             }
           }
-
         }
 
         return nHits;
       }
       // ------------------------------------------------------------------------------------------------
 
-    } // V1 namespace
+    } // namespace RichZeroSuppALICEDataV1
 
-  }
-}
+  } // namespace DAQ
+} // namespace Rich

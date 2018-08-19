@@ -24,23 +24,24 @@ namespace Rich
     namespace RichZeroSuppDataV1
     {
 
-      template< class Version, class Header, class Footer >
-      void RichZeroSuppData<Version,Header,Footer>::buildData( const LHCb::RichSmartID::Vector & pdHits )
+      template < class Version, class Header, class Footer >
+      void RichZeroSuppData< Version, Header, Footer >::buildData(
+        const LHCb::RichSmartID::Vector &pdHits )
       {
 
         // Loop over digits and form groups of three
         auto iDigit = pdHits.begin();
         while ( iDigit != pdHits.end() )
         {
-          const LHCb::RichSmartID *one(&*iDigit), *two(nullptr), *three(nullptr);
+          const LHCb::RichSmartID *one( &*iDigit ), *two( nullptr ), *three( nullptr );
           ++iDigit;
           if ( iDigit != pdHits.end() )
           {
-            two = &(*iDigit);
+            two = &( *iDigit );
             ++iDigit;
             if ( iDigit != pdHits.end() )
             {
-              three = &(*iDigit);
+              three = &( *iDigit );
               ++iDigit;
             }
           }
@@ -49,16 +50,16 @@ namespace Rich
           this->addData( RichZSHitTriplet( one, two, three ) );
 
         } // end while loop
-
       }
 
-      template< class Version, class Header, class Footer >
-      Rich::DAQ::ShortType
-      RichZeroSuppData<Version,Header,Footer>::fillRichSmartIDs ( LHCb::RichSmartID::Vector & ids,
-                                                                  const LHCb::RichSmartID hpdID ) const
+      template < class Version, class Header, class Footer >
+      Rich::DAQ::ShortType RichZeroSuppData< Version, Header, Footer >::fillRichSmartIDs(
+        LHCb::RichSmartID::Vector &ids,
+        const LHCb::RichSmartID    hpdID ) const
       {
 
-        // For this implementation the header nEightBitBlocksPlusOne word contains the number of hits
+        // For this implementation the header nEightBitBlocksPlusOne word contains the number of
+        // hits
         const Rich::DAQ::ShortType digitCount = this->header().nEightBitBlocksPlusOne();
 
         // rough guess at number of hits
@@ -66,38 +67,47 @@ namespace Rich
 
         // Loop over data fields
         Rich::DAQ::ShortType nDigitsMade = 0;
-        for ( Rich::DAQ::ShortType iData = 0; iData < this->dataSize(); ++iData ) {
+        for ( Rich::DAQ::ShortType iData = 0; iData < this->dataSize(); ++iData )
+        {
 
           // Get triplet data
-          const RichZSHitTriplet triplet( this->data()[iData] );
+          const RichZSHitTriplet triplet( this->data()[ iData ] );
 
           // Make first smartid from triplet
-          ids.emplace_back( hpdID.rich(), hpdID.panel(),
-                            hpdID.pdNumInCol(), hpdID.pdCol(),
-                            triplet.row0(), triplet.col0() );
+          ids.emplace_back( hpdID.rich(),
+                            hpdID.panel(),
+                            hpdID.pdNumInCol(),
+                            hpdID.pdCol(),
+                            triplet.row0(),
+                            triplet.col0() );
           ++nDigitsMade;
           if ( nDigitsMade == digitCount ) break;
 
           // Make second smartid from triplet
-          ids.emplace_back( hpdID.rich(), hpdID.panel(),
-                            hpdID.pdNumInCol(), hpdID.pdCol(),
-                            triplet.row1(), triplet.col1() );
+          ids.emplace_back( hpdID.rich(),
+                            hpdID.panel(),
+                            hpdID.pdNumInCol(),
+                            hpdID.pdCol(),
+                            triplet.row1(),
+                            triplet.col1() );
           ++nDigitsMade;
           if ( nDigitsMade == digitCount ) break;
 
           // Make third smartid from triplet
-          ids.emplace_back( hpdID.rich(), hpdID.panel(),
-                            hpdID.pdNumInCol(), hpdID.pdCol(),
-                            triplet.row2(), triplet.col2() );
+          ids.emplace_back( hpdID.rich(),
+                            hpdID.panel(),
+                            hpdID.pdNumInCol(),
+                            hpdID.pdCol(),
+                            triplet.row2(),
+                            triplet.col2() );
           ++nDigitsMade;
           if ( nDigitsMade == digitCount ) break;
-
         }
 
         return nDigitsMade;
       }
 
-    } // V1 namespace
+    } // namespace RichZeroSuppDataV1
 
-  }
-}
+  } // namespace DAQ
+} // namespace Rich

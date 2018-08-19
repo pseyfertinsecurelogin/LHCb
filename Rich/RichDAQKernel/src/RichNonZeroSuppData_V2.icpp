@@ -28,43 +28,40 @@ namespace Rich
     namespace RichNonZeroSuppDataV2
     {
 
-      template< class Version, class Header, class Footer >
-      void
-      RichNonZeroSuppData<Version,Header,Footer>::buildData( const LHCb::RichSmartID::Vector & digits )
+      template < class Version, class Header, class Footer >
+      void RichNonZeroSuppData< Version, Header, Footer >::buildData(
+        const LHCb::RichSmartID::Vector &digits )
       {
         // Set data words
-        for ( const auto& digit : digits )
-        {
-          setPixelActive( digit.pixelRow(), digit.pixelCol() );
-        }
+        for ( const auto &digit : digits ) { setPixelActive( digit.pixelRow(), digit.pixelCol() ); }
         // set footer parity
         if ( this->footer().hasParityWord() )
         {
           Footer foot = this->footer();
-          foot.setParityWord( this->createParityWord(digits) );
-          this->setFooter(foot);
+          foot.setParityWord( this->createParityWord( digits ) );
+          this->setFooter( foot );
         }
         // Fill the number of 8 bit words + 1 field in header
-        Header head ( this->header() );
-        head.setNEightBitBlocksPlusOne ( calcEightBitword(digits) + 1 );
+        Header head( this->header() );
+        head.setNEightBitBlocksPlusOne( calcEightBitword( digits ) + 1 );
         this->setHeader( head );
       }
 
-      template< class Version, class Header, class Footer >
-      ShortType
-      RichNonZeroSuppData<Version,Header,Footer>::calcEightBitword( const LHCb::RichSmartID::Vector & digits ) const
+      template < class Version, class Header, class Footer >
+      ShortType RichNonZeroSuppData< Version, Header, Footer >::calcEightBitword(
+        const LHCb::RichSmartID::Vector &digits ) const
       {
         using namespace RichZSPacked_V2;
 
         // temporary data map
         typedef Rich::Map< ShortType, ShortType > DataMap;
-        DataMap dataM;
+        DataMap                                   dataM;
 
         // Get dummy packed data
         const RichZSPacked zsData;
 
         // Loop over digits
-        for ( const auto& ID : digits )
+        for ( const auto &ID : digits )
         {
 
           // Get bit and address
@@ -72,38 +69,34 @@ namespace Rich
           const ShortType address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
-          this->setBit( dataM[address], bit );
-
+          this->setBit( dataM[ address ], bit );
         }
 
         // How many words ?
-        const ShortType nWords = dataM.size()/2 + dataM.size()%2;
+        const ShortType nWords = dataM.size() / 2 + dataM.size() % 2;
         return nWords;
       }
 
-      template< class Version, class Header, class Footer >
-      ShortType
-      RichNonZeroSuppData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                                                    const LHCb::RichSmartID hpdID ) const
+      template < class Version, class Header, class Footer >
+      ShortType RichNonZeroSuppData< Version, Header, Footer >::fillRichSmartIDs(
+        LHCb::RichSmartID::Vector &ids,
+        const LHCb::RichSmartID    hpdID ) const
       {
         // reserve size in hit vector ( guess )
         ids.reserve( 96 );
 
         // count hits made
-        ShortType nHits(0);
+        ShortType nHits( 0 );
 
         // Fill with active channels
         for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
         {
           for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
           {
-            if ( isPixelActive(iRow,iCol) )
+            if ( isPixelActive( iRow, iCol ) )
             {
-              ids.emplace_back( hpdID.rich(),
-                                hpdID.panel(),
-                                hpdID.pdNumInCol(),
-                                hpdID.pdCol(),
-                                iRow, iCol );
+              ids.emplace_back(
+                hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(), iRow, iCol );
               ++nHits;
             }
           }
@@ -112,7 +105,7 @@ namespace Rich
         return nHits;
       }
 
-    } // end V2 namespace
+    } // namespace RichNonZeroSuppDataV2
 
-  }
-}
+  } // namespace DAQ
+} // namespace Rich

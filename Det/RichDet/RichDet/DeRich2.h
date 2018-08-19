@@ -22,15 +22,14 @@ extern const CLID CLID_DERich2;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
 
-class DeRich2: public DeRich
+class DeRich2 : public DeRich
 {
 
 public:
-  
   /**
    * Constructor for this class
    */
-  DeRich2(const std::string & name = "");
+  DeRich2( const std::string &name = "" );
 
   /**
    * Default destructor
@@ -41,13 +40,13 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const override { return classID(); }
+  const CLID &clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID& classID();
+  static const CLID &classID();
 
   /**
    * Specific Rich2 initialisation
@@ -56,11 +55,9 @@ public:
   StatusCode initialize() override;
 
 private:
-
   /// Access the name for a given panel
   const std::string panelName( const Rich::Side panel ) const override;
 
   /// Update Nominal mirror parameters
   StatusCode updateMirrorParams();
-
 };

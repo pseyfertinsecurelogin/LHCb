@@ -36,17 +36,14 @@ namespace Rich::Future
    */
   //-----------------------------------------------------------------------------
 
-  class TupleAlgBase : public HistoBase<GaudiTupleAlg>
+  class TupleAlgBase : public HistoBase< GaudiTupleAlg >
   {
 
   public:
-
     /// Standard constructor
-    TupleAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : HistoBase<GaudiTupleAlg> ( name, pSvcLocator )
-    { }
-
+    TupleAlgBase( const std::string &name, ISvcLocator *pSvcLocator )
+      : HistoBase< GaudiTupleAlg >( name, pSvcLocator )
+    {}
   };
 
-}
+} // namespace Rich::Future

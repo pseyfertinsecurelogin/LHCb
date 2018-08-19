@@ -18,8 +18,8 @@
 #include "GaudiKernel/IAlgTool.h"
 
 // Kernel
-#include "Kernel/RichSmartID.h"
 #include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSmartID.h"
 
 // RichUtils
 #include "RichUtils/RichDecodedData.h"
@@ -43,53 +43,54 @@ namespace Rich::DAQ
   {
 
   public:
-
     /// Type for Input location for RawEvent in TES
-    using RawEventLocation  = std::string;
+    using RawEventLocation = std::string;
     /// Type for Input location(s) for RawEvent in TES
-    using RawEventLocations = std::vector<RawEventLocation>;
+    using RawEventLocations = std::vector< RawEventLocation >;
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IRawBufferToSmartIDsTool, 1, 0 );
 
     /** Access all RichSmartIDs, for all configured TAE spills
      *  @return Reference to the decoded RICH data structure
      */
-    virtual const Rich::DAQ::L1Map & allRichSmartIDs() const = 0;
+    virtual const Rich::DAQ::L1Map &allRichSmartIDs() const = 0;
 
-    /** Access the vector of RichSmartIDs for the given HPD identifier, for all configured TAE spills
+    /** Access the vector of RichSmartIDs for the given HPD identifier, for all configured TAE
+     * spills
      *  @param hpdID The HPD identifier
      *  @param createIfMissing If data is missing for the given HPD, create the entry in the L1Map
      *  @return The vector of hits (RichSmartIDs) for the given HPD
      */
-    virtual const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID hpdID,
-                                                           const bool createIfMissing = true ) const = 0;
+    virtual const LHCb::RichSmartID::Vector &
+    richSmartIDs( const LHCb::RichSmartID hpdID, const bool createIfMissing = true ) const = 0;
 
     /** Access all the RichSmartIDs, for the given list of TAE spills
      *  @param taeLocs The TAE location(s) ( "" for main event, "Prev1" for -25 ns etc. )
      *  @return Reference to the decoded RICH data structure
      */
-    virtual const Rich::DAQ::L1Map & allRichSmartIDs( const RawEventLocations& taeLocs ) const = 0;
+    virtual const Rich::DAQ::L1Map &allRichSmartIDs( const RawEventLocations &taeLocs ) const = 0;
 
-    /** Access the vector of RichSmartIDs for the given HPD identifier, for the given list of TAE spills
+    /** Access the vector of RichSmartIDs for the given HPD identifier, for the given list of TAE
+     * spills
      *  @param taeLocs The TAE location(s) ( "" for main event, "Prev1" for -25 ns etc. )
      *  @param hpdID   The HPD identifier
      *  @param createIfMissing If data is missing for the given HPD, create the entry in the L1Map
      *  @return The vector of hits (RichSmartIDs) for the given HPD
      */
-    virtual const LHCb::RichSmartID::Vector& richSmartIDs( const RawEventLocations& taeLocs,
-                                                           const LHCb::RichSmartID hpdID,
-                                                           const bool createIfMissing = true ) const = 0;
+    virtual const LHCb::RichSmartID::Vector &
+    richSmartIDs( const RawEventLocations &taeLocs,
+                  const LHCb::RichSmartID  hpdID,
+                  const bool               createIfMissing = true ) const = 0;
 
     /** Access all RichSmartIDs for the given TAE spill
      *  @param taeLoc The TAE location ( "" for main event, "Prev1" for -25 ns etc. )
      *  @return Reference to the decoded RICH data structure
      */
-    inline const Rich::DAQ::L1Map & allRichSmartIDs( const RawEventLocation& taeLoc ) const
+    inline const Rich::DAQ::L1Map &allRichSmartIDs( const RawEventLocation &taeLoc ) const
     {
-      return this->allRichSmartIDs ( RawEventLocations(1,taeLoc) );
+      return this->allRichSmartIDs( RawEventLocations( 1, taeLoc ) );
     }
 
     /** Access the vector of RichSmartIDs for the given HPD identifier, for the given TAE spill
@@ -98,11 +99,11 @@ namespace Rich::DAQ
      *  @param createIfMissing If data is missing for the given HPD, create the entry in the L1Map
      *  @return The vector of hits (RichSmartIDs) for the given HPD
      */
-    inline const LHCb::RichSmartID::Vector& richSmartIDs( const RawEventLocation& taeLoc,
+    inline const LHCb::RichSmartID::Vector &richSmartIDs( const RawEventLocation &taeLoc,
                                                           const LHCb::RichSmartID hpdID,
                                                           const bool createIfMissing = true ) const
     {
-      return this->richSmartIDs ( RawEventLocations(1,taeLoc), hpdID, createIfMissing );
+      return this->richSmartIDs( RawEventLocations( 1, taeLoc ), hpdID, createIfMissing );
     }
 
     /** Access the number of RICH hits in the given detector, in the current event,
@@ -110,7 +111,8 @@ namespace Rich::DAQ
      *  @param rich The RICH detector (Rich::InvalidDetector means count both)
      *  @return The total number of hits for the configured TAE locations and the given RICH
      */
-    virtual unsigned int nTotalHits( const Rich::DetectorType rich = Rich::InvalidDetector ) const = 0;
+    virtual unsigned int
+    nTotalHits( const Rich::DetectorType rich = Rich::InvalidDetector ) const = 0;
 
     /** Access the number of RICH hits in the given detector, the current event,
      *  for the given list of TAE spills
@@ -118,8 +120,9 @@ namespace Rich::DAQ
      *  @param rich The RICH detector (Rich::InvalidDetector means count both)
      *  @return The total number of hits for the configured TAE locations
      */
-    virtual unsigned int nTotalHits( const RawEventLocations& taeLocs,
-                                     const Rich::DetectorType rich = Rich::InvalidDetector ) const = 0;
+    virtual unsigned int
+    nTotalHits( const RawEventLocations &taeLocs,
+                const Rich::DetectorType rich = Rich::InvalidDetector ) const = 0;
 
     /** Access the number of RICH hits in the given RICH detecotr, in the current event,
      *  for the given TAE spill
@@ -127,12 +130,11 @@ namespace Rich::DAQ
      *  @param rich The RICH detector (Rich::InvalidDetector means count both)
      *  @return The total number of hits for the configured TAE location
      */
-    inline unsigned int nTotalHits( const RawEventLocation& taeLoc,
+    inline unsigned int nTotalHits( const RawEventLocation & taeLoc,
                                     const Rich::DetectorType rich = Rich::InvalidDetector )
     {
-      return this->nTotalHits ( RawEventLocations(1,taeLoc), rich );
+      return this->nTotalHits( RawEventLocations( 1, taeLoc ), rich );
     }
-
   };
 
-}
+} // namespace Rich::DAQ

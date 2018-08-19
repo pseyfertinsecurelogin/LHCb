@@ -10,7 +10,7 @@
 
 namespace Rich
 {
-  
+
   /** @namespace Rich::SIMD
    *
    *  Namespace for RICH SIMD types and utilities
@@ -31,5 +31,5 @@ namespace Rich
     /// Container for detector sides
     using Sides = Int32;
 
-  }
-}
+  } // namespace SIMD
+} // namespace Rich

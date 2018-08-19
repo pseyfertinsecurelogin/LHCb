@@ -35,22 +35,21 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------
 
-  class PoissonEffFunctorResult final : private std::pair<double,double>
+  class PoissonEffFunctorResult final : private std::pair< double, double >
   {
 
   public:
-
     /** Default constructor
      *
      *  @param result The result of the calculation
      *  @param error  The error on the result
      *  @param parent Point to the parent calculator
      */
-    PoissonEffFunctorResult( const double result,
-                             const double error,
-                             const PoissonEffFunctor * parent )
-      : std::pair<double,double>(result,error),
-        m_parent ( parent ) { }
+    PoissonEffFunctorResult( const double             result,
+                             const double             error,
+                             const PoissonEffFunctor *parent )
+      : std::pair< double, double >( result, error ), m_parent( parent )
+    {}
 
     /// Access the result of the calculation
     inline double result() const noexcept { return this->first; }
@@ -59,13 +58,11 @@ namespace Rich
     inline double error() const noexcept { return this->second; }
 
     /// Access the parent calculator
-    inline const PoissonEffFunctor * parent() const noexcept { return m_parent; }
+    inline const PoissonEffFunctor *parent() const noexcept { return m_parent; }
 
   private:
-
     /// Pointer to parent calculator
-    const PoissonEffFunctor * m_parent = nullptr;
-
+    const PoissonEffFunctor *m_parent = nullptr;
   };
 
   //--------------------------------------------------------------------------------
@@ -88,47 +85,42 @@ namespace Rich
   {
 
   public:
-
     /** Constructor with print format string
      *
      *  @param format The Printing format
      */
-    PoissonEffFunctor( const std::string & format = "%8.2f +-%6.2f" )
-      : m_format( format ) { }
+    PoissonEffFunctor( const std::string &format = "%8.2f +-%6.2f" ) : m_format( format ) {}
 
-      /** The efficiency calculation operator
-       *
-       *  @param top The numerator
-       *  @param bot The denominator
-       *
-       *  @return The poisson efficiency and error
-       */
-      inline PoissonEffFunctorResult operator() ( const double top,
-                                                  const double bot ) const
-      {
-        return PoissonEffFunctorResult( ( bot>0 ? 100.0 * top/bot                          : 0 ),
-                                        ( bot>0 ? 100.0 * sqrt((top/bot)*(1.-top/bot)/bot) : 0 ),
-                                        this );
-      }
+    /** The efficiency calculation operator
+     *
+     *  @param top The numerator
+     *  @param bot The denominator
+     *
+     *  @return The poisson efficiency and error
+     */
+    inline PoissonEffFunctorResult operator()( const double top, const double bot ) const
+    {
+      return PoissonEffFunctorResult(
+        ( bot > 0 ? 100.0 * top / bot : 0 ),
+        ( bot > 0 ? 100.0 * sqrt( ( top / bot ) * ( 1. - top / bot ) / bot ) : 0 ),
+        this );
+    }
 
-      /** Access the print format
-       *
-       *  @return The print format string
-       */
-      inline const std::string & printFormat() const { return m_format; }
+    /** Access the print format
+     *
+     *  @return The print format string
+     */
+    inline const std::string &printFormat() const { return m_format; }
 
   private:
-
-      /// The print format
-      std::string m_format;
-
+    /// The print format
+    std::string m_format;
   };
 
   /// overloaded output to MsgStream
-  inline MsgStream & operator << ( MsgStream & os,
-                                   const PoissonEffFunctorResult & res )
+  inline MsgStream &operator<<( MsgStream &os, const PoissonEffFunctorResult &res )
   {
-    return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error() ;
+    return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error();
   }
 
-}
+} // namespace Rich

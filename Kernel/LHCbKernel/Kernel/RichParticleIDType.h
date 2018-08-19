@@ -13,18 +13,19 @@
 #define RICHKERNEL_PARTICLEIDTYPE_H 1
 
 // std include
-#include <string>
-#include <vector>
-#include <iostream>
 #include <array>
 #include <cstdint>
+#include <iostream>
+#include <string>
+#include <vector>
 
 // General namespace for RICH specific definitions documented in RichSide.h
-namespace Rich 
+namespace Rich
 {
 
-  /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron and 'Below Threshold')
-  static const uint8_t NParticleTypes     = 7;
+  /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron and 'Below
+  /// Threshold')
+  static const uint8_t NParticleTypes = 7;
 
   /// Number of 'real' RICH particle types (Electron, Muon, Pion, Kaon, Proton and Deuteron)
   static const uint8_t NRealParticleTypes = 6;
@@ -38,38 +39,37 @@ namespace Rich
    */
   //--------------------------------------------------------------------------
   enum ParticleIDType : int8_t
-    {
-      Unknown = -1,   ///< Unknown particle type
-      Electron,       ///< Represents e+ or e-
-      Muon,           ///< Represents mu+ or mu-
-      Pion,           ///< Represents pi+ or pi-
-      Kaon,           ///< Represents K+ or K-
-      Proton,         ///< Represents Pr+ or Pr-
-      Deuteron,       ///< Represents d+ or d-   
-      BelowThreshold  ///< Particle type is below threshold
-    };
+  {
+    Unknown = -1,  ///< Unknown particle type
+    Electron,      ///< Represents e+ or e-
+    Muon,          ///< Represents mu+ or mu-
+    Pion,          ///< Represents pi+ or pi-
+    Kaon,          ///< Represents K+ or K-
+    Proton,        ///< Represents Pr+ or Pr-
+    Deuteron,      ///< Represents d+ or d-
+    BelowThreshold ///< Particle type is below threshold
+  };
 
   /// Text conversion for Rich::ParticleIDType enumeration
   std::string text( const Rich::ParticleIDType particle );
 
   /// Type for container of particle types
-  typedef std::vector<ParticleIDType> Particles;
-  //using Particles = std::vector<ParticleIDType>;
+  typedef std::vector< ParticleIDType > Particles;
+  // using Particles = std::vector<ParticleIDType>;
 
   /// Access a vector of all valid particle ID types
-  const Particles & particles() noexcept;
+  const Particles &particles() noexcept;
 
   /// Implement textual ostream << method for Rich::ParticleIDType enumeration
-  inline std::ostream& operator << ( std::ostream& s,
-                                     const Rich::ParticleIDType particle ) 
+  inline std::ostream &operator<<( std::ostream &s, const Rich::ParticleIDType particle )
   {
-    return s << Rich::text(particle) ;
+    return s << Rich::text( particle );
   }
 
   /// Type for fixed size arrays with mass hypothesis information
   template < typename TYPE >
   using ParticleArray = std::array< TYPE, NParticleTypes >;
-  
-}
+
+} // namespace Rich
 
 #endif // RICHKERNEL_PARTICLEIDTYPE_H

@@ -10,8 +10,8 @@
 #pragma once
 
 // Include files
-#include "RichDet/DeRichRadiator.h"
 #include "GaudiKernel/Transform3DTypes.h"
+#include "RichDet/DeRichRadiator.h"
 
 // External declarations
 extern const CLID CLID_DeRichMultiSolidRadiator;
@@ -30,11 +30,10 @@ class DeRichMultiSolidRadiator : public DeRichRadiator
 {
 
 public:
-
   /**
    * Constructor for this class
    */
-  DeRichMultiSolidRadiator( const std::string & name = "" );
+  DeRichMultiSolidRadiator( const std::string &name = "" );
 
   /**
    * Default destructor
@@ -45,13 +44,13 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const override final { return classID(); }
+  const CLID &clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID& classID();
+  static const CLID &classID();
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -62,72 +61,70 @@ public:
   StatusCode initialize() override final;
 
   // Finds the next intersection point with radiator.
-  StatusCode nextIntersectionPoint( const Gaudi::XYZPoint& pGlobal,
-                                    const Gaudi::XYZVector& vGlobal,
-                                    Gaudi::XYZPoint& returnPoint ) const override final;
+  StatusCode nextIntersectionPoint( const Gaudi::XYZPoint & pGlobal,
+                                    const Gaudi::XYZVector &vGlobal,
+                                    Gaudi::XYZPoint &       returnPoint ) const override final;
 
   // Finds the entry and exit points of the radiator after looking
   // at all the solids to find the first and last intersection point.
-  StatusCode intersectionPoints( const Gaudi::XYZPoint& position,
-                                 const Gaudi::XYZVector& direction,
-                                 Gaudi::XYZPoint& entryPoint,
-                                 Gaudi::XYZPoint& exitPoint ) const override final;
+  StatusCode intersectionPoints( const Gaudi::XYZPoint & position,
+                                 const Gaudi::XYZVector &direction,
+                                 Gaudi::XYZPoint &       entryPoint,
+                                 Gaudi::XYZPoint &       exitPoint ) const override final;
 
   // Finds the intersection points with radiator after looking at all the solids
-  unsigned int intersectionPoints( const Gaudi::XYZPoint& pGlobal,
-                                   const Gaudi::XYZVector& vGlobal,
-                                   std::vector<Gaudi::XYZPoint>& points ) const override final;
+  unsigned int intersectionPoints( const Gaudi::XYZPoint &         pGlobal,
+                                   const Gaudi::XYZVector &        vGlobal,
+                                   std::vector< Gaudi::XYZPoint > &points ) const override final;
 
   // Finds the intersections (entry/exit) with radiator. For boolean solids there
-  unsigned int intersections( const Gaudi::XYZPoint& pGlobal,
-                              const Gaudi::XYZVector& vGlobal,
-                              Rich::RadIntersection::Vector& intersections ) const override final;
+  unsigned int intersections( const Gaudi::XYZPoint &        pGlobal,
+                              const Gaudi::XYZVector &       vGlobal,
+                              Rich::RadIntersection::Vector &intersections ) const override final;
 
   // Returns the refractive index at the given photon energy for this radiator
   double refractiveIndex( const double energy, const bool hlt = false ) const override final;
 
 public:
-
   /** Access to the list of single solid radiators.
    *  Will be either sub-tiles, or tiles, depending on which are active in the DB
    */
-  inline const DeRichRadiator::Vector& radiators() const noexcept { return m_radiators; }
+  inline const DeRichRadiator::Vector &radiators() const noexcept { return m_radiators; }
 
   /// Explicit Access to sub-tiles (if active)
-  inline const DeRichRadiator::Vector& subTileRadiators() const noexcept { return radiators(); }
+  inline const DeRichRadiator::Vector &subTileRadiators() const noexcept { return radiators(); }
 
   /// Explicit Access to full tiles
-  inline const DeRichRadiator::Vector& fullTileRadiators() const noexcept { return m_fullTiles; }
+  inline const DeRichRadiator::Vector &fullTileRadiators() const noexcept { return m_fullTiles; }
 
 private:
-
   /// Add radiator volumes
-  StatusCode addVolumes(const ILVolume* lv,
-                        const std::string& volName,
-                        const Gaudi::Transform3D& toUpperLevel, const int VolIndex);
+  StatusCode addVolumes( const ILVolume *          lv,
+                         const std::string &       volName,
+                         const Gaudi::Transform3D &toUpperLevel,
+                         const int                 VolIndex );
 
-  StatusCode addFullTileVolumes(const ILVolume* lv,
-                        const std::string& volName,
-                        const Gaudi::Transform3D& toUpperLevel);
+  StatusCode addFullTileVolumes( const ILVolume *          lv,
+                                 const std::string &       volName,
+                                 const Gaudi::Transform3D &toUpperLevel );
 
-  StatusCode addSubTileVolumes(const ILVolume* lv,
-                        const std::string& volName,
-                        const Gaudi::Transform3D& toUpperLevel);
+  StatusCode addSubTileVolumes( const ILVolume *          lv,
+                                const std::string &       volName,
+                                const Gaudi::Transform3D &toUpperLevel );
 
   /// UMS update on geometry changes
   StatusCode geometryUpdate();
 
 private:
-
   /// vector of solids
-  typedef std::vector<const ISolid*> Solids;
+  typedef std::vector< const ISolid * > Solids;
   /// vector of physical volumes
-  typedef std::vector<const IPVolume*> PVolumes;
+  typedef std::vector< const IPVolume * > PVolumes;
   /// vector of transformation matrices
-  typedef std::vector<Gaudi::Transform3D> Transforms;
+  typedef std::vector< Gaudi::Transform3D > Transforms;
 
-  Solids m_solids;         ///< The solids that make up this radiator
-  PVolumes m_pVolumes;     ///< The physical volumes
+  Solids     m_solids;     ///< The solids that make up this radiator
+  PVolumes   m_pVolumes;   ///< The physical volumes
   Transforms m_toTopLevel; ///< Tranforms to top level of the detector element
   Transforms m_toLowLevel; ///< Tranforms to low (solid) level of the detector element
 
@@ -138,6 +135,5 @@ private:
   DeRichRadiator::Vector m_fullTiles;
 
   /// First update flag
-  bool m_firstUpdate{true};
-
+  bool m_firstUpdate{ true };
 };
