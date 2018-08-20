@@ -20,6 +20,7 @@
 #include "LoKi/Services.h"
 #include "LoKi/Functor.h"
 #include "LoKi/TES.h"
+#include "LoKi/BasicFunctors.h"
 // ============================================================================
 /** @file LoKi/Sources.h
  *
@@ -92,6 +93,40 @@ namespace LoKi
       /// return the valid data
       return { data->begin() , data->end() } ;
     }
+    // ========================================================================
+    /** @class Counter 
+     *  counter with the source 
+     *  @code
+     *  const LoKi::BasicFunctors<TYPE>::Source& source = ... ;
+     *  auto cnt = LoKi::Functors::Counter<TYPE>( source ) ;
+     *  @endcode
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-20
+     */
+    template <class TYPE> 
+    class Counter : public LoKi::Functor<void,double>
+    {
+      // ======================================================================
+      typedef typename LoKi::BasicFunctors<TYPE>::Source _Source ;
+      typedef typename LoKi::Assignable_t<_Source>       Source_ ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor  form the source 
+      explicit Counter ( const _Source& s ) : m_source ( s ) {}      
+      /// MANDATORY: clone method ("virtual constructor")
+      Counter* clone() const override { return new Counter( *this ) ; }
+      // ======================================================================      
+      /// MANDATORY: the only one essenial method
+      result_type operator() ( ) const override 
+      { return this->m_source().size() ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the actual source 
+      Source_ m_source; // the actual source 
+      // ======================================================================      
+    } ;
     // ========================================================================
   } //                                          end of namespace LoKi::Functors
   // ==========================================================================
