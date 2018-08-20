@@ -23,9 +23,9 @@ namespace Rich
   //-----------------------------------------------------------------------------
   /** @class IDetParameters IRichDetParameters.h RichKernel/IRichDetParameters.h
    *
-   *  Interface for tools providing access to useful detector parameters, that 
-   *  cannot be easily calculated on the fly. Some could eventually be moved to 
-   *  either the LHCbCond or DDDB databases. 
+   *  Interface for tools providing access to useful detector parameters, that
+   *  cannot be easily calculated on the fly. Some could eventually be moved to
+   *  either the LHCbCond or DDDB databases.
    *
    *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
    *  @date   2004-03-29
@@ -36,7 +36,6 @@ namespace Rich
   {
 
   public:
-
     /** @class RadLimits IRichDetParameters.h RichKernel/IRichDetParameters.h
      *
      *  Helper class for IRichDetParameters to contain HPD acceptance data
@@ -44,11 +43,10 @@ namespace Rich
      *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
      *  @date   2005-01-29
      */
-    class RadLimits 
+    class RadLimits
     {
 
     public:
-
       /// Default Constructor
       RadLimits() = default;
 
@@ -61,12 +59,11 @@ namespace Rich
        *  @param minY The minimum y edge of acceptance
        *  @param maxY The maximum y edge of acceptance
        */
-      RadLimits( const double minX, const double maxX,
-                 const double minY, const double maxY )
-        : m_maxX(maxX), m_minX(minX), m_maxY(maxY), m_minY(minY) { }
+      RadLimits( const double minX, const double maxX, const double minY, const double maxY )
+        : m_maxX( maxX ), m_minX( minX ), m_maxY( maxY ), m_minY( minY )
+      {}
 
     public:
-
       /// Access the minimum x limit
       inline double minX() const noexcept { return m_minX; }
       /// Access the maximum x limit
@@ -77,16 +74,13 @@ namespace Rich
       inline double maxY() const noexcept { return m_maxY; }
 
     private:
-
-      double m_maxX {0}; ///< Maximum X limit
-      double m_minX {0}; ///< Minimum X limit
-      double m_maxY {0}; ///< Maximum Y limit
-      double m_minY {0}; ///< Minimum Y limit
-
+      double m_maxX{ 0 }; ///< Maximum X limit
+      double m_minX{ 0 }; ///< Minimum X limit
+      double m_maxY{ 0 }; ///< Maximum Y limit
+      double m_minY{ 0 }; ///< Minimum Y limit
     };
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IDetParameters, 1, 0 );
 
@@ -96,7 +90,7 @@ namespace Rich
      *
      *  @return The value of the maximum photon energy for the given radiator
      */
-    virtual double maxPhotonEnergy ( const Rich::RadiatorType rad ) const = 0;
+    virtual double maxPhotonEnergy( const Rich::RadiatorType rad ) const = 0;
 
     /** Calculates the minimum observable photon energy for a given radiator medium
      *
@@ -104,7 +98,7 @@ namespace Rich
      *
      *  @return The value of the minimum photon energy for the given radiator
      */
-    virtual double minPhotonEnergy ( const Rich::RadiatorType rad ) const = 0;
+    virtual double minPhotonEnergy( const Rich::RadiatorType rad ) const = 0;
 
     /** Calculate the mean observable photon energy for a given radiator medium
      *
@@ -112,15 +106,16 @@ namespace Rich
      *
      * @return The value of the mean photon energy for the given radiator
      */
-    virtual double meanPhotonEnergy ( const Rich::RadiatorType rad ) const = 0;
+    virtual double meanPhotonEnergy( const Rich::RadiatorType rad ) const = 0;
 
     /** Calculate the standard deviation of n-1 distribution for observed photons
      *
      *  @param rad  The radiator type
      *
-     * @return The standard deviation of n-1 distribution for observed photons for the given radiator
+     * @return The standard deviation of n-1 distribution for observed photons for the given
+     * radiator
      */
-    virtual double refIndexSD ( const Rich::RadiatorType rad ) const = 0;
+    virtual double refIndexSD( const Rich::RadiatorType rad ) const = 0;
 
     /** Returns the average acceptance outer limits in local HPD coordinates
      *  for the given radiator type
@@ -133,7 +128,6 @@ namespace Rich
      */
     virtual const IDetParameters::RadLimits &
     AvAcceptOuterLimitsLocal( const Rich::RadiatorType rad ) const = 0;
-
   };
 
-}
+} // namespace Rich

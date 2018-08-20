@@ -21,13 +21,17 @@ namespace Rich::Maths::FastRoots
   */
   inline float vfast_cbrt( const float x0 )
   {
-    union {int ix; float x;};
-    x = x0;                      // x can be viewed as int.
-    ix = ix/4 + ix/16;           // Approximate divide by 3.
-    ix = ix + ix/16;
-    ix = ix + ix/256;
-    ix = 0x2a5137a0 + ix;        // Initial guess.
-    x = 0.33333333f*(2.0f*x + x0/(x*x));  // Newton step.
+    union
+    {
+      int   ix;
+      float x;
+    };
+    x  = x0;               // x can be viewed as int.
+    ix = ix / 4 + ix / 16; // Approximate divide by 3.
+    ix = ix + ix / 16;
+    ix = ix + ix / 256;
+    ix = 0x2a5137a0 + ix;                             // Initial guess.
+    x  = 0.33333333f * ( 2.0f * x + x0 / ( x * x ) ); // Newton step.
     return x;
   }
 
@@ -37,15 +41,19 @@ namespace Rich::Maths::FastRoots
   */
   inline float fast_cbrt( const float x0 )
   {
-    union {int ix; float x;};
-    x  = x0;                     // x can be viewed as int.
-    ix = ix/4 + ix/16;           // Approximate divide by 3.
-    ix = ix + ix/16;
-    ix = ix + ix/256;
-    ix = 0x2a5137a0 + ix;        // Initial guess.
-    x  = 0.33333333f*(2.0f*x + x0/(x*x));  // Newton step 1
-    x  = 0.33333333f*(2.0f*x + x0/(x*x));  // Newton step 2
-    x  = 0.33333333f*(2.0f*x + x0/(x*x));  // Newton step 3
+    union
+    {
+      int   ix;
+      float x;
+    };
+    x  = x0;               // x can be viewed as int.
+    ix = ix / 4 + ix / 16; // Approximate divide by 3.
+    ix = ix + ix / 16;
+    ix = ix + ix / 256;
+    ix = 0x2a5137a0 + ix;                             // Initial guess.
+    x  = 0.33333333f * ( 2.0f * x + x0 / ( x * x ) ); // Newton step 1
+    x  = 0.33333333f * ( 2.0f * x + x0 / ( x * x ) ); // Newton step 2
+    x  = 0.33333333f * ( 2.0f * x + x0 / ( x * x ) ); // Newton step 3
     return x;
   }
 
@@ -64,12 +72,16 @@ namespace Rich::Maths::FastRoots
       Gives the correct result (inf) for x = inf.
       Gives the correct result (NaN) for x = NaN.
   */
-  float vfast_sqrt(const float x0)
+  float vfast_sqrt( const float x0 )
   {
-    union {int ix; float x;};
-    x  = x0;                      // x can be viewed as int.
-    ix = 0x1fbb67a8 + (ix >> 1);  // Initial guess.
-    x  = 0.5f*(x + x0/x);         // Newton step.
+    union
+    {
+      int   ix;
+      float x;
+    };
+    x  = x0;                       // x can be viewed as int.
+    ix = 0x1fbb67a8 + ( ix >> 1 ); // Initial guess.
+    x  = 0.5f * ( x + x0 / x );    // Newton step.
     return x;
   }
 
@@ -78,14 +90,18 @@ namespace Rich::Maths::FastRoots
       The relative error ranges from 0 to +0.00000023.
   */
   template < class TYPE >
-  TYPE fast_sqrt(const TYPE x0)
+  TYPE fast_sqrt( const TYPE x0 )
   {
-    union {int ix; float x;};
-    x  = x0;                      // x can be viewed as int.
-    ix = 0x1fbb3f80 + (ix >> 1);  // Initial guess.
-    x  = 0.5f*(x + x0/x);         // Newton step.
-    x  = 0.5f*(x + x0/x);         // Newton step again.
+    union
+    {
+      int   ix;
+      float x;
+    };
+    x  = x0;                       // x can be viewed as int.
+    ix = 0x1fbb3f80 + ( ix >> 1 ); // Initial guess.
+    x  = 0.5f * ( x + x0 / x );    // Newton step.
+    x  = 0.5f * ( x + x0 / x );    // Newton step again.
     return x;
   }
 
-}
+} // namespace Rich::Maths::FastRoots

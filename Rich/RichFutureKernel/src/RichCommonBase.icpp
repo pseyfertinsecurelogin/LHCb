@@ -13,9 +13,9 @@
 #define RICHFUTUREKERNEL_RICHCOMMONBASE_ICPP 1
 
 // STL
+#include <algorithm>
 #include <sstream>
 #include <string>
-#include <algorithm>
 
 // local
 #include "RichFutureKernel/RichCommonBase.h"
@@ -25,14 +25,15 @@
 
 // Disable warning on windows
 #ifdef _WIN32
-#pragma warning ( disable:4661 ) // incomplete explicit templates
+#pragma warning( disable : 4661 ) // incomplete explicit templates
 #endif
 
 //=============================================================================
 // Constructor initialisation
 //=============================================================================
-template <class PBASE>
-void Rich::Future::CommonBase<PBASE>::initRichCommonConstructor()
+template < class PBASE >
+void
+Rich::Future::CommonBase< PBASE >::initRichCommonConstructor()
 {
   // nothing yet ..
 }
@@ -40,20 +41,19 @@ void Rich::Future::CommonBase<PBASE>::initRichCommonConstructor()
 //=============================================================================
 // Initialisation
 //=============================================================================
-template <class PBASE>
-StatusCode Rich::Future::CommonBase<PBASE>::initialize()
+template < class PBASE >
+StatusCode
+Rich::Future::CommonBase< PBASE >::initialize()
 {
   // Execute the base class initialize
   const StatusCode sc = PBASE::initialize();
-  if ( sc.isFailure() )
-  { return this -> Error( "Failed to initialise Gaudi Base class", sc ); }
+  if ( sc.isFailure() ) { return this->Error( "Failed to initialise Gaudi Base class", sc ); }
 
   // Load some common tools by default
-  m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" );
+  m_jos = this->template svc< IJobOptionsSvc >( "JobOptionsSvc" );
 
   // Printout from initialize
-  if ( this -> msgLevel(MSG::DEBUG) )
-    this -> debug() << "Initialize" << endmsg;
+  if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Initialize" << endmsg;
 
   return sc;
 }
@@ -62,12 +62,12 @@ StatusCode Rich::Future::CommonBase<PBASE>::initialize()
 //=============================================================================
 // Finalisation
 //=============================================================================
-template <class PBASE>
-StatusCode Rich::Future::CommonBase<PBASE>::finalize()
+template < class PBASE >
+StatusCode
+Rich::Future::CommonBase< PBASE >::finalize()
 {
   // Printout from finalization
-  if ( this -> msgLevel(MSG::DEBUG) )
-    this -> debug() << "Finalize" << endmsg;
+  if ( this->msgLevel( MSG::DEBUG ) ) this->debug() << "Finalize" << endmsg;
 
   // Finalise base class and return
   return PBASE::finalize();

@@ -37,7 +37,6 @@ namespace Rich
   {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IHPDOccupancyTool, 1, 0 );
 
@@ -49,7 +48,6 @@ namespace Rich
      *  @return The average HPD occupancy
      */
     virtual double averageOccupancy( const LHCb::RichSmartID hpdID ) const = 0;
-
   };
 
-}
+} // namespace Rich

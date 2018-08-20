@@ -13,28 +13,27 @@
 #include "Kernel/RichParticleIDType.h"
 
 // Text conversion for ParticleIDType enumeration
-std::string Rich::text( const Rich::ParticleIDType particle )
+std::string
+Rich::text( const Rich::ParticleIDType particle )
 {
-  switch( particle )
+  switch ( particle )
   {
-  case Rich::Electron:       return "electron";
-  case Rich::Muon:           return "muon";
-  case Rich::Pion:           return "pion";
-  case Rich::Kaon:           return "kaon";
-  case Rich::Proton:         return "proton";
-  case Rich::BelowThreshold: return "below_threshold";
-  case Rich::Deuteron: 	     return "deuteron";
-  case Rich::Unknown:        return "unknown";
-  default:                   return "?"; // should never happen
+    case Rich::Electron: return "electron";
+    case Rich::Muon: return "muon";
+    case Rich::Pion: return "pion";
+    case Rich::Kaon: return "kaon";
+    case Rich::Proton: return "proton";
+    case Rich::BelowThreshold: return "below_threshold";
+    case Rich::Deuteron: return "deuteron";
+    case Rich::Unknown: return "unknown";
+    default: return "?"; // should never happen
   }
 }
 
-const Rich::Particles & Rich::particles() noexcept
+const Rich::Particles &
+Rich::particles() noexcept
 {
-  static Rich::Particles pids =
-    { Rich::Electron, Rich::Muon, 
-      Rich::Pion,     Rich::Kaon, 
-      Rich::Proton,   Rich::Deuteron,
-      Rich::BelowThreshold };
+  static Rich::Particles pids = { Rich::Electron, Rich::Muon,     Rich::Pion,          Rich::Kaon,
+                                  Rich::Proton,   Rich::Deuteron, Rich::BelowThreshold };
   return pids;
 }

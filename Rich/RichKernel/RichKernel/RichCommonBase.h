@@ -15,10 +15,10 @@
 #include "RichInterfaces/IRichToolRegistry.h"
 
 // Gaudi
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/SerializeSTL.h"
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/SerializeSTL.h"
 
 // Forward declarations
 class IJobOptionsSvc;
@@ -26,10 +26,12 @@ class DeRich;
 
 // Some defines for debug/verbose messages...
 #ifndef _ri_debug
-#define _ri_debug if ( msgLevel(MSG::DEBUG)   ) debug()
+#define _ri_debug                                                                                  \
+  if ( msgLevel( MSG::DEBUG ) ) debug()
 #endif
 #ifndef _ri_verbo
-#define _ri_verbo if ( msgLevel(MSG::VERBOSE) ) verbose()
+#define _ri_verbo                                                                                  \
+  if ( msgLevel( MSG::VERBOSE ) ) verbose()
 #endif
 
 namespace Rich
@@ -46,28 +48,21 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  template <class PBASE>
+  template < class PBASE >
   class CommonBase : public PBASE
   {
 
   public:
-
     /// Standard algorithm-like constructor
-    CommonBase( const std::string& name,
-                ISvcLocator* pSvcLocator );
+    CommonBase( const std::string &name, ISvcLocator *pSvcLocator );
 
     /// Standard tool-like constructor
-    CommonBase( const std::string& type,
-                const std::string& name,
-                const IInterface* parent );
+    CommonBase( const std::string &type, const std::string &name, const IInterface *parent );
 
     /// Standard Converter-like Constructor
-    CommonBase( long storage_type,
-                const CLID &class_type,
-                ISvcLocator *svc = nullptr );
+    CommonBase( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr );
 
   public:
-
     /** Initialization of the algorithm after creation
      *
      * @return The status of the initialization
@@ -85,17 +80,16 @@ namespace Rich
     virtual StatusCode finalize() override;
 
   public:
-
     /** Returns the full location of the given object in the Data Store
      *
      *  @param pObj Data object
      *
      *  @return Location of given data object
      */
-    inline std::string objectLocation( const DataObject * pObj ) const
+    inline std::string objectLocation( const DataObject *pObj ) const
     {
       return ( !pObj ? "Null DataObject !" :
-               (pObj->registry() ? pObj->registry()->identifier() : "UnRegistered") );
+                       ( pObj->registry() ? pObj->registry()->identifier() : "UnRegistered" ) );
     }
 
     /** @brief Returns a pointer to the tool associated to a given nickname.
@@ -114,54 +108,48 @@ namespace Rich
      *
      *  @return Pointer to the tool associated to the given nickname
      */
-    template <typename TOOL>
-    inline const TOOL* acquireTool( const std::string & nickName,
-                                    const std::string & iName,
-                                    const TOOL*& pTool,
-                                    const IInterface * parent = nullptr,
-                                    const bool commonTool = false ) const
+    template < typename TOOL >
+    inline const TOOL *acquireTool( const std::string &nickName,
+                                    const std::string &iName,
+                                    const TOOL *&      pTool,
+                                    const IInterface * parent     = nullptr,
+                                    const bool         commonTool = false ) const
     {
       // Start by setting tool pointer to null
       pTool = nullptr;
 
       // Check consistency
       if ( UNLIKELY( parent && commonTool ) )
-      {
-        this -> Error( "Tool " + nickName + " cannot be common and private !" ).ignore();
-      }
+      { this->Error( "Tool " + nickName + " cannot be common and private !" ).ignore(); }
       else
       {
 
         // the tool registry
-        const auto * reg = this->toolRegistry();
+        const auto *reg = this->toolRegistry();
 
         // tool name
-        const auto & name = reg->toolName(iName);
+        const auto &name = reg->toolName( iName );
 
         // tool type
-        const auto & type = reg->toolType(nickName);
+        const auto &type = reg->toolType( nickName );
 
         // Construct name
-        const auto & fname = ( commonTool || parent ? iName : name );
+        const auto &fname = ( commonTool || parent ? iName : name );
 
         // If not private tool - Check Context and OutputLevel option
-        if ( parent || this->setProperties(name) )
+        if ( parent || this->setProperties( name ) )
         {
-          
-          // get tool
-          pTool = this -> template tool<TOOL>( type, fname, parent );
-          if ( UNLIKELY( !pTool ) )
-          {
-            this->Exception( "Null Pointer returned by ToolSvc for "+fname );
-          }
-          if ( UNLIKELY( this -> msgLevel(MSG::DEBUG) ) )
-          {
-            this -> debug() << " Acquired tool '" << pTool->name()
-                            << "' of type '" << type << "'" << endmsg;
-          }
-          
-        }
 
+          // get tool
+          pTool = this->template tool< TOOL >( type, fname, parent );
+          if ( UNLIKELY( !pTool ) )
+          { this->Exception( "Null Pointer returned by ToolSvc for " + fname ); }
+          if ( UNLIKELY( this->msgLevel( MSG::DEBUG ) ) )
+          {
+            this->debug() << " Acquired tool '" << pTool->name() << "' of type '" << type << "'"
+                          << endmsg;
+          }
+        }
       }
 
       // return the tool pointer
@@ -181,13 +169,13 @@ namespace Rich
      *
      *  @return Pointer to the tool associated to the given nickname
      */
-    template <typename TOOL>
-    inline const TOOL* acquireTool( const std::string & nickName,
-                                    const TOOL*& pTool,
-                                    const IInterface * parent = nullptr,
-                                    const bool commonTool = false ) const
+    template < typename TOOL >
+    inline const TOOL *acquireTool( const std::string &nickName,
+                                    const TOOL *&      pTool,
+                                    const IInterface * parent     = nullptr,
+                                    const bool         commonTool = false ) const
     {
-      return this -> acquireTool( nickName, nickName, pTool, parent, commonTool );
+      return this->acquireTool( nickName, nickName, pTool, parent, commonTool );
     }
 
     /** @brief Forced release of a particular tool
@@ -197,49 +185,42 @@ namespace Rich
      *
      *  @param pTool  Pointer to the tool to be released
      */
-    template <typename TOOL>
-    inline void releaseTool( TOOL *& pTool ) const
+    template < typename TOOL >
+    inline void releaseTool( TOOL *&pTool ) const
     {
       if ( pTool )
       {
-        if ( UNLIKELY( this -> msgLevel(MSG::DEBUG) ) )
-        {
-          this -> debug() << " Forced release for tool '" << pTool->name() << "'" 
-                          << endmsg;
-        }
-        this -> release( pTool );
+        if ( UNLIKELY( this->msgLevel( MSG::DEBUG ) ) )
+        { this->debug() << " Forced release for tool '" << pTool->name() << "'" << endmsg; }
+        this->release( pTool );
         pTool = nullptr;
       }
       else
       {
-        this -> Warning ( "Attempt to release a NULL Tool pointer" ).ignore();
+        this->Warning( "Attempt to release a NULL Tool pointer" ).ignore();
       }
     }
 
   protected: // methods
-
     /** Returns pointer to RICH tool registry tool
      *  Used internally by base class to convert tool nicknames
      *  in the appropriate class name
      *
      *  @return Pointer to the IRichToolRegistry interface
      */
-    inline const Rich::IToolRegistry * toolRegistry() const noexcept
-    {
-      return m_toolReg;
-    }
+    inline const Rich::IToolRegistry *toolRegistry() const noexcept { return m_toolReg; }
 
     /// Pointer to Job Options Service
-    inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
+    inline IJobOptionsSvc *joSvc() const noexcept { return m_jos; }
 
     /// String matching on context()
-    bool contextContains( const std::string & str ) const;
+    bool contextContains( const std::string &str ) const;
 
     /** Generate a context specific TES location for the given Default location
      *  @param loc The Default TES location
      *  @return The context specific TES location for the input location
      */
-    std::string contextSpecificTES( const std::string & loc ) const;
+    std::string contextSpecificTES( const std::string &loc ) const;
 
     /** Propagate a list oj job options from one object to another
      *  @param from_name The name of the object to get the options from
@@ -250,13 +231,12 @@ namespace Rich
      *  @return StatusCode indicating if the options where correctly copied
      */
     StatusCode
-    propagateJobOptions( const std::string & from_name,
-                         const std::string & to_name,
-                         const std::vector<std::string> & options = std::vector<std::string>(),
-                         const bool overwrite = false ) const;
+    propagateJobOptions( const std::string &               from_name,
+                         const std::string &               to_name,
+                         const std::vector< std::string > &options   = std::vector< std::string >(),
+                         const bool                        overwrite = false ) const;
 
   private: // private methods
-
     /** Finds the propert object of a given name, for the given component name
      *
      *   @param name Component name
@@ -265,8 +245,8 @@ namespace Rich
      *   @return Pointer to the Property object if it exists
      */
     template < class PROPERTYTYPE >
-    const PROPERTYTYPE * my_getProperty( const std::string & name,
-                                         const std::string & property ) const;
+    const PROPERTYTYPE *my_getProperty( const std::string &name,
+                                        const std::string &property ) const;
 
     /** @brief Set the given Property for given public tool
      *
@@ -281,8 +261,7 @@ namespace Rich
      *  @retval FALSE Setting failed
      */
     template < class PROPERTYTYPE >
-    bool my_setToolProperty( const std::string & name,
-                             const std::string & property ) const;
+    bool my_setToolProperty( const std::string &name, const std::string &property ) const;
 
     /** @brief Set the properties for given public tool
      *
@@ -296,24 +275,21 @@ namespace Rich
      *  @retval TRUE  Setting was successful
      *  @retval FALSE Setting failed
      */
-    bool setProperties( const std::string & name ) const;
+    bool setProperties( const std::string &name ) const;
 
   private:
-
     /// Common Constructor initisalisations
     void initRichCommonConstructor();
 
   private: // data
-
     /// Pointer to tool registry
-    const IToolRegistry * m_toolReg = nullptr;
+    const IToolRegistry *m_toolReg = nullptr;
 
     /// Pointer to job options service
-    IJobOptionsSvc * m_jos = nullptr;
+    IJobOptionsSvc *m_jos = nullptr;
 
     /// Runtime name for RichToolRegistry
     std::string m_regName;
-
   };
 
-}
+} // namespace Rich

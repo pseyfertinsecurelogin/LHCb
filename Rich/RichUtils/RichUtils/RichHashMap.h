@@ -36,17 +36,16 @@ namespace Rich
   //--------------------------------------------------------------------------------
 
   template < class KEY, class VALUE >
-  class HashMap : public GaudiUtils::HashMap < KEY, VALUE >
+  class HashMap : public GaudiUtils::HashMap< KEY, VALUE >
   {
   public:
     /// Operator overloading for ostream
-    friend inline std::ostream& operator << ( std::ostream& str ,
-                                              const HashMap<KEY,VALUE> & m )
+    friend inline std::ostream &operator<<( std::ostream &str, const HashMap< KEY, VALUE > &m )
     {
       str << "[";
-      for ( const auto& i : m ) { str << " (" << i.first << "," << i.second << ")"; }
+      for ( const auto &i : m ) { str << " (" << i.first << "," << i.second << ")"; }
       return str << " ]";
     }
   };
 
-}
+} // namespace Rich

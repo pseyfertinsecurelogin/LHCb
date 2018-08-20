@@ -12,9 +12,9 @@
 #pragma once
 
 // STL
+#include <algorithm>
 #include <cstdint>
 #include <limits>
-#include <algorithm>
 #include <type_traits>
 
 // Utils
@@ -60,21 +60,19 @@ namespace Rich::Future
   {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IMirrorSegFinderLookUpTable, 1, 0 );
 
   protected: // helper classes
-
-    /// Type for list of mirrors
+             /// Type for list of mirrors
 #ifndef __clang__
-    using Mirrors =  Vc::vector<const DeRichSphMirror*>;
+    using Mirrors = Vc::vector< const DeRichSphMirror * >;
 #else
-    using Mirrors = std::vector<const DeRichSphMirror*>;
+    using Mirrors = std::vector< const DeRichSphMirror * >;
 #endif
 
     /// SIMD Type for array of Mirrors
-    template< typename TYPE >
+    template < typename TYPE >
     using SIMDMirrors = Rich::SIMD::STDArray< const DeRichSphMirror *, TYPE >;
 
     //-----------------------------------------------------------------------------
@@ -87,41 +85,45 @@ namespace Rich::Future
      */
     //-----------------------------------------------------------------------------
     template < typename FPTYPE,
-               std::uint32_t NXBINS, std::uint32_t NYBINS,
+               std::uint32_t NXBINS,
+               std::uint32_t NYBINS,
                typename SIMDTYPE = SIMD::DefaultScalarFP >
     class LookupTableFinder
     {
     private:
       /// Type for Mirror Number. Small to minimise LUT size.
-      using MirrorNum   = std::uint8_t;
+      using MirrorNum = std::uint8_t;
       /// Type for SIMD array of indices
       using SIMDIndices = SIMD::UInt32;
       /// Type for Scalar index
       using ScalarIndex = std::uint32_t;
+
     public:
       /// Constructor from extra size
-      explicit LookupTableFinder( const FPTYPE eSize ) : m_eSize(eSize) { }
+      explicit LookupTableFinder( const FPTYPE eSize ) : m_eSize( eSize ) {}
       /// Default constructor not allowed
       LookupTableFinder() = delete;
+
     public:
       /// Reset this object
       void reset()
       {
         mirrors.clear();
         m_lookupTable.clear();
-        m_minX     = m_minY     =  9e9;
-        m_maxX     = m_maxY     = -9e9;
-        m_incX     = m_incY     =  0.0;
-        m_minXSIMD = m_minYSIMD =  9e9;
+        m_minX = m_minY = 9e9;
+        m_maxX = m_maxY = -9e9;
+        m_incX = m_incY = 0.0;
+        m_minXSIMD = m_minYSIMD = 9e9;
         m_maxXSIMD = m_maxYSIMD = -9e9;
-        m_incXSIMD = m_incYSIMD =  0.0;
+        m_incXSIMD = m_incYSIMD = 0.0;
       }
+
     public:
       /// Initialise this object
       void init()
       {
         // sanity check
-        if ( std::numeric_limits<MirrorNum>::max() < mirrors.size() )
+        if ( std::numeric_limits< MirrorNum >::max() < mirrors.size() )
         {
           throw GaudiException( "Too many mirrors",
                                 "MirrorSegFinderLookUpTable::LookupTableFinder",
@@ -129,17 +131,16 @@ namespace Rich::Future
         }
 
         // sort mirrors by distance from beam line (proxy for most used)
-        std::sort( mirrors.begin(), mirrors.end(),
-                   []( const auto m1, const auto m2 )
-                   { return ( ( std::pow(m1->mirrorCentre().X(),2) +
-                                std::pow(m1->mirrorCentre().Y(),2) ) <
-                              ( std::pow(m2->mirrorCentre().X(),2) +
-                                std::pow(m2->mirrorCentre().Y(),2) ) ); } );
+        std::sort( mirrors.begin(), mirrors.end(), []( const auto m1, const auto m2 ) {
+          return (
+            ( std::pow( m1->mirrorCentre().X(), 2 ) + std::pow( m1->mirrorCentre().Y(), 2 ) ) <
+            ( std::pow( m2->mirrorCentre().X(), 2 ) + std::pow( m2->mirrorCentre().Y(), 2 ) ) );
+        } );
 
         // Loop over the mirrors to find the (x,y) range
-        for ( const auto* M : mirrors )
+        for ( const auto *M : mirrors )
         {
-          const auto & mC = M->mirrorCentre();
+          const auto &mC = M->mirrorCentre();
           if ( mC.X() > m_maxX ) { m_maxX = mC.X(); }
           if ( mC.X() < m_minX ) { m_minX = mC.X(); }
           if ( mC.Y() > m_maxY ) { m_maxY = mC.Y(); }
@@ -157,12 +158,12 @@ namespace Rich::Future
         m_incY = (FPTYPE)nYBins() / ( m_maxY - m_minY );
 
         // Set cached SIMD values
-        m_minXSIMD = SIMD::FP<SIMDTYPE>(m_minX);
-        m_maxXSIMD = SIMD::FP<SIMDTYPE>(m_maxX);
-        m_minYSIMD = SIMD::FP<SIMDTYPE>(m_minY);
-        m_maxYSIMD = SIMD::FP<SIMDTYPE>(m_maxY);
-        m_incXSIMD = SIMD::FP<SIMDTYPE>(m_incX);
-        m_incYSIMD = SIMD::FP<SIMDTYPE>(m_incY);
+        m_minXSIMD = SIMD::FP< SIMDTYPE >( m_minX );
+        m_maxXSIMD = SIMD::FP< SIMDTYPE >( m_maxX );
+        m_minYSIMD = SIMD::FP< SIMDTYPE >( m_minY );
+        m_maxYSIMD = SIMD::FP< SIMDTYPE >( m_maxY );
+        m_incXSIMD = SIMD::FP< SIMDTYPE >( m_incX );
+        m_incYSIMD = SIMD::FP< SIMDTYPE >( m_incY );
 
         // initialise the look up table
         for ( auto iX = 0u; iX < nXBins(); ++iX )
@@ -170,7 +171,7 @@ namespace Rich::Future
           for ( auto iY = 0u; iY < nYBins(); ++iY )
           {
             // find the mirror for this bin
-            const auto m = closestXY( binX(iX), binY(iY) );
+            const auto m = closestXY( binX( iX ), binY( iY ) );
             // get the index for this mirror
             const auto im = std::find( mirrors.begin(), mirrors.end(), m );
             // Find the nearest mirror segment to the centre of this bin
@@ -178,70 +179,73 @@ namespace Rich::Future
             m_lookupTable.set( iX, iY, im - mirrors.begin() );
           }
         }
-
       }
-      /// Find the mirror for a given position 
-      template< typename POINT >
-      inline decltype(auto) find( const POINT& p ) const noexcept
+      /// Find the mirror for a given position
+      template < typename POINT >
+      inline decltype( auto ) find( const POINT &p ) const noexcept
       {
         return find( p.x(), p.y() );
       }
       /// Find the mirror for a given position (x,y)
-      template< typename TYPE >
-      inline decltype(auto) find( const TYPE x, const TYPE y ) const noexcept
+      template < typename TYPE >
+      inline decltype( auto ) find( const TYPE x, const TYPE y ) const noexcept
       {
-        if constexpr ( std::is_arithmetic<TYPE>::value )
+        if constexpr ( std::is_arithmetic< TYPE >::value )
         {
           // Scalar
-          return mirrors[ m_lookupTable.get( xIndex(x), yIndex(y) ) ];
+          return mirrors[ m_lookupTable.get( xIndex( x ), yIndex( y ) ) ];
         }
         else
         {
           // SIMD
           // Get the mirror indices
-          const auto xyi = m_lookupTable.xyIndex( xIndex(x), yIndex(y) );
+          const auto xyi = m_lookupTable.xyIndex( xIndex( x ), yIndex( y ) );
           // gather lookup seems slower for now ... :(
-          //const auto xyi = m_lookupTable.get( xIndex(x), yIndex(y) );
+          // const auto xyi = m_lookupTable.get( xIndex(x), yIndex(y) );
           // Mirrors to return
-          SIMDMirrors<TYPE> mirrs;
+          SIMDMirrors< TYPE > mirrs;
           // Fill the mirrors. Can this be vectoirsed ??
           for ( std::size_t i = 0; i < TYPE::Size; ++i )
           {
             // just load the mirror using the number
             // mirrs[i] = mirrors[ xyi[i] ];
             // Revert to scalar lookup
-            mirrs[i] = mirrors[ m_lookupTable.get( xyi[i] ) ];
+            mirrs[ i ] = mirrors[ m_lookupTable.get( xyi[ i ] ) ];
           }
           // return the filled mirrors
           return mirrs;
-        } 
+        }
       }
+
     private:
       /// Get the mirror closest to a given (x,y) point
-      const DeRichSphMirror* closestXY( const FPTYPE x, const FPTYPE y ) const
+      const DeRichSphMirror *closestXY( const FPTYPE x, const FPTYPE y ) const
       {
-        const DeRichSphMirror* minM = nullptr;
+        const DeRichSphMirror *minM = nullptr;
         // Loop over all the mirrors to find the closest
-        FPTYPE minDist(9e30);
-        for ( const auto* M : mirrors )
+        FPTYPE minDist( 9e30 );
+        for ( const auto *M : mirrors )
         {
           const auto dist = distance2( x, y, M );
-          if ( dist < minDist ) { minM = M; minDist = dist; }
+          if ( dist < minDist )
+          {
+            minM    = M;
+            minDist = dist;
+          }
         }
         return minM;
       }
       /// Returns the 2D (x,y) distance^2 between a given point and mirror centre
-      static inline double distance2( const FPTYPE x,
-                                      const FPTYPE y,
-                                      const DeRichSphMirror* M )
+      static inline double distance2( const FPTYPE x, const FPTYPE y, const DeRichSphMirror *M )
       {
-        return ( std::pow( x - M->mirrorCentre().X() , 2 ) +
-                 std::pow( y - M->mirrorCentre().Y() , 2 ) );
+        return ( std::pow( x - M->mirrorCentre().X(), 2 ) +
+                 std::pow( y - M->mirrorCentre().Y(), 2 ) );
       }
+
     private:
       /// Type for lookup storage
 #ifndef __clang__
-      using MirrorArray =  Vc::vector< MirrorNum >;
+      using MirrorArray = Vc::vector< MirrorNum >;
 #else
       using MirrorArray = std::vector< MirrorNum >;
 #endif
@@ -251,55 +255,52 @@ namespace Rich::Future
       {
       public:
         /// Constructor
-        LookupTable( ) { clear(); }
+        LookupTable() { clear(); }
+
       public:
         /// Combine two (scalar) x,y indices in a single one
-        inline ScalarIndex xyIndex( const ScalarIndex ix,
-                                    const ScalarIndex iy ) const noexcept
+        inline ScalarIndex xyIndex( const ScalarIndex ix, const ScalarIndex iy ) const noexcept
         {
           return ( NYBINS * ix ) + iy;
         }
         /// Combine two (SIMD) x,y indices in a single one
-        inline SIMDIndices::IndexType xyIndex( const SIMDIndices::IndexType & ix,
-                                               const SIMDIndices::IndexType & iy ) const noexcept
+        inline SIMDIndices::IndexType xyIndex( const SIMDIndices::IndexType &ix,
+                                               const SIMDIndices::IndexType &iy ) const noexcept
         {
-          return ( SIMDIndices::IndexType(NYBINS) * ix ) + iy;
+          return ( SIMDIndices::IndexType( NYBINS ) * ix ) + iy;
         }
+
       public:
         /// Access the mirror for a given combined xy index (Scalar)
-        inline MirrorNum get( const ScalarIndex ixy ) const noexcept
-        {
-          return (*this)[ixy];
-        }
+        inline MirrorNum get( const ScalarIndex ixy ) const noexcept { return ( *this )[ ixy ]; }
         /// Access the mirror for a given set of (x,y) indices (Scalar)
-        inline MirrorNum get( const ScalarIndex ix,
-                              const ScalarIndex iy ) const noexcept
+        inline MirrorNum get( const ScalarIndex ix, const ScalarIndex iy ) const noexcept
         {
-          return get( xyIndex(ix,iy) );
+          return get( xyIndex( ix, iy ) );
         }
+
       public:
 #ifndef __clang__
         /// Access the mirror for a given xy index (SIMD)
-        inline SIMDIndices get( const SIMDIndices::IndexType & ixy ) const noexcept
+        inline SIMDIndices get( const SIMDIndices::IndexType &ixy ) const noexcept
         {
           // gather SIMD lookup
-          return (*this)[ixy];
+          return ( *this )[ ixy ];
         }
 #endif
         /// Access the mirror for a given set of (x,y) indices (SIMD)
-        inline SIMDIndices get( const SIMDIndices::IndexType & ix,
-                                const SIMDIndices::IndexType & iy ) const noexcept
+        inline SIMDIndices get( const SIMDIndices::IndexType &ix,
+                                const SIMDIndices::IndexType &iy ) const noexcept
         {
           // Make '1D' indices from X and Y
-          return get( xyIndex(ix,iy) );
+          return get( xyIndex( ix, iy ) );
         }
+
       public:
         /// Set the mirror for a given bin
-        void set( const ScalarIndex ix,
-                  const ScalarIndex iy,
-                  const MirrorNum   im ) noexcept
+        void set( const ScalarIndex ix, const ScalarIndex iy, const MirrorNum im ) noexcept
         {
-          (*this)[ xyIndex(ix,iy) ] = im;
+          ( *this )[ xyIndex( ix, iy ) ] = im;
         }
         /// Clear the table
         void clear() noexcept
@@ -308,41 +309,43 @@ namespace Rich::Future
           resize( NXBINS * NYBINS, 0 );
         }
       };
+
     private:
       /// Get the number of bins in X (Scalar)
       constexpr std::uint32_t nXBins() const noexcept { return NXBINS; }
       /// Get the number of bins in Y (Scalar)
       constexpr std::uint32_t nYBins() const noexcept { return NYBINS; }
       /// Get the minimum range in X (Scalar)
-      FPTYPE                    minX() const noexcept { return m_minX; }
+      FPTYPE minX() const noexcept { return m_minX; }
       /// Get the maximum range in X (Scalar)
-      FPTYPE                    maxX() const noexcept { return m_maxX; }
+      FPTYPE maxX() const noexcept { return m_maxX; }
       /// Get the minimum range in Y (Scalar)
-      FPTYPE                    minY() const noexcept { return m_minY; }
+      FPTYPE minY() const noexcept { return m_minY; }
       /// Get the maximum range in Y (Scalar)
-      FPTYPE                    maxY() const noexcept { return m_maxY; }
+      FPTYPE maxY() const noexcept { return m_maxY; }
+
     private:
       /// Get x for a given index value
       inline FPTYPE binX( const ScalarIndex i ) const noexcept
       {
-        return minX() + ( ( (FPTYPE)i + 0.5 ) / m_incX ) ;
+        return minX() + ( ( (FPTYPE)i + 0.5 ) / m_incX );
       }
       /// Get y for a given index value
       inline FPTYPE binY( const ScalarIndex i ) const noexcept
       {
-        return minY() + ( ( (FPTYPE)i + 0.5 ) / m_incY ) ;
+        return minY() + ( ( (FPTYPE)i + 0.5 ) / m_incY );
       }
+
     private:
       /// Get the x index
-      template< typename TYPE >
-      inline decltype(auto) xIndex( const TYPE x ) const noexcept
+      template < typename TYPE >
+      inline decltype( auto ) xIndex( const TYPE x ) const noexcept
       {
-        if constexpr ( std::is_arithmetic<TYPE>::value )
+        if constexpr ( std::is_arithmetic< TYPE >::value )
         {
           // scalar
-          return (ScalarIndex)( x < minX() ? 0            :
-                                x > maxX() ? nXBins() - 1 :
-                                ((x-minX())*m_incX)      );
+          return ( ScalarIndex )(
+            x < minX() ? 0 : x > maxX() ? nXBins() - 1 : ( ( x - minX() ) * m_incX ) );
         }
         else
         {
@@ -352,24 +355,23 @@ namespace Rich::Future
           // form indices
           auto xtmp = ( x - m_minXSIMD ) * m_incXSIMD;
           // Underflow protection
-          xtmp.setZero(mask);
-          auto xi = LHCb::SIMD::simd_cast<SIMDIndices::IndexType>( xtmp );
+          xtmp.setZero( mask );
+          auto xi = LHCb::SIMD::simd_cast< SIMDIndices::IndexType >( xtmp );
           // Overflow protection
-          xi( xi >= SIMDIndices::IndexType(NXBINS) ) = SIMDIndices::IndexType(NXBINS-1);
+          xi( xi >= SIMDIndices::IndexType( NXBINS ) ) = SIMDIndices::IndexType( NXBINS - 1 );
           // return
           return xi;
-        }  
+        }
       }
       /// Get the y index
-      template< typename TYPE >
-      inline decltype(auto) yIndex( const TYPE y ) const noexcept
+      template < typename TYPE >
+      inline decltype( auto ) yIndex( const TYPE y ) const noexcept
       {
-        if constexpr ( std::is_arithmetic<TYPE>::value )
+        if constexpr ( std::is_arithmetic< TYPE >::value )
         {
           // scalar
-          return (ScalarIndex)( y < minY() ? 0            :
-                                y > maxY() ? nYBins() - 1 :
-                                ((y-minY())*m_incY)      );
+          return ( ScalarIndex )(
+            y < minY() ? 0 : y > maxY() ? nYBins() - 1 : ( ( y - minY() ) * m_incY ) );
         }
         else
         {
@@ -379,51 +381,63 @@ namespace Rich::Future
           // form indices
           auto ytmp = ( y - m_minYSIMD ) * m_incYSIMD;
           // Underflow protection
-          ytmp.setZero(mask);
-          auto yi = LHCb::SIMD::simd_cast<SIMDIndices::IndexType>( ytmp );
+          ytmp.setZero( mask );
+          auto yi = LHCb::SIMD::simd_cast< SIMDIndices::IndexType >( ytmp );
           // Overflow protection
-          yi( yi >= SIMDIndices::IndexType(NYBINS) ) = SIMDIndices::IndexType(NYBINS-1);
+          yi( yi >= SIMDIndices::IndexType( NYBINS ) ) = SIMDIndices::IndexType( NYBINS - 1 );
           // return
           return yi;
         }
       }
-    private: // SIMD cached values
-      SIMD::FP<SIMDTYPE> m_minXSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Minimum X (SIMD)
-      SIMD::FP<SIMDTYPE> m_maxXSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Maximum X (SIMD)
-      SIMD::FP<SIMDTYPE> m_minYSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Minimum Y (SIMD)
-      SIMD::FP<SIMDTYPE> m_maxYSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Maximum Y (SIMD)
-      SIMD::FP<SIMDTYPE> m_incXSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< 1 / Increment in X
-      SIMD::FP<SIMDTYPE> m_incYSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< 1 / Increment in Y
+
+    private:                                                          // SIMD cached values
+      SIMD::FP< SIMDTYPE > m_minXSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Minimum X (SIMD)
+      SIMD::FP< SIMDTYPE > m_maxXSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Maximum X (SIMD)
+      SIMD::FP< SIMDTYPE > m_minYSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Minimum Y (SIMD)
+      SIMD::FP< SIMDTYPE > m_maxYSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Maximum Y (SIMD)
+      SIMD::FP< SIMDTYPE > m_incXSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< 1 / Increment in X
+      SIMD::FP< SIMDTYPE > m_incYSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< 1 / Increment in Y
     private:
-      FPTYPE m_minX{ 9e9};         ///< Minimum X
-      FPTYPE m_maxX{-9e9};         ///< Maximum X
-      FPTYPE m_minY{ 9e9};         ///< Minimum Y
-      FPTYPE m_maxY{-9e9};         ///< Maximum Y
-      FPTYPE m_incX{0};            ///< 1 / Increment in X
-      FPTYPE m_incY{0};            ///< 1 / Increment in Y
-      LookupTable m_lookupTable;   ///< The lookup table
+      FPTYPE      m_minX{ 9e9 };  ///< Minimum X
+      FPTYPE      m_maxX{ -9e9 }; ///< Maximum X
+      FPTYPE      m_minY{ 9e9 };  ///< Minimum Y
+      FPTYPE      m_maxY{ -9e9 }; ///< Maximum Y
+      FPTYPE      m_incX{ 0 };    ///< 1 / Increment in X
+      FPTYPE      m_incY{ 0 };    ///< 1 / Increment in Y
+      LookupTable m_lookupTable;  ///< The lookup table
     public:
       /// Vector of all mirrors in this panel
       Mirrors mirrors;
+
     private:
       /// Extra size to take into account mirror extents
-      FPTYPE m_eSize{0};
+      FPTYPE m_eSize{ 0 };
     };
 
     /// Specialisation for RICH1
-    template < typename FPTYPE, std::uint32_t NXBINS, std::uint32_t NYBINS, typename SIMDTYPE = float >
-    class R1LookupTableFinder final : public LookupTableFinder<FPTYPE,NXBINS,NYBINS,SIMDTYPE>
+    template < typename FPTYPE,
+               std::uint32_t NXBINS,
+               std::uint32_t NYBINS,
+               typename SIMDTYPE = float >
+    class R1LookupTableFinder final : public LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >
     {
     public:
-      R1LookupTableFinder() : LookupTableFinder<FPTYPE,NXBINS,NYBINS,SIMDTYPE>(100*Gaudi::Units::mm) { }
+      R1LookupTableFinder()
+        : LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >( 100 * Gaudi::Units::mm )
+      {}
     };
 
     /// Specialisation for RICH2
-    template < typename FPTYPE, std::uint32_t NXBINS, std::uint32_t NYBINS, typename SIMDTYPE = float >
-    class R2LookupTableFinder final : public LookupTableFinder<FPTYPE,NXBINS,NYBINS,SIMDTYPE>
+    template < typename FPTYPE,
+               std::uint32_t NXBINS,
+               std::uint32_t NYBINS,
+               typename SIMDTYPE = float >
+    class R2LookupTableFinder final : public LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >
     {
     public:
-      R2LookupTableFinder() : LookupTableFinder<FPTYPE,NXBINS,NYBINS,SIMDTYPE>(2500*Gaudi::Units::mm) { }
+      R2LookupTableFinder()
+        : LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >( 2500 * Gaudi::Units::mm )
+      {}
     };
 
     //-----------------------------------------------------------------------------
@@ -439,65 +453,64 @@ namespace Rich::Future
     {
     public:
       /// Reset this object
-      void reset()
-      {
-        mirrors.clear();
-      }
+      void reset() { mirrors.clear(); }
       /// Initialise this object
       void init()
       {
         // Must have 2 mirrors in -ve and +ve x positions
-        if ( 2 != mirrors.size() || ( mirrors[0]->mirrorCentre().X() *
-                                      mirrors[1]->mirrorCentre().X() > 0 ) )
+        if ( 2 != mirrors.size() ||
+             ( mirrors[ 0 ]->mirrorCentre().X() * mirrors[ 1 ]->mirrorCentre().X() > 0 ) )
         {
           throw GaudiException( "Problem with mirror segments",
                                 "MirrorSegFinderLookUpTable::TwoSegmentXFinder",
                                 StatusCode::FAILURE );
         }
         // sort the mirrors so the -ve X one is in [0] and +ve in [1]
-        std::sort( mirrors.begin(), mirrors.end(),
-                   []( const auto m1, const auto m2 )
-                   { return ( m1->mirrorCentre().X() <
-                              m2->mirrorCentre().X() ); } );
+        std::sort( mirrors.begin(), mirrors.end(), []( const auto m1, const auto m2 ) {
+          return ( m1->mirrorCentre().X() < m2->mirrorCentre().X() );
+        } );
       }
       /// Find the mirror for a given position (Scalar)
-      template< typename POINT,
-                typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-      inline decltype(auto) find( const POINT & p ) const noexcept
+      template < typename POINT,
+                 typename std::enable_if<
+                   std::is_arithmetic< typename POINT::Scalar >::value >::type * = nullptr >
+      inline decltype( auto ) find( const POINT &p ) const noexcept
       {
         return find( p.x() );
       }
       /// Find the mirror for a given position (SIMD)
-      template< typename POINT,
-                typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-      inline decltype(auto) find( const POINT & p ) const noexcept
+      template < typename POINT,
+                 typename std::enable_if<
+                   !std::is_arithmetic< typename POINT::Scalar >::value >::type * = nullptr >
+      inline decltype( auto ) find( const POINT &p ) const noexcept
       {
         return find( p.x() );
       }
       /// Find the mirror for a given position (x,y)
-      template< typename TYPE >
-      inline decltype(auto) find( const TYPE x, const TYPE /* y */ ) const noexcept
+      template < typename TYPE >
+      inline decltype( auto ) find( const TYPE x, const TYPE /* y */ ) const noexcept
       {
         return find( x );
       }
       /// Find the mirror for a given x position
-      template< typename TYPE >
-      inline decltype(auto) find( const TYPE x ) const noexcept
+      template < typename TYPE >
+      inline decltype( auto ) find( const TYPE x ) const noexcept
       {
-        if constexpr ( std::is_arithmetic<TYPE>::value )
+        if constexpr ( std::is_arithmetic< TYPE >::value )
         {
           // Scalar
-          return ( x < 0 ? mirrors[0] : mirrors[1] );
+          return ( x < 0 ? mirrors[ 0 ] : mirrors[ 1 ] );
         }
         else
         {
           // SIMD - revert to scalar loop here... Is there a way to avoid this ?
-          SIMDMirrors<TYPE> mirrs;
+          SIMDMirrors< TYPE > mirrs;
           for ( std::size_t i = 0; i < TYPE::Size; ++i )
-          { mirrs[i] = ( x[i] < 0 ? mirrors[0] : mirrors[1] ); }
+          { mirrs[ i ] = ( x[ i ] < 0 ? mirrors[ 0 ] : mirrors[ 1 ] ); }
           return mirrs;
         }
       }
+
     public:
       /// Vector of all mirrors in this panel
       Mirrors mirrors;
@@ -511,120 +524,123 @@ namespace Rich::Future
       /// Reset the finders
       void reset()
       {
-        m_r1Finder[Rich::top]   .reset();
-        m_r1Finder[Rich::bottom].reset();
-        m_r2Finder[Rich::left]  .reset();
-        m_r2Finder[Rich::right] .reset();
+        m_r1Finder[ Rich::top ].reset();
+        m_r1Finder[ Rich::bottom ].reset();
+        m_r2Finder[ Rich::left ].reset();
+        m_r2Finder[ Rich::right ].reset();
       }
       /// Validity check
       bool isOK() const
       {
-        return ( !m_r1Finder[Rich::top]   .mirrors.empty() &&
-                 !m_r1Finder[Rich::bottom].mirrors.empty() &&
-                 !m_r2Finder[Rich::left]  .mirrors.empty() &&
-                 !m_r2Finder[Rich::right] .mirrors.empty() );
+        return (
+          !m_r1Finder[ Rich::top ].mirrors.empty() && !m_r1Finder[ Rich::bottom ].mirrors.empty() &&
+          !m_r2Finder[ Rich::left ].mirrors.empty() && !m_r2Finder[ Rich::right ].mirrors.empty() );
       }
       /// Add a mirror to the given RICH and side
-      void addMirror( const Rich::DetectorType rich,
-                      const Rich::Side side,
-                      const DeRichSphMirror * m )
+      void
+      addMirror( const Rich::DetectorType rich, const Rich::Side side, const DeRichSphMirror *m )
       {
-        if ( Rich::Rich1 == rich )
-        { m_r1Finder[side].mirrors.push_back( m ); }
+        if ( Rich::Rich1 == rich ) { m_r1Finder[ side ].mirrors.push_back( m ); }
         else
-        { m_r2Finder[side].mirrors.push_back( m ); }
+        {
+          m_r2Finder[ side ].mirrors.push_back( m );
+        }
       }
       /// Initialise
-      void init( )
+      void init()
       {
-        m_r1Finder[Rich::top]   .init();
-        m_r1Finder[Rich::bottom].init();
-        m_r2Finder[Rich::left]  .init();
-        m_r2Finder[Rich::right] .init();
+        m_r1Finder[ Rich::top ].init();
+        m_r1Finder[ Rich::bottom ].init();
+        m_r2Finder[ Rich::left ].init();
+        m_r2Finder[ Rich::right ].init();
       }
+
     public:
       /// Find the mirrors for the given RICH, panel and point
-      template< typename POINT >
-      inline decltype(auto) find( const Rich::DetectorType rich,
-                                  const Rich::Side side,
-                                  const POINT& p ) const noexcept
+      template < typename POINT >
+      inline decltype( auto )
+      find( const Rich::DetectorType rich, const Rich::Side side, const POINT &p ) const noexcept
       {
         return find( rich, side, p.x(), p.y() );
       }
       /// Find the mirrors for the given RICH, panels and point (SIMD)
-      template< typename POINT,
-                typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-      inline decltype(auto) find( const Rich::DetectorType rich,
-                                  const Rich::SIMD::Sides& sides,
-                                  const POINT& p ) const noexcept
+      template < typename POINT,
+                 typename std::enable_if<
+                   !std::is_arithmetic< typename POINT::Scalar >::value >::type * = nullptr >
+      inline decltype( auto ) find( const Rich::DetectorType rich,
+                                    const Rich::SIMD::Sides &sides,
+                                    const POINT &            p ) const noexcept
       {
         return find( rich, sides, p.x(), p.y() );
       }
+
     public:
       /// Find the mirror for the given RICH, panel and point (x,y)
-      template< typename TYPE >
-      inline decltype(auto) find( const Rich::DetectorType rich,
-                                  const Rich::Side side,
-                                  const TYPE x, const TYPE y ) const noexcept
+      template < typename TYPE >
+      inline decltype( auto )
+      find( const Rich::DetectorType rich, const Rich::Side side, const TYPE x, const TYPE y ) const
+        noexcept
       {
-        return ( Rich::Rich1 == rich ?
-                 m_r1Finder[side].find(x,y) : m_r2Finder[side].find(x,y) );
+        return ( Rich::Rich1 == rich ? m_r1Finder[ side ].find( x, y ) :
+                                       m_r2Finder[ side ].find( x, y ) );
       }
       /// Find the mirror for the given RICH, panels and point (x,y) (SIMD)
-      template< typename TYPE,
-                typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-      inline decltype(auto) find( const Rich::DetectorType rich,
-                                  const Rich::SIMD::Sides& sides,
-                                  const TYPE x, const TYPE y ) const noexcept
+      template < typename TYPE,
+                 typename std::enable_if< !std::is_arithmetic< TYPE >::value >::type * = nullptr >
+      inline decltype( auto ) find( const Rich::DetectorType rich,
+                                    const Rich::SIMD::Sides &sides,
+                                    const TYPE               x,
+                                    const TYPE               y ) const noexcept
       {
         // Side masks
-        const auto m1 = ( sides == Rich::SIMD::Sides(Rich::firstSide)  );
-        const auto m2 = ( sides == Rich::SIMD::Sides(Rich::secondSide) );
+        const auto m1 = ( sides == Rich::SIMD::Sides( Rich::firstSide ) );
+        const auto m2 = ( sides == Rich::SIMD::Sides( Rich::secondSide ) );
         // return the right ones
-        if      ( all_of(m1) ) { return find( rich, Rich::firstSide,  x, y ); }
-        else if ( all_of(m2) ) { return find( rich, Rich::secondSide, x, y ); }
+        if ( all_of( m1 ) ) { return find( rich, Rich::firstSide, x, y ); }
+        else if ( all_of( m2 ) )
+        {
+          return find( rich, Rich::secondSide, x, y );
+        }
         else
         {
-          auto mirrs1 = find( rich, Rich::firstSide,  x, y );
+          auto mirrs1 = find( rich, Rich::firstSide, x, y );
           auto mirrs2 = find( rich, Rich::secondSide, x, y );
           for ( std::size_t i = 0; i < Rich::SIMD::Sides::Size; ++i )
           {
-            if ( m2[i] ) { mirrs1[i] = mirrs2[i]; }
+            if ( m2[ i ] ) { mirrs1[ i ] = mirrs2[ i ]; }
           }
           return mirrs1;
         }
       }
+
     public:
       /// Get the list of mirrors
-      const Mirrors& mirrors( const Rich::DetectorType rich,
-                              const Rich::Side side ) const noexcept
+      const Mirrors &mirrors( const Rich::DetectorType rich, const Rich::Side side ) const noexcept
       {
-        return ( Rich::Rich1 == rich ?
-                 m_r1Finder[side].mirrors : m_r2Finder[side].mirrors );
+        return ( Rich::Rich1 == rich ? m_r1Finder[ side ].mirrors : m_r2Finder[ side ].mirrors );
       }
+
     private:
       /// RICH1 finder
-      PanelArray<R1FINDER> m_r1Finder;
+      PanelArray< R1FINDER > m_r1Finder;
       /// RICH2 finder
-      PanelArray<R2FINDER> m_r2Finder;
+      PanelArray< R2FINDER > m_r2Finder;
     };
 
   protected:
-
     // Finder types for each RICH and mirror type
     using R1Primary   = TwoSegmentXFinder;
-    using R2Primary   = R2LookupTableFinder<double,400,400>;
-    using R1Secondary = R1LookupTableFinder<double,200,100>;
-    using R2Secondary = R2LookupTableFinder<double,400,400>;
+    using R2Primary   = R2LookupTableFinder< double, 400, 400 >;
+    using R1Secondary = R1LookupTableFinder< double, 200, 100 >;
+    using R2Secondary = R2LookupTableFinder< double, 400, 400 >;
 
     /// Primary mirrors
-    RichMirrorFinder<R1Primary,R2Primary> m_sphMirrFinder;
+    RichMirrorFinder< R1Primary, R2Primary > m_sphMirrFinder;
 
     /// Secondary mirrors
-    RichMirrorFinder<R1Secondary,R2Secondary> m_secMirrFinder;
+    RichMirrorFinder< R1Secondary, R2Secondary > m_secMirrFinder;
 
   public:
-
     /** Locates the spherical mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -634,10 +650,10 @@ namespace Rich::Future
      *
      *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
      */
-    template< typename POINT >
-    inline decltype(auto) findSphMirror( const Rich::DetectorType rich,
-                                         const Rich::Side side,
-                                         const POINT& reflPoint ) const noexcept
+    template < typename POINT >
+    inline decltype( auto ) findSphMirror( const Rich::DetectorType rich,
+                                           const Rich::Side         side,
+                                           const POINT &            reflPoint ) const noexcept
     {
       // Find the mirror from the lookup map
       return findSphMirror( rich, side, reflPoint.x(), reflPoint.y() );
@@ -654,18 +670,18 @@ namespace Rich::Future
      *
      *  @return Array of DeRichSphMirror objects for the associated mirror segments
      */
-    template< typename POINT,
-              typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-    inline decltype(auto) findSphMirror( const Rich::DetectorType rich,
-                                         const Rich::SIMD::Sides& sides,
-                                         const POINT& reflPoint ) const noexcept
+    template < typename POINT,
+               typename std::enable_if< !std::is_arithmetic< typename POINT::Scalar >::value >::type
+                 * = nullptr >
+    inline decltype( auto ) findSphMirror( const Rich::DetectorType rich,
+                                           const Rich::SIMD::Sides &sides,
+                                           const POINT &            reflPoint ) const noexcept
     {
       // Find the mirror from the lookup map
       return findSphMirror( rich, sides, reflPoint.x(), reflPoint.y() );
     }
 
   public:
-
     /** Locates the secondary mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -675,10 +691,10 @@ namespace Rich::Future
      *
      *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
      */
-    template< typename POINT >
-    inline decltype(auto) findSecMirror( const Rich::DetectorType rich,
-                                         const Rich::Side side,
-                                         const POINT& reflPoint ) const noexcept
+    template < typename POINT >
+    inline decltype( auto ) findSecMirror( const Rich::DetectorType rich,
+                                           const Rich::Side         side,
+                                           const POINT &            reflPoint ) const noexcept
     {
       // Find the mirror from the lookup map
       return findSecMirror( rich, side, reflPoint.x(), reflPoint.y() );
@@ -695,18 +711,18 @@ namespace Rich::Future
      *
      *  @return Array of DeRichSphMirror objects for the associated mirror segments
      */
-    template< typename POINT,
-              typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-    inline decltype(auto) findSecMirror( const Rich::DetectorType rich,
-                                         const Rich::SIMD::Sides& sides,
-                                         const POINT& reflPoint ) const noexcept
+    template < typename POINT,
+               typename std::enable_if< !std::is_arithmetic< typename POINT::Scalar >::value >::type
+                 * = nullptr >
+    inline decltype( auto ) findSecMirror( const Rich::DetectorType rich,
+                                           const Rich::SIMD::Sides &sides,
+                                           const POINT &            reflPoint ) const noexcept
     {
       // Find the mirror from the lookup map
       return findSecMirror( rich, sides, reflPoint.x(), reflPoint.y() );
     }
 
   public:
-
     /** Locates the spherical mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -716,10 +732,11 @@ namespace Rich::Future
      *
      *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
      */
-    template< typename TYPE >
-    inline decltype(auto) findSphMirror( const Rich::DetectorType rich,
-                                         const Rich::Side side,
-                                         const TYPE x, const TYPE y ) const noexcept
+    template < typename TYPE >
+    inline decltype( auto ) findSphMirror( const Rich::DetectorType rich,
+                                           const Rich::Side         side,
+                                           const TYPE               x,
+                                           const TYPE               y ) const noexcept
     {
       // Find the mirror from the lookup map
       return m_sphMirrFinder.find( rich, side, x, y );
@@ -736,18 +753,18 @@ namespace Rich::Future
      *
      *  @return Array of DeRichSphMirror objects for the associated mirror segments
      */
-    template< typename TYPE,
-              typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline decltype(auto) findSphMirror( const Rich::DetectorType rich,
-                                         const Rich::SIMD::Sides& sides,
-                                         const TYPE x, const TYPE y ) const noexcept
+    template < typename TYPE,
+               typename std::enable_if< !std::is_arithmetic< TYPE >::value >::type * = nullptr >
+    inline decltype( auto ) findSphMirror( const Rich::DetectorType rich,
+                                           const Rich::SIMD::Sides &sides,
+                                           const TYPE               x,
+                                           const TYPE               y ) const noexcept
     {
       // Find the mirror from the lookup map
       return m_sphMirrFinder.find( rich, sides, x, y );
     }
 
   public:
-
     /** Locates the secondary mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -757,10 +774,11 @@ namespace Rich::Future
      *
      *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
      */
-    template< typename TYPE >
-    inline decltype(auto) findSecMirror( const Rich::DetectorType rich,
-                                         const Rich::Side side,
-                                         const TYPE x, const TYPE y ) const noexcept
+    template < typename TYPE >
+    inline decltype( auto ) findSecMirror( const Rich::DetectorType rich,
+                                           const Rich::Side         side,
+                                           const TYPE               x,
+                                           const TYPE               y ) const noexcept
     {
       // Find the mirror from the lookup map
       return m_secMirrFinder.find( rich, side, x, y );
@@ -777,16 +795,16 @@ namespace Rich::Future
      *
      *  @return Array of DeRichSphMirror objects for the associated mirror segments
      */
-    template< typename TYPE,
-              typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-    inline decltype(auto) findSecMirror( const Rich::DetectorType rich,
-                                         const Rich::SIMD::Sides& sides,
-                                         const TYPE x, const TYPE y ) const noexcept
+    template < typename TYPE,
+               typename std::enable_if< !std::is_arithmetic< TYPE >::value >::type * = nullptr >
+    inline decltype( auto ) findSecMirror( const Rich::DetectorType rich,
+                                           const Rich::SIMD::Sides &sides,
+                                           const TYPE               x,
+                                           const TYPE               y ) const noexcept
     {
       // Find the mirror from the lookup map
       return m_secMirrFinder.find( rich, sides, x, y );
     }
-
   };
 
-}
+} // namespace Rich::Future

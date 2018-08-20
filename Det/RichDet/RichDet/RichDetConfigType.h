@@ -14,11 +14,11 @@ namespace Rich
    *  @date   17/11/2011
    */
   enum RichPhDetConfigType
-    {
-      InvalidPDConfig = -1, ///< Invalid PD config
-      HPDConfig       = 0,  ///< HPD photodetectors
-      PMTConfig       = 1   ///< PMT photodetectors
-    };
+  {
+    InvalidPDConfig = -1, ///< Invalid PD config
+    HPDConfig       = 0,  ///< HPD photodetectors
+    PMTConfig       = 1   ///< PMT photodetectors
+  };
 
   /** Text conversion for RichPhDetConfigType enumeration
    *
@@ -27,4 +27,4 @@ namespace Rich
    */
   std::string text( const Rich::RichPhDetConfigType conf );
 
-}
+} // namespace Rich

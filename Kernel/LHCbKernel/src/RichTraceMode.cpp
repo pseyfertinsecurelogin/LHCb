@@ -14,16 +14,17 @@
 // local
 #include "Kernel/RichTraceMode.h"
 
-std::ostream& LHCb::RichTraceMode::fillStream(std::ostream& os) const
+std::ostream &
+LHCb::RichTraceMode::fillStream( std::ostream &os ) const
 {
   os << "RichTraceMode[ DetectionPrecision=" << detPrecision()
      << " DetPlaneBoundaries=" << detPlaneBound();
-  if ( forcedSide() )         { os << " [Will force given RICH side]"; }
-  if ( outMirrorBoundary() )  { os << " [Will Respect Outside Mirror Boundaries]"; }
-  if ( mirrorSegBoundary() )  { os << " [Will Respect Mirror Seg Boundaries]"; }
+  if ( forcedSide() ) { os << " [Will force given RICH side]"; }
+  if ( outMirrorBoundary() ) { os << " [Will Respect Outside Mirror Boundaries]"; }
+  if ( mirrorSegBoundary() ) { os << " [Will Respect Mirror Seg Boundaries]"; }
   if ( beamPipeIntersects() ) { os << " [Will Test for intersections with beampipe]"; }
   if ( hpdKaptonShadowing() ) { os << " [Will check for intersections with HPD kapton]"; }
-  if ( aeroRefraction()     ) { os << " [Will correct for refraction at Aerogel/Rich1Gas boundary]"; }
+  if ( aeroRefraction() ) { os << " [Will correct for refraction at Aerogel/Rich1Gas boundary]"; }
   return os << " ]";
 }
 

@@ -36,26 +36,23 @@ namespace Rich::DAQ
   {
 
   public:
-
     /// Standard constructor
-    RawBufferToRichDigitsAlg( const std::string& name, ISvcLocator* pSvcLocator );
+    RawBufferToRichDigitsAlg( const std::string &name, ISvcLocator *pSvcLocator );
 
-    virtual ~RawBufferToRichDigitsAlg( ); ///< Destructor
+    virtual ~RawBufferToRichDigitsAlg(); ///< Destructor
 
-    StatusCode initialize() override;    // Algorithm initialization
-    StatusCode execute   () override;    // Algorithm execution
+    StatusCode initialize() override; // Algorithm initialization
+    StatusCode execute() override;    // Algorithm execution
 
   private: // data
-
     /// Output location for RichDigits
     std::string m_richDigitsLoc;
 
     /// Raw Buffer Decoding tool
-    const IRawBufferToSmartIDsTool * m_decoder = nullptr;
+    const IRawBufferToSmartIDsTool *m_decoder = nullptr;
 
     /// Flag to turn off RichDigit creation
     bool m_decodeOnly;
-
   };
 
-}
+} // namespace Rich::DAQ

@@ -17,16 +17,16 @@
 #include "GaudiKernel/Point3DTypes.h"
 
 // LHCbKernel
+#include "Kernel/FastAllocVector.h"
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
-#include "Kernel/FastAllocVector.h"
 
 // Kernel
 #include "Kernel/RichSmartID.h"
 
 // RichUtils
-#include "RichUtils/RichSIMDTypes.h"
 #include "RichUtils/RichPixelCluster.h"
+#include "RichUtils/RichSIMDTypes.h"
 
 namespace Rich::Future
 {
@@ -46,15 +46,13 @@ namespace Rich::Future
   {
 
   public: // types
-
     // SIMD types
     using FP         = Rich::SIMD::DefaultScalarFP; ///< Default scalar floating point type
-    using SIMDFP     = SIMD::FP<FP>;                ///< Default vector floating point type
-    using SIMDVector = SIMD::Vector<FP>;            ///< Default vector Vector class
-    using SIMDPoint  = SIMD::Point<FP>;             ///< Default vector Point class
+    using SIMDFP     = SIMD::FP< FP >;              ///< Default vector floating point type
+    using SIMDVector = SIMD::Vector< FP >;          ///< Default vector Vector class
+    using SIMDPoint  = SIMD::Point< FP >;           ///< Default vector Point class
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( ISmartIDTool, 1, 0 );
 
@@ -68,8 +66,8 @@ namespace Rich::Future
      *  @retval true  The conversion to a global coordinate was successful
      *  @retval false The conversion to a global coordinate failed
      */
-    virtual bool globalPosition ( const LHCb::RichSmartID& smartid,
-                                  Gaudi::XYZPoint& detectPoint ) const = 0;
+    virtual bool globalPosition( const LHCb::RichSmartID &smartid,
+                                 Gaudi::XYZPoint &        detectPoint ) const = 0;
 
     /** Finds the average position of a cluster of RichSmartIDs,
      *  in global LHCb coordinates on the PD entrance window.
@@ -81,8 +79,8 @@ namespace Rich::Future
      *  @retval true  The conversion to a global coordinate was successful
      *  @retval false The conversion to a global coordinate failed
      */
-    virtual bool globalPosition ( const Rich::PDPixelCluster& cluster,
-                                  Gaudi::XYZPoint& detectPoint ) const = 0;
+    virtual bool globalPosition( const Rich::PDPixelCluster &cluster,
+                                 Gaudi::XYZPoint &           detectPoint ) const = 0;
 
     /** Finds the global positions, in global LHCb coordinates, for the
      *  given vector of PD clusters on the PD entrance window.
@@ -93,9 +91,9 @@ namespace Rich::Future
      *
      *  @return The vector of positions.
      */
-    virtual LHCb::STL::Vector<Gaudi::XYZPoint>
-    globalPositions( const Rich::PDPixelCluster::Vector& clusters,
-                     const bool ignoreClusters = false ) const = 0;
+    virtual LHCb::STL::Vector< Gaudi::XYZPoint >
+    globalPositions( const Rich::PDPixelCluster::Vector &clusters,
+                     const bool                          ignoreClusters = false ) const = 0;
 
     /** @brief Converts an PD RichSmartID identification into a position in
      *  global LHCb coordinates.
@@ -109,8 +107,7 @@ namespace Rich::Future
      *  @retval true  The conversion to a global coordinate was successful
      *  @retval false The conversion to a global coordinate failed
      */
-    virtual bool pdPosition ( const LHCb::RichSmartID& pdid,
-                              Gaudi::XYZPoint& pdPoint ) const = 0;
+    virtual bool pdPosition( const LHCb::RichSmartID &pdid, Gaudi::XYZPoint &pdPoint ) const = 0;
 
     /** Computes the global position coordinate (on PD entrance window) for a given
      *  position in local PD panel coordinates and RICH detector and panel identifiers.
@@ -121,9 +118,9 @@ namespace Rich::Future
      *
      *  @return The position in global coordinates
      */
-    virtual Gaudi::XYZPoint globalPosition ( const Gaudi::XYZPoint& localPoint,
-                                             const Rich::DetectorType rich,
-                                             const Rich::Side side ) const = 0;
+    virtual Gaudi::XYZPoint globalPosition( const Gaudi::XYZPoint &  localPoint,
+                                            const Rich::DetectorType rich,
+                                            const Rich::Side         side ) const = 0;
 
     /** Converts a position (on the pixel chip) in global coordinates to the corresponding
      *  RichSmartID identifier.
@@ -135,8 +132,8 @@ namespace Rich::Future
      *  @retval true  Conversion was successful (position in PD acceptance)
      *  @retval false Conversion was not successful (position not in PD acceptance)
      */
-    virtual bool smartID ( const Gaudi::XYZPoint& globalPoint,
-                           LHCb::RichSmartID& smartid ) const = 0;
+    virtual bool smartID( const Gaudi::XYZPoint &globalPoint,
+                          LHCb::RichSmartID &    smartid ) const = 0;
 
     /** Supplies a vector of all currently active and valid channels in the RICH detectors
      *
@@ -144,7 +141,7 @@ namespace Rich::Future
      *  @retval Vector size > 0 : Request was successful, RichSmartID vector is valid
      *  @retval Vector size = 0 : Request was UNsuccessful, RichSmartID vector is not valid
      */
-    virtual LHCb::RichSmartID::Vector readoutChannelList( ) const = 0;
+    virtual LHCb::RichSmartID::Vector readoutChannelList() const = 0;
 
     /** Converts a position in global coordinates to the local coordinate system
      *  of the appropriate PD panel
@@ -157,7 +154,7 @@ namespace Rich::Future
      *
      *  @return The local position on the PD panel
      */
-    virtual Gaudi::XYZPoint globalToPDPanel ( const Gaudi::XYZPoint& globalPoint ) const = 0;
+    virtual Gaudi::XYZPoint globalToPDPanel( const Gaudi::XYZPoint &globalPoint ) const = 0;
 
     /** Converts a SIMD position in global coordinates to the local coordinate system
      *  of the appropriate PD panel
@@ -171,8 +168,8 @@ namespace Rich::Future
      *
      *  @return The local position on the PD panel
      */
-    virtual SIMDPoint globalToPDPanel ( const Rich::DetectorType rich,
-                                        const SIMDPoint& globalPoint ) const = 0;
+    virtual SIMDPoint globalToPDPanel( const Rich::DetectorType rich,
+                                       const SIMDPoint &        globalPoint ) const = 0;
 
     /** Converts a SIMD position in global coordinates to the local coordinate system
      *  of the appropriate PD panel
@@ -187,10 +184,9 @@ namespace Rich::Future
      *
      *  @return The local position on the PD panel
      */
-    virtual SIMDPoint globalToPDPanel ( const Rich::DetectorType rich,
-                                        const Rich::Side side,
-                                        const SIMDPoint& globalPoint ) const = 0;
-
+    virtual SIMDPoint globalToPDPanel( const Rich::DetectorType rich,
+                                       const Rich::Side         side,
+                                       const SIMDPoint &        globalPoint ) const = 0;
   };
 
-}
+} // namespace Rich::Future

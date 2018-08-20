@@ -16,14 +16,14 @@
 #include <stdio.h>
 
 // Gaudi
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/CommonMessaging.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
 
 // Utils
 #include "RichUtils/RichDAQDefinitions.h"
-#include "RichUtils/RichDAQHeaderPDBase.h"
 #include "RichUtils/RichDAQFooterPDBase.h"
+#include "RichUtils/RichDAQHeaderPDBase.h"
 
 namespace Rich::DAQ
 {
@@ -42,7 +42,6 @@ namespace Rich::DAQ
   {
 
   public:
-
     /** Decode the data bank to a RichSmartID vector
      *
      *  @param ids     Vector of RichSmartIDs to fill
@@ -50,19 +49,18 @@ namespace Rich::DAQ
      *
      *  @return Number of decoded hits
      */
-    virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                        const LHCb::RichSmartID hpdID ) const = 0;
+    virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector &ids,
+                                        const LHCb::RichSmartID    hpdID ) const = 0;
 
     /// Destructor
     virtual ~PDDataBank() = default;
 
   public:
-
     /** Fill a RAWBank with the data for this bank
      *
      *  @param rawData The raw data bank to fill
      */
-    virtual void fillRAWBank( RAWBank & rawData ) const = 0;
+    virtual void fillRAWBank( RAWBank &rawData ) const = 0;
 
     /// Returns the L0ID
     virtual Level0ID level0ID() const = 0;
@@ -80,19 +78,16 @@ namespace Rich::DAQ
     virtual EventID eventID() const = 0;
 
     /// Returns the total number of words for this HPD
-    inline ShortType nTotalWords() const
-    {
-      return nHeaderWords() + nFooterWords() + nDataWords();
-    }
+    inline ShortType nTotalWords() const { return nHeaderWords() + nFooterWords() + nDataWords(); }
 
     /// Read access to primary header word
     virtual HeaderPDBase::WordType primaryHeaderWord() const = 0;
 
     /// Read access to extended header words
-    virtual const HeaderPDBase::ExtendedHeaderWords & extendedHeaderWords() const = 0;
+    virtual const HeaderPDBase::ExtendedHeaderWords &extendedHeaderWords() const = 0;
 
     /// Read access to footer
-    virtual const FooterPDBase::FooterWords & footerWords() const = 0;
+    virtual const FooterPDBase::FooterWords &footerWords() const = 0;
 
     /// Is the data in 'extended' mode
     inline bool isExtended() const noexcept
@@ -106,25 +101,24 @@ namespace Rich::DAQ
     /** Print data bank to message stream
      *  @param os Stream to print to
      */
-    virtual void fillMsgStream( MsgStream & os ) const = 0;
+    virtual void fillMsgStream( MsgStream &os ) const = 0;
 
     /** Overloaded output to message stream
      *  @param os   Output stream
      *  @param data HPD data bank to print
      */
-    friend MsgStream & operator << ( MsgStream & os, const PDDataBank & data )
+    friend MsgStream &operator<<( MsgStream &os, const PDDataBank &data )
     {
-      data.fillMsgStream(os);
+      data.fillMsgStream( os );
       return os;
     }
 
     /// perform any data quality checks that can be done (such as parity word etc.)
-    virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
-                                     const CommonMessagingBase * msgBase ) const = 0;
+    virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector &ids,
+                                     const CommonMessagingBase *      msgBase ) const = 0;
 
     /// reset for a new data block
-    virtual void reset( const LongType * data,
-                        const ShortType  dataSize = 0 ) = 0;
+    virtual void reset( const LongType *data, const ShortType dataSize = 0 ) = 0;
   };
 
   //-----------------------------------------------------------------------------
@@ -137,26 +131,22 @@ namespace Rich::DAQ
    *  @date   2004-12-18
    */
   //-----------------------------------------------------------------------------
-  template< class Version, class Header, class Footer >
+  template < class Version, class Header, class Footer >
   class PDDataBankImp : public PDDataBank
   {
 
   public:
-
     /// Default Constructor
     PDDataBankImp( const ShortType maxDataSize = 1 )
-      : m_data         ( new LongType[maxDataSize] ),
-        m_maxDataSize  ( maxDataSize ),
-        m_internalData ( true )
+      : m_data( new LongType[ maxDataSize ] ), m_maxDataSize( maxDataSize ), m_internalData( true )
     {
-      for ( ShortType i = 0; i < maxDataSize; ++i ) { m_data[i] = 0; }
+      for ( ShortType i = 0; i < maxDataSize; ++i ) { m_data[ i ] = 0; }
       // memset ( m_data, 0, sizeof(m_data) );
       // for ( ShortType i = 0; i < maxDataSize; ++i )
       // { std::cout << i << " " << m_data[i] << std::endl; }
     }
 
   public:
-
     /** Constructor with internal data representation (encoding)
      *
      *  @param header   Header word for this HPD data bank
@@ -165,43 +155,37 @@ namespace Rich::DAQ
      *  @param maxDataSize Max possible data size
      *  @param dataSize Initialisation size for data bank
      */
-    PDDataBankImp( const Header &        header,
-                   const Footer &        footer,
-                   const LongType        dataInit,
-                   const ShortType       maxDataSize,
-                   const ShortType       dataSize = 0 )
-      : m_header       ( header                    ),
-        m_data         ( new LongType[maxDataSize] ),
-        m_footer       ( footer                    ),
-        m_dataSize     ( dataSize                  ),
-        m_maxDataSize  ( maxDataSize               ),
-      m_internalData ( true                      )
+    PDDataBankImp( const Header &  header,
+                   const Footer &  footer,
+                   const LongType  dataInit,
+                   const ShortType maxDataSize,
+                   const ShortType dataSize = 0 )
+      : m_header( header )
+      , m_data( new LongType[ maxDataSize ] )
+      , m_footer( footer )
+      , m_dataSize( dataSize )
+      , m_maxDataSize( maxDataSize )
+      , m_internalData( true )
     {
-      for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[i] = dataInit;
+      for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[ i ] = dataInit;
     }
 
   public:
-
     /** Constructor from external data (decoding RawBuffer)
      *
      *  @param data        Pointer to start of data block (including header)
      *  @param maxDataSize Max possible data size
      *  @param dataSize    Initialisation size for data bank (excluding header)
      */
-    PDDataBankImp( const LongType * data,
-                   const ShortType  maxDataSize,
-                   const ShortType  dataSize = 0 )
-      : m_maxDataSize  ( maxDataSize ),
-        m_internalData ( false       )
+    PDDataBankImp( const LongType *data, const ShortType maxDataSize, const ShortType dataSize = 0 )
+      : m_maxDataSize( maxDataSize ), m_internalData( false )
     {
       init( data, dataSize );
     }
 
   public:
-
     /// Reset object to decode a new data stream
-    void reset( const LongType * data,
-                const ShortType  dataSize = 0 ) override
+    void reset( const LongType *data, const ShortType dataSize = 0 ) override
     {
       // reset header and footer to default size if needed
       m_header.reset();
@@ -214,58 +198,42 @@ namespace Rich::DAQ
     }
 
   private:
-
     /// initialisation for decoding
-    void init( const LongType * data,
-               const ShortType  dataSize );
+    void init( const LongType *data, const ShortType dataSize );
 
   public:
-
     /// Destructor
     virtual ~PDDataBankImp() { cleanUp(); }
 
   public:
-
     /// Read access to header
-    inline const Header & header() const noexcept
-    {
-      return m_header;
-    }
+    inline const Header &header() const noexcept { return m_header; }
 
     /// Set the header
-    inline void setHeader( const Header & head ) noexcept
-    {
-      m_header = head;
-    }
+    inline void setHeader( const Header &head ) noexcept { m_header = head; }
 
     /// Read access to footer
-    inline const Footer & footer() const noexcept
-    {
-      return m_footer;
-    }
+    inline const Footer &footer() const noexcept { return m_footer; }
 
     /// Set the footer
-    inline void setFooter( const Footer & footer ) noexcept
-    {
-      m_footer = footer;
-    }
+    inline void setFooter( const Footer &footer ) noexcept { m_footer = footer; }
 
     /// Read access to extended header words
-    const HeaderPDBase::ExtendedHeaderWords & extendedHeaderWords() const override final;
+    const HeaderPDBase::ExtendedHeaderWords &extendedHeaderWords() const override final;
 
     /// Read access to primary header word
     HeaderPDBase::WordType primaryHeaderWord() const override final;
 
     /// Read access to footer
-    const FooterPDBase::FooterWords & footerWords() const override final;
+    const FooterPDBase::FooterWords &footerWords() const override final;
 
     /** Decode the data bank to a RichSmartID vector
      *
      *  @param ids     Vector of RichSmartIDs to fill
      *  @param hpdID   RichSmartID for the HPD
      */
-    ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                const LHCb::RichSmartID hpdID ) const override = 0;
+    ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector &ids,
+                                const LHCb::RichSmartID    hpdID ) const override = 0;
 
     /// Returns the L0ID
     Level0ID level0ID() const override final;
@@ -289,17 +257,16 @@ namespace Rich::DAQ
      *
      *  @param rawData The raw data bank to fill
      */
-    void fillRAWBank( RAWBank & rawData ) const override;
+    void fillRAWBank( RAWBank &rawData ) const override;
 
     /// Creates the parity word from the list of hoit pixels
-    typename Footer::WordType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
+    typename Footer::WordType createParityWord( const LHCb::RichSmartID::Vector &ids ) const;
 
     /// perform any data quality checks that can be done (such as parity word etc.)
-    bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
-                             const CommonMessagingBase * msgBase ) const override;
+    bool checkDataIntegrity( const LHCb::RichSmartID::Vector &ids,
+                             const CommonMessagingBase *      msgBase ) const override;
 
   private: // methods
-
     /// Clean up data representation
     inline void cleanUp()
     {
@@ -311,94 +278,78 @@ namespace Rich::DAQ
     }
 
   protected: // methods
-
     /// Add data point
     inline void addData( const LongType data )
     {
-      if ( m_dataSize > maxDataSize()-1 )
+      if ( m_dataSize > maxDataSize() - 1 )
       {
-        throw GaudiException("Attempt to fill more than MAX data words",
-                             "*Rich::DAQ::PDDataBankImp*", StatusCode::SUCCESS );
+        throw GaudiException( "Attempt to fill more than MAX data words",
+                              "*Rich::DAQ::PDDataBankImp*",
+                              StatusCode::SUCCESS );
       }
-      m_data[m_dataSize++] = data;
+      m_data[ m_dataSize++ ] = data;
     }
 
     /// Read only access to data bank
-    inline const LongType * data() const noexcept
-    {
-      return m_data;
-    }
+    inline const LongType *data() const noexcept { return m_data; }
 
     /// Read/write only access to data bank
-    inline LongType * data() noexcept
-    {
-      return m_data;
-    }
+    inline LongType *data() noexcept { return m_data; }
 
     /// Access the number of words in the data block
-    inline ShortType dataSize() const noexcept
-    {
-      return m_dataSize;
-    }
+    inline ShortType dataSize() const noexcept { return m_dataSize; }
 
     /// Returns the max possible data size for the data block
-    inline ShortType maxDataSize() const noexcept
-    {
-      return m_maxDataSize;
-    }
+    inline ShortType maxDataSize() const noexcept { return m_maxDataSize; }
 
     /// Test if a given bit in a word is set on
-    inline bool
-    isBitOn( const LongType& data, const ShortType pos ) const noexcept
+    inline bool isBitOn( const LongType &data, const ShortType pos ) const noexcept
     {
-      return ( 0 != (data & (1<<pos)) );
+      return ( 0 != ( data & ( 1 << pos ) ) );
     }
 
     /// Set a given bit in a data word on
-    template< typename DTYPE, typename ITYPE >
-    inline void
-    setBit( DTYPE & data, const ITYPE pos, const ITYPE value = 1 ) const noexcept
+    template < typename DTYPE, typename ITYPE >
+    inline void setBit( DTYPE &data, const ITYPE pos, const ITYPE value = 1 ) const noexcept
     {
-      data |= value<<pos;
+      data |= value << pos;
     }
 
     /// Test if a given type is even or odd
-    template< typename T >
+    template < typename T >
     inline bool isEven( const T data ) const noexcept
     {
-      return ( (data & 0x1) == 0 );
+      return ( ( data & 0x1 ) == 0 );
     }
 
     /** Dump the raw header and data block to message stream
      *
      *  @param os Stream to print to
      */
-    void dumpAllBits( MsgStream & os ) const;
+    void dumpAllBits( MsgStream &os ) const;
 
     /** Print data bank to message stream
      *
      *  @param os Stream to print to
      */
-    void fillMsgStream( MsgStream & os ) const override final;
+    void fillMsgStream( MsgStream &os ) const override final;
 
   private:
-
     /// Turn a number into a hex string, with leading zeros padded to length 8
     inline std::string asHex( const LongType word ) const
     {
       std::ostringstream AsHex;
       AsHex << std::hex << word;
       std::string tmpW = AsHex.str();
-      return ( tmpW.size() < 8 ? std::string(8-tmpW.size(),'0')+tmpW : tmpW );
+      return ( tmpW.size() < 8 ? std::string( 8 - tmpW.size(), '0' ) + tmpW : tmpW );
     }
 
   private: // data
-
     /// HPD header word(s)
     Header m_header;
 
     /// Pointer to the data block (excluding header)
-    LongType * m_data = nullptr;
+    LongType *m_data = nullptr;
 
     /// HPD Footer word(s)
     Footer m_footer;
@@ -411,7 +362,6 @@ namespace Rich::DAQ
 
     /// Flag to indicate if data is external or internal
     bool m_internalData = false;
-
   };
 
-}
+} // namespace Rich::DAQ

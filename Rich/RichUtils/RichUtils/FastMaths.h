@@ -30,5 +30,5 @@ namespace Rich
     // Import from LHCbMath
     using namespace LHCb::Math;
 
-  }
-}
+  } // namespace Maths
+} // namespace Rich

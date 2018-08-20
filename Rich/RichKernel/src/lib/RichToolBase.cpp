@@ -15,5 +15,5 @@
 // ============================================================================
 // Force creation of templated class
 #include "RichCommonBase.icpp"
-template class Rich::CommonBase<GaudiTool> ;
+template class Rich::CommonBase< GaudiTool >;
 // ============================================================================

@@ -31,16 +31,14 @@ namespace Rich::Future
    */
   //-----------------------------------------------------------------------------
 
-  class AlgBase : public CommonBase<GaudiAlgorithm>
+  class AlgBase : public CommonBase< GaudiAlgorithm >
   {
 
   public:
-
     /// Standard constructor
-    AlgBase( const std::string& name,
-             ISvcLocator* pSvcLocator )
-      : CommonBase<GaudiAlgorithm> ( name, pSvcLocator ) { }
-
+    AlgBase( const std::string &name, ISvcLocator *pSvcLocator )
+      : CommonBase< GaudiAlgorithm >( name, pSvcLocator )
+    {}
   };
 
-}
+} // namespace Rich::Future
