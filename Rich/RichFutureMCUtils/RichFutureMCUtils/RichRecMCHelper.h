@@ -19,16 +19,19 @@ namespace Rich::Future::Rec::MC
   {
 
   public:
+
     /// Contructor from the underlying MC relations
     Helper( const TkToMCPRels &rels, const LHCb::MCRichDigitSummarys &histories )
       : SmartIDUtils( histories ), TrackToMCParticle( rels )
     {}
 
   public:
+
     using SmartIDUtils::mcParticles;
     using TrackToMCParticle::mcParticles;
 
   public:
+
     /// Access the common MCParticle(s) for the given track and RICH hit
     LHCb::MCParticle::ConstVector trueRecPhoton( const LHCb::Track &         track,
                                                  const Rich::PDPixelCluster &cluster ) const;

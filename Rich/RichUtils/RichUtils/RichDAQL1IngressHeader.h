@@ -42,6 +42,7 @@ namespace Rich::DAQ
   {
 
   public: // Bit packing information
+
     // Number of bits for each data field in the word
     static const ShortType BitsEventID        = 8;  ///< Number of bits for Event ID
     static const ShortType BitsBXID           = 8;  ///< Number of bits for BX ID
@@ -50,6 +51,7 @@ namespace Rich::DAQ
     static const ShortType BitsHPDsSuppressed = 1;  ///< Number of bits for supression flag
 
   private:
+
     // The shifts
     static const ShortType ShiftEventID        = 0;
     static const ShortType ShiftBXID           = ShiftEventID + BitsEventID;
@@ -75,6 +77,7 @@ namespace Rich::DAQ
     static const ShortType MaxHPDsSuppressed = ( ShortType )( 1 << BitsHPDsSuppressed ) - 1;
 
   public:
+
     /// Default Constructor
     L1IngressHeader() = default;
 
@@ -85,6 +88,7 @@ namespace Rich::DAQ
     inline LongType data() const noexcept { return m_data; }
 
   public: // getters
+
     /// Read data from ODIN
     inline void readFromODIN( const LHCb::ODIN *odin )
     {
@@ -127,6 +131,7 @@ namespace Rich::DAQ
     }
 
   public: // setters
+
     /// Set the event ID
     inline void setEventID( const EventID &evID )
     {
@@ -165,6 +170,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /** For a given set of HPD Ids, set each of them as active
      *  @param inputs  HPD Ingress Input Numbers
      */
@@ -184,10 +190,12 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Write this header to a RAWBank
     inline void fillRAWBank( RAWBank &bank ) const { bank.push_back( this->data() ); }
 
   private:
+
     /// Update the internal data
     inline void setData( const LongType data ) { m_data = data; }
 
@@ -225,6 +233,7 @@ namespace Rich::DAQ
     std::ostream &fillStream( std::ostream &os ) const;
 
   public:
+
     /// Overloaded printout to ostream
     friend inline std::ostream &operator<<( std::ostream &os, const L1IngressHeader &head )
     {
@@ -232,8 +241,9 @@ namespace Rich::DAQ
     }
 
   private:
+
     /// The data word
-    LongType m_data{ 0 };
+    LongType m_data { 0 };
   };
 
 } // namespace Rich::DAQ

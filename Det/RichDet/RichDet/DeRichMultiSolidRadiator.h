@@ -30,6 +30,7 @@ class DeRichMultiSolidRadiator : public DeRichRadiator
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -86,6 +87,7 @@ public:
   double refractiveIndex( const double energy, const bool hlt = false ) const override final;
 
 public:
+
   /** Access to the list of single solid radiators.
    *  Will be either sub-tiles, or tiles, depending on which are active in the DB
    */
@@ -98,6 +100,7 @@ public:
   inline const DeRichRadiator::Vector &fullTileRadiators() const noexcept { return m_fullTiles; }
 
 private:
+
   /// Add radiator volumes
   StatusCode addVolumes( const ILVolume *          lv,
                          const std::string &       volName,
@@ -116,6 +119,7 @@ private:
   StatusCode geometryUpdate();
 
 private:
+
   /// vector of solids
   typedef std::vector< const ISolid * > Solids;
   /// vector of physical volumes
@@ -135,5 +139,5 @@ private:
   DeRichRadiator::Vector m_fullTiles;
 
   /// First update flag
-  bool m_firstUpdate{ true };
+  bool m_firstUpdate { true };
 };

@@ -61,6 +61,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// Standard constructor
     RawBankDecoder( const std::string &name, ISvcLocator *pSvcLocator );
 
@@ -72,6 +73,7 @@ namespace Rich::Future
                                          const LHCb::ODIN &    odin ) const override;
 
   private:
+
     /// Returns the RawBank version enum for the given bank
     inline Rich::DAQ::BankVersion bankVersion( const LHCb::RawBank &bank ) const
     {
@@ -82,6 +84,7 @@ namespace Rich::Future
     class PDBanks
     {
     public: // the cached PD decoders
+
       /// Non-zero suppressed decoder (LHCb mode)
       std::unique_ptr< Rich::DAQ::PDDataBank > lhcb_nonZS;
       ///     zero suppressed decoder (LHCb mode)
@@ -92,11 +95,13 @@ namespace Rich::Future
       std::unique_ptr< Rich::DAQ::PDDataBank > alice_ZS;
 
     public:
+
       /// The bank type the current decoders are for
       Rich::DAQ::BankVersion version;
     };
 
   private:
+
     /** Creates a bank data from the given raw block of data
      *
      *  @param dataStart Pointer to the start of the raw data
@@ -108,6 +113,7 @@ namespace Rich::Future
                                                  PDBanks &                    banks ) const;
 
   private:
+
     /// Decode a RawBank into RichSmartID identifiers
     void decodeToSmartIDs( const LHCb::RawBank &     bank,
                            const LHCb::ODIN &        odin,
@@ -152,11 +158,13 @@ namespace Rich::Future
     }
 
   private:
+
     /// Suppress hot pixels
     void suppressHotPixels( const LHCb::RichSmartID &  hpdID,
                             LHCb::RichSmartID::Vector &newids ) const;
 
   private:
+
     /** Print the given RawBank as a simple hex dump
      *  @param bank The RawBank to dump out
      *  @param os   The Message Stream to print to
@@ -184,44 +192,45 @@ namespace Rich::Future
     }
 
   private:
+
     /// RICH System detector element
     const DeRichSystem *m_richSys = nullptr;
 
     /// Flag to turn on/off decoding of each RICH detector (default is both on)
-    Gaudi::Property< Rich::DetectorArray< bool > > m_richIsActive{ this,
-                                                                   "Detectors",
-                                                                   { true, true } };
+    Gaudi::Property< Rich::DetectorArray< bool > > m_richIsActive { this,
+                                                                    "Detectors",
+                                                                    { true, true } };
 
     /// Flag to turn on/off the use of the ODIN data bank during decoding for integrity checks
-    Gaudi::Property< bool > m_decodeUseOdin{ this, "DecodeUsingODIN", false };
+    Gaudi::Property< bool > m_decodeUseOdin { this, "DecodeUsingODIN", false };
 
     /// Turn on/off Event ID integrity checks between the RICH ingress headers and the ODIN
-    Gaudi::Property< bool > m_checkODINEventsIDs{ this, "CheckODINEventIDs", false };
+    Gaudi::Property< bool > m_checkODINEventsIDs { this, "CheckODINEventIDs", false };
 
     /// Turn on/off internal RICH Event ID integrity checks between the ingress and HPD header words
-    Gaudi::Property< bool > m_checkRICHEventsIDs{ this, "CheckRICHEventIDs", true };
+    Gaudi::Property< bool > m_checkRICHEventsIDs { this, "CheckRICHEventIDs", true };
 
     /// Perform check of HPD L1 hardward ID to that expected by the DB
-    Gaudi::Property< bool > m_hpdL1check{ this, "CheckHPDL1IDs", false };
+    Gaudi::Property< bool > m_hpdL1check { this, "CheckHPDL1IDs", false };
 
     /** Flag to turn on/off the purging off data from HPDs that fail the data
      *  integrity checks (default is on) */
-    Gaudi::Property< bool > m_purgeHPDsFailIntegrity{ this, "PurgeHPDsFailIntegrityTest", true };
+    Gaudi::Property< bool > m_purgeHPDsFailIntegrity { this, "PurgeHPDsFailIntegrityTest", true };
 
     /// Flag to activate the raw printout of each Rawbank
-    Gaudi::Property< bool > m_dumpBanks{ this, "DumpRawBanks", false };
+    Gaudi::Property< bool > m_dumpBanks { this, "DumpRawBanks", false };
 
     /// Turn on/off BX ID integrity checks
-    Gaudi::Property< bool > m_checkBxIDs{ this, "CheckBXIDs", true };
+    Gaudi::Property< bool > m_checkBxIDs { this, "CheckBXIDs", true };
 
     /// Turn on/off data integrity checks
-    Gaudi::Property< bool > m_checkDataIntegrity{ this, "CheckDataIntegrity", true };
+    Gaudi::Property< bool > m_checkDataIntegrity { this, "CheckDataIntegrity", true };
 
     /// Boolean to indicate if there are any pixels that need suppressing
     bool m_pixelsToSuppress = false;
 
     /// Max HPD Occupancy Cut
-    Gaudi::Property< Rich::DAQ::ShortType > m_maxHPDOc{
+    Gaudi::Property< Rich::DAQ::ShortType > m_maxHPDOc {
       this,
       "MaxHPDOccupancy",
       std::numeric_limits< Rich::DAQ::ShortType >::max()
@@ -231,15 +240,16 @@ namespace Rich::Future
      *
      *  VERY verbose in case of frequent errors
      */
-    Gaudi::Property< bool > m_verboseErrors{ this, "VerboseErrors", false };
+    Gaudi::Property< bool > m_verboseErrors { this, "VerboseErrors", false };
 
   private: // pixel masking
+
     /// Type for hot pixel list
     using HotPixelListType = std::vector< LHCb::RichSmartID::KeyType >;
 
     /** Software suppression of hot channels. List of RichSmartIDs (as unsigned ints)
      *  to suppress in the data. */
-    Gaudi::Property< HotPixelListType > m_hotChannels{ this, "HotPixelsToMask" };
+    Gaudi::Property< HotPixelListType > m_hotChannels { this, "HotPixelsToMask" };
 
     /// Type for Storage of pixels to mask for each HPD
     typedef Rich::HashMap< LHCb::RichSmartID, std::set< LHCb::RichSmartID > > HPDHotPixels;
@@ -248,6 +258,7 @@ namespace Rich::Future
     HPDHotPixels m_hotPixels;
 
   private:
+
     /** @brief Turns on the use of a fake HPD RichSmartID for each HPD data data block.
      *
      *  Useful for deep debugging cases when the HPD L0 ID is missing in the database.
@@ -256,7 +267,7 @@ namespace Rich::Future
      * missing). Consequently, this option should only be used to test the data decoding and not if
      * the RichSmartIDs are needed for analysis downstream.
      */
-    Gaudi::Property< bool > m_useFakeHPDID{ this, "UseFakeHPDID", false };
+    Gaudi::Property< bool > m_useFakeHPDID { this, "UseFakeHPDID", false };
   };
 
   //}

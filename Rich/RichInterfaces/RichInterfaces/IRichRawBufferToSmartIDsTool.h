@@ -43,12 +43,14 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Type for Input location for RawEvent in TES
     using RawEventLocation = std::string;
     /// Type for Input location(s) for RawEvent in TES
     using RawEventLocations = std::vector< RawEventLocation >;
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IRawBufferToSmartIDsTool, 1, 0 );
 

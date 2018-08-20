@@ -42,6 +42,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( ISnellsLawRefraction, 1, 0 );
 

@@ -47,19 +47,23 @@ namespace Rich
   {
 
   public:
+
     /// Typedef for a vector of pointers to TabulatedFunction1D
     using ConstVector = std::vector< const TabulatedFunction1D * >;
 
   protected: // definitions
+
     /// Internal data container type
     using Data = std::map< double, double >;
 
   private:
+
     /** Callable class to handle the GSL interpolator free call.
      *  Used in conjugation with std::unique_ptr. */
     class GSLSpline final
     {
     public:
+
       /// the deletion operator
       void operator()( gsl_spline *s ) { gsl_spline_free( s ); }
       /// The type for memory management
@@ -71,6 +75,7 @@ namespace Rich
     class GSLAccelerator final
     {
     public:
+
       /// the deletion operator
       void operator()( gsl_interp_accel *a ) { gsl_interp_accel_free( a ); }
       /// The type for memory management
@@ -84,10 +89,12 @@ namespace Rich
     {
 
     public:
+
       /// A single bin in the interpolator
       class Bin final
       {
       public:
+
         /// Drault constructor
         Bin() = default;
         /// Constructor from bin low/high edges
@@ -112,21 +119,24 @@ namespace Rich
         inline TYPE maxY() const noexcept { return getY( m_maxX ); }
 
       private:
+
         /// The slope parameter
-        TYPE m_slope{ 0 };
+        TYPE m_slope { 0 };
         /// The constant parameter
-        TYPE m_const{ 0 };
+        TYPE m_const { 0 };
         /// The bin min x
-        TYPE m_minX{ 0 };
+        TYPE m_minX { 0 };
         /// The bin max x
-        TYPE m_maxX{ 0 };
+        TYPE m_maxX { 0 };
 
       public:
+
         /// type for storage of data points
         typedef std::vector< Bin > Storage;
       };
 
     public:
+
       /// Clear the interpolator
       void clear()
       {
@@ -160,6 +170,7 @@ namespace Rich
       }
 
     public:
+
       /// Access the value for a given X
       inline TYPE value( const TYPE x ) const noexcept { return m_data[ xIndex( x ) ].getY( x ); }
 
@@ -216,6 +227,7 @@ namespace Rich
       inline std::size_t nDataPoints() const noexcept { return m_data.size(); }
 
     private:
+
       /// Get the look up index for a given x
       inline unsigned int xIndex( const TYPE x ) const noexcept
       {
@@ -226,20 +238,22 @@ namespace Rich
       }
 
     private:
+
       /// The look up storage of data points
       typename Bin::Storage m_data;
 
       /// 1 / the bin increment
-      TYPE m_incXinv{ 0 };
+      TYPE m_incXinv { 0 };
 
       /// The minimum valid x
-      TYPE m_minX{ 0 };
+      TYPE m_minX { 0 };
 
       /// The maximum valid x
-      TYPE m_maxX{ 0 };
+      TYPE m_maxX { 0 };
     };
 
   public:
+
     /// Default constructor
     TabulatedFunction1D() = default;
 
@@ -303,6 +317,7 @@ namespace Rich
     virtual ~TabulatedFunction1D() = default;
 
   public:
+
     /** Create an interpolator that is the product of a list of interpolators
      *
      *  @param funcs   A vector containing pointers to the functions to merge
@@ -318,6 +333,7 @@ namespace Rich
              const gsl_interp_type *interType = gsl_interp_linear );
 
   private:
+
     /// Check lower bound
     inline bool checkLowerBound( const double x ) const noexcept { return ( minX() <= x ); }
 
@@ -342,6 +358,7 @@ namespace Rich
     }
 
   public:
+
     /** Computes the function value (y) for the given parameter (x) value
      *
      *  @param x The parameter value
@@ -477,6 +494,7 @@ namespace Rich
     inline std::size_t nDataPoints() const noexcept { return m_fastInterp.nDataPoints(); }
 
   public:
+
     /** Initialisation from arrays containing x and y values
      *
      *  Arrays must be of the same size and ordered such that entry i in each
@@ -518,6 +536,7 @@ namespace Rich
                            const gsl_interp_type *interType = gsl_interp_linear );
 
   protected: // methods
+
     /// clear the interpolator
     inline void clearInterpolator() { m_fastInterp.clear(); }
 
@@ -525,10 +544,12 @@ namespace Rich
     void initInterpolator();
 
   private: // data
+
     // Fast linear interpolator
     LinearInterp< double > m_fastInterp;
 
   protected:
+
     /// Status flag
     bool m_OK = false;
   };

@@ -155,7 +155,7 @@ DeRichPMTPanel::geometryUpdate()
 
       // save module {0,0,0} in local panel coords
       {
-        const auto zInGlobal = dePMTModule->geometry()->toGlobalMatrix() * GP{ 0, 0, 0 };
+        const auto zInGlobal = dePMTModule->geometry()->toGlobalMatrix() * GP { 0, 0, 0 };
         // Move to panel local and save
         m_DePMTModulesZeroPtn.emplace_back( geometry()->toLocalMatrix() * zInGlobal );
       }
@@ -209,7 +209,7 @@ DeRichPMTPanel::geometryUpdate()
 
               // Set the position of PD's {0,0,0} in this panel's local frame
               {
-                const auto zInGlobal = dePMT->toGlobalMatrix() * GP{ 0, 0, 0 };
+                const auto zInGlobal = dePMT->toGlobalMatrix() * GP { 0, 0, 0 };
                 // Move to panel local
                 const auto zInLocal( geometry()->toLocalMatrix() * zInGlobal );
                 // save
@@ -239,7 +239,7 @@ DeRichPMTPanel::geometryUpdate()
                       // Set the position of anodes's {0,0,0} in this panel's local frame
                       {
                         const auto zInGlobal =
-                          dePmtAnode->geometry()->toGlobalMatrix() * GP{ 0, 0, 0 };
+                          dePmtAnode->geometry()->toGlobalMatrix() * GP { 0, 0, 0 };
                         const auto zInLocal( geometry()->toLocalMatrix() * zInGlobal );
                         DePmtAnodeZeroPsInCurModule[ curPmtNum ] = zInLocal;
                       }
@@ -345,7 +345,7 @@ DeRichPMTPanel::geometryUpdate()
     aPon = geometry()->toGlobal( GP( 0, 0, aZShiftR2 ) );
 
     // determine which panel
-    const RowCol rci = ( side() == Rich::left ? RowCol{ 0, 1 } : RowCol{ 2, 3 } );
+    const RowCol rci = ( side() == Rich::left ? RowCol { 0, 1 } : RowCol { 2, 3 } );
 
     sign = ( side() == Rich::left ? 1 : -1 );
 
@@ -458,8 +458,8 @@ DeRichPMTPanel::geometryUpdate()
 
   // transform does not like direct assignent from scalar version :(
   {
-    double xx{ 0 }, xy{ 0 }, xz{ 0 }, dx{ 0 }, yx{ 0 }, yy{ 0 };
-    double yz{ 0 }, dy{ 0 }, zx{ 0 }, zy{ 0 }, zz{ 0 }, dz{ 0 };
+    double xx { 0 }, xy { 0 }, xz { 0 }, dx { 0 }, yx { 0 }, yy { 0 };
+    double yz { 0 }, dy { 0 }, zx { 0 }, zy { 0 }, zz { 0 }, dz { 0 };
 
     // Set to local matrix
     geometry()->toLocalMatrix().GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
@@ -774,7 +774,7 @@ DeRichPMTPanel::RichSetupMixedSizePmtModules()
 DeRichPMTPanel::ArraySetupSIMD
 DeRichPMTPanel::findPMTArraySetupSIMD( const SIMDPoint &aLocalPoint ) const
 {
-  ArraySetupSIMD aCh{ {} };
+  ArraySetupSIMD aCh { {} };
 
   ModuleNumbersSIMD nums;
   getModuleNumsSIMD( aLocalPoint.x(), aLocalPoint.y(), nums );
@@ -1247,7 +1247,7 @@ DeRichPMTPanel::setRichAndSide()
 {
   bool OK = true;
 
-  const auto centreGlobal = geometry()->toGlobal( Gaudi::XYZPoint{ 0, 0, 0 } );
+  const auto centreGlobal = geometry()->toGlobal( Gaudi::XYZPoint { 0, 0, 0 } );
 
   // Work out what Rich/panel I am
   if ( name().find( "Rich1" ) != std::string::npos )

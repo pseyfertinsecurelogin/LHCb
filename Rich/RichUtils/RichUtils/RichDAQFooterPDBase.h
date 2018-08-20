@@ -37,12 +37,14 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Type for a single word. Strongly typed for safety.
     using WordType = NumericType< LongType >;
     /// Type for header words
     using FooterWords = LHCb::STL::Vector< WordType >;
 
   public:
+
     /// Constructor with number of header words
     explicit FooterPDBase( const ShortType nWords, const WordType wordInit = WordType( 0 ) )
       : m_footerWords( nWords, wordInit )
@@ -52,10 +54,12 @@ namespace Rich::DAQ
     explicit FooterPDBase( const FooterWords &words ) : m_footerWords( words ) {}
 
   public:
+
     /// Default constructor ( 0 words in footer )
     FooterPDBase() = default;
 
   public: // methods
+
     /// Read only access to footer words
     inline const FooterWords &footerWords() const & { return m_footerWords; }
 
@@ -66,6 +70,7 @@ namespace Rich::DAQ
     inline FooterWords::size_type nFooterWords() const { return footerWords().size(); }
 
   public: // reading and writing
+
     /// Read given number of data words from stream
     /// Note, after this call data pointer is incremented to the next word after the footer
     inline void readFromDataStream( const LongType *&data )
@@ -81,6 +86,7 @@ namespace Rich::DAQ
     }
 
   protected: // methods
+
     /// Set the data value using the given mask and shift values
     inline bool set( const ShortType value, const ShortType shift, const LongType mask )
     {
@@ -102,6 +108,7 @@ namespace Rich::DAQ
     void setWord( const ShortType word, const WordType data ) { footerWords()[ word ] = data; }
 
   private: // data
+
     /// The footer words
     FooterWords m_footerWords;
   };

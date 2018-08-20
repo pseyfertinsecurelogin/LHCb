@@ -60,10 +60,12 @@ namespace Rich::Future
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IRayTracing, 1, 0 );
 
   public: // types
+
     // SIMD types
     using FP         = Rich::SIMD::DefaultScalarFP; ///< Default scalar floating point type
     using SIMDFP     = SIMD::FP< FP >;              ///< Default vector floating point type
@@ -74,6 +76,7 @@ namespace Rich::Future
     using Result = Rich::RayTracingUtils::SIMDResult;
 
   public: // vector methods
+
     /** For a given detector, ray-traces a given set of directions from a given point to
      *  the photo detectors.
      *
@@ -91,6 +94,7 @@ namespace Rich::Future
                      const LHCb::RichTraceMode       mode = LHCb::RichTraceMode() ) const = 0;
 
   public: // scalar methods
+
     /** For a given detector, ray-traces a given direction from a given point to
      *  the photo detectors. Returns the result in the form of a RichGeomPhoton
      *  which contains the full ray tracing information.

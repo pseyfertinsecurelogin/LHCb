@@ -25,6 +25,7 @@ class DeRichAerogelRadiator : public DeRichSingleSolidRadiator
 {
 
 public:
+
   /// Standard constructor
   DeRichAerogelRadiator( const std::string &name = "" );
 
@@ -51,6 +52,7 @@ public:
   StatusCode initialize() override;
 
 public:
+
   /// Indicates if this represents a sub-tile(true) or full primary tile (false)
   inline bool subTile() const noexcept { return m_subTile; }
 
@@ -76,6 +78,7 @@ public:
   }
 
 private:
+
   /// method to update the refractive index of the radiator
   StatusCode updateProperties();
 
@@ -96,6 +99,7 @@ private:
   inline DetectorElement *deRich1() const noexcept { return m_deRich1; }
 
 private:
+
   /// access to DeRich1 for user parameters
   DetectorElement *m_deRich1 = nullptr;
 
@@ -103,17 +107,17 @@ private:
   SmartRef< Condition > m_AerogelCond;
 
   /// conertion from nm to eV
-  double m_photMomWaveConv{ 0 };
+  double m_photMomWaveConv { 0 };
 
   /// Aerogel tile number
-  int m_tileNumber{ -1 };
+  int m_tileNumber { -1 };
 
   /// Aerogel sub tile copy number
-  int m_subtilecopynumber{ -1 };
+  int m_subtilecopynumber { -1 };
 
   /// Aerogel subtile number in a tile
-  int m_subtileNumInTile{ -1 };
+  int m_subtileNumInTile { -1 };
 
   /// Flag to say if this is a sub tile or not
-  bool m_subTile{ true };
+  bool m_subTile { true };
 };

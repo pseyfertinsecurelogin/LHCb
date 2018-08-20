@@ -49,6 +49,7 @@ class DeRich : public DeRichBase
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -417,6 +418,7 @@ public:
                                     const LHCb::RichTraceMode       mode ) const;
 
 protected:
+
   /// Load on demand the nominal PD Q.E.
   void loadNominalQuantumEff();
 
@@ -427,6 +429,7 @@ protected:
   void fillSIMDTypes();
 
 private:
+
   /// Access the name for a given panel
   virtual const std::string panelName( const Rich::Side panel ) const;
 
@@ -437,22 +440,23 @@ private:
   std::shared_ptr< const Rich::TabulatedProperty1D > loadNominalPMTQuantumEff();
 
 protected:
+
   /// rich type
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
   /// The nominal radius of the spherical mirror
-  double m_sphMirrorRadius{ 0 };
+  double m_sphMirrorRadius { 0 };
 
   /// RICH PhotoDetector Configuration
   Rich::RichPhDetConfigType m_RichPhotoDetConfig = Rich::HPDConfig;
 
   /// Rich Geometry Configuration
-  int m_RichGeometryConfig{ 0 };
+  int m_RichGeometryConfig { 0 };
 
   /** RICH2 PhotoDetector Configuration
    * This is specific to RICH2, but is part of the overall RICH geometry config.
    */
-  int m_Rich2PhotoDetectorArrayConfig{ 0 };
+  int m_Rich2PhotoDetectorArrayConfig { 0 };
 
   /** Use large PMTs in RICH2
    *  This is specific to RICH2, but the flags are in RICH1 part of DB since
@@ -462,10 +466,10 @@ protected:
    * it easier to navigate through them. The mixed pmt means some pmts are large and others are with
    * standard size.
    */
-  bool m_Rich2UseGrandPmt{ false };
+  bool m_Rich2UseGrandPmt { false };
 
   /// Use mixed PMTs
-  bool m_Rich2UseMixedPmt{ false };
+  bool m_Rich2UseMixedPmt { false };
 
   /// refractive index of the quartz gas window
   std::unique_ptr< const Rich::TabulatedProperty1D > m_gasWinRefIndex;
@@ -489,21 +493,23 @@ protected:
   Rich::PanelArray< Gaudi::XYZPoint > m_nominalCentresOfCurvature = { {} };
 
 private: // data
+
   /// Pointers to the PD panels of this Rich detector
-  Rich::DetectorArray< const DeRichPDPanel * > m_PDPanels{ { nullptr, nullptr } };
+  Rich::DetectorArray< const DeRichPDPanel * > m_PDPanels { { nullptr, nullptr } };
 
   /// flag to test if the xml supports mirror position info
-  bool m_positionInfo{ false };
+  bool m_positionInfo { false };
 
-  int m_sphMirrorSegRows{ 0 }; ///< number of spherical mirror rows
-  int m_sphMirrorSegCols{ 0 }; ///< number of spherical mirror columns
-  int m_secMirrorSegRows{ 0 }; ///< number of secondary mirror rows
-  int m_secMirrorSegCols{ 0 }; ///< number of secondary mirror columns
+  int m_sphMirrorSegRows { 0 }; ///< number of spherical mirror rows
+  int m_sphMirrorSegCols { 0 }; ///< number of spherical mirror columns
+  int m_secMirrorSegRows { 0 }; ///< number of secondary mirror rows
+  int m_secMirrorSegCols { 0 }; ///< number of secondary mirror columns
 
   /// PD quantum efficiency
   std::shared_ptr< const Rich::TabulatedProperty1D > m_nominalPDQuantumEff;
 
 private:
+
   // SIMD copies of various types
 
   /// SIMD Nominal planes for each panel

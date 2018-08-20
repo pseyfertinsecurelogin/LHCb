@@ -45,11 +45,13 @@ namespace Rich
   {
 
   public:
+
     /// Definition of a vector of intersections
     typedef std::vector< Rich::RadIntersection > Vector;
     // using Vector = std::vector<Rich::RadIntersection>;
 
   public:
+
     /// Default constructor
     RadIntersection() {}
 
@@ -69,6 +71,7 @@ namespace Rich
     RadIntersection &operator=( RadIntersection && ) = default;
 
   public:
+
     /// Constructor from (copied) entry and exit points and momentum vectors, and a pointer to a
     /// DeRichRadiator
     RadIntersection( const Gaudi::XYZPoint & entryPoint, ///< The radiator entry point
@@ -100,6 +103,7 @@ namespace Rich
     {}
 
   public:
+
     /// Set the entry point to the radiator
     inline void setEntryPoint( const Gaudi::XYZPoint &entryPoint ) noexcept
     {
@@ -157,6 +161,7 @@ namespace Rich
     }
 
   private:
+
     /// Entry point for radiator
     Gaudi::XYZPoint m_entryPoint;
 
@@ -173,6 +178,7 @@ namespace Rich
     const DeRichRadiator *m_radiator = nullptr;
 
   public:
+
     /** @class Sorter RichRadIntersection.h Kernel/RichRadIntersection.h
      *
      *  Utility class to sort the Radiator Intersections
@@ -183,6 +189,7 @@ namespace Rich
     class Sorter
     {
     private: // utility classes
+
       /// Functor to sort RichSmartIDs by Rich then panel numbers
       struct SortByZ
       {
@@ -204,6 +211,7 @@ namespace Rich
       };
 
     public:
+
       /// Constructor
       Sorter() {}
 

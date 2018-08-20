@@ -53,6 +53,7 @@ namespace Rich::DAQ
   {
 
   public: // Methods for Gaudi Framework
+
     /// Standard constructor
     RawBufferToSmartIDsTool( const std::string &type,
                              const std::string &name,
@@ -69,6 +70,7 @@ namespace Rich::DAQ
     void handle( const Incident &incident ) override;
 
   public: // methods (and doxygen comments) inherited from interface
+
     // Access all RichSmartIDs for the current Event
     const Rich::DAQ::L1Map &allRichSmartIDs() const override;
 
@@ -94,6 +96,7 @@ namespace Rich::DAQ
                              const Rich::DetectorType rich = Rich::InvalidDetector ) const override;
 
   private: // private methods
+
     /// Initialise for a new event
     void InitNewEvent();
 
@@ -118,6 +121,7 @@ namespace Rich::DAQ
                                  const Rich::DetectorType rich ) const;
 
   private: // private data
+
     /// Rich System detector element
     const DeRichSystem *m_richSys = nullptr;
 

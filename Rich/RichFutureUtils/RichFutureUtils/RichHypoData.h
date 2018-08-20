@@ -47,6 +47,7 @@ namespace Rich::Future
   {
 
   public: // definitions
+
     /// Data Type
     using Type = TYPE;
 
@@ -57,6 +58,7 @@ namespace Rich::Future
     using Vector = Rich::SIMD::STDVector< HypoData >;
 
   public: // constructors and destructors
+
     /// Default Constructor
     HypoData() = default;
 
@@ -67,6 +69,7 @@ namespace Rich::Future
     explicit HypoData( const TYPE value ) { resetData( value ); }
 
   public: // methods
+
     /** Read/Write access operator
      *
      *  @param type  The mass hypothesis for which the data is requested
@@ -149,6 +152,7 @@ namespace Rich::Future
     inline const DataArray &dataArray() const &noexcept { return m_data; }
 
   public:
+
     /// Implement textual ostream << method
     friend inline std::ostream &operator<<( std::ostream &os, const HypoData< TYPE > &data )
     {
@@ -158,6 +162,7 @@ namespace Rich::Future
     }
 
   private: // data
+
     /// The internal representation of the data
     DataArray m_data = { {} };
   };

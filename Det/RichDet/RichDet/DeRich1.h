@@ -27,6 +27,7 @@ class DeRich1 : public DeRich
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -56,6 +57,7 @@ public:
   StatusCode initialize() override;
 
 private:
+
   /// Access the name for a given panel
   const std::string panelName( const Rich::Side panel ) const override;
 

@@ -34,14 +34,17 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IRefractiveIndex, 1, 0 );
 
   public:
+
     /// Scalar type to use
     using ScType = float;
 
   public:
+
     /** Calculates the refractive index for a given radiator type at a
      *  given photon energy.
      *

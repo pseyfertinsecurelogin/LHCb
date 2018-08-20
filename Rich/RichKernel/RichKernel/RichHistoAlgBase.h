@@ -40,6 +40,7 @@ namespace Rich
   {
 
   public:
+
     /// Standard constructor
     HistoAlgBase( const std::string &name, ISvcLocator *pSvcLocator )
       : Rich::HistoBase< GaudiHistoAlg >( name, pSvcLocator )

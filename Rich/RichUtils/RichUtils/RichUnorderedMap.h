@@ -36,6 +36,7 @@ namespace Rich
   class UnorderedMap : public std::unordered_map< KEY, VALUE, HASH, EQUAL, ALLOC >
   {
   public:
+
     /// Operator overloading for ostream
     friend inline std::ostream &
     operator<<( std::ostream &str, const UnorderedMap< KEY, VALUE, HASH, EQUAL, ALLOC > &m )

@@ -40,6 +40,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IPixelClusteringTool, 1, 0 );
 

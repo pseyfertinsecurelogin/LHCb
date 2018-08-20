@@ -19,10 +19,12 @@ namespace Rich::Future::MC::Relations
   {
 
   public:
+
     /// Constructor from a relations table
     TrackToMCParticle( const TkToMCPRels &rels ) : m_rels( rels ) {}
 
   public:
+
     /// Access the best MCParticle match for the given track
     const LHCb::MCParticle *mcParticle( const LHCb::Track &track,
                                         const double       minWeight = 0.5 ) const;
@@ -48,6 +50,7 @@ namespace Rich::Future::MC::Relations
     Rich::ParticleIDType mcParticleType( const LHCb::MCParticle *mcP ) const;
 
   private:
+
     /// reference to the relations
     const TkToMCPRels &m_rels;
   };

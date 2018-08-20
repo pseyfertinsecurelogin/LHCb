@@ -38,14 +38,17 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IParticleProperties, 1, 0 );
 
   public:
+
     /// Scalar type to use
     using ScType = float;
 
   public:
+
     /** Calculates 'beta' for given particle hypothesis and track momentum
      *
      *  @param ptot    Track segment momentum

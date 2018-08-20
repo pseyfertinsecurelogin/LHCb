@@ -19,6 +19,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// Standard constructor
     Converter( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr )
       : CommonBase< Converter_Imp >( storage_type, class_type, svc )

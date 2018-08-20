@@ -27,6 +27,7 @@ namespace Rich
   {
 
   public: // definitions
+
     /// Type for dataword
     typedef unsigned int ShortType;
 
@@ -42,6 +43,7 @@ namespace Rich
     static constexpr ShortType MaskColumn = ( ( 1 << BitsColumn ) - 1 ) << ShiftColumn;
 
   public:
+
     /** Access to the full bit-packed data word
      *
      *  @return the bit-packed data word
@@ -69,14 +71,16 @@ namespace Rich
     inline int column() const noexcept { return ( ( data() & MaskColumn ) >> ShiftColumn ); }
 
   private: // methods
+
     inline void set( const ShortType value, const ShortType shift, const ShortType mask ) noexcept
     {
       setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
     }
 
   private: // data
+
     /// The bit-pack data word
-    ShortType m_data{ 0 };
+    ShortType m_data { 0 };
   };
 
 } // namespace Rich

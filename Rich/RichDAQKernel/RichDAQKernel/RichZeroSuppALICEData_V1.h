@@ -56,6 +56,7 @@ namespace Rich::DAQ
     {
 
     public:
+
       /// Default constructor
       RichZeroSuppALICEData() : PDDataBankImp< Version, Header, Footer >( MaxDataSize ) {}
 
@@ -114,6 +115,7 @@ namespace Rich::DAQ
       inline bool tooBig() const noexcept { return m_tooBig; }
 
     private: // methods
+
       /// Build data array from vector of RichSmartIDs
       void buildData( const LHCb::RichSmartID::Vector &pdHits );
 
@@ -139,6 +141,7 @@ namespace Rich::DAQ
       }
 
     private: // data
+
       /// Too big flag
       bool m_tooBig = false;
     };

@@ -35,6 +35,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// Standard constructor
     ToolBase( const std::string &type, const std::string &name, const IInterface *parent )
       : CommonBase< GaudiTool >( type, name, parent )

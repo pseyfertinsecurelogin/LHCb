@@ -40,6 +40,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// Standard constructor
     TupleToolBase( const std::string &type, const std::string &name, const IInterface *parent )
       : HistoBase< GaudiTupleTool >( type, name, parent )

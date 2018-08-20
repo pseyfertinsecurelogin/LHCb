@@ -109,10 +109,12 @@ namespace Rich::DAQ
   class NumericType
   {
   public:
+
     /// The underlying type
     using Type = TYPE;
 
   public:
+
     /// Default Constructor
     NumericType() = default;
     /// Constructor
@@ -141,6 +143,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Operator std::string
     inline operator std::string() const
     {
@@ -181,6 +184,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Print the word in Hex
     inline void hexDump( std::ostream &os ) const
     {
@@ -206,6 +210,7 @@ namespace Rich::DAQ
     }
 
   protected:
+
     /// Update the internal data
     inline void setData( const TYPE id ) noexcept { m_id = id; }
     /// test if a given bit is  'on'
@@ -215,7 +220,8 @@ namespace Rich::DAQ
     }
 
   private:
-    TYPE m_id{ 0 }; ///< The data value
+
+    TYPE m_id { 0 }; ///< The data value
   };
 
   //---------------------------------------------------------------------------------
@@ -230,6 +236,7 @@ namespace Rich::DAQ
   class Level0ID final : public NumericType< ShortType >
   {
   public:
+
     // Define the number of bits for each field
     static constexpr IndexType BitsPD = 1;  ///< Number of bits for PD ID
     static constexpr IndexType BitsL0 = 10; ///< Number of bits for L0 ID
@@ -244,6 +251,7 @@ namespace Rich::DAQ
     static constexpr ShortType MaxL0 = ( 1 << BitsL0 ) - 1;
 
   public:
+
     /// Default Constructor
     Level0ID() = default;
     /// Constructor from bit packed word
@@ -273,6 +281,7 @@ namespace Rich::DAQ
     }
 
   private: // methods
+
     /// Set the data value for a given mask and shift value
     inline bool set( const ShortType value, const IndexType shift, const ShortType mask ) noexcept
     {
@@ -298,6 +307,7 @@ namespace Rich::DAQ
   class EventID final : public NumericType< LLongType >
   {
   public:
+
     /// Default constructor
     EventID() = default;
     /// Copy Constructor
@@ -318,10 +328,12 @@ namespace Rich::DAQ
     inline void setActiveBits( const ShortType bits ) noexcept { m_nActiveBits = bits; }
 
   public:
+
     /// Operator LLongtype
     inline operator LLongType() const noexcept { return data(); }
 
   public:
+
     /// Overloaded output to ostream
     friend inline std::ostream &operator<<( std::ostream &evtID_os, const EventID &id )
     {
@@ -334,6 +346,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Operator == that takes into account the correct number of bits
     inline bool operator==( const EventID &id ) const noexcept
     {
@@ -348,8 +361,9 @@ namespace Rich::DAQ
     inline bool operator!=( const EventID &id ) const noexcept { return !this->operator==( id ); }
 
   private:
+
     /// Number of sensitive bits in this EventID
-    ShortType m_nActiveBits{ 8 * sizeof( LLongType ) };
+    ShortType m_nActiveBits { 8 * sizeof( LLongType ) };
   };
 
   /** @class BXID RichUtils/RichDAQDefinitions.h
@@ -362,6 +376,7 @@ namespace Rich::DAQ
   class BXID final : public NumericType< LongType >
   {
   public:
+
     /// Default constructor
     BXID() = default;
     /// Copy Constructor
@@ -382,10 +397,12 @@ namespace Rich::DAQ
     inline void setActiveBits( const ShortType bits ) noexcept { m_nActiveBits = bits; }
 
   public:
+
     /// Operator LongType
     inline operator LongType() const noexcept { return data(); }
 
   public:
+
     /// Overloaded output to ostream
     friend inline std::ostream &operator<<( std::ostream &os, const BXID &id )
     {
@@ -398,6 +415,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Operator == that takes into account the correct number of bits
     inline bool operator==( const BXID &id ) const noexcept
     {
@@ -412,8 +430,9 @@ namespace Rich::DAQ
     inline bool operator!=( const BXID &id ) const noexcept { return !this->operator==( id ); }
 
   private:
+
     /// Number of sensitive bits in this BXID
-    ShortType m_nActiveBits{ 8 * sizeof( LongType ) };
+    ShortType m_nActiveBits { 8 * sizeof( LongType ) };
   };
 
   /** @class Level1LogicalID RichUtils/RichDAQDefinitions.h
@@ -426,6 +445,7 @@ namespace Rich::DAQ
   class Level1LogicalID final : public NumericType< LongType >
   {
   public:
+
     /// Default Constructor
     Level1LogicalID() = default;
     /// Constructor with value
@@ -442,6 +462,7 @@ namespace Rich::DAQ
   class Level1HardwareID final : public NumericType< ShortType >
   {
   public:
+
     /// Default Constructor
     Level1HardwareID() = default;
     /// Constructor with value
@@ -458,6 +479,7 @@ namespace Rich::DAQ
   class L1IngressID final : public NumericType< ShortType >
   {
   public:
+
     /// Default Constructor
     L1IngressID() = default;
     /// Constructor with value
@@ -474,6 +496,7 @@ namespace Rich::DAQ
   class L1InputWithinIngress final : public NumericType< ShortType >
   {
   public:
+
     /// Default Constructor
     L1InputWithinIngress() = default;
     /// Constructor with value
@@ -492,6 +515,7 @@ namespace Rich::DAQ
     class Level1Input final : public NumericType< ShortType >
     {
     public:
+
       /// Default Constructor
       Level1Input() = default;
       /// Constructor with value
@@ -523,6 +547,7 @@ namespace Rich::DAQ
   class PDHardwareID final : public NumericType< LongType >
   {
   public:
+
     /// Default Constructor
     PDHardwareID() = default;
     /// Constructor with value
@@ -545,6 +570,7 @@ namespace Rich::DAQ
     class L1InputID final : public NumericType< ShortType >
     {
     public:
+
       // Define the number of bits for each field
       static constexpr IndexType BitsIn = 8; ///< Number of bits for input number
       static constexpr IndexType BitsB  = 8; ///< Number of bits for board number
@@ -559,6 +585,7 @@ namespace Rich::DAQ
       static constexpr ShortType MaxB  = ( 1 << BitsB ) - 1;
 
     public:
+
       /// Default Constructor
       L1InputID() = default;
       /// Constructor from bit packed word
@@ -594,6 +621,7 @@ namespace Rich::DAQ
       }
 
     private: // methods
+
       /// Set the data value for a given mask and shift value
       inline bool set( const ShortType value, const IndexType shift, const ShortType mask ) noexcept
       {
@@ -620,6 +648,7 @@ namespace Rich::DAQ
   class PDCopyNumber final : public NumericType< ShortType >
   {
   public:
+
     /// Default Constructor
     PDCopyNumber() = default;
     /// Constructor with value
@@ -636,6 +665,7 @@ namespace Rich::DAQ
   class PDPanelIndex final : public NumericType< ShortType >
   {
   public:
+
     /// Default Constructor
     PDPanelIndex() = default;
     /// Constructor with value
@@ -652,6 +682,7 @@ namespace Rich::DAQ
   class Level1CopyNumber final : public NumericType< ShortType >
   {
   public:
+
     /// Default Constructor
     Level1CopyNumber() = default;
     /// Constructor with value

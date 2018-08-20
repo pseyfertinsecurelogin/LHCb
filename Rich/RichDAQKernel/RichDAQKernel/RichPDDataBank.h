@@ -42,6 +42,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /** Decode the data bank to a RichSmartID vector
      *
      *  @param ids     Vector of RichSmartIDs to fill
@@ -56,6 +57,7 @@ namespace Rich::DAQ
     virtual ~PDDataBank() = default;
 
   public:
+
     /** Fill a RAWBank with the data for this bank
      *
      *  @param rawData The raw data bank to fill
@@ -136,6 +138,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Default Constructor
     PDDataBankImp( const ShortType maxDataSize = 1 )
       : m_data( new LongType[ maxDataSize ] ), m_maxDataSize( maxDataSize ), m_internalData( true )
@@ -147,6 +150,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /** Constructor with internal data representation (encoding)
      *
      *  @param header   Header word for this HPD data bank
@@ -171,6 +175,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /** Constructor from external data (decoding RawBuffer)
      *
      *  @param data        Pointer to start of data block (including header)
@@ -184,6 +189,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Reset object to decode a new data stream
     void reset( const LongType *data, const ShortType dataSize = 0 ) override
     {
@@ -198,14 +204,17 @@ namespace Rich::DAQ
     }
 
   private:
+
     /// initialisation for decoding
     void init( const LongType *data, const ShortType dataSize );
 
   public:
+
     /// Destructor
     virtual ~PDDataBankImp() { cleanUp(); }
 
   public:
+
     /// Read access to header
     inline const Header &header() const noexcept { return m_header; }
 
@@ -267,6 +276,7 @@ namespace Rich::DAQ
                              const CommonMessagingBase *      msgBase ) const override;
 
   private: // methods
+
     /// Clean up data representation
     inline void cleanUp()
     {
@@ -278,6 +288,7 @@ namespace Rich::DAQ
     }
 
   protected: // methods
+
     /// Add data point
     inline void addData( const LongType data )
     {
@@ -335,6 +346,7 @@ namespace Rich::DAQ
     void fillMsgStream( MsgStream &os ) const override final;
 
   private:
+
     /// Turn a number into a hex string, with leading zeros padded to length 8
     inline std::string asHex( const LongType word ) const
     {
@@ -345,6 +357,7 @@ namespace Rich::DAQ
     }
 
   private: // data
+
     /// HPD header word(s)
     Header m_header;
 

@@ -858,7 +858,7 @@ DeRichHPD::detectionPoint( const SmartIDs &smartID,
   SIMDFP X( 0 ), Y( 0 ), Z( 0 );
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    Gaudi::XYZPoint p{ 0, 0, 0 };
+    Gaudi::XYZPoint p { 0, 0, 0 };
     ok[ i ] = detectionPoint( smartID[ i ], p, photoCathodeSide );
     if ( ok[ i ] )
     {

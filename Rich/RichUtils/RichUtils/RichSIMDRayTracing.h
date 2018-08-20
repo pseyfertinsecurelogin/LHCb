@@ -24,6 +24,7 @@ namespace Rich::RayTracingUtils
   {
 
   public:
+
     /// Type for SIMD array of result codes
     using Results = Rich::SIMD::UInt32;
     /// Type for SmartIDs container.
@@ -38,10 +39,12 @@ namespace Rich::RayTracingUtils
     using Mask = Rich::SIMD::FP< Rich::SIMD::DefaultScalarFP >::MaskType;
 
   public:
+
     /// Default constructor
     SIMDResult() = default;
 
   public:
+
     /// Ray tracing status code
     Results result = Results::Zero(); // 0 means RayTraceFailed
 
@@ -64,6 +67,7 @@ namespace Rich::RayTracingUtils
     Mask valid;
 
   public:
+
     /// Container of results
     using Vector = Rich::SIMD::STDVector< SIMDResult >;
   };

@@ -97,8 +97,8 @@ DeRichBeamPipe::initialize()
         m_endPGloSIMD   = m_endPGlo;
         // transform does not like direct assignent from scalar version :(
         {
-          double xx{ 0 }, xy{ 0 }, xz{ 0 }, dx{ 0 }, yx{ 0 }, yy{ 0 };
-          double yz{ 0 }, dy{ 0 }, zx{ 0 }, zy{ 0 }, zz{ 0 }, dz{ 0 };
+          double xx { 0 }, xy { 0 }, xz { 0 }, dx { 0 }, yx { 0 }, yy { 0 };
+          double yz { 0 }, dy { 0 }, zx { 0 }, zy { 0 }, zz { 0 }, dz { 0 };
           geometry()->toLocalMatrix().GetComponents(
             xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
           m_toLocalMatrixSIMD.SetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );

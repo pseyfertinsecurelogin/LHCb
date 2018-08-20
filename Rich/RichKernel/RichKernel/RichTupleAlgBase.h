@@ -40,6 +40,7 @@ namespace Rich
   {
 
   public:
+
     /// Standard constructor
     TupleAlgBase( const std::string &name, ISvcLocator *pSvcLocator )
       : Rich::HistoBase< GaudiTupleAlg >( name, pSvcLocator )

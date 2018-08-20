@@ -65,6 +65,7 @@ namespace LHCb
   {
 
   public:
+
     /// Vector of track segments
     using Vector = Rich::SIMD::STDVector< RichTrackSegment >;
 
@@ -78,6 +79,7 @@ namespace LHCb
     using SIMDVector = Rich::SIMD::Vector< Rich::SIMD::DefaultScalarFP >;
 
   private:
+
     /** Add two points together
      *  @param p1 The first point
      *  @param p2 The second point
@@ -100,6 +102,7 @@ namespace LHCb
     }
 
   public: // helper classes
+
     //-----------------------------------------------------------------------------
     /** @class StateErrors RichTrackSegment.h RichUtils/RichTrackSegment.h
      *
@@ -113,10 +116,12 @@ namespace LHCb
     {
 
     public:
+
       /// Default Constructor
       StateErrors() {}
 
     public:
+
       /// Constructor with explicit float values
       StateErrors( const float errX2,  ///< error on x squared
                    const float errY2,  ///< error on y squared
@@ -152,6 +157,7 @@ namespace LHCb
       {}
 
     public:
+
       inline float errX2() const noexcept { return m_errX2; }   ///< Access the x error squared
       inline float errY2() const noexcept { return m_errY2; }   ///< Access the y error squared
       inline float errTX2() const noexcept { return m_errTX2; } ///< Access the tx error squared
@@ -165,6 +171,7 @@ namespace LHCb
       inline float errP() const noexcept { return std::sqrt( errP2() ); }   ///< Access the P error
 
     public:
+
       ///< send to std::ostream
       inline friend std::ostream &operator<<( std::ostream &s, const StateErrors &errs )
       {
@@ -174,11 +181,12 @@ namespace LHCb
       }
 
     private:
-      float m_errX2{ 0 };  ///< The x error squared
-      float m_errY2{ 0 };  ///< The y error squared
-      float m_errTX2{ 0 }; ///< The tx error squared
-      float m_errTY2{ 0 }; ///< The ty error squared
-      float m_errP2{ 0 };  ///< The P error squared
+
+      float m_errX2 { 0 };  ///< The x error squared
+      float m_errY2 { 0 };  ///< The y error squared
+      float m_errTX2 { 0 }; ///< The tx error squared
+      float m_errTY2 { 0 }; ///< The ty error squared
+      float m_errP2 { 0 };  ///< The P error squared
     };
 
     // ------------------------------------------------------------------------------------------------------
@@ -187,10 +195,12 @@ namespace LHCb
     class SIMDRotation3D
     {
     private:
+
       /// 9 elements (3x3 matrix) representing the rotation
       std::array< SIMDFP, 9 > fM;
 
     public:
+
       /// Default Constructor
       SIMDRotation3D() {}
       /// Construct from Gaudi::Rotation3D
@@ -211,6 +221,7 @@ namespace LHCb
     };
 
   private:
+
     /// Helper method for two point constructor
     inline void initTwoPoints() noexcept
     {
@@ -230,6 +241,7 @@ namespace LHCb
     // ------------------------------------------------------------------------------------------------------
 
   public:
+
     /** Constructor that uses the supplied radiator intersections for the entry and exit points.
      *
      *  The middle point and the momentum at the middle point are derived from the average
@@ -239,11 +251,11 @@ namespace LHCb
      */
     template < class INTERS >
     RichTrackSegment(
-      INTERS &&                inters,                    ///< The radiator intersections
-      const Rich::RadiatorType rad,                       ///< The radiator type
-      const Rich::DetectorType rich,                      ///< The detector type
-      const StateErrors &      entryErrs = StateErrors{}, ///< The segment errors at the entry point
-      const StateErrors &      exitErrs  = StateErrors{}  ///< The segment errors at the exit point
+      INTERS &&                inters,               ///< The radiator intersections
+      const Rich::RadiatorType rad,                  ///< The radiator type
+      const Rich::DetectorType rich,                 ///< The detector type
+      const StateErrors &entryErrs = StateErrors {}, ///< The segment errors at the entry point
+      const StateErrors &exitErrs  = StateErrors {}  ///< The segment errors at the exit point
       )
       : m_radiator( rad )
       , m_rich( rich )
@@ -270,9 +282,9 @@ namespace LHCb
       const Gaudi::XYZVector & middV,  ///< The momentum vector at the radiator mid point
       const Rich::RadiatorType rad,    ///< The radiator type
       const Rich::DetectorType rich,   ///< The detector type
-      const StateErrors &entryErrors  = StateErrors{}, ///< The segment errors at the entry point
-      const StateErrors &middleErrors = StateErrors{}, ///< The segment errors at the mid point
-      const StateErrors &exitErrors   = StateErrors{}  ///< The segment errors at the exit point
+      const StateErrors &entryErrors  = StateErrors {}, ///< The segment errors at the entry point
+      const StateErrors &middleErrors = StateErrors {}, ///< The segment errors at the mid point
+      const StateErrors &exitErrors   = StateErrors {}  ///< The segment errors at the exit point
       )
       : m_radiator( rad )
       , m_rich( rich )
@@ -290,12 +302,14 @@ namespace LHCb
     // ------------------------------------------------------------------------------------------------------
 
   public:
+
     /// Standard constructor
     RichTrackSegment() = default;
 
     // ------------------------------------------------------------------------------------------------------
 
   public:
+
     /// Provides read-only access to the radiator intersections
     inline const Rich::RadIntersection::Vector &radIntersections() const noexcept
     {
@@ -585,6 +599,7 @@ namespace LHCb
     inline void reset() { updateCachedInfo(); }
 
   public:
+
     /// Printout method
     std::ostream &fillStream( std::ostream &s ) const;
 
@@ -595,18 +610,20 @@ namespace LHCb
     }
 
   private: // methods
+
     /// Provides write access to the radiator intersections
     inline Rich::RadIntersection::Vector &radIntersections() noexcept { return m_radIntersections; }
 
     /// Updates the cached information
     void updateCachedInfo();
 
-  private:                                                 // private data
+  private: // private data
+
     Rich::RadiatorType m_radiator = Rich::InvalidRadiator; ///< Rich radiator
     Rich::DetectorType m_rich     = Rich::InvalidDetector; ///< Rich detector
 
     /// The raw intersections with the radiator volumes
-    Rich::RadIntersection::Vector m_radIntersections{ 1 };
+    Rich::RadIntersection::Vector m_radIntersections { 1 };
 
     /// The middle point of the segment in the radiator volume (Scalar)
     Gaudi::XYZPoint m_middlePoint;
@@ -626,6 +643,7 @@ namespace LHCb
     float m_avPhotonEnergy = 4.325;
 
   private: // SIMD data caches
+
     /// SIMD Entry Point
     SIMDPoint m_entryPointSIMD;
 
@@ -648,6 +666,7 @@ namespace LHCb
     SIMDRotation3D m_rotationSIMD, m_rotation2SIMD;
 
   private: // Some variables for internal caching of information for speed
+
     /** Rotation matrix used to calculate the theta and phi angles between
      *  this track segment and a given direction. */
     Gaudi::Rotation3D m_rotation;
@@ -656,11 +675,11 @@ namespace LHCb
      *  to this track segment. */
     Gaudi::Rotation3D m_rotation2;
 
-    Gaudi::XYZVector m_midEntryV;        ///< Entry to middle point vector
-    Gaudi::XYZVector m_exitMidV;         ///< Middle to exit point vector
-    double           m_invMidFrac1{ 0 }; ///< Cached fraction 1
-    double           m_midFrac2{ 0 };    ///< Cached fraction 2
-    double           m_pathLength{ 0 };  ///< Segment path length
+    Gaudi::XYZVector m_midEntryV;         ///< Entry to middle point vector
+    Gaudi::XYZVector m_exitMidV;          ///< Middle to exit point vector
+    double           m_invMidFrac1 { 0 }; ///< Cached fraction 1
+    double           m_midFrac2 { 0 };    ///< Cached fraction 2
+    double           m_pathLength { 0 };  ///< Segment path length
   };
 
   /// TES locations

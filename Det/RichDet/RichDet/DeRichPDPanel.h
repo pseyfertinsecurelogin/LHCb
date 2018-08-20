@@ -41,6 +41,7 @@ class DeRichPDPanel : public DeRichBase
 {
 
 public:
+
   /// Standard constructor
   explicit DeRichPDPanel( const std::string &name = "" );
 
@@ -48,6 +49,7 @@ public:
   virtual ~DeRichPDPanel() = default;
 
 public:
+
   /// Access the RICH detector type
   inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
@@ -139,6 +141,7 @@ public:
   }
 
 public:
+
   /// type for SIMD ray tracing result
   using SIMDRayTResult = Rich::RayTracingUtils::SIMDResult;
   /// scalar FP type for SIMD objects
@@ -153,6 +156,7 @@ public:
   using SIMDVector = Rich::SIMD::Vector< FP >;
 
 public: // virtual methods. Derived classes must implement these
+
   /** Access the DeRichPD object for a given PD RichSmartID
    *  @param[in] pdID The PD RichSmartID identifier
    *  @return Pointer to the associated DeRichPD object
@@ -287,6 +291,7 @@ public: // virtual methods. Derived classes must implement these
   virtual Rich::DAQ::PDPanelIndex maxPdNumber() const = 0;
 
 protected:
+
   /// Set the Rich and side
   void setRichSide( const Rich::DetectorType rich, const Rich::Side side ) noexcept
   {
@@ -298,16 +303,17 @@ protected:
   }
 
 protected: // Parameters that must be properly configured in the derived classes
-  unsigned int m_PDColumns{ 0 };  ///< Number of PD columns in the panel
-  unsigned int m_PDNumInCol{ 0 }; ///< Number of PDs in each column
-  unsigned int m_PDMax{ 0 };      ///< Total number of PDs in this panel
+
+  unsigned int m_PDColumns { 0 };  ///< Number of PD columns in the panel
+  unsigned int m_PDNumInCol { 0 }; ///< Number of PDs in each column
+  unsigned int m_PDMax { 0 };      ///< Total number of PDs in this panel
 
   /// The PD technology type (HPD or MaPMT)
   LHCb::RichSmartID::IDType m_pdType = LHCb::RichSmartID::Undefined;
 
-  double m_localOffset{ 0 }; ///< offset applied in the global to panel coordinate transformation
+  double m_localOffset { 0 }; ///< offset applied in the global to panel coordinate transformation
 
-  double m_detPlaneZ{ 0 }; ///< The z position of the detection plane in an PD panel
+  double m_detPlaneZ { 0 }; ///< The z position of the detection plane in an PD panel
 
   Gaudi::Plane3D m_detectionPlane; ///< detection plane in global coordinates
 
@@ -317,6 +323,7 @@ protected: // Parameters that must be properly configured in the derived classes
   Rich::SIMD::Transform3D< Rich::SIMD::DefaultScalarFP > m_globalToPDPanelTransformSIMD;
 
 private:
+
   /// SmartID for this panel
   LHCb::RichSmartID m_panelID;
 

@@ -115,6 +115,7 @@ namespace Rich::DAQ
     {
 
     public: // methods
+
       /// Default Constructor
       explicit RichDAQHeaderPD() : HeaderPDBase( RichDAQHeaderPDCode::nHeaderWords, WordType( 0 ) )
       {}
@@ -146,6 +147,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Read correct number of data words from given stream
       /// Note, after this call data pointer is incremented to the next word after the header
       inline void readFromDataStream( const LongType *&data )
@@ -154,6 +156,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// reset for new data stream
       inline void reset()
       {
@@ -170,6 +173,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Retrieve the Level0 ID
       inline Level0ID l0ID() const
       {
@@ -257,6 +261,7 @@ namespace Rich::DAQ
       }
 
     public: // Static methods to test specific flags in external data blocks
+
       /// Test if this data block is for an ALICE mode HPD
       inline static bool aliceMode( const LongType *word )
       {
@@ -272,6 +277,7 @@ namespace Rich::DAQ
       }
 
     public: // methods not properly implemented, but included for compatibility
+
       /// Returns if this header (and the associated footer) are in extended mode or not (compact)
       inline bool extendedFormat() const noexcept { return true; }
 

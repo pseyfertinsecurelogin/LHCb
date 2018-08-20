@@ -38,6 +38,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IPixelSuppressionTool, 1, 0 );
 

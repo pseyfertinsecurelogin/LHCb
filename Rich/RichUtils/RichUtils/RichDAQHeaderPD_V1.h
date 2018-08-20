@@ -87,6 +87,7 @@ namespace Rich::DAQ
     {
 
     public: // methods
+
       /// Default Constructor
       RichDAQHeaderPD() = default;
 
@@ -106,6 +107,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Read correct number of data words from given stream
       /// Note, after this call data pointer is incremented to the next word after the header
       inline void readFromDataStream( const LongType *&data )
@@ -114,6 +116,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// reset
       inline void reset() { setPrimaryHeaderWord( WordType( 0 ) ); }
 
@@ -125,6 +128,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Set the Level0 ID
       inline bool setL0ID( const Level0ID l0id )
       {
@@ -193,6 +197,7 @@ namespace Rich::DAQ
       }
 
     public: // Static methods to test specific flags in external data blocks
+
       /// Test if this data block is for a zero suppressed HPD
       inline static bool zeroSuppressed( const LongType *word )
       {
@@ -201,6 +206,7 @@ namespace Rich::DAQ
       }
 
     public: // methods not properly implemented, but included for compatbility
+
       /// Returns if this header (and the associated footer) are in extended mode or not (compact)
       inline bool extendedFormat() const { return false; }
 

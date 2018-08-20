@@ -52,6 +52,7 @@ class DeRichBase : public DetectorElement, public Vc::AlignedBase< Vc::VectorAli
 {
 
 public:
+
   /// Standard constructor
   DeRichBase( const std::string &name = "" ) : DetectorElement( name ) { resetMsgStream(); }
 
@@ -59,6 +60,7 @@ public:
   virtual ~DeRichBase() = default;
 
 protected:
+
   /// Set the name for this detector element
   inline void setMyName( const std::string &name )
   {
@@ -73,6 +75,7 @@ protected:
   inline const std::string &myName() const { return ( m_myname.empty() ? name() : m_myname ); }
 
 protected:
+
   /** Create a MsgStream object on the fly, when first needed
    *
    *  @return Reference to the predefined stream
@@ -146,14 +149,17 @@ protected:
   }
 
 private:
+
   /// reset the message stream with the currently set name
   void resetMsgStream() { m_msgStream = std::make_unique< MsgStream >( msgSvc(), myName() ); }
 
 protected:
+
   /// Access DeRichSystem on demand
   DeRichSystem *deRichSys();
 
 private:
+
   std::string                  m_myname = "";       ///< The name of this detector element
   std::unique_ptr< MsgStream > m_msgStream;         ///< Message Stream Object
   DeRichSystem *               m_deRichS = nullptr; ///< Pointer to the overall RICH system object

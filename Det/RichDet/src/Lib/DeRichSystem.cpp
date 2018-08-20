@@ -458,7 +458,7 @@ DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
   // L1 Logical ID to Copy Numbers
   // Create on the fly here. Should add to CondDB really ...
-  unsigned int firstL1CopyN{ 0 };
+  unsigned int firstL1CopyN { 0 };
   for ( const auto &L1HID : m_l1IDs )
   {
     if ( m_l1H2CopyN.find( L1HID ) == m_l1H2CopyN.end() )

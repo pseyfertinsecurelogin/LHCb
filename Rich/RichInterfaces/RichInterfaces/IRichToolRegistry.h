@@ -31,6 +31,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IToolRegistry, 1, 0 );
 

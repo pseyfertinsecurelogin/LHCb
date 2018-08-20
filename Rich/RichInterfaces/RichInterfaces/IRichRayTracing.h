@@ -50,6 +50,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IRayTracing, 1, 0 );
 

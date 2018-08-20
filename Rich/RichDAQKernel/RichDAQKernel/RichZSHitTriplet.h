@@ -30,6 +30,7 @@ namespace Rich::DAQ
   {
 
   public: // definitions
+
     /// Number of bits for each row or column number
     static const Rich::DAQ::IndexType BitsHit = 5;
 
@@ -53,6 +54,7 @@ namespace Rich::DAQ
     static const Rich::DAQ::ShortType MaxRowCol = ( 1 << BitsHit ) - 1;
 
   public: // methods
+
     /// Copy Constructor
     RichZSHitTriplet( const RichZSHitTriplet &hits ) : m_data( hits.data() ) {}
 
@@ -154,6 +156,7 @@ namespace Rich::DAQ
     inline Rich::DAQ::ShortType col2() const { return ( ( data() & MaskCol2 ) >> ShiftCol2 ); }
 
   private: // methods
+
     /// Update the internal data
     inline void setData( const Rich::DAQ::LongType data ) { m_data = data; }
 
@@ -174,6 +177,7 @@ namespace Rich::DAQ
     }
 
   private: // data
+
     /// The data word
     Rich::DAQ::LongType m_data = 0;
   };

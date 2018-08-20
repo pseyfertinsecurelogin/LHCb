@@ -39,6 +39,7 @@ namespace Rich
   {
 
   public:
+
     /** Default constructor
      *
      *  @param result The result of the calculation
@@ -61,6 +62,7 @@ namespace Rich
     inline const PoissonEffFunctor *parent() const noexcept { return m_parent; }
 
   private:
+
     /// Pointer to parent calculator
     const PoissonEffFunctor *m_parent = nullptr;
   };
@@ -85,6 +87,7 @@ namespace Rich
   {
 
   public:
+
     /** Constructor with print format string
      *
      *  @param format The Printing format
@@ -113,6 +116,7 @@ namespace Rich
     inline const std::string &printFormat() const { return m_format; }
 
   private:
+
     /// The print format
     std::string m_format;
   };

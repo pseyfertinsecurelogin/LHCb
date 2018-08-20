@@ -49,6 +49,7 @@ namespace Rich::SIMD::Future
   {
 
   public:
+
     /// The scalar floating point precision
     using FP = Rich::SIMD::DefaultScalarFP;
     /// The SIMD floating point type
@@ -59,10 +60,12 @@ namespace Rich::SIMD::Future
     using Vector = Rich::SIMD::STDVector< RecoPhoton >;
 
   public:
+
     /// Default Constructor
     RecoPhoton() = default;
 
   public:
+
     /** Constructor from RICH and SmartIDs
      *
      *  @param rich  The RICH detector
@@ -94,6 +97,7 @@ namespace Rich::SIMD::Future
     {}
 
   public: // Setters
+
     /** Set accessor for the Cherenkov theta angle
      *  @param theta the new value for the Cherenkov theta angle */
     inline void setCherenkovTheta( const SIMDFP &theta ) noexcept { m_ckTheta = theta; }
@@ -124,6 +128,7 @@ namespace Rich::SIMD::Future
     inline void setValidityMask( const SIMDFP::mask_type &valid ) noexcept { m_valid = valid; }
 
   public: // const getters
+
     /** Get accessor for the Cherenkov theta angle
      *  @return the current value of the Cherenkov theta angle */
     inline const SIMDFP &CherenkovTheta() const noexcept { return m_ckTheta; }
@@ -152,6 +157,7 @@ namespace Rich::SIMD::Future
     inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   public:
+
     /// Create a scalar photon object for the given SIMD entry
     inline Rich::Future::RecoPhoton scalarPhoton( const std::size_t simdEntry ) const noexcept
     {
@@ -165,10 +171,12 @@ namespace Rich::SIMD::Future
     Rich::Future::RecoPhoton::Vector scalarPhotons() const;
 
   protected:
+
     /// Printout method
     std::ostream &fillStream( std::ostream &s ) const;
 
   public:
+
     /// Implement ostream << method for GeomPhoton
     friend inline std::ostream &operator<<( std::ostream &s, const RecoPhoton &photon )
     {
@@ -176,27 +184,28 @@ namespace Rich::SIMD::Future
     }
 
   private:
+
     /// Cherenkov angles theta
-    SIMDFP m_ckTheta{ SIMDFP::Zero() };
+    SIMDFP m_ckTheta { SIMDFP::Zero() };
 
     /// Cherenkov angles phi
-    SIMDFP m_ckPhi{ SIMDFP::Zero() };
+    SIMDFP m_ckPhi { SIMDFP::Zero() };
 
     /// The channel IDs for the photon detection points
     SmartIDs m_smartID;
 
     /** The fraction of the RichTrackSegment trajectory these photons are associated
      *  with for which it is geometrically possible these photon were produced */
-    SIMDFP m_actSegF{ SIMDFP::One() };
+    SIMDFP m_actSegF { SIMDFP::One() };
 
     /// Flag to indicate if unambiguous photons or not
-    SIMDFP::MaskType m_unambigPhot{ SIMDFP::MaskType::Zero() };
+    SIMDFP::MaskType m_unambigPhot { SIMDFP::MaskType::Zero() };
 
     /// Validity mask
-    SIMDFP::MaskType m_valid{ SIMDFP::MaskType::Zero() };
+    SIMDFP::MaskType m_valid { SIMDFP::MaskType::Zero() };
 
     /// RICH
-    Rich::DetectorType m_rich{ Rich::InvalidDetector };
+    Rich::DetectorType m_rich { Rich::InvalidDetector };
   };
 
 } // namespace Rich::SIMD::Future

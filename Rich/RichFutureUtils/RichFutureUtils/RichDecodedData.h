@@ -40,12 +40,14 @@ namespace Rich::Future
     {
 
     public:
+
       /// The PD Header type
       using Header = RichDAQHeaderV4::RichDAQHeaderPD;
       /// The PD Footer type
       using Footer = ParityFooter;
 
     public:
+
       /// Default Constructor
       PDInfo() = default;
 
@@ -92,6 +94,7 @@ namespace Rich::Future
       inline LHCb::RichSmartID::Vector &smartIDs() & { return m_smartIds; }
 
     public:
+
       /// Move the Header words
       inline Header &&header() && { return std::move( m_header ); }
       /// Move the Footer words
@@ -100,6 +103,7 @@ namespace Rich::Future
       inline LHCb::RichSmartID::Vector &&smartIDs() && { return std::move( m_smartIds ); }
 
     private:
+
       LHCb::RichSmartID         m_pdID;     ///< The RichSmartID for this PD
       Header                    m_header;   ///< The PDHeader word
       Footer                    m_footer;   ///< The PDFooter word
@@ -119,6 +123,7 @@ namespace Rich::Future
     {
 
     public:
+
       /// Default Constructor
       IngressInfo() = default;
 
@@ -126,6 +131,7 @@ namespace Rich::Future
       explicit IngressInfo( const L1IngressHeader &head ) : m_ingressHeader( head ) {}
 
     public:
+
       /// Get the L1IngressHeader
       inline const L1IngressHeader &ingressHeader() const &noexcept { return m_ingressHeader; }
       /// Read access to the PD data for this Ingress
@@ -139,12 +145,14 @@ namespace Rich::Future
       }
 
     public:
+
       /// Move the L1IngressHeader
       inline L1IngressHeader &&ingressHeader() && { return std::move( m_ingressHeader ); }
       /// Move the PD data for this Ingress
       inline L1InToPDMap &&pdData() && { return std::move( m_pdData ); }
 
     private:
+
       L1IngressHeader m_ingressHeader; ///< The ingress header word
       L1InToPDMap     m_pdData;        ///< The PD data blocks for this ingress
     };
@@ -156,6 +164,7 @@ namespace Rich::Future
     class L1Map final : public std::vector< std::pair< Level1HardwareID, IngressMap > >
     {
     public:
+
       /// Returns the total number of RICH hits in the decoded data
       unsigned int nTotalHits() const noexcept
       {
@@ -193,6 +202,7 @@ namespace Rich::Future
       }
 
     private:
+
       /// The total hit count for each RICH detector
       DetectorArray< unsigned int > m_nTotalHits = { { 0, 0 } };
       /// The total active PD count for each RICH detector
