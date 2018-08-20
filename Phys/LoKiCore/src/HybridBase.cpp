@@ -170,7 +170,7 @@ StatusCode LoKi::Hybrid::Base::initialize ()
   if ( !m_use_python ) Print( "Python Functors are DISABLED"    , sc , MSG::ALWAYS ).ignore() ;
   if ( !m_use_cache  ) Print( "C++ Cache Functors are DISABLED" , sc , MSG::ALWAYS ).ignore() ;
   // return
-  m_showCode = true ;
+  // m_showCode = true ;
   return ( m_use_python || m_use_cache ? sc : Error( "No Functors enabled" ) );
 }
 // ============================================================================
