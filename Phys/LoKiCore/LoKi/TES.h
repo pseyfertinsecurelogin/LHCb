@@ -122,15 +122,21 @@ namespace LoKi
     {
     public:
       // ======================================================================
+      /// constructor fomr the context and TES location
       DataHandle  ( const GaudiAlgorithm* algorithm , 
                     const std::string&    location  ) 
         : LoKi::AuxFunBase ( std::tie ( algorithm , location ) )
         , m_location       ( location  )
         , m_algorithm      ( algorithm ) 
-        , m_datahandle     ( this->location() , this->algorithm() )
+        , m_datahandle     ( this->location () , this->algorithm  () )
       {}
-      // needed?
-      // explicit DataHandle ( const LoKi::TES::DataHandle<TYPE>& handle ) ;
+      /// copy constructor
+      DataHandle ( const DataHandle& right ) 
+        : LoKi::AuxFunBase ( right ) 
+        , m_location       ( right.location  () ) 
+        , m_algorithm      ( right.algorithm () ) 
+        , m_datahandle     ( right.location  () , right.algorithm () ) 
+      {}
       // ======================================================================
       std::ostream& fillStream ( std::ostream& s ) const  override
       { return s << " GET(" << "'" << this->location() << "')" ; }
@@ -538,22 +544,8 @@ namespace LoKi
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
-
-
-
-// template <class TYPE>
-// LoKi::TES::DataHandle<TYPE>::DataHandle
-// ( const LoKi::TES::DataHandle<TYPE>& handle )
-//   : LoKi::AuxFunBase ( handle )
-//   , m_location     ( handle.location()     )
-//   , m_algorithm (getAlgSvc())
-//   , m_datahandle(this->location(), this->algorithm())
-// {
-// }
-
-
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_TES_H
 // ============================================================================

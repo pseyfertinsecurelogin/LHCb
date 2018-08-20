@@ -42,9 +42,7 @@ namespace LoKi
   {
     // ========================================================================
     /** @class Sources LoKi/Sources.h
-     *
-     *  The concept belongs to the Gerhard "The Great" Raven.
-     *
+     *  "Source" : The concept belongs to the Gerhard "The Great" Raven.
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2007-11-28
      */
