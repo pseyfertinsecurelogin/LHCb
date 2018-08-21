@@ -1388,7 +1388,7 @@ std::unique_ptr<SolidPolycone> XmlLVolumeCnv::dealWithPolycone(const xercesc::DO
     return std::make_unique< SolidPolycone>
       (polyconeName, zplanes, startPhiAngle, deltaPhiAngle);
 
-  } catch (GaudiException e) {
+  } catch (const GaudiException &e) {
     MsgStream log(msgSvc(), "XmlLVolumeCnv" );
     log << MSG::ERROR << "Was not able to create SolidPolycone "
         << "due to following GaudiException : ";
@@ -1559,14 +1559,14 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
     // catches an exception in case the r attribute is negative
     try {
       result = dealWithPosRPhiZ(childElement);
-    } catch (XmlCnvException e) {
+    } catch (const XmlCnvException &e) {
       result.emplace();
     }
   } else if (0 == xercesc::XMLString::compareString(posRThPhiString, tagName)) {
     // catches an exception in case the r attribute is negative
     try {
       result = dealWithPosRThPhi(childElement);
-    } catch (XmlCnvException e) {
+    } catch (const XmlCnvException &e) {
       result.emplace();
     }
   } else if (0 == xercesc::XMLString::compareString
@@ -1603,7 +1603,7 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
       // catches an exception in case the theta or phi value is out of range
       try {
         *result = *result * dealWithRotAxis(childElement);
-      } catch (XmlCnvException e) {
+      } catch (const XmlCnvException &e) {
       }
       foundRotation = true;
     }

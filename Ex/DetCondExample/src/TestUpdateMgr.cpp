@@ -69,7 +69,7 @@ StatusCode TestUpdateMgr::initialize() {
     updMgrSvc()->registerCondition(m_dummyUMSentry);
     registerCondition<TestUpdateMgr>(m_dummyUMSentry,NULL);
 
-  } catch (GaudiException) {
+  } catch (const GaudiException &) {
     return StatusCode::FAILURE;
   }
   return StatusCode::SUCCESS;

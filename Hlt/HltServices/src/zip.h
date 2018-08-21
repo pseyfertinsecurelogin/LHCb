@@ -23,6 +23,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <ios>
 
 #include "boost/integer_traits.hpp"
 using boost::uint8_t;
@@ -183,7 +184,7 @@ class ZipFile : public IArchive
         bool write_ecd( std::ostream& os );
         bool write_to( std::ostream& os );
         bool read_zip64_ecd( std::istream& is );
-        bool read_zip64_cdl( std::istream& is, std::ios::streampos cdl_offset );
+        bool read_zip64_cdl( std::istream& is, std::streampos cdl_offset );
         bool read_from( std::istream& is );
     };
 

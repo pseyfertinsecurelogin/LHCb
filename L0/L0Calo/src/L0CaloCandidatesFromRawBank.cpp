@@ -20,7 +20,7 @@ DECLARE_COMPONENT( L0CaloCandidatesFromRawBank )
 
 struct SortL0CaloByEt {
   bool operator() (const LHCb::L0CaloCandidate * c1 ,
-                   const LHCb::L0CaloCandidate * c2) {
+                   const LHCb::L0CaloCandidate * c2) const {
     return  c1->etCode() > c2->etCode() ;
   }
 };

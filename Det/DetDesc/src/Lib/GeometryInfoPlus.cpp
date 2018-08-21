@@ -793,7 +793,7 @@ const ILVolume* GeometryInfoPlus::lvolume() const
   if(  m_gi_lvolume ) { return  m_gi_lvolume          ; }
   try
   { m_gi_lvolume  = findLogical() ; }
-  catch ( const GaudiException Exception )
+  catch ( const GaudiException &Exception )
   { Assert( false ,
             "GeometryInfoPlus::lvolume() : exception caught" , Exception ) ; }
   catch (...)
