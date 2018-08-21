@@ -1,6 +1,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
+// STD&STL
+// ============================================================================
+#include <mutex>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/System.h"
@@ -395,12 +399,11 @@ LoKi::Hybrid::MCTool::_get
   LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&               output  ,
   const std::string&                                            context )
 {
+  std::lock_guard<std::recursive_mutex> guard ( m_mutex ) ;
   // prepare the actual python code
-  std::string code = makeCode
-    ( m_modules , m_actor , pycode , m_lines , context ) ;
+  std::string code = makeCode ( m_modules , m_actor , pycode , m_lines , context ) ;
   // define and lock the scope:
-  LoKi::Hybrid::MCLock lock ( this , make_context() ) ; // ATTENTION: the scope is locked!!
-  //
+  LoKi::Hybrid::MCLock lock   ( this , make_context() ) ; // ATTENTION: the scope is locked!!
   // use the base class method
   StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
   if ( sc.isFailure() )
