@@ -2697,8 +2697,9 @@ class HybridContext(object):
         while self.decorated :
             o = self.decorated.pop()
             if hasattr ( o , '_hybrid_old_init_' ) and \
-               hasattr ( o , '_hybrid_new_init_' ) :
+                   hasattr ( o , '_hybrid_new_init_' ) :
                 o.__init__ = o._hybrid_old_init_ 
+                delattr ( o , '_hybrid_new_init_' )
                 o.hybrid_decorated = False
                 
 def hybrid_context_deco ( objects_dct , context ) :
@@ -2708,17 +2709,18 @@ def hybrid_context_deco ( objects_dct , context ) :
 
         vc = v.__class__ 
         vt = v if issubclass ( vc , type ) else vc 
-
+        
         if hasattr ( vt , 'hybrid_decorated' ) :
-            ##print  'already decorated class %s/%s/%s' % ( s , v , vt )
+            #print  'already decorated class %s/%s/%s' % ( s , v , vt )
             if vt.hybrid_decorated : continue     ## CONTINUE
-            ##print  'decorate again class %s/%s/%s' % ( s , v , vt )            
-            vt.__init__ = vt._hybrid_new_init_ 
-            context.decorated.add ( vt )
-            continue                              ## CONTINUE 
+            #print  'decorate again class %s/%s/%s' % ( s , v , vt )            
+            #vt.__init__ = vt._hybrid_new_init_ 
+            #context.decorated.add ( vt )
+            #continue                              ## CONTINUE
+            pass 
         
         if hasattr ( vt , 'context_dvalgo' ) and vt.context_dvalgo() and context.dvalgo () : 
-
+                
             def _hybrid_new_init_ ( self , *args ) :
                 """New constructor, created for decorated ``Hybrid''object
                 """

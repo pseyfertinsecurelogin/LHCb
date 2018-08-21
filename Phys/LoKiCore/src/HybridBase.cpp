@@ -451,7 +451,7 @@ std::string LoKi::Hybrid::Base::makeCode
   stream   << "_context = _actor.context  () if hasattr ( _actor , 'context' ) else None\n" 
            << "from LoKiCore.decorators import HybridContext, hybrid_context_deco       \n" 
            << "_algo    = _context.  algo () if _context else None                      \n" 
-           << "_dvalgo  = _context.dvalgo () if _context else None                      \n" 
+           << "_dvalgo  = _context.dvalgo () if _context else None                      \n"
            << "with HybridContext ( algo = _algo , dvalgo = _dvalgo ) as context :      \n" 
            << ntab << "hybrid_context_deco ( locals().copy() , context )                \n" ;
   /// insert additional lines:
@@ -665,9 +665,10 @@ LoKi::Context LoKi::Hybrid::Base::make_context () const
   const IAlgContextSvc* cntx = svc<IAlgContextSvc> ( "AlgContextSvc", true ) ;
   if ( nullptr == cntx ) 
   {
-    Error("Can't get the context service!") ;
+    Error ( "Can't get the context service!" ).ignore() ;
     return LoKi::Context() ;
   }
+  //
   return LoKi::Context ( Gaudi::Utils::getGaudiAlg     ( cntx ) ,
                          Gaudi::Utils::getIDVAlgorithm ( cntx ) )  ;
 }

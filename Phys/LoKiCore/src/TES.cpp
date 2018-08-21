@@ -230,13 +230,8 @@ double LoKi::TES::Size::operator() ( /* LoKi::TES::Size::argument */ ) const
   return -1;
 }
 // ============================================================================
-std::ostream&
-LoKi::TES::Size::fillStream ( std::ostream& s ) const
-{
-  s << " SIZE( " ;
-  Gaudi::Utils::toStream ( location() , s ) ;
-  return s << " ) " ;
-}
+std::ostream& LoKi::TES::Size::fillStream ( std::ostream& s ) const
+{ return s << "SIZE('" << location() << "')" ; }
 // ============================================================================
 
 // ============================================================================

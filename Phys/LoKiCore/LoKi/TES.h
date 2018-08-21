@@ -122,21 +122,22 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor fomr the context and TES location
+      /// constructor from the context and TES location
       DataHandle  ( const GaudiAlgorithm* algorithm , 
                     const std::string&    location  ) 
         : LoKi::AuxFunBase ( std::tie ( algorithm , location ) )
         , m_location       ( location  )
         , m_algorithm      ( algorithm ) 
-        , m_datahandle     ( this->location () , this->algorithm  () )
+        , m_datahandle     ( this->location () , this->algorithm().get() )
       {}
       /// copy constructor
       DataHandle ( const DataHandle& right ) 
         : LoKi::AuxFunBase ( right ) 
         , m_location       ( right.location  () ) 
         , m_algorithm      ( right.algorithm () ) 
-        , m_datahandle     ( right.location  () , right.algorithm () ) 
+        , m_datahandle     ( right.location  () , right.algorithm().get() ) 
       {}
+      DataHandle() =  delete ;
       // ======================================================================
       std::ostream& fillStream ( std::ostream& s ) const  override
       { return s << " GET(" << "'" << this->location() << "')" ; }
@@ -243,7 +244,7 @@ namespace LoKi
       Size ( const GaudiAlgorithm*  algortihm , 
              const std::string&     location  ) ;
       Size* clone() const override;
-      double operator() ( ) const override;
+      double operator() () const override;
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;

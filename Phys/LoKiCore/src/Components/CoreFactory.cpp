@@ -256,6 +256,7 @@ inline StatusCode LoKi::Hybrid::CoreFactory::_get
   LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
   const std::string&                                context )
 {
+  
   // prepare the actual python code
   std::string code = makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
   /// define and lock the scope:
