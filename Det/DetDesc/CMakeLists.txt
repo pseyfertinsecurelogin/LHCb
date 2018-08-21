@@ -12,6 +12,7 @@ find_package(Boost)
 find_package(VDT)
 
 find_package(ROOT COMPONENTS MathCore GenVector)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 find_path(RANGES_V3_INCLUDE_DIR NAMES range/v3/all.hpp)
 if(NOT RANGES_V3_INCLUDE_DIR)

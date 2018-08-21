@@ -7,6 +7,13 @@ gaudi_depends_on_subdirs(Det/DetDesc
                          Det/DetDescCnv
                          GaudiKernel)
 
+find_package(ROOT)
+find_package(Boost)
+find_package(XercesC)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS}
+                           ${Boost_INCLUDE_DIRS}
+                           ${XERCESC_INCLUDE_DIRS})
+
 gaudi_add_library(BcmDetLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS BcmDet

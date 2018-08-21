@@ -9,6 +9,10 @@ gaudi_depends_on_subdirs(Event/LinkerEvent
                          GaudiAlg
                          GaudiKernel)
 
+find_package(ROOT)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
+
+
 gaudi_add_dictionary(MCAssociators
                      dict/MCAssociatorsDict.h
                      dict/MCAssociatorsDict.xml

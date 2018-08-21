@@ -6,6 +6,7 @@ gaudi_subdir(MDF_ROOT v1r9)
 gaudi_depends_on_subdirs(DAQ/MDF)
 
 find_package(ROOT COMPONENTS RIO)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
 
 gaudi_add_library(MDF_ROOT
                   src/*.cpp
