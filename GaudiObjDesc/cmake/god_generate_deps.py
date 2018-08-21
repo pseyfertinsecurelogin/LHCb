@@ -35,7 +35,6 @@ def main():
             elements = [elem.getAttribute('name') + '.h' for elem in dom.getElementsByTagName('class') + dom.getElementsByTagName('namespace')]
         products[key].update(join(opts.src_output,elem)
                              for elem in elements)
-        print products[key]
 
     old_data = open(cmake_info).read() if exists(cmake_info) else ''
     data = ''

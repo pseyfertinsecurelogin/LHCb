@@ -235,6 +235,7 @@ class godII(object):
             if self.gClassDicts :
                 gClassDicts = genClassDicts.genClassDicts(self.godRoot, self.dictOutput, self.srcOutput)
                 if not self.gClasses : gClasses = genClasses.genClasses(self.godRoot)
+                gNamespaceDict = genClassDicts.genClassDicts(self.godRoot, self.dictOutput, self.srcOutput)
 
             gdd = x.parseSource(srcFile)
             godPackage = gdd['package'][0]
@@ -260,10 +261,13 @@ class godII(object):
                 gAssocDicts.doit(godPackage)
                 self._log.debug( '  - Done' )
 
-            if 'namespace' in godPackage and self.gNamespaces :
-                self._log.debug( '  Generating Namespaces' )
-                gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname,self.allocatorType)
-                self._log.debug( '  - Done' )
+            if 'namespace' in godPackage:
+                if self.gNamespaces :
+                    self._log.debug( '  Generating Namespaces' )
+                    gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname,self.allocatorType)
+                    self._log.debug( '  - Done' )
+                elif self.gClassDicts and [nsitem.get('class') for nsitem in godPackage['namespace']]:
+                    gNamespaceDict.doit(godPackage)
 
             if 'class' in godPackage:
                 if self.gClasses :
