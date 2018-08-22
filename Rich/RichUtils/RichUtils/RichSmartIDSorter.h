@@ -34,6 +34,7 @@ namespace Rich
   {
 
   public:
+
     /// Sort the list by detector region
     inline static void sortByRegion( LHCb::RichSmartID::Vector &smartIDs )
     {

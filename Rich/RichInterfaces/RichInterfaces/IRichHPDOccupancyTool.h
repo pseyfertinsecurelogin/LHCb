@@ -37,6 +37,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IHPDOccupancyTool, 1, 0 );
 

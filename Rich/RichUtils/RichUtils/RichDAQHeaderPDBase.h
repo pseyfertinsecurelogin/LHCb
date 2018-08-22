@@ -35,6 +35,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Type for a single word. Strongly typed for safety.
     using WordType = NumericType< LongType >;
     /// Type for extended header words
@@ -43,6 +44,7 @@ namespace Rich::DAQ
     using HeaderWords = LHCb::STL::Vector< WordType >;
 
   public:
+
     /// Constructor with number of header words and init value
     explicit HeaderPDBase( const ShortType nWords, const WordType wordInit )
       : m_primaryHeader( wordInit ), m_extendedWords( nWords > 0 ? nWords - 1 : 0, wordInit )
@@ -57,10 +59,12 @@ namespace Rich::DAQ
     explicit HeaderPDBase( const WordType primWord ) : m_primaryHeader( primWord ) {}
 
   public:
+
     /// Default constructor
     HeaderPDBase() = default;
 
   public: // methods
+
     /// Read access the primary head word
     inline const WordType &primaryHeaderWord() const noexcept { return m_primaryHeader; }
 
@@ -103,6 +107,7 @@ namespace Rich::DAQ
     }
 
   public: // writing
+
     /// Write this head to a RAWBank of data words
     inline void fillRAWBank( RAWBank &rawData ) const
     {
@@ -111,6 +116,7 @@ namespace Rich::DAQ
     }
 
   protected: // methods
+
     /// Set the primary header word
     inline void setPrimaryHeaderWord( const WordType word ) noexcept { m_primaryHeader = word; }
 
@@ -153,8 +159,9 @@ namespace Rich::DAQ
     }
 
   private: // data
+
     /// The primary header word
-    WordType m_primaryHeader{ 0 };
+    WordType m_primaryHeader { 0 };
 
     /// The extended header words
     ExtendedHeaderWords m_extendedWords;

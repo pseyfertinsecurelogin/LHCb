@@ -50,6 +50,7 @@ class DeRichSystem : public DeRichBase
 {
 
 public:
+
   /// Constructor for this class
   DeRichSystem( const std::string &name = "" ) : DeRichBase( name ) {}
 
@@ -74,6 +75,7 @@ public:
   StatusCode initialize() override;
 
 public:
+
   /** Convert an PD RichSmartID into the corresponding PD hardware number
    *  @param smartID The RichSmartID for the PD
    *  @return The corresponding PD hardware ID
@@ -274,6 +276,7 @@ public:
   }
 
 public:
+
   /**
    * Retrieves the location of the PD/PMT in the detector store, so it can be
    * loaded using the getDet<DeRichPD> method.
@@ -282,6 +285,7 @@ public:
   std::string getDePDLocation( const LHCb::RichSmartID &smartID ) const;
 
 public:
+
   /// The photon detector type
   inline Rich::RichPhDetConfigType RichPhotoDetConfig() const noexcept { return m_photDetConf; }
 
@@ -289,6 +293,7 @@ public:
   inline int systemVersion() const noexcept { return m_version; }
 
 private: // definitions
+
   /// Map type to use.
   template < typename TO, typename FROM >
   // using MyMap = GaudiUtils::HashMap< TO, FROM >;
@@ -296,6 +301,7 @@ private: // definitions
   using MyMap = std::unordered_map< TO, FROM >;
 
 private: // methods
+
   /// Update methods for PD mappings
   StatusCode buildPDMappings();
 
@@ -324,6 +330,7 @@ private: // methods
   std::vector< std::string > getDeRichLocations();
 
 private: // data
+
   /// RICH PhotoDetector Configuration (assume HPD by default)
   Rich::RichPhDetConfigType m_photDetConf = Rich::HPDConfig;
 
@@ -432,7 +439,7 @@ private: // data
   L1HardToLog m_l1HardToLog = { {} };
 
   /// version number
-  int m_version{ 0 };
+  int m_version { 0 };
 };
 
 //=========================================================================

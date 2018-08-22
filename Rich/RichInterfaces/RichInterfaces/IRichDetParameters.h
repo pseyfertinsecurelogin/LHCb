@@ -36,6 +36,7 @@ namespace Rich
   {
 
   public:
+
     /** @class RadLimits IRichDetParameters.h RichKernel/IRichDetParameters.h
      *
      *  Helper class for IRichDetParameters to contain HPD acceptance data
@@ -47,6 +48,7 @@ namespace Rich
     {
 
     public:
+
       /// Default Constructor
       RadLimits() = default;
 
@@ -64,6 +66,7 @@ namespace Rich
       {}
 
     public:
+
       /// Access the minimum x limit
       inline double minX() const noexcept { return m_minX; }
       /// Access the maximum x limit
@@ -74,13 +77,15 @@ namespace Rich
       inline double maxY() const noexcept { return m_maxY; }
 
     private:
-      double m_maxX{ 0 }; ///< Maximum X limit
-      double m_minX{ 0 }; ///< Minimum X limit
-      double m_maxY{ 0 }; ///< Maximum Y limit
-      double m_minY{ 0 }; ///< Minimum Y limit
+
+      double m_maxX { 0 }; ///< Maximum X limit
+      double m_minX { 0 }; ///< Minimum X limit
+      double m_maxY { 0 }; ///< Maximum Y limit
+      double m_minY { 0 }; ///< Minimum Y limit
     };
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IDetParameters, 1, 0 );
 

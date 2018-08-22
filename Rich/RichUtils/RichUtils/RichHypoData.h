@@ -45,12 +45,14 @@ namespace Rich
   {
 
   public: // definitions
+
     /// Definition of internal data array type
     using DataArray = std::array< TYPE, Rich::NParticleTypes >;
     /// Definition of internal validity array type
     using ValidityArray = std::array< bool, Rich::NParticleTypes >;
 
   public: // constructors and destructors
+
     /// Default Constructor
     HypoData() = default;
 
@@ -61,6 +63,7 @@ namespace Rich
     explicit HypoData( const TYPE value ) { resetData( value ); }
 
   public: // methods
+
     /** Read access operator
      *
      *  @param type  The mass hypothesis for which the data is requested
@@ -154,6 +157,7 @@ namespace Rich
     }
 
   public:
+
     /// Implement textual ostream << method
     friend inline std::ostream &operator<<( std::ostream &os, const HypoData< TYPE > &data )
     {
@@ -163,6 +167,7 @@ namespace Rich
     }
 
   private: // data
+
     /// The internal representation of the data
     DataArray m_data = { {} };
 

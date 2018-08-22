@@ -35,6 +35,7 @@ namespace Rich
   class Map : public std::map< KEY, VALUE, COMPARE, ALLOC >
   {
   public:
+
     /// Operator overloading for ostream
     friend inline std::ostream &operator<<( std::ostream &                           str,
                                             const Map< KEY, VALUE, COMPARE, ALLOC > &m )

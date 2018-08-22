@@ -40,6 +40,7 @@ namespace Rich
   {
 
   private: // definitions
+
     /// typedef of container of strings for job options
     using ToolList = std::vector< std::string >;
 
@@ -47,6 +48,7 @@ namespace Rich
     using RichToolMap = Rich::HashMap< std::string, std::string >;
 
   public: // for Gaudi framework
+
     /// Standard constructor
     ToolRegistry( const std::string &type, const std::string &name, const IInterface *parent );
 
@@ -54,6 +56,7 @@ namespace Rich
     StatusCode initialize() override final;
 
   public: // methods (and doxygen comments) inherited from interface
+
     // Converts a tool nickname into a particular class name
     const std::string &toolType( const std::string &nickname ) const override final;
 
@@ -61,6 +64,7 @@ namespace Rich
     const std::string toolName( const std::string &nickname ) const override final;
 
   private: // methods
+
     /// Set up the tool mappings
     void setUpTools( const ToolList &toolList );
 
@@ -70,6 +74,7 @@ namespace Rich
                    ) const;
 
   private: // data
+
     /// Tool data from job options
     ToolList m_names;
 

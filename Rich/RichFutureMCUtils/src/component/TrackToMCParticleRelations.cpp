@@ -13,10 +13,10 @@ TrackToMCParticleRelations::TrackToMCParticleRelations( const std::string &name,
                                                         ISvcLocator *      pSvcLocator )
   : Transformer( name,
                  pSvcLocator,
-                 { KeyValue{ "TracksLocation", LHCb::TrackLocation::Default },
-                   KeyValue{ "MCParticlesLocation", LHCb::MCParticleLocation::Default } },
-                 { KeyValue{ "TrackToMCParticlesRelations",
-                             Rich::Future::MC::Relations::TrackToMCParticles } } )
+                 { KeyValue { "TracksLocation", LHCb::TrackLocation::Default },
+                   KeyValue { "MCParticlesLocation", LHCb::MCParticleLocation::Default } },
+                 { KeyValue { "TrackToMCParticlesRelations",
+                              Rich::Future::MC::Relations::TrackToMCParticles } } )
 {
   // debugging
   // setProperty( "OutputLevel", MSG::VERBOSE );

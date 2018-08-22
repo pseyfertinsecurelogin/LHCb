@@ -49,6 +49,7 @@ namespace Rich
   {
 
   public:
+
     /** Constructor with RICH specific information
      *  @param id    Histogram string ID
      *  @param det   The RICH detector
@@ -106,6 +107,7 @@ namespace Rich
     {}
 
   public:
+
     /// Access the Detector type
     inline Rich::DetectorType det() const noexcept { return m_data.det(); }
 
@@ -119,6 +121,7 @@ namespace Rich
     inline Rich::ParticleIDType pid() const noexcept { return m_data.pid(); }
 
   public:
+
     /// Returns the appropriate histogram ID
     inline const std::string &id() const noexcept { return m_id; }
 
@@ -132,6 +135,7 @@ namespace Rich
     std::string fullTitle( const std::string &title ) const;
 
   public:
+
     /// implicit conversion to an std::string
     inline operator std::string() const { return fullid(); }
 
@@ -139,6 +143,7 @@ namespace Rich
     inline operator GaudiAlg::HistoID() const { return GaudiAlg::HistoID( fullid() ); }
 
   private:
+
     std::string         m_id;   ///< The ID string
     Rich::PackedPIDInfo m_data; ///< Packed Rich Info
   };
@@ -178,6 +183,7 @@ namespace Rich
   {
 
   public:
+
     /// Standard constructor
     HistoID() {}
 

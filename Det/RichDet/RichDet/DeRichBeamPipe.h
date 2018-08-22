@@ -38,10 +38,12 @@ class DeRichBeamPipe : public DeRichBase
 {
 
 private:
+
   /// Internal representation of a line
   // using LINE = Gaudi::Math::Line<Gaudi::XYZPoint,Gaudi::XYZVector>;
 
 public:
+
   /// Enum describing the various possible types of intersection
   enum BeamPipeIntersectionType
   {
@@ -54,6 +56,7 @@ public:
   };
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -85,6 +88,7 @@ public:
   StatusCode initialize() override;
 
 public:
+
   /**
    *  Finds the entry and exit points of the beam pipe equivalent (central
    *  tube in Rich2). For boolean solids
@@ -178,8 +182,8 @@ public:
         if ( mask[ i ] )
         {
           mask[ i ] = m_localCone->testForIntersection(
-            Gaudi::XYZPoint{ pL.X()[ i ], pL.Y()[ i ], pL.Z()[ i ] },
-            Gaudi::XYZVector{ vL.X()[ i ], vL.Y()[ i ], vL.Z()[ i ] } );
+            Gaudi::XYZPoint { pL.X()[ i ], pL.Y()[ i ], pL.Z()[ i ] },
+            Gaudi::XYZVector { vL.X()[ i ], vL.Y()[ i ], vL.Z()[ i ] } );
         }
       }
     }
@@ -189,10 +193,12 @@ public:
   }
 
 public:
+
   /// Convert the enum to text for easy reading
   static std::string text( const DeRichBeamPipe::BeamPipeIntersectionType &type );
 
 private:
+
   /// Returns the 'average' of two points
   template < typename POINT >
   inline POINT average( const POINT &p1, const POINT &p2 ) const
@@ -257,6 +263,7 @@ private:
   }
 
 private: // data
+
   /// SIMD Global position on the z axis for the start of the beampipe
   Rich::SIMD::Point< Rich::SIMD::DefaultScalarFP > m_startPGloSIMD;
 
@@ -270,6 +277,7 @@ private: // data
   Rich::SIMD::Transform3D< Rich::SIMD::DefaultScalarFP > m_toLocalMatrixSIMD;
 
 private: // data
+
   /// The RICH detector
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 

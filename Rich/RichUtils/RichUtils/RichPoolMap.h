@@ -58,6 +58,7 @@ namespace Rich
   class PoolMap : public std::map< KEY, VALUE, COMPARE, ALLOC >
   {
   public:
+
     /// Operator overloading for ostream
     friend inline std::ostream &operator<<( std::ostream &                               str,
                                             const PoolMap< KEY, VALUE, COMPARE, ALLOC > &m )

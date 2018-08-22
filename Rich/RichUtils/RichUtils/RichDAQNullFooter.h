@@ -31,6 +31,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Does this foot have a parity word ?
     inline bool hasParityWord() const noexcept { return false; }
 

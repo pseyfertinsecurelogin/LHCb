@@ -79,6 +79,7 @@ namespace Rich::DAQ
     {
 
     public: // methods
+
       /// Copy Constructor
       RichZSPacked( const RichZSPacked &word ) : m_data( word.data() ) {}
 
@@ -161,6 +162,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Get address from row and column information
       inline static Rich::DAQ::ShortType addressFromRowCol( const Rich::DAQ::ShortType row,
                                                             const Rich::DAQ::ShortType col )
@@ -188,6 +190,7 @@ namespace Rich::DAQ
       }
 
     private: // methods
+
       /// Update the internal data
       inline void setData( const Rich::DAQ::LongType data ) noexcept { m_data = data; }
 
@@ -208,6 +211,7 @@ namespace Rich::DAQ
       }
 
     private: // data
+
       /// The data word
       Rich::DAQ::LongType m_data = 0;
     };

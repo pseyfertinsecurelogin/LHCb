@@ -59,6 +59,7 @@ namespace Rich
     {
 
     public:
+
       /// Standard algorithm-like constructor
       CommonBase( const std::string &name, ISvcLocator *pSvcLocator );
 
@@ -69,6 +70,7 @@ namespace Rich
       CommonBase( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr );
 
     public:
+
       /** Initialization of the algorithm after creation
        *
        * @return The status of the initialization
@@ -86,6 +88,7 @@ namespace Rich
       virtual StatusCode finalize() override;
 
     public:
+
       /** Returns the full location of the given object in the Data Store
        *
        *  @param pObj Data object
@@ -122,6 +125,7 @@ namespace Rich
       }
 
     protected: // methods
+
       /// Pointer to Job Options Service
       inline IJobOptionsSvc *joSvc() const noexcept { return m_jos; }
 
@@ -140,10 +144,12 @@ namespace Rich
                            const bool                        overwrite = false ) const;
 
     private:
+
       /// Common Constructor initisalisations
       void initRichCommonConstructor();
 
     private: // data
+
       /// Pointer to job options service
       IJobOptionsSvc *m_jos = nullptr;
     };

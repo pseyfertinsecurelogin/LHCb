@@ -55,6 +55,7 @@ namespace Rich::DAQ
     {
 
     public:
+
       /// Default constructor
       RichNonZeroSuppData() : PDDataBankImp< Version, Header, Footer >( MaxDataSize ) {}
 
@@ -100,6 +101,7 @@ namespace Rich::DAQ
                                   const LHCb::RichSmartID    hpdID ) const override final;
 
     private: // methods
+
       /// Set a pixel as active
       inline void setPixelActive( const ShortType row, const ShortType col ) noexcept
       {

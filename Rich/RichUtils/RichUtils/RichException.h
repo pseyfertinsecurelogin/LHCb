@@ -34,6 +34,7 @@ namespace Rich
   {
 
   public:
+
     /** Default Constructor
      *
      *  @param ex  exception message

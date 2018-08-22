@@ -50,6 +50,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// Standard algorithm-like constructor
     HistoBase( const std::string &name, ISvcLocator *pSvcLocator );
 
@@ -60,6 +61,7 @@ namespace Rich::Future
     HistoBase( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr );
 
   private:
+
     /// Histogram Constructor initisalisations
     void initRichHistoConstructor();
 
@@ -67,6 +69,7 @@ namespace Rich::Future
     void initRichTupleConstructor();
 
   public:
+
     /// System initialize
     virtual StatusCode sysInitialize() override;
 
@@ -77,6 +80,7 @@ namespace Rich::Future
     virtual StatusCode finalize() override;
 
   protected:
+
     /// Number of bins for 1D histograms
     inline unsigned int nBins1D() const noexcept { return m_nBins1D; }
 
@@ -84,13 +88,15 @@ namespace Rich::Future
     inline unsigned int nBins2D() const noexcept { return m_nBins2D; }
 
   private:
+
     /// Number of bins for 1D histograms
-    Gaudi::Property< unsigned int > m_nBins1D{ this, "NBins1DHistos", 100 };
+    Gaudi::Property< unsigned int > m_nBins1D { this, "NBins1DHistos", 100 };
 
     /// Number of bins for 2D histograms
-    Gaudi::Property< unsigned int > m_nBins2D{ this, "NBins2DHistos", 50 };
+    Gaudi::Property< unsigned int > m_nBins2D { this, "NBins2DHistos", 50 };
 
   protected:
+
     /** @brief Place to book all histograms which must be present after initialisation
      *
      *  Useful for online monitoring where booking on-demand does not play well with
@@ -105,10 +111,12 @@ namespace Rich::Future
     virtual StatusCode prebookHistograms();
 
   protected:
+
     /// short name for bin labels
     using BinLabels = std::vector< std::string >;
 
   protected:
+
     /** Book a 1D histogram
      *
      * @param id         Histogram identifier
@@ -220,6 +228,7 @@ namespace Rich::Future
     //-----------------------------------------------------------------------------------------
 
   private: // Types for histogram lookup
+
     /** @class HistoMap RichFutureKernel/RichHistoBase.h
      *
      *  Private class to implement mapping between RICH classes and histograms
@@ -231,15 +240,19 @@ namespace Rich::Future
     class HistoMap
     {
     public:
+
       using StringToHist = Rich::HashMap< std::string, HTYPE * >;
 
     private:
+
       using Map = Rich::Map< Rich::PackedPIDInfo::Pack32_t, StringToHist >;
 
     private:
+
       Map m_map;
 
     public:
+
       inline StringToHist &getmap( const Rich::PackedPIDInfo &info ) { return m_map[ info.raw() ]; }
       inline const StringToHist &getmap( const Rich::PackedPIDInfo &info ) const
       {
@@ -262,8 +275,9 @@ namespace Rich::Future
     using Map2DP = HistoMap< AIDA::IProfile2D >;
 
   private:
+
     /// Flag to indicate if histograms have been booked or not
-    bool m_histosAreBooked{ false };
+    bool m_histosAreBooked { false };
 
     /// 1D histo map
     Map1DH m_1dhmap;
@@ -278,6 +292,7 @@ namespace Rich::Future
     Map2DP m_2dpmap;
 
   protected:
+
     //-----------------------------------------------------------------------------------------
 
     /** Access 1D histogram by id

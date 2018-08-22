@@ -34,6 +34,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IDetectorTool, 1, 0 );
 

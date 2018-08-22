@@ -41,6 +41,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IMirrorSegFinder, 1, 0 );
 

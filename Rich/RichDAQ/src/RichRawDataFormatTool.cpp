@@ -880,7 +880,7 @@ RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank &bank, L1Map &deco
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
 
   // various counts
-  DetectorArray< unsigned int > nHPDbanks{ { 0, 0 } }, decodedHits{ { 0, 0 } };
+  DetectorArray< unsigned int > nHPDbanks { { 0, 0 } }, decodedHits { { 0, 0 } };
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -1226,7 +1226,7 @@ RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank &bank, L1Map &de
   const Level1HardwareID L1ID( bank.sourceID() );
 
   // HPD count
-  DetectorArray< unsigned int > nHPDbanks{ { 0, 0 } }, decodedHits{ { 0, 0 } };
+  DetectorArray< unsigned int > nHPDbanks { { 0, 0 } }, decodedHits { { 0, 0 } };
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1361,7 +1361,7 @@ RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank &bank, L1Map &de
   const ShortType maxDataSize = MaxDataSize;
 
   // HPD count
-  DetectorArray< unsigned int > nHPDbanks{ { 0, 0 } }, decodedHits{ { 0, 0 } };
+  DetectorArray< unsigned int > nHPDbanks { { 0, 0 } }, decodedHits { { 0, 0 } };
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;

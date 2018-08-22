@@ -51,10 +51,12 @@ class DeRichRadiator : public DeRichBase
 {
 
 public:
+
   /// Type for a vector of pointers to DeRichRadiators
   typedef std::vector< DeRichRadiator * > Vector;
 
 public:
+
   /// Default constructor
   DeRichRadiator( const std::string &name = "" );
 
@@ -185,6 +187,7 @@ public:
   virtual double refractiveIndex( const double energy, const bool hlt = true ) const = 0;
 
 protected:
+
   /// Initialise Tab Property Interpolators
   StatusCode initTabPropInterpolators();
 
@@ -210,6 +213,7 @@ protected:
   StatusCode setRadiatorID(); ///< Set rich and radiator ID
 
 protected:
+
   /// The radiator id (Aerogel, CF4, C4F10)
   Rich::RadiatorType m_radiatorID = Rich::InvalidRadiator;
 

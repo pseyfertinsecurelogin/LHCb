@@ -171,7 +171,7 @@ DeRich1::updateMirrorParams()
     m_nominalCentresOfCurvature[ Rich::top ]    = Gaudi::XYZPoint( 0, 0, 0 );
     m_nominalCentresOfCurvature[ Rich::bottom ] = Gaudi::XYZPoint( 0, 0, 0 );
     unsigned int nTop( 0 ), nBot( 0 );
-    double       avroc{ 0 };
+    double       avroc { 0 };
     for ( const auto &loc : paramVect< std::string >( "SphericalMirrorDetElemLocations" ) )
     {
       SmartDataPtr< DeRichSphMirror > mirror( dataSvc(), loc );
@@ -209,8 +209,8 @@ DeRich1::updateMirrorParams()
 
   // Load the secondary mirrors to compute the 'nominal' settings
   {
-    std::vector< double > nominalFMirrorPlaneTop{ 0, 0, 0, 0 };
-    std::vector< double > nominalFMirrorPlaneBot{ 0, 0, 0, 0 };
+    std::vector< double > nominalFMirrorPlaneTop { 0, 0, 0, 0 };
+    std::vector< double > nominalFMirrorPlaneBot { 0, 0, 0, 0 };
     unsigned int          nTop( 0 ), nBot( 0 );
     for ( const auto &loc : paramVect< std::string >( "SecondaryMirrorDetElemLocations" ) )
     {

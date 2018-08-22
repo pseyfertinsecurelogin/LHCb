@@ -41,6 +41,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// The floating point precision to use
     using Scalar = float;
 
@@ -48,10 +49,12 @@ namespace Rich::Future
     using Vector = LHCb::STL::Vector< RecoPhoton >;
 
   public:
+
     /// Default Constructor
     RecoPhoton() = default;
 
   public:
+
     /** Constructor with parameters
      *
      *  @param theta Cherenkov angle theta
@@ -71,6 +74,7 @@ namespace Rich::Future
     {}
 
   public:
+
     /** Set accessor for the Cherenkov theta angle
      *  @param theta the new value for the Cherenkov theta angle */
     inline void setCherenkovTheta( const Scalar theta ) noexcept { m_CherenkovTheta = theta; }
@@ -123,10 +127,12 @@ namespace Rich::Future
     inline bool unambiguousPhoton() const noexcept { return m_unambigPhot; }
 
   protected:
+
     /// Printout method
     std::ostream &fillStream( std::ostream &s ) const;
 
   public:
+
     /// Implement ostream << method for GeomPhoton
     friend inline std::ostream &operator<<( std::ostream &s, const RecoPhoton &photon )
     {
@@ -134,21 +140,22 @@ namespace Rich::Future
     }
 
   private:
+
     /// Cherenkov angle theta
-    Scalar m_CherenkovTheta{ 0 };
+    Scalar m_CherenkovTheta { 0 };
 
     /// Cherenkov angle phi
-    Scalar m_CherenkovPhi{ 0 };
+    Scalar m_CherenkovPhi { 0 };
 
     /// The channel ID for the photon detection point
     LHCb::RichSmartID m_smartID;
 
     /** The fraction of the RichTrackSegment trajectory this photon is associated
      *  with for which it is geometrically possible this photon was produced */
-    Scalar m_activeSegmentFraction{ 1 };
+    Scalar m_activeSegmentFraction { 1 };
 
     /// Flag to indicate if an unambiguous photon or not
-    bool m_unambigPhot{ false };
+    bool m_unambigPhot { false };
   };
 
   /** @class GeomPhoton RichGeomPhoton.h RichUtils/RichGeomPhoton.h
@@ -164,14 +171,17 @@ namespace Rich::Future
   {
 
   public:
+
     /// Container of photons
     using Vector = LHCb::STL::Vector< GeomPhoton >;
 
   public:
+
     /// Default Constructor
     GeomPhoton() = default;
 
   public:
+
     /** Constructor from full photon information
      *
      *  @param theta Cherenkov angle theta
@@ -230,6 +240,7 @@ namespace Rich::Future
     {}
 
   public:
+
     /**
      * Set accessor for the estimated emission point
      * @param emissionPoint the new value for the estimated emission point
@@ -366,17 +377,20 @@ namespace Rich::Future
     inline Gaudi::XYZPoint &flatMirReflectionPoint() noexcept { return m_flatMirReflectionPoint; }
 
   private:
+
     /// Printout method
     std::ostream &fillStream( std::ostream &s ) const;
 
   public:
+
     /// Implement ostream << method for GeomPhoton
     friend inline std::ostream &operator<<( std::ostream &s, const GeomPhoton &photon )
     {
       return photon.fillStream( s );
     }
 
-  private:                             // data
+  private: // data
+
     Gaudi::XYZPoint  m_emissionPoint;  ///< The photon emission point
     Gaudi::XYZVector m_emissionDir;    ///< The photon direction at the emission point
     Gaudi::XYZPoint  m_detectionPoint; ///< The photon detection point on the HPD entrance window

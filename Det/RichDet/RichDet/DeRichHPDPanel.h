@@ -46,6 +46,7 @@ class DeRichHPDPanel : public DeRichPDPanel
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -78,6 +79,7 @@ public:
   StatusCode initialize() override final;
 
 public:
+
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
   bool smartID( const Gaudi::XYZPoint &globalPoint, LHCb::RichSmartID &id ) const override final;
 
@@ -155,6 +157,7 @@ public:
   Rich::DAQ::PDPanelIndex maxPdNumber() const override final;
 
 private: // methods
+
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID &smartID ) const
   {
@@ -178,22 +181,23 @@ private: // methods
   /// Update cached information on geometry changes
   StatusCode geometryUpdate();
 
-private:                            // data
-  double m_HPDPitch{ 0 };           ///< distance between HPDs
-  double m_HPDColPitch{ 0 };        ///< distance between HPD columns
-  double m_OneOverHPDPitch{ 0 };    ///< 1 / distance between HPDs (cached for speed)
-  double m_OneOverHPDColPitch{ 0 }; ///< 1 / distance between HPD columns (cached for speed)
+private: // data
 
-  unsigned int m_pixelRows{ 0 };    ///< Number of pixel rows
-  unsigned int m_pixelColumns{ 0 }; ///< Number of pixel columns
+  double m_HPDPitch { 0 };           ///< distance between HPDs
+  double m_HPDColPitch { 0 };        ///< distance between HPD columns
+  double m_OneOverHPDPitch { 0 };    ///< 1 / distance between HPDs (cached for speed)
+  double m_OneOverHPDColPitch { 0 }; ///< 1 / distance between HPD columns (cached for speed)
+
+  unsigned int m_pixelRows { 0 };    ///< Number of pixel rows
+  unsigned int m_pixelColumns { 0 }; ///< Number of pixel columns
 
   /// The active HPD window radius (photocathode coverage) Squared
-  double m_activeRadiusSq{ 0 };
+  double m_activeRadiusSq { 0 };
 
-  double m_pixelSize{ 0 };          ///< The pixel size on the silicon sensor
-  double m_subPixelSize{ 0 };       ///< The size of the subpixel (Alice mode)
-  double m_siliconHalfLengthX{ 0 }; ///< Half size (x) of silicon sensor
-  double m_siliconHalfLengthY{ 0 }; ///< Half size (y) of silicon sensor
+  double m_pixelSize { 0 };          ///< The pixel size on the silicon sensor
+  double m_subPixelSize { 0 };       ///< The size of the subpixel (Alice mode)
+  double m_siliconHalfLengthX { 0 }; ///< Half size (x) of silicon sensor
+  double m_siliconHalfLengthY { 0 }; ///< Half size (y) of silicon sensor
 
   Gaudi::Plane3D   m_localPlane;       ///< detection plane in PDPanel coordinates
   Gaudi::XYZVector m_localPlaneNormal; ///< The normal vector of det plane in local coordinates
@@ -203,13 +207,13 @@ private:                            // data
    *  This plane is parrallel to m_localPlane, thus share the same normal vector
    */
   Gaudi::Plane3D m_localPlane2;
-  double         m_localPlaneZdiff{ 0 }; ///< Shift in Z between localPlane2 and localPlane
+  double         m_localPlaneZdiff { 0 }; ///< Shift in Z between localPlane2 and localPlane
 
-  double                  m_panelColumnSideEdge{ 0 }; ///< Edge of the panel along the columns
+  double                  m_panelColumnSideEdge { 0 }; ///< Edge of the panel along the columns
   std::array< double, 2 > m_panelStartColPosEvenOdd = {
     { 0, 0 }
   }; ///< Bottom/Start point of the [even,odd] HPD columns
-  double m_panelStartColPos{
+  double m_panelStartColPos {
     0
   }; ///< abs max of even and odd start points used as the edge across columns
 

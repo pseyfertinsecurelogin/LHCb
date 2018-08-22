@@ -43,6 +43,7 @@ class DeRichHPD : public DeRichPD
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -74,6 +75,7 @@ public:
   StatusCode initialize() override final;
 
 public:
+
   /**
    * Get the point on the centre of the HPD window on the inside surface
    * @return Inside window surface centre point
@@ -197,6 +199,7 @@ public:
                              Gaudi::XYZPoint &       intersection ) const;
 
 public: // types
+
   /// Field polarity
   enum FieldPolarity : uint8_t
   {
@@ -208,6 +211,7 @@ public: // types
   static const uint8_t NPolarities = 2;
 
 public:
+
   /** Retrieves the demagnification interpolation function for the HPD R coordinate.
    *  For a given R on the HPD cathode returns the R on the anode.
    *  Only valid values for field are 0 (DOWN) or 1 (UP)
@@ -253,6 +257,7 @@ public:
   }
 
 private: // functions
+
   /** Returns the silicon x coordinate for the given RichSmartID
    *  @param smartID The RichSmartID
    *  @return The x coordinate
@@ -345,15 +350,17 @@ private: // functions
   double demag( const double r, const double B );
 
 private: // data
+
   // cached field parameters
 
   /// Field polarity
-  FieldPolarity m_field{ Down };
+  FieldPolarity m_field { Down };
 
   /// Is field ON or OFF
-  bool m_isFieldON{ true };
+  bool m_isFieldON { true };
 
 private:
+
   /// version of MDMS corrections, for both field polarities
   std::array< int, NPolarities > m_MDMS_version = { { 0, 0 } };
 
@@ -364,26 +371,26 @@ private:
 
   const ISolid *m_kaptonSolid = nullptr; ///< Pointer to the kapton solid
 
-  int m_number{ 0 }; ///< HPD number (should be the same as copy number)
+  int m_number { 0 }; ///< HPD number (should be the same as copy number)
 
-  double m_winInR{ 0 };    ///< Inner radius of HPD window squared
-  double m_winOutR{ 0 };   ///< Outter radius of HPD window squared
-  double m_winInRsq{ 0 };  ///< Inner radius of HPD window squared
-  double m_winOutRsq{ 0 }; ///< Outter radius of HPD window squared
+  double m_winInR { 0 };    ///< Inner radius of HPD window squared
+  double m_winOutR { 0 };   ///< Outter radius of HPD window squared
+  double m_winInRsq { 0 };  ///< Inner radius of HPD window squared
+  double m_winOutRsq { 0 }; ///< Outter radius of HPD window squared
 
   /// The active HPD window radius (photocathode coverage)
-  double m_activeRadius{ 0 };
+  double m_activeRadius { 0 };
 
-  double m_pixelSize{ 0 };          ///< The pixel size on the silicon sensor
-  double m_siliconHalfLengthX{ 0 }; ///< Si sensor half size in x
-  double m_siliconHalfLengthY{ 0 }; ///< Si sensor half size in y
-  double m_siAnodeRCheck{ 0 };      ///< Max Anode radius on Si sensor
+  double m_pixelSize { 0 };          ///< The pixel size on the silicon sensor
+  double m_siliconHalfLengthX { 0 }; ///< Si sensor half size in x
+  double m_siliconHalfLengthY { 0 }; ///< Si sensor half size in y
+  double m_siAnodeRCheck { 0 };      ///< Max Anode radius on Si sensor
 
   /// The demagnification factor of the HPD. Element [0] is the linear
   /// term, and element[1] the non-linear term for small corrections.
   std::array< double, 2 > m_deMagFactor = { { 0, 0 } };
-  double                  m_magnificationCoef1{ 0 };
-  double                  m_magnificationCoef2{ 0 };
+  double                  m_magnificationCoef1 { 0 };
+  double                  m_magnificationCoef2 { 0 };
 
   /// Interpolated function for HPD R for demagnification
   std::array< Rich::TabulatedFunction1D, NPolarities > m_demagMapR;
@@ -400,13 +407,13 @@ private:
   std::vector< double > m_refPs = { 0, 0, 0, 0 }; ///< refraction parameters for quartz window
 
   /// Flag to indicate the full treatment of magnetic distortions should be performed
-  bool m_UseHpdMagDistortions{ true };
+  bool m_UseHpdMagDistortions { true };
 
   /// Turns on the use of a test field map
-  bool m_UseBFieldTestMap{ false };
+  bool m_UseBFieldTestMap { false };
 
   /// magnitude of the longitudinal B field
-  double m_LongitudinalBField{ 0 };
+  double m_LongitudinalBField { 0 };
 
   // Cached parameters for speed reasons.
   Gaudi::Transform3D m_SiSensorToHPDMatrix; ///< silicon to HPD transform

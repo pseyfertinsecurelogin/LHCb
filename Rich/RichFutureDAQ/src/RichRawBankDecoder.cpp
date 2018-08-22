@@ -25,11 +25,11 @@ namespace
 RawBankDecoder::RawBankDecoder( const std::string &name, ISvcLocator *pSvcLocator )
   : Transformer( name,
                  pSvcLocator,
-                 { KeyValue{ "RawEventLocation",
-                             concat_alternatives( { LHCb::RawEventLocation::Rich,
-                                                    LHCb::RawEventLocation::Default } ) },
-                   KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
-                 { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } } )
+                 { KeyValue { "RawEventLocation",
+                              concat_alternatives( { LHCb::RawEventLocation::Rich,
+                                                     LHCb::RawEventLocation::Default } ) },
+                   KeyValue { "OdinLocation", LHCb::ODINLocation::Default } },
+                 { KeyValue { "DecodedDataLocation", L1MapLocation::Default } } )
 {
   // setProperty( "OutputLevel", MSG::VERBOSE );
 }
@@ -301,7 +301,7 @@ RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank &bank,
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
 
   // various counts
-  DetectorArray< unsigned int > nHPDbanks{ { 0, 0 } }, decodedHits{ { 0, 0 } };
+  DetectorArray< unsigned int > nHPDbanks { { 0, 0 } }, decodedHits { { 0, 0 } };
 
   // Data bank size in 32 bit words
   const auto bankSize = bank.size() / 4;
@@ -613,7 +613,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank &bank, L1Map &decod
   const auto bankSize = bank.size() / 4;
 
   // various counts
-  DetectorArray< unsigned int > decodedHits{ { 0, 0 } };
+  DetectorArray< unsigned int > decodedHits { { 0, 0 } };
 
   // If we have some words to process, start the decoding
   if ( bankSize > 0 )

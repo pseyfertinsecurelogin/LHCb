@@ -46,6 +46,7 @@ namespace Rich::Future
   {
 
   public: // types
+
     // SIMD types
     using FP         = Rich::SIMD::DefaultScalarFP; ///< Default scalar floating point type
     using SIMDFP     = SIMD::FP< FP >;              ///< Default vector floating point type
@@ -53,6 +54,7 @@ namespace Rich::Future
     using SIMDPoint  = SIMD::Point< FP >;           ///< Default vector Point class
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( ISmartIDTool, 1, 0 );
 

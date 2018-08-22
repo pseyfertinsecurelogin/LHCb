@@ -40,6 +40,7 @@ namespace Rich::Future::MC
   {
 
   public:
+
     /// Standard constructor
     TrackToMCParticleRelations( const std::string &name, ISvcLocator *pSvcLocator );
 
@@ -48,8 +49,9 @@ namespace Rich::Future::MC
     operator()( const LHCb::Tracks &tks, const LHCb::MCParticles &mcps ) const override;
 
   private:
+
     /// Allow more than one MCParticle per track ?
-    Gaudi::Property< bool > m_allowMultMPs{ this, "AllowMultipleMCPsPerTrack", true };
+    Gaudi::Property< bool > m_allowMultMPs { this, "AllowMultipleMCPsPerTrack", true };
   };
 
 } // namespace Rich::Future::MC

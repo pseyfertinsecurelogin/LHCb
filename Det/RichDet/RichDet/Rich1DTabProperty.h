@@ -35,6 +35,7 @@ namespace Rich
   {
 
   public:
+
     /// Default Constructor
     TabulatedProperty1D() = default;
 
@@ -83,6 +84,7 @@ namespace Rich
                            const gsl_interp_type *  interType   = gsl_interp_linear );
 
   private: // methods
+
     /// Service locator
     ISvcLocator *svcLocator();
 
@@ -103,6 +105,7 @@ namespace Rich
     virtual double rangeWarning( const double x, const double retx ) const override;
 
   private: // data
+
     /// Pointer to the underlying TabulatedProperty
     const TabulatedProperty *m_tabProp = nullptr;
 

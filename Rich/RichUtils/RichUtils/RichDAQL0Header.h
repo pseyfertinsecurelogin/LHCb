@@ -38,6 +38,7 @@ namespace Rich::DAQ
   {
 
   public: // Each word
+
     //=============================================================================================
     /** @class Word0 RichDAQL0Header.h RichUtils/RichDAQL0Header.h
      *
@@ -51,6 +52,7 @@ namespace Rich::DAQ
     {
 
     public:
+
       /// Default Constructor
       Word0() = default;
 
@@ -63,6 +65,7 @@ namespace Rich::DAQ
       // bit packing info
       //-----------------------------------------------------------------------------------------
     private:
+
       // Define the number of bits for each field
       static const ShortType BitsEventID   = 8;  ///< Number of bits for Event ID
       static const ShortType BitsBxID      = 12; ///< Number of bits for BX ID
@@ -84,6 +87,7 @@ namespace Rich::DAQ
       //-----------------------------------------------------------------------------------------
 
     public: // accessors
+
       /// Retrieve the event ID word
       inline EventID eventID() const
       {
@@ -100,6 +104,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// overloaded output to std::ostream
       friend inline std::ostream &operator<<( std::ostream &os, const L0Header::Word0 &word )
       {
@@ -108,8 +113,9 @@ namespace Rich::DAQ
       }
 
     private:
+
       /// The data word
-      LongType m_data{ 0 };
+      LongType m_data { 0 };
     };
 
     //=============================================================================================
@@ -125,6 +131,7 @@ namespace Rich::DAQ
     {
 
     public:
+
       /// Default Constructor
       Word1() = default;
 
@@ -137,6 +144,7 @@ namespace Rich::DAQ
       // bit packing info
       //------------------------------------------------------------------------------------------------------
     private:
+
       // Define the number of bits for each field
       static const ShortType BitsL0ID         = 11; ///< Number of bits for the Level0 ID
       static const ShortType BitsNWordsBIDFIF = 4;  ///< Number of bits for the # words in BID FIF()
@@ -182,6 +190,7 @@ namespace Rich::DAQ
       //------------------------------------------------------------------------------------------------------
 
     public:
+
       /// Retrieve the Level0 ID
       inline Level0ID l0ID() const { return Level0ID( ( data() & MaskL0ID ) >> ShiftL0ID ); }
 
@@ -228,6 +237,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// overloaded output to std::ostream
       friend inline std::ostream &operator<<( std::ostream &l0head_os, const L0Header::Word1 &word )
       {
@@ -243,11 +253,13 @@ namespace Rich::DAQ
       }
 
     private:
+
       /// The data word
-      LongType m_data{ 0 };
+      LongType m_data { 0 };
     };
 
   public:
+
     /// Constructor from raw LongType words
     explicit L0Header( const Word0 &word0, const Word1 &word1 ) : m_word0( word0 ), m_word1( word1 )
     {}
@@ -270,6 +282,7 @@ namespace Rich::DAQ
     inline Word1 &&word1() && { return std::move( m_word1 ); }
 
   public:
+
     /// Write this header to a RAWBank
     inline void fillRAWBank( RAWBank &bank ) const
     {
@@ -278,6 +291,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// overloaded output to std::ostream
     friend inline std::ostream &operator<<( std::ostream &os, const L0Header &header )
     {
@@ -285,6 +299,7 @@ namespace Rich::DAQ
     }
 
   private:
+
     /// The first data word
     Word0 m_word0;
 

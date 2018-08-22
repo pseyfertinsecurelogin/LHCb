@@ -35,6 +35,7 @@ class DeRichSphMirror : public DeRichBase
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -130,6 +131,7 @@ public:
   inline const Gaudi::Plane3D &centreNormalPlane() const noexcept { return m_centreNormalPlane; }
 
 private: // methods
+
   /**
    * Update the geometrical parameters.
    * @return SUCCESS if everything OK
@@ -137,6 +139,7 @@ private: // methods
   StatusCode updateGeometry();
 
 private: // data
+
   /// mirror reflectivity
   std::unique_ptr< const Rich::TabulatedProperty1D > m_reflectivity;
 
@@ -148,8 +151,8 @@ private: // data
   Gaudi::XYZPoint m_localOrigin;       ///< The local centre of curvature
   Gaudi::XYZPoint m_localMirrorCentre; ///< The local mirror centre
 
-  double m_radius{ 0 };        ///< Spherical mirror radius
-  int    m_mirrorNumber{ -1 }; ///< mirror (segment) number
+  double m_radius { 0 };        ///< Spherical mirror radius
+  int    m_mirrorNumber { -1 }; ///< mirror (segment) number
 
   /// The normal vector at the centre of the mirror
   Gaudi::XYZVector m_centreNormal;
@@ -158,5 +161,5 @@ private: // data
   Gaudi::Plane3D m_centreNormalPlane;
 
   /// Flag for first update
-  bool m_firstUpdate{ true };
+  bool m_firstUpdate { true };
 };

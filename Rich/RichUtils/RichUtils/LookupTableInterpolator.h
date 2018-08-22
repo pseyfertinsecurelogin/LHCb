@@ -35,17 +35,21 @@ namespace Rich
   {
 
   protected:
+
     /// SIMD floating point type
     using SIMDFP = SIMD::FP< Rich::SIMD::DefaultScalarFP >;
 
   protected:
+
     /// class for each interpolator bin
     class Bin
     {
     public:
-      TYPE m{ 0 }; ///< Slope    in y = mx +c
-      TYPE c{ 0 }; ///< Constant in y = mx +c
+
+      TYPE m { 0 }; ///< Slope    in y = mx +c
+      TYPE c { 0 }; ///< Constant in y = mx +c
     public:
+
       /// Constructor from bin min and max, and value functor
       template < typename FUNC >
       Bin( const TYPE lowX, const TYPE highX, const FUNC &func )
@@ -57,6 +61,7 @@ namespace Rich
       }
 
     public:
+
 #ifndef __clang__
       using Vector = Vc::vector< Bin >;
 #else
@@ -65,6 +70,7 @@ namespace Rich
     };
 
   public:
+
     /// Default constructor
     BaseLookupTableInterpolator() = default;
 
@@ -76,6 +82,7 @@ namespace Rich
     }
 
   protected:
+
     /// Initialise
     template < typename FUNC >
     inline void init( const TYPE minX, const TYPE maxX, FUNC &&func )
@@ -95,6 +102,7 @@ namespace Rich
     }
 
   protected:
+
     /// Get the low x value for a given bin index
     inline TYPE binLowX( const std::size_t i ) const noexcept
     {
@@ -108,6 +116,7 @@ namespace Rich
     }
 
   protected:
+
     /** Returns the scalar value for the given scalar index and x value.
      *  Assumes range checking if required is already done. */
     inline TYPE value( const std::size_t index, const TYPE x ) const noexcept
@@ -141,19 +150,21 @@ namespace Rich
     }
 
   protected:
+
     /// Data storage
     typename Bin::Vector m_data;
 
     /// Minimum valid x (scalar)
-    TYPE m_minX{ 0 };
+    TYPE m_minX { 0 };
 
     /// Maximum valid x (scalar)
-    TYPE m_maxX{ 0 };
+    TYPE m_maxX { 0 };
 
     /// 1 / the bin increment (scalar)
-    TYPE m_incXinv{ 0 };
+    TYPE m_incXinv { 0 };
 
   protected: // cache SIMD variables
+
     /// Minimum valid x (SIMD)
     SIMDFP m_minXSIMD = SIMDFP::Zero();
 
@@ -178,12 +189,14 @@ namespace Rich
   {
 
   public:
+
     /// SIMD FP type
     using SIMDFP = typename BaseLookupTableInterpolator< TYPE, NBINS >::SIMDFP;
     /// SIMD Index type
     using SIMDIn = typename SIMDFP::IndexType;
 
   private:
+
     /// Get the look up index for a given scalar x (no range checks)
     template < typename PARAM,
                typename std::enable_if< std::is_arithmetic< PARAM >::value >::type * = nullptr >
@@ -199,6 +212,7 @@ namespace Rich
     }
 
   public:
+
     /// Inherit base class constructors
     using BaseLookupTableInterpolator< TYPE, NBINS >::BaseLookupTableInterpolator;
 
@@ -210,6 +224,7 @@ namespace Rich
     }
 
   public:
+
     /// Access the computed value for the given scalar parameter
     inline TYPE operator()( const TYPE x ) const noexcept
     {
@@ -228,6 +243,7 @@ namespace Rich
     }
 
   public:
+
     /** Access the computed value for the given scalar parameter.
      *  WARNING NO Range checking is performed */
     inline TYPE fast_value( const TYPE x ) const noexcept { return this->value( xIndex( x ), x ); }
@@ -261,12 +277,14 @@ namespace Rich
   {
 
   public:
+
     /// SIMD FP type
     using SIMDFP = typename BaseLookupTableInterpolator< TYPE, NBINS >::SIMDFP;
     /// SIMD Index type
     using SIMDIn = typename SIMDFP::IndexType;
 
   private:
+
     /// Get the look up index for a given scalar x (no range checks)
     template < typename PARAM,
                typename std::enable_if< std::is_arithmetic< PARAM >::value >::type * = nullptr >
@@ -282,6 +300,7 @@ namespace Rich
     }
 
   public:
+
     /// Inherit base class constructors
     using BaseLookupTableInterpolator< TYPE, NBINS >::BaseLookupTableInterpolator;
 
@@ -294,6 +313,7 @@ namespace Rich
     }
 
   public:
+
     /** Access the computed value for the given scalar parameter.
      *  Range checking is performed */
     inline TYPE operator()( const TYPE x ) const noexcept
@@ -314,6 +334,7 @@ namespace Rich
     }
 
   public:
+
     /** Access the computed value for the given scalar parameter.
      *  WARNING NO Range checking is performed */
     inline TYPE fast_value( const TYPE x ) const noexcept { return this->value( xIndex( x ), x ); }

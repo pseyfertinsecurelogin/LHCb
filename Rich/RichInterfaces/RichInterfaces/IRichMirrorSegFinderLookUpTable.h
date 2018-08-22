@@ -60,11 +60,13 @@ namespace Rich::Future
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IMirrorSegFinderLookUpTable, 1, 0 );
 
   protected: // helper classes
              /// Type for list of mirrors
+
 #ifndef __clang__
     using Mirrors = Vc::vector< const DeRichSphMirror * >;
 #else
@@ -91,6 +93,7 @@ namespace Rich::Future
     class LookupTableFinder
     {
     private:
+
       /// Type for Mirror Number. Small to minimise LUT size.
       using MirrorNum = std::uint8_t;
       /// Type for SIMD array of indices
@@ -99,12 +102,14 @@ namespace Rich::Future
       using ScalarIndex = std::uint32_t;
 
     public:
+
       /// Constructor from extra size
       explicit LookupTableFinder( const FPTYPE eSize ) : m_eSize( eSize ) {}
       /// Default constructor not allowed
       LookupTableFinder() = delete;
 
     public:
+
       /// Reset this object
       void reset()
       {
@@ -119,6 +124,7 @@ namespace Rich::Future
       }
 
     public:
+
       /// Initialise this object
       void init()
       {
@@ -218,6 +224,7 @@ namespace Rich::Future
       }
 
     private:
+
       /// Get the mirror closest to a given (x,y) point
       const DeRichSphMirror *closestXY( const FPTYPE x, const FPTYPE y ) const
       {
@@ -243,6 +250,7 @@ namespace Rich::Future
       }
 
     private:
+
       /// Type for lookup storage
 #ifndef __clang__
       using MirrorArray = Vc::vector< MirrorNum >;
@@ -254,10 +262,12 @@ namespace Rich::Future
       class LookupTable final : private MirrorArray
       {
       public:
+
         /// Constructor
         LookupTable() { clear(); }
 
       public:
+
         /// Combine two (scalar) x,y indices in a single one
         inline ScalarIndex xyIndex( const ScalarIndex ix, const ScalarIndex iy ) const noexcept
         {
@@ -271,6 +281,7 @@ namespace Rich::Future
         }
 
       public:
+
         /// Access the mirror for a given combined xy index (Scalar)
         inline MirrorNum get( const ScalarIndex ixy ) const noexcept { return ( *this )[ ixy ]; }
         /// Access the mirror for a given set of (x,y) indices (Scalar)
@@ -280,6 +291,7 @@ namespace Rich::Future
         }
 
       public:
+
 #ifndef __clang__
         /// Access the mirror for a given xy index (SIMD)
         inline SIMDIndices get( const SIMDIndices::IndexType &ixy ) const noexcept
@@ -297,6 +309,7 @@ namespace Rich::Future
         }
 
       public:
+
         /// Set the mirror for a given bin
         void set( const ScalarIndex ix, const ScalarIndex iy, const MirrorNum im ) noexcept
         {
@@ -311,6 +324,7 @@ namespace Rich::Future
       };
 
     private:
+
       /// Get the number of bins in X (Scalar)
       constexpr std::uint32_t nXBins() const noexcept { return NXBINS; }
       /// Get the number of bins in Y (Scalar)
@@ -325,6 +339,7 @@ namespace Rich::Future
       FPTYPE maxY() const noexcept { return m_maxY; }
 
     private:
+
       /// Get x for a given index value
       inline FPTYPE binX( const ScalarIndex i ) const noexcept
       {
@@ -337,6 +352,7 @@ namespace Rich::Future
       }
 
     private:
+
       /// Get the x index
       template < typename TYPE >
       inline decltype( auto ) xIndex( const TYPE x ) const noexcept
@@ -390,7 +406,8 @@ namespace Rich::Future
         }
       }
 
-    private:                                                          // SIMD cached values
+    private: // SIMD cached values
+
       SIMD::FP< SIMDTYPE > m_minXSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Minimum X (SIMD)
       SIMD::FP< SIMDTYPE > m_maxXSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Maximum X (SIMD)
       SIMD::FP< SIMDTYPE > m_minYSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< Minimum Y (SIMD)
@@ -398,20 +415,23 @@ namespace Rich::Future
       SIMD::FP< SIMDTYPE > m_incXSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< 1 / Increment in X
       SIMD::FP< SIMDTYPE > m_incYSIMD = SIMD::FP< SIMDTYPE >::Zero(); ///< 1 / Increment in Y
     private:
-      FPTYPE      m_minX{ 9e9 };  ///< Minimum X
-      FPTYPE      m_maxX{ -9e9 }; ///< Maximum X
-      FPTYPE      m_minY{ 9e9 };  ///< Minimum Y
-      FPTYPE      m_maxY{ -9e9 }; ///< Maximum Y
-      FPTYPE      m_incX{ 0 };    ///< 1 / Increment in X
-      FPTYPE      m_incY{ 0 };    ///< 1 / Increment in Y
-      LookupTable m_lookupTable;  ///< The lookup table
+
+      FPTYPE      m_minX { 9e9 };  ///< Minimum X
+      FPTYPE      m_maxX { -9e9 }; ///< Maximum X
+      FPTYPE      m_minY { 9e9 };  ///< Minimum Y
+      FPTYPE      m_maxY { -9e9 }; ///< Maximum Y
+      FPTYPE      m_incX { 0 };    ///< 1 / Increment in X
+      FPTYPE      m_incY { 0 };    ///< 1 / Increment in Y
+      LookupTable m_lookupTable;   ///< The lookup table
     public:
+
       /// Vector of all mirrors in this panel
       Mirrors mirrors;
 
     private:
+
       /// Extra size to take into account mirror extents
-      FPTYPE m_eSize{ 0 };
+      FPTYPE m_eSize { 0 };
     };
 
     /// Specialisation for RICH1
@@ -422,6 +442,7 @@ namespace Rich::Future
     class R1LookupTableFinder final : public LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >
     {
     public:
+
       R1LookupTableFinder()
         : LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >( 100 * Gaudi::Units::mm )
       {}
@@ -435,6 +456,7 @@ namespace Rich::Future
     class R2LookupTableFinder final : public LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >
     {
     public:
+
       R2LookupTableFinder()
         : LookupTableFinder< FPTYPE, NXBINS, NYBINS, SIMDTYPE >( 2500 * Gaudi::Units::mm )
       {}
@@ -452,6 +474,7 @@ namespace Rich::Future
     class TwoSegmentXFinder final
     {
     public:
+
       /// Reset this object
       void reset() { mirrors.clear(); }
       /// Initialise this object
@@ -512,6 +535,7 @@ namespace Rich::Future
       }
 
     public:
+
       /// Vector of all mirrors in this panel
       Mirrors mirrors;
     };
@@ -521,6 +545,7 @@ namespace Rich::Future
     class RichMirrorFinder
     {
     public:
+
       /// Reset the finders
       void reset()
       {
@@ -556,6 +581,7 @@ namespace Rich::Future
       }
 
     public:
+
       /// Find the mirrors for the given RICH, panel and point
       template < typename POINT >
       inline decltype( auto )
@@ -575,6 +601,7 @@ namespace Rich::Future
       }
 
     public:
+
       /// Find the mirror for the given RICH, panel and point (x,y)
       template < typename TYPE >
       inline decltype( auto )
@@ -614,6 +641,7 @@ namespace Rich::Future
       }
 
     public:
+
       /// Get the list of mirrors
       const Mirrors &mirrors( const Rich::DetectorType rich, const Rich::Side side ) const noexcept
       {
@@ -621,6 +649,7 @@ namespace Rich::Future
       }
 
     private:
+
       /// RICH1 finder
       PanelArray< R1FINDER > m_r1Finder;
       /// RICH2 finder
@@ -628,6 +657,7 @@ namespace Rich::Future
     };
 
   protected:
+
     // Finder types for each RICH and mirror type
     using R1Primary   = TwoSegmentXFinder;
     using R2Primary   = R2LookupTableFinder< double, 400, 400 >;
@@ -641,6 +671,7 @@ namespace Rich::Future
     RichMirrorFinder< R1Secondary, R2Secondary > m_secMirrFinder;
 
   public:
+
     /** Locates the spherical mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -682,6 +713,7 @@ namespace Rich::Future
     }
 
   public:
+
     /** Locates the secondary mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -723,6 +755,7 @@ namespace Rich::Future
     }
 
   public:
+
     /** Locates the spherical mirror Segment given a reflection point,
      *  RICH identifier and panel
      *
@@ -765,6 +798,7 @@ namespace Rich::Future
     }
 
   public:
+
     /** Locates the secondary mirror Segment given a reflection point,
      *  RICH identifier and panel
      *

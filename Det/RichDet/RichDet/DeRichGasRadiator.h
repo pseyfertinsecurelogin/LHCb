@@ -28,6 +28,7 @@ class DeRichGasRadiator : public DeRichSingleSolidRadiator
 {
 
 public:
+
   /// Standard constructor
   DeRichGasRadiator( const std::string &name = "" );
 
@@ -54,6 +55,7 @@ public:
   StatusCode initialize() override final;
 
 private:
+
   /// method to update the refractive index of the radiator
   StatusCode updateProperties();
 
@@ -77,6 +79,7 @@ private:
   StatusCode setupOldGasConditions();
 
 private: // data
+
   /// Condition holding the current temperature of radiator
   SmartRef< Condition > m_temperatureCond;
 

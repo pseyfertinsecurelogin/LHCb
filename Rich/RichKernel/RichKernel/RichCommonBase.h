@@ -53,6 +53,7 @@ namespace Rich
   {
 
   public:
+
     /// Standard algorithm-like constructor
     CommonBase( const std::string &name, ISvcLocator *pSvcLocator );
 
@@ -63,6 +64,7 @@ namespace Rich
     CommonBase( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr );
 
   public:
+
     /** Initialization of the algorithm after creation
      *
      * @return The status of the initialization
@@ -80,6 +82,7 @@ namespace Rich
     virtual StatusCode finalize() override;
 
   public:
+
     /** Returns the full location of the given object in the Data Store
      *
      *  @param pObj Data object
@@ -202,6 +205,7 @@ namespace Rich
     }
 
   protected: // methods
+
     /** Returns pointer to RICH tool registry tool
      *  Used internally by base class to convert tool nicknames
      *  in the appropriate class name
@@ -237,6 +241,7 @@ namespace Rich
                          const bool                        overwrite = false ) const;
 
   private: // private methods
+
     /** Finds the propert object of a given name, for the given component name
      *
      *   @param name Component name
@@ -278,10 +283,12 @@ namespace Rich
     bool setProperties( const std::string &name ) const;
 
   private:
+
     /// Common Constructor initisalisations
     void initRichCommonConstructor();
 
   private: // data
+
     /// Pointer to tool registry
     const IToolRegistry *m_toolReg = nullptr;
 

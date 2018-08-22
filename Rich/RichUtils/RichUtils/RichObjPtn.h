@@ -33,6 +33,7 @@ namespace Rich
   {
 
   public:
+
     /// Default Constructor
     ObjPtn() = default;
 
@@ -70,10 +71,12 @@ namespace Rich
     ~ObjPtn() { delete m_obj; }
 
   private:
+
     /// Check if new object is needed
     inline TYPE *checkObj() const noexcept { return ( m_obj ? m_obj : ( m_obj = new TYPE() ) ); }
 
   public:
+
     /// Check if an object is defined
     inline bool objectExists() const noexcept { return nullptr != m_obj; }
 
@@ -103,6 +106,7 @@ namespace Rich
     }
 
   private:
+
     /// Pointer to the data object
     mutable TYPE *m_obj = nullptr;
   };

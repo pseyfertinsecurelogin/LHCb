@@ -33,6 +33,7 @@ class DeRichPMTPanel : public DeRichPDPanel
 {
 
 public:
+
   /// Standard constructor
   DeRichPMTPanel( const std::string &name = "" );
 
@@ -123,6 +124,7 @@ public:
   Rich::DAQ::PDPanelIndex maxPdNumber() const override;
 
 private:
+
   using Int        = std::int32_t;
   using IDeElemV   = std::vector< IDetectorElement * >;
   using IGeomInfoV = std::vector< const IGeometryInfo * >;
@@ -134,6 +136,7 @@ private:
   using ArraySetupSIMD = std::array< SIMDINT32, 4 >;
 
 private: // setup methods
+
   /// Update cached information on geometry changes
   StatusCode geometryUpdate();
 
@@ -145,6 +148,7 @@ private: // setup methods
   bool setRichAndSide();
 
 private:
+
   /// Get the first RICH pointer
   const DetectorElement *getFirstDeRich() const;
 
@@ -183,6 +187,7 @@ private:
   }
 
 private:
+
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {
     const Int aPRow = ( aPmtNum / m_NumPmtInRowCol[ 0 ] );
@@ -291,6 +296,7 @@ private:
   ArraySetupSIMD findPMTArraySetupSIMD( const SIMDPoint &aLocalPoint ) const;
 
 private:
+
   // Simple struct to store module numbers
   struct ModuleNumbersSIMD
   {
@@ -440,6 +446,7 @@ private:
   }
 
 private:
+
   template < typename TYPE >
   inline void
   setRichPmtSmartIDPix( const TYPE pixCol, const TYPE pixRow, LHCb::RichSmartID &id ) const noexcept
@@ -460,6 +467,7 @@ private:
   }
 
 private:
+
   inline Int getNumModulesInThisPanel() const noexcept
   {
     return m_NumPmtModuleInRich[ m_CurPanelNum ];
@@ -548,6 +556,7 @@ private:
   }
 
 private:
+
   /// Gets the intersection with the panel (SIMD) in global panel coordinates
   inline decltype( auto ) getPanelInterSection( const SIMDPoint & pGlobal,
                                                 const SIMDVector &vGlobal,
@@ -608,6 +617,7 @@ private:
   }
 
 private:
+
   /// utility method to convert a vector to an array of the same size.
   template < typename OUTTYPE, std::size_t N, typename INTYPE = OUTTYPE >
   decltype( auto ) toarray( const std::vector< INTYPE > &v ) const
@@ -622,6 +632,7 @@ private:
   }
 
 private:
+
   // SIMD caches of quantities
 
   /// SIMD To global transform
@@ -702,42 +713,43 @@ private:
   Rich::SIMD::STDVector< SIMDINT32 > m_Rich2MixedModuleArrayColumnSizeSIMD;
 
 private:
+
   /// Index for this panel
-  Int m_CurPanelNum{ -1 };
+  Int m_CurPanelNum { -1 };
 
   /// Container for the PMT Module geometry() pointers
-  IGeomInfoV m_DePMTModules{ 1, nullptr };
+  IGeomInfoV m_DePMTModules { 1, nullptr };
 
   /// Position of module local {0,0,0} in panel local coordinates
   std::vector< Gaudi::XYZPoint > m_DePMTModulesZeroPtn;
 
   ///< Container for the PMTs, sorted by panel
-  std::vector< DRiPMTV > m_DePMTs{ 1, DRiPMTV( 2, nullptr ) };
+  std::vector< DRiPMTV > m_DePMTs { 1, DRiPMTV( 2, nullptr ) };
 
   /// Container for the PMTAnodes geometry() pointers
-  std::vector< IGeomInfoV > m_DePMTAnodes{ 1, IGeomInfoV( 2, nullptr ) };
+  std::vector< IGeomInfoV > m_DePMTAnodes { 1, IGeomInfoV( 2, nullptr ) };
 
   /// Position of anode local {0,0,0} in panel local coordinates
   std::vector< std::vector< Gaudi::XYZPoint > > m_DePMTAnodesZeroPtn;
 
   /// Total number of PMT
-  unsigned int m_totNumPMTs{ 0 };
+  unsigned int m_totNumPMTs { 0 };
 
   std::array< Int, 4 > m_RichPmtNumModulesInRowCol      = { {} };
   std::array< Int, 4 > m_RichPmtModuleCopyNumBeginPanel = { {} };
   std::array< Int, 4 > m_RichPmtModuleCopyNumEndPanel   = { {} };
   std::array< Int, 2 > m_NumPmtInRowCol                 = { {} };
   std::array< Int, 4 > m_NumPmtModuleInRich             = { {} };
-  Int                  m_NumPmtInRichModule{ 0 };
-  Int                  m_totNumPmtModuleInRich{ 0 };
+  Int                  m_NumPmtInRichModule { 0 };
+  Int                  m_totNumPmtModuleInRich { 0 };
   // double m_PmtAnodeXSize{0};
   // double m_PmtAnodeYSize{0};
   // double m_PmtPixelGap{0};
-  double m_PmtAnodeXEdge{ 0 };
-  double m_PmtAnodeYEdge{ 0 };
+  double m_PmtAnodeXEdge { 0 };
+  double m_PmtAnodeYEdge { 0 };
   // double m_AnodeXPixelSize{0};
   // double m_AnodeYPixelSize{0};
-  double m_PmtMasterLateralSize{ 0 };
+  double m_PmtMasterLateralSize { 0 };
   // double m_RichPmtQuartzThickness{0};
   // double m_RichPmtQuartzLocalZInPmt{0};
 
@@ -750,18 +762,18 @@ private:
   // double m_PmtLensPitch{0};
   // double m_Rich1LensDemagnificationFactor{0};
 
-  bool m_Rich2UseGrandModule{ false };
-  Int  m_Rich2ArrayConfig{ 0 };
-  bool m_Rich2UseMixedModule{ false };
+  bool m_Rich2UseGrandModule { false };
+  Int  m_Rich2ArrayConfig { 0 };
+  bool m_Rich2UseMixedModule { false };
 
   // double m_GrandPmtAnodeXSize{0};
   // double m_GrandPmtAnodeYSize{0};
   // double m_GrandPmtPixelGap{0};
-  double m_GrandPmtAnodeXEdge{ 0 };
-  double m_GrandPmtAnodeYEdge{ 0 };
+  double m_GrandPmtAnodeXEdge { 0 };
+  double m_GrandPmtAnodeYEdge { 0 };
   // double m_GrandAnodeXPixelSize{0};
   // double m_GrandAnodeYPixelSize{0};
-  double m_GrandPmtMasterLateralSize{ 0 };
+  double m_GrandPmtMasterLateralSize { 0 };
   // Int m_GrandNumPmtInRichModule{0};
   std::array< Int, 2 > m_NumGrandPmtInRowCol = { {} };
 
@@ -771,8 +783,8 @@ private:
 
   // Int m_Rich2TotNumStdModules{0};
 
-  std::vector< int >  m_Rich2MixedModuleArrayColumnSize{ 3, 0 };
+  std::vector< int >  m_Rich2MixedModuleArrayColumnSize { 3, 0 };
   std::vector< bool > m_ModuleIsWithGrandPMT;
 
-  Rich::DAQ::PDPanelIndex m_maxPDCopyN{ 0 };
+  Rich::DAQ::PDPanelIndex m_maxPDCopyN { 0 };
 };

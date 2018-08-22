@@ -37,6 +37,7 @@ namespace Rich
   {
 
   public:
+
     /// Standard constructor
     Converter_Imp( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr )
       : ::Converter( storage_type, class_type, svc )
@@ -55,10 +56,12 @@ namespace Rich
     StatusCode finalize() override;
 
   public:
+
     /// name of this converter
     virtual const std::string &name() const { return m_name; }
 
   protected: // few actual data types
+
     /// the actual type of general counters
     using Statistics = std::map< std::string, StatEntity >;
     /// the actual type error/warning counter
@@ -69,6 +72,7 @@ namespace Rich
     using Services = GaudiUtils::HashMap< std::string, SmartIF< IService > >;
 
   public: // tools and services
+
     /// accessor to ToolSvc
     IToolSvc *toolSvc() const;
 
@@ -132,6 +136,7 @@ namespace Rich
     // ============================================================================
 
   protected:
+
     /// manual forced (and 'safe') release of the tool
     StatusCode releaseTool( const IAlgTool *tool ) const;
 
@@ -139,6 +144,7 @@ namespace Rich
     StatusCode releaseSvc( const IInterface *svc ) const;
 
   public: // messaging
+
     /** @brief Test the output level
      *  @param level The message level to test against
      *  @return boolean Indicating if messages at given level will be printed
@@ -224,14 +230,17 @@ namespace Rich
     }
 
   public:
+
     /// access context
     inline const std::string &context() const { return m_context; }
 
   protected:
+
     /// set new converter name
     inline void setName( const std::string &newName ) { m_name = newName; }
 
   protected:
+
     /** 'Dummy' implementation of property setting method
      *  @todo Extend to a full implementation if needed
      */
@@ -242,11 +251,12 @@ namespace Rich
     {}
 
   private:
+
     /// name of this converter
     std::string m_name;
 
     /// Context like string
-    std::string m_context{ "Offline" };
+    std::string m_context { "Offline" };
 
     /// The predefined message stream
     mutable std::unique_ptr< MsgStream > m_msgStream;

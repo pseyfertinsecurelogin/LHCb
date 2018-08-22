@@ -38,6 +38,7 @@ class DeRichPD : public DeRichBase
 {
 
 public:
+
   /// Standard constructor
   explicit DeRichPD( const std::string &name = "" ) : DeRichBase( name ) {}
 
@@ -48,6 +49,7 @@ public:
   StatusCode initialize() override;
 
 public:
+
   /** Retrieves the HPD Quantum Efficiency interpolation function.
    *  For a given photon momentum (eV) returns the PD Quantum Efficiency percentage.
    *  @return pointer to the interpolation function for QuantumEff(PhotMom)
@@ -58,6 +60,7 @@ public:
   }
 
 public:
+
   /// scalar FP type for SIMD objects
   using FP = Rich::SIMD::DefaultScalarFP;
   /// SIMD float type
@@ -70,6 +73,7 @@ public:
   using SIMDUINT = Rich::SIMD::UInt32;
 
 public: // virtual methods to be implemented by derived classes
+
   /** @brief Converts a RichSmartID to a point in global coordinates.
    *
    *  The point can be given either on the inside of the PD window (photocathode) if
@@ -106,6 +110,7 @@ public: // virtual methods to be implemented by derived classes
                                            bool            photoCathodeSide = false ) const = 0;
 
 public:
+
   /// Access the RICH
   inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
@@ -119,19 +124,21 @@ public:
   inline float effectiveNumActivePixels() const noexcept { return m_effNumActivePixs; }
 
 private:
+
   /// The RICH this PD is in
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
 protected: // to be initialised by derived classes
+
   /// Interpolated property for HPD quantum efficiency
   std::shared_ptr< const Rich::TabulatedProperty1D > m_pdQuantumEffFunc;
 
   /// The pixel area (in mm^2)
-  float m_pixelArea{ 0 };
+  float m_pixelArea { 0 };
 
   /// The effective pixel area (in mm^2) including any demagnification factors
-  float m_effPixelArea{ 0 };
+  float m_effPixelArea { 0 };
 
   /// The effective number of active pixels (including acceptance effects).
-  float m_effNumActivePixs{ 0 };
+  float m_effNumActivePixs { 0 };
 };

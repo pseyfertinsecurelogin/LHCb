@@ -30,6 +30,7 @@ namespace LHCb
     friend DeRichPMTPanel;
 
   public:
+
     /// Type for internal key
     using KeyType = std::uint32_t;
 
@@ -46,6 +47,7 @@ namespace LHCb
     static constexpr const BitPackType NBits = 32;
 
   private:
+
     /// Get the initialisation value from a value, shift and mask
     inline static constexpr KeyType
     initData( const BitPackType value, const BitPackType shift, const BitPackType mask ) noexcept
@@ -55,9 +57,10 @@ namespace LHCb
 
     /** The bit-packed internal data word.
      *  Default initialisation is as an HPD ID */
-    KeyType m_key{ initData( HPDID, ShiftIDType, MaskIDType ) };
+    KeyType m_key { initData( HPDID, ShiftIDType, MaskIDType ) };
 
   public:
+
     /// Retrieve the bit-packed internal data word
     inline constexpr KeyType key() const noexcept { return m_key; }
 
@@ -77,6 +80,7 @@ namespace LHCb
     inline void setKey( const LHCb::RichSmartID::KeyType value ) noexcept { m_key = value; }
 
   private:
+
     // Setup up the type bit field
     static constexpr const BitPackType BitsIDType = 1; ///< Number of bits to use for the PD type
     static constexpr const BitPackType ShiftIDType =
@@ -88,6 +92,7 @@ namespace LHCb
     static constexpr const BitPackType MaxIDType = ( BitPackType )( 1 << BitsIDType ) - 1;
 
   public:
+
     /** @enum IDType
      *
      *  The type of photon detector this RichSmartID represents
@@ -103,6 +108,7 @@ namespace LHCb
     };
 
   public:
+
     /// Access the ID type
     inline constexpr RichSmartID::IDType idType() const noexcept
     {
@@ -110,6 +116,7 @@ namespace LHCb
     }
 
   public:
+
     /// Set the ID type
     inline void setIDType( const LHCb::RichSmartID::IDType type )
 #ifdef NDEBUG
@@ -124,6 +131,7 @@ namespace LHCb
     }
 
   public:
+
     /** @class HPD RichSmartID.h
      *
      *  Implementation details for HPDs
@@ -135,6 +143,7 @@ namespace LHCb
     {
 
     public:
+
       // Number of bits for each data field in the word
       static constexpr const BitPackType BitsPixelSubRow =
         3; ///< Number of bits for HPD sub pixel field
@@ -208,6 +217,7 @@ namespace LHCb
     };
 
   public:
+
     /** @class MaPMT RichSmartID.h
      *
      *  Implementation details for MaPMTs
@@ -219,6 +229,7 @@ namespace LHCb
     {
 
     public:
+
       // Number of bits for each data field in the word
       static constexpr const BitPackType BitsPixelCol =
         3; ///< Number of bits for MaPMT pixel column
@@ -291,6 +302,7 @@ namespace LHCb
     };
 
   private:
+
     /// Reinterpret the internal unsigned representation as a signed 32 bit int
     inline int32_t as_int() const noexcept { return reinterpret_cast< const int32_t & >( m_key ); }
 
@@ -322,10 +334,12 @@ namespace LHCb
     rangeError( const DataType value, const DataType maxValue, const std::string &message ) const;
 
   public:
+
     /// Default Constructor
     RichSmartID() {}
 
   public:
+
     /// Constructor from internal type (unsigned int)
     explicit constexpr RichSmartID( const LHCb::RichSmartID::KeyType key ) noexcept : m_key( key )
     {}
@@ -447,6 +461,7 @@ namespace LHCb
     }
 
   public:
+
     /// < operator
     inline constexpr friend bool operator<( const LHCb::RichSmartID &lhs,
                                             const LHCb::RichSmartID &rhs ) noexcept
@@ -486,6 +501,7 @@ namespace LHCb
     }
 
   private: // HPD specific setters
+
     /// Set the RICH detector identifier for HPDs
     inline void setRich_HPD( const Rich::DetectorType rich )
 #ifdef NDEBUG
@@ -560,6 +576,7 @@ namespace LHCb
     }
 
   private: // PMT specific setters
+
     /// Set the RICH detector identifier for PMTs
     inline void setRich_PMT( const Rich::DetectorType rich )
 #ifdef NDEBUG
@@ -634,6 +651,7 @@ namespace LHCb
     }
 
   public:
+
     /// Set the RICH detector identifier
     inline void setRich( const Rich::DetectorType rich )
 #ifdef NDEBUG
@@ -703,6 +721,7 @@ namespace LHCb
     void setPixelSubRow( const DataType pixelSubRow );
 
   public:
+
     /// Decoding function to strip the sub-pixel information and return a pixel RichSmartID
     inline constexpr LHCb::RichSmartID pixelID() const noexcept
     {
@@ -754,6 +773,7 @@ namespace LHCb
     }
 
   public:
+
     /// Retrieve The pixel sub-row (Alice mode) number
     inline constexpr DataType pixelSubRow() const noexcept
     {
@@ -811,6 +831,7 @@ namespace LHCb
     }
 
   public:
+
     /// Retrieve Pixel sub-row field is set
     inline constexpr bool pixelSubRowIsSet() const noexcept
     {
@@ -861,6 +882,7 @@ namespace LHCb
     }
 
   public:
+
     /// Returns true if the RichSmartID contains valid RICH detector data
     inline constexpr bool richDataAreValid() const noexcept { return richIsSet(); }
 
@@ -890,6 +912,7 @@ namespace LHCb
     }
 
   public:
+
     /** Returns true if the SmartID is for a 'large' PMT.
      *  @attention Will always return false for HPDs... */
     inline constexpr bool isLargePMT() const noexcept
@@ -920,6 +943,7 @@ namespace LHCb
     std::string toString() const;
 
   public:
+
     /// Test if a given bit in the ID is on
     inline constexpr bool isBitOn( const int32_t pos ) const noexcept
     {

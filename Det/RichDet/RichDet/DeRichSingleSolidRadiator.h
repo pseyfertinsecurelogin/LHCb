@@ -31,6 +31,7 @@ class DeRichSingleSolidRadiator : public DeRichRadiator
 {
 
 public:
+
   /**
    * Constructor for this class
    */
@@ -96,6 +97,7 @@ public:
   inline const Material *material() const noexcept { return m_material; }
 
 protected:
+
   /// prepare the momentum vector for the calculation of the
   /// refractive index
   StatusCode prepareMomentumVector( std::vector< double > &photonMomentumVect,
@@ -104,6 +106,7 @@ protected:
                                     const unsigned int     nbins ) const;
 
 private:
+
   const ISolid *  m_solid    = nullptr; ///< top most solid of the radiator
   const Material *m_material = nullptr; ///< pointer to the radiator material
 };

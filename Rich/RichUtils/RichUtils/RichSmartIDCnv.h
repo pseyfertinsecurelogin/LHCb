@@ -68,6 +68,7 @@ namespace Rich
   {
 
   public: // definitions and constants
+
     /// The mode in operation to determine ALICE or LHCb data
     enum PixelMode
     {
@@ -78,6 +79,7 @@ namespace Rich
     };
 
   public:
+
     /// Constructor from a RichSmartID
     explicit SmartIDGlobalOrdering( const LHCb::RichSmartID                      id,
                                     const Rich::SmartIDGlobalOrdering::PixelMode mode =
@@ -92,6 +94,7 @@ namespace Rich
     inline Rich::SmartIDGlobalOrdering::PixelMode pixelMode() const { return m_mode; }
 
   private:
+
     /** Number of PD columns per PD panel.
      *
      *  Note here 'column' is used in the RICH sense. I.e. a column is vertical
@@ -138,6 +141,7 @@ namespace Rich
     int _pdCol() const;
 
   public:
+
     /// Returns the minimum PD x-coordinate on a panel.
     inline int minPDX() const { return ( 0 ); }
 
@@ -203,6 +207,7 @@ namespace Rich
     inline int totalNumInGlobalY() const { return maxGlobalPixelY() - minGlobalPixelY(); }
 
   public:
+
     /** Returns the PD number in column 'offset'.
      *
      *  Used to get the stagger between neighbouring PD columns
@@ -252,6 +257,7 @@ namespace Rich
     int localPixelY() const;
 
   public:
+
     /// Overload output to MsgStream
     friend inline MsgStream &operator<<( MsgStream &os, const SmartIDGlobalOrdering &order )
     {
@@ -259,10 +265,12 @@ namespace Rich
     }
 
   private:
+
     /// Print in a human readable way
     MsgStream &fillStream( MsgStream &os ) const;
 
   private:
+
     LHCb::RichSmartID m_id; ///< The RichSmartID
     PixelMode m_mode; ///< The data mode (Forced ALICE or LHCb, or automatic based on the data)
   };

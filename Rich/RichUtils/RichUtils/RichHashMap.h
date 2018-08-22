@@ -39,6 +39,7 @@ namespace Rich
   class HashMap : public GaudiUtils::HashMap< KEY, VALUE >
   {
   public:
+
     /// Operator overloading for ostream
     friend inline std::ostream &operator<<( std::ostream &str, const HashMap< KEY, VALUE > &m )
     {

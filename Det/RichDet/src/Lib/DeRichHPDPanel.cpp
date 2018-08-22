@@ -212,8 +212,8 @@ DeRichHPDPanel::PDWindowPointSIMD( const SIMDPoint &         pGlobal,
   // Just do a scalar loop
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    const Gaudi::XYZPoint  p{ pGlobal.x()[ i ], pGlobal.y()[ i ], pGlobal.z()[ i ] };
-    const Gaudi::XYZVector v{ vGlobal.x()[ i ], vGlobal.y()[ i ], vGlobal.z()[ i ] };
+    const Gaudi::XYZPoint  p { pGlobal.x()[ i ], pGlobal.y()[ i ], pGlobal.z()[ i ] };
+    const Gaudi::XYZVector v { vGlobal.x()[ i ], vGlobal.y()[ i ], vGlobal.z()[ i ] };
     Gaudi::XYZPoint        h;
     res[ i ] = PDWindowPoint( p, v, h, smartID[ i ], PDs[ i ], mode );
     hx[ i ]  = h.x();
@@ -241,8 +241,8 @@ DeRichHPDPanel::detPlanePointSIMD( const SIMDPoint &         pGlobal,
   // Just do a scalar loop
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    const Gaudi::XYZPoint  p{ pGlobal.x()[ i ], pGlobal.y()[ i ], pGlobal.z()[ i ] };
-    const Gaudi::XYZVector v{ vGlobal.x()[ i ], vGlobal.y()[ i ], vGlobal.z()[ i ] };
+    const Gaudi::XYZPoint  p { pGlobal.x()[ i ], pGlobal.y()[ i ], pGlobal.z()[ i ] };
+    const Gaudi::XYZVector v { vGlobal.x()[ i ], vGlobal.y()[ i ], vGlobal.z()[ i ] };
     Gaudi::XYZPoint        h;
     res[ i ] = detPlanePoint( p, v, h, smartID[ i ], PDs[ i ], mode );
     hx[ i ]  = h.x();
@@ -792,8 +792,8 @@ DeRichHPDPanel::geometryUpdate()
 
   // transform does not like direct assignent from scalar version :(
   {
-    double xx{ 0 }, xy{ 0 }, xz{ 0 }, dx{ 0 }, yx{ 0 }, yy{ 0 };
-    double yz{ 0 }, dy{ 0 }, zx{ 0 }, zy{ 0 }, zz{ 0 }, dz{ 0 };
+    double xx { 0 }, xy { 0 }, xz { 0 }, dx { 0 }, yx { 0 }, yy { 0 };
+    double yz { 0 }, dy { 0 }, zx { 0 }, zy { 0 }, zz { 0 }, dz { 0 };
 
     // panel
     m_globalToPDPanelTransform.GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );

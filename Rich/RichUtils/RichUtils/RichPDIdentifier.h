@@ -29,6 +29,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /** Constructor from human readable number
      *  @param data The HPD information in a human readable form.
      *              The format is ABCCDD where A is the Rich number (1,2),
@@ -58,6 +59,7 @@ namespace Rich::DAQ
     }
 
   public:
+
     /// Return a RichSmartID
     inline LHCb::RichSmartID smartID() const
     {
@@ -87,7 +89,8 @@ namespace Rich::DAQ
     inline int number() const noexcept { return m_data; }
 
   private:
-    int m_data{ -1 }; ///< The internal data
+
+    int m_data { -1 }; ///< The internal data
   };
 
 } // namespace Rich::DAQ

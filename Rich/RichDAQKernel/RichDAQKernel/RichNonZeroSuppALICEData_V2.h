@@ -55,6 +55,7 @@ namespace Rich::DAQ
     {
 
     public:
+
       /// Default constructor
       RichNonZeroSuppALICEData() : PDDataBankImp< Version, Header, Footer >( MaxDataSizeALICE ) {}
 
@@ -110,6 +111,7 @@ namespace Rich::DAQ
                                   const LHCb::RichSmartID    hpdID ) const override final;
 
     private: // methods
+
       /// Build data array from vector of RichSmartIDs
       void buildData( const LHCb::RichSmartID::Vector &digits );
 

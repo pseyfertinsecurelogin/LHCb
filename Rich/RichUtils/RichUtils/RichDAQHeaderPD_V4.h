@@ -52,6 +52,7 @@ namespace Rich::DAQ
     {
 
     private:
+
       /// Number of words in this header (normal format)
       static const unsigned int nHeaderWordsNormal = 1;
       /// Number of words in this header (extended format)
@@ -61,6 +62,7 @@ namespace Rich::DAQ
       //-----------------------------------------------------------------------------------------
 
     public:
+
       // Define the number of bits for each field
       static const ShortType BitsL0ID      = 11; ///< Bits for L0 identifier
       static const ShortType BitsEventID   = 5;  ///< Bits for Event ID
@@ -72,6 +74,7 @@ namespace Rich::DAQ
       static const ShortType BitsGTInhibit = 1; ///< Bits for the GT inhibit flag
 
     private:
+
       // Create the shift registers
       static const ShortType ShiftL0ID       = 0;
       static const ShortType ShiftEventID    = ShiftL0ID + BitsL0ID;
@@ -101,6 +104,7 @@ namespace Rich::DAQ
       //-----------------------------------------------------------------------------------------
 
     public: // methods
+
       /// Default Constructor
       explicit RichDAQHeaderPD() = default;
 
@@ -138,6 +142,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// reset
       inline void reset()
       {
@@ -153,6 +158,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Retrieve the Level0 ID
       inline Level0ID l0ID() const noexcept
       {
@@ -251,6 +257,7 @@ namespace Rich::DAQ
       }
 
     public: // Static methods to test specific flags in external data blocks
+
       /// Test if this data block is for an ALICE mode HPD
       inline static bool aliceMode( const LongType *word ) noexcept
       {
@@ -264,6 +271,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Read correct number of data words from given stream
       /// Note, after this call data pointer is incremented to the next word after the header
       inline void readFromDataStream( const LongType *&data )
@@ -282,6 +290,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Retrieve the L0 headers
       inline L0Header l0Header() const
       {
@@ -303,6 +312,7 @@ namespace Rich::DAQ
       inline bool l1Suppressed() const noexcept { return inhibit(); }
 
     public:
+
       /** Returns the number of words in the data block associated to this header
        *  taking into account the bank type (zero-supressed or not) */
       inline unsigned int nDataWords() const
@@ -314,6 +324,7 @@ namespace Rich::DAQ
       }
 
     private:
+
       /// Make sure this header has the extended L0 data words available
       inline void makeExtended()
       {

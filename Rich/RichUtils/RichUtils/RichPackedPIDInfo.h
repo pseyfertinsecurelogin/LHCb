@@ -35,6 +35,7 @@ namespace Rich
   {
 
   public:
+
     /// Type for 8 bit packed word
     using Pack8_t = boost::int8_t;
 
@@ -42,6 +43,7 @@ namespace Rich
     using Pack32_t = boost::uint32_t;
 
   private:
+
     /// Packed PID information
     union Data
     {
@@ -52,10 +54,11 @@ namespace Rich
         Pack8_t side : 8; ///< The RICH detector 'side'
         Pack8_t pid : 8;  ///< The Mass Hypothesis
       } packed;           ///< Representation as a packed struct
-      Pack32_t raw{ 0 };  ///< Representation as an unsigned int (init to 0)
+      Pack32_t raw { 0 }; ///< Representation as an unsigned int (init to 0)
     } data;
 
   public:
+
     /// Set the detector type
     inline void setDet( const Rich::DetectorType det ) noexcept
     {
@@ -81,6 +84,7 @@ namespace Rich
     }
 
   public:
+
     /// Get the detector type
     inline Rich::DetectorType det() const noexcept
     {
@@ -103,6 +107,7 @@ namespace Rich
     }
 
   public:
+
     /// Standard constructor
     PackedPIDInfo() = default;
 
@@ -124,6 +129,7 @@ namespace Rich
     }
 
   public:
+
     /// Return as a raw unsigned int
     inline Pack32_t raw() const noexcept { return data.raw; }
 

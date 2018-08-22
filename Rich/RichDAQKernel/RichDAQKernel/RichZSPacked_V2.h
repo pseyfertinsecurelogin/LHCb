@@ -48,12 +48,14 @@ namespace Rich::DAQ
     {
 
     public: // definitions
+
       /// Number of bits for each address
       static const IndexType BitsAddress = 8;
       /// Number of bits for each bit field
       static const IndexType BitsField = 8;
 
     private: // definitions
+
       // shift registers
       static const IndexType ShiftField0   = 0;
       static const IndexType ShiftAddress0 = ShiftField0 + BitsField;
@@ -73,6 +75,7 @@ namespace Rich::DAQ
       static const ShortType MaxAddress = ( 1 << BitsAddress ) - 1;
 
     public: // methods
+
       /// Copy Constructor
       RichZSPacked( const RichZSPacked &word )
         : m_data( word.data() ), m_aliceMode( word.aliceMode() )
@@ -151,6 +154,7 @@ namespace Rich::DAQ
       inline bool aliceMode() const { return m_aliceMode; }
 
     public:
+
       /** Get address from row and column information
        *  @param row LHCb pixel row number (0-31)
        *  @param col LHCb pixel col number (0-31)
@@ -210,6 +214,7 @@ namespace Rich::DAQ
       }
 
     private: // methods
+
       /// Update the internal data
       inline void setData( const LongType data ) noexcept { m_data = data; }
 
@@ -227,6 +232,7 @@ namespace Rich::DAQ
       }
 
     private: // data
+
       /// The data word
       LongType m_data = 0;
 

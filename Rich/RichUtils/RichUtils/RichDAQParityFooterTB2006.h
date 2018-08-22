@@ -30,6 +30,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Standard constructor
     ParityFooterTB2006() : FooterPDBase( 1 ) {}
 

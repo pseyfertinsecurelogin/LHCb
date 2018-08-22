@@ -34,6 +34,7 @@ class DeRichPMT : public DeRichPD
 {
 
 public:
+
   /// Standard constructor
   explicit DeRichPMT( const std::string &name = "" ) : DeRichPD( name ) {}
 
@@ -101,12 +102,14 @@ public:
   inline const Gaudi::XYZPoint &zeroInPanelLocal() const noexcept { return m_zeroInPanelLocal; }
 
 private:
+
   /// Floating point to use internal. Use float for reduced memory footprint.
   using FType = float;
   /// int type
   using IPix = LHCb::RichSmartID::DataType;
 
 private:
+
   DetectorElement *getFirstRich();
 
   StatusCode getPMTParameters();
@@ -114,6 +117,7 @@ private:
   StatusCode updateGeometry();
 
 private:
+
   inline Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const IPix fracPixelCol,
                                                        const IPix fracPixelRow ) const noexcept
   {
@@ -183,6 +187,7 @@ private:
   }
 
 private:
+
   // CRJ - To minimise memory footprint do not define data members
   //       that are not needed (outside of getPMTParameters() setup)
   //       Also, data members should be arranged so most commonly
@@ -201,25 +206,25 @@ private:
    * in the local frame of its parent PD panel */
   Gaudi::XYZPoint m_zeroInPanelLocal;
 
-  FType m_zShift{ 0 };
+  FType m_zShift { 0 };
 
-  FType m_PmtQwZSize{ 0 };
+  FType m_PmtQwZSize { 0 };
 
-  FType        m_PmtEffectivePixelXSize{ 0 };
-  FType        m_PmtEffectivePixelYSize{ 0 };
-  FType        m_PmtAnodeHalfThickness{ 0 };
-  unsigned int m_PmtNumPixCol{ 0 };
-  unsigned int m_PmtNumPixRow{ 0 };
-  FType        m_PmtNumPixColFrac{ 0 };
-  FType        m_PmtNumPixRowFrac{ 0 };
+  FType        m_PmtEffectivePixelXSize { 0 };
+  FType        m_PmtEffectivePixelYSize { 0 };
+  FType        m_PmtAnodeHalfThickness { 0 };
+  unsigned int m_PmtNumPixCol { 0 };
+  unsigned int m_PmtNumPixRow { 0 };
+  FType        m_PmtNumPixColFrac { 0 };
+  FType        m_PmtNumPixRowFrac { 0 };
 
-  FType m_GrandPmtEdgePixelXSize{ 0 };
-  FType m_GrandPmtEdgePixelYSize{ 0 };
-  FType m_GrandPmtEffectivePixelXSize{ 0 };
-  FType m_GrandPmtEffectivePixelYSize{ 0 };
-  FType m_GrandPmtAnodeHalfThickness{ 0 };
+  FType m_GrandPmtEdgePixelXSize { 0 };
+  FType m_GrandPmtEdgePixelYSize { 0 };
+  FType m_GrandPmtEffectivePixelXSize { 0 };
+  FType m_GrandPmtEffectivePixelYSize { 0 };
+  FType m_GrandPmtAnodeHalfThickness { 0 };
 
-  bool m_PmtIsGrand{ false };
+  bool m_PmtIsGrand { false };
 
   /// The PMT Anode detector element
   IDetectorElement *m_dePmtAnode = nullptr;

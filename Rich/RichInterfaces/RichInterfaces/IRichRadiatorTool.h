@@ -40,6 +40,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( IRadiatorTool, 1, 0 );
 

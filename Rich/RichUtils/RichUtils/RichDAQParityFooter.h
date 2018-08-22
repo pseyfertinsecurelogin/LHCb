@@ -32,10 +32,12 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Default Constructor
     ParityFooter() = default;
 
   public:
+
     /// Constructor with given size
     ParityFooter( const ShortType nWords, const WordType wordInit = WordType( 0 ) )
       : FooterPDBase( nWords, wordInit )
@@ -67,6 +69,7 @@ namespace Rich::DAQ
     }
 
   private:
+
     /// Make sure this footer has the parity word available
     inline void makeParityAvailable()
     {

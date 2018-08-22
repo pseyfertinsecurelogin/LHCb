@@ -35,6 +35,7 @@ namespace Rich
   {
 
   public:
+
     /// Standard constructor
     AlgBase( const std::string &name, ISvcLocator *pSvcLocator )
       : Rich::CommonBase< GaudiAlgorithm >( name, pSvcLocator )

@@ -26,10 +26,12 @@ namespace Rich::Future::MC::Relations
   {
 
   public:
+
     /// Constructor from a summaries object
     SmartIDUtils( const LHCb::MCRichDigitSummarys &histories );
 
   public:
+
     /// Returns a vector of the MCParticles associated to a given pixel cluster
     LHCb::MCParticle::ConstVector mcParticles( const Rich::PDPixelCluster &cluster ) const;
 
@@ -64,6 +66,7 @@ namespace Rich::Future::MC::Relations
                                const Rich::RadiatorType    rad ) const;
 
   private:
+
     /// Type for vector of pointers to MCRichDigitSummaries
     using DigitSummaries = std::vector< const LHCb::MCRichDigitSummary * >;
 
@@ -71,6 +74,7 @@ namespace Rich::Future::MC::Relations
     using SummaryMap = Rich::Map< const LHCb::RichSmartID, DigitSummaries >;
 
   private:
+
     /// map relating a smartID to its list of history objects
     SummaryMap m_sumMap;
   };

@@ -49,6 +49,7 @@ namespace Rich
   {
 
   public:
+
     /// Interface ID
     DeclareInterfaceID( ISmartIDTool, 1, 0 );
 

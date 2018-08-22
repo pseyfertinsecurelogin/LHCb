@@ -36,6 +36,7 @@ namespace Rich::DAQ
   {
 
   public:
+
     /// Standard constructor
     RawBufferToRichDigitsAlg( const std::string &name, ISvcLocator *pSvcLocator );
 
@@ -45,6 +46,7 @@ namespace Rich::DAQ
     StatusCode execute() override;    // Algorithm execution
 
   private: // data
+
     /// Output location for RichDigits
     std::string m_richDigitsLoc;
 

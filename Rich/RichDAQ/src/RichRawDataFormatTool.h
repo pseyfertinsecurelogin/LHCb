@@ -75,6 +75,7 @@ namespace Rich::DAQ
   {
 
   public: // Methods for Gaudi Framework
+
     /// Standard constructor
     RawDataFormatTool( const std::string &type, const std::string &name, const IInterface *parent );
 
@@ -85,6 +86,7 @@ namespace Rich::DAQ
     StatusCode finalize() override;
 
   public:
+
     /** Implement the handle method for the Incident service.
      *  This is used to inform the tool of software incidents.
      *
@@ -93,6 +95,7 @@ namespace Rich::DAQ
     void handle( const Incident &incident ) override;
 
   public: // methods (and doxygen comments) inherited from interface
+
     /// Creates a bank data from a vector of RichSmartIDs
     void fillRawEvent( const LHCb::RichSmartID::Vector &smartIDs,
                        const Rich::DAQ::BankVersion     version = Rich::DAQ::LHCb2 ) const override;
@@ -102,6 +105,7 @@ namespace Rich::DAQ
                            Rich::DAQ::L1Map &       decodedData ) const override;
 
   private: // definitions
+
     /** @class L1IDandV RichRawDataFormatTool.h
      *
      *  Utility Class
@@ -112,12 +116,14 @@ namespace Rich::DAQ
     class L1IDandV
     {
     public:
+
       /// Constructor from arguments
       L1IDandV( const Rich::DAQ::BankVersion _version, const Rich::DAQ::Level1HardwareID &_id )
         : bankVersion( _version ), l1HardwareID( _id )
       {}
 
     public:
+
       /// Sorting operator
       inline bool operator<( const L1IDandV &id ) const
       {
@@ -125,6 +131,7 @@ namespace Rich::DAQ
       }
 
     public:
+
       /// Bank version
       Rich::DAQ::BankVersion bankVersion = Rich::DAQ::UndefinedBankVersion;
       /// L1 hardwareID
@@ -141,6 +148,7 @@ namespace Rich::DAQ
     class L1CountAndSize
     {
     public:
+
       /// Constructor from values
       L1CountAndSize( const unsigned long long _nHPDs  = 0,
                       const unsigned long long _nHits  = 0,
@@ -150,6 +158,7 @@ namespace Rich::DAQ
       {}
 
     public:
+
       unsigned long long nHPDs  = 0; ///< Number of HPDs
       unsigned long long nHits  = 0; ///< Number of Hits
       unsigned long long nWords = 0; ///< Number of 32 bit words
@@ -163,6 +172,7 @@ namespace Rich::DAQ
     typedef Rich::HashMap< const std::string, L1TypeCount > L1TypeCountTAE;
 
   private: // methods
+
     /// Decode a RawBank into RichSmartID identifiers
     void decodeToSmartIDs( const LHCb::RawBank &bank, Rich::DAQ::L1Map &decodedData ) const;
 
@@ -290,6 +300,7 @@ namespace Rich::DAQ
                             LHCb::RichSmartID::Vector &newids ) const;
 
   private: // data
+
     /// Rich System detector element
     const DeRichSystem *m_richSys = nullptr;
 

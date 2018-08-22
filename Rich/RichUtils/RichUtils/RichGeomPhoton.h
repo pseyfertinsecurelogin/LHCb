@@ -46,14 +46,17 @@ namespace LHCb
   {
 
   public:
+
     /// Container of photons
     using Vector = LHCb::STL::Vector< RichGeomPhoton >;
 
   public:
+
     /// Default Constructor
     RichGeomPhoton() = default;
 
   public:
+
     /** Constructor with parameters
      *
      *  @param theta Cherenkov angle theta
@@ -129,6 +132,7 @@ namespace LHCb
     {}
 
   public:
+
     /**
      * Set accessor for the Cherenkov theta angle
      * @param theta the new value for the Cherenkov theta angle
@@ -322,6 +326,7 @@ namespace LHCb
     inline float activeSegmentFraction() const noexcept { return m_activeSegmentFraction; }
 
   public:
+
     /// Printout method
     std::ostream &fillStream( std::ostream &s ) const;
 
@@ -331,11 +336,12 @@ namespace LHCb
       return photon.fillStream( s );
     }
 
-  private:                                   // data
-    float             m_CherenkovTheta{ 0 }; ///< Cherenkov angle theta
-    float             m_CherenkovPhi{ 0 };   ///< Cherenkov angle phi
-    Gaudi::XYZPoint   m_emissionPoint;       ///< The photon emission point
-    Gaudi::XYZVector  m_emissionDir;         ///< The photon direction at the emission point
+  private: // data
+
+    float             m_CherenkovTheta { 0 }; ///< Cherenkov angle theta
+    float             m_CherenkovPhi { 0 };   ///< Cherenkov angle phi
+    Gaudi::XYZPoint   m_emissionPoint;        ///< The photon emission point
+    Gaudi::XYZVector  m_emissionDir;          ///< The photon direction at the emission point
     Gaudi::XYZPoint   m_detectionPoint; ///< The photon detection point on the HPD entrance window
     Gaudi::XYZPoint   m_sphMirReflectionPoint;  ///< The primary mirror reflection point
     Gaudi::XYZPoint   m_flatMirReflectionPoint; ///< The secondary mirror reflection point
@@ -353,7 +359,7 @@ namespace LHCb
     /** The fraction of the RichTrackSegment trajectory this photon is associated
      *  with for which it is geometrically possible this photon was produced
      */
-    float m_activeSegmentFraction{ 0 };
+    float m_activeSegmentFraction { 0 };
   };
 
 } // namespace LHCb

@@ -40,6 +40,7 @@ namespace Rich::Future
   {
 
   public:
+
     /// Standard constructor
     TupleAlgBase( const std::string &name, ISvcLocator *pSvcLocator )
       : HistoBase< GaudiTupleAlg >( name, pSvcLocator )
