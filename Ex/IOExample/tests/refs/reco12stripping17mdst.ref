@@ -101,7 +101,7 @@ StoreExplorerAlg     INFO   | | | +--> /Weights [Address: CLID=0x6272f Type=0x2]
 StoreExplorerAlg     INFO   | | +--> /ProtoP [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /Charged [Address: CLID=0x60323 Type=0x2]  KeyedContainer<LHCb::ProtoPartic [0x2]
 StoreExplorerAlg     INFO   | | +--> /Track [Address: CLID=0x1 Type=0x2]  DataObject
-StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Track,Conta [0x2]
+StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Event::v1:: [0x2]
 StoreExplorerAlg     INFO   | | +--> /Rich [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /PIDs [Address: CLID=0x63072 Type=0x2]  KeyedContainer<LHCb::RichPID,Con [0x2]
 StoreExplorerAlg     INFO   | | +--> /Muon [Address: CLID=0x1 Type=0x2]  DataObject
@@ -161,7 +161,7 @@ StoreExplorerAlg     INFO   | | | +--> /Weights [Address: CLID=0x6272f Type=0x2]
 StoreExplorerAlg     INFO   | | +--> /ProtoP [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /Charged [Address: CLID=0x60323 Type=0x2]  KeyedContainer<LHCb::ProtoPartic [0x2]
 StoreExplorerAlg     INFO   | | +--> /Track [Address: CLID=0x1 Type=0x2]  DataObject
-StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Track,Conta [0x2]
+StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Event::v1:: [0x2]
 StoreExplorerAlg     INFO   | | +--> /Rich [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /PIDs [Address: CLID=0x63072 Type=0x2]  KeyedContainer<LHCb::RichPID,Con [0x2]
 StoreExplorerAlg     INFO   | | +--> /Muon [Address: CLID=0x1 Type=0x2]  DataObject
@@ -223,7 +223,7 @@ StoreExplorerAlg     INFO   | | | +--> /Weights [Address: CLID=0x6272f Type=0x2]
 StoreExplorerAlg     INFO   | | +--> /ProtoP [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /Charged [Address: CLID=0x60323 Type=0x2]  KeyedContainer<LHCb::ProtoPartic [0x4]
 StoreExplorerAlg     INFO   | | +--> /Track [Address: CLID=0x1 Type=0x2]  DataObject
-StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Track,Conta [0x4]
+StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Event::v1:: [0x4]
 StoreExplorerAlg     INFO   | | +--> /Rich [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /PIDs [Address: CLID=0x63072 Type=0x2]  KeyedContainer<LHCb::RichPID,Con [0x4]
 StoreExplorerAlg     INFO   | | +--> /Muon [Address: CLID=0x1 Type=0x2]  DataObject
@@ -299,7 +299,7 @@ StoreExplorerAlg     INFO   | | | +--> /Weights [Address: CLID=0x6272f Type=0x2]
 StoreExplorerAlg     INFO   | | +--> /ProtoP [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /Charged [Address: CLID=0x60323 Type=0x2]  KeyedContainer<LHCb::ProtoPartic [0x2]
 StoreExplorerAlg     INFO   | | +--> /Track [Address: CLID=0x1 Type=0x2]  DataObject
-StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Track,Conta [0x2]
+StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Event::v1:: [0x2]
 StoreExplorerAlg     INFO   | | +--> /Rich [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /PIDs [Address: CLID=0x63072 Type=0x2]  KeyedContainer<LHCb::RichPID,Con [0x2]
 StoreExplorerAlg     INFO   | | +--> /Muon [Address: CLID=0x1 Type=0x2]  DataObject
@@ -369,7 +369,7 @@ StoreExplorerAlg     INFO   | | | +--> /Weights [Address: CLID=0x6272f Type=0x2]
 StoreExplorerAlg     INFO   | | +--> /ProtoP [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /Charged [Address: CLID=0x60323 Type=0x2]  KeyedContainer<LHCb::ProtoPartic [0x8]
 StoreExplorerAlg     INFO   | | +--> /Track [Address: CLID=0x1 Type=0x2]  DataObject
-StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Track,Conta [0x8]
+StoreExplorerAlg     INFO   | | | +--> /Best [Address: CLID=0x6271a Type=0x2]  KeyedContainer<LHCb::Event::v1:: [0x8]
 StoreExplorerAlg     INFO   | | +--> /Rich [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO   | | | +--> /PIDs [Address: CLID=0x63072 Type=0x2]  KeyedContainer<LHCb::RichPID,Con [0x8]
 StoreExplorerAlg     INFO   | | +--> /Muon [Address: CLID=0x1 Type=0x2]  DataObject
