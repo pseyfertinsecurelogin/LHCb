@@ -424,7 +424,7 @@ LoKi::MCVertices::SourceTES::SourceTES
   const std::string&              path ) 
   : LoKi::AuxFunBase ( std::tie ( svc , path ) )
   , SourceTES::_Base   ( svc , path )
-  , m_cut        ( LoKi::BasicFunctors<const LHCb::MCVertex*>::BooleanConstant ( true ) )
+  , m_cut ( LoKi::BasicFunctors<const LHCb::MCVertex*>::BooleanConstant ( true ) )
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
