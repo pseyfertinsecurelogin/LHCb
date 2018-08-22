@@ -10,6 +10,9 @@ gaudi_depends_on_subdirs(Det/CaloDet
                          GaudiKernel
                          Kernel/LHCbKernel)
 
+find_package(ROOT)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
+
 gaudi_add_dictionary(CaloInterfaces
                      dict/CaloInterfacesDict.h
                      dict/CaloInterfacesDict.xml

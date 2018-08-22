@@ -8,6 +8,10 @@ gaudi_depends_on_subdirs(Event/DAQEvent
                          GaudiUtils
                          Kernel/LHCbKernel)
 
+find_package(ROOT)
+find_package(Boost)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
 #message(STATUS "CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}")
 
 gaudi_add_library(DAQKernelLib
