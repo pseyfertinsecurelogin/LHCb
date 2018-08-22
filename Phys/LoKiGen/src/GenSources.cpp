@@ -85,5 +85,90 @@ std::ostream&
 LoKi::GenParticles::SourceTES::fillStream ( std::ostream& o ) const
 { return o << "GSOURCE(" << path () << "," << m_cut << ")" ; }
 // ============================================================================
+
+// ============================================================================
+// constructor
+// ============================================================================
+LoKi::GenParticles::TESData::TESData 
+( const GaudiAlgorithm*           algorithm , 
+  const std::string&              path      )
+  : TESData ( algorithm ,  
+              path      ,  
+              LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant ( true ) ) 
+{}
+// ============================================================================
+// constructor
+// ============================================================================
+LoKi::GenParticles::TESData::TESData 
+( const GaudiAlgorithm*           algorithm , 
+  const std::string&              path      ,
+  const LoKi::GenTypes::GCuts&    cuts      ) 
+  : LoKi::AuxFunBase ( std::tie ( algorithm , path , cuts ) ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Source() 
+  , LoKi::TES::DataHandle<LHCb::HepMCEvent::Container>( algorithm , path )
+  , m_cuts ( cuts )
+{}
+// ============================================================================
+// constructor
+// ============================================================================
+LoKi::GenParticles::TESData::TESData 
+( const GaudiAlgorithm*           algorithm , 
+  const LoKi::GenTypes::GCuts&    cuts      ,
+  const std::string&              path      )
+  : TESData ( algorithm , path , cuts ) 
+{}
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::GenParticles::TESData*
+LoKi::GenParticles::TESData::clone() const 
+{ return new LoKi::GenParticles::TESData(*this) ; }
+// ============================================================================
+// MANDATORY: the only essential method:
+// ============================================================================
+LoKi::GenParticles::TESData::result_type
+LoKi::GenParticles::TESData::operator() () const 
+{
+  const auto* data = get() ;
+  result_type result ;
+  result.reserve ( data -> size () / 4 ) ;
+  LoKi::Extract::genParticles ( data , std::back_inserter ( result ) , m_cuts ) ;
+  return result ;
+}
+// ============================================================================
+// OPTIONAL: the nice printout
+// ============================================================================
+std::ostream& LoKi::GenParticles::TESData::fillStream ( std::ostream& o ) const
+{ return o << "GTESDATA('" << location() << "'," << m_cuts << ")" ; }
+// ============================================================================
+
+// ============================================================================
+// constructor from the service, TES location and cuts
+// ============================================================================
+LoKi::GenParticles::TESCounter::TESCounter
+( const LoKi::BasicFunctors<const HepMC::GenParticle*>::Source& s ) 
+  : LoKi::AuxFunBase ( std::tie ( s ) )
+  , LoKi::Functor<void,double> () 
+  , m_source ( s ) 
+{}
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::GenParticles::TESCounter*
+LoKi::GenParticles::TESCounter::clone() const 
+{  return new LoKi::GenParticles::TESCounter(*this ) ; }
+// ============================================================================
+// MANDATORY: the only essential method:
+// ============================================================================
+double LoKi::GenParticles::TESCounter::operator() (  ) const
+{ return m_source().size() ; }
+// ============================================================================
+// OPTIONAL: the nice printout
+// ============================================================================
+std::ostream& LoKi::GenParticles::TESCounter::fillStream ( std::ostream& o ) const
+{ return o << "GNUM(" << m_source << ")" ; }
+// ============================================================================
+
+// ============================================================================
 //                                                                      The END
 // ============================================================================

@@ -106,21 +106,104 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class TESData
+     *  special source that relies on DataHandle to access data in TES 
+     *  @see LoKi::TES::DataHanble
+     *  @see DataObjectReadHandle
+     *  @see LoKi::Cuts::GTESDATA
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date    2018-08-20
+     */
+    class TESData 
+      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Source
+      , public LoKi::TES::DataHandle<LHCb::HepMCEvent::Container>
+    {
+    public:
+      // ======================================================================
+      /// constructor
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location = LHCb::HepMCEventLocation::Default ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location  , 
+                 const LoKi::GenTypes::GCuts&    cuts      ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const LoKi::GenTypes::GCuts&    cuts      ,
+                 const std::string&              location = LHCb::HepMCEventLocation::Default ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      TESData* clone() const override ;
+      /// MANDATORY: the only essential method:
+      result_type operator() () const override ;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// 'on-flight' filter
+      LoKi::GenTypes::GCut m_cuts ; // 'on-flight' filter
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class TESCounter
+     *  simple functor to count number of 'good'-objects form TES
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @see LoKi::Cuts::GNUM
+     *  @date   2018-08-22
+     */
+    class GAUDI_API TESCounter : public LoKi::Functor<void,double>
+    {
+    public:
+      // ======================================================================
+      /// constructor from the source 
+      explicit TESCounter 
+        ( const LoKi::BasicFunctors<const HepMC::GenParticle*>::Source& s ) ;
+      // =============================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      TESCounter* clone () const  override;
+      /// MANDATORY: the only essential method:
+      double operator() () const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const  override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the actual source
+      LoKi::Assignable_t<LoKi::BasicFunctors<const HepMC::GenParticle*>::Source> 
+        m_source ;                                         // the actual source
+      // ======================================================================
+    } ;
+    // ========================================================================
   } //                                  The end of namespace LoKi::GenParticles
   // ==========================================================================
   namespace Cuts
   {
     // ========================================================================
     /** @typedef GSOURCE
-     *  The simlpe ``source'' of HepMC-particles
-     *  @author Vanya BELAYEV Ivan.BElyaev@cern.ch
+     *  The simple ``source'' of HepMC-particles
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
      *  @date 2006-12-07
      */
     typedef LoKi::GenParticles::SourceTES GSOURCE ;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+    /** @typedef GTESDATA        
+     *  The simple ``source'' of HepMC-particles   
+     *  @attention DataHandler is used 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-22
+     */
+    typedef LoKi::GenParticles::TESData GTESDATA ;
+    // ========================================================================
+    /** @typedef GNUM
+     *  Count particles from the source 
+     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @date 2006-12-07
+     */
+    typedef LoKi::GenParticles::TESCounter GNUM  ;
+    // ========================================================================
+  } //                                          The end of namespace LoKi::Cuts
   // ==========================================================================
-} //                                                      end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

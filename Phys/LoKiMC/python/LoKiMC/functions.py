@@ -339,6 +339,8 @@ MCSOURCE    = LoKi.MCParticles . SourceTES
 MCVSOURCE   = LoKi.MCVertices  . SourceTES
 MCNUM       = LoKi.MCParticles . TESCounter
 
+MCTESDATA   = LoKi.MCParticles . TESData ## <-- use DataHandler
+MCVTESDATA  = LoKi.MCVertices  . TESData ## <-- use DataHandler
 
 MCEMPTY     = LoKi.Functors.Empty ( _MCP ) ()
 MCVEMPTY    = LoKi.Functors.Empty ( _MCV ) ()

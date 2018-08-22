@@ -157,6 +157,45 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class TESData
+     *  special source that relies on DataHandle to access data in TES 
+     *  @see LoKi::TES::DataHanble
+     *  @see DataObjectReadHandle
+     *  @see LoKi::Cuts::MCTESDATA
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date    2018-08-20
+     */
+    class TESData 
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Source
+      , public LoKi::TES::DataHandle<LHCb::MCParticle::Container>
+    {
+    public:
+      // ======================================================================
+      /// constructor
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location = LHCb::MCParticleLocation::Default ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location  , 
+                 const LoKi::MCTypes::MCCuts&    cuts      ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const LoKi::MCTypes::MCCuts&    cuts      ,
+                 const std::string&              location = LHCb::MCParticleLocation::Default ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      TESData* clone() const override ;
+      /// MANDATORY: the only essential method:
+      result_type operator() () const override ;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// 'on-flight' filter
+      LoKi::MCTypes::MCCut m_cuts ; // 'on-flight' filter
+      // ======================================================================
+    } ;
+    // ========================================================================
     /** @class TESCounter
      *  simple functor to count number of 'good'-objects form TES
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
@@ -167,90 +206,22 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from the service, TES location and cuts
-      TESCounter
-        ( const IDataProviderSvc*         svc                                      , 
-          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
-      /// constructor from the service, TES location and cuts
-      TESCounter
-        ( const IDataProviderSvc*         svc  , 
-          const LoKi::MCTypes::MCCuts&    cuts ,
-          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
-      /// constructor from the service, TES location and cuts
-      TESCounter
-        ( const IDataProviderSvc*         svc  , 
-          const Decays::iNode&            node ,
-          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
-      /// constructor from the service, TES location and finder 
-      TESCounter
-        ( const IDataProviderSvc*         svc        , 
-          const Decays::IMCDecay::Finder& finder     ,
-          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
-      /// constructor from the service, TES location and tree 
-      TESCounter
-        ( const IDataProviderSvc*         svc        , 
-          const Decays::IMCDecay::iTree&  finder     ,
-          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
-      /// constructor from the service, TES location
-      TESCounter
-        ( const IDataProviderSvc*         svc        , 
-          const std::string&              descriptor ,
-          const std::string&              path       ) ;
-      // ======================================================================
-      /// constructor from the own algorithm , TES location and cuts
-      TESCounter
-        ( const GaudiAlgorithm*           algorithm                                         , 
-          const std::string&              path          = LHCb::MCParticleLocation::Default , 
-          const bool                      useRootInTES  = true                              ) ;
-      /// constructor from the own algortihm , TES location and cuts
-      TESCounter
-        ( const GaudiAlgorithm*           algorithm                                         , 
-          const LoKi::MCTypes::MCCuts&    cuts                                              ,
-          const std::string&              path          = LHCb::MCParticleLocation::Default , 
-          const bool                      useRootInTES  = true                              ) ;
-      /// constructor from the own algorithm , TES location and cuts
-      TESCounter
-        ( const GaudiAlgorithm*           algorithm                                         , 
-          const Decays::iNode&            node                                              ,
-          const std::string&              path          = LHCb::MCParticleLocation::Default , 
-          const bool                      useRootInTES  = true                              ) ;
-      /// constructor from the own algorithm , TES location and finder 
-      TESCounter
-        ( const GaudiAlgorithm*           algorithm                                         , 
-          const Decays::IMCDecay::Finder& finder                                            ,
-          const std::string&              path          = LHCb::MCParticleLocation::Default , 
-          const bool                      useRootInTES  = true                              ) ;
-      /// constructor from the own algorithm, TES location and tree 
-      TESCounter
-        ( const GaudiAlgorithm*           algorithm                                         , 
-          const Decays::IMCDecay::iTree&  finder                                            ,
-          const std::string&              path          = LHCb::MCParticleLocation::Default , 
-          const bool                      useRootInTES  = true                              ) ;
-      /// constructor from the algorithm , TES location
-      TESCounter
-        ( const GaudiAlgorithm*           algorithm           , 
-          const std::string&              descriptor          ,
-          const std::string&              path                ,     
-          const bool                      useRootInTES = true ) ;
+      /// constructor from the source 
+      explicit TESCounter 
+        ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Source& s ) ;
       // =============================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      TESCounter* clone() const  override;
+      TESCounter* clone () const  override;
       /// MANDATORY: the only essential method:
-      double operator() (  ) const  override;
+      double operator() () const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// notify that we need the context algorithm 
-      static bool context_algo   () { return true ; }
-      /// notify that we need the context  service 
-      static bool context_evtsvc () { return true ; }
       // ======================================================================
     private:
       // ======================================================================
       /// the actual source
-      SourceTES m_source ;                                 // the actual source
+      LoKi::Assignable_t<LoKi::BasicFunctors<const LHCb::MCParticle*>::Source> 
+        m_source ;                                         // the actual source
       // ======================================================================
     } ;
     // ========================================================================
@@ -314,10 +285,85 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class TESData
+     *  special source that relies on DataHandle to access data in TES 
+     *  @see LoKi::TES::DataHanble
+     *  @see DataObjectReadHandle
+     *  @see LoKi::Cuts::MCVTESDATA
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date    2018-08-20
+     */
+    class TESData 
+      : public LoKi::BasicFunctors<const LHCb::MCVertex*>::Source
+      , public LoKi::TES::DataHandle<LHCb::MCVertex::Container>
+    {
+    public:
+      // ======================================================================
+      /// constructor
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location = LHCb::MCVertexLocation::Default ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location  , 
+                 const LoKi::MCTypes::MCVCuts&    cuts      ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const LoKi::MCTypes::MCVCuts&    cuts      ,
+                 const std::string&              location = LHCb::MCVertexLocation::Default ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      TESData* clone() const override ;
+      /// MANDATORY: the only essential method:
+      result_type operator() () const override ;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// 'on-flight' filter
+      LoKi::MCTypes::MCVCut m_cuts ; // 'on-flight' filter
+      // ======================================================================
+    } ;
+    // ========================================================================
   } //                                       end of namespace LoKi::MCParticles
   // ==========================================================================
   namespace Cuts
   {
+    // ========================================================================
+    /** @typedef MCTESDATA
+     *  simple ``source'' for MC-particles
+     *  @attention DataHandler is used!
+     *  @see LoKi::MCParticles::TESData
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-22
+     */
+    typedef LoKi::MCParticles::TESData                              MCTESDATA ;
+    // ========================================================================
+    /** @typedef MCVTESDATA
+     *  simple ``source'' for MC-vertices
+     *  @attention DataHandler is used!
+     *  @see LoKi::MCVertices::TESData
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-22
+     */
+    typedef LoKi::MCVertices::TESData                              MCVTESDATA ;
+    // ========================================================================
+    /** @typedef MCSOURCE
+     *  simple ``source'' for MC-particles
+     *
+     *  @code
+     *
+     *   const MCSOURCE s1 = MCSOURCE ( "MC/Particles" ,   MCPT > 1 * GeV ) ;
+     *   const MCSOURCE s2 = MCSOURCE ( "MC/Particles" , " D0 => K- pi+ " ) ;
+     *
+     *    const LHCb::MCParticle::ConstVector v1 = s1() ;
+     *    const LHCb::MCParticle::ConstVector v2 = s2() ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::MCParticles::SourceTES
+     *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
+     */
+    typedef LoKi::MCParticles::SourceTES                             MCSOURCE ;
     // ========================================================================
     /** @typedef MCSOURCE
      *  simple ``source'' for MC-particles
