@@ -209,6 +209,24 @@ public:
   /** Get the global height of the mat in y */
   float globaldy() const { return m_globaldy; }
 
+  /** Get the Location of end of fibres at x=z=0 */
+  const Gaudi::XYZPointF& mirrorPoint() const { return m_mirrorPoint; }
+
+  /** Get the global direction vector for a local displacement in unit x */
+  const Gaudi::XYZVectorF& ddx() const { return m_ddx; }
+
+  /** Get the local u-coordinate of sensitive SiPM */
+  float uBegin() const { return m_uBegin; }
+
+  /** Get the half of the readout channel pitch */
+  float halfChannelPitch() const { return m_halfChannelPitch; }
+
+  /** Get the gap between channel 63 and 64 */
+  float dieGap() const { return m_dieGap; }
+
+  /** Get the pitch between SiPMs in mat */
+  float sipmPitch() const { return m_sipmPitch; }
+
  /** Flag if there is a gap on the left of this channel */
   bool hasGapLeft( const LHCb::FTChannelID thisChannel ) const {
     return ( thisChannel.channel() == 0u ||
