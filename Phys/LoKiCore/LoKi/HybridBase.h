@@ -171,20 +171,16 @@ namespace LoKi
 template <class TYPE>
 inline void LoKi::Hybrid::Base::_set ( std::unique_ptr<TYPE>& local , const TYPE& right )
 {
-  if ( local ) 
-  {
-    if ( msgLevel ( MSG::DEBUG ) )
-    { Warning ( "setCut/Fun(): Existing 'Function/Predicate' is substituted !" ).ignore() ; } ;
-  }
+  // ==========================================================================
+  if ( local && msgLevel ( MSG::DEBUG ) )
+  { Warning ( "setCut/Fun(): Existing 'Function/Predicate' is substituted !" ).ignore() ; }
   // clone it!
   local.reset( right.clone() );
   // debug printput:
   if ( msgLevel ( MSG::DEBUG ) ) 
-  {
-    debug() << "The 'cut' is set to be '" << (*local) << "' = '"
-            << System::typeinfoName ( typeid ( *local) ) << endmsg  ;
-  } ;
-  //
+  { debug() << "The 'cut' is set to be '" << (*local) << "' = '"
+            << System::typeinfoName ( typeid ( *local.get() ) ) << endmsg ; } 
+  // ==========================================================================
 }
 // ============================================================================
 template <class TYPE1,class TYPE2>
@@ -208,7 +204,7 @@ StatusCode LoKi::Hybrid::Base::_get_
   //
   if ( local ) 
   {
-    output = *local ;
+    output= *local ;
     this->counter("# loaded from CACHE" ) += 1 ;
     local.reset();
     return StatusCode::SUCCESS ;    // RETURN
@@ -223,8 +219,10 @@ StatusCode LoKi::Hybrid::Base::_get_
   { return Error ( "Error from LoKi::Hybrid::Base::executeCode", sc  ) ; } // RETURN
   if ( !local  )
   { return Error ( "Invalid object for the code"                     ) ; } // RETURN
+  //
   // assign the result
-  output = *local ;                                                        // ASSIGN
+  //
+  output = *local ;                                         // ASSIGN
   //
   this->counter("# loaded from PYTHON") += 1 ;
   //
@@ -240,10 +238,10 @@ StatusCode LoKi::Hybrid::Base::_get_
   }
   //
   return sc ;
-  // =========================================================================
+  // ==========================================================================
 }
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKIHYBRID_HYBRIDTOOL_H
 // ============================================================================

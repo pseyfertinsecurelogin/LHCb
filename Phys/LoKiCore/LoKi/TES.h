@@ -137,6 +137,7 @@ namespace LoKi
         , m_algorithm      ( right.algorithm () ) 
         , m_datahandle     ( right.location  () , right.algorithm().get() ) 
       {}
+      /// default constructoir is disabled
       DataHandle() =  delete ;
       // ======================================================================
       std::ostream& fillStream ( std::ostream& s ) const  override

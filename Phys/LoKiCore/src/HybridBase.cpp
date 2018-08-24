@@ -375,7 +375,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
            << endmsg ;
     return Error( " Error has occured in Python " ) ;
   }
-
+  //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
@@ -495,10 +495,11 @@ std::string LoKi::Hybrid::Base::makeCode
   }
   /// and finally the code 
   stream   << ntab << "##        CODE :         \n" 
-           << ntab << "_code= " << _code    << '\n' 
+           << ntab << "_code = " << _code    << '\n' 
            << ntab << "## End of CODE           \n" ;
   /// the most important line: send the created python object to C++
-  stream   << ntab << "sc = _actor.process( '" << name () << "' , _code ) \n" ;
+  stream   << ntab << "sc    = _actor.process( '" << name () << "' , _code ) \n" 
+           << ntab << "_code = None \n" ;
   //
   stream   << "#"  << std::string ( 78 , '=' ) <<        '\n' 
            << "##" << std::string ( 70 , ' ' ) << "The END\n" 

@@ -95,6 +95,8 @@ namespace LoKi
     // ========================================================================
     /// the initialization of the algorithm
     StatusCode initialize () override;
+    /// the finalization   of the algorithm
+    StatusCode finalize   () override;
     // ========================================================================
     /// the copy constructor is disabled
     FilterAlg ( const FilterAlg& ) = delete;        // the copy constructor is disabled
@@ -161,7 +163,7 @@ namespace LoKi
       StatusCode sc = _factory-> get ( code() , functor , preambulo () ) ;
       // release the factory (not needed anymore)
       this->releaseTool ( _factory ).ignore() ;
-      if ( sc.isFailure() )
+      if ( sc.isFailure() ) 
       { return Error("Unable to decode functor '" + code() + "'" , sc ) ; }
       //
       if( msgLevel(MSG::DEBUG) ) debug() << "Requested code: \n'"

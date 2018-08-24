@@ -94,7 +94,7 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-} // end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
 // the main method: execute
 // ============================================================================
@@ -124,7 +124,7 @@ StatusCode LoKi::VoidFilter::execute () // the main method: execute
 StatusCode LoKi::VoidFilter::finalize ()
 {
   // reset the functor
-  m_cut = LoKi::BasicFunctors<void>::BooleanConstant ( false )  ;
+  // m_cut = LoKi::BasicFunctors<void>::BooleanConstant ( false )  ;
   set_code_updated  ( true ) ;
   // finalize the base
   return LoKi::FilterAlg::finalize () ;
