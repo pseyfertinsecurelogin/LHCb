@@ -155,6 +155,10 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 result["CountersMismatch"]=msg
             else:
                 result["CountersMismatch"]=result.Quote(msg)
+            # make sure we create newref file when there are only counters differences
+            if len(causes) == 1:
+                self._createNewRef(stdout)
+
             return
         msg = ''
         for algoName in refAlgoNames:
@@ -178,14 +182,27 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 result["CountersMismatch"]=result.Quote(msg)
             # make sure we create newref file when there are only counters differences
             if len(causes) == 1:
-                # this is copied from GaudiTest.py. Should be factorized out ideally
-                try:
-                    newref = open(lreference + ".new", "w")
-                    # sanitize newlines
-                    for l in stdout.splitlines():
-                        newref.write(l.rstrip() + '\n')
-                    del newref  # flush and close
-                except IOError:
-                    # Ignore IO errors when trying to update reference files
-                    # because we may be in a read-only filesystem
-                    pass
+                self._createNewRef(stdout)
+
+
+    def _createNewRef(self, stdout):
+        """
+        Creates a new reference file
+        stdout:     the test output
+        """
+        # get reference
+        lreference = self._expandReferenceFileName(self.reference)
+        if not (lreference and os.path.isfile(lreference)):
+            return
+
+        # this is copied from GaudiTest.py. Should be factorized out ideally
+        try:
+            newref = open(lreference + ".new", "w")
+            # sanitize newlines
+            for l in stdout.splitlines():
+                newref.write(l.rstrip() + '\n')
+            del newref  # flush and close
+        except IOError:
+            # Ignore IO errors when trying to update reference files
+            # because we may be in a read-only filesystem
+            pass
