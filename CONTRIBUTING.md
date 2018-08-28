@@ -13,7 +13,7 @@ This helps with the validation of code prior to making it available in the offic
   They will then be propagated to `master` (if relevant also for Upgrade) by the applications managers.
 
 - Any changes specific to Upgrade should *only* got to `master`. When making a MR to `master`, please make it initially as WIP and add
-a comment when it is ready to be tested. The release manager will then tet it initially in one nightly slot and, if successful,
+a comment when it is ready to be tested. The release manager will then test it initially in one nightly slot and, if successful,
 remove the WIP for general testing 
 
 -  Things may be different for bug fixes to old and/or specific versions of applications, in which case it is probably best to discuss 
