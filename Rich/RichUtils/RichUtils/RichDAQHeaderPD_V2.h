@@ -208,7 +208,7 @@ namespace Rich::DAQ
       /// Test if this data block is for an ALICE mode HPD
       inline static bool aliceMode( const LongType *word )
       {
-        return ( 0 != ( ( word[ 0 ] & RichDAQHeaderPDCode::MaskAlice ) >>
+        return ( 0 != ( ( word[0] & RichDAQHeaderPDCode::MaskAlice ) >>
                         RichDAQHeaderPDCode::ShiftAlice ) );
       }
 
@@ -216,7 +216,7 @@ namespace Rich::DAQ
       inline static bool zeroSuppressed( const LongType *word )
       {
         return ( 0 !=
-                 ( ( word[ 0 ] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
+                 ( ( word[0] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
       }
 
     public: // methods not properly implemented, but included for compatibility

@@ -137,7 +137,7 @@ namespace Rich::Future
     {
       // First check if we are decoding each RICH.
       // If so, no need to lookup RICH type from ID
-      bool ok = m_richIsActive[ Rich::Rich1 ] && m_richIsActive[ Rich::Rich2 ];
+      bool ok = m_richIsActive[Rich::Rich1] && m_richIsActive[Rich::Rich2];
       if ( UNLIKELY( !ok ) )
       {
         // Now lookup the RICH type
@@ -151,7 +151,7 @@ namespace Rich::Future
         }
         else
         {
-          ok = m_richIsActive[ rich ];
+          ok = m_richIsActive[rich];
         }
       }
       return ok;

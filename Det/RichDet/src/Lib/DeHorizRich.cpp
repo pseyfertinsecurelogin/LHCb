@@ -48,10 +48,10 @@ DeHorizRich::initialize()
   if ( !DeRich::initialize() ) return StatusCode::FAILURE;
 
   const std::vector< double > &nominalCoC = param< std::vector< double > >( "NominalSphMirrorCoC" );
-  m_nominalCentresOfCurvature[ Rich::left ] =
-    Gaudi::XYZPoint( nominalCoC[ 0 ], nominalCoC[ 1 ], nominalCoC[ 2 ] );
-  m_nominalCentresOfCurvature[ Rich::right ] =
-    Gaudi::XYZPoint( -nominalCoC[ 0 ], nominalCoC[ 1 ], nominalCoC[ 2 ] );
+  m_nominalCentresOfCurvature[Rich::left] =
+    Gaudi::XYZPoint( nominalCoC[0], nominalCoC[1], nominalCoC[2] );
+  m_nominalCentresOfCurvature[Rich::right] =
+    Gaudi::XYZPoint( -nominalCoC[0], nominalCoC[1], nominalCoC[2] );
 
   m_sphMirrorRadius = param< double >( "SphMirrorRadius" );
 
@@ -60,17 +60,17 @@ DeHorizRich::initialize()
   std::vector< double > nominalFMirrorPlane;
   nominalFMirrorPlane = param< std::vector< double > >( "NominalSecMirrorPlane" );
 
-  m_nominalPlanes[ Rich::left ]  = Gaudi::Plane3D( nominalFMirrorPlane[ 0 ],
-                                                  nominalFMirrorPlane[ 1 ],
-                                                  nominalFMirrorPlane[ 2 ],
-                                                  nominalFMirrorPlane[ 3 ] );
-  m_nominalPlanes[ Rich::right ] = Gaudi::Plane3D( -nominalFMirrorPlane[ 0 ],
-                                                   nominalFMirrorPlane[ 1 ],
-                                                   nominalFMirrorPlane[ 2 ],
-                                                   nominalFMirrorPlane[ 3 ] );
+  m_nominalPlanes[Rich::left]  = Gaudi::Plane3D( nominalFMirrorPlane[0],
+                                                nominalFMirrorPlane[1],
+                                                nominalFMirrorPlane[2],
+                                                nominalFMirrorPlane[3] );
+  m_nominalPlanes[Rich::right] = Gaudi::Plane3D( -nominalFMirrorPlane[0],
+                                                 nominalFMirrorPlane[1],
+                                                 nominalFMirrorPlane[2],
+                                                 nominalFMirrorPlane[3] );
 
-  m_nominalNormals[ Rich::left ]  = m_nominalPlanes[ Rich::left ].Normal();
-  m_nominalNormals[ Rich::right ] = m_nominalPlanes[ Rich::right ].Normal();
+  m_nominalNormals[Rich::left]  = m_nominalPlanes[Rich::left].Normal();
+  m_nominalNormals[Rich::right] = m_nominalPlanes[Rich::right].Normal();
 
   _ri_debug << "Spherical Mirror radius:" << m_sphMirrorRadius << endmsg;
   _ri_debug << "Nominal centre of curvature" << m_nominalCentresOfCurvature << endmsg;
@@ -161,8 +161,8 @@ DeHorizRich::initialize()
   std::vector< std::string > radLocs = paramVect< std::string >( "RadiatorDetElemLocations" );
   for ( unsigned int rad = 0; rad < radLocs.size(); rad++ )
   {
-    SmartDataPtr< DeRichRadiator > richRad( dataSvc(), radLocs[ rad ] );
-    if ( !richRad ) error() << "Cannot initialize Rich Radiator:" << radLocs[ rad ] << endmsg;
+    SmartDataPtr< DeRichRadiator > richRad( dataSvc(), radLocs[rad] );
+    if ( !richRad ) error() << "Cannot initialize Rich Radiator:" << radLocs[rad] << endmsg;
   }
 
   // initialise various local cached data
@@ -179,5 +179,5 @@ const std::string
 DeHorizRich::panelName( const Rich::Side panel ) const
 {
   const auto &panelLoc = paramVect< std::string >( "PDPanelDetElemLocations" );
-  return panelLoc[ panel ];
+  return panelLoc[panel];
 }

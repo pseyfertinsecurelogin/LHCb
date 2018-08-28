@@ -76,7 +76,7 @@ namespace Rich::DAQ
     inline void readFromDataStream( const LongType *&data )
     {
       for ( FooterWords::size_type i = 0; i < nFooterWords(); ++i )
-      { footerWords()[ i ] = WordType( *( data++ ) ); }
+      { footerWords()[i] = WordType( *( data++ ) ); }
     }
 
     /// Write this head to a RAWBank of data words
@@ -90,8 +90,8 @@ namespace Rich::DAQ
     /// Set the data value using the given mask and shift values
     inline bool set( const ShortType value, const ShortType shift, const LongType mask )
     {
-      footerWords()[ 0 ] =
-        WordType( ( ( value << shift ) & mask ) | ( footerWords()[ 0 ].data() & ~mask ) );
+      footerWords()[0] =
+        WordType( ( ( value << shift ) & mask ) | ( footerWords()[0].data() & ~mask ) );
       return true;
     }
 
@@ -105,7 +105,7 @@ namespace Rich::DAQ
     inline FooterWords &footerWords() & { return m_footerWords; }
 
     /// Set the given footer word
-    void setWord( const ShortType word, const WordType data ) { footerWords()[ word ] = data; }
+    void setWord( const ShortType word, const WordType data ) { footerWords()[word] = data; }
 
   private: // data
 

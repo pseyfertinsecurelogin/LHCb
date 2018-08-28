@@ -77,7 +77,7 @@ public:
    */
   inline const Gaudi::XYZPoint &nominalCentreOfCurvature( const Rich::Side side ) const noexcept
   {
-    return m_nominalCentresOfCurvature[ side ];
+    return m_nominalCentresOfCurvature[side];
   }
 
   /**
@@ -90,7 +90,7 @@ public:
   inline const Rich::SIMD::Point< Rich::SIMD::DefaultScalarFP > &
   nominalCentreOfCurvatureSIMD( const Rich::Side side ) const noexcept
   {
-    return m_nominalCentresOfCurvatureSIMD[ side ];
+    return m_nominalCentresOfCurvatureSIMD[side];
   }
 
   /**
@@ -130,7 +130,7 @@ public:
    */
   inline const Gaudi::XYZVector &nominalNormal( const Rich::Side side ) const noexcept
   {
-    return m_nominalNormals[ side ];
+    return m_nominalNormals[side];
   }
 
   /**
@@ -142,7 +142,7 @@ public:
   inline const Rich::SIMD::Vector< Rich::SIMD::DefaultScalarFP > &
   nominalNormalSIMD( const Rich::Side side ) const noexcept
   {
-    return m_nominalNormalsSIMD[ side ];
+    return m_nominalNormalsSIMD[side];
   }
 
   /**
@@ -153,7 +153,7 @@ public:
    */
   inline const Gaudi::Plane3D &nominalPlane( const Rich::Side side ) const noexcept
   {
-    return m_nominalPlanes[ side ];
+    return m_nominalPlanes[side];
   }
 
   /**
@@ -165,7 +165,7 @@ public:
   inline const Rich::SIMD::Plane< Rich::SIMD::DefaultScalarFP > &
   nominalPlaneSIMD( const Rich::Side side ) const noexcept
   {
-    return m_nominalPlanesSIMD[ side ];
+    return m_nominalPlanesSIMD[side];
   }
 
   /**
@@ -380,7 +380,7 @@ public:
   /// Access PD Panels
   inline const DeRichPDPanel *pdPanel( const Rich::Side panel ) const noexcept
   {
-    return m_PDPanels[ panel ];
+    return m_PDPanels[panel];
   }
 
   /// Ray trace a given direction with the given PD panel (scalar)

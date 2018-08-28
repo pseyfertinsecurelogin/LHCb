@@ -220,7 +220,7 @@ public:
   inline const Rich::TabulatedFunction1D *
   demagnification_RtoR( const FieldPolarity field = FieldPolarity::Down ) const noexcept
   {
-    return &m_demagMapR[ field ];
+    return &m_demagMapR[field];
   }
 
   /** Retrieves the demagnification interpolation function for the HPD phi coordinate.
@@ -231,7 +231,7 @@ public:
   inline const Rich::TabulatedFunction1D *
   demagnification_RtoPhi( const FieldPolarity field = FieldPolarity::Down ) const noexcept
   {
-    return &m_demagMapPhi[ field ];
+    return &m_demagMapPhi[field];
   }
 
   /** Retrieves the magnification interpolation function for the HPD R coordinate.
@@ -242,7 +242,7 @@ public:
   inline const Rich::TabulatedFunction1D *
   magnification_RtoR( const FieldPolarity field = FieldPolarity::Down ) const noexcept
   {
-    return &m_magMapR[ field ];
+    return &m_magMapR[field];
   }
 
   /** Retrieves the magnification interpolation function for the HPD phi coordinate.
@@ -253,7 +253,7 @@ public:
   inline const Rich::TabulatedFunction1D *
   magnification_RtoPhi( const FieldPolarity field = FieldPolarity::Down ) const noexcept
   {
-    return &m_magMapPhi[ field ];
+    return &m_magMapPhi[field];
   }
 
 private: // functions
@@ -279,8 +279,7 @@ private: // functions
   /// parameterised extra radius for the defraction in the HPD window
   inline double extraRadiusForRefraction( const double r ) const
   {
-    return ( m_refPs[ 0 ] +
-             ( ( ( ( m_refPs[ 3 ] * r ) + m_refPs[ 2 ] ) * r + m_refPs[ 1 ] ) * r ) );
+    return ( m_refPs[0] + ( ( ( ( m_refPs[3] * r ) + m_refPs[2] ) * r + m_refPs[1] ) * r ) );
   }
 
   /// Get parameters from Rich1

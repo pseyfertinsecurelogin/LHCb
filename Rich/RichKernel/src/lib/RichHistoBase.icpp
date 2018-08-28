@@ -129,7 +129,7 @@ Rich::HistoBase< PBASE >::richHisto1D( const Rich::HistogramID &id,
                                        const BinLabels &        binLabels ) const
 {
   // Already been booked ?
-  auto *&h = m_1dhmap.getmap( id.packedData() )[ id.id() ];
+  auto *&h = m_1dhmap.getmap( id.packedData() )[id.id()];
   if ( !h )
   {
     // Book the histo
@@ -168,7 +168,7 @@ Rich::HistoBase< PBASE >::richHisto2D( const Rich::HistogramID &id,
                                        const BinLabels &        yBinLabels ) const
 {
   // Already been booked ?
-  auto *&h = m_2dhmap.getmap( id.packedData() )[ id.id() ];
+  auto *&h = m_2dhmap.getmap( id.packedData() )[id.id()];
   if ( !h )
   {
     // Book the histo
@@ -204,7 +204,7 @@ Rich::HistoBase< PBASE >::richProfile1D( const Rich::HistogramID &id,
                                          const BinLabels &        binLabels ) const
 {
   // Already been booked ?
-  auto *&h = m_1dpmap.getmap( id.packedData() )[ id.id() ];
+  auto *&h = m_1dpmap.getmap( id.packedData() )[id.id()];
   if ( !h )
   {
     // Book the histo
@@ -243,7 +243,7 @@ Rich::HistoBase< PBASE >::richProfile2D( const Rich::HistogramID &id,
                                          const BinLabels &        yBinLabels ) const
 {
   // Already been booked ?
-  auto *&h = m_2dpmap.getmap( id.packedData() )[ id.id() ];
+  auto *&h = m_2dpmap.getmap( id.packedData() )[id.id()];
   if ( !h )
   {
     // Book the histo

@@ -410,7 +410,7 @@ namespace Rich
     inline decltype( auto ) getCluster( const std::int16_t row, const std::int16_t col ) const
       noexcept
     {
-      return ( isOn( row, col ) ? ( m_clusters )[ index( row, col ) ] : nullptr );
+      return ( isOn( row, col ) ? ( m_clusters )[index( row, col )] : nullptr );
     }
 
     /// Set cluster for given pixel
@@ -420,7 +420,7 @@ namespace Rich
                             PDPixelClusters::Cluster *clus ) noexcept
     {
       // Set the pointer to the cluster for this (row,col)
-      ( m_clusters )[ index( row, col ) ] = clus;
+      ( m_clusters )[index( row, col )] = clus;
       // save this hit to the list of pixels for this cluster
       clus->addPixel( id );
     }
@@ -448,9 +448,9 @@ namespace Rich
     inline void allocate()
     {
       const auto S = nPixelRows() * nPixelCols();
-      m_data.reset( new bool[ S ] );
+      m_data.reset( new bool[S] );
       memset( m_data.get(), 0, S );
-      m_clusters.reset( new PDPixelClusters::Cluster *[ S ] );
+      m_clusters.reset( new PDPixelClusters::Cluster *[S] );
       memset( m_clusters.get(), 0, S );
     }
 
@@ -463,7 +463,7 @@ namespace Rich
     /// Set given col and row on
     inline void setOn( const std::int16_t row, const std::int16_t col ) noexcept
     {
-      ( m_data )[ index( row, col ) ] = true;
+      ( m_data )[index( row, col )] = true;
     }
 
     /// Check if given row and col is on
@@ -471,7 +471,7 @@ namespace Rich
 
     {
       return ( row >= 0 && row < nPixelRows() && col >= 0 && col < nPixelCols() &&
-               ( m_data )[ index( row, col ) ] );
+               ( m_data )[index( row, col )] );
     }
 
     /// Remove a cluster

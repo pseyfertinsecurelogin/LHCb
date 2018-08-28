@@ -43,7 +43,7 @@ namespace Rich
             RichZSPacked_V1::RichZSPacked::addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
-          this->setBit( dataM[ address ], bit );
+          this->setBit( dataM[address], bit );
         }
 
         // How many words ?
@@ -92,7 +92,7 @@ namespace Rich
         {
 
           // Get packed data data
-          const RichZSPacked_V1::RichZSPacked zsData( this->data()[ iData ] );
+          const RichZSPacked_V1::RichZSPacked zsData( this->data()[iData] );
 
           // Get first address and bit field
           {

@@ -261,13 +261,13 @@ namespace Rich::DAQ
       /// Test if this data block is for an ALICE mode HPD
       inline static bool aliceMode( const LongType *word ) noexcept
       {
-        return ( 0 != ( ( word[ 0 ] & MaskAlice ) >> ShiftAlice ) );
+        return ( 0 != ( ( word[0] & MaskAlice ) >> ShiftAlice ) );
       }
 
       /// Test if this data block is for a zero suppressed HPD
       inline static bool zeroSuppressed( const LongType *word ) noexcept
       {
-        return ( 0 != ( ( word[ 0 ] & MaskZS ) >> ShiftZS ) );
+        return ( 0 != ( ( word[0] & MaskZS ) >> ShiftZS ) );
       }
 
     public:
@@ -294,18 +294,17 @@ namespace Rich::DAQ
       /// Retrieve the L0 headers
       inline L0Header l0Header() const
       {
-        return ( extendedFormat() ?
-                   L0Header( L0Header::Word0( extendedHeaderWords()[ 0 ].data() ),
-                             L0Header::Word1( extendedHeaderWords()[ 1 ].data() ) ) :
-                   L0Header( L0Header::Word0( 0 ), L0Header::Word1( 0 ) ) );
+        return ( extendedFormat() ? L0Header( L0Header::Word0( extendedHeaderWords()[0].data() ),
+                                              L0Header::Word1( extendedHeaderWords()[1].data() ) ) :
+                                    L0Header( L0Header::Word0( 0 ), L0Header::Word1( 0 ) ) );
       }
 
       /// Set the L0 header words
       inline void setL0Headers( const L0Header &l0header )
       {
         makeExtended();
-        extendedHeaderWords()[ 0 ] = WordType( l0header.word0().data() );
-        extendedHeaderWords()[ 1 ] = WordType( l0header.word1().data() );
+        extendedHeaderWords()[0] = WordType( l0header.word0().data() );
+        extendedHeaderWords()[1] = WordType( l0header.word1().data() );
       }
 
       /// Check overall status of the header word

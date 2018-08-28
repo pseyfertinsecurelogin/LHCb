@@ -105,13 +105,13 @@ namespace Rich::DAQ
       /// Set a pixel as active
       inline void setPixelActive( const ShortType row, const ShortType col ) noexcept
       {
-        PDDataBankImp< Version, Header, Footer >::setBit( this->data()[ row ], col );
+        PDDataBankImp< Version, Header, Footer >::setBit( this->data()[row], col );
       }
 
       /// Is a given pixel active ?
       inline bool isPixelActive( const ShortType row, const ShortType col ) const noexcept
       {
-        return this->isBitOn( this->data()[ row ], col );
+        return this->isBitOn( this->data()[row], col );
       }
     };
 

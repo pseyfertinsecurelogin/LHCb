@@ -69,7 +69,7 @@ namespace Rich
           const ShortType address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
-          this->setBit( dataM[ address ], bit );
+          this->setBit( dataM[address], bit );
         }
 
         // How many words ?

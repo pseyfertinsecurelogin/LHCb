@@ -9,7 +9,7 @@ Rich::SIMD::Future::RecoPhoton::fillStream( std::ostream &s ) const
   s << "{ " << rich() << " ";
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    if ( validityMask()[ i ] ) { s << scalarPhoton( i ); }
+    if ( validityMask()[i] ) { s << scalarPhoton( i ); }
   }
   return s << " }";
 }
@@ -23,7 +23,7 @@ Rich::SIMD::Future::RecoPhoton::scalarPhotons() const
   // fill with valid photons
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    if ( validityMask()[ i ] ) { photons.emplace_back( scalarPhoton( i ) ); }
+    if ( validityMask()[i] ) { photons.emplace_back( scalarPhoton( i ) ); }
   }
   // return
   return photons;

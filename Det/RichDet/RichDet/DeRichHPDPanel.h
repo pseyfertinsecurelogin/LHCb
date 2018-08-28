@@ -132,7 +132,7 @@ public:
   /// Returns the detector element for the given PD number
   inline const DeRichHPD *deHPD( const Rich::DAQ::PDPanelIndex HPDNumber ) const
   {
-    const DeRichHPD *deHPD = ( HPDNumber.data() < nPDs() ? m_DeHPDs[ HPDNumber.data() ] : nullptr );
+    const DeRichHPD *deHPD = ( HPDNumber.data() < nPDs() ? m_DeHPDs[HPDNumber.data()] : nullptr );
 #ifndef NDEBUG
     if ( !deHPD )
     {

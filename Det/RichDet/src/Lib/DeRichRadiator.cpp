@@ -118,8 +118,8 @@ DeRichRadiator::setRadiatorID()
   if ( exists( "IDVector" ) )
   {
     const auto radID = paramVect< int >( "IDVector" );
-    m_rich           = Rich::DetectorType( radID[ 0 ] );
-    m_radiatorID     = Rich::RadiatorType( radID[ 1 ] );
+    m_rich           = Rich::DetectorType( radID[0] );
+    m_radiatorID     = Rich::RadiatorType( radID[1] );
     return StatusCode::SUCCESS;
   }
   else

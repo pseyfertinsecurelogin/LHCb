@@ -38,7 +38,7 @@ namespace Rich::DAQ
     inline bool hasParityWord() const noexcept { return true; }
 
     /// Access the parity word
-    inline WordType parityWord() const { return footerWords()[ 0 ]; }
+    inline WordType parityWord() const { return footerWords()[0]; }
 
     /// Set the parity word
     inline void setParityWord( const WordType word ) { this->setWord( 0, word ); }

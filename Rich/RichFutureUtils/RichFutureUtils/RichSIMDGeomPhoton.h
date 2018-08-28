@@ -161,10 +161,10 @@ namespace Rich::SIMD::Future
     /// Create a scalar photon object for the given SIMD entry
     inline Rich::Future::RecoPhoton scalarPhoton( const std::size_t simdEntry ) const noexcept
     {
-      return { CherenkovTheta()[ simdEntry ],
-               CherenkovPhi()[ simdEntry ],
-               smartID()[ simdEntry ],
-               activeSegmentFraction()[ simdEntry ] };
+      return { CherenkovTheta()[simdEntry],
+               CherenkovPhi()[simdEntry],
+               smartID()[simdEntry],
+               activeSegmentFraction()[simdEntry] };
     }
 
     /// Create a vector of valid scalar photons

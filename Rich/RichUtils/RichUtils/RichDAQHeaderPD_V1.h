@@ -202,7 +202,7 @@ namespace Rich::DAQ
       inline static bool zeroSuppressed( const LongType *word )
       {
         return ( 0 !=
-                 ( ( word[ 0 ] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
+                 ( ( word[0] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
       }
 
     public: // methods not properly implemented, but included for compatbility

@@ -172,12 +172,12 @@ namespace Rich
     public:
 
       /// Access the value for a given X
-      inline TYPE value( const TYPE x ) const noexcept { return m_data[ xIndex( x ) ].getY( x ); }
+      inline TYPE value( const TYPE x ) const noexcept { return m_data[xIndex( x )].getY( x ); }
 
       /// Access the first derivative (slope) at given x
       inline TYPE firstDerivative( const TYPE x ) const noexcept
       {
-        return m_data[ xIndex( x ) ].slope();
+        return m_data[xIndex( x )].slope();
       }
 
       /// Access the min X value

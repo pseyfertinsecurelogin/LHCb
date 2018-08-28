@@ -114,13 +114,13 @@ namespace Rich::DAQ
       /// Set a pixel as active
       inline void setPixelActive( const ShortType row, const ShortType col ) noexcept
       {
-        this->setBit( this->data()[ this->maxDataSize() - ( row + 1 ) ], col );
+        this->setBit( this->data()[this->maxDataSize() - ( row + 1 )], col );
       }
 
       /// Is a given pixel active ?
       inline bool isPixelActive( const ShortType row, const ShortType col ) const noexcept
       {
-        return this->isBitOn( this->data()[ this->maxDataSize() - ( row + 1 ) ], col );
+        return this->isBitOn( this->data()[this->maxDataSize() - ( row + 1 )], col );
       }
     };
 

@@ -109,22 +109,22 @@ DeRichBeamPipe::initialize()
         const auto zDiff = ( m_startPGlo.z() - m_endPGlo.z() );
 
         // x coordinate
-        m_m[ 0 ] = ( m_startPGlo.x() - m_endPGlo.x() ) / zDiff;
-        m_c[ 0 ] = m_startPGlo.x() - ( m_m[ 0 ] * m_startPGlo.z() );
+        m_m[0] = ( m_startPGlo.x() - m_endPGlo.x() ) / zDiff;
+        m_c[0] = m_startPGlo.x() - ( m_m[0] * m_startPGlo.z() );
 
         // y coordinate
-        m_m[ 1 ] = ( m_startPGlo.y() - m_endPGlo.y() ) / zDiff;
-        m_c[ 1 ] = m_startPGlo.y() - ( m_m[ 1 ] * m_startPGlo.z() );
+        m_m[1] = ( m_startPGlo.y() - m_endPGlo.y() ) / zDiff;
+        m_c[1] = m_startPGlo.y() - ( m_m[1] * m_startPGlo.z() );
 
         // R^2
-        m_m[ 2 ] = ( startRad2 - endRad2 ) / zDiff;
-        m_c[ 2 ] = startRad2 - ( m_m[ 2 ] * m_startPGlo.z() );
+        m_m[2] = ( startRad2 - endRad2 ) / zDiff;
+        m_c[2] = startRad2 - ( m_m[2] * m_startPGlo.z() );
 
         // SIMD copies
         for ( const int i : { 0, 1, 2 } )
         {
-          m_mSIMD[ i ] = m_m[ i ];
-          m_cSIMD[ i ] = m_c[ i ];
+          m_mSIMD[i] = m_m[i];
+          m_cSIMD[i] = m_c[i];
         }
       }
       else
@@ -172,13 +172,13 @@ DeRichBeamPipe::intersectionPoints( const Gaudi::XYZPoint &start,
     if ( 0 != noTicks )
     {
       // set entry point
-      const auto entryLocal = pLocal + ticks[ 0 ] * vLocal;
+      const auto entryLocal = pLocal + ticks[0] * vLocal;
       const bool frontFaceHit =
         ( entryLocal.z() < -( m_localCone->zHalfLength() ) + 1 * Gaudi::Units::mm );
       entryPoint = geometry()->toGlobal( entryLocal );
 
       // set exit point
-      const auto exitLocal = pLocal + ticks[ noTicks - 1 ] * vLocal;
+      const auto exitLocal = pLocal + ticks[noTicks - 1] * vLocal;
       const bool backFaceHit =
         ( exitLocal.z() > m_localCone->zHalfLength() - 1 * Gaudi::Units::mm );
       exitPoint = geometry()->toGlobal( exitLocal );

@@ -153,7 +153,7 @@ DeRichSingleSolidRadiator::nextIntersectionPoint( const Gaudi::XYZPoint & pGloba
 
   if ( 0 == noTicks ) { return StatusCode::FAILURE; }
 
-  returnPoint = geometry()->toGlobal( pLocal + ticks[ 0 ] * vLocal );
+  returnPoint = geometry()->toGlobal( pLocal + ticks[0] * vLocal );
   return StatusCode::SUCCESS;
 }
 
@@ -174,8 +174,8 @@ DeRichSingleSolidRadiator::intersectionPoints( const Gaudi::XYZPoint & position,
 
   if ( 0 == noTicks ) { return StatusCode::FAILURE; }
 
-  entryPoint = geometry()->toGlobal( pLocal + ticks[ 0 ] * vLocal );
-  exitPoint  = geometry()->toGlobal( pLocal + ticks[ noTicks - 1 ] * vLocal );
+  entryPoint = geometry()->toGlobal( pLocal + ticks[0] * vLocal );
+  exitPoint  = geometry()->toGlobal( pLocal + ticks[noTicks - 1] * vLocal );
   return StatusCode::SUCCESS;
 }
 
@@ -223,9 +223,9 @@ DeRichSingleSolidRadiator::intersections( const Gaudi::XYZPoint &        pGlobal
     for ( unsigned int tick = 0; tick < noTicks; tick += 2 )
     {
       intersections.emplace_back(
-        Rich::RadIntersection( geometry()->toGlobal( pLocal + ticks[ tick ] * vLocal ),
+        Rich::RadIntersection( geometry()->toGlobal( pLocal + ticks[tick] * vLocal ),
                                vGlobal,
-                               geometry()->toGlobal( pLocal + ticks[ tick + 1 ] * vLocal ),
+                               geometry()->toGlobal( pLocal + ticks[tick + 1] * vLocal ),
                                vGlobal,
                                this ) );
     }
@@ -245,5 +245,5 @@ DeRichSingleSolidRadiator::refractiveIndex( const double energy, const bool hlt 
     warning() << "Null ref. index pointer" << endmsg;
     return 0;
   }
-  return ( *ind )[ energy * Gaudi::Units::eV ];
+  return ( *ind )[energy * Gaudi::Units::eV];
 }
