@@ -200,6 +200,5 @@ std::pair<Gaudi::XYZPointF,Gaudi::XYZPointF> DeFTMat::endPoints(
   float localX = localXfromChannel( channelID, frac );
 
   Gaudi::XYZVectorF delta(m_ddx*localX);
-  return std::make_pair<Gaudi::XYZPointF>( m_mirrorPoint+delta,
-                                          m_sipmPoint+delta );
+  return { m_mirrorPoint+delta, m_sipmPoint+delta };
 }

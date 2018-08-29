@@ -21,7 +21,7 @@ ParamList::ParamList(const  ParamList&pl) : base_type() { *this = pl; }
 ParamList& ParamList::operator= (const ParamList &pl){
   clear();
   for ( const auto& i : pl ) {
-  	insert(std::make_pair(i.first,i.second->new_copy().release()));
+  	insert({i.first,i.second->new_copy().release()});
   }
   return *this;
 }
@@ -32,7 +32,7 @@ ParamList& ParamList::operator+= (const ParamList &pl){
       delete old->second;
       old->second = i.second->new_copy().release();
     } else {
-  	  insert(std::make_pair(i.first,i.second->new_copy().release()));
+  	  insert({i.first,i.second->new_copy().release()});
     }
   }
   return *this;

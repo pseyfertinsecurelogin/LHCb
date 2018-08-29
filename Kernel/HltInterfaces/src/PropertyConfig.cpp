@@ -124,7 +124,7 @@ std::istream& PropertyConfig::read(std::istream& is) {
             std::transform( begin(tree), end(tree),
                             std::back_inserter(p),
                             []( const ptree::value_type& i )
-                            { return std::make_pair( i.first, i.second.data() ); } );
+                            { return std::pair{ i.first, i.second.data() }; } );
             return p;
         };
         *this = PropertyConfig{ top.get<std::string>("Name"),
@@ -177,7 +177,7 @@ std::ostream& PropertyConfig::print(std::ostream& os) const {
     top.put("Type",type());
     std::transform( begin(properties()), end(properties()),
                     std::back_inserter(top.put_child("Properties",ptree{})),
-                    []( const Prop& i ) { return std::make_pair(i.first,ptree{i.second}); } );
+                    []( const Prop& i ) { return std::pair{i.first,ptree{i.second}}; } );
     write_json(os,top,false);
     return os;
 }

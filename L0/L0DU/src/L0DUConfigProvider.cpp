@@ -23,22 +23,23 @@
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( L0DUConfigProvider )
 
+using namespace std::string_literals;
+
 namespace {
-  static const std::array<std::string,3> s_dataFlags = { "name", "data","operator" };
-  static const std::array<std::string,7> s_condFlags = { "name", "data","comparator","threshold","index","reported","bx" };
-  static const std::array<std::string,7> s_chanFlags = { "name", "condition", "rate", "enable","disable","mask","index" };
-  static const std::array<std::string,4> s_trigFlags = { "name", "channel", "index", "type" };
+  static const auto s_dataFlags = std::array{ "name"s, "data"s,"operator"s };
+  static const auto s_condFlags = std::array{ "name"s, "data"s,"comparator"s,"threshold"s,"index"s,"reported"s,"bx"s };
+  static const auto s_chanFlags = std::array{ "name"s, "condition"s, "rate"s, "enable"s,"disable"s,"mask"s,"index"s };
+  static const auto s_trigFlags = std::array{ "name"s, "channel"s, "index"s, "type"s };
   // define the allowed operator and comparators
-  static const std::array<std::string,4> s_comparators = { ">", "<", "==", "!=" };
+  static const auto s_comparators = std::array{ ">"s, "<"s, "=="s, "!="s };
   // pair(operator,dimension)
-  static const std::array<std::pair<std::string, unsigned int>, 4 >
-  s_operators = { std::make_pair("+", 2), std::make_pair("-", 2),
-                  std::make_pair("&", 2), std::make_pair("^", 2) };
+  static const auto s_operators = std::array{ std::pair{"+"s, 2}, std::pair{"-"s, 2},
+                                              std::pair{"&"s, 2}, std::pair{"^"s, 2} };
   // index of the predefined triggers
-  static const std::map<std::string,int> s_tIndices = { { std::string("L0Ecal"), 0 },
-                                                        { std::string("L0Hcal"), 1 },
-                                                        { std::string("L0Muon"), 2 },
-                                                        { std::string("Other"),  3 } };
+  static const std::map<std::string,int> s_tIndices = { { "L0Ecal"s, 0 },
+                                                        { "L0Hcal"s, 1 },
+                                                        { "L0Muon"s, 2 },
+                                                        { "Other"s,  3 } };
 
    // Try to find, in the Haystack, the Needle - ignore case
   bool contains_ci(std::string_view haystack, std::string_view needle)

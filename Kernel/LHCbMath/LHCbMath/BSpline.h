@@ -76,17 +76,17 @@ namespace Gaudi
                 const unsigned short inner  = 3 ,   // number of inner points
                 const unsigned short order  = 3 ) ;
       // ======================================================================
-      /** constructor from another spline with the different range 
-       *  @param b b-spline 
-       *  @param xmin minimal x-value 
-       *  @param xmax maximal y-value 
+      /** constructor from another spline with the different range
+       *  @param b b-spline
+       *  @param xmin minimal x-value
+       *  @param xmax maximal y-value
        */
-      BSpline ( const BSpline& b     , 
-                const double   xmin  , 
+      BSpline ( const BSpline& b     ,
+                const double   xmin  ,
                 const double   xmax  ) ;
       // ======================================================================
-      /** constructor from Bernstein polynomial 
-       *  @param b Bernstein polynomial 
+      /** constructor from Bernstein polynomial
+       *  @param b Bernstein polynomial
        */
       BSpline ( const Gaudi::Math::Bernstein& b ) ;
       // ======================================================================
@@ -105,7 +105,7 @@ namespace Gaudi
       /// Greville's abscissa
       double              greville_abscissa  ( const unsigned short i ) const ;
       // ======================================================================
-      /// get the vector of Greville's abscissas 
+      /// get the vector of Greville's abscissas
       std::vector<double> greville_abscissas () const ;
       // ======================================================================
     public:
@@ -176,21 +176,21 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /** insert new (unique) knot into the list of knots 
-       *  @param t new knot  to be inserted 
-       *  @return true if knot is indeed inserted 
+      /** insert new (unique) knot into the list of knots
+       *  @param t new knot  to be inserted
+       *  @return true if knot is indeed inserted
        */
       bool insert ( const double t ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /**  calculate q-norm of the spline 
+      /**  calculate q-norm of the spline
        *  where q-norm is defined as:
        *  \f$ \left| f \right|_{q} = \left( \sum_i \left|c_i\right|^q\right)^{\frac{1}{q}} \f$
-       *  
-       *  - q_inv = 0.0 ->  \f$ max_k    \left|c_k\right|  \f$ 
+       *
+       *  - q_inv = 0.0 ->  \f$ max_k    \left|c_k\right|  \f$
        *  - q_inv = 0.5 ->  \f$ \sqrt{ \sum_k  c_k^2 }     \f$
-       *  - q_inv = 1.0 ->  \f$ \sum_k \left| c_k \right|  \f$ 
+       *  - q_inv = 1.0 ->  \f$ \sum_k \left| c_k \right|  \f$
        */
       double   norm ( const double q_inv = 0 ) const ;
       /// scale  all coefficients with 2**i
@@ -731,10 +731,10 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value  
-      double operator () ( const double x , const double y ) const 
-      { return evaluate  ( x , y ) ; }      
-      /// get the value  
+      /// get the value
+      double operator () ( const double x , const double y ) const
+      { return evaluate  ( x , y ) ; }
+      /// get the value
       double evaluate    ( const double x , const double y ) const ;
       // ======================================================================
     public:
@@ -746,34 +746,34 @@ namespace Gaudi
       { return setParameter ( k , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value ) ;
-      /// set (i,j) paramter 
+      /// set (i,j) paramter
       bool setPar       ( const unsigned short i ,
-                          const unsigned short j , const double value ) 
+                          const unsigned short j , const double value )
       { return setPar ( index ( i , j ) , value ) ; }
       /// get the parameter value
       double  par       ( const unsigned int k ) const
       { return k < m_pars.size() ? m_pars[k] : 0.0 ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get (i,j)-parameter 
-      double  par       ( const unsigned short i ,  
-                          const unsigned short j ) const 
-      { return par ( index ( i  , j ) ) ; }      
+      /// get (i,j)-parameter
+      double  par       ( const unsigned short i ,
+                          const unsigned short j ) const
+      { return par ( index ( i  , j ) ) ; }
       // ======================================================================
       // get all parameters
       const std::vector<double>& pars() const { return m_pars ; }
       // ======================================================================
     private:
       // ======================================================================
-      unsigned int index ( const unsigned short i , 
-                           const unsigned short j ) const 
+      unsigned int index ( const unsigned short i ,
+                           const unsigned short j ) const
       {
         const unsigned short nx = m_xspline.npars() ;
-        const unsigned short ny = m_yspline.npars() ;        
+        const unsigned short ny = m_yspline.npars() ;
         return
           i >= nx ? -1 :
           j >= ny ? -1 :
-          1u * i * ny  + j ;  
+          1u * i * ny  + j ;
       }
       // ======================================================================
     public:
@@ -790,7 +790,7 @@ namespace Gaudi
       double         xinner () const { return m_xspline.inner () ; }
       double         yinner () const { return m_yspline.inner () ; }
       // ======================================================================
-    public: // few useful methdod 
+    public: // few useful methdod
       // ======================================================================
       /// simple  manipulations with polynoms: shift it!
       GenericSpline2D& operator += ( const double a ) ;
@@ -800,7 +800,7 @@ namespace Gaudi
       GenericSpline2D& operator *= ( const double a ) ;
       /// simple  manipulations with polynoms: scale it!
       GenericSpline2D& operator /= ( const double a ) ;
-      // negate it 
+      // negate it
       GenericSpline2D  operator-()  const ;
       // ======================================================================
     public:  // for python
@@ -880,8 +880,8 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      // make the calcualtions 
-      double calculate ( const std::vector<double>& fx , 
+      // make the calcualtions
+      double calculate ( const std::vector<double>& fx ,
                          const std::vector<double>& fy ) const ;
       // ======================================================================
     private:
@@ -890,7 +890,7 @@ namespace Gaudi
       mutable Gaudi::Math::BSpline m_xspline ; // x-spline
       /// Y-spline
       mutable Gaudi::Math::BSpline m_yspline ; // y-spline
-      /// parameters 
+      /// parameters
       std::vector<double>  m_pars ;
       // ======================================================================
     };
@@ -926,10 +926,10 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value  
-      double operator () ( const double x , const double y ) const 
-      { return evaluate  ( x , y ) ; }      
-      /// get the value  
+      /// get the value
+      double operator () ( const double x , const double y ) const
+      { return evaluate  ( x , y ) ; }
+      /// get the value
       double evaluate    ( const double x , const double y ) const ;
       // ======================================================================
     public:
@@ -941,28 +941,28 @@ namespace Gaudi
       { return setParameter ( k , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value ) ;
-      /// set (i,j) paramter 
+      /// set (i,j) paramter
       bool setPar       ( const unsigned short i ,
-                          const unsigned short j , const double value ) 
+                          const unsigned short j , const double value )
       { return setPar ( index ( i , j ) , value ) ; }
       /// get the parameter value
       double  par       ( const unsigned int k ) const
       { return k < m_pars.size() ? m_pars[k] : 0.0 ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get (i,j)-parameter 
-      double  par       ( const unsigned short i ,  
-                          const unsigned short j ) const 
-      { return par ( index ( i  , j ) ) ; }      
+      /// get (i,j)-parameter
+      double  par       ( const unsigned short i ,
+                          const unsigned short j ) const
+      { return par ( index ( i  , j ) ) ; }
       // ======================================================================
       // get all parameters
       const std::vector<double>& pars() const { return m_pars ; }
       // ======================================================================
-    private : 
+    private :
       // ======================================================================
       ///  convert (l,m)-index into single k-index
-      unsigned int index ( const unsigned short l , 
-                           const unsigned short m ) const 
+      unsigned int index ( const unsigned short l ,
+                           const unsigned short m ) const
       {
         const unsigned short n = m_spline.npars() ;
         return
@@ -985,7 +985,7 @@ namespace Gaudi
       double         xinner () const { return m_spline.inner () ; }
       double         yinner () const { return m_spline.inner () ; }
       // ======================================================================
-    public: // few useful methdod 
+    public: // few useful methdod
       // ======================================================================
       /// simple  manipulations with polynoms: shift it!
       GenericSpline2DSym& operator += ( const double a ) ;
@@ -995,7 +995,7 @@ namespace Gaudi
       GenericSpline2DSym& operator *= ( const double a ) ;
       /// simple  manipulations with polynoms: scale it!
       GenericSpline2DSym& operator /= ( const double a ) ;
-      // negate it 
+      // negate it
       GenericSpline2DSym  operator-()  const ;
       // ======================================================================
     public:  // for python
@@ -1075,15 +1075,15 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      // make the calcualtions 
-      double calculate ( const std::vector<double>& fx , 
+      // make the calcualtions
+      double calculate ( const std::vector<double>& fx ,
                          const std::vector<double>& fy ) const ;
       // ======================================================================
     private:
       // ======================================================================
       /// X-spline
       mutable Gaudi::Math::BSpline m_spline ; // x-spline
-      /// parameters 
+      /// parameters
       std::vector<double>  m_pars ;
       // ======================================================================
     };
@@ -1121,9 +1121,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x , const double y ) const 
+      double operator () ( const double x , const double y ) const
       { return evaluate ( x , y ) ; }
-      double evaluate   ( const double x , const double y ) const 
+      double evaluate   ( const double x , const double y ) const
       { return m_spline ( x , y ) ; }
       // ======================================================================
     public:
@@ -1131,7 +1131,7 @@ namespace Gaudi
       /// get number of parameters
       std::size_t npars () const { return m_sphere.nPhi () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) 
+      bool setPar       ( const unsigned int k , const double value )
       { return m_sphere.setPhase ( k , value ) ? updateSpline() : false ; }
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
@@ -1170,7 +1170,7 @@ namespace Gaudi
        *  @param yhigh high edge in y
        */
       double integral   ( const double xlow , const double xhigh ,
-                          const double ylow , const double yhigh ) const 
+                          const double ylow , const double yhigh ) const
       { return m_spline.integral ( xlow , xhigh , ylow , yhigh ) ; }
       /** get the integral over X  for given Y
        *  @param y  (INPU) y-value
@@ -1179,8 +1179,8 @@ namespace Gaudi
        */
       double integrateX
         ( const double y     ,
-          const double xlow  , 
-          const double xhigh ) const 
+          const double xlow  ,
+          const double xhigh ) const
       { return m_spline.integrateX ( y , xlow , xhigh ) ; }
       /** get the integral over Y  for given X
        *  @param x  (INPU) y-value
@@ -1189,8 +1189,8 @@ namespace Gaudi
        */
       double integrateY
         ( const double x     ,
-          const double ylow  , 
-          const double yhigh ) const 
+          const double ylow  ,
+          const double yhigh ) const
       { return m_spline.integrateY ( x , ylow , yhigh ) ; }
       // ======================================================================
     public: // specific integrals
@@ -1208,14 +1208,14 @@ namespace Gaudi
        *  @param xlow  low  edge in x
        *  @param xhigh high edge in x
        */
-      double integrateX ( const double y ) const 
-      { return m_spline.integrateX ( y  ) ; }      
+      double integrateX ( const double y ) const
+      { return m_spline.integrateX ( y  ) ; }
       /** get the integral over Y  for given X
        *  @param x  (INPU) y-value
        *  @param ylow  low  edge in y
        *  @param yhigh high edge in y
        */
-      double integrateY ( const double x ) const 
+      double integrateY ( const double x ) const
       { return m_spline.integrateY ( x  ) ; }
       // ======================================================================
     public: // ingredients
@@ -1238,7 +1238,7 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// the 2D-spline itself 
+      /// the 2D-spline itself
       Gaudi::Math::GenericSpline2D m_spline ;
       /// parameter sphere
       Gaudi::Math::NSphere         m_sphere ; // parameter sphere
@@ -1258,10 +1258,10 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x , const double y ) const 
-      { return evaluate  ( x , y ) ; }        
-      double evaluate    ( const double x , const double y ) const 
-      { return  m_spline ( x , y ) ; }      
+      double operator () ( const double x , const double y ) const
+      { return evaluate  ( x , y ) ; }
+      double evaluate    ( const double x , const double y ) const
+      { return  m_spline ( x , y ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1302,7 +1302,7 @@ namespace Gaudi
        *  @param yhigh high edge in y
        */
       double integral   ( const double xlow , const double xhigh ,
-                          const double ylow , const double yhigh ) const 
+                          const double ylow , const double yhigh ) const
       { return m_spline.integral ( xlow , xhigh , ylow , yhigh ) ; }
       /** get the integral over X  for given Y
        *  @param y  (INPU) y-value
@@ -1311,9 +1311,9 @@ namespace Gaudi
        */
       double integrateX
         ( const double y     ,
-          const double xlow  , 
-          const double xhigh ) const 
-      { return m_spline.integrateX ( y , xlow , xhigh ) ; }      
+          const double xlow  ,
+          const double xhigh ) const
+      { return m_spline.integrateX ( y , xlow , xhigh ) ; }
       /** get the integral over Y  for given X
        *  @param x  (INPU) y-value
        *  @param ylow  low  edge in y
@@ -1321,9 +1321,9 @@ namespace Gaudi
        */
       double integrateY
         ( const double x     ,
-          const double ylow  , 
-          const double yhigh ) const 
-      { return m_spline.integrateY ( x , ylow , yhigh ) ; }      
+          const double ylow  ,
+          const double yhigh ) const
+      { return m_spline.integrateY ( x , ylow , yhigh ) ; }
       // ======================================================================
     public: // specific integration
       // ======================================================================
@@ -1334,13 +1334,13 @@ namespace Gaudi
       /** get the integral over X  for given Y
        *  @param y  (INPU) y-value
        */
-      double integrateX ( const double y ) const 
-      { return m_spline.integrateX ( y ) ; }      
+      double integrateX ( const double y ) const
+      { return m_spline.integrateX ( y ) ; }
       /** get the integral over Y  for given X
        *  @param x  (INPU) y-value
        */
-      double integrateY ( const double x ) const 
-      { return m_spline.integrateY ( x ) ; }      
+      double integrateY ( const double x ) const
+      { return m_spline.integrateY ( x ) ; }
       // ======================================================================
     public: // ingeredients
       // =====================================================================
@@ -1348,16 +1348,16 @@ namespace Gaudi
       const  Gaudi::Math::BSpline& xspline () const { return m_spline.xspline() ; }
       // get y-spline
       const  Gaudi::Math::BSpline& yspline () const { return m_spline.yspline() ; }
-      // get 2D-spline 
+      // get 2D-spline
       const  Gaudi::Math::GenericSpline2DSym&  spline () const { return m_spline  ; }
-      // get 2D-spline 
+      // get 2D-spline
       const  Gaudi::Math::GenericSpline2DSym& bspline () const { return m_spline  ; }
       /// get the parameter sphere
       const  Gaudi::Math::NSphere& sphere  () const { return m_sphere ; }
       // ======================================================================
     private:
       // ======================================================================
-      ///  update spline  coefficients 
+      ///  update spline  coefficients
       bool updateSpline () ;
       // ======================================================================
     private:
@@ -1381,7 +1381,7 @@ namespace  LHCb
     // ========================================================================
     /// specialization: is B-spline close to zero?
     template <>
-    struct Zero<Gaudi::Math::BSpline> 
+    struct Zero<Gaudi::Math::BSpline>
     {
     public:
       // ======================================================================
@@ -1390,14 +1390,14 @@ namespace  LHCb
       { return m_zero ( b.pars() ) ; }
     private:
       // ======================================================================
-      /// the actual comparator 
+      /// the actual comparator
       Zero< std::vector<double> > m_zero ;
-      // ======================================================================      
+      // ======================================================================
     };
     // ========================================================================
     /// specialization: is B-spline small enough ?
     template <>
-    struct Tiny<Gaudi::Math::BSpline> 
+    struct Tiny<Gaudi::Math::BSpline>
     {
     public:
       // ======================================================================
@@ -1410,17 +1410,17 @@ namespace  LHCb
     private:
       // ======================================================================
       Tiny<double> m_tiny ;
-      // ======================================================================      
+      // ======================================================================
     };
     // ========================================================================
     /** scale all coefficients with 2**i
-     *  @param  b (INPUT) B-spline 
+     *  @param  b (INPUT) B-spline
      *  @param  i (INPUT) the scaling binary exponent
-     *  @return the scaled B-spline 
+     *  @return the scaled B-spline
      */
-    inline 
+    inline
     Gaudi::Math::BSpline
-    ldexp ( const Gaudi::Math::BSpline& b , 
+    ldexp ( const Gaudi::Math::BSpline& b ,
             const short                 i ) { return b.ldexp ( i ) ; }
     // ========================================================================
   } //                                              end of namespace LHCb::Math
@@ -1430,24 +1430,24 @@ namespace  LHCb
 namespace  Gaudi
 {
   // ==========================================================================
-  namespace Math 
+  namespace Math
   {
     // ========================================================================
     class Bernstein ;
     // ========================================================================
-    /** calculate the upper convex hull for Bernstein Polynomial 
-     *  \f$ B(x) \le U (x) \f$ 
+    /** calculate the upper convex hull for Bernstein Polynomial
+     *  \f$ B(x) \le U (x) \f$
      *  @param p  bernstein Polynomial
-     *  @return   the spline object that represents upper convex hull 
+     *  @return   the spline object that represents upper convex hull
      */
     GAUDI_API
     Gaudi::Math::BSpline
     upper_convex_hull ( const Gaudi::Math::Bernstein& p ) ;
     // ========================================================================
-    /** calculate the lower convex hull for Bernstein Polynomial 
-     *  \f$ B(x)  \ge  L (x) \f$ 
+    /** calculate the lower convex hull for Bernstein Polynomial
+     *  \f$ B(x)  \ge  L (x) \f$
      *  @param p  bernstein Polynomial
-     *  @return   the spline object that represents lower convex hull 
+     *  @return   the spline object that represents lower convex hull
      */
     GAUDI_API
     Gaudi::Math::BSpline
@@ -1462,7 +1462,7 @@ namespace  Gaudi
     control_polygon   ( const Gaudi::Math::Bernstein& p ) ;
     // ========================================================================
     /** get control polygon  for Basic spline
-     *  @param p  basic spline 
+     *  @param p  basic spline
      *  @return   the spline object that represents the control polygon
      */
     GAUDI_API
@@ -1471,50 +1471,50 @@ namespace  Gaudi
     // ========================================================================
     /** get abscissas of crossing points of the control polygon with x-axis
      *  @param  b     (INPUT) bernstein polynomial
-     *  @param formal (INPUT) get all formal crossing-points 
+     *  @param formal (INPUT) get all formal crossing-points
      *  @reutrn abscissas of crossing points of the control  polygon
      */
-    GAUDI_API 
-    std::vector<double> 
-    crossing_points  ( const Gaudi::Math::BSpline& b              , 
+    GAUDI_API
+    std::vector<double>
+    crossing_points  ( const Gaudi::Math::BSpline& b              ,
                        const bool                  formal = false ) ;
     // ========================================================================
-    /** calculate the value of spline defined by vector of knot and vector of 
+    /** calculate the value of spline defined by vector of knot and vector of
      *  points using de-boor-cox algorithm
      *  @see https://en.wikipedia.org/wiki/De_Boor%27s_algorithm
-     *  @param x     (INPUT) value of x 
-     *  @param order (INPUT) the order of spline 
-     *  @param knots (INPUT) the vector of knots 
-     *  @param pars  (INPUT) the vector of control points 
-     *  @return the valeu of b-spline at point x 
-     */
-    GAUDI_API 
-    double deboor
-    ( const double               x     ,      
-      const unsigned short       order , 
-      const std::vector<double>& knots , 
-      const std::vector<double>& pars  ) ;
-    // ========================================================================    
-        /** insert new knot at position x in the spline, defined by 
-     *  knot vector knots, vector of control points pars and the order
-     *  Boehm's algorithm is used 
-     *  @see W.Boehm, ``Inserting new knots into B-spline curves'',
-     *       Computer-Aided Design, 12, no.4, (1980) 199 
-     *  @see http://dx.doi.org/10.1016/0010-4485(80)90154-2
-     *  @see http://www.sciencedirect.com/science/article/pii/0010448580901542
-     *  @param x     (INPUT)  position of new knot 
-     *  @param knots (UPDATE) vector of knots 
-     *  @param pars  (UPDATE) vector of control points 
-     *  @param order (INPUT)  degree/order of spline 
-     *  @param num   (INPUT)  insert new knot "num"-times 
-     *  @return multiplicity of inserted knot  
+     *  @param x     (INPUT) value of x
+     *  @param order (INPUT) the order of spline
+     *  @param knots (INPUT) the vector of knots
+     *  @param pars  (INPUT) the vector of control points
+     *  @return the valeu of b-spline at point x
      */
     GAUDI_API
-    unsigned short 
-    boehm ( const double         x       , 
+    double deboor
+    ( const double               x     ,
+      const unsigned short       order ,
+      const std::vector<double>& knots ,
+      const std::vector<double>& pars  ) ;
+    // ========================================================================
+        /** insert new knot at position x in the spline, defined by
+     *  knot vector knots, vector of control points pars and the order
+     *  Boehm's algorithm is used
+     *  @see W.Boehm, ``Inserting new knots into B-spline curves'',
+     *       Computer-Aided Design, 12, no.4, (1980) 199
+     *  @see http://dx.doi.org/10.1016/0010-4485(80)90154-2
+     *  @see http://www.sciencedirect.com/science/article/pii/0010448580901542
+     *  @param x     (INPUT)  position of new knot
+     *  @param knots (UPDATE) vector of knots
+     *  @param pars  (UPDATE) vector of control points
+     *  @param order (INPUT)  degree/order of spline
+     *  @param num   (INPUT)  insert new knot "num"-times
+     *  @return multiplicity of inserted knot
+     */
+    GAUDI_API
+    unsigned short
+    boehm ( const double         x       ,
             std::vector<double>& knots   ,
-            std::vector<double>& pars    , 
-            const unsigned short order   , 
+            std::vector<double>& pars    ,
+            const unsigned short order   ,
             const unsigned short num = 1 ) ;
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
@@ -1524,112 +1524,112 @@ namespace  Gaudi
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Math 
+  namespace Math
   {
     // ========================================================================
     namespace Interpolation
     {
       // ======================================================================
-      /** define parameters for the interpolation spline 
-       *  @param xy (INPUT)   vector of data 
-       *  @param bs (UPDATE) the spline 
-       *  @return status code 
+      /** define parameters for the interpolation spline
+       *  @param xy (INPUT)   vector of data
+       *  @param bs (UPDATE) the spline
+       *  @return status code
        */
       GAUDI_API
       StatusCode
-      bspline 
+      bspline
       ( std::vector< std::pair<double,double> >  xy ,
-        Gaudi::Math::BSpline&                    bs ) ;      
+        Gaudi::Math::BSpline&                    bs ) ;
       // ======================================================================
-      /** create the interpolation spline 
-       *  @param xy (INPUT)   vector of data 
-       *  @param bs (UPDATE) the spline 
-       *  @return status code 
+      /** create the interpolation spline
+       *  @param xy (INPUT)   vector of data
+       *  @param bs (UPDATE) the spline
+       *  @return status code
        */
       GAUDI_API
       StatusCode
-      bspline  
+      bspline
       ( const std::vector<double>& x  ,
         const std::vector<double>& y  ,
-        Gaudi::Math::BSpline&      bs ) ;      
+        Gaudi::Math::BSpline&      bs ) ;
       // ======================================================================
-      // /** interpolate function <code>func</code> using  its value at x 
-      //  *  @param func  (INPPUT) the function 
+      // /** interpolate function <code>func</code> using  its value at x
+      //  *  @param func  (INPPUT) the function
       //  *  @param x     (INPUT)  vector of points/abscissas
-      //  *  @param order (INPUT)  the spline order  
-      //  *  @return B-spline object that interpolates the function 
+      //  *  @param order (INPUT)  the spline order
+      //  *  @return B-spline object that interpolates the function
       //  */
       // template <class FUNCTION>
-      // inline 
-      // Gaudi::Math::BSpline 
-      // spline_interpolate 
+      // inline
+      // Gaudi::Math::BSpline
+      // spline_interpolate
       // ( FUNCTION                   func      ,
-      //   const std::vector<double>& x         , 
-      //   const unsigned short       order = 3 ) 
+      //   const std::vector<double>& x         ,
+      //   const unsigned short       order = 3 )
       // {
-      //   /// get some reasonable knots from  proposed  vector of abscissas 
+      //   /// get some reasonable knots from  proposed  vector of abscissas
       //   std::vector<double> knots = knots_from_abscissas ( x , order ) ;
-      //   /// create the spline 
+      //   /// create the spline
       //   Gaudi::Math::BSpline result (  knots , order ) ;
       //   std::vector<double> f ( x.size() , 0  ) ;
       //   const unsigned short N = x.size() ;
       //   for ( unsigned short i = 0 ; i < N ; ++i ) { f[i] = func ( x[i] ) ; }
       //   //
       //   StatusCode sc = bspline ( x  , f , result ) ;
-      //   if (  sc.isFailure() ) 
-      //   { throw GaudiException ( "Can't interpolate" , 
+      //   if (  sc.isFailure() )
+      //   { throw GaudiException ( "Can't interpolate" ,
       //                            "Gaudi::Math::spline_interpolate", sc ) ; }
       //   //
       //   return result ;
       // }
       // =====================================================================
-      /** Create variation diminishing spline approximation for the given function 
-       *  @param func the function 
+      /** Create variation diminishing spline approximation for the given function
+       *  @param func the function
        *  @param knots vector of knots
-       *  @param order the order of approximation spline 
+       *  @param order the order of approximation spline
        *  @return constructed VDS approximating spline
        */
       template <class FUNCTION>
-      inline  
-      Gaudi::Math::BSpline 
-      spline_approximate  
+      inline
+      Gaudi::Math::BSpline
+      spline_approximate
       ( FUNCTION                   func      ,
-        const std::vector<double>& knots     , 
-        const unsigned short       order = 3 ) 
-      {  
-        // constuct spline  
+        const std::vector<double>& knots     ,
+        const unsigned short       order = 3 )
+      {
+        // constuct spline
         Gaudi::Math::BSpline      bs ( knots , order ) ;
         // get greville abscissas
         const std::vector<double> ga ( bs.greville_abscissas() ) ;
         unsigned short i  = 0 ;
-        // fill vector of parameters 
+        // fill vector of parameters
         for ( double t : ga ) { bs.setPar ( i , func( t )  ); ++i ; }
         return bs ;
       }
       // ======================================================================
-      /** define parameters for the interpolation spline 
-       *  @param func (INPUT) the function 
-       *  @param x    (INPUT) vector of abscissas 
-       *  @param bs   (UPDATE) the spline 
-       *  @return status code 
+      /** define parameters for the interpolation spline
+       *  @param func (INPUT) the function
+       *  @param x    (INPUT) vector of abscissas
+       *  @param bs   (UPDATE) the spline
+       *  @return status code
        */
       template <class FUNCTION>
-      inline 
+      inline
       StatusCode
-      bspline 
-      ( FUNCTION                   func , 
+      bspline
+      ( FUNCTION                   func ,
         const std::vector<double>& x    ,
         Gaudi::Math::BSpline&      bs   )
       {
         std::vector< std::pair<double,double> >  xy (  x.size() ) ;
-        std::transform 
-          ( x.begin() , x.end  () , xy.begin() , 
-            [&func]( const double a ) { return std::make_pair (  a , func ( a ) ) ; } ) ;
+        std::transform
+          ( x.begin() , x.end  () , xy.begin() ,
+            [&func]( const double a ) { return std::pair{  a , func ( a ) } ; } ) ;
         return bspline (  xy , bs ) ;
-      } 
+      }
       // ======================================================================
     } //                            end of namespace Gaudi::Math::Interpolation
-    // ======================================================================== 
+    // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi

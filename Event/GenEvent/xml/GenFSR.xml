@@ -599,9 +599,9 @@
 	     CrossValues meanCross("",0);
 
 	     if(countB == 0 &amp;&amp; countA == 0)
-	        meanCross = std::make_pair(name, 0);
+	        meanCross = { name, 0 };
 	     else
-	        meanCross = std::make_pair(name, (crossA*countA+crossB*countB)/(countA+countB));
+	        meanCross = { name, (crossA*countA+crossB*countB)/(countA+countB)};
 
 	     addCrossSection(keys, meanCross);
           }

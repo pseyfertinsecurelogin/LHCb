@@ -82,18 +82,18 @@ LHCb::ParticleID LoKi::Particles::pidFromName( const std::string& name )
 {
   typedef boost::container::flat_map<std::string,LHCb::ParticleID> Map ;
   /// ATTENTION
-  static Synced<Map> s_map{ std::make_pair( "gamma" , LHCb::ParticleID (    22 ) ),
-                            std::make_pair( "e+"    , LHCb::ParticleID (   -11 ) ),
-                            std::make_pair( "e-"    , LHCb::ParticleID (    11 ) ),
-                            std::make_pair( "mu+"   , LHCb::ParticleID (   -13 ) ),
-                            std::make_pair( "mu-"   , LHCb::ParticleID (    13 ) ),
-                            std::make_pair( "pi+"   , LHCb::ParticleID (   211 ) ),
-                            std::make_pair( "pi0"   , LHCb::ParticleID (   111 ) ),
-                            std::make_pair( "pi-"   , LHCb::ParticleID (  -211 ) ),
-                            std::make_pair( "K+"    , LHCb::ParticleID (   321 ) ),
-                            std::make_pair( "K-"    , LHCb::ParticleID (  -321 ) ),
-                            std::make_pair( "p+"    , LHCb::ParticleID (  2212 ) ),
-                            std::make_pair( "p~-"   , LHCb::ParticleID ( -2212 ) ) };
+  static Synced<Map> s_map{ std::pair{ "gamma" , LHCb::ParticleID (    22 ) },
+                            std::pair{ "e+"    , LHCb::ParticleID (   -11 ) },
+                            std::pair{ "e-"    , LHCb::ParticleID (    11 ) },
+                            std::pair{ "mu+"   , LHCb::ParticleID (   -13 ) },
+                            std::pair{ "mu-"   , LHCb::ParticleID (    13 ) },
+                            std::pair{ "pi+"   , LHCb::ParticleID (   211 ) },
+                            std::pair{ "pi0"   , LHCb::ParticleID (   111 ) },
+                            std::pair{ "pi-"   , LHCb::ParticleID (  -211 ) },
+                            std::pair{ "K+"    , LHCb::ParticleID (   321 ) },
+                            std::pair{ "K-"    , LHCb::ParticleID (  -321 ) },
+                            std::pair{ "p+"    , LHCb::ParticleID (  2212 ) },
+                            std::pair{ "p~-"   , LHCb::ParticleID ( -2212 ) } };
 
   auto res = s_map.with_rlock( [&]( const Map& m )
                                -> std::optional<LHCb::ParticleID> {
@@ -382,18 +382,18 @@ std::string  LoKi::Particles::nameFromPID ( const LHCb::ParticleID& pid )
 {
   typedef boost::container::flat_map<LHCb::ParticleID,std::string> Map ;
   // ATTENTION
-  static Synced<Map> s_map{ std::make_pair( LHCb::ParticleID (    22 ) , "gamma" ),
-                            std::make_pair( LHCb::ParticleID (   -11 ) , "e+"    ),
-                            std::make_pair( LHCb::ParticleID (    11 ) , "e-"    ),
-                            std::make_pair( LHCb::ParticleID (   -13 ) , "mu+"   ),
-                            std::make_pair( LHCb::ParticleID (    13 ) , "mu-"   ),
-                            std::make_pair( LHCb::ParticleID (   211 ) , "pi+"   ),
-                            std::make_pair( LHCb::ParticleID (   111 ) , "pi0"   ),
-                            std::make_pair( LHCb::ParticleID (  -211 ) , "pi-"   ),
-                            std::make_pair( LHCb::ParticleID (   321 ) , "K+"    ),
-                            std::make_pair( LHCb::ParticleID (  -321 ) , "K-"    ),
-                            std::make_pair( LHCb::ParticleID (  2212 ) , "p+"    ),
-                            std::make_pair( LHCb::ParticleID ( -2212 ) , "p~-"   ) };
+  static Synced<Map> s_map{ std::pair{ LHCb::ParticleID (    22 ) , "gamma" },
+                            std::pair{ LHCb::ParticleID (   -11 ) , "e+"    },
+                            std::pair{ LHCb::ParticleID (    11 ) , "e-"    },
+                            std::pair{ LHCb::ParticleID (   -13 ) , "mu+"   },
+                            std::pair{ LHCb::ParticleID (    13 ) , "mu-"   },
+                            std::pair{ LHCb::ParticleID (   211 ) , "pi+"   },
+                            std::pair{ LHCb::ParticleID (   111 ) , "pi0"   },
+                            std::pair{ LHCb::ParticleID (  -211 ) , "pi-"   },
+                            std::pair{ LHCb::ParticleID (   321 ) , "K+"    },
+                            std::pair{ LHCb::ParticleID (  -321 ) , "K-"    },
+                            std::pair{ LHCb::ParticleID (  2212 ) , "p+"    },
+                            std::pair{ LHCb::ParticleID ( -2212 ) , "p~-"   } };
 
   auto res = s_map.with_rlock( [&]( const Map& m )
                                -> std::optional<std::string> {

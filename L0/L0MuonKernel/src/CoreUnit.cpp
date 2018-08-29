@@ -160,7 +160,7 @@ bool L0Muon::CoreUnit::makeTower() {
             // Local coordinated of the pad (PU frame)
             int nXindex= nX-refX+m_tower.maxXFoi(sta);
             int nYindex= nY-refY+m_tower.maxYFoi(sta);
-            std::pair<int, int>  yx = std::make_pair(nYindex,nXindex);
+            auto  yx = std::pair{nYindex,nXindex};
 
             // Set the corresponding bit in the tower
             m_tower.setBit(sta, nYindex, nXindex );
@@ -184,7 +184,7 @@ bool L0Muon::CoreUnit::makeTower() {
         // Local coordinated of the pad (PU frame)
         int nXindex= nX-refX+m_tower.maxXFoi(sta);
         int nYindex= nY-refY+m_tower.maxYFoi(sta);
-        std::pair<int, int>  yx = std::make_pair(nYindex,nXindex);
+        auto yx = std::pair{nYindex,nXindex};
 
         // Set the corresponding bit in the tower
         m_tower.setBit(sta, nYindex, nXindex );
@@ -202,7 +202,7 @@ bool L0Muon::CoreUnit::makeTower() {
         // Local coordinated of the pad (PU frame)
         int nXindex= (ipM3gran->nX())-refX+m_tower.maxXFoi(sta);
         int nYindex= (ipM3gran->nY())-refY+m_tower.maxYFoi(sta);
-        std::pair<int, int>  yx = std::make_pair(nYindex,nXindex);
+        auto yx = std::pair{nYindex,nXindex};
 
         // Set the corresponding bit in the tower
         m_tower.setBit(sta, nYindex, nXindex );
@@ -291,7 +291,7 @@ void L0Muon::CoreUnit::initializeM1TowerMap() {
             // Local coordinated of the pad (PU frame)
             int nXindex= nX-refX+m_tower.maxXFoi(sta);
             int nYindex= nY-refY+m_tower.maxYFoi(sta);
-            std::pair<int, int>  yx = std::make_pair(nYindex,nXindex);
+            auto yx = std::pair{nYindex,nXindex};
 
             // Set the corresponding bit in the tower
             m_tower.setBit(sta, nYindex, nXindex );
@@ -315,7 +315,7 @@ void L0Muon::CoreUnit::initializeM1TowerMap() {
         // Local coordinated of the pad (PU frame)
         int nXindex= nX-refX+m_tower.maxXFoi(sta);
         int nYindex= nY-refY+m_tower.maxYFoi(sta);
-        std::pair<int, int>  yx = std::make_pair(nYindex,nXindex);
+        auto yx = std::pair{nYindex,nXindex};
 
         // Set the corresponding bit in the tower
         m_tower.setBit(sta, nYindex, nXindex );
@@ -336,7 +336,7 @@ void L0Muon::CoreUnit::initializeM1TowerMap() {
         // Local coordinated of the pad (PU frame)
         int nXindex= (ipM3gran->nX())-refX+m_tower.maxXFoi(sta);
         int nYindex= (ipM3gran->nY())-refY+m_tower.maxYFoi(sta);
-        std::pair<int, int>  yx = std::make_pair(nYindex,nXindex);
+        auto  yx = std::pair{nYindex,nXindex};
 
         // Set the corresponding bit in the tower
         m_tower.setBit(sta, nYindex, nXindex );

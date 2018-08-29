@@ -37,7 +37,7 @@ public:
   /// reimplemented from MuonLayout
   std::pair<unsigned int, unsigned int> grid(const LHCb::MuonTileID& id) const override {
     int reg = id.region();
-    return std::make_pair(xGrid(reg),yGrid(reg));
+    return { xGrid(reg),yGrid(reg)};
   }
   /// Accessor to X granularity
   unsigned int xGrid(int reg) const { return regionLayout(reg).xGrid(); }

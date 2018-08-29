@@ -665,12 +665,12 @@ StatusCode DeVeloPhiType::updateZoneLimits()
     }
 
     // determine the r ranges of the zones in VELO half box frame
-    auto halfBoxLimitsMin = std::make_pair(globalToVeloHalfBox(globalLimitsMin.first),
-                                           globalToVeloHalfBox(globalLimitsMin.second));
-    auto halfBoxLimitsMax = std::make_pair(globalToVeloHalfBox(globalLimitsMax.first),
-                                           globalToVeloHalfBox(globalLimitsMax.second));
-    auto halfBoxLimitsMid = std::make_pair(globalToVeloHalfBox(globalLimitsMid.first),
-                                           globalToVeloHalfBox(globalLimitsMid.second));
+    auto halfBoxLimitsMin = std::pair{globalToVeloHalfBox(globalLimitsMin.first),
+                                      globalToVeloHalfBox(globalLimitsMin.second)};
+    auto halfBoxLimitsMax = std::pair{globalToVeloHalfBox(globalLimitsMax.first),
+                                      globalToVeloHalfBox(globalLimitsMax.second)};
+    auto halfBoxLimitsMid = std::pair{globalToVeloHalfBox(globalLimitsMid.first),
+                                      globalToVeloHalfBox(globalLimitsMid.second)};
     rLimits = { halfBoxLimitsMin.first.rho(), halfBoxLimitsMin.second.rho(),
                 halfBoxLimitsMax.first.rho(), halfBoxLimitsMax.second.rho(),
                 halfBoxLimitsMid.first.rho(), halfBoxLimitsMid.second.rho() };

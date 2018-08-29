@@ -289,9 +289,9 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
         const auto dist = amb*std::abs(distCirc-rCirc);
         const unsigned int straw = strawA;
         if ( std::abs(dist) < m_cellRadius ) {
-          chanAndDist.push_back(std::make_pair(
+          chanAndDist.emplace_back(
 		      OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw),
-		      dist));
+		      dist);
         }
         strawA = nextRightStraw(straw);
       }
@@ -307,9 +307,9 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
         const auto dist = amb*std::abs(distCirc-rCirc);
         const unsigned int straw = strawB;
         if ( std::abs(dist) < m_cellRadius ) {
-          chanAndDist.push_back(std::make_pair(
+          chanAndDist.emplace_back(
 		      OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw),
-		      dist));
+		      dist);
         }
         strawB = nextRightStraw(straw);
       }

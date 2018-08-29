@@ -273,7 +273,7 @@ public:
   typename std::enable_if<std::is_scalar<T>::value, std::pair<std::size_t, std::size_t> >::type save(T x) {
     auto index0 = m_buffer.pos();
     m_buffer.write(x);
-    return std::make_pair(index0, sizeof(x));
+    return { index0, sizeof(x) };
   }
   /// Save a scalar at a given position.
   template<typename T>
@@ -299,12 +299,12 @@ public:
 
   /// Save a serializable object.
   template<typename T>
-  auto save(const T& object) 
+  auto save(const T& object)
     -> decltype(PackedDataPersistence::save(*this, object), std::pair<std::size_t, std::size_t>())
   {
     auto index0 = m_buffer.pos();
     PackedDataPersistence::save(*this, object);
-    return std::make_pair(index0, m_buffer.pos() - index0);
+    return { index0, m_buffer.pos() - index0 };
   }
   /// Save a vector of serializable objects in AOS format.
   template<typename T>
@@ -427,7 +427,7 @@ public:
 
   /// Load a serializable object.
   template<typename T>
-  auto load(T& object) 
+  auto load(T& object)
     -> decltype(PackedDataPersistence::load(*this, object), std::size_t())
   {
     auto index0 = m_buffer.pos();

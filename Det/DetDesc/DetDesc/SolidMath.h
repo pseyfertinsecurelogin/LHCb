@@ -36,7 +36,7 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE >
   inline unsigned int SolveQuadraticEquation(double a,
-                                             double b, 
+                                             double b,
                                              double c,
                                              OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
@@ -87,8 +87,8 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheSphere2(const aPoint& point,
-                                               const aVector& vect, 
-                                               const double r2, 
+                                               const aVector& vect,
+                                               const double r2,
                                                OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     // sphere with non-positive radius is not able to intersect the line!
@@ -118,7 +118,7 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheSphere(const aPoint& point,
-                                              const aVector& vect, 
+                                              const aVector& vect,
                                               const double radius,
                                               OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
@@ -139,7 +139,7 @@ namespace SolidTicks
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheCylinder(const aPoint& point,
                                                 const aVector& vect,
-                                                const double radius, 
+                                                const double radius,
                                                 OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     // Cylinder with non-positive radius is not able to intersect the line!
@@ -194,8 +194,8 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheY(const aPoint& point,
-                                         const aVector& vect, 
-                                         const double Y, 
+                                         const aVector& vect,
+                                         const double Y,
                                          OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     /**  line with null vector in Y-direction is not able
@@ -218,15 +218,15 @@ namespace SolidTicks
    */
   template < class aPoint, class aVector >
   inline std::pair<bool,double> LineZIntersectTick(const aPoint& point,
-                                                   const aVector& vect, 
+                                                   const aVector& vect,
                                                    const double Z ) noexcept
   {
     /**  line with null vector in Z-direction is
      *  not able to intersect the z-plane!
      */
-    return ( 0 != vect.z() ? 
-             std::make_pair( true, ( Z - point.z() ) / vect.z() ) : 
-             std::make_pair( false, 0.0 ) );
+    return ( 0 != vect.z() ?
+             std::pair{ true, ( Z - point.z() ) / vect.z() } :
+             std::pair{ false, 0.0 } );
   }
 
   /** find intersection ticks for the line
@@ -242,7 +242,7 @@ namespace SolidTicks
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheZ(const aPoint& point,
                                          const aVector& vect,
-                                         const double Z, 
+                                         const double Z,
                                          OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     /** line with null vector in Z-direction is
@@ -265,8 +265,8 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsThePhi(const aPoint& point,
-                                           const aVector& vect, 
-                                           const double Phi, 
+                                           const aVector& vect,
+                                           const double Phi,
                                            OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     const auto sinphi = std::sin( Phi );
@@ -293,8 +293,8 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheTheta(const aPoint & point,
-                                             const aVector& vect, 
-                                             const double Theta, 
+                                             const aVector& vect,
+                                             const double Theta,
                                              OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     /** it is equivalent to solve the equation
@@ -338,11 +338,11 @@ namespace SolidTicks
    */
   template < class OUTPUTTYPE, class aPoint, class aVector >
   inline unsigned int LineIntersectsTheCone(const aPoint& point,
-                                            const aVector& vect, 
-                                            const double r1, 
+                                            const aVector& vect,
+                                            const double r1,
                                             const double r2,
-                                            const double z1, 
-                                            const double z2, 
+                                            const double z1,
+                                            const double z2,
                                             OUTPUTTYPE out) noexcept(noexcept(*out++))
   {
     /** it is equivalent to the equation

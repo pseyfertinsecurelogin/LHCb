@@ -233,7 +233,7 @@ StatusCode LoKi::Hybrid::Base::_get_
     const std::string funtype = System::typeinfoName ( typeid ( LoKi::Functor<TYPE1,TYPE2> ) ) ;
     const std::string cppcode = Gaudi::Utils::toCpp           ( output )   ;
     const std::string pytype  = Gaudi::Utils::toString        ( output )   ;
-    m_allfuncs[ funtype ][ code ] = std::make_pair ( cppcode , pytype ) ;
+    m_allfuncs[ funtype ][ code ] = { cppcode , pytype } ;
     //
   }
   //

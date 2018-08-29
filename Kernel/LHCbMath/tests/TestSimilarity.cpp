@@ -226,7 +226,7 @@ std::pair<M, bool> compareSMatrix( const M& A,
       }
     }
   }
-  return std::make_pair(cmpres, hasDiff);
+  return {cmpres, hasDiff};
 }
 
 

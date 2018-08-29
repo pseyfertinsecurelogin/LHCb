@@ -63,9 +63,9 @@ std::string to_json_t::operator()(const std::map<std::string,V>& m) const {
 }
 
 std::string to_json_t::operator()(const std::tuple<std::string,to_json_t::r2t_t,std::string>& e) const {
-    return "{" +to_json(std::make_pair("TCK",std::get<0>(e)))
-         + "," +to_json(std::make_pair("Release2Type",std::get<1>(e)))
-         + "," +to_json(std::make_pair("label",std::get<2>(e)))
+    return "{" +to_json(std::pair{"TCK",std::get<0>(e)})
+         + "," +to_json(std::pair{"Release2Type",std::get<1>(e)})
+         + "," +to_json(std::pair{"label",std::get<2>(e)})
          + "}";
 }
 

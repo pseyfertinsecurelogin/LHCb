@@ -45,7 +45,7 @@ public:
   /// reimplemented from IMuonLayout
   std::pair<unsigned int, unsigned int>
           grid(const  LHCb::MuonTileID&) const override {
-    return std::make_pair(xGrid(),yGrid());
+    return {xGrid(),yGrid()};
   }
 
   /// Accessor to X granularity

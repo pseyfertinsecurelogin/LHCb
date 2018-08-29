@@ -234,7 +234,7 @@ StatusCode parse(std::map<TCK,std::string>& result, const std::string& input )
         std::transform( std::begin(m), std::end(m),
                         std::inserter( result, std::end(result) ),
                         []( const std::pair<std::string,std::string>& i) {
-                           return std::make_pair( TCK{i.first}, i.second );
+                           return std::pair{ TCK{i.first}, i.second };
                         } );
     }
     return sc;

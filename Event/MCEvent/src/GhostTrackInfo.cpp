@@ -6,7 +6,7 @@
 std::ostream& LHCb::GhostTrackInfo::fillStream(std::ostream& s) const
 {
   s << "{ " << "classed as :";
-  s << m_classification; 
+  s << m_classification;
   s << std::endl << " }";
   return s;
 }
@@ -21,5 +21,5 @@ LHCb::GhostTrackInfo::LinkPair LHCb::GhostTrackInfo::bestLink() const
     tot += l.second;
   }
   const double purity = ( tot > 0 ? double(best.second) / tot : 0.0 );
-  return std::make_pair(best.first,purity); 
+  return { best.first,purity };
 }

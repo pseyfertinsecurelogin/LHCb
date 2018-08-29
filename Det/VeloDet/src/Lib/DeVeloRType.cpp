@@ -758,12 +758,12 @@ StatusCode DeVeloRType::updateZoneLimits()
     }
 
     // determine the phi ranges of the zones in VELO half box frame
-    auto halfBoxLimitsMin = std::make_pair(globalToVeloHalfBox(globalLimitsMin.first),
-                                           globalToVeloHalfBox(globalLimitsMin.second));
-    auto halfBoxLimitsMax = std::make_pair(globalToVeloHalfBox(globalLimitsMax.first),
-                                           globalToVeloHalfBox(globalLimitsMax.second));
-    auto halfBoxLimitsMid = std::make_pair(globalToVeloHalfBox(globalLimitsMid.first),
-                                           globalToVeloHalfBox(globalLimitsMid.second));
+    auto halfBoxLimitsMin = std::pair{globalToVeloHalfBox(globalLimitsMin.first),
+                                      globalToVeloHalfBox(globalLimitsMin.second)};
+    auto halfBoxLimitsMax = std::pair{globalToVeloHalfBox(globalLimitsMax.first),
+                                      globalToVeloHalfBox(globalLimitsMax.second)};
+    auto halfBoxLimitsMid = std::pair{globalToVeloHalfBox(globalLimitsMid.first),
+                                      globalToVeloHalfBox(globalLimitsMid.second)};
     phiLimits = std::array{  halfBoxLimitsMin.first.phi(),halfBoxLimitsMin.second.phi(),
                              halfBoxLimitsMax.first.phi(),halfBoxLimitsMax.second.phi(),
                              halfBoxLimitsMid.first.phi(),halfBoxLimitsMid.second.phi() };
@@ -852,9 +852,8 @@ bool DeVeloRType::distToM2Line(double const & x, double const & y,
   // start at begining of zone
   auto iLineMin = m_M2RLMinPhi.begin() + zone*m_stripsInZone;
   // skip all strips with a minPhi > this phi
-  auto iLineMax =
-    lower_bound(iLineMin, iLineMin+m_stripsInZone,
-                std::make_pair(phi,0u));
+  auto iLineMax = lower_bound(iLineMin, iLineMin+m_stripsInZone,
+                              std::pair{ phi,0u });
   for ( ; iLineMin != iLineMax; ++iLineMin ){
     unsigned int iL = iLineMin->second;
     // as ranges are complicated in phi need to keep going even if

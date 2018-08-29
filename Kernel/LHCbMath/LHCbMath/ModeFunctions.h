@@ -18,18 +18,18 @@
 
 namespace ModeFunctions{
 
-  /** calculate the shorth 
-  * the mean of the half sample 
-  * @param start beginning of sequence 
+  /** calculate the shorth
+  * the mean of the half sample
+  * @param start beginning of sequence
   * @param stop  end of sequence
   * @return double shorth
   */
   template <typename TYPE>
     double shorth(TYPE start, TYPE stop);
 
-  /** calculate the LMS 
-  * average of the values of the half sample 
-  * @param start beginning of sequence 
+  /** calculate the LMS
+  * average of the values of the half sample
+  * @param start beginning of sequence
   * @param stop  end of sequence
   * @return double LMS
   */
@@ -38,8 +38,8 @@ namespace ModeFunctions{
 
  /** calculate the halfSample
   * value of i for which distance x_i, x_i+h is minimum
-  * where h is the half sample 
-  * @param start beginning of sequence 
+  * where h is the half sample
+  * @param start beginning of sequence
   * @param stop  end of sequence
   * @return TYPE iterator for starting position
   */
@@ -47,8 +47,8 @@ namespace ModeFunctions{
     std::pair<TYPE,TYPE> halfSample(TYPE start, TYPE stop);
 
  /** calculate the halfSampleWidth
-  * size of the half sample 
-  * @param start beginning of sequence 
+  * size of the half sample
+  * @param start beginning of sequence
   * @param stop  end of sequence
   * @return TYPE iterator for starting position
   */
@@ -56,9 +56,9 @@ namespace ModeFunctions{
     double halfSampleWidth(TYPE start, TYPE stop);
 
   /** <a href = "http://en.wikipedia.org/wiki/Harmonic_mean" > Generalized Mean </a>
-   * @param start beginning of sequence 
+   * @param start beginning of sequence
    * @param stop  end of sequence
-   * @param p     power 
+   * @param p     power
    * @return double LMS
    */
    template <typename TYPE>
@@ -67,17 +67,17 @@ namespace ModeFunctions{
 
 template <typename TYPE>
 inline std::pair<TYPE,TYPE> ModeFunctions::halfSample(TYPE start, TYPE stop){
- const unsigned int halfSize = (unsigned int)((stop-start)/2u); 
+ const unsigned int halfSize = (unsigned int)((stop-start)/2u);
  unsigned int pos = 0u;
  unsigned int bestpos = halfSize-1u;
  for (TYPE iter = start; iter != stop ; ++iter, ++pos){
    if (pos < halfSize){
-    if (*(iter+halfSize) - *iter < *(start+bestpos+halfSize) - *(start+bestpos) ) { 
-       bestpos = pos; 
+    if (*(iter+halfSize) - *iter < *(start+bestpos+halfSize) - *(start+bestpos) ) {
+       bestpos = pos;
      }
    }
- } //iter1 
- return std::make_pair(start+bestpos, start+bestpos+halfSize);
+ } //iter1
+ return {start+bestpos, start+bestpos+halfSize};
 }
 
 template <typename TYPE>
@@ -87,7 +87,7 @@ inline double ModeFunctions::halfSampleWidth(TYPE start, TYPE stop){
     return 0.0;
   }
   else if (stop - start <= 2) {
-    return 0.5* fabs(*start - *stop); 
+    return 0.5* fabs(*start - *stop);
   }
   std::pair<TYPE,TYPE> bestpos = halfSample(start,stop);
   return fabs(*bestpos.first - *bestpos.second);
@@ -101,12 +101,12 @@ inline double ModeFunctions::shorth(TYPE start, TYPE stop){
    }
    else if (stop - start == 1) {
      return *start;
-   } 
+   }
    else if (stop - start == 2){
      return (*start + *(start+1))/2u;
    }
    std::pair<TYPE,TYPE> bestpos = halfSample(start,stop);
-   const unsigned int halfSize = (unsigned int)((stop-start)/2u); 
+   const unsigned int halfSize = (unsigned int)((stop-start)/2u);
     return std::accumulate(bestpos.first, bestpos.second,0.0)/double(halfSize);
 }
 
@@ -118,7 +118,7 @@ inline double ModeFunctions::LMS(TYPE start, TYPE stop){
    }
    else if (stop - start == 1) {
      return *start;
-   } 
+   }
    else if (stop - start == 2){
      return 0.5*(*start + *(start+1));
    }
@@ -135,10 +135,10 @@ inline double ModeFunctions::generalizedMean(TYPE start, TYPE stop, double power
     if (power > 0.0){
       sum += pow(*iter,power);
     }
-    else { 
+    else {
       // we have to be careful if the data is zero
       double value = std::max(1e-5,fabs(*iter));
-      sum +=pow(value,power);      
+      sum +=pow(value,power);
     }
   } // iter
   return size != 0u ?  pow(sum/double(size),1.0/power) : 0.0;

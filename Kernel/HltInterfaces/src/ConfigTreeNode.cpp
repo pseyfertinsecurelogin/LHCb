@@ -38,7 +38,7 @@ void read_custom(std::istream& is, ptree& top) {
             if (boost::regex_match(s,what,nodeend) ) {
                 parsing_nodes = false;
             } else if (boost::regex_match(s,what,node) ) {
-                nodes.push_back(std::make_pair(std::string{},ptree{what[1].str()}));
+                nodes.push_back(std::pair{std::string{},ptree{what[1].str()}});
             } else {
                 std::cerr << "ConfigTreeNode: read_custom: parsing error while looking for nodes!!! : [" << s << "]" << std::endl;
                 top = ptree{} ; return;
@@ -121,7 +121,7 @@ std::ostream& ConfigTreeNode::print(std::ostream& os) const {
     if (!nodes().empty()) {
         std::transform( begin(nodes()), end(nodes()),
                         std::back_inserter(top.put_child("Nodes",ptree{})),
-                        []( const NodeRef& i ) { return std::make_pair(std::string(),ptree{ i.str() }); }  );
+                        []( const NodeRef& i ) { return std::pair{std::string(),ptree{ i.str() }}; }  );
     }
     write_json(os,top,false);
     return os;

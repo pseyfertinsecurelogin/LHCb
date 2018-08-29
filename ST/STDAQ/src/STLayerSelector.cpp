@@ -7,7 +7,7 @@
 
 // ====================================================================
 namespace {
-  auto mp = [](const char* p, unsigned int i) { return std::make_pair(p,i); };
+  auto mp = [](const char* p, unsigned int i) { return std::pair{p,i}; };
   static const auto s_layerMap = std::array {
       // TT layer mapping
       mp("TTaX", 9), mp("TTaU",10), mp("TTbV",17), mp("TTbX",18),

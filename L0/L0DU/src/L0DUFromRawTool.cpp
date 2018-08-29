@@ -629,19 +629,19 @@ bool L0DUFromRawTool::decoding(int ibank){
 
     for(unsigned int i = 0 ; i < itc ; i++){
       if( !nextData() )return false;
-      m_tcs[std::make_pair(0,i)] = *m_data;
+      m_tcs[{0,i}] = *m_data;
       if ( msgLevel( MSG::VERBOSE) )verbose() << "   ->  Channel PreDecision summary[BX=0, Word=" << i << "] = "
                                               << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
     }
     for(unsigned int i = 0 ; i < itc ; i++){
       if( !nextData() )return false;
-      m_cds[std::make_pair(0,i)]=*m_data;
+      m_cds[{0,i}]=*m_data;
       if ( msgLevel( MSG::VERBOSE) )verbose() << "   -> Channel Decision summary[BX=0, Word=" << i << "] = "
                                               << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
     }
     for(unsigned int i = 0 ; i < iec ; i++){
       if( !nextData() )return false;
-      m_ecs[std::make_pair(0,i)]=*m_data;
+      m_ecs[{0,i}]=*m_data;
       if ( msgLevel( MSG::VERBOSE) )verbose() << "   ->  Elementary condition summary[BX=0, Word=" << i << "] = "
                                               << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
     }
@@ -693,13 +693,13 @@ bool L0DUFromRawTool::decoding(int ibank){
     for(int im = nm ; im > 0 ; im--){
       for(unsigned int i = 0 ; i < itc ; i++){
         if( !nextData() )return false;
-        m_cds[std::make_pair(-im,i)] = *m_data;
+        m_cds[{-im,i}] = *m_data;
         if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Trigger Channel Summary[BX="<< -im << ", Word=" <<i << "] = "
                                                << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
       for(unsigned int i = 0 ; i < iec ; i++){
         if( !nextData() )return false;
-        m_ecs[std::make_pair(-im,i)] = *m_data;
+        m_ecs[{-im,i}] = *m_data;
         if ( msgLevel( MSG::VERBOSE) )verbose() << "   -> Elementary Condition Summary[BX="<< -im << ", Word=" <<i << "] = "
                   << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
@@ -738,13 +738,13 @@ bool L0DUFromRawTool::decoding(int ibank){
     for(int ip = 0 ; ip < np ; ip++){
       for(unsigned int i = 0 ; i < itc ; i++){
         if( !nextData() )return false;
-        m_cds[std::make_pair(ip+1,i)] = *m_data;
+        m_cds[{ip+1,i}] = *m_data;
         if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Trigger Channel Summary[BX="<< ip+1 << ", Word=" <<i << "] = "
                                                << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
       for(unsigned int i = 0 ; i < iec ; i++){
         if( !nextData() )return false;
-        m_ecs[std::make_pair(ip+1,i)] = *m_data;
+        m_ecs[{ip+1,i}] = *m_data;
         if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Elementary Condition Summary[BX="<< ip+1 << ", Word=" <<i << "] = "
                                                << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }

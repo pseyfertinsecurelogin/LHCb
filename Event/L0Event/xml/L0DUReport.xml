@@ -212,8 +212,8 @@
         desc="add value/scale pair to the embedded data map"
         type="void">
         <code> 
-          std::map&lt;std::string,std::pair&lt;int,double&gt; &gt;::iterator ib = m_dataMap.find(name);
-          if( m_dataMap.end() == ib)m_dataMap[name] = std::make_pair(value,scale);
+          auto ib = m_dataMap.find(name);
+          if( m_dataMap.end() == ib) m_dataMap[name] = { value,scale };
         </code>
       </method>
       
@@ -224,7 +224,7 @@
         argList= "const unsigned int summary,  unsigned int loc=0, int bx=0"
         type   = "void"> 
         <code>
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,loc);
+          auto key = std::pair{bx,loc};
           m_channelsPreDecisionSummaries[key]=summary;
         </code>
       </method>
@@ -235,7 +235,7 @@
         argList= "const unsigned int summary,  unsigned int loc=0, int bx=0"
         type   = "void"> 
         <code>
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,loc); 
+          auto key = std::pair{bx,loc}; 
           m_channelsDecisionSummaries[key]=summary;
         </code>
       </method>
@@ -245,7 +245,7 @@
         argList= "const unsigned int summary,  unsigned int loc=0, int bx=0" 
         type   = "void">
         <code>
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,loc); 
+          auto key = std::pair{bx,loc}; 
           m_conditionsValueSummaries[key]=summary;
         </code>
       </method>
@@ -262,7 +262,7 @@
           if( it == channels.end() )return;
           unsigned int pos = ((*it).second)-&gt;id();
           unsigned int index = pos / 32;
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index); 
+          auto key = std::pair{bx,index}; 
           unsigned int summary = m_channelsPreDecisionSummaries[key];
           unsigned int loc   = pos - index *32;
           triggered ? summary |= (1 &lt;&lt; loc) : summary &amp;= ~(1 &lt;&lt; loc);
@@ -282,7 +282,7 @@
           if( it == channels.end() )return;
           unsigned int pos = ((*it).second)-&gt;id();
           unsigned int index = pos / 32;
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index); 
+          auto key = std::pair{bx,index}; 
           unsigned int summary = m_channelsDecisionSummaries[key];
           unsigned int loc   = pos - index *32;
           decision ? summary |= (1 &lt;&lt; loc) : summary &amp;= ~(1 &lt;&lt; loc);
@@ -302,7 +302,7 @@
           if( it == conditions.end() )return;
           unsigned int pos = ((*it).second)->reportBit();
           unsigned int index = pos / 32;
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index); 
+          auto key = std::pair{bx,index}; 
           unsigned int summary = m_conditionsValueSummaries[key];
           unsigned int loc   = pos - index *32;
           decision ? summary |= (1 &lt;&lt; loc) : summary &amp;= ~(1 &lt;&lt; loc);
@@ -321,10 +321,10 @@
         const = "TRUE"
         type="unsigned int">
         <code> 
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index); 
+          auto key = std::pair{bx,index}; 
           auto it = m_channelsDecisionSummaries.find( key );
           if(it == m_channelsDecisionSummaries.end())return 0;
-          return (*it).second;
+          return it->second;
         </code>
       </method>
 
@@ -337,7 +337,7 @@
         const = "TRUE"
         type="unsigned int">
         <code> 
-          auto key = std::make_pair(bx,index); 
+          auto key = std::pair{bx,index}; 
           auto it = m_channelsPreDecisionSummaries.find( key );
           if(it == m_channelsPreDecisionSummaries.end())return 0;
           return it->second;
@@ -351,7 +351,7 @@
         const = "TRUE"
         type="unsigned int">
         <code> 
-          auto key = std::make_pair(bx,index);
+          auto key = std::pair{bx,index};
           auto it = m_conditionsValueSummaries.find( key );
           if (it == m_conditionsValueSummaries.end()) return 0;
           return it->second;
@@ -368,8 +368,8 @@
         const="TRUE">
         <code> 
           unsigned int index = channel / 32;
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index);
-          std::map&lt;std::pair&lt;int,unsigned int&gt;,unsigned int&gt;::const_iterator it = m_channelsDecisionSummaries.find( key );
+          auto key = std::pair{bx,index};
+          auto it = m_channelsDecisionSummaries.find( key );
           if( it == m_channelsDecisionSummaries.end())return 0;
           unsigned int summary = (*it).second;
           unsigned int loc   = channel - index *32;
@@ -384,8 +384,8 @@
         const="TRUE">
         <code> 
           unsigned int index = channel / 32;
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index);
-          std::map&lt;std::pair&lt;int,unsigned int&gt;,unsigned int&gt;::const_iterator it = m_channelsPreDecisionSummaries.find(key);
+          auto key = std::pair{bx,index};
+          auto it = m_channelsPreDecisionSummaries.find(key);
           if( it == m_channelsPreDecisionSummaries.end())return 0;
           unsigned int summary = (*it).second;
           unsigned int loc   = channel - index *32;
@@ -401,8 +401,8 @@
         const="TRUE">
         <code> 
           unsigned int index = condition / 32;
-          std::pair&lt;int,unsigned int&gt;  key = std::make_pair(bx,index);
-          std::map&lt;std::pair&lt;int,unsigned int&gt;,unsigned int&gt;::const_iterator it = m_conditionsValueSummaries.find(key);
+          auto key = std::pair{bx,index};
+          auto it = m_conditionsValueSummaries.find(key);
           if( it == m_conditionsValueSummaries.end())return 0;
           unsigned int summary = (*it).second;
           unsigned int loc   = condition - index *32;
@@ -424,7 +424,7 @@
           const LHCb::L0DUChannel::Map&amp; channels= m_configuration->channels();
           LHCb::L0DUChannel::Map::const_iterator it = channels.find( name );
           if( it == channels.end() )return false;
-          const unsigned int pos = ((*it).second)->id();
+          const unsigned int pos = it->second->id();
           return channelPreDecision( pos,bx );
         </code>
       </method>
@@ -437,9 +437,9 @@
         <code> 
           if(0 == m_configuration)return false;
           const LHCb::L0DUChannel::Map&amp; channels=m_configuration->channels();
-          LHCb::L0DUChannel::Map::const_iterator it = channels.find( name );
+          auto it = channels.find( name );
           if( it == channels.end() )return false;
-          const unsigned int pos = ((*it).second)->id();
+          const unsigned int pos = it->second->id();
           return channelDecision( pos,bx );
         </code>
       </method>
@@ -454,8 +454,8 @@
           const LHCb::L0DUElementaryCondition::Map&amp; conditions=m_configuration->conditions();
           LHCb::L0DUElementaryCondition::Map::const_iterator it = conditions.find( name );
           if( it == conditions.end() )return false;
-          if( !(it-&gt;second)-&gt;reported() )return false;
-          const unsigned int pos = ((*it).second)-&gt;reportBit();
+          if( !(it->second)->reported() )return false;
+          const unsigned int pos = it->second->reportBit();
           return conditionValue( pos, bx );
         </code>
       </method>

@@ -52,8 +52,8 @@ StatusCode FilterByRunEvent::execute()
   const auto * odin = get<LHCb::ODIN> ( LHCb::ODINLocation::Default );
 
   // Get run/event from ODIn and make comparison object
-  const auto runEv = std::make_pair( (int)odin->runNumber(),
-                                     (int)odin->eventNumber() );
+  const auto runEv = std::pair{ (int)odin->runNumber(),
+                                (int)odin->eventNumber() };
 
   const bool lcl_sel = std::any_of( m_events.begin(), m_events.end(),
                                     [&runEv]( const auto & p )

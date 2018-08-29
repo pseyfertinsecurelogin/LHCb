@@ -87,13 +87,12 @@ namespace DetDesc
         const double z2 = std::min ( x2 , y2 ) ;
         if ( z1 < z2 )
         {
-          std::pair<int,int> p = std::make_pair
-            ( i1 - cnt.begin() , i2 - cnt.begin  () ) ;
-          return std::make_pair ( p , z2 - z1 ) ;
+          auto p = std::pair{ i1 - cnt.begin() , i2 - cnt.begin  () };
+          return { p , z2 - z1 } ;
         }
       }
     }
-    return std::pair<std::pair<int,int>,double>() ;
+    return {};
   }
   // ==========================================================================
   /** @class CheckOverlap

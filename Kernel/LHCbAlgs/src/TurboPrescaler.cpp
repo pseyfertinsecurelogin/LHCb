@@ -200,7 +200,7 @@ void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
               {
                 lineName.erase(lineName.end()-m_preScalerName.length(),lineName.end());
                 prescales[lineName]=scale; //Write the prescale to a map
-                postscales.insert(std::make_pair(lineName,-1.0)); //Initialise a postscale if it isn't already there with a nonsense value
+                postscales.insert({lineName,-1.0}); //Initialise a postscale if it isn't already there with a nonsense value
                 break;
               }
               else
@@ -210,7 +210,7 @@ void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
                 {
                   lineName.erase(lineName.end()-m_postScalerName.length(),lineName.end());
                   postscales[lineName]=scale; //Write the postscale to a map
-                  prescales.insert(std::make_pair(lineName,-1.0)); //Initialise a prescale if it isn't already there with a nonsense value
+                  prescales.insert({lineName,-1.0}); //Initialise a prescale if it isn't already there with a nonsense value
                   break;
                 }else{
                   Warning("Found property AcceptFraction not associated to a pre/post scale! " + lineName).ignore();
@@ -233,7 +233,7 @@ void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
     if ( pre < 0.0 ) { pre = 1.0; } //If prescale was never found it'll be -9999., and we assume it will always pass
     auto post = postscales[i.first];
     if ( post < 0.0 ) { post = 1.0; } //If postscale was never found it'll be -9999., and we assume it will always pass
-    scaleProducts.insert(std::make_pair(i.first,pre*post));
+    scaleProducts.insert({i.first,pre*post});
   }
 }
 
@@ -296,7 +296,7 @@ void TurboPrescaler::setupPrescalers()
       Algorithm*  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
       if ( myAlg )
       {
-        prescalers.insert( std::make_pair(it.first,myAlg) );
+        prescalers.insert( {it.first,myAlg} );
       }
       else
       {

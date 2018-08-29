@@ -365,8 +365,8 @@ protected:
     auto itp =  std::find_if( m_pvolumes.begin () ,
                               m_pvolumes.end   () ,
                               IPVolume_isInside( LocalPoint ) ) ;
-    return itp != m_pvolumes.end() ? std::make_pair(*itp, std::distance( m_pvolumes.begin(), itp) )
-                                   : std::make_pair(nullptr,-1);
+    return itp != m_pvolumes.end() ? std::pair{*itp, std::distance( m_pvolumes.begin(), itp) }
+                                   : std::pair{nullptr,-1};
   }
 
 protected:

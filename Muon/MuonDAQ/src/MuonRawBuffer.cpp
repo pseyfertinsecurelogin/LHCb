@@ -1006,7 +1006,7 @@ std::vector<std::pair<MuonTell1Header, unsigned int> > MuonRawBuffer::getHeaders
   std::transform(b.begin(),b.end(),
                  std::back_inserter(ret),
                  [&](const RawBank* rb) {
-                     return std::make_pair(getHeader(rb),rb->sourceID());
+                     return std::pair{getHeader(rb),rb->sourceID()};
   });
   return  ret;
 }

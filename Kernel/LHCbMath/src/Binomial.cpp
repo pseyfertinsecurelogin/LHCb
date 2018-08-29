@@ -1,4 +1,3 @@
-//$Id:%
 // ============================================================================
 // STD& STL
 // ============================================================================
@@ -9,24 +8,21 @@
 #include "LHCbMath/Binomial.h"
 #include "LHCbMath/MoreFunctions.h"
 // ============================================================================
-// GSL 
+// GSL
 // ============================================================================
 #include "gsl/gsl_cdf.h"
 #include "gsl/gsl_sf_gamma.h"
 // ============================================================================
-// Boost 
+// Boost
 // ============================================================================
 // #include "boost/math/special_functions/beta.hpp"
 // ============================================================================
 /** @file
  *  implementationof funcntion from file LHCbMath/Binomial.h
- * 
+ *
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
  *
- *  Version           $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace
@@ -42,29 +38,29 @@ namespace
                              const double b ,
                              const double p )
   // { return boost::math::ibeta_inv ( a , b , p ) ; }
-  { return gsl_cdf_beta_Pinv      ( p , a , b ) ; } 
+  { return gsl_cdf_beta_Pinv      ( p , a , b ) ; }
   // ==========================================================================
 }
 // ============================================================================
 /* get quantile function for standard normal distribution
  *  @see http://en.wikipedia.org./wiki/Probitq
- *  @param alpha argument    \f$  0<\alpha<1 \f$  
- *  @return quantile value 
+ *  @param alpha argument    \f$  0<\alpha<1 \f$
+ *  @return quantile value
  */
 // ============================================================================
 double Gaudi::Math::probit ( const double alpha  )
 {
   return
     alpha <= 0 ? -1.0/0.0  :
-    alpha >= 1 ? +1.0/0.0  : _probit_ ( alpha  ) ;  
+    alpha >= 1 ? +1.0/0.0  : _probit_ ( alpha  ) ;
 }
 // ============================================================================
-/* normal approximation interval for binomial proportion/efficiency 
+/* normal approximation interval for binomial proportion/efficiency
  *  ( "Wald test")
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
  */
@@ -76,12 +72,12 @@ Gaudi::Math::wald_interval
   const double        conflevel )
 {
   //
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   const double  z    = _probit_ ( 1 - 0.5  * alpha ) ;
@@ -97,15 +93,15 @@ Gaudi::Math::wald_interval
   const double low  = std::max ( 0.0 , p - z * dx ) ;
   const double high = std::min ( 1.0 , p + z * dx ) ;
   //
-  return std::make_pair ( low , high ) ;
+  return { low , high } ;
   //
 }
 // ============================================================================
-/*  Wilson score interval for binomial proportion/efficiency 
+/*  Wilson score interval for binomial proportion/efficiency
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
  */
@@ -116,12 +112,12 @@ Gaudi::Math::wilson_score_interval
   const unsigned long rejected  ,
   const double        conflevel )
 {
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   const double  z  = _probit_ ( 1 - 0.5  * alpha ) ;
@@ -134,14 +130,14 @@ Gaudi::Math::wilson_score_interval
   const double low  = f2 * ( f1 - z * dx ) ;
   const double high = f2 * ( f1 + z * dx ) ;
   //
-  return std::make_pair ( low  , high ) ;  
+  return { low  , high } ;
 }
 // ============================================================================
-/*  Wilson score interval with continuity correction for binomial proportion/efficiency 
+/*  Wilson score interval with continuity correction for binomial proportion/efficiency
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
  */
@@ -152,12 +148,12 @@ Gaudi::Math::wilson_score_continuity_interval
   const unsigned long rejected  ,
   const double        conflevel )
 {
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   const double  z  = _probit_ ( 1 - 0.5  * alpha ) ;
@@ -173,14 +169,14 @@ Gaudi::Math::wilson_score_continuity_interval
   const double low  = std::max ( 0.0 , f2 * ( f1 - dx ) ) ;
   const double high = std::min ( 1.0 , f2 * ( f1 + dx ) ) ;
   //
-  return std::make_pair ( low  , high ) ;  
+  return { low  , high } ;
 }
 // ============================================================================
-/*  ArcSin interval with continuity correction for binomial proportion/efficiency 
+/*  ArcSin interval with continuity correction for binomial proportion/efficiency
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
  */
@@ -191,12 +187,12 @@ Gaudi::Math::arcsin_interval
   const unsigned long rejected  ,
   const double        conflevel )
 {
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   const double  z  = _probit_ ( 1 - 0.5  * alpha ) ;
@@ -220,14 +216,14 @@ Gaudi::Math::arcsin_interval
   const double h1  =
     0 == rejected ? 1.0 : std::sin ( asp + dx ) ;
   //
-  return std::make_pair ( l1 * l1  , h1 * h1  ) ;  
+  return { l1 * l1  , h1 * h1  } ;
 }
 // ============================================================================
-/*  Agresti-Coull interval with continuity correction for binomial proportion/efficiency 
+/*  Agresti-Coull interval with continuity correction for binomial proportion/efficiency
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
  */
@@ -238,12 +234,12 @@ Gaudi::Math::agresti_coull_interval
   const unsigned long rejected  ,
   const double        conflevel )
 {
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   const double  z  = _probit_ ( 1 - 0.5  * alpha ) ;
@@ -256,14 +252,14 @@ Gaudi::Math::agresti_coull_interval
   const double low  = std::max ( 0.0 , p1 - dx ) ;
   const double high = std::min ( 1.0 , p1 + dx ) ;
   //
-  return std::make_pair ( low , high ) ;  
+  return { low , high } ;
 }
 // ============================================================================
-/*  Jeffreys interval for binomial proportion/efficiency 
+/*  Jeffreys interval for binomial proportion/efficiency
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
@@ -277,12 +273,12 @@ Gaudi::Math::jeffreys_interval
   const double        conflevel )
 {
   //
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   //
@@ -291,14 +287,14 @@ Gaudi::Math::jeffreys_interval
   const double high  =
     0 == rejected ? 1.0 : ibeta_inv (  accepted + 0.5 , rejected + 0.5 , 1 - 0.5 * alpha ) ;
   //
-  return std::make_pair ( low  , high ) ;
+  return { low  , high } ;
 }
 // ============================================================================
-/* Clopper-Pearson interval for binomial proportion/efficiency 
+/* Clopper-Pearson interval for binomial proportion/efficiency
  *  @param  accepted  number of accepted events
  *  @param  rejected  number of rejected events
- *  @param  conflevel the confidence level:    0<=CL<=1 
- *  @return the confidence interval 
+ *  @param  conflevel the confidence level:    0<=CL<=1
+ *  @return the confidence interval
  *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2015-09-17
@@ -311,12 +307,12 @@ Gaudi::Math::clopper_pearson_interval
   const double        conflevel )
 {
   //
-  if ( 0 == accepted && 0 == rejected ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 0 == accepted && 0 == rejected ) { return { 0.0 , 1.0 } ; }
   //
-  if ( 1 <= conflevel ) { return std::make_pair ( 0.0 , 1.0 ) ; }
+  if ( 1 <= conflevel ) { return { 0.0 , 1.0 } ; }
   const double a = accepted ;
   const double p = a / ( a + rejected ) ;
-  if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
+  if ( 0 >= conflevel  ) { return { p , p }     ; }
   //
   const double alpha = 1 - conflevel ;
   //
@@ -325,11 +321,11 @@ Gaudi::Math::clopper_pearson_interval
   const double high  =
     0 == rejected ? 1.0 : ibeta_inv (  accepted + 1 , rejected     , 1 - 0.5 * alpha ) ;
   //
-  return std::make_pair ( low  , high ) ;
+  return { low  , high } ;
 }
 
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 

@@ -492,10 +492,8 @@ SolidPolycone::Triplets SolidPolycone::makeTriplets(double ZHalfLength        ,
 						    double InnerRadiusMinusZ  ,
 						    double InnerRadiusPlusZ )
 {
-  Triplets triplets ;
-  triplets.emplace_back( -ZHalfLength, std::make_pair(InnerRadiusMinusZ,OuterRadiusMinusZ) ) ;
-  triplets.emplace_back(  ZHalfLength, std::make_pair(InnerRadiusPlusZ, OuterRadiusPlusZ)  ) ;
-  return triplets ;
+  return { { -ZHalfLength, std::pair{ InnerRadiusMinusZ,OuterRadiusMinusZ } },
+           {  ZHalfLength, std::pair{ InnerRadiusPlusZ, OuterRadiusPlusZ } } };
 }
 
 //=============================================================================

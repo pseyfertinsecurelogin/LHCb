@@ -488,7 +488,7 @@ StatusCode HltSelReportsWriter::execute() {
 }
 
 const HltSelReportsWriter::NameToNumberMap& HltSelReportsWriter::tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major) const {
-  const auto key = std::make_pair(tck, major);
+  const auto key = std::pair{tck, major};
 
   auto itbl = m_infoTable.find(key);
   if (LIKELY(itbl != std::end(m_infoTable))) {

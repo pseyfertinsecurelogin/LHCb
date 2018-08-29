@@ -1605,7 +1605,7 @@ Gaudi::Math::GenericSpline2D::GenericSpline2D
 // set k-parameter
 // ===========================================================================
 bool Gaudi::Math::GenericSpline2D::setParameter
-( const unsigned int k , const double value ) 
+( const unsigned int k , const double value )
 {
   if ( k >= m_pars.size() )    { return false  ; }
   const double v = m_pars[k] ;
@@ -1615,24 +1615,24 @@ bool Gaudi::Math::GenericSpline2D::setParameter
   return true ;
 }
 // ===========================================================================
-// make the calcualtions 
+// make the calcualtions
 // ===========================================================================
 double Gaudi::Math::GenericSpline2D::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   const unsigned int NX = fx.size() ;
   const unsigned int NY = fy.size() ;
   //
   double result = 0.0 ;
-  for ( unsigned short ix = 0 ; ix < NX ; ++ix ) 
+  for ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     const double vx = fx[ix] ;
-    for ( unsigned short iy = 0 ; iy < NY ; ++iy ) 
+    for ( unsigned short iy = 0 ; iy < NY ; ++iy )
     {
       const double vy = fy[iy] ;
       const double p  = par ( ix , iy ) ;
-      result += p *vx * vy ;  
+      result += p *vx * vy ;
     }
   }
   return result * ( m_xspline.order() + 1 ) * ( m_yspline.order() + 1 ) ;
@@ -1640,7 +1640,7 @@ double Gaudi::Math::GenericSpline2D::calculate
 // ===========================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::GenericSpline2D::evaluate 
+double Gaudi::Math::GenericSpline2D::evaluate
   ( const double x , const double y ) const
 {
   //
@@ -1938,7 +1938,7 @@ double Gaudi::Math::GenericSpline2D::integrateX
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::GenericSpline2D::integral   () const 
+double Gaudi::Math::GenericSpline2D::integral   () const
 { return std::accumulate ( m_pars.begin() , m_pars.end() ,  0.0 ) ; }
 // ============================================================================
 /*  get the integral over X  for given Y
@@ -2024,24 +2024,24 @@ double Gaudi::Math::GenericSpline2D::integrateX
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2D&
-Gaudi::Math::GenericSpline2D::operator += ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2D::operator += ( const double a )
+{
   if   ( s_zero ( a ) ) { return *this ; }
   LHCb::Math::shift ( m_pars , a ) ;
-  return *this ; 
+  return *this ;
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2D&
-Gaudi::Math::GenericSpline2D::operator -= ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2D::operator -= ( const double a )
+{
   if   ( s_zero ( a ) ) { return *this ; }
   LHCb::Math::shift ( m_pars , -a ) ;
-  return *this ; 
+  return *this ;
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2D&
-Gaudi::Math::GenericSpline2D::operator *= ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2D::operator *= ( const double a )
+{
   if      ( s_equal ( a , 1 ) ) { return *this ; }
   else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
   LHCb::Math::scale ( m_pars , a ) ;
@@ -2049,17 +2049,17 @@ Gaudi::Math::GenericSpline2D::operator *= ( const double a )
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2D&
-Gaudi::Math::GenericSpline2D::operator /= ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2D::operator /= ( const double a )
+{
   if   ( s_equal ( a , 1 ) ) { return *this ; }
   LHCb::Math::scale ( m_pars , 1/a ) ;
   return *this ;
 }
 // ============================================================================
-// negate it 
+// negate it
 // ============================================================================
 Gaudi::Math::GenericSpline2D
-Gaudi::Math::GenericSpline2D::operator-() const 
+Gaudi::Math::GenericSpline2D::operator-() const
 {
   GenericSpline2D b ( *this ) ;
   LHCb::Math::negate ( b.m_pars ) ;
@@ -2068,49 +2068,49 @@ Gaudi::Math::GenericSpline2D::operator-() const
 // ============================================================================
 // Sum of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__add__   ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__add__   ( const double value ) const
 { return  (*this) + value ; }
 // ============================================================================
 // Sum of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__radd__ ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__radd__ ( const double value ) const
 { return  (*this) + value ; }
 // ============================================================================
 // Subtract a constant from Benrstein polynomial
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__sub__   ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__sub__   ( const double value ) const
 { return  (*this) - value ; }
 // ============================================================================
 // Constant minus GenericSpline polynomial
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__rsub__  ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__rsub__  ( const double value ) const
 { return  value - (*this) ; }
 // ============================================================================
 // Product of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__mul__  ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__mul__  ( const double value ) const
 { return  (*this) * value ; }
 // ============================================================================
 // Product of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__rmul__ ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__rmul__ ( const double value ) const
 { return  (*this) * value ; }
 // ============================================================================
 // Divide Benrstein polynomial by a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
-Gaudi::Math::GenericSpline2D::__div__  ( const double value ) const 
+Gaudi::Math::GenericSpline2D
+Gaudi::Math::GenericSpline2D::__div__  ( const double value ) const
 { return  (*this) / value ; }
 // ============================================================================
 // Negate GenericSpline polynomial
 // ============================================================================
-Gaudi::Math::GenericSpline2D 
+Gaudi::Math::GenericSpline2D
 Gaudi::Math::GenericSpline2D::__neg__  () const { return  -(*this) ; }
 // ============================================================================
 
@@ -2129,7 +2129,7 @@ Gaudi::Math::GenericSpline2DSym::GenericSpline2DSym
 // set k-parameter
 // ===========================================================================
 bool Gaudi::Math::GenericSpline2DSym::setParameter
-( const unsigned int k , const double value ) 
+( const unsigned int k , const double value )
 {
   if ( k >= m_pars.size() )    { return false  ; }
   const double v = m_pars[k] ;
@@ -2139,11 +2139,11 @@ bool Gaudi::Math::GenericSpline2DSym::setParameter
   return true ;
 }
 // ===========================================================================
-// make the calcualtions 
+// make the calcualtions
 // ===========================================================================
 double Gaudi::Math::GenericSpline2DSym::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   //
   const unsigned int NX = fx.size() ;
@@ -2154,7 +2154,7 @@ double Gaudi::Math::GenericSpline2DSym::calculate
   {
     result   += par ( ix , ix ) * fx[ix] * fy[ix] ;
     for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
-    { result += par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
+    { result += par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; }
   }
   //
   const unsigned int scale = ( m_spline.order() + 1 ) ;
@@ -2164,7 +2164,7 @@ double Gaudi::Math::GenericSpline2DSym::calculate
 // ===========================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::GenericSpline2DSym::evaluate 
+double Gaudi::Math::GenericSpline2DSym::evaluate
 ( const double x , const double y ) const
 {
   //
@@ -2401,15 +2401,15 @@ double Gaudi::Math::GenericSpline2DSym::integrateX
  *  @param yhigh high edge in y
  */
 // ============================================================================
-double Gaudi::Math::GenericSpline2DSym::integral   () const 
-{ 
+double Gaudi::Math::GenericSpline2DSym::integral   () const
+{
   const unsigned short  NX = m_spline.npars() ;
   double result = 0 ;
   for  ( unsigned short ix = 0 ; ix < NX ; ++ix )
   {
     result   += par ( ix , ix ) ;
     for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
-    { result += 2 * par ( ix , iy ) ; } 
+    { result += 2 * par ( ix , iy ) ; }
   }
   //
   return result ;
@@ -2464,24 +2464,24 @@ double Gaudi::Math::GenericSpline2DSym::integrateX
 
 // ============================================================================
 Gaudi::Math::GenericSpline2DSym&
-Gaudi::Math::GenericSpline2DSym::operator += ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2DSym::operator += ( const double a )
+{
   if   ( s_zero ( a ) ) { return *this ; }
   LHCb::Math::shift ( m_pars , a ) ;
-  return *this ; 
+  return *this ;
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2DSym&
-Gaudi::Math::GenericSpline2DSym::operator -= ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2DSym::operator -= ( const double a )
+{
   if   ( s_zero ( a ) ) { return *this ; }
   LHCb::Math::shift ( m_pars , -a ) ;
-  return *this ; 
+  return *this ;
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2DSym&
-Gaudi::Math::GenericSpline2DSym::operator *= ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2DSym::operator *= ( const double a )
+{
   if      ( s_equal ( a , 1 ) ) { return *this ; }
   else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
   LHCb::Math::scale ( m_pars , a ) ;
@@ -2489,17 +2489,17 @@ Gaudi::Math::GenericSpline2DSym::operator *= ( const double a )
 }
 // ============================================================================
 Gaudi::Math::GenericSpline2DSym&
-Gaudi::Math::GenericSpline2DSym::operator /= ( const double a ) 
-{ 
+Gaudi::Math::GenericSpline2DSym::operator /= ( const double a )
+{
   if   ( s_equal ( a , 1 ) ) { return *this ; }
   LHCb::Math::scale ( m_pars , 1/a ) ;
   return *this ;
 }
 // ============================================================================
-// negate it 
+// negate it
 // ============================================================================
 Gaudi::Math::GenericSpline2DSym
-Gaudi::Math::GenericSpline2DSym::operator-() const 
+Gaudi::Math::GenericSpline2DSym::operator-() const
 {
   GenericSpline2DSym b ( *this ) ;
   LHCb::Math::negate ( b.m_pars ) ;
@@ -2508,49 +2508,49 @@ Gaudi::Math::GenericSpline2DSym::operator-() const
 // ============================================================================
 // Sum of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__add__   ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__add__   ( const double value ) const
 { return  (*this) + value ; }
 // ============================================================================
 // Sum of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__radd__ ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__radd__ ( const double value ) const
 { return  (*this) + value ; }
 // ============================================================================
 // Subtract a constant from Benrstein polynomial
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__sub__   ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__sub__   ( const double value ) const
 { return  (*this) - value ; }
 // ============================================================================
 // Constant minus GenericSpline polynomial
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__rsub__  ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__rsub__  ( const double value ) const
 { return  value - (*this) ; }
 // ============================================================================
 // Product of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__mul__  ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__mul__  ( const double value ) const
 { return  (*this) * value ; }
 // ============================================================================
 // Product of GenericSpline polynomial and a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__rmul__ ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__rmul__ ( const double value ) const
 { return  (*this) * value ; }
 // ============================================================================
 // Divide Benrstein polynomial by a constant
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
-Gaudi::Math::GenericSpline2DSym::__div__  ( const double value ) const 
+Gaudi::Math::GenericSpline2DSym
+Gaudi::Math::GenericSpline2DSym::__div__  ( const double value ) const
 { return  (*this) / value ; }
 // ============================================================================
 // Negate GenericSpline polynomial
 // ============================================================================
-Gaudi::Math::GenericSpline2DSym 
+Gaudi::Math::GenericSpline2DSym
 Gaudi::Math::GenericSpline2DSym::__neg__  () const { return  -(*this) ; }
 // ============================================================================
 
@@ -2562,20 +2562,20 @@ Gaudi::Math::GenericSpline2DSym::__neg__  () const { return  -(*this) ; }
 
 
 // ============================================================================
-// Positive 2D spline 
+// Positive 2D spline
 // ============================================================================
-Gaudi::Math::Spline2D::Spline2D 
+Gaudi::Math::Spline2D::Spline2D
 ( const Gaudi::Math::BSpline& xspline ,
-  const Gaudi::Math::BSpline& yspline ) 
-  : m_spline  ( xspline , yspline ) 
-  , m_sphere  ( xspline.npars() * yspline.npars() - 1 ) 
+  const Gaudi::Math::BSpline& yspline )
+  : m_spline  ( xspline , yspline )
+  , m_sphere  ( xspline.npars() * yspline.npars() - 1 )
 {
   updateSpline() ;
 }
 // =============================================================================
 // update spline coefficients
 // =============================================================================
-bool Gaudi::Math::Spline2D::updateSpline()  
+bool Gaudi::Math::Spline2D::updateSpline()
 {
   //
   bool update = false ;
@@ -2589,11 +2589,11 @@ bool Gaudi::Math::Spline2D::updateSpline()
 }
 
 // ============================================================================
-// Positive symmetric 2D spline 
+// Positive symmetric 2D spline
 // ============================================================================
-Gaudi::Math::Spline2DSym::Spline2DSym 
+Gaudi::Math::Spline2DSym::Spline2DSym
 ( const Gaudi::Math::BSpline&  spline )
-  : m_spline ( spline ) 
+  : m_spline ( spline )
   , m_sphere ( spline.npars() * ( spline.npars() + 1 ) / 2 - 1  )
 {
   updateSpline() ;
@@ -2601,7 +2601,7 @@ Gaudi::Math::Spline2DSym::Spline2DSym
 // =============================================================================
 // update spline coefficients
 // =============================================================================
-bool Gaudi::Math::Spline2DSym::updateSpline()  
+bool Gaudi::Math::Spline2DSym::updateSpline()
 {
   //
   bool update = false ;
@@ -2610,14 +2610,14 @@ bool Gaudi::Math::Spline2DSym::updateSpline()
     const bool updated = m_spline.setPar ( ix , m_sphere.x2 ( ix ) ) ;
     update = updated || update ;
   }
-  // 
+  //
   if ( update ) { m_spline /= m_spline.integral() ; }
   //
   return update ;
 }
 
 // ============================================================================
-// CONVEX  HULLS 
+// CONVEX  HULLS
 // ============================================================================
 namespace
 {
@@ -2922,7 +2922,7 @@ Gaudi::Math::Interpolation::bspline
   //
   std::vector< std::pair<double,double> > xy { N } ;
   for ( unsigned short i = 0 ; i < N ;   ++i )
-  { xy[i] = std::make_pair ( x[i] , y[i] ) ; }
+  { xy[i] = { x[i] , y[i] } ; }
   return bspline ( xy , bs ) ;
 }
 // ============================================================================
