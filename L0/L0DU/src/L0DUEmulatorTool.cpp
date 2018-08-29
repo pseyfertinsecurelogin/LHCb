@@ -396,7 +396,7 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     // ------------
     // PGA3-Block
     // -----------
-    auto ptMu = LHCb::make_array(
+    auto ptMu = std::array{
       digit( L0DUBase::Muon1::Pt ) | ( digit( L0DUBase::Muon1::Sign ) << 7 ),
       digit( L0DUBase::Muon2::Pt ) | ( digit( L0DUBase::Muon2::Sign ) << 7 ),
       digit( L0DUBase::Muon3::Pt ) | ( digit( L0DUBase::Muon3::Sign ) << 7 ),
@@ -404,9 +404,9 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
       digit( L0DUBase::Muon5::Pt ) | ( digit( L0DUBase::Muon5::Sign ) << 7 ),
       digit( L0DUBase::Muon6::Pt ) | ( digit( L0DUBase::Muon6::Sign ) << 7 ),
       digit( L0DUBase::Muon7::Pt ) | ( digit( L0DUBase::Muon7::Sign ) << 7 ),
-      digit( L0DUBase::Muon8::Pt ) | ( digit( L0DUBase::Muon8::Sign ) << 7 ) );
+      digit( L0DUBase::Muon8::Pt ) | ( digit( L0DUBase::Muon8::Sign ) << 7 ) };
 
-    auto adMu = LHCb::make_array(
+    auto adMu = std::array{
       digit(L0DUBase::Muon1::Address) | (0 << 13),
       digit(L0DUBase::Muon2::Address) | (1 << 13),
       digit(L0DUBase::Muon3::Address) | (2 << 13),
@@ -414,7 +414,7 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
       digit(L0DUBase::Muon5::Address) | (4 << 13),
       digit(L0DUBase::Muon6::Address) | (5 << 13),
       digit(L0DUBase::Muon7::Address) | (6 << 13),
-      digit(L0DUBase::Muon8::Address) | (7 << 13) );
+      digit(L0DUBase::Muon8::Address) | (7 << 13) };
 
     unsigned int nmuons  =0;
     unsigned int muPt[2]={0,0};

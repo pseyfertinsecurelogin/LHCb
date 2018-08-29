@@ -8,13 +8,13 @@
 // ====================================================================
 namespace {
   auto mp = [](const char* p, unsigned int i) { return std::make_pair(p,i); };
-  static const auto s_layerMap = LHCb::make_array(
+  static const auto s_layerMap = std::array {
       // TT layer mapping
       mp("TTaX", 9), mp("TTaU",10), mp("TTbV",17), mp("TTbX",18),
       // IT layer mapping
       mp("T1X1", 9), mp("T1U", 10), mp("T1V", 11), mp("T1X2",12),
       mp("T2X1",17), mp("T2U", 18), mp("T2V", 19), mp("T2X2",20),
-      mp("T3X1",25), mp("T3U", 26), mp("T3V", 27), mp("T3X2",28) );
+      mp("T3X1",25), mp("T3U", 26), mp("T3V", 27), mp("T3X2",28) };
 }
 // ====================================================================
 

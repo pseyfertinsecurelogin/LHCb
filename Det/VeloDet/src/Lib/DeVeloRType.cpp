@@ -21,9 +21,6 @@
 #include "VeloDet/DeVeloRType.h"
 #include "Kernel/VeloChannelID.h"
 
-// for make_array
-#include "Kernel/STLExtensions.h"
-
 #include "getOutputLevel.h"
 
 namespace VeloDet {
@@ -742,9 +739,9 @@ StatusCode DeVeloRType::updateZoneLimits()
     auto globalLimitsMin = globalStripLimits(minStrip);
     auto globalLimitsMax = globalStripLimits(maxStrip);
     auto globalLimitsMid = globalStripLimits(midStrip);
-    auto phiLimits = LHCb::make_array( globalLimitsMin.first.phi(), globalLimitsMin.second.phi(),
-                                       globalLimitsMax.first.phi(), globalLimitsMax.second.phi(),
-                                       globalLimitsMid.first.phi(), globalLimitsMid.second.phi()  );
+    auto phiLimits = std::array{  globalLimitsMin.first.phi(), globalLimitsMin.second.phi(),
+                                  globalLimitsMax.first.phi(), globalLimitsMax.second.phi(),
+                                  globalLimitsMid.first.phi(), globalLimitsMid.second.phi()  };
     // map to [0,2pi] for right hand side sensors
     if (isRight()) {
       for (auto& phiLimit : phiLimits) {
@@ -767,9 +764,9 @@ StatusCode DeVeloRType::updateZoneLimits()
                                            globalToVeloHalfBox(globalLimitsMax.second));
     auto halfBoxLimitsMid = std::make_pair(globalToVeloHalfBox(globalLimitsMid.first),
                                            globalToVeloHalfBox(globalLimitsMid.second));
-    phiLimits = LHCb::make_array( halfBoxLimitsMin.first.phi(),halfBoxLimitsMin.second.phi(),
-                                  halfBoxLimitsMax.first.phi(),halfBoxLimitsMax.second.phi(),
-                                  halfBoxLimitsMid.first.phi(),halfBoxLimitsMid.second.phi() );
+    phiLimits = std::array{  halfBoxLimitsMin.first.phi(),halfBoxLimitsMin.second.phi(),
+                             halfBoxLimitsMax.first.phi(),halfBoxLimitsMax.second.phi(),
+                             halfBoxLimitsMid.first.phi(),halfBoxLimitsMid.second.phi() };
     // map to [0,2pi] for right hand side sensors
     if (isRight()) {
       for (auto& phiLimit : phiLimits ) {
