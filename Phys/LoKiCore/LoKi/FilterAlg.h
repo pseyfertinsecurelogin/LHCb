@@ -95,8 +95,6 @@ namespace LoKi
     // ========================================================================
     /// the initialization of the algorithm
     StatusCode initialize () override;
-    /// the finalization   of the algorithm
-    StatusCode finalize   () override;
     // ========================================================================
     /// the copy constructor is disabled
     FilterAlg ( const FilterAlg& ) = delete;        // the copy constructor is disabled
