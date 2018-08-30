@@ -192,6 +192,9 @@ public:
 
   constexpr size_t nSubDetectors() const { return ( ... * sizes ); }
 
+  template <size_t N>
+  static constexpr size_t subSize() { return std::get<N>( std::array{ sizes... } ); }
+
   /**
    * Function to insert a range of hits in (detectorElementId).
    *
