@@ -16,285 +16,262 @@
 
 // Gaudi
 #include "GaudiKernel/Converter.h"
-#include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/HashMap.h"
+#include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/StatEntity.h"
 
 class IDataProviderSvc;
 class IChronoStatSvc;
 
-namespace Rich
+namespace Rich::Future
 {
-  namespace Future
+
+  /** @class Converter_Imp RichFutureKernel/RichConverter.h
+   *
+   *  Extends ::Converter class with GaudiAlg like methods
+   *
+   *  @author Chris Jones
+   *  @date   2009-07-07
+   */
+  class Converter_Imp : public ::Converter
   {
 
-    /** @class Converter_Imp RichFutureKernel/RichConverter.h
-     *
-     *  Extends ::Converter class with GaudiAlg like methods
-     *
-     *  @author Chris Jones
-     *  @date   2009-07-07
-     */
-    class Converter_Imp : public ::Converter
+  public:
+
+    /// Standard constructor
+    Converter_Imp( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr )
+      : ::Converter( storage_type, class_type, svc )
     {
+      /// @todo make this work
+      // declareProperty( "Context", m_context );
+    }
 
-    public:
+    /// standard initialization method
+    virtual StatusCode initialize() override;
 
-      /// Standard constructor
-      Converter_Imp ( long storage_type,
-                      const CLID &class_type,
-                      ISvcLocator *svc = nullptr )
-        : ::Converter ( storage_type, class_type, svc )
+    /// standard finalization  method
+    virtual StatusCode finalize() override;
+
+  public:
+
+    /// name of this converter
+    virtual const std::string &name() const noexcept { return m_name; }
+
+  protected: // few actual data types
+
+    /// the actual type of general counters
+    using Statistics = std::map< std::string, StatEntity >;
+    /// the actual type error/warning counter
+    using Counter = std::map< std::string, unsigned int >;
+    /// storage for active tools
+    using AlgTools = std::vector< IAlgTool * >;
+    /// storage for active services
+    using Services = GaudiUtils::HashMap< std::string, SmartIF< IService > >;
+
+  public: // tools and services
+
+    /// accessor to ToolSvc
+    IToolSvc *toolSvc() const;
+
+    /// accessor to Detector Data Svc
+    IDataProviderSvc *detSvc() const;
+
+    /// accessor to Chrono & Stat service
+    IChronoStatSvc *chronoSvc() const;
+
+    // Useful method for the easy location of tools.
+    template < class TOOL >
+    TOOL *tool( const std::string &type,
+                const std::string &name   = "",
+                const IInterface * parent = nullptr,
+                bool               create = true ) const
+    {
+      TOOL *Tool = nullptr;
+      if ( name.empty() ) { this->toolSvc()->retrieveTool( type, Tool, parent, create ); }
+      else
       {
-        /// @todo make this work
-        //declareProperty( "Context", m_context );
+        this->toolSvc()->retrieveTool( type, name, Tool, parent, create );
       }
+      // add the tool into list of known tools to be properly released
+      addToToolList( Tool );
+      return Tool;
+    }
 
-      /// standard initialization method
-      virtual StatusCode initialize() override;
+    template < class SERVICE >
+    inline SmartIF< SERVICE > svc( const std::string &name, const bool create = true ) const
+    {
+      SmartIF< IService > &baseSvc = this->serviceLocator()->service( name, create );
+      // Try to get the requested interface
+      SmartIF< SERVICE > s;
+      s = baseSvc;
+      // check the results
+      if ( !baseSvc.isValid() || !s.isValid() )
+      { this->Exception( "svc():: Could not retrieve Svc '" + name + "'", StatusCode::FAILURE ); }
+      // add the tool into list of known tools, to be properly released
+      addToServiceList( baseSvc );
+      // return *VALID* located service
+      return s;
+    }
 
-      /// standard finalization  method
-      virtual StatusCode finalize  () override;
+    using Converter::release;
+    /// Release tools and services
+    StatusCode release( const IInterface *interface ) const;
 
-    public:
+    // ============================================================================
+    // Add the given tool to the list of active tools
+    // ============================================================================
+    inline void addToToolList( IAlgTool *tool ) const { m_tools.push_back( tool ); }
+    // ============================================================================
 
-      /// name of this converter
-      virtual const std::string & name() const noexcept { return m_name; }
+    // ============================================================================
+    // Add the given service to the list of active services
+    // ============================================================================
+    inline void addToServiceList( const SmartIF< IService > &svc ) const
+    {
+      if ( svc.isValid() ) { m_services[ svc->name() ] = svc; }
+    }
+    // ============================================================================
 
-    protected: // few actual data types
+  protected:
 
-      /// the actual type of general counters
-      using Statistics = std::map<std::string,StatEntity>;
-      /// the actual type error/warning counter
-      using Counter    = std::map<std::string,unsigned int>;
-      /// storage for active tools
-      using AlgTools = std::vector<IAlgTool*>;
-      /// storage for active services
-      using Services = GaudiUtils::HashMap<std::string, SmartIF<IService> >;
+    /// manual forced (and 'safe') release of the tool
+    StatusCode releaseTool( const IAlgTool *tool ) const;
 
-    public: // tools and services
+    /// manual forced (and 'safe') release of the service
+    StatusCode releaseSvc( const IInterface *svc ) const;
 
-      /// accessor to ToolSvc
-      IToolSvc * toolSvc() const;
+  public: // messaging
 
-      /// accessor to Detector Data Svc
-      IDataProviderSvc* detSvc() const;
+    /** @brief Test the output level
+     *  @param level The message level to test against
+     *  @return boolean Indicating if messages at given level will be printed
+     *  @retval true Messages at level "level" will be printed
+     *  @retval true Messages at level "level" will NOT be printed
+     */
+    inline bool msgLevel( const MSG::Level /* level */ ) const
+    {
+      // return msgLevel() <= level ;
+      /// @todo Implement properly
+      return false;
+    }
 
-      /// accessor to Chrono & Stat service
-      IChronoStatSvc* chronoSvc() const;
+    /** Predefined configurable message stream for the efficient printouts
+     *
+     *  @code
+     *
+     *  if ( a < 0 ) { msgStream( MSG::ERROR ) << "a = " << endmsg ; }
+     *
+     *  @endcode
+     *
+     *  @return Reference to the predefined stream
+     */
+    inline MsgStream &msgStream( const MSG::Level level ) const
+    {
+      if ( !m_msgStream ) { m_msgStream.reset( new MsgStream( this->msgSvc(), this->name() ) ); }
+      return *m_msgStream << level;
+    }
 
-      // Useful method for the easy location of tools.
-      template < class TOOL >
-      TOOL* tool ( const std::string& type              ,
-                   const std::string& name    = ""      ,
-                   const IInterface*  parent  = nullptr ,
-                   bool               create  = true    ) const
-      {
-        TOOL* Tool = nullptr ;
-        if ( name.empty() )
-        {
-          this->toolSvc()->retrieveTool( type, Tool, parent, create );
-        }
-        else
-        {
-          this->toolSvc()->retrieveTool( type, name, Tool, parent, create );
-        }
-        // add the tool into list of known tools to be properly released
-        addToToolList( Tool );
-        return Tool;
-      }
+    /// Delete the current messaging object
+    inline void resetMsgStream() const { m_msgStream.reset( nullptr ); }
 
-      template < class SERVICE >
-      inline SmartIF<SERVICE> svc( const std::string& name   ,
-                                   const bool         create = true ) const
-      {
-        SmartIF<IService> & baseSvc = this->serviceLocator()->service(name, create);
-        // Try to get the requested interface
-        SmartIF<SERVICE> s;
-        s = baseSvc;
-        // check the results
-        if ( !baseSvc.isValid() || !s.isValid() )
-        {
-          this->Exception ("svc():: Could not retrieve Svc '" + name + "'", StatusCode::FAILURE);
-        }
-        // add the tool into list of known tools, to be properly released
-        addToServiceList(baseSvc);
-        // return *VALID* located service
-        return s;
-      }
+    /// shortcut for the method msgStream ( MSG::ALWAYS )
+    inline MsgStream &always() const { return msgStream( MSG::ALWAYS ); }
+    /// shortcut for the method msgStream ( MSG::FATAL   )
+    inline MsgStream &fatal() const { return msgStream( MSG::FATAL ); }
+    /// shortcut for the method msgStream ( MSG::ERROR   )
+    inline MsgStream &err() const { return msgStream( MSG::ERROR ); }
+    /// shortcut for the method msgStream ( MSG::ERROR   )
+    inline MsgStream &error() const { return msgStream( MSG::ERROR ); }
+    /// shortcut for the method msgStream ( MSG::WARNING )
+    inline MsgStream &warning() const { return msgStream( MSG::WARNING ); }
+    /// shortcut for the method msgStream ( MSG::INFO    )
+    inline MsgStream &info() const { return msgStream( MSG::INFO ); }
+    /// shortcut for the method msgStream ( MSG::DEBUG   )
+    inline MsgStream &debug() const { return msgStream( MSG::DEBUG ); }
+    /// shortcut for the method msgStream ( MSG::VERBOSE )
+    inline MsgStream &verbose() const { return msgStream( MSG::VERBOSE ); }
+    /// shortcut for the method msgStream ( MSG::INFO    )
+    inline MsgStream &msg() const { return msgStream( MSG::INFO ); }
 
-      using Converter::release;
-      /// Release tools and services
-      StatusCode release ( const IInterface* interface ) const;
+    /// print error message
+    StatusCode Error( const std::string &Message,
+                      const StatusCode   Status = StatusCode::FAILURE ) const;
 
-      // ============================================================================
-      // Add the given tool to the list of active tools
-      // ============================================================================
-      inline void addToToolList( IAlgTool * tool ) const
-      {
-        m_tools.push_back( tool ) ;
-      }
-      // ============================================================================
+    /// print warning  message
+    StatusCode Warning( const std::string &Message,
+                        const StatusCode   Status = StatusCode::FAILURE ) const;
 
-      // ============================================================================
-      // Add the given service to the list of active services
-      // ============================================================================
-      inline void addToServiceList( const SmartIF<IService>& svc ) const
-      {
-        if ( svc.isValid() ) { m_services[svc->name()] = svc; }
-      }
-      // ============================================================================
+    /// print info message
+    StatusCode Info( const std::string &Message,
+                     const StatusCode   Status = StatusCode::SUCCESS ) const;
 
-    protected:
+    /// print debug message
+    StatusCode Debug( const std::string &Message,
+                      const StatusCode   Status = StatusCode::SUCCESS ) const;
 
-      /// manual forced (and 'safe') release of the tool
-      StatusCode releaseTool ( const IAlgTool*   tool ) const ;
+    /// print verbose message
+    StatusCode Verbose( const std::string &Message,
+                        const StatusCode   Status = StatusCode::SUCCESS ) const;
 
-      /// manual forced (and 'safe') release of the service
-      StatusCode releaseSvc  ( const IInterface* svc  ) const ;
+    /// print the message
+    StatusCode Print( const std::string &Message,
+                      const MSG::Level   level  = MSG::INFO,
+                      const StatusCode   Status = StatusCode::SUCCESS ) const;
 
-    public: // messaging
+    /// Throw an exception
+    StatusCode Exception( const std::string &msg,
+                          const StatusCode   sc = StatusCode( StatusCode::FAILURE, true ) ) const
+    {
+      throw GaudiException( this->name() + ":: " + msg, "", sc );
+      return sc;
+    }
 
-      /** @brief Test the output level
-       *  @param level The message level to test against
-       *  @return boolean Indicating if messages at given level will be printed
-       *  @retval true Messages at level "level" will be printed
-       *  @retval true Messages at level "level" will NOT be printed
-       */
-      inline bool msgLevel( const MSG::Level /* level */ ) const
-      {
-        // return msgLevel() <= level ;
-        /// @todo Implement properly
-        return false;
-      }
+  public:
 
-      /** Predefined configurable message stream for the efficient printouts
-       *
-       *  @code
-       *
-       *  if ( a < 0 ) { msgStream( MSG::ERROR ) << "a = " << endmsg ; }
-       *
-       *  @endcode
-       *
-       *  @return Reference to the predefined stream
-       */
-      inline MsgStream&
-      msgStream ( const MSG::Level level ) const
-      {
-        if ( !m_msgStream )
-        { m_msgStream.reset( new MsgStream ( this->msgSvc() , this->name() ) ); }
-        return *m_msgStream << level ;
-      }
+    /// access context
+    inline const std::string &context() const noexcept { return m_context; }
 
-      /// Delete the current messaging object
-      inline void resetMsgStream() const
-      {
-        m_msgStream.reset( nullptr );
-      }
+  protected:
 
-      /// shortcut for the method msgStream ( MSG::ALWAYS )
-      inline MsgStream&  always () const { return msgStream ( MSG::ALWAYS ) ; }
-      /// shortcut for the method msgStream ( MSG::FATAL   )
-      inline MsgStream&   fatal () const { return msgStream ( MSG::FATAL ) ; }
-      /// shortcut for the method msgStream ( MSG::ERROR   )
-      inline MsgStream&     err () const { return msgStream ( MSG::ERROR ) ; }
-      /// shortcut for the method msgStream ( MSG::ERROR   )
-      inline MsgStream&   error () const { return msgStream ( MSG::ERROR ) ; }
-      /// shortcut for the method msgStream ( MSG::WARNING )
-      inline MsgStream& warning () const { return msgStream ( MSG::WARNING ) ; }
-      /// shortcut for the method msgStream ( MSG::INFO    )
-      inline MsgStream&    info () const { return msgStream ( MSG::INFO ) ; }
-      /// shortcut for the method msgStream ( MSG::DEBUG   )
-      inline MsgStream&   debug () const { return msgStream ( MSG::DEBUG ) ; }
-      /// shortcut for the method msgStream ( MSG::VERBOSE )
-      inline MsgStream& verbose () const { return msgStream ( MSG::VERBOSE ) ; }
-      /// shortcut for the method msgStream ( MSG::INFO    )
-      inline MsgStream&     msg () const { return msgStream ( MSG::INFO ) ; }
+    /// set new converter name
+    inline void setName( const std::string &newName ) { m_name = newName; }
 
-      /// print error message
-      StatusCode Error     ( const std::string    & Message ,
-                             const StatusCode       Status  = StatusCode::FAILURE ) const;
+  protected:
 
-      /// print warning  message
-      StatusCode Warning   ( const std::string    & Message                       ,
-                             const StatusCode       Status  = StatusCode::FAILURE ) const;
+    /** 'Dummy' implementation of property setting method
+     *  @todo Extend to a full implementation if needed
+     */
+    template < class TYPE >
+    void declareProperty( const std::string & /* name */,
+                          TYPE & /* property */,
+                          const std::string & /* doc = "none" */ )
+    {}
 
-      /// print info message
-      StatusCode Info      ( const std::string    & Message ,
-                             const StatusCode       Status  = StatusCode::SUCCESS ) const;
+  private:
 
-      /// print debug message
-      StatusCode Debug     ( const std::string    & Message ,
-                             const StatusCode       Status  = StatusCode::SUCCESS ) const;
+    /// name of this converter
+    std::string m_name;
 
-      /// print verbose message
-      StatusCode Verbose   ( const std::string    & Message ,
-                             const StatusCode       Status  = StatusCode::SUCCESS ) const;
+    /// Context like string
+    std::string m_context { "Offline" };
 
-      /// print the message
-      StatusCode Print     ( const std::string    & Message                       ,
-                             const MSG::Level       level   = MSG::INFO           ,
-                             const StatusCode       Status  = StatusCode::SUCCESS ) const;
+    /// The predefined message stream
+    mutable std::unique_ptr< MsgStream > m_msgStream;
 
-      /// Throw an exception
-      StatusCode Exception
-      ( const std::string    & msg,
-        const StatusCode       sc  = StatusCode(StatusCode::FAILURE,true) ) const
-      {
-        throw GaudiException( this->name() + ":: " + msg , "",  sc );
-        return sc;
-      }
+    /// Tool service
+    IToolSvc *m_toolSvc = nullptr;
 
-    public:
+    /// detector data service
+    IDataProviderSvc *m_detSvc = nullptr;
 
-      /// access context
-      inline const std::string & context() const noexcept { return m_context; }
+    /// Chrono & Stat service
+    IChronoStatSvc *m_chronoSvc = nullptr;
 
-    protected:
+    /// List of active  tools
+    mutable AlgTools m_tools;
 
-      /// set new converter name
-      inline void setName ( const std::string& newName )
-      {
-        m_name = newName;
-      }
+    /// List of active  services
+    mutable Services m_services;
+  };
 
-    protected:
-
-      /** 'Dummy' implementation of property setting method
-       *  @todo Extend to a full implementation if needed
-       */
-      template < class TYPE >
-      void declareProperty ( const std::string & /* name */,
-                             TYPE & /* property */,
-                             const std::string & /* doc = "none" */ ) { }
-
-    private:
-
-      /// name of this converter
-      std::string m_name;
-
-      /// Context like string
-      std::string m_context {"Offline"};
-
-      /// The predefined message stream
-      mutable std::unique_ptr<MsgStream> m_msgStream;
-
-      /// Tool service
-      IToolSvc * m_toolSvc = nullptr;
-
-      /// detector data service
-      IDataProviderSvc * m_detSvc = nullptr;
-
-      /// Chrono & Stat service
-      IChronoStatSvc * m_chronoSvc = nullptr;
-
-      /// List of active  tools
-      mutable AlgTools m_tools;
-
-      /// List of active  services
-      mutable Services m_services;
-
-    };
-
-  }
-}
+} // namespace Rich::Future

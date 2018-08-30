@@ -37,7 +37,7 @@ namespace Rich
 
   public:
 
-      /// Interface ID
+    /// Interface ID
     DeclareInterfaceID( IGenericHPDAnalysisTool, 1, 0 );
 
   public:
@@ -52,13 +52,14 @@ namespace Rich
     class Result
     {
     public:
-      LHCb::RichSmartID id; ///< Detector component the result refers to
-      std::string message;  ///< Message associated with the result
-      StatusCode status;    ///< StatusCode indicating the severity of the report
+
+      LHCb::RichSmartID id;      ///< Detector component the result refers to
+      std::string       message; ///< Message associated with the result
+      StatusCode        status;  ///< StatusCode indicating the severity of the report
     };
 
     /// Type for a list of results
-    using Results = std::vector<Result>;
+    using Results = std::vector< Result >;
 
   public:
 
@@ -69,10 +70,9 @@ namespace Rich
      *
      *  @return StatusCode indicating if the analysis was successfully run or not
      */
-    virtual StatusCode analyse( const LHCb::RichSmartID hpdID,
+    virtual StatusCode analyse( const LHCb::RichSmartID           hpdID,
                                 const LHCb::RichSmartID::Vector & smartIDs,
-                                IGenericHPDAnalysisTool::Results & results ) const = 0;
-
+                                IGenericHPDAnalysisTool::Results &results ) const = 0;
   };
 
-}
+} // namespace Rich

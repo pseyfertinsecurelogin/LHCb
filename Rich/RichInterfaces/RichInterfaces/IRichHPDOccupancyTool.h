@@ -49,7 +49,6 @@ namespace Rich
      *  @return The average HPD occupancy
      */
     virtual double averageOccupancy( const LHCb::RichSmartID hpdID ) const = 0;
-
   };
 
-}
+} // namespace Rich

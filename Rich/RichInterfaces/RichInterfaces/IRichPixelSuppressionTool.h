@@ -20,43 +20,40 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-namespace Rich
+namespace Rich::DAQ
 {
-  namespace DAQ
+
+  //-----------------------------------------------------------------------------
+  /** @class IPixelSuppressionTool IRichPixelSuppressionTool.h
+   * RichKernel/IRichPixelSuppressionTool.h
+   *
+   *  Interface for tool for apply suppression to HPD pixels
+   *
+   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+   *  @date   15/03/2002
+   */
+  //-----------------------------------------------------------------------------
+
+  class IPixelSuppressionTool : public virtual IAlgTool
   {
 
-    //-----------------------------------------------------------------------------
-    /** @class IPixelSuppressionTool IRichPixelSuppressionTool.h RichKernel/IRichPixelSuppressionTool.h
+  public:
+
+    /// Interface ID
+    DeclareInterfaceID( IPixelSuppressionTool, 1, 0 );
+
+    /** Applies pixel suppression to the given HPD
      *
-     *  Interface for tool for apply suppression to HPD pixels
+     *  @param hpdID    HPD identifier
+     *  @param smartIDs Reference to vector of pixel RichSmartIDs for the given HPD
      *
-     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-     *  @date   15/03/2002
+     *  @return Boolean indicating if pixels have been suppressed or not
+     *  @retval true Some (or all) pixels have been suppressed. In the case the vector of
+     *               pixel RichSmartIDs is changed
+     *  @retval false No pixels are suppressed
      */
-    //-----------------------------------------------------------------------------
+    virtual bool applyPixelSuppression( const LHCb::RichSmartID    hpdID,
+                                        LHCb::RichSmartID::Vector &smartIDs ) const = 0;
+  };
 
-    class IPixelSuppressionTool : public virtual IAlgTool
-    {
-
-    public:
-
-      /// Interface ID
-      DeclareInterfaceID( IPixelSuppressionTool, 1, 0 );
-
-      /** Applies pixel suppression to the given HPD
-       *
-       *  @param hpdID    HPD identifier
-       *  @param smartIDs Reference to vector of pixel RichSmartIDs for the given HPD
-       *
-       *  @return Boolean indicating if pixels have been suppressed or not
-       *  @retval true Some (or all) pixels have been suppressed. In the case the vector of
-       *               pixel RichSmartIDs is changed
-       *  @retval false No pixels are suppressed
-       */
-      virtual bool applyPixelSuppression( const LHCb::RichSmartID hpdID,
-                                          LHCb::RichSmartID::Vector & smartIDs ) const = 0;
-
-    };
-
-  }
-}
+} // namespace Rich::DAQ

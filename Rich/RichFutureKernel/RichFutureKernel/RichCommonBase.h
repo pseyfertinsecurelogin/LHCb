@@ -12,10 +12,10 @@
 #pragma once
 
 // Gaudi
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/SerializeSTL.h"
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/SerializeSTL.h"
 
 // Utils
 #include "RichUtils/RichSIMDTypes.h"
@@ -29,10 +29,12 @@ class DeRich;
 
 // Some defines for debug/verbose messages...
 #ifndef _ri_debug
-#define _ri_debug if ( msgLevel(MSG::DEBUG)   ) debug()
+#define _ri_debug                                                                                  \
+  if ( msgLevel( MSG::DEBUG ) ) debug()
 #endif
 #ifndef _ri_verbo
-#define _ri_verbo if ( msgLevel(MSG::VERBOSE) ) verbose()
+#define _ri_verbo                                                                                  \
+  if ( msgLevel( MSG::VERBOSE ) ) verbose()
 #endif
 
 namespace Rich
@@ -52,26 +54,20 @@ namespace Rich
      */
     //-----------------------------------------------------------------------------
 
-    template <class PBASE>
-    class CommonBase : public PBASE,
-                       public Vc::AlignedBase<Vc::VectorAlignment>
+    template < class PBASE >
+    class CommonBase : public PBASE, public Vc::AlignedBase< Vc::VectorAlignment >
     {
 
     public:
 
       /// Standard algorithm-like constructor
-      CommonBase( const std::string& name,
-                  ISvcLocator* pSvcLocator );
+      CommonBase( const std::string &name, ISvcLocator *pSvcLocator );
 
       /// Standard tool-like constructor
-      CommonBase( const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent );
+      CommonBase( const std::string &type, const std::string &name, const IInterface *parent );
 
       /// Standard Converter-like Constructor
-      CommonBase( long storage_type,
-                  const CLID &class_type,
-                  ISvcLocator *svc = nullptr );
+      CommonBase( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr );
 
     public:
 
@@ -99,10 +95,10 @@ namespace Rich
        *
        *  @return Location of given data object
        */
-      inline std::string objectLocation( const DataObject * pObj ) const
+      inline std::string objectLocation( const DataObject *pObj ) const
       {
         return ( !pObj ? "Null DataObject !" :
-                 (pObj->registry() ? pObj->registry()->identifier() : "UnRegistered") );
+                         ( pObj->registry() ? pObj->registry()->identifier() : "UnRegistered" ) );
       }
 
       /** @brief Forced release of a particular tool
@@ -112,29 +108,26 @@ namespace Rich
        *
        *  @param pTool  Pointer to the tool to be released
        */
-      template <typename TOOL>
-      inline void releaseTool( TOOL *& pTool ) const
+      template < typename TOOL >
+      inline void releaseTool( TOOL *&pTool ) const
       {
         if ( pTool )
         {
-          if ( UNLIKELY( this -> msgLevel(MSG::DEBUG) ) )
-          {
-            this -> debug() << " Forced release for tool '" << pTool->name() << "'"
-                            << endmsg;
-          }
-          this -> release( pTool );
+          if ( UNLIKELY( this->msgLevel( MSG::DEBUG ) ) )
+          { this->debug() << " Forced release for tool '" << pTool->name() << "'" << endmsg; }
+          this->release( pTool );
           pTool = nullptr;
         }
         else
         {
-          this -> Warning ( "Attempt to release a NULL Tool pointer" );
+          this->Warning( "Attempt to release a NULL Tool pointer" );
         }
       }
 
     protected: // methods
 
       /// Pointer to Job Options Service
-      inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
+      inline IJobOptionsSvc *joSvc() const noexcept { return m_jos; }
 
       /** Propagate a list oj job options from one object to another
        *  @param from_name The name of the object to get the options from
@@ -145,11 +138,11 @@ namespace Rich
        *  @return StatusCode indicating if the options where correctly copied
        */
       StatusCode
-      propagateJobOptions( const std::string & from_name,
-                           const std::string & to_name,
-                           const std::vector<std::string> & options = std::vector<std::string>(),
-                           const bool overwrite = false ) const;
-      
+      propagateJobOptions( const std::string &               from_name,
+                           const std::string &               to_name,
+                           const std::vector< std::string > &options = std::vector< std::string >(),
+                           const bool                        overwrite = false ) const;
+
     private:
 
       /// Common Constructor initisalisations
@@ -158,9 +151,8 @@ namespace Rich
     private: // data
 
       /// Pointer to job options service
-      IJobOptionsSvc * m_jos = nullptr;
-
+      IJobOptionsSvc *m_jos = nullptr;
     };
 
-  }
-}
+  } // namespace Future
+} // namespace Rich

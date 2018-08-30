@@ -8,6 +8,10 @@ gaudi_depends_on_subdirs(Det/DetDesc
                          Kernel/LHCbKernel)
 
 find_package(Boost)
+find_package(ROOT)
+find_package(XercesC)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
+                           ${XERCESC_INCLUDE_DIRS})
 
 gaudi_add_library(STDetLib
                   src/Lib/*.cpp

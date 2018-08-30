@@ -11,16 +11,16 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 // Local
 #include "RichKernel/RichCommonBase.h"
 
 // RichUtils
+#include "RichUtils/RichHashMap.h"
 #include "RichUtils/RichHistoID.h"
 #include "RichUtils/RichMap.h"
-#include "RichUtils/RichHashMap.h"
 
 // boost
 #include "boost/array.hpp"
@@ -45,25 +45,20 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  template <class PBASE>
-  class HistoBase : public CommonBase<PBASE>
+  template < class PBASE >
+  class HistoBase : public CommonBase< PBASE >
   {
 
   public:
 
     /// Standard algorithm-like constructor
-    HistoBase( const std::string& name,
-               ISvcLocator* pSvcLocator );
+    HistoBase( const std::string &name, ISvcLocator *pSvcLocator );
 
     /// Standard tool-like constructor
-    HistoBase( const std::string& type,
-               const std::string& name,
-               const IInterface* parent );
+    HistoBase( const std::string &type, const std::string &name, const IInterface *parent );
 
     /// Standard Converter-like Constructor
-    HistoBase( long storage_type,
-               const CLID &class_type,
-               ISvcLocator *svc = nullptr );
+    HistoBase( long storage_type, const CLID &class_type, ISvcLocator *svc = nullptr );
 
   private:
 
@@ -115,7 +110,7 @@ namespace Rich
   protected:
 
     /// short name for bin labels
-    using BinLabels = std::vector<std::string>;
+    using BinLabels = std::vector< std::string >;
 
   protected:
 
@@ -132,14 +127,14 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    AIDA::IHistogram1D* richHisto1D( const Rich::HistogramID &  id,
-                                     const std::string &     title,
-                                     const double              low,
+    AIDA::IHistogram1D *richHisto1D( const Rich::HistogramID &id,
+                                     const std::string &      title,
+                                     const double             low,
                                      const double             high,
                                      const unsigned int       bins,
-                                     const std::string&      xAxisLabel = "",
-                                     const std::string&      yAxisLabel = "",
-                                     const BinLabels& binLabels = BinLabels() ) const;
+                                     const std::string &      xAxisLabel = "",
+                                     const std::string &      yAxisLabel = "",
+                                     const BinLabels &        binLabels  = BinLabels() ) const;
 
     /** Book a 2D histogram
      *
@@ -159,19 +154,19 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    AIDA::IHistogram2D* richHisto2D( const Rich::HistogramID &  id,
-                                     const std::string &     title,
+    AIDA::IHistogram2D *richHisto2D( const Rich::HistogramID &id,
+                                     const std::string &      title,
                                      const double             lowX,
-                                     const double            highX,
-                                     const unsigned int      binsX,
+                                     const double             highX,
+                                     const unsigned int       binsX,
                                      const double             lowY,
-                                     const double            highY,
-                                     const unsigned int      binsY,
-                                     const std::string&      xAxisLabel = "",
-                                     const std::string&      yAxisLabel = "",
-                                     const std::string&      zAxisLabel = "",
-                                     const BinLabels& xBinLabels = BinLabels(),
-                                     const BinLabels& yBinLabels = BinLabels() ) const;
+                                     const double             highY,
+                                     const unsigned int       binsY,
+                                     const std::string &      xAxisLabel = "",
+                                     const std::string &      yAxisLabel = "",
+                                     const std::string &      zAxisLabel = "",
+                                     const BinLabels &        xBinLabels = BinLabels(),
+                                     const BinLabels &        yBinLabels = BinLabels() ) const;
 
     /** Book a 1D profile histogram
      *
@@ -186,14 +181,14 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    AIDA::IProfile1D* richProfile1D( const Rich::HistogramID & id,
-                                     const std::string &    title,
+    AIDA::IProfile1D *richProfile1D( const Rich::HistogramID &id,
+                                     const std::string &      title,
                                      const double             low,
-                                     const double            high,
-                                     const unsigned int      bins,
-                                     const std::string&      xAxisLabel = "",
-                                     const std::string&      yAxisLabel = "",
-                                     const BinLabels& binLabels = BinLabels() ) const;
+                                     const double             high,
+                                     const unsigned int       bins,
+                                     const std::string &      xAxisLabel = "",
+                                     const std::string &      yAxisLabel = "",
+                                     const BinLabels &        binLabels  = BinLabels() ) const;
 
     /** Book a 2D profile histogram
      *
@@ -213,19 +208,19 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    AIDA::IProfile2D* richProfile2D( const Rich::HistogramID &  id,
-                                     const std::string &     title,
+    AIDA::IProfile2D *richProfile2D( const Rich::HistogramID &id,
+                                     const std::string &      title,
                                      const double             lowX,
-                                     const double            highX,
-                                     const unsigned int      binsX,
+                                     const double             highX,
+                                     const unsigned int       binsX,
                                      const double             lowY,
-                                     const double            highY,
-                                     const unsigned int      binsY,
-                                     const std::string&      xAxisLabel = "",
-                                     const std::string&      yAxisLabel = "",
-                                     const std::string&      zAxisLabel = "",
-                                     const BinLabels& xBinLabels = BinLabels(),
-                                     const BinLabels& yBinLabels = BinLabels() ) const;
+                                     const double             highY,
+                                     const unsigned int       binsY,
+                                     const std::string &      xAxisLabel = "",
+                                     const std::string &      yAxisLabel = "",
+                                     const std::string &      zAxisLabel = "",
+                                     const BinLabels &        xBinLabels = BinLabels(),
+                                     const BinLabels &        yBinLabels = BinLabels() ) const;
 
     //-----------------------------------------------------------------------------------------
 
@@ -238,20 +233,24 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   2009-07-27
      */
-    template< class HTYPE >
+    template < class HTYPE >
     class HistoMap
     {
     public:
-      using StringToHist = Rich::HashMap < std::string, HTYPE * >;
+
+      using StringToHist = Rich::HashMap< std::string, HTYPE * >;
+
     private:
-      using Map = Rich::Map < Rich::PackedPIDInfo::Pack32_t, StringToHist >;
+
+      using Map = Rich::Map< Rich::PackedPIDInfo::Pack32_t, StringToHist >;
+
     private:
+
       Map map;
+
     public:
-      inline StringToHist & getmap( const Rich::PackedPIDInfo& info ) 
-      { 
-        return map[info.raw()];
-      }
+
+      inline StringToHist &getmap( const Rich::PackedPIDInfo &info ) { return map[ info.raw() ]; }
     };
 
     /// Mapping between IDs and 1D histogram pointers
@@ -269,7 +268,7 @@ namespace Rich
   private:
 
     /// Flag to indicate if histograms have been booked or not
-    mutable bool m_histosAreBooked{false};
+    mutable bool m_histosAreBooked { false };
 
     /// 1D histo map
     mutable Map1DH m_1dhmap;
@@ -293,14 +292,12 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    inline AIDA::IHistogram1D * richHisto1D( const Rich::HistogramID & id ) const
+    inline AIDA::IHistogram1D *richHisto1D( const Rich::HistogramID &id ) const
     {
-      const auto & map = m_1dhmap.getmap(id.packedData());
-      const auto    iH = map.find(id.id());
+      const auto &map = m_1dhmap.getmap( id.packedData() );
+      const auto  iH  = map.find( id.id() );
       if ( iH == map.end() )
-      {
-        this->Exception( "Cannot find pre-booked histogram '"+id.fullid()+"'" );
-      }
+      { this->Exception( "Cannot find pre-booked histogram '" + id.fullid() + "'" ); }
       return iH->second;
     }
 
@@ -310,14 +307,12 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    inline AIDA::IHistogram2D * richHisto2D( const Rich::HistogramID & id ) const
+    inline AIDA::IHistogram2D *richHisto2D( const Rich::HistogramID &id ) const
     {
-      const auto & map = m_2dhmap.getmap(id.packedData());
-      const auto    iH = map.find(id.id());
+      const auto &map = m_2dhmap.getmap( id.packedData() );
+      const auto  iH  = map.find( id.id() );
       if ( iH == map.end() )
-      {
-        this->Exception( "Cannot find pre-booked histogram '"+id.fullid()+"'" );
-      }
+      { this->Exception( "Cannot find pre-booked histogram '" + id.fullid() + "'" ); }
       return iH->second;
     }
 
@@ -327,14 +322,12 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    inline AIDA::IProfile1D * richProfile1D( const Rich::HistogramID & id ) const
+    inline AIDA::IProfile1D *richProfile1D( const Rich::HistogramID &id ) const
     {
-      const auto & map = m_1dpmap.getmap(id.packedData());
-      const auto    iH = map.find(id.id());
+      const auto &map = m_1dpmap.getmap( id.packedData() );
+      const auto  iH  = map.find( id.id() );
       if ( iH == map.end() )
-      {
-        this->Exception( "Cannot find pre-booked histogram '"+id.fullid()+"'" );
-      }
+      { this->Exception( "Cannot find pre-booked histogram '" + id.fullid() + "'" ); }
       return iH->second;
     }
 
@@ -344,19 +337,16 @@ namespace Rich
      *
      * @return Pointer to booked histogram
      */
-    inline AIDA::IProfile2D * richProfile2D( const Rich::HistogramID & id ) const
+    inline AIDA::IProfile2D *richProfile2D( const Rich::HistogramID &id ) const
     {
-      const auto & map = m_2dpmap.getmap(id.packedData());
-      const auto    iH = map.find(id.id());
+      const auto &map = m_2dpmap.getmap( id.packedData() );
+      const auto  iH  = map.find( id.id() );
       if ( iH == map.end() )
-      {
-        this->Exception( "Cannot find pre-booked histogram '"+id.fullid()+"'" );
-      }
+      { this->Exception( "Cannot find pre-booked histogram '" + id.fullid() + "'" ); }
       return iH->second;
     }
 
     //-----------------------------------------------------------------------------------------
-
   };
 
-}
+} // namespace Rich

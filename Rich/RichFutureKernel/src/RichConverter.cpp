@@ -15,5 +15,5 @@
 // ============================================================================
 // Force creation of templated classes
 #include "RichCommonBase.icpp"
-template class Rich::Future::CommonBase< Rich::Future::Converter_Imp > ;
+template class Rich::Future::CommonBase< Rich::Future::Converter_Imp >;
 // ============================================================================

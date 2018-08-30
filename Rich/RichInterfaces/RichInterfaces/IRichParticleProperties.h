@@ -12,9 +12,9 @@
 #pragma once
 
 // Kernel
+#include "GaudiKernel/IAlgTool.h"
 #include "Kernel/RichParticleIDType.h"
 #include "Kernel/RichRadiatorType.h"
-#include "GaudiKernel/IAlgTool.h"
 
 // Event Model
 namespace LHCb
@@ -56,8 +56,7 @@ namespace Rich
      *
      *  @return The value of beta
      */
-    virtual ScType beta( const ScType ptot,
-                         const Rich::ParticleIDType id ) const = 0;
+    virtual ScType beta( const ScType ptot, const Rich::ParticleIDType id ) const = 0;
 
     /** Calculates the nominal mass for a given particle type
      *
@@ -85,7 +84,7 @@ namespace Rich
      *          can be emitted
      */
     virtual ScType thresholdMomentum( const Rich::ParticleIDType id,
-                                      const Rich::RadiatorType rad ) const = 0;
+                                      const Rich::RadiatorType   rad ) const = 0;
 
     /** Calculates the threshold momentum for a given mass hypothesis
      *  for the given RichTrackSegment
@@ -96,12 +95,11 @@ namespace Rich
      *  @return The momentum threshold value, below which no Cherenkov radiation
      *          can be emitted
      */
-    virtual ScType thresholdMomentum( const Rich::ParticleIDType id,
-                                      const LHCb::RichTrackSegment& trSeg ) const = 0;
+    virtual ScType thresholdMomentum( const Rich::ParticleIDType    id,
+                                      const LHCb::RichTrackSegment &trSeg ) const = 0;
 
     /// Vector of the mass hypotheses to be considered
-    virtual const Rich::Particles & particleTypes() const = 0;
-
+    virtual const Rich::Particles &particleTypes() const = 0;
   };
 
-}
+} // namespace Rich

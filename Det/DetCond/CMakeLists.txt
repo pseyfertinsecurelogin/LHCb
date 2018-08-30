@@ -11,8 +11,10 @@ gaudi_depends_on_subdirs(Det/DetDesc
 find_package(Boost COMPONENTS system thread filesystem)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)
+find_package(ROOT)
 
-include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${COOL_INCLUDE_DIRS})
+include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${COOL_INCLUDE_DIRS}
+                           ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 gaudi_add_library(DetCondLib
                   src/Lib/*.cpp

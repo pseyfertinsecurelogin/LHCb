@@ -25,49 +25,54 @@ namespace Rich
     namespace RichZeroSuppDataV3
     {
 
-      template< class Version, class Header, class Footer >
-      void RichZeroSuppData<Version,Header,Footer>::buildData( const LHCb::RichSmartID::Vector & pdHits )
+      template < class Version, class Header, class Footer >
+      void RichZeroSuppData< Version, Header, Footer >::buildData(
+        const LHCb::RichSmartID::Vector &pdHits )
       {
         using namespace RichZSPacked_V2;
 
         // temporary data map
         typedef Rich::Map< ShortType, ShortType > DataMap;
-        DataMap dataM;
-        
+        DataMap                                   dataM;
+
         // Get dummy packed data
         const RichZSPacked zsData;
 
         // Loop over digits
-        for ( const auto& ID : pdHits )
+        for ( const auto &ID : pdHits )
         {
           // Get bit and address
           const ShortType bit     = zsData.bitFromCol( ID.pixelCol() );
           const ShortType address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
-          this->setBit( dataM[address], bit );
+          this->setBit( dataM[ address ], bit );
         }
 
         // How many words ?
-        const ShortType nWords = dataM.size()/2 + dataM.size()%2;
-        if ( nWords > MaxDataSize ) { m_tooBig = true; return; }
+        const ShortType nWords = dataM.size() / 2 + dataM.size() % 2;
+        if ( nWords > MaxDataSize )
+        {
+          m_tooBig = true;
+          return;
+        }
 
         // Store "nEightBitBlocksPlusOne" value in header word
-        Header head ( this->header() );
-        head.setNEightBitBlocksPlusOne ( dataM.size() + 1 );
+        Header head( this->header() );
+        head.setNEightBitBlocksPlusOne( dataM.size() + 1 );
         this->setHeader( head );
 
         // Loop over address / bitfield pairs and fill to data bank
         auto iD = dataM.begin();
         while ( iD != dataM.end() )
         {
-          const ShortType address0( (*iD).first ), field0( (*iD).second );
-          ShortType address1(0), field1(0);
+          const ShortType address0( ( *iD ).first ), field0( ( *iD ).second );
+          ShortType       address1( 0 ), field1( 0 );
           ++iD;
           if ( iD != dataM.end() )
           {
-            address1 = (*iD).first;
-            field1   = (*iD).second;
+            address1 = ( *iD ).first;
+            field1   = ( *iD ).second;
             ++iD;
           }
 
@@ -79,17 +84,15 @@ namespace Rich
         if ( this->footer().hasParityWord() )
         {
           Footer foot = this->footer();
-          foot.setParityWord( this->createParityWord(pdHits) );
-          this->setFooter(foot);
+          foot.setParityWord( this->createParityWord( pdHits ) );
+          this->setFooter( foot );
         }
-
       }
 
-      template< class Version, class Header, class Footer >
-      ShortType 
-      RichZeroSuppData<Version,Header,Footer>::
-      fillRichSmartIDs ( LHCb::RichSmartID::Vector & ids,
-                         const LHCb::RichSmartID hpdID ) const
+      template < class Version, class Header, class Footer >
+      ShortType RichZeroSuppData< Version, Header, Footer >::fillRichSmartIDs(
+        LHCb::RichSmartID::Vector &ids,
+        const LHCb::RichSmartID    hpdID ) const
       {
         using namespace RichZSPacked_V2;
 
@@ -97,10 +100,10 @@ namespace Rich
         const ShortType nDataWords = this->dataSize();
 
         // count hits made
-        ShortType nHits(0);
+        ShortType nHits( 0 );
 
         // Is the last word padded or not ?
-        const bool lastWordIsPadded = ( 0 == this->header().nEightBitBlocksPlusOne()%2 );
+        const bool lastWordIsPadded = ( 0 == this->header().nEightBitBlocksPlusOne() % 2 );
 
         // rough guess at number of hits
         ids.reserve( nDataWords * 4 );
@@ -110,7 +113,7 @@ namespace Rich
         {
 
           // Get packed data data
-          const RichZSPacked zsData( this->data()[iData] );
+          const RichZSPacked zsData( this->data()[ iData ] );
 
           // Get first address and bit field
           const ShortType address0 = zsData.address0();
@@ -119,18 +122,20 @@ namespace Rich
           {
             for ( ShortType iB = 0; iB < RichZSPacked::BitsField; ++iB )
             {
-              if ( this->isBitOn(bits0,iB) )
+              if ( this->isBitOn( bits0, iB ) )
               {
-                ids.emplace_back( hpdID.rich(), hpdID.panel(),
-                                  hpdID.pdNumInCol(), hpdID.pdCol(),
-                                  zsData.rowFromAddress(address0),
-                                  zsData.colFromAddressAndBit(address0,iB) );
+                ids.emplace_back( hpdID.rich(),
+                                  hpdID.panel(),
+                                  hpdID.pdNumInCol(),
+                                  hpdID.pdCol(),
+                                  zsData.rowFromAddress( address0 ),
+                                  zsData.colFromAddressAndBit( address0, iB ) );
                 ++nHits;
               }
             }
           }
 
-          if ( (iData < this->dataSize()-1) || !lastWordIsPadded )
+          if ( ( iData < this->dataSize() - 1 ) || !lastWordIsPadded )
           {
             // Get second address and bit field
             const ShortType address1 = zsData.address1();
@@ -139,24 +144,25 @@ namespace Rich
             {
               for ( ShortType iB = 0; iB < RichZSPacked::BitsField; ++iB )
               {
-                if ( this->isBitOn(bits1,iB) )
+                if ( this->isBitOn( bits1, iB ) )
                 {
-                  ids.emplace_back( hpdID.rich(), hpdID.panel(),
-                                    hpdID.pdNumInCol(), hpdID.pdCol(),
-                                    zsData.rowFromAddress(address1),
-                                    zsData.colFromAddressAndBit(address1,iB) );
+                  ids.emplace_back( hpdID.rich(),
+                                    hpdID.panel(),
+                                    hpdID.pdNumInCol(),
+                                    hpdID.pdCol(),
+                                    zsData.rowFromAddress( address1 ),
+                                    zsData.colFromAddressAndBit( address1, iB ) );
                   ++nHits;
                 }
               }
             }
           }
-
         }
 
         return nHits;
       }
 
-    } // V3 namespace
+    } // namespace RichZeroSuppDataV3
 
-  }
-}
+  } // namespace DAQ
+} // namespace Rich

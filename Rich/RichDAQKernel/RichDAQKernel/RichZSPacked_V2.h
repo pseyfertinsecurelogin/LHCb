@@ -10,260 +10,236 @@
 #pragma once
 
 // Gaudi
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
 
 // numberings
 #include "RichUtils/RichDAQDefinitions.h"
 
-namespace Rich
+namespace Rich::DAQ
 {
-  namespace DAQ
+
+  /** @namespace Rich::DAQ::RichZSPacked_V2
+   *
+   *  Namespace for second version of LHCb mode ZS compressed data words
+   *
+   *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
+   *  @date   2005-01-12
+   */
+  namespace RichZSPacked_V2
   {
 
-    /** @namespace Rich::DAQ::RichZSPacked_V2
+    /// Import HPD specific parameters
+    using namespace Rich::DAQ::HPD;
+
+    /** @class RichZSPacked RichZSPacked_V2.h
      *
-     *  Namespace for second version of LHCb mode ZS compressed data words
+     *  Utility class representing 2 groups of address and
+     *  bit-field packed into a single word for LHCb mode readout ONLY
      *
-     *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
+     *  Second version. Inverted row number (0,1,2 -> 31,30,29)
+     *  as compared to the first version. Used in 2006 September testbeam.
+     *
+     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   2005-01-12
      */
-    namespace RichZSPacked_V2
+
+    class RichZSPacked
     {
 
-      /// Import HPD specific parameters
-      using namespace Rich::DAQ::HPD;
+    public: // definitions
 
-      /** @class RichZSPacked RichZSPacked_V2.h
-       *
-       *  Utility class representing 2 groups of address and
-       *  bit-field packed into a single word for LHCb mode readout ONLY
-       *
-       *  Second version. Inverted row number (0,1,2 -> 31,30,29)
-       *  as compared to the first version. Used in 2006 September testbeam.
-       *
-       *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-       *  @date   2005-01-12
-       */
+      /// Number of bits for each address
+      static const IndexType BitsAddress = 8;
+      /// Number of bits for each bit field
+      static const IndexType BitsField = 8;
 
-      class RichZSPacked
+    private: // definitions
+
+      // shift registers
+      static const IndexType ShiftField0   = 0;
+      static const IndexType ShiftAddress0 = ShiftField0 + BitsField;
+      static const IndexType ShiftField1   = ShiftAddress0 + BitsAddress;
+      static const IndexType ShiftAddress1 = ShiftField1 + BitsField;
+
+      // The masks
+      static const LongType MaskField0   = ( LongType )( ( 1 << BitsField ) - 1 ) << ShiftField0;
+      static const LongType MaskAddress0 = ( LongType )( ( 1 << BitsAddress ) - 1 )
+                                           << ShiftAddress0;
+      static const LongType MaskField1   = ( LongType )( ( 1 << BitsField ) - 1 ) << ShiftField1;
+      static const LongType MaskAddress1 = ( LongType )( ( 1 << BitsAddress ) - 1 )
+                                           << ShiftAddress1;
+
+      // the max value of address and bit-field storable
+      static const ShortType MaxField   = ( 1 << BitsField ) - 1;
+      static const ShortType MaxAddress = ( 1 << BitsAddress ) - 1;
+
+    public: // methods
+
+      /// Copy Constructor
+      RichZSPacked( const RichZSPacked &word )
+        : m_data( word.data() ), m_aliceMode( word.aliceMode() )
+      {}
+
+      /// Constructor from LongType
+      RichZSPacked( const LongType data = 0, const bool aliceMode = false )
+        : m_data( data ), m_aliceMode( aliceMode )
+      {}
+
+      /// Constructor from address and field values
+      RichZSPacked( const ShortType address0, ///< First address to store
+                    const ShortType field0,   ///< First bitfield to store
+                    const ShortType address1, ///< Second address to store
+                    const ShortType field1,   ///< Second bitfield to store
+                    const bool      aliceMode = false )
+        : m_data( 0 ), m_aliceMode( aliceMode )
       {
+        /// &todo Setup ALICE mode encoding properly
+        setAddress0( address0 );
+        setBitField0( field0 );
+        setAddress1( address1 );
+        setBitField1( field1 );
+      }
 
-      public: // definitions
+      /// Destructor
+      ~RichZSPacked() = default;
 
-        /// Number of bits for each address
-        static const IndexType BitsAddress = 8;
-        /// Number of bits for each bit field
-        static const IndexType BitsField   = 8;
+      /// Retrieve the full value
+      inline LongType data() const noexcept { return m_data; }
 
-      private: // definitions
+      /// operator to convert to LongType
+      inline operator LongType() const noexcept { return data(); }
 
-        // shift registers
-        static const IndexType ShiftField0    = 0;
-        static const IndexType ShiftAddress0  = ShiftField0   + BitsField;
-        static const IndexType ShiftField1    = ShiftAddress0 + BitsAddress;
-        static const IndexType ShiftAddress1  = ShiftField1   + BitsField;
+      /// Set the first address
+      inline void setAddress0( const ShortType address )
+      {
+        dataInRange( address, MaxAddress );
+        set( address, ShiftAddress0, MaskAddress0 );
+      }
 
-        // The masks
-        static const LongType  MaskField0   = (LongType) ((1 << BitsField)-1)   << ShiftField0;
-        static const LongType  MaskAddress0 = (LongType) ((1 << BitsAddress)-1) << ShiftAddress0;
-        static const LongType  MaskField1   = (LongType) ((1 << BitsField)-1)   << ShiftField1;
-        static const LongType  MaskAddress1 = (LongType) ((1 << BitsAddress)-1) << ShiftAddress1;
+      /// Set the second address
+      inline void setAddress1( const ShortType address )
+      {
+        dataInRange( address, MaxAddress );
+        set( address, ShiftAddress1, MaskAddress1 );
+      }
 
-        // the max value of address and bit-field storable
-        static const ShortType MaxField     = ( 1 << BitsField   ) - 1;
-        static const ShortType MaxAddress   = ( 1 << BitsAddress ) - 1;
+      /// Set the first bit-field
+      inline void setBitField0( const ShortType field )
+      {
+        dataInRange( field, MaxField );
+        set( field, ShiftField0, MaskField0 );
+      }
 
-      public: // methods
+      /// Set the second bit-field
+      inline void setBitField1( const ShortType field )
+      {
+        dataInRange( field, MaxField );
+        set( field, ShiftField1, MaskField1 );
+      }
 
-        /// Copy Constructor
-        RichZSPacked( const RichZSPacked & word )
-          : m_data( word.data() ), m_aliceMode( word.aliceMode() ) {}
+      /// Retrieve the first address
+      inline ShortType address0() const { return ( ( data() & MaskAddress0 ) >> ShiftAddress0 ); }
 
-        /// Constructor from LongType
-        RichZSPacked( const LongType data  = 0,
-                      const bool aliceMode = false ) 
-          : m_data( data ), m_aliceMode( aliceMode ) { }
-        
-        /// Constructor from address and field values
-        RichZSPacked( const ShortType address0 ,  ///< First address to store
-                      const ShortType field0   ,  ///< First bitfield to store
-                      const ShortType address1 ,  ///< Second address to store
-                      const ShortType field1   ,  ///< Second bitfield to store
-                      const bool aliceMode = false
-                      )
-          : m_data ( 0 ), m_aliceMode( aliceMode )
-        {
-          /// &todo Setup ALICE mode encoding properly
-          setAddress0  ( address0 );
-          setBitField0 ( field0   );
-          setAddress1  ( address1 );
-          setBitField1 ( field1   );
-        }
+      /// Retrieve the first address
+      inline ShortType address1() const { return ( ( data() & MaskAddress1 ) >> ShiftAddress1 ); }
 
-        /// Destructor
-        ~RichZSPacked( ) = default;
+      /// Retrieve the first bit-field
+      inline ShortType bitField0() const { return ( ( data() & MaskField0 ) >> ShiftField0 ); }
 
-        /// Retrieve the full value
-        inline LongType data() const noexcept { return m_data; }
+      /// Retrieve the second bit-field
+      inline ShortType bitField1() const { return ( ( data() & MaskField1 ) >> ShiftField1 ); }
 
-        /// operator to convert to LongType
-        inline operator LongType() const noexcept { return data(); }
+      /// Is this in alice mode or not ?
+      inline bool aliceMode() const { return m_aliceMode; }
 
-        /// Set the first address
-        inline void setAddress0( const ShortType address )
-        {
-          dataInRange( address, MaxAddress );
-          set( address, ShiftAddress0, MaskAddress0 );
-        }
+    public:
 
-        /// Set the second address
-        inline void setAddress1( const ShortType address )
-        {
-          dataInRange( address, MaxAddress );
-          set( address, ShiftAddress1, MaskAddress1 );
-        }
+      /** Get address from row and column information
+       *  @param row LHCb pixel row number (0-31)
+       *  @param col LHCb pixel col number (0-31)
+       *  @param subPix ALICE sub-pixel number, within an LHCb pixel (0-7)
+       *  @return The address for the 8-bit block for the given row, col and subPix
+       */
+      inline ShortType addressFromRowCol( const ShortType row,
+                                          const ShortType col,
+                                          const ShortType subPix = 0 ) const
+      {
+        return ( !aliceMode() ? ( ( MaxDataSize - 1 - row ) * 4 + col / BitsField ) :
+                                ( 4 * ( NumAlicePixelsPerLHCbPixel - 1 - subPix ) +
+                                  4 * ( MaxDataSize - 1 - row ) * NumAlicePixelsPerLHCbPixel +
+                                  col / BitsField ) %
+                                  ( 1 + MaxZSAddress ) );
+      }
 
-        /// Set the first bit-field
-        inline void setBitField0( const ShortType field )
-        {
-          dataInRange( field, MaxField );
-          set( field, ShiftField0, MaskField0 );
-        }
+      /** Get bit number from column information
+       *  @param col The LHCb pixel column number
+       *  @return the bit (0-7) for the column
+       */
+      inline ShortType bitFromCol( const ShortType col ) const { return col % BitsField; }
 
-        /// Set the second bit-field
-        inline void setBitField1( const ShortType field )
-        {
-          dataInRange( field, MaxField );
-          set( field, ShiftField1, MaskField1 );
-        }
+      /** Get column information from address and bit number
+       *  @param address The 8-bit address
+       *  @param bit     The bit (0-7)
+       *  @return The LHCb pixel column number
+       */
+      inline ShortType colFromAddressAndBit( const ShortType address, const ShortType bit ) const
+      {
+        return bit + BitsField * ( address % 4 );
+      }
 
-        /// Retrieve the first address
-        inline ShortType address0() const
-        {
-          return ( (data() & MaskAddress0) >> ShiftAddress0 );
-        }
+      /** Get row information from address
+       *  @param address The 8-bit address
+       *  @param aliceModeOffset Offset for ALICE mode
+       *  @return The LHCB pixel row number
+       */
+      inline ShortType rowFromAddress( const ShortType address,
+                                       const ShortType aliceModeOffset = 0 ) const
+      {
+        return ( !aliceMode() ?
+                   ( MaxDataSize - 1 - ( address / 4 ) ) :
+                   ( MaxDataSize - 1 -
+                     ( ( address / ( 4 * NumAlicePixelsPerLHCbPixel ) ) + aliceModeOffset * 8 ) ) );
+      }
 
-        /// Retrieve the first address
-        inline ShortType address1() const
-        {
-          return ( (data() & MaskAddress1) >> ShiftAddress1 );
-        }
+      /** get the ALICE sub-pixel number (0-7) from address
+       *  @param address The 8-bit address
+       *  @return The ALICE sub-pixel number
+       */
+      inline ShortType subPixelFromAddress( const ShortType address ) const
+      {
+        return ( !aliceMode() ? 0 :
+                                NumAlicePixelsPerLHCbPixel - 1 -
+                                  ( address % ( 4 * NumAlicePixelsPerLHCbPixel ) ) / 4 );
+      }
 
-        /// Retrieve the first bit-field
-        inline ShortType bitField0() const
-        {
-          return ( (data() & MaskField0) >> ShiftField0 );
-        }
+    private: // methods
 
-        /// Retrieve the second bit-field
-        inline ShortType bitField1() const
-        {
-          return ( (data() & MaskField1) >> ShiftField1 );
-        }
+      /// Update the internal data
+      inline void setData( const LongType data ) noexcept { m_data = data; }
 
-        /// Is this in alice mode or not ?
-        inline bool aliceMode() const { return m_aliceMode; }
+      /// Set the data value for a given mask and shift value
+      inline void set( const ShortType value, const ShortType shift, const LongType mask )
+      {
+        setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
+      }
 
-      public:
+      /// tests whether a given value is in range for a given data field
+      inline void dataInRange( const ShortType value, const ShortType max ) const
+      {
+        if ( value > max )
+        { throw GaudiException( "Data out of range", "*RichZSPacked*", StatusCode::FAILURE ); }
+      }
 
-        /** Get address from row and column information
-         *  @param row LHCb pixel row number (0-31)
-         *  @param col LHCb pixel col number (0-31)
-         *  @param subPix ALICE sub-pixel number, within an LHCb pixel (0-7)
-         *  @return The address for the 8-bit block for the given row, col and subPix
-         */
-        inline ShortType addressFromRowCol( const ShortType row,
-                                            const ShortType col,
-                                            const ShortType subPix = 0 ) const
-        {
-          return ( !aliceMode() ? 
-                   ( (MaxDataSize-1-row)*4 + col/BitsField ) :
-                   ( 4*(NumAlicePixelsPerLHCbPixel-1-subPix) +
-                     4*(MaxDataSize-1-row)*NumAlicePixelsPerLHCbPixel +
-                     col/BitsField ) % (1+MaxZSAddress)
-                   );
-        }
+    private: // data
 
-        /** Get bit number from column information
-         *  @param col The LHCb pixel column number
-         *  @return the bit (0-7) for the column
-         */
-        inline ShortType bitFromCol( const ShortType col ) const
-        {
-          return col%BitsField;
-        }
+      /// The data word
+      LongType m_data = 0;
 
-        /** Get column information from address and bit number
-         *  @param address The 8-bit address
-         *  @param bit     The bit (0-7)
-         *  @return The LHCb pixel column number
-         */
-        inline ShortType colFromAddressAndBit( const ShortType address,
-                                               const ShortType bit ) const
-        {
-          return bit + BitsField*(address%4);
-        }
+      /// Alice mode flag
+      bool m_aliceMode = false;
+    };
 
-        /** Get row information from address
-         *  @param address The 8-bit address
-         *  @param aliceModeOffset Offset for ALICE mode
-         *  @return The LHCB pixel row number
-         */
-        inline ShortType rowFromAddress( const ShortType address,
-                                         const ShortType aliceModeOffset = 0 ) const
-        {
-          return ( !aliceMode() ?
-                   ( MaxDataSize - 1 - ( address/4) ) :
-                   ( MaxDataSize - 1 - ( (address/(4*NumAlicePixelsPerLHCbPixel)) + aliceModeOffset*8 ) )
-                   );
-        }
+  } // namespace RichZSPacked_V2
 
-        /** get the ALICE sub-pixel number (0-7) from address
-         *  @param address The 8-bit address
-         *  @return The ALICE sub-pixel number
-         */
-        inline ShortType subPixelFromAddress( const ShortType address ) const
-        {
-          return ( !aliceMode() ? 0 :
-                   NumAlicePixelsPerLHCbPixel - 1 - ( address % (4*NumAlicePixelsPerLHCbPixel) ) / 4
-                   );
-        }
-
-      private: // methods
-
-        /// Update the internal data
-        inline void setData( const LongType data ) noexcept { m_data = data; }
-
-        /// Set the data value for a given mask and shift value
-        inline void set( const ShortType value,
-                         const ShortType shift,
-                         const LongType  mask )
-        {
-          setData( ((value << shift) & mask) | (data() & ~mask) );
-        }
-
-        /// tests whether a given value is in range for a given data field
-        inline void dataInRange( const ShortType value,
-                                 const ShortType max ) const
-        {
-          if ( value > max ) 
-          {
-            throw GaudiException( "Data out of range", "*RichZSPacked*", StatusCode::FAILURE );
-          }
-        }
-
-      private: // data
-
-        /// The data word
-        LongType m_data  = 0;
-
-        /// Alice mode flag
-        bool m_aliceMode = false;
-
-      };
-
-    }
-
-  }
-}
+} // namespace Rich::DAQ

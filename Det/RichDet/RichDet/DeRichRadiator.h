@@ -12,28 +12,28 @@
 #pragma once
 
 // STL
-#include <vector>
 #include <memory>
+#include <vector>
 
 // Math typedefs
-#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Point3DTypes.h"
 
 // DetDesc
-#include "DetDesc/ISolid.h"
-#include "DetDesc/TabulatedProperty.h"
-#include "DetDesc/Material.h"
 #include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/Material.h"
+#include "DetDesc/TabulatedProperty.h"
 
 // Kernel
-#include "Kernel/RichRadiatorType.h"
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichRadIntersection.h"
+#include "Kernel/RichRadiatorType.h"
 
 // RichDet
 #include "RichDet/DeRichBase.h"
-#include "RichDet/Rich1DTabProperty.h"
 #include "RichDet/DeRichLocations.h"
+#include "RichDet/Rich1DTabProperty.h"
 
 //----------------------------------------------------------------------------
 /** @class DeRichRadiator RichDet/DeRichRadiator.h
@@ -47,18 +47,18 @@
  */
 //----------------------------------------------------------------------------
 
-class DeRichRadiator: public DeRichBase
+class DeRichRadiator : public DeRichBase
 {
 
 public:
 
   /// Type for a vector of pointers to DeRichRadiators
-  typedef std::vector<DeRichRadiator*> Vector;
+  typedef std::vector< DeRichRadiator * > Vector;
 
 public:
 
   /// Default constructor
-  DeRichRadiator( const std::string & name = "" );
+  DeRichRadiator( const std::string &name = "" );
 
   /// Destructor
   virtual ~DeRichRadiator() = default;
@@ -75,19 +75,13 @@ public:
    * Retrieves the id of this radiator
    * @return The id of this radiator (Aerogel, C4F10, CF4)
    */
-  inline Rich::RadiatorType radiatorID() const noexcept
-  {
-    return m_radiatorID;
-  }
+  inline Rich::RadiatorType radiatorID() const noexcept { return m_radiatorID; }
 
   /**
    * Retrieves the rich detector of this radiator
    * @return the rich detector of this radiator (Rich1/2)
    */
-  inline Rich::DetectorType rich() const noexcept
-  {
-    return m_rich;
-  }
+  inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   /**
    * Retrieves the refractive index of the radiator with the option to use HLT
@@ -96,7 +90,7 @@ public:
    * @return A pointer to the refractive index  interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  inline const Rich::TabulatedProperty1D* refIndex( bool hlt = true ) const
+  inline const Rich::TabulatedProperty1D *refIndex( bool hlt = true ) const
   {
     return ( hlt ? hltRefIndex() : checkRefIndex() );
   }
@@ -106,68 +100,50 @@ public:
    * @return A pointer to the HLT refractive index interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  inline const Rich::TabulatedProperty1D* hltRefIndex() const
-  {
-    return m_hltRefIndex.get();
-  }
+  inline const Rich::TabulatedProperty1D *hltRefIndex() const { return m_hltRefIndex.get(); }
 
   /**
    * Retrieves The refractive index of the radiator
    * @return A pointer to the refractive index of the radiator
    */
-  inline const TabulatedProperty* refIndexTabProp() const noexcept
-  {
-    return m_refIndexTabProp;
-  }
+  inline const TabulatedProperty *refIndexTabProp() const noexcept { return m_refIndexTabProp; }
 
   /**
    * Retrieves the Rayleigh properties of the radiator
    * @return A pointer to the Rayleigh interpolated function
    * @retval nullptr No interpolation function
    */
-  inline const Rich::TabulatedProperty1D* rayleigh() const noexcept
-  {
-    return m_rayleigh.get();
-  }
+  inline const Rich::TabulatedProperty1D *rayleigh() const noexcept { return m_rayleigh.get(); }
 
   /**
    * Retrieves the Rayleigh properties of the radiator
    * @return A pointer to the Rayleigh tab property
    * @retval nullptr No Rayleigh tab property
    */
-  inline const TabulatedProperty* rayleighTabProp() const noexcept
-  {
-    return m_rayleighTabProp;
-  }
+  inline const TabulatedProperty *rayleighTabProp() const noexcept { return m_rayleighTabProp; }
 
   /**
    * Retrieves the absorption properties of the radiator
    * @return A pointer to the absorption interpolated function
    * @retval nullptr No interpolation function
    */
-  inline const Rich::TabulatedProperty1D* absorption() const noexcept
-  {
-    return m_absorption.get();
-  }
+  inline const Rich::TabulatedProperty1D *absorption() const noexcept { return m_absorption.get(); }
 
   /**
    * Retrieves the absorption properties of the radiator
    * @return A pointer to the absorption tab property
    * @retval nullptr No tab property
    */
-  inline const TabulatedProperty* absorptionTabProp() const noexcept
-  {
-    return m_absorptionTabProp;
-  }
+  inline const TabulatedProperty *absorptionTabProp() const noexcept { return m_absorptionTabProp; }
 
   /**
    * Finds the next intersection point with radiator.
    * @return Status of intersection
    * @retval StatusCode::FAILURE No intersection
    */
-  virtual StatusCode nextIntersectionPoint( const Gaudi::XYZPoint& pGlobal,
-                                            const Gaudi::XYZVector& vGlobal,
-                                            Gaudi::XYZPoint& returnPoint ) const = 0;
+  virtual StatusCode nextIntersectionPoint( const Gaudi::XYZPoint & pGlobal,
+                                            const Gaudi::XYZVector &vGlobal,
+                                            Gaudi::XYZPoint &       returnPoint ) const = 0;
 
   /**
    * Finds the entry and exit points of the radiator. For boolean solids
@@ -175,10 +151,10 @@ public:
    * @return Status of intersection
    * @retval StatusCode::FAILURE if there is no intersection
    */
-  virtual StatusCode intersectionPoints( const Gaudi::XYZPoint& pGlobal,
-                                         const Gaudi::XYZVector& vGlobal,
-                                         Gaudi::XYZPoint& entryPoint,
-                                         Gaudi::XYZPoint& exitPoint ) const = 0;
+  virtual StatusCode intersectionPoints( const Gaudi::XYZPoint & pGlobal,
+                                         const Gaudi::XYZVector &vGlobal,
+                                         Gaudi::XYZPoint &       entryPoint,
+                                         Gaudi::XYZPoint &       exitPoint ) const = 0;
 
   /**
    * Finds the intersection points with radiator. For boolean solids there
@@ -187,9 +163,9 @@ public:
    * @return The number of intersection points.
    * @retval Zero if there is no intersction.
    */
-  virtual unsigned int intersectionPoints( const Gaudi::XYZPoint& pGlobal,
-                                           const Gaudi::XYZVector& vGlobal,
-                                           std::vector<Gaudi::XYZPoint>& points ) const = 0;
+  virtual unsigned int intersectionPoints( const Gaudi::XYZPoint &         pGlobal,
+                                           const Gaudi::XYZVector &        vGlobal,
+                                           std::vector< Gaudi::XYZPoint > &points ) const = 0;
 
   /**
    * Finds the intersections (entry/exit) with radiator. For boolean solids there
@@ -198,9 +174,9 @@ public:
    * @return The number of intersections.
    * @retval Zero if there is no intersction.
    */
-  virtual unsigned int intersections( const Gaudi::XYZPoint& pGlobal,
-                                      const Gaudi::XYZVector& vGlobal,
-                                      Rich::RadIntersection::Vector& intersections ) const = 0;
+  virtual unsigned int intersections( const Gaudi::XYZPoint &        pGlobal,
+                                      const Gaudi::XYZVector &       vGlobal,
+                                      Rich::RadIntersection::Vector &intersections ) const = 0;
 
   /**
    * Returns the refractive index at the given photon energy for this radiator
@@ -208,8 +184,7 @@ public:
    * @param hlt Return the HLT refractive index if true
    * @return The refractive index at that energy
    */
-  virtual double refractiveIndex( const double energy,
-                                  const bool hlt = true ) const = 0;
+  virtual double refractiveIndex( const double energy, const bool hlt = true ) const = 0;
 
 protected:
 
@@ -228,13 +203,10 @@ protected:
    * @return A pointer to the refractive index  interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  inline const Rich::TabulatedProperty1D* checkRefIndex() const
+  inline const Rich::TabulatedProperty1D *checkRefIndex() const
   {
     if ( !m_refIndex.get() )
-    {
-      throw GaudiException( "Invalid refractive index",
-                            "DeRichRadiator", StatusCode::FAILURE );
-    }
+    { throw GaudiException( "Invalid refractive index", "DeRichRadiator", StatusCode::FAILURE ); }
     return m_refIndex.get();
   }
 
@@ -249,30 +221,29 @@ protected:
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
   /// pointer to the refractive index of the material
-  std::shared_ptr<Rich::TabulatedProperty1D> m_refIndex;
+  std::shared_ptr< Rich::TabulatedProperty1D > m_refIndex;
 
   /// pointer to the refractive index of the material used by the HLT
-  std::shared_ptr<Rich::TabulatedProperty1D> m_hltRefIndex;
+  std::shared_ptr< Rich::TabulatedProperty1D > m_hltRefIndex;
 
   /// pointer to the Tabulated property refractive index
-  TabulatedProperty* m_refIndexTabProp = nullptr;
+  TabulatedProperty *m_refIndexTabProp = nullptr;
 
   /// pointer to the Tabulated property refractive index
-  std::unique_ptr<TabulatedProperty> m_hltRefIndexTabProp;
+  std::unique_ptr< TabulatedProperty > m_hltRefIndexTabProp;
 
   /// pointer to the Tabulated property Cherenkov Ref Index
-  TabulatedProperty* m_chkvRefIndexTabProp = nullptr;
+  TabulatedProperty *m_chkvRefIndexTabProp = nullptr;
 
   /// pointer to the Rayleigh scattering properties
-  std::unique_ptr<Rich::TabulatedProperty1D> m_rayleigh;
+  std::unique_ptr< Rich::TabulatedProperty1D > m_rayleigh;
 
   /// pointer to the Tabulated property Rayleigh
-  TabulatedProperty* m_rayleighTabProp = nullptr;
+  TabulatedProperty *m_rayleighTabProp = nullptr;
 
   /// pointer to the absorption tabulated function
-  std::unique_ptr<Rich::TabulatedProperty1D> m_absorption;
+  std::unique_ptr< Rich::TabulatedProperty1D > m_absorption;
 
   /// pointer to the Tabulated property for the absoption
-  TabulatedProperty* m_absorptionTabProp = nullptr;
-
+  TabulatedProperty *m_absorptionTabProp = nullptr;
 };

@@ -60,6 +60,9 @@ private:
   template<typename T>
   void process(const std::string& key, const T& x);
 
+  template<typename T1, typename T2>
+  void process(const std::string& key, const std::pair<T1, T2>& x);
+
   template<typename T>
   void processVector(const std::string& key, const std::vector<T>& v);
 

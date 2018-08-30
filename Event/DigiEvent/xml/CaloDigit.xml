@@ -107,17 +107,6 @@
  <code>  setKey( CellID ) ;  </code>
 </method>
 
-<method
- desc    = "Cloning of the object ('virtual constructor') "
- name    = "clone"
- type    = "LHCb::CaloDigit*"
- const   = "TRUE"
- virtual = "TRUE"
- access  = "PUBLIC" > 
-<code> return new LHCb::CaloDigit( *this );</code>
-</method>
-
-
 
 </class>
 </package>

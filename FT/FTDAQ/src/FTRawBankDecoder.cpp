@@ -16,7 +16,7 @@
 // 2012-05-11 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-namespace {  
+namespace {
 unsigned quarterFromChannel(LHCb::FTChannelID id) {
   return id.uniqueQuarter() - 16u;
 }
@@ -24,7 +24,7 @@ unsigned quarterFromChannel(LHCb::FTChannelID id) {
 unsigned channelInBank(short int c) {
   return ( c >> FTRawBank::cellShift);
 }
-  
+
 unsigned getLinkInBank(short int c){
   return ((c >> FTRawBank::linkShift));
 }
@@ -104,7 +104,7 @@ FTLiteClusters
 FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
   const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
-  
+
   // Estimate total number of clusters from bank sizes
   FTLiteClusters clus( LHCb::FTDAQ::nbFTClusters(banks) );
   if ( msgLevel(MSG::DEBUG) )
@@ -186,7 +186,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             bool cSize2       = ( c2 >> 8) & 1;
 
             if( !cSize2 ){ //next cluster is not last fragment
-              clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+              clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                              module, mat, sipm, channel },
                                           fraction, 4), bank->sourceID() );
 
@@ -213,7 +213,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
               if(diff  > m_clusterMaxWidth){
 
                 //add the first edge cluster
-                clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+                clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                                module, mat, sipm, channel },
                                             fraction, 0), bank->sourceID() ); //pseudoSize=0
 
@@ -225,7 +225,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 for(unsigned int  i = m_clusterMaxWidth; i < diff ; i+= m_clusterMaxWidth){
                   // all middle clusters will have same size as the first cluster,
                   // so use same fraction
-                  clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+                  clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                                  module, mat, sipm, channel+i },
                                               fraction, 0), bank->sourceID() );
 
@@ -236,7 +236,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 }
 
                 //add the last edge
-                clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+                clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                                module, mat, sipm, channel2 },
                                             fraction2, 0), bank->sourceID() );
 
@@ -253,7 +253,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                 int frac                      = (widthClus-1)%2;
 
                 //add the new cluster = cluster1+cluster2
-                clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+                clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                                module, mat, sipm, clusChanPosition },
                                             frac, widthClus), bank->sourceID() );
 
@@ -266,7 +266,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
             }//last edge foud
           }//not the last cluster
           else{ //last cluster, so nothing we can do
-            clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+            clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                            module, mat, sipm, channel },
                                         fraction, 4), bank->sourceID() );
 
@@ -283,7 +283,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           unsigned channel = ( c >> 0 ) & 127;
           int fraction     = ( c >> 7 ) & 1;
           int cSize        = ( c >> 8 ) & 1;
-          clus.addHit(std::make_tuple(LHCb::FTChannelID{ station, layer, quarter,
+          clus.addHit(std::forward_as_tuple(LHCb::FTChannelID{ station, layer, quarter,
                                                          module, mat, sipm, channel },
                                       fraction, ( cSize ? 0 : 4 )), bank->sourceID() );
         }
@@ -308,7 +308,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                                                    fraction(c), ( cSize(c) ? 0 : 4 ) };} );
       clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
     }//end loop over rawbanks
-  }//version == 4  
+  }//version == 4
   else if (m_decodingVersion == 5u) {
     for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
       LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
@@ -316,7 +316,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
       // Define Lambda functions to be used in loop
       auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
-        clus.addHit(std::make_tuple(chan, fraction, size), quarter );
+        clus.addHit(std::forward_as_tuple(chan, fraction, size), quarter );
       };
 
       // Make clusters between two channels

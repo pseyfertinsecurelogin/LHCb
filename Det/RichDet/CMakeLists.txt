@@ -7,11 +7,14 @@ gaudi_depends_on_subdirs(Det/DetDescCnv
                          Rich/RichUtils)
 
 find_package(Boost)
+find_package(ROOT)
 find_package(GSL)
 find_package(Vc)
+find_package(XercesC)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GSL_INCLUDE_DIRS}
-                           ${Vc_INCLUDE_DIR})     
+                           ${ROOT_INCLUDE_DIRS} ${Vc_INCLUDE_DIR}
+                           ${XERCESC_INCLUDE_DIRS})
 
 gaudi_add_library(RichDetLib
                   src/Lib/*.cpp

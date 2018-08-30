@@ -35,7 +35,7 @@ public:
   /**
    * Constructor for this class
    */
-  DeRichSingleSolidRadiator( const std::string & name = "" );
+  DeRichSingleSolidRadiator( const std::string &name = "" );
 
   /**
    * Default destructor
@@ -46,16 +46,13 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID& clID() const override
-  {
-    return classID();
-  }
+  inline const CLID &clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID& classID();
+  static const CLID &classID();
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -66,28 +63,28 @@ public:
   virtual StatusCode initialize() override;
 
   // Finds the next intersection point with radiator.
-  StatusCode nextIntersectionPoint(const Gaudi::XYZPoint& pGlobal,
-                                   const Gaudi::XYZVector& vGlobal,
-                                   Gaudi::XYZPoint& returnPoint) const override;
+  StatusCode nextIntersectionPoint( const Gaudi::XYZPoint & pGlobal,
+                                    const Gaudi::XYZVector &vGlobal,
+                                    Gaudi::XYZPoint &       returnPoint ) const override;
 
   // Finds the entry and exit points of the radiator. For boolean solids
   // this is the first and last intersection point.
-  virtual StatusCode intersectionPoints(const Gaudi::XYZPoint& position,
-                                        const Gaudi::XYZVector& direction,
-                                        Gaudi::XYZPoint& entryPoint,
-                                        Gaudi::XYZPoint& exitPoint ) const override;
+  virtual StatusCode intersectionPoints( const Gaudi::XYZPoint & position,
+                                         const Gaudi::XYZVector &direction,
+                                         Gaudi::XYZPoint &       entryPoint,
+                                         Gaudi::XYZPoint &       exitPoint ) const override;
 
   // Finds the intersection points with radiator. For boolean solids there
   // can be more than two intersection points
-  virtual unsigned int intersectionPoints(const Gaudi::XYZPoint& pGlobal,
-                                          const Gaudi::XYZVector& vGlobal,
-                                          std::vector<Gaudi::XYZPoint>& points) const override;
+  virtual unsigned int intersectionPoints( const Gaudi::XYZPoint &         pGlobal,
+                                           const Gaudi::XYZVector &        vGlobal,
+                                           std::vector< Gaudi::XYZPoint > &points ) const override;
 
   // Finds the intersections (entry/exit) with radiator. For boolean solids there
   //  can be more than one intersections
-  virtual unsigned int intersections( const Gaudi::XYZPoint& pGlobal,
-                                      const Gaudi::XYZVector& vGlobal,
-                                      Rich::RadIntersection::Vector& intersections ) const override;
+  virtual unsigned int intersections( const Gaudi::XYZPoint &        pGlobal,
+                                      const Gaudi::XYZVector &       vGlobal,
+                                      Rich::RadIntersection::Vector &intersections ) const override;
 
   // Returns the refractive index at the given photon energy for this radiator
   virtual double refractiveIndex( const double energy, const bool hlt = true ) const override;
@@ -97,20 +94,19 @@ public:
    *
    * @return Pointer to the material
    */
-  inline const Material* material() const noexcept { return m_material; }
+  inline const Material *material() const noexcept { return m_material; }
 
 protected:
 
   /// prepare the momentum vector for the calculation of the
   /// refractive index
-  StatusCode prepareMomentumVector( std::vector<double>& photonMomentumVect,
-                                    const double min,
-                                    const double max,
-                                    const unsigned int nbins ) const;
+  StatusCode prepareMomentumVector( std::vector< double > &photonMomentumVect,
+                                    const double           min,
+                                    const double           max,
+                                    const unsigned int     nbins ) const;
 
 private:
 
-  const ISolid* m_solid = nullptr;      ///< top most solid of the radiator
-  const Material* m_material = nullptr; ///< pointer to the radiator material
-
+  const ISolid *  m_solid    = nullptr; ///< top most solid of the radiator
+  const Material *m_material = nullptr; ///< pointer to the radiator material
 };

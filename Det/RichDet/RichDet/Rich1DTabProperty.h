@@ -36,8 +36,8 @@ namespace Rich
 
   public:
 
-    /// Default Constructor 
-    TabulatedProperty1D( ) = default;
+    /// Default Constructor
+    TabulatedProperty1D() = default;
 
     /** Constructor from tabulated property and gsl interpolator type
      *
@@ -46,21 +46,18 @@ namespace Rich
      *                     itself to the UMS, so that it is automatically updated
      *                     when the underlying TabulatedProperty is updated
      */
-    explicit TabulatedProperty1D( const TabulatedProperty * tab,
-                                  const bool registerUMS = false,
-                                  const gsl_interp_type * interType = gsl_interp_linear );
+    explicit TabulatedProperty1D( const TabulatedProperty *tab,
+                                  const bool               registerUMS = false,
+                                  const gsl_interp_type *  interType   = gsl_interp_linear );
 
     /// Destructor
-    virtual ~TabulatedProperty1D( );
+    virtual ~TabulatedProperty1D();
 
     /** The underlying tabulated property used to initialise the interpolator
      *
      *  @return Pointer to the tabulated property
      */
-    inline const TabulatedProperty * tabProperty() const noexcept
-    {
-      return m_tabProp;
-    }
+    inline const TabulatedProperty *tabProperty() const noexcept { return m_tabProp; }
 
     /** @brief The UMS update method
      *
@@ -82,23 +79,23 @@ namespace Rich
      *                     when the underlying TabulatedProperty is updated
      *  @param interType GSL Interpolator type (If not given, currently configured type is used)
      */
-    bool initInterpolator( const TabulatedProperty * tab,
-                           const bool registerUMS = false,
-                           const gsl_interp_type * interType = gsl_interp_linear );
+    bool initInterpolator( const TabulatedProperty *tab,
+                           const bool               registerUMS = false,
+                           const gsl_interp_type *  interType   = gsl_interp_linear );
 
   private: // methods
 
     /// Service locator
-    ISvcLocator* svcLocator();
+    ISvcLocator *svcLocator();
 
     /// Access the UpdateManagerSvc
-    IUpdateManagerSvc* updMgrSvc();
+    IUpdateManagerSvc *updMgrSvc();
 
     /// Access the message service
-    IMessageSvc* msgSvc();
+    IMessageSvc *msgSvc();
 
     /// Set up the UMS updates for the TabulatedProperty
-    bool configureUMS( const TabulatedProperty * tab );
+    bool configureUMS( const TabulatedProperty *tab );
 
     /** Issue an out of range warning
      *  @param x    The requested x value
@@ -110,11 +107,10 @@ namespace Rich
   private: // data
 
     /// Pointer to the underlying TabulatedProperty
-    const TabulatedProperty * m_tabProp = nullptr;
+    const TabulatedProperty *m_tabProp = nullptr;
 
     /// Flag to say if we have registered a dependency with the UMS
     bool m_registedUMS = false;
-
   };
 
-}
+} // namespace Rich

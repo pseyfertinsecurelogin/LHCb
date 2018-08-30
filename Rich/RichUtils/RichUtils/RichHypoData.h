@@ -16,8 +16,8 @@
 #include <type_traits>
 
 // LHCbKernel
-#include "Kernel/RichParticleIDType.h"
 #include "Kernel/MemPoolAlloc.h"
+#include "Kernel/RichParticleIDType.h"
 
 // local
 #include "RichUtils/StlArray.h"
@@ -39,18 +39,17 @@ namespace Rich
   //------------------------------------------------------------------------
 
   template < typename TYPE,
-             typename = typename std::enable_if< std::is_arithmetic <TYPE> ::value ||
-                                                 std::is_pointer    <TYPE> ::value >::type
-	     >
-  class HypoData : public LHCb::MemPoolAlloc< HypoData<TYPE> >
+             typename = typename std::enable_if< std::is_arithmetic< TYPE >::value ||
+                                                 std::is_pointer< TYPE >::value >::type >
+  class HypoData : public LHCb::MemPoolAlloc< HypoData< TYPE > >
   {
 
   public: // definitions
 
     /// Definition of internal data array type
-    using DataArray     = std::array<TYPE,Rich::NParticleTypes>;
+    using DataArray = std::array< TYPE, Rich::NParticleTypes >;
     /// Definition of internal validity array type
-    using ValidityArray = std::array<bool,Rich::NParticleTypes>;
+    using ValidityArray = std::array< bool, Rich::NParticleTypes >;
 
   public: // constructors and destructors
 
@@ -61,7 +60,7 @@ namespace Rich
      *
      *  @param value The data initialisation value for each mass hypothesis
      */
-    explicit HypoData( const TYPE value ) { resetData(value); }
+    explicit HypoData( const TYPE value ) { resetData( value ); }
 
   public: // methods
 
@@ -70,9 +69,9 @@ namespace Rich
      *  @param type  The mass hypothesis for which the data is requested
      *  @return The data value
      */
-    inline const TYPE & operator[] ( const Rich::ParticleIDType type ) const
+    inline const TYPE &operator[]( const Rich::ParticleIDType type ) const
     {
-      return m_data[type];
+      return m_data[ type ];
     }
 
     /** Set the data value for a given particle hypothesis
@@ -82,8 +81,8 @@ namespace Rich
      */
     inline void setData( const Rich::ParticleIDType type, const TYPE value ) noexcept
     {
-      m_valid[type] = true;
-      m_data[type]  = value;
+      m_valid[ type ] = true;
+      m_data[ type ]  = value;
     }
 
     /** Reset the data for all mass hypotheses. Following this call all data
@@ -93,34 +92,24 @@ namespace Rich
      */
     inline void resetData( const TYPE value ) noexcept
     {
-      m_valid.fill ( false );
-      m_data.fill  ( value );
+      m_valid.fill( false );
+      m_data.fill( value );
     }
 
     /** Reset the data for all mass hypotheses. Following this call all data
      *  fields will be flagged as invalid (i.e. unset)
      *
-     *  This implementation is for arithemtic types, and sets the value to 0
-     *
      *  @attention The data values themselves are unaffected
      */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<T>::value >::type
-    resetData() noexcept { resetData( 0 );  }
+    inline void resetData() noexcept
+    {
+      if constexpr ( std::is_arithmetic< TYPE >::value ) { resetData( 0 ); }
+      else if constexpr ( std::is_pointer< TYPE >::value )
+      {
+        resetData( nullptr );
+      }
+    }
 
-    /** Reset the data for all mass hypotheses. Following this call all data
-     *  fields will be flagged as invalid (i.e. unset)
-     *
-     *  This implementation is for pointer types, and sets the value to nullptr
-     *
-     *  @attention The data values themselves are unaffected
-     */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_pointer<T>::value >::type
-    resetData() noexcept { resetData( nullptr ); }
-    
     /** Reset data for given particle hypothesis. Following this call the
      *  data for the given mas hypothesis will be flagged as invalid (i.e. unset)
      *
@@ -129,48 +118,29 @@ namespace Rich
      */
     inline void resetData( const Rich::ParticleIDType type, const TYPE value ) noexcept
     {
-      m_valid[type] = false; 
-      m_data[type]  = value;
-    }
-    
-    /** Reset data for given particle hypothesis. Following this call the
-     *  data for the given mas hypothesis will be flagged as invalid (i.e. unset)
-     *
-     *  This implementation is for arithemtic types, and sets the value to 0
-     *
-     *  @param type  The mass hypothesis to reset
-     */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<T>::value >::type
-    resetData( const Rich::ParticleIDType type ) noexcept
-    {
-      resetData( type, 0 );
+      m_valid[ type ] = false;
+      m_data[ type ]  = value;
     }
 
     /** Reset data for given particle hypothesis. Following this call the
      *  data for the given mas hypothesis will be flagged as invalid (i.e. unset)
      *
-     *  This implementation is for pointer types, and sets the value to nullptr
-     *
      *  @param type  The mass hypothesis to reset
      */
-    template< typename T = TYPE >
-    inline 
-    typename std::enable_if< std::is_pointer<T>::value >::type
-    resetData( const Rich::ParticleIDType type ) noexcept
+    inline void resetData( const Rich::ParticleIDType type ) noexcept
     {
-      resetData( type, nullptr );
+      if constexpr ( std::is_arithmetic< TYPE >::value ) { resetData( type, 0 ); }
+      else if constexpr ( std::is_pointer< TYPE >::value )
+      {
+        resetData( type, nullptr );
+      }
     }
 
     /** Const Accessor to data array
      *
      *  @return Const reference to the internal data array
      */
-    inline const DataArray & dataArray() const & noexcept
-    {
-      return m_data;
-    }    
+    inline const DataArray &dataArray() const &noexcept { return m_data; }
 
     /** Check whether a piece of data has been initialised
      *
@@ -178,34 +148,31 @@ namespace Rich
      *
      *  @return boolean indicating the status of the data
      *  @retval true  Data field has been explicitly set
-     *  @retval false Data field has not been set. 
+     *  @retval false Data field has not been set.
      *                Value will be the initialisation (or reset) value
      */
     inline bool dataIsValid( const Rich::ParticleIDType type ) const noexcept
     {
-      return m_valid[type];
+      return m_valid[ type ];
     }
 
   public:
-    
+
     /// Implement textual ostream << method
-    friend inline std::ostream& operator << ( std::ostream& os, 
-                                              const HypoData<TYPE>& data )
+    friend inline std::ostream &operator<<( std::ostream &os, const HypoData< TYPE > &data )
     {
       os << "[ ";
-      for ( const auto id : Rich::particles() ) { os << data[id] << " "; }
+      for ( const auto id : Rich::particles() ) { os << data[ id ] << " "; }
       return os << "]";
     }
 
   private: // data
 
     /// The internal representation of the data
-    DataArray      m_data = {{}};
+    DataArray m_data = { {} };
 
     /// The validity flags
-    ValidityArray  m_valid = {{}};
-
+    ValidityArray m_valid = { {} };
   };
 
-
-} // Rich namespace
+} // namespace Rich

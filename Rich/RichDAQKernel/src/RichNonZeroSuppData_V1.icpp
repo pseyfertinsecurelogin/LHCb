@@ -25,11 +25,12 @@ namespace Rich
     namespace RichNonZeroSuppDataV1
     {
 
-      template< class Version, class Header, class Footer >
-      ShortType RichNonZeroSuppData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                                                              const LHCb::RichSmartID hpdID ) const
+      template < class Version, class Header, class Footer >
+      ShortType RichNonZeroSuppData< Version, Header, Footer >::fillRichSmartIDs(
+        LHCb::RichSmartID::Vector &ids,
+        const LHCb::RichSmartID    hpdID ) const
       {
-        ShortType nHits(0);
+        ShortType nHits( 0 );
 
         // reserve size in hit vector ( guess )
         ids.reserve( 96 );
@@ -39,13 +40,10 @@ namespace Rich
         {
           for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
           {
-            if ( isPixelActive(iRow,iCol) )
+            if ( isPixelActive( iRow, iCol ) )
             {
-              ids.emplace_back( hpdID.rich(),
-                                hpdID.panel(),
-                                hpdID.pdNumInCol(),
-                                hpdID.pdCol(),
-                                iRow, iCol );
+              ids.emplace_back(
+                hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(), iRow, iCol );
               ++nHits;
             }
           }
@@ -54,7 +52,7 @@ namespace Rich
         return nHits;
       }
 
-    } // end V1 namespace
+    } // namespace RichNonZeroSuppDataV1
 
-  }
-}
+  } // namespace DAQ
+} // namespace Rich

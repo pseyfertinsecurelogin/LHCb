@@ -39,8 +39,8 @@ namespace Rich
     static constexpr ShortType ShiftColumn = BitsColumn + ShiftRow;
 
     // Create the Masks
-    static constexpr ShortType MaskRow    = ((1 << BitsRow)-1) << ShiftRow;
-    static constexpr ShortType MaskColumn = ((1 << BitsColumn)-1) << ShiftColumn;
+    static constexpr ShortType MaskRow    = ( ( 1 << BitsRow ) - 1 ) << ShiftRow;
+    static constexpr ShortType MaskColumn = ( ( 1 << BitsColumn ) - 1 ) << ShiftColumn;
 
   public:
 
@@ -48,67 +48,46 @@ namespace Rich
      *
      *  @return the bit-packed data word
      */
-    inline ShortType data() const noexcept
-    {
-      return m_data;
-    }
+    inline ShortType data() const noexcept { return m_data; }
 
     /** Set the full bit-packed data word
      */
-    inline void setData( const ShortType data ) noexcept
-    {
-      m_data = data;
-    }
+    inline void setData( const ShortType data ) noexcept { m_data = data; }
 
     /** Set the row number
      */
-    inline void setRow( const int row ) noexcept
-    {
-      set( row, ShiftRow, MaskRow );
-    }
+    inline void setRow( const int row ) noexcept { set( row, ShiftRow, MaskRow ); }
 
     /** Retrieve the row number
      */
-    inline int row() const noexcept
-    {
-      return ( (data() & MaskRow) >> ShiftRow );
-    }
+    inline int row() const noexcept { return ( ( data() & MaskRow ) >> ShiftRow ); }
 
     /** Set the column number
      */
-    inline void setColumn( const int column ) noexcept
-    {
-      set( column, ShiftColumn, MaskColumn );
-    }
+    inline void setColumn( const int column ) noexcept { set( column, ShiftColumn, MaskColumn ); }
 
     /** Retrieve the column number
      */
-    inline int column() const noexcept
-    {
-      return ( (data() & MaskColumn) >> ShiftColumn  );
-    }
+    inline int column() const noexcept { return ( ( data() & MaskColumn ) >> ShiftColumn ); }
 
   private: // methods
 
-    inline void set( const ShortType value,
-                     const ShortType shift,
-                     const ShortType mask ) noexcept
+    inline void set( const ShortType value, const ShortType shift, const ShortType mask ) noexcept
     {
-      setData( ((value << shift) & mask) | (data() & ~mask) );
+      setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
     }
 
   private: // data
 
     /// The bit-pack data word
-    ShortType m_data{0};
-
+    ShortType m_data { 0 };
   };
 
-}
+} // namespace Rich
 
 /// overloaded output to MsgStream
-inline std::ostream& operator << ( std::ostream& os,
-                                   const Rich::MirrorSegPosition& pos )
+inline std::ostream &
+operator<<( std::ostream &os, const Rich::MirrorSegPosition &pos )
 {
   return os << "Mirror Segment row:" << pos.row() << " column:" << pos.column();
 }

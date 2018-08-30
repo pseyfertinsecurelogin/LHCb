@@ -12,8 +12,8 @@
 #pragma once
 
 // STL
-#include <unordered_map>
 #include <ostream>
+#include <unordered_map>
 
 namespace Rich
 {
@@ -28,24 +28,23 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------
 
-  template < typename KEY, 
-             typename VALUE, 
-             typename HASH  = std::hash<KEY>,
-             typename EQUAL = std::equal_to<KEY>,
-             typename ALLOC = std::allocator<std::pair<const KEY,VALUE> > 
-             >
-  class UnorderedMap : public std::unordered_map < KEY , VALUE , HASH , EQUAL , ALLOC >
+  template < typename KEY,
+             typename VALUE,
+             typename HASH  = std::hash< KEY >,
+             typename EQUAL = std::equal_to< KEY >,
+             typename ALLOC = std::allocator< std::pair< const KEY, VALUE > > >
+  class UnorderedMap : public std::unordered_map< KEY, VALUE, HASH, EQUAL, ALLOC >
   {
   public:
+
     /// Operator overloading for ostream
-    friend inline std::ostream& operator << ( std::ostream& str ,
-                                              const UnorderedMap<KEY,VALUE,HASH,EQUAL,ALLOC> & m )
+    friend inline std::ostream &
+    operator<<( std::ostream &str, const UnorderedMap< KEY, VALUE, HASH, EQUAL, ALLOC > &m )
     {
       str << "[";
-      for ( const auto& i : m ) { str << " (" << i.first << "," << i.second << ")"; }
+      for ( const auto &i : m ) { str << " (" << i.first << "," << i.second << ")"; }
       return str << " ]";
     }
   };
 
-}
-
+} // namespace Rich

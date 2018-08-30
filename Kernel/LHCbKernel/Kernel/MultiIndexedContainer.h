@@ -18,55 +18,8 @@ namespace LHCb
 namespace Container
 {
 
-namespace details
-{
-  template<typename C, typename Tuple, size_t ... I>
-  auto emplace_tuple(C& c, Tuple&& t, std::index_sequence<I...>) -> typename C::reference
-  {
-    c.emplace_back ( std::get<I>(t)... );
-
-    return c.back ();
-  }
-}
-
 namespace
 {
-
-  /**
-   * When C++17 is supported, all references to this function
-   * should be replaced with (... * sizes ).
-   *
-   * Allocate one more than the actual number requested.
-   *
-   * Reason for this is performance: this allows us to quickly
-   * return the size of the offsets (and if empty).
-   ***/
-  template<size_t ... S>
-  constexpr size_t multiply()
-  {
-    size_t result = 1;
-
-    for (auto s : { S... })
-      result *= s;
-
-    return result;
-  }
-
-  /**
-   * C++11 version of multiply.
-	template <typename ...Ts>
-	constexpr size_t multiply()
-	{
-		return  1;
-	}
-
-	template <size_t I,size_t... Is>
-	constexpr size_t multiply()
-	{
-		return   I * multiply<Is...>();
-	}
-
-   */
 
   /**
    * Helper function to access the value of the template
@@ -140,8 +93,8 @@ public:
    * For the offsets we reserve one more, to make the calculation of the
    * number of hits quicker (can always do n(uniqueSubDetId).second - n(uniqueSubDetId).first )
    */
-  using Offsets = std::array<std::pair<offset_t, offset_t>, multiply<sizes...>() >;
-  using Ids = std::array<size_t, multiply<sizes...>()>;
+  using Offsets = std::array<std::pair<offset_t, offset_t>, ( ...*sizes )  >;
+  using Ids = std::array<size_t, ( ... * sizes ) >;
 
   using HitRange=Gaudi::Range_<MultiIndexedContainer<Hit, sizes...> >;
 
@@ -224,9 +177,7 @@ public:
   template<typename ... Args>
   size_t size(Args&&...args) const
   {
-    offset_t obegin{0}, oend{0};
-    std::tie(obegin, oend) = getOffsets(std::forward(args)...);
-
+    auto [ obegin, oend] = getOffset(std::forward(args)...);
     assert(oend >= obegin && "ill-formed offsets");
     return oend - obegin;
   }
@@ -234,17 +185,15 @@ public:
   template<typename ... Args>
   bool empty(Args&&...args) const
   {
-    offset_t obegin{0}, oend{0};
-    std::tie(obegin, oend) = getOffsets(std::forward(args)...);
-
+    auto [ obegin, oend ] = getOffset(std::forward(args)...);
     assert(oend >= obegin && "ill-formed offsets");
     return oend == obegin;
   }
 
-  inline size_t nSubDetectors() const
-  {
-    return multiply<sizes...>();
-  }
+  constexpr size_t nSubDetectors() const { return ( ... * sizes ); }
+
+  template <size_t N>
+  static constexpr size_t subSize() { return std::get<N>( std::array{ sizes... } ); }
 
   /**
    * Function to insert a range of hits in (detectorElementId).
@@ -285,26 +234,6 @@ public:
     m_offsets[subDetectorId].second += n;
   }
 
-  /*
-   * This implementation can be used when we have std::invoke available.
-   *
-		template<typename Tuple, typename ... LocArgs>
-		Hit& addHit(Tuple&& cargs, LocArgs&&... subDetectorElement)
-		{
-			static_assert((sizeof...(subDetectorElement) <= sizeof...(sizes)),
-					"The number of indices provided is strictly higher than the nesting for this subdetector.");
-
-			auto id = getUniqueDetectorElementId ( std::forward<LocArgs>(subDetectorElement)... );
-			m_ids.emplace_back ( id );
-			++m_nIds[id];
-			//constexpr auto nArguments = sizeof...(CtorArgs);
-
-			return std::invoke ( [this]( auto&&... args ) -> decltype(auto)
-			{	m_hits.emplace_back( std::forward<decltype(args)>(args)... );
-				return m_hits.back();}, std::forward<Tuple> ( cargs ) );
-		}
-   */
-
   /**
    * Function to create a single hit in (detectorElementId).
    * A reference to the hit created is returned.
@@ -317,18 +246,22 @@ public:
    * one should explicitly call setOffsets before further using the
    * hit manager.
    */
-  template<typename ... CtorArgs, typename ... LocArgs>
-  Hit& addHit(std::tuple<CtorArgs...>&& cargs, LocArgs&&... subDetectorElement)
+  template<typename Tuple, typename ... LocArgs>
+  Hit& addHit(Tuple&& cargs, LocArgs&&... subDetectorElement)
   {
-    auto id = getUniqueDetectorElementId ( std::forward<LocArgs>(subDetectorElement)... );
-#ifdef NDEBUG
-    m_ids.emplace_back ( id );
-#endif
-    m_nIds[ id ] += 1;
+		static_assert((sizeof...(subDetectorElement) <= sizeof...(sizes)),
+				"The number of indices provided is strictly higher than the nesting for this subdetector.");
 
-    return details::emplace_tuple ( m_hits, std::forward<std::tuple<CtorArgs...> > ( cargs ),
-        std::index_sequence_for < CtorArgs... > {} );
-  }
+		auto id = getUniqueDetectorElementId ( std::forward<LocArgs>(subDetectorElement)... );
+#ifndef NDEBUG
+		m_ids.emplace_back ( id );
+#endif
+		++m_nIds[id];
+
+		return std::apply( [this]( auto&&... args ) -> decltype(auto)
+		                    { return m_hits.emplace_back( std::forward<decltype(args)>(args)... ); },
+			                std::forward<Tuple>( cargs ) );
+	}
 
   void setOffsets(){
     // Set the offsets
@@ -396,7 +329,7 @@ private:
    * Is it therefore faster to cache the outcome of this?
    */
   template<typename ... Args>
-  inline size_t getUniqueDetectorElementId(Args&& ... args) const
+  size_t getUniqueDetectorElementId(Args&& ... args) const
   {
     constexpr auto nArguments = sizeof...(args);
     constexpr size_t detector_geometry[] = { sizes... };
@@ -433,7 +366,6 @@ private:
   }
 
   template<typename ... Args>
-  inline
   typename Offsets::value_type getOffset(Args&& ... args) const
   {
     const auto uniqueDetectorElementId = getUniqueDetectorElementId( std::forward<Args>(args)... );
@@ -441,7 +373,7 @@ private:
     return m_offsets[ uniqueDetectorElementId ];
   }
 
-  inline void clearOffsets()
+  void clearOffsets()
   {
     typename Offsets::value_type zero{0, 0};
     std::fill ( std::begin ( m_offsets ), std::end ( m_offsets ), zero );

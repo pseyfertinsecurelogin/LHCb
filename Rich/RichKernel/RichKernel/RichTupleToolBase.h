@@ -36,18 +36,15 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public Rich::HistoBase<GaudiTupleTool>
+  class TupleToolBase : public Rich::HistoBase< GaudiTupleTool >
   {
 
   public:
 
     /// Standard constructor
-    TupleToolBase( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent )
-      : Rich::HistoBase<GaudiTupleTool> ( type, name, parent )
-    { }
-
+    TupleToolBase( const std::string &type, const std::string &name, const IInterface *parent )
+      : Rich::HistoBase< GaudiTupleTool >( type, name, parent )
+    {}
   };
 
-}
+} // namespace Rich

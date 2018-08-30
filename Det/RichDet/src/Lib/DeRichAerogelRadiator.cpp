@@ -11,9 +11,9 @@
 
 // Include files
 
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 #include "RichDet/DeRich.h"
 
@@ -26,19 +26,20 @@
 // 2006-03-02 : Antonis Papanestis
 //-----------------------------------------------------------------------------
 
-const CLID CLID_DeRichAerogelRadiator = 12043;  // User defined
+const CLID CLID_DeRichAerogelRadiator = 12043; // User defined
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeRichAerogelRadiator::DeRichAerogelRadiator(const std::string & name)
-  : DeRichSingleSolidRadiator ( name )
-{ }
+DeRichAerogelRadiator::DeRichAerogelRadiator( const std::string &name )
+  : DeRichSingleSolidRadiator( name )
+{}
 
 //=========================================================================
 // Retrieve Pointer to class defininition structure
 //=========================================================================
-const CLID& DeRichAerogelRadiator::classID()
+const CLID &
+DeRichAerogelRadiator::classID()
 {
   return CLID_DeRichAerogelRadiator;
 }
@@ -46,74 +47,71 @@ const CLID& DeRichAerogelRadiator::classID()
 //=========================================================================
 //  initialize
 //=========================================================================
-StatusCode DeRichAerogelRadiator::initialize ( )
+StatusCode
+DeRichAerogelRadiator::initialize()
 {
 
   MsgStream msg = msgStream( "DeRichAerogelRadiator" );
 
-  if ( msgLevel(MSG::DEBUG,msg) )
-    msg << MSG::DEBUG << "Initialize " << myName() << endmsg;
+  if ( msgLevel( MSG::DEBUG, msg ) ) msg << MSG::DEBUG << "Initialize " << myName() << endmsg;
 
   StatusCode sc = DeRichSingleSolidRadiator::initialize();
   if ( sc.isFailure() ) return sc;
 
-  m_photMomWaveConv = 1243.125*Gaudi::Units::nanometer*Gaudi::Units::eV;
+  m_photMomWaveConv = 1243.125 * Gaudi::Units::nanometer * Gaudi::Units::eV;
   // Check on full tile vs subtile
-  const auto tilenamePos = name().find("AerogelT");
-  const auto subtilenamePos = name().find("Rich1AerogelSubTileDe");
+  const auto tilenamePos    = name().find( "AerogelT" );
+  const auto subtilenamePos = name().find( "Rich1AerogelSubTileDe" );
 
   if ( tilenamePos != std::string::npos )
   {
     // This is full tile, so extract tile number from detector element name
 
-    m_subTile = false;
-    const auto pos = name().find(':');
+    m_subTile      = false;
+    const auto pos = name().find( ':' );
     if ( std::string::npos == pos )
     {
       fatal() << "An Aerogel full tile without a number!" << endmsg;
       return StatusCode::FAILURE;
     }
-    m_tileNumber = atoi( name().substr(pos+1).c_str() );
-
+    m_tileNumber = atoi( name().substr( pos + 1 ).c_str() );
   }
-  else if ( subtilenamePos !=  std::string::npos )
+  else if ( subtilenamePos != std::string::npos )
   {
     // this is a subtile, so extract the subtile copy number and the
     // corresponding full tile number and the subtile number inside the
-    // full tile. The copy number is a unique number for each subtile and is within the range 0->299.
+    // full tile. The copy number is a unique number for each subtile and is within the range
+    // 0->299.
 
-    m_subTile = true;
-    const auto colpos = name().find(':');
-    if ( colpos != std::string::npos ) {
-      m_subtilecopynumber= atoi( name().substr(colpos+1).c_str() );
-      m_subtileNumInTile = atoi( name().substr(colpos-2,2).c_str() );
-      m_tileNumber = atoi( name().substr(colpos-4,2).c_str() );
-      if ( msgLevel(MSG::VERBOSE) )
-        verbose() << "DeRichAerogelRadiator Tile subtileNum and subtileCopy number "
-                  << m_tileNumber <<"   "
-                  << m_subtileNumInTile <<"   "<<m_subtilecopynumber<<endmsg;
-    }
-    else 
+    m_subTile         = true;
+    const auto colpos = name().find( ':' );
+    if ( colpos != std::string::npos )
     {
-      fatal()<< "An Aerogel sub tile tile without a number!" << endmsg;
+      m_subtilecopynumber = atoi( name().substr( colpos + 1 ).c_str() );
+      m_subtileNumInTile  = atoi( name().substr( colpos - 2, 2 ).c_str() );
+      m_tileNumber        = atoi( name().substr( colpos - 4, 2 ).c_str() );
+      if ( msgLevel( MSG::VERBOSE ) )
+        verbose() << "DeRichAerogelRadiator Tile subtileNum and subtileCopy number " << m_tileNumber
+                  << "   " << m_subtileNumInTile << "   " << m_subtilecopynumber << endmsg;
+    }
+    else
+    {
+      fatal() << "An Aerogel sub tile tile without a number!" << endmsg;
       return StatusCode::FAILURE;
     }
-
   }
   else
   {
-    fatal() << "An Aerogel radiator det elem without corresponding full tile or sub tile !" << endmsg;
+    fatal() << "An Aerogel radiator det elem without corresponding full tile or sub tile !"
+            << endmsg;
     return StatusCode::FAILURE;
-
   }
 
   // Load RICH1 DetElem
-  SmartDataPtr<DetectorElement> deRich1( dataSvc(), DeRichLocations::Rich1 );
+  SmartDataPtr< DetectorElement > deRich1( dataSvc(), DeRichLocations::Rich1 );
   m_deRich1 = deRich1;
   if ( !m_deRich1 )
-  {
-    return Error( "Failed to load DeRich1 detector element at " + DeRichLocations::Rich1 );
-  }
+  { return Error( "Failed to load DeRich1 detector element at " + DeRichLocations::Rich1 ); }
 
   // configure refractive index updates
 
@@ -121,9 +119,8 @@ StatusCode DeRichAerogelRadiator::initialize ( )
   if ( hasCondition( "AerogelParameters" ) )
   {
     m_AerogelCond = condition( "AerogelParameters" );
-    updMgrSvc()->registerCondition( this,
-                                    m_AerogelCond.path(),
-                                    &DeRichAerogelRadiator::updateProperties );
+    updMgrSvc()->registerCondition(
+      this, m_AerogelCond.path(), &DeRichAerogelRadiator::updateProperties );
   }
   else
   {
@@ -131,14 +128,14 @@ StatusCode DeRichAerogelRadiator::initialize ( )
     warning() << "Cannot load Condition AerogelParameters" << endmsg;
   }
 
-  sc = updMgrSvc()->update(this);
+  sc = updMgrSvc()->update( this );
   if ( sc.isFailure() )
   {
     error() << "First UMS update failed" << endmsg;
     return sc;
   }
 
-  if ( msgLevel(MSG::DEBUG,msg) )
+  if ( msgLevel( MSG::DEBUG, msg ) )
     msg << MSG::DEBUG << "Initialisation Complete " << myName() << endmsg;
 
   // return
@@ -148,31 +145,33 @@ StatusCode DeRichAerogelRadiator::initialize ( )
 //=========================================================================
 // updateRefIndex
 //=========================================================================
-StatusCode DeRichAerogelRadiator::updateProperties ( )
+StatusCode
+DeRichAerogelRadiator::updateProperties()
 {
   _ri_debug << "Refractive index update triggered" << endmsg;
 
   // load various parameters
-  const auto photonEnergyLowLimit     = deRich1()->param<double>("PhotonMinimumEnergyAerogel");
-  const auto photonEnergyHighLimit    = deRich1()->param<double>("PhotonMaximumEnergyAerogel");
-  const auto ckvPhotonEnergyLowLimit  = deRich1()->param<double>("PhotonCkvMinimumEnergyAerogel");
-  const auto ckvPhotonEnergyHighLimit = deRich1()->param<double>("PhotonCkvMaximumEnergyAerogel");
-  const unsigned int photonEnergyNumBins    = deRich1()->param<int>("PhotonEnergyNumBins");
-  const unsigned int ckvPhotonEnergyNumBins = deRich1()->param<int>("CkvPhotonEnergyNumBins");
+  const auto photonEnergyLowLimit  = deRich1()->param< double >( "PhotonMinimumEnergyAerogel" );
+  const auto photonEnergyHighLimit = deRich1()->param< double >( "PhotonMaximumEnergyAerogel" );
+  const auto ckvPhotonEnergyLowLimit =
+    deRich1()->param< double >( "PhotonCkvMinimumEnergyAerogel" );
+  const auto ckvPhotonEnergyHighLimit =
+    deRich1()->param< double >( "PhotonCkvMaximumEnergyAerogel" );
+  const unsigned int photonEnergyNumBins    = deRich1()->param< int >( "PhotonEnergyNumBins" );
+  const unsigned int ckvPhotonEnergyNumBins = deRich1()->param< int >( "CkvPhotonEnergyNumBins" );
 
-  if ( photonEnergyHighLimit    <  ckvPhotonEnergyHighLimit ||
-       ckvPhotonEnergyLowLimit  <  photonEnergyLowLimit  )
+  if ( photonEnergyHighLimit < ckvPhotonEnergyHighLimit ||
+       ckvPhotonEnergyLowLimit < photonEnergyLowLimit )
   {
-    error() << "Inadmissible photon energy limits "
-            << photonEnergyLowLimit << " " << photonEnergyHighLimit
-            << "  " << ckvPhotonEnergyLowLimit << " "
+    error() << "Inadmissible photon energy limits " << photonEnergyLowLimit << " "
+            << photonEnergyHighLimit << "  " << ckvPhotonEnergyLowLimit << " "
             << ckvPhotonEnergyHighLimit << endmsg;
     return StatusCode::FAILURE;
   }
 
-  std::vector<double> photonMomentumVect;
-  StatusCode sc = prepareMomentumVector( photonMomentumVect, photonEnergyLowLimit,
-                                         photonEnergyHighLimit, photonEnergyNumBins );
+  std::vector< double > photonMomentumVect;
+  StatusCode            sc = prepareMomentumVector(
+    photonMomentumVect, photonEnergyLowLimit, photonEnergyHighLimit, photonEnergyNumBins );
   if ( !sc ) return sc;
 
   // calculate the refractive index and update Tabulated property
@@ -187,9 +186,11 @@ StatusCode DeRichAerogelRadiator::updateProperties ( )
   sc = calcAbsorption( photonMomentumVect, m_absorptionTabProp );
   if ( !sc ) return sc;
 
-  std::vector<double> ckvPhotonMomentumVect;
-  sc = prepareMomentumVector( ckvPhotonMomentumVect, ckvPhotonEnergyLowLimit,
-                              ckvPhotonEnergyHighLimit, ckvPhotonEnergyNumBins );
+  std::vector< double > ckvPhotonMomentumVect;
+  sc = prepareMomentumVector( ckvPhotonMomentumVect,
+                              ckvPhotonEnergyLowLimit,
+                              ckvPhotonEnergyHighLimit,
+                              ckvPhotonEnergyNumBins );
   if ( !sc ) return sc;
 
   // calculate the refractive index CKVRNDX and update Tabulated property
@@ -208,9 +209,9 @@ StatusCode DeRichAerogelRadiator::updateProperties ( )
 //=========================================================================
 //  calcSellmeirRefIndex
 //=========================================================================
-StatusCode DeRichAerogelRadiator::
-calcSellmeirRefIndex (const std::vector<double>& momVect,
-                      TabulatedProperty* tabProp )
+StatusCode
+DeRichAerogelRadiator::calcSellmeirRefIndex( const std::vector< double > &momVect,
+                                             TabulatedProperty *          tabProp )
 {
 
   // test the tab property pointer
@@ -221,37 +222,36 @@ calcSellmeirRefIndex (const std::vector<double>& momVect,
   }
 
   // reset table
-  auto & aTable = tabProp->table();
+  auto &aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
-  const auto fixedLambdaValue = deRich1()->param<double>("FixedLambdaValueForAerogel");
+  const auto fixedLambdaValue = deRich1()->param< double >( "FixedLambdaValueForAerogel" );
 
-  const auto SellE1 = m_AerogelCond->param<double>("CurrentAerogel_SellE1");
-  const auto SellE2 = m_AerogelCond->param<double>("CurrentAerogel_SellE2");
-  const auto SellF1 = m_AerogelCond->param<double>("CurrentAerogel_SellF1");
-  const auto SellF2 = m_AerogelCond->param<double>("CurrentAerogel_SellF2");
-  const auto nAtFixedL = m_AerogelCond->param<double>("CurrentAerogel_nAtFixedLambda");
+  const auto SellE1    = m_AerogelCond->param< double >( "CurrentAerogel_SellE1" );
+  const auto SellE2    = m_AerogelCond->param< double >( "CurrentAerogel_SellE2" );
+  const auto SellF1    = m_AerogelCond->param< double >( "CurrentAerogel_SellF1" );
+  const auto SellF2    = m_AerogelCond->param< double >( "CurrentAerogel_SellF2" );
+  const auto nAtFixedL = m_AerogelCond->param< double >( "CurrentAerogel_nAtFixedLambda" );
 
-  //calculate scaling factor to match measured n(lambda)
-  const auto ephot = m_photMomWaveConv/Gaudi::Units::eV / fixedLambdaValue;
-  const auto term1 = SellF1/(SellE1*SellE1-ephot*ephot);
-  const auto term2 = SellF2/(SellE2*SellE2-ephot*ephot);
+  // calculate scaling factor to match measured n(lambda)
+  const auto ephot                  = m_photMomWaveConv / Gaudi::Units::eV / fixedLambdaValue;
+  const auto term1                  = SellF1 / ( SellE1 * SellE1 - ephot * ephot );
+  const auto term2                  = SellF2 / ( SellE2 * SellE2 - ephot * ephot );
   const auto rindex_square_minusone = term1 + term2;
-  const auto scalingfactor = (nAtFixedL*nAtFixedL-1.0)/rindex_square_minusone;
+  const auto scalingfactor          = ( nAtFixedL * nAtFixedL - 1.0 ) / rindex_square_minusone;
 
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
-    const auto epho = momVect[ibin]/Gaudi::Units::eV;
-    const auto pfe  =
-      SellF1 / ( SellE1 * SellE1 - epho * epho ) +
-      SellF2 / ( SellE2 * SellE2 - epho * epho );
+    const auto epho = momVect[ ibin ] / Gaudi::Units::eV;
+    const auto pfe =
+      SellF1 / ( SellE1 * SellE1 - epho * epho ) + SellF2 / ( SellE2 * SellE2 - epho * epho );
     const double curRindex = sqrt( 1.0 + pfe * scalingfactor );
-    aTable.emplace_back( epho*Gaudi::Units::eV, curRindex );
+    aTable.emplace_back( epho * Gaudi::Units::eV, curRindex );
   }
 
-  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
-            << " updated with " << momVect.size() << " bins" << endmsg;
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name() << " updated with "
+            << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;
 }
@@ -259,9 +259,9 @@ calcSellmeirRefIndex (const std::vector<double>& momVect,
 //=========================================================================
 // calculate Rayleigh scattering
 //=========================================================================
-StatusCode DeRichAerogelRadiator::
-calcRayleigh (const std::vector<double>& momVect,
-              TabulatedProperty* tabProp )
+StatusCode
+DeRichAerogelRadiator::calcRayleigh( const std::vector< double > &momVect,
+                                     TabulatedProperty *          tabProp )
 {
 
   // test the tab property pointer
@@ -272,34 +272,34 @@ calcRayleigh (const std::vector<double>& momVect,
   }
 
   // get clarity
-  const auto clarity = m_AerogelCond->param<double>("CurrentAerogel_Clarity");
+  const auto clarity = m_AerogelCond->param< double >( "CurrentAerogel_Clarity" );
 
   // reset table
-  auto & aTable = tabProp->table();
+  auto &aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
-    const auto epho       = momVect[ibin]/Gaudi::Units::eV;
-    const auto wAgel      = (m_photMomWaveConv/1000./Gaudi::Units::eV/Gaudi::Units::nanometer) /epho;
-    const auto pathlength = wAgel*wAgel*wAgel*wAgel/clarity*10;
-    aTable.emplace_back( epho*Gaudi::Units::eV, pathlength );
+    const auto epho = momVect[ ibin ] / Gaudi::Units::eV;
+    const auto wAgel =
+      ( m_photMomWaveConv / 1000. / Gaudi::Units::eV / Gaudi::Units::nanometer ) / epho;
+    const auto pathlength = wAgel * wAgel * wAgel * wAgel / clarity * 10;
+    aTable.emplace_back( epho * Gaudi::Units::eV, pathlength );
   }
 
-  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
-            << " updated with " << momVect.size() << " bins" << endmsg;
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name() << " updated with "
+            << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;
-
 }
 
 //=========================================================================
 // calculate Absorption
 //=========================================================================
-StatusCode DeRichAerogelRadiator::
-calcAbsorption (const std::vector<double>& momVect,
-                TabulatedProperty* tabProp )
+StatusCode
+DeRichAerogelRadiator::calcAbsorption( const std::vector< double > &momVect,
+                                       TabulatedProperty *          tabProp )
 {
 
   // test the tab property pointer
@@ -309,26 +309,26 @@ calcAbsorption (const std::vector<double>& momVect,
     return StatusCode::FAILURE;
   }
 
-  const auto thickness = deRich1()->param<double>("AerogelThickness");
+  const auto thickness = deRich1()->param< double >( "AerogelThickness" );
 
   // get A constant
-  const auto constA = m_AerogelCond->param<double>("CurrentAerogel_Aconst");
+  const auto constA = m_AerogelCond->param< double >( "CurrentAerogel_Aconst" );
 
   // reset table
-  auto & aTable = tabProp->table();
+  auto &aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
-  const auto pathlength = -thickness/std::log( constA );
+  const auto pathlength = -thickness / std::log( constA );
 
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
-    const auto epho = momVect[ibin]/Gaudi::Units::eV;
-    aTable.emplace_back( epho*Gaudi::Units::eV, pathlength );
+    const auto epho = momVect[ ibin ] / Gaudi::Units::eV;
+    aTable.emplace_back( epho * Gaudi::Units::eV, pathlength );
   }
 
-  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
-            << " updated with " << momVect.size() << " bins" << endmsg;
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name() << " updated with "
+            << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;
 }

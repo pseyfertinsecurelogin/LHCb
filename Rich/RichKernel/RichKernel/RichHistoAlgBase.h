@@ -36,17 +36,15 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class HistoAlgBase : public Rich::HistoBase<GaudiHistoAlg>
+  class HistoAlgBase : public Rich::HistoBase< GaudiHistoAlg >
   {
 
   public:
 
     /// Standard constructor
-    HistoAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : Rich::HistoBase<GaudiHistoAlg> ( name, pSvcLocator )
-    { }
-
+    HistoAlgBase( const std::string &name, ISvcLocator *pSvcLocator )
+      : Rich::HistoBase< GaudiHistoAlg >( name, pSvcLocator )
+    {}
   };
 
-}
+} // namespace Rich

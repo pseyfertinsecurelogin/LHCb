@@ -54,10 +54,9 @@ namespace Rich
      *
      *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
      */
-    virtual const DeRichSphMirror*
-    findSphMirror( const Rich::DetectorType rich,
-                   const Rich::Side side,
-                   const Gaudi::XYZPoint& reflPoint ) const = 0;
+    virtual const DeRichSphMirror *findSphMirror( const Rich::DetectorType rich,
+                                                  const Rich::Side         side,
+                                                  const Gaudi::XYZPoint &  reflPoint ) const = 0;
 
     /** Locates the secondary (spherical) mirror Segment given a reflection point,
      *  RICH identifier and panel
@@ -68,11 +67,9 @@ namespace Rich
      *
      *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
      */
-    virtual const DeRichSphMirror*
-    findSecMirror( const Rich::DetectorType rich,
-                   const Rich::Side side,
-                   const Gaudi::XYZPoint& reflPoint ) const = 0;
-
+    virtual const DeRichSphMirror *findSecMirror( const Rich::DetectorType rich,
+                                                  const Rich::Side         side,
+                                                  const Gaudi::XYZPoint &  reflPoint ) const = 0;
   };
 
-}
+} // namespace Rich

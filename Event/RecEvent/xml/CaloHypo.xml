@@ -200,15 +200,6 @@
 </method>
 
 <method
- desc    = "Cloning of the object ('virtual constructor') "
- name    = "clone"
- type    = "LHCb::CaloHypo*"
- const   = "TRUE"
- virtual = "TRUE"
- access  = "PUBLIC" >
-</method>
-
-<method
     name    = "fillStream"
     desc    = "Print this CaloHypo data object in a human readable way"
     type    = "std::ostream&amp;"

@@ -31,17 +31,15 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class ToolBase : public Rich::CommonBase<GaudiTool>
+  class ToolBase : public Rich::CommonBase< GaudiTool >
   {
 
   public:
 
     /// Standard constructor
-    ToolBase( const std::string& type,
-              const std::string& name,
-              const IInterface* parent )
-      : Rich::CommonBase<GaudiTool> ( type, name, parent ) { }
-
+    ToolBase( const std::string &type, const std::string &name, const IInterface *parent )
+      : Rich::CommonBase< GaudiTool >( type, name, parent )
+    {}
   };
 
-}
+} // namespace Rich

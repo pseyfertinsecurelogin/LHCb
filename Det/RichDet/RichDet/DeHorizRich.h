@@ -22,14 +22,15 @@ extern const CLID CLID_DEHorizRich;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
 
-class DeHorizRich: public DeRich
+class DeHorizRich : public DeRich
 {
 
 public:
+
   /**
    * Constructor for this class
    */
-  DeHorizRich(const std::string & name = "");
+  DeHorizRich( const std::string &name = "" );
 
   /**
    * Default destructor
@@ -40,13 +41,13 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const override { return classID(); }
+  const CLID &clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID& classID();
+  static const CLID &classID();
 
   /**
    * Specific HorizRich initialisation
@@ -58,5 +59,4 @@ private:
 
   /// Access the name for a given panel
   const std::string panelName( const Rich::Side panel ) const override;
-
 };

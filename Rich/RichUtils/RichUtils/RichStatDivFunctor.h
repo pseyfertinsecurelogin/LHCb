@@ -12,8 +12,8 @@
 #pragma once
 
 // STL
-#include <functional>
 #include <cmath>
+#include <functional>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -36,7 +36,7 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------------
 
-  class StatDivFunctorResult final : private std::pair<double,double>
+  class StatDivFunctorResult final : private std::pair< double, double >
   {
 
   public:
@@ -47,11 +47,9 @@ namespace Rich
      *  @param error  The error on the result
      *  @param parent Point to the parent calculator
      */
-    StatDivFunctorResult( const double result,
-                          const double error,
-                          const StatDivFunctor * parent )
-      : std::pair<double,double>(result,error),
-        m_parent ( parent ) { }
+    StatDivFunctorResult( const double result, const double error, const StatDivFunctor *parent )
+      : std::pair< double, double >( result, error ), m_parent( parent )
+    {}
 
     /// Access the result of the calculation
     inline double result() const { return this->first; }
@@ -60,13 +58,12 @@ namespace Rich
     inline double error() const { return this->second; }
 
     /// Access the parent calculator
-    inline const StatDivFunctor * parent() const { return m_parent; }
+    inline const StatDivFunctor *parent() const { return m_parent; }
 
   private:
 
     /// Pointer to parent calculator
-    const StatDivFunctor * m_parent = nullptr;
-
+    const StatDivFunctor *m_parent = nullptr;
   };
 
   //------------------------------------------------------------------------------------
@@ -94,42 +91,37 @@ namespace Rich
      *
      *  @param format The Printing format
      */
-    StatDivFunctor( const std::string & format = "%8.2f +-%6.2f" )
-      : m_format( format ) { }
+    StatDivFunctor( const std::string &format = "%8.2f +-%6.2f" ) : m_format( format ) {}
 
-      /** The efficiency calculation operator
-       *
-       *  @param top The numerator
-       *  @param bot The denominator
-       *
-       *  @return The poisson efficiency and error
-       */
-      inline StatDivFunctorResult operator() ( const double top,
-                                               const double bot ) const
-      {
-        return StatDivFunctorResult( ( bot>0 ? top/bot            : 0 ),
-                                     ( bot>0 ? std::sqrt(top)/bot : 0 ),
-                                     this );
-      }
+    /** The efficiency calculation operator
+     *
+     *  @param top The numerator
+     *  @param bot The denominator
+     *
+     *  @return The poisson efficiency and error
+     */
+    inline StatDivFunctorResult operator()( const double top, const double bot ) const
+    {
+      return StatDivFunctorResult(
+        ( bot > 0 ? top / bot : 0 ), ( bot > 0 ? std::sqrt( top ) / bot : 0 ), this );
+    }
 
-      /** Access the print format
-       *
-       *  @return The print format string
-       */
-      inline const std::string & printFormat() const { return m_format; }
+    /** Access the print format
+     *
+     *  @return The print format string
+     */
+    inline const std::string &printFormat() const { return m_format; }
 
   private:
 
-      /// The print format
-      std::string m_format;
-
+    /// The print format
+    std::string m_format;
   };
 
   /// overloaded output to MsgStream
-  inline MsgStream & operator << ( MsgStream & os,
-                                   const StatDivFunctorResult & res )
+  inline MsgStream &operator<<( MsgStream &os, const StatDivFunctorResult &res )
   {
-    return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error() ;
+    return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error();
   }
 
-}
+} // namespace Rich

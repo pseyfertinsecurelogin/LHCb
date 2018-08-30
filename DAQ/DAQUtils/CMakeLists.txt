@@ -13,6 +13,9 @@ gaudi_depends_on_subdirs(Event/DAQEvent
 			 DAQ/DAQKernel)
 
 find_package(RELAX)
+find_package(Boost)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
 
 gaudi_add_module(DAQUtils
                  src/*.cpp

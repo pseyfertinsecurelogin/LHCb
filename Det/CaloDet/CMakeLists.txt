@@ -8,6 +8,11 @@ gaudi_depends_on_subdirs(Calo/CaloKernel
                          GaudiAlg
                          Kernel/LHCbKernel)
 
+find_package(Boost)
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+
+
 gaudi_add_library(CaloDetLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS CaloDet

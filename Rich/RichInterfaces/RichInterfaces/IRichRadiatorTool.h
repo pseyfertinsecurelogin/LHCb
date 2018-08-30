@@ -22,8 +22,8 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 // from LHCbKernel
-#include "Kernel/RichRadiatorType.h"
 #include "Kernel/RichRadIntersection.h"
+#include "Kernel/RichRadiatorType.h"
 
 namespace Rich
 {
@@ -57,11 +57,10 @@ namespace Rich
      *
      * @return The number of intersections
      */
-    virtual unsigned int intersections( const Gaudi::XYZPoint& globalPoint,
-                                        const Gaudi::XYZVector& globalVector,
-                                        const Rich::RadiatorType radiator,
-                                        Rich::RadIntersection::Vector& intersections ) const = 0;
-
+    virtual unsigned int intersections( const Gaudi::XYZPoint &        globalPoint,
+                                        const Gaudi::XYZVector &       globalVector,
+                                        const Rich::RadiatorType       radiator,
+                                        Rich::RadIntersection::Vector &intersections ) const = 0;
   };
 
-}
+} // namespace Rich

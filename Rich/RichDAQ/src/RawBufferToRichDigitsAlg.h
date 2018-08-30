@@ -8,8 +8,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RAWBUFFERTORICHDIGITSALG_H
-#define RICHDAQ_RAWBUFFERTORICHDIGITSALG_H 1
+#pragma once
 
 // base class
 #include "RichKernel/RichAlgBase.h"
@@ -20,48 +19,42 @@
 // Interfaces
 #include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
 
-namespace Rich
+namespace Rich::DAQ
 {
-  namespace DAQ
+
+  //-----------------------------------------------------------------------------
+  /** @class RawBufferToRichDigitsAlg RawBufferToRichDigitsAlg.h
+   *
+   *  Algorithm to create RichDigits from RawEvent object
+   *
+   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+   *  @date   2003-11-06
+   */
+  //-----------------------------------------------------------------------------
+
+  class RawBufferToRichDigitsAlg final : public AlgBase
   {
 
-    //-----------------------------------------------------------------------------
-    /** @class RawBufferToRichDigitsAlg RawBufferToRichDigitsAlg.h
-     *
-     *  Algorithm to create RichDigits from RawEvent object
-     *
-     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-     *  @date   2003-11-06
-     */
-    //-----------------------------------------------------------------------------
+  public:
 
-    class RawBufferToRichDigitsAlg final : public AlgBase
-    {
+    /// Standard constructor
+    RawBufferToRichDigitsAlg( const std::string &name, ISvcLocator *pSvcLocator );
 
-    public:
+    virtual ~RawBufferToRichDigitsAlg(); ///< Destructor
 
-      /// Standard constructor
-      RawBufferToRichDigitsAlg( const std::string& name, ISvcLocator* pSvcLocator );
+    StatusCode initialize() override; // Algorithm initialization
+    StatusCode execute() override;    // Algorithm execution
 
-      virtual ~RawBufferToRichDigitsAlg( ); ///< Destructor
+  private: // data
 
-      StatusCode initialize() override;    // Algorithm initialization
-      StatusCode execute   () override;    // Algorithm execution
+    /// Output location for RichDigits
+    std::string m_richDigitsLoc;
 
-    private: // data
+    /// Raw Buffer Decoding tool
+    const IRawBufferToSmartIDsTool *m_decoder = nullptr;
 
-      /// Output location for RichDigits
-      std::string m_richDigitsLoc;
+    /// Flag to turn off RichDigit creation
+    bool m_decodeOnly;
+  };
 
-      /// Raw Buffer Decoding tool
-      const IRawBufferToSmartIDsTool * m_decoder = nullptr;
-
-      /// Flag to turn off RichDigit creation
-      bool m_decodeOnly;
-
-    };
-
-  }
-}
-
-#endif // RICHDAQ_RAWBUFFERTORICHDIGITSALG_H
+} // namespace Rich::DAQ

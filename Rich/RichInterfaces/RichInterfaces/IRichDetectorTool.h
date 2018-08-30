@@ -39,8 +39,7 @@ namespace Rich
     DeclareInterfaceID( IDetectorTool, 1, 0 );
 
     /// Vector of pointers to the Rich Detectors
-    virtual std::vector<DeRich*> deRichDetectors() const = 0;
-
+    virtual std::vector< DeRich * > deRichDetectors() const = 0;
   };
 
-}
+} // namespace Rich
