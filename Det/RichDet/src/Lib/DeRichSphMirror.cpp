@@ -345,8 +345,8 @@ DeRichSphMirror::updateGeometry()
   {
     if ( table->type() == "REFLECTIVITY" )
     {
-      m_reflectivity = std::make_unique< Rich::TabulatedProperty1D >( table );
-      foundRefl      = true;
+      m_reflectivity.reset( new Rich::TabulatedProperty1D( table ) );
+      foundRefl = true;
       break;
     }
   }
@@ -362,16 +362,6 @@ DeRichSphMirror::updateGeometry()
     debug() << "Second volume is " << surf->secondVol() << endmsg;
   }
   _ri_verbo << m_reflectivity->tabProperty() << endmsg;
-
-  // update SIMD float mirror data cache
-  m_mirrorData.radius = radius();
-  m_mirrorData.planeA = centreNormalPlane().A();
-  m_mirrorData.planeB = centreNormalPlane().B();
-  m_mirrorData.planeC = centreNormalPlane().C();
-  m_mirrorData.planeD = centreNormalPlane().D();
-  m_mirrorData.cocX   = centreOfCurvature().X();
-  m_mirrorData.cocY   = centreOfCurvature().Y();
-  m_mirrorData.cocZ   = centreOfCurvature().Z();
 
   m_firstUpdate = false;
 
