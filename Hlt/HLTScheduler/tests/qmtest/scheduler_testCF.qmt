@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="unsupported_platforms"><set><text>.*gcc6.*</text></set></argument>
+<argument name="args"><set>
+  <text>-v</text>
+  <text>../../options/scheduler_testCF.py</text>
+</set></argument>
+<argument name="validator"><text>
+expected_strings = [ "NONLAZY_AND: moore     0|0",
+                     " LAZY_AND: line2       0|0",
+                     "  A3                   0|0",
+                     "  A4                   1|1",
+                     " NONLAZY_OR: decision  0|1",
+                     "  LAZY_OR: line1       0|1",
+                     "   A1                  0|1",
+                     "   A2                  1|1",
+                     "  A5                   0|1",
+                     "  NOT: notA1           0|0",
+                     "   A1                  0|1",
+                     "ordered nodes: [A3, A4, A5, A1, A2]",]
+for expected_string in expected_strings:
+    if stdout.find(expected_string) == -1:
+        causes.append('not the right control flow')
+        result['GaudiTest.expected_string'] = result.Quote(expected_string)
+</text></argument>
+</extension>
+
