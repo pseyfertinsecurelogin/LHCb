@@ -30,7 +30,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,"IgnoreDQFlags" : True
        ,"EnableHive"    : False
        ,"ThreadPoolSize": cpu_count()
-       ,"EnableHLTEventLoopMgr" : False
+       ,"Scheduler"     : "AvalancheScheduler"
        ,"OnlineMode"    : False
         }
 
@@ -52,7 +52,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,'IgnoreDQFlags': """ If False, process only events with good DQ. Default is True (process all events)"""
        ,'EnableHive'   : """ If True, use HiveEventLoopMgr (deafult False) """
        ,'ThreadPoolSize': """ If EnableHive is set, size of the thread pool (default cpu_count) """
-       ,'EnableHLTEventLoopMgr' : """ Use HLTEventLoopMgr instead of the HiveSlimEventLoopMgr and AvalancheScheduler """
+       ,"Scheduler"     : "Choose between AvalancheScheduler, HLTEventLoopMgr, HLTControlFlowMgr"
        ,'OnlineMode'  : """ Set to True for online jobs like monitoring. Default is False """
        }
 
@@ -240,16 +240,22 @@ class LHCbApp(LHCbConfigurableUser):
         if not whiteboard.isPropertySet('EventSlots'):
             whiteboard.EventSlots = 10
         ApplicationMgr().ExtSvc.insert(0, whiteboard)
-        if self.getProp("EnableHLTEventLoopMgr"):
+        if self.getProp("Scheduler") == "HLTEventLoopMgr":
             from Configurables import HLTEventLoopMgr
             eventloopmgr = HLTEventLoopMgr()
             self.propagateProperty('ThreadPoolSize', eventloopmgr)
-        else:
+        elif self.getProp("Scheduler") == "HLTControlFlowMgr":
+            from Configurables import HLTControlFlowMgr
+            eventloopmgr = HLTControlFlowMgr()
+            self.propagateProperty('ThreadPoolSize', eventloopmgr)
+        elif self.getProp("Scheduler") == "AvalancheScheduler":
             from Configurables import HiveSlimEventLoopMgr, AvalancheSchedulerSvc
             scheduler = AvalancheSchedulerSvc()
             scheduler.CheckDependencies = True
             eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
             self.propagateProperty('ThreadPoolSize', scheduler)
+        else:
+            raise RuntimeError("Unknown scheduler '%s'"%scheduler)
         ApplicationMgr().EventLoop = eventloopmgr
 
         from Configurables import UpdateManagerSvc
