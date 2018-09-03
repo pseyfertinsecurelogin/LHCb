@@ -21,6 +21,9 @@
 #include "RichDet/DeRichBase.h"
 #include "RichDet/Rich1DTabProperty.h"
 
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
+
 // External declarations
 extern const CLID CLID_DeRichSphMirror;
 
@@ -88,7 +91,7 @@ public:
    * Retrieves the radius of this spherical mirror
    * @return The radius of this spherical mirror
    */
-  inline double radius() const noexcept { return m_radius; }
+  inline decltype( auto ) radius() const noexcept { return m_radius; }
 
   /**
    * Checks if the direction intersects with the mirror
@@ -138,7 +141,27 @@ private: // methods
    */
   StatusCode updateGeometry();
 
+public:
+
+  /// Basic cache of mirror data needed by SIMD reconstruction as required type
+  template < typename TYPE >
+  struct MirrorData
+  {
+    /// radius of curvature
+    TYPE radius { 0 };
+    /// Plane parameters
+    TYPE planeA { 0 }, planeB { 0 }, planeC { 0 }, planeD { 0 };
+    /// Centre of curvature
+    TYPE cocX { 0 }, cocY { 0 }, cocZ { 0 };
+  };
+
+  /// Access the mirror data
+  inline decltype( auto ) mirrorData() const noexcept { return m_mirrorData; }
+
 private: // data
+
+  /// floating point mirror data
+  MirrorData< Rich::SIMD::DefaultScalarFP > m_mirrorData;
 
   /// mirror reflectivity
   std::unique_ptr< const Rich::TabulatedProperty1D > m_reflectivity;
