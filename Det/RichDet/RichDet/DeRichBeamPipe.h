@@ -179,11 +179,11 @@ public:
       // For the moment run this scalar ... Vectorising SolidCons is for later on ...
       for ( std::size_t i = 0; i < POINT::Scalar::Size; ++i )
       {
-        if ( mask[ i ] )
+        if ( mask[i] )
         {
-          mask[ i ] = m_localCone->testForIntersection(
-            Gaudi::XYZPoint { pL.X()[ i ], pL.Y()[ i ], pL.Z()[ i ] },
-            Gaudi::XYZVector { vL.X()[ i ], vL.Y()[ i ], vL.Z()[ i ] } );
+          mask[i] = m_localCone->testForIntersection(
+            Gaudi::XYZPoint { pL.X()[i], pL.Y()[i], pL.Z()[i] },
+            Gaudi::XYZVector { vL.X()[i], vL.Y()[i], vL.Z()[i] } );
         }
       }
     }
@@ -235,9 +235,9 @@ private:
         ( p.z() > m_endPGlo.z() ? m_endPGlo.z() :
                                   p.z() < m_startPGlo.z() ? m_startPGlo.z() : p.z() );
       // Get (beam pipe axis (x,y) and R^2 at this point in z position
-      const auto beamx  = ( m_m[ 0 ] * beamz ) + m_c[ 0 ];
-      const auto beamy  = ( m_m[ 1 ] * beamz ) + m_c[ 1 ];
-      const auto beamR2 = ( m_m[ 2 ] * beamz ) + m_c[ 2 ];
+      const auto beamx  = ( m_m[0] * beamz ) + m_c[0];
+      const auto beamy  = ( m_m[1] * beamz ) + m_c[1];
+      const auto beamR2 = ( m_m[2] * beamz ) + m_c[2];
       const auto dx     = beamx - p.x();
       const auto dy     = beamy - p.y();
       const auto dz     = beamz - p.z();
@@ -251,9 +251,9 @@ private:
       beamz( beamz > m_endPGloSIMD.z() )   = m_endPGloSIMD.z();
       beamz( beamz < m_startPGloSIMD.z() ) = m_startPGloSIMD.z();
       // Get beam pipe axis (x,y) and R^2 at this point in z position
-      const auto beamx  = ( m_mSIMD[ 0 ] * beamz ) + m_cSIMD[ 0 ];
-      const auto beamy  = ( m_mSIMD[ 1 ] * beamz ) + m_cSIMD[ 1 ];
-      const auto beamR2 = ( m_mSIMD[ 2 ] * beamz ) + m_cSIMD[ 2 ];
+      const auto beamx  = ( m_mSIMD[0] * beamz ) + m_cSIMD[0];
+      const auto beamy  = ( m_mSIMD[1] * beamz ) + m_cSIMD[1];
+      const auto beamR2 = ( m_mSIMD[2] * beamz ) + m_cSIMD[2];
       const auto dx     = beamx - p.x();
       const auto dy     = beamy - p.y();
       const auto dz     = beamz - p.z();

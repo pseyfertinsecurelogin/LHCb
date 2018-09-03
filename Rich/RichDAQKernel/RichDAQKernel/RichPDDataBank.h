@@ -141,9 +141,9 @@ namespace Rich::DAQ
 
     /// Default Constructor
     PDDataBankImp( const ShortType maxDataSize = 1 )
-      : m_data( new LongType[ maxDataSize ] ), m_maxDataSize( maxDataSize ), m_internalData( true )
+      : m_data( new LongType[maxDataSize] ), m_maxDataSize( maxDataSize ), m_internalData( true )
     {
-      for ( ShortType i = 0; i < maxDataSize; ++i ) { m_data[ i ] = 0; }
+      for ( ShortType i = 0; i < maxDataSize; ++i ) { m_data[i] = 0; }
       // memset ( m_data, 0, sizeof(m_data) );
       // for ( ShortType i = 0; i < maxDataSize; ++i )
       // { std::cout << i << " " << m_data[i] << std::endl; }
@@ -165,13 +165,13 @@ namespace Rich::DAQ
                    const ShortType maxDataSize,
                    const ShortType dataSize = 0 )
       : m_header( header )
-      , m_data( new LongType[ maxDataSize ] )
+      , m_data( new LongType[maxDataSize] )
       , m_footer( footer )
       , m_dataSize( dataSize )
       , m_maxDataSize( maxDataSize )
       , m_internalData( true )
     {
-      for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[ i ] = dataInit;
+      for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[i] = dataInit;
     }
 
   public:
@@ -298,7 +298,7 @@ namespace Rich::DAQ
                               "*Rich::DAQ::PDDataBankImp*",
                               StatusCode::SUCCESS );
       }
-      m_data[ m_dataSize++ ] = data;
+      m_data[m_dataSize++] = data;
     }
 
     /// Read only access to data bank

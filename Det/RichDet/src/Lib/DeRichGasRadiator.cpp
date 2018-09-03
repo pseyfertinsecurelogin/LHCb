@@ -280,7 +280,7 @@ DeRichGasRadiator::calcSellmeirRefIndex( const std::vector< double > &momVect,
     gasNames     = compCond->paramVect< std::string >( "GasNames" );
     gasFractions = compCond->paramVect< double >( "GasFractions" );
 
-    if ( numOfGases == 1 ) { gasFractions[ 0 ] = 1.0; }
+    if ( numOfGases == 1 ) { gasFractions[0] = 1.0; }
 
     if ( numOfGases > gasNames.size() || numOfGases > gasFractions.size() )
     {
@@ -322,7 +322,7 @@ DeRichGasRadiator::calcSellmeirRefIndex( const std::vector< double > &momVect,
   }
   else if ( material()->name().find( "R1RadiatorGas" ) != std::string::npos )
   {
-    if ( numOfGases == 1 && gasNames[ 0 ] == "C4F10" )
+    if ( numOfGases == 1 && gasNames[0] == "C4F10" )
     {
       // same as before
       curRadMedium   = C4F10_Classic;
@@ -449,12 +449,12 @@ DeRichGasRadiator::calcSellmeirRefIndex( const std::vector< double > &momVect,
       nMinus1 = 0.0;
       for ( unsigned int gas = 0; gas < numOfGases; ++gas )
       {
-        if ( aWaveZeroVect[ gas ] > 1.0 ) // typical value when exists = 61.9
-        { EphyZSq = std::pow( MomConvWave / aWaveZeroVect[ gas ], 2 ); }
-        nMinus1 += ( scaleFactor * gasFractions[ gas ] *
-                     ( ( AParamVect[ gas ] * AMultParamVect[ gas ] * MomConvWave * MomConvWave *
-                         GasRhoCur ) /
-                       ( EphyZSq - ( epho * epho ) ) ) );
+        if ( aWaveZeroVect[gas] > 1.0 ) // typical value when exists = 61.9
+        { EphyZSq = std::pow( MomConvWave / aWaveZeroVect[gas], 2 ); }
+        nMinus1 +=
+          ( scaleFactor * gasFractions[gas] *
+            ( ( AParamVect[gas] * AMultParamVect[gas] * MomConvWave * MomConvWave * GasRhoCur ) /
+              ( EphyZSq - ( epho * epho ) ) ) );
       }
     }
     else

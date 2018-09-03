@@ -313,13 +313,13 @@ DeRichMultiSolidRadiator::nextIntersectionPoint( const Gaudi::XYZPoint & pGlobal
 
   for ( unsigned int solid = 0; solid < m_solids.size(); ++solid )
   {
-    const Gaudi::XYZVector solidLocalVector( m_toLowLevel[ solid ] * vLocal );
-    const Gaudi::XYZPoint  solidLocalPoint( m_toLowLevel[ solid ] * pLocal );
+    const Gaudi::XYZVector solidLocalVector( m_toLowLevel[solid] * vLocal );
+    const Gaudi::XYZPoint  solidLocalPoint( m_toLowLevel[solid] * pLocal );
 
-    if ( m_solids[ solid ]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks ) )
+    if ( m_solids[solid]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks ) )
     {
-      const auto localNext = solidLocalPoint + solidLocalVector * ticks[ 0 ];
-      localNextTempPoint   = m_toTopLevel[ solid ] * localNext;
+      const auto localNext = solidLocalPoint + solidLocalVector * ticks[0];
+      localNextTempPoint   = m_toTopLevel[solid] * localNext;
       if ( localNextTempPoint.z() < localNextPoint.z() ) localNextPoint = localNextTempPoint;
       foundTick = true;
     }
@@ -354,15 +354,15 @@ DeRichMultiSolidRadiator::intersectionPoints( const Gaudi::XYZPoint & position,
 
   for ( unsigned int solid = 0; solid < m_solids.size(); ++solid )
   {
-    const Gaudi::XYZVector solidLocalVector( m_toLowLevel[ solid ] * vLocal );
-    const Gaudi::XYZPoint  solidLocalPoint( m_toLowLevel[ solid ] * pLocal );
+    const Gaudi::XYZVector solidLocalVector( m_toLowLevel[solid] * vLocal );
+    const Gaudi::XYZPoint  solidLocalPoint( m_toLowLevel[solid] * pLocal );
 
-    if ( m_solids[ solid ]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks ) )
+    if ( m_solids[solid]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks ) )
     {
-      const auto localEntryStep1( solidLocalPoint + solidLocalVector * ticks[ 0 ] );
-      localEntryTempPoint = m_toTopLevel[ solid ] * localEntryStep1;
-      const auto localExitStep1( solidLocalPoint + solidLocalVector * ticks[ ticks.size() - 1 ] );
-      localExitTempPoint = m_toTopLevel[ solid ] * localExitStep1;
+      const auto localEntryStep1( solidLocalPoint + solidLocalVector * ticks[0] );
+      localEntryTempPoint = m_toTopLevel[solid] * localEntryStep1;
+      const auto localExitStep1( solidLocalPoint + solidLocalVector * ticks[ticks.size() - 1] );
+      localExitTempPoint = m_toTopLevel[solid] * localExitStep1;
 
       if ( localEntryTempPoint.z() < localEntryPoint.z() ) localEntryPoint = localEntryTempPoint;
       if ( localExitTempPoint.z() > localExitPoint.z() ) localExitPoint = localExitTempPoint;
@@ -397,17 +397,17 @@ DeRichMultiSolidRadiator::intersectionPoints( const Gaudi::XYZPoint &         pG
   for ( unsigned int solid = 0; solid < m_solids.size(); ++solid )
   {
 
-    const auto solidLocalPoint( m_toLowLevel[ solid ] * pLocal );
-    const auto solidLocalVector( m_toLowLevel[ solid ] * vLocal );
+    const auto solidLocalPoint( m_toLowLevel[solid] * pLocal );
+    const auto solidLocalVector( m_toLowLevel[solid] * vLocal );
     const auto noTicks =
-      m_solids[ solid ]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks );
+      m_solids[solid]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks );
     if ( 0 != noTicks )
     {
       totalTicks += noTicks;
       for ( const auto &tick : ticks )
       {
         points.emplace_back( geometry()->toGlobal(
-          m_toTopLevel[ solid ] * ( solidLocalPoint + solidLocalVector * ( tick ) ) ) );
+          m_toTopLevel[solid] * ( solidLocalPoint + solidLocalVector * ( tick ) ) ) );
       }
     }
   }
@@ -431,23 +431,23 @@ DeRichMultiSolidRadiator::intersections( const Gaudi::XYZPoint &        pGlobal,
 
   for ( unsigned int solid = 0; solid < m_solids.size(); ++solid )
   {
-    const auto solidLocalPoint( m_toLowLevel[ solid ] * pLocal );
-    const auto solidLocalVector( m_toLowLevel[ solid ] * vLocal );
+    const auto solidLocalPoint( m_toLowLevel[solid] * pLocal );
+    const auto solidLocalVector( m_toLowLevel[solid] * vLocal );
     const auto noTicks =
-      m_solids[ solid ]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks );
+      m_solids[solid]->intersectionTicks( solidLocalPoint, solidLocalVector, ticks );
     if ( 0 != noTicks )
     {
       totalTicks += noTicks;
       for ( unsigned int tick = 0; tick < noTicks; tick += 2 )
       {
         intersections.push_back( Rich::RadIntersection(
-          geometry()->toGlobal( m_toTopLevel[ solid ] *
-                                ( solidLocalPoint + solidLocalVector * ticks[ tick ] ) ),
+          geometry()->toGlobal( m_toTopLevel[solid] *
+                                ( solidLocalPoint + solidLocalVector * ticks[tick] ) ),
           vGlobal,
-          geometry()->toGlobal( m_toTopLevel[ solid ] *
-                                ( solidLocalPoint + solidLocalVector * ticks[ tick + 1 ] ) ),
+          geometry()->toGlobal( m_toTopLevel[solid] *
+                                ( solidLocalPoint + solidLocalVector * ticks[tick + 1] ) ),
           vGlobal,
-          m_radiators[ solid ] ) );
+          m_radiators[solid] ) );
       }
     }
   }
@@ -476,7 +476,7 @@ DeRichMultiSolidRadiator::refractiveIndex( const double energy, const bool hlt )
       continue;
     }
     // Should this be a weighted average of some form ?
-    refIn += ( *ind )[ energy * Gaudi::Units::eV ];
+    refIn += ( *ind )[energy * Gaudi::Units::eV];
   }
   return ( radiators().empty() ? refIn : refIn / radiators().size() );
 }

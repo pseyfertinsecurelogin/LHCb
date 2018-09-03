@@ -64,7 +64,7 @@ namespace Rich
         {
 
           // Get packed data data (in ALICE mode)
-          const RichZSPacked zsData( this->data()[ iData ], true );
+          const RichZSPacked zsData( this->data()[iData], true );
 
           // First data word
           // Get first address and bit field

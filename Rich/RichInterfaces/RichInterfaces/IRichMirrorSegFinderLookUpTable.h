@@ -199,7 +199,7 @@ namespace Rich::Future
         if constexpr ( std::is_arithmetic< TYPE >::value )
         {
           // Scalar
-          return mirrors[ m_lookupTable.get( xIndex( x ), yIndex( y ) ) ];
+          return mirrors[m_lookupTable.get( xIndex( x ), yIndex( y ) )];
         }
         else
         {
@@ -216,7 +216,7 @@ namespace Rich::Future
             // just load the mirror using the number
             // mirrs[i] = mirrors[ xyi[i] ];
             // Revert to scalar lookup
-            mirrs[ i ] = mirrors[ m_lookupTable.get( xyi[ i ] ) ];
+            mirrs[i] = mirrors[m_lookupTable.get( xyi[i] )];
           }
           // return the filled mirrors
           return mirrs;
@@ -283,7 +283,7 @@ namespace Rich::Future
       public:
 
         /// Access the mirror for a given combined xy index (Scalar)
-        inline MirrorNum get( const ScalarIndex ixy ) const noexcept { return ( *this )[ ixy ]; }
+        inline MirrorNum get( const ScalarIndex ixy ) const noexcept { return ( *this )[ixy]; }
         /// Access the mirror for a given set of (x,y) indices (Scalar)
         inline MirrorNum get( const ScalarIndex ix, const ScalarIndex iy ) const noexcept
         {
@@ -297,7 +297,7 @@ namespace Rich::Future
         inline SIMDIndices get( const SIMDIndices::IndexType &ixy ) const noexcept
         {
           // gather SIMD lookup
-          return ( *this )[ ixy ];
+          return ( *this )[ixy];
         }
 #endif
         /// Access the mirror for a given set of (x,y) indices (SIMD)
@@ -313,7 +313,7 @@ namespace Rich::Future
         /// Set the mirror for a given bin
         void set( const ScalarIndex ix, const ScalarIndex iy, const MirrorNum im ) noexcept
         {
-          ( *this )[ xyIndex( ix, iy ) ] = im;
+          ( *this )[xyIndex( ix, iy )] = im;
         }
         /// Clear the table
         void clear() noexcept
@@ -482,7 +482,7 @@ namespace Rich::Future
       {
         // Must have 2 mirrors in -ve and +ve x positions
         if ( 2 != mirrors.size() ||
-             ( mirrors[ 0 ]->mirrorCentre().X() * mirrors[ 1 ]->mirrorCentre().X() > 0 ) )
+             ( mirrors[0]->mirrorCentre().X() * mirrors[1]->mirrorCentre().X() > 0 ) )
         {
           throw GaudiException( "Problem with mirror segments",
                                 "MirrorSegFinderLookUpTable::TwoSegmentXFinder",
@@ -522,14 +522,14 @@ namespace Rich::Future
         if constexpr ( std::is_arithmetic< TYPE >::value )
         {
           // Scalar
-          return ( x < 0 ? mirrors[ 0 ] : mirrors[ 1 ] );
+          return ( x < 0 ? mirrors[0] : mirrors[1] );
         }
         else
         {
           // SIMD - revert to scalar loop here... Is there a way to avoid this ?
           SIMDMirrors< TYPE > mirrs;
           for ( std::size_t i = 0; i < TYPE::Size; ++i )
-          { mirrs[ i ] = ( x[ i ] < 0 ? mirrors[ 0 ] : mirrors[ 1 ] ); }
+          { mirrs[i] = ( x[i] < 0 ? mirrors[0] : mirrors[1] ); }
           return mirrs;
         }
       }
@@ -549,35 +549,35 @@ namespace Rich::Future
       /// Reset the finders
       void reset()
       {
-        m_r1Finder[ Rich::top ].reset();
-        m_r1Finder[ Rich::bottom ].reset();
-        m_r2Finder[ Rich::left ].reset();
-        m_r2Finder[ Rich::right ].reset();
+        m_r1Finder[Rich::top].reset();
+        m_r1Finder[Rich::bottom].reset();
+        m_r2Finder[Rich::left].reset();
+        m_r2Finder[Rich::right].reset();
       }
       /// Validity check
       bool isOK() const
       {
         return (
-          !m_r1Finder[ Rich::top ].mirrors.empty() && !m_r1Finder[ Rich::bottom ].mirrors.empty() &&
-          !m_r2Finder[ Rich::left ].mirrors.empty() && !m_r2Finder[ Rich::right ].mirrors.empty() );
+          !m_r1Finder[Rich::top].mirrors.empty() && !m_r1Finder[Rich::bottom].mirrors.empty() &&
+          !m_r2Finder[Rich::left].mirrors.empty() && !m_r2Finder[Rich::right].mirrors.empty() );
       }
       /// Add a mirror to the given RICH and side
       void
       addMirror( const Rich::DetectorType rich, const Rich::Side side, const DeRichSphMirror *m )
       {
-        if ( Rich::Rich1 == rich ) { m_r1Finder[ side ].mirrors.push_back( m ); }
+        if ( Rich::Rich1 == rich ) { m_r1Finder[side].mirrors.push_back( m ); }
         else
         {
-          m_r2Finder[ side ].mirrors.push_back( m );
+          m_r2Finder[side].mirrors.push_back( m );
         }
       }
       /// Initialise
       void init()
       {
-        m_r1Finder[ Rich::top ].init();
-        m_r1Finder[ Rich::bottom ].init();
-        m_r2Finder[ Rich::left ].init();
-        m_r2Finder[ Rich::right ].init();
+        m_r1Finder[Rich::top].init();
+        m_r1Finder[Rich::bottom].init();
+        m_r2Finder[Rich::left].init();
+        m_r2Finder[Rich::right].init();
       }
 
     public:
@@ -608,8 +608,8 @@ namespace Rich::Future
       find( const Rich::DetectorType rich, const Rich::Side side, const TYPE x, const TYPE y ) const
         noexcept
       {
-        return ( Rich::Rich1 == rich ? m_r1Finder[ side ].find( x, y ) :
-                                       m_r2Finder[ side ].find( x, y ) );
+        return ( Rich::Rich1 == rich ? m_r1Finder[side].find( x, y ) :
+                                       m_r2Finder[side].find( x, y ) );
       }
       /// Find the mirror for the given RICH, panels and point (x,y) (SIMD)
       template < typename TYPE,
@@ -634,7 +634,7 @@ namespace Rich::Future
           auto mirrs2 = find( rich, Rich::secondSide, x, y );
           for ( std::size_t i = 0; i < Rich::SIMD::Sides::Size; ++i )
           {
-            if ( m2[ i ] ) { mirrs1[ i ] = mirrs2[ i ]; }
+            if ( m2[i] ) { mirrs1[i] = mirrs2[i]; }
           }
           return mirrs1;
         }
@@ -645,7 +645,7 @@ namespace Rich::Future
       /// Get the list of mirrors
       const Mirrors &mirrors( const Rich::DetectorType rich, const Rich::Side side ) const noexcept
       {
-        return ( Rich::Rich1 == rich ? m_r1Finder[ side ].mirrors : m_r2Finder[ side ].mirrors );
+        return ( Rich::Rich1 == rich ? m_r1Finder[side].mirrors : m_r2Finder[side].mirrors );
       }
 
     private:

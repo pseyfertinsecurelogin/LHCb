@@ -70,7 +70,7 @@ DeRichSphMirror::intersects( const Gaudi::XYZPoint & globalP,
   if ( 0 == noTicks ) { return StatusCode::FAILURE; }
   else
   {
-    intersectionPoint = geometry()->toGlobal( pLocal + ticks[ 0 ] * vLocal );
+    intersectionPoint = geometry()->toGlobal( pLocal + ticks[0] * vLocal );
     return StatusCode::SUCCESS;
   }
 }
@@ -224,7 +224,7 @@ DeRichSphMirror::updateGeometry()
     return StatusCode::FAILURE;
   }
 
-  m_localMirrorCentre = Gaudi::XYZPoint( sphTicks[ 0 ] * toSphCentreXYZ );
+  m_localMirrorCentre = Gaudi::XYZPoint( sphTicks[0] * toSphCentreXYZ );
   m_mirrorCentre      = geometry()->toGlobal( m_localMirrorCentre );
   m_centreOfCurvature = geometry()->toGlobal( m_localOrigin );
 

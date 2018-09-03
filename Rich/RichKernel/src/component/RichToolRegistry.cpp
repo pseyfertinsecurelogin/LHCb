@@ -122,7 +122,7 @@ Rich::ToolRegistry::toolType( const std::string &nickname ) const
   }
 
   // test instance name is defined
-  if ( m_myTools[ nickname ].empty() )
+  if ( m_myTools[nickname].empty() )
   {
     // Don't allow any missing tool entries
     // Exception( "Unknown RICH tool nickname '" + nickname + "'" );
@@ -134,7 +134,7 @@ Rich::ToolRegistry::toolType( const std::string &nickname ) const
   }
 
   // All OK, so return instance name for this nickname
-  return m_myTools[ nickname ];
+  return m_myTools[nickname];
 }
 
 const std::string
@@ -146,10 +146,10 @@ Rich::ToolRegistry::toolName( const std::string &nickname ) const
 void
 Rich::ToolRegistry::addEntry( const std::string &nickname, const std::string &type ) const
 {
-  if ( !m_myTools[ nickname ].empty() && type != m_myTools[ nickname ] )
+  if ( !m_myTools[nickname].empty() && type != m_myTools[nickname] )
   {
     std::ostringstream mess;
-    mess << "Nickname '" << nickname << "' mapping changed : '" << m_myTools[ nickname ] << "' to '"
+    mess << "Nickname '" << nickname << "' mapping changed : '" << m_myTools[nickname] << "' to '"
          << type + "'";
     // Print info for any tool type changes, other than to the MC
     // association tools as these always change when running on real data
@@ -162,5 +162,5 @@ Rich::ToolRegistry::addEntry( const std::string &nickname, const std::string &ty
   }
   if ( msgLevel( MSG::DEBUG ) )
   { debug() << " Tool nickname '" << nickname << "' maps to type '" << type << "'" << endmsg; }
-  m_myTools[ nickname ] = type;
+  m_myTools[nickname] = type;
 }

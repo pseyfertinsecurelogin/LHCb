@@ -115,11 +115,11 @@ DeRichHPD::initialize()
   {
     m_demagConds.push_back( condition( "DemagParametersFieldNegative" ) );
     updMgrSvc()->registerCondition(
-      this, m_demagConds[ 0 ].path(), &DeRichHPD::updateDemagProperties );
+      this, m_demagConds[0].path(), &DeRichHPD::updateDemagProperties );
 
     m_demagConds.push_back( condition( "DemagParametersFieldPositive" ) );
     updMgrSvc()->registerCondition(
-      this, m_demagConds[ 1 ].path(), &DeRichHPD::updateDemagProperties );
+      this, m_demagConds[1].path(), &DeRichHPD::updateDemagProperties );
   }
   else
   {
@@ -128,7 +128,7 @@ DeRichHPD::initialize()
       m_demagConds.push_back( condition( "DemagParameters" ) );
       m_demagConds.push_back( condition( "DemagParameters" ) );
       updMgrSvc()->registerCondition(
-        this, m_demagConds[ 0 ].path(), &DeRichHPD::updateDemagProperties );
+        this, m_demagConds[0].path(), &DeRichHPD::updateDemagProperties );
     }
     else
     {
@@ -287,8 +287,8 @@ DeRichHPD::getParameters()
     return StatusCode::FAILURE;
   }
   const auto &DeMagTable = HPDdeMag->table();
-  m_deMagFactor[ 0 ]     = DeMagTable[ 0 ].second;
-  m_deMagFactor[ 1 ]     = DeMagTable[ 1 ].second;
+  m_deMagFactor[0]       = DeMagTable[0].second;
+  m_deMagFactor[1]       = DeMagTable[1].second;
 
   return StatusCode::SUCCESS;
 }
@@ -356,9 +356,9 @@ DeRichHPD::updateGeometry()
   }
 
   // Get inner and outer window radii
-  m_winInR    = windowTicks[ 0 ];
+  m_winInR    = windowTicks[0];
   m_winInRsq  = m_winInR * m_winInR;
-  m_winOutR   = windowTicks[ 1 ];
+  m_winOutR   = windowTicks[1];
   m_winOutRsq = m_winOutR * m_winOutR;
 
   // get kapton
@@ -432,7 +432,7 @@ DeRichHPD::fillHpdDemagTable( const FieldPolarity field )
 
   std::ostringstream paraLoc, detLoc;
   paraLoc << "hpd" << m_number << "_sim";
-  const auto &coeff_sim = m_demagConds[ field ]->paramVect< double >( paraLoc.str() );
+  const auto &coeff_sim = m_demagConds[field]->paramVect< double >( paraLoc.str() );
   detLoc << XmlHpdDemagPath << "Sim_" << m_number;
   SmartDataPtr< TabulatedProperty > dem( dataSvc(), detLoc.str() );
 
@@ -499,12 +499,12 @@ DeRichHPD::fillHpdDemagTable( const FieldPolarity field )
     }
 
     simTable.push_back( TabulatedProperty::Entry( r_anode, phi_anode ) );
-    tableR[ r_cathode ]   = r_anode;
-    tablePhi[ r_cathode ] = phi_anode;
+    tableR[r_cathode]   = r_anode;
+    tablePhi[r_cathode] = phi_anode;
   }
 
-  m_demagMapR[ field ].initInterpolator( tableR );
-  m_demagMapPhi[ field ].initInterpolator( tablePhi );
+  m_demagMapR[field].initInterpolator( tableR );
+  m_demagMapPhi[field].initInterpolator( tablePhi );
 
   return StatusCode::SUCCESS;
 }
@@ -517,31 +517,31 @@ DeRichHPD::fillHpdMagTable( const FieldPolarity field )
 {
 
   // MDMS version
-  m_MDMS_version[ field ] = ( m_demagConds[ field ]->exists( "version" ) ?
-                                m_demagConds[ field ]->param< int >( "version" ) :
-                                0 );
-  _ri_debug << " -> Field " << field << " MDMS version = " << m_MDMS_version[ field ] << endmsg;
-  if ( m_MDMS_version[ field ] < 0 || m_MDMS_version[ field ] > 2 )
+  m_MDMS_version[field] =
+    ( m_demagConds[field]->exists( "version" ) ? m_demagConds[field]->param< int >( "version" ) :
+                                                 0 );
+  _ri_debug << " -> Field " << field << " MDMS version = " << m_MDMS_version[field] << endmsg;
+  if ( m_MDMS_version[field] < 0 || m_MDMS_version[field] > 2 )
   {
-    error() << "Unknown MDMS version " << m_MDMS_version[ field ] << endmsg;
+    error() << "Unknown MDMS version " << m_MDMS_version[field] << endmsg;
     return StatusCode::FAILURE;
   }
 
   // Load the MDMS parameters
   std::ostringstream paraLoc;
   paraLoc << "hpd" << m_number << "_rec";
-  const auto &coeff_rec = m_demagConds[ field ]->paramVect< double >( paraLoc.str() );
+  const auto &coeff_rec = m_demagConds[field]->paramVect< double >( paraLoc.str() );
 
   // Expected size of the MDMS parameters vector
   const unsigned int nMDMSParams =
-    ( 0 == m_MDMS_version[ field ] ?
+    ( 0 == m_MDMS_version[field] ?
         8 :
-        1 == m_MDMS_version[ field ] ? 9 : 2 == m_MDMS_version[ field ] ? 12 : 8 );
+        1 == m_MDMS_version[field] ? 9 : 2 == m_MDMS_version[field] ? 12 : 8 );
 
   // Check the size of the MDMS parameters
   if ( coeff_rec.size() < nMDMSParams )
   {
-    error() << "MDMS Version " << m_MDMS_version[ field ] << " requires " << nMDMSParams
+    error() << "MDMS Version " << m_MDMS_version[field] << " requires " << nMDMSParams
             << " parameters. Found only " << coeff_rec.size() << "..." << endmsg;
     return StatusCode::FAILURE;
   }
@@ -560,7 +560,7 @@ DeRichHPD::fillHpdMagTable( const FieldPolarity field )
   const double phi_a3 = coeff_rec.at( 7 );
 
   // If MDMS V1, scale the r1 values
-  if ( 1 == m_MDMS_version[ field ] )
+  if ( 1 == m_MDMS_version[field] )
   {
 
     // HPD image radius from data
@@ -612,19 +612,19 @@ DeRichHPD::fillHpdMagTable( const FieldPolarity field )
       phi_cathode = phi_a0 + ( phi_a1 * r_anode ) + ( phi_a2 * rAnode2 ) + ( phi_a3 * rAnode3 );
     }
 
-    tableR[ r_anode ]   = r_cathode;
-    tablePhi[ r_anode ] = phi_cathode;
+    tableR[r_anode]   = r_cathode;
+    tablePhi[r_anode] = phi_cathode;
 
   } // bins
 
-  m_magMapR[ field ].initInterpolator( tableR );
-  m_magMapPhi[ field ].initInterpolator( tablePhi );
+  m_magMapR[field].initInterpolator( tableR );
+  m_magMapPhi[field].initInterpolator( tablePhi );
 
-  if ( UNLIKELY( 2 == m_MDMS_version[ field ] ) )
+  if ( UNLIKELY( 2 == m_MDMS_version[field] ) )
   {
-    m_MDMSRotCentre      = Gaudi::XYZVector( coeff_rec[ 8 ], coeff_rec[ 9 ], 0.0 );
-    m_magnificationCoef1 = coeff_rec[ 10 ];
-    m_magnificationCoef2 = coeff_rec[ 11 ];
+    m_MDMSRotCentre      = Gaudi::XYZVector( coeff_rec[8], coeff_rec[9], 0.0 );
+    m_magnificationCoef1 = coeff_rec[10];
+    m_magnificationCoef2 = coeff_rec[11];
   }
   else
   {
@@ -646,8 +646,8 @@ DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint &detectPoint,
 {
 
   // Only versions 0, 1 or 2 possible
-  detectPoint = ( 2 > m_MDMS_version[ m_field ] ? m_SiSensorToHPDMatrix * detectPoint :
-                                                  detectPoint - m_MDMSRotCentre );
+  detectPoint = ( 2 > m_MDMS_version[m_field] ? m_SiSensorToHPDMatrix * detectPoint :
+                                                detectPoint - m_MDMSRotCentre );
   detectPoint.SetZ( 0.0 );
 
   const auto rAnode = detectPoint.R();
@@ -655,7 +655,7 @@ DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint &detectPoint,
   // const bool rAnodeOK = rAnode < m_siAnodeRCheck;
 
   double rCathode( 0 );
-  if ( UNLIKELY( 2 == m_MDMS_version[ m_field ] ) )
+  if ( UNLIKELY( 2 == m_MDMS_version[m_field] ) )
   {
     detectPoint = m_SiSensorToHPDMatrix * detectPoint;
     detectPoint.SetZ( 0.0 );
@@ -721,11 +721,11 @@ DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint &detectPoint,
   // To go from the anode to the cathode solve: d1*Rc^2 - d0*Rc - Ra = 0
   // The difference is that Ra is now positive.
   // Chose the solution with the minus sign
-  auto rCathode = ( m_deMagFactor[ 1 ] > 1e-6 ?
-                      ( ( m_deMagFactor[ 0 ] - std::sqrt( std::pow( m_deMagFactor[ 0 ], 2 ) -
-                                                          4 * m_deMagFactor[ 1 ] * rAnode ) ) /
-                        ( 2 * m_deMagFactor[ 1 ] ) ) :
-                      rAnode / m_deMagFactor[ 0 ] );
+  auto rCathode = ( m_deMagFactor[1] > 1e-6 ?
+                      ( ( m_deMagFactor[0] - std::sqrt( std::pow( m_deMagFactor[0], 2 ) -
+                                                        4 * m_deMagFactor[1] * rAnode ) ) /
+                        ( 2 * m_deMagFactor[1] ) ) :
+                      rAnode / m_deMagFactor[0] );
 
   // check if this point could have come from the photoCathode
   if ( m_winInRsq < rCathode * rCathode ) return false;
@@ -859,12 +859,12 @@ DeRichHPD::detectionPoint( const SmartIDs &smartID,
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
     Gaudi::XYZPoint p { 0, 0, 0 };
-    ok[ i ] = detectionPoint( smartID[ i ], p, photoCathodeSide );
-    if ( ok[ i ] )
+    ok[i] = detectionPoint( smartID[i], p, photoCathodeSide );
+    if ( ok[i] )
     {
-      X[ i ] = p.X();
-      Y[ i ] = p.Y();
-      Z[ i ] = p.Z();
+      X[i] = p.X();
+      Y[i] = p.Y();
+      Z[i] = p.Z();
     }
   }
   detectPoint = { X, Y, Z };

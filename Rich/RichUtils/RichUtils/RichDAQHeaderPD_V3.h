@@ -126,8 +126,8 @@ namespace Rich::DAQ
                         WordType( 0 ) ) // header has three words
       {
         setPrimaryHeaderWord( WordType( *( data++ ) ) );
-        extendedHeaderWords()[ 0 ] = WordType( *( data++ ) );
-        extendedHeaderWords()[ 1 ] = WordType( *( data++ ) );
+        extendedHeaderWords()[0] = WordType( *( data++ ) );
+        extendedHeaderWords()[1] = WordType( *( data++ ) );
       }
 
       /// Constructor from all data
@@ -161,8 +161,8 @@ namespace Rich::DAQ
       inline void reset()
       {
         setPrimaryHeaderWord( WordType( 0 ) );
-        extendedHeaderWords()[ 0 ] = WordType( 0 );
-        extendedHeaderWords()[ 1 ] = WordType( 0 );
+        extendedHeaderWords()[0] = WordType( 0 );
+        extendedHeaderWords()[1] = WordType( 0 );
       }
 
       /// reset for a new data stream
@@ -177,7 +177,7 @@ namespace Rich::DAQ
       /// Retrieve the Level0 ID
       inline Level0ID l0ID() const
       {
-        return Level0ID( ( extendedHeaderWords()[ 1 ].data() & RichDAQHeaderPDCode::MaskL0ID ) >>
+        return Level0ID( ( extendedHeaderWords()[1].data() & RichDAQHeaderPDCode::MaskL0ID ) >>
                          RichDAQHeaderPDCode::ShiftL0ID );
       }
 
@@ -265,7 +265,7 @@ namespace Rich::DAQ
       /// Test if this data block is for an ALICE mode HPD
       inline static bool aliceMode( const LongType *word )
       {
-        return ( 0 != ( ( word[ 0 ] & RichDAQHeaderPDCode::MaskAlice ) >>
+        return ( 0 != ( ( word[0] & RichDAQHeaderPDCode::MaskAlice ) >>
                         RichDAQHeaderPDCode::ShiftAlice ) );
       }
 
@@ -273,7 +273,7 @@ namespace Rich::DAQ
       inline static bool zeroSuppressed( const LongType *word )
       {
         return ( 0 !=
-                 ( ( word[ 0 ] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
+                 ( ( word[0] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
       }
 
     public: // methods not properly implemented, but included for compatibility

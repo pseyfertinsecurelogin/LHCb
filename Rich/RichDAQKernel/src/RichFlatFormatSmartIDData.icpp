@@ -63,7 +63,7 @@ namespace Rich
         // Loop over data fields
         for ( unsigned int iData = 0; iData < nDataWords; ++iData )
         {
-          const LHCb::RichSmartID id( LHCb::RichSmartID32( this->data()[ iData ] ) );
+          const LHCb::RichSmartID id( LHCb::RichSmartID32( this->data()[iData] ) );
           if ( id.pdID() != hpdID )
           { std::cout << "PD ID Error. Should never see this" << std::endl; }
           ids.push_back( id );

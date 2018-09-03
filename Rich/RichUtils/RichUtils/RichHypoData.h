@@ -69,10 +69,7 @@ namespace Rich
      *  @param type  The mass hypothesis for which the data is requested
      *  @return The data value
      */
-    inline const TYPE &operator[]( const Rich::ParticleIDType type ) const
-    {
-      return m_data[ type ];
-    }
+    inline const TYPE &operator[]( const Rich::ParticleIDType type ) const { return m_data[type]; }
 
     /** Set the data value for a given particle hypothesis
      *
@@ -81,8 +78,8 @@ namespace Rich
      */
     inline void setData( const Rich::ParticleIDType type, const TYPE value ) noexcept
     {
-      m_valid[ type ] = true;
-      m_data[ type ]  = value;
+      m_valid[type] = true;
+      m_data[type]  = value;
     }
 
     /** Reset the data for all mass hypotheses. Following this call all data
@@ -118,8 +115,8 @@ namespace Rich
      */
     inline void resetData( const Rich::ParticleIDType type, const TYPE value ) noexcept
     {
-      m_valid[ type ] = false;
-      m_data[ type ]  = value;
+      m_valid[type] = false;
+      m_data[type]  = value;
     }
 
     /** Reset data for given particle hypothesis. Following this call the
@@ -153,7 +150,7 @@ namespace Rich
      */
     inline bool dataIsValid( const Rich::ParticleIDType type ) const noexcept
     {
-      return m_valid[ type ];
+      return m_valid[type];
     }
 
   public:
@@ -162,7 +159,7 @@ namespace Rich
     friend inline std::ostream &operator<<( std::ostream &os, const HypoData< TYPE > &data )
     {
       os << "[ ";
-      for ( const auto id : Rich::particles() ) { os << data[ id ] << " "; }
+      for ( const auto id : Rich::particles() ) { os << data[id] << " "; }
       return os << "]";
     }
 

@@ -180,7 +180,7 @@ private:
     {
       pdCol = PmtModuleNumInPanelFromModuleNumAlone( pdCol );
     } // return the pointer from the array
-    return m_DePMTs[ pdCol ][ pdInCol ];
+    return m_DePMTs[pdCol][pdInCol];
 
     // get the old way
     // return dePMT( _pdNumber( pdID ) );
@@ -190,71 +190,68 @@ private:
 
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {
-    const Int aPRow = ( aPmtNum / m_NumPmtInRowCol[ 0 ] );
-    return { aPRow, ( Int )( aPmtNum - ( aPRow * m_NumPmtInRowCol[ 0 ] ) ) };
+    const Int aPRow = ( aPmtNum / m_NumPmtInRowCol[0] );
+    return { aPRow, ( Int )( aPmtNum - ( aPRow * m_NumPmtInRowCol[0] ) ) };
   }
 
   inline RowCol getGrandPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {
-    const Int aPRow = ( aPmtNum / m_NumGrandPmtInRowCol[ 0 ] );
-    return { aPRow, ( Int )( aPmtNum - ( aPRow * m_NumGrandPmtInRowCol[ 0 ] ) ) };
+    const Int aPRow = ( aPmtNum / m_NumGrandPmtInRowCol[0] );
+    return { aPRow, ( Int )( aPmtNum - ( aPRow * m_NumGrandPmtInRowCol[0] ) ) };
   }
 
   inline Int PmtModuleNumInPanelFromModuleNum( const Int aMnum ) const noexcept
   {
-    return aMnum - m_RichPmtModuleCopyNumBeginPanel[ m_CurPanelNum ];
+    return aMnum - m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
   }
 
   inline Int PmtModuleNumInPanelFromModuleNumAlone( const Int aMnum ) const noexcept
   {
-    return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[ 0 ] &&
-                 aMnum <= m_RichPmtModuleCopyNumEndPanel[ 0 ] ?
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[ 0 ] :
-               aMnum >= m_RichPmtModuleCopyNumBeginPanel[ 1 ] &&
-                   aMnum <= m_RichPmtModuleCopyNumEndPanel[ 1 ] ?
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[ 1 ] :
-               aMnum >= m_RichPmtModuleCopyNumBeginPanel[ 2 ] &&
-                     aMnum <= m_RichPmtModuleCopyNumEndPanel[ 2 ] ?
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[ 2 ] :
-               aMnum >= m_RichPmtModuleCopyNumBeginPanel[ 3 ] &&
-                       aMnum <= m_RichPmtModuleCopyNumEndPanel[ 3 ] ?
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[ 3 ] :
-               -1 );
+    return (
+      aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] && aMnum <= m_RichPmtModuleCopyNumEndPanel[0] ?
+        aMnum - m_RichPmtModuleCopyNumBeginPanel[0] :
+        aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] && aMnum <= m_RichPmtModuleCopyNumEndPanel[1] ?
+        aMnum - m_RichPmtModuleCopyNumBeginPanel[1] :
+        aMnum >= m_RichPmtModuleCopyNumBeginPanel[2] && aMnum <= m_RichPmtModuleCopyNumEndPanel[2] ?
+        aMnum - m_RichPmtModuleCopyNumBeginPanel[2] :
+        aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] && aMnum <= m_RichPmtModuleCopyNumEndPanel[3] ?
+        aMnum - m_RichPmtModuleCopyNumBeginPanel[3] :
+        -1 );
   }
 
   inline SIMDINT32 PmtModuleNumInPanelFromModuleNumAlone( const SIMDINT32 &aMnum ) const noexcept
   {
     SIMDINT32 res = -SIMDINT32::One();
-    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[ 0 ] &&
-         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[ 0 ] ) =
-      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 0 ];
-    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[ 1 ] &&
-         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[ 1 ] ) =
-      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 1 ];
-    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[ 2 ] &&
-         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[ 2 ] ) =
-      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 2 ];
-    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[ 3 ] &&
-         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[ 3 ] ) =
-      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 3 ];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[0] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[0] ) =
+      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[1] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[1] ) =
+      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[2] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[2] ) =
+      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[3] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[3] ) =
+      aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
     return res;
   }
 
   inline RowCol PmtModuleRowColFromModuleNumInPanel( const Int aMnum ) const noexcept
   {
     RowCol rc   = { -1, -1 };
-    auto & MRow = rc[ 0 ];
-    auto & MCol = rc[ 1 ];
+    auto & MRow = rc[0];
+    auto & MCol = rc[1];
 
     if ( Rich::Rich1 == rich() )
     {
-      MRow = ( Int )( aMnum / m_RichPmtNumModulesInRowCol[ 0 ] );
-      MCol = aMnum - MRow * m_RichPmtNumModulesInRowCol[ 0 ];
+      MRow = ( Int )( aMnum / m_RichPmtNumModulesInRowCol[0] );
+      MCol = aMnum - MRow * m_RichPmtNumModulesInRowCol[0];
     }
     else // if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
     {
-      MCol = ( Int )( aMnum / m_RichPmtNumModulesInRowCol[ 3 ] );
-      MRow = aMnum - MCol * m_RichPmtNumModulesInRowCol[ 3 ];
+      MCol = ( Int )( aMnum / m_RichPmtNumModulesInRowCol[3] );
+      MRow = aMnum - MCol * m_RichPmtNumModulesInRowCol[3];
     }
 
     return rc;
@@ -268,23 +265,23 @@ private:
     MRow.setZero( MRow < SIMDINT32::Zero() );
     MCol.setZero( MCol < SIMDINT32::Zero() );
 
-    SIMDINT32 aMNum = m_RichPmtModuleCopyNumBeginPanelSIMD[ m_CurPanelNum ];
+    SIMDINT32 aMNum = m_RichPmtModuleCopyNumBeginPanelSIMD[m_CurPanelNum];
 
     if ( Rich::Rich1 == rich() )
     {
-      MRow( MRow >= m_RichPmtNumModulesInRowColSIMD[ 1 ] ) =
-        m_RichPmtNumModulesInRowColSIMD[ 1 ] - SIMDINT32::One();
-      MCol( MCol >= m_RichPmtNumModulesInRowColSIMD[ 0 ] ) =
-        m_RichPmtNumModulesInRowColSIMD[ 0 ] - SIMDINT32::One();
-      aMNum += MCol + ( MRow * m_RichPmtNumModulesInRowColSIMD[ 0 ] );
+      MRow( MRow >= m_RichPmtNumModulesInRowColSIMD[1] ) =
+        m_RichPmtNumModulesInRowColSIMD[1] - SIMDINT32::One();
+      MCol( MCol >= m_RichPmtNumModulesInRowColSIMD[0] ) =
+        m_RichPmtNumModulesInRowColSIMD[0] - SIMDINT32::One();
+      aMNum += MCol + ( MRow * m_RichPmtNumModulesInRowColSIMD[0] );
     }
     else // if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
     {
-      MRow( MRow >= m_RichPmtNumModulesInRowColSIMD[ 3 ] ) =
-        m_RichPmtNumModulesInRowColSIMD[ 3 ] - SIMDINT32::One();
-      MCol( MCol >= m_RichPmtNumModulesInRowColSIMD[ 2 ] ) =
-        m_RichPmtNumModulesInRowColSIMD[ 2 ] - SIMDINT32::One();
-      aMNum += MRow + ( MCol * m_RichPmtNumModulesInRowColSIMD[ 3 ] );
+      MRow( MRow >= m_RichPmtNumModulesInRowColSIMD[3] ) =
+        m_RichPmtNumModulesInRowColSIMD[3] - SIMDINT32::One();
+      MCol( MCol >= m_RichPmtNumModulesInRowColSIMD[2] ) =
+        m_RichPmtNumModulesInRowColSIMD[2] - SIMDINT32::One();
+      aMNum += MRow + ( MCol * m_RichPmtNumModulesInRowColSIMD[3] );
     }
 
     return aMNum;
@@ -320,129 +317,129 @@ private:
   getModuleNums_R1Up_NoLens_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_PmtModulePlaneHalfSizeR1SIMD[ 0 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( x - m_PmtModulePlaneHalfSizeR1SIMD[0] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_PmtModulePlaneHalfSizeR1SIMD[ 1 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( y - m_PmtModulePlaneHalfSizeR1SIMD[1] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 0 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
   }
 
   void
   getModuleNums_R1Dn_NoLens_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_PmtModulePlaneHalfSizeR1SIMD[ 2 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( x - m_PmtModulePlaneHalfSizeR1SIMD[2] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_PmtModulePlaneHalfSizeR1SIMD[ 3 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( y - m_PmtModulePlaneHalfSizeR1SIMD[3] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 1 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
   }
 
   void
   getModuleNums_R2Le_Small_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_PmtModulePlaneHalfSizeR2SIMD[ 0 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( x - m_PmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_PmtModulePlaneHalfSizeR2SIMD[ 1 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( y - m_PmtModulePlaneHalfSizeR2SIMD[1] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 2 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
   }
 
   void
   getModuleNums_R2Ri_Small_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_PmtModulePlaneHalfSizeR2SIMD[ 2 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( x - m_PmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_PmtModulePlaneHalfSizeR2SIMD[ 3 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( y - m_PmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 3 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
   }
 
   void
   getModuleNums_R2Le_Grand_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_GrandPmtModulePlaneHalfSizeR2SIMD[ 0 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( x - m_GrandPmtModulePlaneHalfSizeR2SIMD[0] ) * m_GrandPmtModulePitchInvSIMD ) );
     nums.aModuleRow = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_GrandPmtModulePlaneHalfSizeR2SIMD[ 1 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( y - m_GrandPmtModulePlaneHalfSizeR2SIMD[1] ) * m_GrandPmtModulePitchInvSIMD ) );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 2 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
   }
 
   void
   getModuleNums_R2Ri_Grand_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_GrandPmtModulePlaneHalfSizeR2SIMD[ 2 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( x - m_GrandPmtModulePlaneHalfSizeR2SIMD[2] ) * m_GrandPmtModulePitchInvSIMD ) );
     nums.aModuleRow = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_GrandPmtModulePlaneHalfSizeR2SIMD[ 3 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( y - m_GrandPmtModulePlaneHalfSizeR2SIMD[3] ) * m_GrandPmtModulePitchInvSIMD ) );
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 3 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
   }
 
   void
   getModuleNums_R2Le_Mixed_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[ 0 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[0] ) * m_GrandPmtModulePitchInvSIMD ) );
 
-    const auto m1 = LHCb::SIMD::simd_cast< SIMDINT32::MaskType >(
-      y < m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 1 ] );
+    const auto m1 =
+      LHCb::SIMD::simd_cast< SIMDINT32::MaskType >( y < m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] );
     nums.aModuleRow( m1 ) = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[ 1 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[1] ) * m_GrandPmtModulePitchInvSIMD ) );
 
     const auto m2 = LHCb::SIMD::simd_cast< SIMDINT32::MaskType >(
-      y >= abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 1 ] ) );
+      y >= abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
     nums.aModuleRow( m2 ) = LHCb::SIMD::simd_cast< SIMDINT32 >(
-                              abs( ( y - ( abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 1 ] ) ) ) *
+                              abs( ( y - ( abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) ) ) *
                                    m_GrandPmtModulePitchInvSIMD ) ) +
-                            m_Rich2MixedModuleArrayColumnSizeSIMD[ 0 ] +
-                            m_Rich2MixedModuleArrayColumnSizeSIMD[ 1 ];
+                            m_Rich2MixedModuleArrayColumnSizeSIMD[0] +
+                            m_Rich2MixedModuleArrayColumnSizeSIMD[1];
 
     const auto m3 = LHCb::SIMD::simd_cast< SIMDINT32::MaskType >(
-      abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 1 ] ) );
+      abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) );
     nums.aModuleCol( m3 ) = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 0 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[0] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow( m3 ) =
       LHCb::SIMD::simd_cast< SIMDINT32 >(
-        abs( ( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 1 ] ) * m_PmtModulePitchInvSIMD ) ) +
-      m_Rich2MixedModuleArrayColumnSizeSIMD[ 0 ];
+        abs( ( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] ) * m_PmtModulePitchInvSIMD ) ) +
+      m_Rich2MixedModuleArrayColumnSizeSIMD[0];
 
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 2 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
   }
 
   void
   getModuleNums_R2Ri_Mixed_SIMD( const SIMDFP &x, const SIMDFP &y, ModuleNumbersSIMD &nums ) const
   {
     nums.aModuleCol = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[ 2 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( x - m_MixedPmtModulePlaneHalfSizeR2SIMD[2] ) * m_GrandPmtModulePitchInvSIMD ) );
 
-    const auto m1 = LHCb::SIMD::simd_cast< SIMDINT32::MaskType >(
-      y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 3 ] );
+    const auto m1 =
+      LHCb::SIMD::simd_cast< SIMDINT32::MaskType >( y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
     nums.aModuleRow( m1 ) = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[ 3 ] ) * m_GrandPmtModulePitchInvSIMD ) );
+      abs( ( y - m_MixedPmtModulePlaneHalfSizeR2SIMD[3] ) * m_GrandPmtModulePitchInvSIMD ) );
 
     const auto m2 = LHCb::SIMD::simd_cast< SIMDINT32::MaskType >(
-      y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 3 ] );
+      y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
     nums.aModuleRow( m2 ) =
-      LHCb::SIMD::simd_cast< SIMDINT32 >( abs( ( y + m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 3 ] ) *
-                                               m_GrandPmtModulePitchInvSIMD ) ) +
-      m_Rich2MixedModuleArrayColumnSizeSIMD[ 0 ] + m_Rich2MixedModuleArrayColumnSizeSIMD[ 1 ];
+      LHCb::SIMD::simd_cast< SIMDINT32 >(
+        abs( ( y + m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_GrandPmtModulePitchInvSIMD ) ) +
+      m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
 
     const auto m3 = LHCb::SIMD::simd_cast< SIMDINT32::MaskType >(
-      abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 3 ] ) );
+      abs( y ) < abs( m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) );
     nums.aModuleCol( m3 ) = LHCb::SIMD::simd_cast< SIMDINT32 >(
-      abs( ( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 2 ] ) * m_PmtModulePitchInvSIMD ) );
+      abs( ( x - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[2] ) * m_PmtModulePitchInvSIMD ) );
     nums.aModuleRow( m3 ) =
       LHCb::SIMD::simd_cast< SIMDINT32 >(
-        abs( ( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[ 3 ] ) * m_PmtModulePitchInvSIMD ) ) +
-      m_Rich2MixedModuleArrayColumnSizeSIMD[ 0 ];
+        abs( ( y - m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] ) * m_PmtModulePitchInvSIMD ) ) +
+      m_Rich2MixedModuleArrayColumnSizeSIMD[0];
 
     nums.aModuleNum        = getPmtModuleNumFromRowCol( nums.aModuleRow, nums.aModuleCol );
-    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[ 3 ];
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
   }
 
 private:
@@ -470,7 +467,7 @@ private:
 
   inline Int getNumModulesInThisPanel() const noexcept
   {
-    return m_NumPmtModuleInRich[ m_CurPanelNum ];
+    return m_NumPmtModuleInRich[m_CurPanelNum];
   }
 
   inline SIMDINT32 getPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
@@ -478,21 +475,19 @@ private:
     // for values outside the range, set the closest value to the
     // corresponding edges.
     PRow.setZero( PRow < SIMDINT32::Zero() );
-    PRow( PRow >= m_NumPmtInRowColSIMD[ 1 ] ) = m_NumPmtInRowCol[ 1 ] - SIMDINT32::One();
+    PRow( PRow >= m_NumPmtInRowColSIMD[1] ) = m_NumPmtInRowCol[1] - SIMDINT32::One();
     PCol.setZero( PCol < SIMDINT32::Zero() );
-    PCol( PCol >= m_NumPmtInRowColSIMD[ 0 ] ) = m_NumPmtInRowCol[ 0 ] - SIMDINT32::One();
-    return ( PCol + ( PRow * m_NumPmtInRowColSIMD[ 0 ] ) );
+    PCol( PCol >= m_NumPmtInRowColSIMD[0] ) = m_NumPmtInRowCol[0] - SIMDINT32::One();
+    return ( PCol + ( PRow * m_NumPmtInRowColSIMD[0] ) );
   }
 
   inline SIMDINT32 getGrandPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
   {
     PRow.setZero( PRow < SIMDINT32::Zero() );
-    PRow( PRow >= m_NumGrandPmtInRowColSIMD[ 1 ] ) =
-      m_NumGrandPmtInRowColSIMD[ 1 ] - SIMDINT32::One();
+    PRow( PRow >= m_NumGrandPmtInRowColSIMD[1] ) = m_NumGrandPmtInRowColSIMD[1] - SIMDINT32::One();
     PCol.setZero( PCol < SIMDINT32::Zero() );
-    PCol( PCol >= m_NumGrandPmtInRowColSIMD[ 0 ] ) =
-      m_NumGrandPmtInRowColSIMD[ 0 ] - SIMDINT32::One();
-    return ( PCol + ( PRow * m_NumGrandPmtInRowColSIMD[ 0 ] ) );
+    PCol( PCol >= m_NumGrandPmtInRowColSIMD[0] ) = m_NumGrandPmtInRowColSIMD[0] - SIMDINT32::One();
+    return ( PCol + ( PRow * m_NumGrandPmtInRowColSIMD[0] ) );
   }
 
   inline bool isInPmtAnodeLateralAcc( const Gaudi::XYZPoint &aPointInPmtAnode,
@@ -536,8 +531,8 @@ private:
 
   inline decltype( auto ) isInPmtPanel( const SIMDPoint &aPointInPanel ) const noexcept
   {
-    return ( abs( aPointInPanel.x() ) < m_xyHalfSizeSIMD[ 0 ] &&
-             abs( aPointInPanel.y() ) < m_xyHalfSizeSIMD[ 1 ] );
+    return ( abs( aPointInPanel.x() ) < m_xyHalfSizeSIMD[0] &&
+             abs( aPointInPanel.y() ) < m_xyHalfSizeSIMD[1] );
   }
 
   inline decltype( auto )
@@ -601,7 +596,7 @@ private:
   inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept
   {
     return ( aModuleNum >= 0 && aModuleNum < (Int)m_ModuleIsWithGrandPMT.size() ?
-               m_ModuleIsWithGrandPMT[ aModuleNum ] :
+               m_ModuleIsWithGrandPMT[aModuleNum] :
                false );
   }
 
@@ -611,7 +606,7 @@ private:
                aModuleNum < SIMDINT32( m_ModuleIsWithGrandPMT.size() ) );
     for ( std::size_t i = 0; i < SIMDINT32::Size; ++i )
     {
-      if ( m[ i ] ) { m[ i ] = m_ModuleIsWithGrandPMT[ aModuleNum[ i ] ]; }
+      if ( m[i] ) { m[i] = m_ModuleIsWithGrandPMT[aModuleNum[i]]; }
     }
     return m;
   }

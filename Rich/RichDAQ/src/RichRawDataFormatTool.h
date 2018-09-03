@@ -222,7 +222,7 @@ namespace Rich::DAQ
      */
     inline const LHCb::ODIN *odin() const
     {
-      LHCb::ODIN *&odin = m_odin[ m_currentTAE ];
+      LHCb::ODIN *&odin = m_odin[m_currentTAE];
       if ( !odin )
       {
         timeTool()->getTime(); // Needed to make sure ODIN object is in TES (Strange but true)

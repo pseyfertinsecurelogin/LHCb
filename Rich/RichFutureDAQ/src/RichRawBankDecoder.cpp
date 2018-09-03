@@ -47,9 +47,9 @@ RawBankDecoder::initialize()
   m_richSys = getDet< DeRichSystem >( DeRichLocations::RichSystem );
 
   // report inactive RICHes
-  if ( !m_richIsActive[ Rich::Rich1 ] )
+  if ( !m_richIsActive[Rich::Rich1] )
   { Warning( "Decoding for RICH1 disabled", StatusCode::SUCCESS ).ignore(); }
-  if ( !m_richIsActive[ Rich::Rich2 ] )
+  if ( !m_richIsActive[Rich::Rich2] )
   { Warning( "Decoding for RICH2 disabled", StatusCode::SUCCESS ).ignore(); }
 
   // if suppression is less than max possible number of (ALICE) hits, print a message.
@@ -77,7 +77,7 @@ RawBankDecoder::initialize()
     for ( const auto &C : m_hotChannels )
     {
       const LHCb::RichSmartID channel( C );
-      m_hotPixels[ channel.pdID() ].insert( channel );
+      m_hotPixels[channel.pdID()].insert( channel );
       info() << " " << channel << " (" << channel.key() << ")" << endmsg;
     }
   }
@@ -334,7 +334,7 @@ RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank &bank,
     {
 
       // First, the ingress header word (and increment to the next line)
-      const L1IngressHeader ingressWord( bank.data()[ lineC++ ] );
+      const L1IngressHeader ingressWord( bank.data()[lineC++] );
       _ri_debug << " Ingress " << ingressWord << endmsg;
 
       // Get data for this ingress
@@ -387,7 +387,7 @@ RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank &bank,
         {
 
           // Create data bank and decode into RichSmartIDs
-          const auto hpdBank( createDataBank( &bank.data()[ lineC ], // pointer to start of data
+          const auto hpdBank( createDataBank( &bank.data()[lineC], // pointer to start of data
                                               version,
                                               banks ) );
 
@@ -531,8 +531,8 @@ RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank &bank,
                 {
                   const auto rich = hpdID.rich();
                   // counts
-                  ++nHPDbanks[ rich ];
-                  decodedHits[ rich ] += hpdHitCount;
+                  ++nHPDbanks[rich];
+                  decodedHits[rich] += hpdHitCount;
                   // suppress hot pixels
                   suppressHotPixels( hpdID, newids );
                 }
@@ -592,7 +592,7 @@ RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank &bank,
 
   // debug printout
   _ri_debug << "Decoded "
-            << boost::format( "%2i" ) % ( nHPDbanks[ Rich::Rich1 ] + nHPDbanks[ Rich::Rich2 ] );
+            << boost::format( "%2i" ) % ( nHPDbanks[Rich::Rich1] + nHPDbanks[Rich::Rich2] );
   _ri_debug << " PDs from Level1 Bank ID = " << boost::format( "%2i" ) % L1ID.data();
   _ri_debug << " : Size " << boost::format( "%4i" ) % ( bank.size() / 4 ) << " words : Version "
             << version << endmsg;
@@ -636,7 +636,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank &bank, L1Map &decod
     while ( lineC < bankSize )
     {
       // Read the smartID direct from the banks
-      const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[ lineC++ ] ) );
+      const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
       if ( UNLIKELY( !id.isValid() ) )
       { Warning( "Invalid RichSmartID read from FlatList data format" ).ignore(); }
       else
@@ -736,7 +736,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank &bank, L1Map &decod
         pdInfo->smartIDs().emplace_back( id );
 
         // count the hits
-        ++decodedHits[ rich ];
+        ++decodedHits[rich];
       }
     }
 

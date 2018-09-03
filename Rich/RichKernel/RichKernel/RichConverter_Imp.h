@@ -131,7 +131,7 @@ namespace Rich
     // ============================================================================
     inline void addToServiceList( const SmartIF< IService > &svc ) const
     {
-      if ( svc.isValid() ) { m_services[ svc->name() ] = svc; }
+      if ( svc.isValid() ) { m_services[svc->name()] = svc; }
     }
     // ============================================================================
 

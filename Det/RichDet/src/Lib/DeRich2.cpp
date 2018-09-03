@@ -146,8 +146,8 @@ DeRich2::updateMirrorParams()
 
   // Load the primary mirror segments to compute the 'nominal' settings
   {
-    m_nominalCentresOfCurvature[ Rich::left ]  = Gaudi::XYZPoint( 0, 0, 0 );
-    m_nominalCentresOfCurvature[ Rich::right ] = Gaudi::XYZPoint( 0, 0, 0 );
+    m_nominalCentresOfCurvature[Rich::left]  = Gaudi::XYZPoint( 0, 0, 0 );
+    m_nominalCentresOfCurvature[Rich::right] = Gaudi::XYZPoint( 0, 0, 0 );
     unsigned int nLeft( 0 ), nRight( 0 );
     double       avroc { 0 };
     for ( const auto &loc : paramVect< std::string >( "SphericalMirrorDetElemLocations" ) )
@@ -162,17 +162,17 @@ DeRich2::updateMirrorParams()
       if ( cen.x() > 0 )
       {
         ++nLeft;
-        m_nominalCentresOfCurvature[ Rich::left ] += Gaudi::XYZVector( coc );
+        m_nominalCentresOfCurvature[Rich::left] += Gaudi::XYZVector( coc );
       }
       else
       {
         ++nRight;
-        m_nominalCentresOfCurvature[ Rich::right ] += Gaudi::XYZVector( coc );
+        m_nominalCentresOfCurvature[Rich::right] += Gaudi::XYZVector( coc );
       }
       avroc += roc;
     }
-    m_nominalCentresOfCurvature[ Rich::left ] /= (double)nLeft;
-    m_nominalCentresOfCurvature[ Rich::right ] /= (double)nRight;
+    m_nominalCentresOfCurvature[Rich::left] /= (double)nLeft;
+    m_nominalCentresOfCurvature[Rich::right] /= (double)nRight;
     m_sphMirrorRadius = avroc / (double)( nLeft + nRight );
   }
 
@@ -199,31 +199,30 @@ DeRich2::updateMirrorParams()
                 << " " << plane.HesseDistance() << " RoC = " << mirror->radius()
                 << " CoC = " << mirror->centreOfCurvature() << endmsg;
       auto &params = ( cen.x() > 0 ? nominalFMirrorPlaneLeft : nominalFMirrorPlaneRight );
-      params[ 0 ] += plane.A();
-      params[ 1 ] += plane.B();
-      params[ 2 ] += plane.C();
-      params[ 3 ] += plane.D();
+      params[0] += plane.A();
+      params[1] += plane.B();
+      params[2] += plane.C();
+      params[3] += plane.D();
       ++( cen.x() > 0 ? nLeft : nRight );
     }
 
-    m_nominalPlanes[ Rich::left ] = Gaudi::Plane3D( nominalFMirrorPlaneLeft[ 0 ] / (double)nLeft,
-                                                    nominalFMirrorPlaneLeft[ 1 ] / (double)nLeft,
-                                                    nominalFMirrorPlaneLeft[ 2 ] / (double)nLeft,
-                                                    nominalFMirrorPlaneLeft[ 3 ] / (double)nLeft );
-    m_nominalPlanes[ Rich::right ] =
-      Gaudi::Plane3D( nominalFMirrorPlaneRight[ 0 ] / (double)nRight,
-                      nominalFMirrorPlaneRight[ 1 ] / (double)nRight,
-                      nominalFMirrorPlaneRight[ 2 ] / (double)nRight,
-                      nominalFMirrorPlaneRight[ 3 ] / (double)nRight );
+    m_nominalPlanes[Rich::left]  = Gaudi::Plane3D( nominalFMirrorPlaneLeft[0] / (double)nLeft,
+                                                  nominalFMirrorPlaneLeft[1] / (double)nLeft,
+                                                  nominalFMirrorPlaneLeft[2] / (double)nLeft,
+                                                  nominalFMirrorPlaneLeft[3] / (double)nLeft );
+    m_nominalPlanes[Rich::right] = Gaudi::Plane3D( nominalFMirrorPlaneRight[0] / (double)nRight,
+                                                   nominalFMirrorPlaneRight[1] / (double)nRight,
+                                                   nominalFMirrorPlaneRight[2] / (double)nRight,
+                                                   nominalFMirrorPlaneRight[3] / (double)nRight );
   }
 
-  _ri_debug << "Nominal Plane Left " << m_nominalPlanes[ Rich::left ].Normal() << " "
-            << m_nominalPlanes[ Rich::left ].HesseDistance() << endmsg;
-  _ri_debug << "Nominal Plane Right " << m_nominalPlanes[ Rich::right ].Normal() << " "
-            << m_nominalPlanes[ Rich::right ].HesseDistance() << endmsg;
+  _ri_debug << "Nominal Plane Left " << m_nominalPlanes[Rich::left].Normal() << " "
+            << m_nominalPlanes[Rich::left].HesseDistance() << endmsg;
+  _ri_debug << "Nominal Plane Right " << m_nominalPlanes[Rich::right].Normal() << " "
+            << m_nominalPlanes[Rich::right].HesseDistance() << endmsg;
 
-  m_nominalNormals[ Rich::left ]  = m_nominalPlanes[ Rich::left ].Normal();
-  m_nominalNormals[ Rich::right ] = m_nominalPlanes[ Rich::right ].Normal();
+  m_nominalNormals[Rich::left]  = m_nominalPlanes[Rich::left].Normal();
+  m_nominalNormals[Rich::right] = m_nominalPlanes[Rich::right].Normal();
 
   _ri_debug << "Nominal normal " << m_nominalNormals << endmsg;
 
@@ -249,12 +248,12 @@ DeRich2::panelName( const Rich::Side panel ) const
     if ( exists( "Rich2HPDPanelDetElemLocations" ) )
     {
       const auto &panelLoc = paramVect< std::string >( "Rich2HPDPanelDetElemLocations" );
-      pname                = panelLoc[ panel ];
+      pname                = panelLoc[panel];
     }
     else if ( exists( "HPDPanelDetElemLocations" ) )
     { // kept for backward compatibility
       const auto &panelLoc = paramVect< std::string >( "HPDPanelDetElemLocations" );
-      pname                = panelLoc[ panel ];
+      pname                = panelLoc[panel];
     }
   }
   else if ( RichPhotoDetConfig() == Rich::PMTConfig )
@@ -263,7 +262,7 @@ DeRich2::panelName( const Rich::Side panel ) const
     if ( exists( "Rich2PMTPanelDetElemLocations" ) )
     {
       const auto &panelLoc = paramVect< std::string >( "Rich2PMTPanelDetElemLocations" );
-      pname                = panelLoc[ panel ];
+      pname                = panelLoc[panel];
     }
   }
 

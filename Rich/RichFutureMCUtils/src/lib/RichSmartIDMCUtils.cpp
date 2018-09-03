@@ -15,7 +15,7 @@ SmartIDUtils::SmartIDUtils( const LHCb::MCRichDigitSummarys &histories )
   // multiple times each event...
   for ( const auto *sum : histories )
   {
-    if ( sum ) { m_sumMap[ sum->richSmartID() ].push_back( sum ); }
+    if ( sum ) { m_sumMap[sum->richSmartID()].push_back( sum ); }
   }
 }
 

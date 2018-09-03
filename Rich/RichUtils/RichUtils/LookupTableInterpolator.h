@@ -122,7 +122,7 @@ namespace Rich
     inline TYPE value( const std::size_t index, const TYPE x ) const noexcept
     {
       // get the data bin for the index for the given x
-      const auto &bin = m_data[ index ];
+      const auto &bin = m_data[index];
       // return the function value in this bin
       return ( bin.m * x ) + bin.c;
     }
@@ -133,16 +133,16 @@ namespace Rich
     {
 #ifndef __clang__
       // gather the m and c parameters for x
-      const auto m = m_data[ index ][&Bin::m ];
-      const auto c = m_data[ index ][&Bin::c ];
+      const auto m = m_data[index][&Bin::m];
+      const auto c = m_data[index][&Bin::c];
 #else
       // clang 5.0 has issues with Vc::vector. So fallback to scalar lookup.
       SIMDFP m( SIMDFP::Zero() ), c( SIMDFP::Zero() );
       for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
       {
-        const auto &bin = m_data[ index[ i ] ];
-        m[ i ]          = bin.m;
-        c[ i ]          = bin.c;
+        const auto &bin = m_data[index[i]];
+        m[i]            = bin.m;
+        c[i]            = bin.c;
       }
 #endif
       // return the function values

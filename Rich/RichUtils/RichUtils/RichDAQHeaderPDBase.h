@@ -129,7 +129,7 @@ namespace Rich::DAQ
       if ( 0 == iW ) { m_primaryHeader = WordType( word ); }
       else
       {
-        m_extendedWords[ iW - 1 ] = WordType( word );
+        m_extendedWords[iW - 1] = WordType( word );
       }
     }
 
@@ -147,7 +147,7 @@ namespace Rich::DAQ
                      const LongType  mask,
                      const ShortType wordNumber )
     {
-      auto &word = ( 0 == wordNumber ? m_primaryHeader : m_extendedWords[ wordNumber - 1 ] );
+      auto &word = ( 0 == wordNumber ? m_primaryHeader : m_extendedWords[wordNumber - 1] );
       word       = WordType( ( ( value << shift ) & mask ) | ( word.data() & ~mask ) );
       return true;
     }

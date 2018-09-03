@@ -140,9 +140,9 @@ RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID pdID,
 
     // require non-const access to L1 Map
     auto &l1Map       = *( const_cast< Rich::DAQ::L1Map * >( &data ) );
-    auto &ingressMap  = l1Map[ l1HID ];
-    auto &ingressInfo = ingressMap[ l1Input.ingressID() ];
-    auto &hpdInfo     = ingressInfo.pdData()[ l1Input ];
+    auto &ingressMap  = l1Map[l1HID];
+    auto &ingressInfo = ingressMap[l1Input.ingressID()];
+    auto &hpdInfo     = ingressInfo.pdData()[l1Input];
 
     // check PDID is invalid (should be as not set so far ....)
     if ( hpdInfo.pdID().isValid() ) { Error( "PDID already set ...." ).ignore(); }
@@ -166,7 +166,7 @@ const Rich::DAQ::L1Map &
 RawBufferToSmartIDsTool::allRichSmartIDs(
   const IRawBufferToSmartIDsTool::RawEventLocations &taeLocs ) const
 {
-  auto &data = m_richDataTAE[ taeKey( taeLocs ) ];
+  auto &data = m_richDataTAE[taeKey( taeLocs )];
   if ( data.empty() )
   {
     // Use raw format tool to decode event
@@ -178,7 +178,7 @@ RawBufferToSmartIDsTool::allRichSmartIDs(
 const Rich::DAQ::L1Map &
 RawBufferToSmartIDsTool::allRichSmartIDs() const
 {
-  auto &data = m_richDataTAE[ m_taeKey ];
+  auto &data = m_richDataTAE[m_taeKey];
   if ( data.empty() )
   {
     // Use raw format tool to decode event

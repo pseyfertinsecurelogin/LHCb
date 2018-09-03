@@ -243,7 +243,7 @@ DeRichAerogelRadiator::calcSellmeirRefIndex( const std::vector< double > &momVec
 
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
-    const auto epho = momVect[ ibin ] / Gaudi::Units::eV;
+    const auto epho = momVect[ibin] / Gaudi::Units::eV;
     const auto pfe =
       SellF1 / ( SellE1 * SellE1 - epho * epho ) + SellF2 / ( SellE2 * SellE2 - epho * epho );
     const double curRindex = sqrt( 1.0 + pfe * scalingfactor );
@@ -281,7 +281,7 @@ DeRichAerogelRadiator::calcRayleigh( const std::vector< double > &momVect,
 
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
-    const auto epho = momVect[ ibin ] / Gaudi::Units::eV;
+    const auto epho = momVect[ibin] / Gaudi::Units::eV;
     const auto wAgel =
       ( m_photMomWaveConv / 1000. / Gaudi::Units::eV / Gaudi::Units::nanometer ) / epho;
     const auto pathlength = wAgel * wAgel * wAgel * wAgel / clarity * 10;
@@ -323,7 +323,7 @@ DeRichAerogelRadiator::calcAbsorption( const std::vector< double > &momVect,
 
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
-    const auto epho = momVect[ ibin ] / Gaudi::Units::eV;
+    const auto epho = momVect[ibin] / Gaudi::Units::eV;
     aTable.emplace_back( epho * Gaudi::Units::eV, pathlength );
   }
 

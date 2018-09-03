@@ -87,7 +87,7 @@ TabulatedProperty1D::initInterpolator( const TabulatedProperty *tab,
 
   // copy data to temporary data map
   Data data;
-  for ( const auto &t : tab->table() ) { data[ t.first ] = t.second; }
+  for ( const auto &t : tab->table() ) { data[t.first] = t.second; }
 
   // std::cout << tab->name() << std::endl;
 

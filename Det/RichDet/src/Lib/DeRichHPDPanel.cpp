@@ -151,8 +151,7 @@ DeRichHPDPanel::smartID( const Gaudi::XYZPoint &globalPoint, LHCb::RichSmartID &
     return false;
   }
 
-  const auto inSilicon =
-    m_DeSiSensors[ HPDNumber.data() ]->geometry()->toLocalMatrix() * globalPoint;
+  const auto inSilicon = m_DeSiSensors[HPDNumber.data()]->geometry()->toLocalMatrix() * globalPoint;
 
   auto inSiliconX = inSilicon.x();
   auto inSiliconY = inSilicon.y();
@@ -212,13 +211,13 @@ DeRichHPDPanel::PDWindowPointSIMD( const SIMDPoint &         pGlobal,
   // Just do a scalar loop
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    const Gaudi::XYZPoint  p { pGlobal.x()[ i ], pGlobal.y()[ i ], pGlobal.z()[ i ] };
-    const Gaudi::XYZVector v { vGlobal.x()[ i ], vGlobal.y()[ i ], vGlobal.z()[ i ] };
+    const Gaudi::XYZPoint  p { pGlobal.x()[i], pGlobal.y()[i], pGlobal.z()[i] };
+    const Gaudi::XYZVector v { vGlobal.x()[i], vGlobal.y()[i], vGlobal.z()[i] };
     Gaudi::XYZPoint        h;
-    res[ i ] = PDWindowPoint( p, v, h, smartID[ i ], PDs[ i ], mode );
-    hx[ i ]  = h.x();
-    hy[ i ]  = h.y();
-    hz[ i ]  = h.z();
+    res[i] = PDWindowPoint( p, v, h, smartID[i], PDs[i], mode );
+    hx[i]  = h.x();
+    hy[i]  = h.y();
+    hz[i]  = h.z();
   }
   hitPosition = { hx, hy, hz };
   return res;
@@ -241,13 +240,13 @@ DeRichHPDPanel::detPlanePointSIMD( const SIMDPoint &         pGlobal,
   // Just do a scalar loop
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    const Gaudi::XYZPoint  p { pGlobal.x()[ i ], pGlobal.y()[ i ], pGlobal.z()[ i ] };
-    const Gaudi::XYZVector v { vGlobal.x()[ i ], vGlobal.y()[ i ], vGlobal.z()[ i ] };
+    const Gaudi::XYZPoint  p { pGlobal.x()[i], pGlobal.y()[i], pGlobal.z()[i] };
+    const Gaudi::XYZVector v { vGlobal.x()[i], vGlobal.y()[i], vGlobal.z()[i] };
     Gaudi::XYZPoint        h;
-    res[ i ] = detPlanePoint( p, v, h, smartID[ i ], PDs[ i ], mode );
-    hx[ i ]  = h.x();
-    hy[ i ]  = h.y();
-    hz[ i ]  = h.z();
+    res[i] = detPlanePoint( p, v, h, smartID[i], PDs[i], mode );
+    hx[i]  = h.x();
+    hy[i]  = h.y();
+    hz[i]  = h.z();
   }
   hitPosition = { hx, hy, hz };
   return res;
@@ -368,7 +367,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint &   pGlobal,
       {
 
         // get point in HPD entrance window ( 0=outside(best) 1=inside )
-        const auto windowPoint = pInWindow + HPDWindowTicks[ 0 ] * vInWindow;
+        const auto windowPoint = pInWindow + HPDWindowTicks[0] * vInWindow;
 
         // convert point in window to point in main HPD volume
         const auto windowPointInHPD = HPD->fromHPDWindowToHPD() * windowPoint;
@@ -509,8 +508,8 @@ DeRichHPDPanel::findHPDColAndPos( const Gaudi::XYZPoint &inPanel, LHCb::RichSmar
 
   // nearest number in column
   auto HPDNumInCol =
-    ( 0 == HPDCol % 2 ? (long int)( ( v - m_panelStartColPosEvenOdd[ 0 ] ) * m_OneOverHPDPitch ) :
-                        (long int)( ( v - m_panelStartColPosEvenOdd[ 1 ] ) * m_OneOverHPDPitch ) );
+    ( 0 == HPDCol % 2 ? (long int)( ( v - m_panelStartColPosEvenOdd[0] ) * m_OneOverHPDPitch ) :
+                        (long int)( ( v - m_panelStartColPosEvenOdd[1] ) * m_OneOverHPDPitch ) );
   // auto HPDNumInCol = (long int)( (v-m_panelStartColPosEvenOdd[HPDCol%2]) * m_OneOverHPDPitch );
   if ( HPDNumInCol >= (long int)nPDsPerCol() )
   {
@@ -631,15 +630,15 @@ DeRichHPDPanel::geometryUpdate()
   double HPD00u( 0.0 ), HPD00v( 0.0 ), HPD10v( 0.0 );
   if ( Rich::Rich1 == rich() )
   {
-    HPD00u = startColPos[ 1 ];
-    HPD00v = startColPos[ 0 ];
-    HPD10v = startColPos[ 2 ];
+    HPD00u = startColPos[1];
+    HPD00v = startColPos[0];
+    HPD10v = startColPos[2];
   }
   else
   {
-    HPD00u = startColPos[ 0 ];
-    HPD00v = startColPos[ 1 ];
-    HPD10v = startColPos[ 3 ];
+    HPD00u = startColPos[0];
+    HPD00v = startColPos[1];
+    HPD10v = startColPos[3];
   }
 
   if ( HPD00v > 0.0 ) m_HPDPitch = -m_HPDPitch;
@@ -653,12 +652,12 @@ DeRichHPDPanel::geometryUpdate()
     msg << MSG::DEBUG << "HPDPitch:" << m_HPDPitch
         << " panelColumnSideEdge:" << m_panelColumnSideEdge << endmsg;
 
-  m_panelStartColPosEvenOdd[ 0 ] = HPD00v - 0.5 * m_HPDPitch;
-  m_panelStartColPosEvenOdd[ 1 ] = HPD10v - 0.5 * m_HPDPitch;
+  m_panelStartColPosEvenOdd[0] = HPD00v - 0.5 * m_HPDPitch;
+  m_panelStartColPosEvenOdd[1] = HPD10v - 0.5 * m_HPDPitch;
 
   // use the abs(largest) value as an overall panel edge
   m_panelStartColPos =
-    std::max( fabs( m_panelStartColPosEvenOdd[ 0 ] ), fabs( m_panelStartColPosEvenOdd[ 1 ] ) );
+    std::max( fabs( m_panelStartColPosEvenOdd[0] ), fabs( m_panelStartColPosEvenOdd[1] ) );
 
   if ( msgLevel( MSG::DEBUG, msg ) )
     msg << MSG::DEBUG << "panelStartColPosEvenOdd: " << m_panelStartColPosEvenOdd
@@ -715,7 +714,7 @@ DeRichHPDPanel::geometryUpdate()
     msg << MSG::FATAL << "Problem getting window radius" << endmsg;
     return StatusCode::FAILURE;
   }
-  const double winR = windowTicks[ 0 ];
+  const double winR = windowTicks[0];
 
   if ( msgLevel( MSG::DEBUG, msg ) )
     msg << MSG::DEBUG << "Centre of HPDPanel : " << centreGlobal << endmsg;

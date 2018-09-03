@@ -35,7 +35,7 @@ TabulatedFunction1D::initInterpolator( const double           x[],
 {
   // copy data to temporary map
   Data data;
-  for ( unsigned int i = 0; i < size; ++i ) { data[ x[ i ] ] = y[ i ]; }
+  for ( unsigned int i = 0; i < size; ++i ) { data[x[i]] = y[i]; }
 
   // initialise interpolation
   m_OK = initInterpolator( data, interType );
@@ -63,7 +63,7 @@ TabulatedFunction1D::initInterpolator( const std::vector< double > &x,
   {
     // copy data to temporary map
     Data data;
-    for ( auto ix( x.begin() ), iy( y.begin() ); ix != x.end(); ++ix, ++iy ) { data[ *ix ] = *iy; }
+    for ( auto ix( x.begin() ), iy( y.begin() ); ix != x.end(); ++ix, ++iy ) { data[*ix] = *iy; }
 
     // initialise interpolation
     m_OK = initInterpolator( data, interType );
@@ -81,7 +81,7 @@ TabulatedFunction1D::initInterpolator( const std::vector< std::pair< double, dou
 {
   // copy data to temporary map
   Data data_map;
-  for ( auto i = data.begin(); i != data.end(); ++i ) { data_map[ i->first ] = i->second; }
+  for ( auto i = data.begin(); i != data.end(); ++i ) { data_map[i->first] = i->second; }
 
   // initialise interpolation
   m_OK = initInterpolator( data_map, interType );
@@ -121,16 +121,16 @@ TabulatedFunction1D::initInterpolator( const std::map< double, double > &data,
   auto maxX = boost::numeric::bounds< double >::lowest();
 
   // Copy data to temporary GSL initialisation arrays
-  std::unique_ptr< double[] > x( new double[ data.size() ] );
-  std::unique_ptr< double[] > y( new double[ data.size() ] );
+  std::unique_ptr< double[] > x( new double[data.size()] );
+  std::unique_ptr< double[] > y( new double[data.size()] );
   unsigned int                i = 0;
   for ( auto iD = data.begin(); iD != data.end(); ++iD, ++i )
   {
-    x[ i ] = ( *iD ).first;
-    y[ i ] = ( *iD ).second;
+    x[i] = ( *iD ).first;
+    y[i] = ( *iD ).second;
     // set min and max x
-    if ( x[ i ] < minX ) { minX = x[ i ]; }
-    if ( x[ i ] > maxX ) { maxX = x[ i ]; }
+    if ( x[i] < minX ) { minX = x[i]; }
+    if ( x[i] > maxX ) { maxX = x[i]; }
   }
 
   // find the min distance in x between consecutive (x,y) data points
@@ -316,7 +316,7 @@ TabulatedFunction1D::combine( const ConstVector &    funcs,
     {
       double Y = 1.0;
       for ( const auto func : funcs ) { Y *= func->value( X ); }
-      mergedData[ X ] = Y;
+      mergedData[X] = Y;
     }
 
     // Create the new interpolated function

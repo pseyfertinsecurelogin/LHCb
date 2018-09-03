@@ -257,7 +257,7 @@ public:
   inline const DeRichPDPanel *dePDPanel( const Rich::DetectorType rich,
                                          const Rich::Side         side ) const
   {
-    return m_deRich[ rich ]->pdPanel( side );
+    return m_deRich[rich]->pdPanel( side );
   }
 
   /// Access the DeRichPanel for the given PD ID
@@ -321,7 +321,7 @@ private: // methods
       error() << "Error filling map '" << System::typeinfoName( typeid( map ) ) << "' source "
               << System::typeinfoName( typeid( source ) ) << "=" << source
               << " already has an entry for target " << System::typeinfoName( typeid( target ) )
-              << " OLD=" << map[ source ] << " NEW=" << target << endmsg;
+              << " OLD=" << map[source] << " NEW=" << target << endmsg;
     }
     return p.second;
   }
@@ -448,7 +448,7 @@ private: // data
 inline DeRich *
 DeRichSystem::deRich( const Rich::DetectorType rich ) const noexcept
 {
-  return m_deRich[ rich ];
+  return m_deRich[rich];
 }
 
 //=========================================================================

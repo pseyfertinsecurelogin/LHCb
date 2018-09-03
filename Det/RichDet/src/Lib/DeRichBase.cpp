@@ -23,7 +23,7 @@ DeRichBase::deRichSys()
     std::string deRichSysLoc;
     if ( afterMag->exists( "RichDetectorLocations" ) )
     {
-      const auto firstRichLoc = afterMag->paramVect< std::string >( "RichDetectorLocations" )[ 0 ];
+      const auto firstRichLoc = afterMag->paramVect< std::string >( "RichDetectorLocations" )[0];
       SmartDataPtr< DetectorElement > deRich( dataSvc(), firstRichLoc );
       if ( !deRich )
       {

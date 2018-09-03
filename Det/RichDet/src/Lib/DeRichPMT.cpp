@@ -97,10 +97,9 @@ DeRichPMT::getFirstRich()
   if ( !afterMag ) { error() << "Could not load AfterMagnetRegion det elem" << endmsg; }
   else
   {
-    const auto firstRichLoc =
-      ( afterMag->exists( "RichDetectorLocations" ) ?
-          afterMag->paramVect< std::string >( "RichDetectorLocations" )[ 0 ] :
-          DeRichLocations::Rich1 );
+    const auto                      firstRichLoc = ( afterMag->exists( "RichDetectorLocations" ) ?
+                                  afterMag->paramVect< std::string >( "RichDetectorLocations" )[0] :
+                                  DeRichLocations::Rich1 );
     SmartDataPtr< DetectorElement > deRich( dataSvc(), firstRichLoc );
     if ( deRich ) { de = deRich; }
   }
@@ -288,8 +287,8 @@ DeRichPMT::detectionPoint( const SmartIDs &smartID,
   SIMDUINT row, col;
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    row[ i ] = smartID[ i ].pixelRow();
-    col[ i ] = smartID[ i ].pixelCol();
+    row[i] = smartID[i].pixelRow();
+    col[i] = smartID[i].pixelCol();
   }
 
   // make local hit

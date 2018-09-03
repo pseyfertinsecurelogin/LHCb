@@ -250,7 +250,7 @@ namespace Rich
 
     public:
 
-      inline StringToHist &getmap( const Rich::PackedPIDInfo &info ) { return map[ info.raw() ]; }
+      inline StringToHist &getmap( const Rich::PackedPIDInfo &info ) { return map[info.raw()]; }
     };
 
     /// Mapping between IDs and 1D histogram pointers

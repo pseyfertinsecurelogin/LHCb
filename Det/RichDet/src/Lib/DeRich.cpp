@@ -286,7 +286,7 @@ DeRich::loadPDPanels()
       throw GaudiException( mess.str(), "DeRich::PhDetPanel", StatusCode::FAILURE );
     }
 
-    m_PDPanels[ panel ] = phdePanel;
+    m_PDPanels[panel] = phdePanel;
   }
 }
 
@@ -300,12 +300,12 @@ DeRich::fillSIMDTypes()
   // this loop also does RICH1 Up and down as enums have same numerical value
   for ( const Rich::Side side : { Rich::firstSide, Rich::secondSide } )
   {
-    const auto &p = m_nominalPlanes[ side ];
-    m_nominalPlanesSIMD[ side ] =
+    const auto &p = m_nominalPlanes[side];
+    m_nominalPlanesSIMD[side] =
       Rich::SIMD::Plane< Rich::SIMD::DefaultScalarFP >( p.A(), p.B(), p.C(), p.D() );
-    m_nominalNormalsSIMD[ side ]            = m_nominalNormals[ side ];
-    m_nominalCentresOfCurvatureSIMD[ side ] = m_nominalCentresOfCurvature[ side ];
-    m_sphMirrorRadiusSIMD                   = m_sphMirrorRadius;
+    m_nominalNormalsSIMD[side]            = m_nominalNormals[side];
+    m_nominalCentresOfCurvatureSIMD[side] = m_nominalCentresOfCurvature[side];
+    m_sphMirrorRadiusSIMD                 = m_sphMirrorRadius;
   }
 }
 
@@ -402,11 +402,11 @@ DeRich::rayTrace( const Rich::SIMD::Sides &       sides,
   // scalar loop for non-Vc types
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
-    if ( m2[ i ] )
+    if ( m2[i] )
     {
-      res1[ i ]    = res2[ i ];
-      smartID[ i ] = smartID2[ i ];
-      PDs[ i ]     = PDs2[ i ];
+      res1[i]    = res2[i];
+      smartID[i] = smartID2[i];
+      PDs[i]     = PDs2[i];
     }
   }
 

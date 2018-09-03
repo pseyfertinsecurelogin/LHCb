@@ -52,7 +52,7 @@ namespace Rich::DAQ
     /// Access the parity word
     inline WordType parityWord() const
     {
-      return ( hasParityWord() ? footerWords()[ 0 ] : WordType( 0 ) );
+      return ( hasParityWord() ? footerWords()[0] : WordType( 0 ) );
     }
 
     /// Set the parity word

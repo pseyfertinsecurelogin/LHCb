@@ -253,7 +253,7 @@ namespace Rich::Future
 
     public:
 
-      inline StringToHist &getmap( const Rich::PackedPIDInfo &info ) { return m_map[ info.raw() ]; }
+      inline StringToHist &getmap( const Rich::PackedPIDInfo &info ) { return m_map[info.raw()]; }
       inline const StringToHist &getmap( const Rich::PackedPIDInfo &info ) const
       {
         static const StringToHist defaultMap;

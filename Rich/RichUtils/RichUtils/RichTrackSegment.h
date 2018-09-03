@@ -207,16 +207,16 @@ namespace LHCb
       SIMDRotation3D( const Gaudi::Rotation3D &rot )
       {
         std::array< Gaudi::Rotation3D::Scalar, 9 > m;
-        rot.GetComponents( m[ 0 ], m[ 1 ], m[ 2 ], m[ 3 ], m[ 4 ], m[ 5 ], m[ 6 ], m[ 7 ], m[ 8 ] );
-        for ( int i = 0; i < 9; ++i ) { fM[ i ] = m[ i ]; }
+        rot.GetComponents( m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8] );
+        for ( int i = 0; i < 9; ++i ) { fM[i] = m[i]; }
       }
       /// Vector rotation operator
       template < typename VECTOR >
       inline VECTOR operator*( const VECTOR &v ) const noexcept
       {
-        return VECTOR( fM[ 0 ] * v.X() + fM[ 1 ] * v.Y() + fM[ 2 ] * v.Z(),
-                       fM[ 3 ] * v.X() + fM[ 4 ] * v.Y() + fM[ 5 ] * v.Z(),
-                       fM[ 6 ] * v.X() + fM[ 7 ] * v.Y() + fM[ 8 ] * v.Z() );
+        return VECTOR( fM[0] * v.X() + fM[1] * v.Y() + fM[2] * v.Z(),
+                       fM[3] * v.X() + fM[4] * v.Y() + fM[5] * v.Z(),
+                       fM[6] * v.X() + fM[7] * v.Y() + fM[8] * v.Z() );
       }
     };
 

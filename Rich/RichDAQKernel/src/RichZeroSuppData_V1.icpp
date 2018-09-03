@@ -71,7 +71,7 @@ namespace Rich
         {
 
           // Get triplet data
-          const RichZSHitTriplet triplet( this->data()[ iData ] );
+          const RichZSHitTriplet triplet( this->data()[iData] );
 
           // Make first smartid from triplet
           ids.emplace_back( hpdID.rich(),
