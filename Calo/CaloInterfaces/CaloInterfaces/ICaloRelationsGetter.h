@@ -8,6 +8,7 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
+#include "Event/Track.h"
 //Forward dec'
 template <class FROM,class TO,class WEIGHT> class IRelationWeighted; 
 template <class FROM,class TO,class WEIGHT> class IRelationWeighted2D; 
@@ -16,7 +17,6 @@ template <class FROM,class TO> class IRelation;
 namespace LHCb{ 
   class CaloHypo;
   class CaloCluster;
-  class Track;
 }
 
 /** @class ICaloRelationsGetter ICaloRelationsGetter.h

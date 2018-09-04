@@ -53,6 +53,9 @@ class genClassDicts:
             includes_xml = '#include "%s%s.h"' % (self.srcOutputDir, ns_name)
             self.sIncludes = self.conc(self.sIncludes, includes_xml)
 
+            if 'class' in ns:
+                self.genPackageDictClass(ns)
+
             typetags = [('enum','enum'),('method','function')]
             for typ,tag in typetags:
                 try:
@@ -67,7 +70,7 @@ class genClassDicts:
 
 #--------------------------------------------------------------------------------
     def genPackageDictClass(self,godPackage):
-        pkg_namespace = godPackage['attrs']['namespace']
+        pkg_namespace = godPackage['attrs'].get('namespace')
         for cl in godPackage['class']:
             clnamespace = cl['attrs'].get('namespace',pkg_namespace)
             clname = clnamespace+'::'+cl['attrs']['name']

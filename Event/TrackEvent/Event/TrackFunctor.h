@@ -187,7 +187,7 @@ constexpr auto decreasingByZ = []() {
     if ( iter == allstates.end() )
       throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
-    return *iter;
+    return *(*iter);
   }
 
 //=============================================================================
@@ -201,7 +201,7 @@ constexpr auto decreasingByZ = []() {
     if ( iter == allstates.end() )
       throw GaudiException( "No states","TrackFunctor.h",
                             StatusCode::FAILURE );
-    return *iter;
+    return *(*iter);
   }
 
 //=============================================================================

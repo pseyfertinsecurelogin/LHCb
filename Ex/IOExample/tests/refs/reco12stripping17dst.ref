@@ -288,7 +288,7 @@ StoreExplorerAlg     INFO     +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO       +--> /Vertex [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO         +--> /Primary [Address: CLID=0x6272e Type=0x2]  KeyedContainer<LHCb::RecVertex,C [0x3]
 TESFingerPrint      DEBUG ==> Execute
-DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
+DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Event::v1::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
 DumpTracks           INFO There are 273 tracks in Rec/Track/Best
 DumpTracks          DEBUG *** Track ***
  key        : 0
@@ -663,7 +663,7 @@ StoreExplorerAlg     INFO     +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO       +--> /Vertex [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO         +--> /Primary [Address: CLID=0x6272e Type=0x2]  KeyedContainer<LHCb::RecVertex,C [0x2]
 TESFingerPrint      DEBUG ==> Execute
-DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
+DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Event::v1::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
 DumpTracks           INFO There are 139 tracks in Rec/Track/Best
 DumpTracks          DEBUG *** Track ***
  key        : 0
@@ -1041,7 +1041,7 @@ StoreExplorerAlg     INFO     +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO       +--> /Vertex [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO         +--> /Primary [Address: CLID=0x6272e Type=0x2]  KeyedContainer<LHCb::RecVertex,C [0x3]
 TESFingerPrint      DEBUG ==> Execute
-DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
+DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Event::v1::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
 DumpTracks           INFO There are 154 tracks in Rec/Track/Best
 DumpTracks          DEBUG *** Track ***
  key        : 0
@@ -1410,7 +1410,7 @@ StoreExplorerAlg     INFO     +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO       +--> /Vertex [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO         +--> /Primary [Address: CLID=0x6272e Type=0x2]  KeyedContainer<LHCb::RecVertex,C [0x4]
 TESFingerPrint      DEBUG ==> Execute
-DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
+DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Event::v1::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
 DumpTracks           INFO There are 266 tracks in Rec/Track/Best
 DumpTracks          DEBUG *** Track ***
  key        : 0
@@ -1868,7 +1868,7 @@ StoreExplorerAlg     INFO     +--> /Rec [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO       +--> /Vertex [Address: CLID=0x1 Type=0x2]  DataObject
 StoreExplorerAlg     INFO         +--> /Primary [Address: CLID=0x6272e Type=0x2]  KeyedContainer<LHCb::RecVertex,C [0x2]
 TESFingerPrint      DEBUG ==> Execute
-DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
+DumpTracks          DEBUG The object of type 'KeyedContainer<LHCb::Event::v1::Track,Containers::KeyedObjectManager<Containers::hashmap> >*' has been retrieved from TS at address 'Rec/Track/Best'
 DumpTracks           INFO There are 158 tracks in Rec/Track/Best
 DumpTracks          DEBUG *** Track ***
  key        : 0

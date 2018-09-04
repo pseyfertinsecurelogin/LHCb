@@ -7,5 +7,7 @@
 #include "TrackInterfaces/IVeloClusterPosition.h"
 #include "Kernel/VPChannelID.h"
 #include "TrackInterfaces/IVPClusterPosition.h"
+#include "TrackInterfaces/IInAcceptance.h"
+
 #endif // DICT_LHCBTRACKINTERFACESDICT_H
 

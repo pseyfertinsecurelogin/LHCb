@@ -39,7 +39,6 @@
   <class name = "IEventCounter"        />
   <class name = "IEventTupleTool"      />
   <class name = "IEvtTypeSvc"          />
-  <class name = "IInAcceptance"        />
   <class name = "ILHCbMagnetSvc"       />
   <class name = "IMCVeloFEType"        />
   <class name = "INormalizeTool"       />
