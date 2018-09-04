@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+
+<gdd>
+  <package name='UTTELL1Event'>
+  <!-- location = address in TES -->
+  <!-- classId = identifier -->
+
+    <class name='UTTELL1BoardErrorBank'
+	   id='9013'
+	   author='Mathias Knecht'
+	   desc='Error Bank from a Tell1 board'
+           serializers = 'FALSE'>
+      <base name='KeyedObject&lt; int &gt; '/>
+      <location name="UTErrors"   place="Raw/UT/Errors"   />
+
+      &KeyedContainer;
+
+      <import name='Event/UTTELL1Error' />
+
+
+      <typedef desc = "Vector of UTTELL1Error typedef"
+       type =  "std::vector&lt;LHCb::UTTELL1Error*&gt;"
+       def = "ErrorVector"
+       access = "PUBLIC " />
+
+ <!--
+      <constructor
+        desc = 'constructor with arguments'
+        argList = 'Data data'
+        initList = 'm_data(data)'>
+      </constructor> -->
+
+
+      <destructor desc = 'destructor' virtual = 'TRUE'>
+       <code>
+ for ( auto&amp; eInfo : m_errorInfo ) delete eInfo;
+ m_errorInfo.clear();
+       </code>
+      </destructor>
+
+       <attribute
+       name="errorInfo"
+       type="std::vector &lt;  LHCb::UTTELL1Error* &gt;"
+       desc= "Vector of 4 Error Info (1 per PP)"
+       setMeth = "FALSE"
+       transient = "TRUE"
+       nonconstaccessor = "TRUE"
+       />
+
+
+      <method type = "void"
+              name = "addToErrorInfo"
+              desc = "add to error vector"
+              argList = "UTTELL1Error* value"
+      >
+      <code>
+      m_errorInfo.push_back(value);
+      </code>
+      </method>
+
+      <method type = 'unsigned int'
+      	      name = 'Tell1ID'
+	      desc = 'Returns the Tell1D id'
+	      const = 'TRUE'>
+      <code>  return key();
+      </code>
+      </method>
+
+      <method
+       name = "ppErrorInfo"
+       desc = "get the error info for a given pp"
+       argList = "const unsigned int&amp; pp"
+       type = "LHCb::UTTELL1Error*"
+       const = "TRUE">
+          <code>
+            return (pp &lt; m_errorInfo.size() ?  m_errorInfo[pp]: 0 );
+	  </code>
+      </method>
+
+     <method
+     name = "fractionOK"
+     desc = "fraction of links that are OK"
+     type = "double"
+     const = "TRUE"
+     argList = "const unsigned int pcn">
+   </method>
+
+   <method
+     name = "isUT"
+     desc = "true if an UT error bank"
+     type = "bool"
+     const = "TRUE">
+   </method>
+
+    <method
+     name = "regName"
+     desc = "short cut to the registry name"
+     type = "std::string"
+     access = "PRIVATE"
+     const = "TRUE">
+   </method>
+
+
+    <method
+        name    = "fillStream"
+        desc    = "Print out of error information"
+        type    = "std::ostream&amp;"
+        override = "TRUE"
+        const   = "TRUE">
+        <arg
+         type = "std::ostream"
+         name = "s" />
+     </method>
+
+    </class>
+
+  </package>
+</gdd>

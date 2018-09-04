@@ -9,13 +9,13 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDAQ/UTReadoutTool.h"
-#include "Kernel/STTell1Board.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STBoardMapping.h"
-#include "Kernel/STChannelID.h"
+#include "Kernel/UTTell1Board.h"
+#include "Kernel/UTTell1ID.h"
+#include "Kernel/UTBoardMapping.h"
+#include "Kernel/UTChannelID.h"
 #include <algorithm>
 #include "DetDesc/Condition.h"
-#include "Kernel/STXMLUtils.h"
+#include "Kernel/UTXMLUtils.h"
 
 using namespace LHCb;
 
@@ -45,7 +45,7 @@ StatusCode UTReadoutTool::initialize() {
   }
 
   // tracker
-  m_tracker = getDet<DeSTDetector>(DeSTDetLocation::location("UT"));
+  m_tracker = getDet<DeUTDetector>(DeUTDetLocation::location());
 
   registerCondition(m_conditionLocation,
                     &UTReadoutTool::createTell1Map);
@@ -82,7 +82,7 @@ StatusCode UTReadoutTool::writeMappingToXML() const {
 
   // add comments
   std::ostringstream comment;
-  ST::XMLUtils::fullComment(comment, m_author, m_tag, m_desc);
+  UT::XMLUtils::fullComment(comment, m_author, m_tag, m_desc);
   outputFile << comment.str() << '\n';
 
   std::string temp = strip(rInfo->toXml("", false, m_precision));
@@ -103,7 +103,7 @@ unsigned int UTReadoutTool::nServiceBox() const{
   return m_serviceBoxes.size();
 }
 
-std::string UTReadoutTool::serviceBox(const LHCb::STChannelID& aChan) const{
+std::string UTReadoutTool::serviceBox(const LHCb::UTChannelID& aChan) const{
 
   // find the board
 
@@ -121,15 +121,15 @@ std::string UTReadoutTool::serviceBox(const LHCb::STChannelID& aChan) const{
   return(  isFound ? m_boards[iBoard]->serviceBoxes()[waferIndex] : InValidBox);
 }
 
-std::vector<STTell1ID> UTReadoutTool::boardIDs() const{
-  std::vector<STTell1ID> ids; ids.reserve(m_boards.size());
+std::vector<UTTell1ID> UTReadoutTool::boardIDs() const{
+  std::vector<UTTell1ID> ids; ids.reserve(m_boards.size());
   std::transform( m_boards.begin(), m_boards.end(),
                   std::back_inserter(ids),
                   [](const auto& b) { return b->boardID(); } );
   return ids;
 }
 
-STDAQ::chanPair UTReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
+UTDAQ::chanPair UTReadoutTool::offlineChanToDAQ(const UTChannelID aOfflineChan,
                                                 double isf) const
 {
   // look up region start.....
@@ -146,7 +146,7 @@ STDAQ::chanPair UTReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
   } // iBoard
 
   if (!isFound){
-    return { STTell1ID(STTell1ID::nullBoard, false),0};
+    return { UTTell1ID(UTTell1ID::nullBoard, false),0};
   } else {
     return { m_boards[iBoard]->boardID(),
              m_boards[iBoard]->offlineToDAQ(aOfflineChan,
@@ -155,13 +155,13 @@ STDAQ::chanPair UTReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
 }
 
 
-double UTReadoutTool::interStripToDAQ(const STChannelID aOfflineChan,
-                                      const STTell1ID aBoardID,
+double UTReadoutTool::interStripToDAQ(const UTChannelID aOfflineChan,
+                                      const UTTell1ID aBoardID,
                                       const double isf) const
 {
   unsigned int waferIndex = 999u;
 
-  STTell1Board* aBoard = this->findByBoardID(aBoardID);
+  UTTell1Board* aBoard = this->findByBoardID(aBoardID);
   double newisf = 0;
 
   if(aBoard->isInside(aOfflineChan,waferIndex)){
@@ -179,12 +179,12 @@ double UTReadoutTool::interStripToDAQ(const STChannelID aOfflineChan,
 }
 
 
-bool UTReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
-                                    const STTell1ID aBoardID,
-                                    STCluster::ADCVector& adcs) const
+bool UTReadoutTool::ADCOfflineToDAQ(const UTChannelID aOfflineChan,
+                                    const UTTell1ID aBoardID,
+                                    UTCluster::ADCVector& adcs) const
 {
   unsigned int waferIndex = 999u;
-  STTell1Board* aBoard = this->findByBoardID(aBoardID);
+  UTTell1Board* aBoard = this->findByBoardID(aBoardID);
 
   if( !aBoard->isInside(aOfflineChan,waferIndex) ) return false; // can not find board!
 
@@ -195,7 +195,7 @@ bool UTReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
 }
 
 
-STTell1Board* UTReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
+UTTell1Board* UTReadoutTool::findByBoardID(const UTTell1ID aBoardID) const{
   // find by board id
   try {
     return m_boardsMap.at(aBoardID);
@@ -204,7 +204,7 @@ STTell1Board* UTReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
   }
 }
 
-STTell1Board* UTReadoutTool::findByOrder(const unsigned int aValue) const{
+UTTell1Board* UTReadoutTool::findByOrder(const unsigned int aValue) const{
   // find by order
   return aValue< m_nBoard ? m_boards[aValue].get() : nullptr;
 }
@@ -230,19 +230,19 @@ unsigned int UTReadoutTool::TELLNumberToSourceID(unsigned int TELL) const {
 StatusCode UTReadoutTool::validate() const{
 
   // validate the map - every sector must go somewhere !
-  const DeSTDetector::Sectors& dSectors = m_tracker->sectors();
+  const DeUTDetector::Sectors& dSectors = m_tracker->sectors();
   return StatusCode{std::none_of(std::begin(dSectors), std::end(dSectors),
-                      [this](const DeSTSector *s) {
-                             STChannelID chan = s->elementID();
+                      [this](const DeUTSector *s) {
+                             UTChannelID chan = s->elementID();
                              auto chanPair = offlineChanToDAQ(chan,0.0);
-                             return chanPair.first == STTell1ID(STTell1ID::nullBoard, false);
+                             return chanPair.first == UTTell1ID(UTTell1ID::nullBoard, false);
                        } )};
 }
 
-std::vector<LHCb::STChannelID> UTReadoutTool::sectorIDs(const STTell1ID board) const{
+std::vector<LHCb::UTChannelID> UTReadoutTool::sectorIDs(const UTTell1ID board) const{
 
-  std::vector<LHCb::STChannelID> sectors; sectors.reserve(8);
-  STTell1Board* theBoard = findByBoardID(board);
+  std::vector<LHCb::UTChannelID> sectors; sectors.reserve(8);
+  UTTell1Board* theBoard = findByBoardID(board);
   if (theBoard){
     sectors.insert(sectors.begin(), theBoard->sectorIDs().begin(), theBoard->sectorIDs().end());
   }
@@ -252,21 +252,21 @@ std::vector<LHCb::STChannelID> UTReadoutTool::sectorIDs(const STTell1ID board) c
   return sectors;
 }
 
-std::vector<DeSTSector*> UTReadoutTool::sectors(const STTell1ID board) const{
+std::vector<DeUTSector*> UTReadoutTool::sectors(const UTTell1ID board) const{
 
   return m_tracker->findSectors(sectorIDs(board));
 }
 
-std::vector<DeSTSector*> UTReadoutTool::sectorsOnServiceBox(const std::string& serviceBox) const{
+std::vector<DeUTSector*> UTReadoutTool::sectorsOnServiceBox(const std::string& serviceBox) const{
 
   return m_tracker->findSectors(sectorIDsOnServiceBox(serviceBox));
 }
 
-std::vector<LHCb::STChannelID> UTReadoutTool::sectorIDsOnServiceBox(const std::string& serviceBox) const{
+std::vector<LHCb::UTChannelID> UTReadoutTool::sectorIDsOnServiceBox(const std::string& serviceBox) const{
   // loop over all boards
-  std::vector<LHCb::STChannelID> sectors; sectors.reserve(16);
+  std::vector<LHCb::UTChannelID> sectors; sectors.reserve(16);
   for (const auto& board : m_boards ) {
-    const std::vector<LHCb::STChannelID>& sectorVec = board->sectorIDs();
+    const std::vector<LHCb::UTChannelID>& sectorVec = board->sectorIDs();
     const std::vector<std::string>& sBoxes = board->serviceBoxes();
     for (unsigned int iS = 0u ; iS < board->nSectors(); ++iS){
       if (sBoxes[iS] == serviceBox) sectors.push_back(sectorVec[iS]);
@@ -295,12 +295,12 @@ std::string UTReadoutTool::header(const std::string& conString) const
 
   // correct the location of the DTD
   if( m_removeCondb ) {
-    ST::XMLUtils::replace(temp,"conddb:", "");
+    UT::XMLUtils::replace(temp,"conddb:", "");
     std::string location;
     for (unsigned int i = 0;  i< m_depth; ++i) location += "../";
     std::string::size_type pos = temp.find("/DTD/");
     temp.insert(pos,location);
-    ST::XMLUtils::replace(temp,"//", "/");
+    UT::XMLUtils::replace(temp,"//", "/");
   }
 
   return temp;
@@ -313,19 +313,19 @@ std::string UTReadoutTool::strip(const std::string& conString) const
   return conString.substr(startpos, endpos - startpos);
 }
 
-unsigned int UTReadoutTool::region(const STChannelID aChan) const{
+unsigned int UTReadoutTool::region(const UTChannelID aChan) const{
   // convert channel to region
   return aChan.station() == 1 ?  aChan.layer() - 1 : m_nRegionA + aChan.layer() - 1;
 }
 
 // Add the mapping of source ID to TELL1 board number
 const  std::map<unsigned int, unsigned int>& UTReadoutTool::SourceIDToTELLNumberMap() const {
-  return STBoardMapping::UTSourceIDToNumberMap();
+  return UTBoardMapping::UTSourceIDToNumberMap();
 }
 
 // Add the mapping of TELL1 board number to source ID
 const  std::map<unsigned int, unsigned int>& UTReadoutTool::TELLNumberToSourceIDMap() const {
-  return STBoardMapping::UTNumberToSourceIDMap();
+  return UTBoardMapping::UTNumberToSourceIDMap();
 }
 
 StatusCode UTReadoutTool::createTell1Map()
@@ -333,7 +333,7 @@ StatusCode UTReadoutTool::createTell1Map()
   Condition* rInfo = getDet<Condition>(m_conditionLocation);
   const std::vector<std::string> layers =  rInfo->param<std::vector<std::string> >("layers");
 
-  STBoardMapping::ClearUTMap();
+  UTBoardMapping::ClearUTMap();
 
   unsigned int sourceIDBase = 0;
   for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
@@ -343,7 +343,7 @@ StatusCode UTReadoutTool::createTell1Map()
 
       const std::vector<int>& tell1 = rInfo->param<std::vector<int> >(tell1Loc);
       for ( unsigned int i=0; i<tell1.size(); i++ ) {
-        STBoardMapping::AddUTMapEntry(sourceIDBase+i, tell1.at(i));
+        UTBoardMapping::AddUTMapEntry(sourceIDBase+i, tell1.at(i));
       }
     }
     sourceIDBase += 64;
@@ -369,7 +369,7 @@ StatusCode UTReadoutTool::createBoards() {
 
   m_hybridsPerBoard = rInfo->param<int>("hybridsPerBoard");
   m_nRegionA = rInfo->param<int>("nRegionsInUTa");
-  unsigned int nStripsPerHybrid =  STDAQ::nStripsPerBoard/m_hybridsPerBoard;
+  unsigned int nStripsPerHybrid =  UTDAQ::nStripsPerBoard/m_hybridsPerBoard;
 
   for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
 
@@ -384,18 +384,18 @@ StatusCode UTReadoutTool::createBoards() {
 
    unsigned int vecLoc = 0;
    if ( iReg == 0){
-     STChannelID firstChan = STChannelID(tMap[0]);
+     UTChannelID firstChan = UTChannelID(tMap[0]);
      m_firstStation = firstChan.station() ;
    }
 
    for (unsigned int iBoard = 0; iBoard < (unsigned int)nBoards[iReg]; ++iBoard){
 
      // make new board
-     STTell1ID anID = STTell1ID(iReg,iBoard, isUT);
-     auto aBoard = std::make_unique<STTell1Board>(anID, nStripsPerHybrid, "UT");
+     UTTell1ID anID = UTTell1ID(iReg,iBoard, isUT);
+     auto aBoard = std::make_unique<UTTell1Board>(anID, nStripsPerHybrid, "UT");
 
      for (unsigned iH = 0 ; iH < m_hybridsPerBoard; ++iH, ++vecLoc){
-       STChannelID sectorID((unsigned int)tMap[vecLoc]);
+       UTChannelID sectorID((unsigned int)tMap[vecLoc]);
        aBoard->addSector(sectorID, (unsigned int)orientation[vecLoc], serviceBoxes[vecLoc]);
 
        // add to the list of service boxs if not already there

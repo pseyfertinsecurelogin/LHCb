@@ -41,6 +41,7 @@ gaudi_depends_on_subdirs(Associators/AssociatorsBase
                          Det/OTDet
                          Det/RichDet
                          Det/STDet
+                         Det/UTDet
                          Det/VPDet
                          Det/VeloDet
                          Event/DAQEvent
@@ -121,6 +122,9 @@ gaudi_depends_on_subdirs(Associators/AssociatorsBase
                          Tools/CondDBUI
                          Tools/FileStager
                          Tools/XmlTools
+                         UT/UTDAQ
+                         UT/UTKernel
+                         UT/UTTELL1Event
                          Velo/VeloDAQ
                          VP/VPDAQ)
 

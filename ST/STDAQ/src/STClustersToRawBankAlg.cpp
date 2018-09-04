@@ -12,7 +12,6 @@
 #include "STClustersToRawBankAlg.h"
 #include "Kernel/STRawBankMap.h"
 #include "Kernel/STTell1ID.h"
-#include "Kernel/IUTReadoutTool.h"
 
 #include "Kernel/STTell1Board.h"
 #include "Kernel/STDAQDefinitions.h"
@@ -42,7 +41,6 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 
 DECLARE_COMPONENT_WITH_ID( STClustersToRawBankAlgT<ISTReadoutTool>, "STClustersToRawBankAlg" )
-DECLARE_COMPONENT_WITH_ID( STClustersToRawBankAlgT<IUTReadoutTool>, "UTClustersToRawBankAlg" )
 
 template<class IReadoutTool>
 STClustersToRawBankAlgT<IReadoutTool>::STClustersToRawBankAlgT( const std::string& name,

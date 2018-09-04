@@ -15,7 +15,6 @@
 #include "Event/STCluster.h"
 #include "Kernel/ITNames.h"
 #include "Kernel/TTNames.h"
-#include "Kernel/UTNames.h"
 
 using namespace LHCb;
 
@@ -178,12 +177,10 @@ std::ostream& STTell1Board::fillStream( std::ostream& os ) const{
     if (m_detType == "IT"){
       os  << ITNames().UniqueSectorToString(*iterW)  << " "   << serviceBox(wafer) << '\n';
     }
-    else if (m_detType == "TT") {
+    else {
       os << TTNames().UniqueSectorToString(*iterW) << " " << serviceBox(wafer) << '\n';
     }
-    else {
-      os << UTNames().UniqueSectorToString(*iterW) << " " << serviceBox(wafer) << '\n';
-    }
+    
   }   // iW
   return os << " -----------\n";
 }
@@ -193,6 +190,5 @@ std::ostream& STTell1Board::fillStream( std::ostream& os ) const{
 unsigned int STTell1Board::flatTell1Number() const{
   return STBoardMapping::find( boardID().id(),
                                m_detType == "TT" ? STBoardMapping::TTSourceIDToNumberMap()
-                             : m_detType == "IT" ? STBoardMapping::ITSourceIDToNumberMap()
-                             :                     STBoardMapping::UTSourceIDToNumberMap());
+                                                 : STBoardMapping::ITSourceIDToNumberMap());
 }

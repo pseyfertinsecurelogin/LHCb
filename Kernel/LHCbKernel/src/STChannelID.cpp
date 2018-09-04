@@ -29,7 +29,6 @@ std::ostream& LHCb::STChannelID::fillStream(std::ostream& s) const
   s << "{ ";
   if ( isTT() ) s << "TT ";
   if ( isIT() ) s << "IT ";
-  if ( isUT() ) s << "UT ";
   s << "STChannelID : " << channelID()
     << " : type=" << type()
     << " strip=" << strip()

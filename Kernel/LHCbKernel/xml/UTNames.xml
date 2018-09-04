@@ -11,9 +11,9 @@
 -->
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
-  <package name='STKernel'>
+  <package name='UTKernel'>
 <!-- ****************************************************************
-     * ITNames                                                      *
+     * UTNames                                                      *
      ****************************************************************-->
 
     <class name   = "UTNames"
@@ -21,7 +21,7 @@
            author = "Jianchun Wang"
            virtual= "FALSE">
 
-    <import name = "Kernel/STChannelID"/>
+    <import name = "Kernel/UTChannelID"/>
 
       <enum name  = "Station"
             desc  = "Station names"
@@ -46,19 +46,19 @@
       <method name = "StationToString"
               desc = "station string from id"
               type = "std::string"
-              argList = "LHCb::STChannelID chan">
+              argList = "LHCb::UTChannelID chan">
         <code> return StationToString(chan.station());</code>
       </method>
 
       <method name = "channelToString"
               desc = "channel to string from id"
               type = "std::string"
-              argList = "LHCb::STChannelID chan"/>
+              argList = "LHCb::UTChannelID chan"/>
 
       <method name = "UniqueRegionToString"
               desc = "unique box string from id"
               type = "std::string"
-              argList = "LHCb::STChannelID chan">
+              argList = "LHCb::UTChannelID chan">
         <code>
           std::string temp = UniqueLayerToString(chan);
           temp += detRegionToString(chan.detRegion());
@@ -69,17 +69,17 @@
       <method name = "UniqueLayerToString"
               desc = "unique layer string from id"
               type = "std::string"
-              argList = "LHCb::STChannelID chan"/>
+              argList = "LHCb::UTChannelID chan"/>
 
       <method name = "UniqueSectorToString"
               desc = "unique sector string from id"
               type = "std::string"
-              argList = "LHCb::STChannelID chan"/>
+              argList = "LHCb::UTChannelID chan"/>
 
       <method name = "SectorToString"
               desc = "sector string from id"
               type = "std::string"
-              argList = "LHCb::STChannelID chan"/>
+              argList = "LHCb::UTChannelID chan"/>
 
       <method name = "allStations"
               desc = "vector of string names for all stations"
@@ -107,7 +107,7 @@
 
       <method name = "stringToChannel"
               desc = "convert string to channel"
-              type = "LHCb::STChannelID"
+              type = "LHCb::UTChannelID"
               argList = "std::string name"/>
 
       <method name = "findStationType"
