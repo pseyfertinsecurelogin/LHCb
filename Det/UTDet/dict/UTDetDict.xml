@@ -1,0 +1,19 @@
+<lcgdict>
+  <class name="DeUTBaseElement"   />
+  <class name="DeUTDetector"      />
+  <class name="DeUTStation"       />
+  <class name="DeUTLayer"         />
+  <class name="DeUTModule"        />
+  <class name="DeUTSector"        />
+  <class name="DeUTSensor"        />
+  <class name="std::vector<DeUTStation*>"            />
+  <class name="std::vector<DeUTLayer*>"              />
+  <class name="std::vector<DeUTModule*>"             />
+  <class name="std::vector<DeUTSector*>"             />
+  <class name="std::vector<DeUTSensor*>"             />
+  <class name="std::pair<unsigned int, DeUTSector*>" /> <!-- UTSectorMap typedef -->
+  <variable pattern="DeUTDetLocation::*" />
+  <enum pattern= "DeUTSector::Status::*" />
+  <class name="std::vector<DeUTSector::Status>" />
+  <class name="std::pair<unsigned int, DeUTSector::Status>" />
+</lcgdict>

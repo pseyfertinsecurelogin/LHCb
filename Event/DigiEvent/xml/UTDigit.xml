@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM 'gdd.dtd' [
+<!ENTITY UTClusterChannelIDFunctions SYSTEM "UTChannelID.ent">
+<!ENTITY channelIDFunction "channelID()" >
+]>
+<gdd>
+  <package name='DigiEvent'>
+
+  <class author="Matthew Needham" desc="Silicon tracker digitization class" id="9003" name="UTDigit"
+    final = "TRUE"
+    defaultdestructor="FALSE"
+  >
+      <base name="KeyedObject&lt;LHCb::UTChannelID&gt;"/>
+      &KeyedContainer;
+      <location name="UTDigits"   place="Raw/UT/Digits"   />
+      <import name ="Kernel/UTChannelID"/>
+      <import name = "Kernel/UTNames" />
+       <constructor argList="double charge"
+                    initList="m_depositedCharge(charge)"
+                    desc="special constructor">
+       <code></code>
+      </constructor>
+
+  <constructor desc = 'copy constructor'
+      initList = "KeyedObject&lt;LHCb::UTChannelID&gt;(),m_depositedCharge(digit.m_depositedCharge)" >
+      <arg const = 'TRUE' name = "digit" type = "LHCb::UTDigit" />
+	</constructor>
+
+  <method desc= 'clone method'
+   name = 'clone'
+   const = 'TRUE'
+   type = "LHCb::UTDigit*"
+   access = "PUBLIC">
+   <code>
+     return new LHCb::UTDigit( *this );
+   </code>
+  </method>
+
+      <attribute name="depositedCharge" type="double" desc="charge deposited on strip"/>
+      <method type='LHCb::UTChannelID' name='channelID' const='TRUE'  desc='channel = key'>
+        <code>return key();</code>
+      </method>
+
+  <method
+   name = "fillStream"
+   desc = "Print the digit in a human readable way"
+   type = "std::ostream&amp;"
+   override = "TRUE"
+   const = "TRUE">
+   <arg type = "std::ostream"
+    name = "s" />
+     <code >
+       s &lt;&lt; "{ UTDigit with key: " &lt;&lt; (int) key() &lt;&lt; " channel: " &lt;&lt; sectorName() &lt;&lt; " strip " &lt;&lt; strip()
+         &lt;&lt; " depositedCharge :" &lt;&lt; (float)m_depositedCharge &lt;&lt; std::endl &lt;&lt; " }";
+      return s;
+     </code>
+  </method>
+
+  &UTClusterChannelIDFunctions;
+
+  </class>
+
+ </package>
+</gdd>

@@ -256,35 +256,30 @@ inline const std::string& ST::CommonBase<PBASE, IReadoutTool>::detType() const {
 
 #include "Kernel/ITNames.h"
 #include "Kernel/TTNames.h"
-#include "Kernel/UTNames.h"
 #include "Kernel/STChannelID.h"
 
 template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE, IReadoutTool>::station(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().StationToString(chan) :
-           m_detType == "IT" ? LHCb::ITNames().StationToString(chan) :
-                               LHCb::UTNames().StationToString(chan) );
+                               LHCb::ITNames().StationToString(chan));
 }
 
 template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE, IReadoutTool>::uniqueDetRegion(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().UniqueRegionToString(chan) :
-           m_detType == "IT" ? LHCb::ITNames().UniqueBoxToString(chan) :
-                               LHCb::UTNames().UniqueRegionToString(chan) );
+                               LHCb::ITNames().UniqueBoxToString(chan) );
 }
 
 template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE, IReadoutTool>::uniqueLayer(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().UniqueLayerToString(chan) :
-           m_detType == "IT" ? LHCb::ITNames().UniqueLayerToString(chan) :
-                               LHCb::UTNames().UniqueLayerToString(chan) );
+                               LHCb::ITNames().UniqueLayerToString(chan) );
 }
 
 template <class PBASE, class IReadoutTool>
 inline std::string ST::CommonBase<PBASE, IReadoutTool>::uniqueSector(const LHCb::STChannelID& chan) const{
   return ( m_detType == "TT" ? LHCb::TTNames().UniqueSectorToString(chan) :
-           m_detType == "IT" ? LHCb::ITNames().UniqueSectorToString(chan) :
-                               LHCb::UTNames().UniqueSectorToString(chan) );
+                               LHCb::ITNames().UniqueSectorToString(chan));
 }
 
 template <class PBASE, class IReadoutTool>

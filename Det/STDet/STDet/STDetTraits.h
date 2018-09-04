@@ -33,13 +33,6 @@ class DeTTHalfModule;
 class DeTTSector;
 class DeTTSensor;
 
-class DeUTDetector;
-class DeUTStation;
-class DeUTLayer;
-class DeUTModule;
-class DeUTSector;
-class DeUTSensor;
-
 template <typename TYPE>
 class STDetTraits {
  public:
@@ -59,13 +52,6 @@ class STDetTraits<DeTTStation>{
  public:
   typedef DeTTDetector parent;
   typedef DeTTLayer child;
-};
-
-template<>
-class STDetTraits<DeUTStation>{
- public:
-  typedef DeUTDetector parent;
-  typedef DeUTLayer child;
 };
 
 template<>
@@ -90,13 +76,6 @@ class STDetTraits<DeTTLayer>{
 };
 
 template<>
-class STDetTraits<DeUTLayer>{
- public:
-  typedef DeUTStation parent;
-  typedef DeUTModule child;
-};
-
-template<>
 class STDetTraits<DeITLadder>{
  public:
   typedef DeITLayer parent;
@@ -108,13 +87,6 @@ class STDetTraits<DeTTHalfModule>{
  public:
   typedef DeTTLayer parent;
   typedef DeTTSector child;
-};
-
-template<>
-class STDetTraits<DeUTModule>{
- public:
-  typedef DeUTLayer parent;
-  typedef DeUTSector child;
 };
 
 template<>
@@ -132,13 +104,6 @@ class STDetTraits<DeTTSector>{
 };
 
 template<>
-class STDetTraits<DeUTSector>{
- public:
-  typedef DeUTModule parent;
-  typedef DeUTSensor child;
-};
-
-template<>
 class STDetTraits<DeITSensor>{
  public:
   typedef DeITSector parent;
@@ -150,13 +115,6 @@ class STDetTraits<DeTTSensor>{
  public:
   typedef DeTTSector parent;
   typedef DeTTSensor child;
-};
-
-template<>
-class STDetTraits<DeUTSensor>{
- public:
-  typedef DeUTSector parent;
-  typedef DeUTSensor child;
 };
 
 #endif

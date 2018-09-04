@@ -79,3 +79,4 @@ namespace UTDAQ {
 } // namespace LHCb
 
 #endif // UTDAQHELPER_H
+

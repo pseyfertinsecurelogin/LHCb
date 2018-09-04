@@ -46,9 +46,6 @@ namespace DeSTDetLocation {
   /// TT location in transient detector store
   static const std::string& TT = "/dd/Structure/LHCb/BeforeMagnetRegion/TT";
 
-  /// TT location in transient detector store
-  static const std::string& UT = "/dd/Structure/LHCb/BeforeMagnetRegion/UT";
-
   /// IT location in transient detector store
   static const std::string& IT = "/dd/Structure/LHCb/AfterMagnetRegion/T/IT";
 
@@ -169,7 +166,7 @@ public:
   * @return sector
   */
   virtual DeSTSector* getSector(const LHCb::STChannelID aChannel) const {
-    return findSector(aChannel); // redefined for DeUTDetector
+    return findSector(aChannel);
   };
 
   /**
@@ -266,14 +263,12 @@ private:
 
 inline const std::string& DeSTDetLocation::location(const std::string& type){
   return ( type == "TT" ? DeSTDetLocation::TT :
-           type == "IT" ? DeSTDetLocation::IT :
-                          DeSTDetLocation::UT );
+                          DeSTDetLocation::IT );
 }
 
 inline unsigned int DeSTDetLocation::detType(const std::string& type){
   return ( type == "TT" ? LHCb::STChannelID::detType::typeTT :
-           type == "IT" ? LHCb::STChannelID::detType::typeIT :
-                          LHCb::STChannelID::detType::typeUT );
+                          LHCb::STChannelID::detType::typeIT );
 }
 
 #include "STDet/DeSTSector.h"

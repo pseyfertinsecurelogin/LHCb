@@ -29,6 +29,7 @@
        <import name="Kernel/MuonTileID"/>
        <import name="Kernel/VPChannelID"/>
        <import name="Kernel/FTChannelID"/>
+       <import name="Kernel/UTChannelID"/>
        <import name="Kernel/HCCellID"/>
 
        &StlVector;
@@ -171,8 +172,16 @@
           <code>
   unsigned int stType = channelIDtype::TT;
   if ( chanID.isIT() ) stType = channelIDtype::IT;
-  if ( chanID.isUT() ) stType = channelIDtype::UT;
   m_lhcbID = (stType &lt;&lt; detectorTypeBits) + chanID;
+        </code>
+      </constructor>
+
+       <constructor
+         desc     = "Constructor from UTChannelID " >
+          <arg const="TRUE" name="chanID" type="UTChannelID" />
+          <code>
+  unsigned int utType = channelIDtype::UT;
+  m_lhcbID = (utType &lt;&lt; detectorTypeBits) + chanID;
         </code>
       </constructor>
 
@@ -197,6 +206,16 @@
        </method>
 
        <method
+         type  = "LHCb::UTChannelID"
+         name  = "utID"
+         const = 'TRUE'
+         desc  = "return the UTChannelID">
+         <code>
+           return ( isUT() ? LHCb::UTChannelID(m_lhcbID &amp; IDMask ) : LHCb::UTChannelID(0xF0000000));
+         </code>
+       </method>
+
+       <method
          type  = "bool"
          name  = "isIT"
          const = 'TRUE'
@@ -212,7 +231,7 @@
          const = 'TRUE'
          desc  = "return true if this is a Silicon Tracker identifier (i.e. TT, IT or UT)">
          <code>
-  return isTT() || isUT() || isIT();
+  return isTT() || isIT();
          </code>
        </method>
 
@@ -474,8 +493,8 @@
   switch ( detectorType() ) {
     case channelIDtype::VP:    return vpID().channelID();
     case channelIDtype::Velo:  return veloID().channelID();
+    case channelIDtype::UT:    return utID().channelID();
     case channelIDtype::TT:    //C++17 [[fall-through]]
-    case channelIDtype::UT:    //C++17 [[fall-through]]
     case channelIDtype::IT:    return stID().channelID();
     case channelIDtype::OT:    return otID().channelID();
     case channelIDtype::Rich:  return richID().key();

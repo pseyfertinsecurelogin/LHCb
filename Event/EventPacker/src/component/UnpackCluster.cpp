@@ -64,7 +64,7 @@ StatusCode UnpackCluster::execute()
   // If any clusters already exist, return
   if ( exist<LHCb::VeloClusters>(LHCb::VeloClusterLocation::Default+m_extension)  ||
        exist<LHCb::STClusters>  (LHCb::STClusterLocation::TTClusters+m_extension) ||
-       exist<LHCb::STClusters>  (LHCb::STClusterLocation::UTClusters+m_extension) ||
+       exist<LHCb::UTClusters>  (LHCb::UTClusterLocation::UTClusters+m_extension) ||
        exist<LHCb::STClusters>  (LHCb::STClusterLocation::ITClusters+m_extension)  )
   {
     if ( msgLevel(MSG::DEBUG) )
@@ -180,7 +180,7 @@ StatusCode UnpackCluster::execute()
   // Sort any filled containers.
   if ( m_vClus  ) { std::sort( m_vClus->begin(),  m_vClus->end(),  compareKeys<LHCb::VeloCluster> ); }
   if ( m_ttClus ) { std::sort( m_ttClus->begin(), m_ttClus->end(), compareKeys<LHCb::STCluster>   ); }
-  if ( m_utClus ) { std::sort( m_utClus->begin(), m_utClus->end(), compareKeys<LHCb::STCluster>   ); }
+  if ( m_utClus ) { std::sort( m_utClus->begin(), m_utClus->end(), compareKeys<LHCb::UTCluster>   ); }
   if ( m_itClus ) { std::sort( m_itClus->begin(), m_itClus->end(), compareKeys<LHCb::STCluster>   ); }
 
   //== If we stored in a different location, compare...
@@ -221,17 +221,17 @@ StatusCode UnpackCluster::execute()
       }
     }
 
-    LHCb::STClusters* utRef = get<LHCb::STClusters>(LHCb::STClusterLocation::UTClusters);
-    for ( LHCb::STClusters::iterator itU = utClus()->begin(); utClus()->end() != itU; ++itU )
+    LHCb::UTClusters* utRef = get<LHCb::UTClusters>(LHCb::UTClusterLocation::UTClusters);
+    for ( LHCb::UTClusters::iterator itU = utClus()->begin(); utClus()->end() != itU; ++itU )
     {
-      LHCb::STCluster* sCl = *itU;
-      LHCb::STCluster* sOld = utRef->object( sCl->key() );
+      LHCb::UTCluster* sCl = *itU;
+      LHCb::UTCluster* sOld = utRef->object( sCl->key() );
       if ( ( sOld->interStripFraction() != sCl->interStripFraction() ) ||
            ( sOld->pseudoSize()         != sCl->pseudoSize() )         ||
            ( sOld->highThreshold()      != sCl->highThreshold() )      ||
            ( sOld->stripValues()        != sCl->stripValues() )         )
       {
-        info() << "Old ST Cluster " << format( "frac%5.2f size%3d thr%2d ", sOld->interStripFraction(),
+        info() << "Old UT Cluster " << format( "frac%5.2f size%3d thr%2d ", sOld->interStripFraction(),
                                                sOld->pseudoSize(),  sOld->highThreshold() ) << endmsg;
         info() << " new           " << format( "frac%5.2f size%3d thr%2d ", sCl->interStripFraction(),
                                                sCl->pseudoSize(),  sCl->highThreshold() ) << endmsg;

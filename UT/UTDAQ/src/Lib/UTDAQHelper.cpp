@@ -155,3 +155,4 @@ void LHCb::UTDAQ::computeGeometry(const DeSTDetector &utDet,
     }
   }
 }
+

@@ -10,6 +10,7 @@
 -->
 <lcgdict>
   <class name    = "ISTClusterPosition"      />
+  <class name    = "IUTClusterPosition"      />
   <class name    = "IVeloClusterPosition"    />
   <class name    = "IVPClusterPosition" />
   <class name = "IInAcceptance"        />

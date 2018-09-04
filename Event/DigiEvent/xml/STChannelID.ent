@@ -19,16 +19,6 @@
 </method>
 
 <method
- name = "isUT"
- type = "bool"
- desc = "check if UT type"
- const = "TRUE" >
-  <code>
-  return &channelIDFunction;.isUT(); 
-  </code> 
-</method>
-
-<method
  name = "station"
  type = "unsigned int"
  desc = "short cut for station"
@@ -86,8 +76,7 @@
    const = "TRUE">
      <code >
       return ( isTT() ? TTNames().UniqueSectorToString(&channelIDFunction;) :
-               isIT() ? ITNames().UniqueSectorToString(&channelIDFunction;) :
-                        UTNames().UniqueSectorToString(&channelIDFunction;) );
+                        ITNames().UniqueSectorToString(&channelIDFunction;) );
      </code>
 </method>
 
@@ -99,8 +88,7 @@
    const = "TRUE">
      <code >
       return ( isTT() ? TTNames().UniqueLayerToString(&channelIDFunction;) :
-               isIT() ? ITNames().UniqueLayerToString(&channelIDFunction;) :
-                        UTNames().UniqueLayerToString(&channelIDFunction;) );
+                        ITNames().UniqueLayerToString(&channelIDFunction;) );
      </code>
 </method>
 
@@ -113,8 +101,7 @@
    const = "TRUE">
      <code >
       return ( isTT() ? TTNames().UniqueRegionToString(&channelIDFunction;) :
-               isIT() ? ITNames().UniqueBoxToString(&channelIDFunction;) :
-                        UTNames().UniqueRegionToString(&channelIDFunction;) );
+                        ITNames().UniqueBoxToString(&channelIDFunction;) );
      </code>
 </method>
 
@@ -127,7 +114,6 @@
    const = "TRUE">
      <code >
       return ( isTT() ? TTNames().StationToString(&channelIDFunction;) :
-               isIT() ? ITNames().StationToString(&channelIDFunction;) :
-                        UTNames().StationToString(&channelIDFunction;) );
+                        ITNames().StationToString(&channelIDFunction;) );
      </code>
 </method>

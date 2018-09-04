@@ -22,6 +22,7 @@ std::ostream& LHCb::LHCbID::fillStream(std::ostream& s) const
   if (isVelo()) { s << veloID(); }
   if (isVP())   { s << vpID();   }
   if (isST())   { s << stID();   }
+  if (isUT())   { s << utID();   }
   if (isOT())   { s << otID();   }
   if (isRich()) { s << richID(); }
   if (isCalo()) { s << caloID(); }

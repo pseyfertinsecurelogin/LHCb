@@ -1,0 +1,25 @@
+<lcgdict>
+
+  <class name = "IUTReadoutTool"       />
+  <class name = "UT::IUTNoiseCalculationTool" />
+  <class name = "IUTClusterSelector" />
+  <class name = "IUTChannelIDSelector" />
+  <class name = "IUTRawADCInfo" />
+  <class name = "UTTell1ID" />
+  <class name = "UTTell1Board" />
+  <class name = "UTBitsPolicy" />
+  <class name = "UTDAQ::UTBeetleRepresentation" />
+  <class name = "UTDAQ::UTPPRepresentation" />
+  <class name = "UTDAQ::UTStripRepresentation" />
+  <class name = "UT::UTDetectorPlot" />
+  <struct name = "UT::UTDetectorPlot::Bins" />
+  <class name = "std::pair<UTTell1ID, unsigned int>" /> 
+
+  <enum name = "UTDAQ::version" />
+  <enum name = "UTBitsPolicy::bits" />
+  <enum name = "UTBitsPolicy::masks" />
+  <function pattern ="UTFun::*" />
+  <function name = "UTBoardMapping::printUTMap" />
+  <function name = "UTBoardMapping::find" />
+  <function pattern = "UT::XMLUtils*" />
+</lcgdict>

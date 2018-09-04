@@ -23,7 +23,6 @@
            serializers = 'FALSE'>
       <base name='KeyedObject&lt; int &gt; '/>
       <location name="TTErrors"   place="Raw/TT/Errors"   />
-      <location name="UTErrors"   place="Raw/UT/Errors"   />
       <location name="ITErrors"   place="Raw/IT/Errors"   />
 
       &KeyedContainer;
@@ -106,13 +105,6 @@
    </method>
 
    <method
-     name = "isUT"
-     desc = "true if an UT error bank"
-     type = "bool"
-     const = "TRUE">
-   </method>
-
-    <method
      name = "isIT"
      desc = "true if an IT error bank"
      type = "bool"

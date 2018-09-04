@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--- $Id: -->
+<!--- Author  : M. Needham -->
+<!--- Created : 2006-01-30 -->
+
+<!DOCTYPE gdd SYSTEM "gdd.dtd" [
+<!ENTITY liteClusterName "UTLiteCluster">
+<!ENTITY channelID "UTChannelID">
+<!ENTITY channelIDFunction "channelID()" >
+<!ENTITY UTClusterClass SYSTEM "SiCluster.ent">
+<!ENTITY UTClusterChannelIDFunctions SYSTEM "UTChannelID.ent">
+]>
+<gdd>
+ <package name="DigiEvent">
+    <class name="UTCluster"
+     id="9004"
+     author="Matthew Needham"
+     desc="A cluster as produced by the TELL1 with full ADC information."
+     final = "TRUE"
+     defaultdestructor="FALSE"
+     serializers="TRUE">
+
+     <import name="vector"  std="TRUE"/>
+     <import name="utility" std="TRUE"/>
+     <import name = "Kernel/UTNames" />
+     <location name="UTClusters"   place="Raw/UT/Clusters"   />
+
+
+     <enum
+        desc="spill names"
+        name="Spill"
+        strTypConv = "TRUE"
+        unknownValue="UnknownSpill"
+        value="UnknownSpill=99, Central = 0, Prev1 = -1, Prev2 = -2,
+               Prev3 = -3 , Prev4 = -4 ,Prev5 = -5, Prev6 = -6,
+               Prev7 = -7, Prev8 = -8, Prev9 = -9, Prev10 = -10,
+               Next1 = 1, Next2 = 2, Next3 = 3, Next4 = 4, Next5 =5,
+               Next6 = 6, Next7 = 7, Next8 = 8, Next9 = 9, Next10 = 10 "
+        access="PUBLIC"
+      />
+
+
+
+     <!-- constructor desc="Constructor"
+       argList='&liteClusterName; lCluster,
+                ADCVector strips,
+                double neighbourSum'
+        initList='m_liteCluster(lCluster), m_stripValues(strips),m_neighbourSum(neighbourSum) , m_sourceID(999), m_tell1Channel(9999), m_spill(UTCluster::Central)' >
+     </constructor -->
+
+    <constructor desc="Constructor with source id"
+       argList='&liteClusterName; lCluster,
+                ADCVector strips,
+                double neighbourSum, unsigned sourceID, unsigned int tell1Chan,                 const LHCb::UTCluster::Spill&amp; spill '
+        initList='m_liteCluster(lCluster), m_stripValues(strips),m_neighbourSum(neighbourSum) , m_sourceID(sourceID), m_tell1Channel(tell1Chan), m_spill(spill)' >
+     </constructor>
+
+   <constructor desc = 'copy constructor'
+      initList = "KeyedObject&lt;LHCb::&channelID;&gt;(),m_liteCluster(cluster.m_liteCluster), m_stripValues(cluster.m_stripValues),m_neighbourSum(cluster.m_neighbourSum) , m_sourceID(cluster.m_sourceID), m_tell1Channel(cluster.m_tell1Channel), m_spill(cluster.m_spill) " >
+      <arg const = 'TRUE' name = "cluster" type = "LHCb::UTCluster" />
+	</constructor>
+
+  <method desc= 'clone method'
+   name = 'clone'
+   const = 'TRUE'
+   type = "LHCb::UTCluster*"
+   access = "PUBLIC">
+   <code>
+     return new LHCb::UTCluster( *this );
+   </code>
+  </method>
+
+
+
+
+  &UTClusterClass;
+
+
+ <attribute
+       name="neighbourSum"
+       type="double"
+       desc="sum neighbour channels"
+       setMeth="FALSE" />
+
+ <attribute
+   name="sourceID"
+   type ="unsigned int"
+   setMeth="FALSE"
+   desc = "Identifier of the tell1 giving the cluster "
+ />
+
+  <attribute
+    name = "tell1Channel"
+    type= "unsigned int"
+    setMeth="FALSE"
+    desc = "tell1 channel number"
+  />
+
+  <attribute
+    name = "spill"
+    type = "LHCb::UTCluster::Spill"
+    desc = "spill the cluster corresponds to"
+    setMeth = "FALSE"
+  />
+
+   <method
+     name = "firstChannel"
+     type="LHCb::UTChannelID"
+     desc="first UT Channel ID"
+     const="TRUE">
+    <code>
+ return UTChannelID(channelID().type(),channelID().station(),
+                     channelID().layer(), channelID().detRegion(),
+                     channelID().sector(),channelID().strip()+stripValues().front().first);
+   </code>
+   </method>
+   <method
+     name = "lastChannel"
+     type="LHCb::UTChannelID"
+     desc="first UT Channel ID"
+     const="TRUE">
+    <code>
+ return UTChannelID(channelID().type(),channelID().station(),
+                    channelID().layer(), channelID().detRegion(),
+                    channelID().sector(),channelID().strip()+stripValues().back().first);    </code>
+  </method>
+
+ <method
+     name = "channels"
+     type="std::vector &lt; LHCb::UTChannelID &gt;"
+     desc="channel IDs"
+     const="TRUE">
+      <code>
+  std::vector &lt; LHCb::UTChannelID &gt; chanCont;
+  UTChannelID first = firstChannel();
+  for (unsigned int i = 0; i &lt; size(); ++i){
+    UTChannelID aChan(first.type(), first.station(), first.layer(),
+                      first.detRegion(),first.sector(),first.strip()+i);
+    chanCont.push_back(aChan);
+  }
+  return chanCont;
+      </code>
+ </method>
+
+
+ <method name = "contains"
+  type = "bool"
+  desc = "check if channel is inside cluster"
+  argList = "const LHCb::UTChannelID&amp; chan"
+  const = "TRUE">
+ <code>
+  bool inside = false;
+  if (chan.uniqueSector() == channelID().uniqueSector()){
+    const unsigned int firstStrip = channelID().strip() + stripValues().front().first;
+    const unsigned int lastStrip = channelID().strip() + stripValues().back().first;
+    if (chan.strip() &gt;= firstStrip &amp;&amp; chan.strip() &lt;= lastStrip ) inside = true;
+  }
+  return inside;
+  </code>
+  </method>
+
+
+  <method name = "overlaps"
+          type = "bool"
+          desc = "true if clusters have strips in common"
+          argList = "const UTCluster* testCluster"
+  const = "TRUE">
+     <code>
+        bool overlap = false;
+        if (channelID().uniqueSector() == testCluster->channelID().uniqueSector()){
+          std::vector&lt;LHCb::UTChannelID&gt; testchans = testCluster->channels();
+          for (std::vector&lt;LHCb::UTChannelID&gt;::const_iterator iterC1 = testchans.begin();
+                iterC1 != testchans.end() &amp;&amp; overlap == false ; ++iterC1){
+            if (contains(*iterC1) == true) overlap = true;
+          } // loop chans
+        } // if
+        return overlap;
+     </code>
+  </method>
+
+
+ <method
+   name = "maxADCValue"
+   type = "unsigned int"
+   desc = "maximum adc value of strips in a cluster"
+   const = "TRUE" >
+    <code>
+   unsigned int maxCharge = 0u;
+   LHCb::UTCluster::ADCVector::const_iterator iter = stripValues().begin();
+   while (iter != stripValues().end()){
+     if (iter->second &gt; maxCharge) maxCharge = iter->second;
+     ++iter;
+   }
+    return maxCharge;
+    </code>
+ </method>
+
+
+ <method
+   name = "fillStream"
+   desc = "Print the cluster in a human readable way"
+   type = "std::ostream&amp;"
+   override = "TRUE"
+   const = "TRUE">
+   <arg type = "std::ostream"
+    name = "s" />
+     <code >
+       s &lt;&lt; "{ UTCluster with key: " &lt;&lt; (int) key() &lt;&lt; " channel: " &lt;&lt; sectorName() &lt;&lt; " strip " &lt;&lt; strip()
+         &lt;&lt; "Size " &lt;&lt; size() &lt;&lt; " charge :" &lt;&lt; totalCharge() &lt;&lt; " source ID " &lt;&lt; sourceID()  &lt;&lt;
+        " tell1 channel " &lt;&lt; tell1Channel()  &lt;&lt; " Spill "  &lt;&lt; spill() &lt;&lt;  std::endl &lt;&lt; " }";
+      return s;
+     </code>
+  </method>
+
+
+ &UTClusterChannelIDFunctions;
+
+
+    </class>
+</package>
+</gdd>
