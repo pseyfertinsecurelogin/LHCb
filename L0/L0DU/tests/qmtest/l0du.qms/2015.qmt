@@ -1,0 +1,33 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+#######################################################
+# SUMMARY OF THIS TEST
+# ...................
+# Author: cattanem
+# Purpose: Check that L0DU can be decoded on 2015 data
+#######################################################
+-->
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"><text>gaudirun.py</text></argument>
+  <argument name="timeout"><integer>1200</integer></argument>
+  <argument name="options"><text>
+from Configurables import ApplicationMgr, GaudiSequencer, L0Conf, LHCbApp, HltRoutingBitsFilter
+
+# Filter out Lumi only triggers from further processing, but still write to output
+physFilterRequireMask = [ 0x0, 0x4, 0x0 ]
+physFilter = HltRoutingBitsFilter( "PhysFilter", RequireMask = physFilterRequireMask )
+
+l0TrgSeq = GaudiSequencer("L0TriggerSeq")
+l0TrgSeq.Members += [ physFilter ]
+L0Conf().L0Sequencer = l0TrgSeq
+L0Conf().DecodeL0DU = True
+ApplicationMgr().TopAlg += [ l0TrgSeq ]                                                
+
+from PRConfig import TestFileDB
+TestFileDB.test_file_db['2015_raw_full'].run(configurable=LHCbApp())
+LHCbApp().EvtMax = 10
+  </text></argument>
+  <argument name="validator"><text>
+countErrorLines({"FATAL":0, "WARNING":0, "ERROR":2})
+</text></argument>
+</extension>

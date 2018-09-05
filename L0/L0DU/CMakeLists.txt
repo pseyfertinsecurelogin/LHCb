@@ -28,3 +28,4 @@ gaudi_install_python_modules()
 
 gaudi_env(SET L0DUOPTS \${L0DUROOT}/options)
 
+gaudi_add_test(QMTest QMTEST)
