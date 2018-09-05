@@ -1,4 +1,3 @@
-// $Id: UTFun.cpp,v 1.1 2008-01-08 10:22:58 mneedham Exp $
 #include "Kernel/UTFun.h"
 
 

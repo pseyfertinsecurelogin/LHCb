@@ -16,8 +16,8 @@ class DeUTStation;
  *
  *  UT Layer detector element
  *
- *  @author Jianchun Wang, Matt Needham
- *  @date   2012-07-10
+ *  @author Andy Beiter (based on code by Jianchun Wang, Matt Needham)
+ *  @date   2018-09-04
  *
  */
 

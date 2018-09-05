@@ -8,7 +8,7 @@
 *
 *  Implementation of class :  DeUTBaseElement
 *
-*    @author Matthew Needham
+*    @author Andy Beiter (based on code by Matthew Needham)
 */
 
 using namespace LHCb;

@@ -18,8 +18,8 @@ class UTDigit;
  *
  *  Interface Class for charge sharing IT strip
  *
- *  @author M.Needham
- *  @date   14/3/2002
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
  */
 
 

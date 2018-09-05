@@ -1,4 +1,3 @@
-// $Id: UTDAQDefinitions.h,v 1.6 2009-02-05 13:45:55 jluisier Exp $
 #ifndef _UTDAQDefinitions_H
 #define _UTDAQDefinitions_H
 
@@ -10,8 +9,8 @@ class UTTell1ID;
  *
  *  Namespace for some useful type definitions and const
  *
- *  @author M.Needham
- *  @date   13/3/2002
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
 */
 
 

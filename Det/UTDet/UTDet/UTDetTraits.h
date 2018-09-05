@@ -5,7 +5,7 @@
  *
  *  Traits info
  *
- *  @author Matthew Needham Matthew.Needham@cern.ch
+ *  @author Andy Beiter (based on code by Matthew Needham)
  */
 
 class DeUTDetector;

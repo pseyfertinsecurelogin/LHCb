@@ -6,8 +6,8 @@
  *  Helper class for mapping boards to banks
  *  basically hides a a map - used in 2 places....
  *
- *  @author M Needham
- *  @date   2004-08-01
+ *  @author A Beiter (based on code by M Needham)
+ *  @date   2018-09-04
  */
 
 #include <map>

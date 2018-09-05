@@ -12,8 +12,8 @@ namespace UT{
    * @param digits the number of desired digits (ie '1' -> "001" if digits is 3
    * @return the wanted string
    *
-   * @author Johan Luisier
-   * @date 2008-10-14
+   * @author Andy Beiter (based on code by Johan Luisier)
+   * @date 2018-09-04
    */
   template <typename T>
   std::string toString(const T& type, const unsigned int& digits = 0)
@@ -32,9 +32,10 @@ namespace UT{
    * @param m_string the string which has to be converted
    * @param type the variable where the value will be stored
    * @return bool true if success
+   * @author Andy Beiter based on code by:
    * @author Johan Luisier
    * @author M Needham
-   * @date 2008-10-14
+   * @date 2018-09-04
    */
   template <typename T>
   bool fromString(const std::string& mystring, T& type)

@@ -5,8 +5,8 @@
  *
  *  Class to describe a UTTell1ID
  *
- *  @author M.Needham
- *  @date   7/01/2004
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
  */
 
 #include <iostream>

@@ -13,8 +13,8 @@
 //
 // C++ code for 'LHCb Tracking package(s)'
 //
-//   Author: M. Needham
-//   Created:
+//   Author: A. Beiter (based on code by M. Needham)
+//   Created: 2018-09-04
 
 namespace UTDataFunctor {
 

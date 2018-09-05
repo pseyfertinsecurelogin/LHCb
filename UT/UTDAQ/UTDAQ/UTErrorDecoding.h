@@ -11,8 +11,8 @@
 /** @class UTErrorDecoding UTErrorDecoding.h public/UTErrorDecoding.h
  *
  *
- *  @author Mathias Knecht, M Needham, S Ponce
- *  @date   2007-09-11 (2008-06)
+ *  @author A Beiter (based on code by Mathias Knecht, M Needham, S Ponce)
+ *  @date   2018-09-04
  */
 
 class UTErrorDecoding : public Gaudi::Functional::Consumer<void(const LHCb::RawEvent&),

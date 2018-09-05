@@ -8,7 +8,7 @@
 
     <class name='UTTELL1Data'
 	   id='9010'
-	   author='Matthew Needham'
+	   author='Andy Beiter (based on code by Matthew Needham)'
 	   desc='ADCs from a TELL1 board'
            serializers = 'FALSE'>
       <base name='KeyedObject&lt; int &gt; '/>

@@ -5,8 +5,8 @@
  *
  *  Helper class for keeping track of clusters...
  *
- *  @author M Needham
- *  @date   2004-08-01
+ *  @author A Beiter (based on code by M Needham)
+ *  @date   2018-09-04
  */
 
 #include <vector>

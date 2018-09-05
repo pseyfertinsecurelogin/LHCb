@@ -15,8 +15,8 @@
  *  - \b EventInfoLocation: Location of event info data
  *  \sa{https://edms.cern.ch/document/692431/3}.
  *
- *  @author Mathias Knecht, Jeroen van Tilburg
- *  @date   2007-09-11
+ *  @author Andy Beiter (based on code by Mathias Knecht, Jeroen van Tilburg)
+ *  @date   2018-09-04
  */
 class UTFullDecoding : public UT::AlgBase {
 

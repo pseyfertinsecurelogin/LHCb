@@ -3,7 +3,7 @@
 <gdd>
   <package name='RecEvent'>
 
-  <class author="Matthew Needham" desc="Silicon tracker summary class" id="9005" name="UTSummary"  serializers = "TRUE"
+  <class author="Andy Beiter (based on code by Matthew Needham)" desc="Upstream tracker summary class" id="9005" name="UTSummary"  serializers = "TRUE"
     virtual = "FALSE"
     final = "TRUE"
     defaultdestructor="FALSE"

@@ -5,9 +5,10 @@
  *
  *  Namespace for source ID to board number (and vice-versa) for IT and TT & UT
  *
+ *  @author Andy Beiter based on code by:
  *  @author Johan Luisier
- * @author M Needham
- *  @date   2008-07-14
+ *  @author M Needham
+ *  @date   2018-09-04
  */
 
 #include <sstream>

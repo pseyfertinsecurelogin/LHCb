@@ -4,11 +4,8 @@
  *
  *  Header file for algorithm base class : UT::AlgBase
  *
- *  CVS Log :-
- *  $Id: UTToolBase.h,v 1.2 2008-10-16 13:08:02 mneedham Exp $
- *
- *  @author Matthew Needham
- *  @date   11/10/2008
+ *  @author Andy Beiter
+ *  @date   2018-09-04
  */
 //-----------------------------------------------------------------------------
 
@@ -30,8 +27,8 @@ namespace UT
    *  Abstract base class for UT algorithms providing
    *  some basic functionality.
    *
-   *  @author Matthew Needham
-   *  @date   11/10/2008
+   *  @author Andy Beiter (based on code by Matthew Needham)
+   *  @date   2018-09-04
    */
   //-----------------------------------------------------------------------------
 

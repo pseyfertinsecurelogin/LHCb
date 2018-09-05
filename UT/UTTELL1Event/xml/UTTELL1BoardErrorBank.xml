@@ -8,7 +8,7 @@
 
     <class name='UTTELL1BoardErrorBank'
 	   id='9013'
-	   author='Mathias Knecht'
+	   author='Andy Beiter (based on code by Mathias Knecht)'
 	   desc='Error Bank from a Tell1 board'
            serializers = 'FALSE'>
       <base name='KeyedObject&lt; int &gt; '/>

@@ -5,9 +5,10 @@
  *
  *  class to hold 2-D histogram properties
  *
+ *  @author Andy Beiter based on code by:
  *  @author Johan Luisier
  *  @author M Needham
- *  @date   2009-07-22
+ *  @date   2018-09-04
  */
 
 #include "Kernel/UTChannelID.h"

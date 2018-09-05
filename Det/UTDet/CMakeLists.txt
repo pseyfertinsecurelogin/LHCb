@@ -1,7 +1,7 @@
 ################################################################################
 # Package: UTDet
 ################################################################################
-gaudi_subdir(UTDet v5r1)
+gaudi_subdir(UTDet v1r0)
 
 gaudi_depends_on_subdirs(Det/DetDesc
                          Det/DetDescCnv

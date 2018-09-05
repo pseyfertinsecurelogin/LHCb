@@ -11,8 +11,8 @@ namespace UT {
    *  
    * Abstract interface for noise calculation tool.
    *
-   *  @author Mark Tobin
-   *  @date   2009-10-01
+   *  @author Andy Beiter (based on code by Mark Tobin)
+   *  @date   2018-09-04
    */
   class IUTNoiseCalculationTool : public extend_interfaces<IAlgTool> {
   public: 
