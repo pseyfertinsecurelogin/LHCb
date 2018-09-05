@@ -6,7 +6,8 @@
 
 #include <array>
 #include <type_traits>
-#include "GaudiKernel/invoke.h"
+#include <functional>
+#include <memory>
 
 #ifdef NDEBUG
 #pragma GCC diagnostic push
@@ -32,7 +33,7 @@ namespace LHCb
   }
 
   // TODO: when we switch to C++17, deprecate, and point to std::invoke instead;
-  using Gaudi::invoke;
+  using std::invoke;
 
   // TODO: when we use a more recent version of range-v3, switch to its version of span
   using gsl::span;
@@ -85,6 +86,28 @@ namespace LHCb
   auto make_span(Ptr& cont, std::ptrdiff_t count)
   {
       return span<typename Ptr::element_type>(cont, count);
+  }
+
+  namespace details {
+    // see https://en.cppreference.com/w/cpp/named_req/ContiguousIterator
+    // 1) array::iterator is typically a pointer, so no need to support it here
+    // 2) string_view::iterator: why would ever want to turn that into a span?
+    // 3) valarray: if you really need it, then feel free to add it
+    template <typename Iterator>
+    constexpr bool isContiguous() {
+        using Value = typename std::iterator_traits<Iterator>::value_type;
+        return ( std::is_same<typename std::vector<Value>::iterator,
+                            Iterator>::value
+                 || std::is_same<typename std::vector<Value>::const_iterator,
+                           Iterator>::value )
+           && !std::is_same<bool,Value>::value;
+    }
+  }
+
+  template <typename Iterator, typename = std::enable_if_t<details::isContiguous<Iterator>()> >
+  auto make_span(Iterator firstElem, Iterator lastElem)
+  {
+      return make_span(std::addressof(*firstElem),std::distance(firstElem,lastElem));
   }
 
 }
