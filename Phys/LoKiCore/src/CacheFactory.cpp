@@ -86,7 +86,7 @@ std::ostream& LoKi::Cache::makeCode ( std::ostream&       stream  ,
   return stream << "\nnamespace LoKi { namespace Details {\n"
                 << "template<>\n"
                 << type            << "*\n"
-                << "CacheFactory<" << type << "," << nX << ">::create( const LoKi::Context& context )\n"
+                << "CacheFactory<" << type << "," << nX << ">::create( [[maybe_unused]] const LoKi::Context& context )\n"
                 << " { return ( "  << cppcode << " ).clone() ; } \n"
                 << "}} // end of namespaces LoKi::Details\n"
                 << "\ntypedef " << type    << "  t_" << nX << ";\n"
