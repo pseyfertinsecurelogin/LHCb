@@ -427,8 +427,6 @@ std::string LoKi::Hybrid::Base::makeCode
   // start the code:
   stream   << "# "             << std::string(78,'=')                                     << '\n'
            << "# python pseudomodule, generated for the hybrid factory'" << name() << "'" << '\n' 
-           << "# \tat "        << Gaudi::Time::current().format(true)                     << '\n' 
-           << "# \tby "        << System::accountName()                                   << '\n'
            << "# "             << std::string(78,'=')                                     << '\n' ;
   // 
   stream   << "# Arguments:\n" 
