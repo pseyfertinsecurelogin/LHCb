@@ -1,4 +1,3 @@
-// $Id: UTBeetleRepresentation.h,v 1.3 2009-08-20 07:58:46 mneedham Exp $
 #ifndef _UTDAQ_UTBeetleRepresentation_H
 #define _UTDAQ_UTBeetleRepresentation_H 1
 
@@ -9,8 +8,8 @@
 * Sometimes we want to compose/decompose this into Beetles and ports
 * This helper class does just that.
 *
-*  @author M.Needham
-*  @date   17/8/2008
+*  @author A. Beiter (based on code by M.Needham)
+*  @date   2018-09-04
 */
 
 #include "Kernel/LHCbConstants.h"

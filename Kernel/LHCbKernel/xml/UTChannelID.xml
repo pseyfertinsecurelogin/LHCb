@@ -4,7 +4,7 @@
 <gdd>
   <package name='LHCbKernel'>
     <class name    = 'UTChannelID' 
-           author  = 'M Needham, J. Wang'
+           author  = 'A Beiter (based on code by M Needham, J. Wang)'
            desc    = 'Channel ID for class for UT'
            virtual = 'FALSE'>
       &StlVector;

@@ -16,9 +16,10 @@
  *  class to plot detector view (ie displays the detector with
  *  one bin per sector) for the IT.
  *
+ *  @author Andy Beiter based on code by:
  *  @author Johan Luisier
  *  @author M Needham
- *  @date   2009-07-22
+ *  @date   2018-09-04
  */
 
 #include "Kernel/UTHisto2DProperties.h"

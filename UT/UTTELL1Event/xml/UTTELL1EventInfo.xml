@@ -7,7 +7,7 @@
   <!-- classId = identifier -->
     <class name='UTTELL1EventInfo'
 	   id='9011'
-	   author='Mathias Knecht'
+	   author='Andy Beiter (based on code by Mathias Knecht)'
 	   desc='Event info from a TELL1 board'>
    <base name='KeyedObject&lt; int &gt; '/>
       <location name="UTEventInfo"   place="Raw/UT/EventInfo"   />

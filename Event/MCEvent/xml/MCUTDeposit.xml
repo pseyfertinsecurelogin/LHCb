@@ -3,7 +3,7 @@
 <gdd>
   <package name='MCEvent'>
 
-    <class author="Matthew Needham" desc="This class turns represents charge deposited on a strip by a single MCHit" id="9001" name="MCUTDeposit">
+    <class author="Andy Beiter (based on code by Matthew Needham)" desc="This class turns represents charge deposited on a strip by a single MCHit" id="9001" name="MCUTDeposit">
       <base name="KeyedObject&lt;int&gt;"/>
       &KeyedObject;
       <location name="UTDeposits"   place="MC/UT/Deposits"   />

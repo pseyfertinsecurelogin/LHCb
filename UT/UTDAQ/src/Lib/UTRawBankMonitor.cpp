@@ -1,8 +1,8 @@
 //
 // C++ code for 'LHCb Tracking package(s)'
 //
-//   Author: M. Needham
-//   Created: 19-09-2000
+//   Author: A. Beiter (based on code by M. Needham)
+//   Created: 2018-09-04
 
 #include "UTDAQ/UTRawBankMonitor.h"
 

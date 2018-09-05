@@ -1,4 +1,3 @@
-// $Id: UTStripRepresentation.h,v 1.2 2009-01-22 11:43:44 mneedham Exp $
 #ifndef _UTDAQ_UTStripRepresentation_H
 #define _UTDAQ_UTStripRepresentation_H 1
 
@@ -8,8 +7,8 @@
 * Sometimes we number a strip on a tell1 board 0 - 3072
 * This helper class does just that.
 *
-*  @author M.Needham
-*  @date   17/8/2008
+*  @author A. Beiter (based on code by M.Needham)
+*  @date   2018-09-04
 */
 
 #include <iostream>

@@ -16,8 +16,8 @@ namespace LHCb{
  *  of clusters
  *
  *
- *  @author M Needham
- *  @date   03/02/2009
+ *  @author A Beiter
+ *  @date   2018-09-04
  */
 
 struct IUTClusterSelector : extend_interfaces<IAlgTool>

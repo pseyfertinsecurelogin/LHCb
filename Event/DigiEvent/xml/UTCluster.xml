@@ -14,7 +14,7 @@
  <package name="DigiEvent">
     <class name="UTCluster"
      id="9004"
-     author="Matthew Needham"
+     author="Andy Beiter (based on code by Matthew Needham)"
      desc="A cluster as produced by the TELL1 with full ADC information."
      final = "TRUE"
      defaultdestructor="FALSE"

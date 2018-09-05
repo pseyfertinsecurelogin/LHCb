@@ -3,7 +3,7 @@
 <gdd>
   <package name='MCEvent'>
 
-    <class author="Matthew Needham" desc="This class turns represents total charge deposited on strip in an event" id="9002" name="MCUTDigit">
+    <class author="Andy Beiter (based on code by Matthew Needham)" desc="This class turns represents total charge deposited on strip in an event" id="9002" name="MCUTDigit">
       <base name="KeyedObject&lt;LHCb::UTChannelID&gt;"/>
       <template name="KeyedObjectDict" t1="LHCb::UTChannelID"/>
       &KeyedContainer;

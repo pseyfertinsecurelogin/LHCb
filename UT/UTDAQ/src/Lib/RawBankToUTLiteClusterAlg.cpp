@@ -16,7 +16,6 @@
 #include "Kernel/UTTell1ID.h"
 #include "Kernel/UTDAQDefinitions.h"
 #include "Kernel/UTDecoder.h"
-#include "Kernel/UTDetSwitch.h"
 #include "Kernel/UTDataFunctor.h"
 #include "Kernel/UTStripRepresentation.h"
 

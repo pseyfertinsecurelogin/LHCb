@@ -14,8 +14,8 @@
  *
  *  Algorithm to create UTTELL1Data (type ProcFull) from RawEvent object
  *
- *  @author M. Needham
- *  @date   2007-10-10
+ *  @author A. Beiter (based on code by M. Needham)
+ *  @date   2018-09-04
  */
 
 struct IUTReadoutTool;

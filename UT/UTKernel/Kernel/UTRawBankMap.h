@@ -4,8 +4,8 @@
 /** @namespace UTRawBankMap UTRawBankMap.h SKernel/UTRawBank
  *
  *  Map string to corresponding bank type enum
- *  @author M.Needham
- *  @date   06/09/2007
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
  */
 
 #include "Event/RawBank.h"

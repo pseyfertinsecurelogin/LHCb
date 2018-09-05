@@ -1,4 +1,3 @@
-// $Id: UTKernelDict.h,v 1.17 2010-04-05 09:35:32 mneedham Exp $
 #ifndef DICT_UTKERNELDICT_H 
 #define DICT_UTKERNELDICT_H 1
 

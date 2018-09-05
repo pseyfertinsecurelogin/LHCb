@@ -6,8 +6,8 @@
  *  class to help writing XML comments
  *
  *
- *  @author M Needham
- *  @date   2009-07-22
+ *  @author A Beiter (based on code by M Needham)
+ *  @date   2018-09-04
  */
 
 

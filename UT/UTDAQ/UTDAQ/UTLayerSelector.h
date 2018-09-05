@@ -17,8 +17,8 @@
  *
  *  Algorithm to remove clusters in excluded layers
  *
- *  @author Ch. Elsasser
- *  @date   2012-05-02
+ *  @author A. Beiter (based on code by Ch. Elsasser)
+ *  @date   2018-09-04
  */
 
 class UTLayerSelector : public extends<GaudiTool, IUTChannelIDSelector>

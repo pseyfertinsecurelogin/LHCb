@@ -6,7 +6,7 @@
 <gdd>
   <package name='DigiEvent'>
 
-  <class author="Matthew Needham" desc="Silicon tracker digitization class" id="9003" name="UTDigit"
+  <class author="Andy Beiter (based on code by Matthew Needham)" desc="Upstream tracker digitization class" id="9003" name="UTDigit"
     final = "TRUE"
     defaultdestructor="FALSE"
   >

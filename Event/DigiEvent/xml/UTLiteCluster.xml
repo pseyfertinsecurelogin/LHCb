@@ -15,7 +15,7 @@
 
 <package name="DigiEvent">
     <class name="&className;" 
-     author="M Needham" 
+     author="A Beiter (based on code by M Needham)" 
      desc="A cluster as produced by the TELL1 but without full ADC information"
      final = "TRUE"
      defaultdestructor="FALSE"

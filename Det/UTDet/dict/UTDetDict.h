@@ -1,5 +1,3 @@
-// $Id: UTDetDict.h,v 1.3 2008-08-04 07:23:56 mneedham Exp $
-// ============================================================================
 #ifndef UTDET_UTDETDICT_H 
 #define UTDET_UTDETDICT_H 1
 

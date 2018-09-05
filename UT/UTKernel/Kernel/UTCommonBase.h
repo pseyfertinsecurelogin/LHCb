@@ -3,8 +3,8 @@
  *
  *  Header file for UT base class : UTCommonBase
  *
- *  @author Matthew Needham    Matthew.Needham@cern.ch
- *  @date   2005-11-10
+ *  @author Andy Beiter (based on code by Matthew Needham)
+ *  @date   2018-09-04
  */
 //-----------------------------------------------------------------------------
 
@@ -35,8 +35,8 @@ namespace UT
    *
    *  Base class providing common functionality for all UT tools and algorithms
    *
-   *  @author Matthew Needham
-   *  @date   2008-10-11
+   *  @author Andy Beiter (based on code by Matthew Needham)
+   *  @date   2018-09-04
    */
   //-----------------------------------------------------------------------------
 
@@ -116,24 +116,14 @@ namespace UT
    /** detector type as a string */
    std::string detectorType(const LHCb::UTChannelID& chan) const;
 
-   /** flip all flippables **/
-   void flip() const;
-
-   /** flip the given string */
-   void flip(std::string& aString) const;
-
-
    /** declarePropery the UT way **/
    ::Property* declareUTConfigProperty(const std::string& name,
                                std::string& value,
                                const std::string& def,
                                const std::string& doc="none") {
-    // add to the property to the list of flippable after the normal property declaration
-    return addToFlipList(this->declareProperty(name, value = def , doc));
+   // add to the property to the list of flippable after the normal property declaration
+     return this->declareProperty(name, value = def , doc);
    }
-
-   /** accessor to the list of things to be flipped */
-   const std::vector<::Property*>& flipList() const;
 
    /** safe finding of the sector - exception thrown if not valid */
    DeUTSector* findSector(const LHCb::UTChannelID& aChannel) const;
@@ -142,9 +132,6 @@ namespace UT
    StatusCode procFailure(const std::string& reason, const bool aborted = false) const;
 
   private:
-   /** add to flipable list **/
-   ::Property* addToFlipList(::Property* aProperty) const;
-
    DeUTDetector* getTracker() const;
 
    IReadoutTool* getReadoutTool() const;
@@ -197,7 +184,6 @@ StatusCode UT::CommonBase<PBASE, IReadoutTool>::initialize()
   // Printout from initialize
   if ( this -> msgLevel(MSG::DEBUG) )
     this -> debug() << "Initialize" << endmsg;
-  flip(); // flip all that needs to be flipped
 
   if (m_forcedInit == true){
      // force getting of the tools
@@ -315,33 +301,6 @@ template <class PBASE, class IReadoutTool>
 inline std::string UT::CommonBase<PBASE, IReadoutTool>::detectorType(const LHCb::UTChannelID& chan) const{
   const DeUTSector* sector = tracker()->findSector(chan);
   return sector ? sector->type()  : "Unknown" ;
-}
-
-#include "Kernel/UTDetSwitch.h"
-template <class PBASE, class IReadoutTool>
-inline Property* UT::CommonBase<PBASE, IReadoutTool>::addToFlipList(Property* aProperty) const{
-  m_toBeFlipped.push_back(aProperty);
-  return aProperty;
-}
-
-template <class PBASE, class IReadoutTool>
-inline void UT::CommonBase<PBASE, IReadoutTool>::flip() const {
- // turn IT into TT or TT into IT
- for (Property* p : m_toBeFlipped ) {
-     auto value = p->toString();
-     UTDetSwitch::flip(m_detType,value);
-     p->fromString(value).ignore();
- }
-}
-
-template <class PBASE, class IReadoutTool>
-void UT::CommonBase<PBASE, IReadoutTool>::flip(std::string& aString) const{
-  UTDetSwitch::flip(m_detType,aString);
-}
-
-template <class PBASE, class IReadoutTool>
-inline const std::vector<Property*>& UT::CommonBase<PBASE, IReadoutTool>::flipList() const{
- return m_toBeFlipped;
 }
 
 #include "Event/ProcStatus.h"

@@ -14,8 +14,8 @@
  *  - \b OutputLocation: Location of output pedestal data, e.g. TTPedestal
  *  \sa{http://edms.cern.ch/doc/695007}.
  *
- *  @author Mathias Knecht, Jeroen van Tilburg
- *  @date   2007-09-11
+ *  @author Andy Beiter (based on code by Mathias Knecht, Jeroen van Tilburg)
+ *  @date   2018-09-04
  */
 class UTPedestalDecoding : public UT::AlgBase {
 

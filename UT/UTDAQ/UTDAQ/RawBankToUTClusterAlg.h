@@ -18,8 +18,8 @@
  *
  *  Algorithm to create UTClusters from RawEvent object
  *
- *  @author M. Needham
- *  @date   2004-01-07
+ *  @author A Beiter (based on code by M. Needham)
+ *  @date   2018-09-04
  */
 
 

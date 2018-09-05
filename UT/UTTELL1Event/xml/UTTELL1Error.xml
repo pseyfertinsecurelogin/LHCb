@@ -7,7 +7,7 @@
   <!-- classId = identifier -->
     <class name='UTTELL1Error'
 	   id='9012'
-	   author='Mathias Knecht'
+	   author='Andy Beiter (based on code by Mathias Knecht)'
 	   desc='Error info from one PP-FPGA for a TELL1 board'
            virtual = 'FALSE'>
    <base name='KeyedObject&lt; int &gt; '/>

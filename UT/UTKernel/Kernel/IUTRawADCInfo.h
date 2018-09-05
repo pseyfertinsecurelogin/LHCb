@@ -1,4 +1,3 @@
-// $Id: IUTRawADCInfo.h,v 1.1 2009-08-20 07:58:46 mneedham Exp $
 // ============================================================================
 #ifndef UTKERNEL_IUTRAWADCINFO_H
 #define UTKERNEL_IUTRAWADCINFO 1
@@ -17,8 +16,8 @@ namespace LHCb{
  *  An abstract interface for linking channels to RAW info
  *
  *
- *  @author M Needham
- *  @date   08/08/2009
+ *  @author A Beiter (based on code by M Needham)
+ *  @date   2018-09-04
  */
 
 struct IUTRawADCInfo : extend_interfaces<IAlgTool> {

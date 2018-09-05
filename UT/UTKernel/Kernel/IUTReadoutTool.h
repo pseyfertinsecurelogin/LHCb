@@ -30,8 +30,8 @@ namespace LHCb{
 *
 *  Interface Class for things related to the Readout - Tell1 Board
 *
-*  @author M.Needham
-*  @date   13/3/2002
+*  @author A. Beiter (based on code by M.Needham)
+*  @date   2018-09-04
 */
 
 // Declaration of the interface ID ( interface id, major version, minor version)

@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 // Implementation file for class : UTChannelID
 //
-// 2007-08-11 : M Needham
+// 2018-09-04 : A Beiter (based on code by M Needham)
 //-----------------------------------------------------------------------------
 
 std::string  LHCb::UTChannelID::toString() const{

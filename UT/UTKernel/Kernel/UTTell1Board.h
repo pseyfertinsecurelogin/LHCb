@@ -14,8 +14,8 @@
  *
  *  Class for converting from UTChannelID to daq channel/UTTell1ID
  *
- *  @author M.Needham
- *  @date   5/01/2004
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
  */
 
 class UTTell1Board final {
