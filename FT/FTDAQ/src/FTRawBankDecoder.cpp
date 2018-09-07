@@ -21,42 +21,43 @@ unsigned quarterFromChannel(LHCb::FTChannelID id) {
   return id.uniqueQuarter() - 16u;
 }
 
-unsigned channelInBank(short int c) {
+constexpr unsigned channelInBank(short int c) {
   return ( c >> FTRawBank::cellShift);
 }
 
-unsigned getLinkInBank(short int c){
+constexpr unsigned getLinkInBank(short int c){
   return ((c >> FTRawBank::linkShift));
 }
 
-int cell(short int c) {
+constexpr int cell(short int c) {
   return ( c >> FTRawBank::cellShift ) & FTRawBank::cellMaximum;
 }
 
-int fraction(short int c) {
+constexpr int fraction(short int c) {
     return ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
 }
 
-bool cSize(short int c) {
+constexpr bool cSize(short int c) {
     return ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
 }
 
-const auto is_in_module = [](unsigned int mod) {
-    return [mod](const LHCb::FTLiteCluster cluster) { return cluster.channelID().module() == mod; };
+constexpr auto is_in_module = [](unsigned int mod) {
+    return [mod](const LHCb::FTLiteCluster cluster) {
+        return cluster.channelID().module() == mod;
+    };
 };
 
 template <typename Iter>
 void reverse_each_module(Iter first, Iter last) {
-        for( unsigned int iMod = 0; iMod < 6; ++iMod ) {
-          auto finish = std::partition_point(first,last,is_in_module(iMod));
-          std::reverse(first, finish);  // swap clusters in module
-          first = finish;
-        }
-        //TODO: need only to call partition_point until iMod=4, as the remainder
-        //      must be module 5...
-        assert(first==last);
+    for( unsigned int iMod = 0; iMod < 5; ++iMod ) {
+      auto finish = std::partition_point(first,last,is_in_module(iMod));
+      std::reverse(first, finish);  // swap clusters in module
+      first = finish;
+    }
+    assert(std::all_of(first,last,is_in_module(5)) &&
+            "Remaining partition should all be in module 5...");
+    std::reverse(first,last);
 }
-
 
 template <typename Container, typename Fun >
 void for_each_quadrant( Container& c, Fun&& f)
@@ -81,20 +82,12 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
                     Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Other,
                                                             LHCb::RawEventLocation::Default )},
                 KeyValue{ "OutputLocation", LHCb::FTLiteClusterLocation::Default } )
-{ }
-
-//=============================================================================
-// Initialize
-//=============================================================================
-StatusCode FTRawBankDecoder::initialize() {
-  StatusCode sc = Transformer::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;
-
+{
   // For the v2 and v3 decoding versions, opt out for the default initialization
   // of m_readouttool.
-  if( m_decodingVersion < 4u ) m_readoutTool.disable();
-
-  return sc;
+   m_decodingVersion.declareUpdateHandler( [=](Property& ) {
+       this->m_readoutTool.setEnabled( this->m_decodingVersion > 3u );
+   }).useUpdateHandler();
 }
 
 //=============================================================================

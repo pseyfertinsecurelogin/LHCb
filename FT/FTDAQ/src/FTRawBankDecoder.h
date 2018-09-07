@@ -26,15 +26,13 @@ class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEven
  public:
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-  
-  StatusCode initialize() override;
 
   FTLiteClusters operator()(const LHCb::RawEvent& rawEvent) const override;
 
  private:
   PublicToolHandle<IFTReadoutTool> m_readoutTool = { this, "FTReadoutTool", "FTReadoutTool" };
 
-  // for MC, following property has to be same as cluster creator, 
+  // for MC, following property has to be same as cluster creator,
   // not sure how to ensure this
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4u,
       "Maximal cluster width"};
@@ -42,4 +40,5 @@ class FTRawBankDecoder : public Transformer< FTLiteClusters( const LHCb::RawEven
       "Set the decoding version"};
 
 };
+
 #endif // FTRAWBANKDECODER_H
