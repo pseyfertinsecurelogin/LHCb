@@ -379,9 +379,12 @@ GVPipe     = LoKi.FunctorFromFunctor  ( _vgv , _vgv      )
 GVFunVals  = LoKi.Functor             ( _vgv , 'double'  )
 GVFunVal   = LoKi.FunctorFromFunctor  ( _vgv , 'double'  )
 GVCutVals  = LoKi.Functor             ( _vgv , bool      )
+
 GVCutVal   = LoKi.FunctorFromFunctor  ( _vgv , bool      )
 
-GSOURCE    = LoKi.GenParticles.SourceTES
+GSOURCE     = LoKi.GenParticles.SourceTES
+GTESDATA    = LoKi.GenParticles.TESData     ## <-- DataHandle used 
+GNUM        = LoKi.GenParticles.TESCounter  
 
 GEMPTY      = LoKi.Functors.Empty ( _GP ) ()
 GVEMPTY     = LoKi.Functors.Empty ( _GV ) ()

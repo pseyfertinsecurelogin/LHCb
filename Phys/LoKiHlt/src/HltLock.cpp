@@ -16,16 +16,16 @@
 // contructor
 // ============================================================================
 LoKi::Hybrid::HltLock::HltLock
-( LoKi::Hybrid::IHltAntiFactory* tool )
+( const LoKi::Hybrid::IHltAntiFactory* tool    , 
+  const LoKi::Context&                 context ) 
   : m_tool ( tool )
 {
   auto& actor = LoKi::Hybrid::HltEngineActor::instance() ;
   // connect the tool to the actor
-  StatusCode sc = actor.connectTool ( m_tool.getObject () ) ;
-  if ( sc.isFailure () ) {
-    LoKi::Report::Error
-      ( "LoKi::Hybrid::HltLock: error from connectTool", sc ) .ignore() ;
-  }
+  StatusCode sc = actor.connect ( m_tool.getObject () , context ) ;
+  if ( sc.isFailure () ) 
+  { LoKi::Report::Error
+      ( "LoKi::Hybrid::HltLock: error from connectTool", sc ) .ignore() ; }
 }
 // ============================================================================
 // destructor
@@ -34,11 +34,10 @@ LoKi::Hybrid::HltLock::~HltLock()
 {
   auto& actor = LoKi::Hybrid::HltEngineActor::instance() ;
   // connect the tool to the actor
-  StatusCode sc = actor.releaseTool ( m_tool.getObject () ) ;
-  if ( sc.isFailure () ) {
-    LoKi::Report::Error
-      ( "LoKi::Hybrid::HltLock: error from releaseTool", sc ) .ignore() ;
-  }
+  StatusCode sc = actor.disconnect ( m_tool.getObject () ) ;
+  if ( sc.isFailure () ) 
+  { LoKi::Report::Error
+      ( "LoKi::Hybrid::HltLock: error from releaseTool", sc ) .ignore() ; }
 }
 // ============================================================================
 // The END

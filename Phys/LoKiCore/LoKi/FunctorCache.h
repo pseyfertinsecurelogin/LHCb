@@ -12,6 +12,10 @@
 #define LOKI_FUNCTOR_CACHE_PLUGIN_VERSION
 #endif
 // ============================================================================
+// LoKi
+// ============================================================================
+#include "LoKi/Context.h"
+// ============================================================================
 namespace LoKi
 {
   // ==========================================================================
@@ -19,7 +23,7 @@ namespace LoKi
   struct CacheFactory
   {
     typedef T CutType;
-    typedef ::Gaudi::PluginService:: LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*> Factory;
+    typedef ::Gaudi::PluginService:: LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*,LoKi::Context> Factory;
     static std::string id(unsigned int hash)
     {
       return "loki_functor_" + std::to_string(hash);
@@ -33,8 +37,9 @@ namespace LoKi
     struct CacheFactory: public ::LoKi::CacheFactory<T>
     {
       typedef T CutType;
-      typedef ::Gaudi::PluginService:: LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*> Factory;
-      static typename Factory::ReturnType create();
+      typedef ::Gaudi::PluginService:: LOKI_FUNCTOR_CACHE_PLUGIN_VERSION Factory<CutType*,LoKi::Context> Factory;
+      // static typename Factory::ReturnType create();
+      static typename Factory::ReturnType create ( const  LoKi::Context& context );
     };
     // ========================================================================
   } //                                           end of namespace LoKi::Details
@@ -58,11 +63,12 @@ namespace Gaudi
       class Factory<LoKi::Details::CacheFactory<CutType, HASH> >
       {
       public:
-        template <typename S>
-        static typename S::ReturnType create()
-        {
-          return LoKi::Details::CacheFactory<CutType, HASH>::create();
-        }
+        //template <typename S>
+        // static typename S::ReturnType create()
+        // { return LoKi::Details::CacheFactory<CutType, HASH>::create(); }
+        template <typename S,  typename... Args>
+        static typename S::ReturnType create(Args... args)
+        { return LoKi::Details::CacheFactory<CutType, HASH>::create ( args... ); }
       };
       // ======================================================================
     } //                         end of namespace Gaudi:PluginServiuce::Details

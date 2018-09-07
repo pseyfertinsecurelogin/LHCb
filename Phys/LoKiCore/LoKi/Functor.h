@@ -125,7 +125,6 @@ namespace LoKi
     }
     /// move  assignement operator is enabled
     FunctorFromFunctor& operator= ( FunctorFromFunctor&& ) = default;
-
     // ========================================================================
     friend void swap(FunctorFromFunctor& lhs, FunctorFromFunctor& rhs) noexcept
     {
@@ -134,7 +133,7 @@ namespace LoKi
         swap(lhs.m_fun,rhs.m_fun);
     }
     // ========================================================================
-  public:
+    // public:
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
     FunctorFromFunctor* clone() const override
@@ -160,11 +159,13 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the actual underlying function // TODO: consider std::shared_ptr... or small object optimization, or both...
-    std::unique_ptr<const functor> m_fun ;           // the underlying functor
+    /** the actual underlying function 
+     *  @todo TODO: consider std::shared_ptr... 
+     *  or small object optimization, or both...
+     */
+    std::unique_ptr<functor> m_fun ;           // the underlying functor
     // ========================================================================
   };
-  // ==========================================================================
   // ==========================================================================
   /// specialiation for void-argument
   template <class TYPE2>
@@ -283,9 +284,7 @@ namespace LoKi
     std::unique_ptr<const functor> m_fun ;           // the underlying functor
     // ========================================================================
   } ;
-
   // ========================================================================
-
   namespace details {
 
       template <typename T, typename U>

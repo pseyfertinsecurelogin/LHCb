@@ -158,7 +158,9 @@
     <class pattern="Decays::*">
       <method name="=" />
     </class>
-
+    
+    <class name="LoKi::Interface<GaudiAlgorithm>"/>
+    
   </exclusion>
   
 </lcgdict>

@@ -7,6 +7,7 @@
 // ============================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/ICoreAntiFactory.h"
+#include "LoKi/Context.h"
 // ============================================================================
 /** @file LoKi/CoreLock.h
  *
@@ -36,8 +37,13 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// contructor : Lock
-      explicit CoreLock  ( LoKi::Hybrid::ICoreAntiFactory* tool ) ; // contructor : Lock
+      /** contructor : Lock
+       *  @param  factory pointer to (anti)factory 
+       *  @param  context the context 
+       */
+      explicit CoreLock  
+      ( const LoKi::Hybrid::ICoreAntiFactory* factory , 
+        const LoKi::Context&                  context ) ; 
       /// destrcutor : UnLock
       virtual ~CoreLock () ;                              // destructor : UnLock
       // ======================================================================
@@ -53,11 +59,11 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
- } // end of namespace LoKi::Hybrid
+ } //                                         The end of namespace LoKi::Hybrid
   // ==========================================================================
-} // end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_CORELOCK_H
 // ============================================================================

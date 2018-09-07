@@ -4,10 +4,15 @@
 // ===========================================================================
 // Include files
 // ===========================================================================
+// STD&STL
+// ===========================================================================
+#include <stack>
+// ===========================================================================
 // LoKi
 // ===========================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/IMCHybridTool.h"
+#include "LoKi/Context.h"
 // ===========================================================================
 namespace LoKi
 {
@@ -28,9 +33,6 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2004-06-29
      *
-     *                    $Revision$
-     *  Last modification $Date$
-     *                 by $Author$
      */
     class GAUDI_API MCEngineActor
     { 
@@ -39,9 +41,16 @@ namespace LoKi
       // get the static instance 
       static MCEngineActor& instance() ;
       /// connect the hybrid tool for code translation 
-      StatusCode connectTool (       LoKi::IMCHybridTool* tool ) ;
+      StatusCode connect     ( const LoKi::IMCHybridTool* tool    ,
+                               const LoKi::Context&       context ) ;
       /// disconnect the tool 
-      StatusCode releaseTool ( const LoKi::IMCHybridTool* tool ) ;
+      StatusCode disconnect  ( const LoKi::IMCHybridTool* tool    ) ;
+      // ======================================================================
+      /** get the current context
+       *  contex is valid only in between <code>connect/disconnect</code>
+       *  @return the current active context 
+       */
+      const LoKi::Context* context () const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -155,8 +164,11 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      // the tool itself 
-      LoKi::Interface<LoKi::IMCHybridTool> m_tool = nullptr;
+      typedef LoKi::Interface<LoKi::IMCHybridTool>    Tool  ;
+      typedef std::pair<Tool,LoKi::Context>           Entry ;
+      typedef std::stack<Entry>                       Stack ;
+      ///  the stack of active factories 
+      Stack m_stack {} ; // the stack of active factories 
       // ======================================================================
     };
     // ========================================================================

@@ -8,6 +8,7 @@
 // ============================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/IHltAntiFactory.h"
+#include "LoKi/Context.h"
 // ============================================================================
 namespace LoKi
 {
@@ -25,7 +26,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// contructor : Lock 
-      HltLock  ( LoKi::Hybrid::IHltAntiFactory* tool ) ; // contructor : Lock 
+      HltLock  ( const LoKi::Hybrid::IHltAntiFactory* factory , 
+                 const LoKi::Context&                 context ) ; 
       /// destrcutor : UnLock
       virtual ~HltLock () ;                              // destructor : UnLock
       // ======================================================================
@@ -43,11 +45,11 @@ namespace LoKi
       // ======================================================================
     } ; 
     // ========================================================================
- } // end of namespace LoKi::Hybrid 
+ } //                                         The end of namespace LoKi::Hybrid 
   // ==========================================================================  
-} // end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // LOKI_HltLOCK_H
 // ============================================================================

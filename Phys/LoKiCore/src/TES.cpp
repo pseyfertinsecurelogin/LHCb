@@ -59,53 +59,47 @@ namespace
 }
 // ============================================================================
 /*  constructor from TES location and root-in-tes flag
+ *  @param algorithm    own algorithm/context 
  *  @param location     TES-location
  *  @param useRootInTES RootInTES-flag
  */
 // ============================================================================
 LoKi::TES::Get::Get
-( const std::string& location     ,
-  const bool         useRootInTES )
-  : LoKi::AuxFunBase ( std::tie ( location, useRootInTES ) )
+( const GaudiAlgorithm* algorithm    ,
+  const std::string&    location     ,
+  const bool            useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location, useRootInTES ) )
   , m_location     ( location     )
   , m_useRootInTES ( useRootInTES )
-  , m_algorithm ()
-  , m_datasvc   ()
+  , m_algorithm    ( algorithm    )
+  , m_datasvc      ( nullptr      )
 {
-  if ( gaudi() ) { getAlgSvc() ; }
+  // if ( gaudi() ) { getAlgSvc() ; }
+}
+// ============================================================================
+/*  constructor from TES location 
+ *  @param datasvc    data service 
+ *  @param location   TES-location
+ */
+// ============================================================================
+LoKi::TES::Get::Get
+( const IDataProviderSvc* datasvc  ,
+  const std::string&      location )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
+  , m_location     ( location     )
+  , m_useRootInTES ( false        )
+  , m_algorithm    ( nullptr      )
+  , m_datasvc      ( datasvc      )
+{
+  // if ( gaudi() ) { getAlgSvc() ; }
 }
 // ============================================================================
 // virtual destructor
 // ============================================================================
 LoKi::TES::Get::~Get()
-{
-  if ( m_algorithm && !gaudi() ) { m_algorithm.reset() ; }
-  if ( m_datasvc   && !gaudi() ) { m_datasvc  .reset() ; }
-}
-// ============================================================================
-void LoKi::TES::Get::getAlgSvc() const
-{
-  //
-  if ( !(!m_algorithm) || !(!m_datasvc)) { return ; }
-  //
-  // 1. locate algorithm
-  //
-  ILoKiSvc* l = lokiSvc() ;
-  Assert ( 0 != l   , "ILoKiSvc*       points to NULL!" ) ;
-  SmartIF<IAlgContextSvc> cntx ( l ) ;
-  if ( !(!cntx) )
-  { m_algorithm = Gaudi::Utils::getGaudiAlg ( cntx ) ; }
-  //
-  // 2. use data service only in case root-in-tes is not required
-  //
-  if ( !m_algorithm && !m_useRootInTES )
-  {
-    const LoKi::Services& svc = LoKi::Services::instance() ;
-    m_datasvc = svc.evtSvc() ;
-  }
-  //
-  Assert ( !(!m_algorithm) || !(!m_datasvc)  ,
-           "Neither algorithm nor service is located" ) ;
+{ 
+  if ( m_algorithm && !gaudi() ) { m_algorithm .reset() ; }
+  if ( m_datasvc   && !gaudi() ) { m_datasvc   .reset() ; }
 }
 // ============================================================================
 // OPTIONAL: nice printout
@@ -113,7 +107,7 @@ void LoKi::TES::Get::getAlgSvc() const
 std::ostream& LoKi::TES::Get::fillStream ( std::ostream& s ) const
 {
   s << " GET(" << "'" << location() << "'" ;
-  if ( !useRootInTES() ) { s << ", False" ; }
+  if ( m_algorithm && !useRootInTES() ) { s << ", False" ; }
   return s << ") " ;
 }
 // ============================================================================
@@ -129,10 +123,20 @@ const std::string& LoKi::TES::Get::algName() const
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Exists::Exists
-( const std::string& location  ,
-  const bool         rootInTes )
-  : LoKi::AuxFunBase ( std::tie ( location , rootInTes ) )
-  , LoKi::TES::Get ( location , rootInTes )
+( const GaudiAlgorithm* algorithm ,
+  const std::string&    location  ,
+  const bool            rootInTes )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location , rootInTes ) )
+  , LoKi::TES::Get ( algorithm , location , rootInTes )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Exists::Exists
+( const IDataProviderSvc* datasvc   ,
+  const std::string&      location  )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
+  , LoKi::TES::Get ( datasvc , location )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -161,10 +165,20 @@ LoKi::TES::Exists::fillStream ( std::ostream& s ) const
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Contains::Contains
-( const std::string& location     ,
-  const bool         useRootInTes )
-  : LoKi::AuxFunBase ( std::tie ( location , useRootInTes ) )
-  , LoKi::TES::Get ( location , useRootInTes )
+( const GaudiAlgorithm* algorithm    ,
+  const std::string&    location     ,
+  const bool            useRootInTes )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location , useRootInTes ) )
+  , LoKi::TES::Get ( algorithm , location , useRootInTes )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Contains::Contains
+( const IDataProviderSvc* datasvc  , 
+  const std::string&      location )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
+  , LoKi::TES::Get ( datasvc , location )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -176,8 +190,8 @@ LoKi::TES::Contains* LoKi::TES::Contains::clone() const
 // ============================================================================
 double LoKi::TES::Contains::operator() ( /* LoKi::TES::Contains::argument */ ) const
 {
-  //
-  const ObjectContainerBase *obj = LoKi::TES::get_<ObjectContainerBase> ( *this ) ;
+  const ObjectContainerBase *obj = 
+    LoKi::TES::get_<ObjectContainerBase> ( *this ) ;
   if ( !obj ) { return -1 ; }
   return obj -> numberOfObjects () ;
 }
@@ -197,50 +211,39 @@ LoKi::TES::Contains::fillStream ( std::ostream& s ) const
 
 // ============================================================================
 LoKi::TES::Size::Size
-( const std::string& location )
-  : LoKi::AuxFunBase ( std::tie ( location ) )
-  , LoKi::TES::DataHandle<DataObject> ( location )
-{
-}
-
+( const GaudiAlgorithm* algorithm ,  
+  const std::string&    location  )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location ) )
+  , LoKi::TES::DataHandle<DataObject> ( algorithm , location )
+{}
+// ============================================================================
 LoKi::TES::Size* LoKi::TES::Size::clone() const
-{ return new LoKi::TES::Size ( *this ) ; }
-
+{ return new LoKi::TES::Size ( algorithm() , location() ) ; }
+// ============================================================================
 double LoKi::TES::Size::operator() ( /* LoKi::TES::Size::argument */ ) const
 {
   auto obj =  get();
-  auto container = dynamic_cast<ObjectContainerBase*>(obj);
-  if (container){
-    return container->numberOfObjects () ;
-  }
-  auto anydata =  dynamic_cast<AnyDataWrapperBase*>(obj);
-  if (anydata){
-    return anydata->size().value_or(-1);
-  }
+  auto container = dynamic_cast<ObjectContainerBase*>(obj) ;
+  if ( container ) { return container->numberOfObjects ()  ; }
+  auto anydata   = dynamic_cast<AnyDataWrapperBase*> (obj) ;
+  if ( anydata   ) { return anydata->size().value_or(-1)   ; }
   return -1;
 }
-
-std::ostream&
-LoKi::TES::Size::fillStream ( std::ostream& s ) const
-{
-  s << " SIZE( " ;
-  Gaudi::Utils::toStream ( location() , s ) ;
-  return s << " ) " ;
-}
 // ============================================================================
-
-
-
+std::ostream& LoKi::TES::Size::fillStream ( std::ostream& s ) const
+{ return s << "SIZE('" << location() << "')" ; }
+// ============================================================================
 
 // ============================================================================
 // constructor from TES location
 // ============================================================================
 LoKi::TES::HrcSumAdc::HrcSumAdc
-( const std::string& location     ,
-  const std::string& stationName       ,
-  const bool         useRootInTes )
-  : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )
-  , LoKi::TES::Get ( location , useRootInTes )
+( const GaudiAlgorithm* algorithm    ,
+  const std::string&    location     ,
+  const std::string&    stationName  ,
+  const bool            useRootInTes )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location , stationName, useRootInTes ) )
+  , LoKi::TES::Get   ( algorithm , location , useRootInTes )
   , m_stationName    ( stationName )
 {}
 // ============================================================================
@@ -289,12 +292,13 @@ LoKi::TES::HrcSumAdc::fillStream ( std::ostream& s ) const
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Counter::Counter
-( const std::string& location     ,
-  const std::string& counter      ,
-  const double       bad          ,
-  const bool         useRootInTes )
-  : LoKi::AuxFunBase ( std::tie ( location , counter , bad , useRootInTes ) )
-  , LoKi::TES::Contains ( location , useRootInTes )
+( const GaudiAlgorithm* algorithm    ,
+  const std::string&    location     ,
+  const std::string&    counter      ,
+  const double          bad          ,
+  const bool            useRootInTes )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location , counter , bad , useRootInTes ) )
+  , LoKi::TES::Contains ( algorithm , location , useRootInTes )
   , m_counter ( counter )
   , m_bad     ( bad     )
 {}
@@ -302,12 +306,38 @@ LoKi::TES::Counter::Counter
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Counter::Counter
-( const std::string& location     ,
-  const std::string& counter      )
-  : LoKi::AuxFunBase ( std::tie ( location , counter ) )
-  , LoKi::TES::Contains ( location )
+( const GaudiAlgorithm* algorithm    ,
+  const std::string&    location     ,
+  const std::string&    counter      )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location , counter ) )
+  , LoKi::TES::Contains ( algorithm , location )
   , m_counter ( counter )
   , m_bad     ( LoKi::Constants::NegativeInfinity )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Counter::Counter
+( const IDataProviderSvc* datasvc   , 
+  const std::string&      location  ,
+  const std::string&      counter   )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location , counter ) )
+  , LoKi::TES::Contains ( datasvc , location )
+  , m_counter ( counter )
+  , m_bad     ( LoKi::Constants::NegativeInfinity )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Counter::Counter
+( const IDataProviderSvc* datasvc , 
+  const std::string&    location  ,
+  const std::string&    counter   ,
+  const double          bad       )
+  : LoKi::AuxFunBase ( std::tie ( datasvc , location , counter , bad ) )
+  , LoKi::TES::Contains ( datasvc  , location )
+  , m_counter ( counter )
+  , m_bad     ( bad     )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -362,10 +392,10 @@ namespace LoKi
   {
     // =======================================================================-
     /** Helper class used to extract information from a \c StatEntity object.
-     *
-     * @author Marco Clemencic <marco.clemencic@cern.ch>
+     *  @author Marco Clemencic <marco.clemencic@cern.ch>
      */
-    class StatEntityGetter {
+    class StatEntityGetter 
+    {
     private:
       /// List of known getters in \c StatEntity.
       enum StatFunction
@@ -418,39 +448,40 @@ namespace LoKi
 
       /// Pointer to the actual instance of the Helper class.
       std::shared_ptr<const BaseHelper> m_helper;
-
+      
     public:
-
+      
       /// Constructor.
       /// Maps a string the the required Helper instance to extract the requested
       /// data member for \c StatEntity.
       StatEntityGetter(const std::string &fun) {
         using _t = std::pair<StatFunction,const char*>;
-        static const auto tbl = LHCb::make_array (
-              // basic
-              _t{ nEntries, "nEntries"   }, _t{ sum     , "sum"           },
-              _t{ sum2    , "sum2"       }, _t{ mean    , "mean"          },
-              _t{ rms     , "rms"        }, _t{ meanErr , "meanErr"       },
-              _t{ min     , "min"        }, _t{ max     , "max"           },
-              // derived
-              _t{ eff     , "efficiency" }, _t{ effErr  , "efficiencyErr" },
-              _t{ eff     , "eff"        }, _t{ effErr  , "effErr"        },
-              // a'la ROOT
-              _t{ sum     , "Sum"        }, _t{ sum2    , "Sum2"          },
-              _t{ mean    , "Mean"       }, _t{ rms     , "Rms"           },
-              _t{ rms     , "RMS"        }, _t{ meanErr , "MeanErr"       },
-              _t{ min     , "Min"        }, _t{ max     , "Max"           },
-              _t{ eff     , "Eff"        }, _t{ effErr  , "EffErr"        },
-              _t{ nEntries, "N"          }, _t{ nEntries, "Entries"       },
-              _t{ nEntries, "entries"    }
-        );
-
+        static const auto tbl = LHCb::make_array 
+          (
+           // basic
+           _t{ nEntries, "nEntries"   }, _t{ sum     , "sum"           },
+           _t{ sum2    , "sum2"       }, _t{ mean    , "mean"          },
+           _t{ rms     , "rms"        }, _t{ meanErr , "meanErr"       },
+           _t{ min     , "min"        }, _t{ max     , "max"           },
+           // derived
+           _t{ eff     , "efficiency" }, _t{ effErr  , "efficiencyErr" },
+           _t{ eff     , "eff"        }, _t{ effErr  , "effErr"        },
+           // a'la ROOT
+           _t{ sum     , "Sum"        }, _t{ sum2    , "Sum2"          },
+           _t{ mean    , "Mean"       }, _t{ rms     , "Rms"           },
+           _t{ rms     , "RMS"        }, _t{ meanErr , "MeanErr"       },
+           _t{ min     , "Min"        }, _t{ max     , "Max"           },
+           _t{ eff     , "Eff"        }, _t{ effErr  , "EffErr"        },
+           _t{ nEntries, "N"          }, _t{ nEntries, "Entries"       },
+           _t{ nEntries, "entries"    }
+           );
+        
         auto i = std::find_if( tbl.begin(), tbl.end(),
                                [&]( const _t& p ) { return fun == p.second; } );
         if (UNLIKELY(i==tbl.end())) { throw LoKi::Exception("invalid function name '" + fun + "'") ; }
         setHelper(i->first);
       }
-
+      
       /// Accessor function.
       /// Forwards the call to the \c Helper instance.
       inline double operator() (const StatEntity &ent) const
@@ -458,7 +489,7 @@ namespace LoKi
         assert(m_helper.get());
         return (*m_helper)(ent);
       }
-
+      
       /// Name of the \c StatEntity data member.
       /// Forwards the call to the \c Helper instance.
       inline std::string name() const
@@ -518,49 +549,79 @@ void StatEntityGetter::setHelper(StatFunction fun) {
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Stat::Stat
-( const std::string&            location     ,
+( const GaudiAlgorithm*         algorithm    ,
+  const std::string&            location     ,
   const std::string&            counter      ,
   const StatEntityGetter&       function     ,
   const double                  bad          ,
   const bool                    useRootInTes )
-  : LoKi::TES::Counter ( location , counter , bad , useRootInTes )
+  : LoKi::TES::Counter ( algorithm , location , counter , bad , useRootInTes )
   , m_getter  ( std::make_shared<const StatEntityGetter>(function) )
 {}
 // ============================================================================
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Stat::Stat
-( const std::string&            location     ,
+( const GaudiAlgorithm*         algorithm    ,
+  const std::string&            location     ,
   const std::string&            counter      ,
   const StatEntityGetter&       function     )
-  : LoKi::TES::Counter ( location , counter )
+  : LoKi::TES::Counter ( algorithm , location , counter )
   , m_getter  ( std::make_shared<const StatEntityGetter>(function) )
 {}
 // ============================================================================
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Stat::Stat
-( const std::string&            location     ,
+( const GaudiAlgorithm*         algorithm    ,
+  const std::string&            location     ,
   const std::string&            counter      ,
   const std::string&            function     ,
   const double                  bad          ,
   const bool                    useRootInTes )
-  : LoKi::AuxFunBase (  std::tie ( location , counter , function , bad , useRootInTes ) )
-  , LoKi::TES::Counter ( location , counter , bad , useRootInTes )
+  : LoKi::AuxFunBase (  std::tie ( algorithm , location , counter , 
+                                   function , bad , useRootInTes ) )
+  , LoKi::TES::Counter ( algorithm , location , counter , bad , useRootInTes )
   , m_getter  ( std::make_shared<const StatEntityGetter>(function) )
 {}
 // ============================================================================
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Stat::Stat
-( const std::string&            location     ,
+( const GaudiAlgorithm*         algorithm    ,
+  const std::string&            location     ,
   const std::string&            counter      ,
   const std::string&            function          )
-  : LoKi::AuxFunBase (  std::tie ( location , counter , function ) )
-  , LoKi::TES::Counter ( location , counter )
+  : LoKi::AuxFunBase (  std::tie ( algorithm , location , counter , function ) )
+  , LoKi::TES::Counter ( algorithm , location , counter )
   , m_getter  ( std::make_shared<const  StatEntityGetter>(function) )
 {}
-
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Stat::Stat
+( const IDataProviderSvc* datasvc  ,
+  const std::string&      location ,
+  const std::string&      counter  ,
+  const std::string&      function ,
+  const double            bad      )
+  : LoKi::AuxFunBase (  std::tie ( datasvc , location , counter , 
+                                   function , bad ) )
+  , LoKi::TES::Counter ( datasvc , location , counter , bad  )
+  , m_getter  ( std::make_shared<const StatEntityGetter>(function) )
+{}
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::Stat::Stat
+( const IDataProviderSvc* datasvc   ,
+  const std::string&      location  ,
+  const std::string&      counter   ,
+  const std::string&      function  )
+  : LoKi::AuxFunBase (  std::tie ( datasvc , location , counter , function ) )
+  , LoKi::TES::Counter ( datasvc , location , counter )
+  , m_getter  ( std::make_shared<const  StatEntityGetter>(function) )
+{}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================

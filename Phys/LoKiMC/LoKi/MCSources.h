@@ -4,6 +4,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
+// STD&STL
+// ============================================================================
+#include <type_traits>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/IDataProviderSvc.h"
@@ -22,6 +26,7 @@
 #include "LoKi/Interface.h"
 #include "LoKi/MCTypes.h"
 #include "LoKi/IMCDecay.h"
+#include "LoKi/Sources.h"
 // ============================================================================
 namespace LoKi
 {
@@ -30,49 +35,91 @@ namespace LoKi
   {
     // ========================================================================
     /** @class SourceTES
-     *
-     *  @see LoKi::Cuts::MCSOURCE
      *  simple "source for the Monte Carlo particles"
+     *  @see LoKi::Cuts::MCSOURCE
      *  @author Vanya BELYAEV ibelyav@physics.syr.edu
      *  @date 2006-12-07
      */
     class GAUDI_API SourceTES
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Source
+      : public LoKi::Functors::Source<LHCb::MCParticle              ,
+                                      LHCb::MCParticle::ConstVector ,
+                                      LHCb::MCParticle::Container   >
     {
       // ======================================================================
-      typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Source _Source;
+      typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Source   _Source ;
+      typedef LoKi::Functors::Source<LHCb::MCParticle,
+        LHCb::MCParticle::ConstVector,LHCb::MCParticle::Container >  _Base   ;
+      // ======================================================================
+      static_assert(std::is_base_of<_Source,_Base>::value, "Invalid base") ;
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the service, TES location and cuts
       SourceTES
-      ( const std::string&              path = LHCb::MCParticleLocation::Default ,
-        IDataProviderSvc*               svc  = 0                                 ) ;
+        ( const IDataProviderSvc*         svc                                      , 
+          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
       /// constructor from the service, TES location and cuts
       SourceTES
-      ( const std::string&              path       ,
-        const LoKi::MCTypes::MCCuts&    cuts       ,
-        IDataProviderSvc*               svc  = 0   ) ;
+        ( const IDataProviderSvc*         svc  , 
+          const LoKi::MCTypes::MCCuts&    cuts ,
+          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
       /// constructor from the service, TES location and cuts
       SourceTES
-      ( const std::string&              path       ,
-        const Decays::iNode&            node       ,
-        IDataProviderSvc*               svc  = 0   ) ;
+        ( const IDataProviderSvc*         svc  , 
+          const Decays::iNode&            node ,
+          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
+      /// constructor from the service, TES location and finder 
+      SourceTES
+        ( const IDataProviderSvc*         svc        , 
+          const Decays::IMCDecay::Finder& finder     ,
+          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
+      /// constructor from the service, TES location and tree 
+      SourceTES
+        ( const IDataProviderSvc*         svc        , 
+          const Decays::IMCDecay::iTree&  finder     ,
+          const std::string&              path = LHCb::MCParticleLocation::Default ) ;
       /// constructor from the service, TES location
       SourceTES
-      ( const std::string&              path       ,
-        const Decays::IMCDecay::Finder& finder     ,
-        IDataProviderSvc*               svc  = 0   ) ;
-      /// constructor from the service, TES location
+        ( const IDataProviderSvc*         svc        , 
+          const std::string&              descriptor ,
+          const std::string&              path       ) ;
+      // ======================================================================
+      /// constructor from the own algorithm , TES location and cuts
       SourceTES
-      ( const std::string&              path       ,
-        const Decays::IMCDecay::iTree&  finder     ,
-        IDataProviderSvc*               svc  = 0   ) ;
-      /// constructor from the service, TES location
+        ( const GaudiAlgorithm*           algorithm                                         , 
+          const std::string&              path          = LHCb::MCParticleLocation::Default , 
+          const bool                      useRootInTES  = true                              ) ;
+      /// constructor from the own algortihm , TES location and cuts
       SourceTES
-      ( const std::string&              path       ,
-        const std::string&              descriptor ,
-        IDataProviderSvc*               svc  = 0   ) ;
+        ( const GaudiAlgorithm*           algorithm                                         , 
+          const LoKi::MCTypes::MCCuts&    cuts                                              ,
+          const std::string&              path          = LHCb::MCParticleLocation::Default , 
+          const bool                      useRootInTES  = true                              ) ;
+      /// constructor from the own algorithm , TES location and cuts
+      SourceTES
+        ( const GaudiAlgorithm*           algorithm                                         , 
+          const Decays::iNode&            node                                              ,
+          const std::string&              path          = LHCb::MCParticleLocation::Default , 
+          const bool                      useRootInTES  = true                              ) ;
+      /// constructor from the own algorithm , TES location and finder 
+      SourceTES
+        ( const GaudiAlgorithm*           algorithm                                         , 
+          const Decays::IMCDecay::Finder& finder                                            ,
+          const std::string&              path          = LHCb::MCParticleLocation::Default , 
+          const bool                      useRootInTES  = true                              ) ;
+      /// constructor from the own algorithm, TES location and tree 
+      SourceTES
+        ( const GaudiAlgorithm*           algorithm                                         , 
+          const Decays::IMCDecay::iTree&  finder                                            ,
+          const std::string&              path          = LHCb::MCParticleLocation::Default , 
+          const bool                      useRootInTES  = true                              ) ;
+      /// constructor from the algorithm , TES location
+      SourceTES
+        ( const GaudiAlgorithm*           algorithm            , 
+          const std::string&              descriptor           ,
+          const std::string&              path                 , 
+          const bool                      useRootInTES  = true ) ;
+      // =============================================================================
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone () const  override;
       /// MANDATORY: the only essential method:
@@ -82,33 +129,14 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the path
-      const std::string& path() const { return m_path ; }
-      /// get the service
-      const LoKi::Interface<IDataProviderSvc>& dataSvc() const
-      { return m_dataSvc ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// set the  path
-      void setPath    ( const std::string& value ) { m_path = value ; }
-      /// set the  service
-      void setDataSvc ( const                 IDataProviderSvc*  value )
-      { m_dataSvc = value ; }
-      /// set the  service
-      void setDataSvc ( const LoKi::Interface<IDataProviderSvc>& value )
-      { m_dataSvc = value ; }
-      // ======================================================================
-    public:
-      // ======================================================================
       /// get the data from TES
       std::size_t get
-      ( const std::string&             location ,
-        LHCb::MCParticle::ConstVector& output   ) const ;
+        ( const std::string&             location ,
+          LHCb::MCParticle::ConstVector& output   ) const ;
       // ======================================================================
       /// count data in TES
       std::size_t count
-      ( const std::string&             location ) const ;
+        ( const std::string&             location ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -119,17 +147,52 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// TES location of MCParticles
-      std::string               m_path       ;  // TES location of HepMC events
-      /// data provder service
-      mutable LoKi::Interface<IDataProviderSvc>  m_dataSvc ;
       /// 'on-flight' filter
       LoKi::MCTypes::MCCut      m_cut        ;            // 'on-flight' filter
       /// use decay finder ?
       bool                      m_use_finder ;            // use decay finder ?
       /// decay finder
-      mutable Decays::IMCDecay::Finder  m_finder ;            //       decay finder
+      mutable Decays::IMCDecay::Finder  m_finder ;        //       decay finder
       std::string               m_decay      ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class TESData
+     *  special source that relies on DataHandle to access data in TES 
+     *  @see LoKi::TES::DataHanble
+     *  @see DataObjectReadHandle
+     *  @see LoKi::Cuts::MCTESDATA
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date    2018-08-20
+     */
+    class TESData 
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Source
+      , public LoKi::TES::DataHandle<LHCb::MCParticle::Container>
+    {
+    public:
+      // ======================================================================
+      /// constructor
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location = LHCb::MCParticleLocation::Default ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location  , 
+                 const LoKi::MCTypes::MCCuts&    cuts      ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const LoKi::MCTypes::MCCuts&    cuts      ,
+                 const std::string&              location = LHCb::MCParticleLocation::Default ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      TESData* clone() const override ;
+      /// MANDATORY: the only essential method:
+      result_type operator() () const override ;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// 'on-flight' filter
+      LoKi::MCTypes::MCCut m_cuts ; // 'on-flight' filter
       // ======================================================================
     } ;
     // ========================================================================
@@ -139,48 +202,26 @@ namespace LoKi
      *  @see LoKi::Cuts::MCNUM
      *  @date   2010-10-24
      */
-    class GAUDI_API TESCounter
-      : public LoKi::Functor<void,double>
+    class GAUDI_API TESCounter : public LoKi::Functor<void,double>
     {
     public:
       // ======================================================================
-      /// constructor from the service, TES location and cuts
-      TESCounter
-      ( const std::string&           path                    ,
-        const LoKi::MCTypes::MCCuts& cuts =
-        LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant(true) ) ;
-      /// constructor from the service, TES location and cuts
-      TESCounter
-      ( const std::string&              path   ,
-        const Decays::iNode&            node   ) ;
-      /// constructor from the service, TES location and cuts
-      TESCounter
-      ( const std::string&              path   ,
-        const Decays::IMCDecay::Finder& finder ) ;
-      /// constructor from the service, TES location and cuts
-      TESCounter
-      ( const std::string&              path   ,
-        const Decays::IMCDecay::iTree&  tree   ) ;
-      /// constructor from the service, TES location and cuts
-      TESCounter
-      ( const std::string&              path   ,
-        const std::string&              decay  ) ;
+      /// constructor from the source 
+      explicit TESCounter 
+        ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Source& s ) ;
+      // =============================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      TESCounter* clone() const  override;
+      TESCounter* clone () const  override;
       /// MANDATORY: the only essential method:
-      double operator() (  ) const  override;
+      double operator() () const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      TESCounter () ;                    // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the actual source
-      SourceTES m_source ;                                 // the actual source
+      LoKi::Assignable_t<LoKi::BasicFunctors<const LHCb::MCParticle*>::Source> 
+        m_source ;                                         // the actual source
       // ======================================================================
     } ;
     // ========================================================================
@@ -197,22 +238,39 @@ namespace LoKi
      *  @date 2010-06-04
      */
     class GAUDI_API SourceTES
-      : public LoKi::BasicFunctors<const LHCb::MCVertex*>::Source
+      : public LoKi::Functors::Source<LHCb::MCVertex              ,
+                                      LHCb::MCVertex::ConstVector ,
+                                      LHCb::MCVertex::Container   >
     {
       // ======================================================================
-      typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Source _Source;
+      typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Source _Source ;
+      typedef LoKi::Functors::Source<LHCb::MCVertex,
+        LHCb::MCVertex::ConstVector,LHCb::MCVertex::Container >  _Base   ;
+      // ======================================================================
+      static_assert(std::is_base_of<_Source,_Base>::value, "Invalid base") ;
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the service, TES location and cuts
       SourceTES
-      ( const std::string&              path = LHCb::MCVertexLocation::Default ,
-        IDataProviderSvc*               svc  = 0                               ) ;
+        ( const IDataProviderSvc*         svc                                      , 
+          const std::string&              path = LHCb::MCVertexLocation::Default ) ;
       /// constructor from the service, TES location and cuts
       SourceTES
-      ( const std::string&              path       ,
-        const LoKi::MCTypes::MCVCuts&   cuts       ,
-        IDataProviderSvc*               svc  = 0   ) ;
+        ( const IDataProviderSvc*         svc  , 
+          const LoKi::MCTypes::MCVCuts&   cuts ,
+          const std::string&              path = LHCb::MCVertexLocation::Default ) ;
+      /// constructor from the service, TES location and cuts
+      SourceTES
+        ( const GaudiAlgorithm*           algorithm                              , 
+          const std::string&              path = LHCb::MCVertexLocation::Default ,
+          const bool                      useRootInTES  = true   ) ;
+      /// constructor from the service, TES location and cuts
+      SourceTES
+        ( const GaudiAlgorithm*           algorithm            ,
+          const LoKi::MCTypes::MCVCuts&   cuts                 ,
+          const std::string&              path = LHCb::MCVertexLocation::Default ,
+          const bool                      useRootInTES  = true   ) ;
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone () const  override;
       /// MANDATORY: the only essential method:
@@ -220,33 +278,49 @@ namespace LoKi
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================
+    private:
+      // ======================================================================
+      /// 'on-flight' filter
+      LoKi::MCTypes::MCVCut m_cut ; // 'on-flight' filter
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class TESData
+     *  special source that relies on DataHandle to access data in TES 
+     *  @see LoKi::TES::DataHanble
+     *  @see DataObjectReadHandle
+     *  @see LoKi::Cuts::MCVTESDATA
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date    2018-08-20
+     */
+    class TESData 
+      : public LoKi::BasicFunctors<const LHCb::MCVertex*>::Source
+      , public LoKi::TES::DataHandle<LHCb::MCVertex::Container>
+    {
     public:
       // ======================================================================
-      /// get the path
-      const std::string& path() const { return m_path ; }
-      /// get the service
-      const LoKi::Interface<IDataProviderSvc>& dataSvc() const
-      { return m_dataSvc ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// set the  path
-      void setPath    ( const std::string& value ) { m_path = value ; }
-      /// set the  service
-      void setDataSvc ( const                 IDataProviderSvc*  value )
-      { m_dataSvc = value ; }
-      /// set the  service
-      void setDataSvc ( const LoKi::Interface<IDataProviderSvc>& value )
-      { m_dataSvc = value ; }
+      /// constructor
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location = LHCb::MCVertexLocation::Default ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location  , 
+                 const LoKi::MCTypes::MCVCuts&    cuts      ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const LoKi::MCTypes::MCVCuts&    cuts      ,
+                 const std::string&              location = LHCb::MCVertexLocation::Default ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      TESData* clone() const override ;
+      /// MANDATORY: the only essential method:
+      result_type operator() () const override ;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      /// TES location of MCVertices
-      std::string               m_path       ;    // TES location of MCVertices
-      /// data provder service
-      mutable LoKi::Interface<IDataProviderSvc>  m_dataSvc ;
       /// 'on-flight' filter
-      LoKi::MCTypes::MCVCut     m_cut        ;            // 'on-flight' filter
+      LoKi::MCTypes::MCVCut m_cuts ; // 'on-flight' filter
       // ======================================================================
     } ;
     // ========================================================================
@@ -254,6 +328,42 @@ namespace LoKi
   // ==========================================================================
   namespace Cuts
   {
+    // ========================================================================
+    /** @typedef MCTESDATA
+     *  simple ``source'' for MC-particles
+     *  @attention DataHandler is used!
+     *  @see LoKi::MCParticles::TESData
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-22
+     */
+    typedef LoKi::MCParticles::TESData                              MCTESDATA ;
+    // ========================================================================
+    /** @typedef MCVTESDATA
+     *  simple ``source'' for MC-vertices
+     *  @attention DataHandler is used!
+     *  @see LoKi::MCVertices::TESData
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-22
+     */
+    typedef LoKi::MCVertices::TESData                              MCVTESDATA ;
+    // ========================================================================
+    /** @typedef MCSOURCE
+     *  simple ``source'' for MC-particles
+     *
+     *  @code
+     *
+     *   const MCSOURCE s1 = MCSOURCE ( "MC/Particles" ,   MCPT > 1 * GeV ) ;
+     *   const MCSOURCE s2 = MCSOURCE ( "MC/Particles" , " D0 => K- pi+ " ) ;
+     *
+     *    const LHCb::MCParticle::ConstVector v1 = s1() ;
+     *    const LHCb::MCParticle::ConstVector v2 = s2() ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::MCParticles::SourceTES
+     *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
+     */
+    typedef LoKi::MCParticles::SourceTES                             MCSOURCE ;
     // ========================================================================
     /** @typedef MCSOURCE
      *  simple ``source'' for MC-particles
@@ -287,11 +397,11 @@ namespace LoKi
      *  @see LoKi::MCParticles::SourceTES
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
      */
-    typedef LoKi::MCParticles::SourceTES                             MCSOURCE ;
+    typedef LoKi::MCVertices::SourceTES                             MCVSOURCE ;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } //                                          The end of namespace LoKi::Cuts
   // ==========================================================================
-} //                                                      end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

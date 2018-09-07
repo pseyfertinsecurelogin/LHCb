@@ -59,10 +59,10 @@
   <class name    = "Bender::Welcome"       />
   <class name    = "LoKi::Pids::GetPids"   />
 
-  <class name = "LoKi::Hybrid::ICoreFactory"               />
-  <class name = "LoKi::Hybrid::ICoreAntiFactory"           />
-  <class name = "LoKi::Hybrid::CoreEngine"                 />
-
+  <class name = "LoKi::Hybrid::ICoreFactory"      />
+  <class name = "LoKi::Hybrid::ICoreAntiFactory"  />
+  <class name = "LoKi::Hybrid::CoreEngine"        />
+  <class name = "LoKi::Context"         />
 
   <class    name   = "Gaudi::Histo1DDef"                 />
   <function name   = "Gaudi::Histos::book"               />

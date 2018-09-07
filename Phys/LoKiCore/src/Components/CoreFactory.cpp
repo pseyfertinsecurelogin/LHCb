@@ -1,6 +1,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
+// STD&STL
+// ============================================================================
+#include <mutex>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/System.h"
@@ -11,6 +15,7 @@
 #include "LoKi/CoreLock.h"
 #include "LoKi/ICoreFactory.h"
 #include "LoKi/ICoreAntiFactory.h"
+#include "LoKi/Context.h"
 // ============================================================================
 // Local
 // ============================================================================
@@ -29,19 +34,23 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-09-18
  */
+// ============================================================================
 namespace
 {
-  static const auto occurs_in_ci = [](const std::string& haystack) {
-      return [&](const std::string& needle) {
-          return std::search( begin(haystack), end(haystack),
-                              begin(needle), end(needle),
-                              [](char c1, char c2) {
-                                   return std::toupper(c1)==std::toupper(c2);
-                              } ) != end(haystack);
-      };
+  // ==========================================================================
+  static const auto occurs_in_ci = [](const std::string& haystack) 
+  {
+    return [&](const std::string& needle) {
+      return std::search( begin(haystack), end(haystack),
+                          begin(needle), end(needle),
+                          [](char c1, char c2) {
+                            return std::toupper(c1)==std::toupper(c2);
+                          } ) != end(haystack);
+    };
   };
-
-}
+  // ===========================================================================
+} //                                              The end of anonymous namespace 
+// =============================================================================
 namespace LoKi
 {
   // ==========================================================================
@@ -210,25 +219,37 @@ namespace LoKi
     private:
       // ======================================================================
       /// "void   -> ..."
-      std::unique_ptr<LoKi::Types::FCuts>    m_fcut ;                     // predicate
-      std::unique_ptr<LoKi::Types::FFunc>    m_ffun ;                     //  function
+      std::unique_ptr<LoKi::Types::FCuts>    m_fcut    ; // predicate
+      std::unique_ptr<LoKi::Types::FFunc>    m_ffun    ; //  function
       /// "double -> ... "
-      std::unique_ptr<LoKi::Types::XCuts>    m_xcut ;                     // predicate
-      std::unique_ptr<LoKi::Types::XFunc>    m_xfun ;                     //  function
+      std::unique_ptr<LoKi::Types::XCuts>    m_xcut    ; // predicate
+      std::unique_ptr<LoKi::Types::XFunc>    m_xfun    ; //  function
       /// functional
-      std::unique_ptr<LoKi::Types::XMaps>    m_xmap ;                       // map/pipe
-      std::unique_ptr<LoKi::Types::XFunVals> m_xfunval ;              // funval/element
-      std::unique_ptr<LoKi::Types::XSources> m_xsource ;                      // source
+      std::unique_ptr<LoKi::Types::XMaps>    m_xmap    ; // map/pipe
+      std::unique_ptr<LoKi::Types::XFunVals> m_xfunval ; // funval/element
+      std::unique_ptr<LoKi::Types::XSources> m_xsource ; // source
       // ======================================================================
-      Gaudi::Property<std::vector<std::string>> m_modules { this, "Modules", {"LoKiNumbers.decorators"}, "Python modules to be imported" };
-      Gaudi::Property<std::string> m_actor { this, "Actor", "LoKi.Hybrid.CoreEngine()","The processing engine"  };
-      Gaudi::Property<std::vector<std::string>> m_lines   { this, "Lines", { },  "Additional Python lines to be executed" } ;
+      Gaudi::Property<std::vector<std::string>> m_modules 
+      { this, 
+          "Modules", 
+          {"LoKiNumbers.decorators"}, 
+          "Python modules to be imported" };
+      Gaudi::Property<std::string> m_actor 
+      { this,
+          "Actor", 
+          "LoKi.Hybrid.CoreEngine()",
+          "The processing engine"  };
+      Gaudi::Property<std::vector<std::string>> m_lines   
+      { this, 
+          "Lines", 
+          { },  
+          "Additional Python lines to be executed" } ;
       // ======================================================================
     } ;
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } //                                        The end of namespace LoKi::Hybrid
   // ==========================================================================
-} // end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
 // helper method to sdave many lines:
 // ============================================================================
@@ -239,16 +260,16 @@ inline StatusCode LoKi::Hybrid::CoreFactory::_get
   LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
   const std::string&                                context )
 {
+  std::lock_guard<std::recursive_mutex> guard ( m_mutex );
   // prepare the actual python code
-  std::string code =
-    makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
+  std::string code = makeCode ( m_modules , m_actor , pycode , m_lines , context ) ;
   /// define and lock the scope:
-  LoKi::Hybrid::CoreLock lock ( this ) ;   // ATTENTION: the scope is locked!!
+  LoKi::Hybrid::CoreLock lock ( this , make_context () ) ;  // ATTENTION: the scope is locked!!
   // use the base class method
   StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
   if ( sc.isFailure() )
   { return Error ( "Invalid object for the code '" + pycode + "' (hash: " +
-    std::to_string(LoKi::Cache::makeHash(code)) + ")" ) ; } // RETURN
+                   std::to_string( LoKi::Cache::makeHash ( code ) ) + ")" ) ; } // RETURN
   //
   return StatusCode::SUCCESS ;
 }

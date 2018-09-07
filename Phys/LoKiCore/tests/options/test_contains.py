@@ -23,7 +23,13 @@ filter_old_keyed = LoKi__VoidFilter("FilterOldKeyed",
 app.TopAlg += [Gaudi__Examples__IntDataProducer(),  Gaudi__Examples__VectorDataProducer(),
                produce_to_rootintes, Gaudi__Examples__KeyedDataProducer()]
 # add consumers
-app.TopAlg += [filter_keyed, filter_keyed_rootintes, filter_old_keyed, filter_int, filter_vector]
+app.TopAlg += [
+    filter_keyed,
+    filter_keyed_rootintes,
+    filter_old_keyed,
+    filter_int,
+    filter_vector
+    ]
 
 EventDataSvc().ForceLeaves = True
 

@@ -1,6 +1,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
+// STD&STL
+// ============================================================================
+#include <mutex>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/System.h"
@@ -27,9 +31,6 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace LoKi
 {
@@ -319,10 +320,10 @@ namespace LoKi
       /// helper method to save many lines:
       template <class TYPE1,class TYPE2>
       inline StatusCode _get
-      ( const std::string& pycode  ,
-        std::unique_ptr<TYPE1>& local   ,
-        TYPE2&             output  ,
-        const std::string& context ) ;
+      ( const std::string&                                pycode  ,
+        std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&      local   ,
+        LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
+        const std::string&                                context ) ;
       // ======================================================================
     protected:
       // ======================================================================
@@ -366,26 +367,21 @@ namespace LoKi
 // ============================================================================
 template <class TYPE1,class TYPE2>
 inline StatusCode LoKi::Hybrid::GenTool::_get
-( const std::string& pycode  ,
-  std::unique_ptr<TYPE1>&  local   ,
-  TYPE2&             output  ,
-  const std::string& context )
+( const std::string&                                pycode  ,
+  std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&      local   ,
+  LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
+  const std::string&                                context ) 
 {
+  std::lock_guard<std::recursive_mutex> guard ( m_mutex );
   // prepare the actual python code
-  std::string code =
-    makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
-  // define and lock the scope:
-  LoKi::Hybrid::GenLock lock ( this ) ;   ///< ATTENTION: the scope is locked!!
-  // clear the placeholder:
-  local.reset();
-  // execute the code
-  StatusCode sc = executeCode ( code ) ;
+  std::string code = makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
+  /// define and lock the scope:
+  LoKi::Hybrid::GenLock lock ( this , make_context() ) ; 
+  // use the base class method 
+  StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
   if ( sc.isFailure() )
-  { return Error ( "Error from LoKi::Hybrid::Base::executeCode"      ) ; } // RETURN
-  if ( !local     )
-  { return Error ( "Invaid object for the code '"+pycode+"'" ) ; } // RETURN
-  // assign the result
-  output = *local ;                                                // ASSIGN
+  { return Error ( "Invalid object for the code '" + pycode + "' (hash: " +
+                   std::to_string( LoKi::Cache::makeHash ( code ) ) + ")" ) ; } // RETURN
   //
   return StatusCode::SUCCESS ;
 }

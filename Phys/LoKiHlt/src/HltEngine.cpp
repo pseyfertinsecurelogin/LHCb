@@ -32,6 +32,15 @@ namespace
   }
 }
 // ============================================================================
+// get the current context 
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::HltEngine::context () const 
+{
+  const LoKi::Hybrid::HltEngineActor& actor =
+    LoKi::Hybrid::HltEngineActor::instance() ;
+  return actor.context () ;
+}
+// ============================================================================
 // add the cut 
 // ============================================================================
 StatusCode LoKi::Hybrid::HltEngine::process

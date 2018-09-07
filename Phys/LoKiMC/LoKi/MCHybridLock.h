@@ -8,6 +8,7 @@
 // ============================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/IMCHybridTool.h"
+#include "LoKi/Context.h"
 // ============================================================================
 namespace LoKi
 {
@@ -25,7 +26,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor : Lock 
-      MCLock  ( IMCHybridTool* tool ) ;                 //  contructor : Lock 
+      MCLock  ( const LoKi::IMCHybridTool* tool    , //  constructor : Lock 
+                const LoKi::Context&       context ) ;
       /// destrcutor : UnLock
       virtual ~MCLock () ;                              //  destructor : UnLock
       // ======================================================================
@@ -45,7 +47,7 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // LOKI_MCHYBRIDLOCK_H
 // ============================================================================

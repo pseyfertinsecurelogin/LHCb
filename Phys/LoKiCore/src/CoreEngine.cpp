@@ -27,7 +27,7 @@ namespace
   inline StatusCode _process
   ( const std::string& name , const TYPE& cut )
   {
-    LoKi::Hybrid::CoreEngineActor& actor =
+    const LoKi::Hybrid::CoreEngineActor& actor =
       LoKi::Hybrid::CoreEngineActor::instance() ;
     return actor.process ( name , cut ) ;
   }
@@ -77,6 +77,15 @@ StatusCode CoreEngine::process ( const std::string&           name ,
 { return _process ( name , cut ) ; }
 
 } }
+// ============================================================================
+/// get the current context 
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::CoreEngine::context () const 
+{
+  const LoKi::Hybrid::CoreEngineActor& actor =
+    LoKi::Hybrid::CoreEngineActor::instance() ;
+  return actor.context () ;
+}
 // ============================================================================
 // The END
 // ============================================================================

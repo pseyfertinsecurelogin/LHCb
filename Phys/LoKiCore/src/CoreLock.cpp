@@ -15,17 +15,18 @@
 // contructor 
 // ============================================================================
 LoKi::Hybrid::CoreLock::CoreLock 
-( LoKi::Hybrid::ICoreAntiFactory* tool ) 
+( const LoKi::Hybrid::ICoreAntiFactory* tool    ,   
+  const LoKi::Context&                  context ) 
   : m_tool ( tool ) 
 {
   LoKi::Hybrid::CoreEngineActor& actor = 
     LoKi::Hybrid::CoreEngineActor::instance() ;
   // connect the tool to the actor 
-  StatusCode sc = actor.connectTool ( m_tool.getObject () ) ;  
+  StatusCode sc = actor.connect ( m_tool.getObject () , context ) ;  
   if ( sc.isFailure () ) 
   {
     LoKi::Report::Error
-      ( "LoKi::Hybrid::CoreLock: error from connectTool", sc ) .ignore() ;
+      ( "LoKi::Hybrid::CoreLock: error from connect", sc ) .ignore() ;
   } 
 }
 // ============================================================================
@@ -36,11 +37,11 @@ LoKi::Hybrid::CoreLock::~CoreLock()
   LoKi::Hybrid::CoreEngineActor& actor = 
     LoKi::Hybrid::CoreEngineActor::instance() ;
   // connect the tool to the actor 
-  StatusCode sc = actor.releaseTool ( m_tool.getObject () ) ;  
+  StatusCode sc = actor.disconnect ( m_tool.getObject () ) ;  
   if ( sc.isFailure () ) 
   {
     LoKi::Report::Error
-      ( "LoKi::Hybrid::CoreLock: error from releaseTool", sc ) .ignore() ;
+      ( "LoKi::Hybrid::CoreLock: error from disconnect", sc ) .ignore() ;
   } 
 }
 // ============================================================================

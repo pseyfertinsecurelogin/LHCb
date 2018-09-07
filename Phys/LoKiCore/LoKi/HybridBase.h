@@ -8,6 +8,7 @@
 // ============================================================================
 #include <vector>
 #include <map>
+#include <mutex>
 // ============================================================================
 // GaudiAlg/GaudiTools
 // ============================================================================
@@ -18,6 +19,7 @@
 #include "LoKi/BasicFunctors.h"
 #include "LoKi/FunctorCache.h"
 #include "LoKi/CacheFactory.h"
+#include "LoKi/Context.h"
 // ============================================================================
 namespace LoKi
 {
@@ -70,6 +72,11 @@ namespace LoKi
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
+      // ======================================================================
+    protected:
+      // ======================================================================
+      /// build the universal context 
+      LoKi::Context make_context () const ;      
       // ======================================================================
     protected:
       // ======================================================================
@@ -130,8 +137,8 @@ namespace LoKi
       // ======================================================================
     protected : // use python as factroy for LOK-functors ?
       // ======================================================================
-      /// use python as factroy for LOKI-functors ?
-      bool m_use_python ;           // use python as factory for LOKI-functors ?
+      /// use python as factory for LoKi-functors ?
+      bool m_use_python ;           // use python as factory for LoKi-functors ?
       /// use LoKi functor cache
       bool m_use_cache ;            // use LoKi functor cache ?
       // ======================================================================
@@ -148,6 +155,11 @@ namespace LoKi
       typedef std::map<std::string,std::pair<std::string,std::string>> FUNCTIONS  ;
       std::map<std::string,FUNCTIONS>             m_allfuncs   ;
       // ======================================================================
+    protected:
+      // ======================================================================
+      // the mutex 
+      mutable std::recursive_mutex m_mutex ;
+      // ======================================================================
     } ;
     // ========================================================================
   } //                                            end of namespace LoKi::Hybrid
@@ -159,18 +171,16 @@ namespace LoKi
 template <class TYPE>
 inline void LoKi::Hybrid::Base::_set ( std::unique_ptr<TYPE>& local , const TYPE& right )
 {
-  if ( local ) {
-    if ( msgLevel ( MSG::DEBUG ) )
-    { Warning ( "setCut/Fun(): Existing 'Function/Predicate' is substituted !" ).ignore() ; } ;
-  }
+  // ==========================================================================
+  if ( local && msgLevel ( MSG::DEBUG ) )
+  { Warning ( "setCut/Fun(): Existing 'Function/Predicate' is substituted !" ).ignore() ; }
   // clone it!
   local.reset( right.clone() );
   // debug printput:
-  if ( msgLevel ( MSG::DEBUG ) ) {
-    debug() << "The 'cut' is set to be '" << (*local) << "' = '"
-            << System::typeinfoName( typeid( *local) ) << endmsg  ;
-  } ;
-  //
+  if ( msgLevel ( MSG::DEBUG ) ) 
+  { debug() << "The 'cut' is set to be '" << (*local) << "' = '"
+            << System::typeinfoName ( typeid ( *local.get() ) ) << endmsg ; } 
+  // ==========================================================================
 }
 // ============================================================================
 template <class TYPE1,class TYPE2>
@@ -185,17 +195,18 @@ StatusCode LoKi::Hybrid::Base::_get_
   // 1) clear the placeholder, if needed
   // 2') look for cached functors:
   typedef LoKi::CacheFactory< LoKi::Functor<TYPE1,TYPE2> > cache_t;
-  local.reset(
-    ( !this->m_use_cache ? nullptr :
-      cache_t::Factory::create ( cache_t::id ( LoKi::Cache::makeHash ( code ) ) ) ) );
+  if ( !this->m_use_cache ) { local.reset ( nullptr  ) ; }
+  {
+    const LoKi::Context cntx = this->make_context() ;
+    const auto          hash = LoKi::Cache::makeHash ( code ) ;
+    local.reset ( cache_t::Factory::create ( cache_t::id ( hash ) , cntx ) ) ;
+  }
   //
-  if ( local ) {
-    output = *local ;
-    //
+  if ( local ) 
+  {
+    output= *local ;
     this->counter("# loaded from CACHE" ) += 1 ;
-    //
     local.reset();
-    //
     return StatusCode::SUCCESS ;    // RETURN
   }
   //
@@ -208,8 +219,10 @@ StatusCode LoKi::Hybrid::Base::_get_
   { return Error ( "Error from LoKi::Hybrid::Base::executeCode", sc  ) ; } // RETURN
   if ( !local  )
   { return Error ( "Invalid object for the code"                     ) ; } // RETURN
+  //
   // assign the result
-  output = *local ;                                                        // ASSIGN
+  //
+  output = *local ;                                         // ASSIGN
   //
   this->counter("# loaded from PYTHON") += 1 ;
   //
@@ -225,10 +238,10 @@ StatusCode LoKi::Hybrid::Base::_get_
   }
   //
   return sc ;
-  // =========================================================================
+  // ==========================================================================
 }
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKIHYBRID_HYBRIDTOOL_H
 // ============================================================================

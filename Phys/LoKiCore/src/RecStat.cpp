@@ -35,11 +35,12 @@
  */
 // ============================================================================
 LoKi::TES::HasRecSummary::HasRecSummary
-( const int          key          ,
-  const std::string& location     ,
-  const bool         useRootInTES )
-  : LoKi::AuxFunBase ( std::tie ( key , location , useRootInTES ) )
-  , LoKi::TES::Exists ( location , useRootInTES )
+( const GaudiAlgorithm* algorithm , 
+  const int             key          ,
+  const std::string&    location     ,
+  const bool            useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , key , location , useRootInTES ) )
+  , LoKi::TES::Exists ( algorithm , location , useRootInTES )
   , m_key ( key )
 {
   if  ( location.empty () )
@@ -91,12 +92,13 @@ LoKi::TES::HasRecSummary::fillStream ( std::ostream& s ) const
  */
 // ============================================================================
 LoKi::TES::RecSummary::RecSummary
-( const int          key          ,
-  const int          bad         ,
+( const GaudiAlgorithm* algorithm , 
+  const int          key          ,
+  const int          bad          ,
   const std::string& location     ,
   const bool         useRootInTES )
-  : LoKi::AuxFunBase ( std::tie ( key , bad , location , useRootInTES ) )
-  , LoKi::TES::Contains ( location , useRootInTES )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , key , bad , location , useRootInTES ) )
+  , LoKi::TES::Contains ( algorithm , location , useRootInTES )
   , m_key ( key )
   , m_bad ( bad )
 {

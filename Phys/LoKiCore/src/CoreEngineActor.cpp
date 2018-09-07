@@ -31,20 +31,27 @@ template <class TYPE>
 inline StatusCode LoKi::Hybrid::CoreEngineActor::_add 
 ( const std::string& name , const TYPE& cut ) const 
 { 
-  // check the tool
-  if ( !m_tool.validPointer() ) 
+  if ( m_stack.empty() ) 
   {
     return LoKi::Report::Error
-      ("LoKi:Hybrid::CoreEngineActor::addCut/Fun(): LoKi::Hybrid::ICoreAntiFactory* is not connected!") ;  
+      ("LoKi:Hybrid::CoreEngineActor::addCut/Fun(): empty stack!") ;  
+  }
+  //
+  const Entry& entry = m_stack.top() ;
+  // check the tool
+  if ( !entry.first ) 
+  {
+    return LoKi::Report::Error
+      ("LoKi:Hybrid::CoreEngineActor::addCut/Fun(): LoKi::Hybrid::ICoreAntiFactory* is invalid!") ;  
   }
   // one more check 
-  if ( name != m_tool->name() )
+  if ( name != entry.first->name() )
   {
     return LoKi::Report::Error
       ("LoKi:Hybrid::CoreEngineActor::addCut/Fun() : mismatch in LoKi::Hybrid::ICoreAntiFactory name!") ;  
   }
   // set the cut for the tool 
-  m_tool->set ( cut ) ;
+  entry.first->set ( cut ) ;
   // 
   return StatusCode::SUCCESS ;
 } 
@@ -59,7 +66,8 @@ LoKi::Hybrid::CoreEngineActor& LoKi::Hybrid::CoreEngineActor::instance()
 // ============================================================================
 // constructor 
 // ============================================================================
-LoKi::Hybrid::CoreEngineActor::CoreEngineActor() : m_tool ( 0 ) {} 
+LoKi::Hybrid::CoreEngineActor::CoreEngineActor() 
+  : m_stack() {} 
 // ============================================================================
 // destructor
 // ============================================================================
@@ -67,42 +75,58 @@ LoKi::Hybrid::CoreEngineActor::~CoreEngineActor() {}
 // ============================================================================
 // disconnect the tool 
 // ============================================================================
-StatusCode LoKi::Hybrid::CoreEngineActor::releaseTool 
-( const LoKi::Hybrid::ICoreAntiFactory*       tool ) 
+StatusCode LoKi::Hybrid::CoreEngineActor::disconnect 
+( const LoKi::Hybrid::ICoreAntiFactory* factory  ) 
 {
-  if ( m_tool.getObject() != tool ) 
-  {
-    m_tool = 0 ;
-    return LoKi::Report::Error
-      ("LoKi::Hybrid::CoreEngineActor::releaseTool(): mismatch in tools " ) ;
-  } 
-  // nullify the pointer 
-  m_tool = 0 ;
+  if ( m_stack.empty() ) 
+  { return LoKi::Report::Error ("LoKi:Hybrid::CoreEngineActor::disconnect: empty stack!") ; }
   //
+  const Entry& entry = m_stack.top () ;
+  //
+  if ( entry.first == factory  ) { m_stack.pop() ; } /// remove the last entry
+  else
+  {
+    return LoKi::Report::Error
+      ("LoKi::Hybrid::CoreEngineActor::disconnect: mismatch in tools " ) ;
+  } 
+  ///
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
 // connect the hybrid tool for code translation 
 // ============================================================================
-StatusCode LoKi::Hybrid::CoreEngineActor::connectTool 
-(       LoKi::Hybrid::ICoreAntiFactory*       tool )
+StatusCode LoKi::Hybrid::CoreEngineActor::connect
+( const LoKi::Hybrid::ICoreAntiFactory*  factory , 
+  const LoKi::Context&                   context )
 {
   //
-  LoKi::Report::Assert 
-    ( !m_tool.validPointer() , "LoKi::Hybrid::CoreEngineActor: double lock?" )  ;
-  //
-  // substitute the tool 
-  //
-  m_tool =  tool ;
-  // 
-  if ( !m_tool.validPointer() ) 
+  if ( !factory ) 
   {
     return LoKi::Report::Error
-      ( "LoKi::Hybrid::CoreEngineActor::releaseTool(): Invalid LoKi::Hybrid::ICoreAntiFactory" ) ;
+      ( "LoKi::Hybrid::CoreEngineActor::connect: Invalid factory" ) ;
   }
+  m_stack.emplace ( factory , context ) ;
   //
   return StatusCode::SUCCESS ;
 }
+// ============================================================================
+/* get the current context
+ *  contex is valid only inbetween <code>connect/disconnect</code>
+ *  @return the current active context 
+ */
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::CoreEngineActor::context () const
+{
+  if ( m_stack.empty() ) 
+  {
+    LoKi::Report::Error ( "LoKi::Hybrid::CoreEngineActor::context: empty stack" ) ;
+    return nullptr ;
+  }
+  const Entry& last = m_stack.top() ;
+  return &last.second ;
+}  
+// ============================================================================
+
 // ============================================================================
 // propagate the function to the tool 
 // ============================================================================

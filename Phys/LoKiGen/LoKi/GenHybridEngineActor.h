@@ -4,10 +4,15 @@
 // ===========================================================================
 // Include files
 // ===========================================================================
+// STD&STL
+// ===========================================================================
+#include <stack>
+// ===========================================================================
 // LoKi
 // ===========================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/IGenHybridTool.h"
+#include "LoKi/Context.h"
 // ===========================================================================
 /** @file
  *
@@ -47,9 +52,16 @@ namespace LoKi
       // get the static instance
       static GenEngineActor& instance() ;
       /// connect the hybrid tool for code translation
-      StatusCode connectTool (       LoKi::IGenHybridTool* tool ) ;
+      StatusCode connect    ( const LoKi::IGenHybridTool* factory , 
+                              const LoKi::Context&        context ) ;
       /// disconnect the tool
-      StatusCode releaseTool ( const LoKi::IGenHybridTool* tool ) ;
+      StatusCode disconnect ( const LoKi::IGenHybridTool* factory ) ;
+      // ======================================================================
+      /** get the current context
+       *  contex is valid only in between <code>connect/disconnect</code>
+       *  @return the current active context 
+       */
+      const LoKi::Context* context () const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -157,8 +169,11 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      // the tool itself
-      LoKi::Interface<LoKi::IGenHybridTool> m_tool = nullptr;
+      typedef LoKi::Interface<LoKi::IGenHybridTool>   Tool  ;
+      typedef std::pair<Tool,LoKi::Context>           Entry ;
+      typedef std::stack<Entry>                       Stack ;
+      ///  the stack of active factories 
+      Stack m_stack {} ; // the stack of active factories 
       // ======================================================================
     };
     // ========================================================================

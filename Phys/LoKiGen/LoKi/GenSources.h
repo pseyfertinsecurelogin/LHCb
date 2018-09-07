@@ -17,6 +17,7 @@
 #include "LoKi/BasicFunctors.h"
 #include "LoKi/Interface.h"
 #include "LoKi/GenTypes.h"
+#include "LoKi/Sources.h"
 // ============================================================================
 /** @file LoKi/GenSources.h
  *
@@ -33,6 +34,19 @@
 namespace LoKi
 {
   // ==========================================================================
+  namespace Functors 
+  {
+    // ========================================================================
+    template <>
+    inline 
+    LoKi::GenTypes::GenContainer
+    LoKi::Functors::Source<HepMC::GenParticle,
+                           LoKi::GenTypes::GenContainer,
+                           LHCb::HepMCEvent::Container>::operator() ( ) const
+    { return  LoKi::GenTypes::GenContainer() ; }
+    // ========================================================================
+  }
+  // ==========================================================================
   namespace GenParticles
   {
     // ========================================================================
@@ -43,34 +57,41 @@ namespace LoKi
      *  @date 2006-12-07
      */
     class SourceTES
-      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Source
+      : public LoKi::Functors::Source<HepMC::GenParticle           ,
+                                      LoKi::GenTypes::GenContainer ,
+                                      LHCb::HepMCEvent::Container  >
     {
       // =====================================================================
-      typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Source _Source;
-      // =====================================================================
+      typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Source _Source ;
+      typedef LoKi::Functors::Source<HepMC::GenParticle           ,
+                                     LoKi::GenTypes::GenContainer ,
+                                     LHCb::HepMCEvent::Container  >  _Base ;
+      // ======================================================================
+      static_assert(std::is_base_of<_Source,_Base>::value, "Invalid base") ;
+      // ======================================================================
     public:
       // =====================================================================
       /// constructor from the service, TES location and cuts
       SourceTES
-      ( const std::string&           path = LHCb::HepMCEventLocation::Default ,
-        IDataProviderSvc*            svc  = 0                                 ,
-        const LoKi::GenTypes::GCuts& cuts =
-        LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant(true) ) ;
-      /// constructor from the service, TES location and cuts
-      SourceTES
-      ( const std::string&           path     ,
-        const LoKi::GenTypes::GCuts& cuts     ,
-        IDataProviderSvc*            svc  = 0 ) ;
-      /// constructor from the service, TES location and cuts
-      SourceTES
-      ( const LoKi::GenTypes::GCuts& cuts                                     ,
-        const std::string&           path = LHCb::HepMCEventLocation::Default ,
-        IDataProviderSvc*            svc  = 0                                 ) ;
-      /// constructor from the service, TES location and cuts
-      SourceTES
-      ( const LoKi::GenTypes::GCuts& cuts                                     ,
-        IDataProviderSvc*            svc                                      ,
+      ( const IDataProviderSvc*      svc                                      ,
         const std::string&           path = LHCb::HepMCEventLocation::Default ) ;
+      /// constructor from the service, TES location and cuts
+      SourceTES
+      ( const IDataProviderSvc*      svc                                      ,
+        const LoKi::GenTypes::GCuts& cuts                                     ,
+        const std::string&           path = LHCb::HepMCEventLocation::Default ) ;
+      // ======================================================================
+      /// constructor from the service, TES location and cuts
+      SourceTES
+      ( const GaudiAlgorithm*        alg                                      ,
+        const std::string&           path = LHCb::HepMCEventLocation::Default ,
+        const bool                   useRootInTES  = true                     ) ;
+      /// constructor from the service, TES location and cuts
+      SourceTES
+      ( const GaudiAlgorithm*        alg                                      ,
+        const LoKi::GenTypes::GCuts& cuts                                     ,
+        const std::string&           path = LHCb::HepMCEventLocation::Default ,               
+        const bool                   useRootInTES  = true                     ) ;
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone() const override { return new SourceTES(*this) ; }
       /// MANDATORY: the only essential method:
@@ -78,53 +99,113 @@ namespace LoKi
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================
-    public:
-      // ======================================================================
-      /// get the path
-      const std::string& path() const { return m_path ; }
-      /// get the service
-      const LoKi::Interface<IDataProviderSvc>& dataSvc() const
-      { return m_dataSvc ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// set the  path
-      void setPath ( const std::string& value ) { m_path = value ; }
-      /// set the  service
-      void setPath ( const                 IDataProviderSvc*  value )
-      { m_dataSvc = value ; }
-      /// set the  service
-      void setPath ( const LoKi::Interface<IDataProviderSvc>& value )
-      { m_dataSvc = value ; }
-      // ======================================================================
     private:
       // ======================================================================
-      // TES location of HepMC-events
-      std::string m_path ;              ///< TES location of HepMC events
-      /// data provder service
-      mutable LoKi::Interface<IDataProviderSvc>  m_dataSvc ;
       /// 'on-flight' filter
-      LoKi::GenTypes::GCut m_cut ;
+      LoKi::GenTypes::GCut m_cut ;                       // 'on-flight' filter
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles
+    /** @class TESData
+     *  special source that relies on DataHandle to access data in TES 
+     *  @see LoKi::TES::DataHanble
+     *  @see DataObjectReadHandle
+     *  @see LoKi::Cuts::GTESDATA
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date    2018-08-20
+     */
+    class TESData 
+      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Source
+      , public LoKi::TES::DataHandle<LHCb::HepMCEvent::Container>
+    {
+    public:
+      // ======================================================================
+      /// constructor
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location = LHCb::HepMCEventLocation::Default ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const std::string&              location  , 
+                 const LoKi::GenTypes::GCuts&    cuts      ) ;
+      /// constructor with cuts 
+      TESData  ( const GaudiAlgorithm*           algorithm , 
+                 const LoKi::GenTypes::GCuts&    cuts      ,
+                 const std::string&              location = LHCb::HepMCEventLocation::Default ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      TESData* clone() const override ;
+      /// MANDATORY: the only essential method:
+      result_type operator() () const override ;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// 'on-flight' filter
+      LoKi::GenTypes::GCut m_cuts ; // 'on-flight' filter
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class TESCounter
+     *  simple functor to count number of 'good'-objects form TES
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @see LoKi::Cuts::GNUM
+     *  @date   2018-08-22
+     */
+    class GAUDI_API TESCounter : public LoKi::Functor<void,double>
+    {
+    public:
+      // ======================================================================
+      /// constructor from the source 
+      explicit TESCounter 
+        ( const LoKi::BasicFunctors<const HepMC::GenParticle*>::Source& s ) ;
+      // =============================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      TESCounter* clone () const  override;
+      /// MANDATORY: the only essential method:
+      double operator() () const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& o ) const  override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the actual source
+      LoKi::Assignable_t<LoKi::BasicFunctors<const HepMC::GenParticle*>::Source> 
+        m_source ;                                         // the actual source
+      // ======================================================================
+    } ;
+    // ========================================================================
+  } //                                  The end of namespace LoKi::GenParticles
   // ==========================================================================
   namespace Cuts
   {
     // ========================================================================
     /** @typedef GSOURCE
-     *  The simlpe ``source'' of HepMC-particles
-     *  @author Vanya BELAYEV Ivan.BElyaev@cern.ch
+     *  The simple ``source'' of HepMC-particles
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
      *  @date 2006-12-07
      */
     typedef LoKi::GenParticles::SourceTES GSOURCE ;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+    /** @typedef GTESDATA        
+     *  The simple ``source'' of HepMC-particles   
+     *  @attention DataHandler is used 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2018-08-22
+     */
+    typedef LoKi::GenParticles::TESData GTESDATA ;
+    // ========================================================================
+    /** @typedef GNUM
+     *  Count particles from the source 
+     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @date 2006-12-07
+     */
+    typedef LoKi::GenParticles::TESCounter GNUM  ;
+    // ========================================================================
+  } //                                          The end of namespace LoKi::Cuts
   // ==========================================================================
-} //                                                      end of namespace LoKi
+} //                                                  The end of namespace LoKi
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_GENSOURCES_H
 // ============================================================================

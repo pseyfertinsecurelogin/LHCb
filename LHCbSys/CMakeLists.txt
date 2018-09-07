@@ -66,6 +66,7 @@ gaudi_depends_on_subdirs(Associators/AssociatorsBase
                          Hlt/HltDAQ
                          Hlt/HltServices
                          Kernel/FSRAlgs
+                         Kernel/PhysInterfaces
                          Kernel/HltInterfaces
                          Kernel/KernelSys
                          Kernel/LHCbAlgs

@@ -4,10 +4,15 @@
 // ============================================================================
 // Include files
 // ============================================================================
+// STD&STL
+// ============================================================================
+#include <stack>
+// ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/IHltAntiFactory.h"
+#include "LoKi/Context.h"
 // ============================================================================
 namespace LoKi 
 {
@@ -37,9 +42,15 @@ namespace LoKi
       // get the static instance 
       static HltEngineActor& instance() ;
       /// connect the hybrid tool for code translation 
-      StatusCode connectTool (       LoKi::Hybrid::IHltAntiFactory* tool ) ;
+      StatusCode connect    ( const LoKi::Hybrid::IHltAntiFactory* factory , 
+                              const LoKi::Context&                 context ) ;
       /// disconnect the tool 
-      StatusCode releaseTool ( const LoKi::Hybrid::IHltAntiFactory* tool ) ;
+      StatusCode disconnect ( const LoKi::Hybrid::IHltAntiFactory* fatcory ) ;
+      /** get the current context
+       *  contex is valid only in between <code>connect/disconnect</code>
+       *  @return the current active context 
+       */
+      const LoKi::Context* context () const ;
       // ======================================================================
     public: // L0
       // ======================================================================
@@ -95,16 +106,19 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the tool itself 
-      LoKi::Interface<LoKi::Hybrid::IHltAntiFactory> m_tool = 0; // the tool itself 
+      typedef LoKi::Interface<LoKi::Hybrid::IHltAntiFactory> Tool  ;
+      typedef std::pair<Tool,LoKi::Context>                  Entry ;
+      typedef std::stack<Entry>                              Stack ;
+      ///  the stack of active factories 
+      Stack m_stack {} ; // the stack of active factories 
       // ======================================================================
     } ;
     // ========================================================================
-  } // end of namespace LoKi::Hybrid 
+  } //                                        The end of namespace LoKi::Hybrid 
   // ==========================================================================
-} //end of namespace LoKi 
+} //                                                  The end of namespace LoKi 
 // ============================================================================
-// The END  
+//                                                                      The END  
 // ============================================================================
 #endif // LOKI_HltENGINEACTOR_H
 // ============================================================================
