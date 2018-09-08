@@ -85,43 +85,96 @@ FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
 {
   // For the v2 and v3 decoding versions, opt out for the default initialization
   // of m_readouttool.
-   m_decodingVersion.declareUpdateHandler( [=](Property& ) {
-       this->m_readoutTool.setEnabled( this->m_decodingVersion > 3u );
-   }).useUpdateHandler();
+  m_decodingVersion.declareUpdateHandler( [=](Property& ) {
+      this->m_readoutTool.setEnabled( this->m_decodingVersion > 3u );
+  }).useUpdateHandler();
 }
 
-//=============================================================================
-// Main execution
-//=============================================================================
-FTLiteClusters
-FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
+
+template <>
+FTLiteClusters FTRawBankDecoder::decode<4>(LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters) const
 {
-  const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
+  FTLiteClusters clus{ nClusters };
+  for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
+    LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
+    auto first = bank->begin<short int>() + 2; // skip first 32b of the header
+    auto last  = bank->end<short int>();
+    if (*(last-1) == 0 && first < last) --last;//Remove padding at the end
 
-  // Estimate total number of clusters from bank sizes
-  FTLiteClusters clus( LHCb::FTDAQ::nbFTClusters(banks) );
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Number of raw banks " << banks.size() << endmsg;
-  if( banks.empty() ) return clus;
-
-  // Testing the bank version
-  unsigned int version = banks[0]->version();
-  if( msgLevel(MSG::DEBUG) )
-    debug() << "Bank version=v" << version << " with decoding version=v"
-            <<  m_decodingVersion.toString() << endmsg;
-
-  // Check if decoding version corresponds with bank version (only for first bank).
-  // Special case for v5 data that is decoded as v4. This possibility is added
-  // temporarily to test the tracking performance versus decoding speed.
-  if( version != m_decodingVersion and
-      !(version==5u and m_decodingVersion==4u) ) {
-    error() << "Bank version=v" << version << " is not compatible with decoding "
-            << "version=v" <<  m_decodingVersion.toString() << endmsg;
-    throw GaudiException("Wrong decoding version",
-                         "FTRawBankDecoder", StatusCode::FAILURE);
+    auto r = ranges::make_iterator_range(first, last )
+            | ranges::view::transform( [&offset](unsigned short int c) -> LHCb::FTLiteCluster
+                                      { return { offset+channelInBank(c),
+                                                 fraction(c), ( cSize(c) ? 0 : 4 ) };} );
+    clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
   }
+  return clus;
+}
 
-  if( m_decodingVersion==2u or m_decodingVersion==3u ) {
+template <>
+FTLiteClusters FTRawBankDecoder::decode<5>(LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters) const
+{
+  FTLiteClusters clus{ nClusters };
+  for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
+    LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
+    auto quarter = quarterFromChannel(offset);
+
+    // Define Lambda functions to be used in loop
+    auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
+      clus.addHit(std::forward_as_tuple(chan, fraction, size), quarter );
+    };
+
+    // Make clusters between two channels
+    auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
+      unsigned int delta = (cell(c2) - cell(c));
+
+      // fragmented clusters, size > 2*max size
+      // only edges were saved, add middles now
+      if ( delta  > m_clusterMaxWidth ) {
+        //add the first edge cluster, and then the middle clusters
+        for(unsigned int  i = m_clusterMaxWidth; i < delta ; i+= m_clusterMaxWidth){
+          // all middle clusters will have same size as the first cluster,
+          // so re-use the fraction
+          make_cluster( firstChannel+i, fraction(c), 0 );
+        }
+        //add the last edge
+        make_cluster  ( firstChannel+delta, fraction(c2), 0 );
+      } else { //big cluster size upto size 8
+        unsigned int widthClus  =  2 * delta - 1 + fraction(c2);
+        make_cluster( firstChannel+(widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ),
+                      (widthClus-1)%2, widthClus );
+      }//end if adjacent clusters
+    };//End lambda make_clusters
+
+    // loop over clusters
+    auto it = bank->begin<short int>() + 2; // skip first 32b of header
+    auto last  = bank->end<short int>();
+    if (*(last-1) == 0) --last;//Remove padding at the end
+    for( ;  it < last; ++it ){ // loop over the clusters
+      unsigned short int c = *it;
+      LHCb::FTChannelID channel = offset + channelInBank(c);
+
+      if( !cSize(c) || it+1 == last ) //No size flag or last cluster
+        make_cluster(channel,fraction(c),4);
+      else{//Flagged or not the last one.
+        unsigned c2 = *(it+1);
+        if( cSize(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {
+          make_clusters(channel,c,c2);
+          ++it;
+        } else {
+          make_cluster(channel,fraction(c),4);
+        }
+      }
+    }
+  }//end loop over rawbanks
+  clus.setOffsets();
+  return clus;
+}
+
+template <unsigned int version>
+FTLiteClusters FTRawBankDecoder::decode(LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters) const
+{
+  static_assert(version == 2 || version == 3 );
+  FTLiteClusters clus{ nClusters };
   for ( const LHCb::RawBank* bank : banks) {
     int source       = bank->sourceID();
     unsigned station = source/16 + 1u;
@@ -158,14 +211,14 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
                              StatusCode::FAILURE);
       }
 
-      if( module > 5 ){
+      if( UNLIKELY(module > 5) ){
         Warning("Skipping cluster(s) for non-existing module " +
                 std::to_string(module) ).ignore();
         first += nClus;
         continue;
       }
 
-      if(m_decodingVersion == 3u){
+      if constexpr (version  == 3u){
 
         for( auto it = first ;  it< first+nClus;++it ){
           short int c      = *it;
@@ -270,6 +323,7 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
           }//last cluster added
         }//end loop over clusters in one sipm
       } else { //bank version == 2
+        static_assert(version==2);
         //normal clustering without any modification to clusters, should work for encoder=2
         for( auto it = first ;  it< first+nClus;++it ){
           short int c      = *it;
@@ -285,78 +339,50 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
     }//end loop over sipms
   }//end loop over rawbanks
   clus.setOffsets();
+  return clus;
+}
+
+
+
+//=============================================================================
+// Main execution
+//=============================================================================
+FTLiteClusters
+FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
+{
+  const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
+
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << "Number of raw banks " << banks.size() << endmsg;
+  if( banks.empty() ) return {};;
+
+  // Testing the bank version
+  unsigned int version = banks[0]->version();
+  if( msgLevel(MSG::DEBUG) )
+    debug() << "Bank version=v" << version << " with decoding version=v"
+            <<  m_decodingVersion.toString() << endmsg;
+
+  // Check if decoding version corresponds with bank version (only for first bank).
+  // Special case for v5 data that is decoded as v4. This possibility is added
+  // temporarily to test the tracking performance versus decoding speed.
+  if( UNLIKELY( version != m_decodingVersion ) &&
+      !(version==5u && m_decodingVersion==4u) ) {
+    error() << "Bank version=v" << version << " is not compatible with decoding "
+            << "version=v" <<  m_decodingVersion.toString() << endmsg;
+    throw GaudiException("Wrong decoding version",
+                         "FTRawBankDecoder", StatusCode::FAILURE);
   }
 
-  //Body of the decoder
-  if (m_decodingVersion == 4u ){
-    for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
-      LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
-      auto first = bank->begin<short int>() + 2; // skip first 32b of the header
-      auto last  = bank->end<short int>();
-      if (*(last-1) == 0 && first < last) --last;//Remove padding at the end
-
-      auto r = ranges::make_iterator_range(first, last )
-              | ranges::view::transform( [&offset](unsigned short int c) -> LHCb::FTLiteCluster
-                                        { return { offset+channelInBank(c),
-                                                   fraction(c), ( cSize(c) ? 0 : 4 ) };} );
-      clus.insert(r.begin(),r.end(), quarterFromChannel(offset));
-    }//end loop over rawbanks
-  }//version == 4
-  else if (m_decodingVersion == 5u) {
-    for ( const LHCb::RawBank* bank : banks) {//Iterates over the banks
-      LHCb::FTChannelID offset = m_readoutTool->channelIDShift(bank->sourceID());
-      auto quarter = quarterFromChannel(offset);
-
-      // Define Lambda functions to be used in loop
-      auto make_cluster = [&clus, &quarter](unsigned chan, int fraction, int size) {
-        clus.addHit(std::forward_as_tuple(chan, fraction, size), quarter );
+  // Estimate total number of clusters from bank sizes
+  auto clus = [&](unsigned int nClusters) {
+      switch (m_decodingVersion.value()) {
+          case 2 : return decode<2>(banks,nClusters);
+          case 3 : return decode<3>(banks,nClusters);
+          case 4 : return decode<4>(banks,nClusters);
+          case 5 : return decode<5>(banks,nClusters);
+          default: throw GaudiException("Unknown decoder version: " + std::to_string(version),__FILE__,StatusCode::FAILURE);
       };
-
-      // Make clusters between two channels
-      auto make_clusters = [&](unsigned firstChannel, short int c, short int c2) {
-        unsigned int delta = (cell(c2) - cell(c));
-
-        // fragmented clusters, size > 2*max size
-        // only edges were saved, add middles now
-        if ( delta  > m_clusterMaxWidth ) {
-          //add the first edge cluster, and then the middle clusters
-          for(unsigned int  i = m_clusterMaxWidth; i < delta ; i+= m_clusterMaxWidth){
-            // all middle clusters will have same size as the first cluster,
-            // so re-use the fraction
-            make_cluster( firstChannel+i, fraction(c), 0 );
-          }
-          //add the last edge
-          make_cluster  ( firstChannel+delta, fraction(c2), 0 );
-        } else { //big cluster size upto size 8
-          unsigned int widthClus  =  2 * delta - 1 + fraction(c2);
-          make_cluster( firstChannel+(widthClus-1)/2 - int( (m_clusterMaxWidth-1)/2 ),
-                        (widthClus-1)%2, widthClus );
-        }//end if adjacent clusters
-      };//End lambda make_clusters
-
-      // loop over clusters
-      auto it = bank->begin<short int>() + 2; // skip first 32b of header
-      auto last  = bank->end<short int>();
-      if (*(last-1) == 0) --last;//Remove padding at the end
-      for( ;  it < last; ++it ){ // loop over the clusters
-        unsigned short int c = *it;
-        LHCb::FTChannelID channel = offset + channelInBank(c);
-
-        if( !cSize(c) || it+1 == last ) //No size flag or last cluster
-          make_cluster(channel,fraction(c),4);
-        else{//Flagged or not the last one.
-          unsigned c2 = *(it+1);
-          if( cSize(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {
-            make_clusters(channel,c,c2);
-            ++it;
-          } else {
-            make_cluster(channel,fraction(c),4);
-          }
-        }
-      }
-    }//end loop over rawbanks
-    clus.setOffsets();
-  }//version ==5
+  }(LHCb::FTDAQ::nbFTClusters(banks));
 
   if ( msgLevel(MSG::VERBOSE) ) {
       for ( const auto& c : clus.range() )
@@ -387,4 +413,6 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 
   return clus;
 }
+
+
 
