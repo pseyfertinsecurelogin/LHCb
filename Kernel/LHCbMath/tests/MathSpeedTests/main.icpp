@@ -119,7 +119,7 @@ int main ( int /*argc*/, char** /*argv*/ )
  // ---------------------------------------------------------------------------------------------------------------------
 
   // Loop to print some values
-  if ( false ) // uncomment to enable
+  // if ( false ) // uncomment to enable
   {
 
     float  ss(0), sc(0);
@@ -161,10 +161,12 @@ int main ( int /*argc*/, char** /*argv*/ )
       std::cout << "VDT isqrt(" << d.absxv << ") = " << fast_isqrt(d.absxv) << std::endl;
       std::cout << std::endl;
       
-      std::cout << "STD atan2(" << d.xs << "," << d.ys << ") = " << std::atan2(d.xs,d.ys) << std::endl;
-      std::cout << "VDT atan2(" << d.xs << "," << d.ys << ") = " << vdt::fast_atan2f(d.xs,d.ys) << std::endl;
-      std::cout << "STD atan2(" << d.xv << "," << d.yv << ") = " << std::atan2(d.xv,d.yv) << std::endl;
-      std::cout << "VDT atan2(" << d.xv << "," << d.yv << ") = " << fast_atan2(d.xv,d.yv) << std::endl;
+      std::cout << "STD  atan2(" << d.xs << "," << d.ys << ") = " << std::atan2(d.xs,d.ys) << std::endl;
+      std::cout << "VDT  atan2(" << d.xs << "," << d.ys << ") = " << fast_atan2(d.xs,d.ys) << std::endl;
+      std::cout << "VAPX atan2(" << d.xs << "," << d.ys << ") = " << vapprox_atan2(d.xs,d.ys) << std::endl;
+      std::cout << "STD  atan2(" << d.xv << "," << d.yv << ") = " << std::atan2(d.xv,d.yv) << std::endl;
+      std::cout << "VDT  atan2(" << d.xv << "," << d.yv << ") = " << fast_atan2(d.xv,d.yv) << std::endl;
+      std::cout << "VAPX atan2(" << d.xv << "," << d.yv << ") = " << vapprox_atan2(d.xv,d.yv) << std::endl;
       std::cout << std::endl;
 
       vdt::fast_sincosf( d.xs, ss, sc );
@@ -179,7 +181,7 @@ int main ( int /*argc*/, char** /*argv*/ )
   }
 
   // timing
-  //if ( false )
+  // if ( false )
   {
 
     // ---------------------------------------------------------------------------------------------------------------------
@@ -386,33 +388,46 @@ int main ( int /*argc*/, char** /*argv*/ )
     
     std::cout << "testing atan2 functions..." << std::endl;
     
-    // STD scalar exp
+    // STD scalar
     auto timeScSTDAtan2 = solve<float>( data, []( const auto & d ) { return std::atan2(d.xs,d.ys); } );
-    std::cout << "Scalar STD atan2 " << timeScSTDAtan2 << std::endl;
+    std::cout << "Scalar STD  atan2 " << timeScSTDAtan2 << std::endl;
     
-    // VDT scalar exp
-    auto timeScVDTAtan2 = solve<float>( data, []( const auto & d ) { return vdt::fast_atan2f(d.xs,d.ys); } );
-    std::cout << "Scalar VDT atan2 " << timeScVDTAtan2 << std::endl;
+    // VDT scalar
+    auto timeScVDTAtan2 = solve<float>( data, []( const auto & d ) { return fast_atan2(d.xs,d.ys); } );
+    std::cout << "Scalar VDT  atan2 " << timeScVDTAtan2 << std::endl;
+
+    // VAPX scalar
+    auto timeScVAPXAtan2 = solve<float>( data, []( const auto & d ) { return vapprox_atan2(d.xs,d.ys); } );
+    std::cout << "Scalar VAPX atan2 " << timeScVAPXAtan2 << std::endl;
     
-    // STD(Vc) SIMD exp
+    // STD(Vc) SIMD 
     auto timeVcSTDAtan2 = solve<FloatV>( data, []( const auto & d ) { return std::atan2(d.xv,d.yv); } );
-    std::cout << "SIMD   STD atan2 " << timeVcSTDAtan2 
+    std::cout << "SIMD   STD  atan2 " << timeVcSTDAtan2 
               << " ( " << timeVcSTDAtan2/FloatV::Size << " per scalar, SpeedUp "
               << (double)FloatV::Size*timeScSTDAtan2/timeVcSTDAtan2 << " )"
               << std::endl;
     
-    // STD(Vc) SIMD exp
+    // STD(Vc) SIMD
     auto timeVcVDTAtan2 = solve<FloatV>( data, []( const auto & d ) { return fast_atan2(d.xv,d.yv); } );
-    std::cout << "SIMD   VDT atan2 " << timeVcVDTAtan2
+    std::cout << "SIMD   VDT  atan2 " << timeVcVDTAtan2
               << " ( " << timeVcVDTAtan2/FloatV::Size << " per scalar, SpeedUp "
               << (double)FloatV::Size*timeScVDTAtan2/timeVcVDTAtan2 << " )"
+              << std::endl;
+
+    // VAPX SIMD
+    auto timeVcVAPXAtan2 = solve<FloatV>( data, []( const auto & d ) { return vapprox_atan2(d.xv,d.yv); } );
+    std::cout << "SIMD   VAPX atan2 " << timeVcVAPXAtan2
+              << " ( " << timeVcVAPXAtan2/FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size*timeScVAPXAtan2/timeVcVAPXAtan2 << " )"
               << std::endl;
     
     // make sure we are not optimized away
     asm volatile ("" : "+x"(timeScSTDAtan2));
     asm volatile ("" : "+x"(timeScVDTAtan2));
+    asm volatile ("" : "+x"(timeScVAPXAtan2));
     asm volatile ("" : "+x"(timeVcSTDAtan2));
     asm volatile ("" : "+x"(timeVcVDTAtan2));
+    asm volatile ("" : "+x"(timeVcVAPXAtan2));
 
     // ---------------------------------------------------------------------------------------------------------------------
     
@@ -422,18 +437,18 @@ int main ( int /*argc*/, char** /*argv*/ )
     auto timeScSTDAsin = solve<float>( data, []( const auto & d ) { return std::asin(d.zs); } );
     std::cout << "Scalar STD asin " << timeScSTDAsin << std::endl;
     
-    // VDT scalar log
+    // VDT scalar asin
     auto timeScVDTAsin = solve<float>( data, []( const auto & d ) { return vdt::fast_asinf(d.zs); } );
     std::cout << "Scalar VDT asin " << timeScVDTAsin << std::endl;
 
-    // STD(Vc) SIMD log
+    // STD(Vc) SIMD asin
     auto timeVcSTDAsin = solve<FloatV>( data, []( const auto & d ) { return std::asin(d.zv); } );
     std::cout << "SIMD   STD asin " << timeVcSTDAsin 
               << " ( " << timeVcSTDAsin/FloatV::Size << " per scalar, SpeedUp "
               << (double)FloatV::Size*timeScSTDAsin/timeVcSTDAsin << " )"
               << std::endl;
     
-    // STD(Vc) SIMD log
+    // STD(Vc) SIMD asin
     auto timeVcVDTAsin = solve<FloatV>( data, []( const auto & d ) { return fast_asin(d.zv); } );
     std::cout << "SIMD   VDT asin " << timeVcVDTAsin 
               << " ( " << timeVcVDTAsin/FloatV::Size << " per scalar, SpeedUp "
