@@ -37,7 +37,7 @@ struct AlgWrapper {
     assert(m_alg != nullptr);
   }
 
-  int isExecuted (std::vector<int>& AlgoStates) const {
+  int isExecuted (std::vector<int> const& AlgoStates) const {
     return AlgoStates[m_executedIndex];
   }
 
@@ -251,13 +251,9 @@ template <>
 void CompositeNode<nodeType::NONLAZY_OR>::updateStateAndNotify(int, std::vector<NodeState> &NodeStates) const {
   NodeStates[m_NodeID].executionCtr--;
   if (NodeStates[m_NodeID].executionCtr == 0) {
-    for (VNode *child : m_children) {
-      if (std::visit([&NodeStates](auto &child) { return NodeStates[child.m_NodeID].passed; }, *child)) {
-        NodeStates[m_NodeID].passed = true;
-        break;
-      }
-      NodeStates[m_NodeID].passed = false;
-    }
+    NodeStates[m_NodeID].passed = std::any_of(begin(m_children), end(m_children), [&] (VNode* vchild) {
+      return std::visit([&](auto &child) { return NodeStates[child.m_NodeID].passed; }, *vchild);
+    });
     notifyParents(NodeStates);
   }
 }
@@ -266,13 +262,9 @@ template <>
 void CompositeNode<nodeType::NONLAZY_AND>::updateStateAndNotify(int, std::vector<NodeState> &NodeStates) const {
   NodeStates[m_NodeID].executionCtr--;
   if (NodeStates[m_NodeID].executionCtr == 0) {
-    for (VNode *child : m_children) {
-      if (std::visit([&NodeStates](auto &child) { return NodeStates[child.m_NodeID].passed; }, *child)) {
-        NodeStates[m_NodeID].passed = false;
-        break;
-      }
-      NodeStates[m_NodeID].passed = true;
-    }
+    NodeStates[m_NodeID].passed = std::all_of(begin(m_children), end(m_children), [&] (VNode* vchild) {
+      return std::visit([&](auto &child) { return NodeStates[child.m_NodeID].passed; }, *vchild);
+    });
     notifyParents(NodeStates);
   }
 }
