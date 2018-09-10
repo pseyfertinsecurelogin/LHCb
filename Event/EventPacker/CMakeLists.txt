@@ -23,7 +23,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 gaudi_add_library(EventPackerLib
                   src/lib/*.cpp
                   PUBLIC_HEADERS Event
-                  LINK_LIBRARIES MCEvent PhysEvent RecEvent GaudiAlgLib GaudiKernel LHCbKernel)
+                  LINK_LIBRARIES MCEvent PhysEvent RecEvent GaudiAlgLib GaudiKernel LHCbKernel RelationsLib )
 
 gaudi_add_module(EventPacker
                  src/component/*.cpp
