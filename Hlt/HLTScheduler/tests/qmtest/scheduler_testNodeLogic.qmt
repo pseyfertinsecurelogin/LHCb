@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="args"><set>
+  <text>-v</text>
+  <text>../../options/scheduler_testNodeLogic.py</text>
+</set></argument>
+<argument name="validator"><text>
+expected_strings = [ \
+"NONLAZY_OR: top  0|1",
+" NONLAZY_AND: 0  0|1",
+"  A1             0|1",
+"  A1             0|1",
+" NONLAZY_AND: 1  0|0",
+"  A1             0|1",
+"  A2             0|0",
+" NONLAZY_AND: 2  0|0",
+"  A2             0|0",
+"  A1             0|1",
+" NONLAZY_AND: 3  0|0",
+"  A2             0|0",
+"  A2             0|0",
+" NONLAZY_OR: 4   0|1",
+"  A1             0|1",
+"  A1             0|1",
+" NONLAZY_OR: 5   0|1",
+"  A1             0|1",
+"  A2             0|0",
+" NONLAZY_OR: 6   0|1",
+"  A2             0|0",
+"  A1             0|1",
+" NONLAZY_OR: 7   0|0",
+"  A2             0|0",
+"  A2             0|0",
+" LAZY_AND: 8     0|1",
+"  A1             0|1",
+"  A1             0|1",
+" LAZY_AND: 9     0|0",
+"  A1             0|1",
+"  A2             0|0",
+" LAZY_AND: 10    0|0",
+"  A2             0|0",
+"  A1             0|1",
+" LAZY_AND: 11    0|0",
+"  A2             0|0",
+"  A2             0|0",
+" LAZY_OR: 12     0|1",
+"  A1             0|1",
+"  A1             0|1",
+" LAZY_OR: 13     0|1",
+"  A1             0|1",
+"  A2             0|0",
+" LAZY_OR: 14     0|1",
+"  A2             0|0",
+"  A1             0|1",
+" LAZY_OR: 15     0|0",
+"  A2             0|0",
+"  A2             0|0",
+" NOT: notA1      0|0",
+"  A1             0|1",
+" NOT: notA2      0|1",
+"  A2             0|0",
+]
+for expected_string in expected_strings:
+    if stdout.find(expected_string) == -1:
+        causes.append('not the right control flow')
+        result['GaudiTest.expected_string'] = result.Quote(expected_string)
+</text></argument>
+</extension>
+
