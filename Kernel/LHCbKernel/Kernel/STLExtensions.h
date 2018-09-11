@@ -88,7 +88,7 @@ namespace LHCb
       return span<typename Ptr::element_type>(cont, count);
   }
 
-  namespace details {
+  namespace details_se {
     // see https://en.cppreference.com/w/cpp/named_req/ContiguousIterator
     // 1) array::iterator is typically a pointer, so no need to support it here
     // 2) string_view::iterator: why would ever want to turn that into a span?
@@ -104,7 +104,7 @@ namespace LHCb
     }
   }
 
-  template <typename Iterator, typename = std::enable_if_t<details::isContiguous<Iterator>()> >
+  template <typename Iterator, typename = std::enable_if_t<details_se::isContiguous<Iterator>()> >
   auto make_span(Iterator firstElem, Iterator lastElem)
   {
       return make_span(std::addressof(*firstElem),std::distance(firstElem,lastElem));
