@@ -19,7 +19,6 @@
  author = "Vanya Belyaev Ivan.Belyaev@itep.ru"
  stdVectorTypeDef = "TRUE"
  final = "TRUE"
- defaultdestructor="FALSE"
 >
 <desc> *
  *

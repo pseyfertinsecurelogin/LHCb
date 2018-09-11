@@ -10,6 +10,8 @@
            id     = "14005"
            author = "Violaine Bellee, Julian Wishahi"
            desc   = "This class represents a photon in a fibre mat as a result of crossing MCHits."
+           final = "TRUE"
+           defaultdestructor = "FALSE"
            serializers="FALSE">
       <base     name="ContainedObject"/>
       &ContainedObject;
