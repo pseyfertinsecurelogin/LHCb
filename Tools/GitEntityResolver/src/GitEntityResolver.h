@@ -124,10 +124,10 @@ private:
         result.second.cut( info );
         return result;
       } else {
-        return std::make_pair( i_makeIStream( i_listdir( obj, url ) ), IOVInfo{} );
+        return { i_makeIStream( i_listdir( obj, url ) ), IOVInfo{} };
       }
     } else {
-      return std::make_pair( i_makeIStream( obj ), IOVInfo{} );
+      return { i_makeIStream( obj ), IOVInfo{} };
     }
   }
 

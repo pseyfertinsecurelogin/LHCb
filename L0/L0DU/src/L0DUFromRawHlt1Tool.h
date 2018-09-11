@@ -48,7 +48,7 @@ public:
 
 private:
   void encode(const std::string& name, unsigned int data , unsigned int scale = 1 ) {
-    m_dataMap[name] = std::make_pair( data, scale );
+    m_dataMap[name] = { data, scale };
     if ( m_report.dataDigit(name) != data ) m_report.addToData( name, data, scale );
   }
 

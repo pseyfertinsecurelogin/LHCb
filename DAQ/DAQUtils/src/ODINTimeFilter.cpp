@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // local
 #include "ODINTimeFilter.h"
@@ -38,22 +38,18 @@ ODINTimeFilter::ODINTimeFilter( const std::string& name,
   declareProperty ( "localTime" , m_loc = true);
   declareProperty ( "eventTime" , m_print = false);
 
-  m_yRange=std::make_pair(-1,-1);
-  m_mRange=std::make_pair(-1,-1);
-  m_dRange=std::make_pair(-1,-1);
-  m_hRange=std::make_pair(-1,-1);
-  m_mnRange=std::make_pair(-1,-1);
-  m_sRange=std::make_pair(-1,-1);
-  m_nsRange=std::make_pair(-1,-1);
-  m_eRange=std::make_pair(-1,-1);
-  m_bRange=std::make_pair(-1,-1);
-  
+  m_yRange={-1,-1};
+  m_mRange={-1,-1};
+  m_dRange={-1,-1};
+  m_hRange={-1,-1};
+  m_mnRange={-1,-1};
+  m_sRange={-1,-1};
+  m_nsRange={-1,-1};
+  m_eRange={-1,-1};
+  m_bRange={-1,-1};
+
 
  }
-//=============================================================================
-// Destructor
-//=============================================================================
-ODINTimeFilter::~ODINTimeFilter() {} 
 
 //=============================================================================
 // Initialization
@@ -64,7 +60,7 @@ StatusCode ODINTimeFilter::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  criteriaPrintOut();  
+  criteriaPrintOut();
   return StatusCode::SUCCESS;
 }
 
@@ -80,12 +76,12 @@ StatusCode ODINTimeFilter::execute() {
   LHCb::ODIN* odin = getIfExists<LHCb::ODIN>(LHCb::ODINLocation::Default);
   if( odin == NULL ) return Error("ODIN cannot be loaded");
 
-  // get time & eventID 
+  // get time & eventID
   Gaudi::Time time = odin->eventTime();
   unsigned long long event  = odin->eventNumber();
   int       run  = odin->runNumber();
   int       bx  = odin->bunchId();
-  
+
 
   setFilterPassed( true );
 
@@ -100,7 +96,7 @@ StatusCode ODINTimeFilter::execute() {
                                     val(m_sRange.first   , time.second(m_loc) ),
                                     val(m_nsRange.first   , time.nsecond() ),
                                     m_loc);
-  
+
   Gaudi::Time maxTime = Gaudi::Time(val(m_yRange.second   , time.year(m_loc)   ),
                                     val(m_mRange.second   , time.month(m_loc)  , -1),
                                     val(m_dRange.second   , time.day(m_loc)    ),
@@ -109,10 +105,10 @@ StatusCode ODINTimeFilter::execute() {
                                     val(m_sRange.second   , time.second(m_loc) ),
                                     val(m_nsRange.second  , time.nsecond() ),
                                     m_loc);
-  
+
 
   // timing selection
-  counter("Event") += 1 ;  
+  counter("Event") += 1 ;
   if( m_time ){
     if (def(m_yRange) || def(m_mRange) || def(m_dRange) || def(m_hRange) ||def(m_mnRange) ||def(m_sRange) || def(m_sRange))
       if( minTime > time || maxTime < time )setFilterPassed(false);
@@ -127,15 +123,15 @@ StatusCode ODINTimeFilter::execute() {
   if(filterPassed())counter("Filtered Events") += 1 ;
 
 
-  if(m_print)info() << "[Run : " << run  
-                    << ", EventId  : " << event 
+  if(m_print)info() << "[Run : " << run
+                    << ", EventId  : " << event
                     << ", BCID : "<< bx << "]"
-                    << " @ EventTime : "  
-                    << time.year(m_loc) << "/"  
-                    << time.month(m_loc) +1 << "/"  
-                    << time.day(m_loc) << " "  
-                    << time.hour(m_loc) << ":"  
-                    << time.minute(m_loc) << ":"  
+                    << " @ EventTime : "
+                    << time.year(m_loc) << "/"
+                    << time.month(m_loc) +1 << "/"
+                    << time.day(m_loc) << " "
+                    << time.hour(m_loc) << ":"
+                    << time.minute(m_loc) << ":"
                     << time.second(m_loc) << "::"
                     << time.nsecond()
                     << " (accepted :  " << filterPassed()  << ")" << endmsg;
@@ -160,15 +156,15 @@ void ODINTimeFilter::criteriaPrintOut(){
   bool ok2 = true;
   bool ok3 = true;
   if (!def(m_yRange) &&
-      !def(m_mRange) && 
-      !def(m_dRange) && 
-      !def(m_hRange) && 
-      !def(m_mnRange) && 
+      !def(m_mRange) &&
+      !def(m_dRange) &&
+      !def(m_hRange) &&
+      !def(m_mnRange) &&
       !def(m_sRange) &&
       !def(m_nsRange) )ok1 = false;
 
-  if (!def(m_eRange) )ok2 = false; 
-  if (!def(m_bRange) )ok3 = false; 
+  if (!def(m_eRange) )ok2 = false;
+  if (!def(m_bRange) )ok3 = false;
 
   if( !ok1 && !ok2 && !ok3)info() << "Empty filtering criteria - all events passing " << endmsg;
   else{
@@ -193,13 +189,13 @@ bool ODINTimeFilter::check(unsigned long long val, std::pair<double,double> rang
   if( val >= (unsigned long long) range.first && val <= (unsigned long long) range.second )return true;
   return false;
 }
-    
+
 bool ODINTimeFilter::check(int val, std::pair<int,int> range){
   if( !def(range) )return true;
   if( val >= range.first && val <=  range.second )return true;
   return false;
 }
-    
+
 
 //=============================================================================
 //  Finalize
@@ -210,5 +206,5 @@ StatusCode ODINTimeFilter::finalize() {
   criteriaPrintOut();
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
-  
+
   //=============================================================================

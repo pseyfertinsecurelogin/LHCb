@@ -99,7 +99,7 @@ void ParamValidDataObject::setComment (const std::string &name, const char *comm
   } else {
     // do not add the comment if empty (ora a null pointer)
     if (comm && std::strlen(comm) != 0)
-      m_comments.insert(make_pair(name,std::string(comm)));
+      m_comments.insert({ name,std::string(comm)});
   }
 }
 

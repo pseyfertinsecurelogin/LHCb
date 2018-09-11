@@ -47,12 +47,12 @@ public:
   ICaloDataProvider::CaloAdcPair adcRange() override{
     LHCb::CaloAdc min = (m_minADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_minADC;
     LHCb::CaloAdc max = (m_maxADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_maxADC;
-    return std::make_pair(min,max) ;
+    return {min,max} ;
   }
   ICaloDataProvider::CaloAdcPair pinRange() override{
     LHCb::CaloAdc min = (m_minPinADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_minPinADC;
     LHCb::CaloAdc max = (m_maxPinADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_maxPinADC;
-    return std::make_pair(min,max) ;
+    return {min,max} ;
   }
   bool ok() override{
     if(m_getRaw)getBanks();

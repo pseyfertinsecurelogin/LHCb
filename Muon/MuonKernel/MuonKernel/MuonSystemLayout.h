@@ -44,7 +44,7 @@ public:
   {
     int reg = id.region();
     int st  = id.station();
-    return std::make_pair(xGrid(st,reg),yGrid(st,reg));
+    return { xGrid(st,reg),yGrid(st,reg) };
   }
   /// Accessor to X granularity
   unsigned int xGrid(int st, int reg) const { return stationLayout(st).xGrid(reg); }

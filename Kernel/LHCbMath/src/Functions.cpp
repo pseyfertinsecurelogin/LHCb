@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -57,9 +56,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $author$
  */
 // ============================================================================
 // Rho-functions from Jackson
@@ -4432,13 +4428,13 @@ Gaudi::Math::Rho0::Rho0
   const double gam0     ,
   const double pi_mass  ,
   const double breakup  )
-  : Gaudi::Math::BreitWigner 
+  : Gaudi::Math::BreitWigner
     ( m0         ,
       gam0       ,
       pi_mass    ,
       pi_mass    ,
       1          ,
-      Gaudi::Math::FormFactors::BlattWeisskopf 
+      Gaudi::Math::FormFactors::BlattWeisskopf
       ( Gaudi::Math::FormFactors::BlattWeisskopf::One , breakup ) )
 {}
 // ============================================================================
@@ -4472,7 +4468,7 @@ Gaudi::Math::Kstar0::Kstar0
       k_mass     ,
       pi_mass    ,
       1          ,
-      Gaudi::Math::FormFactors::BlattWeisskopf 
+      Gaudi::Math::FormFactors::BlattWeisskopf
       ( Gaudi::Math::FormFactors::BlattWeisskopf::One , breakup ) )
 {}
 // ============================================================================
@@ -4482,7 +4478,7 @@ Gaudi::Math::Phi0::Phi0
 ( const double m0       ,
   const double gam0     ,
   const double k_mass   )
-  : Gaudi::Math::BreitWigner 
+  : Gaudi::Math::BreitWigner
     ( m0         ,
       gam0       ,
       k_mass     ,
@@ -4498,7 +4494,7 @@ Gaudi::Math::Phi0::Phi0
   const double gam0     ,
   const double k_mass   ,
   const double breakup  )
-  : Gaudi::Math::BreitWigner 
+  : Gaudi::Math::BreitWigner
     ( m0         ,
       gam0       ,
       k_mass     ,
@@ -4551,26 +4547,26 @@ double Gaudi::Math::Rho0FromEtaPrime::operator() ( const double x ) const
 // ============================================================================
 // clone!
 // ============================================================================
-Gaudi::Math::Rho0* 
-Gaudi::Math::Rho0::clone() const 
+Gaudi::Math::Rho0*
+Gaudi::Math::Rho0::clone() const
 { return new Rho0(*this) ; }
 // ============================================================================
 // clone!
 // ============================================================================
-Gaudi::Math::Kstar0* 
-Gaudi::Math::Kstar0::clone() const 
+Gaudi::Math::Kstar0*
+Gaudi::Math::Kstar0::clone() const
 { return new Kstar0(*this) ; }
 // ============================================================================
 // clone!
 // ============================================================================
-Gaudi::Math::Phi0* 
-Gaudi::Math::Phi0::clone() const 
+Gaudi::Math::Phi0*
+Gaudi::Math::Phi0::clone() const
 { return new Phi0(*this) ; }
 // ============================================================================
 // clone!
 // ============================================================================
-Gaudi::Math::Rho0FromEtaPrime* 
-Gaudi::Math::Rho0FromEtaPrime::clone() const 
+Gaudi::Math::Rho0FromEtaPrime*
+Gaudi::Math::Rho0FromEtaPrime::clone() const
 { return new Rho0FromEtaPrime(*this) ; }
 // ============================================================================
 
@@ -4602,7 +4598,7 @@ Gaudi::Math::Flatte::Flatte
   , m_workspace ()
 {}
 // ============================================================================
-// clone it! 
+// clone it!
 // ============================================================================
 Gaudi::Math::Flatte*
 Gaudi::Math::Flatte::clone() const { return new Flatte ( *this ) ; }
@@ -4847,7 +4843,7 @@ Gaudi::Math::Flatte2::Flatte2
   : Gaudi::Math::Flatte ( flatte )
 {}
 // ============================================================================
-// clone it! 
+// clone it!
 // ============================================================================
 Gaudi::Math::Flatte2*
 Gaudi::Math::Flatte2::clone() const { return new Flatte2 ( *this ) ; }
@@ -6485,7 +6481,7 @@ Gaudi::Math::BW23L::BW23L
   const double         m    ,
   const unsigned short L1   ,
   const unsigned short L2   )
-  : m_bw ( new Gaudi::Math::BreitWigner( m0 , gam0 , m1  , m2 , L1 ) ) 
+  : m_bw ( new Gaudi::Math::BreitWigner( m0 , gam0 , m1  , m2 , L1 ) )
   , m_ps ( m1 , m2   , m3  , m  , L2 , L1 )
     //
   , m_workspace ()
@@ -6503,7 +6499,7 @@ Gaudi::Math::BW23L::BW23L
   const unsigned short                       L1   ,
   const unsigned short                       L2   ,
   const Gaudi::Math::FormFactors::JacksonRho r    )
-  : m_bw ( new Gaudi::Math::BreitWigner ( m0 , gam0 , m1  , m2 , L1 , r  ) ) 
+  : m_bw ( new Gaudi::Math::BreitWigner ( m0 , gam0 , m1  , m2 , L1 , r  ) )
   , m_ps ( m1 , m2   , m3  , m  , L2 , L1 )
     //
   , m_workspace ()
@@ -6522,12 +6518,12 @@ Gaudi::Math::BW23L::BW23L
   , m_workspace ()
 {}
 // ============================================================================
-// copy constructor 
+// copy constructor
 // ============================================================================
 Gaudi::Math::BW23L::BW23L
-( const Gaudi::Math::BW23L& right ) 
-  : m_bw ( right.m_bw->clone() ) 
-  , m_ps ( right.m_ps ) 
+( const Gaudi::Math::BW23L& right )
+  : m_bw ( right.m_bw->clone() )
+  , m_ps ( right.m_ps )
     //
   , m_workspace ()
 {}
@@ -6640,7 +6636,7 @@ Gaudi::Math::Flatte23L::Flatte23L
   const double         m3    ,     // MeV
   const double         m     ,     // MeV
   const unsigned short L     )
-  : m_flatte    ( new Gaudi::Math::Flatte ( m0  , m0g1 , g2og1 , mA , mA , mB , mB ) ) 
+  : m_flatte    ( new Gaudi::Math::Flatte ( m0  , m0g1 , g2og1 , mA , mA , mB , mB ) )
   , m_ps        ( mA  , mA  , m3    , m  , L    )
 //
   , m_workspace ()
@@ -6664,9 +6660,9 @@ Gaudi::Math::Flatte23L::Flatte23L
 {}
 // ============================================================================
 Gaudi::Math::Flatte23L::Flatte23L
-( const Gaudi::Math::Flatte23L&  right ) 
-  : m_flatte ( right.m_flatte->clone() ) 
-  , m_ps     ( right.m_ps ) 
+( const Gaudi::Math::Flatte23L&  right )
+  : m_flatte ( right.m_flatte->clone() )
+  , m_ps     ( right.m_ps )
 {}
 // ============================================================================
 // get the value of Flatte function
@@ -8787,15 +8783,15 @@ double Gaudi::Math::PS2DPol::operator ()
 // helper function to make calculations
 // ============================================================================
 double Gaudi::Math::PS2DPol::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   double       result = 0 ;
   const Gaudi::Math::Bernstein2D& b2d = m_positive.bernstein() ;
   for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
   {
     for  ( unsigned short iy = 0 ; iy <= nY() ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; } 
+    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
   //
   const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
@@ -8830,9 +8826,7 @@ namespace
                     const Gaudi::Math::Bernstein*>     _KEY1 ;
   typedef std::pair<double,double>                     _KEY2 ;
   typedef std::pair<_KEY1,_KEY2>                       _KEY  ;
-  typedef std::map<_KEY,double>                        _MAP  ;
-  typedef _MAP::const_iterator                         _CIT  ;
-  _MAP _s_map_ ;
+  std::map<_KEY,double> _s_map_ ;
   // ==========================================================================
   double _integral_
   ( const Gaudi::Math::PhaseSpaceNL&    ps   ,
@@ -8859,10 +8853,8 @@ namespace
     if ( 1 == bp.npars() ) { return bp.par(0) * ps.integral ( xlow , xhigh ) ; }
     //
     // check the cache
-    const _KEY1 k1  = std::make_pair( &ps , &bp  ) ;
-    const _KEY2 k2  = std::make_pair( low , high ) ;
-    const _KEY  key = std::make_pair( k1  , k2   ) ;
-    _CIT  it = _s_map_.find  ( key ) ;
+    const auto  key = std::pair{ std::pair{ &ps , &bp  }  , std::pair{ low , high } } ;
+    auto  it = _s_map_.find  ( key ) ;
     if ( _s_map_.end() != it ) {  return it->second ; }  // AVOID calculation
     //
     // use GSL to evaluate the integral
@@ -9054,8 +9046,8 @@ double Gaudi::Math::PS2DPolSym::operator ()
 // helper function to make calculations
 // ============================================================================
 double Gaudi::Math::PS2DPolSym::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   double       result = 0 ;
   const Gaudi::Math::Bernstein2DSym& b2d = m_positive.bernstein() ;
@@ -9063,7 +9055,7 @@ double Gaudi::Math::PS2DPolSym::calculate
   {
     result   += b2d.par ( ix , ix ) * fx[ix] * fy[ix] ;
     for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
-    { result += b2d.par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
+    { result += b2d.par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; }
   }
   //
   const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
@@ -9210,15 +9202,15 @@ double Gaudi::Math::ExpoPS2DPol::operator ()
 }
 // ============================================================================
 double Gaudi::Math::ExpoPS2DPol::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   double       result = 0 ;
   const Gaudi::Math::Bernstein2D& b2d = m_positive.bernstein() ;
   for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
   {
     for  ( unsigned short iy = 0 ; iy <= nY() ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; } 
+    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
   //
   const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
@@ -9389,15 +9381,15 @@ double Gaudi::Math::Expo2DPol::operator ()
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPol::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   double       result = 0 ;
   const Gaudi::Math::Bernstein2D& b2d = m_positive.bernstein() ;
   for  ( unsigned short ix = 0 ; ix <= nX()  ; ++ix )
   {
     for  ( unsigned short iy = 0 ; iy <= nY() ; ++iy )
-    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; } 
+    { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
   //
   const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;
@@ -9549,8 +9541,8 @@ double Gaudi::Math::Expo2DPolSym::operator ()
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::calculate
-( const std::vector<double>& fx , 
-  const std::vector<double>& fy ) const 
+( const std::vector<double>& fx ,
+  const std::vector<double>& fy ) const
 {
   double       result = 0 ;
   const Gaudi::Math::Bernstein2DSym& b2d = m_positive.bernstein() ;
@@ -9558,7 +9550,7 @@ double Gaudi::Math::Expo2DPolSym::calculate
   {
     result   += b2d.par ( ix , ix ) * fx[ix] * fy[ix] ;
     for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
-    { result += b2d.par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
+    { result += b2d.par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; }
   }
   //
   const double scalex = ( nX () + 1 ) / ( xmax () - xmin () ) ;

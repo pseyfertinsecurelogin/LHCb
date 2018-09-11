@@ -136,11 +136,11 @@ STDAQ::chanPair UTReadoutTool::offlineChanToDAQ(const STChannelID aOfflineChan,
   } // iBoard
 
   if (!isFound){
-    return std::make_pair(STTell1ID(STTell1ID::nullBoard, false),0);
+    return { STTell1ID(STTell1ID::nullBoard, false),0};
   } else {
-    return std::make_pair(m_boards[iBoard]->boardID(),
-                          m_boards[iBoard]->offlineToDAQ(aOfflineChan,
-                                                         waferIndex,isf));
+    return { m_boards[iBoard]->boardID(),
+             m_boards[iBoard]->offlineToDAQ(aOfflineChan,
+                                            waferIndex,isf)};
   }
 }
 

@@ -93,9 +93,10 @@ void Element::compute()
 
   setZ( isotope(0)->Z() );
 
+  using R = std::pair<double,double>;
   auto a = std::accumulate( m_isotopes.begin(), m_isotopes.end(),
-                              std::make_pair(0.0,0.0),
-                              [](std::pair<double,double> r, const Entry& e) {
+                              R{0,0},
+                              [](R r, const Entry& e) {
         r.first  += e.first*e.second->A();
         r.second += e.first;
         return r;

@@ -7,13 +7,13 @@ std::pair<double, unsigned int > STFun::position(const SmartRefVector<LHCb::STDi
   double maxCharge = 0.0;
   SmartRefVector<LHCb::STDigit>::const_iterator iterDigit = digits.begin();
   for (; iterDigit != digits.end(); ++iterDigit){
-    if ((*iterDigit)->depositedCharge() > maxCharge) maxCharge =(*iterDigit)->depositedCharge(); 
+    if ((*iterDigit)->depositedCharge() > maxCharge) maxCharge =(*iterDigit)->depositedCharge();
   } // iterDigit
 
   const double trimVal = trim*maxCharge;
 
   unsigned int nUsed = 0;
-  double trimmedCharge = 0.0; double firstMoment =0.0; 
+  double trimmedCharge = 0.0; double firstMoment =0.0;
   iterDigit = digits.begin();
   for (; iterDigit != digits.end() ; ++iterDigit){
     if ((*iterDigit)->depositedCharge() >= trimVal){
@@ -22,23 +22,23 @@ std::pair<double, unsigned int > STFun::position(const SmartRefVector<LHCb::STDi
       ++nUsed;
     }
   } // iterDigit
- 
+
   // mean u
-  return std::make_pair(firstMoment/trimmedCharge, nUsed);
+  return {firstMoment/trimmedCharge, nUsed};
 }
 
 std::pair<double, unsigned int> STFun::position(const LHCb::STCluster::ADCVector& strips, double trim)
-{ 
+{
  // mean u - weighted according to charge dep
   double firstMoment = 0.0;
-  double trimmedCharge = 0; 
+  double trimmedCharge = 0;
 
   // mean
   double maxCharge = 0.0;
   LHCb::STCluster::ADCVector::const_iterator iter = strips.begin();
   while (iter != strips.end()){
     if (iter->second > maxCharge) maxCharge = iter->second;
-    ++iter; 
+    ++iter;
   }
   const unsigned int trimVal = int(trim*maxCharge) ;
 
@@ -55,7 +55,7 @@ std::pair<double, unsigned int> STFun::position(const LHCb::STCluster::ADCVector
     ++iter;
     ++i;
   }
- 
+
   // mean u
-  return std::make_pair(firstMoment/trimmedCharge, nUsed);
+  return {firstMoment/trimmedCharge, nUsed};
 }

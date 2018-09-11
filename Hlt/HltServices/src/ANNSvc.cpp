@@ -49,8 +49,8 @@ namespace ANNSvcUtilities {
 
     result_type   key(const value_type& value) const {
       auto i = m_invmap.find(value);
-      return i == m_invmap.end() ? result_type()
-                                 : result_type(std::make_pair(i->second,i->first)) ;
+      return i == m_invmap.end() ? result_type{}
+                                 : result_type{std::pair{i->second,i->first}} ;
     }
 
     const k2v_type& mapping() const { return m_map; }

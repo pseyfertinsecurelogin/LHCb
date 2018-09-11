@@ -173,8 +173,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
       }else{
 
         // put all the nzs data in one container
-        auto full_info=std::make_pair(aBank->size(), aBank->data());
-        m_fullData2Decode[(aBank->sourceID())]=full_info;
+        m_fullData2Decode[(aBank->sourceID())]= { aBank->size(), aBank->data() };
 
       }
 
@@ -196,8 +195,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
                          << pedBanks.size() <<endmsg;
 
     for(const LHCb::RawBank* aBank : pedBanks ) {
-      auto ped_info=std::make_pair(aBank->size(), aBank->data());
-      m_pedestalData2Decode[aBank->sourceID()]=ped_info;
+      m_pedestalData2Decode[aBank->sourceID()]= { aBank->size(), aBank->data() };
     }
 
   }

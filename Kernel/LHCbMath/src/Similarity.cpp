@@ -71,34 +71,34 @@ namespace LHCb {
 
       void similarity_5_1(span<const double,15> Ci, span<const double, 5> Fi, span<double,1> ti)
       {
-        auto vtbl = { std::make_pair( CPU::AVX2, avx2::similarity_5_1 ),
-                      std::make_pair( CPU::AVX, avx::similarity_5_1 ),
-                      std::make_pair( CPU::SSE3, sse3::similarity_5_1 ),
-                      std::make_pair( CPU::GENERIC, generic::similarity_5_1 ) };
+        auto vtbl = { std::pair{ CPU::AVX2, avx2::similarity_5_1 },
+                      std::pair{ CPU::AVX, avx::similarity_5_1 },
+                      std::pair{ CPU::SSE3, sse3::similarity_5_1 },
+                      std::pair{ CPU::GENERIC, generic::similarity_5_1 } };
         dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_1, Ci, Fi, ti );
       }
 
       void similarity_5_5(span<const double,15> Ci, span<const double,25> Fi, span<double,15> ti)
       {
-        auto vtbl = { std::make_pair( CPU::AVX2, avx2::similarity_5_5 ),
-                      std::make_pair( CPU::AVX, avx::similarity_5_5 ),
-                      std::make_pair( CPU::SSE3, sse3::similarity_5_5  ),
-                      std::make_pair( CPU::GENERIC, generic::similarity_5_5 ) };
+        auto vtbl = { std::pair{ CPU::AVX2, avx2::similarity_5_5 },
+                      std::pair{ CPU::AVX, avx::similarity_5_5 },
+                      std::pair{ CPU::SSE3, sse3::similarity_5_5  },
+                      std::pair{ CPU::GENERIC, generic::similarity_5_5 } };
         dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_5, Ci, Fi, ti );
       }
 
       void similarity_5_7(span<const double,15> Ci, span<const double,35> Fi, span<double,28> ti)
       {
-        auto vtbl = { std::make_pair( CPU::AVX2, avx2::similarity_5_7 ),
-                      std::make_pair( CPU::AVX, avx::similarity_5_7 ),
-                      std::make_pair( CPU::SSE3, sse3::similarity_5_7 ),
-                      std::make_pair( CPU::GENERIC, generic::similarity_5_7 ) };
+        auto vtbl = { std::pair{ CPU::AVX2, avx2::similarity_5_7 },
+                      std::pair{ CPU::AVX, avx::similarity_5_7 },
+                      std::pair{ CPU::SSE3, sse3::similarity_5_7 },
+                      std::pair{ CPU::GENERIC, generic::similarity_5_7 } };
         dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_7, Ci, Fi, ti );
       }
 
       void similarity_2_5(span<const double,3> Ci, span<const double,10> Fi, span<double,15> ti)
       {
-        auto vtbl = { std::make_pair( CPU::GENERIC, generic::similarity_2_5 ) };
+        auto vtbl = { std::pair{ CPU::GENERIC, generic::similarity_2_5 } };
         dispatch_fn( vtbl, LHCb::Math::detail::similarity_2_5, Ci, Fi, ti );
       }
 
@@ -106,18 +106,18 @@ namespace LHCb {
                    span<const double,5> X2, span<const double,15> C2,
                    span<double,5> X, span<double,15> C )
       {
-        auto vtbl = { std::make_pair( CPU::AVX2, avx2::average ),
-                      std::make_pair( CPU::AVX, avx::average ),
-                      std::make_pair( CPU::GENERIC, generic::average ) };
+        auto vtbl = { std::pair{ CPU::AVX2, avx2::average },
+                      std::pair{ CPU::AVX, avx::average },
+                      std::pair{ CPU::GENERIC, generic::average } };
         return dispatch_fn( vtbl, LHCb::Math::detail::average, X1, C1, X2, C2, X, C );
       }
 
       double filter( span<double,5> X, span<double,15> C,
                      span<const double,5> Xref, span<const double,5> H,
                      double refResidual, double errorMeas2 ) {
-        auto vtbl = { std::make_pair( CPU::AVX2, avx2::filter ),
-                      std::make_pair( CPU::AVX, avx::filter ),
-                      std::make_pair( CPU::GENERIC, generic::filter ) };
+        auto vtbl = { std::pair{ CPU::AVX2, avx2::filter },
+                      std::pair{ CPU::AVX, avx::filter },
+                      std::pair{ CPU::GENERIC, generic::filter } };
         return dispatch_fn( vtbl, LHCb::Math::detail::filter, X, C, Xref, H, refResidual, errorMeas2 );
       }
 

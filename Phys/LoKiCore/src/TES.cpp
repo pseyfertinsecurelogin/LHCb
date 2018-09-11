@@ -59,7 +59,7 @@ namespace
 }
 // ============================================================================
 /*  constructor from TES location and root-in-tes flag
- *  @param algorithm    own algorithm/context 
+ *  @param algorithm    own algorithm/context
  *  @param location     TES-location
  *  @param useRootInTES RootInTES-flag
  */
@@ -77,8 +77,8 @@ LoKi::TES::Get::Get
   // if ( gaudi() ) { getAlgSvc() ; }
 }
 // ============================================================================
-/*  constructor from TES location 
- *  @param datasvc    data service 
+/*  constructor from TES location
+ *  @param datasvc    data service
  *  @param location   TES-location
  */
 // ============================================================================
@@ -97,7 +97,7 @@ LoKi::TES::Get::Get
 // virtual destructor
 // ============================================================================
 LoKi::TES::Get::~Get()
-{ 
+{
   if ( m_algorithm && !gaudi() ) { m_algorithm .reset() ; }
   if ( m_datasvc   && !gaudi() ) { m_datasvc   .reset() ; }
 }
@@ -175,7 +175,7 @@ LoKi::TES::Contains::Contains
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Contains::Contains
-( const IDataProviderSvc* datasvc  , 
+( const IDataProviderSvc* datasvc  ,
   const std::string&      location )
   : LoKi::AuxFunBase ( std::tie ( datasvc , location ) )
   , LoKi::TES::Get ( datasvc , location )
@@ -190,7 +190,7 @@ LoKi::TES::Contains* LoKi::TES::Contains::clone() const
 // ============================================================================
 double LoKi::TES::Contains::operator() ( /* LoKi::TES::Contains::argument */ ) const
 {
-  const ObjectContainerBase *obj = 
+  const ObjectContainerBase *obj =
     LoKi::TES::get_<ObjectContainerBase> ( *this ) ;
   if ( !obj ) { return -1 ; }
   return obj -> numberOfObjects () ;
@@ -211,7 +211,7 @@ LoKi::TES::Contains::fillStream ( std::ostream& s ) const
 
 // ============================================================================
 LoKi::TES::Size::Size
-( const GaudiAlgorithm* algorithm ,  
+( const GaudiAlgorithm* algorithm ,
   const std::string&    location  )
   : LoKi::AuxFunBase ( std::tie ( algorithm , location ) )
   , LoKi::TES::DataHandle<DataObject> ( algorithm , location )
@@ -318,7 +318,7 @@ LoKi::TES::Counter::Counter
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Counter::Counter
-( const IDataProviderSvc* datasvc   , 
+( const IDataProviderSvc* datasvc   ,
   const std::string&      location  ,
   const std::string&      counter   )
   : LoKi::AuxFunBase ( std::tie ( datasvc , location , counter ) )
@@ -330,7 +330,7 @@ LoKi::TES::Counter::Counter
 // constructor from TES location
 // ============================================================================
 LoKi::TES::Counter::Counter
-( const IDataProviderSvc* datasvc , 
+( const IDataProviderSvc* datasvc ,
   const std::string&    location  ,
   const std::string&    counter   ,
   const double          bad       )
@@ -394,7 +394,7 @@ namespace LoKi
     /** Helper class used to extract information from a \c StatEntity object.
      *  @author Marco Clemencic <marco.clemencic@cern.ch>
      */
-    class StatEntityGetter 
+    class StatEntityGetter
     {
     private:
       /// List of known getters in \c StatEntity.
@@ -448,16 +448,16 @@ namespace LoKi
 
       /// Pointer to the actual instance of the Helper class.
       std::shared_ptr<const BaseHelper> m_helper;
-      
+
     public:
-      
+
       /// Constructor.
       /// Maps a string the the required Helper instance to extract the requested
       /// data member for \c StatEntity.
       StatEntityGetter(const std::string &fun) {
         using _t = std::pair<StatFunction,const char*>;
-        static const auto tbl = LHCb::make_array 
-          (
+        static const auto tbl = std::array
+          {
            // basic
            _t{ nEntries, "nEntries"   }, _t{ sum     , "sum"           },
            _t{ sum2    , "sum2"       }, _t{ mean    , "mean"          },
@@ -474,25 +474,25 @@ namespace LoKi
            _t{ eff     , "Eff"        }, _t{ effErr  , "EffErr"        },
            _t{ nEntries, "N"          }, _t{ nEntries, "Entries"       },
            _t{ nEntries, "entries"    }
-           );
-        
+           };
+
         auto i = std::find_if( tbl.begin(), tbl.end(),
                                [&]( const _t& p ) { return fun == p.second; } );
         if (UNLIKELY(i==tbl.end())) { throw LoKi::Exception("invalid function name '" + fun + "'") ; }
         setHelper(i->first);
       }
-      
+
       /// Accessor function.
       /// Forwards the call to the \c Helper instance.
-      inline double operator() (const StatEntity &ent) const
+      double operator() (const StatEntity &ent) const
       {
         assert(m_helper.get());
         return (*m_helper)(ent);
       }
-      
+
       /// Name of the \c StatEntity data member.
       /// Forwards the call to the \c Helper instance.
-      inline std::string name() const
+      std::string name() const
       {
         assert(m_helper.get());
         return m_helper->name();
@@ -579,7 +579,7 @@ LoKi::TES::Stat::Stat
   const std::string&            function     ,
   const double                  bad          ,
   const bool                    useRootInTes )
-  : LoKi::AuxFunBase (  std::tie ( algorithm , location , counter , 
+  : LoKi::AuxFunBase (  std::tie ( algorithm , location , counter ,
                                    function , bad , useRootInTes ) )
   , LoKi::TES::Counter ( algorithm , location , counter , bad , useRootInTes )
   , m_getter  ( std::make_shared<const StatEntityGetter>(function) )
@@ -605,7 +605,7 @@ LoKi::TES::Stat::Stat
   const std::string&      counter  ,
   const std::string&      function ,
   const double            bad      )
-  : LoKi::AuxFunBase (  std::tie ( datasvc , location , counter , 
+  : LoKi::AuxFunBase (  std::tie ( datasvc , location , counter ,
                                    function , bad ) )
   , LoKi::TES::Counter ( datasvc , location , counter , bad  )
   , m_getter  ( std::make_shared<const StatEntityGetter>(function) )

@@ -67,7 +67,7 @@ void CaloTriggerBitsFromRaw::cleanData(int feb ) {
     tempPrs.push_back( *iprs );
   }
   clear();
-  m_data = std::make_pair( std::move(tempPrs), std::move(tempSpd) );
+  m_data = { std::move(tempPrs), std::move(tempSpd) };
 }
 
 

@@ -169,7 +169,7 @@ namespace LHCb
       template <typename TYPE>
       inline double operator () ( const TYPE& obj ) const
       {
-        return ( obj ? 
+        return ( obj ?
                  obj->e() * std::sin( m_det->cellCenter(CellID(obj)).Theta() ) :
                  0.0 );
       }
@@ -608,10 +608,10 @@ namespace LHCb
         for( IT it2 = begin2 ; end2 != it2 ; ++it2 )
         {
           if( it1->digit() == it2->digit() )  // the same digit!
-          { return std::make_pair( it1 , it2 ); }
+          { return { it1 , it2 }; }
         }
       }
-      return std::make_pair( end1 , end2 );
+      return { end1 , end2 };
     }
     // ==========================================================================
 
@@ -635,9 +635,8 @@ namespace LHCb
                         IT end                 ,
                         const LHCb::CaloDigit* digit )
     {
-      using Arg = typename std::iterator_traits<IT>::reference;
-      return std::find_if( begin, end, 
-                           [&](Arg arg) { return arg->digit() == digit; } );
+      return std::find_if( begin, end,
+                           [&](const auto& arg) { return arg->digit() == digit; } );
     }
     // ==========================================================================
 
@@ -662,8 +661,7 @@ namespace LHCb
                          IT end                            ,
                          const LHCb::CaloDigitStatus::Status& st )
     {
-      using Arg = typename std::iterator_traits<IT>::reference;
-      return std::find_if( begin, end, [&](Arg arg) { return  st & arg.status(); } );
+      return std::find_if( begin, end, [&](const auto& arg) { return  st & arg.status(); } );
     }
     // ==========================================================================
 

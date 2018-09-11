@@ -516,7 +516,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
                       << " -- processing continues" << endmsg;
                }
             }
-            m_connectionMap.insert( std::make_pair( fid, e.release() ) );
+            m_connectionMap.insert( { fid, e.release() } );
             log << MSG::DEBUG << "connectDataIO (PFN)" << endmsg
                 << "connection fid: " <<  connection->fid() << endmsg
                 << "fid: " << fid << endmsg << "dsn: " << dsn << endmsg;

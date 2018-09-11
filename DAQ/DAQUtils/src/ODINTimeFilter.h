@@ -19,8 +19,6 @@ public:
   /// Standard constructor
   ODINTimeFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ODINTimeFilter( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization

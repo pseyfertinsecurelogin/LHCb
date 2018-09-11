@@ -447,8 +447,8 @@ makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
 
   LHCb::VeloCluster * fakeClus;
   if( liteCluster.pseudoSize() == 1){
-    fakeClus = new LHCb::VeloCluster( liteCluster, { std::make_pair(liteCluster.channelID().strip(),
-                                                                    liteCluster.highThreshold()?64:21) } );
+    fakeClus = new LHCb::VeloCluster( liteCluster, { std::pair{liteCluster.channelID().strip(),
+                                                               liteCluster.highThreshold()?64:21} } );
   }else{
     // always fake two strip clusters for two or more strip clusters
     // from pseudosize

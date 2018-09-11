@@ -40,7 +40,7 @@ public:
     if ( i != end() ) { // key already used
       i->second->set(val);
     } else {
-      insert(std::make_pair(key,new Param<T>(val)));
+      insert({key,new Param<T>(val)});
     }
   }
 
@@ -51,7 +51,7 @@ public:
       delete i->second;
       i->second = p.new_copy().release();
     } else {
-      insert(std::make_pair(key,p.new_copy().release()));
+      insert({key,p.new_copy().release()});
     }
   }
 

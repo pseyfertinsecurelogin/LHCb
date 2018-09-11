@@ -187,7 +187,7 @@ namespace {
         status = System::getProcedureByName(hdl,mod,(System::Creator*)&func);
         io = (func)();
         if ( io )  {
-          modules.insert(std::make_pair(mod,io));
+          modules.insert({mod,io});
           return io;
         }
       }

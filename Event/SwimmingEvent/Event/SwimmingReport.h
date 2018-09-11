@@ -148,10 +148,10 @@ public:
 
    void addTurningPoint(const std::string& stage, const LHCb::TurningPoint& tp)
    {
-      TurningPoints::iterator it = m_turningPoints.find(stage);
+      auto it = m_turningPoints.find(stage);
       if ( it == m_turningPoints.end() ) {
          std::vector<LHCb::TurningPoint> tps(1, tp);
-         m_turningPoints.insert(make_pair(stage, tps));
+         m_turningPoints.insert({stage, tps});
       } else {
          it->second.push_back(tp);
       }

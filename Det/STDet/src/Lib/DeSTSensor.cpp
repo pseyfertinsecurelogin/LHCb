@@ -195,7 +195,7 @@ StatusCode DeSTSensor::cacheInfo()
   m_midTraj = std::make_unique<LineTraj<double>>(g3,g4);
 
   // range ---> strip Length
-  m_range = std::make_pair(-0.5*m_stripLength,0.5*m_stripLength);
+  m_range = { -0.5*m_stripLength,0.5*m_stripLength };
 
   // plane
   m_plane =  Gaudi::Plane3D(g1,g2,g4);

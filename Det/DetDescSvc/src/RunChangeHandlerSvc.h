@@ -109,7 +109,7 @@ public:
       std::unique_lock<std::mutex> lock(m_mutex);
       auto h = m_cache.find(path);
       if (h == m_cache.end()) {
-        h = m_cache.emplace(std::make_pair(path, Hash_t{0})).first;
+        h = m_cache.emplace(std::pair{path, Hash_t{0}}).first;
         SHA_CTX c;
         SHA1_Init(&c);
         std::ifstream data(path, std::ios::binary);
@@ -212,7 +212,7 @@ private:
   Gaudi::Property<bool> m_forceUpdate{ this, "ForceUpdate", false,
    "Always invalidate files."};
 
-   
+
   typedef std::vector<CondData> Conditions;
   /// List of objects to modify
   Conditions m_conditions;

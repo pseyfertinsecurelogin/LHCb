@@ -59,8 +59,8 @@ StatusCode CaloMergeTAE::initialize() {
   }
   //
   std::tie( m_outDigit, m_outAdc ) = ( m_outputDataLoc.value().empty()
-                                     ? std::make_pair( "TAE/"+m_locDigit, "TAE/"+m_locAdc)
-                                     : std::make_pair( m_outputDataLoc.value(), m_outputDataLoc.value() ) );
+                                     ? std::pair{ "TAE/"+m_locDigit, "TAE/"+m_locAdc}
+                                     : std::pair{ m_outputDataLoc.value(), m_outputDataLoc.value() } );
 
   //
   if(m_slots.value().empty()){
