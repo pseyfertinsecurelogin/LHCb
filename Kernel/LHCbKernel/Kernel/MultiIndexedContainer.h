@@ -60,6 +60,39 @@ namespace Container
  * 			Renato Quagliani <Renato.Quagliani@cern.ch>,
  * 			Gerhard Raven <gerhard.raven@nikhef.nl>
  */
+
+
+namespace detail {
+    template <size_t ... J, size_t ... I>
+    constexpr auto prod(std::index_sequence<I...>)
+    {
+        return ( ... * std::get<I>(std::array{J...}) );
+    }
+
+    template <size_t N, size_t ... I>
+    constexpr auto pivot(std::index_sequence<I...>)
+    {
+        return std::index_sequence< N-I ... >{};
+    }
+
+    template <int M, size_t... Extent>
+    constexpr int stride() {
+        constexpr auto N = sizeof...(Extent);
+        static_assert(M<N);
+        if constexpr (M==N-1) {
+           return 1;
+        } else {
+           return prod<Extent...>(pivot<N-1>( std::make_index_sequence<(N-1)-M>()));
+        }
+    }
+
+    template <size_t ... Extent, typename T, size_t N, size_t ... Is >
+    constexpr int index_offset( std::array<T,N> i, std::index_sequence<Is...>)
+    {
+        return ( ... + (std::get<Is>(i)*stride<Is,Extent...>()) );
+    }
+}
+
 template<class Hit, size_t... sizes>
 class MultiIndexedContainer
 {
@@ -302,49 +335,10 @@ private:
 #endif
   Ids m_nIds;
 
-  /**
-   * Is it possible to do this in a more efficient manner?
-   * The table for [ (x,y,z) -> unsigned int ] is constant
-   * and can in principle already be generated at this objects
-   * construction.
-   *
-   * Is it therefore faster to cache the outcome of this?
-   */
-  template<typename ... Args>
-  constexpr static size_t getUniqueDetectorElementId(Args&& ... args)
+  template <typename ... I>
+  static constexpr int getUniqueDetectorElementId( I... i )
   {
-    constexpr auto nArguments = sizeof...(args);
-    constexpr auto detector_geometry = std::array{ sizes... };
-    const auto x_array = std::array{ size_t(args)... }; // convert the arguments to size_t array
-
-    static_assert((nArguments <= sizeof...(sizes)),
-        "The number of indices provided is strictly higher than the nesting for this subdetector.");
-
-    size_t uniqueDetectorElementId = 0;
-
-    // The actual logic:
-    //
-    // For the geometry [1,1]
-    // (0,0) -> 0
-    // (0,1) -> 1
-    // (1,0) -> 2
-    // (1) -> 2
-    // (0) -> 0
-    for (unsigned int argumentId = 0; argumentId < sizeof...(sizes); argumentId++)
-    {
-      auto x = (sizeof...(args) - 1 < argumentId ? 0 : x_array[ argumentId ]);
-
-      for (unsigned int detectorId = argumentId+1;
-          detectorId < sizeof...(sizes);
-          detectorId++)
-      {
-        uniqueDetectorElementId += x * detector_geometry[ detectorId ];
-      }
-    }
-
-    uniqueDetectorElementId += x_array[ sizeof...(args) - 1 ];
-
-    return uniqueDetectorElementId;
+      return detail::index_offset<sizes...>( std::array{ i... }, std::index_sequence_for<I...>{} );
   }
 
   template<typename ... Args>
