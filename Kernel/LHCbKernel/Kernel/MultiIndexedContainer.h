@@ -75,22 +75,35 @@ namespace detail {
         return std::index_sequence< N-I ... >{};
     }
 
-    template <int M, size_t... Extent>
-    constexpr int stride() {
-        constexpr auto N = sizeof...(Extent);
-        static_assert(M<N);
-        if constexpr (M==N-1) {
-           return 1;
-        } else {
-           return prod<Extent...>(pivot<N-1>( std::make_index_sequence<(N-1)-M>()));
-        }
-    }
-
-    template <size_t ... Extent, typename T, size_t N, size_t ... Is >
-    constexpr int index_offset( std::array<T,N> i, std::index_sequence<Is...>)
+    template <size_t ... Extent >
+    struct Extents
     {
-        return ( ... + (std::get<Is>(i)*stride<Is,Extent...>()) );
-    }
+        template <size_t Dim>
+        static constexpr int size() { return std::get<Dim>( std::array{ Extent... } ); }
+
+        template <int M>
+        static constexpr int stride() {
+            constexpr auto N = sizeof...(Extent);
+            static_assert(M<N);
+            if constexpr (M==N-1) {
+               return 1;
+            } else {
+               return prod<Extent...>(pivot<N-1>( std::make_index_sequence<(N-1)-M>()));
+            }
+        }
+
+        template <typename T, size_t N, size_t ... Is >
+        static constexpr int index_offset( std::array<T,N> i, std::index_sequence<Is...>)
+        {
+            return ( ... + (std::get<Is>(i)*stride<Is>()) );
+        }
+
+        template <typename ... Is>
+        static constexpr int offset( Is ... is )
+        {
+            return index_offset( std::array{ is... }, std::index_sequence_for<Is...>{} );
+        }
+    };
 }
 
 template<class Hit, size_t... sizes>
@@ -338,7 +351,7 @@ private:
   template <typename ... I>
   static constexpr int getUniqueDetectorElementId( I... i )
   {
-      return detail::index_offset<sizes...>( std::array{ i... }, std::index_sequence_for<I...>{} );
+      return detail::Extents<sizes...>::offset( i... );
   }
 
   template<typename ... Args>
