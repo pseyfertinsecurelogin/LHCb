@@ -16,6 +16,8 @@
       desc="Class to store IO information about a job, upgraded EventAccountFSR, needs a special FSRWriter to add file-by-file"
       stdVectorTypeDef="TRUE"
       id="13506"
+      final = "TRUE"
+      defaultdestructor= "FALSE"
       serializers="TRUE"
       >
 

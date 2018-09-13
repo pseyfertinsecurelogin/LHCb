@@ -210,6 +210,8 @@
       name        = 'HltSelReports'
       author      = 'Tomasz Skwarnicki'
       desc        = 'managed container of Hlt Selection Reports'
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id          = '7531' >
 
       <location name='Default'  place='Hlt/SelReports' />

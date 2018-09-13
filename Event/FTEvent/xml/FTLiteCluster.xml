@@ -55,7 +55,7 @@
         <bitfield name    = 'pseudoSize'
                   length  = '4'
                   desc    = 'number of cells in the cluster'
-                  setMeth = "TRUE"
+                  setMeth = "FALSE"
                   getMeth = "TRUE"/>
       </attribute>
       
@@ -68,10 +68,6 @@
         </code>
       </constructor>
 
-      <destructor  desc="destructor">
-        <code> </code>
-      </destructor>
-      
       <method name   = "channelID"
               type   = "LHCb::FTChannelID"
               access = "PUBLIC"
