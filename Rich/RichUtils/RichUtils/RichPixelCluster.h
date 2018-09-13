@@ -363,6 +363,8 @@ namespace Rich
 
   public:
 
+    // Note : Do not remove the destructor below !! It is required.
+
     /// virtual destructor
     virtual ~PDPixelClustersBuilder() = default;
 
