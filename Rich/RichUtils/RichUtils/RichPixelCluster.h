@@ -363,11 +363,8 @@ namespace Rich
 
   public:
 
-    /// default constructor
-    PDPixelClustersBuilder() = default;
-
     /// virtual destructor
-    virtual ~PDPixelClustersBuilder() { }
+    virtual ~PDPixelClustersBuilder() = default;
 
   public:
 
