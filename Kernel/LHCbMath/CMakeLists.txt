@@ -226,5 +226,7 @@ gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
 
-gaudi_add_unit_test(TestFastMath tests/TestFastMath.cpp LINK_LIBRARIES LHCbMathLib rt)
-
+# Disable under sanitizer as timing is skewed
+if (NOT SANITIZER_ENABLED)
+  gaudi_add_unit_test(TestFastMath tests/TestFastMath.cpp LINK_LIBRARIES LHCbMathLib rt)
+endif()
