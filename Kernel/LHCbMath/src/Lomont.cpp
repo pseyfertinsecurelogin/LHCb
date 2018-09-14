@@ -43,14 +43,10 @@ namespace
   typedef _Longs::Long  Long  ;
   typedef _Longs::ULong ULong ;
   // ==========================================================================
-  ///  maximal int
-  static const constexpr int  const_max_int  = std::numeric_limits<int>::max  () ;
-  ///  maximal Long
-  static const constexpr Long const_max_long = std::numeric_limits<Long>::max () ;
-  ///  minimal int
-  static const constexpr int  const_min_int  = std::numeric_limits<int>::min  () ;
-  ///  minimal Long
-  static const constexpr Long const_min_long = std::numeric_limits<Long>::min () ;
+  ///  lowest int
+  static const constexpr int  const_low_int  = std::numeric_limits<int>::lowest  () ;
+  ///  lowest Long
+  static const constexpr Long const_low_long = std::numeric_limits<Long>::lowest () ;
   // ==========================================================================
   /// the final check
   static_assert( std::numeric_limits<double>  ::is_specialized &&
@@ -66,20 +62,20 @@ namespace
   template< typename TYPE >
   inline constexpr TYPE _safe_sum_( const TYPE a, const TYPE b )
   {
-    const constexpr TYPE tMin = std::numeric_limits<TYPE>::min();
+    const constexpr TYPE tLow = std::numeric_limits<TYPE>::lowest();
     const constexpr TYPE tMax = std::numeric_limits<TYPE>::max();
     return ( a > 0 && tMax - a < b ? tMax :
-             b < 0 && a < tMin - b ? tMin :
+             b < 0 && a < tLow - b ? tLow :
              a + b );
   }
   /// over/under flow safe negation
   template< typename TYPE >
   inline constexpr TYPE _safe_negate_( const TYPE a )
   {
-    const constexpr TYPE tMin = std::numeric_limits<TYPE>::min();
+    const constexpr TYPE tLow = std::numeric_limits<TYPE>::lowest();
     const constexpr TYPE tMax = std::numeric_limits<TYPE>::max();
-    return ( tMin == a ? tMax :
-             tMax == a ? tMin : 
+    return ( tLow == a ? tMax :
+             tMax == a ? tLow : 
              -a );
   }
   // ==========================================================================
@@ -193,7 +189,7 @@ namespace
     const int test = (((unsigned int)(ai^bi))>>31)-1;
     //
     // test for underflow
-    const int diff = ( ai > 0 ? const_min_int : const_min_int - ai );
+    const int diff = ( ai > 0 ? const_low_int : const_low_int - ai );
     // return
     return ( ( ( diff ) & ( ~test ) ) | ( ai& test ) ) - bi ;
   }
@@ -228,7 +224,7 @@ namespace
     const Long test = (((ULong)(ai^bi))>>63)-1;
     //
     // catch underflows
-    const Long diff = ( ai > 0 ? const_min_long : const_min_long - ai );
+    const Long diff = ( ai > 0 ? const_low_long : const_low_long - ai );
     //
     // return
     return ( ( ( diff ) & ( ~test ) ) | ( ai & test ) ) - bi ;
