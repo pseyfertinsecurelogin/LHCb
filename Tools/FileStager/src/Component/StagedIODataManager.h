@@ -37,16 +37,12 @@ protected:
    typedef std::map<std::string,Entry*>       ConnectionMap;
    typedef std::map<std::string, std::string> FidMap;
 
-   /// Property: Name of the file catalog service
-   std::string m_catalogSvcName;
-   std::string m_stagerSvcName;
-
-   /// Property: Age limit
-   int m_ageLimit;
-   /// Property: Flag for auto gfal data access
-   bool m_useGFAL;
-   /// Property: Flag if unaccessible files should be quarantines in job
-   bool m_quarantine;
+   Gaudi::Property<std::string> m_catalogSvcName{this, "CatalogType", "Gaudi::MultiFileCatalog/FileCatalog"};
+   Gaudi::Property<std::string> m_stagerSvcName{this, "StagerType", "FileStagerSvc/FileStagerSvc"};
+   Gaudi::Property<int> m_ageLimit{this, "AgeLimit", 2};
+   Gaudi::Property<bool> m_useGFAL{this, "UseGFAL", true};
+   Gaudi::Property<bool> m_quarantine{this, "QuarantineFiles", true};
+   Gaudi::Property<bool> m_disablePFNWarning{this, "DisablePFNWarning", true};
 
    /// Map with I/O descriptors
    ConnectionMap m_connectionMap;
@@ -64,13 +60,7 @@ protected:
 
 public:
 
-   /** Initializing constructor
-    *  @param[in]   nam   Name of the service
-    *  @param[in]   loc   Pointer to the service locator object
-    *  @return Initialized reference to service object
-    */
-   StagedIODataManager(CSTR nam, ISvcLocator* loc);
-
+   using base_class::base_class;
 
    /// IService implementation: initialize the service
    StatusCode initialize() override;
