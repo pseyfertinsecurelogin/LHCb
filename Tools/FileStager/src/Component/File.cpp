@@ -87,14 +87,12 @@ boost::uintmax_t  File::size() const
          boost::smatch matches;
          boost::match_flag_type flags = boost::match_default;
          boost::regex_search( m_remote.begin(), m_remote.end(), matches, re_xrd, flags );
-         command << "xrd";
-         size_t size_line = 0;
+         command << "xrdfs " << matches[1];
          if (matches.length(2)) {
-            command << " -DIport " << matches[2];
-            size_line = 1;
+            command << ":" << matches[2];
          }
-         command << " " << matches[1] << " \"stat " << matches.suffix() << "\" 2>&1";
-         m_size = get_size( command.str(), size_line, 1);
+         command << " stat " << matches.suffix() << " 2>&1";
+         m_size = get_size( command.str(), 2, 0);
       } else if ( args[0] == "scp" ) {
          stringstream command;
          boost::regex re_ssh{"(^[a-zA-z0-9\\.-]+):"};

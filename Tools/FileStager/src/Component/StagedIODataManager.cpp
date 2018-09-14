@@ -34,17 +34,6 @@ static const auto S_ERROR = StatusCode::FAILURE;
 static std::set<std::string>    s_badFiles;
 
 //=============================================================================
-StagedIODataManager::StagedIODataManager(CSTR nam, ISvcLocator* svcloc)
-   : base_class(nam, svcloc), m_ageLimit(2)
-{
-   declareProperty("CatalogType",     m_catalogSvcName="Gaudi::MultiFileCatalog/FileCatalog");
-   declareProperty("StagerType",     m_stagerSvcName="FileStagerSvc/FileStagerSvc");
-   declareProperty("UseGFAL",         m_useGFAL = true);
-   declareProperty("QuarantineFiles", m_quarantine = true);
-   declareProperty("AgeLimit",        m_ageLimit = 2);
-}
-
-//=============================================================================
 /// IService implementation: Db event selector override
 StatusCode StagedIODataManager::initialize()
 {
@@ -64,7 +53,7 @@ StatusCode StagedIODataManager::initialize()
    {
       log << MSG::ERROR
           << "Unable to localize interface IFileCatalog from service:"
-          << m_catalogSvcName << endmsg;
+          << m_catalogSvcName.value() << endmsg;
       return StatusCode::FAILURE;
    }
 
@@ -190,22 +179,24 @@ StatusCode StagedIODataManager::disconnect(Connection* con)
       auto j = m_fidMap.find(dataset);
       if ( j != m_fidMap.end() )
       {
-         std::vector<FidMap::iterator> toRemove( 1, j );
+         std::vector<FidMap::iterator> toRemove;
          std::string fid;
-         while ( true ) {
-            auto it = m_fidMap.find(j->second);
-            if ( it != m_fidMap.end() ) toRemove.push_back( it );
-            if ( it == m_fidMap.end() ) {
-               break;
-            } else if ( it->first == it->second ) {
-               fid = it->second;
+         auto j = m_fidMap.find(dataset);
+         while (j != m_fidMap.end()) {
+            toRemove.push_back(j);
+            if (j->second == j->first) {
                break;
             }
-            j = it;
+            j = m_fidMap.find(j->second);
+         }
+         if (j!= m_fidMap.end()) {
+            fid = j->second;
          }
 
          std::string gfal_name = "gfal:guid:" + fid;
-         for ( const auto& i : toRemove) m_fidMap.erase(i);
+         for ( const auto& i : toRemove) {
+            m_fidMap.erase(i);
+         }
          auto i=m_connectionMap.find(fid);
          if ( (j=m_fidMap.find(gfal_name)) != m_fidMap.end() )
             m_fidMap.erase(j);
@@ -257,7 +248,7 @@ StatusCode StagedIODataManager::reconnect(Entry* e)
             IDataConnection* c = i.second->connection;
             if ( e->connection != c && c->isConnected() && !i.second->keepOpen ) {
                c->ageFile();
-               if ( c->age() > m_ageLimit ) {
+               if ( c->age() > m_ageLimit.value() ) {
                   to_retire.push_back(i.second);
                }
             }
@@ -378,14 +369,14 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
                StatusCode sc1 = m_stager->getLocal( dsn, local );
                if ( sc1.isSuccess() ) {
                   staged = true;
-               } else if ( m_useGFAL && dsn.length() == 36 && dsn[8]=='-' && dsn[13]=='-' ) {
+               } else if ( m_useGFAL.value() && dsn.length() == 36 && dsn[8]=='-' && dsn[13]=='-' ) {
                   std::string gfal_name = "gfal:guid:" + dsn;
                   m_fidMap[dsn] = m_fidMap[dataset] = m_fidMap[gfal_name] = dsn;
                   sc1 = connectDataIO(PFN, rw, gfal_name, technology, keep_open, connection);
                   if ( sc1.isSuccess() ) return sc1;
                }
                if ( !staged ) {
-                  if ( m_quarantine ) s_badFiles.insert(dsn);
+                  if ( m_quarantine.value() ) s_badFiles.insert(dsn);
                   m_incSvc->fireIncident(Incident(dsn,IncidentType::FailInputFile));
                   error("connectDataIO> Failed to resolve FID:"+dsn,false).ignore();
                   return IDataConnection::BAD_DATA_CONNECTION;
@@ -403,7 +394,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
             sc = connectDataIO(PFN, rw, pfn, technology, keep_open, connection);
             if ( !sc.isSuccess() )
             {
-               if ( m_quarantine ) s_badFiles.insert(pfn);
+               if ( m_quarantine.value() ) s_badFiles.insert(pfn);
                m_incSvc->fireIncident(Incident(pfn,IncidentType::FailInputFile));
                return IDataConnection::BAD_DATA_CONNECTION;
             }
@@ -411,10 +402,6 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
             return sc;
          }
          return S_ERROR;
-         //Connection* c = (*fi).second->connection;
-         //sc = connectDataIO(PFN, rw, c->pfn(), technology, keep_open, connection);
-         //if ( !sc.isSuccess() && m_quarantine ) s_badFiles.insert(c->pfn());
-         //return sc;
       }
       std::string fid;
       FidMap::iterator j = m_fidMap.find( dsn );
@@ -498,7 +485,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
             // Here we open the file!
             if ( !reconnect(e.get()).isSuccess() )
             {
-               if ( m_quarantine ) s_badFiles.insert(dsn);
+               if ( m_quarantine.value() ) s_badFiles.insert(dsn);
                m_incSvc->fireIncident(Incident(dsn,IncidentType::FailInputFile));
                error("connectDataIO> Cannot connect to database: PFN="+dsn+" FID="+fid,false).ignore();
                return IDataConnection::BAD_DATA_CONNECTION;
@@ -508,7 +495,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
             m_fidMap[dataset] = m_fidMap[dsn] = m_fidMap[fid] = fid;
             if (  !(rw==Connection::CREATE || rw==Connection::RECREATE) )
             {
-               if ( strcasecmp(dsn.c_str(),fid.c_str()) == 0 )
+               if ( strcasecmp(dsn.c_str(),fid.c_str()) == 0 && !m_disablePFNWarning.value() )
                {
                   log << MSG::ERROR << "Referring to existing dataset " << dsn
                       << " by its physical name." << endmsg;
@@ -531,7 +518,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
 
             if ( !reconnect(fi->second).isSuccess() )
             {
-               if ( m_quarantine ) s_badFiles.insert(dsn);
+               if ( m_quarantine.value() ) s_badFiles.insert(dsn);
                m_incSvc->fireIncident(Incident(dsn,IncidentType::FailInputFile));
                error("connectDataIO> Cannot connect to database: PFN="+dsn+" FID="+fid,false).ignore();
                return IDataConnection::BAD_DATA_CONNECTION;
