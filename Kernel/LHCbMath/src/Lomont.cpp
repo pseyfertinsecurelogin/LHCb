@@ -43,10 +43,10 @@ namespace
   typedef _Longs::Long  Long  ;
   typedef _Longs::ULong ULong ;
   // ==========================================================================
-  ///  minimal int
-  const int  const_min_int  = std::numeric_limits<int>::min  () ;
-  ///  minimal Long
-  const Long const_min_long = std::numeric_limits<Long>::min () ;
+  ///  lowest int
+  static const constexpr int  const_low_int  = std::numeric_limits<int>::lowest  () ;
+  ///  lowest Long
+  static const constexpr Long const_low_long = std::numeric_limits<Long>::lowest () ;
   // ==========================================================================
   /// the final check
   static_assert( std::numeric_limits<double>  ::is_specialized &&
@@ -58,7 +58,26 @@ namespace
                  sizeof(double)==sizeof(ULong)                 &&
                  64 == std::numeric_limits<ULong>::digits      , "FAILED ASSUMPTIONS") ;
   // ==========================================================================
-
+  /// over/under-flow safe sum
+  template< typename TYPE >
+  inline constexpr TYPE _safe_sum_( const TYPE a, const TYPE b )
+  {
+    const constexpr TYPE tLow = std::numeric_limits<TYPE>::lowest();
+    const constexpr TYPE tMax = std::numeric_limits<TYPE>::max();
+    return ( a > 0 && tMax - a < b ? tMax :
+             b < 0 && a < tLow - b ? tLow :
+             a + b );
+  }
+  /// over/under flow safe negation
+  template< typename TYPE >
+  inline constexpr TYPE _safe_negate_( const TYPE a )
+  {
+    const constexpr TYPE tLow = std::numeric_limits<TYPE>::lowest();
+    const constexpr TYPE tMax = std::numeric_limits<TYPE>::max();
+    return ( tLow == a ? tMax :
+             tMax == a ? tLow : 
+             -a );
+  }
   // ==========================================================================
   /** @struct Cast_F
    *  Helper structure to perfrom "cast" between int and float
@@ -79,9 +98,9 @@ namespace
   public:
     // ========================================================================
     /// int -> float
-    float i2f ( const int   i ) { m_f.i = i ; return m_f.f ; } // int   -> float
+    float i2f ( const int   i ) noexcept { m_f.i = i ; return m_f.f ; } // int   -> float
     /// float -> in
-    int   f2i ( const float f ) { m_f.f = f ; return m_f.i ; } // float -> int
+    int   f2i ( const float f ) noexcept { m_f.f = f ; return m_f.i ; } // float -> int
     // ========================================================================
   private:
     // ========================================================================
@@ -95,7 +114,7 @@ namespace
   private:
     // ========================================================================
     /// the helper union
-    Float_U m_f ;                                           // the helper union
+    Float_U m_f { 0.0f };                                   // the helper union
     // ========================================================================
   } ;
   // ==========================================================================
@@ -136,7 +155,7 @@ namespace
   private:
     // ========================================================================
     /// the helper union
-    Double_U m_d ;                                          // the helper union
+    Double_U m_d { 0.0 };                                   // the helper union
     // ========================================================================
   } ;
   // ==========================================================================
@@ -145,17 +164,22 @@ namespace
                                 const float bf )
   {
     //
-    if      ( af == bf    ) { return 0 ; }
-    else if ( af >  bf    ) { return -_distance_float_ ( bf , af ) ; }
+    if      ( UNLIKELY( af == bf ) ) { return 0 ; }
+    else if ( af >  bf    ) 
+    {
+      return _safe_negate_( _distance_float_ ( bf , af ) );
+    }
     //
     // both numbers are negative:
-    if      ( bf < 0      ) { return _distance_float_ ( -bf , -af ) ; }
+    else if ( bf < 0      ) 
+    {
+      return _distance_float_ ( _safe_negate_(bf) , _safe_negate_(af) ) ;
+    }
     // both numbers have differrent  signs:
     else if ( af < 0 && 0 < bf )
     {
-      return
-        _distance_float_ ( af   , 0.0f ) +
-        _distance_float_ ( 0.0f ,   bf ) ;
+      return _safe_sum_( _distance_float_ ( af   , 0.0f ),
+                         _distance_float_ ( 0.0f ,   bf ) );
     }
     //
     Cast_F caster{} ;
@@ -164,7 +188,10 @@ namespace
     const int bi   = caster.f2i ( bf ) ;
     const int test = (((unsigned int)(ai^bi))>>31)-1;
     //
-    return ((( const_min_int - ai ) & (~test)) | ( ai& test )) - bi ;
+    // test for underflow
+    const int diff = ( ai > 0 ? const_low_int : const_low_int - ai );
+    // return
+    return ( ( ( diff ) & ( ~test ) ) | ( ai& test ) ) - bi ;
   }
   // ==========================================================================
   // kind of "distance" between two doubles
@@ -172,17 +199,22 @@ namespace
                                    const double bf )
   {
     //
-    if      ( af == bf    ) { return 0 ; }
-    else if ( af >  bf    ) { return - _distance_double_ (  bf ,  af ) ; }
+    if      ( UNLIKELY( af == bf ) ) { return 0 ; }
+    else if ( af >  bf    ) 
+    {
+      return _safe_negate_( _distance_double_ (  bf ,  af ) );
+    }
     //
     // both numbers are negative:
-    if      ( bf < 0      ) { return   _distance_double_ ( -bf , -af ) ; }
-    // both numbers have differrent  signs:
+    else if  ( bf < 0      )
+    {
+      return _distance_double_ ( _safe_negate_(bf) , _safe_negate_(af) ) ;
+    }
+    // both numbers have different  signs:
     else if ( af < 0 && 0 < bf )
     {
-      return
-        _distance_double_ ( af   , 0.0l ) +
-        _distance_double_ ( 0.0l ,   bf ) ;
+      return _safe_sum_( _distance_double_ ( af   , 0.0l ),
+                         _distance_double_ ( 0.0l ,   bf ) );
     }
     //
     Cast_D caster{} ;
@@ -191,29 +223,31 @@ namespace
     const Long bi   = caster.d2l ( bf ) ;
     const Long test = (((ULong)(ai^bi))>>63)-1;
     //
-    return ((( const_min_long - ai ) & (~test)) | ( ai& test )) - bi ;
+    // catch underflows
+    const Long diff = ( ai > 0 ? const_low_long : const_low_long - ai );
+    //
+    // return
+    return ( ( ( diff ) & ( ~test ) ) | ( ai & test ) ) - bi ;
   }
   // ==========================================================================
-  inline bool _compare_float_
-  ( const float          af      ,
-    const float          bf      ,
-    const unsigned short maxULPs )
+  inline bool _compare_float_ ( const float          af      ,
+                                const float          bf      ,
+                                const unsigned short maxULPs )
   {
     //
     const int diff     = _distance_float_ ( af  , bf ) ;
     //
     const int maxDiff_ = maxULPs ;
     //
-    const int v1       = maxDiff_ + diff ;
-    const int v2       = maxDiff_ - diff ;
+    const int v1       = _safe_sum_( maxDiff_ ,  diff );
+    const int v2       = _safe_sum_( maxDiff_ , _safe_negate_(diff) );
     //
     return 0 <= ( v1 | v2 ) ;
   }
   // ==========================================================================
-  bool _compare_double_
-  ( const double       af      ,
-    const double       bf      ,
-    const unsigned int maxULPs )
+  bool _compare_double_ ( const double       af      ,
+                          const double       bf      ,
+                          const unsigned int maxULPs )
   {
     // ==========================================================================
     //
@@ -221,8 +255,8 @@ namespace
     //
     const Long maxDiff_ = maxULPs ;
     //
-    const Long v1       = maxDiff_ + diff ;
-    const Long v2       = maxDiff_ - diff ;
+    const Long v1       = _safe_sum_( maxDiff_ ,  diff );
+    const Long v2       = _safe_sum_( maxDiff_ , _safe_negate_(diff) );
     //
     return 0 <= ( v1 | v2 ) ;
   }
@@ -231,12 +265,16 @@ namespace
   inline float _next_float_ ( const float af , const short ulps )
   {
     if      ( 0 == ulps ) { return af ; }
-    else if ( 0 > af    ) { return -_next_float_ ( -af , -ulps ) ; }
+    else if ( 0 > af    ) 
+    {
+      return _safe_negate_( _next_float_ ( _safe_negate_(af) , 
+                                           _safe_negate_(ulps) ) );
+    }
     //
     if ( 0 > ulps )
     {
       const int d = _distance_float_ ( af , 0.0f ) + ulps ;
-      if (  d < 0 ) { return -_next_float_ ( 0.0f , -d ) ; }
+      if (  d < 0 ) { return -_next_float_ ( 0.0f , _safe_negate_(d) ) ; }
     }
     //
     Cast_F caster{} ;
@@ -249,12 +287,16 @@ namespace
   inline double _next_double_ ( const double ad , const short ulps )
   {
     if      ( 0 == ulps ) { return ad ; }
-    else if ( 0 > ad    ) { return -_next_double_ ( -ad , -ulps ) ; }
+    else if ( 0 > ad    ) 
+    {
+      return _safe_negate_( _next_double_ ( _safe_negate_(ad) ,
+                                            _safe_negate_(ulps) ) );
+    }
     //
     if ( 0 > ulps )
     {
       const Long d = _distance_double_ ( ad , 0 ) + ulps ;
-      if (  d < 0 ) { return -_next_double_ ( 0 , -d ) ; }
+      if (  d < 0 ) { return -_next_double_ ( 0 , _safe_negate_(d) ) ; }
     }
     //
     Cast_D caster{} ;
