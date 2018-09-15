@@ -116,7 +116,7 @@ public:
 
   void notifyParents(std::vector<NodeState> &NodeStates) const;
 
-  bool requested(std::vector<NodeState> &NodeStates) const;
+  bool requested(std::vector<NodeState> const &NodeStates) const;
 
 }; // end of BasicNode
 
@@ -144,7 +144,7 @@ public:
   // calls this->notifyParents() and recursively notifyParents again
   void notifyParents(std::vector<NodeState> &NodeStates) const {
     for (VNode *Vparent : m_parents) {
-      std::visit(overload{[this, &NodeStates](auto &parent) {
+      std::visit(overload{[&](auto &parent) {
                             if (NodeStates[parent.m_NodeID].executionCtr != 0)
                               parent.updateStateAndNotify(m_NodeID, NodeStates);
                           },
@@ -165,16 +165,16 @@ public:
   // and we continue to resolve the recursion, asking each composite
   // ControlFlowNode if it is active. If any of the parents of the basic
   // ControlFlowNode, it will be executed.
-  bool requested(std::vector<NodeState> &NodeStates) const {
+  bool requested(std::vector<NodeState> const &NodeStates) const {
     return m_parents.empty() ||
-      std::any_of(begin(m_parents), end(m_parents), [&NodeStates](VNode const * Vparent) {
-        return std::visit(overload{[&NodeStates](auto const &parent) { return parent.isActive(NodeStates); },
+      std::any_of(begin(m_parents), end(m_parents), [&](VNode const * Vparent) {
+        return std::visit(overload{[&](auto const &parent) { return parent.isActive(NodeStates); },
                                    [](BasicNode const &) { return false; }},
                    *Vparent);
       });
   } // end of requested
 
-  bool isActive(std::vector<NodeState> &NodeStates) const {
+  bool isActive(std::vector<NodeState> const & NodeStates) const {
     return NodeStates[m_NodeID].executionCtr != 0 && requested(NodeStates);
   }
 
@@ -251,8 +251,8 @@ template <>
 void CompositeNode<nodeType::NONLAZY_OR>::updateStateAndNotify(int, std::vector<NodeState> &NodeStates) const {
   NodeStates[m_NodeID].executionCtr--;
   if (NodeStates[m_NodeID].executionCtr == 0) {
-    NodeStates[m_NodeID].passed = std::any_of(begin(m_children), end(m_children), [&] (VNode* vchild) {
-      return std::visit([&](auto &child) { return NodeStates[child.m_NodeID].passed; }, *vchild);
+    NodeStates[m_NodeID].passed = std::any_of(begin(m_children), end(m_children), [&] (VNode const * vchild) {
+      return std::visit([&](auto const & child) { return NodeStates[child.m_NodeID].passed; }, *vchild);
     });
     notifyParents(NodeStates);
   }
@@ -262,8 +262,8 @@ template <>
 void CompositeNode<nodeType::NONLAZY_AND>::updateStateAndNotify(int, std::vector<NodeState> &NodeStates) const {
   NodeStates[m_NodeID].executionCtr--;
   if (NodeStates[m_NodeID].executionCtr == 0) {
-    NodeStates[m_NodeID].passed = std::all_of(begin(m_children), end(m_children), [&] (VNode* vchild) {
-      return std::visit([&](auto &child) { return NodeStates[child.m_NodeID].passed; }, *vchild);
+    NodeStates[m_NodeID].passed = std::all_of(begin(m_children), end(m_children), [&] (VNode const * vchild) {
+      return std::visit([&](auto const & child) { return NodeStates[child.m_NodeID].passed; }, *vchild);
     });
     notifyParents(NodeStates);
   }
@@ -272,17 +272,17 @@ void CompositeNode<nodeType::NONLAZY_AND>::updateStateAndNotify(int, std::vector
 template <>
 void CompositeNode<nodeType::NOT>::updateStateAndNotify(int, std::vector<NodeState> &NodeStates) const {
   NodeStates[m_NodeID].executionCtr--;
-  NodeStates[m_NodeID].passed = !std::visit([&NodeStates](auto &child) {
+  NodeStates[m_NodeID].passed = !std::visit([&](auto const & child) {
                                  return NodeStates[child.m_NodeID].passed; }, *m_children.front());
   notifyParents(NodeStates);
 }
 
 
 // just the same as CompositeNode::requested()
-bool BasicNode::requested(std::vector<NodeState> &NodeStates) const {
+bool BasicNode::requested(std::vector<NodeState> const &NodeStates) const {
   return m_parents.empty() ||
-    std::any_of(begin(m_parents), end(m_parents), [&NodeStates](VNode const * Vparent) {
-      return std::visit(overload{[&NodeStates](auto const &parent) { return parent.isActive(NodeStates); },
+    std::any_of(begin(m_parents), end(m_parents), [&](VNode const * Vparent) {
+      return std::visit(overload{[&](auto const &parent) { return parent.isActive(NodeStates); },
                                  [](BasicNode const &) { return false; }},
                  *Vparent);
     });
@@ -292,7 +292,7 @@ bool BasicNode::requested(std::vector<NodeState> &NodeStates) const {
 // just the same as CompositeNode::notifyParents
 void BasicNode::notifyParents(std::vector<NodeState> &NodeStates) const {
   for (VNode *Vparent : m_parents) {
-    std::visit(overload{[this, &NodeStates](auto &parent) {
+    std::visit(overload{[&](auto &parent) {
                           if (NodeStates[parent.m_NodeID].executionCtr != 0)
                             parent.updateStateAndNotify(m_NodeID, NodeStates);
                         },
@@ -303,9 +303,9 @@ void BasicNode::notifyParents(std::vector<NodeState> &NodeStates) const {
 
 // ----------DEFINITION OF FUNCTIONS FOR SCHEDULING---------------------------------------
 template<template<typename> class Container>
-std::optional<VNode*> findVNodeInContainer(std::string_view name, Container<VNode> & container) {
-  auto it = std::find_if(std::begin(container), std::end(container), [name](auto &cnode) {
-        return getNameOfVNode(cnode) == name ;
+std::optional<VNode *> findVNodeInContainer(std::string_view name, Container<VNode> & container) {
+  auto it = std::find_if(std::begin(container), std::end(container), [name](auto & cnode) {
+        return getNameOfVNode(cnode) == name;
       });
   if ( it != std::end(container) ) { return (&*it); }
   else { return {}; }
@@ -314,7 +314,7 @@ std::optional<VNode*> findVNodeInContainer(std::string_view name, Container<VNod
 
 void childrenNamesToPointers(std::vector<VNode> &allNodes) {
   for (VNode &vnode : allNodes) {
-    std::visit(overload{[&allNodes](auto &node) {
+    std::visit(overload{[&](auto &node) {
                           for (std::string_view name : node.m_childrenNames) {
                             auto OptPtr = findVNodeInContainer(name, allNodes);
                             if (OptPtr) { node.m_children.push_back(OptPtr.value());
@@ -330,26 +330,26 @@ void childrenNamesToPointers(std::vector<VNode> &allNodes) {
 }
 
 namespace {
-  void appendBasics(std::set<VNode*>& children, VNode *vnode){
+  void appendBasics(std::set<VNode*>& children, VNode * vnode){
     assert(vnode != nullptr);
-    std::visit(overload{ [&] (auto & node) {
+    std::visit(overload{ [&] (auto const & node) {
                            for (VNode *child : node.m_children)
                              appendBasics(children,child);
                          },
-                         [&] (BasicNode &) {
+                         [&] (BasicNode const &) {
                            children.emplace(vnode);
                          }
                }, *vnode );
   }
 
-  void appendComposites(std::set<VNode*>& children, VNode *vnode){
+  void appendComposites(std::set<VNode*>& children, VNode * vnode){
     assert(vnode != nullptr);
-    std::visit(overload{ [&] (auto & node) {
+    std::visit(overload{ [&] (auto const & node) {
                            children.emplace(vnode);
-                           for (VNode *child : node.m_children)
+                           for (VNode * child : node.m_children)
                              appendComposites(children,child);
                          },
-                         [&] (BasicNode &) {}
+                         [&] (BasicNode const &) {}
                }, *vnode );
   }
 }
@@ -362,38 +362,38 @@ std::set<VNode *> reachableBasics(VNode *vnode) {
   return children;
 }
 
-std::set<VNode *> reachableComposites(VNode *vnode) {
+std::set<VNode *> reachableComposites(VNode * vnode) {
   assert(vnode != nullptr);
   std::set<VNode *> composites;
   appendComposites(composites, vnode);
   return composites;
 }
 
+namespace {
+  void appendEdges( std::set<std::vector<std::set<VNode*>>>& allEdges, VNode const *vnode) {
+    assert(vnode != nullptr);
+    std::visit(overload{[&](auto const &node) {
+                          for (auto const &edge : node.Edges()) {
+                            allEdges.emplace(std::vector<std::set<VNode*>>{reachableBasics(edge[0]),
+                                                                           reachableBasics(edge[1])});
+                          }
+                          for (VNode const *child : node.m_children)
+                            appendEdges(allEdges, child);
+                        },
+                        [](BasicNode const &) {}},
+               *vnode);
+  }
+}
+
 // this function shall be called to get a set of edges of structure vector(
 // VNode from , VNode to ) and and unwrap those edges to form
 // vector(set(BasicNode froms ...) , set(BasicNode tos ...) )
-
-std::set<std::vector<std::set<VNode *>>> findAllEdges(VNode *variantNode, std::set<std::vector<VNode *>> custom_edges = {}) {
+std::set<std::vector<std::set<VNode*>>> findAllEdges(VNode const *variantNode, std::set<std::vector<VNode *>> const custom_edges = {}) {
   assert(variantNode != nullptr);
 
-  std::set<std::vector<std::set<VNode *>>> allEdges;
+  std::set<std::vector<std::set<VNode*>>> allEdges;
 
-  std::function<void(VNode *)> _findNodeEdges;
-
-  _findNodeEdges = [&allEdges, &_findNodeEdges](VNode *current_variantNode) {
-    std::visit(overload{[&allEdges, &_findNodeEdges](auto &node) {
-                          for (auto &edge : node.Edges()) {
-                            allEdges.emplace(std::vector<std::set<VNode *>>{reachableBasics(edge[0]),
-                                                                            reachableBasics(edge[1])});
-                          }
-                          for (VNode *child : node.m_children)
-                            _findNodeEdges(child);
-                        },
-                        [](BasicNode &) {}},
-               *current_variantNode);
-  };
-
-  _findNodeEdges(variantNode);
+  appendEdges(allEdges, variantNode);
 
   for (std::vector<VNode *> const & edge : custom_edges ) {
     allEdges.emplace(std::vector<std::set<VNode *>>{reachableBasics(edge[0]),
@@ -408,16 +408,16 @@ std::set<std::vector<std::set<VNode *>>> findAllEdges(VNode *variantNode, std::s
 // check the dependencies of in the right hand side of an edge, make sure
 // that all corresponding left hand sided nodes are already in the
 // alreadyOrdered vector. I know, unreadable AF
-bool CFDependenciesMet(VNode *nodeToCheck, std::set<std::vector<std::set<VNode *>>> &setOfEdges,
+bool CFDependenciesMet(VNode * nodeToCheck, std::set<std::vector<std::set<VNode *>>> const &setOfEdges,
                        std::vector<VNode *> &alreadyOrdered) {
   assert(nodeToCheck != nullptr);
   return std::all_of(begin(setOfEdges), end(setOfEdges),
-                     [nodeToCheck, &alreadyOrdered](std::vector<std::set<VNode *>> const &unwrappedEdge) {
+                     [&](std::vector<std::set<VNode *>> const &unwrappedEdge) {
                        if (unwrappedEdge[1].find(nodeToCheck) == end(unwrappedEdge[1]))
                          return true;
                        else {
                          return std::all_of(begin(unwrappedEdge[0]), end(unwrappedEdge[0]),
-                                            [&alreadyOrdered](VNode *node) {
+                                            [&](VNode const *node) {
                                               return std::find(begin(alreadyOrdered),
                                                                end(alreadyOrdered),
                                                                node) != end(alreadyOrdered);
@@ -429,7 +429,7 @@ bool CFDependenciesMet(VNode *nodeToCheck, std::set<std::vector<std::set<VNode *
 // this should resolve the CF and DD dependencies and return a ordered vector which meets
 // all dependencies. Pick from unordered, append to ordered and erase from unordered when dependencies met.
 std::vector<VNode *> resolveDependencies(std::set<VNode *> &unordered,
-                                         std::set<std::vector<std::set<VNode *>>> &setOfEdges) {
+                                         std::set<std::vector<std::set<VNode *>>> const &setOfEdges) {
   std::vector<VNode *> ordered;
   ordered.reserve(unordered.size());
   // check for each loop over unordered, whether at least one node was put into ordered,
@@ -455,21 +455,21 @@ std::vector<VNode *> resolveDependencies(std::set<VNode *> &unordered,
 // fill the parents member of all nodes that are interconnected.
 // you can give a list of composite nodes, and all their children's parents-member will
 // be filled.
-void addParentsToAllNodes(std::set<VNode *> &composites) {
-  auto get_children = [](VNode * n) { return std::visit(overload{
-                                               [] (auto& node) { return node.m_children; },
-                                               [] (BasicNode&) { return std::vector<VNode*>{}; }
+void addParentsToAllNodes(std::set<VNode *> const &composites) {
+  auto get_children = [](VNode const * n) { return std::visit(overload{
+                                               [] (auto const & node) { return node.m_children; },
+                                               [] (BasicNode const &) { return std::vector<VNode*>{}; }
                                              }, *n);
                                     };
   for (VNode *composite : composites) {
     for (VNode *node : get_children(composite)) {
-      std::visit([&composite](auto &toAppendTo) { return toAppendTo.m_parents.emplace_back(composite); },
+      std::visit([&](auto &toAppendTo) { return toAppendTo.m_parents.emplace_back(composite); },
                  *node);
     }
   }
 }
 
 inline std::string getNameOfVNode(VNode const &node) {
-  return std::visit([](auto &node) { return node.m_name; }, node);
+  return std::visit([](auto const &node) { return node.m_name; }, node);
 }
 

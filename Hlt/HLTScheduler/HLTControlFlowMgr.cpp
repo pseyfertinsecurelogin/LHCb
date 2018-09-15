@@ -150,7 +150,6 @@ StatusCode HLTControlFlowMgr::initialize()
 
   //build the m_printableDependencyTree for monitoring
   registerStructuredTree();
-  mapPrintToStateOrder();
   registerTreePrintWidth();
 
 
@@ -164,7 +163,7 @@ StatusCode HLTControlFlowMgr::initialize()
   //print out high level nodes + their children
   if ( msgLevel( MSG::DEBUG ) ) {
     for ( auto& vnode : m_allVNodes ) {
-      std::visit( overload{[this]( auto& node ) {
+      std::visit( overload{[&]( auto& node ) {
                              debug() << std::left << "children of " << std::setw( 12 ) << node.getType() << " "
                                      << std::setw( 25 ) << node.m_name << ": " << node.m_children << endmsg;
                            },
@@ -556,7 +555,7 @@ void HLTControlFlowMgr::buildLines() { //here lines are configured, filled into 
   //all childs that are not yet in m_allVNodes are obviously BasicNodes, so add them
   for (std::string const& childname : allChildNames) {
     if (std::all_of(begin(m_allVNodes), end(m_allVNodes),
-          [&childname] (VNode& node) { return getNameOfVNode(node) != childname; })) {
+          [&] (VNode& node) { return getNameOfVNode(node) != childname; })) {
       m_allVNodes.emplace_back( BasicNode{childname, msgStream()} );
     }
   }
@@ -575,12 +574,12 @@ void HLTControlFlowMgr::buildLines() { //here lines are configured, filled into 
 
 
   if ( msgLevel( MSG::DEBUG ) ) {
-    for ( auto& vnode : m_allVNodes ) {
-      std::visit( overload{[this]( auto& node ) {
+    for ( auto const & vnode : m_allVNodes ) {
+      std::visit( overload{[&]( auto const & node ) {
                              debug() << std::left << "children of " << std::setw( 13 ) << node.getType() << " "
                                      << std::setw( 15 ) << node.m_name << ": " << node.m_children << endmsg;
                            },
-                           []( BasicNode& ) {}},
+                           []( BasicNode const & ) {}},
                   vnode );
     }
   }
@@ -591,7 +590,7 @@ void HLTControlFlowMgr::configureScheduling() {
 
   //find all basic nodes by traversing the tree recursively
   std::set<VNode *> allBasics{reachableBasics(m_motherOfAllNodes)};
-  std::set<VNode *> allComposites{reachableComposites(m_motherOfAllNodes)};
+  std::set<VNode *> const allComposites{reachableComposites(m_motherOfAllNodes)};
 
   std::set<std::vector<VNode*>> additionalEdges;
 
@@ -606,17 +605,17 @@ void HLTControlFlowMgr::configureScheduling() {
   //barrier inputs
   std::vector<std::vector<Algorithm*>> BarrierInputs;
   //fill them
-  for(auto& name : m_BarrierAlgNames){
-    BarrierInputs.emplace_back(m_databroker->algorithmsRequiredFor(name));
-  }
+
+  std::transform(begin(m_BarrierAlgNames), end(m_BarrierAlgNames), begin(BarrierInputs),
+                 [&] (auto const & name) {return m_databroker->algorithmsRequiredFor(name);});
 
   //which ones are also explicit CF nodes?
   std::vector<std::set<VNode *>> explicitDataDependencies{BarrierInputs.size()};
 
   for( std::size_t i = 0; i != BarrierInputs.size(); ++i ) {
-    for( Algorithm * alg : BarrierInputs[i] ) {
+    for( Algorithm const * alg : BarrierInputs[i] ) {
       auto node = std::find_if( begin( allBasics ), end( allBasics ),
-                                [alg]( VNode* vnode ) { return ( getNameOfVNode( *vnode ) == alg->name() ); } );
+                                [&]( VNode const * vnode ) { return getNameOfVNode( *vnode ) == alg->name(); } );
       if( node != std::end(allBasics) ){
         explicitDataDependencies[i].emplace(*node);
       }
@@ -653,7 +652,7 @@ void HLTControlFlowMgr::configureScheduling() {
                            // to add additional edges from each input to each output of the barrier to make sure
                            // stuff runs in the right order. Keep in mind that datadependencies are cut away if they are
                            // optional (stopperalg in m_databroker)
-                           for (AlgWrapper& reqAlg : node.m_RequiredAlgs) {
+                           for (AlgWrapper const & reqAlg : node.m_RequiredAlgs) {
                              for (std::size_t i = 0; i != m_BarrierAlgNames.size(); ++i) {
                                if ( reqAlg.name() == m_BarrierAlgNames[i] ) {
                                  for ( VNode* explicitDD : explicitDataDependencies[i] ) {
@@ -706,11 +705,11 @@ void HLTControlFlowMgr::buildNodeStates() {
   int helper_index = 0;
 
   for (auto &vNode : m_allVNodes) {
-    std::visit(overload{[this, &helper_index](BasicNode &node) {
+    std::visit(overload{[&](BasicNode &node) {
                           node.m_NodeID = helper_index++;
                           m_NodeStates.emplace_back(1, true);
                         },
-                        [this, &helper_index](auto &node) {
+                        [&](auto &node) {
                           node.m_NodeID = helper_index++;
                           m_NodeStates.emplace_back(node.m_children.size(), true);
                         }},
@@ -729,43 +728,29 @@ void HLTControlFlowMgr::buildNodeStates() {
 void HLTControlFlowMgr::registerStructuredTree() {
   assert(m_printableDependencyTree.empty());
   std::stringstream ss;
-  std::function<void(VNode const *, int const )> print_indented = [&print_indented, this](VNode const *vnode,
-                                                                                          int const currentIndent) {
-    std::visit(overload{[&print_indented, currentIndent, this](auto const &node) {
+
+  auto print_indented = [&](VNode const *vnode, int const currentIndent, auto& itself) -> void {
+    //to recursively call this lambda, use auto& itself
+    std::visit(overload{[&](auto const &node) {
                           std::stringstream ss;
                           ss << std::string(currentIndent, ' ') << node.getType() << ": " << node.m_name << " ";
                           m_printableDependencyTree.emplace_back(ss.str());
+                          m_mapPrintToStateOrder.emplace_back(node.m_NodeID); //to later print it
                           for (VNode *child : node.m_children) {
-                            print_indented(child, currentIndent + 1);
+                            itself(child, currentIndent + 1, itself);
                           }
                         },
-                        [currentIndent, this](BasicNode const &node) {
+                        [&](BasicNode const &node) {
                           std::stringstream ss;
                           ss << std::string(currentIndent, ' ') << node.m_name << " ";
                           m_printableDependencyTree.emplace_back(ss.str());
+                          m_mapPrintToStateOrder.emplace_back(node.m_NodeID);
                         }},
                *vnode);
   };
-  print_indented(m_motherOfAllNodes, 0);
+  print_indented(m_motherOfAllNodes, 0, print_indented);
 }
 
-// defines a map between print order and order in the NodeStatestor, to print
-// the right states for the right nodes
-void HLTControlFlowMgr::mapPrintToStateOrder() {
-
-  assert (!m_printableDependencyTree.empty());
-  for (std::string_view printableNodeEntry : m_printableDependencyTree) {
-    auto i = std::find_if( begin(m_allVNodes), end(m_allVNodes),
-               [&](auto const & node) {
-                 std::string toFind = " " + getNameOfVNode(node) + " ";
-                 return (printableNodeEntry.find(toFind) == printableNodeEntry.length() - toFind.length())
-                        && toFind.length() <= printableNodeEntry.length();
-               }
-             );
-    if (i != end(m_allVNodes)) m_mapPrintToStateOrder.emplace_back( std::distance(begin(m_allVNodes), i));
-  }
-  assert(m_mapPrintToStateOrder.size() == m_printableDependencyTree.size() );
-}
 
 //determines the size of the largest string in the structured tree vector, to print neatly afterwards
 void HLTControlFlowMgr::registerTreePrintWidth() {

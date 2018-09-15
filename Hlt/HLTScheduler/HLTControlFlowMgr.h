@@ -107,7 +107,7 @@ private:
   /// event selector context
   IEvtSelector::Context* m_evtSelContext{nullptr};
 
-
+  private:
   //state vectors for each event, once filled, then copied per event
   std::vector<NodeState> m_NodeStates;
   std::vector<int> m_AlgStates;
@@ -131,7 +131,6 @@ private:
 
   //functions to create m_printableDependencyTree
   void registerStructuredTree();
-  void mapPrintToStateOrder();
   void registerTreePrintWidth();
   //runtime adding of states to print tree and states
   std::stringstream buildStructuredTreeWithStates(std::vector<NodeState> const states);
