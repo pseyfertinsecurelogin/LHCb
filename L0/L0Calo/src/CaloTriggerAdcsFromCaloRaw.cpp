@@ -26,8 +26,16 @@ CaloTriggerAdcsFromCaloRaw::CaloTriggerAdcsFromCaloRaw( const std::string& type,
 {
   declareInterface<ICaloTriggerAdcsFromRaw>(this);
   declareProperty( "DoubleScale" , m_doubleScale = false ) ;
+  // fix L0Calo to reproduce 2016 bug
+  declareProperty( "FixFor2016" , m_fixFor2016 = false ) ;
+  declareProperty( "RawEventLocations" , m_rawEventLocations ) ;
   int index = name.find_first_of(".",0) +1 ;
   m_detectorName = name.substr( index, 4 );
+  if( "Ecal" == m_detectorName ){
+    m_bank = LHCb::RawBank::EcalPacked;
+  } else if( "Hcal" == m_detectorName ){
+    m_bank = LHCb::RawBank::HcalPacked;
+  }
   m_data.clear() ;
 }
 
@@ -53,6 +61,15 @@ StatusCode CaloTriggerAdcsFromCaloRaw::initialize() {
     return StatusCode::FAILURE ;
   }
 
+  // Initialise the RawEvent locations
+  if (std::find(m_rawEventLocations.begin(), m_rawEventLocations.end(),
+                LHCb::RawEventLocation::Default)
+      == m_rawEventLocations.end()) {
+    // append the defaults to the search path
+    m_rawEventLocations.push_back(LHCb::RawEventLocation::Calo);
+    m_rawEventLocations.push_back(LHCb::RawEventLocation::Default);
+  }
+
   long nCells = m_calo -> numberOfCells() ;
   m_data.reserve( nCells ) ;
   m_data.clear() ;
@@ -62,6 +79,20 @@ StatusCode CaloTriggerAdcsFromCaloRaw::initialize() {
 //=============================================================================
 const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( ) 
 {
+  // Retrieve the RawEvent:
+  LHCb::RawEvent* rawEvt = nullptr ;
+  for (auto p = m_rawEventLocations.begin(); p != m_rawEventLocations.end() &&
+         ! rawEvt; ++p) {
+    rawEvt = getIfExists<LHCb::RawEvent>(*p);
+  }
+
+  if( rawEvt == nullptr )
+    Exception( "No CALO Raw bank in the event" ) ;
+
+  bool bank = ( 0 == (rawEvt->banks( m_bank )).size() ) ?  false : true ;
+  if ( ! bank )
+    Exception( "No Calo packed bank in the event" ) ;
+
   m_data.clear() ;
   const CaloVector< LHCb::CaloAdc >& adcs = m_adcs -> adcs( -1 ) ;
   std::transform( adcs.begin(), adcs.end(), std::back_inserter(m_data),
@@ -95,6 +126,9 @@ int CaloTriggerAdcsFromCaloRaw::l0adcFromAdc( const int adc ,
 
   unsigned long calibCte = m_calo -> cellParam( id ).l0Constant() ;
   if ( m_doubleScale ) calibCte = calibCte / 2 ;
+
+  // for 2016, all constants were set to 127 in ECAL
+  if ( ( m_fixFor2016 ) && ( id.calo() == 2 ) ) calibCte = 127 ;
 
   int theAdc = adc ;
 

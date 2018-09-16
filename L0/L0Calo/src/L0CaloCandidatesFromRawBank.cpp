@@ -36,6 +36,10 @@ L0CaloCandidatesFromRawBank::L0CaloCandidatesFromRawBank
   // Store also the intermediate informations for debugging the Selection boards
   // such as the partial results of the hadron Selection Boards
   declareProperty( "DebugDecoding" , m_doDebugDecoding = false ) ;
+  // Correct the L0electron and photon energies to reflect 2016 bug
+  declareProperty( "FixFor2016" , m_fixFor2016 = false ) ;
+  // Data or simulation (relevant for FixFor2016 only !)
+  declareProperty( "Simulation" , m_simulation = false ) ;
 }
 
 //=============================================================================
@@ -311,6 +315,13 @@ void L0CaloCandidatesFromRawBank::convertRawBankToTES
             }
           }
         } else {
+          // ECAL trigger
+          // Apply 2016 correction here if requested
+          if ( m_fixFor2016 ) {
+            et = correctedEnergy( et , id ) ;
+            if ( et > 255 ) et = 255 ;
+          }
+
           myL0Cand = new LHCb::L0CaloCandidate ( type, id, et,
                                                  et * m_etScale, center,
                                                  tol );
@@ -389,3 +400,15 @@ void L0CaloCandidatesFromRawBank::convertRawBankToTES
     outFull -> add( *it ) ;
 }
 //=============================================================================
+// Function to correct ECAL energy (approximatively) for 2016 bug
+//=============================================================================
+int L0CaloCandidatesFromRawBank::correctedEnergy( const int oldEnergy ,
+                                                  const LHCb::CaloCellID & id )
+  const
+{
+  // Get correct calib constant
+  unsigned long calibCte = m_ecal -> cellParam( id ).l0Constant() ;
+  // compute energy with wrong calib constant (127)
+  if ( m_simulation ) return (int) ( (double) oldEnergy * 127. / ( (double) calibCte ) ) ;
+  return (int) ( (double) oldEnergy * ( (double) calibCte ) / 127. ) ;
+}

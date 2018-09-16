@@ -324,7 +324,11 @@ StatusCode L0CaloAlg::initialize() {
 //=============================================================================
 StatusCode L0CaloAlg::execute() {
   // Get the ECAL data, store them in the Front-End card
-  sumEcalData( );
+  try { sumEcalData( ); }
+  catch ( const GaudiException & exc ) {
+    fatal() << "The L0Calo trigger will be wrong, dont rely on it" << endmsg ;
+    return StatusCode::FAILURE ;
+  }
 
   // Get Spd+Prs data
   m_PrsSpdIds = m_bitsFromRaw -> prsSpdCells( ) ;
@@ -414,8 +418,12 @@ StatusCode L0CaloAlg::execute() {
   } // eCard
 
   //  Do a similar processing for HCAL Data
-  sumHcalData( );
-  
+  try { sumHcalData( ); }
+  catch ( const GaudiException & exc ) {
+    fatal() << "The L0Calo trigger will be wrong, dont rely on it" << endmsg ;
+    return StatusCode::FAILURE ;
+  }
+
   // Add the highest ECAL energy in matching cards and store
   // the candidates (one per Selection Board input, in 3 vectors
   // one vector per SB: (0 - master, 1 - slave1, 2 - slave2)

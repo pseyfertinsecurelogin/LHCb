@@ -66,12 +66,6 @@ StatusCode L0CaloCandidatesFromRaw::execute() {
   readoutStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Status::OK ) ;
   readoutStatus.addStatus( 1 , LHCb::RawBankReadoutStatus::Status::OK ) ;
 
-  // Scan the list of input location and select the first existing one.
-  // no need to do this any longer, the base class takes care of it
-  //std::string rawEventLocation;
-  //if ( selectRawEventLocation(rawEventLocation).isFailure() )
-  //  return Error("No valid raw event location found",StatusCode::SUCCESS,50);
-
   LHCb::L0CaloCandidates * outFull = new LHCb::L0CaloCandidates( ) ;
   LHCb::L0CaloCandidates * out = new LHCb::L0CaloCandidates() ;
 
