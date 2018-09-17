@@ -603,7 +603,7 @@ void HLTControlFlowMgr::configureScheduling() {
 
   //get data dependencies right
   //barrier inputs
-  std::vector<std::vector<Algorithm*>> BarrierInputs;
+  std::vector<std::vector<Algorithm*>> BarrierInputs{m_BarrierAlgNames.size()};
   //fill them
 
   std::transform(begin(m_BarrierAlgNames), end(m_BarrierAlgNames), begin(BarrierInputs),
