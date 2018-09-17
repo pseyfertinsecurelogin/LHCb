@@ -97,7 +97,7 @@ namespace Rich::Future
     public:
 
       /// The bank type the current decoders are for
-      Rich::DAQ::BankVersion version;
+      Rich::DAQ::BankVersion version { Rich::DAQ::UndefinedBankVersion };
     };
 
   private:
