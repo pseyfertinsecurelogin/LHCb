@@ -1,0 +1,67 @@
+//ApplicationMgr.TopAlg += {"GaudiSequencer/CaloFutureBanksHandler"};
+
+
+// BANK FORMAT CONVERSION IS OBSOLETE
+
+CaloFutureBanksHandler.Members = {"GaudiSequencer/PrsBanksHandler",
+                            "GaudiSequencer/EcalBanksHandler",
+                            "GaudiSequencer/HcalBanksHandler"};
+
+
+CaloFutureBanksHandler.IgnoreFilterPassed = true; // the 3 sequences have to run independantly
+
+EcalBanksHandler.Members = {   "CheckCaloFutureBank/EcalCheckBanks",      // Check if compressed banks exist. If not ...
+                               "CaloFutureZSupAlg/EcalADCs",                      // ... Ecal CaloFutureAdcs from packed bank
+                               "CaloFutureTriggerAdcsFromRawAlg/EcalTrigFromRaw", // ... Ecal L0CaloFutureAdcs from packed bank
+                               "RawBankReadoutStatusConverter/EcalProcStatus", // ... Convert ReadoutStatus to ProcStatus
+                               "RawBankReadoutStatusFilter/EcalROFilter"     , // ... stop processing in case of ReadoutStatus != OK
+                               "CaloFutureFillRawBuffer/EcalFillRawBuffer",       // ... Fill RawBank::EcalE & EcalTrig
+                               "bankKiller/RemoveEcalPackedBanks"         // ... and remove packed bank
+};
+HcalBanksHandler.Members = { "CheckCaloFutureBank/HcalCheckBanks",     // ...  Check if compressed banks exist. If not ...
+                             "CaloFutureZSupAlg/HcalADCs",                      // ... Ecal CaloFutureAdcs from packed bank
+                             "CaloFutureTriggerAdcsFromRawAlg/HcalTrigFromRaw", // ... Ecal L0CaloFutureAdcs from packed bank
+                             "RawBankReadoutStatusConverter/HcalProcStatus", // ... Convert ReadoutStatus to ProcStatus
+                             "RawBankReadoutStatusFilter/HcalROFilter"     , // ... stop processing in case of ReadoutStatus != OK
+                             "CaloFutureFillRawBuffer/HcalFillRawBuffer",       // ... Fill RawBank::EcalE & EcalTrig
+                             "bankKiller/RemoveHcalPackedBanks"};         // ... and remove packed bank
+
+PrsBanksHandler.Members = { "CheckCaloFutureBank/PrsCheckBanks",        // ...Check if compressed banks exist. If not ..
+                            "CaloFutureDigitsFromRaw/PrsADCs",                   // ... Prs CaloFutureAdcs from packed bank
+                            "CaloFutureTriggerBitsFromRawAlg/PrsL0Bit",          // ... Prs L0PrsSpdHit from packed bank
+                            "CaloFutureTriggerBitsFromRawAlg/SpdL0Bit",          // ... Spd L0PrsSpdHit from packed bank
+                            "RawBankReadoutStatusConverter/PrsProcStatus", // ... Convert ReadoutStatus to ProcStatus
+                            "RawBankReadoutStatusFilter/PrsROFilter"     , // ... stop processing in case of ReadoutStatus != OK
+                            "CaloFutureFillPrsSpdRawBuffer/PrsSpdFillRawBuffer", // ... Fill RawBank::PrsE & PrsTrig
+                            "bankKiller/RemovePrsPackedBanks"};            // ... and remove packed bank
+
+RemoveEcalPackedBanks.bankTypes ={ "EcalPacked" };
+RemoveHcalPackedBanks.bankTypes ={ "HcalPacked" };
+RemovePrsPackedBanks.bankTypes  ={ "PrsPacked"  };
+
+EcalADCs.OutputType ="ADCs";
+HcalADCs.OutputType ="ADCs";
+PrsADCs.OutputType="ADCs";
+
+//CaloFutureBanksHandler.MeasureTime=true;
+//CaloFutureFillCompressedBanks.MeasureTime=true;
+
+
+// Readout Status   -> ProcStatus
+EcalProcStatus.System="Ecal";
+EcalProcStatus.BankTypes={"EcalPacked"};
+HcalProcStatus.System="Hcal";
+HcalProcStatus.BankTypes={"HcalPacked"};
+PrsProcStatus.System="Prs";
+PrsProcStatus.BankTypes={"PrsPacked"};
+
+
+// Readout Status Filter (switch off conversion in case of corrupted bank)
+EcalROFilter.BankType=21; // EcalPacked
+EcalROFilter.RejectionMask=4095;   // stop in case of any problem
+HcalROFilter.BankType=22; // HcalPacked
+HcalROFilter.RejectionMask=4095;   // stop in case of any problem
+PrsROFilter.BankType=23; // PrsPacked
+PrsROFilter.RejectionMask=4095;   // stop in case of any problem
+
+

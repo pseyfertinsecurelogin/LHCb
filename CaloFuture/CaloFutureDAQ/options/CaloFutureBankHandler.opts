@@ -1,0 +1,27 @@
+//=============================================================================
+// New BANK handler : just decode bank and convert ReadoutStatus to ProcStatus
+//=============================================================================
+
+
+//ApplicationMgr.TopAlg += {"GaudiSequencer/CaloFutureBanksHandler"};
+//CaloFutureBanksHandler.MeasureTime=true;
+
+CaloFutureBanksHandler.Members = {"GaudiSequencer/PrsBanksHandler",
+                            "GaudiSequencer/EcalBanksHandler",
+                            "GaudiSequencer/HcalBanksHandler"};
+
+
+CaloFutureBanksHandler.IgnoreFilterPassed = true; // the 3 sequences have to run independantly
+
+EcalBanksHandler.Members = { "CaloFutureZSupAlg/FutureEcalZSup"         , "RawBankReadoutStatusConverter/EcalProcStatus"};
+HcalBanksHandler.Members = { "CaloFutureZSupAlg/FutureHcalZSup"         , "RawBankReadoutStatusConverter/HcalProcStatus"};
+PrsBanksHandler.Members  = { "CaloFutureDigitsFromRaw/FuturePrsFromRaw" , "RawBankReadoutStatusConverter/PrsProcStatus" };
+
+// Readout Status   -> ProcStatus
+EcalProcStatus.System="Ecal";
+EcalProcStatus.BankTypes={"EcalPacked"};
+HcalProcStatus.System="Hcal";
+HcalProcStatus.BankTypes={"HcalPacked"};
+PrsProcStatus.System="Prs";
+PrsProcStatus.BankTypes={"PrsPacked"};
+

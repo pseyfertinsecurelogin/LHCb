@@ -1,0 +1,748 @@
+!------------------------------------------------------------------------------
+! Package     : CaloFutureUtils
+! Responsible : Olivier Deschamps odescham@in2p3.fr
+!------------------------------------------------------------------------------
+
+
+! 2017-04-14 - Olivier Deschamps
+ - CaloFuture2DView : fix bug introduced during the modernization process
+
+! 2017-04-14 - Olivier Deschamps
+ - CaloFuture2DView : add protection against invalid CellID
+
+!========================= CaloFutureUtils v10r6 2016-01-27 =========================
+! 2015-12-17 - Marco Cattaneo
+ - CovarianceEstimator.cpp: 
+   o fix clang warning ("implicit conversion of NULL constant to 'int'")
+   o prefer nullptr to 0 or NULL
+   o use std::endl instead of endmsg for new line inside a MsgStream
+   o remove unnecessary include
+
+!========================= CaloFutureUtils v10r5p1 2015-10-12 =========================
+! 2015-08-03 - Gerhard Raven
+ - remove #include of obsolete Gaudi headers
+
+!========================= CaloFutureUtils v10r5 2015-07-20 =========================
+! 2015-06-02 - Marco Cattaneo
+ - Fix a pattern selection rule to please genreflex
+
+!========================= CaloFutureUtils v10r4 2014-07-14 =========================
+! 2014-07-03 - Olivier Deschamps
+  - CaloFutureMomentum.cpp    : protect against negative calo energy
+  - CovarianceEstimator : add global term to Cov_ii - add covariance parametrization per calo area
+
+! 2014-07-02 - Olivier Deschamps
+  - CovarianceEstimator.cpp  : set default energy to 0 in case of evaluation failure (no more huge negative value !)
+
+! 2014-06-27 - Olivier Deschamps
+  - CovarianceEstimator.cpp     : prepare for different cluster masking for energy and position
+  - CaloFutureUtils/ClusterFunctors.h : update tagTheSubCluster() method 
+
+!========================= CaloFutureUtils v10r3 2014-02-17 =========================
+! 2013-10-30 - Marco Clemencic
+ - Minor fix in CaloFuture2Track.h (needed only when not using Reflex, e.g. ROOT 6).
+
+!========================= CaloFutureUtils v10r2 2013-10-23 =========================
+! 2013-10-11 - Olivier Deschamps
+ - CaloFuture2Dview :  fix trivial bug
+
+! 2013-10-09 - Olivier Deschamps
+ - CaloFuture2Dview :  protect against the upgrade configuration with no Spd/Prs
+
+!========================= CaloFutureUtils v10r1 2013-07-17 =========================
+! 2013-06-06 - Marco Cattaneo
+ - Remove CaloFutureHistoTrackAlh.{h,cpp}, no longer used
+ - Remove no longer necessary TrackEvent dependency
+ - Remove empty CaloFuture2DView::finalize() method
+
+!========================= CaloFutureUtils v10r0 2013-06-03 =========================
+! 2013-05-26 - Marco Cattaneo
+ - Fix trivial gcc48 warnings
+
+! 2013-05-10 - Olivier Deschamps
+  - move CaloFutureTrackAlg/Match/Tool.{cpp,h} to CaloFuturePIDs
+  - remove "use TrackInterfaces" from requirements
+
+! 2013-05-06 - Marco Cattaneo
+ - Replace endreq by endmsg
+ - Fix UNINIT_CTOR defect
+
+!========================= CaloFutureUtils v9r6 2012-11-26 =========================
+! 2012-11-20 - Marco Clemencic
+ - Fixed a warning.
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+!========================= CaloFutureUtils v9r5 2012-09-28 =========================
+! 2012-09-26 - Marco Clemencic
+  - Minor changes to requirements for a smoother migration to CMake.
+
+!========================= CaloFutureUtils v9r4 2012-06-25 =========================
+! 2012-06-24 - Olivier Deschamps
+  - CaloFuture2MC.h : add Hypo->MC table typedef
+
+! 2012-06-15 - Olivier Deschamps
+  - CaloFutureMomentum : add the missing method to return the CaloFutureHypo vector
+
+! 2012-06-12 - Olivier Deschamps
+  - CaloFutureParticle/CaloFutureMomentum : store CaloFutureHypo vector
+
+! 2012-05-14 - Olivier Deschamps
+  - CaloFutureMomentum : add constructor from vector<CaloFutureHypo> (useful for bremList() from
+    BremAdder) - New method : multiplicity() returns CaloFuturePositions multiplicity
+
+!========================= CaloFutureUtils v9r3 2012-01-31 ==========================
+! 2012-01-06 - Olivier Deschamps
+ - fix minor bug in CaloFutureAlgUtils::StringMatcher
+
+!========================= CaloFutureUtils v9r2p1 2011-12-14 ========================
+! 2011-12-07 - Marco Cattaneo
+ - Fix unprotected debug() messages
+ - Replace endreq by endmsg
+ - Fix an UNINIT_CTOR coverity defect
+
+! 2011-11-23 - Marco Cattaneo
+ - Fix trivial icc remarks
+
+!========================= CaloFutureUtils v9r2 2011-08-30 =========================
+! 2011-08-29 - alexander.mazurov@gmail.com
+ - CaloFutureCellIDAsProperty.cpp
+
+   Updates for LHCb::CaloFutureCellID's parser functions.
+   This version works only with Gaudi version > v22r2
+   (where the new parser model is provided)
+
+!========================= CaloFutureUtils v9r1 2011-06-14 =========================
+! 2011-06-14 - Olivier Deschamps
+ - CaloFutureAlgUtils : new method StringMatcher()
+
+! 2011-05-15 - Olivier Deschamps
+  - src/CaloFutureNeighbours::_neighbours : fix infinite loop when level < 0
+
+!========================== CaloFutureUtils v9r0 2010-09-27 =========================
+! 2010-08-31 - Olivier Deschamps
+  - fix compilation warning on slc4
+
+! 2010-08-30 - Vanya Belyaev
+ - a bit more polishing to Kinemactics functions
+
+! 2010-08-30 - Vanya Belyaev
+ - Kinematics.h,
+   Kinematics.cpp
+
+     factor out the actual evaluation of various quantities
+     from CaloFutureMomentum class
+
+    FIX THE BUG in Evaluation of F11 and F12 matrix elements!
+
+  - cmt/requirements
+
+    version inrement to v9r0
+
+! 2010-08-27 - O. Deschamps
+ - CaloFutureAlgUtils :  new method ClusterFromHypo(CaloFutureHypo*) return hypo->cluster with special care for SplitPhotons
+
+!========================== CaloFutureUtils v8r13 2010-06-18 ========================
+! 2010-06-11 - V. Gligorov
+ - Remove obsolete default HLT track locations.
+
+!========================== CaloFutureUtils v8r12p1 2010-06-01 ========================
+! 2010-06-01 - Gerhard Raven
+ - suppress printout of warning in case 2D inversion fails, but keep the statistics
+
+!========================== CaloFutureUtils v8r12 2010-03-19 ========================
+! 2010-03-18 - Vanya Belyaev
+ - CaloFutureUtils.xml
+     add dictionaries for CaloVectors...
+
+ - CaloFutureUtils/CellID.py
+     add the python iteration for related CaloVector-classes
+
+! 2010-03-13 - Olivier Deschamps
+  - CaloFutureAlgUtils : track location is either 'offline' or 'hlt' depending on
+      context by default CaloFutureReco Configurable to apply specific location
+
+! 2010-02-25 - Olivier Deschamps
+  - CaloFutureAlgUtils/CaloFuture2Track : improvements in generic context-dependent TES
+                              locations
+  - CaloFutureTrackAlg : accept unknown fitted status if hltContext(context())
+
+!========================== CaloFutureUtils v8r11 2010-01-20 ========================
+! 2010-01-14 - Victor Egorychev
+ - add dictionary for ICaloFutureElectron interface
+ - cmt/requirements
+     version increment to v8r11
+
+!========================== CaloFutureUtils v8r10 2009-12-11 ========================
+! 2009-12-08 - Vanya Belyaev
+ - CellID.py: bug fix in python decorator for std::set-container
+
+! 2009-12-07 - Marco Cattaneo
+ - In CaloFutureTrackTool.h: Fix trivial untested StatusCode,
+                       Downgrade Errors to Warnings
+
+! 2009-11-30 - Olivier Deschamps
+ - CaloFuture2Dview::getUnit() : protect against non string unit (bug or feature in HistoID::literalID())
+
+! 2009-11-30 - Marco Cattaneo
+ - Remove obsolete files CaloFutureUtils/dirHbookName.h, CaloFutureUtils/histoHbookName.h
+
+! 2009-11-28 - Vanya Belyaev
+ - new helper python decorator classes
+ - cmt/requirements
+    version increment to v8r10
+
+!========================== CaloFutureUtils v8r9 2009-11-27 =========================
+! 2009-11-17 - Olivier Deschamps
+ - CaloFutureParticle :
+  - new method isPureNeutralCaloFuture(particle) (all particle descendant is a neutral
+    calo object e.g. pi0->gg (J/Psi->ee is not)
+  - minor cleaning
+
+!========================== CaloFutureUtils v8r8 2009-11-13 =========================
+! 2009-11-08 - Olivier Deschamps
+ - CaloFuture2Dview :
+  - speed-up processing
+    - getunit() method : remove usage of  slow HistoID/std::string cast-conversion
+    - fillCaloFuture2D() method :reduce usage of histoXD() method in case of sequential filling of the same histogram
+  - implement  Profile2D view
+
+! 2009-10-25 - Vanya Belyaev
+
+ - CaloFutureNeighbours:
+
+    make use of new typedef
+
+ - CaloFutureTrackTool:
+
+     use ICaloFutureDigits4Track
+
+ - cmt/requirements
+
+     version increment to v8r8
+
+!========================== CaloFutureUtils v8r7 2009-10-16 =========================
+! 2009-10-12 - Olivier Deschamps
+ - CaloFuture2Dview : speed-up processing
+
+! 2009-10-02 - Vanya BELYAEV
+ - attempt for "blind-fix" for compilaiton problme at lhcb6 slot
+
+! 2009-10-01 - Vanya BELYAEV
+ - SharedCells.h
+    add misisng include <numeric>
+
+! 2009-09-30 - Vanya BELYAEV
+ - add possibiilty to use CaloFutureCellID as property
+   new files:
+     CaloFutureCellIDAsProperty.h/.cpp
+ - add some python decoration:
+      >>> import GaudiUtils.CellID
+ - cmt/requirements
+    version increment to v8r7
+
+!========================== CaloFutureUtils v8r6 2009-08-31 =========================
+! 2009-08-21 - Olivier Deschamps
+  - change rule for detector name extraction in CaloFutureAlgUtils (find substring wherever in the instance name instead of first digits)
+
+! 2009-08-21 - Olivier Deschamps
+  - new functor : CaloFutureAlgUtils (allows to consistently define context-dependent TES I/O)
+
+! 2009-08-05 - Vanya BELYAEV
+ - CaloFutureDataFunctor
+      remove duplicated functors
+      add isLocalMax
+ - CaloFutureNeighbours - helpe function to get proper neighbours
+ - cmt/requirements
+    version increment to v8r6
+
+!========================== CaloFutureUtils v8r5 2009-05-25 =========================
+! 2009-05-21 - Olivier Deschamps
+ - CovarianceEstimator : fix parameter index
+
+! 2009-05-20 - Olivier Deschamps
+ - CaloFutureMomentum : invariant mass error relies on Gaudi::Math::sigmamass
+                  (LHCbMath/Kinematics.h)
+
+! 2009-05-20 - Olivier Deschamps
+ - CaloFuture2Dview : fix bug in getCaloFutureParam() - affecting L0CaloFutureMonitoring only
+
+! 2009-05-19 - Vanya  BELYAEV
+ - add missing files
+
+! 2009-05-16 - Vanya BELYAEV
+ - add the dictionary for CaloFutureMomentum/CaloFutureParticle classes
+    (needed for python) and polish a bit these classes
+
+! 2009-05-08 - Vanya BELYAEV
+ - CaloFutureUtils/SpreadEstimator.h
+   src/SpreadEstimator.cpp
+
+   put more protection for evalaution of
+   cluster covariance("spread") matrix.
+
+    The algorithm is:
+
+    1) evaluate the eigenvalues
+    2) for "suspicion" clusters:
+         - "small" eigenvalues
+         - "small" diagonal elements
+         - four or less cells with positive energy
+         replace the eigenvalues with max("cellsize*cellsize/12", eigenvalue)
+
+    3) recalculate the covariance/spread matrix using the updated eigenvalues
+       *and* old eigenvectors ("cluster orientation")
+
+    To decrease the influence of numerical uncertanties
+    the temporary coordinate bias is introduced..
+
+  - cmt/requirements
+    version increment to v8r5
+
+!========================== CaloFutureUtils v8r4 2009-05-06 =========================
+! 2009-04-20 - Olivier Deschamps
+ - CaloFuture2Dview : add protection + 1D profile allowed
+
+! 2009-04-10 - Olivier Deschamps
+ - CaloFuture2Dview : fix bug in 'electronics' 2D view for Spd
+
+! 2009-04-06 - Olivier Deschamps
+ - CaloFuture2Dview : add new 2D views (crate-feb vs channels) +
+                possibility to split the view per area
+
+! 2009-03-20 - Victor Egorychev
+ - CaloFutureUtils/CaloFutureTrackMatch.h
+    Error to Warning (requisted by Olivier)
+ - cmt/requirements
+  . Increase version to v8r4
+
+!========================== CaloFutureUtils v8r3p1 2008-11-17 =========================
+! 2008-12-10 - Marco Cattaneo
+ - More fixes for gcc 4.3 compilation
+
+!========================== CaloFutureUtils v8r3 2008-11-17 =========================
+! 2008-10-29 - Marco Cattaneo
+ - Fixes for gcc 4.3 compilation
+
+!========================== CaloFutureUtils v8r2 2008-09-30 =========================
+! 2008-09-29 - Olivier Deschamps
+ - CaloFuture2Dview.cpp : add new features (Flux and energyWeighted properties)
+ - add new class : CellSelector to handle the various CellMatrix methods
+ - add CaloFutureDataFunctor.h (moved from RecEvent)
+
+!========================== CaloFutureUtils v8r1p1 2008-09-01 =======================
+! 2008-08-28 - Olivier Deschamps
+ - CaloFuture2Dview.cpp : remove verbose line
+
+!========================== CaloFutureUtils v8r1 2008-06-30 =========================
+! 2008-06-27 - Olivier Deschamps
+ - CaloFuture2Track.h : add default locations for PID object within Hlt processing
+ - CaloFutureTrackAlg : select tracks with fit status =  Track::FitStatusUnknown
+                  in Hlt context
+
+! 2008-06-25 - Juan Palacios
+ - CaloFutureUtils/CaloFutureTrackTool.h
+  . Change Gaudi::Line for Gaudi::Math::Line
+ - cmt/requirements
+  . Increase version to v8r1
+
+! 2008-06-06 - Olivier Deschamps
+- threshold and offset as double in CaloFuture2DView
+
+!========================== CaloFutureUtils v8r0p1 2008-06-02 =======================
+! 2008-05-22 - Olivier Deschamps
+- minor change in CaloFuture2Dview (debug printout)
+
+!========================== CaloFutureUtils v8r0 2008-05-13 =========================
+! 2008-05-13 - Olivier Deschamps
+- _setProperty() method restored in CaloFutureTrackAlg and CaloFutureTrackTool (check statsucode)
+
+! 2008-05-08 - Marco Cattaneo
+ - Removed CaloFuture2CaloFuture, CaloFutureElectron, Part2CaloFuture, Track2CaloFuture2 components, moved
+   to new CaloFutureTools package
+
+!========================== CaloFutureUtils v7r9 2008-03-28 =========================
+! 2008-03-05 - Olivier Deschamps
+ - CaloFuture2Dview : minor fix
+
+! 2008-03-04 - Olivier Deschamps
+ - CaloFuture2Dview : move HistoDir default to constructor - remove SplitHistoDir(true)
+
+!========================== CaloFutureUtils v7r8 2008-02-07 =========================
+! 2008-02-07 - Marco Cattaneo
+ - Clean up public includes with better use of forward declarations
+
+! 2008-02-04 - Olivier Deschamps
+- bug fix in CaloFuture2Dview.cpp
+
+!========================== CaloFutureUtils v7r7 2008-01-24 =========================
+! 2008-12-24 - Victor Egorychev
+- version was increased
+- _setProperty was removed from CaloFutureTracktool.h and CaloFutureTrackTool.cpp
+
+! 2007-08-23 Olivier Deschamps
+ - src /            : new base class CaloFuture2Dview.cpp (inherits from GaudiHistoAlg) : produces 2D display of CaloFuturerimeter
+ - cmt/requirements : import AIDA
+
+!========================== CaloFutureUtils v7r6 2007-11-29 =========================
+! 2007-11-29 - Marco Cattaneo
+ - Adapt to templated function change in LHCbMath v2r4
+
+!========================== CaloFutureUtils v7r5 2007-09-04 =========================
+! 2007-08-27 - Olivier Deschamps
+ - clean unchecked StatusCode
+
+! 2007-08-24 - Olivier Deschamps
+ - Fix the unchecked StatusCodes
+
+!========================== CaloFutureUtils v7r4 2007-07-20 =========================
+! 2007-06-25 - Olivier Deschamps
+ - New tools : Track2CaloFuture and Part2CaloFuture --> match Track/Part to calo
+  (requested by Jose for L0 on/offline matching)
+               CaloFutureElectron tool update accordingly
+
+!========================== CaloFutureUtils v7r3 2007-06-07 =========================
+! 2007-05-30 - Olivier Descha;p
+ - New tool : CaloFuture2CaloFuture --> connect 2 calorimeters
+ usage  :
+  std::vector<LHCb::CaloFutureCellID> cellIDs = m_calo2calo->cellIDs( from, to);
+  std::vector<LHCb::CaloFutureDigit>   digits = m_calo2calo->digits ( from, to);
+  double                         energy = m_calo2calo->energy ( from, to);
+with 'from' == LHCb::CaloFutureCellID or LHCb::CaloFutureCluster
+     'to'   == CaloFuture name, i.e. "Hcal", "Ecal", "Prs", "Spd"
+
+!========================== CaloFutureUtils v7r2 2007-03-30 =========================
+! 2007-03-30 - Marco Cattaneo
+ - Fix a doxygen warning
+
+! 2007-03-29 - Olivier Deschamps
+ - Fix bug in CaloFutureMomenum definition of the transport matrix (indices swap)
+ - add new method : bremstrahlung() & bremCaloFutureMomentum() in CaloFutureElectron
+ - implement ICaloFutureMomentum interface (moved from CaloFutureInterfaces)
+
+!========================== CaloFutureUtils v7r1 2007-02-07 =========================
+! 2007-02-07 - Olivier Deschamps
+ - change default extrapolator in CaloFutureElectron ('HeraB' instead of 'Master')
+
+!========================== CaloFutureUtils v7r0 2007-01-15 =========================
+! 2007-01-15 - Marco Cattaneo
+ - Remove dependency on LHCbDefinitions
+ - Clean up includes
+
+! 2007-01-12 - Olivier Deschamps
+ - include CaloFutureMomentum.h in CaloFutureElectron implementation instead in the interface
+   to avoid circular depedency with CaloFutureInterfaces
+
+! 2006-12-21 - Olivier Deschamps
+ - new tool added : CaloFutureUtils/CaloFutureElectron.h - src/CaloFutureElectron.cpp
+
+! 2006-12-06 - Florence RANJARD
+ - apply_pattern install_more_includes
+
+!========================== CaloFutureUtils v6r6 2006-11-03 =========================
+! 2006-11-03 - Marco Cattaneo
+ - CaloFutureMomentum.cpp: Remove an unneccessary division in a sqrt
+
+! 2006-10-31 - Vanya BELYAEV ibelyaev@physics.syr.edu
+  - SpreadEstimator.cpp: increase the efficient "minimal cluster size threshold"
+                         from (0.1*cellsize) to (cellsize/sqrt(24))
+
+!========================== CaloFutureUtils v6r5p1 2006-10-23 =======================
+! 2006-10-23 Olivier Deschamps
+ - Fix in CaloFutureParticle.cpp
+
+!========================== CaloFutureUtils v6r5 2006-09-22 =======================
+! 2006-09-22 Olivier Deschamps
+ - Modify CaloFutureParticle{.cpp,.h} so that it can works with a bunch of LHCb::Particles
+
+!========================== CaloFutureUtils v6r4 2006-09-01 =======================
+! 2006-09-01 Olivier Deschamps
+ - Add two new classes : CaloFutureMomentum{.h,.cpp} and CaloFutureParticle{.h,.cpp}
+
+!========================== CaloFutureUtils v6r3p2 2006-07-19 =======================
+! 2006-07-19 - Marco Cattaneo
+ - Use SMatrix::Invert() instead of Sinvert(), to please root 5.12.00
+
+!========================== CaloFutureUtils v6r3p1 2006-07-06 =======================
+! 2006-07-06 - Olivier Deschamps
+ - Remove Assert() in CaloFutureTrackMatch.h - Error message instead of exption
+
+!========================== CaloFutureUtils v6r3 2006-06-20 =========================
+! 2006-06-20 - Olivier Deschamps
+ - add a predefined location in CaloFuture2Track.h
+
+! 2006-06-20 - Olivier Deschamps
+ - improve CaloFutureUtils/CaloFuture2Track.h
+
+! 2006-06-18 - Vanya BELYAEV
+ - fix few minor bugs
+
+! 2006-06-14 - Vanya BELYAEV
+ - CaloFutureUtils/CaloFutureTrackMatch.h
+     fix the return boolean valeus from Sinvert functions...
+ - CaloFutureUtils/CaloFutureTrackTool.h
+     fix the problem with NEGATIVE distance from plane to point
+
+! 2006-06-14 - Olivier Deschamps
+ - Bug fix src/CovarianceEstimator.cpp
+ - Add CaloFutureUtils/CaloFuture2Track.h header file
+
+! 2006-06-12 - Marco Cattaneo
+ - Fixes to modified files, for compatibility with changes in LHCbMath and Track
+
+! 2006-06-06 - Vanya BELYAEV
+ - few base classed for CaloFuturePIDs implementation
+    CaloFutureTrackTool &  CaloFutureTrackMatch
+ - rewritten class TrackUse
+ - cmt/requirements
+     add LHCbMath & TrackInterfaces
+
+! 2006-05-29 - Olivier Deschamps
+ - Update TrackUse.{cpp,h} for New Track Model
+ - bug fix in src/SpreadEstimator.cpp
+
+! 2006-05-26 - Marco Cattaneo
+ - Move to Gaudi::Units in header files
+
+!========================== CaloFutureUtils v6r2p1 2006-05-09 =======================
+! 2006-05-09 - Marco Cattaneo
+ - Remove explicit usage of boost, to please Win32 with Gaudi v18r4
+
+!========================== CaloFutureUtils v6r2 2006-05-02 =========================
+! 2006-05-02 - Eduardo Rodrigues
+ - propagation of change Track::Unique -> Track::Clone in Event/TrackEvent
+
+!========================== CaloFutureUtils v6r1 2006-04-19 =========================
+! 2006-04-10 - Olivier Deschamps
+ -  Complete migration to LHCb v20/Gaudi v18 :
+    CaloFutureUtils/Digit2ClustersConnector.h and CaloFutureUtils/SharedCells.h updated
+
+! 2006-04-10 - Marco Cattaneo
+ - Make Boost usage no_auto_imports (needed only in .cpp)
+
+! 2006-04-06 - Olivier Deschamps
+ - a bit of repackaging : CaloFutureUtils/CaloFuture2MC.h & CaloFutureMCTools.h moved from
+   CaloFutureAssociators/src
+
+!========================== CaloFutureUtils v6r0p1 2006-03-28 =================
+! 2006-03-28 - Marco Cattaneo
+ - Add explicit dependency on Boost, needed for Gaudi v18r3
+
+!========================== CaloFutureUtils v6r0 2006-03-22 ===================
+! 2006-03-22 - Olivier Deschamps
+ - Migration to LHCb v20/Gaudi v18
+ - cmt/requirement : RecEvent dependency replaces CaloFutureEvent
+ - version increment to v6r0
+
+!========================== CaloFutureUtils v5r1 2005-12-08 ===================
+! 2005-12-08 - Olivier Deschamps
+ - TrackUse.cpp based on Track::History == 'Cnv' Tracks only
+
+!========================== CaloFutureUtils v5r0 2005-11-04 ===================
+! 2005-11-04 - Olivier Deschamps
+ - Adapt to new Track Event Model (TrackEvent v1r4)
+
+  modified files :
+   CaloFutureUtils/CaloFutureTrackAlg.h
+   CaloFutureUtils/CaloFutureHistoTrackAlg.h
+   CaloFutureUtils/TrackUse.h
+   src/CaloFutureTrackAlg.cpp
+   src/CaloFutureHistoTrackAlg.cpp
+   src/TrackUse.cpp
+
+ - cmt/requirements
+   version increment to v5r0
+!========================== CaloFutureUtils v4r9 2005-05-09 ===================
+! 2005-05-09 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2005-05-06 - Vanya BELYAEV
+ - move the base classes CaloFutureTrackAlg and CaloFutureHistoTrackAlg
+   from CaloFuture/CaloFutureReco to this package ( to be used also in CaloFuture/CaloFuturePIDs)
+
+  new files :
+
+   CaloFutureUtils/CaloFutureTrackAlg.h
+   CaloFutureUtils/CaloFutureHistoTrackAlg.h
+   src/CaloFutureTrackAlg.cpp
+   src/CaloFutureHistoTrackAlg.cpp
+
+ - cmt/requirements
+   version increment to v4r9
+
+!========================== CaloFutureUtils v4r8 2004-10-27 ===================
+! 2004-10-27 - Vanya BELYAEV
+ - CaloFutureUtils/TrTrackUse.h ,
+   src/TrTrackUse.cpp
+
+      new helper class to simplify the selection/rejection of
+      TrStoredTrack fro e.g. mathcing, monitoring, PID, etc...
+      It defins a "standard" set of properties for "Component"
+      classes ("Algorithm", "Service", "AlgTool") and few methods
+      for seelction.rejection of tracks, inspection, etc...
+
+      The clients : CaloFutureReco, CaloFutureMoniDst. CaloFuturePIDs
+
+ - cmt/requirements
+    increment the version to v4r8
+
+! ============================ CaloFutureUtils v4r7p1 2004-10-26 ====================
+! 2004-10-26 - Marco Cattaneo
+ - Files histoHBookName.h and dirHbookName.h are obsolete, they are now empty
+   and redirect to the corresponding GaudiAlg file
+ - Fix some doxygen comments...
+
+! 2004-10-22 - Vanya BELYAEV
+  - src/CellMatrix2x2.cpp
+  - src/CellMatrix3x3.cpp
+  - src/CellNeighbour.cpp
+  - src/CellSwissCross.cpp
+
+   bug fix in evaluation of energy fractions (kindly reported by O.Deschamps:)
+  """
+      I am looking at the sharing of the energy of cells that belong to several
+      clusters using CellMatrix3x3 method that returns the fraction of 2
+      overlaping squares on the Ecal surface. In the function
+      "treatDifferentAreas" you return :
+      Area / sizeCell / sizeCel
+      where Area is the overlaping surface but sizeCell is defined as :
+      0.5 det()->cellSize   ( cell ) ;
+
+      So the returned fraction is wrong by a factor (1/0.5)**2=4 (Indeed I
+      observe Outer->Middle fractions are set to 4 !!).
+      Are these fractions >1 taken into account elsewhere or is it an error?
+  """
+
+  - cmt/requirements
+   version increment to v4r7p1
+
+! ============================= CaloFutureUtils v4r7 2004-05-27 =====================
+! 2004-05-27 - Marco Cattaneo
+ - Fix many doxygen comments and warnings
+
+! 2004-05-27 - Ivan Belyaev
+ - CaloFutureUtils/CellMatrix.h
+   fix my stupid bug in evaluation of overlapping area for 2 rectangular areas
+   The bug was observed and kindly reported by Olivier Deschamps
+ - cmt/requirements
+   increment the version to v4r7
+
+! ============================= CaloFutureUtils v4r6 2004-01-07 =====================
+! 2004-01-07 - Marco Cattaneo
+ - Move to Gaudi v14 (use CaloFutureEvent v13r* in requirements)
+
+!========================= CaloFutureUtils v4r5 2003-07-16 =====================
+! 2003-07-16 - Marco Cattaneo
+ - requirements: use CaloFutureEvent v12r*
+
+!========================= CaloFutureUtils v4r4 2002-12-06 =====================
+! 2002-11-22 - Florence Ranjard
+ - requirements - use new versions
+
+! 2002-11-29 - Ivan Belyaev
+ - cmt/requirements                       version update
+
+!======================== CaloFutureUtils v4r3 2002-11-11 ========================
+! 2002-11-14 - Ivan Belyaev
+ - Few bugs are fixed
+
+!======================== CaloFutureUtils v4r2 2002-10-04 ========================
+! 2002-10-03 - Marco Cattaneo
+ - use fabs() instead of abs() for floats
+
+!========================= CaloFutureUtils v4r1 2002-07-18 ==========================
+! 2002-07-18 - Ivan Belyaev
+ - use new CaloFutureEvent
+
+!========================= CaloFutureUtils v4r0 2002-07-09 ==========================
+! 2002-06-15 - Vanya Belyaev
+ - version update for new CaloDet version
+
+! 2002-06-14 - v3r2 Vanya Belyaev
+ - src/SpreadEstimator.cpp       bug fix
+
+
+! 2002-06-10 - Marco Cattaneo
+ - Change version to v3r0 to use EventKernel v2r*
+
+!===================== CaloFutureUtils v2r0 2002-05-29 ==============================
+! 2002-05-29 - Ivan Belyaev
+ - src/CovarinaceEstimator.cpp : remove the most stupid bug
+  induced by previoud "bug fix'. Indices for covariance and parameters
+  were set to be 100% wrong. I definitely need some vacations.
+  I never put SO stupid bugs  :-(((
+
+! 2002-05-23 - Vanya Belyaev
+ - cmt/requirements               : increase tehversion and use new patterns
+ - CaloFutureUtils/CaloFuturePhotonMomnetum.h : add the posiibility to redefine
+   the nominal position of null(primary) vertex
+ - src/CovarinaceEstimator.cpp    : remove stupid bug
+
+
+!=============================================================================
+! 07/04/2002 - Vanya Belyaev
+! - histoHbookName.h, dirHbookName.h  bug fix
+!=============================================================================
+
+!=============================================================================
+! 05/04/2002 - Vanya Belyaev
+! - split histoHbookName.h file into histoHbookName.h and dirHbookName.h
+!=============================================================================
+
+!=============================================================================
+! 04/04/2002 - Vanya Belyaev
+  - add "dirHbookName()" function to histoHbookName.h file
+!=============================================================================
+
+!=============================================================================
+! 02/04/2002 - Olivier Callot
+  - Fix reference to CaloFutureEvent/CaloFutureDigit.h in CaloFutureUtils/CaloFutureData.h
+!=============================================================================
+
+! =============================================================================
+! 02/04/2002 - v2r0 Vanya Belyaev
+!  - update for new event model
+! =============================================================================
+
+! =============================================================================
+! 13/03/2002 - Vanya Belyaev
+  - change version on requirements file
+! =============================================================================
+
+! =============================================================================
+! 09/12/2001 - Vanya Belyaev
+  - update for newer Gaudi version
+! =============================================================================
+
+! =============================================================================
+! 25/11/2001 - Ivan Belyaev
+  - update for newer CaloKernel package
+
+! =============================================================================
+  20011122    Vanya Belyaev
+  SpreadEstimator.h/.cpp
+  new utility for estimation of teh spread/size of the cluster
+
+! =============================================================================
+  20011107    Vanya Belyaev
+
+  CaloFutureUtils/CellMatrix.h
+  CaloFutureUtils/CellMatrix3x3.h
+  CaloFutureUtils/CellMatrix2x2.h
+  CaloFutureUtils/CellSwissCross.h
+  3 new useful utilities to determinet the relative position
+   of calorimeter with respect to some reference ("seed") cell.
+  Utilities are able to determite what fraction of the area of
+  the given cell belongs to certain topological configuration
+  around referenced "seed" cell.
+  5 possible configurations are considered:
+    3x3 matrix          ( area of 9 seed cells )
+    swiss-cross matrix  ( area of 5 seed cells )
+    4 types of 2x2 submatrices -
+    UpperLeft,UpperRight, LowerLeft and LowerRight  (area of 4 seed cells)
+
+! =============================================================================
+  20011102    v1  Vanya Belyaev
+   first release of new package
+! =============================================================================

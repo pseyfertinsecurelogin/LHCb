@@ -1,0 +1,35 @@
+<lcgdict>
+
+  <class name    = "IFutureCounterLevel"            />
+  <class name    = "ICaloFuture2CaloFuture"               />
+  <class name    = "ICaloFuture2MCTool"             />
+  <class name    = "ICaloFutureClusterization"      />
+  <class name    = "ICaloFutureClusterSelector"     />
+  <class name    = "ICaloFutureClusterTool"         />
+  <class name    = "ICaloFutureCorrection"          />
+  <class name    = "ICaloFutureDigitTool"           />
+  <class name    = "ICaloFutureDigits4Track"        />
+  <class name    = "ICaloFutureHypoLikelihood"      /> 
+  <class name    = "ICaloFutureHypoTool"            />
+  <class name    = "ICaloFutureLikelihood"          />
+  <class name    = "ICaloFutureSplitTool"           />
+  <class name    = "ICaloFutureSubClusterTag"       />
+  <class name    = "ICaloFutureTrackIdEval"         />
+  <class name    = "ICaloFutureTrackMatch"          />
+  <class name    = "IL0CaloFuture2CaloFuture"             />
+  <class name    = "IPart2CaloFuture"               />
+  <class name    = "ITrack2CaloFuture"              />
+  <class name    = "ICaloFutureCosmicsTool"         />
+  <class name    = "ICaloFutureCosmicsTrackTool"    />
+  <class name    = "ICaloFutureHypo2CaloFuture"           />
+  <class name    = "ICaloFutureGetterTool"          />
+  <class name    = "ICaloFutureHypoEstimator"       />
+  <class name    = "IFutureGammaPi0SeparationTool"  />
+  <class name    = "ICaloFutureRelationsGetter"     />
+  <class name    = "IFutureNeutralIDTool"           />
+  <class name    = "ICaloFutureShowerOverlapTool"   />
+</lcgdict>
+
+
+
+
