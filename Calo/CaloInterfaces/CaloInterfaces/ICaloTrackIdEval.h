@@ -11,6 +11,7 @@
 // forward declaration
 // ============================================================================
 #include "Event/Track.h"
+#include "Event/CaloDigit.h"
 // ============================================================================
 /** @class ICaloTrackIdEval ICaloTrackIdEval.h CaloInterfaces/ICaloTrackIdEval.h
  *  
@@ -35,16 +36,14 @@ struct ICaloTrackIdEval : extend_interfaces<IAlgTool>
    *  @param  value  (return) the value of the estimator
    *  @return status code 
    */  
-  virtual StatusCode process   
-  ( const LHCb::Track* track , 
-    double&              value ) const = 0 ;
+  virtual StatusCode process( const LHCb::Track& track , const LHCb::CaloDigits& digits, double& value) const = 0 ;
   
   /** The main processing method (functor interface)
    *  It evaluated the Track ID estimators using the calorimeter information  
    *  @param  track  pointer to the object to be processed
    */  
-  virtual double     operator() 
-    ( const LHCb::Track* track ) const = 0 ;
+  //virtual double     operator() 
+  //  ( const LHCb::Track* track ) const = 0 ;
   // ==========================================================================  
   /** static interface identification
    *  @see IInterface
