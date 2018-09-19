@@ -29,6 +29,12 @@ namespace LHCb::Pr
       SOAFIELD_TRIVIAL( f_vhits,   velohits, VeloHits );
       SOASKIN( VeloTrackSkin, f_pvstate, f_prstate, f_vhits ) {
         SOASKIN_INHERIT_DEFAULT_METHODS( VeloTrackSkin );
+        VeloTrackSkin(const LHCb::Track t) {
+          // FIXME optimise me
+          this->pvstate() = *t.states().front();
+          this->prstate() = *t.states().back();
+          //this->velohits() = ...
+        }
       };
       SOASKIN( VeloBackwardTrackSkin, f_pvstate, f_vhits ) {
         SOASKIN_INHERIT_DEFAULT_METHODS( VeloBackwardTrackSkin );
