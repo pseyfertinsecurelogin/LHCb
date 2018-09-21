@@ -1,4 +1,3 @@
-
 // Boost
 #include "boost/format.hpp"
 
@@ -25,6 +24,38 @@
 
 // Factory not declared here to avoid it appearing in the LHCbKernel library
 // and in all component libraries depending on LHCbKernel. Moved to LHCbApps
+
+namespace
+{
+  
+  /** Generate a hash from a string
+   *  Note this method generates undefined behaviour errors :-
+   *  runtime error: left shift of 69513675 by 10 places cannot be represented in type 'int'
+   *  runtime error: signed integer overflow: 643403938 + 1715636224 cannot be represented in type 'int'
+   *  Suppress with compiler attribute. */
+#if  defined (__GNUC__)
+  __attribute__((no_sanitize_undefined))
+#elif defined(__clang__) 
+  // add something for clang ...
+#endif
+  int makeHash( const std::string_view s )
+  {
+    //--> Hash32 algorithm from Pere Mato
+    int hash = 0;
+    // NOTE : Do NOT modernise this with STL algorithms, as this breaks the attribute...
+    for ( auto & c : s )
+    {
+      hash += c; 
+      hash += (hash << 10); 
+      hash ^= (hash >> 6);
+    }
+    hash += (hash << 3); 
+    hash ^= (hash >> 11); 
+    hash += (hash << 15);
+    return hash;
+  }
+
+}
 
 //=============================================================================
 // Initialization
@@ -203,14 +234,7 @@ std::vector<long int> LbAppInit::getSeeds(unsigned int seed1, unsigned long long
     (boost::io::str(boost::format("_%1%_%2%")
                       % boost::io::group(std::setfill('0'), std::hex, std::setw(8),  seed1)
                       % boost::io::group(std::setfill('0'), std::hex, std::setw(16), seed2)));
-
-  //--> Hash32 algorithm from Pere Mato
-  int hash = 0;
-  for(std::string::const_iterator iC = s.begin(); s.end() != iC; ++iC) {
-    hash += *iC; hash += (hash << 10); hash ^= (hash >> 6);
-  }
-  hash += (hash << 3); hash ^= (hash >> 11); hash += (hash << 15);
-  //<--
+  const auto hash = makeHash(s);
 
   // CLHEP uses the last seed as a seed (only 24 bits used) but also to generate
   // more pseudorandom seeds to populate the "seeds" vector to its capacity of 24
