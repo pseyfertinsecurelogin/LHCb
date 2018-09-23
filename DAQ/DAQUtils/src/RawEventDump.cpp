@@ -45,9 +45,9 @@ StatusCode RawEventDump::execute() {
 
     if (!raw) continue;
 
-    for(int j=0; j<256; ++j)
+    for ( int j = 0; j < int(RawBank::BankType::LastType); ++j )
     {
-      RawBank::BankType i = RawBank::BankType(j);
+      const auto i = RawBank::BankType(j);
 
       if( !acceptBank(i) )continue;
 
