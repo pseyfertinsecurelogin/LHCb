@@ -43,30 +43,44 @@ StatusCode ByteStreamTests::initialize() {
 
   BankWriter bw(6u);
 
-  unsigned int a[3]; 
-  unsigned char t1 = 6;
+  unsigned char  t1 = 6;
   unsigned short t2 = 0;
-  unsigned int t3 = 12;
-  bw << t1 << t2 << t3 << t3 << t3 << t2 << t1 ;
+  unsigned int   t3 = 12;
+
+  // each type must be written out enough times to fill a complete multiple 
+  // of 32 bits to avoid 'store to misaligned address' sanitizer errors
+  bw << t1 << t1 << t1 << t1; 
+  bw << t2 << t2;
+  bw << t3 << t3 << t3;
+  bw << t2 << t2;
+  bw << t1 << t1 << t1 << t1;
 
   info() << bw.dataBank().size() << endmsg;
 
+  unsigned int a[3] = {0,0,0};
   a[0] = 1+ (2<<8) + (3<<16) + (4<<24);
-  info() << a[0] << endmsg;
   a[1] = 0;
   a[2] = 256;
+
+  info() << a[0] << endmsg;
 
   unsigned int* c = &a[0];
 
   SmartBank<char> cont(c,3*4);
 
-  for (SmartBank<char>::iterator iter = cont.begin(); iter!= cont.end(); ++iter){
-    info() << int(*iter)<< endmsg;
-  }
-
+  for ( auto c : cont ) { info() << int(c) << endmsg; }
+  
   ByteStream smart(c,3*4); 
-  unsigned char d; unsigned int e; unsigned short f;
-  smart  >> e >> f >> d;
+  unsigned int   e{0}; 
+  unsigned short f[2]{0,0};
+  unsigned char  d[4]{0,0,0,0}; 
+  smart >> e >> f[0] >> f[1] >> d[0] >> d[1] >> d[2] >> d[3];
+  info() << e << " " << f[0] << " " << f[1]
+         << " " << (int)d[0]  
+         << " " << (int)d[1]  
+         << " " << (int)d[2] 
+         << " " << (int)d[3] 
+         << endmsg;
 
   return StatusCode::SUCCESS;
 }
