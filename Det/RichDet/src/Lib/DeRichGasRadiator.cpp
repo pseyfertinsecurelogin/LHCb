@@ -477,11 +477,11 @@ DeRichGasRadiator::calcSellmeirRefIndex( const std::vector< double > &momVect,
 //=========================================================================
 // generateHltRefIndex
 //=========================================================================
-void
+StatusCode
 DeRichGasRadiator::generateHltRefIndex()
 {
   // update the HLT parameters
-  updateHltProperties();
+  return updateHltProperties();
 }
 
 //=========================================================================

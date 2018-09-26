@@ -199,9 +199,10 @@ DeRichAerogelRadiator::updateProperties()
 
   // Update interpolators in base class
   sc = initTabPropInterpolators();
+  if ( !sc ) return sc;
 
   // Update the HLT ref index
-  generateHltRefIndex();
+  sc = generateHltRefIndex();
 
   return sc;
 }

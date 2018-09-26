@@ -102,11 +102,13 @@ DeRichRadiator::initTabPropInterpolators()
 //=========================================================================
 // generateHltRefIndex
 //=========================================================================
-void
+StatusCode
 DeRichRadiator::generateHltRefIndex()
 {
   // use normal refractive index
   m_hltRefIndex = m_refIndex;
+  // return OK
+  return StatusCode::SUCCESS;
 }
 
 //=========================================================================
