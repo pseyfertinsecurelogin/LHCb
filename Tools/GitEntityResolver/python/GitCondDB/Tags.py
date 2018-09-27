@@ -37,11 +37,31 @@ def getTagsInfos(repository):
     from collections import OrderedDict
     from dateutil.parser import parse as date_parse
     cmd = ['for-each-ref', '--python', '--sort=-creatordate',
-           ('--format=(%(refname:short),%(taggername)" "'
-            '%(taggeremail),%(taggerdate:iso8601),%(contents)),'),
+           ('--format=(%(objecttype),%(refname:short),%(taggername)" "'
+            '%(taggeremail),%(taggerdate:iso8601),'
+           '%(authorname)" "%(authoremail),%(authordate:iso8601),%(contents)),'),
            'refs/tags/']
-    return OrderedDict((tag, TagInfo(author, date_parse(date),
-                                     _parse_metadata(content)))
-                       for tag, author, date, content in
-                       eval('[{}]'.format(_git(repository, cmd)
-                                          .replace('\r', '\\r'))))
+
+    # Using the named tuple to make sure we always match correctly the output
+    # of the command.
+    GitResult = namedtuple('GitResult',
+                           ['objecttype', 'tag',
+                            'taggerauthor', 'taggerdate',
+                            'commitauthor', 'commitdate', 'content'])
+
+    def _checkTagInfo(result):
+        ''' Check the tags values and return the right ones '''
+        if result.objecttype == "tag":
+            return (result.taggerauthor, date_parse(result.taggerdate),
+                    _parse_metadata(result.content))
+        elif result.objecttype == "commit":
+            return (result.commitauthor, date_parse(result.commitdate),
+                    _parse_metadata(result.content))
+        raise Exception("objectype %s is not handled" % result.objectype)
+    
+    return OrderedDict((g.tag, TagInfo(*_checkTagInfo(g)))
+                       for g in 
+                       [ GitResult(*gitresult)
+                         for gitresult in
+                         eval('[{}]'.format(_git(repository, cmd)
+                                            .replace('\r', '\\r'))) ])
