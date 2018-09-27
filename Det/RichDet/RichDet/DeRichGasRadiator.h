@@ -67,7 +67,7 @@ private:
    * @return A pointer to the HLT refractive index interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  void generateHltRefIndex() override;
+  StatusCode generateHltRefIndex() override;
 
   /** Method for the calculation of the refractive index from the Sellmeir
    *  coeficients and update of the Tabulated Property */
