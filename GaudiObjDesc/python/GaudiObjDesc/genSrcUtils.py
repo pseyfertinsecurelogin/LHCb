@@ -279,6 +279,7 @@ class genSrcUtils(importUtils.importUtils):
                     else         : s += ',\n%s %s' % (indent*' ', p)
 
         s += ')' + constF
+        if metAtt['noexcept'] == 'TRUE': s += ' noexcept'
         if metAtt['virtual'] == 'PURE': s += ' = 0'
         if not scopeName:
             if metAtt['override'] == 'TRUE':
