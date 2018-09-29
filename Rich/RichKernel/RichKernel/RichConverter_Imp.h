@@ -220,15 +220,14 @@ namespace Rich
     StatusCode Print( const std::string &Message,
                       const MSG::Level   level  = MSG::INFO,
                       const StatusCode   Status = StatusCode::SUCCESS ) const;
-
+    
     /// Throw an exception
-    StatusCode Exception( const std::string &msg,
-                          const StatusCode   sc = StatusCode( StatusCode::FAILURE, true ) ) const
+    void Exception( const std::string &msg,
+                    const StatusCode   sc = StatusCode( StatusCode::FAILURE, true ) ) const
     {
       throw GaudiException( this->name() + ":: " + msg, "", sc );
-      return sc;
     }
-
+    
   public:
 
     /// access context
