@@ -248,25 +248,16 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
   // play with raw Python, ensuring we have the GIL.
   PyGILGuard guard{};
 
-  // local scope
-  PyObject* locals  = PyEval_GetLocals  () ;
-  if ( !locals )
-  {
-    debug() << "PyEval_GetLocals:  'locals'  points to NULL" << endmsg ;
+  // Use an independend global (== local) scope for evaluating code
+  PyObject* globals = PyDict_New() ;
+  if (!globals) {
     if ( PyErr_Occurred() ) { PyErr_Print() ; }
-  }
-  // global scope
-  PyObject* globals = PyEval_GetGlobals () ;
-  bool globnew = false ;
-  if ( !globals )
-  {
-    debug() << "PyEval_GetGlobals: 'globals' points to NULL" << endmsg ;
-    if ( PyErr_Occurred() ) { PyErr_Print() ; }
-    globals  = PyDict_New() ;
-    if ( PyErr_Occurred() ) { PyErr_Print() ; }
-    globnew  = true ;
-    PyDict_SetItemString ( globals, "__builtins__" , PyEval_GetBuiltins() ) ;
-    if ( PyErr_Occurred() ) { PyErr_Print() ; }
+    // TODO Return error here?
+  } else {
+    if (-1 == PyDict_SetItemString ( globals, "__builtins__" , PyEval_GetBuiltins() )) {
+      if ( PyErr_Occurred() ) { PyErr_Print() ; }
+      // TODO Return error here?
+    }
   }
   // ===========
   // ATTENTION!
@@ -274,7 +265,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
   // execute Python 'code'
   PyObject* result = PyRun_String
     ( const_cast<char*> ( pycode.c_str() ) ,                // EXECUTE CODE
-      Py_file_input  , globals  , locals ) ;
+      Py_file_input  , globals  , globals ) ;
 
   bool ok = true ;
   if ( !result )
@@ -361,7 +352,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
     error ()  << "End of native Python printout to stderr" << endmsg ;
   }
 
-  if ( globals && globnew )      { Py_XDECREF( globals ) ; }
+  if ( globals )                 { Py_XDECREF( globals ) ; }
 
   if ( result )                  { Py_XDECREF ( result )      ; }
   else if ( PyErr_Occurred()   ) { PyErr_Print() ; ok = false ; }
@@ -451,7 +442,7 @@ std::string LoKi::Hybrid::Base::makeCode
            << "_algo    = _context.  algo () if _context else None                      \n"
            << "_dvalgo  = _context.dvalgo () if _context else None                      \n"
            << "with HybridContext ( algo = _algo , dvalgo = _dvalgo ) as context :      \n"
-           << ntab << "hybrid_context_deco ( locals().copy() , context )                \n" ;
+           << ntab << "hybrid_context_deco ( globals() , context )                \n" ;
   /// insert additional lines:
   if ( !lines.empty() )
   {
@@ -468,7 +459,7 @@ std::string LoKi::Hybrid::Base::makeCode
         stream << ntab << lll << '\n' ;
       }
     }
-    stream << ntab << "hybrid_context_deco ( locals().copy() , context ) \n"
+    stream << ntab << "hybrid_context_deco ( globals() , context ) \n"
            << ntab << "## end of LINES  " << '\n' ;
   }
   /// insert preambulo
@@ -489,7 +480,7 @@ std::string LoKi::Hybrid::Base::makeCode
     stream << ntab << "##        PREAMBULO :\n" ;
     for (  const  auto& ll : context_ ) { stream << ll << '\n' ; }
     stream << ntab << "## End of PREAMBULO  \n"
-           << ntab << "hybrid_context_deco ( locals().copy() , context ) \n" ;
+           << ntab << "hybrid_context_deco ( globals() , context ) \n" ;
   }
   /// and finally the code
   stream   << ntab << "##        CODE :         \n"

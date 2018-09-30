@@ -2696,64 +2696,92 @@ class HybridContext(object):
     def __exit__  ( self , *_ ) :
         while self.decorated :
             o = self.decorated.pop()
-            if hasattr ( o , '_hybrid_old_init_' ) and \
-                   hasattr ( o , '_hybrid_new_init_' ) :
-                o.__init__ = o._hybrid_old_init_ 
-                delattr ( o , '_hybrid_new_init_' )
-                o.hybrid_decorated = False
-                
-def hybrid_context_deco ( objects_dct , context ) :
 
-    n_deco = 0 
+
+def contextualizedFunctor(cls, context):
+    """Bind context to a context-dependent functor.
+
+    Args:
+        cls (class): Context-dependent functor to be wrapped.
+        context (obj): Context algorithm to bind to ``cls``.
+
+    Returns:
+        A new functor class bound to a concrete context algorithm.
+
+    """
+
+    # class _ContextualizedFunctorMeta(type(cls)):
+    #     def __repr__(self):
+    #         return "contextualizedFunctor({!r}, {!r})".format(cls, context)
+
+    class _ContextualizedFunctor(cls):
+        """Context-dependent functor bound to ``{!r}``."""
+
+        # __metaclass__ = _ContextualizedFunctorMeta
+
+        def __init__(self, *args):
+            if len(args) == 1 and isinstance(args[0], cls):
+                # no decoration for copy-constructor
+                super(_ContextualizedFunctor, self).__init__(*args)
+            else:
+                super(_ContextualizedFunctor, self).__init__(context, *args)
+
+    _ContextualizedFunctor.__doc__ = _ContextualizedFunctor.__doc__.format(cls)
+    return _ContextualizedFunctor
+
+
+CONTEXT_NONE = 0
+CONTEXT_DVALGO = 1
+CONTEXT_ALGO = 2
+_context_types_cache = {}
+
+def hybrid_context_type(cls):
+    try:
+        if cls.context_dvalgo():
+            return CONTEXT_DVALGO
+    except AttributeError:
+        pass
+    try:
+        if cls.context_algo():
+            return CONTEXT_ALGO
+    except AttributeError:
+        pass
+    return CONTEXT_NONE
+
+
+def hybrid_context_deco ( objects_dct , context ) :
     for s , v in objects_dct.iteritems() :
 
-        vc = v.__class__ 
-        vt = v if issubclass ( vc , type ) else vc 
-        
-        if hasattr ( vt , 'hybrid_decorated' ) :
-            #print  'already decorated class %s/%s/%s' % ( s , v , vt )
-            if vt.hybrid_decorated : continue     ## CONTINUE
-            #print  'decorate again class %s/%s/%s' % ( s , v , vt )            
-            #vt.__init__ = vt._hybrid_new_init_ 
-            #context.decorated.add ( vt )
-            #continue                              ## CONTINUE
-            pass 
-        
-        if hasattr ( vt , 'context_dvalgo' ) and vt.context_dvalgo() and context.dvalgo () : 
-                
-            def _hybrid_new_init_ ( self , *args ) :
-                """New constructor, created for decorated ``Hybrid''object
-                """
-                if 1 == len ( args ) and isinstance ( args[0] , self.__class__ ) :
-                    ## no decoration for copy-constructor
-                    return self._hybrid_old_init_ ( *args )
-                return self._hybrid_old_init_ ( context.dvalgo () , *args )
-            
-        elif hasattr ( vt , 'context_algo' ) and vt.context_algo() and context.algo () : 
-            
-            def _hybrid_new_init_ ( self , *args ) :
-                """New constructor, created for decorated ``Hybrid''object
-                """
-                if 1 == len ( args ) and isinstance ( args[0] , self.__class__ ) :
-                    ## no decoration for copy-constructor
-                    return self._hybrid_old_init_ ( *args )
-                return self._hybrid_old_init_ ( context.algo () , *args )
-            
-        else :
+        vc = v.__class__
+        vt = v if issubclass ( vc , type ) else vc
+        # import inspect; print inspect.getmro(vt)
+
+        if not issubclass(vt, LoKi.AuxFunBase):
+            continue  # not to be decorated
+
+        if vt in context.decorated:
+            # or maybe drop context.decorated and have just
+            # `vt.__name__ == '_DecoratedHybrid'`?
+            continue
+
+        try:
+            context_type = _context_types_cache[vt]
+        except KeyError:
+            context_type = _context_types_cache[vt] = hybrid_context_type(vt)
+
+        if context_type == CONTEXT_DVALGO:
+            context_algo = context.dvalgo()
+        elif context_type == CONTEXT_ALGO:
+            context_algo = context.algo()
+        else:
             ## print 'skip class %s/%s/%s' % ( s , v , vt )
-            continue 
-    
-        vt._hybrid_old_init_       =  vt.__init__
-        _hybrid_new_init_.__doc__ += '\n' + vt._hybrid_old_init_.__doc__
-        vt._hybrid_new_init_       = _hybrid_new_init_
-        vt.__init__                = _hybrid_new_init_  ## ATTENTION HERE! 
-        vt.hybrid_decorated        = True
-        context.decorated.add ( vt ) 
-        n_deco +=1 
-        ##print  'decorate class %s/%s/%s' % ( s , v , vt )
-            
-    return n_deco     
-        
+            continue
+
+        vt = contextualizedFunctor(vt, context_algo)
+        objects_dct[s] = vt
+        context.decorated.add ( vt )
+
+
 # =============================================================================
 ## import all dependent functions 
 # =============================================================================
