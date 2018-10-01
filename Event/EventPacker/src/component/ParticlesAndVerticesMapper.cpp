@@ -62,14 +62,19 @@ ParticlesAndVerticesMapper::algorithmForPath( const std::string & path )
     const std::string algName = streamName(path) + "_PsAndVsUnpack";
 
     // Add the configuration of algorithm instance to the JobOptionsSvc
-    joSvc()->addPropertyToCatalogue( algName,
-                                     StringProperty("InputStream",streamRoot(path)) );
+    auto sc = joSvc()->addPropertyToCatalogue( algName,
+                                               StringProperty("InputStream",streamRoot(path)) );
     if ( m_unpackersOutputLevel > 0 )
     {
       std::stringstream lvl;
       lvl << m_unpackersOutputLevel;
-      joSvc()->addPropertyToCatalogue( algName,
-                                       StringProperty("OutputLevel",lvl.str()));
+      if (sc) sc = joSvc()->addPropertyToCatalogue( algName,
+                                                    StringProperty("OutputLevel",lvl.str()));
+    }
+
+    if ( UNLIKELY(!sc) )
+    {
+      Exception( "Failed to configure Job Options Service" );
     }
 
     // Return the algorithm type/name.

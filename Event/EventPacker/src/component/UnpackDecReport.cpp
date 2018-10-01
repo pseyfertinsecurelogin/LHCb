@@ -64,7 +64,8 @@ StatusCode UnpackDecReport::execute()
     {
       const std::string & name = myLink->path();
       tmp.setIntDecisionID( 1 );
-      newReport->insert( name, tmp );
+      auto sc = newReport->insert( name, tmp );
+      if ( !sc ) { Error( "Problem saving " + name ).ignore(); }
       if ( msgLevel(MSG::DEBUG) ) 
         debug() << format( "restored report %8.8x link ID %3d", tmp.decReport(), myLink->ID() ) 
                 << " name " << name << endmsg;     
