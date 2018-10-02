@@ -46,7 +46,7 @@ namespace LoKi
       /// the only one essential method: compare two particles
       inline bool operator()
         ( const HepMC::GenParticle* a ,
-          const HepMC::GenParticle* b )
+          const HepMC::GenParticle* b ) const
       {
         return a == b ? false :                 // they are equal, not "less"
                0 == a ? true  :                 // NULL is always less

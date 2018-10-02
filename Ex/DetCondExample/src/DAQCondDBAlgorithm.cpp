@@ -74,7 +74,7 @@ StatusCode DAQCondDBAlgorithm::initialize() {
                              "DAQ folder for the ConditionsDB",
                              ICondDBEditor::XML,
                              ICondDBEditor::SINGLE);
-    } catch (cool::Exception &e) {
+    } catch ( const cool::Exception &e) {
       error() << e.what() << endmsg;
       return StatusCode::FAILURE;
     }
@@ -83,7 +83,7 @@ StatusCode DAQCondDBAlgorithm::initialize() {
   
     m_nsInitialized = System::currentTime(System::nanoSec);
 
-  } catch ( GaudiException ) {
+  } catch ( const GaudiException &) {
     return StatusCode::FAILURE;
   }
 
@@ -119,7 +119,7 @@ StatusCode DAQCondDBAlgorithm::execute( ) {
       }
     }
     m_nsDBIO += (endIO - startIO);
-  } catch (cool::Exception &e) {
+  } catch ( const cool::Exception &e) {
     error() << "Error in storing condition object in the CondDB" << endmsg;
     error() << "*** cool::Exception caught:" << endmsg;
     error() << "*** " << e.what() << endmsg;

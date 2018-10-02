@@ -277,7 +277,7 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
                 val->setValidity(document->validSince(),document->validTill());
               }
             }
-          } catch (GaudiException e) {
+          } catch (const GaudiException &e) {
             fatal() << "An exception went out of the conversion process : ";
             e.printOut ( *m_msg );
             fatal() << endmsg;

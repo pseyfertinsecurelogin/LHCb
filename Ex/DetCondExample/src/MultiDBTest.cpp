@@ -42,7 +42,7 @@ StatusCode MultiDBTest::initialize() {
     registerCondition<MultiDBTest>("/dd/multiDBTest/Align1",m_align1);
 
   }
-  catch (GaudiException){
+  catch (const GaudiException &){
     return StatusCode::FAILURE;
   }
   return runUpdate();

@@ -52,7 +52,7 @@ StatusCode TestUMSError::initialize() {
     registerCondition<TestUMSError>("/dd/TestObject");
 
   }
-  catch (GaudiException) {
+  catch ( const GaudiException &) {
     return StatusCode::FAILURE;
   }
     

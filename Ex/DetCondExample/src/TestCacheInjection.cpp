@@ -58,7 +58,7 @@ StatusCode TestCacheInjection::initialize() {
     registerCondition<TestCacheInjection>("CacheTest/Object3",m_cond3);
     registerCondition<TestCacheInjection>("CacheTest/Object4",m_cond4);
   }
-  catch (GaudiException) {
+  catch ( const GaudiException &) {
     return StatusCode::FAILURE;
   }
 
