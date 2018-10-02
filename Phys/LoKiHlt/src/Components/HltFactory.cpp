@@ -205,13 +205,13 @@ inline StatusCode LoKi::Hybrid::HltFactory::_get
 ( const std::string&                                pycode  ,
   std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&      local   ,
   LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
-  const std::string&                                context ) 
+  const std::string&                                context )
 {
-  std::lock_guard<std::recursive_mutex> guard ( m_mutex );
+  std::lock_guard guard ( m_mutex );
   // prepare the actual python code
   std::string code = makeCode ( m_modules , m_actor , pycode , m_lines , context ) ;
   // define and lock the scope:
-  LoKi::Hybrid::HltLock lock  ( this , make_context () ) ;   
+  LoKi::Hybrid::HltLock lock  ( this , make_context () ) ;
   // use the base class method
   StatusCode sc = LoKi::Hybrid::Base::_get_ ( code , local , output ) ;
   if ( sc.isFailure() )

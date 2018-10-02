@@ -284,7 +284,7 @@ DetectorElement::childIDetectorElements() const {
     std::vector<IRegistry*> leaves;
     StatusCode sc = mgr->objectLeaves(this, leaves);
     if (sc.isSuccess()) {
-      std::lock_guard<std::mutex> guard(m_de_childrens_lock);
+      std::lock_guard guard(m_de_childrens_lock);
       if (!m_de_childrensLoaded) {
         for (const auto& l : leaves) {
           Assert (l, "DirIterator points to NULL!" );

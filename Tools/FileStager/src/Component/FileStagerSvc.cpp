@@ -180,7 +180,7 @@ StatusCode FileStagerSvc::getLocal( const string& filename, string& local )
    File* openFile = 0;
    const_original_iterator openIt;
    {
-      lock_guard< recursive_mutex > fileLock( m_fileMutex );
+      lock_guard fileLock( m_fileMutex );
       filesByOriginal_t& originals = m_files.get< originalTag >();
       openIt = originals.find( filename );
       openFile = openIt->file();
@@ -292,7 +292,7 @@ StatusCode FileStagerSvc::clearFiles()
 void FileStagerSvc::stage()
 {
    {
-      lock_guard< recursive_mutex > fileLock( m_fileMutex );
+      lock_guard fileLock( m_fileMutex );
       if ( m_files.empty() ) return;
       m_stageIt = m_files.get< originalTag >().find( m_stageStart );
    }
@@ -348,7 +348,7 @@ void FileStagerSvc::stage()
          const_position_iterator pos;
          bool waitForClose = true;
          {
-            lock_guard< recursive_mutex > lock( m_fileMutex );
+            lock_guard lock( m_fileMutex );
             const filesByPosition_t& filesByPosition = m_files.get< listTag >();
             pos = m_files.project< listTag >( m_stageIt );
 
@@ -431,7 +431,7 @@ void FileStagerSvc::stage()
 
          if ( err ) {
             // Handle errors
-            lock_guard< recursive_mutex > lock( m_fileMutex );
+            lock_guard lock( m_fileMutex );
             // Set correct variables and notify conditions.
             stageFile->setStaged( true );
             stageFile->setGood( false );
@@ -439,7 +439,7 @@ void FileStagerSvc::stage()
             break;
          } else {
             // We're good
-            lock_guard< recursive_mutex > lock( m_fileMutex );
+            lock_guard lock( m_fileMutex );
             info() << "Staging successful: " << stageFile->remote() << " staged." << endmsg;
             stageFile->setStaged( true );
             stageFile->setGood( true );
@@ -494,7 +494,7 @@ void FileStagerSvc::restartStaging( const string& filename )
 //=============================================================================
 void FileStagerSvc::removeFile( const_original_iterator it )
 {
-   lock_guard< recursive_mutex > lock( m_fileMutex );
+   lock_guard lock( m_fileMutex );
 
    // Remove the file
    File* file = it->file();
@@ -537,7 +537,7 @@ void FileStagerSvc::removeFiles()
 //=============================================================================
 void FileStagerSvc::removePrevious( const_original_iterator it )
 {
-   lock_guard< recursive_mutex > lock( m_fileMutex );
+   lock_guard lock( m_fileMutex );
    filesByPosition_t& filesByPosition = m_files.get< listTag >();
    const_position_iterator pos = m_files.project< listTag >( it );
 

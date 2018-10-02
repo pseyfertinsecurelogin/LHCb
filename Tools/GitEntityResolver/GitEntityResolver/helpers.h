@@ -33,7 +33,7 @@ public:
 
   pointer get() const {
     {
-      std::lock_guard<std::mutex> guard(m_ptr_mutex);
+      std::lock_guard guard(m_ptr_mutex);
       if ( !m_ptr ){
         m_ptr = m_factory();
         if ( !m_ptr ) throw std::runtime_error("unable create object");
@@ -55,7 +55,7 @@ public:
   }
 
   void reset() {
-    std::lock_guard<std::mutex> guard(m_ptr_mutex);
+    std::lock_guard guard(m_ptr_mutex);
     m_ptr.reset();
   }
 
