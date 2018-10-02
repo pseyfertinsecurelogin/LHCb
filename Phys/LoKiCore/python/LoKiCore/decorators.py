@@ -35,6 +35,7 @@ __date__    = "????-??-??"
 __version__ = "SVN $Revision$ "
 # =============================================================================
 
+import logging
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
 
 # (auto) load the objects from LoKiCoreDict dictionary 
@@ -42,6 +43,8 @@ LoKi.RangeBase_ = cpp.Gaudi.RangeBase_
 LoKi.KeeperBase
 
 from LoKiCore.functions import vct_from_list
+
+log = logging.getLogger(__name__)
 
 # =============================================================================
 ## simple function to provide the iteration over LoKi's range objects
@@ -2730,23 +2733,21 @@ def contextualizedFunctor(cls, context):
     return _ContextualizedFunctor
 
 
-CONTEXT_NONE = 0
-CONTEXT_DVALGO = 1
-CONTEXT_ALGO = 2
 _context_types_cache = {}
 
-def hybrid_context_type(cls):
+def hybrid_context_types(cls):
+    types = []
     try:
         if cls.context_dvalgo():
-            return CONTEXT_DVALGO
+            types.append("dvalgo")
     except AttributeError:
         pass
     try:
         if cls.context_algo():
-            return CONTEXT_ALGO
+            types.append("algo")
     except AttributeError:
         pass
-    return CONTEXT_NONE
+    return types
 
 
 def hybrid_context_deco ( objects_dct , context ) :
@@ -2765,14 +2766,17 @@ def hybrid_context_deco ( objects_dct , context ) :
             continue
 
         try:
-            context_type = _context_types_cache[vt]
+            context_types = _context_types_cache[vt]
         except KeyError:
-            context_type = _context_types_cache[vt] = hybrid_context_type(vt)
+            context_types = _context_types_cache[vt] = hybrid_context_types(vt)
 
-        if context_type == CONTEXT_DVALGO:
+        if "dvalgo" in context_types and context.dvalgo():
             context_algo = context.dvalgo()
-        elif context_type == CONTEXT_ALGO:
+        elif "algo" in context_types and context.algo():
             context_algo = context.algo()
+        elif context_types:
+            log.error("Functor {} requires context (type {}) but none is defined."
+                      .format(vt, ' or '.join(context_types)))
         else:
             ## print 'skip class %s/%s/%s' % ( s , v , vt )
             continue
