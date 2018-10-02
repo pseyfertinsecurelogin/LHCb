@@ -32,9 +32,7 @@ struct Iterator {
   
   Iterator (Store<PRECISION>& storeParam)
     : store(&storeParam) {
-    backend = store->backends.begin();
-    vector = 0;
-    element = 0;
+    backend        = store->backends.begin();
     vectorCapacity = store->vectorCapacity;
   }
 
@@ -42,12 +40,12 @@ struct Iterator {
     : store(&storeParam) {
     if (fromCurrent) {
       backend = store->currentBackend;
-      vector = store->currentVector;
+      vector  = store->currentVector;
       element = store->currentElement;
-      vectorCapacity = store->vectorCapacity;
     } else {
-      Iterator(store);
+      backend = store->backends.begin();
     }
+    vectorCapacity = store->vectorCapacity;
   }
 
   friend inline std::ostream& operator<< (
