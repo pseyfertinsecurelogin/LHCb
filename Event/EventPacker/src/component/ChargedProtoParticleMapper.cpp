@@ -39,44 +39,44 @@ ChargedProtoParticleMapper::algorithmForPath( const std::string & path )
   if ( pathIsHandled(path) )
   {
     // Choose a unique name
-    const std::string baseName = streamName(path) + "_ChargedPP";
+    const auto baseName = streamName(path) + "_ChargedPP";
 
     // Use a sequencer as the main type
     const std::string unpackerType = "GaudiSequencer";
-    const std::string seqName      = baseName + "_Seq";
+    const auto        seqName      = baseName + "_Seq";
 
     // List of algorithms to run in the sequencer
     std::vector<std::string> algs;
 
     // Add the basic unpacker
-    const std::string unpackName = baseName + "_Unpack";
+    const auto unpackName = baseName + "_Unpack";
     algs.emplace_back( "UnpackProtoParticle/" + unpackName );
-    joSvc()->addPropertyToCatalogue( unpackName,
-                                     StringProperty("InputName",
-                                                    packedProtoLocation(streamRoot(path))) );
-    joSvc()->addPropertyToCatalogue( unpackName,
-                                     StringProperty("OutputName",
-                                                    protoLocation(streamRoot(path))) );
+    auto sc = joSvc()->addPropertyToCatalogue( unpackName,
+                                               StringProperty("InputName",
+                                                              packedProtoLocation(streamRoot(path))) );
+    if (sc) sc = joSvc()->addPropertyToCatalogue( unpackName,
+                                                  StringProperty("OutputName",
+                                                                 protoLocation(streamRoot(path))) );
 
     // PID recalibration
     if ( !m_pidTune.empty() )
     {
       if ( !m_regex.empty() )
       {
-        const std::string name = "Reco14Filter_" + baseName;
-        joSvc()->addPropertyToCatalogue( name, StringProperty("HeaderLocation","Rec/Header") );
-        joSvc()->addPropertyToCatalogue( name, StringProperty("VersionRegex",m_regex) );
+        const auto name = "Reco14Filter_" + baseName;
+        if (sc) sc = joSvc()->addPropertyToCatalogue( name, StringProperty("HeaderLocation","Rec/Header") );
+        if (sc) sc = joSvc()->addPropertyToCatalogue( name, StringProperty("VersionRegex",m_regex) );
         algs.emplace_back( "ApplicationVersionFilter/" + name );
       }
       for ( const auto& tkType : m_tkTypes )
       {
         for ( const auto& pidType : m_pidTypes )
         {
-          const std::string name = "ANNPID" + tkType + pidType + "_" + baseName;
-          joSvc()->addPropertyToCatalogue( name, StringProperty("TrackType",tkType) );
-          joSvc()->addPropertyToCatalogue( name, StringProperty("PIDType",pidType) );
-          joSvc()->addPropertyToCatalogue( name, StringProperty("NetworkVersion",m_pidTune) );
-          joSvc()->addPropertyToCatalogue( name, StringProperty("ProtoParticleLocation",
+          const auto name = "ANNPID" + tkType + pidType + "_" + baseName;
+          if (sc) sc = joSvc()->addPropertyToCatalogue( name, StringProperty("TrackType",tkType) );
+          if (sc) sc = joSvc()->addPropertyToCatalogue( name, StringProperty("PIDType",pidType) );
+          if (sc) sc = joSvc()->addPropertyToCatalogue( name, StringProperty("NetworkVersion",m_pidTune) );
+          if (sc) sc = joSvc()->addPropertyToCatalogue( name, StringProperty("ProtoParticleLocation",
                                                                 protoLocation(streamRoot(path))) );
           algs.emplace_back( "ANNGlobalPID::ChargedProtoANNPIDAlg/" + name );
         }
@@ -84,23 +84,26 @@ ChargedProtoParticleMapper::algorithmForPath( const std::string & path )
     }
 
     // Set the sequencer alg list
-    joSvc()->addPropertyToCatalogue( seqName, StringArrayProperty("Members",algs) );
+    if (sc) sc = joSvc()->addPropertyToCatalogue( seqName, StringArrayProperty("Members",algs) );
 
     // Set output levels, if required
     if ( m_unpackersOutputLevel > 0 )
     {
       std::stringstream lvl;
       lvl << m_unpackersOutputLevel;
-      joSvc()->addPropertyToCatalogue( seqName,
-                                       StringProperty("OutputLevel",lvl.str()));
-      for ( std::vector<std::string>::const_iterator iName = algs.begin();
-            iName != algs.end(); ++iName )
+      if (sc) sc = joSvc()->addPropertyToCatalogue( seqName,
+                                                    StringProperty("OutputLevel",lvl.str()));
+      for ( const auto & a : algs )
       {
-        const std::string::size_type slash = (*iName).find_last_of("/");
-        const std::string N = ( slash != std::string::npos ?
-                                (*iName).substr(slash+1) : *iName );
-        joSvc()->addPropertyToCatalogue( N, StringProperty("OutputLevel",lvl.str()) );
+        const auto slash = a.find_last_of("/");
+        const auto N = ( slash != std::string::npos ? a.substr(slash+1) : a );
+        if (sc) sc = joSvc()->addPropertyToCatalogue( N, StringProperty("OutputLevel",lvl.str()) );
       }
+    }
+
+    if ( UNLIKELY(!sc) )
+    {
+      Exception( "Failed to configure Job Options Service" );
     }
 
     // Return the algorithm type/name.
@@ -120,9 +123,9 @@ ChargedProtoParticleMapper::nodeTypeForPath( const std::string & path )
 {
   updateNodeTypeMap(path);
 
-  NodeTypeMap::const_iterator it = m_nodeTypeMap.find( fixPath(path) );
+  auto it = m_nodeTypeMap.find( fixPath(path) );
 
-  const std::string& retS = ( it != m_nodeTypeMap.end() ? it->second : "" );
+  const auto retS = ( it != m_nodeTypeMap.end() ? it->second : "" );
 
   LOG_VERBOSE << "ChargedProtoParticleMapper::nodeTypeForPath '"
               << path << "' NodeType '" << retS << "'" << endmsg;
@@ -135,7 +138,7 @@ ChargedProtoParticleMapper::nodeTypeForPath( const std::string & path )
 void ChargedProtoParticleMapper::updateNodeTypeMap( const std::string & path )
 {
   // The stream TES root
-  const std::string streamR = streamRoot(path);
+  const auto streamR = streamRoot(path);
 
   LOG_VERBOSE << "ChargedProtoParticleMapper::updateNodeTypeMap Running for "
               << streamR << endmsg;
@@ -144,7 +147,7 @@ void ChargedProtoParticleMapper::updateNodeTypeMap( const std::string & path )
   if ( !m_streamsDone[streamR] )
   {
     m_streamsDone[streamR] = true;
-    const std::string packedLoc = packedProtoLocation(streamR);
+    const auto packedLoc = packedProtoLocation(streamR);
     LOG_VERBOSE << "ChargedProtoParticleMapper::updateNodeTypeMap Looking for "
                 << packedLoc << endmsg;
     if ( exist<LHCb::PackedProtoParticles*>(packedLoc) )
@@ -164,7 +167,7 @@ void ChargedProtoParticleMapper::updateNodeTypeMap( const std::string & path )
 void ChargedProtoParticleMapper::addPath( const std::string & path )
 {
   // Make sure paths start with /Event/
-  const std::string npath = fixPath(path);
+  const auto npath = fixPath(path);
 
   // if not already there, add.
   if ( m_nodeTypeMap.find(npath) == m_nodeTypeMap.end() )
@@ -175,8 +178,8 @@ void ChargedProtoParticleMapper::addPath( const std::string & path )
     m_nodeTypeMap[npath] = "";
 
     // Data Node paths ...
-    std::string tmp = npath;
-    std::string::size_type slash = tmp.find_last_of("/");
+    auto tmp = npath;
+    auto slash = tmp.find_last_of("/");
     while ( !tmp.empty() && slash != std::string::npos )
     {
       tmp = tmp.substr(0,slash);

@@ -106,36 +106,42 @@ ConversionDODMapper::algorithmForPath(const std::string & path)
   LOG_VERBOSE << "ConversionDODMapper::algorithmForPath '" << path << "'" << endmsg;
 
   // source path in the transient store
-  const std::string src = transform(path);
+  const auto src = transform(path);
 
   // If we have a source path and it points to an actual object get the source object...
-  const DataObject *obj = candidate(src);
+  const auto obj = candidate(src);
   if ( obj )
   {
     LOG_VERBOSE << " -> Found source data at '" << src << "'" << endmsg;
 
     // ... and choose the correct converter based on the ClassID.
-    AlgForTypeMap::iterator item = m_algTypes.find(obj->clID());
+    auto item = m_algTypes.find(obj->clID());
     if ( item != m_algTypes.end() )
     {
       // Get the algorithm type
-      const std::string &algType = item->second;
+      const auto &algType = item->second;
 
       // Choose a unique name for the algorithm instance
-      std::string algName = src + "_Converter";
+      auto algName = src + "_Converter";
       std::replace( algName.begin(), algName.end(), '/', '_' );
 
       // Add the configuration of algorithm instance to the JobOptionsSvc
-      joSvc()->addPropertyToCatalogue( algName, StringProperty(m_inputOptionName,src)   );
-      joSvc()->addPropertyToCatalogue( algName, StringProperty(m_outputOptionName,path) );
+      auto sc = 
+        ( joSvc()->addPropertyToCatalogue( algName, StringProperty(m_inputOptionName,src)   ).isSuccess() &&
+          joSvc()->addPropertyToCatalogue( algName, StringProperty(m_outputOptionName,path) ).isSuccess() );
       // ... including the output level
-      OutLevelsMap::iterator level = m_algOutLevels.find(algType);
+      auto level = m_algOutLevels.find(algType);
       if ( level != m_algOutLevels.end() )
       {
         std::stringstream lvl;
         lvl << level->second;
-        joSvc()->addPropertyToCatalogue( algName, 
-                                         StringProperty("OutputLevel",lvl.str()) );
+        sc = sc && joSvc()->addPropertyToCatalogue( algName, 
+                                                    StringProperty("OutputLevel",lvl.str()) ).isSuccess();
+      }
+      
+      if ( UNLIKELY(!sc) )
+      {
+        Exception( "Failed to configure Job Options Service" );
       }
 
       // Return the algorithm type/name.

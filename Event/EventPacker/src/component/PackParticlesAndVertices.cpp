@@ -1007,7 +1007,10 @@ packAP2RelatedInfoRelationContainer( const PackParticlesAndVertices::Part2InfoRe
     rPacker.unpack( prels, *unpacked, location );
 
     // check
-    rPacker.check( *rels, *unpacked );
+    if ( !rPacker.check( *rels, *unpacked ) )
+    {
+      Warning( "Problem running packing checks" ).ignore();
+    }
 
     // remove temporary data
     const StatusCode sc = evtSvc()->unregisterObject( unpacked );
