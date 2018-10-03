@@ -5,6 +5,7 @@
  *  @author Sean Benson
  *  @date   24/02/2014
  */
+#include <algorithm>
 #include <type_traits>
 #include "Event/Track.h"
 #include "Event/ProtoParticle.h"
@@ -13,22 +14,44 @@
 #include "GaudiKernel/detected.h"
 
 namespace details {
-    template <typename T, typename = int>
-    using has_clone_ = decltype( std::declval<const T&>().clone() );
-    template <typename T>
-    constexpr bool has_clone_v = Gaudi::cpp17::is_detected<has_clone_, T>::value;
 
+  template <typename T, typename = int>
+  using has_clone_ = decltype( std::declval<const T&>().clone() );
+  template <typename T>
+  constexpr bool has_clone_v = Gaudi::cpp17::is_detected<has_clone_, T>::value;
+
+  constexpr struct Clone_t {
     template <typename T>
-    T* clone(T const& t) {
-        if constexpr ( details::has_clone_v<T> ) {
-            return t.clone();
-        } else {
-            return new T(t);
-        }
+    auto operator()(T const& t) const {
+      if constexpr ( std::is_pointer_v<T> ) {
+        assert(t!=nullptr);
+        return operator()(*t);
+      } else if constexpr ( details::has_clone_v<T> ) {
+        return t.clone();
+      } else {
+        return new T(t);
+      }
     }
-    // adapt between containers which use 'insert' (eg. KeyedContainer)
-    // and those which use 'push_back' (eg. std::vector)
-    using Gaudi::Functional::details::insert;
+  } clone{};
+
+  // TODO: move to Gaudi::Functional::details
+  template <typename C>
+  class Inserter {
+    C& container;
+  public:
+    Inserter(C& c) : container(c) {}
+    template <typename ValueType>
+    Inserter& operator=( ValueType&& value ) {
+      // adapt between containers which use 'insert' (eg. KeyedContainer)
+      // and those which use 'push_back' (eg. std::vector)
+      Gaudi::Functional::details::insert(container,std::forward<ValueType>(value));
+      return *this;
+    }
+    Inserter& operator*() { return *this; }
+    Inserter& operator++() { return *this; }
+    Inserter& operator++(int) { return *this; }
+  };
+
 }
 
 template <typename T> using VOC = Gaudi::Functional::vector_of_const_<T>;
@@ -43,14 +66,12 @@ struct TESMerger final : Gaudi::Functional::MergingTransformer<Container(VOC<Con
   {}
 
   Container operator()(VOC<Container*>const& vcont) const override {
-      Container out;
-      for (auto const* container : vcont) {
-          if (!container) continue;
-          for (auto const* obj : *container) {
-              details::insert( out, details::clone(*obj) );
-          }
-      }
-      return out;
+    Container out;
+    for (auto const* container : vcont) {
+      if (container) std::transform( container->begin(), container->end(),
+                                     details::Inserter{out}, details::clone );
+    }
+    return out;
   }
 };
 
