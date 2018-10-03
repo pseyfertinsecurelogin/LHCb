@@ -77,8 +77,8 @@ class TurboConf(LHCbConfigurableUser):
 
     def _register_pr_links(self, packing, rootintes, datatype, simulation):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
-        from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
-        from Configurables import TESMerger_LHCb__Track_ as TESMergerTrack
+        from Configurables import TESMergerProtoParticle
+        from Configurables import TESMergerTrack
         from Configurables import GaudiSequencer
         from Configurables import Gaudi__DataLink as DataLink
 
