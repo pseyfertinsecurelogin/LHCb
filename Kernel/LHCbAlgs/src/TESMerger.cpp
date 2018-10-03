@@ -5,64 +5,60 @@
  *  @author Sean Benson
  *  @date   24/02/2014
  */
-
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/SharedObjectsContainer.h"
-#include <string>
-#include <vector>
+#include <type_traits>
 #include "Event/Track.h"
 #include "Event/ProtoParticle.h"
 #include "Event/Particle.h"
+#include "GaudiAlg/MergingTransformer.h"
+#include "GaudiKernel/detected.h"
 
+namespace details {
+    template <typename T, typename = int>
+    using has_clone_ = decltype( std::declval<const T&>().clone() );
+    template <typename T>
+    constexpr bool has_clone_v = Gaudi::cpp17::is_detected<has_clone_, T>::value;
 
-template <class T> class TESMerger final : public GaudiAlgorithm
+    template <typename T>
+    T* clone(T const& t) {
+        if constexpr ( details::has_clone_v<T> ) {
+            return t.clone();
+        } else {
+            return new T(t);
+        }
+    }
+    // adapt between containers which use 'insert' (eg. KeyedContainer)
+    // and those which use 'push_back' (eg. std::vector)
+    using Gaudi::Functional::details::insert;
+}
+
+template <typename T> using VOC = Gaudi::Functional::vector_of_const_<T>;
+
+template <class Container>
+struct TESMerger final : Gaudi::Functional::MergingTransformer<Container(VOC<Container*> const &)>
 {
+  TESMerger(std::string const& name, ISvcLocator* pSvcLocator)
+  : Gaudi::Functional::MergingTransformer<Container(VOC<Container*>const&)>(name,pSvcLocator,
+                       { "inputLocations", {}},
+                       { "outputLocation", {}} )
+  {}
 
-public:
-
-  TESMerger(const std::string& name,
-            ISvcLocator* pSvcLocator);
-
-  StatusCode execute() override;
-
-private:
-
-  std::vector<std::string> m_inputLocations;
-  std::string m_outputLocation;
-
+  Container operator()(VOC<Container*>const& vcont) const override {
+      Container out;
+      for (auto const* container : vcont) {
+          if (!container) continue;
+          for (auto const* obj : *container) {
+              details::insert( out, details::clone(*obj) );
+          }
+      }
+      return out;
+  }
 };
 
-template <class T>
-TESMerger<T>::TESMerger(const std::string& name,
-                        ISvcLocator* pSvcLocator):
-  GaudiAlgorithm(name, pSvcLocator)
-{
-  // constructor
-  declareProperty( "inputLocations",  m_inputLocations) ;
-  declareProperty( "outputLocation", m_outputLocation) ;
-}
+template <typename ValueType> using KC = KeyedContainer< ValueType , Containers::HashMap >;
 
-template <class T>
-StatusCode TESMerger<T>::execute()
-{
-  using ContT = KeyedContainer< T , Containers::HashMap >;
-
-  auto * out = new ContT() ;
-  put( out, m_outputLocation) ;
-
-  for ( const auto & loc : m_inputLocations )
-  {
-    auto * cont_in = getIfExists<ContT>(loc) ;
-    if ( cont_in )
-    {
-      for ( const auto * obj : *cont_in )
-      { out->insert( obj->clone() ) ; }
-    }
-  }
-  return StatusCode::SUCCESS;
-}
-
-typedef TESMerger<LHCb::ProtoParticle> TESMergerProtoParticle;
-DECLARE_COMPONENT( TESMergerProtoParticle )
-typedef TESMerger<LHCb::Particle> TESMergerParticle;
-DECLARE_COMPONENT( TESMergerParticle )
+using TESMergerProtoParticle = TESMerger<KC<LHCb::ProtoParticle>>;
+DECLARE_COMPONENT_WITH_ID( TESMergerProtoParticle, "TESMergerProtoParticle" )
+using TESMergerParticle = TESMerger<KC<LHCb::Particle>>;
+DECLARE_COMPONENT_WITH_ID( TESMergerParticle , "TESMergerParticle" )
+using TESMergerTrack = TESMerger<KC<LHCb::Track>>;
+DECLARE_COMPONENT_WITH_ID( TESMergerTrack , "TESMergerTrack" )
