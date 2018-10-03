@@ -94,9 +94,6 @@ struct TESMerger final : Gaudi::Functional::MergingTransformer<Container( VOC<Co
 template <typename ValueType>
 using KC = KeyedContainer<ValueType, Containers::HashMap>;
 
-using TESMergerProtoParticle = TESMerger<KC<LHCb::ProtoParticle>>;
-DECLARE_COMPONENT_WITH_ID( TESMergerProtoParticle, "TESMergerProtoParticle" )
-using TESMergerParticle = TESMerger<KC<LHCb::Particle>>;
-DECLARE_COMPONENT_WITH_ID( TESMergerParticle, "TESMergerParticle" )
-using TESMergerTrack = TESMerger<KC<LHCb::Track>>;
-DECLARE_COMPONENT_WITH_ID( TESMergerTrack, "TESMergerTrack" )
+DECLARE_COMPONENT_WITH_ID( TESMerger<KC<LHCb::ProtoParticle>>, "TESMergerProtoParticle" )
+DECLARE_COMPONENT_WITH_ID( TESMerger<KC<LHCb::Particle>>, "TESMergerParticle" )
+DECLARE_COMPONENT_WITH_ID( TESMerger<KC<LHCb::Track>>, "TESMergerTrack" )
