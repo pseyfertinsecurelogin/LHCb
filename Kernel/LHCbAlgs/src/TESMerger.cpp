@@ -6,6 +6,7 @@
  *  @date   24/02/2014
  */
 #include <algorithm>
+#include <numeric>
 #include <type_traits>
 #include "Event/Track.h"
 #include "Event/ProtoParticle.h"
@@ -15,14 +16,19 @@
 
 namespace details {
 
-  template <typename T, typename = int>
+  template <typename T>
+  using has_reserve_ = decltype(std::declval<T&>().reserve(typename T::size_type(0)));
+  template <typename T>
+  constexpr bool has_reserve_v = Gaudi::cpp17::is_detected<has_reserve_, T>::value;
+
+  template <typename T>
   using has_clone_ = decltype( std::declval<const T&>().clone() );
   template <typename T>
   constexpr bool has_clone_v = Gaudi::cpp17::is_detected<has_clone_, T>::value;
 
   constexpr struct Clone_t {
     template <typename T>
-    auto operator()(T const& t) const {
+    auto* operator()(T const& t) const {
       if constexpr ( std::is_pointer_v<T> ) {
         assert(t!=nullptr);
         return operator()(*t);
@@ -67,6 +73,11 @@ struct TESMerger final : Gaudi::Functional::MergingTransformer<Container(VOC<Con
 
   Container operator()(VOC<Container*>const& vcont) const override {
     Container out;
+    if constexpr ( details::has_reserve_v<Container> ) {
+      auto n = std::accumulate( vcont.begin(), vcont.end(), 0,
+                                [](int n, auto const * c) { return c ? n + c->size() : n ; } );
+      out.reserve(n);
+    }
     for (auto const* container : vcont) {
       if (container) std::transform( container->begin(), container->end(),
                                      details::Inserter{out}, details::clone );
