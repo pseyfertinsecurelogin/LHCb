@@ -101,12 +101,12 @@ class TurboConf(LHCbConfigurableUser):
         DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
-                                     What=mergeProtos.outputLocation,
+                                     What=str(mergeProtos.outputLocation),
                                      Target=join(rootintes, 'Rec/ProtoP/Charged'))
         DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = linkChargedProtos
 
         linkTracks = DataLink('HltRecTracks',
-                              What=mergeTracks.outputLocation,
+                              What=str(mergeTracks.outputLocation),
                               Target=join(rootintes, 'Rec/Track/Best'))
         DataOnDemandSvc().AlgMap[linkTracks.Target] = linkTracks
 
