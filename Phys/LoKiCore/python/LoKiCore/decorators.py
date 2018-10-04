@@ -2686,21 +2686,6 @@ def decorateFinder ( finder , opers ) :
 # =============================================================================
 # context.... 
 # =============================================================================
-class HybridContext(object):
-    def __init__ ( self , algo = None   , dvalgo = None ) :
-        self.__algo      =   algo
-        self.__dvalgo    = dvalgo
-        self.decorated   = set()
-        
-    def algo   ( self ) : return self.__algo 
-    def dvalgo ( self ) : return self.__dvalgo
-
-    def __enter__ ( self ) : return self
-    def __exit__  ( self , *_ ) :
-        while self.decorated :
-            o = self.decorated.pop()
-
-
 def contextualizedFunctor(cls, context):
     """Bind context to a context-dependent functor.
 
@@ -2756,19 +2741,15 @@ def hybrid_context_types(cls):
     return types
 
 
-def hybrid_context_deco ( objects_dct , context ) :
-    for s , v in objects_dct.iteritems() :
+def hybrid_context_deco(global_symbols, contexts):
+    for s, v in sorted(global_symbols.items()):
 
-        vc = v.__class__
-        vt = v if issubclass ( vc , type ) else vc
-        # import inspect; print inspect.getmro(vt)
+        vt = v if isinstance(v, type) else v.__class__
 
         if not issubclass(vt, LoKi.AuxFunBase):
             continue  # not to be decorated
 
-        if vt in context.decorated:
-            # or maybe drop context.decorated and have just
-            # `vt.__name__ == '_DecoratedHybrid'`?
+        if hasattr(vt, "_ContextualizedFunctor__context"):
             continue
 
         try:
@@ -2776,20 +2757,21 @@ def hybrid_context_deco ( objects_dct , context ) :
         except KeyError:
             context_types = _context_types_cache[vt] = hybrid_context_types(vt)
 
-        if "dvalgo" in context_types and context.dvalgo():
-            context_algo = context.dvalgo()
-        elif "algo" in context_types and context.algo():
-            context_algo = context.algo()
-        elif context_types:
-            log.error("Functor {} requires context (type {}) but none is defined."
-                      .format(vt, ' or '.join(context_types)))
-        else:
-            ## print 'skip class %s/%s/%s' % ( s , v , vt )
-            continue
+        context_algo = None
+        for typ in ["dvalgo", "algo"]:
+            if typ in context_types and contexts.get(typ):
+                context_algo = contexts[typ]
+                break
+
+        if context_algo is None:
+            if context_types:
+                log.error("Functor {} requires context (type {}) but none is defined."
+                          .format(vt, ' or '.join(context_types)))
+            else:
+                continue
 
         vt = contextualizedFunctor(vt, context_algo)
-        objects_dct[s] = vt
-        context.decorated.add ( vt )
+        global_symbols[s] = vt
 
 
 # =============================================================================

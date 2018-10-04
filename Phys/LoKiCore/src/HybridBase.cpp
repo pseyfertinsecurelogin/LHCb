@@ -436,13 +436,12 @@ std::string LoKi::Hybrid::Base::makeCode
   //
   stream   << "## The ACTOR :\n" ;
   stream   << "_actor   = " << actor << '\n' ;
-  const std::string ntab ( 8 , ' ' ) ;
-  stream   << "_context = _actor.context  () if hasattr ( _actor , 'context' ) else None\n"
-           << "from LoKiCore.decorators import HybridContext, hybrid_context_deco       \n"
-           << "_algo    = _context.  algo () if _context else None                      \n"
-           << "_dvalgo  = _context.dvalgo () if _context else None                      \n"
-           << "with HybridContext ( algo = _algo , dvalgo = _dvalgo ) as context :      \n"
-           << ntab << "hybrid_context_deco ( globals() , context )                \n" ;
+  const std::string ntab ( 0 , ' ' ) ;
+  stream   << "from LoKiCore.decorators import hybrid_context_deco                      \n"
+           << "_context = _actor.context  () if hasattr ( _actor , 'context' ) else None\n"
+           << "_contexts = {'algo': _context.algo () if _context else None,             \n"
+           << "             'dvalgo': _context.dvalgo () if _context else None}         \n"
+           << ntab << "hybrid_context_deco ( globals() , _contexts )               \n" ;
   /// insert additional lines:
   if ( !lines.empty() )
   {
@@ -459,7 +458,7 @@ std::string LoKi::Hybrid::Base::makeCode
         stream << ntab << lll << '\n' ;
       }
     }
-    stream << ntab << "hybrid_context_deco ( globals() , context ) \n"
+    stream << ntab << "hybrid_context_deco ( globals() , _contexts ) \n"
            << ntab << "## end of LINES  " << '\n' ;
   }
   /// insert preambulo
@@ -480,7 +479,7 @@ std::string LoKi::Hybrid::Base::makeCode
     stream << ntab << "##        PREAMBULO :\n" ;
     for (  const  auto& ll : context_ ) { stream << ll << '\n' ; }
     stream << ntab << "## End of PREAMBULO  \n"
-           << ntab << "hybrid_context_deco ( globals() , context ) \n" ;
+           << ntab << "hybrid_context_deco ( globals() , _contexts ) \n" ;
   }
   /// and finally the code
   stream   << ntab << "##        CODE :         \n"
