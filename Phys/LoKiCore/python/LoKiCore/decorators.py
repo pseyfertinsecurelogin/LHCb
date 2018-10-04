@@ -2713,23 +2713,29 @@ def contextualizedFunctor(cls, context):
 
     """
 
-    # class _ContextualizedFunctorMeta(type(cls)):
-    #     def __repr__(self):
-    #         return "contextualizedFunctor({!r}, {!r})".format(cls, context)
-
     class _ContextualizedFunctor(cls):
-        """Context-dependent functor bound to ``{!r}``."""
-
-        # __metaclass__ = _ContextualizedFunctorMeta
+        __functor = cls
+        __context = context
 
         def __init__(self, *args):
-            if len(args) == 1 and isinstance(args[0], cls):
+            if len(args) == 1 and isinstance(args[0], self.__functor):
                 # no decoration for copy-constructor
                 super(_ContextualizedFunctor, self).__init__(*args)
             else:
-                super(_ContextualizedFunctor, self).__init__(context, *args)
+                super(_ContextualizedFunctor, self).__init__(
+                    self.__context, *args)
 
-    _ContextualizedFunctor.__doc__ = _ContextualizedFunctor.__doc__.format(cls)
+    try:
+        type_name = context.type()
+    except AttributeError:
+        type_name = type(context).__name__
+
+    _ContextualizedFunctor.__name__ = (
+        "{cls.__name__}({typ}('{name}'), ...)".format(
+            cls=cls, typ=type_name, name=context.name()))
+    _ContextualizedFunctor.__doc__ = (
+        "{cls.__name__} bound to {typ}('{name}').".format(
+            cls=cls, typ=type_name, name=context.name()))
     return _ContextualizedFunctor
 
 
