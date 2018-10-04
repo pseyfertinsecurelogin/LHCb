@@ -222,16 +222,38 @@ LoKi::TES::Size* LoKi::TES::Size::clone() const
 // ============================================================================
 double LoKi::TES::Size::operator() ( /* LoKi::TES::Size::argument */ ) const
 {
-  auto obj =  get();
-  auto container = dynamic_cast<ObjectContainerBase*>(obj) ;
-  if ( container ) { return container->numberOfObjects ()  ; }
-  auto anydata   = dynamic_cast<AnyDataWrapperBase*> (obj) ;
-  if ( anydata   ) { return anydata->size().value_or(-1)   ; }
-  return -1;
+  auto obj = getIfExists ();
+  //
+  if ( !obj )      { return                             -1     ; } // RETURN
+  auto container = dynamic_cast<ObjectContainerBase*>  ( obj ) ;
+  if ( container ) { return container->numberOfObjects (     ) ; } // RETURN
+  auto anydata   = dynamic_cast<AnyDataWrapperBase*>   ( obj ) ;
+  if ( anydata   ) { return anydata->size().value_or   ( -1  ) ; } // RETURN
+  //
+  return -1;                                                       // RETURN
 }
 // ============================================================================
 std::ostream& LoKi::TES::Size::fillStream ( std::ostream& s ) const
 { return s << "SIZE('" << location() << "')" ; }
+// ============================================================================
+
+
+// ============================================================================
+LoKi::TES::HasData::HasData
+( const GaudiAlgorithm* algorithm ,
+  const std::string&    location  )
+  : LoKi::AuxFunBase ( std::tie ( algorithm , location ) )
+  , LoKi::TES::DataHandle<DataObject> ( algorithm , location )
+{}
+// ============================================================================
+LoKi::TES::HasData* LoKi::TES::HasData::clone() const
+{ return new LoKi::TES::HasData ( algorithm() , location() ) ; }
+// ============================================================================
+bool LoKi::TES::HasData::operator() ( /* LoKi::TES::HasData::argument */ ) const
+{ return exist () ; }
+// ============================================================================
+std::ostream& LoKi::TES::HasData::fillStream ( std::ostream& s ) const
+{ return s << "HASDATA('" << location() << "')" ; }
 // ============================================================================
 
 // ============================================================================
