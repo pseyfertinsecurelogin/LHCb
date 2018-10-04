@@ -224,12 +224,10 @@ namespace ClusterFunctors
      *  @see CaloException
      *  @exception CaloException
      *  @param     message exception message
-     *  @return    status code (fictive)
      */
-    StatusCode Exception( const std::string& message ) const
+    void Exception( const std::string& message ) const
     {
       throwException( "ClusterArea() " + message );
-      return StatusCode::FAILURE ;
     };
   };
 
@@ -286,12 +284,10 @@ namespace ClusterFunctors
      *  @see CaloException
      *  @exception CaloException
      *  @param     message exception message
-     *  @return    status code (fictive)
      */
-    StatusCode Exception( const std::string& message ) const
+    void Exception( const std::string& message ) const
     {
       throwException( "ClusterCalo() " + message );
-      return StatusCode::FAILURE ;
     };
   };
 
@@ -351,12 +347,10 @@ namespace ClusterFunctors
      *  @see CaloException
      *  @exception CaloException
      *  @param     message exception message
-     *  @return    status code (fictive)
      */
-    StatusCode Exception( const std::string& message ) const
+    void Exception( const std::string& message ) const
     {
       throwException( "ClusterFromCalo() " + message );
-      return StatusCode::FAILURE ;
     };
   private:
     /// default constructor is private
@@ -444,12 +438,10 @@ namespace ClusterFunctors
      *  @see CaloException
      *  @exception CaloException
      *  @param     message exception message
-     *  @return    status code (fictive)
      */
-    StatusCode Exception( const std::string& message ) const
+    void Exception( const std::string& message ) const
     {
       throwException( "OnTheBoundary() " + message );
-      return StatusCode::FAILURE ;
     };
   };
 
@@ -521,12 +513,10 @@ namespace ClusterFunctors
      *  @see CaloException
      *  @exception CaloException
      *  @param     message exception message
-     *  @return    status code (fictive)
      */
-    StatusCode Exception( const std::string& message ) const
+    void Exception( const std::string& message ) const
     {
       throwException( "ZPosition() " + message );
-      return StatusCode::FAILURE ;
     };
 
   private:
