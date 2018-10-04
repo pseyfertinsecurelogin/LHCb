@@ -1,0 +1,54 @@
+<!-- 
+     * $Id: CaloFutureUtils.xml,v 1.5 2010-03-18 13:58:42 ibelyaev Exp $ 
+     * ========================================================================
+     * @file
+     * The seleciton file to build Reflex dictionaries for 
+     * CaloFuture/CaloFutureUtils package 
+     * @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
+     * @date 2008-05-15
+     * ========================================================================
+-->
+
+
+<lcgdict>
+  
+  <class name      = "ICaloFutureElectron"      />
+<!-- 
+*     <class name      = "LHCb::CaloMomentum" />
+-->
+  <class name      = "LHCb::CaloFutureParticle" />
+
+  <class    name   = "CaloFutureCellCode::Cell2String" />
+  <function name   = "CaloFutureCellCode::caloName"    />
+  <function name   = "CaloFutureCellCode::caloNum"     />
+  <function name   = "CaloFutureCellCode::caloArea"    />
+
+  
+<!-- 
+*     <function name = "LHCb::CaloHelpers::toSet"     />
+*     <function name = "LHCb::CaloHelpers::toVector"  />
+*     <function name = "LHCb::CaloHelpers::_get_at_"  />
+*     <function name = "LHCb::CaloHelpers::_insert_"  />
+*     <class    name = "std::vector<LHCb::CaloCellID>"       />
+*     <class    name = "std::vector<const LHCb::CaloDigit*>" />
+*     <class    name = "std::set<LHCb::CaloCellID>"          />
+*     <class    name = "std::set<const LHCb::CaloDigit*>"    />
+*     
+*     <class pattern = "CaloVector<LHCb::CaloDigit*>"  /> 
+*     <class pattern = "CaloVector<LHCb::CaloAdc*>"    /> 
+-->
+
+  <function name = "CaloFuture::Kinematics::momentum"    />
+  
+  <exclusion>
+
+    <class pattern="LHCb::CaloMomentum::CaloPositions*"/>
+    
+    <class pattern="LHCb::Calo*">
+      <field  name="m_caloPositions" />
+      <method name="caloPositions"   />
+    </class>
+
+  </exclusion>
+  
+</lcgdict>

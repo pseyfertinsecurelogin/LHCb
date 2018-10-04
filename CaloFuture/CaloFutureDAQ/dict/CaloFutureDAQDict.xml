@@ -1,0 +1,11 @@
+<lcgdict>
+
+  <class name = "ICaloFutureDataProvider"       />
+  <class name = "ICaloFutureEnergyFromRaw"      />
+  <class name = "ICaloFutureL0DataProvider"     />
+  <class name = "ICaloFutureReadoutTool"        />
+  <class name = "ICaloFutureTriggerAdcsFromRaw" />
+  <class name = "ICaloFutureTriggerBitsFromRaw" />
+  <class name = "ICaloFutureDigitFilterTool" />
+
+</lcgdict>
