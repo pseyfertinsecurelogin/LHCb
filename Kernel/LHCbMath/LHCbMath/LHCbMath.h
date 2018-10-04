@@ -89,8 +89,8 @@ namespace LHCb
       template <typename V1, typename V2>
       bool operator() ( V1&& v1 , V2&& v2 ) const
       {
-        return std::less<TYPE>{}( std::fabs( std::forward<V1>(v1) ),
-                                  std::fabs( std::forward<V2>(v2) ) ) ;
+        return std::less{}( std::fabs( std::forward<V1>(v1) ),
+                            std::fabs( std::forward<V2>(v2) ) ) ;
       }
     } ;
     // ========================================================================
@@ -105,8 +105,8 @@ namespace LHCb
       template <typename V1, typename V2>
       bool operator() ( V1&& v1 , V2&& v2 ) const
       {
-        return std::greater<TYPE>{}( std::fabs(std::forward<V1>( v1 ) ),
-                                     std::fabs(std::forward<V1>( v2 ) ) );
+        return std::greater{}( std::abs(std::forward<V1>( v1 ) ),
+                               std::abs(std::forward<V1>( v2 ) ) );
       }
     } ;
     // ========================================================================
@@ -532,7 +532,7 @@ using namespace std;
       // ======================================================================
     private:
       // ======================================================================
-      std::less_equal<TYPE>      m_leq   ; // ordering criteria
+      std::less_equal<>          m_leq   ; // ordering criteria
       LHCb::Math::Equal_To<TYPE> m_equal ; // equality criteria
       // ======================================================================
     } ;
@@ -571,7 +571,7 @@ using namespace std;
     private:
       // ======================================================================
       /// comparion criteria for objects
-      std::less<TYPE>            m_less  ; // comparion criteria for objects
+      std::less<>                m_less  ; // comparion criteria for objects
       /// equality criteria for  objects
       LHCb::Math::Equal_To<TYPE> m_equal ; // equality criteria for objects
       // ======================================================================
