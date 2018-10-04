@@ -71,49 +71,49 @@ public:
 
    bool staged() const
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       return m_staged;
    }
 
    void setStaged( bool staged )
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       m_staged = staged;
    }
 
    bool good() const
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       return m_good;
    }
 
    void setGood( bool good )
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       m_good = good;
    }
 
    boost::condition_variable& openCondition()
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       return m_openCondition;
    }
 
    const boost::condition_variable& openCondition() const
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       return m_openCondition;
    }
 
    boost::condition_variable& closeCondition()
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       return m_closeCondition;
    }
 
    const boost::condition_variable& closeCondition() const
    {
-      boost::lock_guard< boost::mutex > lock( m_internalMutex );
+      boost::lock_guard lock( m_internalMutex );
       return m_closeCondition;
    }
 

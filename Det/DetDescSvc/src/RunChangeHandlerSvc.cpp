@@ -91,7 +91,7 @@ void RunChangeHandlerSvc::handle(const Incident &inc) {
 // Flag for update all conditions
 //=========================================================================
 void RunChangeHandlerSvc::update(unsigned long run) {
-  std::lock_guard<std::mutex> lock(m_updateMutex); // we cannot run this concurrently
+  std::lock_guard lock(m_updateMutex); // we cannot run this concurrently
   FileHasher hasher;
   std::for_each(m_conditions.begin(), m_conditions.end(),
                 [this, run, &hasher](CondData &cond) {

@@ -38,7 +38,7 @@
 namespace
 {
   // ==========================================================================
-  static const auto occurs_in_ci = [](const std::string& haystack) 
+  static const auto occurs_in_ci = [](const std::string& haystack)
   {
     return [&](const std::string& needle) {
       return std::search( begin(haystack), end(haystack),
@@ -49,7 +49,7 @@ namespace
     };
   };
   // ===========================================================================
-} //                                              The end of anonymous namespace 
+} //                                              The end of anonymous namespace
 // =============================================================================
 namespace LoKi
 {
@@ -229,20 +229,20 @@ namespace LoKi
       std::unique_ptr<LoKi::Types::XFunVals> m_xfunval ; // funval/element
       std::unique_ptr<LoKi::Types::XSources> m_xsource ; // source
       // ======================================================================
-      Gaudi::Property<std::vector<std::string>> m_modules 
-      { this, 
-          "Modules", 
-          {"LoKiNumbers.decorators"}, 
-          "Python modules to be imported" };
-      Gaudi::Property<std::string> m_actor 
+      Gaudi::Property<std::vector<std::string>> m_modules
       { this,
-          "Actor", 
+          "Modules",
+          {"LoKiNumbers.decorators"},
+          "Python modules to be imported" };
+      Gaudi::Property<std::string> m_actor
+      { this,
+          "Actor",
           "LoKi.Hybrid.CoreEngine()",
           "The processing engine"  };
-      Gaudi::Property<std::vector<std::string>> m_lines   
-      { this, 
-          "Lines", 
-          { },  
+      Gaudi::Property<std::vector<std::string>> m_lines
+      { this,
+          "Lines",
+          { },
           "Additional Python lines to be executed" } ;
       // ======================================================================
     } ;
@@ -260,7 +260,7 @@ inline StatusCode LoKi::Hybrid::CoreFactory::_get
   LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
   const std::string&                                context )
 {
-  std::lock_guard<std::recursive_mutex> guard ( m_mutex );
+  std::lock_guard guard ( m_mutex );
   // prepare the actual python code
   std::string code = makeCode ( m_modules , m_actor , pycode , m_lines , context ) ;
   /// define and lock the scope:

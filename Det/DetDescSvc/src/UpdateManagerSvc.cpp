@@ -817,7 +817,7 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime
     // lock aquisition. If we want the write lock aquisition to succeed at the end,
     // we need to take the extra lock AFTER releasing the read lock or we create a nice
     // dead lock.
-    std::lock_guard<std::mutex> need_to_update {m_IOVreserve_mutex};
+    std::lock_guard need_to_update {m_IOVreserve_mutex};
     // now that we have the privilege to attempt taking the write lock,
     // redo the initial check as things may have changed
     if ( eventTime < m_head_since || eventTime >= m_head_until ) {
@@ -826,7 +826,7 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime
       // TES at the end of this method by whoever called it and kept until the end of
       // the event. This is preventing another change of IOV while the current one is
       // still under use
-      std::unique_lock<std::shared_timed_mutex> updating {m_IOVresource};
+      std::unique_lock updating {m_IOVresource};
       detDataSvc()->setEventTime( eventTime );
       const_cast<UpdateManagerSvc*>(this)->newEvent( eventTime );
     } // releasing write lock
