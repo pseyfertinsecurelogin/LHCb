@@ -50,7 +50,8 @@ StatusCode ProcessPhase::initialize()
     myMembers +=  "\"GaudiSequencer/" + algName + "\"";
     // Sequences are not yet instantiated, so set MeasureTime property directly 
     // in the catalogue. Uses same value as the parent ProcessPhase
-    StringProperty p( "MeasureTime", myMeasureProp );
+    Gaudi::Property<bool> p( "MeasureTime", false );
+    p.fromString( myMeasureProp ).ignore();
     jobSvc->addPropertyToCatalogue( algName, p ).ignore();
   }
   myMembers += "}";
