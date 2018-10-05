@@ -77,8 +77,8 @@ class TurboConf(LHCbConfigurableUser):
 
     def _register_pr_links(self, packing, rootintes, datatype, simulation):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
-        from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
-        from Configurables import TESMerger_LHCb__Track_ as TESMergerTrack
+        from Configurables import TESMergerProtoParticle
+        from Configurables import TESMergerTrack
         from Configurables import GaudiSequencer
         from Configurables import Gaudi__DataLink as DataLink
 
@@ -101,12 +101,12 @@ class TurboConf(LHCbConfigurableUser):
         DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
-                                     What=mergeProtos.outputLocation,
+                                     What=str(mergeProtos.outputLocation),
                                      Target=join(rootintes, 'Rec/ProtoP/Charged'))
         DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = linkChargedProtos
 
         linkTracks = DataLink('HltRecTracks',
-                              What=mergeTracks.outputLocation,
+                              What=str(mergeTracks.outputLocation),
                               Target=join(rootintes, 'Rec/Track/Best'))
         DataOnDemandSvc().AlgMap[linkTracks.Target] = linkTracks
 
