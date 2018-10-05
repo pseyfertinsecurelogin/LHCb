@@ -222,9 +222,8 @@ LoKi::TES::Size* LoKi::TES::Size::clone() const
 // ============================================================================
 double LoKi::TES::Size::operator() ( /* LoKi::TES::Size::argument */ ) const
 {
-  auto obj = getIfExists ();
+  auto obj = get ();
   //
-  if ( !obj )      { return                             -1     ; } // RETURN
   auto container = dynamic_cast<ObjectContainerBase*>  ( obj ) ;
   if ( container ) { return container->numberOfObjects (     ) ; } // RETURN
   auto anydata   = dynamic_cast<AnyDataWrapperBase*>   ( obj ) ;

@@ -147,9 +147,11 @@ namespace LoKi
       { return m_algorithm ; }
       const std::string& location     () const { return m_location     ; }
       // ======================================================================
-      decltype(auto) get         () const { return m_datahandle.get         () ; }      
-      decltype(auto) getIfExists () const { return m_datahandle.getIfExists () ; }
-      bool           exist       () const { return m_datahandle.exist       () ; }
+      decltype(auto) get         () const { return m_datahandle.get   () ; }      
+      // ======================================================================
+    protected:
+      // =======================================================================
+      bool           exist       () const { return m_datahandle.exist () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -238,7 +240,7 @@ namespace LoKi
     /** @class Size
      *  <code>DataHandle</code>-based functor 
      *  to check the size of data at certain TES-location
-     *  - for non-existent data <code>-1</code> is returned 
+     *  - for non-existent data exeption is thrown 
      *  - for data inherited from <code>ObjectContainerBase</code> 
      *       <code>ObjectContainerBase::numberObjects</code> is returned 
      *  - for data inhetited  from <code>AnyDataWrapperBase</code>
@@ -513,7 +515,7 @@ namespace LoKi
     /** @typedef SIZE
      *  <code>DataHandle</code>-based functor 
      *  to check the size of data at certain TES-location
-     *  - for non-existent data <code>-1</code> is returned 
+     *  - for non-existent data exception is thrown
      *  - for data inherited from <code>ObjectContainerBase</code> 
      *       <code>ObjectContainerBase::numberObjects</code> is returned 
      *  - for data inhetited  from <code>AnyDataWrapperBase</code>
