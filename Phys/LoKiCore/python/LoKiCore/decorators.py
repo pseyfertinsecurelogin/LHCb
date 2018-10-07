@@ -2724,8 +2724,18 @@ def contextualizedFunctor(cls, context):
     return _ContextualizedFunctor
 
 
-_context_types_cache = {}
+def memoize(func):
+    cache = func.cache = {}
+    def decorated(x):
+        try:
+            y = cache[x]
+        except KeyError:
+            y = cache[x] = func(x)
+        return y
+    return decorated
 
+
+@memoize
 def hybrid_context_types(cls):
     types = []
     try:
@@ -2741,8 +2751,13 @@ def hybrid_context_types(cls):
     return types
 
 
+@memoize
+def warn_once(msg):
+    log.warning(msg)
+
+
 def hybrid_context_deco(global_symbols, contexts):
-    for s, v in sorted(global_symbols.items()):
+    for symbol_name, v in sorted(global_symbols.items()):
 
         vt = v if isinstance(v, type) else v.__class__
 
@@ -2752,10 +2767,9 @@ def hybrid_context_deco(global_symbols, contexts):
         if hasattr(vt, "_ContextualizedFunctor__context"):
             continue
 
-        try:
-            context_types = _context_types_cache[vt]
-        except KeyError:
-            context_types = _context_types_cache[vt] = hybrid_context_types(vt)
+        context_types = hybrid_context_types(vt)
+        if not context_types:
+            continue
 
         context_algo = None
         for typ in ["dvalgo", "algo"]:
@@ -2763,15 +2777,13 @@ def hybrid_context_deco(global_symbols, contexts):
                 context_algo = contexts[typ]
                 break
 
-        if context_algo is None:
-            if context_types:
-                log.error("Functor {} requires context (type {}) but none is defined."
-                          .format(vt, ' or '.join(context_types)))
-            else:
-                continue
-
-        vt = contextualizedFunctor(vt, context_algo)
-        global_symbols[s] = vt
+        if context_algo is not None:
+            vt = contextualizedFunctor(vt, context_algo)
+            global_symbols[symbol_name] = vt
+        else:
+            warn_once("Functor {} requires context (type {}) but none is "
+                      "defined. Using it will lead to an error."
+                      .format(symbol_name, ' or '.join(context_types)))
 
 
 # =============================================================================
