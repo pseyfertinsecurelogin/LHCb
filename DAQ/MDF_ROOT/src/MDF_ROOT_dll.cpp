@@ -151,8 +151,8 @@ namespace {
 extern "C" EXPORT LHCb::PosixIO* MDF_ROOT()  {
   typedef LHCb::PosixIO _IO;
   static _IO p;
-  if ( 0 == p.open )  {
-    memset(&p,0,sizeof(p));
+  if ( !p.open )  {
+    p = {};
     p.unbuffered  = _IO::COMPLETE;
     p.open      = root_open;
     p.close     = root_close;
