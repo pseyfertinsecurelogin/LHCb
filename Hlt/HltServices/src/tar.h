@@ -1,25 +1,19 @@
 #ifndef TAR_IMPL_H
 #define TAR_IMPL_H
 #include "IArchive.h"
-#ifndef _WIN32
-#include <unistd.h>
 #include <map>
 #include <string>
 #include <iostream>
+#include <cstring>
 #include <fstream>
+#include <unistd.h>
 #include <time.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <grp.h>
-#else
-typedef int uid_t;
-typedef int gid_t;
-#endif
 
-#include "boost/optional.hpp"
 #include "boost/iostreams/filtering_stream.hpp"
 namespace io = boost::iostreams;
 
@@ -52,11 +46,10 @@ struct posix_header
     char padding[12];   /* 500-512 (pad to exactly the TAR_BLOCK_SIZE) */
 };
 
-inline bool isZero( const struct ConfigTarFileAccessSvc_details::posix_header& h )
+inline bool isZero( const ConfigTarFileAccessSvc_details::posix_header& h )
 {
-    const char* i = (const char*)( &h );
-    static_assert( sizeof(h) == 512 , "unexpected size of header" );
-    return std::all_of( i, i + 512, []( const char& c ) { return c == 0; } );
+    auto sv = std::string_view(reinterpret_cast<const char*>( &h ), sizeof(h));
+    return std::all_of(sv.begin(),sv.end(),[](char c) { return c == 0; });
 }
 
 struct Info
@@ -121,50 +114,42 @@ class TarFile : public IArchive, private boost::noncopyable
     // at the end.  Returns -1 on an illegal format.
     uid_t getUid() const
     {
-#ifndef _WIN32
         if ( m_myUid == 0 ) m_myUid = getuid();
-#endif
         return m_myUid;
     }
     gid_t getGid() const
     {
-#ifndef _WIN32
         if ( m_myGid == 0 ) m_myGid = getgid();
-#endif
         return m_myGid;
     }
     const char* getUname() const
     {
-#ifndef _WIN32
         if ( m_uname.empty() ) {
             struct passwd* passwd = getpwuid( getUid() );
             m_uname = ( passwd ? passwd->pw_name : "" );
         }
-#endif
         return m_uname.c_str();
     }
     const char* getGname() const
     {
-#ifndef _WIN32
         if ( m_gname.empty() ) {
             struct group* group = getgrgid( getGid() );
             m_gname = ( group ? group->gr_name : "" );
         }
-#endif
         return m_gname.c_str();
     }
 
     std::string m_name;
     mutable std::fstream m_file;
-    mutable int m_lock;
+    mutable int m_lock = -1;
     mutable std::map<Gaudi::StringKey, Info> m_index;
-    mutable long m_leof;
-    mutable bool m_indexUpToDate;
+    mutable long m_leof = 0;
+    mutable bool m_indexUpToDate = false;
     mutable std::string m_gname;
     mutable std::string m_uname;
-    mutable uid_t m_myUid;
-    mutable gid_t m_myGid;
-    bool m_compressOnWrite;
+    mutable uid_t m_myUid = 0;
+    mutable gid_t m_myGid = 0;
+    bool m_compressOnWrite = true;
 };
 }
 #endif
