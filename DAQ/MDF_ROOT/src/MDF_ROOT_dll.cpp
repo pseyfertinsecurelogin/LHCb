@@ -1,4 +1,3 @@
-// $Id: MDF_ROOT_dll.cpp,v 1.5 2008-03-03 20:07:38 frankb Exp $
 //  ====================================================================
 //  MDFIO.cpp
 //  --------------------------------------------------------------------
@@ -38,7 +37,7 @@ namespace {
     return s_fileMap;
   }
   int root_open(const char *filepath, int flags, unsigned int mode) {
-    TFile* f = 0;
+    TFile* f = nullptr;
     TUrl url(filepath);
     TString opts="filetype=raw", proto, spec, tmp=url.GetOptions();
 
@@ -76,9 +75,9 @@ namespace {
     return -1;
   }
   int root_close(int fd) {
-    FileMap::iterator i = fileMap().find(fd);
+    auto i = fileMap().find(fd);
     if ( i != fileMap().end() ) {
-      TFile* f = (*i).second;
+      TFile* f = i->second;
       if ( f ) {
         if ( !f->IsZombie() ) f->Close();
         delete f;
@@ -93,9 +92,9 @@ namespace {
   }
   int root_unlink(const char*) {  return -1; }
   long long int root_lseek64(int fd, long long int offset, int how) {
-    FileMap::iterator i = fileMap().find(fd);
+    auto i = fileMap().find(fd);
     if ( i != fileMap().end() ) {
-      TFile* f = (*i).second;
+      TFile* f = i->second;
       Long64_t off;
       switch(how) {
       case SEEK_SET:
@@ -105,7 +104,7 @@ namespace {
         f->Seek(offset,TFile::kCur);
         return f->GetRelOffset();
       case SEEK_END:
-	off = f->GetRelOffset();
+        off = f->GetRelOffset();
         f->Seek(offset,TFile::kEnd);
         return offset==0 && off==f->GetSize() ? off : f->GetRelOffset();
       }
@@ -116,9 +115,9 @@ namespace {
     return (long)root_lseek64(s,offset,how);
   }
   int root_read(int fd, void *ptr, unsigned int size) {
-    FileMap::iterator i = fileMap().find(fd);
+    auto i = fileMap().find(fd);
     if ( i != fileMap().end() ) {
-      TFile* f = (*i).second;
+      TFile* f = i->second;
       if ( f->GetBytesRead()+size > f->GetSize() ) {
 #ifdef MDF_ROOT_DEBUG
 	std::cout << "TFile::Read> Bytes read:" << f->GetBytesRead()
@@ -134,7 +133,7 @@ namespace {
     return -1;
   }
   int root_write(int fd, const void *ptr, unsigned int size) {
-    FileMap::iterator i = fileMap().find(fd);
+    auto i = fileMap().find(fd);
     if ( i != fileMap().end() ) {
       if ( (*i).second->WriteBuffer((const char*)ptr,size)==0 )
         return size;
@@ -149,11 +148,10 @@ namespace {
 }
 
 extern "C" EXPORT LHCb::PosixIO* MDF_ROOT()  {
-  typedef LHCb::PosixIO _IO;
-  static _IO p;
-  if ( 0 == p.open )  {
-    memset(&p,0,sizeof(p));
-    p.unbuffered  = _IO::COMPLETE;
+  static LHCb::PosixIO p;
+  if ( !p.open )  {
+    p = {};
+    p.unbuffered  = LHCb::PosixIO::COMPLETE;
     p.open      = root_open;
     p.close     = root_close;
     p.read      = root_read;
@@ -167,7 +165,7 @@ extern "C" EXPORT LHCb::PosixIO* MDF_ROOT()  {
     p.fstat     = root_fstat;
     p.fstat64   = root_fstat64;
 
-    p.buffered  = _IO::NONE;
+    p.buffered  = LHCb::PosixIO::NONE;
     p.fopen     = 0;
     p.fclose    = 0;
     p.fwrite    = 0;
@@ -183,7 +181,7 @@ extern "C" EXPORT LHCb::PosixIO* MDF_ROOT()  {
     p.ftell64   = 0;
 #endif // WIN32
 #endif
-    p.directory = _IO::NONE;
+    p.directory = LHCb::PosixIO::NONE;
     p.rmdir     = 0;
     p.mkdir     = 0;
     p.opendir   = 0;
