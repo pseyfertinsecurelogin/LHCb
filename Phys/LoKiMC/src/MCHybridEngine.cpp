@@ -129,7 +129,14 @@ StatusCode LoKi::Hybrid::MCEngine::process
 ( const std::string&              name ,
   const LoKi::Types::MCVSources&  cut  ) const { return _process ( name , cut ) ; }
 // ============================================================================
-
+// get the current context 
+// ============================================================================
+const LoKi::Context* LoKi::Hybrid::MCEngine::context () const 
+{
+  const LoKi::Hybrid::MCEngineActor& actor =
+    LoKi::Hybrid::MCEngineActor::instance() ;
+  return actor.context () ;
+}
 // ============================================================================
 // The END
 // ============================================================================
