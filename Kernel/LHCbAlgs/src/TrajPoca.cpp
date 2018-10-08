@@ -82,8 +82,8 @@ step_status_t stepTowardPoca( const LHCb::Trajectory<double>& traj1, double& mu1
     // check product of eigenvalues of mat; if too small, trajectories are very
     // nearly parallel
     decltype(mat) lmat;
-    decomp.getL(&lmat[0]);
-    if (UNLIKELY(lmat[0] * lmat[2] < 1e-8)) return step_status_t::nearly_parallel;
+    if (UNLIKELY(!decomp.getL(&lmat[0])) ||
+        UNLIKELY(lmat[0] * lmat[2] < 1e-8)) return step_status_t::nearly_parallel;
   }
   const std::array<double, 2> rhs = { -d.Dot(cache.dp1dmu1), d.Dot(cache.dp2dmu2) };
   std::array<double, 2> dmu = rhs;
