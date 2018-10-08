@@ -2751,11 +2751,6 @@ def hybrid_context_types(cls):
     return types
 
 
-@memoize
-def warn_once(msg):
-    log.warning(msg)
-
-
 def hybrid_context_deco(global_symbols, contexts):
     for symbol_name, v in sorted(global_symbols.items()):
 
@@ -2777,13 +2772,12 @@ def hybrid_context_deco(global_symbols, contexts):
                 context_algo = contexts[typ]
                 break
 
-        if context_algo is not None:
-            vt = contextualizedFunctor(vt, context_algo)
-            global_symbols[symbol_name] = vt
-        else:
-            warn_once("Functor {} requires context (type {}) but none is "
-                      "defined. Using it will lead to an error."
-                      .format(symbol_name, ' or '.join(context_types)))
+        assert context_algo is not None, (
+            "Functor {} requires context (type {}) but none is defined."
+            .format(symbol_name, ' or '.join(context_types)))
+
+        vt = contextualizedFunctor(vt, context_algo)
+        global_symbols[symbol_name] = vt
 
 
 # =============================================================================
