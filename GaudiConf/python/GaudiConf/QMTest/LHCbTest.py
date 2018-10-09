@@ -97,7 +97,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
 
     def _compareCutSets(self, refCounters, stdoutCounters):
         """
-        Compares 2 set of counter names that may be incomplete and thus cut befoer the end !
+        Compares 2 set of counter names that may be incomplete and thus cut before the end !
         outputs a tuple containing:
             - the set of counters in ref and not in stdout, may be empty
             - the set of counters in stdout and not in ref, may be empty
@@ -144,24 +144,17 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         # diff counters
         refAlgoNames = set(refCounters)
         newAlgoNames = set(newCounters)
+        msg = ''
         if refAlgoNames != newAlgoNames:
-            msg = ''
             if refAlgoNames.difference(newAlgoNames):
-                msg += '    Missing : ' + ', '.join(refAlgoNames.difference(newAlgoNames))
+                msg += '    Missing : ' + ', '.join(refAlgoNames.difference(newAlgoNames)) + '\n'
             if newAlgoNames.difference(refAlgoNames):
-                msg += '    Extra : ' + ', '.join(newAlgoNames.difference(refAlgoNames))
+                msg += '    Extra : ' + ', '.join(newAlgoNames.difference(refAlgoNames)) + '\n'
             causes.append("Different set of algorithms in counters")
-            if type(result) == dict:
-                result["CountersMismatch"]=msg
-            else:
-                result["CountersMismatch"]=result.Quote(msg)
             # make sure we create newref file when there are only counters differences
             if len(causes) == 1:
                 self._createNewRef(stdout)
-
-            return
-        msg = ''
-        for algoName in refAlgoNames:
+        for algoName in refAlgoNames.intersection(newAlgoNames):
             onlyref, onlystdout, counterPairs = self._compareCutSets(set(refCounters[algoName]), set(newCounters[algoName]))
             if onlyref or onlystdout:
                 msg += '    Different set of counters for algo %s\n' % algoName
