@@ -1,11 +1,12 @@
-#ifndef EVENT_PACKEDTRACK_H
-#define EVENT_PACKEDTRACK_H 1
+
+#pragma once
 
 // STL
 #include <string>
 #include <vector>
 #include <limits>
 #include <cstdint>
+#include <array>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -352,5 +353,3 @@ namespace LHCb
   };
 
 }  // End of LHCb namespace
-
-#endif // EVENT_PACKEDTRACK_H

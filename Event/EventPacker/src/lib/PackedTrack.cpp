@@ -506,14 +506,14 @@ void TrackPacker::compareStates ( const LHCb::State& oSta,
   }
   if ( 5.e-3 < fabs( oP - tP ) ) isOK = false;
 
-  const std::vector<double> oDiag {
+  const auto oDiag = std::array {
       safe_sqrt(oSta.errX2()),
       safe_sqrt(oSta.errY2()),
       safe_sqrt(oSta.errTx2()),
       safe_sqrt(oSta.errTy2()),
       safe_sqrt(oSta.errQOverP2()) };
 
-  const std::vector<double> tDiag {
+  const auto tDiag = std::array {
       safe_sqrt(tSta.errX2()),
       safe_sqrt(tSta.errY2()),
       safe_sqrt(tSta.errTx2()),
@@ -528,7 +528,7 @@ void TrackPacker::compareStates ( const LHCb::State& oSta,
   if ( 5.    < fabs( oDiag[4]*oP*1.e5 - tDiag[4]*tP*1.e5 ) &&
        fabs( tDiag[4]*tP*1.e5 ) < 1.999e7                   ) isOK = false;
 
-  const std::vector<double> oFrac {
+  const auto oFrac = std::array {
       safe_divide( oSta.covariance()(1,0) , oDiag[1] * oDiag[0] ),
       safe_divide( oSta.covariance()(2,0) , oDiag[2] * oDiag[0] ),
       safe_divide( oSta.covariance()(2,1) , oDiag[2] * oDiag[1] ),
@@ -540,7 +540,7 @@ void TrackPacker::compareStates ( const LHCb::State& oSta,
       safe_divide( oSta.covariance()(4,2) , oDiag[4] * oDiag[2] ),
       safe_divide( oSta.covariance()(4,3) , oDiag[4] * oDiag[3] ) };
 
-  const std::vector<double> tFrac {
+  const auto tFrac = std::array {
       safe_divide( tSta.covariance()(1,0) , tDiag[1] * tDiag[0] ),
       safe_divide( tSta.covariance()(2,0) , tDiag[2] * tDiag[0] ),
       safe_divide( tSta.covariance()(2,1) , tDiag[2] * tDiag[1] ),
