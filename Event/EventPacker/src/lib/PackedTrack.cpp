@@ -488,23 +488,37 @@ void TrackPacker::compareStates ( const LHCb::State& oSta,
   if ( 5.e-5 < fabs( oSta.y() - tSta.y() ) ) isOK = false;
   if ( 5.e-8 < fabs( oSta.tx() - tSta.tx() ) ) isOK = false;
   if ( 5.e-8 < fabs( oSta.ty() - tSta.ty() ) ) isOK = false;
-  double oP = 1./oSta.qOverP();
-  double tP = 1./tSta.qOverP();
+  const auto oP = safe_divide( 1.0, oSta.qOverP() );
+  const auto tP = safe_divide( 1.0, tSta.qOverP() );
+  if ( !( fabs(oSta.qOverP()) > 0 && fabs(tSta.qOverP()) > 0 ) ) 
+  {
+    parent().info() << "=== State has q/p == 0 ! "  << endmsg;
+    parent().info() << "     old "
+                    << format( " %12.5f %12.5f %12.5f %12.9f %12.9f %12.3f",
+                               oSta.z(), oSta.x(), oSta.y(),
+                               oSta.tx(), oSta.ty(), oP )
+                    << endmsg;
+    parent().info() << "    test "
+                    << format( " %12.5f %12.5f %12.5f %12.9f %12.9f %12.3f",
+                               tSta.z(), tSta.x(), tSta.y(),
+                               tSta.tx(), tSta.ty(), tP )
+                    << endmsg;
+  }
   if ( 5.e-3 < fabs( oP - tP ) ) isOK = false;
 
-  std::vector<double> oDiag;
-  oDiag.push_back( safe_sqrt(oSta.errX2()) );
-  oDiag.push_back( safe_sqrt(oSta.errY2()) );
-  oDiag.push_back( safe_sqrt(oSta.errTx2()) );
-  oDiag.push_back( safe_sqrt(oSta.errTy2()) );
-  oDiag.push_back( safe_sqrt(oSta.errQOverP2() ) );
+  const std::vector<double> oDiag {
+      safe_sqrt(oSta.errX2()),
+      safe_sqrt(oSta.errY2()),
+      safe_sqrt(oSta.errTx2()),
+      safe_sqrt(oSta.errTy2()),
+      safe_sqrt(oSta.errQOverP2()) };
 
-  std::vector<double> tDiag;
-  tDiag.push_back( safe_sqrt(tSta.errX2()) );
-  tDiag.push_back( safe_sqrt(tSta.errY2()) );
-  tDiag.push_back( safe_sqrt(tSta.errTx2()) );
-  tDiag.push_back( safe_sqrt(tSta.errTy2()) );
-  tDiag.push_back( safe_sqrt(tSta.errQOverP2() ) );
+  const std::vector<double> tDiag {
+      safe_sqrt(tSta.errX2()),
+      safe_sqrt(tSta.errY2()),
+      safe_sqrt(tSta.errTx2()),
+      safe_sqrt(tSta.errTy2()),    
+      safe_sqrt(tSta.errQOverP2()) };
 
   if ( 5.e-5 < fabs( oDiag[0] - tDiag[0] ) ) isOK = false;
   if ( 5.e-5 < fabs( oDiag[1] - tDiag[1] ) ) isOK = false;
@@ -514,29 +528,29 @@ void TrackPacker::compareStates ( const LHCb::State& oSta,
   if ( 5.    < fabs( oDiag[4]*oP*1.e5 - tDiag[4]*tP*1.e5 ) &&
        fabs( tDiag[4]*tP*1.e5 ) < 1.999e7                   ) isOK = false;
 
-  std::vector<double> oFrac;
-  oFrac.push_back( oSta.covariance()(1,0) / oDiag[1] / oDiag[0] );
-  oFrac.push_back( oSta.covariance()(2,0) / oDiag[2] / oDiag[0] );
-  oFrac.push_back( oSta.covariance()(2,1) / oDiag[2] / oDiag[1] );
-  oFrac.push_back( oSta.covariance()(3,0) / oDiag[3] / oDiag[0] );
-  oFrac.push_back( oSta.covariance()(3,1) / oDiag[3] / oDiag[1] );
-  oFrac.push_back( oSta.covariance()(3,2) / oDiag[3] / oDiag[2] );
-  oFrac.push_back( oSta.covariance()(4,0) / oDiag[4] / oDiag[0] );
-  oFrac.push_back( oSta.covariance()(4,1) / oDiag[4] / oDiag[1] );
-  oFrac.push_back( oSta.covariance()(4,2) / oDiag[4] / oDiag[2] );
-  oFrac.push_back( oSta.covariance()(4,3) / oDiag[4] / oDiag[3] );
+  const std::vector<double> oFrac {
+      safe_divide( oSta.covariance()(1,0) , oDiag[1] * oDiag[0] ),
+      safe_divide( oSta.covariance()(2,0) , oDiag[2] * oDiag[0] ),
+      safe_divide( oSta.covariance()(2,1) , oDiag[2] * oDiag[1] ),
+      safe_divide( oSta.covariance()(3,0) , oDiag[3] * oDiag[0] ),
+      safe_divide( oSta.covariance()(3,1) , oDiag[3] * oDiag[1] ),
+      safe_divide( oSta.covariance()(3,2) , oDiag[3] * oDiag[2] ),
+      safe_divide( oSta.covariance()(4,0) , oDiag[4] * oDiag[0] ),
+      safe_divide( oSta.covariance()(4,1) , oDiag[4] * oDiag[1] ),
+      safe_divide( oSta.covariance()(4,2) , oDiag[4] * oDiag[2] ),
+      safe_divide( oSta.covariance()(4,3) , oDiag[4] * oDiag[3] ) };
 
-  std::vector<double> tFrac;
-  tFrac.push_back( tSta.covariance()(1,0) / tDiag[1] / tDiag[0] );
-  tFrac.push_back( tSta.covariance()(2,0) / tDiag[2] / tDiag[0] );
-  tFrac.push_back( tSta.covariance()(2,1) / tDiag[2] / tDiag[1] );
-  tFrac.push_back( tSta.covariance()(3,0) / tDiag[3] / tDiag[0] );
-  tFrac.push_back( tSta.covariance()(3,1) / tDiag[3] / tDiag[1] );
-  tFrac.push_back( tSta.covariance()(3,2) / tDiag[3] / tDiag[2] );
-  tFrac.push_back( tSta.covariance()(4,0) / tDiag[4] / tDiag[0] );
-  tFrac.push_back( tSta.covariance()(4,1) / tDiag[4] / tDiag[1] );
-  tFrac.push_back( tSta.covariance()(4,2) / tDiag[4] / tDiag[2] );
-  tFrac.push_back( tSta.covariance()(4,3) / tDiag[4] / tDiag[3] );
+  const std::vector<double> tFrac {
+      safe_divide( tSta.covariance()(1,0) , tDiag[1] * tDiag[0] ),
+      safe_divide( tSta.covariance()(2,0) , tDiag[2] * tDiag[0] ),
+      safe_divide( tSta.covariance()(2,1) , tDiag[2] * tDiag[1] ),
+      safe_divide( tSta.covariance()(3,0) , tDiag[3] * tDiag[0] ),
+      safe_divide( tSta.covariance()(3,1) , tDiag[3] * tDiag[1] ),
+      safe_divide( tSta.covariance()(3,2) , tDiag[3] * tDiag[2] ),
+      safe_divide( tSta.covariance()(4,0) , tDiag[4] * tDiag[0] ),
+      safe_divide( tSta.covariance()(4,1) , tDiag[4] * tDiag[1] ),
+      safe_divide( tSta.covariance()(4,2) , tDiag[4] * tDiag[2] ),
+      safe_divide( tSta.covariance()(4,3) , tDiag[4] * tDiag[3] ) };
 
   unsigned int kk;
   for ( kk = 0 ; oFrac.size() > kk ; ++kk )
@@ -551,12 +565,12 @@ void TrackPacker::compareStates ( const LHCb::State& oSta,
     parent().info() << "     old "
                     << format( " %12.5f %12.5f %12.5f %12.9f %12.9f %12.3f",
                                oSta.z(), oSta.x(), oSta.y(),
-                               oSta.tx(), oSta.ty(), 1./oSta.qOverP() )
+                               oSta.tx(), oSta.ty(), oP )
                     << endmsg;
     parent().info() << "    test "
                     << format( " %12.5f %12.5f %12.5f %12.9f %12.9f %12.3f",
                                tSta.z(), tSta.x(), tSta.y(),
-                               tSta.tx(), tSta.ty(), 1./tSta.qOverP() )
+                               tSta.tx(), tSta.ty(), tP )
                     << endmsg;
     parent().info() << format( " old Diag %10.5f %10.5f %12.9f %12.9f %12.3f",
                                oDiag[0], oDiag[1], oDiag[2], oDiag[3], oDiag[4]*oP*1.e5 )

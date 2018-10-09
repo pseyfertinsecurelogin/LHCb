@@ -291,11 +291,21 @@ namespace LHCb
     inline const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
     /// Safe sqrt ...
-    inline double safe_sqrt( const double x ) const
-    { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+    template< typename TYPE >
+    inline TYPE safe_sqrt( const TYPE x ) const
+    { 
+      return ( x > TYPE(0) ? std::sqrt(x) : TYPE(0) );
+    }
+
+    /// Safe divide ...
+    template< typename TYPE >
+    inline TYPE safe_divide( const TYPE a, const TYPE b ) const
+    { 
+      return ( fabs(b) > TYPE(0) ? a/b : 9e9 );
+    }
 
     /// Check if the given packing version is supported
-    bool isSupportedVer( const char& ver ) const
+    bool isSupportedVer( const char ver ) const
     {
       const bool OK = ( 0 <= ver && ver <= 5 );
       if ( UNLIKELY(!OK) )
