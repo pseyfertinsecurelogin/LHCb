@@ -301,7 +301,7 @@ namespace LHCb
     template< typename TYPE >
     inline TYPE safe_divide( const TYPE a, const TYPE b ) const
     { 
-      return ( fabs(b) > TYPE(0) ? a/b : 9e9 );
+      return ( b != TYPE(0) ? a/b : 9e9 );
     }
 
     /// Check if the given packing version is supported
