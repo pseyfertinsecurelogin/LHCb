@@ -35,6 +35,7 @@ __date__    = "????-??-??"
 __version__ = "SVN $Revision$ "
 # =============================================================================
 
+import logging
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
 
 # (auto) load the objects from LoKiCoreDict dictionary 
@@ -42,6 +43,8 @@ LoKi.RangeBase_ = cpp.Gaudi.RangeBase_
 LoKi.KeeperBase
 
 from LoKiCore.functions import vct_from_list
+
+log = logging.getLogger(__name__)
 
 # =============================================================================
 ## simple function to provide the iteration over LoKi's range objects
@@ -2683,77 +2686,100 @@ def decorateFinder ( finder , opers ) :
 # =============================================================================
 # context.... 
 # =============================================================================
-class HybridContext(object):
-    def __init__ ( self , algo = None   , dvalgo = None ) :
-        self.__algo      =   algo
-        self.__dvalgo    = dvalgo
-        self.decorated   = set()
-        
-    def algo   ( self ) : return self.__algo 
-    def dvalgo ( self ) : return self.__dvalgo
+def contextualizedFunctor(cls, context):
+    """Bind context to a context-dependent functor.
 
-    def __enter__ ( self ) : return self
-    def __exit__  ( self , *_ ) :
-        while self.decorated :
-            o = self.decorated.pop()
-            if hasattr ( o , '_hybrid_old_init_' ) and \
-                   hasattr ( o , '_hybrid_new_init_' ) :
-                o.__init__ = o._hybrid_old_init_ 
-                delattr ( o , '_hybrid_new_init_' )
-                o.hybrid_decorated = False
-                
-def hybrid_context_deco ( objects_dct , context ) :
+    Args:
+        cls (class): Context-dependent functor to be wrapped.
+        context (obj): Context algorithm to bind to ``cls``.
 
-    n_deco = 0 
-    for s , v in objects_dct.iteritems() :
+    Returns:
+        A new functor class bound to a concrete context algorithm.
 
-        vc = v.__class__ 
-        vt = v if issubclass ( vc , type ) else vc 
-        
-        if hasattr ( vt , 'hybrid_decorated' ) :
-            #print  'already decorated class %s/%s/%s' % ( s , v , vt )
-            if vt.hybrid_decorated : continue     ## CONTINUE
-            #print  'decorate again class %s/%s/%s' % ( s , v , vt )            
-            #vt.__init__ = vt._hybrid_new_init_ 
-            #context.decorated.add ( vt )
-            #continue                              ## CONTINUE
-            pass 
-        
-        if hasattr ( vt , 'context_dvalgo' ) and vt.context_dvalgo() and context.dvalgo () : 
-                
-            def _hybrid_new_init_ ( self , *args ) :
-                """New constructor, created for decorated ``Hybrid''object
-                """
-                if 1 == len ( args ) and isinstance ( args[0] , self.__class__ ) :
-                    ## no decoration for copy-constructor
-                    return self._hybrid_old_init_ ( *args )
-                return self._hybrid_old_init_ ( context.dvalgo () , *args )
-            
-        elif hasattr ( vt , 'context_algo' ) and vt.context_algo() and context.algo () : 
-            
-            def _hybrid_new_init_ ( self , *args ) :
-                """New constructor, created for decorated ``Hybrid''object
-                """
-                if 1 == len ( args ) and isinstance ( args[0] , self.__class__ ) :
-                    ## no decoration for copy-constructor
-                    return self._hybrid_old_init_ ( *args )
-                return self._hybrid_old_init_ ( context.algo () , *args )
-            
-        else :
-            ## print 'skip class %s/%s/%s' % ( s , v , vt )
-            continue 
-    
-        vt._hybrid_old_init_       =  vt.__init__
-        _hybrid_new_init_.__doc__ += '\n' + vt._hybrid_old_init_.__doc__
-        vt._hybrid_new_init_       = _hybrid_new_init_
-        vt.__init__                = _hybrid_new_init_  ## ATTENTION HERE! 
-        vt.hybrid_decorated        = True
-        context.decorated.add ( vt ) 
-        n_deco +=1 
-        ##print  'decorate class %s/%s/%s' % ( s , v , vt )
-            
-    return n_deco     
-        
+    """
+
+    class _ContextualizedFunctor(cls):
+        __functor = cls
+        __context = context
+
+        def __init__(self, *args):
+            if len(args) == 1 and isinstance(args[0], self.__functor):
+                # no decoration for copy-constructor
+                super(_ContextualizedFunctor, self).__init__(*args)
+            else:
+                super(_ContextualizedFunctor, self).__init__(
+                    self.__context, *args)
+
+    try:
+        type_name = context.type()
+    except AttributeError:
+        type_name = type(context).__name__
+
+    _ContextualizedFunctor.__name__ = (
+        "{cls.__name__}({typ}('{name}'), ...)".format(
+            cls=cls, typ=type_name, name=context.name()))
+    _ContextualizedFunctor.__doc__ = (
+        "{cls.__name__} bound to {typ}('{name}').".format(
+            cls=cls, typ=type_name, name=context.name()))
+    return _ContextualizedFunctor
+
+
+def memoize(func):
+    cache = func.cache = {}
+    def decorated(x):
+        try:
+            y = cache[x]
+        except KeyError:
+            y = cache[x] = func(x)
+        return y
+    return decorated
+
+
+@memoize
+def hybrid_context_types(cls):
+    types = []
+    try:
+        if cls.context_dvalgo():
+            types.append("dvalgo")
+    except AttributeError:
+        pass
+    try:
+        if cls.context_algo():
+            types.append("algo")
+    except AttributeError:
+        pass
+    return types
+
+
+def hybrid_context_deco(global_symbols, contexts):
+    for symbol_name, v in sorted(global_symbols.items()):
+
+        vt = v if isinstance(v, type) else v.__class__
+
+        if not issubclass(vt, LoKi.AuxFunBase):
+            continue  # not to be decorated
+
+        if hasattr(vt, "_ContextualizedFunctor__context"):
+            continue
+
+        context_types = hybrid_context_types(vt)
+        if not context_types:
+            continue
+
+        context_algo = None
+        for typ in ["dvalgo", "algo"]:
+            if typ in context_types and contexts.get(typ):
+                context_algo = contexts[typ]
+                break
+
+        assert context_algo is not None, (
+            "Functor {} requires context (type {}) but none is defined."
+            .format(symbol_name, ' or '.join(context_types)))
+
+        vt = contextualizedFunctor(vt, context_algo)
+        global_symbols[symbol_name] = vt
+
+
 # =============================================================================
 ## import all dependent functions 
 # =============================================================================
