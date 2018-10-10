@@ -57,8 +57,8 @@ namespace UTDAQ {
    * a hit at given layer and coordinates and with given x tolerance
    */
   void findSectors(unsigned int layer, float x, float y, float xTol, float yTol,
-                   boost::container::small_vector<std::pair<int, int>,9>& sectors,
-                   const LayerInfo& info);
+                   const LayerInfo& info,
+                   boost::container::small_vector_base<std::pair<int, int>>& sectors);
 
   void computeGeometry(const DeSTDetector &utDet,
                        std::array<LayerInfo,4> &layers,

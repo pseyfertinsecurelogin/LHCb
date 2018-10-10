@@ -20,8 +20,8 @@ LHCb::UTDAQ::nbUTClusters(LHCb::span<const RawBank *> banks,
 }
 
 void LHCb::UTDAQ::findSectors(unsigned int layer, float x, float y, float xTol, float yTol,
-                              boost::container::small_vector<std::pair<int, int>,9>& sectors,
-                              const LHCb::UTDAQ::LayerInfo& info) {
+                              const LHCb::UTDAQ::LayerInfo& info,
+                              boost::container::small_vector_base<std::pair<int, int>>& sectors) {
   auto localX = x - info.dxDy * y;
   // deal with sector overlaps and geometry imprecision
   xTol += 1; //mm
@@ -51,11 +51,13 @@ void LHCb::UTDAQ::findSectors(unsigned int layer, float x, float y, float xTol, 
   if (subrowmin <0) subrowmin = 0;
   for (int subcol=subcolmin; subcol <= subcolmax; subcol++) {
     int region = subcol < (int)(2*info.nColsPerSide-4) ? 1 : subcol >= (int)(2*info.nColsPerSide+4) ? 3 : 2;
-    for (int subrow=subrowmin; subrow <= subrowmax; subrow++) {
-      if (region == 1) {
+    if (region == 1) {
+      for (int subrow=subrowmin; subrow <= subrowmax; subrow++) {
         sectors.emplace_back(1, (subcol/2)*info.nRowsPerSide*2+subrow/2+1);
-      } else if (region == 2) {
-        int subcolInReg = subcol - 2*info.nColsPerSide + 4;
+      }
+    } else if (region == 2) {
+      int subcolInReg = subcol - 2*info.nColsPerSide + 4;
+      for (int subrow=subrowmin; subrow <= subrowmax; subrow++) {
         if (subrow < (int)(2*info.nRowsPerSide-4) || subrow >= (int)(2*info.nRowsPerSide+4)) {
           // no in central Region
           sectors.emplace_back(2, mapSectorToSector[(subcolInReg/2)*14+(subrow/2)]);
@@ -63,7 +65,9 @@ void LHCb::UTDAQ::findSectors(unsigned int layer, float x, float y, float xTol, 
           // central region
           sectors.emplace_back(2, mapQuarterSectorToSectorCentralRegion[subcolInReg*8+subrow-2*info.nRowsPerSide+4]);
         }
-      } else {
+      }
+    } else {
+      for (int subrow=subrowmin; subrow <= subrowmax; subrow++) {
         sectors.emplace_back(3, (subcol/2-info.nColsPerSide-2)*info.nRowsPerSide*2+subrow/2+1);
       }
     }
@@ -99,13 +103,13 @@ void LHCb::UTDAQ::computeGeometry(const DeSTDetector &utDet,
         DeUTSector* utSector = dynamic_cast<DeUTSector*>(sector);
         auto column = utSector->column();
         auto row = utSector->row();
-        smallestColumn = std::min<float>(smallestColumn, column);
+        smallestColumn = std::min(smallestColumn, column);
         if (utSector->column() == smallestColumn) {
-          topMostRow = std::max<float>(topMostRow, row);
-          bottomMostRow = std::min<float>(bottomMostRow, row);
+          topMostRow = std::max(topMostRow, row);
+          bottomMostRow = std::min(bottomMostRow, row);
         }
         if (utSector->row() == bottomMostRow) {
-          biggestColumn = std::max<float>(biggestColumn, column);
+          biggestColumn = std::max(biggestColumn, column);
         }
       }
       // Second pass
