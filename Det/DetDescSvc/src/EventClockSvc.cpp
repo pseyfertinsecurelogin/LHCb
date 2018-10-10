@@ -44,7 +44,7 @@ StatusCode EventClockSvc::initialize() {
     return StatusCode::FAILURE;
   }
   if( msgLevel(MSG::DEBUG) )
-    debug() << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
+    debug() << "Got pointer to IDetDataSvc \"" << m_detDataSvcName.value() << '"' << endmsg;
 
   // get a pointer to the tool service
   m_toolSvc = service( "ToolSvc", true );
@@ -57,11 +57,11 @@ StatusCode EventClockSvc::initialize() {
 
   sc = m_toolSvc->retrieveTool(m_eventTimeDecoderName, m_eventTimeDecoder, this);
   if (!sc.isSuccess()) {
-    error() << "Unable to get a handle to the IEventTimeDecoder \"" << m_eventTimeDecoderName << '"' << endmsg;
+    error() << "Unable to get a handle to the IEventTimeDecoder \"" << m_eventTimeDecoderName.value() << '"' << endmsg;
     return sc;
   }
   if( msgLevel(MSG::DEBUG) )
-      debug() << "Got pointer to " <<  m_eventTimeDecoderName << endmsg;
+      debug() << "Got pointer to IEventTimeDecoder \"" <<  m_eventTimeDecoderName.value() << '"' << endmsg;
 
   // Set the first event time at initialization.
   Gaudi::Time initTime = m_eventTimeDecoder->getTime(); // try to get the actual event time
