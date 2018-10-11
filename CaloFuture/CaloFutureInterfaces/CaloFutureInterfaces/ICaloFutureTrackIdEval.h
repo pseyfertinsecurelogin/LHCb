@@ -10,6 +10,7 @@
 // ============================================================================
 // forward declaration
 // ============================================================================
+#include "Event/CaloDigit.h"
 #include "Event/Track.h"
 // ============================================================================
 /** @class ICaloFutureTrackIdEval ICaloFutureTrackIdEval.h CaloFutureInterfaces/ICaloFutureTrackIdEval.h
