@@ -58,7 +58,7 @@ namespace LoKi
                        KeyValue{"Location", LHCb::ODINLocation::Default } )
     {
       StatusCode sc = setProperty ( "Code" , "ODIN_NONE" ) ;
-      Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
+      Assert ( sc.isSuccess () , "Unable (re)set property 'Code'" ) ;
       sc = setProperty
         ( "Factory" ,
           0 == name.find ( "Hlt1" ) ?
@@ -66,7 +66,7 @@ namespace LoKi
           0 == name.find ( "Hlt2" ) ?
           "LoKi::Hybrid::HltFactory/Hlt2HltFactory:PUBLIC" :
           "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"     ) ;
-      Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
+      Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" ) ;
     }
     // ========================================================================
     /// the copy constructor is disabled

@@ -192,7 +192,7 @@ LoKi::HDRFilter::HDRFilter
   });
 
   StatusCode sc = setProperty ( "Code" , "HLT_NONE" ) ;
-  Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
+  Assert ( sc.isSuccess () , "Unable (re)set property 'Code'" ) ;
   sc = setProperty
     ( "Factory" ,
       boost::algorithm::starts_with( name,  "Hlt1" ) ?
@@ -200,7 +200,7 @@ LoKi::HDRFilter::HDRFilter
       boost::algorithm::starts_with( name,  "Hlt2" ) ?
       "LoKi::Hybrid::HltFactory/Hlt2HltFactory:PUBLIC" :
       "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"     ) ;
-  Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
+  Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" ) ;
   //
 }
 // ============================================================================
