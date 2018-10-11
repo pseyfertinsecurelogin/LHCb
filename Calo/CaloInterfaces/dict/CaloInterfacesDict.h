@@ -10,7 +10,7 @@
 #include "CaloInterfaces/ICaloCosmicsTool.h"
 #include "CaloInterfaces/ICaloCosmicsTrackTool.h"
 #include "CaloInterfaces/ICaloDigitTool.h"           
-//#include "CaloInterfaces/ICaloDigits4Track.h"           
+#include "CaloInterfaces/ICaloDigits4Track.h"           
 #include "CaloInterfaces/ICaloGetterTool.h"
 #include "CaloInterfaces/ICaloHypoLikelihood.h"      
 #include "CaloInterfaces/ICaloHypoTool.h"            
