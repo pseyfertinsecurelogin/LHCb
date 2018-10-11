@@ -251,7 +251,7 @@ namespace LoKi
                               const PREDICATE& cut   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , cut , std::less<> () ).first  ;
+        ( first , last , fun , cut , std::less{} ).first  ;
     }
     // ========================================================================
     /** select element from the sequence with maximal value of
@@ -292,7 +292,7 @@ namespace LoKi
                               const PREDICATE& cut   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , cut , std::greater<>() ).first ;
+        ( first , last , fun , cut , std::greater{} ).first ;
     }
     // ========================================================================
     /** select element from the sequence with maximal value of
@@ -329,7 +329,7 @@ namespace LoKi
                               const FUNCTION&  fun   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , std::less<>() ).first ;
+        ( first , last , fun , std::less{} ).first ;
     }
     // ========================================================================
     /** select element form the sequence with maximal value of
@@ -366,7 +366,7 @@ namespace LoKi
                               const FUNCTION&  fun   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , std::greater<>() ).first ;
+        ( first , last , fun , std::greater{} ).first ;
     }
     // ========================================================================
     /** very simple algorithm for minimum value of the function over the
@@ -441,7 +441,7 @@ namespace LoKi
     // ========================================================================
     // FoundN-family of algorithms
     // ========================================================================
-    /** @typedef INDICES  
+    /** @typedef INDICES
      *  container to keep "exceptional" indices"
      */
     typedef std::set<std::ptrdiff_t> INDICES  ;
@@ -454,7 +454,7 @@ namespace LoKi
                           const INDICES&    except  = INDICES()  )
     {
       const std::ptrdiff_t num = last - first ;
-      if  ( num < 2 ) { return false ; }                      // RETURN  
+      if  ( num < 2 ) { return false ; }                      // RETURN
       for ( std::ptrdiff_t i = 0 ; i  < num ; ++i )
       {
         if ( except.end() != except.find ( i ) )  { continue ; }
@@ -543,7 +543,7 @@ namespace LoKi
                           const PREDICATE3& cut3   ,
                           const PREDICATE4& cut4   ,
                           const INDICES&    except  = INDICES()  )
-    {      
+    {
       //
       if  ( last - first  < 4 ) { return false ; }                      // RETURN
       //
@@ -703,7 +703,7 @@ namespace LoKi
       for ( typename std::vector<PREDICATE>::const_iterator i = cuts.begin() ; cuts.end() != i ; ++i )
       { _cuts.push_back ( &(*i ) ) ; }
       return _found_N_ ( first , last , _cuts , except ) ;
-    }    
+    }
     // ========================================================================
     /** find "N" different elements in the sequence which satisfy to N
      *  various predicates
@@ -718,7 +718,7 @@ namespace LoKi
                          const std::vector<PREDICATE>& cuts    )
     {
       if ( static_cast<std::size_t>(std::distance( first, last )) < cuts.size() )  return false;
-      
+
       switch (cuts.size())
       {
       case 0 : return false;

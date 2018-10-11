@@ -196,7 +196,7 @@ protected:
    * @return A pointer to the HLT refractive index interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  virtual void generateHltRefIndex();
+  virtual StatusCode generateHltRefIndex();
 
   /**
    * Checks if the refractive index is valid. If not it throws an exception

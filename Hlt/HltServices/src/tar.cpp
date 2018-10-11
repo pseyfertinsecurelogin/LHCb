@@ -1,6 +1,9 @@
 #include "tar.h"
 #include <sstream>
 #include <set>
+#include <string_view>
+#include <type_traits>
+#include <cstring>
 #include "boost/iostreams/copy.hpp"
 #include "boost/iostreams/filter/gzip.hpp"
 #include "boost/iostreams/slice.hpp"
@@ -42,57 +45,28 @@ class CleanupAtExit
     std::set<std::string> m_files;
 };
 
-bool isOctal( const char& ch )
+
+long getOctal( const char* first, const char* last)
 {
-    return ( ( ch >= '0' ) && ( ch <= '7' ) );
-}
-long getOctal( const char* cp, int size )
-{
+    auto isOctal = [](const char& ch) { return ( ch >= '0' ) && ( ch <= '7' ); };
+
+    while ( first!=last && *first==' ') ++first;
+    if ( first==last || !isOctal( *first ) ) return -1;
     long val = 0;
-    for ( ; ( size > 0 ) && ( *cp == ' ' ); cp++, size-- )
-        ;
-    if ( ( size == 0 ) || !isOctal( *cp ) ) return -1;
-    for ( ; ( size > 0 ) && isOctal( *cp ); size-- )
-        val = ( val << 3 ) + ( *cp++ - '0' );
-    for ( ; ( size > 0 ) && ( *cp == ' ' ); cp++, size-- )
-        ;
-    if ( ( size > 0 ) && *cp ) return -1;
-    return val;
+    for ( ; first!=last && isOctal( *first ); ++first )
+        val = ( val << 3 ) + ( *first - '0' );
+    while ( first!=last  && *first==' ' ) ++first;
+    return ( first == last || *first==0 ) ? val : -1;
 }
 
-long computeChecksum( const ConfigTarFileAccessSvc_details::posix_header& header )
-{
-    /* Check the checksum */
-    long sum = 0;
-    unsigned char* s = (unsigned char*)&header;
-    for ( int i = sizeof( header ); i-- != 0; ) sum += *s++;
-    /* Remove the effects of the checksum field (replace
-     * with blanks for the purposes of the checksum) */
-    for ( int i = sizeof header.chksum; i-- != 0; ) {
-        sum -= (unsigned char)header.chksum[i];
-    }
-    sum += ' ' * sizeof header.chksum;
-    return sum;
-}
+template <size_t N>
+long getOctal( const char(&s)[N] ) { return getOctal( std::begin(s), std::end(s)); }
 
-template <typename T>
-std::string convert( const T& in )
-{
-    // take into account that eg. name and prefix do not have a
-    // terminating '\0' in case they occupy the full length...
-    std::string s( in, sizeof( in ) );
-    std::string::size_type last = s.find( char( 0 ) );
-    return ( last == std::string::npos ) ? s : s.substr( 0, last );
-}
-
-template <typename T>
-char* putString( const char* s, T& buffer )
-{
-    return strncpy( buffer, s, sizeof( buffer ) );
-}
-template <typename T, size_t Size>
+template <typename T, size_t Size,
+          typename = std::enable_if_t<std::numeric_limits<T>::is_integer>>
 bool putOctal( T val, char ( &buf )[Size] )
 {
+    assert(val>=0);
     // octal needs 3 bits per digit, and we need a terminal '\0'
     // uintmax_t m = maxValWithDigits( Size-1, 3)
     // TODO: check whether val fits within size octal characters...
@@ -103,6 +77,31 @@ bool putOctal( T val, char ( &buf )[Size] )
         val >>= 3;
     } while ( size );
     return true;
+}
+
+template <size_t N>
+std::string getString( const char(&buffer)[N] )
+{
+    // take into account that eg. name and prefix do not have a
+    // terminating '\0' in case they occupy the full length...
+    auto sv = std::string_view{ buffer, N };
+    if (auto zero = sv.find( '\0' ); zero != std::string_view::npos) sv = sv.substr(0,zero);
+    return std::string{ sv };
+}
+
+template <size_t N>
+char* putString( const char* s, char(&buffer)[N] )
+{
+    // possible truncation is explicitly OK, as 'getString' will deal with it
+    // appropriately
+#if defined(__GNUC__) && __GNUC__ >= 8
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+#endif
+    return std::strncpy( buffer, s, N );
+#if defined(__GNUC__) && __GNUC__ >= 8
+#pragma GCC diagnostic pop
+#endif
 }
 
 
@@ -118,29 +117,41 @@ typedef enum TarFileType TarFileType;
 
 namespace ConfigTarFileAccessSvc_details
 {
-bool interpretHeader(std::fstream& file,  ConfigTarFileAccessSvc_details::posix_header& header, Info& info )
+
+long computeChecksum( const posix_header& header )
+{
+    /* Check the checksum */
+    long sum = 0;
+    unsigned char* s = (unsigned char*)&header;
+    for ( int i = sizeof( header ); i-- != 0; ) sum += *s++;
+    /* Remove the effects of the checksum field (replace
+     * with blanks for the purposes of the checksum) */
+    for ( int i = sizeof header.chksum; i-- != 0; ) {
+        sum -= (unsigned char)header.chksum[i];
+    }
+    sum += ' ' * sizeof header.chksum;
+    return sum;
+}
+bool interpretHeader(std::fstream& file, posix_header& header, Info& info )
 {
     if ( strncmp( header.magic, "ustar ", 6 ) &&
          strncmp( header.magic, "ustar\0", 6 ) ) {
         return false;
     }
-    long chksum = getOctal( header.chksum, sizeof( header.chksum ) );
     /* Check the checksum */
-    long sum = computeChecksum( header );
-    if ( sum != chksum ) {
+    if (long sum = computeChecksum( header ),chksum = getOctal( header.chksum ) ; sum != chksum ) {
         std::cerr << " bad chksum " << sum << " vs. " << chksum << std::endl;
         return false;
     }
-    long size = getOctal( header.size, sizeof( header.size ) );
+    long size = getOctal( header.size );
     if ( size < 0 ) {
         std::cerr << " got negative file size: " << info.size << std::endl;
         return false;
     }
     info.size = size;
-    info.name = convert( header.name );
+    info.name = getString( header.name );
     if ( header.prefix[0] != 0 ) {
-        std::string prefix = convert( header.prefix );
-        info.name = prefix + "/" + info.name;
+        info.name = getString( header.prefix ) + "/" + info.name;
     }
 
     if ( TarFileType( header.typeflag ) == TarFileType::GNUTYPE_LONGNAME ) {
@@ -150,8 +161,7 @@ bool interpretHeader(std::fstream& file,  ConfigTarFileAccessSvc_details::posix_
         // first read the real, untruncated name as data
         std::ostringstream fname;
         io::copy( io::slice( file, 0, info.size ), fname );
-        size_t padding = info.size % 512;
-        if ( padding != 0 ) file.seekg( 512 - padding, std::ios::cur );
+        if (size_t padding = info.size % 512; padding != 0 ) file.seekg( 512 - padding, std::ios::cur );
         // and now get another header, which contains a truncated name
         // but which is otherwise the 'real' one
         file.read( (char*)&header, sizeof( header ) );
@@ -161,8 +171,8 @@ bool interpretHeader(std::fstream& file,  ConfigTarFileAccessSvc_details::posix_
         // removing trailing zero(s)
         boost::trim_right_if(info.name,[](const char& c) { return c==0; });
     }
-    info.uid    = getOctal( header.uid, sizeof(header.uid) );
-    info.mtime  = getOctal( header.mtime, sizeof(header.mtime) );
+    info.uid    = getOctal( header.uid );
+    info.mtime  = getOctal( header.mtime );
     info.offset = file.tellg(); // this goes here, as the longlink handling
                                   // reads an extra block...
     // if name ends in .gz, assume it is gzipped.
@@ -241,8 +251,8 @@ bool TarFile::_append( const std::string& name, std::stringstream& is )
 
     // and write the file contents, padded with zeros
     m_file.write( buffer, size );
-    static const size_t blockingFactor = 20;
-    static char zeros[blockingFactor * 512] = {0};
+    constexpr size_t blockingFactor = 20;
+    static constexpr const char zeros[blockingFactor * 512] = {0};
     if ( size % 512 ) m_file.write( zeros, 512 - size % 512 );
     // update the logical EOF
     std::streamoff leof = m_file.tellp();
@@ -341,11 +351,6 @@ bool TarFile::setupStream( io::filtering_istream& s, const std::string& name ) c
 TarFile::TarFile( const std::string& name, std::ios::openmode mode,
                   bool compressOnWrite )
     : m_name( name )
-    , m_lock( -1 )
-    , m_leof( 0 )
-    , m_indexUpToDate( false )
-    , m_myUid( 0 )
-    , m_myGid( 0 )
     , m_compressOnWrite( compressOnWrite )
 {
     if ( mode & std::ios::out ) {

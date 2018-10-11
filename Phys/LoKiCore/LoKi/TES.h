@@ -137,7 +137,7 @@ namespace LoKi
         , m_algorithm      ( right.algorithm () ) 
         , m_datahandle     ( right.location  () , right.algorithm().get() ) 
       {}
-      /// default constructoir is disabled
+      /// default constructor is disabled
       DataHandle() =  delete ;
       // ======================================================================
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -147,7 +147,11 @@ namespace LoKi
       { return m_algorithm ; }
       const std::string& location     () const { return m_location     ; }
       // ======================================================================
-      decltype(auto) get() const { return m_datahandle.get(); };
+      decltype(auto) get         () const { return m_datahandle.get   () ; }      
+      // ======================================================================
+    protected:
+      // =======================================================================
+      bool           exist       () const { return m_datahandle.exist () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -233,7 +237,21 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Size 
+    /** @class Size
+     *  <code>DataHandle</code>-based functor 
+     *  to check the size of data at certain TES-location
+     *  - for non-existent data exeption is thrown 
+     *  - for data inherited from <code>ObjectContainerBase</code> 
+     *       <code>ObjectContainerBase::numberObjects</code> is returned 
+     *  - for data inhetited  from <code>AnyDataWrapperBase</code>
+     *       <code>anydata->size().value_or   ( -1  )</code> is  returned 
+     *  - for unknown data type <code>-1</code> is returned 
+     *  @see LoKi::Cuts::SIZE
+     *  @see LoKi::Cuts::CONTAINS
+     *  @see LoKi::TES::DataHandle
+     *  @see DataObjectReadHandle
+     *  @see ObjectContainerBase::numberObjects
+     *  @see AnyDataWrapperBase
      *  @author Sascha Stahl 
      */
     class GAUDI_API Size
@@ -250,7 +268,26 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
-
+    /** @class HasData
+     *  <code>DataHandle</code>-based functor 
+     *  to check the existence of data at certain TES-location
+     *  @see LoKi::Cuts::HASDATA
+     *  @see LoKi::Cuts::EXISTS
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     */
+    class GAUDI_API HasData
+      : public LoKi::Functor<void,bool>
+      , public LoKi::TES::DataHandle<DataObject>
+    {
+    public:
+      // ======================================================================
+      HasData ( const GaudiAlgorithm*  algortihm , 
+                const std::string&     location  ) ;
+      HasData* clone() const override;
+      bool operator() () const override;
+      std::ostream& fillStream ( std::ostream& s ) const override;
+      // ======================================================================
+    } ;
     // ========================================================================
     /** @class HrcSumAdc
      *  Simple query to sum contents of Herschel Digits for a station
@@ -474,6 +511,26 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Contains                                      CONTAINS ;
+    // ========================================================================
+    /** @typedef SIZE
+     *  <code>DataHandle</code>-based functor 
+     *  to check the size of data at certain TES-location
+     *  - for non-existent data exception is thrown
+     *  - for data inherited from <code>ObjectContainerBase</code> 
+     *       <code>ObjectContainerBase::numberObjects</code> is returned 
+     *  - for data inhetited  from <code>AnyDataWrapperBase</code>
+     *       <code>anydata->size().value_or   ( -1  )</code> is  returned 
+     *  - for unknown data type <code>-1</code> is returned 
+     *  @code
+     *   0 < SIZE ( '/Event/PSIX/Phys/SelPsi2KForPsiX/Particles' ) 
+     *  @endcode 
+     *  @see LoKi::TES::Size 
+     *  @see LoKi::TES::DataHandle
+     *  @see DataObjectReadHandle
+     *  @see ObjectContainerBase::numberObjects
+     *  @see AnyDataWrapperBase     
+     *  @author Sascha Stahl  
+     */
     typedef LoKi::TES::Size                                          SIZE     ;
     // ========================================================================
 
@@ -508,6 +565,16 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Exists                                          EXISTS ;
+    // ========================================================================
+    /** @typedef HASDATA         
+     *  <code>DataHandle</code>-based functor 
+     *  to check the existence of data at certain TES-location
+     *  @see LoKi::TES::HasData
+     *  @see LoKi::Cuts::HASDATA
+     *  @see LoKi::Cuts::EXISTS
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     */
+    typedef LoKi::TES::HasData                                        HASDATA ;
     // ========================================================================
     /** @typedef COUNTER
      *  Trivial accessor to the counter in TES

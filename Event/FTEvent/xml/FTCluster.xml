@@ -30,10 +30,6 @@
         <code> this->setKey(id); </code>
       </constructor>
 
-      <destructor  desc="destructor">
-        <code> // dummy  </code>
-      </destructor>
-
       <method    name   = "channelID"
                  desc   = "Retrieve the FTChannelID, key of the object"
                  type   = "const LHCb::FTChannelID&amp;"

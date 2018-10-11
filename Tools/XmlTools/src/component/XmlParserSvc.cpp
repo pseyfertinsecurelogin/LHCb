@@ -228,7 +228,7 @@ IOVDOMDocument* XmlParserSvc::parse( const char* fileName )
           info() << format( "%7.1f ms user and %7.1f ms clock time for ", cpu1, cpu2 ) << fileName << endmsg;
       }
       return myDoc;
-    } catch ( xercesc::XMLPlatformUtilsException e ) {
+    } catch ( const xercesc::XMLPlatformUtilsException &e ) {
       char* message = xercesc::XMLString::transcode( e.getMessage() );
       Service::error() << "Unable to find file " << fileName << ",  Exception message:" << message << endmsg;
       xercesc::XMLString::release( &message );

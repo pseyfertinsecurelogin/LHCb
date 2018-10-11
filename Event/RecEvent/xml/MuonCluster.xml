@@ -11,6 +11,7 @@
       desc="Reconstructed muon hit clusters"
       id="11041"
       final = "TRUE"
+      defaultdestructor = "FALSE"
       >
       <base
         name="KeyedObject&lt;int&gt;"/>

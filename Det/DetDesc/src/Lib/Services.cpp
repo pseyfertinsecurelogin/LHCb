@@ -31,7 +31,7 @@ namespace {
 SmartIF<ISvcLocator>& DetDesc::Services::svcLocator() const {
   /// Get the service if necessary
   if (UNLIKELY(!m_svcLocator)){
-    std::lock_guard<std::mutex> lock(s_svcLoc_mutex);
+    std::lock_guard lock(s_svcLoc_mutex);
     if (!m_svcLocator) m_svcLocator = Gaudi::svcLocator();
     if (!m_svcLocator) {
       throw GaudiException("DetDesc::ISvcLocator* points to NULL!",
@@ -50,7 +50,7 @@ SmartIF<ISvcLocator>& DetDesc::Services::svcLocator() const {
 IDataProviderSvc* DetDesc::Services::detSvc() const {
   /// locate the service if necessary
   if (UNLIKELY(!m_detSvc)){
-    std::lock_guard<std::mutex> lock(s_detsvc_mutex);
+    std::lock_guard lock(s_detsvc_mutex);
     if (!m_detSvc) m_detSvc = svcLocator()->service ("DetectorDataSvc");
     if (!m_detSvc) {
       throw GaudiException
@@ -70,7 +70,7 @@ IDataProviderSvc* DetDesc::Services::detSvc() const {
 IMessageSvc* DetDesc::Services::msgSvc() const {
   // locate the service if necessary
   if (UNLIKELY(!m_msgSvc)) {
-    std::lock_guard<std::mutex> lock(s_msgsvc_mutex);
+    std::lock_guard lock(s_msgsvc_mutex);
     if (!m_msgSvc) m_msgSvc = svcLocator()->service("MessageSvc");
     if (!m_msgSvc) {
       throw GaudiException
@@ -89,7 +89,7 @@ IMessageSvc* DetDesc::Services::msgSvc() const {
 IUpdateManagerSvc* DetDesc::Services::updMgrSvc(bool create) const {
   // locate the service if necessary
   if (UNLIKELY(!m_updMgrSvc)) {
-    std::lock_guard<std::mutex> lock(s_updsvc_mutex);
+    std::lock_guard lock(s_updsvc_mutex);
     if (!m_updMgrSvc) m_updMgrSvc = svcLocator()->service("UpdateManagerSvc", create);
     if (!m_updMgrSvc)
       throw GaudiException
@@ -107,7 +107,7 @@ IUpdateManagerSvc* DetDesc::Services::updMgrSvc(bool create) const {
 DetDesc::ServicesPtr DetDesc::Services::services() {
   auto sp = s_services.lock();
   if (UNLIKELY(!sp)) {
-    std::lock_guard<std::mutex> lock(s_mutex);
+    std::lock_guard lock(s_mutex);
     sp = s_services.lock();
     if (!sp) {
       sp = std::make_shared<ServicesMaker>();

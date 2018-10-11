@@ -120,7 +120,8 @@ RelatedInfoRelationsPacker::unpack( const LHCb::PackedRelatedInfoMap & pmap,
           to.insert( prels.info()[jj] );
         }
         // Save the relation
-        rels.relate( from, to );
+        auto sc = rels.relate( from, to );
+        if ( !sc ) { parent().Error( "Problem forming relation" ).ignore(); }
       }
     }
 

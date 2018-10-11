@@ -7,6 +7,8 @@
       name        = "IntLink" 
       author      = "Jose A. Hernando" 
       desc        = "Link to int" 
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id          = "500">
       
       <base name="DataObject"/> 

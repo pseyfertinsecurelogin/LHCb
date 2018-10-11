@@ -365,7 +365,7 @@ namespace Gaudi
     inline std::pair<unsigned int,unsigned int>
     ind_max_element
     ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return ind_max_element ( m , std::less<>() ) ; }
+    { return ind_max_element ( m , std::less{} ) ; }
     // ========================================================================
     /** find an index of the minimal element in matrix
      *  @param m (input) matrix to be studied
@@ -449,7 +449,7 @@ namespace Gaudi
     inline std::pair<unsigned int,unsigned int>
     ind_min_element
     ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return ind_min_element( m , std::less<>() ) ; }
+    { return ind_min_element( m , std::less{} ) ; }
     // ========================================================================
     /** find an index of the maximal element in the vector
      *  @param m (input) vector to be studied
@@ -702,7 +702,7 @@ namespace Gaudi
     inline T
     max_diagonal
     ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    { return max_diagonal( m , std::less<>() ) ; }
+    { return max_diagonal( m , std::less{} ) ; }
     // ========================================================================
     /** find the maximal diagonal element of the square matrix
      *
@@ -732,7 +732,7 @@ namespace Gaudi
     inline T
     min_diagonal
     ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    { return min_diagonal( m , std::less<>() ) ; }
+    { return min_diagonal( m , std::less{} ) ; }
     // ========================================================================
     /** find the diagonal element of square matrix with maximal absolute value
      *
@@ -888,7 +888,7 @@ namespace Gaudi
      *  // count number of VERY small (and negative) diagonal elements:
      *  const size_t bad =
      *   Gaudi::Math::cound_diagonal( covariance ,
-     *   std::bind2nd( std::less<>() , 0.01 * Gaudi::Units::micrometer ) ;
+     *   std::bind2nd( std::less{} , 0.01 * Gaudi::Units::micrometer ) ;
      *  if ( 0 != bad )
      *   {
      *      std::cerr << " #bad diagonal elements is " << bad << std::endl ;
@@ -959,7 +959,7 @@ namespace Gaudi
      *  // check for "almost nulls"
      *  const bool bad =
      *   Gaudi::Math::check_diagonal( covariance ,
-     *   std::bind2nd( std::less<>() , 0.001 * Gaudi::Units::micrometer ) ;
+     *   std::bind2nd( std::less{} , 0.001 * Gaudi::Units::micrometer ) ;
      *  if ( bad )
      *   {
      *      std::cerr << " bad diagonal elements are detected " << std::endl ;

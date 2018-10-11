@@ -49,12 +49,15 @@ public:
    */
   void saveCandidate( L0DUBase::Fiber::Type type , 
                       LHCb::L0ProcessorDatas* L0Calo ) {
-    unsigned int word = 0x10000 |
-			( m_ID.index() << L0DUBase::Calo::Address::Shift) | 
-			( m_et << L0DUBase::Calo::Et::Shift ) ;
-    if( type == L0DUBase::Fiber::CaloSumEt || type ==  L0DUBase::Fiber::CaloSpdMult)
-      word = 0x10000 | m_et << L0DUBase::Calo::Sum::Shift;
-
+    unsigned int word = 0 ;
+    if ( L0DUBase::Fiber::CaloSumEt == type )
+      word = 0x10000 + ( m_et << L0DUBase::Calo::Sum::Shift ) ;
+    else if ( L0DUBase::Fiber::CaloSpdMult == type )
+      word = 0x10000 + ( m_et << L0DUBase::Calo::Sum::Shift ) ;
+    else
+      word = 0x10000 |
+        ( m_ID.index() << L0DUBase::Calo::Address::Shift) |
+        ( m_et << L0DUBase::Calo::Et::Shift ) ;
     LHCb::L0ProcessorData * temp = new LHCb::L0ProcessorData ( type , word ) ;
     L0Calo -> add( temp );
   }

@@ -69,32 +69,36 @@ if (size/1024/1024) > 3.0:
 
 memory = -1
 
-sum = None
-try:
-    from XMLSummaryBase import summary
-    sum = summary.Summary()
-    sum.parse("summary.xml")
-    for child in sum.children("usage")[0].children():
-        if child.attrib()["useOf"] == "MemoryMaximum":
-            memory = child.value()
-            result['maximum_vmem'] = '%f GB' % (memory/1024/1024)
-except ImportError:
-    causes.append('XMLsummary python error')
-    retstr += '\nXMLSummary Summary class could not be imported'
-except IOError:
-    causes.append('XMLsummary missing')
-    retstr += '\nXMLSummary missing'
-except IndexError:
-    causes.append('XMLsummary Memory Maximum missing')
-    retstr += '\nXMLsummary Memory Maximum missing\n' + sum.xml()
+# Disable this check under sanitizers as vmem usage
+# there is artifically high
+if not "PRELOAD_SANITIZER_LIB" in os.environ:
 
-if memory == -1:
-    causes.append('XMLsummary Memory Maximum missing')
-    retstr += '\nXMLsummary Memory Maximum missing\n' + sum.xml()
-if (memory/1024/1024) > 1.5:
-    causes.append('VMem usage too high')
-    retstr += ('\n\nVMem usage too high, ' + str(memory/1024/1024) +
-               " GB. Note that anything over 1.5 GB represents a serious problem. Don't just ignore it!")
+    sum = None
+    try:
+        from XMLSummaryBase import summary
+        sum = summary.Summary()
+        sum.parse("summary.xml")
+        for child in sum.children("usage")[0].children():
+            if child.attrib()["useOf"] == "MemoryMaximum":
+                memory = child.value()
+                result['maximum_vmem'] = '%f GB' % (memory/1024/1024)
+    except ImportError:
+        causes.append('XMLsummary python error')
+        retstr += '\nXMLSummary Summary class could not be imported'
+    except IOError:
+       causes.append('XMLsummary missing')
+       retstr += '\nXMLSummary missing'
+    except IndexError:
+       causes.append('XMLsummary Memory Maximum missing')
+       retstr += '\nXMLsummary Memory Maximum missing\n' + sum.xml()
+
+    if memory == -1:
+        causes.append('XMLsummary Memory Maximum missing')
+        retstr += '\nXMLsummary Memory Maximum missing\n' + sum.xml()
+    if (memory/1024/1024) > 1.5:
+        causes.append('VMem usage too high')
+        retstr += ('\n\nVMem usage too high, ' + str(memory/1024/1024) +
+                   " GB. Note that anything over 1.5 GB represents a serious problem. Don't just ignore it!")
 
 if retstr:
   result[myname] = result.Quote(retstr)

@@ -40,14 +40,19 @@ TrackClustersMapper::algorithmForPath( const std::string & path )
 
     // Set RootInTES for this unpacker. Controls where packed data is loaded
     // from and where the output goes.
-    joSvc()->addPropertyToCatalogue( algName,
-                                     StringProperty("RootInTES",streamRoot(path)) );
+    auto sc = joSvc()->addPropertyToCatalogue( algName,
+                                               StringProperty("RootInTES",streamRoot(path)) );
     if ( m_unpackersOutputLevel > 0 )
     {
       std::stringstream lvl;
       lvl << m_unpackersOutputLevel;
-      joSvc()->addPropertyToCatalogue( algName,
-                                       StringProperty("OutputLevel",lvl.str()));
+      if (sc) sc = joSvc()->addPropertyToCatalogue( algName,
+                                                    StringProperty("OutputLevel",lvl.str()));
+    }
+
+    if ( UNLIKELY(!sc) )
+    {
+      Exception( "Failed to configure Job Options Service" );
     }
 
     // Return the algorithm type/name.

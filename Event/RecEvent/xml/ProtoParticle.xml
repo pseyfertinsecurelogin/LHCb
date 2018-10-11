@@ -242,7 +242,7 @@
 
        <method
         name    = "addInfo"
-        desc    = "Add or replace new information, associated with the specified key"
+        desc    = "Add new information, associated with the specified key"
         argList = "const int key, const double info"
         type    = "bool" >
         <code>

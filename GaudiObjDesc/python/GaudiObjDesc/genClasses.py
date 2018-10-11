@@ -136,6 +136,7 @@ class genClasses(genSrcUtils.genSrcUtils):
                     else : s += ',\n%s %s' % (indent*' ', p)
                     pIndent = max(pIndent,len(p))
         s += ')'
+        if constAtt['noexcept'] == 'TRUE' : s += ' noexcept '
         indent += pIndent+1
         if ( not scopeName ) :
             if ('initList' in constAtt and 'code' not in const) or \

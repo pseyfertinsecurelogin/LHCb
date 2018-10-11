@@ -4,9 +4,11 @@
 #include "XmlTools/Evaluator.h"
 
 #include <iostream>
+#include <functional>
 #include <algorithm>
 #include <cmath>	// for std::pow()
 #include <stack>
+#include <cassert>
 #include <string>
 #include <unordered_map>
 #include <cctype>
@@ -66,19 +68,31 @@ namespace {
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
+    template <std::size_t N>
     class InvokeFuncPtrWith {
-        const double *p; //TODO: C++20: use std::span
+        const std::array<double,N> &p; // TODO: C++20: use std::span<double> instead...
         std::size_t n;
-        template <typename F, std::size_t ... Is>
-        double helper( F fun, std::index_sequence<Is...> ) const {
-            return fun( p[Is]... );
+        template <typename Fun, std::size_t ... Is>
+        double apply( Fun f, std::index_sequence<Is...> ) const {
+            return std::invoke( std::forward<Fun>(f), std::get<Is>(p)... );
         }
     public:
-        InvokeFuncPtrWith(const double* pp, std::size_t npar) : p(pp), n(npar) {}
-        template <typename... Args>
+        InvokeFuncPtrWith(const std::array<double,N> &pp, std::size_t npar) : p(pp), n(npar)
+        {
+            assert(n<=N);
+        }
+        template <typename... Args,
+                  typename = std::enable_if_t<std::conjunction_v<std::is_same<Args,double>...>>>
         std::optional<double> operator()( double(*fun)(Args...) ) const {
+#if __GNUC__ == 8
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
             if (sizeof...(Args)!=n) return {};
-            return helper( fun, std::index_sequence_for<Args...>{} );
+#if __GNUC__ == 8
+#pragma GCC diagnostic pop
+#endif
+            return apply( fun, std::index_sequence_for<Args...>{} );
         }
     };
 
@@ -167,7 +181,7 @@ static int function(const std::string & name, std::stack<double> & par,
   auto iter = dictionary.find(sss[npar]+name);
   if (iter == dictionary.end()) return EVAL::ERROR_UNKNOWN_FUNCTION;
 
-  double pp[MAX_N_PAR];
+  std::array<double,MAX_N_PAR> pp { 0 };
   for(unsigned i=0; i<npar; i++) { pp[npar-1-i] = par.top(); par.pop(); } // reverse the arguments
   errno = 0;
   auto status = visit( overloaded{ [&result,eval=InvokeFuncPtrWith(pp,npar)](FuncPtr f) {

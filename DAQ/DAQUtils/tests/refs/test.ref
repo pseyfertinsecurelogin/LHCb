@@ -1,17 +1,18 @@
-# --> Including file '/afs/cern.ch/user/r/rlambert/cmtuser/LHCb_HEAD/DAQ/DAQUtils/tests/options/test.opts'
-# ApplicationMgr.TopAlg += { "DAQEventTests::ByteStreamTests",                           "DAQEventTests::DummyRawEventCreator",                           "RawEventDump" };
+# setting LC_ALL to "C"
+# --> Including file '/var/clus/usera/jonesc/LHCbCMake/Feature/LHCb/DAQ/DAQUtils/tests/options/test.opts'
+# ApplicationMgr.TopAlg += { "DAQEventTests::ByteStreamTests",\n                           "DAQEventTests::DummyRawEventCreator",\n                           "RawEventDump" };
 # ApplicationMgr.EvtMax = 1;
 # ApplicationMgr.EvtSel = "NONE";
 # EventDataSvc.ForceLeaves = 1;
 # RawEventDump.DumpData = true;
-# <-- End of file '/afs/cern.ch/user/r/rlambert/cmtuser/LHCb_HEAD/DAQ/DAQUtils/tests/options/test.opts'
+# <-- End of file '/var/clus/usera/jonesc/LHCbCMake/Feature/LHCb/DAQ/DAQUtils/tests/options/test.opts'
 ApplicationMgr    SUCCESS
 ====================================================================================================================================
-                                                   Welcome to ApplicationMgr (GaudiCoreSvc v2r1)
-                                          running on lxplus0024 on Thu Feb  6 17:17:41 2014
+                                                   Welcome to LHCb version v50r1
+                                          running on pcmf on Mon Sep 24 13:35:16 2018
 ====================================================================================================================================
 ApplicationMgr       INFO Application Manager Configured successfully
-DAQEventTests::...   INFO 5
+DAQEventTests::...   INFO 7
 DAQEventTests::...   INFO 67305985
 DAQEventTests::...   INFO 1
 DAQEventTests::...   INFO 2
@@ -25,6 +26,7 @@ DAQEventTests::...   INFO 0
 DAQEventTests::...   INFO 1
 DAQEventTests::...   INFO 0
 DAQEventTests::...   INFO 0
+DAQEventTests::...   INFO 67305985 0 0 0 1 0 0
 EventLoopMgr      WARNING Unable to locate service "EventSelector"
 EventLoopMgr      WARNING No events will be processed from external input.
 HistogramPersis...WARNING Histograms saving not required.

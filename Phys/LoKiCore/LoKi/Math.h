@@ -329,7 +329,7 @@ namespace LoKi
   Iterator select_min ( Iterator first , Iterator last  , const F& fun   )
   {
     return std::min_element( first, last,
-                             LoKi::compare( fun , fun , std::less<>() ) ) ;
+                             LoKi::compare( fun , fun , std::less{} ) ) ;
   }
   // ==========================================================================
   /** select element form the sequence with maximal value of function
@@ -360,7 +360,7 @@ namespace LoKi
   Iterator select_max ( Iterator first , Iterator last  , const F& fun   )
   {
     return std::max_element( first , last  ,
-                             LoKi::compare( fun, fun, std::less<>() ) );
+                             LoKi::compare( fun, fun, std::less{} ) );
   }
   // ==========================================================================
   /** select element form the sequence with minimal value of function
@@ -468,7 +468,7 @@ namespace LoKi
     if ( first == last ) { return last ; }
     auto result = first++;
     //
-    const auto cmp = LoKi::compare( fun , fun , std::less<>{} )  ;
+    const auto cmp = LoKi::compare( fun , fun , std::less{} );
     //
     for ( ; first != last ; ++first )
     {
@@ -524,7 +524,7 @@ namespace LoKi
     if ( first == last ) { return last ; }
     auto result = first++;
 
-    const auto cmp = LoKi::compare( fun , fun , std::less<>() )  ;
+    const auto cmp = LoKi::compare( fun , fun , std::less{} );
     //
     for (  ; first != last ; ++first ) {
       if ( cut( *first ) &&  cmp( *result , *first ) ) { result = first ; }

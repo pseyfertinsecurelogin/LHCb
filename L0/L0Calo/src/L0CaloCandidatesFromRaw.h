@@ -67,6 +67,5 @@ private:
     }
     return false;
   }
-  
 };
 #endif // L0CALOCANDIDATESFROMRAW_H

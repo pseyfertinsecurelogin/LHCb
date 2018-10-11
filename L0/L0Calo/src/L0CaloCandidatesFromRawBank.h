@@ -53,5 +53,9 @@ private:
   DeCalorimeter* m_hcal;         ///< HCAL detector element
   double         m_etScale;      ///< Conversion int -> Et.
   bool           m_doDebugDecoding ; ///< Store intermediate information for debug
+  bool           m_fixFor2016 ;  ///< Fix energy to correspond to 2016 conditions
+  bool           m_simulation ;  ///< Data or MC, relevant only for fixFor2016
+
+  int correctedEnergy( const int oldEnergy , const LHCb::CaloCellID & id ) const ;
 };
 #endif // L0CALO_L0CALOCANDIDATESFROMRAWBANK_H

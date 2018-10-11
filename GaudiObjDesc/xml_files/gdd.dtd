@@ -93,6 +93,7 @@
         argList          CDATA                             #IMPLIED
         initList         CDATA                             #IMPLIED
         explicit         (TRUE | FALSE)                    "FALSE"
+        noexcept         (TRUE | FALSE)                    "FALSE"
 >
 <!ELEMENT destructor (arg*, code?)>
 <!ATTLIST destructor
@@ -113,6 +114,7 @@
         inline           (TRUE | FALSE)                    "FALSE"
         friend           (TRUE | FALSE)                    "FALSE"
         explicit         (TRUE | FALSE)                    "FALSE"
+        noexcept         (TRUE | FALSE)                    "FALSE"
         type             CDATA                             "void"
         argList          CDATA                             #IMPLIED
         useBase          CDATA                             #IMPLIED

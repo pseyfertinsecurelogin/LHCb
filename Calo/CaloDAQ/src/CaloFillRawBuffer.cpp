@@ -287,11 +287,13 @@ void CaloFillRawBuffer::fillPackedBank ( ) {
           if ( 4095 < adc ) adc = 4095;
         }
         if ( 248 <= adc && 264 > adc ) { //... store short
+          int omask= (offset-28 > 0) ? 0xF >> (offset-28) : 0xF ; // actually not needed : should be always 0xF
           adc -= 248;
-          word |= adc<<offset;
+          word |= (adc&omask)<<offset;
           offset += 4;
         } else {                         //... store long
-          word |= adc<<offset;
+          int omask= (offset-20 > 0) ? 0xFFF >> (offset-20) : 0xFFF ;
+          word |= (adc&omask)<<offset;
           pattern += (1<<bNum);
           offset  +=12;
         }

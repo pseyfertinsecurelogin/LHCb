@@ -10,6 +10,8 @@
       desc="Header for event generator information"
       name="GenHeader"
       location="Gen/Header"
+      final="TRUE"
+      defaultdestructor="FALSE"
       id="102"
      >
        &DataObject;

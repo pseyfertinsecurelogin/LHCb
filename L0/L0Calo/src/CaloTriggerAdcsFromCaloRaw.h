@@ -50,6 +50,10 @@ private:
   DeCalorimeter     * m_calo = nullptr ;
 
   bool m_doubleScale ;
+  bool m_fixFor2016 ;
+  LHCb::RawBank::BankType m_bank;
+  /// List of locations in the transient store to search the RawEvent object.
+  std::vector<std::string> m_rawEventLocations;
 
   int l0adcFromAdc( const int adc , const LHCb::CaloCellID & id ) const ;
 };

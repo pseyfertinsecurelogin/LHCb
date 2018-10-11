@@ -109,10 +109,8 @@ DeRichMultiSolidRadiator::geometryUpdate()
 
   m_firstUpdate = false;
 
-  // Check the HLT ref index
-  generateHltRefIndex();
-
-  return StatusCode::SUCCESS;
+  // Check the HLT ref index and return
+  return generateHltRefIndex();
 }
 
 //=========================================================================

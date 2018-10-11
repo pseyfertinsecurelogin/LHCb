@@ -383,7 +383,7 @@
       </method>
       <method
         name="addInfo"
-        desc=" add/replace new information, associated with the key"
+        desc=" add new information, associated with the key"
         argList="int key, double info"
         type="bool"
         >

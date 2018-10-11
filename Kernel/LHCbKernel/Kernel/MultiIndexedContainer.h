@@ -18,22 +18,6 @@ namespace LHCb
 namespace Container
 {
 
-namespace
-{
-
-  /**
-   * Helper function to access the value of the template
-   * argument as an actual value. Only works for size_t.
-   *
-   * If there is a smarter way to do this, please change.
-   */
-  template<class T>
-  size_t fv(const T& t)
-  {
-    return t;
-  }
-
-}
 /**
  * Desirably efficient container of hits, in effect a
  * smarter wrapper around a 1D vector and an array of offsets.
@@ -76,6 +60,52 @@ namespace
  * 			Renato Quagliani <Renato.Quagliani@cern.ch>,
  * 			Gerhard Raven <gerhard.raven@nikhef.nl>
  */
+
+
+namespace detail {
+    template <size_t ... J, size_t ... I>
+    constexpr auto prod(std::index_sequence<I...>)
+    {
+        return ( ... * std::get<I>(std::array{J...}) );
+    }
+
+    template <size_t N, size_t ... I>
+    constexpr auto pivot(std::index_sequence<I...>)
+    {
+        return std::index_sequence< N-I ... >{};
+    }
+
+    template <size_t ... Extent >
+    struct Extents
+    {
+        template <size_t Dim>
+        static constexpr int size() { return std::get<Dim>( std::array{ Extent... } ); }
+
+        template <int M>
+        static constexpr int stride() {
+            constexpr auto N = sizeof...(Extent);
+            static_assert(M<N);
+            if constexpr (M==N-1) {
+               return 1;
+            } else {
+               return prod<Extent...>(pivot<N-1>( std::make_index_sequence<(N-1)-M>()));
+            }
+        }
+
+        template <typename T, size_t N, size_t ... Is >
+        static constexpr int index_offset( std::array<T,N> i, std::index_sequence<Is...>)
+        {
+            return ( ... + (std::get<Is>(i)*stride<Is>()) );
+        }
+
+        template <typename ... Is>
+        static constexpr int offset( Is ... is )
+        {
+            return index_offset( std::array{ is... }, std::index_sequence_for<Is...>{} );
+        }
+    };
+}
+
 template<class Hit, size_t... sizes>
 class MultiIndexedContainer
 {
@@ -103,9 +133,7 @@ public:
    */
   MultiIndexedContainer(size_t reserve = 0)
   {
-    if (reserve != 0)
-      m_hits.reserve ( reserve );
-
+    if (reserve != 0) m_hits.reserve ( reserve );
     clearOffsets();
     std::fill ( begin(m_nIds), end(m_nIds), 0u);
   }
@@ -113,10 +141,10 @@ public:
   MultiIndexedContainer(std::vector<Hit>&& hits, Offsets&& offsets)
   : m_hits(std::move(hits)), m_offsets(std::move(offsets))
   {
-
   }
 
-  void reserve( size_t reserve ) {
+  void reserve( size_t reserve )
+  {
     m_hits.reserve ( reserve );
   }
 
@@ -124,20 +152,16 @@ public:
   std::pair<iterator, iterator> range_( Args&&...args )
   {
     auto rng = getOffset(std::forward<Args>(args)...);
-
-    return
-        {	std::next( std::begin(m_hits), rng.first ),
-          std::next( std::begin(m_hits), rng.second )};
+    return { std::next( std::begin(m_hits), rng.first ),
+             std::next( std::begin(m_hits), rng.second )};
   }
 
   template<typename ... Args>
   HitRange range ( Args&&...args ) const
   {
     auto rng = getOffset(std::forward<Args>(args)...);
-
-    return
-        {	std::next( begin(m_hits), rng.first ),
-          std::next( begin(m_hits), rng.second )};
+    return { std::next( begin(m_hits), rng.first ),
+             std::next( begin(m_hits), rng.second )};
   }
 
   /**
@@ -175,7 +199,7 @@ public:
    * sub-detector.
    */
   template<typename ... Args>
-  size_t size(Args&&...args) const
+  constexpr size_t size(Args&&...args) const
   {
     auto [ obegin, oend] = getOffset(std::forward(args)...);
     assert(oend >= obegin && "ill-formed offsets");
@@ -183,14 +207,14 @@ public:
   }
 
   template<typename ... Args>
-  bool empty(Args&&...args) const
+  constexpr bool empty(Args&&...args) const
   {
     auto [ obegin, oend ] = getOffset(std::forward(args)...);
     assert(oend >= obegin && "ill-formed offsets");
     return oend == obegin;
   }
 
-  constexpr size_t nSubDetectors() const { return ( ... * sizes ); }
+  static constexpr size_t nSubDetectors() { return ( ... * sizes ); }
 
   template <size_t N>
   static constexpr size_t subSize() { return std::get<N>( std::array{ sizes... } ); }
@@ -211,10 +235,10 @@ public:
   template<typename I, typename ... Args>
   void insert(I&& b, I&& e, Args&& ... args)
   {
-    auto n = std::distance ( b, e );
-    m_hits.reserve ( m_hits.size () + n );
+    auto n = std::distance( b, e );
+    m_hits.reserve( m_hits.size () + n );
 
-    auto subDetectorId = getUniqueDetectorElementId( std::forward<Args>(args)... );
+    const auto subDetectorId = getUniqueDetectorElementId( std::forward<Args>(args)... );
 
     assert( std::none_of( std::next ( begin(m_offsets), subDetectorId + 1 ),
                           std::end ( m_offsets ),
@@ -227,8 +251,8 @@ public:
       m_offsets[subDetectorId].first = m_offsets[subDetectorId].second = m_hits.size();
     }
 
-    m_hits.insert ( std::next ( begin ( m_hits ), m_offsets[subDetectorId].second ),
-                    std::forward<I> ( b ), std::forward<I> ( e ) );
+    m_hits.insert( std::next( begin( m_hits ), m_offsets[subDetectorId].second ),
+                   std::forward<I>( b ), std::forward<I>( e ) );
 
     // Add number of entries to the end offset
     m_offsets[subDetectorId].second += n;
@@ -265,7 +289,7 @@ public:
 
   void setOffsets(){
     // Set the offsets
-    const auto nSub = nSubDetectors();
+    constexpr auto nSub = nSubDetectors();
     m_offsets[0] = { 0, m_nIds[0] };
     for (size_t i = 1; i < nSub; ++i) {
       m_offsets[i] = { m_offsets[i-1].second, m_offsets[i-1].second + m_nIds[i] };
@@ -273,7 +297,7 @@ public:
   }
 
   template <typename...>
-  struct always_false { static constexpr bool value = false; };
+  struct always_false : std::bool_constant<false> {};
 
   /**
    * Function used only for debug ordering check
@@ -283,7 +307,8 @@ public:
 #ifdef NDEBUG
     static_assert(always_false<COMPARE>::value,
                   "this function can be called only on debug mode (NDEBUG should not be defined)");
-#endif
+    return true;
+#else
 
     // Zip the ids and hits together
     auto zipped = ranges::view::zip(m_ids, m_hits);
@@ -302,6 +327,7 @@ public:
     };
 
     return std::is_sorted(zipped.begin(), zipped.end(), pred );
+#endif
   }
 
   auto offsets() const
@@ -317,65 +343,27 @@ private:
    * These two arrays are here to enable faster functionality
    * for adding hits one-by-one.
    */
+#ifndef NDEBUG
   std::vector<unsigned> m_ids; // used only for debug
+#endif
   Ids m_nIds;
 
-  /**
-   * Is it possible to do this in a more efficient manner?
-   * The table for [ (x,y,z) -> unsigned int ] is constant
-   * and can in principle already be generated at this objects
-   * construction.
-   *
-   * Is it therefore faster to cache the outcome of this?
-   */
-  template<typename ... Args>
-  size_t getUniqueDetectorElementId(Args&& ... args) const
+  template <typename ... I>
+  static constexpr int getUniqueDetectorElementId( I... i )
   {
-    constexpr auto nArguments = sizeof...(args);
-    constexpr size_t detector_geometry[] = { sizes... };
-    const size_t x_array[] = { fv(args)... }; // convert the arguments to size_t array
-
-    static_assert((nArguments <= sizeof...(sizes)),
-        "The number of indices provided is strictly higher than the nesting for this subdetector.");
-
-    size_t uniqueDetectorElementId = 0;
-
-    // The actual logic:
-    //
-    // For the geometry [1,1]
-    // (0,0) -> 0
-    // (0,1) -> 1
-    // (1,0) -> 2
-    // (1) -> 2
-    // (0) -> 0
-    for (unsigned int argumentId = 0; argumentId < sizeof...(sizes); argumentId++)
-    {
-      auto x = (sizeof...(args) - 1 < argumentId ? 0 : x_array[ argumentId ]);
-
-      for (unsigned int detectorId = argumentId+1;
-          detectorId < sizeof...(sizes);
-          detectorId++)
-      {
-        uniqueDetectorElementId += x * detector_geometry[ detectorId ];
-      }
-    }
-
-    uniqueDetectorElementId += x_array[ sizeof...(args) - 1 ];
-
-    return uniqueDetectorElementId;
+      return detail::Extents<sizes...>::offset( i... );
   }
 
   template<typename ... Args>
-  typename Offsets::value_type getOffset(Args&& ... args) const
+  constexpr typename Offsets::value_type getOffset(Args&& ... args) const
   {
-    const auto uniqueDetectorElementId = getUniqueDetectorElementId( std::forward<Args>(args)... );
-
+    auto uniqueDetectorElementId = getUniqueDetectorElementId( std::forward<Args>(args)... );
     return m_offsets[ uniqueDetectorElementId ];
   }
 
   void clearOffsets()
   {
-    typename Offsets::value_type zero{0, 0};
+    constexpr auto zero = typename Offsets::value_type{ 0, 0 };
     std::fill ( std::begin ( m_offsets ), std::end ( m_offsets ), zero );
   }
 };

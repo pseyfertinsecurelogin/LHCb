@@ -1,0 +1,6 @@
+CaloFutureDigitsSeq.Members += { 
+  "CaloFutureDigitsFromRaw/FutureSpdFromRaw",
+    "CaloFutureDigitsFromRaw/FuturePrsFromRaw",
+    "CaloFutureZSupAlg/FutureEcalZSup",
+    "CaloFutureZSupAlg/FutureHcalZSup"
+};

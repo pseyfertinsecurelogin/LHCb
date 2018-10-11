@@ -380,7 +380,7 @@ bool ZipFile::EndRec::read_zip64_ecd( istream& is )
     return true;
 }
 
-bool ZipFile::EndRec::read_zip64_cdl( istream& is, ios::streampos cdl_offset )
+bool ZipFile::EndRec::read_zip64_cdl( istream& is, std::streampos cdl_offset )
 {
     is.seekg( cdl_offset, ios::beg );
     if ( ::get<uint32_t>( is ) != 0x07064b50 ) {
@@ -409,13 +409,13 @@ bool ZipFile::EndRec::read_from( istream& is )
     // the signature of an 'ecd' record...
 
     is.seekg( 0, ios::end );
-    ios::streamoff filesize = is.tellg();
-    ios::streampos er_offset;
+    std::streamoff filesize = is.tellg();
+    std::streampos er_offset;
 
     for ( er_offset = filesize - streamsize( sizeEndCentDir );
           er_offset >=
               max( filesize - streamsize( 0xffff ) - streamsize( sizeEndCentDir ),
-                   ios::streamoff( 0 ) );
+                  std::streamoff( 0 ) );
           er_offset -= 1 ) {
         is.seekg( er_offset, ios::beg );
         if ( ::get<uint8_t>( is ) == 0x50 && ::get<uint8_t>( is ) == 0x4b &&

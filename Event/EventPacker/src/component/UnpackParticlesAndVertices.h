@@ -150,7 +150,8 @@ UnpackParticlesAndVertices::unpackP2PRelations( const std::string & location )
         if ( !to ) info() << "Unknown objec: Container type " << (dstContainer->clID()>>16)
                           << "+" << (dstContainer->clID()&0xFFFF)
                           << " key " << dstKey << endmsg;
-        rels->relate( from, to );
+        auto sc = rels->relate( from, to );
+        if ( !sc ) { Error( "Problem forming relation" ).ignore(); }
         ++nbRel;
       }
     }
@@ -224,7 +225,8 @@ UnpackParticlesAndVertices::unpackP2PWeightedRelations( const std::string & loca
         if ( !to ) info() << "Unknown objec: Container type " << (dstContainer->clID()>>16)
                           << "+" << (dstContainer->clID()&0xFFFF)
                           << " key " << dstKey << endmsg;
-        rels->relate( from, to, wgt );
+        auto sc = rels->relate( from, to, wgt );
+        if ( !sc ) { Error( "Problem forming weighted relation" ).ignore(); }
         ++nbRel;
       }
     }
@@ -273,7 +275,8 @@ UnpackParticlesAndVertices::unpackP2IntRelations( const std::string & location )
         }
         FROM * from = srcContainer->object( srcKey );
         TO to       = (TO) prels->dests()[kk];
-        rels->relate( from, to );
+        auto sc = rels->relate( from, to );
+        if ( !sc ) { Error( "Problem forming relation" ).ignore(); }
         ++nbRel;
       }
     }

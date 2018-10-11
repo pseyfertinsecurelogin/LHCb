@@ -72,7 +72,7 @@ class ParamValidDataObject : public ValidDataObject {
     if ( i == m_paramList.end() ) throw ParamException(name);
     try {
       return i->second-> template get<T>();
-    } catch (std::bad_cast) {
+    } catch (const std::bad_cast &) {
       throw ParamException(name,typeid(T),i->second->type());
     }
   }
@@ -84,7 +84,7 @@ class ParamValidDataObject : public ValidDataObject {
     if ( i == m_paramList.end() ) throw ParamException(name);
     try {
       return i->second-> template get<T>();
-    } catch (std::bad_cast) {
+    } catch (const std::bad_cast &) {
       throw ParamException(name,typeid(T),i->second->type());
     }
   }

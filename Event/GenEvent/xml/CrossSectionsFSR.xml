@@ -15,6 +15,8 @@
       desc="Enum class for Generator fractions and cross-sections"
       id="13602"
       serializers="TRUE"
+      final="TRUE"
+      defaultdestructor="FALSE"
       >
 
       &DataObject;

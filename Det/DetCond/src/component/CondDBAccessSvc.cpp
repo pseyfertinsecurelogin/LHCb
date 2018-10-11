@@ -242,12 +242,12 @@ StatusCode CondDBAccessSvc::i_openConnection(){
     m_rootFolderSet = m_db->getFolderSet("/");
   }
   //  catch ( cool::DatabaseDoesNotExist &e ) {
-  catch ( coral::Exception &e ) {
+  catch ( const coral::Exception &e ) {
     report_exception(error(),"Problems opening database",e);
     m_db.reset();
     return StatusCode::FAILURE;
   }
-  catch ( cool::Exception &e ) {
+  catch ( const cool::Exception &e ) {
     report_exception(error(),"Problems opening database",e);
     m_db.reset();
     return StatusCode::FAILURE;
@@ -326,24 +326,24 @@ StatusCode CondDBAccessSvc::i_checkTag(const std::string &tag) const {
     try {
       try {
         m_rootFolderSet->resolveTag(tag);
-      } catch (cool::NodeRelationNotFound) {
+      } catch ( const cool::NodeRelationNotFound &) {
         // to be ignored: it means that the tag exists, but somewhere else.
-      } catch (coral::AttributeException) { // FIXME: COOL bug #38422
+      } catch ( const coral::AttributeException &) { // FIXME: COOL bug #38422
         // to be ignored: it means that the tag exists, but somewhere else.
       }
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << "\"" << tag << "\" found: OK" << endmsg;
       return StatusCode::SUCCESS;
-    } catch (cool::TagNotFound &) {
+    } catch ( const cool::TagNotFound &) {
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << "\"" << tag << "\" NOT found" << endmsg;
       return StatusCode::FAILURE;
     }
-    catch (cool::TagRelationNotFound &e) {
+    catch ( const cool::TagRelationNotFound &e) {
       error() << "got a cool::TagRelationNotFound : " << e.what() << endmsg;
       return StatusCode::FAILURE;
     }
-    catch (std::exception &e) {
+    catch (const std::exception &e) {
       report_exception(error(),"got exception",e);
       return StatusCode::FAILURE;
     }
@@ -404,11 +404,11 @@ StatusCode CondDBAccessSvc::createNode(const std::string &path,
           << "\": unknown StorageType" << endmsg;
       return StatusCode::FAILURE;
     }
-  } catch(cool::NodeExists &){
+  } catch( const cool::NodeExists &){
     error() << "Unable to create the folder \"" << path
         << "\": the node already exists" << endmsg;
     return StatusCode::FAILURE;
-  } catch(cool::Exception &e){
+  } catch( const cool::Exception &e){
     error() << "Unable to create the folder \"" << path
         << "\" (cool::Exception): " << e.what() << endmsg;
     return StatusCode::FAILURE;
@@ -461,11 +461,11 @@ StatusCode CondDBAccessSvc::createNode(const std::string &path,
           << "\": unknown StorageType" << endmsg;
       return StatusCode::FAILURE;
     }
-  } catch(cool::NodeExists &){
+  } catch( const cool::NodeExists &){
     error() << "Unable to create the folder \"" << path
         << "\": the node already exists" << endmsg;
     return StatusCode::FAILURE;
-  } catch(cool::Exception &e){
+  } catch( const cool::Exception &e){
     error() << "Unable to create the folder \"" << path
         << "\" (cool::Exception): " << e.what() << endmsg;
     return StatusCode::FAILURE;
@@ -493,7 +493,7 @@ StatusCode CondDBAccessSvc::storeXMLData(const std::string &path, const std::str
     payload["data"].setValue<cool::String16M>(data);
     folder->storeObject(timeToValKey(since),timeToValKey(until),payload,channel);
 
-  } catch (cool::FolderNotFound &) {
+  } catch ( const cool::FolderNotFound &) {
 
     if (m_db->existsFolderSet(path))
       error() << "Trying to store data into the non-leaf folder \"" <<
@@ -502,7 +502,7 @@ StatusCode CondDBAccessSvc::storeXMLData(const std::string &path, const std::str
       error() << "Cannot find folder \"" << path << '\"' << endmsg;
     return StatusCode::FAILURE;
 
-  } catch (cool::Exception &e){
+  } catch ( const cool::Exception &e){
 
     error() << "Unable to store the XML string into \"" << path
         << "\" (cool::Exception): " << e.what() << endmsg;
@@ -534,7 +534,7 @@ StatusCode CondDBAccessSvc::storeXMLData(const std::string &path, const std::map
 
     folder->storeObject(timeToValKey(since),timeToValKey(until),payload,channel);
 
-  } catch (cool::FolderNotFound &) {
+  } catch ( const cool::FolderNotFound &) {
 
     if (m_db->existsFolderSet(path))
       error() << "Trying to store data into the non-leaf folder \"" <<
@@ -543,7 +543,7 @@ StatusCode CondDBAccessSvc::storeXMLData(const std::string &path, const std::map
       error() << "Cannot find folder \"" << path << '\"' << endmsg;
     return StatusCode::FAILURE;
 
-  } catch (cool::Exception &e){
+  } catch ( const cool::Exception &e){
 
     error() << "Unable to store the XML string into \"" << path
         << "\" (cool::Exception): " << e.what() << endmsg;
@@ -589,7 +589,7 @@ StatusCode CondDBAccessSvc::tagLeafNode(const std::string &path, const std::stri
       folder->tagCurrentHead(tagName, description);
     }
 
-  } catch (cool::FolderNotFound &) {
+  } catch ( const cool::FolderNotFound &) {
 
     if (m_db->existsFolderSet(path))
       error() << "Node \"" << path << "\" is not leaf." << endmsg;
@@ -597,7 +597,7 @@ StatusCode CondDBAccessSvc::tagLeafNode(const std::string &path, const std::stri
       error() << "Cannot find node \"" << path << '\"' << endmsg;
     return StatusCode::FAILURE;
 
-  } catch (cool::Exception &e){
+  } catch (const cool::Exception &e){
 
     error() << "Unable tag leaf node \"" << path
         << "\" (cool::Exception): " << e.what() << endmsg;
@@ -699,14 +699,14 @@ StatusCode CondDBAccessSvc::i_recursiveTag(const std::string &path, const std::s
 
     }
   }
-  catch (cool::FolderSetNotFound &) {
+  catch ( const cool::FolderSetNotFound &) {
     if (m_db->existsFolder(path))
       error() << "Node \"" << path << "\" is a leaf." << endmsg;
     else
       error() << "Cannot find node \"" << path << '\"' << endmsg;
     return StatusCode::FAILURE;
   }
-  catch (cool::Exception &e) {
+  catch ( const cool::Exception &e) {
     error() << "Problems tagging" << endmsg;
     error() << e.what() << endmsg;
     return StatusCode::FAILURE;
@@ -758,14 +758,14 @@ ICondDBReader::IOVList CondDBAccessSvc::i_getIOVsFromDB(const std::string & path
         result.push_back(ICondDBReader::IOV(Gaudi::Time(obj.since()), Gaudi::Time(obj.until())));
       }
     }
-  } catch(cool::FolderNotFound &/*e*/) {
+  } catch( const cool::FolderNotFound &/*e*/) {
     // ignore
-  } catch (cool::TagRelationNotFound &/*e*/) {
+  } catch ( const cool::TagRelationNotFound &/*e*/) {
     // ignore
-  } catch (cool::NodeRelationNotFound &) {
+  } catch ( const cool::NodeRelationNotFound &) {
     // to be ignored: it means that the tag exists, but it is not in the
     // node '/'.
-  } catch (coral::AttributeException &) { // FIXME: COOL bug #38422
+  } catch ( const coral::AttributeException &) { // FIXME: COOL bug #38422
     // to be ignored: it means that the tag exists, but it is not in the
     // node '/'.
   }
@@ -810,9 +810,9 @@ ICondDBReader::IOVList CondDBAccessSvc::getIOVs(const std::string & path, const 
     DataBaseOperationLock dbLock(this);
     cool::IFolderPtr folder = database()->getFolder(path);
     id = folder->channelId(channel);
-  } catch(cool::FolderNotFound &/*e*/) {
+  } catch( const cool::FolderNotFound &/*e*/) {
     return ICondDBReader::IOVList(); // unknown folder
-  } catch(cool::InvalidChannelName &/*e*/) {
+  } catch( const cool::InvalidChannelName &/*e*/) {
     return ICondDBReader::IOVList(); // unknown channel
   }
   return getIOVs(path, iov, id);
@@ -915,25 +915,25 @@ StatusCode CondDBAccessSvc::i_getObjectFromDB(const std::string &path, const coo
       }
     }
     
-  } catch ( cool::FolderNotFound &/*e*/) {
+  } catch ( const cool::FolderNotFound &/*e*/) {
     //error() << e << endmsg;
     return StatusCode::FAILURE;
-  } catch (cool::TagRelationNotFound &/*e*/) {
+  } catch ( const cool::TagRelationNotFound &/*e*/) {
     return StatusCode::FAILURE;
-  } catch (cool::ObjectNotFound &/*e*/) {
+  } catch ( const cool::ObjectNotFound &/*e*/) {
     //error() << "Object not found in \"" << path <<
     //  "\" for tag \"" << (*accSvc)->tag() << "\" ("<< now << ')' << endmsg;
     //debug() << e << endmsg;
     return StatusCode::FAILURE;
-  } catch (cool::NodeRelationNotFound &) {
+  } catch ( const cool::NodeRelationNotFound &) {
     // to be ignored: it means that the tag exists, but it is not in the
     // node '/'.
     return StatusCode::FAILURE;
-  } catch (coral::AttributeException &) { // FIXME: COOL bug #38422
+  } catch ( const coral::AttributeException &) { // FIXME: COOL bug #38422
     // to be ignored: it means that the tag exists, but it is not in the
     // node '/'.
     return StatusCode::FAILURE;
-  } catch (coral::Exception &e) {
+  } catch ( const coral::Exception &e) {
     report_exception(error(),"got CORAL exception",e);
   }
   return StatusCode::SUCCESS;
@@ -1031,11 +1031,11 @@ const cool::ValidityKey& CondDBAccessSvc::i_latestHeartBeat()
         cool::IObjectPtr obj = folder->findObject(cool::ValidityKeyMax-1, 0);
         m_latestHeartBeat = obj->since();
       }
-      catch (cool::Exception &) {
+      catch ( const cool::Exception &) {
         cannotGetHeartBeatError(this, m_heartBeatCondition);
         m_latestHeartBeat = 1; // not set to 0 to avoid another search in the database
       }
-      catch (coral::Exception &) {
+      catch ( const coral::Exception &) {
         cannotGetHeartBeatError(this, m_heartBeatCondition);
         m_latestHeartBeat = 1; // not set to 0 to avoid another search in the database
       }
@@ -1089,18 +1089,18 @@ StatusCode CondDBAccessSvc::getChildNodes (const std::string &path,
             try{
               folder->resolveTag(tag());
               folders.push_back(f->substr(f->rfind('/')+1));
-            } catch (cool::TagRelationNotFound &) {
+            } catch ( const cool::TagRelationNotFound &) {
               if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
                 debug() << "Tag '" << tag()
                     << "' relation was not found for ': "<< *f << "' folder" << endmsg;
-            } catch (cool::ReservedHeadTag &) {
+            } catch ( const cool::ReservedHeadTag &) {
               //to be ignored: 'HEAD' tag is in every node
               folders.push_back(f->substr(f->rfind('/')+1));
-            } catch (cool::NodeRelationNotFound &) {
+            } catch ( const cool::NodeRelationNotFound &) {
               //to be ignored: it means that the tag exists, but it is not in the node '/'.
-            } catch (coral::AttributeException &) { // FIXME: COOL bug #38422. To be ignored:
+            } catch ( const coral::AttributeException &) { // FIXME: COOL bug #38422. To be ignored:
               //it means that the tag exists, but it is not in the node '/'.
-            } catch (coral::Exception &e) {
+            } catch ( const coral::Exception &e) {
               report_exception(error(),"got CORAL exception",e);
               folders.push_back(f->substr(f->rfind('/')+1));
             }
@@ -1131,10 +1131,10 @@ StatusCode CondDBAccessSvc::getChildNodes (const std::string &path,
       // no cache and no db
       return StatusCode::FAILURE;
     }
-  } catch ( cool::FolderNotFound &/*e*/) {
+  } catch ( const cool::FolderNotFound &/*e*/) {
     //error() << e << endmsg;
     return StatusCode::FAILURE;
-  } catch (coral::Exception &e) {
+  } catch ( const coral::Exception &e) {
     report_exception(error(),"got CORAL exception",e);
   }
   return StatusCode::SUCCESS;
@@ -1170,7 +1170,7 @@ bool CondDBAccessSvc::exists(const std::string &path) {
       return m_cache->hasPath(path);
     }
 
-  } catch (coral::Exception &e) {
+  } catch ( const coral::Exception &e) {
     report_exception(error(),"got CORAL exception",e);
   }
   // if we do not have neither DB nor cache, or we got an exception
@@ -1192,7 +1192,7 @@ bool CondDBAccessSvc::isFolder(const std::string &path) {
       return m_cache->isFolder(path);
     }
 
-  } catch (coral::Exception &e) {
+  } catch ( const coral::Exception &e) {
     report_exception(error(),"got CORAL exception",e);
   }
   // if we do not have neither DB nor cache, or we got an exception
@@ -1214,7 +1214,7 @@ bool CondDBAccessSvc::isFolderSet(const std::string &path) {
       return m_cache->isFolderSet(path);
     }
 
-  } catch (coral::Exception &e) {
+  } catch ( const coral::Exception &e) {
     report_exception(error(),"got CORAL exception",e);
   }
   // if we do not have neither DB nor cache, or we got an exception

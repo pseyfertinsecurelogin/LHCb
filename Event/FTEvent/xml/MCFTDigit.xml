@@ -10,6 +10,8 @@
            id     = "14002"
            author = "Eric Cogneras"
            desc   = "This class represents the ADC charge collected per FTChannelID"
+           final = "TRUE"
+           defaultdestructor = "FALSE"
            serializers="FALSE">
       <import   name = "Kernel/FTChannelID" />
       <import   name = "Event/MCHit.h" />
