@@ -153,7 +153,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 msg += '    Extra : ' + ', '.join(newAlgoNames.difference(refAlgoNames)) + '\n'
             causes.append("Different set of algorithms in counters")
             # make sure we create newref file when there are only counters differences
-            if len(causes) == 1:
+            if causes:
                 self._createNewRef(stdout)
         for algoName in refAlgoNames.intersection(newAlgoNames):
             onlyref, onlystdout, counterPairs = self._compareCutSets(set(refCounters[algoName]), set(newCounters[algoName]))
@@ -178,7 +178,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             else:
                 result["CountersMismatch"]=result.Quote(msg)
             # make sure we create newref file when there are only counters differences
-            if len(causes) == 1:
+            if causes:
                 self._createNewRef(stdout)
 
 
