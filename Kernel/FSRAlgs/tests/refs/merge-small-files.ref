@@ -1,31 +1,38 @@
-# --> Including file '/nightlies/jenkins/workspace/nightly-slot-test-project-platform@3/build/LHCB/LHCB_HEAD/Kernel/FSRAlgs/options/merge-small-files-test.py'
-# <-- End of file '/nightlies/jenkins/workspace/nightly-slot-test-project-platform@3/build/LHCB/LHCB_HEAD/Kernel/FSRAlgs/options/merge-small-files-test.py'
+# --> Including file '/workspace/build/LHCB/LHCB_HEAD/Kernel/FSRAlgs/options/merge-small-files-test.py'
+# <-- End of file '/workspace/build/LHCB/LHCB_HEAD/Kernel/FSRAlgs/options/merge-small-files-test.py'
 # applying configuration of LHCbApp
 # /***** User LHCbApp/LHCbApp ************************************************************************
 # |-Persistency    = None
-# |-DataType       = '2010'  (default: '2012')
-# |-DDDBtag        = 'head-20100531'  (default: '')
-# |-SkipEvents     = 0
 # |-XMLSummary     = None
 # |-OutputLevel    = 3
+# |-LocalDataTypes = []  (default: [])
+# |-DataType       = '2010'  (default: '2012')
+# |-TimeStamp      = False
+# |-ThreadPoolSize = 8
+# |-SkipEvents     = 0
 # |-EvtMax         = -1
-# |-Simulation     = False  (default: False)
+# |-CondDBtag      = 'head-20100531'  (default: '')
 # |-DQFLAGStag     = ''
 # |-IgnoreDQFlags  = True
-# |-Detectors      = []  (default: [])
-# |-LocalDataTypes = []  (default: [])
-# |-TimeStamp      = False
-# |-CondDBtag      = 'head-20100531'  (default: '')
 # |-Monitors       = []  (default: [])
+# |-Detectors      = []  (default: [])
+# |-Scheduler      = 'AvalancheScheduler'
+# |-EnableHive     = False
+# |-Simulation     = False  (default: False)
+# |-DDDBtag        = 'head-20100531'  (default: '')
+# |-OnlineMode     = False
 # \----- (End of User LHCbApp/LHCbApp) ---------------------------------------------------------------
 # applying configuration of DDDBConf
 # WARNING: Using default tag tt-20110126 for partition DQFLAGS
 # /***** User DDDBConf/DDDBConf **********************************************************************
-# |-DataType    = '2010'  (default: '2012')
-# |-DbRoot      = 'conddb:/lhcb.xml'
-# |-InitialTime = 'Safe'
-# |-AutoTags    = False
-# |-Simulation  = False  (default: False)
+# |-IgnoreHeartBeat     = False
+# |-EnableRunStampCheck = True
+# |-InitialTime         = 'Safe'
+# |-Simulation          = False  (default: False)
+# |-DataType            = '2010'  (default: '2012')
+# |-AutoTags            = False
+# |-DbRoot              = 'git:/lhcb.xml'
+# |-OnlineMode          = False
 # \----- (End of User DDDBConf/DDDBConf) -------------------------------------------------------------
 # applying configuration of XMLSummary
 # /***** User XMLSummary/XMLSummary ******************************************************************
@@ -43,8 +50,9 @@
 # |-EnableRunChangeHandler     = False
 # |-RunChangeHandlerConditions = {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']}
 # |                            (default: {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']})
-# |-Tags                       = {}  (default: {})
-# |-LoadCALIBDB                = 'OFFLINE'
+# |-Tags                       = {'DDDB': 'head-20100531', 'DQFLAGS': 'tt-20110126', 'LHCBCOND': 'head-20100531'}
+# |                            (default: {})
+# |-LoadCALIBDB                = 'HLT1'
 # |-AllLocalTagsByDataType     = []  (default: [])
 # |-UseOracle                  = False
 # |-RunStampCondition          = ''
@@ -65,17 +73,25 @@
 ApplicationMgr    SUCCESS
 ====================================================================================================================================
                                                    Welcome to LHCb version HEAD
-                                          running on lbbuild10.cern.ch on Mon Mar 14 06:06:54 2016
+                                          running on lbbuild33.cern.ch on Thu Oct 11 04:06:33 2018
 ====================================================================================================================================
 ApplicationMgr       INFO Application Manager Configured successfully
+ToolSvc.GitDDDB      INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DDDB.git'
+ToolSvc.GitDDDB      INFO using commit 'head-20100531' corresponding to 5403db8e2b39ecae1060ccf16498608994ef74f8
+ToolSvc.GitLHCB...   INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/LHCBCOND.git'
+ToolSvc.GitLHCB...   INFO using commit 'head-20100531' corresponding to 65f560282c40fa363e22efa6b91a5fbb6487614e
+ToolSvc.GitONLINE    INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/ONLINE.git'
+ToolSvc.GitONLINE    INFO using commit 'HEAD' corresponding to 464fbb44c26b8d37293285800349b30ca4571c31
+ToolSvc.GitDQFLAGS   INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DQFLAGS.git'
+ToolSvc.GitDQFLAGS   INFO using commit 'tt-20110126' corresponding to 095d108a7fa4870ccb5eea44ba783f7c8e36e2f6
 DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc
-DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml
+DetectorDataSvc   SUCCESS Detector description database: git:/lhcb.xml
 CounterSummarySvc    INFO Wrote xml file summary.xml
 LumiSeq              INFO Member list: EventAccounting/EventAccount, LumiMergeFSR/MergeFSR, FSRCleaner
 RndmGenSvc.Engine    INFO Generator engine type:CLHEP::RanluxEngine
 RndmGenSvc.Engine    INFO Current Seed:1234567 Luxury:3
 RndmGenSvc           INFO Using Random engine:HepRndm::Engine<CLHEP::RanluxEngine>
-ToolSvc.Sequenc...   INFO This machine has a speed about   2.50 times the speed of a 2.8 GHz Xeon.
+ToolSvc.Sequenc...   INFO This machine has a speed about   2.70 times the speed of a 2.8 GHz Xeon.
 MergeFSR             INFO Primary  BXType BeamCrossing
 MergeFSR             INFO Subtract BXType Beam1
 MergeFSR             INFO Subtract BXType Beam2
@@ -83,7 +99,7 @@ MergeFSR             INFO Subtract BXType NoBeam
 FSRCleaner          DEBUG Property update for OutputLevel : new value = 2
 FSRCleaner          DEBUG Initialize base class GaudiCommon<Algorithm>
 FSRCleaner          DEBUG found CounterSummarySvc OK
-FSRCleaner          DEBUG List of ALL properties of FSRCleaner/FSRCleaner  #properties = 38
+FSRCleaner          DEBUG List of ALL properties of FSRCleaner/FSRCleaner  #properties = 39
 FSRCleaner          DEBUG Property ['Name': Value] =  'DataService':FileRecordDataSvc
 FSRCleaner          DEBUG Property ['Name': Value] =  'InputStream':/FileRecords
 FSRCleaner          DEBUG Property ['Name': Value] =  'RequireObjects':[  ]
@@ -97,12 +113,14 @@ FSRCleaner          DEBUG Property ['Name': Value] =  'StatTableHeader': |    Co
 FSRCleaner          DEBUG Property ['Name': Value] =  'RootInTES':
 FSRCleaner          DEBUG Property ['Name': Value] =  'Context':
 FSRCleaner          DEBUG Property ['Name': Value] =  'TypePrint':True
+FSRCleaner          DEBUG Property ['Name': Value] =  'PrintEmptyCounters':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'StatPrint':True
 FSRCleaner          DEBUG Property ['Name': Value] =  'PropertiesPrint':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'ErrorsPrint':True
+FSRCleaner          DEBUG Property ['Name': Value] =  'FilterCircularDependencies':True
+FSRCleaner          DEBUG Property ['Name': Value] =  'IsIOBound':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'NeededResources':[  ]
 FSRCleaner          DEBUG Property ['Name': Value] =  'Cardinality':1
-FSRCleaner          DEBUG Property ['Name': Value] =  'IsClonable':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'RegisterForContextService':True
 FSRCleaner          DEBUG Property ['Name': Value] =  'MonitorService':MonitorSvc
 FSRCleaner          DEBUG Property ['Name': Value] =  'Timeline':False
@@ -116,12 +134,11 @@ FSRCleaner          DEBUG Property ['Name': Value] =  'AuditRestart':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'AuditReinitialize':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'AuditInitialize':False
 FSRCleaner          DEBUG Property ['Name': Value] =  'AuditAlgorithms':False
-FSRCleaner          DEBUG Property ['Name': Value] =  'ExtraOutputs':[]
-FSRCleaner          DEBUG Property ['Name': Value] =  'ExtraInputs':[]
-FSRCleaner          DEBUG Property ['Name': Value] =  'ErrorCounter':0
 FSRCleaner          DEBUG Property ['Name': Value] =  'ErrorMax':1
 FSRCleaner          DEBUG Property ['Name': Value] =  'Enable':True
 FSRCleaner          DEBUG Property ['Name': Value] =  'OutputLevel':2
+FSRCleaner          DEBUG Property ['Name': Value] =  'ExtraOutputs':[]
+FSRCleaner          DEBUG Property ['Name': Value] =  'ExtraInputs':[]
 FSRCleaner          DEBUG input handles: 0
 FSRCleaner          DEBUG output handles: 0
 FSRCleaner          DEBUG Data Deps for FSRCleaner
@@ -134,11 +151,7 @@ HistogramPersis...WARNING Histograms saving not required.
 ApplicationMgr       INFO Application Manager Initialized successfully
 ApplicationMgr       INFO Application Manager Started successfully
 EventSelector     SUCCESS Reading Event record 1. Record number within stream 1: 1
-COOLConfSvc          INFO CORAL Connection Retrial Period set to 60s
-COOLConfSvc          INFO CORAL Connection Retrial Time-Out set to 900s
-ONLINE_2010          INFO Connected to database "sqlite_file:/afs/cern.ch/lhcb/software/DEV/nightlies/DBASE/Det/SQLDDDB/v7r999/db/ONLINE-2010.db/ONLINE"
-ONLINE_2010          INFO Using TAG ""
-IODataManager        INFO Referring to dataset merged.dst by its file ID:92A69199-A2E9-E511-A9C8-02163E016E27
+IODataManager        INFO Referring to dataset merged.dst by its file ID:86C4044F-FACC-E811-8A7C-02163E01BB2F
 EventSelector        INFO Stream:EventSelector.DataStreamTool_2 Def:DATAFILE='root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_2.dst' SVC='Gaudi::RootEvtSelector' OPT='READ'
 EventSelector        INFO Stream:EventSelector.DataStreamTool_3 Def:DATAFILE='root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_3.dst' SVC='Gaudi::RootEvtSelector' OPT='READ'
 EventSelector        INFO Stream:EventSelector.DataStreamTool_4 Def:DATAFILE='root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_4.dst' SVC='Gaudi::RootEvtSelector' OPT='READ'
@@ -1901,7 +1914,7 @@ FSRInputCopyStream   INFO Events output: 1
 EventLoopMgr         INFO Histograms converted successfully according to request.
 ToolSvc              INFO Removing all tools created by ToolSvc
 ToolSvc.Sequenc...   INFO --------------------------------------------------------------------------------------------------
-ToolSvc.Sequenc...   INFO This machine has a speed about   2.50 times the speed of a 2.8 GHz Xeon.
+ToolSvc.Sequenc...   INFO This machine has a speed about   2.70 times the speed of a 2.8 GHz Xeon.
 ToolSvc.Sequenc...   INFO Algorithm          (millisec) |    <user> |   <clock> |      min       max    sigma | entries | total (s) |
 ToolSvc.Sequenc...   INFO --------------------------------------------------------------------------------------------------
 ToolSvc.Sequenc...   INFO --------------------------------------------------------------------------------------------------
@@ -1912,7 +1925,7 @@ FileRecordCnvSvc     INFO Disconnected data IO:1AA99DA5-D90E-E211-9637-003048F0E
 FileRecordCnvSvc     INFO Disconnected data IO:B82104A6-D90E-E211-BFA4-003048F0E7C4 [root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_1.dst]
 RootCnvSvc           INFO Disconnected data IO:46D8D8A5-D90E-E211-A616-003048F0E7C4 [root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_3.dst]
 RootCnvSvc           INFO Disconnected data IO:586E9FA5-D90E-E211-91EB-003048F0E7C4 [root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_4.dst]
-RootCnvSvc           INFO Disconnected data IO:92A69199-A2E9-E511-A9C8-02163E016E27 [merged.dst]
+RootCnvSvc           INFO Disconnected data IO:86C4044F-FACC-E811-8A7C-02163E01BB2F [merged.dst]
 RootCnvSvc           INFO Disconnected data IO:B69019A6-D90E-E211-AC4A-003048F0E7C4 [root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_5.dst]
 XMLCatalog           INFO File 'test_catalog.xml' does not exist. New file created.
 ApplicationMgr       INFO Application Manager Finalized successfully
