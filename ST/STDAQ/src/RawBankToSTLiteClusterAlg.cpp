@@ -112,9 +112,9 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
   const LHCb::span<const RawBank* >  tBanks = rawEvt.banks(bankType());
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if ( !missing.empty() ){
-    counter("lost Banks") += missing.size() ;
+    m_lostBanks += missing.size() ;
     if (tBanks.empty()){
-      ++counter("no banks found");
+      ++m_noBanksFound;
       return StatusCode::SUCCESS;
     }
   }
@@ -122,7 +122,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
   const unsigned int pcn = pcnVote(tBanks);
   if ( msgLevel(MSG::DEBUG) ) debug() << "PCN was voted to be " << pcn << endmsg;
   if (pcn == STDAQ::inValidPcn) {
-    counter("skipped Banks") += tBanks.size();
+    m_skippedBanks += tBanks.size();
     return Warning("PCN vote failed", StatusCode::SUCCESS,2);
   }
 
@@ -132,23 +132,23 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
   for (auto iterBank =  tBanks.begin(); iterBank != tBanks.end() ; ++iterBank){
 
-    ++counter("# valid banks");
+    ++m_validBanks;
 
     // get the board and data
     STTell1Board* aBoard = readoutTool()->findByBoardID(STTell1ID((*iterBank)->sourceID()));
     if (!aBoard && !m_skipErrors){
       Warning( "Invalid source ID --> skip bank"+ std::to_string((*iterBank)->sourceID()),
                StatusCode::SUCCESS,2).ignore();
-      ++counter("skipped Banks");
+      m_skippedBanks += 1;
       continue;
     }
 
-   ++counter("# valid source ID");
+   ++m_validSourceID;
 
    if ((*iterBank)->magic() != RawBank::MagicPattern) {
       Warning( "wrong magic pattern "+ std::to_string((*iterBank)->sourceID()),
                StatusCode::SUCCESS,2).ignore();
-      counter("skipped Banks") += tBanks.size();
+      m_skippedBanks += tBanks.size();
       continue;
     }
 
@@ -161,7 +161,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
       if (!recoverMode()){
         Warning( "bank has errors, skip sourceID " + std::to_string((*iterBank)->sourceID()),
                  StatusCode::SUCCESS, 2).ignore();
-        ++counter("skipped Banks");
+        m_skippedBanks += 1;
         continue;
       }else{
         // flag that need to recover....
@@ -193,7 +193,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
         if ( msgLevel(MSG::DEBUG) )
         Warning("PCNs out of sync sourceID "+ std::to_string((*iterBank)->sourceID())
                 , StatusCode::SUCCESS,2).ignore();
-        ++counter("skipped Banks");
+        m_skippedBanks += 1;
         continue;
       }
     } // errorbank == 0
@@ -232,8 +232,8 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
 StatusCode RawBankToSTLiteClusterAlg::finalize() {
 
-  const double failed = counter("skipped Banks").flag();
-  const double processed = counter("# valid banks").flag();
+  const double failed = m_skippedBanks.sum();
+  const double processed = m_validBanks.nEntries();
   double eff = ( !LHCb::Math::Equal_To<double>()(processed, 0.0) ?
                             1.0 - (failed/processed) : 0.0 );
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;

@@ -154,6 +154,8 @@ namespace LoKi
       // information about the created functors
       typedef std::map<std::string,std::pair<std::string,std::string>> FUNCTIONS  ;
       std::map<std::string,FUNCTIONS>             m_allfuncs   ;
+
+      mutable Gaudi::Accumulators::Counter<> m_pyInitCnt{ this, "Python is initialized!" };
       // ======================================================================
     protected:
       // ======================================================================

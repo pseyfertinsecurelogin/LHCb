@@ -32,5 +32,10 @@ private:
   Gaudi::Property<std::map<std::string,std::vector<int>>> m_mapRam { this, "RAMBCID" };
   unsigned int m_cycle = 3564;
   std::string m_rams;
+
+  mutable Gaudi::Accumulators::Counter<> m_unknownScale{ this, "Unknown scale type" };
+  mutable Gaudi::Accumulators::Counter<> m_gainNotFound{ this, "'Gain' condition not found for Ecal" };
+  mutable Gaudi::Accumulators::Counter<> m_L0EtBinNotFound{ this, "'L0EtBin' parameter not found in 'Gain' condition" };
+
 };
 #endif // L0CONDDBPROVIDER_H

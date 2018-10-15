@@ -86,6 +86,8 @@ namespace LoKi
     LoKi::Types::MCCutVal m_cut = s_NONE; // the functor itself
     /// TES location of LHCb::MCParticle::Container object
     std::string m_location ;     // TES location of LHCb::MCParticle::Container
+
+    mutable Gaudi::Accumulators::BinomialCounter<> m_passed{ this, "#passed" };
     // ========================================================================
   };
   // ==========================================================================
@@ -139,7 +141,7 @@ bool LoKi::MCFilter::operator() (const LHCb::MCParticle::Container& particles) c
   //
   // some statistics
   //
-  counter ("#passed" ) += result ;
+  m_passed += result ;
   //
   return result;
 }

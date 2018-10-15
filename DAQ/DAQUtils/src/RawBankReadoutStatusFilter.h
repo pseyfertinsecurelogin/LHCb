@@ -28,6 +28,10 @@ public:
 protected:
 
 private:
+
+  mutable Gaudi::Accumulators::Counter<> m_acceptedEventCount{ this, "Accepted events" };
+  mutable Gaudi::Accumulators::Counter<> m_rejectedEventCount{ this, "Rejected events" };
+
   int m_type;
   long m_mask;
   bool m_invert;

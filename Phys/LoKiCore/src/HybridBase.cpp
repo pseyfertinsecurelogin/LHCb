@@ -240,7 +240,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
     info() << "Initialization of Python is triggered" << endmsg ;
     Py_Initialize () ;
     m_pyInit = true  ;
-    ++counter ("Python is initialized!") ;
+    ++m_pyInitCnt;
   }
   // Check the proper python environment:
   if ( !Py_IsInitialized() ) { return Error("Python is not initialized yet!") ; }

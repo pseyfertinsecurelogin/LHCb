@@ -159,6 +159,9 @@ namespace DetDesc
     // point of shooting for sphere
     Gaudi::XYZPoint                   m_vertex   ;
     mutable std::set<const ILVolume*> m_checked  ;
+
+    mutable Gaudi::Accumulators::Counter<> m_volumesCnt{ this, "#volumes" };
+    mutable Gaudi::Accumulators::Counter<> m_assemblyCnt{ this, "#assembly" };
   } ;
   // ==========================================================================
 } //end of namespace DetDesk
@@ -315,8 +318,8 @@ StatusCode DetDesc::CheckOverlap::checkVolume
     << lev << std::string ( 2*level , ' ' )
     << "Checked:  " << volume -> name () << endmsg ;
 
-  counter ("#volumes") += 1 ;
-  if ( volume->isAssembly() ) { counter ("#assembly") += 1 ; }
+  ++m_volumesCnt;
+  if ( volume->isAssembly() ) { ++m_assemblyCnt ; }
 
   m_checked.insert ( volume ) ;
 

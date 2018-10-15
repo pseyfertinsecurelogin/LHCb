@@ -76,6 +76,10 @@ private:
   double m_minPathLength;
   unsigned int m_nToCollect;
 
+  // counters
+  mutable Gaudi::Accumulators::AveragingCounter<> m_betaGamma_counter{ this, "betaGamma" };
+  mutable Gaudi::Accumulators::Counter<> m_DeltaRay_counter{ this, "DeltaRay" };
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_numberHits_counter{ this, "numberHits" };
 };
 
 #endif // TrMCHitMonitor_H

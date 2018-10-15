@@ -78,6 +78,7 @@ namespace LoKi
     // ========================================================================
     /// the functor itself
     LoKi::Types::ODIN_Cut  m_cut = {  LoKi::BasicFunctors<const LHCb::ODIN*>::BooleanConstant( false ) } ;                        // the functor itself
+    mutable Gaudi::Accumulators::BinomialCounter<> m_passed{ this, "#passed" };
     // ========================================================================
   };
   // ==========================================================================
@@ -96,7 +97,7 @@ bool LoKi::ODINFilter::operator() (const LHCb::ODIN& odin) const // the main met
   const bool result = m_cut ( &odin ) ;
   //
   // some statistics
-  counter ("#passed" ) += result ;
+  m_passed += result ;
   //
   // set the filter:
   return result;

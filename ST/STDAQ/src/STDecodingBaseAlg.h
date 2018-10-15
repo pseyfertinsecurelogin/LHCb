@@ -96,6 +96,9 @@ private:
 
   bool m_recoverMode;
 
+  mutable Gaudi::Accumulators::Counter<> m_skippedBanks{ this, "skipped Banks" };
+  mutable Gaudi::Accumulators::Counter<> m_evtsWithErrorBanks{ this, "events with error banks" };
+  mutable Gaudi::Accumulators::Counter<> m_totalErrorBanks{ this, "total # error banks" };
 };
 
 

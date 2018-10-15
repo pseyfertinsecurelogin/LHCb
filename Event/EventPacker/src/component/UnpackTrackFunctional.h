@@ -1,5 +1,5 @@
 // $Id: UnpackTrackFunctional.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UnpackTrackFunctional_H 
+#ifndef UnpackTrackFunctional_H
 #define UnpackTrackFunctional_H 1
 
 // Include files
@@ -16,11 +16,11 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class UnpackTrackFunctional final : 
+class UnpackTrackFunctional final :
   public Gaudi::Functional::Transformer< LHCb::Tracks(const LHCb::PackedTracks&) >
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackTrackFunctional( const std::string& name, ISvcLocator* pSvcLocator );
@@ -28,6 +28,8 @@ public:
   /// Functional operator
   LHCb::Tracks operator()( const LHCb::PackedTracks& pTracks ) const override;
 
+private:
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned long> m_unpackedTracks{ this, "# Unpacked Tracks" };
 };
 
 #endif // UnpackTrackFunctional
