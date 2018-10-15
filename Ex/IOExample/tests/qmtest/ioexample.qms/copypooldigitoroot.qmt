@@ -9,7 +9,7 @@ preprocessor = (LHCbPreprocessor +
   LineSkipper(['/lhcb/swtest/MC09-pool-digi/30000000-100ev-20090407-MC09.digi',
                'DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc'
                'DetectorDataSvc   SUCCESS Detector description database:']) +
-  RegexpReplacer(r'x86_64-slc6-gcc62-opt:.*', '{0}:AVX2'.format(os.environ.get('CMTCONFIG')), 'platformInfo')
+  RegexpReplacer(r'x86_64-centos7-gcc7-opt:.*', '{0}:AVX2'.format(os.environ.get('CMTCONFIG')), 'platformInfo')
 )
 validateWithReference(preproc = preprocessor)
 </text></argument>
