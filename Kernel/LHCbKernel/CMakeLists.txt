@@ -48,6 +48,8 @@ gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
 
+gaudi_add_unit_test(test_PolymorphicValue tests/src/test_PolymorphicValue.cpp
+                    LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_STLExtensions tests/src/test_STLExtensions.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_MultiIndexContainer tests/src/test_MultiIndexContainer.cpp
