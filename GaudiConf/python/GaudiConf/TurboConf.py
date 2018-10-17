@@ -89,7 +89,8 @@ class TurboConf(LHCbConfigurableUser):
             packing.outputs["Hlt2DownstreamProtos"],
         ]
         mergeProtos.outputLocation = join(rootintes, mergedProtosLoc)
-        DataOnDemandSvc().AlgMap[mergeProtos.outputLocation] = mergeProtos
+        # outputLocation is a DataObjectHandleBase, must convert explicitly to str
+        DataOnDemandSvc().AlgMap[str(mergeProtos.outputLocation)] = mergeProtos
 
         mergedTracksLoc = 'Hlt2/TrackFitted/Charged'
         mergeTracks = TESMergerTrack("MergeTracks")
@@ -98,7 +99,8 @@ class TurboConf(LHCbConfigurableUser):
             packing.outputs["Hlt2DownstreamTracks"],
         ]
         mergeTracks.outputLocation = join(rootintes, mergedTracksLoc)
-        DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
+        # outputLocation is a DataObjectHandleBase, must convert explicitly to str
+        DataOnDemandSvc().AlgMap[str(mergeTracks.outputLocation)] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
                                      What=str(mergeProtos.outputLocation),
@@ -129,14 +131,14 @@ class TurboConf(LHCbConfigurableUser):
         if simulation and datatype == 2016:
             assert rootintes.startswith('/Event/Turbo')
             linkMergedProtos = DataLink('LinkHltMergedProtos',
-                                        What=mergeProtos.outputLocation,
+                                        What=str(mergeProtos.outputLocation),
                                         Target=join('/Event', mergedProtosLoc)
                                         )
             DataOnDemandSvc().AlgMap[linkMergedProtos.Target] = linkMergedProtos
             
             # Just in case, we do the same for the merged tracks
             linkMergedTracks = DataLink('LinkHltMergedTracks',
-                                        What=mergeTracks.outputLocation,
+                                        What=str(mergeTracks.outputLocation),
                                         Target=join('/Event', mergedTracksLoc)
                                         )
             DataOnDemandSvc().AlgMap[linkMergedTracks.Target] = linkMergedTracks
