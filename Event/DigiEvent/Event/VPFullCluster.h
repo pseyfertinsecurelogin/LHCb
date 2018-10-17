@@ -2,6 +2,7 @@
 #define RecEvent_VPFullCluster_H 1
 
 // Include files
+#include "GaudiKernel/ClassID.h"
 #include "Kernel/VPChannelID.h"
 #include <boost/container/flat_map.hpp>
 #include <ostream>

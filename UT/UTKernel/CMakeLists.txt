@@ -7,6 +7,7 @@ gaudi_depends_on_subdirs(Det/STDet
                          GaudiAlg
                          GaudiKernel
                          Kernel/LHCbKernel
+                         ST/STKernel
                          Si/SiDAQ)
 
 gaudi_install_headers(Kernel)

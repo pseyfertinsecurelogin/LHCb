@@ -2,6 +2,7 @@
 #define ASSOCIATORS_OUTPUTLINKS_H
 
 #include <Event/LinksByKey.h>
+#include <GaudiKernel/LinkManager.h>
 
 template <typename Source, typename Target>
 class OutputLinks final {
