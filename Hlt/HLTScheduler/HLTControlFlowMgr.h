@@ -12,24 +12,45 @@
 // much of that code is stolen from Sebastien Ponce's HLTEventLoopMgr
 #pragma once
 
+// The following MUST be included before GaudiKernel/Parsers.h,
+// which means very early on in the compilation unit.
+#include "CFNodePropertiesParse.h"
+
+// FW includes
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/DataSvc.h"
+#include "GaudiKernel/EventContext.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IAlgExecStateSvc.h"
+#include "GaudiKernel/IAlgorithm.h"
+#include "GaudiKernel/IDataBroker.h"
+#include "GaudiKernel/IEventProcessor.h"
+#include "GaudiKernel/IEvtSelector.h"
+#include "GaudiKernel/IHiveWhiteBoard.h"
+#include "GaudiKernel/Memory.h"
+#include "GaudiKernel/ThreadLocalContext.h"
+#include "GaudiAlg/FunctionalDetails.h"
+
+#include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <fstream>
+#include <map>
+#include <sstream>
+#include <iomanip>
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
-#include <sstream>
+
+//tbb
+#include "tbb/task_scheduler_init.h"
+#include "tbb/task.h"
 
 //locals
 #include "ControlFlowNode.h"
+#include "HistogramAgent.h"
 
-#include "tbb/task.h"
-
-
-// Forward declarations
-class IAlgExecStateSvc;
-class IEvtSelector;
-class IHiveWhiteBoard;
-class IDataManagerSvc;
-class IDataProviderSvc;
 
 class HLTControlFlowMgr : public extends<Service, IEventProcessor>
 {
@@ -117,7 +138,6 @@ private:
   /// event selector context
   IEvtSelector::Context* m_evtSelContext{nullptr};
 
-  private:
   //state vectors for each event, once filled, then copied per event
   std::vector<NodeState> m_NodeStates;
   std::vector<int> m_AlgStates;

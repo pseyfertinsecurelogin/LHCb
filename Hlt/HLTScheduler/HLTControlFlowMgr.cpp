@@ -8,47 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// @author Niklas Nolte
-// some of that code is stolen from Sebastien Ponce's HLTEventLoopMgr
-
-// The following MUST be included before GaudiKernel/Parsers.h,
-// which means very early on in the compilation unit.
-#include "CFNodePropertiesParse.h"
-
-// FW includes
-#include "GaudiKernel/Algorithm.h"
-#include "GaudiKernel/AppReturnCode.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/DataSvc.h"
-#include "GaudiKernel/EventContext.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IAlgExecStateSvc.h"
-#include "GaudiKernel/IAlgorithm.h"
-#include "GaudiKernel/IDataBroker.h"
-#include "GaudiKernel/IEventProcessor.h"
-#include "GaudiKernel/IEvtSelector.h"
-#include "GaudiKernel/IHiveWhiteBoard.h"
-#include "GaudiKernel/IScheduler.h"
-#include "GaudiKernel/Memory.h"
-#include "GaudiKernel/ThreadLocalContext.h"
-
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "HistogramAgent.h"
-
-#include <algorithm>
-#include <chrono>
-#include <condition_variable>
-#include <fstream>
-#include <map>
-#include <sstream>
-#include <iomanip>
-
-#include "boost/algorithm/string.hpp"
-#include "boost/optional.hpp"
-#include "boost/thread.hpp"
-#include "boost/tokenizer.hpp"
-#include "tbb/task_scheduler_init.h"
-
 #include "HLTControlFlowMgr.h"
 
 // Instantiation of a static factory class used by clients to create instances of this service
@@ -517,7 +476,6 @@ namespace {
     os << getNameOfVNode(*node);
     return os;
   }
-
 }
 
 
@@ -677,7 +635,6 @@ void HLTControlFlowMgr::configureScheduling() {
                        *vnode );
 
   }
-
 
 
 
