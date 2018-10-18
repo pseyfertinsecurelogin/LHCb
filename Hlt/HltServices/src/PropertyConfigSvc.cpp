@@ -257,7 +257,7 @@ PropertyConfigSvc::findInTree(const ConfigTreeNode::digest_type& configTree, con
 ConfigTreeNode::digest_type
 PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) const
 {
-    auto digest = m_aliases.with_rlock( [&](const auto& aliases) {
+    auto digest = m_aliases.with_lock( [&](const ConfigTreeNodeAliasMap_t& aliases) {
         auto i = aliases.find(alias);
         return i!=aliases.end() ? i->second
                                 : ConfigTreeNode::digest_type::createInvalid();
@@ -271,10 +271,10 @@ PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) co
     }
     // add it into alias cache
     auto ref = node->digest();
-    m_aliases.with_wlock( [&](ConfigTreeNodeAliasMap_t& aliases) {
+    m_aliases.with_lock( [&](ConfigTreeNodeAliasMap_t& aliases) {
         aliases.emplace( alias,ref );
     } );
-    m_nodes.with_wlock( [&](ConfigTreeNodeMap_t& nodes) {
+    m_nodes.with_lock( [&](ConfigTreeNodeMap_t& nodes) {
         // add to ConfigTreeNode cache now that we got it anyway...
         if (nodes.find(ref)==nodes.end()) nodes.emplace( ref, *node );
     } );
@@ -293,7 +293,7 @@ const PropertyConfigSvc::Tree2NodeMap_t::mapped_type&
 PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
         // first check cache...
-    auto ptr = m_nodesInTree.with_rlock( [&](const auto& nodesInTree) {
+    auto ptr = m_nodesInTree.with_lock( [&](const Tree2NodeMap_t& nodesInTree) {
         auto j = nodesInTree.find(nodeRef);
         return j!=nodesInTree.end() ? &j->second : nullptr;
     } );
@@ -323,7 +323,7 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) c
     // insert in cache
     // we may be beaten to this point, and nodeRef may already be there,
     // but that is OK / irrelevant ;-)
-    return m_nodesInTree.with_wlock( [&](auto& nodesInTree) -> decltype(auto) {
+    return m_nodesInTree.with_lock( [&](Tree2NodeMap_t& nodesInTree) -> decltype(auto) {
         auto r = nodesInTree.emplace(nodeRef,std::move(nrefs));
         return (r.first->second); // note: the () matter!
     } );
@@ -338,7 +338,7 @@ PropertyConfigSvc::collectLeafRefs(const ConfigTreeNodeAlias::alias_type& alias)
 const std::vector<PropertyConfig::digest_type>&
 PropertyConfigSvc::collectLeafRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
-     auto ptr = m_leavesInTree.with_rlock( [&](const auto& leavesInTree) {
+     auto ptr = m_leavesInTree.with_lock( [&](const Tree2LeafMap_t& leavesInTree) {
         auto i = leavesInTree.find(nodeRef);
         return i != leavesInTree.end() ? &i->second : nullptr;
      } );
@@ -349,7 +349,7 @@ PropertyConfigSvc::collectLeafRefs(const ConfigTreeNode::digest_type& nodeRef) c
         PropertyConfig::digest_type leafRef = node->leaf();
         if (leafRef.valid()) leafRefs.push_back(leafRef);
      }
-     return m_leavesInTree.with_wlock( [&](auto& leavesInTree) -> decltype(auto) {
+     return m_leavesInTree.with_lock( [&](Tree2LeafMap_t& leavesInTree) -> decltype(auto) {
         auto rv = leavesInTree.emplace( nodeRef, std::move(leafRefs) );
         return (rv.first->second); // note: the () matter!
     });
@@ -654,7 +654,7 @@ PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, co
 const PropertyConfig*
 PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref) const
 {
-   auto pc = m_configs.with_rlock( [&](const auto& configs) -> const PropertyConfig* {
+   auto pc = m_configs.with_lock( [&](const PropertyConfigMap_t& configs) -> const PropertyConfig* {
        auto i = configs.find(ref);
        if ( i == configs.end() ) return nullptr;
        if(this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endmsg;
@@ -671,7 +671,7 @@ PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref)
                 << " points at " << config->digest().str() << endmsg;
         return nullptr;
    }
-   return m_configs.with_wlock([&](auto& configs) {
+   return m_configs.with_lock([&](PropertyConfigMap_t& configs) {
         auto rv = configs.emplace(  ref, *config);
         return &(rv.first->second);
    });
@@ -688,7 +688,7 @@ const ConfigTreeNode*
 PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref) const
 {
    if(msgLevel(MSG::DEBUG)) debug() << " resolving nodeRef " << ref << endmsg;
-   auto cfn = m_nodes.with_rlock( [&](const auto& nodes) -> const ConfigTreeNode* {
+   auto cfn = m_nodes.with_lock( [&](const ConfigTreeNodeMap_t& nodes) -> const ConfigTreeNode* {
        auto i = nodes.find(ref);
        if (i==nodes.end()) return nullptr;
        if (this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endmsg;
@@ -706,7 +706,7 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
                << " points at " << node->digest().str() << endmsg;
        return nullptr;
    }
-   return m_nodes.with_wlock( [&](auto& nodes) {
+   return m_nodes.with_lock( [&](ConfigTreeNodeMap_t& nodes) {
        auto rv = nodes.emplace( ref, *node );
        return &(rv.first->second);
    } );

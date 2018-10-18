@@ -55,24 +55,24 @@ StatusCode XmlParserSvc::initialize()
   }
 
   // creates a new XercesDOMParser
-  {   std::unique_lock<std::mutex> lck(m_parser_mtx);
-      m_parser = std::make_unique<xercesc::XercesDOMParser>();
-      // if the creation was successful, sets some properties
-      if( !m_parser ) {
-        Service::error() << "Could not create xercesc::XercesDOMParser" << endmsg;
-        return StatusCode::FAILURE;
-      }
-      // sets the error handler to this object
-      m_parser->setErrorHandler(this);
-      // asks the parser to validate the parsed xml
-      m_parser->setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
-      // asks the parser to continue parsing after a fatal error
-      m_parser->setExitOnFirstFatalError(false);
-      // asks the parser to ignore whitespaces when possible
-      m_parser->setIncludeIgnorableWhitespace (false);
-      // asks the parser to avoid the creation of EntityReference nodes
-      m_parser->setCreateEntityReferenceNodes (false);
+  m_parser = std::make_unique<LHCb::cxx::SynchronizedValue<xercesc::XercesDOMParser>>();
+  // if the creation was successful, sets some properties
+  if( !m_parser ) {
+    Service::error() << "Could not create xercesc::XercesDOMParser" << endmsg;
+    return StatusCode::FAILURE;
   }
+  m_parser->with_lock([&](xercesc::XercesDOMParser& parser) {
+      // sets the error handler to this object
+      parser.setErrorHandler(this);
+      // asks the parser to validate the parsed xml
+      parser.setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
+      // asks the parser to continue parsing after a fatal error
+      parser.setExitOnFirstFatalError(false);
+      // asks the parser to ignore whitespaces when possible
+      parser.setIncludeIgnorableWhitespace (false);
+      // asks the parser to avoid the creation of EntityReference nodes
+      parser.setCreateEntityReferenceNodes (false);
+  } );
 
   if ( !m_resolverName.empty() ) {
     m_toolSvc = service( "ToolSvc", true );
@@ -91,10 +91,7 @@ StatusCode XmlParserSvc::initialize()
       Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName.value() << endmsg;
       return sc;
     }
-    {
-      std::unique_lock<std::mutex> lck( m_parser_mtx );
-      m_parser->setEntityResolver( m_resolver->resolver() );
-    }
+    m_parser->with_lock( &xercesc::XercesDOMParser::setEntityResolver, m_resolver->resolver() );
     DEBUG_MSG << "using the xercesc::EntityResolver provided by " << m_resolverName.value() << endmsg;
   }
   return StatusCode::SUCCESS;
@@ -107,9 +104,7 @@ StatusCode XmlParserSvc::finalize()
 {
   clearCache();
 
-  { std::unique_lock<std::mutex> lck(m_parser_mtx);
-    m_parser.reset();
-  }
+  m_parser.reset();
 
   if ( m_toolSvc && m_resolver ) {
     m_resolver.reset();
@@ -179,60 +174,59 @@ IOVDOMDocument* XmlParserSvc::parse( const char* fileName )
     }
   }
   // There was nothing in the cache, try to parse the file if a parser exists
-  if ( m_parser ) {
-    std::unique_lock<std::mutex> lck(m_parser_mtx);
-    // resets it
-    m_parser->reset();
-    // parses the file
-    try {
-      DEBUG_MSG << "parsing file " << fileName << endmsg;
-      long long start1 = 0;
-      long long start2 = 0;
-      if ( UNLIKELY( m_measureTime ) ) {
-        start1 = System::cpuTime( System::microSec );
-        start2 = System::currentTime( System::microSec );
-      }
+  try {
+      return m_parser ? m_parser->with_lock([&]( xercesc::XercesDOMParser& parser) -> IOVDOMDocument* {
+          // resets it
+          parser.reset();
+          // parses the file
+          DEBUG_MSG << "parsing file " << fileName << endmsg;
+          long long start1 = 0;
+          long long start2 = 0;
+          if ( UNLIKELY( m_measureTime ) ) {
+            start1 = System::cpuTime( System::microSec );
+            start2 = System::currentTime( System::microSec );
+          }
 
-      xercesc::DOMDocument* doc = nullptr;
-      std::unique_ptr<xercesc::InputSource> is;
-      // If we have an entity resolver, we try to use it
-      if ( m_resolver ) {
-        XMLCh *sysId = xercesc::XMLString::transcode( fileName );
-        is.reset( m_resolver->resolver()->resolveEntity( nullptr, sysId ) );
-        xercesc::XMLString::release( &sysId );
-      }
-      if ( is ) { // If the entity resolver succeeded, we parse the InputSource
-        m_parser->parse( *is );
-      } else { // otherwise try to pass the filename to XercesC
-        m_parser->parse( fileName );
-      }
-      // get a pointer to the DOM Document and also take the responsibility of
-      // freeing the memory
-      doc = m_parser->adoptDocument();
-      // if the document is not null, cache it
-      if ( !doc ) return nullptr;
-      std::unique_ptr<IOVDOMDocument> cache_doc{new IOVDOMDocument( doc )};
-      // Try to see if the InputSource knows about validity/
-      ValidInputSource* iov_is = dynamic_cast<ValidInputSource*>( is.get() );
-      if ( iov_is ) { // it does
-        cache_doc->setValidity( iov_is->validSince(), iov_is->validTill() );
-      }
-      auto myDoc = cacheItem( fileName, std::move( cache_doc ) );
-      // returns the parsed document
-      if ( UNLIKELY( m_measureTime ) ) {
-        double cpu1 = .001 * double( System::cpuTime( System::microSec ) - start1 );
-        double cpu2 = .001 * double( System::currentTime( System::microSec ) - start2 );
-        m_sumCpu += cpu1;
-        m_sumClock += cpu2;
-        if ( m_printTime )
-          info() << format( "%7.1f ms user and %7.1f ms clock time for ", cpu1, cpu2 ) << fileName << endmsg;
-      }
-      return myDoc;
-    } catch ( const xercesc::XMLPlatformUtilsException &e ) {
-      char* message = xercesc::XMLString::transcode( e.getMessage() );
-      Service::error() << "Unable to find file " << fileName << ",  Exception message:" << message << endmsg;
-      xercesc::XMLString::release( &message );
-    }
+          xercesc::DOMDocument* doc = nullptr;
+          std::unique_ptr<xercesc::InputSource> is;
+          // If we have an entity resolver, we try to use it
+          if ( m_resolver ) {
+            XMLCh *sysId = xercesc::XMLString::transcode( fileName );
+            is.reset( m_resolver->resolver()->resolveEntity( nullptr, sysId ) );
+            xercesc::XMLString::release( &sysId );
+          }
+          if ( is ) { // If the entity resolver succeeded, we parse the InputSource
+            parser.parse( *is );
+          } else { // otherwise try to pass the filename to XercesC
+            parser.parse( fileName );
+          }
+          // get a pointer to the DOM Document and also take the responsibility of
+          // freeing the memory
+          doc = parser.adoptDocument();
+          // if the document is not null, cache it
+          if ( !doc ) return nullptr;
+          std::unique_ptr<IOVDOMDocument> cache_doc{new IOVDOMDocument( doc )};
+          // Try to see if the InputSource knows about validity/
+          ValidInputSource* iov_is = dynamic_cast<ValidInputSource*>( is.get() );
+          if ( iov_is ) { // it does
+            cache_doc->setValidity( iov_is->validSince(), iov_is->validTill() );
+          }
+          auto myDoc = cacheItem( fileName, std::move( cache_doc ) );
+          // returns the parsed document
+          if ( UNLIKELY( m_measureTime ) ) {
+            double cpu1 = .001 * double( System::cpuTime( System::microSec ) - start1 );
+            double cpu2 = .001 * double( System::currentTime( System::microSec ) - start2 );
+            m_sumCpu += cpu1;
+            m_sumClock += cpu2;
+            if ( m_printTime )
+              info() << format( "%7.1f ms user and %7.1f ms clock time for ", cpu1, cpu2 ) << fileName << endmsg;
+          }
+          return myDoc;
+        } ) : nullptr;
+  } catch ( const xercesc::XMLPlatformUtilsException &e ) {
+    char* message = xercesc::XMLString::transcode( e.getMessage() );
+    Service::error() << "Unable to find file " << fileName << ",  Exception message:" << message << endmsg;
+    xercesc::XMLString::release( &message );
   }
   // no way to parse the file, returns an empty document
   return nullptr;
@@ -246,17 +240,18 @@ IOVDOMDocument* XmlParserSvc::parseString( std::string source )
   // there is of course no cache for parsing XML strings directly
   // try to parse the string if a parser exists
   if ( !m_parser ) return nullptr;
-  // resets it
-  std::unique_lock<std::mutex> lck(m_parser_mtx);
-  m_parser->reset();
-  // builds a new InputSource
-  xercesc::MemBufInputSource inputSource ( (const XMLByte*) source.data(), source.length(), "" );
-  // parses the file
-  m_parser->parse( inputSource );
-  if ( msgLevel( MSG::DEBUG ) ) debug() << "parsing xml string..." << endmsg;
-  xercesc::DOMDocument* doc = m_parser->adoptDocument();
-  // returns the parsed document if successful
-  return doc ? new IOVDOMDocument( doc ) : nullptr;
+  return m_parser->with_lock( [&](xercesc::XercesDOMParser& parser) {
+      // resets it
+      parser.reset();
+      // builds a new InputSource
+      xercesc::MemBufInputSource inputSource ( (const XMLByte*) source.data(), source.length(), "" );
+      // parses the file
+      parser.parse( inputSource );
+      if ( msgLevel( MSG::DEBUG ) ) debug() << "parsing xml string..." << endmsg;
+      xercesc::DOMDocument* doc = parser.adoptDocument();
+      // returns the parsed document if successful
+      return doc ? new IOVDOMDocument( doc ) : nullptr;
+  } );
 }
 
 // -----------------------------------------------------------------------
@@ -266,10 +261,7 @@ void XmlParserSvc::clearCache()
 {
   // remove everything from the cache
   //    first delete the DOM documents
-  {
-    std::unique_lock<std::mutex> lck(m_parser_mtx);
-    m_parser->resetDocumentPool();
-  }
+  m_parser->with_lock(&xercesc::XercesDOMParser::resetDocumentPool);
   //    check the lock status of the cached objects
   for ( auto& i : m_cache ) {
     if ( i.second.lock > 0 ) {

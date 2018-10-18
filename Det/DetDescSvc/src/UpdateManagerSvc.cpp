@@ -804,7 +804,7 @@ namespace {
 ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime) const {
   // take a read lock on the IOV resource. This secures the reading of m_head_since/until
   // by preventing any update of it
-  std::shared_lock<std::shared_timed_mutex> reading {m_IOVresource};
+  std::shared_lock reading {m_IOVresource};
   if ( eventTime < m_head_since || eventTime >= m_head_until ) {
     // We seem to need to update. We will need to take a write lock on the IOV resource
     // First thing to do is release our read lock, or we have no chance

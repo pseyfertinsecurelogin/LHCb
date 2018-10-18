@@ -23,7 +23,6 @@
 #include "RichUtils/RichPixelCluster.h"
 
 // Kernel
-#include "Kernel/FastAllocVector.h"
 #include "Kernel/MemPoolAlloc.h"
 
 // Forward declarations

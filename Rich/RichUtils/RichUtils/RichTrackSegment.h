@@ -25,7 +25,6 @@
 #include "RichUtils/RichSIMDTypes.h"
 
 // LHCbKernel
-#include "Kernel/FastAllocVector.h"
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichRadIntersection.h"
 #include "Kernel/RichRadiatorType.h"
