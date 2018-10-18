@@ -103,12 +103,12 @@ class TurboConf(LHCbConfigurableUser):
         DataOnDemandSvc().AlgMap[str(mergeTracks.outputLocation)] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
-                                     What=str(mergeProtos.outputLocation),
+                                     What=mergeProtos.outputLocation,
                                      Target=join(rootintes, 'Rec/ProtoP/Charged'))
         DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = linkChargedProtos
 
         linkTracks = DataLink('HltRecTracks',
-                              What=str(mergeTracks.outputLocation),
+                              What=mergeTracks.outputLocation,
                               Target=join(rootintes, 'Rec/Track/Best'))
         DataOnDemandSvc().AlgMap[linkTracks.Target] = linkTracks
 
@@ -131,14 +131,14 @@ class TurboConf(LHCbConfigurableUser):
         if simulation and datatype == 2016:
             assert rootintes.startswith('/Event/Turbo')
             linkMergedProtos = DataLink('LinkHltMergedProtos',
-                                        What=str(mergeProtos.outputLocation),
+                                        What=mergeProtos.outputLocation,
                                         Target=join('/Event', mergedProtosLoc)
                                         )
             DataOnDemandSvc().AlgMap[linkMergedProtos.Target] = linkMergedProtos
             
             # Just in case, we do the same for the merged tracks
             linkMergedTracks = DataLink('LinkHltMergedTracks',
-                                        What=str(mergeTracks.outputLocation),
+                                        What=mergeTracks.outputLocation,
                                         Target=join('/Event', mergedTracksLoc)
                                         )
             DataOnDemandSvc().AlgMap[linkMergedTracks.Target] = linkMergedTracks
