@@ -89,7 +89,8 @@ class TurboConf(LHCbConfigurableUser):
             packing.outputs["Hlt2DownstreamProtos"],
         ]
         mergeProtos.outputLocation = join(rootintes, mergedProtosLoc)
-        DataOnDemandSvc().AlgMap[mergeProtos.outputLocation] = mergeProtos
+        # outputLocation is a DataObjectHandleBase, must convert explicitly to str
+        DataOnDemandSvc().AlgMap[str(mergeProtos.outputLocation)] = mergeProtos
 
         mergedTracksLoc = 'Hlt2/TrackFitted/Charged'
         mergeTracks = TESMergerTrack("MergeTracks")
@@ -98,15 +99,16 @@ class TurboConf(LHCbConfigurableUser):
             packing.outputs["Hlt2DownstreamTracks"],
         ]
         mergeTracks.outputLocation = join(rootintes, mergedTracksLoc)
-        DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
+        # outputLocation is a DataObjectHandleBase, must convert explicitly to str
+        DataOnDemandSvc().AlgMap[str(mergeTracks.outputLocation)] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
-                                     What=str(mergeProtos.outputLocation),
+                                     What=mergeProtos.outputLocation,
                                      Target=join(rootintes, 'Rec/ProtoP/Charged'))
         DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = linkChargedProtos
 
         linkTracks = DataLink('HltRecTracks',
-                              What=str(mergeTracks.outputLocation),
+                              What=mergeTracks.outputLocation,
                               Target=join(rootintes, 'Rec/Track/Best'))
         DataOnDemandSvc().AlgMap[linkTracks.Target] = linkTracks
 
