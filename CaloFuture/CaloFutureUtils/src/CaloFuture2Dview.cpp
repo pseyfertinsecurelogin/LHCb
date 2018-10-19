@@ -104,11 +104,11 @@ StatusCode CaloFuture2Dview::initialize() {
       LHCb::CaloCellID(3, 1, 2 ,0)
     }, {}, {}};
 
-  // Check if missing, once.
-  if (m_caloParams[0].calo == nullptr)
-    Warning("Spd Element does not exists !", StatusCode::SUCCESS).ignore();
-  if (m_caloParams[1].calo == nullptr)
-    Warning("Prs Element does not exists !", StatusCode::SUCCESS).ignore();
+  // This check is very noisy in the upgrade!
+  //  if (m_caloParams[0].calo == nullptr)
+  //    Warning("Spd Element does not exists !", StatusCode::SUCCESS).ignore();
+  //  if (m_caloParams[1].calo == nullptr)
+  //    Warning("Prs Element does not exists !", StatusCode::SUCCESS).ignore();
 
   // Init the derived values
   // ? no need for m_calo->YtoXratio() ?
