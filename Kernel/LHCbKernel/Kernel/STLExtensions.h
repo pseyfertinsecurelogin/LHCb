@@ -9,6 +9,14 @@
 #include <functional>
 #include <memory>
 
+// add a macro state assumptions
+#ifdef NDEBUG
+#define ASSUME(COND) static_cast<void>((COND) ? void(0) : __builtin_unreachable())
+#else
+#include <cassert>
+#define ASSUME(COND) assert(COND)
+#endif
+
 #ifdef NDEBUG
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -26,14 +34,18 @@ namespace LHCb
   /// Once we target gcc 6.1 or newer only, this can be removed
   /// and <experimental/array> directly used instead.
   template <typename... T>
+  [[deprecated("use class template argument deduction instead, i.e. replace LHCb::make_array(...) with std::array{...}")]]
   constexpr decltype(auto) make_array( T && ... values )
   {
-    return std::array< std::decay_t< std::common_type_t<T... > >, sizeof...(T) >
-           { std::forward<T>(values)... };
+    return std::array{ std::forward<T>(values)... };
   }
 
-  // TODO: when we switch to C++17, deprecate, and point to std::invoke instead;
-  using std::invoke;
+  template <typename F, typename ... Args >
+  [[deprecated("use std::invoke instead")]]
+  decltype(auto) invoke( F&& f, Args&&... args )
+  {
+      return std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+  }
 
   // TODO: when we use a more recent version of range-v3, switch to its version of span
   using gsl::span;
