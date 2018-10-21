@@ -19,7 +19,7 @@ void Condition::update ( ValidDataObject& obj )
 //=========================================================================
 //  Prepare an XML string representing the condition
 //=========================================================================
-std::string Condition::toXml(boost::string_ref name, bool header, int precision) const{
+std::string Condition::toXml(std::string_view name, bool header, int precision) const{
   std::ostringstream xml;
   if (header) {
     // XML header

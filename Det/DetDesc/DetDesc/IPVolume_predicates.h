@@ -3,7 +3,7 @@
 // STD & STL
 #include <iostream>
 #include <functional>
-#include "boost/utility/string_ref.hpp"
+#include <string_view>
 // Geometry definitions
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
@@ -53,7 +53,7 @@ static auto IPVolume_isInside = [](Gaudi::XYZPoint PointInMotherFrame)
    *  @return true if name matches the given name
    */
 // TODO: add overload for std::string instead of string_ref
-static auto IPVolume_byName = [](boost::string_ref name) {
+static auto IPVolume_byName = [](std::string_view name) {
     return [=](const IPVolume* pv)
            { return pv && name == pv->name(); };
 };

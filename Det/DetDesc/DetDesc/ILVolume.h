@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "boost/utility/string_ref.hpp"
+#include <string_view>
 
 /// GaudiKernel includes
 #include "GaudiKernel/MsgStream.h"
@@ -121,7 +121,7 @@ struct ILVolume : virtual IInterface
    *  @return pointer to daughter (Physical Volume)
    */
   virtual const IPVolume* operator[]
-  ( boost::string_ref  name  ) const = 0;
+  ( std::string_view  name  ) const = 0;
 
   /** get daughter (Physical Volume) by index
    *  @param  index    physical volume index
@@ -135,7 +135,7 @@ struct ILVolume : virtual IInterface
    *  @return pointer to daughter (Physical Volume)
    */
   virtual const IPVolume* pvolume
-  ( boost::string_ref           name  ) const = 0;
+  ( std::string_view           name  ) const = 0;
 
   /**  retrieve begin iterator  for manipulation with daughters
    *   @return begin iterator  for manipulation with daughters
