@@ -7,42 +7,15 @@
 #include <functional>
 #include <utility>
 
+#include "CallableTraits.h"
+
 namespace LHCb {
 namespace cxx {
 
 namespace details {
 
-
-    template <typename Signature> struct signature_helper;
-
-    template <typename Ret, typename... Arg>
-    struct signature_helper<std::function<Ret(Arg...)>> {
-        using argument0_type = std::tuple_element_t<0,std::tuple<Arg...>>;
-    };
-
-    template <typename Ret, typename Obj, typename ...Args, bool Bool>
-    struct signature_helper< Ret(Obj::*)(Args...) noexcept(Bool)> {
-        using argument0_type = Obj&;
-    };
-
-    template <typename Ret, typename Obj, typename ...Args, bool Bool>
-    struct signature_helper< Ret(Obj::*)(Args...) const noexcept(Bool)> {
-        using argument0_type = const Obj&;
-    };
-
-    template <typename T, typename B> struct signature_traits_;
-
-    template <typename T> struct signature_traits_<T,std::true_type>
-    : signature_helper< T > {};
-
-    template <typename T> struct signature_traits_<T,std::false_type>
-    : signature_helper< decltype(std::function{std::declval<T&&>()})> {};
-
-    template <typename T>
-    struct signature_traits : signature_traits_<T,typename std::is_member_function_pointer<T>::type> {};
-
     template <typename F, typename Value>
-    using require_arg0_t = std::enable_if_t<std::is_same_v< typename signature_traits<F>::argument0_type, Value > >;
+    using require_arg0_t = std::enable_if_t<std::is_same_v< typename CallableTraits<F>::template argument_type<0>, Value > >;
 
     template <typename Value, typename... Args>
     using require_constructible_t = std::enable_if_t<std::is_constructible_v<Value,Args...>>;

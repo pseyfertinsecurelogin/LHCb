@@ -1,5 +1,5 @@
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE test_MultiSynchronizedValue
+#define BOOST_TEST_MODULE test_SynchronizedValue
 #include <boost/test/unit_test.hpp>
 
 #include "Kernel/SynchronizedValue.h"
