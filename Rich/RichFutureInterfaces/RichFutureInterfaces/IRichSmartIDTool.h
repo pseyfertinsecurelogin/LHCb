@@ -17,7 +17,6 @@
 #include "GaudiKernel/Point3DTypes.h"
 
 // LHCbKernel
-#include "Kernel/FastAllocVector.h"
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
 

@@ -3,7 +3,6 @@
 
 // Include files
 #include <map>
-#include <mutex>
 
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
@@ -12,6 +11,7 @@
 #include "GaudiKernel/Service.h"
 
 #include "Kernel/ICondDBInfo.h"
+#include "Kernel/SynchronizedValue.h"
 #include "XmlTools/IXmlParserSvc.h"
 
 // Forward and external declarations
@@ -161,8 +161,7 @@ private:
   //
   // i.e. we need to protect the parser with a mutex...
   //
-  std::mutex m_parser_mtx;
-  std::unique_ptr<xercesc::XercesDOMParser> m_parser;
+  std::unique_ptr<LHCb::cxx::SynchronizedValue<xercesc::XercesDOMParser>> m_parser;
 
   /**
    * this is a parameter that defines the cache behavior.
