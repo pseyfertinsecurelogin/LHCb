@@ -7,7 +7,8 @@
 #include <functional>
 #include <utility>
 
-#include "CallableTraits.h"
+#include <boost/callable_traits.hpp>
+
 
 namespace LHCb {
 namespace cxx {
@@ -15,7 +16,8 @@ namespace cxx {
 namespace details {
 
     template <typename F, typename Value>
-    using require_arg0_t = std::enable_if_t<std::is_same_v< typename CallableTraits<F>::template argument_type<0>, Value > >;
+    using require_arg0_t = std::enable_if_t<std::is_same_v< std::tuple_element_t<0, boost::callable_traits::args_t<F>>,
+                                                            Value> >;
 
     template <typename Value, typename... Args>
     using require_constructible_t = std::enable_if_t<std::is_constructible_v<Value,Args...>>;

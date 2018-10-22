@@ -119,6 +119,9 @@ BOOST_AUTO_TEST_CASE( svmem_fun )
     auto fun2 = LHCb::cxx::with_lock(fun);
     BOOST_CHECK( fun2( aaa, 9 ) == 12 );
 
+    auto lfun102 = LHCb::cxx::with_lock( [](const HasFun& hf, int i) { return hf.h(99+i); } );
+    BOOST_CHECK( lfun102( aaa, 12 ) == (3+99+12) );
+
     BOOST_CHECK( aaa.with_lock( &fun_noexcept ) == 9 );
     BOOST_CHECK( aaa.with_lock( &fun_except ) == 10 );
     BOOST_CHECK( aaa.with_lock( &constfun_noexcept ) == 11 );
