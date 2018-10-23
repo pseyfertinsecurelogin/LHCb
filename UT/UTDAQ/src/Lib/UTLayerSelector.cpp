@@ -18,9 +18,10 @@
 // ====================================================================
 namespace {
   auto mp = [](const char* p, unsigned int i) { return std::make_pair(p,i); };
-  static const auto s_layerMap = LHCb::make_array(
-      // UT layer mapping
-      mp("UTaX", 9), mp("UTaU",10), mp("UTbV",17), mp("UTbX",18));
+  static const auto s_layerMap = 
+    std::array{ std::pair{"UTaX", 9}, std::pair{"UTaU",10}, 
+                std::pair{"UTbV",17}, std::pair{"UTbX",18} };
+
 }
 // ====================================================================
 

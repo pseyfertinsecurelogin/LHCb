@@ -489,26 +489,23 @@ public:
 
   std::string conditionsPathName() const;
 
-  /** module type */
-  std::string moduleType() const;
-
 protected:
 
-  bool m_isStereo;
+  bool m_isStereo = false;
 
   StatusCode registerConditionsCallbacks();
   StatusCode cacheInfo();
 
   Sensors m_sensors;
-  double m_thickness;
+  double m_thickness = 0.0;
   std::string m_nickname;
 
 private:
 
   typedef std::map<unsigned int,Status> StatusMap;
 
-  parent_type* m_parent;
-  unsigned int m_row;
+  parent_type* m_parent = nullptr;
+  unsigned int m_row = 0u;
   std::string m_hybridType;
   std::string m_conditionPathName;
 
@@ -522,39 +519,38 @@ private:
   void setStatusCondition( const std::string& type, const unsigned int entry,
                            const DeUTSector::Status& newStatus );
 
-
-  unsigned int m_firstStrip;
-  unsigned int m_firstBeetle;
-  unsigned int m_id;
-  double m_pitch;
-  unsigned int m_nStrip;
-  double m_capacitance;
-  double m_stripLength;
+  unsigned int m_firstStrip = 1;
+  unsigned int m_firstBeetle = 1;
+  unsigned int m_id = 0u;
+  double m_pitch = 0.0;
+  unsigned int m_nStrip = 0u;
+  double m_capacitance = 0.0;
+  double m_stripLength =0.0;
   // std::pair<double, double> m_range;
 
-  double m_deadWidth;
+  double m_deadWidth = 0.0;
   std::string m_type;
 
-  double m_dxdy ;
-  double m_dzdy ;
-  double m_dy ;
+  double m_dxdy = 0.0;
+  double m_dzdy = 0.0;
+  double m_dy = 0.0;
   Gaudi::XYZVector m_dp0di ;
   Gaudi::XYZPoint  m_p0 ;
-  double m_angle ;
-  double m_cosAngle ;
-  double m_sinAngle ;
-  mutable double m_measEff;
+  double m_angle = 0.0;
+  double m_cosAngle = 0.0;
+  double m_sinAngle = 0.0;
+  mutable double m_measEff = 0.0;
 
   // status info
-  Status m_status;
+  Status m_status = OK;
   mutable StatusMap m_beetleStatus;
   mutable StatusMap m_stripStatus;
-  std::string m_statusString;
-  std::string m_versionString;
+  std::string m_statusString = "Status";
+  std::string m_versionString = "DC06";
 
 
   // Noise info
-  std::string m_noiseString;
+  std::string m_noiseString = "Noise";
   std::vector< double > m_noiseValues;
   std::vector< double > m_electronsPerADC;
   std::vector< double > m_cmModeValues;

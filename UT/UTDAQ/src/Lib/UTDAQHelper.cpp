@@ -84,14 +84,14 @@ void LHCb::UTDAQ::findSectors(unsigned int layer, float x, float y, float xTol, 
   }
 }
 
-void LHCb::UTDAQ::computeGeometry(const DeSTDetector &utDet,
+void LHCb::UTDAQ::computeGeometry(const DeUTDetector &utDet,
                                   std::array<LHCb::UTDAQ::LayerInfo,4> &layers,
                                   std::array<SectorsInStationZ,2> &sectorsZ) {
   for(int iStation = 0; iStation < 2; ++iStation){
     for(int iLayer = 0; iLayer < 2; ++iLayer){
       // get layer
       unsigned int layerIndex = 2*iStation+iLayer;
-      DeSTLayer* layer = utDet.layers()[layerIndex];
+      DeUTLayer* layer = utDet.layers()[layerIndex];
       // get the z position of the layer and store it
       layers[layerIndex].z = layer->sectors()[0]->sensors()[0]->plane().ProjectOntoPlane({0,0,0}).z();
       // get the layer size and sector sizes. Go through all sectors, do not rely on ordering

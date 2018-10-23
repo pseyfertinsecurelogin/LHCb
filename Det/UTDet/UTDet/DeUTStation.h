@@ -113,7 +113,7 @@ protected:
 
 private:
 
-  unsigned int m_id;
+  unsigned int m_id = 0u;
 
   parent_type* m_parent = nullptr;
   Children m_layers;

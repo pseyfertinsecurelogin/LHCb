@@ -94,7 +94,7 @@ private:
   std::string m_fullBankString;
   LHCb::RawBank::BankType m_fullType;
 
-  unsigned int m_nBits;
+  unsigned int m_nBits = 0u;
 
 
 };
