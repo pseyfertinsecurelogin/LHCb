@@ -1,3 +1,13 @@
+###############################################################################
+# (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           #
+#                                                                             #
+# This software is distributed under the terms of the GNU General Public      #
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
+#                                                                             #
+# In applying this licence, CERN does not waive the privileges and immunities #
+# granted to it by virtue of its status as an Intergovernmental Organization  #
+# or submit itself to any jurisdiction.                                       #
+###############################################################################
 # Test of UnpackTrack on SDST contaning a track with more than 65k LHCbIDs
 from PRConfig import TestFileDB
 from Gaudi.Configuration import ApplicationMgr

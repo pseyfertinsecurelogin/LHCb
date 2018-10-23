@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // $Id: SimpleAlgorithm.h,v 1.3 2005-12-08 10:02:43 cattanem Exp $
 #ifndef DDEXAMPLE_SIMPLEALGORITHM_H
 #define DDEXAMPLE_SIMPLEALGORITHM_H 1
