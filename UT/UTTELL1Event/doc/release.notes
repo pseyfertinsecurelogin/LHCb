@@ -1,8 +1,0 @@
-! Package     : UTTELL1Event
-! Responsible : Andy Beiter
-!-----------------------------------------------------------------------------
-
-!========================= UTTELL1Event v1r0 2018-09-04 =========================
-! 2018-09-04 - Andy Beiter
- - Duplicated ST code to create independent UT library for further development.
-
