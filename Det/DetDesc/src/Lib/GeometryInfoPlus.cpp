@@ -544,7 +544,7 @@ const ILVolume::ReplicaPath& GeometryInfoPlus::supportPath() const
   if( !m_gi_support ) { m_gi_support = geoByName( m_gi_supportName ) ; }
   ///
   const ILVolume* lv = m_gi_support->lvolume();
-  auto aux = boost::string_ref( m_gi_supportNamePath );
+  auto aux = std::string_view( m_gi_supportNamePath );
   while ( !aux.empty() && lv ) {
     // find separator
     auto pos     = aux.find_first_of('/');
