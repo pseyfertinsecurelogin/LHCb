@@ -196,11 +196,11 @@ protected:
 
 private:
 
-  parent_type* m_parent;
+  parent_type* m_parent = nullptr;
 
   void clear();
   void determineSense();
-  StatusCode cacheInfo();
+  void cacheInfo();
   StatusCode registerConditionsCallbacks();
 
   Gaudi::Plane3D m_plane;
@@ -210,25 +210,25 @@ private:
   Gaudi::XYZVector m_direction;
   std::pair<double,double> m_range;
 
-  unsigned int m_firstStrip;
-  unsigned int m_id;
-  double m_pitch;
-  unsigned int m_nStrip;
+  unsigned int m_firstStrip = 1;
+  unsigned int m_id = 0u;
+  double m_pitch = 0.0;
+  unsigned int m_nStrip = 0u;
   std::string m_versionString;
 
-  double m_thickness;
-  double m_uMinLocal;
-  double m_uMaxLocal;
-  double m_vMinLocal;
-  double m_vMaxLocal;
+  double m_thickness = 0.0;
+  double m_uMinLocal = 0.0;
+  double m_uMaxLocal = 0.0;
+  double m_vMinLocal = 0.0;
+  double m_vMaxLocal = 0.0;
 
   std::unique_ptr<LHCb::Trajectory<double>> m_midTraj;
 
-  bool m_xInverted;
-  bool m_yInverted;
+  bool m_xInverted = false;
+  bool m_yInverted = false;
 
-  double m_deadWidth;
-  double m_stripLength;
+  double m_deadWidth = 0.0;
+  double m_stripLength = 0.0;
 
 };
 

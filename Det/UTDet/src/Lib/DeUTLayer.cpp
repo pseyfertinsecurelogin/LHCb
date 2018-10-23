@@ -36,11 +36,6 @@ using namespace LHCb;
 
 DeUTLayer::DeUTLayer( const std::string& name ) :
   DeUTBaseElement( name ),
-  m_id(0u),
-  m_angle(0.0),
-  m_sinAngle(0.0),
-  m_cosAngle(0.0),
-  m_parent(NULL)
 {
   m_modules.clear();
 }

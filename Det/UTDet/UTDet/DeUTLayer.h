@@ -144,16 +144,16 @@ protected:
 
   Gaudi::Plane3D m_plane;
 
-  unsigned int m_id;
-  double m_angle;
-  double m_sinAngle;
-  double m_cosAngle;
+  unsigned int m_id = 0u;
+  double m_angle 0.0;
+  double m_sinAngle = 0.0;
+  double m_cosAngle =0.0;
 
   /** make flat list of lowest descendents  and also layers*/
   void flatten();
 
   Children m_modules;
-  parent_type* m_parent;
+  parent_type* m_parent = nullptr;
 
 };
 

@@ -30,10 +30,6 @@
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
-
-#ifdef __INTEL_COMPILER         // Disable ICC remark from Boost
-  #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
-#endif
 #include "boost/lexical_cast.hpp"
 
 using namespace LHCb;
@@ -48,30 +44,7 @@ using namespace LHCb;
  */
 
 DeUTSector::DeUTSector( const std::string& name ) :
-  DeUTBaseElement( name ),
-  m_thickness(0.0),
-  m_firstStrip(1),
-  m_firstBeetle(1),
-  m_id(0u),
-  m_pitch(0.0),
-  m_nStrip(0u),
-  m_capacitance(0.0),
-  m_stripLength(0.0),
-  m_deadWidth(0.0),
-  m_dxdy(0.0),
-  m_dzdy(0.0),
-  m_dy(0.0),
-  m_angle(0.0),
-  m_cosAngle(0.0),
-  m_sinAngle(0.0),
-  m_measEff(0.0),
-  m_status(OK),
-  m_statusString("Status"),
-  m_versionString("DC06"),
-  m_noiseString("Noise"),
-  m_isStereo(false),
-  m_parent(NULL),
-  m_row(0u)
+  DeUTBaseElement( name )
 {
 }
 
@@ -502,7 +475,7 @@ void DeUTSector::setCMNoise(const std::vector<double>& values)
 void DeUTSector::setADCConversion(const std::vector<double>& values)
 {
   Condition* aCon( condition(m_noiseString) );
-  if (aCon == 0)
+  if (aCon == nullptr)
   {
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
@@ -1108,18 +1081,26 @@ std::string DeUTSector::moduleNumber(const unsigned int& reg, const unsigned int
   int col = 0;
 
   // UTaX or UTaU
-  if ( station == 1 ) {
-    if ( reg == 1 ) col = column();
-    if ( reg == 2 ) col = column() - 6;
-    if ( reg == 3 ) col = column() - 6 - 6;
+  if(station == 1) {
+    switch( reg ) {
+      case 1: col = column();
+              break;
+      case 2: col = column() - 6;
+              break;
+      case 3: col = column() - 6 - 6;
+              break;
+    }
+  } else if (station == 2) {// UTbV or UTbX
+    switch( reg ) {
+      case 1: col = column();
+              break;
+      case 2: col = column() - 7;
+              break;
+      case 3: col = column() - 7 - 6;
+              break;
+    }
   }
 
-  // UTbV or UTbX
-  if ( station == 2 ) {
-    if ( reg == 1 ) col = column();
-    if ( reg == 2 ) col = column() - 7;
-    if ( reg == 3 ) col = column() - 7 - 6;
-  }
 
   return lexical_cast<std::string>(col);
 }

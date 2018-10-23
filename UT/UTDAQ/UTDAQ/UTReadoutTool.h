@@ -66,7 +66,7 @@ public:
   /// Add the mapping of source ID to TELL1 board number
   unsigned int SourceIDToTELLNumber(unsigned int sourceID) const override;
 
-  /** Add the mapping of source ID to board number for IT / TT / UT */
+  /** Add the mapping of source ID to board number for UT */
   const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
 
 
@@ -112,10 +112,10 @@ public:
   StatusCode initialize() override;
 
   /// get region
-  unsigned int region(const LHCb::UTChannelID aChan) const;
+  unsigned int region(const LHCb::UTChannelID aChan) const override;
 
-  /** Add the mapping of board number to source ID for IT / TT / UT */
-  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const;
+  /** Add the mapping of board number to source ID for UT */
+  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const override;
 
 protected:
 

@@ -90,11 +90,11 @@ protected:
 
  unsigned int byteSize(LHCb::span<const LHCb::RawBank*> banks) const;
 
- bool m_skipErrors;
+ bool m_skipErrors = false;
  std::string m_bankTypeString;
 
- int m_forcedVersion;
- bool m_checkValidSpill;
+ int m_forcedVersion = 0;
+ bool m_checkValidSpill = false;
  LHCb::RawBank::BankType m_errorType;
  LHCb::RawBank::BankType m_bankType;
 
@@ -105,7 +105,7 @@ private:
 
   std::string m_errorBankString;
 
-  bool m_recoverMode;
+  bool m_recoverMode = false;
 
 };
 

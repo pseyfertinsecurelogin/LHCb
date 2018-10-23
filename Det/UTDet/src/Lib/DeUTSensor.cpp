@@ -37,21 +37,7 @@ using namespace LHCb;
  */
 
 DeUTSensor::DeUTSensor( const std::string& name ) :
-  DeUTBaseElement( name ),
-  m_firstStrip(1),
-  m_id(0u),
-  m_pitch(0.0),
-  m_nStrip(0u),
-  m_thickness(0.0),
-  m_uMinLocal(0.0),
-  m_uMaxLocal(0.0),
-  m_vMinLocal(0.0),
-  m_vMaxLocal(0.0),
-  m_xInverted(false),
-  m_yInverted(false),
-  m_deadWidth(0.0),
-  m_stripLength(0.0),
-  m_parent(0)
+  DeUTBaseElement( name )
 {
 }
 

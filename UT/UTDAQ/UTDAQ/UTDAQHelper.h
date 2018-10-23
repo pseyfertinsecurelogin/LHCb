@@ -15,8 +15,8 @@
 #include "Kernel/STLExtensions.h"
 #include <array>
 #include <boost/container/small_vector.hpp>
-#include "STDet/DeUTDetector.h"
-#include "STDet/DeUTSector.h"
+#include "UTDet/DeUTDetector.h"
+#include "UTDet/DeUTSector.h"
 
 namespace LHCb {
 
@@ -70,7 +70,7 @@ namespace UTDAQ {
                    const LayerInfo& info,
                    boost::container::small_vector_base<std::pair<int, int>>& sectors);
 
-  void computeGeometry(const DeSTDetector &utDet,
+  void computeGeometry(const DeUTDetector &utDet,
                        std::array<LayerInfo,4> &layers,
                        std::array<SectorsInStationZ,2> &sectorsZ);
 
