@@ -489,6 +489,9 @@ public:
 
   std::string conditionsPathName() const;
 
+  /** module type */
+  std::string moduleType() const;
+
 protected:
 
   bool m_isStereo = false;

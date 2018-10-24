@@ -145,7 +145,7 @@ protected:
   Gaudi::Plane3D m_plane;
 
   unsigned int m_id = 0u;
-  double m_angle 0.0;
+  double m_angle = 0.0;
   double m_sinAngle = 0.0;
   double m_cosAngle =0.0;
 
