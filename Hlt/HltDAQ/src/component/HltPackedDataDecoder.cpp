@@ -41,8 +41,6 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  declareProperty("EnableChecksum", m_enableChecksum = false);
-  declareProperty("ContainerMap", m_containerMap);
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
   setProperty("SourceID", kSourceID_Hlt2);
@@ -98,12 +96,7 @@ std::pair<DataObject*, size_t> HltPackedDataDecoder::loadObject(const std::strin
 StatusCode HltPackedDataDecoder::execute() {
   if (UNLIKELY(msgLevel(MSG::DEBUG))) debug() << "==> Execute" << endmsg;
 
-  auto* rawEvent = findFirstRawEvent();
-  if (!rawEvent) {
-    return Error("Raw event not found!");
-  }
-
-  const auto& rawBanksConst = rawEvent->banks(LHCb::RawBank::DstData);
+  const auto& rawBanksConst = findFirstRawBank(LHCb::RawBank::DstData);
   if (rawBanksConst.empty()) {
     return Warning("No HltPackedData raw bank (the DstData bank) in raw event. Quitting.",
                    StatusCode::SUCCESS, 10);
@@ -169,6 +162,10 @@ StatusCode HltPackedDataDecoder::execute() {
   }
 
   // Get the map of ids to locations (may differ between events)
+  auto* rawEvent = findFirstRawEvent();
+  if (!rawEvent) {
+    return Error("Raw event not found!");
+  }
   const auto& locationsMap = packedObjectLocation2string(tck(*rawEvent));
 
   std::vector<int32_t> linkLocationIDs;
