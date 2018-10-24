@@ -112,7 +112,6 @@ void LHCb::LinksByKey::addReference ( int srcKey, int srcLinkID, int destKey,
         prevIndex = nextIndex;
         nextIndex = m_linkReference[prevIndex].nextIndex();
       }
-      m_linkReference.push_back( temp );
       m_linkReference[prevIndex].setNextIndex( refNum );
     } 
   } else {
