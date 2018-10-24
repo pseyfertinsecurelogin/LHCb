@@ -47,14 +47,12 @@ UTFullDecoding::UTFullDecoding( const std::string& name,
                                 ISvcLocator* pSvcLocator)
   : UT::AlgBase ( name , pSvcLocator )
 {
-  declareProperty("PrintErrorInfo", m_printErrorInfo = true );     
-  declareUTConfigProperty("InputLocation", m_inputLocation , 
+  declareUTConfigProperty("InputLocation", m_inputLocation ,
                           RawEventLocation::Default );
   declareUTConfigProperty("OutputLocation", m_outputLocation,
                           UTTELL1DataLocation::UTFull );
-  declareUTConfigProperty("EventInfoLocation" , m_eventInfoLocation , 
+  declareUTConfigProperty("EventInfoLocation" , m_eventInfoLocation ,
                           UTTELL1EventInfoLocation::UTEventInfo );
-  
   setForcedInit();
 }
 

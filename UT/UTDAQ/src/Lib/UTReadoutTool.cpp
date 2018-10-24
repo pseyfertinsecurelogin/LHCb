@@ -25,8 +25,6 @@ UTReadoutTool::UTReadoutTool(const std::string& type,
 : base_class( type, name, parent)
 {
   // constructor
-  declareProperty( "conditionLocation",
-                    m_conditionLocation  = "/dd/Conditions/ReadoutConf/UT/ReadoutMap");
   m_boards.reserve(100); // about correct
 }
 

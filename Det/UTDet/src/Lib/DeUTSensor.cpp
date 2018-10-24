@@ -186,12 +186,12 @@ StatusCode DeUTSensor::cacheInfo()
 
   clear();
 
-  double yUpper =  m_vMaxLocal;
-  double yLower =  m_vMinLocal;
+  float yUpper =  m_vMaxLocal;
+  float yLower =  m_vMinLocal;
   if ( m_yInverted ) std::swap(yUpper,yLower);
 
-  double xUpper =  m_uMaxLocal - 0.5*m_pitch;
-  double xLower =  m_uMinLocal + 0.5*m_pitch;
+  float xUpper =  m_uMaxLocal - 0.5*m_pitch;
+  float xLower =  m_uMinLocal + 0.5*m_pitch;
   if ( m_xInverted ) std::swap(xUpper,xLower);
 
 

@@ -207,7 +207,7 @@ StatusCode RawBankToUTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
       }
     } // errorbank == 0
 
-    const UTDAQ::version bankVersion = UTDAQ::version(forceVersion() ? m_forcedVersion
+    const UTDAQ::version bankVersion = UTDAQ::version(forceVersion() ? m_forcedVersion.value()
                                                                      : (*iterBank)->version() );
 
     // check the integrity of the bank --> always skip if not ok

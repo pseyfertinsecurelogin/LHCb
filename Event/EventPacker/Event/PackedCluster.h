@@ -60,7 +60,7 @@ namespace LHCb
     static const std::string& Velo = "pRec/Velo/Clusters";
     static const std::string& IT = "pRec/IT/Clusters";
     static const std::string& TT = "pRec/TT/Clusters";
-    static const std::string& UT = "pRec/TT/Clusters";
+    static const std::string& UT = "pRec/UT/Clusters";
   }
 
   /** @class PackedClusters PackedCluster.h Event/PackedCluster.h

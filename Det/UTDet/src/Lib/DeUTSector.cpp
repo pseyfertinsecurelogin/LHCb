@@ -238,7 +238,7 @@ StatusCode DeUTSector::initialize()
   return StatusCode::SUCCESS;
 }
 
-double DeUTSector::noise(const LHCb::UTChannelID& aChannel) const
+float DeUTSector::noise(const LHCb::UTChannelID& aChannel) const
 {
   // check strip is valid
   if (!isStrip(aChannel.strip())) return 999;
@@ -254,27 +254,26 @@ double DeUTSector::noise(const LHCb::UTChannelID& aChannel) const
   return 999;
 }
 
-double DeUTSector::rawNoise(const LHCb::UTChannelID& aChannel) const{
+float DeUTSector::rawNoise(const LHCb::UTChannelID& aChannel) const{
   return sqrt(noise(aChannel)*noise(aChannel) + cmNoise(aChannel)*cmNoise(aChannel));
 }
 
-double DeUTSector::rawSectorNoise() const{
+float DeUTSector::rawSectorNoise() const{
   return sqrt(sectorNoise()*sectorNoise() + cmSectorNoise()*cmSectorNoise());
 }
 
-double DeUTSector::rawBeetleNoise(const unsigned int& beetle) const{
+float DeUTSector::rawBeetleNoise(const unsigned int& beetle) const{
   return sqrt(beetleNoise(beetle)*beetleNoise(beetle) + cmBeetleNoise(beetle)*cmBeetleNoise(beetle));
 }
 
-double DeUTSector::rawPortNoise(const unsigned int& beetle, const unsigned int& port) const{
+float DeUTSector::rawPortNoise(const unsigned int& beetle, const unsigned int& port) const{
   return sqrt(portNoise(beetle,port)*portNoise(beetle,port) + cmPortNoise(beetle,port)*cmPortNoise(beetle,port));
 }
 
-double DeUTSector::sectorNoise() const
-{
+float DeUTSector::sectorNoise() const{
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  double sum(0.0), number(0.0);
+  float sum(0.0), number(0.0);
 
   for (unsigned int chan(0); chan < m_nStrip; ++chan)
   {
@@ -298,7 +297,7 @@ double DeUTSector::sectorNoise() const
   }
 }
 
-double DeUTSector::beetleNoise(const unsigned int& beetle) const
+float DeUTSector::beetleNoise(const unsigned int& beetle) const
 {
   if (beetle > nBeetle())
    {
@@ -317,7 +316,7 @@ double DeUTSector::beetleNoise(const unsigned int& beetle) const
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  double sum(0.), number(0.);
+  float sum(0.), number(0.);
 
   for (unsigned int chan((beetle - 1) * LHCbConstants::nStripsInBeetle);
        chan < beetle * LHCbConstants::nStripsInBeetle; chan++)
@@ -343,7 +342,7 @@ double DeUTSector::beetleNoise(const unsigned int& beetle) const
   }
 }
 
-double DeUTSector::portNoise(const unsigned int& beetle,
+float DeUTSector::portNoise(const unsigned int& beetle,
                              const unsigned int& port) const
 {
   if (beetle > nBeetle())
@@ -378,7 +377,7 @@ double DeUTSector::portNoise(const unsigned int& beetle,
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  double sum(0.), number(0.);
+  float sum(0.), number(0.);
 
   for (unsigned int chan((beetle - 1) * LHCbConstants::nStripsInBeetle +
                          (port - 1) * LHCbConstants::nStripsInPort);
@@ -406,67 +405,67 @@ double DeUTSector::portNoise(const unsigned int& beetle,
   }
 }
 
-void DeUTSector::setNoise(const unsigned int& strip, const double& value)
+void DeUTSector::setNoise(const unsigned int& strip, const float& value)
 {
   Condition* aCon = condition(m_noiseString);
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   }
   else
   {
-    std::vector<double>& reference =
-      aCon -> param< std::vector< double > >( "SectorNoise" );
+    std::vector<float>& reference =
+      aCon -> param< std::vector< float > >( "SectorNoise" );
     reference[strip-1u] = value;
     m_noiseValues[strip-1u] = value;
   }
 }
 
-void DeUTSector::setNoise(const std::vector<double>& values)
+void DeUTSector::setNoise(const std::vector<float>& values)
 {
   Condition* aCon( condition(m_noiseString) );
-  if (aCon == 0)
+  if (aCon == nullptr)
   {
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   }
   else
   {
-    std::vector<double>& reference =
-      aCon -> param< std::vector< double > >( "SectorNoise" );
+    std::vector<float>& reference =
+      aCon -> param< std::vector< float > >( "SectorNoise" );
     reference.assign( values.begin(), values.end() );
     m_noiseValues = values;
   }
 }
 
-void DeUTSector::setCMNoise(const unsigned int& strip, const double& value)
+void DeUTSector::setCMNoise(const unsigned int& strip, const float& value)
 {
   Condition* aCon = condition(m_noiseString);
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   }
   else
   {
-    std::vector<double>& reference =
-      aCon -> param< std::vector< double > >( "cmNoise" );
+    std::vector<float>& reference =
+      aCon -> param< std::vector< float > >( "cmNoise" );
     reference[strip-1u] = value;
     m_cmModeValues[strip-1u] = value;
   }
 }
 
-void DeUTSector::setCMNoise(const std::vector<double>& values)
+void DeUTSector::setCMNoise(const std::vector<float>& values)
 {
   Condition* aCon( condition(m_noiseString) );
-  if (aCon == 0)
+  if (aCon == nullptr)
   {
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   }
   else
   {
-    std::vector<double>& reference =
-      aCon -> param< std::vector< double > >( "cmNoise" );
+    std::vector<float>& reference =
+      aCon -> param< std::vector< float > >( "cmNoise" );
     reference.assign( values.begin(), values.end() );
     m_cmModeValues = values;
   }
@@ -489,7 +488,7 @@ void DeUTSector::setADCConversion(const std::vector<double>& values)
   }
 }
 
-double DeUTSector::cmNoise(const LHCb::UTChannelID& aChannel) const
+float DeUTSector::cmNoise(const LHCb::UTChannelID& aChannel) const
 {
   // check strip is valid
   if (!isStrip(aChannel.strip())) return 999;
@@ -506,11 +505,11 @@ double DeUTSector::cmNoise(const LHCb::UTChannelID& aChannel) const
 }
 
 
-double DeUTSector::cmSectorNoise() const
+float DeUTSector::cmSectorNoise() const
 {
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  double sum(0.0), number(0.0);
+  float sum(0.0), number(0.0);
 
   for (unsigned int chan(0); chan < m_nStrip; ++chan)
   {
@@ -534,7 +533,7 @@ double DeUTSector::cmSectorNoise() const
   }
 }
 
-double DeUTSector::cmBeetleNoise(const unsigned int& beetle) const
+float DeUTSector::cmBeetleNoise(const unsigned int& beetle) const
 {
   if (beetle > nBeetle())
    {
@@ -553,7 +552,7 @@ double DeUTSector::cmBeetleNoise(const unsigned int& beetle) const
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  double sum(0.), number(0.);
+  float sum(0.), number(0.);
 
   for (unsigned int chan((beetle - 1) * LHCbConstants::nStripsInBeetle);
        chan < beetle * LHCbConstants::nStripsInBeetle; chan++)
@@ -579,7 +578,7 @@ double DeUTSector::cmBeetleNoise(const unsigned int& beetle) const
   }
 }
 
-double DeUTSector::cmPortNoise(const unsigned int& beetle,
+float DeUTSector::cmPortNoise(const unsigned int& beetle,
                                const unsigned int& port) const
 {
   if (beetle > nBeetle())
@@ -614,7 +613,7 @@ double DeUTSector::cmPortNoise(const unsigned int& beetle,
 
   const std::vector<DeUTSector::Status> statusVector = stripStatus();
 
-  double sum(0.), number(0.);
+  float sum(0.), number(0.);
 
   for (unsigned int chan((beetle - 1) * LHCbConstants::nStripsInBeetle +
                          (port - 1) * LHCbConstants::nStripsInPort);
@@ -830,7 +829,7 @@ StatusCode DeUTSector::registerConditionsCallbacks(){
 StatusCode DeUTSector::updateStatusCondition(){
 
   Condition* aCon = const_cast<Condition*>(statusCondition());
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << "failed to find status condition" << endmsg;
     return StatusCode::FAILURE;
@@ -859,7 +858,7 @@ StatusCode DeUTSector::updateStatusCondition(){
 StatusCode DeUTSector::updateNoiseCondition()
 {
   Condition* aCon = condition(m_noiseString);
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "failed to find noise condition" << endmsg;
     return StatusCode::FAILURE;
@@ -956,7 +955,7 @@ double DeUTSector::fractionActive() const {
 void DeUTSector::setMeasEff(const double value){
   m_measEff = value;
   Condition* aCon = condition(m_statusString);
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -971,7 +970,7 @@ void DeUTSector::setSectorStatus(const DeUTSector::Status& newStatus)
 
   // Set the condition
   Condition* aCon = condition(m_statusString);
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {
@@ -1052,7 +1051,7 @@ void DeUTSector::setStatusCondition( const std::string& type,
 {
   // Set the condition
   Condition* aCon = condition(m_statusString);
-  if (aCon == 0){
+  if (aCon == nullptr){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find status condition" << endmsg;
   } else {

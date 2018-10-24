@@ -136,7 +136,8 @@ protected:
 
   Gaudi::Property<bool> m_printMapping { this, "printMapping", false };
   DeUTDetector* m_tracker = nullptr;
-  std::string m_conditionLocation;
+  Gaudi::Property<std::string> m_conditionLocation 
+    {this, "conditionLocation","/dd/Conditions/ReadoutConf/UT/ReadoutMap"};
 
 private:
 

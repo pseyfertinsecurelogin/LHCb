@@ -79,7 +79,7 @@ public:
   /** detector pitch
    * @return pitch
    */
-  double pitch() const;
+  float pitch() const;
 
   /** number of strips
    * @return number of strips
@@ -160,19 +160,19 @@ public:
                        double tol = 0) const;
 
   /** thickness
-   * @return double thickness
+   * @return float thickness
    */
-  double thickness() const;
+  float thickness() const;
 
   /** active height
-  * @return double activeHeight
+  * @return float activeHeight
   **/
-  double activeHeight() const;
+  float activeHeight() const;
 
   /** active height
-  * @return double activeWidth
+  * @return float activeWidth
   **/
-  double activeWidth() const;
+  float activeWidth() const;
 
   /**  sensor capacitance **/
   double capacitance() const;
@@ -200,7 +200,7 @@ private:
 
   void clear();
   void determineSense();
-  void cacheInfo();
+  StatusCode cacheInfo();
   StatusCode registerConditionsCallbacks();
 
   Gaudi::Plane3D m_plane;
@@ -212,23 +212,23 @@ private:
 
   unsigned int m_firstStrip = 1;
   unsigned int m_id = 0u;
-  double m_pitch = 0.0;
+  float m_pitch = 0.0;
   unsigned int m_nStrip = 0u;
   std::string m_versionString;
 
-  double m_thickness = 0.0;
-  double m_uMinLocal = 0.0;
-  double m_uMaxLocal = 0.0;
-  double m_vMinLocal = 0.0;
-  double m_vMaxLocal = 0.0;
+  float m_thickness = 0.0;
+  float m_uMinLocal = 0.0;
+  float m_uMaxLocal = 0.0;
+  float m_vMinLocal = 0.0;
+  float m_vMaxLocal = 0.0;
 
   std::unique_ptr<LHCb::Trajectory<double>> m_midTraj;
 
   bool m_xInverted = false;
   bool m_yInverted = false;
 
-  double m_deadWidth = 0.0;
-  double m_stripLength = 0.0;
+  float m_deadWidth = 0.0;
+  float m_stripLength = 0.0;
 
 };
 
@@ -244,7 +244,7 @@ inline void DeUTSensor::setID(unsigned int id) {
   m_id = id;
 }
 
-inline double DeUTSensor::pitch() const{
+inline float DeUTSensor::pitch() const{
   return m_pitch;
 }
 
@@ -257,15 +257,15 @@ inline unsigned int DeUTSensor::nStrip() const{
 }
 
 
-inline double DeUTSensor::thickness() const{
+inline float DeUTSensor::thickness() const{
   return m_thickness;
 }
 
-inline double DeUTSensor::activeWidth() const{
+inline float DeUTSensor::activeWidth() const{
   return fabs(m_uMinLocal - m_uMaxLocal);
 }
 
-inline double DeUTSensor::activeHeight() const{
+inline float DeUTSensor::activeHeight() const{
   return fabs(m_vMinLocal - m_vMaxLocal);
 }
 

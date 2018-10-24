@@ -90,11 +90,11 @@ protected:
 
  unsigned int byteSize(LHCb::span<const LHCb::RawBank*> banks) const;
 
- bool m_skipErrors = false;
+ Gaudi::Property<bool> m_skipErrors {this, "skipBanksWithErrors", false};
  std::string m_bankTypeString;
 
- int m_forcedVersion = 0;
- bool m_checkValidSpill = false;
+ Gaudi::Property<int> m_forcedVersion {this, "forcedVersion", UTDAQ::inValidVersion};
+ Gaudi::Property<bool> m_checkValidSpill {this, "checkValidity", false};
  LHCb::RawBank::BankType m_errorType;
  LHCb::RawBank::BankType m_bankType;
 
@@ -105,7 +105,7 @@ private:
 
   std::string m_errorBankString;
 
-  bool m_recoverMode = false;
+  Gaudi::Property<bool> m_recoverMode {this, "recoverMode", true};
 
 };
 
