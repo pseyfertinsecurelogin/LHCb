@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2015-2018 CERN for the benefit of the LHCb Collaboration      *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 /** @file SOAView.h
  *
  * @author Manuel Schiller <Manuel.Schiller@cern.ch>
@@ -538,11 +548,16 @@ namespace SOA {
             using its_safe_tag = union {};
             class position {
             private:
-                SOAStorage* m_stor = nullptr;
-                size_type m_idx = 0;
+                SOAStorage* m_stor;
+                size_type m_idx;
             public:
                 using parent_type = self_type;
                 using safe_tag = its_safe_tag;
+                constexpr position() noexcept : m_stor(nullptr), m_idx(0) {}
+                constexpr position(const position&) noexcept = default;
+                constexpr position(position&&) noexcept = default;
+                position& operator=(const position&) noexcept = default;
+                position& operator=(position&&) noexcept = default;
                 constexpr position(SOAStorage* stor, size_type idx) noexcept :
                     m_stor(stor), m_idx(idx) {}
                 SOAStorage*& stor() noexcept { return m_stor; }
@@ -630,7 +645,7 @@ namespace SOA {
             using naked_const_reference_tuple_type = typename SOA::Typelist::to_tuple<
                 fields_typelist>::const_reference_tuple;
 
-            _View() {}
+            _View() = default;
 
         public:
             /// (notion of) type of the contained objects
@@ -706,6 +721,8 @@ namespace SOA {
             _View(const self_type& other) = default;
             /// move constructor
             _View(self_type&& other) = default;
+            /// destructor
+            ~_View() = default;
 
             /// assignment from other _View
             self_type& operator=(const self_type& other) = default;

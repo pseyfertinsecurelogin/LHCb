@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2015-2018 CERN for the benefit of the LHCb Collaboration      *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 /** @file Container.h
  *
  * @author Manuel Schiller <Manuel.Schiller@cern.ch>
@@ -264,11 +274,13 @@ namespace SOA {
 
         public:
             /// default constructor
-            _Container() : BASE() { }
+            _Container() = default;
             /// copy constructor
             _Container(const self_type& other) = default;
             /// move constructor
             _Container(self_type&& other) = default;
+            /// destructor
+            ~_Container() = default;
             /// assignment from other _Container
             self_type& operator=(const self_type& other) = default;
             /// move-assignment from other _Container
@@ -392,6 +404,18 @@ namespace SOA {
                         std::forward<T>(val));
             }
 
+            /// push element from related View or Container at back of array
+            template <typename REF>
+            typename std::enable_if<
+                    !std::is_constructible<value_type, REF>::value &&
+                    std::is_same<fields_typelist,
+                                 typename REF::fields_typelist>::value>::type
+            push_back(REF val) noexcept(
+                    noexcept(std::declval<self_type&>().push_back(typename REF::const_reference(val))))
+            {
+                push_back(typename REF::const_reference(val));
+            }
+
             /// insert a value at the given position
             template <typename T>
             typename std::enable_if<std::is_constructible<value_type,
@@ -409,6 +433,18 @@ namespace SOA {
                 return iterator{ position{ pos.stor(), pos.idx() } };
             }
 
+            /// insert element from related View or Container at pos
+            template <typename REF>
+            typename std::enable_if<
+                    !std::is_constructible<value_type, REF>::value &&
+                    std::is_same<fields_typelist,
+                                 typename REF::fields_typelist>::value, iterator>::type
+            insert(const_iterator pos, REF val) noexcept(
+                    noexcept(std::declval<self_type&>().insert(pos, typename REF::const_reference(val))))
+            {
+                return insert(pos, typename REF::const_reference(val));
+            }
+
             /// insert count copies of value at the given position
             iterator insert(const_iterator pos, size_type count,
                 const value_type& val) noexcept(
@@ -421,6 +457,18 @@ namespace SOA {
                         impl::insertHelper2<size_type>{pos.idx(), count},
                         this->m_storage, val);
                 return iterator{ position{ pos.stor(), pos.idx() } };
+            }
+
+            /// insert count copies of element from related View or Container at pos
+            template <typename REF>
+            typename std::enable_if<
+                    !std::is_constructible<value_type, REF>::value &&
+                    std::is_same<fields_typelist,
+                                 typename REF::fields_typelist>::value, iterator>::type
+            insert(const_iterator pos, size_type count, REF val) noexcept(
+                    noexcept(std::declval<self_type&>().insert(pos, count, typename REF::const_reference(val))))
+            {
+                return insert(pos, count, typename REF::const_reference(val));
             }
 
             /// insert elements between first and last at position pos
@@ -802,9 +850,6 @@ namespace SOA {
     class Container : public _ContainerImpl::Container<CONTAINER, SKIN, FIELDS...>
     {
         using _ContainerImpl::Container<CONTAINER, SKIN, FIELDS...>::Container;
-        public:
-        template <typename... ARGS>
-        using Storage = CONTAINER<ARGS...>;
     };
 } // namespace SOA
 

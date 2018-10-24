@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2015-2018 CERN for the benefit of the LHCb Collaboration      *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef SOAITERATOR_H
 #define SOAITERATOR_H
 
@@ -15,12 +25,12 @@ namespace SOA {
         template < template <typename...> class CONTAINER,
             template <typename> class SKIN, typename... FIELDS>
         friend class _Container;
-        using parent_type = typename POSITION::parent_type;
 
         using POSITION::stor;
         using POSITION::idx;
 
     public:
+        using parent_type = typename POSITION::parent_type;
         using iterator_category = std::random_access_iterator_tag;
         using reference = typename std::conditional<ISCONST,
               typename parent_type::const_reference,
@@ -30,6 +40,12 @@ namespace SOA {
         using value_type = typename parent_type::value_type;
         using pointer = Iterator<POSITION, ISCONST>;
         using const_pointer = Iterator<POSITION, true>;
+
+        constexpr Iterator() noexcept = default;
+        constexpr Iterator(const Iterator<POSITION, ISCONST>&) noexcept = default;
+        constexpr Iterator(Iterator<POSITION, ISCONST>&&) noexcept = default;
+        Iterator<POSITION, ISCONST>& operator=(const Iterator<POSITION, ISCONST>&) noexcept = default;
+        Iterator<POSITION, ISCONST>& operator=(Iterator<POSITION, ISCONST>&&) noexcept = default;
 
         // "magic" constructor to be used by SOA container classes only
         //
@@ -46,9 +62,12 @@ namespace SOA {
             POSITION(std::forward<POS>(pos))
         {}
 
-        // test for "nullness"
-        constexpr operator bool() const noexcept
+        // test for nullness
+        constexpr explicit operator bool() const noexcept
         { return stor() && (idx() < std::get<0>(*stor()).size()); }
+        // test for non-nullness
+        constexpr bool operator!() const noexcept
+        { return !bool(*this); }
 
         // deference/index/operator->
         constexpr reference operator*() const noexcept
@@ -82,7 +101,7 @@ namespace SOA {
         // pointer equality
         friend constexpr bool operator==(
                 const pointer& p, const pointer& q) noexcept
-        { return p.stor() == q.stor() && p.idx() == q.idx(); }
+        { return p.idx() == q.idx() && p.stor() == q.stor(); }
         friend constexpr bool operator!=(
                 const pointer& p, const pointer& q) noexcept
         { return !(p == q); }
@@ -92,8 +111,8 @@ namespace SOA {
         friend constexpr bool operator<(
                 const pointer& p, const pointer& q) noexcept
         {
-            return (p.stor() < q.stor()) ||
-                (!(q.stor() < p.stor()) && p.idx() < q.idx());
+            return (p.idx() < q.idx()) ||
+                   (!(q.idx() < p.idx()) && (p.stor() < q.stor()));
         }
         friend constexpr bool operator>(
                 const pointer& p, const pointer& q) noexcept
@@ -110,6 +129,24 @@ namespace SOA {
             os << "iterator{ stor=" << p.stor() << ", pos=" << p.idx() << " }";
             return os;
         }
+
+        /// convert SOA iterator into iterator for given field
+        template <typename FIELD>
+        auto for_field() const noexcept -> typename std::conditional<
+                ISCONST,
+                decltype(std::get<parent_type::template memberno<FIELD>()>(
+                                 *std::declval<POSITION>().stor())
+                                 .cbegin() +
+                         std::declval<POSITION>().idx()),
+                decltype(std::get<parent_type::template memberno<FIELD>()>(
+                                 *std::declval<POSITION>().stor())
+                                 .begin() +
+                         std::declval<POSITION>().idx())>::type
+        {
+            return std::get<parent_type::template memberno<FIELD>()>(*stor())
+                           .begin() +
+                   idx();
+        }
     };
 
     /// iterator + integer constant (or similar)
@@ -118,7 +155,10 @@ namespace SOA {
               typename Iterator<POSITION, CONST>::difference_type, INC>::value,
     Iterator<POSITION, CONST> >::type operator+(
             const Iterator<POSITION, CONST>& pos, INC inc) noexcept
-    { return Iterator<POSITION, CONST>(pos) += inc; }
+    {
+        return Iterator<POSITION, CONST>(pos) +=
+               typename Iterator<POSITION, CONST>::difference_type(inc);
+    }
 
     /// integer constant (or similar) + iterator
     template <typename POSITION, bool CONST, typename INC>
@@ -126,7 +166,10 @@ namespace SOA {
               typename Iterator<POSITION, CONST>::difference_type, INC>::value,
     Iterator<POSITION, CONST> >::type operator+(INC inc,
             const Iterator<POSITION, CONST>& pos) noexcept
-    { return Iterator<POSITION, CONST>(pos) += inc; }
+    {
+        return Iterator<POSITION, CONST>(pos) +=
+               typename Iterator<POSITION, CONST>::difference_type(inc);
+    }
 
     /// iterator - integer constant (or similar)
     template <typename POSITION, bool CONST, typename INC>
@@ -134,7 +177,10 @@ namespace SOA {
               typename Iterator<POSITION, CONST>::difference_type, INC>::value,
     Iterator<POSITION, CONST> >::type operator-(
             const Iterator<POSITION, CONST>& pos, INC inc) noexcept
-    { return Iterator<POSITION, CONST>(pos) -= inc; }
+    {
+        return Iterator<POSITION, CONST>(pos) -=
+               typename Iterator<POSITION, CONST>::difference_type(inc);
+    }
 
 } // namespace SOA
 

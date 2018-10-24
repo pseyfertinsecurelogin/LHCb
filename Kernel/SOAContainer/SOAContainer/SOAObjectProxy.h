@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2015-2018 CERN for the benefit of the LHCb Collaboration      *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 /** @file SOAObjectProxy.h
  *
  * @author Manuel Schiller <Manuel.Schiller@cern.ch>
@@ -275,9 +285,11 @@ namespace SOA {
         /// access to member by number
         template <size_type MEMBERNO>
         auto get() noexcept -> decltype(std::get<MEMBERNO>(
-                *std::declval<self_type>()
-                         .stor())[std::declval<self_type>().idx()])
+                *std::declval<POSITION&>()
+                         .stor())[std::declval<POSITION&>().idx()])
         {
+            static_assert(std::is_base_of<POSITION, self_type>::value,
+                          "SOAObjectProxy must be derived from POSITION");
             return std::get<MEMBERNO>(*stor())[idx()];
         }
         /// access to member by "member tag"
@@ -285,9 +297,11 @@ namespace SOA {
                 typename MEMBER,
                 size_type MEMBERNO = parent_type::template memberno<MEMBER>()>
         auto get() noexcept -> decltype(std::get<MEMBERNO>(
-                *std::declval<self_type>()
-                         .stor())[std::declval<self_type>().idx()])
+                *std::declval<POSITION&>()
+                         .stor())[std::declval<POSITION&>().idx()])
         {
+            static_assert(std::is_base_of<POSITION, self_type>::value,
+                          "SOAObjectProxy must be derived from POSITION");
             static_assert(parent_type::template memberno<MEMBER>() ==
                                   MEMBERNO,
                           "Called with wrong template argument(s).");
@@ -296,9 +310,11 @@ namespace SOA {
         /// access to member by number (read-only)
         template <size_type MEMBERNO>
         auto get() const noexcept -> decltype(std::get<MEMBERNO>(
-                *std::declval<self_type>()
-                         .stor())[std::declval<self_type>().idx()])
+                *std::declval<const POSITION&>()
+                         .stor())[std::declval<const POSITION&>().idx()])
         {
+            static_assert(std::is_base_of<POSITION, self_type>::value,
+                          "SOAObjectProxy must be derived from POSITION");
             return std::get<MEMBERNO>(*stor())[idx()];
         }
         /// access to member by "member tag" (read-only)
@@ -306,9 +322,11 @@ namespace SOA {
                 typename MEMBER,
                 size_type MEMBERNO = parent_type::template memberno<MEMBER>()>
         auto get() const noexcept -> decltype(std::get<MEMBERNO>(
-                *std::declval<self_type>()
-                         .stor())[std::declval<self_type>().idx()])
+                *std::declval<const POSITION&>()
+                         .stor())[std::declval<const POSITION&>().idx()])
         {
+            static_assert(std::is_base_of<POSITION, self_type>::value,
+                          "SOAObjectProxy must be derived from POSITION");
             static_assert(parent_type::template memberno<MEMBER>() ==
                                   MEMBERNO,
                           "Called with wrong template argument(s).");

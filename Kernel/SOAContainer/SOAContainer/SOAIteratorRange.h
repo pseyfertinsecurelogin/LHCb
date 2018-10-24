@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2015-2018 CERN for the benefit of the LHCb Collaboration      *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 /** @file SOAIteratorRange.h
  *
  * @brief a range given by two iterators
@@ -168,12 +178,15 @@ namespace SOA {
      *
      * @returns iterator_range<IT> from [first, last(
      */
-    template <typename IT>
+    template <typename IT, typename JT,
+              typename = typename std::enable_if<std::is_same<
+                      typename std::decay<IT>::type,
+                      typename std::decay<JT>::type>::value>::type>
     constexpr iterator_range<typename std::remove_reference<IT>::type>
-    make_iterator_range(IT&& first, IT&& last)
+    make_iterator_range(IT&& first, JT&& last)
     {
         return iterator_range<typename std::remove_reference<IT>::type>{
-            std::forward<IT>(first), std::forward<IT>(last) };
+            std::forward<IT>(first), std::forward<JT>(last) };
     }
 } // namespace SOA
 
