@@ -35,7 +35,7 @@ using namespace LHCb;
  */
 
 DeUTLayer::DeUTLayer( const std::string& name ) :
-  DeUTBaseElement( name ),
+  DeUTBaseElement( name )
 {
   m_modules.clear();
 }

@@ -200,7 +200,7 @@ private:
 
   void clear();
   void determineSense();
-  void cacheInfo();
+  StatusCode cacheInfo();
   StatusCode registerConditionsCallbacks();
 
   Gaudi::Plane3D m_plane;
