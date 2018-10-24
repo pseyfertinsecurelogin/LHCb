@@ -51,16 +51,8 @@ UTDecodingBaseAlg::UTDecodingBaseAlg( const std::string& name,
                                            ISvcLocator* pSvcLocator )
     : UT::AlgBase (name , pSvcLocator)
 {
- // Standard constructor, initializes variables
- declareUTConfigProperty("ErrorBank", m_errorBankString , "UTError");
-
- declareProperty("skipBanksWithErrors", m_skipErrors = false );
- declareProperty("recoverMode", m_recoverMode = true);
-
- declareProperty("forcedVersion", m_forcedVersion = UTDAQ::inValidVersion);
- declareProperty("checkValidity", m_checkValidSpill = true);
-
- setForcedInit();
+  declareUTConfigProperty("ErrorBank", m_errorBankString , "UTError");
+  setForcedInit();
 }
 
 StatusCode UTDecodingBaseAlg::initialize() {

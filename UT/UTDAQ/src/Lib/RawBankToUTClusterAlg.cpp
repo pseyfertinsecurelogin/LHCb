@@ -160,7 +160,7 @@ LHCb::UTSummary RawBankToUTClusterAlg::decodeBanks(const RawEvent& rawEvt,
     // make a decoder
     UTDecoder decoder(bank->data());
     // get verion of the bank
-    const UTDAQ::version bankVersion = forceVersion() ? UTDAQ::version(m_forcedVersion): UTDAQ::version(bank->version());
+    const UTDAQ::version bankVersion = forceVersion() ? UTDAQ::version(m_forcedVersion.value()): UTDAQ::version(bank->version());
 
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "decoding bank version " << bankVersion << endmsg;

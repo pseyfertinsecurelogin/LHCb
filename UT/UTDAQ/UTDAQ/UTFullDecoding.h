@@ -42,10 +42,10 @@ private:
   LHCb::RawBank::BankType m_bankType;
 
   // job options
-  bool m_printErrorInfo = false;           ///< Flag to print out errors from event info
+  Gaudi::Property<bool> m_printErrorInfo
+    {this, "PrintErrorInfo", true};///< Flag to print out errors from event info
   std::string m_inputLocation;     ///< Location of RawEvent
   std::string m_outputLocation;    ///< Location of NZS output data, e.g. UTFull
   std::string m_eventInfoLocation; ///< Location of event info data
-
 };
 #endif // UTFULLDECODING_H

@@ -106,109 +106,109 @@ public:
 
   /** get the noise of the corresponding strip
    * @param aChannel channel
-   * @return double noise of the strip
+   * @return float noise of the strip
    */
-  double noise(const LHCb::UTChannelID& aChannel) const;
+  float noise(const LHCb::UTChannelID& aChannel) const;
 
   /** get the average noise in the sector
-   * @return double average noise
+   * @return float average noise
    */
-  double sectorNoise() const;
+  float sectorNoise() const;
 
   /** get the average noise of a beetle
    * @param beetle beetle number (1-4)
-   * @return double average noise
+   * @return float average noise
    */
-  double beetleNoise(const unsigned int& beetle) const;
+  float beetleNoise(const unsigned int& beetle) const;
 
   /** get the average noise of a beetle port
    * @param beetle beetle number (1-4)
    * @param port beetle port number (1-3)
-   * @return double average noise
+   * @return float average noise
    */
-  double portNoise(const unsigned int& beetle, const unsigned int& port) const;
+  float portNoise(const unsigned int& beetle, const unsigned int& port) const;
 
   /** set the Noise of the corresponding strip
    * @param strip strip number
    * @param value Noise value
    */
-  void setNoise(const unsigned int& strip, const double& value);
+  void setNoise(const unsigned int& strip, const float& value);
 
   /** set the Noise of the corresponding channel
    * @param chan channel
    * @param value Noise value
    */
-  void setNoise(const LHCb::UTChannelID &chan, const double& value);
+  void setNoise(const LHCb::UTChannelID &chan, const float& value);
 
   /** set the Noise vector
    * @param values Noise vector
    */
-  void setNoise(const std::vector<double>& values);
+  void setNoise(const std::vector<float>& values);
 
   /** get the Noise of the corresponding strip
    * @param aChannel channel
-   * @return double noise of the strip
+   * @return float noise of the strip
    */
-  double rawNoise(const LHCb::UTChannelID& aChannel) const;
+  float rawNoise(const LHCb::UTChannelID& aChannel) const;
 
   /** get the average raw noise in the sector
-   * @return double average noise
+   * @return float average noise
    */
-  double rawSectorNoise() const;
+  float rawSectorNoise() const;
 
   /** get the average raw noise of a beetle
    * @param beetle beetle number (1-4)
-   * @return double average noise
+   * @return float average noise
    */
-  double rawBeetleNoise(const unsigned int& beetle) const;
+  float rawBeetleNoise(const unsigned int& beetle) const;
 
   /** get the average raw noise of a beetle port
    * @param beetle beetle number (1-4)
    * @param port beetle port number (1-3)
-   * @return double average noise
+   * @return float average noise
    */
-  double rawPortNoise(const unsigned int& beetle, const unsigned int& port) const;
+  float rawPortNoise(const unsigned int& beetle, const unsigned int& port) const;
 
   /** get the common mode noise of the corresponding strip
    * @param aChannel channel
-   * @return double noise of the strip
+   * @return float noise of the strip
    */
-  double cmNoise(const LHCb::UTChannelID& aChannel) const;
+  float cmNoise(const LHCb::UTChannelID& aChannel) const;
 
   /** get the average common noise in the sector
-   * @return double average noise
+   * @return float average noise
    */
-  double cmSectorNoise() const;
+  float cmSectorNoise() const;
 
   /** get the average common mode noise of a beetle
    * @param beetle beetle number (1-4)
-   * @return double average noise
+   * @return float average noise
    */
-  double cmBeetleNoise(const unsigned int& beetle) const;
+  float cmBeetleNoise(const unsigned int& beetle) const;
 
   /** get the average common mode noise of a beetle port
    * @param beetle beetle number (1-4)
    * @param port beetle port number (1-3)
-   * @return double average noise
+   * @return float average noise
    */
-  double cmPortNoise(const unsigned int& beetle, const unsigned int& port) const;
+  float cmPortNoise(const unsigned int& beetle, const unsigned int& port) const;
 
   /** set the cmNoise of the corresponding strip
    * @param strip strip number
    * @param value cmNoise value
    */
-  void setCMNoise(const unsigned int& strip, const double& value);
+  void setCMNoise(const unsigned int& strip, const float& value);
 
   /** set the cmNoise of the corresponding channel
    * @param chan channel
    * @param value cmNoise value
    */
-  void setCMNoise(const LHCb::UTChannelID &chan, const double& value);
+  void setCMNoise(const LHCb::UTChannelID &chan, const float& value);
 
   /** set the cmNoise vector
    * @param values cmNoise vector
    */
-  void setCMNoise(const std::vector<double>& values);
+  void setCMNoise(const std::vector<float>& values);
 
   /** set the ACD count from the electron number vector
    * @param values
@@ -554,9 +554,9 @@ private:
 
   // Noise info
   std::string m_noiseString = "Noise";
-  std::vector< double > m_noiseValues;
+  std::vector< float > m_noiseValues;
   std::vector< double > m_electronsPerADC;
-  std::vector< double > m_cmModeValues;
+  std::vector< float > m_cmModeValues;
 };
 
 inline unsigned int DeUTSector::id() const{
@@ -656,13 +656,13 @@ inline unsigned int DeUTSector::nBeetle() const{
   return nStrip()/LHCbConstants::nStripsInBeetle;
 }
 
-inline void DeUTSector::setNoise(const LHCb::UTChannelID &chan, const double& value)
+inline void DeUTSector::setNoise(const LHCb::UTChannelID &chan, const float& value)
 {
   // just delegate
   setNoise(chan.strip(),value);
 }
 
-inline void DeUTSector::setCMNoise(const LHCb::UTChannelID &chan, const double& value)
+inline void DeUTSector::setCMNoise(const LHCb::UTChannelID &chan, const float& value)
 {
   // just delegate
   setCMNoise(chan.strip(),value);
