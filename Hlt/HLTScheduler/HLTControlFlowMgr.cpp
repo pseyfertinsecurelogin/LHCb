@@ -228,7 +228,7 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
       createdEvts,
       this
     ] () mutable {
-      auto rawEvtContext = evtContext.get();
+      auto* rawEvtContext = evtContext.get();
 
       Gaudi::Hive::setCurrentContext( rawEvtContext );
 
@@ -255,7 +255,7 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
                                if ( req ) {
                                  bNode.execute( NodeStates,
                                                 AlgStates,
-                                                *evtContext.get(),
+                                                *rawEvtContext,
                                                 m_algExecStateSvc,
                                                 appmgr );
                                  bNode.notifyParents( NodeStates );
@@ -266,16 +266,16 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
       }
       m_algExecStateSvc->updateEventStatus( false, *evtContext );
 
+      //printing
+      if ( msgLevel( MSG::DEBUG ) && createdEvts % m_printFreq == 0) {
+        debug() << buildStructuredTreeWithStates( NodeStates ).str() << endmsg;
+        debug() << buildAlgsWithStates( AlgStates ).str() << endmsg;
+      }
+
       // update scheduler state
       promoteToExecuted( std::move( evtContext ) );
       Gaudi::Hive::setCurrentContextEvt( -1 );
 
-      //printing
-      if ( msgLevel( MSG::DEBUG ) && createdEvts % m_printFreq == 0) {
-        std::stringstream printableTree =
-            buildStructuredTreeWithStates( NodeStates );
-        debug() << printableTree.str() << endmsg;
-      }
       return nullptr;
     }
   );
@@ -636,9 +636,10 @@ void HLTControlFlowMgr::configureScheduling() {
 
   }
 
+  m_AlgNames.reserve(allAlgos.size());
+  std::transform(begin(allAlgos), end(allAlgos), std::back_inserter(m_AlgNames), [] (auto const* alg) {return alg->name();});
 
-
-  m_AlgStates = std::vector<int>(allAlgos.size());
+  m_AlgStates = std::vector<uint16_t>(allAlgos.size());
 
   //end of Data depdendency handling
 
@@ -702,7 +703,7 @@ void HLTControlFlowMgr::registerStructuredTree() {
                           std::stringstream ss;
                           ss << std::string(currentIndent, ' ') << node.getType() << ": " << node.m_name << " ";
                           m_printableDependencyTree.emplace_back(ss.str());
-                          m_mapPrintToStateOrder.emplace_back(node.m_NodeID); //to later print it
+                          m_mapPrintToNodeStateOrder.emplace_back(node.m_NodeID); //to later print it
                           for (VNode *child : node.m_children) {
                             itself(child, currentIndent + 1, itself);
                           }
@@ -711,7 +712,7 @@ void HLTControlFlowMgr::registerStructuredTree() {
                           std::stringstream ss;
                           ss << std::string(currentIndent, ' ') << node.m_name << " ";
                           m_printableDependencyTree.emplace_back(ss.str());
-                          m_mapPrintToStateOrder.emplace_back(node.m_NodeID);
+                          m_mapPrintToNodeStateOrder.emplace_back(node.m_NodeID);
                         }},
                *vnode);
   };
@@ -728,13 +729,23 @@ void HLTControlFlowMgr::registerTreePrintWidth() {
 
 
 //build the full tree
-inline std::stringstream
-HLTControlFlowMgr::buildStructuredTreeWithStates(std::vector<NodeState> const states) {
+std::stringstream HLTControlFlowMgr::buildStructuredTreeWithStates(std::vector<NodeState> const & states) const {
   assert(!m_printableDependencyTree.empty());
   std::stringstream ss;
   ss << '\n';
-  for (std::size_t i = 0; i < m_printableDependencyTree.size(); ++i) {
-    ss << std::left << std::setw(m_maxTreeWidth + 1) << m_printableDependencyTree[i] << states[m_mapPrintToStateOrder[i]] << '\n';
+  for (auto const & [treeEntry, printToStateIndex] : Gaudi::Functional::details::zip::range(m_printableDependencyTree, m_mapPrintToNodeStateOrder)) {
+    ss << std::left << std::setw(m_maxTreeWidth + 1) << treeEntry << states[printToStateIndex] << '\n';
+  }
+  return ss;
+}
+
+//build the AlgState printout
+std::stringstream
+HLTControlFlowMgr::buildAlgsWithStates(std::vector<uint16_t> const & states) const {
+  std::stringstream ss;
+  ss << '\n';
+  for (auto const & [name, state] : Gaudi::Functional::details::zip::range(m_AlgNames, states)) {
+    ss << std::left << std::setw(20) << name << state << '\n';
   }
   return ss;
 }

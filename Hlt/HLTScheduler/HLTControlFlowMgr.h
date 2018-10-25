@@ -95,7 +95,7 @@ private:
 private:
   Gaudi::Property<std::string> m_histPersName{this, "HistogramPersistency", "", ""};
   Gaudi::Property<std::string> m_evtsel{this, "EvtSel", "", ""};
-  Gaudi::Property<int> m_threadPoolSize{this, "ThreadPoolSize", -1, "Size of the threadpool initialised by TBB"};
+  Gaudi::Property<uint16_t> m_threadPoolSize{this, "ThreadPoolSize", -1, "Size of the threadpool initialised by TBB"};
   Gaudi::Property<std::string> m_whiteboardSvcName{this, "WhiteboardSvc", "EventDataSvc", "The whiteboard name"};
   Gaudi::Property<std::string> m_dotfile{
       this, "DotFile", {}, "Name of file to dump dependency graph; if empty, do not dump"};
@@ -140,7 +140,7 @@ private:
 
   //state vectors for each event, once filled, then copied per event
   std::vector<NodeState> m_NodeStates;
-  std::vector<int> m_AlgStates;
+  std::vector<uint16_t> m_AlgStates;
 
   //all controlflownodes
   std::vector<VNode> m_allVNodes;
@@ -154,8 +154,9 @@ private:
   //for printing
   //printable dependency tree (will be built during initialize
   std::vector<std::string> m_printableDependencyTree;
+  std::vector<std::string> m_AlgNames;
   //map order of print to order of m_NodeStates and m_allVNodes
-  std::vector<int> m_mapPrintToStateOrder;
+  std::vector<int> m_mapPrintToNodeStateOrder;
   //maximum width of the dependencytree
   int m_maxTreeWidth;
 
@@ -163,5 +164,7 @@ private:
   void registerStructuredTree();
   void registerTreePrintWidth();
   //runtime adding of states to print tree and states
-  std::stringstream buildStructuredTreeWithStates(std::vector<NodeState> const states);
+  public:
+  std::stringstream buildStructuredTreeWithStates(std::vector<NodeState> const & states) const;
+  std::stringstream buildAlgsWithStates(std::vector<uint16_t> const & states) const;
 };

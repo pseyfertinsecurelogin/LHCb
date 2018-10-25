@@ -35,28 +35,28 @@
 #include "GaudiKernel/MsgStream.h"
 
 struct NodeState {
-  int executionCtr;
+  uint16_t executionCtr;
   bool passed;
-  NodeState(int execounter, bool pass) : executionCtr(execounter), passed(pass) {}
+  NodeState(uint16_t execounter, bool pass) : executionCtr(execounter), passed(pass) {}
 };
 
 struct AlgWrapper {
   Algorithm* m_alg;
-  int m_executedIndex;
+  uint16_t m_executedIndex;
 
-  AlgWrapper (Algorithm* algo, int index) : m_alg(algo), m_executedIndex(index) {
+  AlgWrapper (Algorithm* algo, uint16_t index) : m_alg(algo), m_executedIndex(index) {
     assert(m_alg != nullptr);
   }
 
-  int isExecuted (std::vector<int> const& AlgoStates) const {
+  bool isExecuted (std::vector<uint16_t> const& AlgoStates) const {
     return AlgoStates[m_executedIndex];
   }
 
-  void setIndex (int i) { m_executedIndex = i; }
+  void setIndex (uint16_t i) { m_executedIndex = i; }
 
-  StatusCode execute(EventContext& evtCtx, std::vector<int>& AlgoStates) const {
+  StatusCode execute(EventContext& evtCtx, std::vector<uint16_t>& AlgoStates) const {
     m_alg->whiteboard()->selectStore( evtCtx.valid() ? evtCtx.slot() : 0 ).ignore();
-    AlgoStates[m_executedIndex] = 1;
+    AlgoStates[m_executedIndex]++;
     return m_alg->sysExecute( evtCtx );
   }
 
@@ -97,7 +97,7 @@ public:
   BasicNode( std::string const & name, MsgStream& msg )
       : m_name( name ), m_msg(msg){};
 
-  void execute(std::vector<NodeState> &NodeStates, std::vector<int> &AlgStates, EventContext& evtCtx, IAlgExecStateSvc* aess, SmartIF<IProperty> & appmgr) const {
+  void execute(std::vector<NodeState> &NodeStates, std::vector<uint16_t> &AlgStates, EventContext& evtCtx, IAlgExecStateSvc* aess, SmartIF<IProperty> & appmgr) const {
     assert(aess != nullptr);
     //first, execute the required algorithms
     try {
