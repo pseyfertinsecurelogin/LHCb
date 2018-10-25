@@ -1939,11 +1939,14 @@ SE .__str__  = lambda s : 'Stat: '+ s.toString()
 if not hasattr ( SE , '_orig_sum'  ) : 
     _orig_sum    = SE.sum
     SE._orig_sum = _orig_sum
-    
-if not hasattr ( SE , '_orig_mean' ) : 
-    _orig_mean    = SE.mean
-    SE._orig_mean = _orig_mean
-    
+
+if not hasattr ( SE , '_orig_mean' ) :
+    if hasattr(SE, 'mean<double>'):  # needed for gaudi/Gaudi!786
+        SE._orig_mean = getattr(SE, 'mean<double>')
+        SE.meanErr = getattr(SE, 'meanErr<double>')
+    else:
+        SE._orig_mean = SE.mean
+
 SE. sum     = lambda s : VE ( s._orig_sum  () , s.sum2()       )
 SE. minmax  = lambda s :    ( s.flagMin()     , s.flagMax()    ) 
 SE. mean    = lambda s : VE ( s._orig_mean () , s.meanErr()**2 )
