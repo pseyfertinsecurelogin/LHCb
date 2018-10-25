@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // Include files
 
 // GaudiKernel
@@ -534,7 +544,7 @@ const ILVolume::ReplicaPath& GeometryInfoPlus::supportPath() const
   if( !m_gi_support ) { m_gi_support = geoByName( m_gi_supportName ) ; }
   ///
   const ILVolume* lv = m_gi_support->lvolume();
-  auto aux = boost::string_ref( m_gi_supportNamePath );
+  auto aux = std::string_view( m_gi_supportNamePath );
   while ( !aux.empty() && lv ) {
     // find separator
     auto pos     = aux.find_first_of('/');

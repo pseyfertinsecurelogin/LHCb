@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // Include files
 
 // local
@@ -76,8 +86,8 @@ StatusCode RawBankReadoutStatusFilter::execute() {
 
   int decision = value & m_mask;
   if(decision !=0 )setFilterPassed(m_invert); // reject by default
-  if(filterPassed())counter("Accepted events")+=1;
-  else counter("Rejected events")+=1;
+  if(filterPassed()) ++m_acceptedEventCount;
+  else ++m_rejectedEventCount;
 
   if(msgLevel(MSG::DEBUG)) debug() << "Status value : " << value << " Mask : "
                                    << m_mask << " => " << filterPassed() << endmsg;

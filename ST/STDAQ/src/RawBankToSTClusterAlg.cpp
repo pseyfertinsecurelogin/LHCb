@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #include <algorithm>
 
 // local
@@ -103,9 +113,9 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if (!missing.empty()){
-    counter("lost Banks") += missing.size();
+    m_lostBanks += missing.size();
     if (tBanks.empty()){
-      ++counter("no banks found");
+      ++m_noBanksFound;
       return createSummaryBlock(rawEvt,0, STDAQ::inValidPcn, false, 0,  bankList, missing, recoveredBanks);
     }
   }
@@ -115,7 +125,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "PCN was voted to be " << pcn << endmsg;
   if (pcn == STDAQ::inValidPcn && !m_skipErrors) {
-    counter("skipped Banks") += tBanks.size();
+    m_skippedBanks += tBanks.size();
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "PCN vote failed with " << tBanks.size() << endmsg;
     warning() << "PCN vote failed" << endmsg;
@@ -125,7 +135,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
   // loop over the banks of this type..
   for (const auto& bank : tBanks ) {
 
-    ++counter("# banks found");
+    ++m_banksFound;
     // get the board and data
     STTell1ID tell1ID = STTell1ID((unsigned int)bank->sourceID(), detType()=="UT");
     const STTell1Board* aBoard =  readoutTool()->findByBoardID(tell1ID);
@@ -134,16 +144,16 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
       // not a valid IT
       Warning("Invalid source ID --> skip bank"+ std::to_string(bank->sourceID()),
               StatusCode::SUCCESS,2).ignore();
-      ++counter("skipped Banks");
+      m_skippedBanks += 1;
       continue;
     }
 
-    ++counter("# valid banks");
+    ++m_validBanks;
 
     if (bank->magic() != RawBank::MagicPattern) {
       Warning( "wrong magic pattern "+ std::to_string(bank->sourceID()),
                StatusCode::SUCCESS, 2).ignore();
-      ++counter("skipped banks");
+      m_skippedBanks += 1;
       continue;
     }
 
@@ -162,7 +172,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
         bankList.push_back(bank->sourceID());
         Warning( "bank has errors, skip sourceID " + std::to_string(bank->sourceID()),
                 StatusCode::SUCCESS, 2).ignore();
-        ++counter("skipped Banks");
+        m_skippedBanks += 1;
         continue;
       }
       else {
@@ -197,7 +207,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
           debug() << "Expected " << pcn << " found " << bankpcn << endmsg;
         Warning("PCNs out of sync, sourceID " + std::to_string(bank->sourceID()),
                 StatusCode::SUCCESS, 2).ignore();
-        ++counter("skipped Banks");
+        m_skippedBanks += 1;
         continue;
       }
     }
@@ -316,8 +326,8 @@ double RawBankToSTClusterAlg::mean(LHCb::span<const SiADCWord> adcValues) const
 
 StatusCode RawBankToSTClusterAlg::finalize() {
 
-  const double failed = counter("skipped Banks").flag();
-  const double processed = counter("# valid banks").flag();
+  const double failed = m_skippedBanks.sum();
+  const double processed = m_validBanks.nEntries();
 
   double eff = 0.0;
   if (!LHCb::Math::Equal_To<double>()(processed, 0.0)){
@@ -327,4 +337,3 @@ StatusCode RawBankToSTClusterAlg::finalize() {
 
   return MultiTransformer::finalize();
 }
-

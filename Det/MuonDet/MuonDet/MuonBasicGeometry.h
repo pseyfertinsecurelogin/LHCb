@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // $Id: MuonBasicGeometry.h,v 1.3 2009-09-14 08:58:35 jonrob Exp $
 #ifndef MUONDET_MUONBASICGEOMETRY_H 
 #define MUONDET_MUONBASICGEOMETRY_H 1

@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // Include files
 
 // local
@@ -108,7 +118,7 @@ StatusCode ODINTimeFilter::execute() {
 
 
   // timing selection
-  counter("Event") += 1 ;
+  ++m_eventCount;
   if( m_time ){
     if (def(m_yRange) || def(m_mRange) || def(m_dRange) || def(m_hRange) ||def(m_mnRange) ||def(m_sRange) || def(m_sRange))
       if( minTime > time || maxTime < time )setFilterPassed(false);
@@ -120,7 +130,7 @@ StatusCode ODINTimeFilter::execute() {
     if( !check( bx               , m_bRange  ))setFilterPassed(false);
   }
 
-  if(filterPassed())counter("Filtered Events") += 1 ;
+  if(filterPassed()) ++m_filteredEventCount;
 
 
   if(m_print)info() << "[Run : " << run

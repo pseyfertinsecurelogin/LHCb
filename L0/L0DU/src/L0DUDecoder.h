@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef L0DUDECODER_H
 #define L0DUDECODER_H 1
 
@@ -38,5 +48,6 @@ private:
   Gaudi::Property<std::string> m_configName{ this, "L0DUConfigProviderName", "L0DUConfig" };
   Gaudi::Property<std::string> m_configType{ this, "L0DUConfigProviderType", "L0DUMultiConfigProvider" };
 
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_rawbankSize{ this, "L0DU RawBank Size (Bytes)" };
 };
 #endif // L0DUFROMRAWHLT1TOOL_H

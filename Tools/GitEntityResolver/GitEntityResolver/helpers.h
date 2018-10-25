@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef GIT_ENTITY_RESOLVER_HELPERS_H
 #define GIT_ENTITY_RESOLVER_HELPERS_H
 
@@ -5,7 +15,7 @@
 #include <boost/filesystem.hpp>
 #include <git2.h>
 #include <string>
-#include <mutex>
+#include "Kernel/SynchronizedValue.h"
 
 namespace std
 {
@@ -32,14 +42,13 @@ public:
   git_repository_ptr(factory_t factory): m_factory( std::move( factory ) ) {}
 
   pointer get() const {
-    {
-      std::lock_guard guard(m_ptr_mutex);
-      if ( !m_ptr ){
-        m_ptr = m_factory();
-        if ( !m_ptr ) throw std::runtime_error("unable create object");
-      }
-    }
-    return m_ptr.get();
+    return m_ptr.with_lock( [&](storage_t& ptr) {
+                if (!ptr) {
+                    ptr = m_factory();
+                    if ( !ptr ) throw std::runtime_error("unable create object");
+                }
+                return ptr.get();
+            } );
   }
 
   reference operator*() const {
@@ -55,15 +64,13 @@ public:
   }
 
   void reset() {
-    std::lock_guard guard(m_ptr_mutex);
-    m_ptr.reset();
+    m_ptr.with_lock( [](storage_t& ptr) { ptr.reset(); } );
   }
 
 private:
 
   factory_t m_factory;
-  mutable storage_t m_ptr;
-  mutable std::mutex m_ptr_mutex;
+  mutable LHCb::cxx::SynchronizedValue<storage_t> m_ptr;
 };
 
 namespace Git

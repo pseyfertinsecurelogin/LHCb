@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // ============================================================================
 #ifndef LOKIHYBRID_HYBRIDBASE_H
 #define LOKIHYBRID_HYBRIDBASE_H 1
@@ -154,6 +164,8 @@ namespace LoKi
       // information about the created functors
       typedef std::map<std::string,std::pair<std::string,std::string>> FUNCTIONS  ;
       std::map<std::string,FUNCTIONS>             m_allfuncs   ;
+
+      mutable Gaudi::Accumulators::Counter<> m_pyInitCnt{ this, "Python is initialized!" };
       // ======================================================================
     protected:
       // ======================================================================

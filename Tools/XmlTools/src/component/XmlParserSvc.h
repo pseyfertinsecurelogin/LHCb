@@ -1,9 +1,18 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef DETDESCCNV_XMLPARSERSVC_H
 #define DETDESCCNV_XMLPARSERSVC_H
 
 // Include files
 #include <map>
-#include <mutex>
 
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
@@ -12,6 +21,7 @@
 #include "GaudiKernel/Service.h"
 
 #include "Kernel/ICondDBInfo.h"
+#include "Kernel/SynchronizedValue.h"
 #include "XmlTools/IXmlParserSvc.h"
 
 // Forward and external declarations
@@ -161,8 +171,7 @@ private:
   //
   // i.e. we need to protect the parser with a mutex...
   //
-  std::mutex m_parser_mtx;
-  std::unique_ptr<xercesc::XercesDOMParser> m_parser;
+  std::unique_ptr<LHCb::cxx::SynchronizedValue<xercesc::XercesDOMParser>> m_parser;
 
   /**
    * this is a parameter that defines the cache behavior.

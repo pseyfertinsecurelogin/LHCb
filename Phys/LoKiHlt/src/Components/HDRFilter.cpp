@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // ============================================================================
 // Include files
 // ============================================================================
@@ -68,6 +78,7 @@ namespace LoKi
     // ========================================================================
     /// the functor itself
     LoKi::Types::HLT_Cut  m_cut = { LoKi::BasicFunctors<const LHCb::HltDecReports*>::BooleanConstant( false ) }  ;                         // the functor itself
+    mutable Gaudi::Accumulators::BinomialCounter<> m_passed{ this, "#passed" };
     // ========================================================================
   };
   // ==========================================================================
@@ -192,7 +203,7 @@ LoKi::HDRFilter::HDRFilter
   });
 
   StatusCode sc = setProperty ( "Code" , "HLT_NONE" ) ;
-  Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
+  Assert ( sc.isSuccess () , "Unable (re)set property 'Code'" ) ;
   sc = setProperty
     ( "Factory" ,
       boost::algorithm::starts_with( name,  "Hlt1" ) ?
@@ -200,7 +211,7 @@ LoKi::HDRFilter::HDRFilter
       boost::algorithm::starts_with( name,  "Hlt2" ) ?
       "LoKi::Hybrid::HltFactory/Hlt2HltFactory:PUBLIC" :
       "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"     ) ;
-  Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
+  Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" ) ;
   //
 }
 // ============================================================================
@@ -217,7 +228,7 @@ bool LoKi::HDRFilter::operator()(const LHCb::HltDecReports& hdr) const // the ma
   const bool result = m_cut ( &hdr ) ;
   //
   // some statistics
-  counter ("#passed" ) += result ;
+  m_passed += result ;
 
   return result;
 }

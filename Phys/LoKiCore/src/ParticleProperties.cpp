@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // ============================================================================
 // Include files
 // ============================================================================
@@ -5,7 +15,6 @@
 // ============================================================================
 #include <algorithm>
 #include <optional>
-#include <shared_mutex>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -18,6 +27,7 @@
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
 #include "Kernel/IParticlePropertySvc.h"
+#include "Kernel/SynchronizedValue.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -57,20 +67,6 @@ namespace
   static const std::string s_InvalidPIDName = "Unknown" ;
   // ==========================================================================
 
-  template <typename T, typename Mutex = std::shared_timed_mutex> // C++17: replace with shared_mutex...
-  class Synced {
-      T m_obj;
-      mutable Mutex m_mtx;
-  public:
-      template <typename... Args>
-      Synced(Args&&... args) : m_obj{ std::forward<Args>(args)... } {}
-
-      template <typename F> auto with_wlock(F&& f) -> decltype(auto)
-      { auto lock=std::unique_lock<Mutex>{m_mtx}; return f(m_obj); }
-      template <typename F> auto with_rlock(F&& f) const -> decltype(auto)
-      { auto lock=std::shared_lock<Mutex>{m_mtx}; return f(m_obj); }
-  };
-
 }
 // ============================================================================
 /*  retrieve particle ID from Particle name
@@ -82,23 +78,24 @@ LHCb::ParticleID LoKi::Particles::pidFromName( const std::string& name )
 {
   typedef boost::container::flat_map<std::string,LHCb::ParticleID> Map ;
   /// ATTENTION
-  static Synced<Map> s_map{ std::pair{ "gamma" , LHCb::ParticleID (    22 ) },
-                            std::pair{ "e+"    , LHCb::ParticleID (   -11 ) },
-                            std::pair{ "e-"    , LHCb::ParticleID (    11 ) },
-                            std::pair{ "mu+"   , LHCb::ParticleID (   -13 ) },
-                            std::pair{ "mu-"   , LHCb::ParticleID (    13 ) },
-                            std::pair{ "pi+"   , LHCb::ParticleID (   211 ) },
-                            std::pair{ "pi0"   , LHCb::ParticleID (   111 ) },
-                            std::pair{ "pi-"   , LHCb::ParticleID (  -211 ) },
-                            std::pair{ "K+"    , LHCb::ParticleID (   321 ) },
-                            std::pair{ "K-"    , LHCb::ParticleID (  -321 ) },
-                            std::pair{ "p+"    , LHCb::ParticleID (  2212 ) },
-                            std::pair{ "p~-"   , LHCb::ParticleID ( -2212 ) } };
+  static auto s_map = LHCb::cxx::SynchronizedValue<Map,std::shared_mutex>
+                      { Map { std::pair{ "gamma" , LHCb::ParticleID (    22 ) },
+                              std::pair{ "e+"    , LHCb::ParticleID (   -11 ) },
+                              std::pair{ "e-"    , LHCb::ParticleID (    11 ) },
+                              std::pair{ "mu+"   , LHCb::ParticleID (   -13 ) },
+                              std::pair{ "mu-"   , LHCb::ParticleID (    13 ) },
+                              std::pair{ "pi+"   , LHCb::ParticleID (   211 ) },
+                              std::pair{ "pi0"   , LHCb::ParticleID (   111 ) },
+                              std::pair{ "pi-"   , LHCb::ParticleID (  -211 ) },
+                              std::pair{ "K+"    , LHCb::ParticleID (   321 ) },
+                              std::pair{ "K-"    , LHCb::ParticleID (  -321 ) },
+                              std::pair{ "p+"    , LHCb::ParticleID (  2212 ) },
+                              std::pair{ "p~-"   , LHCb::ParticleID ( -2212 ) } } };
 
-  auto res = s_map.with_rlock( [&]( const Map& m )
+  auto res = s_map.with_lock( [&]( const Map& map )
                                -> std::optional<LHCb::ParticleID> {
-      auto i = m.find( name );
-      if ( UNLIKELY( i == m.end() ) ) return {};
+      auto i = map.find( name );
+      if ( UNLIKELY( i == map.end() ) ) return {};
       return i->second ;
   });
   if (res) return *res;
@@ -113,7 +110,7 @@ LHCb::ParticleID LoKi::Particles::pidFromName( const std::string& name )
     return LHCb::ParticleID();
   }
   // update the map:
-  s_map.with_wlock( [&](Map& m) { m.try_emplace( name, pp->particleID() ); } );
+  s_map.with_lock( [&](Map& m) { m.try_emplace( name, pp->particleID() ); } );
   return pp -> particleID() ;
 }
 // ============================================================================
@@ -382,20 +379,21 @@ std::string  LoKi::Particles::nameFromPID ( const LHCb::ParticleID& pid )
 {
   typedef boost::container::flat_map<LHCb::ParticleID,std::string> Map ;
   // ATTENTION
-  static Synced<Map> s_map{ std::pair{ LHCb::ParticleID (    22 ) , "gamma" },
-                            std::pair{ LHCb::ParticleID (   -11 ) , "e+"    },
-                            std::pair{ LHCb::ParticleID (    11 ) , "e-"    },
-                            std::pair{ LHCb::ParticleID (   -13 ) , "mu+"   },
-                            std::pair{ LHCb::ParticleID (    13 ) , "mu-"   },
-                            std::pair{ LHCb::ParticleID (   211 ) , "pi+"   },
-                            std::pair{ LHCb::ParticleID (   111 ) , "pi0"   },
-                            std::pair{ LHCb::ParticleID (  -211 ) , "pi-"   },
-                            std::pair{ LHCb::ParticleID (   321 ) , "K+"    },
-                            std::pair{ LHCb::ParticleID (  -321 ) , "K-"    },
-                            std::pair{ LHCb::ParticleID (  2212 ) , "p+"    },
-                            std::pair{ LHCb::ParticleID ( -2212 ) , "p~-"   } };
+  static auto s_map = LHCb::cxx::SynchronizedValue<Map,std::shared_mutex>
+                      { Map{ std::pair{ LHCb::ParticleID (    22 ) , "gamma" },
+                             std::pair{ LHCb::ParticleID (   -11 ) , "e+"    },
+                             std::pair{ LHCb::ParticleID (    11 ) , "e-"    },
+                             std::pair{ LHCb::ParticleID (   -13 ) , "mu+"   },
+                             std::pair{ LHCb::ParticleID (    13 ) , "mu-"   },
+                             std::pair{ LHCb::ParticleID (   211 ) , "pi+"   },
+                             std::pair{ LHCb::ParticleID (   111 ) , "pi0"   },
+                             std::pair{ LHCb::ParticleID (  -211 ) , "pi-"   },
+                             std::pair{ LHCb::ParticleID (   321 ) , "K+"    },
+                             std::pair{ LHCb::ParticleID (  -321 ) , "K-"    },
+                             std::pair{ LHCb::ParticleID (  2212 ) , "p+"    },
+                             std::pair{ LHCb::ParticleID ( -2212 ) , "p~-"   } }} ;
 
-  auto res = s_map.with_rlock( [&]( const Map& m )
+  auto res = s_map.with_lock( [&]( const Map& m )
                                -> std::optional<std::string> {
       auto i = m.find( pid );
       if ( UNLIKELY( i == m.end() ) ) return {};
@@ -424,10 +422,8 @@ std::string  LoKi::Particles::nameFromPID ( const LHCb::ParticleID& pid )
     return "Unknown(" + invalid_name + ")";
   }
   // update the map
-  {
-  s_map.with_wlock( [&](Map& m) { m.try_emplace( pid, pp->particle() ); } );
+  s_map.with_lock( [&](Map& m) { m.try_emplace( pid, pp->particle() ); } );
   return pp->particle() ;
-  }
 }
 // ============================================================================
 /*  retrieve the lifetime for the particle form the name

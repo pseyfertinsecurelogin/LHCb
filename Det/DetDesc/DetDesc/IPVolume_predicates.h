@@ -1,9 +1,19 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef     DETDESC_IPVOLUME_PREDICATES_H
 #define     DETDESC_IPVOLUME_PREDICATES_H
 // STD & STL
 #include <iostream>
 #include <functional>
-#include "boost/utility/string_ref.hpp"
+#include <string_view>
 // Geometry definitions
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
@@ -53,7 +63,7 @@ static auto IPVolume_isInside = [](Gaudi::XYZPoint PointInMotherFrame)
    *  @return true if name matches the given name
    */
 // TODO: add overload for std::string instead of string_ref
-static auto IPVolume_byName = [](boost::string_ref name) {
+static auto IPVolume_byName = [](std::string_view name) {
     return [=](const IPVolume* pv)
            { return pv && name == pv->name(); };
 };

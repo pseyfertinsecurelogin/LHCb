@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // ============================================================================
 // Include files
 // ============================================================================
@@ -159,6 +169,9 @@ namespace DetDesc
     // point of shooting for sphere
     Gaudi::XYZPoint                   m_vertex   ;
     mutable std::set<const ILVolume*> m_checked  ;
+
+    mutable Gaudi::Accumulators::Counter<> m_volumesCnt{ this, "#volumes" };
+    mutable Gaudi::Accumulators::Counter<> m_assemblyCnt{ this, "#assembly" };
   } ;
   // ==========================================================================
 } //end of namespace DetDesk
@@ -315,8 +328,8 @@ StatusCode DetDesc::CheckOverlap::checkVolume
     << lev << std::string ( 2*level , ' ' )
     << "Checked:  " << volume -> name () << endmsg ;
 
-  counter ("#volumes") += 1 ;
-  if ( volume->isAssembly() ) { counter ("#assembly") += 1 ; }
+  ++m_volumesCnt;
+  if ( volume->isAssembly() ) { ++m_assemblyCnt ; }
 
   m_checked.insert ( volume ) ;
 

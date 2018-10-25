@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef _MCHitMonitor_H
 #define _MCHitMonitor_H
 
@@ -76,6 +86,10 @@ private:
   double m_minPathLength;
   unsigned int m_nToCollect;
 
+  // counters
+  mutable Gaudi::Accumulators::AveragingCounter<> m_betaGamma_counter{ this, "betaGamma" };
+  mutable Gaudi::Accumulators::Counter<> m_DeltaRay_counter{ this, "DeltaRay" };
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_numberHits_counter{ this, "numberHits" };
 };
 
 #endif // TrMCHitMonitor_H

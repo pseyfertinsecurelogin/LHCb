@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // ============================================================================
 // Include files
 // ============================================================================
@@ -240,7 +250,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
     info() << "Initialization of Python is triggered" << endmsg ;
     Py_Initialize () ;
     m_pyInit = true  ;
-    ++counter ("Python is initialized!") ;
+    ++m_pyInitCnt;
   }
   // Check the proper python environment:
   if ( !Py_IsInitialized() ) { return Error("Python is not initialized yet!") ; }

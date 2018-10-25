@@ -1,3 +1,13 @@
+###############################################################################
+# (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           #
+#                                                                             #
+# This software is distributed under the terms of the GNU General Public      #
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
+#                                                                             #
+# In applying this licence, CERN does not waive the privileges and immunities #
+# granted to it by virtue of its status as an Intergovernmental Organization  #
+# or submit itself to any jurisdiction.                                       #
+###############################################################################
 ################################################################################
 # Package: LHCbKernel
 ################################################################################
@@ -48,6 +58,10 @@ gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
 
+gaudi_add_unit_test(test_SynchronizedValue tests/src/test_SynchronizedValue.cpp
+                    LINK_LIBRARIES LHCbKernel TYPE Boost)
+gaudi_add_unit_test(test_PolymorphicValue tests/src/test_PolymorphicValue.cpp
+                    LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_STLExtensions tests/src/test_STLExtensions.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_MultiIndexContainer tests/src/test_MultiIndexContainer.cpp

@@ -1,11 +1,21 @@
-#ifndef EVENT_PACKEDTRACK_H
-#define EVENT_PACKEDTRACK_H 1
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
+#pragma once
 
 // STL
 #include <string>
 #include <vector>
 #include <limits>
 #include <cstdint>
+#include <array>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -291,11 +301,21 @@ namespace LHCb
     inline const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
     /// Safe sqrt ...
-    inline double safe_sqrt( const double x ) const
-    { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+    template< typename TYPE >
+    inline TYPE safe_sqrt( const TYPE x ) const
+    { 
+      return ( x > TYPE(0) ? std::sqrt(x) : TYPE(0) );
+    }
+
+    /// Safe divide ...
+    template< typename TYPE >
+    inline TYPE safe_divide( const TYPE a, const TYPE b ) const
+    { 
+      return ( b != TYPE(0) ? a/b : 9e9 );
+    }
 
     /// Check if the given packing version is supported
-    bool isSupportedVer( const char& ver ) const
+    bool isSupportedVer( const char ver ) const
     {
       const bool OK = ( 0 <= ver && ver <= 5 );
       if ( UNLIKELY(!OK) )
@@ -342,5 +362,3 @@ namespace LHCb
   };
 
 }  // End of LHCb namespace
-
-#endif // EVENT_PACKEDTRACK_H

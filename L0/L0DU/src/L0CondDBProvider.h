@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef L0CONDDBPROVIDER_H
 #define L0CONDDBPROVIDER_H 1
 
@@ -32,5 +42,10 @@ private:
   Gaudi::Property<std::map<std::string,std::vector<int>>> m_mapRam { this, "RAMBCID" };
   unsigned int m_cycle = 3564;
   std::string m_rams;
+
+  mutable Gaudi::Accumulators::Counter<> m_unknownScale{ this, "Unknown scale type" };
+  mutable Gaudi::Accumulators::Counter<> m_gainNotFound{ this, "'Gain' condition not found for Ecal" };
+  mutable Gaudi::Accumulators::Counter<> m_L0EtBinNotFound{ this, "'L0EtBin' parameter not found in 'Gain' condition" };
+
 };
 #endif // L0CONDDBPROVIDER_H

@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // Include files
 #include <optional>
 
@@ -251,7 +261,7 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
            << endmsg;
     throw GaudiException("Corrupt L0DU RawBank", name(), StatusCode::FAILURE );
   }
-  counter("L0DU RawBank Size (Bytes)") += size;
+  m_rawbankSize += size;
 
   if ( (0x7F & bcid2) != bcid3){
     info() << " BCIDs PGA2(LSB)/PGA3= " << (bcid2 & 0x7F) << " /"  << bcid3 << " NOT ALIGNED " << endmsg;

@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // ============================================================================
 // Include files
 // ============================================================================
@@ -58,7 +68,7 @@ namespace LoKi
                        KeyValue{"Location", LHCb::ODINLocation::Default } )
     {
       StatusCode sc = setProperty ( "Code" , "ODIN_NONE" ) ;
-      Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
+      Assert ( sc.isSuccess () , "Unable (re)set property 'Code'" ) ;
       sc = setProperty
         ( "Factory" ,
           0 == name.find ( "Hlt1" ) ?
@@ -66,7 +76,7 @@ namespace LoKi
           0 == name.find ( "Hlt2" ) ?
           "LoKi::Hybrid::HltFactory/Hlt2HltFactory:PUBLIC" :
           "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"     ) ;
-      Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
+      Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" ) ;
     }
     // ========================================================================
     /// the copy constructor is disabled
@@ -78,6 +88,7 @@ namespace LoKi
     // ========================================================================
     /// the functor itself
     LoKi::Types::ODIN_Cut  m_cut = {  LoKi::BasicFunctors<const LHCb::ODIN*>::BooleanConstant( false ) } ;                        // the functor itself
+    mutable Gaudi::Accumulators::BinomialCounter<> m_passed{ this, "#passed" };
     // ========================================================================
   };
   // ==========================================================================
@@ -96,7 +107,7 @@ bool LoKi::ODINFilter::operator() (const LHCb::ODIN& odin) const // the main met
   const bool result = m_cut ( &odin ) ;
   //
   // some statistics
-  counter ("#passed" ) += result ;
+  m_passed += result ;
   //
   // set the filter:
   return result;

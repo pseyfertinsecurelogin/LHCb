@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 
 // from Gaudi
 #include "Event/StandardPacker.h"
@@ -40,7 +50,7 @@ LHCb::Tracks UnpackTrackFunctional::operator()( const LHCb::PackedTracks& dst ) 
   // Unpack the tracks
   packer.unpack( dst, newTracks );
 
-  counter("# Unpacked Tracks") += newTracks.size();
+  m_unpackedTracks += newTracks.size();
 
   return newTracks;
 }

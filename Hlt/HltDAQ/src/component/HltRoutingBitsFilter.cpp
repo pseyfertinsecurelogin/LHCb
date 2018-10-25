@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // Include files
 #include <vector>
 
@@ -17,6 +27,10 @@ private:
   Gaudi::Property<std::vector<unsigned int>> m_r{ this, "RequireMask",{ ~0u,~0u,~0u } },
                                              m_v{ this, "VetoMask",   {  0u, 0u, 0u } };
   Gaudi::Property<bool> m_passOnError { this, "PassOnError", true };
+
+  mutable Gaudi::Accumulators::Counter<> m_unexpectedRawbanks{ this, "#unexpected number of HltRoutingBits rawbanks" };
+  mutable Gaudi::Accumulators::Counter<> m_unexpectedRawbanksSize{ this, "#unexpected HltRoutingBits rawbank size" };
+  mutable Gaudi::Accumulators::BinomialCounter<> m_accept{ this, "#accept" };
 };
 
 //-----------------------------------------------------------------------------
@@ -63,13 +77,13 @@ bool HltRoutingBitsFilter::operator()(const LHCb::RawEvent& rawEvent) const {
 
   const auto& banks = rawEvent.banks(LHCb::RawBank::HltRoutingBits);
   if (banks.size()!=1) {
-    counter("#unexpected number of HltRoutingBits rawbanks")++;
+    m_unexpectedRawbanks++;
     Error("Unexpected # of HltRoutingBits rawbanks",
                  StatusCode::SUCCESS,0).ignore();
     return m_passOnError;
   }
   if (banks[0]->size()!=3*sizeof(unsigned int)) {
-    counter("#unexpected HltRoutingBits rawbank size")++;
+    m_unexpectedRawbanksSize++;
     Error("Unexpected HltRoutingBits rawbank size",
                  StatusCode::FAILURE,0).ignore();
     return m_passOnError;
@@ -83,7 +97,7 @@ bool HltRoutingBitsFilter::operator()(const LHCb::RawEvent& rawEvent) const {
         req  = req  || ( data[i] & m_r[i] );
   }
   bool accept = ( req & !veto );
-  counter("#accept") += accept;
+  m_accept += accept;
 
   return accept;
 }

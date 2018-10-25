@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 // Include files
 
 #include "GaudiKernel/IDetDataSvc.h"
@@ -804,7 +814,7 @@ namespace {
 ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime) const {
   // take a read lock on the IOV resource. This secures the reading of m_head_since/until
   // by preventing any update of it
-  std::shared_lock<std::shared_timed_mutex> reading {m_IOVresource};
+  std::shared_lock reading {m_IOVresource};
   if ( eventTime < m_head_since || eventTime >= m_head_until ) {
     // We seem to need to update. We will need to take a write lock on the IOV resource
     // First thing to do is release our read lock, or we have no chance

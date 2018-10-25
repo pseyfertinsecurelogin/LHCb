@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef PROPERTYCONFIGSVC_H
 #define PROPERTYCONFIGSVC_H 1
 
@@ -12,6 +22,8 @@
 #include <iterator>
 #include <optional>
 #include <string_view>
+
+#include "Kernel/SynchronizedValue.h"
 
 class StatusCode;
 namespace Gaudi { namespace Parsers {
@@ -35,17 +47,6 @@ StatusCode parse(std::set<std::string>& result,
 #include "Kernel/IConfigAccessSvc.h"
 #include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/PropertyConfig.h"
-
-template <typename T, typename Mutex = std::shared_timed_mutex> // C++17: replace with shared_mutex...
-class Synced {
-    T m_obj;
-    mutable Mutex m_mtx;
-public:
-    template <typename F> auto with_wlock(F&& f) -> decltype(auto)
-    { auto lock=std::unique_lock<Mutex>{m_mtx}; return f(m_obj); }
-    template <typename F> auto with_rlock(F&& f) const -> decltype(auto)
-    { auto lock=std::shared_lock<Mutex>{m_mtx}; return f(m_obj); }
-};
 
 /** @class PropertyConfigSvc PropertyConfigSvc.h
  *
@@ -142,11 +143,11 @@ private:
   SmartIF<IAppMgrUI>                   m_appMgrUI;
   SmartIF<IConfigAccessSvc>            m_accessSvc;
 
-  mutable Synced<PropertyConfigMap_t>    m_configs;  // config ref -> config (leaf)
-  mutable Synced<ConfigTreeNodeMap_t>    m_nodes;    // node   ref -> node
-  mutable Synced<ConfigTreeNodeAliasMap_t> m_aliases;    // node   ref -> node
-  mutable Synced<Tree2LeafMap_t>         m_leavesInTree; // top level node ref -> config refs (leaves)
-  mutable Synced<Tree2NodeMap_t>         m_nodesInTree; // top level node ref -> node refs
+  mutable LHCb::cxx::SynchronizedValue<PropertyConfigMap_t,std::shared_mutex>    m_configs;  // config ref -> config (leaf)
+  mutable LHCb::cxx::SynchronizedValue<ConfigTreeNodeMap_t,std::shared_mutex>    m_nodes;    // node   ref -> node
+  mutable LHCb::cxx::SynchronizedValue<ConfigTreeNodeAliasMap_t,std::shared_mutex> m_aliases;    // node   ref -> node
+  mutable LHCb::cxx::SynchronizedValue<Tree2LeafMap_t,std::shared_mutex>         m_leavesInTree; // top level node ref -> config refs (leaves)
+  mutable LHCb::cxx::SynchronizedValue<Tree2NodeMap_t,std::shared_mutex>         m_nodesInTree; // top level node ref -> node refs
 
   mutable std::map<std::string, PropertyConfig::digest_type> m_configPushed;
   std::map<std::string,IAlgTool*>      m_toolmap;

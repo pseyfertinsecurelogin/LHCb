@@ -1,7 +1,17 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef DETDESC_CONDITION_H
 #define DETDESC_CONDITION_H 1
 
-#include "boost/utility/string_ref.hpp"
+#include <string_view>
 #include <string>
 
 // Base classes
@@ -31,7 +41,7 @@ struct Condition : ParamValidDataObject {
   void update ( ValidDataObject& obj) override;
 
   /// Prepare an XML string representing the condition.
-  virtual std::string toXml(boost::string_ref name = {}, bool header = false, int precision = 16) const;
+  virtual std::string toXml(std::string_view name = {}, bool header = false, int precision = 16) const;
 
   /**
    * This method initializes the condition. It should be overridden

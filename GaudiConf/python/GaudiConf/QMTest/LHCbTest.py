@@ -1,3 +1,13 @@
+###############################################################################
+# (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           #
+#                                                                             #
+# This software is distributed under the terms of the GNU General Public      #
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
+#                                                                             #
+# In applying this licence, CERN does not waive the privileges and immunities #
+# granted to it by virtue of its status as an Intergovernmental Organization  #
+# or submit itself to any jurisdiction.                                       #
+###############################################################################
 import os
 import re
 import GaudiTesting.QMTTest
@@ -146,27 +156,31 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         newAlgoNames = set(newCounters)
         msg = ''
         if refAlgoNames != newAlgoNames:
+            msg += 'Different set of algorithms in counters\n'
             if refAlgoNames.difference(newAlgoNames):
                 msg += '    Missing : ' + ', '.join(refAlgoNames.difference(newAlgoNames)) + '\n'
             if newAlgoNames.difference(refAlgoNames):
                 msg += '    Extra : ' + ', '.join(newAlgoNames.difference(refAlgoNames)) + '\n'
             causes.append("Different set of algorithms in counters")
             # make sure we create newref file when there are only counters differences
-            if len(causes) == 1:
+            if causes:
                 self._createNewRef(stdout)
         for algoName in refAlgoNames.intersection(newAlgoNames):
             onlyref, onlystdout, counterPairs = self._compareCutSets(set(refCounters[algoName]), set(newCounters[algoName]))
             if onlyref or onlystdout:
-                msg += '    Different set of counters for algo %s\n' % algoName
-                msg += '      Ref has %d counters, found %d of them in stdout\n' % (len(refCounters[algoName]), len(newCounters[algoName]))
+                msg += 'Different set of counters for algo %s\n' % algoName
+                msg += '    Ref has %d counters, found %d of them in stdout\n' % (len(refCounters[algoName]), len(newCounters[algoName]))
                 if onlyref:
-                    msg += '      Counters in ref and not in stdout : %s\n' % str(sorted(list(onlyref)))
+                    msg += '    Counters in ref and not in stdout : %s\n' % str(sorted(list(onlyref)))
                 if onlystdout:
-                    msg += '      Counters in stdout and not in ref : %s\n' % str(sorted(list(onlystdout)))
-                continue
+                    msg += '    Counters in stdout and not in ref : %s\n' % str(sorted(list(onlystdout)))
+            headerPrinted = False
             for counterNameRef, counterNameStdout in counterPairs:
                 if not self._compareCounterLine(refCounters[algoName][counterNameRef], newCounters[algoName][counterNameStdout]):
-                    msg += '(%s ref) %s\n(%s new) %s\n' % (algoName, ' | '.join([counterNameRef]+refCounters[algoName][counterNameRef]), algoName, ' | '.join([counterNameStdout]+newCounters[algoName][counterNameStdout]))
+                    if not headerPrinted:
+                        msg += 'Different content of counters for algo %s\n' % algoName
+                        headerPrinted = True
+                    msg += '    (%s ref) %s\n    (%s new) %s\n' % (algoName, ' | '.join([counterNameRef]+refCounters[algoName][counterNameRef]), algoName, ' | '.join([counterNameStdout]+newCounters[algoName][counterNameStdout]))
         if msg:
             causes.append("Wrong Counters")
             if type(result) == dict:
@@ -174,7 +188,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             else:
                 result["CountersMismatch"]=result.Quote(msg)
             # make sure we create newref file when there are only counters differences
-            if len(causes) == 1:
+            if causes:
                 self._createNewRef(stdout)
 
 
