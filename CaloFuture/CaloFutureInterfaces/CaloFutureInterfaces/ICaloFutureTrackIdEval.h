@@ -48,12 +48,6 @@ struct ICaloFutureTrackIdEval : extend_interfaces<IAlgTool>
    */  
   virtual StatusCode process( const LHCb::Track& track , const LHCb::CaloDigits& digits, double& value) const = 0 ;
   
-  /** The main processing method (functor interface)
-   *  It evaluated the Track ID estimators using the calorimeter information  
-   *  @param  track  pointer to the object to be processed
-   */  
-  //virtual double     operator() 
-  //  ( const LHCb::Track* track ) const = 0 ;
   // ==========================================================================  
   /** static interface identification
    *  @see IInterface
