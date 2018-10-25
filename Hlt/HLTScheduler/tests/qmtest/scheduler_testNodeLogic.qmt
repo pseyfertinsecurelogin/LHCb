@@ -72,9 +72,16 @@ expected_strings = [ \
 "  A2             0|0",
 ]
 for expected_string in expected_strings:
-    if stdout.find(expected_string) == -1:
-        causes.append('not the right control flow')
-        result['GaudiTest.expected_string'] = result.Quote(expected_string)
+    occurrences = 0
+    index = 0
+    while True:
+        index = stdout.find(expected_string, index)
+        if index == -1:
+            break
+        index += 1
+        occurrences += 1
+    if occurrences &lt; 4:
+        causes.append('control flow gone wrong for {}'.format(expected_string))
 </text></argument>
 </extension>
 

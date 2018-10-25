@@ -16,47 +16,36 @@ from Configurables import (HLTControlFlowMgr,
                             HiveDataBrokerSvc,
                             )
 from Gaudi.Configuration import *
-
+import itertools
 
 evtslots = 2
 evtMax = 4
 threads = 2
 
-a1 = ConfigurableDummy("A1")
-a1.outKeys = ['/Event/a1']
-a1.CFD = True
+Ts = [ConfigurableDummy("T{}".format(i)) for i in range(8)]
+Fs = [ConfigurableDummy("F{}".format(i)) for i in range(8)]
 
-a2 = ConfigurableDummy("A2")
-a2.inpKeys = ['/Event/a1']
-a2.outKeys = ['/Event/a2']
-a2.CFD = False
-
-a3 = ConfigurableDummy("A3")
-a3.inpKeys = ['/Event/a1']
-a3.outKeys = ['/Event/a3']
-a3.CFD = False
-
-a4 = ConfigurableDummy("A4")
-a4.inpKeys = ['/Event/a3']
-a4.outKeys = ['/Event/a4']
-a4.CFD = True
-
-a5 = ConfigurableDummy("A5")
-a5.inpKeys = ['/Event/a1']
-a5.outKeys = ['/Event/a5']
-a5.CFD = True
+for t in Ts:
+    t.CFD = True
+for f in Fs:
+    f.CFD = False
 
 whiteboard = HiveWhiteBoard("EventDataSvc",
                             EventSlots=evtslots)
+HLTControlFlowMgr().CompositeCFNodes = []
 
-HLTControlFlowMgr().CompositeCFNodes = [
-             ( 'moore', 'NONLAZY_AND', ['line2', 'decision'], True ),
-             ( 'decision', 'NONLAZY_OR', ['line1', 'A5', 'notA1'], False ),
-             ( 'line1', 'LAZY_OR', ['A1', 'A2'], True ),
-             ( 'line2', 'LAZY_AND', ['A3', 'A4'], True ),
-             ( 'notA1', 'NOT', ['A1'], True ),
-]
-HLTControlFlowMgr().AdditionalCFEdges = [ ['A5', 'line1'] ]
+listofnodes = ['NONLAZY_AND', 'NONLAZY_OR', 'LAZY_AND', 'LAZY_OR']
+
+helperindex = 0
+for compNode in listofnodes:
+    #once with a True node first
+    HLTControlFlowMgr().CompositeCFNodes.append(( compNode + "_TF", compNode, [Ts[helperindex].name(), Fs[helperindex].name()], True ))
+    helperindex += 1
+    #once with a False node first
+    HLTControlFlowMgr().CompositeCFNodes.append(( compNode + "_FT", compNode, [Fs[helperindex].name(), Ts[helperindex].name()], True ))
+    helperindex += 1
+
+HLTControlFlowMgr().CompositeCFNodes.append(('top', 'NONLAZY_OR', [x[0] for x in HLTControlFlowMgr().CompositeCFNodes] , False))
 
 HLTControlFlowMgr().ThreadPoolSize = threads
 HLTControlFlowMgr().OutputLevel = DEBUG
@@ -66,13 +55,12 @@ HLTEventLoopMgr().OutputLevel = DEBUG
 
 HiveDataBrokerSvc().OutputLevel = DEBUG
 
-
+print(HLTControlFlowMgr().CompositeCFNodes)
 
 app = ApplicationMgr(EvtMax=evtMax,
-               EvtSel='NONE',
-               ExtSvc=[whiteboard],
+               EvtSel= 'NONE',
+               ExtSvc= [whiteboard],
                EventLoop=HLTControlFlowMgr(),
-               # EventLoop=HLTEventLoopMgr(),
-               TopAlg=[a1, a2, a3, a4, a5])
+               TopAlg= Ts + Fs)
 
 HiveDataBrokerSvc().DataProducers = app.TopAlg
