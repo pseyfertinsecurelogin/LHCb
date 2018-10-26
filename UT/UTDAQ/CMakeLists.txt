@@ -39,5 +39,5 @@ gaudi_add_library(UTDAQLib
                   LINK_LIBRARIES DetDescLib UTDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel UTKernelLib UTTELL1Event)
 
 gaudi_add_module(UTDAQ
-                 src/component/Components.cpp
+                 src/component/*.cpp
                  LINK_LIBRARIES UTDAQLib)
