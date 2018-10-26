@@ -1,3 +1,13 @@
+/*****************************************************************************\
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 #ifndef LHCB_CXX_SYNCHRONIZED_VALUE_H
 #define LHCB_CXX_SYNCHRONIZED_VALUE_H
 #include <mutex>
@@ -7,36 +17,21 @@
 #include <functional>
 #include <utility>
 
+#include <boost/callable_traits.hpp>
+
+
 namespace LHCb {
 namespace cxx {
 
 namespace details {
 
-    template <typename Signature> struct helper;
-
-    template <typename Ret, typename... Arg>
-    struct helper<std::function<Ret(Arg...)>> {
-        using return_type = Ret;
-        template <size_t N=0>
-        using argument_type = std::tuple_element_t<N,std::tuple<Arg...>>;
-        constexpr static auto N = sizeof...(Arg);
-    };
-
-    template <typename T>
-    struct signature_traits
-    : helper<decltype(std::function{std::declval<T&&>()})> {};
-
-    template <typename F, size_t N=0>
-    using arg_t = typename signature_traits<F>::template argument_type<N>;
-
-    template <typename F, typename Arg>
-    using require_arg_t = std::enable_if_t<std::is_same_v<arg_t<F>,Arg>>;
+    template <typename F, typename Value>
+    using require_arg0_t = std::enable_if_t<std::is_same_v< std::tuple_element_t<0, boost::callable_traits::args_t<F>>,
+                                                            Value> >;
 
     template <typename Value, typename... Args>
     using require_constructible_t = std::enable_if_t<std::is_constructible_v<Value,Args...>>;
 
-    template <typename F>
-    using require_not_memfun_t = std::enable_if_t<!std::is_member_function_pointer_v<F>>;
 }
 
 
@@ -59,28 +54,16 @@ public:
   template <typename... Args, typename = details::require_constructible_t<Value,Args...>>
   SynchronizedValue(Args&&... args) : m_obj{ std::forward<Args>(args)...} { }
 
-  template <typename F, typename ... Args, typename = details::require_not_memfun_t<F>, typename = details::require_arg_t<F,Value&> >
+  template <typename F, typename ... Args, typename = details::require_arg0_t<F,Value&> >
   decltype( auto ) with_lock( F&& f, Args&& ... args ) {
     WriteLock _{m_mtx};
     return std::invoke(std::forward<F>(f),m_obj, std::forward<Args>(args)...);
   }
 
-  template <typename F, typename ... Args, typename = details::require_not_memfun_t<F>, typename = details::require_arg_t<F,const Value&>  >
+  template <typename F, typename ... Args, typename = details::require_arg0_t<F,const Value&>  >
   decltype( auto ) with_lock( F&& f, Args&& ... args ) const {
     ReadLock _{m_mtx};
     return std::invoke(std::forward<F>(f),m_obj, std::forward<Args>(args)...);
-  }
-
-  template <typename Ret, typename Obj, typename... Args>
-  decltype( auto ) with_lock( Ret(Obj::*f)(Args...), Args&&... args ) {
-    WriteLock _{m_mtx};
-    return std::invoke(f,m_obj,std::forward<Args>(args)...);
-  }
-
-  template <typename Ret, typename Obj, typename ... Args>
-  decltype( auto ) with_lock( Ret(Obj::*f)(Args...) const, Args&& ... args ) const {
-    ReadLock _{m_mtx};
-    return std::invoke(f,m_obj,std::forward<Args>(args)...);
   }
 
 };
