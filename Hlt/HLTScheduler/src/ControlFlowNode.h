@@ -217,7 +217,14 @@ public:
 
 // ----------DEFINITION OF SCHEDULING UTILITIES---------------------------------------
 template<template<typename> class Container>
-std::optional<VNode *> findVNodeInContainer(std::string_view name, Container<VNode> & container);
+std::optional<VNode *> findVNodeInContainer(std::string_view name, Container<VNode> & container) {
+  auto it = std::find_if(std::begin(container), std::end(container), [name](auto & cnode) {
+        return getNameOfVNode(cnode) == name;
+      });
+  if ( it != std::end(container) ) { return (&*it); }
+  else { return {}; }
+}
+
 
 //returns all basic nodes reachable from vnode
 std::set<VNode *> reachableBasics(VNode *vnode);

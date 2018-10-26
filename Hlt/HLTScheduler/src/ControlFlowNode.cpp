@@ -105,15 +105,6 @@ void BasicNode::notifyParents(std::vector<NodeState> &NodeStates) const {
 }
 
 // ----------DEFINITION OF FUNCTIONS FOR SCHEDULING---------------------------------------
-template<template<typename> class Container>
-std::optional<VNode *> findVNodeInContainer(std::string_view name, Container<VNode> & container) {
-  auto it = std::find_if(std::begin(container), std::end(container), [name](auto & cnode) {
-        return getNameOfVNode(cnode) == name;
-      });
-  if ( it != std::end(container) ) { return (&*it); }
-  else { return {}; }
-}
-
 
 void childrenNamesToPointers(std::vector<VNode> &allNodes) {
   for (VNode &vnode : allNodes) {
