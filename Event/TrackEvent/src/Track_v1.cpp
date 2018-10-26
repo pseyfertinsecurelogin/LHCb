@@ -89,33 +89,9 @@ Track& Track::operator=(Track&& track)
 //=============================================================================
 Track::ConstNodeRange Track::nodes() const
 {
-  if ( !m_fitResult ) { return Track::ConstNodeRange() ; }
-  //
-  const TrackFitResult* _result = m_fitResult.get() ;
-  // cast the const container to a container of const pointers
-  const TrackFitResult::NodeContainer& nodes_ = _result->nodes() ;
-  //
-  typedef TrackFitResult::NodeContainer::const_iterator Iterator1 ;
-  typedef Track::ConstNodeRange::const_iterator               Iterator2 ;
-  static_assert( sizeof(Iterator1) == sizeof(Iterator2), "iterator sizes must be equal" ) ;
-  //
-  const auto begin = nodes_ . cbegin () ;
-  const auto end   = nodes_ . cend   () ;
-  //
-  // Helper union to avoid reinterpret_cast
-  union _IteratorCast
-  {
-    const Iterator1* input  ;
-    const Iterator2* output ;
-  } ;
-  // somehow, volatile didn't work here in gcc46
-  _IteratorCast _begin ;
-  _IteratorCast _end   ;
-  //
-  _begin . input = &begin ;
-  _end   . input = &end   ;
-  //
-  return Track::ConstNodeRange ( *_begin.output , *_end.output ) ;
+  if ( !m_fitResult ) return {};
+  const auto& nodes_ = m_fitResult->nodes() ;
+  return { nodes_.data(), std::next( nodes_.data(), nodes_.size() ) };
 }
 
 //=============================================================================
