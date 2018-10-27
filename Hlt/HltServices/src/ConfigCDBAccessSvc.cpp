@@ -21,12 +21,10 @@
 #include <string>
 #include "boost/iostreams/copy.hpp"
 #include "boost/iostreams/filter/zlib.hpp"
-#ifndef _WIN32
 #include "boost/iostreams/filter/bzip2.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#endif
 #include "boost/iostreams/filtering_stream.hpp"
 #include "boost/iostreams/device/back_inserter.hpp"
 #include "boost/iostreams/device/array.hpp"
@@ -427,9 +425,7 @@ class CDB
 
     uid_t getUid() const
     {
-#ifndef _WIN32
         if ( UNLIKELY(!m_myUid) ) m_myUid = getuid();
-#endif
         return m_myUid;
     }
 
@@ -504,7 +500,7 @@ StatusCode ConfigCDBAccessSvc::initialize()
 ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
 {
     if ( UNLIKELY(!m_file) ) {
-      std::unique_lock<std::mutex> lock(m_file_mtx);
+      std::unique_lock _(m_file_mtx);
       if (LIKELY(!m_file)){
         std::string name = m_name.value();
         if ( name.empty() ) {
@@ -585,7 +581,7 @@ bool ConfigCDBAccessSvc::write( std::string_view path, const T& object ) const
     s << object;
     try {
         return f->append( path, s );
-    } catch (std::runtime_error& err) {
+    } catch (const std::runtime_error& err) {
         error() << "failure during write: " << err.what() << endmsg;
         return false;
     }
@@ -594,20 +590,20 @@ bool ConfigCDBAccessSvc::write( std::string_view path, const T& object ) const
 std::optional<PropertyConfig>
 ConfigCDBAccessSvc::readPropertyConfig( const PropertyConfig::digest_type& ref )
 {
-    return this->read<PropertyConfig>( propertyConfigPath( ref ) );
+    return read<PropertyConfig>( propertyConfigPath( ref ) );
 }
 
 std::optional<ConfigTreeNode>
 ConfigCDBAccessSvc::readConfigTreeNode( const ConfigTreeNode::digest_type& ref )
 {
-    return this->read<ConfigTreeNode>( configTreeNodePath( ref ) );
+    return read<ConfigTreeNode>( configTreeNodePath( ref ) );
 }
 
 std::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
     std::string fnam = configTreeNodeAliasPath( alias );
-    auto sref = this->read<std::string>( fnam );
+    auto sref = read<std::string>( fnam );
     if ( !sref ) return {};
     auto ref = ConfigTreeNode::digest_type::createFromStringRep( *sref );
     if ( !ref.valid() ) {
@@ -639,7 +635,7 @@ PropertyConfig::digest_type
 ConfigCDBAccessSvc::writePropertyConfig( const PropertyConfig& config )
 {
     PropertyConfig::digest_type digest = config.digest();
-    return this->write( propertyConfigPath( digest ), config )
+    return write( propertyConfigPath( digest ), config )
                ? digest
                : PropertyConfig::digest_type::createInvalid();
 }
@@ -648,7 +644,7 @@ ConfigTreeNode::digest_type
 ConfigCDBAccessSvc::writeConfigTreeNode( const ConfigTreeNode& config )
 {
     ConfigTreeNode::digest_type digest = config.digest();
-    return this->write( configTreeNodePath( digest ), config )
+    return write( configTreeNodePath( digest ), config )
                ? digest
                : ConfigTreeNode::digest_type::createInvalid();
 }

@@ -17,10 +17,8 @@
 #include <list>
 #include <iterator>
 #include <chrono>
-
-#include "boost/filesystem/fstream.hpp"
-#include "boost/filesystem/convenience.hpp"
-#include "boost/regex.hpp"
+#include <regex>
+#include <fstream>
 
 // local
 #include "PropertyConfigSvc.h"
@@ -53,7 +51,7 @@ namespace {
     }
 
     // model this as output iterator
-    class property2jos  : public std::iterator<std::output_iterator_tag,const PropertyConfig::Prop> {
+    class property2jos : public std::iterator<std::output_iterator_tag,const PropertyConfig::Prop> {
          public:
             property2jos& operator++()   { return *this; }
             property2jos& operator*()    { return *this; }
@@ -75,9 +73,9 @@ namespace {
                     // NOTE: if the reference is not found, optionally, a default, can be specified.
                     //       eg.  foo.something = @OnlineEnv.somethingelse@somedefault
                    if (!prop.second.empty() && prop.second[0]=='@') {
-                       static boost::regex pattern("^@([^\\.]+)\\.([^@]+)(@.+)?$");
-                       boost::smatch what;
-                       if (!boost::regex_match(prop.second,what,pattern) ) {
+                       static std::regex pattern("^@([^\\.]+)\\.([^@]+)(@.+)?$");
+                       std::smatch what;
+                       if (!std::regex_match(prop.second,what,pattern) ) {
                             throw GaudiException(prop.second,"badly formatted reference property ", StatusCode::FAILURE);
                        }
                        std::string value;
@@ -133,7 +131,7 @@ StatusCode PropertyConfigSvc::initialize() {
    if ( !m_toolSvc )  return StatusCode::FAILURE;
    m_toolSvc->registerObserver(this);
 
-   if (!m_ofname.empty()) m_os = std::make_unique<boost::filesystem::ofstream>( m_ofname.value() );
+   if (!m_ofname.empty()) m_os = std::make_unique<std::ofstream>( m_ofname.value() );
 
   // read table of pre-assigned, possible configurations for this job...
   // i.e. avoid reading _everything_ when we really need to be quick
@@ -373,7 +371,7 @@ PropertyConfigSvc::loadConfig(const ConfigTreeNode::digest_type& nodeRef)
          info() << "loading config " << nodeRef.str() << endmsg;
          for (auto& i : collectLeafRefs(nodeRef) ) resolvePropertyConfig(i);
          return validateConfig( nodeRef );
-     } catch ( const boost::filesystem::filesystem_error& x )  {
+     } catch ( const std::exception& x )  {
          error() << x.what() << endmsg;
          throw x;
      }
@@ -453,8 +451,8 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
     if (!configID.valid()) return StatusCode::FAILURE;
     setTopAlgs(configID); // do this last instead of first?
     std::vector<const PropertyConfig*> configs;
-    StatusCode sc = outOfSyncConfigs(configID,std::back_inserter(configs));
-    if (sc.isFailure()) return sc;
+    if ( auto sc = outOfSyncConfigs(configID,std::back_inserter(configs));
+         sc.isFailure() ) return sc;
     for (const auto& i : configs ) {
         if(msgLevel(MSG::DEBUG)) debug() << " configuring " << i->name() << " using " << i->digest() << endmsg;
         const PropertyConfig::Properties& map = i->properties();
@@ -463,8 +461,8 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
         std::string fqname = i->type() + "/" + i->name();
         Transformer transformer(fqname,warning());
         for (const auto& trans : m_transform ) {
-            boost::regex re( trans.first );
-            if ( boost::regex_match( fqname, re ) ) transformer.push_back( &trans.second );
+            if ( std::regex re( trans.first );
+                 std::regex_match( fqname, re ) ) transformer.push_back( &trans.second );
         }
         if (!transformer.empty()) {
           std::transform(begin(map), end(map),
@@ -480,8 +478,7 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
     //@TODO: should we do this in reverse order??
     if (callSetProperties) {
         for (const auto&  i : configs ) {
-             sc = invokeSetProperties(*i);
-             if (sc.isFailure()) {
+             if (auto sc = invokeSetProperties(*i); sc.isFailure()) {
                   error() << "failed whilst invoking setProperties for " << i->name() << endmsg;
                   return sc;
              }
@@ -641,7 +638,7 @@ PropertyConfigSvc::validateConfig(const ConfigTreeNode::digest_type& ref) const 
 void
 PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, const std::string& fname) const
 {
-   boost::filesystem::ofstream df( fname );
+   std::ofstream df( fname );
    df << "digraph pvn {\n ordering=out;\n rankdir=LR;\n";
    for (const auto& i : collectNodeRefs(ref) ) {
        const ConfigTreeNode *node   = resolveConfigTreeNode(i);
@@ -701,7 +698,7 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
    auto cfn = m_nodes.with_lock( [&](const ConfigTreeNodeMap_t& nodes) -> const ConfigTreeNode* {
        auto i = nodes.find(ref);
        if (i==nodes.end()) return nullptr;
-       if (this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endmsg;
+       if (msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endmsg;
        return &(i->second);
    } );
    if (cfn) return cfn;
@@ -729,10 +726,9 @@ PropertyConfigSvc::Transformer::operator()(const PropertyConfig::Prop& in) {
    for (const auto& i : m_list) { // vector of all component maps to apply
      for (const auto& j : *i ) {  // map to apply
        if (in.first != j.first) continue;
-       for (const auto& k : j.second ) {
-         boost::regex pattern(k.first);
-         out = boost::regex_replace(std::move(out), pattern, k.second);
-       }
+       out = std::accumulate( begin(j.second), end(j.second), out,
+                              [](const std::string& s, const auto& rule)
+                              { return std::regex_replace(s, std::regex{rule.first}, rule.second ); } );
      }
    }
    if (out == in.second) return in;

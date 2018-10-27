@@ -11,9 +11,7 @@
 #include "zip.h"
 #include <boost/crc.hpp>                             // for boost::crc_32_type
 #include "boost/regex.hpp"
-#ifndef _WIN32
 #include "boost/iostreams/filter/bzip2.hpp"
-#endif
 #include "boost/iostreams/filter/zlib.hpp"
 #include "boost/iostreams/slice.hpp"
 #include "boost/filesystem/path.hpp"
@@ -144,11 +142,9 @@ bool ZipFile::setupStream( io::filtering_istream& s, const string& name ) const
         params.noheader = true;
         s.push( io::zlib_decompressor( params ) );
     } break;
-#ifndef _WIN32
     case 12:
         s.push( io::bzip2_decompressor() );
         break;
-#endif
     default:
         cerr << " unknown compression algorithm " << i->second.compress << endl;
         return false;
