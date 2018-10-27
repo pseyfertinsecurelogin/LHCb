@@ -12,24 +12,45 @@
 // much of that code is stolen from Sebastien Ponce's HLTEventLoopMgr
 #pragma once
 
+// The following MUST be included before GaudiKernel/Parsers.h,
+// which means very early on in the compilation unit.
+#include "CFNodePropertiesParse.h"
+
+// FW includes
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/DataSvc.h"
+#include "GaudiKernel/EventContext.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IAlgExecStateSvc.h"
+#include "GaudiKernel/IAlgorithm.h"
+#include "GaudiKernel/IDataBroker.h"
+#include "GaudiKernel/IEventProcessor.h"
+#include "GaudiKernel/IEvtSelector.h"
+#include "GaudiKernel/IHiveWhiteBoard.h"
+#include "GaudiKernel/Memory.h"
+#include "GaudiKernel/ThreadLocalContext.h"
+#include "GaudiAlg/FunctionalDetails.h"
+
+#include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <fstream>
+#include <map>
+#include <sstream>
+#include <iomanip>
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
-#include <sstream>
+
+//tbb
+#include "tbb/task_scheduler_init.h"
+#include "tbb/task.h"
 
 //locals
 #include "ControlFlowNode.h"
+#include "HistogramAgent.h"
 
-#include "tbb/task.h"
-
-
-// Forward declarations
-class IAlgExecStateSvc;
-class IEvtSelector;
-class IHiveWhiteBoard;
-class IDataManagerSvc;
-class IDataProviderSvc;
 
 class HLTControlFlowMgr : public extends<Service, IEventProcessor>
 {
@@ -74,7 +95,7 @@ private:
 private:
   Gaudi::Property<std::string> m_histPersName{this, "HistogramPersistency", "", ""};
   Gaudi::Property<std::string> m_evtsel{this, "EvtSel", "", ""};
-  Gaudi::Property<int> m_threadPoolSize{this, "ThreadPoolSize", -1, "Size of the threadpool initialised by TBB"};
+  Gaudi::Property<uint16_t> m_threadPoolSize{this, "ThreadPoolSize", -1, "Size of the threadpool initialised by TBB"};
   Gaudi::Property<std::string> m_whiteboardSvcName{this, "WhiteboardSvc", "EventDataSvc", "The whiteboard name"};
   Gaudi::Property<std::string> m_dotfile{
       this, "DotFile", {}, "Name of file to dump dependency graph; if empty, do not dump"};
@@ -117,10 +138,9 @@ private:
   /// event selector context
   IEvtSelector::Context* m_evtSelContext{nullptr};
 
-  private:
   //state vectors for each event, once filled, then copied per event
   std::vector<NodeState> m_NodeStates;
-  std::vector<int> m_AlgStates;
+  std::vector<uint16_t> m_AlgStates;
 
   //all controlflownodes
   std::vector<VNode> m_allVNodes;
@@ -134,8 +154,9 @@ private:
   //for printing
   //printable dependency tree (will be built during initialize
   std::vector<std::string> m_printableDependencyTree;
+  std::vector<std::string> m_AlgNames;
   //map order of print to order of m_NodeStates and m_allVNodes
-  std::vector<int> m_mapPrintToStateOrder;
+  std::vector<int> m_mapPrintToNodeStateOrder;
   //maximum width of the dependencytree
   int m_maxTreeWidth;
 
@@ -143,5 +164,7 @@ private:
   void registerStructuredTree();
   void registerTreePrintWidth();
   //runtime adding of states to print tree and states
-  std::stringstream buildStructuredTreeWithStates(std::vector<NodeState> const states);
+  public:
+  std::stringstream buildStructuredTreeWithStates(std::vector<NodeState> const & states) const;
+  std::stringstream buildAlgsWithStates(std::vector<uint16_t> const & states) const;
 };

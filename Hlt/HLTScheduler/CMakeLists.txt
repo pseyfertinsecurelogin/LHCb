@@ -26,7 +26,7 @@ find_package(TBB)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${TBB_INCLUDE_DIRS})
 
 gaudi_add_module(HLTScheduler
-                 *.cpp
+                 src/*.cpp
                  INCLUDE_DIRS Boost HLTScheduler
                  LINK_LIBRARIES Boost GaudiAlgLib GaudiKernel)
 

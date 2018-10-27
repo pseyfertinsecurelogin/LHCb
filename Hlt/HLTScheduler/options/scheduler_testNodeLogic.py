@@ -23,11 +23,9 @@ evtMax = 4
 threads = 2
 
 a1 = ConfigurableDummy("A1")
-a1.outKeys = ['/Event/a1']
 a1.CFD = True
 
 a2 = ConfigurableDummy("A2")
-a2.outKeys = ['/Event/a2']
 a2.CFD = False
 
 whiteboard = HiveWhiteBoard("EventDataSvc",
@@ -56,6 +54,7 @@ HLTEventLoopMgr().OutputLevel = DEBUG
 
 HiveDataBrokerSvc().OutputLevel = DEBUG
 
+print(HLTControlFlowMgr().CompositeCFNodes)
 
 
 app = ApplicationMgr(EvtMax=evtMax,

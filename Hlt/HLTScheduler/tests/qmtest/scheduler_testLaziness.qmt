@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="args"><set>
+  <text>-v</text>
+  <text>../../options/scheduler_testLaziness.py</text>
+</set></argument>
+<argument name="validator"><text>
+expected_strings = [ \
+"NONLAZY_OR: top               0|1",
+" NONLAZY_AND: NONLAZY_AND_TF  0|0",
+"  T0                          0|1",
+"  F0                          0|0",
+" NONLAZY_AND: NONLAZY_AND_FT  0|0",
+"  F1                          0|0",
+"  T1                          0|1",
+" NONLAZY_OR: NONLAZY_OR_TF    0|1",
+"  T2                          0|1",
+"  F2                          0|0",
+" NONLAZY_OR: NONLAZY_OR_FT    0|1",
+"  F3                          0|0",
+"  T3                          0|1",
+" LAZY_AND: LAZY_AND_TF        0|0",
+"  T4                          0|1",
+"  F4                          0|0",
+" LAZY_AND: LAZY_AND_FT        0|0",
+"  F5                          0|0",
+"  T5                          1|1",
+" LAZY_OR: LAZY_OR_TF          0|1",
+"  T6                          0|1",
+"  F6                          1|1",
+" LAZY_OR: LAZY_OR_FT          0|1",
+"  F7                          0|0",
+"  T7                          0|1",
+"T0                  1",
+"F0                  1",
+"F1                  1",
+"T1                  1",
+"T2                  1",
+"F2                  1",
+"F3                  1",
+"T3                  1",
+"T4                  1",
+"F4                  1",
+"F5                  1",
+"T5                  0",
+"T6                  1",
+"F6                  0",
+"F7                  1",
+"T7                  1",
+]
+for expected_string in expected_strings:
+    occurrences = 0
+    index = 0
+    while True:
+        index = stdout.find(expected_string, index)
+        if index == -1:
+            break
+        index += 1
+        occurrences += 1
+    if occurrences &lt; 4:
+        causes.append('shortcircuiting gone wrong for {}'.format(expected_string))
+</text></argument>
+</extension>
+

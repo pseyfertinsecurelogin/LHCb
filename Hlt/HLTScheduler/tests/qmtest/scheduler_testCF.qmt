@@ -27,11 +27,29 @@ expected_strings = [ "NONLAZY_AND: moore     0|0",
                      "  A5                   0|1",
                      "  NOT: notA1           0|0",
                      "   A1                  0|1",
-                     "ordered nodes: [A3, A4, A5, A1, A2]",]
+                     "A1                  1",
+                     "A2                  1",
+                     "A5                  1",
+                     "A3                  1",
+                     "A4                  0" ]
+
+nodeorder = "ordered nodes: [A3, A4, A5, A1, A2]"
+
+
 for expected_string in expected_strings:
-    if stdout.find(expected_string) == -1:
-        causes.append('not the right control flow')
-        result['GaudiTest.expected_string'] = result.Quote(expected_string)
+    occurrences = 0
+    index = 0
+    while True:
+        index = stdout.find(expected_string, index)
+        if index == -1:
+            break
+        index += 1
+        occurrences += 1
+    if occurrences &lt; 4:
+        causes.append('control flow gone wrong for {}'.format(expected_string))
+
+if stdout.find(nodeorder) == -1:
+    causes.append('node order gone wrong')
 </text></argument>
 </extension>
 
