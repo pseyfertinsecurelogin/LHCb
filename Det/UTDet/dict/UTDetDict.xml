@@ -1,0 +1,29 @@
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <class name="DeUTBaseElement"   />
+  <class name="DeUTDetector"      />
+  <class name="DeUTStation"       />
+  <class name="DeUTLayer"         />
+  <class name="DeUTModule"        />
+  <class name="DeUTSector"        />
+  <class name="DeUTSensor"        />
+  <class name="std::vector<DeUTStation*>"            />
+  <class name="std::vector<DeUTLayer*>"              />
+  <class name="std::vector<DeUTModule*>"             />
+  <class name="std::vector<DeUTSector*>"             />
+  <class name="std::vector<DeUTSensor*>"             />
+  <class name="std::pair<unsigned int, DeUTSector*>" /> <!-- UTSectorMap typedef -->
+  <variable pattern="DeUTDetLocation::*" />
+  <enum pattern= "DeUTSector::Status::*" />
+  <class name="std::vector<DeUTSector::Status>" />
+  <class name="std::pair<unsigned int, DeUTSector::Status>" />
+</lcgdict>

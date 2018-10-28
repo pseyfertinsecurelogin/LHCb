@@ -43,6 +43,12 @@
 	   access = "PUBLIC" />
 
        <typedef
+           def    = "UTPattern"
+           type   = "std::bitset&lt;4&gt;"
+           desc   = "UT hit pattern"
+           access = "PUBLIC" />
+
+       <typedef
 	   def    = "TPattern"
 	   type   = "std::bitset&lt;12&gt;"
 	   desc   = "T-station hit pattern"
@@ -160,7 +166,7 @@
          const   = 'TRUE'
          desc    = 'number of UT hits'>
          <code>
-            return (m_tt.count());
+            return (m_ut.count());
          </code>
        </method>
 
@@ -233,6 +239,7 @@
            m_veloPhiC.reset();
 	
 	   m_tt.reset();
+	   m_ut.reset();
 		  
 	   m_itAC.reset();
            m_itTopBottom.reset();
@@ -324,7 +331,14 @@
         desc      = 'tt bit pattern'
         access    = 'PRIVATE'
         setMeth   = 'TRUE'
-        getMeth   = 'TRUE' />  
+        getMeth   = 'TRUE' />
+     <attribute
+        type      = 'UTPattern'
+        name      = 'ut'
+        desc      = 'ut bit pattern'
+        access    = 'PRIVATE'
+        setMeth   = 'TRUE'
+        getMeth   = 'TRUE' />
 
      <attribute
         type      = 'MuonPattern'

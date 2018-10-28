@@ -28,12 +28,6 @@
   <class name="DeTTHalfModule"    />
   <class name="DeTTSector"        />
   <class name="DeTTSensor"        />
-  <class name="DeUTDetector"      />
-  <class name="DeUTStation"       />
-  <class name="DeUTLayer"         />
-  <class name="DeUTModule"        />
-  <class name="DeUTSector"        />
-  <class name="DeUTSensor"        />
   <class name="std::vector<DeSTStation*>"            /> <!-- STStations  typedef -->
   <class name="std::vector<DeSTLayer*>"              /> <!-- STLayers    typedef -->
   <class name="std::vector<DeSTSector*>"             /> <!-- STSectors   typedef -->
@@ -49,11 +43,6 @@
   <class name="std::vector<DeTTHalfModule*>"         />
   <class name="std::vector<DeTTSector*>"             />
   <class name="std::vector<DeTTSensor*>"             />
-  <class name="std::vector<DeUTStation*>"            />
-  <class name="std::vector<DeUTLayer*>"              />
-  <class name="std::vector<DeUTModule*>"             />
-  <class name="std::vector<DeUTSector*>"             />
-  <class name="std::vector<DeUTSensor*>"             />
   <class name="std::pair<unsigned int, DeSTSector*>" /> <!-- STSectorMap typedef -->
   <variable pattern="DeSTDetLocation::*" />
   <enum pattern= "DeSTSector::Status::*" />

@@ -23,9 +23,7 @@
   <class name = "STDAQ::StripRepresentation" />
   <class name = "ST::ITDetectorPlot" />
   <class name = "ST::TTDetectorPlot" />
-  <class name = "ST::UTDetectorPlot" />
   <struct name = "ST::TTDetectorPlot::Bins" />
-  <struct name = "ST::UTDetectorPlot::Bins" />
   <struct name = "ST::ITDetectorPlot::Bins" />
   <class name = "std::pair<STTell1ID, unsigned int>" /> 
 
@@ -35,7 +33,6 @@
   <function pattern ="STFun::*" />
   <function name = "STBoardMapping::printTTMap" />
   <function name = "STBoardMapping::printITMap" />
-  <function name = "STBoardMapping::printUTMap" />
   <function name = "STBoardMapping::find" />
   <function pattern = "ST::XMLUtils*" />
 </lcgdict>

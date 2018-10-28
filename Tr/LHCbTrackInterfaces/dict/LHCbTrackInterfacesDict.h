@@ -13,6 +13,8 @@
 
 #include "Kernel/STChannelID.h"
 #include "TrackInterfaces/ISTClusterPosition.h"
+#include "Kernel/UTChannelID.h"
+#include "TrackInterfaces/IUTClusterPosition.h"
 #include "Kernel/VeloChannelID.h"
 #include "TrackInterfaces/IVeloClusterPosition.h"
 #include "Kernel/VPChannelID.h"

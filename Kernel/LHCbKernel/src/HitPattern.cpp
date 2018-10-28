@@ -68,6 +68,12 @@ namespace LHCb
 		}
 		break ;
 		case LHCbID::channelIDtype::UT:
+                {
+                    LHCb::UTChannelID utid = id.utID() ;
+                    unsigned int uniquelayer = (utid.station()-1)*2 + utid.layer()-1 ;
+                    m_ut.set(uniquelayer) ;
+                }
+                break ;
 		case LHCbID::channelIDtype::TT:
 		{
 		    LHCb::STChannelID stid = id.stID() ;
@@ -124,6 +130,7 @@ namespace LHCb
 	  << "veloRC:             " << m_veloRC << std::endl
 	  << "veloPhiA:           " << m_veloPhiA << std::endl
 	  << "veloPhiC:           " << m_veloPhiC << std::endl
+          << "UT:                 " << m_ut << std::endl
 	  << "TT:                 " << m_tt << std::endl
 	  << "IT-top-bottom:      " << m_itTopBottom << std::endl
 	  << "IT-AC:              " << m_itAC << std::endl

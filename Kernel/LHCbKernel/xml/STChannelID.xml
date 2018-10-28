@@ -22,29 +22,8 @@
       <enum
           desc   = "types of sub-detector channel ID"
           name   = "detType"
-          value  = "typeTT = 0, typeIT = 1, typeUT = 2"
+          value  = "typeTT = 0, typeIT = 1"
           access = 'PUBLIC'
-       />
-
-      <enum
-          desc   = "Offsets of UT bitfield that are different from TT/IT"
-          name   = "channelIDBitsUT"
-          value  = "sectorBitsUT    = 10,
-                    detRegionBitsUT = 17,
-                    layerBitsUT     = 19"
-          access = 'PRIVATE'
-       />
-
-      <enum
-          desc   = "Bitmasks for UT bitfield that are different from TT/IT"
-          name   = "channelIDMasksUT"
-          value  = "sectorMaskUT          = 0x1fc00L,
-                    detRegionMaskUT       = 0x60000L,
-                    layerMaskUT           = 0x180000L,
-                    stationMaskUT         = 0x600000L,
-                    uniqueLayerMaskUT     = layerMaskUT + stationMaskUT,
-                    uniqueDetRegionMaskUT = detRegionMaskUT + layerMaskUT + stationMaskUT"
-          access = 'PRIVATE'
        />
 
       <constructor argList='const unsigned int iType, const unsigned int iStation, 
@@ -52,20 +31,12 @@
                             const unsigned int iSector, const unsigned int iStrip' 
                    desc='constructor with station, layer, detRegion, sector , strip,'>
         <code>
-          if ( iType == LHCb::STChannelID::detType::typeUT )
-             m_channelID = (iType &lt;&lt; typeBits) +
-                           (iStation &lt;&lt; stationBits) + 
-                           (iLayer &lt;&lt; layerBitsUT) + 
-                           (iDetRegion &lt;&lt; detRegionBitsUT) + 
-                           (iSector &lt;&lt;  sectorBitsUT) + 
-                           (iStrip &lt;&lt; stripBits);
-          else
-             m_channelID = (iType &lt;&lt; typeBits) +
-                           (iStation &lt;&lt; stationBits) + 
-                           (iLayer &lt;&lt; layerBits) + 
-                           (iDetRegion &lt;&lt; detRegionBits) + 
-                           (iSector &lt;&lt;  sectorBits) + 
-                           (iStrip &lt;&lt; stripBits);
+           m_channelID = (iType &lt;&lt; typeBits) +
+                         (iStation &lt;&lt; stationBits) + 
+                         (iLayer &lt;&lt; layerBits) + 
+                         (iDetRegion &lt;&lt; detRegionBits) + 
+                         (iSector &lt;&lt;  sectorBits) + 
+                         (iStrip &lt;&lt; stripBits);
         </code>
       </constructor>
 
@@ -90,54 +61,40 @@
       </method>
 
       <method type='bool' name='isTT' const='TRUE' desc='test whether TT or not'>
-        <code>  return type() == LHCb::STChannelID::detType::typeTT ;</code>
+        <code>  return (type() == LHCb::STChannelID::typeTT ? true : false);</code>
       </method>
 
       <method type='bool' name='isIT' const='TRUE' desc='test whether IT or not'>
-        <code>  return type() == LHCb::STChannelID::detType::typeIT ;</code>
-      </method>
-
-      <method type='bool' name='isUT' const='TRUE' desc='test whether UT or not'>
-        <code>  return type() == LHCb::STChannelID::detType::typeUT ;</code>
+        <code>  return (type() == LHCb::STChannelID::typeIT ? true : false);</code>
       </method>
 
       <method type='unsigned int' name='sector' const='TRUE' desc='Retrieve sector'>
         <code>
-          return ( isUT() ?
-                 (unsigned int)((m_channelID &amp; sectorMaskUT) &gt;&gt; sectorBitsUT) :
-                 (unsigned int)((m_channelID &amp; sectorMask) &gt;&gt; sectorBits) );
+          return (unsigned int)((m_channelID &amp; sectorMask) &gt;&gt; sectorBits);
         </code>
       </method>
 
       <method type='unsigned int' name='detRegion' const='TRUE' desc='Retrieve detRegion'>
         <code>
-          return ( isUT() ?
-                 (unsigned int)((m_channelID &amp; detRegionMaskUT) &gt;&gt; detRegionBitsUT) :
-                 (unsigned int)((m_channelID &amp; detRegionMask) &gt;&gt; detRegionBits) );
+          return (unsigned int)((m_channelID &amp; detRegionMask) &gt;&gt; detRegionBits);
         </code>
       </method>
 
       <method type='unsigned int' name='layer' const='TRUE' desc='Retrieve layer'>
         <code>
-          return ( isUT() ?
-                 (unsigned int)((m_channelID &amp; layerMaskUT) &gt;&gt; layerBitsUT) :
-                 (unsigned int)((m_channelID &amp; layerMask) &gt;&gt; layerBits) );
+          return (unsigned int)((m_channelID &amp; layerMask) &gt;&gt; layerBits);
         </code>
       </method>
 
       <method type='unsigned int' name='uniqueLayer' const='TRUE' desc='Retrieve unique layer'>
         <code>
-          return ( isUT() ?
-                 (unsigned int)((m_channelID &amp; uniqueLayerMaskUT) &gt;&gt; layerBitsUT) :
-                 (unsigned int)((m_channelID &amp; uniqueLayerMask) &gt;&gt; layerBits) );
+          return (unsigned int)((m_channelID &amp; uniqueLayerMask) &gt;&gt; layerBits);
         </code>
       </method>
 
       <method type='unsigned int' name='uniqueDetRegion' const='TRUE' desc='Retrieve unique detRegion'>
         <code>
-          return ( isUT() ?
-                 (unsigned int)((m_channelID &amp; uniqueDetRegionMaskUT) &gt;&gt; detRegionBitsUT) :
-                 (unsigned int)((m_channelID &amp; uniqueDetRegionMask) &gt;&gt; detRegionBits) );
+          return (unsigned int)((m_channelID &amp; uniqueDetRegionMask) &gt;&gt; detRegionBits);
         </code>
       </method>
 
@@ -147,7 +104,7 @@
         <bitfield name='detRegion' length='3'  desc='detRegion' setMeth='FALSE' getMeth='FALSE'/>
         <bitfield name='layer'     length='3'  desc='layer'     setMeth='FALSE' getMeth='FALSE'/>
         <bitfield name='station'   length='2'  desc='station'   setMeth='FALSE'/>
-        <bitfield name='type' length='2' desc='type - TT/IT/UT' setMeth='FALSE' getMeth='FALSE'/>
+        <bitfield name='type' length='2' desc='type - TT/IT' setMeth='FALSE' getMeth='FALSE'/>
         <bitfield name='uniqueLayer'      length='layer, station' 
                   desc='unique layer'     setMeth='FALSE' getMeth='FALSE'/>
         <bitfield name='uniqueDetRegion'  length='detRegion, layer, station' 

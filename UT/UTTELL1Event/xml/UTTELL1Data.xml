@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+
+<gdd>
+  <package name='UTTELL1Event'>
+  <!-- location = address in TES -->
+  <!-- classId = identifier -->
+
+    <class name='UTTELL1Data'
+	   id='9010'
+	   author='Andy Beiter (based on code by Matthew Needham)'
+	   desc='ADCs from a TELL1 board'
+           serializers = 'FALSE'>
+      <base name='KeyedObject&lt; int &gt; '/>
+      <location name="UTFull"   place="Raw/UT/Full"   />
+      <location name="UTPedestal"   place="Raw/UT/Pedestal"   />
+      <location name="UTProcFull"   place="Raw/UT/ProcFull"   />
+      <location name="UTPedSubADCs"   place="Raw/UT/PedSubADCs"   />
+      <location name="UTSubPeds"   place="Raw/UT/SubPeds"   />
+      <location name="UTLCMSADCs"   place="Raw/UT/LCMSADCs"   />
+      <location name="UTEmulated"   place="Raw/UT/Emulated"   />
+
+      &KeyedContainer;
+      <import name='Event/UTTELL1EventInfo' />
+      <typedef desc = "2-d data vector of signed int typedef"
+       type =  "std::vector &lt;  std::vector &lt; signed int &gt; &gt;"
+       def = "Data"
+       access = "PUBLIC " />
+
+      <typedef desc = "Vector of UTTELL1EventInfo typedef"
+       type =  "SmartRefVector&lt;LHCb::UTTELL1EventInfo&gt;"
+       def = "Info"
+       access = "PUBLIC " />
+
+
+      <constructor
+        desc = 'constructor with arguments'
+        argList = 'Data data, Data headers, std::vector&lt; unsigned int &gt; sentPP, Info info'
+        initList = 'm_data(data), m_header(headers), m_sentPPs(sentPP) ,m_eventInfo(info)'>
+      </constructor>
+
+      <constructor
+        desc = 'constructor with arguments'
+        argList = 'Data data '
+        initList = 'm_data(data)'>
+      </constructor>
+
+
+      <constructor
+        desc = 'constructor with key'
+        argList = 'const int numberOfTELL1'
+        initList = 'KeyedObject&lt;int&gt;(numberOfTELL1), m_data(), m_header()'>
+      </constructor>
+
+      <attribute
+        type ='Data'
+        name = 'data'
+        desc = 'vector of raw data'
+        nonconstaccessor = 'TRUE'
+      />
+
+       <attribute
+        type ='Data'
+        name = 'header'
+        desc = 'vector of headers'
+      />
+
+
+
+     <attribute
+        type ='std::vector&lt; unsigned int &gt;'
+        name = 'sentPPs'
+        desc = 'which pp sent data'
+      />
+
+
+     <method
+        type =' std::vector &lt; const LHCb::UTTELL1EventInfo*  &gt;'
+        name = 'validData'
+        desc = 'data from pps that are read out'
+        const = 'TRUE'
+      />
+
+
+       <relation
+       name="eventInfo"
+       multiplicity="M"
+       type="LHCb::UTTELL1EventInfo"
+       desc= "Vector of 4 Event Info block (1 per PP)"
+       />
+
+      <method
+          name = "fillStream"
+          desc = "Print in a human readable way"
+          type = "std::ostream&amp;"
+          override = "TRUE"
+          const = "TRUE">
+          <arg type = "std::ostream" name  = "s" />
+      </method>
+
+      <method type = 'unsigned int'
+              name = 'dataSize'
+              desc = 'size of TELL1 data'
+              const = 'TRUE'>
+        <code> return m_data.size();  </code>
+      </method>
+
+
+      <method type = 'unsigned int'
+      	      name = 'TELL1ID'
+	      desc = 'Returns the TELL1D id'
+	      const = 'TRUE'>
+      <code>  return key();
+      </code>
+      </method>
+
+      <method type = 'const std::vector &lt; signed int &gt; &amp;'
+      	      name = 'beetleData'
+	      argList = 'unsigned char beetleID'
+	      desc = 'Returns the data of a single beetle'
+	      const = 'TRUE'>
+      <code>  return m_data[beetleID];
+      </code>
+      </method>
+
+    </class>
+
+  </package>
+</gdd>

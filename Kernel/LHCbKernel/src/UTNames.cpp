@@ -8,18 +8,18 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "Kernel/STChannelID.h"
+#include "Kernel/UTChannelID.h"
 #include "Kernel/UTNames.h"
 
 #include <iostream>
 #include <string>
 
-std::string LHCb::UTNames::UniqueSectorToString(const LHCb::STChannelID& chan)
+std::string LHCb::UTNames::UniqueSectorToString(const LHCb::UTChannelID& chan)
 {
   return UniqueRegionToString(chan) + SectorToString(chan);
 }
 
-std::string LHCb::UTNames::SectorToString(const LHCb::STChannelID& chan)
+std::string LHCb::UTNames::SectorToString(const LHCb::UTChannelID& chan)
 {
   return "Sector"+ std::to_string(chan.sector());;
 }
@@ -73,7 +73,7 @@ std::vector<std::string> LHCb::UTNames::allLayers() {
 }
 
 
-std::string LHCb::UTNames::UniqueLayerToString(const LHCb::STChannelID& chan)
+std::string LHCb::UTNames::UniqueLayerToString(const LHCb::UTChannelID& chan)
 {
   std::string layer = "UnknownLayer";
   if (chan.station() == 1){
@@ -99,12 +99,12 @@ std::string LHCb::UTNames::UniqueLayerToString(const LHCb::STChannelID& chan)
   return StationToString(chan) + layer;
 }
 
-std::string LHCb::UTNames::channelToString(const LHCb::STChannelID& chan)
+std::string LHCb::UTNames::channelToString(const LHCb::UTChannelID& chan)
 {
   return UniqueSectorToString(chan) + "Strip" + std::to_string(chan.strip());
 }
 
-LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
+LHCb::UTChannelID LHCb::UTNames::stringToChannel(const std::string& name)
 {
 
   // convert string to channel
@@ -124,7 +124,7 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
       layer = 2;
     }
     else {
-      return STChannelID(LHCb::STChannelID::detType::typeUT, station , 0u , 0u , 0u, 0u);
+      return UTChannelID(LHCb::UTChannelID::detType::typeUT, station , 0u , 0u , 0u, 0u);
     }
   }
 
@@ -136,7 +136,7 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
       layer = 1;
     }
     else {
-      return STChannelID(LHCb::STChannelID::detType::typeUT, station , 0u , 0u , 0u, 0u);
+      return UTChannelID(LHCb::UTChannelID::detType::typeUT, station , 0u , 0u , 0u, 0u);
     }
   }
 
@@ -157,7 +157,7 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
     std::string sectorName = name.substr(startSector+6);
     sector = toInt(sectorName);
     if (sector == 0) {
-      return STChannelID(); // invalid sector
+      return UTChannelID(); // invalid sector
     }
   }
   else {
@@ -167,7 +167,7 @@ LHCb::STChannelID LHCb::UTNames::stringToChannel(const std::string& name)
     sector = toInt(sectorName);
   }
 
-  return LHCb::STChannelID(LHCb::STChannelID::detType::typeUT, station, layer,
+  return LHCb::UTChannelID(LHCb::UTChannelID::detType::typeUT, station, layer,
                            region, sector, strip);
 }
 

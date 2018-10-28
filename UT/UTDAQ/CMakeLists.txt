@@ -15,15 +15,15 @@ gaudi_subdir(UTDAQ v1r0)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Det/DetDesc
-                         Det/STDet
+                         Det/UTDet
                          Event/DAQEvent
                          Event/DigiEvent
                          Event/RecEvent
                          GaudiAlg
                          GaudiKernel
                          Kernel/LHCbKernel
-                         ST/STKernel
-                         ST/STTELL1Event
+                         UT/UTKernel
+                         UT/UTTELL1Event
                          Si/SiDAQ)
 
 
@@ -36,8 +36,8 @@ gaudi_add_library(UTDAQLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS UTDAQ
                   INCLUDE_DIRS Boost Event/RawEvent DAQ/DAQUtils Event/DigiEvent Si/SiDAQ UT/UTKernel
-                  LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
+                  LINK_LIBRARIES DetDescLib UTDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel UTKernelLib UTTELL1Event)
 
 gaudi_add_module(UTDAQ
-                 src/component/Components.cpp
+                 src/component/*.cpp
                  LINK_LIBRARIES UTDAQLib)

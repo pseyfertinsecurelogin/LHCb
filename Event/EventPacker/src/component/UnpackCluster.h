@@ -57,12 +57,12 @@ private:
   }
 
   /// Create and access UT Clusters on demand
-  LHCb::STClusters* utClus()
+  LHCb::UTClusters* utClus()
   {
     if ( !m_utClus )
     {
-      put( m_utClus = new LHCb::STClusters() ,
-           LHCb::STClusterLocation::UTClusters + m_extension );
+      put( m_utClus = new LHCb::UTClusters() ,
+           LHCb::UTClusterLocation::UTClusters + m_extension );
     }
     return m_utClus;
   }
@@ -90,7 +90,7 @@ private:
   // Cache pointers to containers, for on-demand creation
   LHCb::VeloClusters * m_vClus = nullptr; ///< Velo clusters
   LHCb::STClusters*   m_ttClus = nullptr; ///< TT Clusters
-  LHCb::STClusters*   m_utClus = nullptr; ///< UT Clusters
+  LHCb::UTClusters*   m_utClus = nullptr; ///< UT Clusters
   LHCb::STClusters*   m_itClus = nullptr; ///< IT Clusters
 
 };

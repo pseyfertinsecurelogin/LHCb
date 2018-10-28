@@ -21,6 +21,7 @@
 #include "Kernel/VeloChannelID.h"
 #include "Kernel/VPChannelID.h"
 #include "Kernel/STChannelID.h"
+#include "Kernel/UTChannelID.h"
 #include "Kernel/OTChannelID.h"
 #include "Kernel/CaloCellID.h"
 #include "Kernel/MuonTileID.h"
@@ -78,6 +79,7 @@ namespace {
     std::pair<LHCb::VeloChannelID,int>                  m_std_pair_VeloChannelID_int;
     std::pair<LHCb::VPChannelID,int>                    m_std_pair_VPChannelID_int;
     std::pair<LHCb::STChannelID,int>                    m_std_pair_STChannelID_int;
+    std::pair<LHCb::UTChannelID,int>                    m_std_pair_UTChannelID_int;
     std::pair<LHCb::OTChannelID,int>                    m_std_pair_OTChannelID_int;
     std::pair<double,LHCb::CaloCellID>                  m_std_pair_double_CaloCellID;
     std::pair<LHCb::MuonTileID,int>                     m_std_pair_MuonTileID_int;
@@ -85,11 +87,13 @@ namespace {
     std::vector<std::pair<LHCb::VeloChannelID,int> >    m_std_vector_std_pair_VeloChannelID_int;
     std::vector<std::pair<LHCb::VPChannelID,int> >      m_std_vector_std_pair_VPChannelID_int;
     std::vector<std::pair<LHCb::STChannelID,int> >      m_std_vector_std_pair_STChannelID_int;
+    std::vector<std::pair<LHCb::UTChannelID,int> >      m_std_vector_std_pair_UTChannelID_int;
     std::vector<std::pair<LHCb::OTChannelID,int> >      m_std_vector_std_pair_OTChannelID_int;
     std::vector<std::pair<double,LHCb::CaloCellID> >    m_std_vector_std_pair_double_CaloCellID;
     std::vector<std::pair<LHCb::MuonTileID,int> >       m_std_vector_std_pair_MuonTileID_int;
     std::vector<std::pair<LHCb::HCCellID,int> >         m_std_vector_std_pair_HCCellID_int;
     LHCb::SiPositionInfo<LHCb::STChannelID>             m_SiPositionInfo_STChannelID;
+    LHCb::SiPositionInfo<LHCb::UTChannelID>             m_SiPositionInfo_UTChannelID;
     LHCb::SiPositionInfo<LHCb::VeloChannelID>           m_SiPositionInfo_VeloChannelID;
     LHCb::PixelPositionInfo<LHCb::VPChannelID>          m_PixelPositionInfo_VPChannelID;
     std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>          m_std_pair_XYZPoint_XYZPoint;

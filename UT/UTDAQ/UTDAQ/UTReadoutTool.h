@@ -16,14 +16,14 @@
 #include <string>
 
 #include "Kernel/IUTReadoutTool.h"
-#include "Kernel/STChannelID.h"
+#include "Kernel/UTChannelID.h"
 #include "GaudiAlg/GaudiTool.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Kernel/STChannelID.h"
-#include "Kernel/STTell1Board.h"
-#include "Event/STCluster.h"
-#include "STDet/DeSTDetector.h"
+#include "Kernel/UTTell1ID.h"
+#include "Kernel/UTDAQDefinitions.h"
+#include "Kernel/UTChannelID.h"
+#include "Kernel/UTTell1Board.h"
+#include "Event/UTCluster.h"
+#include "UTDet/DeUTDetector.h"
 
 /**
  *  Concret Class for things related to the Readout of the UT Tell1 Boards
@@ -42,31 +42,31 @@ public:
   unsigned int nBoard() const override;
 
   ///return vector of Tell1IDs
-  std::vector<STTell1ID> boardIDs() const override;
+  std::vector<UTTell1ID> boardIDs() const override;
 
   /// convert ITChannelID to DAQ ChannelID
-  STDAQ::chanPair offlineChanToDAQ(const LHCb::STChannelID aOfflineChan, double isf) const override;
+  UTDAQ::chanPair offlineChanToDAQ(const LHCb::UTChannelID aOfflineChan, double isf) const override;
 
   /// convert offline interStripFraction to DAQ interStripFraction
-  double interStripToDAQ(const LHCb::STChannelID aOfflineChan,
-                                 const STTell1ID aBoardID,
+  double interStripToDAQ(const LHCb::UTChannelID aOfflineChan,
+                                 const UTTell1ID aBoardID,
                                  const double isf) const override;
 
-  bool ADCOfflineToDAQ(const LHCb::STChannelID aOfflineChan,
-                       const STTell1ID aBoardID,
-                       LHCb::STCluster::ADCVector& adcs) const override;
+  bool ADCOfflineToDAQ(const LHCb::UTChannelID aOfflineChan,
+                       const UTTell1ID aBoardID,
+                       LHCb::UTCluster::ADCVector& adcs) const override;
 
 
   /// find the Tell1 board given a board ID
-  STTell1Board* findByBoardID(const STTell1ID aBoardID) const override;
+  UTTell1Board* findByBoardID(const UTTell1ID aBoardID) const override;
 
   /// find Tell1 board by storage order
-  STTell1Board* findByOrder(const unsigned int aValue) const override;
+  UTTell1Board* findByOrder(const unsigned int aValue) const override;
 
   /// Add the mapping of source ID to TELL1 board number
   unsigned int SourceIDToTELLNumber(unsigned int sourceID) const override;
 
-  /** Add the mapping of source ID to board number for IT / TT / UT */
+  /** Add the mapping of source ID to board number for UT */
   const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
 
 
@@ -74,22 +74,22 @@ public:
   
   
   /// list of the readout sector ids on the board
-  std::vector<LHCb::STChannelID> sectorIDs(const STTell1ID board) const override;
+  std::vector<LHCb::UTChannelID> sectorIDs(const UTTell1ID board) const override;
 
   /// list of the readout sectors
-  std::vector<DeSTSector*> sectors(const STTell1ID board) const override;
+  std::vector<DeUTSector*> sectors(const UTTell1ID board) const override;
 
   /// service box
   unsigned int nServiceBox() const override;
 
   /// service box number
-  std::string serviceBox(const LHCb::STChannelID& aChan) const override;
+  std::string serviceBox(const LHCb::UTChannelID& aChan) const override;
 
   /// list of the readout sectors ids in a service box
-  std::vector<LHCb::STChannelID> sectorIDsOnServiceBox(const std::string& serviceBox) const override;
+  std::vector<LHCb::UTChannelID> sectorIDsOnServiceBox(const std::string& serviceBox) const override;
 
   /// list of the readout sectors in a service box
-  std::vector<DeSTSector*> sectorsOnServiceBox(const std::string& serviceBox) const override;
+  std::vector<DeUTSector*> sectorsOnServiceBox(const std::string& serviceBox) const override;
 
   /// list of service boxes
   const std::vector<std::string>& serviceBoxes() const override;
@@ -112,10 +112,10 @@ public:
   StatusCode initialize() override;
 
   /// get region
-  unsigned int region(const LHCb::STChannelID aChan) const;
+  unsigned int region(const LHCb::UTChannelID aChan) const override;
 
-  /** Add the mapping of board number to source ID for IT / TT / UT */
-  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const;
+  /** Add the mapping of board number to source ID for UT */
+  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const override;
 
 protected:
 
@@ -129,14 +129,15 @@ protected:
   unsigned int m_hybridsPerBoard;
   unsigned int m_nBoard{0};
   unsigned int m_nServiceBox;
-  std::vector<std::unique_ptr<STTell1Board>> m_boards;
-  std::map<STTell1ID, STTell1Board*> m_boardsMap;
+  std::vector<std::unique_ptr<UTTell1Board>> m_boards;
+  std::map<UTTell1ID, UTTell1Board*> m_boardsMap;
   std::vector<std::string> m_serviceBoxes;
   std::vector<unsigned int> m_firstBoardInRegion;
 
   Gaudi::Property<bool> m_printMapping { this, "printMapping", false };
-  DeSTDetector* m_tracker = nullptr;
-  std::string m_conditionLocation;
+  DeUTDetector* m_tracker = nullptr;
+  Gaudi::Property<std::string> m_conditionLocation 
+    {this, "conditionLocation","/dd/Conditions/ReadoutConf/UT/ReadoutMap"};
 
 private:
 

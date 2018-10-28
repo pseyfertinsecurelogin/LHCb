@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+<gdd>
+  <package name='MCEvent'>
+
+    <class author="Andy Beiter (based on code by Matthew Needham)" desc="This class turns represents total charge deposited on strip in an event" id="9002" name="MCUTDigit">
+      <base name="KeyedObject&lt;LHCb::UTChannelID&gt;"/>
+      <template name="KeyedObjectDict" t1="LHCb::UTChannelID"/>
+      &KeyedContainer;
+      <location name="UTDigits"   place="MC/UT/Digits"   />
+      <import name ="Kernel/UTChannelID"/>
+      <import name="MCUTDeposit" soft="TRUE"/>
+      <relation name="mcDeposit" multiplicity="M" type="LHCb::MCUTDeposit" desc="vector of MCUTDeposits"/>
+      <method type='LHCb::UTChannelID' name='channelID' const='TRUE'  desc='channel = key'>
+        <code>return key();</code>
+      </method> 
+  </class>
+  
+ </package>
+</gdd>

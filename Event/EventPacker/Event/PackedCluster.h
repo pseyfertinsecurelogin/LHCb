@@ -13,6 +13,7 @@
 #include "GaudiKernel/DataObject.h"
 #include "Event/VeloCluster.h"
 #include "Event/STCluster.h"
+#include "Event/UTCluster.h"
 #include <string>
 #include <vector>
 
@@ -59,6 +60,7 @@ namespace LHCb
     static const std::string& Velo = "pRec/Velo/Clusters";
     static const std::string& IT = "pRec/IT/Clusters";
     static const std::string& TT = "pRec/TT/Clusters";
+    static const std::string& UT = "pRec/UT/Clusters";
   }
 
   /** @class PackedClusters PackedCluster.h Event/PackedCluster.h
@@ -101,9 +103,9 @@ namespace LHCb
       addSTCluster( sCl, 0x40000000 );
     }
 
-    void addUTCluster( const LHCb::STCluster* sCl )
+    void addUTCluster( const LHCb::UTCluster* sCl )
     {
-      addSTCluster( sCl, 0x50000000 ); // need to find the proper key (JC)
+      addUTCluster( sCl, 0x50000000 ); // need to find the proper key (JC)
     }
 
     void addITCluster( const LHCb::STCluster* sCl )
@@ -112,6 +114,9 @@ namespace LHCb
     }
 
     void addSTCluster( const LHCb::STCluster* sCl,
+                       const unsigned int key );
+
+    void addUTCluster( const LHCb::UTCluster* uCl,
                        const unsigned int key );
 
   public:

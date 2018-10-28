@@ -35,7 +35,7 @@ DECLARE_COMPONENT( PackCluster )
   declareProperty( "OutputName",    m_outputName = LHCb::PackedClusterLocation::Default );
   declareProperty( "VeloClusters", m_veloClusLoc = LHCb::VeloClusterLocation::Default );
   declareProperty( "TTClusters",     m_ttClusLoc = LHCb::STClusterLocation::TTClusters );
-  declareProperty( "UTClusters",     m_utClusLoc = LHCb::STClusterLocation::UTClusters );
+  declareProperty( "UTClusters",     m_utClusLoc = LHCb::UTClusterLocation::UTClusters );
   declareProperty( "ITClusters",     m_itClusLoc = LHCb::STClusterLocation::ITClusters );
   declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
   //setProperty( "OutputLevel", 1 );
@@ -86,7 +86,7 @@ StatusCode PackCluster::execute()
   // Cluster pointers. Only loaded when really needed.
   const LHCb::VeloClusters* vClus = nullptr;
   const LHCb::STClusters*  ttClus = nullptr;
-  const LHCb::STClusters*  utClus = nullptr;
+  const LHCb::UTClusters*  utClus = nullptr;
   const LHCb::STClusters*  itClus = nullptr;
 
   // pack the clusters
@@ -129,10 +129,10 @@ StatusCode PackCluster::execute()
     {
       if ( UNLIKELY(!utClus) ) 
       {
-        utClus = getIfExists<LHCb::STClusters>(m_utClusLoc);
+        utClus = getIfExists<LHCb::UTClusters>(m_utClusLoc);
         if ( !utClus ) { Warning("Failed to load '"+m_utClusLoc+"'").ignore(); }
       }
-      const auto * cl = ( utClus ? utClus->object(id.stID()) : nullptr );
+      const auto * cl = ( utClus ? utClus->object(id.utID()) : nullptr );
       if ( cl ) { out->addUTCluster( cl ); }
       else 
       {
