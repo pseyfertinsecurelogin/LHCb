@@ -13,6 +13,11 @@
 ################################################################################
 gaudi_subdir(MCEvent v3r4)
 
+# hide warnings from some external projects
+find_package(ROOT)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
+
+
 gaudi_depends_on_subdirs(Event/EventBase
                          GaudiObjDesc
                          Kernel/LHCbKernel
