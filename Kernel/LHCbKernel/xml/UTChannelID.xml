@@ -53,7 +53,7 @@
                    desc='constructor with station, layer, detRegion, sector , strip,'>
         <code>
         <!--
-          if ( iType == LHCb::UTChannelID::typeUT )
+          if ( iType == LHCb::UTChannelID::detType::typeUT )
           -->
              m_channelID = (iType &lt;&lt; typeBits) +
                            (iStation &lt;&lt; stationBits) + 
@@ -85,7 +85,7 @@
       </method>
 
       <method type='bool' name='isUT' const='TRUE' desc='test whether UT or not'>
-        <code>  return (type() == LHCb::UTChannelID::typeUT ? true : false);</code>
+        <code>  return type() == LHCb::UTChannelID::detType::typeUT ;</code>
       </method>
 
       <method type='unsigned int' name='sector' const='TRUE' desc='Retrieve sector'>

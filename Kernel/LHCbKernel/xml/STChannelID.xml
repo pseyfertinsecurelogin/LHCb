@@ -61,11 +61,11 @@
       </method>
 
       <method type='bool' name='isTT' const='TRUE' desc='test whether TT or not'>
-        <code>  return (type() == LHCb::STChannelID::typeTT ? true : false);</code>
+        <code>  return type() == LHCb::STChannelID::detType::typeTT;</code>
       </method>
 
       <method type='bool' name='isIT' const='TRUE' desc='test whether IT or not'>
-        <code>  return (type() == LHCb::STChannelID::typeIT ? true : false);</code>
+        <code>  return type() == LHCb::STChannelID::detType::typeIT;</code>
       </method>
 
       <method type='unsigned int' name='sector' const='TRUE' desc='Retrieve sector'>
