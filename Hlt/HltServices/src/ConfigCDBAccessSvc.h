@@ -43,20 +43,20 @@ namespace ConfigCDBAccessSvc_details  {
 
 }
 
-class ConfigCDBAccessSvc : public extends<Service,IConfigAccessSvc> {
+class ConfigCDBAccessSvc final : public extends<Service,IConfigAccessSvc> {
 public:
   using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
 
-  std::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
-  PropertyConfig::digest_type      writePropertyConfig(const PropertyConfig& config) override;
+  std::optional<PropertyConfig>   readPropertyConfig(const PropertyConfig::digest_type& ref) override;
+  PropertyConfig::digest_type     writePropertyConfig(const PropertyConfig& config) override;
 
-  std::optional<ConfigTreeNode>  readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
-  ConfigTreeNode::digest_type      writeConfigTreeNode(const ConfigTreeNode& config) override;
+  std::optional<ConfigTreeNode>   readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
+  ConfigTreeNode::digest_type     writeConfigTreeNode(const ConfigTreeNode& config) override;
 
-  std::optional<ConfigTreeNode>  readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
+  std::optional<ConfigTreeNode>   readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
   ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias(const ConfigTreeNodeAlias&) override;
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;
