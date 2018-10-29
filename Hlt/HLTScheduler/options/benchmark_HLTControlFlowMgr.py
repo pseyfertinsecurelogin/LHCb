@@ -49,6 +49,8 @@ if useDummies:
 else: 
     baseUnit = CPUCruncher
 
+# HLTControlFlowMgr().StartTimeAtEvt = -1
+# HLTControlFlowMgr().StopTimeAfterEvt = -1
 
 #concurrency conf
 HLTControlFlowMgr().ThreadPoolSize = threads

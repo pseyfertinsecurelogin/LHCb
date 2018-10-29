@@ -95,10 +95,7 @@ private:
 private:
   Gaudi::Property<std::string> m_histPersName{this, "HistogramPersistency", "", ""};
   Gaudi::Property<std::string> m_evtsel{this, "EvtSel", "", ""};
-  Gaudi::Property<uint16_t> m_threadPoolSize{this, "ThreadPoolSize", -1, "Size of the threadpool initialised by TBB"};
-  Gaudi::Property<std::string> m_whiteboardSvcName{this, "WhiteboardSvc", "EventDataSvc", "The whiteboard name"};
-  Gaudi::Property<std::string> m_dotfile{
-      this, "DotFile", {}, "Name of file to dump dependency graph; if empty, do not dump"};
+  Gaudi::Property<int> m_threadPoolSize{this, "ThreadPoolSize", -1, "Size of the threadpool initialised by TBB"};
   Gaudi::Property<int> m_printFreq{this, "PrintFreq", 1, "Print Frequency for the full algorithm tree"};
   Gaudi::Property<std::vector<NodeDefinition>> m_compositeCFProperties{
       this, "CompositeCFNodes", {}, "Specification of composite CF nodes"};
@@ -111,6 +108,12 @@ private:
       this, "AdditionalAlgs", {}, "Add algs that do not participate in the control flow but should\
                                    definitly run, like e.g. a callgrindprofile" };
 
+  Gaudi::Property<int> m_startTimeAtEvt{this, "StartTimeAtEvt", -1, "start timing at this event. Counting from 0. \
+                                        Default choice is deduced from #slots and #evts \
+                                        to be reasonably far away from the beginning"};
+  Gaudi::Property<int> m_stopTimeAfterEvt{this, "StopTimeAfterEvt", -1, "stop timing at this event. Counting from 0. \
+                                          Default choice is deduced from #slots and #evts \
+                                          to be reasonably far away from the end"};
 
   /// Reference to the Event Data Service's IDataManagerSvc interface
   IDataManagerSvc* m_evtDataMgrSvc = nullptr;
