@@ -325,6 +325,45 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt )
   // Run the first event before spilling more than one
   bool newEvtAllowed = false;
 
+  //adjust timing start counter
+  if ( m_startTimeAtEvt < 0 || m_startTimeAtEvt > m_stopTimeAfterEvt ) {
+    if ( maxevt > 0 ) {
+      if ( m_startTimeAtEvt < -1 || m_startTimeAtEvt > m_stopTimeAfterEvt ) {
+        warning() << "StartTimeAtEvt set faulty, changing to .1*maxevt" << endmsg;
+      }
+      m_startTimeAtEvt = static_cast<int>(.1*maxevt);
+    } else {
+      if ( m_startTimeAtEvt < -1 || m_startTimeAtEvt > m_stopTimeAfterEvt ) {
+        warning() << "StartTimeAtEvt set faulty, changing to 10*evtslots" << endmsg;
+      }
+      m_startTimeAtEvt = 10*m_whiteboard->getNumberOfStores();
+    }
+  }
+
+  //adjust timing stop counter
+  if ( maxevt > 0 ) {
+    if ( m_stopTimeAfterEvt < 0 ) { //default
+      if ( m_stopTimeAfterEvt < -1 ) {
+        warning() << "StopTimeAfterEvt set faulty, changing to .9*maxevt" << endmsg;
+      }
+      m_stopTimeAfterEvt = static_cast<int>(.9*maxevt);
+    }
+    else if (m_stopTimeAfterEvt > maxevt - 1) {
+      warning() << "StopTimeAfterEvt too big, changing to last event (maxevt - 1)" << endmsg;
+      m_stopTimeAfterEvt = maxevt - 1;
+    }
+  } else {
+    if ( m_stopTimeAfterEvt < 0 ) { //default
+      if ( m_stopTimeAfterEvt < -1 ) {
+        warning() << "StopTimeAfterEvt set faulty, changing to last element" << endmsg;
+      }
+      m_stopTimeAfterEvt = std::numeric_limits<int>::max();
+    }
+  }
+
+  info() << "Will measure time between events " << m_startTimeAtEvt.value() << " and "
+         << m_stopTimeAfterEvt.value() << " (stop might be some events later)" << endmsg;
+
   auto okToStartNewEvt = [&] {
           return ( newEvtAllowed || createdEvts == 0 ) && // Launch the first event alone
           // The events are not finished with an unlimited number of events
@@ -337,28 +376,48 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt )
   auto maxEvtNotReached = [&] { return maxevt < 0 || m_finishedEvt < (unsigned int)maxevt; };
 
   info() << "Starting loop on events" << endmsg;
-  auto start_time = Clock::now();
+  std::optional<decltype(Clock::now())> startTime, endTime;
+
   while ( maxEvtNotReached() ) {
     std::unique_lock<std::mutex> lock{m_createEventMutex};
-    if ( m_createEventCond.wait_for( lock, 1ms, okToStartNewEvt ) ) {
-      if ( 1 == createdEvts ) // reset counter to count from event 1
-        start_time = Clock::now();
-
+    if ( m_createEventCond.wait_for( lock, 2ms, okToStartNewEvt ) ) {
+      //in some cases, due to concurrency, we do not stop exactly at the given value.
+      if (UNLIKELY(static_cast<unsigned int>(m_stopTimeAfterEvt) <= m_finishedEvt - 1 && !endTime &&
+                   m_finishedEvt > 0)) {
+        m_stopTimeAfterEvt = m_finishedEvt - 1;
+        endTime = Clock::now();
+      }
+      if ( UNLIKELY( m_startTimeAtEvt == createdEvts ) ) {
+        startTime = Clock::now();
+      }
       StatusCode sc = executeEvent( &createdEvts );
       if ( !sc.isSuccess() ) return StatusCode::FAILURE; // else we have an success --> exit loop
       if (createdEvts == -1) break;
       newEvtAllowed = true;
     }
   } // end main loop on finished events
-  auto end_time = Clock::now();
+
+  if( !endTime ) {
+    endTime = Clock::now();
+    m_stopTimeAfterEvt = m_finishedEvt - 1;
+  }
 
   delete m_evtSelContext;
   m_evtSelContext = nullptr;
 
-  constexpr double oneOver1024 = 1. / 1024.;
-  info() << "---> Loop over " << m_finishedEvt << " Events Finished (skipping 1st evt) - "
-         << " WSS " << System::mappedMemory( System::MemoryUnit::kByte ) * oneOver1024 << " total time "
-         << std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count() << " ms" << endmsg;
+  if (UNLIKELY(!startTime)) {
+    info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
+           << " WSS " << System::mappedMemory(System::MemoryUnit::kByte) * 1. / 1024. << ", timing failed.."
+           << endmsg;
+  } else {
+    auto totalTime = std::chrono::duration_cast<std::chrono::milliseconds>(*endTime - *startTime).count();
+
+    info() << "---> Loop over " << m_finishedEvt << " Events Finished - "
+           << " WSS " << System::mappedMemory(System::MemoryUnit::kByte) * 1. / 1024. << ", timed "
+           << m_stopTimeAfterEvt.value() - m_startTimeAtEvt.value() + 1 << " Events: " << totalTime << " ms"
+           << ", Evts/s = "
+           << (m_stopTimeAfterEvt.value() - m_startTimeAtEvt.value() + 1) * 1. / totalTime * 1e3 << endmsg;
+  }
   return StatusCode::SUCCESS;
 }
 
