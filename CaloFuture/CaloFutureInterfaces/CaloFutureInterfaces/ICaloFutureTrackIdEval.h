@@ -43,6 +43,7 @@ struct ICaloFutureTrackIdEval : extend_interfaces<IAlgTool>
   /** The main processing method 
    *  It evaluated the Track ID estimators using the calorimeter information  
    *  @param  track  pointer to the object to be processed
+   *  @param  digits calo digits from TES
    *  @param  value  (return) the value of the estimator
    *  @return status code 
    */  

@@ -18,7 +18,6 @@
   <class name    = "ICaloFutureClusterTool"         />
   <class name    = "ICaloFutureCorrection"          />
   <class name    = "ICaloFutureDigitTool"           />
-  <!-- <class name    = "ICaloFutureDigits4Track"        /> -->
   <class name    = "ICaloFutureHypoLikelihood"      /> 
   <class name    = "ICaloFutureHypoTool"            />
   <class name    = "ICaloFutureLikelihood"          />
