@@ -10,6 +10,7 @@
 \*****************************************************************************/
 #pragma once
 #include "Event/Track_v1.h"
+#include "Event/Track_v2.h"
 
 namespace LHCb{
   using Track = Event::Track; // for backwards compatibility, to be deprecated one day...

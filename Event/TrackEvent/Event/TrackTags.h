@@ -10,16 +10,26 @@
 \*****************************************************************************/
 #pragma once
 
-namespace LHCb {
-  namespace Tag {
+namespace LHCb
+{
+  namespace Tag
+  {
+    struct Unordered_tag {
+    };
+    struct Sorted_tag : Unordered_tag {
+    };
+    constexpr auto Unordered = Unordered_tag{};
+    constexpr auto Sorted    = Sorted_tag{};
 
-    namespace State {
-      struct AssumeUnordered_tag { };
-      struct AssumeSorted_tag : AssumeUnordered_tag { };
+    namespace State
+    {
+      struct AssumeUnordered_tag {
+      };
+      struct AssumeSorted_tag : AssumeUnordered_tag {
+      };
 
       constexpr auto AssumeUnordered = AssumeUnordered_tag{};
       constexpr auto AssumeSorted    = AssumeSorted_tag{};
     }
-
   }
 }
