@@ -44,10 +44,9 @@ struct ICaloFutureTrackIdEval : extend_interfaces<IAlgTool>
    *  It evaluated the Track ID estimators using the calorimeter information  
    *  @param  track  pointer to the object to be processed
    *  @param  digits calo digits from TES
-   *  @param  value  (return) the value of the estimator
-   *  @return status code 
+   *  @return the value of the estimator
    */  
-  virtual StatusCode process( const LHCb::Track& track , const LHCb::CaloDigits& digits, double& value) const = 0 ;
+  virtual std::optional<double> process( const LHCb::Track& track , const LHCb::CaloDigits& digits) const = 0 ;
   
   // ==========================================================================  
   /** static interface identification
