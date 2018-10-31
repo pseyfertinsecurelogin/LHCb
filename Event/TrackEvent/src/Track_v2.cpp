@@ -30,6 +30,30 @@
 //
 // 2004-12-14 : Jose Hernando, Eduardo Rodrigues
 //-----------------------------------------------------------------------------
+namespace
+{
+      template <typename Order1, typename Order2, typename F >
+      constexpr decltype(auto) select_order( bool b, Order1 o1, Order2 o2, F&& f )
+      {
+          return b ? f(o1) : f(o2);
+      }
+
+      template <size_t N>
+      std::array<double, N + 1> generate_chi2max( double limit )
+      {
+        std::array<double, N + 1> c = {0};
+        std::generate( std::next( std::begin( c ) ), std::end( c ),
+                       [ limit, i = 1u ]() mutable { return gsl_cdf_chisq_Qinv( limit, i++ ); } );
+        return c;
+      }
+
+
+      // could put this into probChi2, but then the table is generated at
+      // first use of probChi2, i.e. during the event loop.
+      // This way, it tends to be generated when libTrackEvent.so is
+      // dynamically linked into the executable, i.e. very early.
+      static const auto chi2max = generate_chi2max<256>( 1e-15 );
+}
 
 namespace LHCb::Event
 {
@@ -64,40 +88,18 @@ namespace LHCb::Event
                          : MeasurementContainer{};
     }
 
-    namespace
-    {
-
-      template <size_t N>
-      std::array<double, N + 1> generate_chi2max( double limit )
-      {
-        std::array<double, N + 1> c = {0};
-        std::generate( std::next( std::begin( c ) ), std::end( c ),
-                       [ limit, i = 1u ]() mutable { return gsl_cdf_chisq_Qinv( limit, i++ ); } );
-        return c;
-      }
-
-      // could put this into probChi2, but then the table is generated at
-      // first use of probChi2, i.e. during the event loop.
-      // This way, it tends to be generated when libTrackEvent.so is
-      // dynamically linked into the executable, i.e. very early.
-      static const auto chi2max = generate_chi2max<256>( 1e-15 );
-    }
 
     //=============================================================================
     // Retrieve the probability of chi^2
     //=============================================================================
     double Track::probChi2() const
     {
-      double val( 0 );
-      if ( nDoF() > 0 ) {
-        // what to do if nDoF is bigger than the lookup table?
-        // let's just do a range-checked acess, and have it throw
-        // an exception... maybe not the most elegant solution...
-        // alternative: chi2max[  std::min( nDoF(), int(chi2max.size() ) ]
-        // in which case for unreasonable nDoF we don't go until 1e-15...
-        val = ( chi2() < chi2max.at( nDoF() ) ? gsl_cdf_chisq_Q( chi2(), nDoF() ) : 0 );
-      }
-      return val;
+      // what to do if nDoF is bigger than the lookup table?
+      // let's just do a range-checked acess, and have it throw
+      // an exception... maybe not the most elegant solution...
+      // alternative: chi2max[  std::min( nDoF(), int(chi2max.size() ) ]
+      // in which case for unreasonable nDoF we don't go until 1e-15...
+      return ( nDoF()>0 && chi2() < chi2max.at( nDoF() ) ) ? gsl_cdf_chisq_Q( chi2(), nDoF() ) : 0 ;
     }
 
     //=============================================================================
@@ -172,8 +174,8 @@ namespace LHCb::Event
     //=============================================================================
     void Track::addToStates( const State& state )
     {
-      const int order = ( checkFlag( Track::Flags::Backward ) ? -1 : 1 );
-      auto      ipos  = std::upper_bound( m_states.begin(), m_states.end(), state, TrackFunctor::orderByZ( order ) );
+      auto ipos = select_order( checkFlag(Flags::Backward), TrackFunctor::decreasingByZ(), TrackFunctor::increasingByZ(),
+                                [&](auto order) { return std::upper_bound( m_states.begin(), m_states.end(), state, order); } );
       m_states.emplace( ipos, state );
     }
 
@@ -184,15 +186,11 @@ namespace LHCb::Event
     {
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
       // do not assumme that the incoming states are properly sorted.
-      // The 'if' is ugly, but more efficient than using 'orderByZ'.
-      if ( checkFlag( Track::Flags::Backward ) ) {
-        // it's already sorted in most cases
-        std::sort( pivot, m_states.end(), TrackFunctor::decreasingByZ() );
-        std::inplace_merge( m_states.begin(), pivot, m_states.end(), TrackFunctor::decreasingByZ() );
-      } else {
-        std::sort( pivot, m_states.end(), TrackFunctor::increasingByZ() );
-        std::inplace_merge( m_states.begin(), pivot, m_states.end(), TrackFunctor::increasingByZ() );
-      }
+      select_order( checkFlag(Flags::Backward), TrackFunctor::decreasingByZ(), TrackFunctor::increasingByZ(),
+                    [&](auto order) {
+        std::sort( pivot, m_states.end(), order );
+        std::inplace_merge( m_states.begin(), pivot, m_states.end(), order );
+      });
     }
 
     //=============================================================================
@@ -201,18 +199,15 @@ namespace LHCb::Event
     void Track::addToStates( span<const State> states, Tag::Sorted_tag )
     {
       // debug assert checking whether it's correctly sorted or not
-      assert( ( checkFlag( Track::Flags::Backward )
-                    ? std::is_sorted( states.begin(), states.end(), TrackFunctor::decreasingByZ() )
-                    : std::is_sorted( states.begin(), states.end(), TrackFunctor::increasingByZ() ) ) &&
+      assert( select_order( checkFlag( Track::Flags::Backward ), TrackFunctor::decreasingByZ(),  TrackFunctor::increasingByZ(),
+                            [&states](auto order) { return std::is_sorted( begin(states), end(states), order ) } ) &&
               "states are not correctly sorted;"
               "hint: use the general addToStates function assuming unordered states" );
 
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
-      if ( UNLIKELY( checkFlag( Track::Flags::Backward ) ) ) {
-        std::inplace_merge( m_states.begin(), pivot, m_states.end(), TrackFunctor::decreasingByZ() );
-      } else {
-        std::inplace_merge( m_states.begin(), pivot, m_states.end(), TrackFunctor::increasingByZ() );
-      }
+      select_order(  UNLIKELY( checkFlag( Track::Flags::Backward ) ), TrackFunctor::decreasingByZ(),
+                                                                      TrackFunctor::increasingByZ(),
+                     [&](auto order) { std::inplace_merge( m_states.begin(), pivot, m_states.end(), order ); });
     }
 
     //=============================================================================
@@ -243,8 +238,7 @@ namespace LHCb::Event
     bool Track::addToLhcbIDs( span<LHCbID const> ids, S /**/ )
     {
       // check that original list is sorted and contained only unique elements
-      if
-        constexpr( std::is_same<S, Tag::Sorted_tag>::value )
+      if constexpr( std::is_same_v<S, Tag::Sorted_tag> )
         {
           assert( std::is_sorted( ids.begin(), ids.end() ) );
           assert( std::adjacent_find( ids.begin(), ids.end() ) == ids.end() );
@@ -253,8 +247,7 @@ namespace LHCb::Event
       auto pivot    = m_lhcbIDs.insert( end( m_lhcbIDs ), std::begin( ids ), std::end( ids ) );
       auto org_size = m_lhcbIDs.size();
 
-      if
-        constexpr( std::is_same<S, Tag::Unordered_tag>::value )
+      if constexpr( std::is_same_v<S, Tag::Unordered_tag> )
         {
           std::sort( pivot, end( m_lhcbIDs ) );
           // check that original list contained only unique elements
