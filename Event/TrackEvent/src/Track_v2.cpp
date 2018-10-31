@@ -35,7 +35,7 @@ namespace
       template <typename Order1, typename Order2, typename F >
       constexpr decltype(auto) select_order( bool b, Order1 o1, Order2 o2, F&& f )
       {
-          return b ? f(o1) : f(o2);
+          return b ? std::invoke(f,o1) : std::invoke(f,o2);
       }
 
       template <size_t N>
@@ -53,12 +53,185 @@ namespace
       // This way, it tends to be generated when libTrackEvent.so is
       // dynamically linked into the executable, i.e. very early.
       static const auto chi2max = generate_chi2max<256>( 1e-15 );
+
+
+
 }
 
 namespace LHCb::Event
 {
   namespace v2
   {
+
+    namespace details {
+
+      template <typename Enum> struct enumMap {
+          static Enum const unknown;
+          static GaudiUtils::VectorMap<std::string, Enum> const map;
+          static std::string const s_unknown;
+      };
+
+      template  std::string const& toStringHelper( Track::History const flag );
+      template  Track::History toEnumHelper<Track::History>( std::string const& aName );
+      template <> const Track::History enumMap<Track::History>::unknown = Track::History::HistoryUnknown;
+      template <> const std::string enumMap<Track::History>::s_unknown = "HistoryError";
+      template <> const GaudiUtils::VectorMap<std::string, Track::History> enumMap<Track::History>::map = {
+              {"HistoryUnknown", Track::History::HistoryUnknown},
+              {"TrackIdealPR", Track::History::TrackIdealPR},
+              {"TrackSeeding", Track::History::TrackSeeding},
+              {"PatVelo", Track::History::PatVelo},
+              {"PatVeloTT", Track::History::PatVeloTT},
+              {"TrackVeloTT", Track::History::TrackVeloTT},
+              {"PatForward", Track::History::PatForward},
+              {"TrackMatching", Track::History::TrackMatching},
+              {"PatKShort", Track::History::PatKShort},
+              {"TsaTrack", Track::History::TsaTrack},
+              {"MuonID", Track::History::MuonID},
+              {"PatVeloR", Track::History::PatVeloR},
+              {"PatVeloGeneric", Track::History::PatVeloGeneric},
+              {"PatVeloGeneral", Track::History::PatVeloGeneral},
+              {"PatVeloOpen", Track::History::PatVeloOpen},
+              {"PatSeeding", Track::History::PatSeeding},
+              {"PatMatch", Track::History::PatMatch},
+              {"PatDownstream", Track::History::PatDownstream},
+              {"TTGeneric", Track::History::TTGeneric},
+              {"PatVPCheated", Track::History::PatVPCheated},
+              {"HLTImportedTrack", Track::History::HLTImportedTrack},
+              {"PatFastVelo", Track::History::PatFastVelo},
+              {"PatVP", Track::History::PatVP},
+              {"PatVeloUT", Track::History::PatVeloUT},
+              {"PrForward", Track::History::PrForward},
+              {"PrSeeding", Track::History::PrSeeding},
+              {"PrMatch", Track::History::PrMatch},
+              {"PrDownstream", Track::History::PrDownstream},
+              {"PrVeloUT", Track::History::PrVeloUT}};
+
+
+      template  std::string const& toStringHelper( Track::FitHistory const flag );
+      template  Track::FitHistory toEnumHelper<Track::FitHistory>( std::string const& aName );
+      template <> const Track::FitHistory enumMap<Track::FitHistory>::unknown = Track::FitHistory::FitUnknown;
+      template <> const std::string enumMap<Track::FitHistory>::s_unknown = "FitUnknown";
+      template <> const GaudiUtils::VectorMap<std::string, Track::FitHistory> enumMap<Track::FitHistory>::map = {
+              {"FitUnknown", Track::FitHistory::FitUnknown},
+              {"StdKalman", Track::FitHistory::StdKalman},
+              {"BiKalman", Track::FitHistory::BiKalman}};
+
+
+      template  std::string const& toStringHelper( Track::Types const flag );
+      template  Track::Types toEnumHelper<Track::Types>( std::string const& aName );
+      template <> const Track::Types enumMap<Track::Types>::unknown = Track::Types::TypeUnknown;
+      template <> const std::string enumMap<Track::Types>::s_unknown = "TypeUnknown";
+      template <> const GaudiUtils::VectorMap<std::string, Track::Types> enumMap<Track::Types>::map = {
+              {"TypeUnknown", Track::Types::TypeUnknown},
+              {"Velo", Track::Types::Velo},
+              {"VeloR", Track::Types::VeloR},
+              {"Long", Track::Types::Long},
+              {"Upstream", Track::Types::Upstream},
+              {"Downstream", Track::Types::Downstream},
+              {"Ttrack", Track::Types::Ttrack},
+              {"Muon", Track::Types::Muon},
+              {"Calo", Track::Types::Calo},
+              {"TT", Track::Types::TT},
+              {"UT", Track::Types::UT}};
+
+
+      template  std::string const& toStringHelper( Track::FitStatus const flag );
+      template  Track::FitStatus toEnumHelper<Track::FitStatus>( std::string const& aName );
+      template <> const Track::FitStatus enumMap<Track::FitStatus>::unknown = Track::FitStatus::FitStatusUnknown;
+      template <> const std::string enumMap<Track::FitStatus>::s_unknown = "FitStatusUnknown";
+      template <> const GaudiUtils::VectorMap<std::string, Track::FitStatus> enumMap<Track::FitStatus>::map = {
+              {"FitStatusUnknown", Track::FitStatus::FitStatusUnknown},
+              {"Fitted", Track::FitStatus::Fitted},
+              {"FitFailed", Track::FitStatus::FitFailed}};
+
+      template  std::string const& toStringHelper( Track::PatRecStatus const flag );
+      template  Track::PatRecStatus toEnumHelper<Track::PatRecStatus>( std::string const& aName );
+      template <> const Track::PatRecStatus enumMap<Track::PatRecStatus>::unknown = Track::PatRecStatus::PatRecStatusUnknown;
+      template <> const std::string enumMap<Track::PatRecStatus>::s_unknown = "PatRecStatusUnknown";
+      template <> const GaudiUtils::VectorMap<std::string, Track::PatRecStatus> enumMap<Track::PatRecStatus>::map = {
+              {"PatRecStatusUnknown", Track::PatRecStatus::PatRecStatusUnknown},
+              {"PatRecIDs", Track::PatRecStatus::PatRecIDs},
+              {"PatRecMeas", Track::PatRecStatus::PatRecMeas}};
+
+
+      template  std::string const& toStringHelper( Track::Flags const flag );
+      template  Track::Flags toEnumHelper<Track::Flags>( std::string const& aName );
+      template <> const Track::Flags enumMap<Track::Flags>::unknown = Track::Flags::FlagsUnknown;
+      template <> std::string const enumMap<Track::Flags>::s_unknown = "FlagsUnknown";
+      template <> const GaudiUtils::VectorMap<std::string, Track::Flags> enumMap<Track::Flags>::map = {
+              {"FlagsUnknown", Track::Flags::FlagsUnknown},
+              {"Backward", Track::Flags::Backward},
+              {"Invalid", Track::Flags::Invalid},
+              {"Clone", Track::Flags::Clone},
+              {"Used", Track::Flags::Used},
+              {"IPSelected", Track::Flags::IPSelected},
+              {"PIDSelected", Track::Flags::PIDSelected},
+              {"Selected", Track::Flags::Selected},
+              {"L0Candidate", Track::Flags::L0Candidate}};
+
+
+      template  std::string const& toStringHelper( Track::AdditionalInfo const flag );
+      template  Track::AdditionalInfo toEnumHelper<Track::AdditionalInfo>( std::string const& aName );
+      template <> const Track::AdditionalInfo enumMap<Track::AdditionalInfo>::unknown = Track::AdditionalInfo::AdditionalInfoUnknown;
+      template <> const std::string enumMap<Track::AdditionalInfo>::s_unknown = "AdditionalInfoUnknown";
+      template <> const GaudiUtils::VectorMap<std::string, Track::AdditionalInfo> enumMap<Track::AdditionalInfo>::map = {
+              {"AdditionalInfoUnknown", Track::AdditionalInfo::AdditionalInfoUnknown},
+              {"DC06Likelihood", Track::AdditionalInfo::DC06Likelihood},
+              {"PatQuality", Track::AdditionalInfo::PatQuality},
+              {"Cand1stQPat", Track::AdditionalInfo::Cand1stQPat},
+              {"Cand2ndQPat", Track::AdditionalInfo::Cand2ndQPat},
+              {"NCandCommonHits", Track::AdditionalInfo::NCandCommonHits},
+              {"Cand1stChi2Mat", Track::AdditionalInfo::Cand1stChi2Mat},
+              {"Cand2ndChi2Mat", Track::AdditionalInfo::Cand2ndChi2Mat},
+              {"DC06nExpectedVelo", Track::AdditionalInfo::DC06nExpectedVelo},
+              {"DC06nExpectedTT", Track::AdditionalInfo::DC06nExpectedTT},
+              {"DC06nExpectedIT", Track::AdditionalInfo::DC06nExpectedIT},
+              {"DC06nExpectedOT", Track::AdditionalInfo::DC06nExpectedOT},
+              {"MatchChi2", Track::AdditionalInfo::MatchChi2},
+              {"FitVeloChi2", Track::AdditionalInfo::FitVeloChi2},
+              {"FitVeloNDoF", Track::AdditionalInfo::FitVeloNDoF},
+              {"FitTChi2", Track::AdditionalInfo::FitTChi2},
+              {"FitTNDoF", Track::AdditionalInfo::FitTNDoF},
+              {"FitMatchChi2", Track::AdditionalInfo::FitMatchChi2},
+              {"FitFracUsedOTTimes", Track::AdditionalInfo::FitFracUsedOTTimes},
+              {"TsaLikelihood", Track::AdditionalInfo::TsaLikelihood},
+              {"CloneDist", Track::AdditionalInfo::CloneDist},
+              {"DC06GhostProbability", Track::AdditionalInfo::DC06GhostProbability},
+              {"nPRVeloRZExpect", Track::AdditionalInfo::nPRVeloRZExpect},
+              {"nPRVelo3DExpect", Track::AdditionalInfo::nPRVelo3DExpect},
+              {"AdditionalInfo201", Track::AdditionalInfo::AdditionalInfo201},
+              {"AdditionalInfo202", Track::AdditionalInfo::AdditionalInfo202},
+              {"MuonChi2perDoF", Track::AdditionalInfo::MuonChi2perDoF},
+              {"MuonMomentumPreSel", Track::AdditionalInfo::MuonMomentumPreSel},
+              {"MuonInAcceptance", Track::AdditionalInfo::MuonInAcceptance},
+              {"IsMuonLoose", Track::AdditionalInfo::IsMuonLoose},
+              {"IsMuon", Track::AdditionalInfo::IsMuon},
+              {"MuonDist2", Track::AdditionalInfo::MuonDist2},
+              {"MuonDLL", Track::AdditionalInfo::MuonDLL},
+              {"MuonNShared", Track::AdditionalInfo::MuonNShared},
+              {"MuonCLQuality", Track::AdditionalInfo::MuonCLQuality},
+              {"MuonCLArrival", Track::AdditionalInfo::MuonCLArrival},
+              {"IsMuonTight", Track::AdditionalInfo::IsMuonTight}};
+
+
+      template <typename Flag>
+      std::string const& toStringHelper( Flag const flag )
+      {
+        auto iter = std::find_if( enumMap<Flag>::map.begin(), enumMap<Flag>::map.end(),
+                                  [&]( const std::pair<std::string const, Flag>& i ) { return i.second == flag; } );
+        assert( iter != enumMap<Flag>::map.end() );
+        return iter != enumMap<Flag>::map.end() ? iter->first : enumMap<Flag>::s_unknown;
+      }
+
+      template <typename Enum>
+      Enum toEnumHelper( std::string const& aName )
+      {
+        auto iter = enumMap<Enum>::map.find( aName );
+        return iter != enumMap<Enum>::map.end() ? iter->second : enumMap<Enum>::unknown;
+      }
+
+
+    }
     //=============================================================================
     // Set the fit result. This takes ownership.
     //=============================================================================
@@ -452,249 +625,42 @@ namespace LHCb::Event
     //=============================================================================
     std::ostream& Track::fillStream( std::ostream& os ) const
     {
-      os << "*** Track ***" << std::endl
-         << " type       : " << type() << std::endl
-         << " history    : " << history() << std::endl
-         << " fitstatus  : " << fitStatus() << std::endl
-         << " # ids      : " << nLHCbIDs() << std::endl
-         << " # meas     : " << nMeasurements() << std::endl
-         << " chi2PerDoF : " << (float)chi2PerDoF() << std::endl
-         << " nDoF       : " << nDoF() << std::endl
-         << " GhostProb  : " << ghostProbability() << std::endl
-         << " Likelihood : " << likelihood() << std::endl;
+      os << "*** Track ***"
+         << "\n type       : " << type()
+         << "\n history    : " << history()
+         << "\n fitstatus  : " << fitStatus()
+         << "\n # ids      : " << nLHCbIDs()
+         << "\n # meas     : " << nMeasurements()
+         << "\n chi2PerDoF : " << (float)chi2PerDoF()
+         << "\n nDoF       : " << nDoF()
+         << "\n GhostProb  : " << ghostProbability()
+         << "\n Likelihood : " << likelihood();
 
-      os << " extraInfo : [";
+      os << "\n extraInfo : [";
       for ( const auto& i : extraInfo() ) {
         const Track::AdditionalInfo info = static_cast<Track::AdditionalInfo>( i.first );
         os << " " << info << "=" << i.second << " ";
       }
-      os << "]" << std::endl;
+      os << "]\n" ;
 
       if ( !m_states.empty() ) {
-        os << " p  : " << (float)firstState().p() << std::endl
-           << " pt : " << (float)firstState().pt() << std::endl
-           << " " << nStates() << " states at z =";
+        os << " p  : " << (float)firstState().p()
+           << "\n pt : " << (float)firstState().pt()
+           << "\n " << nStates() << " states at z =";
         for ( const auto& s : states() ) {
           os << " " << s.z();
         }
-        os << "  :-" << std::endl;
+        os << "  :-\n" ;
         for ( const auto& s : states() ) {
           os << " " << s;
         }
-        os << std::endl;
+        os << '\n';
       } else {
-        os << " # states : " << nStates() << std::endl;
+        os << " # states : " << nStates() << '\n';
       }
 
       return os;
     }
 
-    namespace
-    {
-      static const GaudiUtils::VectorMap<std::string, Track::History> HistoryTypMap = {
-          {"HistoryUnknown", Track::History::HistoryUnknown},
-          {"TrackIdealPR", Track::History::TrackIdealPR},
-          {"TrackSeeding", Track::History::TrackSeeding},
-          {"PatVelo", Track::History::PatVelo},
-          {"PatVeloTT", Track::History::PatVeloTT},
-          {"TrackVeloTT", Track::History::TrackVeloTT},
-          {"PatForward", Track::History::PatForward},
-          {"TrackMatching", Track::History::TrackMatching},
-          {"PatKShort", Track::History::PatKShort},
-          {"TsaTrack", Track::History::TsaTrack},
-          {"MuonID", Track::History::MuonID},
-          {"PatVeloR", Track::History::PatVeloR},
-          {"PatVeloGeneric", Track::History::PatVeloGeneric},
-          {"PatVeloGeneral", Track::History::PatVeloGeneral},
-          {"PatVeloOpen", Track::History::PatVeloOpen},
-          {"PatSeeding", Track::History::PatSeeding},
-          {"PatMatch", Track::History::PatMatch},
-          {"PatDownstream", Track::History::PatDownstream},
-          {"TTGeneric", Track::History::TTGeneric},
-          {"PatVPCheated", Track::History::PatVPCheated},
-          {"HLTImportedTrack", Track::History::HLTImportedTrack},
-          {"PatFastVelo", Track::History::PatFastVelo},
-          {"PatVP", Track::History::PatVP},
-          {"PatVeloUT", Track::History::PatVeloUT},
-          {"PrForward", Track::History::PrForward},
-          {"PrSeeding", Track::History::PrSeeding},
-          {"PrMatch", Track::History::PrMatch},
-          {"PrDownstream", Track::History::PrDownstream},
-          {"PrVeloUT", Track::History::PrVeloUT}};
-
-      static const GaudiUtils::VectorMap<std::string, Track::FitHistory> FitHistoryTypMap = {
-          {"FitUnknown", Track::FitHistory::FitUnknown},
-          {"StdKalman", Track::FitHistory::StdKalman},
-          {"BiKalman", Track::FitHistory::BiKalman}};
-
-      static const GaudiUtils::VectorMap<std::string, Track::Types> TypesTypMap = {
-          {"TypeUnknown", Track::Types::TypeUnknown},
-          {"Velo", Track::Types::Velo},
-          {"VeloR", Track::Types::VeloR},
-          {"Long", Track::Types::Long},
-          {"Upstream", Track::Types::Upstream},
-          {"Downstream", Track::Types::Downstream},
-          {"Ttrack", Track::Types::Ttrack},
-          {"Muon", Track::Types::Muon},
-          {"Calo", Track::Types::Calo},
-          {"TT", Track::Types::TT},
-          {"UT", Track::Types::UT}};
-
-      static const GaudiUtils::VectorMap<std::string, Track::FitStatus> FitStatusTypMap = {
-          {"FitStatusUnknown", Track::FitStatus::FitStatusUnknown},
-          {"Fitted", Track::FitStatus::Fitted},
-          {"FitFailed", Track::FitStatus::FitFailed}};
-
-      static const GaudiUtils::VectorMap<std::string, Track::PatRecStatus> PatRecStatusTypMap = {
-          {"PatRecStatusUnknown", Track::PatRecStatus::PatRecStatusUnknown},
-          {"PatRecIDs", Track::PatRecStatus::PatRecIDs},
-          {"PatRecMeas", Track::PatRecStatus::PatRecMeas}};
-
-      static const GaudiUtils::VectorMap<std::string, Track::Flags> FlagsTypMap = {
-          {"FlagsUnknown", Track::Flags::FlagsUnknown},
-          {"Backward", Track::Flags::Backward},
-          {"Invalid", Track::Flags::Invalid},
-          {"Clone", Track::Flags::Clone},
-          {"Used", Track::Flags::Used},
-          {"IPSelected", Track::Flags::IPSelected},
-          {"PIDSelected", Track::Flags::PIDSelected},
-          {"Selected", Track::Flags::Selected},
-          {"L0Candidate", Track::Flags::L0Candidate}};
-
-      static const GaudiUtils::VectorMap<std::string, Track::AdditionalInfo> AdditionalInfoTypMap = {
-          {"AdditionalInfoUnknown", Track::AdditionalInfo::AdditionalInfoUnknown},
-          {"DC06Likelihood", Track::AdditionalInfo::DC06Likelihood},
-          {"PatQuality", Track::AdditionalInfo::PatQuality},
-          {"Cand1stQPat", Track::AdditionalInfo::Cand1stQPat},
-          {"Cand2ndQPat", Track::AdditionalInfo::Cand2ndQPat},
-          {"NCandCommonHits", Track::AdditionalInfo::NCandCommonHits},
-          {"Cand1stChi2Mat", Track::AdditionalInfo::Cand1stChi2Mat},
-          {"Cand2ndChi2Mat", Track::AdditionalInfo::Cand2ndChi2Mat},
-          {"DC06nExpectedVelo", Track::AdditionalInfo::DC06nExpectedVelo},
-          {"DC06nExpectedTT", Track::AdditionalInfo::DC06nExpectedTT},
-          {"DC06nExpectedIT", Track::AdditionalInfo::DC06nExpectedIT},
-          {"DC06nExpectedOT", Track::AdditionalInfo::DC06nExpectedOT},
-          {"MatchChi2", Track::AdditionalInfo::MatchChi2},
-          {"FitVeloChi2", Track::AdditionalInfo::FitVeloChi2},
-          {"FitVeloNDoF", Track::AdditionalInfo::FitVeloNDoF},
-          {"FitTChi2", Track::AdditionalInfo::FitTChi2},
-          {"FitTNDoF", Track::AdditionalInfo::FitTNDoF},
-          {"FitMatchChi2", Track::AdditionalInfo::FitMatchChi2},
-          {"FitFracUsedOTTimes", Track::AdditionalInfo::FitFracUsedOTTimes},
-          {"TsaLikelihood", Track::AdditionalInfo::TsaLikelihood},
-          {"CloneDist", Track::AdditionalInfo::CloneDist},
-          {"DC06GhostProbability", Track::AdditionalInfo::DC06GhostProbability},
-          {"nPRVeloRZExpect", Track::AdditionalInfo::nPRVeloRZExpect},
-          {"nPRVelo3DExpect", Track::AdditionalInfo::nPRVelo3DExpect},
-          {"AdditionalInfo201", Track::AdditionalInfo::AdditionalInfo201},
-          {"AdditionalInfo202", Track::AdditionalInfo::AdditionalInfo202},
-          {"MuonChi2perDoF", Track::AdditionalInfo::MuonChi2perDoF},
-          {"MuonMomentumPreSel", Track::AdditionalInfo::MuonMomentumPreSel},
-          {"MuonInAcceptance", Track::AdditionalInfo::MuonInAcceptance},
-          {"IsMuonLoose", Track::AdditionalInfo::IsMuonLoose},
-          {"IsMuon", Track::AdditionalInfo::IsMuon},
-          {"MuonDist2", Track::AdditionalInfo::MuonDist2},
-          {"MuonDLL", Track::AdditionalInfo::MuonDLL},
-          {"MuonNShared", Track::AdditionalInfo::MuonNShared},
-          {"MuonCLQuality", Track::AdditionalInfo::MuonCLQuality},
-          {"MuonCLArrival", Track::AdditionalInfo::MuonCLArrival},
-          {"IsMuonTight", Track::AdditionalInfo::IsMuonTight}};
-    }
-    namespace
-    {
-      template <typename Flag>
-      std::string const& toStringHelper( Flag const flag, GaudiUtils::VectorMap<std::string, Flag> const& map,
-                                         std::string const& unknown )
-      {
-        auto iter = std::find_if( map.begin(), map.end(),
-                                  [&]( const std::pair<std::string const, Flag>& i ) { return i.second == flag; } );
-        assert( iter != map.end() );
-        return iter != map.end() ? iter->first : unknown;
-      }
-    }
-
-    std::string const& toString( Track::History const flag )
-    {
-      static std::string const s_unknown = "HistoryError";
-      return toStringHelper( flag, HistoryTypMap, s_unknown );
-    }
-
-    std::string const& toString( Track::FitHistory const flag )
-    {
-      static std::string const s_unknown = "FitUnknown";
-      return toStringHelper( flag, FitHistoryTypMap, s_unknown );
-    }
-
-    std::string const& toString( Track::Types const flag )
-    {
-      static std::string const s_unknown = "TypeUnknown";
-      return toStringHelper( flag, TypesTypMap, s_unknown );
-    }
-
-    std::string const& toString( Track::PatRecStatus const flag )
-    {
-      static std::string const s_unknown = "PatRecStatusUnknown";
-      return toStringHelper( flag, PatRecStatusTypMap, s_unknown );
-    }
-
-    std::string const& toString( Track::FitStatus const flag )
-    {
-      static std::string const s_unknown = "FitStatusUnknown";
-      return toStringHelper( flag, FitStatusTypMap, s_unknown );
-    }
-
-    std::string const& toString( Track::Flags const flag )
-    {
-      static std::string const s_unknown = "FlagsUnknown";
-      return toStringHelper( flag, FlagsTypMap, s_unknown );
-    }
-
-    std::string const& toString( Track::AdditionalInfo const flag )
-    {
-      static std::string const s_unknown = "AdditionalInfoUnknown";
-      return toStringHelper( flag, AdditionalInfoTypMap, s_unknown );
-    }
-
-    Track::History Track::HistoryToType( std::string const& aName )
-    {
-      auto iter = HistoryTypMap.find( aName );
-      return iter != HistoryTypMap.end() ? iter->second : History::HistoryUnknown;
-    }
-
-    Track::FitHistory Track::FitHistoryToType( std::string const& aName )
-    {
-      auto iter = FitHistoryTypMap.find( aName );
-      return iter != FitHistoryTypMap.end() ? iter->second : FitHistory::FitUnknown;
-    }
-
-    Track::Types Track::TypesToType( std::string const& aName )
-    {
-      auto iter = TypesTypMap.find( aName );
-      return iter != TypesTypMap.end() ? iter->second : Types::TypeUnknown;
-    }
-
-    Track::PatRecStatus Track::PatRecStatusToType( std::string const& aName )
-    {
-      auto iter = PatRecStatusTypMap.find( aName );
-      return iter != PatRecStatusTypMap.end() ? iter->second : PatRecStatus::PatRecStatusUnknown;
-    }
-
-    Track::FitStatus Track::FitStatusToType( std::string const& aName )
-    {
-      auto iter = FitStatusTypMap.find( aName );
-      return iter != FitStatusTypMap.end() ? iter->second : FitStatus::FitStatusUnknown;
-    }
-
-    Track::Flags Track::FlagsToType( std::string const& aName )
-    {
-      auto iter = FlagsTypMap.find( aName );
-      return iter != FlagsTypMap.end() ? iter->second : Flags::FlagsUnknown;
-    }
-
-    Track::AdditionalInfo Track::AdditionalInfoToType( std::string const& aName )
-    {
-      auto iter = AdditionalInfoTypMap.find( aName );
-      return iter != AdditionalInfoTypMap.end() ? iter->second : AdditionalInfo::AdditionalInfoUnknown;
-    }
   }
 }
