@@ -24,19 +24,37 @@
 #include "Event/Track_v2.h"
 
 // ============================================================================
-
-//-----------------------------------------------------------------------------
-// Implementation file for class : Track
-//
-// 2004-12-14 : Jose Hernando, Eduardo Rodrigues
-//-----------------------------------------------------------------------------
 namespace
 {
-      template <typename Order1, typename Order2, typename F >
-      constexpr decltype(auto) select_order( bool b, Order1 o1, Order2 o2, F&& f )
+      template <typename T1, typename T2, typename F >
+      constexpr decltype(auto) with_selection_invoke( bool b, T1 t1, T2 t2, F&& f )
       {
-          return b ? std::invoke(f,o1) : std::invoke(f,o2);
+          return b ? std::invoke(f,t1) : std::invoke(f,t2);
       }
+
+      using useDecreasingOrder = Gaudi::tagged_bool<struct useDecreasingOrder_tag>;
+
+      template < typename F >
+      constexpr decltype(auto) with_order( useDecreasingOrder decreasing, F&& f )
+      {
+          return with_selection_invoke( UNLIKELY(static_cast<bool>(decreasing)),
+                                                TrackFunctor::decreasingByZ(),
+                                                TrackFunctor::increasingByZ(),
+                                                std::forward<F>(f) );
+      }
+
+      // inserter which only counts how often something is inserted
+      struct counting_inserter {
+        size_t count = 0;
+        counting_inserter& operator++() { return *this; } // nop
+        counting_inserter& operator*() { return *this; }  // redirect to self, so that our op= is called
+        template <typename T>
+        counting_inserter& operator=( T&& )
+        {
+          ++count; // raison d'etre
+          return *this;
+        }
+      };
 
       template <size_t N>
       std::array<double, N + 1> generate_chi2max( double limit )
@@ -47,23 +65,11 @@ namespace
         return c;
       }
 
-
       // could put this into probChi2, but then the table is generated at
       // first use of probChi2, i.e. during the event loop.
       // This way, it tends to be generated when libTrackEvent.so is
       // dynamically linked into the executable, i.e. very early.
       static const auto chi2max = generate_chi2max<256>( 1e-15 );
-
-
-
-}
-
-namespace LHCb::Event
-{
-  namespace v2
-  {
-
-    namespace details {
 
       template <typename Enum> struct enumMap {
           static Enum const unknown;
@@ -71,8 +77,8 @@ namespace LHCb::Event
           static std::string const s_unknown;
       };
 
-      template  std::string const& toStringHelper( Track::History const flag );
-      template  Track::History toEnumHelper<Track::History>( std::string const& aName );
+      using namespace LHCb::Event::v2;
+
       template <> const Track::History enumMap<Track::History>::unknown = Track::History::HistoryUnknown;
       template <> const std::string enumMap<Track::History>::s_unknown = "HistoryError";
       template <> const GaudiUtils::VectorMap<std::string, Track::History> enumMap<Track::History>::map = {
@@ -107,8 +113,6 @@ namespace LHCb::Event
               {"PrVeloUT", Track::History::PrVeloUT}};
 
 
-      template  std::string const& toStringHelper( Track::FitHistory const flag );
-      template  Track::FitHistory toEnumHelper<Track::FitHistory>( std::string const& aName );
       template <> const Track::FitHistory enumMap<Track::FitHistory>::unknown = Track::FitHistory::FitUnknown;
       template <> const std::string enumMap<Track::FitHistory>::s_unknown = "FitUnknown";
       template <> const GaudiUtils::VectorMap<std::string, Track::FitHistory> enumMap<Track::FitHistory>::map = {
@@ -117,8 +121,6 @@ namespace LHCb::Event
               {"BiKalman", Track::FitHistory::BiKalman}};
 
 
-      template  std::string const& toStringHelper( Track::Types const flag );
-      template  Track::Types toEnumHelper<Track::Types>( std::string const& aName );
       template <> const Track::Types enumMap<Track::Types>::unknown = Track::Types::TypeUnknown;
       template <> const std::string enumMap<Track::Types>::s_unknown = "TypeUnknown";
       template <> const GaudiUtils::VectorMap<std::string, Track::Types> enumMap<Track::Types>::map = {
@@ -135,8 +137,6 @@ namespace LHCb::Event
               {"UT", Track::Types::UT}};
 
 
-      template  std::string const& toStringHelper( Track::FitStatus const flag );
-      template  Track::FitStatus toEnumHelper<Track::FitStatus>( std::string const& aName );
       template <> const Track::FitStatus enumMap<Track::FitStatus>::unknown = Track::FitStatus::FitStatusUnknown;
       template <> const std::string enumMap<Track::FitStatus>::s_unknown = "FitStatusUnknown";
       template <> const GaudiUtils::VectorMap<std::string, Track::FitStatus> enumMap<Track::FitStatus>::map = {
@@ -144,8 +144,6 @@ namespace LHCb::Event
               {"Fitted", Track::FitStatus::Fitted},
               {"FitFailed", Track::FitStatus::FitFailed}};
 
-      template  std::string const& toStringHelper( Track::PatRecStatus const flag );
-      template  Track::PatRecStatus toEnumHelper<Track::PatRecStatus>( std::string const& aName );
       template <> const Track::PatRecStatus enumMap<Track::PatRecStatus>::unknown = Track::PatRecStatus::PatRecStatusUnknown;
       template <> const std::string enumMap<Track::PatRecStatus>::s_unknown = "PatRecStatusUnknown";
       template <> const GaudiUtils::VectorMap<std::string, Track::PatRecStatus> enumMap<Track::PatRecStatus>::map = {
@@ -154,8 +152,6 @@ namespace LHCb::Event
               {"PatRecMeas", Track::PatRecStatus::PatRecMeas}};
 
 
-      template  std::string const& toStringHelper( Track::Flags const flag );
-      template  Track::Flags toEnumHelper<Track::Flags>( std::string const& aName );
       template <> const Track::Flags enumMap<Track::Flags>::unknown = Track::Flags::FlagsUnknown;
       template <> std::string const enumMap<Track::Flags>::s_unknown = "FlagsUnknown";
       template <> const GaudiUtils::VectorMap<std::string, Track::Flags> enumMap<Track::Flags>::map = {
@@ -170,8 +166,6 @@ namespace LHCb::Event
               {"L0Candidate", Track::Flags::L0Candidate}};
 
 
-      template  std::string const& toStringHelper( Track::AdditionalInfo const flag );
-      template  Track::AdditionalInfo toEnumHelper<Track::AdditionalInfo>( std::string const& aName );
       template <> const Track::AdditionalInfo enumMap<Track::AdditionalInfo>::unknown = Track::AdditionalInfo::AdditionalInfoUnknown;
       template <> const std::string enumMap<Track::AdditionalInfo>::s_unknown = "AdditionalInfoUnknown";
       template <> const GaudiUtils::VectorMap<std::string, Track::AdditionalInfo> enumMap<Track::AdditionalInfo>::map = {
@@ -212,15 +206,20 @@ namespace LHCb::Event
               {"MuonCLQuality", Track::AdditionalInfo::MuonCLQuality},
               {"MuonCLArrival", Track::AdditionalInfo::MuonCLArrival},
               {"IsMuonTight", Track::AdditionalInfo::IsMuonTight}};
+}
 
+namespace LHCb::Event::v2
+{
+    namespace details
+    {
 
-      template <typename Flag>
-      std::string const& toStringHelper( Flag const flag )
+      template <typename Enum>
+      std::string const& toStringHelper( Enum const e )
       {
-        auto iter = std::find_if( enumMap<Flag>::map.begin(), enumMap<Flag>::map.end(),
-                                  [&]( const std::pair<std::string const, Flag>& i ) { return i.second == flag; } );
-        assert( iter != enumMap<Flag>::map.end() );
-        return iter != enumMap<Flag>::map.end() ? iter->first : enumMap<Flag>::s_unknown;
+        auto iter = std::find_if( enumMap<Enum>::map.begin(), enumMap<Enum>::map.end(),
+                                  [&]( const std::pair<std::string const, Enum>& i ) { return i.second == e; } );
+        assert( iter != enumMap<Enum>::map.end() );
+        return iter != enumMap<Enum>::map.end() ? iter->first : enumMap<Enum>::s_unknown;
       }
 
       template <typename Enum>
@@ -230,7 +229,26 @@ namespace LHCb::Event
         return iter != enumMap<Enum>::map.end() ? iter->second : enumMap<Enum>::unknown;
       }
 
+      template  std::string const& toStringHelper( Track::History const );
+      template  Track::History toEnumHelper<Track::History>( std::string const& );
 
+      template  std::string const& toStringHelper( Track::FitHistory const );
+      template  Track::FitHistory toEnumHelper<Track::FitHistory>( std::string const& );
+
+      template  std::string const& toStringHelper( Track::Types const );
+      template  Track::Types toEnumHelper<Track::Types>( std::string const& );
+
+      template  std::string const& toStringHelper( Track::FitStatus const );
+      template  Track::FitStatus toEnumHelper<Track::FitStatus>( std::string const& );
+
+      template  std::string const& toStringHelper( Track::PatRecStatus const );
+      template  Track::PatRecStatus toEnumHelper<Track::PatRecStatus>( std::string const& );
+
+      template  std::string const& toStringHelper( Track::Flags const );
+      template  Track::Flags toEnumHelper<Track::Flags>( std::string const& );
+
+      template  std::string const& toStringHelper( Track::AdditionalInfo const );
+      template  Track::AdditionalInfo toEnumHelper<Track::AdditionalInfo>( std::string const& );
     }
     //=============================================================================
     // Set the fit result. This takes ownership.
@@ -347,8 +365,8 @@ namespace LHCb::Event
     //=============================================================================
     void Track::addToStates( const State& state )
     {
-      auto ipos = select_order( checkFlag(Flags::Backward), TrackFunctor::decreasingByZ(), TrackFunctor::increasingByZ(),
-                                [&](auto order) { return std::upper_bound( m_states.begin(), m_states.end(), state, order); } );
+      auto ipos = with_order( useDecreasingOrder{ checkFlag(Flags::Backward) },
+                              [&](auto order) { return std::upper_bound( m_states.begin(), m_states.end(), state, order); } );
       m_states.emplace( ipos, state );
     }
 
@@ -359,8 +377,7 @@ namespace LHCb::Event
     {
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
       // do not assumme that the incoming states are properly sorted.
-      select_order( checkFlag(Flags::Backward), TrackFunctor::decreasingByZ(), TrackFunctor::increasingByZ(),
-                    [&](auto order) {
+      with_order( useDecreasingOrder{ checkFlag(Flags::Backward) }, [&](auto order) {
         std::sort( pivot, m_states.end(), order );
         std::inplace_merge( m_states.begin(), pivot, m_states.end(), order );
       });
@@ -372,15 +389,14 @@ namespace LHCb::Event
     void Track::addToStates( span<const State> states, Tag::Sorted_tag )
     {
       // debug assert checking whether it's correctly sorted or not
-      assert( select_order( checkFlag( Track::Flags::Backward ), TrackFunctor::decreasingByZ(),  TrackFunctor::increasingByZ(),
-                            [&states](auto order) { return std::is_sorted( begin(states), end(states), order ) } ) &&
+      assert( with_order( useDecreasingOrder{ checkFlag( Track::Flags::Backward ) },
+                          [&states](auto order) { return std::is_sorted( states.begin(), states.end(), order ); } ) &&
               "states are not correctly sorted;"
               "hint: use the general addToStates function assuming unordered states" );
 
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
-      select_order(  UNLIKELY( checkFlag( Track::Flags::Backward ) ), TrackFunctor::decreasingByZ(),
-                                                                      TrackFunctor::increasingByZ(),
-                     [&](auto order) { std::inplace_merge( m_states.begin(), pivot, m_states.end(), order ); });
+      with_order( useDecreasingOrder{ checkFlag( Track::Flags::Backward ) },
+                  [&](auto order) { std::inplace_merge( m_states.begin(), pivot, m_states.end(), order ); });
     }
 
     //=============================================================================
@@ -439,22 +455,6 @@ namespace LHCb::Event
     //=============================================================================
     // Count the number of LHCbIDs that two tracks have in common
     //=============================================================================
-    namespace
-    {
-
-      // inserter which only counts how often something is inserted
-      struct counting_inserter {
-        size_t count = 0;
-        counting_inserter& operator++() { return *this; } // nop
-        counting_inserter& operator*() { return *this; }  // redirect to self, so that our op= is called
-        counting_inserter& operator=( const LHCbID& )
-        {
-          ++count;
-          return *this;
-        } // raison d'etre
-      };
-    }
-
     size_t Track::nCommonLhcbIDs( const Track& rhs ) const
     {
       return std::set_intersection( begin( m_lhcbIDs ), end( m_lhcbIDs ), begin( rhs.m_lhcbIDs ), end( rhs.m_lhcbIDs ),
@@ -569,7 +569,7 @@ namespace LHCb::Event
     void Track::setLhcbIDs( LHCbIDContainer&& value, Tag::Sorted_tag )
     {
       m_lhcbIDs = std::move( value );
-      assert( std::is_sorted( begin( m_lhcbIDs ), end( m_lhcbIDs ) ) );
+      assert( std::is_sorted( m_lhcbIDs.begin(), m_lhcbIDs.end() ) );
       assert( std::adjacent_find( m_lhcbIDs.begin(), m_lhcbIDs.end() ) == m_lhcbIDs.end() );
     }
 
@@ -661,6 +661,4 @@ namespace LHCb::Event
 
       return os;
     }
-
-  }
 }
