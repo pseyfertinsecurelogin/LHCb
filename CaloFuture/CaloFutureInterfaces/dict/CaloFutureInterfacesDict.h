@@ -20,7 +20,6 @@
 #include "CaloFutureInterfaces/ICaloFutureCosmicsTool.h"
 #include "CaloFutureInterfaces/ICaloFutureCosmicsTrackTool.h"
 #include "CaloFutureInterfaces/ICaloFutureDigitTool.h"           
-#include "CaloFutureInterfaces/ICaloFutureDigits4Track.h"           
 #include "CaloFutureInterfaces/ICaloFutureGetterTool.h"
 #include "CaloFutureInterfaces/ICaloFutureHypoLikelihood.h"      
 #include "CaloFutureInterfaces/ICaloFutureHypoTool.h"            
