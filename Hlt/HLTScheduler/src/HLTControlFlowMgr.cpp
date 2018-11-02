@@ -196,6 +196,11 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
   evtContext->set( createdEvts, m_whiteboard->allocateStore( createdEvts ) );
   m_algExecStateSvc->reset( *evtContext );
 
+  // giving the scheduler states to the evtContext, so that they are
+  // globally accessible within an event
+  // copy of states happens here!
+  evtContext->emplaceExtension<SchedulerStates>(m_NodeStates, m_AlgStates);
+
   StatusCode sc = m_whiteboard->selectStore( evtContext->slot() );
   if ( sc.isFailure() ) {
     fatal() << "Slot " << evtContext->slot() << " could not be selected for the WhiteBoard\n"
@@ -220,29 +225,28 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
   if ( msgLevel( MSG::DEBUG ) )
     debug() << "Event " << evtContext->evt() << " submitting in slot " << evtContext->slot() << endmsg;
 
+
   enqueue(
     [
-      NodeStates = m_NodeStates,
-      AlgStates = m_AlgStates,
       evtContext = std::move(evtContext),
       createdEvts,
       this
     ] () mutable {
-      auto* rawEvtContext = evtContext.get();
+      auto& [NodeStates, AlgStates] = evtContext->getExtension<SchedulerStates>();
 
-      Gaudi::Hive::setCurrentContext( rawEvtContext );
+      Gaudi::Hive::setCurrentContext( evtContext.get() );
 
       SmartIF<IProperty> appmgr( serviceLocator() );
 
       for ( AlgWrapper& toBeRun : m_definitlyRunTheseAlgs ) {
         try {
-          auto sc = toBeRun.execute(*rawEvtContext, AlgStates);
+          auto sc = toBeRun.execute(*evtContext, AlgStates);
           if ( UNLIKELY( !sc.isSuccess() ) ) {
-            m_algExecStateSvc->updateEventStatus( true, *rawEvtContext );
+            m_algExecStateSvc->updateEventStatus( true, *evtContext );
             break;
           }
         } catch ( ... ) {
-          m_algExecStateSvc->updateEventStatus( true, *rawEvtContext );
+          m_algExecStateSvc->updateEventStatus( true, *evtContext );
           fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
           Gaudi::setAppReturnCode(appmgr, Gaudi::ReturnCode::UnhandledException);
         }
@@ -251,11 +255,10 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
 
       for ( VNode* execNode : m_orderedNodesVec ) {
         std::visit( overload{[&]( BasicNode& bNode ) {
-                               bool req = bNode.requested( NodeStates );
-                               if ( req ) {
+                               if ( bNode.requested( NodeStates ) ) {
                                  bNode.execute( NodeStates,
                                                 AlgStates,
-                                                *rawEvtContext,
+                                                *evtContext,
                                                 m_algExecStateSvc,
                                                 appmgr );
                                  bNode.notifyParents( NodeStates );
