@@ -23,8 +23,6 @@
 #include <vector>
 #include <string>
 
-#include "LHCbOutputStreamAgent.h"
-
 // forward declarations
 class IConversionSvc;
 struct IDataManagerSvc;
@@ -60,8 +58,6 @@ protected:
   Gaudi::Property<std::string> m_outputName{ this, "OutputFile" } ;
   /// Output type: NEW(NEW,CREATE,WRITE,RECREATE), UPDATE)
   std::string m_outputType = "UPDATE";
-  /// Keep reference of agent
-  std::unique_ptr<LHCbOutputStreamAgent> m_agent = std::make_unique<LHCbOutputStreamAgent>(this);
   /// Keep reference to the data provider service
   SmartIF<IDataProviderSvc>        m_pDataProvider;
   /// Keep reference to the data manager service

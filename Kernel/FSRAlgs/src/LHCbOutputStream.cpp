@@ -298,7 +298,7 @@ StatusCode LHCbOutputStream::collectObjects()   {
     m_currentItem = (*i);
     StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
     if ( iret.isSuccess() )  {
-      iret = m_pDataManager->traverseSubTree(obj, m_agent.get());
+      iret = m_pDataManager->traverseSubTree(obj, [&](IRegistry* pReg, int level) { return this->collect(pReg,level); } );
       if ( !iret.isSuccess() )  {
         status = iret;
       }
@@ -316,7 +316,7 @@ StatusCode LHCbOutputStream::collectObjects()   {
     m_currentItem = *i;
     StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
     if ( iret.isSuccess() )  {
-      iret = m_pDataManager->traverseSubTree(obj, m_agent.get());
+      iret = m_pDataManager->traverseSubTree(obj, [&](IRegistry* pReg, int level) { return this->collect(pReg,level); } );
     }
     if ( !iret.isSuccess() )    {
       ON_DEBUG
@@ -338,7 +338,7 @@ StatusCode LHCbOutputStream::collectObjects()   {
         m_currentItem = i;
         StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(),obj);
         if ( iret.isSuccess() ) {
-          iret = m_pDataManager->traverseSubTree(obj,m_agent.get());
+          iret = m_pDataManager->traverseSubTree(obj, [&](IRegistry* pReg, int level) { return this->collect(pReg,level); } );
           if ( !iret.isSuccess() ) { status = iret; }
         } else {
           log << MSG::ERROR << "Cannot write mandatory (algorithm dependent) object(s) (Not found) "
