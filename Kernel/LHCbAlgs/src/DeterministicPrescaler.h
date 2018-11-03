@@ -13,14 +13,9 @@
 
 // STL
 #include <string>
-#include <math.h>
-
-// from Boost
-#include "boost/cstdint.hpp"
-#include "boost/integer/integer_mask.hpp"
-#include "boost/integer_traits.hpp"
-using boost::uint32_t;
-using boost::uint64_t;
+#include <cmath>
+#include <cstdint>
+#include <limits>
 
 // from LHCb core
 #include "Event/ODIN.h"
@@ -36,13 +31,21 @@ public:
 private:
 
   /// fraction of input events to accept...
-  double                  m_accFrac;
+  Gaudi::Property<double>                  m_accFrac
+  { this,  "AcceptFraction" , 1,  [this](const Property&) {
+    m_acc = ( m_accFrac<=0 ? 0
+            : m_accFrac>=1 ? std::numeric_limits<uint32_t>::max()
+            : uint32_t( m_accFrac*std::numeric_limits<uint32_t>::max())
+            );
+    if( msgLevel(MSG::DEBUG) )
+      debug() << "frac: " << m_accFrac << " acc: 0x" << std::hex << m_acc << endmsg;
+  }};
 
   /// integer representation of the above
-  boost::uint32_t         m_acc{boost::integer_traits<uint32_t>::const_max};
+  std::uint32_t         m_acc{std::numeric_limits<uint32_t>::max()};
 
   /// initial seed unique to this instance (computed from the name)
-  boost::uint32_t         m_initial{0};
+  std::uint32_t         m_initial{0};
 
   // acahe pointer to counter, to avoid map look ups
   StatEntity*             m_counter = nullptr;

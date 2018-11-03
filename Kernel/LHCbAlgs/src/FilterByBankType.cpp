@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: FilterByBankType.cpp,v 1.1 2009-03-09 21:18:07 jvantilb Exp $
 // Include files
 
 // From DAQEvent

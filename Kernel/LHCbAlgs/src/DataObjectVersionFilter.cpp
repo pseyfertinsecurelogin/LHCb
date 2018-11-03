@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DataObjectVersionFilter.cpp,v 1.3 2009-11-10 09:27:51 jonrob Exp $
-// Include files 
+// Include files
 
 // local
 #include "DataObjectVersionFilter.h"
@@ -24,33 +23,21 @@
 DECLARE_COMPONENT( DataObjectVersionFilter )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DataObjectVersionFilter::DataObjectVersionFilter( const std::string& name,
-                                                  ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "MinVersion", m_minV = 0       );
-  declareProperty( "MaxVersion", m_maxV = 9999999 );
-  declareProperty( "DataObjectLocation", m_loc = "" );
-}
-
-//=============================================================================
 // Main execution
 //=============================================================================
-StatusCode DataObjectVersionFilter::execute() 
+StatusCode DataObjectVersionFilter::execute()
 {
   bool OK = true;
 
   try
   {
-    const DataObject * data = getIfExists<DataObject>(m_loc);
+    const DataObject * data = m_loc.getIfExists();
     if ( data )
     {
       const auto ver = (unsigned int)data->version();
       if ( msgLevel(MSG::DEBUG) )
         debug() << "version = " << ver << endmsg;
-      OK = ( ver <= m_maxV && ver >= m_minV );
+      OK = ( ver <= m_maxV.value() && ver >= m_minV.value() );
     }
     else
     {
@@ -61,7 +48,7 @@ StatusCode DataObjectVersionFilter::execute()
   {
     OK = false;
   }
-  
+
   setFilterPassed(OK);
 
   return StatusCode::SUCCESS;

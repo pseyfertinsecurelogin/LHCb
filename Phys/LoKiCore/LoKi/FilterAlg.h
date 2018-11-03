@@ -171,7 +171,7 @@ namespace LoKi
       StatusCode sc = _factory-> get ( code() , functor , preambulo () ) ;
       // release the factory (not needed anymore)
       this->releaseTool ( _factory ).ignore() ;
-      if ( sc.isFailure() ) 
+      if ( sc.isFailure() )
       { return Error("Unable to decode functor '" + code() + "'" , sc ) ; }
       //
       if( msgLevel(MSG::DEBUG) ) debug() << "Requested code: \n'"

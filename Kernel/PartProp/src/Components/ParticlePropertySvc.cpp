@@ -50,6 +50,13 @@
  *                add/replace/modify the existing particle properties
  */
 // ============================================================================
+namespace
+{
+    std::string defaultFilename() { // the main file with particle properties
+      auto* root = getenv("PARAMFILESROOT");
+      return root ? std::string{root}+"/data/ParticleTable.txt" : std::string{ "./ParticleTable.txt" };
+    }
+}
 namespace LHCb
 {
   // ==========================================================================
@@ -184,43 +191,8 @@ namespace LHCb
       ISvcLocator*       pSvc )   // the Service Locator
       : base_class ( name , pSvc )
     {
-      // Redefine the default name:
-      if( getenv("PARAMFILESROOT") )
-      {
-        m_filename  = getenv( "PARAMFILESROOT" ) ;
-        m_filename += "/data/ParticleTable.txt"  ;
-      }
       //
-      declareProperty
-        ( "ParticlePropertiesFile" ,
-          m_filename               ,
-          "The name of 'main' particle properties file" )
-        -> declareUpdateHandler (&LHCb::ParticlePropertySvc::updateHandler , this ) ;
-      declareProperty
-        ( "OtherFiles"  ,
-          m_other       ,
-          "The (optional) list of additional files with the particle data" )
-        -> declareUpdateHandler (&LHCb::ParticlePropertySvc::updateHandler , this ) ;
-      declareProperty
-        ( "Particles"  ,
-          m_particles  ,
-          "The (optional) list of special particle properties" )
-        -> declareUpdateHandler (&LHCb::ParticlePropertySvc::updateHandler , this ) ;
-      declareProperty
-        ( "Dump" , m_dump ,
-          "Dump all properties in a table format" )
-        -> declareUpdateHandler (&LHCb::ParticlePropertySvc::updateDump   , this ) ;
       //
-      // CC-related part
-      //
-      // get the default set of protected symbols
-      const Decays::Symbols& symbols = Decays::Symbols::instance() ;
-      m_ccmap_ = symbols.cc() ;
-      //
-      declareProperty
-        ( "ChargeConjugations" , m_ccmap_ ,
-          "The map of charge-conjugation & protected symbols" )
-        -> declareUpdateHandler (&LHCb::ParticlePropertySvc::updateCC   , this ) ;
     }
     // ========================================================================
   private: // update handler
@@ -322,7 +294,9 @@ namespace LHCb
     /// Map:   { "pid"  : "property" }
     PidMap  m_pidMap  ;                         // Map:   { "pid"  : "property"}
     /// dump the table?
-    bool m_dump  = false;                               // dump the table?
+    Gaudi::Property<bool> m_dump                               // dump the table?
+        { this, "Dump" , false, &LHCb::ParticlePropertySvc::updateDump,
+          "Dump all properties in a table format" };
     // ========================================================================
   private: // service data
     // ========================================================================
@@ -331,18 +305,28 @@ namespace LHCb
     /// the actual type for the list of particle properties (strings)
     typedef std::vector<std::string> Particles ;
     /// the main file with particle properties
-    std::string m_filename = { "./ParticleTable.txt" }; // the main file with particle properties
+    Gaudi::Property<std::string> m_filename  // the main file with particle properties
+        { this, "ParticlePropertiesFile" , defaultFilename(),
+          &LHCb::ParticlePropertySvc::updateHandler ,
+          "The name of 'main' particle properties file" };
     /// additional files
-    Files m_other ;                                    // additional file names
+    Gaudi::Property<Files> m_other                                     // additional file names
+        {this, "OtherFiles"  , {}, &LHCb::ParticlePropertySvc::updateHandler ,
+          "The (optional) list of additional files with the particle data" };
     /// properties to be redefined  explicitely
-    Particles m_particles ;          // properties to be redefined  explicitely
+    Gaudi::Property<Particles> m_particles           // properties to be redefined  explicitely
+        { this, "Particles"  , {}, &LHCb::ParticlePropertySvc::updateHandler ,
+          "The (optional) list of special particle properties" };
     // ========================================================================
   private: // CC-related stuff
     // ========================================================================
     /// the CC-map
     mutable Decays::CC::MapCC         m_ccMap  ;            //       the CC-map
     /// CC-map for properties
-    std::map<std::string,std::string> m_ccmap_ ;            //           CC-map
+    Gaudi::Property<std::map<std::string,std::string>> m_ccmap_            //           CC-map
+        { this, "ChargeConjugations" , Decays::Symbols::instance().cc() ,
+          &LHCb::ParticlePropertySvc::updateCC,
+          "The map of charge-conjugation & protected symbols" };
     // ========================================================================
   private: // various statistics of modifications
     // ========================================================================
@@ -395,7 +379,7 @@ StatusCode LHCb::ParticlePropertySvc::initialize ()
   //
   m_ccMap.clear () ;
   //
-  if ( m_dump || MSG::DEBUG >= outputLevel () ) { dump () ; }
+  if ( m_dump.value() || MSG::DEBUG >= outputLevel () ) { dump () ; }
   //
   return StatusCode::SUCCESS ;
 }
@@ -418,20 +402,18 @@ StatusCode LHCb::ParticlePropertySvc::rebuild ()
   m_ccMap     . clear () ;
   // ==========================================================================
   // parse the main file
-  StatusCode sc = parse ( m_filename ) ;
+  StatusCode sc = parse ( m_filename.value() ) ;
   if ( sc.isFailure() ) { return sc ; }                              // RETURN
   // parse the additional files
-  for ( auto ifile = m_other.begin () ; m_other.end() != ifile ; ++ifile )
+  for ( const auto& file : m_other.value() )
   {
-    sc = parse ( *ifile ) ;
-    if ( sc.isFailure() ) { return sc ; }                            // RETURN
+    if ( sc = parse ( file ) ; sc.isFailure() ) { return sc ; }                            // RETURN
   }
   // parse the options/lines
   m_modified.clear() ;
-  for ( auto iline = m_particles.begin() ; m_particles.end() != iline ; ++iline )
+  for ( const auto& line: m_particles.value() )
   {
-    sc = parseLine ( *iline ) ;
-    if ( sc.isFailure() ) { return sc ; } // RETURN
+    if ( sc = parseLine ( line ) ; sc.isFailure() ) { return sc ; } // RETURN
   }
   // sort the vector
   std::stable_sort ( m_vector.begin() , m_vector.end() ,
@@ -441,7 +423,7 @@ StatusCode LHCb::ParticlePropertySvc::rebuild ()
   if ( sc.isFailure() ) { return sc ; }                             // RETURN
   /// some debug printout
   MsgStream log ( msgSvc() , name() ) ;
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) ) { 
+  if( UNLIKELY( log.level() <= MSG::DEBUG ) ) {
     log << MSG::DEBUG
         << " All:   "   << m_vector   .size ()
         << " By Name: " << m_nameMap  .size ()
@@ -587,8 +569,7 @@ StatusCode LHCb::ParticlePropertySvc::parse( const std::string& file )
     //
     if ( !active ) { continue ; } // skip the lines if not active
     // parse the line
-    auto sc = parseLine ( line ) ;
-    if ( sc.isFailure() ) {
+    if (auto sc = parseLine ( line ) ; sc.isFailure() ) {
       error() << "Unable to parse the file '" << file << "'" << endmsg ;
       return sc ;                                                     // RETURN
     }
@@ -623,11 +604,11 @@ StatusCode LHCb::ParticlePropertySvc::parseLine ( const std::string& line )
        >> p_charge >> p_mass   >> p_ltime
        >> p_evtgen >> p_pythia >> p_maxwid )
   {
-    /// Negative lifetime means the width in GeV-units 
-    if ( 0 > p_ltime ) 
-    { p_ltime = Gaudi::Units::hbar_Planck 
+    /// Negative lifetime means the width in GeV-units
+    if ( 0 > p_ltime )
+    { p_ltime = Gaudi::Units::hbar_Planck
         / std::abs ( p_ltime * Gaudi::Units::GeV ) / Gaudi::Units::s ; }
-    
+
     StatusCode sc = addParticle
       ( p_name                        ,
         LHCb::ParticleID ( p_pdg )    ,
@@ -711,9 +692,8 @@ StatusCode LHCb::ParticlePropertySvc::setAntiParticles ()
 {
   MsgStream log ( msgSvc() , name() ) ;
   //
-  for ( auto i = m_vector.begin() ; m_vector.end() != i ; ++i )
+  for ( const LHCb::ParticleProperty* _pp : m_vector )
   {
-    const LHCb::ParticleProperty* _pp = *i ;
     LHCb::ParticleProperty* pp = const_cast<LHCb::ParticleProperty*> ( _pp );
     pp -> setAntiParticle ( nullptr ) ;
     // get the ID for antiParticle
@@ -737,13 +717,13 @@ StatusCode LHCb::ParticlePropertySvc::setAntiParticles ()
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-namespace 
+namespace
 {
-  inline bool different ( const double a         , 
-                          const double b         , 
+  inline bool different ( const double a         ,
+                          const double b         ,
                           const double p = 1.e-8 )
-  { return std::abs ( a - b ) > ( std::abs ( a ) + std::abs ( b ) ) * std::abs ( p ) ; } 
-  inline bool different ( const std::string& a   , 
+  { return std::abs ( a - b ) > ( std::abs ( a ) + std::abs ( b ) ) * std::abs ( p ) ; }
+  inline bool different ( const std::string& a   ,
                           const std::string& b   ) { return a != b ;}
 }
 // ============================================================================
@@ -813,7 +793,7 @@ std::string LHCb::ParticlePropertySvc::cc ( const std::string& decay ) const
       m_ccMap [ pp   -> particle() ] = anti->particle() ;
     }
     // get the particles from the options
-    for ( const auto& ic : m_ccmap_) {
+    for ( const auto& ic : m_ccmap_.value()) {
       m_ccMap [ ic.first  ] = ic.second ;
       m_ccMap [ ic.second ] = ic.first  ;
     }

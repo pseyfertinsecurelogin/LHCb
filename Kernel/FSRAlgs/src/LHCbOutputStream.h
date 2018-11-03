@@ -88,11 +88,27 @@ protected:
   /// Number of events written to this output stream
   int                      m_events;
   /// Vector of names of Algorithms that this stream accepts
-  Gaudi::Property<std::vector<std::string>> m_acceptNames{ this, "AcceptAlgs"};
+  Gaudi::Property<std::vector<std::string>> m_acceptNames{ this, "AcceptAlgs", {},
+      [=](auto&) {
+          if ( auto sc = decodeAlgorithms(m_acceptNames, &m_acceptAlgs ); sc.isFailure()) {
+                throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
+                                     "LHCbOutputStream::acceptAlgsHandler",sc);
+      } ; } };
+
   /// Vector of names of Algorithms that this stream requires
-  Gaudi::Property<std::vector<std::string>> m_requireNames{ this, "RequireAlgs"};
+  Gaudi::Property<std::vector<std::string>> m_requireNames{ this, "RequireAlgs", {},
+       [=](auto&) {
+            if ( auto sc = decodeAlgorithms( m_requireNames, &m_requireAlgs ); sc.isFailure()) {
+                throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
+                                     "LHCbOutputStream::requireAlgsHandler",sc);
+       } ; } } ;
   /// Vector of names of Algorithms that this stream is vetoed by
-  Gaudi::Property<std::vector<std::string>> m_vetoNames{ this, "VetoAlgs"};
+  Gaudi::Property<std::vector<std::string>> m_vetoNames{ this, "VetoAlgs", {},
+       [=](auto&) {
+             if (auto sc = decodeAlgorithms( m_vetoNames, &m_vetoAlgs ); sc.isFailure()) {
+                throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
+                                     "LHCbOutputStream::vetoAlgsHandler",sc);
+       } ; } };
   /// Vector of Algorithms that this stream accepts
   std::vector<Algorithm*>  m_acceptAlgs;
   /// Vector of Algorithms that this stream requires
@@ -102,16 +118,12 @@ protected:
 
 public:
   /// Standard algorithm Constructor
-  LHCbOutputStream(const std::string& name, ISvcLocator* pSvcLocator);
+  using Algorithm::Algorithm;
 protected:
   /// Decode list of Algorithms that this stream accepts
   StatusCode decodeAcceptAlgs();
-  /// Handler for AcceptAlgs Property
-  void acceptAlgsHandler( Property& theProp );
   /// Decode list of Algorithms that this stream requires
   StatusCode decodeRequireAlgs();
-  /// Handler for RequireAlgs Property
-  void requireAlgsHandler( Property& theProp );
   /// Decode list of Algorithms that this stream is vetoed by
   StatusCode decodeVetoAlgs();
   /// Handler for VetoAlgs Property

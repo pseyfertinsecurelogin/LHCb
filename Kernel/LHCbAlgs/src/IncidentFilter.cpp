@@ -56,6 +56,8 @@ namespace Gaudi
   {
   public:
     // ========================================================================
+    /// standard constructor
+    using extends::extends;
     /// standard initialization
     StatusCode initialize ()  override;
     /// standard finalization
@@ -64,19 +66,10 @@ namespace Gaudi
     StatusCode execute ()  override; // the only one essential method
     // handle the incident
     void handle ( const Incident& inc ) override;
-    /// standard constructor
-    IncidentFilter
-    ( const std::string& name ,
-      ISvcLocator*       pSvc ) ;
     // ========================================================================
   protected:
     // ========================================================================
     void setVeto ( bool value ) { m_veto = value ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// update handler for "What"
-    void handler_1 ( ::Property&  p ) ;            // update handler for "What"
     // ========================================================================
   private:
     // ========================================================================
@@ -89,7 +82,17 @@ namespace Gaudi
     bool                     m_decision = false;
     //
     typedef std::vector<std::string> LIST    ;
-    LIST m_incidents     ;
+    Gaudi::Property<LIST> m_incidents
+      { this, "Incidents" , {}, [=](auto&) {
+          if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
+          if ( m_old_incidents == m_incidents.value()        ) { return ; }
+          // unsubscribe old incidents
+          IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
+          for ( const auto & item :  m_old_incidents )
+          { isvc->removeListener ( this , item ) ; }
+          // subscribe new incidents
+          subscribe() ;
+        }, "Incidents to be handled" };
     LIST m_old_incidents ;
     // ========================================================================
   } ; //                                            end of class IncidentFilter
@@ -124,29 +127,13 @@ namespace Gaudi
 // ============================================================================
 // Filter
 // ============================================================================
-// standard constructor
-// ============================================================================
-Gaudi::IncidentFilter::IncidentFilter
-( const std::string& name ,
-  ISvcLocator*       pSvc )                        // standard constructor
-  : base_class  ( name , pSvc )
-//
-{
-  // ==========================================================================
-  declareProperty
-    ( "Incidents" ,
-      m_incidents ,
-      "Incidents to be handled" ) ->
-    declareUpdateHandler ( &Gaudi::IncidentFilter::handler_1 , this ) ;
-  // ==========================================================================
-}
 // ============================================================================
 // standard initialization
 // ============================================================================
 StatusCode Gaudi::IncidentFilter::initialize ()
 {
   //
-  StatusCode sc = base_class::initialize() ;
+  StatusCode sc = extends::initialize() ;
   if ( sc.isFailure() ) { return sc ; }
   //
   subscribe () ;
@@ -158,10 +145,8 @@ StatusCode Gaudi::IncidentFilter::initialize ()
 // ============================================================================
 StatusCode Gaudi::IncidentFilter::finalize ()
 {
-  //
   unsubscribe () ;
-  //
-  return base_class::finalize () ;
+  return extends::finalize () ;
 }
 // ============================================================================
 // subscribe incidents
@@ -191,7 +176,6 @@ void Gaudi::IncidentFilter::subscribe ()
 // ============================================================================
 void Gaudi::IncidentFilter::unsubscribe ()
 {
-  //
   m_old_incidents.clear () ;
   //
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
@@ -200,25 +184,6 @@ void Gaudi::IncidentFilter::unsubscribe ()
   { isvc->removeListener ( this , item ) ; }
   //
   m_old_incidents = m_incidents ;
-  //
-}
-// ============================================================================
-// update handler for property "What"
-// ============================================================================
-void Gaudi::IncidentFilter::handler_1 ( ::Property&  /* p */ )
-{
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  //
-  if ( m_old_incidents == m_incidents                ) { return ; }
-  //
-  // unsubscribe old incidents
-  IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
-  //
-  for ( const auto & item :  m_old_incidents )
-  { isvc->removeListener ( this , item ) ; }
-  //
-  // subscribe new incidents
-  subscribe() ;
 }
 // ============================================================================
 // handle the incident
@@ -241,13 +206,10 @@ void Gaudi::IncidentFilter::handle ( const Incident& inc )
 // ============================================================================
 StatusCode Gaudi::IncidentFilter::execute ()
 {
-  //
   setFilterPassed ( m_decision ) ;
-  //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-
 
 
 // ============================================================================

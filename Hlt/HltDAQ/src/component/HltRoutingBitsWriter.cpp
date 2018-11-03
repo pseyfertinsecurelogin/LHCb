@@ -36,10 +36,6 @@
 // 2008-07-29 : Gerhard Raven
 //-----------------------------------------------------------------------------
 
-namespace {
-   using std::string;
-}
-
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( HltRoutingBitsWriter )
 
@@ -48,7 +44,7 @@ StatusCode HltRoutingBitsWriter::decode() {
    zeroEvaluators();
 
    // Create the right type of evaluator and build it
-   auto build = [this](const unsigned int bit, const string expr) -> StatusCode {
+   auto build = [this](const unsigned int bit, const std::string expr) -> StatusCode {
       if (expr.empty()) return StatusCode::SUCCESS;
 
       std::string title = boost::str(boost::format("%02d:%s") % bit % expr);
@@ -83,39 +79,12 @@ StatusCode HltRoutingBitsWriter::decode() {
 }
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltRoutingBitsWriter::HltRoutingBitsWriter( const std::string& name,
-                                            ISvcLocator* pSvcLocator)
-: HltEvaluator( name , pSvcLocator )
-{
-   m_bits.declareUpdateHandler( &HltRoutingBitsWriter::updateBits, this );
-}
-
-//=============================================================================
 void HltRoutingBitsWriter::zeroEvaluators() {
    Deleter deleter;
    for (auto& entry : m_evaluators) {
       boost::apply_visitor(deleter, entry.second);
    }
 }
-
-//=============================================================================
-// update handlers
-//=============================================================================
-void HltRoutingBitsWriter::updateBits( Property& /* p */ )
-{
-   /// mark as "to-be-updated"
-   m_evals_updated = true;
-   // no action if not yet initialized
-   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) return;
-   // postpone the action
-   if ( !m_preambulo_updated ){ return; }
-   // perform the actual immediate decoding
-   StatusCode sc = decode();
-   Assert ( sc.isFailure() , "Error from HltRoutingBitsWriter::decode()" , sc );
-}
-
 
 //=============================================================================
 // Main execution

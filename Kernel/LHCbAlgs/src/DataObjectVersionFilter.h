@@ -8,13 +8,13 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DataObjectVersionFilter.h,v 1.3 2009-11-10 09:27:51 jonrob Exp $
 #ifndef DATAOBJECTVERSIONFILTER_H
 #define DATAOBJECTVERSIONFILTER_H 1
 
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/DataObjectHandle.h"
 
 
 /** @class DataObjectVersionFilter DataObjectVersionFilter.h
@@ -28,22 +28,18 @@
  */
 class DataObjectVersionFilter final : public GaudiAlgorithm
 {
-
 public:
 
   /// Standard constructor
-  DataObjectVersionFilter( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~DataObjectVersionFilter( ) = default; ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode execute() override;    ///< Algorithm execution
 
 private:
 
-  unsigned int m_minV;          ///< Min version number
-  unsigned int m_maxV;          ///< Max version number
-  std::string m_loc;            ///< DataObject location in TES
-
+  Gaudi::Property<unsigned int> m_minV{this, "MinVersion", 0 , "Min version number"};
+  Gaudi::Property<unsigned int> m_maxV{this, "MaxVersion", 9999999, "Max version number"};
+  DataObjectReadHandle<DataObject> m_loc = {this,  "DataObjectLocation", "" , "DataObject location in TES" };
 };
 
 #endif // DATAOBJECTVERSIONFILTER_H

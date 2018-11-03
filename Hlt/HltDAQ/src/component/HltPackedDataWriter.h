@@ -15,6 +15,7 @@
 #include "Kernel/IANNSvc.h"
 #include "PackedDataBuffer.h"
 #include "PackedDataChecksum.h"
+#include <optional>
 
 /** @class HltPackedDataWriter HltPackedDataWriter.h
  *  Algorithm that writes packed objects to raw banks.
@@ -48,7 +49,7 @@ public:
   };
 
   /// Standard constructor
-  HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator);
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override; ///< Algorithm execution
@@ -78,8 +79,18 @@ private:
   Gaudi::Property<std::map<std::string, std::string>> m_containerMap{ this,"ContainerMap"};
   /// Property giving the location of the raw event
   Gaudi::Property<std::string> m_outputRawEventLocation { this, "OutputRawEventLocation", LHCb::RawEventLocation::Default};
+  /// ROOT compression algorithm
+  ROOT::ECompressionAlgorithm m_compressionAlg;
   /// Property setting the compression algorithm
-  Gaudi::Property<int> m_compression { this, "Compression", LZMA};
+  Gaudi::Property<int> m_compression { this, "Compression", LZMA,
+    [=](Property&) {
+      switch (this->m_compression) {
+        case NoCompression: { this->m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
+        case ZLIB: { this->m_compressionAlg = ROOT::kZLIB; break; }
+        case LZMA: { this->m_compressionAlg = ROOT::kLZMA; break; }
+        default: throw GaudiException( "Unrecognized compression algorithm.", this->name(), StatusCode::FAILURE );
+        }
+    }, Gaudi::Details::Property::ImmediatelyInvokeHandler{true} };
   /// Property setting the compression level
   Gaudi::Property<int> m_compressionLevel{ this, "CompressionLevel", 6};
   /// Property enabling calculation and print of checksums
@@ -95,9 +106,7 @@ private:
   /// Buffer for the compressed data
   std::vector<uint8_t> m_compressedBuffer;
   /// Helper for computing checksums
-  PackedDataPersistence::PackedDataChecksum* m_checksum{nullptr};
-  /// ROOT compression algorithm
-  ROOT::ECompressionAlgorithm m_compressionAlg;
+  std::optional<PackedDataPersistence::PackedDataChecksum> m_checksum;
 
 };
 

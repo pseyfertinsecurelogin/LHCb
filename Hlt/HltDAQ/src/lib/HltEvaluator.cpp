@@ -39,21 +39,6 @@
 // 2016-05-01 : Roel Aaij
 //-----------------------------------------------------------------------------
 
-namespace {
-   using std::string;
-}
-
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltEvaluator::HltEvaluator(const std::string& name, ISvcLocator* pSvcLocator)
-: base_class( name , pSvcLocator )
-{
-  m_preambulo_.declareUpdateHandler(&HltEvaluator::updatePreambulo , this);
-}
-
-
 //=============================================================================
 StatusCode HltEvaluator::times(double& t, double& w, double& et) const
 {

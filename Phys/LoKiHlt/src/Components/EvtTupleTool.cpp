@@ -11,6 +11,9 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include "boost/algorithm/string/join.hpp"
+#include "boost/algorithm/string/predicate.hpp"
+// ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiTool.h"
@@ -100,8 +103,6 @@ namespace LoKi
       ( const std::string&  type   ,                      // tool type ??
         const std::string&  name   ,                      // tool instance name
         const IInterface*   parent ) ;                    // the parent
-      /// vitual & protected destructor
-      virtual ~EvtTupleTool () ;               // vitual & protected destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -136,16 +137,7 @@ namespace LoKi
       /// the preambulo
       std::string preambulo() const
       {
-        const std::vector<std::string>& lines  = m_preambulo ;
-        //
-        std::string result ;
-        for ( std::vector<std::string>::const_iterator iline =
-                lines.begin() ; lines.end() != iline ; ++iline )
-        {
-          if ( lines.begin() != iline ) { result += "\n" ; }
-          result += (*iline) ;
-        }
-        return result ;
+        return boost::algorithm::join( m_preambulo.value(), "\n" );
       }
       // ======================================================================
     protected:
@@ -155,22 +147,14 @@ namespace LoKi
        *  @date 2010-02-16
        */
       template <class TYPE>
-      class Item
+      struct Item
       {
-      public:
-        // ====================================================================
-        // the default constructor
-        Item ()
-          : m_name ()
-          , m_fun  ( typename LoKi::BasicFunctors<TYPE>::Constant ( -1.e+10 ) )
-        {}
-        // ====================================================================
-      public:
         // ====================================================================
         /// the variable name
         std::string           m_name ; // the variable name
         /// the functor itself
-        typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction m_fun ;
+        typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction m_fun
+        { typename LoKi::BasicFunctors<TYPE>::Constant ( -1.e+10 ) };
         // ====================================================================
       } ;
       // ======================================================================
@@ -188,20 +172,36 @@ namespace LoKi
     private:
       // ======================================================================
       /// Preambulo:
-      std::vector<std::string>  m_preambulo ;                      // Preambulo
+      Gaudi::Property<std::vector<std::string>>  m_preambulo
+           { this, "Preambulo"  , {}, &LoKi::Hybrid::EvtTupleTool::handlePreambulo,
+             "The preambulo lines to be used for the temporary python script" };
       /// CoreFactory name
-      std::string               m_core      ;               // CoreFactory name
+      Gaudi::Property<std::string>               m_core
+           { this, "CoreFactory",  "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC",
+             &LoKi::Hybrid::EvtTupleTool::handleCore,
+             "The type/name of LoKiBender \"hybrid\" factory: void->double" };
       /// HltFactory  name
-      std::string               m_hlt       ;               //  HltFactory name
+      Gaudi::Property<std::string>               m_hlt
+           { this, "HltFactory" , "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC",
+             &LoKi::Hybrid::EvtTupleTool::handleHlt,
+             "The type/name of LoKiBender \"hybrid\" factory: ODIN->double, L0DUReport->double & HltDecReports->double" };
       // ======================================================================
       /// the { "name" : "functor" } map ( property)
-      Map  m_map_odin ;           // the { "name" : "functor" } map ( property)
+      Gaudi::Property<Map> m_map_odin            // the { "name" : "functor" } map ( property)
+            {this, "ODIN_Variables" , {}, &LoKi::Hybrid::EvtTupleTool::handleODIN ,
+             "The map { 'name' : 'functor'} of variables: LHCb::ODIN -> double " };
       /// the { "name" : "functor" } map ( property)
-      Map  m_map_l0   ;           // the { "name" : "functor" } map ( property)
+      Gaudi::Property<Map>  m_map_l0             // the { "name" : "functor" } map ( property)
+            { this, "L0DU_Variables" , {}, &LoKi::Hybrid::EvtTupleTool::handleL0DU ,
+              "The map { 'name' : 'functor'} of variables: LHCb::L0DUReport -> double   " };
       /// the { "name" : "functor" } map ( property)
-      Map  m_map_hdr  ;           // the { "name" : "functor" } map ( property)
+      Gaudi::Property<Map>  m_map_hdr             // the { "name" : "functor" } map ( property)
+            {this, "HLT_Variables"  , {}, &LoKi::Hybrid::EvtTupleTool::handleHLT ,
+             "The map { 'name' : 'functor'} of variables:  LHCb::HltDecReports-> double " };
       /// the { "name" : "functor" } map ( property)
-      Map  m_map_void ;           // the { "name" : "functor" } map ( property)
+      Gaudi::Property<Map>  m_map_void            // the { "name" : "functor" } map ( property)
+            {this, "VOID_Variables" , {}, &LoKi::Hybrid::EvtTupleTool::handleVOID ,
+             "The map { 'name' : 'functor'} of variables: void -> double " };
       // ======================================================================
     private:
       // ======================================================================
@@ -217,11 +217,17 @@ namespace LoKi
     private:
       // ======================================================================
       /// the TES-location of ODIN
-      std::string  m_ODINLocation ;        //          the TES-location of ODIN
+      Gaudi::Property<std::string>  m_ODINLocation         //          the TES-location of ODIN
+            {this, "ODIN_Location" , LHCb::ODINLocation::Default,
+             "TES-location of LHCb::ODIN object" };
       /// the TES-location of L0DUReports
-      std::string  m_L0DULocation ;        //   the TES-location of L0DUReports
+      Gaudi::Property<std::string>  m_L0DULocation         //   the TES-location of L0DUReports
+            { this, "L0DU_Location" , LHCb::L0DUReportLocation:: Default,
+              "TES-location of LHCb::L0DUReport object"};
       /// the TES-location of HltDecReports
-      std::string  m_HDRLocation  ;        // the TES-location of HltDecReports
+      Gaudi::Property<std::string>  m_HDRLocation          // the TES-location of HltDecReports
+            { this, "HLT_Location", LHCb::HltDecReportsLocation::Default,
+              "TES-location of LHCb::HltDecReports object" };
       // ======================================================================
     } ;
     // ========================================================================
@@ -236,111 +242,23 @@ namespace LoKi
  */
 // ============================================================================
 LoKi::Hybrid::EvtTupleTool::EvtTupleTool
-( const std::string&  type   ,                      // tool type ??
+( const std::string&  type   ,                      // tool type
   const std::string&  name   ,                      // tool instance name
   const IInterface*   parent )                      // the parent
   : GaudiTool ( type , name , parent )
-// preambulo:
-  , m_preambulo ( )
-  , m_core      ( "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" )
-  , m_hlt       ( "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"   )
-// maps:
-  , m_map_odin  ( )
-  , m_map_l0    ( )
-  , m_map_hdr   ( )
-  , m_map_void  ( )
-// items
-  , m_odin      ( )
-  , m_l0        ( )
-  , m_hdr       ( )
-  , m_void      ( )
-// TES-locations
-  , m_ODINLocation ( LHCb::ODINLocation          :: Default )
-  , m_L0DULocation ( LHCb::L0DUReportLocation    :: Default )
-  , m_HDRLocation  ( LHCb::HltDecReportsLocation :: Default )
 {
   // interface
   declareInterface<IEventTupleTool> ( this ) ;
   //
-  if      ( 0 == name.find ( "Hlt1" ) )
+  if      ( boost::algorithm::starts_with(name, "Hlt1" ) )
   { m_core = "LoKi::Hybrid::CoreFactory/Hlt1CoreFactory:PUBLIC"; }
-  else if ( 0 == name.find ( "Hlt2" ) )
-  { m_core = "LoKi::Hybrid::CoreFactory/Hlt1CoreFactory:PUBLIC"; }
+  else if ( boost::algorithm::starts_with(name, "Hlt2" ) )
+  { m_core = "LoKi::Hybrid::CoreFactory/Hlt2CoreFactory:PUBLIC"; }
   //
-  if      ( 0 == name.find ( "Hlt1" ) )
+  if      ( boost::algorithm::starts_with(name, "Hlt1" ) )
   { m_hlt  = "LoKi::Hybrid::HltFactory/Hlt1HltFactory:PUBLIC" ; }
-  else if ( 0 == name.find ( "Hlt2" ) )
+  else if ( boost::algorithm::starts_with(name, "Hlt2" ) )
   { m_hlt  = "LoKi::Hybrid::HltFactory/Hlt2HltFactory:PUBLIC" ; }
-  //
-  declareProperty
-    ( "Preambulo"  ,
-      m_preambulo  ,
-      "The preambulo lines to be used for the temporary python script" )
-    -> declareUpdateHandler  ( &LoKi::Hybrid::EvtTupleTool::handlePreambulo , this ) ;
-  //
-  declareProperty
-    ( "CoreFactory" ,
-      m_core        ,
-      "The type/name of LoKiBender \"hybrid\" factory: void->double" )
-    -> declareUpdateHandler  ( &LoKi::Hybrid::EvtTupleTool::handleCore      , this ) ;
-  //
-  declareProperty
-    ( "HltFactory" ,
-      m_hlt        ,
-      "The type/name of LoKiBender \"hybrid\" factory: ODIN->double, L0DUReport->double & HltDecReports->double" )
-    -> declareUpdateHandler  ( &LoKi::Hybrid::EvtTupleTool::handleHlt      , this ) ;
-  //
-  declareProperty
-    ( "ODIN_Variables" ,
-      m_map_odin       ,
-      "The map { 'name' : 'functor'} of variables: LHCb::ODIN -> double " )
-    -> declareUpdateHandler  ( &LoKi::Hybrid::EvtTupleTool::handleODIN , this ) ;
-  //
-  declareProperty
-    ( "L0DU_Variables" ,
-      m_map_l0         ,
-      "The map { 'name' : 'functor'} of variables: LHCb::L0DUReport -> double   " )
-    -> declareUpdateHandler  ( &LoKi::Hybrid::EvtTupleTool::handleL0DU , this ) ;
-  //
-  declareProperty
-    ( "HLT_Variables"  ,
-      m_map_hdr        ,
-      "The map { 'name' : 'functor'} of variables:  LHCb::HltDecReports-> double " )
-    -> declareUpdateHandler ( &LoKi::Hybrid::EvtTupleTool::handleHLT , this ) ;
-  //
-  declareProperty
-    ( "VOID_Variables" ,
-      m_map_void       ,
-      "The map { 'name' : 'functor'} of variables: void -> double "     )
-    -> declareUpdateHandler ( &LoKi::Hybrid::EvtTupleTool::handleVOID , this ) ;
-  //
-  // TES-locations
-  //
-  declareProperty
-    ( "ODIN_Location" ,
-      m_ODINLocation  ,
-      "TES-location of LHCb::ODIN object"          ) ;
-  //
-  declareProperty
-    ( "L0DU_Location" ,
-      m_L0DULocation  ,
-      "TES-location of LHCb::L0DUReport object"    ) ;
-  //
-  declareProperty
-    ( "HLT_Location"  ,
-      m_HDRLocation   ,
-      "TES-location of LHCb::HltDecReports object" ) ;
-  //
-}
-// ============================================================================
-// virtual & protected destructor
-// ============================================================================
-LoKi::Hybrid::EvtTupleTool::~EvtTupleTool()
-{
-  m_odin . clear() ;
-  m_l0   . clear() ;
-  m_hdr  . clear() ;
-  m_void . clear() ;
 }
 // ============================================================================
 // standard initialization of the tool
@@ -524,21 +442,20 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateL0DU ()  // update ODIN-variables
   //
   m_l0.clear() ;
   m_l0.reserve ( m_map_l0.size() ) ;
-  for ( Map::const_iterator ivar = m_map_l0.begin() ;
-        m_map_l0.end() != ivar ; ++ivar )
+  for ( const auto& ivar : m_map_l0 )
   {
     Item<const LHCb::L0DUReport*> item ;
-    StatusCode sc = factory->get ( ivar->second , item.m_fun , preambulo() ) ;
+    StatusCode sc = factory->get ( ivar.second , item.m_fun , preambulo() ) ;
     if ( sc.isFailure() )
     { return Error
-        ("Unable to decode " + ivar->first + " : " + ivar->second , sc ) ; }
+        ("Unable to decode " + ivar.first + " : " + ivar.second , sc ) ; }
     //
-    item.m_name = ivar->first ;
-    m_l0.push_back  ( item ) ;
+    item.m_name = ivar.first ;
+    m_l0.push_back( std::move(item) );
     //
     debug() << "The decoded variable name is '"
-            << m_l0 .back().m_name << "'\t, the functor : '"
-            << m_l0 .back().m_fun  << "'" << endmsg ;
+            << m_l0.back().m_name << "'\t, the functor : '"
+            << m_l0.back().m_fun  << "'" << endmsg ;
   }
   //
   release ( factory ) ; // we do not need the factory anymore
@@ -555,17 +472,16 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateHLT ()  // update HLT-variables
   //
   m_hdr.clear() ;
   m_hdr.reserve ( m_map_hdr.size() ) ;
-  for ( Map::const_iterator ivar = m_map_hdr.begin() ;
-        m_map_hdr.end() != ivar ; ++ivar )
+  for ( const auto& ivar : m_map_hdr )
   {
     Item<const LHCb::HltDecReports*> item ;
-    StatusCode sc = factory->get ( ivar->second , item.m_fun , preambulo() ) ;
+    StatusCode sc = factory->get ( ivar.second , item.m_fun , preambulo() ) ;
     if ( sc.isFailure() )
     { return Error
-        ("Unable to decode " + ivar->first + " : " + ivar->second , sc ) ; }
+        ("Unable to decode " + ivar.first + " : " + ivar.second , sc ) ; }
     //
-    item.m_name = ivar->first ;
-    m_hdr.push_back  ( item ) ;
+    item.m_name = ivar.first ;
+    m_hdr.push_back  ( std::move(item) ) ;
     //
     debug() << "The decoded variable name is '"
             << m_hdr .back().m_name << "'\t, the functor : '"
@@ -586,17 +502,16 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateVOID ()  // update VOID-variables
   //
   m_void.clear() ;
   m_void.reserve ( m_map_void.size() ) ;
-  for ( Map::const_iterator ivar = m_map_void.begin() ;
-        m_map_void.end() != ivar ; ++ivar )
+  for ( const auto& ivar : m_map_void )
   {
     Item<void> item ;
-    StatusCode sc = factory->get ( ivar->second , item.m_fun , preambulo() ) ;
+    StatusCode sc = factory->get ( ivar.second , item.m_fun , preambulo() ) ;
     if ( sc.isFailure() )
     { return Error
-        ("Unable to decode " + ivar->first + " : " + ivar->second , sc ) ; }
+        ("Unable to decode " + ivar.first + " : " + ivar.second , sc ) ; }
     //
-    item.m_name = ivar->first ;
-    m_void.push_back  ( item ) ;
+    item.m_name = ivar.first ;
+    m_void.push_back  ( std::move(item) ) ;
     //
     debug() << "The decoded variable name is '"
             << m_void.back().m_name << "'\t, the functor : '"
@@ -623,13 +538,12 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t )
   {
     const LHCb::ODIN* odin = get<LHCb::ODIN> ( m_ODINLocation ) ;
     //
-    for ( ODIN_Items::const_iterator item = m_odin.begin() ;
-          m_odin.end() != item ; ++item )
+    for ( const auto& item : m_odin )
     {
-      StatusCode code = t->column ( item->m_name , item->m_fun ( odin ) ) ;
+      StatusCode code = t->column ( item.m_name , item.m_fun ( odin ) ) ;
       if ( code.isFailure() )
       {
-        Warning ( "Error in column('" + item -> m_name + "')" , code ).ignore() ;
+        Warning ( "Error in column('" + item.m_name + "')" , code ).ignore() ;
         sc = code ;
       }
     }
@@ -640,13 +554,12 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t )
   {
     const LHCb::L0DUReport* l0 = get<LHCb::L0DUReport> ( m_L0DULocation ) ;
     //
-    for ( L0_Items::const_iterator item = m_l0.begin() ;
-          m_l0.end() != item ; ++item )
+    for ( const auto& item : m_l0 )
     {
-      StatusCode code = t->column ( item->m_name , item->m_fun ( l0 ) ) ;
+      StatusCode code = t->column ( item.m_name , item.m_fun ( l0 ) ) ;
       if ( code.isFailure() )
       {
-        Warning ( "Error in column('" + item -> m_name + "')" , code ).ignore() ;
+        Warning ( "Error in column('" + item.m_name + "')" , code ).ignore() ;
         sc = code ;
       }
     }
@@ -657,26 +570,24 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t )
   {
     const LHCb::HltDecReports* hdr = get<LHCb::HltDecReports> ( m_HDRLocation ) ;
     //
-    for ( HLT_Items::const_iterator item = m_hdr.begin() ;
-          m_hdr.end() != item ; ++item )
+    for ( const auto& item : m_hdr )
     {
-      StatusCode code = t->column ( item->m_name , item->m_fun ( hdr ) ) ;
+      StatusCode code = t->column ( item.m_name , item.m_fun ( hdr ) ) ;
       if ( code.isFailure() )
       {
-        Warning ( "Error in column('" + item -> m_name + "')" , code ).ignore() ;
+        Warning ( "Error in column('" + item.m_name + "')" , code ).ignore() ;
         sc = code ;
       }
     }
   }
   // ==========================================================================
   // VOID
-  for ( VOID_Items::const_iterator item = m_void.begin() ;
-        m_void.end() != item ; ++item )
+  for ( const auto& item : m_void )
   {
-    StatusCode code = t->column ( item->m_name , item->m_fun () ) ;
+    StatusCode code = t->column ( item.m_name , item.m_fun () ) ;
     if ( code.isFailure() )
     {
-      Warning ( "Error in column('" + item -> m_name + "')" , code ).ignore() ;
+      Warning ( "Error in column('" + item.m_name + "')" , code ).ignore() ;
       sc = code ;
     }
   }

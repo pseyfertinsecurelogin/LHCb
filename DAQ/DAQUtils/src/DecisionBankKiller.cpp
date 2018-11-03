@@ -22,17 +22,6 @@ DecisionBankKiller::DecisionBankKiller(const std::string& name, ISvcLocator* pSv
 {
   m_rawEventLocations = {LHCb::RawEventLocation::Default};
   initRawEventSearch();
-
-  m_alwaysKeepBanks.declareUpdateHandler([this](Property&) {
-    for (unsigned i = 0; i < LHCb::RawBank::LastType; ++i) {
-      auto type = LHCb::RawBank::typeName(static_cast<LHCb::RawBank::BankType>(i));
-      if (std::find(std::begin(m_alwaysKeepBanks), std::end(m_alwaysKeepBanks), type)
-          != std::end(m_alwaysKeepBanks)) {
-        m_alwaysKeepBanksSet[i] = 1;
-      }
-    }
-  }).useUpdateHandler();
-  declareProperty("LineFilter", m_lineFilterTool, "LoKi Tool to execute line filter");
 }
 
 //=============================================================================
