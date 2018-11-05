@@ -72,7 +72,7 @@ public:
   // Methods from ITransportSvc
   // ==========================================================================
   /// Create an instance of the accelerator cache
-  ranges::v3::any createCache() const override;
+  std::any createCache() const override;
   /** Estimate the distance between 2 points in
    *  units of radiation length units
    *  @see ITransportSvc
@@ -105,7 +105,7 @@ public:
   distanceInRadUnits_r
   ( const Gaudi::XYZPoint& point1,
     const Gaudi::XYZPoint& point2,
-    ranges::v3::any&       accelCache,
+    std::any&       accelCache,
     double                 threshold           = 0,
     IGeometryInfo*         alternativeGeometry = nullptr,
     IGeometryInfo*         geometryGuess       = nullptr  ) const override;
@@ -162,7 +162,7 @@ public:
     const ISolid::Tick&      tickMin,
     const ISolid::Tick&      tickMax,
     ILVolume::Intersections& intersept,
-    ranges::v3::any&         accelCache,
+    std::any&         accelCache,
     double                   threshold           = 0,
     IGeometryInfo*           alternativeGeometry = nullptr,
     IGeometryInfo*           geometryGuess       = nullptr ) const override;
@@ -283,12 +283,12 @@ private:
    *  of "standard" geometry source */
   Gaudi::Property<std::string>     m_standardGeometry_address
   { this, "StandardGeometryTop", "/dd/Structure/LHCb" };
-  /// Pointer to the "standard" geometry 
+  /// Pointer to the "standard" geometry
   IGeometryInfo *                  m_standardGeometry = nullptr;
 private:
   /** Local accelerator cache. Should eventually be removed so
    *  only the re-entrant versions are available */
-  mutable ranges::v3::any m_accelCache { AccelCache{} };
+  mutable std::any m_accelCache { AccelCache{} };
   //
 private:
   /// the actual type of the Map
@@ -298,11 +298,11 @@ private:
   Map  m_recover     ; /// the map of the recovered-intervals
   Map1 m_codes       ; /// the map of various error-codes
   /// property to allow the recovery
-  Gaudi::Property<bool> m_recovery 
+  Gaudi::Property<bool> m_recovery
   { this, "Recovery", true,
       "The flag to allow the recovery of geometry errors" } ;
   /// property to allow the protocol
-  Gaudi::Property<bool> m_protocol 
+  Gaudi::Property<bool> m_protocol
   { this, "Protocol", true,
       "The flag to allow protocol for the geometry problems" };
 };

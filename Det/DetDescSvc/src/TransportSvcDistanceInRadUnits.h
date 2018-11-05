@@ -14,16 +14,16 @@
 // DetDesc
 #include "DetDesc/VolumeIntersectionIntervals.h"
 
-// local 
-#include "TransportSvc.h" 
+// local
+#include "TransportSvc.h"
 
 // ============================================================================
-/** @file 
- * 
- * simple implementation of  TrnasportSvc::distanceInRadUnits method 
- * @see TransportSvc 
- * @see ITransportSvc 
- * 
+/** @file
+ *
+ * simple implementation of  TrnasportSvc::distanceInRadUnits method
+ * @see TransportSvc
+ * @see ITransportSvc
+ *
  * @author: Vanya Belyaev
  */
 // ============================================================================
@@ -49,69 +49,69 @@ double TransportSvc::distanceInRadUnits
                                AlternativeGeometry, GeometryGuess );
 }
 // ============================================================================
-/** Estimate the distance between 2 points in 
- *  units of radiation length units 
+/** Estimate the distance between 2 points in
+ *  units of radiation length units
  *  Similar to distanceInRadUnits but with an additional accelerator
  *  cache for local client storage. This method, unlike distanceInRadUnits
  *  is re-entrant and thus thread safe.
- *  @see ITransportSvc 
+ *  @see ITransportSvc
  *  @param point1 first point
- *  @param point2 second point 
- *  @param threshold threshold value 
- *  @param alternativeGeometry  source ot alternative geomtry 
+ *  @param point2 second point
+ *  @param threshold threshold value
+ *  @param alternativeGeometry  source ot alternative geomtry
  *  @param geometryGuess guess for geometry
- *  @return distance in rad length units 
+ *  @return distance in rad length units
  */
 // ============================================================================
 double TransportSvc::distanceInRadUnits_r
-( const Gaudi::XYZPoint& point1         ,  
-  const Gaudi::XYZPoint& point2         ,  
-  ranges::v3::any&       accelCache     ,
-  double            threshold           ,  
-  IGeometryInfo*    alternativeGeometry ,  
+( const Gaudi::XYZPoint& point1         ,
+  const Gaudi::XYZPoint& point2         ,
+  std::any&       accelCache     ,
+  double            threshold           ,
+  IGeometryInfo*    alternativeGeometry ,
   IGeometryInfo*    geometryGuess       )  const
 {
-  // check for the  distance 
-  if ( point1 == point2 ) { return 0; } 
+  // check for the  distance
+  if ( point1 == point2 ) { return 0; }
 
-  // retrieve the history 
+  // retrieve the history
   const Gaudi::XYZVector Vector( point2 - point1 ) ;
 
-  // initial point on the line 
-  // direction vector of the line 
-  // minimal value of the parameter of the line  
-  // maximal value of the parameter of the line 
-  // (output) container of intersections 
-  // threshold value 
-  // source of the alternative geometry information 
+  // initial point on the line
+  // direction vector of the line
+  // minimal value of the parameter of the line
+  // maximal value of the parameter of the line
+  // (output) container of intersections
+  // threshold value
+  // source of the alternative geometry information
   // a guess for navigation
   ILVolume::Intersections local_intersects;
-  intersections_r( point1              ,   
-                   Vector              ,   
-                   0.0                 ,   
-                   1.0                 ,   
-                   local_intersects    ,   
+  intersections_r( point1              ,
+                   Vector              ,
+                   0.0                 ,
+                   1.0                 ,
+                   local_intersects    ,
                    accelCache          ,
                    threshold           ,
                    alternativeGeometry ,
-                   geometryGuess       ); 
-  
-  //  radiation length in tick units 
-  const auto RadLength = 
+                   geometryGuess       );
+
+  //  radiation length in tick units
+  const auto RadLength =
     std::accumulate
-    (  local_intersects.begin()                               ,  
-       local_intersects.end  ()                               , 
-       0.0                                                    ,  
-       VolumeIntersectionIntervals::AccumulateIntersections() ); 
+    (  local_intersects.begin()                               ,
+       local_intersects.end  ()                               ,
+       0.0                                                    ,
+       VolumeIntersectionIntervals::AccumulateIntersections() );
 
   // scale
-  const auto TickLength = std::sqrt( Vector.mag2() ); 
-  
-  return RadLength * TickLength ;  
+  const auto TickLength = std::sqrt( Vector.mag2() );
+
+  return RadLength * TickLength ;
 }
 
 // ============================================================================
-// The End 
+// The End
 // ============================================================================
 #endif  // __DETDESC_TRANSPORTSVC_TRASNPORTSVCDISTANCEINRADUNITS_H__
 // ============================================================================

@@ -9,22 +9,22 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
-#ifndef     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__ 
+#ifndef     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__
 #define     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__  1
 
-#include "TransportSvc.h" 
+#include "TransportSvc.h"
 
 // ============================================================================
 /** @file TransportSvcIntersections.h
- * 
- *  a simple implementation of TransportSvc::intersection method 
- *  @see TransportSvc 
- *  @see ITransportSvc 
- *  @see ILVolume  
- *  @see IPVolume  
- *  @see ISolid 
  *
- *  @author: Vanya Belyaev 
+ *  a simple implementation of TransportSvc::intersection method
+ *  @see TransportSvc
+ *  @see ITransportSvc
+ *  @see ILVolume
+ *  @see IPVolume
+ *  @see ISolid
+ *
+ *  @author: Vanya Belyaev
  */
 // ============================================================================
 
@@ -54,108 +54,108 @@ unsigned long TransportSvc::intersections
   IGeometryInfo*           geometryGuess       )  const
 {
   return intersections_r( point, vect, tickMin, tickMax,
-                          intersept, m_accelCache, threshold, 
+                          intersept, m_accelCache, threshold,
                           alternativeGeometry, geometryGuess );
 }
 
 // ============================================================================
-/** general method ( returns the "full history" of the volume 
- *  boundary intersections 
+/** general method ( returns the "full history" of the volume
+ *  boundary intersections
  *  with different material properties between 2 points )
  *  Similar to intersections but with an additional accelerator
  *  cache for local client storage. This method, unlike the above
  *  @see ITransportSvc
  *  @see IGeometryInfo
  *  @see ILVolume
- *  @param Point               initial point on the line  
- *  @param Vector              direction vector of the line 
+ *  @param Point               initial point on the line
+ *  @param Vector              direction vector of the line
  *  @param TickMin             minimal value of line paramater
- *  @param TickMax             maximal value of line parameter 
+ *  @param TickMax             maximal value of line parameter
  *  @param Intersept           (output) container of intersections
- *  @param Threshold           threshold value 
- *  @param AlternativeGeometry source of alternative geometry information 
- *  @param GeometryGuess       a guess for navigation 
+ *  @param Threshold           threshold value
+ *  @param AlternativeGeometry source of alternative geometry information
+ *  @param GeometryGuess       a guess for navigation
  */
 // ============================================================================
 unsigned long TransportSvc::intersections_r
-( const Gaudi::XYZPoint&   point               , 
-  const Gaudi::XYZVector&  vect                , 
-  const ISolid::Tick&      tickMin             , 
-  const ISolid::Tick&      tickMax             , 
-  ILVolume::Intersections& intersept           , 
-  ranges::v3::any&         accelCache          ,
-  double                   threshold           , 
-  IGeometryInfo*           alternativeGeometry , 
+( const Gaudi::XYZPoint&   point               ,
+  const Gaudi::XYZVector&  vect                ,
+  const ISolid::Tick&      tickMin             ,
+  const ISolid::Tick&      tickMax             ,
+  ILVolume::Intersections& intersept           ,
+  std::any&         accelCache          ,
+  double                   threshold           ,
+  IGeometryInfo*           alternativeGeometry ,
   IGeometryInfo*           guessGeometry       ) const
 {
 
-  try { 
-    
+  try {
+
     intersept.clear();
-    
-    /// check the input parameters of the line 
+
+    /// check the input parameters of the line
     if ( tickMin >= tickMax && vect.mag2() <= 0 ) { return 0;}
-    
+
     // Set the top level geometry, because this is what is in the cache
     auto * topGeometry = alternativeGeometry ? alternativeGeometry : standardGeometry() ;
- 
-    // get the cache
-    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
 
-    Gaudi::XYZPoint point1( point + vect * tickMin ) ; 
-    Gaudi::XYZPoint point2( point + vect * tickMax ) ; 
+    // get the cache
+    auto & cache = std::any_cast<AccelCache&>(accelCache);
+
+    Gaudi::XYZPoint point1( point + vect * tickMin ) ;
+    Gaudi::XYZPoint point2( point + vect * tickMax ) ;
     // check - if the previous paramaters are the same
-    if ( point1              == cache.prevPoint1          && 
+    if ( point1              == cache.prevPoint1          &&
          point2              == cache.prevPoint2          &&
          threshold           == cache.previousThreshold   &&
-         topGeometry         == cache.previousTopGeometry && 
-         guessGeometry       == cache.previousGuess        ) 
+         topGeometry         == cache.previousTopGeometry &&
+         guessGeometry       == cache.previousGuess        )
     {
       /// use cached container!!!
-      intersept.reserve( cache.localIntersections.size() ); 
+      intersept.reserve( cache.localIntersections.size() );
       intersept.insert( intersept.begin(),
-                        cache.localIntersections.begin() , 
-                        cache.localIntersections.end() ); 
+                        cache.localIntersections.begin() ,
+                        cache.localIntersections.end() );
       ///
-      return intersept.size();  
+      return intersept.size();
     }
-    
-    /** locate the both points inside one "good" 
+
+    /** locate the both points inside one "good"
      *  DetectorElement/GeometryInfo objects
-     * 
-     * "Good" in this context means that 
-     * 
+     *
+     * "Good" in this context means that
+     *
      *  - 1) both points should be "inside"
      *  - 2) it has the associated Logical Volume (it is not "ghost")
-     *  - 3) Logical Volume is not an assembly! 
-     *  - 4) the line between tickMin and tickMax do not cross 
+     *  - 3) Logical Volume is not an assembly!
+     *  - 4) the line between tickMin and tickMax do not cross
      *    the Logical Volume ("no holes between") requirement
      */
-    
-    IGeometryInfo* giLocal = nullptr ; 
-    IGeometryInfo* gi      = 
+
+    IGeometryInfo* giLocal = nullptr ;
+    IGeometryInfo* gi      =
       // try the guess geometry
-     ( guessGeometry       && 
-       ( giLocal = findLocalGI( point1 , 
-                                point2 , 
+     ( guessGeometry       &&
+       ( giLocal = findLocalGI( point1 ,
+                                point2 ,
                                 guessGeometry ,
-                                alternativeGeometry ) ) ) ? 
-      guessGeometry       : 
+                                alternativeGeometry ) ) ) ?
+      guessGeometry       :
       // try the previous geometry (only if top-geometry matches)
       ( cache.previousGeometry && topGeometry == cache.previousTopGeometry &&
-	( giLocal = findLocalGI( point1 , 
-                                 point2 , 
+	( giLocal = findLocalGI( point1 ,
+                                 point2 ,
                                  cache.previousGeometry ,
-                                 topGeometry ) ) ) ? 
+                                 topGeometry ) ) ) ?
       // just take the top geometry
       cache.previousGeometry :
-      ( giLocal = findLocalGI( point1 , 
-                               point2 , 
+      ( giLocal = findLocalGI( point1 ,
+                               point2 ,
                                topGeometry,
-                               topGeometry ) ) ? 
-      
+                               topGeometry ) ) ?
+
       topGeometry : nullptr ;
-    
+
     ///
     if ( !giLocal )
       throw TransportSvcException( "TransportSvc::(1) unable to locate points",
@@ -163,95 +163,95 @@ unsigned long TransportSvc::intersections_r
     if ( !gi )
       throw TransportSvcException( "TransportSvc::(2) unable to locate points",
                                    StatusCode::FAILURE );
-    
-    /// delegate the calculation to the logical volume 
-    const auto * lv = giLocal->lvolume();   
+
+    /// delegate the calculation to the logical volume
+    const auto * lv = giLocal->lvolume();
     lv->intersectLine
-      ( giLocal->toLocalMatrix() * point , 
-        giLocal->toLocalMatrix() * vect  , 
-        intersept                 , 
-        tickMin                   , 
-        tickMax                   , 
+      ( giLocal->toLocalMatrix() * point ,
+        giLocal->toLocalMatrix() * vect  ,
+        intersept                 ,
+        tickMin                   ,
+        tickMax                   ,
         threshold                 );
-      
+
     /// redefine previous geometry
     cache.previousGeometry = giLocal;
-    
-    /// make local copy of all parameters:    
+
+    /// make local copy of all parameters:
     cache.prevPoint1           = point1              ;
-    cache.prevPoint2           = point2              ; 
+    cache.prevPoint2           = point2              ;
     cache.previousThreshold    = threshold           ;
     cache.previousGuess        = guessGeometry       ;
     cache.previousTopGeometry  = topGeometry ;
-    
-    /// intersections 
+
+    /// intersections
     cache.localIntersections.clear();
-    cache.localIntersections.reserve( intersept.size() ); 
+    cache.localIntersections.reserve( intersept.size() );
     cache.localIntersections.insert( cache.localIntersections.begin(),
-                                     intersept.begin() , 
+                                     intersept.begin() ,
                                      intersept.end() );
-    
+
   }
-  
-  catch ( const GaudiException& Exception ) 
+
+  catch ( const GaudiException& Exception )
   {
     /// 1) reset cache:
-    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+    auto & cache = std::any_cast<AccelCache&>(accelCache);
     cache.prevPoint1           = Gaudi::XYZPoint() ;
-    cache.prevPoint2           = Gaudi::XYZPoint() ; 
-    cache.previousThreshold    = -1000.0      ; 
-    cache.previousGuess        = 0            ; 
+    cache.prevPoint2           = Gaudi::XYZPoint() ;
+    cache.previousThreshold    = -1000.0      ;
+    cache.previousGuess        = 0            ;
     cache.previousTopGeometry  = 0            ;
-    cache.localIntersections.clear()          ; 
+    cache.localIntersections.clear()          ;
 
     ///  2) throw new exception:
     std::string message
       ("TransportSvc::intersection(...), exception caught; Params: ");
     {
       std::ostringstream ost;
-      ost << "Point=" << point 
+      ost << "Point=" << point
           << ",Vect=" << vect
-          << ",Tick=" << tickMin << "/" << tickMax  
-          << "Thrsh=" << threshold; 
-      if ( alternativeGeometry ) { ost << "A.Geo!=NULL" ; }  
-      if ( guessGeometry ) { ost << "G.Geo!=NULL" ; }  
-      message += ost.str();             
+          << ",Tick=" << tickMin << "/" << tickMax
+          << "Thrsh=" << threshold;
+      if ( alternativeGeometry ) { ost << "A.Geo!=NULL" ; }
+      if ( guessGeometry ) { ost << "G.Geo!=NULL" ; }
+      message += ost.str();
       Assert( false , message , Exception );
     }
   }
-  catch( ... ) 
+  catch( ... )
   {
-    /// 1) reset cache: 
-    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+    /// 1) reset cache:
+    auto & cache = std::any_cast<AccelCache&>(accelCache);
     cache.prevPoint1           = Gaudi::XYZPoint() ;
-    cache.prevPoint2           = Gaudi::XYZPoint() ; 
-    cache.previousThreshold    = -1000.0      ; 
-    cache.previousGuess        = 0            ; 
+    cache.prevPoint2           = Gaudi::XYZPoint() ;
+    cache.previousThreshold    = -1000.0      ;
+    cache.previousGuess        = 0            ;
     cache.previousTopGeometry  = 0            ;
-    cache.localIntersections.clear()          ; 
+    cache.localIntersections.clear()          ;
 
     /// 2) throw new exception:
     std::string message
       ("TransportSvc::intersection(...), unknown exception caught; Params: ");
     {
       std::ostringstream ost;
-      ost << "Point=" << point 
+      ost << "Point=" << point
           << ",Vect=" << vect
-          << ",Tick=" << tickMin << "/" << tickMax  
-          << "Thrsh=" << threshold; 
-      if ( alternativeGeometry ) { ost << "A.Geo!=NULL" ; }  
-      if ( guessGeometry ) { ost << "G.Geo!=NULL" ; }  
-      message += ost.str();             
+          << ",Tick=" << tickMin << "/" << tickMax
+          << "Thrsh=" << threshold;
+      if ( alternativeGeometry ) { ost << "A.Geo!=NULL" ; }
+      if ( guessGeometry ) { ost << "G.Geo!=NULL" ; }
+      message += ost.str();
       Assert( false , message );
     }
   }
-  
+
   return intersept.size() ;
   ///
 }
 
 // ============================================================================
-// The End 
+// The End
 // ============================================================================
-#endif  //  __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__ 
+#endif  //  __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__
 // ============================================================================
