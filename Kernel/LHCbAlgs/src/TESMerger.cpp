@@ -37,7 +37,7 @@ namespace details
   template <typename T>
   constexpr bool has_clone_v = Gaudi::cpp17::is_detected<has_clone_, T>::value;
 
-  constexpr struct Clone_t {
+  struct Clone_t {
     template <typename T>
     auto* operator()( T const& t ) const
     {
@@ -50,7 +50,8 @@ namespace details
         return new T( t );
       }
     }
-  } clone{};
+  };
+  inline constexpr Clone_t clone{};
 
   // TODO: move to Gaudi::Functional::details
   template <typename C>

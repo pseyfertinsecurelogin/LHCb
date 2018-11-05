@@ -728,10 +728,11 @@ namespace LoKi
   namespace Math
   {
     // ========================================================================
-    constexpr struct Abs_t {
+    struct Abs_t {
       template <class TYPE>
       auto operator() ( TYPE i ) const { return std::abs( i ) ; }
-    } _Abs_{} ;
+    };
+    inline constexpr Abs_t _Abs_{} ;
     // ========================================================================
     template <class TYPE = void, class TYPE1,
               class TYPE2 = std::conditional_t< std::is_void<TYPE>::value, TYPE1, TYPE >>

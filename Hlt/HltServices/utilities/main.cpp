@@ -44,14 +44,15 @@ template <typename T> std::string convert(const std::string& s) {
     return out.str();
 }
 
-constexpr struct to_json_t {
+struct to_json_t {
     std::string operator()(const std::string& s) const;
     using r2t_t = std::map<std::string,std::string>;
     std::string operator()(const std::tuple<std::string,r2t_t,std::string>& e) const;
 
     template <typename K, typename V> std::string operator()(const std::pair<K,V>& p) const ;
     template <typename V> std::string operator()(const std::map<std::string,V>& m) const ;
-} to_json {};
+};
+inline constexpr to_json_t to_json {};
 
 std::string to_json_t::operator()(const std::string& s) const {
     // TODO: replace with C++14 std::quoted
