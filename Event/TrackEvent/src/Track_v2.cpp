@@ -457,7 +457,8 @@ namespace LHCb::Event::v2
     //=============================================================================
     size_t Track::nCommonLhcbIDs( const Track& rhs ) const
     {
-      return std::set_intersection( begin( m_lhcbIDs ), end( m_lhcbIDs ), begin( rhs.m_lhcbIDs ), end( rhs.m_lhcbIDs ),
+      return std::set_intersection( begin( m_lhcbIDs ), end( m_lhcbIDs ),
+                                    begin( rhs.m_lhcbIDs ), end( rhs.m_lhcbIDs ),
                                     counting_inserter{} )
           .count;
     }

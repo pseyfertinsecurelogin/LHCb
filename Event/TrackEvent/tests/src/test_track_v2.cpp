@@ -21,6 +21,7 @@
 #include <sstream>
 #include <ostream>
 
+
 // The test fixture: Create a container of tracks
 // This can be used as a common starting point for all tests
 using Track  = LHCb::Event::v2::Track;
@@ -186,7 +187,7 @@ BOOST_AUTO_TEST_CASE(test_track_lhcbids){
   auto tr = Track{};
   tr.setLhcbIDs(lhcbids, LHCb::Tag::Unordered);
   BOOST_CHECK(std::is_sorted(std::begin(tr.lhcbIDs()),std::end(tr.lhcbIDs())));
-  
+
   auto ids = tr.lhcbIDs();
   BOOST_CHECK(std::is_sorted(std::begin(ids),std::end(ids)));
 
@@ -215,15 +216,19 @@ BOOST_AUTO_TEST_CASE(test_track_lhcbids){
 }
 
 BOOST_AUTO_TEST_CASE(test_track_constructors){
-  BOOST_CHECK(std::is_move_constructible<Track>::value);
-  BOOST_CHECK(std::is_copy_constructible<Track>::value);
-  BOOST_CHECK(std::is_default_constructible<Track>::value);
+  static_assert(std::is_default_constructible_v<Track>);
+  static_assert(std::is_move_constructible_v<Track>);
+  static_assert(std::is_nothrow_move_constructible_v<Track>); // FIXME: waiting for gaudi/Gaudi!791
+  static_assert(std::is_copy_constructible_v<Track>);
+  // static_assert(std::is_nothrow_copy_constructible_v<Track>); // as long as we use heap memory, this is not going to be possible...
 }
 BOOST_AUTO_TEST_CASE(test_track_assignments){
-  BOOST_CHECK(std::is_move_assignable<Track>::value);
-  BOOST_CHECK(std::is_copy_assignable<Track>::value);
-  auto is_assignable = std::is_assignable<Track&,Track>{};
-  BOOST_CHECK( is_assignable() );
+  static_assert(std::is_move_assignable_v<Track>);
+  static_assert(std::is_nothrow_move_assignable_v<Track>);
+  static_assert(std::is_copy_assignable_v<Track>);
+  // static_assert(std::is_nothrow_copy_assignable_v<Track>); // as long as we use heap memory, this is not going to be possible
+  static_assert(std::is_assignable_v<Track&,Track>);
+  static_assert(std::is_nothrow_assignable_v<Track&,Track>);
 }
 
 BOOST_AUTO_TEST_CASE(test_track_object_size){
