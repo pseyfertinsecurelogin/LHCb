@@ -60,7 +60,7 @@ struct AlgWrapper {
     return m_alg->sysExecute( evtCtx );
   }
 
-  bool passed () const { return m_alg->filterPassed(); }
+  bool passed () const { return m_alg->execState( Gaudi::Hive::currentContext() ).filterPassed(); }
 
   std::string_view name () const { return m_alg->name(); }
 };

@@ -64,7 +64,7 @@ namespace LoKi {
           // ==========================================================================
           // filter passed ?
           inline constexpr auto filterPassed = [](const IAlgorithm* ia) {
-            return ia && ia->filterPassed () ;
+            return ia && ia->execState( Gaudi::Hive::currentContext() ).filterPassed();
           };
           // ========================================================================
           // is enabled ?
@@ -74,7 +74,7 @@ namespace LoKi {
           // ==========================================================================
           // is executed ?
           inline constexpr auto isExecuted = []( const IAlgorithm* ia ) {
-            return ia && ia->isExecuted () ;
+            return ia && ia->execState( Gaudi::Hive::currentContext() ).state() == AlgExecState::State::Done;
           };
           // ==========================================================================
       }
