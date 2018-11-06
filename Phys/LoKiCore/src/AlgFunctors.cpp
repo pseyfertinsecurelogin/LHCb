@@ -181,70 +181,22 @@ namespace
     /////////////////////////////
     /////////////////////////////
     const Gaudi::Utils::TypeNameString typeName(name);
-    const std::string &theName = typeName.name();
-    const std::string &theType = typeName.type();
 
     // do not create it now
-    SmartIF<IAlgorithm> myIAlg = iam->algorithm( typeName , false);
+    SmartIF<IAlgorithm> myIAlg = iam->algorithm(typeName , false);
 
     if ( !myIAlg.isValid() ) {
       // ensure some magic properties are set while we create the subalgorithm so
       // that it effectively inherites 'our' settings -- if they have non-default
       // values... and are not set explicitly already.
-      populate_JobOptionsSvc_t populate_guard{theName, jos, std::forward_as_tuple( "Context", parent->context() ),
-                                                            std::forward_as_tuple( "RootInTES", parent->rootInTES() )};
-      Algorithm *myAlg = nullptr;
-      StatusCode result = parent->createSubAlgorithm( theType, theName, myAlg );
-      // (MCl) this should prevent bug #35199... even if I didn't manage to
-      // reproduce it with a simple test.
-      if (result.isSuccess()) myIAlg = myAlg;
-    } else {
-      Algorithm *myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
-      if (myAlg) {
-        parent->subAlgorithms()->push_back(myAlg);
-        // when the algorithm is not created,
-        // the ref count is short by one, so we have to fix it.
-        myAlg->addRef();
-      }
+      populate_JobOptionsSvc_t populate_guard{typeName.name(), jos,
+                                              std::forward_as_tuple( "Context", parent->context() ),
+                                              std::forward_as_tuple( "RootInTES", parent->rootInTES() )};
+      myIAlg = iam->algorithm(typeName, true);
     }
 
     ///////// end of code copied from GaudiSequencer...
-
-    IAlgorithm* _a =  myIAlg;
-    if ( Gaudi::StateMachine::INITIALIZED    > _a -> FSMState() )
-    {
-      const Gaudi::StateMachine::State loki_state =
-        LoKi::Services::instance().lokiSvc()->FSMState() ;
-      if ( Gaudi::StateMachine::INITIALIZED <= loki_state )
-      {
-        StatusCode sc = _a->sysInitialize() ;
-        if ( sc.isFailure() )
-        {
-          LoKi::Report::Error
-            ( "AlgFunctors::getAlgorithm: Failure to initialize '" + name + "'" , sc ) ;
-          return LoKi::Interface<IAlgorithm>()  ;
-        }
-      }
-    }
-    //
-    if ( Gaudi::StateMachine::RUNNING != _a -> FSMState() )
-    {
-      const Gaudi::StateMachine::State loki_state =
-        LoKi::Services::instance().lokiSvc()->FSMState() ;
-      if ( Gaudi::StateMachine::RUNNING == loki_state )
-      {
-        // start it!
-        StatusCode sc = _a->sysStart() ;
-        if ( sc.isFailure() )
-        {
-          LoKi::Report::Error
-            ( "AlgFunctors::getAlgorithm: Failure to start '" + name + "'" , sc ) ;
-          return LoKi::Interface<IAlgorithm>()  ;
-        }
-      }
-    }
-    //
-    return LoKi::Interface<IAlgorithm>( _a )  ;
+    return LoKi::Interface<IAlgorithm>( myIAlg )  ;
   }
   // ===========================================================================
   // get the algorithm

@@ -314,9 +314,6 @@ StatusCode TCKPrescaleEmulator::getPrescalers()
 
   //== Get the "Context" option if in the file...
   IJobOptionsSvc* jos = svc<IJobOptionsSvc>( "JobOptionsSvc" );
-  bool addedContext = false;  //= Have we added the context ?
-  bool addedRootInTES = false;  //= Have we added the rootInTES ?
-  bool addedPrescale = false; //= have we added the prescale?
 
   //= Get the Application manager, to see if algorithm exist
   IAlgManager* appMgr = svc<IAlgManager>("ApplicationMgr");
@@ -332,131 +329,41 @@ StatusCode TCKPrescaleEmulator::getPrescalers()
     { verbose() << "Initialising Algorithm: " << theName << " of type: " << theType << endmsg;}
 
     //== Check wether the specified algorithm already exists. If not, create it
-    StatusCode result = StatusCode::SUCCESS;
     SmartIF<IAlgorithm> myIAlg = appMgr->algorithm(typeName, false); // do not create it now
 
     if ( !myIAlg.isValid() ) {
 
       if(UNLIKELY( msgLevel(MSG::VERBOSE)))
       {verbose() << "AppManager doesn't already have an instance of " << theName << endmsg;}
-      //== Set the Context if not in the jobOptions list
-      if ( ""  != context() || ""  != rootInTES()  )
-      {
-        bool foundContext = false;
-        bool foundRootInTES = false;
-        const auto * properties = jos->getProperties( theName );
-        if ( properties )
-        {
-          if(UNLIKELY( msgLevel(MSG::VERBOSE))){verbose() << "Found properties for " << theName << endmsg;}
-          // Iterate over the list to set the options
-          for ( const auto & prop : *properties )
-          {
-            const auto * sp = dynamic_cast<const StringProperty*>(prop);
-            if ( sp )
-            {
-              if ( "Context" == prop->name() ) {
-                foundContext = true;
-              }
-              if ( "RootInTES" == prop->name() ) {
-                foundRootInTES = true;
-              }
-            }
-          }
-        }
-        if ( !foundContext && "" != context() ) {
-          StringProperty contextProperty( "Context", context() );
-          jos->addPropertyToCatalogue( theName, contextProperty ).ignore();
-          addedContext = true;
-        }
-        if ( !foundRootInTES && "" != rootInTES() ) {
-          StringProperty rootInTESProperty( "RootInTES", rootInTES() );
-          jos->addPropertyToCatalogue( theName, rootInTESProperty ).ignore();
-          addedRootInTES = true;
-        }
-      }
 
       //Set the acceptfraction and verbosity for the ODP:
       if(UNLIKELY( msgLevel(MSG::VERBOSE)))verbose() << "Setting an acceptfraction for " << theName << endmsg;
       IntegerProperty outputLevelProperty( "OutputLevel", MSG::WARNING);
       jos->addPropertyToCatalogue( theName, outputLevelProperty ).ignore();
 
-
       DoubleProperty acceptFractionProperty( "AcceptFraction", it.second);
       jos->addPropertyToCatalogue( theName, acceptFractionProperty ).ignore();
-      //  addedPrescale = true;
 
-      Algorithm *myAlg = nullptr;
-      result = createSubAlgorithm( theType, theName, myAlg );
-      // (MCl) this should prevent bug #35199... even if I didn't manage to
-      // reproduce it with a simple test.
-      if (result.isSuccess()) myIAlg = myAlg;
-    } else {
-      if(UNLIKELY( msgLevel(MSG::VERBOSE))){verbose() << "Algorithm " << theName << "already exists!" << endmsg;}
-      Algorithm *myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
-      if (myAlg) {
-        subAlgorithms()->push_back(myAlg);
-        // when the algorithm is not created, the ref count is short by one, so we have to fix it.
-        myAlg->addRef();
-      }
+      myIAlg = appMgr->algorithm(typeName, true);
     }
 
     //== Remove the property, in case this is not a GaudiAlgorithm...
-
-    if ( addedContext ) {
-      jos->removePropertyFromCatalogue( theName, "Context" ).ignore();
-      addedContext = false;
-    }
-    if ( addedRootInTES ) {
-      jos->removePropertyFromCatalogue( theName, "RootInTES" ).ignore();
-      addedRootInTES = false;
-    }
-
-    if(addedPrescale){
-      jos->removePropertyFromCatalogue( theName, "AcceptFraction" ).ignore();
-      addedPrescale = false;
-    }
-
-    // propagate the sub-algorithm into own state.
-    if ( result.isSuccess () &&
-         Gaudi::StateMachine::INITIALIZED <= FSMState() &&
-         myIAlg.isValid   () &&
-         Gaudi::StateMachine::INITIALIZED  > myIAlg->FSMState() )
-    {
-      StatusCode sc = myIAlg->sysInitialize() ;
-      if  ( sc.isFailure() ) { result = sc ; }
-    }
-
-    // propagate the sub-algorithm into own state.
-    if ( result.isSuccess () &&
-         Gaudi::StateMachine::RUNNING <= FSMState() &&
-         myIAlg.isValid   () &&
-         Gaudi::StateMachine::RUNNING  > myIAlg->FSMState() )
-    {
-      StatusCode sc = myIAlg->sysStart () ;
-      if  ( sc.isFailure() ) { result = sc ; }
-    }
+    jos->removePropertyFromCatalogue( theName, "AcceptFraction" ).ignore();
 
     //== Is it an Algorithm ?  Strange test...
-    if ( result.isSuccess() )
-      {
-      // TODO: (MCl) it is possible to avoid the dynamic_cast in most of the
-      //             cases by keeping the result of createSubAlgorithm.
-      auto *  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
-      if ( myAlg )
-      {
-        // Note: The reference counting is kept by the system of sub-algorithms
-        prescalers.insert({it.first,myAlg});
-        if (msgLevel(MSG::DEBUG)) debug () << "Added algorithm " << theName << endmsg;
-      } else {
-        warning() << theName << " is not an Algorithm - failed dynamic_cast"
-                  << endmsg;
-        final = StatusCode::FAILURE;
-      }
+    // TODO: (MCl) it is possible to avoid the dynamic_cast in most of the
+    //             cases by keeping the result of createSubAlgorithm.
+    auto *  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
+    if ( myAlg )
+    {
+      // Note: The reference counting is kept by the system of sub-algorithms
+      prescalers.insert({it.first,myAlg});
+      if (msgLevel(MSG::DEBUG)) debug () << "Added algorithm " << theName << endmsg;
     } else {
-      warning() << "Unable to find or create " << theName << endmsg;
-      final = result;
+      warning() << theName << " is not an Algorithm - failed dynamic_cast"
+                << endmsg;
+      final = StatusCode::FAILURE;
     }
-
   }
 
   release(appMgr).ignore();
