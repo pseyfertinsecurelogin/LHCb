@@ -144,6 +144,7 @@ private:
   //state vectors for each event, once filled, then copied per event
   std::vector<NodeState> m_NodeStates;
   std::vector<uint16_t> m_AlgStates;
+  using SchedulerStates = decltype(std::pair{m_NodeStates, m_AlgStates});
 
   //all controlflownodes
   std::vector<VNode> m_allVNodes;
