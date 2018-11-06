@@ -50,11 +50,12 @@ namespace {
   template <> struct my_map_traits<int>         { static constexpr const char* str="int";};
   template <> struct my_map_traits<std::string> { static constexpr const char* str="string";};
 
-  constexpr struct stream_key_value_pair_t {
+  struct stream_key_value_pair_t {
       template <typename Key, typename Value> std::ostream& operator()(std::ostream& os, const std::pair<Key,Value>& p) {
               return os << "<item key=\"" << p.first << "\" value=\"" << p.second << "\"/>";
       }
-  } stream_key_value_pair{};
+  };
+  inline constexpr stream_key_value_pair_t  stream_key_value_pair{};
 
   template <typename T>
   std::string toXMLStr_impl(const std::string& name, const std::string& comment, int precision,

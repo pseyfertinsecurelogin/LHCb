@@ -18,9 +18,10 @@
 #include "boost/iostreams/filtering_stream.hpp"
 
 namespace {
-constexpr struct all_ {
+struct all_t {
   template <typename T> bool operator()(const T &) const { return true; }
-} all{};
+} ;
+inline constexpr all_t all{};
 
 struct PrefixFilenameSelector {
   PrefixFilenameSelector(const std::string &_prefix) : prefix(_prefix) {}

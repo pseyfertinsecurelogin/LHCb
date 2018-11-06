@@ -30,10 +30,11 @@ DECLARE_COMPONENT( HltTrackReportsWriter )
 using namespace LHCb;
 namespace {
 
-constexpr struct select2nd_ {
+struct select2nd_t {
         template <typename U, typename V>
         const V& operator()(const std::pair<U,V>& p) const { return p.second; }
-} select2nd{};
+};
+inline constexpr select2nd_t select2nd{};
 
 }
 

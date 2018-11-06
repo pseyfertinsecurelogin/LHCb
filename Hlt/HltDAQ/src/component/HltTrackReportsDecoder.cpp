@@ -31,10 +31,11 @@ int sourceID( const RawBank& bank )
      return bank.sourceID() >> HltTrackReportsWriter::kSourceID_BitShift;
 }
 
-constexpr struct cmp_sourceID_t {
+struct cmp_sourceID_t {
     bool operator()(int id, const RawBank* bank) const { return id < sourceID( *bank ); }
     bool operator()(const RawBank* bank, int id) const { return sourceID( *bank ) < id; }
-} cmp_sourceID{};
+};
+inline constexpr cmp_sourceID_t cmp_sourceID{};
 
 int seq( const RawBank& bank )
 {
@@ -133,8 +134,8 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
         std::end( hltTrackReportsRawBanks ) );
 
     // sort by sourceID ( which is 'origin << somebits | sequential number' )
-    std::sort( begin( hltTrackReportsRawBanks ), end( hltTrackReportsRawBanks ), 
-               [=]( const RawBank* lhs, const RawBank* rhs ) 
+    std::sort( begin( hltTrackReportsRawBanks ), end( hltTrackReportsRawBanks ),
+               [=]( const RawBank* lhs, const RawBank* rhs )
                { return lhs->sourceID() < rhs->sourceID(); } );
 
     // TODO: add some counters to track how many tracks per source ID per event...
@@ -143,7 +144,7 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
     for ( const auto & entry : m_map ) {
         auto& outputTracks = outputs[indx++];
 
-        auto range = std::equal_range( begin(hltTrackReportsRawBanks), 
+        auto range = std::equal_range( begin(hltTrackReportsRawBanks),
                                        end(hltTrackReportsRawBanks), entry, cmp_sourceID );
         // if there is a valid bank, create the output -- even if it is an empty bank...
         // (which results in an empty output ;-). If there is no bank, then do NOT
@@ -185,7 +186,7 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
                              []( unsigned int* p, const RawBank* bank ) {
                 return std::copy( bank->begin<unsigned int>(), bank->end<unsigned int>(), p );
             } );
-            assert( std::distance( completeBank.data(), p ) == bankSize ); 
+            assert( std::distance( completeBank.data(), p ) == bankSize );
             // do the actual decoding: see HltTrackingCoder.cpp
             decodeTracks( completeBank.data(), bankSize, *outputTracks );
         }

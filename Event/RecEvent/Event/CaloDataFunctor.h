@@ -60,7 +60,7 @@ namespace LHCb
      *  @date 2004-10-22
      */
     // ==========================================================================
-    constexpr struct CellID_t
+    struct CellID_t
     {
       template<class TYPE, typename = typename std::enable_if<!std::is_pointer<TYPE>::value>::type>
       LHCb::CaloCellID operator() ( const TYPE& obj ) const
@@ -84,7 +84,8 @@ namespace LHCb
       { return !hypo.clusters().empty() ? (*this)( hypo.clusters().front() )
                                         : LHCb::CaloCellID() ; }
 
-    } CellID {};
+    };
+    inline constexpr CellID_t CellID{};
     // ==========================================================================
 
     // ==========================================================================
@@ -260,7 +261,7 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    constexpr struct Less_by_Energy_t
+    struct Less_by_Energy_t
     {
       /** compare the energy of one object with the energy of
        *  another object
@@ -284,7 +285,8 @@ namespace LHCb
           ( obj2.digit()->e() * obj2.fraction() ) ;
       }
       ///
-    } Less_by_Energy {};
+    };
+    inline constexpr Less_by_Energy_t Less_by_Energy {};
     // ==========================================================================
 
     // ==========================================================================
@@ -373,7 +375,7 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    constexpr struct Accumulate_Energy_t
+    struct Accumulate_Energy_t
     {
     public:
       /** accumulate the energy of the objkect
@@ -385,7 +387,8 @@ namespace LHCb
       inline double  operator() ( double&     Energy  ,
                                   const TYPE& object     ) const
       { return ( !object ) ? Energy : Energy += object->e() ; }
-    } Accumulate_Energy {};
+    };
+    inline constexpr Accumulate_Energy_t Accumulate_Energy {};
     // ==========================================================================
 
     // ==========================================================================
@@ -776,12 +779,13 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    constexpr struct Calo_t
+    struct Calo_t
     {
       template <class TYPE>
       int operator() ( const TYPE& obj ) const
       { return CellID( obj ).calo() ; }
-    } Calo {};
+    };
+    inline constexpr Calo_t Calo{};
     // ==========================================================================
 
     // ==========================================================================
@@ -815,11 +819,12 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    constexpr struct CaloArea_t
+    struct CaloArea_t
     {
       template <class TYPE>
       int operator() ( const TYPE& obj ) const { return CellID( obj ).area() ; }
-    } CaloArea {};
+    };
+    inline constexpr CaloArea_t CaloArea{};
     // ==========================================================================
 
     // ==========================================================================
@@ -851,13 +856,14 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    constexpr struct CaloRow_t
+    struct CaloRow_t
     {
       template <class TYPE>
       int operator() ( const TYPE& obj ) const
       { return CellID( obj ).row() ; }
 
-    } CaloRow {};
+    };
+    inline constexpr CaloRow_t CaloRow{};
     // ==========================================================================
 
     // ==========================================================================
@@ -886,12 +892,13 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    constexpr struct CaloColumn_t
+    struct CaloColumn_t
     {
       template <class TYPE>
       int operator() ( const TYPE& obj ) const
       { return CellID( obj ).col() ; }
-    } CaloColumn {};
+    };
+    inline constexpr CaloColumn_t CaloColumn{};
     // ==========================================================================
 
     // ==========================================================================
