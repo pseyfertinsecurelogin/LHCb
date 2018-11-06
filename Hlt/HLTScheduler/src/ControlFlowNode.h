@@ -41,6 +41,7 @@ struct NodeState {
 };
 
 struct AlgWrapper {
+  using Algorithm = Gaudi::Algorithm;
   Algorithm* m_alg;
   uint16_t m_executedIndex;
 

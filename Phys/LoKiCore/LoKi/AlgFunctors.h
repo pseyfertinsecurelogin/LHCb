@@ -23,6 +23,7 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IAlgorithm.h"
 #include "GaudiKernel/ThreadLocalContext.h"
+#include <GaudiKernel/IAlgExecStateSvc.h>
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -482,4 +483,3 @@ namespace LoKi {
 //                                                                      The END
 // ============================================================================
 #endif // LOKI_ALGFUNCTORS_H
-// ============================================================================

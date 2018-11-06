@@ -167,12 +167,12 @@ void LoKi::FilterAlg::updatePreambulo ( Property& /* p */ )  // update preambulo
 StatusCode LoKi::FilterAlg::initialize ()
 {
   // look the context
-  Gaudi::Utils::AlgContext lock  ( this , contextSvc() ) ;
+  Gaudi::Utils::AlgContext lock  ( this , contextSvc(), Gaudi::Hive::currentContext() ) ;
   /// initialize the base
   StatusCode sc = GaudiAlgorithm::initialize () ;
   if ( sc.isFailure() ) { return sc ; }
   /// lock the context
-  Gaudi::Utils::AlgContext lock2 ( this , contextSvc() ) ;
+  Gaudi::Utils::AlgContext lock2 ( this , contextSvc(), Gaudi::Hive::currentContext() ) ;
   // force LoKi service
   svc<IService>( "LoKiSvc" , true ) ;
   // decode the functor

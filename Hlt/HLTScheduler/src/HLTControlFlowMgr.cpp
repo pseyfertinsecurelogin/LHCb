@@ -640,6 +640,7 @@ void HLTControlFlowMgr::configureScheduling() {
                                                 findVNodeInContainer(edge[1], m_allVNodes).value()});
   }
 
+  using Algorithm = Gaudi::Algorithm;
   //get data dependencies right
   //barrier inputs
   std::vector<std::vector<Algorithm*>> BarrierInputs{m_BarrierAlgNames.size()};
