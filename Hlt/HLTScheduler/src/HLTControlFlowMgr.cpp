@@ -390,9 +390,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt )
         m_stopTimeAfterEvt = m_finishedEvt - 1;
         endTime = Clock::now();
       }
-      if ( UNLIKELY( m_startTimeAtEvt == createdEvts ) ) {
-        startTime = Clock::now();
-      }
+      if ( UNLIKELY( m_startTimeAtEvt == createdEvts ) ) startTime = Clock::now();
       StatusCode sc = executeEvent( &createdEvts );
       if ( !sc.isSuccess() ) return StatusCode::FAILURE; // else we have an success --> exit loop
       if (createdEvts == -1) break;
@@ -554,24 +552,24 @@ void HLTControlFlowMgr::buildLines() { //here lines are configured, filled into 
     nodeType const nt = nodeTypeNames_inv.at(cfprop.type);
     switch (nt) {
       case nodeType::LAZY_AND:
-        m_allVNodes.emplace_back(std::in_place_type_t<CompositeNode<nodeType::LAZY_AND>>{},
+        m_allVNodes.emplace_back(std::in_place_type<CompositeNode<nodeType::LAZY_AND>>,
           cfprop.name, cfprop.children, cfprop.ordered);
         break;
       case nodeType::LAZY_OR:
-        m_allVNodes.emplace_back(std::in_place_type_t<CompositeNode<nodeType::LAZY_OR>>{},
+        m_allVNodes.emplace_back(std::in_place_type<CompositeNode<nodeType::LAZY_OR>>,
           cfprop.name, cfprop.children, cfprop.ordered);
         break;
       case nodeType::NONLAZY_OR:
-        m_allVNodes.emplace_back(std::in_place_type_t<CompositeNode<nodeType::NONLAZY_OR>>{},
+        m_allVNodes.emplace_back(std::in_place_type<CompositeNode<nodeType::NONLAZY_OR>>,
           cfprop.name, cfprop.children, cfprop.ordered);
         break;
       case nodeType::NONLAZY_AND:
-        m_allVNodes.emplace_back(std::in_place_type_t<CompositeNode<nodeType::NONLAZY_AND>>{},
+        m_allVNodes.emplace_back(std::in_place_type<CompositeNode<nodeType::NONLAZY_AND>>,
           cfprop.name, cfprop.children, cfprop.ordered);
         break;
       case nodeType::NOT:
         assert(cfprop.children.size() == 1);
-        m_allVNodes.emplace_back(std::in_place_type_t<CompositeNode<nodeType::NOT>>{},
+        m_allVNodes.emplace_back(std::in_place_type<CompositeNode<nodeType::NOT>>,
           cfprop.name, cfprop.children, cfprop.ordered);
         break;
       default:
