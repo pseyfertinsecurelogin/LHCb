@@ -20,15 +20,7 @@
 // local
 #include "TCKPrescaleEmulator.h"
 
-
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
-
 
 using namespace LHCb;
 //-----------------------------------------------------------------------------
@@ -146,7 +138,7 @@ StatusCode TCKPrescaleEmulator::execute()
         Algorithm* myAlg= prescalers[lineName];
         //If the algorithm with this lineName exists and is enabled:
         if(myAlg && myAlg->isEnabled()){
-          StatusCode result = myAlg->sysExecute(SYSEX_ARGUMENT);
+          StatusCode result = myAlg->sysExecute(Gaudi::Hive::currentContext());
           if ( ! result.isSuccess() ) return StatusCode::FAILURE;
           //If the ODP wants the line killed:
           if(!myAlg->filterPassed()){

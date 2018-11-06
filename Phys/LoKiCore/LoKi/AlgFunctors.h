@@ -22,13 +22,7 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IAlgorithm.h"
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -413,7 +407,7 @@ namespace LoKi {
                       throw GaudiException( "Algorithm '" + alg->name() + "' is disabled", "RunAll", StatusCode::SUCCESS );
                     }
                     if ( !Predicates::isExecuted ( alg ) ) {
-                      StatusCode sc = alg->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
+                      StatusCode sc = alg->sysExecute(Gaudi::Hive::currentContext()) ;  // EXECUTE IT!!!
                       if ( sc.isFailure() ) {
                         throw GaudiException("Error from algorithm '" + alg->name() + "' sysExecute", "RunAll", sc );
                       }

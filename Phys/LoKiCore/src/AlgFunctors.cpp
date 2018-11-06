@@ -369,7 +369,7 @@ bool LoKi::Algorithms::Run::operator() () const
   //
   if ( !Predicates::isExecuted ( algorithm() ) )
   {
-    StatusCode sc = algorithm()->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
+    StatusCode sc = algorithm()->sysExecute(Gaudi::Hive::currentContext()) ;  // EXECUTE IT!!!
     if ( sc.isFailure() )
     {
       Error("Error from algorithm '" + algName() + "' sysExecute", sc );

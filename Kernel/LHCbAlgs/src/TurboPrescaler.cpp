@@ -19,15 +19,7 @@
 // local
 #include "TurboPrescaler.h"
 
-
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
-
 
 using namespace LHCb;
 //-----------------------------------------------------------------------------
@@ -131,7 +123,7 @@ StatusCode TurboPrescaler::execute()
         // Execute prescaler
         if ( prescaler && prescaler->isEnabled() )
         {
-          const auto result = prescaler->sysExecute(SYSEX_ARGUMENT);
+          const auto result = prescaler->sysExecute(Gaudi::Hive::currentContext());
           if ( ! result.isSuccess() ) return StatusCode::FAILURE;
           //If the DP wants the line killed:
           if ( !prescaler->filterPassed() )
