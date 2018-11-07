@@ -251,7 +251,7 @@ IGeometryInfo*       TransportSvc::findGeometry
 // ============================================================================
 
 // Create an instance of the accelerator cache
-ranges::v3::any TransportSvc::createCache() const { return AccelCache{}; }
+std::any TransportSvc::createCache() const { return AccelCache{}; }
 
 // ============================================================================
 // Implementation of interface DetDesc::IGeometryErrorSvc
