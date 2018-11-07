@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: TESCheck.cpp,v 1.7 2009-10-08 15:21:37 cattanem Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -79,51 +78,18 @@ class TESCheck final : public GaudiAlgorithm
 {
  public:
 
-  typedef StringArrayProperty       Inputs ;
-  enum Stores
-  {
-    EvtStore = 0 ,
-    DetStore     ,
-    HstStore
-  };
-
- protected:
-
-  typedef std::vector<std::string> _Inputs ;
-
- public:
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   /// execute the algorithm itself
   StatusCode execute()  override;
 
-  /** constructor
-   *  @param name algorithm instance name
-   *  @param pSvc pointer to Service Locator
-   */
-  TESCheck ( const std::string& name ,
-             ISvcLocator*       pSvc )
-    : GaudiAlgorithm ( name , pSvc )
-    , m_inputs       (          )
-    , m_store        ( EvtStore )
-    , m_stop         ( true     )
-  {
-    declareProperty  ( "Inputs" , m_inputs ) ;
-    declareProperty  ( "Store"  , m_store  ) ;
-    declareProperty  ( "Stop"   , m_stop   ) ;
-    //
-    m_inputs.declareUpdateHandler (&TESCheck::propHndl , this);
-  }
-
- public:
-
-  /// a technical - to be able to modify it interactively, e.g. in Python
-  void propHndl ( Property&  /* p */ ) {};
 
  private:
+  enum Stores { EvtStore = 0 , DetStore, HstStore };
 
-  Inputs  m_inputs ;
-  int     m_store  ;
-  bool    m_stop   ;
+  StringArrayProperty   m_inputs { this, "Inputs" ,{} };
+  Gaudi::Property<int>  m_store  { this, "Store"  , Stores::EvtStore };
+  Gaudi::Property<bool> m_stop   { this, "Stop", true };
 
 };
 // ============================================================================
@@ -136,20 +102,18 @@ DECLARE_COMPONENT( TESCheck )
 // ============================================================================
 StatusCode TESCheck::execute()
 {
-  const auto & inputs = m_inputs.value() ;
-
-  for ( const auto & address : inputs )
+  for ( const auto & address : m_inputs.value() )
   {
 
     SmartIF<IDataProviderSvc> dp;
     switch(m_store) {
-    case DetStore:
+    case Stores::DetStore:
       dp = detSvc();
       break;
-    case HstStore:
+    case Stores::HstStore:
       dp = histoSvc();
       break;
-    case EvtStore:
+    case Stores::EvtStore:
     default:
       dp = evtSvc();
     }
@@ -158,7 +122,7 @@ StatusCode TESCheck::execute()
     DataObject * o = obj ;
     if ( !o  )
     {
-      if ( m_stop ) { return Error ( "Check failed for '" + address + "'" ) ; }
+      if ( m_stop.value() ) { return Error ( "Check failed for '" + address + "'" ) ; }
       if ( msgLevel ( MSG::WARNING ) )
         Warning ( "Check failed for '" + address  + "'", StatusCode::SUCCESS, 1 ).ignore() ;
       setFilterPassed(false) ;

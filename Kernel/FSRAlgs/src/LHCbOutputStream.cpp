@@ -44,16 +44,6 @@ DECLARE_COMPONENT(LHCbOutputStream)
 
 #define ON_DEBUG if (log.level() <= MSG::DEBUG)
 
-// Standard Constructor
-LHCbOutputStream::LHCbOutputStream(const std::string& name, ISvcLocator* pSvcLocator)
-: Algorithm(name, pSvcLocator)
-{
-  // Associate action handlers with the AcceptAlgs, RequireAlgs and VetoAlgs.
-  m_acceptNames.declareUpdateHandler ( &LHCbOutputStream::acceptAlgsHandler , this );
-  m_requireNames.declareUpdateHandler( &LHCbOutputStream::requireAlgsHandler, this );
-  m_vetoNames.declareUpdateHandler   ( &LHCbOutputStream::vetoAlgsHandler   , this );
-}
-
 
 // initialize data writer
 StatusCode LHCbOutputStream::initialize() {
@@ -496,14 +486,6 @@ StatusCode LHCbOutputStream::decodeAcceptAlgs( ) {
   return decodeAlgorithms( m_acceptNames, &m_acceptAlgs );
 }
 
-void LHCbOutputStream::acceptAlgsHandler( Property& /* theProp */ )  {
-  StatusCode sc = decodeAlgorithms( m_acceptNames, &m_acceptAlgs );
-  if (sc.isFailure()) {
-    throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
-                         "LHCbOutputStream::acceptAlgsHandler",sc);
-  }
-}
-
 StatusCode LHCbOutputStream::decodeRequireAlgs( )  {
   MsgStream log(msgSvc(), name());
   ON_DEBUG
@@ -511,26 +493,10 @@ StatusCode LHCbOutputStream::decodeRequireAlgs( )  {
   return decodeAlgorithms( m_requireNames, &m_requireAlgs );
 }
 
-void LHCbOutputStream::requireAlgsHandler( Property& /* theProp */ )  {
-  StatusCode sc = decodeAlgorithms( m_requireNames, &m_requireAlgs );
-  if (sc.isFailure()) {
-    throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
-                         "LHCbOutputStream::requireAlgsHandler",sc);
-  }
-}
-
 StatusCode LHCbOutputStream::decodeVetoAlgs( )  {
   MsgStream log(msgSvc(), name());
   ON_DEBUG debug() << "VetoAlgs    : " << m_vetoNames.value() << endmsg;
   return decodeAlgorithms( m_vetoNames, &m_vetoAlgs );
-}
-
-void LHCbOutputStream::vetoAlgsHandler( Property& /* theProp */ )  {
-  StatusCode sc = decodeAlgorithms( m_vetoNames, &m_vetoAlgs );
-  if (sc.isFailure()) {
-    throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
-                         "LHCbOutputStream::vetoAlgsHandler",sc);
-  }
 }
 
 Algorithm* LHCbOutputStream::decodeAlgorithm( const std::string& theName )

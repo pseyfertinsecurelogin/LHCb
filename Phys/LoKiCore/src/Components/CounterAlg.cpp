@@ -113,40 +113,13 @@ namespace LoKi
     ( const std::string& name , // the algorithm instance name
       ISvcLocator*       pSvc ) // pointer to the service locator
       : GaudiAlgorithm ( name , pSvc )
-    //
-      , m_factory   ( "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" )
-    //
-      , m_location  ( "Counters/" + name  )
     {
-      declareProperty
-        ( "Preambulo"  ,
-          m_preambulo  ,
-          "The preambulo lines to be used for the temporary python script" )
-        -> declareUpdateHandler  ( &LoKi::CounterAlg::handlePreambulo  , this ) ;
       //
-      declareProperty
-        ( "Factory"   ,
-          m_factory   ,
-          "The type/name of LoKiBender \"hybrid\" factory: void->double" )
-        -> declareUpdateHandler  ( &LoKi::CounterAlg::handleFactory    , this ) ;
       //
-      declareProperty
-        ( "Variables" ,
-          m_map       ,
-          "The map { 'name' : 'functor'} of variables: void -> double " )
-        -> declareUpdateHandler  ( &LoKi::CounterAlg::handleVariables  , this ) ;
       //
-      declareProperty
-        ( "Location"  ,
-          m_location  ,
-          "TES-location of counters" ) ;
     }
     // ========================================================================
   protected:
-    // ========================================================================
-    void       handlePreambulo ( Property& /* p */ )  ;
-    void       handleFactory   ( Property& /* p */ )  ;
-    void       handleVariables ( Property& /* p */ )  ;
     // ========================================================================
     /// update variables
     StatusCode updateItems () ;                // update variables
@@ -154,7 +127,7 @@ namespace LoKi
     /// the preambulo
     std::string preambulo() const
     {
-      const std::vector<std::string>& lines = m_preambulo ;
+      const auto& lines = m_preambulo.value() ;
       return std::accumulate( lines.begin(), lines.end(),
                               std::string{},
                               [](std::string r, const std::string& line)
@@ -164,13 +137,35 @@ namespace LoKi
   private:
     // ========================================================================
     /// map pf variables
-    std::map<std::string,std::string> m_map       ; // map pf variables
+    Gaudi::Property<std::map<std::string,std::string>> m_map   // map pf variables
+        { this, "Variables" , {}, [=](auto&) {
+              if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) return;
+              Warning ( "Reintialization of Variables" ).ignore() ;
+              StatusCode sc = updateItems () ;
+              Assert ( sc.isSuccess() , "Unable to set 'Variables'"   , sc ) ;
+          },
+          "The map { 'name' : 'functor'} of variables: void -> double " };
     /// the preambulo
-    std::vector<std::string> m_preambulo ; // the preambulo
+    Gaudi::Property<std::vector<std::string>> m_preambulo  // the preambulo
+        { this, "Preambulo"  , {}, [=](auto&) {
+              if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
+              Warning ( "Reintialization of Preambulo" ).ignore() ;
+              StatusCode sc = updateItems () ;
+              Assert ( sc.isSuccess () , "Unable to set 'Preambulo'"   , sc ) ;
+          },
+          "The preambulo lines to be used for the temporary python script" };
     ///  factory for functor decoding
-    std::string              m_factory   ; //  factory for functor decoding
+    Gaudi::Property<std::string>   m_factory    //  factory for functor decoding
+      { this, "Factory", "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC",
+        [=](auto&) {
+              if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) return ;
+              Warning ( "Reintialization of HltFactory" ).ignore() ;
+              StatusCode sc = updateItems () ;
+              Assert ( sc.isSuccess() , "Unable to set 'Variables'"   , sc ) ;
+        }, "The type/name of LoKiBender \"hybrid\" factory: void->double" };
     ///  TES-location of counters
-    std::string              m_location  ; //  TES-location of counters
+    Gaudi::Property<std::string>    m_location   //  TES-location of counters
+      { this, "Location"  , "Counters/" + name(), "TES-location of counters" };
     /// decoded vector of functors/items
     std::vector<Item>        m_items     ;
     // ========================================================================
@@ -178,72 +173,39 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// the update handler for Preambulo
-// ============================================================================
-void LoKi::CounterAlg::handlePreambulo ( Property& /* p */ )
-{
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  //
-  Warning ( "Reintialization of Preambulo" ).ignore() ;
-  //
-  StatusCode sc = updateItems () ;
-  Assert ( sc.isSuccess () , "Unable to set 'Variables'"   , sc ) ;
-}
-// ============================================================================
-// the update handler for HltFactory
-// ============================================================================
-void LoKi::CounterAlg::handleFactory ( Property& /* p */ )
-{
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  //
-  Warning ( "Reintialization of HltFactory" ).ignore() ;
-  //
-  StatusCode sc = updateItems () ;
-  Assert ( sc.isSuccess() , "Unable to set 'Variables'"   , sc ) ;
-}
-// ============================================================================
-// The update handler for Variables
-// ============================================================================
-void LoKi::CounterAlg::handleVariables ( Property& /* p */ )
-{
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  //
-  Warning ( "Reintialization of Variables" ).ignore() ;
-  //
-  StatusCode sc = updateItems () ;
-  Assert ( sc.isSuccess() , "Unable to set 'Variables'"   , sc ) ;
-}
-// ============================================================================
 // update  variables
 // ============================================================================
 StatusCode LoKi::CounterAlg::updateItems ()                 // update variables
 {
-  // get the factory
-  LoKi::Hybrid::ICoreFactory* factory = tool<LoKi::Hybrid::ICoreFactory> ( m_factory , this ) ;
-  //
-  m_items.clear() ;
-  m_items.reserve ( m_map.size() ) ;
-  for ( auto ivar = m_map.begin() ; m_map.end() != ivar ; ++ivar )
-  {
-    Item item ;
-    StatusCode sc = factory->get ( ivar->second , item.m_fun , preambulo() ) ;
-    if ( sc.isFailure() )
-    { return Error
-        ("Unable to decode " + ivar->first + " : " + ivar->second , sc ) ; }
-    //
-    item.m_name =           ivar->first   ;
-    item.m_cnt  = &counter( ivar->first ) ;
-    //
-    m_items.push_back  ( item ) ;
-    //
-    debug() << "The decoded variable name is '"
-            << m_items.back().m_name << "'\t, the functor : '"
-            << m_items.back().m_fun  << "'" << endmsg ;
+  try {
+      // get the factory
+      LoKi::Hybrid::ICoreFactory* factory = tool<LoKi::Hybrid::ICoreFactory> ( m_factory , this ) ;
+      //
+      m_items.clear() ;
+      m_items.reserve ( m_map.size() ) ;
+      std::transform( m_map.begin(),m_map.end(),std::back_inserter(m_items),
+                      [&](const auto& ivar) {
+        Item item ;
+        StatusCode sc = factory->get ( ivar.second , item.m_fun , preambulo() ) ;
+        if ( sc.isFailure() )
+        { throw Error
+            ("Unable to decode " + ivar.first + " : " + ivar.second , sc ) ; }
+        //
+        item.m_name =           ivar.first   ;
+        item.m_cnt  = &counter( ivar.first ) ;
+        //
+        //
+        debug() << "The decoded variable name is '"
+                << item.m_name << "'\t, the functor : '"
+                << item.m_fun  << "'" << endmsg ;
+        return item;
+      } );
+      //
+      return release ( factory ) ; // we do not need the factory anymore
+  } catch (const StatusCode& sc) {
+      return sc;
   }
   //
-  release ( factory ) ; // we do not need the factory anymore
-  //
-  return StatusCode::SUCCESS ;
 }
 // ============================================================================
 // standard initialization
@@ -284,7 +246,7 @@ StatusCode LoKi::CounterAlg::execute ()
   // get(create) counters in TES (if needed)
   if ( !m_location.empty() )
   { numbers = getOrCreate<Gaudi::Numbers,Gaudi::Numbers>
-      ( evtSvc() , m_location ) ; }
+      ( evtSvc() , m_location.value() ) ; }
   //
   for ( auto item = m_items.cbegin() ; m_items.cend() != item ; ++item )
   {

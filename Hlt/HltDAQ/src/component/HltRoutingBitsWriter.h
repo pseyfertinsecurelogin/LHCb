@@ -41,7 +41,7 @@
 class HltRoutingBitsWriter : public HltEvaluator {
 public:
    /// Standard constructor
-   HltRoutingBitsWriter( const std::string& name, ISvcLocator* pSvcLocator );
+   using HltEvaluator::HltEvaluator;
 
    StatusCode execute   () override;    ///< Algorithm execution
 
@@ -51,12 +51,23 @@ private:
    StatusCode decode() override;
 
    void zeroEvaluators();
-   void updateBits( Property& /* p */ );
 
    std::unordered_map<unsigned int, EvalVariant> m_evaluators;
    Gaudi::Property<bool> m_updateBank { this, "UpdateExistingRawBank", false };
    Gaudi::Property<std::string> m_raw_location { this, "RawEventLocation", LHCb::RawEventLocation::Default };
-   Gaudi::Property<std::map<unsigned int,std::string>> m_bits { this, "RoutingBits" };
+   Gaudi::Property<std::map<unsigned int,std::string>> m_bits { this, "RoutingBits", {},
+       [=](auto&) {
+           /// mark as "to-be-updated"
+           m_evals_updated = true;
+           // no action if not yet initialized
+           if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) return;
+           // postpone the action
+           if ( !m_preambulo_updated ){ return; }
+           // perform the actual immediate decoding
+           StatusCode sc = decode();
+           Assert ( sc.isFailure() , "Error from HltRoutingBitsWriter::decode()" , sc );
+       }
+   };
 
 };
 #endif // HLTROUTINGBITSWRITER_H

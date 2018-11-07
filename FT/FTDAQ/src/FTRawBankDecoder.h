@@ -46,7 +46,11 @@ private:
   // not sure how to ensure this
   Gaudi::Property<unsigned int> m_clusterMaxWidth{ this, "ClusterMaxWidth", 4u,
       "Maximal cluster width"};
+  // For the v2 and v3 decoding versions, opt out for the default initialization
+  // of m_readouttool.
   Gaudi::Property<unsigned int> m_decodingVersion{ this, "DecodingVersion", 5u,
+      [=](auto&) { this->m_readoutTool.setEnabled( this->m_decodingVersion > 3u ); },
+      Gaudi::Details::Property::ImmediatelyInvokeHandler{true},
       "Set the decoding version"};
 
   template <unsigned int version>

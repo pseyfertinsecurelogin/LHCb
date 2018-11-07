@@ -42,9 +42,9 @@ inline uint32_t mix32(uint32_t state, uint32_t extra)
 // mix some 'extra' entropy into 'state' and return result
 inline uint32_t mix64(uint32_t state, uint64_t extra)
 {
-    typedef boost::low_bits_mask_t<32>  mask_t;
-    state = mix32( state , uint32_t( extra        & mask_t::sig_bits_fast) );
-    return  mix32( state , uint32_t((extra >> 32) & mask_t::sig_bits_fast) );
+    constexpr auto mask = ( ( ~uint64_t{0} ) >> 32 );
+    state = mix32( state , uint32_t( extra        & mask ));
+    return  mix32( state , uint32_t((extra >> 32) & mask ));
 }
 
 // mix some 'extra' entropy into 'state' and return result
@@ -71,15 +71,6 @@ DeterministicPrescaler::DeterministicPrescaler(const std::string& name,
     FilterPredicate(name, pSvcLocator,
                     KeyValue{ "ODINLocation", LHCb::ODINLocation::Default } )
 {
-  declareProperty( "AcceptFraction" , m_accFrac = 1 )
-    -> declareUpdateHandler( [this](const Property&) {
-    m_acc = ( m_accFrac<=0 ? 0
-            : m_accFrac>=1 ? boost::integer_traits<uint32_t>::const_max
-            : uint32_t( m_accFrac*boost::integer_traits<uint32_t>::const_max )
-            );
-    if( msgLevel(MSG::DEBUG) )
-      debug() << "frac: " << m_accFrac << " acc: 0x" << std::hex << m_acc << endmsg;
-    });
 }
 
 StatusCode
@@ -93,8 +84,8 @@ DeterministicPrescaler::initialize()
 
   if (msgLevel(MSG::DEBUG)) debug() << " generated initial value " << m_initial << endmsg;
 
-  if (m_acc!=boost::integer_traits<uint32_t>::const_max)  {
-      info() << "Prescaling events; keeping " << m_accFrac << " of events " << endmsg;
+  if (m_acc!=std::numeric_limits<uint32_t>::max())  {
+      info() << "Prescaling events; keeping " << m_accFrac.value() << " of events " << endmsg;
   }
   return sc;
 }
@@ -120,7 +111,7 @@ DeterministicPrescaler::operator()(const LHCb::ODIN& odin) const
       return x < m_acc;
   };
 
-  const bool acc = ( ( m_acc == boost::integer_traits<uint32_t>::const_max )
+  const bool acc = ( ( m_acc == std::numeric_limits<uint32_t>::max() )
                      || ( m_acc !=0 && accept( odin ) )
                    );
   *m_counter += acc;

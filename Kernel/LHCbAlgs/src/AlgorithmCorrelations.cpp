@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: AlgorithmCorrelations.cpp,v 1.6 2009-04-15 09:48:14 pkoppenb Exp $
 // Include files
 #include <boost/format.hpp>
 #include <math.h>

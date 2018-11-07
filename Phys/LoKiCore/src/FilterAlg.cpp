@@ -48,14 +48,6 @@ LoKi::FilterAlg::FilterAlg
 ( const std::string& name ,                     // the algorithm instance name
   ISvcLocator*       pSvc )                  // pointer to the service locator
   : GaudiAlgorithm ( name , pSvc )
-// the type/name for LoKi/Bender "hybrid" factory
-  , m_factory ( "<UNSPECIFIED>" )
-// the filter/code criteria itself
-  , m_code   ( "<unspecified>" )
-  //
-  , m_factory_updated   ( false )
-  , m_code_updated      ( false )
-  , m_preambulo_updated ( false )
 {
   // the factory
   declareProperty
@@ -100,8 +92,6 @@ void LoKi::FilterAlg::setPreambulo( const std::vector<std::string>& items )
 // ============================================================================
 void LoKi::FilterAlg::updateFactory ( Property& ) // update the factory
 {
-  // if (&p != &m_factory) return;
-  //
   // mark as "to-be-updated"
   m_factory_updated = true ;
   // no action if not yet initialized
@@ -150,7 +140,7 @@ void LoKi::FilterAlg::updatePreambulo ( Property& /* p */ )  // update preambulo
   m_preambulo.clear() ;
   auto iline = m_preambulo_.cbegin() ;
   if    ( iline != m_preambulo_.cend() ) { m_preambulo += *iline++ ; }
-  while ( iline != m_preambulo_.cend() ) 
+  while ( iline != m_preambulo_.cend() )
   {
     m_preambulo += "\n" ;
     m_preambulo += *iline++ ;
@@ -161,12 +151,12 @@ void LoKi::FilterAlg::updatePreambulo ( Property& /* p */ )  // update preambulo
   m_preambulo_updated = true ;
   // postpone the action
   if ( !m_factory_updated || !m_code_updated ) { return ; }
-  
+
   // perform the actual immediate decoding
-  
+
   StatusCode sc = decode  () ;
   Assert ( sc.isSuccess () , "Error from LoKi::FilterAlg::decode()" , sc ) ;
-  
+
   m_code_updated      = false ;
   m_factory_updated   = false ;
   m_preambulo_updated = false ;

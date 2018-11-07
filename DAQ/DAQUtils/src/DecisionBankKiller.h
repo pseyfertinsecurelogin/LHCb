@@ -67,18 +67,27 @@ class DecisionBankKiller : public Gaudi::Functional::Consumer<
   void killFromRawEvent(LHCb::RawEvent *rawEvent, const ReqBanksBitset &reqBanks) const;
 
  private:
-  /// Input Location for HltDecReports
-  Gaudi::Property<std::vector<std::string>> m_alwaysKeepBanks{this,
-    "AlwaysKeepBanks", {"ODIN", "HltRoutingBits", "DAQ"},
-    "Set of Banks to always keep regardless of line conditions."};
   /// Set of banks to be always kept
   ReqBanksBitset m_alwaysKeepBanksSet{};
+  Gaudi::Property<std::vector<std::string>> m_alwaysKeepBanks{this,
+    "AlwaysKeepBanks", {"ODIN", "HltRoutingBits", "DAQ"},
+    [=](auto&) {
+        for (unsigned i = 0; i < LHCb::RawBank::LastType; ++i) {
+          auto type = LHCb::RawBank::typeName(static_cast<LHCb::RawBank::BankType>(i));
+          if (std::find(std::begin(m_alwaysKeepBanks), std::end(m_alwaysKeepBanks), type)
+              != std::end(m_alwaysKeepBanks)) {
+            m_alwaysKeepBanksSet[i] = 1;
+          }
+        }
+    },
+    Gaudi::Details::Property::ImmediatelyInvokeHandler{true},
+    "Set of Banks to always keep regardless of line conditions."};
   Gaudi::Property<bool> m_killFromAll{this, "KillFromAll", false,
     "Whether to kill from all raw event locations, or just from the first one"};
   /// Implementation of ILinePersistenceSvc used to get the requested raw banks
   Gaudi::Property<std::string> m_linePersistenceSvcName{this, "ILinePersistenceSvc", ""};
   /// LoKi Tool to execute line filter
-  ToolHandle<LoKi::IHDRFilterTool> m_lineFilterTool{"LoKi::HDRFilterTool", this};
+  ToolHandle<LoKi::IHDRFilterTool> m_lineFilterTool{this,"LineFilter","LoKi::HDRFilterTool","LoKi Tool to execute line filter" };
 
   SmartIF<ILinePersistenceSvc> m_linePersistenceSvc;
   mutable std::map<unsigned int, ILinePersistenceSvc::LineDecNames> m_filteredLinesCache;

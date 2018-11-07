@@ -36,21 +36,6 @@ static const Gaudi::StringKey PackedObjectLocations{"PackedObjectLocations"};
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( HltPackedDataWriter )
 
-HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator)
-: GaudiAlgorithm(name, pSvcLocator)
-{
-  m_compression.declareUpdateHandler(
-    [=](Property&) {
-      switch (this->m_compression) {
-        case NoCompression: { this->m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
-        case ZLIB: { this->m_compressionAlg = ROOT::kZLIB; break; }
-        case LZMA: { this->m_compressionAlg = ROOT::kLZMA; break; }
-        default: throw GaudiException( "Unrecognized compression algorithm.", this->name(), StatusCode::FAILURE );
-        }
-    }
-  );
-  m_compression.useUpdateHandler(); // sync m_compressionAlg with m_compression
-}
 
 template<typename PackedData>
 void HltPackedDataWriter::register_object() {
@@ -89,9 +74,8 @@ StatusCode HltPackedDataWriter::initialize() {
   m_hltANNSvc = service("HltANNSvc");
 
   if (UNLIKELY(m_enableChecksum)) {
-    m_checksum = new PackedDataPersistence::PackedDataChecksum();
+    m_checksum.emplace();
   }
-
   return sc;
 }
 
@@ -230,7 +214,7 @@ StatusCode HltPackedDataWriter::finalize() {
   if (UNLIKELY(m_enableChecksum)) {
     for (const auto& x: m_checksum->checksums())
       info() << "Packed data checksum for '" << x.first << "' = " << x.second << endmsg;
-    delete m_checksum;
+    m_checksum.reset();
   }
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }

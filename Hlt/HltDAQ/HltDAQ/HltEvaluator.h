@@ -47,7 +47,7 @@ class HltEvaluator : public extends<GaudiHistoAlg, IIncidentListener> {
 public:
 
    /// Standard constructor
-   HltEvaluator( const std::string& name, ISvcLocator* pSvcLocator );
+   using extends::extends;
 
    StatusCode initialize() override;    ///< Algorithm initialization
 
@@ -210,7 +210,7 @@ private:
    Gaudi::Property<bool> m_useCondDB { this, "GetStartOfRunFromCondDB", true };
    Gaudi::Property<std::string> m_monSvc { this, "MonitorSvc","HltMonitorSvc/Hlt2MonSvc" };
 
-   Gaudi::Property<std::vector<std::string>> m_preambulo_ { this, "Preambulo" };
+   Gaudi::Property<std::vector<std::string>> m_preambulo_ { this, "Preambulo", {}, &HltEvaluator::updatePreambulo };
 
    std::unordered_map<std::string, const DataObject*> m_data;
    Condition *m_runpars = nullptr;

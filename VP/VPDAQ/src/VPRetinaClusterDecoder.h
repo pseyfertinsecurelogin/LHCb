@@ -71,14 +71,18 @@ private:
   unsigned int m_firstModule;
   unsigned int m_lastModule;
 
-  float m_ltg[16 * VP::NSensors]; // 16*208 = 16*number of sensors
+  std::array<std::array<float,9>,VP::NSensors> m_ltg; // 9*208 = 9*number of sensors
   LHCb::span<const double> m_local_x;
   LHCb::span<const double> m_x_pitch;
   float m_pixel_size;
 
-  Gaudi::Property<std::vector<unsigned int>> m_modulesToSkip{ this, "ModulesToSkip",{}, 
-      "List of modules that should be skipped in decoding"};
   std::bitset<VP::NModules> m_modulesToSkipMask;
+  Gaudi::Property<std::vector<unsigned int>> m_modulesToSkip{ this, "ModulesToSkip",{},
+      [=](auto&) {
+        m_modulesToSkipMask.reset();
+        for( auto i : m_modulesToSkip) m_modulesToSkipMask.set( i);
+      }, Gaudi::Details::Property::ImmediatelyInvokeHandler{true},
+      "List of modules that should be skipped in decoding"};
 
 };
 

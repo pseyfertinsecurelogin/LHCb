@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: AlgorithmCorrelations.h,v 1.5 2009-04-15 09:48:14 pkoppenb Exp $
 #ifndef ALGORITHMCORRELATIONS_H
 #define ALGORITHMCORRELATIONS_H 1
 
