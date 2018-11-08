@@ -129,7 +129,7 @@ namespace
     SmartIF<IAlgManager> alg ( loki ) ;
     if ( !alg )
     { LoKi::Report::Error
-        ( "AlgFunctors::getAlgManager: Unable to locate IAlgManager" ) ; }
+        ( "AlgFunctors::getAlgManager: Unable to locate IAlgManager" ).ignore(); }
     return alg ;
   }
   // =========================================================================
@@ -143,7 +143,7 @@ namespace
     if ( !iam )
     {
       LoKi::Report::Error
-        ( "AlgFunctors::getAlgorithm: IAlgManager* points to NULL" ) ;
+        ( "AlgFunctors::getAlgorithm: IAlgManager* points to NULL" ).ignore();
       return LoKi::Interface<IAlgorithm>()  ;
     }
 
@@ -315,7 +315,7 @@ bool LoKi::Algorithms::Run::operator() () const
   //
   if ( !Predicates::isEnabled ( algorithm() ) )
   {
-    Warning("Algorithm '" + algName() + "' is disabled, return false " );
+    Warning("Algorithm '" + algName() + "' is disabled, return false " ).ignore();
     return false ;                                                  // RETURN
   }
   //
@@ -324,7 +324,7 @@ bool LoKi::Algorithms::Run::operator() () const
     StatusCode sc = algorithm()->sysExecute(Gaudi::Hive::currentContext()) ;  // EXECUTE IT!!!
     if ( sc.isFailure() )
     {
-      Error("Error from algorithm '" + algName() + "' sysExecute", sc );
+      Error("Error from algorithm '" + algName() + "' sysExecute", sc ).ignore();
       return false ;                                                // RETURN
     }
   }
