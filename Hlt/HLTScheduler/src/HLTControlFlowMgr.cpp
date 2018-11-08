@@ -100,6 +100,10 @@ StatusCode HLTControlFlowMgr::initialize()
   }
 
   m_databroker = serviceLocator()->service<IDataBroker>( "HiveDataBrokerSvc" );
+  if ( !m_databroker ) {
+    fatal() << "Error retrieving HiveDataBrokerSvc" << endmsg;
+    return StatusCode::FAILURE;
+  }
 
   // Clearly inform about the level of concurrency
   info() << "Concurrency level information:" << endmsg;
