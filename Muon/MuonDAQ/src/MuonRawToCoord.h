@@ -33,7 +33,7 @@
  *  This is the muon reconstruction algorithm
  *  This just crosses the logical strips back into pads
  */
-class MuonRawToCoord : public Gaudi::Functional::Transformer<LHCb::MuonCoords (const LHCb::RawEvent &)> {
+class MuonRawToCoord final : public Gaudi::Functional::Transformer<LHCb::MuonCoords (const LHCb::RawEvent &)> {
 public:
   /// Standard constructor
   MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator );
@@ -44,18 +44,7 @@ public:
   using DigitsRange = boost::iterator_range<Digits::iterator>;
   StatusCode initialize() override;    ///< Algorithm initialization
   LHCb::MuonCoords operator()(const LHCb::RawEvent& event) const override;
-  StatusCode finalize  () override;    ///< Algorithm finalization
 
-  struct Coord {
-      LHCb::MuonTileID m_pad;
-      unsigned m_tdc1;
-      unsigned m_tdc2;
-      const LHCb::MuonTileID& m_tile1;
-      const LHCb::MuonTileID& m_tile2;
-      Coord(const LHCb::MuonTileID& pad, unsigned tdc1, unsigned tdc2, const LHCb::MuonTileID& tile1, const LHCb::MuonTileID& tile2) :
-          m_pad(pad), m_tdc1(tdc1), m_tdc2(tdc2), m_tile1(tile1), m_tile2(tile2) {}
-  };
-  using Coords = std::vector<Coord>;
 private:
 
   StatusCode checkBankSize(const LHCb::RawBank*) const;

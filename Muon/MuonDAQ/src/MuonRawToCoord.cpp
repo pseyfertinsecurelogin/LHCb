@@ -21,6 +21,19 @@ using namespace LHCb;
 
 DECLARE_COMPONENT( MuonRawToCoord )
 
+namespace{
+  struct Coord {
+      LHCb::MuonTileID m_pad;
+      unsigned m_tdc1;
+      unsigned m_tdc2;
+      const LHCb::MuonTileID& m_tile1;
+      const LHCb::MuonTileID& m_tile2;
+      Coord(const LHCb::MuonTileID& pad, unsigned tdc1, unsigned tdc2, const LHCb::MuonTileID& tile1, const LHCb::MuonTileID& tile2) :
+          m_pad(pad), m_tdc1(tdc1), m_tdc2(tdc2), m_tile1(tile1), m_tile2(tile2) {}
+  };
+  using Coords = std::vector<Coord>;
+}
+
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -96,7 +109,8 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
   // flatten out the vector of vectors
   // this is quick and dirty
-
+  
+  decoding.reserve(m_decoding.size());
   for( const auto& r : mb ) {
     unsigned int tell1Number=r->sourceID();
     std::copy(m_decoding[tell1Number].begin(),
@@ -113,7 +127,7 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
     debug()<<decoding.size()<<" digits in input "<<endmsg;
 
   std::sort(decoding.begin(), decoding.end(),
-    [] (const Digit& a, const Digit& b) noexcept {
+    [] (const Digit& a, const Digit& b) {
     if (a.first.station() < b.first.station()) return true;
       else if (b.first.station() < a.first.station()) return false;
       else return a.first.region() < b.first.region();
@@ -138,7 +152,6 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
   for (auto& coordsPerStaReg : boost::make_iterator_range(perStaReg.begin(), perStaReg.begin() + nStaReg)) {
     // return coords directly
     addCoordsCrossingMap(coordsPerStaReg, coords);
-    //allocateAndCopyCoords(&coords, mycoords);
   }
   //return StatusCode::SUCCESS;
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -166,8 +179,8 @@ void MuonRawToCoord::addCoordsCrossingMap(DigitsRange& digits, LHCb::MuonCoords&
   // partition into the two directions of digits 
   // vertical and horizontal stripes
   const auto mid = std::partition(digits.begin(), digits.end(),
-          [&layoutOne] (const Digit& digit) noexcept 
-          { return digit.first.layout() == layoutOne; });
+          [&layoutOne] (const Digit& digit) { 
+          return digit.first.layout() == layoutOne; });
   auto digitsOne = boost::make_iterator_range(digits.begin(), mid);
   auto digitsTwo = boost::make_iterator_range(mid, digits.end());
 
@@ -209,11 +222,12 @@ void MuonRawToCoord::addCoordsCrossingMap(DigitsRange& digits, LHCb::MuonCoords&
     }
     ++m;
   }
-  debug() << "retVal size = " << retVal.size() << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "retVal size = " << retVal.size() << endmsg;
 
 }
 
-void MuonRawToCoord::makeStripLayouts(unsigned station, unsigned region,
+void MuonRawToCoord::makeStripLayouts(unsigned int station, unsigned int region,
                                      MuonLayout &layout1,
                                      MuonLayout &layout2) const {
 
@@ -296,7 +310,7 @@ std::vector<std::pair<LHCb::MuonTileID, unsigned int>> MuonRawToCoord::decodeTil
 
   const unsigned short* it=rawdata->begin<unsigned short>();
 
-  std::array<unsigned int,24> hit_link_cnt = { { 0 } };
+//  std::array<unsigned int,24> hit_link_cnt = { { 0 } };
   short skip=0;
   unsigned  short nPads=*it;
   skip=(nPads+3)*0.5;
@@ -328,27 +342,10 @@ std::vector<std::pair<LHCb::MuonTileID, unsigned int>> MuonRawToCoord::decodeTil
         info() << "invalid add " << add << " " << tile << endmsg; 
       }
       //update the hitillink counter
-      unsigned int link=add/192;
-      hit_link_cnt[link]++;
+//      unsigned int link=add/192;
+//      hit_link_cnt[link]++;
     }
   }
   
   return storage;
 }
-
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode MuonRawToCoord::finalize() {
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
-    debug() << "==> Finalize" << endmsg;
-
-//  if (m_Exccounter>0) {
-//    info()<<" during the reconstruction there were problem with duplicated coords "<<endmsg;
-//    info()<<"The error occured " <<  m_Exccounter<<endmsg;
-//  }
-
-  return GaudiAlgorithm::finalize();
-}
-
