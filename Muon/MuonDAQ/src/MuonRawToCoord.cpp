@@ -17,8 +17,6 @@ using namespace LHCb;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonRawToCoord
-//
-// 22/03/2002 : David Hutchcroft
 //-----------------------------------------------------------------------------
 
 DECLARE_COMPONENT( MuonRawToCoord )

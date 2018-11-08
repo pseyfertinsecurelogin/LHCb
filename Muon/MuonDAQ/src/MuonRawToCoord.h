@@ -32,9 +32,6 @@
 /** @class MuonRawToCoord MuonRawToCoord.h
  *  This is the muon reconstruction algorithm
  *  This just crosses the logical strips back into pads
- *
- *  @author David Hutchcroft
- *  @date   22/03/2002
  */
 class MuonRawToCoord : public Gaudi::Functional::Transformer<LHCb::MuonCoords (const LHCb::RawEvent &)> {
 public:
@@ -47,8 +44,6 @@ public:
   using DigitsRange = boost::iterator_range<Digits::iterator>;
   StatusCode initialize() override;    ///< Algorithm initialization
   LHCb::MuonCoords operator()(const LHCb::RawEvent& event) const override;
-  //LHCb::MuonCoords operator()(Digits &decoding) const override;
-//  LHCb::MuonCoords operator()(const Digits &decoding) const override;
   StatusCode finalize  () override;    ///< Algorithm finalization
 
   struct Coord {
@@ -64,7 +59,6 @@ public:
 private:
 
   StatusCode checkBankSize(const LHCb::RawBank*) const;
-//  StatusCode checkAllHeaders(const LHCb::RawEvent*);
   std::vector<std::pair<LHCb::MuonTileID, unsigned int>> decodeTileAndTDCV1(const LHCb::RawBank*) const;
 
   /// Copy MuonTileID from digits to coord by crossing the digits
@@ -79,7 +73,6 @@ private:
   int m_NStation = 0;
   int m_NRegion = 0;
   bool m_forceResetDAQ = false;
-//  mutable int  m_Exccounter = 0;
 
 };
 #endif // MUONRAWTOCOORD_MUONRAWTOCOORD_H
