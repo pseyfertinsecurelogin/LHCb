@@ -22,11 +22,11 @@ namespace L0Muon {
   /**
      The XML keywords.
   */
-  static const std::string XMLRegisterFactory   = "RegisterFactory";
-  static const std::string XMLRegisterAlias     = "RegisterAlias";
-  static const std::string XMLRegister          = "Register";
-  static const std::string XMLTileRegister      = "TileRegister";
-  static const std::string XMLTile              = "Tile";
+  inline const std::string XMLRegisterFactory   = "RegisterFactory";
+  inline const std::string XMLRegisterAlias     = "RegisterAlias";
+  inline const std::string XMLRegister          = "Register";
+  inline const std::string XMLTileRegister      = "TileRegister";
+  inline const std::string XMLTile              = "Tile";
 
   class Link;
 

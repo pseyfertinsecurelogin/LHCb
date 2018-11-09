@@ -29,6 +29,6 @@ namespace Rich::Future::MC::Relations
   using TkToMCPRels = LHCb::RelationWeighted2D< LHCb::Track *, LHCb::MCParticle *, double >;
 
   /// Default TES location for Track <-> MCparticle relations
-  static const std::string TrackToMCParticles = "MC/Rich/TrackToMCParticleRelations";
+  inline const std::string TrackToMCParticles = "MC/Rich/TrackToMCParticleRelations";
 
 } // namespace Rich::Future::MC::Relations

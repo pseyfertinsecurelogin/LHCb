@@ -695,7 +695,7 @@ namespace LHCb
   namespace RichTrackSegmentLocation
   {
     /// Default Location in TES for the track segments
-    static const std::string Default = "Rec/Rich/TrackSegments/Default";
+    inline const std::string Default = "Rec/Rich/TrackSegments/Default";
   } // namespace RichTrackSegmentLocation
 
 } // namespace LHCb
