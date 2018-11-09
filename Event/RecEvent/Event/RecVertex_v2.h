@@ -48,14 +48,6 @@ namespace LHCb::Event::v2 {
                         Primary,
                         LastRec=10000
     };
-
-    RecVertex() = default;
-      
-    /// Copy constructor, note that the tracks are cloned
-    RecVertex(const RecVertex& rhs) = default;
-
-    /// Constructor from a point
-    RecVertex(const Gaudi::XYZPoint& point) : m_position(point) {}
   
     /// Is the vertex a primary?
     bool isPrimary() const { return RecVertexType::Primary == technique(); }
@@ -73,21 +65,16 @@ namespace LHCb::Event::v2 {
     void setCovMatrix(const Gaudi::SymMatrix3x3& value) { m_covMatrix = value; }
   
     /// Retrieve const  Chi square of vertex fit
-    double chi2() const { return m_chi2; }
+    auto chi2() const { return m_chi2PerDoF.chi2(); }
   
     /// Retrieve const  Number of degree of freedom
-    int nDoF() const { return m_nDoF; }
+    auto nDoF() const { return m_chi2PerDoF.nDoF; }
   
     /// Retrieve the Chi^2/DoF of vertex
-    double chi2PerDoF() const {
-      return ( (m_nDoF > 0) ? m_chi2 / double(m_nDoF) : -1. );  
-    }
+    auto chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; }
   
     /// Set the Chi^2 and the DoF of the vertex (fit)
-    void setChi2AndDoF(double chi2, int ndof) {
-      m_chi2 = chi2;
-      m_nDoF = ndof;
-    }
+    void setChi2PerDoF( Track::Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
 
     /// Set the tracks for this PV. Weights are implicitly set to 1 for each
     void setTracks(const std::vector<const Track*>& tracks) {
@@ -140,10 +127,8 @@ namespace LHCb::Event::v2 {
     Gaudi::XYZPoint       m_position{0.0, 0.0, -100*Gaudi::Units::m};
     /// Covariance matrix containing errors on vertex position
     Gaudi::SymMatrix3x3   m_covMatrix{};
-    /// Chi square of vertex fit
-    double                m_chi2{-1.0};
-    /// Number of degree of freedom
-    int                   m_nDoF{-1};
+    /// Chi square and number of degree of freedom
+    Track::Chi2PerDoF     m_chi2PerDoF{};
     /// How the vertex was made
     RecVertexType         m_technique{RecVertexType::Unknown};
     /// Tracks this vertex was made from
