@@ -49,7 +49,6 @@
 
 //locals
 #include "ControlFlowNode.h"
-#include "HistogramAgent.h"
 
 
 class HLTControlFlowMgr : public extends<Service, IEventProcessor>

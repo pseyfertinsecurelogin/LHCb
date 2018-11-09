@@ -9,6 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "HLTControlFlowMgr.h"
+#include "GaudiKernel/IDataSelector.h"
 
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
@@ -157,10 +158,16 @@ StatusCode HLTControlFlowMgr::finalize()
   StatusCode sc;
   // Save Histograms Now
   if ( m_histoPersSvc ) {
-    HistogramAgent agent;
-    sc = m_histoDataMgrSvc->traverseTree( &agent );
+    IDataSelector objects;
+    sc = m_histoDataMgrSvc->traverseTree( [&objects](IRegistry* pReg, int) {
+        DataObject* obj = pReg->object();
+        if ( obj && obj->clID() != CLID_StatisticsFile ) {
+          objects.push_back( obj );
+          return true;
+        }
+        return false;
+    });
     if ( sc.isSuccess() ) {
-      IDataSelector const & objects = agent.selectedObjects();
       // skip /stat entry!
       sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const & i ) {
         IOpaqueAddress* pAddr = nullptr;

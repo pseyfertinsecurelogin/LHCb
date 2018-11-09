@@ -34,6 +34,9 @@ void clearItems(LHCbOutputStream::Items& itms) {
   for ( auto&  i : itms ) delete i;
   itms.clear();
 }
+auto bind = [](auto fun, auto... bargs) {
+    return [=](auto&&... args) { return std::invoke(fun,bargs...,std::forward<decltype(args)>(args)... ); };
+};
 
 }
 
@@ -283,17 +286,13 @@ StatusCode LHCbOutputStream::collectObjects()   {
   StatusCode status = StatusCode::SUCCESS;
 
   // Traverse the tree and collect the requested objects
-  for ( Items::iterator i = m_itemList.begin(); i != m_itemList.end(); i++ )    {
-    DataObject* obj = 0;
-    m_currentItem = (*i);
-    StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
-    if ( iret.isSuccess() )  {
-      iret = m_pDataManager->traverseSubTree(obj, [&](IRegistry* pReg, int level) { return this->collect(pReg,level); } );
-      if ( !iret.isSuccess() )  {
-        status = iret;
-      }
-    }
-    else  {
+  for ( const auto& item : m_itemList ) {
+    DataObject* obj = nullptr;
+    m_currentItem = item;
+    if ( StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj); iret.isSuccess() ) {
+      iret = m_pDataManager->traverseSubTree(obj, bind(&LHCbOutputStream::collect, this));
+      if ( !iret.isSuccess() )  status = iret;
+    } else  {
       log << MSG::ERROR << "Cannot write mandatory object(s) (Not found) "
           << m_currentItem->path() << endmsg;
       status = iret;
@@ -301,12 +300,12 @@ StatusCode LHCbOutputStream::collectObjects()   {
   }
 
   // Traverse the tree and collect the requested objects (tolerate missing items here)
-  for ( auto i = m_optItemList.begin(); i != m_optItemList.end(); i++ )    {
+  for ( const auto& item : m_optItemList ) {
     DataObject* obj = nullptr;
-    m_currentItem = *i;
+    m_currentItem = item;
     StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
     if ( iret.isSuccess() )  {
-      iret = m_pDataManager->traverseSubTree(obj, [&](IRegistry* pReg, int level) { return this->collect(pReg,level); } );
+      iret = m_pDataManager->traverseSubTree(obj, bind(&LHCbOutputStream::collect, this));
     }
     if ( !iret.isSuccess() )    {
       ON_DEBUG
@@ -319,16 +318,14 @@ StatusCode LHCbOutputStream::collectObjects()   {
   for ( const auto& iAlgItems : m_algDependentItems ) {
     Algorithm * alg    = iAlgItems.first;
     const Items& items = iAlgItems.second;
-    if ( alg->isExecuted() && alg->filterPassed() )
-    {
+    if ( alg->isExecuted() && alg->filterPassed() ) {
       ON_DEBUG
         log << MSG::DEBUG << "Algorithm '" << alg->name() << "' fired. Adding " << items << endmsg;
       for ( const auto& i : items ) {
         DataObject* obj = nullptr;
         m_currentItem = i;
-        StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(),obj);
-        if ( iret.isSuccess() ) {
-          iret = m_pDataManager->traverseSubTree(obj, [&](IRegistry* pReg, int level) { return this->collect(pReg,level); } );
+        if ( StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(),obj); iret.isSuccess() ) {
+          iret = m_pDataManager->traverseSubTree(obj, bind(&LHCbOutputStream::collect, this));
           if ( !iret.isSuccess() ) { status = iret; }
         } else {
           log << MSG::ERROR << "Cannot write mandatory (algorithm dependent) object(s) (Not found) "
