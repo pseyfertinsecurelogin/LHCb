@@ -309,51 +309,44 @@ using namespace std;
       inline bool operator() ( const std::vector<double>& v1 ,
                                const std::vector<double>& v2 ) const
       {
-        return ( &v1 == &v2 ) ||
-          ( v1.size() == v2.size() &&
-            std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ) ;
+        return &v1 == &v2 ||
+               std::equal ( v1.begin () , v1.end () , v2.begin (), v2.end() , m_cmp ) ;
       }
       /// comparison:
       inline bool operator() ( const std::vector<double>& v1 ,
                                const std::vector<float>&  v2 ) const
       {
-        return v1.size() == v2.size() &&
-          std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ;
+        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
       }
       /// comparison:
       inline bool operator() ( const std::vector<double>& v1 ,
                                const std::vector<int>&    v2 ) const
       {
-        return v1.size() == v2.size() &&
-          std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ;
+        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
       }
       /// comparison:
       inline bool operator() ( const std::vector<double>&       v1 ,
                                const std::vector<unsigned int>& v2 ) const
       {
-        return v1.size() == v2.size() &&
-          std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ;
+        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
       }
       /// comparison:
       inline bool operator() ( const std::vector<float>&  v1 ,
                                const std::vector<double>& v2 ) const
       {
-        return v1.size() == v2.size() &&
-          std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ;
+        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
       }
       /// comparison:
       inline bool operator() ( const std::vector<int>&    v1 ,
                                const std::vector<double>& v2 ) const
       {
-        return v1.size() == v2.size() &&
-          std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ;
+        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
       }
       /// comparison:
       inline bool operator() ( const std::vector<unsigned int>& v1 ,
                                const std::vector<double>&       v2 ) const
       {
-        return v1.size() == v2.size() &&
-          std::equal ( v1.begin () , v1.end () , v2.begin () , m_cmp ) ;
+        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
       }
       // ======================================================================
     private:
