@@ -45,12 +45,12 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedMCRichDigitSummarys = 1527;
+  constexpr CLID CLID_PackedMCRichDigitSummarys = 1527;
 
   /// Namespace for locations in TDS
   namespace PackedMCRichDigitSummaryLocation
   {
-    static const std::string& Default = "pSim/Rich/DigitSummaries";
+    inline const std::string Default = "pSim/Rich/DigitSummaries";
   }
 
   /** @class PackedMCRichDigitSummarys Event/PackedMCRichDigitSummary.h

@@ -54,12 +54,12 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedMCRichOpticalPhotons = 1522;
+  constexpr CLID CLID_PackedMCRichOpticalPhotons = 1522;
 
   /// Namespace for locations in TDS
   namespace PackedMCRichOpticalPhotonLocation
   {
-    static const std::string& Default = "pSim/Rich/OpticalPhotons";
+    inline const std::string Default = "pSim/Rich/OpticalPhotons";
   }
 
   /** @class PackedMCRichOpticalPhotons Event/PackedMCRichOpticalPhoton.h

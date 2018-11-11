@@ -22,7 +22,7 @@ namespace LHCb
   // Namespace for locations in TDS
   namespace PackedTwoProngVertexLocation
   {
-    static const std::string& Default = "pRec/Vertex/V0";
+    inline const std::string Default = "pRec/Vertex/V0";
   }
 
   /** @class PackedTwoProngVertex Event/PackedTwoProngVertex.h
@@ -80,7 +80,7 @@ namespace LHCb
 
   };
 
-  static const CLID CLID_PackedTwoProngVertices = 1554;
+  constexpr CLID CLID_PackedTwoProngVertices = 1554;
 
   /** @class PackedTwoProngVertices Event/PackedTwoProngVertex.h
    *

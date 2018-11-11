@@ -26,7 +26,7 @@ namespace LHCb
    *  @date   2015-10-01
    */
 
-  static const CLID CLID_GenericBuffer = 1556 ;
+  constexpr CLID CLID_GenericBuffer = 1556 ;
 
   class GenericBuffer : public DataObject
   {

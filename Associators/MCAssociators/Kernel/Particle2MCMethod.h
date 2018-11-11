@@ -33,7 +33,7 @@ namespace Particle2MCMethod {
     No = 0, WithChi2, Chi2, Links, Composite, ChargedPP, NeutralPP, Max
   } ;
 
-  static const std::array<std::string,Max> extension= {
+  inline const std::array<std::string,Max> extension= {
     "",
     "/WithChi2",
     "/Chi2",
@@ -42,7 +42,7 @@ namespace Particle2MCMethod {
     "/PP2MC",
     "/PP2MC"
   };
-  static const std::array<std::string,Max> algType = {
+  inline const std::array<std::string,Max> algType = {
     "",
     "Particle2MCWithChi2",
     "Particle2MCChi2",

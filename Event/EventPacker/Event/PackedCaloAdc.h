@@ -53,15 +53,15 @@ namespace LHCb{
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedCaloAdcs = 1543;
+  constexpr CLID CLID_PackedCaloAdcs = 1543;
 
   /// Namespace for locations in TDS
   namespace PackedCaloAdcLocation
   {
-    static const std::string& Ecal    = "pRec/Ecal/Adcs";
-    static const std::string& Hcal    = "pRec/Hcal/Adcs";
-    static const std::string& Prs     = "pRec/Prs/Adcs";
-    static const std::string& Spd     = "pRec/Spd/Adcs";
+    inline const std::string Ecal    = "pRec/Ecal/Adcs";
+    inline const std::string Hcal    = "pRec/Hcal/Adcs";
+    inline const std::string Prs     = "pRec/Prs/Adcs";
+    inline const std::string Spd     = "pRec/Spd/Adcs";
   }
 
   /** @class PackedCaloAdcs Event/PackedCaloAdc.h

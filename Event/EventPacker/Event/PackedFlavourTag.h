@@ -98,13 +98,13 @@ namespace LHCb
 
   // ----------------------------------------------------------------------------------------
 
-  static const CLID CLID_PackedFlavourTags = 1583;
+  constexpr CLID CLID_PackedFlavourTags = 1583;
 
   /// Namespace for locations in TDS
   namespace PackedFlavourTagLocation
   {
-    static const std::string& Default  = "pPhys/FlavourTags";
-    static const std::string& InStream = "/pPhys/FlavourTags";
+    inline const std::string Default  = "pPhys/FlavourTags";
+    inline const std::string InStream = "/pPhys/FlavourTags";
   }
 
   /** @class PackedFlavourTags Event/PackedFlavourTag.h

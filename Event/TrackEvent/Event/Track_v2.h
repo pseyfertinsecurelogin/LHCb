@@ -46,25 +46,25 @@ namespace LHCb::Event
     // Namespace for locations in TDS
     namespace TrackLocation
     {
-      static std::string const Default             = "Rec/Track/Best";
-      static std::string const Ideal               = "MC/Track/Ideal";
-      static std::string const Seed                = "Rec/Track/Seed";
-      static std::string const RZVelo              = "Rec/Track/RZVelo";
-      static std::string const Velo                = "Rec/Track/Velo";
-      static std::string const Forward             = "Rec/Track/Forward";
-      static std::string const VeloTT              = "Rec/Track/VeloTT";
-      static std::string const TT                  = "Rec/Track/TT";
-      static std::string const Match               = "Rec/Track/Match";
-      static std::string const Downstream          = "Rec/Track/Downstream";
-      static std::string const Tsa                 = "Rec/Track/Tsa";
-      static std::string const Muon                = "Rec/Track/Muon";
-      static std::string const VP                  = "Rec/Track/VP";
-      static std::string const VPTT                = "Rec/Track/VPTT";
-      static std::string const VeloUT              = "Rec/Track/VeloUT";
-      static std::string const UT                  = "Rec/Track/UT";
-      static std::string const CaloCosmicsForward  = "Calo/Track/Forward";
-      static std::string const CaloCosmicsBackward = "Calo/Track/Backward";
-      static std::string const HltImport           = "Red/Track/HLTImport";
+      inline std::string const Default             = "Rec/Track/Best";
+      inline std::string const Ideal               = "MC/Track/Ideal";
+      inline std::string const Seed                = "Rec/Track/Seed";
+      inline std::string const RZVelo              = "Rec/Track/RZVelo";
+      inline std::string const Velo                = "Rec/Track/Velo";
+      inline std::string const Forward             = "Rec/Track/Forward";
+      inline std::string const VeloTT              = "Rec/Track/VeloTT";
+      inline std::string const TT                  = "Rec/Track/TT";
+      inline std::string const Match               = "Rec/Track/Match";
+      inline std::string const Downstream          = "Rec/Track/Downstream";
+      inline std::string const Tsa                 = "Rec/Track/Tsa";
+      inline std::string const Muon                = "Rec/Track/Muon";
+      inline std::string const VP                  = "Rec/Track/VP";
+      inline std::string const VPTT                = "Rec/Track/VPTT";
+      inline std::string const VeloUT              = "Rec/Track/VeloUT";
+      inline std::string const UT                  = "Rec/Track/UT";
+      inline std::string const CaloCosmicsForward  = "Calo/Track/Forward";
+      inline std::string const CaloCosmicsBackward = "Calo/Track/Backward";
+      inline std::string const HltImport           = "Red/Track/HLTImport";
     }
 
     namespace details

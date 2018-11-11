@@ -67,12 +67,12 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedWeightsVector = 1555;
+  constexpr CLID CLID_PackedWeightsVector = 1555;
 
   /// Namespace for locations in TDS
   namespace PackedWeightsVectorLocation
   {
-    static const std::string& Default = "pRec/Vertex/Weights";
+    inline const std::string Default = "pRec/Vertex/Weights";
   }
 
   /** @class PackedWeightsVectors Event/PackedWeightsVector.h

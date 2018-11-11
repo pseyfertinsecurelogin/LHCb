@@ -36,12 +36,12 @@ namespace LHCb
     int end{0};
   };
 
-  static const CLID CLID_PackedParticle2Ints = 1591;
+  constexpr CLID CLID_PackedParticle2Ints = 1591;
 
   /// Namespace for locations in TES
   namespace PackedParticle2IntsLocation
   {
-    static const std::string& InStream = "/pPhys/Particle2Int";
+    inline const std::string InStream = "/pPhys/Particle2Int";
   }
 
   /** @class PackedParticle2Ints PackedParticle2Ints.h Event/PackedParticle2Ints.h

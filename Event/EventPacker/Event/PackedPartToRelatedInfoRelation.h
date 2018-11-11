@@ -61,13 +61,13 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedRelatedInfoRelations = 1584; // Tell Marco !!
+  constexpr CLID CLID_PackedRelatedInfoRelations = 1584; // Tell Marco !!
 
   /// Namespace for locations in TDS
   namespace PackedRelatedInfoLocation
   {
-    static const std::string& User = "pPhys/User/PartToRelatedInfoRelations";
-    static const std::string& InStream = "/pPhys/PartToRelatedInfoRelations";
+    inline const std::string User = "pPhys/User/PartToRelatedInfoRelations";
+    inline const std::string InStream = "/pPhys/PartToRelatedInfoRelations";
   }
 
   /** @class PackedParticles Event/PackedParticle.h

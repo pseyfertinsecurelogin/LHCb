@@ -30,7 +30,7 @@
  */
 
 namespace EvtInfoLocation {
-  static const std::string& Default = "Raw/Velo/EvtInfo";
+  inline const std::string Default = "Raw/Velo/EvtInfo";
 }
 
 class EvtInfo: public KeyedObject<int>{

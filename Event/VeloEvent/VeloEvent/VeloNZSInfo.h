@@ -30,7 +30,7 @@
  */
 
 namespace VeloNZSInfoLocation{
-  static const std::string& Default="Raw/Velo/NZSInfo";
+  inline const std::string Default="Raw/Velo/NZSInfo";
 }
 
 class VeloNZSInfo: public ContainedObject{
