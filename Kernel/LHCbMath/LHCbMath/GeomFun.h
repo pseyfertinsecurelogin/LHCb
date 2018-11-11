@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$
 // ============================================================================
 #ifndef LHCBMATH_GEOMFUN_H
 #define LHCBMATH_GEOMFUN_H 1
@@ -26,7 +25,7 @@ namespace Gaudi
      *  aPlane must have methods Normal() and HesseDistance()
      *
      *  aPoint must be constructible from object with x(), y(), z() methods.
-     *  
+     *
      *  @author  Matthew Needham
      *  @author  Juan Palacios
      *  @param   line: generic line
@@ -41,20 +40,20 @@ namespace Gaudi
       const aPlane& plane     ,
       aPoint&       intersect ,
       double&       mu        ) ;
-    // ========================================================================    
+    // ========================================================================
     /** Calculate aLine, the intersection of two aPlanes pane0 and
-     *  plane1. 
+     *  plane1.
      *
      *  aLine must satisfy point = line.beginPoint() + scalar*line.direction()
      *  and export its vector and point types as aLine::Vector and aLine::Point
      *  respectively
      *
-     *  aPlane must have methods Normal() and HesseDistance() and export 
+     *  aPlane must have methods Normal() and HesseDistance() and export
      *  its scalar type as aPlane::Scalar
      *
      *  @author  Juan Palacios Juan.Palacios@cern.ch
      *  @date    01/05/2006
-     *  @param   plane0: aPlane to be intersected 
+     *  @param   plane0: aPlane to be intersected
      *  @param   plane1: aPlane to be intersected
      *  @param   intersect: aLine of intersection between plane0 and plane1
      *  @return  false if planes parallel
@@ -76,7 +75,7 @@ namespace Gaudi
      *
      *  @author  Juan Palacios Juan.Palacios@cern.ch
      *  @date    01/05/2006
-     *  @param   plane0:    aPlane to be intersected 
+     *  @param   plane0:    aPlane to be intersected
      *  @param   plane1:    aPlane to be intersected
      *  @param   plane2:    aPlane to be intersected
      *  @param   intersect: aPoint, point of intersection between three planes
@@ -120,8 +119,8 @@ namespace Gaudi
     ( const aLine& line0 ,
       const bLine& line1 );
     // ========================================================================
-    /** Get nearest aPoints p0 and p1 between 
-     *  aLines line0 and abd bLine line2 such that 
+    /** Get nearest aPoints p0 and p1 between
+     *  aLines line0 and abd bLine line2 such that
      *  p0 = line0.beginPoint() + mu0 * line0.direction()
      *  p1 = line1.beginPoint() + mu1 * line1.direction()
      *
@@ -143,7 +142,7 @@ namespace Gaudi
       aPoint&      p0    ,
       aPoint&      p1    ) ;
     // ========================================================================
-    /** Return scalar parameter defining the point on aLine 
+    /** Return scalar parameter defining the point on aLine
      *  which is closest to an aPoint, such that
      *  closest point = line.beginPoint() + scalar * line.direction()
      *
@@ -180,12 +179,12 @@ namespace Gaudi
     aPoint closestPoint(const aPoint&  point ,
                         const aLine& line);
     // ========================================================================
-    /** Calculate scalar parameters defining points of nearest approach 
+    /** Calculate scalar parameters defining points of nearest approach
      *  between aLine line0 and bLine line1. If p0 and p1 are the points of closest
      *  approach, mu0 and mu1 satisfy
      *  p0 = line0.beginPoint() + mu0 * line0.direction()
      *  p0 = line1.beginPoint() + mu1 * line1.direction()
-     * 
+     *
      *  @author  Matthew Needham
      *  @date    19/04/2006
      *  @param   line0
@@ -198,7 +197,7 @@ namespace Gaudi
     bool closestPointParams
     ( const aLine& line0 ,
       const bLine& line1 ,
-      double&      mu0   , 
+      double&      mu0   ,
       double&      mu1   ) ;
     // ========================================================================
     /** Estimate whether two lines are parallel
@@ -221,7 +220,7 @@ namespace Gaudi
 // ============================================================================
 #include "LHCbMath/GeomFun.icpp"
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif
 // ============================================================================

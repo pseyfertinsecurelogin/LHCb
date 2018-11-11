@@ -8,9 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$
 // ============================================================================
-#ifndef LHCBMATH_BINOMIAL_H 
+#ifndef LHCBMATH_BINOMIAL_H
 #define LHCBMATH_BINOMIAL_H 1
 // ============================================================================
 // Include files
@@ -24,7 +23,7 @@
 #include  "GaudiKernel/Kernel.h"
 // ============================================================================
 /** @file
- *  Collection of functions to estimate the confidence intervals for 
+ *  Collection of functions to estimate the confidence intervals for
  *  binomial proportion/efficiency
  *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
@@ -37,12 +36,12 @@ namespace Gaudi
   namespace Math
   {
     // ========================================================================
-    /** normal approximation interval for binomial proportion/efficiency 
+    /** normal approximation interval for binomial proportion/efficiency
      *  ( "Wald test")
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
@@ -54,11 +53,11 @@ namespace Gaudi
       const unsigned long rejected  ,
       const double        conflevel ) ;
     // ========================================================================
-    /** Wilson score interval for binomial proportion/efficiency 
+    /** Wilson score interval for binomial proportion/efficiency
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
@@ -70,11 +69,11 @@ namespace Gaudi
       const unsigned long rejected  ,
       const double        conflevel ) ;
     // ========================================================================
-    /** Wilson score interval with continuity correction for binomial proportion/efficiency 
+    /** Wilson score interval with continuity correction for binomial proportion/efficiency
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
@@ -86,11 +85,11 @@ namespace Gaudi
       const unsigned long rejected  ,
       const double        conflevel ) ;
     // ========================================================================
-    /** ArcSin interval with continuity correction for binomial proportion/efficiency 
+    /** ArcSin interval with continuity correction for binomial proportion/efficiency
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
@@ -102,11 +101,11 @@ namespace Gaudi
       const unsigned long rejected  ,
       const double        conflevel ) ;
     // ========================================================================
-    /** Agresti-Coull interval with continuity correction for binomial proportion/efficiency 
+    /** Agresti-Coull interval with continuity correction for binomial proportion/efficiency
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
@@ -118,11 +117,11 @@ namespace Gaudi
       const unsigned long rejected  ,
       const double        conflevel ) ;
     // ========================================================================
-    /** Jeffreys interval for binomial proportion/efficiency 
+    /** Jeffreys interval for binomial proportion/efficiency
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
@@ -135,11 +134,11 @@ namespace Gaudi
       const unsigned long rejected  ,
       const double        conflevel ) ;
     // ========================================================================
-    /** Clopper-Pearson interval for binomial proportion/efficiency 
+    /** Clopper-Pearson interval for binomial proportion/efficiency
      *  @param  accepted  number of accepted events
      *  @param  rejected  number of rejected events
-     *  @param  conflevel the confidence level:    0<=CL<=1 
-     *  @return the confidence interval 
+     *  @param  conflevel the confidence level:    0<=CL<=1
+     *  @return the confidence interval
      *  @see http://en.wikipedia.org.wiki/Binomial_proportion_connfidence_interval
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date 2015-09-17
@@ -156,7 +155,7 @@ namespace Gaudi
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LHCBMATH_BINOMIAL_H
 // ============================================================================

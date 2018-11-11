@@ -8,11 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$ 
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// STD&STL 
+// STD&STL
 // ============================================================================
 #include <limits>
 #include <cassert>
@@ -26,7 +25,7 @@
 // ============================================================================
 #include "LHCbMath/NStatEntity.h"
 // ===========================================================================
-/** @file 
+/** @file
  *  Implementation file for class Gaudi::Math::NStatEntity
  *  @see Gaudi::Math::NStatEntity
  *  @see Gaudi::Math::WStatEntity
@@ -39,24 +38,24 @@
  *                 by $Author$
  */
 // ===========================================================================
-namespace 
+namespace
 {
   // =========================================================================
-  static_assert ( std::numeric_limits<unsigned long>::is_specialized   , 
+  static_assert ( std::numeric_limits<unsigned long>::is_specialized   ,
                   "numeric_limits<unsigned long> is not specialized!" ) ;
   // =========================================================================
-  /// define the maximum half-width of a window 
+  /// define the maximum half-width of a window
   const unsigned long s_max = std::numeric_limits<unsigned long>::max() << 3 ;
   // =========================================================================
 }
 // ===========================================================================
-// constructor with N-parameter  
+// constructor with N-parameter
 // ===========================================================================
-Gaudi::Math::NStatEntity::NStatEntity ( const unsigned long N ) 
-  : m_cnt1 () 
-  , m_cnt2 () 
+Gaudi::Math::NStatEntity::NStatEntity ( const unsigned long N )
+  : m_cnt1 ()
+  , m_cnt2 ()
   , m_N    ( std::min ( std::max ( 1UL , N ) , s_max ) )
 {}
 // ===========================================================================
-// The END 
+// The END
 // ===========================================================================
