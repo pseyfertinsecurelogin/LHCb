@@ -27,19 +27,19 @@ namespace L0Muon {
   // The XML keywords
 
   /// The XML keyword for Property
-  static const std::string XMLProperty        = "Property";
+  inline const std::string XMLProperty        = "Property";
 
   /// The XML keyword for RegisterRecord
-  static const std::string XMLRegisterRecord  = "RegisterRecord";
+  inline const std::string XMLRegisterRecord  = "RegisterRecord";
 
   /// The XML keyword for InputRegisters
-  static const std::string XMLInputRegisters  = "InputRegisters";
+  inline const std::string XMLInputRegisters  = "InputRegisters";
 
   /// The XML keyword for OutputRegisters
-  static const std::string XMLOutputRegisters = "OutputRegisters";
+  inline const std::string XMLOutputRegisters = "OutputRegisters";
 
   /// The XML keyword for Unit
-  static const std::string XMLUnit            = "Unit";
+  inline const std::string XMLUnit            = "Unit";
 
   /** @class L0MUnit L0MUnit.h L0MuonKernel/L0MUnit.h
 

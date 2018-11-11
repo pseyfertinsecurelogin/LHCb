@@ -79,12 +79,12 @@ class genClasses(genSrcUtils.genSrcUtils):
         s2 = ''
         classAtt = godClass['attrs']
         if 'location' in classAtt:                                             # add class attribute location
-            s2 += '  static const std::string Default = "%s";\n' % classAtt['location']
+            s2 += '  inline const std::string Default = "%s";\n' % classAtt['location']
         for loc in godClass.get('location',[]):
             locAtt = loc['attrs']
             place = locAtt['place']
             if locAtt['noQuote'] == 'FALSE': place = '"' + place + '"'
-            s2 += '  static const std::string %s = %s;\n' % ( locAtt['name'], place )
+            s2 += '  inline const std::string %s = %s;\n' % ( locAtt['name'], place )
         if len(s2):                                                                  # if found something put namespace around it
             s =  '// Namespace for locations in TDS\n'
             s += 'namespace %sLocation {\n%s}\n' % ( classAtt['name'], s2 )

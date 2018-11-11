@@ -227,7 +227,7 @@ namespace Rich
   namespace PDPixelClusterLocation
   {
     /// Default Location in TES for the decoded data map
-    static const std::string Default = "Rec/Rich/PixelClusters/Default";
+    inline const std::string Default = "Rec/Rich/PixelClusters/Default";
   } // namespace PDPixelClusterLocation
 
   //-----------------------------------------------------------------------------
