@@ -17,7 +17,9 @@ gaudi_depends_on_subdirs(GaudiObjDesc
                          Kernel/LHCbKernel)
 
 find_package(Boost)
+find_package(ROOT)
 find_package(GSL)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 include(GaudiObjDesc)
 
