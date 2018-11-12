@@ -21,6 +21,9 @@ gaudi_depends_on_subdirs(Event/DigiEvent
                          Kernel/PartProp)
 
 include(GaudiObjDesc)
+find_package(ROOT)
+find_package(Boost)
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 god_build_headers(xml/*.xml)
 
