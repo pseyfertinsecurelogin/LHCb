@@ -60,7 +60,7 @@ public:
     L0Candidate = 128 //
   };
 
-  operator LHCb::Event::v2::Track();
+  operator LHCb::Event::v2::Track() const;
   LHCb::State state;
   LHCb::Event::v2::Track::Types type;
   LHCb::Event::v2::Track::History history;
