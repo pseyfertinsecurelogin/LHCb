@@ -72,10 +72,10 @@
 
 namespace DeFTDetectorLocation{
 // FT location defined in the XmlDDDB
-static const std::string& Default = "/dd/Structure/LHCb/AfterMagnetRegion/T/FT";
+inline const std::string Default = "/dd/Structure/LHCb/AfterMagnetRegion/T/FT";
 }
 
-static const CLID CLID_DeFTDetector = 8601;
+constexpr CLID CLID_DeFTDetector = 8601;
 
 class DeFTDetector : public DetectorElement {
 
@@ -86,14 +86,14 @@ public:
   /// Standard constructor
   using DetectorElement::DetectorElement;
 
-  /** Initialization method 
+  /** Initialization method
    *  @return Status of initialization
-   */ 
+   */
   StatusCode initialize() override;
 
   /** Finalization method - delete objects created with new
    *  @return Status of finalization
-   */ 
+   */
   StatusCode finalize();
 
   /** Retrieves reference to class identifier

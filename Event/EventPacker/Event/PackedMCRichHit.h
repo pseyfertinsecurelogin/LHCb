@@ -48,12 +48,12 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedMCRichHits = 1521;
+  constexpr CLID CLID_PackedMCRichHits = 1521;
 
   /// Namespace for locations in TDS
   namespace PackedMCRichHitLocation
   {
-    static const std::string& Default = "pSim/Rich/Hits";
+    inline const std::string Default = "pSim/Rich/Hits";
   }
 
   /** @class PackedMCRichHits Event/PackedMCRichHit.h

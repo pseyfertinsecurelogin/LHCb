@@ -19,12 +19,12 @@
 namespace LHCb
 {
 
-  static const CLID CLID_PackedDecReport = 1559;
+  constexpr CLID CLID_PackedDecReport = 1559;
 
   // Namespace for locations in TDS
   namespace PackedDecReportLocation
   {
-    static const std::string& Default = "pStrip/Phys/DecReports";
+    inline const std::string Default = "pStrip/Phys/DecReports";
   }
 
   /** @class PackedDecReport PackedDecReport.h Event/PackedDecReport.h

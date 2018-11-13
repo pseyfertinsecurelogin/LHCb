@@ -17,8 +17,8 @@
 
 namespace SiAmpliferResponseType{
 
-  static const std::string& signal = "signal";
-  static const std::string& capCoupling = "capCoupling";
+  inline const std::string signal = "signal";
+  inline const std::string capCoupling = "capCoupling";
 }
 
 /** @class ISiAmplifierResponse ISiAmplifierResponse.h Kernel/ISiAmplifierResponse.h

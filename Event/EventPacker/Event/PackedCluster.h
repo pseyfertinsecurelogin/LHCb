@@ -52,15 +52,15 @@ namespace LHCb
 
   };
 
-  static const CLID CLID_PackedClusters = 1540;
+  constexpr CLID CLID_PackedClusters = 1540;
 
   namespace PackedClusterLocation
   {
-    static const std::string& Default = "pRec/Track/Clusters";
-    static const std::string& Velo = "pRec/Velo/Clusters";
-    static const std::string& IT = "pRec/IT/Clusters";
-    static const std::string& TT = "pRec/TT/Clusters";
-    static const std::string& UT = "pRec/UT/Clusters";
+    inline const std::string Default = "pRec/Track/Clusters";
+    inline const std::string Velo = "pRec/Velo/Clusters";
+    inline const std::string IT = "pRec/IT/Clusters";
+    inline const std::string TT = "pRec/TT/Clusters";
+    inline const std::string UT = "pRec/UT/Clusters";
   }
 
   /** @class PackedClusters PackedCluster.h Event/PackedCluster.h

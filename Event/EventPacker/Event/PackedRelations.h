@@ -46,14 +46,14 @@ namespace LHCb
 
   // =================== Unweighted Relations =========================
 
-  static const CLID CLID_PackedRelations = 1560;
+  constexpr CLID CLID_PackedRelations = 1560;
 
   /// Namespace for locations in TDS
   namespace PackedRelationsLocation
   {
-    static const std::string& InStream = "/pPhys/Relations";
-    static const std::string& P2MCP    = "/pPhys/P2MCPRelations";
-    static const std::string& P2Int    = "/pPhys/P2IntRelations";
+    inline const std::string InStream = "/pPhys/Relations";
+    inline const std::string P2MCP    = "/pPhys/P2MCPRelations";
+    inline const std::string P2Int    = "/pPhys/P2IntRelations";
   }
 
   /** @class PackedRelations PackedRelations.h Event/PackedRelations.h
@@ -124,12 +124,12 @@ namespace LHCb
 
   // =================== Weighted Relations =========================
 
-  static const CLID CLID_PackedWeightedRelations = 1562;
+  constexpr CLID CLID_PackedWeightedRelations = 1562;
 
   /// Namespace for locations in TDS
   namespace PackedWeightedRelationsLocation
   {
-    static const std::string& PP2MCP = "/pPhys/PP2MCPRelations";
+    inline const std::string PP2MCP = "/pPhys/PP2MCPRelations";
   }
 
   /** @class PackedWeightedRelations PackedRelations.h Event/PackedRelations.h

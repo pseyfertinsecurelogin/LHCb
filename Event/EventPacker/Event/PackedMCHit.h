@@ -49,24 +49,24 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedMCHits = 1525;
+  constexpr CLID CLID_PackedMCHits = 1525;
 
   /// Namespace for locations in TDS
   namespace PackedMCHitLocation
   {
-    static const std::string& Velo    = "pSim/Velo/Hits";
-    static const std::string& PuVeto  = "pSim/PuVeto/Hits";
-    static const std::string& VP      = "pSim/VP/Hits";
-    static const std::string& TT      = "pSim/TT/Hits";
-    static const std::string& UT      = "pSim/UT/Hits";
-    static const std::string& IT      = "pSim/IT/Hits";
-    static const std::string& SL    = "pSim/SL/Hits";
-    static const std::string& OT      = "pSim/OT/Hits";
-    static const std::string& FT      = "pSim/FT/Hits";
-    static const std::string& Muon    = "pSim/Muon/Hits";
-    static const std::string& HC      = "pSim/HC/Hits";
-    static const std::string& Bcm     = "pSim/Bcm/Hits";
-    static const std::string& Bls     = "pSim/Bls/Hits";
+    inline const std::string Velo    = "pSim/Velo/Hits";
+    inline const std::string PuVeto  = "pSim/PuVeto/Hits";
+    inline const std::string VP      = "pSim/VP/Hits";
+    inline const std::string TT      = "pSim/TT/Hits";
+    inline const std::string UT      = "pSim/UT/Hits";
+    inline const std::string IT      = "pSim/IT/Hits";
+    inline const std::string SL    = "pSim/SL/Hits";
+    inline const std::string OT      = "pSim/OT/Hits";
+    inline const std::string FT      = "pSim/FT/Hits";
+    inline const std::string Muon    = "pSim/Muon/Hits";
+    inline const std::string HC      = "pSim/HC/Hits";
+    inline const std::string Bcm     = "pSim/Bcm/Hits";
+    inline const std::string Bls     = "pSim/Bls/Hits";
   }
 
   /** @class PackedMCHits Event/PackedMCHit.h

@@ -55,7 +55,7 @@ namespace LHCb
     inline void save(T& buf) const {
       buf.io(
         MuonLLMu, MuonLLBg, nShared, status,
-        idtrack, mutrack, key,        
+        idtrack, mutrack, key,
         chi2Corr, muonMVA1, muonMVA2, muonMVA3, muonMVA4
       );
     }
@@ -76,13 +76,13 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedMuonPIDs = 1571;
+  constexpr CLID CLID_PackedMuonPIDs = 1571;
 
   /// Namespace for locations in TDS
   namespace PackedMuonPIDLocation
   {
-    static const std::string& Default  =  "pRec/Muon/MuonPID";
-    static const std::string& InStream = "/pRec/Muon/CustomPIDs";
+    inline const std::string Default  =  "pRec/Muon/MuonPID";
+    inline const std::string InStream = "/pRec/Muon/CustomPIDs";
   }
 
   /** @class PackedMuonPIDs Event/PackedMuonPID.h

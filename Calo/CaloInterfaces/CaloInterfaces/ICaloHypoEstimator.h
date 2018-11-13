@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef ICALOHYPOESTIMATOR_H 
+#ifndef ICALOHYPOESTIMATOR_H
 #define ICALOHYPOESTIMATOR_H 1
 
 // Include files
@@ -27,7 +27,7 @@
 
 namespace CaloDataType{
 
-  static const double Default = -1.e+06;  // default value
+  constexpr double Default = -1.e+06;  // default value
 
   enum DataType  {  HypoE     = 0,   //0 hypo energy
                     HypoEt       ,   //1 hypo Et
@@ -41,10 +41,10 @@ namespace CaloDataType{
                     ToPrsM       ,   //9 Prs multiplicity
                     ToSpdM       ,   //10 Spd multiplicity
                     E1           ,   // cluster seed energy
-                    E9           ,   // 3x3 area cluster 
+                    E9           ,   // 3x3 area cluster
                     E19          ,   // E1/E9
                     E1Hypo       ,   // E1/HypoE
-                    E4           ,   // max (2x2) energy within 3x3 
+                    E4           ,   // max (2x2) energy within 3x3
                     E49          ,   // E4/E9
                     CellID       ,   // cluster-seed id
                     Hcal2Ecal    ,   // ToHcalE/ClusterE
@@ -91,54 +91,54 @@ namespace CaloDataType{
                     ClusterAsY,
                     isPhotonXGB,
                     Last // dummy end (59)
-  };                
+  };
 
-  static const  int TypeMask[Last] ={  // 0x1 : neutral ; 0x2 : charged ; 0x3 : both
+  inline const  int TypeMask[Last] ={  // 0x1 : neutral ; 0x2 : charged ; 0x3 : both
     0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,    // 20
     0x2,0x2,0x1,0x3,0x2,  // 5
     0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3, // 12
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Ecal-based)
-    0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Prs-based)  
+    0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Prs-based)
     0x1,0x1,0x3,0x3, //4
     0x1,0x1,0x1,0x1 //4
   };
-  static const  std::string Name[Last] = {
+  inline const  std::string Name[Last] = {
     "HypoE"     , // 0
-    "HypoEt"    ,     
-    "HypoM"     ,     
-    "HypoPrsE"  ,     
-    "HypoPrsM"  ,     
-    "HypoSpdM"  ,     
-    "ClusterE"  ,  
-    "ToPrsE"    ,  
-    "ToHcalE"   ,  
-    "ToPrsM"    ,   
-    "ToSpdM"    , //10 
-    "E1"        ,  
-    "E9"        ,  
-    "E19"       ,  
-    "E1Hypo"    ,  
-    "E4"        ,  
-    "E49"       ,  
-    "CellID"    ,  
-    "Hcal2Ecal" ,  
-    "ClusterMatch" , 
-    "ElectronMatch", //20 
-    "BremMatch"    ,  
-    "NeutralID"    ,  
-    "Spread"       ,  
+    "HypoEt"    ,
+    "HypoM"     ,
+    "HypoPrsE"  ,
+    "HypoPrsM"  ,
+    "HypoSpdM"  ,
+    "ClusterE"  ,
+    "ToPrsE"    ,
+    "ToHcalE"   ,
+    "ToPrsM"    ,
+    "ToSpdM"    , //10
+    "E1"        ,
+    "E9"        ,
+    "E19"       ,
+    "E1Hypo"    ,
+    "E4"        ,
+    "E49"       ,
+    "CellID"    ,
+    "Hcal2Ecal" ,
+    "ClusterMatch" ,
+    "ElectronMatch", //20
+    "BremMatch"    ,
+    "NeutralID"    ,
+    "Spread"       ,
     "TrajectoryL"  ,
     "PrsE19" ,
     "PrsE49" ,
     "PrsE4Max" ,
-    "PrsE1" , 
-    "PrsE2" , 
+    "PrsE1" ,
+    "PrsE2" ,
     "PrsE3" , //30
-    "PrsE4" , 
-    "PrsE5" , 
-    "PrsE6" , 
-    "PrsE7" , 
-    "PrsE8" , 
+    "PrsE4" ,
+    "PrsE5" ,
+    "PrsE6" ,
+    "PrsE7" ,
+    "PrsE8" ,
     "PrsE9" ,
     "isPhoton",
     "isPhoton_Ecl",
@@ -168,30 +168,30 @@ namespace CaloDataType{
 }
 
 namespace CaloMatchType{
-  enum MatchType  {  ClusterMatch     = 0,  
-                     ElectronMatch      ,     
-                     BremMatch   , 
+  enum MatchType  {  ClusterMatch     = 0,
+                     ElectronMatch      ,
+                     BremMatch   ,
                      Last};
-  static const  std::string Name[Last] = { "ClusterMatch","ElectronMatch","BremMatch"};
+  inline const  std::string Name[Last] = { "ClusterMatch","ElectronMatch","BremMatch"};
 }
 
 namespace CaloClusterType{
-  enum ClusterType  { Main     = 0,  
+  enum ClusterType  { Main     = 0,
                       SplitOrMain,
                       Last};
-  static const  std::string Name[Last] = { "Main","SplitOrMain"};
+  inline const  std::string Name[Last] = { "Main","SplitOrMain"};
 }
 
 
 
 
 /** @class ICaloHypoEstimator ICaloHypoEstimator.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2010-08-18
  */
-struct ICaloHypoEstimator : extend_interfaces<IAlgTool> 
+struct ICaloHypoEstimator : extend_interfaces<IAlgTool>
 {
 
   // Return the interface ID
@@ -200,15 +200,15 @@ struct ICaloHypoEstimator : extend_interfaces<IAlgTool>
   typedef std::map<CaloDataType::DataType, double> caloDataType;
   typedef std::map<CaloMatchType::MatchType, const LHCb::Track*> caloMatchType;
   typedef std::map<CaloClusterType::ClusterType, const LHCb::CaloCluster*> caloClusterType;
-  
+
   virtual double data(const LHCb::CaloCluster* cluster ,CaloDataType::DataType type, double def = 0.)=0;
   virtual double data(const LHCb::CaloHypo* hypo ,CaloDataType::DataType type, double def = 0)=0;
   virtual StatusCode _setProperty(const std::string&, const std::string&)=0;
-  virtual ICaloHypo2Calo* hypo2Calo()=0;  
-  virtual bool status()=0;  
+  virtual ICaloHypo2Calo* hypo2Calo()=0;
+  virtual bool status()=0;
   virtual const LHCb::Track*  toTrack(CaloMatchType::MatchType match)=0;
   virtual const LHCb::CaloCluster* toCluster(CaloClusterType::ClusterType clus=CaloClusterType::SplitOrMain)=0;
 
-  
+
 };
 #endif // ICALOHYPOESTIMATOR_H

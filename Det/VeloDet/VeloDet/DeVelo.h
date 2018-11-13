@@ -38,10 +38,10 @@
  *  @date 22/4/2003
  */
 
-static const CLID CLID_DeVelo = 8100;
+constexpr CLID CLID_DeVelo = 8100;
 
 namespace DeVeloLocation{
-  static const std::string& Default="/dd/Structure/LHCb/BeforeMagnetRegion/Velo";
+  inline const std::string Default="/dd/Structure/LHCb/BeforeMagnetRegion/Velo";
 }
 
 class DeVelo: public DetectorElement {

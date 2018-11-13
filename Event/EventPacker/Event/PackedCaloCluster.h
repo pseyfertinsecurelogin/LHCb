@@ -95,12 +95,12 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  static const CLID CLID_PackedCaloClusters = 1541;
+  constexpr CLID CLID_PackedCaloClusters = 1541;
 
   /// Namespace for locations in TDS
   namespace PackedCaloClusterLocation
   {
-    static const std::string& Default = "pRec/Calo/Clusters";
+    inline const std::string Default = "pRec/Calo/Clusters";
   }
 
   /** @class PackedCaloClusters Event/PackedCaloCluster.h

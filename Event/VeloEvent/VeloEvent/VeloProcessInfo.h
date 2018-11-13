@@ -27,7 +27,7 @@
  */
 
 namespace VeloProcessInfoLocation{
-  static const std::string& Default="Raw/Velo/ProcInfo";
+  inline const std::string Default="Raw/Velo/ProcInfo";
 }
 
 class VeloProcessInfo: public ContainedObject{
