@@ -15,31 +15,32 @@
 // STD & STL
 #include <functional>
 #include <utility>
-// GaudiKernel
-#include "Event/Track.h"
+// GaudiKernel 
 #include "GaudiKernel/IAlgTool.h"
+#include "Math/Plane3D.h"
+#include "Event/State.h"
+namespace LHCb{
+  class CaloPosition  ; // from CaloEvent package 
+  class Track         ; // from TrackEvent   package
+  class State         ; // from TrackEvent   package
+}
 
-namespace LHCb {
-  class CaloPosition; // from CaloEvent package
-  class State;        // from TrackEvent   package
-} // namespace LHCb
-
-/** @class ICaloFutureTrackMatch ICaloFutureTrackMatch.h CaloFutureInterfaces/ICaloFutureTrackMatch.h
- *
- *  The generic interface for matching of
- *  calorimeter object with tracking object
+/** @class ICaloTrackMatch ICaloTrackMatch.h CaloInterfaces/ICaloTrackMatch.h
+ *  
+ *  The generic interface for matching of 
+ *  calorimeter object with tracking object 
  *
  *  The potential implementation candidates are:
  *
- *    - full matching of CaloFutureParticle/CaloFutureHypo object with Track
- *      for electron/positron PID. The energy is taken into account
+ *    - full matching of CaloParticle/CaloHypo object with Track 
+ *      for electron/positron PID. The energy is taken into account 
  *      for matching procedure
- *    - matching of position of cluster with track for photon
- *      selection/identification. The energy is not taken
- *      into account in the matching procedure
- *    - matching of track DIRECTION before magnet with
- *      CaloFutureCluster/CaloFutureHypo/CaloFutureParticle for searching for
- *      bremmstrahlung photons. Energy is not taken
+ *    - matching of position of cluster with track for photon 
+ *      selection/identification. The energy is not taken 
+ *      into account in the matching procedure 
+ *    - matching of track DIRECTION before magnet with 
+ *      CaloCluster/CaloHypo/CaloParticle for searching for 
+ *      bremmstrahlung photons. Energy is not taken 
  *      into account.
  *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
@@ -48,7 +49,20 @@ namespace LHCb {
  *  @date   30/10/2001
  */
 
-struct ICaloFutureTrackMatch : extend_interfaces<IAlgTool> {
+struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
+{
+  
+  struct MatchStatus
+  {
+   const LHCb::CaloPosition* m_cBad;//itd..
+   const LHCb::Track* m_tBad;
+   ROOT::Math::Plane3D m_plane;
+   const LHCb::CaloPosition* m_position;
+   double chi2;
+   StatusCode status;
+   LHCb::State m_state;
+  };
+
 
   /** useful typedef for result
    *  - it is just a pair of status  and chi2 of the matching
@@ -67,9 +81,12 @@ struct ICaloFutureTrackMatch : extend_interfaces<IAlgTool> {
    *  @param chi2     returned value of chi2 of the matching
    *  @return status code for matching procedure
    */
-  virtual StatusCode match( const LHCb::CaloPosition* caloObj, const LHCb::Track* trObj, double& chi2 ) = 0;
-
-  /** The main matching method (Stl interface)
+  virtual MatchStatus match 
+  ( const LHCb::CaloPosition*   caloObj  , 
+    const LHCb::Track*  trObj    ,
+    const MatchStatus& ms_old     ) const = 0 ;
+  
+  /** The main matching method (Stl interface) 
    *  @param caloObj  pointer to "calorimeter" object (position)
    *  @param trObj    pointer to tracking object (track)
    *  @return pair of status code/chi2  for matching procedure
@@ -82,7 +99,9 @@ struct ICaloFutureTrackMatch : extend_interfaces<IAlgTool> {
    *  to TrStateP
    *  @return pointer to the state actually used for last matching
    */
-  virtual const LHCb::State* state() const = 0;
+  virtual const LHCb::State* state   () const = 0 ;;
+  
+  
 };
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURETRMATCH_H
