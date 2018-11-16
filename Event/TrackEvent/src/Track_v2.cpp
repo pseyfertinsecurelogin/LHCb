@@ -191,7 +191,7 @@ namespace LHCb::Event::v2
     //=============================================================================
     void Track::addToStates( const State& state )
     {
-      auto ipos = with_order( useDecreasingOrder{ checkFlag(Flags::Backward) },
+      auto ipos = with_order( useDecreasingOrder{ checkFlag(Flag::Backward) },
                               [&](auto order) { return std::upper_bound( m_states.begin(), m_states.end(), state, order); } );
       m_states.emplace( ipos, state );
     }
@@ -203,7 +203,7 @@ namespace LHCb::Event::v2
     {
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
       // do not assumme that the incoming states are properly sorted.
-      with_order( useDecreasingOrder{ checkFlag(Flags::Backward) }, [&](auto order) {
+      with_order( useDecreasingOrder{ checkFlag(Flag::Backward) }, [&](auto order) {
         std::sort( pivot, m_states.end(), order );
         std::inplace_merge( m_states.begin(), pivot, m_states.end(), order );
       });
@@ -215,13 +215,13 @@ namespace LHCb::Event::v2
     void Track::addToStates( span<const State> states, Tag::Sorted_tag )
     {
       // debug assert checking whether it's correctly sorted or not
-      assert( with_order( useDecreasingOrder{ checkFlag( Flags::Backward ) },
+      assert( with_order( useDecreasingOrder{ checkFlag( Flag::Backward ) },
                           [&states](auto order) { return std::is_sorted( states.begin(), states.end(), order ); } ) &&
               "states are not correctly sorted;"
               "hint: use the general addToStates function assuming unordered states" );
 
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
-      with_order( useDecreasingOrder{ checkFlag( Flags::Backward ) },
+      with_order( useDecreasingOrder{ checkFlag( Flag::Backward ) },
                   [&](auto order) { std::inplace_merge( m_states.begin(), pivot, m_states.end(), order ); });
     }
 
@@ -319,7 +319,7 @@ namespace LHCb::Event::v2
      *         'false' if information was not inserted, due to already existing key
      */
     //=============================================================================
-    bool Track::addInfo( AdditionalInfo const key, double const info )
+    bool Track::addInfo( Track::AdditionalInfo const key, double const info )
     {
       return m_extraInfo.insert( static_cast<int>( key ), info ).second;
     }
@@ -347,7 +347,7 @@ namespace LHCb::Event::v2
      *          is such information, the default value otherwise
      */
     //=============================================================================
-    double Track::info( AdditionalInfo const key, double const def ) const
+    double Track::info( Track::AdditionalInfo const key, double const def ) const
     {
       auto i = m_extraInfo.find( static_cast<int>( key ) );
       return m_extraInfo.end() == i ? def : i->second;
@@ -407,7 +407,7 @@ namespace LHCb::Event::v2
       return std::includes( m_lhcbIDs.begin(), m_lhcbIDs.end(), ids.begin(), ids.end() );
     }
 
-    void Track::setFlag( Flags const flag, bool const ok )
+    void Track::setFlag( Track::Flag const flag, bool const ok )
     {
       uint32_t val = ( ( static_cast<uint32_t>( flag ) ) << details::trailing_zeros( flagsMasks::flagMask ) ) &
                      flagsMasks::flagMask;
@@ -417,7 +417,7 @@ namespace LHCb::Event::v2
         m_flags &= ~val;
     }
 
-    bool Track::checkFlag( Flags const flag ) const
+    bool Track::checkFlag( Track::Flag const flag ) const
     {
       uint32_t val = ( static_cast<uint32_t>( flag ) << details::trailing_zeros( flagsMasks::flagMask ) );
       return ( 0 != ( m_flags & flagsMasks::flagMask & val ) );
@@ -426,25 +426,25 @@ namespace LHCb::Event::v2
     bool Track::hasT() const
     {
       auto const t = type();
-      return t == Types::Ttrack || t == Types::Downstream || t == Types::Long;
+      return t == Type::Ttrack || t == Type::Downstream || t == Type::Long;
     }
 
     bool Track::hasVelo() const
     {
       auto const t = type();
-      return t == Types::Velo || t == Types::VeloR || t == Types::Upstream || t == Types::Long;
+      return t == Type::Velo || t == Type::VeloR || t == Type::Upstream || t == Type::Long;
     }
 
     bool Track::hasTT() const
     {
       auto const t = type();
-      return t == Types::Downstream || t == Types::Upstream || t == Types::Long;
+      return t == Type::Downstream || t == Type::Upstream || t == Type::Long;
     }
 
     bool Track::hasUT() const
     {
       auto const t = type();
-      return t == Types::Downstream || t == Types::Upstream || t == Types::Long;
+      return t == Type::Downstream || t == Type::Upstream || t == Type::Long;
     }
 
     //=============================================================================

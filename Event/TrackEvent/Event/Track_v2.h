@@ -110,128 +110,131 @@ namespace LHCb::Event
       }
     }
 
-    /// Track history enumerations: each entry corresponds to the name of the pattern recognition algorithm that
-    /// produced the Track
-    meta_enum_class(History, int, HistoryUnknown,
-                    HistoryUnknown   = 0,  // unknown history (i.e. history not set)
-                    TrackIdealPR     = 1,  // track produced with the ideal pattern recognition
-                    TrackSeeding     = 2,  // track produced with the seeding pattern recognition
-                    PatVelo          = 3,  // track produced with the 2D then 3D VELO pattern recognition
-                    PatVeloTT        = 4,  // track produced with the online Velo-TT pattern recognition
-                    TrackVeloTT      = 5,  // track produced with the offline Velo-TT pattern recognition
-                    PatForward       = 6,  // track produced with the forward pattern recognition
-                    TrackMatching    = 7,  //
-                    PatKShort        = 8,  // track produced with the PatKShort pattern recognition
-                    TsaTrack         = 9,  //
-                    MuonID           = 10, // track produced with the Muon pattern recognition
-                    PatVeloR         = 11, // produced with the 2D VELO pattern recognition
-                    PatVeloGeneric   = 12, // produced with the VELO Generic pattern recognition
-                    PatVeloGeneral   = 13, // produced with the VELO General pattern recognition
-                    PatVeloOpen      = 14, // produced with the VELO open pattern recognition
-                    PatSeeding       = 15, // track produced with the PatSeeding pattern recognition
-                    PatMatch         = 16, // track produced with the PatMatch pattern recognition
-                    PatDownstream    = 17, // track produced with the PatDownstream pattern recognition
-                    TTGeneric        = 18, // track produced with the TTGenericTracking algorithm
-                    PatVPCheated     = 19, // track produced with the CheatedVPPat algorithm
-                    HLTImportedTrack = 20, // track imported from HLT to offline
-                    PatFastVelo      = 21, // track produced by FastVelo algorithm
-                    PatVP            = 22, // track produced by VP algorithm
-                    PatVeloUT        = 23, // track produced with the online Velo-UT pattern recognition
-                    PrForward        = 30, // track produced with the PrForward pattern recognition for the upgrade
-                    PrSeeding        = 31, // track produced with the PrSeeding pattern recognition for the upgrade
-                    PrMatch          = 32, // track produced with the PrMatch pattern recognition for the upgrade
-                    PrDownstream     = 33, // track produced with the PrDownstream pattern recognition for the upgrade
-                    PrVeloUT         = 34) // track produced with the PrVeloUT pattern recognition for the upgrade
+    namespace Enum::Track {
+
+      /// Track history enumerations: each entry corresponds to the name of the pattern recognition algorithm that
+      /// produced the Track
+      meta_enum_class(History, int, Unknown,
+                      Unknown          = 0,  // unknown history (i.e. history not set)
+                      TrackIdealPR     = 1,  // track produced with the ideal pattern recognition
+                      TrackSeeding     = 2,  // track produced with the seeding pattern recognition
+                      PatVelo          = 3,  // track produced with the 2D then 3D VELO pattern recognition
+                      PatVeloTT        = 4,  // track produced with the online Velo-TT pattern recognition
+                      TrackVeloTT      = 5,  // track produced with the offline Velo-TT pattern recognition
+                      PatForward       = 6,  // track produced with the forward pattern recognition
+                      TrackMatching    = 7,  //
+                      PatKShort        = 8,  // track produced with the PatKShort pattern recognition
+                      TsaTrack         = 9,  //
+                      MuonID           = 10, // track produced with the Muon pattern recognition
+                      PatVeloR         = 11, // produced with the 2D VELO pattern recognition
+                      PatVeloGeneric   = 12, // produced with the VELO Generic pattern recognition
+                      PatVeloGeneral   = 13, // produced with the VELO General pattern recognition
+                      PatVeloOpen      = 14, // produced with the VELO open pattern recognition
+                      PatSeeding       = 15, // track produced with the PatSeeding pattern recognition
+                      PatMatch         = 16, // track produced with the PatMatch pattern recognition
+                      PatDownstream    = 17, // track produced with the PatDownstream pattern recognition
+                      TTGeneric        = 18, // track produced with the TTGenericTracking algorithm
+                      PatVPCheated     = 19, // track produced with the CheatedVPPat algorithm
+                      HLTImportedTrack = 20, // track imported from HLT to offline
+                      PatFastVelo      = 21, // track produced by FastVelo algorithm
+                      PatVP            = 22, // track produced by VP algorithm
+                      PatVeloUT        = 23, // track produced with the online Velo-UT pattern recognition
+                      PrForward        = 30, // track produced with the PrForward pattern recognition for the upgrade
+                      PrSeeding        = 31, // track produced with the PrSeeding pattern recognition for the upgrade
+                      PrMatch          = 32, // track produced with the PrMatch pattern recognition for the upgrade
+                      PrDownstream     = 33, // track produced with the PrDownstream pattern recognition for the upgrade
+                      PrVeloUT         = 34) // track produced with the PrVeloUT pattern recognition for the upgrade
       
-    /// Track fit history enumerations
-    meta_enum_class(FitHistory, int, FitUnknown,
-                    FitUnknown = 0, // track not fitted yet (fit history not set)
-                    StdKalman,      // track fitted with the standard Kalman fitter
-                    BiKalman)       // track fitted with the bi-directional Kalman fitter
+      /// Track fit history enumerations
+      meta_enum_class(FitHistory, int, Unknown,
+                      Unknown = 0,    // track not fitted yet (fit history not set)
+                      StdKalman,      // track fitted with the standard Kalman fitter
+                      BiKalman)       // track fitted with the bi-directional Kalman fitter
 
-    /// Track type enumerations
-    meta_enum_class(Types, int, TypeUnknown,
-                    TypeUnknown = 0, // track of undefined type
-                    Velo,            // VELO track
-                    VeloR,           // 2D VELO track
-                    Long,            // forward track
-                    Upstream,        // upstream track
-                    Downstream,      // downstream track
-                    Ttrack,          // seed track
-                    Muon,            // muon track
-                    Calo,            // calo cosmics track
-                    TT,              // TT track
-                    UT)              // UT track
+      /// Track type enumerations
+      meta_enum_class(Type, int, Unknown,
+                      Unknown = 0,     // track of undefined type
+                      Velo,            // VELO track
+                      VeloR,           // 2D VELO track
+                      Long,            // forward track
+                      Upstream,        // upstream track
+                      Downstream,      // downstream track
+                      Ttrack,          // seed track
+                      Muon,            // muon track
+                      Calo,            // calo cosmics track
+                      TT,              // TT track
+                      UT)              // UT track
 
-    /// Track pattern recognition status flag enumerations: The flag specifies in which state of the pattern
-    /// recognition phase the track is. The status flag is set by the relevant algorithms
-    meta_enum_class(PatRecStatus, int, PatRecStatusUnknown,
-                    PatRecStatusUnknown = 0, // track in an undefined PR status
-                    PatRecIDs,               // pattern recognition track with LHCbIDs
-                    PatRecMeas)              // pattern recognition track with Measurements added
+      /// Track pattern recognition status flag enumerations: The flag specifies in which state of the pattern
+      /// recognition phase the track is. The status flag is set by the relevant algorithms
+      meta_enum_class(PatRecStatus, int, Unknown,
+                      Unknown = 0,     // track in an undefined PR status
+                      PatRecIDs,       // pattern recognition track with LHCbIDs
+                      PatRecMeas)      // pattern recognition track with Measurements added
 
-    /// Track fitting status flag enumerations: The flag specifies in which state of the fitting phase the track is.
-    /// The status flag is set by the relevant algorithms
-    meta_enum_class(FitStatus, int, FitStatusUnknown,
-                    FitStatusUnknown = 0, // track in an undefined fitting status
-                    Fitted,               // fitted track
-                    FitFailed)            // track for which the track fit failed
+      /// Track fitting status flag enumerations: The flag specifies in which state of the fitting phase the track is.
+      /// The status flag is set by the relevant algorithms
+      meta_enum_class(FitStatus, int, Unknown,
+                      Unknown = 0,     // track in an undefined fitting status
+                      Fitted,          // fitted track
+                      FitFailed)       // track for which the track fit failed
 
-    /// Track general flags enumerations
-    meta_enum_class(Flags, int, FlagsUnknown,
-                    FlagsUnknown = 0,  //
-                    Backward     = 1,  // VELO track in the backward direction
-                    Invalid      = 2,  // invalid track for physics
-                    Clone        = 4,  // clone track (of a corresponding unique track)
-                    Used         = 8,  //
-                    IPSelected   = 16, //
-                    PIDSelected  = 32, //
-                    Selected     = 64, //
-                    L0Candidate  = 128)//
+      /// Track general flag enumerations
+      meta_enum_class(Flag, int, Unknown,
+                      Unknown = 0,       //
+                      Backward     = 1,  // VELO track in the backward direction
+                      Invalid      = 2,  // invalid track for physics
+                      Clone        = 4,  // clone track (of a corresponding unique track)
+                      Used         = 8,  //
+                      IPSelected   = 16, //
+                      PIDSelected  = 32, //
+                      Selected     = 64, //
+                      L0Candidate  = 128)//
 
-    /// Additional information assigned to this Track by pattern recognition
-    meta_enum_class(AdditionalInfo, int, AdditionalInfoUnknown,
-                    AdditionalInfoUnknown = 0, //
-                    DC06Likelihood = 1, // The Likelihood the track is real. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                    PatQuality     = 2, // Quality variable from PatForward Tracking
-                    Cand1stQPat    = 3, //  Quality of the first candidate
-                    Cand2ndQPat    = 4, //  Quality of the second candidate
-                    NCandCommonHits   = 5,  //  NCand with common hits
-                    Cand1stChi2Mat    = 6,  //  Chi2 of the first candidate
-                    Cand2ndChi2Mat    = 7,  //  Chi2 of the second candidate
-                    DC06nExpectedVelo = 10, // number of expected Velo hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                    DC06nExpectedTT   = 11, // number of expected TT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                    DC06nExpectedIT   = 12, // number of expected IT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                    DC06nExpectedOT   = 13, // number of expected OT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                    MatchChi2         = 16, // Chi2 from the velo-seed matching (TrackMatching)
-                    FitVeloChi2       = 17, // Chi2 of the velo segment (from TrackFitResult)
-                    FitVeloNDoF       = 18, // NDoF of the velo segment chisq
-                    FitTChi2          = 19, // Chi2 of the T station segment (from TrackFitResult)
-                    FitTNDoF          = 20, // NDoF of the T station segment chisq
-                    FitMatchChi2      = 21, // Chi2 of the breakpoint between T and TT (from TrackFitResult)
-                    FitFracUsedOTTimes = 25, // Fraction of OT hits for which drifttime is used in fit
-                    TsaLikelihood      = 32, // Likelihood from tsa seeding
-                    CloneDist =
-                    101, // Track is flagged as being a (rejected) clone of another track. Value is the KL clone distance
-                    DC06GhostProbability =
-                    102, //  gives the NN ghost probability. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                    nPRVeloRZExpect    = 103, // Number of expected Velo clusters from VELO RZ pattern recognition
-                    nPRVelo3DExpect    = 104, // Number of expected Velo clusters from VELO 3D pattern recognition
-                    AdditionalInfo201  = 201, // OBSOLETE, may exist in some 2008/09 files
-                    AdditionalInfo202  = 202, // OBSOLETE, may exist in some 2008/09 files
-                    MuonChi2perDoF     = 300, // Chi2/nDoF of muon track fit
-                    MuonMomentumPreSel = 301, // 1 if pass Momentum pre-selection, 0 if not
-                    MuonInAcceptance   = 302, // 1 if in Muon system InAcceptance, 0 if not
-                    IsMuonLoose        = 303, // 1 if pass IsMuonLoose criteria, 0 if not
-                    IsMuon             = 304, // 1 if pass IsMuon criteria, 0 if not
-                    MuonDist2          = 305, // Squared distance of the closest muon hit to the extrapolated track
-                    MuonDLL            = 306, // DLL (from muon system only)
-                    MuonNShared = 307, // NShared (number of additional IsMuon tracks with at least one shared hit with the current
-                    // track and a smaller Dist value)
-                    MuonCLQuality = 308, // CLQuality
-                    MuonCLArrival = 309, // CLArrival
-                    IsMuonTight   = 310) // 1 if pass IsMuonTight criteria, 0 if not
-
+      /// Additional information assigned to this Track by pattern recognition
+      meta_enum_class(AdditionalInfo, int, Unknown,
+                      Unknown = 0,        //
+                      DC06Likelihood = 1, // The Likelihood the track is real. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
+                      PatQuality     = 2, // Quality variable from PatForward Tracking
+                      Cand1stQPat    = 3, //  Quality of the first candidate
+                      Cand2ndQPat    = 4, //  Quality of the second candidate
+                      NCandCommonHits   = 5,  //  NCand with common hits
+                      Cand1stChi2Mat    = 6,  //  Chi2 of the first candidate
+                      Cand2ndChi2Mat    = 7,  //  Chi2 of the second candidate
+                      DC06nExpectedVelo = 10, // number of expected Velo hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
+                      DC06nExpectedTT   = 11, // number of expected TT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
+                      DC06nExpectedIT   = 12, // number of expected IT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
+                      DC06nExpectedOT   = 13, // number of expected OT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
+                      MatchChi2         = 16, // Chi2 from the velo-seed matching (TrackMatching)
+                      FitVeloChi2       = 17, // Chi2 of the velo segment (from TrackFitResult)
+                      FitVeloNDoF       = 18, // NDoF of the velo segment chisq
+                      FitTChi2          = 19, // Chi2 of the T station segment (from TrackFitResult)
+                      FitTNDoF          = 20, // NDoF of the T station segment chisq
+                      FitMatchChi2      = 21, // Chi2 of the breakpoint between T and TT (from TrackFitResult)
+                      FitFracUsedOTTimes = 25, // Fraction of OT hits for which drifttime is used in fit
+                      TsaLikelihood      = 32, // Likelihood from tsa seeding
+                      CloneDist =
+                      101, // Track is flagged as being a (rejected) clone of another track. Value is the KL clone distance
+                      DC06GhostProbability =
+                      102, //  gives the NN ghost probability. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
+                      nPRVeloRZExpect    = 103, // Number of expected Velo clusters from VELO RZ pattern recognition
+                      nPRVelo3DExpect    = 104, // Number of expected Velo clusters from VELO 3D pattern recognition
+                      AdditionalInfo201  = 201, // OBSOLETE, may exist in some 2008/09 files
+                      AdditionalInfo202  = 202, // OBSOLETE, may exist in some 2008/09 files
+                      MuonChi2perDoF     = 300, // Chi2/nDoF of muon track fit
+                      MuonMomentumPreSel = 301, // 1 if pass Momentum pre-selection, 0 if not
+                      MuonInAcceptance   = 302, // 1 if in Muon system InAcceptance, 0 if not
+                      IsMuonLoose        = 303, // 1 if pass IsMuonLoose criteria, 0 if not
+                      IsMuon             = 304, // 1 if pass IsMuon criteria, 0 if not
+                      MuonDist2          = 305, // Squared distance of the closest muon hit to the extrapolated track
+                      MuonDLL            = 306, // DLL (from muon system only)
+                      MuonNShared = 307, // NShared (number of additional IsMuon tracks with at least one shared hit with the current
+                      // track and a smaller Dist value)
+                      MuonCLQuality = 308, // CLQuality
+                      MuonCLArrival = 309, // CLArrival
+                      IsMuonTight   = 310) // 1 if pass IsMuonTight criteria, 0 if not
+      } // namespace TrakcEnums
+    
     class Track final
     {
     public:
@@ -250,6 +253,14 @@ namespace LHCb::Event
         int    nDoF       = 0;
         auto   chi2() const { return chi2PerDoF * nDoF; };
       };
+
+      using History = Enum::Track::History;
+      using FitHistory = Enum::Track::FitHistory;
+      using Type = Enum::Track::Type;
+      using PatRecStatus = Enum::Track::PatRecStatus;
+      using FitStatus = Enum::Track::FitStatus;
+      using Flag = Enum::Track::Flag;
+      using AdditionalInfo = Enum::Track::AdditionalInfo;
 
       /// Retrieve the position and momentum vectors and the corresponding 6D covariance matrix (pos:0->2,mom:3-5) at
       /// the first state
@@ -407,8 +418,8 @@ namespace LHCb::Event
       /// get const pointer to the object holding the trackfit data.
       TrackFitResult const* fitResult() const { return m_fitResult.ptr(); };
 
-      /// Check the type of the track (see the Types enum)
-      bool checkType( Types const value ) const { return type() == value; };
+      /// Check the type of the track (see the Type enum)
+      bool checkType( Type const value ) const { return type() == value; };
 
       /// Check the history of the track (see the History enum)
       bool checkHistory( History const value ) const { return history() == value; };
@@ -422,11 +433,11 @@ namespace LHCb::Event
       /// Check the fitting status of the track (see the FitStatus enum)
       bool checkFitStatus( FitStatus const value ) const { return fitStatus() == value; };
 
-      /// Update the flag (see the Flags enum)
-      void setFlag( Flags const flag, bool const ok );
+      /// Update the flag (see the Flag enum)
+      void setFlag( Flag const flag, bool const ok );
 
-      /// Check the status of the flag (see the Flags enum)
-      bool checkFlag( Flags const flag ) const;
+      /// Check the status of the flag (see the Flag enum)
+      bool checkFlag( Flag const flag ) const;
 
       /// Check if track is of a type that goes thro T stations
       bool hasT() const;
@@ -502,10 +513,10 @@ namespace LHCb::Event
       void setFlags( unsigned int value ) { m_flags = value; };
 
       /// Retrieve Track type
-      Types type() const { return static_cast<Types>( details::getBits<flagsMasks::typeMask>( m_flags ) ); };
+      Type type() const { return static_cast<Type>( details::getBits<flagsMasks::typeMask>( m_flags ) ); };
 
       /// Update Track type
-      void setType( Types const value )
+      void setType( Type const value )
       {
         details::setBits<flagsMasks::typeMask>( m_flags, static_cast<uint32_t>( value ) );
       };
@@ -520,7 +531,7 @@ namespace LHCb::Event
       };
 
       /// Retrieve Track flags
-      Flags flag() const { return static_cast<Flags>( details::getBits<flagsMasks::flagMask>( m_flags ) ); };
+      Flag flag() const { return static_cast<Flag>( details::getBits<flagsMasks::flagMask>( m_flags ) ); };
 
       /// Retrieve Specifies the fitting algorithm the fitted the track)
       FitHistory fitHistory() const

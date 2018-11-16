@@ -26,6 +26,13 @@
 // The test fixture: Create a container of tracks
 // This can be used as a common starting point for all tests
 using namespace LHCb::Event::v2;
+using History = Enum::Track::History;
+using FitHistory = Enum::Track::FitHistory;
+using Type = Enum::Track::Type;
+using PatRecStatus = Enum::Track::PatRecStatus;
+using FitStatus = Enum::Track::FitStatus;
+using Flag = Enum::Track::Flag;
+using AdditionalInfo = Enum::Track::AdditionalInfo;
 struct ExampleTracks {
   std::vector<Track> m_tracks;                  // collection of tracks
 
@@ -34,7 +41,7 @@ struct ExampleTracks {
     auto& tr1 = m_tracks.emplace_back();
 
     tr1.setFlags(1);
-    tr1.setType(Types::Velo);
+    tr1.setType(Type::Velo);
 
     tr1.addToLhcbIDs(LHCb::LHCbID(1));
     tr1.addToLhcbIDs(LHCb::LHCbID(3));
@@ -42,7 +49,7 @@ struct ExampleTracks {
 
     auto& tr2 = m_tracks.emplace_back();
     tr2.setFlags(1);
-    tr2.setType(Types::TT);
+    tr2.setType(Type::TT);
 
     tr2.addToLhcbIDs(LHCb::LHCbID(2));
     tr2.addToLhcbIDs(LHCb::LHCbID(4));
@@ -50,7 +57,7 @@ struct ExampleTracks {
 
     auto& tr3=m_tracks.emplace_back();
     tr3.setFlags(8);
-    tr3.setType(Types::Long);
+    tr3.setType(Type::Long);
 
     tr3.addToLhcbIDs(LHCb::LHCbID(7));
     tr3.addToLhcbIDs(LHCb::LHCbID(11));
@@ -98,18 +105,18 @@ struct ExampleTracks {
 BOOST_AUTO_TEST_CASE(test_track_flags){
   auto tr = Track{};
 
-  tr.setType(Types::Long);
-  BOOST_CHECK(tr.type()==Types::Long);
-  BOOST_CHECK(toString(Types::Long)=="Long");
+  tr.setType(Type::Long);
+  BOOST_CHECK(tr.type()==Type::Long);
+  BOOST_CHECK(toString(Type::Long)=="Long");
   std::ostringstream stream_types;
-  stream_types<<Types::Long;
+  stream_types<<Type::Long;
   BOOST_CHECK(stream_types.str()=="Long");
-  Types tt_l;
+  Type tt_l;
   BOOST_CHECK(parse(tt_l, "HelloWorld!").isFailure());
   BOOST_CHECK(parse(tt_l,"Long").isSuccess());
-  BOOST_CHECK(tt_l==Types::Long);
+  BOOST_CHECK(tt_l==Type::Long);
 
-  Gaudi::Property<Types> prop_tt{Types::Long};
+  Gaudi::Property<Type> prop_tt{Type::Long};
   BOOST_CHECK( prop_tt.toString() == "Long" );
 
 
@@ -125,18 +132,18 @@ BOOST_AUTO_TEST_CASE(test_track_flags){
   BOOST_CHECK(th_prf==History::PrForward);
 
 
-  tr.setFlag(Flags::Backward, true);
-  BOOST_CHECK(tr.flag()==Flags::Backward);
-  tr.setFlag(Flags::Backward, false);
-  BOOST_CHECK((tr.flag()==Flags::Backward)==false);
-  BOOST_CHECK(toString(Flags::Backward)=="Backward");
+  tr.setFlag(Flag::Backward, true);
+  BOOST_CHECK(tr.flag()==Flag::Backward);
+  tr.setFlag(Flag::Backward, false);
+  BOOST_CHECK((tr.flag()==Flag::Backward)==false);
+  BOOST_CHECK(toString(Flag::Backward)=="Backward");
   std::ostringstream stream_flags;
-  stream_flags<<Flags::Backward;
+  stream_flags<<Flag::Backward;
   BOOST_CHECK(stream_flags.str()=="Backward");
-  Flags tft_b;
+  Flag tft_b;
   BOOST_CHECK(parse(tft_b, "HelloWorld!").isFailure());
   BOOST_CHECK(parse(tft_b, "Backward").isSuccess());
-  BOOST_CHECK(tft_b==Flags::Backward);
+  BOOST_CHECK(tft_b==Flag::Backward);
 
   tr.setFitStatus(FitStatus::Fitted);
   BOOST_CHECK(tr.fitStatus()==FitStatus::Fitted);
@@ -162,7 +169,7 @@ BOOST_AUTO_TEST_CASE(test_track_lhcbids){
   tracks.reserve(3);
   auto& tr1 = tracks.emplace_back();
   tr1.setFlags(1);
-  tr1.setType(Types::Velo);
+  tr1.setType(Type::Velo);
   auto velo_id = LHCb::LHCbID();
   velo_id.setDetectorType(LHCb::LHCbID::channelIDtype::VP);
   velo_id.setID(1);
