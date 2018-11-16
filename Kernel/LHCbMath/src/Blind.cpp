@@ -8,9 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // STD& STL
 // ============================================================================
@@ -21,7 +20,7 @@
 #include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/Hash.h"
 // ============================================================================
-// Boots 
+// Boots
 // ============================================================================
 #include "boost/integer_traits.hpp"
 #include "boost/static_assert.hpp"
@@ -31,36 +30,36 @@
 #include "LHCbMath/Blind.h"
 // ============================================================================
 /** @file
- *  Implementation file for function Gaudi::Math::blind 
- *  @see Gaudi::Math::blind 
+ *  Implementation file for function Gaudi::Math::blind
+ *  @see Gaudi::Math::blind
  *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
  *  @date 2010-10-10
  */
 // ============================================================================
-/// local anonymous namespace to hide all implementation details 
+/// local anonymous namespace to hide all implementation details
 // ============================================================================
-namespace 
+namespace
 {
   // ===========================================================================
-  // prerequisites for "correct" 
-  BOOST_STATIC_ASSERT( boost::integer_traits<unsigned int> :: is_specialized && 
-                       boost::integer_traits<unsigned int> :: is_integral    && 
-                       boost::integer_traits<unsigned int> :: const_min == 0 && 
+  // prerequisites for "correct"
+  BOOST_STATIC_ASSERT( boost::integer_traits<unsigned int> :: is_specialized &&
+                       boost::integer_traits<unsigned int> :: is_integral    &&
+                       boost::integer_traits<unsigned int> :: const_min == 0 &&
                        boost::integer_traits<unsigned int> :: const_max  > 0 ) ;
   // ==========================================================================
-  // define proper double 
+  // define proper double
   // ==========================================================================
-  /// get the hash of the value 
-  unsigned int _hash_ ( const std::string& name ) 
-  { 
+  /// get the hash of the value
+  unsigned int _hash_ ( const std::string& name )
+  {
     // VB. It is not so uniform for 'short' strings
     // GaudiUtils::Hash<std::string> hash ;
-    // return hash( name ) ; 
-    // this one it better... 
-    return InterfaceID::hash32 ( name.c_str() ) ; 
+    // return hash( name ) ;
+    // this one it better...
+    return InterfaceID::hash32 ( name.c_str() ) ;
   }
   /// normalize the hash [0,1]
-  double       _norm_ ( const unsigned int hashv ) 
+  double       _norm_ ( const unsigned int hashv )
   {
     //
     static const double ui_max = boost::integer_traits<unsigned int> :: const_max ;
@@ -68,27 +67,27 @@ namespace
     return double ( std::min ( hashv , boost::integer_traits<unsigned int> :: const_max - 1 ) ) / ui_max ;
   }
   // ==========================================================================
-  /// reuturn the normalized value [-1,1] of hash 
-  double _blind_ ( const std::string& name ) 
-  { 
+  /// reuturn the normalized value [-1,1] of hash
+  double _blind_ ( const std::string& name )
+  {
     return 2 * _norm_ ( _hash_ ( name ) ) - 1 ;
-  }  
+  }
   // ==========================================================================
-} //                                           end of local anonymous namespace 
+} //                                           end of local anonymous namespace
 // ============================================================================
-/*  get the 'blind'-number form the string 
+/*  get the 'blind'-number form the string
  *  @param name the name to be used for construction of the coefficient
- *  @param minv the minimal value 
- *  @param minv the maximal value 
- *  @return the value that can be used for blinding 
+ *  @param minv the minimal value
+ *  @param minv the maximal value
+ *  @return the value that can be used for blinding
  *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
  *  @date 2010-10-10
  */
 // ============================================================================
-double Gaudi::Math::blind 
-( const std::string& name , 
-  const double       minv , 
-  const double       maxv ) 
+double Gaudi::Math::blind
+( const std::string& name ,
+  const double       minv ,
+  const double       maxv )
 {
   //
   if      ( minv  > maxv ) {
@@ -101,5 +100,5 @@ double Gaudi::Math::blind
 }
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

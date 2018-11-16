@@ -8,11 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <iostream>
 #include <iomanip>
@@ -23,21 +22,21 @@
 #include "LHCbMath/Lomont.h"
 // ============================================================================
 /** @file
- *  The test file for "Lomont" comparison of doubles 
+ *  The test file for "Lomont" comparison of doubles
  *  @author Vanya BELYAEV i
  *  @date   2009-05-23
  */
 // ============================================================================
-void _test ( double a , double diff ) 
+void _test ( double a , double diff )
 {
   int n = 0 ;
-  std::cout << "test with a = " << std::setprecision ( 15 ) << a 
+  std::cout << "test with a = " << std::setprecision ( 15 ) << a
             << " \t diff "      << std::setprecision ( 15 ) << diff << std::endl ;
-  do 
+  do
   {
     diff /= 9.0 ;
     ++n  ;
-    std::cout << " n=" << n  
+    std::cout << " n=" << n
               << " \t diff=" << std::setprecision ( 15 ) << diff << std::endl ;
   }
   while ( !LHCb::Math::lomont_compare_double ( a , a +diff , 1000 ) ) ;
@@ -56,5 +55,5 @@ int main()
   return 0 ;
 }
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

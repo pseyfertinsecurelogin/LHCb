@@ -8,9 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$
 // ============================================================================
-#ifndef GSL_SENTRY_H 
+#ifndef GSL_SENTRY_H
 #define GSL_SENTRY_H 1
 // ============================================================================
 // Include files
@@ -19,7 +18,7 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
-// GSL 
+// GSL
 // ============================================================================
 #include "gsl/gsl_errno.h"
 // ============================================================================
@@ -29,11 +28,11 @@ namespace Gaudi
   namespace Math
   {
     // ========================================================================
-    namespace GSL 
+    namespace GSL
     {
       // ======================================================================
       /** @class GSL_Error_Handler
-       *  helper class to manipulate with GSL error handlers 
+       *  helper class to manipulate with GSL error handlers
        *  @author Vanya BELAYEV Ivan.Belyaev@itep.ru
        */
       class GAUDI_API GSL_Error_Handler
@@ -42,23 +41,23 @@ namespace Gaudi
         // ====================================================================
         /// constructor: loc
         GSL_Error_Handler  () ;
-        /// destructor/ unlock 
-        ~GSL_Error_Handler () ; 
+        /// destructor/ unlock
+        ~GSL_Error_Handler () ;
         // ====================================================================
       private:
         // ====================================================================
-        /// the "old" error handler 
-        gsl_error_handler_t * m_old ; // the "old" error handler 
+        /// the "old" error handler
+        gsl_error_handler_t * m_old ; // the "old" error handler
         // ====================================================================
       } ;
       // ======================================================================
-    } //                                      end of namespace Gaudi::Math::GSL 
+    } //                                      end of namespace Gaudi::Math::GSL
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
-} //                                                     end of namespace Gaudi 
+} //                                                     end of namespace Gaudi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // GSL_SENTRY_H
 // ============================================================================
