@@ -31,15 +31,19 @@ namespace LHCb::Event::v2 {
     inline const std::string FilteredPrimary = "Rec/Vertex/FilteredPrimary";
     inline const std::string V0 = "Rec/Vertex/V0";
   }
-  
-  /// Enumeration to describe how the vertex was made
-  meta_enum_class(RecVertexType, int, Unknown, 
-                  Unknown=0,
-                  Vertex2D,
-                  Vertex3D,
-                  V0,
-                  Primary,
-                  LastRec=10000)
+
+  namespace Enum::RecVertex {
+
+    /// Enumeration to describe how the vertex was made
+    meta_enum_class(RecVertexType, int, Unknown, 
+                    Unknown=0,
+                    Vertex2D,
+                    Vertex3D,
+                    V0,
+                    Primary,
+                    LastRec=10000)
+
+    } // namespace RecVertexEnums
 
   /// Reconstructed Vertices class
   class RecVertex final {
@@ -47,6 +51,7 @@ namespace LHCb::Event::v2 {
 
     /// local Track type
     using Track = LHCb::Event::v2::Track;
+    using RecVertexType = Enum::RecVertex::RecVertexType;
     /// typedef for std::vector of RecVertex
     using Vector = std::vector<RecVertex*>;
     using ConstVector = std::vector<const RecVertex*>;
@@ -134,7 +139,7 @@ namespace LHCb::Event::v2 {
     /// Chi square and number of degree of freedom
     Track::Chi2PerDoF     m_chi2PerDoF{};
     /// How the vertex was made
-    RecVertexType         m_technique{RecVertexType::Unknown};
+    RecVertexType m_technique{};
     /// Tracks this vertex was made from
     std::vector<const Track*> m_tracks;
     /// vector of weights for each track in this PV
