@@ -11,8 +11,6 @@
 ###############################################################################
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file  LHCbMath/deriv.py 
 #  Simple adaptive numerical differentiation (for pyroot/PyRoUts/Ostap)
 #  R. De Levie, "An improved numerical approximation for the first derivative"

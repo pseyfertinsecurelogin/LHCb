@@ -11,8 +11,6 @@
 ###############################################################################
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file  test_combine.py
 #  Test utilities for combining correlated measurements
 #  @see P.Avery "Combining measurements with correlated errors", CBX 95 55

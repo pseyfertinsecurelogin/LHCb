@@ -31,6 +31,7 @@ namespace LHCb {
 class IMuonLayout {
 
 public:
+  virtual ~IMuonLayout() = default;
 
   /** Accessor to the layout grid values for a given MuonTileID
       @param   id   MuonTileID of the tile for which the grid is requested
