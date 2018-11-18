@@ -9,9 +9,7 @@
 #include "Event/CrossSectionsFSR.h"
 
 // From GaudiKernel
-#include "GaudiKernel/System.h"
 #include "GaudiKernel/Time.h"
-#include "GaudiKernel/IDataProviderSvc.h"
 
 // other libraries
 #include <string>
@@ -19,7 +17,6 @@
 #include <fstream>
 #include <cmath>
 #include <stdio.h>
-#include "TSystem.h"
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/json_parser.hpp"
@@ -291,12 +288,21 @@ namespace
 DECLARE_COMPONENT(GenFSRJson)
 
 //=============================================================================
+// Standard constructor, initializes variables
+//=============================================================================
+GenFSRJson::GenFSRJson( const std::string& name,
+                        ISvcLocator* pSvcLocator)
+: GaudiAlgorithm ( name , pSvcLocator )
+{
+}
+
+//=============================================================================
 //  Initialization
 //=============================================================================  
 
 StatusCode GenFSRJson::initialize() 
 {
-  StatusCode sc = Service::initialize(); // must be executed first
+  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   
   if ( sc.isFailure() ) return sc;   // error prinsted already by Service
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
@@ -304,7 +310,19 @@ StatusCode GenFSRJson::initialize()
   // get the File Records service    
   m_fileRecordSvc = Gaudi::svcLocator()->service("FileRecordDataSvc");
 
+  m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");
+
   return sc;
+}
+
+//=============================================================================
+// Main execution
+//=============================================================================
+StatusCode GenFSRJson::execute() 
+{
+  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+
+  return StatusCode::SUCCESS;  
 }
 
 //=============================================================================  
@@ -315,12 +333,12 @@ StatusCode GenFSRJson::finalize()
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
   
   GenFSRJson::printFSR();
-  
-  return Service::finalize();
+
+  return GaudiAlgorithm::finalize();   // must be called after all other actions
 }
 
 //=============================================================================
-//  Print the GenFSR in a file json
+//  Printthe GenFSR in a file json
 //=============================================================================
 
 void GenFSRJson::printFSR()
@@ -329,14 +347,12 @@ void GenFSRJson::printFSR()
   
   // make an inventory of the FileRecord store
   std::vector< std::string > addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
-  
+
   for(const auto& genRecordAddress: addresses)
-  {    
-    std::string line;
+  {
     DataObject *obj = nullptr;
     StatusCode sc = m_fileRecordSvc->retrieveObject(genRecordAddress, obj);
-      
-    // If so, retrieve it
+
     if(!sc.isSuccess())
     {
       error() << "Unable to retrieve object '" << genRecordAddress << "'" << endmsg;
@@ -344,7 +360,6 @@ void GenFSRJson::printFSR()
     }
     
     LHCb::GenFSR* genFSR = dynamic_cast<LHCb::GenFSR*>(obj);
-    
     if (genFSR == nullptr)
     {
       warning() << "genFSR record not found!" << endmsg;
@@ -379,16 +394,16 @@ void GenFSRJson::printFSR()
         
         std::string evtDesc = ::getEvtTypeDesc(evtType);       
 
-        main_tree.put("\"APPCONFIG_file\"", m_appConfigFile);
-        main_tree.put("\"APPCONFIG_version\"", m_appConfigVersion);
-        main_tree.put("\"evtType\"", evtType_str);
-        main_tree.put("\"evtTypeDesc\"", evtDesc);
-        main_tree.put("\"DecFiles_version\"", decFiles);
-        main_tree.put("\"Hard Generator\"", genName);
-        main_tree.put(" \"Gauss_version\"", m_gaussVersion);
-        main_tree.put("\"DDDB\"", m_dddb);
-        main_tree.put("\"SIMCOND\"", m_simCond);
-        main_tree.put("\"genTimeStamp\"", time);
+        main_tree.put("APPCONFIG_file", m_appConfigFile);
+        main_tree.put("APPCONFIG_version", m_appConfigVersion);
+        main_tree.put("evtType", evtType_str);
+        main_tree.put("evtTypeDesc", evtDesc);
+        main_tree.put("DecFiles_version", decFiles);
+        main_tree.put("Hard Generator", genName);
+        main_tree.put("Gauss_version", m_gaussVersion);
+        main_tree.put("DDDB", m_dddb);
+        main_tree.put("SIMCOND", m_simCond);
+        main_tree.put("genTimeStamp", time);
         
         
         ptree gencounters_array = ::writeGeneratorCounters(*genFSR);
@@ -412,6 +427,5 @@ void GenFSRJson::printFSR()
         jsonOutput.close(); 
       }
     }
-  }
+  } 
 }
-
