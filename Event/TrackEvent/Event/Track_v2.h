@@ -114,7 +114,7 @@ namespace LHCb::Event
 
       /// Track history enumerations: each entry corresponds to the name of the pattern recognition algorithm that
       /// produced the Track
-      meta_enum_class(History, int, Unknown,
+      meta_enum_class(History, int,
                       Unknown          = 0,  // unknown history (i.e. history not set)
                       TrackIdealPR     = 1,  // track produced with the ideal pattern recognition
                       TrackSeeding     = 2,  // track produced with the seeding pattern recognition
@@ -146,13 +146,13 @@ namespace LHCb::Event
                       PrVeloUT         = 34) // track produced with the PrVeloUT pattern recognition for the upgrade
       
       /// Track fit history enumerations
-      meta_enum_class(FitHistory, int, Unknown,
+      meta_enum_class(FitHistory, int,
                       Unknown = 0,    // track not fitted yet (fit history not set)
                       StdKalman,      // track fitted with the standard Kalman fitter
                       BiKalman)       // track fitted with the bi-directional Kalman fitter
 
       /// Track type enumerations
-      meta_enum_class(Type, int, Unknown,
+      meta_enum_class(Type, int,
                       Unknown = 0,     // track of undefined type
                       Velo,            // VELO track
                       VeloR,           // 2D VELO track
@@ -167,20 +167,20 @@ namespace LHCb::Event
 
       /// Track pattern recognition status flag enumerations: The flag specifies in which state of the pattern
       /// recognition phase the track is. The status flag is set by the relevant algorithms
-      meta_enum_class(PatRecStatus, int, Unknown,
+      meta_enum_class(PatRecStatus, int,
                       Unknown = 0,     // track in an undefined PR status
                       PatRecIDs,       // pattern recognition track with LHCbIDs
                       PatRecMeas)      // pattern recognition track with Measurements added
 
       /// Track fitting status flag enumerations: The flag specifies in which state of the fitting phase the track is.
       /// The status flag is set by the relevant algorithms
-      meta_enum_class(FitStatus, int, Unknown,
+      meta_enum_class(FitStatus, int,
                       Unknown = 0,     // track in an undefined fitting status
                       Fitted,          // fitted track
                       FitFailed)       // track for which the track fit failed
 
       /// Track general flag enumerations
-      meta_enum_class(Flag, int, Unknown,
+      meta_enum_class(Flag, int,
                       Unknown = 0,       //
                       Backward     = 1,  // VELO track in the backward direction
                       Invalid      = 2,  // invalid track for physics
@@ -192,7 +192,7 @@ namespace LHCb::Event
                       L0Candidate  = 128)//
 
       /// Additional information assigned to this Track by pattern recognition
-      meta_enum_class(AdditionalInfo, int, Unknown,
+      meta_enum_class(AdditionalInfo, int,
                       Unknown = 0,        //
                       DC06Likelihood = 1, // The Likelihood the track is real. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
                       PatQuality     = 2, // Quality variable from PatForward Tracking
