@@ -814,7 +814,7 @@ double LoKi::Kinematics::kullback
 }
 // ============================================================================
 /*  trivial function to calculate the "mass-distance"
- *  \f$ ( m^2_{12} - m^2_{mid} ) / m^2_{12}\f$
+ *  \f$ ( m^2_{12} - m^2_1 - m^2_2 ) / m^2_{12}\f$
  *  @param p1 the first  particle
  *  @param p2 the second particle
  *  @return mass-differened
@@ -829,50 +829,8 @@ double LoKi::Kinematics::deltaM2
   //
   const double m2 =  ( p1 + p2 ).M2() ;
   //
-  // return ( m2 - 2 * p1.M2() - 2 * p2.M2() ) / m2 ;
-  //
-  if ( &p1 == &p2 ) { return 0 ; }
-  //
-  if ( p1.x () == p2.x () &&  
-       p1.y () == p2.y () && 
-       p1.z () == p2.z () && 
-       p1.e () == p2.e () ) { return 0 ; }
-  //
-  const LoKi::ThreeVector   pp = 0.5 * ( p1.Vect() + p2.Vect() ) ;
-  //
-  const double e1 = std::sqrt ( p1.M2() + pp.Mag2() ) ;
-  const double e2 = std::sqrt ( p2.M2() + pp.Mag2() ) ;
-  //
-  const LoKi::LorentzVector v1 { pp.x() , pp.y() , pp.z() , e1 } ;
-  const LoKi::LorentzVector v2 { pp.x() , pp.y() , pp.z() , e2 } ;
-  //
-  return ( m2 - ( v1 + v2 ).M2() ) / m2 ;  
-  //
+  return ( m2 - 2 * p1.M2() - 2 * p2.M2() ) / m2 ;
 }
-// ============================================================================
-/*  trivial function to calculate the mass-distance
- *  but first assign the same mass fro both momenta 
- *  @param p1 the first  particle
- *  @param p2 the second particle
- *  @param mass the amss to be assigned 
- *  @return mass-difference
- *  @see LoKi::Kinematics::deltaM2
- *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
- *  @date 2018-11-15
- */
-// ============================================================================
-double LoKi::Kinematics::deltaM2 ( const LoKi::LorentzVector& p1 ,
-                                   const LoKi::LorentzVector& p2 , 
-                                   const double mass             )
-{
-  const double e1 = std::sqrt ( mass * mass + p1.Vect().Mag2() ) ;
-  const double e2 = std::sqrt ( mass * mass + p2.Vect().Mag2() ) ;
-  //
-  const LoKi::LorentzVector v1 { p1.x() , p1.y() , p1.z() , e1 } ;
-  const LoKi::LorentzVector v2 { p2.x() , p2.y() , p2.z() , e2 } ;
-  //
-  return deltaM2 ( v1 , v2 ) ;
-}  
 // ============================================================================
 /*  trivial function to calculate the delta-angle
  *  @param p1 the first  particle

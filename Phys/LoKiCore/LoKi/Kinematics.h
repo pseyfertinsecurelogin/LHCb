@@ -951,7 +951,7 @@ namespace LoKi
      *  @param p1 the first  particle
      *  @param p2 the second particle
      *  @return delta-phi
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double deltaPhi ( const LoKi::LorentzVector& p1 ,
@@ -961,7 +961,7 @@ namespace LoKi
      *  @param p1 the first  particle
      *  @param p2 the second particle
      *  @return dr2
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double deltaEta ( const LoKi::LorentzVector& p1 ,
@@ -971,7 +971,7 @@ namespace LoKi
      *  @param p1 the first  particle
      *  @param p2 the second particle
      *  @return dr2
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double deltaR2 ( const LoKi::LorentzVector& p1 ,
@@ -984,7 +984,7 @@ namespace LoKi
      *  @param c2 the second covariance matrix
      *  @return Kullback-Liebler divergency
      *  @thanks The code is provided by Matt Needham
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double kullback ( const LoKi::LorentzVector& p1 ,
@@ -993,38 +993,21 @@ namespace LoKi
                                 const Gaudi::SymMatrix4x4& c2 ) ;
     // ========================================================================
     /** trivial function to calculate the mass-distance
-     *  \f$ (m^2_{12} - m^2_{mid} ) / m^2_{12} \f$, 
-     *  where \f#offset is \f$ m2 \f$ calculated using mid-momentum
-     *   \f$ \vec{p}_{mid} = \frac{1}{2}\left( \vec{p}_1 + \vec{p}_2\right)\f$ 
-     *   for both particles 
+     *  \f$ (m^2_{12} - m^2_1 - m^2_2 ) / m^2_{12} \f$
      *  @param p1 the first  particle
      *  @param p2 the second particle
-     *  @return mass-distance
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @return mass-difference
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double deltaM2 ( const LoKi::LorentzVector& p1 ,
                                const LoKi::LorentzVector& p2 ) ;
     // ========================================================================
-    /** trivial function to calculate the mass-distance
-     *  but first assign the same mass fro both momenta 
-     *  @param p1 the first  particle
-     *  @param p2 the second particle
-     *  @param mass the amss to be assigned 
-     *  @return mass-distance
-     *  @see LoKi::Kinematics::deltaM2
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2018-11-15
-     */
-    GAUDI_API double deltaM2 ( const LoKi::LorentzVector& p1 ,
-                               const LoKi::LorentzVector& p2 , 
-                               const double mass             ) ;
-    // ========================================================================
     /** trivial function to calculate the delta-angle
      *  @param p1 the first  particle
      *  @param p2 the second particle
      *  @return the angle between vectors
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double deltaAlpha ( const LoKi::LorentzVector& p1 ,
@@ -1034,7 +1017,7 @@ namespace LoKi
      *  @param p1 the first  particle
      *  @param p2 the second particle
      *  @return the angle between vectors
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double deltaAlpha ( const LoKi::Vector3D& p1 ,
@@ -1047,7 +1030,7 @@ namespace LoKi
      *  @param c2 the second covariance matrix
      *  @return Kullback-Liebler divergency
      *  @thanks The code is provided by Matt Needham
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2012-01-17
      */
     GAUDI_API double kullback ( const LoKi::Vector3D&      p1 ,
@@ -1059,7 +1042,7 @@ namespace LoKi
      *  @param v3     (INPUT) 3-momentum
      *  @param energy (INPUT) the energy
      *  @return 4-momentum
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@ite.ru
      *  @date 2015-02-05
      */
     inline LoKi::LorentzVector fourMomentum ( const LoKi::Vector3D& v3     ,
