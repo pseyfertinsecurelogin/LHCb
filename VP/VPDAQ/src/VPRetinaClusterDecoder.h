@@ -34,7 +34,7 @@ namespace LHCb
 {
   namespace VPClusterLocation
   {
-    inline const std::string Offsets = "Raw/VP/LightClustersOffsets";
+    static const std::string Offsets = "Raw/VP/LightClustersOffsets";
   }
 }
 

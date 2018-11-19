@@ -71,10 +71,10 @@ namespace CaloPlane
 /// Locations of DeCalorimeter detector elements in the TDS
 namespace DeCalorimeterLocation
 {
-  inline const std::string Spd  = "/dd/Structure/LHCb/DownstreamRegion/Spd"  ;
-  inline const std::string Prs  = "/dd/Structure/LHCb/DownstreamRegion/Prs"  ;
-  inline const std::string Ecal = "/dd/Structure/LHCb/DownstreamRegion/Ecal" ;
-  inline const std::string Hcal = "/dd/Structure/LHCb/DownstreamRegion/Hcal" ;
+  static const std::string Spd  = "/dd/Structure/LHCb/DownstreamRegion/Spd"  ;
+  static const std::string Prs  = "/dd/Structure/LHCb/DownstreamRegion/Prs"  ;
+  static const std::string Ecal = "/dd/Structure/LHCb/DownstreamRegion/Ecal" ;
+  static const std::string Hcal = "/dd/Structure/LHCb/DownstreamRegion/Hcal" ;
 }
 // ============================================================================
 /** @class DeCalorimeter CaloDet/DeCalorimeter.h
@@ -201,7 +201,7 @@ public:
   bool isSaturated(double energy,LHCb::CaloCellID id){
     return cellADC(energy,id)+256  >= adcMax();
   }
-
+  
 
   inline double cellTime ( const LHCb::CaloCellID& ) const ;
   inline const Gaudi::XYZPoint cellCenter       ( const LHCb::CaloCellID& ) const ;
@@ -802,7 +802,7 @@ inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::cardChannels( const 
 inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::pinChannels( const LHCb::CaloCellID id)
 {return m_pins[id].cells() ;}
 
-inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::ledChannels( const int led)
+inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::ledChannels( const int led) 
 { return  led < (int)m_leds.size() ? m_leds[led].cells() : m_empty; }
 
 inline const std::vector<int>&  DeCalorimeter::pinLeds( const LHCb::CaloCellID id )

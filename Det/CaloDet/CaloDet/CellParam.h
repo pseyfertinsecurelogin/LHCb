@@ -8,13 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+// $Id: CellParam.h,v 1.13 2009-08-05 14:24:35 ibelyaev Exp $
 // ============================================================================
-#ifndef CALODET_CELLPARAM_H
+#ifndef CALODET_CELLPARAM_H 
 #define CALODET_CELLPARAM_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL
+// STD & STL 
 // ============================================================================
 #include <vector>
 // ============================================================================
@@ -33,7 +34,7 @@ typedef LHCb::CaloCellID::Vector CaloNeighbors ;
 // ============================================================================
 /** @class  CellParam CellParam.h CaloDet/CellParam.h
  *
- *   Auxilliary class to store cell's information inside
+ *   Auxilliary class to store cell's information inside 
  *   the detector element
  *   The constructor creates a null cellID if no argument, as a default
  *   creator is needed for CaloVector...
@@ -42,9 +43,9 @@ typedef LHCb::CaloCellID::Vector CaloNeighbors ;
 // ============================================================================
 namespace CaloCellQuality{
   // ==========================================================================
-  enum Flag
+  enum Flag 
     {
-    OK            = 0 ,
+    OK            = 0 , 
     Dead          = 1 ,
     Noisy         = 2 ,
     Shifted       = 4 ,
@@ -60,24 +61,24 @@ namespace CaloCellQuality{
     StuckADC         =4096,
     OfflineMask      =8192
   } ;
-  inline const int Number = 15;
-  inline const std::string Name[Number] = {"OK","Dead","Noisy","Shifted","DeadLED","VeryNoisy","VeryShifted","LEDSaturated","BadLEDTiming","VeryBadLEDTiming","BadLEDRatio","BadLEDOpticBundle","UnstableLED","StuckADC","OfflineMask"};
-  inline const std::string qName(int i){
+  static const int Number = 15;
+  static const std::string Name[Number] = {"OK","Dead","Noisy","Shifted","DeadLED","VeryNoisy","VeryShifted","LEDSaturated","BadLEDTiming","VeryBadLEDTiming","BadLEDRatio","BadLEDOpticBundle","UnstableLED","StuckADC","OfflineMask"};
+  static const std::string qName(int i){
     if( i < Number && i >=0)return Name[i];
     return std::string("??");
   }
   // ==========================================================================
 }
 // ============================================================================
-class CellParam
-{
-  friend class DeCalorimeter;
+class CellParam 
+{ 
+  friend class DeCalorimeter; 
 public:
-  /// standard constructor
+  /// standard constructor 
   CellParam( const LHCb::CaloCellID& id  = LHCb::CaloCellID() ) ;
-  /// destructor
+  /// destructor 
   ~CellParam();
-  bool                  valid         () const { return m_valid      ; }
+  bool                  valid         () const { return m_valid      ; }   
   LHCb::CaloCellID      cellID        () const { return m_cellID        ; }
   double                x             () const { return m_center.x()    ; }
   double                y             () const { return m_center.y()    ; }
@@ -103,29 +104,29 @@ public:
   double                ledMoniRMS    () const { return m_ledMoniRMS    ; } // RMS(LED/PIN) from Quality condition (current T)
   double                ledDataShift  () const { return ( ledDataRef() > 0 && ledData() > 0 ) ? ledData()/ledDataRef() : 1; }
   double                gainShift     () const { return ( ledMoniRef() > 0 && ledMoni() > 0 ) ? ledMoni()/ledMoniRef() : 1; }
-  double                gain          () const { return nominalGain() * calibration() / gainShift() ;}
+  double                gain          () const { return nominalGain() * calibration() / gainShift() ;}  
   int                   numericGain   () const { return m_nGain         ; }  // for Prs only
   double                pileUpOffset  () const { return m_offset;}
   double                pileUpOffsetSPD() const { return m_offsetSPD;}
   double                pileUpOffsetRMS() const { return m_eoffset;}
   double                pileUpOffsetSPDRMS() const { return m_eoffsetSPD;}
-
-
+  
+    
 
   const std::vector<LHCb::CaloCellID>& pins() const  { return m_pins ;}
   const std::vector<int>& leds() const  { return m_leds ;}
   const CaloNeighbors& neighbors     () const { return m_neighbors     ; }
   const CaloNeighbors& zsupNeighbors () const { return m_zsupNeighbors ; }
-
+  
   // ** To initialize the cell: Geometry, neighbours, gain
-
+  
   void  setValid( bool valid ) { m_valid = valid ;  }
 
   void  setCenterSize( const Gaudi::XYZPoint& point, double S) {
-    m_center = point;
-    m_size   = S;
-    //    m_sine   = sqrt( (point.x()*point.x() + point.y()*point.y()) /
-    //                 point.mag2() );
+    m_center = point; 
+    m_size   = S; 
+    //    m_sine   = sqrt( (point.x()*point.x() + point.y()*point.y()) / 
+    //                 point.mag2() ); 
     m_sine = 0;
     if(point.R() != 0)m_sine   = point.Rho()/point.R();  // MathCore methods (Cartesian3D)
     m_time   = point.R() /Gaudi::Units::c_light *Gaudi::Units::ns ; //R=sqrt(Mag2)
@@ -133,7 +134,7 @@ public:
   void setDeltaTime(double dtime){ m_dtime = dtime; }
   void setZshower(double dz){ m_zShower = dz; }
 
-  void addZsupNeighbor( const LHCb::CaloCellID& ID) {
+  void addZsupNeighbor( const LHCb::CaloCellID& ID) { 
     m_zsupNeighbors.push_back(ID);
   }
   void addNeighbor    ( const LHCb::CaloCellID& ID) { m_neighbors.push_back(ID); }
@@ -147,23 +148,23 @@ public:
   void addLed(int id){ m_leds.push_back(id) ;}
   void resetPins(){ m_pins.clear() ;}
   void resetLeds(){ m_leds.clear() ;}
-
-
+  
+    
 
 
   // Calibration & quality
   void setQualityFlag   (int quality)           {m_quality = quality; }
   void addQualityFlag   (int quality)           {m_quality = m_quality | quality; }
   void setLedData       (double ledData, double ledDataRMS ){
-    m_ledData    = ledData ;
-    m_ledDataRMS = ledDataRMS;
+    m_ledData    = ledData ; 
+    m_ledDataRMS = ledDataRMS;  
   }
   void setLedMoni(double ledMoni, double ledMoniRMS){
-    m_ledMoni     = ledMoni ;
-    m_ledMoniRMS  = ledMoniRMS;
+    m_ledMoni     = ledMoni ; 
+    m_ledMoniRMS  = ledMoniRMS;  
   }
   void setLedDataRef   (double ledDataRef, double ledMoniRef){
-    m_ledDataRef = ledDataRef ;
+    m_ledDataRef = ledDataRef ; 
     m_ledMoniRef = ledMoniRef;
   }
   void setCalibration  (double calib)          { m_calibration = calib;           }
@@ -172,11 +173,11 @@ public:
   void setPileUpOffset( double off, double eoff=0){
     m_offset = off;
     m_eoffset = eoff;
-  }
+  }  
   void setPileUpOffsetSPD( double off, double eoff=0){
     m_offsetSPD = off;
     m_eoffsetSPD = eoff;
-  }
+  }  
 
   std::string cellStatus(){
     if( (CaloCellQuality::Flag) m_quality == CaloCellQuality::OK )return CaloCellQuality::qName(CaloCellQuality::OK);
@@ -185,25 +186,25 @@ public:
     int q = m_quality;
     int d=1;
     while( q > 0 ){
-      if( (q & 0x1) == 1 ) s << CaloCellQuality::qName( d ) << " | ";
+      if( (q & 0x1) == 1 ) s << CaloCellQuality::qName( d ) << " | "; 
       d +=1;
       q /= 2;
     }
     return s.str();
   }
-
-  bool operator==( const CellParam& c2 ) const {
+  
+  bool operator==( const CellParam& c2 ) const { 
     return center() == c2.center() && size() == c2.size(); }
-
+  
 private:
-
+  
   LHCb::CaloCellID    m_cellID         ; ///< ID of the cell
   double        m_size           ; ///< Cell size
   Gaudi::XYZPoint m_center       ; ///< Cell centre
   double        m_sine           ; ///< To transform E to Et
   double        m_gain           ; ///< MeV per ADC count
   double        m_time           ; ///< Nominal time of flight from Vertex (ns)
-  int           m_cardNumber     ; ///< Front-end card number
+  int           m_cardNumber     ; ///< Front-end card number 
   int           m_cardRow        ; ///< card row and column
   int           m_cardColumn     ;
   CaloNeighbors m_neighbors      ; ///< List of neighbors
@@ -230,7 +231,7 @@ private:
 };
 
 // ============================================================================
-// The END
+// The END 
 // ============================================================================
 #endif // CALODET_CELLPARAM_H
 // ============================================================================

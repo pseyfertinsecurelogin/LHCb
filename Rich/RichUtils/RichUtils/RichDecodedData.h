@@ -204,7 +204,7 @@ namespace Rich::DAQ
   namespace L1MapLocation
   {
     /// Default Location in TES for the decoded data map
-    inline const std::string Default = "Raw/Rich/L1Data/RICH1RICH2";
+    static const std::string Default = "Raw/Rich/L1Data/RICH1RICH2";
   } // namespace L1MapLocation
 
 } // namespace Rich::DAQ

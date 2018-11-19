@@ -46,11 +46,11 @@
 
 namespace LHCb
 {
-   constexpr CLID CLID_SwimmingReport = 900;
+   static const CLID CLID_SwimmingReport = 900;
 
   // Namespace for locations in TDS
   namespace SwimmingReportsLocation {
-    inline const std::string Default = "Swimming/Reports";
+    static const std::string Default = "Swimming/Reports";
   }
 
   /**Class ID definition

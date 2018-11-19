@@ -25,7 +25,7 @@ namespace LHCb
   // Namespace for locations in TDS
   namespace VPClusterLocation
   {
-    inline const std::string Light = "Raw/VP/LightClusters";
+    static const std::string Light = "Raw/VP/LightClusters";
   }
 
   class VPLightCluster final
