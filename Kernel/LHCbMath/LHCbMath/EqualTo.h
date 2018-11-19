@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+// $Id$
 // ============================================================================
 #ifndef LHCBMATH_EQUALTO_H
 #define LHCBMATH_EQUALTO_H 1

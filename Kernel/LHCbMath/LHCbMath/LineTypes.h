@@ -8,25 +8,26 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef LHCBMATH_LINETYPES_H
+// $Id$
+#ifndef LHCBMATH_LINETYPES_H 
 #define LHCBMATH_LINETYPES_H 1
 
 // Include files
 #include "LHCbMath/Line.h"
 
 /** @file
- *
+ *  
  *  Typedefs for 3D line types
- *
+ * 
  *  @author Juan PALACIOS
  *  @date   2005-11-21
  */
-namespace Gaudi
+namespace Gaudi 
 {
 
   namespace Math
   {
-
+    
     // NB : Please remember to give a simple doxygen comment for each typedef
 
     typedef Line<XYZPoint, XYZVector>                 XYZLine;          ///< 3D cartesian line (double)
@@ -38,9 +39,9 @@ namespace Gaudi
     typedef Line<Polar3DPointF, Polar3DVectorF>       Polar3DLineF;     ///< 3D ploar line (float)
     typedef Line<RhoEtaPhiPointF, RhoEtaPhiVectorF>   RhoEtaPhiLineF;   ///< 3D RhoEtaPhi line (float)
     typedef Line<RhoZPhiPointF, RhoZPhiVectorF>       RhoZPhiLineF;     ///< 3D RhoZPhi line (float)
-
+    
   }
-
+  
 }
 
 #endif // LHCBMATH_LINETYPES_H

@@ -8,8 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+//  $Id$ 
 // ============================================================================
-#ifndef LHCBMATH_COMBINE_H
+#ifndef LHCBMATH_COMBINE_H 
 #define LHCBMATH_COMBINE_H 1
 // ============================================================================
 // Include files
@@ -37,7 +38,7 @@ namespace  Gaudi
   {
     // ========================================================================
     /** @class Combine
-     *  Helper utility to combine   correlated measurements
+     *  Helper utility to combine   correlated measurements 
      *  @see P.Avery "Combining measurements with correlated errors", CBX 95 55
      *  @see http://www.phys.ufl.edu/~avery/fitting/error_correl.ps.gz
      *  @see http://www.researchgate.net.publication/2345482_Combining_Measurements_with_Correlated_Errors
@@ -55,57 +56,57 @@ namespace  Gaudi
       // ============================================================================
     public:
       // =======================================================================
-      // constructor from the vector of data and cov matrix
-      Combine ( const Data&       data ,
-                const Covariance& cov2 )
-        : m_data ( data )
-        , m_cov2 ( cov2 )
-        , m_w    ()
+      // constructor from the vector of data and cov matrix 
+      Combine ( const Data&       data , 
+                const Covariance& cov2 ) 
+        : m_data ( data ) 
+        , m_cov2 ( cov2 ) 
+        , m_w    () 
       { m_w = this->getWeights() ; }
       // ======================================================================
-      // constructor from the vector of data and cov matrices
-      Combine ( const Data&       data ,
-                const Covariance& cov1 ,
+      // constructor from the vector of data and cov matrices 
+      Combine ( const Data&       data , 
+                const Covariance& cov1 , 
                 const Covariance& cov2 )
-        : m_data ( data )
-        , m_cov2 ( cov1 + cov2  )
-        , m_w    ()
+        : m_data ( data ) 
+        , m_cov2 ( cov1 + cov2  ) 
+        , m_w    () 
       { m_w = this->getWeights() ; }
       // ======================================================================
-      // constructor from the vector of data and cov matrices
-      Combine ( const Data&       data ,
-                const Covariance& cov1 ,
+      // constructor from the vector of data and cov matrices 
+      Combine ( const Data&       data , 
+                const Covariance& cov1 , 
                 const Covariance& cov2 ,
                 const Covariance& cov3 )
-        : m_data ( data )
-        , m_cov2 ( cov1 + cov2 + cov3 )
-        , m_w    ()
+        : m_data ( data ) 
+        , m_cov2 ( cov1 + cov2 + cov3 ) 
+        , m_w    () 
       { m_w = this->getWeights() ; }
       // ======================================================================
-      // constructor from the vector of data and cov matrix
-      Combine ( const Covariance& cov2 ,
+      // constructor from the vector of data and cov matrix 
+      Combine ( const Covariance& cov2 , 
                 const Data&       data )
-        : m_data ( data )
-        , m_cov2 ( cov2 )
-        , m_w    ()
+        : m_data ( data ) 
+        , m_cov2 ( cov2 ) 
+        , m_w    () 
       { m_w = this->getWeights() ; }
       // ======================================================================
       // constructor from the data
-      Combine ( const DataWithError& data )
-        : m_data ( data.value() )
-        , m_cov2 ( data.cov2 () )
-        , m_w    ()
+      Combine ( const DataWithError& data ) 
+        : m_data ( data.value() ) 
+        , m_cov2 ( data.cov2 () ) 
+        , m_w    () 
       { m_w = this->getWeights() ; }
       // ======================================================================
     public:
       // ======================================================================
       /// calculate weights
-      Data getWeights() const
+      Data getWeights() const 
       {
-        // the inverse covariance matrix
+        // the inverse covariance matrix 
         Covariance vxi ;
-        if ( Gaudi::Math::inverse ( m_cov2 , vxi ) )
-        {
+        if ( Gaudi::Math::inverse ( m_cov2 , vxi ) ) 
+        { 
           /* try to regularize the matrix */
           const double tr    = std::abs ( Gaudi::Math::trace           ( m_cov2 ) ) / D     ;
           const double mnd   = std::abs ( Gaudi::Math::min_diagonal    ( m_cov2 ) )         ;
@@ -138,8 +139,8 @@ namespace  Gaudi
         return ( vxi * vone ) / ROOT::Math::Similarity( vxi , vone ) ;
       }
       /// the main method:  get a combined value using the calculated weights
-      Gaudi::Math::ValueWithError result () const
-      {
+      Gaudi::Math::ValueWithError result () const 
+      { 
         const double r  = ROOT::Math::Dot        ( m_data , m_w ) ;
         const double e2 = ROOT::Math::Similarity ( m_cov2 , m_w ) ;
         return Gaudi::Math::ValueWithError ( r , e2 ) ;
@@ -149,8 +150,8 @@ namespace  Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// get vector of units
-      const Data& units () const
+      /// get vector of units 
+      const Data& units () const 
       {
         static Data s_units ;
         if ( 1 != s_units[0] ) { Gaudi::Math::setToScalar ( s_units , T(1) ) ; }
@@ -159,17 +160,17 @@ namespace  Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// input data vector
-      Data        m_data  ;            // input data vector
-      /// the overall covariance matrix
+      /// input data vector 
+      Data        m_data  ;            // input data vector 
+      /// the overall covariance matrix 
       Covariance  m_cov2  ;            // the overall covariance matrix
       // ======================================================================
     private:
       // ======================================================================
-      /// weights
-      Data m_w            ; // weights
+      /// weights 
+      Data m_w            ; // weights 
       // ======================================================================
-    } ;
+    } ;  
     // ========================================================================
   } //                                         The end of namespace Gaudi::Math
   // ==========================================================================
@@ -182,57 +183,57 @@ namespace  Gaudi
     // ========================================================================
     /** combine two measurements <code>x</code> and <code>y</code>
      *  with covarinace matrix <code>cov</code>
-     *  @param x (INPUT) the first  measurement
-     *  @param y (INPUT) the second measurement
-     *  @param cov2 (INPUT) covariance matrix
+     *  @param x (INPUT) the first  measurement 
+     *  @param y (INPUT) the second measurement 
+     *  @param cov2 (INPUT) covariance matrix 
      *  @return combined result
      *  @author  Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-09-28
      */
-    GAUDI_API
-    Gaudi::Math::ValueWithError
-    combine  ( const double               x   ,
-               const double               y   ,
+    GAUDI_API 
+    Gaudi::Math::ValueWithError 
+    combine  ( const double               x   , 
+               const double               y   , 
                const Gaudi::SymMatrix2x2& cov ) ;
     // ========================================================================
     /** combine two measurements <code>x1</code> and <code>x2</code>
      *  using correlation coefficient <code>rho</code>:  \f$-1\le\rho\le1\f$
-     *  @param x1  (INPUT) the first  measurement
-     *  @param x2  (INPUT) the second measurement
-     *  @param rho (INPUT) correlation coefficient
+     *  @param x1  (INPUT) the first  measurement 
+     *  @param x2  (INPUT) the second measurement 
+     *  @param rho (INPUT) correlation coefficient 
      *  @return combined result
      *  @author  Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-09-28
      */
-    GAUDI_API
-    Gaudi::Math::ValueWithError
-    combine
+    GAUDI_API 
+    Gaudi::Math::ValueWithError 
+    combine 
     ( const Gaudi::Math::ValueWithError& x1  ,
-      const Gaudi::Math::ValueWithError& x2  ,
+      const Gaudi::Math::ValueWithError& x2  , 
       const double                       rho ) ;
     // =========================================================================
     /** combine two measurements <code>x1</code> and <code>x2</code>
-     *  using theie "statistical" uncertainties (assumed to be uncorrelated)
+     *  using theie "statistical" uncertainties (assumed to be uncorrelated) 
      *  and a covariance matrix of "systematic" uncertainnties
-     *  @param x1   (INPUT) the first  measurement
-     *  @param x2   (INPUT) the second measurement
-     *  @param syst (INPUT) covariance matrix of systematic uncertainnties
+     *  @param x1   (INPUT) the first  measurement 
+     *  @param x2   (INPUT) the second measurement 
+     *  @param syst (INPUT) covariance matrix of systematic uncertainnties  
      *  @return combined result
      *  @author  Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-09-28
      */
-    GAUDI_API
-    Gaudi::Math::ValueWithError
-    combine
+    GAUDI_API 
+    Gaudi::Math::ValueWithError 
+    combine 
     ( const Gaudi::Math::ValueWithError& x1   ,
-      const Gaudi::Math::ValueWithError& x2   ,
+      const Gaudi::Math::ValueWithError& x2   , 
       const Gaudi::SymMatrix2x2&         syst ) ;
     // =========================================================================
   }
   // ==========================================================================
 }
 // ============================================================================
-//                                                                      The END
+//                                                                      The END 
 // ============================================================================
 #endif // LHCBMATH_COMBINE_H
 // ============================================================================

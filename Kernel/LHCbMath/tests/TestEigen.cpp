@@ -8,10 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+// $Id$
 // ============================================================================
-// Include files
+// Include files 
 // ============================================================================
-// STD & STL
+// STD & STL 
 // ============================================================================
 #include <iostream>
 // ============================================================================
@@ -33,10 +34,10 @@
 // ============================================================================
 int main()
 {
-
-  // create the evaluator
-  Gaudi::Math::GSL::EigenSystem eval ;
-
+  
+  // create the evaluator 
+  Gaudi::Math::GSL::EigenSystem eval ;  
+  
   Gaudi::SymMatrix3x3 cov ;
   cov(0,0) = 1 ;
   cov(1,1) = 2 ;
@@ -44,17 +45,17 @@ int main()
   // get the sorted vector of eigenvalues and eigenvectors
   Gaudi::Vector3   eigval;
   Gaudi::Matrix3x3 eigvects;
-  StatusCode sc = eval.eigenVectors( cov ,
+  StatusCode sc = eval.eigenVectors( cov , 
                                      eigval, eigvects , true );
   if( sc.isFailure() ) {
     std::cout << "Bad StatusCode from eval.eigenVectors = " << sc << std::endl;
   }
-
-  std::cout
-    << " eigenvalues : " << eigval   << std::endl
+  
+  std::cout 
+    << " eigenvalues : " << eigval   << std::endl 
     << " matrix      : " << eigvects << std::endl ;
-
-  return 0 ;
+  
+  return 0 ;  
 }
 
 

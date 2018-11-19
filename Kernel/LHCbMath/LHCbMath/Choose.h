@@ -8,8 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-#ifndef LHCBMATH_CHOOSE_H
+// $Id$
+// ============================================================================ 
+#ifndef LHCBMATH_CHOOSE_H 
 #define LHCBMATH_CHOOSE_H 1
 // ============================================================================
 // Include files
@@ -21,16 +22,16 @@
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math 
+  {    
     // ========================================================================
     /** calculate the binomial coefficient C(n,k) = n!/((n-k)!*k!)
      *  the result is exact for all n,k<=67
-     *  @warning In case of overflow std::numeric_limits<unsigned long long>::max is returned
+     *  @warning In case of overflow std::numeric_limits<unsigned long long>::max is returned 
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
-    GAUDI_API
+    GAUDI_API 
     unsigned long long  choose ( const unsigned short n ,
                                  const unsigned short k ) ;
     // ========================================================================
@@ -39,7 +40,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
-    GAUDI_API
+    GAUDI_API 
     double log_choose ( const unsigned short n ,
                         const unsigned short k ) ;
     // ========================================================================
@@ -47,25 +48,25 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
      *  @date 2015-03-08
      */
-    GAUDI_API
-    double choose_double       ( const unsigned short n ,
+    GAUDI_API 
+    double choose_double       ( const unsigned short n , 
                                  const unsigned short k ) ;
     // ========================================================================
-    /** calculate the generalized binomial coefficient C(a,k)
+    /** calculate the generalized binomial coefficient C(a,k) 
      *  \f$C(\alpha,k) = \frac{\alpha}{k}\frac{\alpha-1}{k-1}...\f$
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
-    GAUDI_API
+    GAUDI_API 
     double gen_choose ( const double         a ,
                         const unsigned short k ) ;
     // ========================================================================
-    /** calculate the generalized binomial coefficient C(n/2,k)
+    /** calculate the generalized binomial coefficient C(n/2,k) 
      *  \f$C(n,k) = \frac{n/2}{k}\frac{n/2-1}{k-1}...\f$
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
-    GAUDI_API
+    GAUDI_API 
     double choose_half ( const int            n ,
                          const unsigned short k ) ;
     // ========================================================================
@@ -73,7 +74,7 @@ namespace Gaudi
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-//                                                                      The END
+//                                                                      The END 
 // ============================================================================
 #endif // LHCBMATH_CHOOSE_H
 // ============================================================================

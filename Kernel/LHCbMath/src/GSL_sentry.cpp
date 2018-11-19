@@ -8,10 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+// $Id$
 // ============================================================================
-// Include files
+// Include files 
 // ============================================================================
-// STD & STL
+// STD & STL 
 // ============================================================================
 #include <iostream>
 // ============================================================================
@@ -19,11 +20,11 @@
 // ============================================================================
 #include "GSL_sentry.h"
 // ============================================================================
-/** @file
+/** @file 
  *  Implementation file for class Gaudi::Math::GSL::GSL_Error_Handler
- *
+ *  
  *  @see Gaudi::Math::GSL::GSL_Error_Handler
- *  @date 2012-05-27
+ *  @date 2012-05-27 
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *
  *                    $Revision$
@@ -39,38 +40,38 @@
 namespace
 {
   // ==========================================================================
-  // GSL
+  // GSL 
   // ==========================================================================
   void GSL_local_error
   ( const char * reason    ,
     const char * file      ,
     int          line      ,
-    int          gsl_errno )
+    int          gsl_errno ) 
   {
-    std::cerr
-      << " GSL_ERROR : "
+    std::cerr 
+      << " GSL_ERROR : "   
       << gsl_errno << "/'" << gsl_strerror ( gsl_errno ) << "'"
-      << "\t reason '"
+      << "\t reason '"     
       << reason    << "' "
-      << "\t file/line '"
-      << file      << "'/" << line
-      << std::endl ;
+      << "\t file/line '"  
+      << file      << "'/" << line 
+      << std::endl ;  
   }
   // ==========================================================================
 }
 // ============================================================================
 // constructor: loc
 // ============================================================================
-Gaudi::Math::GSL::GSL_Error_Handler::GSL_Error_Handler ()
-  : m_old ( 0 )
-{
-  m_old = gsl_set_error_handler ( &GSL_local_error ) ;
-  // m_old = gsl_set_error_handler_off () ;
+Gaudi::Math::GSL::GSL_Error_Handler::GSL_Error_Handler () 
+  : m_old ( 0 ) 
+{ 
+  m_old = gsl_set_error_handler ( &GSL_local_error ) ; 
+  // m_old = gsl_set_error_handler_off () ; 
 }
 // ============================================================================
-// destructor/ unlock
+// destructor/ unlock 
 // ============================================================================
-Gaudi::Math::GSL::GSL_Error_Handler::~GSL_Error_Handler ()
+Gaudi::Math::GSL::GSL_Error_Handler::~GSL_Error_Handler () 
 { gsl_set_error_handler ( m_old ) ; }
 // ============================================================================
 #ifdef __INTEL_COMPILER
@@ -78,5 +79,5 @@ Gaudi::Math::GSL::GSL_Error_Handler::~GSL_Error_Handler ()
 #pragma warning(pop)        // Reenable ICC remark 177
 #endif
 // ============================================================================
-// the END
+// the END 
 // ============================================================================
