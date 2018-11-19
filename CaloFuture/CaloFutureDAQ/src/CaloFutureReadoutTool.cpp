@@ -62,6 +62,7 @@ bool CaloFutureReadoutTool::getCaloFutureBanksFromRaw( ) {
 
   m_readSources.clear();
   m_banks = {};
+  //m_banks = nullptr;
 
   // Retrieve the RawEvent:
   LHCb::RawEvent* rawEvt = findFirstRawEvent() ;
@@ -85,6 +86,7 @@ bool CaloFutureReadoutTool::getCaloFutureBanksFromRaw( ) {
     m_status = LHCb::RawBankReadoutStatus( m_packedType);
   }
 
+  //if ( !m_banks || 0 == m_banks->size() ) {
   if (  m_banks.empty() ) {
     if( !m_packedIsDefault){
       if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of short type has not been found ... try packed type" << endmsg;
@@ -96,7 +98,8 @@ bool CaloFutureReadoutTool::getCaloFutureBanksFromRaw( ) {
       m_status = LHCb::RawBankReadoutStatus( m_shortType);
     }
 
-    if ( m_banks.empty() ){
+    //if ( !m_banks || 0 == m_banks->size() ){
+    if (  m_banks.empty() ) {
       if ( msgLevel( MSG::DEBUG) )debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
       counter("No " + toString(m_detectorName) + " bank found") += 1;
       return false;

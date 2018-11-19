@@ -45,7 +45,7 @@ def caloDigits ( context        ,
     if context != _cntx :
         _log.warning('CaloFutureDigit: Context is redefined to be Offline')
         
-    from Configurables import ( CaloFutureZSupAlg       ,
+    from Configurables import ( CaloFutureRawToDigits   ,
                                 CaloFutureDigitsFromRaw ,
                                 RawBankReadoutStatusConverter,
                                 GaudiSequencer    ) 
@@ -65,6 +65,7 @@ def caloDigits ( context        ,
                          enableOnDemand          )
         conflist.append(spd)
         alglist.append(spd)
+
 
     if 'Prs'  in detectors :
         _log.debug('caloDigits : Prs is added to the detector list')
@@ -88,7 +89,7 @@ def caloDigits ( context        ,
     if 'Ecal' in detectors :
         _log.debug('caloDigits : Ecal is added to the detector list')
         ecalSeq = GaudiSequencer ('FutureEcalDigitsSeq',Context = _cntx)
-        ecal = getAlgo ( CaloFutureZSupAlg             , 
+        ecal = getAlgo ( CaloFutureRawToDigits             , 
                          "FutureEcalZSup"              ,
                          _cntx                   ,
                          "Raw/Ecal/Digits"       ,
@@ -107,7 +108,7 @@ def caloDigits ( context        ,
     if 'Hcal' in detectors :
         _log.debug('caloDigits : Hcal is added to the detector list')
         hcalSeq = GaudiSequencer ('FutureHcalDigitsSeq',Context = _cntx)
-        hcal = getAlgo ( CaloFutureZSupAlg             , 
+        hcal = getAlgo ( CaloFutureRawToDigits         , 
                          "FutureHcalZSup"              ,
                          _cntx                   ,
                          "Raw/Hcal/Digits"       ,
