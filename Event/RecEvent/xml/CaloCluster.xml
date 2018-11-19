@@ -47,7 +47,6 @@
   <base   name = "KeyedObject&lt;int&gt;" />
 
   <location name = "Default"   place = "Rec/Calo/Clusters"          />
-  <location name = "EcalRaw"   place = "Rec/Calo/EcalClustersRaw"   />
   <location name = "Ecal"      place = "Rec/Calo/EcalClusters"      />
   <location name = "Hcal"      place = "Rec/Calo/HcalClusters"      />
   <location name = "EcalSplit" place = "Rec/Calo/EcalSplitClusters" />

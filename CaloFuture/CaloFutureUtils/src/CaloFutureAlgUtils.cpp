@@ -56,9 +56,7 @@ std::string  LHCb::CaloFutureAlgUtils::CaloFutureSplitClusterLocation( const std
 }
 
 
-std::string  LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::string& name ,
-                                                                 const std::string& context,
-                                                                 const std::string& type) {
+std::string  LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::string& name , const std::string& context) {
   //##  splitClusters
   if( contains_ci(name, "SPLITCLUSTER" ) ) return CaloFutureSplitClusterLocation(context);
 
@@ -68,15 +66,10 @@ std::string  LHCb::CaloFutureAlgUtils::CaloFutureClusterLocation( const std::str
   // caloClusters are almost context-independent : either Offline type or HLT-type!
   // MUST be synchronous with CaloFutureRecoConf
   using namespace LHCb::CaloClusterLocation;
-  std::string clusters;
-    if (det == "Hcal") {clusters = Hcal;}
-    else {
-        if (type == "EcalRaw") {clusters = EcalRaw;}
-        else {clusters = Ecal;}
-    }
   return PathFromContext(
                 contains_ci( context, "HLT" )  ? "Hlt" : "",
-                clusters);
+                det == "Hcal" ? Hcal : Ecal // default is Ecal
+  );
 }
 
 // Hypo location from type/context

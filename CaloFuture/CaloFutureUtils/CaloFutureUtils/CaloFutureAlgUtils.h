@@ -82,7 +82,7 @@ namespace LHCb{
     // Default location for CaloFutureObject as function of detector and possibly context
     std::string DeCaloFutureLocation( const std::string& name );
     std::string CaloFutureDigitLocation( const std::string& name, const std::string& context="");
-      std::string CaloFutureClusterLocation( const std::string& name , const std::string& context="", const std::string& type="");
+    std::string CaloFutureClusterLocation( const std::string& name , const std::string& context="");
     std::string CaloFutureSplitClusterLocation( const std::string& context="");
     std::string CaloFutureHypoLocation( const std::string& type , const std::string& context="");
     std::string CaloFutureIdLocation( const std::string& type, const std::string& context = "");
