@@ -11,6 +11,8 @@
 ###############################################################################
 # -*- coding: utf-8 -*-
 # =============================================================================
+# $Id$
+# =============================================================================
 ## @file  LHCbMath/combine.py
 #  Few helper utilities for combining correlated measurements
 #  @see P.Avery "Combining measurements with correlated errors", CBX 95 55

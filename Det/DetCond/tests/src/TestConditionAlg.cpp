@@ -50,7 +50,6 @@ protected:
   GaudiUtils::Map<std::string,Condition*> m_conditions;
 
   struct CondUpdateMonitor {
-    virtual ~CondUpdateMonitor() = default;
     CondUpdateMonitor(MsgStream& _log, std::string _path):
       log{_log}, path{std::move(_path)} {}
     virtual StatusCode handler() {
