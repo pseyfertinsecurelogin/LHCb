@@ -165,7 +165,7 @@ namespace meta_enum_internal {
   template <typename EnumType, typename EnumUnderlyingType, size_t size>
     constexpr ValuesWithDefault<EnumType, size>
     resolveEnumValuesArray
-    (const IntWrapper<EnumUnderlyingType> defaultValue,
+    (const EnumType defaultValue,
      const std::initializer_list<IntWrapper<EnumUnderlyingType>>& in) {
     Values<EnumType, size> result{};
     EnumUnderlyingType nextValue = 0;
@@ -175,7 +175,7 @@ namespace meta_enum_internal {
       nextValue = newValue + 1;
       result[i] = static_cast<EnumType>(newValue);
     }
-    return {static_cast<EnumType>(defaultValue.value), result};
+    return {defaultValue, result};
   }
 }
 
@@ -191,7 +191,7 @@ namespace meta_enum_internal {
  *   - ... list of entries, in the form "Name" or "Name=value"
  *     to force a given value
  */
-#define meta_enum_class(Type, UnderlyingType, Default, ...)      \
+#define meta_enum_class_with_unknown(Type, UnderlyingType, Default, ...)\
   enum class Type : UnderlyingType { __VA_ARGS__};\
   constexpr static auto Type##_internal_size = [] () constexpr {\
     using IntWrapperType = meta_enum_internal::IntWrapper<UnderlyingType>;\
@@ -201,7 +201,7 @@ namespace meta_enum_internal {
   constexpr static auto Type##_meta = meta_enum_internal::parseMetaEnum<Type, UnderlyingType, Type##_internal_size()>(#__VA_ARGS__, []() { \
     using IntWrapperType = meta_enum_internal::IntWrapper<UnderlyingType>;\
     IntWrapperType __VA_ARGS__;\
-    return meta_enum_internal::resolveEnumValuesArray<Type, UnderlyingType, Type##_internal_size()>(Default, {__VA_ARGS__}); \
+    return meta_enum_internal::resolveEnumValuesArray<Type, UnderlyingType, Type##_internal_size()>(Type::Default, {__VA_ARGS__}); \
   }());\
   inline std::string toString(const Type e) {\
     for(const auto& member : Type##_meta.members) {\
@@ -222,3 +222,13 @@ namespace meta_enum_internal {
     e = Type##_meta.defaultValue;\
     return StatusCode::FAILURE;\
   }
+
+/**
+ * This macro allows to declare enums that can be automatically
+ * pretty printed and parsed from strings.
+ * This is an improvement on meta_enum_class_with_unknown where
+ * the Default is automatically "Unknown". This implies that the
+ * enum declared must have an "Unknown" entry or this will trigger
+ * a compiler error.
+ */
+#define meta_enum_class(Type, UnderlyingType, ...) meta_enum_class_with_unknown(Type, UnderlyingType, Unknown, __VA_ARGS__)

@@ -15,13 +15,21 @@
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/meta_enum.h"
 #include <sstream>
+#include <iostream>
 
-meta_enum_class(MyEnum, int, Unknown,
+meta_enum_class(MyEnum, int,
                 Unknown=0,
                 Case1,
                 Case2,
                 Case3,
                 CaseLarge=10000)
+
+meta_enum_class_with_unknown(MyEnum2, int, Case2,
+                             Unknown=0,
+                             Case1,
+                             Case2,
+                             Case3,
+                             CaseLarge=10000)
 
 BOOST_AUTO_TEST_CASE(test_meta_enum_printing) {
   BOOST_CHECK(static_cast<int>(MyEnum::Unknown) == 0);
@@ -36,4 +44,8 @@ BOOST_AUTO_TEST_CASE(test_meta_enum_printing) {
   BOOST_CHECK(value == MyEnum::Case2 && sc == StatusCode::SUCCESS);
   sc = parse(value, "non existing");
   BOOST_CHECK(value == MyEnum::Unknown && sc == StatusCode::FAILURE);
+  MyEnum2 value2;
+  sc = parse(value2, "non existing");
+  std::cout << value2 << "" << static_cast<int>(MyEnum2_meta.defaultValue) << std::endl;
+  BOOST_CHECK(value2 == MyEnum2::Case2 && sc == StatusCode::FAILURE);
 }
