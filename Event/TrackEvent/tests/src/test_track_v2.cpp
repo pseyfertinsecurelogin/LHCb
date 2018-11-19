@@ -13,7 +13,6 @@
 #include <boost/test/unit_test.hpp>
 #include <type_traits>
 
-#include "GaudiKernel/Property.h"
 #include "Event/State.h"
 
 #include "Event/Track.h"
@@ -104,13 +103,7 @@ BOOST_AUTO_TEST_CASE(test_track_flags){
   std::ostringstream stream_types;
   stream_types<<Track::Types::Long;
   BOOST_CHECK(stream_types.str()=="Long");
-  Track::Types tt_l;
-  BOOST_CHECK(parse(tt_l, "HelloWorld!").isFailure());
-  BOOST_CHECK(parse(tt_l,"Long").isSuccess());
-  BOOST_CHECK(tt_l==Track::Types::Long);
-
-  Gaudi::Property<Track::Types> prop_tt{Track::Types::Long};
-  BOOST_CHECK( prop_tt.toString() == "Long" );
+  BOOST_CHECK(Track::TypesToType("Long")==Track::Types::Long);
 
 
   tr.setHistory(Track::History::PrForward);
@@ -119,11 +112,7 @@ BOOST_AUTO_TEST_CASE(test_track_flags){
   std::ostringstream stream_history;
   stream_history<<Track::History::PrForward;
   BOOST_CHECK(stream_history.str()=="PrForward");
-  Track::History th_prf;
-  BOOST_CHECK(parse(th_prf, "HelloWorld!").isFailure());
-  BOOST_CHECK(parse(th_prf,"PrForward").isSuccess());
-  BOOST_CHECK(th_prf==Track::History::PrForward);
-
+  BOOST_CHECK(Track::HistoryToType("PrForward")==Track::History::PrForward);
 
   tr.setFlag(Track::Flags::Backward, true);
   BOOST_CHECK(tr.flag()==Track::Flags::Backward);
@@ -133,10 +122,7 @@ BOOST_AUTO_TEST_CASE(test_track_flags){
   std::ostringstream stream_flags;
   stream_flags<<Track::Flags::Backward;
   BOOST_CHECK(stream_flags.str()=="Backward");
-  Track::Flags tft_b;
-  BOOST_CHECK(parse(tft_b, "HelloWorld!").isFailure());
-  BOOST_CHECK(parse(tft_b, "Backward").isSuccess());
-  BOOST_CHECK(tft_b==Track::Flags::Backward);
+  BOOST_CHECK(Track::FlagsToType("Backward")==Track::Flags::Backward);
 
   tr.setFitStatus(Track::FitStatus::Fitted);
   BOOST_CHECK(tr.fitStatus()==Track::FitStatus::Fitted);
@@ -144,10 +130,7 @@ BOOST_AUTO_TEST_CASE(test_track_flags){
   std::ostringstream stream_fitstatus;
   stream_fitstatus<<Track::FitStatus::Fitted;
   BOOST_CHECK(stream_fitstatus.str()=="Fitted");
-  Track::FitStatus fs_f;
-  BOOST_CHECK(parse(fs_f, "HelloWorld!").isFailure());
-  BOOST_CHECK(parse(fs_f, "Fitted").isSuccess());
-  BOOST_CHECK(fs_f==Track::FitStatus::Fitted);
+  BOOST_CHECK(Track::FitStatusToType("Fitted")==Track::FitStatus::Fitted);
 }
 
 void print_ids(LHCb::span<LHCb::LHCbID const> ids){

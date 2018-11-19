@@ -107,6 +107,9 @@ namespace LHCb::Event
       {
         return ( val & mask ) >> trailing_zeros( mask );
       }
+
+      template <typename Flag> std::string const& toStringHelper( Flag const flag );
+      template <typename Enum> Enum toEnumHelper( std::string const& aName );
     }
 
     class Track final
@@ -161,22 +164,12 @@ namespace LHCb::Event
         PrDownstream     = 33, // track produced with the PrDownstream pattern recognition for the upgrade
         PrVeloUT         = 34  // track produced with the PrVeloUT pattern recognition for the upgrade
       };
-      /// conversion of string to enum for type History
-      friend StatusCode parse(History& e, std::string const& name);
-      /// conversion to string for enum type History
-      friend std::string const& toString( History const flag );
-
       /// Track fit history enumerations
       enum class FitHistory {
         FitUnknown = 0, // track not fitted yet (fit history not set)
         StdKalman,      // track fitted with the standard Kalman fitter
         BiKalman        // track fitted with the bi-directional Kalman fitter
       };
-      /// conversion of string to enum for type FitHistory
-      friend StatusCode parse(FitHistory& e, std::string const& name);
-      /// conversion to string for enum type FitHistory
-      friend std::string const& toString( FitHistory const flag );
-
       /// Track type enumerations
       enum class Types {
         TypeUnknown = 0, // track of undefined type
@@ -191,11 +184,6 @@ namespace LHCb::Event
         TT,              // TT track
         UT               // UT track
       };
-      /// conversion of string to enum for type Types
-      friend StatusCode parse(Types& e, std::string const& name);
-      /// conversion to string for enum type Types
-      friend std::string const& toString( Types const flag );
-
       /// Track pattern recognition status flag enumerations: The flag specifies in which state of the pattern
       /// recognition phase the track is. The status flag is set by the relevant algorithms
       enum class PatRecStatus {
@@ -203,11 +191,6 @@ namespace LHCb::Event
         PatRecIDs,               // pattern recognition track with LHCbIDs
         PatRecMeas               // pattern recognition track with Measurements added
       };
-      /// conversion of string to enum for type PatRecStatus
-      friend StatusCode parse(PatRecStatus& e, std::string const& name);
-      /// conversion to string for enum type PatRecStatus
-      friend std::string const& toString( PatRecStatus const flag );
-
       /// Track fitting status flag enumerations: The flag specifies in which state of the fitting phase the track is.
       /// The status flag is set by the relevant algorithms
       enum class FitStatus {
@@ -215,11 +198,6 @@ namespace LHCb::Event
         Fitted,               // fitted track
         FitFailed             // track for which the track fit failed
       };
-      /// conversion of string to enum for type FitStatus
-      friend StatusCode parse(FitStatus& e, std::string const& name);
-      /// conversion to string for enum type FitStatus
-      friend std::string const& toString( FitStatus const flag );
-
       /// Track general flags enumerations
       enum class Flags {
         FlagsUnknown = 0,  //
@@ -232,11 +210,6 @@ namespace LHCb::Event
         Selected     = 64, //
         L0Candidate  = 128 //
       };
-      /// conversion of string to enum for type Flags
-      friend StatusCode parse(Flags& e, std::string const& name);
-      /// conversion to string for enum type Flags
-      friend std::string const& toString( Flags const flag );
-
       /// Additional information assigned to this Track by pattern recognition
       enum class AdditionalInfo {
         AdditionalInfoUnknown = 0, //
@@ -280,10 +253,41 @@ namespace LHCb::Event
         MuonCLArrival = 309, // CLArrival
         IsMuonTight   = 310  // 1 if pass IsMuonTight criteria, 0 if not
       };
+
+      /// conversion of string to enum for type History
+      static History HistoryToType( std::string const& aName ) { return details::toEnumHelper<History>(aName); }
+      /// conversion to string for enum type History
+      friend std::string const& toString( History const flag ) { return details::toStringHelper(flag); }
+
+      /// conversion of string to enum for type FitHistory
+      static FitHistory FitHistoryToType( std::string const& aName ) { return details::toEnumHelper<FitHistory>(aName); }
+      /// conversion to string for enum type FitHistory
+      friend std::string const& toString( FitHistory const flag ) { return details::toStringHelper(flag); }
+
+      /// conversion of string to enum for type Types
+      static Types TypesToType( std::string const& aName ) { return details::toEnumHelper<Types>(aName); }
+      /// conversion to string for enum type Types
+      friend std::string const& toString( Types const flag ) { return details::toStringHelper(flag); }
+
+      /// conversion of string to enum for type PatRecStatus
+      static PatRecStatus PatRecStatusToType( std::string const& aName ) { return details::toEnumHelper<PatRecStatus>(aName); }
+      /// conversion to string for enum type PatRecStatus
+      friend std::string const& toString( PatRecStatus const flag ) { return details::toStringHelper(flag); }
+
+      /// conversion of string to enum for type FitStatus
+      static FitStatus FitStatusToType( std::string const& aName ) { return details::toEnumHelper<FitStatus>(aName); }
+      /// conversion to string for enum type FitStatus
+      friend std::string const& toString( FitStatus const flag ) { return details::toStringHelper(flag); }
+
+      /// conversion of string to enum for type Flags
+      static Flags FlagsToType( std::string const& aName ) { return details::toEnumHelper<Flags>(aName); }
+      /// conversion to string for enum type Flags
+      friend std::string const& toString( Flags const flag ) { return details::toStringHelper(flag); }
+
       /// conversion of string to enum for type AdditionalInfo
-      friend StatusCode parse(AdditionalInfo& e, std::string const& name);
+      static AdditionalInfo AdditionalInfoToType( std::string const& aName ) { return details::toEnumHelper<AdditionalInfo>(aName); }
       /// conversion to string for enum type AdditionalInfo
-      friend std::string const& toString( AdditionalInfo const flag );
+      friend std::string const& toString( AdditionalInfo const flag ) { return details::toStringHelper(flag); }
 
       /// Retrieve the position and momentum vectors and the corresponding 6D covariance matrix (pos:0->2,mom:3-5) at
       /// the first state
