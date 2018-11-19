@@ -234,7 +234,7 @@ const State* Track::stateAt( const State::Location& location ) const
 //=============================================================================
 void Track::addToStates( const State& state )
 {
-  auto local = new State{state};
+  auto local = state.clone();
   const int order = ( checkFlag(Track::Flags::Backward) ? -1 : 1 );
   auto ipos = std::upper_bound(m_states.begin(),
                                m_states.end(),
@@ -399,7 +399,7 @@ void Track::copy( const Track& track )
   m_states.reserve( track.states().size() ) ;
   std::transform( track.states().begin(), track.states().end(),
                   std::back_inserter(m_states),
-                  [](const State* s) { return new State{*s}; });
+                  [](const State* s) { return s->clone(); });
 
   // copy the track fit info
   m_fitResult.reset( track.m_fitResult ? track.m_fitResult->clone()

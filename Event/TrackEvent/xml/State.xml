@@ -411,6 +411,13 @@
         const   = 'TRUE'/>
 
       <method
+        type    = 'LHCb::State*'
+        name    = 'clone'
+        desc    = 'Clone the state (remember you then own the pointer)'
+        const   = 'TRUE' >
+      </method>
+
+      <method
         name    = 'setState'
         argList = 'const Gaudi::TrackVector state'
         desc    = 'Update the state vector'>

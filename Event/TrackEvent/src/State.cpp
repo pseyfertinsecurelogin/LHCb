@@ -119,6 +119,14 @@ void State::setErrQOverP2( double value )
 }
 
 //=============================================================================
+// Clone the state
+//=============================================================================
+State* State::clone() const
+{
+  return new State(*this);
+}
+
+//=============================================================================
 // Retrieve the errors on the 3D-position vector of the state
 //=============================================================================
 Gaudi::SymMatrix3x3 State::errPosition() const
