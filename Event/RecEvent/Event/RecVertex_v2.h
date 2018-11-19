@@ -45,6 +45,13 @@ namespace LHCb::Event::v2 {
 
     } // namespace RecVertexEnums
 
+  /// helper class to bundle a Track and its weight
+  struct WeightedTrack {
+    using Track = LHCb::Event::v2::Track;
+    const Track* track;
+    float weight;
+  };
+
   /// Reconstructed Vertices class
   class RecVertex final {
   public:
@@ -89,17 +96,10 @@ namespace LHCb::Event::v2 {
     /// Set the Chi^2 and the DoF of the vertex (fit)
     void setChi2PerDoF( Track::Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
 
-    /// Set the tracks for this PV. Weights are implicitly set to 1 for each
-    void setTracks(const std::vector<const Track*>& tracks) {
-      m_tracks = tracks;
-      m_weights = std::vector<float>( tracks.size(), 1.0 );
-    };
-
     /// Add a track to the track list, with the given weight
     void addToTracks(const Track* track,
                      const float weight=1.0) {
-      m_tracks.push_back(track);
-      m_weights.push_back(weight);
+      m_tracks.push_back(WeightedTrack{track, weight});
     }
   
     /// Remove the given track from the list of tracks and its associated weight
@@ -108,12 +108,10 @@ namespace LHCb::Event::v2 {
     /// Remove all tracks, and their associated weights, from this vertex
     void clearTracks() {
       m_tracks.clear();
-      m_weights.clear();
     }
   
     /// Returns a pair containing a bool, indicating if the track was part of this vertex or not, and its associated weight (0 if track not included)
     std::optional<float> trackWeight(const Track* track) const;
-
       
     /// Print this RecVertex in a human readable way
     std::ostream& fillStream(std::ostream& s) const;
@@ -124,11 +122,8 @@ namespace LHCb::Event::v2 {
     /// Update  How the vertex was made
     void setTechnique(const RecVertexType& value) { m_technique = value; }
   
-    /// Retrieve const  Tracks this vertex was made from
-    const std::vector<const Track*>& tracks() const { return m_tracks; }
-  
-    /// Retrieve const  vector of weights for each track in this PV
-    const std::vector<float>& weights() const { return m_weights; }
+    /// Retrieve const Tracks this vertex was made from
+    const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
 
   private:
     
@@ -141,9 +136,7 @@ namespace LHCb::Event::v2 {
     /// How the vertex was made
     RecVertexType m_technique{};
     /// Tracks this vertex was made from
-    std::vector<const Track*> m_tracks;
-    /// vector of weights for each track in this PV
-    std::vector<float>    m_weights;
+    std::vector<WeightedTrack> m_tracks;
 
   }; // class RecVertex
   
