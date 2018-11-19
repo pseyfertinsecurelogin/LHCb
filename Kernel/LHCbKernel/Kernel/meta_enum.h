@@ -212,7 +212,7 @@ namespace meta_enum_internal {
   inline std::ostream& operator<< (std::ostream& s, const Type e) {\
     return s << toString(e);\
   }\
-  inline StatusCode parse(Type& e, std::string const& name) {\
+  inline StatusCode parse(Type& e, std::string_view name) {\
     for(const auto& member : Type##_meta.members) {\
       if (member.name == name) {\
         e = member.value;\
