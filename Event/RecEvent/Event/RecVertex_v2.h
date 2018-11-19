@@ -35,7 +35,7 @@ namespace LHCb::Event::v2 {
   namespace Enum::RecVertex {
 
     /// Enumeration to describe how the vertex was made
-    meta_enum_class(RecVertexType, int, Unknown, 
+    meta_enum_class(RecVertexType, int,
                     Unknown=0,
                     Vertex2D,
                     Vertex3D,
