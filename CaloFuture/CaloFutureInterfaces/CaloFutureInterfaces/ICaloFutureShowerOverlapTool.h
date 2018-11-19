@@ -34,10 +34,8 @@ struct ICaloFutureShowerOverlapTool : extend_interfaces<IAlgTool>
   // Return the interface ID
   DeclareInterfaceID(ICaloFutureShowerOverlapTool, 2, 0 );
 
-  using propagateInitialWeights = Gaudi::tagged_bool<struct propagateInitialWeights_tag>;
-
-  virtual void process(LHCb::CaloCluster& c1, LHCb::CaloCluster& c2, const int niter=5, 
-		       propagateInitialWeights=propagateInitialWeights{false}) const = 0;
+  virtual void process(const LHCb::CaloCluster* c1,const LHCb::CaloCluster* c2,
+                       int niter=5, bool propagateInitialWeights=false) const = 0;
   
 };
 #endif // ICALOFUTURESHOWEROVERLAPTOOL_H
