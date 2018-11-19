@@ -310,8 +310,9 @@ void UpdateManagerSvc::i_registerCondition(void *obj, BaseObjectMemberFunction *
     m_head_items.push_back(mf_item); // since it is new, it has no parents
     insertInMap( mf_item );
   }
-  if ( ! mf_item->ptr ) { // the item is known but not its pointer (e.g. after a purge)
-    mf_item->setPointers( mf->castToDataObject() );
+  if ( ! mf_item->ptr ) { // the item is know but not its pointer (e.g. after a purge)
+    mf_item->vdo = mf->castToValidDataObject();
+    mf_item->ptr = mf->castToVoid();
   }
   link(mf_item,mf,cond_item);
   // a new item means that we need an update
