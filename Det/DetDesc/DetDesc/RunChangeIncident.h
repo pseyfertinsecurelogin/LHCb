@@ -15,7 +15,7 @@
 
 namespace IncidentType
 {
-  inline const std::string RunChange = "RunChange"; ///< Change of run number
+  const static std::string RunChange = "RunChange"; ///< Change of run number
 }
 
 /** @class RunChangeIncident
@@ -32,8 +32,8 @@ public:
   : Incident(source, IncidentType::RunChange), m_run(run), m_eventTime(evtTime) {}
 
   /// Get the new run number
-  unsigned long runNumber() const { return m_run; }
-  const Gaudi::Time& eventTime() const { return m_eventTime; }
+  inline unsigned long runNumber() const { return m_run; }
+  inline const Gaudi::Time& eventTime() const { return m_eventTime; }
 
 private:
   /// New run number

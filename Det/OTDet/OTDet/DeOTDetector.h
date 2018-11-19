@@ -48,10 +48,10 @@ namespace LHCb
 
 namespace DeOTDetectorLocation{
   /// Outer Tracker location in transient detector store
-  inline const std::string Default="/dd/Structure/LHCb/AfterMagnetRegion/T/OT";
+  static const std::string& Default="/dd/Structure/LHCb/AfterMagnetRegion/T/OT";
 }
 
-constexpr CLID CLID_DeOTDetector = 8101;
+static const CLID CLID_DeOTDetector = 8101;
 
 class DeOTDetector : public DetectorElement {
 

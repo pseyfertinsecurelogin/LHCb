@@ -144,14 +144,14 @@ namespace LHCb
 
   };
 
-  constexpr CLID CLID_PackedTracks = 1550;
+  static const CLID CLID_PackedTracks = 1550;
 
   // Namespace for locations in TDS
   namespace PackedTrackLocation
   {
-    inline const std::string Default  =  "pRec/Track/Best";
-    inline const std::string Muon     =  "pRec/Track/Muon";
-    inline const std::string InStream = "/pRec/Track/Custom";
+    static const std::string& Default  =  "pRec/Track/Best";
+    static const std::string& Muon     =  "pRec/Track/Muon";
+    static const std::string& InStream = "/pRec/Track/Custom";
   }
 
   /** @class PackedTracks PackedTrack.h Event/PackedTrack.h
@@ -303,14 +303,14 @@ namespace LHCb
     /// Safe sqrt ...
     template< typename TYPE >
     inline TYPE safe_sqrt( const TYPE x ) const
-    {
+    { 
       return ( x > TYPE(0) ? std::sqrt(x) : TYPE(0) );
     }
 
     /// Safe divide ...
     template< typename TYPE >
     inline TYPE safe_divide( const TYPE a, const TYPE b ) const
-    {
+    { 
       return ( b != TYPE(0) ? a/b : 9e9 );
     }
 

@@ -89,13 +89,13 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  constexpr CLID CLID_PackedRecVertices = 1553;
+  static const CLID CLID_PackedRecVertices = 1553;
 
   // Namespace for locations in TDS
   namespace PackedRecVertexLocation
   {
-    inline const std::string Primary = "pRec/Vertex/Primary";
-    inline const std::string InStream = "/pPhys/RecVertices";
+    static const std::string& Primary = "pRec/Vertex/Primary";
+    static const std::string& InStream = "/pPhys/RecVertices";
   }
 
   /** @class PackedRecVertices Event/PackedRecVertex.h

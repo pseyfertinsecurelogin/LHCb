@@ -31,7 +31,7 @@ class DeUTLayer;
 namespace DeUTDetLocation {
 
   /// UT location in transient detector store
-  inline const std::string UT = "/dd/Structure/LHCb/BeforeMagnetRegion/UT";
+  static const std::string& UT = "/dd/Structure/LHCb/BeforeMagnetRegion/UT";
 
   const std::string& location();
 
@@ -51,7 +51,7 @@ namespace DeUTDetLocation {
  *
  */
 
-constexpr CLID CLID_DeUTDetector = 9301;
+static const CLID CLID_DeUTDetector = 9301;
 
 namespace {
   constexpr int NBSTATION = 2;

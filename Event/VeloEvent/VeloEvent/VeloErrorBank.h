@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+// $Id: VeloErrorBank.h,v 1.7 2010-02-18 07:54:54 szumlat Exp $
 #ifndef VELOERRORBANK_H
 #define VELOERRORBANK_H 1
 
@@ -30,7 +31,7 @@
  */
 
 namespace VeloErrorBankLocation {
-  inline const std::string Default = "Raw/Velo/VeloErrorBank";
+  static const std::string& Default = "Raw/Velo/VeloErrorBank";
 }
 
 class VeloErrorBank: public KeyedObject<int> {

@@ -22,10 +22,13 @@
  *  @date 20/5/2009
  */
 
-constexpr CLID CLID_DeVP = 8200;
+static const CLID CLID_DeVP = 8200;
 
+#ifdef __INTEL_COMPILER         // Disable ICC remark
+#pragma warning(disable : 177)  // variable was declared but never referenced
+#endif
 namespace DeVPLocation {
-inline const std::string Default = "/dd/Structure/LHCb/BeforeMagnetRegion/VP";
+static const std::string& Default = "/dd/Structure/LHCb/BeforeMagnetRegion/VP";
 }
 
 class DeVP : public DetectorElement {

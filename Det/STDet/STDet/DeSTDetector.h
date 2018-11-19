@@ -44,10 +44,10 @@ namespace DeSTDetLocation {
 
 
   /// TT location in transient detector store
-  inline const std::string TT = "/dd/Structure/LHCb/BeforeMagnetRegion/TT";
+  static const std::string& TT = "/dd/Structure/LHCb/BeforeMagnetRegion/TT";
 
   /// IT location in transient detector store
-  inline const std::string IT = "/dd/Structure/LHCb/AfterMagnetRegion/T/IT";
+  static const std::string& IT = "/dd/Structure/LHCb/AfterMagnetRegion/T/IT";
 
   /// "short cut" if you know the type, ie TT or IT
   const std::string& location(const std::string& type);

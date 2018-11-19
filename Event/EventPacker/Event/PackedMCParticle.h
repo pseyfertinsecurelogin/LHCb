@@ -39,12 +39,12 @@ namespace LHCb
     unsigned int flags{0};
   };
 
-  constexpr CLID CLID_PackedMCParticles = 1510;
+  static const CLID CLID_PackedMCParticles = 1510;
 
   // Namespace for locations in TDS
   namespace PackedMCParticleLocation
   {
-    inline const std::string Default = "pSim/MCParticles";
+    static const std::string& Default = "pSim/MCParticles";
   }
 
   /** @class PackedMCParticles Event/PackedMCParticle.h

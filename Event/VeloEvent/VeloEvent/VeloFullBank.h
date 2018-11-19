@@ -28,8 +28,8 @@
  */
 
 namespace VeloFullBankLocation {
-  inline const std::string Default = "Raw/Velo/ADCBank";
-  inline const std::string Pedestals = "Raw/Velo/PedBank";
+  static const std::string& Default = "Raw/Velo/ADCBank";
+  static const std::string& Pedestals = "Raw/Velo/PedBank";
 }
 
 class VeloFullBank: public KeyedObject<int>{

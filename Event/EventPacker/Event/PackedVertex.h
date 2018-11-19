@@ -82,13 +82,13 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  constexpr CLID CLID_PackedVertices = 1582;
+  static const CLID CLID_PackedVertices = 1582;
 
   /// Namespace for locations in TDS
   namespace PackedVertexLocation
   {
-    inline const std::string User = "pPhys/User/Vertices";
-    inline const std::string InStream = "/pPhys/Vertices";
+    static const std::string& User = "pPhys/User/Vertices";
+    static const std::string& InStream = "/pPhys/Vertices";
   }
 
   /** @class PackedVertices Event/PackedVertex.h

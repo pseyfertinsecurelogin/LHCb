@@ -53,16 +53,16 @@ namespace LHCb{
 
   // -----------------------------------------------------------------------
 
-  constexpr CLID CLID_PackedCaloDigits = 1542;
+  static const CLID CLID_PackedCaloDigits = 1542;
 
   /// Namespace for locations in TDS
   namespace PackedCaloDigitLocation
   {
-    inline const std::string Default = "pRec/Calo/Digits";
-    inline const std::string Ecal    = "pRec/Ecal/Digits";
-    inline const std::string Hcal    = "pRec/Hcal/Digits";
-    inline const std::string Prs     = "pRec/Prs/Digits";
-    inline const std::string Spd     = "pRec/Spd/Digits";
+    static const std::string& Default = "pRec/Calo/Digits";
+    static const std::string& Ecal    = "pRec/Ecal/Digits";
+    static const std::string& Hcal    = "pRec/Hcal/Digits";
+    static const std::string& Prs     = "pRec/Prs/Digits";
+    static const std::string& Spd     = "pRec/Spd/Digits";
   }
 
   /** @class PackedCaloDigits Event/PackedCaloDigit.h

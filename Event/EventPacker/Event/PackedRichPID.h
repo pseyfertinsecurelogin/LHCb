@@ -88,13 +88,13 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  constexpr CLID CLID_PackedRichPIDs = 1561;
+  static const CLID CLID_PackedRichPIDs = 1561;
 
   /// Namespace for locations in TDS
   namespace PackedRichPIDLocation
   {
-    inline const std::string Default  = "pRec/Rich/PIDs";
-    inline const std::string InStream = "/pRec/Rich/CustomPIDs";
+    static const std::string& Default  = "pRec/Rich/PIDs";
+    static const std::string& InStream = "/pRec/Rich/CustomPIDs";
   }
 
   /** @class PackedRichPIDs Event/PackedRichPID.h

@@ -80,15 +80,15 @@ namespace LHCb
     }
   };
 
-  constexpr CLID CLID_PackedCaloHypos = 1551;
+  static const CLID CLID_PackedCaloHypos = 1551;
 
   // Namespace for locations in TDS
   namespace PackedCaloHypoLocation
   {
-    inline const std::string Photons      = "pRec/Calo/Photons";
-    inline const std::string Electrons    = "pRec/Calo/Electrons";
-    inline const std::string MergedPi0s   = "pRec/Calo/MergedPi0s";
-    inline const std::string SplitPhotons = "pRec/Calo/SplitPhotons";
+    static const std::string& Photons      = "pRec/Calo/Photons";
+    static const std::string& Electrons    = "pRec/Calo/Electrons";
+    static const std::string& MergedPi0s   = "pRec/Calo/MergedPi0s";
+    static const std::string& SplitPhotons = "pRec/Calo/SplitPhotons";
   }
 
   /** @class PackedCaloHypos Event/PackedCaloHypo.h

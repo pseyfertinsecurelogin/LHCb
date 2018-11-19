@@ -34,14 +34,14 @@ class GaudiAlgorithm;
 
 namespace Packer
 {
-  constexpr double ENERGY_SCALE     = 1.0e2;  ///< .01 MeV steps
-  constexpr double POSITION_SCALE   = 1.0e4;  ///< 0.1 micron steps
-  constexpr double SLOPE_SCALE      = 1.0e8;  ///< full scale +- 20 radians
-  constexpr double FRACTION_SCALE   = 3.0e4;  ///< store in short int.
-  constexpr double TIME_SCALE       = 1.0e5;  ///< 0.0001 ns resolution
-  constexpr double DELTALL_SCALE    = 1.0e4;  ///< 0.0001 precision
-  constexpr double MASS_SCALE       = 1.0e3;  ///< 1 keV steps
-  constexpr double MVA_SCALE        = 1.0e5;  ///< Scale for MVAs
+  const double ENERGY_SCALE     = 1.0e2;  ///< .01 MeV steps
+  const double POSITION_SCALE   = 1.0e4;  ///< 0.1 micron steps
+  const double SLOPE_SCALE      = 1.0e8;  ///< full scale +- 20 radians
+  const double FRACTION_SCALE   = 3.0e4;  ///< store in short int.
+  const double TIME_SCALE       = 1.0e5;  ///< 0.0001 ns resolution
+  const double DELTALL_SCALE    = 1.0e4;  ///< 0.0001 precision
+  const double MASS_SCALE       = 1.0e3;  ///< 1 keV steps
+  const double MVA_SCALE        = 1.0e5;  ///< Scale for MVAs
 }
 
 class StandardPacker
@@ -123,7 +123,7 @@ public:
 
   //---------------------------------------------------------------------------
 
-  /// Returns the 'LinkID'
+  /// Returns the 'LinkID' 
   inline long linkID( DataObject* out,
                       const DataObject* parent ) const
   {
@@ -148,7 +148,7 @@ public:
     }
     return ( myLink ? myLink->ID() : 0 );
   }
-
+  
   //---------------------------------------------------------------------------
 
   /** returns an int for a Smart Ref.
@@ -168,7 +168,7 @@ public:
   int reference32( DataObject* out,
                    const std::string& targetName,
                    const int key ) const;
-
+  
   /// Extracts the key and index from a packed data word
   inline void indexAndKey32( const int data,
                              int& indx,
@@ -177,14 +177,14 @@ public:
     indx = data >> 28;
     key  = data & 0x0FFFFFFF;
   }
-
+  
   /// Extracts the key and hint from a packed data word
   bool hintAndKey32( const int data,
                      const DataObject* source,
                      DataObject* target,
                      int& hint,
                      int& key ) const;
-
+  
   //---------------------------------------------------------------------------
 
   /** returns a long long for a Smart Ref, with small key and large links.

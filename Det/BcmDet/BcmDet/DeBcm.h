@@ -21,14 +21,18 @@
 static const CLID& CLID_DeBcm = 14001;
 
 namespace DeBcmLocation{
-  inline const std::string BcmUp = "/dd/Structure/LHCb/BeforeMagnetRegion/BcmUp";
-  inline const std::string BcmDown = "/dd/Structure/LHCb/MagnetRegion/BcmDown";
-  inline const std::string Default = BcmUp;
+  static const std::string& BcmUp = "/dd/Structure/LHCb/BeforeMagnetRegion/BcmUp";
+  static const std::string& BcmDown = "/dd/Structure/LHCb/MagnetRegion/BcmDown";
+  static const std::string& Default
+#ifdef __GNUC__
+    __attribute__ ((unused))
+#endif
+    = BcmUp;
 }
 
 namespace DeBcmShifts{
-    constexpr unsigned int shiftStationID         = 3;
-    constexpr unsigned int shiftSensorID          = 0;
+    static const unsigned int shiftStationID         = 3;
+    static const unsigned int shiftSensorID          = 0;
 }
 
 class DeBcm: public DetectorElement {
@@ -37,17 +41,17 @@ public:
 
   DeBcm(int nStation = 0);
 
-  static const CLID& classID(){
+  inline static const CLID& classID(){
     return CLID_DeBcm;
   }
 
-  const CLID& clID() const override {
+  inline const CLID& clID() const override {
     return classID();
   }
 
   StatusCode initialize() override;
 
-  int stationNumber() const {
+  inline int stationNumber() const {
     return m_StationNumber;
   }
 

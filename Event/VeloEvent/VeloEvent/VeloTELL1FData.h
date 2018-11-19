@@ -26,9 +26,9 @@ namespace VeloTELL1
 {
   // Namespace for locations in TDS
   namespace VeloTELL1FDataLocation {
-    inline const std::string Default = "Raw/Velo/FNoise";
-    inline const std::string FCMSNoise = "Raw/Velo/CMSNoise";
-  }
+    static const std::string& Default = "Raw/Velo/FNoise";
+    static const std::string& FCMSNoise = "Raw/Velo/CMSNoise";
+  }  
 
   /** @class VeloTELL1FData VeloTELL1FData.h
    *
@@ -39,7 +39,7 @@ namespace VeloTELL1
    *
    * @author Tomasz Szumlak
    * created Mon Nov 12 14:07:31 2007
-   *
+   * 
    */
 
   class VeloTELL1FData: public KeyedObject<int>
@@ -50,7 +50,7 @@ namespace VeloTELL1
     typedef std::vector<float>::const_iterator cFIT;
     /// Pair of const iterators
     typedef std::pair<cFIT, cFIT> ALinkPairF;
-
+  
     /// Configuration constants depending on stored data type
     enum NZSDataType{ VeloFull=18,
                       VeloPedestal=30,
@@ -67,48 +67,48 @@ namespace VeloTELL1
                    R_SENSOR=2,
                    PILE_UP=3
       };
-
+  
     /// constructor with key
     VeloTELL1FData(const int numberOfTELL1,
                    const int dataType): KeyedObject<int>(numberOfTELL1),
                                         m_decodedData(),
                                         m_dataType(dataType),
                                         m_isReordered(false),
-                                        m_sensorType(0) {}
+                                        m_sensorType(0) {}  
     /// Default Constructor
     VeloTELL1FData(): m_decodedData(),
                       m_dataType(0),
                       m_isReordered(),
-                      m_sensorType(0) {}
+                      m_sensorType(0) {}  
     /// Default Destructor
-    virtual ~VeloTELL1FData() {}
+    virtual ~VeloTELL1FData() {}  
     /// overloaded subscripting operator
-    ALinkPairF operator[](const unsigned int ALinkNumber) const;
+    ALinkPairF operator[](const unsigned int ALinkNumber) const;  
     /// Returns true if R type
-    bool isR() const;
+    bool isR() const;  
     /// Returns true if Pile-Up type
-    bool isPileUp() const;
+    bool isPileUp() const;  
     /// Returns true if Phi type
-    bool isPhi() const;
+    bool isPhi() const;  
     /// returns value of the charge deposited in a given channel
     float channelADC(const unsigned int channel) const;
     /// returns adc value for a given strip - valid after reordering
-    float stripADC(const unsigned int strip) const;
+    float stripADC(const unsigned int strip) const;  
     /// returns vector with all decoded samples
     std::vector<float>& data();
     /// fill the vector with adc Velo data, use restricted within TELL1 algorithm
-    void addALink(std::vector<float>& inVec);
+    void addALink(std::vector<float>& inVec);  
     /// Update  Vector with decoded data
-    void setDecodedData(const std::vector<float>& value);
+    void setDecodedData(const std::vector<float>& value);  
     /// Retrieve const  Name of last process
-    bool isReordered() const;
+    bool isReordered() const;  
     /// Update  Name of last process
-    void setIsReordered(bool value);
+    void setIsReordered(bool value);  
     /// Update  Sensor Type
     void setSensorType(unsigned int value);
     /// get ALink number using channel number
     unsigned int channel2ALink(const unsigned int channel) const;
-
+ 
   private:
 
     /// Strips
@@ -127,40 +127,40 @@ namespace VeloTELL1
                  SENSOR_STRIPS=2048,
                  ALL_STRIPS=2304
       };
-
+  
     std::vector<float> m_decodedData; ///< Vector with decoded data
     int                     m_dataType;    ///< Type of decoded data to be stored
     bool                    m_isReordered; ///< Name of last process
     unsigned int            m_sensorType;  ///< Sensor Type
-
+  
   }; // class VeloTELL1FData
 
   /// Definition of Keyed Container for VeloTELL1FData
   typedef KeyedContainer<VeloTELL1FData, Containers::HashMap> VeloTELL1FDatas;
-
+  
 } // namespace VeloTELL1;
 //--
-inline void VeloTELL1::VeloTELL1FData::setDecodedData(const std::vector<float>& value)
+inline void VeloTELL1::VeloTELL1FData::setDecodedData(const std::vector<float>& value) 
 {
   m_decodedData = value;
 }
 //--
-inline bool VeloTELL1::VeloTELL1FData::isReordered() const
+inline bool VeloTELL1::VeloTELL1FData::isReordered() const 
 {
   return m_isReordered;
 }
 //--
-inline void VeloTELL1::VeloTELL1FData::setIsReordered(bool value)
+inline void VeloTELL1::VeloTELL1FData::setIsReordered(bool value) 
 {
   m_isReordered = value;
 }
 //--
-inline void VeloTELL1::VeloTELL1FData::setSensorType(unsigned int value)
+inline void VeloTELL1::VeloTELL1FData::setSensorType(unsigned int value) 
 {
   m_sensorType = value;
 }
 //--
-inline VeloTELL1::VeloTELL1FData::ALinkPairF VeloTELL1::VeloTELL1FData::operator[](const unsigned int ALinkNumber) const
+inline VeloTELL1::VeloTELL1FData::ALinkPairF VeloTELL1::VeloTELL1FData::operator[](const unsigned int ALinkNumber) const 
 {
       int ALinkBegin=0, ALinkEnd=0;
       // this only makes sense before reordering
@@ -186,37 +186,37 @@ inline VeloTELL1::VeloTELL1FData::ALinkPairF VeloTELL1::VeloTELL1FData::operator
       aPair.first=m_decodedData.begin()+ALinkBegin;
       aPair.second=m_decodedData.begin()+ALinkEnd;
       //
-      return ( aPair );
+      return ( aPair );     
 }
 //--
-inline bool VeloTELL1::VeloTELL1FData::isR() const
+inline bool VeloTELL1::VeloTELL1FData::isR() const 
 {
       if(m_isReordered&&m_sensorType==R_SENSOR){
         return ( true );
       }else{
         return ( false );
-      }
+      }     
 }
 //--
-inline bool VeloTELL1::VeloTELL1FData::isPileUp() const
+inline bool VeloTELL1::VeloTELL1FData::isPileUp() const 
 {
       if(m_isReordered&&m_sensorType==PILE_UP){
         return ( true );
       }else{
         return ( false );
-      }
+      }     
 }
 //--
-inline bool VeloTELL1::VeloTELL1FData::isPhi() const
+inline bool VeloTELL1::VeloTELL1FData::isPhi() const 
 {
       if(m_isReordered&&m_sensorType==PHI_SENSOR){
         return ( true );
       }else{
         return ( false );
-      }
+      }    
 }
 //--
-inline float VeloTELL1::VeloTELL1FData::channelADC(const unsigned int channel) const
+inline float VeloTELL1::VeloTELL1FData::channelADC(const unsigned int channel) const 
 {
        float adc=0;
        // call it only before reordering
@@ -228,10 +228,10 @@ inline float VeloTELL1::VeloTELL1FData::channelADC(const unsigned int channel) c
            adc=m_decodedData[index];
          }
        }
-       return ( adc );
+       return ( adc );      
 }
 //--
-inline float VeloTELL1::VeloTELL1FData::stripADC(const unsigned int strip) const
+inline float VeloTELL1::VeloTELL1FData::stripADC(const unsigned int strip) const 
 {
        float adc=0;
        if(m_isReordered&&strip<SENSOR_STRIPS&&m_dataType==VeloFull){
@@ -255,7 +255,7 @@ inline float VeloTELL1::VeloTELL1FData::stripADC(const unsigned int strip) const
              }
           }else{
              if(strip<INNER_STRIPS+OUTER_STRIPS_1){
-               unsigned int index=strip+INNER_DUMMY;
+               unsigned int index=strip+INNER_DUMMY; 
                adc=m_decodedData[index];
              }else if(strip<INNER_STRIPS+OUTER_STRIPS_1+OUTER_STRIPS_2){
                unsigned int index=strip+INNER_DUMMY+OUTER_DUMMY_1;
@@ -270,22 +270,22 @@ inline float VeloTELL1::VeloTELL1FData::stripADC(const unsigned int strip) const
            }
          }
        }
-       return ( adc );
+       return ( adc );     
 }
 //--
-inline std::vector<float>& VeloTELL1::VeloTELL1FData::data()
+inline std::vector<float>& VeloTELL1::VeloTELL1FData::data() 
 {
-      return ( m_decodedData );
+      return ( m_decodedData );    
 }
 //--
-inline void VeloTELL1::VeloTELL1FData::addALink(std::vector<float>& inVec)
+inline void VeloTELL1::VeloTELL1FData::addALink(std::vector<float>& inVec) 
 {
        std::vector<float>::iterator datIt;
        datIt=inVec.begin();
        for( ; datIt!=inVec.end(); datIt++){
          m_decodedData.push_back(*datIt);
        }
-       assert(m_decodedData.size()<=SENSOR_STRIPS);
+       assert(m_decodedData.size()<=SENSOR_STRIPS);     
 }
 //--
 inline unsigned int VeloTELL1::VeloTELL1FData::channel2ALink(const unsigned int channel) const

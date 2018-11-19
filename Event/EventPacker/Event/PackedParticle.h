@@ -96,13 +96,13 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  constexpr CLID CLID_PackedParticles = 1581;
+  static const CLID CLID_PackedParticles = 1581;
 
   /// Namespace for locations in TDS
   namespace PackedParticleLocation
   {
-    inline const std::string User     =  "pPhys/User/Particles";
-    inline const std::string InStream = "/pPhys/Particles";
+    static const std::string& User     =  "pPhys/User/Particles";
+    static const std::string& InStream = "/pPhys/Particles";
   }
 
   /** @class PackedParticles Event/PackedParticle.h

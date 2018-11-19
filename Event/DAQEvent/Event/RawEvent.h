@@ -22,24 +22,27 @@ namespace LHCb
 {
 
   // Class ID definition
-  constexpr CLID CLID_RawEvent = 1002;
+  static const CLID CLID_RawEvent = 1002;
 
-  // Namespace for locations in TES
+  // Namespace for locations in TDS
+  #ifdef __INTEL_COMPILER        // Disable ICC remark
+    #pragma warning(disable:177) // variable was declared but never referenced
+  #endif
   namespace RawEventLocation {
-    inline const std::string Default  = "DAQ/RawEvent";     ///< Original FULL Raw Event
-    inline const std::string Emulated = "Emu/RawEvent";
-    inline const std::string Copied   = "pRec/RawEvent";
-    inline const std::string Calo     = "Calo/RawEvent";    ///< Copy of Calo banks
-    inline const std::string Muon     = "Muon/RawEvent";    ///< Copy of Muon banks, for MDST
-    inline const std::string Rich     = "Rich/RawEvent";    ///< Copy of Rich banks
-    inline const std::string Trigger  = "Trigger/RawEvent"; ///< Copy of Trigger banks for Stripping and MDST
-    inline const std::string PersistReco  = "PersistReco/RawEvent"; ///< Copy of PersistReco banks for MC Stripping and MDST
-    inline const std::string Other    = "Other/RawEvent";   ///< Copy of all banks except Calo, Muon, Rich and Trigger (now Obsolete)
-    inline const std::string Velo     = "Velo/RawEvent";    ///< Copy of Velo banks
-    inline const std::string Tracker  = "Tracker/RawEvent"; ///< Copy of IT, OT and TT banks
-    inline const std::string HC       = "HC/RawEvent";      ///< Copy of Herschel banks
-    inline const std::string Unstripped = "Unstripped/RawEvent"; ///< Miscellaneous banks not required by stripping lines.
-    inline const std::string VeloCluster = "VeloCluster/RawEvent";    ///< Copy of Velo Cluster banks
+    static const std::string& Default  = "DAQ/RawEvent";     ///< Original FULL Raw Event
+    static const std::string& Emulated = "Emu/RawEvent";
+    static const std::string& Copied   = "pRec/RawEvent";
+    static const std::string& Calo     = "Calo/RawEvent";    ///< Copy of Calo banks
+    static const std::string& Muon     = "Muon/RawEvent";    ///< Copy of Muon banks, for MDST
+    static const std::string& Rich     = "Rich/RawEvent";    ///< Copy of Rich banks
+    static const std::string& Trigger  = "Trigger/RawEvent"; ///< Copy of Trigger banks for Stripping and MDST
+    static const std::string& PersistReco  = "PersistReco/RawEvent"; ///< Copy of PersistReco banks for MC Stripping and MDST
+    static const std::string& Other    = "Other/RawEvent";   ///< Copy of all banks except Calo, Muon, Rich and Trigger (now Obsolete)
+    static const std::string& Velo     = "Velo/RawEvent";    ///< Copy of Velo banks
+    static const std::string& Tracker  = "Tracker/RawEvent"; ///< Copy of IT, OT and TT banks
+    static const std::string& HC       = "HC/RawEvent";      ///< Copy of Herschel banks
+    static const std::string& Unstripped = "Unstripped/RawEvent"; ///< Miscellaneous banks not required by stripping lines.
+    static const std::string& VeloCluster = "VeloCluster/RawEvent";    ///< Copy of Velo Cluster banks
   }
 
   /** @class LHCb::RawEvent RawEvent.h

@@ -47,15 +47,15 @@ namespace LHCb
 
   // -----------------------------------------------------------------------
 
-  constexpr CLID CLID_PackedMCCaloHits = 1526;
+  static const CLID CLID_PackedMCCaloHits = 1526;
 
   /// Namespace for locations in TDS
   namespace PackedMCCaloHitLocation
   {
-    inline const std::string Spd  = "pSim/Spd/Hits";
-    inline const std::string Prs  = "pSim/Prs/Hits";
-    inline const std::string Ecal = "pSim/Ecal/Hits";
-    inline const std::string Hcal = "pSim/Hcal/Hits";
+    static const std::string& Spd  = "pSim/Spd/Hits";
+    static const std::string& Prs  = "pSim/Prs/Hits";
+    static const std::string& Ecal = "pSim/Ecal/Hits";
+    static const std::string& Hcal = "pSim/Hcal/Hits";
   }
 
   /** @class PackedMCCaloHits Event/PackedMCCaloHit.h

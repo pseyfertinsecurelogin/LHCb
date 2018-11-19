@@ -61,14 +61,14 @@ namespace LHCb
     }
   };
 
-  constexpr CLID CLID_PackedProtoParticles = 1552;
+  static const CLID CLID_PackedProtoParticles = 1552;
 
   // Namespace for locations in TDS
   namespace PackedProtoParticleLocation
   {
-    inline const std::string Charged  =  "pRec/ProtoP/Charged";
-    inline const std::string Neutral  =  "pRec/Protop/Neutral";
-    inline const std::string InStream = "/pRec/ProtoP/Custom";
+    static const std::string& Charged  =  "pRec/ProtoP/Charged";
+    static const std::string& Neutral  =  "pRec/Protop/Neutral";
+    static const std::string& InStream = "/pRec/ProtoP/Custom";
   }
 
   /** @class PackedProtoParticles PackedProtoParticle.h Event/PackedProtoParticle.h

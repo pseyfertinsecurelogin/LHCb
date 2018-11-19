@@ -39,12 +39,12 @@ namespace LHCb
     std::vector<long long> products;
   };
 
-  constexpr CLID CLID_PackedMCVertices = 1511;
+  static const CLID CLID_PackedMCVertices = 1511;
 
   // Namespace for locations in TDS
   namespace PackedMCVertexLocation
   {
-    inline const std::string Default = "pSim/MCVertices";
+    static const std::string& Default = "pSim/MCVertices";
   }
 
   /** @class PackedMCVertices Event/PackedMCVertex.h
