@@ -25,9 +25,10 @@
 template <typename Container, typename Cmp>
 bool
 equal(const Container& c1, const Container& c2, Cmp cmp) {
-  return std::equal( std::begin(c1), std::end(c1),
-                     std::begin(c2), std::end(c2),
-                     cmp );
+  return  c1.size() == c2.size() &&
+           std::equal( std::begin(c1), std::end(c1),
+                       std::begin(c2),
+                       cmp );
 }
 
 

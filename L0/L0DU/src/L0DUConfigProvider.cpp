@@ -63,7 +63,8 @@ namespace {
 
   bool icompare(std::string const& a, std::string const& b)
   {
-      return std::equal(b.begin(), b.end(), a.begin(), a.end(),
+      return a.size()==b.size() &&
+             std::equal(b.begin(), b.end(), a.begin(),
                         [](char ch1, char ch2)
                         { return std::toupper(ch1) == std::toupper(ch2); });
   }
