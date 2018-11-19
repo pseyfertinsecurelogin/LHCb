@@ -37,6 +37,8 @@ A.Golutvin, P.Koppenburg have been used in the design.
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
+__date__    = "????-??-??"
+__version__ = "Version $Revision$ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -1350,37 +1352,6 @@ def PDGM ( o ) :
 
 PDGM. __doc__ += '\n' + LoKi.Particles.massFromName . __doc__ 
 PDGM. __doc__ += '\n' + LoKi.Particles.massFromPID  . __doc__
-
-def _pid_name_ ( self ) :
-    """Get the name of the particle
-    >>> p = ...
-    >>> p.name()
-    """
-    return LoKi.Particles.nameFromPID ( self )
-# =============================================================================
-def _pid_abs_name_ ( self ) :
-    """Get the ``absolute'' name of the particle
-    >>> p = ...
-    >>> p.absname  () 
-    >>> p.abs_name () ## ditto
-    """
-    abspid = abs ( self ) 
-    return abspid.name()
-# =============================================================================
-def _p_abs_name_ ( self ) :
-    """Get the ``absolute'' name of the particle
-    >>> p = ...
-    >>> p.absname  () 
-    >>> p.abs_name () ## ditto
-    """
-    abspid = abs ( self.particleID()  ) 
-    return abspid.name()
-
-if not hasattr ( LHCb.ParticleID , 'name'     ) : LHCb.ParticleID.name     =     _pid_name_ 
-if not hasattr ( LHCb.ParticleID , 'absname'  ) : LHCb.ParticleID.absname  = _pid_abs_name_ 
-if not hasattr ( LHCb.ParticleID , 'abs_name' ) : LHCb.ParticleID.abs_name = _pid_abs_name_ 
-if not hasattr ( LHCb.Particle   , 'absname'  ) : LHCb.Particle  .absname  =   _p_abs_name_ 
-if not hasattr ( LHCb.Particle   , 'abs_name' ) : LHCb.Particle  .abs_name =   _p_abs_name_ 
 
 # =============================================================================
 if '__main__' == __name__ :
