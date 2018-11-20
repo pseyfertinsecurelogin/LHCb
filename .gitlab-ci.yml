@@ -18,10 +18,8 @@ check-copyright:
     - python lb-check-copyright origin/${TARGET_BRANCH}
 
 check-formatting:
-  image: debian:testing
+  image: gitlab-registry.cern.ch/lhcb-docker/style-checker
   script:
-    - apt update && apt install -y clang-format-7 python-pip git curl
-    - pip install yapf==0.24.0 whichcraft
     - if [ ! -e .clang-format ] ; then
     -   curl -o .clang-format "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/data/default.clang-format?inline=false"
     -   echo '.clang-format' >> .gitignore
