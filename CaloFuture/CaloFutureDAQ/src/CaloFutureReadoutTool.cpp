@@ -101,7 +101,7 @@ bool CaloFutureReadoutTool::getCaloFutureBanksFromRaw( ) {
     //if ( !m_banks || 0 == m_banks->size() ){
     if (  m_banks.empty() ) {
       if ( msgLevel( MSG::DEBUG) )debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
-      counter("No " + toString(m_detectorName) + " bank found") += 1;
+      ++m_noBank;
       return false;
     }else{
       if( !m_packedIsDefault){

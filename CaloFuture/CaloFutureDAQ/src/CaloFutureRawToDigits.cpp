@@ -30,24 +30,6 @@ CaloFutureRawToDigits::CaloFutureRawToDigits( const std::string& name, ISvcLocat
   updateHandleLocation(*this,"OutputAdcData" ,   LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation   ( name.substr(6,4) , context() ) );
   updateHandleLocation(*this,"OutputDigitData" , LHCb::CaloFutureAlgUtils::CaloFutureDigitLocation ( name.substr(6,4) , context() ) );
   updateHandleLocation(*this,"OutputReadoutStatusData" , LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation ( name.substr(6,4) , context() ) );
-
-  m_detData = LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( name ) ;
-
-  //=== Default values according to the name of the algorithm !
-  if ( name.compare( 6 , 4, "Ecal" ) == 0 ) {
-    m_zsupMethod       = "2D";
-    m_zsupThreshold    = 20;
-    m_zsupNeighbor     = -5; // reject large negative noise
-    m_packedType = LHCb::RawBank::EcalPacked;
-    m_shortType  = LHCb::RawBank::EcalE;
-    m_errorType  = LHCb::RawBank::EcalPackedError;
-  } else if ( name.compare( 6 , 4, "Hcal" ) == 0 ) {
-    m_zsupMethod       = "1D";
-    m_zsupThreshold    = 4;
-    m_packedType = LHCb::RawBank::HcalPacked;
-    m_shortType  = LHCb::RawBank::HcalE;
-    m_errorType  = LHCb::RawBank::HcalPackedError;
-  }
 }
 
 //=============================================================================
@@ -59,7 +41,7 @@ StatusCode CaloFutureRawToDigits::initialize() {
   if( sc.isFailure() ) return sc;
   
   // Retrieve the calorimeter we are working with.
-  m_calo = getDet<DeCalorimeter>( m_detData );
+  m_calo = getDet<DeCalorimeter>( LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( m_detectorName ) );
   if( !m_calo ) { return Error("Detector information is not available!");}
   
   m_numberOfCells = m_calo->numberOfCells();
@@ -87,55 +69,53 @@ std::tuple<LHCb::CaloAdcs,
   // ------------------------------------    
   // --- Get RawBank AND ReadoutStatus
   // ------------------------------------    
-  //std::vector<LHCb::RawBank*> banks;
-  //banks.reserve(50);
   LHCb::span<const LHCb::RawBank*> banks;
   LHCb::RawBankReadoutStatus status;
   
   bool m_packed = false;
   if ( !m_packedIsDefault ) {
-    debug() << "Banks of short type are requested as default" << endmsg;
-    banks  = rawEvt.banks( m_shortType );
-    status = LHCb::RawBankReadoutStatus( m_shortType);
+    if( msgLevel(MSG::DEBUG) ) debug() << "Banks of short type are requested as default" << endmsg;
+    banks  = rawEvt.banks( m_detectorName=="Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE);
+    status = LHCb::RawBankReadoutStatus( m_detectorName=="Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE);
   } else {
-    debug() << "Banks of paked type are requested as default" << endmsg;
-    banks  = rawEvt.banks( m_packedType );
-    status = LHCb::RawBankReadoutStatus( m_packedType);
+    if( msgLevel(MSG::DEBUG) ) debug() << "Banks of packed type are requested as default" << endmsg;
+    banks  = rawEvt.banks( m_detectorName=="Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked);
+    status = LHCb::RawBankReadoutStatus( m_detectorName=="Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked);
   }
   
   if (0 == banks.size() ) {
     if ( !m_packedIsDefault) {
-      debug() << " Requested banks of short type has not been found ... try packed type" << endmsg;
-      banks  = rawEvt.banks( m_packedType );
-      status = LHCb::RawBankReadoutStatus( m_packedType);
+      if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of short type has not been found ... try packed type" << endmsg;
+      banks  = rawEvt.banks( m_detectorName=="Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked);
+      status = LHCb::RawBankReadoutStatus( m_detectorName=="Ecal" ? LHCb::RawBank::EcalPacked : LHCb::RawBank::HcalPacked);
     } else {
-      debug() << " Requested banks of packed type has not been found ... try short type" << endmsg;
-      banks  = rawEvt.banks( m_shortType );
-      status = LHCb::RawBankReadoutStatus( m_shortType);
+      if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of packed type has not been found ... try short type" << endmsg;
+      banks  = rawEvt.banks( m_detectorName=="Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE);
+      status = LHCb::RawBankReadoutStatus( m_detectorName=="Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE);
     }
     
     if (  0 == banks.size() ){
-      debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
-      counter("No " + Gaudi::Utils::toString(m_detectorName) + " bank found") += 1;
+      if( msgLevel(MSG::DEBUG) ) debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
+      ++m_noBank;
     } else {
       if ( !m_packedIsDefault ) {
-	debug() << " Requested banks of packed type has been found" << endmsg;
+	if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of packed type has been found" << endmsg;
 	m_packed = true;
       } else {
-	debug() << " Requested banks of short type has found" << endmsg;
+	if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of short type has found" << endmsg;
       }
     }
   } else {
     if ( !m_packedIsDefault ) {
-      debug() << " Requested banks of short type has been found" << endmsg;
+      if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of short type has been found" << endmsg;
     } else {
-      debug() << " Requested banks of packed type has found" << endmsg;
+      if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of packed type has found" << endmsg;
       m_packed = true;
     }
   }
   
   // check whether the associated Error Bank is present or not
-  for( const auto& b : rawEvt.banks( m_errorType )) 
+  for( const auto& b : rawEvt.banks( m_detectorName=="Ecal" ? LHCb::RawBank::EcalPackedError : LHCb::RawBank::HcalPackedError ))
     status.addStatus( b->sourceID() , LHCb::RawBankReadoutStatus::Status::ErrorBank );
   
   // check banks integrity + Magic pattern
@@ -165,7 +145,7 @@ std::tuple<LHCb::CaloAdcs,
   // ------------------------------------
   std::vector<LHCb::CaloAdc> dataVec;
   if ( banks.empty() ) {
-    debug() << "The banks container is empty"<< endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << "The banks container is empty"<< endmsg;
   } else {
     std::vector<int> readSources;  
     for( const auto& bank : banks ) {
@@ -186,8 +166,8 @@ std::tuple<LHCb::CaloAdcs,
       dataVec.insert(dataVec.end(), dataVecDec.begin(), dataVecDec.end());
 
       if( dataVec.size()==0 )
-	debug() <<"Error when decoding bank " << Gaudi::Utils::toString(sourceID)
-		<< " -> incomplete data - May be corrupted"<< endmsg;
+	if( msgLevel(MSG::DEBUG) ) debug() <<"Error when decoding bank " << Gaudi::Utils::toString(sourceID)
+					   << " -> incomplete data - May be corrupted"<< endmsg;
     }
     readSources.clear();
   }
@@ -198,10 +178,10 @@ std::tuple<LHCb::CaloAdcs,
   // ------------------------------------
   LHCb::CaloAdcs   newAdcs;
   LHCb::CaloDigits newDigits;
-  debug() << "Processing " << dataVec.size() << " Digits." << endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug() << "Processing " << dataVec.size() << " Digits." << endmsg;
   
   enum { DefaultFlag,
-	 NeighborFlag,
+	 NeighbourFlag,
 	 SeedFlag };
   std::vector<int> caloFlags ( m_numberOfCells, DefaultFlag ) ;
   int index;
@@ -217,9 +197,9 @@ std::tuple<LHCb::CaloAdcs,
       verbose() << endmsg;
       caloFlags[index] = SeedFlag ;
       if ( m_zsupMethod == "2D" ) {
-	for ( const auto& neighbor :  m_calo->neighborCells( id ) ) {
-	  int& neighFlag = caloFlags[m_calo->cellIndex(neighbor)];
-	  if ( neighFlag != SeedFlag ) neighFlag = NeighborFlag ;
+	for ( const auto& neighbour :  m_calo->neighborCells( id ) ) {
+	  int& neighFlag = caloFlags[m_calo->cellIndex(neighbour)];
+	  if ( neighFlag != SeedFlag ) neighFlag = NeighbourFlag ;
 	}
       }
     }
@@ -231,7 +211,7 @@ std::tuple<LHCb::CaloAdcs,
     LHCb::CaloCellID id = anAdc.cellID();
     index         = m_calo->cellIndex( id );
     if ( DefaultFlag == caloFlags[index] ) continue;
-    if ( NeighborFlag == caloFlags[index] && anAdc.adc() < m_zsupNeighbor) continue;
+    if ( NeighbourFlag == caloFlags[index] && anAdc.adc() < m_zsupNeighbour) continue;
     
     double e = ( double( anAdc.adc() ) - pedShift ) * m_calo->cellGain( id );
     try {
@@ -242,7 +222,7 @@ std::tuple<LHCb::CaloAdcs,
       newDigits.insert( digit.get() ) ;
       digit.release();
     } catch(GaudiException &exc) {
-      counter("Duplicate ADC/Digit") += 1;
+      ++m_duplicateADCDigits; // Duplicate ADC/Digit
       std::ostringstream os("");
       os << "Duplicate ADC/Digit for channel " << id << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -252,14 +232,14 @@ std::tuple<LHCb::CaloAdcs,
       status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::Status::DuplicateEntry);
     }
         
-    if ( NeighborFlag == caloFlags[index] )
-      verbose() << id << " added as Neighbor." << endmsg;
+    if ( NeighbourFlag == caloFlags[index] )
+      verbose() << id << " added as Neighbour." << endmsg;
     else
       verbose() << id << " added as Seed.    " << endmsg;
   }
   
-  debug() << format("Have stored %5d CaloAdcs.", newAdcs.size()) << endmsg;
-  debug() << format("Have stored %5d CaloDigits.", newDigits.size()) << endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug() << format("Have stored %5d CaloAdcs.", newAdcs.size()) << endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug() << format("Have stored %5d CaloDigits.", newDigits.size()) << endmsg;
     
   return std::make_tuple(std::move(newAdcs),
 			 std::move(newDigits),
@@ -293,8 +273,8 @@ std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode ( const LHCb::RawBank& 
   int version        = bank.version();
   int sourceID       = bank.sourceID();
 
-  debug() << "Decode bank " << &bank << " source " << sourceID
-	  << " version " << version << " size " << size << endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug() << "Decode bank " << &bank << " source " << sourceID
+				     << " version " << version << " size " << size << endmsg;
 
   if (0 == size) status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Empty );
 
@@ -348,8 +328,8 @@ std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode ( const LHCb::RawBank& 
     // Get the FE-Cards associated to that bank (via condDB)
     std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
     int nCards = feCards.size();
-    debug() << nCards << " FE-Cards are expected to be readout : "
-	    << feCards << " in Tell1 bank " << sourceID << endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << nCards << " FE-Cards are expected to be readout : "
+				       << feCards << " in Tell1 bank " << sourceID << endmsg;
     int prevCard = -1;
     while( 0 != size ) {
       // Skip
@@ -460,8 +440,8 @@ std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode ( const LHCb::RawBank& 
     // Get the FE-Cards associated to that bank (via condDB)
     std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
     int nCards = feCards.size();
-    debug() << nCards << " FE-Cards are expected to be readout : "
-	    << feCards << " in Tell1 bank " << sourceID << endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << nCards << " FE-Cards are expected to be readout : "
+				       << feCards << " in Tell1 bank " << sourceID << endmsg;
     int prevCard = -1;
     while( 0 != size ) {
       // Skip
@@ -556,11 +536,11 @@ std::vector<LHCb::CaloAdc> CaloFutureRawToDigits::decode ( const LHCb::RawBank& 
 //========================
 bool CaloFutureRawToDigits::checkCards(int nCards, const std::vector<int>& feCards ) const {
   bool check = true;
-  debug() << nCards-feCards.size()
-	  << "FE-Cards have been read among the " << nCards << " expected"<< endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug() << nCards-feCards.size()
+				     << "FE-Cards have been read among the " << nCards << " expected"<< endmsg;
   for ( auto i : feCards ) {
-    debug() << " Unread FE-Cards : " << m_calo->cardCode( i )
-	    << "  - Is it a PinDiode readout FE-Card ? " << m_calo->isPinCard( i ) << endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << " Unread FE-Cards : " << m_calo->cardCode( i )
+				       << "  - Is it a PinDiode readout FE-Card ? " << m_calo->isPinCard( i ) << endmsg;
     if ( m_calo->isPmtCard( i ) ){
       Warning(" The standard (PMT) FE-Card " + Gaudi::Utils::toString( m_calo->cardCode( i ) )
               + " expected in TELL1 bank has not been read !!").ignore();
@@ -583,17 +563,17 @@ int CaloFutureRawToDigits::findCardbyCode(const std::vector<int>& feCards , int 
             + "] does not match the condDB cabling scheme  ",StatusCode::SUCCESS).ignore();
       return -1;
   }
-  debug() <<" FE-Card [code : " << code << " | crate : " << m_calo->cardParam( *i ).crate()
-	  << " slot : " << m_calo->cardParam( *i ).slot()
-	  << "] has been found with (num : " << *i <<")  in condDB" << endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug() <<" FE-Card [code : " << code << " | crate : " << m_calo->cardParam( *i ).crate()
+				     << " slot : " << m_calo->cardParam( *i ).slot()
+				     << "] has been found with (num : " << *i <<")  in condDB" << endmsg;
   return std::distance( feCards.begin(), i);
 }
 
 
 void CaloFutureRawToDigits::checkCtrl(int ctrl,int sourceID, LHCb::RawBankReadoutStatus status) const {
-  debug()<< "Control word :" << ctrl << endmsg;
+  if( msgLevel(MSG::DEBUG) ) debug()<< "Control word :" << ctrl << endmsg;
   if( 0 != (0x1& ctrl) || 0 != (0x20& ctrl) || 0 != (0x40& ctrl)){
-    debug() << "Tell1 error bits have been detected in data" << endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << "Tell1 error bits have been detected in data" << endmsg;
     if( 0 != (0x1  & ctrl)) status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Tell1Error );
     if( 0 != (0x20 & ctrl)) status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Tell1Sync  );
     if( 0 != (0x40 & ctrl)) status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Status::Tell1Link  );

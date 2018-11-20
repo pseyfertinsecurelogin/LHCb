@@ -15,6 +15,7 @@
 
 // from Gaudi
 #include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/Counters.h"
 #include "GaudiAlg/Transformer.h"
 
 // from CaloKernel
@@ -53,25 +54,25 @@ public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::CaloAdcs,
   int findCardbyCode(const std::vector<int>& feCards , int code) const;
   void checkCtrl(int ctrl,int sourceID, LHCb::RawBankReadoutStatus status) const;
     
-  Gaudi::Property<std::string> m_detectorName  { this, "DetectorName" } ;           //< Detector element name
+  Gaudi::Property<std::string> m_detectorName  { this, "DetectorName", "Ecal", "Detector element name" };
   Gaudi::Property<std::string> m_zsupMethod    { this, "ZSupMethod", "1D" };
-  Gaudi::Property<int>         m_zsupThreshold { this,  "ZsupThreshold" };        //< Initial threshold, in ADC counts
-  Gaudi::Property<int>         m_zsupNeighbor  { this,  "ZsupNeighbor", -256  } ; //< zsup (ADC) for neighbors for 2D method
-  Gaudi::Property<futuredetails::OutputType_t> m_outputType { this, "OutputType", {false, true} }; // ADC: false, Digits: true
-  Gaudi::Property<std::string> m_extension     { this,  "Extension" };
-  Gaudi::Property<bool> m_packedIsDefault      { this, "PackedIsDefault",false };
-  Gaudi::Property<std::string> m_detData       { this, "Detector", LHCb::CaloFutureAlgUtils::DeCaloFutureLocation("Ecal")};
+  Gaudi::Property<int>         m_zsupThreshold { this, "ZSupThreshold", -1000, "Initial threshold, in ADC counts" };
+  Gaudi::Property<int>         m_zsupNeighbour { this, "ZSupNeighbour", -256, "zsup (ADC) for neighbours for 2D method" };
+  Gaudi::Property<futuredetails::OutputType_t> m_outputType { this, "OutputType", {false, true}, "ADC: false, Digits: true" };
+  Gaudi::Property<std::string> m_extension     { this, "Extension" };
+  Gaudi::Property<bool> m_packedIsDefault      { this, "PackedIsDefault", false };
   DeCalorimeter*         m_calo = nullptr;    ///< Detector element pointer
-  LHCb::RawBank::BankType m_packedType;
-  LHCb::RawBank::BankType m_shortType;
-  LHCb::RawBank::BankType m_errorType;
 
   Gaudi::Property<bool> m_extraHeader { this, "DetectorSpecificHeader", false };
   Gaudi::Property<bool> m_cleanCorrupted {this, "CleanWhenCorruption", false };
   //bool m_packed = false;
   std::vector<int> m_readSources;
   bool m_ok = false;
-  int         m_numberOfCells =0    ; ///< Number of cells of this detector.
+  int  m_numberOfCells =0; ///< Number of cells of this detector.
+
+  mutable Gaudi::Accumulators::Counter<> m_noBank{this, "# duplicate ADC/Digits"};
+  mutable Gaudi::Accumulators::Counter<> m_duplicateADCDigits{this, "# duplicate ADC/Digits"};
+    
 };
 
 

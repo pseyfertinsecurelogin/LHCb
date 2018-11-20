@@ -17,6 +17,7 @@
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Counters.h"
 // from LHCb
 #include "CaloFutureDAQ/ICaloFutureReadoutTool.h"
 #include "DAQKernel/DecoderToolBase.h"
@@ -50,7 +51,7 @@ public:
   // Useful methods  to set/get m_banks externally
   // e.g. : avoid the call to getCaloFutureBanksFromRaw() at each call of adc(bank)
   bool getBanks() override {
-    if(m_stat)counter("getCaloFutureBanks") += 1;
+    if(m_stat) ++m_nBanks;
     m_getRaw = false;
     clear();
     m_ok = getCaloFutureBanksFromRaw();
@@ -113,5 +114,9 @@ protected:
 private:
   bool m_first = true;
   Gaudi::Property<bool> m_stat { this, "PrintStat", false };
+
+  mutable Gaudi::Accumulators::Counter<> m_nBanks{this, "getCaloFutureBanks"};
+  mutable Gaudi::Accumulators::Counter<> m_noBank{this, "No bank found"};
+
 };
 #endif // CALOFUTUREDAQ_CALOFUTUREREADOUTTOOL_H

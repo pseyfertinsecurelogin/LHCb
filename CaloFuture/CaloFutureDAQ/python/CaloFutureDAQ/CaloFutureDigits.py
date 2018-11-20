@@ -94,6 +94,11 @@ def caloDigits ( context        ,
                          _cntx                   ,
                          "Raw/Ecal/Digits"       ,
                          enableOnDemand          )
+        ecal.DetectorName = "Ecal"
+        ecal.ZSupMethod = "2D"
+        ecal.ZSupThreshold = 20
+        ecal.ZSupNeighbour = -5
+
         conflist.append(ecal)
         if ReadoutStatusConvert :
             ecalCnv = getAlgo ( RawBankReadoutStatusConverter, "EcalProcStatus",_cntx)
@@ -113,6 +118,10 @@ def caloDigits ( context        ,
                          _cntx                   ,
                          "Raw/Hcal/Digits"       ,
                          enableOnDemand          )
+        hcal.DetectorName = "Hcal"
+        hcal.ZSupMethod = "1D"
+        hcal.ZSupThreshold = 4
+
         conflist.append(hcal)
         if ReadoutStatusConvert :
             hcalCnv = getAlgo ( RawBankReadoutStatusConverter, "HcalProcStatus",_cntx)
