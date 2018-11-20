@@ -26,11 +26,11 @@ std::ostream& LHCb::Event::v2::RecVertex::fillStream(std::ostream& s) const {
   return s << "]\n }";
 }
 
-void LHCb::Event::v2::RecVertex::removeFromTracks(const RecVertex::Track* track) {
+bool LHCb::Event::v2::RecVertex::removeFromTracks(const RecVertex::Track* track) {
   auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
-  if (it != end(m_tracks)) {
-    m_tracks.erase(it);
-  }
+  if (it == end(m_tracks)) return false;
+  m_tracks.erase(it);
+  return true;
 }
 
 std::optional<float> LHCb::Event::v2::RecVertex::trackWeight( const RecVertex::Track* track ) const {

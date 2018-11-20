@@ -48,6 +48,7 @@ namespace LHCb::Event::v2 {
   /// helper class to bundle a Track and its weight
   struct WeightedTrack {
     using Track = LHCb::Event::v2::Track;
+    WeightedTrack(const Track* t, float w) : track(t), weight(w){};
     const Track* track;
     float weight;
   };
@@ -96,14 +97,20 @@ namespace LHCb::Event::v2 {
     /// Set the Chi^2 and the DoF of the vertex (fit)
     void setChi2PerDoF( Track::Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
 
+    /// reserve space for n tracks
+    void reserve(unsigned int n) { m_tracks.reserve(n); }
+
     /// Add a track to the track list, with the given weight
     void addToTracks(const Track* track,
                      const float weight=1.0) {
-      m_tracks.push_back(WeightedTrack{track, weight});
+      m_tracks.emplace_back(track, weight);
     }
   
-    /// Remove the given track from the list of tracks and its associated weight
-    void removeFromTracks(const Track* track);
+    /**
+     * Remove the given track from the list of tracks and its associated weight
+     * returns whether the track was found (and erased) or not
+     */
+    bool removeFromTracks(const Track* track);
   
     /// Remove all tracks, and their associated weights, from this vertex
     void clearTracks() {
