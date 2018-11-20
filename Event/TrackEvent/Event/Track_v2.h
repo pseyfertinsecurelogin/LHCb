@@ -17,6 +17,7 @@
 #include "Event/State.h"
 #include "Event/TrackParameters.h"
 #include "Event/TrackTags.h"
+#include "Event/TrackHit.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
@@ -487,9 +488,11 @@ namespace LHCb::Event
       void addToAncestors( const Track& ancestor ) { m_ancestors.push_back( &ancestor ); };
       const std::vector<const Track*> ancestors() const { return m_ancestors; }
 
-    protected:
     public:
       double forwardPatQuality = std::numeric_limits<double>::signaling_NaN();
+      std::vector<LHCb::TrackHit> ftHits;
+      std::vector<LHCb::TrackHit> utHits;
+      std::vector<LHCb::TrackHit> veloHits;
     private:
       Chi2PerDoF                                  m_chi2PerDoF{};
       unsigned int                                m_flags{0};              ///< The variety of track flags
