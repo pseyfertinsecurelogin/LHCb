@@ -1,5 +1,15 @@
-// Include file
+/*****************************************************************************\
+ * (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
+ *                                                                             *
+ * This software is distributed under the terms of the GNU General Public      *
+ * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+ *                                                                             *
+ * In applying this licence, CERN does not waive the privileges and immunities *
+ * granted to it by virtue of its status as an Intergovernmental Organization  *
+ * or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
 
+// Include file
 // local
 #include "GenFSRJson.h"
 
@@ -343,7 +353,6 @@ StatusCode GenFSRJson::finalize()
 
 void GenFSRJson::printFSR()
 {
-  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_jsonOutputName << endmsg;
   
   // make an inventory of the FileRecord store
   std::vector< std::string > addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
@@ -377,7 +386,9 @@ void GenFSRJson::printFSR()
       std::string njobs_str = std::to_string(njobs);        
       std::string time = ::getCurrentTime();
 
-      // open the new file                       
+      // open the new file
+      m_jsonOutputName += "_"+m_appConfigFile+".json";
+      if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_jsonOutputName << endmsg;
       std::ofstream jsonOutput(m_jsonOutputLocation + m_jsonOutputName, 
                                std::fstream::out);
       
