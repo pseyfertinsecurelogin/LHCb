@@ -20,7 +20,6 @@
 #include "Event/CaloDigit.h"
 #include "Event/CaloCluster.h"
 #include "Event/CaloHypo.h"
-struct ICaloFutureDataProvider;
 
 
 /** @class ICaloFutureGetterTool ICaloFutureGetterTool.h
