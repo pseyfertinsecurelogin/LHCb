@@ -32,6 +32,8 @@
 #include "RichUtils/RichHistoID.h"
 #include "RichUtils/RichMap.h"
 
+#include "GaudiKernel/Property.h"
+
 // boost
 #include "boost/array.hpp"
 

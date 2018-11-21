@@ -12,6 +12,7 @@
 #define PROPERTYCONFIG_H 1
 #include <string>
 #include <vector>
+#include <tuple>
 #include <iostream>
 #include <numeric>
 #include <string_view>
