@@ -44,7 +44,6 @@ struct ICaloFutureGetterTool : extend_interfaces<IAlgTool>
   virtual int detectorsMask()=0;
   
   virtual bool hasData ( const std::string& det )=0;
-  virtual ICaloFutureDataProvider* provider ( const std::string& det)=0;
 
 };
 #endif // ICALOFUTUREGETTERTOOL_H
