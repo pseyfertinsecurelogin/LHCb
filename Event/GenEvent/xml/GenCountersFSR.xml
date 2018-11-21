@@ -78,7 +78,7 @@
 
 <!-- ****************************** B Hadron counters ****************************** -->
 	<enumval name="B0Gen"             value="30"   desc="Number of generated B0 in events with at least one selected particle (contained in the inclusive list)"/>
-	<enumval name="antiB0Gen"         value="31"   desc="Number of generated B0bar in events with at least one selected particle"/>
+	<enumval name="antiB0Gen"         value="31"   desc="Number of generated anti-B0 in events with at least one selected particle"/>
 	<enumval name="BplusGen"          value="32"   desc="Number of generated B+ in events with at least one selected particle"/>
 	<enumval name="BminusGen"         value="33"   desc="Number of generated B- in events with at least one selected particle"/>
 	<enumval name="Bs0Gen"            value="34"   desc="Number of generated Bs0 in events with at least one selected particle"/>
@@ -87,9 +87,9 @@
 	<enumval name="antibBaryonGen"    value="37"   desc="Number of generated anti-b-Baryon (with positive PDG code) in events with at least one selected particle"/>
 	<enumval name="BcplusGen"         value="38"   desc="Number of generated Bc+ in events with at least one selected particle"/>
 	<enumval name="BcminusGen"        value="39"   desc="Number of generated Bc- in events with at least one selected particle"/>
-	<enumval name="bbGen"             value="40"   desc="Number of generated b bbar states in events with at least one selected particle"/>
+	<enumval name="bbGen"             value="40"   desc="Number of generated b anti-b states in events with at least one selected particle"/>
 	<enumval name="B0Acc"             value="41"   desc="Number of B0 in accepted events (passing the generator level cuts)"/>
-        <enumval name="antiB0Acc"         value="42"   desc="Number of B0bar in accepted events"/>
+        <enumval name="antiB0Acc"         value="42"   desc="Number of anti-B0 in accepted events"/>
         <enumval name="BplusAcc"          value="43"   desc="Number of B+ in accepted events"/>
         <enumval name="BminusAcc"         value="44"   desc="Number of B- in accepted events"/>
         <enumval name="Bs0Acc"            value="45"   desc="Number of Bs0 in accepted events"/>
@@ -98,27 +98,27 @@
         <enumval name="antibBaryonAcc"    value="48"   desc="Number of anti-b-Baryon (with positive PDG code) in accepted events"/>
         <enumval name="BcplusAcc"         value="49"   desc="Number of Bc+ in accepted events"/>
         <enumval name="BcminusAcc"        value="50"   desc="Number of Bc- in accepted events"/>
-        <enumval name="bbAcc"             value="51"   desc="Number of b bbar states in accepted events"/>
+        <enumval name="bbAcc"             value="51"   desc="Number of b anti-b states in accepted events"/>
 
 <!-- ****************************** D Hadron counters ****************************** -->
         <enumval name="D0Gen"             value="55"   desc="Number of generated D0"/>
-        <enumval name="antiD0Gen"         value="56"   desc="Number of generated D0bar"/>
+        <enumval name="antiD0Gen"         value="56"   desc="Number of generated anti-D0"/>
         <enumval name="DplusGen"          value="57"   desc="Number of generated D+"/>
         <enumval name="DminusGen"         value="58"   desc="Number of generated D-"/>
         <enumval name="DsplusGen"         value="59"   desc="Number of generated Ds+"/>
         <enumval name="DsminusGen"        value="60"   desc="Number of generated Ds-"/>
         <enumval name="cBaryonGen"        value="61"   desc="Number of generated c-Baryon (with positive PDG code)"/>
         <enumval name="anticBaryonGen"    value="62"   desc="Number of generated anti-c-Baryon (with negative PDG code)"/>
-        <enumval name="ccGen"             value="63"   desc="Number of generated c cbar states"/>
+        <enumval name="ccGen"             value="63"   desc="Number of generated c anti-c states"/>
         <enumval name="D0Acc"             value="64"   desc="Number of D0 in accepted events"/>
-        <enumval name="antiD0Acc"         value="65"   desc="Number of D0bar in accepted events"/>
+        <enumval name="antiD0Acc"         value="65"   desc="Number of anti-D0 in accepted events"/>
 	<enumval name="DplusAcc"          value="66"   desc="Number of D+ in accepted events"/>
         <enumval name="DminusAcc"         value="67"   desc="Number of D- in accepted events"/>
         <enumval name="DsplusAcc"         value="68"   desc="Number of Ds+ in accepted events"/>
         <enumval name="DsminusAcc"        value="69"   desc="Number of Ds- in accepted events"/>
         <enumval name="cBaryonAcc"        value="70"   desc="Number of c-Baryon (with positive PDG code) in accepted events"/>
         <enumval name="anticBaryonAcc"    value="71"   desc="Number of anti-c-Baryon (with negative PDG code) in accepted events"/>
-        <enumval name="ccAcc"             value="72"   desc="Number of c cbar states in accepted events"/>
+        <enumval name="ccAcc"             value="72"   desc="Number of c anti-c states in accepted events"/>
 
 <!-- ****************************** B** Hadron counters ****************************** -->
         <enumval name="BGen"              value="75"   desc="Number of generated B (spin 0, angular momentum 0)"/>
@@ -201,7 +201,7 @@
 
 <!-- ****************************** B Hadron counters ****************************** -->
 	  map.insert(std::pair&lt;std::string,std::string&gt;("B0Gen","generated B0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("antiB0Gen","generated B0bar"));
+          map.insert(std::pair&lt;std::string,std::string&gt;("antiB0Gen","generated anti-B0"));
           map.insert(std::pair&lt;std::string,std::string&gt;("BplusGen","generated B+"));
           map.insert(std::pair&lt;std::string,std::string&gt;("BminusGen","generated B-"));
           map.insert(std::pair&lt;std::string,std::string&gt;("Bs0Gen","generated Bs0"));
@@ -212,7 +212,7 @@
           map.insert(std::pair&lt;std::string,std::string&gt;("BcminusGen","generated Bc-"));
           map.insert(std::pair&lt;std::string,std::string&gt;("bbGen","generated (bb)"));
           map.insert(std::pair&lt;std::string,std::string&gt;("B0Acc","accepted B0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("antiB0Acc","accepted B0bar"));
+          map.insert(std::pair&lt;std::string,std::string&gt;("antiB0Acc","accepted anti-B0"));
           map.insert(std::pair&lt;std::string,std::string&gt;("BplusAcc","accepted B+"));
           map.insert(std::pair&lt;std::string,std::string&gt;("BminusAcc","accepted B-"));
           map.insert(std::pair&lt;std::string,std::string&gt;("Bs0Acc","accepted Bs0"));
@@ -225,7 +225,7 @@
 
 <!-- ****************************** D Hadron counters ****************************** -->
 	  map.insert(std::pair&lt;std::string,std::string&gt;("D0Gen","generated D0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("antiD0Gen","generated D0bar"));
+          map.insert(std::pair&lt;std::string,std::string&gt;("antiD0Gen","generated anti-D0"));
           map.insert(std::pair&lt;std::string,std::string&gt;("DplusGen","generated D+"));
           map.insert(std::pair&lt;std::string,std::string&gt;("DminusGen","generated D-"));
           map.insert(std::pair&lt;std::string,std::string&gt;("DsplusGen","generated Ds+"));
@@ -234,7 +234,7 @@
           map.insert(std::pair&lt;std::string,std::string&gt;("anticBaryonGen","generated anti-c-Baryon"));
           map.insert(std::pair&lt;std::string,std::string&gt;("ccGen","generated (cc)"));
           map.insert(std::pair&lt;std::string,std::string&gt;("D0Acc","accepted D0"));
-          map.insert(std::pair&lt;std::string,std::string&gt;("antiD0Acc","accepted D0bar"));
+          map.insert(std::pair&lt;std::string,std::string&gt;("antiD0Acc","accepted anti-D0"));
           map.insert(std::pair&lt;std::string,std::string&gt;("DplusAcc","accepted D+"));
           map.insert(std::pair&lt;std::string,std::string&gt;("DminusAcc","acceptedD-"));
           map.insert(std::pair&lt;std::string,std::string&gt;("DsplusAcc","accepted Ds+"));
