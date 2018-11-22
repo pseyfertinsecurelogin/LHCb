@@ -20,6 +20,7 @@ gaudi_depends_on_subdirs(CaloFuture/CaloFutureInterfaces
                          Event/MCEvent
                          Event/PhysEvent
                          Event/RecEvent
+			 Event/DAQEvent
                          GaudiAlg
                          Kernel/LHCbMath)
 
