@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd">
+<DDDB>
+
+<!--- Id: -->
+<!--- Author  : Juan PALACIOS -->
+<!--- Created : 2005-05-12 -->
+
+  <detelem name="VeloLeft">
+    <author> Juan Palacios </author>
+    <version> 1.0 </version>
+    <geometryinfo lvname ="/dd/Geometry/BeforeMagnetRegion/Velo/lvVeloLeft"
+      condition = "/dd/Conditions/Alignment/Velo/VeloLeft"
+      support="/dd/Structure/LHCb/BeforeMagnetRegion/Velo"
+      npath  ="pvVeloLeft"/>
+  </detelem>
+
+  <detelem name="VeloRight">
+    <author> Juan Palacios </author>
+    <version> 1.0 </version>
+    <geometryinfo lvname ="/dd/Geometry/BeforeMagnetRegion/Velo/lvVeloRight"
+      condition = "/dd/Conditions/Alignment/Velo/VeloRight"
+      support="/dd/Structure/LHCb/BeforeMagnetRegion/Velo"
+      npath  ="pvVeloRight"/>
+  </detelem>
+
+</DDDB>

@@ -27,15 +27,15 @@ use_cases = { "simple": "basic/plain geometry",
 
 def configure(use_case = "simple"):
     # Common configuration
+    import os
     import Gaudi.Configuration
     from Configurables import (ApplicationMgr, MessageSvc,
-                               DDDBConf, CondDB, CondDBAccessSvc,
+                               DDDBConf, CondDB,
                                UpdateManagerSvc)
     DDDBConf() # detector description
-    localDb = CondDBAccessSvc("VeloAlignCondTestDB",
-                              ConnectionString = "sqlite_file:../data/VeloAlignCondTest.db/DDDB",
-                              DefaultTAG = "simple")
-    CondDB().addLayer(localDb) # use local DB
+    CondDB().addLayer(os.path.join(os.environ.get('TEST_OVERLAY_ROOT',
+                                                  'Det/VeloDet/test/DB'),
+                                   'simple'))  # use local test DB
 
     ApplicationMgr(TopAlg = [], EvtSel = "NONE")
     #MessageSvc(OutputLevel = 1)

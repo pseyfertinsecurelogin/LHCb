@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<!DOCTYPE DDDB SYSTEM "git:/DTD/geometry.dtd" >
+<DDDB>
+
+  <!-- Geometry for Vertex detector -->
+
+  <logvol name="lvVelo" material="Vacuum">
+      <tubs name="VeloTubs1"
+            sizeZ         = "1670*mm"
+            innerRadius   = "0*mm"
+            outerRadius   = "590*mm"
+            startPhiAngle = "0*degree"
+            deltaPhiAngle = "360*degree"/>
+
+    <physvol name="pvVeloLeft" logvol="/dd/Geometry/BeforeMagnetRegion/Velo/lvVeloLeft">
+      <posXYZ x="0*mm" y="0*mm" z="0*mm"/>
+    </physvol>
+
+    <physvol name="pvVeloRight" logvol="/dd/Geometry/BeforeMagnetRegion/Velo/lvVeloRight">
+      <posXYZ x="0*mm" y="0*mm" z="0*mm"/>
+    </physvol>
+
+  </logvol>
+
+  <logvol name="lvVeloRight" material="Vacuum">
+    <box name="rightmod" sizeX = "5*mm" sizeY = "5*mm" sizeZ = "5*mm" />
+  </logvol>
+
+
+  <logvol name="lvVeloLeft" material="Vacuum">
+    <box name="leftmod" sizeX = "5*mm" sizeY = "5*mm" sizeZ = "5*mm" />
+  </logvol>
+
+</DDDB>

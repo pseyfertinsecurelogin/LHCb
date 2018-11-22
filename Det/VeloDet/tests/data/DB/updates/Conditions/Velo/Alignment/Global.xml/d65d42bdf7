@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd"><DDDB>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+
+<!--Surveyed VELO alignment constatants from the CERN metrology data, EDMS 908162-->
+
+  <condition classID="6" name="VeloSystem">
+    <paramVector name="dPosXYZ" type="double">0 0 0</paramVector>
+    <paramVector name="dRotXYZ" type="double">0 0 0</paramVector>
+    <paramVector name="pivotXYZ" type="double">0 0 0</paramVector>
+  </condition>
+
+  <condition name="VeloLeft" classID="1008106">
+    <paramVector name="dPosXYZ" type="double">0 0 0</paramVector>
+    <paramVector name="dRotXYZ" type="double">0 0 0</paramVector>
+    <paramVector name="pivotXYZ" type="double">0 0 0</paramVector>
+    <param name="XOffset" type="string">Conditions/Online/Velo/MotionSystem[ResolPosLA]</param>
+    <param name="YOffset" type="string">Conditions/Online/Velo/MotionSystem[ResolPosY]</param>
+  </condition>
+  <condition name="VeloRight" classID="1008106">
+    <paramVector name="dPosXYZ" type="double">0 0 0</paramVector>
+    <paramVector name="dRotXYZ" type="double">0 0 0</paramVector>
+    <paramVector name="pivotXYZ" type="double">0 0 0</paramVector>
+    <param name="XOffset" type="string">Conditions/Online/Velo/MotionSystem[ResolPosRC]</param>
+    <param name="YOffset" type="string">Conditions/Online/Velo/MotionSystem[ResolPosY]</param>
+    <!-- Being YOffset == 1, we should get 15  -->
+    <paramVector name="YOffsetCoeffs" type="double">20 -5</paramVector>
+  </condition>
+
+</DDDB>
