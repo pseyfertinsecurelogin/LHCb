@@ -253,7 +253,7 @@ class CondDB(ConfigurableUser):
                 entries.extend(os.path.relpath(os.path.join(root, f), path)
                                for f in files)
         resolver = GitEntityResolver(name,
-                                     Ignore='^(?!({})$).*'
+                                     Ignore='^(?!({})(\\/.*)?$).*'
                                      .format('|'.join(re.escape(entry)
                                                       for entry in entries)),
                                      PathToRepository=path,
