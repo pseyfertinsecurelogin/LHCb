@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files 
+// Include files
 #include "Event/Track.h"
 #include "Event/StandardPacker.h"
 
@@ -46,7 +46,7 @@ StatusCode PackTrack::execute()
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && 
+  if ( !m_alwaysOutput &&
        !exist<LHCb::Tracks>(m_inputName) ) return StatusCode::SUCCESS;
 
   // Input
@@ -69,16 +69,16 @@ StatusCode PackTrack::execute()
     // make new unpacked output data object
     LHCb::Tracks * unpacked = new LHCb::Tracks();
     put( unpacked, m_inputName+"_PackingCheck" );
-    
+
     // unpack
     packer.unpack( *out, *unpacked );
-    
+
     // run checks
     packer.check( *tracks, *unpacked ).ignore();
-    
+
     // clean up after checks
     StatusCode sc = evtSvc()->unregisterObject( unpacked );
-    if( sc.isSuccess() ) 
+    if( sc.isSuccess() )
       delete unpacked;
     else
       return Error("Failed to delete test data after unpacking check", sc );
@@ -101,7 +101,8 @@ StatusCode PackTrack::execute()
   else
   {
     // Clear the registry address of the unpacked container, to prevent reloading
-    tracks->registry()->setAddress( 0 );
+    auto* pReg = tracks->registry();
+    if (pReg) pReg->setAddress( nullptr );
   }
 
   // Summary of the size of the PackTracks container

@@ -134,7 +134,10 @@ StatusCode Pack<PACKER>::execute()
       else
       {
         // Clear the registry address of the unpacked container, to prevent reloading
-        if ( m_clearRegistry ) { data->registry()->setAddress( 0 ); }
+        if ( m_clearRegistry ) { 
+            auto* pReg = data->registry();
+            if (pReg) pReg->setAddress( nullptr ); 
+        }
       }
 
     } // input OK

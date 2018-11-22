@@ -38,7 +38,7 @@
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PackProtoParticle::execute() 
+StatusCode PackProtoParticle::execute()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
@@ -68,22 +68,22 @@ StatusCode PackProtoParticle::execute()
     // make new unpacked output data object
     LHCb::ProtoParticles * unpacked = new LHCb::ProtoParticles();
     put( unpacked, m_inputName+"_PackingCheck" );
-    
+
     // unpack
     packer.unpack( *out, *unpacked );
-    
+
     // run checks
     packer.check( *parts, *unpacked ).ignore();
-    
+
     // clean up after checks
     const StatusCode sc = evtSvc()->unregisterObject( unpacked );
-    if ( sc.isSuccess() ) 
+    if ( sc.isSuccess() )
     {
       delete unpacked;
     }
     else
     {
-      return Error( "Failed to delete test data after unpacking check", sc );  
+      return Error( "Failed to delete test data after unpacking check", sc );
     }
   }
 
@@ -104,7 +104,10 @@ StatusCode PackProtoParticle::execute()
   else
   {
     // Clear the registry address of the unpacked container, to prevent reloading
-    if ( m_clearRegistry ) { parts->registry()->setAddress(0); }
+    if ( m_clearRegistry ) {
+        auto* pReg = parts->registry();
+        if (pReg) pReg->setAddress(nullptr);
+    }
   }
 
   return StatusCode::SUCCESS;
