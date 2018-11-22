@@ -17,6 +17,7 @@
 #include "GaudiAlg/GaudiTool.h"
 
 #include "Event/L0MuonCandidate.h"
+#include "Event/RawEvent.h"
 
 #include "L0MuonKernel/CtrlCandCnv.h"
 #include "L0MuonKernel/ProcCandCnv.h"

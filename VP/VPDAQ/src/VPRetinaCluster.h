@@ -11,6 +11,8 @@
 #ifndef VPRETINACLUSTER_H
 #define VPRETINACLUSTER_H 1
 
+#include <cstdint>
+#include <vector>
 
 /*
  * @author Federico Lazzari

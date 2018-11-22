@@ -11,11 +11,13 @@
 #ifndef CONDDBREPLAYALG_H_
 #define CONDDBREPLAYALG_H_
 
-// Include files
-// from Gaudi
+#include "DetCond/ICondDBReader.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/Time.h"
+
 #include <list>
+#include <string>
 
 class ICondDBReader;
 

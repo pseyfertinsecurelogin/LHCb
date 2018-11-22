@@ -17,6 +17,7 @@
 // From MCEvent
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
+#include "Event/RecVertex.h"
 // From ROOT
 #include "TFile.h"
 #include "TH3.h"

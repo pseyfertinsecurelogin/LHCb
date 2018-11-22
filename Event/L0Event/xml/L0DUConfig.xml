@@ -13,12 +13,11 @@
 <gdd>
   <package name="L0Event">
 
-
-
     <namespace
       desc="L0DU template configuration attributes"
       name="L0DUTemplateConfig"
       author="O. Deschamps">
+      <import name="string" std="TRUE"/>
       <attribute
         desc="default name of the Template configuration"
         name="Name"

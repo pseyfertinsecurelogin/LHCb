@@ -11,10 +11,10 @@
 #ifndef HLTLUMIWRITER_H
 #define HLTLUMIWRITER_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "Event/HltLumiSummary.h"
 #include "Event/RawEvent.h"
+
+#include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class HltLumiWriter HltLumiWriter.h
  *  Fills the Raw Buffer banks for the LumiSummary

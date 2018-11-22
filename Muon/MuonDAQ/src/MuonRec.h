@@ -17,8 +17,7 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-//#include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "Event/MuonCoord.h"
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonDet/DeMuonDetector.h"
 #include "MuonDAQ/IMuonRawBuffer.h"

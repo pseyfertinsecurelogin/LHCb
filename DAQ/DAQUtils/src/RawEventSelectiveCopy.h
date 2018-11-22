@@ -11,9 +11,13 @@
 #ifndef TESTS_RAWEVENTSELECTIVECOPY_H
 #define TESTS_RAWEVENTSELECTIVECOPY_H 1
 
-// Include files
-// from Gaudi
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
+
+#include <vector>
+#include <string>
 
 /** @class RawEventSelectiveCopy RawEventSelectiveCopy.h
  *  Copies selected RawBanks to RawEvent at a new TES location.

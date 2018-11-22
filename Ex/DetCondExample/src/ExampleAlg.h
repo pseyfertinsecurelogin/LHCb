@@ -11,8 +11,9 @@
 #ifndef EXAMPLEALG_H
 #define EXAMPLEALG_H 1
 
-// Include files
-// from Gaudi
+#include "DetDesc/Condition.h"
+#include "DetDesc/AlignmentCondition.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 

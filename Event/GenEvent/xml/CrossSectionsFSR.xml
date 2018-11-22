@@ -18,6 +18,7 @@
   <package name='GenEvent'>
 
 <!-- Cross-Section Class -->
+    <import name="map" std="TRUE"/>
 
     <class
       name="CrossSectionsFSR"

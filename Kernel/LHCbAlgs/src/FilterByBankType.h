@@ -11,7 +11,8 @@
 #ifndef FILTERBYRUNEVENT_H
 #define FILTERBYRUNEVENT_H 1
 
-// from Gaudi
+#include "Event/RawBank.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class FilterByBankType FilterByBankType.h

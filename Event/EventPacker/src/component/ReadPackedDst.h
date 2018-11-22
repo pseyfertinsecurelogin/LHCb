@@ -11,8 +11,9 @@
 #ifndef READPACKEDDST_H
 #define READPACKEDDST_H 1
 
-// Include files
-// from Gaudi
+#include "Kernel/STLExtensions.h"
+#include "Event/RawBank.h"
+
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/IAddressCreator.h"
 #include "GaudiKernel/IDataManagerSvc.h"

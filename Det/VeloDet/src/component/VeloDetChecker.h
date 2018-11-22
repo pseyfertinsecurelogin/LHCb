@@ -12,8 +12,8 @@
 #ifndef VELODETCHECKER_H
 #define VELODETCHECKER_H 1
 
-// Include files
-// from Gaudi
+#include "VeloDet/DeVeloSensor.h"
+
 #include "GaudiAlg/GaudiTupleAlg.h"
 
 /** @class VeloDetChecker VeloDetChecker.h

@@ -12,7 +12,8 @@
 #ifndef DDEXAMPLE_SIMPLEALGORITHM_H
 #define DDEXAMPLE_SIMPLEALGORITHM_H 1
 
-// from Gaudi
+#include "DetDesc/ILVolume.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class SimpleAlgorithm SimpleAlgorithm.h

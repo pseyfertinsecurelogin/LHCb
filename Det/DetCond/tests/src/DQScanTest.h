@@ -18,6 +18,18 @@
 
 #include "DetCond/ICondDBReader.h"
 
+// Local custom parsers must be defined very early in the file.
+#include "GaudiKernel/ParsersFactory.h"
+
+namespace Gaudi {
+  namespace Parsers {
+    // Note: to be kept in sync with the property in DetCondTest::DQScanTest
+    StatusCode parse(std::vector<std::pair<unsigned int, unsigned int> >& result, const std::string& input) {
+      return Gaudi::Parsers::parse_(result, input);
+    }
+  }
+}
+
 namespace DetCondTest {
 
 /** @class DQScanTest DQScanTest.h src/DQScanTest.h

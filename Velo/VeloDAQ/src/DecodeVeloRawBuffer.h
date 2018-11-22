@@ -17,6 +17,8 @@
 #include "DAQKernel/DecoderAlgBase.h"
 #include "GaudiKernel/DataObjectHandle.h"
 #include "VeloEvent/VeloDecodeStatus.h"
+#include "Event/VeloLiteCluster.h" 
+#include "Event/VeloCluster.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
 

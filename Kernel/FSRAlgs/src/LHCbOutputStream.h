@@ -13,6 +13,9 @@
 
 // Required for inheritance
 #include "GaudiKernel/IDataSelector.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IConversionSvc.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/Property.h"
@@ -22,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <map>
 
 // forward declarations
 class IConversionSvc;

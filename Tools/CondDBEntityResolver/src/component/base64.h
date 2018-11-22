@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <string>
+#include <array>
 
 static std::array<char,64> encoding_table =
                                {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',

@@ -17,6 +17,8 @@
 
 #include "CaloDet/DeCalorimeter.h"
 
+#include "Event/RawBank.h"
+
 /** @class CaloFillPrsSpdRawBuffer CaloFillPrsSpdRawBuffer.h
  *  
  *

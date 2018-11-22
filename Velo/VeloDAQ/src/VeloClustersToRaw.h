@@ -16,6 +16,7 @@
 #include <string>
 
 #include "Event/VeloCluster.h"
+#include "SiDAQ/SiRawBufferWord.h"
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 

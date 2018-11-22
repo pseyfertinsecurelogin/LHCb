@@ -13,6 +13,7 @@
 #define     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__  1
 
 #include "TransportSvc.h"
+#include "DetDesc/IGeometryInfo.h"
 
 // ============================================================================
 /** @file TransportSvcIntersections.h

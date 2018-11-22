@@ -11,16 +11,15 @@
 #ifndef HLTSELREPORTSWRITER_H
 #define HLTSELREPORTSWRITER_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-
 #include "Event/HltObjectSummary.h"
 #include "Event/HltDecReports.h"
+#include "Event/HltSelReports.h"
+#include "Event/RawEvent.h"
 
 #include "Kernel/IANNSvc.h"
 #include "Kernel/IIndexedANNSvc.h"
 
+#include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class HltSelReportsWriter HltSelReportsWriter.h
  *

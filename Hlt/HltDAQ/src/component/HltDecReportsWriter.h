@@ -11,10 +11,10 @@
 #ifndef HLTDECREPORTSWRITER_H
 #define HLTDECREPORTSWRITER_H 1
 
-// Include files
-// from Gaudi
+#include "Event/HltDecReports.h"
+#include "Event/RawEvent.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/HltDecReport.h"
 
 /** @class HltDecReportsWriter HltDecReportsWriter.h
  *

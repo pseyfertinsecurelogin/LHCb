@@ -15,6 +15,10 @@
 #include "Kernel/IANNSvc.h"
 #include "PackedDataBuffer.h"
 #include "PackedDataChecksum.h"
+#include "Event/RawEvent.h"
+
+#include "GaudiAlg/GaudiAlgorithm.h"
+
 #include <optional>
 
 /** @class HltPackedDataWriter HltPackedDataWriter.h

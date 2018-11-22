@@ -14,6 +14,8 @@
 // Include files
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IDetDataSvc.h"
 
 class IEventTimeDecoder;
 class IToolSvc;

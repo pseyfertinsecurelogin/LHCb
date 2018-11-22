@@ -16,6 +16,7 @@
 #include <string>
 
 #include "VeloEvent/InternalVeloCluster.h"
+#include "SiDAQ/SiRawBankDecoder.h"
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 

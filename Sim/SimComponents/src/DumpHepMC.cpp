@@ -8,23 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-// Include files
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/MsgStream.h"
-// ============================================================================
-// Event
-// ============================================================================
+
+#include "DumpHepMC.h"
+
 #include "Event/HepMCEvent.h"
-// ============================================================================
-// HepMC
-// ============================================================================
 #include "HepMC/GenEvent.h"
 #include "GenEvent/HepMCUtils.h"
 
-#include "DumpHepMC.h"
+#include "GaudiKernel/MsgStream.h"
 
 /** @file
  *  implementation file for the class DumpHepMC.

@@ -11,9 +11,9 @@
 #ifndef HLTVERTEXREPORTSDECODER_H 
 #define HLTVERTEXREPORTSDECODER_H 1
 
-// Include files
-// from Gaudi
 #include "HltRawBankDecoderBase.h"
+
+#include "Event/VertexBase.h"
 
 /** @class HltvertexReportsDecoder HltvertexReportsDecoder.h
  *  

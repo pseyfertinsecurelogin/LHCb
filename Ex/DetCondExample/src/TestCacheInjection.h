@@ -11,8 +11,8 @@
 #ifndef TESTCACHEINJECTION_H
 #define TESTCACHEINJECTION_H 1
 
-// Include files
-// from Gaudi
+#include "DetDesc/Condition.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // Forward declarations

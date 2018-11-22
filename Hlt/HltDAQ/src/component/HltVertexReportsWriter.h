@@ -11,12 +11,13 @@
 #ifndef HLTVERTEXREPORTSWRITER_H
 #define HLTVERTEXREPORTSWRITER_H 1
 
-// Include files
-#include <optional>
-// from Gaudi
+#include "Event/HltVertexReports.h"
+#include "Event/RawEvent.h"
+#include "Kernel/IANNSvc.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-#include "Kernel/IANNSvc.h"
+#include <optional>
 
 
 /** @class HltvertexReportsWriter HltvertexReportsWriter.h

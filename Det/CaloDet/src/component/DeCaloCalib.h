@@ -17,7 +17,7 @@
 #include "GaudiKernel/IRndmGenSvc.h"
 #include "CaloDet/DeCalorimeter.h"
 
-
+#include "GaudiKernel/RndmGenerators.h"
 
 /** @class DeCaloCalib DeCaloCalib.h component/DeCaloCalib.h
  *

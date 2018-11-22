@@ -12,11 +12,14 @@
 #ifndef FTRAWBANKENCODER_H 
 #define FTRAWBANKENCODER_H 1
 
-// Include files
-#include <cstdint>
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "IFTReadoutTool.h"
+
+#include "Event/FTCluster.h"
+#include "Event/RawEvent.h"
+
+#include "GaudiAlg/GaudiAlgorithm.h"
+
+#include <cstdint>
 
 /** @class FTRawBankEncoder FTRawBankEncoder.h
  *  Encode the FTCLusters into raw banks
