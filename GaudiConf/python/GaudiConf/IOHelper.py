@@ -358,9 +358,16 @@ class IOHelper(object):
 
         from Gaudi.Configuration import (EventDataSvc, ApplicationMgr, EventPersistencySvc)
         # Set up the TES
-        EventDataSvc( ForceLeaves        = True,
-                      RootCLID           =    1,
-                      EnableFaultHandler = True )
+        from Gaudi.Configuration import allConfigurables
+        if "EventDataSvc" in allConfigurables :
+            evtDataSvc = allConfigurables.get("EventDataSvc")
+        else :
+            evtDataSvc = EventDataSvc()
+
+        evtDataSvc.RootCLID = 1
+        if evtDataSvc.getType() in [ 'EvtDataSvc', 'HiveWhiteBoard' ]:
+            evtDataSvc.ForceLeaves = 1
+            evtDataSvc.EnableFaultHandler = True
 
         # Set up the IO
         ApplicationMgr().ExtSvc += [ "Gaudi::MultiFileCatalog/FileCatalog",
