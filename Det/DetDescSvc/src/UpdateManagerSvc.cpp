@@ -52,16 +52,16 @@ StatusCode UpdateManagerSvc::initialize(){
     debug() << "--- initialize ---" << endmsg;
 
   // find the data provider
-  m_dataProvider = serviceLocator()->service(m_dataProviderName,true);
+  m_dataProvider = serviceLocator()->service(m_dataProviderName, true);
   if (!m_dataProvider) {
     error() << "Unable to get a handle to the data provider" << endmsg;
     return StatusCode::FAILURE;
   }
   if( msgLevel(MSG::DEBUG) )
-    debug() << "Got pointer to IDataProviderSvc \"" << m_dataProviderName << '"' << endmsg;
+    debug() << "Got pointer to IDataProviderSvc \"" << m_dataProviderName.value() << '"' << endmsg;
   auto dMgr = m_dataProvider.as<IDataManagerSvc>();
   if ( !dMgr ) {
-    warning() << "Cannot access IDataManagerSvc interface of \"" << m_dataProviderName
+    warning() << "Cannot access IDataManagerSvc interface of \"" << m_dataProviderName.value()
         << "\": using empty RootName" << endmsg;
     m_dataProviderRootName = "";
   } else {
@@ -70,13 +70,13 @@ StatusCode UpdateManagerSvc::initialize(){
 
   // find the detector data service
   if (m_detDataSvcName.empty()) m_detDataSvcName = m_dataProviderName;
-  m_detDataSvc = serviceLocator()->service(m_detDataSvcName,true);
+  m_detDataSvc = serviceLocator()->service(m_detDataSvcName, true);
   if (!m_detDataSvc) {
     warning() << "Unable to get a handle to the detector data service interface:"
       " all the calls to newEvent(void) will fail!" << endmsg;
   } else {
     if( msgLevel(MSG::DEBUG) )
-      debug() << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
+      debug() << "Got pointer to IDetDataSvc \"" << m_detDataSvcName.value() << '"' << endmsg;
   }
 
   {
