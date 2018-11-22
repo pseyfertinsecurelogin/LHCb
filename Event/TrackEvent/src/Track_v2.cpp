@@ -71,188 +71,10 @@ namespace
       // dynamically linked into the executable, i.e. very early.
       static const auto chi2max = generate_chi2max<256>( 1e-15 );
 
-      namespace details
-      {
-
-        template <typename Enum> struct enumMap {
-            static Enum const unknown;
-            static GaudiUtils::VectorMap<std::string, Enum> const map;
-            static std::string const s_unknown;
-        };
-
-        using namespace LHCb::Event::v2;
-
-        template <> const Track::History enumMap<Track::History>::unknown = Track::History::HistoryUnknown;
-        template <> const std::string enumMap<Track::History>::s_unknown = "HistoryError";
-        template <> const GaudiUtils::VectorMap<std::string, Track::History> enumMap<Track::History>::map = {
-                {"HistoryUnknown", Track::History::HistoryUnknown},
-                {"TrackIdealPR", Track::History::TrackIdealPR},
-                {"TrackSeeding", Track::History::TrackSeeding},
-                {"PatVelo", Track::History::PatVelo},
-                {"PatVeloTT", Track::History::PatVeloTT},
-                {"TrackVeloTT", Track::History::TrackVeloTT},
-                {"PatForward", Track::History::PatForward},
-                {"TrackMatching", Track::History::TrackMatching},
-                {"PatKShort", Track::History::PatKShort},
-                {"TsaTrack", Track::History::TsaTrack},
-                {"MuonID", Track::History::MuonID},
-                {"PatVeloR", Track::History::PatVeloR},
-                {"PatVeloGeneric", Track::History::PatVeloGeneric},
-                {"PatVeloGeneral", Track::History::PatVeloGeneral},
-                {"PatVeloOpen", Track::History::PatVeloOpen},
-                {"PatSeeding", Track::History::PatSeeding},
-                {"PatMatch", Track::History::PatMatch},
-                {"PatDownstream", Track::History::PatDownstream},
-                {"TTGeneric", Track::History::TTGeneric},
-                {"PatVPCheated", Track::History::PatVPCheated},
-                {"HLTImportedTrack", Track::History::HLTImportedTrack},
-                {"PatFastVelo", Track::History::PatFastVelo},
-                {"PatVP", Track::History::PatVP},
-                {"PatVeloUT", Track::History::PatVeloUT},
-                {"PrForward", Track::History::PrForward},
-                {"PrSeeding", Track::History::PrSeeding},
-                {"PrMatch", Track::History::PrMatch},
-                {"PrDownstream", Track::History::PrDownstream},
-                {"PrVeloUT", Track::History::PrVeloUT}};
-
-
-        template <> const Track::FitHistory enumMap<Track::FitHistory>::unknown = Track::FitHistory::FitUnknown;
-        template <> const std::string enumMap<Track::FitHistory>::s_unknown = "FitUnknown";
-        template <> const GaudiUtils::VectorMap<std::string, Track::FitHistory> enumMap<Track::FitHistory>::map = {
-                {"FitUnknown", Track::FitHistory::FitUnknown},
-                {"StdKalman", Track::FitHistory::StdKalman},
-                {"BiKalman", Track::FitHistory::BiKalman}};
-
-
-        template <> const Track::Types enumMap<Track::Types>::unknown = Track::Types::TypeUnknown;
-        template <> const std::string enumMap<Track::Types>::s_unknown = "TypeUnknown";
-        template <> const GaudiUtils::VectorMap<std::string, Track::Types> enumMap<Track::Types>::map = {
-                {"TypeUnknown", Track::Types::TypeUnknown},
-                {"Velo", Track::Types::Velo},
-                {"VeloR", Track::Types::VeloR},
-                {"Long", Track::Types::Long},
-                {"Upstream", Track::Types::Upstream},
-                {"Downstream", Track::Types::Downstream},
-                {"Ttrack", Track::Types::Ttrack},
-                {"Muon", Track::Types::Muon},
-                {"Calo", Track::Types::Calo},
-                {"TT", Track::Types::TT},
-                {"UT", Track::Types::UT}};
-
-
-        template <> const Track::FitStatus enumMap<Track::FitStatus>::unknown = Track::FitStatus::FitStatusUnknown;
-        template <> const std::string enumMap<Track::FitStatus>::s_unknown = "FitStatusUnknown";
-        template <> const GaudiUtils::VectorMap<std::string, Track::FitStatus> enumMap<Track::FitStatus>::map = {
-                {"FitStatusUnknown", Track::FitStatus::FitStatusUnknown},
-                {"Fitted", Track::FitStatus::Fitted},
-                {"FitFailed", Track::FitStatus::FitFailed}};
-
-        template <> const Track::PatRecStatus enumMap<Track::PatRecStatus>::unknown = Track::PatRecStatus::PatRecStatusUnknown;
-        template <> const std::string enumMap<Track::PatRecStatus>::s_unknown = "PatRecStatusUnknown";
-        template <> const GaudiUtils::VectorMap<std::string, Track::PatRecStatus> enumMap<Track::PatRecStatus>::map = {
-                {"PatRecStatusUnknown", Track::PatRecStatus::PatRecStatusUnknown},
-                {"PatRecIDs", Track::PatRecStatus::PatRecIDs},
-                {"PatRecMeas", Track::PatRecStatus::PatRecMeas}};
-
-
-        template <> const Track::Flags enumMap<Track::Flags>::unknown = Track::Flags::FlagsUnknown;
-        template <> std::string const enumMap<Track::Flags>::s_unknown = "FlagsUnknown";
-        template <> const GaudiUtils::VectorMap<std::string, Track::Flags> enumMap<Track::Flags>::map = {
-                {"FlagsUnknown", Track::Flags::FlagsUnknown},
-                {"Backward", Track::Flags::Backward},
-                {"Invalid", Track::Flags::Invalid},
-                {"Clone", Track::Flags::Clone},
-                {"Used", Track::Flags::Used},
-                {"IPSelected", Track::Flags::IPSelected},
-                {"PIDSelected", Track::Flags::PIDSelected},
-                {"Selected", Track::Flags::Selected},
-                {"L0Candidate", Track::Flags::L0Candidate}};
-
-
-        template <> const Track::AdditionalInfo enumMap<Track::AdditionalInfo>::unknown = Track::AdditionalInfo::AdditionalInfoUnknown;
-        template <> const std::string enumMap<Track::AdditionalInfo>::s_unknown = "AdditionalInfoUnknown";
-        template <> const GaudiUtils::VectorMap<std::string, Track::AdditionalInfo> enumMap<Track::AdditionalInfo>::map = {
-                {"AdditionalInfoUnknown", Track::AdditionalInfo::AdditionalInfoUnknown},
-                {"DC06Likelihood", Track::AdditionalInfo::DC06Likelihood},
-                {"PatQuality", Track::AdditionalInfo::PatQuality},
-                {"Cand1stQPat", Track::AdditionalInfo::Cand1stQPat},
-                {"Cand2ndQPat", Track::AdditionalInfo::Cand2ndQPat},
-                {"NCandCommonHits", Track::AdditionalInfo::NCandCommonHits},
-                {"Cand1stChi2Mat", Track::AdditionalInfo::Cand1stChi2Mat},
-                {"Cand2ndChi2Mat", Track::AdditionalInfo::Cand2ndChi2Mat},
-                {"DC06nExpectedVelo", Track::AdditionalInfo::DC06nExpectedVelo},
-                {"DC06nExpectedTT", Track::AdditionalInfo::DC06nExpectedTT},
-                {"DC06nExpectedIT", Track::AdditionalInfo::DC06nExpectedIT},
-                {"DC06nExpectedOT", Track::AdditionalInfo::DC06nExpectedOT},
-                {"MatchChi2", Track::AdditionalInfo::MatchChi2},
-                {"FitVeloChi2", Track::AdditionalInfo::FitVeloChi2},
-                {"FitVeloNDoF", Track::AdditionalInfo::FitVeloNDoF},
-                {"FitTChi2", Track::AdditionalInfo::FitTChi2},
-                {"FitTNDoF", Track::AdditionalInfo::FitTNDoF},
-                {"FitMatchChi2", Track::AdditionalInfo::FitMatchChi2},
-                {"FitFracUsedOTTimes", Track::AdditionalInfo::FitFracUsedOTTimes},
-                {"TsaLikelihood", Track::AdditionalInfo::TsaLikelihood},
-                {"CloneDist", Track::AdditionalInfo::CloneDist},
-                {"DC06GhostProbability", Track::AdditionalInfo::DC06GhostProbability},
-                {"nPRVeloRZExpect", Track::AdditionalInfo::nPRVeloRZExpect},
-                {"nPRVelo3DExpect", Track::AdditionalInfo::nPRVelo3DExpect},
-                {"AdditionalInfo201", Track::AdditionalInfo::AdditionalInfo201},
-                {"AdditionalInfo202", Track::AdditionalInfo::AdditionalInfo202},
-                {"MuonChi2perDoF", Track::AdditionalInfo::MuonChi2perDoF},
-                {"MuonMomentumPreSel", Track::AdditionalInfo::MuonMomentumPreSel},
-                {"MuonInAcceptance", Track::AdditionalInfo::MuonInAcceptance},
-                {"IsMuonLoose", Track::AdditionalInfo::IsMuonLoose},
-                {"IsMuon", Track::AdditionalInfo::IsMuon},
-                {"MuonDist2", Track::AdditionalInfo::MuonDist2},
-                {"MuonDLL", Track::AdditionalInfo::MuonDLL},
-                {"MuonNShared", Track::AdditionalInfo::MuonNShared},
-                {"MuonCLQuality", Track::AdditionalInfo::MuonCLQuality},
-                {"MuonCLArrival", Track::AdditionalInfo::MuonCLArrival},
-                {"IsMuonTight", Track::AdditionalInfo::IsMuonTight}};
-
-
-      template <typename Enum>
-      std::string const& toString( Enum const e )
-      {
-        auto iter = std::find_if( enumMap<Enum>::map.begin(), enumMap<Enum>::map.end(),
-                                  [&]( const std::pair<std::string const, Enum>& i ) { return i.second == e; } );
-        assert( iter != enumMap<Enum>::map.end() );
-        return iter != enumMap<Enum>::map.end() ? iter->first : enumMap<Enum>::s_unknown;
-      }
-
-      template <typename Enum>
-      StatusCode parse(Enum& e, std::string const& aName )
-      {
-        auto iter = enumMap<Enum>::map.find( aName );
-        if (iter == enumMap<Enum>::map.end() ) { e = enumMap<Enum>::unknown;  return StatusCode::FAILURE; }
-        e = iter->second;
-        return StatusCode::SUCCESS;
-      }
-    }
 }
 
 namespace LHCb::Event::v2
 {
-    std::string const& toString( Track::History e ) { return ::details::toString(e); }
-    StatusCode parse(Track::History& e, std::string const& name) { return ::details::parse(e,name); }
-
-    std::string const& toString( Track::FitHistory e ) { return ::details::toString(e); }
-    StatusCode parse(Track::FitHistory& e, std::string const& name) { return ::details::parse(e,name); }
-
-    std::string const& toString( Track::Types e ) { return ::details::toString(e); }
-    StatusCode parse(Track::Types& e, std::string const& name) { return ::details::parse(e,name); }
-
-    std::string const& toString( Track::FitStatus e ) { return ::details::toString(e); }
-    StatusCode parse(Track::FitStatus& e, std::string const& name) { return ::details::parse(e,name); }
-
-    std::string const& toString( Track::PatRecStatus e ) { return ::details::toString(e); }
-    StatusCode parse(Track::PatRecStatus& e, std::string const& name) { return ::details::parse(e,name); }
-
-    std::string const& toString( Track::Flags e ) { return ::details::toString(e); }
-    StatusCode parse(Track::Flags& e, std::string const& name) { return ::details::parse(e,name); }
-
-    std::string const& toString( Track::AdditionalInfo e ) { return ::details::toString(e); }
-    StatusCode parse(Track::AdditionalInfo& e, std::string const& name) { return ::details::parse(e,name); }
 
     //=============================================================================
     // Set the fit result. This takes ownership.
@@ -369,7 +191,7 @@ namespace LHCb::Event::v2
     //=============================================================================
     void Track::addToStates( const State& state )
     {
-      auto ipos = with_order( useDecreasingOrder{ checkFlag(Flags::Backward) },
+      auto ipos = with_order( useDecreasingOrder{ checkFlag(Flag::Backward) },
                               [&](auto order) { return std::upper_bound( m_states.begin(), m_states.end(), state, order); } );
       m_states.emplace( ipos, state );
     }
@@ -381,7 +203,7 @@ namespace LHCb::Event::v2
     {
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
       // do not assumme that the incoming states are properly sorted.
-      with_order( useDecreasingOrder{ checkFlag(Flags::Backward) }, [&](auto order) {
+      with_order( useDecreasingOrder{ checkFlag(Flag::Backward) }, [&](auto order) {
         std::sort( pivot, m_states.end(), order );
         std::inplace_merge( m_states.begin(), pivot, m_states.end(), order );
       });
@@ -393,13 +215,13 @@ namespace LHCb::Event::v2
     void Track::addToStates( span<const State> states, Tag::Sorted_tag )
     {
       // debug assert checking whether it's correctly sorted or not
-      assert( with_order( useDecreasingOrder{ checkFlag( Track::Flags::Backward ) },
+      assert( with_order( useDecreasingOrder{ checkFlag( Flag::Backward ) },
                           [&states](auto order) { return std::is_sorted( states.begin(), states.end(), order ); } ) &&
               "states are not correctly sorted;"
               "hint: use the general addToStates function assuming unordered states" );
 
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
-      with_order( useDecreasingOrder{ checkFlag( Track::Flags::Backward ) },
+      with_order( useDecreasingOrder{ checkFlag( Flag::Backward ) },
                   [&](auto order) { std::inplace_merge( m_states.begin(), pivot, m_states.end(), order ); });
     }
 
@@ -497,7 +319,7 @@ namespace LHCb::Event::v2
      *         'false' if information was not inserted, due to already existing key
      */
     //=============================================================================
-    bool Track::addInfo( AdditionalInfo const key, double const info )
+    bool Track::addInfo( Track::AdditionalInfo const key, double const info )
     {
       return m_extraInfo.insert( static_cast<int>( key ), info ).second;
     }
@@ -525,7 +347,7 @@ namespace LHCb::Event::v2
      *          is such information, the default value otherwise
      */
     //=============================================================================
-    double Track::info( AdditionalInfo const key, double const def ) const
+    double Track::info( Track::AdditionalInfo const key, double const def ) const
     {
       auto i = m_extraInfo.find( static_cast<int>( key ) );
       return m_extraInfo.end() == i ? def : i->second;
@@ -585,7 +407,7 @@ namespace LHCb::Event::v2
       return std::includes( m_lhcbIDs.begin(), m_lhcbIDs.end(), ids.begin(), ids.end() );
     }
 
-    void Track::setFlag( Flags const flag, bool const ok )
+    void Track::setFlag( Track::Flag const flag, bool const ok )
     {
       uint32_t val = ( ( static_cast<uint32_t>( flag ) ) << details::trailing_zeros( flagsMasks::flagMask ) ) &
                      flagsMasks::flagMask;
@@ -595,7 +417,7 @@ namespace LHCb::Event::v2
         m_flags &= ~val;
     }
 
-    bool Track::checkFlag( Flags const flag ) const
+    bool Track::checkFlag( Track::Flag const flag ) const
     {
       uint32_t val = ( static_cast<uint32_t>( flag ) << details::trailing_zeros( flagsMasks::flagMask ) );
       return ( 0 != ( m_flags & flagsMasks::flagMask & val ) );
@@ -604,25 +426,25 @@ namespace LHCb::Event::v2
     bool Track::hasT() const
     {
       auto const t = type();
-      return t == Types::Ttrack || t == Types::Downstream || t == Types::Long;
+      return t == Type::Ttrack || t == Type::Downstream || t == Type::Long;
     }
 
     bool Track::hasVelo() const
     {
       auto const t = type();
-      return t == Types::Velo || t == Types::VeloR || t == Types::Upstream || t == Types::Long;
+      return t == Type::Velo || t == Type::VeloR || t == Type::Upstream || t == Type::Long;
     }
 
     bool Track::hasTT() const
     {
       auto const t = type();
-      return t == Types::Downstream || t == Types::Upstream || t == Types::Long;
+      return t == Type::Downstream || t == Type::Upstream || t == Type::Long;
     }
 
     bool Track::hasUT() const
     {
       auto const t = type();
-      return t == Types::Downstream || t == Types::Upstream || t == Types::Long;
+      return t == Type::Downstream || t == Type::Upstream || t == Type::Long;
     }
 
     //=============================================================================
@@ -643,7 +465,7 @@ namespace LHCb::Event::v2
 
       os << "\n extraInfo : [";
       for ( const auto& i : extraInfo() ) {
-        const Track::AdditionalInfo info = static_cast<Track::AdditionalInfo>( i.first );
+        const AdditionalInfo info = static_cast<AdditionalInfo>( i.first );
         os << " " << info << "=" << i.second << " ";
       }
       os << "]\n" ;
