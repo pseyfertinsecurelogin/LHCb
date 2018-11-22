@@ -99,8 +99,6 @@ StatusCode GenFSRMerge::merge()
   for(const auto& genRecordAddress: addresses)
   {
     if (msgLevel(MSG::DEBUG)) debug() << "address: " << genRecordAddress << endmsg;
-
-    always() << "CAZZO !!!!!!!!!!!    " << genRecordAddress << endmsg;
     
     if (genRecordAddress.find(m_FSRName) != std::string::npos)
     {
@@ -173,9 +171,7 @@ StatusCode GenFSRMerge::merge()
     else
     {
       if (msgLevel(MSG::VERBOSE)) verbose() << genRecordAddress << " found" << endmsg;
-      
-      m_fileRecordSvc->unlinkObject(genRecordAddress).ignore(); // get the FSR out of TS
-      //genRecordAddress.erase(genRecordAddress.end()-m_FSRName.length(), genRecordAddress.end());
+
       m_fileRecordSvc->unlinkObject(genRecordAddress).ignore(); // get the FSR's directory out of TS
     }
   }
