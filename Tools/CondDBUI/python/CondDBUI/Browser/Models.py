@@ -13,11 +13,8 @@ from PyQt5.Qt import (QObject, QAbstractItemModel, QAbstractListModel,
                       pyqtSlot, QIcon, QApplication, QItemSelectionModel,
                       QItemDelegate, QComboBox, QLineEdit, QBrush, QFont)
 
-from PyCool import cool
-
-from Utils import *
-
-from CondDBUI import CondDB
+from CondDBUI import ValidityKeyMin, ValidityKeyMax
+from CondDBUI.Browser.Utils import *
 
 __all__ = [
     "setModelsIcons",
@@ -129,7 +126,7 @@ class CondDBStructureItem(object):
         self.leaf = node.isLeaf()
         if self.leaf:
             self.singleVersion = node.versioningMode(
-            ) == cool.FolderVersioning.SINGLE_VERSION
+            ) == 0  # cool.FolderVersioning.SINGLE_VERSION
         else:
             self.singleVersion = False
         self.index = None
@@ -619,7 +616,7 @@ class BaseIoVModel(QAbstractTableModel):
 
     ## Return the string representation of a validity key
     def validityKeyToString(self, valkey):
-        if valkey == cool.ValidityKeyMax:
+        if valkey == ValidityKeyMax:
             s = "Max"
         else:
             dt = valKeyToDateTime(valkey)
@@ -654,8 +651,8 @@ class CondDBIoVModel(BaseIoVModel):
 
         # "_since" is the value requested by the user,
         # "_actualSince" is the one in the cache
-        self._since = self._actualSince = cool.ValidityKeyMin
-        self._until = self._actualUntil = cool.ValidityKeyMax
+        self._since = self._actualSince = ValidityKeyMin
+        self._until = self._actualUntil = ValidityKeyMax
 
         # initializes internal members
         self._reset()
@@ -960,8 +957,8 @@ class CondDBIoVModel(BaseIoVModel):
     ## Get the payload of the currently selected IoV.
     def getPayload(self):
         if self._allIoVs and self._selectedIndex is not None:
-            return self._allIoVs[self._selectedIndex
-                                 + self._sinceIndex][self.PAYLOAD]
+            return self._allIoVs[self._selectedIndex +
+                                 self._sinceIndex][self.PAYLOAD]
         return None
 
 
@@ -1177,8 +1174,8 @@ class NodeFieldsModel(QAbstractTableModel):
         count = rows
         while count > 0:
             count -= 1
-            self.fields.insert(position, ("field_%d" %
-                                          (id + count), __default_field__[1]))
+            self.fields.insert(
+                position, ("field_%d" % (id + count), __default_field__[1]))
         self.endInsertRows()
         return True
 
