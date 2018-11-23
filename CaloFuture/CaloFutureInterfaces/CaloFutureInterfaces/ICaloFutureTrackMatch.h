@@ -19,9 +19,9 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "Math/Plane3D.h"
 #include "Event/State.h"
+#include "Event/Track.h"
 namespace LHCb{
   class CaloPosition  ; // from CaloEvent package 
-  class Track         ; // from TrackEvent   package
   class State         ; // from TrackEvent   package
 }
 
@@ -99,7 +99,7 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
    *  to TrStateP
    *  @return pointer to the state actually used for last matching
    */
-  virtual const LHCb::State* state   () const = 0 ;;
+  virtual const LHCb::State* state   () const = 0;
   
   
 };
