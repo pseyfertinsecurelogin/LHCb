@@ -10,8 +10,6 @@
 -->
 <lcgdict>
 
-  <class name = "ICaloFutureEnergyFromRaw"      />
-  <class name = "ICaloFutureReadoutTool"        />
   <class name = "ICaloFutureDigitFilterTool" />
 
 </lcgdict>

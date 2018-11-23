@@ -26,7 +26,6 @@
 #include "CaloDet/DeCalorimeter.h"
 
 // CaloDAQ
-//#include "CaloDAQ/ICaloEnergyFromRaw.h"
 #include "futuredetails.h"
 
 #include "Event/RawEvent.h"

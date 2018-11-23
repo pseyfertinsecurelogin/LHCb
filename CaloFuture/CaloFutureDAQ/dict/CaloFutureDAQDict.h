@@ -11,8 +11,6 @@
 #ifndef DICT_CALOFUTUREDAQDICT_H 
 #define DICT_CALOFUTUREDAQDICT_H 1
 
-#include "CaloFutureDAQ/ICaloFutureEnergyFromRaw.h"
-#include "CaloFutureDAQ/ICaloFutureReadoutTool.h"
 #include "CaloFutureDAQ/ICaloFutureDigitFilterTool.h"
 
 #endif // DICT_CALOFUTUREDAQDICT_H
