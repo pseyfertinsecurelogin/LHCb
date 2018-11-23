@@ -21,38 +21,22 @@ std::ostream& LHCb::Event::v3::RecVertex::fillStream(std::ostream& s) const {
     << "chi2PerDoF: " << chi2PerDoF() << "\n"
     << "nDoF      : " << nDoF() << "\n"
     << "technique :	" << technique() << "\n"
-    << " tracks :	[ ";
-  for ( const auto& tk : tracks() ) { s << tk << " "; }
-  s << "]" << "\n"
-    << "weights : [ ";
-  for ( const auto& w : weights() ) { s << w << " "; }
-  s << "]\n";
-  return s << " }";
+    << "tracks/weight :	[ ";
+  for ( const auto& tk : tracks() ) { s << tk.track << "/" << tk.weight << " "; }
+  return s << "]\n }";
 }
 
-void LHCb::Event::v3::RecVertex::removeFromTracks(const RecVertex::Track* track) {
-  auto it = std::find(begin(m_tracks), end(m_tracks), track);
-  if (it != end(m_tracks)) {
+bool LHCb::Event::v3::RecVertex::removeFromTracks(const RecVertex::Track* track) {
+  auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
+  if (it == end(m_tracks)) return false;
     m_tracks.erase(it);
-    m_weights.erase(std::next(begin(m_weights), std::distance(begin(m_tracks), it)));
-  }
-}
-
-bool LHCb::Event::v3::RecVertex::setTrackWeight( const RecVertex::Track* track,
-                                                 const float weight ) {
-  auto it = std::find(begin(m_tracks), end(m_tracks), track);
-  if (it != end(m_tracks)) {
-    *std::next(begin(m_weights), std::distance(begin(m_tracks), it)) = weight;
     return true;
-  }
-  return false;
 }
 
-std::optional<float> LHCb::Event::v3::RecVertex::trackWeight( const RecVertex::Track* track ) const
-{
-  auto it = std::find(begin(m_tracks), end(m_tracks), track);
+std::optional<float> LHCb::Event::v3::RecVertex::trackWeight( const RecVertex::Track* track ) const {
+  auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
   if (it != end(m_tracks)) {
-    return *std::next(begin(m_weights), std::distance(begin(m_tracks), it));
+    return it->weight;
   }
   return {};
 }

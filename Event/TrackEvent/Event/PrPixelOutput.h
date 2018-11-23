@@ -48,7 +48,7 @@ struct PrPixelOutputForTracking {
   // depends on the reader.
 public:
   /// Track general flags enumerations
-  enum class Flags {
+  enum class Flag {
     FlagsUnknown = 0, //
     Backward = 1,     // VELO track in the backward direction
     Invalid = 2,      // invalid track for physics
@@ -71,7 +71,7 @@ public:
 
   unsigned int m_flags{0}; ///< The variety of track flags
 
-  void setFlag(Flags const flag, bool const ok) {
+  void setFlag(Flag const flag, bool const ok) {
     uint32_t val = ((static_cast<uint32_t>(flag))
                     << details::trailing_zeros(flagsMasks::flagMask)) &
                    flagsMasks::flagMask;
@@ -80,7 +80,7 @@ public:
     else
       m_flags &= ~val;
   }
-  bool checkFlag( Flags const flag ) const
+  bool checkFlag( Flag const flag ) const
   {
     uint32_t val = ( static_cast<uint32_t>( flag ) << details::trailing_zeros( flagsMasks::flagMask ) );
     return ( 0 != ( m_flags & flagsMasks::flagMask & val ) );
