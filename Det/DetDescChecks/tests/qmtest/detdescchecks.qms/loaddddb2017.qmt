@@ -22,7 +22,8 @@ from Configurables import CondDB
 from DetDescChecks.Options import LoadDDDBTest
 
 LoadDDDBTest("2017")
-CondDB().UseLatestTags = ["2017"]
+CondDB().Tags.update({'DDDB': 'dt-2017',
+                      'LHCBCOND': 'dt-2017'})
 CondDB().EnableRunStampCheck = False
 
 </text></argument>

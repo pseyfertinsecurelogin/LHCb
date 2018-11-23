@@ -444,10 +444,7 @@ class DDDBConf(ConfigurableUser):
         """
         Default database for Upgrade MonteCarlo production and analysis
         """
-        # Need also to change connection string to DDDB
-        CondDB().PartitionConnectionString = {
-            "DDDB": "sqlite_file:$SQLITEDBPATH/DDDB_upgrade.db/DDDB"
-        }
+        pass  # nothing special here
 
     __data_types_handlers__ = {
         "2018": __2018_conf__,

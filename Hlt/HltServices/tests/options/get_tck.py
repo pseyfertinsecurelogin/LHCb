@@ -20,7 +20,7 @@ app.DataType = '2015'
 # app.Simulation = True
 
 from Configurables import CondDB
-CondDB().UseLatestTags = [app.DataType, True]
+CondDB().LatestGlobalTagByDataTypes = [app.DataType]
 CondDB().Simulation = False
 
 from Configurables import Gaudi__IODataManager as IODataManager
