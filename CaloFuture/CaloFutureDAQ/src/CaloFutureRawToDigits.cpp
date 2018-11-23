@@ -94,9 +94,9 @@ std::tuple<LHCb::CaloAdcs,
       status = LHCb::RawBankReadoutStatus( m_detectorName=="Ecal" ? LHCb::RawBank::EcalE : LHCb::RawBank::HcalE);
     }
     
-    if (  0 == banks.size() ){
-      if( msgLevel(MSG::DEBUG) ) debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
-      ++m_noBank;
+    m_noBanksCounter += banks.empty();
+    if (banks.empty() && msgLevel(MSG::DEBUG) ) {
+      debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
     } else {
       if ( !m_packedIsDefault ) {
 	if( msgLevel(MSG::DEBUG) ) debug() << " Requested banks of packed type has been found" << endmsg;

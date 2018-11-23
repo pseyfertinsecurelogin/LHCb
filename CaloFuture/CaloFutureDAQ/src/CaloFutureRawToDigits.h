@@ -70,7 +70,7 @@ public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::CaloAdcs,
   bool m_ok = false;
   int  m_numberOfCells =0; ///< Number of cells of this detector.
 
-  mutable Gaudi::Accumulators::Counter<> m_noBank{this, "# duplicate ADC/Digits"};
+  mutable Gaudi::Accumulators::BinomialCounter<> m_noBanksCounter{this, "No bank found"};
   mutable Gaudi::Accumulators::Counter<> m_duplicateADCDigits{this, "# duplicate ADC/Digits"};
     
 };
