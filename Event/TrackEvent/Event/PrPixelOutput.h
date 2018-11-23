@@ -62,7 +62,7 @@ public:
 
   operator LHCb::Event::v2::Track() const;
   LHCb::State state;
-  LHCb::Event::v2::Track::Types type;
+  LHCb::Event::v2::Track::Type type;
   LHCb::Event::v2::Track::History history;
   LHCb::Event::v2::Track::PatRecStatus patrecstatus;
   std::vector<LHCb::LHCbID> lhcbIDs;
