@@ -314,6 +314,8 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
   const std::string iovs_url = url + "/IOVs";
   if ( i_exists( iovs_url ) ) {
     auto data              = i_open( iovs_url ).first;
+    if ( UNLIKELY( !data ) ) throw GaudiException( "cannot access existing file " + iovs_url
+       + ", configuration problem?", name(), StatusCode::FAILURE );
     const auto when        = m_detDataSvc->eventTime();
     std::int_fast64_t time = when.ns();
     DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
