@@ -37,7 +37,7 @@
 
 namespace
 {
-  
+
   /** Generate a hash from a string
    *  Note this method generates undefined behaviour errors :-
    *  runtime error: left shift of 69513675 by 10 places cannot be represented in type 'int'
@@ -45,7 +45,7 @@ namespace
    *  Suppress with compiler attribute. */
 #if  defined (__GNUC__)
   __attribute__((no_sanitize_undefined))
-#elif defined(__clang__) 
+#elif defined(__clang__)
   // add something for clang ...
 #endif
   int makeHash( const std::string_view s )
@@ -55,12 +55,12 @@ namespace
     // NOTE : Do NOT modernise this with STL algorithms, as this breaks the attribute...
     for ( auto & c : s )
     {
-      hash += c; 
-      hash += (hash << 10); 
+      hash += c;
+      hash += (hash << 10);
       hash ^= (hash >> 6);
     }
-    hash += (hash << 3); 
-    hash ^= (hash >> 11); 
+    hash += (hash << 3);
+    hash ^= (hash >> 11);
     hash += (hash << 15);
     return hash;
   }
@@ -111,7 +111,7 @@ StatusCode LbAppInit::initialize() {
     release(preloadTool);
   }
 
-  m_condDBInfo = service("CondDBCnvSvc", true);
+  m_condDBInfo = service("XmlParserSvc", true);
 
   if( m_memPurgeLimit != -1 )
     warning() << "MemPurgeLimit property is obsolete, please remove it" << endmsg;
