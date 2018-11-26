@@ -60,7 +60,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto BARYON = LoKi::MCParticles::IsBaryon{};
+    inline const auto BARYON = LoKi::MCParticles::IsBaryon{};
     // ========================================================================
     /** @var BEAUTY
      *  Check for bottom quark
@@ -78,7 +78,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto BEAUTY = LoKi::MCParticles::HasQuark{ LHCb::ParticleID::bottom } ;
+    inline const auto BEAUTY = LoKi::MCParticles::HasQuark{ LHCb::ParticleID::bottom } ;
     // ========================================================================
     /** @var CHARGED
      *  Check for particle charge
@@ -96,7 +96,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto CHARGED = LoKi::MCParticles::IsCharged{};
+    inline const auto CHARGED = LoKi::MCParticles::IsCharged{};
     // ========================================================================
     /** @var CHARM
      *  Check for charm quark
@@ -153,7 +153,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto HADRON = LoKi::MCParticles::IsHadron{};
+    inline const auto HADRON = LoKi::MCParticles::IsHadron{};
     // ========================================================================
     /** @typedef ISMCCO
      *  Trivial predicate to check the identity of a particle
@@ -193,7 +193,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto LEPTON = LoKi::MCParticles::IsLepton{};
+    inline const auto LEPTON = LoKi::MCParticles::IsLepton{};
     // ========================================================================
     /** @var MC3Q
      *  MCParticle three charge
@@ -210,7 +210,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MC3Q = LoKi::MCParticles::ThreeCharge{};
+    inline const auto MC3Q = LoKi::MCParticles::ThreeCharge{};
     // ========================================================================
     /** @var MCABSID
      *  abs( MCParticle ID )
@@ -227,14 +227,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCABSID = LoKi::MCParticles::AbsIdentifier{};
+    inline const auto MCABSID = LoKi::MCParticles::AbsIdentifier{};
     // ========================================================================
     /** @var MCALL
      *  primitive predicate, "always true"
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    const auto MCALL = LoKi::Constant<const LHCb::MCParticle*,bool>{ true } ;
+    inline const auto MCALL = LoKi::Constant<const LHCb::MCParticle*,bool>{ true } ;
     // ========================================================================
     /** @typedef MCCHILD
      *  Simple function which delegates the evaluation of
@@ -408,7 +408,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCCTAU = LoKi::MCParticles::ProperLifeTime{};
+    inline const auto MCCTAU = LoKi::MCParticles::ProperLifeTime{};
     // ========================================================================
     /** @typedef MCDECAY
      *  Simple predicate to test certain decay pattern, using
@@ -557,14 +557,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCE = LoKi::MCParticles::Energy{};
+    inline const auto MCE = LoKi::MCParticles::Energy{};
     // =========================================================================
     /** @var MCFALSE
      *  primitive predicate, "always false"
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    const auto MCFALSE = LoKi::Constant<const LHCb::MCParticle*,bool>{ false } ;
+    inline const auto MCFALSE = LoKi::Constant<const LHCb::MCParticle*,bool>{ false } ;
     // =========================================================================
     /** @var MCETA
      *  MCParticle pseudorapidity
@@ -581,7 +581,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCETA = LoKi::MCParticles::PseudoRapidity{};
+    inline const auto MCETA = LoKi::MCParticles::PseudoRapidity{};
     // ========================================================================
     /** @var MCFROMDECAYS
      *  Simple predicate to check if particle comes from "decays"
@@ -609,7 +609,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
-    const auto MCFROMDECAYS = LoKi::MCParticles::FromDecays{};
+    inline const auto MCFROMDECAYS = LoKi::MCParticles::FromDecays{};
     // ========================================================================
     /** @var MCFROMXS
      *  Simple predicate to check if particle comes from "interactions"
@@ -637,15 +637,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
-    const auto MCFROMXS = LoKi::MCParticles::FromInteractions{};
+    inline const auto MCFROMXS = LoKi::MCParticles::FromInteractions{};
     // ========================================================================
     /** @var MCFROMSIGNAL
      *  Is this partiicle is a SIGNAL particle?
      *  @code
      *  const LHCb::MCParticle* p = ... ;
      *  const bool signal = MCFROMSIGNAL ( p ) ;
-     *  if ( signal) { ... } 
-     *  @endcode 
+     *  if ( signal) { ... }
+     *  @endcode
      *  @see LHCb::MCParticle
      *  @see LHCb::MCParticle::fromSignal
      *  @see LoKi::MCParticles::FromSignal
@@ -671,7 +671,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCID = LoKi::MCParticles::Identifier{};
+    inline const auto MCID = LoKi::MCParticles::Identifier{};
     // ========================================================================
     /** @typedef MCINANCESTORS
      *  Simple predicate to chck the presence of certain criteria
@@ -719,7 +719,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCM = LoKi::MCParticles::Mass{};
+    inline const auto MCM = LoKi::MCParticles::Mass{};
     // ========================================================================
     /** @var MCM0
      *  MCParticle mass
@@ -738,7 +738,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCM0 = LoKi::MCParticles::Mass{};
+    inline const auto MCM0 = LoKi::MCParticles::Mass{};
     // ========================================================================
     /** @var MCMASS
      *  MCParticle mass
@@ -757,7 +757,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCMASS = LoKi::MCParticles::Mass{};
+    inline const auto MCMASS = LoKi::MCParticles::Mass{};
     // ========================================================================
     /** @typedef MCMAXTREE
      *  Simple function to find a maximum value in the decay tree
@@ -905,7 +905,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    const auto MCNONE = LoKi::Constant<const LHCb::MCParticle*,bool>{ false } ;
+    inline const auto MCNONE = LoKi::Constant<const LHCb::MCParticle*,bool>{ false } ;
     // ========================================================================
     /** @var MCONE
      *  primitive function, "always 1"
@@ -913,7 +913,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    const auto MCONE = LoKi::Constant<const LHCb::MCParticle*,double>{ 1 } ;
+    inline const auto MCONE = LoKi::Constant<const LHCb::MCParticle*,double>{ 1 } ;
     // ========================================================================
     /** @var MCOSCILLATED
      *
@@ -932,7 +932,7 @@ namespace LoKi
      *  @author Vanya Belyaev ibelyaev@physics.syr.edu
      *  @date   2006-02-05
      */
-    const auto MCOSCILLATED = LoKi::MCParticles::Oscillated{};
+    inline const auto MCOSCILLATED = LoKi::MCParticles::Oscillated{};
     // ========================================================================
     /** @var MCOVALID
      *  trivial predicate which evaluated to true for
@@ -941,7 +941,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivanb.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    const auto MCOVALID = LoKi::MCParticles::ValidOrigin{};
+    inline const auto MCOVALID = LoKi::MCParticles::ValidOrigin{};
     // ========================================================================
     /** @var MCP
      *  MCParticle momentum
@@ -958,7 +958,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCP = LoKi::MCParticles::Momentum{};
+    inline const auto MCP = LoKi::MCParticles::Momentum{};
     // ========================================================================
     /** @var MCP0
      *  MCParticle momentum
@@ -975,7 +975,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCP0 = LoKi::MCParticles::Momentum{};
+    inline const auto MCP0 = LoKi::MCParticles::Momentum{};
     // ========================================================================
     /** @var MCPHI
      *  MCParticle asymuthal angle
@@ -992,7 +992,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCPHI = LoKi::MCParticles::Phi{};
+    inline const auto MCPHI = LoKi::MCParticles::Phi{};
     // ========================================================================
     /** @typedef MCPLOT
      *  Simple monitoring histogram for the functions
@@ -1073,7 +1073,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCPT = LoKi::MCParticles::TransverseMomentum{};
+    inline const auto MCPT = LoKi::MCParticles::TransverseMomentum{};
     // ========================================================================
     /** @var MCPT0
      *  MCParticle transverse momentum
@@ -1091,7 +1091,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCPT0 = LoKi::MCParticles::TransverseMomentum{};
+    inline const auto MCPT0 = LoKi::MCParticles::TransverseMomentum{};
     // ========================================================================
     /** @typedef MCPTDIR
      *  primitive evaluator of particle's transverse momentum
@@ -1156,7 +1156,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCPX = LoKi::MCParticles::MomentumX{};
+    inline const auto MCPX = LoKi::MCParticles::MomentumX{};
     // ========================================================================
     /** @var MCPY
      *  MCParticle y-momentum
@@ -1173,7 +1173,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCPY = LoKi::MCParticles::MomentumY{};
+    inline const auto MCPY = LoKi::MCParticles::MomentumY{};
     // ========================================================================
     /** @var MCPZ
      *  MCParticle z-momentum
@@ -1190,7 +1190,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCPZ = LoKi::MCParticles::MomentumZ{};
+    inline const auto MCPZ = LoKi::MCParticles::MomentumZ{};
     // ========================================================================
     /** @typedef MCQUARK
      *  quark content
@@ -1266,8 +1266,8 @@ namespace LoKi
      *  @code
      *  const LHCb::MCParticle* p = ... ;
      *  const bool signal = SIGNAL ( p ) ;
-     *  if ( signal) { ... } 
-     *  @endcode 
+     *  if ( signal) { ... }
+     *  @endcode
      *  @see LHCb::MCParticle
      *  @see LHCb::MCParticle::fromSignal
      *  @see LoKi::MCParticles::Signal
@@ -1427,7 +1427,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    const auto MCTHETA = LoKi::MCParticles::Theta{};
+    inline const auto MCTHETA = LoKi::MCParticles::Theta{};
     // ========================================================================
 
     /** @var MCTIME
@@ -1446,7 +1446,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MCTIME = LoKi::MCParticles::ProperLifeTime{};
+    inline const auto MCTIME = LoKi::MCParticles::ProperLifeTime{};
     // ========================================================================
     /** @typedef MCTREEMAX
      *  Simple function to find a maximum value in the decay tree
@@ -1493,7 +1493,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    const auto MCTRUE = LoKi::Constant<const LHCb::MCParticle*,bool>{ true } ;
+    inline const auto MCTRUE = LoKi::Constant<const LHCb::MCParticle*,bool>{ true } ;
     // ========================================================================
     /** @var MCVALID
      *
@@ -1511,7 +1511,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-01-21
      */
-    const auto MCVALID = LoKi::Valid<const LHCb::MCParticle*>{} ;
+    inline const auto MCVALID = LoKi::Valid<const LHCb::MCParticle*>{} ;
     // ========================================================================
     /** @typedef MCVFASPF
      *  simple adapter, which evaluated the actual function
@@ -1539,7 +1539,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-02-10
      */
-    const auto MCY = LoKi::MCParticles::Rapidity {};
+    inline const auto MCY = LoKi::MCParticles::Rapidity {};
     // ========================================================================
     /** @var MCY0
      *  Evaluator of rapidity of the particle
@@ -1550,7 +1550,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-02-10
      */
-    const auto MCY0 = LoKi::MCParticles::Rapidity0{};
+    inline const auto MCY0 = LoKi::MCParticles::Rapidity0{};
     // ========================================================================
     /** @var MCZERO
      *  primitive function, "always 0"
@@ -1558,7 +1558,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    const auto MCZERO = LoKi::Constant<const LHCb::MCParticle*,double>{ 0 } ;
+    inline const auto MCZERO = LoKi::Constant<const LHCb::MCParticle*,double>{ 0 } ;
     // ========================================================================
     /** @var MESON
      *  Check for particle type
@@ -1576,7 +1576,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto MESON = LoKi::MCParticles::IsMeson{};
+    inline const auto MESON = LoKi::MCParticles::IsMeson{};
     // ========================================================================
     /** @typedef NINMCDOWN
      *  simple adapter function which counts teh number
@@ -1612,7 +1612,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto NUCLEUS = LoKi::MCParticles::IsNucleus{};
+    inline const auto NUCLEUS = LoKi::MCParticles::IsNucleus{};
     // ========================================================================
     /** @var NEUTRAL
      *  Check for particle charge
@@ -1630,7 +1630,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto NEUTRAL = LoKi::MCParticles::IsNeutral{};
+    inline const auto NEUTRAL = LoKi::MCParticles::IsNeutral{};
     // ========================================================================
     /** @var OSCILLATED
      *
@@ -1649,7 +1649,7 @@ namespace LoKi
      *  @author Vanya Belyaev ibelyaev@physics.syr.edu
      *  @date   2006-02-05
      */
-    const auto OSCILLATED = LoKi::MCParticles::Oscillated{};
+    inline const auto OSCILLATED = LoKi::MCParticles::Oscillated{};
     // ========================================================================
     /** @var STRANGE
      *  Check for strange quark
@@ -1667,7 +1667,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-03-01
      */
-    const auto STRANGE = LoKi::MCParticles::HasQuark{ LHCb::ParticleID::strange };
+    inline const auto STRANGE = LoKi::MCParticles::HasQuark{ LHCb::ParticleID::strange };
     // ========================================================================
     /** @var TOP
      *  Check for TOP  quark
@@ -1685,7 +1685,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const auto TOP = LoKi::MCParticles::HasQuark{ LHCb::ParticleID::top } ;
+    inline const auto TOP = LoKi::MCParticles::HasQuark{ LHCb::ParticleID::top } ;
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================

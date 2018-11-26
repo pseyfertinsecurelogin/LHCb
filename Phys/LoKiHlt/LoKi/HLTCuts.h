@@ -56,7 +56,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    const auto HLT_DECISION = LoKi::HLT::Decision{};
+    inline const auto HLT_DECISION = LoKi::HLT::Decision{};
     // ========================================================================
     /** @typedef HLT_ERRORBITS
      *  simple functor to get the error bits for the certain line
@@ -210,7 +210,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    const auto HLT_NPASS = LoKi::HLT::NPass{};
+    inline const auto HLT_NPASS = LoKi::HLT::NPass{};
     // ========================================================================
     /** @typedef HLT_NCANDIDATES
      *  simple functor to get the number of candidates
@@ -421,7 +421,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    const auto HLT_SIZE = LoKi::HLT::Size{};
+    inline const auto HLT_SIZE = LoKi::HLT::Size{};
     // ========================================================================
     /** @var HLT_TCK
      *  simple function which returns the TCK
@@ -431,7 +431,7 @@ namespace LoKi
      *  @author Pieter David <pieter.david@nikhef.nl>
      *  @date 2014-08-28
      */
-    const auto HLT_TCK = LoKi::HLT::TrgConfKey{};
+    inline const auto HLT_TCK = LoKi::HLT::TrgConfKey{};
     // ========================================================================
   } // end of namespace LoKi::Cuts
   // ==========================================================================

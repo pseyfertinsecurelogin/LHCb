@@ -202,7 +202,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_DECISION_BEAM1 = LoKi::L0::Decision{ LHCb::L0DUDecision::Beam1 } ;
+    inline const auto L0_DECISION_BEAM1 = LoKi::L0::Decision{ LHCb::L0DUDecision::Beam1 } ;
     // ========================================================================
     /** @var L0_DECISION_BEAM2
      *  Simple accessor to LHCb::L0DUReport::decision
@@ -226,7 +226,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_DECISION_BEAM2 = LoKi::L0::Decision{ LHCb::L0DUDecision::Beam2 } ;
+    inline const auto L0_DECISION_BEAM2 = LoKi::L0::Decision{ LHCb::L0DUDecision::Beam2 } ;
     // ========================================================================
     /** @var L0_DECISION_PHYSICS
      *  Simple accessor to LHCb::L0DUReport::decision
@@ -249,7 +249,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_DECISION_PHYSICS = LoKi::L0::Decision{ LHCb::L0DUDecision::Physics };
+    inline const auto L0_DECISION_PHYSICS = LoKi::L0::Decision{ LHCb::L0DUDecision::Physics };
     // ========================================================================
     /** @typedef L0_DIGIT
      *  Simple accessor to 'dataDigit' for L0
@@ -289,7 +289,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_FORCEBIT = LoKi::L0::ForceBit{};
+    inline const auto L0_FORCEBIT = LoKi::L0::ForceBit{};
     // ========================================================================
     /** @typedef L0_SUMET
      *  Simple accessor to 'sum-et' by L0
@@ -329,7 +329,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_SUMET0 = LoKi::L0::SumEt{};
+    inline const auto L0_SUMET0 = LoKi::L0::SumEt{};
     // ========================================================================
     /** @typedef L0_SUMDECISION
      *  Simple accessor to 'decison form summary'
@@ -374,7 +374,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_SUMDECISION_BEAM1 = LoKi::L0::SumDecision{ LHCb::L0DUDecision::Beam1 } ;
+    inline const auto L0_SUMDECISION_BEAM1 = LoKi::L0::SumDecision{ LHCb::L0DUDecision::Beam1 } ;
     // ========================================================================
     /** @var L0_SUMDECISION_BEAM2
      *  Simple accessor to 'decison from summary'
@@ -396,7 +396,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_SUMDECISION_BEAM2 = LoKi::L0::SumDecision{ LHCb::L0DUDecision::Beam2 } ;
+    inline const auto L0_SUMDECISION_BEAM2 = LoKi::L0::SumDecision{ LHCb::L0DUDecision::Beam2 } ;
     // ========================================================================
     /** @var L0_SUMDECISION_PHYSICS
      *  Simple accessor to 'decison from summary'
@@ -418,7 +418,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_SUMDECISION_PHYSICS = LoKi::L0::SumDecision{ LHCb::L0DUDecision::Physics } ;
+    inline const auto L0_SUMDECISION_PHYSICS = LoKi::L0::SumDecision{ LHCb::L0DUDecision::Physics } ;
     // ========================================================================
     /** @var L0_TCK
      *  Simple accessor to 'trigger configuration key'
@@ -436,7 +436,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_TCK = LoKi::L0::Tck{};
+    inline const auto L0_TCK = LoKi::L0::Tck{};
     // ========================================================================
     /** @var L0_TIMING
      *  Simple accessor to 'timing bit'
@@ -454,7 +454,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    const auto L0_TIMINGBIT = LoKi::L0::TimingBit{};
+    inline const auto L0_TIMINGBIT = LoKi::L0::TimingBit{};
     // ========================================================================
     /** @typedef L0_TRIGGER
      *  Accessor to check the trigger decision
@@ -506,7 +506,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-01-08
      */
-    const auto L0_VALID = LoKi::L0::Valid{};
+    inline const auto L0_VALID = LoKi::L0::Valid{};
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================

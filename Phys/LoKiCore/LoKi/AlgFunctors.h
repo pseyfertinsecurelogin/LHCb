@@ -61,7 +61,6 @@ namespace LoKi {
   /** @namespace LoKi::Algortithms
    *
    *  Collection of various functors which test the status of "algorithm".
-   *  The idea comes form Gerhard "The Great" Raven
    *  @see LoKi::Cuts::ALG_PASSED
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-010-14
@@ -70,17 +69,17 @@ namespace LoKi {
       namespace Predicates {
           // ==========================================================================
           // filter passed ?
-          static const auto filterPassed = [](const IAlgorithm* ia) {
+          inline constexpr auto filterPassed = [](const IAlgorithm* ia) {
             return ia && ia->filterPassed () ;
           };
           // ========================================================================
           // is enabled ?
-          static const auto isEnabled = [](const IAlgorithm* ia) {
+          inline constexpr auto isEnabled = [](const IAlgorithm* ia) {
             return ia && ia->isEnabled () ;
           };
           // ==========================================================================
           // is executed ?
-          static const auto isExecuted = []( const IAlgorithm* ia ) {
+          inline constexpr auto isExecuted = []( const IAlgorithm* ia ) {
             return ia && ia->isExecuted () ;
           };
           // ==========================================================================

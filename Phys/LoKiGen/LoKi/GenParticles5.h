@@ -89,7 +89,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    const auto GFLIGHTPV = LoKi::GenParticles::Flight{ true  } ;
+    inline const auto GFLIGHTPV = LoKi::GenParticles::Flight{ true  } ;
     // ========================================================================
     /** @var GPVFLIGHT
      *  evaluator of flight distance from PV
@@ -100,7 +100,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    const auto GPVFLIGHT = LoKi::GenParticles::Flight{ true } ;
+    inline const auto GPVFLIGHT = LoKi::GenParticles::Flight{ true } ;
     // ========================================================================
     /** @var GFLIGHT
      *  evaluator of flight distance
@@ -112,7 +112,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    const auto GFLIGHT  = LoKi::GenParticles::Flight{ false } ;
+    inline const auto GFLIGHT  = LoKi::GenParticles::Flight{ false } ;
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================
