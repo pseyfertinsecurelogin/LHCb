@@ -46,14 +46,12 @@ StatusCode CaloFutureRawToDigits::initialize() {
   
   m_numberOfCells = m_calo->numberOfCells();
   
-  if ( m_zsupMethod == "NO" ) {
-    if( -1000 != m_zsupThreshold )
-      info() << " Threshold is reset from "<< m_zsupThreshold<< " to " << -1000 << endmsg;
-    m_zsupThreshold = -1000 ; // no threshold at all !
+  if (m_zsupMethod == "NO" && m_zsupThreshold >= 0) { 
+    return Error("Zero suppression method: NO while Threshold>=0: Must be fixed in configuration");
   }
   
-  info() << "Calorimeter has " <<  m_numberOfCells
-         << " cells. Zsup method "  << m_zsupMethod
+  info() << m_detectorName.value() << " has " <<  m_numberOfCells
+         << " cells. Zsup method "  << m_zsupMethod.value()
          << " Threshold " << m_zsupThreshold.value() << endmsg;
     
   return StatusCode::SUCCESS;
