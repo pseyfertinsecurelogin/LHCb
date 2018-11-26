@@ -190,48 +190,6 @@ namespace LHCb::Event
                       Selected     = 64, //
                       L0Candidate  = 128)//
 
-      /// Additional information assigned to this Track by pattern recognition
-      meta_enum_class(AdditionalInfo, int,
-                      Unknown = 0,        //
-                      DC06Likelihood = 1, // The Likelihood the track is real. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      PatQuality     = 2, // Quality variable from PatForward Tracking
-                      Cand1stQPat    = 3, //  Quality of the first candidate
-                      Cand2ndQPat    = 4, //  Quality of the second candidate
-                      NCandCommonHits   = 5,  //  NCand with common hits
-                      Cand1stChi2Mat    = 6,  //  Chi2 of the first candidate
-                      Cand2ndChi2Mat    = 7,  //  Chi2 of the second candidate
-                      DC06nExpectedVelo = 10, // number of expected Velo hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      DC06nExpectedTT   = 11, // number of expected TT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      DC06nExpectedIT   = 12, // number of expected IT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      DC06nExpectedOT   = 13, // number of expected OT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      MatchChi2         = 16, // Chi2 from the velo-seed matching (TrackMatching)
-                      FitVeloChi2       = 17, // Chi2 of the velo segment (from TrackFitResult)
-                      FitVeloNDoF       = 18, // NDoF of the velo segment chisq
-                      FitTChi2          = 19, // Chi2 of the T station segment (from TrackFitResult)
-                      FitTNDoF          = 20, // NDoF of the T station segment chisq
-                      FitMatchChi2      = 21, // Chi2 of the breakpoint between T and TT (from TrackFitResult)
-                      FitFracUsedOTTimes = 25, // Fraction of OT hits for which drifttime is used in fit
-                      TsaLikelihood      = 32, // Likelihood from tsa seeding
-                      CloneDist =
-                      101, // Track is flagged as being a (rejected) clone of another track. Value is the KL clone distance
-                      DC06GhostProbability =
-                      102, //  gives the NN ghost probability. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      nPRVeloRZExpect    = 103, // Number of expected Velo clusters from VELO RZ pattern recognition
-                      nPRVelo3DExpect    = 104, // Number of expected Velo clusters from VELO 3D pattern recognition
-                      AdditionalInfo201  = 201, // OBSOLETE, may exist in some 2008/09 files
-                      AdditionalInfo202  = 202, // OBSOLETE, may exist in some 2008/09 files
-                      MuonChi2perDoF     = 300, // Chi2/nDoF of muon track fit
-                      MuonMomentumPreSel = 301, // 1 if pass Momentum pre-selection, 0 if not
-                      MuonInAcceptance   = 302, // 1 if in Muon system InAcceptance, 0 if not
-                      IsMuonLoose        = 303, // 1 if pass IsMuonLoose criteria, 0 if not
-                      IsMuon             = 304, // 1 if pass IsMuon criteria, 0 if not
-                      MuonDist2          = 305, // Squared distance of the closest muon hit to the extrapolated track
-                      MuonDLL            = 306, // DLL (from muon system only)
-                      MuonNShared = 307, // NShared (number of additional IsMuon tracks with at least one shared hit with the current
-                      // track and a smaller Dist value)
-                      MuonCLQuality = 308, // CLQuality
-                      MuonCLArrival = 309, // CLArrival
-                      IsMuonTight   = 310) // 1 if pass IsMuonTight criteria, 0 if not
       } // namespace TrakcEnums
     
     class Track final
@@ -255,7 +213,6 @@ namespace LHCb::Event
       using PatRecStatus = Enum::Track::PatRecStatus;
       using FitStatus = Enum::Track::FitStatus;
       using Flag = Enum::Track::Flag;
-      using AdditionalInfo = Enum::Track::AdditionalInfo;
 
       /// Retrieve the position and momentum vectors and the corresponding 6D covariance matrix (pos:0->2,mom:3-5) at
       /// the first state

@@ -32,7 +32,6 @@ using Type = Enum::Track::Type;
 using PatRecStatus = Enum::Track::PatRecStatus;
 using FitStatus = Enum::Track::FitStatus;
 using Flag = Enum::Track::Flag;
-using AdditionalInfo = Enum::Track::AdditionalInfo;
 struct ExampleTracks {
   std::vector<Track> m_tracks;                  // collection of tracks
 
