@@ -19,7 +19,6 @@
 #include "gsl/gsl_cdf.h"
 
 // local
-#include "Event/TrackFitResult.h"
 #include "Event/TrackFunctor.h"
 #include "Event/Track_v2.h"
 
@@ -77,36 +76,6 @@ namespace LHCb::Event::v2
 {
 
     //=============================================================================
-    // Set the fit result. This takes ownership.
-    //=============================================================================
-    void Track::setFitResult( std::unique_ptr<TrackFitResult> absfit )
-    {
-      m_fitResult = LHCb::cxx::PolymorphicValue<TrackFitResult>{std::move( absfit )};
-    }
-
-    //=============================================================================
-    // Get a range of nodes in this track
-    //=============================================================================
-    Track::ConstNodeRange Track::nodes() const
-    {
-      if ( !m_fitResult ) return {};
-      const auto& nodes_ = m_fitResult->nodes();
-      return {nodes_.data(), std::next( nodes_.data(), nodes_.size() )};
-    }
-
-    //=============================================================================
-    // Get the measurements on the track. Note that it does not return a
-    // reference. This is because I want to remove this container from
-    // fitresult.
-    //=============================================================================
-    Track::MeasurementContainer Track::measurements() const
-    {
-      return m_fitResult ? MeasurementContainer{m_fitResult->measurements().begin(), m_fitResult->measurements().end()}
-                         : MeasurementContainer{};
-    }
-
-
-    //=============================================================================
     // Retrieve the probability of chi^2
     //=============================================================================
     double Track::probChi2() const
@@ -134,17 +103,9 @@ namespace LHCb::Event::v2
     //=============================================================================
     const State& Track::closestState( double const z ) const
     {
-      if ( m_fitResult && !m_fitResult->nodes().empty() ) {
-        auto iter = std::min_element( m_fitResult->nodes().begin(), m_fitResult->nodes().end(),
-                                      TrackFunctor::distanceAlongZ( z ) );
-        if ( iter == m_fitResult->nodes().end() )
-          throw GaudiException( "No state closest to z", "Track.cpp", StatusCode::FAILURE );
-        return ( *iter )->state();
-      } else {
-        auto iter = std::min_element( m_states.begin(), m_states.end(), TrackFunctor::distanceAlongZ( z ) );
-        if ( iter == m_states.end() ) throw GaudiException( "No state closest to z", "Track.cpp", StatusCode::FAILURE );
-        return *iter;
-      }
+      auto iter = std::min_element( m_states.begin(), m_states.end(), TrackFunctor::distanceAlongZ( z ) );
+      if ( iter == m_states.end() ) throw GaudiException( "No state closest to z", "Track.cpp", StatusCode::FAILURE );
+      return *iter;
     }
 
     //=============================================================================
@@ -152,18 +113,10 @@ namespace LHCb::Event::v2
     //=============================================================================
     const State& Track::closestState( const Gaudi::Plane3D& plane ) const
     {
-      if ( m_fitResult && !m_fitResult->nodes().empty() ) {
-        auto iter = std::min_element( m_fitResult->nodes().begin(), m_fitResult->nodes().end(),
-                                      TrackFunctor::distanceToPlane( plane ) );
-        if ( iter == m_fitResult->nodes().end() )
-          throw GaudiException( "No state closest to z", "Track.cpp", StatusCode::FAILURE );
-        return ( *iter )->state();
-      } else {
-        auto iter = std::min_element( m_states.begin(), m_states.end(), TrackFunctor::distanceToPlane( plane ) );
-        if ( iter == m_states.end() )
-          throw GaudiException( "No state closest to plane", "Track.cpp", StatusCode::FAILURE );
-        return *iter;
-      }
+      auto iter = std::min_element( m_states.begin(), m_states.end(), TrackFunctor::distanceToPlane( plane ) );
+      if ( iter == m_states.end() )
+        throw GaudiException( "No state closest to plane", "Track.cpp", StatusCode::FAILURE );
+      return *iter;
     }
 
     //=============================================================================
@@ -298,68 +251,7 @@ namespace LHCb::Event::v2
       return pos != m_lhcbIDs.end() && *pos == value;
     }
 
-    //=============================================================================
-    /** Add new information, associated with the specified key.
-     *  This method cannot be used to modify information for an already existing key
-     *
-     *  @code
-     *
-     *  Track* p = ... ;
-     *
-     *  Track::Key  key   = ... ;
-     *  Track::Info info  = ... ;
-     *
-     *  bool inserted = p->addInfo( key , info ) ;
-     *
-     *  @endcode
-     *
-     *  @param key key for the information
-     *  @param info information to be associated with the key
-     *  @return 'true' if information is inserted,
-     *         'false' if information was not inserted, due to already existing key
-     */
-    //=============================================================================
-    bool Track::addInfo( Track::AdditionalInfo const key, double const info )
-    {
-      return m_extraInfo.insert( static_cast<int>( key ), info ).second;
-    }
-
-    //=============================================================================
-    /** extract the information associated with the given key
-     *  If there is no such infomration the default value will
-     *  be returned
-     *
-     *  @code
-     *
-     *  const Track* p = ... ;
-     *
-     *  Track::Key  key   = ... ;
-     *
-     *  // extract the information
-     *  Track::Info info = p->info( key, -999 ) ;
-     *
-     *  @endcode
-     *
-     *  @param key key for the information
-     *  @param def the default value to be returned
-     *         in the case of missing info
-     *  @return information associated with the key if there
-     *          is such information, the default value otherwise
-     */
-    //=============================================================================
-    double Track::info( Track::AdditionalInfo const key, double const def ) const
-    {
-      auto i = m_extraInfo.find( static_cast<int>( key ) );
-      return m_extraInfo.end() == i ? def : i->second;
-    }
-
-    void Track::removeFromAncestors( const Track* value )
-    {
-      auto i = std::remove( m_ancestors.begin(), m_ancestors.end(), value );
-      m_ancestors.erase( i, m_ancestors.end() );
-    }
-
-    int Track::charge() const
+     int Track::charge() const
     {
       double qP = firstState().qOverP();
       return UNLIKELY( std::abs( qP ) < TrackParameters::lowTolerance ) ? 0 : qP < 0 ? -1 : +1;
@@ -457,18 +349,10 @@ namespace LHCb::Event::v2
          << "\n history    : " << history()
          << "\n fitstatus  : " << fitStatus()
          << "\n # ids      : " << nLHCbIDs()
-         << "\n # meas     : " << nMeasurements()
          << "\n chi2PerDoF : " << (float)chi2PerDoF()
          << "\n nDoF       : " << nDoF()
          << "\n GhostProb  : " << ghostProbability()
          << "\n Likelihood : " << likelihood();
-
-      os << "\n extraInfo : [";
-      for ( const auto& i : extraInfo() ) {
-        const AdditionalInfo info = static_cast<AdditionalInfo>( i.first );
-        os << " " << info << "=" << i.second << " ";
-      }
-      os << "]\n" ;
 
       if ( !m_states.empty() ) {
         os << " p  : " << (float)firstState().p()
