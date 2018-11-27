@@ -400,18 +400,6 @@ namespace LHCb::Event
 
       auto nDoF() const { return m_chi2PerDoF.nDoF; };
 
-      /// Retrieve const  Likelihood variable
-      auto likelihood() const { return m_likelihood; };
-
-      /// Update  Likelihood variable
-      void setLikelihood( double value ) { m_likelihood = value; };
-
-      /// Retrieve const  ghost probability variable
-      auto ghostProbability() const { return m_ghostProbability; };
-
-      /// Update  ghost probability variable
-      void setGhostProbability( double value ) { m_ghostProbability = value; };
-
       /// Retrieve const  The variety of track flags
       auto flags() const { return m_flags; };
 
@@ -502,8 +490,6 @@ namespace LHCb::Event
       double forwardPatQuality = std::numeric_limits<double>::signaling_NaN();
     private:
       Chi2PerDoF                                  m_chi2PerDoF{};
-      double                                      m_likelihood{999};       ///< Likelihood variable
-      double                                      m_ghostProbability{999}; ///< ghost probability variable
       unsigned int                                m_flags{0};              ///< The variety of track flags
       std::vector<LHCbID>                         m_lhcbIDs{};             ///< Container of (sorted) LHCbIDs
       std::vector<State>                          m_states{}; ///< Container with pointers to all the states

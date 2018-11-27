@@ -350,9 +350,7 @@ namespace LHCb::Event::v2
          << "\n fitstatus  : " << fitStatus()
          << "\n # ids      : " << nLHCbIDs()
          << "\n chi2PerDoF : " << (float)chi2PerDoF()
-         << "\n nDoF       : " << nDoF()
-         << "\n GhostProb  : " << ghostProbability()
-         << "\n Likelihood : " << likelihood();
+         << "\n nDoF       : " << nDoF();
 
       if ( !m_states.empty() ) {
         os << " p  : " << (float)firstState().p()
