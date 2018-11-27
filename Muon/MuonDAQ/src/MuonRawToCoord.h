@@ -42,6 +42,7 @@ public:
   using Digit = std::pair<LHCb::MuonTileID, unsigned int>;
   using Digits = std::vector<Digit>;
   using DigitsRange = boost::iterator_range<Digits::iterator>;
+
   StatusCode initialize() override;    ///< Algorithm initialization
   LHCb::MuonCoords operator()(const LHCb::RawEvent& event) const override;
 
@@ -51,12 +52,7 @@ private:
   std::vector<std::pair<LHCb::MuonTileID, unsigned int>> decodeTileAndTDCV1(const LHCb::RawBank*) const;
 
   /// Copy MuonTileID from digits to coord by crossing the digits
-  void addCoordsCrossingMap(DigitsRange&, LHCb::MuonCoords&) const;
-
-  /// fills in the two readout layouts by querying the DeMuonRegion
-  void makeStripLayouts(unsigned station , unsigned region,
-                              MuonLayout &layout1,
-                              MuonLayout &layout2) const;
+  Digits::iterator addCoordsCrossingMap(const DigitsRange&, LHCb::MuonCoords&) const;
 
   DeMuonDetector* m_muonDetector = nullptr;
   int m_NStation = 0;
