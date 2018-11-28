@@ -994,7 +994,7 @@ namespace LHCb::Math
 #endif
 
 // include rsqrt implementation
-#include "LHCbMath/fast_math_rsqrt.h"
+#include "LHCbMath/fast_math_rsqrt.icpp"
 
 namespace LHCb::Math
 {

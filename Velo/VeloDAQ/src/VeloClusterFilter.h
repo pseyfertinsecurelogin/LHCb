@@ -14,6 +14,8 @@
 #include "Kernel/VeloChannelID.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/DataObjectHandle.h"
+#include "Event/VeloLiteCluster.h" 
+#include "Event/VeloCluster.h"
 #include <string>
 
 class DeVelo;

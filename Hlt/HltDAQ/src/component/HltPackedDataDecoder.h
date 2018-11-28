@@ -15,10 +15,12 @@
 //// TODO: split this up into RawEvent -> [ loc, Out_i ]
 //         and then use SuperAlgorithm to have a vector over i....
 
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "PackedDataBuffer.h"
 
 #include "HltRawBankDecoderBase.h"
 #include "PackedDataChecksum.h"
+
+#include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class HltPackedDataDecoder HltPackedDataDecoder.h
  *  Algorithm that reads packed objects from raw banks.

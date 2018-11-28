@@ -13,6 +13,7 @@
 
 // base class
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 // interface
 #include "MCInterfaces/IMCParticleSelector.h"

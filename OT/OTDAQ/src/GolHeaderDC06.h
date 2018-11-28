@@ -12,6 +12,8 @@
 #ifndef OTDAQ_GolHeaderDC06_H
 #define OTDAQ_GolHeaderDC06_H 1
 
+#include <ostream>
+
 namespace OTDAQ
 {
 

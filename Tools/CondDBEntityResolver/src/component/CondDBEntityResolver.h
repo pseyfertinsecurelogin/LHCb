@@ -17,6 +17,8 @@
 #include <boost/utility/string_ref.hpp>
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IFileAccess.h"
+#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/Time.h"
 #include "XmlTools/IXmlEntityResolver.h"
 #include "Kernel/ICondDBInfo.h"
 

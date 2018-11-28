@@ -14,6 +14,7 @@
 // Include files
 // from Gaudi
 #include "Event/FTLiteCluster.h"
+#include "Event/RawEvent.h"
 #include "GaudiAlg/Transformer.h"
 #include "GaudiAlg/FunctionalUtilities.h"
 #include "Kernel/MultiIndexedContainer.h"

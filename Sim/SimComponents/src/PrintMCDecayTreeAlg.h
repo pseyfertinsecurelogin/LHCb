@@ -11,13 +11,11 @@
 #ifndef PRINTMCDECAYTREEALG_H
 #define PRINTMCDECAYTREEALG_H 1
 
-// Include files
-// from STL
-#include <string>
+#include "Event/MCParticle.h"
 
-// from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
+#include <string>
 
 // forward declaration
 struct IPrintMCDecayTreeTool;

@@ -19,6 +19,7 @@
 #include <TAxis.h>
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
 // Interface
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"

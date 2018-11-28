@@ -31,6 +31,7 @@
 #include "LoKi/HLTTypes.h"
 
 #include "HltDAQ/HltEvaluator.h"
+#include "Event/RawEvent.h"
 
 /** @class HltRoutingBitsWriter HltRoutingBitsWriter.h
  *

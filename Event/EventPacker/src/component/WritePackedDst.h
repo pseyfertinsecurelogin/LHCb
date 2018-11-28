@@ -14,6 +14,7 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "Event/RawEvent.h"
 #include "PackedBank.h"
 
 /** @class WritePackedDst WritePackedDst.h

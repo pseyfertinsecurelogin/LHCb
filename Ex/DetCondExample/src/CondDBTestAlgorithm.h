@@ -11,8 +11,8 @@
 #ifndef CONDDBTESTALGORITHM_H
 #define CONDDBTESTALGORITHM_H 1
 
-// Include files
-// from Gaudi
+#include "DetDesc/TabulatedProperty.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // Forward declarations

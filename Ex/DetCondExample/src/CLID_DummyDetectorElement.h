@@ -12,8 +12,8 @@
 #ifndef     _CLID_DUMMYDETECTORELEMENT_H
 #define     _CLID_DUMMYDETECTORELEMENT_H 1
 
+#include "GaudiKernel/ClassID.h"
 
-///
 /// unique ID of the class
 static const CLID CLID_DummyDetectorElement = 6669999;
 

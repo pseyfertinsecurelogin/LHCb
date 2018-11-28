@@ -17,6 +17,7 @@
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/TaggedBool.h"
 
 namespace LHCb{
   class CaloCluster;

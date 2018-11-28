@@ -19,6 +19,7 @@
 #include "GaudiAlg/GaudiTupleAlg.h"
 #include "AIDA/IHistogram1D.h"
 #include "AIDA/IAxis.h"
+#include "Event/HltObjectSummary.h"
 
 /** @class HltRawDataMonitor HltRawDataMonitor.h
  *  

@@ -11,6 +11,7 @@
 #ifndef L0HC_L0HCALG_H
 #define L0HC_L0HCALG_H 1
 
+#include "Event/HCDigit.h"
 #include "L0Base/L0AlgBase.h"
 #include "DetDesc/Condition.h"
 

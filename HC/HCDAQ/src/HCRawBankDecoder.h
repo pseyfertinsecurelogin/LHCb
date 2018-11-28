@@ -20,9 +20,11 @@
 #include "GaudiAlg/Transformer.h"
 
 #include "Event/HCDigit.h"
+#include "Event/RawEvent.h"
+#include "Event/RawBank.h"
+#include "Event/ODIN.h"
 
 namespace LHCb {
-class RawEvent;
 class ODIN;
 }
 

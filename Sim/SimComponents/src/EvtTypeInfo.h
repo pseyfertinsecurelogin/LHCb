@@ -11,7 +11,7 @@
 #ifndef EVTTYPEINFO_H 
 #define EVTTYPEINFO_H 1
 
-// Include files
+#include <string>
 
 /** @class EvtTypeInfo EvtTypeInfo.h
  *  

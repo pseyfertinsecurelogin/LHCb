@@ -16,6 +16,7 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
 #include "Kernel/STLExtensions.h"
+#include "Event/VeloCluster.h" 
 
 // from TELL1 Kernel:
 #include "Tell1Kernel/VeloDecodeConf.h"

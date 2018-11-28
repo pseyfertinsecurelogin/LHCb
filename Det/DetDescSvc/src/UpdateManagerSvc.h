@@ -11,19 +11,19 @@
 #ifndef UPDATEMANAGERSVC_H
 #define UPDATEMANAGERSVC_H 1
 
-// Include files
+#include "DetDesc/ICondIOVResource.h"
+#include "DetDesc/ValidDataObject.h"
+
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/Time.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/MsgStream.h"
-
+#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/UpdateManagerException.h"
-
 #include "GaudiKernel/Map.h"
-
 #include "GaudiKernel/HashMap.h"
 
 #include <string>
@@ -31,12 +31,6 @@
 #include <exception>
 #include <algorithm>
 #include <shared_mutex>
-
-#include "DetDesc/ICondIOVResource.h"
-
-#ifndef WIN32
-#include <pthread.h>
-#endif
 
 // Forward declarations
 template <class TYPE> class SvcFactory;

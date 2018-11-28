@@ -13,6 +13,7 @@
 #define VELORAWWORDSIZES_H 1
 
 #include "SiDAQ/SiRawBufferWord.h"
+#include <cstddef>
 
 namespace VeloDAQ {
   // the size of a cluster word in bytes

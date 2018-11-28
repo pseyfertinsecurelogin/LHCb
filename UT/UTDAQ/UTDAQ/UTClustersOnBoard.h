@@ -25,6 +25,7 @@
 #include <array>
 
 #include "Kernel/UTDAQDefinitions.h"
+#include "Event/UTCluster.h"
 
 class UTClustersOnBoard final {
 

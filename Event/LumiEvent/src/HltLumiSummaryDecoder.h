@@ -14,6 +14,7 @@
 // Include files
 // from Gaudi
 #include "Event/HltLumiSummary.h"
+#include "Event/RawEvent.h"
 #include "GaudiAlg/Transformer.h"
 // std
 #include <string>

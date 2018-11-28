@@ -14,6 +14,9 @@
 // Include files
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/DataObject.h"
+
+#include <cstring>
 
 /** @class PackedBank PackedBank.h
  *  This is a simple class to store theinformation of a DataObject as a bank

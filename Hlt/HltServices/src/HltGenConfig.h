@@ -11,15 +11,16 @@
 #ifndef HLTGENCONFIG_H
 #define HLTGENCONFIG_H 1
 
-// Include files
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IAlgManager.h"
+#include "GaudiKernel/IAlgTool.h"
+#include "Kernel/IConfigAccessSvc.h"
+#include "Kernel/IPropertyConfigSvc.h"
+
 #include <string>
 #include <vector>
 #include <unordered_map>
-
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "Kernel/IConfigAccessSvc.h"
-#include "Kernel/IPropertyConfigSvc.h"
+#include <map>
 
 /** @class HltGenConfig HltGenConfig.h
  *

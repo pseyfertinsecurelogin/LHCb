@@ -21,6 +21,7 @@
 // Kernel
 #include "OTDet/DeOTModule.h"
 #include "Event/OTLiteTime.h"
+#include "Event/OTBankVersion.h"
 
 // forward declarations
 class DeOTDetector;

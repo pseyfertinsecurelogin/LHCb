@@ -19,6 +19,7 @@
 
 // local
 #include "TransportSvc.h" 
+#include "DetDesc/IGeometryInfo.h"
 
 /** @file
  *

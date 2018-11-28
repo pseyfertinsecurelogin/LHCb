@@ -16,6 +16,7 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 // from Tr/TrackInterfaces
 #include "Kernel/ITrajPoca.h"

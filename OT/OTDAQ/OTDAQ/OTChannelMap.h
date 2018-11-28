@@ -11,6 +11,7 @@
 #ifndef OTDAQ_OTCHANNELMAP_H_
 #define OTDAQ_OTCHANNELMAP_H_
 
+#include <array>
 #include <vector>
 #include "Kernel/OTChannelID.h"
 #include "OTDAQ/OTEnum.h"

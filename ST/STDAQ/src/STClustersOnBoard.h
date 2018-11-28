@@ -25,6 +25,7 @@
 #include <array>
 
 #include "Kernel/STDAQDefinitions.h"
+#include "Event/STCluster.h"
 
 class STClustersOnBoard final {
 

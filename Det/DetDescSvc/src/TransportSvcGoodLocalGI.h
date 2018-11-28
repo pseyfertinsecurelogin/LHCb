@@ -13,6 +13,7 @@
 #define       __DETDESC_TRANSPORTSVC_TRANSPORTSVCGOODLOCALGI_H__ 1
 
 #include "TransportSvc.h"
+#include "DetDesc/IGeometryInfo.h"
 
 /** @file TransportSvcGoodLocalGI.h
  *  

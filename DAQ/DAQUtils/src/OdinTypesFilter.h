@@ -16,7 +16,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/ParsersFactory.h"
-
+#include "Event/ODIN.h"
 
 namespace OdinTypesFilter_details {
     //=======================================================

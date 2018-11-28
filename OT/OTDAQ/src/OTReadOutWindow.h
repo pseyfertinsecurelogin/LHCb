@@ -13,6 +13,7 @@
 
 // Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 // OTDAQ
 #include "OTDAQ/IOTReadOutWindow.h"

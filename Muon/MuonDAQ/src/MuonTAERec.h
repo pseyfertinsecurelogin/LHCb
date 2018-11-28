@@ -17,8 +17,7 @@
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonDet/DeMuonDetector.h"
 #include "MuonDAQ/IMuonRawBuffer.h"
-
-
+#include "Event/MuonCoord.h"
 
 /** @class MuonTAERec MuonTAERec.h
  *

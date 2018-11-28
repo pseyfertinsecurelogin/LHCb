@@ -11,9 +11,10 @@
 #ifndef PRINTMCTREE_H
 #define PRINTMCTREE_H 1
 
-// Include files
-// from Gaudi
+#include "MCInterfaces/IPrintMCDecayTreeTool.h"
+
 #include "GaudiAlg/GaudiAlgorithm.h"
+
 class IDebugTool;
 
 

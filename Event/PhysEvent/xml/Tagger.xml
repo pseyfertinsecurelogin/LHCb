@@ -21,8 +21,9 @@
       desc      = "Individual tagger decision on B flavour"  >
 
     &StlVector;
+      
+    <import name="Event/Particle.h"/>
     <import name="vector" std="TRUE"/>
-
     <import name="string" std="TRUE"/>
 
      <enum
