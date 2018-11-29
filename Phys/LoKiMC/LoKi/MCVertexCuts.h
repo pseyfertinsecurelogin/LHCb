@@ -109,7 +109,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::TypeOfMCVertex                            MCVTYPE{} ;
+    inline const auto MCVTYPE = LoKi::MCVertices::TypeOfMCVertex{} ;
     // ========================================================================
     /** @var MCVVALID
      *
@@ -127,7 +127,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-01-21
      */
-    const LoKi::Valid<const LHCb::MCVertex*>                         MCVVALID{} ;
+    inline const auto MCVVALID = LoKi::Valid<const LHCb::MCVertex*>{} ;
     // ========================================================================
     /** @var MCVTOF
      *  the time of flight for  MC vertex ( MCVertex::timeOfFlight )
@@ -144,7 +144,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::TimeOfFlight                               MCVTOF{} ;
+    inline const auto MCVTOF = LoKi::MCVertices::TimeOfFlight{} ;
     // ========================================================================
     /** @var MCVX
      *  the x-position of       MC vertex
@@ -161,7 +161,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::VertexPositionX                              MCVX{} ;
+    inline const auto MCVX = LoKi::MCVertices::VertexPositionX{} ;
     // ========================================================================
     /** @var MCVY
      *  the y-position of       MC vertex
@@ -178,7 +178,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::VertexPositionY                              MCVY{} ;
+    inline const auto MCVY = LoKi::MCVertices::VertexPositionY {} ;
     // ========================================================================
     /** @var MCVZ
      *  the z-position of       MC vertex
@@ -195,7 +195,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::VertexPositionZ                              MCVZ{} ;
+    inline const auto MCVZ = LoKi::MCVertices::VertexPositionZ{} ;
     // ========================================================================
     /** @var MCVTIME
      *  the "time" of MC vertex
@@ -213,7 +213,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::VertexTime                                MCVTIME{} ;
+    inline const auto MCVTIME = LoKi::MCVertices::VertexTime{} ;
     // ========================================================================
     /** @var MCPRIMARY
      *  evaluates to "true" for  primary vertices
@@ -231,7 +231,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::Primary                                 MCPRIMARY{} ;
+    inline const auto MCPRIMARY = LoKi::MCVertices::Primary{} ;
     // ========================================================================
     /** @var MCISPRIMARY
      *  evaluates to "true" for  primary vertices
@@ -249,7 +249,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::Primary                               MCISPRIMARY{} ;
+    inline const auto MCISPRIMARY = LoKi::MCVertices::Primary{} ;
     // ========================================================================
     /** @var MCISDECAY
      *  evaluates to "true" for 'decay' vertices
@@ -267,7 +267,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::Decay                                   MCISDECAY{} ;
+    inline const auto MCISDECAY = LoKi::MCVertices::Decay{} ;
     // ========================================================================
     /** the distance for MC vertex from given point,
      *  given (MC)Vertex or collision
@@ -300,7 +300,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    typedef LoKi::MCVertices::MCVertexDistance                        MCVDIST ;
+    using MCVDIST = LoKi::MCVertices::MCVertexDistance ;
     // ========================================================================
     /** the adaptor for MC vertex function to be interpreted as
      *  MC particle function
@@ -383,24 +383,24 @@ namespace LoKi
      */
     typedef LoKi::MCVertices::MCVFunction                              MCVFUN ;
     // ========================================================================
-    const LoKi::Constant<const LHCb::MCVertex*,bool>   MCVTRUE     ( true  )  ;
+    inline const auto MCVTRUE = LoKi::Constant<const LHCb::MCVertex*,bool>{ true  }  ;
     // ========================================================================
-    const LoKi::Constant<const LHCb::MCVertex*,bool>   MCVFALSE    ( false )  ;
+    inline const auto MCVFALSE = LoKi::Constant<const LHCb::MCVertex*,bool>{ false }  ;
     // ========================================================================
-    const LoKi::Constant<const LHCb::MCVertex*,bool>   MCVALL    =   MCVTRUE  ;
+    inline const auto MCVALL    =   MCVTRUE  ;
     // ========================================================================
-    const LoKi::Constant<const LHCb::MCVertex*,bool>   MCVNONE   =   MCVFALSE ;
+    inline const auto MCVNONE   =   MCVFALSE ;
     // ========================================================================
-    const LoKi::Constant<const LHCb::MCVertex*,double> MCVONE      ( 1.0   )  ;
+    inline const auto MCVONE    = LoKi::Constant<const LHCb::MCVertex*,double> { 1.0   }  ;
     // ========================================================================
-    const LoKi::Constant<const LHCb::MCVertex*,double> MCVZERO     ( 0.0   )  ;
+    inline const auto MCVZERO   = LoKi::Constant<const LHCb::MCVertex*,double> { 0.0   }  ;
     // ========================================================================
     /** @var MCVKEY
      *  get the key for the MC-vertex
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date 2011-02-14
      */
-    const LoKi::MCVertices::Key                                        MCVKEY ;
+    inline const auto MCVKEY = LoKi::MCVertices::Key{};
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================

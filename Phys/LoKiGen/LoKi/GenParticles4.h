@@ -614,7 +614,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Mass                                         GM ;
+    inline const auto GM = LoKi::GenParticles::Mass{};
     // ========================================================================
     /** @typedef GMASS
      *  evaluator of particle mass
@@ -625,7 +625,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Mass                                   GMASS ;
+    using GMASS = LoKi::GenParticles::Mass;
     // ========================================================================
     /** @var GE
      *  evaluator of particle energy
@@ -636,7 +636,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Energy                                       GE ;
+    inline const auto GE = LoKi::GenParticles::Energy{};
     // ========================================================================
     /** @typedef GENERGY
      *  evaluator of particle energy
@@ -647,7 +647,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Energy                                GENERGY ;
+    using GENERGY = LoKi::GenParticles::Energy                 ;
     // ========================================================================
     /** @var GP
      *  evaluator of particle momentum
@@ -658,7 +658,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Momentum                                     GP ;
+    inline const auto GP =LoKi::GenParticles::Momentum{} ;
     // ========================================================================
     /** @typedef GMOMENTUM
      *  evaluator of particle momentum
@@ -670,7 +670,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Momentum                            GMOMENTUM ;
+    using GMOMENTUM = LoKi::GenParticles::Momentum;
     // ========================================================================
     /** @var GPX
      *  evaluator of particle momentum
@@ -681,7 +681,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::MomentumX                                   GPX ;
+    inline const auto GPX = LoKi::GenParticles::MomentumX{} ;
     // ========================================================================
     /** @typedef GMOMX
      *  evaluator of particle momentum
@@ -692,7 +692,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::MomentumX                               GMOMX ;
+    using GMOMX = LoKi::GenParticles::MomentumX    ;
     // ========================================================================
     /** @var GPY
      *  evaluator of particle momentum
@@ -703,7 +703,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::MomentumY                                   GPY ;
+    inline const auto GPY = LoKi::GenParticles::MomentumY{} ;
     // ========================================================================
     /** @typedef GMOMY
      *  evaluator of particle momentum
@@ -714,7 +714,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::MomentumY                               GMOMY ;
+    using GMOMY = LoKi::GenParticles::MomentumY;
     // ========================================================================
     /** @var GPZ
      *  evaluator of particle momentum
@@ -725,7 +725,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::MomentumZ                                   GPZ ;
+    inline const auto GPZ = LoKi::GenParticles::MomentumZ{};
     // ========================================================================
     /** @typedef GMOMZ
      *  evaluator of particle momentum
@@ -736,7 +736,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::MomentumZ                               GMOMZ ;
+    using GMOMZ = LoKi::GenParticles::MomentumZ              ;
     // ========================================================================
     /** @var GPT
      *  evaluator of particle transverse momentum
@@ -747,7 +747,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::TransverseMomentum                          GPT ;
+    inline const auto GPT = LoKi::GenParticles::TransverseMomentum{};
     // ========================================================================
     /** @typedef GMOMT
      *  evaluator of particle transverse momentum
@@ -758,7 +758,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::TransverseMomentum                      GMOMT ;
+    using GMOMT = LoKi::GenParticles::TransverseMomentum;
     // ========================================================================
     /** @var GETA
      *  evaluator of particle pseudorapidity
@@ -769,7 +769,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::PseudoRapidity                             GETA ;
+    inline const auto GETA = LoKi::GenParticles::PseudoRapidity{} ;
     // ========================================================================
     /** @typedef GPSEUDORAPIDITY
      *  evaluator of particle transverse momentum
@@ -780,7 +780,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::PseudoRapidity                GPSEUDORAPIDITY ;
+    using GPSEUDORAPIDITY = LoKi::GenParticles::PseudoRapidity               ;
     // ========================================================================
     /** @var GY
      *  evaluator of particle rapidity
@@ -793,7 +793,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Rapidity                                     GY ;
+    inline const auto GY = LoKi::GenParticles::Rapidity{} ;
     // ========================================================================
     /** @typedef GRAPIDITY
      *  evaluator of particle rapidity
@@ -806,7 +806,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Rapidity                            GRAPIDITY ;
+    using GRAPIDITY = LoKi::GenParticles::Rapidity   ;
     // ========================================================================
     /** @var GY0
      *  evaluator of particle rapidity0
@@ -819,7 +819,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Rapidity0                                   GY0 ;
+    inline const auto GY0 = LoKi::GenParticles::Rapidity0{}  ;
     // ========================================================================
     /** @typedef GRAPIDITY0
      *  evaluator of particle rapidity0
@@ -832,7 +832,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Rapidity0                          GRAPIDITY0 ;
+    using GRAPIDITY0 = LoKi::GenParticles::Rapidity0               ;
     // ========================================================================
     /** @var GPHI
      *  evaluator of particle \f$\phi\f$
@@ -843,7 +843,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Phi                                        GPHI ;
+    inline const auto GPHI =  LoKi::GenParticles::Phi{} ;
     // ========================================================================
     /** @typedef GASYMUTH
      *  evaluator of particle \f$\phi\f$
@@ -854,7 +854,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Phi                                  GASYMUTH ;
+    using GASYMUTH = LoKi::GenParticles::Phi                   ;
     // ========================================================================
     /** @var GTHETA
      *  evaluator of particle \f$\theta\f$
@@ -865,7 +865,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    const LoKi::GenParticles::Theta                                    GTHETA ;
+    inline const auto GTHETA = LoKi::GenParticles::Theta{} ;
     // ========================================================================
     /** @typedef GPOLAR
      *  evaluator of particle \f$\theta\f$
@@ -900,31 +900,31 @@ namespace LoKi
      *  get \f$\beta\f$ for the particle
      *  @see LoKi::GenParticles::Beta
      */
-    const LoKi::GenParticles::Beta                                      GBETA ;
+    inline const auto GBETA = LoKi::GenParticles::Beta{}          ;
     // ========================================================================
     /** @var GGAMMA
      *  get \f$\gamma\f$ for the particle
      *  @see LoKi::GenParticles::Gamma
      */
-    const LoKi::GenParticles::Gamma                                    GGAMMA ;
+    inline const auto GGAMMA = LoKi::GenParticles::Gamma{}              ;
     // ========================================================================
     /** @var GBETAGAMMA
      *  get \f$\beta\gamma\f$ for the particle
      *  @see LoKi::GenParticles::BetaGamma
      */
-    const LoKi::GenParticles::BetaGamma                            GBETAGAMMA ;
+    inline const auto GBETAGAMMA = LoKi::GenParticles::BetaGamma{};
     // ========================================================================
     /** @var GBGAMMA
      *  get \f$\beta\gamma\f$ for the particle
      *  @see LoKi::GenParticles::BetaGamma
      */
-    const LoKi::GenParticles::BetaGamma                               GBGAMMA ;
+    inline const auto GBGAMMA = LoKi::GenParticles::BetaGamma{}        ;
     // ========================================================================
     /** @var GBG
      *  get \f$\beta\gamma\f$ for the particle
      *  @see LoKi::GenParticles::BetaGamma
      */
-    const LoKi::GenParticles::BetaGamma                                   GBG ;
+    inline const auto GBG = LoKi::GenParticles::BetaGamma{}  ;
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================

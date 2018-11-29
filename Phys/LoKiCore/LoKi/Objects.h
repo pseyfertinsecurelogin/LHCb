@@ -134,7 +134,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto _ALL_ = _ALL<const void*>{};
+    inline const auto _ALL_ = _ALL<const void*>{};
     // ========================================================================
     /** @var _NONE_
      *  helper objects which allows the efficient implementation
@@ -142,7 +142,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto _NONE_ = _NONE<const void*>{};
+    inline const auto _NONE_ = _NONE<const void*>{};
     // ========================================================================
     /** @var _ONE_
      *  helper objects which allows the efficient implementation
@@ -151,7 +151,7 @@ namespace LoKi
      *  @date 2006-02-08
      */
     // ========================================================================
-    const auto _ONE_ = _ONE<const void*>{};
+    inline const auto _ONE_ = _ONE<const void*>{};
     // ========================================================================
     /** @var _ZERO_
      *  helper objects which allows the efficient implementation
@@ -160,7 +160,7 @@ namespace LoKi
      *  @date 2006-02-08
      */
     // ========================================================================
-    const auto _ZERO_ = _ZERO<const void*>{};
+    inline const auto _ZERO_ = _ZERO<const void*>{};
     // ========================================================================
     /** @var _VALID_
      *  helper objects which allows the efficient implementation
@@ -168,7 +168,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto _VALID_ = _VALID<const void*>{};
+    inline const auto _VALID_ = _VALID<const void*>{};
     // ========================================================================
   } //                                       end of the namespace LoKi::Objects
   // ==========================================================================

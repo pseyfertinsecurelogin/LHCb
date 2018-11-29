@@ -54,49 +54,49 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVTRUE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ true };
+    inline const auto GVTRUE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ true };
     // ========================================================================
     /** @var GVFALSE
      *  trivial predicate which always returns "false"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVFALSE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ false };
+    inline const auto GVFALSE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ false };
     // ========================================================================
     /** @var GVALL
      *  trivial predicate which always returns "true"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVALL = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ true };
+    inline const auto GVALL = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ true };
     // ========================================================================
     /** @var GVNONE
      *  trivial predicate which always returns "false"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVNONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ false };
+    inline const auto GVNONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ false };
     // ========================================================================
     /** @var GVONE
      *  trivial function which always returns 1
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{  1 } ;
+    inline const auto GVONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{  1 } ;
     // ========================================================================
     /** @var GVNULL
      *  trivial function which always returns 0
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVNULL = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{ 0 } ;
+    inline const auto GVNULL = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{ 0 } ;
     // ========================================================================
     /** @var GVZERO
      *  trivial function which always returns 0
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVZERO = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{ 0 } ;
+    inline const auto GVZERO = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{ 0 } ;
     // ========================================================================
     /** Minimum from 2 functions
      *
@@ -134,7 +134,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVBAR = LoKi::GenVertices::BarCode{};
+    inline const auto GVBAR = LoKi::GenVertices::BarCode{};
     // ========================================================================
     /** @var GVBARCODE
      *  trivial function which returns the "bar-code" for
@@ -142,7 +142,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVBARCODE = LoKi::GenVertices::BarCode{};
+    inline const auto GVBARCODE = LoKi::GenVertices::BarCode{};
     // ========================================================================
     /** @var GVX
      *  trivial function which returns the X-position of
@@ -152,7 +152,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVX = LoKi::GenVertices::PositionX{};
+    inline const auto GVX = LoKi::GenVertices::PositionX{};
     // ========================================================================
     /** @var GVY
      *  trivial function which returns the X-position of
@@ -162,7 +162,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVY = LoKi::GenVertices::PositionY{};
+    inline const auto GVY = LoKi::GenVertices::PositionY{};
     // ========================================================================
     /** @var GVZ
      *  trivial function which returns the Z-position of
@@ -172,7 +172,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVZ = LoKi::GenVertices::PositionZ{};
+    inline const auto GVZ = LoKi::GenVertices::PositionZ{};
     // ========================================================================
     /** @var GVRHO
      *  trivial function which returns the rho(zylindrical)-position of
@@ -182,7 +182,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
-    const auto GVRHO = LoKi::GenVertices::Rho{};
+    inline const auto GVRHO = LoKi::GenVertices::Rho{};
     // ========================================================================
     /** @var GVT
      *  trivial function which returns the T-position of
@@ -192,7 +192,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVT = LoKi::GenVertices::PositionT{};
+    inline const auto GVT = LoKi::GenVertices::PositionT{};
     // ========================================================================
     /** @var GVTIME
      *  trivial function which returns the T-position of
@@ -202,7 +202,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    const auto GVTIME = LoKi::GenVertices::PositionT{};
+    inline const auto GVTIME = LoKi::GenVertices::PositionT{};
     // ========================================================================
     /** the adapter function which counts number of particles
      *  which satisfy certain criteria within the specified range
