@@ -139,6 +139,10 @@ class CondDB(ConfigurableUser):
         if ger:
             from GitCondDB.Tags import getTagsInfos
             dt = int(datatype) if datatype.isdigit() else datatype
+            if not ger.PathToRepository:
+                raise ValueError(
+                    'CondDB._getLatestTag: {}: missing repository path'.format(
+                        ger.name()))
             for tag, data in getTagsInfos(ger.PathToRepository).iteritems():
                 if dt in data.info.get('datatypes', []):
                     return tag
