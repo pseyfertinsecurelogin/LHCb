@@ -42,12 +42,12 @@ DECLARE_COMPONENT( PackRecVertex )
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PackRecVertex::execute() 
+StatusCode PackRecVertex::execute()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && !exist<LHCb::RecVertices>(m_inputName) ) 
+  if ( !m_alwaysOutput && !exist<LHCb::RecVertices>(m_inputName) )
     return StatusCode::SUCCESS;
 
   auto* verts = getOrCreate<LHCb::RecVertices,LHCb::RecVertices>( m_inputName );
@@ -56,7 +56,7 @@ StatusCode PackRecVertex::execute()
   out->setPackingVersion( LHCb::PackedRecVertices::defaultPackingVersion() );
   out->vertices().reserve(verts->size());
   put( out, m_outputName );
-  out->setVersion( (unsigned char)m_version ); 
+  out->setVersion( (unsigned char)m_version );
 
   const LHCb::RecVertexPacker rvPacker(this);
 
@@ -89,7 +89,8 @@ StatusCode PackRecVertex::execute()
   else
   {
     // Clear the registry address of the unpacked container, to prevent reloading
-    verts->registry()->setAddress( 0 );
+    auto* pReg = verts->registry();
+    if (pReg) pReg->setAddress( nullptr );
   }
 
   return StatusCode::SUCCESS;

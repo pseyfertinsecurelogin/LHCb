@@ -76,7 +76,8 @@ StatusCode PackUTCluster::execute() {
   else
   {
     // Clear the registry address of the unpacked container, to prevent reloading
-    clusters->registry()->setAddress( 0 );
+    auto* pReg = clusters->registry();
+    if (pReg) pReg->setAddress( nullptr );
   }
 
   // Summary of the size of the packed container

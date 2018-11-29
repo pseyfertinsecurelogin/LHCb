@@ -46,7 +46,7 @@ StatusCode PackCaloHypo::execute()
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && 
+  if ( !m_alwaysOutput &&
        !exist<LHCb::CaloHypos>(m_inputName) ) return StatusCode::SUCCESS;
 
   // inputs
@@ -68,16 +68,16 @@ StatusCode PackCaloHypo::execute()
     // make new unpacked output data object
     LHCb::CaloHypos * unpacked = new LHCb::CaloHypos();
     put( unpacked, m_inputName+"_PackingCheck" );
-    
+
     // unpack
     packer.unpack( *out, *unpacked );
-    
+
     // run checks
     packer.check( *hypos, *unpacked ).ignore();
-    
+
     // clean up after checks
     const StatusCode sc = evtSvc()->unregisterObject( unpacked );
-    if ( sc.isSuccess() ) 
+    if ( sc.isSuccess() )
     {
       delete unpacked;
     }
@@ -91,7 +91,7 @@ StatusCode PackCaloHypo::execute()
   if ( UNLIKELY(m_deleteInput) )
   {
     const StatusCode sc = evtSvc()->unregisterObject( hypos );
-    if ( sc.isSuccess() ) 
+    if ( sc.isSuccess() )
     {
       delete hypos;
       hypos = nullptr;
@@ -104,7 +104,10 @@ StatusCode PackCaloHypo::execute()
   else
   {
     // Clear the registry address of the unpacked container, to prevent reloading
-    if ( m_clearRegistry ) { hypos->registry()->setAddress( 0 ); }
+    if ( m_clearRegistry ) {
+        auto* pReg = hypos->registry();
+        if (pReg) pReg->setAddress( nullptr );
+    }
   }
 
   return StatusCode::SUCCESS;
