@@ -9,7 +9,6 @@
     granted to it by virtue of its status as an Intergovernmental Organization
     or submit itself to any jurisdiction.
 -->
-<!--- $Id: -->
 <!--- Author  : Davide Fazzini -->
 <!--- Created : 2015-05-24 -->
 
@@ -32,7 +31,6 @@
 
       &DataObject;
       <base name="DataObject"/>
-      <import name="map"     std="TRUE"/>
       <import name="GaudiKernel/VectorMap"/>
 
       <enum
