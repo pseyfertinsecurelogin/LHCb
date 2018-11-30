@@ -22,9 +22,8 @@
 	name="KeyedObject&lt;LHCb::MuonTileID&gt;"/>
       <import name="Kernel/MuonTileID"/>
       <import name="vector" std="TRUE"/>
-      <import name="Kernel/STLExtensions"/>
-      <import name="Event/static_vector_streamer"/>
       <import name="boost/container/static_vector.hpp" std="FALSE"/>
+      <import name="Event/static_vector_streamer"/>
       &KeyedContainer;
       <attribute 
 	name="digitTile" 
@@ -89,8 +88,8 @@
 	name   = "timeSpread"
 	type   = "float"
 	access = "PUBLIC" >
-	<code> if(uncrossed()){return 0 ;}else{
-	  return (float)((digitTDC1()-digitTDC2())/2.0f);} </code>
+	<code> 
+	  return uncrossed() ? 0.f : (float)((digitTDC1()-digitTDC2())/2.0f); </code>
       </method>
       <method
 	desc   = "Time spread of the coord in ns "
@@ -98,8 +97,8 @@
 	type   = "float"
     const  = "TRUE"
 	access = "PUBLIC" >
-	<code> if(uncrossed()){return 0 ;}else{
-	  return (25.0f/16.0f*(float)(digitTDC1()-digitTDC2())/2.0f);} </code>
+	<code> 
+	  return uncrossed() ? 0.f : (25.0f/16.0f*(float)(digitTDC1()-digitTDC2())/2.0f); </code>
       </method>
 
 

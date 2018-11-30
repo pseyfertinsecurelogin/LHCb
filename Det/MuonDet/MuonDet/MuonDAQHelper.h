@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef MUONDET_MUONDAQHELPER_H 
+#ifndef MUONDET_MUONDAQHELPER_H
 #define MUONDET_MUONDAQHELPER_H 1
 #include <string>
 #include <memory>
@@ -28,7 +28,7 @@ class IMessageSvc;
 #include "MuonDet/MuonBasicGeometry.h"
 
 /** @class MuonDAQHelper MuonDAQHelper.h MuonDet/MuonDAQHelper.h
- *  
+ *
  *
  *  @author Alessia Satta
  *  @date   2007-12-05
@@ -39,7 +39,7 @@ static const unsigned int MuonDAQHelper_maxODENumber=180;
 static const unsigned int MuonDAQHelper_linkNumber=24;
 
 class MuonDAQHelper final {
-public: 
+public:
   /// Standard constructor
   MuonDAQHelper( ) = default;
 
@@ -55,22 +55,23 @@ public:
   /// Initialize TELL1 maps
   StatusCode initMaps();
   /// Initialize ODE maps
-  //  StatusCode initODEMaps(); // removed, useless  
+  //  StatusCode initODEMaps(); // removed, useless
   /// Initialize TELL1 pad maps
   StatusCode initLUTCrossing()  ;
-  //  StatusCode initODENames(); // removed, useless  
+  //  StatusCode initODENames(); // removed, useless
   StatusCode initReverseMaps();
   StatusCode checkMapConsistency();
-  
+
   std::vector<LHCb::MuonTileID> DoPadDC06(std::vector<LHCb::MuonTileID> digit,
                                                    MuonTSMap* TS);
   std::vector<LHCb::MuonTileID> DoPadV1(std::vector<LHCb::MuonTileID> digit,
-                                        std::vector<LHCb::MuonTileID> 
+                                        std::vector<LHCb::MuonTileID>
                                           wrongdigit,MuonTSMap* TS);
   LHCb::MuonTileID getADDInLink(unsigned int Tell1_num, long link_num,long ch) const;
   LHCb::MuonTileID getADDInODE(long ODE_num, long ch) const;
   LHCb::MuonTileID getADDInODENoHole(long ODE_num, long ch) const;
   LHCb::MuonTileID getADDInTell1(unsigned int Tell1_num, long ch) const;
+  const std::vector<LHCb::MuonTileID>& getADDInTell1(unsigned int Tell1_num) const;
   LHCb::MuonTileID getPadInTell1DC06(unsigned int Tell1_num, long pad) const ;
   LHCb::MuonTileID getPadInTell1V1(unsigned int Tell1_num, long pad) const;
    unsigned int getPPNumber(unsigned int Tell1_num,unsigned int ODE_num);
@@ -98,42 +99,42 @@ public:
   StatusCode findHWNumber(LHCb::MuonTileID digit,
                           long& L1Number,long& link_number,
                           long& ODE_number,long& ode_ch);
-  
+
   StatusCode findL0Number(LHCb::MuonTileID digit,
                           std::string& ECSName,long& link_number,
                           long& link_ch);
-  
+
   std::string getODEECSName(int number);
   StatusCode findStrips(LHCb::MuonTileID pad,
                         LHCb::MuonTileID  strips[2]);
-  
 
 
-  
+
+
   LHCb::MuonTileID findTS(LHCb::MuonTileID digit) const;
   unsigned int findDigitInTS(std::string TSPath, LHCb::MuonTileID TSTile,
-                             LHCb::MuonTileID digit,bool hole=true);  
+                             LHCb::MuonTileID digit,bool hole=true);
   unsigned int findODENumber(std::string odePath);
 
-  unsigned int findODEPosition(std::string L1Path, long odeNumber,bool hole=true);  
+  unsigned int findODEPosition(std::string L1Path, long odeNumber,bool hole=true);
   std::string findODEPath(LHCb::MuonTileID TS);
   std::string findL1(LHCb::MuonTileID TS);
   unsigned int findTSPosition(std::string ODEPath, LHCb::MuonTileID TSTile);
-  std::string findTSPath(std::string ODEPath, long TSPosition,int station); 
-  long channelsInL1BeforeODE(std::string L1Path,long ODENumber,bool hole=true);	
+  std::string findTSPath(std::string ODEPath, long TSPosition,int station);
+  long channelsInL1BeforeODE(std::string L1Path,long ODENumber,bool hole=true);
   unsigned int DAQaddressInODE(LHCb::MuonTileID digitTile, long& L1Number, long& ODENumber,bool hole=true);
-  unsigned int DAQaddressInL1(LHCb::MuonTileID digitTile, long& 
+  unsigned int DAQaddressInL1(LHCb::MuonTileID digitTile, long&
    L1Number, long& ODENumber,unsigned int & ODEAdd,bool hole=true);
-  std::string getBasePath(std::string statname);  
-  std::vector<unsigned int> padsinTS(std::vector<unsigned int>& TSDigit, 
+  std::string getBasePath(std::string statname);
+  std::vector<unsigned int> padsinTS(std::vector<unsigned int>& TSDigit,
                                      std::string TSPath);
-  LHCb::MuonTileID getPadTileInODE(std::string ODEName, int firstChannel, int secondChannel); 
+  LHCb::MuonTileID getPadTileInODE(std::string ODEName, int firstChannel, int secondChannel);
 
   StatusCode updateLUT();
 
   MuonL1Board* getL1Board(unsigned int board_num);
-  MuonODEBoard* getODEBoard(MuonL1Board*l1,unsigned int board);  
-  MuonTSMap* getTSMap(MuonL1Board*l1,MuonODEBoard* ode,unsigned int ts);  
+  MuonODEBoard* getODEBoard(MuonL1Board*l1,unsigned int board);
+  MuonTSMap* getTSMap(MuonL1Board*l1,MuonODEBoard* ode,unsigned int ts);
   std::vector<int> getTell1InStation(int station)
   {
     return m_tellPerStation[station];
@@ -142,13 +143,13 @@ public:
 
   //GP
   // new method to retrieve the progressive number of Tell1 named L1Name
-  // this is neded at the moment because TELL1s are indexed sometimes 
+  // this is neded at the moment because TELL1s are indexed sometimes
   // by serial number and sometimes by an progressive counter.
   // This is irrelevant when M1 is present by matters if M1 is missing !
-  // 
-  
+  //
+
   int findL1Index(std::string L1Name);
-  
+
 private:
 
   /// Access to Msgstream object
@@ -165,7 +166,7 @@ private:
   IMessageSvc* m_msgSvc = nullptr;
   friend class DeMuonDetector;
   void resetLUT();
-  
+
   unsigned int m_TotTell1 = 0; // TELL1 counter
   unsigned int m_ODENumberInTell1[MuonDAQHelper_maxTell1Number];
   unsigned int m_M1Tell1 = 0;
@@ -176,14 +177,14 @@ private:
   std::map<std::string, std::string> basePath;
   std::vector<LHCb::MuonTileID> m_mapPadDC06[MuonDAQHelper_maxTell1Number];
   std::vector<LHCb::MuonTileID> m_mapPadV1[MuonDAQHelper_maxTell1Number];
- 
+
 
   std::vector<LHCb::MuonTileID> m_mapTileInTell1[MuonDAQHelper_maxTell1Number];
   std::vector<long> m_linkInTell1[MuonDAQHelper_maxTell1Number];
 
 
   std::vector<std::string> m_L1Name;
-  //  long m_TotODEBoard; 
+  //  long m_TotODEBoard;
   std::vector<std::string> m_TELL1Name;
   std::vector<std::string> m_ODEName;
   unsigned int m_ODENameStart[5][4][4];

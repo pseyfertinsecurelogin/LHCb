@@ -9,36 +9,130 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-#include <cstdio>
-#include <functional>
-
 // local
 #include "MuonRawToCoord.h"
+
+#include <functional>
+#include <optional>
+#include "range/v3/view/remove_if.hpp"
+#include "range/v3/view/take_exactly.hpp"
+#include "range/v3/view/drop_exactly.hpp"
+#include "range/v3/view/map.hpp"
+#include "range/v3/view/zip.hpp"
+
 using namespace LHCb;
 
-//-----------------------------------------------------------------------------
-// Implementation file for class : MuonRawToCoord
-//-----------------------------------------------------------------------------
-
-DECLARE_COMPONENT( MuonRawToCoord )
+// define error enum / category
+namespace MuonRaw {
+  enum class ErrorCode : StatusCode::code_t {
+    BAD_MAGIC = 10,
+    BANK_TOO_SHORT,
+    PADDING_TOO_LONG,
+    TOO_MANY_HITS,
+    INVALID_TELL1
+  };
+  struct ErrorCategory : StatusCode::Category {
+    const char* name() const override { return "MuonRawBankDecoding"; }
+    bool isRecoverable( StatusCode::code_t ) const override { return false; }
+    std::string message( StatusCode::code_t code ) const override {
+      switch ( static_cast<MuonRaw::ErrorCode>( code ) ) {
+        case ErrorCode::BAD_MAGIC: return "Incorrect Magic pattern in raw bank";
+        case ErrorCode::BANK_TOO_SHORT: return "Muon bank is too short";
+        case ErrorCode::PADDING_TOO_LONG: return "Muon bank has too much padding for its size";
+        case ErrorCode::TOO_MANY_HITS: return "Muon bank has too many hits for its size";
+        case ErrorCode::INVALID_TELL1: return "Invalid TELL1 source ID";
+        default: return StatusCode::default_category().message( code );
+      }
+    }
+  };
+}
+STATUSCODE_ENUM_DECL( MuonRaw::ErrorCode )
+STATUSCODE_ENUM_IMPL( MuonRaw::ErrorCode, MuonRaw::ErrorCategory )
 
 namespace{
-  /// fills in the two readout layouts by querying the DeMuonRegion
-  std::array<MuonLayout,2> makeStripLayouts(const DeMuonDetector& det, unsigned int station, unsigned int region) {
-    unsigned int x1 = det.getLayoutX(0,station,region);
-    unsigned int y1 = det.getLayoutY(0,station,region);
-    unsigned int x2 = det.getLayoutX(1,station,region);
-    unsigned int y2 = det.getLayoutY(1,station,region);
-    return {  MuonLayout{x1,y1}, MuonLayout{x2,y2} };
-  }
-  struct Coord final {
-      LHCb::MuonTileID m_pad;
-      unsigned m_tdc1;
-      unsigned m_tdc2;
-      const LHCb::MuonTileID& m_tile1;
-      const LHCb::MuonTileID& m_tile2;
+  //TODO make Digit and Digits common to all MuonDAQ
+  struct Digit {
+      LHCb::MuonTileID tile;
+      unsigned int tdc;
   };
-  using Coords = std::vector<Coord>;
+  using Digits = std::vector<Digit>;
+
+  [[gnu::noreturn]] void throw_exception( MuonRaw::ErrorCode ec, const char* tag ) {
+      auto sc = StatusCode( ec );
+      throw GaudiException{ sc.message(), tag, std::move(sc) };
+  }
+#define OOPS(x) throw_exception(x,__PRETTY_FUNCTION__)
+
+  /// fills in the two readout layouts by querying the DeMuonRegion
+  template <int N = 0>
+  MuonLayout  makeStripLayout(const DeMuonDetector& det, const MuonTileID& tile) {
+    static_assert(N==0 || N==1);
+    unsigned int station = tile.station();
+    unsigned int region  = tile.region();
+    unsigned int x = det.getLayoutX(N,station,region);
+    unsigned int y = det.getLayoutY(N,station,region);
+    return { x, y };
+  }
+
+  int nDigits(const RawBank& rb) {
+    auto range = rb.range<unsigned short>();
+    if (range.empty()) return 0;
+    auto preamble_size = 2*((range[0]+3)/2);
+    auto overhead = preamble_size+4;
+    return range.size() > overhead ? range.size()-overhead : 0;
+  }
+
+  int nDigits( LHCb::span<const RawBank*> rbs) {
+    return std::accumulate(rbs.begin(),rbs.end(),0,[](int s, const RawBank* rb) {
+        return rb ? s + nDigits(*rb) : s ;
+    } );
+  }
+
+  /// Copy MuonTileID from digits to coord by crossing the digits
+  template <typename Iterator>
+  Iterator addCoordsCrossingMap(const DeMuonDetector& det, Iterator first, Iterator last, LHCb::MuonCoords& retVal) {
+    assert(first!=last);
+    static_assert( std::is_same_v< typename std::iterator_traits<Iterator>::value_type, Digit > );
+    using namespace ranges;
+
+    // used flags
+    std::vector<bool> used(last-first, false);
+
+    // partition into the two directions of digits
+    // vertical and horizontal stripes
+    const auto N = std::distance(first,std::partition(first, last,
+                                    [layout = makeStripLayout<0>(det, first->tile)]
+                                    (const Digit& digit) { return digit.tile.layout() == layout; }));
+
+    auto usedAndDigits = view::zip( used, iterator_range{ first, last }) ;
+    auto digitsOne = ( usedAndDigits | view::take_exactly( N ) );
+    auto digitsTwo = ( usedAndDigits | view::drop_exactly( N ) );
+
+    // check how many cross
+    retVal.reserve(digitsOne.size() * digitsTwo.size() + (last-first));
+    for (auto&& [ used_one, digit_one ] : digitsOne ) {
+      for (auto&& [ used_two, digit_two ] : digitsTwo ) {
+        LHCb::MuonTileID pad = digit_one.tile.intercept(digit_two.tile);
+        if (!pad.isValid()) continue;
+
+        auto current = std::make_unique<MuonCoord>(pad, digit_one.tile, digit_two.tile, digit_one.tdc, digit_two.tdc );
+        retVal.insert(current.get());
+        current.release();
+        // set used flag
+        used_one = used_two = true;
+      }
+    }
+
+    // copy over "uncrossed" digits
+    for ( const Digit& digit : usedAndDigits
+                             | view::remove_if( [](const auto& p ) { return p.first; } )
+                             | view::values ) {
+      auto current = std::make_unique<MuonCoord>(digit.tile, digit.tdc );
+      retVal.insert(current.get());
+      current.release();
+    }
+    return last;
+  }
 
   template <typename Projection, typename Cmp = std::less<>>
   auto orderByProjection(Projection&& projection, Cmp&& cmp = {}) {
@@ -53,10 +147,16 @@ namespace{
       return [proj_ref,proj=std::forward<Projection>(projection)](const Value& val)
              { return proj_ref == std::invoke(proj,val); };
   }
-  auto stationRegion(const MuonRawToCoord::Digit& d) {
-      return std::tuple{d.first.station(),d.first.region()};
+  auto stationRegion(const Digit& d) {
+      return std::tuple{d.tile.station(),d.tile.region()};
   }
 }
+
+//-----------------------------------------------------------------------------
+// Implementation file for class : MuonRawToCoord
+//-----------------------------------------------------------------------------
+
+DECLARE_COMPONENT( MuonRawToCoord )
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -75,23 +175,10 @@ MuonRawToCoord::MuonRawToCoord( const std::string& name,
 //=============================================================================
 StatusCode MuonRawToCoord::initialize() {
   auto sc = Transformer::initialize();
-  if(sc.isFailure()) return sc;
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug() << "==> Initialise" << endmsg;
-  m_muonDetector=getDet<DeMuonDetector>(DeMuonLocation::Default);
-  if(!m_muonDetector)
-    return Error("Could not read /dd/Structure/LHCb/DownstreamRegion/Muon from TDS");
-
-  // unnecessary debug
-  /*
-  MuonBasicGeometry basegeometry( detSvc(),msgSvc());
-  m_NStation= basegeometry.getStations();
-  m_NRegion = basegeometry.getRegions();
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug()<<" station number "<<m_NStation<<" "<<m_NRegion <<endmsg;
-  */
-  return StatusCode::SUCCESS;
+  if (sc.isSuccess()) {
+    m_muonDetector=getDet<DeMuonDetector>(DeMuonLocation::Default);
+  }
+  return !m_muonDetector ? Error("Could not read " + DeMuonLocation::Default ) : sc;
 }
 
 //=============================================================================
@@ -99,238 +186,79 @@ StatusCode MuonRawToCoord::initialize() {
 //=============================================================================
 LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug() << "==> Execute" << endmsg;
-
-  // need to loop over input vector of MuonDigits
-  // and make output vectors of MuonCoords one for each station
-  //Digits decoding;
-  //FIXME: should this decoding be used?
-
-  std::array<std::vector<std::pair<LHCb::MuonTileID, unsigned int> >, 14>  m_decoding;
-  std::vector<std::pair<LHCb::MuonTileID, unsigned int> >  decoding;
-
   LHCb::MuonCoords coords;
-
-  if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-    verbose()<<" start the real decoding "<<endmsg;
-
+  if( msgLevel(MSG::DEBUG) ) {
+    debug() << "==> Execute" << endmsg;
+  }
   const auto& mb = raw.banks(RawBank::Muon);
-  if (mb.empty()) return coords;
-
-  //first decode data
-  for( const auto& r : mb ) {
-    unsigned int tell1Number=r->sourceID();
-    m_decoding[tell1Number] = decodeTileAndTDCV1(r);
-      //TODO handle failure
-//      if(sc.isFailure())return storage;
+  if (mb.empty()) {
+    return coords;
   }
-  if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-    verbose()<<" the decoding is finished "<<endmsg;
-    //compact data  in one container
-
-  // flatten out the vector of vectors
-  // this is quick and dirty
-
-  decoding.reserve(m_decoding.size());
-  for( const auto& r : mb ) {
-    unsigned int tell1Number=r->sourceID();
-    std::copy(m_decoding[tell1Number].begin(),
-              m_decoding[tell1Number].end(),
-              std::back_inserter(decoding) );
+  std::vector<Digit>  decoding;
+  decoding.reserve( nDigits(mb) );
+  for ( const auto& r : mb ) {
+    decodeTileAndTDCV1(*r, std::back_inserter(decoding));
   }
-
-  if(decoding.empty()) {
+  m_digits+=decoding.size();
+  if (decoding.empty()) {
     error() << "Error in decoding the muon raw data ";
     return coords;
   }
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug()<<decoding.size()<<" digits in input "<<endmsg;
-
   auto first = decoding.begin(); auto last = decoding.end();
   while ( first != last ) {
     std::nth_element( first, first, last, orderByProjection( stationRegion ) );
     auto next = std::partition( std::next(first), last, hasEqualProjection( stationRegion, *first ) );
-    first = addCoordsCrossingMap( { first, next } , coords);
+    first = addCoordsCrossingMap( *m_muonDetector, first, next , coords);
   }
-
-  //return StatusCode::SUCCESS;
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug() << "coords size = " << coords.size() << endmsg;
+  m_coords += coords.size();
   return coords;
 }
 
-//=============================================================================
+template <typename OutputIterator>
+OutputIterator MuonRawToCoord::decodeTileAndTDCV1(const RawBank& rawdata, OutputIterator out) const {
 
-MuonRawToCoord::Digits::iterator
-MuonRawToCoord::addCoordsCrossingMap(const DigitsRange& digits, LHCb::MuonCoords& retVal) const {
-  // need to calculate the shape of the horizontal and vertical logical strips
-  //  if( 2 != m_muonDetector->getLogMapInRegion(station,region) ){
-  // log << MSG::ERROR << "There are " << pRegion->numberLogicalMap()
-  //     << " logical maps, I expect either 1 or 2" << endmsg;
-  //}
-
-  // get local MuonLayouts for strips
-  const auto& [ layoutOne, layoutTwo ] = makeStripLayouts(*m_muonDetector,
-                                                          digits.front().first.station(),
-                                                          digits.front().first.region() );
-  // used flags
-  std::vector<bool> used(digits.size(), false);
-
-  // partition into the two directions of digits
-  // vertical and horizontal stripes
-  const auto mid = std::partition(digits.begin(), digits.end(),
-          [&layoutOne] (const Digit& digit) {
-          return digit.first.layout() == layoutOne; });
-  auto digitsOne = boost::make_iterator_range(digits.begin(), mid);
-  auto digitsTwo = boost::make_iterator_range(mid, digits.end());
-
-  // check how many cross
-  unsigned i = 0;
-  retVal.reserve(digitsOne.size() * digitsTwo.size() + digits.size());
-  for (const Digit& one: digitsOne) {
-    unsigned j = mid - digits.begin();
-    for (const Digit& two: digitsTwo) {
-      LHCb::MuonTileID pad = one.first.intercept(two.first);
-      if (pad.isValid()) {
-        auto current = std::make_unique<MuonCoord>(pad,one.first,two.first, one.second,two.second);
-        retVal.insert(current.get());
-        current.release();
-        // set used flag
-        used[i] = used[j] = true;
-      }
-    ++j;
-    }
-  ++i;
+  if (RawBank::MagicPattern != rawdata.magic() ) {
+    OOPS( MuonRaw::ErrorCode::BAD_MAGIC );
   }
-
-  // copy over "uncrossed" digits
-
-  unsigned m = 0;
-  for (const Digit& digit: digits) {
-    if (!used[m]) {
-      LHCb::MuonTileID pad = digit.first;
-      auto current = std::make_unique<MuonCoord>(digit.first,digit.second );
-      retVal.insert(current.get());
-      current.release();
-    }
-    ++m;
+  unsigned int tell1Number=rawdata.sourceID();
+  if (tell1Number>=MuonDAQHelper_maxTell1Number){
+    OOPS( MuonRaw::ErrorCode::INVALID_TELL1 );
   }
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug() << "retVal size = " << retVal.size() << endmsg;
-
-  return digits.end();
-}
-
-
-StatusCode MuonRawToCoord::checkBankSize(const LHCb::RawBank* rawdata) const {
-
-  if( RawBank::MagicPattern != rawdata->magic() ) {
-    error()<<"magic pattern not correct in muon bank "<<endmsg;
-    return StatusCode::FAILURE;
-  }
-
-  const unsigned short * it=rawdata->begin<unsigned short>();
-  unsigned int tell1Number=(rawdata)->sourceID();
-  int bank_size=rawdata->size();
-  int read_data=0;
+  auto make_tile = [&di = m_muonDetector->getDAQInfo()->getADDInTell1(tell1Number)](unsigned int add) {
+    return add<di.size() ? std::optional{di[add]} : std::nullopt;
+  };
   //minimum length is 3 words --> 12 bytes
-  if(bank_size<12){
-    error()<< " muon bank "<<tell1Number<<" is too short "<< bank_size<<endmsg;
-    return StatusCode::FAILURE;
+  if (rawdata.size()<12) {
+    OOPS( MuonRaw::ErrorCode::BANK_TOO_SHORT );
   }
-  //how many pads ?
-  //const unsigned short * itPad=rawdata->begin<unsigned short>();
-  unsigned short nPads=*it;
-  //  if ( msgLevel(MSG::VERBOSE) ){
-  //    verbose()<< " pad # "<<nPads<<endmsg;
-  //  }
-
-  int skip=(nPads+3)*0.5;
-
-  if((bank_size-skip*4)<0){
-    error()<<"bank_size "<<bank_size<<" pad size to read "<<nPads*4<<endmsg;
-    error()<< "so muon bank "<<tell1Number<<" is too short in pad part "<<endmsg;
-    return StatusCode::FAILURE;
+  auto range = rawdata.range<unsigned short>();
+  auto preamble_size = 2*((range[0]+3)/2);
+  if (range.size()<preamble_size) {
+    OOPS( MuonRaw::ErrorCode::PADDING_TOO_LONG );
   }
+  range = range.subspan( preamble_size );
 
-  it += 2*skip;
-  read_data=read_data+skip*2;
-  if(read_data<0)info()<<nPads<<" "<<skip<<" "<< bank_size<<" "<<read_data<<endmsg;
-
-  for(int i=0;i<4;i++){
-    //now go to the single pp counter
-    int pp_cnt=*it++;
-    read_data++;
-
-    //check size before start looping
-    if(bank_size-read_data*2<pp_cnt*2){
-      error()<<"bank_size "<<bank_size<<"read data "<<read_data<<" hit size to read "<<pp_cnt*2<<endmsg;
-      error()<< "so muon bank "<<tell1Number<<" is too short in hit part "<<endmsg;
-      //break;
-      return StatusCode::FAILURE;
+  auto invalid_add = m_invalid_add.buffer();
+  for(int i=0;i<4;++i){
+    if (UNLIKELY(range.empty())) {
+      OOPS( MuonRaw::ErrorCode::BANK_TOO_SHORT );
     }
-    it+=pp_cnt;
-  }
-
-  return StatusCode::SUCCESS;
-
-}
-
-std::vector<std::pair<LHCb::MuonTileID, unsigned int>> MuonRawToCoord::decodeTileAndTDCV1(const RawBank* rawdata) const {
-
-  StatusCode sc=checkBankSize(rawdata);
-  if(sc.isFailure()){
-    return Digits();
-  }
-
-  unsigned int tell1Number=rawdata->sourceID();
-
-  if(tell1Number>=MuonDAQHelper_maxTell1Number){
-    error()<<" in muon data a Tell1 Source ID is gretare than maximum "<<endmsg;
-    //TODO handle failure
-    //return StatusCode::FAILURE;
-  }
-
-  const unsigned short* it=rawdata->begin<unsigned short>();
-
-//  std::array<unsigned int,24> hit_link_cnt = { { 0 } };
-  short skip=0;
-  unsigned  short nPads=*it;
-  skip=(nPads+3)*0.5;
-  for(int k=0;k<2*skip;k++){
-//    if (k==1) fillTell1Header(tell1Number,*it);
-    it++;
-  }
-  std::vector<std::pair<LHCb::MuonTileID, unsigned int> >  storage;
-
-  for(int i=0;i<4;i++){
-    //now go to the single pp counter
-    unsigned int pp_cnt=*it++;
-
-    if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-      verbose()<<" hit in PP "<<pp_cnt<<endmsg;
-
-    for (unsigned int loop=0;loop<pp_cnt;++loop) {
-      unsigned int add=(*it)&(0x0FFF);
-      unsigned int tdc_value=(((*it)&(0xF000))>>12);
-      ++it;
-      LHCb::MuonTileID tile = m_muonDetector->getDAQInfo()->getADDInTell1(tell1Number,add);
-      if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-        verbose()<<" add "<<add<<" "<<tile <<endmsg;
-      if(tile.isValid()) {
-        if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-          debug()<<" valid  add "<<add<<" "<<tile <<endmsg;
-        storage.emplace_back(tile, tdc_value);
-      } else {
-        info() << "invalid add " << add << " " << tile << endmsg;
-      }
-      //update the hitillink counter
-//      unsigned int link=add/192;
-//      hit_link_cnt[link]++;
+    if( UNLIKELY( msgLevel(MSG::VERBOSE) ) ) {
+      verbose()<<" hit in PP "<< range[0] <<endmsg;
     }
+    if (UNLIKELY( range.size() < 1 + range[0] ) ) {
+      OOPS( MuonRaw::ErrorCode::TOO_MANY_HITS );
+    }
+    for (unsigned int pp : range.subspan(1,range[0])) {
+      unsigned int add       =  (pp&0x0FFF);
+      unsigned int tdc_value = ((pp&0xF000)>>12);
+      std::optional<LHCb::MuonTileID> tile = make_tile(add);
+      invalid_add += !tile.has_value();
+      if (UNLIKELY(!tile.has_value())) continue;
+      *out++ = { std::move(*tile), tdc_value };
+    }
+    range = range.subspan(1+range[0]);
   }
-
-  return storage;
+  assert(range.empty());
+  return out;
 }

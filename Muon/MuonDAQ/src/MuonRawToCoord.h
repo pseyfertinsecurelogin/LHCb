@@ -11,23 +11,13 @@
 #ifndef MUONRAWTOCOORD_MUONRAWTOCOORD_H
 #define MUONRAWTOCOORD_MUONRAWTOCOORD_H 1
 
-// Include files
-// from STL
-#include <string>
-#include <array>
-
-// from Gaudi
 #include "GaudiAlg/Transformer.h"
 
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonDet/DeMuonDetector.h"
 #include "Event/MuonCoord.h"
 #include "Event/RawBank.h"
-#include "boost/range/iterator_range.hpp"
 #include "Event/RawEvent.h"
-#include "Event/MuonODEData.h"
-#include "Event/MuonPPEventInfo.h"
-#include "DAQKernel/DecoderToolBase.h"
 
 /** @class MuonRawToCoord MuonRawToCoord.h
  *  This is the muon reconstruction algorithm
@@ -38,26 +28,22 @@ public:
   /// Standard constructor
   MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator );
 
-  //TODO make Digit and Digits common to all MuonDAQ
-  using Digit = std::pair<LHCb::MuonTileID, unsigned int>;
-  using Digits = std::vector<Digit>;
-  using DigitsRange = boost::iterator_range<Digits::iterator>;
-
   StatusCode initialize() override;    ///< Algorithm initialization
   LHCb::MuonCoords operator()(const LHCb::RawEvent& event) const override;
 
 private:
 
-  StatusCode checkBankSize(const LHCb::RawBank*) const;
-  std::vector<std::pair<LHCb::MuonTileID, unsigned int>> decodeTileAndTDCV1(const LHCb::RawBank*) const;
-
-  /// Copy MuonTileID from digits to coord by crossing the digits
-  Digits::iterator addCoordsCrossingMap(const DigitsRange&, LHCb::MuonCoords&) const;
+  template <typename OutputIterator>
+  OutputIterator decodeTileAndTDCV1(const LHCb::RawBank&, OutputIterator) const;
 
   DeMuonDetector* m_muonDetector = nullptr;
   int m_NStation = 0;
   int m_NRegion = 0;
   bool m_forceResetDAQ = false;
+
+  mutable Gaudi::Accumulators::BinomialCounter<>  m_invalid_add{ this, "invalid add" };
+  mutable Gaudi::Accumulators::AveragingCounter<> m_digits{ this, "#digits" };
+  mutable Gaudi::Accumulators::AveragingCounter<> m_coords{ this, "#coords" };
 
 };
 #endif // MUONRAWTOCOORD_MUONRAWTOCOORD_H
