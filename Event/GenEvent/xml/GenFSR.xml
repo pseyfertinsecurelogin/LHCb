@@ -735,6 +735,7 @@
             int key = icross-&gt;first;
             double value = icross-&gt;second.second;
 	    std::string name = icross-&gt;second.first;
+            name.erase(name.size() - 2);
 
 	    s &lt;&lt; name &lt;&lt; "  key: " &lt;&lt; key &lt;&lt; "  value: " &lt;&lt; value &lt;&lt; " / ";
           }

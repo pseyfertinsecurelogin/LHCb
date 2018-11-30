@@ -49,7 +49,7 @@ private:
   Gaudi::Property<std::string> m_xmlOutputLocation{this, "XmlOutputLocation", 
       "","Path where to save the .xml output"};
   Gaudi::Property<std::string> m_xmlOutputName{this, "xmlOutputName", 
-      "GenerationFSR.xml","Name of the .xml output"};
+      "GeneratorLogFSR.xml","Name of the .xml output"};
 
   SmartIF<IDataProviderSvc> m_fileRecordSvc;
   IFSRNavigator* m_navigatorTool = nullptr;  // tool to navigate FSR

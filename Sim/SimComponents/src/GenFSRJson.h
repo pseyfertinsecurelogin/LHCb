@@ -57,8 +57,9 @@ private:
   Gaudi::Property<std::string> m_dddb{this, "dddb", "", "Tag for the DDDB database"};
   Gaudi::Property<std::string> m_jsonOutputLocation{this, "jsonOutputLocation", "",
       "Path where to save the .json output"};
-  Gaudi::Property<std::string> m_jsonOutputName{this, "jsonOutputName", 
-      "GenerationFSR", "Name of the .json output"};
+  Gaudi::Property<std::string> m_jsonOutputName{this, "jsonOutputName",
+  "GenerationFSR_" + m_appConfigFile + ".json","Name of the .json output"};
+
 
   SmartIF<IDataProviderSvc> m_fileRecordSvc;
   IFSRNavigator* m_navigatorTool = nullptr;  // tool to navigate FSR

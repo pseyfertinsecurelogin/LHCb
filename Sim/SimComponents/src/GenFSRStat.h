@@ -57,7 +57,7 @@ private:
   Gaudi::Property<std::string> m_htmlOutputLocation{this, "htmlOutputLocation", "",
       "Path where to save the .html output"};
   Gaudi::Property<std::string> m_htmlOutputName{this, "htmlOutputName", 
-      "GenerationFSRNew_" + m_appConfigFile + ".html","Name of the .html output"};
+      "GenerationFSR_" + m_appConfigFile + ".html","Name of the .html output"};
 
   SmartIF<IDataProviderSvc> m_fileRecordSvc;
   IFSRNavigator* m_navigatorTool = nullptr; // tool to navigate FSR

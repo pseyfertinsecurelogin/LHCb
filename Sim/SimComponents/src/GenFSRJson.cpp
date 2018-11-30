@@ -234,6 +234,7 @@ namespace
     for(const auto& cross : genFSR.crossSections())
     {
       std::string name = cross.second.first;
+      name.erase(name.size() - 2);
       double value = cross.second.second;
       
       if(value == 0 || std::isnan(value) != 0) continue;
@@ -387,22 +388,16 @@ void GenFSRJson::printFSR()
       std::string time = ::getCurrentTime();
 
       // open the new file
-      m_jsonOutputName += "_"+m_appConfigFile+".json";
-      if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_jsonOutputName << endmsg;
+      if (msgLevel(MSG::DEBUG)) debug() << "write to file: " + m_jsonOutputName << endmsg;
       std::ofstream jsonOutput(m_jsonOutputLocation + m_jsonOutputName, 
                                std::fstream::out);
       
       if(jsonOutput.is_open())
       {          
         if (msgLevel(MSG::DEBUG))
-          debug() << "Json output: " << m_jsonOutputLocation << m_jsonOutputName << " created." << endmsg;
-        
-        if (msgLevel(MSG::DEBUG))
-          debug() << m_jsonOutputLocation << "GenerationFSR_" << m_appConfigFile << ".json" <<
-            " does not exist, creating it now." << endmsg;
+          debug() << "Json output: " + m_jsonOutputLocation + m_jsonOutputName + " created." << endmsg;
         
         ptree main_tree;
-        
         std::string evtDesc = ::getEvtTypeDesc(evtType);       
 
         main_tree.put("APPCONFIG_file", m_appConfigFile);
@@ -416,7 +411,6 @@ void GenFSRJson::printFSR()
         main_tree.put("SIMCOND", m_simCond);
         main_tree.put("genTimeStamp", time);
         
-        
         ptree gencounters_array = ::writeGeneratorCounters(*genFSR);
         ptree hadroncounters_array = ::writeHadronCounters(*genFSR);
         ptree cross_array = ::writeGeneratorCrossSections(*genFSR);
@@ -428,8 +422,7 @@ void GenFSRJson::printFSR()
         main_tree.add_child("HardGeneratorCrossSection", cross_array);
         main_tree.add_child("SignalCounters", efficiencies_array);
         main_tree.add_child("globStat", stats_array);
-  
-  
+
         main_tree.put("prodID", m_prodID);
         main_tree.put("nb_jobs", njobs_str);
         main_tree.put("script_version", script_version);
@@ -437,6 +430,8 @@ void GenFSRJson::printFSR()
         write_json(jsonOutput, main_tree, false);
         jsonOutput.close(); 
       }
+      else if (msgLevel(MSG::DEBUG))
+        debug() << "The output file was not opened correctly" << endmsg;
     }
-  } 
+  }
 }

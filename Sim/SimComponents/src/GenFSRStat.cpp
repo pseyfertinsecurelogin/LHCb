@@ -468,6 +468,7 @@ namespace
       for(auto const& cross : genFSR.crossSections())
       {
         std::string name = cross.second.first;
+        name.erase(name.size() - 2);
 
         for(unsigned int icross = 0; icross < temp_names.size(); icross++)
           if(name == temp_names.at(icross))
@@ -493,6 +494,7 @@ namespace
       for(auto const& cross : genFSR.crossSections())
       {
         std::string name = cross.second.first;
+        name.erase(name.size() - 2);
         double value = cross.second.second;
         
         for(unsigned int icross = 0; icross < temp_names.size(); icross++)
@@ -578,7 +580,7 @@ StatusCode GenFSRStat::finalize() {
 
 void GenFSRStat::printFSR()
 {
-  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_htmlOutputName << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " + m_htmlOutputName << endmsg;
 
   // make an inventory of the FileRecord store
   std::vector< std::string > addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
@@ -587,7 +589,7 @@ void GenFSRStat::printFSR()
   {
     DataObject *obj = nullptr;
     StatusCode sc = m_fileRecordSvc->retrieveObject(genRecordAddress, obj);
-
+    
     if(!sc.isSuccess())
     {
       error() << "Unable to retrieve object '" << genRecordAddress << "'" << endmsg;
@@ -618,7 +620,7 @@ void GenFSRStat::printFSR()
       for(auto const& counter : genFSR->genCounters())
       {
         auto key = counter.first;
-
+        
         if(key == LHCb::GenCountersFSR::CounterKey::AfterFullEvt || 
            key == LHCb::GenCountersFSR::CounterKey::AfterLevelCut || 
            key == LHCb::GenCountersFSR::CounterKey::EvtSignal || 
@@ -639,7 +641,7 @@ void GenFSRStat::printFSR()
           int after = genFSR->getGenCounterInfo(key).second;
           if(before == 0 || after == 0) continue;
           count2 += 1;
-          }
+        }
         else if((key >= LHCb::GenCountersFSR::CounterKey::B0Gen && 
                  key <= LHCb::GenCountersFSR::CounterKey::bbGen) || 
                 (key >= LHCb::GenCountersFSR::CounterKey::D0Gen && 
@@ -669,7 +671,7 @@ void GenFSRStat::printFSR()
             count4 += 1;
           }
         }
-
+      
       // look in the FSR if there are any generator cross-section is stored
       for(auto const& cross : genFSR->crossSections())
       {
@@ -677,187 +679,191 @@ void GenFSRStat::printFSR()
         if(value == 0 || std::isnan(value) != 0) continue;
         count5 += 1;
       }
-
+      
       // read the already existing file
-      std::string readOutputName = m_htmlOutputLocation + "GenerationFSR_" + m_appConfigFile + ".html";
-
-      std::fstream readOutput(readOutputName, std::fstream::in);
+      std::fstream readOutput(m_htmlOutputLocation + m_htmlOutputName, std::fstream::in);
       // open the new file
-      std::ofstream htmlOutput(m_htmlOutputLocation + m_htmlOutputName, std::fstream::out);
-
+      std::string htmlTempName = "GenerationFSRTemp.html";
+      std::ofstream htmlOutput(m_htmlOutputLocation + htmlTempName, std::fstream::out);
+      
       if (htmlOutput.is_open())
       {
-        if (msgLevel(MSG::DEBUG)) debug() << "Html output: " << m_htmlOutputLocation << 
-                                    m_htmlOutputName << " created." << endmsg;
+        if (msgLevel(MSG::DEBUG)) debug() << "Html output: " + m_htmlOutputLocation + 
+                                    htmlTempName + " created." << endmsg;
 
         if (readOutput.is_open())
         {
-          if (msgLevel(MSG::DEBUG)) debug() << "Read output GenerationFSR_"+ m_appConfigFile + ".html opened" 
-                                            << endmsg;
-
-            // hyper-link related to this simulation conditions
-            std::string ref_evType = "<a href=\"GenerationFSR_" + m_appConfigFile + ".html#" + evType_str +
-              "\">" + evType_str + "</a>";
-
-            // link related to this simulation conditions
-            std::string link = "<a name=\"" + evType_str + "\"></a>";
-            
-            bool flag_evType = false;
-            std::size_t pos_end, pos_ref;
-            std::string line;
-            
-            // read the existing file GenerationFSR.html
-            while(getline(readOutput, line))
-            {
-              // look for the hyper-link in the current line
-              if(!flag_evType) pos_ref = line.find(ref_evType);
-              
-              if(pos_ref != std::string::npos && flag_evType == false)
-                flag_evType = true;
-              
-              // if there is not already a simulation for this production, here we need to add the hyperlink 
-              // to the table
-              if(line == "</p>")
-              {
-                if(flag_evType) htmlOutput << line << std::endl;
-                else            htmlOutput << ref_evType << std::endl << line << std::endl;
-              }
-              // add the tables if the current line contains the right link or if the end of the file is reached
-              else if((line == link && flag_evType == true) || (flag_evType == false && line == "</body>"))
-              {
-                // There is already a simulation for this production
-                // but if we are here it's because we have to overwrite the previous results
-                htmlOutput << link << std::endl;  // write link
-                
-                std::string evtDesc = ::getEvtTypeDesc(evType);
-
-                // Write the tables
-                htmlOutput << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << 
-                  " (" << evtDesc << ")</font> ";
-                htmlOutput << "Hard Generator <font color=\"#088A08\">" << genName << "</font> ";
-                htmlOutput << "Gauss <font color=\"#088A08\">" << m_gaussVersion << "</font>";
-                htmlOutput << "<br> DecFiles <font color=\"#088A08\">" << decFiles << "</font>";
-                htmlOutput << "<br> DDDB <font color=\"#FF0000\">" << m_dddb << "</font> - ";
-                htmlOutput << "SIMCOND <font color=\"#FF0000\">" << m_simCond << "</font><br>";
-                htmlOutput << "APPCONFIG <font color=\"#088A08\">" << m_appConfigVersion << "</font> ";
-                htmlOutput << "<font color=\"#FF0000\">" << m_appConfigFile << "</font><br>";
-                htmlOutput << time << "</th>\n<tr>\n\n";
-
-                if(count2!=0) ::writeGeneratorCounters(*genFSR, count2, htmlOutput);
-                if(count3!=0) ::writeGenHadronCounters(*genFSR, count3, htmlOutput);
-                if(count4!=0) ::writeAccHadronCounters(*genFSR, count4, htmlOutput);
-                if(count5!=0) ::writeGeneratorCrossSections(*genFSR, count5, htmlOutput);
-                if(count1!=0) ::writeCutEfficiencies(*genFSR, count1, htmlOutput);
-
-                htmlOutput << "</table>\n";
-
-                // Write the warnings
-                if(count2==0) htmlOutput << 
-                                "<p><font color=\"#FF0000\">Warning: No Counters Interaction lines found</font></p>\n";
-                if(count3==0 && genMethod == "Inclusive") htmlOutput << 
-                                "<p><font color=\"#FF0000\">Warning: No Generated Hadron Counters lines found</font></p>\n";
-                if(count4==0) htmlOutput << 
-                                "<p><font color=\"#FF0000\">Warning: No Accepted Hadron Counters lines found</font></p>\n";
-                if(count5==0) htmlOutput << 
-                                "<p><font color=\"#FF0000\">Warning: No Hard Generator Cross-Sections lines found</font></p>\n";
-                if(count1==0) htmlOutput << 
-                                "<p><font color=\"#FF0000\">Warning: No Signal Counters lines found</font></p>\n";
-
-                ::writeGlobalStat(*genFSR, htmlOutput);
-
-                htmlOutput << "<p> Statistics done (script version " << script_version << ") with " << njobs_str <<
-                  " jobs from the following ProdID:<font color=\"#0000FF\">" << m_prodID << "</font></p>\n";
-                
-                // skip the lines which contain the previous table because they have been just updated
-                if(flag_evType) getline(readOutput, line);
-
-                pos_end = line.find("<a name=");
-
-                while(pos_end == std::string::npos && line != "</body>")
-                {
-                  getline(readOutput, line);
-                  pos_end = line.find("<a name=");
-                }
-
-                htmlOutput << line << std::endl;
-              }
-              else  htmlOutput << line << std::endl;
-            }
-          }
-          // the file does not exist, create it
-          else
+          if (msgLevel(MSG::DEBUG)) debug() << "Html input: " + m_htmlOutputLocation + 
+                                      m_htmlOutputName + "opened." << endmsg;
+          
+          // hyper-link related to this simulation conditions
+          std::string ref_evType = "<a href=\"GenerationFSR_" + m_appConfigFile + ".html#" + evType_str +
+            "\">" + evType_str + "</a>";
+          
+          // link related to this simulation conditions
+          std::string link = "<a name=\"" + evType_str + "\"></a>";
+          
+          bool flag_evType = false;
+          std::size_t pos_end, pos_ref;
+          std::string line;
+          
+          // read the existing file GenerationFSR.html
+          while(getline(readOutput, line))
           {
-            if (msgLevel(MSG::DEBUG)) debug() << readOutputName << " does not exist, creating it now." << endmsg;
+            // look for the hyper-link in the current line
+            if(!flag_evType) pos_ref = line.find(ref_evType);
+            
+            if(pos_ref != std::string::npos && flag_evType == false)
+              flag_evType = true;
+              
+            // if there is not already a simulation for this production, here we need to add the hyperlink 
+            // to the table
+            if(line == "</p>")
+            {
+              if(flag_evType) htmlOutput << line << std::endl;
+              else            htmlOutput << ref_evType << std::endl << line << std::endl;
+            }
+            // add the tables if the current line contains the right link or if the end of the file is reached
+            else if((line == link && flag_evType == true) || (flag_evType == false && line == "</body>"))
+            {
+              // There is already a simulation for this production
+              // but if we are here it's because we have to overwrite the previous results
+              htmlOutput << link << std::endl;  // write link
+              
+              std::string evtDesc = ::getEvtTypeDesc(evType);
+              
+              // Write the tables
+              htmlOutput << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << 
+                " (" << evtDesc << ")</font> ";
+              htmlOutput << "Hard Generator <font color=\"#088A08\">" << genName << "</font> ";
+              htmlOutput << "Gauss <font color=\"#088A08\">" + m_gaussVersion + "</font>";
+              htmlOutput << "<br> DecFiles <font color=\"#088A08\">" + decFiles + "</font>";
+              htmlOutput << "<br> DDDB <font color=\"#FF0000\">" + m_dddb + "</font> - ";
+              htmlOutput << "SIMCOND <font color=\"#FF0000\">" + m_simCond + "</font><br>";
+              htmlOutput << "APPCONFIG <font color=\"#088A08\">" + m_appConfigVersion + "</font> ";
+              htmlOutput << "<font color=\"#FF0000\">" + m_appConfigFile + "</font><br>";
+              htmlOutput << time << "</th>\n<tr>\n\n";
+              
+              if(count2!=0) ::writeGeneratorCounters(*genFSR, count2, htmlOutput);
+              if(count3!=0) ::writeGenHadronCounters(*genFSR, count3, htmlOutput);
+              if(count4!=0) ::writeAccHadronCounters(*genFSR, count4, htmlOutput);
+              if(count5!=0) ::writeGeneratorCrossSections(*genFSR, count5, htmlOutput);
+              if(count1!=0) ::writeCutEfficiencies(*genFSR, count1, htmlOutput);
 
-            // write the web-header
-            htmlOutput << "<html>\n<head>\n";
-            htmlOutput << 
-              "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/css/lhcb.css\"" 
-                       << " type=\"text/css\" media=\"screen\">\n";
-            htmlOutput << 
-              "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/gauss/css/css.css\""
-                       << " type=\"text/css\" media=\"screen\">\n";
-            htmlOutput << "<link rel=\"stylesheet\" href=\"css.css\" type=\"text/css\" media=\"screen\">\n";
-            htmlOutput << "<title>Table for Generation</title>\n";
-            htmlOutput << "</head>\n";
+              htmlOutput << "</table>\n";
+              
+              // Write the warnings
+              if(count2==0) htmlOutput << 
+                              "<p><font color=\"#FF0000\">Warning: No Counters Interaction lines found</font></p>\n";
+              if(count3==0 && genMethod == "Inclusive") htmlOutput << 
+                                                          "<p><font color=\"#FF0000\">Warning: No Generated Hadron Counters lines found</font></p>\n";
+              if(count4==0) htmlOutput << 
+                              "<p><font color=\"#FF0000\">Warning: No Accepted Hadron Counters lines found</font></p>\n";
+              if(count5==0) htmlOutput << 
+                              "<p><font color=\"#FF0000\">Warning: No Hard Generator Cross-Sections lines found</font></p>\n";
+              if(count1==0) htmlOutput << 
+                              "<p><font color=\"#FF0000\">Warning: No Signal Counters lines found</font></p>\n";
+              
+              ::writeGlobalStat(*genFSR, htmlOutput);
+              
+              htmlOutput << "<p> Statistics done (script version " << script_version << ") with " << njobs_str <<
+                " jobs from the following ProdID:<font color=\"#0000FF\">" + m_prodID + "</font></p>\n";
+              
+              // skip the lines which contain the previous table because they have been just updated
+              if(flag_evType) getline(readOutput, line);
+              
+              pos_end = line.find("<a name=");
+              
+              while(pos_end == std::string::npos && line != "</body>")
+              {
+                getline(readOutput, line);
+                pos_end = line.find("<a name=");
+              }
+              
+              htmlOutput << line << std::endl;
+            }
+            else  htmlOutput << line << std::endl;
+          }
+        }
+        // the file does not exist, create it
+        else
+        {
+          if (msgLevel(MSG::DEBUG)) debug() << m_htmlOutputLocation.toString() + m_htmlOutputName.toString() <<
+                                      " does not exist, creating it now." << endmsg;
+          
+          // write the web-header
+          htmlOutput << "<html>\n<head>\n";
+          htmlOutput << 
+            "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/css/lhcb.css\"" 
+                     << " type=\"text/css\" media=\"screen\">\n";
+          htmlOutput << 
+            "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/gauss/css/css.css\""
+                     << " type=\"text/css\" media=\"screen\">\n";
+          htmlOutput << "<link rel=\"stylesheet\" href=\"css.css\" type=\"text/css\" media=\"screen\">\n";
+          htmlOutput << "<title>Table for Generation</title>\n";
+          htmlOutput << "</head>\n";
+          
+          htmlOutput << "\n<body>\n";
+          htmlOutput << "<p> Event Type:\n<a href=\"GenerationFSR_" + m_appConfigFile + ".html#" << 
+            evType_str << "\">" << evType_str << "</a>\n</p>\n";
 
-            htmlOutput << "\n<body>\n";
-            htmlOutput << "<p> Event Type:\n<a href=\"GenerationFSR_" << m_appConfigFile << ".html#" << 
-              evType_str << "\">" << evType_str << "</a>\n</p>\n";
-            // link
-            htmlOutput << "<a name=\"" << evType_str << "\"></a>\n" << std::endl;
-
-            std::string evtDesc = ::getEvtTypeDesc(evType);
-            // Write the tables
-            htmlOutput << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << " (" << evtDesc << ")</font> ";
-            htmlOutput << "Hard Generator <font color=\"#088A08\">" << genName << "</font> ";
-            htmlOutput << "Gauss <font color=\"#088A08\">"<< m_gaussVersion << ": ";
-            htmlOutput << "</font>";
-            htmlOutput << "<br> DecFiles <font color=\"#088A08\">" << decFiles << "</font>";
-            htmlOutput << "<br> DDDB <font color=\"#FF0000\">" << m_dddb << "</font> - ";
-            htmlOutput << "SIMCOND <font color=\"#FF0000\">" << m_simCond << "</font><br>";
-            htmlOutput << "APPCONFIG <font color=\"#088A08\">" << m_appConfigVersion << "</font>";
-            htmlOutput << "<font color=\"#FF0000\">" << m_appConfigFile << "</font><br>";
-            htmlOutput << time << "</th>\n<tr>\n\n";
-
-            if(count2!=0) ::writeGeneratorCounters(*genFSR, count2, htmlOutput);
-            if(count3!=0) ::writeGenHadronCounters(*genFSR, count3, htmlOutput);
-            if(count4!=0) ::writeAccHadronCounters(*genFSR, count4, htmlOutput);
-            if(count5!=0) ::writeGeneratorCrossSections(*genFSR, count5, htmlOutput);
-            if(count1!=0) ::writeCutEfficiencies(*genFSR, count1, htmlOutput);
-
-            htmlOutput << "</table>\n";
-
-            // Write the warnings
-            if(count2==0) htmlOutput <<
-                            "<p><font color=\"#FF0000\">Warning: No Counters Interaction lines found</font></p>\n";
-            if(count3==0 && genMethod == "Inclusive") htmlOutput <<
-                            "<p><font color=\"#FF0000\">Warning: No Generated Hadron Counters lines found</font></p>\n";
-            if(count4==0) htmlOutput <<
-                            "<p><font color=\"#FF0000\">Warning: No Accepted Hadron Counters lines found</font></p>\n";
-            if(count5==0) htmlOutput <<
+          // link
+          htmlOutput << "<a name=\"" << evType_str << "\"></a>\n" << std::endl;
+          
+          std::string evtDesc = ::getEvtTypeDesc(evType);
+          // Write the tables
+          htmlOutput << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << " (" << evtDesc << ")</font> ";
+          htmlOutput << "Hard Generator <font color=\"#088A08\">" << genName << "</font> ";
+          htmlOutput << "Gauss <font color=\"#088A08\">" + m_gaussVersion + ": ";
+          htmlOutput << "</font>";
+          htmlOutput << "<br> DecFiles <font color=\"#088A08\">" << decFiles << "</font>";
+          htmlOutput << "<br> DDDB <font color=\"#FF0000\">" + m_dddb + "</font> - ";
+          htmlOutput << "SIMCOND <font color=\"#FF0000\">" + m_simCond + "</font><br>";
+          htmlOutput << "APPCONFIG <font color=\"#088A08\">" + m_appConfigVersion + "</font>";
+          htmlOutput << "<font color=\"#FF0000\">" + m_appConfigFile + "</font><br>";
+          htmlOutput << time << "</th>\n<tr>\n\n";
+          
+          if(count2!=0) ::writeGeneratorCounters(*genFSR, count2, htmlOutput);
+          if(count3!=0) ::writeGenHadronCounters(*genFSR, count3, htmlOutput);
+          if(count4!=0) ::writeAccHadronCounters(*genFSR, count4, htmlOutput);
+          if(count5!=0) ::writeGeneratorCrossSections(*genFSR, count5, htmlOutput);
+          if(count1!=0) ::writeCutEfficiencies(*genFSR, count1, htmlOutput);
+          
+          htmlOutput << "</table>\n";
+            
+          // Write the warnings
+          if(count2==0) htmlOutput <<
+                          "<p><font color=\"#FF0000\">Warning: No Counters Interaction lines found</font></p>\n";
+          if(count3==0 && genMethod == "Inclusive") htmlOutput <<
+                                                      "<p><font color=\"#FF0000\">Warning: No Generated Hadron Counters lines found</font></p>\n";
+          if(count4==0) htmlOutput <<
+                          "<p><font color=\"#FF0000\">Warning: No Accepted Hadron Counters lines found</font></p>\n";
+          if(count5==0) htmlOutput <<
                             "<p><font color=\"#FF0000\">Warning: No Hard Generator Cross-Sections lines found</font></p>\n";
-            if(count1==0) htmlOutput <<
+          if(count1==0) htmlOutput <<
                             "<p><font color=\"#FF0000\">Warning: No Signal Counters lines found</font></p>\n";
 
-            ::writeGlobalStat(*genFSR, htmlOutput);
+          ::writeGlobalStat(*genFSR, htmlOutput);
+          
+          htmlOutput << "<p> Statistics done (script version " << script_version << ") with " << njobs_str <<
+            " jobs from the following ProdID:<font color=\"#0000FF\">" + m_prodID + "</font></p>\n";
 
-            htmlOutput << "<p> Statistics done (script version " << script_version << ") with " << njobs_str <<
-              " jobs from the following ProdID:<font color=\"#0000FF\">" << m_prodID << "</font></p>\n";
-
-            htmlOutput << "\n</body>\n</html>\n";
-          }
+          htmlOutput << "\n</body>\n</html>\n";
+        }
         htmlOutput.close();
-
+        
         // remove the old file
-        std::string originalOutput = m_htmlOutputLocation + "GenerationFSR_" + m_appConfigFile + ".html";
-        
-        remove(originalOutput.c_str());
-        std::string newOutput = m_htmlOutputLocation + m_htmlOutputName;
-        
+        if (readOutput.is_open())
+        {
+          readOutput.close();
+          remove((m_htmlOutputLocation + m_htmlOutputName).c_str());
+        }
         // create the new .html file
-        rename(newOutput.c_str(),originalOutput.c_str());
+        rename((m_htmlOutputLocation + htmlTempName).c_str(),
+               (m_htmlOutputLocation + m_htmlOutputName).c_str());
       }
+      else if (msgLevel(MSG::DEBUG))
+        debug() << "The output file was not opened correctly" << endmsg;
     }
   }
 }

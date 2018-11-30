@@ -197,6 +197,7 @@ namespace
     {
       auto key = cross.first;
       std::string name = cross.second.first;
+      name.erase(name.size() - 2);
       
       longlong number = genFSR.getGenCounterInfo(key+100).second;      
       double value = cross.second.second;
@@ -270,7 +271,7 @@ StatusCode GenFSRLog::finalize() {
 
 void GenFSRLog::printFSR()
 {
-  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_xmlOutputName << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " + m_xmlOutputName << endmsg;
 
   // make an inventory of the FileRecord store
   auto addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
@@ -281,7 +282,7 @@ void GenFSRLog::printFSR()
 
     if (xmlOutput.is_open())
     {
-      if (msgLevel(MSG::DEBUG)) debug() << " Xml Output: " << m_xmlOutputName << " - opened" << endmsg;
+      if (msgLevel(MSG::DEBUG)) debug() << " Xml Output: " + m_xmlOutputName + " - opened" << endmsg;
 
       xmlOutput << "<?xml version=\"1.0\"?>" << std::endl
                 << "<generatorCounters>" << std::endl
