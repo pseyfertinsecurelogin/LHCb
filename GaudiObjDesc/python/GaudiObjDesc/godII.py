@@ -180,6 +180,7 @@ class godII(object):
                      'ORDERED (use "ordered_" malloc and free instead of plain ones '
                      'and generate the static method to release the memory),'
                      'DEFAULT (alias for BOOST)')
+        p.add_option('--formatter', help='command to use to (re)format the generated files')
 
         deprecated = OptionGroup(p, "Deprecated Options",
                                  "These options are deprecated and will be removed "
@@ -266,6 +267,14 @@ class godII(object):
 
             lname = self.findLongestName(godPackage)
 
+            if self.opts.formatter:
+                def format(filename):
+                    'reformat the given file'
+                    from subprocess import check_output
+                    check_output([self.opts.formatter, '-i', '--style=file', filename])
+            else:
+                format = None
+
             if 'assoc' in godPackage and self.gAssocDicts :
                 self._log.debug( '  Generating Dictionaries for Associations' )
                 gAssocDicts.doit(godPackage)
@@ -274,7 +283,7 @@ class godII(object):
             if 'namespace' in godPackage:
                 if self.gNamespaces :
                     self._log.debug( '  Generating Namespaces' )
-                    gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname,self.allocatorType)
+                    gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname,self.allocatorType,format)
                     self._log.debug( '  - Done' )
                 elif self.gClassDicts and [nsitem.get('class') for nsitem in godPackage['namespace']]:
                     gNamespaceDict.doit(godPackage)
@@ -282,7 +291,7 @@ class godII(object):
             if 'class' in godPackage:
                 if self.gClasses :
                     self._log.debug( '  Generating Header Files' )
-                    gClasses.doit(package,godPackage['class'],self.srcOutput,lname,self.allocatorType)
+                    gClasses.doit(package,godPackage['class'],self.srcOutput,lname,self.allocatorType,format=format)
                     self._log.debug( '  - Done' )
 
                 if self.gClassDicts :

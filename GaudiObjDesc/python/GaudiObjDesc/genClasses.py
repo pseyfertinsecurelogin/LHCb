@@ -837,7 +837,7 @@ namespace {
         return s
 
 ##--------------------------------------------------------------------------------
-    def doit(self,package,godClasses,outputDir,lname,allocatorType = 'FROMXML', nsname=''):
+    def doit(self,package,godClasses,outputDir,lname,allocatorType = 'FROMXML', nsname='',format=None):
 
         nstream = ''
 
@@ -916,6 +916,8 @@ namespace {
                 file = open(outputDir+os.sep+fileName,'w')
                 file.write(g.stream)
                 file.close()
+                if format:
+                    format(outputDir+os.sep+fileName)
 
             else:
 

@@ -54,7 +54,7 @@ class genNamespaces(genSrcUtils.genSrcUtils):
             fwds += fwd
         return (s, incs, fwds)
 #--------------------------------------------------------------------------------
-    def doit(self,package,godNamespaces,outputDir,lname,allocatorType):
+    def doit(self,package,godNamespaces,outputDir,lname,allocatorType,format=None):
 
         default_scope = package.dict['packagenamespace']
 
@@ -102,6 +102,9 @@ class genNamespaces(genSrcUtils.genSrcUtils):
             file = open(outputDir+os.sep+fileName,'w')
             file.write(g.stream)
             file.close()
+            if format:
+                format(outputDir+os.sep+fileName)
+
 
             mess += ' - Done'
             self.log.info( mess )
