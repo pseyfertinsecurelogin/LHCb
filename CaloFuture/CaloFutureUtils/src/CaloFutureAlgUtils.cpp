@@ -12,6 +12,8 @@
 #include "Event/ProtoParticle.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Event/CaloDigit.h"
+#include "Event/CaloAdc.h"
+#include "Event/RawBankReadoutStatus.h"
 #include "CaloFutureUtils/CaloFuture2Track.h"
 #include "CaloFutureUtils/CaloFutureAlgUtils.h"
 #include "GaudiKernel/IRegistry.h"
@@ -37,6 +39,22 @@ std::string LHCb::CaloFutureAlgUtils::DeCaloFutureLocation( const std::string& n
           det == "Hcal" ?  DeCalorimeterLocation::Hcal :
           det == "Prs"  ?  DeCalorimeterLocation::Prs  :
           det == "Spd"  ?  DeCalorimeterLocation::Spd  : "" ;
+}
+
+// ADC location from name (CaloAdcs are context independent so far)
+std::string  LHCb::CaloFutureAlgUtils::CaloFutureRawBankReadoutStatusLocation( const std::string& name  , const std::string&){
+  std::string det = CaloFutureNameFromAlg( name );
+  using namespace LHCb::RawBankReadoutStatusLocation;
+  return det == "Ecal" ? LHCb::RawBankReadoutStatusLocation::Ecal :
+    det == "Hcal" ? LHCb::RawBankReadoutStatusLocation::Hcal : "";
+}
+
+// ADC location from name (CaloAdcs are context independent so far)
+std::string  LHCb::CaloFutureAlgUtils::CaloFutureAdcLocation( const std::string& name  , const std::string&){
+  std::string det = CaloFutureNameFromAlg( name );
+  using namespace LHCb::CaloAdcLocation;
+  return det == "Ecal" ? Ecal :
+         det == "Hcal" ? Hcal : "";
 }
 
 // Digit location from name (CaloDigits are context independent so far)

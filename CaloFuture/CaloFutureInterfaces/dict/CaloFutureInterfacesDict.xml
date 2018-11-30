@@ -25,11 +25,8 @@
   <class name    = "ICaloFutureSubClusterTag"       />
   <class name    = "ICaloFutureTrackIdEval"         />
   <class name    = "ICaloFutureTrackMatch"          />
-  <class name    = "IL0CaloFuture2CaloFuture"             />
   <class name    = "IPart2CaloFuture"               />
   <class name    = "ITrack2CaloFuture"              />
-  <class name    = "ICaloFutureCosmicsTool"         />
-  <class name    = "ICaloFutureCosmicsTrackTool"    />
   <class name    = "ICaloFutureHypo2CaloFuture"           />
   <class name    = "ICaloFutureGetterTool"          />
   <class name    = "ICaloFutureHypoEstimator"       />

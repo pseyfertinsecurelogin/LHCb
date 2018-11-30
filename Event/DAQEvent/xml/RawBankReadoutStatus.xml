@@ -28,6 +28,8 @@
 
 
        <location name = "Default"   place = "Transient/DAQ/Status" />
+       <location name = "Ecal"      place = "Transient/DAQ/StatusEcal" />
+       <location name = "Hcal"      place = "Transient/DAQ/StatusHcal" />
 
       <enum
         name   = 'Status'
