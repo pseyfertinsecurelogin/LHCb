@@ -74,6 +74,11 @@ namespace
 
 namespace LHCb::Event::v2
 {
+    //=============================================================================
+    // Ensure people are aware of changing the Track's size.
+    //=============================================================================
+    static_assert(sizeof(Track) == 224, "You may update this, but make sure to keep the Track's size low.");
+
 
     //=============================================================================
     // Retrieve the probability of chi^2
