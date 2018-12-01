@@ -90,7 +90,7 @@ namespace{
 
   /// Copy MuonTileID from digits to coord by crossing the digits
   template <typename Iterator>
-  Iterator addCoordsCrossingMap(const DeMuonDetector& det, Iterator first, Iterator last, LHCb::MuonCoords& retVal) {
+  Iterator addCoordsCrossingMap(const DeMuonDetector& det, Iterator first, Iterator last, std::vector<LHCb::MuonCoord>& retVal) {
     assert(first!=last);
     static_assert( std::is_same_v< typename std::iterator_traits<Iterator>::value_type, Digit > );
     using namespace ranges;
@@ -115,21 +115,16 @@ namespace{
         LHCb::MuonTileID pad = digit_one.tile.intercept(digit_two.tile);
         if (!pad.isValid()) continue;
 
-        auto current = std::make_unique<MuonCoord>(pad, digit_one.tile, digit_two.tile, digit_one.tdc, digit_two.tdc );
-        retVal.insert(current.get());
-        current.release();
+        retVal.emplace_back(pad, digit_one.tile, digit_two.tile, digit_one.tdc, digit_two.tdc );
         // set used flag
         used_one = used_two = true;
       }
     }
-
     // copy over "uncrossed" digits
     for ( const Digit& digit : usedAndDigits
                              | view::remove_if( [](const auto& p ) { return p.first; } )
                              | view::values ) {
-      auto current = std::make_unique<MuonCoord>(digit.tile, digit.tdc );
-      retVal.insert(current.get());
-      current.release();
+      retVal.emplace_back(digit.tile, digit.tdc );
     }
     return last;
   }
@@ -184,9 +179,9 @@ StatusCode MuonRawToCoord::initialize() {
 //=============================================================================
 // Main execution
 //=============================================================================
-LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
+std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
-  LHCb::MuonCoords coords;
+  std::vector<LHCb::MuonCoord> coords;
   if( msgLevel(MSG::DEBUG) ) {
     debug() << "==> Execute" << endmsg;
   }

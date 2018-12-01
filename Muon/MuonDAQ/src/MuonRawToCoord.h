@@ -23,13 +23,13 @@
  *  This is the muon reconstruction algorithm
  *  This just crosses the logical strips back into pads
  */
-class MuonRawToCoord final : public Gaudi::Functional::Transformer<LHCb::MuonCoords (const LHCb::RawEvent &)> {
+class MuonRawToCoord final : public Gaudi::Functional::Transformer<std::vector<LHCb::MuonCoord> (const LHCb::RawEvent &)> {
 public:
   /// Standard constructor
   MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;    ///< Algorithm initialization
-  LHCb::MuonCoords operator()(const LHCb::RawEvent& event) const override;
+  std::vector<LHCb::MuonCoord> operator()(const LHCb::RawEvent& event) const override;
 
 private:
 
