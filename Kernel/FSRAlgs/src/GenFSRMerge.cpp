@@ -9,11 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-
-// from Gaudi
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiAlg/IGenericTool.h"
-
 // event model
 #include "Event/GenFSR.h"
 #include "Event/GenCountersFSR.h"
@@ -38,14 +33,12 @@ DECLARE_COMPONENT( GenFSRMerge )
 
 GenFSRMerge::GenFSRMerge(const std::string& name, ISvcLocator* pSvcLocator)
    :  GaudiAlgorithm( name, pSvcLocator),
-      m_navigatorTool(NULL),
+      m_fileRecordSvc(nullptr),
+      m_navigatorTool(nullptr),
       m_evtType(0),
       m_genName(""),
       m_method("")
 {
-  // expect the data to be written at LHCb::GenFSRLocation::Default
-  declareProperty( "FileRecordLocation" , m_FileRecordName    = "/FileRecords"   );
-  declareProperty( "FSRName"            , m_FSRName           = "/GenFSR"       );
 }
 
 //=============================================================================
@@ -54,18 +47,17 @@ GenFSRMerge::GenFSRMerge(const std::string& name, ISvcLocator* pSvcLocator)
 StatusCode GenFSRMerge::initialize()
 {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if (sc.isFailure()) return sc;  // error printed already by GaudiAlgorithm
 
+  if (sc.isFailure()) return sc;  // error printed already by GaudiAlgorithm
   if (msgLevel(MSG::DEBUG)) debug() << "==> Initialize" << endmsg;
 
   // get the File Records service
-  m_fileRecordSvc = service("FileRecordDataSvc", true);
+  m_fileRecordSvc = Gaudi::svcLocator()->service("FileRecordDataSvc");
 
   // prepare navigator tool
   m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");
 
-  return StatusCode::SUCCESS;
-
+  return sc;
 }
 
 //=============================================================================
@@ -84,7 +76,6 @@ StatusCode GenFSRMerge::execute()
 //=============================================================================
 StatusCode GenFSRMerge::finalize()
 {
-
   if (msgLevel(MSG::DEBUG)) debug() << "==> Finalize" << endmsg;
   info() << "========== Merging GenFSR ==========" << endmsg;
 
@@ -101,113 +92,95 @@ StatusCode GenFSRMerge::finalize()
 //=============================================================================
 StatusCode GenFSRMerge::merge()
 {
-
   // make an inventory of the FileRecord store
-  std::string fileRecordRoot = m_FileRecordName;
-  std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
-  int nFSRs = 0;
-
-  for(std::vector<std::string>::iterator iAddr = addresses.begin(); iAddr != addresses.end(); iAddr++)
+  std::vector< std::string > addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
+  LHCb::GenFSR* genFSR;
+  
+  for(const auto& genRecordAddress: addresses)
   {
-    debug() << "address: " << *iAddr << endmsg;
-
-    if (iAddr->find(m_FSRName) != std::string::npos)
+    if (msgLevel(MSG::DEBUG)) debug() << "address: " << genRecordAddress << endmsg;
+    
+    if (genRecordAddress.find(m_FSRName) != std::string::npos)
     {
-      std::string fileRecordAddress = *iAddr;
-      LHCb::GenFSR* theGenFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, fileRecordAddress);
+      genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, genRecordAddress);
 
-      if(m_evtType==0) m_evtType = theGenFSR->getSimulationInfo("evtType", 0);
-      else if(m_evtType != theGenFSR->getSimulationInfo("evtType", 0))
+      if(m_evtType==0) m_evtType = genFSR->getSimulationInfo("evtType", 0);
+      else if(m_evtType != genFSR->getSimulationInfo("evtType", 0))
         throw GaudiException("Found a different Event Type! Merging is not allowed!",
                              "GenMergeFSR::finalize", StatusCode::FAILURE);
 
-      if(m_genName=="") m_genName = theGenFSR->getSimulationInfo("hardGenerator", "");
-      else if(m_genName != theGenFSR->getSimulationInfo("hardGenerator", ""))
+      if(m_genName=="") m_genName = genFSR->getSimulationInfo("hardGenerator", "");
+      else if(m_genName != genFSR->getSimulationInfo("hardGenerator", ""))
         throw GaudiException("Found a different Hard Generator Name! Merging is not allowed!",
                              "GenMergeFSR::finalize", StatusCode::FAILURE);
 
-      if(m_method=="") m_method = theGenFSR->getSimulationInfo("generationMethod", "");
-      else if(m_method != theGenFSR->getSimulationInfo("generationMethod", ""))
+      if(m_method=="") m_method = genFSR->getSimulationInfo("generationMethod", "");
+      else if(m_method != genFSR->getSimulationInfo("generationMethod", ""))
         if(msgLevel(MSG::VERBOSE)) verbose() << "Found a different generation method" << endmsg;
-
-      nFSRs += 1;
     }
   }
 
-  if(nFSRs != 0)
+  LHCb::GenFSR* genFSRMerged = new LHCb::GenFSR();
+  put(m_fileRecordSvc, genFSRMerged, m_fileRecordName + m_FSRName);
+
+  genFSRMerged->initializeInfos();
+
+  for(const auto& genRecordAddress: addresses)
   {
-    LHCb::GenFSR* fsr = new LHCb::GenFSR();
-    put(m_fileRecordSvc, fsr, fileRecordRoot + m_FSRName);
-
-    fsr->initializeInfos();
-
-    for(std::vector<std::string>::iterator iAddr = addresses.begin(); iAddr != addresses.end(); iAddr++)
+    if (genRecordAddress.find(m_FSRName) != std::string::npos)
     {
-      if (iAddr->find(m_FSRName) != std::string::npos)
+      genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, genRecordAddress);
+      
+      if(genFSR == nullptr)
       {
-        std::string fileRecordAddress = *iAddr;
-
-        LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, fileRecordAddress);
-
-        if(genFSR == NULL)
-        {
-          if(msgLevel(MSG::VERBOSE)) error() << fileRecordAddress << " not found" << endmsg;
-        }
-        else
-        {
-          if(msgLevel(MSG::VERBOSE)) verbose() << fileRecordAddress << " found" << endmsg;
-
-          // Fill the informations of the new FSR
-          if(fsr->getSimulationInfo("hardGenerator", "") == "")
-          {
-            fsr->setStringInfos(genFSR->stringInfos());
-            fsr->setIntInfos(genFSR->intInfos());
-          }
-
-          // Update the FSR information and append to TS
-          *fsr += *genFSR;
-        }
-      }
-    }
-  }
-
-  // read back genFSR from TS
-  if(nFSRs != 0)
-  {
-    LHCb::GenFSR* topGenFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, fileRecordRoot + m_FSRName);
-    if (msgLevel(MSG::DEBUG)) debug() << *topGenFSR << endmsg;
-
-    // clean up original FSRs
-    for(std::vector<std::string>::iterator iAddr = addresses.begin(); iAddr != addresses.end(); iAddr++)
-    {
-      // get FSR as keyed object and cleanup the original ones - this only cleans genFSRs
-      std::string fileRecordAddress = *iAddr;
-
-      if(msgLevel(MSG::DEBUG)) debug() << "address in list: " << (*iAddr) << endmsg;
-
-      LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, fileRecordAddress);
-      if (NULL == genFSR)
-      {
-        if (msgLevel(MSG::ERROR)) error() << fileRecordAddress << " not found" << endmsg;
+        if(msgLevel(MSG::VERBOSE)) error() << genRecordAddress << " not found" << endmsg;
       }
       else
       {
-        if (msgLevel(MSG::VERBOSE)) verbose() << fileRecordAddress << " found" << endmsg;
+        if(msgLevel(MSG::VERBOSE)) verbose() << genRecordAddress << " found" << endmsg;
 
-        m_fileRecordSvc->unlinkObject(*iAddr).ignore(); // get the FSR out of TS
-        iAddr->erase(iAddr->end()-m_FSRName.length(),iAddr->end());
-        m_fileRecordSvc->unlinkObject(*iAddr).ignore(); // get the FSR's directory out of TS
+        // Fill the informations of the new FSR
+        if(genFSRMerged->getSimulationInfo("hardGenerator", "") == "")
+        {
+          genFSRMerged->setStringInfos(genFSR->stringInfos());
+          genFSRMerged->setIntInfos(genFSR->intInfos());
+        }
+        
+          // Update the FSR information and append to TS
+          *genFSRMerged += *genFSR;
+        }
       }
+  }
+
+  // read back genFSR from TS
+  LHCb::GenFSR* topGenFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, m_fileRecordName + m_FSRName);
+  if (msgLevel(MSG::DEBUG)) debug() << *topGenFSR << endmsg;
+
+  // clean up original FSRs
+  for(const auto& genRecordAddress: addresses)
+  {
+    // get FSR as keyed object and cleanup the original ones - this only cleans genFSRs
+    if(msgLevel(MSG::DEBUG)) debug() << "address in list: " << genRecordAddress << endmsg;
+    
+    genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, genRecordAddress);
+
+    if (genFSR == nullptr)
+    {
+      if (msgLevel(MSG::ERROR)) error() << genRecordAddress << " not found" << endmsg;
+    }
+    else
+    {
+      if (msgLevel(MSG::VERBOSE)) verbose() << genRecordAddress << " found" << endmsg;
+
+      m_fileRecordSvc->unlinkObject(genRecordAddress).ignore(); // get the FSR's directory out of TS
     }
   }
 
   // make a new inventory of the FileRecord store
-  addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
+  addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
   if (msgLevel(MSG::DEBUG))
     for(const auto& addr : addresses )
         debug() << "address: " << addr << endmsg;
 
   return StatusCode::SUCCESS;
-
-
 }

@@ -138,7 +138,7 @@
          desc="Get the string value of a FSR information"
          type="std::string"
          name="getSimulationInfo"
-         argList="std::string name, std::string def"
+         argList="std::string name, std::string def=&quot;&quot;"
          const="TRUE"
          >
         <code>
@@ -192,13 +192,13 @@
 	 />
 
       <method
-	 desc="get method"
-	 name="getGenCounters"
-	 type="GeneratorCounter&amp;"
-	 >
-	<code>
-	  return m_genCounters;
-	</code>
+         desc="get method"
+         name="getGenCounters"
+         type="GeneratorCounter&amp;"
+         >
+        <code>
+          return m_genCounters;
+        </code>
       </method>
 
       <method
@@ -431,9 +431,9 @@
                    std::string counters[] = {"DGen","DstarGen","D2starGen"};
                    counters_vec.assign(counters,counters+sizeof(counters)/sizeof(counters[0]));
                }
-               else if(keyName == "B0Acc" || keyName == "BstarAcc" || keyName == "B2starAcc")
+               else if(keyName == "BAcc" || keyName == "BstarAcc" || keyName == "B2starAcc")
                {
-                   std::string counters[] = {"B0Acc","BstarAcc","B2starAcc"};
+                   std::string counters[] = {"BAcc","BstarAcc","B2starAcc"};
                    counters_vec.assign(counters,counters+sizeof(counters)/sizeof(counters[0]));
                }
                else if(keyName == "DAcc" || keyName == "DstarAcc" || keyName == "D2starAcc")
@@ -735,6 +735,7 @@
             int key = icross-&gt;first;
             double value = icross-&gt;second.second;
 	    std::string name = icross-&gt;second.first;
+            name.erase(name.size() - 2);
 
 	    s &lt;&lt; name &lt;&lt; "  key: " &lt;&lt; key &lt;&lt; "  value: " &lt;&lt; value &lt;&lt; " / ";
           }

@@ -14,7 +14,7 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 
 // from Event
 #include "Event/GenFSR.h"
@@ -28,7 +28,9 @@
  *  @author Davide Fazzini
  *  @date   2015-06-23
  */
-class GenFSRLog : public GaudiAlgorithm {
+
+class GenFSRLog : public GaudiAlgorithm
+{
 public:
   // Standard constructor
   GenFSRLog( const std::string& name, ISvcLocator* pSvcLocator );
@@ -37,26 +39,19 @@ public:
   StatusCode execute   () override;  // Algorithm execution
   StatusCode finalize  () override;  // Algorithm finalization
 
+  void printFSR(); // Print the GenFSR in a file .xml
+
 private:
 
-  void printXmlFSR();       // Print the GenFSR in a file .xml
-
-  void addGenCounters(LHCb::GenFSR* genFSR);
-  void addGenFractions(LHCb::GenFSR* genFSR);
-  void addGenCrossSections(LHCb::GenFSR* genFSR);
-  void addGeneratorCrossSections(LHCb::GenFSR* genFSR);
-  void addCutEfficiencies(LHCb::GenFSR* genFSR);
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation",
+      "/FileRecords", "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
+  Gaudi::Property<std::string> m_xmlOutputLocation{this, "XmlOutputLocation", 
+      "","Path where to save the .xml output"};
+  Gaudi::Property<std::string> m_xmlOutputName{this, "xmlOutputName", 
+      "GeneratorLogFSR.xml","Name of the .xml output"};
 
   SmartIF<IDataProviderSvc> m_fileRecordSvc;
-
-  std::string m_fileRecordName;     // location of FileRecords
-  std::string m_FSRName;            // specific tag of summary data in FSR
-  std::string m_xmlFileName;        // xml file name
-  std::ofstream m_xmlFile;          // file xml
-
-private:
-
-  IFSRNavigator* m_navigatorTool = nullptr;   // tool to navigate FSR
-
+  IFSRNavigator* m_navigatorTool = nullptr;  // tool to navigate FSR
 };
 #endif // GENFSRLOG_H

@@ -9,7 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-
 // local
 #include "GenFSRLog.h"
 
@@ -30,49 +29,226 @@
 // 2015-06-23 : Davide Fazzini
 //-----------------------------------------------------------------------------
 
+namespace
+{
+  //=============================================================================
+  //  Add generator level counters in the xml file
+  //=============================================================================
+
+  void addGenCounters(LHCb::GenFSR& genFSR, std::ostream& xmlOutput)
+  {
+    LHCb::GenCountersFSR counterFSR;    
+    std::map<std::string, std::string> mapCounter = counterFSR.getFullNames();
+    
+    for(auto const& counter : genFSR.genCounters())
+    {
+      auto key = counter.first;
+      
+      if(key > LHCb::GenCountersFSR::CounterKey::bAndcAcc) continue;
+      if(key == LHCb::GenCountersFSR::CounterKey::BeforeFullEvt ||
+         key == LHCb::GenCountersFSR::CounterKey::AfterFullEvt) continue;
+      
+      std::string name = LHCb::GenCountersFSR::CounterKeyToString(key);
+      std::string fullName = mapCounter[name];      
+      
+      longlong value = counter.second.second;
+
+      xmlOutput << "  <counter name = \"" << fullName << "\">" << std::endl
+                << "    <value> " << value << " </value>" << std::endl
+                << "  </counter>" << std::endl; 
+    }    
+  }
+
+  //=============================================================================
+  //  Add generator level cut efficiencies in the xml file
+  //=============================================================================
+
+  void addCutEfficiencies(LHCb::GenFSR& genFSR, std::ofstream& xmlOutput)
+  {
+    LHCb::GenCountersFSR crossFSR;    
+    std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
+
+    for(auto const& counter : genFSR.genCounters())
+    {
+      auto key = counter.first;
+
+      if(key == LHCb::GenCountersFSR::CounterKey::EvtInverted)
+      {
+        std::string name = LHCb::GenCountersFSR::CounterKeyToString(key);
+        std::string fullName = mapCross[name];
+        longlong value = counter.second.second;
+
+        xmlOutput << "  <counter name = \"" << fullName << "\">" << std::endl
+                  << "    <value> " << value << " </value>" << std::endl
+                  << "  </counter>" << std::endl;        
+      }
+
+      if(key != LHCb::GenCountersFSR::CounterKey::AfterFullEvt &&
+         key != LHCb::GenCountersFSR::CounterKey::AfterLevelCut &&
+         key != LHCb::GenCountersFSR::CounterKey::AfterPCut &&
+         key != LHCb::GenCountersFSR::CounterKey::AfterantiPCut) continue;
+
+      std::string name = LHCb::GenCountersFSR::CounterKeyToString(key);      
+      std::string fullName = mapCross[name];
+
+      longlong before = genFSR.getDenominator(key);
+      if(before == 0) continue;
+
+      longlong after = counter.second.second;
+      double fraction = genFSR.getEfficiency(after, before);
+      double error = genFSR.getEfficiencyError(after, before);
+
+      xmlOutput << "  <efficiency name = \"" << fullName << "\">" << std::endl
+                << "    <after> " << after << " </after>" << std::endl
+                << "    <before> " << before << " </before>" << std::endl
+                << "    <value> " << fraction << " </value>" << std::endl
+                << "    <error> " << error << " </error>" << std::endl
+                << "  </efficiency>" << std::endl; 
+    }    
+  }
+
+  //=============================================================================
+  //  Add generator level fractions in the xml file
+  //=============================================================================
+
+  void addGenFractions(LHCb::GenFSR& genFSR, std::ostream& xmlOutput)
+  {
+    LHCb::GenCountersFSR crossFSR;
+    std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
+
+    for(auto const& counter : genFSR.genCounters())
+    {
+      auto key = counter.first;
+      if(key < LHCb::GenCountersFSR::CounterKey::B0Gen || 
+         key >= LHCb::GenCountersFSR::CounterKey::BeforePCut) continue;
+
+      std::string name = LHCb::GenCountersFSR::CounterKeyToString(key);      
+      std::string fullName = mapCross[name];
+
+      longlong before = genFSR.getDenominator(key);
+      if(before == 0) continue;
+
+      longlong after = counter.second.second;
+      double fraction = genFSR.getEfficiency(after, before); 
+      double error = genFSR.getEfficiencyError(after, before);
+
+      xmlOutput << "  <fraction name = \"" << fullName << "\">" << std::endl
+                << "    <number> " << after << " </number>" << std::endl
+                << "    <value> " << fraction << " </value>" << std::endl
+                << "    <error> " << error << " </error>" << std::endl
+                << "  </fraction>" << std::endl;      
+    }
+  }
+  
+  //=============================================================================
+  //  Add generator level cross-sections in the xml file
+  //=============================================================================
+
+  void addGenCrossSections(LHCb::GenFSR& genFSR, std::ostream& xmlOutput)
+  {
+    LHCb::GenFSR::GeneratorCounter genCounters = genFSR.genCounters();
+    
+    LHCb::GenCountersFSR counterFSR;    
+    std::map<std::string,std::string> mapCounter = counterFSR.getFullNames();
+
+    for(auto const& counter : genFSR.genCounters())
+    {
+      auto key = counter.first;
+
+      if(key > LHCb::GenCountersFSR::CounterKey::bAndcAcc) continue;
+      if(key ==  LHCb::GenCountersFSR::CounterKey::BeforeFullEvt || 
+         key == LHCb::GenCountersFSR::CounterKey::AfterFullEvt) continue;
+
+      std::string name = LHCb::GenCountersFSR::CounterKeyToString(key);      
+      std::string fullName = mapCounter[name];
+
+      longlong before = genFSR.getDenominator(key);
+      if(before == 0) continue;
+      
+      double C = key >=  LHCb::GenCountersFSR::CounterKey::OnebGen ? 
+        genFSR.getCrossSectionInfo(LHCb::CrossSectionsFSR::CrossSectionKeyToType("MBCrossSection")).second : 1;
+      
+      longlong after = key == 2 ? genFSR.getGenCounterInfo(key+1).second :  counter.second.second;
+      if(after == 0) continue;      
+      
+      double fraction = genFSR.getEfficiency(after, before, C);
+
+      bool flag = (key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanNoZeroPUInt &&
+                   key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanPUInt &&
+                   key != LHCb::CrossSectionsFSR::CrossSectionKey::MeanPUIntAcc);
+      
+      double error = genFSR.getEfficiencyError(after, before, C, flag);
+
+      xmlOutput << "  <crosssection name = \"" << fullName << "\">" << std::endl
+                << "    <generated> " <<  after  << " </generated>" << std::endl
+                << "    <value> " << fraction << " </value>" << std::endl
+                << "    <error> " << error << " </error>" << std::endl
+                << "  </crosssection>" << std::endl; 
+    }    
+  }
+
+  //=============================================================================
+  //  Add pythia cross-sections in the xml file
+  //=============================================================================
+
+  void addGeneratorCrossSections(LHCb::GenFSR& genFSR, std::ostream& xmlOutput)
+  { 
+    for(auto const& cross : genFSR.crossSections())
+    {
+      auto key = cross.first;
+      std::string name = cross.second.first;
+      name.erase(name.size() - 2);
+      
+      longlong number = genFSR.getGenCounterInfo(key+100).second;      
+      double value = cross.second.second;
+      
+      xmlOutput << "  <crosssection id = \"" << key << "\">" << std::endl
+                << "    <description> \"" << name << "\" </description>" << std::endl
+                << "    <generated> " <<  number  << " </generated>" << std::endl
+                << "    <value> " <<  value << " </value>" << std::endl
+                << "  </crosssection>" << std::endl;
+    }
+  }
+}
+      
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( GenFSRLog )
-
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 GenFSRLog::GenFSRLog( const std::string& name,
-                          ISvcLocator* pSvcLocator)
+                      ISvcLocator* pSvcLocator)
 : GaudiAlgorithm ( name , pSvcLocator )
-{
-  // expect the data to be written at LHCb::GenFSRLocation::Default
-  declareProperty( "FileRecordLocation" , m_fileRecordName = "/FileRecords"        );
-  declareProperty( "FSRName"            , m_FSRName        = "/GenFSR"             );
-  declareProperty( "FileName"           , m_xmlFileName    = "GeneratorLogFSR.xml" );
+{  
 }
 
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode GenFSRLog::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+StatusCode GenFSRLog::initialize() 
+{
+  StatusCode sc = GaudiAlgorithm::initialize();  // must be executed first
 
+  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   // get the File Records service
-  m_fileRecordSvc = service("FileRecordDataSvc", true);
+  m_fileRecordSvc = Gaudi::svcLocator()->service("FileRecordDataSvc");
 
-  // prepare navigator tool
   m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");
 
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode GenFSRLog::execute() {
-
+StatusCode GenFSRLog::execute()
+{  
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-  return StatusCode::SUCCESS;
+  return StatusCode::SUCCESS;  
 }
 
 //=============================================================================
@@ -81,8 +257,8 @@ StatusCode GenFSRLog::execute() {
 StatusCode GenFSRLog::finalize() {
 
   if (msgLevel(MSG::DEBUG)) debug() << "==> Finalize" << endmsg;
-
-  GenFSRLog::printXmlFSR();
+  
+  GenFSRLog::printFSR();
 
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
@@ -93,293 +269,75 @@ StatusCode GenFSRLog::finalize() {
 //  Print the GenFSR in a file xml
 //=============================================================================
 
-void GenFSRLog::printXmlFSR()
+void GenFSRLog::printFSR()
 {
-  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_xmlFileName << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << "write to file: " + m_xmlOutputName << endmsg;
 
-  // root of store
-  std::string fileRecordRoot = m_fileRecordName;
   // make an inventory of the FileRecord store
-  auto addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
+  auto addresses = m_navigatorTool->navigate(m_fileRecordName, m_FSRName);
 
-  if( !addresses.empty() ) {
-    m_xmlFile.open(m_xmlFileName.c_str());
+  if( !addresses.empty() ) 
+  {
+    std::ofstream xmlOutput(m_xmlOutputName, std::fstream::out);
 
-    if (m_xmlFile.is_open())
+    if (xmlOutput.is_open())
     {
-      if (msgLevel(MSG::DEBUG)) debug() << " Xml file: " << m_xmlFileName << " - opened" << endmsg;
+      if (msgLevel(MSG::DEBUG)) debug() << " Xml Output: " + m_xmlOutputName + " - opened" << endmsg;
 
-      m_xmlFile << "<?xml version=\"1.0\"?>" << std::endl
+      xmlOutput << "<?xml version=\"1.0\"?>" << std::endl
                 << "<generatorCounters>" << std::endl
                 << "  <version>" << "1.1" << "</version>" << std::endl;
 
-      for(auto iAddr=addresses.begin(); iAddr!=addresses.end(); iAddr++) {
-        std::string genRecordAddress = *iAddr;
+      for(const auto& genRecordAddress: addresses)
+      {
+        DataObject *obj = nullptr;        
+        StatusCode sc = m_fileRecordSvc->retrieveObject(genRecordAddress, obj);
 
-        // read GenFSR
-        LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc.get(), genRecordAddress);
+        if(!sc.isSuccess())
+        {
+          error() << "Unable to retrieve object '" << genRecordAddress << "'" << endmsg;  
+          continue;
+        }
 
-        if (!genFSR) {
-          Warning("A genFSR record was not found").ignore();
+        LHCb::GenFSR* genFSR = dynamic_cast<LHCb::GenFSR*>(obj);
 
+        if (genFSR == nullptr)
+        {
+          warning() << "genFSR record was not found" << endmsg;
           if (msgLevel(MSG::DEBUG)) debug() << genRecordAddress << " not found" << endmsg;
-        } else {
+        }  
+        else 
+        {
           int evtType = genFSR->getSimulationInfo("evtType", 0);
           std::string genName = genFSR->getSimulationInfo("hardGenerator", "");
           std::string method = genFSR->getSimulationInfo("generationMethod", "");
 
-          m_xmlFile << "  <eventType> " << evtType << " </eventType>" << std::endl;
+          xmlOutput << "  <eventType> " << evtType << " </eventType>" << std::endl;
 
           // Add generator level counters
-          GenFSRLog::addGenCounters(genFSR);
+          ::addGenCounters(*genFSR, xmlOutput);
           // Add generator level cut efficiencies
-          GenFSRLog::addCutEfficiencies(genFSR);
+          ::addCutEfficiencies(*genFSR, xmlOutput);
           // Add generator level fractions
-          GenFSRLog::addGenFractions(genFSR);
+          ::addGenFractions(*genFSR, xmlOutput);
           // Add generator level cross-sections
-          GenFSRLog::addGenCrossSections(genFSR);
+          ::addGenCrossSections(*genFSR, xmlOutput);
 
-          m_xmlFile << "  <method> " << method << " </method>" << std::endl;
-          m_xmlFile << "  <generator> " << genName << " </generator>" << std::endl;
+          xmlOutput << "  <method> " << method << " </method>" << std::endl;
+          xmlOutput << "  <generator> " << genName << " </generator>" << std::endl;
 
           // Add pythia cross-sections
-          GenFSRLog::addGeneratorCrossSections(genFSR);
+          ::addGeneratorCrossSections(*genFSR, xmlOutput);
         }
       }
 
-      m_xmlFile << "</generatorCounters>" << std::endl;
-      m_xmlFile.close();
-    } else if (msgLevel(MSG::DEBUG)) debug() << "The file was not opened correctly" << endmsg;
-  } else if (msgLevel(MSG::DEBUG)) debug() << "There are not FSRs to write" << endmsg;
-
+      xmlOutput << "</generatorCounters>" << std::endl;
+      xmlOutput.close();
+    } 
+    else if (msgLevel(MSG::DEBUG)) 
+      debug() << "The file was not opened correctly" << endmsg;
+  } 
+  else if (msgLevel(MSG::DEBUG)) 
+    debug() << "There are not FSRs to write" << endmsg;
 }
-
-
-//=============================================================================
-//  Add generator level counters in the xml file
-//=============================================================================
-
-void GenFSRLog::addGenCounters(LHCb::GenFSR* genFSR)
-{
-
-  LHCb::GenFSR::GeneratorCounter::iterator icounter;
-  LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-
-  int key = 0;
-  std::string name = "", fullName = "";
-
-  LHCb::GenCountersFSR counterFSR;
-  std::map<std::string,std::string> mapCounter = counterFSR.getFullNames();
-
-  for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {
-    key = icounter->first;
-
-    if(key > 24) continue;
-    if(key == 6 || key == 7) continue;
-
-    name = LHCb::GenCountersFSR::CounterKeyToString(key);
-    fullName = mapCounter[name];
-    longlong value = (icounter->second).second;
-
-    m_xmlFile << "  <counter name = \"" << fullName << "\">" << std::endl
-              << "    <value> " << value << " </value>" << std::endl
-              << "  </counter>" << std::endl;
-  }
-}
-
-
-//=============================================================================
-//  Add generator level cut efficiencies in the xml file
-//=============================================================================
-
-void GenFSRLog::addCutEfficiencies(LHCb::GenFSR* genFSR)
-{
-  LHCb::GenFSR::GeneratorCounter::iterator icounter;
-  LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-
-  int key = 0;
-  std::string name = "", fullName = "";
-
-  LHCb::GenCountersFSR crossFSR;
-  std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
-
-  for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {
-    key = icounter->first;
-
-    if(key == 28)
-    {
-      name = LHCb::GenCountersFSR::CounterKeyToString(key);
-      fullName = mapCross[name];
-      longlong value = (icounter->second).second;
-
-      m_xmlFile << "  <counter name = \"" << fullName << "\">" << std::endl
-                << "    <value> " << value << " </value>" << std::endl
-                << "  </counter>" << std::endl;
-    }
-
-    if(key !=  7 && key != 27 && key != 94 && key != 96) continue;
-
-    name = LHCb::GenCountersFSR::CounterKeyToString(key);
-    fullName = mapCross[name];
-
-    longlong after = 0, before = 0;
-    double fraction = 0, error = 0;
-
-    before = genFSR->getDenominator(key);
-
-    if(before == 0) continue;
-
-    after    = icounter->second.second;
-    fraction = genFSR->getEfficiency(after, before);
-    error    = genFSR->getEfficiencyError(after, before);
-
-    m_xmlFile << "  <efficiency name = \"" << fullName << "\">" << std::endl
-              << "    <after> " << after << " </after>" << std::endl
-              << "    <before> " << before << " </before>" << std::endl
-              << "    <value> " << fraction << " </value>" << std::endl
-              << "    <error> " << error << " </error>" << std::endl
-              << "  </efficiency>" << std::endl;
-  }
-}
-
-
-//=============================================================================
-//  Add generator level fractions in the xml file
-//=============================================================================
-
-void GenFSRLog::addGenFractions(LHCb::GenFSR* genFSR)
-{
-
-  LHCb::GenFSR::GeneratorCounter::iterator icounter;
-  LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-
-  int key = 0;
-  std::string name = "", fullName = "";
-
-  LHCb::GenCountersFSR crossFSR;
-  std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
-
-  for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {
-    key = icounter->first;
-
-    if(key < 30) continue;
-    if(key > 99) continue;
-
-    name = LHCb::GenCountersFSR::CounterKeyToString(key);
-    fullName = mapCross[name];
-
-    longlong after = 0, before = 0;
-    double fraction = 0, error = 0;
-
-    before = genFSR->getDenominator(key);
-
-    if(before == 0) continue;
-
-    after    = icounter->second.second;
-    fraction = genFSR->getEfficiency(after, before);
-    error    = genFSR->getEfficiencyError(after, before);
-
-    m_xmlFile << "  <fraction name = \"" << fullName << "\">" << std::endl
-              << "    <number> " << after << " </number>" << std::endl
-              << "    <value> " << fraction << " </value>" << std::endl
-              << "    <error> " << error << " </error>" << std::endl
-              << "  </fraction>" << std::endl;
-  }
-}
-
-
-//=============================================================================
-//  Add generator level cross-sections in the xml file
-//=============================================================================
-
-void GenFSRLog::addGenCrossSections(LHCb::GenFSR* genFSR)
-{
-
-  LHCb::GenFSR::GeneratorCounter::iterator icounter;
-  LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-
-  int key = 0;
-  std::string name = "", fullName = "";
-
-  LHCb::GenCountersFSR counterFSR;
-  std::map<std::string,std::string> mapCounter = counterFSR.getFullNames();
-
-  for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {
-    key = icounter->first;
-
-    if(key > 24) continue;
-    if(key == 6 || key == 7) continue;
-
-    name = LHCb::GenCountersFSR::CounterKeyToString(key);
-    fullName = mapCounter[name];
-
-    longlong after = 0, before = 0;
-    double fraction = 0, error = 0;
-    bool flag = true;
-    double C = 1;
-
-    before = genFSR->getDenominator(key);
-
-    if(before == 0) continue;
-
-    if(key >= 10)
-    {
-      int keycs = LHCb::CrossSectionsFSR::CrossSectionKeyToType("MBCrossSection");
-      C = genFSR->getCrossSectionInfo(keycs).second;
-    }
-
-    if(key == 2) after = genFSR->getGenCounterInfo(key+1).second;
-    else after = icounter->second.second;
-    if(after == 0) continue;
-    fraction = genFSR->getEfficiency(after, before, C);
-
-    name =  LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
-    if(name == "MeanNoZeroPUInt" || name == "MeanPUInt" || name == "MeanPUIntAcc") flag = false;
-    else flag = true;
-
-    error = genFSR->getEfficiencyError(after, before, C, flag);
-
-    m_xmlFile << "  <crosssection name = \"" << fullName << "\">" << std::endl
-              << "    <generated> " <<  after  << " </generated>" << std::endl
-              << "    <value> " << fraction << " </value>" << std::endl
-              << "    <error> " << error << " </error>" << std::endl
-              << "  </crosssection>" << std::endl;
-  }
-}
-
-
-//=============================================================================
-//  Add pythia cross-sections in the xml file
-//=============================================================================
-
-void GenFSRLog::addGeneratorCrossSections(LHCb::GenFSR* genFSR)
-{
-
-  LHCb::GenFSR::CrossSection::iterator icross;
-  LHCb::GenFSR::CrossSection crossSections = genFSR->getCrossSections();
-
-  int key = 0;
-  std::string name = "", line = "";
-
-  for(icross = crossSections.begin(); icross != crossSections.end(); icross++)
-  {
-    key = icross->first;
-    name = icross->second.first;
-
-    longlong number = genFSR->getGenCounterInfo(key+100).second;
-    double value = icross->second.second;
-
-    m_xmlFile << "  <crosssection id = \"" << key << "\">" << std::endl
-              << "    <description> \"" << name << "\" </description>" << std::endl
-              << "    <generated> " <<  number  << " </generated>" << std::endl
-              << "    <value> " <<  value << " </value>" << std::endl
-              << "  </crosssection>" << std::endl;
-  }
-}
-
-
 
