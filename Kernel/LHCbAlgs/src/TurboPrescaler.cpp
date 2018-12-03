@@ -16,7 +16,6 @@
 #include "GaudiAlg/ISequencerTimerTool.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
 #include "Kernel/IANNSvc.h"
-#include "DeterministicPrescaler.h"
 // local
 #include "TurboPrescaler.h"
 
@@ -324,27 +323,20 @@ void TurboPrescaler::setupPrescalers()
 
 void TurboPrescaler::updatePrescalers()
 {
-  for ( const auto & i : m_prescalesInput )
-  {
-    auto * pre = dynamic_cast<DeterministicPrescaler*>(prescalers[i.first]);
-
+  for ( const auto & i : m_prescalesInput ) {
+    auto * pre = prescalers[i.first];
     if ( !pre ) continue;
 
     auto j = m_outputPS.find(i.first);
-    if ( j != m_outputPS.end() )
-    {
-      if ( (*j).second > 0.0 )
-      {
-        const double ratio = (*j).second / i.second;
-        if ( ratio <= 1.0 )
-        {
+    if ( j != m_outputPS.end() ) {
+      if ( j->second > 0.0 ) {
+        const double ratio = j->second / i.second;
+        if ( ratio <= 1.0 ) {
           DoubleProperty acceptFractionProperty( "AcceptFraction", ratio);
           pre->setProperty(acceptFractionProperty);
-        }
-        else
-        {
+        } else {
           warning() << "*********************************************************************************" << endmsg;
-          warning() << "OUTPUT HAS LARGER PRESCALE THAN INPUT, CANNOT CREATE EVENTS. LEAVING AS UNITY" << endmsg;
+          warning() << "OUTPUT HAS LARGER ACCEPTFRACTION THAN INPUT, CANNOT CREATE EVENTS. LEAVING AS UNITY" << endmsg;
           warning() << "*********************************************************************************" << endmsg;
           DoubleProperty acceptFractionProperty( "AcceptFraction", 1.0);
           pre->setProperty(acceptFractionProperty);
