@@ -365,8 +365,8 @@ class IOHelper(object):
             evtDataSvc = EventDataSvc()
 
         evtDataSvc.RootCLID = 1
+        evtDataSvc.ForceLeaves = 1
         if evtDataSvc.getType() in [ 'EvtDataSvc', 'HiveWhiteBoard' ]:
-            evtDataSvc.ForceLeaves = 1
             evtDataSvc.EnableFaultHandler = True
 
         # Set up the IO
