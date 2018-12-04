@@ -484,15 +484,18 @@ namespace LHCb::Event
       /// Retrieve  Container of all the states
       auto& states() { return m_states; };
 
+      void addToAncestors( const Track& ancestor ) { m_ancestors.push_back( &ancestor ); };
+      const std::vector<const Track*> ancestors() const { return m_ancestors; }
+
     protected:
     public:
-      double matchNnChi2 = std::numeric_limits<double>::signaling_NaN();
       double forwardPatQuality = std::numeric_limits<double>::signaling_NaN();
     private:
       Chi2PerDoF                                  m_chi2PerDoF{};
       unsigned int                                m_flags{0};              ///< The variety of track flags
       std::vector<LHCbID>                         m_lhcbIDs{};             ///< Container of (sorted) LHCbIDs
       std::vector<State>                          m_states{}; ///< Container with pointers to all the states
+      std::vector<const Track*> m_ancestors;
 
       /// Make sure that the offset is the sum of the previous entries
       enum flagsMasks : uint32_t {
