@@ -36,7 +36,7 @@ struct ICaloFutureSubClusterTag : extend_interfaces<ICaloFutureClusterTool>
    *  @param cluster pointer to ClaoCluster object to be selected/tagged 
    *  @return status code 
    */
-  virtual StatusCode tag(LHCb::CaloCluster* cluster)const = 0;
+  virtual StatusCode tag(LHCb::CaloCluster& cluster)const = 0;
   
   virtual void setMask(const LHCb::CaloDigitStatus::Status mask)const=0;
   virtual unsigned int mask()const =0;
@@ -45,7 +45,7 @@ struct ICaloFutureSubClusterTag : extend_interfaces<ICaloFutureClusterTool>
    *  @param cluster pointer to ClaoCluster object to be untagged 
    *  @return status code 
    */
-  virtual StatusCode untag ( LHCb::CaloCluster* cluster ) const = 0 ;
+  virtual StatusCode untag ( LHCb::CaloCluster& cluster ) const = 0 ;
   
 };
 

@@ -45,13 +45,13 @@ struct ICaloFutureHypoTool: extend_interfaces<IAlgTool>
    *  @param  hypo  pointer to CaloHypo object to be processed
    *  @return status code 
    */  
-  virtual StatusCode process    ( LHCb::CaloHypo* hypo  ) const = 0 ;
+  virtual StatusCode process    ( LHCb::CaloHypo& hypo  ) const = 0 ;
   
   /** The main processing method (functor interface)
    *  @param  hypo  pointer to CaloHypo object to be processed
    *  @return status code 
    */  
-  virtual StatusCode operator() ( LHCb::CaloHypo* hypo  ) const = 0 ;
+  virtual StatusCode operator() ( LHCb::CaloHypo& hypo  ) const = 0 ;
   
 };
 
