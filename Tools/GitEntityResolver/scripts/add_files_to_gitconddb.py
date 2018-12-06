@@ -40,27 +40,30 @@ def git_conddb_extend(source, dest, since=IOV_MIN, until=IOV_MAX):
 def main():
     from optparse import OptionParser
     parser = OptionParser(usage='%prog [options] source destination')
-    parser.add_option('--since',
-                      help='start of validity for the files')
-    parser.add_option('--until',
-                      help='end of validity for the files')
+    parser.add_option('--since', help='start of validity for the files')
+    parser.add_option('--until', help='end of validity for the files')
 
-    parser.add_option('--quiet',
-                      action='store_const', const=logging.WARNING,
-                      dest='log_level',
-                      help='minimal output messages [default]')
-    parser.add_option('--verbose',
-                      action='store_const', const=logging.INFO,
-                      dest='log_level',
-                      help='print more details')
-    parser.add_option('--debug',
-                      action='store_const', const=logging.DEBUG,
-                      dest='log_level',
-                      help='debug printout')
+    parser.add_option(
+        '--quiet',
+        action='store_const',
+        const=logging.WARNING,
+        dest='log_level',
+        help='minimal output messages [default]')
+    parser.add_option(
+        '--verbose',
+        action='store_const',
+        const=logging.INFO,
+        dest='log_level',
+        help='print more details')
+    parser.add_option(
+        '--debug',
+        action='store_const',
+        const=logging.DEBUG,
+        dest='log_level',
+        help='debug printout')
 
-    parser.set_defaults(since=IOV_MIN,
-                        until=IOV_MAX,
-                        log_level=logging.WARNING)
+    parser.set_defaults(
+        since=IOV_MIN, until=IOV_MAX, log_level=logging.WARNING)
 
     opts, args = parser.parse_args()
     logging.basicConfig(level=opts.log_level)
