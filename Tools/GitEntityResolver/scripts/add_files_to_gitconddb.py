@@ -37,11 +37,16 @@ def git_conddb_extend(source,
     logging.debug('adding %s to %s, from %d to %d', source, dest, since, until)
     if dest_root is None:
         dest_root = dest
-    for root, _, filenames in os.walk(source):
-        for f in filenames:
-            src_file = os.path.join(root, f)
-            dst_file = os.path.join(dest, os.path.relpath(src_file, source))
-            git_conddb_add_file(src_file, dst_file, dest_root, since, until)
+    if os.path.isfile(source):
+        git_conddb_add_file(source, dest, dest_root, since, until)
+    else:
+        for root, _, filenames in os.walk(source):
+            for f in filenames:
+                src_file = os.path.join(root, f)
+                dst_file = os.path.join(dest, os.path.relpath(
+                    src_file, source))
+                git_conddb_add_file(src_file, dst_file, dest_root, since,
+                                    until)
 
 
 def guess_root(path):

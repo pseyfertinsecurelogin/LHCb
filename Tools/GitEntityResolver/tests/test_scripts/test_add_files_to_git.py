@@ -407,3 +407,25 @@ def test_add_subdir():
     }
     for name, input in cases.items():
         yield check_add_subdir, name, input, expected
+
+
+@with_setup(setup, teardown)
+def check_add_file(name, input, expected):
+    dumptree({name + '.xml': input}, 'source', True)
+    subprocess.check_output(['git', 'init', 'dest'])
+    S.git_conddb_extend(
+        'source/%s.xml' % name, 'dest/A/B/C/%s.xml' % name, dest_root='dest')
+    output = open('dest/A/B/C/%s.xml' % name).read()
+    print(name, repr(output))
+    assert output == expected
+
+
+def test_add_file():
+    # see https://its.cern.ch/jira/browse/LHCBPS-1815
+    expected = '<!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd">\n'
+    cases = {
+        'relative': '<!DOCTYPE DDDB SYSTEM "../../../DTD/structure.dtd">\n',
+        'git': '<!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd">\n'
+    }
+    for name, input in cases.items():
+        yield check_add_file, name, input, expected
