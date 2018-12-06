@@ -314,7 +314,8 @@ StatusCode LHCb::compressBuffer(int           algtype,
     case 9:
       in_len = src_len;
       out_len = tar_len;
-      ::R__zipMultipleAlgorithm(algtype, &in_len, src, &out_len, tar, &res_len, ROOT::kZLIB);
+      ::R__zipMultipleAlgorithm(algtype, &in_len, src, &out_len, tar, &res_len,
+                                ROOT::RCompressionSetting::EAlgorithm::kZLIB);
       if (res_len == 0 || size_t(res_len) >= src_len) {
         //this happens when the buffer cannot be compressed
         res_len = 0;

@@ -84,7 +84,7 @@ public:
   /// Return the internal buffer.
   const buffer_type& buffer() { return m_buffer; }
   /// Compress the buffer
-  bool compress(ROOT::ECompressionAlgorithm algorithm, int level, buffer_type& output) const;
+  bool compress(ROOT::RCompressionSetting::EAlgorithm::EValues algorithm, int level, buffer_type& output) const;
 
   /// Skip reading n bytes.
   std::size_t readNull(std::size_t n) {
@@ -262,7 +262,7 @@ public:
   /// Return a reference to the internal buffer.
   const std::vector<uint8_t>& buffer() { return m_buffer.buffer(); }
   /// Compress the buffer
-  bool compress(ROOT::ECompressionAlgorithm algorithm, int level, ByteBuffer::buffer_type& output) const {
+  bool compress(ROOT::RCompressionSetting::EAlgorithm::EValues algorithm, int level, ByteBuffer::buffer_type& output) const {
     return m_buffer.compress(algorithm, level, output);
   }
   /// Function called by serializable objects' save method.
