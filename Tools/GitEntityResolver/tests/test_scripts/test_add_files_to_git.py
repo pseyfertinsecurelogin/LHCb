@@ -368,3 +368,22 @@ def test_add_remove_iov():
     S.git_conddb_extend('source', 'dest')
     pprint(tree('dest'))
     assert tree('dest') == src
+
+
+def check_add_subdir(name, input, expected):
+    dumptree({name + '.xml': input}, 'source', True)
+    S.git_conddb_extend('source', 'dest/A/B/C')
+    output = open('dest/A/B/C/%s.xml' % name).read()
+    print(name, repr(output))
+    assert output == expected
+
+
+def test_add_subdir():
+    # see https://its.cern.ch/jira/browse/LHCBPS-1815
+    expected = '<!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd">\n'
+    cases = {
+        'relative': '<!DOCTYPE DDDB SYSTEM "../../../DTD/structure.dtd">\n',
+        'git': '<!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd">\n'
+    }
+    for name, input in cases.items():
+        yield check_add_subdir, name, input, expected
