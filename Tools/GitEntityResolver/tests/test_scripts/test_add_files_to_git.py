@@ -15,6 +15,8 @@ from __future__ import print_function
 import os
 import shutil
 import tempfile
+import subprocess
+from nose.tools import raises, with_setup
 
 from pprint import pprint
 
@@ -59,9 +61,10 @@ def setup():
 def teardown():
     'clean up'
     global TMP_DIR
-    os.chdir(os.pardir)
-    shutil.rmtree(TMP_DIR)
-    TMP_DIR = None
+    if TMP_DIR and os.path.isdir(TMP_DIR):
+        os.chdir(os.pardir)
+        shutil.rmtree(TMP_DIR)
+        TMP_DIR = None
 
 
 def test_from_scratch():
@@ -367,9 +370,29 @@ def test_add_remove_iov():
     assert tree('dest') == src
 
 
+def test_guess_root():
+    subprocess.check_output(['git', 'init', 'root'])
+    root = os.path.abspath('root')
+    os.makedirs(os.path.join(root, 'A', 'B', 'C'))
+    with open(os.path.join(root, 'A', 'B', 'C', 'f.xml'), 'w') as f:
+        f.write('')
+
+    assert S.guess_root(root) == root
+    assert S.guess_root(os.path.join(root, 'A')) == root
+    assert S.guess_root(os.path.join(root, 'A', 'B', 'C', 'f.xml')) == root
+    assert S.guess_root(os.path.join(root, 'A', 'B', 'C', 'D')) == root
+
+
+@raises(subprocess.CalledProcessError)
+def test_guess_root_exception():
+    S.guess_root('/')
+
+
+@with_setup(setup, teardown)
 def check_add_subdir(name, input, expected):
     dumptree({name + '.xml': input}, 'source', True)
-    S.git_conddb_extend('source', 'dest/A/B/C')
+    subprocess.check_output(['git', 'init', 'dest'])
+    S.git_conddb_extend('source', 'dest/A/B/C', dest_root='dest')
     output = open('dest/A/B/C/%s.xml' % name).read()
     print(name, repr(output))
     assert output == expected

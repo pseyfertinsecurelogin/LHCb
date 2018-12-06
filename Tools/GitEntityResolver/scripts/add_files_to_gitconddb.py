@@ -14,6 +14,7 @@ Script to add a set of files to Git CondDB (for an optional IOV).
 '''
 import os
 import logging
+from subprocess import check_output, STDOUT, CalledProcessError
 from GitCondDB.IOVs import IOV_MIN, IOV_MAX
 from GitCondDB.Payload import fix_system_refs, fix_lines_ends
 from GitCondDB._helpers import _add_file
@@ -23,18 +24,33 @@ def git_conddb_add_file(source, dest, root, since=IOV_MIN, until=IOV_MAX):
     '''
     copy a file to a Git CondDB location for the given IOV
     '''
-    logging.debug('adding %s', os.path.relpath(source, root))
+    logging.debug('adding %s', os.path.relpath(dest, root))
     data = fix_lines_ends(fix_system_refs(open(source).read(), root, dest))
     _add_file(data, dest, (since, until))
 
 
-def git_conddb_extend(source, dest, since=IOV_MIN, until=IOV_MAX):
+def git_conddb_extend(source,
+                      dest,
+                      since=IOV_MIN,
+                      until=IOV_MAX,
+                      dest_root=None):
     logging.debug('adding %s to %s, from %d to %d', source, dest, since, until)
+    if dest_root is None:
+        dest_root = dest
     for root, _, filenames in os.walk(source):
         for f in filenames:
             src_file = os.path.join(root, f)
             dst_file = os.path.join(dest, os.path.relpath(src_file, source))
-            git_conddb_add_file(src_file, dst_file, source, since, until)
+            git_conddb_add_file(src_file, dst_file, dest_root, since, until)
+
+
+def guess_root(path):
+    logging.debug('looking for DB root of %s', path)
+    while not os.path.isdir(path):
+        path = os.path.dirname(path)
+    return check_output(['git', 'rev-parse', '--show-toplevel'],
+                        cwd=path,
+                        stderr=STDOUT).strip()
 
 
 def main():
@@ -53,6 +69,11 @@ def main():
         type=int,
         default=IOV_MAX,
         help='end of validity for the files')
+
+    parser.add_argument(
+        '--dest-root',
+        help='root directory of the destination database, required only if it'
+        ' cannot be guessed')
 
     parser.add_argument(
         '--quiet',
@@ -78,7 +99,15 @@ def main():
     args = parser.parse_args()
     logging.basicConfig(level=args.log_level)
 
-    git_conddb_extend(args.source, args.destination, args.since, args.until)
+    if args.dest_root is None:
+        try:
+            args.dest_root = guess_root(args.destination)
+        except CalledProcessError:
+            parser.error('destination %s does not seem in a Git repository, '
+                         'use --dest-root' % args.destination)
+
+    git_conddb_extend(args.source, args.destination, args.since, args.until,
+                      args.dest_root)
 
 
 if __name__ == '__main__':
