@@ -36,6 +36,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         self._compare(stdout, causes, result, counter_preproc, 'Counters' )
         # check the 1D histograms
         self._compare(stdout, causes, result, counter_preproc, '1DHistograms' )
+        # check the 1D profile histograms
+        self._compare(stdout, causes, result, counter_preproc, '1DProfiles' )
 
     def _extract(self, s, counter_preproc=None, comp_type='Counters'):
         """
@@ -51,6 +53,10 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             firstValueIndex = 1
         elif comp_type == '1DHistograms' :
             counterStartRE  = re.compile('^([^. ]*)[. ]+SUCCESS 1D histograms in directory ([^. ]*) : (\d+)$')
+            nCountersIndex  = 3
+            firstValueIndex = 2
+        elif comp_type == '1DProfiles' :
+            counterStartRE  = re.compile('^([^. ]*)[. ]+SUCCESS 1D profile histograms in directory ([^. ]*) : (\d+)$')
             nCountersIndex  = 3
             firstValueIndex = 2
         if counter_preproc:
@@ -120,8 +126,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 for n in range(1, len(value)):
                     if self._floatDiffer(ref[n], value[n], sensibility): return False
 
-        # Handle 1D Histos
-        if comp_type == '1DHistograms' :
+        # Handle 1D Histos and Profiles
+        if comp_type == '1DHistograms' or comp_type == '1DProfiles' :
  
             # First value is count so check without precision
             if ref[0] != value[0] : return False
