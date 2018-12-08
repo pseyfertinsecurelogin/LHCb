@@ -15,7 +15,6 @@
 #include "Event/Measurement.h"
 #include "Event/Node.h"
 #include "Event/State.h"
-#include "Event/TrackFitResult.h"
 #include "Event/TrackParameters.h"
 #include "Event/TrackTags.h"
 #include "GaudiKernel/GaudiException.h"
@@ -191,59 +190,13 @@ namespace LHCb::Event
                       Selected     = 64, //
                       L0Candidate  = 128)//
 
-      /// Additional information assigned to this Track by pattern recognition
-      meta_enum_class(AdditionalInfo, int,
-                      Unknown = 0,        //
-                      DC06Likelihood = 1, // The Likelihood the track is real. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      PatQuality     = 2, // Quality variable from PatForward Tracking
-                      Cand1stQPat    = 3, //  Quality of the first candidate
-                      Cand2ndQPat    = 4, //  Quality of the second candidate
-                      NCandCommonHits   = 5,  //  NCand with common hits
-                      Cand1stChi2Mat    = 6,  //  Chi2 of the first candidate
-                      Cand2ndChi2Mat    = 7,  //  Chi2 of the second candidate
-                      DC06nExpectedVelo = 10, // number of expected Velo hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      DC06nExpectedTT   = 11, // number of expected TT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      DC06nExpectedIT   = 12, // number of expected IT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      DC06nExpectedOT   = 13, // number of expected OT hits. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      MatchChi2         = 16, // Chi2 from the velo-seed matching (TrackMatching)
-                      FitVeloChi2       = 17, // Chi2 of the velo segment (from TrackFitResult)
-                      FitVeloNDoF       = 18, // NDoF of the velo segment chisq
-                      FitTChi2          = 19, // Chi2 of the T station segment (from TrackFitResult)
-                      FitTNDoF          = 20, // NDoF of the T station segment chisq
-                      FitMatchChi2      = 21, // Chi2 of the breakpoint between T and TT (from TrackFitResult)
-                      FitFracUsedOTTimes = 25, // Fraction of OT hits for which drifttime is used in fit
-                      TsaLikelihood      = 32, // Likelihood from tsa seeding
-                      CloneDist =
-                      101, // Track is flagged as being a (rejected) clone of another track. Value is the KL clone distance
-                      DC06GhostProbability =
-                      102, //  gives the NN ghost probability. OBSOLETE, may exist on DC06 DSTs and some 2007/09 files
-                      nPRVeloRZExpect    = 103, // Number of expected Velo clusters from VELO RZ pattern recognition
-                      nPRVelo3DExpect    = 104, // Number of expected Velo clusters from VELO 3D pattern recognition
-                      AdditionalInfo201  = 201, // OBSOLETE, may exist in some 2008/09 files
-                      AdditionalInfo202  = 202, // OBSOLETE, may exist in some 2008/09 files
-                      MuonChi2perDoF     = 300, // Chi2/nDoF of muon track fit
-                      MuonMomentumPreSel = 301, // 1 if pass Momentum pre-selection, 0 if not
-                      MuonInAcceptance   = 302, // 1 if in Muon system InAcceptance, 0 if not
-                      IsMuonLoose        = 303, // 1 if pass IsMuonLoose criteria, 0 if not
-                      IsMuon             = 304, // 1 if pass IsMuon criteria, 0 if not
-                      MuonDist2          = 305, // Squared distance of the closest muon hit to the extrapolated track
-                      MuonDLL            = 306, // DLL (from muon system only)
-                      MuonNShared = 307, // NShared (number of additional IsMuon tracks with at least one shared hit with the current
-                      // track and a smaller Dist value)
-                      MuonCLQuality = 308, // CLQuality
-                      MuonCLArrival = 309, // CLArrival
-                      IsMuonTight   = 310) // 1 if pass IsMuonTight criteria, 0 if not
       } // namespace TrakcEnums
     
     class Track final
     {
     public:
-      /// Vector of additional information
-      typedef GaudiUtils::VectorMap<int, double> ExtraInfo;
       /// Container for LHCbIDs on track
       typedef std::vector<LHCbID> LHCbIDContainer;
-      /// Container for Measurements on track
-      typedef std::vector<Measurement const*> MeasurementContainer;
       /// Container for States on track
       typedef std::vector<State> StateContainer;
       /// Range of pointers to nodes on track. For non-const access, use fitresult.
@@ -260,7 +213,6 @@ namespace LHCb::Event
       using PatRecStatus = Enum::Track::PatRecStatus;
       using FitStatus = Enum::Track::FitStatus;
       using Flag = Enum::Track::Flag;
-      using AdditionalInfo = Enum::Track::AdditionalInfo;
 
       /// Retrieve the position and momentum vectors and the corresponding 6D covariance matrix (pos:0->2,mom:3-5) at
       /// the first state
@@ -338,9 +290,6 @@ namespace LHCb::Event
       /// Sets POverQ adn ErrQOverP2 for all states
       void setQOverPAndErrInAllStates( float const qop, float const err );
 
-      /// Retrieve vector with measurements on the track
-      MeasurementContainer measurements() const;
-
       /// Const retrieve the nodes on the track
       ConstNodeRange nodes() const;
 
@@ -377,9 +326,6 @@ namespace LHCb::Event
       /// Retrieve the number of LHCbIDs on the track
       unsigned int nLHCbIDs() const { return m_lhcbIDs.size(); };
 
-      /// Retrieve the number of Measurements on the track
-      unsigned int nMeasurements() const { return m_fitResult ? m_fitResult->nActiveMeasurements() : 0; };
-
       /// Add an LHCbID to the list of LHCbIDs associated to the track. Return true if LHCbID was not yet on track.
       bool addToLhcbIDs( LHCbID const& value );
 
@@ -408,15 +354,6 @@ namespace LHCb::Event
 
       /// Remove an LHCbID from the list of LHCbIDs associated to the track
       void removeFromLhcbIDs( LHCbID const& value );
-
-      /// Set pointer to object holding track fit data. Track becomes owner.
-      void setFitResult( std::unique_ptr<TrackFitResult> trackfit );
-
-      /// get pointer to the object holding the trackfit data.
-      TrackFitResult* fitResult() { return m_fitResult.ptr(); };
-
-      /// get const pointer to the object holding the trackfit data.
-      TrackFitResult const* fitResult() const { return m_fitResult.ptr(); };
 
       /// Check the type of the track (see the Type enum)
       bool checkType( Type const value ) const { return type() == value; };
@@ -451,60 +388,17 @@ namespace LHCb::Event
       /// Check if track is of a type that goes thro UT
       bool hasUT() const;
 
-      /// Retrieve the number of Measurements removed by the track fit (the number of LHCbIDs remains unchanged)
-      unsigned int nMeasurementsRemoved() const { return m_fitResult ? m_fitResult->nOutliers() : 0; };
-
       /// Check whether the given LHCbID is on the track
       bool isOnTrack( LHCbID const value ) const;
 
-      /// Return the measurement on the track corresponding to the input LHCbID. Call first the "isMeasurementOnTrack"
-      /// method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking
-      /// code, not for general use.)
-      const Measurement* measurement( LHCbID const value ) const
-      {
-        return m_fitResult ? m_fitResult->measurement( value ) : nullptr;
-      };
-
       /// printOut method to Gaudi message stream
       std::ostream& fillStream( std::ostream& os ) const;
-
-      /// Check whether the track has information for the specified key
-      bool hasInfo( AdditionalInfo const key ) const
-      {
-        return m_extraInfo.end() != m_extraInfo.find( static_cast<int>( key ) );
-      };
-
-      /// Add new information, associated with the specified key. This method cannot be used to modify information for
-      /// an already existing key
-      bool addInfo( AdditionalInfo const key, double const info );
-
-      /// Extract the information associated with the specified key. If there is no such information the default value
-      /// will be returned.
-      double info( AdditionalInfo const key, double const def ) const;
-
-      /// Erase the information associated with the specified key
-      ExtraInfo::size_type eraseInfo( AdditionalInfo const key )
-      {
-        return m_extraInfo.erase( static_cast<int>( key ) );
-      };
 
       auto chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; };
 
       void setChi2PerDoF( Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
 
       auto nDoF() const { return m_chi2PerDoF.nDoF; };
-
-      /// Retrieve const  Likelihood variable
-      auto likelihood() const { return m_likelihood; };
-
-      /// Update  Likelihood variable
-      void setLikelihood( double value ) { m_likelihood = value; };
-
-      /// Retrieve const  ghost probability variable
-      auto ghostProbability() const { return m_ghostProbability; };
-
-      /// Update  ghost probability variable
-      void setGhostProbability( double value ) { m_ghostProbability = value; };
 
       /// Retrieve const  The variety of track flags
       auto flags() const { return m_flags; };
@@ -590,41 +484,18 @@ namespace LHCb::Event
       /// Retrieve  Container of all the states
       auto& states() { return m_states; };
 
-      /// Retrieve const  Additional pattern recognition information. Do not access directly, use *Info() methods
-      /// instead.
-      ExtraInfo const& extraInfo() const { return m_extraInfo; };
-
-      /// Update  Additional pattern recognition information. Do not access directly, use *Info() methods instead.
-      void setExtraInfo( ExtraInfo const& value ) { m_extraInfo = value; };
-
-      /// Retrieve (const)  Ancestor tracks that created this one
-      auto const& ancestors() const { return m_ancestors; };
-
-      /// Retrieve  Ancestor tracks that created this one
-      auto& ancestors() { return m_ancestors; };
-
-      /// Add a track to the list of ancestors of this track
-      void addToAncestors( Track const& ancestor ) { m_ancestors.push_back( &ancestor ); };
-
-      /// Remove from  Ancestor tracks that created this one
-      void removeFromAncestors( Track const* value );
-
-      /// Clear  Ancestor tracks that created this one
-      void clearAncestors() { m_ancestors.clear(); };
+      void addToAncestors( const Track& ancestor ) { m_ancestors.push_back( &ancestor ); };
+      const std::vector<const Track*> ancestors() const { return m_ancestors; }
 
     protected:
+    public:
+      double forwardPatQuality = std::numeric_limits<double>::signaling_NaN();
     private:
       Chi2PerDoF                                  m_chi2PerDoF{};
-      double                                      m_likelihood{999};       ///< Likelihood variable
-      double                                      m_ghostProbability{999}; ///< ghost probability variable
       unsigned int                                m_flags{0};              ///< The variety of track flags
       std::vector<LHCbID>                         m_lhcbIDs{};             ///< Container of (sorted) LHCbIDs
       std::vector<State>                          m_states{}; ///< Container with pointers to all the states
-      LHCb::cxx::PolymorphicValue<TrackFitResult> m_fitResult{
-          nullptr};            ///< Transient data related to track fit (nodes, material, etc)
-      ExtraInfo m_extraInfo{}; ///< Additional pattern recognition information. Do not access directly, use *Info()
-                               ///methods instead.
-      std::vector<Track const*> m_ancestors{}; ///< Ancestor tracks that created this one
+      std::vector<const Track*> m_ancestors;
 
       /// Make sure that the offset is the sum of the previous entries
       enum flagsMasks : uint32_t {
