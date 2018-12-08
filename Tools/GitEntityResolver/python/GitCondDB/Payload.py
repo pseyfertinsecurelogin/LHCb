@@ -28,7 +28,9 @@ def fix_system_refs(data, root, path):
 
     def repl(match):
         'replacement function'
-        if match.group(2).startswith('conddb:/'):
+        if match.group(2).startswith('git:/'):
+            return match.group(0)  # correct prefix, no change needed
+        elif match.group(2).startswith('conddb:/'):
             newpath = match.group(2)[8:]
         else:
             newpath = os.path.normpath(os.path.join(curr_dir, match.group(2)))

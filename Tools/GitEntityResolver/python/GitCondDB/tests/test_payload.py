@@ -13,12 +13,8 @@
 from __future__ import print_function
 
 import os
-import sys
 import shutil
 import tempfile
-import itertools
-
-from pprint import pprint
 
 from GitCondDB import Payload as P
 
@@ -31,12 +27,14 @@ def setup():
     TMP_DIR = tempfile.mkdtemp()
     os.chdir(TMP_DIR)
 
+
 def teardown():
     'clean up'
     global TMP_DIR
     os.chdir(os.pardir)
     shutil.rmtree(TMP_DIR)
     TMP_DIR = None
+
 
 def test_clean_system_refs():
     orig = '''<?xml version="1.0" encoding="ISO-8859-1"?>
@@ -66,11 +64,13 @@ def test_clean_system_refs():
     print(expected)
     assert fixed == expected
 
+
 def test_clean_endlines():
     orig = '\n'.join(['a  ', 'b', '\r', '    ', ' c ', '', ''])
     fixed = P.fix_lines_ends(orig)
     expected = 'a\nb\n\n\n c\n\n'
     assert fixed == expected
+
 
 def test_checksum():
     data = 'uheuh934u v09834u9 .\n8th3m9e8fjm[3089u m[308 nt[er]]]\n'
