@@ -157,14 +157,7 @@ StatusCode MuonRec::addCoordsNoMap(MuonCoords& coords,
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose()<<" digit tile "<<iD->first<<endmsg;
 
-      auto current = std::make_unique<MuonCoord>();
-
-      current->setUncrossed(true);
-      current->setDigitTDC1(iD->second);
-
-      // make a SmartRef to the MuonDigit
-      current->setDigitTile({ iD->first });
-      // add it to the current digit
+      auto current = std::make_unique<MuonCoord>( iD->first, iD->second);
 
       // need to clear the layer and readout bits
       MuonTileID pad = iD->first;
@@ -172,7 +165,8 @@ StatusCode MuonRec::addCoordsNoMap(MuonCoords& coords,
 
       // as no change between digit and coord in this mapping key is the same
       try {
-        coords.insert( current.release(), pad );
+        coords.insert( current.get(), pad );
+        current.release();
       } catch( const GaudiException& exc  ) {
 
         error() << "The error is caused by the duplication of  pad " <<pad<<endmsg;
@@ -229,16 +223,12 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
       if(pad.isValid()){
         // have a pad to write out
         // make the coordinate to be added to coords
-        auto current = std::make_unique<MuonCoord>();
-        current->setUncrossed(false);
-        current->setDigitTile({ iOne->first.first, iTwo->first.first });
-        current->setDigitTDC1(iOne->first.second);
-        current->setDigitTDC2(iTwo->first.second);
+        auto current = std::make_unique<MuonCoord>(pad,iOne->first.first,iTwo->first.first,iOne->first.second,iTwo->first.second);
 
         // as no change between digit and coord in this mapping key is the same
 
         try {
-          coords.insert( current.get(), pad );
+          coords.insert( current.get() );
           current.release();
         } catch( const GaudiException& exc  ) {
 
@@ -265,17 +255,14 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
       MuonTileID pad = (iOne->first).first;
 
       // make the coordinate to be added to coords
-      auto current = std::make_unique<MuonCoord>();
-      current->setUncrossed(true);
-      current->setDigitTile( { iOne->first.first } ) ;
-      current->setDigitTDC1((iOne->first).second);
+      auto current = std::make_unique<MuonCoord>(iOne->first.first,iOne->first.second);
 
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << " Found an uncrossed pad type 1 " << pad << endmsg;
 
 
       try {
-        coords.insert( current.get(), pad );
+        coords.insert( current.get() );
         current.release();
       } catch( const GaudiException& exc  ) {
 
@@ -294,15 +281,13 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
       MuonTileID pad = iTwo->first.first;
 
       // make the coordinate to be added to coords
-      auto current = std::make_unique<MuonCoord>();
-      current->setUncrossed(true);
-      current->setDigitTDC1((iTwo->first).second);
-      current->setDigitTile( { iTwo->first.first } );
+      auto current = std::make_unique<MuonCoord>( iTwo->first.first, iTwo->first.second);
 
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << " Found an uncrossed pad type 2 " << pad << endmsg;
       try {
-        coords.insert( current.release(), pad );
+        coords.insert( current.get());
+        current.release();
       } catch( const GaudiException& exc  ) {
         error() << "The error is caused by the duplication of  pad " <<pad<<endmsg;
         error() << "It is likely due to data corruption " <<endmsg;

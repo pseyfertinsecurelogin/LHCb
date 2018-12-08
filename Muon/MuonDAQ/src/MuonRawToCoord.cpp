@@ -194,12 +194,8 @@ MuonRawToCoord::addCoordsCrossingMap(const DigitsRange& digits, LHCb::MuonCoords
     for (const Digit& two: digitsTwo) {
       LHCb::MuonTileID pad = one.first.intercept(two.first);
       if (pad.isValid()) {
-        auto current = std::make_unique<MuonCoord>();
-        current->setUncrossed(false);
-        current->setDigitTile({one.first, two.first});
-        current->setDigitTDC1(one.second);
-        current->setDigitTDC2(two.second);
-        retVal.insert(current.get(), pad);
+        auto current = std::make_unique<MuonCoord>(pad,one.first,two.first, one.second,two.second);
+        retVal.insert(current.get());
         current.release();
         // set used flag
         used[i] = used[j] = true;
@@ -215,11 +211,8 @@ MuonRawToCoord::addCoordsCrossingMap(const DigitsRange& digits, LHCb::MuonCoords
   for (const Digit& digit: digits) {
     if (!used[m]) {
       LHCb::MuonTileID pad = digit.first;
-      auto current = std::make_unique<MuonCoord>();
-      current->setUncrossed(true);
-      current->setDigitTile({digit.first});
-      current->setDigitTDC1(digit.second);
-      retVal.insert(current.get(), pad);
+      auto current = std::make_unique<MuonCoord>(digit.first,digit.second );
+      retVal.insert(current.get());
       current.release();
     }
     ++m;

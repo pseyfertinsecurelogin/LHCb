@@ -562,7 +562,7 @@ class genClasses(genSrcUtils.genSrcUtils):
                     for att in godClass['attribute']:
                         attAtt = att['attrs']
                         type = attAtt['type'].lstrip()
-                        if type[:5] == 'std::':
+                        if type[:5] == 'std::' or type[:7] == 'boost::' :
                             if 'GaudiKernel/SerializeSTL' not in self.include:
                                 self.include.append('GaudiKernel/SerializeSTL')
                                  # Trick for namespace problems (Savannah bug 29887)

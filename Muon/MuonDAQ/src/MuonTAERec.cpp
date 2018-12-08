@@ -223,23 +223,14 @@ StatusCode MuonTAERec::addCoordsNoMap(MuonCoords *coords,
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose()<<" digit tile "<<iD->first<<endmsg;
 
-      MuonCoord *current = new MuonCoord();
-
-      current->setUncrossed(true);
-      current->setDigitTDC1(iD->second);
-
-      // make a SmartRef to the MuonDigit
-      std::vector<MuonTileID> link;
-      link.push_back(iD->first);
-      current->setDigitTile(link);
-      // add it to the current digit
+      MuonCoord *current = new MuonCoord(iD->first,iD->second);
 
       // need to clear the layer and readout bits
       MuonTileID pad = iD->first;
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) ) verbose()<<pad<<endmsg;
 
       // as no change between digit and coord in this mapping key is the same
-      coords->insert(current,pad);
+      coords->insert(current);
     }
   }
   return StatusCode::SUCCESS;
@@ -297,21 +288,15 @@ StatusCode MuonTAERec::addCoordsCrossingMap(MuonCoords *coords,
       if(pad.isValid()){
         // have a pad to write out
         // make the coordinate to be added to coords
-        MuonCoord *current = new MuonCoord();
-        current->setUncrossed(false);
-        std::vector<MuonTileID> link;
-        link.push_back((iOne->first).first);
-        link.push_back((iTwo->first).first);
-        current->setDigitTile(link);
-        current->setDigitTDC1((iOne->first).second);
-        current->setDigitTDC2((iTwo->first).second);
+        MuonCoord *current = new MuonCoord(pad,iOne->first.first, iTwo->first.first,
+                                               iOne->first.second,iTwo->first.second);
         if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
           verbose() << " Made an crossed pad " << pad
                     << " from " << (iOne->first) << " and "
                     << (iTwo->first) << endmsg;
 
         // as no change between digit and coord in this mapping key is the same
-        coords->insert(current,pad);
+        coords->insert(current);
 
         // set flags to used on iOne and iTwo
         iOne->second = true;
@@ -328,18 +313,12 @@ if(!m_ignoreUncrossedStrips){
       MuonTileID pad = (iOne->first).first;
 
       // make the coordinate to be added to coords
-      MuonCoord *current = new MuonCoord();
-      current->setUncrossed(true);
-
-      std::vector<MuonTileID> link;
-      link.push_back((iOne->first).first);
-      current->setDigitTile(link);
-      current->setDigitTDC1((iOne->first).second);
+      MuonCoord *current = new MuonCoord(iOne->first.first, iOne->first.second);
 
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << " Found an uncrossed pad type 1 " << pad << endmsg;
 
-      coords->insert(current,pad);
+      coords->insert(current);
     }
   }
 
@@ -349,19 +328,12 @@ if(!m_ignoreUncrossedStrips){
       MuonTileID pad = (iTwo->first).first;
 
       // make the coordinate to be added to coords
-      MuonCoord *current = new MuonCoord();
-      current->setUncrossed(true);
-
-
-      std::vector<MuonTileID> link;
-      current->setDigitTDC1((iTwo->first).second);
-      link.push_back((iTwo->first).first);
-      current->setDigitTile(link);
+      MuonCoord *current = new MuonCoord(iTwo->first.first,iTwo->first.second);
 
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << " Found an uncrossed pad type 2 " << pad << endmsg;
 
-      coords->insert(current,pad);
+      coords->insert(current);
 
     }
   }
