@@ -17,7 +17,7 @@
 #include <algorithm>
 
 #include "Compression.h"
-
+#include "RVersion.h"
 
 namespace PackedDataPersistence {
 
@@ -57,6 +57,11 @@ void load(Buffer& buf, std::pair<K,V>& pair, unsigned int /*version*/) {
   buf.io(pair.first, pair.second);
 }
 
+#if ROOT_VERSION_CODE < ROOT_VERSION( 6, 16, 0 )
+using CompressionAlgorithm = ROOT::ECompressionAlgorithm;
+#else
+using CompressionAlgorithm = ROOT::RCompressionSetting::EAlgorithm::EValues;
+#endif
 
 /** @class ByteBuffer PackedDataBuffer.h
  *  Helper class that represents a byte buffer.
@@ -84,7 +89,7 @@ public:
   /// Return the internal buffer.
   const buffer_type& buffer() { return m_buffer; }
   /// Compress the buffer
-  bool compress(ROOT::RCompressionSetting::EAlgorithm::EValues algorithm, int level, buffer_type& output) const;
+  bool compress(CompressionAlgorithm algorithm, int level, buffer_type& output) const;
 
   /// Skip reading n bytes.
   std::size_t readNull(std::size_t n) {
@@ -262,7 +267,7 @@ public:
   /// Return a reference to the internal buffer.
   const std::vector<uint8_t>& buffer() { return m_buffer.buffer(); }
   /// Compress the buffer
-  bool compress(ROOT::RCompressionSetting::EAlgorithm::EValues algorithm, int level, ByteBuffer::buffer_type& output) const {
+  bool compress(CompressionAlgorithm algorithm, int level, ByteBuffer::buffer_type& output) const {
     return m_buffer.compress(algorithm, level, output);
   }
   /// Function called by serializable objects' save method.
