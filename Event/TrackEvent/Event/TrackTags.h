@@ -14,10 +14,8 @@ namespace LHCb
 {
   namespace Tag
   {
-    struct Unordered_tag {
-    };
-    struct Sorted_tag : Unordered_tag {
-    };
+    struct Unordered_tag { };
+    struct Sorted_tag : Unordered_tag { };
     constexpr auto Unordered = Unordered_tag{};
     constexpr auto Sorted    = Sorted_tag{};
 
