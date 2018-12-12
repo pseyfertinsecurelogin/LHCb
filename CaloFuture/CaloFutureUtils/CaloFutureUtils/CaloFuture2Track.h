@@ -33,70 +33,70 @@ namespace LHCb{
 namespace LHCb {
   namespace CaloFutureIdLocation {
     // CaloFuture-Track matching tables   : IRelationWeighted< CaloFutureCluster/Hypo , Track , float >
-    const std::string ClusterMatch  = "Rec/Calo/ClusterMatch";
-    const std::string PhotonMatch   = "Rec/Calo/PhotonMatch";
-    const std::string BremMatch     = "Rec/Calo/BremMatch";
-    const std::string ElectronMatch = "Rec/Calo/ElectronMatch";
+    inline const std::string ClusterMatch  = "Rec/Calo/ClusterMatch";
+    inline const std::string PhotonMatch   = "Rec/Calo/PhotonMatch";
+    inline const std::string BremMatch     = "Rec/Calo/BremMatch";
+    inline const std::string ElectronMatch = "Rec/Calo/ElectronMatch";
     // Acceptance tables       : IRelation< Track , bool  >
-    const std::string InSpd         =  "Rec/Calo/InAccSpd";
-    const std::string InPrs         =  "Rec/Calo/InAccPrs";
-    const std::string InBrem        =  "Rec/Calo/InAccBrem";
-    const std::string InEcal        =  "Rec/Calo/InAccEcal";
-    const std::string InHcal        =  "Rec/Calo/InAccHcal";
+    inline const std::string InSpd         =  "Rec/Calo/InAccSpd";
+    inline const std::string InPrs         =  "Rec/Calo/InAccPrs";
+    inline const std::string InBrem        =  "Rec/Calo/InAccBrem";
+    inline const std::string InEcal        =  "Rec/Calo/InAccEcal";
+    inline const std::string InHcal        =  "Rec/Calo/InAccHcal";
     // Intermediate estimators : IRelation< Track , float >
-    const std::string SpdE          = "Rec/Calo/SpdE";
-    const std::string PrsE          = "Rec/Calo/PrsE";
-    const std::string EcalE         = "Rec/Calo/EcalE";
-    const std::string HcalE         = "Rec/Calo/HcalE";
-    const std::string EcalChi2      = "Rec/Calo/EcalChi2";
-    const std::string BremChi2      = "Rec/Calo/BremChi2";
-    const std::string ClusChi2      = "Rec/Calo/ClusChi2";
+    inline const std::string SpdE          = "Rec/Calo/SpdE";
+    inline const std::string PrsE          = "Rec/Calo/PrsE";
+    inline const std::string EcalE         = "Rec/Calo/EcalE";
+    inline const std::string HcalE         = "Rec/Calo/HcalE";
+    inline const std::string EcalChi2      = "Rec/Calo/EcalChi2";
+    inline const std::string BremChi2      = "Rec/Calo/BremChi2";
+    inline const std::string ClusChi2      = "Rec/Calo/ClusChi2";
     // CaloFuturePID DLLs            : IRelation< Track , float >
-    const std::string PrsPIDe       = "Rec/Calo/PrsPIDe";
-    const std::string EcalPIDe      = "Rec/Calo/EcalPIDe";
-    const std::string BremPIDe      = "Rec/Calo/BremPIDe";
-    const std::string HcalPIDe      = "Rec/Calo/HcalPIDe";
-    const std::string EcalPIDmu     = "Rec/Calo/EcalPIDmu";
-    const std::string HcalPIDmu     = "Rec/Calo/HcalPIDmu";
+    inline const std::string PrsPIDe       = "Rec/Calo/PrsPIDe";
+    inline const std::string EcalPIDe      = "Rec/Calo/EcalPIDe";
+    inline const std::string BremPIDe      = "Rec/Calo/BremPIDe";
+    inline const std::string HcalPIDe      = "Rec/Calo/HcalPIDe";
+    inline const std::string EcalPIDmu     = "Rec/Calo/EcalPIDmu";
+    inline const std::string HcalPIDmu     = "Rec/Calo/HcalPIDmu";
     // Neutral ID DLLs
-    const std::string PhotonID      = "Rec/Calo/PhotonID" ;
-    const std::string MergedID      = "Rec/Calo/MergedID" ;
-    const std::string PhotonFromMergedID      = "Rec/Calo/PhotonFromMergedID" ;
+    inline const std::string PhotonID      = "Rec/Calo/PhotonID" ;
+    inline const std::string MergedID      = "Rec/Calo/MergedID" ;
+    inline const std::string PhotonFromMergedID      = "Rec/Calo/PhotonFromMergedID" ;
 
 
 
     // =================== Hlt locations ============== DEPRECATED : use CaloFutureAlgUtils::pathFromContext instead !!
 
     // CaloFuture-Track matching tables   : IRelationWeighted< CaloCluster/Hypo , Track , float >
-    const std::string ClusterMatchHlt  = "Hlt/Calo/ClusterMatch";
-    const std::string PhotonMatchHlt   = "Hlt/Calo/PhotonMatch";
-    const std::string BremMatchHlt     = "Hlt/Calo/BremMatch";
-    const std::string ElectronMatchHlt = "Hlt/Calo/ElectronMatch";
+    inline const std::string ClusterMatchHlt  = "Hlt/Calo/ClusterMatch";
+    inline const std::string PhotonMatchHlt   = "Hlt/Calo/PhotonMatch";
+    inline const std::string BremMatchHlt     = "Hlt/Calo/BremMatch";
+    inline const std::string ElectronMatchHlt = "Hlt/Calo/ElectronMatch";
     // Acceptance tables       : IRelation< Track , bool  >
-    const std::string InSpdHlt         =  "Hlt/Calo/InAccSpd";
-    const std::string InPrsHlt         =  "Hlt/Calo/InAccPrs";
-    const std::string InBremHlt        =  "Hlt/Calo/InAccBrem";
-    const std::string InEcalHlt        =  "Hlt/Calo/InAccEcal";
-    const std::string InHcalHlt        =  "Hlt/Calo/InAccHcal";
+    inline const std::string InSpdHlt         =  "Hlt/Calo/InAccSpd";
+    inline const std::string InPrsHlt         =  "Hlt/Calo/InAccPrs";
+    inline const std::string InBremHlt        =  "Hlt/Calo/InAccBrem";
+    inline const std::string InEcalHlt        =  "Hlt/Calo/InAccEcal";
+    inline const std::string InHcalHlt        =  "Hlt/Calo/InAccHcal";
     // Intermediate estimators : IRelation< Track , float >
-    const std::string SpdEHlt          = "Hlt/Calo/SpdE";
-    const std::string PrsEHlt          = "Hlt/Calo/PrsE";
-    const std::string EcalEHlt         = "Hlt/Calo/EcalE";
-    const std::string HcalEHlt         = "Hlt/Calo/HcalE";
-    const std::string EcalChi2Hlt      = "Hlt/Calo/EcalChi2";
-    const std::string BremChi2Hlt      = "Hlt/Calo/BremChi2";
-    const std::string ClusChi2Hlt      = "Hlt/Calo/ClusChi2";
+    inline const std::string SpdEHlt          = "Hlt/Calo/SpdE";
+    inline const std::string PrsEHlt          = "Hlt/Calo/PrsE";
+    inline const std::string EcalEHlt         = "Hlt/Calo/EcalE";
+    inline const std::string HcalEHlt         = "Hlt/Calo/HcalE";
+    inline const std::string EcalChi2Hlt      = "Hlt/Calo/EcalChi2";
+    inline const std::string BremChi2Hlt      = "Hlt/Calo/BremChi2";
+    inline const std::string ClusChi2Hlt      = "Hlt/Calo/ClusChi2";
     // CaloFuturePID DLLs            : IRelation< Track , float >
-    const std::string PrsPIDeHlt       = "Hlt/Calo/PrsPIDe";
-    const std::string EcalPIDeHlt      = "Hlt/Calo/EcalPIDe";
-    const std::string BremPIDeHlt      = "Hlt/Calo/BremPIDe";
-    const std::string HcalPIDeHlt      = "Hlt/Calo/HcalPIDe";
-    const std::string EcalPIDmuHlt     = "Hlt/Calo/EcalPIDmu";
-    const std::string HcalPIDmuHlt     = "Hlt/Calo/HcalPIDmu";
+    inline const std::string PrsPIDeHlt       = "Hlt/Calo/PrsPIDe";
+    inline const std::string EcalPIDeHlt      = "Hlt/Calo/EcalPIDe";
+    inline const std::string BremPIDeHlt      = "Hlt/Calo/BremPIDe";
+    inline const std::string HcalPIDeHlt      = "Hlt/Calo/HcalPIDe";
+    inline const std::string EcalPIDmuHlt     = "Hlt/Calo/EcalPIDmu";
+    inline const std::string HcalPIDmuHlt     = "Hlt/Calo/HcalPIDmu";
     // PhotonID DLL
-    const std::string HltPhotonID         = "Hlt/Calo/PhotonID" ;
-    const std::string HltMergedID         = "Hlt/Calo/MergedID" ;
-    const std::string HltPhotonFromMergedID      = "Hlt/Calo/PhotonFromMergedID" ;
+    inline const std::string HltPhotonID         = "Hlt/Calo/PhotonID" ;
+    inline const std::string HltMergedID         = "Hlt/Calo/MergedID" ;
+    inline const std::string HltPhotonFromMergedID      = "Hlt/Calo/PhotonFromMergedID" ;
   }
   namespace CaloFuture2Track {
     typedef IRelationWeighted< LHCb::CaloCluster , LHCb::Track , float >             IClusTrTable;
