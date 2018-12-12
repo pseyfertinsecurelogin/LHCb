@@ -84,14 +84,23 @@ private:
   /// Property giving the location of the raw event
   Gaudi::Property<std::string> m_outputRawEventLocation { this, "OutputRawEventLocation", LHCb::RawEventLocation::Default};
   /// ROOT compression algorithm
-  ROOT::ECompressionAlgorithm m_compressionAlg;
+  PackedDataPersistence::CompressionAlgorithm m_compressionAlg;
   /// Property setting the compression algorithm
   Gaudi::Property<int> m_compression { this, "Compression", LZMA,
     [=](Property&) {
+#if ROOT_VERSION_CODE < ROOT_VERSION( 6, 16, 0 )
+      constexpr auto kZLIB = ROOT::kZLIB;
+      constexpr auto kLZMA = ROOT::kLZMA;
+      constexpr auto kUndefined = ROOT::kUndefinedCompressionAlgorithm;
+#else
+      constexpr auto kZLIB = ROOT::RCompressionSetting::EAlgorithm::kZLIB;
+      constexpr auto kLZMA = ROOT::RCompressionSetting::EAlgorithm::kLZMA;
+      constexpr auto kUndefined = ROOT::RCompressionSetting::EAlgorithm::kUndefined;
+#endif
       switch (this->m_compression) {
-        case NoCompression: { this->m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
-        case ZLIB: { this->m_compressionAlg = ROOT::kZLIB; break; }
-        case LZMA: { this->m_compressionAlg = ROOT::kLZMA; break; }
+        case NoCompression: { this->m_compressionAlg = kUndefined; break; }
+        case ZLIB: { this->m_compressionAlg = kZLIB; break; }
+        case LZMA: { this->m_compressionAlg = kLZMA; break; }
         default: throw GaudiException( "Unrecognized compression algorithm.", this->name(), StatusCode::FAILURE );
         }
     }, Gaudi::Details::Property::ImmediatelyInvokeHandler{true} };

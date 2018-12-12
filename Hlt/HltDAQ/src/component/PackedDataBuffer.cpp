@@ -14,7 +14,7 @@
 
 namespace PackedDataPersistence {
 
-bool ByteBuffer::compress(ROOT::ECompressionAlgorithm algorithm, int level, buffer_type& output) const {
+bool ByteBuffer::compress(CompressionAlgorithm algorithm, int level, buffer_type& output) const {
   int output_size = 0;
   int input_size = m_buffer.size();
   int buffer_size = input_size;
