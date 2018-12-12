@@ -15,24 +15,24 @@ L0Muon::TileRegister::TileRegister() {
 
 }
 
-L0Muon::TileRegister::TileRegister(int bits) 
+L0Muon::TileRegister::TileRegister(int bits)
   : L0Muon::Register(bits){
-  m_duplicatedTiles = false; 
+  m_duplicatedTiles = false;
 }
 
-L0Muon::TileRegister::TileRegister(int bits, unsigned long pattern) 
+L0Muon::TileRegister::TileRegister(int bits, unsigned long pattern)
   : L0Muon::Register(bits,pattern) {
-  m_duplicatedTiles = false; 
-} 
-    
-L0Muon::TileRegister::TileRegister(int bits, 
+  m_duplicatedTiles = false;
+}
+
+L0Muon::TileRegister::TileRegister(int bits,
                                    unsigned long pattern,
-                                   std::vector<LHCb::MuonTileID> ids) 
+                                   std::vector<LHCb::MuonTileID> ids)
   : L0Muon::Register(bits,pattern), m_ids(ids){
-  m_duplicatedTiles = false; 
-}    
-    
-L0Muon::TileRegister::~TileRegister() {}    
+  m_duplicatedTiles = false;
+}
+
+L0Muon::TileRegister::~TileRegister() {}
 
 bool L0Muon::TileRegister::checkDuplicatedTiles() {
   for (unsigned int ind1 =0; ind1 < m_ids.size(); ++ind1){
@@ -43,22 +43,18 @@ bool L0Muon::TileRegister::checkDuplicatedTiles() {
         std::cout << tile(ind1).toString()<<" "<<tile(ind2).toString()<<std::endl;
         return true;
       }
-    }    
-  }  
+    }
+  }
   return false ;
 }
 
 
 std::vector<LHCb::MuonTileID> L0Muon::TileRegister::firedTiles() {
- 
- 
+
+
   std::vector<LHCb::MuonTileID> result;
-  unsigned int ind;
-  for ( ind = 0; ind<m_bitset.size(); ind++) {
-    if (m_bitset.test(ind)) {
-      result.push_back(tile(ind));    
-      LHCb::MuonTileID mid = tile(ind);
-    }  
+  for ( unsigned int ind = 0; ind<m_bitset.size(); ind++) {
+    if (m_bitset.test(ind)) result.push_back(tile(ind));
   }
   return result;
 }
@@ -70,14 +66,12 @@ void L0Muon::TileRegister::setTileVector(const std::vector<LHCb::MuonTileID>& id
 
 void L0Muon::TileRegister::setTile(LHCb::MuonTileID & id){
   for (unsigned int ind =0; ind < m_ids.size(); ind++){
-    //LHCb::MuonTileID mid = m_ids[ind];
     if ( m_ids[ind]== id){
       m_bitset.set(ind);
-      m_set = true; 
-      if (!m_duplicatedTiles)
-        break;
-    }    
-  }  
+      m_set = true;
+      if (!m_duplicatedTiles) break;
+    }
+  }
 }
 
 
@@ -86,7 +80,7 @@ void L0Muon::TileRegister::setTilesTagVector(boost::dynamic_bitset<> & tilestag)
 }
 
 void L0Muon::TileRegister::setStripsTagVector(boost::dynamic_bitset<> & stripstag){
-  m_stripstag = stripstag; 
+  m_stripstag = stripstag;
 }
 
 
@@ -94,12 +88,12 @@ void L0Muon::TileRegister::setStripsTagVector(boost::dynamic_bitset<> & stripsta
   Fill the vector m_pads
 */
 void L0Muon::TileRegister::makePads(){
- 
+
   if (m_pads.size() != 0){
     m_pads.clear();
-  }  
+  }
   std::vector<LHCb::MuonTileID> tmp = firedTiles();
-  
+
   unsigned int i,j;
   if ( ! tmp.empty() ) {
     for ( i=0; i< m_bitset.size(); i++){
@@ -114,7 +108,7 @@ void L0Muon::TileRegister::makePads(){
           if ( i< m_bitset.size()-1) {
             if (m_bitset.test(i)) {
               for ( j = i+1; j < m_bitset.size(); j++){
-		
+
                 if (m_bitset.test(j)) {
 
                   if ( m_stripstag[i] != m_stripstag[j]) {
@@ -138,29 +132,29 @@ void L0Muon::TileRegister::makePads(){
 void L0Muon::TileRegister::print_bits(unsigned int event, FILE *file){
 
   if (file==0) file= stdout;
-  // Loop over the bits of the register 
+  // Loop over the bits of the register
   for (boost::dynamic_bitset<>::size_type i =0; i < m_bitset.size();i++){
     int val=m_bitset[i] ;
     LHCb::MuonTileID  mid= tile(i);
     if (val) {
-      
+
       if (mid.isValid()){
         fprintf(file,"%5u %3u ( %2d,%2d ) Q%1d M%1d R%1d %2d %2d  %d\n"
-                ,event ,(unsigned int)i 
+                ,event ,(unsigned int)i
                 ,mid.layout().xGrid()
                 ,mid.layout().yGrid()
-                ,mid.quarter()+1 
-                ,mid.station()+1 
-                ,mid.region()+1 
+                ,mid.quarter()+1
+                ,mid.station()+1
+                ,mid.region()+1
                 ,mid.nX()
                 ,mid.nY()
                 ,val
-                ); 
+                );
       } else {
         fprintf(file,"%5u %3u                           %d\n",event,(unsigned int)i,val);
       }
     }
-    
+
 
   }
 }
@@ -168,7 +162,7 @@ void L0Muon::TileRegister::print_bits(unsigned int event, FILE *file){
 
 
 void L0Muon::TileRegister::print_tiles(FILE *file,int ntiles_per_line){
-  if (file==0) file= stdout;  
+  if (file==0) file= stdout;
   int ic=0;
   for (std::vector<LHCb::MuonTileID> ::iterator im = m_ids.begin();im!=m_ids.end();im++) {
     if ((ic % ntiles_per_line)==0)  {
@@ -179,9 +173,9 @@ void L0Muon::TileRegister::print_tiles(FILE *file,int ntiles_per_line){
       fprintf(file," M%1d(%2d,%2d)Q%1dR%1d %2d-%2d ;",
               im->station()+1,im->layout().xGrid(),im->layout().yGrid(),
               im->quarter()+1,im->region()+1,im->nX(),im->nY());
-    else 
+    else
       fprintf(file," M.(..,..)Q.R. ..-.. ;");
-      
+
     ic++;
   }
   fprintf(file,"\n");
@@ -190,7 +184,7 @@ void L0Muon::TileRegister::print_tiles(FILE *file,int ntiles_per_line){
 std::string L0Muon::TileRegister::toXML(std::string tab){
 
   std::string xmlString=tab;
-  
+
   char buf[8];
   std::string str;
 
@@ -222,7 +216,7 @@ std::string L0Muon::TileRegister::toXML(std::string tab){
   }
 
   xmlString += tab;
-  xmlString +="</"+XMLTileRegister+">\n";  
+  xmlString +="</"+XMLTileRegister+">\n";
 
-  return xmlString;  
+  return xmlString;
 }
