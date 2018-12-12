@@ -18,6 +18,7 @@
 #include <type_traits>
 #include <functional>
 #include <memory>
+#include <utility>
 
 // add a macro state assumptions
 #ifdef NDEBUG
@@ -131,6 +132,65 @@ namespace LHCb
   {
       return make_span(std::addressof(*firstElem),std::distance(firstElem,lastElem));
   }
+
+
+  namespace range {
+
+      namespace details {
+          template<typename A, typename B>
+          using disable_if_same_or_derived =
+          std::enable_if_t< !std::is_base_of_v<A,std::remove_reference_t<B> > >;
+      }
+
+  template <typename T> class single final {
+    T m_data{};
+
+  public:
+
+    using value_type = T;
+    using pointer = T*;
+    using const_pointer = std::add_const_t<T>*;
+    using reference = T&;
+    using const_reference = std::add_const_t<T>&;
+
+    template <typename U = T,
+              typename = details::disable_if_same_or_derived<single,U>,
+              typename = std::enable_if_t<std::is_constructible_v<T,U&&>>>
+    constexpr single(U&& u) : m_data(std::forward<U>(u)) { }
+
+    template <typename ... Args,
+              typename = std::enable_if_t<std::is_constructible_v<T,Args&&...>>>
+    constexpr explicit single( std::in_place_t, Args&&... args ) : m_data(std::forward<Args>(args)...) {}
+
+    constexpr pointer begin() noexcept { return std::addressof(m_data); }
+    constexpr pointer end() noexcept { return std::addressof(m_data) + 1; }
+    constexpr pointer data() noexcept { return begin(); }
+
+    constexpr const_pointer begin() const noexcept { return std::addressof(m_data); }
+    constexpr const_pointer end() const noexcept { return std::addressof(m_data) + 1; }
+    constexpr const_pointer data() const noexcept { return begin(); }
+
+    constexpr const_pointer cbegin() const noexcept { return begin(); }
+    constexpr const_pointer cend() const noexcept { return end(); }
+
+    constexpr std::size_t size() const noexcept { return 1; }
+    constexpr bool empty() const noexcept { return false; }
+
+    constexpr const_reference value() const & noexcept { return m_data; }
+    constexpr reference value() & noexcept { return m_data; }
+    constexpr T&& value() && noexcept { return std::move(m_data); }
+
+    constexpr const_reference front() const noexcept { return m_data; }
+    constexpr const_reference back() const noexcept { return m_data; }
+    constexpr reference front() noexcept { return m_data; }
+    constexpr reference back() noexcept { return m_data; }
+
+  };
+
+  template <typename T> single(T) -> single<T>;
+
+  }
+
 
 }
 
