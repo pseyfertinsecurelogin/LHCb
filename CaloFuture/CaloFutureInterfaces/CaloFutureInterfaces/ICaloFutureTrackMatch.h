@@ -20,6 +20,7 @@
 #include "Math/Plane3D.h"
 #include "Event/State.h"
 #include "Event/Track.h"
+#include "GaudiKernel/Plane3DTypes.h"
 namespace LHCb{
   class CaloPosition  ; // from CaloEvent package 
   class State         ; // from TrackEvent   package
@@ -50,60 +51,28 @@ namespace LHCb{
  */
 
 struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
-{
-  
-  struct MatchStatus
-  {
-   const LHCb::CaloPosition* m_cBad;//itd..
-   const LHCb::Track* m_tBad;
-   ROOT::Math::Plane3D m_plane;
-   const LHCb::CaloPosition* m_position;
-   double chi2;
-   StatusCode status;
-   LHCb::State m_state;
-  };
-
-
-  /** useful typedef for result
-   *  - it is just a pair of status  and chi2 of the matching  
-   */
-  typedef std::pair<StatusCode,double>    MatchingPair;
-  
+{  
   /** interface identification
    *  @return unique interface identifier
    */
   DeclareInterfaceID( ICaloFutureTrackMatch , 5 , 0 );
-  
-  /** the main matching method  
-   *
-   *  @param caloObj  pointer to "calorimeter" object (position)
-   *  @param trObj    pointer to tracking object (track)
-   *  @param chi2     returned value of chi2 of the matching
-   *  @return status code for matching procedure 
+
+  /** the main matching method
+   *  @see ICaloFutureTrackMatch
+   *  @param calo_obj "calorimeter" object (position)
+   *  @param track_obj tracking object (track)
+   *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
+   *  @param detector_plane detector's plane - hase to be initialized in calling method
+   *  @param match_state - matching state
+   *  @return tuple < skip_calo_object, chi2_value, plane, state, match_successful > where:
+   *   skip_calo_object - when true this means there is no point to check another tracks for this calo object
+   *   chi2_value - calculated chi2 value - if something goes bad this value is bad()
+   *   plane - this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
+   *   state - mataching state - can be the same like "match_state" or different
+   *   match_successful - when equal true means that the whole matching process finished with successful ( no fails )
    */
-  virtual MatchStatus match 
-  ( const LHCb::CaloPosition*   caloObj  , 
-    const LHCb::Track*  trObj    ,
-    const MatchStatus& ms_old     ) const = 0 ;
-  
-  /** The main matching method (Stl interface) 
-   *  @param caloObj  pointer to "calorimeter" object (position)
-   *  @param trObj    pointer to tracking object (track)
-   *  @return pair of status code/chi2  for matching procedure 
-   */
-  virtual MatchingPair    operator() 
-    ( const LHCb::CaloPosition*   caloObj  , 
-      const LHCb::Track*  trObj    ) = 0 ;
-  
-  /** extract the TrState which was actually used for last matching
-   *  @attention TrState is owned by the tool itself 
-   *  The better solution could be to return the pointer 
-   *  to TrStateP 
-   *  @return pointer to the state actually used for last matching
-   */
-  virtual const LHCb::State* state   () const = 0;
-  
-  
+ virtual std::tuple< bool, double, Gaudi::Plane3D, LHCb::State, bool > match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const bool& is_new_calo_obj, const Gaudi::Plane3D& detector_plane, const LHCb::State& match_state ) const = 0;
+    
 };
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURETRMATCH_H
