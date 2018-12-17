@@ -192,7 +192,7 @@ VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
       const float gy = (ltg[3] * local_x + ltg[4] * local_y + ltg[5]);
       const float gz = (ltg[6] * local_x + ltg[7] * local_y + ltg[8]);
 
-      pool.emplace_back( gx, gy, gz, cid );
+      pool.emplace_back( gx, gy, gz, 0, 0, cid );
 
       ++offsets[module];
     } // loop over clusters in raw bank
