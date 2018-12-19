@@ -45,13 +45,14 @@
 
 //tbb
 #include "tbb/task_scheduler_init.h"
+#include "tbb/task_scheduler_observer.h"
 #include "tbb/task.h"
 
 //locals
 #include "ControlFlowNode.h"
 
 
-class HLTControlFlowMgr : public extends<Service, IEventProcessor>
+class HLTControlFlowMgr final : public extends<Service, IEventProcessor>
 {
 
 public:
@@ -126,7 +127,6 @@ private:
   IHiveWhiteBoard* m_whiteboard = nullptr;
   /// Reference to the AlgExecStateSvc
   IAlgExecStateSvc* m_algExecStateSvc = nullptr;
-
   // the used databroker
   IDataBroker* m_databroker = nullptr;
 

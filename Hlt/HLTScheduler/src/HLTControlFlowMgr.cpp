@@ -28,7 +28,27 @@ namespace {
     tbb::task* task = new (tbb::task::allocate_root()) Wrapper { std::forward<fun>(f) };
     tbb::task::enqueue(*task);
   }
+
+
+  //observe threads to be able to join in the end
+  struct task_observer final : public tbb::task_scheduler_observer
+  {
+    task_observer() { observe( true ); }
+
+    std::atomic<int> m_thread_count{0};
+
+    void on_scheduler_entry( bool ) override
+    {
+      m_thread_count++;
+    }
+
+    void on_scheduler_exit( bool ) override
+    {
+      m_thread_count--;
+    }
+  };
 }
+
 
 
 StatusCode HLTControlFlowMgr::initialize()
@@ -260,6 +280,7 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
           m_algExecStateSvc->updateEventStatus( true, *evtContext );
           fatal() << "ERROR: Event failed in Algorithm " << toBeRun.name() << endmsg;
           Gaudi::setAppReturnCode(appmgr, Gaudi::ReturnCode::UnhandledException);
+          break;
         }
       }
 
@@ -288,7 +309,7 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
 
       // update scheduler state
       promoteToExecuted( std::move( evtContext ) );
-      Gaudi::Hive::setCurrentContextEvt( -1 );
+      //Gaudi::Hive::setCurrentContextEvt( -1 );
 
       return nullptr;
     }
@@ -332,6 +353,7 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt )
 
   // create th tbb thread pool
   tbb::task_scheduler_init tbbSchedInit( m_threadPoolSize.value() + 1 );
+  task_observer taskObsv{};
 
   using namespace std::chrono_literals;
 
@@ -413,6 +435,10 @@ StatusCode HLTControlFlowMgr::nextEvent( int maxevt )
     endTime = Clock::now();
     m_stopTimeAfterEvt = m_finishedEvt - 1;
   }
+
+  tbbSchedInit.terminate(); //non blocking
+  while( taskObsv.m_thread_count > 0 ) //this is our "threads.join()" alternative
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   delete m_evtSelContext;
   m_evtSelContext = nullptr;
