@@ -278,15 +278,9 @@ DeVPSensor::pixelSize(const LHCb::VPChannelID channel) const {
 // Return true if a pixel with given channel ID is an elongated pixel.
 //==============================================================================
 bool DeVPSensor::isLong(const LHCb::VPChannelID channel) const {
-
   const unsigned int chip = channel.chip();
   const unsigned int col = channel.col();
-  if ((col == 0 && chip > 0) ||
-      (col == m_cache.nCols - 1 && chip < m_cache.nChips - 1)) {
-    return true;
-  }
-  return false;
-
+  return (col == 0 && chip > 0) || (col == m_cache.nCols - 1 && chip < m_cache.nChips - 1);
 }
 
 

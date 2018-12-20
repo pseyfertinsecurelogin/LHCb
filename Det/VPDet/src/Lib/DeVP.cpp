@@ -70,6 +70,9 @@ StatusCode DeVP::initialize() {
   msg() << MSG::INFO << "There are " << m_sensors.size() << " sensors "
         << "(left: " << nLeftSensors << ", right: " << nRightSensors << ")"
         << endmsg;
+
+  initMeasurementErrors().ignore();
+
   return StatusCode::SUCCESS;
 
 }
@@ -120,4 +123,66 @@ void DeVP::findSensors(IDetectorElement* det,
       findSensors(*it, sensors);
     }
   }
+}
+
+
+
+//============================================================================
+// Measurement errors
+//============================================================================
+
+std::pair<float, float> DeVP::measurementError(LHCb::VPChannelID id) {
+  unsigned sensorNumber = id.sensor();
+  const DeVPSensor* sensor = this->sensor(sensorNumber);
+  bool isLong = sensor->isLong(id);
+
+  return isLong ? 
+         std::pair<float, float>{ m_errorXLong[sensorNumber], m_errorX[sensorNumber] } 
+         : std::pair<float, float>{ m_errorYLong[sensorNumber], m_errorY[sensorNumber] };
+}
+
+
+StatusCode DeVP::initMeasurementErrors() {
+  // Message to the physicists:
+  // Please correct this code because I just copied it from elsewhere, but it seems shady.
+
+  float errorSinglePixel = 12.5f * Gaudi::Units::micrometer;
+
+  // Store the rotations of each sensor.
+  const unsigned int nSensors = numberSensors();
+  m_errorX.resize(nSensors, 0);
+  m_errorY.resize(nSensors, 0);
+  m_errorXLong.resize(nSensors, 0);
+  m_errorYLong.resize(nSensors, 0);
+
+  const Gaudi::XYZVector vl(1., 0., 0.);
+  
+  for (auto sensor : sensors()) {
+    const unsigned int sensorNumber = sensor->sensorNumber();
+    if (sensorNumber >= m_errorX.size()) {
+      m_errorX.resize(sensorNumber + 1);
+      m_errorY.resize(sensorNumber + 1);
+      m_errorXLong.resize(sensorNumber + 1);
+      m_errorYLong.resize(sensorNumber + 1);
+    }
+    const auto vg = sensor->geometry()->toGlobal(vl);
+    const float cphi = vg.x();
+    const float phi = acos(cphi);
+    const float sphi = sin(phi);
+    float cphiSquared = cphi * cphi;
+    float sphiSquared = sphi * sphi;    
+
+    float dx = errorSinglePixel;
+    float dy = errorSinglePixel;
+    
+    // Transform the error estimate to the global frame.
+    m_errorX[sensorNumber] = sqrt(dx * dx * cphiSquared + dy * dy * sphiSquared);
+    m_errorY[sensorNumber] = sqrt(dx * dx * sphiSquared + dy * dy * cphiSquared);
+
+    dx *= 2;
+    m_errorXLong[sensorNumber] = sqrt(dx * dx * cphiSquared + dy * dy * cphiSquared);
+    m_errorYLong[sensorNumber] = sqrt(dx * dx * sphiSquared + dy * dy * sphiSquared);
+  }
+
+  return StatusCode::SUCCESS;
 }

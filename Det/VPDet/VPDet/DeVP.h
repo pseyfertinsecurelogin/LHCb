@@ -69,6 +69,8 @@ class DeVP : public DetectorElement {
     return m_sensors[sensorNumber];
   }
 
+  std::pair<float, float> measurementError(LHCb::VPChannelID id);
+  StatusCode initMeasurementErrors();
  private:
 
   /// Find sensors inside detector element tree.
@@ -95,6 +97,11 @@ class DeVP : public DetectorElement {
     return *m_msg;
   }
 
+  // Measurement error calculation.
+  std::vector<float> m_errorX;
+  std::vector<float> m_errorY;
+  std::vector<float> m_errorXLong;
+  std::vector<float> m_errorYLong;
 };
 
 #endif
