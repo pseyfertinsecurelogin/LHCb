@@ -253,10 +253,3 @@ BOOST_AUTO_TEST_CASE(test_track_assignments){
   static_assert(std::is_assignable_v<Track&,Track>);
   static_assert(std::is_nothrow_assignable_v<Track&,Track>);
 }
-
-BOOST_AUTO_TEST_CASE(test_track_object_size){
-  auto tr = Track{};
-  BOOST_CHECK( sizeof(tr)==152 );
-}
-
-
