@@ -41,6 +41,7 @@ struct NodeState {
 };
 
 struct AlgWrapper {
+  using Algorithm = Gaudi::Algorithm;
   Algorithm* m_alg;
   uint16_t m_executedIndex;
 
@@ -60,7 +61,7 @@ struct AlgWrapper {
     return m_alg->sysExecute( evtCtx );
   }
 
-  bool passed () const { return m_alg->filterPassed(); }
+  bool passed () const { return m_alg->execState( Gaudi::Hive::currentContext() ).filterPassed(); }
 
   std::string_view name () const { return m_alg->name(); }
 };

@@ -22,13 +22,8 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IAlgorithm.h"
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
+#include <GaudiKernel/IAlgExecStateSvc.h>
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -70,7 +65,7 @@ namespace LoKi {
           // ==========================================================================
           // filter passed ?
           inline constexpr auto filterPassed = [](const IAlgorithm* ia) {
-            return ia && ia->filterPassed () ;
+            return ia && ia->execState( Gaudi::Hive::currentContext() ).filterPassed();
           };
           // ========================================================================
           // is enabled ?
@@ -80,7 +75,7 @@ namespace LoKi {
           // ==========================================================================
           // is executed ?
           inline constexpr auto isExecuted = []( const IAlgorithm* ia ) {
-            return ia && ia->isExecuted () ;
+            return ia && ia->execState( Gaudi::Hive::currentContext() ).state() == AlgExecState::State::Done;
           };
           // ==========================================================================
       }
@@ -413,7 +408,7 @@ namespace LoKi {
                       throw GaudiException( "Algorithm '" + alg->name() + "' is disabled", "RunAll", StatusCode::SUCCESS );
                     }
                     if ( !Predicates::isExecuted ( alg ) ) {
-                      StatusCode sc = alg->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
+                      StatusCode sc = alg->sysExecute(Gaudi::Hive::currentContext()) ;  // EXECUTE IT!!!
                       if ( sc.isFailure() ) {
                         throw GaudiException("Error from algorithm '" + alg->name() + "' sysExecute", "RunAll", sc );
                       }
@@ -488,4 +483,3 @@ namespace LoKi {
 //                                                                      The END
 // ============================================================================
 #endif // LOKI_ALGFUNCTORS_H
-// ============================================================================

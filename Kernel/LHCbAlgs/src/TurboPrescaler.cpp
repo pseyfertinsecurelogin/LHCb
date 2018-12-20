@@ -19,15 +19,7 @@
 // local
 #include "TurboPrescaler.h"
 
-
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
-
 
 using namespace LHCb;
 //-----------------------------------------------------------------------------
@@ -131,7 +123,7 @@ StatusCode TurboPrescaler::execute()
         // Execute prescaler
         if ( prescaler && prescaler->isEnabled() )
         {
-          const auto result = prescaler->sysExecute(SYSEX_ARGUMENT);
+          const auto result = prescaler->sysExecute(Gaudi::Hive::currentContext());
           if ( ! result.isSuccess() ) return StatusCode::FAILURE;
           //If the DP wants the line killed:
           if ( !prescaler->filterPassed() )
@@ -264,7 +256,6 @@ void TurboPrescaler::setupPrescalers()
     tn.append("DPForPrescaleOffline");
     const Gaudi::Utils::TypeNameString typeName(tn);
     const std::string & theName = typeName.name();
-    const std::string & theType = typeName.type();
 
     //== Check wether the specified algorithm already exists. If not, create it
     StatusCode result = StatusCode::SUCCESS;
@@ -282,43 +273,20 @@ void TurboPrescaler::setupPrescalers()
       DoubleProperty acceptFractionProperty( "AcceptFraction", it.second);
       jos->addPropertyToCatalogue( theName, acceptFractionProperty ).ignore();
 
-      Algorithm *myAlg = nullptr;
-      result = createSubAlgorithm( theType, theName, myAlg );
-      if (result.isSuccess()) myIAlg = myAlg;
+      myIAlg = appMgr->algorithm(typeName, false);
     }
 
-    // propagate the sub-algorithm into own state.
-    if ( result.isSuccess() )
+    Algorithm*  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
+    if ( myAlg )
     {
-      const auto sc = myIAlg->sysInitialize() ;
-      if  ( sc.isFailure() ) { result = sc ; }
-    }
-
-    // propagate the sub-algorithm into own state.
-    if ( result.isSuccess () )
-    {
-      const auto sc = myIAlg->sysStart () ;
-      if  ( sc.isFailure() ) { result = sc ; }
-    }
-    if ( result.isSuccess() )
-    {
-      Algorithm*  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
-      if ( myAlg )
-      {
-        prescalers.insert( {it.first,myAlg} );
-      }
-      else
-      {
-        warning() << theName << " is not an Algorithm - failed dynamic_cast"
-                  << endmsg;
-      }
+      prescalers.insert( {it.first,myAlg} );
     }
     else
     {
-      warning() << "Unable to find or create " << theName << endmsg;
+      warning() << theName << " is not an Algorithm - failed dynamic_cast"
+                << endmsg;
     }
   }
-
 }
 
 void TurboPrescaler::updatePrescalers()

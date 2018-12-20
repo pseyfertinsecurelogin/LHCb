@@ -16,13 +16,7 @@
 #include "Event/Particle.h"
 #include <numeric>
 
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : Particle2MCLink
@@ -230,7 +224,7 @@ Object2MCLinker<SOURCE>::createLinks( const std::string& contName )
       // Call the algorithm to get the table done
       debug() << "==> Executing Linker builder algorithm "
               << m_linkerAlg->name() << endmsg;
-      m_linkerAlg->sysExecute(SYSEX_ARGUMENT);
+      m_linkerAlg->sysExecute(Gaudi::Hive::currentContext());
       test = To( evtSvc(), nullptr, name);
     }
     if( *contIt == contName ) m_linkTo = test;
@@ -335,5 +329,3 @@ Object2MCLinker<SOURCE>::checkAssociation( const SOURCE* obj,
   }
   return false;
 }
-
-#undef SYSEX_ARGUMENT

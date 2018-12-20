@@ -23,8 +23,8 @@
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/System.h"
-
 #include "GaudiKernel/TypeNameString.h"
+#include <Gaudi/Sequence.h>
 
 // local
 #include "HltGenConfig.h"
@@ -81,16 +81,13 @@ StatusCode HltGenConfig::initialize() {
 std::vector<PropertyConfig::digest_type>
 HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
   std::vector<PropertyConfig::digest_type> depRefs;
-  INamedInterface *ini = const_cast<INamedInterface *>(&obj); // we do treat obj logically const,
-                                                              // even if we call code which seems
-                                                              // wants non-const version of obj
-  // in case of Algorithms, do some extra work...
-  SmartIF<IAlgorithm> ia(ini);
-  if (ia.isValid()) {
-    auto subs = dynamic_cast<const Algorithm &>(*ia).subAlgorithms();
+  // in case of Sequence, do some extra work...
+  auto seq = dynamic_cast<const Gaudi::Sequence *>(&obj);
+  if (seq) {
+    auto subs = seq->subAlgorithms();
     std::transform( begin(*subs), end(*subs),
                     std::back_inserter(depRefs),
-                    [&](const Algorithm*  dep) {
+                    [&](const Gaudi::Algorithm*  dep) {
       debug() << "adding sub-algorithm " << dep->name() << " as dependant to " << obj.name() << endmsg;
       auto digest = generateConfig(*dep);
       if (digest.invalid())  {
