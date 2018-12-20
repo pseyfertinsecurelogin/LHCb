@@ -92,7 +92,15 @@ namespace
       "x86_64-centos7-gcc8-dbg",
       "x86_64-centos7-gcc8-do0",
       "x86_64+avx-centos7-gcc8-opt",
-      "x86_64+avx2+fma-centos7-gcc8-opt"
+      "x86_64+avx2+fma-centos7-gcc8-opt",
+      "x86_64-centos7-gcc7-dbg+asan",
+      "x86_64-centos7-gcc7-dbg+lsan",
+      "x86_64-centos7-gcc7-dbg+ubsan",
+      "x86_64-centos7-gcc7-dbg+tsan",
+      "x86_64-centos7-gcc8-dbg+asan",
+      "x86_64-centos7-gcc8-dbg+lsan",
+      "x86_64-centos7-gcc8-dbg+ubsan",
+      "x86_64-centos7-gcc8-dbg+tsan"
   };
 
   const std::string invalid_platform = "invalid";
