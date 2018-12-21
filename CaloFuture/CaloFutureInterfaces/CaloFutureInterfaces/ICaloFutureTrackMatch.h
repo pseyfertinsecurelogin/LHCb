@@ -57,7 +57,7 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
  {
   //this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
   Gaudi::Plane3D plane = Gaudi::Plane3D();
-  //mataching state - can be the same like "match_state" or different
+  //matching state - can be the same like "match_state" or different
   LHCb::State state;
   //when true this means there is no point to check another tracks for this calo object
   bool skip_this_calo = false;
