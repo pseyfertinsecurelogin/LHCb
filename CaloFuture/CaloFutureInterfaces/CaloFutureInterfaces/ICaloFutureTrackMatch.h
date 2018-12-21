@@ -52,6 +52,21 @@ namespace LHCb{
 
 struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
 {  
+
+ struct MatchResults 
+ {
+  //this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
+  Gaudi::Plane3D plane = Gaudi::Plane3D();
+  //mataching state - can be the same like "match_state" or different
+  LHCb::State state;
+  //when true this means there is no point to check another tracks for this calo object
+  bool skip_this_calo = false;
+  //when equal true means that the whole matching process finished with successful ( no fails )
+  bool match_successful = false;
+  //calculated chi2 value - if something goes bad this value is bad()
+  double chi2_value = 0;
+ };
+
   /** interface identification
    *  @return unique interface identifier
    */
@@ -64,14 +79,8 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
    *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
    *  @param detector_plane detector's plane - hase to be initialized in calling method
    *  @param match_state - matching state
-   *  @return tuple < skip_calo_object, chi2_value, plane, state, match_successful > where:
-   *   skip_calo_object - when true this means there is no point to check another tracks for this calo object
-   *   chi2_value - calculated chi2 value - if something goes bad this value is bad()
-   *   plane - this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
-   *   state - mataching state - can be the same like "match_state" or different
-   *   match_successful - when equal true means that the whole matching process finished with successful ( no fails )
    */
- virtual std::tuple< bool, double, Gaudi::Plane3D, LHCb::State, bool > match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const bool& is_new_calo_obj, const Gaudi::Plane3D& detector_plane, const LHCb::State& match_state ) const = 0;
+ virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const bool& is_new_calo_obj, const Gaudi::Plane3D& detector_plane, const LHCb::State& match_state ) const = 0;
     
 };
 // ============================================================================
