@@ -16,7 +16,10 @@
       author  = "Andrei Tsaregorodtsev" 
       desc    = "Universal identifier for the Muon System entities" 
       name    = "MuonTileID"
-      virtual = 'FALSE'                                             >
+      virtual = 'FALSE'                                             
+      final   = "TRUE"
+      defaultdestructor = "FALSE" >
+
       <import name="Kernel/MuonBase"/>
       <import name="Kernel/MuonLayout"/>
       &StlVector;

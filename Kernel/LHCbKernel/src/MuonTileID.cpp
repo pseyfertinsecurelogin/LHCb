@@ -52,9 +52,7 @@ LHCb::MuonTileID LHCb::MuonTileID::neighbourID(int dirX, int dirY) const {
 bool LHCb::MuonTileID::isValid() const {
 
   if ( ! isDefined() ) return false;
-
   MuonLayout ml = layout();
-
   return ml.isValidID(*this);
 }
 
