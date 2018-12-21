@@ -64,7 +64,7 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
   //when equal true means that the whole matching process finished with successful ( no fails )
   bool match_successful = false;
   //calculated chi2 value - if something goes bad this value is bad()
-  double chi2_value = 0;
+  double chi2_value = -1;
  };
 
   /** interface identification
