@@ -19,7 +19,7 @@ gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Event/DigiEvent
                          Event/RecEvent
                          GaudiAlg
-			 DAQ/DAQKernel
+                         DAQ/DAQKernel
                          Muon/MuonKernel)
 
 gaudi_add_module(MuonDAQ
