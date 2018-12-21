@@ -10,6 +10,7 @@
 \*****************************************************************************/
 // Include files
 #include <cstdio>
+#include <functional>
 
 // local
 #include "MuonRawToCoord.h"
@@ -22,16 +23,39 @@ using namespace LHCb;
 DECLARE_COMPONENT( MuonRawToCoord )
 
 namespace{
-  struct Coord {
+  /// fills in the two readout layouts by querying the DeMuonRegion
+  std::array<MuonLayout,2> makeStripLayouts(const DeMuonDetector& det, unsigned int station, unsigned int region) {
+    unsigned int x1 = det.getLayoutX(0,station,region);
+    unsigned int y1 = det.getLayoutY(0,station,region);
+    unsigned int x2 = det.getLayoutX(1,station,region);
+    unsigned int y2 = det.getLayoutY(1,station,region);
+    return {  MuonLayout{x1,y1}, MuonLayout{x2,y2} };
+  }
+  struct Coord final {
       LHCb::MuonTileID m_pad;
       unsigned m_tdc1;
       unsigned m_tdc2;
       const LHCb::MuonTileID& m_tile1;
       const LHCb::MuonTileID& m_tile2;
-      Coord(const LHCb::MuonTileID& pad, unsigned tdc1, unsigned tdc2, const LHCb::MuonTileID& tile1, const LHCb::MuonTileID& tile2) :
-          m_pad(pad), m_tdc1(tdc1), m_tdc2(tdc2), m_tile1(tile1), m_tile2(tile2) {}
   };
   using Coords = std::vector<Coord>;
+
+  template <typename Projection, typename Cmp = std::less<>>
+  auto orderByProjection(Projection&& projection, Cmp&& cmp = {}) {
+      return [proj=std::forward<Projection>(projection),
+              cmp =std::forward<Cmp>(cmp)]
+             (const auto& lhs, const auto& rhs)
+             { return std::invoke(cmp,std::invoke(proj,lhs),std::invoke(proj,rhs)); };
+  }
+  template <typename Projection, typename Value>
+  auto hasEqualProjection(Projection&& projection, const Value& ref) {
+      auto proj_ref = std::invoke(projection,ref);
+      return [proj_ref,proj=std::forward<Projection>(projection)](const Value& val)
+             { return proj_ref == std::invoke(proj,val); };
+  }
+  auto stationRegion(const MuonRawToCoord::Digit& d) {
+      return std::tuple{d.first.station(),d.first.region()};
+  }
 }
 
 //=============================================================================
@@ -53,17 +77,17 @@ StatusCode MuonRawToCoord::initialize() {
   auto sc = Transformer::initialize();
   if(sc.isFailure()) return sc;
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialise" << endmsg;
   m_muonDetector=getDet<DeMuonDetector>(DeMuonLocation::Default);
   if(!m_muonDetector)
     return Error("Could not read /dd/Structure/LHCb/DownstreamRegion/Muon from TDS");
 
   // unnecessary debug
-  /* 
+  /*
   MuonBasicGeometry basegeometry( detSvc(),msgSvc());
   m_NStation= basegeometry.getStations();
-  m_NRegion = basegeometry.getRegions(); 
+  m_NRegion = basegeometry.getRegions();
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug()<<" station number "<<m_NStation<<" "<<m_NRegion <<endmsg;
   */
@@ -75,14 +99,14 @@ StatusCode MuonRawToCoord::initialize() {
 //=============================================================================
 LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Execute" << endmsg;
 
   // need to loop over input vector of MuonDigits
   // and make output vectors of MuonCoords one for each station
   //Digits decoding;
   //FIXME: should this decoding be used?
-  
+
   std::array<std::vector<std::pair<LHCb::MuonTileID, unsigned int> >, 14>  m_decoding;
   std::vector<std::pair<LHCb::MuonTileID, unsigned int> >  decoding;
 
@@ -92,11 +116,9 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
     verbose()<<" start the real decoding "<<endmsg;
 
   const auto& mb = raw.banks(RawBank::Muon);
-  if (mb.empty()){
-    return coords;
-  }
+  if (mb.empty()) return coords;
 
-  //first decode data 
+  //first decode data
   for( const auto& r : mb ) {
     unsigned int tell1Number=r->sourceID();
     m_decoding[tell1Number] = decodeTileAndTDCV1(r);
@@ -109,7 +131,7 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
   // flatten out the vector of vectors
   // this is quick and dirty
-  
+
   decoding.reserve(m_decoding.size());
   for( const auto& r : mb ) {
     unsigned int tell1Number=r->sourceID();
@@ -126,33 +148,13 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug()<<decoding.size()<<" digits in input "<<endmsg;
 
-  std::sort(decoding.begin(), decoding.end(),
-    [] (const Digit& a, const Digit& b) {
-    if (a.first.station() < b.first.station()) return true;
-      else if (b.first.station() < a.first.station()) return false;
-      else return a.first.region() < b.first.region();
-  });
-  std::array<DigitsRange, 5 * 4> perStaReg;
-  perStaReg.fill(boost::make_iterator_range(decoding.end(), decoding.end()));
-  unsigned nStaReg = 0;
-  
-  auto it = decoding.begin();
-  for (auto jt = it, kt = decoding.end(); kt != jt; ++jt) {
-    if (jt->first.station() != it->first.station() ||
-        jt->first.region() != it->first.region()) {
-      perStaReg[nStaReg++] = boost::make_iterator_range(it, jt);
-      it = jt;
-    }
+  auto first = decoding.begin(); auto last = decoding.end();
+  while ( first != last ) {
+    std::nth_element( first, first, last, orderByProjection( stationRegion ) );
+    auto next = std::partition( std::next(first), last, hasEqualProjection( stationRegion, *first ) );
+    first = addCoordsCrossingMap( { first, next } , coords);
   }
-  perStaReg[nStaReg++] = boost::make_iterator_range(it, decoding.end());
 
-  Coords mycoords;
-  mycoords.reserve(10000); // FIXME: increase if needed
-  
-  for (auto& coordsPerStaReg : boost::make_iterator_range(perStaReg.begin(), perStaReg.begin() + nStaReg)) {
-    // return coords directly
-    addCoordsCrossingMap(coordsPerStaReg, coords);
-  }
   //return StatusCode::SUCCESS;
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "coords size = " << coords.size() << endmsg;
@@ -161,7 +163,8 @@ LHCb::MuonCoords MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
 //=============================================================================
 
-void MuonRawToCoord::addCoordsCrossingMap(DigitsRange& digits, LHCb::MuonCoords& retVal) const {
+MuonRawToCoord::Digits::iterator
+MuonRawToCoord::addCoordsCrossingMap(const DigitsRange& digits, LHCb::MuonCoords& retVal) const {
   // need to calculate the shape of the horizontal and vertical logical strips
   //  if( 2 != m_muonDetector->getLogMapInRegion(station,region) ){
   // log << MSG::ERROR << "There are " << pRegion->numberLogicalMap()
@@ -169,17 +172,16 @@ void MuonRawToCoord::addCoordsCrossingMap(DigitsRange& digits, LHCb::MuonCoords&
   //}
 
   // get local MuonLayouts for strips
-  MuonLayout layoutOne, layoutTwo;
-  makeStripLayouts(digits.front().first.station(),
-                   digits.front().first.region(), 
-                   layoutOne, layoutTwo);
+  const auto& [ layoutOne, layoutTwo ] = makeStripLayouts(*m_muonDetector,
+                                                          digits.front().first.station(),
+                                                          digits.front().first.region() );
   // used flags
   std::vector<bool> used(digits.size(), false);
 
-  // partition into the two directions of digits 
+  // partition into the two directions of digits
   // vertical and horizontal stripes
   const auto mid = std::partition(digits.begin(), digits.end(),
-          [&layoutOne] (const Digit& digit) { 
+          [&layoutOne] (const Digit& digit) {
           return digit.first.layout() == layoutOne; });
   auto digitsOne = boost::make_iterator_range(digits.begin(), mid);
   auto digitsTwo = boost::make_iterator_range(mid, digits.end());
@@ -225,19 +227,9 @@ void MuonRawToCoord::addCoordsCrossingMap(DigitsRange& digits, LHCb::MuonCoords&
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "retVal size = " << retVal.size() << endmsg;
 
+  return digits.end();
 }
 
-void MuonRawToCoord::makeStripLayouts(unsigned int station, unsigned int region,
-                                     MuonLayout &layout1,
-                                     MuonLayout &layout2) const {
-
-  unsigned int x1 = m_muonDetector->getLayoutX(0,station,region);
-  unsigned int y1 = m_muonDetector->getLayoutY(0,station,region);
-  unsigned int x2 = m_muonDetector->getLayoutX(1,station,region);
-  unsigned int y2 = m_muonDetector->getLayoutY(1,station,region);
-  layout1= MuonLayout(x1,y1);
-  layout2= MuonLayout(x2,y2);
-}
 
 StatusCode MuonRawToCoord::checkBankSize(const LHCb::RawBank* rawdata) const {
 
@@ -339,13 +331,13 @@ std::vector<std::pair<LHCb::MuonTileID, unsigned int>> MuonRawToCoord::decodeTil
           debug()<<" valid  add "<<add<<" "<<tile <<endmsg;
         storage.emplace_back(tile, tdc_value);
       } else {
-        info() << "invalid add " << add << " " << tile << endmsg; 
+        info() << "invalid add " << add << " " << tile << endmsg;
       }
       //update the hitillink counter
 //      unsigned int link=add/192;
 //      hit_link_cnt[link]++;
     }
   }
-  
+
   return storage;
 }
