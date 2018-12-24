@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE DDDB SYSTEM "git:/DTD/structure.dtd">
+<DDDB>
+<condition name="RunParameters">
+<param name="RunStartTime" type="int">32</param>
+<param name="RunNumber" type="int">3</param>
+</condition>
+</DDDB>

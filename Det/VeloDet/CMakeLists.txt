@@ -40,5 +40,15 @@ gaudi_add_dictionary(VeloDet
                      LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib
                      OPTIONS "-U__MINGW32__")
 
+# Prepare test Git CondDB overlay
+file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/test/DB)
+file(COPY tests/data/DB/simple/ DESTINATION test/DB/simple/)
+file(COPY tests/data/DB/simple/ DESTINATION test/DB/updates/)
+file(REMOVE
+  ${CMAKE_CURRENT_BINARY_DIR}/test/DB/updates/Conditions/Velo/Alignment/Global.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/test/DB/updates/Conditions/online.xml)
+file(COPY tests/data/DB/updates/ DESTINATION test/DB/updates/)
+execute_process(COMMAND git init -q ${CMAKE_CURRENT_BINARY_DIR}/test/DB/simple)
+execute_process(COMMAND git init -q ${CMAKE_CURRENT_BINARY_DIR}/test/DB/updates)
 
-gaudi_add_test(QMTest QMTEST ENVIRONMENT NO_GIT_CONDDB=1)
+gaudi_add_test(QMTest QMTEST ENVIRONMENT TEST_OVERLAY_ROOT=${CMAKE_CURRENT_BINARY_DIR}/test/DB)

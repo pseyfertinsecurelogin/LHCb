@@ -8,16 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-################################################################################
-# Package: DDDB
-################################################################################
-gaudi_subdir(DDDB v1r84)
+gaudi_subdir(DDDB)
 
-gaudi_depends_on_subdirs(Det/DetCond
-                         Tools/CondDBEntityResolver)
-
-find_package(Oracle)
-find_package(SQLite)
+gaudi_depends_on_subdirs(Det/DetCond Tools/GitEntityResolver)
 
 gaudi_install_python_modules()
-

@@ -24,8 +24,7 @@ LoadDDDBTest("2010", sim=True)
 
 # this is special
 from Configurables import CondDB
-CondDB(LatestGlobalTagByDataTypes = ['MC10'],
-       LatestLocalTagsByDataType  = ['MC10'])
+CondDB(LatestGlobalTagByDataTypes = ['MC10'])
 
 </text></argument>
 <argument name="validator"><text>

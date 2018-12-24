@@ -14,20 +14,20 @@
 <argument name="options"><text>
 from Gaudi.Configuration import *
 from Configurables import (ApplicationMgr, MessageSvc,
-                           DDDBConf, CondDB, CondDBAccessSvc,
+                           DDDBConf, CondDB,
                            EventClockSvc, FakeEventTime,
                            UpdateManagerSvc)
 import GaudiKernel.SystemOfUnits as unit
+import os
 
 ConditionPaths =  ["/dd/Conditions/Online/Velo/MotionSystem",
                    "/dd/Conditions/Alignment/Velo/VeloLeft",
                    "/dd/Conditions/Alignment/Velo/VeloRight"]
 
 DDDBConf() # detector description
-localDb = CondDBAccessSvc("VeloAlignCondTestDB",
-                          ConnectionString = "sqlite_file:../data/VeloAlignCondTest.db/DDDB",
-                          DefaultTAG = "updates")
-CondDB().addLayer(localDb) # use local DB
+CondDB().addLayer(os.path.join(os.environ.get('TEST_OVERLAY_ROOT',
+                                              'Det/VeloDet/test/DB'),
+                               'updates'))  # use local test DB
 
 # This is needed to trigger the instantiation of the update manager service
 from Configurables import DetCondTest__TestConditionAlg
@@ -50,6 +50,8 @@ ecs.EventTimeDecoder.TimeStep =  10 * unit.s
 <argument name="reference"><text>../data/VeloAlignCondUpdates.ref</text></argument>
 <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor
-validateWithReference(preproc = preprocessor + LineSkipper("OffsetCoeffs = []"))
+validateWithReference(preproc=preprocessor
+                      + RegexpReplacer(r'using checked out files in .*test/DB',
+                                       'using checked out files in test/DB'))
 </text></argument>
 </extension>

@@ -13,8 +13,7 @@
 ################################################################################
 gaudi_subdir(HltDAQ v4r28)
 
-gaudi_depends_on_subdirs(Det/DetCond
-                         Det/DetDesc
+gaudi_depends_on_subdirs(Det/DetDesc
                          Event/DAQEvent
                          Event/HltEvent
                          Event/LumiEvent
@@ -25,7 +24,7 @@ gaudi_depends_on_subdirs(Det/DetCond
                          Hlt/HltServices
                          Kernel/HltInterfaces
                          Phys/LoKiHlt
-			             DAQ/DAQKernel)
+                         DAQ/DAQKernel)
 
 find_package(AIDA)
 find_package(Boost COMPONENTS iostreams filesystem)
@@ -42,12 +41,12 @@ gaudi_add_library(HltDAQLib
                  src/lib/*.cpp
                  PUBLIC_HEADERS HltDAQ
                  INCLUDE_DIRS Boost AIDA
-                 LINK_LIBRARIES Boost DetCondLib DetDescLib DAQEventLib DAQKernelLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
+                 LINK_LIBRARIES Boost DetDescLib DAQEventLib DAQKernelLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
 
 gaudi_add_module(HltDAQ
                  src/component/*.cpp
                  INCLUDE_DIRS Boost AIDA HltDAQ
-                 LINK_LIBRARIES HltDAQLib Boost DetCondLib DetDescLib DAQEventLib DAQKernelLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
+                 LINK_LIBRARIES HltDAQLib Boost DetDescLib DAQEventLib DAQKernelLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
 
 gaudi_add_unit_test(utestTrackingCoder
                     src/utest/utestTrackingCoder.cpp

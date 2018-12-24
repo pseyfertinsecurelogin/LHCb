@@ -30,8 +30,7 @@ def toTimeStampNS(dt):
 dddbConf = DDDBConf()
 
 cdb = CondDB()
-cdb.PartitionConnectionString["DQFLAGS"] = "sqlite_file:../data/DQFLAGS.db/DQFLAGS"
-cdb.Tags["DQFLAGS"] = ""
+cdb.addLayer(os.environ.get('TEST_DQFLAGS_ROOT'))
 cdb.Tags["DDDB"] = "dddb-20171030-2"
 
 ecs = EventClockSvc(InitialTime=toTimeStampNS(datetime(2012,1,1,12)))
@@ -43,7 +42,7 @@ alg = DQScanTest()
 alg.DQScanner = CondDBDQScanner()
 
 tests = [(datetime(2012,1,1,0),  datetime(2012,1,4,0)),
-	 (datetime(2012,1,1,12), datetime(2012,1,3,12)),
+         (datetime(2012,1,1,12), datetime(2012,1,3,12)),
          (datetime(2012,1,2,12), datetime(2012,1,5,12)),
          (datetime(2012,1,4,12), datetime(2012,1,6,12)),
          (datetime(2012,1,3,12), datetime(2012,1,4,12)),

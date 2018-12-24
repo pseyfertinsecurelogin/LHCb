@@ -13,8 +13,7 @@
 ################################################################################
 gaudi_subdir(HltServices v2r14)
 
-gaudi_depends_on_subdirs(Det/DetCond
-                         Det/DetDesc
+gaudi_depends_on_subdirs(Det/DetDesc
                          Event/DAQEvent
                          Event/HltEvent
                          GaudiAlg
@@ -31,7 +30,7 @@ include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 gaudi_add_module(HltServices
                  src/*.cpp
                  INCLUDE_DIRS Boost AIDA
-                 LINK_LIBRARIES Boost DetCondLib DetDescLib DAQEventLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
+                 LINK_LIBRARIES Boost DetDescLib DAQEventLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
 
 gaudi_add_executable(hlttck_cdb_listkeys  utilities/main.cpp src/cdb.cpp src/tar.cpp
                      INCLUDE_DIRS Boost

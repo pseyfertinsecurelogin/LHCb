@@ -31,7 +31,6 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
 gaudi_project(LHCb v50r2
               USE Gaudi v30r5
               DATA Gen/DecFiles
-                   Det/SQLDDDB VERSION v7r*
                    FieldMap
                    ParamFiles
                    PRConfig

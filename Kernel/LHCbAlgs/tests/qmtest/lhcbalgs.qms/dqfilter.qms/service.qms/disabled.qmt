@@ -14,17 +14,16 @@
 <argument name="args"><set><text>-v</text></set></argument>
 <argument name="options"><text>
 from Gaudi.Configuration import *
-from Configurables import (CondDB, EventClockSvc, FakeEventTime,
+from Configurables import (DDDBConf, CondDB, EventClockSvc, FakeEventTime,
                            DQFilterSvc, EventCountAlg, GaudiSequencer,
                            DQAcceptTool, BasicDQFilter, CondDBDQScanner)
 from Configurables import DetCondTest__TestConditionAlg as TestCond
+import os
 
-from Configurables import DDDBConf
-DDDBConf(DbRoot='conddb:/lhcb.xml')
+DDDBConf()
 
 conddb = CondDB()
-conddb.addAlternative(path = "/Conditions/DQ", dbFile = "../data/DQFLAGS.db")
-conddb.addAlternative(path = "/Conditions/Online/LHCb/RunParameters", dbFile = "../data/DQFLAGS.db")
+conddb.addLayer(os.environ.get('TEST_DQFLAGS_ROOT'))
 conddb.Tags["DDDB"] = "dddb-20171030-2"
 
 ecs = EventClockSvc()

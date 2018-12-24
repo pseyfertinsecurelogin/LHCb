@@ -21,8 +21,7 @@ from PyQt5.Qt import (Qt, QObject, pyqtSlot, pyqtSignal, QDateTime, QSettings,
 
 from Ui_MainWindow import Ui_MainWindow
 
-from CondDBUI import CondDB, openDB
-import PyCoolCopy
+from CondDBUI import openDB
 
 from Models import *
 from Dialogs import *
@@ -292,9 +291,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if name in self.defaultDatabases:
                 sender = self.defaultDatabases[name]
             else:
-                QMessageBox.critical(self, "Database nickname not known",
-                                     "The conditions database '%s' is not in "
-                                     "the list of known database." % name)
+                QMessageBox.critical(
+                    self, "Database nickname not known",
+                    "The conditions database '%s' is not in "
+                    "the list of known database." % name)
                 return
         # Open the database using the connection string in the action
         self.openDatabase(str(sender.data()), readOnly=readOnly)
@@ -306,13 +306,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ## Open the "create new database" dialog box
     def newDatabaseDialog(self):
-        dd = NewDatabaseDialog(self)
-        if dd.exec_():
-            connString = str(dd.connectionString())
-            # Create an empty database
-            CondDB(connString, readOnly=False, create_new_db=True)
-            # and open it in read/write mode
-            self.openDatabase(connString, readOnly=False)
+        raise NotImplementedError()
 
     ## Open the "open database" dialog box
     def openDatabaseDialog(self):
@@ -651,34 +645,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ## Create a slice of the current database to a database
     def createSlice(self):
-        d = CreateSliceDialog(self)
-        partName = str(self.db.db.databaseName())
-        i = d.partition.findText(partName)
-        if i >= 0:
-            d.partition.setCurrentIndex(i)
-        else:
-            d.partition.lineEdit().setText(partName)
-        if d.exec_():
-            try:
-                selectionList = [
-                    PyCoolCopy.Selection(path, since, until, tags=tags) for
-                    path, since, until, tags in d.selectionsModel.selections
-                ]
-                connStr = str(d.connectionString())
-                copyTool = PyCoolCopy.PyCoolCopy(self.db.db)
-                # reduce the verbosity of PyCoolCopy
-                PyCoolCopy.log.setLevel(PyCoolCopy.logging.WARNING)
-                from Utils import BusyCursor
-                _bc = BusyCursor()
-                if d.append.isChecked():
-                    copyTool.append(connStr, selectionList)
-                else:
-                    # FIXME : https://sft.its.cern.ch/jira/browse/ROOT-5603
-                    targetDb = CondDB(
-                        connStr, create_new_db=True, readOnly=False).db
-                    copyTool.copy(targetDb, selectionList)
-            except:
-                self.exceptionDialog()
+        raise NotImplementedError()
 
     ## Add a new condition to the selected folder+channel
     def addCondition(self):

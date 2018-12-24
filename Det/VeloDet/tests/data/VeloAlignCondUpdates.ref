@@ -1,77 +1,109 @@
-# --> Including file '/afs/cern.ch/user/c/cattanem/w0/cmtuser/LHCb_HEAD/Det/VeloDet/tests/qmtest/velodet.veloaligncond.updates.launch.py'
-# <-- End of file '/afs/cern.ch/user/c/cattanem/w0/cmtuser/LHCb_HEAD/Det/VeloDet/tests/qmtest/velodet.veloaligncond.updates.launch.py'
+# setting LC_ALL to "C"
+# --> Including file '/tmp/marco/tmpadcA3n.py'
+# <-- End of file '/tmp/marco/tmpadcA3n.py'
 # applying configuration of DDDBConf
-# WARNING: Using default tag head-20110302 for partition DDDB
-# WARNING: Using default tag head-20110524 for partition LHCBCOND
-# WARNING: Using default tag tt-20110126 for partition DQFLAGS
+# WARNING: Using default tag dddb-20180726-2 for partition DDDB
+# WARNING: Using default tag cond-20150409-1 for partition LHCBCOND
+# WARNING: EventClockSvc().InitialTime already set to 1970-01-01T00:00:10 UTC (requested 2012-12-16T21:49:50 UTC)
+# WARNING: Using default tag <latest:2012> for partition DQFLAGS
 # /***** User DDDBConf/DDDBConf **********************************************************************
-# |-DataType   = '2011'
-# |-DbRoot     = 'conddb:/lhcb.xml'
-# |-Simulation = False
+# |-IgnoreHeartBeat     = False
+# |-EnableRunStampCheck = True
+# |-InitialTime         = 'Safe'
+# |-Simulation          = False
+# |-DataType            = '2012'
+# |-AutoTags            = False
+# |-DbRoot              = 'git:/lhcb.xml'
+# |-OnlineMode          = False
 # \----- (End of User DDDBConf/DDDBConf) -------------------------------------------------------------
 # applying configuration of CondDB
-# --> Including file '/afs/cern.ch/lhcb/software/DEV/DBASE/Det/SQLDDDB/options/SQLDDDB.py'
-# <-- End of file '/afs/cern.ch/lhcb/software/DEV/DBASE/Det/SQLDDDB/options/SQLDDDB.py'
 # /***** User CondDB/CondDB **************************************************************************
-# |-PartitionConnectionString = {}  (default: {})
-# |-LocalTags                 = {}  (default: {})
-# |-IgnoreHeartBeat           = False
-# |-Tags                      = {}  (default: {})
-# |-Overrides                 = [(0, <CondDBAccessSvc/VeloAlignCondTestDB at 0x29e7cb0>)]  (default: [])
-# |-DisableLFC                = False
-# |-Simulation                = False
-# |-SQLiteLocalCopiesDir      = ''
-# |-HeartBeatCondition        = '/Conditions/Online/LHCb/Tick'
-# |-Online                    = False
-# |-QueryGranularity          = 0
-# |-UseOracle                 = False
-# |-LogFile                   = ''
-# |-UseLatestTags             = []  (default: [])
-# |-OverwriteSQLiteLocalCopy  = False
+# |-Upgrade                    = False
+# |-EnableRunStampCheck        = True
+# |-DBSnapshotDirectory        = '/group/online/hlt/conditions'
+# |-LatestLocalTagsByDataType  = []  (default: [])
+# |-Online                     = False
+# |-LogFile                    = ''
+# |-SQLiteLocalCopiesDir       = ''
+# |-EnableRunChangeHandler     = False
+# |-RunChangeHandlerConditions = {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']}
+# |                            (default: {'online_%d.xml': ['Conditions/Online/LHCb/Magnet/Set', 'Conditions/Online/Velo/MotionSystem', 'Conditions/Online/LHCb/Lumi/LumiSettings', 'Conditions/Online/LHCb/LHCFillingScheme', 'Conditions/Online/LHCb/RunParameters', 'Conditions/Online/Rich1/R1HltGasParameters', 'Conditions/Online/Rich2/R2HltGasParameters']})
+# |-Tags                       = {'DDDB': 'dddb-20180726-2', 'DQFLAGS': 'dq-20140822', 'LHCBCOND': 'cond-20150409-1'}
+# |                            (default: {})
+# |-LoadCALIBDB                = 'HLT1'
+# |-AllLocalTagsByDataType     = []  (default: [])
+# |-UseOracle                  = False
+# |-RunStampCondition          = ''
+# |-PartitionConnectionString  = {}  (default: {})
+# |-LocalTags                  = {}  (default: {})
+# |-IgnoreHeartBeat            = False
+# |-Overrides                  = [(2, '/home/marco/Devel/workspace/LHCb/build.x86_64-centos7-gcc8-opt/Det/VeloDet/test/DB/updates')]
+# |                            (default: [])
+# |-Simulation                 = False
+# |-QueryGranularity           = 0
+# |-LatestGlobalTagByDataType  = ''
+# |-UseDBSnapshot              = False
+# |-DisableLFC                 = False
+# |-HeartBeatCondition         = '/Conditions/Online/LHCb/Tick'
+# |-LatestGlobalTagByDataTypes = []  (default: [])
+# |-UseLatestTags              = []  (default: [])
+# |-OverwriteSQLiteLocalCopy   = False
 # \----- (End of User CondDB/CondDB) -----------------------------------------------------------------
 ApplicationMgr    SUCCESS
 ====================================================================================================================================
-                                                   Welcome to ApplicationMgr $Revision: 1.77 $
-                                          running on lxbuild163.cern.ch on Thu Jun 23 08:09:22 2011
+                                                   Welcome to LHCb version v50r1
+                                          running on marco-XPS-13 on Thu Nov 22 14:57:05 2018
 ====================================================================================================================================
 ApplicationMgr       INFO Application Manager Configured successfully
-DetectorPersist...   INFO  'CnvServices':[ 'XmlCnvSvc/XmlCnvSvc' ]
+ToolSvc.GitOver...   INFO opening Git repository '/home/marco/Devel/workspace/LHCb/build.x86_64-centos7-gcc8-opt/Det/VeloDet/test/DB/updates'
+ToolSvc.GitOver...   INFO using checked out files in /home/marco/Devel/workspace/LHCb/build.x86_64-centos7-gcc8-opt/Det/VeloDet/test/DB/updates
+ToolSvc.GitDDDB      INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DDDB.git'
+ToolSvc.GitDDDB      INFO using commit 'dddb-20180726-2' corresponding to 6a51e0af2cba20bb235674e3fd53bc0e20890d93
+ToolSvc.GitLHCB...   INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/LHCBCOND.git'
+ToolSvc.GitLHCB...   INFO using commit 'cond-20150409-1' corresponding to 862558522625bc8e913636791ef778223447c38e
+ToolSvc.GitONLINE    INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/ONLINE.git'
+ToolSvc.GitONLINE    INFO using commit 'HEAD' corresponding to 3fc757873bb72de4d2aa7a5ea55a7b6f47333f33
+ToolSvc.GitDQFLAGS   INFO opening Git repository '/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/DQFLAGS.git'
+ToolSvc.GitDQFLAGS   INFO using commit 'dq-20140822' corresponding to c8cd1b53fd9964a2f7f6de2c9a85c1982a286f94
 DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc
-DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml
+DetectorDataSvc   SUCCESS Detector description database: git:/lhcb.xml
+UpdateManagerSvc    DEBUG Property update for OutputLevel : new value = 1
 UpdateManagerSvc    DEBUG Service base class initialized successfully
 UpdateManagerSvc    DEBUG --- initialize ---
 UpdateManagerSvc    DEBUG Got pointer to IDataProviderSvc "DetectorDataSvc"
 UpdateManagerSvc    DEBUG Got pointer to IDetDataSvc "DetectorDataSvc"
 EventClockSvc.E...   INFO Event times generated from 10000000000 with steps of 10000000000
+EventClockSvc.E...   INFO Run numbers generated from 0 every 0 events
 UpdateManagerSvc  VERBOSE ServiceLocatorHelper::service: found service EventClockSvc
 UpdateManagerSvc    DEBUG Good: EventClockSvc found
 UpdateManagerSvc    DEBUG Got pointer to IncidentSvc
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type DetCondTest::TestConditionAlg at 0x4b22650
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Alignment/Velo/VeloLeft" for object of type DetCondTest::TestConditionAlg at 0x4b22650
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Alignment/Velo/VeloRight" for object of type DetCondTest::TestConditionAlg at 0x4b22650
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type DetCondTest::TestConditionAlg::CondUpdateMonitor at 0x2678330
+UpdateManagerSvc  VERBOSE registering object at 0x2678330 for object of type DetCondTest::TestConditionAlg at 0x2671ba0
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Alignment/Velo/VeloLeft" for object of type DetCondTest::TestConditionAlg::CondUpdateMonitor at 0x2678360
+UpdateManagerSvc  VERBOSE registering object at 0x2678360 for object of type DetCondTest::TestConditionAlg at 0x2671ba0
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Alignment/Velo/VeloRight" for object of type DetCondTest::TestConditionAlg::CondUpdateMonitor at 0x2678390
+UpdateManagerSvc  VERBOSE registering object at 0x2678390 for object of type DetCondTest::TestConditionAlg at 0x2671ba0
 EventLoopMgr      WARNING Unable to locate service "EventSelector"
 EventLoopMgr      WARNING No events will be processed from external input.
-HistogramPersis...   INFO  'CnvServices':[ 'HbookHistSvc' , 'RootHistSvc' ]
 HistogramPersis...WARNING Histograms saving not required.
 ApplicationMgr       INFO Application Manager Initialized successfully
 ApplicationMgr       INFO Application Manager Started successfully
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
-COOLConfSvc          INFO CORAL Connection Retrial Period set to 60s
-COOLConfSvc          INFO CORAL Connection Retrial Time-Out set to 900s
-VeloAlignCondTe...   INFO Connected to database "sqlite_file:../data/VeloAlignCondTest.db/DDDB"
-VeloAlignCondTe...   INFO Using TAG "updates"
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x4c899c0
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x4c899c0
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c899c0
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x4c824f0
-UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x4c824f0
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c824f0
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x24c0ef0
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x24c0ef0
+UpdateManagerSvc  VERBOSE Update specific object at 0x24c0ef0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x2ebbfe0
+UpdateManagerSvc  VERBOSE registering condition "Conditions/Online/Velo/MotionSystem" for object of type VeloAlignCond at 0x2ebbfe0
+UpdateManagerSvc  VERBOSE Update specific object at 0x2ebbfe0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -85,7 +117,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -100,7 +132,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 0.0 -> 15.0
 (double) ResolPosLA = 30
 (double) ResolPosRC = -30
@@ -110,10 +142,13 @@ Validity: 0.0 -> 15.0
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -127,7 +162,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -142,7 +177,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 15.0 -> 25.0
 (double) ResolPosLA = 10
 (double) ResolPosRC = -30
@@ -152,10 +187,13 @@ Validity: 15.0 -> 25.0
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -169,7 +207,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -184,7 +222,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 25.0 -> 35.0
 (double) ResolPosLA = 10
 (double) ResolPosRC = -10
@@ -194,10 +232,13 @@ Validity: 25.0 -> 35.0
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -211,7 +252,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -226,7 +267,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 35.0 -> 45.0
 (double) ResolPosLA = 10
 (double) ResolPosRC = -10
@@ -236,10 +277,13 @@ Validity: 35.0 -> 45.0
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -253,7 +297,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 0.0 -> 55.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -268,7 +312,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 45.0 -> 9223372036.854775807
 (double) ResolPosLA = 30
 (double) ResolPosRC = -30
@@ -278,16 +322,18 @@ Validity: 45.0 -> 9223372036.854775807
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c899c0
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c824f0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Update specific object at 0x24c0ef0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Update specific object at 0x2ebbfe0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 55.0 -> 65.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -301,7 +347,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 55.0 -> 65.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
@@ -316,7 +362,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 45.0 -> 9223372036.854775807
 (double) ResolPosLA = 30
 (double) ResolPosRC = -30
@@ -326,16 +372,19 @@ Validity: 45.0 -> 9223372036.854775807
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c899c0
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c824f0
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Update specific object at 0x24c0ef0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Update specific object at 0x2ebbfe0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 65.0 -> 75.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
 (std::vector<double,std::allocator<double> >) XOffsetCoeffs = [30, 0]
@@ -351,7 +400,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 65.0 -> 75.0
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
 (std::vector<double,std::allocator<double> >) XOffsetCoeffs = [0, 0.833333]
@@ -367,7 +416,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 45.0 -> 9223372036.854775807
 (double) ResolPosLA = 30
 (double) ResolPosRC = -30
@@ -377,21 +426,22 @@ Validity: 45.0 -> 9223372036.854775807
 UpdateManagerSvc    DEBUG New BeginEvent incident received
 UpdateManagerSvc  VERBOSE newEvent(evtTime): acquiring mutex lock
 UpdateManagerSvc    DEBUG newEvent(evtTime): loop over head items
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c899c0
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Invalidate object at 0x4c4c420
-UpdateManagerSvc  VERBOSE Update specific object at 0x4c824f0
+DetCondTest::Te...   INFO /dd/Conditions/Online/Velo/MotionSystem was updated
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Update specific object at 0x24c0ef0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloLeft was updated
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Invalidate object at 0x2e5bca0
+UpdateManagerSvc  VERBOSE Update specific object at 0x2ebbfe0
+DetCondTest::Te...   INFO /dd/Conditions/Alignment/Velo/VeloRight was updated
 UpdateManagerSvc  VERBOSE newEvent(evtTime): releasing mutex lock
 DetCondTest::Te...   INFO Requested Conditions:
 --- /dd/Conditions/Alignment/Velo/VeloLeft
-DataObject at 0x4c899c0
+DataObject at 0x24c0ef0
 Validity: 75.0 -> 9223372036.854775807
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosLA]
-(std::vector<double,std::allocator<double> >) XOffsetCoeffs = []
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
-(std::vector<double,std::allocator<double> >) YOffsetCoeffs = []
 (std::vector<double,std::allocator<double> >) dPosXYZ = [0, 0, 0]
 (std::vector<double,std::allocator<double> >) dRotXYZ = [0, 0, 0]
 (std::vector<double,std::allocator<double> >) pivotXYZ = [0, 0, 0]
@@ -402,10 +452,9 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Alignment/Velo/VeloRight
-DataObject at 0x4c824f0
+DataObject at 0x2ebbfe0
 Validity: 75.0 -> 9223372036.854775807
 (std::string) XOffset = Conditions/Online/Velo/MotionSystem[ResolPosRC]
-(std::vector<double,std::allocator<double> >) XOffsetCoeffs = []
 (std::string) YOffset = Conditions/Online/Velo/MotionSystem[ResolPosY]
 (std::vector<double,std::allocator<double> >) YOffsetCoeffs = [20, -5]
 (std::vector<double,std::allocator<double> >) dPosXYZ = [0, 0, 0]
@@ -418,7 +467,7 @@ offNominalMatrix:
 0  0  1  0
 
 --- /dd/Conditions/Online/Velo/MotionSystem
-DataObject at 0x4c4c420
+DataObject at 0x2e5bca0
 Validity: 45.0 -> 9223372036.854775807
 (double) ResolPosLA = 30
 (double) ResolPosRC = -30
@@ -427,37 +476,52 @@ Validity: 45.0 -> 9223372036.854775807
 
 UpdateManagerSvc    DEBUG --- stop ---
 UpdateManagerSvc  VERBOSE --- Dump
-UpdateManagerSvc  VERBOSE     4 items registered
+UpdateManagerSvc  VERBOSE     7 items registered
 UpdateManagerSvc  VERBOSE      of which 1 in the head
-UpdateManagerSvc  VERBOSE          head IOV = 75.0 - 0.0
-UpdateManagerSvc  VERBOSE --item 0 0x4b2ff70 (head)
-UpdateManagerSvc  VERBOSE        ptr  = 0x4b22650
-UpdateManagerSvc  VERBOSE         IOV = 75.0 - 0.0
+UpdateManagerSvc  VERBOSE          head IOV = 4b.0 - 0.0
+UpdateManagerSvc  VERBOSE --item 0 0x267c2e0
+UpdateManagerSvc  VERBOSE        ptr  = 0x2678330
+UpdateManagerSvc  VERBOSE         IOV = 0.000000001 - 0.0
 UpdateManagerSvc  VERBOSE        depend on :
-UpdateManagerSvc  VERBOSE                    0x4b30010 0x4b2c8b0 0x4b303a0
-UpdateManagerSvc  VERBOSE --item 1 0x4b30010
-UpdateManagerSvc  VERBOSE        ptr  = 0x4c4c420
+UpdateManagerSvc  VERBOSE                    0x267c430
+UpdateManagerSvc  VERBOSE --item 1 0x267c430
+UpdateManagerSvc  VERBOSE        ptr  = 0x2e5bca0
 UpdateManagerSvc  VERBOSE        path = Conditions/Online/Velo/MotionSystem
 UpdateManagerSvc  VERBOSE         IOV = 45.0 - 9223372036.854775807
-UpdateManagerSvc  VERBOSE --item 2 0x4b2c8b0
-UpdateManagerSvc  VERBOSE        ptr  = 0x4c899c0
+UpdateManagerSvc  VERBOSE --item 2 0x267c910 (head)
+UpdateManagerSvc  VERBOSE        ptr  = 0x2671ba0
+UpdateManagerSvc  VERBOSE         IOV = 75.0 - 0.0
+UpdateManagerSvc  VERBOSE        depend on :
+UpdateManagerSvc  VERBOSE                    0x267c2e0 0x267c690 0x267cd40
+UpdateManagerSvc  VERBOSE --item 3 0x267c690
+UpdateManagerSvc  VERBOSE        ptr  = 0x2678360
+UpdateManagerSvc  VERBOSE         IOV = 0.000000001 - 0.0
+UpdateManagerSvc  VERBOSE        depend on :
+UpdateManagerSvc  VERBOSE                    0x267caa0
+UpdateManagerSvc  VERBOSE --item 4 0x267caa0
+UpdateManagerSvc  VERBOSE        ptr  = 0x24c0ef0
 UpdateManagerSvc  VERBOSE        path = Conditions/Alignment/Velo/VeloLeft
 UpdateManagerSvc  VERBOSE         IOV = 0.000000001 - 0.0
 UpdateManagerSvc  VERBOSE        depend on :
-UpdateManagerSvc  VERBOSE                    0x4b30010
-UpdateManagerSvc  VERBOSE --item 3 0x4b303a0
-UpdateManagerSvc  VERBOSE        ptr  = 0x4c824f0
+UpdateManagerSvc  VERBOSE                    0x267c430
+UpdateManagerSvc  VERBOSE --item 5 0x267cd40
+UpdateManagerSvc  VERBOSE        ptr  = 0x2678390
+UpdateManagerSvc  VERBOSE         IOV = 75.0 - 0.0
+UpdateManagerSvc  VERBOSE        depend on :
+UpdateManagerSvc  VERBOSE                    0x267cf90
+UpdateManagerSvc  VERBOSE --item 6 0x267cf90
+UpdateManagerSvc  VERBOSE        ptr  = 0x2ebbfe0
 UpdateManagerSvc  VERBOSE        path = Conditions/Alignment/Velo/VeloRight
 UpdateManagerSvc  VERBOSE         IOV = 75.0 - 9223372036.854775807
 UpdateManagerSvc  VERBOSE        depend on :
-UpdateManagerSvc  VERBOSE                    0x4b30010
+UpdateManagerSvc  VERBOSE                    0x267c430
 UpdateManagerSvc  VERBOSE Found 1 head items: OK
 ApplicationMgr       INFO Application Manager Stopped successfully
-UpdateManagerSvc  VERBOSE Unregister object at 0x4b22650
+UpdateManagerSvc  VERBOSE Unregister object at 0x2671ba0
 EventLoopMgr         INFO Histograms converted successfully according to request.
 UpdateManagerSvc    DEBUG --- finalize ---
 ToolSvc              INFO Removing all tools created by ToolSvc
-UpdateManagerSvc  VERBOSE Trying to unregister object at 0x4c824f0, with the service OFFLINE
-UpdateManagerSvc  VERBOSE Trying to unregister object at 0x4c899c0, with the service OFFLINE
+UpdateManagerSvc  VERBOSE Trying to unregister object at 0x2ebbfe0, with the service OFFLINE
+UpdateManagerSvc  VERBOSE Trying to unregister object at 0x24c0ef0, with the service OFFLINE
 ApplicationMgr       INFO Application Manager Finalized successfully
 ApplicationMgr       INFO Application Manager Terminated successfully

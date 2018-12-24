@@ -43,5 +43,9 @@ gaudi_add_module(LHCbAlgsTests tests/src/*.cpp
 
 gaudi_install_python_modules()
 
+# Prepare test Git CondDB overlay
+file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/test/DQFLAGS)
+file(COPY tests/data/DQFLAGS/ DESTINATION test/DQFLAGS/)
+execute_process(COMMAND git init -q ${CMAKE_CURRENT_BINARY_DIR}/test/DQFLAGS)
 
-gaudi_add_test(QMTest QMTEST)
+gaudi_add_test(QMTest QMTEST ENVIRONMENT TEST_DQFLAGS_ROOT=${CMAKE_CURRENT_BINARY_DIR}/test/DQFLAGS)

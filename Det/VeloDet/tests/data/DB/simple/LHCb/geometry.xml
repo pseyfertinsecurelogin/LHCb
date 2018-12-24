@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<!DOCTYPE DDDB SYSTEM "git:/DTD/geometry.dtd">
+
+<DDDB>
+
+  <catalog name="LHCb">      <!-- LHCb detector geometry  catalog -->
+    <logvol name="lvLHCb" material="Vacuum">
+      <box name  = "caveBox"
+	   sizeX = "50000*mm"
+	   sizeY = "50000*mm"
+	   sizeZ = "50000*mm" />
+
+      <physvol name="BeforeMagnetRegion"
+	       logvol="/dd/Geometry/BeforeMagnetRegion/lvBeforeMagnetRegion">
+         <posXYZ z="0*mm" />
+      </physvol>
+
+    </logvol>
+  </catalog>
+
+</DDDB>

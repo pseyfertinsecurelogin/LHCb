@@ -13,9 +13,8 @@ from PyQt5.Qt import (QObject, pyqtSignal, pyqtSlot, QDateTime, QDate, QTime,
                       QDateTimeEdit, QSizePolicy, QAction, QCheckBox,
                       QPlainTextEdit, QTextDocument, QTextCursor, QFont)
 
-from Utils import valKeyToDateTime, dateTimeToValKey
-
-from PyCool import cool
+from CondDBUI import ValidityKeyMin, ValidityKeyMax
+from CondDBUI.Browser.Utils import valKeyToDateTime, dateTimeToValKey
 
 __all__ = ["TimePointEdit", "SearchableTextEdit"]
 
@@ -42,8 +41,8 @@ class TimePointEdit(QWidget):
         self._edit.setContextMenuPolicy(Qt.NoContextMenu)
 
         # Set the time range from cool ValidityKeyMin/Max.
-        self._minDateTime = valKeyToDateTime(cool.ValidityKeyMin)
-        self._maxDateTime = valKeyToDateTime(cool.ValidityKeyMax)
+        self._minDateTime = valKeyToDateTime(ValidityKeyMin)
+        self._maxDateTime = valKeyToDateTime(ValidityKeyMax)
         self._edit.setDateTimeRange(self._minDateTime, self._maxDateTime)
         self._edit.setDisplayFormat("dd-MM-yyyy hh:mm:ss")
         self._edit.setCalendarPopup(True)
@@ -184,12 +183,12 @@ class TimePointEdit(QWidget):
     def toValidityKey(self):
         # Get the number of seconds since epoch and convert it to ns.
         if self._max.isChecked():
-            return cool.ValidityKeyMax
+            return ValidityKeyMax
         return dateTimeToValKey(self._edit.dateTime())
 
     ## Set the internal QDateTime from a cool::ValidityKey.
     def setValidityKey(self, valKey):
-        if valKey == cool.ValidityKeyMax:
+        if valKey == ValidityKeyMax:
             self._edit.setDateTime(self._maxDateTime)
             self._max.setChecked(True)
         else:

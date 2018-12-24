@@ -32,7 +32,7 @@ app = LHCbApp()
 app.EvtMax = -1
 app.DataType = '2016'
 
-CondDB().UseLatestTags = [app.DataType, True]
+CondDB().LatestGlobalTagByDataTypes = [app.DataType]
 
 # Location of TCK database
 TCKData = 'TCKData'

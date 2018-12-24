@@ -15,51 +15,8 @@
 #  and starts the event loop.
 __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
 
-# Define few global variables to tune the behavior depending on the environment
-from os import environ as env
-from os.path import isdir, exists, join
-__pit_special_dir__ = "/group/online/condb_viewer"
-__pit_environment__ = isdir(__pit_special_dir__)
-if __pit_environment__:
-    env["CORAL_DBLOOKUP_PATH"] = env["CORAL_AUTH_PATH"] = __pit_special_dir__
-
-__default_option_files__ = [
-    "$SQLDDDBROOT/options/SQLDDDB.py", "$VETRAROOT/options/Velo/VeloCondDB.py"
-]
-
 import logging
 import sys
-
-
-## Imports an options file to find the configured conditions databases.
-#  @return A dictionary associating names (of the services) to connection strings.
-def getStandardConnectionStrings(optionFiles):
-    from Gaudi.Configuration import importOptions, allConfigurables
-    from GaudiKernel.ProcessJobOptions import ParserError
-    # output dictionary
-    data = {}
-    for o in optionFiles:
-        try:
-            importOptions(o)
-        except (ParserError, ImportError), x:
-            # Ignore errors from the parser (e.g. file not found)
-            logging.info("Problems importing %s: %s", o, x)
-    for name in allConfigurables:
-        if hasattr(allConfigurables[name], "ConnectionString"):
-            data[name] = allConfigurables[name].ConnectionString
-    # If we are at the PIT (we can use Oracle)
-    if __pit_environment__:
-        for c in [
-                "CondDB/DDDB", "CondDB/LHCBCOND", "CondDB/SIMCOND",
-                "CondDBOnline/ONLINE", "CondDBPrivate/PRIVATE"
-        ]:
-            data[c] = c
-    try:
-        from DDDB.Configuration import GIT_CONDDBS
-        data.update((k + ' (Git)', v) for k, v in GIT_CONDDBS.items())
-    except ImportError:
-        pass
-    return data
 
 
 ## Initialize and start the application.
@@ -99,15 +56,8 @@ def main(argv=None):
         help=
         "Open the database specified in the command line in read/write mode")
     parser.add_option(
-        "--options",
-        action="append",
-        dest="option_files",
-        help=
-        "Option files to be used to detect the standard databases (can be specified multiple times"
-    )
-    parser.add_option(
         "--verbose", action="store_true", help="Increase verbosity")
-    parser.set_defaults(rw=False, option_files=__default_option_files__)
+    parser.set_defaults(rw=False)
 
     opts, args = parser.parse_args(argv[1:])
 
@@ -119,7 +69,8 @@ def main(argv=None):
         )
 
     mw = MainWindow()
-    mw.setDefaultDatabases(getStandardConnectionStrings(opts.option_files))
+    from DDDB.Configuration import GIT_CONDDBS
+    mw.setDefaultDatabases(GIT_CONDDBS)
 
     # Use the first (and only) argument as name of the database to open
     if args:
