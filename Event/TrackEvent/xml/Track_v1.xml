@@ -61,7 +61,6 @@
 
       <import name='GaudiKernel/GaudiException' />
       <import name='Event/State' />
-      <import name='Event/Measurement' />
       <import name='Event/TrackTags' />
       <import name='Event/TrackParameters' />
       <import name='Kernel/LHCbID' />
@@ -70,9 +69,8 @@
       <import name="GaudiKernel/VectorMap"/>
       <import name="GaudiKernel/Range"/>
       <import name="GaudiKernel/SharedObjectsContainer"/>
-      <import name="Event/TrackFitResult"/>
+      <import name="Event/ITrackFitResult"/>
       <import name="Kernel/STLExtensions"/>
-      <import name='Node'/>
 
       <enum
         name   = 'History'
@@ -257,12 +255,6 @@
         access = "PUBLIC"
    />
 
-   <typedef
-        type   = "std::vector&lt;const Measurement*&gt;"
-        def    = "MeasurementContainer"
-        desc   = "Container for Measurements on track"
-        access = "PUBLIC"
-   />
 
    <typedef
         type   = "std::vector&lt;State*&gt;"
@@ -271,12 +263,6 @@
         access = "PUBLIC"
    />
 
-   <typedef
-     type   = "Gaudi::Range_&lt;std::vector&lt;const Node*&gt;&gt;"
-     def    = "ConstNodeRange"
-     desc   = "Range of pointers to nodes on track. For non-const access, use fitresult."
-     access = "PUBLIC"
-     />
 
    <constructor
 	desc     = "Constructor with assigned key"
@@ -460,7 +446,7 @@
         nonconstaccessor = 'TRUE' />
 
       <attribute
-	type    = 'std::unique_ptr&lt;TrackFitResult&gt;'
+	type    = 'std::unique_ptr&lt;ITrackFitResult&gt;'
         name      = 'fitResult'
         desc      = 'Transient data related to track fit (nodes, material, etc)'
         access    = 'PRIVATE'
@@ -716,19 +702,7 @@
         </code>
       </method>
 
-      <method
-        type    = 'MeasurementContainer'
-        name    = 'measurements'
-        desc    = 'Retrieve vector with measurements on the track'
-        const   = 'TRUE'>
-      </method>
 
-      <method
-        type    = 'ConstNodeRange'
-        name    = 'nodes'
-        desc    = 'Const retrieve the nodes on the track'
-        const   = 'TRUE'>
-      </method>
 
       <method
         name    = 'addToStates'
@@ -813,12 +787,6 @@
         </code>
       </method>
 
-      <method
-        type    = 'unsigned int'
-        name    = 'nMeasurements'
-        desc    = 'Retrieve the number of Measurements on the track'
-        const   = 'TRUE'>
-      </method>
 
      <method
        name    = 'addToLhcbIDs'
@@ -925,17 +893,17 @@
 	type    = 'void'
         name    = 'setFitResult'
         desc    = 'Set pointer to object holding track fit data. Track becomes owner.'>
-	  <arg type = 'TrackFitResult* ' name='trackfit' />
+	  <arg type = 'ITrackFitResult* ' name='trackfit' />
       </method>
 
       <method
-	type    = 'TrackFitResult*'
+	type    = 'ITrackFitResult*'
         name    = 'fitResult'
         desc    = 'get pointer to the object holding the trackfit data.'>
       </method>
 
       <method
-	type      = 'const TrackFitResult*'
+	type      = 'const ITrackFitResult*'
 	name    = 'fitResult'
 	desc    = 'get const pointer to the object holding the trackfit data.'
 	const   = 'TRUE'>
@@ -1079,12 +1047,6 @@
         </code>
       </method>
 
-      <method
-        type    = 'unsigned int'
-        name    = 'nMeasurementsRemoved'
-        desc    = 'Retrieve the number of Measurements removed by the track fit (the number of LHCbIDs remains unchanged)'
-        const   = 'TRUE'>
-      </method>
 
       <method
         type    = 'bool'
@@ -1094,12 +1056,6 @@
         const   = 'TRUE'>
       </method>
 
-      <method
-        type    = 'const Measurement*'
-        name    = 'measurement'
-        argList = 'const LHCbID value'
-        desc    = 'Return the measurement on the track corresponding to the input LHCbID. Call first the "isMeasurementOnTrack" method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking code, not for general use.)'
-        const   = 'TRUE' />
 
       <method
 	name      = "fillStream"

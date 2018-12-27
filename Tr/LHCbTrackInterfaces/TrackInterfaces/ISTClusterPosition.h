@@ -14,11 +14,10 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/SmartRefVector.h"
 
-#include "Event/StateVector.h"
-
 #include "Kernel/SiPositionInfo.h"
 
 namespace LHCb{
+class StateVector;
 class STChannelID;
 class STCluster;
 class STDigit;

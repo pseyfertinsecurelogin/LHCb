@@ -21,6 +21,7 @@
 // local
 #include "Event/TrackFunctor.h"
 #include "Event/Track_v2.h"
+#include "GaudiKernel/TaggedBool.h"
 
 // ============================================================================
 namespace

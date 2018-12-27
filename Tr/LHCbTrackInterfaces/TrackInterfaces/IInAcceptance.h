@@ -18,10 +18,12 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/IAlgTool.h"
-#include "Event/Track.h"
 // ============================================================================
 // forward declarations
 // ============================================================================
+namespace LHCb::Event::v1 {
+    class Track;
+}
 // ============================================================================
 
 // ============================================================================
@@ -41,7 +43,7 @@ struct IInAcceptance : extend_interfaces<IAlgTool>
    *  @param track track to be checked
    *  @return true if the track is in acceptance
    */
-  virtual bool inAcceptance ( const LHCb::Track* track ) const = 0 ;
+  virtual bool inAcceptance ( const LHCb::Event::v1::Track* track ) const = 0 ;
 
 };
 

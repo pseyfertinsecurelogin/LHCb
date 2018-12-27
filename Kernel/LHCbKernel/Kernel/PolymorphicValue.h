@@ -77,6 +77,7 @@ public:
     PolymorphicValue(PolymorphicValue&& other) noexcept : m_ptr{ std::move(other.m_ptr) } {}
     PolymorphicValue& operator=(PolymorphicValue const& other) { m_ptr = details::clone(other.m_ptr.get()); return *this; }
     PolymorphicValue& operator=(PolymorphicValue&& other) noexcept { m_ptr = std::move(other.m_ptr ); return *this; }
+    PolymorphicValue& operator=(std::unique_ptr<Interface>&& other) noexcept { m_ptr = std::move(other); return *this; }
 
     Interface* ptr() noexcept { return m_ptr.get(); }
     Interface const* ptr() const noexcept { return m_ptr.get(); }
