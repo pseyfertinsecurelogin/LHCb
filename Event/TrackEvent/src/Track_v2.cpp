@@ -141,17 +141,18 @@ namespace LHCb::Event::v2
     //=============================================================================
     // Add a State to the list of States associated to the Track
     //=============================================================================
-    void Track::addToStates( const State& state )
+    Track& Track::addToStates( const State& state )
     {
       auto ipos = with_order( useDecreasingOrder{ checkFlag(Flag::Backward) },
                               [&](auto order) { return std::upper_bound( m_states.begin(), m_states.end(), state, order); } );
       m_states.emplace( ipos, state );
+      return *this;
     }
 
     //=============================================================================
     // Add a list of states to the list associated to the Track.
     //=============================================================================
-    void Track::addToStates( span<const State> states, Tag::Unordered_tag )
+    Track& Track::addToStates( span<const State> states, Tag::Unordered_tag )
     {
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
       // do not assumme that the incoming states are properly sorted.
@@ -159,12 +160,13 @@ namespace LHCb::Event::v2
         std::sort( pivot, m_states.end(), order );
         std::inplace_merge( m_states.begin(), pivot, m_states.end(), order );
       });
+      return *this;
     }
 
     //=============================================================================
     // Add a set of sorted states by increasing Z to the track.
     //=============================================================================
-    void Track::addToStates( span<const State> states, Tag::Sorted_tag )
+    Track& Track::addToStates( span<const State> states, Tag::Sorted_tag )
     {
       // debug assert checking whether it's correctly sorted or not
       assert( with_order( useDecreasingOrder{ checkFlag( Flag::Backward ) },
@@ -175,15 +177,17 @@ namespace LHCb::Event::v2
       auto pivot = m_states.insert( m_states.end(), states.begin(), states.end() );
       with_order( useDecreasingOrder{ checkFlag( Flag::Backward ) },
                   [&](auto order) { std::inplace_merge( m_states.begin(), pivot, m_states.end(), order ); });
+      return *this;
     }
 
     //=============================================================================
     // Remove an LHCbID from the list of LHCbIDs associated to the Track
     //=============================================================================
-    void Track::removeFromLhcbIDs( const LHCbID& value )
+    Track& Track::removeFromLhcbIDs( const LHCbID& value )
     {
       auto pos = std::lower_bound( m_lhcbIDs.begin(), m_lhcbIDs.end(), value );
       if ( pos != m_lhcbIDs.end() && *pos == value ) m_lhcbIDs.erase( pos );
+      return *this;
     }
 
     //=============================================================================
@@ -256,39 +260,27 @@ namespace LHCb::Event::v2
       return UNLIKELY( std::abs( qP ) < TrackParameters::lowTolerance ) ? 0 : qP < 0 ? -1 : +1;
     }
 
-    void Track::setQOverPInAllStates( float const qop )
+    Track& Track::setQOverPInAllStates( float const qop )
     {
       for ( auto& state : m_states ) state.setQOverP( qop );
+      return *this;
     }
 
-    void Track::setQOverPAndErrInAllStates( float const qop, float const err )
+    Track& Track::setQOverPAndErrInAllStates( float const qop, float const err )
     {
       for ( auto& state : m_states ) {
         state.setQOverP( qop );
         state.setErrQOverP2( err );
       }
+      return *this;
     }
 
-    void Track::setLhcbIDs( span<LHCbID const> ids, Tag::Unordered_tag )
-    {
-      m_lhcbIDs.assign( ids.begin(), ids.end() );
-      std::sort( m_lhcbIDs.begin(), m_lhcbIDs.end() );
-      assert( std::adjacent_find( m_lhcbIDs.begin(), m_lhcbIDs.end() ) == m_lhcbIDs.end() );
-    }
-
-    void Track::setLhcbIDs( span<LHCbID const> ids, Tag::Sorted_tag )
-    {
-      assert( std::is_sorted( ids.begin(), ids.end() ) );
-      assert( std::adjacent_find( ids.begin(), ids.end() ) == ids.end() );
-
-      m_lhcbIDs.assign( ids.begin(), ids.end() );
-    }
-
-    void Track::setLhcbIDs( LHCbIDContainer&& value, Tag::Sorted_tag )
+    Track& Track::setLhcbIDs( LHCbIDContainer&& value, Tag::Sorted_tag )
     {
       m_lhcbIDs = std::move( value );
       assert( std::is_sorted( m_lhcbIDs.begin(), m_lhcbIDs.end() ) );
       assert( std::adjacent_find( m_lhcbIDs.begin(), m_lhcbIDs.end() ) == m_lhcbIDs.end() );
+      return *this;
     }
 
     bool Track::containsLhcbIDs( Track const& track ) const { return containsLhcbIDs( track.lhcbIDs() ); }
@@ -298,7 +290,7 @@ namespace LHCb::Event::v2
       return std::includes( m_lhcbIDs.begin(), m_lhcbIDs.end(), ids.begin(), ids.end() );
     }
 
-    void Track::setFlag( Track::Flag const flag, bool const ok )
+    Track& Track::setFlag( Track::Flag const flag, bool const ok )
     {
       uint32_t val = ( ( static_cast<uint32_t>( flag ) ) << details::trailing_zeros( flagsMasks::flagMask ) ) &
                      flagsMasks::flagMask;
@@ -306,6 +298,7 @@ namespace LHCb::Event::v2
         m_flags |= val;
       else
         m_flags &= ~val;
+      return *this;
     }
 
     bool Track::checkFlag( Track::Flag const flag ) const

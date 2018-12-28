@@ -12,25 +12,19 @@
 #define TrackEvent_v2_H 1
 
 // Include files
-#include "Event/Measurement.h"
-#include "Event/Node.h"
 #include "Event/State.h"
 #include "Event/TrackParameters.h"
 #include "Event/TrackTags.h"
 #include "Event/TrackHit.h"
-#include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
-#include "GaudiKernel/Range.h"
-#include "GaudiKernel/VectorMap.h"
 #include "Kernel/LHCbID.h"
-#include "Kernel/PolymorphicValue.h"
 #include "Kernel/STLExtensions.h"
 #include "Kernel/meta_enum.h"
-#include <algorithm>
 #include <ostream>
 #include <type_traits>
 #include <vector>
+#include "range/v3/range_traits.hpp"
 
 /**
  *
@@ -144,7 +138,7 @@ namespace LHCb::Event
                       PrMatch          = 32, // track produced with the PrMatch pattern recognition for the upgrade
                       PrDownstream     = 33, // track produced with the PrDownstream pattern recognition for the upgrade
                       PrVeloUT         = 34) // track produced with the PrVeloUT pattern recognition for the upgrade
-      
+
       /// Track fit history enumerations
       meta_enum_class(FitHistory, int,
                       Unknown = 0,    // track not fitted yet (fit history not set)
@@ -192,7 +186,7 @@ namespace LHCb::Event
                       L0Candidate  = 128)//
 
       } // namespace TrakcEnums
-    
+
     class Track final
     {
     public:
@@ -200,8 +194,6 @@ namespace LHCb::Event
       typedef std::vector<LHCbID> LHCbIDContainer;
       /// Container for States on track
       typedef std::vector<State> StateContainer;
-      /// Range of pointers to nodes on track. For non-const access, use fitresult.
-      typedef Gaudi::Range_<std::vector<Node const*>> ConstNodeRange;
       struct Chi2PerDoF {
         double chi2PerDoF = 0.0;
         int    nDoF       = 0;
@@ -286,25 +278,22 @@ namespace LHCb::Event
       unsigned int nStates() const { return m_states.size(); };
 
       /// Sets POverQ for all states
-      void setQOverPInAllStates( float const qop );
+      Track& setQOverPInAllStates( float const qop );
 
       /// Sets POverQ adn ErrQOverP2 for all states
-      void setQOverPAndErrInAllStates( float const qop, float const err );
-
-      /// Const retrieve the nodes on the track
-      ConstNodeRange nodes() const;
+      Track& setQOverPAndErrInAllStates( float const qop, float const err );
 
       /// Add a State to the list of States associated to the track
-      void addToStates( State const& state );
+      Track& addToStates( State const& state );
 
       /// Add a set of states to the track.
-      void addToStates( span<State const> states, Tag::Unordered_tag );
+      Track& addToStates( span<State const> states, Tag::Unordered_tag );
 
       /// Add a set of sorted states by increasing Z to the track.
-      void addToStates( span<State const> states, Tag::Sorted_tag );
+      Track& addToStates( span<State const> states, Tag::Sorted_tag );
 
       /// Clear the State vector
-      void clearStates() { m_states.clear(); };
+      Track& clearStates() { m_states.clear();  return *this; };
 
       /// Retrieve the reference to the state closest to the given z-position
       State& closestState( double const z );
@@ -330,19 +319,28 @@ namespace LHCb::Event
       /// Add an LHCbID to the list of LHCbIDs associated to the track. Return true if LHCbID was not yet on track.
       bool addToLhcbIDs( LHCbID const& value );
 
-      template <
-          typename S,
-          typename = std::enable_if_t<std::is_same_v<S, Tag::Sorted_tag> || std::is_same_v<S, Tag::Unordered_tag>>>
+      template < typename S,
+                  typename = std::enable_if_t<std::is_base_of_v<Tag::Unordered_tag,S>>>
       bool addToLhcbIDs( span<LHCbID const> ids, S /**/ );
 
-      /// Sets the list of LHCbIDs associated to this track. The input vector will be sorted.
-      void setLhcbIDs( span<LHCbID const> ids, Tag::Unordered_tag );
-
       /// Sets the list of LHCbIDs associated to this track. The input vector must be sorted.
-      void setLhcbIDs( span<LHCbID const> ids, Tag::Sorted_tag );
+      Track& setLhcbIDs( LHCbIDContainer&& value, Tag::Sorted_tag );
 
-      /// Sets the list of LHCbIDs associated to this track. The input vector must be sorted.
-      void setLhcbIDs( LHCbIDContainer&& value, Tag::Sorted_tag );
+      /// Sets the list of LHCbIDs associated to this track
+      template <typename Range, typename Tg,
+                typename = std::enable_if_t<std::is_convertible_v<LHCbID, ranges::v3::range_value_type_t<Range>>>,
+                typename = std::enable_if_t<std::is_base_of_v<Tag::Unordered_tag,Tg>>>
+      Track& setLhcbIDs( const Range& ids, Tg = Tag::Unordered)
+      {
+        m_lhcbIDs.assign( ids.begin(), ids.end() );
+        if constexpr ( !std::is_same_v<Tg,Tag::Sorted_tag> ) {
+            std::sort(m_lhcbIDs.begin(), m_lhcbIDs.end());
+        } else {
+            assert( std::is_sorted( m_lhcbIDs.begin(), m_lhcbIDs.end() ) );
+        }
+        assert( std::adjacent_find( m_lhcbIDs.begin(), m_lhcbIDs.end() ) == m_lhcbIDs.end() );
+        return *this;
+      }
 
       /// Returns true if the LHCbIDs of track are a subset is the LHCbIDs of this track.
       bool containsLhcbIDs( Track const& track ) const;
@@ -354,7 +352,7 @@ namespace LHCb::Event
       size_t nCommonLhcbIDs( Track const& track ) const;
 
       /// Remove an LHCbID from the list of LHCbIDs associated to the track
-      void removeFromLhcbIDs( LHCbID const& value );
+      Track& removeFromLhcbIDs( LHCbID const& value );
 
       /// Check the type of the track (see the Type enum)
       bool checkType( Type const value ) const { return type() == value; };
@@ -372,7 +370,7 @@ namespace LHCb::Event
       bool checkFitStatus( FitStatus const value ) const { return fitStatus() == value; };
 
       /// Update the flag (see the Flag enum)
-      void setFlag( Flag const flag, bool const ok );
+      Track& setFlag( Flag const flag, bool const ok );
 
       /// Check the status of the flag (see the Flag enum)
       bool checkFlag( Flag const flag ) const;
@@ -397,7 +395,7 @@ namespace LHCb::Event
 
       auto chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; };
 
-      void setChi2PerDoF( Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
+      Track& setChi2PerDoF( Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; return *this; };
 
       auto nDoF() const { return m_chi2PerDoF.nDoF; };
 
@@ -405,24 +403,26 @@ namespace LHCb::Event
       auto flags() const { return m_flags; };
 
       /// Update  The variety of track flags
-      void setFlags( unsigned int value ) { m_flags = value; };
+      Track& setFlags( unsigned int value ) { m_flags = value; return *this;};
 
       /// Retrieve Track type
       Type type() const { return static_cast<Type>( details::getBits<flagsMasks::typeMask>( m_flags ) ); };
 
       /// Update Track type
-      void setType( Type const value )
+      Track& setType( Type const value )
       {
         details::setBits<flagsMasks::typeMask>( m_flags, static_cast<uint32_t>( value ) );
+        return *this;
       };
 
       /// Retrieve Specifies the pattern recognition algorithm that created the track
       History history() const { return static_cast<History>( details::getBits<flagsMasks::historyMask>( m_flags ) ); };
 
       /// Update Specifies the pattern recognition algorithm that created the track
-      void setHistory( History const value )
+      Track& setHistory( History const value )
       {
         details::setBits<flagsMasks::historyMask>( m_flags, static_cast<uint32_t>( value ) );
+        return *this;
       };
 
       /// Retrieve Track flags
@@ -435,9 +435,10 @@ namespace LHCb::Event
       };
 
       /// Update Specifies the fitting algorithm the fitted the track)
-      void setFitHistory( FitHistory const value )
+      Track& setFitHistory( FitHistory const value )
       {
         details::setBits<flagsMasks::fitHistoryMask>( m_flags, static_cast<uint32_t>( value ) );
+        return *this;
       };
 
       /// Retrieve Pattern recognition status of the track
@@ -447,9 +448,10 @@ namespace LHCb::Event
       };
 
       /// Update Pattern recognition status of the track
-      void setPatRecStatus( PatRecStatus const value )
+      Track& setPatRecStatus( PatRecStatus const value )
       {
         details::setBits<flagsMasks::patRecStatusMask>( m_flags, static_cast<uint32_t>( value ) );
+        return *this;
       };
 
       /// Retrieve Fitting status of the track
@@ -459,9 +461,10 @@ namespace LHCb::Event
       };
 
       /// Update Fitting status of the track
-      void setFitStatus( FitStatus const value )
+      Track& setFitStatus( FitStatus const value )
       {
         details::setBits<flagsMasks::fitStatusMask>( m_flags, static_cast<uint32_t>( value ) );
+        return *this;
       };
 
       /// Retrieve Track specific bits
@@ -471,9 +474,10 @@ namespace LHCb::Event
       };
 
       /// Update Track specific bits
-      void setSpecific( unsigned int value )
+      Track& setSpecific( unsigned int value )
       {
         details::setBits<flagsMasks::specificMask>( m_flags, static_cast<uint32_t>( value ) );
+        return *this;
       };
 
       /// Retrieve const  Container of (sorted) LHCbIDs
@@ -485,20 +489,23 @@ namespace LHCb::Event
       /// Retrieve  Container of all the states
       auto& states() { return m_states; };
 
-      void addToAncestors( const Track& ancestor ) { m_ancestors.push_back( &ancestor ); };
+      Track& addToAncestors( const Track& ancestor ) { m_ancestors.push_back( &ancestor ); return *this; };
       const std::vector<const Track*> ancestors() const { return m_ancestors; }
 
+      [[deprecated]] Track& setForwardPatQuality(double q) { forwardPatQuality = q; return *this; }
+
+    private:
+      std::vector<LHCbID>                         m_lhcbIDs{};             ///< Container of (sorted) LHCbIDs
+      std::vector<State>                          m_states{};              ///< Container with all the states
+      Chi2PerDoF                                  m_chi2PerDoF{};
+      unsigned int                                m_flags{0};              ///< The variety of track flags
+      std::vector<const Track*> m_ancestors;
     public:
-      double forwardPatQuality = std::numeric_limits<double>::signaling_NaN();
+      double forwardPatQuality = std::numeric_limits<double>::signaling_NaN(); ///< deprecated
       std::vector<LHCb::TrackHit> ftHits;
       std::vector<LHCb::TrackHit> utHits;
       std::vector<LHCb::TrackHit> veloHits;
     private:
-      Chi2PerDoF                                  m_chi2PerDoF{};
-      unsigned int                                m_flags{0};              ///< The variety of track flags
-      std::vector<LHCbID>                         m_lhcbIDs{};             ///< Container of (sorted) LHCbIDs
-      std::vector<State>                          m_states{}; ///< Container with pointers to all the states
-      std::vector<const Track*> m_ancestors;
 
       /// Make sure that the offset is the sum of the previous entries
       enum flagsMasks : uint32_t {
