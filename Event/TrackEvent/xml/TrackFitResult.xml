@@ -245,11 +245,6 @@
         <arg type = 'span&lt;LHCb::Measurement* const&gt;' inout='BYVALUE'  name='measurements' />
       </method>
 
-      <method
-        name    = 'removeFromMeasurements'
-        desc    = 'Remove a Measurement from the list of Measurements associated to the track'
-        argList = 'const LHCb::Measurement* value'>
-      </method>
 
       <method
         name    = 'clearMeasurements'
@@ -270,11 +265,6 @@
         desc    = 'Clear all nodes on track'>
       </method>
 
-      <method
-        name    = 'removeFromNodes'
-        desc    = 'Remove a Node from the list of Nodes associated to the track'
-        argList = 'Node* value'>
-      </method>
 
       <method
         type    = 'unsigned int'
