@@ -12,6 +12,7 @@
 #include <cassert>
 #include <limits>
 #include <numeric>
+#include <algorithm>
 
 std::unique_ptr<LHCb::Trajectory<double>> LHCb::BrokenLineTrajectory::clone() const
 {
@@ -95,7 +96,7 @@ LHCb::BrokenLineTrajectory::distTo1stError( double s,
   auto l = loc(s);
   if ( l.first!= ( pathDirection>=0 ? &m_traj.back().first
                                     : &m_traj.front().first ) ) {
-    // we're movinl amongst the internal pieces
+    // we're moving amongst the internal pieces
     auto endOfLocalRange = ( pathDirection>0 ? l.first->endRange()
                                              : l.first->beginRange() ) ;
     // make sure we don't run beyond the current piece...

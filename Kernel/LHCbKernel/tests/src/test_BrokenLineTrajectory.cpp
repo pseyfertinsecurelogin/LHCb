@@ -85,6 +85,4 @@ BOOST_AUTO_TEST_CASE( test_BrokenLineTrajectory )
     test_trajectory( traj2 );
 
     test_trajectory( { lines[0], lines[1], lines[2], lines[3] }, -1.0 );
-
-
 }
