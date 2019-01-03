@@ -20,9 +20,7 @@
 #include <algorithm>
 
 // Kernel
-#include "Kernel/LineTraj.h"
 #include "Kernel/LHCbID.h"
-#include "Kernel/PiecewiseTrajectory.h"
 #include "Kernel/UTNames.h"
 #include "Kernel/LHCbConstants.h"
 
@@ -691,34 +689,15 @@ std::unique_ptr<LHCb::Trajectory<double>> DeUTSector::trajectoryLastStrip() cons
 }
 
 std::unique_ptr<LHCb::Trajectory<double>> DeUTSector::createTraj(const unsigned int strip,
-                                                                 const double offset) const{
-  // collect the individual traj
+                                                                 const double offset) const {
   const Sensors& theSensors = sensors();
-
-  if (theSensors.size() == 1){ // can just return a line traj
-    return theSensors.front()->trajectory(strip,offset);
+  if (theSensors.size()!=1) {
+    MsgStream msg(msgSvc(), name() );
+    msg << MSG::ERROR << "Unexpected number of UT sensors in DeUTSector::createTraj" << endmsg;
+    throw GaudiException("unexpected number of UT sensors in DeUTSector::createTraj",
+                         "DeUTSector.cpp", StatusCode::FAILURE );
   }
-  // return a piecewise traj
-  auto traj = std::make_unique<UTTraj>();
-  for (auto iterS = theSensors.begin(); iterS != theSensors.end(); ++iterS) {
-    auto sensTraj = (*iterS)->trajectory(strip,offset);
-    if (traj->numberOfPieces() == 0) {
-      traj->append(std::move(sensTraj));
-    } else {
-      const double d1 = (sensTraj->beginPoint()-traj->endPoint()).mag2();
-      const double d2 = (sensTraj->endPoint()-traj->beginPoint()).mag2();
-      if (d1 < d2) {
-        double mu = sensTraj->muEstimate(traj->endPoint());
-        sensTraj->setRange(mu,sensTraj->endRange());
-        traj->append(std::move(sensTraj));
-      } else {
-        const double mu = sensTraj->muEstimate(traj->beginPoint());
-        sensTraj->setRange(sensTraj->beginRange(),mu);
-        traj->prepend(std::move(sensTraj));
-      }
-    }
-  } // loop
-  return traj;
+  return theSensors.front()->trajectory(strip,offset);
 }
 
 StatusCode DeUTSector::cacheInfo()
