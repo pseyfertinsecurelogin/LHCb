@@ -21,10 +21,8 @@
 // local
 #include "Event/Track_v1.h"
 #include "Event/TrackFunctor.h"
+#include "GaudiKernel/TaggedBool.h"
 
-namespace LHCb {
-     class TrackFitResult;
-}
 // ============================================================================
 
 //-----------------------------------------------------------------------------
@@ -32,6 +30,25 @@ namespace LHCb {
 //
 // 2004-12-14 : Jose Hernando, Eduardo Rodrigues
 //-----------------------------------------------------------------------------
+namespace {
+      template <typename T1, typename T2, typename F >
+      constexpr decltype(auto) with_selection_invoke( bool b, T1&& t1, T2&& t2, F&& f )
+      {
+          return b ? std::invoke(std::forward<F>(f),std::forward<T1>(t1))
+                   : std::invoke(std::forward<F>(f),std::forward<T2>(t2));
+      }
+
+      using useDecreasingOrder = Gaudi::tagged_bool<struct useDecreasingOrder_tag>;
+
+      template < typename F >
+      constexpr decltype(auto) with_order( useDecreasingOrder decreasing, F&& f )
+      {
+          return with_selection_invoke( UNLIKELY(static_cast<bool>(decreasing)),
+                                                TrackFunctor::decreasingByZ(),
+                                                TrackFunctor::increasingByZ(),
+                                                std::forward<F>(f) );
+      }
+}
 namespace LHCb::Event{
 inline namespace v1{
 //=============================================================================
@@ -71,10 +88,10 @@ Track& Track::operator=(Track&& track)
   m_lhcbIDs = std::move(track.m_lhcbIDs);
 
   // "copy" the states, avoiding real copy
-  std::swap( m_states, track.m_states );
+  swap(m_states, track.m_states );
 
   // copy the track fit info
-  std::swap( m_fitResult, track.m_fitResult );
+  m_fitResult = std::move( track.m_fitResult );
 
   m_extraInfo = std::move( track.extraInfo() );
 
@@ -145,7 +162,7 @@ const State & Track::closestState( double z ) const
   if ( iter == m_states.end() )
     throw GaudiException( "No state closest to z","Track.cpp",
                           StatusCode::FAILURE );
-  return *(*iter);
+  return **iter;
 }
 
 //=============================================================================
@@ -158,7 +175,7 @@ const State & Track::closestState( const Gaudi::Plane3D& plane ) const
   if ( iter == m_states.end() )
     throw GaudiException( "No state closest to plane","Track.cpp",
                           StatusCode::FAILURE );
-  return *(*iter);
+  return **iter;
 }
 
 //=============================================================================
@@ -212,15 +229,12 @@ void Track::addToStates( span<State* const> states, Tag::State::AssumeUnordered_
 {
   auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
-  // The 'if' is ugly, but more efficient than using 'orderByZ'.
-  if (checkFlag(Track::Flags::Backward)) {
-    // it's already sorted in most cases
-    std::sort(pivot,m_states.end(),TrackFunctor::decreasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::decreasingByZ()) ;
-  } else {
-    std::sort(pivot,m_states.end(),TrackFunctor::increasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::increasingByZ());
-  }
+  // it's already sorted in most cases
+  with_order( useDecreasingOrder{  checkFlag(Track::Flags::Backward) },
+              [&](auto order) {
+                    std::sort(pivot,m_states.end(),order);
+                    std::inplace_merge(m_states.begin(),pivot,m_states.end(),order) ;
+              } );
 }
 
 //=============================================================================
@@ -229,19 +243,14 @@ void Track::addToStates( span<State* const> states, Tag::State::AssumeUnordered_
 void Track::addToStates( span<State* const> states, Tag::State::AssumeSorted_tag)
 {
   // debug assert checking whether it's correctly sorted or not
-  assert( ( checkFlag(Track::Flags::Backward) ?
-              std::is_sorted(states.begin(), states.end(), TrackFunctor::decreasingByZ())
-            : std::is_sorted(states.begin(), states.end(), TrackFunctor::increasingByZ())
-          )
+  assert( with_order( useDecreasingOrder{  checkFlag(Track::Flags::Backward) },
+                      [&](auto order) { return std::is_sorted(states.begin(), states.end(), order ); } )
           && "states are not correctly sorted;"
              "hint: use the general addToStates function assuming unordered states");
 
   auto pivot = m_states.insert(m_states.end(), states.begin(), states.end());
-  if (UNLIKELY(checkFlag(Track::Flags::Backward))) {
-    std::inplace_merge(m_states.begin(), pivot, m_states.end(),TrackFunctor::decreasingByZ());
-  } else {
-    std::inplace_merge(m_states.begin(), pivot, m_states.end(),TrackFunctor::increasingByZ());
-  }
+  with_order( useDecreasingOrder{ checkFlag(Track::Flags::Backward) },
+              [&](auto order) { std::inplace_merge(m_states.begin(), pivot, m_states.end(), order ); } );
 }
 
 //=============================================================================
