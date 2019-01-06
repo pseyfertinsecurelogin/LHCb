@@ -112,18 +112,30 @@ namespace LHCb
   }
 
   namespace details_se {
+    template <typename Iterator>
+    struct is_span_iterator : std::false_type {};
+
+    template <typename ValueType,bool isConst>
+    struct is_span_iterator< gsl::details::span_iterator<ValueType,isConst> > : std::true_type {};
+
+    template <typename Iterator>
+    constexpr bool is_span_iterator_v = is_span_iterator<Iterator>::value;
+
     // see https://en.cppreference.com/w/cpp/named_req/ContiguousIterator
     // 1) array::iterator is typically a pointer, so no need to support it here
     // 2) string_view::iterator: why would ever want to turn that into a span?
     // 3) valarray: if you really need it, then feel free to add it
+    //
+    // or it is a pair of iterators into a span...
     template <typename Iterator>
     constexpr bool isContiguous() {
         using Value = typename std::iterator_traits<Iterator>::value_type;
-        return ( std::is_same<typename std::vector<Value>::iterator,
-                            Iterator>::value
-                 || std::is_same<typename std::vector<Value>::const_iterator,
-                           Iterator>::value )
-           && !std::is_same<bool,Value>::value;
+        return ( ( std::is_same_v<typename std::vector<Value>::iterator,
+                            Iterator>
+                 || std::is_same_v<typename std::vector<Value>::const_iterator,
+                           Iterator> )
+           && !std::is_same_v<bool,Value> )
+            || is_span_iterator_v<Iterator> ;
     }
   }
 

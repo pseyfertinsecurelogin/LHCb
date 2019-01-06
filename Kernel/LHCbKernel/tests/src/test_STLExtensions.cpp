@@ -20,7 +20,7 @@
 template <typename ElementType, std::ptrdiff_t N>
 auto sum( LHCb::span<ElementType,N> s ) {
     using std::begin; using std::end;
-    return std::accumulate( begin(s), end(s), ElementType{0}, std::plus<>{} );
+    return std::accumulate( begin(s), end(s), ElementType{0}, std::plus{} );
 }
 
 BOOST_AUTO_TEST_CASE( span )
@@ -30,6 +30,22 @@ BOOST_AUTO_TEST_CASE( span )
     BOOST_CHECK( sum( LHCb::make_span(ai) ) == 30 );
     std::vector<int> vi{ 9,10,11};
     BOOST_CHECK( sum( LHCb::make_span(vi) ) == 30 );
+
+    const std::vector<int> cvi{ 9,10,11};
+    BOOST_CHECK( sum( LHCb::make_span(cvi) ) == 30 );
+
+    // check that we can make a span from iterators over vector elements ...
+    BOOST_CHECK( sum( LHCb::make_span( vi.begin(), vi.begin()+2 ) ) == 19 );
+
+    BOOST_CHECK( sum( LHCb::make_span( cvi.begin(), cvi.begin()+2 ) ) == 19 );
+
+    // check that we can make a span from iterators over span elements ...
+    auto si = LHCb::make_span(vi);
+    BOOST_CHECK( sum( LHCb::make_span( si.begin(), si.begin()+2 ) ) == 19 );
+
+    auto csi = LHCb::make_span(cvi);
+    BOOST_CHECK( sum( LHCb::make_span( csi.begin(), csi.begin()+2 ) ) == 19 );
+
   }
 }
 
@@ -51,7 +67,9 @@ BOOST_AUTO_TEST_CASE( range_single )
       LHCb::span<double,1> e = single;
       static_assert( e.extent == 1 );
       auto f = static_cast<LHCb::span<double,1>>(single);
+      BOOST_CHECK( f[0] == single.value() );
       auto g = static_cast<LHCb::span<double>>(single);
+      BOOST_CHECK( g[0] == single.value() );
   }
 
   // check two ways of moving out of single...
