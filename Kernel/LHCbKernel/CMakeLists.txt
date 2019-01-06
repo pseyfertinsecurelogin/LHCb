@@ -70,4 +70,6 @@ gaudi_add_unit_test(test_PlatformInfo tests/src/test_PlatformInfo.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
 gaudi_add_unit_test(test_meta_enum tests/src/test_meta_enum.cpp
                     LINK_LIBRARIES LHCbKernel TYPE Boost)
+gaudi_add_unit_test(test_BrokenLineTrajectory tests/src/test_BrokenLineTrajectory.cpp
+                    LINK_LIBRARIES LHCbKernel TYPE Boost)
 set_property(SOURCE tests/src/test_PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
