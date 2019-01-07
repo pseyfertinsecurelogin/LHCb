@@ -123,4 +123,3 @@ namespace VeloTELL1
   constexpr int CUT_LSB=2;
 }
 #endif // VELODECODECONF_H
-//

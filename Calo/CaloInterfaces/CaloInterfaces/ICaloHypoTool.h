@@ -57,4 +57,3 @@ struct ICaloHypoTool: extend_interfaces<IAlgTool>
 
 // ============================================================================
 #endif // CALOINTERFACES_ICALOCLUSTERTOOL_H
-// ============================================================================

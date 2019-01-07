@@ -8,9 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// ============================================================================
-#ifndef UTKERNEL_IUTRAWADCINFO_H
-#define UTKERNEL_IUTRAWADCINFO 1
+#pragma once
 // Include files
 #include <string>
 #include <vector>
@@ -64,7 +62,3 @@ struct IUTRawADCInfo : extend_interfaces<IAlgTool> {
                   std::vector<unsigned int>& values) const = 0;
 
 };
-
-// ============================================================================
-#endif // UT_IUTRawADCInfo
-// ============================================================================

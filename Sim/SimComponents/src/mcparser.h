@@ -74,4 +74,3 @@ union YYSTYPE {
   ParticleMatcher *match;
   std::vector<ParticleMatcher *> *mvect;
 } ;
-

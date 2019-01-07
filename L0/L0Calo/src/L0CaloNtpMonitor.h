@@ -8,9 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0CaloNtpMonitor.h,v 1.2 2008-04-13 16:53:32 robbep Exp $
-#ifndef L0CALONTPMONITOR_H
-#define L0CALONTPNOMITOR_H 1
+#pragma once
 
 // Include files
 // from Gaudi
@@ -42,4 +40,3 @@ private:
   DeCalorimeter * m_hcal            ; ///< Pointer to Hcal detector element
 
 };
-#endif  // L0CALONTPMONITOR_H

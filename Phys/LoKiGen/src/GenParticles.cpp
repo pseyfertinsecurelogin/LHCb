@@ -32,6 +32,7 @@
 #include "LoKi/ParticleProperties.h"
 #include "LoKi/Services.h"
 #include "LoKi/valid.h"
+// this must be included after the others
 #include "LoKi/MoreFunctions.h"
 // ============================================================================
 // LoKiGen

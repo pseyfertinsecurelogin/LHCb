@@ -595,4 +595,3 @@ namespace  VolumeIntersectionIntervals
 // The End
 // ============================================================================
 #endif   //   __DETDESC_VOLUMES_VOLUMEINTERSECTIONIINTERVALS_H__
-// ============================================================================

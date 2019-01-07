@@ -112,5 +112,3 @@ IGeometryInfo*  TransportSvc::findLocalGI ( const Gaudi::XYZPoint& point1 ,
 // The End 
 // ============================================================================
 #endif    //   __DETDESC_TRANSPORTSVC_TRANSPORTSVCFINDLOCALGI_H__
-// ============================================================================
-

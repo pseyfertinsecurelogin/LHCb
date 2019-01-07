@@ -255,4 +255,3 @@ unsigned long TransportSvc::intersections_r
 // The End
 // ============================================================================
 #endif  //  __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__
-// ============================================================================

@@ -54,4 +54,3 @@ struct ICaloDigitTool: extend_interfaces<IAlgTool>
 
 // ============================================================================
 #endif // CALOINTERFACES_ICALODIGITTOOL_H
-// ============================================================================

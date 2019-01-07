@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef L0DUFROMRAWTOOL_H
-#define L0DUFROMRAWTOOL_H 1
+#pragma once
 
 // Include files
 // from Gaudi
@@ -119,10 +118,6 @@ private:
   int  m_sumEtPrev1=-1;
   int  m_sumEtPrev2=-1;
 };
-#endif // L0DUFROMRAWTOOL_H
-
-
-
 
 inline void L0DUFromRawTool::encode(const std::string& name, unsigned int data ,  const std::array<unsigned int,L0DUBase::Index::Size>& base, int bx){
   if(name != "")dataMap(name,data,scale(base));

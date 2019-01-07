@@ -234,5 +234,3 @@ namespace PolyEval { ///< routines to evaluate polynomials
 }
 
 #endif // POLYEVAL_H
-
-// vim: sw=4:tw=78:ft=cpp

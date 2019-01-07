@@ -55,4 +55,3 @@ struct ICaloClusterSelector : extend_interfaces<IAlgTool>
   
 // ============================================================================
 #endif // CALOINTERFACES_ICALOCLUSTERSELECTOR_H
-// ============================================================================

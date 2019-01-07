@@ -1164,5 +1164,3 @@ BloomFilter<T, CAPACITY, PNUMER, PDENOM, HASH> operator|(
 #undef _canUseVeryFastHash
 
 #endif // BLOOMFILTER_H
-
-// vim: tw=78:sw=4:ft=cpp

@@ -52,7 +52,3 @@ struct ICaloHypoLikelihood: extend_interfaces<IAlgTool>
 
 // ============================================================================
 #endif // CALOINTERFACES_ICALOHYPOLIKELIHOOD_H
-// ============================================================================
-
-
-

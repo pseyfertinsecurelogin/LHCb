@@ -65,4 +65,3 @@ struct ICaloTrackIdEval : extend_interfaces<IAlgTool>
 };
 // ============================================================================
 #endif // CALOINTERFACES_ICALOTRACKIDEVAL_H
-// ============================================================================

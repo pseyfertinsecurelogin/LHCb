@@ -114,4 +114,3 @@ struct GAUDI_API IDVAlgorithm : extend_interfaces<INamedInterface>
 // The END
 // ============================================================================
 #endif // KERNEL_IDVALGORITHM_H
-// ============================================================================

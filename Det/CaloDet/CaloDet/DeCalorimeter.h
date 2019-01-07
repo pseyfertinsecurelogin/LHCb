@@ -818,10 +818,5 @@ inline int DeCalorimeter::cardIndexByCode( const int crate, const int slot ){
   return i!=m_feCards.end() ? i-m_feCards.begin() : -1;
 }
 
-// ============================================================================
-#endif  //    CALODET_DECALORIMETER_H
-// ============================================================================
-// CaloDet
-// ============================================================================
 #include "CaloDet/DeCalorimeter.icpp"
-// ============================================================================
+#endif  //    CALODET_DECALORIMETER_H

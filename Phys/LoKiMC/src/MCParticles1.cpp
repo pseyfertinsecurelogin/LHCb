@@ -26,6 +26,7 @@
 // ============================================================================
 #include "LoKi/iTree.h"
 #include "LoKi/Trees.h"
+// MCTypes must be included last
 #include "LoKi/MCTypes.h"
 // ============================================================================
 // local

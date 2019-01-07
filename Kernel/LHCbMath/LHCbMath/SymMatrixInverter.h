@@ -449,5 +449,3 @@ namespace Gaudi
 }
 
 #endif // LHCBMATH_SYMMATRIXINVERTER_H
-
-// vim:sw=2:tw=78:ft=cpp
