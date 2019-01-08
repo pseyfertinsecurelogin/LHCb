@@ -18,8 +18,8 @@ find_package(VectorClass REQUIRED)
 gaudi_add_library(VectorClassLib
                   ${VectorClass_INCLUDE_DIR}/ranvec1.cpp
                   ${VectorClass_INCLUDE_DIR}/instrset_detect.cpp
-                  NO_PUBLIC_HEADERS
-                  INCLUDE_DIRS VectorClass)
+                  PUBLIC_HEADERS VectorClass
+                  INCLUDE_DIRS ${VectorClass_INCLUDE_DIR})
 
 # Disable some warnings
 set_property(SOURCE ${VectorClass_INCLUDE_DIR}/ranvec1.cpp
