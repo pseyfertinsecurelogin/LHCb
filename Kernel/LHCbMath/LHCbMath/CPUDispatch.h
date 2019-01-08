@@ -21,7 +21,7 @@
 #include "GaudiKernel/GaudiException.h"
 
 // Vector Class
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 
 namespace LHCb
 {

@@ -22,7 +22,7 @@
 #include "GaudiKernel/GenericMatrixTypes.h"
 
 // VectorClass
-#include "VectorClass/vectorclass.h"
+#include "vectorclass.h"
 
 class MagneticFieldGridReader ;
 

@@ -989,7 +989,7 @@ namespace LHCb::Math
 // If not compiling the implementation, load everything needed
 #ifndef LHCB_MATH_RSQRT_IMPL
 #ifdef __SSE2__
-#include "VectorClass/vectorclass.h"
+#include "vectorclass.h"
 #endif
 #endif
 

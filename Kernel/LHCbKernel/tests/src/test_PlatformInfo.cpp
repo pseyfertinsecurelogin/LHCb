@@ -14,7 +14,7 @@
 
 #include "Kernel/PlatformInfo.h"
 
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 
 // special trick to add quotes around a macro value
 // see https://stackoverflow.com/a/20632065

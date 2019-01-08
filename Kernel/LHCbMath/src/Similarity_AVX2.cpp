@@ -11,7 +11,7 @@
 #include "GaudiKernel/GenericVectorTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "VectorClass/vectorclass.h"
+#include "vectorclass.h"
 #include <x86intrin.h>
 #ifdef NDEBUG
 #pragma GCC diagnostic push

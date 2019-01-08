@@ -20,7 +20,7 @@
 #include "GaudiKernel/Transform3DTypes.h"
 
 // VectorClass
-#include "VectorClass/vector3d.h"
+#include "vector3d.h"
 
 namespace LHCb
 {

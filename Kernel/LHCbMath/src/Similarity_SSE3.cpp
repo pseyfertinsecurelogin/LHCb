@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "VectorClass/vectorclass.h"
+#include "vectorclass.h"
 #include <x86intrin.h>
 #ifdef NDEBUG
 #pragma GCC diagnostic push

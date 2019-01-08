@@ -15,7 +15,7 @@
 #include <algorithm> // std::min, std::max
 
 #include "GaudiKernel/Kernel.h" // for LIKELY/UNLIKELY
-#include "VectorClass/vectorclass.h"
+#include "vectorclass.h"
 
 #include "LHCbMath/ChebyshevApprox.h"
 
