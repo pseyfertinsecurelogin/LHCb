@@ -155,15 +155,15 @@ bool DeSTSensor::localInActive( const Gaudi::XYZPoint& point,
 }
 
 
-std::unique_ptr<LHCb::Trajectory<double>> DeSTSensor::trajectory(const unsigned int strip,
-                                                                 const double offset) const {
+LHCb::LineTraj<double> DeSTSensor::trajectory(const unsigned int strip,
+                                                    const double offset) const {
 
   const double arclen = (offset + strip - m_firstStrip)*m_pitch ;
 
   Gaudi::XYZPoint midPoint = m_midTraj->position( arclen +
                                                     m_midTraj->beginRange());
 
-  return std::make_unique< LineTraj<double> >(midPoint, m_direction, m_range, Trajectory<double>::DirNormalized{true} );
+  return { midPoint, m_direction, m_range, Trajectory<double>::DirNormalized{true} };
 }
 
 
