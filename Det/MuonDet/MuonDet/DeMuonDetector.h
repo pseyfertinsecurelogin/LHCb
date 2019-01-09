@@ -267,10 +267,10 @@ public:
   };
 
   //Returns the station (as DetectorElement pointer) identified by MuonTileID
-  DetectorElement* Tile2Station(const LHCb::MuonTileID aTile);
+  DetectorElement* Tile2Station(const LHCb::MuonTileID aTile) const;
 
   // Return the chambers (as vector of DeMuonChamber pointer) from the MuonTileID
-  std::vector<DeMuonChamber*> Tile2Chamber(const LHCb::MuonTileID aTile);
+  std::vector<DeMuonChamber*> Tile2Chamber(const LHCb::MuonTileID aTile) const;
 
   //Returns the station (as DetectorElement pointer) from a Hit
   DetectorElement* Hit2Station(const Gaudi::XYZPoint myPoint);

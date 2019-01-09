@@ -603,15 +603,11 @@ StatusCode DeMuonDetector::Tile2XYZ(LHCb::MuonTileID tile,
                                     double & y, double & dy,
                                     double & z, double & dz) const{
 
-  StatusCode sc = StatusCode::FAILURE;
-
   //Ask the chamber Layout about the tile.
   if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
     msgStream() << MSG::DEBUG <<"Calling Tile2XYZpos method!"<<endmsg;
 
-  sc = m_chamberLayout->Tile2XYZpos(tile,x,dx,y,dy,z,dz);
-
-  return sc;
+  return m_chamberLayout->Tile2XYZpos(tile,x,dx,y,dy,z,dz);
 }
 
 StatusCode DeMuonDetector::getPCCenter(MuonFrontEndID fe,int chamber,
@@ -1390,7 +1386,7 @@ int DeMuonDetector::sensitiveVolumeID(const Gaudi::XYZPoint &myPoint) const
 }
 
 
-DetectorElement* DeMuonDetector::Tile2Station(LHCb::MuonTileID aTile)
+DetectorElement* DeMuonDetector::Tile2Station(LHCb::MuonTileID aTile) const
 {
   char stationName[10];
 
@@ -1406,21 +1402,15 @@ DetectorElement* DeMuonDetector::Tile2Station(LHCb::MuonTileID aTile)
 }
 
 
-std::vector<DeMuonChamber*> DeMuonDetector::Tile2Chamber(LHCb::MuonTileID aTile)
+std::vector<DeMuonChamber*> DeMuonDetector::Tile2Chamber(LHCb::MuonTileID aTile) const
 {
-  unsigned int istat = aTile.station();
-  unsigned int ireg =  aTile.region();
-  unsigned int chamNum;
 
-  std::vector<DeMuonChamber*> ChmbPtr;
   std::vector<unsigned int> chamberVector=m_chamberLayout->Tile2ChamberNum(aTile);
-  int vdim = chamberVector.size();
-
-  // std::cout << "chamberNumVect--> size: "<< vdim << std::endl;
-  for(int i=0; i<vdim; i++) {
-    chamNum = chamberVector.at(i);
-    ChmbPtr.push_back(getChmbPtr(istat,ireg,chamNum));
-  }
+  std::vector<DeMuonChamber*> ChmbPtr( chamberVector.size(), nullptr );
+  std::transform( chamberVector.begin(), chamberVector.end(),
+                  ChmbPtr.begin(),
+                  [this,istat=aTile.station(),ireg=aTile.region()]
+                  (unsigned int chamNum) { return this->getChmbPtr(istat,ireg,chamNum); });
   return ChmbPtr;
 }
 
