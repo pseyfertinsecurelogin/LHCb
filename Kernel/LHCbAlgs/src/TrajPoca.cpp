@@ -18,6 +18,7 @@
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
+
 // local
 #include "TrajPoca.h"
 
@@ -28,10 +29,7 @@ namespace {
 inline bool restrictToRange(double& l, const LHCb::Trajectory<double>& t)
 {
   const auto minmax = std::minmax( { t.beginRange(), t.endRange() } ) ;
-  //C++17: use std::clamp instead...
-  auto clamp = [](const auto& v, const auto& lo, const auto& hi ) -> decltype(auto)
-               { return v<lo ? lo : hi<v ? hi : v; };
-  const auto oldl = std::exchange( l, clamp( l, minmax.first, minmax.second ) );
+  const auto oldl = std::exchange( l, std::clamp( l, minmax.first, minmax.second ) );
   return oldl != l;
 }
 
