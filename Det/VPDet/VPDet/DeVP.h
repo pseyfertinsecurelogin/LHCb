@@ -57,11 +57,15 @@ class DeVP : public DetectorElement {
     return sensorNumber >= 0 ? m_sensors[sensorNumber] : nullptr;
   }
   /// Return pointer to sensor for a given channel ID.
-  const DeVPSensor* sensorOfChannel(const LHCb::VPChannelID channel) const {
+  [[deprecated("use sensor(id) instead")]] const DeVPSensor* sensorOfChannel(const LHCb::VPChannelID channel) const {
+    return sensor(channel.sensor());
+  }
+  /// Return pointer to sensor for a given channel ID.
+  const DeVPSensor* sensor(LHCb::VPChannelID channel) const {
     return sensor(channel.sensor());
   }
   /// Return pointer to sensor for a given sensor number.
-  const DeVPSensor* sensor(const unsigned int sensorNumber) const {
+  const DeVPSensor* sensor(unsigned int sensorNumber) const {
     return m_sensors[sensorNumber];
   }
 
