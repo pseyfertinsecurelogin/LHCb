@@ -213,7 +213,8 @@ void ZipFile::ZipInfo::print( void ) const
 
 void ZipFile::ZipInfo::make_from( const string& a_name, uint32_t a_file_offset,
                                   const string& is )
-{/* here 'is' is the body of the 'file' */
+{
+    /* here 'is' is the body of the 'file' */
     vmade = 0x317;
     vneed = 0x14;
     flag = 0;

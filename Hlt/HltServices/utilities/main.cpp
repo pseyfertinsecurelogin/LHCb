@@ -212,7 +212,8 @@ public:
         std::fstream*  m_file;
         std::streamoff m_pos;
 
-        ConfigTarFileAccessSvc_details::Info read_info() { // WARNING: advances the position in the file to just after the header...
+        // WARNING: advances the position in the file to just after the header...
+        ConfigTarFileAccessSvc_details::Info read_info() {
             ConfigTarFileAccessSvc_details::Info info;
             if (!m_file) return info;
             m_file->seekg( m_pos, std::ios::beg );
