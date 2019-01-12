@@ -64,7 +64,6 @@ public:
   };
 
   typedef std::vector<DeSTSensor*> Sensors;
-  typedef LHCb::PiecewiseTrajectory STTraj;
 
   /** Constructor */
   DeSTSector ( const std::string& name = "" ) ;

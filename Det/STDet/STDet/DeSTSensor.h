@@ -19,7 +19,7 @@
 #include "STDet/DeSTBaseElement.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "LHCbMath/LineTypes.h"
-#include "Kernel/Trajectory.h"
+#include "Kernel/LineTraj.h"
 
 
 /** @class DeSTSensor DeSTSensor.h "STDet/DeSTSensor.h"
@@ -93,8 +93,8 @@ public:
   /** trajectory
    * @return trajectory for the fit
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(unsigned int strip,
-                                                       double offset) const;
+  LHCb::LineTraj<double> trajectory(unsigned int strip,
+                                    double offset) const;
 
 
   /** plane corresponding to the sector

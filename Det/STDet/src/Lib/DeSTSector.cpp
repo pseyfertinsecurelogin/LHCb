@@ -19,7 +19,7 @@
 // Kernel
 #include "Kernel/LineTraj.h"
 #include "Kernel/LHCbID.h"
-#include "Kernel/PiecewiseTrajectory.h"
+#include "Kernel/BrokenLineTrajectory.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/GaudiException.h"
 
@@ -615,32 +615,23 @@ std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::trajectoryLastStrip() cons
 
 std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::createTraj(const unsigned int strip,
                                                                  const double offset) const{
-
   // collect the individual traj
   const Sensors& theSensors = sensors();
 
   if (theSensors.size() == 1){ // can just return a line traj
-    return theSensors.front()->trajectory(strip,offset);
+    return std::make_unique<LHCb::LineTraj<double>>(theSensors.front()->trajectory(strip,offset));
   }
-  // return a piecewise traj
-  auto traj = std::make_unique<STTraj>();
-  for (auto iterS = theSensors.begin(); iterS != theSensors.end(); ++iterS) {
-    auto sensTraj = (*iterS)->trajectory(strip,offset);
-    if (traj->numberOfPieces() == 0) {
-      traj->append(std::move(sensTraj));
-    } else {
-      const double d1 = (sensTraj->beginPoint()-traj->endPoint()).mag2();
-      const double d2 = (sensTraj->endPoint()-traj->beginPoint()).mag2();
-      if (d1 < d2) {
-        double mu = sensTraj->muEstimate(traj->endPoint());
-        sensTraj->setRange(mu,sensTraj->endRange());
-        traj->append(std::move(sensTraj));
-      } else {
-        const double mu = sensTraj->muEstimate(traj->beginPoint());
-        sensTraj->setRange(sensTraj->beginRange(),mu);
-        traj->prepend(std::move(sensTraj));
-      }
+  auto traj = std::make_unique<LHCb::BrokenLineTrajectory>();
+  traj->reserve(theSensors.size());
+  for (const auto& sensor : theSensors ) {
+    auto sensTraj = sensor->trajectory(strip,offset);
+    if (traj->size() != 0) {
+      // verify that the sensors are in the 'correct' order
+      assert( (sensTraj.beginPoint()-traj->endPoint()).mag2() < (sensTraj.endPoint()-traj->beginPoint()).mag2() );
+      double mu = sensTraj.muEstimate(traj->endPoint());
+      sensTraj.setRange(mu,sensTraj.endRange());
     }
+    traj->push_back(sensTraj);
   } // loop
   return traj;
 }
