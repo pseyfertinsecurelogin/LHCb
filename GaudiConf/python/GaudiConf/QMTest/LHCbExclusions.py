@@ -71,6 +71,9 @@ preprocessor = (
                  "AlgResourcePool      INFO",
                  "ForwardSchedule...   INFO",
                 ]) +
+    RegexpReplacer(when = "HLTControlFlowMgr    INFO",
+                                              orig = r'\d+',
+                                              repl = r'n') +
     RegexpReplacer(when = "Histograms converted successfully according to request",
         orig = r'"HiveSlimEventLo..."',
         repl = r'"EventLoopMgr      "') +
