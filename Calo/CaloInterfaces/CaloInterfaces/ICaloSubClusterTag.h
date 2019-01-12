@@ -51,4 +51,3 @@ struct ICaloSubClusterTag : extend_interfaces<ICaloClusterTool>
 
 // ============================================================================
 #endif // CALOINTERFACES_ICALOSUBCLUSTERTAG_H
-// ============================================================================

@@ -27,5 +27,3 @@
  */
 
 #endif // LHCBMATH_SYMPOSDEFMATRIXINVERTER_H
-
-// vim:sw=2:tw=78:ft=cpp

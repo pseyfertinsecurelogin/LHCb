@@ -59,4 +59,3 @@ struct ISTChannelIDSelector : extend_interfaces<IAlgTool>
   
 // ============================================================================
 #endif // ST_ISTCHANNELIDSELECTOR_H
-// ============================================================================

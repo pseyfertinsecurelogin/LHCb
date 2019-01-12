@@ -112,5 +112,3 @@ namespace Gaudi
 }
 
 #endif // LHCBMATH_MATRIXINVERSION_H
-
-// vim:sw=2:tw=78:ft=cpp

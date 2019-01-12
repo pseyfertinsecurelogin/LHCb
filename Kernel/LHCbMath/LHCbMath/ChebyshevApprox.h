@@ -514,5 +514,3 @@ class ChebyshevApprox
 };
 
 #endif // CHEBYSHEVAPPROX_H
-
-// vim: sw=4:tw=78:ft=cpp

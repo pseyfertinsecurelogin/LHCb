@@ -162,4 +162,3 @@ template<> inline std::string Param<DetDesc::Params::Histo2D>::toStr() const
 // The END 
 // ============================================================================
 #endif // DETDESC_HISTOPARAM_H
-// ============================================================================

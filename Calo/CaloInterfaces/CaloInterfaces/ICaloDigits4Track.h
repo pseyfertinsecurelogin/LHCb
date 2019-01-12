@@ -141,4 +141,3 @@ struct GAUDI_API ICaloDigits4Track : extend_interfaces<IAlgTool>
 // The END 
 // ============================================================================
 #endif // CALOINTERFACES_ICALODIGITS4TRACK_H
-// ============================================================================

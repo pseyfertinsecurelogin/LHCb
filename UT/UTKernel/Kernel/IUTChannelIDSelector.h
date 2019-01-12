@@ -58,4 +58,3 @@ struct IUTChannelIDSelector : extend_interfaces<IAlgTool>
   
 // ============================================================================
 #endif // UT_IUTCHANNELIDSELECTOR_H
-// ============================================================================

@@ -57,4 +57,3 @@ struct ICaloFutureClusterTool: extend_interfaces<IAlgTool>
 
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURECLUSTERTOOL_H
-// ============================================================================

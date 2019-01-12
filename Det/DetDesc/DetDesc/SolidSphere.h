@@ -368,4 +368,3 @@ inline bool SolidSphere::insideTheta( const aPoint& point ) const
 // The END
 // ===========================================================================
 #endif ///<  DETDESC_SOLIDSPHERE_H
-// ===========================================================================

@@ -67,4 +67,3 @@ struct ICaloFutureCorrection : extend_interfaces<IAlgTool>
 
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURECORRECTION_H
-// ============================================================================

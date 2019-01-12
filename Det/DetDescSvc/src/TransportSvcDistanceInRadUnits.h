@@ -114,4 +114,3 @@ double TransportSvc::distanceInRadUnits_r
 // The End
 // ============================================================================
 #endif  // __DETDESC_TRANSPORTSVC_TRASNPORTSVCDISTANCEINRADUNITS_H__
-// ============================================================================

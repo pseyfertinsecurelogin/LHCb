@@ -67,4 +67,3 @@ inline bool  TransportSvc::goodLocalGI
 // The End 
 // ============================================================================
 #endif //        __DETDESC_TRANSPORTSVC_TRANSPORTSVCGOODLOCALGI_H__
-// ============================================================================

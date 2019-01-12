@@ -26,7 +26,6 @@
 #include "LoKi/iTree.h"
 #include "LoKi/DecayFinder.h"
 #include "LoKi/ILoKiSvc.h"
-#include "LoKi/BasicFunctors.h"
 #include "LoKi/MCChildSelector.h"
 #include "LoKi/Trees.h"
 #include "LoKi/Services.h"
@@ -35,6 +34,8 @@
 #include "LoKi/MCAlgs.h"
 #include "LoKi/MCParticles1.h"
 #include "LoKi/MCChild.h"
+// BasicFunctors must be included last
+#include "LoKi/BasicFunctors.h"
 // ============================================================================
 /** @file
  *  implementation file for class LoKi::MCChild::Selector

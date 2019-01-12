@@ -70,5 +70,3 @@ StatusCode DummyRawEventCreator::execute() {
 
   return StatusCode::SUCCESS;
 }
-
-//=============================================================================

@@ -8,9 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef PREPAREVELOFULLRAWBUFFER_H
-#define PREPAREVELOFULLRAWBUFFER_H 1
-
+#pragma once
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
@@ -136,7 +134,6 @@ private:
   bool m_ignoreErrorBanks;
 
 };
-#endif // DECODEVELOFULLRAWBUFFER_H
 
 struct errorBankFinder{
 

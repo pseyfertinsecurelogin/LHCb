@@ -95,4 +95,3 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
 };
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTURETRMATCH_H
-// ============================================================================

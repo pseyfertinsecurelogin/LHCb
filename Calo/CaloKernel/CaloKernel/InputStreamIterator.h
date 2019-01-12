@@ -99,12 +99,3 @@ inline Distance* distance_type(const InputStreamIterator<T,S, Distance>&) {
 // The End 
 // ============================================================================
 #endif ///<  CALOKERNEL_INPUTSTREAMITERATOR_H 
-// ============================================================================
-
-
-
-
-
-
-
-

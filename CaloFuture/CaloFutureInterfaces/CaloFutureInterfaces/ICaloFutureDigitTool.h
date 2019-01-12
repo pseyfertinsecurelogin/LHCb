@@ -54,4 +54,3 @@ struct ICaloFutureDigitTool: extend_interfaces<IAlgTool>
 
 // ============================================================================
 #endif // CALOFUTUREINTERFACES_ICALOFUTUREDIGITTOOL_H
-// ============================================================================

@@ -47,4 +47,3 @@ private:
 
 };
 #endif // VELOTELL1ALG_VELOFULLDECODER_H
-//
