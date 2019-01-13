@@ -26,18 +26,6 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( CaloAdcFromRaw )
 
-
-namespace {
-
-// C++17:
-template <typename T>
-constexpr const T& clamp( const T& v, const T& lo, const T& hi) noexcept
-{
-        return ( v < lo ) ? lo : ( hi < v ) ? hi : v;
-}
-
-}
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -126,7 +114,7 @@ StatusCode CaloAdcFromRaw::execute() {
         value = (calib > 0) ? int( (double) adc.adc() / calib) : 0 ;
         if( m_calo->isDead( id )) value = 0;
       }
-      value = clamp( value, -m_offset, static_cast<int>(m_calo->adcMax()) - m_offset );
+      value = std::clamp( value, -m_offset, static_cast<int>(m_calo->adcMax()) - m_offset );
       try{
         auto out = std::make_unique<LHCb::CaloAdc>( id, value);
         if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -159,7 +147,7 @@ StatusCode CaloAdcFromRaw::execute() {
         value = ( calib > 0) ? int( (double) adc.adc() / calib) : 0;
         if( m_calo->isDead( id ))value = 0;
       }
-      value = clamp( value, 0, 255 ); // 8 bin L0ADC
+      value = std::clamp( value, 0, 255 ); // 8 bin L0ADC
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
         debug() << "Inserting : " << id << " l0adc = " << value << "  =  " << adc.adc() << " / " << calib
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
