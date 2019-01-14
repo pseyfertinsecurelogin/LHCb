@@ -202,7 +202,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             onlyref, onlystdout, counterPairs = self._compareCutSets(set(refCounters[algoName]), set(newCounters[algoName]))
             if onlyref or onlystdout:
                 msg += 'Different set of '+comp_type+' for algo %s\n' % algoName
-                msg += '    Ref has %d '+comp_type+', found %d of them in stdout\n' % (len(refCounters[algoName]), len(newCounters[algoName]))
+                msg += ('    Ref has %d '+comp_type+', found %d of them in stdout\n') % (len(refCounters[algoName]), len(newCounters[algoName]))
                 if onlyref:
                     msg += '    '+comp_type+' in ref and not in stdout : %s\n' % str(sorted(list(onlyref)))
                 if onlystdout:
