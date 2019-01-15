@@ -122,19 +122,25 @@ FTLiteClusters FTRawBankDecoder::decode<6>(LHCb::span<const LHCb::RawBank*> bank
       // only edges were saved, add middles now
       if ( widthClus  > 8 ) {
         //add the first edge cluster, and then the middle clusters
-        unsigned int  i = 0;
+        unsigned int  i = 4;
         for(; i < widthClus-4 ; i+=4){
           // all middle clusters will have same size as the first cluster,
           // so re-use the fraction
           make_cluster( firstChannel+i, 1, 0 );
+          //info()<<"=== "<< firstChannel+i<<"  "<<1<<"  "<< 0 <<endmsg;
         }
         //add the last edge
         unsigned int lastChannel = firstChannel + i + std::floor((widthClus-i-1)/2) - 1;
         
-        make_cluster  ( lastChannel, widthClus%2+1, 0 );
+        make_cluster  ( lastChannel, (widthClus-1)%2, 0 );
+        //info()<<"=== "<< lastChannel<<"  "<< (widthClus-1)%2<<"  "<< 0 <<endmsg;
+
       } else { //big cluster size upto size 8
         make_cluster( firstChannel+(widthClus-1)/2 - 1,
                       (widthClus-1)%2, widthClus );
+        
+        //info()<<"=== "<< firstChannel+(widthClus-1)/2 - 1 
+        //<<"  "<<(widthClus-1)%2<<"  "<< widthClus <<endmsg;
       }//end if adjacent clusters
     };//End lambda make_clusters
 
@@ -146,12 +152,14 @@ FTLiteClusters FTRawBankDecoder::decode<6>(LHCb::span<const LHCb::RawBank*> bank
     for( ;  it < last; ++it ){ // loop over the clusters
       unsigned short int c = *it;
       LHCb::FTChannelID channel = offset + channelInBank(c);
-
+      
       if( !cSize(c)  ) //No size flag 
         make_cluster(channel,fraction(c),4);
       else if(  it+1 == last && fraction(c)) // flagged but last cluster in sipm
         make_cluster(channel,fraction(c),0);
       else if( fraction(c) ){// first edge
+        //info()<< (unsigned) channel<<"  "<< fraction(c)<<"  "<< cSize(c) <<endmsg;
+            
         unsigned c2 = *(it+1);
         if( cSize(c2) && !fraction(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {//just for safety
           make_clusters(channel,c,c2);
@@ -228,7 +236,7 @@ FTLiteClusters FTRawBankDecoder::decode<5>(LHCb::span<const LHCb::RawBank*> bank
     for( ;  it < last; ++it ){ // loop over the clusters
       unsigned short int c = *it;
       LHCb::FTChannelID channel = offset + channelInBank(c);
-
+      
       if( !cSize(c) || it+1 == last ) //No size flag or last cluster
         make_cluster(channel,fraction(c),4);
       else{//Flagged or not the last one.
