@@ -122,25 +122,22 @@ FTLiteClusters FTRawBankDecoder::decode<6>(LHCb::span<const LHCb::RawBank*> bank
       // only edges were saved, add middles now
       if ( widthClus  > 8 ) {
         //add the first edge cluster, and then the middle clusters
-        unsigned int  i = 4;
+        unsigned int  i = 0;
         for(; i < widthClus-4 ; i+=4){
           // all middle clusters will have same size as the first cluster,
-          // so re-use the fraction
+          // for max size 4, fractions is always 1
           make_cluster( firstChannel+i, 1, 0 );
-          //info()<<"=== "<< firstChannel+i<<"  "<<1<<"  "<< 0 <<endmsg;
         }
+        
         //add the last edge
         unsigned int lastChannel = firstChannel + i + std::floor((widthClus-i-1)/2) - 1;
-        
         make_cluster  ( lastChannel, (widthClus-1)%2, 0 );
-        //info()<<"=== "<< lastChannel<<"  "<< (widthClus-1)%2<<"  "<< 0 <<endmsg;
-
+        
       } else { //big cluster size upto size 8
+      
         make_cluster( firstChannel+(widthClus-1)/2 - 1,
                       (widthClus-1)%2, widthClus );
         
-        //info()<<"=== "<< firstChannel+(widthClus-1)/2 - 1 
-        //<<"  "<<(widthClus-1)%2<<"  "<< widthClus <<endmsg;
       }//end if adjacent clusters
     };//End lambda make_clusters
 
@@ -155,17 +152,20 @@ FTLiteClusters FTRawBankDecoder::decode<6>(LHCb::span<const LHCb::RawBank*> bank
       
       if( !cSize(c)  ) //No size flag 
         make_cluster(channel,fraction(c),4);
-      else if(  it+1 == last && fraction(c)) // flagged but last cluster in sipm
+
+      else if(  it+1 == last && fraction(c)) // flagged first edge but last cluster in sipm
         make_cluster(channel,fraction(c),0);
-      else if( fraction(c) ){// first edge
-        //info()<< (unsigned) channel<<"  "<< fraction(c)<<"  "<< cSize(c) <<endmsg;
-            
+      
+      else if( fraction(c) ){// first edge of large cluster
+                    
         unsigned c2 = *(it+1);
         if( cSize(c2) && !fraction(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {//just for safety
           make_clusters(channel,c,c2);
           ++it;
-        } else {//this should never happen
-          make_cluster(channel,fraction(c),0);
+        } else {//this should never happen, 
+          error() << "there seems to be some inconsitency in FT raw data encoding: "
+                  << "first fragment is not followed by second" <<endmsg;
+          
         }
       }
     }
