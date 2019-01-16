@@ -26,7 +26,7 @@
 #include "VeloDet/DeVeloSensor.h"
 
 // get trajectory
-#include "Kernel/Trajectory.h"
+#include "Kernel/LineTraj.h"
 
 // Unique class identifier
 static const CLID CLID_DeVeloPhiType = 1008103 ;
@@ -45,7 +45,7 @@ namespace LHCb {
  *  @author Kurt Rinnert kurt.rinnert@cern.ch
  *  @date   2003-01-14
  */
-class DeVeloPhiType : public DeVeloSensor {
+class DeVeloPhiType final : public DeVeloSensor {
 public:
   /// Standard constructor
   DeVeloPhiType(  const std::string& name  = "");
@@ -70,7 +70,7 @@ public:
                LHCb::VeloChannelID& channel) const override;
 
   /// Return a trajectory (for track fit) from strip + offset
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::VeloChannelID& id, const double offset) const override;
+  LHCb::LineTraj<double> trajectory(const LHCb::VeloChannelID& id, const double offset) const;
 
   /// Residual of 3-d point to a VeloChannelID
   StatusCode residual(const Gaudi::XYZPoint& point,

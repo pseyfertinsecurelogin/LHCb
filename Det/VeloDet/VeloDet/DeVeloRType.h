@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeVeloRType.h,v 1.31 2009-07-27 10:36:15 jonrob Exp $
 #ifndef VELODET_DEVELORTYPE_H
 #define VELODET_DEVELORTYPE_H 1
 
@@ -28,7 +27,7 @@
 #include "VeloDet/DeVeloSensor.h"
 
 // get trajectory
-#include "Kernel/Trajectory.h"
+#include "Kernel/CircleTraj.h"
 
 // Unique class identifier
 static const CLID CLID_DeVeloRType = 1008102 ;
@@ -47,7 +46,7 @@ namespace LHCb {
  *  @author Kurt Rinnert kurt.rinnert@cern.ch
  *  @date   2003-01-14
  */
-class DeVeloRType : public DeVeloSensor {
+class DeVeloRType final : public DeVeloSensor {
 public:
   /// Standard constructor
   DeVeloRType( const std::string& name = "" );
@@ -74,7 +73,7 @@ public:
                        LHCb::VeloChannelID& channel) const override;
 
   /// Return a trajectory (for track fit) from strip + offset
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::VeloChannelID& id, const double offset) const override;
+  LHCb::CircleTraj trajectory(const LHCb::VeloChannelID& id, const double offset) const;
 
   /// Residual of 3-d point to a VeloChannelID
   StatusCode residual(const Gaudi::XYZPoint& point,

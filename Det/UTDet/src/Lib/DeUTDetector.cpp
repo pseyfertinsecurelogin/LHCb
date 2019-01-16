@@ -195,7 +195,7 @@ std::vector<LHCb::UTChannelID> DeUTDetector::disabledBeetles() const{
   return disabledBeetles;
 }
 
-std::unique_ptr<LHCb::Trajectory<double>>
+LHCb::LineTraj<double>
 DeUTDetector::trajectory(const LHCb::LHCbID& id,
                          const double offset) const
 {
@@ -214,7 +214,7 @@ DeUTDetector::trajectory(const LHCb::LHCbID& id,
   return aSector->trajectory(id.utID(), offset);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>>
+LHCb::LineTraj<double>
 DeUTDetector::trajectoryFirstStrip(const LHCb::LHCbID& id) const
 {
   if ( !id.isUT()){
@@ -232,7 +232,7 @@ DeUTDetector::trajectoryFirstStrip(const LHCb::LHCbID& id) const
   return aSector->trajectoryFirstStrip();
 }
 
-std::unique_ptr<LHCb::Trajectory<double>>
+LHCb::LineTraj<double>
 DeUTDetector::trajectoryLastStrip(const LHCb::LHCbID& id) const
 {
   if ( !id.isUT()){

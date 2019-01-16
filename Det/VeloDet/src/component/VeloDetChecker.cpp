@@ -8,13 +8,15 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/SystemOfUnits.h"
 
 // from Detector
-#include "VeloDet/DeVelo.h" 
+#include "VeloDet/DeVelo.h"
+#include "VeloDet/DeVeloRType.h"
+#include "VeloDet/DeVeloPhiType.h"
 
 #include "Kernel/LHCbID.h"
 #include <boost/lexical_cast.hpp>
@@ -27,6 +29,17 @@
 //
 // 2006-06-12 : Mark TOBIN
 //-----------------------------------------------------------------------------
+
+namespace {
+    template <typename Sensor>
+    std::unique_ptr<LHCb::Trajectory<double>> trajectory(const Sensor& s, LHCb::VeloChannelID channel) {
+        const DeVeloRType* r = s.rType();
+        if (r) return std::make_unique<LHCb::CircleTraj>( r->trajectory(channel,0.) );
+        const DeVeloPhiType* phi = s.phiType();
+        if (phi) return std::make_unique<LHCb::LineTraj<double>>( phi->trajectory(channel,0.) );
+        throw std::runtime_error("impossible sensor");
+    }
+}
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( VeloDetChecker )
@@ -52,11 +65,6 @@ VeloDetChecker::VeloDetChecker( const std::string& name,
   declareProperty("ScanSensors",m_scan=true);
   declareProperty("ScaleXYGrid",m_scale=1);
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-VeloDetChecker::~VeloDetChecker() {
-} 
 
 //=============================================================================
 // Initialization
@@ -143,7 +151,7 @@ void VeloDetChecker::TestAllSensorForwardIterators() {
   }
   if(m_phi) {
     debug() << "==============================================================================" << endmsg;
-    debug() << "Test containers in DeVelo which have only Phi sensors" << endmsg; 
+    debug() << "Test containers in DeVelo which have only Phi sensors" << endmsg;
     debug() << "==============================================================================" << endmsg;
     debug() << "===> Testing Phi DeVeloPhiType container" << endmsg;
     TestPhiSensorForwardIterators(m_velo->phiSensorsBegin(),m_velo->phiSensorsEnd());
@@ -154,7 +162,7 @@ void VeloDetChecker::TestAllSensorForwardIterators() {
   }
   if(m_pileUp) {
     debug() << "==============================================================================" << endmsg;
-    debug() << "Test containers in DeVelo which have Pile Up sensors" << endmsg; 
+    debug() << "Test containers in DeVelo which have Pile Up sensors" << endmsg;
     debug() << "==============================================================================" << endmsg;
     debug() << "===> Testing Pile Up DeVeloSensor containers" << endmsg;
     TestSensorForwardIterators(m_velo->pileUpSensorsBegin(),m_velo->pileUpSensorsEnd());
@@ -180,7 +188,7 @@ void VeloDetChecker::TestSensorForwardIterators(std::vector<DeVeloSensor*>::cons
     debug() << format("Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
   }
 }
@@ -194,7 +202,7 @@ void VeloDetChecker::TestRSensorForwardIterators(std::vector<DeVeloRType*>::cons
     debug() << format("Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
   }
 }
@@ -208,7 +216,7 @@ void VeloDetChecker::TestPhiSensorForwardIterators(std::vector<DeVeloPhiType*>::
     debug() << format("Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
   }
 }
@@ -252,7 +260,7 @@ void VeloDetChecker::TestAllSensorReverseIterators() {
   }
   if(m_phi) {
     debug() << "==============================================================================" << endmsg;
-    debug() << "Test containers in DeVelo which have only Phi sensors" << endmsg; 
+    debug() << "Test containers in DeVelo which have only Phi sensors" << endmsg;
     debug() << "==============================================================================" << endmsg;
     debug() << "===> Testing Phi DeVeloPhiType container" << endmsg;
     TestPhiSensorReverseIterators(m_velo->phiSensorsReverseBegin(),m_velo->phiSensorsReverseEnd());
@@ -263,7 +271,7 @@ void VeloDetChecker::TestAllSensorReverseIterators() {
   }
   if(m_pileUp) {
     debug() << "==============================================================================" << endmsg;
-    debug() << "Test containers in DeVelo which have Pile Up sensors" << endmsg; 
+    debug() << "Test containers in DeVelo which have Pile Up sensors" << endmsg;
     debug() << "==============================================================================" << endmsg;
     debug() << "===> Testing Pile Up DeVeloSensor containers" << endmsg;
     TestSensorReverseIterators(m_velo->pileUpSensorsReverseBegin(),m_velo->pileUpSensorsReverseEnd());
@@ -289,7 +297,7 @@ void VeloDetChecker::TestSensorReverseIterators(std::vector<DeVeloSensor*>::cons
     debug() << format("Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
   }
 }
@@ -303,7 +311,7 @@ void VeloDetChecker::TestRSensorReverseIterators(std::vector<DeVeloRType*>::cons
     debug() << format("Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
   }
 }
@@ -317,7 +325,7 @@ void VeloDetChecker::TestPhiSensorReverseIterators(std::vector<DeVeloPhiType*>::
     debug() << format("Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
   }
 }
@@ -355,19 +363,19 @@ void VeloDetChecker::TestTrajectories() {
   debug() << " Look at trajectory of first and last strips in each zone of the sensors" << endmsg;
   debug() << "==============================================================================" << endmsg;
 
-  for(std::vector<DeVeloSensor*>::const_iterator iSens=m_velo->sensorsBegin(); 
+  for(std::vector<DeVeloSensor*>::const_iterator iSens=m_velo->sensorsBegin();
       iSens != m_velo->sensorsEnd(); ++iSens) {
     unsigned int sensor=(*iSens)->sensorNumber();
     debug() << format("==> Sensor Number=%d, R=%i, Phi=%i, PU=%i, Left=%i, Right=%i, Down=%i, z=%f",
                       (*iSens)->sensorNumber(),(*iSens)->isR(),(*iSens)->isPhi(),(*iSens)->isPileUp(),
                       (*iSens)->isLeft(),(*iSens)->isRight(),(*iSens)->isDownstream(),
-                      (*iSens)->z()) 
+                      (*iSens)->z())
             << endmsg;
     for(unsigned int zone=0; zone < (*iSens)->numberOfZones(); ++zone) {
       unsigned int nStrips=(*iSens)->stripsInZone(zone);
       debug() << format("--> Sensor number=%d, zone=%d",sensor,zone) << endmsg;
-      PrintTrajectory(iSens,LHCb::VeloChannelID(sensor,zone*nStrips));
-      PrintTrajectory(iSens,LHCb::VeloChannelID(sensor,zone*nStrips+nStrips-1));
+      PrintTrajectory(**iSens,LHCb::VeloChannelID(sensor,zone*nStrips));
+      PrintTrajectory(**iSens,LHCb::VeloChannelID(sensor,zone*nStrips+nStrips-1));
     }
   }
 }
@@ -375,14 +383,15 @@ void VeloDetChecker::TestTrajectories() {
 // Print the start and end co-ordinates of the trajectory for a given sensor
 // and VeloChannelID
 //==============================================================================
-void VeloDetChecker::PrintTrajectory(std::vector<DeVeloSensor*>::const_iterator iSens, 
+void VeloDetChecker::PrintTrajectory(const DeVeloSensor&  iSens,
                                      LHCb::VeloChannelID channel) {
-  auto traj=(*iSens)->trajectory(channel,0.);
-  Gaudi::XYZPoint begin=traj->beginPoint(); 
-  Gaudi::XYZPoint end=traj->endPoint(); 
+
+  auto traj=trajectory(iSens,channel);
+  Gaudi::XYZPoint begin=traj->beginPoint();
+  Gaudi::XYZPoint end=traj->endPoint();
   debug() << format("Strip=%d, Begin: x=%f,y=%f,z=%f",channel.strip(),begin.x(),begin.y(),begin.z()) << endmsg;
   debug() << format("Strip=%d, End: x=%f,y=%f,z=%f",channel.strip(),end.x(),end.y(),end.z()) << endmsg;
-  if((*iSens)->isR() || (*iSens)->isPileUp()) {
+  if(iSens.isR() || iSens.isPileUp()) {
     debug() << format("Strip=%d, Phi: Begin=%f, End=%f",channel.strip(),begin.phi()/Gaudi::Units::degree,
                       end.phi()/Gaudi::Units::degree) << endmsg;
   }
@@ -394,7 +403,7 @@ void VeloDetChecker::CheckSensorGeometry() {
   debug() << "==> TestSensors" << endmsg;
   if(m_r) {
     CheckRSensorGeometry();
-  } 
+  }
   if(m_phi) {
     CheckPhiSensorGeometry();
   }
@@ -407,7 +416,7 @@ void VeloDetChecker::CheckSensorGeometry() {
 //==============================================================================
 void VeloDetChecker::CheckAllSensorGeometry() {
   debug() << "==> TestAllSensors" << endmsg;
-  for(std::vector<DeVeloSensor*>::const_iterator iSens=m_velo->sensorsBegin(); 
+  for(std::vector<DeVeloSensor*>::const_iterator iSens=m_velo->sensorsBegin();
       iSens != m_velo->sensorsEnd(); ++iSens) {
     const DeVeloSensor* sensor = (*iSens);
     for (unsigned int strip=0; strip != sensor->numberOfStrips(); ++strip){
@@ -516,7 +525,7 @@ void VeloDetChecker::CheckPhiSensorGeometry() {
   }
 }
 //==============================================================================
-// Scan the surface of x-y plane to check point to channel and residual 
+// Scan the surface of x-y plane to check point to channel and residual
 // calculations work.
 //==============================================================================
 void VeloDetChecker::ScanXYPlaneOfSensors() {

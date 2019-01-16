@@ -17,9 +17,7 @@
 #include <algorithm>
 
 // Kernel
-#include "Kernel/LineTraj.h"
 #include "Kernel/LHCbID.h"
-#include "Kernel/BrokenLineTrajectory.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/GaudiException.h"
 
@@ -588,7 +586,7 @@ double DeSTSector::toElectron(const double& val,
   return val * m_electronsPerADC[aStrip-1];
 }
 
-std::unique_ptr<LHCb::Trajectory<double>>
+LHCb::BrokenLineTrajectory
 DeSTSector::trajectory(const STChannelID& aChan, const double offset) const
 {
 
@@ -603,35 +601,35 @@ DeSTSector::trajectory(const STChannelID& aChan, const double offset) const
   return createTraj(aChan.strip(), offset);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::trajectoryFirstStrip() const
+LHCb::BrokenLineTrajectory DeSTSector::trajectoryFirstStrip() const
 {
   return createTraj(m_firstStrip,0.);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::trajectoryLastStrip() const
+LHCb::BrokenLineTrajectory DeSTSector::trajectoryLastStrip() const
 {
   return createTraj(nStrip(), 0.);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>> DeSTSector::createTraj(const unsigned int strip,
-                                                                 const double offset) const{
+LHCb::BrokenLineTrajectory DeSTSector::createTraj(const unsigned int strip,
+                                                  const double offset) const{
   // collect the individual traj
   const Sensors& theSensors = sensors();
 
   if (theSensors.size() == 1){ // can just return a line traj
-    return std::make_unique<LHCb::LineTraj<double>>(theSensors.front()->trajectory(strip,offset));
+    return { theSensors.front()->trajectory(strip,offset) };
   }
-  auto traj = std::make_unique<LHCb::BrokenLineTrajectory>();
-  traj->reserve(theSensors.size());
+  auto traj = LHCb::BrokenLineTrajectory{};
+  traj.reserve(theSensors.size());
   for (const auto& sensor : theSensors ) {
     auto sensTraj = sensor->trajectory(strip,offset);
-    if (traj->size() != 0) {
+    if (traj.size() != 0) {
       // verify that the sensors are in the 'correct' order
-      assert( (sensTraj.beginPoint()-traj->endPoint()).mag2() < (sensTraj.endPoint()-traj->beginPoint()).mag2() );
-      double mu = sensTraj.muEstimate(traj->endPoint());
+      assert( (sensTraj.beginPoint()-traj.endPoint()).mag2() < (sensTraj.endPoint()-traj.beginPoint()).mag2() );
+      double mu = sensTraj.muEstimate(traj.endPoint());
       sensTraj.setRange(mu,sensTraj.endRange());
     }
-    traj->push_back(sensTraj);
+    traj.push_back(sensTraj);
   } // loop
   return traj;
 }
@@ -642,8 +640,8 @@ StatusCode DeSTSector::cacheInfo()
 
   // get the start and end point. for piecewise trajectories, we
   // effectively make an approximation by a straight line.
-  const Gaudi::XYZPoint g1 = firstTraj->beginPoint();
-  const Gaudi::XYZPoint g2 = firstTraj->endPoint();
+  const Gaudi::XYZPoint g1 = firstTraj.beginPoint();
+  const Gaudi::XYZPoint g2 = firstTraj.endPoint();
 
   const double activeWidth = m_sensors.front()->activeWidth();
 

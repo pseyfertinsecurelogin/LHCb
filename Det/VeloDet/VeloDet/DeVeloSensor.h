@@ -27,9 +27,6 @@
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
 
-// get LHCbID for trajectory
-#include "Kernel/Trajectory.h"
-
 // Unique class identifier
 static const CLID CLID_DeVeloSensor = 1008101 ;
 
@@ -77,9 +74,6 @@ public:
   virtual StatusCode channelDistance(const LHCb::VeloChannelID& start,
                                      const LHCb::VeloChannelID& end,
                                      int& nOffset) const;
-
-  /// Return a trajectory (for track fit) from strip + offset
-  virtual std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::VeloChannelID& id, const double offset) const = 0;
 
   /** Residual of 3-d point to a VeloChannelID
    *

@@ -17,7 +17,7 @@
 
 #include "Kernel/UTChannelID.h"
 #include "Kernel/LHCbID.h"
-#include "Kernel/Trajectory.h"
+#include "Kernel/LineTraj.h"
 
 #include "DetDesc/DetectorElement.h"
 #include "UTDet/DeUTBaseElement.h"
@@ -204,18 +204,18 @@ public:
   /** get the trajectory
    @return trajectory
   */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::LHCbID& id,
-                                                       const double offset) const;
+  LHCb::LineTraj<double> trajectory(const LHCb::LHCbID& id,
+                                    const double offset) const;
 
   /** get the trajectory representing the first strip
    @return trajectory
   */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectoryFirstStrip(const LHCb::LHCbID& id) const;
+  LHCb::LineTraj<double> trajectoryFirstStrip(const LHCb::LHCbID& id) const;
 
   /** get the trajectory representing the last strip
    @return trajectory
   */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectoryLastStrip(const LHCb::LHCbID& id) const;
+  LHCb::LineTraj<double> trajectoryLastStrip(const LHCb::LHCbID& id) const;
 
   /** get the number of strips in detector*/
   unsigned int nStrip() const;

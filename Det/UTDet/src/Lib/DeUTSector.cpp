@@ -663,7 +663,7 @@ double DeUTSector::toElectron(const double& val,
   return val * m_electronsPerADC[aStrip-1];
 }
 
-std::unique_ptr<LHCb::Trajectory<double>>
+LHCb::LineTraj<double>
 DeUTSector::trajectory(const UTChannelID& aChan, const double offset) const
 {
 
@@ -678,18 +678,18 @@ DeUTSector::trajectory(const UTChannelID& aChan, const double offset) const
   return createTraj(aChan.strip(), offset);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>> DeUTSector::trajectoryFirstStrip() const
+LHCb::LineTraj<double> DeUTSector::trajectoryFirstStrip() const
 {
   return createTraj(m_firstStrip,0.);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>> DeUTSector::trajectoryLastStrip() const
+LHCb::LineTraj<double> DeUTSector::trajectoryLastStrip() const
 {
   return createTraj(nStrip(), 0.);
 }
 
-std::unique_ptr<LHCb::Trajectory<double>> DeUTSector::createTraj(const unsigned int strip,
-                                                                 const double offset) const {
+LHCb::LineTraj<double> DeUTSector::createTraj(const unsigned int strip,
+                                               const double offset) const {
   const Sensors& theSensors = sensors();
   if (theSensors.size()!=1) {
     MsgStream msg(msgSvc(), name() );
@@ -706,8 +706,8 @@ StatusCode DeUTSector::cacheInfo()
 
   // get the start and end point. for piecewise trajectories, we
   // effectively make an approximation by a straight line.
-  const Gaudi::XYZPoint g1 = firstTraj->beginPoint();
-  const Gaudi::XYZPoint g2 = firstTraj->endPoint();
+  const Gaudi::XYZPoint g1 = firstTraj.beginPoint();
+  const Gaudi::XYZPoint g2 = firstTraj.endPoint();
 
   const double activeWidth = m_sensors.front()->activeWidth();
 

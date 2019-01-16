@@ -190,8 +190,8 @@ public:
    *  @param channelID input FTChannelID
    *  @param frac input fraction
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::FTChannelID channelID,
-                                                       const float frac) const;
+  LHCb::LineTraj<double> trajectory(const LHCb::FTChannelID channelID,
+                                    const float frac) const;
 
   /** Get the line defined by the begin and end positions of a hit
    *   (channelID + fraction)

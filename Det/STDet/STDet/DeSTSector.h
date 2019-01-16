@@ -19,7 +19,7 @@
 
 #include "Kernel/STChannelID.h"
 #include "Kernel/LHCbConstants.h"
-#include "Kernel/PiecewiseTrajectory.h"
+#include "Kernel/BrokenLineTrajectory.h"
 #include "STDet/DeSTBaseElement.h"
 #include "STDet/DeSTSensor.h"
 
@@ -252,18 +252,18 @@ public:
   /** trajectory
    * @return trajectory for the fit
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::STChannelID& aChan,
+  LHCb::BrokenLineTrajectory trajectory(const LHCb::STChannelID& aChan,
                                              const double offset) const;
 
   /** trajectory
    * @return trajectory of the first strip
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectoryFirstStrip() const;
+  LHCb::BrokenLineTrajectory trajectoryFirstStrip() const;
 
   /** trajectory
    * @return trajectory of the last strip
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectoryLastStrip() const;
+  LHCb::BrokenLineTrajectory trajectoryLastStrip() const;
 
   /** Trajectory<double> parameterized along y-axis */
   void trajectory(unsigned int strip, double offset, double& dxdy, double& dzdy,
@@ -484,7 +484,7 @@ private:
   StatusCode updateStatusCondition();
   StatusCode updateNoiseCondition();
   void toEnumMap(const std::map<int,int>& input, DeSTSector::StatusMap& output);
-  std::unique_ptr<LHCb::Trajectory<double>> createTraj(const unsigned int strip, const double offset ) const;
+  LHCb::BrokenLineTrajectory createTraj(const unsigned int strip, const double offset ) const;
   void setStatusCondition( const std::string& type, const unsigned int entry,
                            const DeSTSector::Status& newStatus );
 

@@ -187,7 +187,7 @@ DeSTDetector::trajectory(const LHCb::LHCbID& id,
                           "DeSTDetector.cpp",
 			  StatusCode::FAILURE );
   }
-  return aSector->trajectory(id.stID(), offset);
+  return std::make_unique<LHCb::BrokenLineTrajectory>(aSector->trajectory(id.stID(), offset));
 }
 
 std::unique_ptr<LHCb::Trajectory<double>>
@@ -205,7 +205,7 @@ DeSTDetector::trajectoryFirstStrip(const LHCb::LHCbID& id) const
                           "DeSTDetector.cpp",
 			  StatusCode::FAILURE );
   }
-  return aSector->trajectoryFirstStrip();
+  return std::make_unique<LHCb::BrokenLineTrajectory>(aSector->trajectoryFirstStrip());
 }
 
 std::unique_ptr<LHCb::Trajectory<double>>
@@ -222,7 +222,7 @@ DeSTDetector::trajectoryLastStrip(const LHCb::LHCbID& id) const
                           "DeSTDetector.cpp",
                           StatusCode::FAILURE );
   }
-  return aSector->trajectoryLastStrip();
+  return std::make_unique<LHCb::BrokenLineTrajectory>(aSector->trajectoryLastStrip());
 }
 
 double DeSTDetector::fractionActive() const {

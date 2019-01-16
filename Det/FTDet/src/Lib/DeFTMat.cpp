@@ -191,8 +191,8 @@ float DeFTMat::distancePointToChannel(const Gaudi::XYZPoint& globalPoint,
 }
 
 // Get the begin and end positions of a fibre
-std::unique_ptr<LHCb::Trajectory<double>> DeFTMat::trajectory(const LHCb::FTChannelID channelID,
-    const float frac) const {
+LHCb::LineTraj<double> DeFTMat::trajectory(const LHCb::FTChannelID channelID,
+                                           const float frac) const {
   float localX = localXfromChannel( channelID, frac );
   Gaudi::XYZPoint mirrorPoint(m_mirrorPoint.x() + localX*m_ddx.x(),
                               m_mirrorPoint.y() + localX*m_ddx.y(),
@@ -200,8 +200,7 @@ std::unique_ptr<LHCb::Trajectory<double>> DeFTMat::trajectory(const LHCb::FTChan
   Gaudi::XYZPoint sipmPoint(m_sipmPoint.x() + localX*m_ddx.x(),
                             m_sipmPoint.y() + localX*m_ddx.y(),
                             m_sipmPoint.z() + localX*m_ddx.z());
-  return std::make_unique<LHCb::LineTraj<double>>(mirrorPoint,
-                                                  sipmPoint);
+  return { mirrorPoint, sipmPoint };
 }
 
 // Get the endpoints of the line defined by the hit
