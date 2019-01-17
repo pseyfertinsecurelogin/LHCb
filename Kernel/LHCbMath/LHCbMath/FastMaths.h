@@ -52,12 +52,12 @@ namespace LHCb::Math
     namespace SCALAR
     {
 
-      static const float THREEPIO4( 3.0f * M_PI / 4.0f ); ///< 3*pi/4
-      static const float PIO4F( M_PI_4 );                 ///< pi/4
-      static const float PIO2F( M_PI_2 );                 ///< pi/2
-      static const float PIF( M_PI );                     ///< pi
-      static const float TAN_PIO8F( 0.4142135623730950 ); ///< tan(pi/8)
-      static const float LOG2EF( 1.44269504088896341f );  ///< log2(e)
+      static constexpr float THREEPIO4( 3.0f * float(M_PI_4) ); ///< 3*pi/4
+      static constexpr float PIO4F( M_PI_4 );                 ///< pi/4
+      static constexpr float PIO2F( M_PI_2 );                 ///< pi/2
+      static constexpr float PIF( M_PI );                     ///< pi
+      static constexpr float TAN_PIO8F( 0.4142135623730950 ); ///< tan(pi/8)
+      static constexpr float LOG2EF( 1.44269504088896341f );  ///< log2(e)
 
     } // namespace SCALAR
     /// SIMD specific constants and methods
@@ -77,7 +77,7 @@ namespace LHCb::Math
       static const FPF PIO2F( M_PI_2 );                 ///< pi/2
       static const FPF PIF( M_PI );                     ///< pi
       static const FPF ONEOPIO4F( 4.0 / M_PI );         ///< 4/pi
-      static const FPF THREEPIO4( 3.0f * M_PI / 4.0f ); ///< 3*pi/4
+      static const FPF THREEPIO4( 3.0f * float(M_PI_4) ); ///< 3*pi/4
       // For exp
       static const FPF LOG2EF( 1.44269504088896341f ); ///< log2(e)
       static const FPF C1F( 0.693359375f );
