@@ -146,26 +146,29 @@ FTLiteClusters FTRawBankDecoder::decode<6>(LHCb::span<const LHCb::RawBank*> bank
     auto it = bank->begin<short int>() + 2; // skip first 32b of header
     auto last  = bank->end<short int>();
     if (*(last-1) == 0) --last;//Remove padding at the end
+    
     for( ;  it < last; ++it ){ // loop over the clusters
       unsigned short int c = *it;
       LHCb::FTChannelID channel = offset + channelInBank(c);
       
-      if( !cSize(c)  ) //No size flag 
+      if( !cSize(c) ) //Not flagged as large 
         make_cluster(channel,fraction(c),4);
-
-      else if(  it+1 == last && fraction(c)) // flagged first edge but last cluster in sipm
-        make_cluster(channel,fraction(c),0);
       
-      else if( fraction(c) ){// first edge of large cluster
-                    
-        unsigned c2 = *(it+1);
-        if( cSize(c2) && !fraction(c2) && getLinkInBank(c) == getLinkInBank(c2) ) {//just for safety
-          make_clusters(channel,c,c2);
-          ++it;
-        } else {//this should never happen, 
-          error() << "there seems to be some inconsitency in FT raw data encoding: "
-                  << "first fragment is not followed by second" <<endmsg;
+      else if( fraction(c) ){// flagged as first edge of large cluster
+        
+        // last cluster in bank or in sipm
+        if(  it+1 == last || getLinkInBank(c) != getLinkInBank( *(it+1)) ) 
+          make_cluster(channel,fraction(c),0);
+        
+        else{
+          unsigned c2 = *(it+1);
           
+          if( cSize(c2) && !fraction(c2) ){//this should always be true
+            make_clusters(channel,c,c2);
+            ++it;
+          } else {//this should never happen, 
+            error()<< "This should have never happened [should it creash here? a more meaningful message?]"<<endmsg;
+          }
         }
       }
     }
