@@ -160,21 +160,12 @@ State & Track::closestState( double z )
 //=============================================================================
 const State & Track::closestState( double z ) const
 {
-  if ( m_fitResult && !m_fitResult->nodes().empty() ) {
-    auto iter = std::min_element( m_fitResult->nodes().begin(),m_fitResult->nodes().end(),
-                                  TrackFunctor::distanceAlongZ(z) );
-    if ( iter == m_fitResult->nodes().end() )
-      throw GaudiException( "No state closest to z","Track.cpp",
-                            StatusCode::FAILURE );
-    return (*iter)->state();
-  } else {
-    auto iter = std::min_element( m_states.begin(),m_states.end(),
-                                  TrackFunctor::distanceAlongZ(z) );
-    if ( iter == m_states.end() )
-      throw GaudiException( "No state closest to z","Track.cpp",
-                            StatusCode::FAILURE );
-    return *(*iter);
-  }
+  auto iter = std::min_element( m_states.begin(),m_states.end(),
+                                TrackFunctor::distanceAlongZ(z) );
+  if ( iter == m_states.end() )
+    throw GaudiException( "No state closest to z","Track.cpp",
+                          StatusCode::FAILURE );
+  return *(*iter);
 }
 
 //=============================================================================
@@ -182,21 +173,12 @@ const State & Track::closestState( double z ) const
 //=============================================================================
 const State & Track::closestState( const Gaudi::Plane3D& plane ) const
 {
-  if ( m_fitResult && !m_fitResult->nodes().empty() ) {
-    auto iter = std::min_element( m_fitResult->nodes().begin(),m_fitResult->nodes().end(),
-                                  TrackFunctor::distanceToPlane(plane) );
-    if ( iter == m_fitResult->nodes().end() )
-      throw GaudiException( "No state closest to z","Track.cpp",
-                            StatusCode::FAILURE );
-    return (*iter)->state();
-  } else {
-    auto iter = std::min_element( m_states.begin(),m_states.end(),
-                                  TrackFunctor::distanceToPlane(plane) );
-    if ( iter == m_states.end() )
-      throw GaudiException( "No state closest to plane","Track.cpp",
-                            StatusCode::FAILURE );
-    return *(*iter);
-  }
+  auto iter = std::min_element( m_states.begin(),m_states.end(),
+                                TrackFunctor::distanceToPlane(plane) );
+  if ( iter == m_states.end() )
+    throw GaudiException( "No state closest to plane","Track.cpp",
+                          StatusCode::FAILURE );
+  return *(*iter);
 }
 
 //=============================================================================
