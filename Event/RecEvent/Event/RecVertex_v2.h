@@ -10,7 +10,8 @@
 \*****************************************************************************/
 #pragma once
 
-#include "Event/Track_v2.h"
+#include "../../../LHCb/Event/Hlt1Event/Track.h"
+#include "../../../LHCb/Event/Hlt1Event/TesLocations.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
@@ -20,6 +21,13 @@
 #include <utility>
 #include <ostream>
 #include <optional>
+
+
+struct Chi2PerDof {
+  float chi2;
+  int dof;
+};
+
 
 namespace LHCb::Event::v2 {
 
@@ -47,9 +55,8 @@ namespace LHCb::Event::v2 {
 
   /// helper class to bundle a Track and its weight
   struct WeightedTrack {
-    using Track = LHCb::Event::v2::Track;
-    WeightedTrack(const Track* t, float w) : track(t), weight(w){};
-    const Track* track;
+    WeightedTrack(const hlt1::Track* t, float w) : track(t), weight(w){};
+    const hlt1::Track* track;
     float weight;
   };
 
@@ -58,7 +65,7 @@ namespace LHCb::Event::v2 {
   public:
 
     /// local Track type
-    using Track = LHCb::Event::v2::Track;
+    using Track = hlt1::Track;
     using RecVertexType = Enum::RecVertex::RecVertexType;
     /// typedef for std::vector of RecVertex
     using Vector = std::vector<RecVertex*>;
@@ -67,8 +74,8 @@ namespace LHCb::Event::v2 {
     /// constructor
     RecVertex(const Gaudi::XYZPoint& position,
               const Gaudi::SymMatrix3x3& covMatrix,
-              const Track::Chi2PerDoF chi2PerDof) :
-    m_position(position), m_covMatrix(covMatrix), m_chi2PerDoF(chi2PerDof) {}
+              Chi2PerDof chi2PerDof) :
+    m_position(position), m_covMatrix(covMatrix), m_chi2PerDof(chi2PerDof) {}
 
     /// Is the vertex a primary?
     bool isPrimary() const { return RecVertexType::Primary == technique(); }
@@ -85,18 +92,6 @@ namespace LHCb::Event::v2 {
     /// Update  Covariance matrix containing errors on vertex position
     void setCovMatrix(const Gaudi::SymMatrix3x3& value) { m_covMatrix = value; }
   
-    /// Retrieve const  Chi square of vertex fit
-    auto chi2() const { return m_chi2PerDoF.chi2(); }
-  
-    /// Retrieve const  Number of degree of freedom
-    auto nDoF() const { return m_chi2PerDoF.nDoF; }
-  
-    /// Retrieve the Chi^2/DoF of vertex
-    auto chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; }
-  
-    /// Set the Chi^2 and the DoF of the vertex (fit)
-    void setChi2PerDoF( Track::Chi2PerDoF const chi2PerDof ) { m_chi2PerDoF = chi2PerDof; };
-
     /// reserve space for n tracks
     void reserve(unsigned int n) { m_tracks.reserve(n); }
 
@@ -132,18 +127,20 @@ namespace LHCb::Event::v2 {
     /// Retrieve const Tracks this vertex was made from
     const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
 
+    float chi2() const { return m_chi2PerDof.chi2; }
+    int dof() const { return m_chi2PerDof.dof; }
   private:
     
     /// Position in LHCb reference system
     Gaudi::XYZPoint       m_position{0.0, 0.0, -100*Gaudi::Units::m};
     /// Covariance matrix containing errors on vertex position
     Gaudi::SymMatrix3x3   m_covMatrix{};
-    /// Chi square and number of degree of freedom
-    Track::Chi2PerDoF     m_chi2PerDoF{};
     /// How the vertex was made
     RecVertexType m_technique{};
     /// Tracks this vertex was made from
     std::vector<WeightedTrack> m_tracks;
+
+    Chi2PerDof m_chi2PerDof;
 
   }; // class RecVertex
   

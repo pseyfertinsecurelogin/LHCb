@@ -14,7 +14,8 @@
 gaudi_subdir(TrackEvent v6r7)
 
 gaudi_depends_on_subdirs(GaudiObjDesc
-                         Kernel/LHCbKernel)
+                         Kernel/LHCbKernel
+                         Event/DigiEvent)
 
 find_package(Boost)
 find_package(GSL)

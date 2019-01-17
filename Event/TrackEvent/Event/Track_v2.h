@@ -16,6 +16,8 @@
 #include "Event/TrackParameters.h"
 #include "Event/TrackTags.h"
 #include "Event/TrackHit.h"
+#include "Event/VPLightCluster.h"
+#include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "Kernel/LHCbID.h"
@@ -501,10 +503,9 @@ namespace LHCb::Event
       unsigned int                                m_flags{0};              ///< The variety of track flags
       std::vector<const Track*> m_ancestors;
     public:
-      double forwardPatQuality = std::numeric_limits<double>::signaling_NaN(); ///< deprecated
-      std::vector<LHCb::TrackHit> ftHits;
+      LHCb::span<const LHCb::VPLightCluster> veloHits;
       std::vector<LHCb::TrackHit> utHits;
-      std::vector<LHCb::TrackHit> veloHits;
+      std::vector<LHCb::TrackHit> ftHits;
     private:
 
       /// Make sure that the offset is the sum of the previous entries

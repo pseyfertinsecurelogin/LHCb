@@ -15,6 +15,7 @@ gaudi_subdir(MCInterfaces v1r19)
 
 gaudi_depends_on_subdirs(Event/GenEvent
                          Event/MCEvent
+                         Event/DigiEvent
                          GaudiKernel
                          Kernel/LHCbKernel)
 
