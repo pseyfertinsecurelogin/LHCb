@@ -74,10 +74,9 @@ std::pair<const LHCb::Trajectory<double>*,double>
 LHCb::PiecewiseTrajectory::loc(double mu) const
 {
   assert(!m_traj.empty());
-  auto i = std::lower_bound(std::begin(m_traj),
+  auto i = std::prev(std::lower_bound(std::next(std::begin(m_traj)),
                             std::end(m_traj),
-                            mu, order2mu());
-  if (i==m_traj.end()) --i;
+                            mu, order2mu()));
   return {i->first.get(),i->first->beginRange()+(mu-i->second)};
 }
 
