@@ -30,7 +30,9 @@
 #include "GaudiKernel/IHiveWhiteBoard.h"
 #include "GaudiKernel/Memory.h"
 #include "GaudiKernel/ThreadLocalContext.h"
+#include "GaudiKernel/Counters.h"
 #include "GaudiAlg/FunctionalDetails.h"
+
 
 #include <algorithm>
 #include <chrono>
@@ -131,7 +133,7 @@ private:
   IDataBroker* m_databroker = nullptr;
 
   /// atomic count of the number of finished events
-  mutable std::atomic<unsigned int> m_finishedEvt{0};
+  mutable std::atomic<uint32_t> m_finishedEvt{0};
   /// condition variable to wake up main thread when we need to create a new event
   mutable std::condition_variable m_createEventCond;
   /// mutex assoiciated with m_createEventCond condition variable
@@ -143,6 +145,7 @@ private:
   //state vectors for each event, once filled, then copied per event
   std::vector<NodeState> m_NodeStates;
   std::vector<uint16_t> m_AlgStates;
+  std::vector<Gaudi::Accumulators::Counter<uint32_t>> m_AlgExecCounter;
   using SchedulerStates = decltype(std::pair{m_NodeStates, m_AlgStates});
 
   //all controlflownodes

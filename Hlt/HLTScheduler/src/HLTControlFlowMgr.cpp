@@ -180,26 +180,34 @@ StatusCode HLTControlFlowMgr::initialize()
 StatusCode HLTControlFlowMgr::finalize()
 {
   StatusCode sc;
+
+  //print the counters
+  info() << boost::format{"\n | Name of Algorithm %|50t| | Execution Count\n"};
+  for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_AlgExecCounter, m_AlgNames ) ) {
+    ctr.print( info() , name ) << '\n';
+  }
+  info() << std::endl;
+
   // Save Histograms Now
   if ( m_histoPersSvc ) {
     IDataSelector objects;
-    sc = m_histoDataMgrSvc->traverseTree( [&objects](IRegistry* pReg, int) {
-        DataObject* obj = pReg->object();
-        if ( obj && obj->clID() != CLID_StatisticsFile ) {
-          objects.push_back( obj );
-          return true;
-        }
-        return false;
-    });
+    sc = m_histoDataMgrSvc->traverseTree( [&objects]( IRegistry* pReg, int ) {
+      DataObject* obj = pReg->object();
+      if ( obj && obj->clID() != CLID_StatisticsFile ) {
+        objects.push_back( obj );
+        return true;
+      }
+      return false;
+    } );
     if ( sc.isSuccess() ) {
       // skip /stat entry!
-      sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const & i ) {
+      sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const& i ) {
         IOpaqueAddress* pAddr = nullptr;
         StatusCode      iret  = m_histoPersSvc->createRep( i, pAddr );
         if ( iret.isSuccess() ) i->registry()->setAddress( pAddr );
         return s.isFailure() ? s : iret;
       } );
-      sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const & i ) {
+      sc = std::accumulate( begin( objects ), end( objects ), sc, [&]( StatusCode s, auto const& i ) {
         IRegistry* reg  = i->registry();
         StatusCode iret = m_histoPersSvc->fillRepRefs( reg->address(), i );
         return s.isFailure() ? s : iret;
@@ -306,6 +314,10 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
         debug() << buildStructuredTreeWithStates( NodeStates ).str() << endmsg;
         debug() << buildAlgsWithStates( AlgStates ).str() << endmsg;
       }
+
+      //update algorithm execution counters
+      for (auto const & [ctr, as] : Gaudi::Functional::details::zip::range(m_AlgExecCounter, AlgStates))
+        if (as) ctr++;
 
       // update scheduler state
       promoteToExecuted( std::move( evtContext ) );
@@ -737,7 +749,9 @@ void HLTControlFlowMgr::configureScheduling() {
   m_AlgNames.reserve(allAlgos.size());
   std::transform(begin(allAlgos), end(allAlgos), std::back_inserter(m_AlgNames), [] (auto const* alg) {return alg->name();});
 
-  m_AlgStates = std::vector<uint16_t>(allAlgos.size());
+  m_AlgStates = decltype(m_AlgStates)(allAlgos.size());
+
+  m_AlgExecCounter = decltype(m_AlgExecCounter)(allAlgos.size());
 
   //end of Data depdendency handling
 
