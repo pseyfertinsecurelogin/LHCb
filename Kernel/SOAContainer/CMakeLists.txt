@@ -20,4 +20,5 @@
 # We do not want to automatically discover any of the other CMakeLists.txt
 # files in the subdirectories therein (therefore disabling in the first place).
 
+set(SOAContainer_header_destination ${CMAKE_INSTALL_PREFIX}/include/SOAContainer)
 add_subdirectory(submodules/SOAContainer)
