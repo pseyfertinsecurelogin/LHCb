@@ -494,8 +494,6 @@ namespace LHCb::Event
       Track& addToAncestors( const Track& ancestor ) { m_ancestors.push_back( &ancestor ); return *this; };
       const std::vector<const Track*> ancestors() const { return m_ancestors; }
 
-      [[deprecated]] Track& setForwardPatQuality(double q) { forwardPatQuality = q; return *this; }
-
     private:
       std::vector<LHCbID>                         m_lhcbIDs{};             ///< Container of (sorted) LHCbIDs
       std::vector<State>                          m_states{};              ///< Container with all the states
@@ -506,6 +504,7 @@ namespace LHCb::Event
       LHCb::span<const LHCb::VPLightCluster> veloHits;
       std::vector<LHCb::TrackHit> utHits;
       std::vector<LHCb::TrackHit> ftHits;
+      double forwardPatQuality = std::numeric_limits<double>::signaling_NaN();
     private:
 
       /// Make sure that the offset is the sum of the previous entries
