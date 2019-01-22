@@ -20,6 +20,7 @@ namespace tes_locations {
     [[maybe_unused]] inline const char* PrPixelBeamStates = "Rec/HLT1/PrPixelBeamStates";
     [[maybe_unused]] inline const char* PrPixelEndStates = "Rec/HLT1/PrPixelEndStates";
     [[maybe_unused]] inline const char* PrPixelVeloTracks = "Rec/HLT1/PrPixelVeloTracks";
+    [[maybe_unused]] inline const char* PrPixelChiSquares = "Rec/HLT1/PrPixelChiSquares";
     [[maybe_unused]] inline const char* PrPixelHitsSelection = "Rec/HLT1/PrPixelHits_Selection";
     [[maybe_unused]] inline const char* PrPixelBeamStatesSelection = "Rec/HLT1/PrPixelBeamStates_Selection";
     [[maybe_unused]] inline const char* PrPixelEndStatesSelection = "Rec/HLT1/PrPixelEndStates_Selection";
