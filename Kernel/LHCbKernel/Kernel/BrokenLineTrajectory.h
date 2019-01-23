@@ -33,7 +33,7 @@ namespace LHCb
    */
   class BrokenLineTrajectory : public Trajectory<double> {
     template <typename Iter>
-    static constexpr bool isForwardIterator = std::is_same_v<typename std::iterator_traits<Iter>::iterator_category,std::forward_iterator_tag>;
+    static constexpr bool isForwardIterator = std::is_base_of_v<std::forward_iterator_tag,typename std::iterator_traits<Iter>::iterator_category> ;
   public:
     using value_type = LineTraj<double>; // required for std::back_inserter...
     template <typename Iter,
