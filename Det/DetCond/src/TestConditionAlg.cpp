@@ -14,6 +14,8 @@
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/Map.h"
 
+#include <DetDesc/ConditionAccessorHolder.h>
+
 #include <vector>
 
 namespace DetCondTest {
@@ -262,9 +264,23 @@ namespace DetCondTest {
     }
   };
 
+  struct CondAccessExample : LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm> {
+    // inherit base class costructor
+    using LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::ConditionAccessorHolder;
+
+    ConditionAccessor<Condition> m_cond{this, "CondPath", "TestCondition"};
+
+    StatusCode execute( const EventContext& ctx ) const override {
+      const auto& cctx = getConditionContext( ctx );
+      const auto& cond = m_cond.get( cctx );
+      info() << &cond << ' ' << cond << endmsg;
+      return StatusCode::SUCCESS;
+    }
+  };
 } // namespace DetCondTest
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( DetCondTest::TestConditionAlg )
 DECLARE_COMPONENT( DetCondTest::FinalizationEvtLoop )
 DECLARE_COMPONENT( DetCondTest::bug_80076 )
+DECLARE_COMPONENT( DetCondTest::CondAccessExample )
