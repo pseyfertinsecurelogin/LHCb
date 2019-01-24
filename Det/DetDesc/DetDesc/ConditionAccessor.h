@@ -12,14 +12,41 @@
 
 #include <DetDesc/ConditionContext.h>
 #include <DetDesc/ConditionKey.h>
+#include <DetDesc/ParamValidDataObject.h>
 
 #include <GaudiKernel/Property.h>
 
 #include <string>
+#include <type_traits>
 
 namespace LHCb::DetDesc {
   template <typename Base>
   class ConditionAccessorHolder;
+
+  namespace details {
+    template <typename T>
+    inline constexpr bool is_conditon_type_v = std::is_convertible<T*, ParamValidDataObject*>::value;
+
+    template <typename T>
+    using is_conditon_type_t = std::conditional_t<is_conditon_type_v<T>, std::true_type, std::false_type>;
+
+    template <typename T>
+    using accessor_storage_t = std::conditional_t<is_conditon_type_v<T>, T*, ParamValidDataObject*>;
+
+    template <typename T>
+    const T& do_extract_payload( std::true_type, const accessor_storage_t<T> ptr ) {
+      return *ptr;
+    }
+    template <typename T>
+    const T& do_extract_payload( std::false_type, const accessor_storage_t<T> ptr ) {
+      return *std::any_cast<T>( &ptr->payload );
+    }
+
+    template <typename T>
+    const T& extract_payload( const accessor_storage_t<T> ptr ) {
+      return do_extract_payload<T>( is_conditon_type_t<T>{}, ptr );
+    }
+  } // namespace details
 
   // A condition accessor is to condition data what an EventReadHandle is to
   // event data : it notifies the framework that an Algorithm or AlgTool depends
@@ -53,7 +80,7 @@ namespace LHCb::DetDesc {
     const ConditionKey& key() const { return m_key; }
 
     // Access the value of the condition, for a given condition context
-    const T& get( const ConditionContext& /*ctx*/ ) const { return *m_ptr; }
+    const T& get( const ConditionContext& /*ctx*/ ) const { return details::extract_payload<T>( m_ptr ); }
 
   private:
     template <typename Base>
@@ -63,6 +90,6 @@ namespace LHCb::DetDesc {
     Gaudi::Property<ConditionKey> m_key;
 
     // Pointer to the condition in the Detector Transien Store
-    T* m_ptr;
+    details::accessor_storage_t<T> m_ptr;
   };
 } // namespace LHCb::DetDesc
