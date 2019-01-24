@@ -273,7 +273,66 @@ namespace DetCondTest {
     StatusCode execute( const EventContext& ctx ) const override {
       const auto& cctx = getConditionContext( ctx );
       const auto& cond = m_cond.get( cctx );
-      info() << &cond << ' ' << cond << endmsg;
+      info() << "condition value: " << cond << endmsg;
+      return StatusCode::SUCCESS;
+    }
+  };
+
+  struct CondAccessExampleWithDerivation : LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm> {
+    // inherit base class costructor
+    using LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::ConditionAccessorHolder;
+
+    Gaudi::Property<std::string> m_srcPath{this, "Source", "TestCondition"};
+    ConditionAccessor<double>    m_cond{this, "Target", "DerivedCondition"};
+
+    struct ConditionTransformation {
+      virtual ~ConditionTransformation() = default;
+      using input_t                      = Condition;
+      using output_t                     = double;
+
+      // actual transformation code
+      output_t operator()( const input_t& cond ) const { return cond.param<int>( "parameter" ) * 2.3; }
+
+      void registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds, const ConditionKey& in_path,
+                               const ConditionKey& out_path ) {
+        DataObject* obj = nullptr;
+        StatusCode  sc  = dds->retrieveObject( in_path, obj );
+        if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionTransformation", sc );
+        input = dynamic_cast<input_t*>( obj );
+        if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionTransformation", sc );
+
+        auto tmp = std::make_unique<Condition>();
+        sc       = dds->registerObject( out_path, tmp.get() );
+        if ( !sc ) throw GaudiException( "failed to add " + out_path, "ConditionTransformation", sc );
+        output = tmp.release();
+
+        ums->registerCondition( this, in_path, &ConditionTransformation::handler, input );
+        ums->registerCondition( output, this );
+      }
+      // boilerplate
+      input_t*   input  = nullptr;
+      Condition* output = nullptr;
+
+      StatusCode handler() {
+        output->payload = ( *this )( *input );
+        return StatusCode::SUCCESS;
+      }
+    } m_transformer;
+
+    StatusCode initialize() override {
+      const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
+      if ( !sc ) return sc;
+
+      m_transformer.registerDerivation( service<IUpdateManagerSvc>( "UpdateManagerSvc" ), detSvc(), m_srcPath,
+                                        m_cond.key() );
+
+      return sc;
+    }
+
+    StatusCode execute( const EventContext& ctx ) const override {
+      const auto& cctx = getConditionContext( ctx );
+      const auto& cond = m_cond.get( cctx );
+      info() << "condition value: " << cond << endmsg;
       return StatusCode::SUCCESS;
     }
   };
@@ -284,3 +343,4 @@ DECLARE_COMPONENT( DetCondTest::TestConditionAlg )
 DECLARE_COMPONENT( DetCondTest::FinalizationEvtLoop )
 DECLARE_COMPONENT( DetCondTest::bug_80076 )
 DECLARE_COMPONENT( DetCondTest::CondAccessExample )
+DECLARE_COMPONENT( DetCondTest::CondAccessExampleWithDerivation )
