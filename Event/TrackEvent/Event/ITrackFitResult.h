@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      *
+* (c) Copyright 2018 CERN for the benefit of the LHCb Collaboration           *
 *                                                                             *
 * This software is distributed under the terms of the GNU General Public      *
 * Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
@@ -8,27 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Node.cpp,v 1.4 2007-11-30 13:12:29 wouter Exp $
+#pragma once
+#include <memory>
 
-// local
-#include "Event/Node.h"
-
-//-----------------------------------------------------------------------------
-// Implementation file for class : Node
-//
-// 2006-06-10 : M. Needham
-//-----------------------------------------------------------------------------
-
-LHCb::Node* LHCb::Node::clone() const 
-{
-
-  return new LHCb::Node(*this);
-        
-}
-
-double LHCb::Node::chi2() const
-{
-  double res = residual() ;
-  double err = errResidual() ;
-  return res*res/(err*err) ;
+namespace LHCb {
+struct ITrackFitResult {
+    virtual ~ITrackFitResult() = default;
+    virtual std::unique_ptr<ITrackFitResult> clone() const = 0;
+};
 }

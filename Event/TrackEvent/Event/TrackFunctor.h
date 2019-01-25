@@ -21,7 +21,6 @@
 
 // from TrackEvent
 #include "Event/Track.h"
-#include "Event/TrackFitResult.h"
 
 /** @namespace TrackFunctor
  *
@@ -224,24 +223,6 @@ constexpr auto decreasingByZ = []() {
     return std::count_if( ids.begin(), ids.end(), std::cref(pred) );
   }
 
-//=============================================================================
-// Retrieve the number of Measurements that fulfill a predicate
-//=============================================================================
-  template <typename Container, typename Predicate>
-  unsigned int nMeasurements( const Container& meas, const Predicate& pred )
-  {
-    return std::count_if( meas.begin(), meas.end(), std::cref(pred) );
-  }
-
-//=============================================================================
-// Retrieve the number of Measurements that fulfill a predicate
-//=============================================================================
-  template <typename Predicate>
-  unsigned int nMeasurements( const LHCb::Track& track, const Predicate& pred )
-  {
-    const LHCb::TrackFitResult* fit = track.fitResult() ;
-    return fit ? nMeasurements( fit->measurements(), std::cref(pred) ) : 0 ;
-  }
 
 }
 

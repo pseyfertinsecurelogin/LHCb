@@ -21,9 +21,7 @@
 // local
 #include "Event/Track_v1.h"
 #include "Event/TrackFunctor.h"
-#include "Event/TrackFitResult.h"
-#include "Event/Node.h"
-
+#include "GaudiKernel/TaggedBool.h"
 
 // ============================================================================
 
@@ -32,12 +30,31 @@
 //
 // 2004-12-14 : Jose Hernando, Eduardo Rodrigues
 //-----------------------------------------------------------------------------
+namespace {
+      template <typename T1, typename T2, typename F >
+      constexpr decltype(auto) with_selection_invoke( bool b, T1&& t1, T2&& t2, F&& f )
+      {
+          return b ? std::invoke(std::forward<F>(f),std::forward<T1>(t1))
+                   : std::invoke(std::forward<F>(f),std::forward<T2>(t2));
+      }
+
+      using useDecreasingOrder = Gaudi::tagged_bool<struct useDecreasingOrder_tag>;
+
+      template < typename F >
+      constexpr decltype(auto) with_order( useDecreasingOrder decreasing, F&& f )
+      {
+          return with_selection_invoke( UNLIKELY(static_cast<bool>(decreasing)),
+                                                TrackFunctor::decreasingByZ(),
+                                                TrackFunctor::increasingByZ(),
+                                                std::forward<F>(f) );
+      }
+}
 namespace LHCb::Event{
 inline namespace v1{
 //=============================================================================
 // Retrieve a pointer to the fit result
 //=============================================================================
-const TrackFitResult* Track::fitResult() const
+const ITrackFitResult* Track::fitResult() const
 {
   return m_fitResult.get() ;
 }
@@ -45,7 +62,7 @@ const TrackFitResult* Track::fitResult() const
 //=============================================================================
 // Retrieve a pointer to the fit result
 //=============================================================================
-TrackFitResult* Track::fitResult()
+ITrackFitResult* Track::fitResult()
 {
   return m_fitResult.get() ;
 }
@@ -53,7 +70,7 @@ TrackFitResult* Track::fitResult()
 //=============================================================================
 // Set the fit result. This takes ownership.
 //=============================================================================
-void Track::setFitResult(TrackFitResult* absfit)
+void Track::setFitResult(ITrackFitResult* absfit)
 {
   if ( m_fitResult.get() != absfit ) m_fitResult.reset( absfit );
 }
@@ -71,10 +88,10 @@ Track& Track::operator=(Track&& track)
   m_lhcbIDs = std::move(track.m_lhcbIDs);
 
   // "copy" the states, avoiding real copy
-  std::swap( m_states, track.m_states );
+  swap(m_states, track.m_states );
 
   // copy the track fit info
-  std::swap( m_fitResult, track.m_fitResult );
+  m_fitResult = std::move( track.m_fitResult );
 
   m_extraInfo = std::move( track.extraInfo() );
 
@@ -84,27 +101,7 @@ Track& Track::operator=(Track&& track)
   return *this;
 }
 
-//=============================================================================
-// Get a range of nodes in this track
-//=============================================================================
-Track::ConstNodeRange Track::nodes() const
-{
-  if ( !m_fitResult ) return {};
-  const auto& nodes_ = m_fitResult->nodes() ;
-  return { nodes_.data(), std::next( nodes_.data(), nodes_.size() ) };
-}
 
-//=============================================================================
-// Get the measurements on the track. Note that it does not return a
-// reference. This is because I want to remove this container from
-// fitresult.
-//=============================================================================
-Track::MeasurementContainer Track::measurements() const
-{
-  return m_fitResult ? MeasurementContainer{ m_fitResult->measurements().begin(),
-                                             m_fitResult->measurements().end() }
-                     : MeasurementContainer{} ;
-}
 
 namespace {
 
@@ -165,7 +162,7 @@ const State & Track::closestState( double z ) const
   if ( iter == m_states.end() )
     throw GaudiException( "No state closest to z","Track.cpp",
                           StatusCode::FAILURE );
-  return *(*iter);
+  return **iter;
 }
 
 //=============================================================================
@@ -178,7 +175,7 @@ const State & Track::closestState( const Gaudi::Plane3D& plane ) const
   if ( iter == m_states.end() )
     throw GaudiException( "No state closest to plane","Track.cpp",
                           StatusCode::FAILURE );
-  return *(*iter);
+  return **iter;
 }
 
 //=============================================================================
@@ -232,15 +229,12 @@ void Track::addToStates( span<State* const> states, Tag::State::AssumeUnordered_
 {
   auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
-  // The 'if' is ugly, but more efficient than using 'orderByZ'.
-  if (checkFlag(Track::Flags::Backward)) {
-    // it's already sorted in most cases
-    std::sort(pivot,m_states.end(),TrackFunctor::decreasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::decreasingByZ()) ;
-  } else {
-    std::sort(pivot,m_states.end(),TrackFunctor::increasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::increasingByZ());
-  }
+  // it's already sorted in most cases
+  with_order( useDecreasingOrder{  checkFlag(Track::Flags::Backward) },
+              [&](auto order) {
+                    std::sort(pivot,m_states.end(),order);
+                    std::inplace_merge(m_states.begin(),pivot,m_states.end(),order) ;
+              } );
 }
 
 //=============================================================================
@@ -249,19 +243,14 @@ void Track::addToStates( span<State* const> states, Tag::State::AssumeUnordered_
 void Track::addToStates( span<State* const> states, Tag::State::AssumeSorted_tag)
 {
   // debug assert checking whether it's correctly sorted or not
-  assert( ( checkFlag(Track::Flags::Backward) ?
-              std::is_sorted(states.begin(), states.end(), TrackFunctor::decreasingByZ())
-            : std::is_sorted(states.begin(), states.end(), TrackFunctor::increasingByZ())
-          )
+  assert( with_order( useDecreasingOrder{  checkFlag(Track::Flags::Backward) },
+                      [&](auto order) { return std::is_sorted(states.begin(), states.end(), order ); } )
           && "states are not correctly sorted;"
              "hint: use the general addToStates function assuming unordered states");
 
   auto pivot = m_states.insert(m_states.end(), states.begin(), states.end());
-  if (UNLIKELY(checkFlag(Track::Flags::Backward))) {
-    std::inplace_merge(m_states.begin(), pivot, m_states.end(),TrackFunctor::decreasingByZ());
-  } else {
-    std::inplace_merge(m_states.begin(), pivot, m_states.end(),TrackFunctor::increasingByZ());
-  }
+  with_order( useDecreasingOrder{ checkFlag(Track::Flags::Backward) },
+              [&](auto order) { std::inplace_merge(m_states.begin(), pivot, m_states.end(), order ); } );
 }
 
 //=============================================================================
@@ -337,13 +326,6 @@ bool Track::isOnTrack( const LHCbID& value ) const
   return pos != m_lhcbIDs.end() && *pos == value ;
 }
 
-//=============================================================================
-// Return the Measurement on the Track corresponding to the input LHCbID
-//=============================================================================
-const Measurement* Track::measurement( const LHCbID& value ) const
-{
-  return m_fitResult ? m_fitResult->measurement(value) : nullptr;
-}
 
 //=============================================================================
 // reset the track
@@ -384,8 +366,8 @@ void Track::copy( const Track& track )
                   [](const State* s) { return new State{*s}; });
 
   // copy the track fit info
-  m_fitResult.reset( track.m_fitResult ? track.m_fitResult->clone()
-                                       : nullptr );
+  m_fitResult = track.m_fitResult ? track.m_fitResult->clone()
+                                  : std::unique_ptr<ITrackFitResult>{};
 
   setExtraInfo( track.extraInfo() );
 
@@ -480,23 +462,6 @@ double Track::info( const int key, const double def ) const
   return m_extraInfo.end() == i ? def : i->second;
 }
 
-//=============================================================================
-// Count the number of outliers
-//=============================================================================
-
-unsigned int Track::nMeasurementsRemoved() const
-{
-  return m_fitResult ? m_fitResult->nOutliers() : 0;
-}
-
-//=============================================================================
-// Count the number of outliers
-//=============================================================================
-
-unsigned int Track::nMeasurements() const
-{
-  return m_fitResult ? m_fitResult->nActiveMeasurements() : 0;
-}
 
 //=============================================================================
 /** erase the information associated with the given key
@@ -525,40 +490,38 @@ Track::ExtraInfo::size_type Track::eraseInfo( const int key )
 //=============================================================================
 std::ostream& Track::fillStream(std::ostream& os) const
 {
-  os << "*** Track ***" << std::endl
-     << " key        : " << key() << std::endl
-     << " type       : " << type() << std::endl
-     << " history    : " << history() << std::endl
-     << " fitstatus  : " << fitStatus() << std::endl
-     << " # ids      : " << nLHCbIDs() << std::endl
-     << " # meas     : " << nMeasurements() << std::endl
-     << " chi2PerDoF : " << (float)m_chi2PerDoF << std::endl
-     << " nDoF       : " << m_nDoF << std::endl
-     << " GhostProb  : " << ghostProbability() << std::endl
-     << " Likelihood : " << likelihood() << std::endl;
-
-  os << " extraInfo : [";
+  os << "*** Track ***"
+     << "\n key        : " << key()
+     << "\n type       : " << type()
+     << "\n history    : " << history()
+     << "\n fitstatus  : " << fitStatus()
+     << "\n # ids      : " << nLHCbIDs()
+     << "\n chi2PerDoF : " << (float)m_chi2PerDoF
+     << "\n nDoF       : " << m_nDoF
+     << "\n GhostProb  : " << ghostProbability()
+     << "\n Likelihood : " << likelihood()
+     << "\n extraInfo : [";
   for ( const auto& i : extraInfo() ) {
     const Track::AdditionalInfo info =
       static_cast<Track::AdditionalInfo>(i.first);
     os << " " << info << "=" << i.second << " ";
   }
-  os << "]" << std::endl;
+  os << "]\n" ;
 
   if ( !m_states.empty() ) {
-    os << " p  : " << (float) firstState().p() <<std::endl
-       << " pt : " << (float) firstState().pt() <<std::endl
-       << " " << nStates() << " states at z =";
+    os << " p  : " << (float) firstState().p()
+       << "\n pt : " << (float) firstState().pt()
+       << "\n " << nStates() << " states at z =";
     for ( const auto& s : states() ) {
       if (s) os << " " << s->z();
     }
-    os << "  :-" << std::endl;
+    os << "  :-\n" ;
     for ( const auto& s : states() ) {
       os << " " << *s;
     }
-    os << std::endl;
+    os << '\n';
   } else {
-    os << " # states : " << nStates() << std::endl;
+    os << " # states : " << nStates() << '\n';
   }
 
   return os;

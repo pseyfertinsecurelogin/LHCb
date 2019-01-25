@@ -21,14 +21,16 @@
 // local
 #include "Event/TrackFunctor.h"
 #include "Event/Track_v2.h"
+#include "GaudiKernel/TaggedBool.h"
 
 // ============================================================================
 namespace
 {
       template <typename T1, typename T2, typename F >
-      constexpr decltype(auto) with_selection_invoke( bool b, T1 t1, T2 t2, F&& f )
+      constexpr decltype(auto) with_selection_invoke( bool b, T1&& t1, T2&& t2, F&& f )
       {
-          return b ? std::invoke(f,t1) : std::invoke(f,t2);
+          return b ? std::invoke(std::forward<F>(f),std::forward<T1>(t1))
+                   : std::invoke(std::forward<F>(f),std::forward<T2>(t2));
       }
 
       using useDecreasingOrder = Gaudi::tagged_bool<struct useDecreasingOrder_tag>;
