@@ -21,8 +21,10 @@ gaudi_add_module(DetCond
 gaudi_install_python_modules()
 
 # Prepare test Git CondDB overlay
-file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/test/DQFLAGS)
-file(COPY tests/data/DQFLAGS/ DESTINATION test/DQFLAGS/)
-execute_process(COMMAND git init -q ${CMAKE_CURRENT_BINARY_DIR}/test/DQFLAGS)
+foreach(_db DQFLAGS TESTCOND)
+  file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/test/${_db})
+  file(COPY tests/data/${_db}/ DESTINATION test/${_db}/)
+  execute_process(COMMAND git init -q ${CMAKE_CURRENT_BINARY_DIR}/test/${_db})
+endforeach()
 
-gaudi_add_test(QMTest QMTEST ENVIRONMENT TEST_DQFLAGS_ROOT=${CMAKE_CURRENT_BINARY_DIR}/test/DQFLAGS)
+gaudi_add_test(QMTest QMTEST ENVIRONMENT TEST_DBS_ROOT=${CMAKE_CURRENT_BINARY_DIR}/test)

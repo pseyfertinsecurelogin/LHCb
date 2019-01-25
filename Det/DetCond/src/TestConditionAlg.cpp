@@ -16,6 +16,7 @@
 
 #include <DetDesc/ConditionAccessorHolder.h>
 
+#include <cmath>
 #include <vector>
 
 namespace DetCondTest {
@@ -282,23 +283,29 @@ namespace DetCondTest {
     // inherit base class costructor
     using LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::ConditionAccessorHolder;
 
+    struct MyData {
+      double p1, p2, v;
+    };
+
     Gaudi::Property<std::string> m_srcPath{this, "Source", "TestCondition"};
-    ConditionAccessor<double>    m_cond{this, "Target", "DerivedCondition"};
+    ConditionAccessor<MyData>    m_cond{this, "Target", "DerivedCondition"};
 
     struct ConditionTransformation {
       virtual ~ConditionTransformation() = default;
-      using input_t                      = Condition;
-      using output_t                     = double;
 
       // actual transformation code
-      output_t operator()( const input_t& cond ) const { return cond.param<int>( "parameter" ) * 2.3; }
+      static MyData transform( const Condition& cond ) {
+        const auto p1 = cond.param<double>( "par1" );
+        const auto p2 = cond.param<double>( "par2" );
+        return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
+      }
 
       void registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds, const ConditionKey& in_path,
                                const ConditionKey& out_path ) {
         DataObject* obj = nullptr;
         StatusCode  sc  = dds->retrieveObject( in_path, obj );
         if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionTransformation", sc );
-        input = dynamic_cast<input_t*>( obj );
+        input = dynamic_cast<Condition*>( obj );
         if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionTransformation", sc );
 
         auto tmp = std::make_unique<Condition>();
@@ -309,12 +316,13 @@ namespace DetCondTest {
         ums->registerCondition( this, in_path, &ConditionTransformation::handler, input );
         ums->registerCondition( output, this );
       }
+
       // boilerplate
-      input_t*   input  = nullptr;
+      Condition* input  = nullptr;
       Condition* output = nullptr;
 
       StatusCode handler() {
-        output->payload = ( *this )( *input );
+        output->payload = transform( *input );
         return StatusCode::SUCCESS;
       }
     } m_transformer;
@@ -332,7 +340,8 @@ namespace DetCondTest {
     StatusCode execute( const EventContext& ctx ) const override {
       const auto& cctx = getConditionContext( ctx );
       const auto& cond = m_cond.get( cctx );
-      info() << "condition value: " << cond << endmsg;
+      info() << "condition value: {\n  p1: " << cond.p1 << "\n  p2: " << cond.p2 << "\n  v:  " << cond.v << "\n}"
+             << endmsg;
       return StatusCode::SUCCESS;
     }
   };
