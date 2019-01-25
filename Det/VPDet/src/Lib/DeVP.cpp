@@ -137,8 +137,8 @@ std::pair<float, float> DeVP::measurementError(LHCb::VPChannelID id) {
   bool isLong = sensor->isLong(id);
 
   return isLong ? 
-         std::pair<float, float>{ m_errorXLong[sensorNumber], m_errorX[sensorNumber] } 
-         : std::pair<float, float>{ m_errorYLong[sensorNumber], m_errorY[sensorNumber] };
+         std::pair<float, float>{ m_errorXLong[sensorNumber], m_errorYLong[sensorNumber] } 
+         : std::pair<float, float>{ m_errorX[sensorNumber], m_errorY[sensorNumber] };
 }
 
 

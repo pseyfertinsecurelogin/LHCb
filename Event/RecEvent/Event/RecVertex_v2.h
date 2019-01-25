@@ -10,8 +10,8 @@
 \*****************************************************************************/
 #pragma once
 
-#include "../../../LHCb/Event/Hlt1Event/Track.h"
-#include "../../../LHCb/Event/Hlt1Event/TesLocations.h"
+#include "Event/Hlt1Track.h"
+#include "Event/Hlt1TesLocations.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"

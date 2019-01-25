@@ -9,30 +9,19 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 ################################################################################
-# Package: RecEvent
+# Package: TrackEvent
 ################################################################################
-gaudi_subdir(RecEvent v2r57)
+gaudi_subdir(TrackEvent v6r7)
 
-gaudi_depends_on_subdirs(Event/DigiEvent
-                         Event/EventBase
-                         Event/TrackEvent
-                         Event/Hlt1Event
-                         GaudiObjDesc
-                         Kernel/LHCbMath
-                         Kernel/PartProp)
+gaudi_depends_on_subdirs(GaudiObjDesc
+                         Kernel/LHCbKernel
+                         Event/DigiEvent)
+
+find_package(GSL)
+find_package(ROOT)
+find_package(Rangev3 REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 include(GaudiObjDesc)
 
-god_build_headers(xml/*.xml)
-
-gaudi_add_library(RecEvent
-                  src/*.cpp
-                  PUBLIC_HEADERS Event
-                  INCLUDE_DIRS Event/DigiEvent Event/EventBase
-                  LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib)
-
-god_build_dictionary(xml/*.xml
-                     EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS Event/DigiEvent Event/EventBase
-                     LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib RecEvent)
-
+gaudi_install_headers(Event)
