@@ -42,6 +42,8 @@ namespace LHCb::DetDesc {
     using ConditionAccessor = LHCb::DetDesc::ConditionAccessor<T>;
     using ConditionContext  = LHCb::DetDesc::ConditionContext;
     using ConditionKey      = LHCb::DetDesc::ConditionKey;
+    template <typename T>
+    using DetectorAccessor = LHCb::DetDesc::ConditionAccessor<T>;
 
     // At initialize() time, we must declare our condition inputs (whose key
     // has been configured by now) to the condition management backend.
