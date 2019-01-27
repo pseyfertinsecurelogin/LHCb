@@ -33,6 +33,9 @@ namespace LHCb::DetDesc {
   template <typename Base>
   class ConditionAccessorHolder : public Base {
   public:
+    // helper to access the base class type
+    using base_class = ConditionAccessorHolder;
+
     // Forward the constructor from the Algorithm / AlgTool base class
     using Base::Base;
 

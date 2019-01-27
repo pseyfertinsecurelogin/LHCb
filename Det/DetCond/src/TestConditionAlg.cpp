@@ -267,7 +267,7 @@ namespace DetCondTest {
 
   struct CondAccessExample : LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm> {
     // inherit base class costructor
-    using LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::ConditionAccessorHolder;
+    using base_class::base_class;
 
     ConditionAccessor<Condition> m_cond{this, "CondPath", "TestCondition"};
 
@@ -281,7 +281,7 @@ namespace DetCondTest {
 
   struct CondAccessExampleWithDerivation : LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm> {
     // inherit base class costructor
-    using LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::ConditionAccessorHolder;
+    using base_class::base_class;
 
     struct MyData {
       double p1, p2, v;
