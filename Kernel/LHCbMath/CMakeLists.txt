@@ -61,9 +61,16 @@ gaudi_add_dictionary(LHCbMath
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.
 
-# Determine if AVX2 is supported
-set(AVX2_BUILD_FLAGS " -mavx ")
-set(AVX2FMA_BUILD_FLAGS " -mavx ")
+# flags to turn off AVX512. 
+set(NO_AVX512_FLAGS     "-mno-avx512bw -mno-avx512cd -mno-avx512dq -mno-avx512er -mno-avx512f -mno-avx512ifma -mno-avx512pf -mno-avx512vbmi -mno-avx512vl -mno-avx512vpopcntdq ")
+if( BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_GREATER "7.99")
+  set(NO_AVX512_FLAGS "${NO_AVX512_FLAGS} -mno-avx512vbmi2 -mno-avx512vnni ")
+endif()
+# Determine compiler flags for each build target
+set(SSE_BUILD_FLAGS     " -msse4.2 -mno-avx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
+set(AVX_BUILD_FLAGS     " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
+set(AVX2_BUILD_FLAGS    " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
+set(AVX2FMA_BUILD_FLAGS " -mavx -mno-avx2 -mno-fma ${NO_AVX512_FLAGS}" )
 exec_program(${CMAKE_CXX_COMPILER} ARGS -print-prog-name=as OUTPUT_VARIABLE _as)
 if(NOT _as)
   message(ERROR "Could not find the 'as' assembler...")
@@ -74,13 +81,13 @@ else()
   if(_as_version VERSION_LESS "2.21.0")
      message(WARNING "binutils is too old to support AVX2+FMA... Falling back to AVX only.")
   else()
-     set(AVX2_BUILD_FLAGS " -mavx2 ")
-     set(AVX2FMA_BUILD_FLAGS " -mavx2 -mfma ")
+     set(AVX2_BUILD_FLAGS " -mavx2 -mno-fma ${NO_AVX512_FLAGS}")
+     set(AVX2FMA_BUILD_FLAGS " -mavx2 -mfma ${NO_AVX512_FLAGS}")
   endif()
 endif()
-message(STATUS "AVX2FMA build flags = " ${AVX2FMA_BUILD_FLAGS})
-set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 " )
-set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
+#message(STATUS "AVX2FMA build flags = " ${AVX2FMA_BUILD_FLAGS})
+set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
+set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
 set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
 if(LCG_COMP STREQUAL "gcc" OR
     (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
@@ -173,12 +180,12 @@ if(GAUDI_BUILD_TESTS)
                        tests/poly.cpp
                        INCLUDE_DIRS Boost GSL ROOT
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
-  set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse4.2 " )
+  set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${SSE_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathSSE4
                        tests/TestVDTMathSSE4.cpp
                        INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
-  set_property(SOURCE tests/TestVDTMathAVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
+  set_property(SOURCE tests/TestVDTMathAVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX
                        tests/TestVDTMathAVX.cpp
                        INCLUDE_DIRS VDT Kernel/VectorClass
@@ -199,14 +206,14 @@ if(GAUDI_BUILD_TESTS)
                        INCLUDE_DIRS ROOT Vc GSL VDT src
                        LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
   target_link_libraries( TestMathSpeedSSE4 -lrt )
-  set_property(SOURCE tests/MathSpeedTests/main_sse4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes -msse4.2 " )
+  set_property(SOURCE tests/MathSpeedTests/main_sse4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes ${SSE_BUILD_FLAGS}" )
 
   gaudi_add_executable(TestMathSpeedAVX
                        tests/MathSpeedTests/main_avx.cpp
                        INCLUDE_DIRS ROOT Vc GSL VDT src
                        LINK_LIBRARIES LHCbMathLib GSL GaudiKernel )
   target_link_libraries( TestMathSpeedAVX -lrt )
-  set_property(SOURCE tests/MathSpeedTests/main_avx.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes -mavx " )
+  set_property(SOURCE tests/MathSpeedTests/main_avx.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-ignored-attributes ${AVX_BUILD_FLAGS} " )
 
   gaudi_add_executable(TestMathSpeedAVX2
                        tests/MathSpeedTests/main_avx2.cpp
