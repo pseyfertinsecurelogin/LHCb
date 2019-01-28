@@ -71,7 +71,8 @@ StatusCode DeVP::initialize() {
         << "(left: " << nLeftSensors << ", right: " << nRightSensors << ")"
         << endmsg;
 
-  initMeasurementErrors().ignore();
+  
+  initMeasurementErrors();
 
   return StatusCode::SUCCESS;
 
@@ -142,10 +143,9 @@ std::pair<float, float> DeVP::measurementError(LHCb::VPChannelID id) {
 }
 
 
-StatusCode DeVP::initMeasurementErrors() {
+void DeVP::initMeasurementErrors() {
   // Message to the physicists:
   // Please correct this code because I just copied it from elsewhere, but it seems shady.
-
   float errorSinglePixel = 12.5f * Gaudi::Units::micrometer;
 
   // Store the rotations of each sensor.
@@ -167,22 +167,15 @@ StatusCode DeVP::initMeasurementErrors() {
     }
     const auto vg = sensor->geometry()->toGlobal(vl);
     const float cphi = vg.x();
-    const float phi = acos(cphi);
-    const float sphi = sin(phi);
+    const float sphi = vg.y();
     float cphiSquared = cphi * cphi;
     float sphiSquared = sphi * sphi;    
-
-    float dx = errorSinglePixel;
-    float dy = errorSinglePixel;
     
     // Transform the error estimate to the global frame.
-    m_errorX[sensorNumber] = sqrt(dx * dx * cphiSquared + dy * dy * sphiSquared);
-    m_errorY[sensorNumber] = sqrt(dx * dx * sphiSquared + dy * dy * cphiSquared);
+    m_errorX[sensorNumber] = errorSinglePixel;
+    m_errorY[sensorNumber] = errorSinglePixel;
 
-    dx *= 2;
-    m_errorXLong[sensorNumber] = sqrt(dx * dx * cphiSquared + dy * dy * cphiSquared);
-    m_errorYLong[sensorNumber] = sqrt(dx * dx * sphiSquared + dy * dy * sphiSquared);
+    m_errorXLong[sensorNumber] = errorSinglePixel * sqrt(4*cphiSquared + sphiSquared);
+    m_errorYLong[sensorNumber] = errorSinglePixel * sqrt(4*sphiSquared + cphiSquared);
   }
-
-  return StatusCode::SUCCESS;
 }
