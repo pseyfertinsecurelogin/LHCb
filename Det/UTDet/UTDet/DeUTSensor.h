@@ -16,7 +16,7 @@
 
 #include "UTDet/DeUTBaseElement.h"
 #include "Kernel/UTChannelID.h"
-#include "Kernel/Trajectory.h"
+#include "Kernel/LineTraj.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "LHCbMath/LineTypes.h"
@@ -108,8 +108,7 @@ public:
   /** trajectory
    * @return trajectory for the fit
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(unsigned int strip,
-                                                       double offset) const;
+  LHCb::LineTraj<double> trajectory(unsigned int strip, double offset) const;
 
 
   /** plane corresponding to the sector
@@ -222,7 +221,7 @@ private:
   float m_vMinLocal = 0.0;
   float m_vMaxLocal = 0.0;
 
-  std::unique_ptr<LHCb::Trajectory<double>> m_midTraj;
+  std::optional<LHCb::LineTraj<double>> m_midTraj;
 
   bool m_xInverted = false;
   bool m_yInverted = false;

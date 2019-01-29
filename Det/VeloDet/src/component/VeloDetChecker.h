@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloDetChecker.h,v 1.2 2006-11-16 21:58:25 mtobin Exp $
 #ifndef VELODETCHECKER_H
 #define VELODETCHECKER_H 1
 
@@ -26,8 +25,6 @@ class VeloDetChecker : public GaudiTupleAlg {
 public:
   /// Standard constructor
   VeloDetChecker( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~VeloDetChecker( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
@@ -75,7 +72,7 @@ public:
 
   /** Print the start and end co-ordinates of the trajectory for a given sensor
       and VeloChannelID */
-  void PrintTrajectory(std::vector<DeVeloSensor*>::const_iterator iSens,
+  void PrintTrajectory(const DeVeloSensor& iSens,
                        LHCb::VeloChannelID channel);
 
   /// Test sensors (geometry and readout)

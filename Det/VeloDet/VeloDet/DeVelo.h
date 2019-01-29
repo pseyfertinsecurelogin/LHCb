@@ -476,13 +476,6 @@ public:
     return m_vpRightPUSensors.rend();
   }
 
-  /// Return a trajectory (for track fit) from strip + offset
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::LHCbID& id, const double offset) const {
-    if ( !id.isVelo()){
-      throw GaudiException( "The LHCbID is not a VeloChannelID", "DeVelo",StatusCode::FAILURE );
-    }
-    return sensor(id.veloID())->trajectory(id.veloID(),offset);
-  }
 
   /// give access to sensor for given sensor number
   const DeVeloSensor* sensor(unsigned int sensorNumber) const {

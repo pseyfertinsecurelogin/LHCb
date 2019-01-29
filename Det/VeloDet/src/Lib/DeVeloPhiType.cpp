@@ -565,8 +565,8 @@ void DeVeloPhiType::BuildRoutingLineMap(){
 }
 //==============================================================================
 // Return a trajectory (for track fit) from strip + offset
-std::unique_ptr<LHCb::Trajectory<double>> DeVeloPhiType::trajectory(const LHCb::VeloChannelID& id,
-                                                            double offset) const {
+LHCb::LineTraj<double> DeVeloPhiType::trajectory(const LHCb::VeloChannelID& id,
+                                                 double offset) const {
   // Trajectory is a line
   unsigned int strip=id.strip();
   auto lEnd = localStripLimits(strip);
@@ -583,8 +583,7 @@ std::unique_ptr<LHCb::Trajectory<double>> DeVeloPhiType::trajectory(const LHCb::
     lEnd.second += (lEnd.second-lNextEnd.second)*offset;
   }
   // transform to global coordinates, and create trajectory
-  return std::make_unique<LHCb::LineTraj<double>>(localToGlobal(lEnd.first),
-                                                  localToGlobal(lEnd.second));
+  return { localToGlobal(lEnd.first), localToGlobal(lEnd.second) };
 }
 
 StatusCode DeVeloPhiType::updatePhiCache()

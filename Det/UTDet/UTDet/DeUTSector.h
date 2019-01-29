@@ -19,7 +19,7 @@
 
 #include "Kernel/UTChannelID.h"
 #include "Kernel/LHCbConstants.h"
-#include "Kernel/PiecewiseTrajectory.h"
+#include "Kernel/LineTraj.h"
 #include "UTDet/DeUTBaseElement.h"
 #include "UTDet/DeUTSensor.h"
 
@@ -64,7 +64,7 @@ public:
   };
 
   typedef std::vector<DeUTSensor*> Sensors;
-  typedef LHCb::PiecewiseTrajectory UTTraj;
+  typedef LHCb::LineTraj<double> UTTraj;
 
   /** parent type */
   typedef UTDetTraits<DeUTSector>::parent parent_type;
@@ -278,18 +278,18 @@ public:
   /** trajectory
    * @return trajectory for the fit
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectory(const LHCb::UTChannelID& aChan,
-                                             const double offset) const;
+  LHCb::LineTraj<double> trajectory(const LHCb::UTChannelID& aChan,
+                                    const double offset) const;
 
   /** trajectory
    * @return trajectory of the first strip
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectoryFirstStrip() const;
+  LHCb::LineTraj<double> trajectoryFirstStrip() const;
 
   /** trajectory
    * @return trajectory of the last strip
    */
-  std::unique_ptr<LHCb::Trajectory<double>> trajectoryLastStrip() const;
+  LHCb::LineTraj<double> trajectoryLastStrip() const;
 
   /** Trajectory<double> parameterized along y-axis */
   void trajectory(unsigned int strip, double offset, double& dxdy, double& dzdy,
@@ -518,7 +518,7 @@ private:
   StatusCode updateStatusCondition();
   StatusCode updateNoiseCondition();
   void toEnumMap(const std::map<int,int>& input, DeUTSector::StatusMap& output);
-  std::unique_ptr<LHCb::Trajectory<double>> createTraj(const unsigned int strip, const double offset ) const;
+  LHCb::LineTraj<double> createTraj(const unsigned int strip, const double offset ) const;
   void setStatusCondition( const std::string& type, const unsigned int entry,
                            const DeUTSector::Status& newStatus );
 
