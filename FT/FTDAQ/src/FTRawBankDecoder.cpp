@@ -167,7 +167,7 @@ FTLiteClusters FTRawBankDecoder::decode<6>(LHCb::span<const LHCb::RawBank*> bank
             make_clusters(channel,c,c2);
             ++it;
           } else {//this should never happen, 
-            Error( "Possibly corrupt data. Ignoring the cluster.");
+            Error( "Possibly corrupt data. Ignoring the cluster.").ignore();
           }
         }
       }
