@@ -587,8 +587,8 @@ class genClasses(genSrcUtils.genSrcUtils):
         s = ''
         if not self.isEventClass and self.genOStream:
             self.addInclude('ostream',1)
-            s += 'inline std::ostream& operator<< (std::ostream& str, const %s& obj)' % ( godClass['attrs']['name'])
-            s += '\n{\n  return obj.fillStream(str);\n}\n'
+            s += '  friend std::ostream& operator<< (std::ostream& str, const %s& obj)' % ( godClass['attrs']['name'])
+            s += '\n  {\n    return obj.fillStream(str);\n  }\n'
         return s
 
 #--------------------------------------------------------------------------------

@@ -55,6 +55,7 @@ namespace @@@classNamespace@@@
   @@@publicBitfieldEnums@@@
   @@@publicAttributes@@@
   @@@allocatorOperators@@@
+  @@@classOstreamOverload@@@
   protected:
 
   @@@protectedTypedefs@@@
@@ -74,7 +75,6 @@ namespace @@@classNamespace@@@
 
   @@@classTypedefs@@@
   @@@globalTypedefs@@@
-  @@@classOstreamOverload@@@
   @@@enumOstreamOverloads@@@
 } // namespace @@@classNamespace@@@;
 
