@@ -14,6 +14,7 @@ from Configurables import (HLTControlFlowMgr,
                             ConfigurableDummy,
                             HiveWhiteBoard,
                             HiveDataBrokerSvc,
+                            ExecutionReportsWriter,
                             )
 from Gaudi.Configuration import *
 
@@ -46,11 +47,13 @@ a5.inpKeys = ['/Event/a1']
 a5.outKeys = ['/Event/a5']
 a5.CFD = True
 
+exerep = ExecutionReportsWriter("ExecReportsWriter", OutputLevel = DEBUG, PrintFreq = 1, DecReportsLocation = "/Event/DecReports")
+
 whiteboard = HiveWhiteBoard("EventDataSvc",
                             EventSlots=evtslots)
 
 HLTControlFlowMgr().CompositeCFNodes = [
-             ( 'moore', 'NONLAZY_AND', ['line2', 'decision'], True ),
+             ( 'moore', 'NONLAZY_AND', ['line2', 'decision', 'ExecReportsWriter'], True ),
              ( 'decision', 'NONLAZY_OR', ['line1', 'A5', 'notA1'], False ),
              ( 'line1', 'LAZY_OR', ['A1', 'A2'], True ),
              ( 'line2', 'LAZY_AND', ['A3', 'A4'], True ),
@@ -73,6 +76,6 @@ app = ApplicationMgr(EvtMax=evtMax,
                ExtSvc=[whiteboard],
                EventLoop=HLTControlFlowMgr(),
                # EventLoop=HLTEventLoopMgr(),
-               TopAlg=[a1, a2, a3, a4, a5])
+               TopAlg=[a1, a2, a3, a4, a5, exerep])
 
 HiveDataBrokerSvc().DataProducers = app.TopAlg
