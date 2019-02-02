@@ -146,7 +146,9 @@ private:
   std::vector<NodeState> m_NodeStates;
   std::vector<uint16_t> m_AlgStates;
   std::vector<Gaudi::Accumulators::Counter<uint32_t>> m_AlgExecCounter;
+  public:
   using SchedulerStates = decltype(std::pair{m_NodeStates, m_AlgStates});
+  private:
 
   //all controlflownodes
   std::vector<VNode> m_allVNodes;
