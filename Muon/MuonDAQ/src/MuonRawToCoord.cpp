@@ -10,7 +10,15 @@
 \*****************************************************************************/
 // Include files
 // local
-#include "MuonRawToCoord.h"
+#include "Gaudi/Algorithm.h"
+#include "GaudiAlg/Transformer.h"
+
+#include "MuonDet/DeMuonDetector.h"
+#include "Event/MuonCoord.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+
+#include "MuonDet/MuonBasicGeometry.h"
 
 #include <functional>
 #include <optional>
@@ -20,7 +28,6 @@
 #include "range/v3/view/map.hpp"
 #include "range/v3/view/zip.hpp"
 
-using namespace LHCb;
 
 // define error enum / category
 namespace MuonRaw {
@@ -50,7 +57,6 @@ STATUSCODE_ENUM_DECL( MuonRaw::ErrorCode )
 STATUSCODE_ENUM_IMPL( MuonRaw::ErrorCode, MuonRaw::ErrorCategory )
 
 namespace{
-  //TODO make Digit and Digits common to all MuonDAQ
   struct Digit {
       LHCb::MuonTileID tile;
       unsigned int tdc;
@@ -65,7 +71,7 @@ namespace{
 
   /// fills in the two readout layouts by querying the DeMuonRegion
   template <int N = 0>
-  MuonLayout  makeStripLayout(const DeMuonDetector& det, const MuonTileID& tile) {
+  MuonLayout  makeStripLayout(const DeMuonDetector& det, const LHCb::MuonTileID& tile) {
     static_assert(N==0 || N==1);
     unsigned int station = tile.station();
     unsigned int region  = tile.region();
@@ -74,7 +80,7 @@ namespace{
     return { x, y };
   }
 
-  int nDigits(const RawBank& rb) {
+  int nDigits(const LHCb::RawBank& rb) {
     auto range = rb.range<unsigned short>();
     if (range.empty()) return 0;
     auto preamble_size = 2*((range[0]+3)/2);
@@ -82,10 +88,34 @@ namespace{
     return range.size() > overhead ? range.size()-overhead : 0;
   }
 
-  int nDigits( LHCb::span<const RawBank*> rbs) {
-    return std::accumulate(rbs.begin(),rbs.end(),0,[](int s, const RawBank* rb) {
+  int nDigits( LHCb::span<const LHCb::RawBank*> rbs) {
+    return std::accumulate(rbs.begin(),rbs.end(),0,[](int s, const LHCb::RawBank* rb) {
         return rb ? s + nDigits(*rb) : s ;
     } );
+  }
+
+  /// convert raw data into tiles
+  template <typename MakeTile, typename OutputIterator>
+  OutputIterator decodeTileAndTDCV1(LHCb::span<const unsigned short> rawdata, MakeTile&& make_tile, OutputIterator out) {
+    //minimum length is three 32 bit words --> 12 bytes -> 6 unsigned shorts
+    if (rawdata.size()<6)  OOPS( MuonRaw::ErrorCode::BANK_TOO_SHORT );
+    auto preamble_size = 2*((rawdata[0]+3)/2);
+    if (rawdata.size()<preamble_size) OOPS( MuonRaw::ErrorCode::PADDING_TOO_LONG );
+    rawdata = rawdata.subspan( preamble_size );
+    for (int i=0;i<4;++i) {
+      if (UNLIKELY( rawdata.empty())) OOPS( MuonRaw::ErrorCode::BANK_TOO_SHORT );
+      if (UNLIKELY( rawdata.size() < 1 + rawdata[0] )) OOPS( MuonRaw::ErrorCode::TOO_MANY_HITS );
+      for (unsigned int pp : rawdata.subspan(1,rawdata[0])) {
+        unsigned int add       =  (pp&0x0FFF);
+        unsigned int tdc_value = ((pp&0xF000)>>12);
+        std::optional<LHCb::MuonTileID> tile = make_tile(add);
+        if (UNLIKELY(!tile.has_value())) continue;
+        *out++ = { std::move(*tile), tdc_value };
+      }
+      rawdata = rawdata.subspan(1+rawdata[0]);
+    }
+    assert(rawdata.empty());
+    return out;
   }
 
   /// Copy MuonTileID from digits to coord by crossing the digits
@@ -150,6 +180,29 @@ namespace{
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonRawToCoord
 //-----------------------------------------------------------------------------
+/** @class MuonRawToCoord MuonRawToCoord.h
+ *  This is the muon reconstruction algorithm
+ *  This just crosses the logical strips back into pads
+ */
+using BaseClass_t = Gaudi::Functional::Traits::BaseClass_t<Gaudi::Algorithm>;
+
+class MuonRawToCoord final : public Gaudi::Functional::Transformer<std::vector<LHCb::MuonCoord> (const LHCb::RawEvent &)/* ,BaseClass_t*/ > {
+public:
+  /// Standard constructor
+  MuonRawToCoord( const std::string& name, ISvcLocator* pSvcLocator );
+
+  StatusCode initialize() override;    ///< Algorithm initialization
+  std::vector<LHCb::MuonCoord> operator()(const LHCb::RawEvent& event) const override;
+
+private:
+  DeMuonDetector* m_muonDetector = nullptr;
+
+  mutable Gaudi::Accumulators::BinomialCounter<>  m_invalid_add{ this, "invalid add" };
+  mutable Gaudi::Accumulators::AveragingCounter<> m_digits{ this, "#digits" };
+  mutable Gaudi::Accumulators::AveragingCounter<> m_coords{ this, "#coords" };
+  // TODO: add min/max to m_deltaEstimate...
+  mutable Gaudi::Accumulators::AveragingCounter<> m_deltaEstimate{ this, "#digits - estimated # digits" };
+};
 
 DECLARE_COMPONENT( MuonRawToCoord )
 
@@ -158,11 +211,12 @@ DECLARE_COMPONENT( MuonRawToCoord )
 //=============================================================================
 MuonRawToCoord::MuonRawToCoord( const std::string& name,
                   ISvcLocator* pSvcLocator)
-  : Transformer ( name , pSvcLocator ,
+  : Transformer { name , pSvcLocator ,
         KeyValue{"RawEventLocation" , LHCb::RawEventLocation::Default},
-        KeyValue{"MuonCoordLocation", LHCb::MuonCoordLocation::MuonCoords})
+        KeyValue{"MuonCoordLocation", LHCb::MuonCoordLocation::MuonCoords}
+        // , KeyValue{"MuonDetectorPath",  DeMuonLocation::Default}
+    }
 {
-  m_forceResetDAQ=(context()=="TAE");
 }
 
 //=============================================================================
@@ -170,10 +224,9 @@ MuonRawToCoord::MuonRawToCoord( const std::string& name,
 //=============================================================================
 StatusCode MuonRawToCoord::initialize() {
   auto sc = Transformer::initialize();
-  if (sc.isSuccess()) {
-    m_muonDetector=getDet<DeMuonDetector>(DeMuonLocation::Default);
-  }
-  return !m_muonDetector ? Error("Could not read " + DeMuonLocation::Default ) : sc;
+  if (sc.isSuccess()) m_muonDetector = getDet<DeMuonDetector>(DeMuonLocation::Default);
+  if (!m_muonDetector) throw GaudiException("Could not read " + DeMuonLocation::Default,__func__,StatusCode::FAILURE );
+  return sc;
 }
 
 //=============================================================================
@@ -182,18 +235,27 @@ StatusCode MuonRawToCoord::initialize() {
 std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()(const LHCb::RawEvent &raw) const {
 
   std::vector<LHCb::MuonCoord> coords;
-  if( msgLevel(MSG::DEBUG) ) {
-    debug() << "==> Execute" << endmsg;
-  }
-  const auto& mb = raw.banks(RawBank::Muon);
-  if (mb.empty()) {
-    return coords;
-  }
+  if( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+  const auto& mb = raw.banks(LHCb::RawBank::Muon);
+  if (mb.empty()) return coords;
   std::vector<Digit>  decoding;
-  decoding.reserve( nDigits(mb) );
-  for ( const auto& r : mb ) {
-    decodeTileAndTDCV1(*r, std::back_inserter(decoding));
+  int est_nDigits = nDigits(mb);
+  decoding.reserve( est_nDigits );
+  for ( const auto* r : mb ) {
+    if (LHCb::RawBank::MagicPattern != r->magic() ) OOPS( MuonRaw::ErrorCode::BAD_MAGIC );
+    unsigned int tell1=r->sourceID();
+    if (tell1>=MuonDAQHelper_maxTell1Number) OOPS( MuonRaw::ErrorCode::INVALID_TELL1 );
+    decodeTileAndTDCV1(r->range<unsigned short>(),
+                       [&di = m_muonDetector->getDAQInfo()->getADDInTell1(tell1),
+                        invalid_add = m_invalid_add.buffer()]
+                        (unsigned int add) mutable {
+                                bool valid = add<di.size();
+                                invalid_add += !valid;
+                                return valid ? std::optional{di[add]} : std::nullopt;
+                       },
+                       std::back_inserter(decoding));
   }
+  m_deltaEstimate += decoding.size()-est_nDigits;
   m_digits+=decoding.size();
   if (decoding.empty()) {
     error() << "Error in decoding the muon raw data ";
@@ -207,53 +269,4 @@ std::vector<LHCb::MuonCoord> MuonRawToCoord::operator()(const LHCb::RawEvent &ra
   }
   m_coords += coords.size();
   return coords;
-}
-
-template <typename OutputIterator>
-OutputIterator MuonRawToCoord::decodeTileAndTDCV1(const RawBank& rawdata, OutputIterator out) const {
-
-  if (RawBank::MagicPattern != rawdata.magic() ) {
-    OOPS( MuonRaw::ErrorCode::BAD_MAGIC );
-  }
-  unsigned int tell1Number=rawdata.sourceID();
-  if (tell1Number>=MuonDAQHelper_maxTell1Number){
-    OOPS( MuonRaw::ErrorCode::INVALID_TELL1 );
-  }
-  auto make_tile = [&di = m_muonDetector->getDAQInfo()->getADDInTell1(tell1Number)](unsigned int add) {
-    return add<di.size() ? std::optional{di[add]} : std::nullopt;
-  };
-  //minimum length is 3 words --> 12 bytes
-  if (rawdata.size()<12) {
-    OOPS( MuonRaw::ErrorCode::BANK_TOO_SHORT );
-  }
-  auto range = rawdata.range<unsigned short>();
-  auto preamble_size = 2*((range[0]+3)/2);
-  if (range.size()<preamble_size) {
-    OOPS( MuonRaw::ErrorCode::PADDING_TOO_LONG );
-  }
-  range = range.subspan( preamble_size );
-
-  auto invalid_add = m_invalid_add.buffer();
-  for(int i=0;i<4;++i){
-    if (UNLIKELY(range.empty())) {
-      OOPS( MuonRaw::ErrorCode::BANK_TOO_SHORT );
-    }
-    if( UNLIKELY( msgLevel(MSG::VERBOSE) ) ) {
-      verbose()<<" hit in PP "<< range[0] <<endmsg;
-    }
-    if (UNLIKELY( range.size() < 1 + range[0] ) ) {
-      OOPS( MuonRaw::ErrorCode::TOO_MANY_HITS );
-    }
-    for (unsigned int pp : range.subspan(1,range[0])) {
-      unsigned int add       =  (pp&0x0FFF);
-      unsigned int tdc_value = ((pp&0xF000)>>12);
-      std::optional<LHCb::MuonTileID> tile = make_tile(add);
-      invalid_add += !tile.has_value();
-      if (UNLIKELY(!tile.has_value())) continue;
-      *out++ = { std::move(*tile), tdc_value };
-    }
-    range = range.subspan(1+range[0]);
-  }
-  assert(range.empty());
-  return out;
 }
