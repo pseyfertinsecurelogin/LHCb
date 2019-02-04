@@ -5,10 +5,15 @@
 # build products
 InstallArea/
 
+# Centrally managed files and helpers
+.clang-format
+toolchain.cmake
+Makefile
+cache_preload.cmake
+
 # CMake temporary files
-build.*/
+build*/
 .build/
-build-dir/
 CMakeFiles/
 CTestTestfile.cmake
 CPackSourceConfig.cmake
@@ -25,24 +30,19 @@ DoxyWarnings.log
 *.launch.py
 *.launch.opts
 
-# Eclipse data
+# QMTest byproducts
+**/tests/qmtest/*
+!**/tests/qmtest/*.qms
+!**/tests/qmtest/*.qmt
+
+# Metadata used by IDEs
+# - Eclipse
 .project
 .cproject
 .settings
 .pydevproject
 .eclipse/
-
-# CMT tempoary files
-build.*.log
-Makefile
-NMake
-install.*.history
-setup.*
-cleanup.*
-version.cmt
-genConf/
-test_results/
-*-slc[56]-*/
-i686-winxp-vc9-dbg/
-.*-slc[56]-*.d/
-.i686-winxp-vc9-dbg.d/
+# - QtCreator
+CMakeLists.txt.user
+# - VSCode
+.vscode/
