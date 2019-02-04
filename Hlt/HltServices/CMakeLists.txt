@@ -24,8 +24,7 @@ gaudi_depends_on_subdirs(Det/DetDesc
 find_package(AIDA)
 find_package(Boost COMPONENTS iostreams filesystem program_options)
 
-find_package(CORAL)
-include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 gaudi_add_module(HltServices
                  src/*.cpp
