@@ -72,7 +72,7 @@ preprocessor = (
                  "ForwardSchedule...   INFO",
                 ]) +
     RegexpReplacer(when = "HLTControlFlowMgr    INFO",
-                                              orig = r'\d+',
+                                              orig = r'\d+\.*\d*',
                                               repl = r'n') +
     RegexpReplacer(when = "Histograms converted successfully according to request",
         orig = r'"HiveSlimEventLo..."',
