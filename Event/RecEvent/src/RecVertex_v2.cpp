@@ -18,6 +18,7 @@ std::ostream& LHCb::Event::v2::RecVertex::fillStream(std::ostream& s) const {
   s << "{ "
     << "position  : " << m_position << "\n"
     << "covMatrix : \n" << m_covMatrix << "\n"
+    << "chi2PerDoF: " << chi2PerDoF() << "\n"
     << "technique :	" << technique() << "\n"
     << "tracks/weight :	[ ";
   for ( const auto& tk : tracks() ) { s << tk.track << "/" << tk.weight << " "; }

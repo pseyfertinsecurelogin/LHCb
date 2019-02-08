@@ -121,8 +121,8 @@ namespace LHCb::Event::v2 {
     /// Retrieve const Tracks this vertex was made from
     const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
 
-    float chi2() const { return m_chi2PerDoF.chi2PerDoF; }
-    int dof() const { return m_chi2PerDoF.nDoF; }
+    float chi2PerDoF() const { return m_chi2PerDoF.chi2PerDoF; }
+    int nDoF() const { return m_chi2PerDoF.nDoF; }
   private:
     
     /// Position in LHCb reference system
