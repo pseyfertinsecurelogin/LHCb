@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <vector>
 #include "range/v3/range_traits.hpp"
+#include "Event/Chi2PerDoF.h"
 
 /**
  *
@@ -196,11 +197,6 @@ namespace LHCb::Event
       typedef std::vector<LHCbID> LHCbIDContainer;
       /// Container for States on track
       typedef std::vector<State> StateContainer;
-      struct Chi2PerDoF {
-        double chi2PerDoF = 0.0;
-        int    nDoF       = 0;
-        auto   chi2() const { return chi2PerDoF * nDoF; };
-      };
 
       using History = Enum::Track::History;
       using FitHistory = Enum::Track::FitHistory;

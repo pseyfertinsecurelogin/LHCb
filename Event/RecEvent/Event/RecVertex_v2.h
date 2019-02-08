@@ -21,13 +21,7 @@
 #include <utility>
 #include <ostream>
 #include <optional>
-
-
-struct Chi2PerDof {
-  float chi2;
-  int dof;
-};
-
+#include "Event/Chi2PerDoF.h"
 
 namespace LHCb::Event::v2 {
 
@@ -55,8 +49,8 @@ namespace LHCb::Event::v2 {
 
   /// helper class to bundle a Track and its weight
   struct WeightedTrack {
-    WeightedTrack(const hlt1::Track* t, float w) : track(t), weight(w){};
-    const hlt1::Track* track;
+    WeightedTrack(const LHCb::HLT1::Track* t, float w) : track(t), weight(w){};
+    const LHCb::HLT1::Track* track;
     float weight;
   };
 
@@ -65,7 +59,7 @@ namespace LHCb::Event::v2 {
   public:
 
     /// local Track type
-    using Track = hlt1::Track;
+    using Track = LHCb::HLT1::Track;
     using RecVertexType = Enum::RecVertex::RecVertexType;
     /// typedef for std::vector of RecVertex
     using Vector = std::vector<RecVertex*>;
@@ -74,8 +68,8 @@ namespace LHCb::Event::v2 {
     /// constructor
     RecVertex(const Gaudi::XYZPoint& position,
               const Gaudi::SymMatrix3x3& covMatrix,
-              Chi2PerDof chi2PerDof) :
-    m_position(position), m_covMatrix(covMatrix), m_chi2PerDof(chi2PerDof) {}
+              Chi2PerDoF chi2PerDoF) :
+    m_position(position), m_covMatrix(covMatrix), m_chi2PerDoF(chi2PerDoF) {}
 
     /// Is the vertex a primary?
     bool isPrimary() const { return RecVertexType::Primary == technique(); }
@@ -127,8 +121,8 @@ namespace LHCb::Event::v2 {
     /// Retrieve const Tracks this vertex was made from
     const std::vector<WeightedTrack>& tracks() const { return m_tracks; }
 
-    float chi2() const { return m_chi2PerDof.chi2; }
-    int dof() const { return m_chi2PerDof.dof; }
+    float chi2() const { return m_chi2PerDoF.chi2PerDoF; }
+    int dof() const { return m_chi2PerDoF.nDoF; }
   private:
     
     /// Position in LHCb reference system
@@ -140,7 +134,7 @@ namespace LHCb::Event::v2 {
     /// Tracks this vertex was made from
     std::vector<WeightedTrack> m_tracks;
 
-    Chi2PerDof m_chi2PerDof;
+    Chi2PerDoF m_chi2PerDoF;
 
   }; // class RecVertex
   

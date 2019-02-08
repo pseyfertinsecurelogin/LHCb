@@ -24,14 +24,14 @@ std::ostream& LHCb::Event::v2::RecVertex::fillStream(std::ostream& s) const {
   return s << "]\n }";
 }
 
-bool LHCb::Event::v2::RecVertex::removeFromTracks(const hlt1::Track* track) {
+bool LHCb::Event::v2::RecVertex::removeFromTracks(const LHCb::HLT1::Track* track) {
   auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
   if (it == end(m_tracks)) return false;
   m_tracks.erase(it);
   return true;
 }
 
-std::optional<float> LHCb::Event::v2::RecVertex::trackWeight( const hlt1::Track* track ) const {
+std::optional<float> LHCb::Event::v2::RecVertex::trackWeight( const LHCb::HLT1::Track* track ) const {
   auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
   if (it != end(m_tracks)) {
     return it->weight;

@@ -14,8 +14,7 @@
 #include <string>
 
 
-namespace hlt1 {
-namespace tes_locations {
+namespace LHCb::HLT1::TESLocations {
     [[maybe_unused]] inline const char* PrPixelHits = "Rec/HLT1/PrPixelHits";
     [[maybe_unused]] inline const char* PrPixelBeamStates = "Rec/HLT1/PrPixelBeamStates";
     [[maybe_unused]] inline const char* PrPixelEndStates = "Rec/HLT1/PrPixelEndStates";
@@ -25,5 +24,4 @@ namespace tes_locations {
     [[maybe_unused]] inline const char* PrPixelBeamStatesSelection = "Rec/HLT1/PrPixelBeamStates_Selection";
     [[maybe_unused]] inline const char* PrPixelEndStatesSelection = "Rec/HLT1/PrPixelEndStates_Selection";
     [[maybe_unused]] inline const char* PrPixelVeloTracksSelection = "Rec/HLT1/PrPixelVeloTracks_Selection";
-}
-} // namespace hlt1::tes_locations
+} // namespace LHCb::HL1::TESLocations

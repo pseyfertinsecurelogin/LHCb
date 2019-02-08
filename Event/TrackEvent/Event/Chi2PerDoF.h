@@ -12,22 +12,12 @@
 #pragma once
 
 
-#include "Event/VPLightCluster.h"
+namespace LHCb {
 
+    struct Chi2PerDoF {
+        float chi2PerDoF = 0.0f; ///< Total chi2 divided by the number of degrees of freedom.
+        int nDoF = 0; ///< Number of degrees of freedom.
+        float chi2() const { return chi2PerDoF*nDoF; }
+    };
 
-namespace LHCb::HLT1 {
-
-
-struct Track {
-    const std::vector<LHCb::VPLightCluster>* veloSegment = nullptr;
-    const void* utSegment = nullptr; // TODO: use proper type.
-    const void* ftSegment = nullptr; // TODO: use proper type.
-};
-
-
-} // namespace hlt1
-
-
-
-
-
+} // namespace LHCb
