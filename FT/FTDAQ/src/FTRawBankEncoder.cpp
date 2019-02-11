@@ -43,7 +43,7 @@ StatusCode FTRawBankEncoder::execute() {
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
 
   // Incremented to deal with new numbering scheme
-  int codingVersion = 5;
+  int codingVersion = 6;
 
   //== create the array of arrays of vectors with the proper size...
   std::array<std::vector<uint16_t>, s_nbBanks> sipmData;
