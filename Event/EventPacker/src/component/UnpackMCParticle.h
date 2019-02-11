@@ -11,13 +11,16 @@
 #ifndef UNPACKMCPARTICLE_H
 #define UNPACKMCPARTICLE_H 1
 
-// Include files
-// from Gaudi
+#include "Event/MCParticle.h"
+#include "Event/PackedMCParticle.h"
+
+#include "GaudiKernel/DataHandle.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-
-/** @class UnpackMCParticle UnpackMCParticle.h
- *  Unpack the MCParticles
+/**
+ * The algorithm provides access to previously packed MC particles at a TES location.
+ * It reads a location of packed MC particles and converts them to LHCb::MCParticle
+ * together with the associated LHCb::MCVertex which is unpacked by the algorithm UnpackMCVertex
  *
  *  @author Olivier Callot
  *  @date   2005-03-18
@@ -27,16 +30,14 @@ class UnpackMCParticle : public GaudiAlgorithm
 
 public:
 
-  /// Standard constructor
-  UnpackMCParticle( const std::string& name, ISvcLocator* pSvcLocator );
-
-  StatusCode execute() override; ///< Algorithm execution
+  using GaudiAlgorithm::GaudiAlgorithm;
+  StatusCode execute() override;
 
 private:
 
-  std::string m_inputName;
-  std::string m_outputName;
-  bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
+  DataObjectReadHandle<LHCb::PackedMCParticles> m_packedMCParticles{this, "InputName", LHCb::PackedMCParticleLocation::Default};
+  DataObjectWriteHandle<LHCb::MCParticles> m_MCParticles{this, "OutputName", LHCb::MCParticleLocation::Default };
+  Gaudi::Property<bool> m_alwaysOutput {this, "AlwaysCreateOutput", false, "Flag to turn on the creation of output, even when input is missing" };
 
 };
 

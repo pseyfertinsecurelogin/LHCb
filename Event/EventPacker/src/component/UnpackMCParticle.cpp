@@ -9,16 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
-// STL
-#include <algorithm>
+#include "UnpackMCParticle.h"
 
-// Event model
 #include "Event/MCParticle.h"
 #include "Event/StandardPacker.h"
 #include "Event/PackedMCParticle.h"
 
-// local
-#include "UnpackMCParticle.h"
+#include <algorithm>
+#include <memory>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackMCParticle
@@ -28,38 +26,20 @@
 
 DECLARE_COMPONENT( UnpackMCParticle )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-  UnpackMCParticle::UnpackMCParticle( const std::string& name,
-                                      ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "InputName" , m_inputName  = LHCb::PackedMCParticleLocation::Default );
-  declareProperty( "OutputName", m_outputName = LHCb::MCParticleLocation::Default );
-  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
-  //setProperty( "OutputLevel", 1 );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
 StatusCode UnpackMCParticle::execute() 
 {
 
   // CRJ : If packed data does not exist just return. Needed for packing of
   //     : spillover which is not neccessarily available for each event
-  if ( !m_alwaysOutput && !exist<LHCb::PackedMCParticles>(m_inputName) )
+  if ( !m_alwaysOutput.value() && !m_packedMCParticles.exist() )
     return StatusCode::SUCCESS;
 
-  LHCb::PackedMCParticles* dst =
-    getOrCreate<LHCb::PackedMCParticles,LHCb::PackedMCParticles>( m_inputName );
+  LHCb::PackedMCParticles* dst = m_packedMCParticles.getOrCreate();
 
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Size of PackedMCParticles = " << dst->mcParts().size() << endmsg;
 
-  LHCb::MCParticles* newMCParticles = new LHCb::MCParticles();
-  put( newMCParticles, m_outputName );
+  LHCb::MCParticles* newMCParticles = m_MCParticles.put(std::make_unique<LHCb::MCParticles>());
 
   StandardPacker pack(this);
 
