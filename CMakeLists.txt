@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -28,8 +28,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${CLHEP_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
 
 # Declare project name and version
-gaudi_project(LHCb v50r2
-              USE Gaudi v30r5
+gaudi_project(LHCb v50r3
+              USE Gaudi v31r0
               DATA Gen/DecFiles
                    FieldMap
                    ParamFiles

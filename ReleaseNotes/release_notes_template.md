@@ -9,7 +9,7 @@
 {{date}} {{project}} {{version}}
 ===
 
-This version uses Gaudi v30r5 and LCG_94 with ROOT 6.14.04.
+This version uses Gaudi v31r0 and LCG_95 with ROOT 6.16.00.
 <p>
 This version is released on `master` branch.
 
@@ -20,6 +20,9 @@ Built relative to LHCb v50rX, with the following changes:
 
 ### Enhancements
 {{ section(['enhancement']) }}
+
+### Thread safety
+{{ section(['thread safety']) }}
 
 ### Bug fixes
 {{ section(['bug fix']) }}
