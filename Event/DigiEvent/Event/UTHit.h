@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef EVENT_UTHIT_H
-#define EVENT_UTHIT_H 1
+#pragma once
 
 // Include files
 #include "Kernel/LHCbID.h"
@@ -22,6 +21,7 @@
  *  @date   2016-11-18
  */
 
+
 namespace UT
 {
 
@@ -29,81 +29,72 @@ namespace UT
   {
   public:
     // constructor
-  Hit( LHCb::UTChannelID chanID, unsigned int size, bool highThreshold,
+  Hit( LHCb::UTChannelID chanID, unsigned int size,
        double dxDy, double xat0, double zat0, double yBegin,
-       double yEnd, double cos, double error, unsigned int strip, double fracStrip )
-    : m_cos( cos )
-      , m_dxDy( dxDy )
-      , m_weight( 1. / error )
-      , m_xAtYEq0( xat0 )
-      , m_yBegin( yBegin )
-      , m_yEnd( yEnd )
-      , m_zAtYEq0( zat0 )
-      , m_x( xAt( yMid() ) )
-      , m_chanID(chanID)
+       double yEnd, double error, double fracStrip )
+    : xAtYEq0( xat0 )
+      , yBegin( yBegin )
+      , zAtYEq0( zat0 )
+      , yEnd( yEnd )
+      , dxdy( dxDy )
+      , error( error )
+      , id(chanID)
       , m_size(size)
-      , m_highThreshold(highThreshold)
-      , m_strip(strip)
       , m_fracStrip(fracStrip)
     {
     }
 
-     float cos() const { return m_cos; }
-     float cosT() const { return ( fabs( m_xAtYEq0 ) < 1.0E-9 ) ? 1. / std::sqrt( 1 + m_dxDy * m_dxDy ) : cos(); }
-     float dxDy() const { return m_dxDy; }
-     bool highThreshold() const { return m_highThreshold; }
-     bool isYCompatible( const float y, const float tol ) const { return yMin() - tol <= y && y <= yMax() + tol; }
-     bool isNotYCompatible( const float y, const float tol ) const { return yMin() - tol > y || y > yMax() + tol; }
-     LHCb::LHCbID lhcbID() const { return LHCb::LHCbID( m_chanID ); }
-     LHCb::UTChannelID chanID() const { return m_chanID; }
-     int planeCode() const { return 2 * ( m_chanID.station() - 1 ) + ( m_chanID.layer() - 1 ) % 2; }
-     float sinT() const { return tanT() * cosT(); }
-     int size() const { return m_size; }
-     float tanT() const { return -m_dxDy; }
-     float weight() const { return m_weight * m_weight; }
-     float error() const { return 1.0f / m_weight; }
-     float xAt( const float globalY ) const { return m_xAtYEq0 + globalY * m_dxDy; }
-     float xAtYEq0() const { return m_xAtYEq0; }
-     float xAtYMid() const { return m_x; }
-     float xMax() const { return std::max( xAt( yBegin() ), xAt( yEnd() ) ); }
-     float xMin() const { return std::min( xAt( yBegin() ), xAt( yEnd() ) ); }
-     float xT() const { return cos(); }
-     float yBegin() const { return m_yBegin; }
-     float yEnd() const { return m_yEnd; }
-     float yMax() const { return std::max( yBegin(), yEnd() ); }
-     float yMid() const { return 0.5 * ( yBegin() + yEnd() ); }
-     float yMin() const { return std::min( yBegin(), yEnd() ); }
-     float zAtYEq0() const { return m_zAtYEq0; }
-     unsigned int strip() const { return m_strip; }
-     double fracStrip() const { return m_fracStrip; }
-     int pseudoSize() const {
+    // Actually used.
+    float xAt( const float globalY ) const { return xAtYEq0 + globalY * dxdy; }
+
+    // Expand/move.
+    int planeCode() const { return 2 * ( id.station() - 1 ) + ( id.layer() - 1 ) % 2; }  // used in PrAddUTHitsTool, DumpUTHits, PrVeloUT, PrLongLivedTracking, PrTrackerDumper, PrTrackerDumper2 and PrTrackRecoDumper
+    float weight() const { return 1.0f/(error * error); } // used in PrVeloUT, PrLongLivedTracking, PrTrackerDumper, PrTrackerDumper2 and PrTrackRecoDumper
+    float xAtYMid() const { return xAt((yBegin + yEnd)*0.5f); } // used in PrAddUTHitsTool, PrTrackerDumper, PrTrackerDumper2 and PrTrackRecoDumper
+    
+    // Ask about.
+    int size() const { return m_size; } // used in PrDebugUTTruthTool, PrTrackerDumper and PrTrackerDumper2
+    double fracStrip() const { return m_fracStrip; } // used in MeasurementProviderT
+    int pseudoSize() const { // used in MeasurementProviderT
       unsigned int cSize = m_size  + 1;
       if (cSize == 1){
-        if (fracStrip() != 0) cSize = 2;
+        if (m_fracStrip != 0) cSize = 2;
       } else {
         cSize = 3;
       }
       return cSize;
     }
 
-  private:
-    float m_cos;
-    float m_dxDy;    ///< The dx/dy value
-    float m_weight;  ///< The hit weight (1/error)
-    float m_xAtYEq0; ///< The value of x at the point y=0
-    float m_yBegin;  ///< The y value at the start point of the line
-    float m_yEnd;    ///< The y value at the end point of the line
-    float m_zAtYEq0; ///< The value of z at the point y=0
-    float m_x;
-    LHCb::UTChannelID m_chanID;
+  public:
+    float xAtYEq0; ///< The value of x at the point y=0
+    float yBegin;  ///< The y value at the start point of the line
+    float zAtYEq0; ///< The value of z at the point y=0
+    float yEnd;    ///< The y value at the end point of the line
+    float dxdy;    ///< The dx/dy value
+    float error;   ///< I don't actually know...
+    LHCb::UTChannelID id;
     unsigned int m_size;
-    bool m_highThreshold;
-    unsigned int m_strip;
     double m_fracStrip;
   };
 
   typedef std::vector<const Hit*> Hits;
 
-}
 
-#endif // EVENT_UTHIT_H
+  inline float CosUtFiberAngle(const Hit& hit) {
+    // cos(fiber angle) = 1 / sqrt(dxdy^2 + 1)
+    // This is a fourth order Taylor-series approximation.
+    // It is fairly accurate in the range -0.08 < dxdy < 0.08, or -5 deg < angle < 5 deg.
+    // Error is in the order of floating point epsilon.
+    // Second order approximation has and error of about 0.004% in aforementioned range.
+    float x = hit.dxdy;
+    float x2 = x*x;
+    float x4 = x2*x2;
+    float c_approx = 1 - 0.5f*x2 + 0.375*x4;
+    return c_approx;
+  }
+
+  inline float SinUtFiberAngle(const Hit& hit) {
+    return hit.dxdy * CosUtFiberAngle(hit);
+  }
+
+}
