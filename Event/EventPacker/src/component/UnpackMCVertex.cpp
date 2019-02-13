@@ -9,14 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 
-// STL
-#include <algorithm>
+#include "UnpackMCVertex.h"
 
 #include "Event/MCVertex.h"
 #include "Event/StandardPacker.h"
 #include "Event/PackedMCVertex.h"
-// local
-#include "UnpackMCVertex.h"
+
+#include <algorithm>
+#include <memory>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackMCVertex
@@ -26,37 +26,19 @@
 
 DECLARE_COMPONENT( UnpackMCVertex )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-UnpackMCVertex::UnpackMCVertex( const std::string& name,
-                                ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "InputName" , m_inputName  = LHCb::PackedMCVertexLocation::Default );
-  declareProperty( "OutputName", m_outputName = LHCb::MCVertexLocation::Default );
-  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
-  //setProperty( "OutputLevel", 1 );
-}
-
-//=============================================================================
-// Main execution
-//=============================================================================
 StatusCode UnpackMCVertex::execute()
 {
 
   // CRJ : If packed data does not exist just return (by default). Needed for packing of 
   //     : spillover which is not neccessarily available for each event
-  if ( !m_alwaysOutput && !exist<LHCb::PackedMCVertices>(m_inputName) ) return StatusCode::SUCCESS;
+  if ( !m_alwaysOutput.value() && !m_packedMCVertices.exist() ) return StatusCode::SUCCESS;
 
-  const auto* dst = 
-    getOrCreate<LHCb::PackedMCVertices,LHCb::PackedMCVertices>( m_inputName );
+  const auto* dst = m_packedMCVertices.getOrCreate();
 
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Size of PackedMCVertices = " << dst->mcVerts().size() << endmsg;
 
-  auto* newMCVertices = new LHCb::MCVertices();
-  put( newMCVertices, m_outputName );
+  auto* newMCVertices = m_MCVertices.put(std::make_unique<LHCb::MCVertices>());
 
   StandardPacker pack(this);
 
