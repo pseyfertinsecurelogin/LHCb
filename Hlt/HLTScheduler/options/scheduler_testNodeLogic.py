@@ -47,7 +47,7 @@ HLTControlFlowMgr().CompositeCFNodes.append(('notA2', 'NOT', ['A2'], False))
 
 
 HLTControlFlowMgr().ThreadPoolSize = threads
-HLTControlFlowMgr().OutputLevel = DEBUG
+HLTControlFlowMgr().OutputLevel = VERBOSE
 
 HLTEventLoopMgr().ThreadPoolSize = threads
 HLTEventLoopMgr().OutputLevel = DEBUG

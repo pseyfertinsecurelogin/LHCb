@@ -261,8 +261,8 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
   }
 
   // Now add event to the scheduler
-  if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Event " << evtContext->evt() << " submitting in slot " << evtContext->slot() << endmsg;
+  if ( msgLevel( MSG::VERBOSE ) )
+    verbose() << "Event " << evtContext->evt() << " submitting in slot " << evtContext->slot() << endmsg;
 
 
   enqueue(
@@ -310,9 +310,9 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr )
       m_algExecStateSvc->updateEventStatus( false, *evtContext );
 
       //printing
-      if ( msgLevel( MSG::DEBUG ) && createdEvts % m_printFreq == 0) {
-        debug() << buildStructuredTreeWithStates( NodeStates ).str() << endmsg;
-        debug() << buildAlgsWithStates( AlgStates ).str() << endmsg;
+      if ( msgLevel( MSG::VERBOSE ) && createdEvts % m_printFreq == 0) {
+        verbose() << buildStructuredTreeWithStates( NodeStates ).str() << endmsg;
+        verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
       }
 
       //update algorithm execution counters
@@ -520,14 +520,14 @@ void HLTControlFlowMgr::promoteToExecuted( std::unique_ptr<EventContext> eventCo
 
   // Schedule the cleanup of the event
   if ( m_algExecStateSvc->eventStatus( *eventContext ) == EventStatus::Success ) {
-    if ( msgLevel( MSG::DEBUG ) )
-      debug() << "Event " << eventContext->evt() << " finished (slot " << si << ")." << endmsg;
+    if ( msgLevel( MSG::VERBOSE ) )
+      verbose() << "Event " << eventContext->evt() << " finished (slot " << si << ")." << endmsg;
   } else {
     fatal() << "Failed event detected on " << *eventContext << endmsg;
   }
 
-  if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Clearing slot " << si << " (event " << eventContext->evt() << ") of the whiteboard" << endmsg;
+  if ( msgLevel( MSG::VERBOSE ) )
+    verbose() << "Clearing slot " << si << " (event " << eventContext->evt() << ") of the whiteboard" << endmsg;
 
   StatusCode sc = m_whiteboard->clearStore( si );
   if ( !sc.isSuccess() ) warning() << "Clear of Event data store failed" << endmsg;

@@ -48,7 +48,7 @@ for compNode in listofnodes:
 HLTControlFlowMgr().CompositeCFNodes.append(('top', 'NONLAZY_OR', [x[0] for x in HLTControlFlowMgr().CompositeCFNodes] , False))
 
 HLTControlFlowMgr().ThreadPoolSize = threads
-HLTControlFlowMgr().OutputLevel = DEBUG
+HLTControlFlowMgr().OutputLevel = VERBOSE
 
 HLTEventLoopMgr().ThreadPoolSize = threads
 HLTEventLoopMgr().OutputLevel = DEBUG

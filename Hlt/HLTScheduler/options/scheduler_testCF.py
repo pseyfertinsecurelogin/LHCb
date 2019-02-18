@@ -62,7 +62,7 @@ HLTControlFlowMgr().CompositeCFNodes = [
 HLTControlFlowMgr().AdditionalCFEdges = [ ['A5', 'line1'] ]
 
 HLTControlFlowMgr().ThreadPoolSize = threads
-HLTControlFlowMgr().OutputLevel = DEBUG
+HLTControlFlowMgr().OutputLevel = VERBOSE
 
 HLTEventLoopMgr().ThreadPoolSize = threads
 HLTEventLoopMgr().OutputLevel = DEBUG
