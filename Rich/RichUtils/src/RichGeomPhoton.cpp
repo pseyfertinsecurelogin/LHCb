@@ -23,9 +23,7 @@
 // local
 #include "RichUtils/RichGeomPhoton.h"
 
-std::ostream &
-LHCb::RichGeomPhoton::fillStream( std::ostream &s ) const
-{
+std::ostream& LHCb::RichGeomPhoton::fillStream( std::ostream& s ) const {
   s << "{ "
     << " cherenkovTheta:\t" << CherenkovTheta() << std::endl
     << " cherenkovPhi:\t" << CherenkovPhi() << std::endl

@@ -26,8 +26,8 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // Event
-#include "Event/ProtoParticle.h"
 #include "Event/MuonPID.h"
+#include "Event/ProtoParticle.h"
 
 //-----------------------------------------------------------------------------
 /** @class MuonPIDsFromProtoParticlesAlg MuonPIDsFromProtoParticlesAlg.h
@@ -40,21 +40,18 @@
  */
 //-----------------------------------------------------------------------------
 
-class MuonPIDsFromProtoParticlesAlg : public GaudiAlgorithm
-{
+class MuonPIDsFromProtoParticlesAlg : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   MuonPIDsFromProtoParticlesAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MuonPIDsFromProtoParticlesAlg( ); ///< Destructor
+  virtual ~MuonPIDsFromProtoParticlesAlg(); ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   /// Input location of ProtoParticles in TES
   std::string m_protoPloc;
 
@@ -63,7 +60,6 @@ private:
 
   /// Location of Muon Tracks in TES
   std::string m_muonTrackLoc;
-
 };
 
 #endif // GLOBALRECO_MuonPIDsFromProtoParticlesAlg_H

@@ -33,42 +33,33 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( DumpHepMCDecay )
 
-
 //=============================================================================
 // Standard constructor
 //=============================================================================
-DumpHepMCDecay::DumpHepMCDecay( const std::string& name ,
-                                ISvcLocator*       isvc )
-  : GaudiAlgorithm ( name , isvc  )
-  , m_levels    ( 4 )
-  , m_ppSvc     ( 0 )
-{
+DumpHepMCDecay::DumpHepMCDecay( const std::string& name, ISvcLocator* isvc )
+    : GaudiAlgorithm( name, isvc ), m_levels( 4 ), m_ppSvc( 0 ) {
 
-  m_addresses .push_back( LHCb::HepMCEventLocation::Default ) ;  // default
-  m_quarks    .push_back( LHCb::ParticleID::bottom          ) ;  // default
+  m_addresses.push_back( LHCb::HepMCEventLocation::Default ); // default
+  m_quarks.push_back( LHCb::ParticleID::bottom );             // default
 
   // define the property
-  declareProperty ( "Addresses" , m_addresses ) ;
-  declareProperty ( "Particles" , m_particles ) ;
-  declareProperty ( "Quarks"    , m_quarks    ) ;
-  declareProperty ( "MaxLevels" , m_levels    ) ;
+  declareProperty( "Addresses", m_addresses );
+  declareProperty( "Particles", m_particles );
+  declareProperty( "Quarks", m_quarks );
+  declareProperty( "MaxLevels", m_levels );
 }
 
 //=============================================================================
 // Initialization of the algoritm
 //=============================================================================
 StatusCode DumpHepMCDecay::initialize() {
-  StatusCode sc = GaudiAlgorithm::initialize() ;
-  if( sc.isFailure() ) {
-    return Error ( "Unable to initialize 'GaudiAlgorithm' base ", sc );
-  }
+  StatusCode sc = GaudiAlgorithm::initialize();
+  if ( sc.isFailure() ) { return Error( "Unable to initialize 'GaudiAlgorithm' base ", sc ); }
 
-  auto i = std::find_if( m_quarks.begin(), m_quarks.end(),
-                        [](PIDs::const_reference q) {
-                            return q < LHCb::ParticleID::down || LHCb::ParticleID::top  < q ;
-                        });
-  return ( i!=m_quarks.end() ) ? Error ( " Invalid Quark ID="  + std::to_string( *i ) )
-                               : StatusCode::SUCCESS;
+  auto i = std::find_if( m_quarks.begin(), m_quarks.end(), []( PIDs::const_reference q ) {
+    return q < LHCb::ParticleID::down || LHCb::ParticleID::top < q;
+  } );
+  return ( i != m_quarks.end() ) ? Error( " Invalid Quark ID=" + std::to_string( *i ) ) : StatusCode::SUCCESS;
 }
 
 //=============================================================================
@@ -76,53 +67,49 @@ StatusCode DumpHepMCDecay::initialize() {
 //=============================================================================
 StatusCode DumpHepMCDecay::execute() {
 
-  bool found = false ;
+  bool found = false;
   if ( !m_particles.empty() || !m_quarks.empty() ) {
 
-    info() << " Decay dump [cut-off at "
-           << m_levels << " levels] " << endmsg ;
+    info() << " Decay dump [cut-off at " << m_levels << " levels] " << endmsg;
 
-    for( const auto& addr : m_addresses ) {
+    for ( const auto& addr : m_addresses ) {
 
-      LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( addr ) ;
-      if( !events ) { continue ; }
+      LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( addr );
+      if ( !events ) { continue; }
 
-      info() << " Container '"  << addr << "' " << endmsg ;
+      info() << " Container '" << addr << "' " << endmsg;
       for ( const auto* event : *events ) {
 
-        if ( !event ) { continue ; }                     // CONTINUE
-        const HepMC::GenEvent* evt = event->pGenEvt() ;
-        if ( !evt   ) { continue ; }                     // CONTINUE
+        if ( !event ) { continue; } // CONTINUE
+        const HepMC::GenEvent* evt = event->pGenEvt();
+        if ( !evt ) { continue; } // CONTINUE
 
-        for ( auto ip = evt->particles_begin () ; evt->particles_end() != ip ; ++ip ) {
+        for ( auto ip = evt->particles_begin(); evt->particles_end() != ip; ++ip ) {
 
-          const HepMC::GenParticle* particle = *ip ;
-          if( !particle ) { continue ; }                // CONTINUE
+          const HepMC::GenParticle* particle = *ip;
+          if ( !particle ) { continue; } // CONTINUE
 
-          bool print = ( m_particles.end () !=
-               std::find ( m_particles.begin(), m_particles.end(),
-                           particle->pdg_id() ) ) ||
-               std::any_of( m_quarks.begin(), m_quarks.end(),
-                            // use LHCb flavour of ParticleID class !                  // NB
-                            [p = LHCb::ParticleID ( particle->pdg_id() )]
-                            (int q)
-                            { return p.hasQuark(LHCb::ParticleID::Quark( q  ));});
+          bool print =
+              ( m_particles.end() != std::find( m_particles.begin(), m_particles.end(), particle->pdg_id() ) ) ||
+              std::any_of( m_quarks.begin(), m_quarks.end(),
+                           // use LHCb flavour of ParticleID class !                  // NB
+                           [p = LHCb::ParticleID( particle->pdg_id() )]( int q ) {
+                             return p.hasQuark( LHCb::ParticleID::Quark( q ) );
+                           } );
           if ( print ) {
-            found = true ;
-            if( info().isActive() ) {
-              info() << std::endl ;
-              printDecay ( particle ,  info().stream() , 0  ) ;
+            found = true;
+            if ( info().isActive() ) {
+              info() << std::endl;
+              printDecay( particle, info().stream(), 0 );
             }
           }
         }
       }
     }
-    info() << endmsg ;
+    info() << endmsg;
   }
 
-  if ( !found ) {
-    Warning ( " No specified Particles/Quarks are found! " ).ignore() ;
-  }
+  if ( !found ) { Warning( " No specified Particles/Quarks are found! " ).ignore(); }
 
   return StatusCode::SUCCESS;
 }
@@ -130,49 +117,41 @@ StatusCode DumpHepMCDecay::execute() {
 //=============================================================================
 // print the decay tree of the particle
 //=============================================================================
-StatusCode DumpHepMCDecay::printDecay( const HepMC::GenParticle* particle,
-                                    std::ostream&  stream,
-                                    unsigned int level ) const {
-  if( 0 == particle ) {
-    return Error ( " printDecay(): HepMC::GenParticle* points to NULL" ) ;
-  }
+StatusCode DumpHepMCDecay::printDecay( const HepMC::GenParticle* particle, std::ostream& stream,
+                                       unsigned int level ) const {
+  if ( 0 == particle ) { return Error( " printDecay(): HepMC::GenParticle* points to NULL" ); }
 
-  static char s_buf[24] ;
-  stream << std::string( s_buf , s_buf + sprintf ( s_buf ,"%3d" , level ) ) ;
+  static char s_buf[24];
+  stream << std::string( s_buf, s_buf + sprintf( s_buf, "%3d", level ) );
 
   {
-    const unsigned int s_maxLevel = 10 ;
-    const std::string  pName = particleName( particle ) ;
-    if ( level < s_maxLevel  ) {
-      stream << " "
-             << std::string (                 level   * 2 , ' ' )
-             << "|-> "
-             << pName
-             << std::string (  ( s_maxLevel - level ) * 2 , ' ' ) ;
+    const unsigned int s_maxLevel = 10;
+    const std::string  pName      = particleName( particle );
+    if ( level < s_maxLevel ) {
+      stream << " " << std::string( level * 2, ' ' ) << "|-> " << pName
+             << std::string( ( s_maxLevel - level ) * 2, ' ' );
     } else {
-      stream << " " << std::string( 2 * s_maxLevel  , ' ' )
-             << "|-> " << pName ;
+      stream << " " << std::string( 2 * s_maxLevel, ' ' ) << "|-> " << pName;
     }
   }
 
   // print the particle itself
-  particle->print( stream ) ;
+  particle->print( stream );
 
-  const HepMC::GenVertex* vertex = particle->end_vertex() ;
-  if ( 0 == vertex  ) { return StatusCode::SUCCESS ; }                // RETURN
+  const HepMC::GenVertex* vertex = particle->end_vertex();
+  if ( 0 == vertex ) { return StatusCode::SUCCESS; } // RETURN
 
-  if ( m_levels <= int(level) ) { return StatusCode::SUCCESS  ; }
+  if ( m_levels <= int( level ) ) { return StatusCode::SUCCESS; }
 
   // loop over all daughters
-  typedef HepMC::GenVertex::particles_out_const_iterator IT ;
-  for( IT ip = vertex -> particles_out_const_begin() ;
-       vertex -> particles_out_const_end() != ip ; ++ip ) {
-    const HepMC::GenParticle* daughter = *ip ;
-    if ( 0 == daughter ) { continue ; }              // CONTINUE
-    printDecay ( daughter , stream , level + 1 ) ;  // RECURSION
+  typedef HepMC::GenVertex::particles_out_const_iterator IT;
+  for ( IT ip = vertex->particles_out_const_begin(); vertex->particles_out_const_end() != ip; ++ip ) {
+    const HepMC::GenParticle* daughter = *ip;
+    if ( 0 == daughter ) { continue; }         // CONTINUE
+    printDecay( daughter, stream, level + 1 ); // RECURSION
   }
 
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 
 //=============================================================================
@@ -187,49 +166,44 @@ namespace {
    */
 
   inline std::string adjust( const std::string& name ) {
-    static const size_t s_maxSize = 12 ;
-    std::string  tmp ( name ) ;
-    auto size = tmp.size() ;
-    if      ( s_maxSize > size ) {
-      tmp += std::string ( s_maxSize - size , ' ' ) ;
+    static const size_t s_maxSize = 12;
+    std::string         tmp( name );
+    auto                size = tmp.size();
+    if ( s_maxSize > size ) {
+      tmp += std::string( s_maxSize - size, ' ' );
     } else if ( s_maxSize < size ) {
-      tmp  = std::string ( tmp.begin() , tmp.begin() + s_maxSize ) ;
-      tmp[s_maxSize-1]='#' ;
+      tmp                = std::string( tmp.begin(), tmp.begin() + s_maxSize );
+      tmp[s_maxSize - 1] = '#';
     }
 
-    return tmp ;
+    return tmp;
   }
 
-}
-
+} // namespace
 
 //=============================================================================
 // get the particle name in the string fixed form
 //=============================================================================
-std::string DumpHepMCDecay::particleName
-                         (const HepMC::GenParticle* particle ) const {
+std::string DumpHepMCDecay::particleName( const HepMC::GenParticle* particle ) const {
 
   if ( !particle ) {
-    Error ( "particlename(): HepMC::GenParticle* points to NULL!" ).ignore() ;
-    return adjust ( "#INVALID****" ) ;
+    Error( "particlename(): HepMC::GenParticle* points to NULL!" ).ignore();
+    return adjust( "#INVALID****" );
   }
 
-  if( !m_ppSvc ) {
-    m_ppSvc = svc<LHCb::IParticlePropertySvc> ( "LHCb::ParticlePropertySvc" , true ) ;
-  }
+  if ( !m_ppSvc ) { m_ppSvc = svc<LHCb::IParticlePropertySvc>( "LHCb::ParticlePropertySvc", true ); }
 
-  const int pdg_id    = particle->pdg_id() ;
-  const LHCb::ParticleProperty* pp = nullptr ;
+  const int                     pdg_id = particle->pdg_id();
+  const LHCb::ParticleProperty* pp     = nullptr;
 
-  pp = m_ppSvc -> find( LHCb::ParticleID(pdg_id) ) ;
-  if( pp ) { return adjust( pp->particle() ) ; }
+  pp = m_ppSvc->find( LHCb::ParticleID( pdg_id ) );
+  if ( pp ) { return adjust( pp->particle() ); }
 
-  Warning  ( "particleName(): ParticleProperty* points to NULL for PDG=" +
-             std::to_string( pdg_id ) ,
-             StatusCode::SUCCESS , 0 ).ignore() ;
+  Warning( "particleName(): ParticleProperty* points to NULL for PDG=" + std::to_string( pdg_id ), StatusCode::SUCCESS,
+           0 )
+      .ignore();
 
-  return adjust ( "#UNKNOWN****" ) ;
+  return adjust( "#UNKNOWN****" );
 }
 
 //=============================================================================
-

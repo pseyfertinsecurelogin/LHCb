@@ -16,5 +16,5 @@
 // ITDet
 #include "STDet/DeITStation.h"
 
-typedef XmlUserDetElemCnv<DeITStation>        XmlITStationCnv;
+typedef XmlUserDetElemCnv<DeITStation> XmlITStationCnv;
 DECLARE_CONVERTER( XmlITStationCnv )

@@ -9,4 +9,3 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "DetDesc/SlowControlInfo.h"
-

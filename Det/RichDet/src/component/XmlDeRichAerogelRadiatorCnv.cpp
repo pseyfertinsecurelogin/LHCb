@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRichAerogelRadiator.h"
 
-typedef XmlUserDetElemCnv< DeRichAerogelRadiator > XmlDeRichAerogelRadiatorCnv;
+typedef XmlUserDetElemCnv<DeRichAerogelRadiator> XmlDeRichAerogelRadiatorCnv;
 DECLARE_CONVERTER( XmlDeRichAerogelRadiatorCnv )
 
 #endif // XMLDERICHAEROGELRADIATORCNV_H

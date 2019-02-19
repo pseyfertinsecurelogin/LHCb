@@ -16,18 +16,16 @@
 // ============================================================================
 // STD&STL
 // ============================================================================
-#include <string>
 #include <ostream>
+#include <string>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cache
-  {
+  namespace Cache {
     // ========================================================================
     /** helper function to create the code for CacheFactory
      *  @param  type    the functor type
@@ -37,10 +35,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-01-17
      */
-    GAUDI_API std::string makeCode ( const std::string&  type    ,
-                                     const std::string&  cppcode ,
-                                     const std::string&  pycode  ,
-                                     const std::string&  pytype  ) ;
+    GAUDI_API std::string makeCode( const std::string& type, const std::string& cppcode, const std::string& pycode,
+                                    const std::string& pytype );
     // ========================================================================
     /** helper function to create the code for CacheFactory
      *  @param  stream  the output stream
@@ -51,11 +47,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-01-17
      */
-    GAUDI_API std::ostream& makeCode ( std::ostream&       stream  ,
-                                       const std::string&  type    ,
-                                       const std::string&  cppcode ,
-                                       const std::string&  pycode  ,
-                                       const std::string&  pytype  ) ;
+    GAUDI_API std::ostream& makeCode( std::ostream& stream, const std::string& type, const std::string& cppcode,
+                                      const std::string& pycode, const std::string& pytype );
     // ========================================================================
     /** calculate the hash for the code flagment
      *  @param code  the code
@@ -63,11 +56,11 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-01-17
      */
-    GAUDI_API unsigned int makeHash  ( const std::string& code ) ;
+    GAUDI_API unsigned int makeHash( const std::string& code );
     // ========================================================================
-  } //                                             end of namespace LoKi::Cache
+  } // namespace Cache
   // ==========================================================================
-} //                                                       end of namepace LoKi
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

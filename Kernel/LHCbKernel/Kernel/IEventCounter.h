@@ -26,19 +26,17 @@
  *  @author Marco CLEMENCIC
  *  @date   2012-06-12
  */
-struct IEventCounter : extend_interfaces<IAlgTool>
-{
+struct IEventCounter : extend_interfaces<IAlgTool> {
 
   /// InterfaceID
-  DeclareInterfaceID(IEventCounter, 2, 0);
+  DeclareInterfaceID( IEventCounter, 2, 0 );
 
-  virtual unsigned long long getEventCounter() const = 0;   ///< Get Event Counter
+  virtual unsigned long long getEventCounter() const = 0; ///< Get Event Counter
 
-  virtual void incrementEventCounter() = 0;   ///< Increment Event Counter
+  virtual void incrementEventCounter() = 0; ///< Increment Event Counter
 
   /// Set the event counter overriding the current value.
-  virtual void setEventCounter(unsigned long long n) = 0;
-
+  virtual void setEventCounter( unsigned long long n ) = 0;
 };
 
 #endif // IEVENTCOUNTER_H

@@ -29,8 +29,7 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ===========================================================================
   /** @class FilterAlg LoKi/FilterAlg.h
    *  The base class for implementation of various
@@ -88,8 +87,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2008-09-23
    */
-  class FilterAlg : public GaudiAlgorithm
-  {
+  class FilterAlg : public GaudiAlgorithm {
   public:
     // ========================================================================
     /** standard constructor
@@ -100,43 +98,42 @@ namespace LoKi
      *  @param name the algorithm instance name
      *  @param pSvc pointer to Service Locator
      */
-    FilterAlg ( const std::string& name ,   // the algorithm instance name
-                ISvcLocator*       pSvc ) ; // pointer to the service locator
+    FilterAlg( const std::string& name, // the algorithm instance name
+               ISvcLocator*       pSvc );     // pointer to the service locator
     // ========================================================================
     /// the initialization of the algorithm
-    StatusCode initialize () override;
+    StatusCode initialize() override;
     // ========================================================================
     /// the copy constructor is disabled
-    FilterAlg ( const FilterAlg& ) = delete;        // the copy constructor is disabled
+    FilterAlg( const FilterAlg& ) = delete; // the copy constructor is disabled
     /// the assignement operator is disabled
-    FilterAlg& operator=( const FilterAlg& ) = delete;   // the assignement is disabled
+    FilterAlg& operator=( const FilterAlg& ) = delete; // the assignement is disabled
     // ========================================================================
   public: // property update handlers
     // ========================================================================
     /// update the factory
-    void updateFactory   ( Property& /* p */ ) ;          // update the factory
+    void updateFactory( Property& /* p */ ); // update the factory
     /// update the code
-    void updateCode      ( Property& /* p */ ) ;             // update the code
+    void updateCode( Property& /* p */ ); // update the code
     /// update the preambulo
-    void updatePreambulo ( Property& /* p */ ) ;        // update the preambulo
+    void updatePreambulo( Property& /* p */ ); // update the preambulo
     // ========================================================================
   protected:
     // ========================================================================
     /// get the type/name of the factory
-    const std::string& factory   () const { return m_factory ; }
+    const std::string& factory() const { return m_factory; }
     /// get the code itself
-    const std::string& code      () const { return m_code    ; }
+    const std::string& code() const { return m_code; }
     /// get the preambulo
-    const std::vector<std::string>& preambulo_() const { return m_preambulo_ ; }
+    const std::vector<std::string>& preambulo_() const { return m_preambulo_; }
     /// get the preambulo
-    const std::string& preambulo() const { return m_preambulo ; }
+    const std::string& preambulo() const { return m_preambulo; }
     // check the nesessity of updated
-    inline bool updateRequired () const
-    { return m_factory_updated || m_code_updated || m_preambulo_updated ; }
+    inline bool updateRequired() const { return m_factory_updated || m_code_updated || m_preambulo_updated; }
     // add to preambulo
-    void addToPreambulo ( const std::string&              item ) ;
+    void addToPreambulo( const std::string& item );
     // set the preambulo
-    void setPreambulo   ( const std::vector<std::string>& items ) ;
+    void setPreambulo( const std::vector<std::string>& items );
     // ========================================================================
   public:
     /// =======================================================================
@@ -155,7 +152,7 @@ namespace LoKi
      *     return i_decode<FACTORY>( functor ) ;
      *  }
      */
-    virtual StatusCode decode () = 0 ;
+    virtual StatusCode decode() = 0;
     /// =======================================================================
   protected:
     // ========================================================================
@@ -163,61 +160,54 @@ namespace LoKi
      *  @param functor placeholder where to decode the fucntor
      */
     template <class FACTORY, class FUNCTOR>
-    StatusCode i_decode ( FUNCTOR& functor )
-    {
+    StatusCode i_decode( FUNCTOR& functor ) {
       // get the factory
-      auto _factory = tool<FACTORY> ( factory() , this ) ;
+      auto _factory = tool<FACTORY>( factory(), this );
       // use the factory
-      StatusCode sc = _factory-> get ( code() , functor , preambulo () ) ;
+      StatusCode sc = _factory->get( code(), functor, preambulo() );
       // release the factory (not needed anymore)
-      this->releaseTool ( _factory ).ignore() ;
-      if ( sc.isFailure() )
-      { return Error("Unable to decode functor '" + code() + "'" , sc ) ; }
+      this->releaseTool( _factory ).ignore();
+      if ( sc.isFailure() ) { return Error( "Unable to decode functor '" + code() + "'", sc ); }
       //
-      if( msgLevel(MSG::DEBUG) ) debug() << "Requested code: \n'"
-                                         << code ()
-                                         << "'\n -> Decoded functor :\n'"
-                                         << functor << "'" << endmsg ;
+      if ( msgLevel( MSG::DEBUG ) )
+        debug() << "Requested code: \n'" << code() << "'\n -> Decoded functor :\n'" << functor << "'" << endmsg;
       //
-      m_factory_updated   = false ;
-      m_code_updated      = false ;
-      m_preambulo_updated = false ;
+      m_factory_updated   = false;
+      m_code_updated      = false;
+      m_preambulo_updated = false;
       //
-      return sc ;
+      return sc;
     }
     /// =======================================================================
   protected:
     // ========================================================================
-    void set_code_updated      ( const bool value )
-    { m_code_updated      = value ; }
-    void set_factory_updated   ( const bool value )
-    { m_factory_updated   = value ; }
-    void set_preambulo_updated ( const bool value )
-    { m_preambulo_updated = value ; }
+    void set_code_updated( const bool value ) { m_code_updated = value; }
+    void set_factory_updated( const bool value ) { m_factory_updated = value; }
+    void set_preambulo_updated( const bool value ) { m_preambulo_updated = value; }
     /// =======================================================================
   private:
     // ========================================================================
     /// the type/name for LoKi/Bender "hybrid" factory
-    std::string m_factory = { "<UNSPECIFIED>" } ;     // hybrid factory
+    std::string m_factory = {"<UNSPECIFIED>"}; // hybrid factory
     /// the filter/code criteria itself
-    std::string m_code = { "<unspecified>" }; // the filter/code criteria itself
+    std::string m_code = {"<unspecified>"}; // the filter/code criteria itself
     /// the preambulo itself
-    std::vector<std::string> m_preambulo_ ;             // the preambulo itself
+    std::vector<std::string> m_preambulo_; // the preambulo itself
     /// the preambulo itself
-    std::string m_preambulo ;                           // the preambulo itself
+    std::string m_preambulo; // the preambulo itself
     // ========================================================================
   private:
     // ========================================================================
     /// flag which indicated that factory has been updated
-    bool m_factory_updated = false ;            // the factory has been updated
+    bool m_factory_updated = false; // the factory has been updated
     /// flag which indicated that code has been updated
-    bool m_code_updated = false ;                  // the code has been updated
+    bool m_code_updated = false; // the code has been updated
     /// flag which indicated that preambulo has been updated
-    bool m_preambulo_updated = false ;        // the preambulo has been updated
+    bool m_preambulo_updated = false; // the preambulo has been updated
     // ========================================================================
   };
   // ==========================================================================
-} //                                                  The end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

@@ -23,7 +23,9 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-namespace LHCb { class RawEvent ; }
+namespace LHCb {
+  class RawEvent;
+}
 // ============================================================================
 /** @file
  *  set of helper function to deal with "hlt-routing-bits"
@@ -32,11 +34,9 @@ namespace LHCb { class RawEvent ; }
  *  @date 2010-05-17
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace HLT
-  {
+  namespace HLT {
     // ========================================================================
     /** @class RoutingBits
      *  simple class to check if the given routing bit is fired
@@ -44,60 +44,50 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    class RoutingBits : public LoKi::Functor<void,bool>
-    {
+    class RoutingBits : public LoKi::Functor<void, bool> {
     public:
       // ======================================================================
-      typedef std::vector<unsigned int>                                  Bits ;
+      typedef std::vector<unsigned int> Bits;
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the bits
-      RoutingBits ( std::vector<unsigned int> bits ) ;
+      RoutingBits( std::vector<unsigned int> bits );
       /// constructor from the bit
-      explicit RoutingBits ( unsigned int bit  )
-          : RoutingBits( std::vector<unsigned int>{ bit } ) {}
+      explicit RoutingBits( unsigned int bit ) : RoutingBits( std::vector<unsigned int>{bit} ) {}
       /// constructor from the bits
-      RoutingBits ( unsigned int bit1 ,
-                    unsigned int bit2 )
-          : RoutingBits( std::vector<unsigned int>{ bit1, bit2 } ) {}
+      RoutingBits( unsigned int bit1, unsigned int bit2 ) : RoutingBits( std::vector<unsigned int>{bit1, bit2} ) {}
       /// constructor from the bits
-      RoutingBits ( unsigned int bit1 ,
-                    unsigned int bit2 ,
-                    unsigned int bit3 )
-          : RoutingBits( std::vector<unsigned int>{ bit1, bit2, bit3 } ) {}
+      RoutingBits( unsigned int bit1, unsigned int bit2, unsigned int bit3 )
+          : RoutingBits( std::vector<unsigned int>{bit1, bit2, bit3} ) {}
       /// constructor from the bits
-      RoutingBits ( unsigned int bit1 ,
-                    unsigned int bit2 ,
-                    unsigned int bit3 ,
-                    unsigned int bit4 )
-          : RoutingBits( std::vector<unsigned int>{ bit1, bit2, bit3, bit4 } ) {}
+      RoutingBits( unsigned int bit1, unsigned int bit2, unsigned int bit3, unsigned int bit4 )
+          : RoutingBits( std::vector<unsigned int>{bit1, bit2, bit3, bit4} ) {}
       /// MANDATORY: clones method ("virtual contructor")
-      RoutingBits* clone() const  override;
+      RoutingBits* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() (  ) const  override;
+      bool operator()() const override;
       /// OPTIONAL : the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-      const Bits& bits() const { return m_bits ; }
+      const Bits& bits() const { return m_bits; }
       // ======================================================================
     private:
       // ======================================================================
       /// get the fired bits
-      std::size_t getFired () const ;                     // get the fired bits
+      std::size_t getFired() const; // get the fired bits
       // ======================================================================
     private:
       // ======================================================================
       /// the list of fired bits
-      mutable Bits m_fired ;                          // the list of fired bits
+      mutable Bits m_fired; // the list of fired bits
       /// the bits to be checked
-      Bits         m_bits  ;                          //  the bit to be checked
+      Bits m_bits; //  the bit to be checked
       // ======================================================================
-    } ;
-  } //                                               end of namespace LoKi::HLT
+    };
+  } // namespace HLT
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef ROUTINBITS
      *  simple (void)-predicate to check the fired routing bits
@@ -108,9 +98,9 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date   2010-05-17
      */
-    typedef LoKi::HLT::RoutingBits                                ROUTINGBITS ;
+    typedef LoKi::HLT::RoutingBits ROUTINGBITS;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

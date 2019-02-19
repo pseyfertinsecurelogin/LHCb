@@ -22,17 +22,14 @@
  *  This is a single-container-type version of UnpackCluster, and assumes a
  *  single input -> output mapping.
  */
-class UnpackSTCluster : public GaudiAlgorithm
-{
+class UnpackSTCluster : public GaudiAlgorithm {
 
 public:
-
-  UnpackSTCluster(const std::string& name, ISvcLocator* svcLocator);
+  UnpackSTCluster( const std::string& name, ISvcLocator* svcLocator );
 
   StatusCode execute() override;
 
 private:
-
   Gaudi::Property<std::string> m_inputName{this, "InputName", LHCb::PackedClusterLocation::TT};
 
   Gaudi::Property<std::string> m_outputName{this, "OutputName", LHCb::STClusterLocation::TTClusters};

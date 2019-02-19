@@ -13,16 +13,14 @@
 
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::CaloHypo::fillStream(std::ostream& s) const
-{
+std::ostream& LHCb::CaloHypo::fillStream( std::ostream& s ) const {
   s << "{\n"
     << "hypothesis : " << m_hypothesis << '\n'
     << "lh : " << m_lh << '\n';
   if ( m_position ) {
     s << "position : " << *m_position;
   } else {
-    s << "No position" ;
+    s << "No position";
   }
   return s << "\n }";
 }
-

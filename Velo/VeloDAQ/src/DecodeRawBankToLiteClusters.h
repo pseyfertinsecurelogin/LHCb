@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef VELODAQ_DECODERAWBANKTOLITECLUSTERS_H 
+#ifndef VELODAQ_DECODERAWBANKTOLITECLUSTERS_H
 #define VELODAQ_DECODERAWBANKTOLITECLUSTERS_H 1
 
 #include "Event/VeloLiteCluster.h"
@@ -17,7 +17,7 @@
 class DeVeloSensor;
 
 namespace VeloDAQ {
-  /**  Append lite clusters to fast container  
+  /**  Append lite clusters to fast container
    *   This function decodes the cluster position part of the
    *   raw bank and appends the resulting VeloLiteClusters to
    *   to the fast container provided by the client.
@@ -31,15 +31,11 @@ namespace VeloDAQ {
    *   @author Kurt Rinnert
    *   @date   2006-02-17
    */
-  int decodeRawBankToLiteClusters(
-      const SiDAQ::buffer_word* bank, 
-      const DeVeloSensor& sensor,
-      const bool assumeChipChannels,
-      LHCb::VeloLiteCluster::FastContainer& clusters,
-      int & bytesCount,
-      bool ignoreErrors); 
+  int decodeRawBankToLiteClusters( const SiDAQ::buffer_word* bank, const DeVeloSensor& sensor,
+                                   const bool assumeChipChannels, LHCb::VeloLiteCluster::FastContainer& clusters,
+                                   int& bytesCount, bool ignoreErrors );
 
-  /**  Append lite clusters to fast container  
+  /**  Append lite clusters to fast container
    *   This function decodes the cluster position part of the
    *   raw bank and appends the resulting VeloLiteClusters to
    *   to the fast container provided by the client. Fast version
@@ -53,10 +49,7 @@ namespace VeloDAQ {
    *   @author Kurt Rinnert
    *   @date   2006-02-17
    */
-  int decodeRawBankToLiteClusters(
-      const SiDAQ::buffer_word* bank, 
-      const DeVeloSensor& sensor,
-      LHCb::VeloLiteCluster::FastContainer& clusters,
-      bool ignoreErrors); 
-}
+  int decodeRawBankToLiteClusters( const SiDAQ::buffer_word* bank, const DeVeloSensor& sensor,
+                                   LHCb::VeloLiteCluster::FastContainer& clusters, bool ignoreErrors );
+} // namespace VeloDAQ
 #endif // VELODAQ_DECODERAWBANKTOLITECLUSTERS_H

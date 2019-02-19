@@ -20,17 +20,10 @@
     An abstract interface to get the alignment information of
     a detector element.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct IAlignment : virtual IConditionInfo
-{
-
-};
+struct IAlignment : virtual IConditionInfo {};
 
 #endif // DETDESC_IALIGNMENT_H
-
-
-
-

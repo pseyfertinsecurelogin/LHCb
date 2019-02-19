@@ -11,8 +11,8 @@
 #ifndef DETDESC_CONDITION_H
 #define DETDESC_CONDITION_H 1
 
-#include <string_view>
 #include <string>
+#include <string_view>
 
 // Base classes
 #include "DetDesc/ParamValidDataObject.h"
@@ -38,10 +38,10 @@ struct Condition : ParamValidDataObject {
   /// Update using another ValidDataObject: deep copy all contents,
   /// except for the properties of a generic DataObject
   using ParamValidDataObject::update;
-  void update ( ValidDataObject& obj) override;
+  void update( ValidDataObject& obj ) override;
 
   /// Prepare an XML string representing the condition.
-  virtual std::string toXml(std::string_view name = {}, bool header = false, int precision = 16) const;
+  virtual std::string toXml( std::string_view name = {}, bool header = false, int precision = 16 ) const;
 
   /**
    * This method initializes the condition. It should be overridden
@@ -56,8 +56,7 @@ struct Condition : ParamValidDataObject {
   inline const CLID& clID() const override { return classID(); }
 
   /// Class ID of this class
-  inline static  const CLID& classID() { return CLID_Condition; }
-
+  inline static const CLID& classID() { return CLID_Condition; }
 };
 
 #endif // DETDESC_CONDITION_H

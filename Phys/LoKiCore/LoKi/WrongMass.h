@@ -18,7 +18,9 @@
 // ============================================================================
 #include "LoKi/Kinematics.h"
 // ============================================================================
-namespace LHCb { class ParticleID ; }
+namespace LHCb {
+  class ParticleID;
+}
 // ============================================================================
 /** @file
  *
@@ -34,10 +36,8 @@ namespace LHCb { class ParticleID ; }
  *  @date 2006-03-08
  */
 // ============================================================================
-namespace LoKi
-{
-  namespace Kinematics
-  {
+namespace LoKi {
+  namespace Kinematics {
     // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momemtum
      *  @param v vector of 4-momentum
@@ -47,12 +47,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-08
      */
-    inline LoKi::LorentzVector
-    wrongMass
-    ( const LoKi::LorentzVector& v ,
-      const double               m )
-    {
-      return { v.Px() , v.Py() , v.Pz() , ::sqrt ( v.P2() + m * m ) };
+    inline LoKi::LorentzVector wrongMass( const LoKi::LorentzVector& v, const double m ) {
+      return {v.Px(), v.Py(), v.Pz(), ::sqrt( v.P2() + m * m )};
     }
     // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momentum
@@ -63,10 +59,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-08
      */
-    LoKi::LorentzVector
-    wrongMass
-    ( const LoKi::LorentzVector& v    ,
-      const std::string&         name ) ;
+    LoKi::LorentzVector wrongMass( const LoKi::LorentzVector& v, const std::string& name );
     // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momentum
      *  @param v    vector of 4-momentum
@@ -76,10 +69,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-08
      */
-    LoKi::LorentzVector
-    wrongMass
-    ( const LoKi::LorentzVector& v    ,
-      const LHCb::ParticleID&    pid  ) ;
+    LoKi::LorentzVector wrongMass( const LoKi::LorentzVector& v, const LHCb::ParticleID& pid );
     // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momenta
      *  to evaluate the effective invarinat mass
@@ -93,14 +83,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-08
      */
-    inline double
-    wrongMass
-    ( const LoKi::LorentzVector& v1 ,
-      const double               m1 ,
-      const LoKi::LorentzVector& v2 ,
-      const double               m2 )
-    { return mass ( wrongMass ( v1 , m1 ) ,
-                    wrongMass ( v2 , m2 ) ) ; }
+    inline double wrongMass( const LoKi::LorentzVector& v1, const double m1, const LoKi::LorentzVector& v2,
+                             const double m2 ) {
+      return mass( wrongMass( v1, m1 ), wrongMass( v2, m2 ) );
+    }
     // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momenta
      *  to evaluate the effective invarinat mass
@@ -114,12 +100,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-08
      */
-    double
-    wrongMass
-    ( const LoKi::LorentzVector& v1    ,
-      const std::string&         name1 ,
-      const LoKi::LorentzVector& v2    ,
-      const std::string&         name2 ) ;
+    double wrongMass( const LoKi::LorentzVector& v1, const std::string& name1, const LoKi::LorentzVector& v2,
+                      const std::string& name2 );
     // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momenta
      *  to evaluate the effective invariant mass
@@ -133,12 +115,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-08
      */
-    double
-    wrongMass
-    ( const LoKi::LorentzVector& v1    ,
-      const LHCb::ParticleID&    pid1  ,
-      const LoKi::LorentzVector& v2    ,
-      const LHCb::ParticleID&    pid2  ) ;
+    double wrongMass( const LoKi::LorentzVector& v1, const LHCb::ParticleID& pid1, const LoKi::LorentzVector& v2,
+                      const LHCb::ParticleID& pid2 );
     // ========================================================================
     /** get the four momentum fo the combination of particles
      *  using the mass hypothesis (masses, pids of names) form some
@@ -174,27 +152,18 @@ namespace LoKi
      *
      *  @endcode
      */
-    template <class PARTICLE,class WMASSVAL,class PREDICATE>
-    LoKi::LorentzVector wrongMass( PARTICLE            first  ,
-                                   PARTICLE            last   ,
-                                   WMASSVAL            begin  ,
-                                   PREDICATE           cut    ,
-                                   LoKi::LorentzVector result = LoKi::LorentzVector() )
-    {
-      using arg_p = decltype(*first);
-      using arg_m = decltype(*begin);
-      return std::inner_product(first, last,
-				begin,
-				result,
-				std::plus<LoKi::LorentzVector>{},
-				[&cut](arg_p part, arg_m m) {
-				  return cut(part) ? wrongMass(part->momentum(),m)
-				    : LoKi::LorentzVector{} ; }
-				);
-
+    template <class PARTICLE, class WMASSVAL, class PREDICATE>
+    LoKi::LorentzVector wrongMass( PARTICLE first, PARTICLE last, WMASSVAL begin, PREDICATE cut,
+                                   LoKi::LorentzVector result = LoKi::LorentzVector() ) {
+      using arg_p = decltype( *first );
+      using arg_m = decltype( *begin );
+      return std::inner_product( first, last, begin, result, std::plus<LoKi::LorentzVector>{},
+                                 [&cut]( arg_p part, arg_m m ) {
+                                   return cut( part ) ? wrongMass( part->momentum(), m ) : LoKi::LorentzVector{};
+                                 } );
     }
     // ========================================================================
-  } // end of namespace LoKi::Kinematics
+  } // namespace Kinematics
 } // end of namespace LoKi
 // ============================================================================
 // The END

@@ -27,8 +27,7 @@
 // forward decs
 class DeRich;
 
-namespace Rich
-{
+namespace Rich {
 
   //---------------------------------------------------------------------------------
   /** @class IDetectorTool IRichDetectorTool.h RichKernel/IRichDetectorTool.h
@@ -40,16 +39,14 @@ namespace Rich
    */
   //---------------------------------------------------------------------------------
 
-  class IDetectorTool : virtual public IAlgTool
-  {
+  class IDetectorTool : virtual public IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IDetectorTool, 1, 0 );
 
     /// Vector of pointers to the Rich Detectors
-    virtual std::vector< DeRich * > deRichDetectors() const = 0;
+    virtual std::vector<DeRich*> deRichDetectors() const = 0;
   };
 
 } // namespace Rich

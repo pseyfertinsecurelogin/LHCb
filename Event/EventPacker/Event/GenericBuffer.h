@@ -11,12 +11,11 @@
 #ifndef __EVENTPACKER_EVENT_GENERICBUFFER_H__
 #define __EVENTPACKER_EVENT_GENERICBUFFER_H__
 
-#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
 #include <vector>
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class GenericBuffer
    *
@@ -26,15 +25,13 @@ namespace LHCb
    *  @date   2015-10-01
    */
 
-  constexpr CLID CLID_GenericBuffer = 1556 ;
+  constexpr CLID CLID_GenericBuffer = 1556;
 
-  class GenericBuffer : public DataObject
-  {
+  class GenericBuffer : public DataObject {
 
   public:
-
     /// type of data holder
-    typedef std::vector<char> DataType ;
+    typedef std::vector<char> DataType;
 
     /// non-const accessor
     DataType& data() { return m_data; }
@@ -43,16 +40,14 @@ namespace LHCb
     const DataType& data() const { return m_data; }
 
     /// Class ID
-    static const CLID& classID() { return CLID_GenericBuffer ; }
+    static const CLID& classID() { return CLID_GenericBuffer; }
 
     /// Class ID
     const CLID& clID() const override { return GenericBuffer::classID(); }
 
   private:
-
-    std::vector<char> m_data ;
-
-  } ;
-}
+    std::vector<char> m_data;
+  };
+} // namespace LHCb
 
 #endif

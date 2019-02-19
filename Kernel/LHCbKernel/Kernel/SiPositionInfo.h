@@ -13,8 +13,7 @@
 
 // Include files
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @struct SiPositionInfo SiPositionInfo.h Kernel/SiPositionInfo.h
    *
@@ -25,13 +24,12 @@ namespace LHCb
    */
 
   template <class ChannelType>
-  struct SiPositionInfo
-  {
-    ChannelType strip;
-    double fractionalPosition;
-    double fractionalError;
+  struct SiPositionInfo {
+    ChannelType  strip;
+    double       fractionalPosition;
+    double       fractionalError;
     unsigned int clusterSize;
   };
-}
+} // namespace LHCb
 
 #endif // KERNEL_SIPOSITIONINFO_H

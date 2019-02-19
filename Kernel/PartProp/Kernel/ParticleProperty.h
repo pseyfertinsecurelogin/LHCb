@@ -14,12 +14,12 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <cmath>
+#include <functional>
+#include <iosfwd>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
-#include <iosfwd>
-#include <functional>
-#include <cmath>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -30,8 +30,7 @@
 // ============================================================================
 #include "Kernel/ParticleID.h"
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   // ==========================================================================
   /** @class ParticleProperty ParticleProperty.h GaudiKernel/ParticleProperty.h
    *
@@ -41,8 +40,7 @@ namespace LHCb
    *  @author Iain Last,G.Corti
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    */
-  class GAUDI_API ParticleProperty  final
-  {
+  class GAUDI_API ParticleProperty final {
   public:
     // ========================================================================
     /** @struct Compare
@@ -50,14 +48,9 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-14
      */
-    struct Compare
-    {
-      inline bool operator()
-      ( const ParticleProperty* p1 ,
-        const ParticleProperty* p2 ) const
-      {
-        return
-          p1 == p2 ? false : 0  == p1 ? true  : 0  == p2 ? false : ( *p1 < *p2 ) ;
+    struct Compare {
+      inline bool operator()( const ParticleProperty* p1, const ParticleProperty* p2 ) const {
+        return p1 == p2 ? false : 0 == p1 ? true : 0 == p2 ? false : ( *p1 < *p2 );
       }
     };
     // ========================================================================
@@ -73,15 +66,8 @@ namespace LHCb
      *  @param evtgen     the name of particle in EvtGen program
      *  @param pythia     the ID for the particle used in Pythia generator
      */
-    ParticleProperty
-    ( const std::string&      name     ,
-      const LHCb::ParticleID& pid      ,
-      const double            charge   ,
-      const double            mass     ,
-      const double            tlife    ,
-      const double            maxWidth ,
-      const std::string&      evtgen   ,
-      const int               pythia   ) ;
+    ParticleProperty( const std::string& name, const LHCb::ParticleID& pid, const double charge, const double mass,
+                      const double tlife, const double maxWidth, const std::string& evtgen, const int pythia );
     /** a bit simplified constructor, from all data (except the antiparticle )
      *
      *    - "evtGenName" is set from the regular "name"
@@ -94,61 +80,56 @@ namespace LHCb
      *  @param tlife      the nominal lifetime of the particle
      *  @param maxWidth   the maximal width of the particle (used in generator)
      */
-    ParticleProperty
-    ( const std::string&      name       ,
-      const LHCb::ParticleID& pid        ,
-      const double            charge     ,
-      const double            mass       ,
-      const double            tlife      ,
-      const double            maxWidth   ) ;
+    ParticleProperty( const std::string& name, const LHCb::ParticleID& pid, const double charge, const double mass,
+                      const double tlife, const double maxWidth );
     // ========================================================================
-  public:  // the major accessors
+  public: // the major accessors
     // ========================================================================
     /// Get the particle name.
-    const std::string&      particle   () const { return m_name ; }
+    const std::string& particle() const { return m_name; }
     /// Get the particle name.
-    const std::string&      name       () const { return m_name ; }
+    const std::string& name() const { return m_name; }
     /// get the particle ID
-    const LHCb::ParticleID& particleID () const { return m_pid  ; }
+    const LHCb::ParticleID& particleID() const { return m_pid; }
     /// get the particle ID
-    const LHCb::ParticleID& pdgID      () const { return m_pid  ; }
+    const LHCb::ParticleID& pdgID() const { return m_pid; }
     /// get the particle ID
-    const LHCb::ParticleID& pid        () const { return m_pid  ; }
+    const LHCb::ParticleID& pid() const { return m_pid; }
     /// Get the particle charge.
-    double charge   () const { return m_charge  ; }      // the charge
+    double charge() const { return m_charge; } // the charge
     /// Get the particle mass.
-    double mass     () const { return m_mass    ; }      // the mass
+    double mass() const { return m_mass; } // the mass
     /// Get the particle lifetime.
-    double lifetime () const { return m_tlife   ; }      // life-time
+    double lifetime() const { return m_tlife; } // life-time
     /// Get the particle lifetime.
-    double lifeTime () const { return m_tlife   ; }      // life-time
+    double lifeTime() const { return m_tlife; } // life-time
     /// Get the particle proper lifetime in c*tau units
-    double ctau     () const { return Gaudi::Units::c_light * lifeTime() ; }
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
+    double ctau() const { return Gaudi::Units::c_light * lifeTime(); }
+#ifdef __INTEL_COMPILER             // Disable ICC remark
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
+#  pragma warning( push )
 #endif
     /// Get the particle natural width
-    double width    () const { return 0 == ctau () ?  0.0  : Gaudi::Units::hbarc / ctau () ; }
-#ifdef __INTEL_COMPILER         // Re-enable ICC remark
-  #pragma warning(pop)
+    double width() const { return 0 == ctau() ? 0.0 : Gaudi::Units::hbarc / ctau(); }
+#ifdef __INTEL_COMPILER // Re-enable ICC remark
+#  pragma warning( pop )
 #endif
     /// Get the max width deviation
-    double maxWidth () const { return m_maxWidth ; }     // max-width
+    double maxWidth() const { return m_maxWidth; } // max-width
     /// get the pointer to the anti-particle
-    const LHCb::ParticleProperty* antiParticle () const { return anti() ; }
+    const LHCb::ParticleProperty* antiParticle() const { return anti(); }
     /// get the pointer to the anti-particle
-    const LHCb::ParticleProperty* anti         () const { return m_anti ; }
+    const LHCb::ParticleProperty* anti() const { return m_anti; }
     // ========================================================================
   public:
     // ========================================================================
     /// self-charge conjugated?
-    bool selfcc      () const { return m_anti == this ; }
+    bool selfcc() const { return m_anti == this; }
     // ========================================================================
   public: // some trivial delegation to ParticleID
     // ========================================================================
     ///  Three times the charge (in positron charge units)
-    int  threeCharge () const { return m_pid . threeCharge () ; }
+    int threeCharge() const { return m_pid.threeCharge(); }
     // ========================================================================
   public: // the only one setter
     // ========================================================================
@@ -156,32 +137,30 @@ namespace LHCb
      *  @attention it is the only one "setter"
      *  @param p pointer to anti-particle
      */
-    void setAntiParticle ( const ParticleProperty* p ) ;
+    void setAntiParticle( const ParticleProperty* p );
     // ========================================================================
   public: // other accessors
     // ========================================================================
     /// Get the EvtGen name
-    const std::string&            evtGenName   () const { return m_evtgen ; }
+    const std::string& evtGenName() const { return m_evtgen; }
     /// Get the EvtGen name
-    const std::string&            evtGen       () const { return m_evtgen ; }
+    const std::string& evtGen() const { return m_evtgen; }
     /// Get the Pythia ID
-    int                           pythiaID     () const { return m_pythia ; }
+    int pythiaID() const { return m_pythia; }
     /// Get the Pythia ID
-    int                           pythia       () const { return m_pythia ; }
+    int pythia() const { return m_pythia; }
     // ========================================================================
   public: // some useful technicalities: comparison&ordering criteria
     // ========================================================================
     /// comparison/ordering operator  ( "strict-less-by-PID&Name" )
-    friend bool operator<( const ParticleProperty& lhs, const ParticleProperty& rhs )
-    {
-      return std::tie(lhs.m_pid, lhs.m_name) <
-             std::tie(rhs.m_pid, rhs.m_name) ;
+    friend bool operator<( const ParticleProperty& lhs, const ParticleProperty& rhs ) {
+      return std::tie( lhs.m_pid, lhs.m_name ) < std::tie( rhs.m_pid, rhs.m_name );
     }
     // ========================================================================
   public: // Other minor details
     // ========================================================================
     /// implicit conversion to ParticleID class
-    operator const LHCb::ParticleID&() const { return m_pid ; }
+    operator const LHCb::ParticleID&() const { return m_pid; }
     // ========================================================================
   public:
     // ========================================================================
@@ -189,35 +168,35 @@ namespace LHCb
      *  @param s reference to the output stream
      *  @return reference to the output stream
      */
-    std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream( std::ostream& s ) const;
     /// simple method for conversion into the string
-    std::string   toString   () const ;
+    std::string toString() const;
     // ========================================================================
   private:
     // ========================================================================
     /// The default constructor is disabled
-    ParticleProperty () ;                             // no default constructor
+    ParticleProperty(); // no default constructor
     // ========================================================================
-  private:   // data members
+  private: // data members
     // ========================================================================
     /// the name for the  particle
-    std::string             m_name     ; // the name for the  particle
+    std::string m_name; // the name for the  particle
     /// the PID for the patricle
-    LHCb::ParticleID        m_pid      ; // the PID for the patricle
+    LHCb::ParticleID m_pid; // the PID for the patricle
     /// the charge for the particle
-    double                  m_charge   ; // the charge for the particle
+    double m_charge; // the charge for the particle
     /// the nominal mass for the particle
-    double                  m_mass     ; // the nominal mass for the particle
+    double m_mass; // the nominal mass for the particle
     /// the nominal proper lifetime for the particle
-    double                  m_tlife    ; // the nominal proper lifetime
+    double m_tlife; // the nominal proper lifetime
     /// The maximum width deviation
-    double                  m_maxWidth ; // The maximum width deviation
+    double m_maxWidth; // The maximum width deviation
     /// the name of the particle for EvtGen program
-    std::string             m_evtgen   ; // the name of the particle for EvtGen
+    std::string m_evtgen; // the name of the particle for EvtGen
     /// the ID for the particle used in Pythia generator
-    int                     m_pythia   ; // the ID for the particle used in Pythia
+    int m_pythia; // the ID for the particle used in Pythia
     /// the pointer to the anti-particle
-    const LHCb::ParticleProperty* m_anti ; // the pointer to the anti-particle
+    const LHCb::ParticleProperty* m_anti; // the pointer to the anti-particle
     // ========================================================================
   };
   // ==========================================================================
@@ -230,21 +209,18 @@ namespace LHCb
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date  2008-08-03
  */
-std::ostream& operator<< ( std::ostream&                 stream ,
-                           const LHCb::ParticleProperty& pp     ) ;
+std::ostream& operator<<( std::ostream& stream, const LHCb::ParticleProperty& pp );
 // ============================================================================
 /// forward declaration
 // ============================================================================
-class MsgStream ;                                       // forward declaration
+class MsgStream; // forward declaration
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   // ==========================================================================
   /// forward declaration
-  class IParticlePropertySvc ;
+  class IParticlePropertySvc;
   // ==========================================================================
-  namespace ParticleProperties
-  {
+  namespace ParticleProperties {
     // ========================================================================
     /** print a list of properties in a form of the table
      *
@@ -297,10 +273,8 @@ namespace LHCb
      *  @date  2008-08-03
      */
     GAUDI_API
-    std::ostream& printAsTable_
-    ( const std::vector<const LHCb::ParticleProperty*>& particles    ,
-      std::ostream&                                     stream       ,
-      const LHCb::IParticlePropertySvc*                 service  = 0 ) ;
+    std::ostream& printAsTable_( const std::vector<const LHCb::ParticleProperty*>& particles, std::ostream& stream,
+                                 const LHCb::IParticlePropertySvc* service = 0 );
     // ========================================================================
     /** print a list of properties in a form of the table
      *
@@ -355,9 +329,8 @@ namespace LHCb
      *  @date  2008-08-03
      */
     GAUDI_API
-    std::string printAsTable
-    ( const std::vector<const LHCb::ParticleProperty*>& particles    ,
-      const LHCb::IParticlePropertySvc*                 service  = 0 ) ;
+    std::string printAsTable( const std::vector<const LHCb::ParticleProperty*>& particles,
+                              const LHCb::IParticlePropertySvc*                 service = 0 );
     // ========================================================================
     /** print a list of properties in a form of the table
      *
@@ -413,10 +386,8 @@ namespace LHCb
      *  @date  2008-08-03
      */
     GAUDI_API
-    MsgStream& printAsTable
-    ( const std::vector<const LHCb::ParticleProperty*>& particles    ,
-      MsgStream&                                        stream       ,
-      const LHCb::IParticlePropertySvc*                 service  = 0 ) ;
+    MsgStream& printAsTable( const std::vector<const LHCb::ParticleProperty*>& particles, MsgStream& stream,
+                             const LHCb::IParticlePropertySvc* service = 0 );
     // ========================================================================
     /** print properties in a form of the table
      *  @param particles (INPUT) list of particles
@@ -427,20 +398,13 @@ namespace LHCb
      *  @date  2010-01-04
      */
     GAUDI_API
-    std::ostream& printAsTable_
-    ( const std::vector<LHCb::ParticleID>& particles    ,
-      std::ostream&                        stream       ,
-      const LHCb::IParticlePropertySvc*    service  = 0 ) ;
+    std::ostream& printAsTable_( const std::vector<LHCb::ParticleID>& particles, std::ostream& stream,
+                                 const LHCb::IParticlePropertySvc* service = 0 );
     // ========================================================================
     template <class C_, class A_>
-    inline std::ostream& printAsTable_
-    ( const std::set<LHCb::ParticleID,C_,A_>& particles    ,
-      std::ostream&                           stream       ,
-      const LHCb::IParticlePropertySvc*       service  = 0 )
-    {
-      return printAsTable_ ( std::vector<LHCb::ParticleID>
-                             ( particles.begin() ,
-                               particles.end  () ) , stream , service ) ;
+    inline std::ostream& printAsTable_( const std::set<LHCb::ParticleID, C_, A_>& particles, std::ostream& stream,
+                                        const LHCb::IParticlePropertySvc* service = 0 ) {
+      return printAsTable_( std::vector<LHCb::ParticleID>( particles.begin(), particles.end() ), stream, service );
     }
     // ========================================================================
     /** print properties in a form of the table
@@ -451,18 +415,13 @@ namespace LHCb
      *  @date  2010-01-04
      */
     GAUDI_API
-    std::string printAsTable
-    ( const std::vector<LHCb::ParticleID>& particles    ,
-      const LHCb::IParticlePropertySvc*    service  = 0 ) ;
+    std::string printAsTable( const std::vector<LHCb::ParticleID>& particles,
+                              const LHCb::IParticlePropertySvc*    service = 0 );
     // ========================================================================
     template <class C_, class A_>
-    inline  std::string printAsTable
-    ( const std::set<LHCb::ParticleID,C_,A_>& particles    ,
-      const LHCb::IParticlePropertySvc*       service  = 0 )
-    {
-      return printAsTable ( std::vector<LHCb::ParticleID>
-                            ( particles.begin() ,
-                              particles.end  () ) , service ) ;
+    inline std::string printAsTable( const std::set<LHCb::ParticleID, C_, A_>& particles,
+                                     const LHCb::IParticlePropertySvc*         service = 0 ) {
+      return printAsTable( std::vector<LHCb::ParticleID>( particles.begin(), particles.end() ), service );
     }
     // ========================================================================
     /** print properties in a form of the table
@@ -474,31 +433,22 @@ namespace LHCb
      *  @date  2010-01-04
      */
     GAUDI_API
-    MsgStream&    printAsTable
-    ( const std::vector<LHCb::ParticleID>& particles    ,
-      MsgStream&                           stream       ,
-      const LHCb::IParticlePropertySvc*    service  = 0 ) ;
+    MsgStream& printAsTable( const std::vector<LHCb::ParticleID>& particles, MsgStream& stream,
+                             const LHCb::IParticlePropertySvc* service = 0 );
     // ========================================================================
     template <class C_, class A_>
-    inline MsgStream& printAsTable
-    ( const std::set<LHCb::ParticleID,C_,A_>& particles ,
-      MsgStream&                              stream       ,
-      const LHCb::IParticlePropertySvc*       service  = 0 )
-    {
-      return printAsTable ( std::vector<LHCb::ParticleID>
-                            ( particles.begin() ,
-                              particles.end  () ) , stream , service ) ;
+    inline MsgStream& printAsTable( const std::set<LHCb::ParticleID, C_, A_>& particles, MsgStream& stream,
+                                    const LHCb::IParticlePropertySvc* service = 0 ) {
+      return printAsTable( std::vector<LHCb::ParticleID>( particles.begin(), particles.end() ), stream, service );
     }
     // ========================================================================
-  } //                                end of namespace LHCb::ParticleProperties
+  } // namespace ParticleProperties
   // ==========================================================================
 } //                                                      end of namespace LHCb
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils
-  {
+  namespace Utils {
     // ========================================================================
     /** print a list of particle properties as formatted table
      *  @see LHCb::ParticleProperty
@@ -508,22 +458,18 @@ namespace Gaudi
      *  @date  2008-08-03
      */
     GAUDI_API
-    std::ostream& toStream
-    ( const std::vector<const LHCb::ParticleProperty*>& particles ,
-      std::ostream&                                     stream    ) ;
+    std::ostream& toStream( const std::vector<const LHCb::ParticleProperty*>& particles, std::ostream& stream );
     // ========================================================================
-  } //                                            end of namespace Gaudi::Utils
+  } // namespace Utils
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-namespace std
-{
+namespace std {
   // ==========================================================================
   GAUDI_API
-  const LHCb::ParticleProperty* abs
-  ( const LHCb::ParticleProperty* p );
+  const LHCb::ParticleProperty* abs( const LHCb::ParticleProperty* p );
   // ==========================================================================
-}
+} // namespace std
 // ============================================================================
 //                                                                      The END
 // ============================================================================

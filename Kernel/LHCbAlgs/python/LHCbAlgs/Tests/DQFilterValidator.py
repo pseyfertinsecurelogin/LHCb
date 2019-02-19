@@ -30,6 +30,7 @@ def count(keys, lines):
                 continue
     return result
 
+
 def checkEff(name, expected, stdout, result, causes):
     eff = None
     name = name.strip('"')
@@ -46,10 +47,11 @@ def checkEff(name, expected, stdout, result, causes):
         causes.append(name)
         result["GaudiTest.%s.found" % name] = result.Quote(pformat(eff))
 
+
 def checkCounts(expected, stdout, result, causes):
     ## Check DQFilter messages
     dqf = re.compile(r"^(DQFilter|ToolSvc\.DQAccep)")
-    lines = [ l.rstrip() for l in stdout.splitlines() if dqf.match(l) ]
+    lines = [l.rstrip() for l in stdout.splitlines() if dqf.match(l)]
 
     counts = count(expected.keys(), lines)
 
@@ -61,4 +63,3 @@ def checkCounts(expected, stdout, result, causes):
         result["GaudiTest.DQFilterOut.found"] = result.Quote(pformat(counts))
         msg = "%s: %s != %s" % getCmpFailingValues(expected, counts, failed)
         result["GaudiTest.DQFilterOut.failure_on"] = result.Quote(msg)
-

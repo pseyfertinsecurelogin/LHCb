@@ -25,15 +25,15 @@
 #include <xercesc/dom/DOMText.hpp>
 
 #ifndef DECLARE_CONVERTER
-#define DECLARE_CONVERTER( x ) DECLARE_CONVERTER_FACTORY( x )
+#  define DECLARE_CONVERTER( x ) DECLARE_CONVERTER_FACTORY( x )
 #endif
 
 // Forward and external declarations
 class ISvcLocator;
 struct IXmlSvc;
 class GenericAddress;
-template <class TYPE> class CnvFactory;
-
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlGenericCnv XmlGenericCnv.h DetDescCnv/XmlGenericCnv.h
  *
@@ -47,8 +47,7 @@ template <class TYPE> class CnvFactory;
  */
 class XmlGenericCnv : public Converter {
 
- public:
-
+public:
   /**
    * Initializes the converter
    *  @return status depending on the completion of the call
@@ -67,16 +66,14 @@ class XmlGenericCnv : public Converter {
    * @param refpObject the object created
    * @return status depending on the completion of the call
    */
-  StatusCode createObj (IOpaqueAddress* addr,
-                        DataObject*& refpObject) override;
+  StatusCode createObj( IOpaqueAddress* addr, DataObject*& refpObject ) override;
   /**
    * Updates the transient object from the other representation.
    * @param pAddress the address of the object representation
    * @param pObject the object updated
    *  @return status depending on the completion of the call
    */
-  StatusCode updateObj (IOpaqueAddress* pAddress,
-                        DataObject* pObject) override;
+  StatusCode updateObj( IOpaqueAddress* pAddress, DataObject* pObject ) override;
 
   /**
    * Converts the transient object to the requested representation.
@@ -84,8 +81,7 @@ class XmlGenericCnv : public Converter {
    * @param pObject the object to convert
    *  @return status depending on the completion of the call
    */
-  StatusCode createRep (DataObject* pObject,
-                        IOpaqueAddress*& refpAddress) override;
+  StatusCode createRep( DataObject* pObject, IOpaqueAddress*& refpAddress ) override;
 
   /**
    * Updates the converted representation of a transient object.
@@ -93,8 +89,7 @@ class XmlGenericCnv : public Converter {
    * @param pObject the object whose representation has to be updated
    *  @return status depending on the completion of the call
    */
-  StatusCode updateRep (IOpaqueAddress* pAddress,
-                        DataObject* pObject) override;
+  StatusCode updateRep( IOpaqueAddress* pAddress, DataObject* pObject ) override;
 
   /**
    * Accessor to the IXmlSvc interface of the XmlCnvSvc service
@@ -102,9 +97,9 @@ class XmlGenericCnv : public Converter {
    *  @return status depending on the completion of the call
    */
   IXmlSvc* xmlSvc() const {
-    if (UNLIKELY(!m_xmlSvc)) {
-        auto self = const_cast<XmlGenericCnv*>(this);
-        self->m_xmlSvc = this->conversionSvc();
+    if ( UNLIKELY( !m_xmlSvc ) ) {
+      auto self      = const_cast<XmlGenericCnv*>( this );
+      self->m_xmlSvc = this->conversionSvc();
     }
     return m_xmlSvc;
   }
@@ -113,27 +108,21 @@ class XmlGenericCnv : public Converter {
    * Accessor to the StorageType value
    * @return the storage type for this object
    */
-  static long storageType() {
-    return XML_StorageType;
-  }
+  static long storageType() { return XML_StorageType; }
 
   /**
    * Accessor to the StorageType value
    * @return the storage type for this object
    */
-  long repSvcType() const override {
-    return XML_StorageType;
-  }
-
+  long repSvcType() const override { return XML_StorageType; }
 
 protected:
-
   /**
    * Constructor for this converter
    * @param svc a ISvcLocator interface to find services
    * @param clid the type of object the converter is able to convert
    */
-  XmlGenericCnv (ISvcLocator* svc,const CLID& clid);
+  XmlGenericCnv( ISvcLocator* svc, const CLID& clid );
 
   /**
    * Default destructor
@@ -150,9 +139,8 @@ protected:
    *  @param address the address for this object
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode internalCreateObj (xercesc::DOMElement* element,
-                                        DataObject*& refpObject,
-                                        IOpaqueAddress* address);
+  virtual StatusCode internalCreateObj( xercesc::DOMElement* element, DataObject*& refpObject,
+                                        IOpaqueAddress* address );
 
   /** This creates the transient representation of an object from the
    *  DOMElement representing it. This actually does the "new" operation
@@ -162,8 +150,7 @@ protected:
    *  @param refpObject the object to be built
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);
+  virtual StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject );
 
   /** This fills the current object for its child element childElement.
    *  This will be called for each element child of the current object
@@ -172,9 +159,7 @@ protected:
    *  @param address the address for this object
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                                DataObject* pObject,
-                                IOpaqueAddress* address);
+  virtual StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* pObject, IOpaqueAddress* address );
 
   /** This fills the current object for its child text node childText.
    *  This will be called for each text child of the current object
@@ -183,9 +168,7 @@ protected:
    *  @param address the address for this object
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMText* childText,
-                                DataObject* pObject,
-                                IOpaqueAddress* address);
+  virtual StatusCode i_fillObj( xercesc::DOMText* childText, DataObject* pObject, IOpaqueAddress* address );
 
   /** This is called after the current object was filled. This is were
    *  some computation based on the object content could be done
@@ -193,8 +176,7 @@ protected:
    *  @param address the address for this object
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode i_processObj (DataObject* pObject,
-                                   IOpaqueAddress* address);
+  virtual StatusCode i_processObj( DataObject* pObject, IOpaqueAddress* address );
 
   /**
    * This parses a href attribute string and creates an address out of it
@@ -208,9 +190,7 @@ protected:
    * new object.
    * @return the new Address
    */
-  IOpaqueAddress* createAddressForHref (std::string href,
-                                        CLID clid,
-                                        IOpaqueAddress* parent) const;
+  IOpaqueAddress* createAddressForHref( std::string href, CLID clid, IOpaqueAddress* parent ) const;
 
   /**
    * This creates an XmlAddress using the location, entryName and clid
@@ -219,9 +199,7 @@ protected:
    * @param clid the clidof the address to create
    * @return the new Address
    */
-  IOpaqueAddress* createXmlAddress (std::string location,
-                                    std::string entryName,
-                                    CLID clid) const;
+  IOpaqueAddress* createXmlAddress( std::string location, std::string entryName, CLID clid ) const;
 
   /**
    * This creates a ConddbAddress using the location, entryName, channelID and clid
@@ -231,17 +209,15 @@ protected:
    * @param clid the clidof the address to create
    * @return the new Address
    */
-  IOpaqueAddress* createCondDBAddress (std::string path,
-                                       std::string entryName,
-                                       unsigned long channelId,
-                                       CLID clid) const;
+  IOpaqueAddress* createCondDBAddress( std::string path, std::string entryName, unsigned long channelId,
+                                       CLID clid ) const;
 
   /**
    * builds a standard string from a XMLCh*
    * @param domString the XMLCh*
    * @return a standard string with the same characters
    */
-  static const std::string dom2Std (const XMLCh* domString);
+  static const std::string dom2Std( const XMLCh* domString );
 
   /// the IXmlSvc interface of this object
   SmartIF<IXmlSvc> m_xmlSvc;
@@ -252,20 +228,19 @@ protected:
   /// Methods to print as in GaudiAlgorithms
   MsgStream& verbose() const { return *m_msg << MSG::VERBOSE; }
 
-  MsgStream& debug()   const { return *m_msg << MSG::DEBUG; }
+  MsgStream& debug() const { return *m_msg << MSG::DEBUG; }
 
-  MsgStream& info()    const { return *m_msg << MSG::INFO; }
+  MsgStream& info() const { return *m_msg << MSG::INFO; }
 
   MsgStream& warning() const { return *m_msg << MSG::WARNING; }
 
-  MsgStream& error()   const { return *m_msg << MSG::ERROR; }
+  MsgStream& error() const { return *m_msg << MSG::ERROR; }
 
-  MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }
+  MsgStream& fatal() const { return *m_msg << MSG::FATAL; }
 
   inline bool msgLevel( const MSG::Level level ) const { return m_msg->level() <= level; }
 
 private:
-
   // Constant strings for element and parameter names
   const XMLCh* DDDBString;
   const XMLCh* materialsString;
@@ -282,7 +257,6 @@ private:
 
   /// Flag that says if the storage type CONDDB_StorageType is accessible.
   bool m_have_CONDDB_StorageType;
-
 };
 
 #endif // DETDESCCNV_XMLGENERICCNV_H

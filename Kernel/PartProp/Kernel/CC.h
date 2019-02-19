@@ -16,40 +16,35 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 // ============================================================================
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace CC
-  {
+  namespace CC {
     // ========================================================================
     /** @struct CmpCC
      *  a bit specific comparison of strings, useful for
      *  ordering according to the length as the primary parameter
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      */
-    struct CmpCC
-    {
+    struct CmpCC {
       /** the only one essential method
        *  The most long string is "less", otherwise the
        *  standard comparison is applicable.
        */
-      inline bool operator() ( const std::string& v1 ,
-                               const std::string& v2 ) const
-      {
-        const std::string::size_type s1 = v1.size () ;
-        const std::string::size_type s2 = v2.size () ;
-        return s1 < s2 ? false : s2 < s1 ? true  : ( v1 < v2 ) ;
+      inline bool operator()( const std::string& v1, const std::string& v2 ) const {
+        const std::string::size_type s1 = v1.size();
+        const std::string::size_type s2 = v2.size();
+        return s1 < s2 ? false : s2 < s1 ? true : ( v1 < v2 );
       }
     };
     // ========================================================================
     /// the actual type of CC-map
-    typedef std::map<std::string,std::string,CmpCC>  MapCC ;          // CC-MAP
+    typedef std::map<std::string, std::string, CmpCC> MapCC; // CC-MAP
     /// the actual type of CC-set
-    typedef std::set<std::string,CmpCC>              SetCC ;          // CC-SET
+    typedef std::set<std::string, CmpCC> SetCC; // CC-SET
     // ========================================================================
     /** simple function to make charge conjugated inside the original string.
      *  All substrings are subsutututed by their charge conjugates
@@ -58,9 +53,7 @@ namespace Decays
      *  @param pos the starting position
      *  @return charge-conjugated string
      */
-    std::string cc
-    ( const std::string&           decay   ,
-      const MapCC&                 map_    ) ;
+    std::string cc( const std::string& decay, const MapCC& map_ );
     // ========================================================================
     /** simple function to make charge conjugated inside the original string.
      *  All substrings are subsutututed by their charge conjugates
@@ -69,11 +62,9 @@ namespace Decays
      *  @param pos the starting position
      *  @return charge-conjugated string
      */
-    std::string cc
-    ( const std::string&                       decay   ,
-      const std::map<std::string,std::string>& map_    ) ;
+    std::string cc( const std::string& decay, const std::map<std::string, std::string>& map_ );
     // ========================================================================
-  } // end of namespace Decays::CC
+  } // namespace CC
   // ==========================================================================
 } // end of namespace Decays
 // ============================================================================

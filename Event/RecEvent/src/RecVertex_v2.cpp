@@ -9,15 +9,16 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "Event/RecVertex_v2.h"
-#include <iostream>
 #include <algorithm>
 #include <assert.h>
+#include <iostream>
 #include <range/v3/view.hpp>
 
-std::ostream& LHCb::Event::v2::RecVertex::fillStream(std::ostream& s) const {
+std::ostream& LHCb::Event::v2::RecVertex::fillStream( std::ostream& s ) const {
   s << "{ "
     << "position  : " << m_position << "\n"
-    << "covMatrix : \n" << m_covMatrix << "\n"
+    << "covMatrix : \n"
+    << m_covMatrix << "\n"
     << "chi2PerDoF: " << chi2PerDoF() << "\n"
     << "nDoF      : " << nDoF() << "\n"
     << "technique :	" << technique() << "\n"
@@ -26,17 +27,15 @@ std::ostream& LHCb::Event::v2::RecVertex::fillStream(std::ostream& s) const {
   return s << "]\n }";
 }
 
-bool LHCb::Event::v2::RecVertex::removeFromTracks(const RecVertex::Track* track) {
-  auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
-  if (it == end(m_tracks)) return false;
-  m_tracks.erase(it);
+bool LHCb::Event::v2::RecVertex::removeFromTracks( const RecVertex::Track* track ) {
+  auto it = std::find_if( begin( m_tracks ), end( m_tracks ), [track]( auto& wt ) { return wt.track == track; } );
+  if ( it == end( m_tracks ) ) return false;
+  m_tracks.erase( it );
   return true;
 }
 
 std::optional<float> LHCb::Event::v2::RecVertex::trackWeight( const RecVertex::Track* track ) const {
-  auto it = std::find_if(begin(m_tracks), end(m_tracks), [track](auto& wt){ return wt.track == track; });
-  if (it != end(m_tracks)) {
-    return it->weight;
-  }
+  auto it = std::find_if( begin( m_tracks ), end( m_tracks ), [track]( auto& wt ) { return wt.track == track; } );
+  if ( it != end( m_tracks ) ) { return it->weight; }
   return {};
 }

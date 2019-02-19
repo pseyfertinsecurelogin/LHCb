@@ -9,12 +9,9 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_CTRLUNIT_H
-#define L0MUONKERNEL_CTRLUNIT_H     1
-
-
+#define L0MUONKERNEL_CTRLUNIT_H 1
 
 #include "L0MuonKernel/SelectionUnit.h"
-
 
 namespace L0Muon {
 
@@ -49,15 +46,14 @@ namespace L0Muon {
   class CtrlUnit : public SelectionUnit {
 
   public:
-
     /// Default Constructor
     CtrlUnit();
 
     /// Constructor with MuonTileID
-    CtrlUnit(LHCb::MuonTileID id);
+    CtrlUnit( LHCb::MuonTileID id );
 
     /// Constructor from xml node
-    CtrlUnit(DOMNode* pNode);
+    CtrlUnit( DOMNode* pNode );
 
     /// Destructor
     ~CtrlUnit();
@@ -71,15 +67,11 @@ namespace L0Muon {
     void execute() override;
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "CtrlUnit";
-    }
+    std::string type() override { return "CtrlUnit"; }
 
-   private:
-
+  private:
   };
 
+} // namespace L0Muon
 
-}  // namespace L0Muon
-
-#endif      // L0MUONKERNEL_CTRLUNIT_H
+#endif // L0MUONKERNEL_CTRLUNIT_H

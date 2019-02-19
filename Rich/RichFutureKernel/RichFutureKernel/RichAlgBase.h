@@ -27,8 +27,7 @@
 // local
 #include "RichFutureKernel/RichCommonBase.h"
 
-namespace Rich::Future
-{
+namespace Rich::Future {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase RichAlgBase.h RichFutureKernel/RichAlgBase.h
@@ -41,15 +40,11 @@ namespace Rich::Future
    */
   //-----------------------------------------------------------------------------
 
-  class AlgBase : public CommonBase< GaudiAlgorithm >
-  {
+  class AlgBase : public CommonBase<GaudiAlgorithm> {
 
   public:
-
     /// Standard constructor
-    AlgBase( const std::string &name, ISvcLocator *pSvcLocator )
-      : CommonBase< GaudiAlgorithm >( name, pSvcLocator )
-    {}
+    AlgBase( const std::string& name, ISvcLocator* pSvcLocator ) : CommonBase<GaudiAlgorithm>( name, pSvcLocator ) {}
   };
 
 } // namespace Rich::Future

@@ -25,30 +25,26 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( ProcessPhase )
 
-
-ProcessPhase::ProcessPhase( const std::string& name, ISvcLocator* pSvcLocator )
- : GaudiSequencer( name, pSvcLocator ) {
-	m_detList.clear();
-	declareProperty( "DetectorList", m_detList );
+ProcessPhase::ProcessPhase( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiSequencer( name, pSvcLocator ) {
+  m_detList.clear();
+  declareProperty( "DetectorList", m_detList );
 }
 
-StatusCode ProcessPhase::initialize() 
-{
+StatusCode ProcessPhase::initialize() {
   std::string myMeasureProp;
 
   auto sc = getProperty( "MeasureTime", myMeasureProp );
   if ( !sc ) return sc;
 
-  IJobOptionsSvc* jobSvc = svc<IJobOptionsSvc>("JobOptionsSvc");
-  
-	// Declare sequences to the phase
+  IJobOptionsSvc* jobSvc = svc<IJobOptionsSvc>( "JobOptionsSvc" );
+
+  // Declare sequences to the phase
   std::string myMembers = "{";
-	for ( auto it = m_detList.begin(); it != m_detList.end(); ++it )
-  {
+  for ( auto it = m_detList.begin(); it != m_detList.end(); ++it ) {
     if ( m_detList.begin() != it ) myMembers += ",";
-    const auto algName = name() + (*it) + "Seq";
-    myMembers +=  "\"GaudiSequencer/" + algName + "\"";
-    // Sequences are not yet instantiated, so set MeasureTime property directly 
+    const auto algName = name() + ( *it ) + "Seq";
+    myMembers += "\"GaudiSequencer/" + algName + "\"";
+    // Sequences are not yet instantiated, so set MeasureTime property directly
     // in the catalogue. Uses same value as the parent ProcessPhase
     Gaudi::Property<bool> p( "MeasureTime", false );
     p.fromString( myMeasureProp ).ignore();

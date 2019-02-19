@@ -12,8 +12,8 @@
 #define DDEXAMPLE_DETDATAAGENT_H
 
 #include "GaudiKernel/IDataStoreAgent.h"
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
 
 class IMessageSvc;
 
@@ -22,16 +22,15 @@ class DetDataAgent : virtual public IDataStoreAgent {
 public:
   DetDataAgent( IMessageSvc* msgSvc ) : m_msgSvc( msgSvc ) {}
   virtual ~DetDataAgent() {}
-  bool analyse(IRegistry* dir, int level ) override;
+  bool analyse( IRegistry* dir, int level ) override;
+
 private:
   IMessageSvc* m_msgSvc;
 };
 
-inline bool DetDataAgent::analyse(IRegistry* dir, int /*level*/ ){
+inline bool DetDataAgent::analyse( IRegistry* dir, int /*level*/ ) {
   MsgStream log( m_msgSvc, "detDataAgent" );
-  log << MSG::INFO << dir->identifier()
-      << ( dir->object() ? " [loaded] " : " " )
-      << endmsg;
+  log << MSG::INFO << dir->identifier() << ( dir->object() ? " [loaded] " : " " ) << endmsg;
   return true;
 }
 

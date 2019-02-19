@@ -31,14 +31,11 @@
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
-    namespace GSL
-    {
+    namespace GSL {
       // ======================================================================
       /** @class EigenSystem EigenSystem.h
        *
@@ -48,27 +45,25 @@ namespace Gaudi
        *  @author Vanya BELYAEV
        *  @date   2006-05-24
        */
-      class EigenSystem
-      {
+      class EigenSystem {
         // ====================================================================
       public:
         // ====================================================================
         /// error codes
-        enum
-          {
-            MatrixAllocationFailure     = 101 ,
-            VectorAllocationFailure     = 102 ,
-            WorkspaceAllocationFailure  = 103 ,
-            // the actual return value is ErrorFromGSL + error code )
-            ErrorFromGSL                = 199 ///< ErrorFromGSL + error code
-          } ;
+        enum {
+          MatrixAllocationFailure    = 101,
+          VectorAllocationFailure    = 102,
+          WorkspaceAllocationFailure = 103,
+          // the actual return value is ErrorFromGSL + error code )
+          ErrorFromGSL = 199 ///< ErrorFromGSL + error code
+        };
         // ====================================================================
       public:
         // ====================================================================
         /// Standard constructor
-        EigenSystem  () ;
+        EigenSystem();
         /// destructor
-        ~EigenSystem () ;
+        ~EigenSystem();
         // ====================================================================
       public:
         // ====================================================================
@@ -92,11 +87,10 @@ namespace Gaudi
          *  @param sorted (input) flag to be use for sorting
          *  @return vector of eigenvalues
          */
-        template <class T,unsigned int D>
-        inline ROOT::Math::SVector<T,D>
-        eigenValues
-        ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& mtrx ,
-          const bool sorted = true ) const ;
+        template <class T, unsigned int D>
+        inline ROOT::Math::SVector<T, D>
+        eigenValues( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& mtrx,
+                     const bool                                                       sorted = true ) const;
         // ====================================================================
         /** evaluate the eigenvalues of symmetrical matrix
          *
@@ -118,12 +112,9 @@ namespace Gaudi
          *  @param sorted (input)  flag to be use for sorting
          *  @return status code
          */
-        template <class T,unsigned int D>
-        inline StatusCode
-        eigenValues
-        ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& mtrx ,
-          ROOT::Math::SVector<T,D>&                                     vals ,
-          const bool sorted = true ) const ;
+        template <class T, unsigned int D>
+        inline StatusCode eigenValues( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& mtrx,
+                                       ROOT::Math::SVector<T, D>& vals, const bool sorted = true ) const;
         // ====================================================================
         /** evaluate the eigenvalues and eigenvectors of the symmetrical matrix
          *
@@ -165,12 +156,9 @@ namespace Gaudi
          *  @return status code
          */
         template <class T, unsigned int D, class R>
-        inline StatusCode
-        eigenVectors
-        ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& mtrx ,
-          ROOT::Math::SVector<T,D>&                                     vals ,
-          ROOT::Math::SMatrix<T,D,D,R>&                                 vecs ,
-          const bool sorted = true ) const ;
+        inline StatusCode eigenVectors( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& mtrx,
+                                        ROOT::Math::SVector<T, D>& vals, ROOT::Math::SMatrix<T, D, D, R>& vecs,
+                                        const bool sorted = true ) const;
         // ====================================================================
         /** evaluate the eigenvalues and eigenvectors of the symmetrical matrix
          *
@@ -197,46 +185,42 @@ namespace Gaudi
          *  @return status code
          */
         template <class T, unsigned int D>
-        inline StatusCode
-        eigenVectors
-        ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& mtrx ,
-          ROOT::Math::SVector<T,D>&                                     vals ,
-          std::vector<ROOT::Math::SVector<T,D> >&                       vecs ,
-          const bool sorted = true ) const ;
+        inline StatusCode eigenVectors( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& mtrx,
+                                        ROOT::Math::SVector<T, D>& vals, std::vector<ROOT::Math::SVector<T, D>>& vecs,
+                                        const bool sorted = true ) const;
         // ====================================================================
       protected:
         // ====================================================================
         /// find the eigenvalues   (& sort them if needed )
-        StatusCode _fun1 ( const bool         sorted    ) const ;
+        StatusCode _fun1( const bool sorted ) const;
         /// find the eigenvalues&eigenvectors (& sort them if needed )
-        StatusCode _fun2 ( const bool         sorted    ) const ;
+        StatusCode _fun2( const bool sorted ) const;
         // ====================================================================
       private:
         // ====================================================================
         /// fill the internal structures with the input data
-        template <class T,unsigned int D>
-        inline StatusCode _fill
-        ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& mtrx ) const;
+        template <class T, unsigned int D>
+        inline StatusCode _fill( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& mtrx ) const;
         /// check/adjust the  internal structures
-        StatusCode _check    ( const unsigned int D ) const ;
+        StatusCode _check( const unsigned int D ) const;
         // thrown the exception
-        StatusCode Exception ( const StatusCode& sc ) const ;
+        StatusCode Exception( const StatusCode& sc ) const;
         // ====================================================================
       private:
         // the size of workspace
-        mutable unsigned int   m_dim1   ; ///< the size of workspace
-        mutable unsigned int   m_dim2   ; ///< the size of workspace
+        mutable unsigned int m_dim1; ///< the size of workspace
+        mutable unsigned int m_dim2; ///< the size of workspace
         // workspace itself
-        mutable gsl_eigen_symm_workspace*  m_work1 ; ///< workspace itself
+        mutable gsl_eigen_symm_workspace* m_work1; ///< workspace itself
         // workspace itself
-        mutable gsl_eigen_symmv_workspace* m_work2 ; ///< workspace itself
+        mutable gsl_eigen_symmv_workspace* m_work2; ///< workspace itself
         // the matrix with input data
-        mutable gsl_matrix*     m_matrix ; ///< the matrix with input data
+        mutable gsl_matrix* m_matrix; ///< the matrix with input data
         // the matrix with eigenvectors
-        mutable gsl_matrix*     m_evec   ; ///< the matrix with eigenvectors
+        mutable gsl_matrix* m_evec; ///< the matrix with eigenvectors
         // the vector with eigenvalues
-        mutable gsl_vector*     m_vector ; ///< the vector with eigenvalues
-      } ;
+        mutable gsl_vector* m_vector; ///< the vector with eigenvalues
+      };
       // ======================================================================
       /** copy GSL vector into MathLib vector
        *  @attention Fast!no checks are performed!
@@ -246,10 +230,7 @@ namespace Gaudi
        *  @date 2006-05-24
        */
       template <class T, unsigned int D>
-      inline void
-      _copy
-      ( const gsl_vector*         input  ,
-        ROOT::Math::SVector<T,D>& output ) ;
+      inline void _copy( const gsl_vector* input, ROOT::Math::SVector<T, D>& output );
       // ======================================================================
       /** copy GSL matrix into MathLib matrix into GSL
        *  @attention Fast!no checks are performed!
@@ -258,11 +239,8 @@ namespace Gaudi
        *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
        *  @date 2006-05-24
        */
-      template < class T, unsigned int D, class R>
-      inline void
-      _copy
-      ( const gsl_matrix*             input  ,
-        ROOT::Math::SMatrix<T,D,D,R>& output ) ;
+      template <class T, unsigned int D, class R>
+      inline void _copy( const gsl_matrix* input, ROOT::Math::SMatrix<T, D, D, R>& output );
       // ======================================================================
       /** copy symmetric MathLib matrix into GSL matrix
        *  @attention Fast!no checks are performed!
@@ -271,11 +249,8 @@ namespace Gaudi
        *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
        *  @date 2006-05-24
        */
-      template < class T, unsigned int D>
-      inline void
-      _copy
-      ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& input ,
-        gsl_matrix* output ) ;
+      template <class T, unsigned int D>
+      inline void _copy( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& input, gsl_matrix* output );
       // ======================================================================
     } //                                                   end of namespace GSL
     // ========================================================================

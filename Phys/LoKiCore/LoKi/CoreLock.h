@@ -15,9 +15,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Interface.h"
-#include "LoKi/ICoreAntiFactory.h"
 #include "LoKi/Context.h"
+#include "LoKi/ICoreAntiFactory.h"
+#include "LoKi/Interface.h"
 // ============================================================================
 /** @file LoKi/CoreLock.h
  *
@@ -31,11 +31,9 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class CoreLock  LoKi/coreLock.h
      *  Helper class (sentry) to connent LoKi::Hybrid::ICoreAntiFactory
@@ -43,35 +41,32 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-18
      */
-    class CoreLock
-    {
+    class CoreLock {
     public:
       // ======================================================================
       /** contructor : Lock
-       *  @param  factory pointer to (anti)factory 
-       *  @param  context the context 
+       *  @param  factory pointer to (anti)factory
+       *  @param  context the context
        */
-      explicit CoreLock  
-      ( const LoKi::Hybrid::ICoreAntiFactory* factory , 
-        const LoKi::Context&                  context ) ; 
+      explicit CoreLock( const LoKi::Hybrid::ICoreAntiFactory* factory, const LoKi::Context& context );
       /// destrcutor : UnLock
-      virtual ~CoreLock () ;                              // destructor : UnLock
+      virtual ~CoreLock(); // destructor : UnLock
       // ======================================================================
       /// no copy constructor
-      CoreLock ( const CoreLock& ) = delete ;            // no copy constructor
+      CoreLock( const CoreLock& ) = delete; // no copy constructor
       /// no assignement opeartor
-      CoreLock& operator = ( const CoreLock& ) = delete ;// no assignement operator
+      CoreLock& operator=( const CoreLock& ) = delete; // no assignement operator
       // ======================================================================
     private:
       // ======================================================================
       /// the tool itself
-      LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory> m_tool ;  // the tool
+      LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory> m_tool; // the tool
       // ======================================================================
-    } ;
+    };
     // ========================================================================
- } //                                         The end of namespace LoKi::Hybrid
-  // ==========================================================================
-} //                                                  The end of namespace LoKi
+  } // namespace Hybrid
+    // ==========================================================================
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

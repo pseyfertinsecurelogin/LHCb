@@ -16,14 +16,13 @@
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
 #include "GaudiKernel/ToolHandle.h"
-#include "GaudiKernel/IEventTimeDecoder.h"            // Interface
 
 // forward declarations
 class IDataProviderSvc;
 class IIncidentSvc;
-namespace LHCb
-{
+namespace LHCb {
   class ODIN;
 }
 
@@ -33,17 +32,14 @@ namespace LHCb
  *  @author Marco Clemencic
  *  @date   2006-09-21
  */
-class OdinTimeDecoder final : public extends<GaudiTool, IEventTimeDecoder>
-{
+class OdinTimeDecoder final : public extends<GaudiTool, IEventTimeDecoder> {
 
- public:
-
+public:
   // inherited constructor
-  OdinTimeDecoder( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent): base_class(type, name, parent) {}
+  OdinTimeDecoder( const std::string& type, const std::string& name, const IInterface* parent )
+      : base_class( type, name, parent ) {}
 
-  virtual ~OdinTimeDecoder( ) = default; ///< Destructor
+  virtual ~OdinTimeDecoder() = default; ///< Destructor
 
   /// Initialize the tool
   StatusCode initialize() override;
@@ -53,15 +49,13 @@ class OdinTimeDecoder final : public extends<GaudiTool, IEventTimeDecoder>
   /// @return The time of current event.
   Gaudi::Time getTime() const override;
 
- private:
-
+private:
   // --- local methods ---
   /// Get the ODIN object from the T.E.S. or create it.
   /// @return Pointer to the ODIN object or NULL if it cannot be found.
-  LHCb::ODIN *getODIN() const;
+  LHCb::ODIN* getODIN() const;
 
- private:
-
+private:
   /// Tool to decode the ODIN bank
   ToolHandle<IGenericTool> m_odinDecoder{"ODINDecodeTool", this};
 
@@ -72,7 +66,6 @@ class OdinTimeDecoder final : public extends<GaudiTool, IEventTimeDecoder>
   /// Used to detect if we switch from flagging to filtering mode (which implies
   /// a "run change" without actually changing the run number).
   mutable bool m_flaggingMode{true};
-
 };
 
 #endif // ODINTIMEDECODER_H

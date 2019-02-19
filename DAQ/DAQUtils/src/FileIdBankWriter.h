@@ -15,8 +15,8 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-#include "Event/RawEvent.h"
 #include "Event/FileId.h"
+#include "Event/RawEvent.h"
 
 /** @class FileIdBankWriter FileIdBankWriter.h
  *
@@ -29,19 +29,17 @@ public:
   /// Standard constructor
   FileIdBankWriter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 private:
-  std::string m_rawEventLocation;     // Location where we get the RawEvent
-  std::string m_current_fname;        // current file ID string
-  int         m_count_files;          // number of files read
+  std::string m_rawEventLocation; // Location where we get the RawEvent
+  std::string m_current_fname;    // current file ID string
+  int         m_count_files;      // number of files read
 
   std::vector<unsigned int> m_bank;
 
   LHCb::FileId m_fileId;
-
-
 };
 #endif // FILEIDBANKWRITER_H

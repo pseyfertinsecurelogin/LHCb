@@ -25,43 +25,36 @@ DECLARE_COMPONENT( UnpackProtoParticle )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-  UnpackProtoParticle::UnpackProtoParticle( const std::string& name,
-                                            ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "InputName" , m_inputName  = LHCb::PackedProtoParticleLocation::Charged );
+UnpackProtoParticle::UnpackProtoParticle( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ) {
+  declareProperty( "InputName", m_inputName = LHCb::PackedProtoParticleLocation::Charged );
   declareProperty( "OutputName", m_outputName = LHCb::ProtoParticleLocation::Charged );
   declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
-  //setProperty( "OutputLevel", 1 );
+  // setProperty( "OutputLevel", 1 );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode UnpackProtoParticle::execute()
-{
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+StatusCode UnpackProtoParticle::execute() {
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && !exist<LHCb::PackedProtoParticles>(m_inputName) )
-    return StatusCode::SUCCESS;
+  if ( !m_alwaysOutput && !exist<LHCb::PackedProtoParticles>( m_inputName ) ) return StatusCode::SUCCESS;
 
-  const auto * dst =
-    getOrCreate<LHCb::PackedProtoParticles,LHCb::PackedProtoParticles>( m_inputName );
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Found " << dst->protos().size() << " PackedProtoParticles at '"
-            << m_inputName << "'" << endmsg;
+  const auto* dst = getOrCreate<LHCb::PackedProtoParticles, LHCb::PackedProtoParticles>( m_inputName );
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << "Found " << dst->protos().size() << " PackedProtoParticles at '" << m_inputName << "'" << endmsg;
 
-  auto * newProtoParticles = new LHCb::ProtoParticles();
+  auto* newProtoParticles = new LHCb::ProtoParticles();
   put( newProtoParticles, m_outputName );
 
   // unpack
-  const LHCb::ProtoParticlePacker packer(this);
+  const LHCb::ProtoParticlePacker packer( this );
   packer.unpack( *dst, *newProtoParticles );
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Created " << newProtoParticles->size() << " ProtoParticles at '"
-            << m_outputName << "'" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << "Created " << newProtoParticles->size() << " ProtoParticles at '" << m_outputName << "'" << endmsg;
 
   return StatusCode::SUCCESS;
 }

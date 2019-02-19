@@ -18,17 +18,17 @@
 // Disable the warnings from distionaries:
 //  warning c4345: behavior change: an object of POD type constructed with
 //                 an initializer of the form () will be default-initialized
-#pragma warning ( disable : 4345 )
+#  pragma warning( disable : 4345 )
 #endif
 // ============================================================================
 // Include files
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Funcs.h"
-#include "LoKi/FuncOps.h"
-#include "LoKi/PIDOps.h"
 #include "LoKi/Calls.h"
+#include "LoKi/FuncOps.h"
+#include "LoKi/Funcs.h"
+#include "LoKi/PIDOps.h"
 // ============================================================================
 /** @file LoKi/Dicts.h
  *

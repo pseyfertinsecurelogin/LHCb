@@ -17,8 +17,8 @@
 // ============================================================================
 // local
 // ============================================================================
-#include "LoKi/MCTypes.h"
 #include "LoKi/MCExtract.h"
+#include "LoKi/MCTypes.h"
 // ============================================================================
 /** @file
  *
@@ -37,61 +37,45 @@
  *
  */
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
   /// get particles
   template <class PARTICLE>
-  inline
-  LHCb::MCParticle::ConstVector
-  _get_ ( PARTICLE                   first ,
-          PARTICLE                   last  ,
-          const LoKi::Types::MCCuts& cuts  )
-  {
+  inline LHCb::MCParticle::ConstVector _get_( PARTICLE first, PARTICLE last, const LoKi::Types::MCCuts& cuts ) {
     //
-    LHCb::MCParticle::ConstVector r ; r.reserve ( 100 ) ;
+    LHCb::MCParticle::ConstVector r;
+    r.reserve( 100 );
     //
-    LoKi::Extract::mcParticles ( first ,
-                                 last  ,
-                                 std::back_inserter ( r ) , cuts ) ;
+    LoKi::Extract::mcParticles( first, last, std::back_inserter( r ), cuts );
     //
     // eliminate duplicates
-    std::set<const LHCb::MCParticle*>  s ( r.begin () , r.end () ) ;
+    std::set<const LHCb::MCParticle*> s( r.begin(), r.end() );
     //
-    return LHCb::MCParticle::ConstVector ( s.begin () , s.end () ) ;
+    return LHCb::MCParticle::ConstVector( s.begin(), s.end() );
   }
   // ==========================================================================
-} //                                                  end of anonymos namespace
+} // namespace
 // ============================================================================
-LHCb::MCParticle::ConstVector
-operator>>
-( const LHCb::MCParticle::ConstVector&    input ,
-  const LoKi::Types::MCCuts&              cuts  )
-{ return _get_ ( input.begin () , input.end() , cuts ) ; }
-// ============================================================================
-LHCb::MCParticle::ConstVector
-operator>>
-( const LHCb::MCParticle::Container*      input ,
-  const LoKi::Types::MCCuts&              cuts  )
-{
-  if ( 0 == input ) { return LHCb::MCParticle::ConstVector() ; }
-  //
-  return _get_ ( input->begin () , input->end() , cuts ) ;
+LHCb::MCParticle::ConstVector operator>>( const LHCb::MCParticle::ConstVector& input,
+                                          const LoKi::Types::MCCuts&           cuts ) {
+  return _get_( input.begin(), input.end(), cuts );
 }
 // ============================================================================
-LHCb::MCParticle::ConstVector
-operator>>
-( const LoKi::MCTypes::MCRange&           input ,
-  const LoKi::Types::MCCuts&              cuts  )
-{ return _get_ ( input.begin () , input.end() , cuts ) ; }
+LHCb::MCParticle::ConstVector operator>>( const LHCb::MCParticle::Container* input, const LoKi::Types::MCCuts& cuts ) {
+  if ( 0 == input ) { return LHCb::MCParticle::ConstVector(); }
+  //
+  return _get_( input->begin(), input->end(), cuts );
+}
 // ============================================================================
-LHCb::MCParticle::ConstVector
-operator>>
-( const SmartRefVector<LHCb::MCParticle>& input ,
-  const LoKi::Types::MCCuts&              cuts  )
-{ return _get_ ( input.begin () , input.end() , cuts ) ; }
+LHCb::MCParticle::ConstVector operator>>( const LoKi::MCTypes::MCRange& input, const LoKi::Types::MCCuts& cuts ) {
+  return _get_( input.begin(), input.end(), cuts );
+}
 // ============================================================================
-
+LHCb::MCParticle::ConstVector operator>>( const SmartRefVector<LHCb::MCParticle>& input,
+                                          const LoKi::Types::MCCuts&              cuts ) {
+  return _get_( input.begin(), input.end(), cuts );
+}
+// ============================================================================
 
 // ============================================================================
 // The END

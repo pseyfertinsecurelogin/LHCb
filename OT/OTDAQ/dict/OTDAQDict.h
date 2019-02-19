@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DICT_OTDAQDICT_H 
+#ifndef DICT_OTDAQDICT_H
 #define DICT_OTDAQDICT_H 1
 
 #include "Event/OTLiteTime.h"
@@ -18,4 +18,3 @@
 #include "OTDAQ/IOTReadOutWindow.h"
 
 #endif // DICT_OTDAQDICT_H
-

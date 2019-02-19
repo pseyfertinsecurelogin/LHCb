@@ -16,31 +16,29 @@
 // ============================================================================
 // STD &STL
 // ============================================================================
-#include <vector>
-#include <string>
 #include <iosfwd>
+#include <string>
+#include <vector>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // forward decalrations
 // ============================================================================
-class IInterface      ;
-class IProperty  ;
+class IInterface;
+class IProperty;
 // ============================================================================
-namespace Gaudi
-{
-  namespace Utils
-  {
+namespace Gaudi {
+  namespace Utils {
     // ========================================================================
     /// the actual type for the vector of properties
-    typedef std::vector<const ::Property*> Properties ;
+    typedef std::vector<const ::Property*> Properties;
     /// the actual type for the vector of property names
-    typedef std::vector<std::string>     Names      ;
+    typedef std::vector<std::string> Names;
     // ========================================================================
     /** simple function to extract from the given component
      *  the list of properties, specified by name
@@ -72,9 +70,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
      *  @date 2008-08-02
      */
-    Properties properties
-    ( const IInterface* cmp   ,
-      const Names&      names ) ;
+    Properties properties( const IInterface* cmp, const Names& names );
     // ========================================================================
     /** simple function to extract from the given component
      *  the list of properties, specified by name
@@ -106,39 +102,31 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-08-02
      */
-    void properties
-    ( const IInterface* cmp    ,
-      const Names&      names  ,
-      Properties&       output ) ;
+    void properties( const IInterface* cmp, const Names& names, Properties& output );
     // ========================================================================
-  } // end of namespace Gaudi::Utils
+  } // namespace Utils
   // ==========================================================================
 } // end of namespace Gaudi
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   // ==========================================================================
   /** @class Inspector
    *  Simple inspector of algorithm properties
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-08-02
    */
-  class Inspector
-  {
+  class Inspector {
   public:
     // ========================================================================
     /** constructor the list of properties
      *  @param props   list of properties to be inspected
      */
-    Inspector
-    ( const Gaudi::Utils::Names& props   = Gaudi::Utils::Names() ) ;
+    Inspector( const Gaudi::Utils::Names& props = Gaudi::Utils::Names() );
     /** constructor the list of properties
      *  @param props   list of properties to be inspected
      *  @param members list of structural properties
      */
-    Inspector
-    ( const Gaudi::Utils::Names& props   ,
-      const Gaudi::Utils::Names& members ) ;
+    Inspector( const Gaudi::Utils::Names& props, const Gaudi::Utils::Names& members );
     // ========================================================================
   public:
     // ========================================================================
@@ -155,19 +143,14 @@ namespace LHCb
      *  @param level the recursion level
      *  @return status code
      */
-    StatusCode inspect
-    ( const IInterface* component     ,
-      std::ostream&     stream        ,
-      const size_t      level     = 0 ) const ;
+    StatusCode inspect( const IInterface* component, std::ostream& stream, const size_t level = 0 ) const;
     // ========================================================================
     /** inspect the component
      *  @param component the component to be inspected
      *  @param level the recursion level
      *  @return the inspection result
      */
-    std::string inspect
-    ( const IInterface* component     ,
-      const size_t      level     = 0 ) const ;
+    std::string inspect( const IInterface* component, const size_t level = 0 ) const;
     // ========================================================================
   public:
     // ========================================================================
@@ -181,21 +164,21 @@ namespace LHCb
      *  @param mgr new algorithm manager
      *  @return status code
      */
-    StatusCode setAlgManager ( const IInterface* mgr ) ;
+    StatusCode setAlgManager( const IInterface* mgr );
     // ========================================================================
   private:
     // ========================================================================
     /// structural properties
-    std::vector<std::string>     m_members ;
+    std::vector<std::string> m_members;
     /// properties toe binspected
-    std::vector<std::string>     m_names   ;
+    std::vector<std::string> m_names;
     // ========================================================================
     // the algorithm manager
     SmartIF<IAlgManager> m_algMgr;
     // ========================================================================
   };
   // ==========================================================================
-}
+} // namespace LHCb
 // ============================================================================
 // The END
 // ============================================================================

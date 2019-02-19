@@ -18,32 +18,27 @@
 
 #ifdef _WIN32
 // Avoid conflict of Windows macro with std::max
-  #ifndef NOMINMAX
-    #define NOMINMAX
-  #endif
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
 #endif
 
-namespace LHCb
-{
+namespace LHCb {
 
-  template<typename FTYPE, typename VECTYPE>
-  inline
-  auto updir(bool dnorm, VECTYPE dir)
-    -> typename std::enable_if<not std::is_floating_point<FTYPE>::value,
-                               VECTYPE>::type {
+  template <typename FTYPE, typename VECTYPE>
+  inline auto updir( bool dnorm, VECTYPE dir ) ->
+      typename std::enable_if<not std::is_floating_point<FTYPE>::value, VECTYPE>::type {
     // Unit() function from ROOT not compatible with VCL
-    if(dnorm) return dir;
+    if ( dnorm ) return dir;
 
     auto tot = dir.R();
-    tot = select(tot == 0, 1, tot);
-    return dir * (1./tot);
+    tot      = select( tot == 0, 1, tot );
+    return dir * ( 1. / tot );
   }
 
-  template<typename FTYPE, typename VECTYPE>
-  inline
-  auto updir(bool dnorm, VECTYPE dir)
-    -> typename std::enable_if<std::is_floating_point<FTYPE>::value,
-                               VECTYPE>::type {
+  template <typename FTYPE, typename VECTYPE>
+  inline auto updir( bool dnorm, VECTYPE dir ) ->
+      typename std::enable_if<std::is_floating_point<FTYPE>::value, VECTYPE>::type {
     return dnorm ? dir : dir.Unit();
   }
 
@@ -56,8 +51,8 @@ namespace LHCb
    *
    */
 
-  template<typename FTYPE>
-  class LineTraj: public Trajectory<FTYPE> {
+  template <typename FTYPE>
+  class LineTraj : public Trajectory<FTYPE> {
   public:
     using DirNormalized = typename Trajectory<FTYPE>::DirNormalized;
     using Trajectory<FTYPE>::Trajectory;
@@ -68,22 +63,19 @@ namespace LHCb
 
     // clone thyself...
     std::unique_ptr<Trajectory<FTYPE>> clone() const override {
-      return std::make_unique<LHCb::LineTraj<FTYPE>>(*this);
+      return std::make_unique<LHCb::LineTraj<FTYPE>>( *this );
     };
 
     // Constructor from the middle point and a direction vector
     // and which takes either a normalized direction vector or not....
-    LineTraj( const Point& middle,
-              const Vector& dir,
-              const Range& range,
-              DirNormalized dnorm = DirNormalized{true})
-      : Trajectory<FTYPE>(range),
-      //m_dir(dnorm ? dir : dir.Unit()),
-        m_pos(middle)
-    {
-      m_dir = updir<FTYPE, Vector>(dnorm == DirNormalized{true}, dir);
+    LineTraj( const Point& middle, const Vector& dir, const Range& range, DirNormalized dnorm = DirNormalized{true} )
+        : Trajectory<FTYPE>( range )
+        ,
+        // m_dir(dnorm ? dir : dir.Unit()),
+        m_pos( middle ) {
+      m_dir = updir<FTYPE, Vector>( dnorm == DirNormalized{true}, dir );
       // Raw unit
-      //m_dir = dnorm == DirNormalized{true} ? dir : dir.Unit();
+      // m_dir = dnorm == DirNormalized{true} ? dir : dir.Unit();
     }
 
     /// Constructor from a begin and an end point
@@ -100,10 +92,7 @@ namespace LHCb
 
     /// Create a parabolic approximation to the trajectory
     /// at arclength from the starting point
-    void expansion( FTYPE arclength,
-                    Point& p,
-                    Vector& dp,
-                    Vector& ddp ) const override;
+    void expansion( FTYPE arclength, Point& p, Vector& dp, Vector& ddp ) const override;
 
     /// Determine the distance in arclenghts to the
     /// closest point on the trajectory to a given point
@@ -111,111 +100,88 @@ namespace LHCb
 
     /// Number of arclengths until deviation of the trajectory from the
     /// expansion reaches the given tolerance.
-    FTYPE distTo1stError( FTYPE arclength,
-                          FTYPE tolerance,
-                          int pathDirection = +1) const override;
+    FTYPE distTo1stError( FTYPE arclength, FTYPE tolerance, int pathDirection = +1 ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the
     /// expansion reaches the given tolerance.
-    FTYPE distTo2ndError( FTYPE arclength,
-                          FTYPE tolerance,
-                          int pathDirection = +1) const override;
+    FTYPE distTo2ndError( FTYPE arclength, FTYPE tolerance, int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because LineTraj is parameterized in
     /// arclength.
     using Trajectory<FTYPE>::arclength;
-    FTYPE arclength(FTYPE mu1, FTYPE mu2) const override { return mu2 - mu1 ; }
+    FTYPE arclength( FTYPE mu1, FTYPE mu2 ) const override { return mu2 - mu1; }
 
   private:
-
     Vector m_dir;
     Point  m_pos;
 
   }; // class LineTraj
 
   /// Constructor from a begin and an end point
-  template<typename FTYPE>
-  inline
-  LineTraj<FTYPE>::LineTraj( const typename Trajectory<FTYPE>::Point& beg,
-                             const typename Trajectory<FTYPE>::Point& end )
-    : m_dir(end-beg),
-      m_pos(beg+0.5*m_dir)
-  {
+  template <typename FTYPE>
+  inline LineTraj<FTYPE>::LineTraj( const typename Trajectory<FTYPE>::Point& beg,
+                                    const typename Trajectory<FTYPE>::Point& end )
+      : m_dir( end - beg ), m_pos( beg + 0.5 * m_dir ) {
     // Trajectory(-(Vector(endPoint-begPoint)).r()/2.,
     //            (Vector(endPoint-begPoint)).r()/2.),
     // can we use r() with VectorClass ? it seems to use std::sqrt
     // temporarly use a raw r() impl. to be sure we use VectorClass sqrt when we manage with
     // VectorClass types
-    Vector p = end-beg;
-    FTYPE val = sqrt(p.Mag2())/2.;
-    this->setRange(-1.*val, val);
+    Vector p   = end - beg;
+    FTYPE  val = sqrt( p.Mag2() ) / 2.;
+    this->setRange( -1. * val, val );
     // m_range.first  = -1.*val;
     // m_range.second = val;
     m_dir = m_dir.Unit();
   }
 
   /// Point on the trajectory at arclength from the starting point
-  template<typename FTYPE>
-  inline typename Trajectory<FTYPE>::Point
-  LineTraj<FTYPE>::position( FTYPE arclength ) const
-  {
+  template <typename FTYPE>
+  inline typename Trajectory<FTYPE>::Point LineTraj<FTYPE>::position( FTYPE arclength ) const {
     return m_pos + arclength * m_dir;
   }
 
   /// First derivative of the trajectory at arclength from the starting point
-  template<typename FTYPE>
-  inline typename Trajectory<FTYPE>::Vector
-  LineTraj<FTYPE>::direction( FTYPE /* arclength*/ ) const
-  {
+  template <typename FTYPE>
+  inline typename Trajectory<FTYPE>::Vector LineTraj<FTYPE>::direction( FTYPE /* arclength*/ ) const {
     return m_dir;
   }
 
   /// Second derivative of the trajectory at arclength from the starting point
-  template<typename FTYPE>
-  inline typename Trajectory<FTYPE>::Vector
-  LineTraj<FTYPE>::curvature( FTYPE /* arclength */ ) const
-  {
-    return {0,0,0};
+  template <typename FTYPE>
+  inline typename Trajectory<FTYPE>::Vector LineTraj<FTYPE>::curvature( FTYPE /* arclength */ ) const {
+    return {0, 0, 0};
   }
 
   /// Create a parabolic approximation to the trajectory
   /// at arclength from the starting point
-  template<typename FTYPE>
-  inline void
-  LineTraj<FTYPE>::expansion( FTYPE arclength,
-                              typename Trajectory<FTYPE>::Point& p,
-                              typename Trajectory<FTYPE>::Vector& dp,
-                              typename Trajectory<FTYPE>::Vector& ddp ) const
-  {
-    ddp = {0,0,0};
+  template <typename FTYPE>
+  inline void LineTraj<FTYPE>::expansion( FTYPE arclength, typename Trajectory<FTYPE>::Point& p,
+                                          typename Trajectory<FTYPE>::Vector& dp,
+                                          typename Trajectory<FTYPE>::Vector& ddp ) const {
+    ddp = {0, 0, 0};
     dp  = m_dir;
     p   = m_pos + arclength * m_dir;
   }
 
   /// Determine the distance in arclenghts to the
   /// closest point on the trajectory to a given point
-  template<typename FTYPE>
-  inline FTYPE
-  LineTraj<FTYPE>::muEstimate( const typename Trajectory<FTYPE>::Point& point ) const
-  {
-    return m_dir.Dot(point-m_pos);
+  template <typename FTYPE>
+  inline FTYPE LineTraj<FTYPE>::muEstimate( const typename Trajectory<FTYPE>::Point& point ) const {
+    return m_dir.Dot( point - m_pos );
   }
 
   // 1st order approx OK everywhere
-  template<typename FTYPE>
-  inline FTYPE
-  LineTraj<FTYPE>::distTo1stError( FTYPE , FTYPE , int ) const
-  {
-    return 10*Gaudi::Units::km;
+  template <typename FTYPE>
+  inline FTYPE LineTraj<FTYPE>::distTo1stError( FTYPE, FTYPE, int ) const {
+    return 10 * Gaudi::Units::km;
   }
 
   // 2nd order approx OK everywhere
-  template<typename FTYPE>
-  inline FTYPE
-  LineTraj<FTYPE>::distTo2ndError( FTYPE , FTYPE , int ) const
-  {
-    return 10*Gaudi::Units::km;
+  template <typename FTYPE>
+  inline FTYPE LineTraj<FTYPE>::distTo2ndError( FTYPE, FTYPE, int ) const {
+    return 10 * Gaudi::Units::km;
   }
 
 } // namespace LHCb

@@ -16,5 +16,5 @@
 // TTDet
 #include "STDet/DeITLayer.h"
 
-typedef XmlUserDetElemCnv<DeITLayer >        XmlITLayerCnv;
+typedef XmlUserDetElemCnv<DeITLayer> XmlITLayerCnv;
 DECLARE_CONVERTER( XmlITLayerCnv )

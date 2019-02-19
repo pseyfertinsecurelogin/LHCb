@@ -16,7 +16,6 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "MuonDAQ/IMuonRawBuffer.h"
 
-
 /** @class MuonPadTest MuonPadTest.h
  *
  *
@@ -28,11 +27,10 @@ public:
   /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
   IMuonRawBuffer* m_MuonBuffer = nullptr;
-
 };
 #endif // MUONPADTEST_H

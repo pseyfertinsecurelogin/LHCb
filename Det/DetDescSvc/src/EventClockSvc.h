@@ -12,10 +12,10 @@
 #define EVENTCLOCKSVC_H 1
 
 // Include files
-#include "GaudiKernel/Service.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/Service.h"
 
 class IEventTimeDecoder;
 class IToolSvc;
@@ -27,7 +27,7 @@ class IToolSvc;
  *  @author Marco Clemencic
  *  @date   2005-07-08
  */
-class EventClockSvc: public extends<Service, IIncidentListener> {
+class EventClockSvc : public extends<Service, IIncidentListener> {
 public:
   /// Standard constructor
   using base_class::base_class;
@@ -40,32 +40,30 @@ public:
 
   // ---- Implement IIncidentListener interface ----
   /// Handle BeginEvent incident.
-  void handle(const Incident &inc) override;
+  void handle( const Incident& inc ) override;
 
 private:
   // ---------- data members ----------
   // --- names ---
   /// Name of the Data Provider (set by the option DetDataSvc, by default "DetectorDataSvc").
-  Gaudi::Property<std::string> m_detDataSvcName{ this, "DetectorDataSvc", "DetectorDataSvc" };
+  Gaudi::Property<std::string> m_detDataSvcName{this, "DetectorDataSvc", "DetectorDataSvc"};
   /// Name of the Event Time Decoder (set by the option EventTimeDecoder, by default "FakeEventTime").
-  Gaudi::Property<std::string> m_eventTimeDecoderName { this, "EventTimeDecoder",  "FakeEventTime"};
+  Gaudi::Property<std::string> m_eventTimeDecoderName{this, "EventTimeDecoder", "FakeEventTime"};
 
   // --- services ---
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
   /// Handle to the IDetDataSvc interface (to propagate the event time).
-  SmartIF<IDetDataSvc>  m_detDataSvc;
+  SmartIF<IDetDataSvc> m_detDataSvc;
   /// Handle to the Tool Service.
-  SmartIF<IToolSvc>     m_toolSvc;
+  SmartIF<IToolSvc> m_toolSvc;
 
   // --- tools ---
   /// Pointer to the EventTimeDecoder tool
-  IEventTimeDecoder *m_eventTimeDecoder = nullptr;
-
+  IEventTimeDecoder* m_eventTimeDecoder = nullptr;
 
   // --- misc ---
   /// Time to use before reading the first event  (set by the option InitialTime, by default 0).
-  Gaudi::Property<long long> m_initialTime { this, "InitialTime",   0 };
-
+  Gaudi::Property<long long> m_initialTime{this, "InitialTime", 0};
 };
 #endif // EVENTCLOCKSVC_H

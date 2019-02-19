@@ -13,8 +13,8 @@
 // ============================================================================
 // STD & SLT
 // ============================================================================
-#include <string>
 #include <ostream>
+#include <string>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -22,8 +22,8 @@
 // ============================================================================
 // local
 // ============================================================================
-#include "LoKi/Param.h"
 #include "LoKi/Assert.h"
+#include "LoKi/Param.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -48,71 +48,57 @@
  *
  */
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
   /** the pattern to improved for more flexibility
    *  @todo improve it for more flexibility
    *  @thanks Alexander MAZUROV
    */
-  const boost::regex s_pattern ( "(\\w+)\\s*(?:\\[\\s*(\\w+)\\s*\\])?\\s*(?:/\\s*(\\w+))?" );
+  const boost::regex s_pattern( "(\\w+)\\s*(?:\\[\\s*(\\w+)\\s*\\])?\\s*(?:/\\s*(\\w+))?" );
   //
-  bool parse
-  ( const std::string& input    ,
-    std::string&       property ,
-    std::string&       key      ,
-    std::string&       alg      )
-  {
-    std::string::size_type r = input.rfind ( '/' ) ;
-    if ( std::string::npos != r )
-    {
-      std::string input2 ( input.begin()         , input.begin () + r ) ;
-      alg = std::string  ( input.begin() + r + 1 , input.end   ()     ) ;
-      std::string alg2 ;
-      return parse ( input2 , property , key , alg2 ) ;
+  bool parse( const std::string& input, std::string& property, std::string& key, std::string& alg ) {
+    std::string::size_type r = input.rfind( '/' );
+    if ( std::string::npos != r ) {
+      std::string input2( input.begin(), input.begin() + r );
+      alg = std::string( input.begin() + r + 1, input.end() );
+      std::string alg2;
+      return parse( input2, property, key, alg2 );
     }
     //
     boost::smatch what;
-    if( !boost::regex_match ( input , what, s_pattern ) ) { return false ; }
+    if ( !boost::regex_match( input, what, s_pattern ) ) { return false; }
     //
 
-    property = std::string ( what[1].first, what[1].second ) ;
-    key      = std::string ( what[2].first, what[2].second ) ;
+    property = std::string( what[1].first, what[1].second );
+    key      = std::string( what[2].first, what[2].second );
     //
     // alg = std::string(what[3].first, what[3].second);
     //
-    return true ;
+    return true;
   }
   // ==========================================================================
-}
+} // namespace
 // ============================================================================
 // Constructor
 // ============================================================================
-LoKi::Param::Param ( const std::string& property )
-{
-  LoKi::Assert ( ::parse ( property , m_property , m_key , m_algorithm ) ,
-                 "Invalid pattern for parameter name '" + property + "'" ) ;
+LoKi::Param::Param( const std::string& property ) {
+  LoKi::Assert( ::parse( property, m_property, m_key, m_algorithm ),
+                "Invalid pattern for parameter name '" + property + "'" );
 }
 // ============================================================================
 // printout
 // ============================================================================
-std::ostream& LoKi::Param::fillStream ( std::ostream& s ) const
-{
+std::ostream& LoKi::Param::fillStream( std::ostream& s ) const {
   s << "PARAM('";
   //
-  if ( !property  () . empty () ) { s        << property  ()        ; }
-  if ( !key       () . empty () ) { s << "[" << key       () << "]" ; }
+  if ( !property().empty() ) { s << property(); }
+  if ( !key().empty() ) { s << "[" << key() << "]"; }
   //
-  return s << "')" ;
+  return s << "')";
 }
 // ============================================================================
-std::string Gaudi::Utils::toCpp ( const LoKi::Param& o )
-{
-  return
-    "LoKi::Param(\""
-    + o.property  () + "["
-    + o.key       () + "]/"
-    + o.algorithm () + "\")" ;
+std::string Gaudi::Utils::toCpp( const LoKi::Param& o ) {
+  return "LoKi::Param(\"" + o.property() + "[" + o.key() + "]/" + o.algorithm() + "\")";
 }
 // ============================================================================
 // The END

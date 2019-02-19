@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeHorizRich.h"
 
-typedef XmlUserDetElemCnv< DeHorizRich > XmlDeHorizRichCnv;
+typedef XmlUserDetElemCnv<DeHorizRich> XmlDeHorizRichCnv;
 DECLARE_CONVERTER( XmlDeHorizRichCnv )
 
 #endif // XMLDEHORIZRICHCNV_H

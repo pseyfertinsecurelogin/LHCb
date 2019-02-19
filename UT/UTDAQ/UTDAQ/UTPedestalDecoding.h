@@ -13,8 +13,8 @@
 
 // Include files
 // from Gaudi
-#include "Kernel/UTAlgBase.h"
 #include "Event/RawBank.h"
+#include "Kernel/UTAlgBase.h"
 
 /** @class UTPedestalDecoding UTPedestalDecoding.h
  *
@@ -33,16 +33,14 @@ public:
   /// Standard constructor
   UTPedestalDecoding( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   LHCb::RawBank::BankType m_bankType;
 
   // job options
   std::string m_inputLocation;  ///< Location of RawEvent
   std::string m_outputLocation; ///< Location of output pedestal (UTTELL1Data)
-
 };
 #endif // UTPEDESTALDECODING_H

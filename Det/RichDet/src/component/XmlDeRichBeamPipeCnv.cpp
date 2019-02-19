@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRichBeamPipe.h"
 
-typedef XmlUserDetElemCnv< DeRichBeamPipe > XmlDeRichBeamPipeCnv;
+typedef XmlUserDetElemCnv<DeRichBeamPipe> XmlDeRichBeamPipeCnv;
 DECLARE_CONVERTER( XmlDeRichBeamPipeCnv )
 
 #endif // XMLDERICHBEAMPIPECNV_H

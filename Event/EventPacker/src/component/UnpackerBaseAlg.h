@@ -13,8 +13,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-namespace DataPacking
-{
+namespace DataPacking {
 
   /** @class Unpack UnpackerBaseAlg.h
    *
@@ -24,12 +23,10 @@ namespace DataPacking
    *  @date   2009-10-14
    */
 
-  template< class PACKER >
-  class Unpack : public GaudiAlgorithm
-  {
+  template <class PACKER>
+  class Unpack : public GaudiAlgorithm {
 
   public:
-
     /// Standard constructor
     Unpack( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -37,16 +34,14 @@ namespace DataPacking
     StatusCode execute() override;    ///< Algorithm execution
 
   private:
-
-    std::string m_inputName;  ///< Input location
-    std::string m_outputName; ///< Output location
-    bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
+    std::string m_inputName;    ///< Input location
+    std::string m_outputName;   ///< Output location
+    bool        m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
 
     /// Packer object
-    const PACKER m_packer{ this };
-
+    const PACKER m_packer{this};
   };
 
-}
+} // namespace DataPacking
 
 #endif // UNPACKERBASEALG_H

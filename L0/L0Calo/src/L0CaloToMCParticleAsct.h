@@ -31,12 +31,11 @@ public:
   /// Standard constructor
   L0CaloToMCParticleAsct( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0CaloToMCParticleAsct( ); ///< Destructor
+  virtual ~L0CaloToMCParticleAsct(); ///< Destructor
 
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 protected:
-
 private:
   std::string m_inputContainer;
   double      m_minimalFraction;

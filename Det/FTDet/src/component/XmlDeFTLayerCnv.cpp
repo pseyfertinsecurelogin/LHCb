@@ -16,7 +16,7 @@
 // FTDet
 #include "FTDet/DeFTLayer.h"
 
-typedef XmlUserDetElemCnv<DeFTLayer>       XmlDeFTLayerCnv;
+typedef XmlUserDetElemCnv<DeFTLayer> XmlDeFTLayerCnv;
 DECLARE_CONVERTER( XmlDeFTLayerCnv )
 
-#endif //XMLDEFTLAYERCNV_H
+#endif // XMLDEFTLAYERCNV_H

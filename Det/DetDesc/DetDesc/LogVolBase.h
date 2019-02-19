@@ -8,24 +8,24 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef     DETDESC_LOGVOLBASE_H
-#define     DETDESC_LOGVOLBASE_H
+#ifndef DETDESC_LOGVOLBASE_H
+#define DETDESC_LOGVOLBASE_H
 /// STD and STL includes
 #include <algorithm>
 /// GaudiKernel includes
-#include "GaudiKernel/IValidity.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IValidity.h"
 #include "GaudiKernel/Transform3DTypes.h"
 /// DetDesc  includes
 #include "DetDesc/DetDesc.h"
-#include "DetDesc/ISolid.h"
-#include "DetDesc/Services.h"
 #include "DetDesc/IPVolume.h"
 #include "DetDesc/IPVolume_predicates.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/InstanceCounter.h"
 #include "DetDesc/LogVolumeException.h"
+#include "DetDesc/Services.h"
 #include "DetDesc/Surface.h"
 #include "DetDesc/ValidDataObject.h"
-#include "DetDesc/InstanceCounter.h"
 
 /// forward declarations
 class IDataProviderSvc;
@@ -42,37 +42,28 @@ class IMessageSvc;
  *  @author  Marco Clemencic
  */
 
-class LogVolBase: public virtual ILVolume,
-                  public         ValidDataObject,
-                  private Details::InstanceCounter<LogVolBase>
-{
+class LogVolBase : public virtual ILVolume, public ValidDataObject, private Details::InstanceCounter<LogVolBase> {
 
 public:
-
   /** constructor
    *  @exception LVolumeException wrong paramaters value
    *  @param name name of logical volume
    *  @param sensitivity  name of sensitive detector object (for simulation)
    *  @param magnetic  nam eof magnetic field object (for simulation)
    */
-  LogVolBase( const std::string& name        = "" ,
-              const std::string& sensitivity = "" ,
-              const std::string& magnetic    = "" );
+  LogVolBase( const std::string& name = "", const std::string& sensitivity = "", const std::string& magnetic = "" );
 
 public:
-
   /// destructor
   ~LogVolBase() override;
-
 
   /** retrieve  the name(identification)  of Logical Volume
    *  @see ILVolume
    *  @return    the name(identification)  of Logical Volume
    */
-  inline const std::string&  name () const override
-  {
+  inline const std::string& name() const override {
     static const std::string s_empty;
-    IRegistry* pReg = registry();
+    IRegistry*               pReg = registry();
     return pReg ? pReg->identifier() : s_empty;
   }
 
@@ -80,29 +71,27 @@ public:
    *  @see ILVolume
    *  @return vector of physical volumes
    */
-  inline PVolumes& pvolumes () override { return m_pvolumes ; }
+  inline PVolumes& pvolumes() override { return m_pvolumes; }
 
   /** vector of physical volumes (const version)
    *  @see ILVolume
    *  @return vector of physical volumes
    */
-  inline const PVolumes& pvolumes () const override { return m_pvolumes ; }
+  inline const PVolumes& pvolumes() const override { return m_pvolumes; }
 
   /** number of Physical(positioned) Volumes
    *  @see ILVolume
    *  @return number of Physical(positioned) Volumes
    */
-  inline ILVolume::ReplicaType noPVolumes () const override
-  { return m_pvolumes.size() ; }
+  inline ILVolume::ReplicaType noPVolumes() const override { return m_pvolumes.size(); }
 
   /** daughter (Physical Volume) by index
    *  @see ILVolume
    *  @param  index    physical volume index
    *  @return pointer to daughter (Physical Volume)
    */
-  const IPVolume* operator[]( const ILVolume::ReplicaType& index ) const override
-  {
-    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
+  const IPVolume* operator[]( const ILVolume::ReplicaType& index ) const override {
+    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr;
   };
 
   /** daughter (Physical Volume) by name
@@ -110,62 +99,51 @@ public:
    *  @param  name    physical volume name
    *  @return pointer to daughter (Physical Volume)
    */
-  inline const IPVolume* operator[]( std::string_view name  ) const override
-  {
-    auto pvi = std::find_if( m_pvolumes.begin  () ,
-                             m_pvolumes.end    () ,
-                             IPVolume_byName( name ) ) ;
-    return pvi != m_pvolumes.end() ? *pvi : nullptr ;
+  inline const IPVolume* operator[]( std::string_view name ) const override {
+    auto pvi = std::find_if( m_pvolumes.begin(), m_pvolumes.end(), IPVolume_byName( name ) );
+    return pvi != m_pvolumes.end() ? *pvi : nullptr;
   };
 
   /** get daughter (Physical Volume) by index
    *  @param  index    physical volume index
    *  @return pointer to daughter (Physical Volume)
    */
-  const IPVolume* pvolume( const ILVolume::ReplicaType& index ) const override
-  {
-    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
+  const IPVolume* pvolume( const ILVolume::ReplicaType& index ) const override {
+    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr;
   }
 
   /** get daughter (Physical Volume) by name
    *  @param  name    physical volume name
    *  @return pointer to daughter (Physical Volume)
    */
-  const IPVolume* pvolume( std::string_view name ) const override
-  {
-    auto pvi = std::find_if( m_pvolumes.begin  () ,
-                             m_pvolumes.end    () ,
-                             IPVolume_byName( name ) ) ;
-    return pvi != m_pvolumes.end() ? *pvi : nullptr ;
+  const IPVolume* pvolume( std::string_view name ) const override {
+    auto pvi = std::find_if( m_pvolumes.begin(), m_pvolumes.end(), IPVolume_byName( name ) );
+    return pvi != m_pvolumes.end() ? *pvi : nullptr;
   }
 
   /** begin iterator  for manipulation with daughters
    *  @see ILVolume
    *  @return begin iterator  for manipulation with daughters
    */
-  inline ILVolume::PVolumes::iterator       pvBegin     () override
-  { return m_pvolumes.begin () ;}
+  inline ILVolume::PVolumes::iterator pvBegin() override { return m_pvolumes.begin(); }
 
   /** begin iterator  for manipulation with daughters (const version)
    *  @see ILVolume
    *  @return begin iterator  for manipulation with daughters
    */
-  inline ILVolume::PVolumes::const_iterator pvBegin     () const override
-  { return m_pvolumes.begin () ;}
+  inline ILVolume::PVolumes::const_iterator pvBegin() const override { return m_pvolumes.begin(); }
 
   /** retrieve end iterator for manipulation with daughters
    *  @see ILVolume
    *  @return end iterator  for manipulation with daughters
    */
-  inline ILVolume::PVolumes::iterator       pvEnd       () override
-  { return m_pvolumes.end ()  ;}
+  inline ILVolume::PVolumes::iterator pvEnd() override { return m_pvolumes.end(); }
 
   /** retrieve end iterator for manipulation with daughters (const version)
    *  @see ILVolume
    *  @return end iterator  for manipulation with daughters
    */
-  inline ILVolume::PVolumes::const_iterator pvEnd       () const override
-  { return m_pvolumes.end () ;}
+  inline ILVolume::PVolumes::const_iterator pvEnd() const override { return m_pvolumes.end(); }
 
   /** traverse the sequence of paths  \n
    *  transform the sequence of replicas to sequence of  physical volumes
@@ -175,10 +153,8 @@ public:
    *  @param pVolumePath  vector of physical volumes
    *  @return status code
    */
-  StatusCode traverse
-  ( ILVolume::ReplicaPath::const_iterator pathBegin,
-    ILVolume::ReplicaPath::const_iterator pathEnd  ,
-    ILVolume::PVolumePath&                pVolumePath ) const override;
+  StatusCode traverse( ILVolume::ReplicaPath::const_iterator pathBegin, ILVolume::ReplicaPath::const_iterator pathEnd,
+                       ILVolume::PVolumePath& pVolumePath ) const override;
 
   /** traverse the sequence of paths  \n
    *  transform the sequence of replicas to sequence of  physical volumes
@@ -187,41 +163,40 @@ public:
    *  @param pVolumePath  vector of physical volumes
    *  @return status code
    */
-  inline StatusCode traverse
-  ( const ILVolume::ReplicaPath&  path,
-    ILVolume::PVolumePath&        pVolumePath ) const override
-  { return traverse( path.begin() , path.end() , pVolumePath ); }
+  inline StatusCode traverse( const ILVolume::ReplicaPath& path, ILVolume::PVolumePath& pVolumePath ) const override {
+    return traverse( path.begin(), path.end(), pVolumePath );
+  }
 
   /** name of sensitive "detector" - needed for simulation
    *  @see ILVolume
    *  @return name of sensitive "detector"
    */
-  inline const std::string& sdName () const override { return m_sdName; }
+  inline const std::string& sdName() const override { return m_sdName; }
 
   /** magnetic properties  (if needed for simulation)
    *  @see ILVolume
    *  @return name of magnetic field  object
    */
-  inline const std::string& mfName () const override { return m_mfName; }
+  inline const std::string& mfName() const override { return m_mfName; }
 
   /** accessors to surfaces
    *  @see ILVolume
    *  @return vector of surfaces
    */
-  inline Surfaces& surfaces() override { return m_surfaces ; }
+  inline Surfaces& surfaces() override { return m_surfaces; }
 
   /** accessors to surfaces  (const version)
    *  @see ILVolume
    *  @return vector of surfaces
    */
-  inline const Surfaces& surfaces() const override { return m_surfaces ; }
+  inline const Surfaces& surfaces() const override { return m_surfaces; }
 
   /** printout to STD/STL stream
    *  @see ILVolume
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream& printOut( std::ostream & os = std::cout ) const override;
+  std::ostream& printOut( std::ostream& os = std::cout ) const override;
 
   /** printout to Gaudi MsgStream stream
    *  @see ILVolume
@@ -234,11 +209,9 @@ public:
    *  @see ILVolume
    *  @return self reference
    */
-  inline ILVolume* reset () override
-  {
+  inline ILVolume* reset() override {
     /// reset all physical volumes
-    std::for_each( m_pvolumes.begin(), m_pvolumes.end(),
-                   [](IPVolume* v) { v->reset(); } );
+    std::for_each( m_pvolumes.begin(), m_pvolumes.end(), []( IPVolume* v ) { v->reset(); } );
     /// return self-reference
     return this;
   }
@@ -249,20 +222,19 @@ public:
    *  @param ppI placeholder for returned interface
    *  @return status code
    */
-  StatusCode
-  queryInterface( const InterfaceID& ID , void** ppI ) override;
+  StatusCode queryInterface( const InterfaceID& ID, void** ppI ) override;
 
   /** add the reference
    *  @see IInterface
    *  @return reference counter
    */
-  unsigned long addRef  () override;
+  unsigned long addRef() override;
 
   /** release the interface
    *  @see IInterface
    *  @return reference counter
    */
-  unsigned long release () override;
+  unsigned long release() override;
 
   /** create daughter physical volume
    *  @param PVname name of daughter volume
@@ -271,9 +243,8 @@ public:
    *  @param rotation rotation of logical volume
    *  @return pointer to created physical volume
    */
-  IPVolume* createPVolume( const std::string&       PVname,
-                           const std::string&       LVnameForPV,
-                           const Gaudi::XYZPoint&   pos = Gaudi::XYZPoint() ,
+  IPVolume* createPVolume( const std::string& PVname, const std::string& LVnameForPV,
+                           const Gaudi::XYZPoint&   pos = Gaudi::XYZPoint(),
                            const Gaudi::Rotation3D& rot = Gaudi::Rotation3D() );
 
   /** create daughter physical volume
@@ -282,12 +253,10 @@ public:
    *  @param Transform   tranformation
    *  @return pointer to created physical volume
    */
-  IPVolume* createPVolume( const std::string&        PVname,
-                           const std::string&        LVnameForPV,
+  IPVolume* createPVolume( const std::string& PVname, const std::string& LVnameForPV,
                            const Gaudi::Transform3D& Transform );
 
 protected:
-
   /** create EMPTY daughter physical volume
    *  @return pointer to created physical volume
    */
@@ -295,17 +264,16 @@ protected:
 
   /// updates box cover integrating the new PVolume
   /// default implementation is empty
-  virtual void updateCover(const IPVolume&) {};
+  virtual void updateCover( const IPVolume& ){};
 
   /** Assertion
    *  @param assertion condition
    *  @param name      exception message
    *  @param sc        status code
    */
-  inline void Assert( bool               assertion,
-                      const std::string& name,
-                      const StatusCode&  sc = StatusCode::FAILURE ) const
-  { if( !assertion ) { throw LogVolumeException( name, this , sc ); } }
+  inline void Assert( bool assertion, const std::string& name, const StatusCode& sc = StatusCode::FAILURE ) const {
+    if ( !assertion ) { throw LogVolumeException( name, this, sc ); }
+  }
 
   /** Assertion
    *  @param assertion condition
@@ -313,13 +281,9 @@ protected:
    *  @param Exception previous exception
    *  @param sc        status code
    */
-  inline void Assert( bool                  assertion ,
-                      const std::string&    name      ,
-                      const GaudiException& Exception ,
-                      const StatusCode&     sc = StatusCode::FAILURE ) const
-  {
-    if( !assertion )
-      { throw LogVolumeException( name, Exception , this , sc ); }
+  inline void Assert( bool assertion, const std::string& name, const GaudiException& Exception,
+                      const StatusCode& sc = StatusCode::FAILURE ) const {
+    if ( !assertion ) { throw LogVolumeException( name, Exception, this, sc ); }
   }
 
   /** Auxillary method  to calculate intersections with daughters
@@ -332,12 +296,9 @@ protected:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  unsigned int intersectDaughters( const Gaudi::XYZPoint&   Point              ,
-                                   const Gaudi::XYZVector&  Vector             ,
-                                   ILVolume::Intersections& childIntersections ,
-                                   const ISolid::Tick     & tickMin            ,
-                                   const ISolid::Tick     & tickMax            ,
-                                   const double             Threshold          ) const ;
+  unsigned int intersectDaughters( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                   ILVolume::Intersections& childIntersections, const ISolid::Tick& tickMin,
+                                   const ISolid::Tick& tickMax, const double Threshold ) const;
 
   /** Auxillary method  to calculate intersection with daughters
    *  @exception LVolumeException wrong parameters or geometry error
@@ -347,10 +308,8 @@ protected:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  unsigned int  intersectDaughters( const Gaudi::XYZPoint&   Point,
-                                    const Gaudi::XYZVector&  Vector,
-                                    ILVolume::Intersections& childIntersections,
-                                    const double             Threshold ) const ;
+  unsigned int intersectDaughters( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                   ILVolume::Intersections& childIntersections, const double Threshold ) const;
 
   /** check for the given 3D-point inside daughter volume
    *  Point coordinates are in the local reference
@@ -358,8 +317,7 @@ protected:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return true if the point is inside the daughter volume
    */
-  bool isInsideDaughter( const Gaudi::XYZPoint& LocalPoint ) const
-  {
+  bool isInsideDaughter( const Gaudi::XYZPoint& LocalPoint ) const {
     return insideDaughter( LocalPoint ).first != nullptr;
   }
 
@@ -369,18 +327,12 @@ protected:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return pointer to the daughter volume
    */
-  std::pair<const IPVolume*,int>
-  insideDaughter( const Gaudi::XYZPoint& LocalPoint ) const
-  {
-    auto itp =  std::find_if( m_pvolumes.begin () ,
-                              m_pvolumes.end   () ,
-                              IPVolume_isInside( LocalPoint ) ) ;
-    return itp != m_pvolumes.end() ? std::pair{*itp, std::distance( m_pvolumes.begin(), itp) }
-                                   : std::pair{nullptr,-1};
+  std::pair<const IPVolume*, int> insideDaughter( const Gaudi::XYZPoint& LocalPoint ) const {
+    auto itp = std::find_if( m_pvolumes.begin(), m_pvolumes.end(), IPVolume_isInside( LocalPoint ) );
+    return itp != m_pvolumes.end() ? std::pair{*itp, std::distance( m_pvolumes.begin(), itp )} : std::pair{nullptr, -1};
   }
 
 protected:
-
   /**
    *  accessor to data service used for retriving of the material
    *  @return pointer to data service
@@ -394,20 +346,19 @@ protected:
   IMessageSvc* msgSvc() const;
 
   /// copy constructor is private!
-  LogVolBase            ( const LogVolBase& lvb ) = delete;
+  LogVolBase( const LogVolBase& lvb ) = delete;
   /// assignment operator is private!
-  LogVolBase& operator= ( const LogVolBase& lvb ) = delete;
+  LogVolBase& operator=( const LogVolBase& lvb ) = delete;
 
 private:
-
   /// list of daughter physical volumes
-  PVolumes              m_pvolumes      ;
+  PVolumes m_pvolumes;
   /// list attached surfaces
-  Surfaces              m_surfaces      ;
+  Surfaces m_surfaces;
   /// name of sensitive detector object
-  std::string           m_sdName        ;
+  std::string m_sdName;
   /// name of magnetic field source
-  std::string           m_mfName        ;
+  std::string m_mfName;
   /// reference to services
   DetDesc::ServicesPtr m_services = DetDesc::services();
 };
@@ -415,4 +366,4 @@ private:
 // ============================================================================
 // The End
 // ============================================================================
-#endif  ///< DETDESC_LVOLUME_H
+#endif ///< DETDESC_LVOLUME_H

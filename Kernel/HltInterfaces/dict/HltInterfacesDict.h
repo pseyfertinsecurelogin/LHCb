@@ -11,28 +11,26 @@
 #ifndef DICT_HLTINTERFACESDICT_H
 #define DICT_HLTINTERFACESDICT_H 1
 
+#include "Kernel/ConfigTreeNode.h"
+#include "Kernel/ConfigTreeNodeAlias.h"
 #include "Kernel/IANNSvc.h"
 #include "Kernel/IANSvc.h"
-#include "Kernel/ConfigTreeNodeAlias.h"
-#include "Kernel/ConfigTreeNode.h"
-#include "Kernel/PropertyConfig.h"
-#include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/IConfigAccessSvc.h"
 #include "Kernel/IConfigTreeEditor.h"
-#include "Kernel/ReadRoutingBits.h"
 #include "Kernel/IHltMonitorSvc.h"
 #include "Kernel/ILinePersistenceSvc.h"
+#include "Kernel/IPropertyConfigSvc.h"
+#include "Kernel/PropertyConfig.h"
+#include "Kernel/ReadRoutingBits.h"
 
 namespace {
 
-  struct _hltinterfaces_instantiations
-  {
+  struct _hltinterfaces_instantiations {
     std::vector<ConfigTreeNodeAlias> py_hlt_07;
-    std::optional<ConfigTreeNode> py_hlt_08;
-    std::optional<PropertyConfig> py_hlt_09;
-    _hltinterfaces_instantiations(){}
+    std::optional<ConfigTreeNode>    py_hlt_08;
+    std::optional<PropertyConfig>    py_hlt_09;
+    _hltinterfaces_instantiations() {}
   };
-}
-
+} // namespace
 
 #endif // DICT_HLTINTERFACESDICT_H

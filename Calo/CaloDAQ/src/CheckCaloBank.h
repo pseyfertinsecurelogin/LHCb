@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef   CHECKCALOBANK_H
-#define   CHECKCALOBANK_H 1
+#ifndef CHECKCALOBANK_H
+#define CHECKCALOBANK_H 1
 
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -24,19 +24,16 @@
 
 class CheckCaloBank : public GaudiAlgorithm {
 public:
-
-  CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator);
+  CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator );
   StatusCode initialize() override;
-  StatusCode execute   () override;
-
+  StatusCode execute() override;
 
 private:
   LHCb::RawBank::BankType m_trig;
   LHCb::RawBank::BankType m_bank;
-  std::string m_typ;
+  std::string             m_typ;
 
   /// List of locations in the transient store to search the RawEvent object.
   std::vector<std::string> m_rawEventLocations;
-
 };
 #endif //    CHECKCALOBANK_H

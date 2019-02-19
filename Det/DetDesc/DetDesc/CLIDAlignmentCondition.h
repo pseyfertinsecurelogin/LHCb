@@ -9,14 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // $Id: CLIDAlignmentCondition.h,v 1.1 2005-06-03 10:19:44 jpalac Exp $
-#ifndef DETDESC_CLIDALIGNMENTCONDITION_H 
+#ifndef DETDESC_CLIDALIGNMENTCONDITION_H
 #define DETDESC_CLIDALIGNMENTCONDITION_H 1
 
 // Include files
 #include "GaudiKernel/ClassID.h"
 
 /** @class CLIDAlignmentCondition CLIDAlignmentCondition.h DetDesc/CLIDAlignmentCondition.h
- *  
+ *
  *
  *  @author Juan PALACIOS
  *  @date   2005-04-12

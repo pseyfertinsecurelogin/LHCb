@@ -25,5 +25,5 @@
 // ============================================================================
 // Force creation of templated classes
 #include "RichCommonBase.icpp"
-template class Rich::Future::CommonBase< GaudiAlgorithm >;
+template class Rich::Future::CommonBase<GaudiAlgorithm>;
 // ============================================================================

@@ -41,8 +41,7 @@ class ValidDataObject : public DataObject,
 
 {
 
- public:
-
+public:
   /// Default constructor
   ValidDataObject();
 
@@ -56,27 +55,25 @@ class ValidDataObject : public DataObject,
 
   /// Update using another instance of this class: deep copy all
   /// contents, except for the properties of a generic DataObject
-  virtual void update ( ValidDataObject& obj );
+  virtual void update( ValidDataObject& obj );
 
- public:
-
+public:
   // Re-implemented from DataObject
 
   /// Class ID of this instance
   inline const CLID& clID() const override { return classID(); }
 
   /// Class ID of this class
-  inline static  const CLID& classID() { return CLID_ValidDataObject; }
+  inline static const CLID& classID() { return CLID_ValidDataObject; }
 
   /// Fill the output stream (ASCII)
   std::ostream& fillStream( std::ostream& s ) const override;
 
- public:
-
+public:
   // Implementation of IValidity
 
   /// Check if the data object has a well defined validity range
-  bool isValid() const  override;
+  bool isValid() const override;
 
   /// Check if the data object is valid at the specified time
   bool isValid( const Gaudi::Time& t ) const override;
@@ -96,9 +93,9 @@ class ValidDataObject : public DataObject,
   /// Set end of validity
   void setValidityTill( const Gaudi::Time& till ) override;
 
-// ================================================
-// ValidDataObject methods
-// ================================================
+  // ================================================
+  // ValidDataObject methods
+  // ================================================
 
   /// Update the current object and all the used ones (children,
   /// references, etc) only if needed, of course.
@@ -107,7 +104,7 @@ class ValidDataObject : public DataObject,
 
   /// Possible stata of the update flag
   enum UpdateModeFlag {
-    DEFAULT, ///< use the actual validity
+    DEFAULT,      ///< use the actual validity
     ALWAYS_VALID, ///< never update
     FORCE_UPDATE, ///< force an update even if still valid (then back to DEFAULT behavior)
     OVERRIDE ///< used only for arguments of the update method to change the update behavior, otherwise same as DEFAULT
@@ -120,17 +117,16 @@ class ValidDataObject : public DataObject,
   /// ValidDataObject::ALWAYS_VALID -> never update
   /// ValidDataObject::FORCE_UPDATE -> force an update even if still valid
   ///                                  (then back to DEFAULT behavior)
-  virtual const UpdateModeFlag &updateMode() const;
+  virtual const UpdateModeFlag& updateMode() const;
 
   /// Set the mode for update
-  virtual void setUpdateMode(UpdateModeFlag mode);
+  virtual void setUpdateMode( UpdateModeFlag mode );
 
   virtual void defaultUpdateMode();
   virtual void forceUpdateMode();
   virtual void neverUpdateMode();
 
- private:
-
+private:
   // IValidity data
   /// Start of validity
   Gaudi::Time m_validSince;
@@ -138,8 +134,7 @@ class ValidDataObject : public DataObject,
   Gaudi::Time m_validUntil;
 
   /// Flag to force/inhibit the update regardless of the validity
-  UpdateModeFlag   m_updateMode;
-
+  UpdateModeFlag m_updateMode;
 };
 
 #endif // DETDESC_VALIDDATAOBJECT_H

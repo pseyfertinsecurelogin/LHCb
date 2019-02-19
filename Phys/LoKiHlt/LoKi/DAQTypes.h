@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_DAQTYPES_H 
+#ifndef LOKI_DAQTYPES_H
 #define LOKI_DAQTYPES_H 1
 // ============================================================================
 // Include files
@@ -18,25 +18,23 @@
 // ============================================================================
 #include "LoKi/OdinTypes.h"
 // ============================================================================
-namespace LoKi 
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::DAQTypes LoKi/DAQTypes.h
    *
-   *  The basic types defined for LoKiHlt package 
+   *  The basic types defined for LoKiHlt package
    *
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2008-09-18
    */
-  namespace DAQTypes 
-  {
+  namespace DAQTypes {
     // ========================================================================
-    using namespace LoKi::OdinTypes ;
+    using namespace LoKi::OdinTypes;
     // ========================================================================
-  } // end of namespace LoKi::DAQTypes 
+  } // namespace DAQTypes
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_DAQTYPES_H

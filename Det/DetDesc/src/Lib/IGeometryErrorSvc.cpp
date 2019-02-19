@@ -9,26 +9,25 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// DetDesc 
+// DetDesc
 // ============================================================================
 #include "DetDesc/IGeometryErrorSvc.h"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for class DetDesc::IGeometryErrorSvc
- *  @date 2007-12-14 
+ *  @date 2007-12-14
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  */
 // ============================================================================
 // Retrieve the unique interface ID
 // ============================================================================
-const InterfaceID& DetDesc::IGeometryErrorSvc::interfaceID() 
-{
-  static const InterfaceID s_IID ( "DetDesc::IGeometryErrorSvc" , 1 , 0 ) ;
-  return s_IID  ;
+const InterfaceID& DetDesc::IGeometryErrorSvc::interfaceID() {
+  static const InterfaceID s_IID( "DetDesc::IGeometryErrorSvc", 1, 0 );
+  return s_IID;
 }
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

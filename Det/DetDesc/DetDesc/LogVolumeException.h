@@ -13,7 +13,7 @@
 // Include files
 #include "GaudiKernel/GaudiException.h"
 // forward declarations
-struct ILVolume ; ///< detdesc package
+struct ILVolume; ///< detdesc package
 
 /** @class LogVolumeException LogVolumeException.h DetDesc/LogVolumeException.h
  *
@@ -23,21 +23,16 @@ struct ILVolume ; ///< detdesc package
  *  @date   18/11/2001
  */
 
-
-class LogVolumeException : public GaudiException
-{
+class LogVolumeException : public GaudiException {
 
 public:
-
   /** standard constructor
    *  @param name   exception name
    *  @param logvol pointer to ILVolume interface
    *  @param sc     status code
    */
-  LogVolumeException
-  ( const std::string&    name                         ,
-    const ILVolume*       logvol = nullptr             ,
-    const StatusCode&     sc     = StatusCode::FAILURE );
+  LogVolumeException( const std::string& name, const ILVolume* logvol = nullptr,
+                      const StatusCode& sc = StatusCode::FAILURE );
 
   /** standard constructor
    *  @param name   exception name
@@ -45,23 +40,20 @@ public:
    *  @param logvol pointer to ILVolume interface
    *  @param sc     status code
    */
-  LogVolumeException
-  ( const std::string&    name                         ,
-    const GaudiException& excp                         ,
-    const ILVolume*       logvol = nullptr             ,
-    const StatusCode&     sc     = StatusCode::FAILURE );
+  LogVolumeException( const std::string& name, const GaudiException& excp, const ILVolume* logvol = nullptr,
+                      const StatusCode& sc = StatusCode::FAILURE );
 
   /** printout to standard STD/STL stream
    *  @param os reference to the stream
    *  @return reference to the stream
    */
-  std::ostream&     printOut ( std::ostream& os = std::cerr ) const override;
+  std::ostream& printOut( std::ostream& os = std::cerr ) const override;
 
   /** printout to standard Message stream
    *  @param os reference to the stream
    *  @return reference to the stream
    */
-  MsgStream&        printOut ( MsgStream&    os             ) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** clone method ("virtual constructor")
    *  @return pointer to newly created object
@@ -73,9 +65,7 @@ public:
   LogVolumeException() = delete;
 
 private:
-
-  const ILVolume* m_logvol ;
-
+  const ILVolume* m_logvol;
 };
 
 // ============================================================================

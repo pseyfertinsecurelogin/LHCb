@@ -12,9 +12,9 @@
 
 #include <iostream>
 
-#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IRegistry.h"
 
 #include "DetDesc/IDetectorElement.h"
 
@@ -30,15 +30,15 @@
 //=============================================================================
 // Analyze
 //=============================================================================
-bool DataStoreLoadAgent::analyse (IRegistry *pObject, int level){
-  DataObject *tmp;
+bool DataStoreLoadAgent::analyse( IRegistry* pObject, int level ) {
+  DataObject* tmp;
 
-   // I couldn't find a better way to load an object.
-  StatusCode sc = pObject->dataSvc()->retrieveObject(pObject->identifier(),tmp);
+  // I couldn't find a better way to load an object.
+  StatusCode sc = pObject->dataSvc()->retrieveObject( pObject->identifier(), tmp );
 
-  if (level > m_maxDepth) m_maxDepth = level;
+  if ( level > m_maxDepth ) m_maxDepth = level;
 
-  if ( sc.isSuccess() ){ // object was loaded successfully
+  if ( sc.isSuccess() ) { // object was loaded successfully
     ++m_loadedObjects;
   } else { // obj. was not loaded: stop the recursion (there shouldn't be any level downstream)
     return false;

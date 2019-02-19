@@ -9,10 +9,10 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #pragma once
-#include <vector>
-#include <array>
 #include <algorithm>
+#include <array>
 #include <string>
+#include <vector>
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
@@ -59,20 +59,18 @@
 
 class VPSuperPixelBankEncoder : public GaudiAlgorithm {
 
- public:
-
+public:
   /// Standard constructor
-  VPSuperPixelBankEncoder(const std::string& name, ISvcLocator* pSvcLocator);
-  virtual ~VPSuperPixelBankEncoder();  ///< Destructor
-  StatusCode initialize() override;     ///< Algorithm initialization
-  StatusCode execute() override;        ///< Algorithm execution
+  VPSuperPixelBankEncoder( const std::string& name, ISvcLocator* pSvcLocator );
+  virtual ~VPSuperPixelBankEncoder(); ///< Destructor
+  StatusCode initialize() override;   ///< Algorithm initialization
+  StatusCode execute() override;      ///< Algorithm execution
 
- private:
-
+private:
   /// to sort super pixels by column (major) and row (minor)
   struct SPLowerThan {
-    inline bool operator()(unsigned int lhs, unsigned int rhs) const {
-      return (lhs & 0x7FFF00) < (rhs & 0x7FFF00);
+    inline bool operator()( unsigned int lhs, unsigned int rhs ) const {
+      return ( lhs & 0x7FFF00 ) < ( rhs & 0x7FFF00 );
     }
   };
 
@@ -89,7 +87,7 @@ class VPSuperPixelBankEncoder : public GaudiAlgorithm {
   /// event counter
   unsigned int m_evt = 0;
   /// per sensor buffers of super pixel words
-  std::array<std::vector<unsigned int>,208 > m_spBySensor;
+  std::array<std::vector<unsigned int>, 208> m_spBySensor;
   /// buffer for checking super pixel neighbours
   unsigned char m_buffer[VP::NPixelsPerSensor];
   /// buffer for all non-zero super pixel indices on a sensor

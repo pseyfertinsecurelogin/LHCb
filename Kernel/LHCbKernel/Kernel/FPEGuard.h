@@ -10,17 +10,17 @@
 \*****************************************************************************/
 #ifndef FPEGUARD_H
 #define FPEGUARD_H 1
-#if defined(linux) && defined(__GNUC__)
-#include <fenv.h>
-#elif defined(_WIN32)
-#include <float.h>
+#if defined( linux ) && defined( __GNUC__ )
+#  include <fenv.h>
+#elif defined( _WIN32 )
+#  include <float.h>
 #endif
 
-#include <map>
-#include <vector>
-#include <string>
-#include <iostream>
 #include "GaudiKernel/GaudiException.h"
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
 /** @namespace FPE
  *
@@ -42,67 +42,72 @@ namespace FPE {
    */
   namespace detail {
 
-#if defined(linux) && defined(__GNUC__)
+#if defined( linux ) && defined( __GNUC__ )
     static const bool has_working_implementation = true;
-    typedef int mask_type;
+    typedef int       mask_type;
     // make sure the FPU has caught up by explicitly issueing an fwait...
-    inline mask_type get()  { asm volatile("fwait"); return fegetexcept() & FE_ALL_EXCEPT; }
-    inline mask_type disable(mask_type mask) { return fedisableexcept( mask & FE_ALL_EXCEPT ); }
-    inline mask_type enable(mask_type mask)  {
-      mask &= FE_ALL_EXCEPT ;
-      feclearexcept(mask); // remove any 'stale' exceptions before switching on trapping
-                           // otherwise we immediately trigger an exception...
-      return feenableexcept(mask) & FE_ALL_EXCEPT;
+    inline mask_type get() {
+      asm volatile( "fwait" );
+      return fegetexcept() & FE_ALL_EXCEPT;
     }
-    inline const std::map<std::string,mask_type>& map() {
-      static std::map<std::string,mask_type> m =
-        {{ "Inexact"   , mask_type(FE_INEXACT)   },
-         { "DivByZero" , mask_type(FE_DIVBYZERO) },
-         { "Underflow" , mask_type(FE_UNDERFLOW) },
-         { "Overflow"  , mask_type(FE_OVERFLOW)  },
-         { "Invalid"   , mask_type(FE_INVALID)   },
-         { "AllExcept" , mask_type(FE_ALL_EXCEPT)}};
+    inline mask_type disable( mask_type mask ) { return fedisableexcept( mask & FE_ALL_EXCEPT ); }
+    inline mask_type enable( mask_type mask ) {
+      mask &= FE_ALL_EXCEPT;
+      feclearexcept( mask ); // remove any 'stale' exceptions before switching on trapping
+                             // otherwise we immediately trigger an exception...
+      return feenableexcept( mask ) & FE_ALL_EXCEPT;
+    }
+    inline const std::map<std::string, mask_type>& map() {
+      static std::map<std::string, mask_type> m = {
+          {"Inexact", mask_type( FE_INEXACT )},     {"DivByZero", mask_type( FE_DIVBYZERO )},
+          {"Underflow", mask_type( FE_UNDERFLOW )}, {"Overflow", mask_type( FE_OVERFLOW )},
+          {"Invalid", mask_type( FE_INVALID )},     {"AllExcept", mask_type( FE_ALL_EXCEPT )}};
       return m;
     }
     /// Default mask (for default FPE::Guard constructor)
-    static const mask_type s_default_guard_mask ( FE_ALL_EXCEPT );
-#elif defined(_WIN32)
-    static const bool has_working_implementation = true;
+    static const mask_type s_default_guard_mask( FE_ALL_EXCEPT );
+#elif defined( _WIN32 )
+    static const bool    has_working_implementation = true;
     typedef unsigned int mask_type;
     // VS8
     // mask_type disable(mask_type mask) { mask_type p; _controlfp_s(&p,~mask,_MCW_EM); return p;}
     // mask_type enable(mask_type mask)  { mask_type p; _controlfp_s(&p, mask,_MCW_EM); return p;}
     // VS7
-    inline mask_type get() { __asm { fwait };  return _controlfp(0,0); }
-    inline mask_type disable(mask_type mask) {
+    inline mask_type get() {
+      __asm { fwait}
+      ;
+      return _controlfp( 0, 0 );
+    }
+    inline mask_type disable( mask_type mask ) {
       int cw = get(); // Get current control word
-      cw |= ~mask; // set control bits, turn exceptions off
-      return _controlfp(cw,_MCW_EM);}
-    inline mask_type enable(mask_type mask)  {
+      cw |= ~mask;    // set control bits, turn exceptions off
+      return _controlfp( cw, _MCW_EM );
+    }
+    inline mask_type enable( mask_type mask ) {
       _clearfp(); // remove any 'stale' exceptions before switching on trapping
                   // otherwise we immediately trigger an exception...
       int cw = mask;
-      return _controlfp(cw,_MCW_EM);}
-    inline const std::map<std::string,mask_type>& map() {
-      static std::map<std::string,mask_type> m = boost::assign::map_list_of
-        ( "Inexact"   , mask_type(~EM_INEXACT)   )
-        ( "DivByZero" , mask_type(~EM_ZERODIVIDE))
-        ( "Underflow" , mask_type(~EM_UNDERFLOW) )
-        ( "Overflow"  , mask_type(~EM_OVERFLOW)  )
-        ( "Invalid"   , mask_type(~EM_INVALID)   )
-        ( "AllExcept" , mask_type(~(EM_INVALID|EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL)));
+      return _controlfp( cw, _MCW_EM );
+    }
+    inline const std::map<std::string, mask_type>& map() {
+      static std::map<std::string, mask_type> m = boost::assign::map_list_of( "Inexact", mask_type( ~EM_INEXACT ) )(
+          "DivByZero", mask_type( ~EM_ZERODIVIDE ) )( "Underflow", mask_type( ~EM_UNDERFLOW ) )(
+          "Overflow", mask_type( ~EM_OVERFLOW ) )( "Invalid", mask_type( ~EM_INVALID ) )(
+          "AllExcept",
+          mask_type( ~( EM_INVALID | EM_OVERFLOW | EM_UNDERFLOW | EM_INEXACT | EM_ZERODIVIDE | EM_DENORMAL ) ) );
       return m;
     }
     /// Default mask (for default FPE::Guard constructor)
-    static const mask_type s_default_guard_mask = ~(EM_INVALID|EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL);
+    static const mask_type s_default_guard_mask =
+        ~( EM_INVALID | EM_OVERFLOW | EM_UNDERFLOW | EM_INEXACT | EM_ZERODIVIDE | EM_DENORMAL );
 #else
-    static const bool has_working_implementation = false;
-    typedef int mask_type;
-    inline mask_type get() { return 0; }
-    inline mask_type disable(mask_type) { return 0; }
-    inline mask_type enable(mask_type) { return 0; }
-    inline const std::map<std::string,mask_type>& map() {
-      static std::map<std::string,mask_type> m;
+    static const bool                              has_working_implementation = false;
+    typedef int                                    mask_type;
+    inline mask_type                               get() { return 0; }
+    inline mask_type                               disable( mask_type ) { return 0; }
+    inline mask_type                               enable( mask_type ) { return 0; }
+    inline const std::map<std::string, mask_type>& map() {
+      static std::map<std::string, mask_type> m;
       return m;
     }
     /// Default mask (for default FPE::Guard constructor)
@@ -170,14 +175,12 @@ namespace FPE {
    *  @author Gerhard Raven
    *  @date   09/06/2008
    */
-  class Guard
-  {
-  
+  class Guard {
+
   public:
-    
     /// export the type of the FPE mask
     typedef FPE::detail::mask_type mask_type;
-    
+
     /// Export whether a working implementation exists.
     /// In case it doesn't, the code (silently!) defaults
     /// to no-operation.
@@ -190,12 +193,8 @@ namespace FPE {
      *  @param mask    The mask of exceptions to activate/deactive
      *  @param disable Disable or enable the given FPE exceptions
      */
-    explicit Guard( const mask_type mask,
-                    bool disable = false )
-      : m_initial( disable ?
-                   FPE::detail::disable(mask) :
-                   FPE::detail::enable(mask)  )
-    { }
+    explicit Guard( const mask_type mask, bool disable = false )
+        : m_initial( disable ? FPE::detail::disable( mask ) : FPE::detail::enable( mask ) ) {}
 
     /** Default Constructor. Activates/Deactivate all known FPE exceptions.
      *
@@ -203,21 +202,17 @@ namespace FPE {
      *                 (default is to enable exceptions).
      */
     explicit Guard( bool disable = false )
-      : m_initial( disable ?
-                   FPE::detail::disable ( FPE::detail::s_default_guard_mask ) :
-                   FPE::detail::enable  ( FPE::detail::s_default_guard_mask ) )
-    { }
+        : m_initial( disable ? FPE::detail::disable( FPE::detail::s_default_guard_mask )
+                             : FPE::detail::enable( FPE::detail::s_default_guard_mask ) ) {}
 
     /// Destructor. Returns system to the same state as before the object was constructed
-    ~Guard() noexcept(false)
-    {
-      //TODO: in disable mode, report which FPE happened between c'tor and d'tor.
+    ~Guard() noexcept( false ) {
+      // TODO: in disable mode, report which FPE happened between c'tor and d'tor.
       FPE::detail::disable( ~m_initial );
       const auto mask = FPE::detail::enable( m_initial );
       // retry once, in case the FPU is a bit behind... yes, that happens
-      if ( mask != m_initial && FPE::detail::get() != m_initial )
-      {
-        throw GaudiException("oops -- Guard failed to restore initial state","FPE::Guard",StatusCode::FAILURE);
+      if ( mask != m_initial && FPE::detail::get() != m_initial ) {
+        throw GaudiException( "oops -- Guard failed to restore initial state", "FPE::Guard", StatusCode::FAILURE );
       }
     }
 
@@ -234,14 +229,13 @@ namespace FPE {
      *   @return The exception mask for the given list of exception strings
      */
     template <typename Iter>
-    static mask_type mask(Iter begin, Iter end)
-    {
-#if defined(_WIN32)
+    static mask_type mask( Iter begin, Iter end ) {
+#if defined( _WIN32 )
       mask_type m = 0x9ffff;
-      for (;begin!=end;++begin) { m &= mask(*begin); }
+      for ( ; begin != end; ++begin ) { m &= mask( *begin ); }
 #else
       mask_type m = 0;
-      for (;begin!=end;++begin) { m |= mask(*begin); }
+      for ( ; begin != end; ++begin ) { m |= mask( *begin ); }
 #endif
       return m;
     }
@@ -256,15 +250,12 @@ namespace FPE {
      *
      *   @return The exception mask for the given exception string
      */
-    static mask_type mask( const std::string & excpt )
-    {
-      mask_type mask(0);
-      if ( FPE::detail::has_working_implementation )
-      {
-        auto j = FPE::detail::map().find(excpt);
-        if ( FPE::detail::map().end() == j )
-        {
-          throw GaudiException("FPE::Guard::mask : Unknown mask "+excpt,excpt,StatusCode::FAILURE);
+    static mask_type mask( const std::string& excpt ) {
+      mask_type mask( 0 );
+      if ( FPE::detail::has_working_implementation ) {
+        auto j = FPE::detail::map().find( excpt );
+        if ( FPE::detail::map().end() == j ) {
+          throw GaudiException( "FPE::Guard::mask : Unknown mask " + excpt, excpt, StatusCode::FAILURE );
         }
         mask = j->second;
       }
@@ -272,9 +263,7 @@ namespace FPE {
     }
 
   private:
-
     mask_type m_initial; ///< Saved previous mask value
-
   };
 
 } // namespace FPE

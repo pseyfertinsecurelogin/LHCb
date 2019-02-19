@@ -15,15 +15,12 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-class DumpHepMC : public GaudiAlgorithm
-{
+class DumpHepMC : public GaudiAlgorithm {
 public:
-
   /// the actual type of container with addresses
-  typedef std::vector<std::string> Addresses ;
+  typedef std::vector<std::string> Addresses;
 
 public:
-
   /** execution of the algoritm
    *  @see IAlgorithm
    *  @return status code
@@ -38,20 +35,16 @@ public:
    *  @param name algorithm instance's name
    *  @param iscv pointer to Service Locator
    */
-  DumpHepMC ( const std::string& name ,
-              ISvcLocator*       isvc ) ;
+  DumpHepMC( const std::string& name, ISvcLocator* isvc );
 
 private:
-
-  Addresses  m_addresses ;
+  Addresses m_addresses;
 
   /// Print HepMC::GenEvent ordering particles according to barcodes
-  void orderedPrint( const HepMC::GenEvent * theEvent ,
-                     std::ostream & ostr ) const ;
+  void orderedPrint( const HepMC::GenEvent* theEvent, std::ostream& ostr ) const;
 
   /// Print HepMC::GenVertex ordering particles according to barcodes
-  void orderedVertexPrint( HepMC::GenVertex * theVertex ,
-                           std::ostream & ostr ) const ;
+  void orderedVertexPrint( HepMC::GenVertex* theVertex, std::ostream& ostr ) const;
 };
 
 // ============================================================================

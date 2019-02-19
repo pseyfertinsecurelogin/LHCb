@@ -21,20 +21,20 @@
 /*
  *    LHCb namespace declaration
  */
-namespace LHCb  {
+namespace LHCb {
 
   // Forward declarations:
   class RawBank;
   class RawEvent;
 
   /** @class RawEventPrintout RawEventPrintout.h MDF/RawEventPrintout.h
-    *
-    */
-  class RawEventPrintout  {
+   *
+   */
+  class RawEventPrintout {
   public:
-    static std::string bankHeader(const RawBank* r);
-    static std::string bankType(const RawBank* r);
-    static std::string bankType(int i);
+    static std::string bankHeader( const RawBank* r );
+    static std::string bankType( const RawBank* r );
+    static std::string bankType( int i );
   };
-}   // End namespace LHCb
+} // End namespace LHCb
 #endif // MDF_RAWEVENTPRINTOUT_H

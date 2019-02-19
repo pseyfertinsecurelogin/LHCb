@@ -15,10 +15,10 @@
 
 // DetDesc
 #include "DetDesc/DetDesc.h"
-#include "DetDesc/SolidTrd.h"
 #include "DetDesc/SolidBox.h"
-#include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidTicks.h"
+#include "DetDesc/SolidTrd.h"
 
 #include <memory>
 
@@ -43,42 +43,29 @@
  *  @exception SolidException wrong parameter range
  */
 // ============================================================================
-SolidTrd::SolidTrd
-( const std::string& name              ,
-  const double       ZHalfLength       ,
-  const double       XHalfLength1      ,
-  const double       YHalfLength1      ,
-  const double       XHalfLength2      ,
-  const double       YHalfLength2      )
-  : SolidBase             ( name         )
-  , SolidPolyHedronHelper ( name         )
-  , m_trd_zHalfLength     ( ZHalfLength  )
-  , m_trd_xHalfLength1    ( XHalfLength1 )
-  , m_trd_xHalfLength2    ( XHalfLength2 )
-  , m_trd_yHalfLength1    ( YHalfLength1 )
-  , m_trd_yHalfLength2    ( YHalfLength2 )
-{
+SolidTrd::SolidTrd( const std::string& name, const double ZHalfLength, const double XHalfLength1,
+                    const double YHalfLength1, const double XHalfLength2, const double YHalfLength2 )
+    : SolidBase( name )
+    , SolidPolyHedronHelper( name )
+    , m_trd_zHalfLength( ZHalfLength )
+    , m_trd_xHalfLength1( XHalfLength1 )
+    , m_trd_xHalfLength2( XHalfLength2 )
+    , m_trd_yHalfLength1( YHalfLength1 )
+    , m_trd_yHalfLength2( YHalfLength2 ) {
   //
-  if( 0 >= ZHalfLength  )
-    { throw SolidException("SolidTrd::ZHalfLength is not positive!"); }
-  if( 0 >  XHalfLength1 )
-    { throw SolidException("SolidTrd::XHalfLength1 is negative!"); }
-  if( 0 >  XHalfLength2 )
-    { throw SolidException("SolidTrd::XHalfLength2 is negative!"); }
-  if( 0 >  YHalfLength1 )
-    { throw SolidException("SolidTrd::YHalfLength1 is negative!"); }
-  if( 0 >  YHalfLength2 )
-    { throw SolidException("SolidTrd::YHalfLengt2 is negative!"); }
-  if( 0 >=  XHalfLength1 + XHalfLength2 )
-    { throw SolidException("SolidTrd::XSUM is not positive "); }
-  if( 0 >=  YHalfLength1 + YHalfLength2 )
-    { throw SolidException("SolidTrd::YSUM is not positive "); }
+  if ( 0 >= ZHalfLength ) { throw SolidException( "SolidTrd::ZHalfLength is not positive!" ); }
+  if ( 0 > XHalfLength1 ) { throw SolidException( "SolidTrd::XHalfLength1 is negative!" ); }
+  if ( 0 > XHalfLength2 ) { throw SolidException( "SolidTrd::XHalfLength2 is negative!" ); }
+  if ( 0 > YHalfLength1 ) { throw SolidException( "SolidTrd::YHalfLength1 is negative!" ); }
+  if ( 0 > YHalfLength2 ) { throw SolidException( "SolidTrd::YHalfLengt2 is negative!" ); }
+  if ( 0 >= XHalfLength1 + XHalfLength2 ) { throw SolidException( "SolidTrd::XSUM is not positive " ); }
+  if ( 0 >= YHalfLength1 + YHalfLength2 ) { throw SolidException( "SolidTrd::YSUM is not positive " ); }
   ///
   makeAll();
   /// set bounding parameters
   setBP();
   ///
-  checkTickContainerCapacity() ;
+  checkTickContainerCapacity();
   createCover();
 }
 
@@ -88,20 +75,18 @@ SolidTrd::SolidTrd
  */
 // ============================================================================
 SolidTrd::SolidTrd( const std::string& name )
-  : SolidBase             ( name          )
-  , SolidPolyHedronHelper ( name          )
-  , m_trd_zHalfLength     ( 10000000      )
-  , m_trd_xHalfLength1    ( 10000         )
-  , m_trd_xHalfLength2    ( 10000         )
-  , m_trd_yHalfLength1    ( 10000         )
-  , m_trd_yHalfLength2    ( 10000         )
-{
+    : SolidBase( name )
+    , SolidPolyHedronHelper( name )
+    , m_trd_zHalfLength( 10000000 )
+    , m_trd_xHalfLength1( 10000 )
+    , m_trd_xHalfLength2( 10000 )
+    , m_trd_yHalfLength1( 10000 )
+    , m_trd_yHalfLength2( 10000 ) {
   ///
   makeAll();
   ///
   createCover();
 }
-
 
 // ============================================================================
 /** - retrieve the pointer to "simplified" solid - "cover"
@@ -113,25 +98,17 @@ SolidTrd::SolidTrd( const std::string& name )
  */
 // ============================================================================
 void SolidTrd::createCover() {
-  if(  ( xHalfLength1() != yHalfLength1() )  || 
-       ( xHalfLength2() != yHalfLength2() ) ) 
-    { m_cover = std::make_unique<SolidTrd>("Cover for " + name() , 
-                                           zHalfLength() , 
-                                           xHalfLength1() > yHalfLength1() ? 
-                                           xHalfLength1() : yHalfLength1() , 
-                                           xHalfLength1() > yHalfLength1() ? 
-                                           xHalfLength1() : yHalfLength1() , 
-                                           xHalfLength2() > yHalfLength2() ? 
-                                           xHalfLength2() : yHalfLength2() , 
-                                           xHalfLength2() > yHalfLength2() ? 
-                                           xHalfLength2() : yHalfLength2() ) ; }
-  else
-    { m_cover = std::make_unique<SolidBox>("Cover for " + name() , 
-                                           xHalfLength1() > xHalfLength2() ? 
-                                           xHalfLength1() : xHalfLength2() , 
-                                           yHalfLength1() > yHalfLength2() ? 
-                                           yHalfLength1() : yHalfLength2() , 
-                                           zHalfLength () ); }
+  if ( ( xHalfLength1() != yHalfLength1() ) || ( xHalfLength2() != yHalfLength2() ) ) {
+    m_cover = std::make_unique<SolidTrd>( "Cover for " + name(), zHalfLength(),
+                                          xHalfLength1() > yHalfLength1() ? xHalfLength1() : yHalfLength1(),
+                                          xHalfLength1() > yHalfLength1() ? xHalfLength1() : yHalfLength1(),
+                                          xHalfLength2() > yHalfLength2() ? xHalfLength2() : yHalfLength2(),
+                                          xHalfLength2() > yHalfLength2() ? xHalfLength2() : yHalfLength2() );
+  } else {
+    m_cover = std::make_unique<SolidBox>(
+        "Cover for " + name(), xHalfLength1() > xHalfLength2() ? xHalfLength1() : xHalfLength2(),
+        yHalfLength1() > yHalfLength2() ? yHalfLength1() : yHalfLength2(), zHalfLength() );
+  }
 }
 
 // ============================================================================
@@ -139,48 +116,39 @@ void SolidTrd::createCover() {
  *  @exception SolidException wrong parameters
  */
 // ============================================================================
-void SolidTrd::makeAll()
-{
-  reset() ;
+void SolidTrd::makeAll() {
+  reset();
   m_ph_planes.clear();
   m_ph_vertices.clear();
   {
     /// construct points (vertices)
-    m_ph_vertices.emplace_back( - xHalfLength1() , - yHalfLength1() , -zHalfLength() ) ;
-    m_ph_vertices.emplace_back( - xHalfLength1() ,   yHalfLength1() , -zHalfLength() ) ;
-    m_ph_vertices.emplace_back(   xHalfLength1() ,   yHalfLength1() , -zHalfLength() ) ;
-    m_ph_vertices.emplace_back(   xHalfLength1() , - yHalfLength1() , -zHalfLength() ) ;
-    m_ph_vertices.emplace_back( - xHalfLength2() , - yHalfLength2() ,  zHalfLength() ) ;
-    m_ph_vertices.emplace_back( - xHalfLength2() ,   yHalfLength2() ,  zHalfLength() ) ;
-    m_ph_vertices.emplace_back(   xHalfLength2() ,   yHalfLength2() ,  zHalfLength() ) ;
-    m_ph_vertices.emplace_back(   xHalfLength2() , - yHalfLength2() ,  zHalfLength() ) ;
+    m_ph_vertices.emplace_back( -xHalfLength1(), -yHalfLength1(), -zHalfLength() );
+    m_ph_vertices.emplace_back( -xHalfLength1(), yHalfLength1(), -zHalfLength() );
+    m_ph_vertices.emplace_back( xHalfLength1(), yHalfLength1(), -zHalfLength() );
+    m_ph_vertices.emplace_back( xHalfLength1(), -yHalfLength1(), -zHalfLength() );
+    m_ph_vertices.emplace_back( -xHalfLength2(), -yHalfLength2(), zHalfLength() );
+    m_ph_vertices.emplace_back( -xHalfLength2(), yHalfLength2(), zHalfLength() );
+    m_ph_vertices.emplace_back( xHalfLength2(), yHalfLength2(), zHalfLength() );
+    m_ph_vertices.emplace_back( xHalfLength2(), -yHalfLength2(), zHalfLength() );
     ///
   }
-  if( 8 != m_ph_vertices.size() )
-    { throw SolidException("SolidTrd::makeAll: wrong # vertices!"); }
+  if ( 8 != m_ph_vertices.size() ) { throw SolidException( "SolidTrd::makeAll: wrong # vertices!" ); }
 
   /// make faces
-  addFace( m_ph_vertices[0] , m_ph_vertices[4] ,
-           m_ph_vertices[5] , m_ph_vertices[1] ) ;
+  addFace( m_ph_vertices[0], m_ph_vertices[4], m_ph_vertices[5], m_ph_vertices[1] );
 
-  addFace( m_ph_vertices[2] , m_ph_vertices[6] ,
-           m_ph_vertices[7] , m_ph_vertices[3] ) ;
+  addFace( m_ph_vertices[2], m_ph_vertices[6], m_ph_vertices[7], m_ph_vertices[3] );
 
-  addFace( m_ph_vertices[1] , m_ph_vertices[5] ,
-           m_ph_vertices[6] , m_ph_vertices[2] ) ;
+  addFace( m_ph_vertices[1], m_ph_vertices[5], m_ph_vertices[6], m_ph_vertices[2] );
 
-  addFace( m_ph_vertices[0] , m_ph_vertices[3] ,
-           m_ph_vertices[7] , m_ph_vertices[4] ) ;
+  addFace( m_ph_vertices[0], m_ph_vertices[3], m_ph_vertices[7], m_ph_vertices[4] );
 
-  addFace( m_ph_vertices[0] , m_ph_vertices[1] ,
-           m_ph_vertices[2] , m_ph_vertices[3] ) ; /// bottom face
+  addFace( m_ph_vertices[0], m_ph_vertices[1], m_ph_vertices[2], m_ph_vertices[3] ); /// bottom face
 
-  addFace( m_ph_vertices[4] , m_ph_vertices[5] ,
-           m_ph_vertices[6] , m_ph_vertices[7] ) ; /// top    face
+  addFace( m_ph_vertices[4], m_ph_vertices[5], m_ph_vertices[6], m_ph_vertices[7] ); /// top    face
 
   ///
-  if( 6 != planes().size() )
-    { throw SolidException("SolidTrd::makeALL: wrong # faces"); }
+  if ( 6 != planes().size() ) { throw SolidException( "SolidTrd::makeALL: wrong # faces" ); }
   ///
 }
 
@@ -194,18 +162,15 @@ void SolidTrd::makeAll()
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream&  SolidTrd::printOut      ( std::ostream&  os ) const
-{
+std::ostream& SolidTrd::printOut( std::ostream& os ) const {
   /// serialize the base class
   SolidBase::printOut( os );
-  return
-    os << "["
-       << " sizeZ[mm]="  << DetDesc::print( zLength  () / Gaudi::Units::mm )
-       << " sizeX1[mm]=" << DetDesc::print( xLength1 () / Gaudi::Units::mm )
-       << " sizeY1[mm]=" << DetDesc::print( yLength1 () / Gaudi::Units::mm )
-       << " sizeX2[mm]=" << DetDesc::print( xLength2 () / Gaudi::Units::mm )
-       << " sizeY2[mm]=" << DetDesc::print( yLength2 () / Gaudi::Units::mm )
-       << "]" << std::endl ;
+  return os << "["
+            << " sizeZ[mm]=" << DetDesc::print( zLength() / Gaudi::Units::mm )
+            << " sizeX1[mm]=" << DetDesc::print( xLength1() / Gaudi::Units::mm )
+            << " sizeY1[mm]=" << DetDesc::print( yLength1() / Gaudi::Units::mm )
+            << " sizeX2[mm]=" << DetDesc::print( xLength2() / Gaudi::Units::mm )
+            << " sizeY2[mm]=" << DetDesc::print( yLength2() / Gaudi::Units::mm ) << "]" << std::endl;
 }
 
 // ============================================================================
@@ -218,18 +183,15 @@ std::ostream&  SolidTrd::printOut      ( std::ostream&  os ) const
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream&     SolidTrd::printOut      ( MsgStream&     os ) const
-{
+MsgStream& SolidTrd::printOut( MsgStream& os ) const {
   /// serialize the base class
   SolidBase::printOut( os );
-  return
-    os << "["
-       << " sizeZ[mm]="  << DetDesc::print( zLength  () / Gaudi::Units::mm )
-       << " sizeX1[mm]=" << DetDesc::print( xLength1 () / Gaudi::Units::mm )
-       << " sizeY1[mm]=" << DetDesc::print( yLength1 () / Gaudi::Units::mm )
-       << " sizeX2[mm]=" << DetDesc::print( xLength2 () / Gaudi::Units::mm )
-       << " sizeY2[mm]=" << DetDesc::print( yLength2 () / Gaudi::Units::mm )
-       << "]" << endmsg ;
+  return os << "["
+            << " sizeZ[mm]=" << DetDesc::print( zLength() / Gaudi::Units::mm )
+            << " sizeX1[mm]=" << DetDesc::print( xLength1() / Gaudi::Units::mm )
+            << " sizeY1[mm]=" << DetDesc::print( yLength1() / Gaudi::Units::mm )
+            << " sizeX2[mm]=" << DetDesc::print( xLength2() / Gaudi::Units::mm )
+            << " sizeY2[mm]=" << DetDesc::print( yLength2() / Gaudi::Units::mm ) << "]" << endmsg;
 }
 // ============================================================================
 

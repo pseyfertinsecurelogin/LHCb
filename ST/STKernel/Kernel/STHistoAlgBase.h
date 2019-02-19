@@ -31,8 +31,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STHistoBase.h STKernel/STHistoBase.h
@@ -45,19 +44,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class HistoAlgBase : public ST::CommonBase<GaudiHistoAlg>
-  {
+  class HistoAlgBase : public ST::CommonBase<GaudiHistoAlg> {
 
   public:
-
     /// Standard constructor
-    HistoAlgBase( const std::string& name,
-             ISvcLocator* pSvcLocator )
-      : ST::CommonBase<GaudiHistoAlg> ( name, pSvcLocator ) { }
-
+    HistoAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : ST::CommonBase<GaudiHistoAlg>( name, pSvcLocator ) {}
   };
 
-}
-
+} // namespace ST
 
 #endif // STKERNEL_STALGBASE_H

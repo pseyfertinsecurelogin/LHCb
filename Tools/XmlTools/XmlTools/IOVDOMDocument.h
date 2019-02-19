@@ -10,12 +10,11 @@
 \*****************************************************************************/
 #ifndef IOVDOMDOCUMENT_
 #define IOVDOMDOCUMENT_
-#include <memory>
-#include "GaudiKernel/Time.h"
 #include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/Time.h"
+#include <memory>
 
 #include <xercesc/dom/DOMDocument.hpp>
-
 
 /** @class IOVDOMDocument XmlTools/IOVDOMDocument.h
  *
@@ -25,16 +24,14 @@
  *  @date   2006-02-01
  */
 
-class IOVDOMDocument: virtual public IValidity {
+class IOVDOMDocument : virtual public IValidity {
 
 public:
-
   /// Constructor
-  IOVDOMDocument(xercesc::DOMDocument *dom);
-
+  IOVDOMDocument( xercesc::DOMDocument* dom );
 
   /// Return the contained DOMDocument.
-  inline xercesc::DOMDocument * getDOM() const { return m_dom.get(); }
+  inline xercesc::DOMDocument* getDOM() const { return m_dom.get(); }
 
   // -------- Implementation of IValidity --------
 
@@ -42,7 +39,7 @@ public:
   bool isValid() const override;
 
   /// is the Object valid for a given time?
-  bool isValid( const Gaudi::Time& time) const override;
+  bool isValid( const Gaudi::Time& time ) const override;
 
   /// since what time the Objest is valid?
   const Gaudi::Time& validSince() const override;
@@ -51,16 +48,15 @@ public:
   const Gaudi::Time& validTill() const override;
 
   /// set the validity range of the Object
-  void setValidity( const Gaudi::Time& since, const Gaudi::Time& until) override;
+  void setValidity( const Gaudi::Time& since, const Gaudi::Time& until ) override;
 
   /// set the validity time of the Object
-  void setValiditySince( const Gaudi::Time& since) override;
+  void setValiditySince( const Gaudi::Time& since ) override;
 
   /// set the validity time of the Object
-  void setValidityTill( const Gaudi::Time& until) override;
+  void setValidityTill( const Gaudi::Time& until ) override;
 
 private:
-
   /// Time of the start of validity
   Gaudi::Time m_since = Gaudi::Time::epoch();
 
@@ -69,9 +65,12 @@ private:
 
   /// The contained document
   struct release {
-    template <typename T> void operator()(T* p) const { if (p) p->release(); }
+    template <typename T>
+    void operator()( T* p ) const {
+      if ( p ) p->release();
+    }
   };
-  std::unique_ptr<xercesc::DOMDocument,release> m_dom;
+  std::unique_ptr<xercesc::DOMDocument, release> m_dom;
 };
 
 #endif /*IOVDOMDOCUMENT_*/

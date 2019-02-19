@@ -12,9 +12,9 @@
 #define CONFIGTARFILEACCESSSVC_H 1
 
 // Include files
-#include <string>
-#include <memory>
 #include "ConfigArchiveAccessSvc.h"
+#include <memory>
+#include <string>
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
  *
@@ -30,14 +30,14 @@ class ConfigTarFileAccessSvc : public ConfigArchiveAccessSvc {
 public:
   using ConfigArchiveAccessSvc::ConfigArchiveAccessSvc;
 
-  StatusCode finalize() override;      ///< Service initialization
+  StatusCode finalize() override; ///< Service initialization
   IArchive*  file() const override;
 
 private:
-
   mutable std::unique_ptr<IArchive>    m_file;
-  mutable Gaudi::Property<std::string> m_name { this, "File" };   ///< filename of tar file from which to read configurations
-  Gaudi::Property<std::string>         m_mode { this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
-  Gaudi::Property<bool>                m_compress { this, "CompressOnWrite", true }; ///< do we want to transparently compress items on write?
+  mutable Gaudi::Property<std::string> m_name{this, "File"}; ///< filename of tar file from which to read configurations
+  Gaudi::Property<std::string> m_mode{this, "Mode", "ReadOnly"}; ///< which flags to specify when opening the tar file
+  Gaudi::Property<bool>        m_compress{this, "CompressOnWrite",
+                                   true}; ///< do we want to transparently compress items on write?
 };
 #endif // CONFIGTARFILEACCESSSVC_H

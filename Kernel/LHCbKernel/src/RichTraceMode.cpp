@@ -24,11 +24,8 @@
 // local
 #include "Kernel/RichTraceMode.h"
 
-std::ostream &
-LHCb::RichTraceMode::fillStream( std::ostream &os ) const
-{
-  os << "RichTraceMode[ DetectionPrecision=" << detPrecision()
-     << " DetPlaneBoundaries=" << detPlaneBound();
+std::ostream& LHCb::RichTraceMode::fillStream( std::ostream& os ) const {
+  os << "RichTraceMode[ DetectionPrecision=" << detPrecision() << " DetPlaneBoundaries=" << detPlaneBound();
   if ( forcedSide() ) { os << " [Will force given RICH side]"; }
   if ( outMirrorBoundary() ) { os << " [Will Respect Outside Mirror Boundaries]"; }
   if ( mirrorSegBoundary() ) { os << " [Will Respect Mirror Seg Boundaries]"; }

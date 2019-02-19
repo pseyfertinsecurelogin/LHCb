@@ -9,12 +9,11 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-
-
-ApplicationMgr.TopAlg += { "DAQEventTests::ByteStreamTests",
-                           "DAQEventTests::DummyRawEventCreator",
-                           "RawEventDump" };
-ApplicationMgr.EvtMax = 1;
-ApplicationMgr.EvtSel = "NONE";
-EventDataSvc.ForceLeaves = 1;
-RawEventDump.DumpData = true;
+ApplicationMgr.TopAlg += {
+    "DAQEventTests::ByteStreamTests", "DAQEventTests::DummyRawEventCreator",
+    "RawEventDump"
+}
+ApplicationMgr.EvtMax = 1
+ApplicationMgr.EvtSel = "NONE"
+EventDataSvc.ForceLeaves = 1
+RawEventDump.DumpData = true

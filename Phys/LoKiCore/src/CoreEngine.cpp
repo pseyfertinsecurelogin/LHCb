@@ -31,70 +31,66 @@
  *  @date 2008-09-18
  */
 // ============================================================================
-namespace
-{
+namespace {
   template <class TYPE>
-  inline StatusCode _process
-  ( const std::string& name , const TYPE& cut )
-  {
-    const LoKi::Hybrid::CoreEngineActor& actor =
-      LoKi::Hybrid::CoreEngineActor::instance() ;
-    return actor.process ( name , cut ) ;
+  inline StatusCode _process( const std::string& name, const TYPE& cut ) {
+    const LoKi::Hybrid::CoreEngineActor& actor = LoKi::Hybrid::CoreEngineActor::instance();
+    return actor.process( name, cut );
   }
-}
-namespace LoKi { namespace Hybrid {
-// ============================================================================
-// propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process ( const std::string&        name ,
-                                 const LoKi::Types::FCuts& cut  ) const
-{ return _process ( name , cut ) ; }
-// ============================================================================
-//  propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process( const std::string&        name ,
-                                const LoKi::Types::FFunc& cut  ) const
-{ return _process ( name , cut ) ; }
-// ============================================================================
-// propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process ( const std::string&        name ,
-                                 const LoKi::Types::XCuts& cut  ) const
-{ return _process ( name , cut ) ; }
-// ============================================================================
-// propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process ( const std::string&        name ,
-                                 const LoKi::Types::XFunc& cut  ) const
-{ return _process ( name , cut ) ; }
-// ============================================================================
-// propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process ( const std::string&           name ,
-                                 const LoKi::Types::XMaps&    cut  ) const
-{ return _process ( name , cut ) ; }
-// ============================================================================
-// propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process ( const std::string&           name ,
-                                 const LoKi::Types::XFunVals& cut  ) const
-{ return _process ( name , cut ) ; }
-// ============================================================================
-// propagate the cut to the tool
-// ============================================================================
-StatusCode CoreEngine::process ( const std::string&           name ,
-                                 const LoKi::Types::XSources& cut  ) const
-{ return _process ( name , cut ) ; }
+} // namespace
+namespace LoKi {
+  namespace Hybrid {
+    // ============================================================================
+    // propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::FCuts& cut ) const {
+      return _process( name, cut );
+    }
+    // ============================================================================
+    //  propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::FFunc& cut ) const {
+      return _process( name, cut );
+    }
+    // ============================================================================
+    // propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::XCuts& cut ) const {
+      return _process( name, cut );
+    }
+    // ============================================================================
+    // propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::XFunc& cut ) const {
+      return _process( name, cut );
+    }
+    // ============================================================================
+    // propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::XMaps& cut ) const {
+      return _process( name, cut );
+    }
+    // ============================================================================
+    // propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::XFunVals& cut ) const {
+      return _process( name, cut );
+    }
+    // ============================================================================
+    // propagate the cut to the tool
+    // ============================================================================
+    StatusCode CoreEngine::process( const std::string& name, const LoKi::Types::XSources& cut ) const {
+      return _process( name, cut );
+    }
 
-} }
+  } // namespace Hybrid
+} // namespace LoKi
 // ============================================================================
-/// get the current context 
+/// get the current context
 // ============================================================================
-const LoKi::Context* LoKi::Hybrid::CoreEngine::context () const 
-{
-  const LoKi::Hybrid::CoreEngineActor& actor =
-    LoKi::Hybrid::CoreEngineActor::instance() ;
-  return actor.context () ;
+const LoKi::Context* LoKi::Hybrid::CoreEngine::context() const {
+  const LoKi::Hybrid::CoreEngineActor& actor = LoKi::Hybrid::CoreEngineActor::instance();
+  return actor.context();
 }
 // ============================================================================
 // The END

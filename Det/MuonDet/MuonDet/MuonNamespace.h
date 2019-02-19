@@ -11,8 +11,8 @@
 #ifndef MUONDET_MUONNAMESPACE_H
 #define MUONDET_MUONNAMESPACE_H 1
 #include <string>
-namespace DeMuonLocation{
-  inline const std::string Default="/dd/Structure/LHCb/DownstreamRegion/Muon";
-  inline const std::string Cabling="/dd/Conditions/ReadoutConf/Muon/Cabling";
-}
+namespace DeMuonLocation {
+  inline const std::string Default = "/dd/Structure/LHCb/DownstreamRegion/Muon";
+  inline const std::string Cabling = "/dd/Conditions/ReadoutConf/Muon/Cabling";
+} // namespace DeMuonLocation
 #endif // MUONDET_MUONNAMESPACE_H

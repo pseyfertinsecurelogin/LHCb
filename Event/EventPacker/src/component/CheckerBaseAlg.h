@@ -14,8 +14,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-namespace DataPacking
-{
+namespace DataPacking {
 
   /** @class Check CheckerBaseAlg.h
    *
@@ -25,25 +24,21 @@ namespace DataPacking
    *  @date   2009-10-14
    */
 
-  template< class PACKER >
-  class Check : public GaudiAlgorithm
-  {
+  template <class PACKER>
+  class Check : public GaudiAlgorithm {
 
   public:
-
     /// Standard constructor
     Check( const std::string& name, ISvcLocator* pSvcLocator );
 
     StatusCode execute() override; ///< Algorithm execution
 
   private:
-
-    std::string m_dataA;  ///< Data location
-    std::string m_dataB;  ///< Data location
-    const PACKER m_packer{this};  ///< Packer
-
+    std::string  m_dataA;        ///< Data location
+    std::string  m_dataB;        ///< Data location
+    const PACKER m_packer{this}; ///< Packer
   };
 
-}
+} // namespace DataPacking
 
 #endif // CHECKERBASEALG_H

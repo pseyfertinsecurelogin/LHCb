@@ -19,17 +19,14 @@
  *
  *  Pack the LHCb::UTCluster objects from a specified container.
  */
-class PackUTCluster : public GaudiAlgorithm
-{
+class PackUTCluster : public GaudiAlgorithm {
 
 public:
-
-  PackUTCluster(const std::string& name, ISvcLocator* svcLocator);
+  PackUTCluster( const std::string& name, ISvcLocator* svcLocator );
 
   StatusCode execute() override;
 
 private:
-
   Gaudi::Property<std::string> m_inputName{this, "InputName", LHCb::UTClusterLocation::UTClusters};
 
   Gaudi::Property<std::string> m_outputName{this, "OutputName", LHCb::PackedClusterLocation::UT};

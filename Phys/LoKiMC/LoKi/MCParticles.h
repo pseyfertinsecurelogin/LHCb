@@ -16,8 +16,8 @@
 // ============================================================================
 // STL & STD
 // ============================================================================
-#include <string>
 #include <math.h>
+#include <string>
 // ============================================================================
 // Event
 // ============================================================================
@@ -31,15 +31,15 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/Constants.h"
+#include "LoKi/Functions.h"
 #include "LoKi/Interface.h"
 #include "LoKi/Kinematics.h"
-#include "LoKi/Functions.h"
-#include "LoKi/Operators.h"
-#include "LoKi/Constants.h"
-#include "LoKi/MCTypes.h"
-#include "LoKi/MCPIDOperators.h"
-#include "LoKi/PidFunctions.h"
 #include "LoKi/MCChildSelector.h"
+#include "LoKi/MCPIDOperators.h"
+#include "LoKi/MCTypes.h"
+#include "LoKi/Operators.h"
+#include "LoKi/PidFunctions.h"
 // ============================================================================
 /** @file
  *
@@ -55,33 +55,29 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::MCParticles MCParticles.h LoKi/MCParticles.h
    *
    *  @author Vanya  BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2003-08-09
    */
-  namespace  MCParticles
-  {
+  namespace MCParticles {
     // ========================================================================
     /** @class Momentum
      *  evaluator of the momentum of the particle
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API Momentum
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API Momentum : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Momentum* clone() const   override;
+      Momentum* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -91,17 +87,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API Energy
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API Energy : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Energy* clone() const  override;
+      Energy* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -111,17 +105,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API TransverseMomentum
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API TransverseMomentum : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      TransverseMomentum* clone() const  override;
+      TransverseMomentum* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -131,17 +123,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API MomentumX
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MomentumX : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      MomentumX* clone() const  override;
+      MomentumX* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -151,17 +141,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API MomentumY
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MomentumY : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      MomentumY* clone() const  override;
+      MomentumY* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -171,17 +159,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API MomentumZ
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MomentumZ : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      MomentumZ* clone() const   override;
+      MomentumZ* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -191,17 +177,15 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2002-07-15
      */
-    class GAUDI_API Theta
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API Theta : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Theta* clone() const  override;
+      Theta* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -212,34 +196,28 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API PseudoRapidity
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API PseudoRapidity : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      PseudoRapidity* clone() const  override;
+      PseudoRapidity* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
       /// get eta
-      double eta ( const LHCb::MCParticle*                    p ) const
-      { return eta ( p -> momentum() ) ; }
+      double eta( const LHCb::MCParticle* p ) const { return eta( p->momentum() ); }
       /// get eta
-      double eta ( const Gaudi::LorentzVector& v ) const
-      { return v . Eta () ; }
+      double eta( const Gaudi::LorentzVector& v ) const { return v.Eta(); }
       /// get rapidity
-      double y  ( const LHCb::MCParticle*                    p  ) const
-      { return y ( p->momentum() ) ; }
+      double y( const LHCb::MCParticle* p ) const { return y( p->momentum() ); }
       /// get rapidity
-      double y  ( const Gaudi::LorentzVector& v  ) const ;
+      double y( const Gaudi::LorentzVector& v ) const;
       /// get rapidity0
-      double y0 ( const LHCb::MCParticle*                    p  ) const
-      { return y ( p->momentum() ) ; }
+      double y0( const LHCb::MCParticle* p ) const { return y( p->momentum() ); }
       /// get rapidity0
-      double y0 ( const Gaudi::LorentzVector& v  ) const ;
+      double y0( const Gaudi::LorentzVector& v ) const;
       // ======================================================================
     };
     // ========================================================================
@@ -255,16 +233,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2010-02-10
      */
-    class GAUDI_API Rapidity : public PseudoRapidity
-    {
+    class GAUDI_API Rapidity : public PseudoRapidity {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Rapidity* clone() const  override;
+      Rapidity* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -280,16 +257,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2010-02-10
      */
-    class GAUDI_API Rapidity0 : public Rapidity
-    {
+    class GAUDI_API Rapidity0 : public Rapidity {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Rapidity0* clone() const  override;
+      Rapidity0* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -299,31 +275,27 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API Phi
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API Phi : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Phi* clone() const  override;
+      Phi* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// get phi
-      double phi ( const LHCb::MCParticle* p ) const
-      { return p->momentum(). Phi () ; }
+      double phi( const LHCb::MCParticle* p ) const { return p->momentum().Phi(); }
       // ======================================================================
       /// adjust phi into the range of [-180:180]degrees
-      double adjust ( double angle ) const
-      {
-        static const double s_180 = 180 * Gaudi::Units::degree ;
-        static const double s_360 = 360 * Gaudi::Units::degree ;
+      double adjust( double angle ) const {
+        static const double s_180 = 180 * Gaudi::Units::degree;
+        static const double s_360 = 360 * Gaudi::Units::degree;
         //
-        while ( angle >      s_180 ) { angle -= s_360 ; }
-        while ( angle < -1 * s_180 ) { angle += s_360 ; }
+        while ( angle > s_180 ) { angle -= s_360; }
+        while ( angle < -1 * s_180 ) { angle += s_360; }
         //
-        return angle ;
+        return angle;
       }
       // ======================================================================
     };
@@ -334,17 +306,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API Mass
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API Mass : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Mass* clone() const  override;
+      Mass* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -354,17 +324,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API Identifier
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API Identifier : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Identifier* clone() const  override;
+      Identifier* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -372,107 +340,101 @@ namespace LoKi
      *  new verison of PID-comparison
      */
     // ========================================================================
-    class GAUDI_API IsID
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-      , public LoKi::Pids::GetPids
-    {
+    class GAUDI_API IsID : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate, public LoKi::Pids::GetPids {
     public:
       // ======================================================================
-      IsID ( const long                           id  ) ;
-      IsID ( const unsigned long                  id  ) ;
-      IsID ( const LHCb::ParticleID&              id  ) ;
-      IsID ( const std::string&                   id  ) ;
-      IsID ( const std::vector<int>&              ids ) ;
-      IsID ( const std::vector<long>&             ids ) ;
-      IsID ( const std::vector<unsigned int>&     ids ) ;
-      IsID ( const std::vector<unsigned long>&    ids ) ;
-      IsID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsID ( const std::vector<std::string>&      ids ) ;
-      IsID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsID( const long id );
+      IsID( const unsigned long id );
+      IsID( const LHCb::ParticleID& id );
+      IsID( const std::string& id );
+      IsID( const std::vector<int>& ids );
+      IsID( const std::vector<long>& ids );
+      IsID( const std::vector<unsigned int>& ids );
+      IsID( const std::vector<unsigned long>& ids );
+      IsID( const std::vector<LHCb::ParticleID>& ids );
+      IsID( const std::vector<std::string>& ids );
+      IsID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
-      IsID* clone() const  override;
+      IsID* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class IsNotID
      *  new verison of PID-comparison
      */
     // ========================================================================
-    class GAUDI_API IsNotID : public LoKi::MCParticles::IsID
-    {
+    class GAUDI_API IsNotID : public LoKi::MCParticles::IsID {
     public:
       // ======================================================================
-      IsNotID ( const long                           id  ) ;
-      IsNotID ( const unsigned long                  id  ) ;
-      IsNotID ( const LHCb::ParticleID&              id  ) ;
-      IsNotID ( const std::string&                   id  ) ;
-      IsNotID ( const std::vector<int>&              ids ) ;
-      IsNotID ( const std::vector<long>&             ids ) ;
-      IsNotID ( const std::vector<unsigned int>&     ids ) ;
-      IsNotID ( const std::vector<unsigned long>&    ids ) ;
-      IsNotID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsNotID ( const std::vector<std::string>&      ids ) ;
-      IsNotID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsNotID( const long id );
+      IsNotID( const unsigned long id );
+      IsNotID( const LHCb::ParticleID& id );
+      IsNotID( const std::string& id );
+      IsNotID( const std::vector<int>& ids );
+      IsNotID( const std::vector<long>& ids );
+      IsNotID( const std::vector<unsigned int>& ids );
+      IsNotID( const std::vector<unsigned long>& ids );
+      IsNotID( const std::vector<LHCb::ParticleID>& ids );
+      IsNotID( const std::vector<std::string>& ids );
+      IsNotID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
-      IsNotID* clone() const  override;
+      IsNotID* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    class GAUDI_API IsAbsID : public LoKi::MCParticles::IsID
-    {
+    class GAUDI_API IsAbsID : public LoKi::MCParticles::IsID {
     public:
       // ======================================================================
-      IsAbsID ( const long                           id  ) ;
-      IsAbsID ( const unsigned long                  id  ) ;
-      IsAbsID ( const LHCb::ParticleID&              id  ) ;
-      IsAbsID ( const std::string&                   id  ) ;
-      IsAbsID ( const std::vector<int>&              ids ) ;
-      IsAbsID ( const std::vector<long>&             ids ) ;
-      IsAbsID ( const std::vector<unsigned int>&     ids ) ;
-      IsAbsID ( const std::vector<unsigned long>&    ids ) ;
-      IsAbsID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsAbsID ( const std::vector<std::string>&      ids ) ;
-      IsAbsID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsAbsID( const long id );
+      IsAbsID( const unsigned long id );
+      IsAbsID( const LHCb::ParticleID& id );
+      IsAbsID( const std::string& id );
+      IsAbsID( const std::vector<int>& ids );
+      IsAbsID( const std::vector<long>& ids );
+      IsAbsID( const std::vector<unsigned int>& ids );
+      IsAbsID( const std::vector<unsigned long>& ids );
+      IsAbsID( const std::vector<LHCb::ParticleID>& ids );
+      IsAbsID( const std::vector<std::string>& ids );
+      IsAbsID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
-      IsAbsID* clone() const  override;
+      IsAbsID* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    class GAUDI_API IsNotAbsID : public LoKi::MCParticles::IsAbsID
-    {
+    class GAUDI_API IsNotAbsID : public LoKi::MCParticles::IsAbsID {
     public:
       // ======================================================================
-      IsNotAbsID ( const long                           id  ) ;
-      IsNotAbsID ( const unsigned long                  id  ) ;
-      IsNotAbsID ( const LHCb::ParticleID&              id  ) ;
-      IsNotAbsID ( const std::string&                   id  ) ;
-      IsNotAbsID ( const std::vector<int>&              ids ) ;
-      IsNotAbsID ( const std::vector<long>&             ids ) ;
-      IsNotAbsID ( const std::vector<unsigned int>&     ids ) ;
-      IsNotAbsID ( const std::vector<unsigned long>&    ids ) ;
-      IsNotAbsID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsNotAbsID ( const std::vector<std::string>&      ids ) ;
-      IsNotAbsID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsNotAbsID( const long id );
+      IsNotAbsID( const unsigned long id );
+      IsNotAbsID( const LHCb::ParticleID& id );
+      IsNotAbsID( const std::string& id );
+      IsNotAbsID( const std::vector<int>& ids );
+      IsNotAbsID( const std::vector<long>& ids );
+      IsNotAbsID( const std::vector<unsigned int>& ids );
+      IsNotAbsID( const std::vector<unsigned long>& ids );
+      IsNotAbsID( const std::vector<LHCb::ParticleID>& ids );
+      IsNotAbsID( const std::vector<std::string>& ids );
+      IsNotAbsID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
-      IsNotAbsID* clone() const  override;
+      IsNotAbsID* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class AbsIdentifier
      *  evaluator of the id of the particle
@@ -480,17 +442,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API AbsIdentifier
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API AbsIdentifier : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      AbsIdentifier* clone() const  override;
+      AbsIdentifier* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -501,17 +461,15 @@ namespace LoKi
      *  @author Vanya Belyaev ibelyaev@physics.syr.edu
      *  @date   2006-02-05
      */
-    class GAUDI_API Oscillated
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API Oscillated : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      Oscillated* clone() const  override;
+      Oscillated* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -521,17 +479,15 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class GAUDI_API ThreeCharge
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API ThreeCharge : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      ThreeCharge* clone() const  override;
+      ThreeCharge* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -545,17 +501,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API ProperLifeTime
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API ProperLifeTime : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      ProperLifeTime* clone() const  override;
+      ProperLifeTime* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -565,24 +519,22 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class  GAUDI_API HasQuark
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API HasQuark : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
-      HasQuark (  const LHCb::ParticleID::Quark quark ) ;
+      HasQuark( const LHCb::ParticleID::Quark quark );
       /// clone method (mandatory!)
-      HasQuark* clone() const  override;
+      HasQuark* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       //
-      LHCb::ParticleID::Quark quark() const { return m_quark ; }
+      LHCb::ParticleID::Quark quark() const { return m_quark; }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      LHCb::ParticleID::Quark m_quark ;
+      LHCb::ParticleID::Quark m_quark;
       // ======================================================================
     };
     // ========================================================================
@@ -591,17 +543,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsCharged
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsCharged : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsCharged* clone() const  override;
+      IsCharged* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -610,17 +560,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsNeutral
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsNeutral : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsNeutral* clone() const  override;
+      IsNeutral* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -629,17 +577,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsLepton
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsLepton : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsLepton* clone() const  override;
+      IsLepton* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -648,17 +594,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsMeson
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsMeson : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsMeson* clone() const  override;
+      IsMeson* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -667,17 +611,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsBaryon
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsBaryon : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsBaryon* clone() const  override;
+      IsBaryon* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -686,17 +628,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsHadron
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsHadron : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsHadron* clone() const  override;
+      IsHadron* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -705,17 +645,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    class GAUDI_API IsNucleus
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsNucleus : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsNucleus* clone() const  override;
+      IsNucleus* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -726,46 +664,42 @@ namespace LoKi
      *  @date   2004-07-07
      *  @warning for this class <c>toCpp</c> method is not properly defined
      */
-    class GAUDI_API FromMCDecayTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API FromMCDecayTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     protected:
       // ======================================================================
-      typedef std::vector<const LHCb::MCParticle*> MCCont ;
+      typedef std::vector<const LHCb::MCParticle*> MCCont;
       // ======================================================================
     public:
       // ======================================================================
       /** constructor from 1 MC particle
        *  @param mcp pointer to MC particle
        */
-      FromMCDecayTree ( const LHCb::MCParticle*                 mcp   ) ;
+      FromMCDecayTree( const LHCb::MCParticle* mcp );
       /** constructor from range of MC particles
        *  @param cnt range of MC particles
        */
-      FromMCDecayTree ( const LoKi::MCTypes::MCRange&     cnt   ) ;
+      FromMCDecayTree( const LoKi::MCTypes::MCRange& cnt );
       /** constructor from container of MC particles
        *  @param cnt container of MC particles
        */
-      FromMCDecayTree ( const LoKi::MCTypes::MCContainer& cnt   ) ;
+      FromMCDecayTree( const LoKi::MCTypes::MCContainer& cnt );
       /** constructor from container of MC particles
        *  @param cnt container of MC particles
        */
-      FromMCDecayTree ( const ::LHCb::MCParticles*              cnt   ) ;
+      FromMCDecayTree( const ::LHCb::MCParticles* cnt );
       /** templated constructor from any sequence of MC particles
        *  @param first begin of the sequence
        *  @param last  end   of the sequence
        */
       template <class MCPARTICLE>
-      FromMCDecayTree ( MCPARTICLE first ,
-                        MCPARTICLE last  )
-        : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-          , m_cont ( first , last ) {}
+      FromMCDecayTree( MCPARTICLE first, MCPARTICLE last )
+          : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate(), m_cont( first, last ) {}
       /// clone method (mandatory!)
-      FromMCDecayTree* clone() const  override;
+      FromMCDecayTree* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
@@ -773,45 +707,39 @@ namespace LoKi
        *  @param p pointe to the particle
        *  @return status code
        */
-      StatusCode  add    ( const LHCb::MCParticle* p ) ;
+      StatusCode add( const LHCb::MCParticle* p );
       /** add particles into the lst of particles
        *  @param first begin of sequence
        *  @param last  end of the sequence
        *  @return status code
        */
       template <class MCPARTICLE>
-      StatusCode add    ( MCPARTICLE first ,
-                          MCPARTICLE last  )
-      {
-        m_cont.reserve ( m_cont.size() + last - first ) ;
-        StatusCode sc = StatusCode::SUCCESS ;
-        for ( ; first != last ; ++first )
-        {
-          StatusCode code = add     ( *first ) ;
-          if ( code.isFailure() ) { sc = code ; }
+      StatusCode add( MCPARTICLE first, MCPARTICLE last ) {
+        m_cont.reserve( m_cont.size() + last - first );
+        StatusCode sc = StatusCode::SUCCESS;
+        for ( ; first != last; ++first ) {
+          StatusCode code = add( *first );
+          if ( code.isFailure() ) { sc = code; }
         }
-        return sc ;
+        return sc;
       }
       /** remove LHCb::MCParticle from the list of tested LHCb::MCParticles
        *  @param p pointe to the LHCb::MCParticle
        *  @return status code
        */
-      StatusCode remove ( const LHCb::MCParticle* p ) ;
+      StatusCode remove( const LHCb::MCParticle* p );
       /** remove LHCb::MCParticles from the list of tested MCarticles
        *  @param first begin of sequence
        *  @param last  end of the sequence
        */
       template <class MCPARTICLE>
-      StatusCode remove ( MCPARTICLE first ,
-                          MCPARTICLE last  )
-      {
-        StatusCode sc = StatusCode::SUCCESS ;
-        for ( ; first != last ; ++first )
-        {
-          StatusCode code = remove ( *first ) ;
-          if ( code.isFailure() ) { sc = code ; }
+      StatusCode remove( MCPARTICLE first, MCPARTICLE last ) {
+        StatusCode sc = StatusCode::SUCCESS;
+        for ( ; first != last; ++first ) {
+          StatusCode code = remove( *first );
+          if ( code.isFailure() ) { sc = code; }
         }
-        return sc ;
+        return sc;
       }
       /** set new LHCb::MCParticles
        *  @param first begin of sequence
@@ -819,16 +747,14 @@ namespace LoKi
        *  @return status code
        */
       template <class MCPARTICLE>
-      StatusCode setParticles ( MCPARTICLE first ,
-                                MCPARTICLE last  )
-      {
-        m_cont.clear() ;
-        return add ( first , last ) ;
+      StatusCode setParticles( MCPARTICLE first, MCPARTICLE last ) {
+        m_cont.clear();
+        return add( first, last );
       }
       // ======================================================================
     private:
       // ======================================================================
-      MCCont m_cont ;
+      MCCont m_cont;
       // ======================================================================
     };
     // ========================================================================
@@ -838,31 +764,28 @@ namespace LoKi
      *  @see LoKi::Cuts::MCINANCESTORS
      *  @date 2010-02-16
      */
-    class GAUDI_API InAncestors
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API InAncestors : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// constructor from the predicate
-      InAncestors ( const LoKi::MCTypes::MCCuts& cut               ,
-                    const bool                   decayOnly = false ) ;
+      InAncestors( const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false );
       /// MANDATORY: clone method ("virtual constructor")
-      InAncestors* clone() const  override;
+      InAncestors* clone() const override;
       /// MANDATORY: the only one important method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// the actual evaluator
-      bool inAncestors ( const LHCb::MCParticle* p ) const ;
+      bool inAncestors( const LHCb::MCParticle* p ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual predicate
-      LoKi::MCTypes::MCCut m_cut       ;                // the actual predicate
-      bool                 m_decayOnly ;
+      LoKi::MCTypes::MCCut m_cut; // the actual predicate
+      bool                 m_decayOnly;
       // ======================================================================
     };
     // ========================================================================
@@ -872,31 +795,28 @@ namespace LoKi
      *  @see LoKi::Cuts::MCNINANCESTORS
      *  @date 2010-02-16
      */
-    class GAUDI_API NinAncestors
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API NinAncestors : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// constructor from the predicate
-      NinAncestors ( const LoKi::MCTypes::MCCuts& cut               ,
-                     const bool                   decayOnly = false ) ;
+      NinAncestors( const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false );
       /// MANDATORY: clone method ("virtual constructor")
-      NinAncestors* clone() const  override;
+      NinAncestors* clone() const override;
       /// MANDATORY: the only one important method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// the actual evaluator
-      unsigned int nInAncestors ( const LHCb::MCParticle* p ) const ;
+      unsigned int nInAncestors( const LHCb::MCParticle* p ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual predicate
-      LoKi::MCTypes::MCCut m_cut       ;                // the actual predicate
-      bool                 m_decayOnly ;
+      LoKi::MCTypes::MCCut m_cut; // the actual predicate
+      bool                 m_decayOnly;
       // ======================================================================
     };
     // ========================================================================
@@ -906,26 +826,23 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-11-17
      */
-    class GAUDI_API NinMCdownTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API NinMCdownTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** constructor
        *  @param cut cut to be inspected
        */
-      NinMCdownTree
-      ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut ) ;
+      NinMCdownTree( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut );
       /// clone method/"virtual constructor" (mandatory!)
-      NinMCdownTree* clone() const  override;
+      NinMCdownTree* clone() const override;
       /// the main method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCCut m_cut ;
+      LoKi::MCTypes::MCCut m_cut;
       // ======================================================================
     };
     // ========================================================================
@@ -936,29 +853,25 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-11-17
      */
-    class GAUDI_API MCMotherFunction
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MCMotherFunction : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** constructor
        *  @param fun function to be evaluated
        *  @param val value to be returned for 'invalid' mother
        */
-      MCMotherFunction
-      ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Function& fun   ,
-        const double                             val   ) ;
+      MCMotherFunction( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Function& fun, const double val );
       /// clone method (virtual constructor) (mandatory!)
-      MCMotherFunction* clone() const  override;
+      MCMotherFunction* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      double               m_val ;
-      LoKi::MCTypes::MCFun m_fun ;
+      double               m_val;
+      LoKi::MCTypes::MCFun m_fun;
       // ======================================================================
     };
     // ========================================================================
@@ -969,29 +882,25 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-02-02
      */
-    class GAUDI_API MCMotherPredicate
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API MCMotherPredicate : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /** constructor
        *  @param cut predicate to be evaluated
        *  @param val value to be returned for 'invalid' mother
        */
-      MCMotherPredicate
-      ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut   ,
-        const bool                                                     val   ) ;
+      MCMotherPredicate( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut, const bool val );
       /// clone method (virtual constructor) (mandatory!)
-      MCMotherPredicate* clone() const  override;
+      MCMotherPredicate* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      bool                 m_val ;
-      LoKi::MCTypes::MCCut m_cut ;
+      bool                 m_val;
+      LoKi::MCTypes::MCCut m_cut;
       // ======================================================================
     };
     // ========================================================================
@@ -1003,39 +912,33 @@ namespace LoKi
      *  @date 2005-02-02
      *  @warning for this class <c>toCpp</c> method is not defined properly
      */
-    class GAUDI_API IsParticle
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsParticle : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /** constructor from 1 particle
        *  @param object object to be compared
        */
-      IsParticle( const LHCb::MCParticle* object ) ;
+      IsParticle( const LHCb::MCParticle* object );
       /** constructor from range of particles
        *  @param obj range of object to be compared
        */
-      IsParticle( const LoKi::MCTypes::MCRange& obj ) ;
+      IsParticle( const LoKi::MCTypes::MCRange& obj );
       /** templated constructor
        *  @param begin 'begin'-iterator for sequence of objects
        *  @param end   'end'-iterator for sequence of objects
        */
-      template<class OBJECT>
-      IsParticle
-      ( OBJECT begin ,
-        OBJECT end   )
-        : m_objects ( begin , end )
-      {}
+      template <class OBJECT>
+      IsParticle( OBJECT begin, OBJECT end ) : m_objects( begin, end ) {}
       /// MANDATORY: clone method ('virtual constructor')
-      IsParticle* clone() const  override;
+      IsParticle* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LHCb::MCParticle::ConstVector m_objects ;
+      LHCb::MCParticle::ConstVector m_objects;
       // ======================================================================
     };
     // ========================================================================
@@ -1047,9 +950,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-02
      */
-    class GAUDI_API IsContainedObject
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API IsContainedObject : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       typedef std::vector<const ContainedObject*> Objects;
@@ -1059,29 +960,24 @@ namespace LoKi
       /** constructor from contained object
        *  @param object object to be compared
        */
-      IsContainedObject
-      ( const ContainedObject* object ) ;
+      IsContainedObject( const ContainedObject* object );
       /** templated constructor
        *  @param begin 'begin'-iterator for sequence of objects
        *  @param end   'end'-iterator for sequence of objects
        */
-      template<class OBJECT>
-      IsContainedObject
-      ( OBJECT begin ,
-        OBJECT end   )
-        : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-        , m_objects ( begin , end )
-      {}
+      template <class OBJECT>
+      IsContainedObject( OBJECT begin, OBJECT end )
+          : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate(), m_objects( begin, end ) {}
       /// MANDATORY: clone method ('virtual constructor')
-      IsContainedObject* clone() const  override;
+      IsContainedObject* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      Objects m_objects ;
+      Objects m_objects;
       // ======================================================================
     };
     // ========================================================================
@@ -1111,28 +1007,23 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23
      */
-    class GAUDI_API MomentumDistance
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MomentumDistance : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// constructor from four components
-      MomentumDistance
-      ( const double px ,
-        const double py ,
-        const double pz ,
-        const double e  ) ;
+      MomentumDistance( const double px, const double py, const double pz, const double e );
       /// constructor from the given 4-momentum
-      MomentumDistance ( const LoKi::LorentzVector& vct ) ;
+      MomentumDistance( const LoKi::LorentzVector& vct );
       /// MANDATORY: clone function ("virtual constructor")
-      MomentumDistance* clone() const  override;
+      MomentumDistance* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
+
     private:
       // ======================================================================
-      LoKi::LorentzVector m_vct ;
+      LoKi::LorentzVector m_vct;
       // ======================================================================
     };
     // ========================================================================
@@ -1154,29 +1045,26 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23
      */
-    class GAUDI_API TransverseMomentumRel
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API TransverseMomentumRel : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// constructor from theta & phi
-      TransverseMomentumRel ( const double theta , const double phi ) ;
+      TransverseMomentumRel( const double theta, const double phi );
       /** constructor
        *  @param vct direction vertor
        *  @see LoKi::ThreeVector
        */
-      TransverseMomentumRel
-      ( const LoKi::ThreeVector& vct ) ;
+      TransverseMomentumRel( const LoKi::ThreeVector& vct );
       /// MANDATORY: clone function ("virtual constructor")
-      TransverseMomentumRel* clone() const  override;
+      TransverseMomentumRel* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // =====================================================================
     private:
       // ======================================================================
-      LoKi::ThreeVector m_vct ;
+      LoKi::ThreeVector m_vct;
       // ======================================================================
     };
     // ========================================================================
@@ -1188,18 +1076,17 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class GAUDI_API DeltaPhi : public Phi
-    {
+    class GAUDI_API DeltaPhi : public Phi {
     public:
       // ======================================================================
       /// constructor from the angle
-      DeltaPhi ( const double phi ) ;
+      DeltaPhi( const double phi );
       /// constructor from the vector
-      DeltaPhi ( const LoKi::ThreeVector&   v ) ;
+      DeltaPhi( const LoKi::ThreeVector& v );
       /// constructor from the vector
-      DeltaPhi ( const LoKi::LorentzVector& v ) ;
+      DeltaPhi( const LoKi::LorentzVector& v );
       /// constructor from the particle
-      DeltaPhi ( const LHCb::MCParticle* p ) ;
+      DeltaPhi( const LHCb::MCParticle* p );
       // /// templated constructor from vector
       //       template <class VECTOR>
       //       DeltaPhi ( const VECTOR& v )
@@ -1219,27 +1106,25 @@ namespace LoKi
       //         m_phi = adjust ( m_phi ) ;
       //       } ;
       /// MANDATORY: clone method ("virtual constructor")
-      DeltaPhi* clone() const override
-      { return new DeltaPhi(*this) ; }
+      DeltaPhi* clone() const override { return new DeltaPhi( *this ); }
       /// MANDATORY: the only essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// accessor to phi0
-      double phi0 () const { return m_phi ; }
+      double phi0() const { return m_phi; }
       /// get delta phi
-      double dphi ( const LHCb::MCParticle* p ) const
-      { return adjust ( phi ( p ) - phi0 () ) ; }
+      double dphi( const LHCb::MCParticle* p ) const { return adjust( phi( p ) - phi0() ); }
       // ======================================================================
     private:
       // ======================================================================
       /// the angle itself
-      double                  m_phi  ; // the angle itself
+      double m_phi; // the angle itself
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class DeltaEta
      *  Simple evaluator of "DeltaEta" for the particle
@@ -1249,18 +1134,17 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class GAUDI_API DeltaEta : public PseudoRapidity
-    {
+    class GAUDI_API DeltaEta : public PseudoRapidity {
     public:
       // ======================================================================
       /// constructor from the eta
-      DeltaEta ( const double eta ) ;
+      DeltaEta( const double eta );
       /// constructor from the vector
-      DeltaEta ( const LoKi::ThreeVector&   v ) ;
+      DeltaEta( const LoKi::ThreeVector& v );
       /// constructor from the vector
-      DeltaEta ( const LoKi::LorentzVector& v ) ;
+      DeltaEta( const LoKi::LorentzVector& v );
       /// constructor from the particle
-      DeltaEta ( const LHCb::MCParticle* p ) ;
+      DeltaEta( const LHCb::MCParticle* p );
       //       /// templated constructor from vector
       //       template <class VECTOR>
       //       DeltaEta ( const VECTOR& v )
@@ -1277,25 +1161,24 @@ namespace LoKi
       //         m_eta = p->momentum().Eta() ;
       //       } ;
       /// MANDATORY: clone method ("virtual constructor")
-       DeltaEta* clone() const override
-      { return new DeltaEta( *this ) ; }
+      DeltaEta* clone() const override { return new DeltaEta( *this ); }
       /// MANDATORY: the only essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       // accessor to eta0
-      double eta0 () const { return m_eta ; }
-      double deta ( const LHCb::MCParticle* p ) const { return eta ( p ) - eta0() ; }
+      double eta0() const { return m_eta; }
+      double deta( const LHCb::MCParticle* p ) const { return eta( p ) - eta0(); }
       // ======================================================================
     private:
       // ======================================================================
       /// the angle itself
-      double                             m_eta  ; // the angle itself
+      double m_eta; // the angle itself
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class DeltaR2
      *  Simple evaluator of "DeltaPhi**2+ DeltaEta**2"
@@ -1312,18 +1195,17 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class GAUDI_API DeltaR2 : public DeltaPhi
-    {
+    class GAUDI_API DeltaR2 : public DeltaPhi {
     public:
       // ======================================================================
       /// constructor from eta and phi
-      DeltaR2 ( const double eta , const double phi ) ;
+      DeltaR2( const double eta, const double phi );
       /// constructor from the vector
-      DeltaR2 ( const LoKi::ThreeVector&   v ) ;
+      DeltaR2( const LoKi::ThreeVector& v );
       /// constructor from the vector
-      DeltaR2 ( const LoKi::LorentzVector& v ) ;
+      DeltaR2( const LoKi::LorentzVector& v );
       /// constructor from the particle
-      DeltaR2 ( const LHCb::MCParticle* p ) ;
+      DeltaR2( const LHCb::MCParticle* p );
       //       /// templated constructor from vector
       //       template <class VECTOR>
       //       DeltaR2 ( const VECTOR& v )
@@ -1337,29 +1219,27 @@ namespace LoKi
       //         , m_deta ( p )
       //       {} ;
       /// MANDATORY: clone method ("virtual constructor")
-      DeltaR2* clone() const override
-      { return new DeltaR2(*this) ; }
+      DeltaR2* clone() const override { return new DeltaR2( *this ); }
       /// MANDATORY: the only essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// accessor to eta0
-      double eta0 () const { return m_deta.eta0()  ; }
+      double eta0() const { return m_deta.eta0(); }
       /// evaluate delta eta
-      double deta ( const LHCb::MCParticle* p )  const
-      { return eta ( p ) - eta0 ()  ; }
+      double deta( const LHCb::MCParticle* p ) const { return eta( p ) - eta0(); }
       /// get the eta
-      double eta  ( const LHCb::MCParticle* p ) const { return m_deta.eta( p ) ; }
+      double eta( const LHCb::MCParticle* p ) const { return m_deta.eta( p ); }
       // ======================================================================
     private:
       // ======================================================================
       /// the actual evaluator of delta eta
-      LoKi::MCParticles::DeltaEta m_deta ; // the actual evaluator of delta eta
+      LoKi::MCParticles::DeltaEta m_deta; // the actual evaluator of delta eta
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ValidOrigin
      *  Trivial predicat eto test teh valdity of "origin" vertex
@@ -1367,17 +1247,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    class GAUDI_API ValidOrigin
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API ValidOrigin : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// MANDATORY : clone method ("virtual constructor")
-      ValidOrigin* clone() const  override;
+      ValidOrigin* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -1387,29 +1265,25 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    class GAUDI_API MCVertexFunAdapter
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
-    public  :
+    class GAUDI_API MCVertexFunAdapter : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
+    public:
       // ======================================================================
       /** constructor from vertex funtion
        *  @param vfunc vertex function
        *  @param err  value to be returned for invalid argument
        */
-      MCVertexFunAdapter
-      ( const LoKi::MCTypes::MCVFunc& vfunc            ,
-        const double                  err   = -1000000 ) ;
+      MCVertexFunAdapter( const LoKi::MCTypes::MCVFunc& vfunc, const double err = -1000000 );
       /// MANDATORY : clone method ("virtual constructor")
-      MCVertexFunAdapter* clone() const  override;
+      MCVertexFunAdapter* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      LoKi::MCTypes::MCVFun m_fun ;
-      double                m_err ;
+      LoKi::MCTypes::MCVFun m_fun;
+      double                m_err;
       // ======================================================================
     };
     // ========================================================================
@@ -1439,9 +1313,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    class GAUDI_API MCDecayPattern
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API MCDecayPattern : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /** constructor
@@ -1449,28 +1321,24 @@ namespace LoKi
        *  @param finder decay finder tool
        *  @see IMCDecayFinder
        */
-      MCDecayPattern
-      ( const std::string& decay  ,
-        IMCDecayFinder*    finder ) ;
+      MCDecayPattern( const std::string& decay, IMCDecayFinder* finder );
       /** constructor
        *  @param decay  decay descriptor
        *  @param finder decay finder tool
        *  @see IMCDecayFinder
        */
-      MCDecayPattern
-      ( const std::string&                     decay  ,
-        const LoKi::Interface<IMCDecayFinder>& finder ) ;
+      MCDecayPattern( const std::string& decay, const LoKi::Interface<IMCDecayFinder>& finder );
       /// MANDATORY: clone method ("virtual constructor")
-      MCDecayPattern* clone() const  override;
+      MCDecayPattern* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Interface<IMCDecayFinder> m_finder ;
-      std::string                     m_decay  ;
+      LoKi::Interface<IMCDecayFinder> m_finder;
+      std::string                     m_decay;
       // ======================================================================
     };
     // ========================================================================
@@ -1481,26 +1349,24 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-03-20
      */
-    class GAUDI_API MCFilter
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API MCFilter : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// constructor from selector
-      MCFilter ( const IMCParticleSelector*                  selector ) ;
+      MCFilter( const IMCParticleSelector* selector );
       /// constructor from selector
-      MCFilter ( const LoKi::Interface<IMCParticleSelector>& selector ) ;
+      MCFilter( const LoKi::Interface<IMCParticleSelector>& selector );
       /// MANDATORY: clone method ("virtual constructor")
-      MCFilter* clone() const  override;
+      MCFilter* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       // the selector itself
-      LoKi::Interface<IMCParticleSelector> m_selector ; ///< the selector itself
+      LoKi::Interface<IMCParticleSelector> m_selector; ///< the selector itself
       // ======================================================================
     };
     // ========================================================================
@@ -1511,34 +1377,31 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-06-01
      */
-    class GAUDI_API MCReconstructible
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MCReconstructible : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// constructor from the tool
-      MCReconstructible ( const IMCReconstructible*                  tool ) ;
+      MCReconstructible( const IMCReconstructible* tool );
       /// constructor from the holder
-      MCReconstructible ( const LoKi::Interface<IMCReconstructible>& tool ) ;
+      MCReconstructible( const LoKi::Interface<IMCReconstructible>& tool );
       /// MANDATORY: clone method ("virtual constructor")
-      MCReconstructible* clone() const  override;
+      MCReconstructible* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "short representation"
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// cast operator to the underlying tool
-      operator const LoKi::Interface<IMCReconstructible>& () const
-      { return m_eval ; }
+      operator const LoKi::Interface<IMCReconstructible>&() const { return m_eval; }
       // ======================================================================
     private:
       // ======================================================================
       // the underlying tool
-      LoKi::Interface<IMCReconstructible> m_eval ; ///< the underlying tool
+      LoKi::Interface<IMCReconstructible> m_eval; ///< the underlying tool
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MCReconstructubleAs
      *  Simple function which checks
@@ -1548,47 +1411,37 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-06-01
      */
-    class GAUDI_API MCReconstructibleAs
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API MCReconstructibleAs : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// constructor from the tool and category
-      MCReconstructibleAs
-      ( const IMCReconstructible*             tool ,
-        const IMCReconstructible::RecCategory cat  ) ;
+      MCReconstructibleAs( const IMCReconstructible* tool, const IMCReconstructible::RecCategory cat );
       /// constructor from the tool and category
-      MCReconstructibleAs
-      ( const IMCReconstructible::RecCategory cat  ,
-        const IMCReconstructible*             tool ) ;
+      MCReconstructibleAs( const IMCReconstructible::RecCategory cat, const IMCReconstructible* tool );
       /// constructor from the holder and category
-      MCReconstructibleAs
-      ( const LoKi::Interface<IMCReconstructible>& tool ,
-        const IMCReconstructible::RecCategory      cat  ) ;
+      MCReconstructibleAs( const LoKi::Interface<IMCReconstructible>& tool, const IMCReconstructible::RecCategory cat );
       /// constructor from the holder and category
-      MCReconstructibleAs
-      ( const IMCReconstructible::RecCategory      cat  ,
-        const LoKi::Interface<IMCReconstructible>& tool ) ;
+      MCReconstructibleAs( const IMCReconstructible::RecCategory cat, const LoKi::Interface<IMCReconstructible>& tool );
       /// MAND ATORY: clone method ("virtual constructor")
-      MCReconstructibleAs* clone() const  override;
+      MCReconstructibleAs* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: "short representation"
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// cast operator to the underlying tool
-      operator const LoKi::Interface<IMCReconstructible>& () const { return m_eval ; }
+      operator const LoKi::Interface<IMCReconstructible>&() const { return m_eval; }
       // ======================================================================
     private:
       // ======================================================================
       /// the underlying tool
-      LoKi::Interface<IMCReconstructible> m_eval ;       // the underlying tool
+      LoKi::Interface<IMCReconstructible> m_eval; // the underlying tool
       /// the recontruction category
-      IMCReconstructible::RecCategory     m_cat  ; // the recontruction category
+      IMCReconstructible::RecCategory m_cat; // the recontruction category
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ChildFunction
      *  Simple adapter function which
@@ -1610,73 +1463,61 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-06-02
      */
-    class GAUDI_API ChildFunction
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API ChildFunction : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
-      /** constructor from the function and child selector 
-       *  @param fun    the function to be used
-       *  @param child  the selector of the proper   child 
-       *  @param bad    the value to be returned for invalid particle
-       */
-      ChildFunction
-        ( const LoKi::MCTypes::MCFunc&   fun   ,
-          const LoKi::MCChild::Selector& child , 
-          const double bad = LoKi::Constants::NegativeInfinity ) ;
-      /** constructor from the function and child selector 
-       *  @param fun    the function to be used
-       *  @param child  the selector of the proper   child 
-       *  @param bad    the value to be returned for invalid particle
-       */
-      ChildFunction
-        ( const LoKi::MCTypes::MCFunc& fun   ,
-          const LoKi::MCTypes::MCCuts& child , 
-          const double bad = LoKi::Constants::NegativeInfinity ) ;
-      /** constructor from the function and child selector 
-       *  @param fun    the function to be used
-       *  @param child  the selector of the proper   child 
-       *  @param bad    the value to be returned for invalid particle
-       */
-      ChildFunction
-        ( const LoKi::MCTypes::MCFunc&   fun   ,
-          const std::string&             child , 
-          const double bad = LoKi::Constants::NegativeInfinity ) ;
-      /** constructor from the function and child selector 
-       *  @param fun    the function to be used
-       *  @param child  the selector of the proper   child 
-       *  @param bad    the value to be returned for invalid particle
-       */
-      ChildFunction
-        ( const LoKi::MCTypes::MCFunc&   fun   ,
-          const Decays::IMCDecay::iTree& child , 
-          const double bad = LoKi::Constants::NegativeInfinity ) ;
       /** constructor from the function and child selector
        *  @param fun    the function to be used
-       *  @param child  the selector of the proper   child 
+       *  @param child  the selector of the proper   child
        *  @param bad    the value to be returned for invalid particle
        */
-      ChildFunction
-        ( const LoKi::MCTypes::MCFunc&   fun   ,
-          const Decays::iNode&           child , 
-          const double bad = LoKi::Constants::NegativeInfinity ) ;
+      ChildFunction( const LoKi::MCTypes::MCFunc& fun, const LoKi::MCChild::Selector& child,
+                     const double bad = LoKi::Constants::NegativeInfinity );
+      /** constructor from the function and child selector
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction( const LoKi::MCTypes::MCFunc& fun, const LoKi::MCTypes::MCCuts& child,
+                     const double bad = LoKi::Constants::NegativeInfinity );
+      /** constructor from the function and child selector
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction( const LoKi::MCTypes::MCFunc& fun, const std::string& child,
+                     const double bad = LoKi::Constants::NegativeInfinity );
+      /** constructor from the function and child selector
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction( const LoKi::MCTypes::MCFunc& fun, const Decays::IMCDecay::iTree& child,
+                     const double bad = LoKi::Constants::NegativeInfinity );
+      /** constructor from the function and child selector
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction( const LoKi::MCTypes::MCFunc& fun, const Decays::iNode& child,
+                     const double bad = LoKi::Constants::NegativeInfinity );
       /// MANDATORY: clone method ("virtual constructor")
-      ChildFunction*  clone() const  override;
+      ChildFunction* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL:  specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the function itself
-      LoKi::MCTypes::MCFun    m_fun   ;                  // the function itself
+      LoKi::MCTypes::MCFun m_fun; // the function itself
       /// the  child selector
-      LoKi::MCChild::Selector m_child ;
+      LoKi::MCChild::Selector m_child;
       ///
-      double                  m_bad   ;    // return value for invalid particle
+      double m_bad; // return value for invalid particle
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ChildPredicate
      *  Simple adapter predicate  which
@@ -1698,71 +1539,54 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-06-02
      */
-    class GAUDI_API ChildPredicate
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API ChildPredicate : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
-      /** constructor from the function and child selector 
+      /** constructor from the function and child selector
        *  @param cut    the function to be used
-       *  @param child  the child selector 
+       *  @param child  the child selector
        *  @param bad    the return value for invalid particle
        */
-      ChildPredicate
-        ( const LoKi::MCTypes::MCCuts&   cut         ,
-          const LoKi::MCChild::Selector& child       ,
-          const bool                     bad = false ) ;
-      /** constructor from the function and child selector 
+      ChildPredicate( const LoKi::MCTypes::MCCuts& cut, const LoKi::MCChild::Selector& child, const bool bad = false );
+      /** constructor from the function and child selector
        *  @param cut    the function to be used
-       *  @param child  the child selector 
+       *  @param child  the child selector
        *  @param bad    the return value for invalid particle
        */
-      ChildPredicate
-        ( const LoKi::MCTypes::MCCuts&   cut         ,
-          const LoKi::MCTypes::MCCuts&   child       ,
-          const bool                     bad = false ) ;
-      /** constructor from the function and child selector 
+      ChildPredicate( const LoKi::MCTypes::MCCuts& cut, const LoKi::MCTypes::MCCuts& child, const bool bad = false );
+      /** constructor from the function and child selector
        *  @param cut    the function to be used
-       *  @param child  the child selector 
+       *  @param child  the child selector
        *  @param bad    the return value for invalid particle
        */
-      ChildPredicate
-        ( const LoKi::MCTypes::MCCuts&   cut         ,
-          const std::string&             child       ,
-          const bool                     bad = false ) ;
-      /** constructor from the function and child selector 
+      ChildPredicate( const LoKi::MCTypes::MCCuts& cut, const std::string& child, const bool bad = false );
+      /** constructor from the function and child selector
        *  @param cut    the function to be used
-       *  @param child  the child selector 
+       *  @param child  the child selector
        *  @param bad    the return value for invalid particle
        */
-      ChildPredicate
-        ( const LoKi::MCTypes::MCCuts&   cut         ,
-          const Decays::IMCDecay::iTree& child       ,
-          const bool                     bad = false ) ;
-      /** constructor from the function and child selector 
+      ChildPredicate( const LoKi::MCTypes::MCCuts& cut, const Decays::IMCDecay::iTree& child, const bool bad = false );
+      /** constructor from the function and child selector
        *  @param cut    the function to be used
-       *  @param child  the child selector 
+       *  @param child  the child selector
        *  @param bad    the return value for invalid particle
        */
-      ChildPredicate
-        ( const LoKi::MCTypes::MCCuts&   cut         ,
-          const Decays::iNode&           child       ,
-          const bool                     bad = false ) ;
+      ChildPredicate( const LoKi::MCTypes::MCCuts& cut, const Decays::iNode& child, const bool bad = false );
       /// MANDATORY: clone method ("virtual constructor")
-      ChildPredicate*  clone() const  override;
+      ChildPredicate* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL:  specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the function itself
-      LoKi::MCTypes::MCCut    m_cut   ;                  // the function itself
+      LoKi::MCTypes::MCCut m_cut; // the function itself
       /// the  child selector
-      LoKi::MCChild::Selector m_child ;
+      LoKi::MCChild::Selector m_child;
       ///
-      bool                    m_bad   ;    // return value for invalid particle
+      bool m_bad; // return value for invalid particle
       // ======================================================================
     };
     // ========================================================================
@@ -1781,30 +1605,27 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API InTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API InTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /** standard constructor
        *  @param cut cut to be checked
        *  @param decayOnly flag to indicate the search through decay products only
        */
-      InTree  ( const LoKi::MCTypes::MCCuts& cut               ,
-                const bool                   decayOnly = false ) ;
+      InTree( const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false );
       /// MANDATORY: clone function ("virtual constructor")
-      InTree*       clone() const  override;
+      InTree* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCCut m_cut       ;
-      bool                 m_decayOnly ;
+      LoKi::MCTypes::MCCut m_cut;
+      bool                 m_decayOnly;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class NinTree
      *  The simple funtion which evaluates the number
@@ -1819,28 +1640,25 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API NinTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API NinTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** standard constructor
        *  @param cut cut to be applied
        *  @param decayOnly search only within decay products
        */
-      NinTree  ( const LoKi::MCTypes::MCCuts& cut                ,
-                 const bool                   decayOnly = false  ) ;
+      NinTree( const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false );
       /// MANDATORY: clone function (virtual destructor)
-      NinTree* clone() const  override;
+      NinTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCCut m_cut       ;
-      bool                 m_decayOnly ;
+      LoKi::MCTypes::MCCut m_cut;
+      bool                 m_decayOnly;
       // ======================================================================
     };
     // ========================================================================
@@ -1861,9 +1679,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API SumTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API SumTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** standard constructor
@@ -1872,35 +1688,29 @@ namespace LoKi
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      SumTree
-      ( const LoKi::MCTypes::MCFunc& fun               ,
-        const LoKi::MCTypes::MCCuts& cut               ,
-        const bool                   decayOnly = false ,
-        const double                 res       = 0.0   ) ;
+      SumTree( const LoKi::MCTypes::MCFunc& fun, const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false,
+               const double res = 0.0 );
       /** standard constructor
        *  @param fun the function to be evaluated
        *  @param cut cut to be applied
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      SumTree
-      ( const LoKi::MCTypes::MCCuts& cut               ,
-        const LoKi::MCTypes::MCFunc& fun               ,
-        const bool                   decayOnly = false ,
-        const double                 res       = 0.0   ) ;
+      SumTree( const LoKi::MCTypes::MCCuts& cut, const LoKi::MCTypes::MCFunc& fun, const bool decayOnly = false,
+               const double res = 0.0 );
       /// MANDATORY: clone function (virtual destructor)
-      SumTree* clone() const  override;
+      SumTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCFun m_fun       ;
-      LoKi::MCTypes::MCCut m_cut       ;
-      bool                 m_decayOnly ;
-      double               m_res       ;
+      LoKi::MCTypes::MCFun m_fun;
+      LoKi::MCTypes::MCCut m_cut;
+      bool                 m_decayOnly;
+      double               m_res;
       // ======================================================================
     };
     // ========================================================================
@@ -1921,9 +1731,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API MultTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MultTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** standard constructor
@@ -1932,35 +1740,29 @@ namespace LoKi
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      MultTree
-      ( const LoKi::MCTypes::MCFunc& fun               ,
-        const LoKi::MCTypes::MCCuts& cut               ,
-        const bool                   decayOnly = false ,
-        const double                 res       = 1.0   ) ;
+      MultTree( const LoKi::MCTypes::MCFunc& fun, const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false,
+                const double res = 1.0 );
       /** standard constructor
        *  @param fun the function to be evaluated
        *  @param cut cut to be applied
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      MultTree
-      ( const LoKi::MCTypes::MCCuts& cut               ,
-        const LoKi::MCTypes::MCFunc& fun               ,
-        const bool                   decayOnly = false ,
-        const double                 res       = 1.0   ) ;
+      MultTree( const LoKi::MCTypes::MCCuts& cut, const LoKi::MCTypes::MCFunc& fun, const bool decayOnly = false,
+                const double res = 1.0 );
       /// MANDATORY: clone function (virtual destructor)
-      MultTree* clone() const  override;
+      MultTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCFun m_fun       ;
-      LoKi::MCTypes::MCCut m_cut       ;
-      bool                 m_decayOnly ;
-      double               m_res       ;
+      LoKi::MCTypes::MCFun m_fun;
+      LoKi::MCTypes::MCCut m_cut;
+      bool                 m_decayOnly;
+      double               m_res;
       // ======================================================================
     };
     // ========================================================================
@@ -1980,9 +1782,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API MinTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MinTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** standard constructor
@@ -1991,37 +1791,29 @@ namespace LoKi
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      MinTree
-      ( const LoKi::MCTypes::MCFunc& fun  ,
-        const LoKi::MCTypes::MCCuts& cut  ,
-        const bool                   decayOnly = false ,
-        const double                 res  =
-        LoKi::Constants::PositiveInfinity ) ;
+      MinTree( const LoKi::MCTypes::MCFunc& fun, const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false,
+               const double res = LoKi::Constants::PositiveInfinity );
       /** standard constructor
        *  @param fun the function to be evaluated
        *  @param cut cut to be applied
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      MinTree
-      ( const LoKi::MCTypes::MCCuts& cut ,
-        const LoKi::MCTypes::MCFunc& fun ,
-        const bool                   decayOnly = false ,
-        const double                 res =
-        LoKi::Constants::PositiveInfinity ) ;
+      MinTree( const LoKi::MCTypes::MCCuts& cut, const LoKi::MCTypes::MCFunc& fun, const bool decayOnly = false,
+               const double res = LoKi::Constants::PositiveInfinity );
       /// MANDATORY: clone function (virtual destructor)
-      MinTree* clone() const   override;
+      MinTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double   operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCFun m_fun       ;
-      LoKi::MCTypes::MCCut m_cut       ;
-      bool                 m_decayOnly ;
-      double               m_res       ;
+      LoKi::MCTypes::MCFun m_fun;
+      LoKi::MCTypes::MCCut m_cut;
+      bool                 m_decayOnly;
+      double               m_res;
       // ======================================================================
     };
     // ========================================================================
@@ -2041,9 +1833,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API MaxTree
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MaxTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /** standard constructor
@@ -2052,37 +1842,29 @@ namespace LoKi
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      MaxTree
-      ( const LoKi::MCTypes::MCFunc& fun  ,
-        const LoKi::MCTypes::MCCuts& cut  ,
-        const bool                   decayOnly = false ,
-        const double                 res  =
-        LoKi::Constants::NegativeInfinity ) ;
+      MaxTree( const LoKi::MCTypes::MCFunc& fun, const LoKi::MCTypes::MCCuts& cut, const bool decayOnly = false,
+               const double res = LoKi::Constants::NegativeInfinity );
       /** standard constructor
        *  @param fun the function to be evaluated
        *  @param cut cut to be applied
        *  @param decayOnly flag to traverse only decay tree
        *  @param res initial value
        */
-      MaxTree
-      ( const LoKi::MCTypes::MCCuts& cut ,
-        const LoKi::MCTypes::MCFunc& fun ,
-        const bool                   decayOnly = false ,
-        const double                 res =
-        LoKi::Constants::NegativeInfinity ) ;
+      MaxTree( const LoKi::MCTypes::MCCuts& cut, const LoKi::MCTypes::MCFunc& fun, const bool decayOnly = false,
+               const double res = LoKi::Constants::NegativeInfinity );
       /// MANDATORY: clone function (virtual destructor)
-      MaxTree* clone() const   override;
+      MaxTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double   operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCFun m_fun       ;
-      LoKi::MCTypes::MCCut m_cut       ;
-      bool                 m_decayOnly ;
-      double               m_res       ;
+      LoKi::MCTypes::MCFun m_fun;
+      LoKi::MCTypes::MCCut m_cut;
+      bool                 m_decayOnly;
+      double               m_res;
       // ======================================================================
     };
     // ========================================================================
@@ -2102,19 +1884,17 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
-    class GAUDI_API FromDecays
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API FromDecays : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      FromDecays* clone() const  override;
+      FromDecays* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Signal
      *  Is it a SIGNAL particle?
@@ -2123,24 +1903,21 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
-    class GAUDI_API Signal
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API Signal : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Signal* clone() const  override;
+      Signal* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      inline bool signal ( const LHCb::MCParticle* p ) const
-      { return nullptr != p && p->fromSignal() ; }
+      inline bool signal( const LHCb::MCParticle* p ) const { return nullptr != p && p->fromSignal(); }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class FromSignal
      *  Is it from a SIGNAL particle?
@@ -2149,24 +1926,21 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
-    class GAUDI_API FromSignal
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API FromSignal : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      FromSignal* clone() const  override;
+      FromSignal* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      inline bool signal ( const LHCb::MCParticle* p ) const
-      { return nullptr != p && p->fromSignal() ; }
+      inline bool signal( const LHCb::MCParticle* p ) const { return nullptr != p && p->fromSignal(); }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class FromInteractions
      *  simple predicate to check if the particle comes from 'interactions'
@@ -2186,28 +1960,26 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
-    class GAUDI_API FromInteractions
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class GAUDI_API FromInteractions : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      FromInteractions* clone() const  override;
+      FromInteractions* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::MCParticle* p ) const  override;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /// soem unique hex-id
-    GAUDI_API std::string hex_id ( const LHCb::MCParticle* particle ) ;
+    GAUDI_API std::string hex_id( const LHCb::MCParticle* particle );
     /// soem unique hash
-    GAUDI_API std::size_t hash   ( const LHCb::MCParticle* particle ) ;
+    GAUDI_API std::size_t hash( const LHCb::MCParticle* particle );
     /// soem unique hash
-    GAUDI_API std::size_t hash   ( const LHCb::MCVertex*   vertex   ) ;
+    GAUDI_API std::size_t hash( const LHCb::MCVertex* vertex );
     // ========================================================================
-  } //                                       end of namespace LoKi::MCParticles
+  } // namespace MCParticles
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

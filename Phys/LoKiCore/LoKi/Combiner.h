@@ -14,9 +14,9 @@
 
 #include "GaudiKernel/Range.h"
 
-#include <vector>
 #include <algorithm>
 #include <functional>
+#include <vector>
 
 // ============================================================================
 /** @file
@@ -33,8 +33,7 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Combiner_ Combiner.h LoKi/Combiner.h
    *
@@ -110,110 +109,102 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-11
    */
-  template<class CONTAINER>
-  class Combiner_
-  {
+  template <class CONTAINER>
+  class Combiner_ {
   public:
     // ========================================================================
     /// type for container itself
-    typedef          CONTAINER                 Container ;
+    typedef CONTAINER Container;
     /// type for effective range
-    typedef Gaudi::Range_<Container>           Range     ;
+    typedef Gaudi::Range_<Container> Range;
     /// iterator type
-    typedef typename Range::const_iterator     iterator  ;
+    typedef typename Range::const_iterator iterator;
     /// definition of (multy)iterator
-    typedef std::vector<iterator>              Select    ;
+    typedef std::vector<iterator> Select;
     /// type for back-up
-    typedef std::pair<Select,size_t>           BackUp    ;
+    typedef std::pair<Select, size_t> BackUp;
     /// container of back-ups
-    typedef std::vector<BackUp>                BackUps   ;
+    typedef std::vector<BackUp> BackUps;
     // ========================================================================
   private:
     // ========================================================================
     /// the Combiner_ itself
-    typedef std::vector<Range>                 Ranges    ;
+    typedef std::vector<Range> Ranges;
     /// iterator over selected combination
-    typedef typename Select::iterator          it        ;
+    typedef typename Select::iterator it;
     /// iterator over selected combination (const version)
-    typedef typename Select::const_iterator    cit       ;
+    typedef typename Select::const_iterator cit;
     /// iterator over the Combiner_
-    typedef typename Ranges::iterator          rit       ;
+    typedef typename Ranges::iterator rit;
     /// iterator over the Combiner_ (cont version)
-    typedef typename Ranges::const_iterator    rcit      ;
+    typedef typename Ranges::const_iterator rcit;
     // ========================================================================
   public:
     // ========================================================================
     /** default constructor, constructs empty Combiner_
      *  the state in "invalid"!
      */
-    Combiner_()
-      : m_size    ( 0     )
-      , m_index   ( 0     )
-    {
-      backup();  // make the backup of initial empty state
+    Combiner_() : m_size( 0 ), m_index( 0 ) {
+      backup(); // make the backup of initial empty state
     }
     // ========================================================================
     /// destructor
     ~Combiner_() { clear(); } // destructor
     // ========================================================================
     /// current dimentions (=number of components)  of the Combiner_
-    size_t  dim  () const { return m_ranges.size() ; }
+    size_t dim() const { return m_ranges.size(); }
     // ========================================================================
     /// current size of the Combiner_  (include ALL combinations)
-    size_t  size () const { return m_size          ; }
+    size_t size() const { return m_size; }
     // ========================================================================
     /** add one more "container" to the existing Combiner_.
      *  @param range  the sequence range
      *  return self reference
      */
-    Combiner_& add( const Range&  range )
-    {
+    Combiner_& add( const Range& range ) {
       // extend the Combiner_
-      m_ranges  .push_back ( range          ) ;
-      m_current .push_back ( range.begin () ) ;
-      m_size = 1 ;
-      for ( rit r = m_ranges.begin() ; m_ranges.end() != r ; ++r )
-      { m_size *= r->size() ; }
+      m_ranges.push_back( range );
+      m_current.push_back( range.begin() );
+      m_size = 1;
+      for ( rit r = m_ranges.begin(); m_ranges.end() != r; ++r ) { m_size *= r->size(); }
       // reset current  (multy) iterator
       reset();
       // save the state
       m_backups.clear();
-      backup ();
+      backup();
       //
-      return *this ;
+      return *this;
     }
     // ========================================================================
     /** pre-increment operator for the Combiner_ (advance current iterator)
      *  @return self reference
      */
-    Combiner_& operator++()
-    {
+    Combiner_& operator++() {
       /// advance the 'current' iterator
-      next() ;
-      return *this ;
+      next();
+      return *this;
     }
     // ========================================================================
     /** post-increment operator for the Combiner_ (advance current iterator)
      *  @attention the same as pre-increment
      *  @return self reference
      */
-    Combiner_& operator++( int ) { return ++(*this) ; }
+    Combiner_& operator++( int ) { return ++( *this ); }
     // ========================================================================
     /** clear the Combiner
      *  @return self reference
      */
-    Combiner_& clear()
-    {
+    Combiner_& clear() {
       // clear the Combiner
-      m_ranges  .clear();
+      m_ranges.clear();
       // clear all (multy)iterators
-      m_current .clear();
+      m_current.clear();
       // size
-      m_size = 0 ;
+      m_size = 0;
       // index
-      m_index = 0 ;
+      m_index = 0;
       // clear the backups
-      m_backups.clear() ;
+      m_backups.clear();
       backup();
       // return
       return *this;
@@ -222,14 +213,11 @@ namespace LoKi
     /** reset current (multy)iterator
      *  @return self-reference
      */
-    Combiner_& reset()
-    {
+    Combiner_& reset() {
       // reset current  (multi) iterator
-      std::transform( m_ranges.begin(), m_ranges.end(),
-                      m_current.begin(),
-                      [](const Range& r) { return r.begin(); } );
+      std::transform( m_ranges.begin(), m_ranges.end(), m_current.begin(), []( const Range& r ) { return r.begin(); } );
       // reset the current index
-      m_index = 0 ;
+      m_index = 0;
       // return
       return *this;
     }
@@ -237,20 +225,17 @@ namespace LoKi
     /** access to the current (multy)iterator (const version)
      *  @return 'current' (multy)iterator
      */
-    const Select& current () const { return m_current ; }
+    const Select& current() const { return m_current; }
     // ========================================================================
     /** end
      *  @return true if there is no more combinatios
      */
-    bool end    () const { return !( m_index < m_size ); }
+    bool end() const { return !( m_index < m_size ); }
     // ========================================================================
     /** check the validity of current (multi)iterator
      *  @return true if no "actual" sub-iterators are invalid
      */
-    bool valid  () const
-    {
-      return m_size!=0 && m_index<m_size;
-    }
+    bool valid() const { return m_size != 0 && m_index < m_size; }
     // ========================================================================
     /** advance 'current' (multi)iterator.
      *  I guess it the most tricky funtion of the whole class.
@@ -258,37 +243,33 @@ namespace LoKi
      *  trying to debug it :-)
      *  @return 'current' (multi)iterator after the advance
      */
-    inline const Select&  next   ()
-    {
+    inline const Select& next() {
       // valid index?
-      if( m_index <  m_size  ) { ++m_index           ; }
+      if ( m_index < m_size ) { ++m_index; }
       // the last combination
-      if( m_index == m_size  ) { return invalidate() ; }
+      if ( m_index == m_size ) { return invalidate(); }
       // evaluate the value of the current iterator from the current index
-      size_t prev = 1    ;
-      auto range = m_ranges  .begin () ;
-      auto curr  = m_current .begin () ;
-      for ( ; m_current.end() != curr ; ++curr  , ++range )
-      {
-        size_t index  =  ( m_index / prev ) % range->size() ;
-        prev         *= range->size() ;
-        *curr         = std::next(range->begin(),index) ;
+      size_t prev  = 1;
+      auto   range = m_ranges.begin();
+      auto   curr  = m_current.begin();
+      for ( ; m_current.end() != curr; ++curr, ++range ) {
+        size_t index = ( m_index / prev ) % range->size();
+        prev *= range->size();
+        *curr = std::next( range->begin(), index );
       }
       // the end
-      return m_current ;
+      return m_current;
     }
     // ========================================================================
   public:
     // ========================================================================
     /// copy the content of current iterator (with dereferencing!)
     template <class OUTPUT>
-    OUTPUT current ( OUTPUT out )  const
-    {
+    OUTPUT current( OUTPUT out ) const {
       // copy only the valid combinations
-      if ( !valid() ) { return out ;}
-      std::transform( m_current.begin(), m_current.end(), out,
-                      [](const iterator& i) { return *i; } );
-      return out ;                                                  // RETURN
+      if ( !valid() ) { return out; }
+      std::transform( m_current.begin(), m_current.end(), out, []( const iterator& i ) { return *i; } );
+      return out; // RETURN
     }
     // ========================================================================
     /** check the validity/uniquiness/ordering of the objects using the external
@@ -296,27 +277,25 @@ namespace LoKi
      *  @param cmp the comparions criteria
      */
     template <class CMP>
-    bool unique ( const CMP& cmp ) const
-    {
+    bool unique( const CMP& cmp ) const {
       // check only "valid" combinations
-      if ( !valid() ) { return false ; }
+      if ( !valid() ) { return false; }
       // double loop over the combination
-      for ( auto it1 = m_current.begin() ; m_current.end() != it1 ; ++it1 ) {
-        for ( auto it2 = std::next(it1) ; m_current.end() != it2 ; ++it2 ) {
-          if ( !cmp ( **it1 , **it2 ) ) { return false ; }         // RETURN
+      for ( auto it1 = m_current.begin(); m_current.end() != it1; ++it1 ) {
+        for ( auto it2 = std::next( it1 ); m_current.end() != it2; ++it2 ) {
+          if ( !cmp( **it1, **it2 ) ) { return false; } // RETURN
         }
       }
-      return true ;
+      return true;
     }
     // ========================================================================
     /** unique
      *  @return true if current combination  is 'unique'
      *  @attention ut has no sence fro invalid combinations!
      */
-    bool unique () const
-    {
+    bool unique() const {
       // get the proper uniquiness criteria:
-      return unique ( std::not_equal_to<typename CONTAINER::value_type>() ) ;
+      return unique( std::not_equal_to<typename CONTAINER::value_type>() );
     }
     // ========================================================================
   public:
@@ -325,9 +304,8 @@ namespace LoKi
      *  (could be restored later)
      *  @return number of backups
      */
-    size_t backup()
-    {
-      m_backups.emplace_back( m_current , m_index ) ;
+    size_t backup() {
+      m_backups.emplace_back( m_current, m_index );
       return m_backups.size();
     }
     /** restore the combiner from backup
@@ -335,16 +313,15 @@ namespace LoKi
      *  times to go to previous-previous-...-previous state
      *  @return self-reference
      */
-    Combiner_& restore()
-    {
+    Combiner_& restore() {
       // restore the current iterator
-      m_current = m_backups.back().first  ;
+      m_current = m_backups.back().first;
       // restore the current index
-      m_index   = m_backups.back().second ;
+      m_index = m_backups.back().second;
       // remove the last backup state
-      if ( m_backups.size() > 1 ) { m_backups.pop_back() ; }
+      if ( m_backups.size() > 1 ) { m_backups.pop_back(); }
       // return
-      return *this  ;
+      return *this;
     }
     // ========================================================================
   private:
@@ -352,30 +329,27 @@ namespace LoKi
     /** invalidate the current iterator (and index)
      *  @return corrent iterator
      */
-    const Select& invalidate()
-    {
+    const Select& invalidate() {
       // invalidate the current index
-      m_index = m_size ;
+      m_index = m_size;
       // invalidate current  (multy) iterator to global 'end' position
-      std::transform( m_ranges.begin(), m_ranges.end(),
-                      m_current.begin(),
-                      [](const Range& r) { return r.end(); } );
+      std::transform( m_ranges.begin(), m_ranges.end(), m_current.begin(), []( const Range& r ) { return r.end(); } );
       // return invalid iterator
-      return m_current ;
+      return m_current;
     }
     // ========================================================================
   private:
     // ========================================================================
     /// Combiner_ itself
-    Ranges              m_ranges   ; // Combiner_ itself
+    Ranges m_ranges; // Combiner_ itself
     /// "current" iterator
-    Select              m_current  ; // "current" iterator
+    Select m_current; // "current" iterator
     /// total number of combinations
-    size_t              m_size     ; // total number of combinations
+    size_t m_size; // total number of combinations
     /// index of current combination
-    size_t              m_index    ; // index of current combination
+    size_t m_index; // index of current combination
     /// 'State' of the combiner
-    BackUps             m_backups  ; // 'State' of the combiner
+    BackUps m_backups; // 'State' of the combiner
     // ========================================================================
   }; //                                                  end of class Combiner_
   // ==========================================================================

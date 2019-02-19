@@ -30,8 +30,7 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   //-----------------------------------------------------------------------------
   /** @class IPixelSuppressionTool IRichPixelSuppressionTool.h
@@ -44,11 +43,9 @@ namespace Rich::DAQ
    */
   //-----------------------------------------------------------------------------
 
-  class IPixelSuppressionTool : public virtual IAlgTool
-  {
+  class IPixelSuppressionTool : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IPixelSuppressionTool, 1, 0 );
 
@@ -62,8 +59,7 @@ namespace Rich::DAQ
      *               pixel RichSmartIDs is changed
      *  @retval false No pixels are suppressed
      */
-    virtual bool applyPixelSuppression( const LHCb::RichSmartID    hpdID,
-                                        LHCb::RichSmartID::Vector &smartIDs ) const = 0;
+    virtual bool applyPixelSuppression( const LHCb::RichSmartID hpdID, LHCb::RichSmartID::Vector& smartIDs ) const = 0;
   };
 
 } // namespace Rich::DAQ

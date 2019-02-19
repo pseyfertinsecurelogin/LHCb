@@ -43,63 +43,53 @@
 // ============================================================================
 // constructor from the bis
 // ============================================================================
-LoKi::HLT::RoutingBits::RoutingBits( std::vector<unsigned int>  bits )
-  : LoKi::AuxFunBase ( std::tie ( bits ) )
-  , m_bits    ( std::move(bits) )
-{
-  std::sort ( m_fired.begin() , m_fired.end() ) ;
+LoKi::HLT::RoutingBits::RoutingBits( std::vector<unsigned int> bits )
+    : LoKi::AuxFunBase( std::tie( bits ) ), m_bits( std::move( bits ) ) {
+  std::sort( m_fired.begin(), m_fired.end() );
 }
 // ============================================================================
 // MANDATORY: clone method ("virtual contructor")
 // ============================================================================
-LoKi::HLT::RoutingBits* LoKi::HLT::RoutingBits::clone () const
-{ return new RoutingBits ( *this ) ; }
+LoKi::HLT::RoutingBits* LoKi::HLT::RoutingBits::clone() const { return new RoutingBits( *this ); }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool LoKi::HLT::RoutingBits::operator()(  ) const
-{
-  if ( !sameEvent() || 0 >= event() || m_fired.empty() ) { getFired() ; }
+bool LoKi::HLT::RoutingBits::operator()() const {
+  if ( !sameEvent() || 0 >= event() || m_fired.empty() ) { getFired(); }
   //
-  return std::any_of( std::begin(m_bits), std::end(m_bits),
-                      [&](unsigned int bit) {
-            return std::binary_search( m_fired.begin() , m_fired.end  () , bit );
-  });
+  return std::any_of( std::begin( m_bits ), std::end( m_bits ),
+                      [&]( unsigned int bit ) { return std::binary_search( m_fired.begin(), m_fired.end(), bit ); } );
 }
 // ============================================================================
 // get the fired bits
 // ============================================================================
-std::size_t LoKi::HLT::RoutingBits::getFired() const
-{
-  LoKi::ILoKiSvc*   loki   = lokiSvc()  ;
-  Assert ( 0 != loki   , "Uanble to get LoKi  Service" ) ;
-  SmartIF<IDataProviderSvc> evtSvc  ( loki ) ;
-  Assert ( !(!evtSvc)  , "Uanble to get Event Service" ) ;
-  SmartDataPtr<LHCb::RawEvent> raw
-    ( evtSvc , LHCb::RawEventLocation::Default ) ;
-  Assert ( !(!raw)     , "Unable to get Raw Event!" ) ;
+std::size_t LoKi::HLT::RoutingBits::getFired() const {
+  LoKi::ILoKiSvc* loki = lokiSvc();
+  Assert( 0 != loki, "Uanble to get LoKi  Service" );
+  SmartIF<IDataProviderSvc> evtSvc( loki );
+  Assert( !( !evtSvc ), "Uanble to get Event Service" );
+  SmartDataPtr<LHCb::RawEvent> raw( evtSvc, LHCb::RawEventLocation::Default );
+  Assert( !( !raw ), "Unable to get Raw Event!" );
   //
-  m_fired = Hlt::firedRoutingBits ( raw ) ;
-  std::sort ( m_fired.begin() , m_fired.end() ) ;
+  m_fired = Hlt::firedRoutingBits( raw );
+  std::sort( m_fired.begin(), m_fired.end() );
   //
-  return m_fired.size() ;
+  return m_fired.size();
 }
 // ============================================================================
 // OPTIONAL : the nice printout
 // ============================================================================
-std::ostream& LoKi::HLT::RoutingBits::fillStream ( std::ostream& s ) const
-{
-  s << "routingBits ( " ;
+std::ostream& LoKi::HLT::RoutingBits::fillStream( std::ostream& s ) const {
+  s << "routingBits ( ";
   //
   auto i = m_bits.begin();
-  if (i!=m_bits.end()) s << *i++;
-  while (i!=m_bits.end()) s << "," << *i++;
+  if ( i != m_bits.end() ) s << *i++;
+  while ( i != m_bits.end() ) s << "," << *i++;
   s << " ) ";
-  Gaudi::Utils::toStream ( m_bits , s ) ;
-  return s << " ) " ;
+  Gaudi::Utils::toStream( m_bits, s );
+  return s << " ) ";
 }
 // ============================================================================
-
 
 // ============================================================================
 // The END

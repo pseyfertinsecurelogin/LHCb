@@ -11,16 +11,16 @@
 #ifndef RAWBANKTOSTLITECLUSTERALG_H
 #define RAWBANKTOSTLITECLUSTERALG_H 1
 
-#include "STDecodingBaseAlg.h"
 #include "Event/RawBank.h"
-#include "Kernel/STDAQDefinitions.h"
 #include "GaudiAlg/Transformer.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "STDecodingBaseAlg.h"
 
 #include "Event/STLiteCluster.h"
 
-#include <vector>
 #include <string>
 #include <utility>
+#include <vector>
 
 /** @class RawBankToSTLiteClusterAlg RawBankToSTLiteClusterAlg.h
  *
@@ -30,61 +30,57 @@
  *  @author S. Ponce
  */
 
-
 #include "Kernel/STClusterWord.h"
 
 class SiADCWord;
 class STTell1Board;
 
-namespace LHCb{
- class STChannelID;
- class STLiteCluster;
-}
+namespace LHCb {
+  class STChannelID;
+  class STLiteCluster;
+} // namespace LHCb
 
-typedef Gaudi::Functional::Transformer<LHCb::STLiteCluster::STLiteClusters(const LHCb::ODIN&, const LHCb::RawEvent&),
-  Gaudi::Functional::Traits::BaseClass_t<STDecodingBaseAlg>> RawBankToSTLiteClusterAlgBaseClass;
+typedef Gaudi::Functional::Transformer<LHCb::STLiteCluster::STLiteClusters( const LHCb::ODIN&, const LHCb::RawEvent& ),
+                                       Gaudi::Functional::Traits::BaseClass_t<STDecodingBaseAlg>>
+    RawBankToSTLiteClusterAlgBaseClass;
 
 class RawBankToSTLiteClusterAlg final : public RawBankToSTLiteClusterAlgBaseClass {
 
 public:
-
   /// Standard constructor
-  RawBankToSTLiteClusterAlg(const std::string& name, ISvcLocator* pSvcLocator);
+  RawBankToSTLiteClusterAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;   ///< Algorithm initialization
-  StatusCode finalize() override;     ///< Algorithm finalization
-  LHCb::STLiteCluster::STLiteClusters operator()(const LHCb::ODIN&, const LHCb::RawEvent&) const override;
+  StatusCode                          initialize() override; ///< Algorithm initialization
+  StatusCode                          finalize() override;   ///< Algorithm finalization
+  LHCb::STLiteCluster::STLiteClusters operator()( const LHCb::ODIN&, const LHCb::RawEvent& ) const override;
 
 private:
-
   // create Clusters from this type
-  StatusCode decodeBanks(const LHCb::RawEvent& rawEvt, LHCb::STLiteCluster::STLiteClusters& fCont) const;
+  StatusCode decodeBanks( const LHCb::RawEvent& rawEvt, LHCb::STLiteCluster::STLiteClusters& fCont ) const;
 
   // add a single cluster to the output container
-  void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
-                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters& fCont, const bool isUT) const;
+  void createCluster( const STTell1Board* aBoard, const STDAQ::version& bankVersion, const STClusterWord& aWord,
+                      LHCb::STLiteCluster::STLiteClusters& fCont, const bool isUT ) const;
 
-  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_lostBanks{ this, "lost Banks" };
-  mutable Gaudi::Accumulators::Counter<> m_noBanksFound{ this, "no banks found" };
-  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_skippedBanks{ this, "skipped Banks" };
-  mutable Gaudi::Accumulators::Counter<> m_validBanks{ this, "# valid banks" };
-  mutable Gaudi::Accumulators::Counter<> m_validSourceID{ this, "# valid source ID" };
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_lostBanks{this, "lost Banks"};
+  mutable Gaudi::Accumulators::Counter<>                      m_noBanksFound{this, "no banks found"};
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_skippedBanks{this, "skipped Banks"};
+  mutable Gaudi::Accumulators::Counter<>                      m_validBanks{this, "# valid banks"};
+  mutable Gaudi::Accumulators::Counter<>                      m_validSourceID{this, "# valid source ID"};
 };
 
-#include "Kernel/STTell1Board.h"
 #include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STTell1Board.h"
 
-inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
-                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters& fCont,
-                                                     const bool isUT) const{
+inline void RawBankToSTLiteClusterAlg::createCluster( const STTell1Board* aBoard, const STDAQ::version& bankVersion,
+                                                      const STClusterWord&                 aWord,
+                                                      LHCb::STLiteCluster::STLiteClusters& fCont,
+                                                      const bool                           isUT ) const {
 
-  const unsigned int fracStrip = aWord.fracStripBits();
-  const STTell1Board::chanPair chan = aBoard->DAQToOffline(fracStrip, bankVersion, STDAQ::StripRepresentation(aWord.channelID()));
-  fCont.emplace_back( chan.second,
-                      aWord.pseudoSizeBits(),
-                      aWord.hasHighThreshold(),
-                      chan.first,
-                      isUT);
+  const unsigned int           fracStrip = aWord.fracStripBits();
+  const STTell1Board::chanPair chan =
+      aBoard->DAQToOffline( fracStrip, bankVersion, STDAQ::StripRepresentation( aWord.channelID() ) );
+  fCont.emplace_back( chan.second, aWord.pseudoSizeBits(), aWord.hasHighThreshold(), chan.first, isUT );
 }
 
 #endif //  RAWBANKTOSTLITECLUSTERALG_H

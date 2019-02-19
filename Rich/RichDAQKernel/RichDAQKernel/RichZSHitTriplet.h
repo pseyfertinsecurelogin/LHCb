@@ -25,8 +25,7 @@
 // numberings
 #include "RichUtils/RichDAQDefinitions.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   /** @class RichZSHitTriplet RichZSHitTriplet.h
    *
@@ -36,11 +35,9 @@ namespace Rich::DAQ
    *  @date   2003-11-06
    */
 
-  class RichZSHitTriplet
-  {
+  class RichZSHitTriplet {
 
   public: // definitions
-
     /// Number of bits for each row or column number
     static const Rich::DAQ::IndexType BitsHit = 5;
 
@@ -64,33 +61,27 @@ namespace Rich::DAQ
     static const Rich::DAQ::ShortType MaxRowCol = ( 1 << BitsHit ) - 1;
 
   public: // methods
-
     /// Copy Constructor
-    RichZSHitTriplet( const RichZSHitTriplet &hits ) : m_data( hits.data() ) {}
+    RichZSHitTriplet( const RichZSHitTriplet& hits ) : m_data( hits.data() ) {}
 
     /// Constructor from Rich::DAQ::LongType
     RichZSHitTriplet( const Rich::DAQ::LongType data = 0 ) : m_data( data ) {}
 
     /// Constructor from three MCRichDigits
-    RichZSHitTriplet(
-      const LHCb::RichSmartID *digOne,  ///< Pointer to first LHCb::RichSmartID to store
-      const LHCb::RichSmartID *digTwo,  ///< Pointer to second LHCb::RichSmartID to store
-      const LHCb::RichSmartID *digThree ///< Pointer to third LHCb::RichSmartID to store
-      )
-      : m_data( 0 )
-    {
-      if ( digOne )
-      {
+    RichZSHitTriplet( const LHCb::RichSmartID* digOne,  ///< Pointer to first LHCb::RichSmartID to store
+                      const LHCb::RichSmartID* digTwo,  ///< Pointer to second LHCb::RichSmartID to store
+                      const LHCb::RichSmartID* digThree ///< Pointer to third LHCb::RichSmartID to store
+                      )
+        : m_data( 0 ) {
+      if ( digOne ) {
         setRow0( digOne->pixelRow() );
         setCol0( digOne->pixelCol() );
       }
-      if ( digTwo )
-      {
+      if ( digTwo ) {
         setRow1( digTwo->pixelRow() );
         setCol1( digTwo->pixelCol() );
       }
-      if ( digThree )
-      {
+      if ( digThree ) {
         setRow2( digThree->pixelRow() );
         setCol2( digThree->pixelCol() );
       }
@@ -106,43 +97,37 @@ namespace Rich::DAQ
     inline operator Rich::DAQ::LongType() const { return data(); }
 
     /// Set the first hit row number
-    inline void setRow0( const Rich::DAQ::ShortType row )
-    {
+    inline void setRow0( const Rich::DAQ::ShortType row ) {
       dataInRange( row, MaxRowCol );
       set( row, ShiftRow0, MaskRow0 );
     }
 
     /// Set the first hit column number
-    inline void setCol0( const Rich::DAQ::ShortType col )
-    {
+    inline void setCol0( const Rich::DAQ::ShortType col ) {
       dataInRange( col, MaxRowCol );
       set( col, ShiftCol0, MaskCol0 );
     }
 
     /// Set the second hit row number
-    inline void setRow1( const Rich::DAQ::ShortType row )
-    {
+    inline void setRow1( const Rich::DAQ::ShortType row ) {
       dataInRange( row, MaxRowCol );
       set( row, ShiftRow1, MaskRow1 );
     }
 
     /// Set the second hit column number
-    inline void setCol1( const Rich::DAQ::ShortType col )
-    {
+    inline void setCol1( const Rich::DAQ::ShortType col ) {
       dataInRange( col, MaxRowCol );
       set( col, ShiftCol1, MaskCol1 );
     }
 
     /// Set the third hit row number
-    inline void setRow2( const Rich::DAQ::ShortType row )
-    {
+    inline void setRow2( const Rich::DAQ::ShortType row ) {
       dataInRange( row, MaxRowCol );
       set( row, ShiftRow2, MaskRow2 );
     }
 
     /// Set the third hit column number
-    inline void setCol2( const Rich::DAQ::ShortType col )
-    {
+    inline void setCol2( const Rich::DAQ::ShortType col ) {
       dataInRange( col, MaxRowCol );
       set( col, ShiftCol2, MaskCol2 );
     }
@@ -166,28 +151,21 @@ namespace Rich::DAQ
     inline Rich::DAQ::ShortType col2() const { return ( ( data() & MaskCol2 ) >> ShiftCol2 ); }
 
   private: // methods
-
     /// Update the internal data
     inline void setData( const Rich::DAQ::LongType data ) { m_data = data; }
 
     /// Set the data value for a given mask and shift value
-    inline void set( const Rich::DAQ::ShortType value,
-                     const Rich::DAQ::ShortType shift,
-                     const Rich::DAQ::LongType  mask )
-    {
+    inline void set( const Rich::DAQ::ShortType value, const Rich::DAQ::ShortType shift,
+                     const Rich::DAQ::LongType mask ) {
       setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
     }
 
     /// tests whether a given value is in range for a given data field
-    inline void dataInRange( const Rich::DAQ::ShortType value,
-                             const Rich::DAQ::ShortType max ) const
-    {
-      if ( value > max )
-      { throw GaudiException( "Data out of range", "*RichZSHitTriplet*", StatusCode::FAILURE ); }
+    inline void dataInRange( const Rich::DAQ::ShortType value, const Rich::DAQ::ShortType max ) const {
+      if ( value > max ) { throw GaudiException( "Data out of range", "*RichZSHitTriplet*", StatusCode::FAILURE ); }
     }
 
   private: // data
-
     /// The data word
     Rich::DAQ::LongType m_data = 0;
   };

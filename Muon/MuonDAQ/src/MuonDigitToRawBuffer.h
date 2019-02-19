@@ -31,11 +31,10 @@ public:
   /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   StatusCode ProcessDC06();
   StatusCode ProcessV1();
   StatusCode ProcessDigitDC06();
@@ -46,15 +45,14 @@ private:
 
   std::vector<unsigned int> m_digitsInODE[MuonDAQHelper_maxODENumber];
   std::vector<unsigned int> m_digitsInL1[MuonDAQHelper_maxTell1Number];
-  unsigned int firedInODE[MuonDAQHelper_maxODENumber];
-  unsigned int firedInPP[MuonDAQHelper_maxTell1Number*4];
+  unsigned int              firedInODE[MuonDAQHelper_maxODENumber];
+  unsigned int              firedInPP[MuonDAQHelper_maxTell1Number * 4];
 
   std::vector<unsigned int> m_padInL1[MuonDAQHelper_maxTell1Number];
 
-  long m_TotL1Board = 0;
-  unsigned int m_M1Tell1 = 0;
+  long         m_TotL1Board = 0;
+  unsigned int m_M1Tell1    = 0;
 
-  Gaudi::Property<unsigned int> m_vtype { this, "VType", 2 } ;
-
+  Gaudi::Property<unsigned int> m_vtype{this, "VType", 2};
 };
 #endif // MUONDIGITTORAWBUFFER_H

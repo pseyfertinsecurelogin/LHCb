@@ -24,13 +24,11 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct CalibrationInfo: ConditionInfo, virtual ICalibration
-{
+struct CalibrationInfo : ConditionInfo, virtual ICalibration {
   /// Constructor
   // ROOT dictionaries don't like
   // using ConditionInfo::ConditionInfo;
-  CalibrationInfo( IDetectorElement* de, const std::string& condition ) 
-  : ConditionInfo(de,condition) {}
+  CalibrationInfo( IDetectorElement* de, const std::string& condition ) : ConditionInfo( de, condition ) {}
 };
 
 #endif // DETDESC_CALIBRATIONINFO_H

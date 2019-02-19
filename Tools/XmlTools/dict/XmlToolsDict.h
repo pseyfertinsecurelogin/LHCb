@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DICT_XMLTOOLSDICT_H 
+#ifndef DICT_XMLTOOLSDICT_H
 #define DICT_XMLTOOLSDICT_H 1
 
 // Include files

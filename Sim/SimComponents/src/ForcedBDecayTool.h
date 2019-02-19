@@ -14,9 +14,9 @@
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 
-//from Event
-#include "Event/MCParticle.h"
+// from Event
 #include "Event/GenHeader.h"
+#include "Event/MCParticle.h"
 
 // Interface
 #include "MCInterfaces/IForcedBDecayTool.h"
@@ -32,11 +32,9 @@ public:
   /// Standard constructor
   using base_class::base_class;
 
-  const LHCb::MCParticle* forcedB(void) override;
+  const LHCb::MCParticle* forcedB( void ) override;
 
 private:
-
-  LHCb::MCParticle* associatedofHEP(HepMC::GenParticle* ) ;
-
+  LHCb::MCParticle* associatedofHEP( HepMC::GenParticle* );
 };
 #endif // FORCEDBDECAYTOOL_H

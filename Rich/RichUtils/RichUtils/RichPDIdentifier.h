@@ -24,8 +24,7 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   /** @class PDIdentifier RichPDIdentifier.h RichUtils/RichPDIdentifier.h
    *
@@ -35,11 +34,9 @@ namespace Rich::DAQ
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   27/04/2007
    */
-  class PDIdentifier final
-  {
+  class PDIdentifier final {
 
   public:
-
     /** Constructor from human readable number
      *  @param data The HPD information in a human readable form.
      *              The format is ABCCDD where A is the Rich number (1,2),
@@ -50,45 +47,32 @@ namespace Rich::DAQ
     explicit PDIdentifier( const int data = -1 ) : m_data( data ) {}
 
     /// Constructor from a RichSmartID
-    explicit PDIdentifier( const LHCb::RichSmartID id )
-    {
-      if ( LHCb::RichSmartID::HPDID == id.idType() )
+    explicit PDIdentifier( const LHCb::RichSmartID id ) {
+      if ( LHCb::RichSmartID::HPDID == id.idType() ) {
+        m_data = ( id.isValid() ? (int)( 100000 * ( 1 + (int)id.rich() ) + 10000 * ( (int)id.panel() ) +
+                                         100 * id.pdCol() + id.pdNumInCol() )
+                                : -1 );
+      } else // MaPMT
       {
-        m_data =
-          ( id.isValid() ? (int)( 100000 * ( 1 + (int)id.rich() ) + 10000 * ( (int)id.panel() ) +
-                                  100 * id.pdCol() + id.pdNumInCol() ) :
-                           -1 );
-      }
-      else // MaPMT
-      {
-        m_data =
-          ( id.isValid() ? (int)( 1000000 * ( 1 + (int)id.rich() ) + 100000 * ( (int)id.panel() ) +
-                                  100 * id.pdCol() + id.pdNumInCol() ) :
-                           -1 );
+        m_data = ( id.isValid() ? (int)( 1000000 * ( 1 + (int)id.rich() ) + 100000 * ( (int)id.panel() ) +
+                                         100 * id.pdCol() + id.pdNumInCol() )
+                                : -1 );
       }
     }
 
   public:
-
     /// Return a RichSmartID
-    inline LHCb::RichSmartID smartID() const
-    {
+    inline LHCb::RichSmartID smartID() const {
       if ( m_data > 999999 ) // MaPMT
       {
         return LHCb::RichSmartID( ( Rich::DetectorType )( ( m_data / 1000000 ) - 1 ),
-                                  ( Rich::Side )( ( m_data / 100000 ) % 10 ),
-                                  m_data % 100,
-                                  ( m_data / 100 ) % 1000,
+                                  ( Rich::Side )( ( m_data / 100000 ) % 10 ), m_data % 100, ( m_data / 100 ) % 1000,
                                   LHCb::RichSmartID::MaPMTID );
-      }
-      else
-      {
-        return ( m_data == -1 ?
-                   LHCb::RichSmartID() :
-                   LHCb::RichSmartID( ( Rich::DetectorType )( ( m_data / 100000 ) - 1 ),
-                                      ( Rich::Side )( ( m_data / 10000 ) % 10 ),
-                                      m_data % 100,
-                                      ( m_data / 100 ) % 100 ) );
+      } else {
+        return ( m_data == -1 ? LHCb::RichSmartID()
+                              : LHCb::RichSmartID( ( Rich::DetectorType )( ( m_data / 100000 ) - 1 ),
+                                                   ( Rich::Side )( ( m_data / 10000 ) % 10 ), m_data % 100,
+                                                   ( m_data / 100 ) % 100 ) );
       }
     }
 
@@ -99,8 +83,7 @@ namespace Rich::DAQ
     inline int number() const noexcept { return m_data; }
 
   private:
-
-    int m_data { -1 }; ///< The internal data
+    int m_data{-1}; ///< The internal data
   };
 
 } // namespace Rich::DAQ

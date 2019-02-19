@@ -43,146 +43,82 @@
  *  @param bg        color for background for 'marked' lines
  */
 // ============================================================================
-LoKi::GenDecayChain::GenDecayChain
-( const size_t          maxDepth ,
-  const bool            vertex   ,
-  const Mode            mode     ,
-  const MSG::Color&     fg       ,
-  const MSG::Color&     bg       ,
-  const bool            vertexe  )
-  : LoKi::DecayChainBase ( maxDepth ,
-                           vertex   ,
-                           mode     ,
-                           fg       ,
-                           bg       )
-  , m_vertexe            ( vertexe  )
-{}
+LoKi::GenDecayChain::GenDecayChain( const size_t maxDepth, const bool vertex, const Mode mode, const MSG::Color& fg,
+                                    const MSG::Color& bg, const bool vertexe )
+    : LoKi::DecayChainBase( maxDepth, vertex, mode, fg, bg ), m_vertexe( vertexe ) {}
 // ==========================================================================
 /*  Standard constructor
  *  @param vertexe   end-vertex info for MC particles to be printed
  */
 // ==========================================================================
-LoKi::GenDecayChain::GenDecayChain
-( const LoKi::DecayChainBase& base    ,
-  const bool                  vertexe )
-  : LoKi::DecayChainBase ( base    )
-  , m_vertexe            ( vertexe )
-{}
+LoKi::GenDecayChain::GenDecayChain( const LoKi::DecayChainBase& base, const bool vertexe )
+    : LoKi::DecayChainBase( base ), m_vertexe( vertexe ) {}
 // ===========================================================================
 // predefined printout
 // ===========================================================================
-std::string LoKi::GenDecayChain::print_
-( const HepMC::GenParticle*   p      ,
-  const LoKi::Types::GCuts&   accept ,
-  const LoKi::Types::GCuts&   mark   ) const
-{
-  std::ostringstream s ;
+std::string LoKi::GenDecayChain::print_( const HepMC::GenParticle* p, const LoKi::Types::GCuts& accept,
+                                         const LoKi::Types::GCuts& mark ) const {
+  std::ostringstream s;
   //
-  print ( p      ,
-          s      ,
-          '\n'   ,
-          accept ,
-          mark   ) ;
+  print( p, s, '\n', accept, mark );
   //
-  return s.str() ;
+  return s.str();
 }
 // ============================================================================
 // predefined printout
 // ============================================================================
-std::string LoKi::GenDecayChain::print_
-( const LoKi::Types::GRange&  e      ,
-  const LoKi::Types::GCuts&   accept ,
-  const LoKi::Types::GCuts&   mark   ) const
-{
-  std::ostringstream s ;
+std::string LoKi::GenDecayChain::print_( const LoKi::Types::GRange& e, const LoKi::Types::GCuts& accept,
+                                         const LoKi::Types::GCuts& mark ) const {
+  std::ostringstream s;
   //
-  print ( e.begin () ,
-          e.end   () ,
-          s          ,
-          '\n'       ,
-          accept     ,
-          mark       ,
-          " "        ,
-          0          ) ;
+  print( e.begin(), e.end(), s, '\n', accept, mark, " ", 0 );
   //
-  return s.str() ;
+  return s.str();
 }
 // ============================================================================
 // predefined printout
 // ============================================================================
-std::string LoKi::GenDecayChain::print_
-( const LoKi::GenTypes::GenContainer& e      ,
-  const LoKi::Types::GCuts&           accept ,
-  const LoKi::Types::GCuts&           mark   ) const
-{
-  std::ostringstream s ;
+std::string LoKi::GenDecayChain::print_( const LoKi::GenTypes::GenContainer& e, const LoKi::Types::GCuts& accept,
+                                         const LoKi::Types::GCuts& mark ) const {
+  std::ostringstream s;
   //
-  print ( e.begin () ,
-          e.end   () ,
-          s          ,
-          '\n'       ,
-          accept     ,
-          mark       ,
-          " "        ,
-          0          ) ;
+  print( e.begin(), e.end(), s, '\n', accept, mark, " ", 0 );
   //
-  return s.str() ;
+  return s.str();
 }
 // ===========================================================================
 // predefined printout
 // ===========================================================================
-std::string LoKi::GenDecayChain::print_
-( const HepMC::GenEvent*      p      ,
-  const LoKi::Types::GCuts&   accept ,
-  const LoKi::Types::GCuts&   mark   ) const
-{
-  std::ostringstream s ;
+std::string LoKi::GenDecayChain::print_( const HepMC::GenEvent* p, const LoKi::Types::GCuts& accept,
+                                         const LoKi::Types::GCuts& mark ) const {
+  std::ostringstream s;
   //
-  print ( p      ,
-          s      ,
-          '\n'   ,
-          accept ,
-          mark   ) ;
+  print( p, s, '\n', accept, mark );
   //
-  return s.str() ;
+  return s.str();
 }
 // ===========================================================================
 // predefined printout
 // ===========================================================================
-std::string LoKi::GenDecayChain::print_
-( const LHCb::HepMCEvent*     p      ,
-  const LoKi::Types::GCuts&   accept ,
-  const LoKi::Types::GCuts&   mark   ) const
-{
-  std::ostringstream s ;
+std::string LoKi::GenDecayChain::print_( const LHCb::HepMCEvent* p, const LoKi::Types::GCuts& accept,
+                                         const LoKi::Types::GCuts& mark ) const {
+  std::ostringstream s;
   //
-  print ( p      ,
-          s      ,
-          '\n'   ,
-          accept ,
-          mark   ) ;
+  print( p, s, '\n', accept, mark );
   //
-  return s.str() ;
+  return s.str();
 }
 // ===========================================================================
 // predefined printout
 // ===========================================================================
-std::string LoKi::GenDecayChain::print_
-( const LHCb::HepMCEvent::Container* p      ,
-  const LoKi::Types::GCuts&          accept ,
-  const LoKi::Types::GCuts&          mark   ) const
-{
-  std::ostringstream s ;
+std::string LoKi::GenDecayChain::print_( const LHCb::HepMCEvent::Container* p, const LoKi::Types::GCuts& accept,
+                                         const LoKi::Types::GCuts& mark ) const {
+  std::ostringstream s;
   //
-  print ( p      ,
-          s      ,
-          '\n'   ,
-          accept ,
-          mark   ) ;
+  print( p, s, '\n', accept, mark );
   //
-  return s.str() ;
+  return s.str();
 }
 // ===========================================================================
 // The END
 // ===========================================================================
-

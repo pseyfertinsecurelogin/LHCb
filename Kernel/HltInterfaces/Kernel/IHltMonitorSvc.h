@@ -32,29 +32,25 @@ class HltHistogram;
  */
 struct GAUDI_API IHltMonitorSvc : extend_interfaces<INamedInterface> {
 
-   // Return the interface ID
-   DeclareInterfaceID(IHltMonitorSvc, 2, 0);
+  // Return the interface ID
+  DeclareInterfaceID( IHltMonitorSvc, 2, 0 );
 
-   /// List of all counters
-   virtual std::vector<std::string> counters() const = 0;
+  /// List of all counters
+  virtual std::vector<std::string> counters() const = 0;
 
-   /// Simple wrapper to facilitate counting
-   virtual RateCounter& rateCounter(const std::string& identifier) const = 0;
+  /// Simple wrapper to facilitate counting
+  virtual RateCounter& rateCounter( const std::string& identifier ) const = 0;
 
-   /// Count counter at time t
-   virtual void count(const Gaudi::StringKey& id, double t) = 0;
+  /// Count counter at time t
+  virtual void count( const Gaudi::StringKey& id, double t ) = 0;
 
-   /// List of all histograms
-   virtual std::vector<std::string> histograms() const = 0;
+  /// List of all histograms
+  virtual std::vector<std::string> histograms() const = 0;
 
-   /// Simple wrapper to facilitate filling of histograms
-   virtual HltHistogram& histogram(const std::string& identifier,
-                                   double left, double right,
-                                   size_t bins) const = 0;
+  /// Simple wrapper to facilitate filling of histograms
+  virtual HltHistogram& histogram( const std::string& identifier, double left, double right, size_t bins ) const = 0;
 
-   /// Fill histogram with value
-   virtual void fill(const Gaudi::StringKey& key, size_t bin) = 0;
-
-
+  /// Fill histogram with value
+  virtual void fill( const Gaudi::StringKey& key, size_t bin ) = 0;
 };
 #endif // KERNEL_IHLTMONITORSVC_H

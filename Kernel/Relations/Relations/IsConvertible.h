@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef RELATIONS_ISCONVERTIBLE_H 
+#ifndef RELATIONS_ISCONVERTIBLE_H
 #define RELATIONS_ISCONVERTIBLE_H 1
 // ============================================================================
 // Include files
@@ -16,8 +16,7 @@
 // ============================================================================
 #include <type_traits>
 // ============================================================================
-namespace Relations 
-{
+namespace Relations {
   // ==========================================================================
   /** @class IsConvertible IsConvertible.h Relations/IsConvertible.h
    *
@@ -25,15 +24,17 @@ namespace Relations
    *  @date   2006-06-11
    */
   template <class T, class U>
-  struct IsConvertible 
-  { enum { same  = false , value = std::is_convertible<T,U>::value  } ; } ;
+  struct IsConvertible {
+    enum { same = false, value = std::is_convertible<T, U>::value };
+  };
   // ==========================================================================
   template <class T>
-  struct IsConvertible<T,T> 
-  { enum { same  = true , value = true } ; } ;
+  struct IsConvertible<T, T> {
+    enum { same = true, value = true };
+  };
   // ==========================================================================
 } // end of namespace Relations
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // RELATIONS_ISCONVERTIBLE_H

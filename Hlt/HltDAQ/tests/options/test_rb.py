@@ -34,12 +34,15 @@ parser = argparse.ArgumentParser(
     usage='usage: %(prog)s test_file_db_entry stream tck')
 
 parser.add_argument("db_entry", nargs=1)
-parser.add_argument("stream", type=str, nargs=1,
-                    help="Which stream")
-parser.add_argument("tck", type=str, nargs=1,
-                    help="What TCK")
-parser.add_argument("-n", "--nevents", type=int, dest="nevt", default=-1,
-                    help="Maximum number of events")
+parser.add_argument("stream", type=str, nargs=1, help="Which stream")
+parser.add_argument("tck", type=str, nargs=1, help="What TCK")
+parser.add_argument(
+    "-n",
+    "--nevents",
+    type=int,
+    dest="nevt",
+    default=-1,
+    help="Maximum number of events")
 
 args = parser.parse_args()
 
@@ -52,15 +55,13 @@ if (hlt2_tck & (2 << 28)) != (2 << 28):
     sys.exit(-1)
 
 stream = args.stream[0].capitalize()
-if stream not in ('Turbo', 'Full', 'Turcal', 'Beamgas', 'Nobias',
-                  'Turboraw'):
+if stream not in ('Turbo', 'Full', 'Turcal', 'Beamgas', 'Nobias', 'Turboraw'):
     print 'Stream must be set'
     print 'FAILED'
     sys.exit(-1)
 
 script_dir = os.path.dirname(inspect.stack()[0][1])
-db_file = os.path.join(script_dir, '..', 'data',
-                       '0x%08x.props' % hlt2_tck)
+db_file = os.path.join(script_dir, '..', 'data', '0x%08x.props' % hlt2_tck)
 if not os.path.exists(db_file):
     print 'Properties db for TCK 0x%08x is missing.' % hlt2_tck
     print 'FAILED'
@@ -99,27 +100,31 @@ for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder",
 
 copier = RawEventCopy(
     "RawEventCopy", Destination='/Event/DAQ/CopyRawEvent', DeepCopy=True)
-killer = bankKiller('KillRoutingBits', BankTypes=['HltRoutingBits'],
-                    DefaultIsKill=False,
-                    RawEventLocations=['DAQ/CopyRawEvent'])
+killer = bankKiller(
+    'KillRoutingBits',
+    BankTypes=['HltRoutingBits'],
+    DefaultIsKill=False,
+    RawEventLocations=['DAQ/CopyRawEvent'])
 
 # Configure the routing bits writer
 rb_name = '{stream}{stage}RoutingBitsWriter'
-rb_name = rb_name.format(stage='Hlt1' if not hlt2_tck else 'Hlt2',
-                         stream=stream)
+rb_name = rb_name.format(
+    stage='Hlt1' if not hlt2_tck else 'Hlt2', stream=stream)
 props = writer_props['HltRoutingBitsWriter/' + rb_name]
-writer = HltRoutingBitsWriter(rb_name,
-                              Hlt1DecReportsLocation='Hlt1/DecReports',
-                              Hlt2DecReportsLocation='Hlt2/DecReports',
-                              RoutingBits=eval(props['RoutingBits']),
-                              RawEventLocation="DAQ/CopyRawEvent",
-                              UpdateExistingRawBank=False)
-
+writer = HltRoutingBitsWriter(
+    rb_name,
+    Hlt1DecReportsLocation='Hlt1/DecReports',
+    Hlt2DecReportsLocation='Hlt2/DecReports',
+    RoutingBits=eval(props['RoutingBits']),
+    RawEventLocation="DAQ/CopyRawEvent",
+    UpdateExistingRawBank=False)
 
 # Configure the LoKi factories
 # Get rid of a few things we don't need that live in dependent projects
-subs = {"Modules": r",[ ]*'LoKiTrigger.[a-z]*'",
-        "Lines": r",[ ]*'import HltTracking.Hlt1StreamerConf'"}
+subs = {
+    "Modules": r",[ ]*'LoKiTrigger.[a-z]*'",
+    "Lines": r",[ ]*'import HltTracking.Hlt1StreamerConf'"
+}
 
 for factory, props in factory_props.iteritems():
     factory_type, factory_name = factory.split('/')
@@ -135,7 +140,6 @@ for factory, props in factory_props.iteritems():
             val = re.sub(subs[prop], '', val)
         setattr(fact, prop, eval(val))
 
-
 topSeq.Members += [copier, killer, writer]
 
 ApplicationMgr().TopAlg = [topSeq]
@@ -143,7 +147,6 @@ ApplicationMgr().TopAlg = [topSeq]
 LoKiSvc().Welcome = False
 
 IOHelper("MDF").inputFiles([file])
-
 
 from GaudiPython.Bindings import AppMgr, gbl
 gaudi = AppMgr()

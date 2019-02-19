@@ -30,24 +30,19 @@
 
 // =================================================================================================
 
-namespace Rich
-{
-  namespace DAQ
-  {
+namespace Rich {
+  namespace DAQ {
 
     // ------------------------------------------------------------------------------------------------
-    template < class Version, class Header, class Footer >
-    void RichFlatFormatSmartIDData< Version, Header, Footer >::buildData(
-      const LHCb::RichSmartID::Vector &digits )
-    {
+    template <class Version, class Header, class Footer>
+    void RichFlatFormatSmartIDData<Version, Header, Footer>::buildData( const LHCb::RichSmartID::Vector& digits ) {
 
       // Set data words
-      for ( const auto &d : digits ) { this->addData( d.key() ); }
+      for ( const auto& d : digits ) { this->addData( d.key() ); }
 
       // In extended format mode set footer parity
       // basically, we don't simulate bit errors, so parity word here is just zero
-      if ( this->header().extendedFormat() )
-      { this->setFooter( Footer( 1, typename Footer::WordType( 0 ) ) ); }
+      if ( this->header().extendedFormat() ) { this->setFooter( Footer( 1, typename Footer::WordType( 0 ) ) ); }
 
       // Fill the number of 8 bit words + 1 field in header
       Header head( this->header() );
@@ -57,25 +52,21 @@ namespace Rich
     // ------------------------------------------------------------------------------------------------
 
     // ------------------------------------------------------------------------------------------------
-    template < class Version, class Header, class Footer >
-    ShortType RichFlatFormatSmartIDData< Version, Header, Footer >::fillRichSmartIDs(
-      LHCb::RichSmartID::Vector &ids,
-      const LHCb::RichSmartID    hpdID ) const
-    {
+    template <class Version, class Header, class Footer>
+    ShortType
+    RichFlatFormatSmartIDData<Version, Header, Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector& ids,
+                                                                          const LHCb::RichSmartID    hpdID ) const {
       ShortType nHits = 0;
 
       // Number of data words
       const auto nDataWords = this->dataSize();
 
       // any data words
-      if ( nDataWords > 0 )
-      {
+      if ( nDataWords > 0 ) {
         // Loop over data fields
-        for ( unsigned int iData = 0; iData < nDataWords; ++iData )
-        {
+        for ( unsigned int iData = 0; iData < nDataWords; ++iData ) {
           const LHCb::RichSmartID id( LHCb::RichSmartID32( this->data()[iData] ) );
-          if ( id.pdID() != hpdID )
-          { std::cout << "PD ID Error. Should never see this" << std::endl; }
+          if ( id.pdID() != hpdID ) { std::cout << "PD ID Error. Should never see this" << std::endl; }
           ids.push_back( id );
           ++nHits;
         }

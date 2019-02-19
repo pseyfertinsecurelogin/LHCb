@@ -12,13 +12,12 @@
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-/// VeloDet 
+/// VeloDet
 #include "VeloDet/DeVeloRType.h"
-
 
 /// =======================================================================
 /// Instantiation of a static factory class used by clients to create
 /// instances of this service
 /// =======================================================================
-typedef XmlUserDetElemCnv<DeVeloRType>         XmlDeVeloRTypeCnv;
+typedef XmlUserDetElemCnv<DeVeloRType> XmlDeVeloRTypeCnv;
 DECLARE_CONVERTER( XmlDeVeloRTypeCnv )

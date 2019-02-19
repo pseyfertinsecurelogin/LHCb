@@ -9,18 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef PROCESSORKERNEL_TILEREGISTER_H
-#define PROCESSORKERNEL_TILEREGISTER_H     1
+#define PROCESSORKERNEL_TILEREGISTER_H 1
 
-
-
-#include <vector>
-#include "ProcessorKernel/Register.h"
 #include "Kernel/MuonTileID.h"
+#include "ProcessorKernel/Register.h"
 #include <stdio.h>
-
+#include <vector>
 
 namespace L0Muon {
-
 
   /** @class TileRegister TileRegister.h ProcessorKernel/TileRegister.h
 
@@ -33,7 +29,6 @@ namespace L0Muon {
   class TileRegister : public L0Muon::Register {
 
   public:
-
     /// Constructor
     TileRegister();
 
@@ -41,14 +36,14 @@ namespace L0Muon {
 
     @param bits : number of bits
     */
-    TileRegister(int bits);
+    TileRegister( int bits );
 
     /** Constructor
 
     @param bits    : number of bits
     @param pattern : bit pattern
     */
-    TileRegister(int bits, unsigned long pattern);
+    TileRegister( int bits, unsigned long pattern );
 
     /** Constructor
 
@@ -56,22 +51,19 @@ namespace L0Muon {
     @param pattern : bit pattern
     @param ids     : associated vector of MuonTileID
     */
-    TileRegister(int bits, unsigned long pattern, std::vector<LHCb::MuonTileID> ids);
+    TileRegister( int bits, unsigned long pattern, std::vector<LHCb::MuonTileID> ids );
 
     /// Destructor
     ~TileRegister();
 
     /// set the duplicatedTiles flag
-    void setDuplicatedTiles(bool flag=true)
-    {
-      m_duplicatedTiles=flag;
-    }
+    void setDuplicatedTiles( bool flag = true ) { m_duplicatedTiles = flag; }
 
     /// check if there are duplicated tiles in the tile list
     bool checkDuplicatedTiles();
 
     /// set the vector of MuonTileIDs
-    void setTileVector(const std::vector<LHCb::MuonTileID>& ids);
+    void setTileVector( const std::vector<LHCb::MuonTileID>& ids );
 
     /// Return the vector of MuonTileIDs
     std::vector<LHCb::MuonTileID> getTileVector() { return m_ids; }
@@ -80,7 +72,7 @@ namespace L0Muon {
 
     @param ind : position in the vector
     */
-    LHCb::MuonTileID tile(int ind) { return m_ids[ind]; }
+    LHCb::MuonTileID tile( int ind ) { return m_ids[ind]; }
 
     /// Return the vector of MuonTileIDs for bits set to 1
     std::vector<LHCb::MuonTileID> firedTiles();
@@ -89,44 +81,43 @@ namespace L0Muon {
 
         Uses the #m_duplicatedTiles to speed up the code.
     */
-    void setTile(LHCb::MuonTileID & id);
+    void setTile( LHCb::MuonTileID& id );
 
     /// set the type of tiles (strips/pad)
-    void setTilesTagVector(boost::dynamic_bitset<> & tilestag);
+    void setTilesTagVector( boost::dynamic_bitset<>& tilestag );
 
     /// Return the type of tiles
-    boost::dynamic_bitset<> TilesTag() { return m_tilestag ;}
+    boost::dynamic_bitset<> TilesTag() { return m_tilestag; }
 
     /// Return the pads
     std::vector<LHCb::MuonTileID> Pads() { return m_pads; }
 
     /// Return the strips
-    boost::dynamic_bitset<> StripsTag() { return m_stripstag ;}
+    boost::dynamic_bitset<> StripsTag() { return m_stripstag; }
 
     /// set the type of strips (H/V)
-    void setStripsTagVector(boost::dynamic_bitset<> & stripstag);
+    void setStripsTagVector( boost::dynamic_bitset<>& stripstag );
 
     /// Cross the strips, fill m_pads
     void makePads();
 
     /// Print the tile register for debug
-    void print_bits(unsigned int event, FILE *file);
+    void print_bits( unsigned int event, FILE* file );
 
     /** Print out in a file the list of MuonTileIDs in the TileRegister
 
       @param file : pointer to the ouput file
       @param ntiles_per_line : nb of tiles per line (default is 4)
     */
-    void print_tiles(FILE *file, int ntiles_per_line=4);
+    void print_tiles( FILE* file, int ntiles_per_line = 4 );
 
     /** Returns an xml representation of the TileRegister.
         (used to build the L0MuonKernel.xml configuration file
          for L0Muon emulation and decoding)
     */
-    std::string toXML(std::string tab="") override;
+    std::string toXML( std::string tab = "" ) override;
 
   private:
-
     /** Flag indicating whether the TileRegister contains twice or more the same tile.
 
         This information is used to speed up the setTile method :
@@ -136,14 +127,13 @@ namespace L0Muon {
     */
     bool m_duplicatedTiles;
 
-    std::vector<LHCb::MuonTileID> m_ids ;  /// MuonTileIDs mapping
-    std::vector<LHCb::MuonTileID> m_pads;  /// Stores the list of fired pads (crossing H and V fired strips)
+    std::vector<LHCb::MuonTileID> m_ids;  /// MuonTileIDs mapping
+    std::vector<LHCb::MuonTileID> m_pads; /// Stores the list of fired pads (crossing H and V fired strips)
 
-    boost::dynamic_bitset<> m_tilestag ;   /// Indicates whether a tile is a strip or a pad
-    boost::dynamic_bitset<> m_stripstag ;  /// Indicates whether a strip is Horizontal or Vertical
-
+    boost::dynamic_bitset<> m_tilestag;  /// Indicates whether a tile is a strip or a pad
+    boost::dynamic_bitset<> m_stripstag; /// Indicates whether a strip is Horizontal or Vertical
   };
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // PROCESSORKERNEL_TILEREGISTER_H
+#endif // PROCESSORKERNEL_TILEREGISTER_H

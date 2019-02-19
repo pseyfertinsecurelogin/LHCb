@@ -15,13 +15,13 @@
 // Include files
 // ============================================================================
 #include "LoKi/CoreTypes.h"
-#include "LoKi/Random.h"
-#include "LoKi/Scalers.h"
 #include "LoKi/Filters.h"
-#include "LoKi/TES.h"
-#include "LoKi/Status.h"
-#include "LoKi/Sources.h"
+#include "LoKi/Random.h"
 #include "LoKi/RecStat.h"
+#include "LoKi/Scalers.h"
+#include "LoKi/Sources.h"
+#include "LoKi/Status.h"
 #include "LoKi/Streamers.h"
+#include "LoKi/TES.h"
 // ============================================================================
 #endif // LOKI_LOKINUMBERS_H

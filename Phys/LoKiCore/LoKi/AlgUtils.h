@@ -20,8 +20,8 @@
 // ============================================================================
 // forward declaration
 // ============================================================================
-class     IAlgorithm ;
-class GaudiAlgorithm ;
+class IAlgorithm;
+class GaudiAlgorithm;
 // ============================================================================
 /** @file
  *
@@ -39,25 +39,21 @@ class GaudiAlgorithm ;
  *  @date 2010-12-06
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  class AuxFunBase ;
+  class AuxFunBase;
   // ==========================================================================
-  namespace AlgUtils
-  {
+  namespace AlgUtils {
     // ========================================================================
     /// get the algorithm from context service
     GAUDI_API
-    IAlgorithm*     getAlg      ( const LoKi::AuxFunBase& base         ,
-                                  const bool              force = true ) ;
+    IAlgorithm* getAlg( const LoKi::AuxFunBase& base, const bool force = true );
     // ========================================================================
     /// get gaudi algorithm from the context
     GAUDI_API
-    GaudiAlgorithm* getGaudiAlg ( const LoKi::AuxFunBase& base  ,
-                                  const bool              force = true ) ;
+    GaudiAlgorithm* getGaudiAlg( const LoKi::AuxFunBase& base, const bool force = true );
     // ========================================================================
-  } //                                          end of namespace LoKi::AlgUtils
+  } // namespace AlgUtils
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

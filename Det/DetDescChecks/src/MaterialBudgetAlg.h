@@ -15,13 +15,12 @@
 
 #include "DetDesc/ITransportSvc.h"
 
-#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiKernel/Point3DTypes.h"
 
 #include <string>
 
-namespace DetDesc
-{
+namespace DetDesc {
   // ==========================================================================
   /** @class MaterialBudget MaterialBudgetAlg.h
    *
@@ -76,8 +75,7 @@ namespace DetDesc
    *  - zref      reference z position (at which xbinref and ybinref
    *                         are given)
    */
-  class MaterialBudget : public GaudiHistoAlg
-  {
+  class MaterialBudget : public GaudiHistoAlg {
   public:
     // ========================================================================
     /** standard initialization of the algorithm
@@ -85,62 +83,60 @@ namespace DetDesc
      *  @see IAlgorithm
      *  @return status code
      */
-    StatusCode initialize ()  override;
+    StatusCode initialize() override;
     /** standard execution of the algorithm
      *  @see  Algorithm
      *  @see IAlgorithm
      *  @return status code
      */
-    StatusCode execute    ()  override;
+    StatusCode execute() override;
     /** Standard constructor
      *  @param name name of the algorithm
      *  @param svc service locator
      */
-    MaterialBudget
-    ( const std::string& name ,
-      ISvcLocator*       svc  ) ;
+    MaterialBudget( const std::string& name, ISvcLocator* svc );
     // ========================================================================
   private:
     // ========================================================================
     /// make  random shoots
-    StatusCode makeRandomShots () ;
+    StatusCode makeRandomShots();
     /// make  grid shots
-    StatusCode makeGridShots   () ;
+    StatusCode makeGridShots();
     /// make  psrap shots
-    StatusCode makePsrapShots  () ;
+    StatusCode makePsrapShots();
     // ========================================================================
   private:
     // ========================================================================
     // transport service
-    std::string         m_trSvcName     ;
-    ITransportSvc*      m_trSvc         ;
+    std::string    m_trSvcName;
+    ITransportSvc* m_trSvc;
     // point of shooting
-    Gaudi::XYZPoint     m_vertex        ;
+    Gaudi::XYZPoint m_vertex;
     // number of shots per event
-    int                 m_shots        ;
+    int m_shots;
     // z-position of reference plane
-    double              m_z             ;
+    double m_z;
     // x- and y- size of shooting area (parameters of 2d-histograms)
-    double              m_xMax          ;
-    double              m_yMax          ;
-    double              m_xMin          ;
-    double              m_yMin          ;
-    double              m_etaMax        ;
-    double              m_phiMax        ;
-    double              m_etaMin        ;
-    double              m_phiMin        ;
-    int                 m_nbx           ;
-    int                 m_nby           ;
+    double m_xMax;
+    double m_yMax;
+    double m_xMin;
+    double m_yMin;
+    double m_etaMax;
+    double m_phiMax;
+    double m_etaMin;
+    double m_phiMin;
+    int    m_nbx;
+    int    m_nby;
     // parameters for "grid shooting" (if grid=1) (added by W. Pokorski)
     // variables ending with "ref" correspond to some reference grid.
     // the actuall grid will be scaled according to m_z/m_zref
-    bool                m_grid          ;
+    bool m_grid;
     // parameter to switch between cartesian (0) and pseudorapidity (1)
     // flat scans.
-    bool                m_psrap         ;
-    double              m_xbinref       ;
-    double              m_ybinref       ;
-    double              m_zref          ;
+    bool   m_psrap;
+    double m_xbinref;
+    double m_ybinref;
+    double m_zref;
     // ========================================================================
   };
   // ==========================================================================

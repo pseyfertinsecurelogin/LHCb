@@ -15,10 +15,9 @@
 #include <functional>
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
-namespace LHCb{
-  class    CaloDigit                ;
+namespace LHCb {
+  class CaloDigit;
 }
-
 
 /** @class ICaloFutureDigitTool ICaloFutureDigitTool.h CaloFutureInterfaces/ICaloFutureDigitTool.h
  *
@@ -31,25 +30,23 @@ namespace LHCb{
  *  @date   30/10/2001
  */
 
-struct ICaloFutureDigitTool: extend_interfaces<IAlgTool>
-{
+struct ICaloFutureDigitTool : extend_interfaces<IAlgTool> {
   /** static interface identification
    *  @return unique interface identifier
    */
-  DeclareInterfaceID( ICaloFutureDigitTool , 3 , 0 );
+  DeclareInterfaceID( ICaloFutureDigitTool, 3, 0 );
 
   /** The main processing method
    *  @param digit pointer to CaloFutureCluster object to be processed
    *  @return status code
    */
-  virtual StatusCode process    ( LHCb::CaloDigit* digit ) const = 0 ;
+  virtual StatusCode process( LHCb::CaloDigit* digit ) const = 0;
 
   /** The main processing method (functor interface)
    *  @param digit pointer to CaloFutureCluster object to be processed
    *  @return status code
    */
-  virtual StatusCode operator() ( LHCb::CaloDigit* digit ) const = 0 ;
-
+  virtual StatusCode operator()( LHCb::CaloDigit* digit ) const = 0;
 };
 
 // ============================================================================

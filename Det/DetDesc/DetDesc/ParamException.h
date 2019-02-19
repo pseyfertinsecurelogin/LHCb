@@ -29,27 +29,21 @@
 class ParamException : public GaudiException {
 
 public:
-
   /// Type of problem encountered in ParamValidDataObject.
-  enum ExceptionType {
-    BAD_KEY,
-    BAD_TYPE
-  };
+  enum ExceptionType { BAD_KEY, BAD_TYPE };
 
   /// Constructor
-  ParamException( const std::string& name , ExceptionType t=BAD_KEY );
+  ParamException( const std::string& name, ExceptionType t = BAD_KEY );
 
   /// Constructor for a BAD_TYPE exception giving informations about the types.
-  ParamException( const std::string& name , const std::type_info &req, const std::type_info &actual );
+  ParamException( const std::string& name, const std::type_info& req, const std::type_info& actual );
 
   /// Returns the type of ParamException.
   inline ExceptionType type() const { return m_type; }
 
 private:
-
   /// store the type
   ExceptionType m_type;
-
 };
 
-#endif  // DETDESC_PARAMEXCEPTION_H
+#endif // DETDESC_PARAMEXCEPTION_H

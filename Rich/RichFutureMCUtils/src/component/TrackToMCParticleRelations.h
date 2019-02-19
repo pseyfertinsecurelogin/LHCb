@@ -27,8 +27,7 @@
 // Relations
 #include "RichFutureMCUtils/RichMCRelations.h"
 
-namespace Rich::Future::MC
-{
+namespace Rich::Future::MC {
 
   // Use the functional framework
   using namespace Gaudi::Functional;
@@ -45,23 +44,20 @@ namespace Rich::Future::MC
    *  @date   2016-12-07
    */
   class TrackToMCParticleRelations final
-    : public Transformer< Relations::TkToMCPRels( const LHCb::Tracks &, const LHCb::MCParticles & ),
-                          Traits::BaseClass_t< AlgBase > >
-  {
+      : public Transformer<Relations::TkToMCPRels( const LHCb::Tracks&, const LHCb::MCParticles& ),
+                           Traits::BaseClass_t<AlgBase>> {
 
   public:
-
     /// Standard constructor
-    TrackToMCParticleRelations( const std::string &name, ISvcLocator *pSvcLocator );
+    TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator );
 
     /// Algorithm execution via transform
-    Rich::Future::MC::Relations::TkToMCPRels
-    operator()( const LHCb::Tracks &tks, const LHCb::MCParticles &mcps ) const override;
+    Rich::Future::MC::Relations::TkToMCPRels operator()( const LHCb::Tracks&      tks,
+                                                         const LHCb::MCParticles& mcps ) const override;
 
   private:
-
     /// Allow more than one MCParticle per track ?
-    Gaudi::Property< bool > m_allowMultMPs { this, "AllowMultipleMCPsPerTrack", true };
+    Gaudi::Property<bool> m_allowMultMPs{this, "AllowMultipleMCPsPerTrack", true};
   };
 
 } // namespace Rich::Future::MC

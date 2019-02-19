@@ -34,29 +34,30 @@
 // ============================================================================
 // define maximal number of prints
 // ============================================================================
-void LoKi::IReporter::setMaxErrorPrint   ( const std::size_t v )// max prints
-{ s_maxErrorPrint    = v ; }
+void LoKi::IReporter::setMaxErrorPrint( const std::size_t v ) // max prints
+{
+  s_maxErrorPrint = v;
+}
 // ============================================================================
 // define maximal number of warning prints
 // ============================================================================
-void LoKi::IReporter::setMaxWarningPrint ( const std::size_t v )// max prints
-{ s_maxWarningPrint  = v ; }
+void LoKi::IReporter::setMaxWarningPrint( const std::size_t v ) // max prints
+{
+  s_maxWarningPrint = v;
+}
 // ============================================================================
 // maximal number of error   prints
 // ============================================================================
-std::size_t LoKi::IReporter::maxErrorPrint   ()
-{ return s_maxErrorPrint   ; }
+std::size_t LoKi::IReporter::maxErrorPrint() { return s_maxErrorPrint; }
 // ============================================================================
 // maximal number of warning prints
 // ============================================================================
-std::size_t LoKi::IReporter::maxWarningPrint ()
-{ return s_maxWarningPrint ; }
+std::size_t LoKi::IReporter::maxWarningPrint() { return s_maxWarningPrint; }
 // ============================================================================
 /// define maximal number of prints
-std::size_t LoKi::IReporter::s_maxErrorPrint   = 2 ;
+std::size_t LoKi::IReporter::s_maxErrorPrint = 2;
 /// define maximal number of prints
-std::size_t LoKi::IReporter::s_maxWarningPrint = 2 ;
+std::size_t LoKi::IReporter::s_maxWarningPrint = 2;
 // ============================================================================
 // The END
 // ============================================================================
-

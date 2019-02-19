@@ -40,8 +40,7 @@
  *  @date 2006-02-06
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Objects Objects.h LoKi/Objects.h
    *
@@ -50,8 +49,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-08
    */
-  namespace Objects
-  {
+  namespace Objects {
     // ========================================================================
     /** @struct _ALL
      *  trivial class/functor/predicate which always evaluated to "true"
@@ -59,14 +57,13 @@ namespace LoKi
      *  @date   2006-02-08
      */
     template <class TYPE>
-    struct _ALL
-    {
+    struct _ALL {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG ;
-      inline bool operator() ( ARG /* arg */ ) const { return true   ; }
+      typedef typename boost::call_traits<TYPE>::param_type ARG;
+      inline bool                                           operator()( ARG /* arg */ ) const { return true; }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct _NONE
      *  trivial class/functor/predicate which always evaluated to "false"
@@ -74,14 +71,13 @@ namespace LoKi
      *  @date   2006-02-08
      */
     template <class TYPE>
-    struct _NONE
-    {
+    struct _NONE {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG ;
-      inline bool operator() ( ARG /* arg */ ) const { return false  ; }
+      typedef typename boost::call_traits<TYPE>::param_type ARG;
+      inline bool                                           operator()( ARG /* arg */ ) const { return false; }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct _ONE
      *  trivial class/functor/predicate which always evaluated to "1"
@@ -89,12 +85,11 @@ namespace LoKi
      *  @date   2006-02-08
      */
     template <class TYPE>
-    struct _ONE
-    {
+    struct _ONE {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG ;
-      inline int operator() ( ARG /* arg */ ) const { return 1 ; }
+      typedef typename boost::call_traits<TYPE>::param_type ARG;
+      inline int                                            operator()( ARG /* arg */ ) const { return 1; }
       // ======================================================================
     };
     // ========================================================================
@@ -104,12 +99,11 @@ namespace LoKi
      *  @date   2006-02-08
      */
     template <class TYPE>
-    struct _ZERO
-    {
+    struct _ZERO {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG ;
-      inline int operator() ( ARG /* arg */ ) const { return 0 ; }
+      typedef typename boost::call_traits<TYPE>::param_type ARG;
+      inline int                                            operator()( ARG /* arg */ ) const { return 0; }
       // ======================================================================
     };
     // ========================================================================
@@ -119,14 +113,13 @@ namespace LoKi
      *  @date   2006-02-08
      */
     template <class TYPE>
-    struct _VALID
-    {
+    struct _VALID {
       // ======================================================================
       /// type for the argument
-      typedef typename boost::call_traits<TYPE>::param_type ARG ;
-      inline bool  operator() ( ARG arg ) const { return LoKi::valid ( arg ) ; }
+      typedef typename boost::call_traits<TYPE>::param_type ARG;
+      inline bool                                           operator()( ARG arg ) const { return LoKi::valid( arg ); }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @var _ALL_
      *  helper objects which allows the efficient implementation
@@ -170,9 +163,9 @@ namespace LoKi
      */
     inline const auto _VALID_ = _VALID<const void*>{};
     // ========================================================================
-  } //                                       end of the namespace LoKi::Objects
+  } // namespace Objects
   // ==========================================================================
-} //                                                  end of the namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRichPMTPanel.h"
 
-typedef XmlUserDetElemCnv< DeRichPMTPanel > XmlDeRichPMTPanelCnv;
+typedef XmlUserDetElemCnv<DeRichPMTPanel> XmlDeRichPMTPanelCnv;
 DECLARE_CONVERTER( XmlDeRichPMTPanelCnv )
 
 #endif // XMLDERICHPMTPANELCNV_CPP

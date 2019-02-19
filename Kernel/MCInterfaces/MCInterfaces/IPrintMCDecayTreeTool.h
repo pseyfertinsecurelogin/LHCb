@@ -13,22 +13,21 @@
 
 // Include files
 // from STL
-#include <vector>
 #include <string>
+#include <vector>
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
 #include "Event/MCParticle.h"
 
-
 /** @class IPrintMCDecayTreeTool IPrintMCDecayTreeTool.h DaVinciMCTools/IPrintMCDecayTreeTool.h
- *  
+ *
  *
  *  Interface for the printing of decay trees of MCParticles.
  *  Taken from the original IDebugTool from Olivier Dormond.
- *  
- *  @todo figure out exactly what each method is supposed to do 
+ *
+ *  @todo figure out exactly what each method is supposed to do
  *        and clarify the doxygen!!!!
  *  @author Juan Palacios juancho@nikhef.nl
  *  @date   09/10/2007
@@ -36,12 +35,11 @@
 struct IPrintMCDecayTreeTool : extend_interfaces<IAlgTool> {
 
   /// Retrieve interface ID
-  DeclareInterfaceID(IPrintMCDecayTreeTool, 2, 0);
+  DeclareInterfaceID( IPrintMCDecayTreeTool, 2, 0 );
 
   /// Print decay tree for a given MC particle up to a depth maxDepth.
   /// Default value of -1 is what exactly???
-  virtual void printTree( const LHCb::MCParticle* mother, 
-                          int maxDepth = -1 ) const = 0;
+  virtual void printTree( const LHCb::MCParticle* mother, int maxDepth = -1 ) const = 0;
 
   /// Print all the MC particles leading to this one.
   virtual void printAncestor( const LHCb::MCParticle* child ) const = 0;
@@ -60,6 +58,5 @@ struct IPrintMCDecayTreeTool : extend_interfaces<IAlgTool> {
   /// Print all the MCParticles in a keyed container as a flat list.
   /// Top level particles are those without parent.
   virtual void printAsList( const LHCb::MCParticles& event ) const = 0;
-
 };
 #endif // MCINTERFACES_IPRINTDECAYTREETOOL_H

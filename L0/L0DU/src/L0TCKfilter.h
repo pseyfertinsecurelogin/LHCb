@@ -15,7 +15,6 @@
 // from Gaudi
 #include "L0Base/L0AlgBase.h"
 
-
 /** @class L0TCKfilter L0TCKfilter.h
  *
  *
@@ -27,13 +26,10 @@ public:
   /// Standard constructor
   L0TCKfilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   std::vector<std::string> m_list;
-  std::string m_reportLocation;
-
-
+  std::string              m_reportLocation;
 };
 #endif // L0TCKFILTER_H

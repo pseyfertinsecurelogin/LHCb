@@ -19,6 +19,6 @@
  *  @author Marco Clemencic
  *  @date   2006-10-23
  */
-bool ConditionParser(const std::string &str, std::string &name, ParamValidDataObject &cond);
+bool ConditionParser( const std::string& str, std::string& name, ParamValidDataObject& cond );
 
 #endif /*CONDITIONPARSER_H_*/

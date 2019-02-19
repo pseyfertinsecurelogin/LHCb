@@ -32,66 +32,58 @@ class DeSTLayer;
  *  @author Matthew Needham Matthew.Needham@cern.ch
  *
  * <b> Additional information: </b>
- * \li <a href="http://doc.cern.ch//archive/electronic/cern/others/LHB/internal/lhcb-2006-034.pdf"><b>LHCb note on STDet</b></a>
-   \li  <a href="http://ckm.physik.unizh.ch/software"><b>ST Software page</b></a><p>
+ * \li <a href="http://doc.cern.ch//archive/electronic/cern/others/LHB/internal/lhcb-2006-034.pdf"><b>LHCb note on
+ STDet</b></a> \li  <a href="http://ckm.physik.unizh.ch/software"><b>ST Software page</b></a><p>
  *
  */
 
 class DeSTStation : public DeSTBaseElement {
 
 public:
-
   /** Constructor */
-  DeSTStation ( const std::string& name = "" ) ;
+  DeSTStation( const std::string& name = "" );
 
   /** initialization method
-  * @return Status of initialisation
-  */
+   * @return Status of initialisation
+   */
   StatusCode initialize() override;
 
   /** station identifier
-  *  @return identifier
-  */
+   *  @return identifier
+   */
   unsigned int id() const;
 
   /** print to stream */
   std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to stream */
-  MsgStream& printOut( MsgStream& os) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** check contains channel
-  *  @param  aChannel channel
-  *  @return bool
-  */
-  bool contains(const LHCb::STChannelID aChannel) const override;
+   *  @param  aChannel channel
+   *  @return bool
+   */
+  bool contains( const LHCb::STChannelID aChannel ) const override;
 
   /**
-  * Nickname for the station
-  **/
-  const std::string& nickname() const ;
+   * Nickname for the station
+   **/
+  const std::string& nickname() const;
 
- protected:
+protected:
+  std::string m_nickname;
 
- std::string m_nickname;
-
- private:
-
+private:
   unsigned int m_id;
-
 };
 
-inline unsigned int DeSTStation::id() const{
-  return m_id;
-}
+inline unsigned int DeSTStation::id() const { return m_id; }
 
-inline bool DeSTStation::contains(const LHCb::STChannelID aChannel) const{
+inline bool DeSTStation::contains( const LHCb::STChannelID aChannel ) const {
   return elementID().station() == aChannel.station();
 }
 
-inline const std::string& DeSTStation::nickname() const{
-  return m_nickname;
-}
+inline const std::string& DeSTStation::nickname() const { return m_nickname; }
 
 /** ouput operator for class DeSTStation
  *  @see DeSTStation
@@ -99,9 +91,7 @@ inline const std::string& DeSTStation::nickname() const{
  *  @param os       reference to STL output stream
  *  @param aStation reference to DeSTStation object
  */
-inline std::ostream& operator<<( std::ostream& os , const DeSTStation* aStation )
-{ return aStation->printOut( os ); }
-
+inline std::ostream& operator<<( std::ostream& os, const DeSTStation* aStation ) { return aStation->printOut( os ); }
 
 /** ouput operator for class DeSTStation
  *  @see DeSTStation
@@ -109,8 +99,6 @@ inline std::ostream& operator<<( std::ostream& os , const DeSTStation* aStation 
  *  @param os       reference to MsgStream output stream
  *  @param aStation reference to DeSTStation object
  */
-inline MsgStream& operator<<( MsgStream& os , const DeSTStation* aStation )
-{ return aStation->printOut( os ); }
-
+inline MsgStream& operator<<( MsgStream& os, const DeSTStation* aStation ) { return aStation->printOut( os ); }
 
 #endif // _DeSTStation_H

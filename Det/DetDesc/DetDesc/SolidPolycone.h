@@ -13,12 +13,12 @@
 #define DETDESC_SOLIDPOLYCONE_H 1
 // Include files
 // STD and STL
-#include <cmath>
-#include <iostream>
-#include <functional>
 #include <algorithm>
-#include <vector>
+#include <cmath>
+#include <functional>
+#include <iostream>
 #include <memory>
+#include <vector>
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
 // Geometry Definitions
@@ -40,17 +40,15 @@ class SolidFactory;
  *  @date   23/10/2001
  */
 
-class SolidPolycone final : public virtual SolidBase
-{
+class SolidPolycone final : public virtual SolidBase {
   /// friend factory for instantiation
   friend class SolidFactory<SolidPolycone>;
 
 public:
-
-  typedef std::pair<double,double>  Pair     ;
-  typedef std::pair<double,Pair>    Triplet  ;
-  typedef std::vector<Triplet>      Triplets ;
-  typedef Triplets::const_iterator  Iterator ;
+  typedef std::pair<double, double> Pair;
+  typedef std::pair<double, Pair>   Triplet;
+  typedef std::vector<Triplet>      Triplets;
+  typedef Triplets::const_iterator  Iterator;
 
   /** Standard constructor
    *
@@ -59,17 +57,15 @@ public:
    *  @param StartPhiAngle the azimuthal angle phi at which polycone "begins"
    *  @param DeltaPhiAngle the opening angle
    */
-  SolidPolycone( const std::string&  Name                       ,
-                 const Triplets   &  Params                     ,
-                 const double        StartPhiAngle = 0          ,
-                 const double        DeltaPhiAngle = 360*Gaudi::Units::degree );
+  SolidPolycone( const std::string& Name, const Triplets& Params, const double StartPhiAngle = 0,
+                 const double DeltaPhiAngle = 360 * Gaudi::Units::degree );
 
   /** - retrieve the polycone  type
    *  - implementation of ISolid abstract interface
    *  @see ISolid
    *  return box type
    */
-  inline std::string typeName () const override { return "SolidPolycone"; }
+  inline std::string typeName() const override { return "SolidPolycone"; }
 
   /** - check for the given 3D-point.
    *    Point coordinates are in the local reference
@@ -79,16 +75,16 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside (  const Gaudi::XYZPoint& point ) const override;
-  bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
-  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
+  bool isInside( const Gaudi::XYZPoint& point ) const override;
+  bool isInside( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside( const Gaudi::RhoZPhiPoint& point ) const override;
 
   /** -# retrieve the pointer to "simplified" solid - "cover"
    *  -# implementation of ISolid abstract interface
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  inline const ISolid* cover () const override { return m_cover.get(); }
+  inline const ISolid* cover() const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -98,7 +94,7 @@ public:
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream&  printOut ( std::ostream& os = std::cout )    const override;
+  std::ostream& printOut( std::ostream& os = std::cout ) const override;
 
   /** - printout to Gaudi MsgStream stream
    *  - implementation  of ISolid abstract interface
@@ -108,7 +104,7 @@ public:
    *  @param "" STD/STL stream
    *  @return reference to the stream
    */
-  MsgStream&     printOut ( MsgStream&                   )    const override;
+  MsgStream& printOut( MsgStream& ) const override;
 
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -129,17 +125,14 @@ public:
    *  @return the number of intersection points
    */
   using SolidBase::intersectionTicks;
-  unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
-                                  const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks  ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                  const Gaudi::Polar3DVector & Vector,
-                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                  const Gaudi::RhoZPhiVector & Vector,
-                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
   /** specific for polycone
    */
@@ -147,99 +140,85 @@ public:
   /** accessor to number of triplets
    *  @return number of z-planes
    */
-  inline unsigned int number   () const { return triplets().size() ; }
+  inline unsigned int number() const { return triplets().size(); }
 
   /** accessor to all triplets
    *  @return reference to all triplets
    */
-  inline const Triplets&
-  triplets () const { return m_triplets ; }
+  inline const Triplets& triplets() const { return m_triplets; }
 
   /** accessor to triplets begin iterator
    *  @return begin iterator to triplets comntainer
    */
-  inline Triplets::const_iterator
-  begin    () const { return triplets().begin(); }
+  inline Triplets::const_iterator begin() const { return triplets().begin(); }
 
   /** accessor to triplets end iterator
    *  @return end iterator to triplets container
    */
-  inline Triplets::const_iterator
-  end      () const { return triplets().end  (); }
+  inline Triplets::const_iterator end() const { return triplets().end(); }
 
   /** accessor to z-position of plane indexed with some index
    *  @param index   plane index
    *  @return z-position
    */
-  inline double  z( Triplets::size_type index ) const
-  { return ( begin() + index )->first ; }
+  inline double z( Triplets::size_type index ) const { return ( begin() + index )->first; }
 
   /** accessor to rMax of plane indexed with some index
    *  @param index   plane index
    *  @return rMax
    */
-  inline double  RMax( Triplets::size_type index ) const
-  { return ( begin() + index )->second.first ; }
+  inline double RMax( Triplets::size_type index ) const { return ( begin() + index )->second.first; }
 
   /** accessor to rMin of plane indexed with some index
    *  @param index   plane index
    *  @return rMin
    */
-  inline double  RMin( Triplets::size_type index ) const
-  { return ( begin() + index )->second.second ; }
+  inline double RMin( Triplets::size_type index ) const { return ( begin() + index )->second.second; }
 
   /** accessor to start phi angle
    *  @return start phi angle
    */
-  inline double startPhiAngle() const { return m_startPhiAngle;}
+  inline double startPhiAngle() const { return m_startPhiAngle; }
 
   /** accessor to delta phi angle
    *  @return delta phi angle
    */
-  inline double deltaPhiAngle() const { return m_deltaPhiAngle;}
-
+  inline double deltaPhiAngle() const { return m_deltaPhiAngle; }
 
   /** find the index from the z position
    *  @param thisz z-position
    *  @return index -- return 'number()-1' if not in z-range
    */
-  inline Triplets::size_type index( const double thisz ) const
-  {
-    Triplets::size_type i = thisz < z(0) || thisz > z(number()-1) ? number()-1 : 0 ;
-    for(; i<number()-1 && z(i+1) <= thisz; ++i) {}
-    return i ;
+  inline Triplets::size_type index( const double thisz ) const {
+    Triplets::size_type i = thisz < z( 0 ) || thisz > z( number() - 1 ) ? number() - 1 : 0;
+    for ( ; i < number() - 1 && z( i + 1 ) <= thisz; ++i ) {}
+    return i;
   }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const override { return (number()+1)*2 ; }
+  Ticks::size_type maxNumberOfTicks() const override { return ( number() + 1 ) * 2; }
 
 protected:
   /** static function to generate triplets for a cone */
-  static Triplets makeTriplets(double ZHalfLength        ,
-			       double OuterRadiusMinusZ  ,
-			       double OuterRadiusPlusZ   ,
-			       double InnerRadiusMinusZ  ,
-			       double InnerRadiusPlusZ ) ;
+  static Triplets makeTriplets( double ZHalfLength, double OuterRadiusMinusZ, double OuterRadiusPlusZ,
+                                double InnerRadiusMinusZ, double InnerRadiusPlusZ );
 
   /** static function to generate triplets for a tubs */
-  static Triplets makeTriplets(double ZHalfLength        ,
-			       double OuterRadius,
-			       double InnerRadius) {
-    return makeTriplets(ZHalfLength,OuterRadius,OuterRadius,InnerRadius,InnerRadius) ; }
+  static Triplets makeTriplets( double ZHalfLength, double OuterRadius, double InnerRadius ) {
+    return makeTriplets( ZHalfLength, OuterRadius, OuterRadius, InnerRadius, InnerRadius );
+  }
 
 protected:
-
   /** set bounding parameters
    */
   void setBP();
 
 private:
-
-  SolidPolycone           ( const SolidPolycone & );  ///< no copy-constructor
-  SolidPolycone& operator=( const SolidPolycone & );  ///< no assignment
+  SolidPolycone( const SolidPolycone& );            ///< no copy-constructor
+  SolidPolycone& operator=( const SolidPolycone& ); ///< no assignment
 
   /**
    * implementation of isInside
@@ -247,37 +226,30 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl(const aPoint& point) const;
+  bool isInsideImpl( const aPoint& point ) const;
 
-  template<class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint  & Point,
-                                      const aVector & Vector,
-                                      ISolid::Ticks& ticks ) const;
+  template <class aPoint, class aVector>
+  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
 
   /// check if phi is in phi range
-  inline bool insidePhi ( const double phi /* [-pi,pi] */ ) const {
-    return
-      noPhiGap() ||
-      ( startPhiAngle ()                   <= phi &&
-	startPhiAngle () + deltaPhiAngle() >= phi     ) ||
-      ( startPhiAngle ()                   <= phi + 2*M_PI &&
-	startPhiAngle () + deltaPhiAngle() >= phi + 2*M_PI ) ;
+  inline bool insidePhi( const double phi /* [-pi,pi] */ ) const {
+    return noPhiGap() || ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) ||
+           ( startPhiAngle() <= phi + 2 * M_PI && startPhiAngle() + deltaPhiAngle() >= phi + 2 * M_PI );
   }
 
   /// gap in phi ?
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
-  bool noPhiGap() const { return m_deltaPhiAngle == 360 * Gaudi::Units::degree ; }
-private:
+  bool noPhiGap() const { return m_deltaPhiAngle == 360 * Gaudi::Units::degree; }
 
+private:
   void createCover();
 
-  Triplets       m_triplets      ; ///< vector of parameters
-  double         m_startPhiAngle = 0                          ; ///< start phi angle
-  double         m_deltaPhiAngle = 360 * Gaudi::Units::degree ; ///< delta phi angle
+  Triplets                m_triplets;                                   ///< vector of parameters
+  double                  m_startPhiAngle = 0;                          ///< start phi angle
+  double                  m_deltaPhiAngle = 360 * Gaudi::Units::degree; ///< delta phi angle
   std::unique_ptr<ISolid> m_cover;
-
 };
 
 // ============================================================================

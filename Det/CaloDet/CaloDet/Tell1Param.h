@@ -9,9 +9,9 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 /// ===========================================================================
-/// $Id: 
+/// $Id:
 /// ===========================================================================
-#ifndef CALODET_TELL1PARAM_H 
+#ifndef CALODET_TELL1PARAM_H
 #define CALODET_TELL1PARAM_H 1
 #include <vector>
 /// ===========================================================================
@@ -20,41 +20,36 @@
 class DeCalorimeter;
 
 /** @class  Tell1Param Tell1Param.h CaloDet/Tell1Param.h
- *  
+ *
  *
  */
 
-class Tell1Param 
-{
-  
+class Tell1Param {
+
   friend class DeCalorimeter;
-  
+
 public:
-  
-  /** constructor 
+  /** constructor
       @param num
   */
   Tell1Param( int num );
-  
-  /// destructor 
+
+  /// destructor
   ~Tell1Param();
-  
+
   // getters
-  int number()      const { return m_number;  }
+  int              number() const { return m_number; }
   std::vector<int> feCards() const { return m_feCards; }
   // setters
-  void addFeCard( int num )   { m_feCards.push_back( num ); }  
-  bool readPin() const { return m_isPin          ; }
-  void setReadPin(bool pin)  {    m_isPin = pin;  }
+  void addFeCard( int num ) { m_feCards.push_back( num ); }
+  bool readPin() const { return m_isPin; }
+  void setReadPin( bool pin ) { m_isPin = pin; }
 
 private:
-  
-  int m_number;
+  int              m_number;
   std::vector<int> m_feCards;
-  bool m_isPin;
-  
+  bool             m_isPin;
 };
-
 
 /// ===========================================================================
 #endif // CALODET_TELL1PARAM_H

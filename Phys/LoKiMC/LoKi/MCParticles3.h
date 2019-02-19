@@ -16,14 +16,12 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/MCTypes.h"
 #include "LoKi/MCParticles1.h"
+#include "LoKi/MCTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace MCParticles
-  {
+  namespace MCParticles {
     // ========================================================================
     /** @class FromInclusive
      *  Simple predicate that allows to bypass limitations of
@@ -37,46 +35,35 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2017-02-07
      */
-    class FromInclusive : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-    {
+    class FromInclusive : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate {
     public:
       // ======================================================================
-      FromInclusive
-      ( const LoKi::Types::MCCuts& mother           ,
-        const LoKi::Types::MCCuts& daughter         ,
-        const bool                 decayOnly = true ) ;
-      FromInclusive
-      ( const Decays::iNode&       mother           ,
-        const Decays::iNode&       daughter         ,
-        const bool                 decayOnly = true ) ;
-      FromInclusive
-      ( const std::string&         mother           ,
-        const std::string&         daughter         ,
-        const bool                 decayOnly = true ) ;
+      FromInclusive( const LoKi::Types::MCCuts& mother, const LoKi::Types::MCCuts& daughter,
+                     const bool decayOnly = true );
+      FromInclusive( const Decays::iNode& mother, const Decays::iNode& daughter, const bool decayOnly = true );
+      FromInclusive( const std::string& mother, const std::string& daughter, const bool decayOnly = true );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      FromInclusive* clone      ()                  const override ;
+      FromInclusive* clone() const override;
       /// MANDATORY: the only one essential method
-      bool    operator   () ( const LHCb::MCParticle* p ) const override ;
+      bool operator()( const LHCb::MCParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream&  fillStream ( std::ostream& s ) const override ;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the final cut
-      LoKi::Types::MCCut m_cut ;  // the final cut
+      LoKi::Types::MCCut m_cut; // the final cut
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                   the end of namespace LoKi::MCParticles
+  } // namespace MCParticles
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef MCINCLUSIVE
      *  Simple predicate that allows to bypass limitations of
@@ -96,7 +83,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2017-02-07
      */
-    typedef LoKi::MCParticles::FromInclusive                      MCINCLUSIVE ;
+    typedef LoKi::MCParticles::FromInclusive MCINCLUSIVE;
     // ========================================================================
     /** @typedef MCFROMINCLUSIVE
      *  Simple predicate that allows to bypass limitations of
@@ -116,11 +103,11 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2017-02-07
      */
-    typedef LoKi::MCParticles::FromInclusive                  MCFROMINCLUSIVE ;
+    typedef LoKi::MCParticles::FromInclusive MCFROMINCLUSIVE;
     // ========================================================================
-  }
+  } // namespace Cuts
   // ==========================================================================
-}
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

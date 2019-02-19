@@ -12,69 +12,92 @@
 Configurable for Gauss output
 """
 __version__ = "v17r0"
-__author__  = "Chris Jones <Christopher.Rob.Jones@cern.ch>"
+__author__ = "Chris Jones <Christopher.Rob.Jones@cern.ch>"
 
 __all__ = [
-    'SimConf'  ## the configurable, configures SIM writing/packing/unpacking   
-    ]
+    'SimConf'  ## the configurable, configures SIM writing/packing/unpacking
+]
 
 from Gaudi.Configuration import *
 from Configurables import LHCbConfigurableUser
 import GaudiKernel.ProcessJobOptions
 
-class SimConf(LHCbConfigurableUser) :
+
+class SimConf(LHCbConfigurableUser):
 
     __slots__ = {
-         "Writer"            : "NONE" # Name of the SIM Writer
-        ,"Phases"            : ["Generator","Simulation"] # The simulation phases to include in the SIM file
-        ,"SpilloverPaths"    : []   # Paths to write out when spillover is enabled
-        ,"EnablePack"        : True # Turn on/off packing of the SIM data
-        ,"EnableUnpack"      : True # Configure the SIM unpacking via the Data On Demand Service
-        ,"DataUnpackingSeq"  : None # If set, the data unpacking will be run explicitly in the given sequence
-        ,"Detectors"         : ['Velo','PuVeto','TT','IT','OT','Rich','Muon','Spd','Prs','Ecal','Hcal'] # Active sub-detectors
-        ,"PackingSequencers" : { } # The packing sequence to fill for each spillover event
-        ,"DataType"          : "" # Flag for backward compatibility with old data
-        ,"SaveHepMC"         : True # If False, do not save HepMC on output file
-        }
+        "Writer":
+        "NONE"  # Name of the SIM Writer
+        ,
+        "Phases":
+        ["Generator",
+         "Simulation"]  # The simulation phases to include in the SIM file
+        ,
+        "SpilloverPaths": []  # Paths to write out when spillover is enabled
+        ,
+        "EnablePack":
+        True  # Turn on/off packing of the SIM data
+        ,
+        "EnableUnpack":
+        True  # Configure the SIM unpacking via the Data On Demand Service
+        ,
+        "DataUnpackingSeq":
+        None  # If set, the data unpacking will be run explicitly in the given sequence
+        ,
+        "Detectors": [
+            'Velo', 'PuVeto', 'TT', 'IT', 'OT', 'Rich', 'Muon', 'Spd', 'Prs',
+            'Ecal', 'Hcal'
+        ]  # Active sub-detectors
+        ,
+        "PackingSequencers": {
+        }  # The packing sequence to fill for each spillover event
+        ,
+        "DataType":
+        ""  # Flag for backward compatibility with old data
+        ,
+        "SaveHepMC":
+        True  # If False, do not save HepMC on output file
+    }
 
     def allEventLocations(self):
-        crossingList = [ '' ]
+        crossingList = ['']
         spillOverList = self.getProp("SpilloverPaths")
-        if '' in spillOverList : spillOverList.remove('')
+        if '' in spillOverList: spillOverList.remove('')
         crossingList += spillOverList
         return crossingList
 
-    def _doWrite( self ):
+    def _doWrite(self):
         """
         Define the file content and write it out
         """
-        if not self.isPropertySet("Writer") :
-            log.debug( "No Writer defined for SIM" )
+        if not self.isPropertySet("Writer"):
+            log.debug("No Writer defined for SIM")
             return
         self._defineOutputData()
 
-    def slot_( self, slot ):
-        if slot != '' :  return slot + '/'
+    def slot_(self, slot):
+        if slot != '': return slot + '/'
         return slot
 
-    def tapeLocation( self, slot , root , item ):
+    def tapeLocation(self, slot, root, item):
         return '/Event/' + self.slot_(slot) + root + '/' + item + '#1'
 
-    def dodLocation( self, slot , root , item ):
+    def dodLocation(self, slot, root, item):
         return '/Event/' + self.slot_(slot) + root + '/' + item
 
     def mcTESRoot(self):
         mcRoot = 'MC'
-        if self.getProp('EnablePack') : mcRoot = 'pSim'
+        if self.getProp('EnablePack'): mcRoot = 'pSim'
         return mcRoot
 
     def writer(self):
-        tape = OutputStream( self.getProp("Writer"), Preload=False, OutputLevel=3 )
+        tape = OutputStream(
+            self.getProp("Writer"), Preload=False, OutputLevel=3)
         return tape
 
     def _doPacking(self):
 
-        from Configurables import ( PackMCParticle, PackMCVertex )
+        from Configurables import (PackMCParticle, PackMCVertex)
 
         # Active Detectors
         dets = self.getProp("Detectors")
@@ -85,111 +108,137 @@ class SimConf(LHCbConfigurableUser) :
         # output content
         for slot in self.allEventLocations():
 
-            if slot in packingSeqs :
+            if slot in packingSeqs:
 
                 packing = packingSeqs[slot]
 
-                if slot != '' : packing.RootInTES = slot
+                if slot != '': packing.RootInTES = slot
 
-                packMCP = PackMCParticle( "PackMCParticle"+slot )
-                packMCV = PackMCVertex( "PackMCVertex"+slot )
-                packing.Members += [ packMCP, packMCV ]
+                packMCP = PackMCParticle("PackMCParticle" + slot)
+                packMCV = PackMCVertex("PackMCVertex" + slot)
+                packing.Members += [packMCP, packMCV]
 
-                if 'Velo' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCVeloHitPacker_   as MCVeloHitPacker
-                    packing.Members += [ MCVeloHitPacker("MCVeloHitPacker"+slot) ]
-                
-                if 'PuVeto' in dets :
+                if 'Velo' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCVeloHitPacker_ as MCVeloHitPacker
+                    packing.Members += [
+                        MCVeloHitPacker("MCVeloHitPacker" + slot)
+                    ]
+
+                if 'PuVeto' in dets:
                     from Configurables import DataPacking__Pack_LHCb__MCPuVetoHitPacker_ as MCPuVetoHitPacker
-                    packing.Members += [ MCPuVetoHitPacker("MCPuVetoHitPacker"+slot) ]
+                    packing.Members += [
+                        MCPuVetoHitPacker("MCPuVetoHitPacker" + slot)
+                    ]
 
-                if 'VP' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCVPHitPacker_     as MCVPHitPacker
-                    packing.Members += [ MCVPHitPacker("MCVPHitPacker"+slot) ]
+                if 'VP' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCVPHitPacker_ as MCVPHitPacker
+                    packing.Members += [MCVPHitPacker("MCVPHitPacker" + slot)]
 
-                if 'TT' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCTTHitPacker_     as MCTTHitPacker
-                    packing.Members += [ MCTTHitPacker("MCTTHitPacker"+slot) ]
+                if 'TT' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCTTHitPacker_ as MCTTHitPacker
+                    packing.Members += [MCTTHitPacker("MCTTHitPacker" + slot)]
 
-                if 'UT' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCUTHitPacker_     as MCUTHitPacker
-                    packing.Members += [ MCUTHitPacker("MCUTHitPacker"+slot) ]
+                if 'UT' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCUTHitPacker_ as MCUTHitPacker
+                    packing.Members += [MCUTHitPacker("MCUTHitPacker" + slot)]
 
-                if 'IT' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCITHitPacker_     as MCITHitPacker
-                    packing.Members += [ MCITHitPacker("MCITHitPacker"+slot) ]
+                if 'IT' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCITHitPacker_ as MCITHitPacker
+                    packing.Members += [MCITHitPacker("MCITHitPacker" + slot)]
 
-                if 'SL' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCSLHitPacker_     as MCSLHitPacker
-                    packing.Members += [ MCSLHitPacker("MCSLHitPacker"+slot) ]
+                if 'SL' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCSLHitPacker_ as MCSLHitPacker
+                    packing.Members += [MCSLHitPacker("MCSLHitPacker" + slot)]
 
-                if 'OT' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCOTHitPacker_     as MCOTHitPacker
-                    packing.Members += [ MCOTHitPacker("MCOTHitPacker"+slot) ]
+                if 'OT' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCOTHitPacker_ as MCOTHitPacker
+                    packing.Members += [MCOTHitPacker("MCOTHitPacker" + slot)]
 
-                if 'FT' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCFTHitPacker_     as MCFTHitPacker
-                    packing.Members += [ MCFTHitPacker("MCFTHitPacker"+slot) ]
+                if 'FT' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCFTHitPacker_ as MCFTHitPacker
+                    packing.Members += [MCFTHitPacker("MCFTHitPacker" + slot)]
 
-                if 'Muon' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCMuonHitPacker_   as MCMuonHitPacker
-                    packing.Members += [ MCMuonHitPacker("MCMuonHitPacker"+slot) ]
+                if 'Muon' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCMuonHitPacker_ as MCMuonHitPacker
+                    packing.Members += [
+                        MCMuonHitPacker("MCMuonHitPacker" + slot)
+                    ]
 
-                if 'Prs' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCPrsHitPacker_    as MCPrsHitPacker
-                    packing.Members += [ MCPrsHitPacker("MCPrsHitPacker"+slot) ]
+                if 'Prs' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCPrsHitPacker_ as MCPrsHitPacker
+                    packing.Members += [
+                        MCPrsHitPacker("MCPrsHitPacker" + slot)
+                    ]
 
-                if 'Spd' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCSpdHitPacker_    as MCSpdHitPacker
-                    packing.Members += [ MCSpdHitPacker("MCSpdHitPacker"+slot) ]
+                if 'Spd' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCSpdHitPacker_ as MCSpdHitPacker
+                    packing.Members += [
+                        MCSpdHitPacker("MCSpdHitPacker" + slot)
+                    ]
 
-                if 'Ecal' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCEcalHitPacker_   as MCEcalHitPacker
-                    packing.Members += [ MCEcalHitPacker("MCEcalHitPacker"+slot) ]
+                if 'Ecal' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCEcalHitPacker_ as MCEcalHitPacker
+                    packing.Members += [
+                        MCEcalHitPacker("MCEcalHitPacker" + slot)
+                    ]
 
-                if 'Hcal' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCHcalHitPacker_   as MCHcalHitPacker
-                    packing.Members += [ MCHcalHitPacker("MCHcalHitPacker"+slot) ]
+                if 'Hcal' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCHcalHitPacker_ as MCHcalHitPacker
+                    packing.Members += [
+                        MCHcalHitPacker("MCHcalHitPacker" + slot)
+                    ]
 
-                if 'Rich' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCRichHitPacker_   as MCRichHitPacker
+                if 'Rich' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCRichHitPacker_ as MCRichHitPacker
                     from Configurables import DataPacking__Pack_LHCb__MCRichOpticalPhotonPacker_ as MCRichOpticalPhotonPacker
                     from Configurables import DataPacking__Pack_LHCb__MCRichSegmentPacker_ as MCRichSegmentPacker
-                    from Configurables import DataPacking__Pack_LHCb__MCRichTrackPacker_   as MCRichTrackPacker
-                    packing.Members += [ MCRichHitPacker("MCRichHitPacker"+slot) ]
-                    packing.Members += [ MCRichOpticalPhotonPacker("MCRichOpPhotPacker"+slot) ]
-                    packing.Members += [ MCRichSegmentPacker("MCRichSegmentPacker"+slot) ]
-                    packing.Members += [ MCRichTrackPacker("MCRichTrackPacker"+slot) ]
+                    from Configurables import DataPacking__Pack_LHCb__MCRichTrackPacker_ as MCRichTrackPacker
+                    packing.Members += [
+                        MCRichHitPacker("MCRichHitPacker" + slot)
+                    ]
+                    packing.Members += [
+                        MCRichOpticalPhotonPacker("MCRichOpPhotPacker" + slot)
+                    ]
+                    packing.Members += [
+                        MCRichSegmentPacker("MCRichSegmentPacker" + slot)
+                    ]
+                    packing.Members += [
+                        MCRichTrackPacker("MCRichTrackPacker" + slot)
+                    ]
 
-                if 'HC' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCHCHitPacker_     as MCHCHitPacker
-                    packing.Members += [ MCHCHitPacker("MCHCHitPacker"+slot) ]
+                if 'HC' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCHCHitPacker_ as MCHCHitPacker
+                    packing.Members += [MCHCHitPacker("MCHCHitPacker" + slot)]
 
-                if 'Bcm' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCBcmHitPacker_    as MCBcmHitPacker
-                    packing.Members += [ MCBcmHitPacker("MCBcmHitPacker"+slot) ]
+                if 'Bcm' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCBcmHitPacker_ as MCBcmHitPacker
+                    packing.Members += [
+                        MCBcmHitPacker("MCBcmHitPacker" + slot)
+                    ]
 
-                if 'Bls' in dets :
-                    from Configurables import DataPacking__Pack_LHCb__MCBlsHitPacker_    as MCBlsHitPacker
-                    packing.Members += [ MCBlsHitPacker("MCBlsHitPacker"+slot) ]
+                if 'Bls' in dets:
+                    from Configurables import DataPacking__Pack_LHCb__MCBlsHitPacker_ as MCBlsHitPacker
+                    packing.Members += [
+                        MCBlsHitPacker("MCBlsHitPacker" + slot)
+                    ]
 
         # print "SimConf.py: _doPacking(): packing.Members =", packing.Members
 
     def _makeUnpacker(self, type, name, slot, tesLoc):
-        
-        unp = type(name+slot)
-        if slot != '' : unp.RootInTES = slot
+
+        unp = type(name + slot)
+        if slot != '': unp.RootInTES = slot
         if self.isPropertySet("DataUnpackingSeq"):
             self.getProp("DataUnpackingSeq").Members += [unp]
         else:
-            output = self.dodLocation( slot, 'MC', tesLoc )
-            DataOnDemandSvc().AlgMap[ output ] = unp
+            output = self.dodLocation(slot, 'MC', tesLoc)
+            DataOnDemandSvc().AlgMap[output] = unp
 
     def _doUnpacking(self):
 
         from Configurables import DataOnDemandSvc
         from Configurables import UnpackMCParticle, UnpackMCVertex
-                
+
         # Define the event locations
         crossingList = self.allEventLocations()
 
@@ -199,260 +248,296 @@ class SimConf(LHCbConfigurableUser) :
         ## event locations
         for slot in crossingList:
 
-            self._makeUnpacker( UnpackMCParticle, "UnpackMCParticles", slot, 'Particles' )
-            self._makeUnpacker( UnpackMCVertex,   "UnpackMCVertices",  slot, 'Vertices' )
+            self._makeUnpacker(UnpackMCParticle, "UnpackMCParticles", slot,
+                               'Particles')
+            self._makeUnpacker(UnpackMCVertex, "UnpackMCVertices", slot,
+                               'Vertices')
 
-            if 'Velo' in dets :
+            if 'Velo' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCVeloHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCVeloHitPacker_, "UnpackMCVeloHits", slot, 'Velo/Hits' )
-            
-            if 'PuVeto' in dets :
-                from Configurables import DataPacking__Unpack_LHCb__MCPuVetoHitPacker_        
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCPuVetoHitPacker_, "UnpackMCPuVetoHits", slot, 'PuVeto/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCVeloHitPacker_,
+                                   "UnpackMCVeloHits", slot, 'Velo/Hits')
 
-            if 'VP' in dets :
+            if 'PuVeto' in dets:
+                from Configurables import DataPacking__Unpack_LHCb__MCPuVetoHitPacker_
+                self._makeUnpacker(
+                    DataPacking__Unpack_LHCb__MCPuVetoHitPacker_,
+                    "UnpackMCPuVetoHits", slot, 'PuVeto/Hits')
+
+            if 'VP' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCVPHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCVPHitPacker_, "UnpackMCVPHits", slot, 'VP/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCVPHitPacker_,
+                                   "UnpackMCVPHits", slot, 'VP/Hits')
 
-            if 'IT' in dets :
+            if 'IT' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCITHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCITHitPacker_, "UnpackMCITHits", slot, 'IT/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCITHitPacker_,
+                                   "UnpackMCITHits", slot, 'IT/Hits')
 
-            if 'SL' in dets :
+            if 'SL' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCSLHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCSLHitPacker_, "UnpackMCSLHits", slot, 'SL/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCSLHitPacker_,
+                                   "UnpackMCSLHits", slot, 'SL/Hits')
 
-            if 'OT' in dets :
+            if 'OT' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCOTHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCOTHitPacker_, "UnpackMCOTHits", slot, 'OT/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCOTHitPacker_,
+                                   "UnpackMCOTHits", slot, 'OT/Hits')
 
-            if 'FT' in dets :
+            if 'FT' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCFTHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCFTHitPacker_, "UnpackMCFTHits", slot, 'FT/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCFTHitPacker_,
+                                   "UnpackMCFTHits", slot, 'FT/Hits')
 
-            if 'TT' in dets :
+            if 'TT' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCTTHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCTTHitPacker_, "UnpackMCTTHits", slot, 'TT/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCTTHitPacker_,
+                                   "UnpackMCTTHits", slot, 'TT/Hits')
 
-            if 'UT' in dets :
+            if 'UT' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCUTHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCUTHitPacker_, "UnpackMCUTHits", slot, 'UT/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCUTHitPacker_,
+                                   "UnpackMCUTHits", slot, 'UT/Hits')
 
-            if 'Muon' in dets :
+            if 'Muon' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCMuonHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCMuonHitPacker_, "UnpackMCMuonHits", slot, 'Muon/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCMuonHitPacker_,
+                                   "UnpackMCMuonHits", slot, 'Muon/Hits')
 
-            if 'Spd' in dets :
+            if 'Spd' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCSpdHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCSpdHitPacker_, "UnpackMCSpdHits", slot, 'Spd/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCSpdHitPacker_,
+                                   "UnpackMCSpdHits", slot, 'Spd/Hits')
 
-            if 'Prs' in dets :
-                from Configurables import DataPacking__Unpack_LHCb__MCPrsHitPacker_                
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCPrsHitPacker_, "UnpackMCPrsHits", slot, 'Prs/Hits' )
+            if 'Prs' in dets:
+                from Configurables import DataPacking__Unpack_LHCb__MCPrsHitPacker_
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCPrsHitPacker_,
+                                   "UnpackMCPrsHits", slot, 'Prs/Hits')
 
-            if 'Ecal' in dets :
+            if 'Ecal' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCEcalHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCEcalHitPacker_, "UnpackMCEcalHits", slot, 'Ecal/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCEcalHitPacker_,
+                                   "UnpackMCEcalHits", slot, 'Ecal/Hits')
 
-            if 'Hcal' in dets :
+            if 'Hcal' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCHcalHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCHcalHitPacker_, "UnpackMCHcalHits", slot, 'Hcal/Hits' )
-                
-            if 'Rich' in dets :
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCHcalHitPacker_,
+                                   "UnpackMCHcalHits", slot, 'Hcal/Hits')
+
+            if 'Rich' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCRichHitPacker_
                 from Configurables import DataPacking__Unpack_LHCb__MCRichOpticalPhotonPacker_
                 from Configurables import DataPacking__Unpack_LHCb__MCRichSegmentPacker_
                 from Configurables import DataPacking__Unpack_LHCb__MCRichTrackPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCRichHitPacker_,
-                                    "UnpackMCRichHits", slot, 'Rich/Hits' )
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCRichOpticalPhotonPacker_,
-                                    "UnpackMCRichPhots", slot, 'Rich/OpticalPhotons' )
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCRichSegmentPacker_,
-                                    "UnpackMCRichSegments", slot, 'Rich/Segments' )
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCRichTrackPacker_,
-                                    "UnpackMCRichTracks", slot, 'Rich/Tracks' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCRichHitPacker_,
+                                   "UnpackMCRichHits", slot, 'Rich/Hits')
+                self._makeUnpacker(
+                    DataPacking__Unpack_LHCb__MCRichOpticalPhotonPacker_,
+                    "UnpackMCRichPhots", slot, 'Rich/OpticalPhotons')
+                self._makeUnpacker(
+                    DataPacking__Unpack_LHCb__MCRichSegmentPacker_,
+                    "UnpackMCRichSegments", slot, 'Rich/Segments')
+                self._makeUnpacker(
+                    DataPacking__Unpack_LHCb__MCRichTrackPacker_,
+                    "UnpackMCRichTracks", slot, 'Rich/Tracks')
 
-            if 'HC' in dets :
+            if 'HC' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCHCHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCHCHitPacker_, "UnpackMCHCHits", slot, 'HC/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCHCHitPacker_,
+                                   "UnpackMCHCHits", slot, 'HC/Hits')
 
-            if 'Bcm' in dets :
+            if 'Bcm' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCBcmHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCHCHitPacker_, "UnpackMCBmcHits", slot, 'Bcm/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCHCHitPacker_,
+                                   "UnpackMCBmcHits", slot, 'Bcm/Hits')
 
-            if 'Bls' in dets :
+            if 'Bls' in dets:
                 from Configurables import DataPacking__Unpack_LHCb__MCBlsHitPacker_
-                self._makeUnpacker( DataPacking__Unpack_LHCb__MCHCHitPacker_, "UnpackMCBlsHits", slot, 'Bls/Hits' )
+                self._makeUnpacker(DataPacking__Unpack_LHCb__MCHCHitPacker_,
+                                   "UnpackMCBlsHits", slot, 'Bls/Hits')
 
-    def addHeaders( self, tape ):
+    def addHeaders(self, tape):
 
         # Event locations
-        for slot in self.allEventLocations() :
+        for slot in self.allEventLocations():
 
             list = []
 
-            if "Generator" in self.getProp("Phases") :
-                list += [ self.tapeLocation( slot, 'Gen', 'Header' ) ]
+            if "Generator" in self.getProp("Phases"):
+                list += [self.tapeLocation(slot, 'Gen', 'Header')]
 
-            if "Simulation" in self.getProp("Phases") or "GenToMCTree" in self.getProp("Phases") :
-                list += [ self.tapeLocation( slot, 'MC', 'Header' ) ]
+            if "Simulation" in self.getProp(
+                    "Phases") or "GenToMCTree" in self.getProp("Phases"):
+                list += [self.tapeLocation(slot, 'MC', 'Header')]
 
             # main event is mandatory, spillover events optional.
             if slot != '':
                 tape.OptItemList += list
             else:
-                tape.ItemList    += list
-            
+                tape.ItemList += list
 
-    def addGenInfo( self, tape ):
+    def addGenInfo(self, tape):
 
         # Add Generator level information
-        if "Generator" in self.getProp("Phases") :
+        if "Generator" in self.getProp("Phases"):
 
             # Save HepMC and BeamParameters only for main event
-            if self.getProp("DataType") not in [ '2009', '2010', 'MC09' ]:
-                tape.ItemList += [ '/Event/Gen/BeamParameters#1' ]
+            if self.getProp("DataType") not in ['2009', '2010', 'MC09']:
+                tape.ItemList += ['/Event/Gen/BeamParameters#1']
                 # OptItem so that, when used by applications other than Gauss, they are saved if saved by Gauss
-                if self.getProp('SaveHepMC') : tape.OptItemList += [ '/Event/Gen/HepMCEvents#1' ]
+                if self.getProp('SaveHepMC'):
+                    tape.OptItemList += ['/Event/Gen/HepMCEvents#1']
 
-            for slot in self.allEventLocations() :
+            for slot in self.allEventLocations():
                 # main event is mandatory, spillover events optional.
                 if slot != '':
-                    tape.OptItemList += [ self.tapeLocation( slot , 'Gen' , 'Collisions' ) ]
+                    tape.OptItemList += [
+                        self.tapeLocation(slot, 'Gen', 'Collisions')
+                    ]
                 else:
-                    tape.ItemList    += [ self.tapeLocation( slot , 'Gen' , 'Collisions' ) ]
+                    tape.ItemList += [
+                        self.tapeLocation(slot, 'Gen', 'Collisions')
+                    ]
 
+    def addMCParticles(self, tape, eventLocations):
 
-    def addMCParticles( self, tape, eventLocations ) :
-        
-        if "Simulation" in self.getProp("Phases") or "GenToMCTree" in self.getProp("Phases") :
+        if "Simulation" in self.getProp(
+                "Phases") or "GenToMCTree" in self.getProp("Phases"):
 
             # Event locations
-            for slot in eventLocations :
+            for slot in eventLocations:
 
                 # Annoyingly (MC)Particles and (MC)Vertices change their names when packed ...
-                if not self.getProp('EnablePack') :
-                    simList = [ self.tapeLocation( slot, 'MC', 'Particles' ) ]
+                if not self.getProp('EnablePack'):
+                    simList = [self.tapeLocation(slot, 'MC', 'Particles')]
                 else:
-                    simList = [ self.tapeLocation( slot, 'pSim', 'MCParticles' ) ]
+                    simList = [self.tapeLocation(slot, 'pSim', 'MCParticles')]
 
                 # main event is manditory, spillover events optional.
                 if slot != '':
                     tape.OptItemList += simList
                 else:
-                    tape.ItemList    += simList
+                    tape.ItemList += simList
 
-    def addMCVertices( self, tape, eventLocations ) :
-        
-        if "Simulation" in self.getProp("Phases") or "GenToMCTree" in self.getProp("Phases") :
+    def addMCVertices(self, tape, eventLocations):
+
+        if "Simulation" in self.getProp(
+                "Phases") or "GenToMCTree" in self.getProp("Phases"):
 
             # Event locations
-            for slot in eventLocations :
+            for slot in eventLocations:
 
                 # Annoyingly (MC)Particles and (MC)Vertices change their names when packed ...
-                if not self.getProp('EnablePack') :
-                    simList = [ self.tapeLocation( slot, 'MC', 'Vertices' ) ]
+                if not self.getProp('EnablePack'):
+                    simList = [self.tapeLocation(slot, 'MC', 'Vertices')]
                 else:
-                    simList = [ self.tapeLocation( slot, 'pSim', 'MCVertices' ) ]
+                    simList = [self.tapeLocation(slot, 'pSim', 'MCVertices')]
 
                 # main event is manditory, spillover events optional.
                 if slot != '':
                     tape.OptItemList += simList
                 else:
-                    tape.ItemList    += simList
-                    
-    def addGeneralSimInfo( self, tape, eventLocations) :
+                    tape.ItemList += simList
+
+    def addGeneralSimInfo(self, tape, eventLocations):
 
         self.addMCVertices(tape, eventLocations)
         self.addMCParticles(tape, eventLocations)
 
-    def addSubDetSimInfo( self, tape ) :
+    def addSubDetSimInfo(self, tape):
 
-        if "Simulation" in self.getProp("Phases") :
+        if "Simulation" in self.getProp("Phases"):
 
             # Active Detectors
             dets = self.getProp("Detectors")
 
             # Event locations
-            for slot in self.allEventLocations() :
+            for slot in self.allEventLocations():
 
                 mcRoot = self.mcTESRoot()
 
-                simList = [ ]
+                simList = []
 
-                if 'Velo' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Velo/Hits' ) ]
+                if 'Velo' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Velo/Hits')]
 
-                if 'PuVeto' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'PuVeto/Hits' ) ]
+                if 'PuVeto' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'PuVeto/Hits')]
 
-                if 'VP' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'VP/Hits' ) ]
+                if 'VP' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'VP/Hits')]
 
-                if 'IT' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'IT/Hits' ) ]
+                if 'IT' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'IT/Hits')]
 
-                if 'OT' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'OT/Hits' ) ]
+                if 'OT' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'OT/Hits')]
 
-                if 'FT' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'FT/Hits' ) ]
+                if 'FT' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'FT/Hits')]
 
-                if 'TT' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'TT/Hits' ) ]
+                if 'TT' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'TT/Hits')]
 
-                if 'UT' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'UT/Hits' ) ]
+                if 'UT' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'UT/Hits')]
 
-                if 'Muon' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Muon/Hits' ) ]
+                if 'Muon' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Muon/Hits')]
 
-                if 'Spd' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Spd/Hits' ) ]
+                if 'Spd' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Spd/Hits')]
 
-                if 'Prs' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Prs/Hits' ) ]
+                if 'Prs' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Prs/Hits')]
 
-                if 'Ecal' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Ecal/Hits' ) ]
+                if 'Ecal' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Ecal/Hits')]
 
-                if 'Hcal' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Hcal/Hits' ) ]
-                   
-                if 'SL' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'SL/Hits' ) ]
+                if 'Hcal' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Hcal/Hits')]
 
-                if 'Rich' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Rich/Hits' ),
-                                 self.tapeLocation( slot, mcRoot, 'Rich/OpticalPhotons' ),
-                                 self.tapeLocation( slot, mcRoot, 'Rich/Tracks' ), 
-                                 self.tapeLocation( slot, mcRoot, 'Rich/Segments' ) ]
+                if 'SL' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'SL/Hits')]
+
+                if 'Rich' in dets:
+                    simList += [
+                        self.tapeLocation(slot, mcRoot, 'Rich/Hits'),
+                        self.tapeLocation(slot, mcRoot, 'Rich/OpticalPhotons'),
+                        self.tapeLocation(slot, mcRoot, 'Rich/Tracks'),
+                        self.tapeLocation(slot, mcRoot, 'Rich/Segments')
+                    ]
                     # Linkers annoyingly put things in slightly different places ...
-                    if slot != '' :
-                        simList += ['/Event/Link/'+slot+'/MC/Particles2MCRichTracks#1',
-                                    '/Event/Link/'+slot+'/MC/Rich/Hits2MCRichOpticalPhotons#1' ]
+                    if slot != '':
+                        simList += [
+                            '/Event/Link/' + slot +
+                            '/MC/Particles2MCRichTracks#1', '/Event/Link/' +
+                            slot + '/MC/Rich/Hits2MCRichOpticalPhotons#1'
+                        ]
                     else:
-                        simList += ['/Event/Link/MC/Particles2MCRichTracks#1',
-                                    '/Event/Link/MC/Rich/Hits2MCRichOpticalPhotons#1' ]
+                        simList += [
+                            '/Event/Link/MC/Particles2MCRichTracks#1',
+                            '/Event/Link/MC/Rich/Hits2MCRichOpticalPhotons#1'
+                        ]
 
-                if 'HC' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'HC/Hits' ) ]
+                if 'HC' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'HC/Hits')]
 
-                if 'Bcm' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Bcm/Hits' ) ]
+                if 'Bcm' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Bcm/Hits')]
 
-                if 'Bls' in dets :
-                    simList += [ self.tapeLocation( slot, mcRoot, 'Bls/Hits' ) ]
+                if 'Bls' in dets:
+                    simList += [self.tapeLocation(slot, mcRoot, 'Bls/Hits')]
 
                 # main event is manditory, spillover events optional.
                 if slot != '':
                     tape.OptItemList += simList
                 else:
-                    tape.ItemList    += simList
+                    tape.ItemList += simList
 
         # print "addSubDetSimInfo(", tape, "): simList =", simList
-                
-    def _defineOutputData( self ):
+
+    def _defineOutputData(self):
         """
         Define content of the output dataset
         """
@@ -461,32 +546,33 @@ class SimConf(LHCbConfigurableUser) :
         tape = self.writer()
 
         # Empty lists to start
-        tape.ItemList    = [ ]
-        tape.OptItemList = [ ]
+        tape.ItemList = []
+        tape.OptItemList = []
 
         # Headers
-        self.addHeaders( tape )
+        self.addHeaders(tape)
 
         # Add generator level information
-        self.addGenInfo( tape )
+        self.addGenInfo(tape)
 
         # Add general simulation information
-        self.addGeneralSimInfo( tape, self.allEventLocations() )
+        self.addGeneralSimInfo(tape, self.allEventLocations())
 
         # Add Sub-detector information
-        self.addSubDetSimInfo( tape )
+        self.addSubDetSimInfo(tape)
 
         # Some printout ...
-        log.info( "%s.ItemList    = %s"%(self.getProp("Writer"),tape.ItemList) )
-        log.info( "%s.OptItemList = %s"%(self.getProp("Writer"),tape.OptItemList) )
-    
+        log.info(
+            "%s.ItemList    = %s" % (self.getProp("Writer"), tape.ItemList))
+        log.info(
+            "%s.OptItemList = %s" % (self.getProp("Writer"), tape.OptItemList))
+
     def __apply_configuration__(self):
         GaudiKernel.ProcessJobOptions.PrintOn(force=True)
-        
+
         self._doWrite()
 
-        if self.getProp("EnablePack")   : self._doPacking()
-        if self.getProp("EnableUnpack") : self._doUnpacking()
-        
-        GaudiKernel.ProcessJobOptions.PrintOff()
+        if self.getProp("EnablePack"): self._doPacking()
+        if self.getProp("EnableUnpack"): self._doUnpacking()
 
+        GaudiKernel.ProcessJobOptions.PrintOff()

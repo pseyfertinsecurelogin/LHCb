@@ -12,11 +12,11 @@
 #pragma once
 
 // STL
-#include <vector>
 #include <array>
-#include <type_traits>
 #include <cstdint>
+#include <type_traits>
 #include <utility>
+#include <vector>
 
 // Vc
 // simdize.h causes problems so include by hand the includes in Vc/Vc
@@ -24,23 +24,22 @@
 // Can be removed once Vc we use is updated to fix the above issue.
 //#include <Vc/Vc>
 #ifndef VC_VC_
-#define VC_VC_
-#include <Vc/vector.h>
-#include <Vc/IO>
-#include <Vc/Memory>
-#include <Vc/Utils>
-#include <Vc/Allocator>
-#include <Vc/iterators>
-#include <Vc/SimdArray>
+#  define VC_VC_
+#  include <Vc/Allocator>
+#  include <Vc/IO>
+#  include <Vc/Memory>
+#  include <Vc/SimdArray>
+#  include <Vc/Utils>
+#  include <Vc/iterators>
+#  include <Vc/vector.h>
 #endif // VC_VC_
 
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @namespace LHCb::SIMD
    *
@@ -49,64 +48,63 @@ namespace LHCb
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   17/10/2017
    */
-  namespace SIMD
-  {
+  namespace SIMD {
 
     //------------------------------------------------------------------------------------------------
     // SIMD types
     //------------------------------------------------------------------------------------------------
 
     /// The SIMD floating point type
-    template < typename FPTYPE >
-    using FP = Vc::Vector< FPTYPE >;
+    template <typename FPTYPE>
+    using FP = Vc::Vector<FPTYPE>;
 
     /// SIMD Point
-    template < typename FPTYPE >
-    using Point = ROOT::Math::PositionVector3D< ROOT::Math::Cartesian3D< FP< FPTYPE > > >;
+    template <typename FPTYPE>
+    using Point = ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<FP<FPTYPE>>>;
 
     /// SIMD Vector
-    template < typename FPTYPE >
-    using Vector = ROOT::Math::DisplacementVector3D< ROOT::Math::Cartesian3D< FP< FPTYPE > > >;
+    template <typename FPTYPE>
+    using Vector = ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<FP<FPTYPE>>>;
 
     /// SIMD Plane
-    template < typename FPTYPE >
-    using Plane = ROOT::Math::Impl::Plane3D< FP< FPTYPE > >;
+    template <typename FPTYPE>
+    using Plane = ROOT::Math::Impl::Plane3D<FP<FPTYPE>>;
 
     /// SIMD Transform3D
-    template < typename FPTYPE >
-    using Transform3D = ROOT::Math::Impl::Transform3D< FP< FPTYPE > >;
+    template <typename FPTYPE>
+    using Transform3D = ROOT::Math::Impl::Transform3D<FP<FPTYPE>>;
 
     //------------------------------------------------------------------------------------------------
     // Types for 64 bit types
     //------------------------------------------------------------------------------------------------
 
     /// SIMD double
-    using FPD = FP< double >;
+    using FPD = FP<double>;
 
     /// SIMD double point
-    using PointD = Point< double >;
+    using PointD = Point<double>;
 
     /// SIMD double vector
-    using VectorD = Vector< double >;
+    using VectorD = Vector<double>;
 
     /// SIMD double plane
-    using PlaneD = Plane< double >;
+    using PlaneD = Plane<double>;
 
     //------------------------------------------------------------------------------------------------
     // Types for 32 bit types
     //------------------------------------------------------------------------------------------------
 
     /// SIMD float
-    using FPF = FP< float >;
+    using FPF = FP<float>;
 
     /// SIMD float point
-    using PointF = Point< float >;
+    using PointF = Point<float>;
 
     /// SIMD float vector
-    using VectorF = Vector< float >;
+    using VectorF = Vector<float>;
 
     /// SIMD float plane
-    using PlaneF = Plane< float >;
+    using PlaneF = Plane<float>;
 
     //------------------------------------------------------------------------------------------------
     // Int types
@@ -118,34 +116,34 @@ namespace LHCb
     // Vc::Vector sizes are not the same (float 8, int 4).... This works around this.
 
     /// The SIMD int type with same size as that for floats
-    template < typename ITYPE >
-    using INT = Vc::SimdArray< ITYPE, FPF::Size >;
+    template <typename ITYPE>
+    using INT = Vc::SimdArray<ITYPE, FPF::Size>;
 
 #else
 
     /// The SIMD int type with same size as that for floats
-    template < typename ITYPE >
-    using INT = Vc::Vector< ITYPE >;
+    template <typename ITYPE>
+    using INT = Vc::Vector<ITYPE>;
 
 #endif
 
     /// SIMD Int8
-    using Int8 = INT< std::int8_t >;
+    using Int8 = INT<std::int8_t>;
 
     /// SIMD UInt8
-    using UInt8 = INT< std::uint8_t >;
+    using UInt8 = INT<std::uint8_t>;
 
     /// SIMD Int16
-    using Int16 = INT< std::int16_t >;
+    using Int16 = INT<std::int16_t>;
 
     /// SIMD UInt16
-    using UInt16 = INT< std::uint16_t >;
+    using UInt16 = INT<std::uint16_t>;
 
     /// SIMD Int32
-    using Int32 = INT< std::int32_t >;
+    using Int32 = INT<std::int32_t>;
 
     /// SIMD UInt32
-    using UInt32 = INT< std::uint32_t >;
+    using UInt32 = INT<std::uint32_t>;
 
     //------------------------------------------------------------------------------------------------
     // Default scalar types
@@ -165,12 +163,12 @@ namespace LHCb
     //------------------------------------------------------------------------------------------------
 
     /// SIMD Vector. std::vector with alignment respecting allocator.
-    template < typename TYPE >
-    using STDVector = std::vector< TYPE, Vc::Allocator< TYPE > >;
+    template <typename TYPE>
+    using STDVector = std::vector<TYPE, Vc::Allocator<TYPE>>;
 
     /// SIMD 'Array' (same size as Vc vectors)
-    template < typename TYPE, typename FPTYPE = FP< DefaultScalarFP > >
-    using STDArray = std::array< TYPE, FPTYPE::Size >;
+    template <typename TYPE, typename FPTYPE = FP<DefaultScalarFP>>
+    using STDArray = std::array<TYPE, FPTYPE::Size>;
 
     //------------------------------------------------------------------------------------------------
     // Utility methods from Vc

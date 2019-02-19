@@ -25,8 +25,8 @@
 // ============================================================================
 // LoKiDecay
 // ============================================================================
-#include "LoKi/Trees.h"
 #include "LoKi/DecayDescriptor.h"
+#include "LoKi/Trees.h"
 // ============================================================================
 /** @file
  *  Implementation file for LoKi HepMC-specific decay/tree-functors
@@ -34,11 +34,9 @@
  *  @date   2008-06-10
  */
 // ============================================================================
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Trees
-  {
+  namespace Trees {
     // ======================================================================
     /** @class GenExclusive
      *  Simple sub tree which consists of the node ("mother") and
@@ -239,17 +237,16 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-10
      */
-    class GenExclusive: public Decays::iTree_<const HepMC::GenParticle*>
-    {
+    class GenExclusive : public Decays::iTree_<const HepMC::GenParticle*> {
     protected:
       // ======================================================================
-      typedef const HepMC::GenParticle*                              PARTICLE ;
-      typedef Decays::Trees::Types_<PARTICLE>                        Types    ;
+      typedef const HepMC::GenParticle*       PARTICLE;
+      typedef Decays::Trees::Types_<PARTICLE> Types;
       // ======================================================================
     public:
       // ======================================================================
       /// the actual type of the container of children trees
-      typedef Types::TreeList                                        TreeList ;
+      typedef Types::TreeList TreeList;
       // ======================================================================
     public:
       // ======================================================================
@@ -259,62 +256,49 @@ namespace Decays
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenExclusive
-      ( const Decays::iNode&       mother                  ,
-        const TreeList&            children                ,
-        const Alg                  alg         = Daughters ,
-        const Oscillation          oscillation = Undefined ) ;
+      GenExclusive( const Decays::iNode& mother, const TreeList& children, const Alg alg = Daughters,
+                    const Oscillation oscillation = Undefined );
       /** constructor from the node (mother) & flags
        *  @param mother the mother node
        *  @param alg the matching algorithm
        *  @param oscillation check the oscillation flag
        */
-      GenExclusive
-      ( const Decays::iNode&       mother                  ,
-        const Alg                  alg         = Daughters ,
-        const Oscillation          oscillation = Undefined ) ;
+      GenExclusive( const Decays::iNode& mother, const Alg alg = Daughters, const Oscillation oscillation = Undefined );
       /** constructor from the node (mother) & flags
        *  @param oscillation check the oscillation flag
        *  @param mother the mother node
        */
-      GenExclusive
-      ( const Oscillation          oscillation ,
-        const Decays::iNode&       mother      ) ;
+      GenExclusive( const Oscillation oscillation, const Decays::iNode& mother );
       /** constructor from the decay & flags
        *  @param decay the decay
        *  @param alg the matching algorithm
        *  @param oscillation check the oscillation flag
        */
-      GenExclusive
-      ( const Decays::Decay&       decay                   ,
-        const Alg                  alg         = Daughters ,
-        const Oscillation          oscillation = Undefined ) ;
+      GenExclusive( const Decays::Decay& decay, const Alg alg = Daughters, const Oscillation oscillation = Undefined );
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      GenExclusive* clone() const override { return new GenExclusive ( *this ) ; }
+      GenExclusive* clone() const override { return new GenExclusive( *this ); }
       /// MANDATORY: the only one essential method:
-      bool operator() ( Decays::iTree_<PARTICLE>::argument p ) const  override;
+      bool operator()( Decays::iTree_<PARTICLE>::argument p ) const override;
       /// MANDATORY: check the validity
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: validate the tree
-      StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       /// MANDATORY: reset the tree
-      void reset () const  override;
+      void reset() const override;
       /// collect the marked elements
-      size_t collect
-      ( Decays::iTree_<PARTICLE>::Collection& output ) const override;
+      size_t collect( Decays::iTree_<PARTICLE>::Collection& output ) const override;
       /// MANDATORY: the specific printout
-       std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// has marked elements  in the tree?
-       bool marked() const  override;
+      bool marked() const override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      virtual bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const ;
+      virtual bool p_match( Decays::iTree_<PARTICLE>::argument p ) const;
       // ======================================================================
     protected:
       // ======================================================================
@@ -322,118 +306,122 @@ namespace Decays
        *  @param p particle to be checked
        *  @return oscilalted or not
        */
-      const HepMC::GenParticle* ok ( const HepMC::GenParticle* p ) const ;
+      const HepMC::GenParticle* ok( const HepMC::GenParticle* p ) const;
       // ======================================================================
     public:
       // ======================================================================
       /// get the algorithm
-      Alg         alg         () const { return m_alg         ; }
-      Oscillation oscillation () const { return m_oscillation ; }
+      Alg         alg() const { return m_alg; }
+      Oscillation oscillation() const { return m_oscillation; }
       // ======================================================================
     public:
       // ======================================================================
       /// get the algorithm
-      void setAlg         (  Alg         value ) { m_alg          = value ; }
-      void setOscillation (  Oscillation value ) { m_oscillation  = value ; }
+      void setAlg( Alg value ) { m_alg = value; }
+      void setOscillation( Oscillation value ) { m_oscillation = value; }
       // ======================================================================
     public:
       // ======================================================================
       /// set children
-      void setChildren
-      ( const TreeList& children ) { m_children = children ; }
+      void setChildren( const TreeList& children ) { m_children = children; }
       /// set children
-      void setChildren
-      ( const std::vector<std::string>&                   chidlren ) ;
+      void setChildren( const std::vector<std::string>& chidlren );
       /// set children
-      void setChildren
-      ( const std::vector<Decays::Decay::Item>&           chidlren ) ;
+      void setChildren( const std::vector<Decays::Decay::Item>& chidlren );
       /// set children
-      void setChildren
-      ( const std::vector<LHCb::ParticleID>&              children ) ;
+      void setChildren( const std::vector<LHCb::ParticleID>& children );
       /// set children
-      void setChildren
-      ( const std::vector<const LHCb::ParticleProperty*>& children ) ;
+      void setChildren( const std::vector<const LHCb::ParticleProperty*>& children );
       // ======================================================================
     public:
       // ======================================================================
       /// add one more daughter to the decay
-      void addDaughter ( const Decays::iTree_<PARTICLE>& tree ) ;
+      void addDaughter( const Decays::iTree_<PARTICLE>& tree );
       /// add one more daughter to the decay
-      void addDaughter ( const Decays::iNode&          node ) ;
+      void addDaughter( const Decays::iNode& node );
       // ======================================================================
       /// add one more daughter to the decay
-      void addDaughter ( const std::string&            node ) ;
+      void addDaughter( const std::string& node );
       // ======================================================================
       /// add one more daughter to the decay
-      void addDaughter ( const LHCb::ParticleID&       node ) ;
+      void addDaughter( const LHCb::ParticleID& node );
       // ======================================================================
       /// add one more daughter to the decay
-      void addDaughter ( const Decays::Decay::Item&    node ) ;
+      void addDaughter( const Decays::Decay::Item& node );
       // ======================================================================
       /// add one more daughter to the decay
-      void addDaughter ( const LHCb::ParticleProperty* node ) ;
+      void addDaughter( const LHCb::ParticleProperty* node );
       // ======================================================================
     public:
       // ======================================================================
       /// add one more node to the tree
-      GenExclusive& operator+= ( const Decays::iTree_<PARTICLE>& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenExclusive& operator+=( const Decays::iTree_<PARTICLE>& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenExclusive& operator+= ( const Decays::iNode&            node )
-      { addDaughter ( node ) ; return *this ; }
+      GenExclusive& operator+=( const Decays::iNode& node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
       /// add one more node to the tree
-      GenExclusive& operator+= ( const std::string&              node )
-      { addDaughter ( node ) ; return *this ; }
+      GenExclusive& operator+=( const std::string& node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
       /// add one more node to the tree
-      GenExclusive& operator+= ( const LHCb::ParticleID&         node )
-      { addDaughter ( node ) ; return *this ; }
+      GenExclusive& operator+=( const LHCb::ParticleID& node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
       /// add one more node to the tree
-      GenExclusive& operator+= ( const Decays::Decay::Item&      node )
-      { addDaughter ( node ) ; return *this ; }
+      GenExclusive& operator+=( const Decays::Decay::Item& node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
       /// add one more node to the tree
-      GenExclusive& operator+= ( const LHCb::ParticleProperty*   node )
-      { addDaughter ( node ) ; return *this ; }
+      GenExclusive& operator+=( const LHCb::ParticleProperty* node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
     protected:
       // ======================================================================
-      inline const TreeList& children() const { return m_children ; }
+      inline const TreeList& children() const { return m_children; }
       // ======================================================================
-      TreeList::const_iterator  childBegin () const { return m_children.begin () ; }
-      TreeList::const_iterator  childEnd   () const { return m_children.end   () ; }
+      TreeList::const_iterator childBegin() const { return m_children.begin(); }
+      TreeList::const_iterator childEnd() const { return m_children.end(); }
       // ======================================================================
-      TreeList::const_reference front      () const { return m_children.front () ; }
-      TreeList::const_reference back       () const { return m_children.back  () ; }
+      TreeList::const_reference front() const { return m_children.front(); }
+      TreeList::const_reference back() const { return m_children.back(); }
       // ======================================================================
-      size_t nChildren () const { return m_children.size() ; }
+      size_t nChildren() const { return m_children.size(); }
       // ======================================================================
       // reset the cache
-      inline void i_reset () const
-      {
-        std::for_each( childBegin() , childEnd() ,
-                       [](const _Tree_<PARTICLE>& t) { t.reset(); });
+      inline void i_reset() const {
+        std::for_each( childBegin(), childEnd(), []( const _Tree_<PARTICLE>& t ) { t.reset(); } );
       }
       // ======================================================================
-      const Decays::iNode& mother () const { return m_mother ; }
+      const Decays::iNode& mother() const { return m_mother; }
       // ======================================================================
-      inline bool mother ( const LHCb::ParticleID& pid ) const
-      { return m_mother.node ( pid ) ;  }
+      inline bool mother( const LHCb::ParticleID& pid ) const { return m_mother.node( pid ); }
       // ======================================================================
     private:
       // ======================================================================
       /// The mother
-      Decays::Node               m_mother      ;               //    the mother
+      Decays::Node m_mother; //    the mother
       /// The children
-      TreeList                   m_children    ;               //  the children
+      TreeList m_children; //  the children
       /// The algorithm
-      Decays::Trees::Alg         m_alg         ;               // the algorithm
+      Decays::Trees::Alg m_alg; // the algorithm
       /// Oscillation flag
-      Decays::Trees::Oscillation m_oscillation ;               //   oscillation
+      Decays::Trees::Oscillation m_oscillation; //   oscillation
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class GenInclusive
      *  Simple sub tree which consists of the node ("mother") and
@@ -567,8 +555,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-10
      */
-    class GenInclusive : public GenExclusive
-    {
+    class GenInclusive : public GenExclusive {
     public:
       // ====================================================================
       /** full constructor from the node (mother), subtrees  & flags
@@ -577,69 +564,72 @@ namespace Decays
        *  @param alg the matching algorithm
        *  @param osc  the oscilaltion flag
        */
-      GenInclusive
-      ( const Decays::iNode& mother                 ,
-        const TreeList&      children               ,
-        const Alg            alg        = Daughters ,
-        const Oscillation    osc        = Undefined ) ;
+      GenInclusive( const Decays::iNode& mother, const TreeList& children, const Alg alg = Daughters,
+                    const Oscillation osc = Undefined );
       /** constructor from the node (mother), subtrees and "final" flag
        *  @param mother the mother node
        *  @param alg the matching algorithm
        *  @param osc require the oscillation flag for mother
        */
-      GenInclusive
-      ( const Decays::iNode& mother                 ,
-        const Alg            alg        = Daughters ,
-        const Oscillation    osc        = Undefined ) ;
+      GenInclusive( const Decays::iNode& mother, const Alg alg = Daughters, const Oscillation osc = Undefined );
       /** constructor from the decay & flags
        *  @param decay the decay
        *  @param alg the matching algorithm
        *  @param oscillation check the oscillation flag
        */
-      GenInclusive
-      ( const Decays::Decay&       decay                   ,
-        const Alg                  alg         = Daughters ,
-        const Oscillation          oscillation = Undefined ) ;
+      GenInclusive( const Decays::Decay& decay, const Alg alg = Daughters, const Oscillation oscillation = Undefined );
       /** constructor from exclusive decay
        *  @param mother the mother node
        */
-      GenInclusive ( const GenExclusive& right ) ;
+      GenInclusive( const GenExclusive& right );
       // ====================================================================
     public:
       // ====================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      GenInclusive* clone() const override { return new GenInclusive ( *this ) ; }
+      GenInclusive* clone() const override { return new GenInclusive( *this ); }
       /// MANDATORY: check the validity of the tree
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: the specific printout
-       std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ====================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
+      bool p_match( Decays::iTree_<PARTICLE>::argument p ) const override;
       // ======================================================================
     public:
       // ====================================================================
       /// add one more node to the tree
-      GenInclusive& operator+= ( const Decays::iTree_<PARTICLE>& node )
-      { addDaughter(  node ) ; return *this ; }
+      GenInclusive& operator+=( const Decays::iTree_<PARTICLE>& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenInclusive& operator+= ( const Decays::iNode& node )
-      { addDaughter(  node ) ; return *this ; }
+      GenInclusive& operator+=( const Decays::iNode& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenInclusive& operator+= ( const std::string& node )
-      { addDaughter(  node ) ; return *this ; }
+      GenInclusive& operator+=( const std::string& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenInclusive& operator+= ( const LHCb::ParticleID& node )
-      { addDaughter(  node ) ; return *this ; }
+      GenInclusive& operator+=( const LHCb::ParticleID& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenInclusive& operator+= ( const Decays::Decay::Item& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenInclusive& operator+=( const Decays::Decay::Item& node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ====================================================================
       /// add one more node to the tree
-      GenInclusive& operator+= ( const LHCb::ParticleProperty* node )
-      { addDaughter ( node ) ; return *this ; }
+      GenInclusive& operator+=( const LHCb::ParticleProperty* node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ====================================================================
     };
     // ======================================================================
@@ -706,8 +696,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
      */
-    class GenOptional : public GenExclusive
-    {
+    class GenOptional : public GenExclusive {
     public:
       // ====================================================================
       /** full constructor from the node (mother) and subtrees
@@ -717,12 +706,9 @@ namespace Decays
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenOptional
-      ( const Decays::iNode&       mother                 ,
-        const TreeList&            children = TreeList () ,
-        const TreeList&            optional = TreeList () ,
-        const Alg                  alg      = Daughters   ,
-        const Oscillation          osc      = Undefined   ) ;
+      GenOptional( const Decays::iNode& mother, const TreeList& children = TreeList(),
+                   const TreeList& optional = TreeList(), const Alg alg = Daughters,
+                   const Oscillation osc = Undefined );
       // ====================================================================
       /** constructor from decay descriptor, optional and flags
        *  @param decay the decay descriptor
@@ -730,103 +716,103 @@ namespace Decays
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenOptional
-      ( const Decays::Decay&       decay                    ,
-        const TreeList&            optional   = TreeList () ,
-        const Alg                  alg        = Daughters   ,
-        const Oscillation          oscillated = Undefined   ) ;
+      GenOptional( const Decays::Decay& decay, const TreeList& optional = TreeList(), const Alg alg = Daughters,
+                   const Oscillation oscillated = Undefined );
       /// constructor  from GenExclusive & optional stuff
-      GenOptional
-      ( const GenExclusive& right                  ,
-        const TreeList&     optional = TreeList () ) ;
+      GenOptional( const GenExclusive& right, const TreeList& optional = TreeList() );
       // ====================================================================
     public:
       // ====================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      GenOptional* clone() const override
-      { return new GenOptional ( *this ) ; }
+      GenOptional* clone() const override { return new GenOptional( *this ); }
       /// MANDATORY: check the validity of the tree
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: the proper validation of the tree
-       StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       /// has marked elements  in the tree?
-      bool marked() const  override;
+      bool marked() const override;
       // ====================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
+      bool p_match( Decays::iTree_<PARTICLE>::argument p ) const override;
       // ======================================================================
     public:
       // ====================================================================
       /// set optional
-      void setOptional
-      ( const TreeList& optional ) { m_optional = optional ; }
+      void setOptional( const TreeList& optional ) { m_optional = optional; }
       /// set optional
-      void setOptional
-      ( const std::vector<std::string>& chidlren ) ;
+      void setOptional( const std::vector<std::string>& chidlren );
       /// set children
-      void setOptional
-      ( const std::vector<Decays::Decay::Item>& chidlren ) ;
+      void setOptional( const std::vector<Decays::Decay::Item>& chidlren );
       /// set optional
-      void setOptional
-      ( const std::vector<LHCb::ParticleID>& children ) ;
+      void setOptional( const std::vector<LHCb::ParticleID>& children );
       /// set optional
-      void setOptional
-      ( const std::vector<const LHCb::ParticleProperty*>& children ) ;
+      void setOptional( const std::vector<const LHCb::ParticleProperty*>& children );
       // ====================================================================
     public:
       // ====================================================================
       /// add one more daughter to the decay
-      void addOptional ( const Decays::iTree_<PARTICLE>& tree ) ;
+      void addOptional( const Decays::iTree_<PARTICLE>& tree );
       /// add one more daughter to the decay
-      void addOptional ( const Decays::iNode& node ) ;
+      void addOptional( const Decays::iNode& node );
       /// add one more daughter to the decay
-      void addOptional ( const std::string& node ) ;
+      void addOptional( const std::string& node );
       /// add one more daughter to the decay
-      void addOptional ( const LHCb::ParticleID& node ) ;
+      void addOptional( const LHCb::ParticleID& node );
       /// add one more daughter to the decay
-      void addOptional ( const Decays::Decay::Item& node ) ;
+      void addOptional( const Decays::Decay::Item& node );
       /// add one more daughter to the decay
-      void addOptional ( const LHCb::ParticleProperty* node ) ;
+      void addOptional( const LHCb::ParticleProperty* node );
       // ====================================================================
     public:
       // ====================================================================
       /// add one more node to the tree
-      GenOptional& operator+= ( const Decays::iTree_<PARTICLE>& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenOptional& operator+=( const Decays::iTree_<PARTICLE>& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenOptional& operator+= ( const Decays::iNode& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenOptional& operator+=( const Decays::iNode& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenOptional& operator+= ( const std::string& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenOptional& operator+=( const std::string& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenOptional& operator+= ( const LHCb::ParticleID& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenOptional& operator+=( const LHCb::ParticleID& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenOptional& operator+= ( const Decays::Decay::Item& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenOptional& operator+=( const Decays::Decay::Item& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenOptional& operator+= ( const LHCb::ParticleProperty* node )
-      { addDaughter ( node ) ; return *this ; }
+      GenOptional& operator+=( const LHCb::ParticleProperty* node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
     protected:
       // ======================================================================
-      TreeList::const_iterator optBegin () const { return m_optional.begin () ; }
-      TreeList::const_iterator optEnd   () const { return m_optional.end   () ; }
-      size_t                   optSize  () const { return m_optional.size  () ; }
-      size_t nOptional() const { return optSize() ; }
+      TreeList::const_iterator optBegin() const { return m_optional.begin(); }
+      TreeList::const_iterator optEnd() const { return m_optional.end(); }
+      size_t                   optSize() const { return m_optional.size(); }
+      size_t                   nOptional() const { return optSize(); }
       // ======================================================================
     private:
       // ======================================================================
       /// the optional particles in the tree
-      TreeList m_optional ;               // the optional particles in the tree
+      TreeList m_optional; // the optional particles in the tree
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class GenPhotos
      *  Simple sub-tree which can contains an undefined number of "photons"
@@ -874,8 +860,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-21
      */
-    class GenPhotos : public GenExclusive
-    {
+    class GenPhotos : public GenExclusive {
     public:
       // ======================================================================
       /** full constructor from the node (mother) and subtrees
@@ -884,68 +869,73 @@ namespace Decays
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenPhotos
-      ( const Decays::iNode&     mother                    ,
-        const TreeList&          children    = TreeList () ,
-        const Decays::Trees::Alg alg         = Daughters   ,
-        const Oscillation        oscillation = Undefined   ) ;
+      GenPhotos( const Decays::iNode& mother, const TreeList& children = TreeList(),
+                 const Decays::Trees::Alg alg = Daughters, const Oscillation oscillation = Undefined );
       /** constructor from the decay descriptor and flags
        *  @param decay the decay descriptor
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenPhotos
-      ( const Decays::Decay&     decay                  ,
-        const Decays::Trees::Alg alg        = Daughters ,
-        const Oscillation        oscillated = Undefined ) ;
+      GenPhotos( const Decays::Decay& decay, const Decays::Trees::Alg alg = Daughters,
+                 const Oscillation oscillated = Undefined );
       /// constructor from GenExclusive
-      GenPhotos ( const GenExclusive& right ) ;
+      GenPhotos( const GenExclusive& right );
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      GenPhotos* clone() const override { return new GenPhotos ( *this ) ; }
+      GenPhotos* clone() const override { return new GenPhotos( *this ); }
       /// MANDATORY: check the validness
-      bool valid () const  override
-      { return m_photon.valid() && GenExclusive::valid() ; }
+      bool valid() const override { return m_photon.valid() && GenExclusive::valid(); }
       /// MANDATORY: the proper validation of the tree
-      StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       /// MANDATORY: the specific printout
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const override;
+      bool p_match( Decays::iTree_<PARTICLE>::argument p ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// add one more node to the tree
-      GenPhotos& operator+= ( const Decays::iTree_<PARTICLE>& node)
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotos& operator+=( const Decays::iTree_<PARTICLE>& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotos& operator+= ( const Decays::iNode& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotos& operator+=( const Decays::iNode& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotos& operator+= ( const std::string&         node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotos& operator+=( const std::string& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotos& operator+= ( const LHCb::ParticleID&    node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotos& operator+=( const LHCb::ParticleID& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotos& operator+= ( const Decays::Decay::Item& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotos& operator+=( const Decays::Decay::Item& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotos& operator+= ( const LHCb::ParticleProperty* node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotos& operator+=( const LHCb::ParticleProperty* node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
     private:
       // ======================================================================
       /// the photon subtree/node ("photon")
-      Decays::Nodes::Pid m_photon     ;                        // the sub-trees
+      Decays::Nodes::Pid m_photon; // the sub-trees
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class GenPhotosOptional
      *  Simple sub tree which consists of the node ("mother") and
@@ -974,8 +964,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-10
      */
-    class GenPhotosOptional : public GenOptional
-    {
+    class GenPhotosOptional : public GenOptional {
     public:
       // ======================================================================
       /** full constructor from the node (mother) and subtrees
@@ -985,88 +974,88 @@ namespace Decays
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenPhotosOptional
-      ( const Decays::iNode& mother                 ,
-        const TreeList&      children = TreeList () ,
-        const TreeList&      optional = TreeList () ,
-        const Alg            alg      = Daughters   ,
-        const Oscillation    osc      = Undefined   ) ;
+      GenPhotosOptional( const Decays::iNode& mother, const TreeList& children = TreeList(),
+                         const TreeList& optional = TreeList(), const Alg alg = Daughters,
+                         const Oscillation osc = Undefined );
       /** constructor from decay descriptor, optional and flags
        *  @param decay the decay descriptor
        *  @param optional the list of optional components
        *  @param alg the matching algorithm
        *  @param oscillation check the oscilaltion flag
        */
-      GenPhotosOptional
-      ( const Decays::Decay&       decay                    ,
-        const TreeList&            optional   = TreeList () ,
-        const Alg                  alg        = Daughters   ,
-        const Oscillation          oscillated = Undefined   ) ;
+      GenPhotosOptional( const Decays::Decay& decay, const TreeList& optional = TreeList(), const Alg alg = Daughters,
+                         const Oscillation oscillated = Undefined );
       /// constructor from GenOptional
-      GenPhotosOptional ( const GenOptional& right ) ;
+      GenPhotosOptional( const GenOptional& right );
       /// constructor from GenExclusive & optional stuff
-      GenPhotosOptional
-      ( const GenExclusive& right                  ,
-        const TreeList&     optional = TreeList () ) ;
+      GenPhotosOptional( const GenExclusive& right, const TreeList& optional = TreeList() );
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      GenPhotosOptional* clone() const override
-      { return new GenPhotosOptional ( *this ) ; }
+      GenPhotosOptional* clone() const override { return new GenPhotosOptional( *this ); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
       /// MANDATORY: check the validness
-      bool valid () const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the tree
-      StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
+      bool p_match( Decays::iTree_<PARTICLE>::argument p ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// add one more node to the tree
-      GenPhotosOptional& operator+= ( const Decays::iTree_<PARTICLE>& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotosOptional& operator+=( const Decays::iTree_<PARTICLE>& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotosOptional& operator+= ( const Decays::iNode& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotosOptional& operator+=( const Decays::iNode& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotosOptional& operator+= ( const std::string&         node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotosOptional& operator+=( const std::string& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotosOptional& operator+= ( const LHCb::ParticleID&    node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotosOptional& operator+=( const LHCb::ParticleID& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotosOptional& operator+= ( const Decays::Decay::Item& node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotosOptional& operator+=( const Decays::Decay::Item& node ) {
+        addDaughter( node );
+        return *this;
+      }
       /// add one more node to the tree
-      GenPhotosOptional& operator+= ( const LHCb::ParticleProperty* node )
-      { addDaughter ( node ) ; return *this ; }
+      GenPhotosOptional& operator+=( const LHCb::ParticleProperty* node ) {
+        addDaughter( node );
+        return *this;
+      }
       // ======================================================================
     private:
       // ======================================================================
       /// the photon subtree/node ("photon")
-      Decays::Nodes::Pid m_photon     ;                        // the sub-trees
+      Decays::Nodes::Pid m_photon; // the sub-trees
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     // treat properly the stable trees
     // ========================================================================
-    template <> bool Stable_<const HepMC::GenParticle*>::operator()
-      ( Decays::iTree_<const HepMC::GenParticle*>::argument p ) const ;
+    template <>
+    bool Stable_<const HepMC::GenParticle*>::operator()( Decays::iTree_<const HepMC::GenParticle*>::argument p ) const;
     // ========================================================================
-  } //                                           end of namespace Decays::Trees
+  } // namespace Trees
   // ==========================================================================
 } //                                                    end of namespace Decays
 // ============================================================================
-
-
 
 // ============================================================================
 // The END

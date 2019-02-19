@@ -27,17 +27,16 @@
  *  @author Marco Cattaneo
  *  @date   2004-03-26
  */
-namespace LHCbConstants
-{
+namespace LHCbConstants {
 
   // Silicon parameters, used by ST silicon simulation (M.Needham)
-  static const double SiExcitationEnergy = 174*Gaudi::Units::eV; ///< SiExcitationEnergy
-  static const double SiEnergyPerIonPair = 3.6*Gaudi::Units::eV; ///< SiEnergyPerIonPair
+  static const double SiExcitationEnergy = 174 * Gaudi::Units::eV; ///< SiExcitationEnergy
+  static const double SiEnergyPerIonPair = 3.6 * Gaudi::Units::eV; ///< SiEnergyPerIonPair
 
   // Description of Beetle chip (M.Needham)
-  static const unsigned int nStripsInPort = 32;     ///< nStripsInPort
-  static const unsigned int nStripsInBeetle = 128;  ///< nStripsInBeetle
+  static const unsigned int nStripsInPort   = 32;  ///< nStripsInPort
+  static const unsigned int nStripsInBeetle = 128; ///< nStripsInBeetle
 
-}
+} // namespace LHCbConstants
 
 #endif // KERNEL_LHCBCONSTANTS_H

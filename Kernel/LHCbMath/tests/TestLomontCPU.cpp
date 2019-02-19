@@ -13,10 +13,10 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <iostream>
-#include <iomanip>
-#include <string>
 #include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <string>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -25,8 +25,8 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
-#include "LHCbMath/Lomont.h"
 #include "LHCbMath/LHCbMath.h"
+#include "LHCbMath/Lomont.h"
 // ============================================================================
 // GSL
 // =========================================================================
@@ -35,8 +35,8 @@
 // Boost
 // ============================================================================
 using namespace std;
-#ifdef __INTEL_COMPILER         // Disable ICC remark from Boost
-  #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark from Boost
+#  pragma warning( disable : 1572 ) // floating-point equality and inequality comparisons are unreliable
 #endif
 #include "boost/progress.hpp"
 // ============================================================================
@@ -57,78 +57,64 @@ using namespace std;
  *  @date 2009-10-22
  */
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
-  bool knuth_compare_double
-  ( const double x1          ,
-    const double x2          ,
-    const double eps = 1.e-8 )
-  { return 0 == gsl_fcmp ( x1 , x2 , eps ) ; }
+  bool knuth_compare_double( const double x1, const double x2, const double eps = 1.e-8 ) {
+    return 0 == gsl_fcmp( x1, x2, eps );
+  }
   // ==========================================================================
 } //                                                 end of anonymous namespace
 // ============================================================================
-int main()
-{
-  using namespace LHCb::Math ;
+int main() {
+  using namespace LHCb::Math;
 
+  ChronoEntity counter1;
+  ChronoEntity counter2;
 
-  ChronoEntity counter1 ;
-  ChronoEntity counter2 ;
+  double value1 = 0;
+  double value2 = 0;
 
-  double value1 = 0 ;
-  double value2 = 0 ;
+  const unsigned int nMax  = 100;
+  const unsigned int nMax1 = 200;
+  const unsigned int nMax2 = 5000;
 
-  const unsigned int nMax  =  100 ;
-  const unsigned int nMax1 =  200 ;
-  const unsigned int nMax2 = 5000 ;
+  boost::progress_display show_progress( nMax );
+  for ( unsigned int m = 0; m < nMax; ++m ) {
 
-  boost::progress_display show_progress ( nMax );
-  for ( unsigned int m = 0 ; m < nMax ; ++m )
-  {
-
-    const double v1 = sin(      double(m) ) * exp( 50 * cos(      double(m) ) ) ;
-    const double v2 = sin( v1 * double(m) ) * exp( 50 * cos( v1 * double(m) ) ) ;
+    const double v1 = sin( double( m ) ) * exp( 50 * cos( double( m ) ) );
+    const double v2 = sin( v1 * double( m ) ) * exp( 50 * cos( v1 * double( m ) ) );
 
     {
-      for ( unsigned int i = 0 ; i < nMax1 ; ++i )
-      {
-        Chrono cnt ( &counter1 ) ;
-        for ( unsigned int j = 0 ; j < nMax2 ; ++j )
-        {
-          value1 += knuth_compare_double ( v1 , v2         ) ;
-          value1 += knuth_compare_double ( v1 , v2 * i     ) ;
-          value1 += knuth_compare_double ( v1 , v2 / j     ) ;
-          value1 += knuth_compare_double ( v1 , v2 * i / j ) ;
+      for ( unsigned int i = 0; i < nMax1; ++i ) {
+        Chrono cnt( &counter1 );
+        for ( unsigned int j = 0; j < nMax2; ++j ) {
+          value1 += knuth_compare_double( v1, v2 );
+          value1 += knuth_compare_double( v1, v2 * i );
+          value1 += knuth_compare_double( v1, v2 / j );
+          value1 += knuth_compare_double( v1, v2 * i / j );
         }
       }
     }
 
     {
-      for ( unsigned int i = 0 ; i < nMax1 ; ++i )
-      {
-        Chrono cnt ( &counter2 ) ;
-        for ( unsigned int j = 0 ; j < nMax2 ; ++j )
-        {
-          value2 += lomont_compare_double ( v1 , v2          , 100 ) ;
-          value2 += lomont_compare_double ( v1 , v2 * i      , 100 ) ;
-          value2 += lomont_compare_double ( v1 , v2 / j      , 100 ) ;
-          value2 += lomont_compare_double ( v1 , v2 * i / j  , 100 ) ;
+      for ( unsigned int i = 0; i < nMax1; ++i ) {
+        Chrono cnt( &counter2 );
+        for ( unsigned int j = 0; j < nMax2; ++j ) {
+          value2 += lomont_compare_double( v1, v2, 100 );
+          value2 += lomont_compare_double( v1, v2 * i, 100 );
+          value2 += lomont_compare_double( v1, v2 / j, 100 );
+          value2 += lomont_compare_double( v1, v2 * i / j, 100 );
         }
       }
     }
     //
-    ++show_progress ;
+    ++show_progress;
   }
 
-  std::cout
-    << " Knuth/GSL-compare " <<  value1  << " "
-    << counter1.outputUserTime() << std::endl
-    << " Lomont-compare    " <<  value2  << " "
-    << counter2.outputUserTime() << std::endl ;
+  std::cout << " Knuth/GSL-compare " << value1 << " " << counter1.outputUserTime() << std::endl
+            << " Lomont-compare    " << value2 << " " << counter2.outputUserTime() << std::endl;
 
-  return 0 ;
-
+  return 0;
 }
 // ============================================================================
 // The END

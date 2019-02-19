@@ -27,8 +27,7 @@
  *  @date   14/12/2001
  */
 
-class CaloDetTestAlgorithm : public GaudiAlgorithm
-{
+class CaloDetTestAlgorithm : public GaudiAlgorithm {
 public:
   /** standard algorithm initialization
    *  @return status code
@@ -39,8 +38,7 @@ public:
    *  @param   name   algorithm name
    *  @param   svcloc pointer to service locator
    */
-  CaloDetTestAlgorithm( const std::string& name   ,
-                        ISvcLocator*       svcloc );
+  CaloDetTestAlgorithm( const std::string& name, ISvcLocator* svcloc );
 
 private:
   std::string m_DetData;

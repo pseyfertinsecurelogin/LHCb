@@ -16,16 +16,15 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Interface.h"
 #include "LoKi/AuxFunBase.h"
+#include "LoKi/Interface.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Listener  LoKi/Listener.h
    *  Helper class to listen incidents
@@ -35,23 +34,20 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2010-04-03
    */
-  class Listener
-    : public virtual LoKi::AuxFunBase
-    , public virtual implements1<IIncidentListener>
-  {
+  class Listener : public virtual LoKi::AuxFunBase, public virtual implements1<IIncidentListener> {
   protected:
     // ========================================================================
     /// the actual type of incidents and their priority
-    typedef std::vector<std::pair<std::string,long> >               Incidents ;
+    typedef std::vector<std::pair<std::string, long>> Incidents;
     // ========================================================================
   public:
     // ========================================================================
     /// default constructor
-    Listener () ;                              // default constructor
+    Listener(); // default constructor
     /// copy  constructor
-    Listener ( const Listener& ) ;             // copy constructor
+    Listener( const Listener& ); // copy constructor
     /// MANDATORY: virtual destructor
-    virtual ~Listener () ;                     // MANDATORY: virtual destrcutor
+    virtual ~Listener(); // MANDATORY: virtual destrcutor
     // ========================================================================
   public:
     // ========================================================================
@@ -59,30 +55,29 @@ namespace LoKi
      *  @param incident (IN) the incident to be subscribed
      *  @reuturn status code
      */
-    StatusCode subscribe   ( const std::string& incident     ,
-                             const long         priority = 0 ) ;
+    StatusCode subscribe( const std::string& incident, const long priority = 0 );
     /** unsubscribe the incident
      *  @param incident (IN) the incident to be subscribed
      *                      (empty string - for all incidents)
      *  @reuturn status code
      */
-    StatusCode unsubscribe ( const std::string& incident = "" ) ;
+    StatusCode unsubscribe( const std::string& incident = "" );
     /// get the list of subscribed incidents
-    const Incidents& incidents() const { return m_incidents ; }
+    const Incidents& incidents() const { return m_incidents; }
     // ========================================================================
   public:
     // ========================================================================
     /// assignement
-    Listener& operator=( const Listener& ) ;                    // assignement
+    Listener& operator=( const Listener& ); // assignement
     // ========================================================================
   private:
     // ========================================================================
     /// Incident service
-    LoKi::Interface<IIncidentSvc>  m_incSvc    ;            // Incident service
+    LoKi::Interface<IIncidentSvc> m_incSvc; // Incident service
     /// the list of incidents
-    Incidents                      m_incidents ;       // the list of incidents
+    Incidents m_incidents; // the list of incidents
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

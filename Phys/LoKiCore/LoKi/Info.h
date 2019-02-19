@@ -34,8 +34,7 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ===========================================================================
   /** @namespace LoKi::ExtraInfo
    *
@@ -99,8 +98,7 @@ namespace LoKi
    *  @author Vanya BELAYEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  namespace ExtraInfo
-  {
+  namespace ExtraInfo {
     // ========================================================================
     /** check the existence of the key in the "extraInfo" data member
      *
@@ -118,11 +116,10 @@ namespace LoKi
      *  @author Vanya BELAYEV ibelyaev@physics.syr.edu
      *  @date 2007-06-14
      */
-    template <class K,class V,class A,class C>
-    inline bool hasInfo
-    ( const GaudiUtils::VectorMap<K,V,A,C>& vmap ,
-      const int                             key  )
-    { return vmap.end() != vmap.find ( key ) ; }
+    template <class K, class V, class A, class C>
+    inline bool hasInfo( const GaudiUtils::VectorMap<K, V, A, C>& vmap, const int key ) {
+      return vmap.end() != vmap.find( key );
+    }
     // ========================================================================
     /** check the existence of the key in the "extraInfo" data member
      *
@@ -141,10 +138,9 @@ namespace LoKi
      *  @date 2007-06-14
      */
     template <class TYPE>
-    inline bool hasInfo
-    ( const TYPE& object ,
-      const int   key )
-    { return hasInfo ( object.extraInfo() , key ) ; }
+    inline bool hasInfo( const TYPE& object, const int key ) {
+      return hasInfo( object.extraInfo(), key );
+    }
     // ========================================================================
     /** check the existence of the key in the "extraInfo" data member
      *
@@ -163,10 +159,9 @@ namespace LoKi
      *  @date 2007-06-14
      */
     template <class TYPE>
-    inline bool hasInfo
-    ( const TYPE* object ,
-      const int   key    )
-    { return 0 == object ? false : hasInfo ( *object , key ) ; }
+    inline bool hasInfo( const TYPE* object, const int key ) {
+      return 0 == object ? false : hasInfo( *object, key );
+    }
     // ========================================================================
     /** get info from "extraInfo" object:
      *
@@ -185,16 +180,10 @@ namespace LoKi
      *  @author Vanya BELAYEV ibelyaev@physics.syr.edu
      *  @date 2007-06-14
      */
-    template <class K,class V,class A,class C>
-    inline double
-    info
-    ( const GaudiUtils::VectorMap<K,V,A,C>& vmap ,
-      const int                             key  ,
-      const double                          def  )
-    {
-      typename GaudiUtils::VectorMap<K,V,A,C>::const_iterator ifind =
-        vmap.find ( key ) ;
-      return vmap.end() != ifind ? ifind->second : def ;
+    template <class K, class V, class A, class C>
+    inline double info( const GaudiUtils::VectorMap<K, V, A, C>& vmap, const int key, const double def ) {
+      typename GaudiUtils::VectorMap<K, V, A, C>::const_iterator ifind = vmap.find( key );
+      return vmap.end() != ifind ? ifind->second : def;
     }
     // ========================================================================
     /** get info from the object
@@ -218,10 +207,8 @@ namespace LoKi
      *  @date 2007-06-14
      */
     template <class TYPE>
-    inline double
-    info ( const TYPE& object , const int key , const double def )
-    {
-      return info ( object.extraInfo() , key , def ) ;
+    inline double info( const TYPE& object, const int key, const double def ) {
+      return info( object.extraInfo(), key, def );
     }
     // ========================================================================
     /** get info from the object
@@ -245,10 +232,8 @@ namespace LoKi
      *  @date 2007-06-14
      */
     template <class TYPE>
-    inline double
-    info ( const TYPE* object , const int key , const double def )
-    {
-      return 0 == object ? def : info ( *object , key , def ) ;
+    inline double info( const TYPE* object, const int key, const double def ) {
+      return 0 == object ? def : info( *object, key, def );
     }
     // ========================================================================
     /** set/update the info of "extraInfo" object:
@@ -267,12 +252,10 @@ namespace LoKi
      *  @author Vanya BELAYEV ibelyaev@physics.syr.edu
      *  @date 2007-06-14
      */
-    template <class K,class V,class A,class C>
-    inline void addInfo
-    ( GaudiUtils::VectorMap<K,V,A,C>&       vmap ,
-      const int                             key  ,
-      const double                          val  )
-    { vmap.update ( key , val ) ; }
+    template <class K, class V, class A, class C>
+    inline void addInfo( GaudiUtils::VectorMap<K, V, A, C>& vmap, const int key, const double val ) {
+      vmap.update( key, val );
+    }
     // ========================================================================
     /** set/update the info of "extraInfo" object:
      *  @attention const_cast is used!
@@ -282,15 +265,10 @@ namespace LoKi
      *  @author Vanya BELAYEV ibelyaev@physics.syr.edu
      *  @date 2007-06-14
      */
-    template <class K,class V,class A,class C>
-    inline void addInfo
-    ( const GaudiUtils::VectorMap<K,V,A,C>& vmap ,
-      const int                             key  ,
-      const double                          val  )
-    {
-      GaudiUtils::VectorMap<K,V,A,C>& aux =
-        const_cast<GaudiUtils::VectorMap<K,V,A,C>&>( vmap ) ;
-      addInfo ( aux , key , val ) ;
+    template <class K, class V, class A, class C>
+    inline void addInfo( const GaudiUtils::VectorMap<K, V, A, C>& vmap, const int key, const double val ) {
+      GaudiUtils::VectorMap<K, V, A, C>& aux = const_cast<GaudiUtils::VectorMap<K, V, A, C>&>( vmap );
+      addInfo( aux, key, val );
     }
     // ========================================================================
     /** set/update the info of "extraInfo" object:
@@ -310,10 +288,8 @@ namespace LoKi
      *  @date 2007-06-14
      */
     template <class TYPE>
-    inline void
-    addInfo ( const TYPE& object , const int key , const double value  )
-    {
-      addInfo ( object.extraInfo() , key , value ) ;
+    inline void addInfo( const TYPE& object, const int key, const double value ) {
+      addInfo( object.extraInfo(), key, value );
     }
     // ========================================================================
     /** set/update the info of "extraInfo" object:
@@ -334,14 +310,12 @@ namespace LoKi
      *  @date 2007-06-14
      */
     template <class TYPE>
-    inline void
-    addInfo ( const TYPE* object , const int key , const double value  )
-    {
-      assert( 0 != object && "LoKi::Info::addInfo: invalid pointer " ) ;
-      if ( 0 != object ) { addInfo ( *object , key , value ) ; }
+    inline void addInfo( const TYPE* object, const int key, const double value ) {
+      assert( 0 != object && "LoKi::Info::addInfo: invalid pointer " );
+      if ( 0 != object ) { addInfo( *object, key, value ); }
     }
     // ========================================================================
-  } //                                              end of namespace LoKi::Info
+  } // namespace ExtraInfo
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

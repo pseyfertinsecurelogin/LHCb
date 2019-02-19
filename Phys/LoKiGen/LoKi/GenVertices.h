@@ -20,9 +20,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Kinematics.h"
 #include "LoKi/Constants.h"
 #include "LoKi/GenTypes.h"
+#include "LoKi/Kinematics.h"
 // ============================================================================
 /** @file LoKi/GenVertices.h
  *
@@ -38,8 +38,7 @@
  *  @date 2006-02-08
  *
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::GenVertices GenVertices.h LoKi/GenVertices.h
    *
@@ -49,8 +48,7 @@ namespace LoKi
    *  @author Vanya  BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-08
    */
-  namespace GenVertices
-  {
+  namespace GenVertices {
     // ========================================================================
     /** @class BarCode
      *  the most primitive function - it return the "barcode"
@@ -62,17 +60,16 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API BarCode : LoKi::GenTypes::GVFunc
-    {
+    struct GAUDI_API BarCode : LoKi::GenTypes::GVFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      BarCode* clone() const  override;
+      BarCode* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* p ) const  override;
+      double operator()( const HepMC::GenVertex* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class PositionX
      *
@@ -85,17 +82,16 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API PositionX : LoKi::GenTypes::GVFunc
-    {
+    struct GAUDI_API PositionX : LoKi::GenTypes::GVFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      PositionX* clone() const  override;
+      PositionX* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* p ) const  override;
+      double operator()( const HepMC::GenVertex* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class PositionY
      *
@@ -108,17 +104,16 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API PositionY : LoKi::GenTypes::GVFunc
-    {
+    struct GAUDI_API PositionY : LoKi::GenTypes::GVFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      PositionY* clone() const  override;
+      PositionY* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* p ) const  override;
+      double operator()( const HepMC::GenVertex* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class PositionZ
      *
@@ -131,17 +126,16 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API PositionZ : LoKi::GenTypes::GVFunc
-    {
+    struct GAUDI_API PositionZ : LoKi::GenTypes::GVFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      PositionZ* clone() const  override;
+      PositionZ* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* p ) const  override;
+      double operator()( const HepMC::GenVertex* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class PositionT
      *
@@ -154,17 +148,16 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API PositionT : LoKi::GenTypes::GVFunc
-    {
+    struct GAUDI_API PositionT : LoKi::GenTypes::GVFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      PositionT* clone() const  override;
+      PositionT* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* p ) const  override;
+      double operator()( const HepMC::GenVertex* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Rho
      *
@@ -177,17 +170,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2012-02-13
      */
-    struct GAUDI_API Rho : LoKi::GenTypes::GVFunc
-    {
+    struct GAUDI_API Rho : LoKi::GenTypes::GVFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      Rho* clone() const  override;
+      Rho* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* p ) const  override;
+      double operator()( const HepMC::GenVertex* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class CountIF
      *  simple class which counts how many particles
@@ -200,8 +192,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    class GAUDI_API CountIF : public LoKi::GenTypes::GVFunc
-    {
+    class GAUDI_API CountIF : public LoKi::GenTypes::GVFunc {
     public:
       // ======================================================================
       /** constructor from the criteria and "range"
@@ -209,30 +200,26 @@ namespace LoKi
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      CountIF
-      ( const LoKi::Types::GCuts& cut   ,
-        HepMC::IteratorRange      range ) ;
+      CountIF( const LoKi::Types::GCuts& cut, HepMC::IteratorRange range );
       /** constructor from the criteria and "range"
        *  @param range search region
        *  @param cut the criteria
        *  @see HepMC::IteratorRange
        */
-      CountIF
-      ( HepMC::IteratorRange      range ,
-        const LoKi::Types::GCuts& cut   ) ;
+      CountIF( HepMC::IteratorRange range, const LoKi::Types::GCuts& cut );
       /// MANDATORY: clone method ("virtual contructor")
-      CountIF* clone() const  override;
+      CountIF* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* v ) const  override;
+      double operator()( const HepMC::GenVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Types::GCut    m_cut   ;
-      HepMC::IteratorRange m_range ;
+      LoKi::Types::GCut    m_cut;
+      HepMC::IteratorRange m_range;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class SumIF
      *  simple class which accumulates the function values
@@ -246,8 +233,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    class GAUDI_API SumIF : public LoKi::GenTypes::GVFunc
-    {
+    class GAUDI_API SumIF : public LoKi::GenTypes::GVFunc {
     public:
       // ======================================================================
       /** constructor from the function and the "range"
@@ -255,58 +241,50 @@ namespace LoKi
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      SumIF ( const LoKi::Types::GFunc& fun   ,
-              HepMC::IteratorRange      range ) ;
+      SumIF( const LoKi::Types::GFunc& fun, HepMC::IteratorRange range );
       /** constructor from the function and the "range"
        *  @param fun function to be accuulated
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      SumIF ( HepMC::IteratorRange      range ,
-              const LoKi::Types::GFunc& fun   ) ;
+      SumIF( HepMC::IteratorRange range, const LoKi::Types::GFunc& fun );
       /** constructor from the function, "range" and criteria
        *  @param fun function to be accuulated
        *  @param range search region
        *  @param cut the criteria
        *  @see HepMC::IteratorRange
        */
-      SumIF ( const LoKi::Types::GFunc& fun   ,
-              HepMC::IteratorRange      range ,
-              const LoKi::Types::GCuts& cut   ) ;
+      SumIF( const LoKi::Types::GFunc& fun, HepMC::IteratorRange range, const LoKi::Types::GCuts& cut );
       /** constructor from the function, "range" and criteria
        *  @param fun function to be accuulated
        *  @param cut the criteria
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      SumIF ( const LoKi::Types::GFunc& fun   ,
-              const LoKi::Types::GCuts& cut   ,
-              HepMC::IteratorRange      range ) ;
+      SumIF( const LoKi::Types::GFunc& fun, const LoKi::Types::GCuts& cut, HepMC::IteratorRange range );
       /** constructor from the function, "range" and criteria
        *  @param cut the criteria
        *  @param fun function to be accuulated
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      SumIF ( const LoKi::Types::GCuts& cut   ,
-              const LoKi::Types::GFunc& fun   ,
-              HepMC::IteratorRange      range ) ;
+      SumIF( const LoKi::Types::GCuts& cut, const LoKi::Types::GFunc& fun, HepMC::IteratorRange range );
       /// MANDATORY: clone method ("virtual contructor")
-      SumIF* clone() const  override;
+      SumIF* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenVertex* v ) const  override;
+      double operator()( const HepMC::GenVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Types::GFun    m_fun   ;
-      LoKi::Types::GCut    m_cut   ;
-      HepMC::IteratorRange m_range ;
+      LoKi::Types::GFun    m_fun;
+      LoKi::Types::GCut    m_cut;
+      HepMC::IteratorRange m_range;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                       end of namespace LoKi::GenVertices
+  } // namespace GenVertices
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

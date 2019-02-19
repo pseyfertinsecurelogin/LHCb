@@ -22,38 +22,34 @@
 // ============================================================================
 #include "gsl/gsl_errno.h"
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
-    namespace GSL
-    {
+    namespace GSL {
       // ======================================================================
       /** @class GSL_Error_Handler
        *  helper class to manipulate with GSL error handlers
        *  @author Vanya BELAYEV Ivan.Belyaev@itep.ru
        */
-      class GAUDI_API GSL_Error_Handler
-      {
-      public :
+      class GAUDI_API GSL_Error_Handler {
+      public:
         // ====================================================================
         /// constructor: loc
-        GSL_Error_Handler  () ;
+        GSL_Error_Handler();
         /// destructor/ unlock
-        ~GSL_Error_Handler () ;
+        ~GSL_Error_Handler();
         // ====================================================================
       private:
         // ====================================================================
         /// the "old" error handler
-        gsl_error_handler_t * m_old ; // the "old" error handler
+        gsl_error_handler_t* m_old; // the "old" error handler
         // ====================================================================
-      } ;
+      };
       // ======================================================================
-    } //                                      end of namespace Gaudi::Math::GSL
+    } // namespace GSL
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

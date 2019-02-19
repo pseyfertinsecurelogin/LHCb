@@ -12,10 +12,8 @@
 #ifndef LHCBMATH_GEOMFUN_H
 #define LHCBMATH_GEOMFUN_H 1
 // ============================================================================
-namespace Gaudi
-{
-  namespace Math
-  {
+namespace Gaudi {
+  namespace Math {
     // ========================================================================
     /** calculate intersection point between a aLine and aPlane.
      *
@@ -34,12 +32,8 @@ namespace Gaudi
      *  @param   mu: scalar defining point on line which intersects plane
      *  @return  bool indicating whether intersection exists
      */
-    template<typename aLine, typename aPlane, typename aPoint>
-    bool intersection
-    ( const aLine&  line      ,
-      const aPlane& plane     ,
-      aPoint&       intersect ,
-      double&       mu        ) ;
+    template <typename aLine, typename aPlane, typename aPoint>
+    bool intersection( const aLine& line, const aPlane& plane, aPoint& intersect, double& mu );
     // ========================================================================
     /** Calculate aLine, the intersection of two aPlanes pane0 and
      *  plane1.
@@ -59,11 +53,8 @@ namespace Gaudi
      *  @return  false if planes parallel
      *  @todo    test for planes being parallel
      */
-    template<typename aLine, typename aPlane>
-    bool intersection
-    ( const aPlane& plane0    ,
-      const aPlane& plane1    ,
-      aLine&        intersect ) ;
+    template <typename aLine, typename aPlane>
+    bool intersection( const aPlane& plane0, const aPlane& plane1, aLine& intersect );
     // ========================================================================
     /** Calculate aPoint, the intersection of three aPlanes.
      *
@@ -81,13 +72,9 @@ namespace Gaudi
      *  @param   intersect: aPoint, point of intersection between three planes
      *  @return  true if intersection exists, false if any two planes parallel
      *  @todo test for any two planes being parallel.
-    */
-    template<typename aPoint, typename aPlane>
-    bool intersection
-    ( const aPlane& plane0    ,
-      const aPlane& plane1    ,
-      const aPlane& plane2    ,
-      aPoint&       intersect ) ;
+     */
+    template <typename aPoint, typename aPlane>
+    bool intersection( const aPlane& plane0, const aPlane& plane1, const aPlane& plane2, aPoint& intersect );
     // ========================================================================
     /** Return the distance between point and line
      *
@@ -97,10 +84,8 @@ namespace Gaudi
      *  @param   line: aLine who's distance to point is to be calculated
      *  @return  distance between point and line (double)
      */
-    template<typename aPoint, typename aLine>
-    double impactParameter
-    ( const aPoint&  point ,
-      const aLine&   line  ) ;
+    template <typename aPoint, typename aLine>
+    double impactParameter( const aPoint& point, const aLine& line );
     // ========================================================================
     /** Compute the distance between two lines
      *
@@ -115,9 +100,7 @@ namespace Gaudi
      *  @return  distance between lines (double)
      */
     template <typename aLine, typename bLine>
-    double distance
-    ( const aLine& line0 ,
-      const bLine& line1 );
+    double distance( const aLine& line0, const bLine& line1 );
     // ========================================================================
     /** Get nearest aPoints p0 and p1 between
      *  aLines line0 and abd bLine line2 such that
@@ -136,11 +119,7 @@ namespace Gaudi
      *  @return  false if not numerically calculable
      */
     template <typename aLine, typename bLine, typename aPoint>
-    bool closestPoints
-    ( const aLine& line0 ,
-      const bLine& line1 ,
-      aPoint&      p0    ,
-      aPoint&      p1    ) ;
+    bool closestPoints( const aLine& line0, const bLine& line1, aPoint& p0, aPoint& p1 );
     // ========================================================================
     /** Return scalar parameter defining the point on aLine
      *  which is closest to an aPoint, such that
@@ -157,9 +136,7 @@ namespace Gaudi
      *  @return  scalar defining aPoint on line which is closest to point
      */
     template <typename aLine, typename aPoint>
-    double closestPointParam
-    ( const aPoint&  point ,
-      const aLine&   line  ) ;
+    double closestPointParam( const aPoint& point, const aLine& line );
     // ========================================================================
     /** Return aPoint on aLine which is closest to an aPoint.
      *
@@ -176,8 +153,7 @@ namespace Gaudi
      *  @return  aPoint on line which is closest to point
      */
     template <typename aLine, typename aPoint>
-    aPoint closestPoint(const aPoint&  point ,
-                        const aLine& line);
+    aPoint closestPoint( const aPoint& point, const aLine& line );
     // ========================================================================
     /** Calculate scalar parameters defining points of nearest approach
      *  between aLine line0 and bLine line1. If p0 and p1 are the points of closest
@@ -194,11 +170,7 @@ namespace Gaudi
      *  @return  true
      */
     template <typename aLine, typename bLine>
-    bool closestPointParams
-    ( const aLine& line0 ,
-      const bLine& line1 ,
-      double&      mu0   ,
-      double&      mu1   ) ;
+    bool closestPointParams( const aLine& line0, const bLine& line1, double& mu0, double& mu1 );
     // ========================================================================
     /** Estimate whether two lines are parallel
      *  Use dot product of line0.direction() and line1.direction() = 1
@@ -211,12 +183,10 @@ namespace Gaudi
      */
     // ========================================================================
     template <typename aLine, typename bLine>
-    bool parallel
-    ( const aLine& line0 ,
-      const bLine& line1 ) ;
+    bool parallel( const aLine& line0, const bLine& line1 );
     // ========================================================================
-  } // end of namespace Gaudi::Math namespace
-} // end of namespace Gaudi namespace
+  } // namespace Math
+} // namespace Gaudi
 // ============================================================================
 #include "LHCbMath/GeomFun.icpp"
 // ============================================================================

@@ -28,8 +28,7 @@
 // Traits
 #include <type_traits>
 
-namespace LHCb
-{
+namespace LHCb {
 
   //-----------------------------------------------------------------------------
   /** @class MemPoolAlloc MemPoolAlloc.h Kernel/MemPoolAlloc.h
@@ -55,67 +54,65 @@ namespace LHCb
    */
   //-----------------------------------------------------------------------------
 
-  template <typename T,              /// The type
-            unsigned NextSize = 32,  /// When needed, allocate size for 'NextSize' T's at once.
-            bool Mutex = true,       /// Do we need to protect access to the singleton with a mutex?
+  template <typename T,                /// The type
+            unsigned NextSize  = 32,   /// When needed, allocate size for 'NextSize' T's at once.
+            bool     Mutex     = true, /// Do we need to protect access to the singleton with a mutex?
             typename Allocator = boost::default_user_allocator_new_delete /// The allocator
             >
-  class MemPoolAlloc
-  {
+  class MemPoolAlloc {
 
   public:
-
     // Eventually should retire completely this class. For quick tests though commenting
     // out the below is the easiest way to turn the allocators off.
 
-//     /// If GOD_NOALLOC flag set, do nothing
-// #ifndef GOD_NOALLOC
+    //     /// If GOD_NOALLOC flag set, do nothing
+    // #ifndef GOD_NOALLOC
 
-// #ifdef __INTEL_COMPILER         // Disable ICC remark
-// #pragma warning(disable:1720) // Operator new has no corresponding member operator delete (to be called if an exception is thrown during initialization of an allocated object)
-// #pragma warning(push)
-// #endif
+    // #ifdef __INTEL_COMPILER         // Disable ICC remark
+    // #pragma warning(disable:1720) // Operator new has no corresponding member operator delete (to be called if an
+    // exception is thrown during initialization of an allocated object) #pragma warning(push) #endif
 
-//     /// operator new
-//     inline static void* operator new ( size_t size )
-//     {
-//       using pool = boost::singleton_pool< T, sizeof(T),
-//                                           Allocator,
-//                                           typename std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
-//                                           NextSize >;
-//       return ( sizeof(T) == size ?  pool::malloc() : ::operator new ( size ) );
-//     }
+    //     /// operator new
+    //     inline static void* operator new ( size_t size )
+    //     {
+    //       using pool = boost::singleton_pool< T, sizeof(T),
+    //                                           Allocator,
+    //                                           typename
+    //                                           std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
+    //                                           NextSize >;
+    //       return ( sizeof(T) == size ?  pool::malloc() : ::operator new ( size ) );
+    //     }
 
-//     /// Operator delete
-//     inline static void operator delete ( void* pObj )
-//     {
-//       using pool = boost::singleton_pool<T, sizeof(T),
-//                                          Allocator,
-//                                          typename std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
-//                                          NextSize >;
-//       pool::is_from(pObj) ? pool::free(pObj) : ::operator delete ( pObj );
-//     }
+    //     /// Operator delete
+    //     inline static void operator delete ( void* pObj )
+    //     {
+    //       using pool = boost::singleton_pool<T, sizeof(T),
+    //                                          Allocator,
+    //                                          typename
+    //                                          std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
+    //                                          NextSize >;
+    //       pool::is_from(pObj) ? pool::free(pObj) : ::operator delete ( pObj );
+    //     }
 
-//     /// placement operator new
-//     static void* operator new ( size_t size, void* pObj )
-//     {
-//       return ::operator new ( size, pObj );
-//     }
+    //     /// placement operator new
+    //     static void* operator new ( size_t size, void* pObj )
+    //     {
+    //       return ::operator new ( size, pObj );
+    //     }
 
-//     /// placement operator delete
-//     static void operator delete ( void* p, void* pObj )
-//     {
-//       ::operator delete ( p, pObj );
-//     }
+    //     /// placement operator delete
+    //     static void operator delete ( void* p, void* pObj )
+    //     {
+    //       ::operator delete ( p, pObj );
+    //     }
 
-// #ifdef __INTEL_COMPILER // Re-enable ICC remark
-// #pragma warning(pop)
-// #endif
+    // #ifdef __INTEL_COMPILER // Re-enable ICC remark
+    // #pragma warning(pop)
+    // #endif
 
-// #endif
-
+    // #endif
   };
 
-}
+} // namespace LHCb
 
 #endif // LHCBKERNEL_MEMPOOLALLOC_H

@@ -35,8 +35,7 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Value LoKi/Value.h
    *  Simple adaptor from void->TYPE2 to TYPE->TYPE2 functor
@@ -45,61 +44,53 @@ namespace LoKi
    *  @date   2014-02-01
    */
   template <class TYPE, class TYPE2>
-  class Value : public LoKi::Functor<TYPE,TYPE2>
-  {
+  class Value : public LoKi::Functor<TYPE, TYPE2> {
   public:
     // ========================================================================
     /** Standard constructor from "void"-functor
      *  @param fun  void-functor
      */
-    explicit Value ( LoKi::FunctorFromFunctor<void,TYPE2>  fun )
-      : LoKi::AuxFunBase         ( std::tie( fun ) )
-      , m_void ( std::move(fun) )
-    {}
+    explicit Value( LoKi::FunctorFromFunctor<void, TYPE2> fun )
+        : LoKi::AuxFunBase( std::tie( fun ) ), m_void( std::move( fun ) ) {}
     /// clone method (mandatory)
-    Value* clone   () const override { return new Value( *this ) ; }
+    Value* clone() const override { return new Value( *this ); }
     /// the only one essential method ("function")
-    TYPE2 operator()
-      ( typename LoKi::Functor<TYPE,TYPE2>::argument  ) const override
-    { return m_void.fun() ; } // bypass one virtual call
+    TYPE2 operator()( typename LoKi::Functor<TYPE, TYPE2>::argument ) const override {
+      return m_void.fun();
+    } // bypass one virtual call
     /// the basic printout method
-    std::ostream& fillStream( std::ostream& s ) const override
-    { return m_void.fillStream ( s ) ; }
+    std::ostream& fillStream( std::ostream& s ) const override { return m_void.fillStream( s ); }
     // ========================================================================
   private:
     // ========================================================================
     /// the actual storage of void-functor
-    LoKi::FunctorFromFunctor<void,TYPE2>  m_void ;
+    LoKi::FunctorFromFunctor<void, TYPE2> m_void;
     // ========================================================================
   };
   // ==========================================================================
   /// specialization for void, essentially bypass all actions
   template <class TYPE2>
-  class Value<void,TYPE2> : public LoKi::Functor<void,TYPE2>
-  {
+  class Value<void, TYPE2> : public LoKi::Functor<void, TYPE2> {
   public:
     // ========================================================================
     /** Standard constructor from "void"-functor
      *  @param fun  void-functor
      */
-    Value ( LoKi::FunctorFromFunctor<void,TYPE2> fun )
-      : LoKi::AuxFunBase         ( std::tie ( fun ) )
-      , m_void ( std::move(fun) )
-    {}
+    Value( LoKi::FunctorFromFunctor<void, TYPE2> fun )
+        : LoKi::AuxFunBase( std::tie( fun ) ), m_void( std::move( fun ) ) {}
     /// clone method (mandatory)
-    Value* clone   () const override { return new Value( *this ) ; }
+    Value* clone() const override { return new Value( *this ); }
     /// the only one essential method ("function")
-    TYPE2 operator()
-    ( /* typename LoKi::Functor<void,TYPE2>::argument a */ ) const override
-    { return m_void.fun () ; } // bypass one virtual call
+    TYPE2 operator()( /* typename LoKi::Functor<void,TYPE2>::argument a */ ) const override {
+      return m_void.fun();
+    } // bypass one virtual call
     /// the basic printout method
-    std::ostream& fillStream( std::ostream& s ) const override
-    { return m_void.fillStream ( s ) ; }
+    std::ostream& fillStream( std::ostream& s ) const override { return m_void.fillStream( s ); }
     // ========================================================================
   private:
     // ========================================================================
     /// the actual storage of void-functor
-    LoKi::FunctorFromFunctor<void,TYPE2>  m_void ;
+    LoKi::FunctorFromFunctor<void, TYPE2> m_void;
     // ========================================================================
   };
   // ==========================================================================

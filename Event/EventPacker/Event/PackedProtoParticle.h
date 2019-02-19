@@ -13,8 +13,8 @@
 
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 
 // STL
 #include <string>
@@ -26,8 +26,7 @@
 // Event
 #include "Event/ProtoParticle.h"
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class PackedProtoParticle PackedProtoParticle.h Event/PackedProtoParticle.h
    *
@@ -36,40 +35,35 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2008-11-13
    */
-  struct PackedProtoParticle
-  {
-    long long key{0};
-    long long track{0};
-    long long richPID{0};
-    long long muonPID{0};
+  struct PackedProtoParticle {
+    long long          key{0};
+    long long          track{0};
+    long long          richPID{0};
+    long long          muonPID{0};
     unsigned short int firstHypo{0};
     unsigned short int lastHypo{0};
     unsigned short int firstExtra{0};
     unsigned short int lastExtra{0};
 
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        key, track, richPID, muonPID,
-        firstHypo, lastHypo, firstExtra, lastExtra
-      );
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.io( key, track, richPID, muonPID, firstHypo, lastHypo, firstExtra, lastExtra );
     }
 
-    template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
+    template <typename T>
+    inline void load( T& buf, unsigned int /*version*/ ) {
+      save( buf ); // identical operation until version is incremented
     }
   };
 
   constexpr CLID CLID_PackedProtoParticles = 1552;
 
   // Namespace for locations in TDS
-  namespace PackedProtoParticleLocation
-  {
-    inline const std::string Charged  =  "pRec/ProtoP/Charged";
-    inline const std::string Neutral  =  "pRec/Protop/Neutral";
+  namespace PackedProtoParticleLocation {
+    inline const std::string Charged  = "pRec/ProtoP/Charged";
+    inline const std::string Neutral  = "pRec/Protop/Neutral";
     inline const std::string InStream = "/pRec/ProtoP/Custom";
-  }
+  } // namespace PackedProtoParticleLocation
 
   /** @class PackedProtoParticles PackedProtoParticle.h Event/PackedProtoParticle.h
    *
@@ -78,32 +72,27 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2008-11-13
    */
-  class PackedProtoParticles : public DataObject
-  {
+  class PackedProtoParticles : public DataObject {
 
   public:
-
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
   public:
-
-    const CLID& clID()  const override { return PackedProtoParticles::classID(); }
-    static  const CLID& classID()     { return CLID_PackedProtoParticles;       }
+    const CLID&        clID() const override { return PackedProtoParticles::classID(); }
+    static const CLID& classID() { return CLID_PackedProtoParticles; }
 
   public:
-
-    std::vector<PackedProtoParticle>& protos()             { return m_vect; }
+    std::vector<PackedProtoParticle>&       protos() { return m_vect; }
     const std::vector<PackedProtoParticle>& protos() const { return m_vect; }
 
-    std::vector<long long>& refs()                         { return m_refs; }
-    const std::vector<long long>& refs() const             { return m_refs; }
+    std::vector<long long>&       refs() { return m_refs; }
+    const std::vector<long long>& refs() const { return m_refs; }
 
-    std::vector<std::pair<int,int> >& extras()             { return m_extra; }
-    const std::vector<std::pair<int,int> >& extras() const { return m_extra; }
+    std::vector<std::pair<int, int>>&       extras() { return m_extra; }
+    const std::vector<std::pair<int, int>>& extras() const { return m_extra; }
 
   public:
-
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
 
@@ -111,41 +100,39 @@ namespace LHCb
     char packingVersion() const { return m_packingVersion; }
 
     /// Describe serialization of object
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.template save<uint8_t>(m_packingVersion);
-      buf.template save<uint8_t>(version());
-      buf.save(m_vect);
-      buf.save(m_refs);
-      buf.save(m_extra);
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.template save<uint8_t>( m_packingVersion );
+      buf.template save<uint8_t>( version() );
+      buf.save( m_vect );
+      buf.save( m_refs );
+      buf.save( m_extra );
     }
 
     /// Describe de-serialization of object
-    template<typename T>
-    inline void load(T& buf) {
-      setPackingVersion(buf.template load<uint8_t>());
-      setVersion(buf.template load<uint8_t>());
-      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
-        throw std::runtime_error("PackedProtoParticles packing version is not supported: "
-                                 + std::to_string(m_packingVersion));
+    template <typename T>
+    inline void load( T& buf ) {
+      setPackingVersion( buf.template load<uint8_t>() );
+      setVersion( buf.template load<uint8_t>() );
+      if ( m_packingVersion < 1 || m_packingVersion > defaultPackingVersion() ) {
+        throw std::runtime_error( "PackedProtoParticles packing version is not supported: " +
+                                  std::to_string( m_packingVersion ) );
       }
-      buf.load(m_vect, m_packingVersion);
-      buf.load(m_refs);
-      buf.load(m_extra, m_packingVersion);
+      buf.load( m_vect, m_packingVersion );
+      buf.load( m_refs );
+      buf.load( m_extra, m_packingVersion );
     }
 
   private:
-
     std::vector<PackedProtoParticle> m_vect;
     std::vector<long long>           m_refs;
-    std::vector<std::pair<int,int> > m_extra;
+    std::vector<std::pair<int, int>> m_extra;
 
     /** Data packing version
      *  Note the default packing version here must stay as zero, for compatibility
      *  with data written before the packing version was added, to implicitly
      *  define the version as 0 for this data  */
     char m_packingVersion{0};
-
   };
 
   /** @class ProtoParticlePacker Event/PackedProtoParticle.h
@@ -155,66 +142,49 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   05/04/2012
    */
-  class ProtoParticlePacker
-  {
+  class ProtoParticlePacker {
 
   public:
-
-    typedef LHCb::ProtoParticle                    Data;
-    typedef LHCb::PackedProtoParticle        PackedData;
-    typedef LHCb::ProtoParticles             DataVector;
+    typedef LHCb::ProtoParticle        Data;
+    typedef LHCb::PackedProtoParticle  PackedData;
+    typedef LHCb::ProtoParticles       DataVector;
     typedef LHCb::PackedProtoParticles PackedDataVector;
 
   private:
-
     /// Default Constructor hidden
     ProtoParticlePacker() {}
 
   public:
-
     /// Default Constructor
-    ProtoParticlePacker( const GaudiAlgorithm * p ) : m_pack(p) {}
+    ProtoParticlePacker( const GaudiAlgorithm* p ) : m_pack( p ) {}
 
   public:
-
     /// Pack a ProtoParticle
-    void pack( const Data & proto,
-               PackedData & pproto,
-               PackedDataVector & pprotos ) const;
+    void pack( const Data& proto, PackedData& pproto, PackedDataVector& pprotos ) const;
 
     /// Pack ProtoParticles
-    void pack( const DataVector & protos,
-               PackedDataVector & pprotos ) const;
+    void pack( const DataVector& protos, PackedDataVector& pprotos ) const;
 
     /// Unpack a single ProtoParticle
-    void unpack( const PackedData       & pproto,
-                 Data                   & proto,
-                 const PackedDataVector & pprotos,
-                 DataVector             & protos ) const;
+    void unpack( const PackedData& pproto, Data& proto, const PackedDataVector& pprotos, DataVector& protos ) const;
 
     /// Unpack ProtoParticles
-    void unpack( const PackedDataVector & pprotos,
-                 DataVector             & protos ) const;
+    void unpack( const PackedDataVector& pprotos, DataVector& protos ) const;
 
     /// Compare two ProtoParticle containers to check the packing -> unpacking performance
-    StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
+    StatusCode check( const DataVector& dataA, const DataVector& dataB ) const;
 
     /// Compare two ProtoParticles to check the packing -> unpacking performance
-    StatusCode check( const Data & dataA,
-                      const Data & dataB ) const;
+    StatusCode check( const Data& dataA, const Data& dataB ) const;
 
   private:
-
     /// Access the parent algorithm
-    inline const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+    inline const GaudiAlgorithm& parent() const { return *( m_pack.parent() ); }
 
     /// Check if the given packing version is supported
-    bool isSupportedVer( const char& ver ) const
-    {
+    bool isSupportedVer( const char& ver ) const {
       const bool OK = ( 1 == ver || 0 == ver );
-      if ( UNLIKELY(!OK) )
-      {
+      if ( UNLIKELY( !OK ) ) {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;
         throw GaudiException( mess.str(), "ProtoParticlePacker", StatusCode::FAILURE );
@@ -223,12 +193,10 @@ namespace LHCb
     }
 
   private:
-
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
   };
 
-}
+} // namespace LHCb
 
 #endif // EVENT_PACKEDPROTOPARTICLE_H

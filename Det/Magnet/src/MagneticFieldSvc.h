@@ -12,18 +12,18 @@
 #pragma once
 
 // Include files
-#include "Kernel/ILHCbMagnetSvc.h"
 #include "DetDesc/Condition.h"
 #include "DetDesc/MagneticFieldGrid.h"
+#include "Kernel/ILHCbMagnetSvc.h"
 
 #include "MagneticFieldGridReader.h"
 
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Service.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 // Forward declarations
 class IUpdateManagerSvc;
@@ -38,11 +38,9 @@ class IUpdateManagerSvc;
  *  Updated and further developped - Adlene Hicheur
  */
 
-class MagneticFieldSvc : public extends<Service, ILHCbMagnetSvc>
-{
+class MagneticFieldSvc : public extends<Service, ILHCbMagnetSvc> {
 
 public:
-
   /// Standard Constructor.
   /// @param  name   String with service name
   /// @param  svc    Pointer to service locator interface
@@ -57,19 +55,15 @@ public:
   /// Finalise the service (Inherited Service overrides)
   StatusCode finalize() override;
 
-
   using ILHCbMagnetSvc::fieldVector;
   /** Implementation of IMagneticFieldSvc interface.
    * @param[in]  xyz Point at which magnetic field vector will be given
    * @return Magnetic field vector.
    */
-  Gaudi::XYZVector fieldVector( const Gaudi::XYZPoint&  xyz ) const override;
+  Gaudi::XYZVector fieldVector( const Gaudi::XYZPoint& xyz ) const override;
 
   /// Returns the field grid
-  const LHCb::MagneticFieldGrid* fieldGrid() const override
-  {
-    return &m_magFieldGrid ;
-  }
+  const LHCb::MagneticFieldGrid* fieldGrid() const override { return &m_magFieldGrid; }
 
   bool useRealMap() const override; ///< True is using real map
 
@@ -79,57 +73,51 @@ public:
   bool isDown() const override;
 
 private:
-
   StatusCode initializeWithCondDB();    ///< default get magnet data from CondDB
   StatusCode initializeWithoutCondDB(); ///< alternative get magnet data from job options
-  StatusCode i_updateConditions();       ///< Reads from conditions
+  StatusCode i_updateConditions();      ///< Reads from conditions
 
 private:
-
   // Properties to configure the service
-  bool m_UseConditions;      ///< Get data from CondDB or options. Default CondDB
-  bool m_UseSetCurrent;      ///< Use Set or Measured current. Default false
-  double m_nominalCurrent;   ///< Nominal magnet current to normalise rescaling
-  std::string m_mapFilePath; ///< Directory where field map files are located
+  bool        m_UseConditions;  ///< Get data from CondDB or options. Default CondDB
+  bool        m_UseSetCurrent;  ///< Use Set or Measured current. Default false
+  double      m_nominalCurrent; ///< Nominal magnet current to normalise rescaling
+  std::string m_mapFilePath;    ///< Directory where field map files are located
 
   // Special properties to use constant field (and no condDB!)
-  bool                m_useConstField;    ///< Job option to use constant field
-  std::vector<double> m_constFieldVector = {{ 0., 0., 0. }}; ///< Option for constant field value
+  bool                m_useConstField;                     ///< Job option to use constant field
+  std::vector<double> m_constFieldVector = {{0., 0., 0.}}; ///< Option for constant field value
 
   // Properties to over-ride values in CondDB
   std::vector<std::string> m_mapFileNames;
   bool                     m_forcedToUseDownMap = false;
-  bool                     m_forcedToUseUpMap = false;
-  double                   m_forcedScaleFactor = 9999.;
-  bool                     m_mapFromOptions = false;
+  bool                     m_forcedToUseUpMap   = false;
+  double                   m_forcedScaleFactor  = 9999.;
+  bool                     m_mapFromOptions     = false;
 
   // Private data
 
-  Condition* m_mapFilesUpPtr = nullptr;   ///< Pointer to FieldMapFilesUp condition
+  Condition* m_mapFilesUpPtr   = nullptr; ///< Pointer to FieldMapFilesUp condition
   Condition* m_mapFilesDownPtr = nullptr; ///< Pointer to FieldMapFilesDown condition
-  Condition* m_scaleUpPtr = nullptr;      ///< Pointer to ScaleUp condition
-  Condition* m_scaleDownPtr = nullptr;    ///< Pointer to ScaleDown condition
-  Condition* m_currentPtr = nullptr;      ///< Pointer to Measured or Set condition
+  Condition* m_scaleUpPtr      = nullptr; ///< Pointer to ScaleUp condition
+  Condition* m_scaleDownPtr    = nullptr; ///< Pointer to ScaleDown condition
+  Condition* m_currentPtr      = nullptr; ///< Pointer to Measured or Set condition
 
   SmartIF<IUpdateManagerSvc> m_updMgrSvc; ///< Pointer to UpdateManagerSvc
 
-  LHCb::MagneticFieldGrid m_magFieldGrid ;
+  LHCb::MagneticFieldGrid m_magFieldGrid;
 
   bool m_isDown = false; ///< Cache the field polarity
 
   double m_signedCurrent{0}; ///< Cache the field current
 
 private:
-
   // update the cached field polarity and current
-  void cacheFieldConstants()
-  {
+  void cacheFieldConstants() {
     // Polarity
-    m_isDown = m_magFieldGrid.fieldVectorClosestPoint( { 0, 0, 5200 } ).y() < 0 ;
+    m_isDown = m_magFieldGrid.fieldVectorClosestPoint( {0, 0, 5200} ).y() < 0;
     // current
     const int sign  = ( m_isDown ? -1 : +1 );
-    m_signedCurrent = std::abs(m_magFieldGrid.scaleFactor()) * sign;
+    m_signedCurrent = std::abs( m_magFieldGrid.scaleFactor() ) * sign;
   }
-  
 };
-

@@ -20,17 +20,10 @@
     An abstract interface to get the calibration information of
     a detector element.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct ICalibration : virtual IConditionInfo
-{
-
-};
+struct ICalibration : virtual IConditionInfo {};
 
 #endif // DETDESC_ICALIBRATION_H
-
-
-
-

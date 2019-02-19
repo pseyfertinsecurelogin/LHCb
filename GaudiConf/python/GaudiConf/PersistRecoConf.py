@@ -29,18 +29,15 @@ from Configurables import DataPacking__Pack_LHCb__CaloAdcPacker_ as PackCaloAdcs
 from Configurables import DataPacking__Unpack_LHCb__CaloAdcPacker_ as UnpackCaloAdcs
 from Configurables import PackCaloHypo, UnpackCaloHypo
 
-__all__ = [
-    'PersistRecoPacking'
-]
+__all__ = ['PersistRecoPacking']
 
 __author__ = "Rosen Matev"
 
 
 def _location_2016_to_2015(location):
-    return (location
-            .replace("Long", "long")
-            .replace("Downstream", "down")
-            .replace("Neutral", "neutral"))
+    return (location.replace("Long", "long").replace("Downstream",
+                                                     "down").replace(
+                                                         "Neutral", "neutral"))
 
 
 def _od_rename(x, keymap):
@@ -57,6 +54,7 @@ class PackingDescriptor(object):
         unpacker: Algorithm used for unpacking
 
     """
+
     def __init__(self, name, location, packer, unpacker):
         self.name = name
         self.location = location
@@ -76,93 +74,108 @@ _standardDescriptors = [
     PackingDescriptor(
         name='Hlt2LongProtos',
         location="/Event/Hlt2/pRec/Long/Protos",
-        packer=PackProtoParticle, unpacker=UnpackProtoParticle),
+        packer=PackProtoParticle,
+        unpacker=UnpackProtoParticle),
     PackingDescriptor(
         name="Hlt2DownstreamProtos",
         location="/Event/Hlt2/pRec/Downstream/Protos",
-        packer=PackProtoParticle, unpacker=UnpackProtoParticle),
+        packer=PackProtoParticle,
+        unpacker=UnpackProtoParticle),
     # RICH PIDs
     PackingDescriptor(
         name="Hlt2LongRichPIDs",
         location="/Event/Hlt2/pRec/Long/RichPIDs",
-        packer=PackRichPIDs, unpacker=UnpackRichPIDs),
+        packer=PackRichPIDs,
+        unpacker=UnpackRichPIDs),
     PackingDescriptor(
         name="Hlt2DownstreamRichPIDs",
         location="/Event/Hlt2/pRec/Downstream/RichPIDs",
-        packer=PackRichPIDs, unpacker=UnpackRichPIDs),
+        packer=PackRichPIDs,
+        unpacker=UnpackRichPIDs),
     # Muon PIDs
     PackingDescriptor(
         name="Hlt2LongMuonPIDs",
         location="/Event/Hlt2/pRec/Long/MuonIDs",
-        packer=PackMuonPIDs, unpacker=UnpackMuonPIDs),
+        packer=PackMuonPIDs,
+        unpacker=UnpackMuonPIDs),
     PackingDescriptor(
         name="Hlt2DownstreamPIDMuonSegments",
         location="/Event/Hlt2/pRec/Downstream/PID/MuonSegments",
-        packer=PackTrack, unpacker=UnpackTrack),
+        packer=PackTrack,
+        unpacker=UnpackTrack),
     # Vertices
     PackingDescriptor(
         name="Hlt2RecVertices",
         location="/Event/Hlt2/pRec/Vertex/PV3D",
-        packer=PackRecVertex, unpacker=UnpackRecVertex),
+        packer=PackRecVertex,
+        unpacker=UnpackRecVertex),
     # Tracks
     PackingDescriptor(
         name="Hlt2LongTracks",
         location="/Event/Hlt2/pRec/Long/Tracks",
-        packer=PackTrack, unpacker=UnpackTrack),
+        packer=PackTrack,
+        unpacker=UnpackTrack),
     PackingDescriptor(
         name="Hlt2DownstreamTracks",
         location="/Event/Hlt2/pRec/Downstream/Tracks",
-        packer=PackTrack, unpacker=UnpackTrack),
+        packer=PackTrack,
+        unpacker=UnpackTrack),
     PackingDescriptor(
         name="Hlt2VeloPVTracks",
         location="/Event/Hlt2/pRec/VeloPV/Tracks",
-        packer=PackTrack, unpacker=UnpackTrack),
+        packer=PackTrack,
+        unpacker=UnpackTrack),
 
     # Neutral proto particles
     PackingDescriptor(
         name="Hlt2NeutralProtos",
         location="/Event/Hlt2/pRec/Neutral/Protos",
-        packer=PackProtoParticle, unpacker=UnpackProtoParticle),
+        packer=PackProtoParticle,
+        unpacker=UnpackProtoParticle),
     # Neutral CaloClusters
     PackingDescriptor(
         name="Hlt2CaloClusters",
         location="/Event/Hlt2/pRec/Neutral/CaloClusters",
-        packer=PackCaloClusters, unpacker=UnpackCaloClusters),
+        packer=PackCaloClusters,
+        unpacker=UnpackCaloClusters),
     PackingDescriptor(
         name="Hlt2EcalSplitClusters",
         location="/Event/Hlt2/pRec/Neutral/EcalSplitClusters",
-        packer=PackCaloClusters, unpacker=UnpackCaloClusters),
+        packer=PackCaloClusters,
+        unpacker=UnpackCaloClusters),
     # Neutral CaloHypos
     PackingDescriptor(
         name="Hlt2CaloElectronHypos",
         location="/Event/Hlt2/pRec/Neutral/Electrons",
-        packer=PackCaloHypo, unpacker=UnpackCaloHypo),
+        packer=PackCaloHypo,
+        unpacker=UnpackCaloHypo),
     PackingDescriptor(
         name="Hlt2CaloPhotonHypos",
         location="/Event/Hlt2/pRec/Neutral/Photons",
-        packer=PackCaloHypo, unpacker=UnpackCaloHypo),
+        packer=PackCaloHypo,
+        unpacker=UnpackCaloHypo),
     PackingDescriptor(
         name="Hlt2CaloMergedPi0Hypos",
         location="/Event/Hlt2/pRec/Neutral/MergedPi0s",
-        packer=PackCaloHypo, unpacker=UnpackCaloHypo),
+        packer=PackCaloHypo,
+        unpacker=UnpackCaloHypo),
     PackingDescriptor(
         name="Hlt2CaloSplitPhotonHypos",
         location="/Event/Hlt2/pRec/Neutral/SplitPhotons",
-        packer=PackCaloHypo, unpacker=UnpackCaloHypo),
+        packer=PackCaloHypo,
+        unpacker=UnpackCaloHypo),
 ]
 
 standardDescriptors = {}
 # Transform the 2016 descriptors into OrderedDict{name: descriptor}
 # without changing all the lines above. Unset descriptor.name
 standardDescriptors['2016'] = OrderedDict(
-    (i.name, i.copy(name=None)) for i in _standardDescriptors
-)
+    (i.name, i.copy(name=None)) for i in _standardDescriptors)
 
 # In 2015 packed locations were named slightly differently
 standardDescriptors['2015'] = OrderedDict(
     (k, v.copy(location=_location_2016_to_2015(v.location)))
-    for k, v in standardDescriptors['2016'].items()
-)
+    for k, v in standardDescriptors['2016'].items())
 
 # We have 2012 descriptors only for running the unit tests
 standardDescriptors['2012'] = standardDescriptors['2016'].copy()
@@ -174,103 +187,123 @@ standardDescriptors['2017'].update([
         PackingDescriptor(
             name="Hlt2VeloClusters",
             location="/Event/Hlt2/pRec/Velo/Clusters",
-            packer=PackVeloCluster, unpacker=UnpackVeloCluster),
+            packer=PackVeloCluster,
+            unpacker=UnpackVeloCluster),
         PackingDescriptor(
             name="Hlt2TTClusters",
             location="/Event/Hlt2/pRec/TT/Clusters",
-            packer=PackSTCluster, unpacker=UnpackSTCluster),
+            packer=PackSTCluster,
+            unpacker=UnpackSTCluster),
         PackingDescriptor(
             name="Hlt2ITClusters",
             location="/Event/Hlt2/pRec/IT/Clusters",
-            packer=PackSTCluster, unpacker=UnpackSTCluster),
+            packer=PackSTCluster,
+            unpacker=UnpackSTCluster),
         # CaloDigits
         PackingDescriptor(
             name="Hlt2VeloClusters",
             location="/Event/Hlt2/pRec/Velo/Clusters",
-            packer=PackVeloCluster, unpacker=UnpackVeloCluster),
+            packer=PackVeloCluster,
+            unpacker=UnpackVeloCluster),
         PackingDescriptor(
             name="Hlt2TTClusters",
             location="/Event/Hlt2/pRec/TT/Clusters",
-            packer=PackSTCluster, unpacker=UnpackSTCluster),
+            packer=PackSTCluster,
+            unpacker=UnpackSTCluster),
         PackingDescriptor(
             name="Hlt2ITClusters",
             location="/Event/Hlt2/pRec/IT/Clusters",
-            packer=PackSTCluster, unpacker=UnpackSTCluster),
+            packer=PackSTCluster,
+            unpacker=UnpackSTCluster),
         PackingDescriptor(
             name="Hlt2CaloEcalDigits",
             location="/Event/Hlt2/pRec/Neutral/EcalDigits",
-            packer=PackCaloDigits, unpacker=UnpackCaloDigits
-        ),
+            packer=PackCaloDigits,
+            unpacker=UnpackCaloDigits),
         PackingDescriptor(
             name="Hlt2CaloHcalDigits",
             location="/Event/Hlt2/pRec/Neutral/HcalDigits",
-            packer=PackCaloDigits, unpacker=UnpackCaloDigits
-        ),
+            packer=PackCaloDigits,
+            unpacker=UnpackCaloDigits),
         PackingDescriptor(
             name="Hlt2CaloPrsDigits",
             location="/Event/Hlt2/pRec/Neutral/PrsDigits",
-            packer=PackCaloDigits, unpacker=UnpackCaloDigits
-        ),
+            packer=PackCaloDigits,
+            unpacker=UnpackCaloDigits),
         PackingDescriptor(
             name="Hlt2CaloSpdDigits",
             location="/Event/Hlt2/pRec/Neutral/SpdDigits",
-            packer=PackCaloDigits, unpacker=UnpackCaloDigits
-        ),
+            packer=PackCaloDigits,
+            unpacker=UnpackCaloDigits),
         # CaloAdcs
         PackingDescriptor(
             name="Hlt2CaloEcalAdcs",
             location="/Event/Hlt2/pRec/Neutral/EcalAdcs",
-            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
-        ),
+            packer=PackCaloAdcs,
+            unpacker=UnpackCaloAdcs),
         PackingDescriptor(
             name="Hlt2CaloHcalAdcs",
             location="/Event/Hlt2/pRec/Neutral/HcalAdcs",
-            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
-        ),
+            packer=PackCaloAdcs,
+            unpacker=UnpackCaloAdcs),
         PackingDescriptor(
             name="Hlt2CaloPrsAdcs",
             location="/Event/Hlt2/pRec/Neutral/PrsAdcs",
-            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
-        ),
+            packer=PackCaloAdcs,
+            unpacker=UnpackCaloAdcs),
         PackingDescriptor(
             name="Hlt2CaloSpdAdcs",
             location="/Event/Hlt2/pRec/Neutral/SpdAdcs",
-            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
-        )
+            packer=PackCaloAdcs,
+            unpacker=UnpackCaloAdcs)
     ]
 ])
 standardDescriptors['2017'] = _od_rename(
-    standardDescriptors['2017'],
-    {'Hlt2DownstreamPIDMuonSegments': 'Hlt2MuonPIDSegments',
-     'Hlt2LongMuonPIDs': 'Hlt2MuonPIDs'}
-)
+    standardDescriptors['2017'], {
+        'Hlt2DownstreamPIDMuonSegments': 'Hlt2MuonPIDSegments',
+        'Hlt2LongMuonPIDs': 'Hlt2MuonPIDs'
+    })
 standardDescriptors['2018'] = standardDescriptors['2017'].copy()
-
 
 standardOutputs = {}
 
 standardOutputs['2016'] = {
-    "Hlt2LongProtos":                "/Event/Hlt2/Long/Protos",
-    "Hlt2DownstreamProtos":          "/Event/Hlt2/Downstream/Protos",
+    "Hlt2LongProtos":
+    "/Event/Hlt2/Long/Protos",
+    "Hlt2DownstreamProtos":
+    "/Event/Hlt2/Downstream/Protos",
     "Hlt2LongRichPIDs":
-        "/Event/Hlt2/TrackFitted/Long/PID/RICH" +
-        "/electronmuonpionkaonprotondeuteronbelowThreshold/Rich1GasRich2GasLong",
+    "/Event/Hlt2/TrackFitted/Long/PID/RICH" +
+    "/electronmuonpionkaonprotondeuteronbelowThreshold/Rich1GasRich2GasLong",
     "Hlt2DownstreamRichPIDs":
-        "/Event/Hlt2/TrackFitted/Downstream/PID/RICH" +
-        "/electronmuonpionkaonprotondeuteronbelowThreshold/Rich1GasRich2GasDownstream",
-    "Hlt2LongMuonPIDs":              "/Event/Hlt2/PID/Muon",
-    "Hlt2DownstreamPIDMuonSegments": "/Event/Hlt2/TrackFitted/Downstream/PID/MuonSegments",
-    "Hlt2LongTracks":                "/Event/Hlt2/TrackFitted/Long",
-    "Hlt2DownstreamTracks":          "/Event/Hlt2/TrackFitted/Downstream",
-    "Hlt2VeloPVTracks":              "/Event/Hlt2/TrackFitted/VeloPV",
-    "Hlt2RecVertices":               "/Event/Hlt2/Vertex/PV3D",
-    "Hlt2NeutralProtos":             "/Event/Hlt2/Neutral/Protos",
-    "Hlt2CaloClusters":              "/Event/Hlt2/Calo/EcalClusters",
-    "Hlt2EcalSplitClusters":         "/Event/Hlt2/PID/CALO/Calo/EcalSplitClusters",
-    "Hlt2CaloElectronHypos":         "/Event/Hlt2/PID/CALO/Calo/Electrons",
-    "Hlt2CaloPhotonHypos":           "/Event/Hlt2/PID/CALO/Calo/Photons",
-    "Hlt2CaloMergedPi0Hypos":        "/Event/Hlt2/PID/CALO/Calo/MergedPi0s",
-    "Hlt2CaloSplitPhotonHypos":      "/Event/Hlt2/PID/CALO/Calo/SplitPhotons",
+    "/Event/Hlt2/TrackFitted/Downstream/PID/RICH" +
+    "/electronmuonpionkaonprotondeuteronbelowThreshold/Rich1GasRich2GasDownstream",
+    "Hlt2LongMuonPIDs":
+    "/Event/Hlt2/PID/Muon",
+    "Hlt2DownstreamPIDMuonSegments":
+    "/Event/Hlt2/TrackFitted/Downstream/PID/MuonSegments",
+    "Hlt2LongTracks":
+    "/Event/Hlt2/TrackFitted/Long",
+    "Hlt2DownstreamTracks":
+    "/Event/Hlt2/TrackFitted/Downstream",
+    "Hlt2VeloPVTracks":
+    "/Event/Hlt2/TrackFitted/VeloPV",
+    "Hlt2RecVertices":
+    "/Event/Hlt2/Vertex/PV3D",
+    "Hlt2NeutralProtos":
+    "/Event/Hlt2/Neutral/Protos",
+    "Hlt2CaloClusters":
+    "/Event/Hlt2/Calo/EcalClusters",
+    "Hlt2EcalSplitClusters":
+    "/Event/Hlt2/PID/CALO/Calo/EcalSplitClusters",
+    "Hlt2CaloElectronHypos":
+    "/Event/Hlt2/PID/CALO/Calo/Electrons",
+    "Hlt2CaloPhotonHypos":
+    "/Event/Hlt2/PID/CALO/Calo/Photons",
+    "Hlt2CaloMergedPi0Hypos":
+    "/Event/Hlt2/PID/CALO/Calo/MergedPi0s",
+    "Hlt2CaloSplitPhotonHypos":
+    "/Event/Hlt2/PID/CALO/Calo/SplitPhotons",
 }
 
 # In 2015 the RICH locations were different
@@ -287,37 +320,36 @@ standardOutputs['2012'] = standardOutputs['2016'].copy()
 
 # In 2017 and 2018 we unpack into a prefixed location /Event/Turbo
 standardOutputs["2017"] = {
-    "Hlt2LongProtos":           "/Event/Turbo/Long/Protos",
-    "Hlt2DownstreamProtos":     "/Event/Turbo/Downstream/Protos",
-    "Hlt2LongRichPIDs":         "/Event/Turbo/PID/Rich/Long",
-    "Hlt2DownstreamRichPIDs":   "/Event/Turbo/PID/Rich/Downstream",
-    "Hlt2MuonPIDs":             "/Event/Turbo/PID/Muon",
-    "Hlt2MuonPIDSegments":      "/Event/Turbo/Track/Best/Muon",
-    "Hlt2LongTracks":           "/Event/Turbo/Track/Best/Long",
-    "Hlt2DownstreamTracks":     "/Event/Turbo/Track/Best/Downstream",
-    "Hlt2VeloPVTracks":         "/Event/Turbo/Track/FittedVeloInPV",
-    "Hlt2VeloClusters":         "/Event/Turbo/Raw/Velo/Clusters",
-    "Hlt2TTClusters":           "/Event/Turbo/Raw/TT/Clusters",
-    "Hlt2ITClusters":           "/Event/Turbo/Raw/IT/Clusters",
-    "Hlt2RecVertices":          "/Event/Turbo/Vertex/PV3D",
-    "Hlt2NeutralProtos":        "/Event/Turbo/Neutral/Protos",
-    "Hlt2CaloClusters":         "/Event/Turbo/PID/Calo/EcalClusters",
-    "Hlt2EcalSplitClusters":    "/Event/Turbo/PID/Calo/EcalSplitClusters",
-    "Hlt2CaloElectronHypos":    "/Event/Turbo/PID/Calo/Electrons",
-    "Hlt2CaloPhotonHypos":      "/Event/Turbo/PID/Calo/Photons",
-    "Hlt2CaloMergedPi0Hypos":   "/Event/Turbo/PID/Calo/MergedPi0s",
+    "Hlt2LongProtos": "/Event/Turbo/Long/Protos",
+    "Hlt2DownstreamProtos": "/Event/Turbo/Downstream/Protos",
+    "Hlt2LongRichPIDs": "/Event/Turbo/PID/Rich/Long",
+    "Hlt2DownstreamRichPIDs": "/Event/Turbo/PID/Rich/Downstream",
+    "Hlt2MuonPIDs": "/Event/Turbo/PID/Muon",
+    "Hlt2MuonPIDSegments": "/Event/Turbo/Track/Best/Muon",
+    "Hlt2LongTracks": "/Event/Turbo/Track/Best/Long",
+    "Hlt2DownstreamTracks": "/Event/Turbo/Track/Best/Downstream",
+    "Hlt2VeloPVTracks": "/Event/Turbo/Track/FittedVeloInPV",
+    "Hlt2VeloClusters": "/Event/Turbo/Raw/Velo/Clusters",
+    "Hlt2TTClusters": "/Event/Turbo/Raw/TT/Clusters",
+    "Hlt2ITClusters": "/Event/Turbo/Raw/IT/Clusters",
+    "Hlt2RecVertices": "/Event/Turbo/Vertex/PV3D",
+    "Hlt2NeutralProtos": "/Event/Turbo/Neutral/Protos",
+    "Hlt2CaloClusters": "/Event/Turbo/PID/Calo/EcalClusters",
+    "Hlt2EcalSplitClusters": "/Event/Turbo/PID/Calo/EcalSplitClusters",
+    "Hlt2CaloElectronHypos": "/Event/Turbo/PID/Calo/Electrons",
+    "Hlt2CaloPhotonHypos": "/Event/Turbo/PID/Calo/Photons",
+    "Hlt2CaloMergedPi0Hypos": "/Event/Turbo/PID/Calo/MergedPi0s",
     "Hlt2CaloSplitPhotonHypos": "/Event/Turbo/PID/Calo/SplitPhotons",
-    "Hlt2CaloEcalDigits":       "/Event/Turbo/Raw/Ecal/Digits",
-    "Hlt2CaloHcalDigits":       "/Event/Turbo/Raw/Hcal/Digits",
-    "Hlt2CaloPrsDigits":        "/Event/Turbo/Raw/Prs/Digits",
-    "Hlt2CaloSpdDigits":        "/Event/Turbo/Raw/Spd/Digits",
-    "Hlt2CaloEcalAdcs":         "/Event/Turbo/Raw/Ecal/Adcs",
-    "Hlt2CaloHcalAdcs":         "/Event/Turbo/Raw/Hcal/Adcs",
-    "Hlt2CaloPrsAdcs":          "/Event/Turbo/Raw/Prs/Adcs",
-    "Hlt2CaloSpdAdcs":          "/Event/Turbo/Raw/Spd/Adcs"
+    "Hlt2CaloEcalDigits": "/Event/Turbo/Raw/Ecal/Digits",
+    "Hlt2CaloHcalDigits": "/Event/Turbo/Raw/Hcal/Digits",
+    "Hlt2CaloPrsDigits": "/Event/Turbo/Raw/Prs/Digits",
+    "Hlt2CaloSpdDigits": "/Event/Turbo/Raw/Spd/Digits",
+    "Hlt2CaloEcalAdcs": "/Event/Turbo/Raw/Ecal/Adcs",
+    "Hlt2CaloHcalAdcs": "/Event/Turbo/Raw/Hcal/Adcs",
+    "Hlt2CaloPrsAdcs": "/Event/Turbo/Raw/Prs/Adcs",
+    "Hlt2CaloSpdAdcs": "/Event/Turbo/Raw/Spd/Adcs"
 }
 standardOutputs['2018'] = standardOutputs['2017'].copy()
-
 
 # We need to register the locations of (non-reconstructed) data
 # that is referenced by the some of the packed objects.
@@ -344,8 +376,12 @@ class PersistRecoPacking(object):
         This can be upgraded to an LHCbConfigurableUser if the need arises.
 
     """
-    def __init__(self, datatype, descriptors=standardDescriptors,
-                 inputs={}, outputs=standardOutputs):
+
+    def __init__(self,
+                 datatype,
+                 descriptors=standardDescriptors,
+                 inputs={},
+                 outputs=standardOutputs):
         """Collection of packed object descriptors.
 
         Args:
@@ -382,8 +418,10 @@ class PersistRecoPacking(object):
 
     def packedToOutputLocationMap(self):
         """Return the dict {packed_location: output_location}."""
-        m = {d.location: self.outputs[name]
-             for name, d in self._descriptors.items()}
+        m = {
+            d.location: self.outputs[name]
+            for name, d in self._descriptors.items()
+        }
         m.update({x: x for x in self.external})
         return m
 
@@ -399,7 +437,9 @@ class PersistRecoPacking(object):
 
     def inputToPackedLocationMap(self):
         """Return the dict {input_location: packed_location}."""
-        m = {self.inputs[name]: d.location
-             for name, d in self._descriptors.items()}
+        m = {
+            self.inputs[name]: d.location
+            for name, d in self._descriptors.items()
+        }
         m.update({x: x for x in self.external})
         return m

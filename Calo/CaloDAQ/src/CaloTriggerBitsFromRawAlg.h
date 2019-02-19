@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef CALOTRIGGERBITSFROMRAWALG_H 
+#ifndef CALOTRIGGERBITSFROMRAWALG_H
 #define CALOTRIGGERBITSFROMRAWALG_H 1
 
 // Include files
@@ -18,26 +18,26 @@
 #include "CaloDAQ/ICaloTriggerBitsFromRaw.h"
 
 /** @class CaloTriggerBitsFromRawAlg CaloTriggerBitsFromRawAlg.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2006-04-07
  */
 class CaloTriggerBitsFromRawAlg final : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   CaloTriggerBitsFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  std::string m_outputData;         ///< Output container
-  std::string m_toolName;
-  std::string m_toolType;
-  bool m_isPrs = false;
-  ICaloTriggerBitsFromRaw*    m_l0BitTool = nullptr;
-  std::string m_extension;  
-  bool m_statusOnTES;
+  std::string              m_outputData; ///< Output container
+  std::string              m_toolName;
+  std::string              m_toolType;
+  bool                     m_isPrs     = false;
+  ICaloTriggerBitsFromRaw* m_l0BitTool = nullptr;
+  std::string              m_extension;
+  bool                     m_statusOnTES;
 };
 #endif // CALOTRIGGERBITSFROMRAWALG_H

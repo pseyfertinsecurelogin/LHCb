@@ -18,8 +18,8 @@
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
 // from Event
-#include "Event/L0ProcessorData.h"
 #include "Event/L0DUBase.h"
+#include "Event/L0ProcessorData.h"
 
 /** @class IL0ProcessorDataDecoder IL0ProcessorDataDecoder.h
  *
@@ -38,14 +38,13 @@ struct IL0ProcessorDataDecoder : extend_interfaces<IAlgTool> {
   /*
    ** The main methods
    */
-  virtual bool   setL0ProcessorData(const std::vector<std::string>& dataLocs )=0;
-  virtual bool   setL0ProcessorData(const std::vector<LHCb::L0ProcessorDatas*>& datass ) = 0;
-  virtual bool   setL0ProcessorData(const std::string& dataLoc )=0;
-  virtual bool   setL0ProcessorData(LHCb::L0ProcessorDatas* datas ) = 0;
-  virtual double value( const std::array<unsigned int,L0DUBase::Index::Size>& data,int bx=0) = 0;
-  virtual unsigned long digit( const std::array<unsigned int,L0DUBase::Index::Size>& data,int bx=0) = 0;
-  virtual std::vector<int> bxList( const std::array<unsigned int, L0DUBase::Index::Size>& data) = 0;
-  virtual bool   isValid()=0;
-
+  virtual bool             setL0ProcessorData( const std::vector<std::string>& dataLocs )                   = 0;
+  virtual bool             setL0ProcessorData( const std::vector<LHCb::L0ProcessorDatas*>& datass )         = 0;
+  virtual bool             setL0ProcessorData( const std::string& dataLoc )                                 = 0;
+  virtual bool             setL0ProcessorData( LHCb::L0ProcessorDatas* datas )                              = 0;
+  virtual double           value( const std::array<unsigned int, L0DUBase::Index::Size>& data, int bx = 0 ) = 0;
+  virtual unsigned long    digit( const std::array<unsigned int, L0DUBase::Index::Size>& data, int bx = 0 ) = 0;
+  virtual std::vector<int> bxList( const std::array<unsigned int, L0DUBase::Index::Size>& data )            = 0;
+  virtual bool             isValid()                                                                        = 0;
 };
 #endif // L0DU_IL0PROCESSORDATADECODER_H

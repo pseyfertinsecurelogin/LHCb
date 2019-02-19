@@ -25,12 +25,10 @@ namespace HepMC {
  *  @date   22.10.2009
  */
 
-
 struct IHepMCParticleSelector : extend_interfaces<IAlgTool> {
 
-
   /// Static access to interface id
-  DeclareInterfaceID(IHepMCParticleSelector, 1 , 0);
+  DeclareInterfaceID( IHepMCParticleSelector, 1, 0 );
 
   /** Method to select or reject a given HepMCParticle
    *  @param aParticle Pointer to the HepMCParticle to consider
@@ -46,11 +44,7 @@ struct IHepMCParticleSelector : extend_interfaces<IAlgTool> {
    *  @retval true  HepMCParticle is selected
    *  @retval false HepMCParticle is rejected
    */
-  inline bool operator() ( const HepMC::GenParticle* aParticle ) const
-  {
-    return this->accept(aParticle);
-  }
-
+  inline bool operator()( const HepMC::GenParticle* aParticle ) const { return this->accept( aParticle ); }
 };
 
 #endif // MCINTERFACES_IMCPARTICLESELECTOR_H

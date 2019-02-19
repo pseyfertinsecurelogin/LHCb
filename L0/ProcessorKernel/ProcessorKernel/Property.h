@@ -30,21 +30,20 @@ namespace L0Muon {
       @date 2005-07-01
   */
 
-  class Property{
+  class Property {
   private:
     std::string m_value;
 
   public:
-
     /**
        Construct an empty Property.
     */
-    Property():m_value("Undefined"){}
+    Property() : m_value( "Undefined" ) {}
 
     /**
        Construct an Property from a string.
     */
-    Property(const std::string &value):m_value(value){}
+    Property( const std::string& value ) : m_value( value ) {}
 
     /**
      Destruct the Property.
@@ -52,7 +51,7 @@ namespace L0Muon {
     ~Property(){};
 
     /// Returns the property value (string)
-    const std::string value() const {return m_value;}
+    const std::string value() const { return m_value; }
 
     /// Build vector of int
     const std::vector<int> getVectorOfInt() const;
@@ -69,71 +68,69 @@ namespace L0Muon {
     /**
        Convert to bool.
     */
-    operator bool() const {return (( atoi(m_value.c_str()) != 0 ) ? true : false );}
+    operator bool() const { return ( ( atoi( m_value.c_str() ) != 0 ) ? true : false ); }
 
     /**
        Convert to int.
     */
-    operator int() const {return atoi(m_value.c_str());}
+    operator int() const { return atoi( m_value.c_str() ); }
 
     /**
        Convert to long.
     */
-    operator long() const {return atol(m_value.c_str());}
+    operator long() const { return atol( m_value.c_str() ); }
 
     /**
        Convert to float.
     */
-    operator float() const {return float(atof(m_value.c_str()));}
+    operator float() const { return float( atof( m_value.c_str() ) ); }
 
     /**
        Convert to double.
     */
-    operator double() const {return atof(m_value.c_str());}
+    operator double() const { return atof( m_value.c_str() ); }
 
     /**
      Convert to vector of int.
     */
-    operator const std::vector<int>() const {return getVectorOfInt();}
+    operator const std::vector<int>() const { return getVectorOfInt(); }
 
     /**
        Convert to vector of int.
     */
-    operator const std::vector<long>() const {return getVectorOfLong();}
+    operator const std::vector<long>() const { return getVectorOfLong(); }
 
     /**
        Convert to vector of float.
     */
-    operator const std::vector<float>() const {return getVectorOfFloat();}
+    operator const std::vector<float>() const { return getVectorOfFloat(); }
 
     /**
        Convert to vector of double.
     */
-    operator const std::vector<double>() const {return getVectorOfDouble();}
+    operator const std::vector<double>() const { return getVectorOfDouble(); }
 
     /**
        Convert to char.
     */
-    //operator const char*() const {return m_value.c_str();}
+    // operator const char*() const {return m_value.c_str();}
 
     /**
        Convert to string.
     */
-    operator const std::string() const {return m_value;}
+    operator const std::string() const { return m_value; }
 
     /**
        Convert to MuonTileID.
     */
-    operator const LHCb::MuonTileID() const {return LHCb::MuonTileID(atol(m_value.c_str()));}
-
-
+    operator const LHCb::MuonTileID() const { return LHCb::MuonTileID( atol( m_value.c_str() ) ); }
   };
 
   /**
      Define ouput operator.
      Output the internal string.
   */
-  std::ostream& operator<< (std::ostream& os, const Property  &fv);
-}  // namespace L0Muon
+  std::ostream& operator<<( std::ostream& os, const Property& fv );
+} // namespace L0Muon
 
 #endif // PROPERTY

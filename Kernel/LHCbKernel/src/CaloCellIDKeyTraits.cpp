@@ -14,7 +14,6 @@
 // local
 #include "Kernel/CaloCellIDKeyTraits.h"
 
-
 // ============================================================================
 /** @file CaloCellIDKeyTraits.cpp
  *
@@ -39,11 +38,9 @@
  *  @date 20/03/2002
  */
 // ============================================================================
-void Containers::errorMakeCaloCellIDKey()
-{
-  throw
-    GaudiException("No automatic key creation for KEY=LHCb::CaloCellID !",
-                   "KeyedObject<LHCb::CaloCellID>" , StatusCode::FAILURE );
+void Containers::errorMakeCaloCellIDKey() {
+  throw GaudiException( "No automatic key creation for KEY=LHCb::CaloCellID !", "KeyedObject<LHCb::CaloCellID>",
+                        StatusCode::FAILURE );
 }
 
 // ============================================================================

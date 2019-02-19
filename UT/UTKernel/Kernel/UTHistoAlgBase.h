@@ -28,8 +28,7 @@
 // local
 #include "Kernel/UTCommonBase.h"
 
-namespace UT
-{
+namespace UT {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase UTHistoBase.h UTKernel/UTHistoBase.h
@@ -42,19 +41,14 @@ namespace UT
    */
   //-----------------------------------------------------------------------------
 
-  class HistoAlgBase : public UT::CommonBase<GaudiHistoAlg>
-  {
+  class HistoAlgBase : public UT::CommonBase<GaudiHistoAlg> {
 
   public:
-
     /// Standard constructor
-    HistoAlgBase( const std::string& name,
-             ISvcLocator* pSvcLocator )
-      : UT::CommonBase<GaudiHistoAlg> ( name, pSvcLocator ) { }
-
+    HistoAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : UT::CommonBase<GaudiHistoAlg>( name, pSvcLocator ) {}
   };
 
-}
-
+} // namespace UT
 
 #endif // UTKERNEL_UTALGBASE_H

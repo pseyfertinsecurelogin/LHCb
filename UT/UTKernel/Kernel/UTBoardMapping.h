@@ -21,33 +21,33 @@
  *  @date   2018-09-04
  */
 
-#include <sstream>
 #include <map>
+#include <sstream>
 #include <string>
 
-namespace UTBoardMapping{
+namespace UTBoardMapping {
 
   typedef std::map<unsigned int, unsigned int> Map;
 
   const Map& UTSourceIDToNumberMap();
   const Map& UTNumberToSourceIDMap();
 
-  enum endValue {notFound = 999};
+  enum endValue { notFound = 999 };
 
   /** trivial helper to find entries in the map safely */
-  unsigned int find(const unsigned int key, const Map& testMap);
+  unsigned int find( const unsigned int key, const Map& testMap );
 
   /** printout the UT mapping */
   std::string printUTMap();
 
   void ClearUTMap();
-  void AddUTMapEntry(unsigned int sourceID, unsigned int number);
+  void AddUTMapEntry( unsigned int sourceID, unsigned int number );
 
-}
+} // namespace UTBoardMapping
 
-inline unsigned int UTBoardMapping::find(const unsigned int key, const UTBoardMapping::Map& testMap){
-  auto iter = testMap.find(key);
-  return (iter == testMap.end() ? (unsigned int)UTBoardMapping::notFound : iter->second);
+inline unsigned int UTBoardMapping::find( const unsigned int key, const UTBoardMapping::Map& testMap ) {
+  auto iter = testMap.find( key );
+  return ( iter == testMap.end() ? (unsigned int)UTBoardMapping::notFound : iter->second );
 }
 
 #endif // UTBOARDMAPPING_H

@@ -24,8 +24,7 @@
 #include <numeric>
 #include <type_traits>
 
-namespace details
-{
+namespace details {
 
   template <typename T>
   using has_reserve_ = decltype( std::declval<T&>().reserve( typename T::size_type( 0 ) ) );
@@ -39,12 +38,11 @@ namespace details
 
   struct Clone_t {
     template <typename T>
-    auto* operator()( T const& t ) const
-    {
-      if constexpr( std::is_pointer_v<T> ) {
+    auto* operator()( T const& t ) const {
+      if constexpr ( std::is_pointer_v<T> ) {
         assert( t != nullptr );
         return operator()( *t );
-      } else if constexpr( details::has_clone_v<T> ) {
+      } else if constexpr ( details::has_clone_v<T> ) {
         return t.clone();
       } else {
         return new T( t );
@@ -55,15 +53,13 @@ namespace details
 
   // TODO: move to Gaudi::Functional::details
   template <typename C>
-  class Inserter
-  {
+  class Inserter {
     C& container;
 
   public:
     Inserter( C& c ) : container( c ) {}
     template <typename ValueType>
-    Inserter& operator=( ValueType&& value )
-    {
+    Inserter& operator=( ValueType&& value ) {
       // adapt between containers which use 'insert' (eg. KeyedContainer)
       // and those which use 'push_back' (eg. std::vector)
       Gaudi::Functional::details::insert( container, std::forward<ValueType>( value ) );
@@ -73,7 +69,7 @@ namespace details
     Inserter& operator++() { return *this; }
     Inserter& operator++( int ) { return *this; }
   };
-}
+} // namespace details
 
 template <typename T>
 using VOC = Gaudi::Functional::vector_of_const_<T>;
@@ -82,21 +78,17 @@ template <class Container>
 struct TESMerger final : Gaudi::Functional::MergingTransformer<Container( VOC<Container*> const& )> {
   TESMerger( std::string const& name, ISvcLocator* pSvcLocator )
       : Gaudi::Functional::MergingTransformer<Container( VOC<Container*> const& )>(
-            name, pSvcLocator, {"inputLocations", {}}, {"outputLocation", {}} )
-  {
-  }
+            name, pSvcLocator, {"inputLocations", {}}, {"outputLocation", {}} ) {}
 
-  Container operator()( VOC<Container*> const& vcont ) const override
-  {
+  Container operator()( VOC<Container*> const& vcont ) const override {
     Container out;
-    if constexpr( details::has_reserve_v<Container> ) {
+    if constexpr ( details::has_reserve_v<Container> ) {
       auto n = std::accumulate( vcont.begin(), vcont.end(), 0,
                                 []( int n, auto const* c ) { return c ? n + c->size() : n; } );
       out.reserve( n );
     }
     for ( auto const* container : vcont ) {
-      if ( container ) std::transform( container->begin(), container->end(),
-                                       details::Inserter{out}, details::clone );
+      if ( container ) std::transform( container->begin(), container->end(), details::Inserter{out}, details::clone );
     }
     return out;
   }

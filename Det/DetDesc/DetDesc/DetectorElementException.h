@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef       DETDESC_DetectorElementEXCEPTION_H
-#define       DETDESC_DetectorElementEXCEPTION_H 1
+#ifndef DETDESC_DetectorElementEXCEPTION_H
+#define DETDESC_DetectorElementEXCEPTION_H 1
 /// GaudiKernel
 #include "GaudiKernel/GaudiException.h"
 //
@@ -23,33 +23,28 @@ class MsgStream;
     @author Vanya Belyaev
 */
 
-
-
-class DetectorElementException : public GaudiException
-{
+class DetectorElementException : public GaudiException {
   ///
 public:
   /// constructor
-  DetectorElementException( const std::string     & name                                   ,
-                            const DetectorElement * DetectorElement = nullptr              ,
-                            const StatusCode      &  sc             = StatusCode::FAILURE  );
+  DetectorElementException( const std::string& name, const DetectorElement* DetectorElement = nullptr,
+                            const StatusCode& sc = StatusCode::FAILURE );
   /// constructor from exception
-  DetectorElementException( const std::string     & name                                    ,
-                            const GaudiException  & Exception                               ,
-                            const DetectorElement * DetectorElement   = nullptr             ,
-                            const StatusCode      & sc                = StatusCode::FAILURE  );
+  DetectorElementException( const std::string& name, const GaudiException& Exception,
+                            const DetectorElement* DetectorElement = nullptr,
+                            const StatusCode&      sc              = StatusCode::FAILURE );
   ///
-  std::ostream&    printOut ( std::ostream& os = std::cerr ) const  override;
+  std::ostream& printOut( std::ostream& os = std::cerr ) const override;
   ///
-  MsgStream&       printOut ( MsgStream&                   ) const  override;
+  MsgStream& printOut( MsgStream& ) const override;
   ///
-  GaudiException*  clone    ()                               const  override;
+  GaudiException* clone() const override;
   ///
- private:
+private:
   ///
-  const DetectorElement*    m_dee_DetectorElement    ;
+  const DetectorElement* m_dee_DetectorElement;
   ///
 };
 ///
 
-#endif  //    DETDESC_DetectorElementEXCEPTION_H
+#endif //    DETDESC_DetectorElementEXCEPTION_H

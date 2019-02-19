@@ -22,11 +22,9 @@
 // ============================================================================
 #include "Event/ODIN.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Odin
-  {
+  namespace Odin {
     // ========================================================================
     /** @class Prescale
      *  Simple "functor"-implementation of Deterministic Prescaler
@@ -36,32 +34,30 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-12
      */
-    class Prescale : public LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate
-    {
+    class Prescale : public LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate {
     public:
       // ======================================================================
       /// constructor from the accept fraction and the seed
-      Prescale ( const double       accept      ,
-                 const std::string& seed   = "" ) ;
+      Prescale( const double accept, const std::string& seed = "" );
       /// MANDATORY: clone method ("virtual constructor")
-      Prescale* clone() const  override;
+      Prescale* clone() const override;
       /// MANDATORY: the only essential method
-      bool operator() ( const LHCb::ODIN* o ) const  override;
+      bool operator()( const LHCb::ODIN* o ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the accept fraction
-      double       m_accept  ;                           // the accept fraction
+      double m_accept; // the accept fraction
       /// the "seed"
-      std::string  m_seed    ;                           //          the "seed"
+      std::string m_seed; //          the "seed"
       /// the initial value
-      unsigned int m_initial ;                           //   the initial value
+      unsigned int m_initial; //   the initial value
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                              end of namepsace LoKi::Odin
+  } // namespace Odin
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

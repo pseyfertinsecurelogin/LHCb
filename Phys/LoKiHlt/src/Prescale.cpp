@@ -33,15 +33,13 @@
  *  @date 2010-02-12
  */
 // =============================================================================
-namespace
-{
+namespace {
   // ===========================================================================
-  using boost::uint32_t ;
-  using boost::uint64_t ;
+  using boost::uint32_t;
+  using boost::uint64_t;
   // =============================================================================
   /// copied form Gerhard
-  inline uint32_t mix(uint32_t state)
-  {
+  inline uint32_t mix( uint32_t state ) {
     // note: the constants below are _not_ arbitrary, but are picked
     //       carefully such that the bit shuffling has a large 'avalanche' effect...
     //       See http://bretm.home.comcast.net/~bretm/hash/
@@ -56,78 +54,67 @@ namespace
     //       black hole: whatever you dump in to it, you get something uniformly
     //       distributed back ;-)
     //
-    state += (state << 16); state ^= (state >> 13);
-    state += (state <<  4); state ^= (state >>  7);
-    state += (state << 10); state ^= (state >>  5);
-    state += (state <<  8); state ^= (state >> 16);
+    state += ( state << 16 );
+    state ^= ( state >> 13 );
+    state += ( state << 4 );
+    state ^= ( state >> 7 );
+    state += ( state << 10 );
+    state ^= ( state >> 5 );
+    state += ( state << 8 );
+    state ^= ( state >> 16 );
     return state;
   }
   // ===========================================================================
   // mix some 'extra' entropy into 'state' and return result
-  inline uint32_t mix32(uint32_t state, uint32_t extra)
-  {
-    return mix( state + extra );
+  inline uint32_t mix32( uint32_t state, uint32_t extra ) { return mix( state + extra ); }
+  // mix some 'extra' entropy into 'state' and return result
+  inline uint32_t mix64( uint32_t state, uint64_t extra ) {
+    typedef boost::low_bits_mask_t<32> mask_t;
+    state = mix32( state, uint32_t( extra & mask_t::sig_bits_fast ) );
+    return mix32( state, uint32_t( ( extra >> 32 ) & mask_t::sig_bits_fast ) );
   }
   // mix some 'extra' entropy into 'state' and return result
-  inline uint32_t mix64(uint32_t state, uint64_t extra)
-  {
-    typedef boost::low_bits_mask_t<32>  mask_t;
-    state = mix32( state , uint32_t( extra        & mask_t::sig_bits_fast) );
-    return  mix32( state , uint32_t((extra >> 32) & mask_t::sig_bits_fast) );
-  }
-  // mix some 'extra' entropy into 'state' and return result
-  inline uint32_t mixString(uint32_t state, const std::string& extra)
-  {
+  inline uint32_t mixString( uint32_t state, const std::string& extra ) {
     // prefix name with ' ' until the size is a multiple of 4.
-    std::string s = std::string((4-extra.size()%4)%4,' ') + extra;
-    for (size_t i=0; i < s.size()/4; ++i)
-    {
+    std::string s = std::string( ( 4 - extra.size() % 4 ) % 4, ' ' ) + extra;
+    for ( size_t i = 0; i < s.size() / 4; ++i ) {
       // FIXME: this might do something different on big endian
       // vs. small endian machines...
-      uint32_t x = uint32_t(s[i*4  ])
-        | uint32_t(s[i*4+1])<< 8
-        | uint32_t(s[i*4+2])<<16
-        | uint32_t(s[i*4+3])<<24 ;
-      state = mix32( state , x );
+      uint32_t x = uint32_t( s[i * 4] ) | uint32_t( s[i * 4 + 1] ) << 8 | uint32_t( s[i * 4 + 2] ) << 16 |
+                   uint32_t( s[i * 4 + 3] ) << 24;
+      state = mix32( state, x );
     }
     return state;
   }
   // ===========================================================================
-}
+} // namespace
 // =============================================================================
 // constructor from the accept fraction and the seed
 // =============================================================================
-LoKi::Odin::Prescale::Prescale
-( const double       accept ,
-  const std::string& seed   )
-  : LoKi::AuxFunBase ( std::tie ( accept , seed ) )
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate ()
-  , m_accept  ( accept )
-  , m_seed    ( seed   )
-  , m_initial ()
-{
-  m_initial = mixString ( seed.size() , seed ) ;
-  if ( 0 >= m_accept )
-  { Warning ( "Non-positive 'AcceptFraction is specified" ) ; }
-  if ( 1 <  m_accept )
-  { Warning ( "'AcceptFraction exceeds 1"                 ) ; }
+LoKi::Odin::Prescale::Prescale( const double accept, const std::string& seed )
+    : LoKi::AuxFunBase( std::tie( accept, seed ) )
+    , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate()
+    , m_accept( accept )
+    , m_seed( seed )
+    , m_initial() {
+  m_initial = mixString( seed.size(), seed );
+  if ( 0 >= m_accept ) { Warning( "Non-positive 'AcceptFraction is specified" ); }
+  if ( 1 < m_accept ) { Warning( "'AcceptFraction exceeds 1" ); }
 }
 // =============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // =============================================================================
-LoKi::Odin::Prescale*
-LoKi::Odin::Prescale::clone() const { return new Prescale ( *this ) ; }
+LoKi::Odin::Prescale* LoKi::Odin::Prescale::clone() const { return new Prescale( *this ); }
 // =============================================================================
 // MANDATORY: the only essential method
 // =============================================================================
-bool LoKi::Odin::Prescale::operator() ( const LHCb::ODIN* a ) const
-{
-  Assert ( 0 != a , "LHCb::ODIN* point to NULL!" ) ;
+bool LoKi::Odin::Prescale::operator()( const LHCb::ODIN* a ) const {
+  Assert( 0 != a, "LHCb::ODIN* point to NULL!" );
   //
   uint32_t x = m_initial;
-  x = mix64 ( x , a -> gpsTime     () ) ;
-  x = mix32 ( x , a -> runNumber   () ) ;
-  x = mix64 ( x , a -> eventNumber () ) ;
+  x          = mix64( x, a->gpsTime() );
+  x          = mix32( x, a->runNumber() );
+  x          = mix64( x, a->eventNumber() );
   //
   // at this point, we assume 'x' to be uniformly
   // distributed in [0,0xffffffff]
@@ -137,20 +124,19 @@ bool LoKi::Odin::Prescale::operator() ( const LHCb::ODIN* a ) const
   // note that an IEEE754 double has 57 bits of fraction,
   // which is enough precision
   // to cover the entire dynamic range of an uint32_t
-  return double(x) < m_accept * boost::integer_traits<uint32_t>::const_max;
+  return double( x ) < m_accept * boost::integer_traits<uint32_t>::const_max;
 }
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::Odin::Prescale::fillStream ( std::ostream& s ) const
-{
-  s << " ODIN_PRESCALE( " << m_accept ;
-  if ( !m_seed.empty() )
-  { s << " , " ; Gaudi::Utils::toStream ( m_seed , s ) ; }
-  return s << " ) " ;
+std::ostream& LoKi::Odin::Prescale::fillStream( std::ostream& s ) const {
+  s << " ODIN_PRESCALE( " << m_accept;
+  if ( !m_seed.empty() ) {
+    s << " , ";
+    Gaudi::Utils::toStream( m_seed, s );
+  }
+  return s << " ) ";
 }
 // =============================================================================
 // The END
 // =============================================================================
-

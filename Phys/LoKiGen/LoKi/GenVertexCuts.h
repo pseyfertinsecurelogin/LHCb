@@ -43,60 +43,58 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @var GVTRUE
      *  trivial predicate which always returns "true"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVTRUE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ true };
+    inline const auto GVTRUE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{true};
     // ========================================================================
     /** @var GVFALSE
      *  trivial predicate which always returns "false"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVFALSE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ false };
+    inline const auto GVFALSE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{false};
     // ========================================================================
     /** @var GVALL
      *  trivial predicate which always returns "true"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVALL = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ true };
+    inline const auto GVALL = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{true};
     // ========================================================================
     /** @var GVNONE
      *  trivial predicate which always returns "false"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVNONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{ false };
+    inline const auto GVNONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::BooleanConstant{false};
     // ========================================================================
     /** @var GVONE
      *  trivial function which always returns 1
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{  1 } ;
+    inline const auto GVONE = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{1};
     // ========================================================================
     /** @var GVNULL
      *  trivial function which always returns 0
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVNULL = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{ 0 } ;
+    inline const auto GVNULL = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{0};
     // ========================================================================
     /** @var GVZERO
      *  trivial function which always returns 0
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline const auto GVZERO = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{ 0 } ;
+    inline const auto GVZERO = LoKi::BasicFunctors<const HepMC::GenVertex*>::Constant{0};
     // ========================================================================
     /** Minimum from 2 functions
      *
@@ -111,7 +109,7 @@ namespace LoKi
      *
      *  @see LoKi::Min
      */
-    typedef LoKi::Min<const HepMC::GenVertex*>             GVMIN ;
+    typedef LoKi::Min<const HepMC::GenVertex*> GVMIN;
     // ========================================================================
     /** Maximum from 2 functions
      *
@@ -126,7 +124,7 @@ namespace LoKi
      *
      *  @see LoKi::MAX
      */
-    typedef LoKi::Min<const HepMC::GenVertex*>             GVMAX ;
+    typedef LoKi::Min<const HepMC::GenVertex*> GVMAX;
     // ========================================================================
     /** @var GVBAR
      *  trivial function which returns the "bar-code" for
@@ -236,7 +234,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    typedef LoKi::GenVertices::CountIF                     GVCOUNT ;
+    typedef LoKi::GenVertices::CountIF GVCOUNT;
     // ========================================================================
     /** the adapter function which accumulated the value of
      *  given function over the particles which satisfy
@@ -264,10 +262,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    typedef LoKi::GenVertices::SumIF                     GVSUM ;
+    typedef LoKi::GenVertices::SumIF GVSUM;
     // ========================================================================
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

@@ -25,6 +25,6 @@
 // ============================================================================
 // Force creation of templated class
 #include "RichHistoBase.icpp"
-template class Rich::Future::CommonBase< GaudiHistoTool >;
-template class Rich::Future::HistoBase< GaudiHistoTool >;
+template class Rich::Future::CommonBase<GaudiHistoTool>;
+template class Rich::Future::HistoBase<GaudiHistoTool>;
 // ============================================================================

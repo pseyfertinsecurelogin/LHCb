@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_BCSUNIT_H
-#define L0MUONKERNEL_BCSUNIT_H     1
+#define L0MUONKERNEL_BCSUNIT_H 1
 
 #include "L0MuonKernel/SelectionUnit.h"
 
@@ -45,15 +45,14 @@ namespace L0Muon {
   class BCSUnit : public SelectionUnit {
 
   public:
-
     /// Default Constructor
     BCSUnit();
 
     /// Constructor with MuonTileID
-    BCSUnit(LHCb::MuonTileID id);
+    BCSUnit( LHCb::MuonTileID id );
 
     /// Constructor from XML node
-    BCSUnit(DOMNode* pNode);
+    BCSUnit( DOMNode* pNode );
 
     /// Destructor
     ~BCSUnit();
@@ -67,15 +66,11 @@ namespace L0Muon {
     void execute() override;
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "BCSUnit";
-    }
+    std::string type() override { return "BCSUnit"; }
 
   private:
-
   };
 
+} // namespace L0Muon
 
-}  // namespace L0Muon
-
-#endif      // L0MUONKERNEL_BCSUNIT_H
+#endif // L0MUONKERNEL_BCSUNIT_H

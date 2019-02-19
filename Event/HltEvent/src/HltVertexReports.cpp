@@ -17,20 +17,18 @@
 // Implementation file for class : HltVertexReports
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::HltVertexReports::fillStream(std::ostream& ss) const
-{
-  ss << " HltVertexReports : { "  << std::endl;
-  for(const auto& i : m_vertexReports ) {
+std::ostream& LHCb::HltVertexReports::fillStream( std::ostream& ss ) const {
+  ss << " HltVertexReports : { " << std::endl;
+  for ( const auto& i : m_vertexReports ) {
     ss << " selectionName : " << i.first;
-    ss << " HltVertexReport : size " << i.second.size()
-       << '\n';
-    for( const auto& iv : i.second ) {
+    ss << " HltVertexReport : size " << i.second.size() << '\n';
+    for ( const auto& iv : i.second ) {
       ss << " x " << iv->position().x();
       ss << " y " << iv->position().y();
       ss << " z " << iv->position().z();
       ss << " chi2 " << iv->chi2();
       ss << " ndf " << iv->nDoF();
-      const Gaudi::SymMatrix3x3 & cov = iv->covMatrix();
+      const Gaudi::SymMatrix3x3& cov = iv->covMatrix();
       ss << " cov xx " << cov[0][0];
       ss << " yy " << cov[1][1];
       ss << " zz " << cov[2][2];
@@ -42,5 +40,4 @@ std::ostream& LHCb::HltVertexReports::fillStream(std::ostream& ss) const
   }
   ss << " }" << std::endl;
   return ss;
-
 }

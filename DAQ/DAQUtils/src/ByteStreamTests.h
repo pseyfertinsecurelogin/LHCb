@@ -16,29 +16,26 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-
 namespace DAQEventTests {
-/** @class ByteStreamTests ByteStreamTests.h tests/ByteStreamTests.h
- *
- *
- *  @author Matt Needham
- *  @date   2005-10-13
- */
-class ByteStreamTests : public GaudiAlgorithm {
-public:
-  /// Standard constructor
-  ByteStreamTests( const std::string& name, ISvcLocator* pSvcLocator );
+  /** @class ByteStreamTests ByteStreamTests.h tests/ByteStreamTests.h
+   *
+   *
+   *  @author Matt Needham
+   *  @date   2005-10-13
+   */
+  class ByteStreamTests : public GaudiAlgorithm {
+  public:
+    /// Standard constructor
+    ByteStreamTests( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ByteStreamTests( ); ///< Destructor
+    virtual ~ByteStreamTests(); ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute() override;       ///< Algorithm execution
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
 
-protected:
-
-private:
-
-};
+  protected:
+  private:
+  };
 
 } // namespace DAQEventTests
 

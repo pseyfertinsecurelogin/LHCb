@@ -32,108 +32,105 @@
  *
  */
 // ============================================================================
-namespace
-{
+namespace {
   template <class TYPE>
-  inline StatusCode _process
-  ( const std::string& name , const TYPE& cut )
-  {
-    LoKi::Hybrid::GenEngineActor& actor = LoKi::Hybrid::GenEngineActor::instance() ;
-    return actor.process ( name , cut ) ;
+  inline StatusCode _process( const std::string& name, const TYPE& cut ) {
+    LoKi::Hybrid::GenEngineActor& actor = LoKi::Hybrid::GenEngineActor::instance();
+    return actor.process( name, cut );
   }
-}
+} // namespace
 // ============================================================================
 // predicates
 // ============================================================================
 // add the cut
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GCuts&   cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GCuts& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // add the cut
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GVCuts&  cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GVCuts& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // functions
 // ============================================================================
 // add the function
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GFunc&   cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GFunc& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // add the function
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GVFunc&  cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GVFunc& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // maps
 // ============================================================================
 // add the map
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GMaps&   cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GMaps& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // add the map
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GVMaps&  cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GVMaps& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // pipe
 // ============================================================================
 // add the pipe
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GPipes&  cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GPipes& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // add the pipe
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GVPipes& cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GVPipes& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // fun-vals
 // ============================================================================
 // add the fun-val
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&           name ,
-  const LoKi::Types::GFunVals& cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GFunVals& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // add the fun-val
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&            name ,
-  const LoKi::Types::GVFunVals& cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GVFunVals& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // cut-vals
 // ============================================================================
 // add the cut-val
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&           name ,
-  const LoKi::Types::GCutVals& cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GCutVals& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // sources
 // ============================================================================
 // add the source
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&          name ,
-  const LoKi::Types::GSources& cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GSources& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 // add the source
 // ============================================================================
-StatusCode LoKi::Hybrid::GenEngine::process
-( const std::string&            name ,
-  const LoKi::Types::GVSources& cut  ) const { return _process ( name , cut ) ; }
+StatusCode LoKi::Hybrid::GenEngine::process( const std::string& name, const LoKi::Types::GVSources& cut ) const {
+  return _process( name, cut );
+}
 // ============================================================================
 
 // ============================================================================

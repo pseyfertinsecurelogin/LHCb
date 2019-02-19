@@ -17,7 +17,7 @@
 # =============================================================================
 """
 Decorate the Condition object with functions to extract 1d and 2d-histograms, and
-define functions to convert 1d and 2d histograms to Condition parameter strings.  
+define functions to convert 1d and 2d histograms to Condition parameter strings.
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl and Dmitry Golubkov"

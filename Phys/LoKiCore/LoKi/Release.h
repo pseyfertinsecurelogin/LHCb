@@ -32,8 +32,7 @@
  *  @date 2006-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** helper function to invoke properly TYPE::release method
    *  avoiding the template ambiguity for GCC compiler
@@ -42,13 +41,12 @@ namespace LoKi
    *  @date   2006-03-11
    */
   template <class TYPE>
-  inline bool release( TYPE* obj )
-  {
-    if ( obj ) { obj->release() ; }
-    return obj != nullptr ;
+  inline bool release( TYPE* obj ) {
+    if ( obj ) { obj->release(); }
+    return obj != nullptr;
   }
   // ==========================================================================
-} //end of namespace LoKi
+} // end of namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

@@ -22,7 +22,6 @@
 // from Kernel
 #include "Kernel/IUTChannelIDSelector.h"
 
-
 /** @class UTLayerSelector UTLayerSelector.h
  *
  *  Algorithm to remove clusters in excluded layers
@@ -31,22 +30,19 @@
  *  @date   2018-09-04
  */
 
-class UTLayerSelector : public extends<GaudiTool, IUTChannelIDSelector>
-{
+class UTLayerSelector : public extends<GaudiTool, IUTChannelIDSelector> {
 
 public:
   using base_class::base_class;
-  UTLayerSelector ( const UTLayerSelector & ) = delete;
-  UTLayerSelector& operator= ( const UTLayerSelector& ) = delete;
+  UTLayerSelector( const UTLayerSelector& ) = delete;
+  UTLayerSelector& operator=( const UTLayerSelector& ) = delete;
 
-  bool select (const LHCb::UTChannelID& id ) const override;
-  bool operator() ( const LHCb::UTChannelID& id ) const override;
+  bool select( const LHCb::UTChannelID& id ) const override;
+  bool operator()( const LHCb::UTChannelID& id ) const override;
 
 private:
-
-  Gaudi::Property<std::string> m_detType { this,  "DetType", "UT" };
-  Gaudi::Property<std::vector<std::string>> m_ignoredLayers { this, "IgnoredLayers" };
-
+  Gaudi::Property<std::string>              m_detType{this, "DetType", "UT"};
+  Gaudi::Property<std::vector<std::string>> m_ignoredLayers{this, "IgnoredLayers"};
 };
 
 #endif // UTLAYERSELECTOR_H

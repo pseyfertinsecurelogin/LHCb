@@ -18,10 +18,10 @@
 // local
 // ============================================================================
 #include "LoKi/BasicFunctors.h"
-#include "LoKi/Primitives.h"
-#include "LoKi/Filters.h"
-#include "LoKi/Scalers.h"
 #include "LoKi/Dumper.h"
+#include "LoKi/Filters.h"
+#include "LoKi/Primitives.h"
+#include "LoKi/Scalers.h"
 // ============================================================================
 /** @file
  *  Implementation file for classes form namesapce LoKi::Functors
@@ -39,22 +39,17 @@
  */
 // ============================================================================
 template <>
-std::vector<double>
-LoKi::Functors::Dump_<double>::operator()( const std::vector<double>& a ) const
-{
-  m_stream << m_dump.open  () ;
+std::vector<double> LoKi::Functors::Dump_<double>::operator()( const std::vector<double>& a ) const {
+  m_stream << m_dump.open();
   //
   if ( a.size() <= m_dump.nMax() ) {
-    Gaudi::Utils::toStream
-      ( a.begin() , a.end() , m_stream , "[ " , " ]" , " , " ) ;
+    Gaudi::Utils::toStream( a.begin(), a.end(), m_stream, "[ ", " ]", " , " );
   } else {
-    Gaudi::Utils::toStream
-      ( a.begin() , std::next(a.begin(), m_dump.nMax()) ,
-        m_stream , "[ " , " , ... ]" , " , " ) ;
+    Gaudi::Utils::toStream( a.begin(), std::next( a.begin(), m_dump.nMax() ), m_stream, "[ ", " , ... ]", " , " );
   }
   //
-  m_stream << m_dump.close () ;
-  return a ;
+  m_stream << m_dump.close();
+  return a;
 }
 // ============================================================================
 // The END

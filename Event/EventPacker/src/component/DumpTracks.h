@@ -26,21 +26,17 @@
  *  @author Marco Cattaneo
  *  @date   2004-07-14
  */
-class DumpTracks : public GaudiAlgorithm
-{
+class DumpTracks : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   DumpTracks( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode execute() override; ///< Algorithm execution
 
 private:
-
-  unsigned int m_numObjects;    ///< Number of objects to print
-  std::string m_tracksLocation; ///< Location of tracks container
-
+  unsigned int m_numObjects;     ///< Number of objects to print
+  std::string  m_tracksLocation; ///< Location of tracks container
 };
 
 #endif // DUMPTRACKS_H

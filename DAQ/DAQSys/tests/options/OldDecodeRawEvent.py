@@ -21,57 +21,63 @@ print "# WARNING: You have imported DecodeRawEvent.py, there is now a configurab
 print __doc__
 
 from Gaudi.Configuration import *
-from Configurables import ( DataOnDemandSvc,
-                            DecodeVeloRawBuffer,
-                            RawBankToSTClusterAlg,
-                            DecodeVeloRawBuffer,
-                            RawBankToSTLiteClusterAlg,
-                            FTRawBankDecoder )
+from Configurables import (DataOnDemandSvc, DecodeVeloRawBuffer,
+                           RawBankToSTClusterAlg, DecodeVeloRawBuffer,
+                           RawBankToSTLiteClusterAlg, FTRawBankDecoder)
 # for the upgrade
 #VPLiteClusters = VPRawBankToLiteCluster("createVPLiteClusters")
 #VPLiteClusters.ClusterLocation  = "Raw/VP/LiteClusters"
 #VPClusters     = VPRawBankToPartialCluster("createVPClusters")
 #VPClusters.ClusterLocation = "Raw/VP/Clusters"
 #
-FTClusters =  FTRawBankDecoder("createFTClusters")
+FTClusters = FTRawBankDecoder("createFTClusters")
 # Set up the algorithms
-#DataOnDemandSvc().AlgMap["Raw/VP/Clusters"]       = VPClusters 
+#DataOnDemandSvc().AlgMap["Raw/VP/Clusters"]       = VPClusters
 #DataOnDemandSvc().AlgMap["Raw/VP/LiteClusters"]   = VPLiteClusters
-DataOnDemandSvc().AlgMap["Raw/Velo/Clusters"]     = "DecodeVeloRawBuffer/createVeloClusters"
-DataOnDemandSvc().AlgMap["Raw/TT/Clusters"]       = "RawBankToSTClusterAlg/createTTClusters"
-DataOnDemandSvc().AlgMap["Raw/IT/Clusters"]       = "RawBankToSTClusterAlg/createITClusters"
-DataOnDemandSvc().AlgMap["Raw/Velo/LiteClusters"] = "DecodeVeloRawBuffer/createVeloLiteClusters"
-DataOnDemandSvc().AlgMap["Raw/TT/LiteClusters"]   = "RawBankToSTLiteClusterAlg/createTTLiteClusters"
-DataOnDemandSvc().AlgMap["Raw/IT/LiteClusters"]   = "RawBankToSTLiteClusterAlg/createITLiteClusters"
-DataOnDemandSvc().AlgMap["Raw/OT/Times"]          = "OTTimeCreator"
+DataOnDemandSvc(
+).AlgMap["Raw/Velo/Clusters"] = "DecodeVeloRawBuffer/createVeloClusters"
+DataOnDemandSvc(
+).AlgMap["Raw/TT/Clusters"] = "RawBankToSTClusterAlg/createTTClusters"
+DataOnDemandSvc(
+).AlgMap["Raw/IT/Clusters"] = "RawBankToSTClusterAlg/createITClusters"
+DataOnDemandSvc().AlgMap[
+    "Raw/Velo/LiteClusters"] = "DecodeVeloRawBuffer/createVeloLiteClusters"
+DataOnDemandSvc().AlgMap[
+    "Raw/TT/LiteClusters"] = "RawBankToSTLiteClusterAlg/createTTLiteClusters"
+DataOnDemandSvc().AlgMap[
+    "Raw/IT/LiteClusters"] = "RawBankToSTLiteClusterAlg/createITLiteClusters"
+DataOnDemandSvc().AlgMap["Raw/OT/Times"] = "OTTimeCreator"
 
 #Error in original script! This was actually decoding somewhere else!
 #DataOnDemandSvc().AlgMap["Raw/FT/RawClusters"]    = FTClusters
-DataOnDemandSvc().AlgMap["Raw/FT/LiteClusters"]    = FTClusters
-DataOnDemandSvc().AlgMap["Raw/Muon/Coords"]       = "MuonRec"
-DataOnDemandSvc().AlgMap["DAQ/ODIN"]              = "createODIN"
-DataOnDemandSvc().AlgMap["Raw/Rich/L1Data/RICH1RICH2"] = "Rich::Future::RawBankDecoder/RichFutureDecode"
+DataOnDemandSvc().AlgMap["Raw/FT/LiteClusters"] = FTClusters
+DataOnDemandSvc().AlgMap["Raw/Muon/Coords"] = "MuonRec"
+DataOnDemandSvc().AlgMap["DAQ/ODIN"] = "createODIN"
+DataOnDemandSvc().AlgMap[
+    "Raw/Rich/L1Data/RICH1RICH2"] = "Rich::Future::RawBankDecoder/RichFutureDecode"
 
-RawBankToSTClusterAlg("createITClusters").clusterLocation         = "Raw/IT/Clusters"
-RawBankToSTClusterAlg("createITClusters").DetType                 = "IT"
-RawBankToSTClusterAlg("createITClusters").summaryLocation         = "Rec/IT/Summary"
-RawBankToSTLiteClusterAlg("createITLiteClusters").clusterLocation = "Raw/IT/LiteClusters"
-RawBankToSTLiteClusterAlg("createITLiteClusters").DetType         = "IT"
+RawBankToSTClusterAlg("createITClusters").clusterLocation = "Raw/IT/Clusters"
+RawBankToSTClusterAlg("createITClusters").DetType = "IT"
+RawBankToSTClusterAlg("createITClusters").summaryLocation = "Rec/IT/Summary"
+RawBankToSTLiteClusterAlg(
+    "createITLiteClusters").clusterLocation = "Raw/IT/LiteClusters"
+RawBankToSTLiteClusterAlg("createITLiteClusters").DetType = "IT"
 
-RawBankToSTClusterAlg("createUTClusters").clusterLocation         = "Raw/UT/Clusters"
-RawBankToSTClusterAlg("createUTClusters").DetType                 = "UT"
-RawBankToSTClusterAlg("createUTClusters").summaryLocation         = "Rec/UT/Summary"
-RawBankToSTLiteClusterAlg("createUTLiteClusters").clusterLocation = "Raw/UT/LiteClusters"
-RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType         = "UT"
+RawBankToSTClusterAlg("createUTClusters").clusterLocation = "Raw/UT/Clusters"
+RawBankToSTClusterAlg("createUTClusters").DetType = "UT"
+RawBankToSTClusterAlg("createUTClusters").summaryLocation = "Rec/UT/Summary"
+RawBankToSTLiteClusterAlg(
+    "createUTLiteClusters").clusterLocation = "Raw/UT/LiteClusters"
+RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType = "UT"
 
 #Moved to ST/STTools/python/STTools/STOfflineConf, as with TT and IT
 #from Configurables import STOfflinePosition
 #UT = STOfflinePosition('ToolSvc.UTClusterPosition')
 #UT.DetType = "UT"
 
-DecodeVeloRawBuffer("createVeloClusters").DecodeToVeloClusters     = True
+DecodeVeloRawBuffer("createVeloClusters").DecodeToVeloClusters = True
 DecodeVeloRawBuffer("createVeloClusters").DecodeToVeloLiteClusters = False
-DecodeVeloRawBuffer("createVeloLiteClusters").DecodeToVeloClusters     = False
+DecodeVeloRawBuffer("createVeloLiteClusters").DecodeToVeloClusters = False
 DecodeVeloRawBuffer("createVeloLiteClusters").DecodeToVeloLiteClusters = True
 
 #Rich__DAQ__RawBufferToRichDigitsAlg("RichRawEventToDigits").DecodeBufferOnly = False
@@ -79,6 +85,6 @@ DecodeVeloRawBuffer("createVeloLiteClusters").DecodeToVeloLiteClusters = True
 from Configurables import CaloDigitConf
 CaloDigitConf(EnableDigitsOnDemand=True).applyConf()
 
-importOptions( "$L0DUOPTS/L0OnDemand.opts" )
+importOptions("$L0DUOPTS/L0OnDemand.opts")
 
 print __doc__

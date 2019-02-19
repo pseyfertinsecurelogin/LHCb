@@ -11,8 +11,8 @@
 // Include files
 
 // from Gaudi
-#include "GaudiKernel/Incident.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Incident.h"
 
 // detector description
 #include "DetDesc/RunChangeIncident.h"
@@ -36,53 +36,43 @@ using namespace LHCbAlgsTests;
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-TestTimeDecoderOdin::TestTimeDecoderOdin( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
-  : GaudiTool ( type, name , parent )
-{
-  declareInterface<IEventTimeDecoder>(this);
-  declareProperty("FirstRunNumber", m_currentRun=1);
-  declareProperty("RunNumberStep", m_runNumberStep=1);
+TestTimeDecoderOdin::TestTimeDecoderOdin( const std::string& type, const std::string& name, const IInterface* parent )
+    : GaudiTool( type, name, parent ) {
+  declareInterface<IEventTimeDecoder>( this );
+  declareProperty( "FirstRunNumber", m_currentRun = 1 );
+  declareProperty( "RunNumberStep", m_runNumberStep = 1 );
 }
 
 //=========================================================================
 //  Return the time of current event
 //=========================================================================
-Gaudi::Time TestTimeDecoderOdin::getTime ( ) const
-{
+Gaudi::Time TestTimeDecoderOdin::getTime() const {
 
   // As a real EventTimeDecoder, the event time can be retrieved only in RUNNING
   // state, i.e. when the event can be loaded.
-  if (FSMState() != Gaudi::StateMachine::RUNNING)
-    return Gaudi::Time::epoch();
+  if ( FSMState() != Gaudi::StateMachine::RUNNING ) return Gaudi::Time::epoch();
 
-  static Gaudi::Time last_time(0);
-  static bool first = true;
+  static Gaudi::Time last_time( 0 );
+  static bool        first = true;
 
-  LHCb::ODIN *odin = new LHCb::ODIN();
+  LHCb::ODIN* odin = new LHCb::ODIN();
 
-  if ( UNLIKELY(first) )
-  {
-    odin->setRunNumber(m_currentRun);
+  if ( UNLIKELY( first ) ) {
+    odin->setRunNumber( m_currentRun );
     first = false;
-  }
-  else
-  {
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << "Firing " << IncidentType::RunChange << " incident. Old run="
-              << m_currentRun;
+  } else {
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
+      debug() << "Firing " << IncidentType::RunChange << " incident. Old run=" << m_currentRun;
     m_currentRun += m_runNumberStep;
-    odin->setRunNumber(m_currentRun);
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << ", new run=" << m_currentRun << endmsg;
+    odin->setRunNumber( m_currentRun );
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << ", new run=" << m_currentRun << endmsg;
   }
 
-  put(odin,LHCb::ODINLocation::Default);
+  put( odin, LHCb::ODINLocation::Default );
 
   last_time = odin->eventTime();
 
-  incSvc()->fireIncident(RunChangeIncident(name(), m_currentRun, last_time));
+  incSvc()->fireIncident( RunChangeIncident( name(), m_currentRun, last_time ) );
 
   return last_time;
 }

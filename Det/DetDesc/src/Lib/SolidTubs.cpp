@@ -14,10 +14,10 @@
 #include "boost/container/static_vector.hpp"
 // DetDesc includes
 #include "DetDesc/DetDesc.h"
-#include "DetDesc/SolidTubs.h"
 #include "DetDesc/SolidBox.h"
-#include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidTicks.h"
+#include "DetDesc/SolidTubs.h"
 //
 #include <memory>
 
@@ -42,44 +42,40 @@
  *  @exception SolidException wrong parameter range
  */
 // ============================================================================
-SolidTubs::SolidTubs( const std::string& name          ,
-                      const double       ZHalfLength   ,
-                      const double       OuterRadius   ,
-                      const double       InnerRadius   ,
-                      const double       StartPhiAngle ,
-                      const double       DeltaPhiAngle ,
-                      const int          CoverModel    )
-  : SolidBase             ( name          )
-  , m_tubs_zHalfLength    ( ZHalfLength   )
-  , m_tubs_outerRadius    ( OuterRadius   )
-  , m_tubs_innerRadius    ( InnerRadius   )
-  , m_tubs_startPhiAngle  ( StartPhiAngle )
-  , m_tubs_deltaPhiAngle  ( DeltaPhiAngle )
-  , m_tubs_coverModel     ( CoverModel    )
-  , m_noPhiGap            ( true          )
-{
-  if( 0 >= ZHalfLength )
-    { throw SolidException("SolidTubs::ZHalfLength is not positive!"); }
-  if( 0 >= OuterRadius )
-    { throw SolidException("SolidTubs::OuterRadius is not positive!"); }
-  if( 0 >  InnerRadius )
-    { throw SolidException("SolidTubs::InnerRadius is negative    !"); }
-  if( InnerRadius >= OuterRadius )
-    { throw SolidException("SolidTubs::InnerRadius >= OuterRadius !"); }
-  if( -180.0 * Gaudi::Units::degree > StartPhiAngle )
-    { throw SolidException("SolidTubs::StartPhiAngle is < -180 degree! "); }
-  if(  360.0 * Gaudi::Units::degree < StartPhiAngle )
-    { throw SolidException("SolidTubs::StartPhiAngle is >  360 degree! "); }
-  if(    0.0 * Gaudi::Units::degree > DeltaPhiAngle )
-    { throw SolidException("SolidTubs::DeltaPhiAngle is <    0 degree! "); }
-  if(  360.0 * Gaudi::Units::degree < DeltaPhiAngle )
-    { throw SolidException("SolidTubs::DeltaPhiAngle is >  360 degree! "); }
-  if(  360.0 * Gaudi::Units::degree < StartPhiAngle + DeltaPhiAngle )
-    { throw SolidException("SolidTubs::StartPhiAngle+DeltaPhiAngle >2pi"); }
+SolidTubs::SolidTubs( const std::string& name, const double ZHalfLength, const double OuterRadius,
+                      const double InnerRadius, const double StartPhiAngle, const double DeltaPhiAngle,
+                      const int CoverModel )
+    : SolidBase( name )
+    , m_tubs_zHalfLength( ZHalfLength )
+    , m_tubs_outerRadius( OuterRadius )
+    , m_tubs_innerRadius( InnerRadius )
+    , m_tubs_startPhiAngle( StartPhiAngle )
+    , m_tubs_deltaPhiAngle( DeltaPhiAngle )
+    , m_tubs_coverModel( CoverModel )
+    , m_noPhiGap( true ) {
+  if ( 0 >= ZHalfLength ) { throw SolidException( "SolidTubs::ZHalfLength is not positive!" ); }
+  if ( 0 >= OuterRadius ) { throw SolidException( "SolidTubs::OuterRadius is not positive!" ); }
+  if ( 0 > InnerRadius ) { throw SolidException( "SolidTubs::InnerRadius is negative    !" ); }
+  if ( InnerRadius >= OuterRadius ) { throw SolidException( "SolidTubs::InnerRadius >= OuterRadius !" ); }
+  if ( -180.0 * Gaudi::Units::degree > StartPhiAngle ) {
+    throw SolidException( "SolidTubs::StartPhiAngle is < -180 degree! " );
+  }
+  if ( 360.0 * Gaudi::Units::degree < StartPhiAngle ) {
+    throw SolidException( "SolidTubs::StartPhiAngle is >  360 degree! " );
+  }
+  if ( 0.0 * Gaudi::Units::degree > DeltaPhiAngle ) {
+    throw SolidException( "SolidTubs::DeltaPhiAngle is <    0 degree! " );
+  }
+  if ( 360.0 * Gaudi::Units::degree < DeltaPhiAngle ) {
+    throw SolidException( "SolidTubs::DeltaPhiAngle is >  360 degree! " );
+  }
+  if ( 360.0 * Gaudi::Units::degree < StartPhiAngle + DeltaPhiAngle ) {
+    throw SolidException( "SolidTubs::StartPhiAngle+DeltaPhiAngle >2pi" );
+  }
   //
-  m_noPhiGap = true ;
-  if(   0 * Gaudi::Units::degree != startPhiAngle() ) { m_noPhiGap = false ; }
-  if( 360 * Gaudi::Units::degree != deltaPhiAngle() ) { m_noPhiGap = false ; }
+  m_noPhiGap = true;
+  if ( 0 * Gaudi::Units::degree != startPhiAngle() ) { m_noPhiGap = false; }
+  if ( 360 * Gaudi::Units::degree != deltaPhiAngle() ) { m_noPhiGap = false; }
   // set bounding parameters
   setBP();
   //
@@ -90,92 +86,84 @@ SolidTubs::SolidTubs( const std::string& name          ,
 // ============================================================================
 /// set parameters for bounding solids (box, sphere and cylinder)
 // ============================================================================
-void SolidTubs::setBP()
-{
+void SolidTubs::setBP() {
   // set bounding paramters of SolidBase class
-  setZMin   ( -zHalfLength() );
-  setZMax   (  zHalfLength() );
-  setRhoMax (  outerRadius() );
-  setRMax   ( sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
+  setZMin( -zHalfLength() );
+  setZMax( zHalfLength() );
+  setRhoMax( outerRadius() );
+  setRMax( sqrt( zMax() * zMax() + rhoMax() * rhoMax() ) );
 
-  const double phi1   = startPhiAngle   ()                      ;
-  const double phi2   = startPhiAngle   () + deltaPhiAngle   () ;
-  const auto sphi1 = sin(phi1); const auto cphi1 = cos(phi1);
-  const auto sphi2 = sin(phi2); const auto cphi2 = cos(phi2);
+  const double phi1  = startPhiAngle();
+  const double phi2  = startPhiAngle() + deltaPhiAngle();
+  const auto   sphi1 = sin( phi1 );
+  const auto   cphi1 = cos( phi1 );
+  const auto   sphi2 = sin( phi2 );
+  const auto   cphi2 = cos( phi2 );
 
-  const double rhoMin = innerRadius     () ;
+  const double rhoMin = innerRadius();
 
   { // evaluate xmin & xmax
-    boost::container::static_vector<double,12> values;
+    boost::container::static_vector<double, 12> values;
 
     // regular cases
-    values.push_back( rhoMax () * cphi1 );
-    values.push_back( rhoMax () * cphi2 );
-    values.push_back( rhoMin    * cphi1 );
-    values.push_back( rhoMin    * cphi2 );
+    values.push_back( rhoMax() * cphi1 );
+    values.push_back( rhoMax() * cphi2 );
+    values.push_back( rhoMin * cphi1 );
+    values.push_back( rhoMin * cphi2 );
 
     // special cases
-    if( phi1 <=    0*Gaudi::Units::degree &&    0*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back (   rhoMax () ) ;
-        values.push_back (   rhoMin    )  ;
-      }
-    if( phi1 <=  360*Gaudi::Units::degree &&  360*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back (   rhoMax () ) ;
-        values.push_back (   rhoMin    ) ;
-      }
+    if ( phi1 <= 0 * Gaudi::Units::degree && 0 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( rhoMax() );
+      values.push_back( rhoMin );
+    }
+    if ( phi1 <= 360 * Gaudi::Units::degree && 360 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( rhoMax() );
+      values.push_back( rhoMin );
+    }
 
     // special cases
-    if( phi1 <=  180*Gaudi::Units::degree &&  180*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
-    if( phi1 <= -180*Gaudi::Units::degree && -180*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
+    if ( phi1 <= 180 * Gaudi::Units::degree && 180 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( -rhoMax() );
+      values.push_back( -rhoMin );
+    }
+    if ( phi1 <= -180 * Gaudi::Units::degree && -180 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( -rhoMax() );
+      values.push_back( -rhoMin );
+    }
 
     auto minmax = std::minmax_element( values.begin(), values.end() );
-    setXMax ( *minmax.second );
-    setXMin ( *minmax.first );
-
+    setXMax( *minmax.second );
+    setXMin( *minmax.first );
   }
 
   { // evaluate ymin & ymax
-    boost::container::static_vector<double,10> values ;
+    boost::container::static_vector<double, 10> values;
 
     // regular cases
-    values.push_back( rhoMax () * sphi1 );
-    values.push_back( rhoMax () * sphi2 );
-    values.push_back( rhoMin    * sphi1 );
-    values.push_back( rhoMin    * sphi2 );
+    values.push_back( rhoMax() * sphi1 );
+    values.push_back( rhoMax() * sphi2 );
+    values.push_back( rhoMin * sphi1 );
+    values.push_back( rhoMin * sphi2 );
 
     // special cases
-    if( phi1 <=   90*Gaudi::Units::degree &&   90*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back (   rhoMax () ) ;
-        values.push_back (   rhoMin    ) ;
-      }
+    if ( phi1 <= 90 * Gaudi::Units::degree && 90 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( rhoMax() );
+      values.push_back( rhoMin );
+    }
 
     // special cases
-    if( phi1 <=  -90*Gaudi::Units::degree &&  -90*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
-    if( phi1 <=  270*Gaudi::Units::degree &&  270*Gaudi::Units::degree <= phi2 )
-      {
-        values.push_back ( - rhoMax () ) ;
-        values.push_back ( - rhoMin    ) ;
-      }
+    if ( phi1 <= -90 * Gaudi::Units::degree && -90 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( -rhoMax() );
+      values.push_back( -rhoMin );
+    }
+    if ( phi1 <= 270 * Gaudi::Units::degree && 270 * Gaudi::Units::degree <= phi2 ) {
+      values.push_back( -rhoMax() );
+      values.push_back( -rhoMin );
+    }
 
     auto minmax = std::minmax_element( values.begin(), values.end() );
-    setYMax ( *minmax.second );
-    setYMin ( *minmax.first );
-
+    setYMax( *minmax.second );
+    setYMin( *minmax.first );
   }
 
   //
@@ -189,17 +177,16 @@ void SolidTubs::setBP()
  */
 // ============================================================================
 SolidTubs::SolidTubs( const std::string& name )
-  : SolidBase             ( name          )
-  , m_tubs_zHalfLength    ( 10000000      )
-  , m_tubs_outerRadius    ( 10000000      )
-  , m_tubs_innerRadius    ( 0             )
-  , m_tubs_startPhiAngle  ( 0             )
-  , m_tubs_deltaPhiAngle  ( 360*Gaudi::Units::degree )
-  , m_tubs_coverModel     (        0      )
-  , m_noPhiGap            ( true          ) {
+    : SolidBase( name )
+    , m_tubs_zHalfLength( 10000000 )
+    , m_tubs_outerRadius( 10000000 )
+    , m_tubs_innerRadius( 0 )
+    , m_tubs_startPhiAngle( 0 )
+    , m_tubs_deltaPhiAngle( 360 * Gaudi::Units::degree )
+    , m_tubs_coverModel( 0 )
+    , m_noPhiGap( true ) {
   createCover();
 }
-
 
 // ============================================================================
 /** - check for the given 3D-point.
@@ -211,75 +198,46 @@ SolidTubs::SolidTubs( const std::string& name )
  *  @return true if the point is inside the solid
  */
 // ============================================================================
-bool SolidTubs::isInside( const Gaudi::XYZPoint   & point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidTubs::isInside( const Gaudi::XYZPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidTubs::isInside( const Gaudi::Polar3DPoint& point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidTubs::isInside( const Gaudi::Polar3DPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidTubs::isInside( const Gaudi::RhoZPhiPoint   & point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidTubs::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
 template <class aPoint>
-bool  SolidTubs::isInsideImpl( const aPoint & point ) const
-{
+bool SolidTubs::isInsideImpl( const aPoint& point ) const {
   // check Z
-  if( isOutBBox  ( point )  ) { return false ; }
+  if ( isOutBBox( point ) ) { return false; }
   // check for rho Rho
-  if( !insideRho ( point )  ) { return false ; }
+  if ( !insideRho( point ) ) { return false; }
   //  check for phi
-  if( !insidePhi ( point )  ) { return false ; }
+  if ( !insidePhi( point ) ) { return false; }
   //
-  return true ;
+  return true;
 }
 
 // ============================================================================
 void SolidTubs::createCover() {
-  if( 0 == m_tubs_coverModel ) {
-      if( 0.0   * Gaudi::Units::degree  != startPhiAngle() ||
-          360.0 * Gaudi::Units::degree  != deltaPhiAngle()    )
-        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
-                                                zHalfLength         () ,
-                                                outerRadius         () ,
-                                                innerRadius         () ); }
-      else if ( 0.0 != innerRadius() )
-        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
-                                                zHalfLength         () ,
-                                                outerRadius         () ); }
-      else
-        { m_cover = std::make_unique<SolidBox>("Cover for " + name () ,
-                                               outerRadius         () ,
-                                               outerRadius         () ,
-                                               zHalfLength         () ); }
+  if ( 0 == m_tubs_coverModel ) {
+    if ( 0.0 * Gaudi::Units::degree != startPhiAngle() || 360.0 * Gaudi::Units::degree != deltaPhiAngle() ) {
+      m_cover = std::make_unique<SolidTubs>( "Cover for " + name(), zHalfLength(), outerRadius(), innerRadius() );
+    } else if ( 0.0 != innerRadius() ) {
+      m_cover = std::make_unique<SolidTubs>( "Cover for " + name(), zHalfLength(), outerRadius() );
     } else {
-      if ( 0.0 != innerRadius() )
-        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
-                                                zHalfLength         () ,
-                                                outerRadius         () ,
-                                                0.0 * Gaudi::Units::mm ,
-                                                startPhiAngle       () ,
-                                                deltaPhiAngle       () ,
-                                                m_tubs_coverModel      ); }
-      else if( 0.0   * Gaudi::Units::degree  != startPhiAngle() ||
-               360.0 * Gaudi::Units::degree  != deltaPhiAngle()    )
-        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
-                                                zHalfLength         () ,
-                                                outerRadius         () ,
-                                                innerRadius         () ,
-                                                0.0 * Gaudi::Units::degree ,
-                                                360.0 * Gaudi::Units::degree ,
-                                                m_tubs_coverModel      ); }
-      else
-        { m_cover = std::make_unique<SolidBox>("Cover for " + name () ,
-                                               outerRadius         () ,
-                                               outerRadius         () ,
-                                               zHalfLength         () ); }
+      m_cover = std::make_unique<SolidBox>( "Cover for " + name(), outerRadius(), outerRadius(), zHalfLength() );
+    }
+  } else {
+    if ( 0.0 != innerRadius() ) {
+      m_cover =
+          std::make_unique<SolidTubs>( "Cover for " + name(), zHalfLength(), outerRadius(), 0.0 * Gaudi::Units::mm,
+                                       startPhiAngle(), deltaPhiAngle(), m_tubs_coverModel );
+    } else if ( 0.0 * Gaudi::Units::degree != startPhiAngle() || 360.0 * Gaudi::Units::degree != deltaPhiAngle() ) {
+      m_cover =
+          std::make_unique<SolidTubs>( "Cover for " + name(), zHalfLength(), outerRadius(), innerRadius(),
+                                       0.0 * Gaudi::Units::degree, 360.0 * Gaudi::Units::degree, m_tubs_coverModel );
+    } else {
+      m_cover = std::make_unique<SolidBox>( "Cover for " + name(), outerRadius(), outerRadius(), zHalfLength() );
+    }
   }
 }
 
@@ -303,94 +261,79 @@ void SolidTubs::createCover() {
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint&  Point,
-                                           const Gaudi::XYZVector& Vector,
-                                           ISolid::Ticks&          ticks ) const
-{
-  return intersectionTicksImpl(Point, Vector, ticks);
+unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint&  Point,
-                                           const Gaudi::Polar3DVector& Vector,
-                                           ISolid::Ticks&              ticks ) const
-{
-  return intersectionTicksImpl(Point, Vector, ticks);
+unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint&  Point,
-                                           const Gaudi::RhoZPhiVector& Vector,
-                                           ISolid::Ticks&              ticks ) const
-{
-  return intersectionTicksImpl(Point, Vector, ticks);
+unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidTubs::intersectionTicksImpl( const aPoint &  Point,
-                                               const aVector&  Vector,
-                                               ISolid::Ticks&  ticks  ) const
-{
+unsigned int SolidTubs::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
+                                               ISolid::Ticks& ticks ) const {
   /// clear the container
   ticks.clear();
   /// line with null direction vector is not able to intersect any solid.
-  if( Vector.mag2() == 0  )                 { return 0 ; } ///< RETURN!
+  if ( Vector.mag2() == 0 ) { return 0; } ///< RETURN!
 
   // need to optimize these
-  //if( !crossBSphere  ( point , vect ) )   { return 0 ; }
-  if( !crossBCylinder( Point , Vector ) )   { return 0 ; }
+  // if( !crossBSphere  ( point , vect ) )   { return 0 ; }
+  if ( !crossBCylinder( Point, Vector ) ) { return 0; }
 
   // first the cylinders
-  ISolid::Ticks tmpticks ;
-  SolidTicks::LineIntersectsTheCylinder( Point, Vector,outerRadius(),std::back_inserter( tmpticks   ) );
-  if( innerRadius() > 0 )
+  ISolid::Ticks tmpticks;
+  SolidTicks::LineIntersectsTheCylinder( Point, Vector, outerRadius(), std::back_inserter( tmpticks ) );
+  if ( innerRadius() > 0 )
     SolidTicks::LineIntersectsTheCylinder( Point, Vector, innerRadius(), std::back_inserter( tmpticks ) );
 
   // check that ticks are actually inside z-range and phi-range
-  for( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it)
-    if( fabs(Point.z() + *it * Vector.z()) <= zHalfLength() &&
-	(noPhiGap() ||
-	 insidePhi(atan2( Point.y() + *it * Vector.y(), Point.x() + *it * Vector.x())) ) )
-      ticks.push_back(*it) ;
+  for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it )
+    if ( fabs( Point.z() + *it * Vector.z() ) <= zHalfLength() &&
+         ( noPhiGap() || insidePhi( atan2( Point.y() + *it * Vector.y(), Point.x() + *it * Vector.x() ) ) ) )
+      ticks.push_back( *it );
 
   // find intersection points("ticks") with z-planes
-  tmpticks.clear() ;
-  SolidTicks::LineIntersectsTheZ( Point, Vector, -1.0 * zHalfLength() , std::back_inserter( tmpticks ) );
-  SolidTicks::LineIntersectsTheZ( Point, Vector,        zHalfLength() , std::back_inserter( tmpticks ) );
+  tmpticks.clear();
+  SolidTicks::LineIntersectsTheZ( Point, Vector, -1.0 * zHalfLength(), std::back_inserter( tmpticks ) );
+  SolidTicks::LineIntersectsTheZ( Point, Vector, zHalfLength(), std::back_inserter( tmpticks ) );
 
   // check that ticks are actually inside radial range and phi
-  for( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it) {
-    double x = Point.x() + *it * Vector.x() ;
-    double y = Point.y() + *it * Vector.y() ;
-    double r = sqrt(x*x+y*y) ;
-    if(innerRadius()<=r && r<=outerRadius() && (noPhiGap() || insidePhi( atan2(y,x) ) ) )
-      ticks.push_back(*it) ;
+  for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it ) {
+    double x = Point.x() + *it * Vector.x();
+    double y = Point.y() + *it * Vector.y();
+    double r = sqrt( x * x + y * y );
+    if ( innerRadius() <= r && r <= outerRadius() && ( noPhiGap() || insidePhi( atan2( y, x ) ) ) )
+      ticks.push_back( *it );
   }
 
-  if(!noPhiGap()) {
-    tmpticks.clear() ;
-    SolidTicks::LineIntersectsThePhi( Point,
-                                      Vector,
-                                      startPhiAngle(),
+  if ( !noPhiGap() ) {
+    tmpticks.clear();
+    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle(), std::back_inserter( tmpticks ) );
+    // if( deltaPhiAngle() != M_PI )
+    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle() + deltaPhiAngle(),
                                       std::back_inserter( tmpticks ) );
-    //if( deltaPhiAngle() != M_PI )
-    SolidTicks::LineIntersectsThePhi( Point,
-                                      Vector,
-                                      startPhiAngle() + deltaPhiAngle(),
-                                      std::back_inserter( tmpticks )   );
 
     // check that we are anywhere inside this cylinder
-    for( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it) {
-      if( fabs(Point.z() + *it * Vector.z()) < zHalfLength() ) {
-        double x = Point.x() + *it * Vector.x() ;
-        double y = Point.y() + *it * Vector.y() ;
-        double r = sqrt(x*x+y*y) ;
-        if(innerRadius()<=r && r<=outerRadius() )
-          ticks.push_back(*it) ;
+    for ( ISolid::Ticks::const_iterator it = tmpticks.begin(); it != tmpticks.end(); ++it ) {
+      if ( fabs( Point.z() + *it * Vector.z() ) < zHalfLength() ) {
+        double x = Point.x() + *it * Vector.x();
+        double y = Point.y() + *it * Vector.y();
+        double r = sqrt( x * x + y * y );
+        if ( innerRadius() <= r && r <= outerRadius() ) ticks.push_back( *it );
       }
     }
   }
 
-  std::sort(ticks.begin(),ticks.end()) ;
-  return SolidTicks::RemoveAdjacentTicksFast(ticks , Point , Vector , *this );
+  std::sort( ticks.begin(), ticks.end() );
+  return SolidTicks::RemoveAdjacentTicksFast( ticks, Point, Vector, *this );
 }
 
 // ============================================================================
@@ -403,22 +346,18 @@ unsigned int SolidTubs::intersectionTicksImpl( const aPoint &  Point,
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream&  SolidTubs::printOut      ( std::ostream&  os ) const
-{
+std::ostream& SolidTubs::printOut( std::ostream& os ) const {
   /// serialize the base
-  SolidBase::printOut( os ) ;
+  SolidBase::printOut( os );
   os << "["
-     << " sizeZ[mm]="         << DetDesc::print( zLength     () / Gaudi::Units::mm )
-     << " outerRadius[mm]="   << DetDesc::print( outerRadius () / Gaudi::Units::mm ) ;
-  if( 0 != innerRadius() )
-    { os << " innerRadius[mm]=" << DetDesc::print( innerRadius () / Gaudi::Units::mm ) ; }
-  if( 0.0   * Gaudi::Units::degree != startPhiAngle() ||
-      360.0 * Gaudi::Units::degree != deltaPhiAngle()   )
-    {
-      os << " startPhiAngle[deg]=" << DetDesc::print( startPhiAngle()/Gaudi::Units::degree)
-         << " deltaPhiAngle[deg]=" << DetDesc::print( deltaPhiAngle()/Gaudi::Units::degree) ;
-    };
-  return os << "]" << std::endl ;
+     << " sizeZ[mm]=" << DetDesc::print( zLength() / Gaudi::Units::mm )
+     << " outerRadius[mm]=" << DetDesc::print( outerRadius() / Gaudi::Units::mm );
+  if ( 0 != innerRadius() ) { os << " innerRadius[mm]=" << DetDesc::print( innerRadius() / Gaudi::Units::mm ); }
+  if ( 0.0 * Gaudi::Units::degree != startPhiAngle() || 360.0 * Gaudi::Units::degree != deltaPhiAngle() ) {
+    os << " startPhiAngle[deg]=" << DetDesc::print( startPhiAngle() / Gaudi::Units::degree )
+       << " deltaPhiAngle[deg]=" << DetDesc::print( deltaPhiAngle() / Gaudi::Units::degree );
+  };
+  return os << "]" << std::endl;
 }
 
 // ============================================================================
@@ -431,22 +370,18 @@ std::ostream&  SolidTubs::printOut      ( std::ostream&  os ) const
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream&     SolidTubs::printOut      ( MsgStream&     os ) const
-{
+MsgStream& SolidTubs::printOut( MsgStream& os ) const {
   /// serialize the base
-  SolidBase::printOut( os ) ;
+  SolidBase::printOut( os );
   os << "["
-     << " sizeZ[mm]="         << DetDesc::print( zLength     () / Gaudi::Units::mm )
-     << " outerRadius[mm]="   << DetDesc::print( outerRadius () / Gaudi::Units::mm ) ;
-  if( 0 != innerRadius() )
-    { os << " innerRadius[mm]=" << DetDesc::print( innerRadius () / Gaudi::Units::mm ) ; }
-  if( 0.0   * Gaudi::Units::degree != startPhiAngle() ||
-      360.0 * Gaudi::Units::degree != deltaPhiAngle()   )
-    {
-      os << " startPhiAngle[deg]=" << DetDesc::print( startPhiAngle()/Gaudi::Units::degree)
-         << " deltaPhiAngle[deg]=" << DetDesc::print( deltaPhiAngle()/Gaudi::Units::degree) ;
-    };
-  return os << "]" << endmsg ;
+     << " sizeZ[mm]=" << DetDesc::print( zLength() / Gaudi::Units::mm )
+     << " outerRadius[mm]=" << DetDesc::print( outerRadius() / Gaudi::Units::mm );
+  if ( 0 != innerRadius() ) { os << " innerRadius[mm]=" << DetDesc::print( innerRadius() / Gaudi::Units::mm ); }
+  if ( 0.0 * Gaudi::Units::degree != startPhiAngle() || 360.0 * Gaudi::Units::degree != deltaPhiAngle() ) {
+    os << " startPhiAngle[deg]=" << DetDesc::print( startPhiAngle() / Gaudi::Units::degree )
+       << " deltaPhiAngle[deg]=" << DetDesc::print( deltaPhiAngle() / Gaudi::Units::degree );
+  };
+  return os << "]" << endmsg;
 }
 
 // ============================================================================
@@ -472,45 +407,35 @@ MsgStream&     SolidTubs::printOut      ( MsgStream&     os ) const
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint  & Point,
-                                           const Gaudi::XYZVector & Vector,
-                                           const ISolid::Tick& tickMin,
-                                           const ISolid::Tick& tickMax,
-                                           ISolid::Ticks     & ticks) const
-{
-  return intersectionTicksImpl(Point, Vector, tickMin, tickMax, ticks);
+unsigned int SolidTubs::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                           const Gaudi::Polar3DVector & Vector,
-                                           const ISolid::Tick& tickMin,
-                                           const ISolid::Tick& tickMax,
-                                           ISolid::Ticks     & ticks) const
-{
-  return intersectionTicksImpl(Point, Vector, tickMin, tickMax, ticks);
+unsigned int SolidTubs::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                           const Gaudi::RhoZPhiVector & Vector,
-                                           const ISolid::Tick& tickMin,
-                                           const ISolid::Tick& tickMax,
-                                           ISolid::Ticks     & ticks) const
-{
-  return intersectionTicksImpl(Point, Vector, tickMin, tickMax, ticks);
+unsigned int SolidTubs::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
 template <class aPoint, class aVector>
-unsigned int SolidTubs::intersectionTicksImpl( const aPoint & Point,
-                                               const aVector& Vector,
-                                               const ISolid::Tick& tickMin,
-                                               const ISolid::Tick& tickMax,
-                                               ISolid::Ticks& ticks) const
-{
+unsigned int SolidTubs::intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
+                                               const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const {
   // don't call down to SolidBase because it performs more complicated
   // tick operations than we need
-  if( isOutBBox( Point , Vector , tickMin , tickMax  )  ) { ticks.clear() ; return 0 ; }
-  SolidTubs::intersectionTicksImpl( Point,Vector,ticks );
-  return SolidTicks::adjustToTickRange( ticks, tickMin, tickMax ) ;
+  if ( isOutBBox( Point, Vector, tickMin, tickMax ) ) {
+    ticks.clear();
+    return 0;
+  }
+  SolidTubs::intersectionTicksImpl( Point, Vector, ticks );
+  return SolidTicks::adjustToTickRange( ticks, tickMin, tickMax );
 }
 // ============================================================================
 

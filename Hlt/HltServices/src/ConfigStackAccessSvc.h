@@ -12,15 +12,14 @@
 #define CONFIGFILEACCESSSVC_H 1
 
 // Include files
-#include <string>
-#include <memory>
 #include "boost/ptr_container/ptr_vector.hpp"
+#include <memory>
+#include <string>
 // from Gaudi
-#include "Kernel/IConfigAccessSvc.h"
-#include "GaudiKernel/Service.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
+#include "Kernel/IConfigAccessSvc.h"
 #include "Kernel/PropertyConfig.h"
-
 
 /** @class ConfigStackAccessSvc ConfigStackAccessSvc.h
  *
@@ -39,22 +38,22 @@ class ConfigStackAccessSvc : public extends<Service, IConfigAccessSvc> {
 public:
   using extends::extends;
 
-  StatusCode initialize() override;    ///< Service initialization
-  StatusCode finalize() override;    ///< Service finalization
+  StatusCode initialize() override; ///< Service initialization
+  StatusCode finalize() override;   ///< Service finalization
 
-  std::optional<PropertyConfig> readPropertyConfig(const PropertyConfig::digest_type& ref) override;
-  PropertyConfig::digest_type    writePropertyConfig(const PropertyConfig& config) override;
+  std::optional<PropertyConfig> readPropertyConfig( const PropertyConfig::digest_type& ref ) override;
+  PropertyConfig::digest_type   writePropertyConfig( const PropertyConfig& config ) override;
 
-  std::optional<ConfigTreeNode> readConfigTreeNode(const ConfigTreeNode::digest_type& ref) override;
-  ConfigTreeNode::digest_type    writeConfigTreeNode(const ConfigTreeNode& edge) override;
+  std::optional<ConfigTreeNode> readConfigTreeNode( const ConfigTreeNode::digest_type& ref ) override;
+  ConfigTreeNode::digest_type   writeConfigTreeNode( const ConfigTreeNode& edge ) override;
 
-  std::optional<ConfigTreeNode>  readConfigTreeNodeAlias(const ConfigTreeNodeAlias::alias_type&) override;
-  ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias(const ConfigTreeNodeAlias&) override;
+  std::optional<ConfigTreeNode>   readConfigTreeNodeAlias( const ConfigTreeNodeAlias::alias_type& ) override;
+  ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& ) override;
 
-  std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type& alias) override;
+  std::vector<ConfigTreeNodeAlias> configTreeNodeAliases( const ConfigTreeNodeAlias::alias_type& alias ) override;
 
 private:
-  Gaudi::Property<std::vector<std::string>>             s_svcs { this, "ConfigAccessSvcs", {{"ConfigCDBAccessSvc"}} };
-  boost::ptr_vector<IConfigAccessSvc>  m_svcs;
+  Gaudi::Property<std::vector<std::string>> s_svcs{this, "ConfigAccessSvcs", {{"ConfigCDBAccessSvc"}}};
+  boost::ptr_vector<IConfigAccessSvc>       m_svcs;
 };
 #endif // CONFIGFILEACCESSSVC_H

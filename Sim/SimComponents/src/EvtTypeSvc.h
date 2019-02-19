@@ -14,16 +14,15 @@
 // Include files
 #include "GaudiKernel/Service.h"
 // from Gaudi
-#include "Kernel/IEvtTypeSvc.h"
 #include "EvtTypeInfo.h"
+#include "Kernel/IEvtTypeSvc.h"
 
-#include <string>
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include <set>
 #include <vector>
-
 
 /** @class EvtTypeSvc EvtTypeSvc.h
  *
@@ -36,10 +35,8 @@
  *  Added implimentation of allTypes(void), returning a std::set of all known types
  *
  */
-class EvtTypeSvc : public extends<Service,IEvtTypeSvc>
-{
+class EvtTypeSvc : public extends<Service, IEvtTypeSvc> {
 public:
-
   /// Initialize the service.
   StatusCode initialize() override;
 
@@ -65,8 +62,7 @@ public:
   /** return a set of all known event types
    *  @see IEvtTypeSvc
    */
-  LHCb::EventTypeSet allTypes( ) const override;
-
+  LHCb::EventTypeSet allTypes() const override;
 
   /** Standard Constructor.
    *  @param  name   String with service name
@@ -75,21 +71,17 @@ public:
   EvtTypeSvc( const std::string& name, ISvcLocator* svc );
 
 private:
-
   /// Parse the input table containing all known event types and
   /// theirs' nicknames and ascii descriptor
   StatusCode parseFile( const std::string input );
 
   /// Name of file with input table
-  const std::string& inputFile() const {
-    return m_inputFile;
-  }
+  const std::string& inputFile() const { return m_inputFile; }
 
   /// Typedefs
 
   // Data
-  std::string  m_inputFile;    ///< Name of input file with necessary info
+  std::string              m_inputFile;    ///< Name of input file with necessary info
   std::vector<EvtTypeInfo> m_evtTypeInfos; ///< List of objects containing all EvtType info
-
 };
 #endif // EVTTYPESVC_H

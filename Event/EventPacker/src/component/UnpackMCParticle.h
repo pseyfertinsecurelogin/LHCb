@@ -14,8 +14,8 @@
 #include "Event/MCParticle.h"
 #include "Event/PackedMCParticle.h"
 
-#include "GaudiKernel/DataHandle.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/DataHandle.h"
 
 /**
  * The algorithm provides access to previously packed MC particles at a TES location.
@@ -25,20 +25,18 @@
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class UnpackMCParticle : public GaudiAlgorithm
-{
+class UnpackMCParticle : public GaudiAlgorithm {
 
 public:
-
   using GaudiAlgorithm::GaudiAlgorithm;
   StatusCode execute() override;
 
 private:
-
-  DataObjectReadHandle<LHCb::PackedMCParticles> m_packedMCParticles{this, "InputName", LHCb::PackedMCParticleLocation::Default};
-  DataObjectWriteHandle<LHCb::MCParticles> m_MCParticles{this, "OutputName", LHCb::MCParticleLocation::Default };
-  Gaudi::Property<bool> m_alwaysOutput {this, "AlwaysCreateOutput", false, "Flag to turn on the creation of output, even when input is missing" };
-
+  DataObjectReadHandle<LHCb::PackedMCParticles> m_packedMCParticles{this, "InputName",
+                                                                    LHCb::PackedMCParticleLocation::Default};
+  DataObjectWriteHandle<LHCb::MCParticles>      m_MCParticles{this, "OutputName", LHCb::MCParticleLocation::Default};
+  Gaudi::Property<bool>                         m_alwaysOutput{this, "AlwaysCreateOutput", false,
+                                       "Flag to turn on the creation of output, even when input is missing"};
 };
 
 #endif // UNPACKMCPARTICLE_H

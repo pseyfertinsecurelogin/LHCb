@@ -22,8 +22,7 @@
 // std include
 #include <iostream>
 
-namespace Rich
-{
+namespace Rich {
 
   /** @class MirrorSegPosition RichDet/RichMirrorSegPosition.h
    *
@@ -33,11 +32,9 @@ namespace Rich
    *  @author Antonis Papanestis a.papanestis@rl.ac.uk
    *  @date   2004-06-30
    */
-  class MirrorSegPosition
-  {
+  class MirrorSegPosition {
 
   public: // definitions
-
     /// Type for dataword
     typedef unsigned int ShortType;
 
@@ -53,7 +50,6 @@ namespace Rich
     static constexpr ShortType MaskColumn = ( ( 1 << BitsColumn ) - 1 ) << ShiftColumn;
 
   public:
-
     /** Access to the full bit-packed data word
      *
      *  @return the bit-packed data word
@@ -81,23 +77,18 @@ namespace Rich
     inline int column() const noexcept { return ( ( data() & MaskColumn ) >> ShiftColumn ); }
 
   private: // methods
-
-    inline void set( const ShortType value, const ShortType shift, const ShortType mask ) noexcept
-    {
+    inline void set( const ShortType value, const ShortType shift, const ShortType mask ) noexcept {
       setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
     }
 
   private: // data
-
     /// The bit-pack data word
-    ShortType m_data { 0 };
+    ShortType m_data{0};
   };
 
 } // namespace Rich
 
 /// overloaded output to MsgStream
-inline std::ostream &
-operator<<( std::ostream &os, const Rich::MirrorSegPosition &pos )
-{
+inline std::ostream& operator<<( std::ostream& os, const Rich::MirrorSegPosition& pos ) {
   return os << "Mirror Segment row:" << pos.row() << " column:" << pos.column();
 }

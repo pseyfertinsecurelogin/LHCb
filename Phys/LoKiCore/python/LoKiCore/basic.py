@@ -38,38 +38,38 @@ A.Golutvin, P.Koppenburg have been used in the design.
 
 """
 # =============================================================================
-__author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__date__    = "2010-09-27"
+__author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
+__date__ = "2010-09-27"
 __version__ = "SVN $Revision$ "
 # =============================================================================
-__all__     = (
-    'cpp'   ,  ## global C++ namespace 
-    'std'   ,  ## C++ 'std'   namespace 
-    'LoKi'  ,  ## C++ 'LoKi'  namespace 
-    'LHCb'  ,  ## C++ 'LHCb'  namespace 
-    'Gaudi'    ## C++ 'Gaudi' namespace
-    )
+__all__ = (
+    'cpp',  ## global C++ namespace
+    'std',  ## C++ 'std'   namespace
+    'LoKi',  ## C++ 'LoKi'  namespace
+    'LHCb',  ## C++ 'LHCb'  namespace
+    'Gaudi'  ## C++ 'Gaudi' namespace
+)
 # =============================================================================
 import cppyy
 
 # namespaces shortcuts
-cpp   = cppyy.gbl
-std   = cpp.std
-LoKi  = cpp.LoKi
-LHCb  = cpp.LHCb
+cpp = cppyy.gbl
+std = cpp.std
+LoKi = cpp.LoKi
+LHCb = cpp.LHCb
 Gaudi = cpp.Gaudi
 
 # =============================================================================
-if '__main__' == __name__ :
+if '__main__' == __name__:
 
-    print 80*'*'
+    print 80 * '*'
     print __doc__
-    print ' Author  : ' , __author__
-    print ' Version : ' , __version__
-    print ' Date    : ' , __date__
-    print 80*'*'
-    for i in dir() : print i
-
+    print ' Author  : ', __author__
+    print ' Version : ', __version__
+    print ' Date    : ', __date__
+    print 80 * '*'
+    for i in dir():
+        print i
 
 # =============================================================================
 # The END

@@ -13,9 +13,9 @@
 
 // Include files
 // from Gaudi
+#include "CaloDet/DeCalorimeter.h"
 #include "GaudiAlg/GaudiTupleAlg.h"
 #include "GaudiKernel/IRndmGenSvc.h"
-#include "CaloDet/DeCalorimeter.h"
 
 #include "GaudiKernel/RndmGenerators.h"
 
@@ -30,33 +30,32 @@ public:
   /// Standard constructor
   DeCaloCalib( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-
-
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 protected:
-  IRndmGenSvc* rndmSvc() const  { return m_rndmSvc.get() ; }
+  IRndmGenSvc* rndmSvc() const { return m_rndmSvc.get(); }
+
 private:
-  double delta(long id ){
-     std::stringstream sid("");
-     sid << id ;
-     return (m_deltas.find( sid.str() ) != m_deltas.end() ) ? m_deltas[sid.str()] : m_deltas["Default"];
+  double delta( long id ) {
+    std::stringstream sid( "" );
+    sid << id;
+    return ( m_deltas.find( sid.str() ) != m_deltas.end() ) ? m_deltas[sid.str()] : m_deltas["Default"];
   }
   void update();
-  bool isDead(int channel);
+  bool isDead( int channel );
 
   Rndm::Numbers m_shoot;
 
-  std::string m_detectorName;
-  std::string m_method;
-  std::vector<double> m_params;
-  std::map<std::string , double > m_deltas;
-  std::string m_key;
-  DeCalorimeter* m_calo = nullptr;
-  mutable SmartIF<IRndmGenSvc>   m_rndmSvc;        ///< random number service
-  bool m_update;
-  bool m_ntup;
-  std::vector<int> m_dead;
+  std::string                   m_detectorName;
+  std::string                   m_method;
+  std::vector<double>           m_params;
+  std::map<std::string, double> m_deltas;
+  std::string                   m_key;
+  DeCalorimeter*                m_calo = nullptr;
+  mutable SmartIF<IRndmGenSvc>  m_rndmSvc; ///< random number service
+  bool                          m_update;
+  bool                          m_ntup;
+  std::vector<int>              m_dead;
 };
 #endif // COMPONENT_DECALOCALIB_H

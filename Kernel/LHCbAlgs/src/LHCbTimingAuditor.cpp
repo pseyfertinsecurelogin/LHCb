@@ -9,13 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "GaudiKernel/Auditor.h"
-#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/HashMap.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/VectorMap.h"
-#include "GaudiKernel/HashMap.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/VectorMap.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
@@ -24,7 +23,7 @@
 #ifdef __ICC
 // disable icc warning #654: overloaded virtual function "B::Y" is only partially overridden in class "C"
 //   TODO: there is only a partial overload of IAuditor::before and IAuditor::after
-#pragma warning(disable:654)
+#  pragma warning( disable : 654 )
 #endif
 /** @class LHCbTimingAuditor
  *
@@ -35,330 +34,292 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-01-31
  */
-class LHCbTimingAuditor final : public extends1<Auditor, IIncidentListener>
-{
+class LHCbTimingAuditor final : public extends1<Auditor, IIncidentListener> {
 
 public:
-
-  void before(StandardEventType evt, INamedInterface* alg) override;
-  void after(StandardEventType evt, INamedInterface* alg, const StatusCode &sc) override;
+  void before( StandardEventType evt, INamedInterface* alg ) override;
+  void after( StandardEventType evt, INamedInterface* alg, const StatusCode& sc ) override;
 
   using Auditor::before; // avoid hiding base-class methods
-  void before(CustomEventTypeRef evt, const std::string& name) override;
+  void before( CustomEventTypeRef evt, const std::string& name ) override;
   using Auditor::after; // avoid hiding base-class methods
-  void after(CustomEventTypeRef evt, const std::string& name, const StatusCode &sc) override;
+  void after( CustomEventTypeRef evt, const std::string& name, const StatusCode& sc ) override;
 
 private:
-
   void i_beforeInitialize( INamedInterface* alg );
   void i_afterInitialize( INamedInterface* alg );
   void i_beforeFinalize( INamedInterface* alg );
   void i_beforeExecute( INamedInterface* alg );
-  void i_afterExecute( INamedInterface* alg);
+  void i_afterExecute( INamedInterface* alg );
 
 public:
-
   /// Inform that a new incident has occurred
-  void handle ( const Incident& ) override;
+  void handle( const Incident& ) override;
 
 public:
-
-  StatusCode initialize ()  override;
-  StatusCode finalize   ()  override;
+  StatusCode initialize() override;
+  StatusCode finalize() override;
 
 public:
-
   /// standard constructor
-  LHCbTimingAuditor
-  ( const std::string& name ,
-    ISvcLocator*       pSvc )
-    : base_class ( name , pSvc )
-  {
-    declareProperty ( "OptimizedForDOD" , m_goodForDOD ) ;
-    declareProperty ( "TimingTool" , m_timingToolName="LHCbSequencerTimerTool/TIMER" ) ;
+  LHCbTimingAuditor( const std::string& name, ISvcLocator* pSvc ) : base_class( name, pSvc ) {
+    declareProperty( "OptimizedForDOD", m_goodForDOD );
+    declareProperty( "TimingTool", m_timingToolName = "LHCbSequencerTimerTool/TIMER" );
   }
   /// virtual destructor
   virtual ~LHCbTimingAuditor() {}
+
 private:
   // the default constructor is disabled
-  LHCbTimingAuditor () ;
+  LHCbTimingAuditor();
   // copy constructor is disabled
-  LHCbTimingAuditor           ( const LHCbTimingAuditor& ) ;
+  LHCbTimingAuditor( const LHCbTimingAuditor& );
   // assignement operator is disabled
-  LHCbTimingAuditor& operator=( const LHCbTimingAuditor& ) ;
+  LHCbTimingAuditor& operator=( const LHCbTimingAuditor& );
+
 private:
   // tool service
-  IToolSvc*            m_toolSvc = nullptr; ///< tool service
+  IToolSvc* m_toolSvc = nullptr; ///< tool service
   // incident service
-  IIncidentSvc*        m_incSvc  = nullptr; ///< incident service
+  IIncidentSvc* m_incSvc = nullptr; ///< incident service
   // the timer tool
-  ISequencerTimerTool* m_timer   = nullptr; ///< the timer tool
+  ISequencerTimerTool* m_timer = nullptr; ///< the timer tool
   // ApplicationManager
-  INamedInterface*     m_appMgr  = nullptr; ///< ApplicationManager
+  INamedInterface* m_appMgr = nullptr; ///< ApplicationManager
   //
-  typedef GaudiUtils::VectorMap<const INamedInterface*,int>  Map ;
-  Map                  m_map     ;
+  typedef GaudiUtils::VectorMap<const INamedInterface*, int> Map;
+  Map                                                        m_map;
   // indentation level
-  int                  m_indent{0}  ; ///< indentation level
+  int m_indent{0}; ///< indentation level
   // "in event"
-  bool                 m_inEvent{false} ; ///< "In event" flag
+  bool m_inEvent{false}; ///< "In event" flag
   // "optimized for Data-On-Demand Service"
-  bool                 m_goodForDOD{false} ; ///< "optimized for DOD"
+  bool m_goodForDOD{false}; ///< "optimized for DOD"
   //
-  typedef GaudiUtils::HashMap<std::string,int> MapUser ;
-  MapUser              m_mapUser ; ///< map used to record user timing events
+  typedef GaudiUtils::HashMap<std::string, int> MapUser;
+  MapUser                                       m_mapUser; ///< map used to record user timing events
 
   // Whether the timing has been saved already
-  bool                 m_histoSaved{false};
+  bool m_histoSaved{false};
 
-  //name of the timing tool to be used
+  // name of the timing tool to be used
   std::string m_timingToolName;
-
-
-} ;
+};
 // ============================================================================
 /// factory:
 // ============================================================================
-DECLARE_COMPONENT(LHCbTimingAuditor)
+DECLARE_COMPONENT( LHCbTimingAuditor )
 // ============================================================================
-StatusCode LHCbTimingAuditor::initialize ()
-{
-  StatusCode sc = Auditor::initialize() ;
-  if ( sc.isFailure() ) { return sc ; }                  // RETURN
+StatusCode LHCbTimingAuditor::initialize() {
+  StatusCode sc = Auditor::initialize();
+  if ( sc.isFailure() ) { return sc; } // RETURN
 
-  MsgStream log ( msgSvc() , name() ) ;
+  MsgStream log( msgSvc(), name() );
 
   // get tool service
-  if ( ! m_toolSvc )
-  {
-    sc = Auditor::service ( "ToolSvc" , m_toolSvc ) ;
-    if ( sc.isFailure() )
-    {
-      log << "Could not retrieve 'ToolSvc' " << sc << endmsg ;
-      return sc ;                                        // RETURN
+  if ( !m_toolSvc ) {
+    sc = Auditor::service( "ToolSvc", m_toolSvc );
+    if ( sc.isFailure() ) {
+      log << "Could not retrieve 'ToolSvc' " << sc << endmsg;
+      return sc; // RETURN
     }
-    if ( ! m_timer )
-    {
-      sc = m_toolSvc->retrieveTool
-        ( m_timingToolName , m_timer , this  , true ) ;
-      if ( sc.isFailure() )
-      {
-        log << MSG::ERROR
-            << "Could not retrieve ISequencerTimerTool" << endmsg ;
-        return sc ;
+    if ( !m_timer ) {
+      sc = m_toolSvc->retrieveTool( m_timingToolName, m_timer, this, true );
+      if ( sc.isFailure() ) {
+        log << MSG::ERROR << "Could not retrieve ISequencerTimerTool" << endmsg;
+        return sc;
       }
     }
   }
   // get incident service
-  if ( ! m_incSvc )
-  {
-    sc = Auditor::service ( "IncidentSvc" , m_incSvc ) ;
-    if ( sc.isFailure() )
-    {
-      log << MSG::ERROR
-          << "Could not retrieve 'IncidentSvc'" << sc << endmsg ;
-      return sc ;
+  if ( !m_incSvc ) {
+    sc = Auditor::service( "IncidentSvc", m_incSvc );
+    if ( sc.isFailure() ) {
+      log << MSG::ERROR << "Could not retrieve 'IncidentSvc'" << sc << endmsg;
+      return sc;
     }
-    m_incSvc -> addListener ( this , IncidentType::BeginEvent ) ;
-    m_incSvc -> addListener ( this , IncidentType::EndEvent   ) ;
+    m_incSvc->addListener( this, IncidentType::BeginEvent );
+    m_incSvc->addListener( this, IncidentType::EndEvent );
   }
   // get the application manager
-  if ( ! m_appMgr )
-  {
-    sc = Auditor::service ( "ApplicationMgr" , m_appMgr ) ;
-    if ( sc.isFailure() )
-    {
-      log << MSG::ERROR
-          << "Could not retrieve 'ApplicationMgr'" << sc << endmsg ;
-      return sc ;
+  if ( !m_appMgr ) {
+    sc = Auditor::service( "ApplicationMgr", m_appMgr );
+    if ( sc.isFailure() ) {
+      log << MSG::ERROR << "Could not retrieve 'ApplicationMgr'" << sc << endmsg;
+      return sc;
     }
-    if ( m_map.end() == m_map.find( m_appMgr ) )
-    {
-      const auto timer = m_timer->addTimer( "EVENT LOOP" ) ;
-      m_map.insert ( m_appMgr , timer ) ;
+    if ( m_map.end() == m_map.find( m_appMgr ) ) {
+      const auto timer = m_timer->addTimer( "EVENT LOOP" );
+      m_map.insert( m_appMgr, timer );
     }
   }
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
-StatusCode LHCbTimingAuditor::finalize   ()
-{
-  if ( m_incSvc )
-  {
-    m_incSvc -> removeListener ( this , IncidentType::BeginEvent ) ;
-    m_incSvc -> removeListener ( this , IncidentType::EndEvent   ) ;
-    m_incSvc -> release () ;
-    m_incSvc = nullptr ;
+StatusCode LHCbTimingAuditor::finalize() {
+  if ( m_incSvc ) {
+    m_incSvc->removeListener( this, IncidentType::BeginEvent );
+    m_incSvc->removeListener( this, IncidentType::EndEvent );
+    m_incSvc->release();
+    m_incSvc = nullptr;
   }
-  if ( m_toolSvc )
-  {
+  if ( m_toolSvc ) {
     // the 2 following line are commented out: it is
     // is a temporary hack which prevent a crash due to a problem in
     // the reference counting
     //     if ( 0 != m_timer )
     //     { m_toolSvc -> releaseTool ( m_timer ) . ignore() ; m_timer = 0 ; }
-    m_toolSvc -> release () ;
-    m_toolSvc = nullptr ;
+    m_toolSvc->release();
+    m_toolSvc = nullptr;
   }
-  if ( m_appMgr ) { m_appMgr -> release () ; m_appMgr = nullptr ; }
+  if ( m_appMgr ) {
+    m_appMgr->release();
+    m_appMgr = nullptr;
+  }
   // clear the map
-  m_map.clear() ;
+  m_map.clear();
   // finalize the base class
-  return Auditor::finalize () ;
+  return Auditor::finalize();
 }
 // ============================================================================
-void LHCbTimingAuditor::before(StandardEventType evt, INamedInterface *alg)
-{
-  switch (evt) {
-  case IAuditor::Initialize : i_beforeInitialize( alg ); break;
-  case IAuditor::Execute    : i_beforeExecute( alg );    break;
-  case IAuditor::Finalize   : i_beforeFinalize( alg );   break;
-  default: break;
+void LHCbTimingAuditor::before( StandardEventType evt, INamedInterface* alg ) {
+  switch ( evt ) {
+  case IAuditor::Initialize:
+    i_beforeInitialize( alg );
+    break;
+  case IAuditor::Execute:
+    i_beforeExecute( alg );
+    break;
+  case IAuditor::Finalize:
+    i_beforeFinalize( alg );
+    break;
+  default:
+    break;
   }
 }
 // ============================================================================
-void LHCbTimingAuditor::after(StandardEventType evt, INamedInterface *alg, const StatusCode &)
-{
-  switch (evt) {
-  case IAuditor::Initialize : i_afterInitialize( alg ); break;
-  case IAuditor::Execute    : i_afterExecute( alg ); break;
-  default: break;
+void LHCbTimingAuditor::after( StandardEventType evt, INamedInterface* alg, const StatusCode& ) {
+  switch ( evt ) {
+  case IAuditor::Initialize:
+    i_afterInitialize( alg );
+    break;
+  case IAuditor::Execute:
+    i_afterExecute( alg );
+    break;
+  default:
+    break;
   }
 }
 // ============================================================================
-void LHCbTimingAuditor::i_beforeFinalize( INamedInterface* /*alg*/ )
-{
-  if (!m_histoSaved)
-  {
+void LHCbTimingAuditor::i_beforeFinalize( INamedInterface* /*alg*/ ) {
+  if ( !m_histoSaved ) {
     m_timer->saveHistograms();
     m_histoSaved = true;
   }
 }
 
 // ============================================================================
-void LHCbTimingAuditor::i_beforeInitialize( INamedInterface* alg )
-{
-  if ( m_goodForDOD ) { return ; }
+void LHCbTimingAuditor::i_beforeInitialize( INamedInterface* alg ) {
+  if ( m_goodForDOD ) { return; }
   //
-  if ( !alg ) { return ; }
-  const auto found = m_map.find( alg ) ;
-  if ( m_map.end() != found ) { return ; }
-  ++m_indent ;
-  std::string nick = alg->name() ;
-  if ( 0 < m_indent ) { nick = std::string ( m_indent , ' ') + nick ; }
-  if ( m_inEvent )
-  {
-    nick[0] = '*' ;
-    MsgStream log( msgSvc() , name() ) ;
-    log << MSG::DEBUG
-        << "Insert non-structural component '"
-        << alg->name() << "' of type '"
-        << System::typeinfoName(typeid(*alg)) << "' at level "
-        << m_indent << endmsg ;
+  if ( !alg ) { return; }
+  const auto found = m_map.find( alg );
+  if ( m_map.end() != found ) { return; }
+  ++m_indent;
+  std::string nick = alg->name();
+  if ( 0 < m_indent ) { nick = std::string( m_indent, ' ' ) + nick; }
+  if ( m_inEvent ) {
+    nick[0] = '*';
+    MsgStream log( msgSvc(), name() );
+    log << MSG::DEBUG << "Insert non-structural component '" << alg->name() << "' of type '"
+        << System::typeinfoName( typeid( *alg ) ) << "' at level " << m_indent << endmsg;
   }
-  const auto timer = m_timer->addTimer( nick ) ;
-  m_map.insert ( alg , timer ) ;
-  m_timer->start( timer ) ;
+  const auto timer = m_timer->addTimer( nick );
+  m_map.insert( alg, timer );
+  m_timer->start( timer );
 }
 // ============================================================================
-void LHCbTimingAuditor::i_afterInitialize( INamedInterface* alg )
-{
-  if ( m_goodForDOD ) { return ; }
-  if ( !alg         ) { return ; }
-  --m_indent ;
+void LHCbTimingAuditor::i_afterInitialize( INamedInterface* alg ) {
+  if ( m_goodForDOD ) { return; }
+  if ( !alg ) { return; }
+  --m_indent;
 }
 // ============================================================================
-void LHCbTimingAuditor::i_beforeExecute( INamedInterface* alg )
-{
-  if ( !alg ) { return ; }
-  ++m_indent ;
-  const auto found = m_map.find( alg ) ;
-  if ( m_map.end() == found )
-  {
-    MsgStream log( msgSvc() , name() ) ;
-    log << MSG::DEBUG
-        << "Insert non-structural component '"
-        << alg->name() << "' of type '"
-        << System::typeinfoName(typeid(*alg)) << "' at level "
-        << m_indent << endmsg ;
-    std::string nick = alg->name() ;
-    if ( 0 < m_indent  ) { nick = std::string ( m_indent , ' ') + nick ; }
-    if ( !m_goodForDOD ) { nick[0]='*' ;}
-    const auto timer = m_timer->addTimer( nick ) ;
-    m_map.insert ( alg , timer ) ;
-    m_timer->start( timer ) ;
-    return ;
+void LHCbTimingAuditor::i_beforeExecute( INamedInterface* alg ) {
+  if ( !alg ) { return; }
+  ++m_indent;
+  const auto found = m_map.find( alg );
+  if ( m_map.end() == found ) {
+    MsgStream log( msgSvc(), name() );
+    log << MSG::DEBUG << "Insert non-structural component '" << alg->name() << "' of type '"
+        << System::typeinfoName( typeid( *alg ) ) << "' at level " << m_indent << endmsg;
+    std::string nick = alg->name();
+    if ( 0 < m_indent ) { nick = std::string( m_indent, ' ' ) + nick; }
+    if ( !m_goodForDOD ) { nick[0] = '*'; }
+    const auto timer = m_timer->addTimer( nick );
+    m_map.insert( alg, timer );
+    m_timer->start( timer );
+    return;
   }
-  m_timer->start( found->second ) ;
+  m_timer->start( found->second );
 }
 // ============================================================================
-void LHCbTimingAuditor::i_afterExecute( INamedInterface* alg )
-{
-  if ( !alg ) { return ; }
-  const auto found = m_map.find( alg ) ;
-  if ( m_map.end() == found ) { return ; }
-  m_timer->stop( found->second ) ;
-  --m_indent ;
+void LHCbTimingAuditor::i_afterExecute( INamedInterface* alg ) {
+  if ( !alg ) { return; }
+  const auto found = m_map.find( alg );
+  if ( m_map.end() == found ) { return; }
+  m_timer->stop( found->second );
+  --m_indent;
 }
 // ============================================================================
-void LHCbTimingAuditor::before(CustomEventTypeRef evt, const std::string& name)
-{
+void LHCbTimingAuditor::before( CustomEventTypeRef evt, const std::string& name ) {
   // Ignore obvious mistakes
   if ( name.empty() && evt.empty() ) { return; }
 
   // look for the user timer in the map
-  int timer = 0;
-  std::string nick = name + ":" + evt;
-  const auto found = m_mapUser.find( nick );
+  int         timer = 0;
+  std::string nick  = name + ":" + evt;
+  const auto  found = m_mapUser.find( nick );
 
   if ( m_mapUser.end() == found ) {
     // add a new timer if not yet available
-    timer = m_timer->addTimer( nick ) ;
+    timer           = m_timer->addTimer( nick );
     m_mapUser[nick] = timer;
-  }
-  else
-  {
+  } else {
     timer = found->second;
   }
 
   m_timer->start( timer );
 }
 // ============================================================================
-void LHCbTimingAuditor::after(CustomEventTypeRef evt, const std::string& name, const StatusCode &)
-{
+void LHCbTimingAuditor::after( CustomEventTypeRef evt, const std::string& name, const StatusCode& ) {
   // Ignore obvious mistakes
   if ( name.empty() && evt.empty() ) { return; }
 
   // look for the user timer in the map
-  std::string nick = name + ":" + evt;
-  const auto found = m_mapUser.find( nick );
+  std::string nick  = name + ":" + evt;
+  const auto  found = m_mapUser.find( nick );
 
   // We cannot do much if the timer is not available
-  if ( m_mapUser.end() == found )
-  {
-    MsgStream log(msgSvc(), this->name());
-    log << MSG::WARNING << "Trying to stop the measure  of the timing for '"
-                        << nick << "' but it was never started. Check the code"
-                        << endmsg;
+  if ( m_mapUser.end() == found ) {
+    MsgStream log( msgSvc(), this->name() );
+    log << MSG::WARNING << "Trying to stop the measure  of the timing for '" << nick
+        << "' but it was never started. Check the code" << endmsg;
     return;
   }
   m_timer->stop( found->second );
 }
 // ============================================================================
-void LHCbTimingAuditor::handle ( const Incident& i )
-{
-  if      ( IncidentType::BeginEvent == i.type () )
-  {
-    m_timer -> start ( m_map[ m_appMgr ] ) ;
-    ++m_indent ;
-    m_inEvent = true ;
-  }
-  else if ( IncidentType::EndEvent   == i.type () )
-  {
-    m_timer -> stop  ( m_map[ m_appMgr ] ) ;
-    --m_indent ;
-    m_inEvent = false ;
+void LHCbTimingAuditor::handle( const Incident& i ) {
+  if ( IncidentType::BeginEvent == i.type() ) {
+    m_timer->start( m_map[m_appMgr] );
+    ++m_indent;
+    m_inEvent = true;
+  } else if ( IncidentType::EndEvent == i.type() ) {
+    m_timer->stop( m_map[m_appMgr] );
+    --m_indent;
+    m_inEvent = false;
   }
 }
 // ============================================================================

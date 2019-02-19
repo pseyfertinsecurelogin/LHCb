@@ -33,9 +33,7 @@
 #include "GaudiKernel/ToStream.h"
 
 /// Implement textual std::ostream << method for boost::array's
-template < class TYPE, std::size_t N >
-inline std::ostream &
-operator<<( std::ostream &s, const boost::array< TYPE, N > &data )
-{
+template <class TYPE, std::size_t N>
+inline std::ostream& operator<<( std::ostream& s, const boost::array<TYPE, N>& data ) {
   return Gaudi::Utils::toStream( data.begin(), data.end(), s, "[ ", " ]", " , " );
 }

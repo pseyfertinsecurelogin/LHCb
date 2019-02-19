@@ -20,59 +20,46 @@
  *  @date   2009-07-22
  */
 
-
-#include <string>
 #include <sstream>
+#include <string>
 
-namespace ST
-{
+namespace ST {
   namespace XMLUtils {
-
 
     /** add a comment for the author
      *  <!-- Author: author --!> */
-    void authorComment(std::ostringstream& stream,
-                       const std::string& author) ;
+    void authorComment( std::ostringstream& stream, const std::string& author );
 
     /** add a comment for the Version Tag
     <!-- Version: tag --!> */
-    void tagComment(std::ostringstream& stream,
-                    const std::string& tag );
-
+    void tagComment( std::ostringstream& stream, const std::string& tag );
 
     /** add a comment for the description
      *  <!-- Descrption: desc --!> */
-    void descriptionComment(std::ostringstream& stream,
-                            const std::string& description) ;
+    void descriptionComment( std::ostringstream& stream, const std::string& description );
 
     /** Pipe all the comments together
      *  <!-- Author: author --!>
      *  <!-- Version: tag --!>
      *  <!-- Descrption: desc --!> */
-    void fullComment(std::ostringstream& stream,
-                     const std::string& author,
-                     const std::string& tag,
-                     const std::string desc) ;
+    void fullComment( std::ostringstream& stream, const std::string& author, const std::string& tag,
+                      const std::string desc );
 
     /** Generic comment
      *  <!-- Name value --!>
      */
-    void comment(std::ostringstream& stream,
-                const std::string& name,
-                const std::string& value);
+    void comment( std::ostringstream& stream, const std::string& name, const std::string& value );
 
     /** remove nasty characters
     The characters , [ ] mapped to whitespace
     / to \
     **/
-    void replaceChars(std::string& conString);
+    void replaceChars( std::string& conString );
 
     /** replace in with out in conString */
-    void replace(std::string& conString,
-                 std::string in,
-		 std::string out );
+    void replace( std::string& conString, std::string in, std::string out );
 
-  }
-}
+  } // namespace XMLUtils
+} // namespace ST
 
 #endif // ST::XMLUtils

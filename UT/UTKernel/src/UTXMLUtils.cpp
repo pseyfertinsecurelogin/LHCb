@@ -18,59 +18,47 @@
 
 namespace {
 
-  static const std::string openComment = "<!-- ";
+  static const std::string openComment  = "<!-- ";
   static const std::string closeComment = " -->";
+} // namespace
+
+void UT::XMLUtils::authorComment( std::ostringstream& stream, const std::string& author ) {
+  comment( stream, "Author", author );
 }
 
-void UT::XMLUtils::authorComment(std::ostringstream& stream,
-                                 const std::string& author) {
-  comment(stream, "Author", author);
+void UT::XMLUtils::tagComment( std::ostringstream& stream, const std::string& tag ) {
+  comment( stream, "Version", tag );
 }
 
-void UT::XMLUtils::tagComment(std::ostringstream& stream,
-                              const std::string& tag) {
-  comment(stream, "Version", tag);
+void UT::XMLUtils::descriptionComment( std::ostringstream& stream, const std::string& description ) {
+  comment( stream, "Description", description );
 }
 
-void UT::XMLUtils::descriptionComment(std::ostringstream& stream,
-                              const std::string& description) {
-  comment(stream, "Description", description);
+void UT::XMLUtils::comment( std::ostringstream& stream, const std::string& name, const std::string& value ) {
+  stream << openComment << name << ": " << value << closeComment << std::endl;
 }
 
-void UT::XMLUtils::comment(std::ostringstream& stream,
-                           const std::string& name,
-                           const std::string& value){
-  stream << openComment << name <<  ": " << value << closeComment << std::endl;
+void UT::XMLUtils::fullComment( std::ostringstream& stream, const std::string& author, const std::string& tag,
+                                const std::string desc ) {
+  authorComment( stream, author );
+  tagComment( stream, tag );
+  descriptionComment( stream, desc );
 }
 
-void UT::XMLUtils::fullComment(std::ostringstream& stream,
-                              const std::string& author,
-                              const std::string& tag,
-		              const std::string desc){
-  authorComment(stream, author);
-  tagComment(stream, tag);
-  descriptionComment(stream, desc);
-}
-
-
-void UT::XMLUtils::replaceChars(std::string& conString) {
-  std::cout << "Add comment " <<std::endl;
+void UT::XMLUtils::replaceChars( std::string& conString ) {
+  std::cout << "Add comment " << std::endl;
   std::string blank = " ";
-  replace(conString, ",", blank);
-  replace(conString, "[", blank);
-  replace(conString, "]", blank);
-  replace(conString, "\"/", "\"");
+  replace( conString, ",", blank );
+  replace( conString, "[", blank );
+  replace( conString, "]", blank );
+  replace( conString, "\"/", "\"" );
 }
 
-void UT::XMLUtils::replace(std::string& conString,
-                           std::string in,
-                           std::string out ) {
+void UT::XMLUtils::replace( std::string& conString, std::string in, std::string out ) {
 
   std::string::size_type pos = 0;
-  while (pos != std::string::npos){
-    pos = conString.find(in,pos);
-    if (pos != std::string::npos) {
-      conString.replace(pos,in.size(),out);
-    }
-  } //pos
+  while ( pos != std::string::npos ) {
+    pos = conString.find( in, pos );
+    if ( pos != std::string::npos ) { conString.replace( pos, in.size(), out ); }
+  } // pos
 }

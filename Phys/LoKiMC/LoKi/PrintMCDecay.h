@@ -16,9 +16,9 @@
 // ===========================================================================
 // STD & STL
 // ===========================================================================
-#include <string>
-#include <limits>
 #include <iostream>
+#include <limits>
+#include <string>
 // ===========================================================================
 // LoKi
 // ===========================================================================
@@ -26,7 +26,7 @@
 // ===========================================================================
 // forward declarations
 // ===========================================================================
-class MsgStream ;
+class MsgStream;
 // ===========================================================================
 /** @file
  *
@@ -42,14 +42,12 @@ class MsgStream ;
  *  @date 2004-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace PrintMC
-  {
+  namespace PrintMC {
     // ========================================================================
     /// the maximal recursion level
-    const int s_maxLevel2 = 4 ;
+    const int s_maxLevel2 = 4;
     // ========================================================================
     /** Simple function to print MC decay in more or less "readable" format
      *
@@ -71,14 +69,9 @@ namespace LoKi
      *  @date   2006-01-18
      */
     GAUDI_API
-    std::ostream&
-    printDecay
-    ( const LHCb::MCParticle*      particle                ,
-      std::ostream&                stream                  ,
-      const LoKi::MCTypes::MCCuts& cut                     ,
-      const bool                   decayOnly = true        ,
-      const int                    level     = s_maxLevel2 ,
-      const std::string&           blank     = "<cut>"     ) ;
+    std::ostream& printDecay( const LHCb::MCParticle* particle, std::ostream& stream, const LoKi::MCTypes::MCCuts& cut,
+                              const bool decayOnly = true, const int level = s_maxLevel2,
+                              const std::string& blank = "<cut>" );
     // ========================================================================
     /** Simple function to print MC decay in more or less "readable" format
      *
@@ -97,11 +90,7 @@ namespace LoKi
      *  @date   2006-01-18
      */
     GAUDI_API
-    std::ostream&
-    printDecay
-    ( const LHCb::MCParticle*      particle                ,
-      std::ostream&                stream                  ,
-      const bool                   decayOnly = true        ) ;
+    std::ostream& printDecay( const LHCb::MCParticle* particle, std::ostream& stream, const bool decayOnly = true );
     // ========================================================================
     /** Simple function to print MC decay in more or less "readable" format
      *
@@ -123,14 +112,9 @@ namespace LoKi
      *  @date   2006-01-18
      */
     GAUDI_API
-    MsgStream&
-    printDecay
-    ( const LHCb::MCParticle*      particle                ,
-      MsgStream&                   stream                  ,
-      const LoKi::MCTypes::MCCuts& cut                     ,
-      const bool                   decayOnly = true        ,
-      const int                    level     = s_maxLevel2 ,
-      const std::string&           blank     = "<cut>"     ) ;
+    MsgStream& printDecay( const LHCb::MCParticle* particle, MsgStream& stream, const LoKi::MCTypes::MCCuts& cut,
+                           const bool decayOnly = true, const int level = s_maxLevel2,
+                           const std::string& blank = "<cut>" );
     // ========================================================================
     /** Simple function to print MC decay in more or less "readable" format
      *
@@ -149,11 +133,7 @@ namespace LoKi
      *  @date   2006-01-18
      */
     GAUDI_API
-    MsgStream&
-    printDecay
-    ( const LHCb::MCParticle*      particle          ,
-      MsgStream&                   stream            ,
-      const bool                   decayOnly = true  ) ;
+    MsgStream& printDecay( const LHCb::MCParticle* particle, MsgStream& stream, const bool decayOnly = true );
     // ========================================================================
     /** Simple function to print MC decay in more or less "readable" format
      *
@@ -174,13 +154,9 @@ namespace LoKi
      *  @date   2006-01-18
      */
     GAUDI_API
-    std::string
-    printDecay
-    ( const LHCb::MCParticle*      particle                ,
-      const LoKi::MCTypes::MCCuts& cut                     ,
-      const bool                   decayOnly = true        ,
-      const int                    level     = s_maxLevel2 ,
-      const std::string&           blank     = "<cut>"     ) ;
+    std::string printDecay( const LHCb::MCParticle* particle, const LoKi::MCTypes::MCCuts& cut,
+                            const bool decayOnly = true, const int level = s_maxLevel2,
+                            const std::string& blank = "<cut>" );
     // ========================================================================
     /** Simple function to print MC decay in more or less "readable" format
      *
@@ -198,20 +174,16 @@ namespace LoKi
      *  @date   2006-01-18
      */
     GAUDI_API
-    std::string
-    printDecay
-    ( const LHCb::MCParticle* particle          ,
-      const bool              decayOnly = true  ) ;
+    std::string printDecay( const LHCb::MCParticle* particle, const bool decayOnly = true );
     // ========================================================================
-  } //                                           end of namespace LoKi::PrintMC
+  } // namespace PrintMC
   // ==========================================================================
-  namespace Print
-  {
+  namespace Print {
     // ========================================================================
-    using LoKi::PrintMC::s_maxLevel2 ;
-    using namespace LoKi::PrintMC    ;
+    using LoKi::PrintMC::s_maxLevel2;
+    using namespace LoKi::PrintMC;
     // ========================================================================
-  } //                                             end of namespace LoKi::Print
+  } // namespace Print
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

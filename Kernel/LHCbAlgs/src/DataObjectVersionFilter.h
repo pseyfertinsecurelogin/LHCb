@@ -16,7 +16,6 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/DataObjectHandle.h"
 
-
 /** @class DataObjectVersionFilter DataObjectVersionFilter.h
  *
  *  Checks the version of a given DataObject in the TES, and sets FilterPassed according
@@ -26,20 +25,17 @@
  *  @author Chris Jones
  *  @date   2009-11-06
  */
-class DataObjectVersionFilter final : public GaudiAlgorithm
-{
+class DataObjectVersionFilter final : public GaudiAlgorithm {
 public:
-
   /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-
-  Gaudi::Property<unsigned int> m_minV{this, "MinVersion", 0 , "Min version number"};
-  Gaudi::Property<unsigned int> m_maxV{this, "MaxVersion", 9999999, "Max version number"};
-  DataObjectReadHandle<DataObject> m_loc = {this,  "DataObjectLocation", "" , "DataObject location in TES" };
+  Gaudi::Property<unsigned int>    m_minV{this, "MinVersion", 0, "Min version number"};
+  Gaudi::Property<unsigned int>    m_maxV{this, "MaxVersion", 9999999, "Max version number"};
+  DataObjectReadHandle<DataObject> m_loc = {this, "DataObjectLocation", "", "DataObject location in TES"};
 };
 
 #endif // DATAOBJECTVERSIONFILTER_H

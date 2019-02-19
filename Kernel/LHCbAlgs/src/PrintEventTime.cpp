@@ -24,24 +24,22 @@
 // ----------------------------------------------------------------------------
 DECLARE_COMPONENT( LHCbAlgsTest::PrintEventTime )
 
-namespace LHCbAlgsTest 
-{
+namespace LHCbAlgsTest {
 
   // ============================================================================
   // Standard constructor, initializes variables
   // ============================================================================
-  PrintEventTime::PrintEventTime(const std::string& name, ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm(name, pSvcLocator) { }
+  PrintEventTime::PrintEventTime( const std::string& name, ISvcLocator* pSvcLocator )
+      : GaudiAlgorithm( name, pSvcLocator ) {}
 
   // ============================================================================
   // Initialization
   // ============================================================================
-  StatusCode PrintEventTime::initialize()
-  {
+  StatusCode PrintEventTime::initialize() {
     StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-    if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
+    if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
-    if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
 
     m_detDataSvc = detSvc();
 
@@ -51,9 +49,8 @@ namespace LHCbAlgsTest
   // ============================================================================
   // Main execution
   // ============================================================================
-  StatusCode PrintEventTime::execute()
-  {
-    if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+  StatusCode PrintEventTime::execute() {
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
     info() << "Current event time: " << m_detDataSvc->eventTime() << endmsg;
 
@@ -63,14 +60,13 @@ namespace LHCbAlgsTest
   // ============================================================================
   // Finalize
   // ============================================================================
-  StatusCode PrintEventTime::finalize()
-  {
-    if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
+  StatusCode PrintEventTime::finalize() {
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
     m_detDataSvc.reset();
 
     return GaudiAlgorithm::finalize(); // must be called after all other actions
   }
 
-}
+} // namespace LHCbAlgsTest
 // ============================================================================

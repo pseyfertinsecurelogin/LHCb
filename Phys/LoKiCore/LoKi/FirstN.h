@@ -36,34 +36,32 @@
  *  @date 2011-10-30
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class FirstN
    *  helper class to implement the selection of first N-elements in Hybdrids
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API FirstN final
-  {
+  class GAUDI_API FirstN final {
     // ========================================================================
   public:
     // ========================================================================
     /// constructor
-    explicit FirstN ( const unsigned int N ) ;                            // constructor
+    explicit FirstN( const unsigned int N ); // constructor
   public:
     // ========================================================================
     /// get N
-    unsigned int N() const { return m_N ; }                            // get N
+    unsigned int N() const { return m_N; } // get N
     /// get N
-    unsigned int n() const { return m_N ; }                            // get N
+    unsigned int n() const { return m_N; } // get N
     /// printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    virtual std::ostream& fillStream( std::ostream& s ) const;
     // ========================================================================
   private:
     // ========================================================================
     /// number of elements to be selected
-    unsigned int m_N ;                     // number of elements to be selected
+    unsigned int m_N; // number of elements to be selected
     // ========================================================================
   }; //                                               end of class LoKi::FirstN
   // ==========================================================================
@@ -72,17 +70,16 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API Reverse final
-  {
+  class GAUDI_API Reverse final {
   public:
     // ========================================================================
     /// constructor
-    Reverse() = default;                                         // constructor
+    Reverse() = default; // constructor
     // ========================================================================
     /// printout
-    std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream( std::ostream& s ) const;
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
   /** @class Sort
    *  helper class to implement the sort and
@@ -90,61 +87,58 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API Sort final
-  {
+  class GAUDI_API Sort final {
   public:
     // ========================================================================
     /// constructor
-    Sort ( const int  N         = -1   , // ALL
-           const bool ascending = true ) ;
+    Sort( const int  N         = -1, // ALL
+          const bool ascending = true );
     // ========================================================================
     /// printout
-    std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream( std::ostream& s ) const;
     // ========================================================================
   public:
     // ========================================================================
-    bool ascending () const { return m_ascending ; }
-    bool all       () const { return m_N < 0    ; }
-    int  N         () const { return m_N        ; }
-    int  n         () const { return m_N        ; }
+    bool ascending() const { return m_ascending; }
+    bool all() const { return m_N < 0; }
+    int  N() const { return m_N; }
+    int  n() const { return m_N; }
     // ========== =============================================================
   private:
     // ========================================================================
     /// number of elements
-    int  m_N         ;                                    // number of elements
+    int m_N; // number of elements
     /// ascending order ?
-    bool m_ascending ;                                     // ascending order ?
+    bool m_ascending; // ascending order ?
     // ========================================================================
   };
   // ==========================================================================
   /// output operator
   // ==========================================================================
-  std::ostream& operator<< ( std::ostream& s , const FirstN&  o ) ;
+  std::ostream& operator<<( std::ostream& s, const FirstN& o );
   // ==========================================================================
   /// output operator
   // ==========================================================================
-  std::ostream& operator<< ( std::ostream& s , const Reverse& o ) ;
+  std::ostream& operator<<( std::ostream& s, const Reverse& o );
   // ==========================================================================
   /// output operator
   // ==========================================================================
-  std::ostream& operator<< ( std::ostream& s , const Sort&    o ) ;
+  std::ostream& operator<<( std::ostream& s, const Sort& o );
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
 //                                                                      The END
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils
-  {
+  namespace Utils {
     // ========================================================================
     // Dump as C++ objects
-    GAUDI_API std::string toCpp ( const LoKi::FirstN&  f ) ;
-    GAUDI_API std::string toCpp ( const LoKi::Sort&    s ) ;
-    GAUDI_API std::string toCpp ( const LoKi::Reverse& r ) ;
+    GAUDI_API std::string toCpp( const LoKi::FirstN& f );
+    GAUDI_API std::string toCpp( const LoKi::Sort& s );
+    GAUDI_API std::string toCpp( const LoKi::Reverse& r );
     // ========================================================================
-  }
+  } // namespace Utils
   // ==========================================================================
-}
+} // namespace Gaudi
 // ============================================================================
 #endif // LOKI_FIRSTN_H

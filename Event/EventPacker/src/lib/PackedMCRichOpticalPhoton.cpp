@@ -19,24 +19,20 @@
 
 using namespace LHCb;
 
-void MCRichOpticalPhotonPacker::pack( const DataVector & phots,
-                                      PackedDataVector & pphots ) const
-{
+void MCRichOpticalPhotonPacker::pack( const DataVector& phots, PackedDataVector& pphots ) const {
   const auto ver = pphots.packingVersion();
-  if ( isSupportedVer(ver) )
-  {
+  if ( isSupportedVer( ver ) ) {
     pphots.data().reserve( phots.size() );
-    for ( const auto * phot : phots )
-    {
+    for ( const auto* phot : phots ) {
 
       pphots.data().emplace_back( PackedData() );
-      auto & pphot = pphots.data().back();
+      auto& pphot = pphots.data().back();
 
-      pphot.key   = phot->key();
+      pphot.key = phot->key();
 
-      pphot.hpdx  = m_pack.position( phot->pdIncidencePoint().x() );
-      pphot.hpdy  = m_pack.position( phot->pdIncidencePoint().y() );
-      pphot.hpdz  = m_pack.position( phot->pdIncidencePoint().z() );
+      pphot.hpdx = m_pack.position( phot->pdIncidencePoint().x() );
+      pphot.hpdy = m_pack.position( phot->pdIncidencePoint().y() );
+      pphot.hpdz = m_pack.position( phot->pdIncidencePoint().z() );
 
       pphot.pmirx = m_pack.position( phot->sphericalMirrorReflectPoint().x() );
       pphot.pmiry = m_pack.position( phot->sphericalMirrorReflectPoint().y() );
@@ -51,7 +47,7 @@ void MCRichOpticalPhotonPacker::pack( const DataVector & phots,
       pphot.aeroz = m_pack.position( phot->aerogelExitPoint().z() );
 
       pphot.theta = m_pack.fltPacked( phot->cherenkovTheta() );
-      pphot.phi   = m_pack.fltPacked( phot->cherenkovPhi()   );
+      pphot.phi   = m_pack.fltPacked( phot->cherenkovPhi() );
 
       pphot.emisx = m_pack.position( phot->emissionPoint().x() );
       pphot.emisy = m_pack.position( phot->emissionPoint().y() );
@@ -59,141 +55,115 @@ void MCRichOpticalPhotonPacker::pack( const DataVector & phots,
 
       pphot.energy = m_pack.energy( phot->energyAtProduction() * PhotEnScale );
 
-      pphot.pmomx  = m_pack.energy( phot->parentMomentum().x() );
-      pphot.pmomy  = m_pack.energy( phot->parentMomentum().y() );
-      pphot.pmomz  = m_pack.energy( phot->parentMomentum().z() );
+      pphot.pmomx = m_pack.energy( phot->parentMomentum().x() );
+      pphot.pmomy = m_pack.energy( phot->parentMomentum().y() );
+      pphot.pmomz = m_pack.energy( phot->parentMomentum().z() );
 
       pphot.hpdqwx = m_pack.position( phot->hpdQWIncidencePoint().x() );
       pphot.hpdqwy = m_pack.position( phot->hpdQWIncidencePoint().y() );
       pphot.hpdqwz = m_pack.position( phot->hpdQWIncidencePoint().z() );
 
-      if ( phot->mcRichHit() )
-      {
-        pphot.mcrichhit = ( UNLIKELY( 0==ver ) ? 
-                            m_pack.reference32( &pphots,
-                                                phot->mcRichHit()->parent(),
-                                                phot->mcRichHit()->index() ) :
-                            m_pack.reference64( &pphots,
-                                                phot->mcRichHit()->parent(),
-                                                phot->mcRichHit()->index() ) );
+      if ( phot->mcRichHit() ) {
+        pphot.mcrichhit =
+            ( UNLIKELY( 0 == ver )
+                  ? m_pack.reference32( &pphots, phot->mcRichHit()->parent(), phot->mcRichHit()->index() )
+                  : m_pack.reference64( &pphots, phot->mcRichHit()->parent(), phot->mcRichHit()->index() ) );
       }
     }
   }
 }
 
-void MCRichOpticalPhotonPacker::unpack( const PackedDataVector & pphots,
-                                        DataVector       & phots ) const
-{
+void MCRichOpticalPhotonPacker::unpack( const PackedDataVector& pphots, DataVector& phots ) const {
 
   const auto ver = pphots.packingVersion();
-  if ( isSupportedVer(ver) )
-  {
+  if ( isSupportedVer( ver ) ) {
     phots.reserve( pphots.data().size() );
-    for ( const auto & pphot : pphots.data() )
-    {
-      auto * phot  = new Data();
+    for ( const auto& pphot : pphots.data() ) {
+      auto* phot = new Data();
       phots.insert( phot, pphot.key );
 
-      phot->setPdIncidencePoint( Gaudi::XYZPoint( m_pack.position(pphot.hpdx),
-                                                  m_pack.position(pphot.hpdy),
-                                                  m_pack.position(pphot.hpdz) ) );
+      phot->setPdIncidencePoint( Gaudi::XYZPoint( m_pack.position( pphot.hpdx ), m_pack.position( pphot.hpdy ),
+                                                  m_pack.position( pphot.hpdz ) ) );
 
-      phot->setSphericalMirrorReflectPoint( Gaudi::XYZPoint( m_pack.position(pphot.pmirx),
-                                                             m_pack.position(pphot.pmiry),
-                                                             m_pack.position(pphot.pmirz) ) );
+      phot->setSphericalMirrorReflectPoint( Gaudi::XYZPoint(
+          m_pack.position( pphot.pmirx ), m_pack.position( pphot.pmiry ), m_pack.position( pphot.pmirz ) ) );
 
-      phot->setFlatMirrorReflectPoint( Gaudi::XYZPoint( m_pack.position(pphot.smirx),
-                                                        m_pack.position(pphot.smiry),
-                                                        m_pack.position(pphot.smirz) ) );
+      phot->setFlatMirrorReflectPoint( Gaudi::XYZPoint( m_pack.position( pphot.smirx ), m_pack.position( pphot.smiry ),
+                                                        m_pack.position( pphot.smirz ) ) );
 
-      phot->setAerogelExitPoint( Gaudi::XYZPoint( m_pack.position(pphot.aerox),
-                                                  m_pack.position(pphot.aeroy),
-                                                  m_pack.position(pphot.aeroz) ) );
+      phot->setAerogelExitPoint( Gaudi::XYZPoint( m_pack.position( pphot.aerox ), m_pack.position( pphot.aeroy ),
+                                                  m_pack.position( pphot.aeroz ) ) );
 
-      phot->setCherenkovTheta ( (float)m_pack.fltPacked(pphot.theta) );
-      phot->setCherenkovPhi   ( (float)m_pack.fltPacked(pphot.phi)   );
+      phot->setCherenkovTheta( (float)m_pack.fltPacked( pphot.theta ) );
+      phot->setCherenkovPhi( (float)m_pack.fltPacked( pphot.phi ) );
 
-      phot->setEmissionPoint( Gaudi::XYZPoint( m_pack.position(pphot.emisx),
-                                               m_pack.position(pphot.emisy),
-                                               m_pack.position(pphot.emisz) ) );
+      phot->setEmissionPoint( Gaudi::XYZPoint( m_pack.position( pphot.emisx ), m_pack.position( pphot.emisy ),
+                                               m_pack.position( pphot.emisz ) ) );
 
-      phot->setEnergyAtProduction( (float) ( (double)m_pack.energy(pphot.energy)/PhotEnScale) );
+      phot->setEnergyAtProduction( (float)( (double)m_pack.energy( pphot.energy ) / PhotEnScale ) );
 
-      phot->setParentMomentum( Gaudi::XYZVector( m_pack.energy(pphot.pmomx),
-                                                 m_pack.energy(pphot.pmomy),
-                                                 m_pack.energy(pphot.pmomz) ) );
+      phot->setParentMomentum( Gaudi::XYZVector( m_pack.energy( pphot.pmomx ), m_pack.energy( pphot.pmomy ),
+                                                 m_pack.energy( pphot.pmomz ) ) );
 
-      phot->setHpdQWIncidencePoint( Gaudi::XYZPoint( m_pack.position(pphot.hpdqwx),
-                                                     m_pack.position(pphot.hpdqwy),
-                                                     m_pack.position(pphot.hpdqwz) ) );
+      phot->setHpdQWIncidencePoint( Gaudi::XYZPoint( m_pack.position( pphot.hpdqwx ), m_pack.position( pphot.hpdqwy ),
+                                                     m_pack.position( pphot.hpdqwz ) ) );
 
-      if ( -1 != pphot.mcrichhit )
-      {
-        int hintID(0), key(0);
-        if ( ( 0!=ver && m_pack.hintAndKey64(pphot.mcrichhit,&pphots,&phots,hintID,key) ) ||
-             ( 0==ver && m_pack.hintAndKey32(pphot.mcrichhit,&pphots,&phots,hintID,key) ) )
-        {
-          SmartRef<LHCb::MCRichHit> ref(&phots,hintID,key);
+      if ( -1 != pphot.mcrichhit ) {
+        int hintID( 0 ), key( 0 );
+        if ( ( 0 != ver && m_pack.hintAndKey64( pphot.mcrichhit, &pphots, &phots, hintID, key ) ) ||
+             ( 0 == ver && m_pack.hintAndKey32( pphot.mcrichhit, &pphots, &phots, hintID, key ) ) ) {
+          SmartRef<LHCb::MCRichHit> ref( &phots, hintID, key );
           phot->setMcRichHit( ref );
+        } else {
+          parent().Error( "Corrupt MCRichOpticalPhoton MCRichHit SmartRef detected." ).ignore();
         }
-        else { parent().Error( "Corrupt MCRichOpticalPhoton MCRichHit SmartRef detected." ).ignore(); }
       }
-
     }
   }
-
 }
 
-StatusCode MCRichOpticalPhotonPacker::check( const DataVector & dataA,
-                                             const DataVector & dataB ) const
-{
+StatusCode MCRichOpticalPhotonPacker::check( const DataVector& dataA, const DataVector& dataB ) const {
   StatusCode sc = StatusCode::SUCCESS;
 
   // checker
-  const DataPacking::DataChecks ch(parent());
+  const DataPacking::DataChecks ch( parent() );
 
   // Loop over data containers together and compare
-  auto iA(dataA.begin()), iB(dataB.begin());
-  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
-  {
+  auto iA( dataA.begin() ), iB( dataB.begin() );
+  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB ) {
     // assume OK frm the start
     bool ok = true;
     // Key
-    ok &= ch.compareInts( "Key", (*iA)->key(), (*iB)->key() );
+    ok &= ch.compareInts( "Key", ( *iA )->key(), ( *iB )->key() );
     // Hit position
-    ok &= ch.comparePoints( "HPD In. Point", (*iA)->pdIncidencePoint(), (*iB)->pdIncidencePoint() );
+    ok &= ch.comparePoints( "HPD In. Point", ( *iA )->pdIncidencePoint(), ( *iB )->pdIncidencePoint() );
     // primary mirror point
-    ok &= ch.comparePoints( "Prim. Mirr.", (*iA)->sphericalMirrorReflectPoint(),
-                            (*iB)->sphericalMirrorReflectPoint() );
+    ok &= ch.comparePoints( "Prim. Mirr.", ( *iA )->sphericalMirrorReflectPoint(),
+                            ( *iB )->sphericalMirrorReflectPoint() );
     // secondary mirror point
-    ok &= ch.comparePoints( "Sec. Mirr.", (*iA)->flatMirrorReflectPoint(),
-                            (*iB)->flatMirrorReflectPoint() );
+    ok &= ch.comparePoints( "Sec. Mirr.", ( *iA )->flatMirrorReflectPoint(), ( *iB )->flatMirrorReflectPoint() );
     // aerogel exit point
-    ok &= ch.comparePoints( "Aero. Exit", (*iA)->aerogelExitPoint(), (*iB)->aerogelExitPoint() );
+    ok &= ch.comparePoints( "Aero. Exit", ( *iA )->aerogelExitPoint(), ( *iB )->aerogelExitPoint() );
     // CK theta and phi
-    ok &= ch.compareDoubles( "Cherenkov Theta", (*iA)->cherenkovTheta(), (*iB)->cherenkovTheta() );
-    ok &= ch.compareDoubles( "Cherenkov Phi", (*iA)->cherenkovPhi(), (*iB)->cherenkovPhi() );
+    ok &= ch.compareDoubles( "Cherenkov Theta", ( *iA )->cherenkovTheta(), ( *iB )->cherenkovTheta() );
+    ok &= ch.compareDoubles( "Cherenkov Phi", ( *iA )->cherenkovPhi(), ( *iB )->cherenkovPhi() );
     // emission point
-    ok &= ch.comparePoints( "Emission Point", (*iA)->emissionPoint(), (*iB)->emissionPoint() );
+    ok &= ch.comparePoints( "Emission Point", ( *iA )->emissionPoint(), ( *iB )->emissionPoint() );
     // energy
-    ok &= ch.compareEnergies( "Energy", (*iA)->energyAtProduction(), (*iB)->energyAtProduction(), 1.0e-7 );
+    ok &= ch.compareEnergies( "Energy", ( *iA )->energyAtProduction(), ( *iB )->energyAtProduction(), 1.0e-7 );
     // parent momentum
-    ok &= ch.compareEnergies( "Parent Momentum", (*iA)->parentMomentum(), (*iB)->parentMomentum() );
+    ok &= ch.compareEnergies( "Parent Momentum", ( *iA )->parentMomentum(), ( *iB )->parentMomentum() );
     // HPD QW point
-    ok &= ch.comparePoints( "HPD QW Point", (*iA)->hpdQWIncidencePoint(), (*iB)->hpdQWIncidencePoint() );
+    ok &= ch.comparePoints( "HPD QW Point", ( *iA )->hpdQWIncidencePoint(), ( *iB )->hpdQWIncidencePoint() );
     // MCRichHit
-    ok &= ch.comparePointers( "MCRichHit", (*iA)->mcRichHit(), (*iB)->mcRichHit() );
+    ok &= ch.comparePointers( "MCRichHit", ( *iA )->mcRichHit(), ( *iB )->mcRichHit() );
 
     // force printout for tests
-    //ok = false;
+    // ok = false;
     // If comparison not OK, print full information
-    if ( !ok )
-    {
+    if ( !ok ) {
       parent().warning() << "Problem with MCRichOpticalPhoton data packing :-" << endmsg
-                         << "  Original Photon : " << **iA
-                         << endmsg
-                         << "  Unpacked Photon : " << **iB
-                         << endmsg;
+                         << "  Original Photon : " << **iA << endmsg << "  Unpacked Photon : " << **iB << endmsg;
       sc = StatusCode::FAILURE;
     }
   }

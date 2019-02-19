@@ -28,19 +28,13 @@ DECLARE_COMPONENT( RawEventDump )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-RawEventDump::RawEventDump( const std::string& name,
-                            ISvcLocator* pSvcLocator)
-  : Decoder::AlgBase ( name , pSvcLocator )
-{
-  //new for decoders, initialize search path, and then call the base method
-  m_rawEventLocations = {LHCb::RawEventLocation::Default,
-                         LHCb::RawEventLocation::Trigger,
-                         LHCb::RawEventLocation::Rich,
-                         LHCb::RawEventLocation::Calo,
-                         LHCb::RawEventLocation::Muon,
-                         LHCb::RawEventLocation::Other,
-                         LHCb::RawEventLocation::Copied,
-                         LHCb::RawEventLocation::Emulated};
+RawEventDump::RawEventDump( const std::string& name, ISvcLocator* pSvcLocator )
+    : Decoder::AlgBase( name, pSvcLocator ) {
+  // new for decoders, initialize search path, and then call the base method
+  m_rawEventLocations = {LHCb::RawEventLocation::Default, LHCb::RawEventLocation::Trigger,
+                         LHCb::RawEventLocation::Rich,    LHCb::RawEventLocation::Calo,
+                         LHCb::RawEventLocation::Muon,    LHCb::RawEventLocation::Other,
+                         LHCb::RawEventLocation::Copied,  LHCb::RawEventLocation::Emulated};
   initRawEventSearch();
 }
 
@@ -49,39 +43,31 @@ RawEventDump::RawEventDump( const std::string& name,
 //=============================================================================
 StatusCode RawEventDump::execute() {
 
-  for (auto loc :  m_rawEventLocations)
-  {
-    RawEvent* raw = tryEventAt(loc);
+  for ( auto loc : m_rawEventLocations ) {
+    RawEvent* raw = tryEventAt( loc );
 
-    if (!raw) continue;
+    if ( !raw ) continue;
 
-    for ( int j = 0; j < int(RawBank::BankType::LastType); ++j )
-    {
-      const auto i = RawBank::BankType(j);
+    for ( int j = 0; j < int( RawBank::BankType::LastType ); ++j ) {
+      const auto i = RawBank::BankType( j );
 
-      if( !acceptBank(i) )continue;
+      if ( !acceptBank( i ) ) continue;
 
-      const auto& b = raw->banks(i);
-      if ( !b.empty() )
-      {
-        info() << "banks of type " << i << "("<< RawBank::typeName(i) << ") discovered in " << loc << endmsg;
+      const auto& b = raw->banks( i );
+      if ( !b.empty() ) {
+        info() << "banks of type " << i << "(" << RawBank::typeName( i ) << ") discovered in " << loc << endmsg;
 
         info() << b.size() << " banks of type " << i << ": [size, source, version, magic]";
         int k = 0;
-        for( const RawBank* r : b )
-        {
-          if ( ((k++)%4) == 0 ) info() << endmsg << "  " ;
-          info() << "[" << int(r->size()) << ", "
-                 << int(r->sourceID()) << ", "
-                 << int(r->version()) << ", "
+        for ( const RawBank* r : b ) {
+          if ( ( ( k++ ) % 4 ) == 0 ) info() << endmsg << "  ";
+          info() << "[" << int( r->size() ) << ", " << int( r->sourceID() ) << ", " << int( r->version() ) << ", "
                  << std::hex << r->magic() << std::dec << "] ";
-          if( m_dump )
-          {
-            info() << "Data follows..." << std::hex ;
+          if ( m_dump ) {
+            info() << "Data follows..." << std::hex;
             int cnt = 0;
-            for(const int* p=r->begin<int>(); p != r->end<int>(); ++p)
-            {
-              if ( ((cnt++)%10) == 0 ) info() << endmsg << "   ... " ;
+            for ( const int* p = r->begin<int>(); p != r->end<int>(); ++p ) {
+              if ( ( ( cnt++ ) % 10 ) == 0 ) info() << endmsg << "   ... ";
               info() << "[" << *p << "] ";
             }
             info() << std::dec << endmsg << "  ";
@@ -95,11 +81,9 @@ StatusCode RawEventDump::execute() {
   return StatusCode::SUCCESS;
 }
 
-
-bool RawEventDump::acceptBank(LHCb::RawBank::BankType i) {
+bool RawEventDump::acceptBank( LHCb::RawBank::BankType i ) {
   return m_banks.empty() ||
          std::any_of( m_banks.begin(), m_banks.end(),
-                      [tn=LHCb::RawBank::typeName(i)](const std::string& i)
-                      { return i == tn; } );
+                      [tn = LHCb::RawBank::typeName( i )]( const std::string& i ) { return i == tn; } );
 }
 //=============================================================================

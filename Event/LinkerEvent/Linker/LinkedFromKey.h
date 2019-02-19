@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef LINKER_LINKEDFROMKEY_H 
+#ifndef LINKER_LINKEDFROMKEY_H
 #define LINKER_LINKEDFROMKEY_H 1
 
 // Include files
@@ -21,7 +21,7 @@
  *  @date   2008-03-14
  */
 
-template <class TARGET, class KEY=int> 
+template <class TARGET, class KEY = int>
 using LinkedFromKey = LinkedFrom<ContainedObject, TARGET, KEY>;
 
 #endif // LINKER_LINKEDFROMKEY_H

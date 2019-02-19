@@ -17,8 +17,8 @@
 // ============================================================================
 // Local
 // ============================================================================
-#include "LoKi/GenTypes.h"
 #include "LoKi/GenExtract.h"
+#include "LoKi/GenTypes.h"
 // ============================================================================
 /** @file
  *
@@ -37,71 +37,59 @@
  *
  */
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
   /// get particles
   template <class PARTICLE>
-  LoKi::GenTypes::GenContainer _get_ ( PARTICLE                   first ,
-                                       PARTICLE                   last  ,
-                                       const LoKi::Types::GCuts&  cuts  )
-  {
+  LoKi::GenTypes::GenContainer _get_( PARTICLE first, PARTICLE last, const LoKi::Types::GCuts& cuts ) {
     //
-    LoKi::GenTypes::GenContainer r ; r.reserve ( 100 ) ;
+    LoKi::GenTypes::GenContainer r;
+    r.reserve( 100 );
     //
-    LoKi::Extract::genParticles ( first ,
-                                  last  ,
-                                  std::back_inserter ( r ) , cuts ) ;
+    LoKi::Extract::genParticles( first, last, std::back_inserter( r ), cuts );
     //
     // eliminate duplicates
-    std::set<const HepMC::GenParticle*>  s ( r.begin () , r.end () ) ;
+    std::set<const HepMC::GenParticle*> s( r.begin(), r.end() );
     //
-    return LoKi::GenTypes::GenContainer ( s.begin () , s.end () ) ;
+    return LoKi::GenTypes::GenContainer( s.begin(), s.end() );
   }
   // ==========================================================================
   template <class PARTICLES>
-  LoKi::GenTypes::GenContainer _get_ ( const PARTICLES*           parts ,
-                                       const LoKi::Types::GCuts&  cuts  )
-  {
+  LoKi::GenTypes::GenContainer _get_( const PARTICLES* parts, const LoKi::Types::GCuts& cuts ) {
     //
-    LoKi::GenTypes::GenContainer r ; r.reserve ( 100 ) ;
+    LoKi::GenTypes::GenContainer r;
+    r.reserve( 100 );
     //
-    LoKi::Extract::genParticles ( parts , std::back_inserter ( r ) , cuts ) ;
+    LoKi::Extract::genParticles( parts, std::back_inserter( r ), cuts );
     //
     // eliminate duplicates
-    std::set<const HepMC::GenParticle*>  s ( r.begin () , r.end () ) ;
+    std::set<const HepMC::GenParticle*> s( r.begin(), r.end() );
     //
-    return LoKi::GenTypes::GenContainer ( s.begin () , s.end () ) ;
+    return LoKi::GenTypes::GenContainer( s.begin(), s.end() );
   }
   // ==========================================================================
-} //                                                  end of anonymos namespace
+} // namespace
 // ============================================================================
-LoKi::GenTypes::GenContainer
-operator >> ( const LoKi::GenTypes::GenContainer& input ,
-              const LoKi::Types::GCuts&           cuts  )
-{ return _get_ ( input.begin() , input.end () , cuts ) ; }
+LoKi::GenTypes::GenContainer operator>>( const LoKi::GenTypes::GenContainer& input, const LoKi::Types::GCuts& cuts ) {
+  return _get_( input.begin(), input.end(), cuts );
+}
 // =============================================================================
-LoKi::GenTypes::GenContainer
-operator >> ( const LoKi::GenTypes::GRange&       input ,
-              const LoKi::Types::GCuts&           cuts  )
-{ return _get_ ( input.begin() , input.end () , cuts ) ; }
+LoKi::GenTypes::GenContainer operator>>( const LoKi::GenTypes::GRange& input, const LoKi::Types::GCuts& cuts ) {
+  return _get_( input.begin(), input.end(), cuts );
+}
 // ============================================================================
-LoKi::GenTypes::GenContainer
-operator >> ( const LHCb::HepMCEvent*             event ,
-              const LoKi::Types::GCuts&           cuts  )
-{ return _get_ ( event , cuts ) ; }
+LoKi::GenTypes::GenContainer operator>>( const LHCb::HepMCEvent* event, const LoKi::Types::GCuts& cuts ) {
+  return _get_( event, cuts );
+}
 // ============================================================================
-LoKi::GenTypes::GenContainer
-operator >> ( const LHCb::HepMCEvent::Container*  event ,
-              const LoKi::Types::GCuts&           cuts  )
-{ return _get_ ( event , cuts ) ; }
+LoKi::GenTypes::GenContainer operator>>( const LHCb::HepMCEvent::Container* event, const LoKi::Types::GCuts& cuts ) {
+  return _get_( event, cuts );
+}
 // ============================================================================
-LoKi::GenTypes::GenContainer
-operator >> ( const HepMC::GenEvent*              event ,
-              const LoKi::Types::GCuts&           cuts  )
-{ return _get_ ( event , cuts ) ; }
+LoKi::GenTypes::GenContainer operator>>( const HepMC::GenEvent* event, const LoKi::Types::GCuts& cuts ) {
+  return _get_( event, cuts );
+}
 // ============================================================================
-
 
 // ============================================================================
 // The END

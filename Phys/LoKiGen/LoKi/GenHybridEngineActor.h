@@ -20,9 +20,9 @@
 // ===========================================================================
 // LoKi
 // ===========================================================================
-#include "LoKi/Interface.h"
-#include "LoKi/IGenHybridTool.h"
 #include "LoKi/Context.h"
+#include "LoKi/IGenHybridTool.h"
+#include "LoKi/Interface.h"
 // ===========================================================================
 /** @file
  *
@@ -36,11 +36,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class GenEngineActor LoKi/GenHybridEngineActor.h
      *
@@ -55,110 +53,82 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2004-06-29
      */
-    class GenEngineActor
-    {
+    class GenEngineActor {
     public:
       // ======================================================================
       // get the static instance
-      static GenEngineActor& instance() ;
+      static GenEngineActor& instance();
       /// connect the hybrid tool for code translation
-      StatusCode connect    ( const LoKi::IGenHybridTool* factory , 
-                              const LoKi::Context&        context ) ;
+      StatusCode connect( const LoKi::IGenHybridTool* factory, const LoKi::Context& context );
       /// disconnect the tool
-      StatusCode disconnect ( const LoKi::IGenHybridTool* factory ) ;
+      StatusCode disconnect( const LoKi::IGenHybridTool* factory );
       // ======================================================================
       /** get the current context
        *  contex is valid only in between <code>connect/disconnect</code>
-       *  @return the current active context 
+       *  @return the current active context
        */
-      const LoKi::Context* context () const ;
+      const LoKi::Context* context() const;
       // ======================================================================
     public:
       // ======================================================================
       // predicates
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GCuts&   cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GCuts& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVCuts&  cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVCuts& cut ) const;
       // ======================================================================
     public:
       // ======================================================================
       // functions
       // ======================================================================
       /// propagate the function to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GFunc&   func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GFunc& func ) const;
       /// propagate the function to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVFunc&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVFunc& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // maps
       // ======================================================================
       /// propagate the map to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GMaps&   func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GMaps& func ) const;
       /// propagate the map to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVMaps&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVMaps& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // pipes
       // ======================================================================
       /// propagate the pipe to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GPipes&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GPipes& func ) const;
       /// propagate the pipe to the tool
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVPipes& func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVPipes& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // fun-vals
       // ======================================================================
       /// propagate the fun-val to the tool
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GFunVals&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GFunVals& func ) const;
       /// propagate the fun-val to the tool
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GVFunVals& func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVFunVals& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // cut-vals
       // ======================================================================
       /// propagate the fun-val to the tool
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GCutVals&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GCutVals& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // sources
       // ======================================================================
       /// propagate the source to the tool
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GSources&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GSources& func ) const;
       /// propagate the source to the tool
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GVSources& func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVSources& func ) const;
       // ======================================================================
     protected:
       // ======================================================================
@@ -169,25 +139,24 @@ namespace LoKi
       // ======================================================================
       /// just to save some lines
       template <class TYPE>
-      inline StatusCode _add
-      ( const std::string& name , const TYPE& cut ) const ;
+      inline StatusCode _add( const std::string& name, const TYPE& cut ) const;
       // ======================================================================
       // the copy contructor is disabled
-      GenEngineActor           ( const GenEngineActor& ) = delete;
+      GenEngineActor( const GenEngineActor& ) = delete;
       // the assignement operator is disabled
       GenEngineActor& operator=( const GenEngineActor& ) = delete;
       // ======================================================================
     private:
       // ======================================================================
-      typedef LoKi::Interface<LoKi::IGenHybridTool>   Tool  ;
-      typedef std::pair<Tool,LoKi::Context>           Entry ;
-      typedef std::stack<Entry>                       Stack ;
-      ///  the stack of active factories 
-      Stack m_stack {} ; // the stack of active factories 
+      typedef LoKi::Interface<LoKi::IGenHybridTool> Tool;
+      typedef std::pair<Tool, LoKi::Context>        Entry;
+      typedef std::stack<Entry>                     Stack;
+      ///  the stack of active factories
+      Stack m_stack{}; // the stack of active factories
       // ======================================================================
     };
     // ========================================================================
-  } //                                             end of namespace LoKi:Hybrid
+  } // namespace Hybrid
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

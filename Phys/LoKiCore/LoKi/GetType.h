@@ -26,8 +26,7 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @struct GetType GetType.h LoKi/GetType.h
    *
@@ -37,28 +36,24 @@ namespace LoKi
    *  @date   2006-10-07
    */
   template <class TYPE>
-  struct GetType
-  {
-    typedef TYPE Type ;
-  } ;
+  struct GetType {
+    typedef TYPE Type;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct GetType<const TYPE>
-  {
-    typedef typename GetType<TYPE>::Type Type ;
-  } ;
+  struct GetType<const TYPE> {
+    typedef typename GetType<TYPE>::Type Type;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct GetType<TYPE&>
-  {
-    typedef typename GetType<TYPE>::Type Type ;
-  } ;
+  struct GetType<TYPE&> {
+    typedef typename GetType<TYPE>::Type Type;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct GetType<TYPE*>
-  {
-    typedef typename GetType<TYPE>::Type Type ;
-  } ;
+  struct GetType<TYPE*> {
+    typedef typename GetType<TYPE>::Type Type;
+  };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

@@ -19,24 +19,23 @@
 """ The test for JIRA LHCBPS-1743
 - https://its.cern.ch/jira/browse/LHCBPS-1743
 """
-__author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru" 
+__author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 # =============================================================================
 
 from LoKiNumbers.decorators import *
-from LoKiCore.functions     import *
+from LoKiCore.functions import *
 
+first = 0 > FONE
 
-first  = 0 > FONE
+second = monitor(FONE > 0, '"  -there should be no such prints  here!\n',
+                 'ERROR: "')
 
-second = monitor( FONE>0 , '"  -there should be no such prints  here!\n', 'ERROR: "' )
-
-func   = first & second
+func = first & second
 
 print 'BEFORE'
-result = func()  ## If  everything is fine it must be silent! 
+result = func()  ## If  everything is fine it must be silent!
 print 'AFTER'
 
-
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

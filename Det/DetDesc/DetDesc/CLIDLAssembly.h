@@ -12,14 +12,14 @@
 // ============================================================================
 // CVS tag $Name: not supported by cvs2svn $
 // ============================================================================
-// $Log: not supported by cvs2svn $ 
+// $Log: not supported by cvs2svn $
 // ============================================================================
-#ifndef DETDESC_CLIDLASSEMBLY_H 
+#ifndef DETDESC_CLIDLASSEMBLY_H
 #define DETDESC_CLIDLASSEMBLY_H 1
 #include "GaudiKernel/ClassID.h"
 
 /** @file CLIDLAssembly.h
- *  
+ *
  *  definition of unique identifier for class LAssembly
  *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
@@ -28,6 +28,6 @@
 static const CLID CLID_LAssembly = 1210;
 
 // ============================================================================
-// The End 
+// The End
 // ============================================================================
 #endif // DETDESC_CLIDLASSEMBLY_H

@@ -13,9 +13,8 @@
 
 // Include files
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
-
+#include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class RawEventDump RawEventDump.h tests/RawEventDump.h
  *  Dump a RawEvent
@@ -28,11 +27,12 @@ public:
   /// Standard constructor
   RawEventDump( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-  bool acceptBank(LHCb::RawBank::BankType i);
-  Gaudi::Property<bool> m_dump{ this, "DumpData", false };///< Property "DumpData". If true, full bank contents are dumped
-  Gaudi::Property<std::vector<std::string>> m_banks{ this, "RawBanks" }; // RawBanks to be dumped  (default ALL banks)
+  bool                                      acceptBank( LHCb::RawBank::BankType i );
+  Gaudi::Property<bool>                     m_dump{this, "DumpData",
+                               false}; ///< Property "DumpData". If true, full bank contents are dumped
+  Gaudi::Property<std::vector<std::string>> m_banks{this, "RawBanks"}; // RawBanks to be dumped  (default ALL banks)
 };
 #endif // TESTS_RAWEVENTDUMP_H

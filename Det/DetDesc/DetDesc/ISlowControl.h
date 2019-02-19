@@ -20,17 +20,10 @@
     An abstract interface to get the slow control information of
     a detector element.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct  ISlowControl : virtual IConditionInfo
-{
-
-};
+struct ISlowControl : virtual IConditionInfo {};
 
 #endif // DETDESC_ISLOWCONTROL_H
-
-
-
-

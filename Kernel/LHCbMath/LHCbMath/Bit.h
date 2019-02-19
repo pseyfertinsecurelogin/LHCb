@@ -67,12 +67,9 @@
  *  @date 2008-08-01
  */
 // ============================================================================
-namespace Gaudi
-{
-  namespace Math
-  {
-    namespace detail
-    {
+namespace Gaudi {
+  namespace Math {
+    namespace detail {
       // ======================================================================
       /** @struct Check
        *  Simple structure to check the if the type has sufficient
@@ -80,15 +77,13 @@ namespace Gaudi
        *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
        *  @date 2008-08-01
        */
-      template <class TYPE,unsigned int N>
-      struct Check
-      {
+      template <class TYPE, unsigned int N>
+      struct Check {
         // ====================================================================
-        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                             && boost::integer_traits<TYPE>::is_integral
-                             &&!boost::integer_traits<TYPE>::is_signed ) ;
+        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized&& boost::integer_traits<TYPE>::is_integral &&
+                             !boost::integer_traits<TYPE>::is_signed );
         // ====================================================================
-        enum { value =  N < (unsigned int) boost::integer_traits <TYPE>::digits } ;
+        enum { value = N < (unsigned int)boost::integer_traits<TYPE>::digits };
         // ====================================================================
       };
       // ======================================================================
@@ -97,19 +92,15 @@ namespace Gaudi
        *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
        *  @date 2008-08-01
        */
-      template <class TYPE,
-                typename Gaudi::Math::TypeWrapper<TYPE>::value_type I,
-                unsigned int N>
-      struct _IBit
-      {
+      template <class TYPE, typename Gaudi::Math::TypeWrapper<TYPE>::value_type I, unsigned int N>
+      struct _IBit {
       private:
         // ====================================================================
-        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                             &&!boost::integer_traits<TYPE>::is_signed   ) ;
+        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized && !boost::integer_traits<TYPE>::is_signed );
         // ====================================================================
       public:
         // ====================================================================
-        enum { value = 0 < ( I & ( static_cast<TYPE>(1) << N ) ) } ;
+        enum { value = 0 < ( I & ( static_cast<TYPE>( 1 ) << N ) ) };
         // ====================================================================
       };
       // ======================================================================
@@ -119,27 +110,19 @@ namespace Gaudi
        *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
        *  @date 2008-08-01
        */
-      template <class TYPE,
-                typename Gaudi::Math::TypeWrapper<TYPE>::value_type I,
-                unsigned int N1,
-                unsigned int N2>
-      struct _IBits
-      {
+      template <class TYPE, typename Gaudi::Math::TypeWrapper<TYPE>::value_type I, unsigned int N1, unsigned int N2>
+      struct _IBits {
       private:
         // ====================================================================
-        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                             &&!boost::integer_traits<TYPE>::is_signed   ) ;
+        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized && !boost::integer_traits<TYPE>::is_signed );
         // ====================================================================
       public:
         // ====================================================================
-        enum
-          {
-            value =
-            ( I & ( static_cast<TYPE> ( -1 )
-                    << ( boost::integer_traits<TYPE>::digits + N1 - N2 )
-                    >> ( boost::integer_traits<TYPE>::digits      - N2 ) ) )
-            >> N1
-          } ;
+        enum {
+          value = ( I & ( static_cast<TYPE>( -1 ) << ( boost::integer_traits<TYPE>::digits + N1 - N2 ) >>
+                          ( boost::integer_traits<TYPE>::digits - N2 ) ) ) >>
+                  N1
+        };
         // ====================================================================
       };
       // ======================================================================
@@ -149,19 +132,17 @@ namespace Gaudi
        *  @date 2008-08-01
        */
       template <class TYPE, unsigned int N>
-      struct _Bit
-      {
+      struct _Bit {
         // ====================================================================
-        static_assert( boost::integer_traits<TYPE>::is_specialized
-                       && boost::integer_traits<TYPE>::is_integral
-                       &&!boost::integer_traits<TYPE>::is_signed ,"TYPE must be signed integral type") ;
+        static_assert( boost::integer_traits<TYPE>::is_specialized && boost::integer_traits<TYPE>::is_integral &&
+                           !boost::integer_traits<TYPE>::is_signed,
+                       "TYPE must be signed integral type" );
         // ====================================================================
       public:
         // ====================================================================
-        inline bool operator() ( const TYPE value ) const
-        {
-          static const TYPE s_mask = static_cast<TYPE> ( 1 ) << N  ;
-          return ( (value & s_mask) == 0 ? false:true );
+        inline bool operator()( const TYPE value ) const {
+          static const TYPE s_mask = static_cast<TYPE>( 1 ) << N;
+          return ( ( value & s_mask ) == 0 ? false : true );
         }
         // ====================================================================
       };
@@ -171,34 +152,28 @@ namespace Gaudi
        *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
        *  @date 2008-08-01
        */
-      template <class TYPE,unsigned int N1,unsigned int N2>
-      struct _Bits
-      {
+      template <class TYPE, unsigned int N1, unsigned int N2>
+      struct _Bits {
       private:
         // ====================================================================
-        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                             && boost::integer_traits<TYPE>::is_integral
-                             &&!boost::integer_traits<TYPE>::is_signed      ) ;
+        BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized&& boost::integer_traits<TYPE>::is_integral &&
+                             !boost::integer_traits<TYPE>::is_signed );
         // ====================================================================
-        BOOST_STATIC_ASSERT( N1 < N2  &&
-                             N1 <  (unsigned int) boost::integer_traits<TYPE>::digits &&
-                             N2 <= (unsigned int) boost::integer_traits<TYPE>::digits ) ;
+        BOOST_STATIC_ASSERT( N1 < N2 && N1 < (unsigned int)boost::integer_traits<TYPE>::digits &&
+                             N2 <= (unsigned int)boost::integer_traits<TYPE>::digits );
         // ====================================================================
       public:
         // ====================================================================
-        inline TYPE operator() ( const TYPE value ) const
-        {
+        inline TYPE operator()( const TYPE value ) const {
           // ==================================================================
-          static const TYPE s_mask =
-            ( static_cast<TYPE> ( -1 )
-              << ( boost::integer_traits<TYPE>::digits + N1 - N2 ) )
-              >> ( boost::integer_traits<TYPE>::digits      - N2 ) ;
+          static const TYPE s_mask = ( static_cast<TYPE>( -1 ) << ( boost::integer_traits<TYPE>::digits + N1 - N2 ) ) >>
+                                     ( boost::integer_traits<TYPE>::digits - N2 );
           // =================================================================
-          return ( value & s_mask ) >> N1 ;
+          return ( value & s_mask ) >> N1;
           // ==================================================================
         }
         // ====================================================================
-      } ;
+      };
       // ======================================================================
     } // end of namespace detail
     // ========================================================================
@@ -219,16 +194,12 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-09
      */
-    template <class TYPE,
-              typename Gaudi::Math::TypeWrapper<TYPE>::value_type I,
-              unsigned int  N>
-    struct IBit : public detail::_IBit<TYPE,I,N>
-    {
+    template <class TYPE, typename Gaudi::Math::TypeWrapper<TYPE>::value_type I, unsigned int N>
+    struct IBit : public detail::_IBit<TYPE, I, N> {
       // ======================================================================
-      BOOST_STATIC_ASSERT ( ( detail::Check<TYPE,N>::value ) ) ;
-      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                           && boost::integer_traits<TYPE>::is_integral
-                           &&!boost::integer_traits<TYPE>::is_signed   ) ;
+      BOOST_STATIC_ASSERT( ( detail::Check<TYPE, N>::value ) );
+      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized&& boost::integer_traits<TYPE>::is_integral &&
+                           !boost::integer_traits<TYPE>::is_signed );
       // ======================================================================
     };
     // ========================================================================
@@ -248,20 +219,14 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-08-01
      */
-    template <class TYPE,
-              typename Gaudi::Math::TypeWrapper<TYPE>::value_type I,
-              unsigned int N1,
-              unsigned int N2>
-    struct IBits : public detail::_IBits<TYPE,I,N1,N2>
-    {
+    template <class TYPE, typename Gaudi::Math::TypeWrapper<TYPE>::value_type I, unsigned int N1, unsigned int N2>
+    struct IBits : public detail::_IBits<TYPE, I, N1, N2> {
       // ======================================================================
-      BOOST_STATIC_ASSERT( N1 < N2
-                           && boost::integer_traits<TYPE>::is_specialized
-                           && boost::integer_traits<TYPE>::is_integral
-                           &&!boost::integer_traits<TYPE>::is_signed   ) ;
+      BOOST_STATIC_ASSERT( N1 < N2 && boost::integer_traits<TYPE>::is_specialized &&
+                           boost::integer_traits<TYPE>::is_integral && !boost::integer_traits<TYPE>::is_signed );
       // ======================================================================
-      BOOST_STATIC_ASSERT( N1 < (unsigned int) boost::integer_traits<TYPE>::digits &&
-                           N2 < 1 +            boost::integer_traits<TYPE>::digits ) ;
+      BOOST_STATIC_ASSERT( N1 < (unsigned int)boost::integer_traits<TYPE>::digits &&
+                           N2 < 1 + boost::integer_traits<TYPE>::digits );
       // ======================================================================
     };
     // ========================================================================
@@ -285,13 +250,11 @@ namespace Gaudi
      *  @date 2008-07-09
      */
     template <class TYPE, unsigned int N>
-    struct Bit : public detail::_Bit<TYPE,N>
-    {
+    struct Bit : public detail::_Bit<TYPE, N> {
       // ======================================================================
-      BOOST_STATIC_ASSERT ( ( detail::Check<TYPE,N>::value ) ) ;
-      BOOST_STATIC_ASSERT ( boost::integer_traits<TYPE>::is_specialized
-                            && boost::integer_traits<TYPE>::is_integral
-                            &&!boost::integer_traits<TYPE>::is_signed   ) ;
+      BOOST_STATIC_ASSERT( ( detail::Check<TYPE, N>::value ) );
+      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized&& boost::integer_traits<TYPE>::is_integral &&
+                           !boost::integer_traits<TYPE>::is_signed );
       // ======================================================================
     };
     // ========================================================================
@@ -314,16 +277,13 @@ namespace Gaudi
      *  @date 2008-08-01
      */
     template <class TYPE, unsigned int N1, unsigned int N2>
-    struct Bits : public detail::_Bits<TYPE,N1,N2>
-    {
+    struct Bits : public detail::_Bits<TYPE, N1, N2> {
       // ======================================================================
-      BOOST_STATIC_ASSERT( N1 < N2
-                           && boost::integer_traits<TYPE>::is_specialized
-                           && boost::integer_traits<TYPE>::is_integral
-                           &&!boost::integer_traits<TYPE>::is_signed    ) ;
+      BOOST_STATIC_ASSERT( N1 < N2 && boost::integer_traits<TYPE>::is_specialized &&
+                           boost::integer_traits<TYPE>::is_integral && !boost::integer_traits<TYPE>::is_signed );
       // ====================================================================
-      BOOST_STATIC_ASSERT( N1 < (unsigned int) boost::integer_traits<TYPE>::digits &&
-                           N2 < 1 +            boost::integer_traits<TYPE>::digits ) ;
+      BOOST_STATIC_ASSERT( N1 < (unsigned int)boost::integer_traits<TYPE>::digits &&
+                           N2 < 1 + boost::integer_traits<TYPE>::digits );
       // ======================================================================
     };
     // ========================================================================
@@ -344,45 +304,36 @@ namespace Gaudi
      *  @date 2008-07-09
      */
     template <class TYPE>
-    inline bool bit ( const TYPE value , const unsigned int N  )
-    {
+    inline bool bit( const TYPE value, const unsigned int N ) {
       // ======================================================================
-      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                           && boost::integer_traits<TYPE>::is_integral
-                           &&!boost::integer_traits<TYPE>::is_signed ) ;
+      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized && boost::integer_traits<TYPE>::is_integral &&
+                           !boost::integer_traits<TYPE>::is_signed );
       // ======================================================================
-      static const TYPE one = static_cast<TYPE>(1) ;
-      return N < (unsigned int) boost::integer_traits <TYPE>::digits ?
-        ( value & ( one << N ) )!=0 : 0 ;
+      static const TYPE one = static_cast<TYPE>( 1 );
+      return N < (unsigned int)boost::integer_traits<TYPE>::digits ? ( value & ( one << N ) ) != 0 : 0;
       // ======================================================================
     }
     // ========================================================================
     template <class TYPE>
-    inline TYPE bits ( const TYPE         value ,
-                       const unsigned int N1    ,
-                       const unsigned int N2    )
-    {
+    inline TYPE bits( const TYPE value, const unsigned int N1, const unsigned int N2 ) {
       // ======================================================================
-      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized
-                           && boost::integer_traits<TYPE>::is_integral
-                           &&!boost::integer_traits<TYPE>::is_signed ) ;
+      BOOST_STATIC_ASSERT( boost::integer_traits<TYPE>::is_specialized && boost::integer_traits<TYPE>::is_integral &&
+                           !boost::integer_traits<TYPE>::is_signed );
       // ======================================================================
-      if ( N2 >  (unsigned int) boost::integer_traits<TYPE>::digits )
-      { return bits ( value , N1 , boost::integer_traits<TYPE>::digits ) ; }
+      if ( N2 > (unsigned int)boost::integer_traits<TYPE>::digits ) {
+        return bits( value, N1, boost::integer_traits<TYPE>::digits );
+      }
       //
-      if ( N1 >= N2 ||
-           N1 >= (unsigned int) boost::integer_traits<TYPE>::digits ) { return 0 ; }
+      if ( N1 >= N2 || N1 >= (unsigned int)boost::integer_traits<TYPE>::digits ) { return 0; }
       // ======================================================================
-      const TYPE mask =
-        ( static_cast<TYPE> ( -1 )
-          << ( boost::integer_traits<TYPE>::digits + N1 - N2 ) )
-          >> ( boost::integer_traits<TYPE>::digits      - N2 ) ;
+      const TYPE mask = ( static_cast<TYPE>( -1 ) << ( boost::integer_traits<TYPE>::digits + N1 - N2 ) ) >>
+                        ( boost::integer_traits<TYPE>::digits - N2 );
       // ======================================================================
-      return ( value & mask ) >> N1 ;
+      return ( value & mask ) >> N1;
       // ======================================================================
     }
     // ========================================================================
-  } // end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } // end of namespace Gaudi
 // ============================================================================

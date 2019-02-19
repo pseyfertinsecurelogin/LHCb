@@ -27,27 +27,22 @@
 
 //-----------------------------------------------------------------------------
 
-namespace Rich
-{
-  namespace DAQ
-  {
+namespace Rich {
+  namespace DAQ {
 
-    template < class Version, class Header, class Footer >
-    void PDDataBankImp< Version, Header, Footer >::init( const LongType *data,
-                                                         const ShortType dataSize )
-    {
+    template <class Version, class Header, class Footer>
+    void PDDataBankImp<Version, Header, Footer>::init( const LongType* data, const ShortType dataSize ) {
       // initialise header words
       // note, this call increments data to the correct place
       m_header.readFromDataStream( data );
       // set pointer to first data word
-      m_data = const_cast< LongType * >( data );
+      m_data = const_cast<LongType*>( data );
       // set data size
       // Use trick here with dataSize to allow compatibility with DC06/DC04 data
       // can be removed when no longer needed (together with dataSize variable)
       m_dataSize = ( 0 == dataSize ? m_header.nDataWords() : dataSize );
       // initialise footer
-      if ( UNLIKELY( m_header.extendedFormat() ) )
-      {
+      if ( UNLIKELY( m_header.extendedFormat() ) ) {
         // skip to start of footer
         data += m_dataSize;
         // make sure the footer expects words
@@ -57,48 +52,42 @@ namespace Rich
       }
     }
 
-    template < class Version, class Header, class Footer >
-    typename Footer::WordType PDDataBankImp< Version, Header, Footer >::createParityWord(
-      const LHCb::RichSmartID::Vector &ids ) const
-    {
-      ShortType                   parity( 0 );
-      std::vector< unsigned int > hC( HPD::BitsPerDataWord, 0 );
-      for ( const auto &id : ids ) { ++hC[id.pixelCol()]; }
-      for ( unsigned int i = 0; i < HPD::BitsPerDataWord; ++i )
-      {
+    template <class Version, class Header, class Footer>
+    typename Footer::WordType
+    PDDataBankImp<Version, Header, Footer>::createParityWord( const LHCb::RichSmartID::Vector& ids ) const {
+      ShortType                 parity( 0 );
+      std::vector<unsigned int> hC( HPD::BitsPerDataWord, 0 );
+      for ( const auto& id : ids ) { ++hC[id.pixelCol()]; }
+      for ( unsigned int i = 0; i < HPD::BitsPerDataWord; ++i ) {
         if ( hC[i] % 2 == 1 ) { setBit( parity, i ); }
       }
       return typename Footer::WordType( parity );
     }
 
-    template < class Version, class Header, class Footer >
-    bool PDDataBankImp< Version, Header, Footer >::checkDataIntegrity(
-      const LHCb::RichSmartID::Vector &ids,
-      const CommonMessagingBase *      msgBase ) const
-    {
+    template <class Version, class Header, class Footer>
+    bool PDDataBankImp<Version, Header, Footer>::checkDataIntegrity( const LHCb::RichSmartID::Vector& ids,
+                                                                     const CommonMessagingBase*       msgBase ) const {
       bool OK( true );
       // does this footer have a parity word ?
-      if ( UNLIKELY( this->footer().hasParityWord() ) )
-      {
+      if ( UNLIKELY( this->footer().hasParityWord() ) ) {
         // yes, so compare to that "decoded" from the data
 
         // decoded parity word
         const auto decodedfoot = this->createParityWord( ids );
 
         // compare to expected
-        if ( UNLIKELY( !this->footer().testParityWord( decodedfoot ) ) )
-        {
+        if ( UNLIKELY( !this->footer().testParityWord( decodedfoot ) ) ) {
           // message stream
-          auto &err = msgBase->error();
+          auto& err = msgBase->error();
           // print
           err << "Parity word indicates an error :-" << endmsg;
           err << " -> decoded from data | " << asHex( decodedfoot.data() ) << " |";
-          for ( int iCol = 31; iCol >= 0; --iCol )
-          { err << " " << isBitOn( decodedfoot.data(), iCol ); }
+          for ( int iCol = 31; iCol >= 0; --iCol ) { err << " " << isBitOn( decodedfoot.data(), iCol ); }
           err << endmsg;
           err << " -> from footer word  | " << asHex( this->footer().parityWord().data() ) << " |";
-          for ( int iCol = 31; iCol >= 0; --iCol )
-          { err << " " << isBitOn( this->footer().parityWord().data(), iCol ); }
+          for ( int iCol = 31; iCol >= 0; --iCol ) {
+            err << " " << isBitOn( this->footer().parityWord().data(), iCol );
+          }
           err << endmsg;
 
           // set flag to bad
@@ -108,11 +97,10 @@ namespace Rich
       return OK;
     }
 
-    template < class Version, class Header, class Footer >
-    void PDDataBankImp< Version, Header, Footer >::dumpAllBits( MsgStream &os ) const
-    {
+    template <class Version, class Header, class Footer>
+    void PDDataBankImp<Version, Header, Footer>::dumpAllBits( MsgStream& os ) const {
 
-      const std::string &lines = "-----------------------------------------------------------------"
+      const std::string& lines = "-----------------------------------------------------------------"
                                  "---------------------------------------------------";
 
       os << lines << endmsg;
@@ -123,8 +111,7 @@ namespace Rich
       os << endmsg << lines << endmsg;
 
       // Header
-      for ( const auto &H : header().allHeaderWords() )
-      {
+      for ( const auto& H : header().allHeaderWords() ) {
         os << " h    | " << asHex( H.data() ) << "  |";
         for ( int iCol = 31; iCol >= 0; --iCol ) { os << "  " << isBitOn( H.data(), iCol ); }
         os << endmsg;
@@ -132,8 +119,7 @@ namespace Rich
       os << lines << endmsg;
 
       // Data bits
-      for ( ShortType iRow = 0; iRow < dataSize(); ++iRow )
-      {
+      for ( ShortType iRow = 0; iRow < dataSize(); ++iRow ) {
         os << boost::format( " d%3i" ) % iRow << " | ";
         os << asHex( data()[iRow] ) << "  |";
         for ( int iCol = 31; iCol >= 0; --iCol ) { os << "  " << isBitOn( data()[iRow], iCol ); }
@@ -142,27 +128,22 @@ namespace Rich
       os << lines << endmsg;
 
       // Footer
-      if ( !footer().footerWords().empty() )
-      {
-        for ( const auto &F : footer().footerWords() )
-        {
+      if ( !footer().footerWords().empty() ) {
+        for ( const auto& F : footer().footerWords() ) {
           os << " f    | " << asHex( F.data() ) << "  |";
           for ( int iCol = 31; iCol >= 0; --iCol ) { os << "  " << isBitOn( F.data(), iCol ); }
           os << endmsg;
         }
-      }
-      else
-      {
+      } else {
         os << " f    | NO FOOTER WORD" << endmsg;
       }
       os << lines << endmsg;
     }
 
-    template < class Version, class Header, class Footer >
-    void PDDataBankImp< Version, Header, Footer >::fillMsgStream( MsgStream &os ) const
-    {
+    template <class Version, class Header, class Footer>
+    void PDDataBankImp<Version, Header, Footer>::fillMsgStream( MsgStream& os ) const {
 
-      const std::string &lines = "================================================================="
+      const std::string& lines = "================================================================="
                                  "===================================================";
 
       os << lines << endmsg;
@@ -176,69 +157,59 @@ namespace Rich
       os << lines;
     }
 
-    template < class Version, class Header, class Footer >
-    Level0ID PDDataBankImp< Version, Header, Footer >::level0ID() const
-    {
+    template <class Version, class Header, class Footer>
+    Level0ID PDDataBankImp<Version, Header, Footer>::level0ID() const {
       return this->header().l0ID();
     }
 
-    template < class Version, class Header, class Footer >
-    void PDDataBankImp< Version, Header, Footer >::fillRAWBank( RAWBank &rawData ) const
-    {
+    template <class Version, class Header, class Footer>
+    void PDDataBankImp<Version, Header, Footer>::fillRAWBank( RAWBank& rawData ) const {
       // fill with header word(s)
       header().fillRAWBank( rawData );
       // ... then data words
-      for ( ShortType iData = 0; iData < dataSize(); ++iData )
-      { rawData.push_back( m_data[iData] ); } // finally the footer word(s)
+      for ( ShortType iData = 0; iData < dataSize(); ++iData ) {
+        rawData.push_back( m_data[iData] );
+      } // finally the footer word(s)
       footer().fillRAWBank( rawData );
     }
 
-    template < class Version, class Header, class Footer >
-    ShortType PDDataBankImp< Version, Header, Footer >::nHeaderWords() const
-    {
+    template <class Version, class Header, class Footer>
+    ShortType PDDataBankImp<Version, Header, Footer>::nHeaderWords() const {
       return this->header().nHeaderWords();
     }
 
-    template < class Version, class Header, class Footer >
-    ShortType PDDataBankImp< Version, Header, Footer >::nFooterWords() const
-    {
+    template <class Version, class Header, class Footer>
+    ShortType PDDataBankImp<Version, Header, Footer>::nFooterWords() const {
       return this->footer().footerWords().size();
     }
 
-    template < class Version, class Header, class Footer >
-    ShortType PDDataBankImp< Version, Header, Footer >::nDataWords() const
-    {
+    template <class Version, class Header, class Footer>
+    ShortType PDDataBankImp<Version, Header, Footer>::nDataWords() const {
       return this->dataSize();
     }
 
-    template < class Version, class Header, class Footer >
-    EventID PDDataBankImp< Version, Header, Footer >::eventID() const
-    {
+    template <class Version, class Header, class Footer>
+    EventID PDDataBankImp<Version, Header, Footer>::eventID() const {
       return this->header().eventID();
     }
 
-    template < class Version, class Header, class Footer >
-    bool PDDataBankImp< Version, Header, Footer >::suppressed() const
-    {
+    template <class Version, class Header, class Footer>
+    bool PDDataBankImp<Version, Header, Footer>::suppressed() const {
       return this->header().l1Suppressed();
     }
 
-    template < class Version, class Header, class Footer >
-    HeaderPDBase::WordType PDDataBankImp< Version, Header, Footer >::primaryHeaderWord() const
-    {
+    template <class Version, class Header, class Footer>
+    HeaderPDBase::WordType PDDataBankImp<Version, Header, Footer>::primaryHeaderWord() const {
       return header().primaryHeaderWord();
     }
 
-    template < class Version, class Header, class Footer >
-    const HeaderPDBase::ExtendedHeaderWords &
-    PDDataBankImp< Version, Header, Footer >::extendedHeaderWords() const
-    {
+    template <class Version, class Header, class Footer>
+    const HeaderPDBase::ExtendedHeaderWords& PDDataBankImp<Version, Header, Footer>::extendedHeaderWords() const {
       return header().extendedHeaderWords();
     }
 
-    template < class Version, class Header, class Footer >
-    const FooterPDBase::FooterWords &PDDataBankImp< Version, Header, Footer >::footerWords() const
-    {
+    template <class Version, class Header, class Footer>
+    const FooterPDBase::FooterWords& PDDataBankImp<Version, Header, Footer>::footerWords() const {
       return footer().footerWords();
     }
 

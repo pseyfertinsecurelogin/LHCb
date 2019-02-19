@@ -34,13 +34,11 @@ extern const CLID CLID_DeRichGasRadiator;
  *  @author Antonis Papanestis
  *  @date   2006-03-02
  */
-class DeRichGasRadiator : public DeRichSingleSolidRadiator
-{
+class DeRichGasRadiator : public DeRichSingleSolidRadiator {
 
 public:
-
   /// Standard constructor
-  DeRichGasRadiator( const std::string &name = "" );
+  DeRichGasRadiator( const std::string& name = "" );
 
   virtual ~DeRichGasRadiator() = default; ///< Destructor
 
@@ -48,13 +46,13 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID &clID() const override final { return classID(); }
+  inline const CLID& clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID &classID();
+  static const CLID& classID();
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -65,7 +63,6 @@ public:
   StatusCode initialize() override final;
 
 private:
-
   /// method to update the refractive index of the radiator
   StatusCode updateProperties();
 
@@ -81,28 +78,26 @@ private:
 
   /** Method for the calculation of the refractive index from the Sellmeir
    *  coeficients and update of the Tabulated Property */
-  StatusCode calcSellmeirRefIndex( const std::vector< double > &momVect,
-                                   TabulatedProperty *          tabProp,
-                                   const SmartRef< Condition > &gasParamCond ) const;
+  StatusCode calcSellmeirRefIndex( const std::vector<double>& momVect, TabulatedProperty* tabProp,
+                                   const SmartRef<Condition>& gasParamCond ) const;
 
   /// method to use the old separate temperature and pressure conditions
   StatusCode setupOldGasConditions();
 
 private: // data
-
   /// Condition holding the current temperature of radiator
-  SmartRef< Condition > m_temperatureCond;
+  SmartRef<Condition> m_temperatureCond;
 
   /// Condition holding the current pressure of radiator
-  SmartRef< Condition > m_pressureCond;
+  SmartRef<Condition> m_pressureCond;
 
   /// Condition holding the current pressure of radiator for use Offline
-  SmartRef< Condition > m_gasParametersCond;
+  SmartRef<Condition> m_gasParametersCond;
 
   /// Condition holding the current pressure of radiator for use in the HLT
-  SmartRef< Condition > m_hltGasParametersCond;
+  SmartRef<Condition> m_hltGasParametersCond;
 
   /// Condition holding the scale factor for the refractivity
   /// This conditions scales n-1 NOT n
-  SmartRef< Condition > m_scaleFactorCond;
+  SmartRef<Condition> m_scaleFactorCond;
 };

@@ -9,119 +9,96 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "STDet/DeITSector.h"
+#include "STDet/DeITLadder.h"
 #include "STDet/DeITSensor.h"
 #include "STDet/DeSTSensor.h"
-#include "STDet/DeITLadder.h"
 #include "STDet/STDetFun.h"
 
 #include "Kernel/ITNames.h"
 
 /** @file DeITSector.cpp
-*
-*  Implementation of class :  DeITSector
-*
-*    @author Matthew Needham
-*/
-
-
+ *
+ *  Implementation of class :  DeITSector
+ *
+ *    @author Matthew Needham
+ */
 
 using namespace LHCb;
 
-DeITSector::DeITSector( const std::string& name ) :
-  DeSTSector( name ),
-  m_parent(0),
-  m_prodID(0),
-  m_prodIDString("ProdID")
-{
+DeITSector::DeITSector( const std::string& name )
+    : DeSTSector( name ), m_parent( 0 ), m_prodID( 0 ), m_prodIDString( "ProdID" ) {
   // constructer
 }
 
-const CLID& DeITSector::clID () const
-{
-  return DeITSector::classID() ;
-}
+const CLID& DeITSector::clID() const { return DeITSector::classID(); }
 
 StatusCode DeITSector::initialize() {
 
   // initialize method
-  MsgStream msg(msgSvc(), name() );
+  MsgStream msg( msgSvc(), name() );
 
   StatusCode sc = DeSTSector::initialize();
-  if (sc.isFailure() ){
+  if ( sc.isFailure() ) {
     msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
     return sc;
-  }
-  else {
+  } else {
     // get the parent
     m_parent = getParent<DeITSector>();
 
     const STChannelID parentID = m_parent->elementID();
-    setElementID(parentID);
-    m_nickname = ITNames().UniqueSectorToString(parentID);
+    setElementID( parentID );
+    m_nickname = ITNames().UniqueSectorToString( parentID );
 
     // see if stereo
     m_isStereo = false;
-    if (elementID().layer() == ITNames::Layer::V || elementID().layer() == ITNames::Layer::U) m_isStereo = true;
+    if ( elementID().layer() == ITNames::Layer::V || elementID().layer() == ITNames::Layer::U ) m_isStereo = true;
 
     // build the id
-    setID(parentID.sector());
+    setID( parentID.sector() );
 
     std::vector<DeITSensor*> sensors = getChildren<DeITSector>();
-    std::sort(sensors.begin(),sensors.end(),STDetFun::SortByY());
-    m_sensors.reserve(sensors.size());
-    m_sensors.insert(m_sensors.begin(), sensors.begin(), sensors.end());
+    std::sort( sensors.begin(), sensors.end(), STDetFun::SortByY() );
+    m_sensors.reserve( sensors.size() );
+    m_sensors.insert( m_sensors.begin(), sensors.begin(), sensors.end() );
     m_thickness = m_sensors.front()->thickness();
 
     // Can't test the version string, it's unfortunalety not trustable
     // it exists a DC07 version (why?) that doesn't contain ProdID
-    if (versionString() != "DC06" && versionString() != "DC07")
-    {
-      sc = registerCondition(this, m_prodIDString,
-                             &DeITSector::updateProdIDCondition, true);
-      if (sc.isFailure() ){
+    if ( versionString() != "DC06" && versionString() != "DC07" ) {
+      sc = registerCondition( this, m_prodIDString, &DeITSector::updateProdIDCondition, true );
+      if ( sc.isFailure() ) {
         msg << MSG::ERROR << "Failed to register prodID conditions" << endmsg;
         return StatusCode::FAILURE;
       }
     }
 
     sc = registerConditionsCallbacks();
-    if (sc.isFailure()){
+    if ( sc.isFailure() ) {
       msg << MSG::ERROR << "Failed to registerConditions call backs" << endmsg;
       return sc;
     }
     sc = cacheInfo();
-    if (sc.isFailure()){
+    if ( sc.isFailure() ) {
       msg << MSG::ERROR << "Failed to cache geometry" << endmsg;
       return sc;
     }
-
   }
   return StatusCode::SUCCESS;
 }
 
-unsigned int DeITSector::prodID() const {
-  return m_prodID;
-}
+unsigned int DeITSector::prodID() const { return m_prodID; }
 
-std::string DeITSector::conditionsPathName() const
-{
-  std::string keys[3] =
-    {
-      "Top",
-      "Bottom",
-      "Side"
-    }, name( nickname() );
+std::string DeITSector::conditionsPathName() const {
+  std::string keys[3] = {"Top", "Bottom", "Side"}, name( nickname() );
 
   size_t loc;
 
-  name.replace(0, 2, "ITT");
+  name.replace( 0, 2, "ITT" );
 
-  for (unsigned int i(0); i < 3; i++)
-  {
-    loc =  name.find(keys[i]);
-    if ( loc < std::string::npos )
-    {
-      name.insert(loc + keys[i].length(), "Layer");
+  for ( unsigned int i( 0 ); i < 3; i++ ) {
+    loc = name.find( keys[i] );
+    if ( loc < std::string::npos ) {
+      name.insert( loc + keys[i].length(), "Layer" );
       break;
     }
   }
@@ -129,15 +106,14 @@ std::string DeITSector::conditionsPathName() const
   return name;
 }
 
-StatusCode DeITSector::updateProdIDCondition()
-{
-  const Condition* aCon = condition(m_prodIDString);
-  if (aCon == 0){
-    MsgStream msg(msgSvc(), name());
+StatusCode DeITSector::updateProdIDCondition() {
+  const Condition* aCon = condition( m_prodIDString );
+  if ( aCon == 0 ) {
+    MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to find condition" << endmsg;
     return StatusCode::FAILURE;
   }
-  m_prodID = aCon->param<int>("ProdID");
+  m_prodID = aCon->param<int>( "ProdID" );
 
   return StatusCode::SUCCESS;
 }

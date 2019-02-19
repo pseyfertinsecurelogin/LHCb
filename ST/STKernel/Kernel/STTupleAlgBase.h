@@ -31,8 +31,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STTupleBase.h STKernel/STTupleBase.h
@@ -45,19 +44,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class TupleAlgBase : public ST::CommonBase<GaudiTupleAlg>
-  {
+  class TupleAlgBase : public ST::CommonBase<GaudiTupleAlg> {
 
   public:
-    
     /// Standard constructor
-    TupleAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : ST::CommonBase<GaudiTupleAlg> ( name, pSvcLocator ) { }
-    
+    TupleAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : ST::CommonBase<GaudiTupleAlg>( name, pSvcLocator ) {}
   };
-  
-}
 
+} // namespace ST
 
 #endif // STKERNEL_STALGBASE_H

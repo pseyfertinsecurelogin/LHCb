@@ -28,15 +28,18 @@
  *  @date   2009-05-06
  */
 // ============================================================================
-bool Decays::Trees::decayOnly ( const Decays::Trees::Arrow& arrow )
-{
-  switch ( arrow )
-  {
-  case Decays::Trees::SingleX     : return false ;  // X
-  case Decays::Trees::LongSingleX : return false ;  // X
-  case Decays::Trees::DoubleX     : return false ;  // X
-  case Decays::Trees::LongDoubleX : return false ;  // X
-  default                         : return true  ;
+bool Decays::Trees::decayOnly( const Decays::Trees::Arrow& arrow ) {
+  switch ( arrow ) {
+  case Decays::Trees::SingleX:
+    return false; // X
+  case Decays::Trees::LongSingleX:
+    return false; // X
+  case Decays::Trees::DoubleX:
+    return false; // X
+  case Decays::Trees::LongDoubleX:
+    return false; // X
+  default:
+    return true;
   }
 }
 // ============================================================================
@@ -47,16 +50,18 @@ bool Decays::Trees::decayOnly ( const Decays::Trees::Arrow& arrow )
  *  @date   2009-05-06
  */
 // ============================================================================
-Decays::Trees::Alg  Decays::Trees::algorithm
-( const Decays::Trees::Arrow& arrow )
-{
-  switch ( arrow )
-  {
-  case Decays::Trees::LongSingle      : return Decays::Trees::Sections  ;
-  case Decays::Trees::LongDouble      : return Decays::Trees::Sections  ;
-  case Decays::Trees::LongSingleX     : return Decays::Trees::Sections  ;
-  case Decays::Trees::LongDoubleX     : return Decays::Trees::Sections  ;
-  default                             : return Decays::Trees::Daughters ;
+Decays::Trees::Alg Decays::Trees::algorithm( const Decays::Trees::Arrow& arrow ) {
+  switch ( arrow ) {
+  case Decays::Trees::LongSingle:
+    return Decays::Trees::Sections;
+  case Decays::Trees::LongDouble:
+    return Decays::Trees::Sections;
+  case Decays::Trees::LongSingleX:
+    return Decays::Trees::Sections;
+  case Decays::Trees::LongDoubleX:
+    return Decays::Trees::Sections;
+  default:
+    return Decays::Trees::Daughters;
   }
 }
 // ============================================================================
@@ -67,15 +72,18 @@ Decays::Trees::Alg  Decays::Trees::algorithm
  *  @date   2009-05-06
  */
 // ============================================================================
-bool Decays::Trees::photos    ( const Decays::Trees::Arrow& arrow )
-{
-  switch ( arrow )
-  {
-  case Decays::Trees::Double          : return true  ;
-  case Decays::Trees::LongDouble      : return true  ;
-  case Decays::Trees::DoubleX         : return true  ;
-  case Decays::Trees::LongDoubleX     : return true  ;
-  default                             : return false ;
+bool Decays::Trees::photos( const Decays::Trees::Arrow& arrow ) {
+  switch ( arrow ) {
+  case Decays::Trees::Double:
+    return true;
+  case Decays::Trees::LongDouble:
+    return true;
+  case Decays::Trees::DoubleX:
+    return true;
+  case Decays::Trees::LongDoubleX:
+    return true;
+  default:
+    return false;
   }
 }
 // ============================================================================
@@ -87,19 +95,26 @@ bool Decays::Trees::photos    ( const Decays::Trees::Arrow& arrow )
  *  @date   2009-05-06
  */
 // ============================================================================
-std::string Decays::Trees::arrow ( const Decays::Trees::Arrow& arr )
-{
-  switch ( arr )
-  {
-  case Decays::Trees::Single              : return   "->"  ;
-  case Decays::Trees::LongSingle          : return  "-->"  ;
-  case Decays::Trees::Double              : return   "=>"  ;
-  case Decays::Trees::LongDouble          : return  "==>"  ;
-  case Decays::Trees::SingleX             : return  "-x>"  ;
-  case Decays::Trees::LongSingleX         : return "--x>"  ;
-  case Decays::Trees::DoubleX             : return  "=x>"  ;
-  case Decays::Trees::LongDoubleX         : return "==x>"  ;
-  default                                 : return "<unknown arrow>" ;
+std::string Decays::Trees::arrow( const Decays::Trees::Arrow& arr ) {
+  switch ( arr ) {
+  case Decays::Trees::Single:
+    return "->";
+  case Decays::Trees::LongSingle:
+    return "-->";
+  case Decays::Trees::Double:
+    return "=>";
+  case Decays::Trees::LongDouble:
+    return "==>";
+  case Decays::Trees::SingleX:
+    return "-x>";
+  case Decays::Trees::LongSingleX:
+    return "--x>";
+  case Decays::Trees::DoubleX:
+    return "=x>";
+  case Decays::Trees::LongDoubleX:
+    return "==x>";
+  default:
+    return "<unknown arrow>";
   }
 }
 // ============================================================================
@@ -111,19 +126,26 @@ std::string Decays::Trees::arrow ( const Decays::Trees::Arrow& arr )
  *  @date   2009-05-06
  */
 // ============================================================================
-bool Decays::Trees::valid ( const Decays::Trees::Arrow& arrow )
-{
-  switch ( arrow )
-  {
-  case Decays::Trees::Single              : return true  ;
-  case Decays::Trees::LongSingle          : return true  ;
-  case Decays::Trees::Double              : return true  ;
-  case Decays::Trees::LongDouble          : return true  ;
-  case Decays::Trees::SingleX             : return true  ;
-  case Decays::Trees::LongSingleX         : return true  ;
-  case Decays::Trees::DoubleX             : return true  ;
-  case Decays::Trees::LongDoubleX         : return true  ;
-  default                                 : return false ;
+bool Decays::Trees::valid( const Decays::Trees::Arrow& arrow ) {
+  switch ( arrow ) {
+  case Decays::Trees::Single:
+    return true;
+  case Decays::Trees::LongSingle:
+    return true;
+  case Decays::Trees::Double:
+    return true;
+  case Decays::Trees::LongDouble:
+    return true;
+  case Decays::Trees::SingleX:
+    return true;
+  case Decays::Trees::LongSingleX:
+    return true;
+  case Decays::Trees::DoubleX:
+    return true;
+  case Decays::Trees::LongDoubleX:
+    return true;
+  default:
+    return false;
   }
 }
 // ============================================================================
@@ -135,17 +157,9 @@ bool Decays::Trees::valid ( const Decays::Trees::Arrow& arrow )
  *  @date   2009-05-06
  */
 // ============================================================================
-bool Decays::Trees::valid ( const std::string& arrow )
-{
-  return
-    "->"   == arrow ||
-    "-->"  == arrow ||
-    "=>"   == arrow ||
-    "==>"  == arrow ||
-    "-x>"  == arrow ||
-    "--x>" == arrow ||
-    "=x>"  == arrow ||
-    "==x>" == arrow ;
+bool Decays::Trees::valid( const std::string& arrow ) {
+  return "->" == arrow || "-->" == arrow || "=>" == arrow || "==>" == arrow || "-x>" == arrow || "--x>" == arrow ||
+         "=x>" == arrow || "==x>" == arrow;
 }
 // ============================================================================
 

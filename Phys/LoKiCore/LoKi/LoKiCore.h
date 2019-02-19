@@ -13,18 +13,18 @@
 // ============================================================================
 // LoKiCore
 // ============================================================================
-#include "LoKi/Functors.h"
-#include "LoKi/Math.h"
-#include "LoKi/Operators.h"
-#include "LoKi/RangeList.h"
+#include "LoKi/Base.h"
 #include "LoKi/Constants.h"
 #include "LoKi/CoreTypes.h"
-#include "LoKi/Helpers.h"
-#include "LoKi/Base.h"
-#include "LoKi/Monitoring.h"
-#include "LoKi/Info.h"
 #include "LoKi/ExtraInfo.h"
 #include "LoKi/Filters.h"
+#include "LoKi/Functors.h"
+#include "LoKi/Helpers.h"
+#include "LoKi/Info.h"
+#include "LoKi/Math.h"
+#include "LoKi/Monitoring.h"
+#include "LoKi/Operators.h"
+#include "LoKi/RangeList.h"
 #include "LoKi/Sources.h"
 #include "LoKi/Streamers.h"
 // ============================================================================
@@ -49,18 +49,17 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-namespace LoKi
-{
-  namespace Algs       {}
-  namespace Cast       {}
-  namespace Adapters   {}
-  namespace Constants  {}
+namespace LoKi {
+  namespace Algs {}
+  namespace Cast {}
+  namespace Adapters {}
+  namespace Constants {}
   namespace Kinematics {}
-  namespace Geometry   {}
-  namespace Particles  {}
-  namespace Types      {}
-  namespace Cuts       {}
-  namespace Objects    {}
+  namespace Geometry {}
+  namespace Particles {}
+  namespace Types {}
+  namespace Cuts {}
+  namespace Objects {}
   namespace Monitoring {}
 } // end of namespace LoKi
 // ============================================================================

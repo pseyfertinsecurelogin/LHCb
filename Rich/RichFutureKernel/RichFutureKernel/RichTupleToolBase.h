@@ -30,8 +30,7 @@
 // Rich Utils
 #include "RichUtils/RichHistoID.h"
 
-namespace Rich::Future
-{
+namespace Rich::Future {
 
   //-----------------------------------------------------------------------------
   /** @class TupleToolBase RichTupleToolBase.h RichFutureKernel/RichTupleToolBase.h
@@ -46,15 +45,12 @@ namespace Rich::Future
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public HistoBase< GaudiTupleTool >
-  {
+  class TupleToolBase : public HistoBase<GaudiTupleTool> {
 
   public:
-
     /// Standard constructor
-    TupleToolBase( const std::string &type, const std::string &name, const IInterface *parent )
-      : HistoBase< GaudiTupleTool >( type, name, parent )
-    {}
+    TupleToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : HistoBase<GaudiTupleTool>( type, name, parent ) {}
   };
 
 } // namespace Rich::Future

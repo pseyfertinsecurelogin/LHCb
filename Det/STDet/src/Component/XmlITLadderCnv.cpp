@@ -16,5 +16,5 @@
 // TTDet
 #include "STDet/DeITLadder.h"
 
-typedef XmlUserDetElemCnv<DeITLadder >        XmlITLadderCnv;
+typedef XmlUserDetElemCnv<DeITLadder> XmlITLadderCnv;
 DECLARE_CONVERTER( XmlITLadderCnv )

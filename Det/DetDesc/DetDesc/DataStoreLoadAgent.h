@@ -21,22 +21,22 @@
  *  @author Marco CLEMENCIC
  *  @date   2005-02-24
  */
-class DataStoreLoadAgent: public IDataStoreAgent {
+class DataStoreLoadAgent : public IDataStoreAgent {
 public:
   /// Standard constructor
-  DataStoreLoadAgent( ) = default;
+  DataStoreLoadAgent() = default;
 
-  bool 	analyse (IRegistry *pObject, int level) override;
+  bool analyse( IRegistry* pObject, int level ) override;
 
   /**
    * Give the number of objects that were loaded.
    */
-  inline int loadedObjects () const { return m_loadedObjects; }
+  inline int loadedObjects() const { return m_loadedObjects; }
 
   /**
    * Give the maximum depth reached navigating the tree.
    */
-  inline int maxDepth () const { return m_maxDepth; }
+  inline int maxDepth() const { return m_maxDepth; }
 
   /**
    * Reset the counters. Useful when using the same instance many times.
@@ -44,11 +44,9 @@ public:
 
   inline void resetCounters() { m_loadedObjects = m_maxDepth = 0; }
 
-
 protected:
-
 private:
   int m_loadedObjects = 0;
-  int m_maxDepth = 0;
+  int m_maxDepth      = 0;
 };
 #endif // DATASTORELOADAGENT_H

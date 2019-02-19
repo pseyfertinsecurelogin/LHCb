@@ -8,25 +8,24 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef IFORCEDBDECAYTOOL_H 
+#ifndef IFORCEDBDECAYTOOL_H
 #define IFORCEDBDECAYTOOL_H 1
 
-#include <string>
 #include "GaudiKernel/IAlgTool.h"
+#include <string>
 
 namespace LHCb {
   class MCParticle;
 }
 
-
-/** @class IForcedBDecayTool IForcedBDecayTool.h 
- *  
+/** @class IForcedBDecayTool IForcedBDecayTool.h
+ *
  *  v1.2
  *  @author Marco Musy (Milano)
  *  @date   2007-02-06
  */
 struct IForcedBDecayTool : extend_interfaces<IAlgTool> {
-  DeclareInterfaceID(IForcedBDecayTool, 2 , 0); 
-  virtual const LHCb::MCParticle*  forcedB( void )=0;
+  DeclareInterfaceID( IForcedBDecayTool, 2, 0 );
+  virtual const LHCb::MCParticle* forcedB( void ) = 0;
 };
 #endif // IFORCEDBDECAYTOOL_H

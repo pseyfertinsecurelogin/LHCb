@@ -16,10 +16,10 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <atomic>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <atomic>
 // ============================================================================
 /** @file
  *
@@ -35,92 +35,88 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Welcome Welcome.h LoKi/Welcome.h
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2004-02-23
    */
-  class Welcome : protected std::vector<int>
-  {
+  class Welcome : protected std::vector<int> {
   public:
     // ========================================================================
     /// get the static instance of class LoKi::Welcome
-    static const Welcome& instance() ;
+    static const Welcome& instance();
     // ========================================================================
   public:
     // ========================================================================
     /// destructor
-    ~Welcome () ;
+    ~Welcome();
     // ========================================================================
   public:
     // ========================================================================
-    void welcome  ( ) const ;
-    void goodbye  ( ) const ;
-    void welcome  ( std::ostream& stream ) const ;
-    void goodbye  ( std::ostream& stream ) const ;
+    void welcome() const;
+    void goodbye() const;
+    void welcome( std::ostream& stream ) const;
+    void goodbye( std::ostream& stream ) const;
     // ========================================================================
   protected:
     // ========================================================================
     /// Standard constructor
-    Welcome ();
+    Welcome();
     // ========================================================================
   private:
     // ========================================================================
-    size_t                   m_len1        ;
-    std::string              m_str1        ;
-    std::string              m_fmt1        ;
-    std::string              m_fmt2        ;
-    std::string              m_fmt3        ;
-    mutable std::atomic<int> m_printed{ 0 };
+    size_t                   m_len1;
+    std::string              m_str1;
+    std::string              m_fmt1;
+    std::string              m_fmt2;
+    std::string              m_fmt3;
+    mutable std::atomic<int> m_printed{0};
     // ========================================================================
   };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-namespace Bender
-{
+namespace Bender {
   // ==========================================================================
   /** @class BenderWelcome
    *  welcome for Bender application
    *  @author Vanya BELYAEV@physics.syr.edu
    *  @date 2007-08-15
    */
-  class Welcome
-  {
+  class Welcome {
   public:
     // ========================================================================
     /// get the static instance of class Bender::Welcome
-    static const Welcome& instance() ;
+    static const Welcome& instance();
     // ========================================================================
   public:
     // ========================================================================
     /// destructor
-    ~Welcome () ;
+    ~Welcome();
     // ========================================================================
   public:
     // ========================================================================
-    void welcome ( ) const ;
-    void goodbye ( ) const ;
-    void welcome ( std::ostream& s ) const ;
-    void goodbye ( std::ostream& s ) const ;
+    void welcome() const;
+    void goodbye() const;
+    void welcome( std::ostream& s ) const;
+    void goodbye( std::ostream& s ) const;
     // ========================================================================
   protected:
     // ========================================================================
     /// Standard constructor
-    Welcome ();
+    Welcome();
     // ========================================================================
   private:
     // ========================================================================
-    size_t       m_len1        ;
-    std::string  m_str1        ;
-    std::string  m_fmt1        ;
-    std::string  m_fmt2        ;
-    std::string  m_fmt3        ;
-    mutable std::atomic<int> m_printed{ 0 };
+    size_t                   m_len1;
+    std::string              m_str1;
+    std::string              m_fmt1;
+    std::string              m_fmt2;
+    std::string              m_fmt3;
+    mutable std::atomic<int> m_printed{0};
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } // end of namespace Bender
 // ============================================================================

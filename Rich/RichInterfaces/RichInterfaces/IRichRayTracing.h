@@ -35,14 +35,12 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 // forward decs
-namespace LHCb
-{
+namespace LHCb {
   class RichGeomPhoton;
   class RichTrackSegment;
 } // namespace LHCb
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class IRayTracing IRichRayTracing.h RichKernel/IRichRayTracing.h
@@ -56,11 +54,9 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class IRayTracing : public virtual IAlgTool
-  {
+  class IRayTracing : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IRayTracing, 1, 0 );
 
@@ -79,13 +75,10 @@ namespace Rich
      *  @return Status of the ray tracing
      */
     virtual LHCb::RichTraceMode::RayTraceResult
-    traceToDetector( const Rich::DetectorType      rich,
-                     const Gaudi::XYZPoint &       startPoint,
-                     const Gaudi::XYZVector &      startDir,
-                     LHCb::RichGeomPhoton &        photon,
-                     const LHCb::RichTrackSegment &trSeg,
-                     const LHCb::RichTraceMode     mode       = LHCb::RichTraceMode(),
-                     const Rich::Side              forcedSide = Rich::top ) const = 0;
+    traceToDetector( const Rich::DetectorType rich, const Gaudi::XYZPoint& startPoint, const Gaudi::XYZVector& startDir,
+                     LHCb::RichGeomPhoton& photon, const LHCb::RichTrackSegment& trSeg,
+                     const LHCb::RichTraceMode mode       = LHCb::RichTraceMode(),
+                     const Rich::Side          forcedSide = Rich::top ) const = 0;
 
     /** For a given detector, raytraces a given direction from a given point to
      *  the photo detectors. Returns the result in the form of a RichGeomPhoton.
@@ -101,13 +94,10 @@ namespace Rich
      *  @return Status of the ray tracing
      */
     virtual LHCb::RichTraceMode::RayTraceResult
-    traceToDetector( const Rich::DetectorType      rich,
-                     const Gaudi::XYZPoint &       startPoint,
-                     const Gaudi::XYZVector &      startDir,
-                     Gaudi::XYZPoint &             hitPosition,
-                     const LHCb::RichTrackSegment &trSeg,
-                     const LHCb::RichTraceMode     mode       = LHCb::RichTraceMode(),
-                     const Rich::Side              forcedSide = Rich::top ) const = 0;
+    traceToDetector( const Rich::DetectorType rich, const Gaudi::XYZPoint& startPoint, const Gaudi::XYZVector& startDir,
+                     Gaudi::XYZPoint& hitPosition, const LHCb::RichTrackSegment& trSeg,
+                     const LHCb::RichTraceMode mode       = LHCb::RichTraceMode(),
+                     const Rich::Side          forcedSide = Rich::top ) const = 0;
 
     /** For a given detector, ray-traces a given direction from a given point to
      *  the photo detectors. Returns the result in the form of a RichGeomPhoton
@@ -125,13 +115,9 @@ namespace Rich
      *  @return Status of the ray tracing
      */
     virtual LHCb::RichTraceMode::RayTraceResult
-    traceToDetector( const Rich::DetectorType  rich,
-                     const Gaudi::XYZPoint &   startPoint,
-                     const Gaudi::XYZVector &  startDir,
-                     LHCb::RichGeomPhoton &    photon,
-                     const LHCb::RichTraceMode mode         = LHCb::RichTraceMode(),
-                     const Rich::Side          forcedSide   = Rich::top,
-                     const double              photonEnergy = 0 ) const = 0;
+    traceToDetector( const Rich::DetectorType rich, const Gaudi::XYZPoint& startPoint, const Gaudi::XYZVector& startDir,
+                     LHCb::RichGeomPhoton& photon, const LHCb::RichTraceMode mode = LHCb::RichTraceMode(),
+                     const Rich::Side forcedSide = Rich::top, const double photonEnergy = 0 ) const = 0;
 
     /** For a given detector, raytraces a given direction from a given point to
      *  the photo detectors. Returns the result in the form of a RichGeomPhoton.
@@ -148,13 +134,9 @@ namespace Rich
      *  @return Status of the ray tracing
      */
     virtual LHCb::RichTraceMode::RayTraceResult
-    traceToDetector( const Rich::DetectorType  rich,
-                     const Gaudi::XYZPoint &   startPoint,
-                     const Gaudi::XYZVector &  startDir,
-                     Gaudi::XYZPoint &         hitPosition,
-                     const LHCb::RichTraceMode mode         = LHCb::RichTraceMode(),
-                     const Rich::Side          forcedSide   = Rich::top,
-                     const double              photonEnergy = 0 ) const = 0;
+    traceToDetector( const Rich::DetectorType rich, const Gaudi::XYZPoint& startPoint, const Gaudi::XYZVector& startDir,
+                     Gaudi::XYZPoint& hitPosition, const LHCb::RichTraceMode mode = LHCb::RichTraceMode(),
+                     const Rich::Side forcedSide = Rich::top, const double photonEnergy = 0 ) const = 0;
 
     /** Raytraces from a point in the detector panel back to the spherical mirror
      *  returning the mirror intersection point and the direction a track would have
@@ -169,10 +151,8 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    virtual bool traceBackFromDetector( const Gaudi::XYZPoint & startPoint,
-                                        const Gaudi::XYZVector &startDir,
-                                        Gaudi::XYZPoint &       endPoint,
-                                        Gaudi::XYZVector &      endDir ) const = 0;
+    virtual bool traceBackFromDetector( const Gaudi::XYZPoint& startPoint, const Gaudi::XYZVector& startDir,
+                                        Gaudi::XYZPoint& endPoint, Gaudi::XYZVector& endDir ) const = 0;
   };
 
 } // namespace Rich

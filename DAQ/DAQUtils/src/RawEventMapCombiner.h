@@ -32,18 +32,14 @@ public:
   /// Standard constructor
   RawEventMapCombiner( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;      ///< Algorithm initialization
-  StatusCode execute() override;         ///< Algorithm execution
-
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
+  std::map<std::string, std::string> m_banksToCopy;    // which banks to recombine, from where, (bank, location)
+  std::string                        m_outputLocation; // where to put them, DEFAULT /Event/RawEvent
 
-  std::map<std::string, std::string> m_banksToCopy; //which banks to recombine, from where, (bank, location)
-  std::string              m_outputLocation; //where to put them, DEFAULT /Event/RawEvent
-
-  std::map<LHCb::RawBank::BankType, std::string> m_bankTypes; //translation of m_banksToCopy
-
+  std::map<LHCb::RawBank::BankType, std::string> m_bankTypes; // translation of m_banksToCopy
 };
-
 
 #endif // LHCB_RAWEVENTMAPCOMBINER_H

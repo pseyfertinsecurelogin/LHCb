@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef TTDETECTORPLOT_H 
+#ifndef TTDETECTORPLOT_H
 #define TTDETECTORPLOT_H 1
 
 /** @class TTDetectorPlot TTDetectorPlot.h Kernel/TTDetectorPlot.h
@@ -26,26 +26,22 @@
 
 class DeTTSector;
 
-namespace ST
-{
-  class TTDetectorPlot: public ST::Histo2DProperties {
+namespace ST {
+  class TTDetectorPlot : public ST::Histo2DProperties {
 
-public:
-
-    struct Bins{
-      int  xBin;
+  public:
+    struct Bins {
+      int xBin;
       int beginBinY;
       int endBinY;
     };
 
-    TTDetectorPlot(const std::string& name, const std::string& title,
-                   const unsigned int xBinsPerSector = 1u);
+    TTDetectorPlot( const std::string& name, const std::string& title, const unsigned int xBinsPerSector = 1u );
 
     ~TTDetectorPlot();
     typedef Bins Bins;
-    Bins toBins(const DeTTSector* sector) const;
-         
+    Bins         toBins( const DeTTSector* sector ) const;
   };
-}
+} // namespace ST
 
-#endif // STDETECTORPLOT_H 
+#endif // STDETECTORPLOT_H

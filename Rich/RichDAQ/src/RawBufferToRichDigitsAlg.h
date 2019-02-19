@@ -29,8 +29,7 @@
 // Interfaces
 #include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   //-----------------------------------------------------------------------------
   /** @class RawBufferToRichDigitsAlg RawBufferToRichDigitsAlg.h
@@ -42,13 +41,11 @@ namespace Rich::DAQ
    */
   //-----------------------------------------------------------------------------
 
-  class RawBufferToRichDigitsAlg final : public AlgBase
-  {
+  class RawBufferToRichDigitsAlg final : public AlgBase {
 
   public:
-
     /// Standard constructor
-    RawBufferToRichDigitsAlg( const std::string &name, ISvcLocator *pSvcLocator );
+    RawBufferToRichDigitsAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
     virtual ~RawBufferToRichDigitsAlg(); ///< Destructor
 
@@ -56,12 +53,11 @@ namespace Rich::DAQ
     StatusCode execute() override;    // Algorithm execution
 
   private: // data
-
     /// Output location for RichDigits
     std::string m_richDigitsLoc;
 
     /// Raw Buffer Decoding tool
-    const IRawBufferToSmartIDsTool *m_decoder = nullptr;
+    const IRawBufferToSmartIDsTool* m_decoder = nullptr;
 
     /// Flag to turn off RichDigit creation
     bool m_decodeOnly;

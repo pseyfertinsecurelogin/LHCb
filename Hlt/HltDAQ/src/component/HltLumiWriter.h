@@ -27,23 +27,21 @@ public:
   /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 private:
+  void fillDataBankShort();
 
-  void fillDataBankShort ( );
-
-  Gaudi::Property<std::string> m_inputBank = { this, "InputBank", LHCb::HltLumiSummaryLocation::Default };
+  Gaudi::Property<std::string> m_inputBank = {this, "InputBank", LHCb::HltLumiSummaryLocation::Default};
 
   // Statistics
-  double m_totDataSize = 0;
-  int m_nbEvents = 0;
-  std::vector<unsigned int> m_bank;
-  LHCb::RawBank::BankType m_bankType = LHCb::RawBank::HltLumiSummary;
-  Gaudi::Property<std::string> m_inputRawEventLocation { this, "RawEventLocation" };
-  std::vector<std::string> m_rawEventLocations;
-
+  double                       m_totDataSize = 0;
+  int                          m_nbEvents    = 0;
+  std::vector<unsigned int>    m_bank;
+  LHCb::RawBank::BankType      m_bankType = LHCb::RawBank::HltLumiSummary;
+  Gaudi::Property<std::string> m_inputRawEventLocation{this, "RawEventLocation"};
+  std::vector<std::string>     m_rawEventLocations;
 };
 #endif // HLTLUMIWRITER_H

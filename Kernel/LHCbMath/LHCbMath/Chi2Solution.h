@@ -27,11 +27,9 @@
 // ============================================================================
 #include "LHCbMath/SVectorWithError.h"
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** @class Chi2Solution LHCbMath/Chi2Solution.h
      *
@@ -45,18 +43,17 @@ namespace Gaudi
      *  @date   2012-04-27
      */
     template <unsigned int N, unsigned int R, class T = double>
-    class Chi2Solution
-    {
+    class Chi2Solution {
     public:
       // ======================================================================
-      typedef ROOT::Math::SVector<T,N>                               DATA    ;
-      typedef ROOT::Math::SMatrix<T,N,N,ROOT::Math::MatRepSym<T,N> > COV2    ;
-      typedef ROOT::Math::SMatrix<T,R,N>                             CMTRX1  ;
-      typedef ROOT::Math::SVector<T,R>                               COFF    ;
-      typedef Gaudi::Math::SVectorWithError<N,T>                     VECT    ;
+      typedef ROOT::Math::SVector<T, N>                                 DATA;
+      typedef ROOT::Math::SMatrix<T, N, N, ROOT::Math::MatRepSym<T, N>> COV2;
+      typedef ROOT::Math::SMatrix<T, R, N>                              CMTRX1;
+      typedef ROOT::Math::SVector<T, R>                                 COFF;
+      typedef Gaudi::Math::SVectorWithError<N, T>                       VECT;
       // ======================================================================
       // backup solution
-      typedef std::vector<DATA>                                      CMTRX2  ;
+      typedef std::vector<DATA> CMTRX2;
       // ======================================================================
     public:
       // ======================================================================
@@ -68,38 +65,31 @@ namespace Gaudi
        *  @param chi2 (UPDATE) the chi2
        *  @return status code
        */
-      static StatusCode solve
-      ( DATA&         data ,
-        COV2&         cov2 ,
-        const CMTRX1& D    ,
-        const COFF &  d    ,
-        double&       chi2 )
-      {
+      static StatusCode solve( DATA& data, COV2& cov2, const CMTRX1& D, const COFF& d, double& chi2 ) {
         //
-        typedef ROOT::Math::SMatrix<T,R,R,ROOT::Math::MatRepSym<T,R> > MRxR ;
-        typedef ROOT::Math::SMatrix<T,N,R>                             MNxR ;
+        typedef ROOT::Math::SMatrix<T, R, R, ROOT::Math::MatRepSym<T, R>> MRxR;
+        typedef ROOT::Math::SMatrix<T, N, R>                              MNxR;
         //
-        MRxR vD = ROOT::Math::Similarity ( D , cov2 ) ;
-        if ( !vD.Invert() )
-        {
-          chi2 = 1.e+100 ;
-          return StatusCode::FAILURE ;                             // RETURN
+        MRxR vD = ROOT::Math::Similarity( D, cov2 );
+        if ( !vD.Invert() ) {
+          chi2 = 1.e+100;
+          return StatusCode::FAILURE; // RETURN
         }
         //
-        const ROOT::Math::SVector<T,R> alpha  =  D * data + d ;
-        const ROOT::Math::SVector<T,R> lambda = vD * alpha    ;
+        const ROOT::Math::SVector<T, R> alpha  = D * data + d;
+        const ROOT::Math::SVector<T, R> lambda = vD * alpha;
         //
-        const MNxR vTimesDt = cov2 * ROOT::Math::Transpose ( D ) ;
+        const MNxR vTimesDt = cov2 * ROOT::Math::Transpose( D );
         //
         // make the solution
-        data -= vTimesDt * lambda ;
-        cov2 -= ROOT::Math::Similarity ( vTimesDt , vD ) ;
+        data -= vTimesDt * lambda;
+        cov2 -= ROOT::Math::Similarity( vTimesDt, vD );
         //
         // get chi2
-        chi2  = ROOT::Math::Dot        ( alpha  , lambda ) ;
+        chi2 = ROOT::Math::Dot( alpha, lambda );
         // chi2  = ROOT::Math::Similarity ( , vD ) ;
         //
-        return StatusCode::SUCCESS ;                            // RETURN
+        return StatusCode::SUCCESS; // RETURN
       }
       // ==================================================================
       /** make N-dimensional chi2-solution with R-constraints
@@ -110,24 +100,16 @@ namespace Gaudi
        *  @param chi2 (UPDATE) the chi2
        *  @return status code
        */
-      static StatusCode solve
-      ( DATA&         data ,
-        COV2&         cov2 ,
-        const CMTRX2& D2   ,
-        const COFF  & d    ,
-        double&       chi2 )
-      {
+      static StatusCode solve( DATA& data, COV2& cov2, const CMTRX2& D2, const COFF& d, double& chi2 ) {
         //
-        CMTRX1 D ;
-        for ( unsigned int i = 0 ; i < R ; ++i )
-        {
-          for ( unsigned int j = 0 ; j < N ; ++j )
-          {
-            if ( i < D2.size() ) { D( i , j ) = D2[i][j] ; }
+        CMTRX1 D;
+        for ( unsigned int i = 0; i < R; ++i ) {
+          for ( unsigned int j = 0; j < N; ++j ) {
+            if ( i < D2.size() ) { D( i, j ) = D2[i][j]; }
           }
         }
         //
-        return solve ( data , cov2 , D , d, chi2 ) ; // REUTRN
+        return solve( data, cov2, D, d, chi2 ); // REUTRN
       }
       // ======================================================================
       /** make N-dimensional chi2-solution with R-constraints
@@ -137,13 +119,8 @@ namespace Gaudi
        *  @param chi2 (UPDATE) the chi2
        *  @return status code
        */
-      static StatusCode solve
-      ( VECT&         data ,
-        const CMTRX1& D    ,
-        const COFF&   d    ,
-        double&       chi2 )
-      {
-        return solve ( data.value () , data.cov2  () , D , d , chi2 ) ;
+      static StatusCode solve( VECT& data, const CMTRX1& D, const COFF& d, double& chi2 ) {
+        return solve( data.value(), data.cov2(), D, d, chi2 );
       }
       // ======================================================================
       /** make N-dimensional chi2-solution with R-constraints
@@ -153,18 +130,13 @@ namespace Gaudi
        *  @param chi2 (UPDATE) the chi2
        *  @return status code
        */
-      static StatusCode solve
-      ( VECT&         data ,
-        const CMTRX2& D    ,
-        const COFF&   d    ,
-        double&       chi2 )
-      {
-        return solve ( data.value () , data.cov2  () , D , d , chi2 ) ;
+      static StatusCode solve( VECT& data, const CMTRX2& D, const COFF& d, double& chi2 ) {
+        return solve( data.value(), data.cov2(), D, d, chi2 );
       }
       // ======================================================================
     };
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

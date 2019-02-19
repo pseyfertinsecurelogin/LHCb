@@ -11,20 +11,20 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include "DetDesc/ISolid.h"
 #include "DetDesc/IDetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/IPVolume.h"
 #include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
 // ============================================================================
 
 // ============================================================================
-/** @file 
- *  (empty) Implementaton of virtual destrctors for abstract classes 
+/** @file
+ *  (empty) Implementaton of virtual destrctors for abstract classes
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
 // ============================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

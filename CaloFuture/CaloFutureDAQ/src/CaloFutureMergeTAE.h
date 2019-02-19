@@ -14,10 +14,10 @@
 // Include files
 #include <iomanip>
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloDigit.h"
 #include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 
 #include "futuredetails.h"
 
@@ -32,27 +32,26 @@ public:
   /// Standard constructor
   CaloFutureMergeTAE( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  void mergeDigits();
-  void mergeAdcs();
-  Gaudi::Property<std::vector<std::string>> m_slots = { this, "MergeSlots", { "T0", "Prev1", "Next1" } };
-  Gaudi::Property<std::string> m_detectorName{ this, "Detector" };
-  Gaudi::Property<double> m_threshold { this, "SumThreshold",  -256 };
-  Gaudi::Property<double> m_slotcut{ this, "SlotThreshold"  , -256 };
-  std::string m_locDigit;
-  std::string m_outDigit;
-  std::string m_locAdc;
-  std::string m_outAdc;
-  Gaudi::Property<futuredetails::source_t> m_data { this ,"OutputType", futuredetails::source_t::from_digit };
+  void                                      mergeDigits();
+  void                                      mergeAdcs();
+  Gaudi::Property<std::vector<std::string>> m_slots = {this, "MergeSlots", {"T0", "Prev1", "Next1"}};
+  Gaudi::Property<std::string>              m_detectorName{this, "Detector"};
+  Gaudi::Property<double>                   m_threshold{this, "SumThreshold", -256};
+  Gaudi::Property<double>                   m_slotcut{this, "SlotThreshold", -256};
+  std::string                               m_locDigit;
+  std::string                               m_outDigit;
+  std::string                               m_locAdc;
+  std::string                               m_outAdc;
+  Gaudi::Property<futuredetails::source_t>  m_data{this, "OutputType", futuredetails::source_t::from_digit};
 
-  Gaudi::Property<std::string> m_outputDataLoc { this, "OutputDataLocation", "" };
-  Gaudi::Property<std::string> m_inExt { this, "inputExtension", "" };
+  Gaudi::Property<std::string> m_outputDataLoc{this, "OutputDataLocation", ""};
+  Gaudi::Property<std::string> m_inExt{this, "inputExtension", ""};
 
   DeCalorimeter* m_calo = nullptr;
-
 };
 
 #endif // CALOFUTUREMERGETAE_H

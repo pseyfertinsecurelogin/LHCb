@@ -33,23 +33,21 @@ DECLARE_COMPONENT( UTErrorDecoding )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-UTErrorDecoding::UTErrorDecoding( const std::string& name,
-                                  ISvcLocator* pSvcLocator )
-: Consumer(name, pSvcLocator,
-           KeyValue{"RawEventLocations",
-                     Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Tracker,
-                                                            LHCb::RawEventLocation::Other,
-                                                            LHCb::RawEventLocation::Default)}) {}
+UTErrorDecoding::UTErrorDecoding( const std::string& name, ISvcLocator* pSvcLocator )
+    : Consumer( name, pSvcLocator,
+                KeyValue{"RawEventLocations", Gaudi::Functional::concat_alternatives(
+                                                  LHCb::RawEventLocation::Tracker, LHCb::RawEventLocation::Other,
+                                                  LHCb::RawEventLocation::Default )} ) {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
-void UTErrorDecoding::operator()(const LHCb::RawEvent& raw) const {
+void UTErrorDecoding::operator()( const LHCb::RawEvent& raw ) const {
   // in fact all the work is delegated to the base class
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
-  auto errorBanks = decodeErrors(raw);
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute " << endmsg;
+  auto errorBanks = decodeErrors( raw );
   // print out the error banks
   if ( m_PrintErrorInfo ) {
-    for (const auto& b : *errorBanks) info() << b << endmsg;
+    for ( const auto& b : *errorBanks ) info() << b << endmsg;
   }
 }

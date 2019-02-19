@@ -17,8 +17,8 @@ EventAccounting, etc.
 #  @date   13/08/2012
 
 __version__ = ""
-__author__  = "Jaap Panman, Rob lambert"
+__author__ = "Jaap Panman, Rob lambert"
 
-from Gaudi.Configuration  import *
+from Gaudi.Configuration import *
 import GaudiKernel.ProcessJobOptions
-from Configurables import LHCbConfigurableUser 
+from Configurables import LHCbConfigurableUser

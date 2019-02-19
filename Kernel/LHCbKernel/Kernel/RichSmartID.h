@@ -23,8 +23,7 @@
 
 class DeRichPMTPanel;
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class RichSmartID RichSmartID.h
    *
@@ -33,19 +32,17 @@ namespace LHCb
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date  24/02/2011
    */
-  class RichSmartID final
-  {
+  class RichSmartID final {
 
     // Allow some specific classes friendship
     friend DeRichPMTPanel;
 
   public:
-
     /// Type for internal key
     using KeyType = std::uint32_t;
 
     /// Vector of RichSmartIDs
-    using Vector = std::vector< LHCb::RichSmartID >;
+    using Vector = std::vector<LHCb::RichSmartID>;
 
     /// Numerical type for bit packing
     using BitPackType = std::uint32_t;
@@ -57,20 +54,17 @@ namespace LHCb
     static constexpr const BitPackType NBits = 32;
 
   private:
-
     /// Get the initialisation value from a value, shift and mask
-    inline static constexpr KeyType
-    initData( const BitPackType value, const BitPackType shift, const BitPackType mask ) noexcept
-    {
+    inline static constexpr KeyType initData( const BitPackType value, const BitPackType shift,
+                                              const BitPackType mask ) noexcept {
       return ( ( value << shift ) & mask );
     }
 
     /** The bit-packed internal data word.
      *  Default initialisation is as an HPD ID */
-    KeyType m_key { initData( HPDID, ShiftIDType, MaskIDType ) };
+    KeyType m_key{initData( HPDID, ShiftIDType, MaskIDType )};
 
   public:
-
     /// Retrieve the bit-packed internal data word
     inline constexpr KeyType key() const noexcept { return m_key; }
 
@@ -78,31 +72,28 @@ namespace LHCb
     inline constexpr operator uint32_t() const noexcept { return key(); }
 
     /// implicit conversion to unsigned long
-    inline constexpr operator uint64_t() const noexcept { return static_cast< uint64_t >( key() ); }
+    inline constexpr operator uint64_t() const noexcept { return static_cast<uint64_t>( key() ); }
 
     /// implicit conversion to signed int
     inline operator int32_t() const noexcept { return as_int(); }
 
     /// implicit conversion to signed long
-    inline operator int64_t() const noexcept { return static_cast< int64_t >( as_int() ); }
+    inline operator int64_t() const noexcept { return static_cast<int64_t>( as_int() ); }
 
     /// Set the bit-packed internal data word
     inline void setKey( const LHCb::RichSmartID::KeyType value ) noexcept { m_key = value; }
 
   private:
-
     // Setup up the type bit field
     static constexpr const BitPackType BitsIDType = 1; ///< Number of bits to use for the PD type
     static constexpr const BitPackType ShiftIDType =
-      ( BitPackType )( NBits - BitsIDType ); ///< Use the last bit of the word
+        ( BitPackType )( NBits - BitsIDType ); ///< Use the last bit of the word
     /// Mask for the PD type
-    static constexpr const BitPackType MaskIDType = ( BitPackType )( ( 1 << BitsIDType ) - 1 )
-                                                    << ShiftIDType;
+    static constexpr const BitPackType MaskIDType = ( BitPackType )( ( 1 << BitsIDType ) - 1 ) << ShiftIDType;
     /// Max possible value that can be stored in the PD type field
     static constexpr const BitPackType MaxIDType = ( BitPackType )( 1 << BitsIDType ) - 1;
 
   public:
-
     /** @enum IDType
      *
      *  The type of photon detector this RichSmartID represents
@@ -110,27 +101,23 @@ namespace LHCb
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   25/02/2011
      */
-    enum IDType : int8_t
-    {
+    enum IDType : int8_t {
       Undefined = -1, ///< Undefined
       MaPMTID   = 0,  ///< Represents an MaPMT channel
       HPDID     = 1   ///< Represents an HPD channel
     };
 
   public:
-
     /// Access the ID type
-    inline constexpr RichSmartID::IDType idType() const noexcept
-    {
+    inline constexpr RichSmartID::IDType idType() const noexcept {
       return ( RichSmartID::IDType )( ( key() & MaskIDType ) >> ShiftIDType );
     }
 
   public:
-
     /// Set the ID type
     inline void setIDType( const LHCb::RichSmartID::IDType type )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -141,7 +128,6 @@ namespace LHCb
     }
 
   public:
-
     /** @class HPD RichSmartID.h
      *
      *  Implementation details for HPDs
@@ -149,21 +135,17 @@ namespace LHCb
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date  24/02/2011
      */
-    class HPD
-    {
+    class HPD {
 
     public:
-
       // Number of bits for each data field in the word
-      static constexpr const BitPackType BitsPixelSubRow =
-        3; ///< Number of bits for HPD sub pixel field
-      static constexpr const BitPackType BitsPixelCol = 5; ///< Number of bits for HPD pixel column
-      static constexpr const BitPackType BitsPixelRow = 5; ///< Number of bits for HPD pixel row
-      static constexpr const BitPackType BitsPDNumInCol =
-        5; ///< Number of bits for HPD 'number in column'
-      static constexpr const BitPackType BitsPDCol = 5; ///< Number of bits for HPD column
-      static constexpr const BitPackType BitsPanel = 1; ///< Number of bits for HPD panel
-      static constexpr const BitPackType BitsRich  = 1; ///< Number of bits for RICH detector
+      static constexpr const BitPackType BitsPixelSubRow      = 3; ///< Number of bits for HPD sub pixel field
+      static constexpr const BitPackType BitsPixelCol         = 5; ///< Number of bits for HPD pixel column
+      static constexpr const BitPackType BitsPixelRow         = 5; ///< Number of bits for HPD pixel row
+      static constexpr const BitPackType BitsPDNumInCol       = 5; ///< Number of bits for HPD 'number in column'
+      static constexpr const BitPackType BitsPDCol            = 5; ///< Number of bits for HPD column
+      static constexpr const BitPackType BitsPanel            = 1; ///< Number of bits for HPD panel
+      static constexpr const BitPackType BitsRich             = 1; ///< Number of bits for RICH detector
       static constexpr const BitPackType BitsPixelSubRowIsSet = 1;
       static constexpr const BitPackType BitsPixelColIsSet    = 1;
       static constexpr const BitPackType BitsPixelRowIsSet    = 1;
@@ -180,41 +162,33 @@ namespace LHCb
       static constexpr const BitPackType ShiftPanel            = ShiftPDCol + BitsPDCol;
       static constexpr const BitPackType ShiftRich             = ShiftPanel + BitsPanel;
       static constexpr const BitPackType ShiftPixelSubRowIsSet = ShiftRich + BitsRich;
-      static constexpr const BitPackType ShiftPixelColIsSet =
-        ShiftPixelSubRowIsSet + BitsPixelSubRowIsSet;
-      static constexpr const BitPackType ShiftPixelRowIsSet =
-        ShiftPixelColIsSet + BitsPixelColIsSet;
-      static constexpr const BitPackType ShiftPDIsSet    = ShiftPixelRowIsSet + BitsPixelRowIsSet;
-      static constexpr const BitPackType ShiftPanelIsSet = ShiftPDIsSet + BitsPDIsSet;
-      static constexpr const BitPackType ShiftRichIsSet  = ShiftPanelIsSet + BitsPanelIsSet;
+      static constexpr const BitPackType ShiftPixelColIsSet    = ShiftPixelSubRowIsSet + BitsPixelSubRowIsSet;
+      static constexpr const BitPackType ShiftPixelRowIsSet    = ShiftPixelColIsSet + BitsPixelColIsSet;
+      static constexpr const BitPackType ShiftPDIsSet          = ShiftPixelRowIsSet + BitsPixelRowIsSet;
+      static constexpr const BitPackType ShiftPanelIsSet       = ShiftPDIsSet + BitsPDIsSet;
+      static constexpr const BitPackType ShiftRichIsSet        = ShiftPanelIsSet + BitsPanelIsSet;
 
       // The masks
-      static constexpr const BitPackType MaskPixelSubRow =
-        ( BitPackType )( ( 1 << BitsPixelSubRow ) - 1 ) << ShiftPixelSubRow;
-      static constexpr const BitPackType MaskPixelCol = ( BitPackType )( ( 1 << BitsPixelCol ) - 1 )
-                                                        << ShiftPixelCol;
-      static constexpr const BitPackType MaskPixelRow = ( BitPackType )( ( 1 << BitsPixelRow ) - 1 )
-                                                        << ShiftPixelRow;
-      static constexpr const BitPackType MaskPDNumInCol =
-        ( BitPackType )( ( 1 << BitsPDNumInCol ) - 1 ) << ShiftPDNumInCol;
-      static constexpr const BitPackType MaskPDCol = ( BitPackType )( ( 1 << BitsPDCol ) - 1 )
-                                                     << ShiftPDCol;
-      static constexpr const BitPackType MaskPanel = ( BitPackType )( ( 1 << BitsPanel ) - 1 )
-                                                     << ShiftPanel;
-      static constexpr const BitPackType MaskRich = ( BitPackType )( ( 1 << BitsRich ) - 1 )
-                                                    << ShiftRich;
-      static constexpr const BitPackType MaskPixelSubRowIsSet =
-        ( BitPackType )( ( 1 << BitsPixelSubRowIsSet ) - 1 ) << ShiftPixelSubRowIsSet;
-      static constexpr const BitPackType MaskPixelColIsSet =
-        ( BitPackType )( ( 1 << BitsPixelColIsSet ) - 1 ) << ShiftPixelColIsSet;
-      static constexpr const BitPackType MaskPixelRowIsSet =
-        ( BitPackType )( ( 1 << BitsPixelRowIsSet ) - 1 ) << ShiftPixelRowIsSet;
-      static constexpr const BitPackType MaskPDIsSet = ( BitPackType )( ( 1 << BitsPDIsSet ) - 1 )
-                                                       << ShiftPDIsSet;
-      static constexpr const BitPackType MaskPanelIsSet =
-        ( BitPackType )( ( 1 << BitsPanelIsSet ) - 1 ) << ShiftPanelIsSet;
-      static constexpr const BitPackType MaskRichIsSet =
-        ( BitPackType )( ( 1 << BitsRichIsSet ) - 1 ) << ShiftRichIsSet;
+      static constexpr const BitPackType MaskPixelSubRow = ( BitPackType )( ( 1 << BitsPixelSubRow ) - 1 )
+                                                           << ShiftPixelSubRow;
+      static constexpr const BitPackType MaskPixelCol   = ( BitPackType )( ( 1 << BitsPixelCol ) - 1 ) << ShiftPixelCol;
+      static constexpr const BitPackType MaskPixelRow   = ( BitPackType )( ( 1 << BitsPixelRow ) - 1 ) << ShiftPixelRow;
+      static constexpr const BitPackType MaskPDNumInCol = ( BitPackType )( ( 1 << BitsPDNumInCol ) - 1 )
+                                                          << ShiftPDNumInCol;
+      static constexpr const BitPackType MaskPDCol            = ( BitPackType )( ( 1 << BitsPDCol ) - 1 ) << ShiftPDCol;
+      static constexpr const BitPackType MaskPanel            = ( BitPackType )( ( 1 << BitsPanel ) - 1 ) << ShiftPanel;
+      static constexpr const BitPackType MaskRich             = ( BitPackType )( ( 1 << BitsRich ) - 1 ) << ShiftRich;
+      static constexpr const BitPackType MaskPixelSubRowIsSet = ( BitPackType )( ( 1 << BitsPixelSubRowIsSet ) - 1 )
+                                                                << ShiftPixelSubRowIsSet;
+      static constexpr const BitPackType MaskPixelColIsSet = ( BitPackType )( ( 1 << BitsPixelColIsSet ) - 1 )
+                                                             << ShiftPixelColIsSet;
+      static constexpr const BitPackType MaskPixelRowIsSet = ( BitPackType )( ( 1 << BitsPixelRowIsSet ) - 1 )
+                                                             << ShiftPixelRowIsSet;
+      static constexpr const BitPackType MaskPDIsSet    = ( BitPackType )( ( 1 << BitsPDIsSet ) - 1 ) << ShiftPDIsSet;
+      static constexpr const BitPackType MaskPanelIsSet = ( BitPackType )( ( 1 << BitsPanelIsSet ) - 1 )
+                                                          << ShiftPanelIsSet;
+      static constexpr const BitPackType MaskRichIsSet = ( BitPackType )( ( 1 << BitsRichIsSet ) - 1 )
+                                                         << ShiftRichIsSet;
 
       // Max Values
       static constexpr const DataType MaxPixelSubRow = ( DataType )( 1 << BitsPixelSubRow ) - 1;
@@ -227,7 +201,6 @@ namespace LHCb
     };
 
   public:
-
     /** @class MaPMT RichSmartID.h
      *
      *  Implementation details for MaPMTs
@@ -235,20 +208,16 @@ namespace LHCb
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date  24/02/2011
      */
-    class MaPMT
-    {
+    class MaPMT {
 
     public:
-
       // Number of bits for each data field in the word
-      static constexpr const BitPackType BitsPixelCol =
-        3; ///< Number of bits for MaPMT pixel column
-      static constexpr const BitPackType BitsPixelRow = 3; ///< Number of bits for MaPMT pixel row
-      static constexpr const BitPackType BitsPDNumInCol =
-        4; ///< Number of bits for MaPMT 'number in column'
-      static constexpr const BitPackType BitsPDCol = 9; ///< Number of bits for MaPMT column
-      static constexpr const BitPackType BitsPanel = 1; ///< Number of bits for MaPMT panel
-      static constexpr const BitPackType BitsRich  = 1; ///< Number of bits for RICH detector
+      static constexpr const BitPackType BitsPixelCol         = 3; ///< Number of bits for MaPMT pixel column
+      static constexpr const BitPackType BitsPixelRow         = 3; ///< Number of bits for MaPMT pixel row
+      static constexpr const BitPackType BitsPDNumInCol       = 4; ///< Number of bits for MaPMT 'number in column'
+      static constexpr const BitPackType BitsPDCol            = 9; ///< Number of bits for MaPMT column
+      static constexpr const BitPackType BitsPanel            = 1; ///< Number of bits for MaPMT panel
+      static constexpr const BitPackType BitsRich             = 1; ///< Number of bits for RICH detector
       static constexpr const BitPackType BitsPixelSubRowIsSet = 1;
       static constexpr const BitPackType BitsPixelColIsSet    = 1;
       static constexpr const BitPackType BitsPixelRowIsSet    = 1;
@@ -265,42 +234,34 @@ namespace LHCb
       static constexpr const BitPackType ShiftPanel            = ShiftPDCol + BitsPDCol;
       static constexpr const BitPackType ShiftRich             = ShiftPanel + BitsPanel;
       static constexpr const BitPackType ShiftPixelSubRowIsSet = ShiftRich + BitsRich;
-      static constexpr const BitPackType ShiftPixelColIsSet =
-        ShiftPixelSubRowIsSet + BitsPixelSubRowIsSet;
-      static constexpr const BitPackType ShiftPixelRowIsSet =
-        ShiftPixelColIsSet + BitsPixelColIsSet;
-      static constexpr const BitPackType ShiftPDIsSet    = ShiftPixelRowIsSet + BitsPixelRowIsSet;
-      static constexpr const BitPackType ShiftPanelIsSet = ShiftPDIsSet + BitsPDIsSet;
-      static constexpr const BitPackType ShiftRichIsSet  = ShiftPanelIsSet + BitsPanelIsSet;
-      static constexpr const BitPackType ShiftLargePixel = ShiftRichIsSet + BitsRichIsSet;
+      static constexpr const BitPackType ShiftPixelColIsSet    = ShiftPixelSubRowIsSet + BitsPixelSubRowIsSet;
+      static constexpr const BitPackType ShiftPixelRowIsSet    = ShiftPixelColIsSet + BitsPixelColIsSet;
+      static constexpr const BitPackType ShiftPDIsSet          = ShiftPixelRowIsSet + BitsPixelRowIsSet;
+      static constexpr const BitPackType ShiftPanelIsSet       = ShiftPDIsSet + BitsPDIsSet;
+      static constexpr const BitPackType ShiftRichIsSet        = ShiftPanelIsSet + BitsPanelIsSet;
+      static constexpr const BitPackType ShiftLargePixel       = ShiftRichIsSet + BitsRichIsSet;
 
       // The masks
-      static constexpr const BitPackType MaskPixelCol = ( BitPackType )( ( 1 << BitsPixelCol ) - 1 )
-                                                        << ShiftPixelCol;
-      static constexpr const BitPackType MaskPixelRow = ( BitPackType )( ( 1 << BitsPixelRow ) - 1 )
-                                                        << ShiftPixelRow;
-      static constexpr const BitPackType MaskPDNumInCol =
-        ( BitPackType )( ( 1 << BitsPDNumInCol ) - 1 ) << ShiftPDNumInCol;
-      static constexpr const BitPackType MaskPDCol = ( BitPackType )( ( 1 << BitsPDCol ) - 1 )
-                                                     << ShiftPDCol;
-      static constexpr const BitPackType MaskPanel = ( BitPackType )( ( 1 << BitsPanel ) - 1 )
-                                                     << ShiftPanel;
-      static constexpr const BitPackType MaskRich = ( BitPackType )( ( 1 << BitsRich ) - 1 )
-                                                    << ShiftRich;
-      static constexpr const BitPackType MaskPixelSubRowIsSet =
-        ( BitPackType )( ( 1 << BitsPixelSubRowIsSet ) - 1 ) << ShiftPixelSubRowIsSet;
-      static constexpr const BitPackType MaskPixelColIsSet =
-        ( BitPackType )( ( 1 << BitsPixelColIsSet ) - 1 ) << ShiftPixelColIsSet;
-      static constexpr const BitPackType MaskPixelRowIsSet =
-        ( BitPackType )( ( 1 << BitsPixelRowIsSet ) - 1 ) << ShiftPixelRowIsSet;
-      static constexpr const BitPackType MaskPDIsSet = ( BitPackType )( ( 1 << BitsPDIsSet ) - 1 )
-                                                       << ShiftPDIsSet;
-      static constexpr const BitPackType MaskPanelIsSet =
-        ( BitPackType )( ( 1 << BitsPanelIsSet ) - 1 ) << ShiftPanelIsSet;
-      static constexpr const BitPackType MaskRichIsSet =
-        ( BitPackType )( ( 1 << BitsRichIsSet ) - 1 ) << ShiftRichIsSet;
-      static constexpr const BitPackType MaskLargePixel =
-        ( BitPackType )( ( 1 << BitsLargePixel ) - 1 ) << ShiftLargePixel;
+      static constexpr const BitPackType MaskPixelCol   = ( BitPackType )( ( 1 << BitsPixelCol ) - 1 ) << ShiftPixelCol;
+      static constexpr const BitPackType MaskPixelRow   = ( BitPackType )( ( 1 << BitsPixelRow ) - 1 ) << ShiftPixelRow;
+      static constexpr const BitPackType MaskPDNumInCol = ( BitPackType )( ( 1 << BitsPDNumInCol ) - 1 )
+                                                          << ShiftPDNumInCol;
+      static constexpr const BitPackType MaskPDCol            = ( BitPackType )( ( 1 << BitsPDCol ) - 1 ) << ShiftPDCol;
+      static constexpr const BitPackType MaskPanel            = ( BitPackType )( ( 1 << BitsPanel ) - 1 ) << ShiftPanel;
+      static constexpr const BitPackType MaskRich             = ( BitPackType )( ( 1 << BitsRich ) - 1 ) << ShiftRich;
+      static constexpr const BitPackType MaskPixelSubRowIsSet = ( BitPackType )( ( 1 << BitsPixelSubRowIsSet ) - 1 )
+                                                                << ShiftPixelSubRowIsSet;
+      static constexpr const BitPackType MaskPixelColIsSet = ( BitPackType )( ( 1 << BitsPixelColIsSet ) - 1 )
+                                                             << ShiftPixelColIsSet;
+      static constexpr const BitPackType MaskPixelRowIsSet = ( BitPackType )( ( 1 << BitsPixelRowIsSet ) - 1 )
+                                                             << ShiftPixelRowIsSet;
+      static constexpr const BitPackType MaskPDIsSet    = ( BitPackType )( ( 1 << BitsPDIsSet ) - 1 ) << ShiftPDIsSet;
+      static constexpr const BitPackType MaskPanelIsSet = ( BitPackType )( ( 1 << BitsPanelIsSet ) - 1 )
+                                                          << ShiftPanelIsSet;
+      static constexpr const BitPackType MaskRichIsSet = ( BitPackType )( ( 1 << BitsRichIsSet ) - 1 )
+                                                         << ShiftRichIsSet;
+      static constexpr const BitPackType MaskLargePixel = ( BitPackType )( ( 1 << BitsLargePixel ) - 1 )
+                                                          << ShiftLargePixel;
 
       // Max Values
       static constexpr const DataType MaxPixelCol   = ( DataType )( 1 << BitsPixelCol ) - 1;
@@ -312,80 +273,59 @@ namespace LHCb
     };
 
   private:
-
     /// Reinterpret the internal unsigned representation as a signed 32 bit int
-    inline int32_t as_int() const noexcept { return reinterpret_cast< const int32_t & >( m_key ); }
+    inline int32_t as_int() const noexcept { return reinterpret_cast<const int32_t&>( m_key ); }
 
     /// Set the given data into the given field, without validity bit
-    inline void
-    setData( const DataType value, const BitPackType shift, const BitPackType mask ) noexcept
-    {
+    inline void setData( const DataType value, const BitPackType shift, const BitPackType mask ) noexcept {
       setKey( ( ( value << shift ) & mask ) | ( m_key & ~mask ) );
     }
 
     /// Set the given data into the given field, with validity bit
-    inline void setData( const DataType    value,
-                         const BitPackType shift,
-                         const BitPackType mask,
-                         const BitPackType okMask ) noexcept
-    {
+    inline void setData( const DataType value, const BitPackType shift, const BitPackType mask,
+                         const BitPackType okMask ) noexcept {
       setKey( ( ( value << shift ) & mask ) | ( m_key & ~mask ) | okMask );
     }
 
     /// Checks if a data value is within range for a given field
-    inline void
-    checkRange( const DataType value, const DataType maxValue, const std::string &message ) const
-    {
+    inline void checkRange( const DataType value, const DataType maxValue, const std::string& message ) const {
       if ( value > maxValue ) { rangeError( value, maxValue, message ); }
     }
 
     /// Issue an exception in the case of a range error
-    void
-    rangeError( const DataType value, const DataType maxValue, const std::string &message ) const;
+    void rangeError( const DataType value, const DataType maxValue, const std::string& message ) const;
 
   public:
-
     /// Default Constructor
     RichSmartID() {}
 
   public:
-
     /// Constructor from internal type (unsigned int)
-    explicit constexpr RichSmartID( const LHCb::RichSmartID::KeyType key ) noexcept : m_key( key )
-    {}
+    explicit constexpr RichSmartID( const LHCb::RichSmartID::KeyType key ) noexcept : m_key( key ) {}
 
     /// Constructor from unsigned 64 bit int
     explicit constexpr RichSmartID( const uint64_t key ) noexcept
-      : m_key( static_cast< LHCb::RichSmartID::KeyType >( key & 0x00000000FFFFFFFF ) )
-    {}
+        : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) {}
 
     /// Constructor from signed 32 bit int type
     explicit RichSmartID( const int32_t key ) noexcept
-      : m_key( reinterpret_cast< const LHCb::RichSmartID::KeyType & >( key ) )
-    {}
+        : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>( key ) ) {}
 
     /// Constructor from signed 64 bit int
     explicit constexpr RichSmartID( const int64_t key ) noexcept
-      : m_key( static_cast< LHCb::RichSmartID::KeyType >( key & 0x00000000FFFFFFFF ) )
-    {}
+        : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) {}
 
     /// Pixel level constructor including sub-pixel information
-    RichSmartID( const Rich::DetectorType rich,
-                 const Rich::Side         panel,
-                 const DataType           pdNumInCol,
-                 const DataType           pdCol,
-                 const DataType           pixelRow,
-                 const DataType           pixelCol,
-                 const DataType           pixelSubRow,
-                 const IDType             type = HPDID )
+    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const DataType pdNumInCol, const DataType pdCol,
+                 const DataType pixelRow, const DataType pixelCol, const DataType pixelSubRow,
+                 const IDType type = HPDID )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
       assert( HPDID == type );
       setIDType( type );
-      if ( HPDID == type )
-      {
+      if ( HPDID == type ) {
         setRich_HPD( rich );
         setPanel_HPD( panel );
         setPD_HPD( pdCol, pdNumInCol );
@@ -396,28 +336,20 @@ namespace LHCb
     }
 
     /// Pixel level constructor
-    RichSmartID( const Rich::DetectorType rich,
-                 const Rich::Side         panel,
-                 const DataType           pdNumInCol,
-                 const DataType           pdCol,
-                 const DataType           pixelRow,
-                 const DataType           pixelCol,
-                 const IDType             type = HPDID )
+    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const DataType pdNumInCol, const DataType pdCol,
+                 const DataType pixelRow, const DataType pixelCol, const IDType type = HPDID )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
       setIDType( type );
-      if ( MaPMTID == type )
-      {
+      if ( MaPMTID == type ) {
         setRich_PMT( rich );
         setPanel_PMT( panel );
         setPD_PMT( pdCol, pdNumInCol );
         setPixelRow_PMT( pixelRow );
         setPixelCol_PMT( pixelCol );
-      }
-      else
-      {
+      } else {
         setRich_HPD( rich );
         setPanel_HPD( panel );
         setPD_HPD( pdCol, pdNumInCol );
@@ -427,24 +359,18 @@ namespace LHCb
     }
 
     /// PD level constructor
-    RichSmartID( const Rich::DetectorType rich,
-                 const Rich::Side         panel,
-                 const DataType           pdNumInCol,
-                 const DataType           pdCol,
-                 const IDType             type = HPDID )
+    RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const DataType pdNumInCol, const DataType pdCol,
+                 const IDType type = HPDID )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
       setIDType( type );
-      if ( MaPMTID == type )
-      {
+      if ( MaPMTID == type ) {
         setRich_PMT( rich );
         setPanel_PMT( panel );
         setPD_PMT( pdCol, pdNumInCol );
-      }
-      else
-      {
+      } else {
         setRich_HPD( rich );
         setPanel_HPD( panel );
         setPD_HPD( pdCol, pdNumInCol );
@@ -454,68 +380,51 @@ namespace LHCb
     /// PD panel level constructor
     RichSmartID( const Rich::DetectorType rich, const Rich::Side panel, const IDType type = HPDID )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
       setIDType( type );
-      if ( MaPMTID == type )
-      {
+      if ( MaPMTID == type ) {
         setRich_PMT( rich );
         setPanel_PMT( panel );
-      }
-      else
-      {
+      } else {
         setRich_HPD( rich );
         setPanel_HPD( panel );
       }
     }
 
   public:
-
     /// < operator
-    inline constexpr friend bool operator<( const LHCb::RichSmartID &lhs,
-                                            const LHCb::RichSmartID &rhs ) noexcept
-    {
+    inline constexpr friend bool operator<( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return lhs.key() < rhs.key();
     }
     /// Equality operator
-    inline constexpr friend bool operator==( const LHCb::RichSmartID &lhs,
-                                             const LHCb::RichSmartID &rhs ) noexcept
-    {
+    inline constexpr friend bool operator==( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return lhs.key() == rhs.key();
     }
     /// > operator
-    inline constexpr friend bool operator>( const LHCb::RichSmartID &lhs,
-                                            const LHCb::RichSmartID &rhs ) noexcept
-    {
+    inline constexpr friend bool operator>( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return lhs.key() > rhs.key();
     }
 
     /// <= operator
-    inline constexpr friend bool operator<=( const LHCb::RichSmartID &lhs,
-                                             const LHCb::RichSmartID &rhs ) noexcept
-    {
+    inline constexpr friend bool operator<=( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return !( lhs > rhs );
     }
     /// Inequality operator
-    inline constexpr friend bool operator!=( const LHCb::RichSmartID &lhs,
-                                             const LHCb::RichSmartID &rhs ) noexcept
-    {
+    inline constexpr friend bool operator!=( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return !( lhs == rhs );
     }
     /// >= operator
-    inline constexpr friend bool operator>=( const LHCb::RichSmartID &lhs,
-                                             const LHCb::RichSmartID &rhs ) noexcept
-    {
+    inline constexpr friend bool operator>=( const LHCb::RichSmartID& lhs, const LHCb::RichSmartID& rhs ) noexcept {
       return !( lhs < rhs );
     }
 
   private: // HPD specific setters
-
     /// Set the RICH detector identifier for HPDs
     inline void setRich_HPD( const Rich::DetectorType rich )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -529,7 +438,7 @@ namespace LHCb
     /// Set the RICH PD panel identifier for HPDs
     inline void setPanel_HPD( const Rich::Side panel )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -543,7 +452,7 @@ namespace LHCb
     /// Set the RICH PD column and number in column identifier for HPDs
     inline void setPD_HPD( const DataType col, const DataType nInCol )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -560,7 +469,7 @@ namespace LHCb
     /// Set the RICH PD pixel row identifier for HPDs
     inline void setPixelRow_HPD( const DataType row )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -574,7 +483,7 @@ namespace LHCb
     /// Set the RICH PD pixel column identifier for HPDs
     inline void setPixelCol_HPD( const DataType col )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -586,11 +495,10 @@ namespace LHCb
     }
 
   private: // PMT specific setters
-
     /// Set the RICH detector identifier for PMTs
     inline void setRich_PMT( const Rich::DetectorType rich )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -604,7 +512,7 @@ namespace LHCb
     /// Set the RICH PD panel identifier for PMTs
     inline void setPanel_PMT( const Rich::Side panel )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -618,7 +526,7 @@ namespace LHCb
     /// Set the RICH PD column and number in column identifier for PMTs
     inline void setPD_PMT( const DataType col, const DataType nInCol )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -635,7 +543,7 @@ namespace LHCb
     /// Set the RICH PD pixel row identifier for PMTs
     inline void setPixelRow_PMT( const DataType row )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -649,7 +557,7 @@ namespace LHCb
     /// Set the RICH PD pixel column identifier for PMTs
     inline void setPixelCol_PMT( const DataType col )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -661,16 +569,15 @@ namespace LHCb
     }
 
   public:
-
     /// Set the RICH detector identifier
     inline void setRich( const Rich::DetectorType rich )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
-      if ( MaPMTID == idType() ) { setRich_PMT( rich ); }
-      else
-      {
+      if ( MaPMTID == idType() ) {
+        setRich_PMT( rich );
+      } else {
         setRich_HPD( rich );
       }
     }
@@ -678,12 +585,12 @@ namespace LHCb
     /// Set the RICH PD panel identifier
     inline void setPanel( const Rich::Side panel )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
-      if ( MaPMTID == idType() ) { setPanel_PMT( panel ); }
-      else
-      {
+      if ( MaPMTID == idType() ) {
+        setPanel_PMT( panel );
+      } else {
         setPanel_HPD( panel );
       }
     }
@@ -691,12 +598,12 @@ namespace LHCb
     /// Set the RICH PD column and number in column identifier
     inline void setPD( const DataType col, const DataType nInCol )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
-      if ( MaPMTID == idType() ) { setPD_PMT( col, nInCol ); }
-      else
-      {
+      if ( MaPMTID == idType() ) {
+        setPD_PMT( col, nInCol );
+      } else {
         setPD_HPD( col, nInCol );
       }
     }
@@ -704,12 +611,12 @@ namespace LHCb
     /// Set the RICH PD pixel row identifier
     inline void setPixelRow( const DataType row )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
-      if ( MaPMTID == idType() ) { setPixelRow_PMT( row ); }
-      else
-      {
+      if ( MaPMTID == idType() ) {
+        setPixelRow_PMT( row );
+      } else {
         setPixelRow_HPD( row );
       }
     }
@@ -717,12 +624,12 @@ namespace LHCb
     /// Set the RICH PD pixel column identifier
     inline void setPixelCol( const DataType col )
 #ifdef NDEBUG
-      noexcept
+        noexcept
 #endif
     {
-      if ( MaPMTID == idType() ) { setPixelCol_PMT( col ); }
-      else
-      {
+      if ( MaPMTID == idType() ) {
+        setPixelCol_PMT( col );
+      } else {
         setPixelCol_HPD( col );
       }
     }
@@ -731,216 +638,164 @@ namespace LHCb
     void setPixelSubRow( const DataType pixelSubRow );
 
   public:
-
     /// Decoding function to strip the sub-pixel information and return a pixel RichSmartID
-    inline constexpr LHCb::RichSmartID pixelID() const noexcept
-    {
-      return RichSmartID( MaPMTID == idType() ?
-                            key() :
-                            key() & ~( HPD::MaskPixelSubRow + HPD::MaskPixelSubRowIsSet ) );
+    inline constexpr LHCb::RichSmartID pixelID() const noexcept {
+      return RichSmartID( MaPMTID == idType() ? key() : key() & ~( HPD::MaskPixelSubRow + HPD::MaskPixelSubRowIsSet ) );
     }
 
     /// Decoding function to return an identifier for a single PD, stripping all pixel level
     /// information
-    inline constexpr LHCb::RichSmartID pdID() const noexcept
-    {
-      return RichSmartID(
-        key() &
-        ( MaPMTID == idType() ?
-            ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol + MaPMT::MaskPDCol +
-              MaPMT::MaskRichIsSet + MaPMT::MaskPanelIsSet + MaPMT::MaskPDIsSet + MaskIDType ) :
-            ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskPDNumInCol + HPD::MaskPDCol +
-              HPD::MaskRichIsSet + HPD::MaskPanelIsSet + HPD::MaskPDIsSet + MaskIDType ) ) );
+    inline constexpr LHCb::RichSmartID pdID() const noexcept {
+      return RichSmartID( key() &
+                          ( MaPMTID == idType()
+                                ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol + MaPMT::MaskPDCol +
+                                    MaPMT::MaskRichIsSet + MaPMT::MaskPanelIsSet + MaPMT::MaskPDIsSet + MaskIDType )
+                                : ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskPDNumInCol + HPD::MaskPDCol +
+                                    HPD::MaskRichIsSet + HPD::MaskPanelIsSet + HPD::MaskPDIsSet + MaskIDType ) ) );
     }
 
     /// Decoding function to strip the photon-detector information and return a PD panel RichSmartID
-    inline constexpr LHCb::RichSmartID panelID() const noexcept
-    {
-      return RichSmartID( key() & ( MaPMTID == idType() ?
-                                      ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskRichIsSet +
-                                        MaPMT::MaskPanelIsSet + MaskIDType ) :
-                                      ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskRichIsSet +
-                                        HPD::MaskPanelIsSet + MaskIDType ) ) );
+    inline constexpr LHCb::RichSmartID panelID() const noexcept {
+      return RichSmartID(
+          key() &
+          ( MaPMTID == idType()
+                ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskRichIsSet + MaPMT::MaskPanelIsSet + MaskIDType )
+                : ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskRichIsSet + HPD::MaskPanelIsSet + MaskIDType ) ) );
     }
 
     /// Decoding function to strip all but the RICH information and return a RICH RichSmartID
-    inline constexpr LHCb::RichSmartID richID() const noexcept
-    {
-      return RichSmartID( key() & ( MaPMTID == idType() ?
-                                      ( MaPMT::MaskRich + MaPMT::MaskRichIsSet + MaskIDType ) :
-                                      ( HPD::MaskRich + HPD::MaskRichIsSet + MaskIDType ) ) );
+    inline constexpr LHCb::RichSmartID richID() const noexcept {
+      return RichSmartID( key() & ( MaPMTID == idType() ? ( MaPMT::MaskRich + MaPMT::MaskRichIsSet + MaskIDType )
+                                                        : ( HPD::MaskRich + HPD::MaskRichIsSet + MaskIDType ) ) );
     }
 
     /// Returns only the data fields, with the validity bits stripped
-    inline constexpr LHCb::RichSmartID dataBitsOnly() const noexcept
-    {
-      return RichSmartID(
-        key() & ( MaPMTID == idType() ?
-                    ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol +
-                      MaPMT::MaskPDCol + MaPMT::MaskPixelRow + MaPMT::MaskPixelCol ) :
-                    ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskPDNumInCol + HPD::MaskPDCol +
-                      HPD::MaskPixelRow + HPD::MaskPixelCol + HPD::MaskPixelSubRow ) ) );
+    inline constexpr LHCb::RichSmartID dataBitsOnly() const noexcept {
+      return RichSmartID( key() & ( MaPMTID == idType()
+                                        ? ( MaPMT::MaskRich + MaPMT::MaskPanel + MaPMT::MaskPDNumInCol +
+                                            MaPMT::MaskPDCol + MaPMT::MaskPixelRow + MaPMT::MaskPixelCol )
+                                        : ( HPD::MaskRich + HPD::MaskPanel + HPD::MaskPDNumInCol + HPD::MaskPDCol +
+                                            HPD::MaskPixelRow + HPD::MaskPixelCol + HPD::MaskPixelSubRow ) ) );
     }
 
   public:
-
     /// Retrieve The pixel sub-row (Alice mode) number
-    inline constexpr DataType pixelSubRow() const noexcept
-    {
+    inline constexpr DataType pixelSubRow() const noexcept {
       // Note MaPMTs have no sub-pixel ...
-      return ( DataType )(
-        HPDID == idType() ? ( ( key() & HPD::MaskPixelSubRow ) >> HPD::ShiftPixelSubRow ) : 0 );
+      return ( DataType )( HPDID == idType() ? ( ( key() & HPD::MaskPixelSubRow ) >> HPD::ShiftPixelSubRow ) : 0 );
     }
 
     /// Retrieve The pixel column number
-    inline constexpr DataType pixelCol() const noexcept
-    {
-      return ( DataType )( MaPMTID == idType() ?
-                             ( ( key() & MaPMT::MaskPixelCol ) >> MaPMT::ShiftPixelCol ) :
-                             ( ( key() & HPD::MaskPixelCol ) >> HPD::ShiftPixelCol ) );
+    inline constexpr DataType pixelCol() const noexcept {
+      return ( DataType )( MaPMTID == idType() ? ( ( key() & MaPMT::MaskPixelCol ) >> MaPMT::ShiftPixelCol )
+                                               : ( ( key() & HPD::MaskPixelCol ) >> HPD::ShiftPixelCol ) );
     }
 
     /// Retrieve The pixel row number
-    inline constexpr DataType pixelRow() const noexcept
-    {
-      return ( DataType )( MaPMTID == idType() ?
-                             ( ( key() & MaPMT::MaskPixelRow ) >> MaPMT::ShiftPixelRow ) :
-                             ( ( key() & HPD::MaskPixelRow ) >> HPD::ShiftPixelRow ) );
+    inline constexpr DataType pixelRow() const noexcept {
+      return ( DataType )( MaPMTID == idType() ? ( ( key() & MaPMT::MaskPixelRow ) >> MaPMT::ShiftPixelRow )
+                                               : ( ( key() & HPD::MaskPixelRow ) >> HPD::ShiftPixelRow ) );
     }
 
     /// Retrieve The PD number in column
-    inline constexpr DataType pdNumInCol() const noexcept
-    {
-      return ( DataType )( MaPMTID == idType() ?
-                             ( ( key() & MaPMT::MaskPDNumInCol ) >> MaPMT::ShiftPDNumInCol ) :
-                             ( ( key() & HPD::MaskPDNumInCol ) >> HPD::ShiftPDNumInCol ) );
+    inline constexpr DataType pdNumInCol() const noexcept {
+      return ( DataType )( MaPMTID == idType() ? ( ( key() & MaPMT::MaskPDNumInCol ) >> MaPMT::ShiftPDNumInCol )
+                                               : ( ( key() & HPD::MaskPDNumInCol ) >> HPD::ShiftPDNumInCol ) );
     }
 
     /// Retrieve The PD column number
-    inline constexpr DataType pdCol() const noexcept
-    {
-      return ( DataType )( MaPMTID == idType() ?
-                             ( ( key() & MaPMT::MaskPDCol ) >> MaPMT::ShiftPDCol ) :
-                             ( ( key() & HPD::MaskPDCol ) >> HPD::ShiftPDCol ) );
+    inline constexpr DataType pdCol() const noexcept {
+      return ( DataType )( MaPMTID == idType() ? ( ( key() & MaPMT::MaskPDCol ) >> MaPMT::ShiftPDCol )
+                                               : ( ( key() & HPD::MaskPDCol ) >> HPD::ShiftPDCol ) );
     }
 
     /// Retrieve The RICH panel
-    inline constexpr Rich::Side panel() const noexcept
-    {
-      return ( Rich::Side )( MaPMTID == idType() ?
-                               ( ( key() & MaPMT::MaskPanel ) >> MaPMT::ShiftPanel ) :
-                               ( ( key() & HPD::MaskPanel ) >> HPD::ShiftPanel ) );
+    inline constexpr Rich::Side panel() const noexcept {
+      return ( Rich::Side )( MaPMTID == idType() ? ( ( key() & MaPMT::MaskPanel ) >> MaPMT::ShiftPanel )
+                                                 : ( ( key() & HPD::MaskPanel ) >> HPD::ShiftPanel ) );
     }
 
     /// Retrieve The RICH Detector
-    inline constexpr Rich::DetectorType rich() const noexcept
-    {
-      return ( Rich::DetectorType )( MaPMTID == idType() ?
-                                       ( ( key() & MaPMT::MaskRich ) >> MaPMT::ShiftRich ) :
-                                       ( ( key() & HPD::MaskRich ) >> HPD::ShiftRich ) );
+    inline constexpr Rich::DetectorType rich() const noexcept {
+      return ( Rich::DetectorType )( MaPMTID == idType() ? ( ( key() & MaPMT::MaskRich ) >> MaPMT::ShiftRich )
+                                                         : ( ( key() & HPD::MaskRich ) >> HPD::ShiftRich ) );
     }
 
   public:
-
     /// Retrieve Pixel sub-row field is set
-    inline constexpr bool pixelSubRowIsSet() const noexcept
-    {
+    inline constexpr bool pixelSubRowIsSet() const noexcept {
       // Note MaPMTs have no sub-pixel ...
-      return ( HPDID == idType() ?
-                 0 != ( ( key() & HPD::MaskPixelSubRowIsSet ) >> HPD::ShiftPixelSubRowIsSet ) :
-                 false );
+      return ( HPDID == idType() ? 0 != ( ( key() & HPD::MaskPixelSubRowIsSet ) >> HPD::ShiftPixelSubRowIsSet )
+                                 : false );
     }
 
     /// Retrieve Pixel column field is set
-    inline constexpr bool pixelColIsSet() const noexcept
-    {
-      return ( MaPMTID == idType() ?
-                 0 != ( ( key() & MaPMT::MaskPixelColIsSet ) >> MaPMT::ShiftPixelColIsSet ) :
-                 0 != ( ( key() & HPD::MaskPixelColIsSet ) >> HPD::ShiftPixelColIsSet ) );
+    inline constexpr bool pixelColIsSet() const noexcept {
+      return ( MaPMTID == idType() ? 0 != ( ( key() & MaPMT::MaskPixelColIsSet ) >> MaPMT::ShiftPixelColIsSet )
+                                   : 0 != ( ( key() & HPD::MaskPixelColIsSet ) >> HPD::ShiftPixelColIsSet ) );
     }
 
     /// Retrieve Pixel row field is set
-    inline constexpr bool pixelRowIsSet() const noexcept
-    {
-      return ( MaPMTID == idType() ?
-                 0 != ( ( key() & MaPMT::MaskPixelRowIsSet ) >> MaPMT::ShiftPixelRowIsSet ) :
-                 0 != ( ( key() & HPD::MaskPixelRowIsSet ) >> HPD::ShiftPixelRowIsSet ) );
+    inline constexpr bool pixelRowIsSet() const noexcept {
+      return ( MaPMTID == idType() ? 0 != ( ( key() & MaPMT::MaskPixelRowIsSet ) >> MaPMT::ShiftPixelRowIsSet )
+                                   : 0 != ( ( key() & HPD::MaskPixelRowIsSet ) >> HPD::ShiftPixelRowIsSet ) );
     }
 
     /// Retrieve PD column field is set
-    inline constexpr bool pdIsSet() const noexcept
-    {
-      return ( MaPMTID == idType() ?
-                 0 != ( ( key() & MaPMT::MaskPDIsSet ) >> MaPMT::ShiftPDIsSet ) :
-                 0 != ( ( key() & HPD::MaskPDIsSet ) >> HPD::ShiftPDIsSet ) );
+    inline constexpr bool pdIsSet() const noexcept {
+      return ( MaPMTID == idType() ? 0 != ( ( key() & MaPMT::MaskPDIsSet ) >> MaPMT::ShiftPDIsSet )
+                                   : 0 != ( ( key() & HPD::MaskPDIsSet ) >> HPD::ShiftPDIsSet ) );
     }
 
     /// Retrieve RICH panel field is set
-    inline constexpr bool panelIsSet() const noexcept
-    {
-      return ( MaPMTID == idType() ?
-                 0 != ( ( key() & MaPMT::MaskPanelIsSet ) >> MaPMT::ShiftPanelIsSet ) :
-                 0 != ( ( key() & HPD::MaskPanelIsSet ) >> HPD::ShiftPanelIsSet ) );
+    inline constexpr bool panelIsSet() const noexcept {
+      return ( MaPMTID == idType() ? 0 != ( ( key() & MaPMT::MaskPanelIsSet ) >> MaPMT::ShiftPanelIsSet )
+                                   : 0 != ( ( key() & HPD::MaskPanelIsSet ) >> HPD::ShiftPanelIsSet ) );
     }
 
     /// Retrieve RICH detector field is set
-    inline constexpr bool richIsSet() const noexcept
-    {
-      return ( MaPMTID == idType() ?
-                 0 != ( ( key() & MaPMT::MaskRichIsSet ) >> MaPMT::ShiftRichIsSet ) :
-                 0 != ( ( key() & HPD::MaskRichIsSet ) >> HPD::ShiftRichIsSet ) );
+    inline constexpr bool richIsSet() const noexcept {
+      return ( MaPMTID == idType() ? 0 != ( ( key() & MaPMT::MaskRichIsSet ) >> MaPMT::ShiftRichIsSet )
+                                   : 0 != ( ( key() & HPD::MaskRichIsSet ) >> HPD::ShiftRichIsSet ) );
     }
 
   public:
-
     /// Returns true if the RichSmartID contains valid RICH detector data
     inline constexpr bool richDataAreValid() const noexcept { return richIsSet(); }
 
     /// Returns true if the RichSmartID contains valid PD data
-    inline constexpr bool pdDataAreValid() const noexcept
-    {
-      return ( pdIsSet() && panelIsSet() && richIsSet() );
-    }
+    inline constexpr bool pdDataAreValid() const noexcept { return ( pdIsSet() && panelIsSet() && richIsSet() ); }
 
     /// Returns true if the RichSmartID contains valid pixel data
-    inline constexpr bool pixelDataAreValid() const noexcept
-    {
+    inline constexpr bool pixelDataAreValid() const noexcept {
       return ( pixelColIsSet() && pixelRowIsSet() && pdDataAreValid() );
     }
 
     /// Returns true if the RichSmartID contains valid pixel sub-row (Alice mode) data
-    inline constexpr bool pixelSubRowDataIsValid() const noexcept
-    {
+    inline constexpr bool pixelSubRowDataIsValid() const noexcept {
       return ( pixelSubRowIsSet() && pixelDataAreValid() );
     }
 
     /// Returns true if at least one data field has been set
-    inline constexpr bool isValid() const noexcept
-    {
-      return ( richIsSet() || panelIsSet() || pdIsSet() || pixelRowIsSet() || pixelColIsSet() ||
-               pixelSubRowIsSet() );
+    inline constexpr bool isValid() const noexcept {
+      return ( richIsSet() || panelIsSet() || pdIsSet() || pixelRowIsSet() || pixelColIsSet() || pixelSubRowIsSet() );
     }
 
   public:
-
     /** Returns true if the SmartID is for a 'large' PMT.
      *  @attention Will always return false for HPDs... */
-    inline constexpr bool isLargePMT() const noexcept
-    {
-      return ( HPDID == idType() ?
-                 false :
-                 0 != ( ( key() & MaPMT::MaskLargePixel ) >> MaPMT::ShiftLargePixel ) );
+    inline constexpr bool isLargePMT() const noexcept {
+      return ( HPDID == idType() ? false : 0 != ( ( key() & MaPMT::MaskLargePixel ) >> MaPMT::ShiftLargePixel ) );
     }
 
     /** Set the large PMT flag.
      *  @attention Does nothing for HPDs */
-    inline void setLargePMT( const bool flag ) noexcept
-    {
+    inline void setLargePMT( const bool flag ) noexcept {
       assert( MaPMTID == idType() );
       if ( MaPMTID == idType() ) { setData( flag, MaPMT::ShiftLargePixel, MaPMT::MaskLargePixel ); }
     }
     /// Print this RichSmartID in a human readable way
-    std::ostream &fillStream( std::ostream &s,
+    std::ostream& fillStream( std::ostream& s,
 #ifdef NDEBUG
                               const bool dumpSmartIDBits = false
 #else
@@ -953,21 +808,14 @@ namespace LHCb
     std::string toString() const;
 
   public:
-
     /// Test if a given bit in the ID is on
-    inline constexpr bool isBitOn( const int32_t pos ) const noexcept
-    {
-      return ( 0 != ( key() & ( 1 << pos ) ) );
-    }
+    inline constexpr bool isBitOn( const int32_t pos ) const noexcept { return ( 0 != ( key() & ( 1 << pos ) ) ); }
 
     /// Print the ID as a series of bits (0/1)
-    std::ostream &dumpBits( std::ostream &s ) const;
+    std::ostream& dumpBits( std::ostream& s ) const;
   };
 
   /// ostream operator
-  inline std::ostream &operator<<( std::ostream &str, const RichSmartID &obj )
-  {
-    return obj.fillStream( str );
-  }
+  inline std::ostream& operator<<( std::ostream& str, const RichSmartID& obj ) { return obj.fillStream( str ); }
 
 } // namespace LHCb

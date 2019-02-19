@@ -29,13 +29,11 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 // Event Model
-namespace LHCb
-{
+namespace LHCb {
   class RichTrackSegment;
 }
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class ISnellsLawRefraction RichKernel/IRichSnellsLawRefraction.h
@@ -48,11 +46,9 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class ISnellsLawRefraction : public virtual IAlgTool
-  {
+  class ISnellsLawRefraction : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( ISnellsLawRefraction, 1, 0 );
 
@@ -65,9 +61,8 @@ namespace Rich
      *  @param[in,out] dir   The direction to update (WARNING Must be a unit vector)
      *  @param[in]     trSeg The aerogel track segment associated to the photon direction to update
      */
-    virtual void aerogelToGas( Gaudi::XYZPoint &             startPoint,
-                               Gaudi::XYZVector &            dir,
-                               const LHCb::RichTrackSegment &trSeg ) const = 0;
+    virtual void aerogelToGas( Gaudi::XYZPoint& startPoint, Gaudi::XYZVector& dir,
+                               const LHCb::RichTrackSegment& trSeg ) const = 0;
 
     /** Correct the direction vector and start point for refraction in going from Aerogel to
      * Rich1Gas
@@ -79,9 +74,8 @@ namespace Rich
      *  @param[in]     photonEnergy The energy of the photon (used to get the correct refractive
      * indices)
      */
-    virtual void aerogelToGas( Gaudi::XYZPoint & startPoint,
-                               Gaudi::XYZVector &dir,
-                               const double      photonEnergy ) const = 0;
+    virtual void aerogelToGas( Gaudi::XYZPoint& startPoint, Gaudi::XYZVector& dir,
+                               const double photonEnergy ) const = 0;
 
     /** Correct the direction vector for refraction in going from Rich1Gas to aerogel
      *
@@ -90,8 +84,7 @@ namespace Rich
      *  @param[in,out] dir   The direction to update (WARNING Must be a unit vector)
      *  @param[in]     trSeg The aerogel track segment associated to the photon direction to update
      */
-    virtual void gasToAerogel( Gaudi::XYZVector &            dir,
-                               const LHCb::RichTrackSegment &trSeg ) const = 0;
+    virtual void gasToAerogel( Gaudi::XYZVector& dir, const LHCb::RichTrackSegment& trSeg ) const = 0;
 
     /** Correct the direction vector for refraction in going from Rich1Gas to aerogel
      *
@@ -101,7 +94,7 @@ namespace Rich
      *  @param[in]     photonEnergy The energy of the photon (used to get the correct refractive
      * indices)
      */
-    virtual void gasToAerogel( Gaudi::XYZVector &dir, const double photonEnergy ) const = 0;
+    virtual void gasToAerogel( Gaudi::XYZVector& dir, const double photonEnergy ) const = 0;
   };
 
 } // namespace Rich

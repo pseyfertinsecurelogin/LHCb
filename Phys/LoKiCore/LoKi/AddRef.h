@@ -40,10 +40,9 @@ namespace LoKi {
    *  @date   2006-03-11
    */
   template <class TYPE>
-  inline bool addRef( TYPE* obj )
-  {
-    if ( obj ) { obj->addRef() ; }
-    return obj != nullptr ;
+  inline bool addRef( TYPE* obj ) {
+    if ( obj ) { obj->addRef(); }
+    return obj != nullptr;
   }
   // ==========================================================================
 } // end of namespace LoKi

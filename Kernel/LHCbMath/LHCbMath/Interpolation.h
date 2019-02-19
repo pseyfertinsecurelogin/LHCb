@@ -15,20 +15,18 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <vector>
+#include <algorithm>
 #include <array>
 #include <utility>
-#include <algorithm>
+#include <vector>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** @namespace Gaudi::Math::Interpolation
      *  Collection of simple utilities for various types of interpolation
@@ -52,13 +50,12 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2016-07-23
      */
-    namespace Interpolation
-    {
+    namespace Interpolation {
       // ======================================================================
       /// the actual type of "simple" data
-      typedef std::vector<std::pair<double,double> >           DATA    ;
+      typedef std::vector<std::pair<double, double>> DATA;
       /// the actual type of "simple" data
-      typedef std::vector<double>                              DATAVCT ;
+      typedef std::vector<double> DATAVCT;
       // ======================================================================
       /** Very simple lagrange interpolation
        *
@@ -82,20 +79,11 @@ namespace Gaudi
        *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
        *  @date 2016-07-23
        */
-      template <class XITERATOR,
-                class YITERATOR,
-                class RESULT   ,
-                class XADAPTER ,
-                class YADAPTER >
-      inline RESULT lagrange
-      ( XITERATOR    xbegin ,
-        XITERATOR    xend   ,
-        YITERATOR    ybegin ,
-        YITERATOR    yend   ,
-        const double x      ,
-        RESULT       result ,
-        XADAPTER     xvalue ,   // adaptor to get y-value
-        YADAPTER     yvalue ) ; // adaptor to get x-value
+      template <class XITERATOR, class YITERATOR, class RESULT, class XADAPTER, class YADAPTER>
+      inline RESULT lagrange( XITERATOR xbegin, XITERATOR xend, YITERATOR ybegin, YITERATOR yend, const double x,
+                              RESULT   result,
+                              XADAPTER xvalue,   // adaptor to get y-value
+                              YADAPTER yvalue ); // adaptor to get x-value
       // ======================================================================
       /** simple interpolation using Neville's algorithm
        *
@@ -119,18 +107,10 @@ namespace Gaudi
        *  @return the value of interpolation polynomial at point x
        *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
        */
-      template <class XITERATOR,
-                class YITERATOR,
-                class XADAPTER ,
-                class YADAPTER >
-      inline double neville
-      ( XITERATOR    xbegin ,
-        XITERATOR    xend   ,
-        YITERATOR    ybegin ,
-        YITERATOR    yend   ,
-        const double x      ,
-        XADAPTER     xvalue ,   // adaptor to get y-value
-        YADAPTER     yvalue ) ; // adaptor to get x-value
+      template <class XITERATOR, class YITERATOR, class XADAPTER, class YADAPTER>
+      inline double neville( XITERATOR xbegin, XITERATOR xend, YITERATOR ybegin, YITERATOR yend, const double x,
+                             XADAPTER xvalue,   // adaptor to get y-value
+                             YADAPTER yvalue ); // adaptor to get x-value
       // ======================================================================
       /** simple interpolation using Neville's algorithm:
        *    evaluate the interpolation polynomial and also the derivative
@@ -155,19 +135,11 @@ namespace Gaudi
        *  @return the value of interpolation polynomial at point x
        *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
        */
-      template <class XITERATOR,
-                class YITERATOR,
-                class XADAPTER ,
-                class YADAPTER >
-      inline
-      std::pair<double,double> neville2
-      ( XITERATOR    xbegin ,
-        XITERATOR    xend   ,
-        YITERATOR    ybegin ,
-        YITERATOR    yend   ,
-        const double x      ,
-        XADAPTER     xvalue ,   // adaptor to get y-value
-        YADAPTER     yvalue ) ; // adaptor to get x-value
+      template <class XITERATOR, class YITERATOR, class XADAPTER, class YADAPTER>
+      inline std::pair<double, double> neville2( XITERATOR xbegin, XITERATOR xend, YITERATOR ybegin, YITERATOR yend,
+                                                 const double x,
+                                                 XADAPTER     xvalue, // adaptor to get y-value
+                                                 YADAPTER     yvalue );   // adaptor to get x-value
       // ======================================================================
       /** simple interpolation using Neville's algorithm
        *
@@ -190,16 +162,10 @@ namespace Gaudi
        *  @return the value of  interpolation polynomial at point x
        *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
        */
-      template <class XITERATOR,
-                class YITERATOR,
-                class XADAPTOR >
-      inline double
-      neville
-      ( XITERATOR    xbegin ,
-        XITERATOR    xend   ,
-        YITERATOR    ybegin , // NON-const!
-        const double x      ,
-        XADAPTOR     xvalue ) ;
+      template <class XITERATOR, class YITERATOR, class XADAPTOR>
+      inline double neville( XITERATOR xbegin, XITERATOR xend,
+                             YITERATOR    ybegin, // NON-const!
+                             const double x, XADAPTOR xvalue );
       // ======================================================================
       /** simple interpolation using Neville's algorithm with simultaneous
        *  estimation of the derivative
@@ -221,18 +187,11 @@ namespace Gaudi
        *  @return the pair (function,derivative) at point x
        *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
        */
-      template <class XITERATOR,
-                class YITERATOR,
-                class DITERATOR,
-                class XADAPTOR >
-      inline std::pair<double,double>
-      neville
-      ( XITERATOR    xbegin ,
-        XITERATOR    xend   ,
-        YITERATOR    ybegin , // NON-const!
-        DITERATOR    dbegin , // NON-const!
-        const double x      ,
-        XADAPTOR     xvalue ) ;
+      template <class XITERATOR, class YITERATOR, class DITERATOR, class XADAPTOR>
+      inline std::pair<double, double> neville( XITERATOR xbegin, XITERATOR xend,
+                                                YITERATOR    ybegin, // NON-const!
+                                                DITERATOR    dbegin, // NON-const!
+                                                const double x, XADAPTOR xvalue );
       // ======================================================================
       /** very simple lagrange interpolation
        *  @param  xs INPUT sequence of abscissas
@@ -251,9 +210,7 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      double lagrange ( const std::vector<double>& xs ,
-                        const std::vector<double>& ys ,
-                        const double               x  ) ;
+      double lagrange( const std::vector<double>& xs, const std::vector<double>& ys, const double x );
       // ======================================================================
       /** very simple lagrange interpolation
        *  @param  data INPUT sequence of (x,y)
@@ -268,7 +225,7 @@ namespace Gaudi
        *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
        *  @date 2016-07-23
        */
-      double lagrange ( const DATA& data , const double x  ) ;
+      double lagrange( const DATA& data, const double x );
       // ======================================================================
       /** Simple lagrange interpolation
        *  - it also evaluate the derivative wity respect to y_i
@@ -289,11 +246,8 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      std::pair<double,double>
-      lagrange2 ( const std::vector<double>& xs ,
-                  const std::vector<double>& ys ,
-                  const double               x  ,
-                  const unsigned int         iy ) ;
+      std::pair<double, double> lagrange2( const std::vector<double>& xs, const std::vector<double>& ys, const double x,
+                                           const unsigned int iy );
       // ======================================================================
       /** Simple lagrange interpolation
        *  - it also evaluate the derivative wity respect to y_i
@@ -311,10 +265,7 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      std::pair<double,double>
-      lagrange2 ( const DATA&        data ,
-                  const double       x    ,
-                  const unsigned int iy   ) ;
+      std::pair<double, double> lagrange2( const DATA& data, const double x, const unsigned int iy );
       // ======================================================================
       /** very simple Neville's interpolation
        *  @param  xs INPUT sequence of abscissas
@@ -333,9 +284,7 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      double neville  ( const std::vector<double>& xs ,
-                        const std::vector<double>& ys ,
-                        const double               x  ) ;
+      double neville( const std::vector<double>& xs, const std::vector<double>& ys, const double x );
       // ======================================================================
       /** very simple Neville interpolation
        *  @param  data INPUT sequence of (x,y)
@@ -351,9 +300,7 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      double
-      neville  ( const DATA&  data ,
-                 const double x    ) ;
+      double neville( const DATA& data, const double x );
       // ======================================================================
       /** very simple Neville's interpolation
        *  -  it evalutes the polynomial and the derivative
@@ -373,10 +320,8 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      std::pair<double,double>
-      neville2  ( const std::vector<double>& xs ,
-                  const std::vector<double>& ys ,
-                  const double               x  ) ;
+      std::pair<double, double> neville2( const std::vector<double>& xs, const std::vector<double>& ys,
+                                          const double x );
       // ======================================================================
       /** very simple Neville interpolation
        *  -  it evaluates the polynomial and the derivative
@@ -393,13 +338,11 @@ namespace Gaudi
        *  @date 2016-07-23
        */
       GAUDI_API
-      std::pair<double,double>
-      neville2  ( const DATA&  data ,
-                  const double x  ) ;
+      std::pair<double, double> neville2( const DATA& data, const double x );
       // ======================================================================
-    } //                            end of namespace Gaudi::Math::Interpolation
+    } // namespace Interpolation
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
@@ -426,52 +369,40 @@ namespace Gaudi
  *  @date 2016-07-23
  */
 // ============================================================================
-template <class XITERATOR,
-          class YITERATOR,
-          class RESULT   ,
-          class XADAPTER ,
-          class YADAPTER >
-inline RESULT
-Gaudi::Math::Interpolation::lagrange
-( XITERATOR    xbegin ,
-  XITERATOR    xend   ,
-  YITERATOR    ybegin ,
-  YITERATOR    yend   ,
-  const double x      ,
-  RESULT       result ,
-  XADAPTER     xvalue ,   // adaptor to get y-value
-  YADAPTER     yvalue )   // adaptor to get x-value
+template <class XITERATOR, class YITERATOR, class RESULT, class XADAPTER, class YADAPTER>
+inline RESULT Gaudi::Math::Interpolation::lagrange( XITERATOR xbegin, XITERATOR xend, YITERATOR ybegin, YITERATOR yend,
+                                                    const double x, RESULT result,
+                                                    XADAPTER xvalue,  // adaptor to get y-value
+                                                    YADAPTER yvalue ) // adaptor to get x-value
 {
   /// 1)special case no data
-  if ( xbegin == xend || ybegin == yend ) { return result ; }    // RETURN
-  const typename std::iterator_traits<XITERATOR>::difference_type nx = std::distance ( xbegin , xend ) ;
+  if ( xbegin == xend || ybegin == yend ) { return result; } // RETURN
+  const typename std::iterator_traits<XITERATOR>::difference_type nx = std::distance( xbegin, xend );
   /// 2) special case: constant function
-  if ( 1 == nx ) { return  result + yvalue ( *ybegin )    ; } // RETURN
-  const typename std::iterator_traits<XITERATOR>::difference_type ny = std::distance ( ybegin , yend ) ;
+  if ( 1 == nx ) { return result + yvalue( *ybegin ); } // RETURN
+  const typename std::iterator_traits<XITERATOR>::difference_type ny = std::distance( ybegin, yend );
   //
   /// redefine yend : skip extra y-values
-  if ( nx < ny ) { std::advance ( yend , nx - ny ) ; }
+  if ( nx < ny ) { std::advance( yend, nx - ny ); }
   //
-  unsigned int i  =      0 ;
-  XITERATOR    ix = xbegin ;
-  YITERATOR    iy = ybegin ;
+  unsigned int i  = 0;
+  XITERATOR    ix = xbegin;
+  YITERATOR    iy = ybegin;
   //
-  for ( ; iy != yend ; ++iy , ++ix , ++i )
-  {
-    const double xi = xvalue ( *ix ) ; // get values
+  for ( ; iy != yend; ++iy, ++ix, ++i ) {
+    const double xi = xvalue( *ix ); // get values
     //
-    double       r = 1 ;
-    unsigned int j = 0 ;
-    for ( XITERATOR jx = xbegin ; jx != xend ; ++jx, ++j  )
-    {
-      const double xj = xvalue ( *jx ) ;  // get the value
-      if ( i == j ) { continue ; }
-      r *= ( x - xj ) / ( xi - xj ) ;
+    double       r = 1;
+    unsigned int j = 0;
+    for ( XITERATOR jx = xbegin; jx != xend; ++jx, ++j ) {
+      const double xj = xvalue( *jx ); // get the value
+      if ( i == j ) { continue; }
+      r *= ( x - xj ) / ( xi - xj );
     }
     //
-    result += r * yvalue ( *iy ) ;
+    result += r * yvalue( *iy );
   }
-  return result ;                            // RETURN
+  return result; // RETURN
 }
 // ============================================================================
 /** simple interpolation using Neville's algorithm
@@ -497,33 +428,25 @@ Gaudi::Math::Interpolation::lagrange
  *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
  */
 // ============================================================================
-template <class XITERATOR,
-          class YITERATOR,
-          class XADAPTER ,
-          class YADAPTER >
-inline double
-Gaudi::Math::Interpolation::neville
-( XITERATOR    xbegin ,
-  XITERATOR    xend   ,
-  YITERATOR    ybegin ,
-  YITERATOR    yend   ,
-  const double x      ,
-  XADAPTER     xvalue , // adaptor to get y-value
-  YADAPTER     yvalue ) // adaptor to get x-value
+template <class XITERATOR, class YITERATOR, class XADAPTER, class YADAPTER>
+inline double Gaudi::Math::Interpolation::neville( XITERATOR xbegin, XITERATOR xend, YITERATOR ybegin, YITERATOR yend,
+                                                   const double x,
+                                                   XADAPTER     xvalue, // adaptor to get y-value
+                                                   YADAPTER     yvalue )    // adaptor to get x-value
 {
   /// 1)special case no data
-  if ( xbegin == xend || ybegin == yend ) { return                   0 ; } // RETURN
-  const typename std::iterator_traits<XITERATOR>::difference_type NX = std::distance ( xbegin , xend ) ;
+  if ( xbegin == xend || ybegin == yend ) { return 0; } // RETURN
+  const typename std::iterator_traits<XITERATOR>::difference_type NX = std::distance( xbegin, xend );
   /// 2) special case: constant function
-  if ( 1 == NX                          ) { return  yvalue ( *ybegin ) ; } // RETURN
-  const typename std::iterator_traits<YITERATOR>::difference_type NY = std::distance ( ybegin , yend ) ;
+  if ( 1 == NX ) { return yvalue( *ybegin ); } // RETURN
+  const typename std::iterator_traits<YITERATOR>::difference_type NY = std::distance( ybegin, yend );
   // temporary storage
-  std::vector<double> _y ( NX , 0 ) ;
-  YITERATOR ylast = yend ;
-  if ( NX < NY ) { std::advance ( ylast , NX - NY ) ; }
-  std::transform ( ybegin , ylast , _y.begin() , yvalue ) ;
+  std::vector<double> _y( NX, 0 );
+  YITERATOR           ylast = yend;
+  if ( NX < NY ) { std::advance( ylast, NX - NY ); }
+  std::transform( ybegin, ylast, _y.begin(), yvalue );
   // simple version of neville
-  return neville ( xbegin , xend , _y.begin() , x , xvalue ) ;
+  return neville( xbegin, xend, _y.begin(), x, xvalue );
 }
 // ============================================================================
 /** simple interpolation using Neville's algorithm:
@@ -550,34 +473,26 @@ Gaudi::Math::Interpolation::neville
  *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
  */
 // ============================================================================
-template <class XITERATOR,
-          class YITERATOR,
-          class XADAPTER ,
-          class YADAPTER >
-inline std::pair<double,double>
-Gaudi::Math::Interpolation::neville2
-( XITERATOR    xbegin ,
-  XITERATOR    xend   ,
-  YITERATOR    ybegin ,
-  YITERATOR    yend   ,
-  const double x      ,
-  XADAPTER     xvalue , // adaptor to get y-value
-  YADAPTER     yvalue ) // adaptor to get x-value
+template <class XITERATOR, class YITERATOR, class XADAPTER, class YADAPTER>
+inline std::pair<double, double> Gaudi::Math::Interpolation::neville2( XITERATOR xbegin, XITERATOR xend,
+                                                                       YITERATOR ybegin, YITERATOR yend, const double x,
+                                                                       XADAPTER xvalue,  // adaptor to get y-value
+                                                                       YADAPTER yvalue ) // adaptor to get x-value
 {
   /// 1)special case no data
-  if ( xbegin == xend || ybegin == yend ) { return { 0                  , 0 } ; } // RETURN
-  const auto NX = std::distance ( xbegin , xend ) ;
+  if ( xbegin == xend || ybegin == yend ) { return {0, 0}; } // RETURN
+  const auto NX = std::distance( xbegin, xend );
   /// 2) special case: constant function
-  if ( 1 == NX                          ) { return { yvalue ( *ybegin ) , 0 } ; } // RETURN
-  const auto NY = std::distance ( ybegin , yend ) ;
+  if ( 1 == NX ) { return {yvalue( *ybegin ), 0}; } // RETURN
+  const auto NY = std::distance( ybegin, yend );
   // temporary storage
-  std::vector<double> _y ( NX , 0 ) ;
-  std::vector<double> _d ( NX , 0 ) ;
-  YITERATOR ylast = yend ;
-  if ( NX < NY ) { std::advance ( ylast , NX - NY ) ; }
-  std::transform ( ybegin , ylast , _y.begin() , yvalue ) ;
+  std::vector<double> _y( NX, 0 );
+  std::vector<double> _d( NX, 0 );
+  YITERATOR           ylast = yend;
+  if ( NX < NY ) { std::advance( ylast, NX - NY ); }
+  std::transform( ybegin, ylast, _y.begin(), yvalue );
   // simple version of neville
-  return neville ( xbegin , xend , _y.begin() , _d.begin() , x , xvalue ) ;
+  return neville( xbegin, xend, _y.begin(), _d.begin(), x, xvalue );
 }
 // ============================================================================
 /** simple interpolation using Neville's algorithm:
@@ -608,33 +523,24 @@ Gaudi::Math::Interpolation::neville2
  *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
  */
 // ============================================================================
-template <class XITERATOR,
-          class YITERATOR,
-          class XADAPTOR >
-inline double
-Gaudi::Math::Interpolation::neville
-( XITERATOR    xbegin ,
-  XITERATOR    xend   ,
-  YITERATOR    ybegin , // NON-CONST
-  const double x      ,
-  XADAPTOR     xvalue )
-{
-  if ( xbegin == xend ) { return 0        ; } // RETURN
-  const typename std::iterator_traits<XITERATOR>::difference_type NX = std::distance ( xbegin , xend ) ;
-  if ( 1 == NX        ) { return *ybegin  ; } // RETURN
+template <class XITERATOR, class YITERATOR, class XADAPTOR>
+inline double Gaudi::Math::Interpolation::neville( XITERATOR xbegin, XITERATOR xend,
+                                                   YITERATOR    ybegin, // NON-CONST
+                                                   const double x, XADAPTOR xvalue ) {
+  if ( xbegin == xend ) { return 0; } // RETURN
+  const typename std::iterator_traits<XITERATOR>::difference_type NX = std::distance( xbegin, xend );
+  if ( 1 == NX ) { return *ybegin; } // RETURN
   //
-  for ( unsigned int k = 1 ; k < NX ; ++k )
-  {
-    for ( unsigned int i = 0 ; i < NX - k ; ++i )
-    {
-      const double xj  = xvalue ( *(xbegin +(i + k) ) ) ;
-      const double xi  = xvalue ( *(xbegin + i      ) ) ;
-      const double yi  = *(ybegin + i      ) ;
-      const double yi1 = *(ybegin +(i + 1) ) ;
-      *(ybegin+i) = ( ( x - xj ) * yi + ( xi - x ) * yi1 ) /( xi - xj ) ;
+  for ( unsigned int k = 1; k < NX; ++k ) {
+    for ( unsigned int i = 0; i < NX - k; ++i ) {
+      const double xj  = xvalue( *( xbegin + ( i + k ) ) );
+      const double xi  = xvalue( *( xbegin + i ) );
+      const double yi  = *( ybegin + i );
+      const double yi1 = *( ybegin + ( i + 1 ) );
+      *( ybegin + i )  = ( ( x - xj ) * yi + ( xi - x ) * yi1 ) / ( xi - xj );
     }
   }
-  return *ybegin ;
+  return *ybegin;
 }
 // ============================================================================
 /** simple interpolation using Neville's algorithm with simultaneous
@@ -658,38 +564,28 @@ Gaudi::Math::Interpolation::neville
  *  @see https://en.wikipedia.org/wiki/Neville%27s_algorithm
  */
 // ============================================================================
-template <class XITERATOR,
-          class YITERATOR,
-          class DITERATOR,
-          class XADAPTOR >
-inline std::pair<double,double>
-Gaudi::Math::Interpolation::neville
-( XITERATOR    xbegin ,
-  XITERATOR    xend   ,
-  YITERATOR    ybegin , // NON-const!
-  DITERATOR    dbegin , // NON-const!
-  const double x      ,
-  XADAPTOR     xvalue )
-{
-  if ( xbegin == xend ) { return { 0       , 0 } ; } // RETURN
-  const auto NX = std::distance ( xbegin , xend ) ;
-  if ( 1 == NX        ) { return { *ybegin , 0 } ; } // RETURN
+template <class XITERATOR, class YITERATOR, class DITERATOR, class XADAPTOR>
+inline std::pair<double, double> Gaudi::Math::Interpolation::neville( XITERATOR xbegin, XITERATOR xend,
+                                                                      YITERATOR    ybegin, // NON-const!
+                                                                      DITERATOR    dbegin, // NON-const!
+                                                                      const double x, XADAPTOR xvalue ) {
+  if ( xbegin == xend ) { return {0, 0}; } // RETURN
+  const auto NX = std::distance( xbegin, xend );
+  if ( 1 == NX ) { return {*ybegin, 0}; } // RETURN
   //
-  for ( unsigned int k = 1 ; k < NX ; ++k )
-  {
-    for ( unsigned int i = 0 ; i < NX - k ; ++i )
-    {
-      const double xj  = xvalue ( *(xbegin +(i + k) ) ) ;
-      const double xi  = xvalue ( *(xbegin + i      ) ) ;
-      const double yi  = *(ybegin + i      ) ;
-      const double yi1 = *(ybegin +(i + 1) ) ;
-      const double di  = *(dbegin + i      ) ;
-      const double di1 = *(dbegin +(i + 1) ) ;
-      *(ybegin+i) = ( ( x - xj ) * yi      + ( xi - x ) * yi1        ) / ( xi - xj ) ;
-      *(dbegin+i) = ( ( x - xj ) * di + yi + ( xi - x ) * di1 - yi1  ) / ( xi - xj ) ;
+  for ( unsigned int k = 1; k < NX; ++k ) {
+    for ( unsigned int i = 0; i < NX - k; ++i ) {
+      const double xj  = xvalue( *( xbegin + ( i + k ) ) );
+      const double xi  = xvalue( *( xbegin + i ) );
+      const double yi  = *( ybegin + i );
+      const double yi1 = *( ybegin + ( i + 1 ) );
+      const double di  = *( dbegin + i );
+      const double di1 = *( dbegin + ( i + 1 ) );
+      *( ybegin + i )  = ( ( x - xj ) * yi + ( xi - x ) * yi1 ) / ( xi - xj );
+      *( dbegin + i )  = ( ( x - xj ) * di + yi + ( xi - x ) * di1 - yi1 ) / ( xi - xj );
     }
   }
-  return { *ybegin , *dbegin } ;
+  return {*ybegin, *dbegin};
 }
 // ============================================================================
 // The END

@@ -22,11 +22,9 @@
 // ===========================================================================
 #include "GaudiKernel/Kernel.h"
 // ===========================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // =========================================================================
-  namespace Math
-  {
+  namespace Math {
     // =======================================================================
     /** get the 'blind'-number form the string
      *  @param name the name to be used for construction of the coefficient
@@ -36,12 +34,9 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
      *  @date 2010-10-10
      */
-    GAUDI_API double blind
-    ( const std::string& name ,
-      const double       minv ,
-      const double       maxv ) ;
+    GAUDI_API double blind( const std::string& name, const double minv, const double maxv );
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

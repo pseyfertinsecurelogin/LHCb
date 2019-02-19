@@ -9,12 +9,11 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // $Id: LbAppInitFactory.cpp,v 1.1 2010-02-12 14:00:30 gcorti Exp $
-// Include files 
-#include "Kernel/LbAppInit.h"
+// Include files
 #include "GaudiKernel/LoadFactoryEntries.h"
+#include "Kernel/LbAppInit.h"
 
 // Put LbAppInit base class factory in this library, to avoid having it in
-// LHCbKernel component library. 
+// LHCbKernel component library.
 // It must be present otherwise the class cannot be instanciated
 DECLARE_COMPONENT( LbAppInit )
-

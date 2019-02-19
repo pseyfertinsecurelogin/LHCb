@@ -14,10 +14,9 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "MuonDAQ/IMuonTell1Config.h"            // Interface
-#include "MuonTell1ConfigData.h"
+#include "MuonDAQ/IMuonTell1Config.h" // Interface
 #include "MuonDet/DeMuonDetector.h"
-
+#include "MuonTell1ConfigData.h"
 
 /** @class MuonTell1Config MuonTell1Config.h
  *
@@ -32,9 +31,9 @@ public:
 
   StatusCode initialize() override;
 
-  StatusCode configTell1(int Tell1) const override;
+  StatusCode configTell1( int Tell1 ) const override;
 
 private:
- DeMuonDetector* m_muonDet = nullptr;
+  DeMuonDetector* m_muonDet = nullptr;
 };
 #endif // MUONTELL1CONFIG_H

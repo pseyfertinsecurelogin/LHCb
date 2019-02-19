@@ -14,15 +14,12 @@
 //
 // Revision 1.2  2001/06/29 10:26:17  ibelyaev
 // update to use new features of DetDesc v7 package
-// 
-#ifndef     CALO_CLID_DESUBSUBCALORIMETER_H
-#define     CALO_CLID_DESUBSUBCALORIMETER_H 1 
+//
+#ifndef CALO_CLID_DESUBSUBCALORIMETER_H
+#define CALO_CLID_DESUBSUBCALORIMETER_H 1
 #include "GaudiKernel/ClassID.h"
 
 // External declarations
-static const CLID CLID_DeSubSubCalorimeter = 8902; 
+static const CLID CLID_DeSubSubCalorimeter = 8902;
 
-
-#endif   // CALO_CLID_DESUBSUBCALORIMETER_H
-
-
+#endif // CALO_CLID_DESUBSUBCALORIMETER_H

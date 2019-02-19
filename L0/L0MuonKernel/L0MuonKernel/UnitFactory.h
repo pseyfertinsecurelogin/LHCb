@@ -11,7 +11,7 @@
 // $Id: UnitFactory.h,v 1.4 2008-12-15 10:19:47 cattanem Exp $
 
 #ifndef L0MUONKERNEL_UNITFACTORY_H
-#define L0MUONKERNEL_UNITFACTORY_H     1
+#define L0MUONKERNEL_UNITFACTORY_H 1
 
 #include <string>
 
@@ -39,12 +39,10 @@ namespace L0Muon {
   class UnitFactory {
 
   protected:
-
     /// Constructor
     UnitFactory();
 
   public:
-
     /// Destructor
     virtual ~UnitFactory();
 
@@ -54,37 +52,33 @@ namespace L0Muon {
     /** From the given xml node, creates a Unit of the given type
         and returns a pointer to it
     */
-    Unit* createUnit(DOMNode* pNode, std::string type);
+    Unit* createUnit( DOMNode* pNode, std::string type );
 
     /// Fill the factory from the top unit node in the XML file describing the L0Muon processor
-    void fromXML(DOMNode* pNode);
+    void fromXML( DOMNode* pNode );
 
     /// Empty the factory
     void reset();
 
     /// Returns a pointer to the top unit in the hierarchy of Units in the factory
-    Unit * topUnit(){return m_topUnit;}
-
+    Unit* topUnit() { return m_topUnit; }
 
   private:
-
     /** Utility for XML decoding: get the attribute key in the list di
         and convert it into an integer
     */
-    int getAttributeInt(DOMNamedNodeMap* di, const char* key);
+    int getAttributeInt( DOMNamedNodeMap* di, const char* key );
     /** Utility for XML decoding: get the attribute key in the list di
         and convert it into a string
     */
-    std::string getAttributeStr(DOMNamedNodeMap* di, const char* key);
+    std::string getAttributeStr( DOMNamedNodeMap* di, const char* key );
 
   private:
+    static UnitFactory* m_instance; ///< pointer to the factory instance (unique)
 
-    static UnitFactory* m_instance;  ///< pointer to the factory instance (unique)
-
-    Unit * m_topUnit;                ///< pointer to the top unit in the hierarchy of Units in the factory
-
+    Unit* m_topUnit; ///< pointer to the top unit in the hierarchy of Units in the factory
   };
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_UNITFACTORY_H
+#endif // L0MUONKERNEL_UNITFACTORY_H

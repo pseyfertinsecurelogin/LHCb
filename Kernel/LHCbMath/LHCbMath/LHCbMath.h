@@ -24,10 +24,10 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <cmath>
 #include <algorithm>
-#include <vector>
 #include <array>
+#include <cmath>
+#include <vector>
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -37,24 +37,22 @@
 // ============================================================================
 #include "boost/call_traits.hpp"
 #include "boost/integer_traits.hpp"
-#include "boost/static_assert.hpp"
 #include "boost/numeric/conversion/converter.hpp"
+#include "boost/static_assert.hpp"
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   // ==========================================================================
   /** @namespace LHCb::Math
    *  Collection of math related functions for general use in LHCb
    */
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /// Parameters for numerical calculations (M.Needham)
     static const double hiTolerance    = 1e-40;
     static const double lowTolerance   = 1e-20;
     static const double looseTolerance = 1e-5;
-    static const double     sqrt_12 = 3.4641016151377546; // sqrt(12.)
-    static const double inv_sqrt_12 = 0.2886751345948129; // 1./sqrt(12.)
+    static const double sqrt_12        = 3.4641016151377546; // sqrt(12.)
+    static const double inv_sqrt_12    = 0.2886751345948129; // 1./sqrt(12.)
     // ========================================================================
     /** @var mULPS_float
      *  "tolerance" parameter for "Lomont"-compare of floating point numbers.
@@ -65,7 +63,7 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-01-02
      */
-    const unsigned short mULPS_float = 100 ;
+    const unsigned short mULPS_float = 100;
     // ========================================================================
     /** @var mULPS_float_low
      *  "Low-tolerance" parameter for "Lomont"-compare of floating point numbers.
@@ -76,7 +74,7 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-01-02
      */
-    const unsigned short mULPS_float_low = 1000 ;
+    const unsigned short mULPS_float_low = 1000;
     // =========================================================================
     /** @var mULPS_double
      *  "tolerance" parameter for "Lomont"-compare of floating point numbers.
@@ -86,7 +84,7 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-01-02
      */
-    const unsigned int mULPS_double = 1000 ;
+    const unsigned int mULPS_double = 1000;
     // ========================================================================
     /** @struct abs_less
      *  comparison by absolute value
@@ -94,15 +92,12 @@ namespace LHCb
      *  @date 2007-08-17
      */
     template <class TYPE = void>
-    struct abs_less final
-    {
+    struct abs_less final {
       template <typename V1, typename V2>
-      bool operator() ( V1&& v1 , V2&& v2 ) const
-      {
-        return std::less{}( std::fabs( std::forward<V1>(v1) ),
-                            std::fabs( std::forward<V2>(v2) ) ) ;
+      bool operator()( V1&& v1, V2&& v2 ) const {
+        return std::less{}( std::fabs( std::forward<V1>( v1 ) ), std::fabs( std::forward<V2>( v2 ) ) );
       }
-    } ;
+    };
     // ========================================================================
     /** @struct abs_greater
      *  comparison by absolute value
@@ -110,31 +105,30 @@ namespace LHCb
      *  @date 2007-08-17
      */
     template <class TYPE = void>
-    struct abs_greater final
-    {
+    struct abs_greater final {
       template <typename V1, typename V2>
-      bool operator() ( V1&& v1 , V2&& v2 ) const
-      {
-        return std::greater{}( std::abs(std::forward<V1>( v1 ) ),
-                               std::abs(std::forward<V1>( v2 ) ) );
+      bool operator()( V1&& v1, V2&& v2 ) const {
+        return std::greater{}( std::abs( std::forward<V1>( v1 ) ), std::abs( std::forward<V1>( v2 ) ) );
       }
-    } ;
+    };
     // ========================================================================
     /** return "min_by_abs"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-08-17
      */
     template <class TYPE>
-    inline TYPE absMin ( TYPE v1 , TYPE v2 )
-    { return std::min ( std::fabs ( v1 ) , std::fabs ( v2 ) ) ; }
+    inline TYPE absMin( TYPE v1, TYPE v2 ) {
+      return std::min( std::fabs( v1 ), std::fabs( v2 ) );
+    }
     // ========================================================================
     /** return  "max_by_abs"
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-08-17
      */
     template <class TYPE>
-    inline TYPE absMax ( TYPE v1 , TYPE v2 )
-    { return std::max ( std::fabs ( v1 ) , std::fabs ( v2 ) ) ; }
+    inline TYPE absMax( TYPE v1, TYPE v2 ) {
+      return std::max( std::fabs( v1 ), std::fabs( v2 ) );
+    }
     // ========================================================================
     /** compare two double numbers with relative precision 'epsilon'
      *
@@ -148,10 +142,7 @@ namespace LHCb
      *  @date 2007-11-27
      */
     GAUDI_API
-    bool knuth_equal_to_double
-    ( const double value1           ,
-      const double value2           ,
-      const double epsilon = 1.0e-6 ) ;
+    bool knuth_equal_to_double( const double value1, const double value2, const double epsilon = 1.0e-6 );
     // ========================================================================
     /** compare two double numbers with precision 'mULPS'
      *  @param value1 (INPUT) the first value
@@ -162,11 +153,9 @@ namespace LHCb
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-11-27
      */
-    inline bool equal_to_double
-    ( const double value1                      ,
-      const double value2                      ,
-      const unsigned int mULPS = mULPS_double  )
-    { return LHCb::Math::lomont_compare_double ( value1 , value2 , mULPS ) ; }
+    inline bool equal_to_double( const double value1, const double value2, const unsigned int mULPS = mULPS_double ) {
+      return LHCb::Math::lomont_compare_double( value1, value2, mULPS );
+    }
     // ========================================================================
     /** @struct Equal_To
      *  helper structure for comparison of floating values
@@ -174,50 +163,46 @@ namespace LHCb
      *  @date 2007-11-27
      */
     template <class TYPE>
-    struct Equal_To final
-    {
+    struct Equal_To final {
       // ======================================================================
-      typedef typename boost::call_traits<const TYPE>::param_type T ;
+      typedef typename boost::call_traits<const TYPE>::param_type T;
       // ======================================================================
       /// comparison
-      inline bool operator() ( T v1 , T v2 ) const
-      {
-        std::equal_to<TYPE> cmp ;
-        return cmp ( v1 , v2 ) ;
+      inline bool operator()( T v1, T v2 ) const {
+        std::equal_to<TYPE> cmp;
+        return cmp( v1, v2 );
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /// partial specialization for const-types
     template <class TYPE>
-    struct Equal_To<const TYPE>: public Equal_To<TYPE> {} ;
+    struct Equal_To<const TYPE> : public Equal_To<TYPE> {};
     // ========================================================================
     /// partial specialization for references
     template <class TYPE>
-    struct Equal_To<TYPE&>     : public Equal_To<TYPE> {} ;
+    struct Equal_To<TYPE&> : public Equal_To<TYPE> {};
     // ========================================================================
     /** explicit specialization for doubles
      *  @see LHCb::Math::mULPS_double
      */
     template <>
-    struct Equal_To<double>
-    {
+    struct Equal_To<double> {
     public:
       // ======================================================================
       /// constructor
-      Equal_To ( const unsigned int eps = mULPS_double ) : m_cmp ( eps ) {}
+      Equal_To( const unsigned int eps = mULPS_double ) : m_cmp( eps ) {}
       /// comparison:
-      inline bool operator() ( const double v1 , const double v2 ) const
-      { return m_cmp ( v1 , v2 ) ; }
+      inline bool operator()( const double v1, const double v2 ) const { return m_cmp( v1, v2 ); }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      Equal_To ( const double /* eps */ ) ;
+      Equal_To( const double /* eps */ );
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// evaluator
-      LHCb::Math::Lomont<double> m_cmp ;                      // the evalautor
+      LHCb::Math::Lomont<double> m_cmp; // the evalautor
       // ======================================================================
     };
     // ========================================================================
@@ -225,38 +210,33 @@ namespace LHCb
      *  @see LHCb::Math::mULPS_double
      */
     template <>
-    struct Equal_To<long double>
-    {
+    struct Equal_To<long double> {
     public:
       // ======================================================================
       /// constructor
-      Equal_To ( const unsigned int eps = mULPS_double ) : m_cmp ( eps ) {}
+      Equal_To( const unsigned int eps = mULPS_double ) : m_cmp( eps ) {}
       /// comparison:
-      inline bool operator()
-      ( const long double v1 ,
-        const long double v2 ) const
-      {
-using namespace std;
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:2259) //  non-pointer conversion may lose significant bits
-  #pragma warning(push)
+      inline bool operator()( const long double v1, const long double v2 ) const {
+        using namespace std;
+#ifdef __INTEL_COMPILER             // Disable ICC remark
+#  pragma warning( disable : 2259 ) //  non-pointer conversion may lose significant bits
+#  pragma warning( push )
 #endif
-        return  m_cmp ( static_cast<double> ( v1 ) ,
-                        static_cast<double> ( v2 ) ) ;
-#ifdef __INTEL_COMPILER         // End disable ICC remark
-  #pragma warning(pop)
+        return m_cmp( static_cast<double>( v1 ), static_cast<double>( v2 ) );
+#ifdef __INTEL_COMPILER // End disable ICC remark
+#  pragma warning( pop )
 #endif
       }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// constructor
-      Equal_To ( const long double /* eps */ ) ;
+      Equal_To( const long double /* eps */ );
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// the evaluator
-      Equal_To<double> m_cmp ;                                 // the evaluator
+      Equal_To<double> m_cmp; // the evaluator
       // ======================================================================
     };
     // ========================================================================
@@ -266,29 +246,27 @@ using namespace std;
      *  @see LHCb::Math::Lomont<float>
      */
     template <>
-    struct Equal_To<float>
-    {
+    struct Equal_To<float> {
     public:
       // ======================================================================
       /** constructor
        *  @see LHCb::Math::mULPS_float
        */
-      Equal_To ( const unsigned short eps =  mULPS_float ) : m_cmp ( eps ) {}
+      Equal_To( const unsigned short eps = mULPS_float ) : m_cmp( eps ) {}
       /// comparison:
-      inline bool operator() ( const float v1 , const float v2 ) const
-      { return m_cmp( v1 , v2 ) ; }
+      inline bool operator()( const float v1, const float v2 ) const { return m_cmp( v1, v2 ); }
       // ======================================================================
     private:
       // ======================================================================
       /// constructor
-      Equal_To ( const float /* eps */ ) ;
+      Equal_To( const float /* eps */ );
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// the evaluator
-      LHCb::Math::Lomont<float> m_cmp ;                       // the evaluator
+      LHCb::Math::Lomont<float> m_cmp; // the evaluator
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** specialisation for vectors
      *  @see LHCb::Math::mULPS_double
@@ -296,68 +274,54 @@ using namespace std;
      *  @see LHCb::Math::Lomont<double>
      */
     template <>
-    struct Equal_To<std::vector<double> >
-    {
+    struct Equal_To<std::vector<double>> {
     public:
       // ======================================================================
       /** constructor
        *  @see LHCb::Math::mULPS_double
        */
-      Equal_To ( const unsigned int eps  = mULPS_double ) : m_cmp ( eps ) {}
+      Equal_To( const unsigned int eps = mULPS_double ) : m_cmp( eps ) {}
       // ======================================================================
       /// comparison:
-      inline bool operator() ( const std::vector<double>& v1 ,
-                               const std::vector<double>& v2 ) const
-      {
-        return &v1 == &v2 ||
-               std::equal ( v1.begin () , v1.end () , v2.begin (), v2.end() , m_cmp ) ;
+      inline bool operator()( const std::vector<double>& v1, const std::vector<double>& v2 ) const {
+        return &v1 == &v2 || std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       /// comparison:
-      inline bool operator() ( const std::vector<double>& v1 ,
-                               const std::vector<float>&  v2 ) const
-      {
-        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
+      inline bool operator()( const std::vector<double>& v1, const std::vector<float>& v2 ) const {
+        return std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       /// comparison:
-      inline bool operator() ( const std::vector<double>& v1 ,
-                               const std::vector<int>&    v2 ) const
-      {
-        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
+      inline bool operator()( const std::vector<double>& v1, const std::vector<int>& v2 ) const {
+        return std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       /// comparison:
-      inline bool operator() ( const std::vector<double>&       v1 ,
-                               const std::vector<unsigned int>& v2 ) const
-      {
-        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
+      inline bool operator()( const std::vector<double>& v1, const std::vector<unsigned int>& v2 ) const {
+        return std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       /// comparison:
-      inline bool operator() ( const std::vector<float>&  v1 ,
-                               const std::vector<double>& v2 ) const
-      {
-        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
+      inline bool operator()( const std::vector<float>& v1, const std::vector<double>& v2 ) const {
+        return std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       /// comparison:
-      inline bool operator() ( const std::vector<int>&    v1 ,
-                               const std::vector<double>& v2 ) const
-      {
-        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
+      inline bool operator()( const std::vector<int>& v1, const std::vector<double>& v2 ) const {
+        return std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       /// comparison:
-      inline bool operator() ( const std::vector<unsigned int>& v1 ,
-                               const std::vector<double>&       v2 ) const
-      {
-        return std::equal ( v1.begin () , v1.end () , v2.begin () , v2.end(), m_cmp ) ;
+      inline bool operator()( const std::vector<unsigned int>& v1, const std::vector<double>& v2 ) const {
+        return std::equal( v1.begin(), v1.end(), v2.begin(), v2.end(), m_cmp );
       }
       // ======================================================================
     private:
       // ======================================================================
       /// the evaluator
-      Equal_To<double> m_cmp ;                                 // the evaluator
+      Equal_To<double> m_cmp; // the evaluator
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    template <class TYPE> struct    Zero ;
-    template <class TYPE> struct NonZero ;
+    template <class TYPE>
+    struct Zero;
+    template <class TYPE>
+    struct NonZero;
     // ========================================================================
     /** @struct Zero
      *  helper structure for comparison of floating values
@@ -365,57 +329,52 @@ using namespace std;
      *  @date 2007-11-27
      */
     template <class TYPE>
-    struct Zero
-    {
+    struct Zero {
       // ======================================================================
-      typedef typename boost::call_traits<const TYPE>::param_type T ;
+      typedef typename boost::call_traits<const TYPE>::param_type T;
       /// comparison
-      inline bool operator() ( T v ) const { return m_cmp ( v , 0 ) ; }
+      inline bool operator()( T v ) const { return m_cmp( v, 0 ); }
       // ======================================================================
     private:
       // ======================================================================
       // the comparizon criteria
-      Equal_To<TYPE> m_cmp ;
+      Equal_To<TYPE> m_cmp;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     template <>
-    struct Zero<double>
-    {
+    struct Zero<double> {
       // ======================================================================
       /// comparison
-      inline bool operator() ( const double  v ) const
-      { return !v || m_cmp ( v , 0 ) ; }
+      inline bool operator()( const double v ) const { return !v || m_cmp( v, 0 ); }
       // ======================================================================
     private:
       // ======================================================================
       // the comparizon criteria
-      Equal_To<double> m_cmp ;
+      Equal_To<double> m_cmp;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     template <>
-    struct Zero<float>
-    {
+    struct Zero<float> {
       // ======================================================================
       /// comparison
-      inline bool operator() ( const float  v ) const
-      { return !v || m_cmp ( v , 0 ) ; }
+      inline bool operator()( const float v ) const { return !v || m_cmp( v, 0 ); }
       // ======================================================================
     private:
       // ======================================================================
       // the comparizon criteria
-      Equal_To<float> m_cmp ;
+      Equal_To<float> m_cmp;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /// partial specialization for const-types
     template <class TYPE>
-    struct Zero<const TYPE>    : public Zero<TYPE>     {} ;
+    struct Zero<const TYPE> : public Zero<TYPE> {};
     // ========================================================================
     /// partial specialization for references
     template <class TYPE>
-    struct Zero<TYPE&>         : public Zero<TYPE>     {} ;
+    struct Zero<TYPE&> : public Zero<TYPE> {};
     // ========================================================================
     /** @struct NotZero
      *  helper structure for comparison of floating values
@@ -423,141 +382,128 @@ using namespace std;
      *  @date 2007-11-27
      */
     template <class TYPE>
-    struct NotZero
-    {
+    struct NotZero {
       // ======================================================================
-      typedef typename boost::call_traits<const TYPE>::param_type T ;
+      typedef typename boost::call_traits<const TYPE>::param_type T;
       /// comparison
-      inline bool operator() ( T v ) const { return !m_zero ( v ) ; }
+      inline bool operator()( T v ) const { return !m_zero( v ); }
       // ======================================================================
     private:
       // ======================================================================
       // the comparison criteria
-      Zero<TYPE> m_zero ;
+      Zero<TYPE> m_zero;
       // ======================================================================
-    } ;
+    };
     /// partial specialization for const-types
     template <class TYPE>
-    struct NotZero<const TYPE> : public NotZero<TYPE>  {} ;
+    struct NotZero<const TYPE> : public NotZero<TYPE> {};
     // ========================================================================
     /// partial specialization for references
     template <class TYPE>
-    struct NotZero<TYPE&>      : public NotZero<TYPE>  {} ;
+    struct NotZero<TYPE&> : public NotZero<TYPE> {};
     // ========================================================================
     /** specialisation for vectors
      *  @see Gaudi::Math::Zero
      *  @see Gaudi::Math::Equal_To
      *  @see LHCb::Math::Lomont<float>
      */
-    template < class TYPE>
-    struct Zero< std::vector<TYPE> >
-    {
+    template <class TYPE>
+    struct Zero<std::vector<TYPE>> {
     public:
       // ======================================================================
-      inline bool operator () ( const std::vector<TYPE>& v ) const
-      {
+      inline bool operator()( const std::vector<TYPE>& v ) const {
         /// empty vector or all elements are zeros
-        return v.empty() || ( v.end() == std::find_if ( v.begin() , v.end  () , m_nz ) ) ;
+        return v.empty() || ( v.end() == std::find_if( v.begin(), v.end(), m_nz ) );
       }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       // comparison criteria for elements
-      NotZero<TYPE> m_nz ;
+      NotZero<TYPE> m_nz;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /// Is value sufficiently  small ?
     template <class TYPE>
-    struct Small
-    {
+    struct Small {
       // ======================================================================
-      typedef  TYPE   Inner ;
+      typedef TYPE Inner;
       // ======================================================================
       // constructor with threshold
-      Small ( const TYPE& a ) : m_a ( std::abs ( a ) ) {}
+      Small( const TYPE& a ) : m_a( std::abs( a ) ) {}
       // the opnly one important method
-      inline bool operator() ( const TYPE& a ) const
-      { return std::abs ( a ) <= m_a ; }
+      inline bool operator()( const TYPE& a ) const { return std::abs( a ) <= m_a; }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// default constructor is disabled
-      Small () ;  // default constructor is disabled
+      Small(); // default constructor is disabled
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      TYPE m_a ;
+      TYPE m_a;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** specialization for vectors
      *  vector is small, if empty or all elements are small
      */
     template <class TYPE>
-    struct Small<std::vector<TYPE> >
-    {
+    struct Small<std::vector<TYPE>> {
       // ======================================================================
-      typedef TYPE Inner ;
+      typedef TYPE Inner;
       // ======================================================================
       // constructor with threshold
-      Small ( const typename Small<TYPE>::Inner & a ) : m_cmp ( a ) {}
+      Small( const typename Small<TYPE>::Inner& a ) : m_cmp( a ) {}
       // the only one important method
-      inline bool operator() ( const std::vector<TYPE>& v ) const
-      {
-        return
-          v.empty() || v.end() == std::find_if
-          ( v.begin() , v.end() , std::not1 ( m_cmp ) ) ;
+      inline bool operator()( const std::vector<TYPE>& v ) const {
+        return v.empty() || v.end() == std::find_if( v.begin(), v.end(), std::not1( m_cmp ) );
       }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// default constructor is disabled
-      Small () ;  // default constructor is disabled
+      Small(); // default constructor is disabled
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      Small<TYPE> m_cmp ;
+      Small<TYPE> m_cmp;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct LessOrEqual
      *  check if two values ar less or equal (numerically)
      *  @see Gaudi::Math::Equal_To
      */
     template <class TYPE>
-    struct LessOrEqual final
-    {
+    struct LessOrEqual final {
       // ======================================================================
       /// the only one method:  o1 <= o2 or o1 \approx p2
-      inline bool operator () ( const TYPE& o1 , const TYPE& o2 ) const
-      { return m_leq ( o1 , o2 ) || m_equal ( o1 , o2 ) ; }
+      inline bool operator()( const TYPE& o1, const TYPE& o2 ) const { return m_leq( o1, o2 ) || m_equal( o1, o2 ); }
       // ======================================================================
     private:
       // ======================================================================
-      std::less_equal<>          m_leq   ; // ordering criteria
-      LHCb::Math::Equal_To<TYPE> m_equal ; // equality criteria
+      std::less_equal<>          m_leq;   // ordering criteria
+      LHCb::Math::Equal_To<TYPE> m_equal; // equality criteria
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct GreaterOrEqual
      *  check if two values are greater or equal (numerically)
      *  @see Gaudi::Math::Equal_To
      */
     template <class TYPE>
-    struct GreaterOrEqual final
-    {
+    struct GreaterOrEqual final {
       // ======================================================================
       /// the only one method:  o1 >= o2 or o1 \approx = o2
-      inline bool operator () ( const TYPE& o1 , const TYPE& o2 ) const
-      { return m_geq ( o1 , o2 ) || m_equal ( o1 , o2 ) ; }
+      inline bool operator()( const TYPE& o1, const TYPE& o2 ) const { return m_geq( o1, o2 ) || m_equal( o1, o2 ); }
       // ======================================================================
     private:
       // ======================================================================
-      std::greater_equal<TYPE>   m_geq   ; // ordering criteria
-      LHCb::Math::Equal_To<TYPE> m_equal ; // equality criteria
+      std::greater_equal<TYPE>   m_geq;   // ordering criteria
+      LHCb::Math::Equal_To<TYPE> m_equal; // equality criteria
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct  NumLess
      *  "Numerically less"
@@ -565,20 +511,18 @@ using namespace std;
      *  @see Gaudi::Math::Equal_To
      */
     template <class TYPE>
-    struct NumLess final
-    {
+    struct NumLess final {
       // ======================================================================
-      inline bool operator () ( const TYPE& o1 , const TYPE& o2 ) const
-      { return m_less ( o1 , o2 ) && !m_equal ( o1 , o2 ) ; }
+      inline bool operator()( const TYPE& o1, const TYPE& o2 ) const { return m_less( o1, o2 ) && !m_equal( o1, o2 ); }
       // ======================================================================
     private:
       // ======================================================================
       /// comparion criteria for objects
-      std::less<>                m_less  ; // comparion criteria for objects
+      std::less<> m_less; // comparion criteria for objects
       /// equality criteria for  objects
-      LHCb::Math::Equal_To<TYPE> m_equal ; // equality criteria for objects
+      LHCb::Math::Equal_To<TYPE> m_equal; // equality criteria for objects
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct MuchSmaller
      *  Is a value of "a" tiny with respect to b ?
@@ -586,24 +530,22 @@ using namespace std;
      *  - otherwise (a+b) is numerically equal to b
      */
     template <class TYPE>
-    struct MuchSmaller
-    {
+    struct MuchSmaller {
     public:
       // ======================================================================
       /** Is a value of "a" tiny with respect to b ?
        *  - if b is numerically zero, a is also zero
        *  - otherwise (a+b) is numerically equal to b
        */
-      bool operator () ( const TYPE a ,  const TYPE b )  const
-      { return m_zero ( b ) ? m_zero ( a ) : m_equal ( a + b , b ) ; }
+      bool operator()( const TYPE a, const TYPE b ) const { return m_zero( b ) ? m_zero( a ) : m_equal( a + b, b ); }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// zero ?
-      Zero    <TYPE> m_zero  {} ; // zero ?
-      Equal_To<TYPE> m_equal {} ; // equality ?
+      Zero<TYPE>     m_zero{};  // zero ?
+      Equal_To<TYPE> m_equal{}; // equality ?
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct Tiny
      *  Is a value of "a" tiny with respect to b ?
@@ -611,45 +553,41 @@ using namespace std;
      *  - otherwise (a+b) is numerically equal to b
      */
     template <class TYPE>
-    struct Tiny
-    {
+    struct Tiny {
     public:
       // ======================================================================
       // constructor
-      Tiny ( TYPE  b ) : m_b (  b ) {} ;
-      Tiny () = delete ; //  no   default constructor
+      Tiny( TYPE b ) : m_b( b ){};
+      Tiny() = delete; //  no   default constructor
       // ======================================================================
     public:
       // ======================================================================
       /// Is a value of "a" tiny with respect to b ?
-      bool operator () ( const TYPE a )  const { return m_smaller ( a , m_b ) ; }
+      bool operator()( const TYPE a ) const { return m_smaller( a, m_b ); }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       // the reference value
-      TYPE              m_b       ;
-      MuchSmaller<TYPE> m_smaller ;
+      TYPE              m_b;
+      MuchSmaller<TYPE> m_smaller;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** round to nearest integer, rounds half integers to nearest even integer
      *  It is just a simple wrapper around boost::numeric::converter
      *  @author Vanya BELYAEV Ivan.BElyaev
      */
-    inline long round ( const double x )
-    {
-#ifdef __INTEL_COMPILER         // Disable ICC remark from Boost
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
+    inline long round( const double x ) {
+#ifdef __INTEL_COMPILER             // Disable ICC remark from Boost
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
+#  pragma warning( push )
 #endif
-      typedef boost::numeric::RoundEven<double> Rounder ;
-      typedef boost::numeric::make_converter_from
-        <double,
-        boost::numeric::silent_overflow_handler,
-        Rounder>::to<long>::type Converter ;
-      return Converter::convert ( x ) ;
-#ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
-  #pragma warning(pop)
+      typedef boost::numeric::RoundEven<double>                            Rounder;
+      typedef boost::numeric::make_converter_from<double, boost::numeric::silent_overflow_handler,
+                                                  Rounder>::to<long>::type Converter;
+      return Converter::convert( x );
+#ifdef __INTEL_COMPILER // Re-enable ICC remark 1572
+#  pragma warning( pop )
 #endif
     }
     // ========================================================================
@@ -657,14 +595,11 @@ using namespace std;
      *  It is just a simple wrapper around boost::numeric::converter
      *  @author Vanya BELYAEV Ivan.BElyaev
      */
-    inline long round ( const float  x )
-    {
-      typedef boost::numeric::RoundEven<float> Rounder ;
-      typedef boost::numeric::make_converter_from
-        <float,
-        boost::numeric::silent_overflow_handler,
-        Rounder>::to<long>::type Converter ;
-      return Converter::convert ( x ) ;
+    inline long round( const float x ) {
+      typedef boost::numeric::RoundEven<float>                             Rounder;
+      typedef boost::numeric::make_converter_from<float, boost::numeric::silent_overflow_handler,
+                                                  Rounder>::to<long>::type Converter;
+      return Converter::convert( x );
     }
     // ========================================================================
     /** get mantissa and exponent
@@ -676,7 +611,7 @@ using namespace std;
      *  @date 2015-07-21
      */
     GAUDI_API
-    double frexp10 ( const double x , long& e ) ;
+    double frexp10( const double x, long& e );
     // ========================================================================
     /** get mantissa and exponent
      *  similar to std::frexp, but radix=10)
@@ -687,7 +622,7 @@ using namespace std;
      *  @date 2015-07-21
      */
     GAUDI_API
-    float frexp10 ( const float x , long& e ) ;
+    float frexp10( const float x, long& e );
     // ========================================================================
     /** get mantissa and exponent
      *  similar to std::frexp, but radix=10)
@@ -697,8 +632,7 @@ using namespace std;
      *  @date 2015-07-21
      */
     GAUDI_API
-    std::pair<double,int>
-    frexp10 ( const double x ) ;
+    std::pair<double, int> frexp10( const double x );
     // ========================================================================
     /** get mantissa and binary exponent
      *  similar to std::frexp
@@ -708,8 +642,7 @@ using namespace std;
      *  @date 2015-07-21
      */
     GAUDI_API
-    std::pair<double,int>
-    frexp2  ( const double x ) ;
+    std::pair<double, int> frexp2( const double x );
     // ========================================================================
     /** round to N-significant digits
      *  @param x  INPUT  input value
@@ -719,7 +652,7 @@ using namespace std;
      *  @date 2015-07-21
      */
     GAUDI_API
-    double round_N ( const double x , const unsigned short n ) ;
+    double round_N( const double x, const unsigned short n );
     // ========================================================================
     /** round to N-significant digits
      *  @param x  INPUT  input value
@@ -729,35 +662,35 @@ using namespace std;
      *  @date 2015-07-21
      */
     GAUDI_API
-    float round_N ( const float x , const unsigned short n ) ;
+    float round_N( const float x, const unsigned short n );
     // ========================================================================
     /** is the value actually long ?
      *  @author Vanya BELYAEV Ivan.Belyaev
      *  @date 2011-07-18
      */
     GAUDI_API
-    bool islong ( const double x ) ;
+    bool islong( const double x );
     // ========================================================================
     /** is the value actually long ?
      *  @author Vanya BELYAEV Ivan.Belyaev
      *  @date 2011-07-18
      */
     GAUDI_API
-    bool islong ( const float  x ) ;
+    bool islong( const float x );
     // ========================================================================
     /** is the value actually int ?
      *  @author Vanya BELYAEV Ivan.Belyaev
      *  @date 2011-07-18
      */
     GAUDI_API
-    bool isint  ( const double x ) ;
+    bool isint( const double x );
     // ========================================================================
     /** is the value actually int ?
      *  @author Vanya BELYAEV Ivan.Belyaev
      *  @date 2011-07-18
      */
     GAUDI_API
-    bool isint  ( const float  x ) ;
+    bool isint( const float x );
     // ========================================================================
     /** check if the double value is actually equal to the integer value
      *  @param val value to be compared with the integer
@@ -769,10 +702,7 @@ using namespace std;
      *  @date 2008-09-17
      */
     GAUDI_API
-    bool equal_to_int
-    ( const double       val                  ,
-      const int          ref                  ,
-      const unsigned int mULPS = mULPS_double ) ;
+    bool equal_to_int( const double val, const int ref, const unsigned int mULPS = mULPS_double );
     // ========================================================================
     /** check if the double value is actually equal to the integer value
      *  @param ref the reference integer  number
@@ -783,12 +713,8 @@ using namespace std;
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-17
      */
-    inline bool equal_to_int
-    ( const int          ref                  ,
-      const double       val                  ,
-      const unsigned int mULPS = mULPS_double )
-    {
-      return equal_to_int ( val , ref , mULPS ) ;
+    inline bool equal_to_int( const int ref, const double val, const unsigned int mULPS = mULPS_double ) {
+      return equal_to_int( val, ref, mULPS );
     }
     // ========================================================================
     /** check if the double value is actually equal to the unsigned integer value
@@ -801,10 +727,7 @@ using namespace std;
      *  @date 2008-09-17
      */
     GAUDI_API
-    bool equal_to_uint
-    ( const double       val                  ,
-      const unsigned int ref                  ,
-      const unsigned int mULPS = mULPS_double ) ;
+    bool equal_to_uint( const double val, const unsigned int ref, const unsigned int mULPS = mULPS_double );
     // ========================================================================
     /** check if the double value is actually equal to the integer value
      *  @param val value to be compared with the unsigned integer
@@ -815,78 +738,70 @@ using namespace std;
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-17
      */
-    inline bool equal_to_uint
-    ( const unsigned int ref                  ,
-      const double       val                  ,
-      const unsigned int mULPS = mULPS_double )
-    {
-      return equal_to_uint ( val , ref , mULPS ) ;
+    inline bool equal_to_uint( const unsigned int ref, const double val, const unsigned int mULPS = mULPS_double ) {
+      return equal_to_uint( val, ref, mULPS );
     }
     // ========================================================================
     /// simple scaling of elements of non-constant sequence
     template <class ITERATOR, typename SCALAR>
-    void scale ( ITERATOR first  ,
-                 ITERATOR last   ,
-                 SCALAR   factor )
-    { for ( ; first != last ; ++first ) { (*first) *= factor ; } }
+    void scale( ITERATOR first, ITERATOR last, SCALAR factor ) {
+      for ( ; first != last; ++first ) { ( *first ) *= factor; }
+    }
     // ========================================================================
     /// shift all elements of non-constant sequence
     template <class ITERATOR, typename SCALAR>
-    void shift ( ITERATOR first  ,
-                 ITERATOR last   ,
-                 SCALAR   factor )
-    { for ( ; first != last ; ++first ) { (*first) += factor ; } }
+    void shift( ITERATOR first, ITERATOR last, SCALAR factor ) {
+      for ( ; first != last; ++first ) { ( *first ) += factor; }
+    }
     // ========================================================================
     /// scale all elements of vector
-    template <class TYPE , typename SCALAR>
-    void scale ( std::vector<TYPE>& vct , SCALAR factor )
-    { scale    ( vct.begin() , vct.end () , factor ) ; }
+    template <class TYPE, typename SCALAR>
+    void scale( std::vector<TYPE>& vct, SCALAR factor ) {
+      scale( vct.begin(), vct.end(), factor );
+    }
     // ========================================================================
     /// shift all elements of vector
-    template <class TYPE , typename SCALAR>
-    void shift ( std::vector<TYPE>& vct , SCALAR factor )
-    { shift    ( vct.begin() , vct.end () , factor ) ; }
+    template <class TYPE, typename SCALAR>
+    void shift( std::vector<TYPE>& vct, SCALAR factor ) {
+      shift( vct.begin(), vct.end(), factor );
+    }
     // ========================================================================
     template <class ITERATOR>
-    void negate ( ITERATOR first , ITERATOR last )
-    { for ( ; first != last ; ++first ) { (*first) = -(*first) ; } }
+    void negate( ITERATOR first, ITERATOR last ) {
+      for ( ; first != last; ++first ) { ( *first ) = -( *first ); }
+    }
     // ========================================================================
     template <class TYPE>
-    void negate ( std::vector<TYPE>& vct )
-    { negate ( vct.begin() , vct.end() ) ; }
+    void negate( std::vector<TYPE>& vct ) {
+      negate( vct.begin(), vct.end() );
+    }
     // ========================================================================
     /// signed sqrt
-    inline double signed_sqrt ( const double value )
-    {
-      return
-        0 < value ? std::sqrt ( value ) : -std::sqrt( std::abs ( value ) ) ;
+    inline double signed_sqrt( const double value ) {
+      return 0 < value ? std::sqrt( value ) : -std::sqrt( std::abs( value ) );
     }
     // ========================================================================
     /// simple scaling of exponents for all elements of non-constant sequence
     template <class ITERATOR>
-    void scale_exp2 ( ITERATOR    first ,
-                      ITERATOR    last  ,
-                      const int   iexp  )
-    {
-      if ( 0 != iexp )
-      { for ( ; first != last ; ++first ) { (*first) = std::ldexp ( *first , iexp ) ; } }
+    void scale_exp2( ITERATOR first, ITERATOR last, const int iexp ) {
+      if ( 0 != iexp ) {
+        for ( ; first != last; ++first ) { ( *first ) = std::ldexp( *first, iexp ); }
+      }
     }
     // ========================================================================
     /// scale all elements of vector
     template <class TYPE>
-    inline void scale_exp2 ( std::vector<TYPE>& vct , const int iexp  )
-    { scale_exp2 ( vct.begin() , vct.end () , iexp ) ; }
+    inline void scale_exp2( std::vector<TYPE>& vct, const int iexp ) {
+      scale_exp2( vct.begin(), vct.end(), iexp );
+    }
     // ========================================================================
     /** scale all elements of vector  by 2**s
      *  @attention new vectro is returned!
      */
     template <class TYPE>
-    inline
-    std::vector<TYPE>
-    ldexp ( std::vector<TYPE> vct , const short iexp )
-    {
-      if ( 0 != iexp ) { scale_exp2 ( vct , iexp ) ; }
-      return vct ;
+    inline std::vector<TYPE> ldexp( std::vector<TYPE> vct, const short iexp ) {
+      if ( 0 != iexp ) { scale_exp2( vct, iexp ); }
+      return vct;
     }
     // ========================================================================
     /** Calculate p-norm for the vector
@@ -900,59 +815,56 @@ using namespace std;
      *  @return p-norm of the vector
      */
     template <class ITERATOR>
-    long double p_norm
-    ( ITERATOR      begin ,
-      ITERATOR      end   ,
-      const double  pinv  )  //  1/p
+    long double p_norm( ITERATOR begin, ITERATOR end,
+                        const double pinv ) //  1/p
     {
       /// check i/p
-      const double ip = pinv < 0 ? 0 : pinv > 1 ? 1  : pinv ;
+      const double ip = pinv < 0 ? 0 : pinv > 1 ? 1 : pinv;
       ///
-      long  double r  = 0 ;
+      long double r = 0;
       /// few "easy" cases:  treat explicitely
       /// 1) (p==1)        : sum of absolute values
-      if      ( 1 == ip )
-      {
-        for ( ; begin != end ; ++begin )
-        { const long double c = *begin ; r += std::abs ( c ) ; }
-        return r ;                                                     // RETURN
+      if ( 1 == ip ) {
+        for ( ; begin != end; ++begin ) {
+          const long double c = *begin;
+          r += std::abs( c );
+        }
+        return r; // RETURN
       }
       /// 2) (p==infinity) : maximal  absolute value
-      else if ( 0 == ip )    // p = infinity
+      else if ( 0 == ip ) // p = infinity
       {
-        for ( ; begin != end ; ++begin )
-        {
-          const long double c = *begin ;
-          r = std::max ( r , std::abs(c) ) ;
+        for ( ; begin != end; ++begin ) {
+          const long double c = *begin;
+          r                   = std::max( r, std::abs( c ) );
         }
-        return r ;                                                      // RETURN
+        return r; // RETURN
       }
       /// 3) (p==2) : frequent case
-      else if ( 0.5 == ip )  // p = 2 : frequent case
+      else if ( 0.5 == ip ) // p = 2 : frequent case
       {
-        for ( ; begin != end ; ++begin )
-        { const long double c  = *begin ; r += c * c ; }
-        return std::sqrt ( r ) ;                                        // RETURN
+        for ( ; begin != end; ++begin ) {
+          const long double c = *begin;
+          r += c * c;
+        }
+        return std::sqrt( r ); // RETURN
       }
       /// 4) not very large integer
-      else if (  ( 0.05 < ip ) && LHCb::Math::isint ( 1/ip ) )
-      {
-        const unsigned short p = LHCb::Math::round ( 1/ip ) ;
-        for ( ; begin != end ; ++begin )
-        {
-          const long double c = *begin ;
-          r += std::pow ( std::abs ( c ) , p ) ;
+      else if ( ( 0.05 < ip ) && LHCb::Math::isint( 1 / ip ) ) {
+        const unsigned short p = LHCb::Math::round( 1 / ip );
+        for ( ; begin != end; ++begin ) {
+          const long double c = *begin;
+          r += std::pow( std::abs( c ), p );
         }
-        return std::pow ( r , ip ) ;                                    // RETURN
+        return std::pow( r, ip ); // RETURN
       }
       /// 5) generic case
-      const double p = 1/ip ;
-      for ( ; begin != end ; ++begin )
-      {
-        const long  double c = *begin ;
-        r += std::pow ( std::abs ( c )  , p ) ;
+      const double p = 1 / ip;
+      for ( ; begin != end; ++begin ) {
+        const long double c = *begin;
+        r += std::pow( std::abs( c ), p );
       }
-      return std::pow ( r , ip ) ;
+      return std::pow( r, ip );
     }
     // ========================================================================
     /** Calculate p-norm for the vector
@@ -962,23 +874,27 @@ using namespace std;
      *  @return p-norm of the vector
      */
     template <class TYPE>
-    long double p_norm
-    ( const std::vector<TYPE>& vct  ,
-      const double             pinv )  //  1/p
-    { return p_norm (  vct.begin() , vct.end() , pinv ) ; }
+    long double p_norm( const std::vector<TYPE>& vct,
+                        const double             pinv ) //  1/p
+    {
+      return p_norm( vct.begin(), vct.end(), pinv );
+    }
     // ========================================================================
     /** sign of the number
      *  @see https://stackoverflow.com/a/4609795
      */
     template <typename T>
-    inline constexpr signed char signum ( T x , std::false_type /* is_signed */ )
-    { return T(0)< x; }
+    inline constexpr signed char signum( T x, std::false_type /* is_signed */ ) {
+      return T( 0 ) < x;
+    }
     template <typename T>
-    inline constexpr signed char signum ( T x , std::true_type  /* is_signed */ )
-    { return ( T(0) < x ) - ( x < T(0) ); }
+    inline constexpr signed char signum( T x, std::true_type /* is_signed */ ) {
+      return ( T( 0 ) < x ) - ( x < T( 0 ) );
+    }
     template <typename T>
-    inline constexpr signed char signum ( T x )
-    { return signum ( x , std::is_signed<T>() ) ; }
+    inline constexpr signed char signum( T x ) {
+      return signum( x, std::is_signed<T>() );
+    }
     // ========================================================================
     /** number of (strickt) sign-variations in the sequence
      *  @param first begin-iterator for the input sequence
@@ -986,50 +902,41 @@ using namespace std;
      *  @return number if strickt sign varination
      */
     template <class ITERATOR, class ZERO>
-    unsigned int sign_changes
-    ( ITERATOR first ,
-      ITERATOR last  ,
-      ZERO     zero  )
-    {
-      while ( first != last && zero ( *first ) ) { ++first ; }
+    unsigned int sign_changes( ITERATOR first, ITERATOR last, ZERO zero ) {
+      while ( first != last && zero( *first ) ) { ++first; }
       //
-      if ( first == last ) { return 0 ; }         //   RETURN
+      if ( first == last ) { return 0; } //   RETURN
       //
-      signed   char si = signum ( *first ) ;
-      unsigned int  nc = 0 ;
-      for ( ITERATOR j = first + 1 ; j != last ; ++j )
-      {
-        if ( zero ( *j ) )  { continue ;  }         // CONTINUE
-        const signed char sj  = signum ( *j ) ;
-        if ( 0 <= si * sj ) { continue ;  }         // CONTINUE
-        nc +=1  ;
-        si = sj ;
+      signed char  si = signum( *first );
+      unsigned int nc = 0;
+      for ( ITERATOR j = first + 1; j != last; ++j ) {
+        if ( zero( *j ) ) { continue; } // CONTINUE
+        const signed char sj = signum( *j );
+        if ( 0 <= si * sj ) { continue; } // CONTINUE
+        nc += 1;
+        si = sj;
       }
-      return nc ;
+      return nc;
     }
     // ========================================================================
-  } //                                              end of namespace LHCb::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                      end of namespace LHCb
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
-    using LHCb::Math::scale ;
-    using LHCb::Math::shift ;
+    using LHCb::Math::scale;
+    using LHCb::Math::shift;
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** make dot-multiplication of two sequences using std::fma
      *  \f$ r = \sum_i  x_i y_i \f$
@@ -1044,15 +951,10 @@ namespace Gaudi
      *   float, double, and long double arguments, respectively. "
      */
     template <class ITERATOR1, class ITERATOR2>
-    inline double dot_fma
-    ( ITERATOR1 begin  ,
-      ITERATOR1 end    ,
-      ITERATOR2 begin2 )
-    {
-      long double dot = 0 ;
-      for ( ; begin != end ; ++begin, ++begin2 )
-      { dot = std::fma ( *begin , *begin2 , dot ) ; }
-      return dot  ;
+    inline double dot_fma( ITERATOR1 begin, ITERATOR1 end, ITERATOR2 begin2 ) {
+      long double dot = 0;
+      for ( ; begin != end; ++begin, ++begin2 ) { dot = std::fma( *begin, *begin2, dot ); }
+      return dot;
     }
     // ========================================================================
     /** make dot-multiplication of two sequences using std::fma
@@ -1062,10 +964,9 @@ namespace Gaudi
      *  @return   "dot" product of two sequences
      */
     template <unsigned int N, class TYPE, class ITERATOR>
-    inline double dot_fma
-    ( const std::array<TYPE,N>& x     ,
-      ITERATOR                  begin )
-    { return dot_fma ( x.begin() , x.end() , begin ) ; }
+    inline double dot_fma( const std::array<TYPE, N>& x, ITERATOR begin ) {
+      return dot_fma( x.begin(), x.end(), begin );
+    }
     // ========================================================================
     /** make dot-multiplication of two sequences using std::fma
      *  \f$ r = \sum_i  x_i y_i \f$
@@ -1074,10 +975,9 @@ namespace Gaudi
      *  @return   "dot" product of two sequences
      */
     template <unsigned int N, class TYPE1, class TYPE2>
-    inline double dot_fma
-    ( const std::array<TYPE1,N>& x ,
-      const std::array<TYPE2,N>& y )
-    { return dot_fma ( x.begin() , x.end() , y.begin() ) ; }
+    inline double dot_fma( const std::array<TYPE1, N>& x, const std::array<TYPE2, N>& y ) {
+      return dot_fma( x.begin(), x.end(), y.begin() );
+    }
     // ========================================================================
     /** Kahan summation
      *  @see https://en.wikipedia.org/wiki/Kahan_summation_algorithm
@@ -1105,20 +1005,16 @@ namespace Gaudi
      *  @param end   (INPUT) end-iterator for the input data
      */
     template <class ITERATOR>
-    inline double sum_kahan
-    ( ITERATOR begin ,
-      ITERATOR end   )
-    {
-      long double sum = 0 ;
-      long double c   = 0 ;
-      for ( ; begin != end ; ++begin )
-      {
-        volatile const long double y = (*begin) - c ;
-        volatile const long double t = sum      + y ;
-        c        = ( t - sum ) - y ;
-        sum      =   t             ;
+    inline double sum_kahan( ITERATOR begin, ITERATOR end ) {
+      long double sum = 0;
+      long double c   = 0;
+      for ( ; begin != end; ++begin ) {
+        volatile const long double y = ( *begin ) - c;
+        volatile const long double t = sum + y;
+        c                            = ( t - sum ) - y;
+        sum                          = t;
       }
-      return sum ;
+      return sum;
     }
     // ========================================================================
     /** make dot-multiplication of two sequences based on Kahan summation
@@ -1128,22 +1024,17 @@ namespace Gaudi
      *  @param ybegin (INPUT) begin-iterator for the second sequence
      */
     template <class ITERATOR1, class ITERATOR2>
-    inline double dot_kahan
-    ( ITERATOR1 xbegin ,
-      ITERATOR1 xend   ,
-      ITERATOR2 ybegin )
-    {
-      long double sum = 0 ;
-      long double c   = 0 ;
-      for ( ; xbegin != xend ; ++xbegin , ++ybegin )
-      {
-        const          long double v = (*xbegin ) * (*ybegin) ;
-        volatile const long double y = v   - c ;
-        volatile const long double t = sum + y ;
-        c   = ( t - sum ) - y ;
-        sum =   t             ;
+    inline double dot_kahan( ITERATOR1 xbegin, ITERATOR1 xend, ITERATOR2 ybegin ) {
+      long double sum = 0;
+      long double c   = 0;
+      for ( ; xbegin != xend; ++xbegin, ++ybegin ) {
+        const long double          v = ( *xbegin ) * ( *ybegin );
+        volatile const long double y = v - c;
+        volatile const long double t = sum + y;
+        c                            = ( t - sum ) - y;
+        sum                          = t;
       }
-      return sum ;
+      return sum;
     }
     // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
@@ -1153,10 +1044,9 @@ namespace Gaudi
      *  @return   "dot" product of two sequences
      */
     template <unsigned int N, class TYPE, class ITERATOR>
-    inline double dot_kahan
-    ( const std::array<TYPE,N>& x     ,
-      ITERATOR                  begin )
-    { return dot_kahan ( x.begin() , x.end() , begin ) ; }
+    inline double dot_kahan( const std::array<TYPE, N>& x, ITERATOR begin ) {
+      return dot_kahan( x.begin(), x.end(), begin );
+    }
     // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
@@ -1165,10 +1055,9 @@ namespace Gaudi
      *  @return   "dot" product of two sequences
      */
     template <unsigned int N, class TYPE1, class TYPE2>
-    inline double dot_kahan
-    ( const std::array<TYPE1,N>& x ,
-      const std::array<TYPE2,N>& y )
-    { return dor_kahan ( x.begin() , x.end() , y.begin() ) ; }
+    inline double dot_kahan( const std::array<TYPE1, N>& x, const std::array<TYPE2, N>& y ) {
+      return dor_kahan( x.begin(), x.end(), y.begin() );
+    }
     // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
@@ -1176,11 +1065,11 @@ namespace Gaudi
      *  @param y (INPUT) begin-iterator for the second sequence
      *  @return   "dot" product of two sequences
      */
-    template <class TYPE,unsigned int N, class ITERATOR>
-    inline double dot_kahan
-    ( TYPE(&x)[N] ,
-      ITERATOR y  ) { return dot_kahan ( x , x + N , y ) ; }
-   // ========================================================================
+    template <class TYPE, unsigned int N, class ITERATOR>
+    inline double dot_kahan( TYPE ( &x )[N], ITERATOR y ) {
+      return dot_kahan( x, x + N, y );
+    }
+    // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
      *  @param x (INPUT) the first sequence
@@ -1188,9 +1077,9 @@ namespace Gaudi
      *  @return   "dot" product of two sequences
      */
     template <class TYPE1, class TYPE2, unsigned int N>
-    inline double dot_kahan
-    ( TYPE1(&x)[N] ,
-      TYPE2(&y)[N] ) { return dot_kahan ( x , x + N , y ) ; }
+    inline double dot_kahan( TYPE1 ( &x )[N], TYPE2 ( &y )[N] ) {
+      return dot_kahan( x, x + N, y );
+    }
     // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
@@ -1199,14 +1088,13 @@ namespace Gaudi
      *  @param y (INPUT) the second sequence
      *  @return   "dot" product of two sequences
      */
-    inline double dot_kahan
-    ( const unsigned int N ,
-      const double*      x ,
-      const double*      y ) { return dot_kahan ( x , x + N , y ) ; }
+    inline double dot_kahan( const unsigned int N, const double* x, const double* y ) {
+      return dot_kahan( x, x + N, y );
+    }
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
-}
+} // namespace Gaudi
 // ============================================================================
 // The END
 // ============================================================================

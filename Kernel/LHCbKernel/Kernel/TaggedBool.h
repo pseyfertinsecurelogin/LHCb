@@ -15,10 +15,9 @@
 
 namespace xplicit {
 
-template <typename Tag>
-using tagged_bool  [[deprecated("please use Gaudi::tagged_bool instead")]] = Gaudi::tagged_bool<Tag>;
+  template <typename Tag>
+  using tagged_bool [[deprecated( "please use Gaudi::tagged_bool instead" )]] = Gaudi::tagged_bool<Tag>;
 
 }
 
 #endif
-

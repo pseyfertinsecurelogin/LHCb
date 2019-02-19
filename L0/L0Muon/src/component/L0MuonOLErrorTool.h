@@ -14,10 +14,9 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "L0Interfaces/IL0MuonOLErrorTool.h"            // Interface
+#include "L0Interfaces/IL0MuonOLErrorTool.h" // Interface
 
 #include "MuonKernel/MuonSystemLayout.h"
-
 
 /** @class L0MuonOLErrorTool L0MuonOLErrorTool.h component/L0MuonOLErrorTool.h
  *  Tool to access the list of optical link in error in input of the L0muon trigger
@@ -28,11 +27,9 @@
 class L0MuonOLErrorTool : public extends<GaudiTool, IL0MuonOLErrorTool> {
 public:
   /// Standard constructor
-  L0MuonOLErrorTool( const std::string& type,
-                     const std::string& name,
-                     const IInterface* parent);
+  L0MuonOLErrorTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  StatusCode getTiles(std::vector<LHCb::MuonTileID> & ols, std::string rootInTes="") override;
+  StatusCode getTiles( std::vector<LHCb::MuonTileID>& ols, std::string rootInTes = "" ) override;
 
 private:
   // Options

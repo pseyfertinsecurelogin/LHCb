@@ -16,9 +16,9 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/IService.h"
-#include "GaudiKernel/IIncidentListener.h"
 // ============================================================================
 // LoKiCore
 // ============================================================================
@@ -26,10 +26,10 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-class ISvcLocator          ;
-class IToolSvc             ;
-class IAlgContextSvc       ;
-class IIncidentSvc         ;
+class ISvcLocator;
+class IToolSvc;
+class IAlgContextSvc;
+class IIncidentSvc;
 // ============================================================================
 /** @file
  *
@@ -45,8 +45,7 @@ class IIncidentSvc         ;
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class ILoKi ILoKiSvc.h LoKi/ILoKiSvc.h
    *  The major LOKi object
@@ -54,21 +53,20 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-01-16
    */
-  struct ILoKiSvc : extend_interfaces<IService>
-  {
-    DeclareInterfaceID( ILoKiSvc , 6 , 0 ) ;
+  struct ILoKiSvc : extend_interfaces<IService> {
+    DeclareInterfaceID( ILoKiSvc, 6, 0 );
     // ========================================================================
     /** get "good" error reporter
      *  @return pointer to Good error reporter
      *  @see LoKi::IReporter
      */
-    virtual LoKi::IReporter*     reporter    () const = 0 ;
+    virtual LoKi::IReporter* reporter() const = 0;
     // ========================================================================
     /** The the sequential event number
      *  (needed for the proper synchronizations checks)
      *  @return the sequential event number
      */
-    virtual unsigned long long   event       () const = 0 ;
+    virtual unsigned long long event() const = 0;
     // ========================================================================
   };
   // ==========================================================================

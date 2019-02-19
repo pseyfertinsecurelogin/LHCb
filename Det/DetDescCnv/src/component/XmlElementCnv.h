@@ -12,14 +12,14 @@
 #define DETDESCCNV_XMLCNVSVC_XMLELEMENTCNV_H
 
 // Include files
-#include "DetDescCnv/XmlGenericCnv.h"
 #include "DetDesc/Element.h"
+#include "DetDescCnv/XmlGenericCnv.h"
 
 // Forward declarations
 class Isotope;
 class ISvcLocator;
-template <class TYPE> class CnvFactory;
-
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlElementCnv
  *
@@ -31,18 +31,17 @@ template <class TYPE> class CnvFactory;
  */
 class XmlElementCnv : public XmlGenericCnv {
 public:
-
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
-  static const CLID& classID () { return CLID_Element; }
+  static const CLID& classID() { return CLID_Element; }
 
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlElementCnv (ISvcLocator* svcs);
+  XmlElementCnv( ISvcLocator* svcs );
 
   /**
    * Default destructor
@@ -56,9 +55,7 @@ protected:
    *  @param refpObject the object to be built
    *  @return status depending on the completion of the call
    */
-  StatusCode i_createObj
-  ( xercesc::DOMElement*  element    ,
-    DataObject*& refpObject ) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -68,10 +65,7 @@ protected:
    *  @param address the address for this object
    *  @return status depending on the completion of the call
    */
-  StatusCode i_fillObj
-  ( xercesc::DOMElement* childElement ,
-    DataObject* refpObject   ,
-    IOpaqueAddress* address  ) override;
+  StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /** This processes the current object.
    *  Overrides the default method in XmlGenericCnv
@@ -79,12 +73,9 @@ protected:
    *  @param address the address for this object
    *  @return status depending on the completion of the call
    */
-  StatusCode i_processObj
-  ( DataObject*     refpObject ,
-    IOpaqueAddress* address    ) override;
+  StatusCode i_processObj( DataObject* refpObject, IOpaqueAddress* address ) override;
 
 private:
-
   // Constant strings for element and parameter names
   const XMLCh* nameString;
   const XMLCh* temperatureString;
@@ -103,7 +94,6 @@ private:
   const XMLCh* addressString;
   const XMLCh* isotoperefString;
   const XMLCh* atomString;
-
 };
 
 // ============================================================================

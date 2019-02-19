@@ -17,8 +17,7 @@
 // Range V3
 #include <range/v3/all.hpp>
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @namespace Ranges
@@ -30,21 +29,18 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  namespace Ranges
-  {
+  namespace Ranges {
 
     /// Zips multiple containers together to form a single range
-    template < typename... Args >
-    inline decltype( auto ) Zip( Args &&... args )
-    {
-      return Gaudi::Functional::details::zip::range( std::forward< Args >( args )... );
+    template <typename... Args>
+    inline decltype( auto ) Zip( Args&&... args ) {
+      return Gaudi::Functional::details::zip::range( std::forward<Args>( args )... );
     }
 
     /// Zips multiple containers together to form a single const range
-    template < typename... Args >
-    inline decltype( auto ) ConstZip( Args &&... args )
-    {
-      return Gaudi::Functional::details::zip::const_range( std::forward< Args >( args )... );
+    template <typename... Args>
+    inline decltype( auto ) ConstZip( Args&&... args ) {
+      return Gaudi::Functional::details::zip::const_range( std::forward<Args>( args )... );
     }
 
   } // namespace Ranges

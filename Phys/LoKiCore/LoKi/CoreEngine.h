@@ -15,8 +15,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/ICoreAntiFactory.h"
 #include "LoKi/Context.h"
+#include "LoKi/ICoreAntiFactory.h"
 // ============================================================================
 /** @file LoKi/CoreEngine.h
  *
@@ -30,11 +30,9 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class CoreEngine LoKi/CoreEngine.h
      *
@@ -51,64 +49,49 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-18
      */
-    class CoreEngine
-    {
+    class CoreEngine {
     public:
       // ======================================================================
       /// Standard constructor
-      CoreEngine () = default;
+      CoreEngine() = default;
       // ======================================================================
       // destructor
-      virtual ~CoreEngine () = default; // Destructor
+      virtual ~CoreEngine() = default; // Destructor
       // ======================================================================
     public: // "void -> ... "
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::FCuts& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::FCuts& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::FFunc& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::FFunc& cut ) const;
       // ======================================================================
     public: // "double -> ... "
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::XCuts& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XCuts& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::XFunc& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XFunc& cut ) const;
       // ======================================================================
     public: // some functional stuff
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&           name ,
-        const LoKi::Types::XMaps&    cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XMaps& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&           name ,
-        const LoKi::Types::XFunVals& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XFunVals& cut ) const;
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&           name ,
-        const LoKi::Types::XSources& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XSources& cut ) const;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the current context 
-      const LoKi::Context* context () const ;
-      // ======================================================================      
+      /// get the current context
+      const LoKi::Context* context() const;
+      // ======================================================================
     };
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
-} //end of namespace LoKi
+} // end of namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

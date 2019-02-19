@@ -18,8 +18,7 @@
 #include <array>
 #include <vector>
 
-namespace LHCb
-{
+namespace LHCb {
   class State;
 }
 
@@ -31,31 +30,28 @@ namespace LHCb
  *  @date   2015-04-18
  */
 
-class VPRetinaMatrix final
-{
+class VPRetinaMatrix final {
 public:
-
   /// Standard constructor
-  VPRetinaMatrix(uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel);
+  VPRetinaMatrix( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel );
 
   /// Check if a SP coordinate are inside the Retina
-  bool IsInRetina(uint32_t SP_row, uint32_t SP_col) const;
-  
+  bool IsInRetina( uint32_t SP_row, uint32_t SP_col ) const;
+
   /// Add a SP to the Retina
-  void AddSP(uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel);
-  
+  void AddSP( uint32_t SP_row, uint32_t SP_col, uint8_t SP_pixel );
+
   /// Search cluster
   std::vector<uint32_t> SearchCluster() const;
-  
-private:
 
+private:
   // Coordinate of the lower left SP
   int32_t Coordinate_Retina_row;
   int32_t Coordinate_Retina_col;
-  
+
   // Matrix of pixel
-  std::array<std::array<unsigned char,5>,3> SPixel_Matrix{};
-  std::array<std::array<unsigned char,10>,12> Pixel_Matrix{};
+  std::array<std::array<unsigned char, 5>, 3>   SPixel_Matrix{};
+  std::array<std::array<unsigned char, 10>, 12> Pixel_Matrix{};
 };
 
 #endif // VPRetinaMatrix_H

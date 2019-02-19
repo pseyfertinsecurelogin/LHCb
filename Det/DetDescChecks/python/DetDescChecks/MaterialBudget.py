@@ -14,57 +14,52 @@
 # =============================================================================
 ## @file DetDescChecks/MaterialBidget.py
 #  Helper file to illustrate the usage of Material-Budget algorithm
-#  @see DetDesc::CheckOverlap 
+#  @see DetDesc::CheckOverlap
 #  @author Vanya BELYAEV Icvan.Belyaev@nikhef.nl
 # =============================================================================
 """
 Helper file to illustrate the usage of Material-Budget algorithm
 """
 # =============================================================================
-__author__  = 'Vanya BELYAEV Icvan.Belyaev@nikhef.nl'
+__author__ = 'Vanya BELYAEV Icvan.Belyaev@nikhef.nl'
 __version__ = 'CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $'
 # =============================================================================
 
 from Gaudi.Configuration import *
 
-from Configurables  import DDDBConf
-DDDBConf ( DataType = '2015' )
+from Configurables import DDDBConf
+DDDBConf(DataType='2015')
 
 from Configurables import DetDesc__MaterialBudget
 
-budget = DetDesc__MaterialBudget (
-    'Budget' ,
+budget = DetDesc__MaterialBudget(
+    'Budget',
     #
-    zPlane   = 970.0 ,
-    Shots    = 100   ,
+    zPlane=970.0,
+    Shots=100,
     #
-    Grid     = False ,
-    Rapidity = False , 
+    Grid=False,
+    Rapidity=False,
     #
-    )
+)
 
 from Configurables import ApplicationMgr
 
-ApplicationMgr  (
-    TopAlg = [ budget ] ,
-    EvtSel = 'NONE'     , 
-    EvtMax = 1         
-    )
+ApplicationMgr(TopAlg=[budget], EvtSel='NONE', EvtMax=1)
 
 # =============================================================================
-if "__main__" == __name__  :
+if "__main__" == __name__:
 
     print __doc__
     print __author__
     print __version__
-    
-    from GaudiPython.Bindings import AppMgr
-    
-    gaudi = AppMgr()
-    
-    gaudi.run(1) 
-    
-# =============================================================================
-# The END 
-# =============================================================================
 
+    from GaudiPython.Bindings import AppMgr
+
+    gaudi = AppMgr()
+
+    gaudi.run(1)
+
+# =============================================================================
+# The END
+# =============================================================================

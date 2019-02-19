@@ -25,25 +25,24 @@
 constexpr CLID CLID_DeVP = 8200;
 
 namespace DeVPLocation {
-inline const std::string Default = "/dd/Structure/LHCb/BeforeMagnetRegion/VP";
+  inline const std::string Default = "/dd/Structure/LHCb/BeforeMagnetRegion/VP";
 }
 
 class DeVP : public DetectorElement {
 
- public:
-
+public:
   /// Constructor
   using DetectorElement::DetectorElement;
 
   /// Object identification
-  static const CLID& classID() { return CLID_DeVP; }
+  static const CLID&  classID() { return CLID_DeVP; }
   virtual const CLID& clID() const override;
 
   /// Initialization method
   StatusCode initialize() override;
 
   /// Return sensitive volume identifier for a given point in the global frame.
-  int sensitiveVolumeID(const Gaudi::XYZPoint& point) const override;
+  int sensitiveVolumeID( const Gaudi::XYZPoint& point ) const override;
 
   /// Return the number of sensors.
   unsigned int numberSensors() const { return m_sensors.size(); }
@@ -52,36 +51,30 @@ class DeVP : public DetectorElement {
   const std::vector<DeVPSensor*>& sensors() const { return m_sensors; }
 
   /// Return pointer to sensor for a given point in the global frame.
-  const DeVPSensor* sensor(const Gaudi::XYZPoint& point) const {
-    const int sensorNumber = sensitiveVolumeID(point);
+  const DeVPSensor* sensor( const Gaudi::XYZPoint& point ) const {
+    const int sensorNumber = sensitiveVolumeID( point );
     return sensorNumber >= 0 ? m_sensors[sensorNumber] : nullptr;
   }
   /// Return pointer to sensor for a given channel ID.
-  [[deprecated("use sensor(id) instead")]] const DeVPSensor* sensorOfChannel(const LHCb::VPChannelID channel) const {
-    return sensor(channel.sensor());
+  [[deprecated( "use sensor(id) instead" )]] const DeVPSensor*
+  sensorOfChannel( const LHCb::VPChannelID channel ) const {
+    return sensor( channel.sensor() );
   }
   /// Return pointer to sensor for a given channel ID.
-  const DeVPSensor* sensor(LHCb::VPChannelID channel) const {
-    return sensor(channel.sensor());
-  }
+  const DeVPSensor* sensor( LHCb::VPChannelID channel ) const { return sensor( channel.sensor() ); }
   /// Return pointer to sensor for a given sensor number.
-  const DeVPSensor* sensor(unsigned int sensorNumber) const {
-    return m_sensors[sensorNumber];
-  }
+  const DeVPSensor* sensor( unsigned int sensorNumber ) const { return m_sensors[sensorNumber]; }
 
- private:
-
+private:
   /// Find sensors inside detector element tree.
-  void findSensors(IDetectorElement* det, std::vector<DeVPSensor*>& sensors);
+  void findSensors( IDetectorElement* det, std::vector<DeVPSensor*>& sensors );
 
   /// List of pointers to all sensors.
   std::vector<DeVPSensor*> m_sensors;
 
   /// Custom operator for sorting sensors by sensor number.
   struct less_SensorNumber {
-    bool operator()(DeVPSensor* const& x, DeVPSensor* const& y) {
-      return (x->sensorNumber() < y->sensorNumber());
-    }
+    bool operator()( DeVPSensor* const& x, DeVPSensor* const& y ) { return ( x->sensorNumber() < y->sensorNumber() ); }
   };
 
   /// Output level flag
@@ -91,10 +84,9 @@ class DeVP : public DetectorElement {
   mutable std::unique_ptr<MsgStream> m_msg;
   /// On-demand access to message stream.
   MsgStream& msg() const {
-    if (!m_msg) m_msg.reset( new MsgStream(msgSvc(), "DeVP") );
+    if ( !m_msg ) m_msg.reset( new MsgStream( msgSvc(), "DeVP" ) );
     return *m_msg;
   }
-
 };
 
 #endif

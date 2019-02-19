@@ -33,8 +33,7 @@
 // RICH Utils
 #include "RichUtils/RichPixelCluster.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   //-----------------------------------------------------------------------------
   /** @class IPixelClusteringTool IRichPixelClusteringTool.h RichKernel/IRichPixelClusteringTool.h
@@ -46,11 +45,9 @@ namespace Rich::DAQ
    */
   //-----------------------------------------------------------------------------
 
-  class IPixelClusteringTool : public virtual IAlgTool
-  {
+  class IPixelClusteringTool : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IPixelClusteringTool, 1, 0 );
 
@@ -62,8 +59,8 @@ namespace Rich::DAQ
      *
      *  @attention The user takes ownership of the returned object.
      */
-    virtual std::unique_ptr< const Rich::PDPixelClusters >
-    findClusters( const LHCb::RichSmartID::Vector &smartIDs ) const = 0;
+    virtual std::unique_ptr<const Rich::PDPixelClusters>
+    findClusters( const LHCb::RichSmartID::Vector& smartIDs ) const = 0;
   };
 
 } // namespace Rich::DAQ

@@ -21,12 +21,12 @@
 // HepMC
 // ============================================================================
 #ifdef __INTEL_COMPILER
-  #pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
+#  pragma warning( disable : 1572 ) // floating-point equality and inequality comparisons are unreliable
+#  pragma warning( push )
 #endif
 #include "HepMC/GenParticle.h"
 #ifdef __INTEL_COMPILER
-  #pragma warning(pop)
+#  pragma warning( pop )
 #endif
 /** @file
  *
@@ -42,10 +42,8 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
-  namespace GenKinematics
-  {
+namespace LoKi {
+  namespace GenKinematics {
     // ========================================================================
     /** The most trivial function.
      *  It seems to be almost useless from the first sight, but
@@ -56,11 +54,9 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    inline LoKi::LorentzVector momentum
-    ( const HepMC::GenParticle* p )
-    {
-      if ( 0 == p ) { return LoKi::LorentzVector() ; }
-      return LoKi::LorentzVector ( p->momentum () ) ;
+    inline LoKi::LorentzVector momentum( const HepMC::GenParticle* p ) {
+      if ( 0 == p ) { return LoKi::LorentzVector(); }
+      return LoKi::LorentzVector( p->momentum() );
     }
     // ========================================================================
     /** @struct Gen4Momentum
@@ -69,11 +65,9 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    struct Gen4Momentum
-    {
-      LoKi::LorentzVector operator()
-        ( const HepMC::GenParticle* p ) const { return momentum ( p ) ; }
-    } ;
+    struct Gen4Momentum {
+      LoKi::LorentzVector operator()( const HepMC::GenParticle* p ) const { return momentum( p ); }
+    };
     // ========================================================================
     /** trivial function to evaluate the mass HepMC::GenParticle
      *  @param  p particle
@@ -82,8 +76,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    double mass
-    ( const HepMC::GenParticle* p ) ;
+    double mass( const HepMC::GenParticle* p );
     // ========================================================================
     /** trivial function to evaluate the mass HepMC::GenParticle
      *  @param  p1 the first particle
@@ -93,9 +86,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    double mass
-    ( const HepMC::GenParticle* p1 ,
-      const HepMC::GenParticle* p2 ) ;
+    double mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2 );
     // ========================================================================
     /** trivial function to evaluate the mass HepMC::GenParticle
      *  @param  p1 the first particle
@@ -106,10 +97,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    double mass
-    ( const HepMC::GenParticle* p1 ,
-      const HepMC::GenParticle* p2 ,
-      const HepMC::GenParticle* p3 ) ;
+    double mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2, const HepMC::GenParticle* p3 );
     // ========================================================================
     /** trivial function to evaluate the mass HepMC::GenParticle
      *  @param  p1 the first particle
@@ -121,21 +109,17 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    double mass
-    ( const HepMC::GenParticle* p1 ,
-      const HepMC::GenParticle* p2 ,
-      const HepMC::GenParticle* p3 ,
-      const HepMC::GenParticle* p4 ) ;
+    double mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2, const HepMC::GenParticle* p3,
+                 const HepMC::GenParticle* p4 );
     // ========================================================================
-  } // end of namespace LoKi::GenKinematics
+  } // namespace GenKinematics
   // ==========================================================================
-  namespace Kinematics
-  {
+  namespace Kinematics {
     // ========================================================================
     // export the namespace into more general scope
-    using namespace LoKi::GenKinematics ;
+    using namespace LoKi::GenKinematics;
     // ========================================================================
-  } // end of namespace LoKi::Kinematics
+  } // namespace Kinematics
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

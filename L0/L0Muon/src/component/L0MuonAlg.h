@@ -9,20 +9,20 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONTRIGGER_L0MUONALG_H
-#define L0MUONTRIGGER_L0MUONALG_H     1
+#define L0MUONTRIGGER_L0MUONALG_H 1
 
 #include "L0Base/L0AlgBase.h"
 
 #include "MuonKernel/MuonSystemLayout.h"
 #include "ProcessorKernel/Property.h"
 //#include "ProcessorKernel/Unit.h"
-#include "L0MuonKernel/L0MUnit.h"
 #include "L0MuonKernel/L0MPtLUT.h"
+#include "L0MuonKernel/L0MUnit.h"
 
 // Interface
 #include "L0Interfaces/IL0DUConfigProvider.h"
-#include "MuonDAQ/IMuonRawBuffer.h"
 #include "L0Interfaces/IL0MuonModifyInputTool.h"
+#include "MuonDAQ/IMuonRawBuffer.h"
 
 #include "L0MuonOutputs.h"
 
@@ -64,27 +64,25 @@
 class L0MuonAlg : public L0AlgBase {
 
 public:
-
-  L0MuonAlg(const std::string& name, ISvcLocator* pSvcLocator);
+  L0MuonAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;
   StatusCode finalize() override;
   StatusCode execute() override;
 
 private:
+  std::map<std::string, L0Muon::Property> l0MuonProperties(); ///< Build the properties of L0MuonKernel Units
 
-  std::map<std::string,L0Muon::Property>  l0MuonProperties(); ///< Build the properties of L0MuonKernel Units
-
-  StatusCode getDigitsFromMuon();   ///< Get the hits from the muon (Digits or ZS raw data)
-  StatusCode getDigitsFromMuonNZS();///< Get the hits from the muon data (Non Zero supp.)
-  StatusCode getDigitsFromL0Muon(); ///< Get the hits from the L0Muon data
-  StatusCode fillOLsfromDigits();   ///< Fill the Optical Links before processing
+  StatusCode getDigitsFromMuon();    ///< Get the hits from the muon (Digits or ZS raw data)
+  StatusCode getDigitsFromMuonNZS(); ///< Get the hits from the muon data (Non Zero supp.)
+  StatusCode getDigitsFromL0Muon();  ///< Get the hits from the L0Muon data
+  StatusCode fillOLsfromDigits();    ///< Fill the Optical Links before processing
 
   // Emulator input
   std::vector<LHCb::MuonTileID> m_digits; ///< Hits used by the emulator
 
   // CondDB
-  bool m_ignoreCondDB;                ///< Flag to ignore the CondDB
+  bool        m_ignoreCondDB;         ///< Flag to ignore the CondDB
   std::string m_conditionNameVersion; ///< Name of the condition of the Controller board
   std::string m_conditionNameFOI;     ///< Name of the condition of the Processing board
   std::string m_parameterNameFOIx;    ///< Name of the parameter with FOIx in CondDB
@@ -93,79 +91,81 @@ private:
 
   // TCK
   IL0DUConfigProvider* m_confTool = nullptr;
-  std::string m_configName;           ///< L0DUConfigProviderName tool name
-  std::string m_configType;           ///< L0DUConfigProviderType tool name
-  std::string m_tck;                  ///< TCK (used to get the FOIs)
-  int m_itck = -1;                    ///< TCK (used to get the FOIs)
-  bool m_useTCKFromData;              ///< Flag to take the TCK from data (odin)
+  std::string          m_configName;     ///< L0DUConfigProviderName tool name
+  std::string          m_configType;     ///< L0DUConfigProviderType tool name
+  std::string          m_tck;            ///< TCK (used to get the FOIs)
+  int                  m_itck = -1;      ///< TCK (used to get the FOIs)
+  bool                 m_useTCKFromData; ///< Flag to take the TCK from data (odin)
 
   // Emulator running modes
-  int m_version;                      ///< Emulator version
-  int m_mode;                         ///< Banks output mode (0=light, 1=standard, 2=full)
-  bool m_compression;                 ///< Apply compression when writing banks
+  int  m_version;     ///< Emulator version
+  int  m_mode;        ///< Banks output mode (0=light, 1=standard, 2=full)
+  bool m_compression; ///< Apply compression when writing banks
 
   // Emulator properties
-  std::vector<int> m_foiXSize;        ///< values of FoI's in X
-  std::vector<int> m_foiYSize;        ///< values of FoI's in Y
-  std::string  m_configfile;          ///< Config file name
-  bool m_ignoreM1;                    ///< Flag to use M1 or not (not tested)
-  bool m_forceM3;                     ///< Flag to force M3 optical link content to 1
-  bool m_debug;                       ///< Flag to turn on debug mode for L0MuonKernel
+  std::vector<int> m_foiXSize;   ///< values of FoI's in X
+  std::vector<int> m_foiYSize;   ///< values of FoI's in Y
+  std::string      m_configfile; ///< Config file name
+  bool             m_ignoreM1;   ///< Flag to use M1 or not (not tested)
+  bool             m_forceM3;    ///< Flag to force M3 optical link content to 1
+  bool             m_debug;      ///< Flag to turn on debug mode for L0MuonKernel
 
   // Algorithm's properties
-  bool m_enableTAE;                   ///< Enable TAE mode
-  int  m_inputSource;                 ///< Specify where to take the input data for the processing
-                                      ///<  - 0: from Muon output
-                                      ///<  - 1: from the input of the processor (extracted form L0Muon itself)
+  bool m_enableTAE;   ///< Enable TAE mode
+  int  m_inputSource; ///< Specify where to take the input data for the processing
+                      ///<  - 0: from Muon output
+                      ///<  - 1: from the input of the processor (extracted form L0Muon itself)
 
-  bool m_modify_digits;               ///< Modify the input data for special studies
+  bool m_modify_digits; ///< Modify the input data for special studies
 
   // For trigger emulation
-  L0Muon::L0MUnit*  m_muontriggerunit = nullptr; ///< Top Unit of the L0Muon emulator
+  L0Muon::L0MUnit* m_muontriggerunit = nullptr; ///< Top Unit of the L0Muon emulator
 
   L0MuonOutputs* m_outputTool = nullptr; ///< For output to RAwEvent, TES ot L0ProcessorDatas
 
   int m_totEvent = 0; ///< Event counter
-  int m_totBx = 0;   ///< Tot number of time slices processed
+  int m_totBx    = 0; ///< Tot number of time slices processed
 
-  IMuonRawBuffer* m_muonBuffer = nullptr;  ///< Interface to muon raw buffer
+  IMuonRawBuffer* m_muonBuffer = nullptr; ///< Interface to muon raw buffer
 
-  Condition * m_l0CondCtrl = nullptr;  ///< Pointer to the L0 Controller board conditions
-  Condition * m_l0CondProc = nullptr;  ///< Pointer to the L0 Processing board conditions
+  Condition* m_l0CondCtrl = nullptr; ///< Pointer to the L0 Controller board conditions
+  Condition* m_l0CondProc = nullptr; ///< Pointer to the L0 Processing board conditions
 
-  std::string m_lut_path;     ///< Directory containing the LUT file
-  std::string m_lut_basename; ///< BaseName of the LUT file
-  std::string m_lut_version;  ///< Version of LUT to be used (appended to the basename)
-  std::unique_ptr<L0MPtLUT> m_lut ;             ///< LUT object
+  std::string               m_lut_path;     ///< Directory containing the LUT file
+  std::string               m_lut_basename; ///< BaseName of the LUT file
+  std::string               m_lut_version;  ///< Version of LUT to be used (appended to the basename)
+  std::unique_ptr<L0MPtLUT> m_lut;          ///< LUT object
 
-  IL0MuonModifyInputTool * m_modifyInputTool = nullptr;
-  std::string m_modifyInputToolType;
-  std::string m_modifyInputToolName;
+  IL0MuonModifyInputTool* m_modifyInputTool = nullptr;
+  std::string             m_modifyInputToolType;
+  std::string             m_modifyInputToolName;
 
   /// Call back function to check the Version condition database content
-  StatusCode updateL0CondVersion() ;
+  StatusCode updateL0CondVersion();
 
   /// Call back function to check the FOI condition database content
-  StatusCode updateL0CondFOI() ;
+  StatusCode updateL0CondFOI();
 
   /// Function to check the FOI in the TCK configuration
-  StatusCode updateL0TCKFOI() ;
+  StatusCode updateL0TCKFOI();
 
-  static inline int hard2softFOIConversion(int sta)
-  {
-    switch (sta) {
-    case 0: return 2; // M1
-    case 1: return 1; // M2
-    case 3: return 4; // M4
-    case 4: return 4; // M5
-    default : return 1;
+  static inline int hard2softFOIConversion( int sta ) {
+    switch ( sta ) {
+    case 0:
+      return 2; // M1
+    case 1:
+      return 1; // M2
+    case 3:
+      return 4; // M4
+    case 4:
+      return 4; // M5
+    default:
+      return 1;
     }
   }
 
   // TAE
-  std::map<int,std::string> m_tae_items;  ///< Definitions of tae slots
-
-
+  std::map<int, std::string> m_tae_items; ///< Definitions of tae slots
 };
 
-#endif      // L0MUONTRIGGER_L0MUONALG_H
+#endif // L0MUONTRIGGER_L0MUONALG_H

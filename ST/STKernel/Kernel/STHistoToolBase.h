@@ -31,8 +31,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STHistoToolBase.h STKernel/STHistoToolBase.h
@@ -45,20 +44,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class HistoToolBase : public ST::CommonBase<GaudiHistoTool>
-  {
+  class HistoToolBase : public ST::CommonBase<GaudiHistoTool> {
 
   public:
-
     /// Standard constructor
-    HistoToolBase(const std::string& type, 
-             const std::string& name,
-             const IInterface* parent )
-      : ST::CommonBase<GaudiHistoTool> ( type, name, parent ) { }
-
+    HistoToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : ST::CommonBase<GaudiHistoTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace ST
 
 #endif // STKERNEL_STHISTOTOOLBASE_H

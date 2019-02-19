@@ -15,18 +15,16 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
 
 // forward declarations
 class IDataProviderSvc;
 class IIncidentSvc;
-namespace LHCb
-{
+namespace LHCb {
   class ODIN;
 }
 
-namespace LHCbAlgsTests
-{
+namespace LHCbAlgsTests {
 
   /** @class TestTimeDecoderOdin TestTimeDecoderOdin.h
    *
@@ -38,16 +36,11 @@ namespace LHCbAlgsTests
    *  @author Marco Clemencic
    *  @date   2006-09-21
    */
-  class TestTimeDecoderOdin final : public GaudiTool,
-                                    virtual public IEventTimeDecoder
-  {
+  class TestTimeDecoderOdin final : public GaudiTool, virtual public IEventTimeDecoder {
 
   public:
-
     /// Standard constructor
-    TestTimeDecoderOdin( const std::string& type,
-                         const std::string& name,
-                         const IInterface* parent);
+    TestTimeDecoderOdin( const std::string& type, const std::string& name, const IInterface* parent );
 
     virtual ~TestTimeDecoderOdin() = default; ///< Destructor
 
@@ -57,16 +50,14 @@ namespace LHCbAlgsTests
     Gaudi::Time getTime() const override;
 
   private:
-
     // --- local data ---
     /// Used to remember the run number and spot a change of run number.
     mutable unsigned int m_currentRun;
 
     /// How much to increase the run number at every call (default 1).
     bool m_runNumberStep;
-
   };
 
-}
+} // namespace LHCbAlgsTests
 
 #endif // ODINTIMEDECODER_H

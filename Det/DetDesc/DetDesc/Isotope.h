@@ -24,57 +24,46 @@
 
    @author Radovan Chytracek
 */
-class Isotope final : public Material
-{
+class Isotope final : public Material {
 
 public:
-
   /// Constructors
-  Isotope( const std::string name    = ""              ,
-           const double      a       = 0               ,
-           const double      z       = 0               ,
-           const double      i       = 0               ,
-           const double      density = 0               ,
-           const double      rl      = 0               ,
-           const double      al      = 0               ,
-           const double      temp    = Gaudi::Units::STP_Temperature ,
-           const double      press   = Gaudi::Units::STP_Pressure    ,
-           const eState      s       = stateUndefined  );
+  Isotope( const std::string name = "", const double a = 0, const double z = 0, const double i = 0,
+           const double density = 0, const double rl = 0, const double al = 0,
+           const double temp = Gaudi::Units::STP_Temperature, const double press = Gaudi::Units::STP_Pressure,
+           const eState s = stateUndefined );
 
   //        Atomic mass [g/mole]
-  inline double   A() const override;
-  inline void  setA(  const double value ) override;
+  inline double A() const override;
+  inline void   setA( const double value ) override;
 
   //        Atomic number
-  inline double   Z() const override;
-  inline void  setZ(  const double value ) override;
+  inline double Z() const override;
+  inline void   setZ( const double value ) override;
 
- //        Mean excitation energy
-  inline double   I() const override;
-  inline void  setI(  const double value ) override;
+  //        Mean excitation energy
+  inline double I() const override;
+  inline void   setI( const double value ) override;
 
   //       Parameters for density effect correction
-  inline double   C() const override;
-  inline void  setC(  const double value ) override;
-  inline double   a() const override;
-  inline void  seta(  const double value ) override;
-  inline double   m() const override;
-  inline void  setm(  const double value ) override;
-  inline double   X0() const override;
-  inline void  setX0(  const double value ) override;
-  inline double   X1() const override;
-  inline void  setX1(  const double value ) override;
-
-
+  inline double C() const override;
+  inline void   setC( const double value ) override;
+  inline double a() const override;
+  inline void   seta( const double value ) override;
+  inline double m() const override;
+  inline void   setm( const double value ) override;
+  inline double X0() const override;
+  inline void   setX0( const double value ) override;
+  inline double X1() const override;
+  inline void   setX1( const double value ) override;
 
   //        Number of nucleons
-  inline double   N() const override;
+  inline double N() const override;
 
-  inline const CLID& clID    () const override { return Isotope::classID(); }
-  static const CLID& classID ()       { return CLID_Isotope; }
+  inline const CLID& clID() const override { return Isotope::classID(); }
+  static const CLID& classID() { return CLID_Isotope; }
 
 protected:
-
   //        Atomic mass [g/mole]
   double m_A;
 
@@ -90,7 +79,6 @@ protected:
   double m_m;
   double m_X0;
   double m_X1;
-
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -118,7 +106,7 @@ inline void   Isotope::setX0( const double value ) { m_X0 = value; }
 inline double Isotope::X1() const { return m_X1; }
 inline void   Isotope::setX1( const double value ) { m_X1 = value; }
 ///////////////////////////////////////////////////////////////////////////
-inline double Isotope::N() const { return m_A*Gaudi::Units::mole/Gaudi::Units::g; }
+inline double Isotope::N() const { return m_A * Gaudi::Units::mole / Gaudi::Units::g; }
 ///////////////////////////////////////////////////////////////////////////
 
 #endif // DETDESC_ISOTOPE_H

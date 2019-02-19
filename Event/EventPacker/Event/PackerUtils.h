@@ -8,19 +8,15 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef EVENT_PACKERUTILS_H 
+#ifndef EVENT_PACKERUTILS_H
 #define EVENT_PACKERUTILS_H 1
-#include <string>
-#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IRegistry.h"
+#include <string>
 
-
-namespace LHCb
-{
-  namespace Packer
-  {
-    namespace Utils
-    {
+namespace LHCb {
+  namespace Packer {
+    namespace Utils {
 
       /** Returns the full location of the given object in the Data Store
        *
@@ -28,14 +24,12 @@ namespace LHCb
        *
        *  @return Location of given data object
        */
-      std::string location( const DataObject * pObj )
-      {
-        return ( !pObj ? "Null DataObject !" :
-                 (pObj->registry() ? pObj->registry()->identifier() : "UnRegistered") );
+      std::string location( const DataObject* pObj ) {
+        return ( !pObj ? "Null DataObject !" : ( pObj->registry() ? pObj->registry()->identifier() : "UnRegistered" ) );
       }
 
-    }
-  }
-}     
+    } // namespace Utils
+  }   // namespace Packer
+} // namespace LHCb
 
 #endif // EVENT_PACKERUTILS_H

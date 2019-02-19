@@ -13,14 +13,14 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <iostream>
 #include <cmath>
+#include <iostream>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/Vector4DTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector4DTypes.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -33,24 +33,20 @@
  *  @date 2008-12-02
  */
 // ============================================================================
-int main()
-{
+int main() {
 
-  Gaudi::LorentzVector lv ( 2 , 2 , 20 , 35 ) ;
-  lv *= Gaudi::Units::GeV ;
+  Gaudi::LorentzVector lv( 2, 2, 20, 35 );
+  lv *= Gaudi::Units::GeV;
 
+  Gaudi::SymMatrix4x4 cov;
+  Gaudi::Math::setToUnit( cov, 0.1 * 0.1 * Gaudi::Units::GeV * Gaudi::Units::GeV );
 
-  Gaudi::SymMatrix4x4  cov ;
-  Gaudi::Math::setToUnit ( cov , 0.1*0.1*Gaudi::Units::GeV*Gaudi::Units::GeV );
+  std::cout << " sigma2mass2  : " << Gaudi::Math::sigma2mass2( lv, cov ) << std::endl
+            << " sigma2mass   : " << Gaudi::Math::sigma2mass( lv, cov ) << std::endl
+            << " sigmamass    : " << Gaudi::Math::sigmamass( lv, cov ) << std::endl
+            << " chi2mass     : " << Gaudi::Math::chi2mass( 5 * Gaudi::Units::GeV, lv, cov ) << std::endl;
 
-  std::cout
-    << " sigma2mass2  : " << Gaudi::Math::sigma2mass2 ( lv , cov ) << std::endl
-    << " sigma2mass   : " << Gaudi::Math::sigma2mass  ( lv , cov ) << std::endl
-    << " sigmamass    : " << Gaudi::Math::sigmamass   ( lv , cov ) << std::endl
-    << " chi2mass     : " << Gaudi::Math::chi2mass    ( 5 * Gaudi::Units::GeV ,
-                                                        lv , cov ) << std::endl ;
-
-  exit(0) ;
+  exit( 0 );
 }
 // ============================================================================
 // The END

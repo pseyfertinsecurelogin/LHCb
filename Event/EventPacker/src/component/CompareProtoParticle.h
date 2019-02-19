@@ -15,8 +15,8 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-#include "Event/ProtoParticle.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
 
 /** @class CompareProtoParticle CompareProtoParticle.h
  *  Compare two containers of ProtoParticles
@@ -24,21 +24,17 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class CompareProtoParticle : public GaudiAlgorithm
-{
+class CompareProtoParticle : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   CompareProtoParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   std::string m_inputName;
   std::string m_testName;
-
 };
 
 #endif // COMPAREPROTOPARTICLE_H

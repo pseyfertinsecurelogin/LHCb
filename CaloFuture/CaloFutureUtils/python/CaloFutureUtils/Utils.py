@@ -20,19 +20,17 @@ Helper module to perfom some decorations for CaloFuturerimeter objects
 
 """
 # =============================================================================
-__author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
+__author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $"
 # =============================================================================
-__all__     = () 
+__all__ = ()
 # =============================================================================
 
-import CaloFutureUtils.CellID 
+import CaloFutureUtils.CellID
 
-
-
-if '__main__' == __name__ :
-    print __doc__ , __author__ , __version__
+if '__main__' == __name__:
+    print __doc__, __author__, __version__
 
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

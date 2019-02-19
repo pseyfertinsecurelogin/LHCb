@@ -37,70 +37,40 @@
  *  @date 2010-11-18
  */
 // ============================================================================
-LoKi::Dump::Dump
-( const std::string& open  ,
-  const std::string& close )
-  : m_open  ( open )
-  , m_close ( close )
-  , m_nmax  ( boost::integer_traits<std::size_t>::const_max )
-{
-  static_assert( boost::integer_traits<std::size_t>::is_specialized &&
-                 boost::integer_traits<std::size_t>::is_integral    &&
-                 boost::integer_traits<std::size_t>::const_min == 0 &&
-                 boost::integer_traits<std::size_t>::const_max  > 0 ,
-                 "size_t must be pos def integral type" ) ;
+LoKi::Dump::Dump( const std::string& open, const std::string& close )
+    : m_open( open ), m_close( close ), m_nmax( boost::integer_traits<std::size_t>::const_max ) {
+  static_assert(
+      boost::integer_traits<std::size_t>::is_specialized && boost::integer_traits<std::size_t>::is_integral &&
+          boost::integer_traits<std::size_t>::const_min == 0 && boost::integer_traits<std::size_t>::const_max > 0,
+      "size_t must be pos def integral type" );
 }
 // =============================================================================
-LoKi::Dump::Dump
-( const std::size_t  nmax  ,
-  const std::string& open  ,
-  const std::string& close )
-  : m_open  ( open  )
-  , m_close ( close )
-  , m_nmax  ( nmax  )
-{
-  static_assert( boost::integer_traits<std::size_t> :: is_specialized &&
-                 boost::integer_traits<std::size_t> :: is_integral    &&
-                 boost::integer_traits<std::size_t> :: const_min == 0 &&
-                 boost::integer_traits<std::size_t> :: const_max  > 0 ,
-                 "size_t must be pos def integral type" ) ;
-}// =============================================================================
-LoKi::Dump::Dump
-( const std::string& open  ,
-  const std::string& close ,
-  const std::size_t  nmax  )
-  : m_open  ( open  )
-  , m_close ( close )
-  , m_nmax  ( nmax  )
-{
-  static_assert( boost::integer_traits<std::size_t> :: is_specialized &&
-                 boost::integer_traits<std::size_t> :: is_integral    &&
-                 boost::integer_traits<std::size_t> :: const_min == 0 &&
-                 boost::integer_traits<std::size_t> :: const_max  > 0 ,
-                 "size_t must be pos def integral type" ) ;
+LoKi::Dump::Dump( const std::size_t nmax, const std::string& open, const std::string& close )
+    : m_open( open ), m_close( close ), m_nmax( nmax ) {
+  static_assert(
+      boost::integer_traits<std::size_t>::is_specialized && boost::integer_traits<std::size_t>::is_integral &&
+          boost::integer_traits<std::size_t>::const_min == 0 && boost::integer_traits<std::size_t>::const_max > 0,
+      "size_t must be pos def integral type" );
+} // =============================================================================
+LoKi::Dump::Dump( const std::string& open, const std::string& close, const std::size_t nmax )
+    : m_open( open ), m_close( close ), m_nmax( nmax ) {
+  static_assert(
+      boost::integer_traits<std::size_t>::is_specialized && boost::integer_traits<std::size_t>::is_integral &&
+          boost::integer_traits<std::size_t>::const_min == 0 && boost::integer_traits<std::size_t>::const_max > 0,
+      "size_t must be pos def integral type" );
 }
 // =============================================================================
-LoKi::Dump::Dump
-( const std::string& open  ,
-  const std::size_t  nmax  ,
-  const std::string& close )
-  : m_open  ( open  )
-  , m_close ( close )
-  , m_nmax  ( nmax  )
-{
-  static_assert( boost::integer_traits<std::size_t> :: is_specialized &&
-                 boost::integer_traits<std::size_t> :: is_integral    &&
-                 boost::integer_traits<std::size_t> :: const_min == 0 &&
-                 boost::integer_traits<std::size_t> :: const_max  > 0 ,
-                 "size_t must be pos def integral type" ) ;
+LoKi::Dump::Dump( const std::string& open, const std::size_t nmax, const std::string& close )
+    : m_open( open ), m_close( close ), m_nmax( nmax ) {
+  static_assert(
+      boost::integer_traits<std::size_t>::is_specialized && boost::integer_traits<std::size_t>::is_integral &&
+          boost::integer_traits<std::size_t>::const_min == 0 && boost::integer_traits<std::size_t>::const_max > 0,
+      "size_t must be pos def integral type" );
 }
 // ============================================================================
-std::string Gaudi::Utils::toCpp ( const LoKi::Dump& dump )
-{
-  return "LoKi::Dump(" +
-         Gaudi::Utils::toCpp ( dump.open  () ) + ", " +
-         Gaudi::Utils::toCpp ( dump.close () ) + ", " +
-         Gaudi::Utils::toCpp ( dump.nMax  () ) + ") " ;
+std::string Gaudi::Utils::toCpp( const LoKi::Dump& dump ) {
+  return "LoKi::Dump(" + Gaudi::Utils::toCpp( dump.open() ) + ", " + Gaudi::Utils::toCpp( dump.close() ) + ", " +
+         Gaudi::Utils::toCpp( dump.nMax() ) + ") ";
 }
 // ============================================================================
 // The END

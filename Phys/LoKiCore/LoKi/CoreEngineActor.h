@@ -19,9 +19,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Interface.h"
-#include "LoKi/ICoreAntiFactory.h"
 #include "LoKi/Context.h"
+#include "LoKi/ICoreAntiFactory.h"
+#include "LoKi/Interface.h"
 // ============================================================================
 /** @file LoKi/CoreEngineActor.h
  *
@@ -35,11 +35,9 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class CoreEngineActor LoKi/CoreEngine.h
      *
@@ -56,95 +54,78 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-18
      */
-    class CoreEngineActor
-    {
+    class CoreEngineActor {
     public:
       // ======================================================================
       // get the static instance
-      static CoreEngineActor& instance() ;
+      static CoreEngineActor& instance();
       /// connect the hybrid tool for code translation
-      StatusCode    connect ( const LoKi::Hybrid::ICoreAntiFactory* factory , 
-                              const LoKi::Context&                  context ) ;
+      StatusCode connect( const LoKi::Hybrid::ICoreAntiFactory* factory, const LoKi::Context& context );
       /// disconnect the tool
-      StatusCode disconnect ( const LoKi::Hybrid::ICoreAntiFactory* factory ) ;
+      StatusCode disconnect( const LoKi::Hybrid::ICoreAntiFactory* factory );
       /** get the current context
        *  contex is valid only inbetween <code>connect/disconnect</code>
-       *  @return the current active context 
+       *  @return the current active context
        */
-      const LoKi::Context* context () const ;
+      const LoKi::Context* context() const;
       // ======================================================================
     public: // "void -> ... "
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::FCuts& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::FCuts& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::FFunc& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::FFunc& cut ) const;
       // ======================================================================
     public: // "double -> ... "
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::XCuts& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XCuts& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&        name ,
-        const LoKi::Types::XFunc& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XFunc& cut ) const;
       // ======================================================================
     public: // some functional stuff
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&           name ,
-        const LoKi::Types::XMaps&    cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XMaps& cut ) const;
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&           name ,
-        const LoKi::Types::XFunVals& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XFunVals& cut ) const;
       // ======================================================================
       /// propagate the cut to the tool
-      StatusCode process
-      ( const std::string&           name ,
-        const LoKi::Types::XSources& cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::XSources& cut ) const;
       // ======================================================================
     protected:
       // ======================================================================
       /// Standard constructor
-      CoreEngineActor() ;
+      CoreEngineActor();
       /// virtual & protected destrucutor
-      virtual ~CoreEngineActor( ); // virtual & protected destrucutor
+      virtual ~CoreEngineActor(); // virtual & protected destrucutor
       // ======================================================================
     private:
       // ======================================================================
       // just to save some lines
       template <class TYPE>
-      inline StatusCode _add
-      ( const std::string& name , const TYPE& cut ) const ;
+      inline StatusCode _add( const std::string& name, const TYPE& cut ) const;
       // ======================================================================
     private:
       // ======================================================================
       // the copy contructor is disabled
-      CoreEngineActor           ( const CoreEngineActor& ) ;
+      CoreEngineActor( const CoreEngineActor& );
       // the assignement operator is disabled
-      CoreEngineActor& operator=( const CoreEngineActor& ) ;
+      CoreEngineActor& operator=( const CoreEngineActor& );
       // ======================================================================
     private:
       // ======================================================================
-      typedef LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory> Tool  ;
-      typedef std::pair<Tool,LoKi::Context>                   Entry ;
-      typedef std::stack<Entry>                               Stack ;
-      ///  the stack of active factories 
-      Stack m_stack {} ; // the stack of active factories 
+      typedef LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory> Tool;
+      typedef std::pair<Tool, LoKi::Context>                  Entry;
+      typedef std::stack<Entry>                               Stack;
+      ///  the stack of active factories
+      Stack m_stack{}; // the stack of active factories
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                        The end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
-} //                                                  The end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

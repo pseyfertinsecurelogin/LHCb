@@ -14,7 +14,6 @@
 /// Include files
 #include "DetDescCnv/XmlBaseDetElemCnv.h"
 
-
 /** @class XmlDetectorElementCnv
  *
  * XML converter for DetectorElements.
@@ -30,7 +29,7 @@ public:
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlDetectorElementCnv(ISvcLocator* svcs);
+  XmlDetectorElementCnv( ISvcLocator* svcs );
 
 protected:
   /** This fills the current object for specific child.
@@ -40,10 +39,8 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                DetectorElement* refpObject,
-                                IOpaqueAddress* address) override;
-
+  StatusCode i_fillSpecificObj( xercesc::DOMElement* childElement, DetectorElement* refpObject,
+                                IOpaqueAddress* address ) override;
 };
 
 #endif // DETDESCCNV_XMLDECNV_H

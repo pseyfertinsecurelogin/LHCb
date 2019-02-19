@@ -25,35 +25,29 @@
 
 DECLARE_COMPONENT( EvtCounter )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-EvtCounter::EvtCounter( const std::string& type,
-                        const std::string& name,
-                        const IInterface* parent )
-: base_class ( type, name , parent )
-{
-  declareProperty("InitialCount", m_initialCount = 1,
-                  "Value to be used for the first event.");
-  declareProperty("UseIncident", m_useIncident = true,
-                  "Whether to increment the counter at every BeginEvent incident.");
+EvtCounter::EvtCounter( const std::string& type, const std::string& name, const IInterface* parent )
+    : base_class( type, name, parent ) {
+  declareProperty( "InitialCount", m_initialCount = 1, "Value to be used for the first event." );
+  declareProperty( "UseIncident", m_useIncident = true,
+                   "Whether to increment the counter at every BeginEvent incident." );
 }
 
 //=============================================================================
 // Initialize method, retrieve necessary services
 //=============================================================================
-StatusCode EvtCounter::initialize() 
-{
+StatusCode EvtCounter::initialize() {
 
   // Mandatory initialization of GaudiTool
   StatusCode sc = GaudiTool::initialize();
-  if( sc.isFailure() ) { return sc; }
+  if ( sc.isFailure() ) { return sc; }
 
   m_eventCounter = m_initialCount;
-  if (m_useIncident) {
+  if ( m_useIncident ) {
     // Register to the Incident service to be notified at the begin of one event
-    incSvc()->addListener(this,"BeginEvent",101);
+    incSvc()->addListener( this, "BeginEvent", 101 );
     // take into account that the increment will be called once before the first event
     --m_eventCounter;
   }

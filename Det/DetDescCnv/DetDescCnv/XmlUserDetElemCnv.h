@@ -20,12 +20,12 @@
 // we put it here
 #include "XmlTools/IXmlSvc.h"
 
-#if defined(__clang__) || defined(__cling__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winconsistent-missing-override"
-#elif defined(__GNUC__) && __GNUC__ >= 5
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsuggest-override"
+#if defined( __clang__ ) || defined( __cling__ )
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Winconsistent-missing-override"
+#elif defined( __GNUC__ ) && __GNUC__ >= 5
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wsuggest-override"
 #endif
 
 /** @class XmlUserDetElemCnv XmlUserDetElemCnv.h DetDescCnv/XmlUserDetElemCnv.h
@@ -39,14 +39,14 @@
  *
  * @author Sebastien Ponce
  */
-template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
- public:
-
+template <class DeType>
+class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
+public:
   /**
    * Constructor for this converter
    * @param svc a ISvcLocator interface to find services
    */
-  XmlUserDetElemCnv (ISvcLocator* svc);
+  XmlUserDetElemCnv( ISvcLocator* svc );
 
   /**
    * accessor to the type of elements that this converter converts
@@ -54,17 +54,14 @@ template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
    */
   static const CLID& classID() { return DeType::classID(); }
 
-
- protected:
-
+protected:
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
    * @param element the DOMElement to be used to builds the object
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  StatusCode i_createObj (xercesc::DOMElement* element,
-                          DataObject*& refpObject) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   /** This fills the current object for specific child.
    * This is a very general method reimplemented from XmlBaseDetElemCnv.
@@ -75,9 +72,8 @@ template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                DetectorElement* refpObject,
-                                IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj( xercesc::DOMElement* childElement, DetectorElement* refpObject,
+                                IOpaqueAddress* address );
 
   /** This fills the current object for specific child.
    * This should never be called directly but always through the other
@@ -88,9 +84,7 @@ template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                DeType* dataObj,
-                                IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj( xercesc::DOMElement* childElement, DeType* dataObj, IOpaqueAddress* address );
 
   /** This fills the current object for specific child.
    * \deprecated This is a deprecated function that was kept for backward
@@ -100,28 +94,22 @@ template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
    * @param dataObj the object to be filled
    * @return status depending on the completion of the call}
    */
-  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                DeType* dataObj);
+  StatusCode i_fillSpecificObj( xercesc::DOMElement* childElement, DeType* dataObj );
 };
-
 
 // -----------------------------------------------------------------------
 // Constructor
 // ------------------------------------------------------------------------
 template <class DeType>
-XmlUserDetElemCnv<DeType>::XmlUserDetElemCnv (ISvcLocator* svc)
-  : XmlBaseDetElemCnv (svc, DeType::classID()) {
-} // end constructor
-
+XmlUserDetElemCnv<DeType>::XmlUserDetElemCnv( ISvcLocator* svc )
+    : XmlBaseDetElemCnv( svc, DeType::classID() ) {} // end constructor
 
 // -----------------------------------------------------------------------
 // Create an object corresponding to a DOM element
 // -----------------------------------------------------------------------
 template <class DeType>
-StatusCode
-XmlUserDetElemCnv<DeType>::i_createObj(xercesc::DOMElement* /* element */,
-                                       DataObject*& refpObject) {
-  if( msgLevel(MSG::DEBUG) ) debug() << "entering i_createObj" << endmsg;
+StatusCode XmlUserDetElemCnv<DeType>::i_createObj( xercesc::DOMElement* /* element */, DataObject*& refpObject ) {
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "entering i_createObj" << endmsg;
 
   // creates an object for the node found
   refpObject = new DeType();
@@ -130,45 +118,37 @@ XmlUserDetElemCnv<DeType>::i_createObj(xercesc::DOMElement* /* element */,
   return StatusCode::SUCCESS;
 } // end i_createObj
 
-
 // -----------------------------------------------------------------------
 // Fill an object with a new specific child element
 // ------------------------------------------------------------------------
 template <class DeType>
-StatusCode
-XmlUserDetElemCnv<DeType>::i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                              DetectorElement* refpObject,
-                                              IOpaqueAddress* address) {
-  DeType* dataObj = dynamic_cast<DeType*> (refpObject);
-  return i_fillSpecificObj (childElement, dataObj, address);
+StatusCode XmlUserDetElemCnv<DeType>::i_fillSpecificObj( xercesc::DOMElement* childElement, DetectorElement* refpObject,
+                                                         IOpaqueAddress* address ) {
+  DeType* dataObj = dynamic_cast<DeType*>( refpObject );
+  return i_fillSpecificObj( childElement, dataObj, address );
 }
 
 // -----------------------------------------------------------------------
 // Fill an object with a new specific child element
 // ------------------------------------------------------------------------
 template <class DeType>
-StatusCode
-XmlUserDetElemCnv<DeType>::i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                              DeType* dataObj,
-                                              IOpaqueAddress* /*address*/) {
-  return i_fillSpecificObj (childElement, dataObj);
+StatusCode XmlUserDetElemCnv<DeType>::i_fillSpecificObj( xercesc::DOMElement* childElement, DeType* dataObj,
+                                                         IOpaqueAddress* /*address*/ ) {
+  return i_fillSpecificObj( childElement, dataObj );
 }
 
 // -----------------------------------------------------------------------
 // Fill an object with a new specific child element
 // ------------------------------------------------------------------------
 template <class DeType>
-StatusCode
-XmlUserDetElemCnv<DeType>::i_fillSpecificObj
-(xercesc::DOMElement* /*childElement*/,
- DeType* /*dataObj*/) {
+StatusCode XmlUserDetElemCnv<DeType>::i_fillSpecificObj( xercesc::DOMElement* /*childElement*/, DeType* /*dataObj*/ ) {
   return StatusCode::SUCCESS;
 }
 
-#if defined(__clang__) || defined(__cling__)
-#pragma clang diagnostic pop
-#elif defined(__GNUC__) && __GNUC__ >= 5
-#pragma GCC diagnostic pop
+#if defined( __clang__ ) || defined( __cling__ )
+#  pragma clang diagnostic pop
+#elif defined( __GNUC__ ) && __GNUC__ >= 5
+#  pragma GCC diagnostic pop
 #endif
 
 #endif // DETDESCCNV_XMLUSERDETELEMCNV_H

@@ -20,11 +20,10 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Random.h"
 #include "LoKi/Listener.h"
+#include "LoKi/Random.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Scalers LoKi/Scalers.h
    *  Helper namespace with varios "scalers"
@@ -32,8 +31,7 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
    *  @date   2009-12-04
    */
-  namespace Scalers
-  {
+  namespace Scalers {
     // ========================================================================
     // void -> bool
     // ========================================================================
@@ -42,37 +40,35 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    class RandomScaleV : public LoKi::Functor<void,bool>
-    {
+    class RandomScaleV : public LoKi::Functor<void, bool> {
     public:
       // ======================================================================
       /** constructor from probability and random service
        *  @param prop accep probability
        *  @param service the random number servce
        */
-      explicit RandomScaleV ( const double prob              ,
-                              IRndmGenSvc* service = nullptr ) ;
+      explicit RandomScaleV( const double prob, IRndmGenSvc* service = nullptr );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      RandomScaleV*  clone() const override;
+      RandomScaleV* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () (  ) const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool eval ( /* argument v = 0 */ ) const override;         //      get the result
+      bool eval( /* argument v = 0 */ ) const override; //      get the result
       /// get the probability
-      double prob() const { return m_prob ; }            // get the probability
+      double prob() const { return m_prob; } // get the probability
       // ======================================================================
     private:
       // ======================================================================
       /// random numbers source
-      LoKi::Random::Uniform m_uniform ;               //         random numbers
+      LoKi::Random::Uniform m_uniform; //         random numbers
       /// the accept ptobability
-      double                m_prob    ;               // the accept probability
+      double m_prob; // the accept probability
       // ======================================================================
     };
     // ========================================================================
@@ -81,36 +77,35 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    class SkipperV : public LoKi::Functor<void,bool>
-    {
+    class SkipperV : public LoKi::Functor<void, bool> {
     public:
       // ======================================================================
       /** constructor from skip rate
        *  @param skip the skip rate
        */
-      explicit SkipperV ( const size_t skip ) ;
+      explicit SkipperV( const size_t skip );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       SkipperV* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () (  ) const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool eval ( /* argument v */ ) const override;          // get the result
+      bool eval( /* argument v */ ) const override; // get the result
       /// get skip rate
-      size_t skip() const { return m_skip ; }
+      size_t skip() const { return m_skip; }
       // ======================================================================
     private:
       // ======================================================================
       /// skip
-      size_t          m_skip ;                                         // skip
-      mutable size_t  m_curr = 0;                                    // current
+      size_t         m_skip;     // skip
+      mutable size_t m_curr = 0; // current
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @enum RateLimitType
      *  helper enum to define the actual type of rate limiter
@@ -118,17 +113,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-04-04
      */
-    enum RateLimitType
-      {
-        // ====================================================================
-        /// periodic limiter with random intial phase
-        RandomPhasePeriodicLimiter = 0 ,  // periodic limiter with random phase
-        /// pure random limiter
-        RandomLimiter              = 1 ,  // pure random limiter
-        /// plain periodic limiter
-        PlainPeriodicLimiter       = 2    // plain periodic limiter
-        // ====================================================================
-      } ;
+    enum RateLimitType {
+      // ====================================================================
+      /// periodic limiter with random intial phase
+      RandomPhasePeriodicLimiter = 0, // periodic limiter with random phase
+                                      /// pure random limiter
+      RandomLimiter = 1,              // pure random limiter
+                                      /// plain periodic limiter
+      PlainPeriodicLimiter = 2        // plain periodic limiter
+                                      // ====================================================================
+    };
     // ========================================================================
     /** @class RateLimitV
      *  simple scaler that scales the predicate according to event rate
@@ -137,72 +131,61 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    class RateLimitV
-      : public LoKi::Functor<void,bool>
-      , public LoKi::Listener
-    {
+    class RateLimitV : public LoKi::Functor<void, bool>, public LoKi::Listener {
     public:
       // ======================================================================
       /** constructor from rate and the limiter type
        *  @param maxRate the maximal rate
        *  @param flag    the limiter type
        */
-      explicit RateLimitV
-      ( const double maxRate                      ,
-        const RateLimitType  flag = RandomLimiter ) ;
+      explicit RateLimitV( const double maxRate, const RateLimitType flag = RandomLimiter );
       // ======================================================================
       /** constructor from the service , rate and "random" flag
        *  @param svc     the rate service
        *  @param maxRate the maximal rate
        *  @param random the random flag
        */
-      RateLimitV
-      ( const IReferenceRate* service              ,
-        const double          maxRate              ,
-        const RateLimitType   flag = RandomLimiter ) ;
+      RateLimitV( const IReferenceRate* service, const double maxRate, const RateLimitType flag = RandomLimiter );
       // ======================================================================
       /** constructor from the service name , rate and "random" flag
        *  @param svc     the rate service name
        *  @param maxRate the maximal rate
        *  @param random the random flag
        */
-      RateLimitV
-      ( const std::string&    service                 ,
-        const double          maxRate                 ,
-        const RateLimitType   flag    = RandomLimiter ) ;
+      RateLimitV( const std::string& service, const double maxRate, const RateLimitType flag = RandomLimiter );
       // ======================================================================
       /** copy construcor
        *  take care about randomization of initial phase
        */
-      RateLimitV ( const RateLimitV& right ) ;
+      RateLimitV( const RateLimitV& right );
       // ======================================================================
       /// MANDATORY: virtual destructor
-      ~RateLimitV () override;
+      ~RateLimitV() override;
       /// MANDATORY: clone method ("virtual constructor")
-      RateLimitV*  clone() const override;
+      RateLimitV* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () (  ) const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool eval ( /* argument v = 0 */ ) const override;      // get the result
+      bool eval( /* argument v = 0 */ ) const override; // get the result
       /// get the rate
-      double rate() const { return m_rate ; }                   // get the rate
+      double rate() const { return m_rate; } // get the rate
       /// get the actual limiter type
-      RateLimitType limitType () const { return m_limitType; } // get the type
+      RateLimitType limitType() const { return m_limitType; } // get the type
       // ======================================================================
     protected:
       // ======================================================================
       /// get the service
-      StatusCode getService ( const std::string& service ) const ;
+      StatusCode getService( const std::string& service ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// perform the initialization
-      void initialize_ ( const std::string& svc ) ;
+      void initialize_( const std::string& svc );
       // ======================================================================
     public:
       // ======================================================================
@@ -211,27 +194,27 @@ namespace LoKi
        *  @see IIncidentListener
        *  @param incident (INPUT) incident to listen
        */
-      void handle ( const Incident& incident ) override;
+      void handle( const Incident& incident ) override;
       // ======================================================================
     private:
       // ======================================================================
       /// rate service
-      mutable LoKi::Interface<IReferenceRate> m_rateSvc   ; //     rate service
+      mutable LoKi::Interface<IReferenceRate> m_rateSvc; //     rate service
       /// random numbers source
-      LoKi::Random::Uniform                   m_uniform   ; //   random numbers
+      LoKi::Random::Uniform m_uniform; //   random numbers
       /// The rate limit
-      double                                  m_rate      ; //   the rate limit
+      double m_rate; //   the rate limit
       /// the actual type
-      LoKi::Scalers::RateLimitType            m_limitType ; //     limiter type
+      LoKi::Scalers::RateLimitType m_limitType; //     limiter type
       // ======================================================================
     private:
       // ======================================================================
       /// Tick interval
-      mutable long double m_interval ;                     //     tick interval
+      mutable long double m_interval; //     tick interval
       /// the next tick
-      mutable long double m_next     ;                     //     the next tick
+      mutable long double m_next; //     the next tick
       /// the previous tick
-      mutable long double m_previous ;                     // the previous tick
+      mutable long double m_previous; // the previous tick
       // ======================================================================
     };
     // ========================================================================
@@ -242,33 +225,31 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    class RandomScale : public LoKi::Functor<double,bool>
-    {
+    class RandomScale : public LoKi::Functor<double, bool> {
     public:
       // ======================================================================
       /** constructor from probability and random service
        *  @param prop accep probability
        *  @param service the random number servce
        */
-      explicit RandomScale ( const double prob              ,
-                             IRndmGenSvc* service = nullptr ) ;
+      explicit RandomScale( const double prob, IRndmGenSvc* service = nullptr );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      RandomScale*  clone() const override;
+      RandomScale* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () ( double v  ) const override ;
+      bool operator()( double v ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool eval ( double v = 0 ) const override;          // get the result ;
+      bool eval( double v = 0 ) const override; // get the result ;
       // ======================================================================
     private:
       // ======================================================================
       /// Random scale
-      LoKi::Scalers::RandomScaleV m_scaler ;                     // the scaler
+      LoKi::Scalers::RandomScaleV m_scaler; // the scaler
       // ======================================================================
     };
     // ========================================================================
@@ -277,33 +258,32 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    class Skipper : public LoKi::Functor<double,bool>
-    {
+    class Skipper : public LoKi::Functor<double, bool> {
     public:
       // ======================================================================
       /** constructor from skip rate
        *  @param skip the skip rate
        */
-      explicit Skipper ( const size_t skip ) ;
+      explicit Skipper( const size_t skip );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       Skipper* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () ( argument v ) const override;
+      bool operator()( argument v ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool eval ( argument v = 0 ) const override;          // get the result ;
+      bool eval( argument v = 0 ) const override; // get the result ;
       // ======================================================================
     private:
       // ======================================================================
       /// the skipper
-      LoKi::Scalers::SkipperV m_skipper ;                        // the skipper
+      LoKi::Scalers::SkipperV m_skipper; // the skipper
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class RateLimit
      *  simple scaler that scales the predicate according to event rate
@@ -313,72 +293,64 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    class RateLimit : public LoKi::Functor<double,bool>
-    {
+    class RateLimit : public LoKi::Functor<double, bool> {
     public:
       // ======================================================================
       /** constructor from rate and "random" flag
        *  @param maxRate the maximal rate
        *  @param random the random flag
        */
-      explicit RateLimit ( const double        maxRate                 ,
-                           const RateLimitType flag    = RandomLimiter ) ;
+      explicit RateLimit( const double maxRate, const RateLimitType flag = RandomLimiter );
       // ======================================================================
       /** constructor from the service , rate and "random" flag
        *  @param svc     the rate service
        *  @param maxRate the maximal rate
        *  @param random the random flag
        */
-      RateLimit ( const IReferenceRate* service                 ,
-                  const double          maxRate                 ,
-                  const RateLimitType   flag    = RandomLimiter ) ;
+      RateLimit( const IReferenceRate* service, const double maxRate, const RateLimitType flag = RandomLimiter );
       /** constructor from the service name , rate and "random" flag
        *  @param svc     the rate service name
        *  @param maxRate the maximal rate
        *  @param random the random flag
        */
-      RateLimit ( const std::string&    service                 ,
-                  const double          maxRate                 ,
-                  const RateLimitType   flag    = RandomLimiter ) ;
+      RateLimit( const std::string& service, const double maxRate, const RateLimitType flag = RandomLimiter );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      RateLimit*  clone() const override;
+      RateLimit* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () ( argument v ) const override;
+      bool operator()( argument v ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool          eval ( argument v = 0 ) const override; // get the result ;
+      bool eval( argument v = 0 ) const override; // get the result ;
       // ======================================================================
       /// get the rate
-      double        rate      () const { return m_rateLimit.rate()      ; }
+      double rate() const { return m_rateLimit.rate(); }
       /// get the actual limiter type
-      RateLimitType limitType () const { return m_rateLimit.limitType() ; }
+      RateLimitType limitType() const { return m_rateLimit.limitType(); }
       // ======================================================================
-    public :
+    public:
       // ======================================================================
       /// get the underlying basic  rate limiter
-      LoKi::Scalers::RateLimitV& rateLimiter () { return m_rateLimit ;}
+      LoKi::Scalers::RateLimitV& rateLimiter() { return m_rateLimit; }
       // ======================================================================
     private:
       // ======================================================================
       /// rate limit
-      LoKi::Scalers::RateLimitV m_rateLimit ;                     // rate limit
+      LoKi::Scalers::RateLimitV m_rateLimit; // rate limit
       // ======================================================================
     };
     // ========================================================================
-  } //                                           end of namespace LoKi::Scalers
+  } // namespace Scalers
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef RATE
      *  Trivial predicate to determine the accept rate limit
@@ -402,7 +374,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RateLimitV                                    RATE ;
+    typedef LoKi::Scalers::RateLimitV RATE;
     // ========================================================================
     /** @typedef XRATE
      *  Trivial predicate to determine the accept rate limit
@@ -426,7 +398,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RateLimit                                    XRATE ;
+    typedef LoKi::Scalers::RateLimit XRATE;
     // ========================================================================
     /** @typedef SCALE
      *  Trivial predicate to prescale with given accept probability
@@ -446,7 +418,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RandomScaleV                                 SCALE ;
+    typedef LoKi::Scalers::RandomScaleV SCALE;
     // ========================================================================
     /** @typedef XSCALE
      *  Trivial predicate to prescale with given accept probability
@@ -466,7 +438,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::RandomScale                                 XSCALE ;
+    typedef LoKi::Scalers::RandomScale XSCALE;
     // ========================================================================
     /** @typedef SKIP
      *  Trivial predicate to accept only Nth event
@@ -486,7 +458,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::SkipperV                                      SKIP ;
+    typedef LoKi::Scalers::SkipperV SKIP;
     // ========================================================================
     /** @typedef XSKIP
      *  Trivial predicate to accept only Nth event
@@ -506,9 +478,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-04
      */
-    typedef LoKi::Scalers::Skipper                                      XSKIP ;
+    typedef LoKi::Scalers::Skipper XSKIP;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

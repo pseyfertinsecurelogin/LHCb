@@ -14,10 +14,10 @@
 
 // Include files
 // from Gaudi
-#include "GaudiAlg/Transformer.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/Track.h"
 #include "Event/PackedTrack.h"
+#include "Event/Track.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/Transformer.h"
 
 /** @class UnpackTrackFunctional UnpackTrackFunctional.h
  *
@@ -26,12 +26,9 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class UnpackTrackFunctional final :
-  public Gaudi::Functional::Transformer< LHCb::Tracks(const LHCb::PackedTracks&) >
-{
+class UnpackTrackFunctional final : public Gaudi::Functional::Transformer<LHCb::Tracks( const LHCb::PackedTracks& )> {
 
 public:
-
   /// Standard constructor
   UnpackTrackFunctional( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -39,7 +36,7 @@ public:
   LHCb::Tracks operator()( const LHCb::PackedTracks& pTracks ) const override;
 
 private:
-  mutable Gaudi::Accumulators::AveragingCounter<unsigned long> m_unpackedTracks{ this, "# Unpacked Tracks" };
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned long> m_unpackedTracks{this, "# Unpacked Tracks"};
 };
 
 #endif // UnpackTrackFunctional

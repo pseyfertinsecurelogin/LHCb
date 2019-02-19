@@ -8,47 +8,31 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef    DETDESC_PVOLUMEEXCEPTION_H
-#define    DETDESC_PVOLUMEEXCEPTION_H 1
+#ifndef DETDESC_PVOLUMEEXCEPTION_H
+#define DETDESC_PVOLUMEEXCEPTION_H 1
 ///
 #include "GaudiKernel/GaudiException.h"
 ///
 class PVolume;
 
 ///
-class PVolumeException : public GaudiException
-{
+class PVolumeException : public GaudiException {
   ///
 public:
   ///
-  PVolumeException( const std::string& name          ,
-                    const PVolume*     pvolume =  nullptr  ) ;
+  PVolumeException( const std::string& name, const PVolume* pvolume = nullptr );
   ///
-  PVolumeException( const std::string&     name          ,
-                    const GaudiException&  Exception     ,
-                    const PVolume*         pvolume =  nullptr  );
+  PVolumeException( const std::string& name, const GaudiException& Exception, const PVolume* pvolume = nullptr );
   ///
-  std::ostream&   printOut ( std::ostream& os = std::cerr ) const  override;
-  MsgStream&      printOut ( MsgStream&    os             ) const  override;
-  GaudiException* clone    ()                               const  override;
+  std::ostream&   printOut( std::ostream& os = std::cerr ) const override;
+  MsgStream&      printOut( MsgStream& os ) const override;
+  GaudiException* clone() const override;
   ///
 private:
   ///
-  const PVolume*    m_pve_pvolume    ;   // "author" of exceptiom
+  const PVolume* m_pve_pvolume; // "author" of exceptiom
   ///
 };
 ///
 
-
-#endif  // DETDESC_PVOLUMEEXCEPTION_H
-
-
-
-
-
-
-
-
-
-
-
+#endif // DETDESC_PVOLUMEEXCEPTION_H

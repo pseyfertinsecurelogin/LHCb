@@ -26,8 +26,7 @@ from Configurables import LoKiSvc
 
 parser = argparse.ArgumentParser(usage='usage: %(prog)s')
 
-parser.add_argument("--tck", type=str, dest="tck", default="",
-                    help="What TCK")
+parser.add_argument("--tck", type=str, dest="tck", default="", help="What TCK")
 
 args = parser.parse_args()
 
@@ -51,8 +50,10 @@ if not args.tck and m:
 elif not args.tck:
     # Use inspect's stack to get the file of the current frame: us
     script_dir = os.path.expandvars('$HLTDAQROOT/tests/options')
-    cmd = ['python', os.path.join(
-        script_dir, 'get_tck.py'), '--odin', files[0]]
+    cmd = [
+        'python',
+        os.path.join(script_dir, 'get_tck.py'), '--odin', files[0]
+    ]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     o, e = p.communicate()
 
@@ -121,6 +122,7 @@ def open_files():
     of = os.listdir(proc_path)
     return sorted([os.path.realpath(os.path.join(proc_path, f)) for f in of])
 
+
 from GaudiPython.Bindings import AppMgr, gbl, InterfaceCast
 gaudi = AppMgr()
 gaudi.initialize()
@@ -147,8 +149,10 @@ if cdb_file not in open_files():
 incSvc.fireIncident(gbl.Incident("GP", close_incident))
 
 if cdb_file in open_files():
-    failed(['CDB file not closed after '
-            'firing close incident {}'.format(close_incident)])
+    failed([
+        'CDB file not closed after '
+        'firing close incident {}'.format(close_incident)
+    ])
 
 while True:
     gaudi.run(1)

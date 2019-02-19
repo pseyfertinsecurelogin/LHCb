@@ -26,7 +26,7 @@
 /** @class IOTRawBankEncoder IOTRawBankEncoder.h OTDAQ/IOTRawBankEncoder.h
  *
  *  Interface for tools that encode the channel ids and
- *  put them in the raw bank. 
+ *  put them in the raw bank.
  *
  *  @author Jan Mennis Amoraal
  *
@@ -38,7 +38,6 @@ struct IOTRawBankEncoder : extend_interfaces<IAlgTool> {
   DeclareInterfaceID( IOTRawBankEncoder, 2, 0 );
 
   virtual StatusCode encodeChannels( const std::vector<LHCb::OTChannelID>& channels ) const = 0;
-  
 };
 
 #endif // OTDAQ_IOTRAWBANKENCODER_H

@@ -17,7 +17,7 @@
  *  CVS Log :-
  *  $Id: STAlgBase.h,v 1.1 2008-10-14 08:47:05 mneedham Exp $
  *
- *  @author Matthew Needham   
+ *  @author Matthew Needham
  *  @date   11/10/2008
  */
 //-----------------------------------------------------------------------------
@@ -31,8 +31,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STAlgBase.h STKernel/STAlgBase.h
@@ -45,19 +44,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class AlgBase : public ST::CommonBase<GaudiAlgorithm>
-  {
+  class AlgBase : public ST::CommonBase<GaudiAlgorithm> {
 
   public:
-
     /// Standard constructor
-    AlgBase( const std::string& name,
-             ISvcLocator* pSvcLocator )
-      : ST::CommonBase<GaudiAlgorithm> ( name, pSvcLocator ) { }
-
+    AlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : ST::CommonBase<GaudiAlgorithm>( name, pSvcLocator ) {}
   };
 
-}
-
+} // namespace ST
 
 #endif // STKERNEL_STALGBASE_H

@@ -13,14 +13,14 @@
 
 #include <string>
 
-/** 
-* Switch the type around (IT - OT and vice versa)
-* @param type to switch to
-* @param string to switch
-*/
-namespace STDetSwitch{
+/**
+ * Switch the type around (IT - OT and vice versa)
+ * @param type to switch to
+ * @param string to switch
+ */
+namespace STDetSwitch {
 
-void flip(std::string aType, std::string& aString);
+  void flip( std::string aType, std::string& aString );
 
 }
 #endif

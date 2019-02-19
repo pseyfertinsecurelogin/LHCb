@@ -13,8 +13,9 @@ def configure_hlt_svc(name=None):
     import GaudiPython
 
     LHCb = GaudiPython.gbl.LHCb
-    ALL_RAWBANKS = [LHCb.RawBank.typeName(i)
-                    for i in range(LHCb.RawBank.LastType)]
+    ALL_RAWBANKS = [
+        LHCb.RawBank.typeName(i) for i in range(LHCb.RawBank.LastType)
+    ]
 
     svc = HltLinePersistenceSvc(name) if name else HltLinePersistenceSvc()
     svc.Locations = {
@@ -45,15 +46,18 @@ def configure_hlt_svc(name=None):
     svc.TurboPPLines = ['Hlt2ThirdLineDecision']
     svc.RawBankTypes = {
         # Lumi-like line
-        'Hlt2FirstLineDecision': ['ODIN', 'HltLumiSummary', 'HltRoutingBits', 'DAQ'],
+        'Hlt2FirstLineDecision':
+        ['ODIN', 'HltLumiSummary', 'HltRoutingBits', 'DAQ'],
         # Turbo-like line
         'Hlt2SecondLineDecision': [
             'ODIN', 'HltLumiSummary', 'DAQ', 'DstData', 'HltRoutingBits',
-            'HltDecReports', 'HltSelReports', 'HltVertexReports', 'HltTrackReports',
-            'L0DU', 'L0Calo', 'L0PU', 'L0PUFull', 'L0Muon', 'L0CaloFull',
-            'L0MuonCtrlAll', 'L0MuonProcCand', 'L0MuonProcData'],
+            'HltDecReports', 'HltSelReports', 'HltVertexReports',
+            'HltTrackReports', 'L0DU', 'L0Calo', 'L0PU', 'L0PUFull', 'L0Muon',
+            'L0CaloFull', 'L0MuonCtrlAll', 'L0MuonProcCand', 'L0MuonProcData'
+        ],
         # Full-like line
-        'Hlt2ThirdLineDecision': list(set(ALL_RAWBANKS) - set(['DstData'])),
+        'Hlt2ThirdLineDecision':
+        list(set(ALL_RAWBANKS) - set(['DstData'])),
     }
 
     return svc

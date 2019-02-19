@@ -16,8 +16,8 @@
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
 // forward declaration
-namespace LHCb{
-  class  STChannelID;
+namespace LHCb {
+  class STChannelID;
 }
 
 /** @class ISTRawADCInfo ISTRawADCInfo.h
@@ -36,30 +36,27 @@ struct ISTRawADCInfo : extend_interfaces<IAlgTool> {
    *  @see IID_ISTRawADCInfo
    *  @return the unique interface identifier
    */
-  DeclareInterfaceID( ISTRawADCInfo , 2 , 0 );
+  DeclareInterfaceID( ISTRawADCInfo, 2, 0 );
 
   /** link to RAW adc info
-  * @param LHCb::STChannelID chan
-  * @param adc value
-  * @return StatusCode
-  */
-  virtual StatusCode link(const LHCb::STChannelID& chan, unsigned int& value) const =0;
+   * @param LHCb::STChannelID chan
+   * @param adc value
+   * @return StatusCode
+   */
+  virtual StatusCode link( const LHCb::STChannelID& chan, unsigned int& value ) const = 0;
 
   /** link to RAW adc info for a list of channels
-  * @param std::vector<LHCb::STChannelID> chan
-  * @param adc value
-  * @return StatusCode
-  */
-  virtual StatusCode link(const std::vector<LHCb::STChannelID>& chans,
-                  std::vector<unsigned int>& values) const =0;
+   * @param std::vector<LHCb::STChannelID> chan
+   * @param adc value
+   * @return StatusCode
+   */
+  virtual StatusCode link( const std::vector<LHCb::STChannelID>& chans, std::vector<unsigned int>& values ) const = 0;
 
   /** link to RAW adc info for a list of channels in a window
-  * @param std::vector<LHCb::STChannelID> chan
-  * @param adc value
-  * @return StatusCode
-  */
-  virtual StatusCode link(const LHCb::STChannelID& chan,
-                  const unsigned int window,
-                  std::vector<unsigned int>& values) const = 0;
-
+   * @param std::vector<LHCb::STChannelID> chan
+   * @param adc value
+   * @return StatusCode
+   */
+  virtual StatusCode link( const LHCb::STChannelID& chan, const unsigned int window,
+                           std::vector<unsigned int>& values ) const = 0;
 };

@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef       VELODET_DEVELO_H
-#define       VELODET_DEVELO_H 1
+#ifndef VELODET_DEVELO_H
+#define VELODET_DEVELO_H 1
 // ============================================================================
 
 #include <mutex>
@@ -17,9 +17,9 @@
 #include "GaudiKernel/MsgStream.h"
 
 // Local
-#include "VeloDet/DeVeloSensor.h"
-#include "VeloDet/DeVeloRType.h"
 #include "VeloDet/DeVeloPhiType.h"
+#include "VeloDet/DeVeloRType.h"
+#include "VeloDet/DeVeloSensor.h"
 
 // From LHCb Kernel
 #include "Kernel/VeloChannelID.h"
@@ -40,25 +40,23 @@
 
 constexpr CLID CLID_DeVelo = 8100;
 
-namespace DeVeloLocation{
-  inline const std::string Default="/dd/Structure/LHCb/BeforeMagnetRegion/Velo";
+namespace DeVeloLocation {
+  inline const std::string Default = "/dd/Structure/LHCb/BeforeMagnetRegion/Velo";
 }
 
-class DeVelo: public DetectorElement {
+class DeVelo : public DetectorElement {
 
 public:
-
-  enum { LeftHalf=0, RightHalf=1, NHalfs=2 };
+  enum { LeftHalf = 0, RightHalf = 1, NHalfs = 2 };
 
 public:
-
   /// Constructors
-  DeVelo( const std::string& name    = "" );
+  DeVelo( const std::string& name = "" );
 
   /// object identification
-  static  const CLID& classID ()       { return CLID_DeVelo ; }
+  static const CLID& classID() { return CLID_DeVelo; }
   /// object identification
-  const CLID& clID    () const  override;
+  const CLID& clID() const override;
 
   /// initialization method
   StatusCode initialize() override;
@@ -66,165 +64,127 @@ public:
   /** Implementation of sensitive volume identifier for a given point in the
       global reference frame.  This is the sensor number defined in the xml.
   */
-  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const override;
+  int sensitiveVolumeID( const Gaudi::XYZPoint& globalPos ) const override;
 
   /// Return the number of sensors
-  inline unsigned int numberSensors() const {return m_vpSensors.size();}
+  inline unsigned int numberSensors() const { return m_vpSensors.size(); }
 
   /// Return the number of Velo sensors (no pile-up)
-  inline unsigned int numberNonPUSensors() const {return m_nRSensors+m_nPhiSensors;}
+  inline unsigned int numberNonPUSensors() const { return m_nRSensors + m_nPhiSensors; }
 
   /// Return the number of PileUp sensors
-  inline unsigned int numberPileUpSensors() const{return m_nPileUpSensors;}
+  inline unsigned int numberPileUpSensors() const { return m_nPileUpSensors; }
 
   /// Return the number of R type sensors
-  inline unsigned int numberRSensors() const{return m_nRSensors;}
+  inline unsigned int numberRSensors() const { return m_nRSensors; }
 
   /// Return the number of Phi type sensors
-  inline unsigned int numberPhiSensors() const{return m_nPhiSensors;}
+  inline unsigned int numberPhiSensors() const { return m_nPhiSensors; }
 
   /// Return the number of sensors in the Left half of the Velo
-  inline unsigned int numberLeftSensors() const {return m_nLeftSensors;}
+  inline unsigned int numberLeftSensors() const { return m_nLeftSensors; }
 
   /// Return the number of Velo sensors in the Left half of the Velo (no pile-up)
-  inline unsigned int numberLeftNonPUSensors() const {return m_nLeftRSensors+m_nLeftPhiSensors;}
+  inline unsigned int numberLeftNonPUSensors() const { return m_nLeftRSensors + m_nLeftPhiSensors; }
 
   /// Return the number of R sensors in the Left half of the Velo
-  inline unsigned int numberLeftRSensors() const {return m_nLeftRSensors;}
+  inline unsigned int numberLeftRSensors() const { return m_nLeftRSensors; }
 
   /// Return the number of Phi sensors in the Left half of the Velo
-  inline unsigned int numberLeftPhiSensors() const {return m_nLeftPhiSensors;}
+  inline unsigned int numberLeftPhiSensors() const { return m_nLeftPhiSensors; }
 
   /// Return the number of Pile Up sensors in the Left half of the Velo
-  inline unsigned int numberLeftPileUpSensors() const {return m_nLeftPUSensors;}
+  inline unsigned int numberLeftPileUpSensors() const { return m_nLeftPUSensors; }
 
   /// Return the number of sensors in the Right half of the Velo
-  inline unsigned int numberRightSensors() const {return m_nRightSensors;}
+  inline unsigned int numberRightSensors() const { return m_nRightSensors; }
 
   /// Return the number of Velo sensors in the Right half of the Velo (no pile-up)
-  inline unsigned int numberRightNonPUSensors() const {return m_nRightRSensors+m_nRightPhiSensors;}
+  inline unsigned int numberRightNonPUSensors() const { return m_nRightRSensors + m_nRightPhiSensors; }
 
   /// Return the number of R sensors in the Right half of the Velo
-  inline unsigned int numberRightRSensors() const {return m_nRightRSensors;}
+  inline unsigned int numberRightRSensors() const { return m_nRightRSensors; }
 
   /// Return the number of Phi sensors in the Right half of the Velo
-  inline unsigned int numberRightPhiSensors() const {return m_nRightPhiSensors;}
+  inline unsigned int numberRightPhiSensors() const { return m_nRightPhiSensors; }
 
   /// Return the number of Pile Up sensors in the Right half of the Velo
-  inline unsigned int numberRightPileUpSensors() const {return m_nRightPUSensors;}
+  inline unsigned int numberRightPileUpSensors() const { return m_nRightPUSensors; }
 
   /// Return the sensor number for a point (global frame)
   const DeVeloSensor* sensor( const Gaudi::XYZPoint& point ) const;
 
   /// Return iterator corresponding to first sensor
-  inline std::vector<DeVeloSensor*>::const_iterator sensorsBegin() const {
-    return m_vpSensors.begin();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator sensorsBegin() const { return m_vpSensors.begin(); }
 
   /// Return iterator corresponding to last sensor
-  inline std::vector<DeVeloSensor*>::const_iterator sensorsEnd() const {
-    return m_vpSensors.end();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator sensorsEnd() const { return m_vpSensors.end(); }
 
   /// Return iterator corresponding to first sensor on left side
-  inline std::vector<DeVeloSensor*>::const_iterator leftSensorsBegin() const {
-    return m_vpLeftSensors.begin();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator leftSensorsBegin() const { return m_vpLeftSensors.begin(); }
 
   /// Return iterator corresponding to last sensor on left side
-  inline std::vector<DeVeloSensor*>::const_iterator leftSensorsEnd() const {
-    return m_vpLeftSensors.end();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator leftSensorsEnd() const { return m_vpLeftSensors.end(); }
 
   /// Return iterator corresponding to first sensor on right side
-  inline std::vector<DeVeloSensor*>::const_iterator rightSensorsBegin() const {
-    return m_vpRightSensors.begin();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator rightSensorsBegin() const { return m_vpRightSensors.begin(); }
 
   /// Return iterator corresponding to last sensor on right side
-  inline std::vector<DeVeloSensor*>::const_iterator rightSensorsEnd() const {
-    return m_vpRightSensors.end();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator rightSensorsEnd() const { return m_vpRightSensors.end(); }
 
   /// Return iterator corresponding to first non-pile up sensor
   inline std::vector<DeVeloSensor*>::const_iterator rPhiSensorsBegin() const {
-    return m_vpSensors.begin()+m_nPileUpSensors;
+    return m_vpSensors.begin() + m_nPileUpSensors;
   }
 
   /// Return iterator corresponding to last non-pile up sensor
-  inline std::vector<DeVeloSensor*>::const_iterator rPhiSensorsEnd() const {
-    return m_vpSensors.end();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator rPhiSensorsEnd() const { return m_vpSensors.end(); }
 
   /// Return iterator corresponding to first non-pile up sensor on left side
   inline std::vector<DeVeloSensor*>::const_iterator leftRPhiSensorsBegin() const {
-    return m_vpLeftSensors.begin()+m_nLeftPUSensors;
+    return m_vpLeftSensors.begin() + m_nLeftPUSensors;
   }
 
   /// Return iterator corresponding to last non-pile up sensor
-  inline std::vector<DeVeloSensor*>::const_iterator leftRPhiSensorsEnd() const {
-    return m_vpLeftSensors.end();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator leftRPhiSensorsEnd() const { return m_vpLeftSensors.end(); }
 
   /// Return iterator corresponding to first non-pile up sensor on right side
   inline std::vector<DeVeloSensor*>::const_iterator rightRPhiSensorsBegin() const {
-    return m_vpRightSensors.begin()+m_nRightPUSensors;
+    return m_vpRightSensors.begin() + m_nRightPUSensors;
   }
 
   /// Return iterator corresponding to last non-pile up sensor on right side
-  inline std::vector<DeVeloSensor*>::const_iterator rightRPhiSensorsEnd() const {
-    return m_vpRightSensors.end();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator rightRPhiSensorsEnd() const { return m_vpRightSensors.end(); }
 
   /// Return iterator corresponding to first R sensor
-  inline std::vector<DeVeloRType*>::const_iterator rSensorsBegin() const {
-    return m_vpRSensors.begin();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator rSensorsBegin() const { return m_vpRSensors.begin(); }
 
   /// Return iterator corresponding to last R sensor
-  inline std::vector<DeVeloRType*>::const_iterator rSensorsEnd() const {
-    return m_vpRSensors.end();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator rSensorsEnd() const { return m_vpRSensors.end(); }
 
   /// Return iterator corresponding to first R sensor on left side
-  inline std::vector<DeVeloRType*>::const_iterator leftRSensorsBegin() const {
-    return m_vpLeftRSensors.begin();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator leftRSensorsBegin() const { return m_vpLeftRSensors.begin(); }
 
   /// Return iterator corresponding to last R sensor on left side
-  inline std::vector<DeVeloRType*>::const_iterator leftRSensorsEnd() const {
-    return m_vpLeftRSensors.end();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator leftRSensorsEnd() const { return m_vpLeftRSensors.end(); }
 
   /// Return iterator corresponding to first R sensor on right side
-  inline std::vector<DeVeloRType*>::const_iterator rightRSensorsBegin() const {
-    return m_vpRightRSensors.begin();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator rightRSensorsBegin() const { return m_vpRightRSensors.begin(); }
 
   /// Return iterator corresponding to last R sensor on right side
-  inline std::vector<DeVeloRType*>::const_iterator rightRSensorsEnd() const {
-    return m_vpRightRSensors.end();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator rightRSensorsEnd() const { return m_vpRightRSensors.end(); }
 
   /// Return iterator corresponding to first Phi sensor
-  inline std::vector<DeVeloPhiType*>::const_iterator phiSensorsBegin() const {
-    return m_vpPhiSensors.begin();
-  }
+  inline std::vector<DeVeloPhiType*>::const_iterator phiSensorsBegin() const { return m_vpPhiSensors.begin(); }
 
   /// Return iterator corresponding to last Phi sensor
-  inline std::vector<DeVeloPhiType*>::const_iterator phiSensorsEnd() const {
-    return m_vpPhiSensors.end();
-  }
+  inline std::vector<DeVeloPhiType*>::const_iterator phiSensorsEnd() const { return m_vpPhiSensors.end(); }
 
   /// Return iterator corresponding to first Phi sensor on left side
-  inline std::vector<DeVeloPhiType*>::const_iterator leftPhiSensorsBegin() const {
-    return m_vpLeftPhiSensors.begin();
-  }
+  inline std::vector<DeVeloPhiType*>::const_iterator leftPhiSensorsBegin() const { return m_vpLeftPhiSensors.begin(); }
 
   /// Return iterator corresponding to last Phi sensor on left side
-  inline std::vector<DeVeloPhiType*>::const_iterator leftPhiSensorsEnd() const {
-    return m_vpLeftPhiSensors.end();
-  }
+  inline std::vector<DeVeloPhiType*>::const_iterator leftPhiSensorsEnd() const { return m_vpLeftPhiSensors.end(); }
 
   /// Return iterator corresponding to first Phi sensor on right side
   inline std::vector<DeVeloPhiType*>::const_iterator rightPhiSensorsBegin() const {
@@ -232,59 +192,43 @@ public:
   }
 
   /// Return iterator corresponding to last Phi sensor on right side
-  inline std::vector<DeVeloPhiType*>::const_iterator rightPhiSensorsEnd() const {
-    return m_vpRightPhiSensors.end();
-  }
+  inline std::vector<DeVeloPhiType*>::const_iterator rightPhiSensorsEnd() const { return m_vpRightPhiSensors.end(); }
 
   /// Return iterator corresponding to first pile up sensor
-  inline std::vector<DeVeloSensor*>::const_iterator pileUpSensorsBegin() const {
-    return m_vpSensors.begin();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator pileUpSensorsBegin() const { return m_vpSensors.begin(); }
 
   /// Return iterator corresponding to last pile up sensor
   inline std::vector<DeVeloSensor*>::const_iterator pileUpSensorsEnd() const {
-    return m_vpSensors.begin()+m_nPileUpSensors;
+    return m_vpSensors.begin() + m_nPileUpSensors;
   }
 
   /// Return iterator corresponding to first pile up sensor on left side
-  inline std::vector<DeVeloSensor*>::const_iterator leftPileUpSensorsBegin() const {
-    return m_vpLeftSensors.begin();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator leftPileUpSensorsBegin() const { return m_vpLeftSensors.begin(); }
 
   /// Return iterator corresponding to last pile up sensor on left side
   inline std::vector<DeVeloSensor*>::const_iterator leftPileUpSensorsEnd() const {
-    return m_vpLeftSensors.begin()+m_nLeftPUSensors;
+    return m_vpLeftSensors.begin() + m_nLeftPUSensors;
   }
 
   /// Return iterator corresponding to first pile up sensor on right side
-  inline std::vector<DeVeloSensor*>::const_iterator rightPileUpSensorsBegin() const {
-    return m_vpRightSensors.begin();
-  }
+  inline std::vector<DeVeloSensor*>::const_iterator rightPileUpSensorsBegin() const { return m_vpRightSensors.begin(); }
 
   /// Return iterator corresponding to last pile up sensor on right side
   inline std::vector<DeVeloSensor*>::const_iterator rightPileUpSensorsEnd() const {
-    return m_vpRightSensors.begin()+m_nRightPUSensors;
+    return m_vpRightSensors.begin() + m_nRightPUSensors;
   }
 
   /// Return iterator corresponding to first pile up sensor
-  inline std::vector<DeVeloRType*>::const_iterator pileUpRSensorsBegin() const {
-    return m_vpPUSensors.begin();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator pileUpRSensorsBegin() const { return m_vpPUSensors.begin(); }
 
   /// Return iterator corresponding to last pile up sensor
-  inline std::vector<DeVeloRType*>::const_iterator pileUpRSensorsEnd() const {
-    return m_vpPUSensors.end();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator pileUpRSensorsEnd() const { return m_vpPUSensors.end(); }
 
   /// Return iterator corresponding to first pile up sensor on left side
-  inline std::vector<DeVeloRType*>::const_iterator leftPileUpRSensorsBegin() const {
-    return m_vpLeftPUSensors.begin();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator leftPileUpRSensorsBegin() const { return m_vpLeftPUSensors.begin(); }
 
   /// Return iterator corresponding to last pile up sensor on left side
-  inline std::vector<DeVeloRType*>::const_iterator leftPileUpRSensorsEnd() const {
-    return m_vpLeftPUSensors.end();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator leftPileUpRSensorsEnd() const { return m_vpLeftPUSensors.end(); }
 
   /// Return iterator corresponding to first pile up sensor on right side
   inline std::vector<DeVeloRType*>::const_iterator rightPileUpRSensorsBegin() const {
@@ -292,19 +236,13 @@ public:
   }
 
   /// Return iterator corresponding to last pile up sensor on right side
-  inline std::vector<DeVeloRType*>::const_iterator rightPileUpRSensorsEnd() const {
-    return m_vpRightPUSensors.end();
-  }
+  inline std::vector<DeVeloRType*>::const_iterator rightPileUpRSensorsEnd() const { return m_vpRightPUSensors.end(); }
 
   /// Return reverse iterator corresponding to first sensor
-  inline std::vector<DeVeloSensor*>::const_reverse_iterator sensorsReverseBegin() const {
-    return m_vpSensors.rbegin();
-  }
+  inline std::vector<DeVeloSensor*>::const_reverse_iterator sensorsReverseBegin() const { return m_vpSensors.rbegin(); }
 
   /// Return reverse iterator corresponding to last sensor
-  inline std::vector<DeVeloSensor*>::const_reverse_iterator sensorsReverseEnd() const {
-    return m_vpSensors.rend();
-  }
+  inline std::vector<DeVeloSensor*>::const_reverse_iterator sensorsReverseEnd() const { return m_vpSensors.rend(); }
 
   /// Return reverse iterator corresponding to first sensor on left side
   inline std::vector<DeVeloSensor*>::const_reverse_iterator leftSensorsReverseBegin() const {
@@ -333,7 +271,7 @@ public:
 
   /// Return reverse iterator corresponding to last non-pile up sensor
   inline std::vector<DeVeloSensor*>::const_reverse_iterator rPhiSensorsReverseEnd() const {
-    return m_vpSensors.rend()-m_nPileUpSensors;
+    return m_vpSensors.rend() - m_nPileUpSensors;
   }
 
   /// Return reverse iterator corresponding to first non-pile up sensor on left side
@@ -343,7 +281,7 @@ public:
 
   /// Return reverse iterator corresponding to last non-pile up sensor on left side
   inline std::vector<DeVeloSensor*>::const_reverse_iterator leftRPhiSensorsReverseEnd() const {
-    return m_vpLeftSensors.rend()-m_nLeftPUSensors;
+    return m_vpLeftSensors.rend() - m_nLeftPUSensors;
   }
 
   /// Return reverse iterator corresponding to first non-pile up sensor on right side
@@ -353,7 +291,7 @@ public:
 
   /// Return reverse iterator corresponding to last non-pile up sensor on right side
   inline std::vector<DeVeloSensor*>::const_reverse_iterator rightRPhiSensorsReverseEnd() const {
-    return m_vpRightSensors.rend()-m_nRightPUSensors;
+    return m_vpRightSensors.rend() - m_nRightPUSensors;
   }
 
   /// Return reverse iterator corresponding to first R sensor
@@ -362,9 +300,7 @@ public:
   }
 
   /// Return reverse iterator corresponding to last R sensor
-  inline std::vector<DeVeloRType*>::const_reverse_iterator rSensorsReverseEnd() const {
-    return m_vpRSensors.rend();
-  }
+  inline std::vector<DeVeloRType*>::const_reverse_iterator rSensorsReverseEnd() const { return m_vpRSensors.rend(); }
 
   /// Return reverse iterator corresponding to first R sensor on left side
   inline std::vector<DeVeloRType*>::const_reverse_iterator leftRSensorsReverseBegin() const {
@@ -418,7 +354,7 @@ public:
 
   /// Return reverse iterator corresponding to first pile up sensor
   inline std::vector<DeVeloSensor*>::const_reverse_iterator pileUpSensorsReverseBegin() const {
-    return m_vpSensors.rend()-m_nPileUpSensors;
+    return m_vpSensors.rend() - m_nPileUpSensors;
   }
 
   /// Return reverse iterator corresponding to last pile up sensor
@@ -428,7 +364,7 @@ public:
 
   /// Return reverse iterator corresponding to first pile up sensor on left side
   inline std::vector<DeVeloSensor*>::const_reverse_iterator leftPileUpSensorsReverseBegin() const {
-    return m_vpLeftSensors.rend()-m_nLeftPUSensors;
+    return m_vpLeftSensors.rend() - m_nLeftPUSensors;
   }
 
   /// Return reverse iterator corresponding to last pile up sensor on left side
@@ -438,7 +374,7 @@ public:
 
   /// Return reverse iterator corresponding to first pile up sensor on right side
   inline std::vector<DeVeloSensor*>::const_reverse_iterator rightPileUpSensorsReverseBegin() const {
-    return m_vpRightSensors.rend()-m_nRightPUSensors;
+    return m_vpRightSensors.rend() - m_nRightPUSensors;
   }
 
   /// Return reverse iterator corresponding to last pile up sensor on right side
@@ -476,39 +412,26 @@ public:
     return m_vpRightPUSensors.rend();
   }
 
+  /// give access to sensor for given sensor number
+  const DeVeloSensor* sensor( unsigned int sensorNumber ) const { return m_sensors[sensorNumber]; }
 
   /// give access to sensor for given sensor number
-  const DeVeloSensor* sensor(unsigned int sensorNumber) const {
-    return m_sensors[sensorNumber];
-  }
+  const DeVeloRType* rSensor( unsigned int sensorNumber ) const { return m_sensors[sensorNumber]->rType(); }
 
   /// give access to sensor for given sensor number
-  const DeVeloRType* rSensor(unsigned int sensorNumber) const {
-    return m_sensors[sensorNumber]->rType();
-  }
-
-  /// give access to sensor for given sensor number
-  const DeVeloPhiType* phiSensor(unsigned int sensorNumber) const {
-    return m_sensors[sensorNumber]->phiType();
-  }
+  const DeVeloPhiType* phiSensor( unsigned int sensorNumber ) const { return m_sensors[sensorNumber]->phiType(); }
 
   /// give access to sensor for given LHCb::VeloChannelID
-  const DeVeloSensor* sensor(LHCb::VeloChannelID channel) const {
-    return sensor(channel.sensor());
-  }
+  const DeVeloSensor* sensor( LHCb::VeloChannelID channel ) const { return sensor( channel.sensor() ); }
 
   /// give access to sensor for given LHCb::VeloChannelID
-  const DeVeloRType* rSensor(LHCb::VeloChannelID channel) const {
-    return rSensor(channel.sensor());
-  }
+  const DeVeloRType* rSensor( LHCb::VeloChannelID channel ) const { return rSensor( channel.sensor() ); }
 
   /// give access to sensor for given LHCb::VeloChannelID
-  const DeVeloPhiType* phiSensor(LHCb::VeloChannelID channel) const {
-    return phiSensor(channel.sensor());
-  }
+  const DeVeloPhiType* phiSensor( LHCb::VeloChannelID channel ) const { return phiSensor( channel.sensor() ); }
 
   /// Access half box offset vectors (don't cache, depends on the geometry condition)
-  const Gaudi::XYZPoint& halfBoxOffset(unsigned int half) { return m_halfBoxOffsets[half]; }
+  const Gaudi::XYZPoint& halfBoxOffset( unsigned int half ) { return m_halfBoxOffsets[half]; }
 
   // public condition related methods
 
@@ -516,7 +439,7 @@ public:
    *  This information is based on CondDB, i.e. it can change
    *  with time.
    */
-  const DeVeloSensor* sensorByTell1Id(unsigned int tell1Id) const;
+  const DeVeloSensor* sensorByTell1Id( unsigned int tell1Id ) const;
 
   /** The TELL1 Id for a given sensor number (cached condition)
    *  This information is based on CondDB, i.e. it can change
@@ -526,7 +449,7 @@ public:
    *  @param tell1Id output, the TELL1 Id associated with the sensor number, undefined if not mapped
    *  @return true if mapping exists, false otherwise
    */
-  bool tell1IdBySensorNumber(unsigned int sensorNumber, unsigned int& tell1Id) const;
+  bool tell1IdBySensorNumber( unsigned int sensorNumber, unsigned int& tell1Id ) const;
 
   /// call back function for TELL1 to sensor mapping update
   StatusCode updateTell1ToSensorsCondition();
@@ -543,10 +466,9 @@ public:
   /// Update the right half box offset vector
   StatusCode updateRightHalfBoxOffset();
 
-   // private condition related methods
+  // private condition related methods
 
 private:
-
   /** registers condition call backs
    *  This has only to be done once.  Method is called once
    *  from initialize().
@@ -554,14 +476,12 @@ private:
   StatusCode registerConditionCallBacks();
 
 private:
-
   /// Find DeVeloSensors inside DeVelo detector element tree.
   std::vector<DeVeloSensor*> findVeloSensors();
 
   /// Navigate DeVelo detector element tree recursively.
   /// Store DeVeloSensors in "sensors" wherever they might be found.
-  void scanDetectorElement(IDetectorElement* detElem,
-                           std::vector<DeVeloSensor*>& sensors);
+  void scanDetectorElement( IDetectorElement* detElem, std::vector<DeVeloSensor*>& sensors );
 
   /// pointers to all sensors sorted by increasing z
   std::vector<DeVeloSensor*> m_vpSensors;
@@ -651,14 +571,12 @@ private:
 
   /// Custom operator for sorting sensors in terms of z position
   struct less_Z {
-    bool operator()(DeVeloSensor * const &x, DeVeloSensor * const &y) {
-      return ( x->z() < y->z() );
-    }
+    bool operator()( DeVeloSensor* const& x, DeVeloSensor* const& y ) { return ( x->z() < y->z() ); }
   };
 
   /// Custom operator for sorting sensors in terms of sensor number
   struct less_sensor {
-    bool operator()(DeVeloSensor * const &x, DeVeloSensor * const &y) {
+    bool operator()( DeVeloSensor* const& x, DeVeloSensor* const& y ) {
       return ( x->sensorNumber() < y->sensorNumber() );
     }
   };
@@ -670,7 +588,7 @@ private:
   const Condition* m_tell1ToSensorsCondition;
 
   std::map<unsigned int, const DeVeloSensor*> m_sensorByTell1Id;
-  std::map<unsigned int, unsigned int> m_tell1IdBySensorNumber;
+  std::map<unsigned int, unsigned int>        m_tell1IdBySensorNumber;
 
   Gaudi::XYZPoint m_halfBoxOffsets[NHalfs];
 
@@ -679,9 +597,8 @@ private:
   bool m_verbose;
 
   /// Thread safe on demand access to MsgStream object
-  inline MsgStream & msg() const {
-    std::call_once(m_msgSetFlag,
-		   [&]{m_msgStream.reset( new MsgStream( msgSvc(), "DeVelo" ) );});
+  inline MsgStream& msg() const {
+    std::call_once( m_msgSetFlag, [&] { m_msgStream.reset( new MsgStream( msgSvc(), "DeVelo" ) ); } );
     return *m_msgStream;
   }
   /// cached Message Stream object
@@ -693,4 +610,4 @@ private:
 };
 
 // ============================================================================
-#endif  //    VELODET_DEVELO_H
+#endif //    VELODET_DEVELO_H

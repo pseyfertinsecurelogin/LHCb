@@ -26,14 +26,12 @@
  * Provides and interface to matrix inversion routines for a pos-def symmetric
  * matrices. Also provides an alternative to the standard ROOT inversion
  * routine for the general symmetric case.
- * 
+ *
  * @author Manuel Schiller
  * @date Aug 29 2008
  **/
-namespace Gaudi
-{
-  namespace Math 
-  {
+namespace Gaudi {
+  namespace Math {
     /** invert symmetric positive definite matrices
      *
      *  For matrix dimensions N <= 6, hand-optimized template specializations
@@ -100,15 +98,15 @@ namespace Gaudi
      *  @param matrix symmetric matrix to invert
      *  @return true if inversion was sucessful, false otherwise
      */
-    template<class T> inline bool invertSymMatrix(T& matrix)
-    {
+    template <class T>
+    inline bool invertSymMatrix( T& matrix ) {
       enum { N = T::kRows };
-      typedef typename T::value_type F;
-      typedef typename ROOT::Math::MatRepSym<F, N> R;
+      typedef typename T::value_type                   F;
+      typedef typename ROOT::Math::MatRepSym<F, N>     R;
       typedef typename ROOT::Math::SMatrix<F, N, N, R> M;
-      return Gaudi::Math::SymMatrixInverter::inverter<M, F, N>()(matrix);
+      return Gaudi::Math::SymMatrixInverter::inverter<M, F, N>()( matrix );
     }
-  }
-}
+  } // namespace Math
+} // namespace Gaudi
 
 #endif // LHCBMATH_MATRIXINVERSION_H

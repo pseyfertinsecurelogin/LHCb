@@ -14,8 +14,8 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <vector>
 #include <algorithm>
+#include <vector>
 // ============================================================================
 // Include files
 // ============================================================================
@@ -33,11 +33,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2010-06-03
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Operations
-  {
+  namespace Operations {
     // ========================================================================
     /** @struct Unique
      *  Helper structure to define "unique" for container
@@ -46,26 +44,24 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Unique
-    {
+    struct Unique {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      _Type operator() ( const _Type& a )  const
-      {
+      _Type operator()( const _Type& a ) const {
         //
-        if  ( a.empty() ) { return a ; } // RETURN
+        if ( a.empty() ) { return a; } // RETURN
         //
-        _Type _a ( a ) ;
+        _Type _a( a );
         //
-        std::stable_sort ( _a.begin() , _a.end () ) ;
-        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
+        std::stable_sort( _a.begin(), _a.end() );
+        auto _ia = std::unique( _a.begin(), _a.end() );
         //
-        return _Type ( _a.begin() , _ia ) ;
+        return _Type( _a.begin(), _ia );
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct Union
      *  Helper structure to represent the union of two containters
@@ -77,40 +73,40 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Union
-    {
+    struct Union {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      _Type operator() ( const _Type& a , const _Type& b )  const
-      {
+      _Type operator()( const _Type& a, const _Type& b ) const {
         //
-        if ( &a == &b    ) { return a ; }                               // RETURN
+        if ( &a == &b ) { return a; } // RETURN
         //
-        LoKi::Operations::Unique<TYPE> _unique ;
-        if      (  a.empty () ) { return _unique ( b ) ; }
-        else if (  b.empty () ) { return _unique ( a ) ; }
+        LoKi::Operations::Unique<TYPE> _unique;
+        if ( a.empty() ) {
+          return _unique( b );
+        } else if ( b.empty() ) {
+          return _unique( a );
+        }
         //
-        auto _a ( a ) ;
-        auto _b ( b ) ;
+        auto _a( a );
+        auto _b( b );
         //
-        std::stable_sort ( _a.begin() , _a.end () ) ;
-        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
+        std::stable_sort( _a.begin(), _a.end() );
+        auto _ia = std::unique( _a.begin(), _a.end() );
         //
-        std::stable_sort ( _b.begin() , _b.end () ) ;
-        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
+        std::stable_sort( _b.begin(), _b.end() );
+        auto _ib = std::unique( _b.begin(), _b.end() );
         //
-        _Type _r ;
-        _r.reserve  ( ( _ia - _a.begin() ) + ( _ib - _b.begin() ) ) ;
+        _Type _r;
+        _r.reserve( ( _ia - _a.begin() ) + ( _ib - _b.begin() ) );
         //
-        std::set_union ( _a.begin () , _ia ,
-                         _b.begin () , _ib , std::back_inserter( _r ) ) ;
+        std::set_union( _a.begin(), _ia, _b.begin(), _ib, std::back_inserter( _r ) );
         //
-        return _r ;
+        return _r;
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct Difference
      *  Helper structure to define "difference" for two containers
@@ -121,40 +117,40 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Difference
-    {
+    struct Difference {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      _Type operator() ( const _Type& a , const _Type& b )  const
-      {
+      _Type operator()( const _Type& a, const _Type& b ) const {
         //
-        if ( &a == &b   ) { return _Type() ; }                         // RETURN
+        if ( &a == &b ) { return _Type(); } // RETURN
         //
-        LoKi::Operations::Unique<TYPE> _unique ;
-        if      (  a.empty () ) { return           a   ; }
-        else if (  b.empty () ) { return _unique ( a ) ; }
+        LoKi::Operations::Unique<TYPE> _unique;
+        if ( a.empty() ) {
+          return a;
+        } else if ( b.empty() ) {
+          return _unique( a );
+        }
         //
-        auto _a ( a ) ;
-        auto _b ( b ) ;
+        auto _a( a );
+        auto _b( b );
         //
-        std::stable_sort ( _a.begin() , _a.end () ) ;
-        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
+        std::stable_sort( _a.begin(), _a.end() );
+        auto _ia = std::unique( _a.begin(), _a.end() );
         //
-        std::stable_sort ( _b.begin() , _b.end () ) ;
-        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
+        std::stable_sort( _b.begin(), _b.end() );
+        auto _ib = std::unique( _b.begin(), _b.end() );
         //
-        _Type _r ;
-        _r.reserve  ( _ia - _a.begin() );
+        _Type _r;
+        _r.reserve( _ia - _a.begin() );
         //
-        std::set_difference ( _a.begin () , _ia ,
-                              _b.begin () , _ib , std::back_inserter( _r ) ) ;
+        std::set_difference( _a.begin(), _ia, _b.begin(), _ib, std::back_inserter( _r ) );
         //
-        return _r ;
+        return _r;
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct SymDifference
      *  Helper structure to define "symmetric-difference" for two containers
@@ -165,37 +161,33 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct SymDifference
-    {
+    struct SymDifference {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      _Type operator() ( const _Type& a , const _Type& b )  const
-      {
+      _Type operator()( const _Type& a, const _Type& b ) const {
         //
-        if ( &a == &b ) { return _Type() ; }                         // RETURN
+        if ( &a == &b ) { return _Type(); } // RETURN
         //
-        _Type _r ;
-        _Type _a ( a ) ;
-        _Type _b ( b ) ;
+        _Type _r;
+        _Type _a( a );
+        _Type _b( b );
         //
-        std::stable_sort ( _a.begin() , _a.end () ) ;
-        typename _Type::iterator _ia = std::unique ( _a.begin () , _a.end() ) ;
+        std::stable_sort( _a.begin(), _a.end() );
+        typename _Type::iterator _ia = std::unique( _a.begin(), _a.end() );
         //
-        std::stable_sort ( _b.begin() , _b.end () ) ;
-        typename _Type::iterator _ib = std::unique ( _b.begin () , _b.end() ) ;
+        std::stable_sort( _b.begin(), _b.end() );
+        typename _Type::iterator _ib = std::unique( _b.begin(), _b.end() );
         //
-        _r.reserve  ( ( _ia - _a.begin() ) + ( _ib - _b.begin() ) ) ;
+        _r.reserve( ( _ia - _a.begin() ) + ( _ib - _b.begin() ) );
         //
-        std::set_symmetric_difference
-          ( _a.begin () , _ia ,
-            _b.begin () , _ib , std::back_inserter( _r ) ) ;
+        std::set_symmetric_difference( _a.begin(), _ia, _b.begin(), _ib, std::back_inserter( _r ) );
         //
-        return _r ;
+        return _r;
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct Intersection
      *  Helper structure to define "intersection" for two containers
@@ -206,39 +198,35 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Intersection
-    {
+    struct Intersection {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      _Type operator() ( const _Type& a , const _Type& b )  const
-      {
+      _Type operator()( const _Type& a, const _Type& b ) const {
         //
-        if ( &a == &b ) { return a ; }                                // RETURN
+        if ( &a == &b ) { return a; } // RETURN
         //
-        if ( a.empty() || b.empty() ) { return _Type() ; } // RETURN
+        if ( a.empty() || b.empty() ) { return _Type(); } // RETURN
         //
-        auto _a ( a ) ;
-        auto _b ( b ) ;
+        auto _a( a );
+        auto _b( b );
         //
-        std::stable_sort ( _a.begin() , _a.end () ) ;
-        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
+        std::stable_sort( _a.begin(), _a.end() );
+        auto _ia = std::unique( _a.begin(), _a.end() );
         //
-        std::stable_sort ( _b.begin() , _b.end () ) ;
-        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
+        std::stable_sort( _b.begin(), _b.end() );
+        auto _ib = std::unique( _b.begin(), _b.end() );
         //
-        _Type _r ;
-        _r.reserve  ( std::min ( _ia - _a.begin() , _ib - _b.begin() ) ) ;
+        _Type _r;
+        _r.reserve( std::min( _ia - _a.begin(), _ib - _b.begin() ) );
         //
-        std::set_intersection
-          ( _a.begin () , _ia ,
-            _b.begin () , _ib , std::back_inserter( _r ) ) ;
+        std::set_intersection( _a.begin(), _ia, _b.begin(), _ib, std::back_inserter( _r ) );
         //
-        return _r ;
+        return _r;
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct Includes
      *  Helper structure to define "includes" for two containers
@@ -249,32 +237,29 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Includes
-    {
+    struct Includes {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      bool operator() ( const _Type& a , const _Type& b )  const
-      {
+      bool operator()( const _Type& a, const _Type& b ) const {
         //
-        if ( &a == &b ) { return true ; }                         // RETURN
+        if ( &a == &b ) { return true; } // RETURN
         //
-        auto _a ( a ) ;
-        auto _b ( b ) ;
+        auto _a( a );
+        auto _b( b );
         //
-        std::stable_sort ( _a.begin() , _a.end () ) ;
-        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
+        std::stable_sort( _a.begin(), _a.end() );
+        auto _ia = std::unique( _a.begin(), _a.end() );
         //
-        std::stable_sort ( _b.begin() , _b.end () ) ;
-        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
+        std::stable_sort( _b.begin(), _b.end() );
+        auto _ib = std::unique( _b.begin(), _b.end() );
         //
-        return std::includes ( _a.begin () , _ia ,
-                               _b.begin () , _ib ) ;
+        return std::includes( _a.begin(), _ia, _b.begin(), _ib );
         //
       }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct NonEmptyUnion
      *  Helper structure to represent the non-empty union of two containters
@@ -286,32 +271,34 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct NoEmptyUnion
-    {
+    struct NoEmptyUnion {
       // ======================================================================
-      typedef std::vector<TYPE> _Type ;
+      typedef std::vector<TYPE> _Type;
       // ======================================================================
       /// the main method
-      _Type operator() ( const _Type& a , const _Type& b )  const
-      {
+      _Type operator()( const _Type& a, const _Type& b ) const {
         //
-        if ( &a == &b         ) { return a ; } // RETURN
+        if ( &a == &b ) { return a; } // RETURN
         //
-        if      (  a.empty () ) { return a ; } // RETURN EMPTY
-        else if (  b.empty () ) { return b ; } // RETURN EMPTY
+        if ( a.empty() ) {
+          return a;
+        } // RETURN EMPTY
+        else if ( b.empty() ) {
+          return b;
+        } // RETURN EMPTY
         //
-        return m_union ( a , b ) ;
+        return m_union( a, b );
       }
       // ======================================================================
     private:
       // ======================================================================
-      Union<TYPE> m_union ;
+      Union<TYPE> m_union;
       // = ====================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                    the end of namespace LoKi::Operations
+  } // namespace Operations
   // ==========================================================================
-} //                                                  the end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

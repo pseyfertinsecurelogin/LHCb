@@ -11,8 +11,8 @@
 #ifndef KERNEL_ALIGNTRAJ_H
 #define KERNEL_ALIGNTRAJ_H 1
 
-#ifdef __INTEL_COMPILER         // Disable ICC remark from ROOT
- #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark from ROOT
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
 
 // Include files
@@ -45,8 +45,7 @@
  *  @date   2006-11-27
  */
 
-namespace LHCb
-{
+namespace LHCb {
 
   class AlignTraj : public DifTraj<6> {
 
@@ -58,77 +57,80 @@ namespace LHCb
     typedef DifTraj<6>::Vector     Vector;
 
     /// Constructors
-    AlignTraj(const Trajectory& traj, const Point& pivot)
-      : DifTraj<6>(traj.range()),
-        m_pivot(pivot),
-        m_traj(&traj) {  }
+    AlignTraj( const Trajectory& traj, const Point& pivot )
+        : DifTraj<6>( traj.range() ), m_pivot( pivot ), m_traj( &traj ) {}
 
-    AlignTraj(const Trajectory& traj)
-      : DifTraj<6>(traj.range()),
-        m_pivot(0,0,0),
-        m_traj(&traj) {  }
+    AlignTraj( const Trajectory& traj ) : DifTraj<6>( traj.range() ), m_pivot( 0, 0, 0 ), m_traj( &traj ) {}
 
-    AlignTraj(const Trajectory& traj, const Parameters& p)
-      : DifTraj<6>(traj.range()),
-        m_rx(p(3)),m_ry(p(4)), m_rz(p(5)),
-        m_pivot(0,0,0), m_traj(&traj)
-    {  m_trans.SetX(p(0)); m_trans.SetY(p(1)); m_trans.SetZ(p(2)); }
+    AlignTraj( const Trajectory& traj, const Parameters& p )
+        : DifTraj<6>( traj.range() )
+        , m_rx( p( 3 ) )
+        , m_ry( p( 4 ) )
+        , m_rz( p( 5 ) )
+        , m_pivot( 0, 0, 0 )
+        , m_traj( &traj ) {
+      m_trans.SetX( p( 0 ) );
+      m_trans.SetY( p( 1 ) );
+      m_trans.SetZ( p( 2 ) );
+    }
 
-    AlignTraj(const Trajectory& traj, const Parameters& p, const Point& pivot)
-      : DifTraj<6>(traj.range()),
-        m_rx(p(3)),m_ry(p(4)), m_rz(p(5)),
-        m_pivot(pivot), m_traj(&traj)
-    {  m_trans.SetX(p(0)); m_trans.SetY(p(1)); m_trans.SetZ(p(2)); }
+    AlignTraj( const Trajectory& traj, const Parameters& p, const Point& pivot )
+        : DifTraj<6>( traj.range() )
+        , m_rx( p( 3 ) )
+        , m_ry( p( 4 ) )
+        , m_rz( p( 5 ) )
+        , m_pivot( pivot )
+        , m_traj( &traj ) {
+      m_trans.SetX( p( 0 ) );
+      m_trans.SetY( p( 1 ) );
+      m_trans.SetZ( p( 2 ) );
+    }
 
     // clone thyself...
     std::unique_ptr<Trajectory> clone() const override;
 
     /// Retrieve the derivative of the point at fixed arclength 'arclength'
     /// with respect to the alignment parameters
-    Derivative derivative( double arclength ) const  override;
+    Derivative derivative( double arclength ) const override;
 
     /// Retrieve the alignment parameters
-    Parameters parameters() const  override;
+    Parameters parameters() const override;
 
     /// update the parameters
-    AlignTraj& operator+=(const Parameters& delta)  override;
+    AlignTraj& operator+=( const Parameters& delta ) override;
 
-
-    Point  position(  double arclength ) const  override;
+    Point  position( double arclength ) const override;
     Vector direction( double arclength ) const override;
     Vector curvature( double arclength ) const override;
-    void expansion(   double arclength,
-                      Point& p,
-                      Vector& dp,
-                      Vector& ddp ) const override;
+    void   expansion( double arclength, Point& p, Vector& dp, Vector& ddp ) const override;
 
-    double muEstimate( const Point& ) const  override;
+    double muEstimate( const Point& ) const override;
 
-    double distTo1stError( double arclength,
-                           double tolerance,
-                           int pathDirection ) const override;
-    double distTo2ndError( double arclength,
-                           double tolerance,
-                           int pathDirection ) const override;
+    double distTo1stError( double arclength, double tolerance, int pathDirection ) const override;
+    double distTo2ndError( double arclength, double tolerance, int pathDirection ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because AlignTraj is parameterized in
     /// arclength.
     using DifTraj<6>::arclength;
-    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
+    double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
 
   private:
-    template <typename T> T rotate(const T& t) const
-    { return m_rx(m_ry(m_rz(t))); }
-    template <typename T> T invRotate(const T& t) const
-    { return m_rz.Inverse()(m_ry.Inverse()(m_rx.Inverse()(t))); }
+    template <typename T>
+    T rotate( const T& t ) const {
+      return m_rx( m_ry( m_rz( t ) ) );
+    }
+    template <typename T>
+    T invRotate( const T& t ) const {
+      return m_rz.Inverse()( m_ry.Inverse()( m_rx.Inverse()( t ) ) );
+    }
 
-    ROOT::Math::RotationX   m_rx;
-    ROOT::Math::RotationY   m_ry;
-    ROOT::Math::RotationZ   m_rz;
-    Vector                  m_trans;
-    Point                   m_pivot;
-    const Trajectory*       m_traj;
+    ROOT::Math::RotationX m_rx;
+    ROOT::Math::RotationY m_ry;
+    ROOT::Math::RotationZ m_rz;
+    Vector                m_trans;
+    Point                 m_pivot;
+    const Trajectory*     m_traj;
   };
 
 } // namespace LHCb
