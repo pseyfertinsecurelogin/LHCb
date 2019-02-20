@@ -35,7 +35,7 @@
 #include "LHCbMath/FastMaths.h"
 // ============================================================================
 // Vector Class
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 // ============================================================================
 /** @file
  *  Test VDT Math Precision

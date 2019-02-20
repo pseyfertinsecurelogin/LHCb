@@ -24,7 +24,7 @@
 #include "Kernel/LbAppInit.h"
 #include "Kernel/PlatformInfo.h"
 
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LbAppInit

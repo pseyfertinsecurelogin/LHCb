@@ -22,7 +22,7 @@
 #include "LHCbMath/EigenTypes.h"
 
 // VectorClass
-//#include "VectorClass/vectorclass.h"
+//#include "vectorclass.h"
 //#include "LHCbMath/VectorClassTypes.h"
 
 // VDT

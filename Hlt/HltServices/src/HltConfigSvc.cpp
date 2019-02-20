@@ -25,7 +25,7 @@
 #include "Event/HltDecReports.h"
 
 #include "Kernel/PlatformInfo.h"
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 
 // Detector
 #include <DetDesc/Condition.h>

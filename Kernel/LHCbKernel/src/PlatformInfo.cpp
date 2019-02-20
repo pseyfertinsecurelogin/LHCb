@@ -10,7 +10,7 @@
 \*****************************************************************************/
 #include "Kernel/PlatformInfo.h"
 
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 
 #include <algorithm>
 #include <vector>

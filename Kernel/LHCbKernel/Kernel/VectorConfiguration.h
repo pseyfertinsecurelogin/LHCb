@@ -13,7 +13,7 @@
 #include <cstdint> // std::*int*_t
 #include <cstddef> // std::size_t
 #include <type_traits>
-#include "VectorClass/vectorclass.h"
+#include "vectorclass.h"
 
 /**
  * @brief      Helper static methods to expose the SIMD
