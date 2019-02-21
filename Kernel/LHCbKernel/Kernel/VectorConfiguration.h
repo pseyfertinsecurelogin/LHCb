@@ -10,10 +10,10 @@
 \*****************************************************************************/
 #pragma once
 
+#include "vectorclass.h"
 #include <cstddef> // std::size_t
 #include <cstdint> // std::*int*_t
 #include <type_traits>
-#include "vectorclass.h"
 
 /**
  * @brief      Helper static methods to expose the SIMD
