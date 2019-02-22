@@ -118,9 +118,9 @@ namespace Rich {
      *  Assumes range checking if required is already done. */
     inline SIMDFP value( const SIMDFP::IndexType& index, const SIMDFP& x ) const noexcept {
 #ifndef __clang__
-      // gather the m and c parameters for x
-      const auto m = m_data[index][&Bin::m];
-      const auto c = m_data[index][&Bin::c];
+      // gather the m and c parameters for f(x) = m.x + c
+      const SIMDFP m = m_data[index][&Bin::m];
+      const SIMDFP c = m_data[index][&Bin::c];
 #else
       // clang 5.0 has issues with Vc::vector. So fallback to scalar lookup.
       SIMDFP m( SIMDFP::Zero() ), c( SIMDFP::Zero() );
