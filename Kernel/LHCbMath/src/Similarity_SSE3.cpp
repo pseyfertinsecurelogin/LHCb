@@ -65,124 +65,118 @@ namespace {
 
 } // namespace
 
-namespace LHCb {
-  namespace Math {
-    namespace detail {
-      namespace sse3 {
+namespace LHCb::Math::detail::sse3 {
 
-        // origin: 5x5 input symmetric matrix, in row-major version,i.e.
-        //  1
-        //  2  3
-        //  4  5  6
-        //  7  8  9 10
-        // 11 12 13 14 15
-        // F: transformation, row-major
-        // ti: output 5x5 matrix: F * origin * Transpose(F)
+  // origin: 5x5 input symmetric matrix, in row-major version,i.e.
+  //  1
+  //  2  3
+  //  4  5  6
+  //  7  8  9 10
+  // 11 12 13 14 15
+  // F: transformation, row-major
+  // ti: output 5x5 matrix: F * origin * Transpose(F)
 
-        void similarity_5_1( span<const double, 15> Ci, span<const double, 5> Fi, span<double, 1> ti ) {
-          sse_t m{Ci};
-          ti[0] = dot5_sse3( Fi, m.g0( Fi ), m.g2( Fi ), m.g4( Fi ) );
-        }
+  void similarity_5_1( span<const double, 15> Ci, span<const double, 5> Fi, span<double, 1> ti ) {
+    sse_t m{Ci};
+    ti[0] = dot5_sse3( Fi, m.g0( Fi ), m.g2( Fi ), m.g4( Fi ) );
+  }
 
-        void similarity_5_5( span<const double, 15> Ci, span<const double, 25> Fi, span<double, 15> ti ) {
-          // std::cout << "using similarity_5_5_sse3" << std::endl;
-          // reshuffle the origin matrix for SIMD use...
-          sse_t m{Ci};
+  void similarity_5_5( span<const double, 15> Ci, span<const double, 25> Fi, span<double, 15> ti ) {
+    // std::cout << "using similarity_5_5_sse3" << std::endl;
+    // reshuffle the origin matrix for SIMD use...
+    sse_t m{Ci};
 
-          auto _0 = m.g0( Fi.subspan<0, 5>() );
-          auto _2 = m.g2( Fi.subspan<0, 5>() );
-          auto _4 = m.g4( Fi.subspan<0, 5>() );
-          auto r  = dots2_5_sse3( Fi.subspan<0, 10>(), _0, _2, _4 );
-          auto s  = dots2_5_sse3( Fi.subspan<10, 10>(), _0, _2, _4 );
-          ti[0]   = r[0];
-          ti[1]   = r[1];
-          ti[3]   = s[0];
-          ti[6]   = s[1];
-          ti[10]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<5, 5>() );
-          _2      = m.g2( Fi.subspan<5, 5>() );
-          _4      = m.g4( Fi.subspan<5, 5>() );
-          r       = dots2_5_sse3( Fi.subspan<5, 10>(), _0, _2, _4 );
-          s       = dots2_5_sse3( Fi.subspan<15, 10>(), _0, _2, _4 );
-          ti[2]   = r[0];
-          ti[4]   = r[1];
-          ti[7]   = s[0];
-          ti[11]  = s[1];
-          _0      = m.g0( Fi.subspan<10, 5>() );
-          _2      = m.g2( Fi.subspan<10, 5>() );
-          _4      = m.g4( Fi.subspan<10, 5>() );
-          r       = dots2_5_sse3( Fi.subspan<10, 10>(), _0, _2, _4 );
-          ti[5]   = r[0];
-          ti[8]   = r[1];
-          ti[12]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<15, 5>() );
-          _2      = m.g2( Fi.subspan<15, 5>() );
-          _4      = m.g4( Fi.subspan<15, 5>() );
-          r       = dots2_5_sse3( Fi.subspan<15, 10>(), _0, _2, _4 );
-          ti[9]   = r[0];
-          ti[13]  = r[1];
-          _0      = m.g0( Fi.subspan<20, 5>() );
-          _2      = m.g2( Fi.subspan<20, 5>() );
-          _4      = m.g4( Fi.subspan<20, 5>() );
-          ti[14]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-        }
+    auto _0 = m.g0( Fi.subspan<0, 5>() );
+    auto _2 = m.g2( Fi.subspan<0, 5>() );
+    auto _4 = m.g4( Fi.subspan<0, 5>() );
+    auto r  = dots2_5_sse3( Fi.subspan<0, 10>(), _0, _2, _4 );
+    auto s  = dots2_5_sse3( Fi.subspan<10, 10>(), _0, _2, _4 );
+    ti[0]   = r[0];
+    ti[1]   = r[1];
+    ti[3]   = s[0];
+    ti[6]   = s[1];
+    ti[10]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<5, 5>() );
+    _2      = m.g2( Fi.subspan<5, 5>() );
+    _4      = m.g4( Fi.subspan<5, 5>() );
+    r       = dots2_5_sse3( Fi.subspan<5, 10>(), _0, _2, _4 );
+    s       = dots2_5_sse3( Fi.subspan<15, 10>(), _0, _2, _4 );
+    ti[2]   = r[0];
+    ti[4]   = r[1];
+    ti[7]   = s[0];
+    ti[11]  = s[1];
+    _0      = m.g0( Fi.subspan<10, 5>() );
+    _2      = m.g2( Fi.subspan<10, 5>() );
+    _4      = m.g4( Fi.subspan<10, 5>() );
+    r       = dots2_5_sse3( Fi.subspan<10, 10>(), _0, _2, _4 );
+    ti[5]   = r[0];
+    ti[8]   = r[1];
+    ti[12]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<15, 5>() );
+    _2      = m.g2( Fi.subspan<15, 5>() );
+    _4      = m.g4( Fi.subspan<15, 5>() );
+    r       = dots2_5_sse3( Fi.subspan<15, 10>(), _0, _2, _4 );
+    ti[9]   = r[0];
+    ti[13]  = r[1];
+    _0      = m.g0( Fi.subspan<20, 5>() );
+    _2      = m.g2( Fi.subspan<20, 5>() );
+    _4      = m.g4( Fi.subspan<20, 5>() );
+    ti[14]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+  }
 
-        void similarity_5_7( span<const double, 15> Ci, span<const double, 35> Fi, span<double, 28> Ti ) {
+  void similarity_5_7( span<const double, 15> Ci, span<const double, 35> Fi, span<double, 28> Ti ) {
 
-          // reshuffle the 5x5 symmetric Ci matrix for SIMD use...
-          sse_t m{Ci};
+    // reshuffle the 5x5 symmetric Ci matrix for SIMD use...
+    sse_t m{Ci};
 
-          auto _0 = m.g0( Fi.subspan<0, 5>() );
-          auto _2 = m.g2( Fi.subspan<0, 5>() );
-          auto _4 = m.g4( Fi.subspan<0, 5>() );
-          Ti[0]   = dot5_sse3( Fi.subspan<0, 5>(), _0, _2, _4 );
-          Ti[1]   = dot5_sse3( Fi.subspan<5, 5>(), _0, _2, _4 );
-          Ti[3]   = dot5_sse3( Fi.subspan<10, 5>(), _0, _2, _4 );
-          Ti[6]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
-          Ti[10]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          Ti[15]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
-          Ti[21]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<5, 5>() );
-          _2      = m.g2( Fi.subspan<5, 5>() );
-          _4      = m.g4( Fi.subspan<5, 5>() );
-          Ti[2]   = dot5_sse3( Fi.subspan<5, 5>(), _0, _2, _4 );
-          Ti[4]   = dot5_sse3( Fi.subspan<10, 5>(), _0, _2, _4 );
-          Ti[7]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
-          Ti[11]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          Ti[16]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
-          Ti[22]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<10, 5>() );
-          _2      = m.g2( Fi.subspan<10, 5>() );
-          _4      = m.g4( Fi.subspan<10, 5>() );
-          Ti[5]   = dot5_sse3( Fi.subspan<10, 5>(), _0, _2, _4 );
-          Ti[8]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
-          Ti[12]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          Ti[17]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
-          Ti[23]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<15, 5>() );
-          _2      = m.g2( Fi.subspan<15, 5>() );
-          _4      = m.g4( Fi.subspan<15, 5>() );
-          Ti[9]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
-          Ti[13]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          Ti[18]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
-          Ti[24]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<20, 5>() );
-          _2      = m.g2( Fi.subspan<20, 5>() );
-          _4      = m.g4( Fi.subspan<20, 5>() );
-          Ti[14]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
-          Ti[19]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
-          Ti[25]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<25, 5>() );
-          _2      = m.g2( Fi.subspan<25, 5>() );
-          _4      = m.g4( Fi.subspan<25, 5>() );
-          Ti[20]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
-          Ti[26]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-          _0      = m.g0( Fi.subspan<30, 5>() );
-          _2      = m.g2( Fi.subspan<30, 5>() );
-          _4      = m.g4( Fi.subspan<30, 5>() );
-          Ti[27]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
-        }
-      } // namespace sse3
-    }   // namespace detail
-  }     // namespace Math
-} // namespace LHCb
+    auto _0 = m.g0( Fi.subspan<0, 5>() );
+    auto _2 = m.g2( Fi.subspan<0, 5>() );
+    auto _4 = m.g4( Fi.subspan<0, 5>() );
+    Ti[0]   = dot5_sse3( Fi.subspan<0, 5>(), _0, _2, _4 );
+    Ti[1]   = dot5_sse3( Fi.subspan<5, 5>(), _0, _2, _4 );
+    Ti[3]   = dot5_sse3( Fi.subspan<10, 5>(), _0, _2, _4 );
+    Ti[6]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
+    Ti[10]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    Ti[15]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
+    Ti[21]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<5, 5>() );
+    _2      = m.g2( Fi.subspan<5, 5>() );
+    _4      = m.g4( Fi.subspan<5, 5>() );
+    Ti[2]   = dot5_sse3( Fi.subspan<5, 5>(), _0, _2, _4 );
+    Ti[4]   = dot5_sse3( Fi.subspan<10, 5>(), _0, _2, _4 );
+    Ti[7]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
+    Ti[11]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    Ti[16]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
+    Ti[22]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<10, 5>() );
+    _2      = m.g2( Fi.subspan<10, 5>() );
+    _4      = m.g4( Fi.subspan<10, 5>() );
+    Ti[5]   = dot5_sse3( Fi.subspan<10, 5>(), _0, _2, _4 );
+    Ti[8]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
+    Ti[12]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    Ti[17]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
+    Ti[23]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<15, 5>() );
+    _2      = m.g2( Fi.subspan<15, 5>() );
+    _4      = m.g4( Fi.subspan<15, 5>() );
+    Ti[9]   = dot5_sse3( Fi.subspan<15, 5>(), _0, _2, _4 );
+    Ti[13]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    Ti[18]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
+    Ti[24]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<20, 5>() );
+    _2      = m.g2( Fi.subspan<20, 5>() );
+    _4      = m.g4( Fi.subspan<20, 5>() );
+    Ti[14]  = dot5_sse3( Fi.subspan<20, 5>(), _0, _2, _4 );
+    Ti[19]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
+    Ti[25]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<25, 5>() );
+    _2      = m.g2( Fi.subspan<25, 5>() );
+    _4      = m.g4( Fi.subspan<25, 5>() );
+    Ti[20]  = dot5_sse3( Fi.subspan<25, 5>(), _0, _2, _4 );
+    Ti[26]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+    _0      = m.g0( Fi.subspan<30, 5>() );
+    _2      = m.g2( Fi.subspan<30, 5>() );
+    _4      = m.g4( Fi.subspan<30, 5>() );
+    Ti[27]  = dot5_sse3( Fi.subspan<30, 5>(), _0, _2, _4 );
+  }
+} // namespace LHCb::Math::detail::sse3
