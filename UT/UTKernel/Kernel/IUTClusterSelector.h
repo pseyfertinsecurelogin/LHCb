@@ -15,8 +15,8 @@
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
 // forward declaration
-namespace LHCb{
-  class  UTCluster     ;
+namespace LHCb {
+  class UTCluster;
 }
 
 /** @class IUTClusterSelector IUTClusterSelector.h
@@ -30,29 +30,26 @@ namespace LHCb{
  *  @date   2018-09-04
  */
 
-struct IUTClusterSelector : extend_interfaces<IAlgTool>
-{
+struct IUTClusterSelector : extend_interfaces<IAlgTool> {
 
   /** static interface identification
    *  @see IInterface
    *  @see IID_IUTClusterSelector
    *  @return the unique interface identifier
    */
-  DeclareInterfaceID( IUTClusterSelector , 2 , 0 );
-
+  DeclareInterfaceID( IUTClusterSelector, 2, 0 );
 
   /** "select"/"preselect" method
    *  @param  cluster pointer to calo cluster object to be selected
    *  @return true if cluster is selected
    */
-  virtual bool select     ( const LHCb::UTCluster* cluster ) const = 0 ;
+  virtual bool select( const LHCb::UTCluster* cluster ) const = 0;
 
   /** "select"/"preselect" method (functor interface)
    *  @param  cluster pointer to calo cluster object to be selected
    *  @return true if cluster is selected
    */
-  virtual bool operator() ( const LHCb::UTCluster* cluster ) const = 0 ;
-
+  virtual bool operator()( const LHCb::UTCluster* cluster ) const = 0;
 };
 
 // ============================================================================

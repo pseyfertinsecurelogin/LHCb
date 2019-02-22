@@ -16,60 +16,48 @@ using namespace DataPacking;
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-template < class PACKER >
-Pack<PACKER>::Pack( const std::string& name,
-                    ISvcLocator* pSvcLocator )
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "InputName" , m_inputName   = PACKER::unpackedLocation() );
-  declareProperty( "OutputName", m_outputName  = PACKER::packedLocation()   );
+template <class PACKER>
+Pack<PACKER>::Pack( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
+  declareProperty( "InputName", m_inputName = PACKER::unpackedLocation() );
+  declareProperty( "OutputName", m_outputName = PACKER::packedLocation() );
   declareProperty( "PackingVersion",
                    m_version = (unsigned short int)PACKER::PackedDataVector::defaultPackingVersion() );
-  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput  = false     );
-  declareProperty( "DeleteInput",                m_deleteInput   = false     );
-  declareProperty( "EnableCheck",                m_enableCheck   = false     );
-  declareProperty( "ClearRegistry",              m_clearRegistry = true      );
-  //setProperty( "OutputLevel", MSG::VERBOSE );
+  declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
+  declareProperty( "DeleteInput", m_deleteInput = false );
+  declareProperty( "EnableCheck", m_enableCheck = false );
+  declareProperty( "ClearRegistry", m_clearRegistry = true );
+  // setProperty( "OutputLevel", MSG::VERBOSE );
 }
 
-template < class PACKER >
-StatusCode Pack<PACKER>::initialize()
-{
+template <class PACKER>
+StatusCode Pack<PACKER>::initialize() {
   const StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Input '"    << rootInTES() << m_inputName
-            << "' Output '" << rootInTES() << m_outputName << "'" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << "Input '" << rootInTES() << m_inputName << "' Output '" << rootInTES() << m_outputName << "'" << endmsg;
 
   return sc;
 }
 
-template < class PACKER >
-StatusCode Pack<PACKER>::execute()
-{
+template <class PACKER>
+StatusCode Pack<PACKER>::execute() {
   // Check to see if the output data already exists.
-  const bool outputOK = !exist<typename PACKER::PackedDataVector>(m_outputName);
-  if ( !outputOK && msgLevel(MSG::DEBUG) )
-  {
+  const bool outputOK = !exist<typename PACKER::PackedDataVector>( m_outputName );
+  if ( !outputOK && msgLevel( MSG::DEBUG ) ) {
     debug() << "Output already exists at '" << m_outputName << "'" << endmsg;
   }
 
   // Only proceed if output doesn't exist
-  if ( outputOK )
-  {
+  if ( outputOK ) {
 
     // Check to see if input exists
-    const bool inputOK = exist<typename PACKER::DataVector>(m_inputName);
-    if ( !inputOK && msgLevel(MSG::DEBUG) )
-    {
-      debug() << "Input missing at '" << m_inputName << "'" << endmsg;
-    }
+    const bool inputOK = exist<typename PACKER::DataVector>( m_inputName );
+    if ( !inputOK && msgLevel( MSG::DEBUG ) ) { debug() << "Input missing at '" << m_inputName << "'" << endmsg; }
 
     // Pointer to packed data
-    typename PACKER::PackedDataVector * pdata = nullptr;
-    if ( inputOK || m_alwaysOutput )
-    {
+    typename PACKER::PackedDataVector* pdata = nullptr;
+    if ( inputOK || m_alwaysOutput ) {
       // make new output data
       pdata = new typename PACKER::PackedDataVector();
       // give new container to Gaudi
@@ -77,23 +65,21 @@ StatusCode Pack<PACKER>::execute()
     }
 
     // Only fill if all input OK
-    if ( inputOK )
-    {
+    if ( inputOK ) {
 
       // Load the input data
-      auto * data = this->get<typename PACKER::DataVector>(m_inputName);
+      auto* data = this->get<typename PACKER::DataVector>( m_inputName );
 
       // set data version
-      pdata->setVersion(data->version());
+      pdata->setVersion( data->version() );
 
       // Set packing version number
-      pdata->setPackingVersion(m_version);
+      pdata->setPackingVersion( m_version );
 
       // Fill packed data
       m_packer.pack( *data, *pdata );
 
-      if ( msgLevel(MSG::DEBUG) )
-      {
+      if ( msgLevel( MSG::DEBUG ) ) {
         debug() << "Created " << pdata->data().size() << " data objects at '" << m_outputName << endmsg;
         debug() << " Unpacked Data Version  = " << (unsigned int)data->version() << endmsg;
         debug() << " Packed Data Version    = " << (unsigned int)pdata->version() << endmsg;
@@ -101,13 +87,12 @@ StatusCode Pack<PACKER>::execute()
       }
 
       // Packing checks
-      if ( UNLIKELY(m_enableCheck) )
-      {
+      if ( UNLIKELY( m_enableCheck ) ) {
         // make new unpacked output data object
-        auto * unpacked = new typename PACKER::DataVector();
+        auto* unpacked = new typename PACKER::DataVector();
 
         // save in TES
-        put( unpacked, m_inputName+"_PackingCheck" );
+        put( unpacked, m_inputName + "_PackingCheck" );
 
         // give same version as original
         unpacked->setVersion( data->version() );
@@ -120,30 +105,34 @@ StatusCode Pack<PACKER>::execute()
 
         // clean up after checks
         const auto sc = evtSvc()->unregisterObject( unpacked );
-        if ( sc.isSuccess() ) { delete unpacked; }
-        else { Error( "Problem unregistering data at "+m_inputName+"_PackingCheck" ).ignore(); }
+        if ( sc.isSuccess() ) {
+          delete unpacked;
+        } else {
+          Error( "Problem unregistering data at " + m_inputName + "_PackingCheck" ).ignore();
+        }
       }
 
       // If requested, remove the input data from the TES and delete
-      if ( UNLIKELY(m_deleteInput) )
-      {
+      if ( UNLIKELY( m_deleteInput ) ) {
         const auto sc = evtSvc()->unregisterObject( data );
-        if ( sc.isSuccess() ) { delete data; data = nullptr; }
-        else { Error( "Problem unregistering data at "+m_inputName ).ignore(); }
-      }
-      else
-      {
+        if ( sc.isSuccess() ) {
+          delete data;
+          data = nullptr;
+        } else {
+          Error( "Problem unregistering data at " + m_inputName ).ignore();
+        }
+      } else {
         // Clear the registry address of the unpacked container, to prevent reloading
-        if ( m_clearRegistry ) { 
-            auto* pReg = data->registry();
-            if (pReg) pReg->setAddress( nullptr ); 
+        if ( m_clearRegistry ) {
+          auto* pReg = data->registry();
+          if ( pReg ) pReg->setAddress( nullptr );
         }
       }
 
     } // input OK
 
     // Count packed output
-    if ( inputOK || m_alwaysOutput ) { counter("# PackedData") += pdata->data().size(); }
+    if ( inputOK || m_alwaysOutput ) { counter( "# PackedData" ) += pdata->data().size(); }
 
   } // output OK
 

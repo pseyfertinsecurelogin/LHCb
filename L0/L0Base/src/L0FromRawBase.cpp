@@ -25,35 +25,31 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-L0FromRawBase::L0FromRawBase( const std::string& name,
-                              ISvcLocator* pSvcLocator)
-: Decoder::AlgBase ( name , pSvcLocator )
-{
-  m_rawEventLocations= {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default };
+L0FromRawBase::L0FromRawBase( const std::string& name, ISvcLocator* pSvcLocator )
+    : Decoder::AlgBase( name, pSvcLocator ) {
+  m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default};
   initRawEventSearch();
   m_useRootInTES = IgnoreRootInTES;
 }
 //=============================================================================
 // Select the raw event location
 //=============================================================================
-StatusCode L0FromRawBase::selectRawEventLocation(std::string &location)
-{
+StatusCode L0FromRawBase::selectRawEventLocation( std::string& location ) {
 
-  for (const auto & loc : m_rawEventLocations) {
-    if (exist<LHCb::RawEvent>( loc, IgnoreRootInTES )) {
+  for ( const auto& loc : m_rawEventLocations ) {
+    if ( exist<LHCb::RawEvent>( loc, IgnoreRootInTES ) ) {
       m_useRootInTES = IgnoreRootInTES;
-      location = loc;
+      location       = loc;
       break;
     }
-    if (exist<LHCb::RawEvent>( loc , UseRootInTES )) {
+    if ( exist<LHCb::RawEvent>( loc, UseRootInTES ) ) {
       m_useRootInTES = UseRootInTES;
-      location = loc;
+      location       = loc;
       break;
     }
   }
 
-  m_statusOnTES = (location==LHCb::RawEventLocation::Default);
+  m_statusOnTES = ( location == LHCb::RawEventLocation::Default );
 
-  return location.empty() ? Error("No valid raw event location found",StatusCode::FAILURE,50)
-                          : StatusCode::SUCCESS;
+  return location.empty() ? Error( "No valid raw event location found", StatusCode::FAILURE, 50 ) : StatusCode::SUCCESS;
 }

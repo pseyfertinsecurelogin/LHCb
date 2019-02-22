@@ -19,17 +19,14 @@
  *
  *  Pack the LHCb::VeloCluster objects from a specified container.
  */
-class PackVeloCluster : public GaudiAlgorithm
-{
+class PackVeloCluster : public GaudiAlgorithm {
 
 public:
-
-  PackVeloCluster(const std::string& name, ISvcLocator* svcLocator);
+  PackVeloCluster( const std::string& name, ISvcLocator* svcLocator );
 
   StatusCode execute() override;
 
 private:
-
   Gaudi::Property<std::string> m_inputName{this, "InputName", LHCb::VeloClusterLocation::Default};
 
   Gaudi::Property<std::string> m_outputName{this, "OutputName", LHCb::PackedClusterLocation::Velo};

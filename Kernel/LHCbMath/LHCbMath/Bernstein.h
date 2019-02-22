@@ -14,10 +14,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include "LHCbMath/BernsteinPoly.h"
 #include "LHCbMath/Bernstein1D.h"
 #include "LHCbMath/Bernstein2D.h"
 #include "LHCbMath/Bernstein3D.h"
+#include "LHCbMath/BernsteinPoly.h"
 // ============================================================================
 /** @file LHCbMath/Bernstein.h
  *  Set of useful math-functions, related to Bernstein polynomials

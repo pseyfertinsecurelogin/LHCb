@@ -14,8 +14,8 @@
 #include <string>
 /** DetDesc */
 #include "DetDesc/Solid.h"
-#include "DetDesc/SolidUnion.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidUnion.h"
 
 // ============================================================================
 /** @file
@@ -33,13 +33,9 @@
  *  @param first pointer to first/main solid
  */
 // ============================================================================
-SolidUnion::SolidUnion( const std::string& name  ,
-                        std::unique_ptr<ISolid> first )
-  : SolidBase    ( name         )
-  , SolidBoolean ( name , std::move(first) )
-{
-  if( UNLIKELY(!SolidBoolean::first()) )
-    { throw SolidException(" SolidUnion:: ISolid* points to NULL!"); }
+SolidUnion::SolidUnion( const std::string& name, std::unique_ptr<ISolid> first )
+    : SolidBase( name ), SolidBoolean( name, std::move( first ) ) {
+  if ( UNLIKELY( !SolidBoolean::first() ) ) { throw SolidException( " SolidUnion:: ISolid* points to NULL!" ); }
   createCoverTop();
 }
 // ============================================================================
@@ -49,10 +45,7 @@ SolidUnion::SolidUnion( const std::string& name  ,
  *  @param name name of the solid union
  */
 // ============================================================================
-SolidUnion::SolidUnion( const std::string& name )
-  : SolidBase    ( name )
-  , SolidBoolean ( name )
-{}
+SolidUnion::SolidUnion( const std::string& name ) : SolidBase( name ), SolidBoolean( name ) {}
 // ============================================================================
 
 // ============================================================================
@@ -65,31 +58,21 @@ SolidUnion::SolidUnion( const std::string& name )
  *  @return true if the point is inside the solid
  */
 // ============================================================================
-bool SolidUnion::isInside( const Gaudi::XYZPoint   & point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidUnion::isInside( const Gaudi::XYZPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidUnion::isInside( const Gaudi::Polar3DPoint& point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidUnion::isInside( const Gaudi::Polar3DPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidUnion::isInside( const Gaudi::RhoZPhiPoint   & point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidUnion::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
 template <class aPoint>
-bool SolidUnion::isInsideImpl( const aPoint   & point ) const
-{
+bool SolidUnion::isInsideImpl( const aPoint& point ) const {
   /// check bounding box
-  if ( isOutBBox( point )         ) { return false ; }
+  if ( isOutBBox( point ) ) { return false; }
   ///  is point inside the "main" volume?
-  if ( first()->isInside( point ) ) { return true  ; }
+  if ( first()->isInside( point ) ) { return true; }
   /// find the first daughter in which the given point is placed
   auto c = children();
-  return std::any_of( begin(c) , end(c) , Solid::isInside( point ) ) ;
+  return std::any_of( begin( c ), end( c ), Solid::isInside( point ) );
 }
 
 // ============================================================================
@@ -99,11 +82,9 @@ bool SolidUnion::isInsideImpl( const aPoint   & point ) const
  *  @return status code
  */
 // ============================================================================
-StatusCode  SolidUnion::unite( std::unique_ptr<ISolid>  solid    ,
-                               const Gaudi::Transform3D*  mtrx     )
-{
-  auto sc = addChild( std::move(solid) , mtrx );
-  return sc.isSuccess() ? updateBP() : sc ;
+StatusCode SolidUnion::unite( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx ) {
+  auto sc = addChild( std::move( solid ), mtrx );
+  return sc.isSuccess() ? updateBP() : sc;
 }
 
 // ============================================================================
@@ -113,11 +94,9 @@ StatusCode  SolidUnion::unite( std::unique_ptr<ISolid>  solid    ,
  *  @return status code
  */
 // ============================================================================
-StatusCode  SolidUnion::unite ( std::unique_ptr<ISolid>  child    ,
-                                const Gaudi::XYZPoint&   position ,
-                                const Gaudi::Rotation3D& rotation )
-{
-  auto sc = addChild( std::move(child) , position , rotation );
+StatusCode SolidUnion::unite( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+                              const Gaudi::Rotation3D& rotation ) {
+  auto sc = addChild( std::move( child ), position, rotation );
   return sc.isSuccess() ? updateBP() : sc;
 }
 // ============================================================================
@@ -127,10 +106,10 @@ StatusCode  SolidUnion::unite ( std::unique_ptr<ISolid>  child    ,
  */
 // ============================================================================
 void SolidUnion::createCoverTop() {
-    const double x =  std::max( std::abs(xMin()), std::abs(xMax()) );
-    const double y =  std::max( std::abs(yMin()), std::abs(yMax()) );
-    const double z =  std::max( std::abs(zMin()), std::abs(zMax()) );
-    m_coverTop = std::make_unique<SolidBox> ("CoverTop for " + name () , x , y, z  ) ;
+  const double x = std::max( std::abs( xMin() ), std::abs( xMax() ) );
+  const double y = std::max( std::abs( yMin() ), std::abs( yMax() ) );
+  const double z = std::max( std::abs( zMin() ), std::abs( zMax() ) );
+  m_coverTop     = std::make_unique<SolidBox>( "CoverTop for " + name(), x, y, z );
 }
 // ============================================================================
 
@@ -139,24 +118,23 @@ void SolidUnion::createCoverTop() {
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidUnion::updateBP()
-{
+StatusCode SolidUnion::updateBP() {
   auto c = children();
-  if( !c ) { return StatusCode::SUCCESS ; }
+  if ( !c ) { return StatusCode::SUCCESS; }
   // get last child
   const auto& base = c.back();
   //
-  setXMin   ( std::min( base.xMin(), xMin() ) );
-  setXMax   ( std::max( base.xMax(), xMax() ) );
+  setXMin( std::min( base.xMin(), xMin() ) );
+  setXMax( std::max( base.xMax(), xMax() ) );
 
-  setYMin   ( std::min( base.yMin(), yMin() ) );
-  setYMax   ( std::max( base.yMax(), yMax() ) );
+  setYMin( std::min( base.yMin(), yMin() ) );
+  setYMax( std::max( base.yMax(), yMax() ) );
 
-  setZMin   ( std::min( base.zMin(), zMin() ) );
-  setZMax   ( std::max( base.zMax(), zMax() ) );
+  setZMin( std::min( base.zMin(), zMin() ) );
+  setZMax( std::max( base.zMax(), zMax() ) );
 
-  setRMax   ( std::max( base.rMax(), rMax() ) );
-  setRhoMax ( std::max( base.rhoMax(), rhoMax() ) );
+  setRMax( std::max( base.rMax(), rMax() ) );
+  setRhoMax( std::max( base.rhoMax(), rhoMax() ) );
   //
   checkBP();
   createCoverTop();

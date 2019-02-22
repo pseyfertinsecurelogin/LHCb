@@ -35,84 +35,84 @@ class DeTTSensor;
 
 template <typename TYPE>
 class STDetTraits {
- public:
+public:
   typedef TYPE parent;
   typedef TYPE child;
 };
 
-template<>
-class STDetTraits<DeITStation>{
- public:
+template <>
+class STDetTraits<DeITStation> {
+public:
   typedef DeITDetector parent;
-  typedef DeITBox child;
+  typedef DeITBox      child;
 };
 
-template<>
-class STDetTraits<DeTTStation>{
- public:
+template <>
+class STDetTraits<DeTTStation> {
+public:
   typedef DeTTDetector parent;
-  typedef DeTTLayer child;
+  typedef DeTTLayer    child;
 };
 
-template<>
-class STDetTraits<DeITBox>{
- public:
+template <>
+class STDetTraits<DeITBox> {
+public:
   typedef DeITStation parent;
-  typedef DeITLayer child;
+  typedef DeITLayer   child;
 };
 
-template<>
-class STDetTraits<DeITLayer>{
- public:
-  typedef DeITBox parent;
+template <>
+class STDetTraits<DeITLayer> {
+public:
+  typedef DeITBox    parent;
   typedef DeITLadder child;
 };
 
-template<>
-class STDetTraits<DeTTLayer>{
- public:
-  typedef DeTTStation parent;
+template <>
+class STDetTraits<DeTTLayer> {
+public:
+  typedef DeTTStation    parent;
   typedef DeTTHalfModule child;
 };
 
-template<>
-class STDetTraits<DeITLadder>{
- public:
-  typedef DeITLayer parent;
+template <>
+class STDetTraits<DeITLadder> {
+public:
+  typedef DeITLayer  parent;
   typedef DeITSector child;
 };
 
-template<>
-class STDetTraits<DeTTHalfModule>{
- public:
-  typedef DeTTLayer parent;
+template <>
+class STDetTraits<DeTTHalfModule> {
+public:
+  typedef DeTTLayer  parent;
   typedef DeTTSector child;
 };
 
-template<>
-class STDetTraits<DeITSector>{
- public:
+template <>
+class STDetTraits<DeITSector> {
+public:
   typedef DeITLadder parent;
   typedef DeITSensor child;
 };
 
-template<>
-class STDetTraits<DeTTSector>{
- public:
+template <>
+class STDetTraits<DeTTSector> {
+public:
   typedef DeTTHalfModule parent;
-  typedef DeTTSensor child;
+  typedef DeTTSensor     child;
 };
 
-template<>
-class STDetTraits<DeITSensor>{
- public:
+template <>
+class STDetTraits<DeITSensor> {
+public:
   typedef DeITSector parent;
   typedef DeITSensor child;
 };
 
-template<>
-class STDetTraits<DeTTSensor>{
- public:
+template <>
+class STDetTraits<DeTTSensor> {
+public:
   typedef DeTTSector parent;
   typedef DeTTSensor child;
 };

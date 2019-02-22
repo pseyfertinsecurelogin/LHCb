@@ -15,9 +15,9 @@
 // ============================================================================
 #include "LoKi/Context.h"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for class LoKi::Context
- *  @date 2018-08-13 
+ *  @date 2018-08-13
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
 // ============================================================================
@@ -26,16 +26,11 @@
  *  @param dvalgo own IDVAlgorithm
  */
 // ============================================================================
-LoKi::Context::Context
-( const GaudiAlgorithm* algo   ,
-  const IDVAlgorithm*   dvalgo ) 
-  : m_algo   ( algo   ) 
-  , m_dvalgo ( dvalgo )
-{}
+LoKi::Context::Context( const GaudiAlgorithm* algo, const IDVAlgorithm* dvalgo ) : m_algo( algo ), m_dvalgo( dvalgo ) {}
 // ============================================================================
-//  destructor 
+//  destructor
 // ============================================================================
-LoKi::Context::~Context(){}
+LoKi::Context::~Context() {}
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================

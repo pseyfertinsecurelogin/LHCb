@@ -10,11 +10,11 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id:$ 
+# $Id:$
 # =============================================================================
 ## @file dump_ParticleProperties
 #
-#  Trivial script to dump the particle properties 
+#  Trivial script to dump the particle properties
 #
 #  @date   2010-10-22
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -22,13 +22,10 @@
 #  Last modification $Date: 2010-09-10 14:04:49 $
 #                 by $Author: ibelyaev $
 # =============================================================================
-import sys 
-from   PartProp.DumpParticleProperties import dump
-dump ( [ a for a in sys.argv[1:] if '--' != a ] )
-
+import sys
+from PartProp.DumpParticleProperties import dump
+dump([a for a in sys.argv[1:] if '--' != a])
 
 # =============================================================================
-# The END 
+# The END
 # =============================================================================
-
-

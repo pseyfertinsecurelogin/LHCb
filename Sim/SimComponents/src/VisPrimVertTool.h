@@ -32,16 +32,13 @@ public:
   using extends::extends;
 
   long countVertices() const override;
-  bool isVisible(const LHCb::MCVertex* pv ) const override
-  { return (countVisTracks(pv) >= m_nTracks) ; }
+  bool isVisible( const LHCb::MCVertex* pv ) const override { return ( countVisTracks( pv ) >= m_nTracks ); }
   bool isB( const LHCb::MCVertex* ) const override;
   long countVisTracks( const LHCb::MCVertex* ) const override;
 
 private:
-
   // Number of tracks defining a PV: m_nTracks, by default= 2
-  Gaudi::Property<long> m_nTracks {this, "TrackNum", 2 };
-  Gaudi::Property<bool> m_veloAndSeed { this, "VeloAndSeed", true };
-
+  Gaudi::Property<long> m_nTracks{this, "TrackNum", 2};
+  Gaudi::Property<bool> m_veloAndSeed{this, "VeloAndSeed", true};
 };
 #endif // VISPRIMVERTTOOL_VISPRIMVERTTOOL_H

@@ -26,11 +26,9 @@
 // ============================================================================
 #include "LoKi/DecayDescriptor.h"
 // ============================================================================
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Parsers
-  {
+  namespace Parsers {
     // ========================================================================
     /** @class Tree
      *  simple (type-neutral) representation of the decay tree
@@ -38,104 +36,102 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-22
      */
-    class Tree
-    {
-    public :
+    class Tree {
+    public:
       // ======================================================================
       /// the vector of trees
-      typedef std::vector<Decays::Parsers::Tree>                        Trees ;
+      typedef std::vector<Decays::Parsers::Tree> Trees;
       // ======================================================================
     public:
       // ======================================================================
       /// default constructor
-      Tree () ;
+      Tree();
       /// constructor from the decay head
-      Tree ( const Decays::iNode& head           ,
-             const bool           stable = false ) ;
+      Tree( const Decays::iNode& head, const bool stable = false );
       // ======================================================================
     public: // operators
       // ======================================================================
       /// add to the daughters
-      Tree& operator+= ( const Tree&          tree      ) ;
-      Tree& operator+= ( const Decays::iNode& node      ) ;
-      Tree& operator+= ( const Trees&         trees     ) ;
+      Tree& operator+=( const Tree& tree );
+      Tree& operator+=( const Decays::iNode& node );
+      Tree& operator+=( const Trees& trees );
       /// add to the optional
-      Tree& operator%= ( const Tree&          tree      ) ;
-      Tree& operator%= ( const Decays::iNode& node      ) ;
-      Tree& operator%= ( const Trees&         trees     ) ;
+      Tree& operator%=( const Tree& tree );
+      Tree& operator%=( const Decays::iNode& node );
+      Tree& operator%=( const Trees& trees );
       /// OR
-      Tree& operator|= ( const Tree&          tree      ) ;
-      Tree& operator|= ( const Decays::iNode& node      ) ;
-      Tree& operator|= ( const Trees&         trees     ) ;
+      Tree& operator|=( const Tree& tree );
+      Tree& operator|=( const Decays::iNode& node );
+      Tree& operator|=( const Trees& trees );
       /// AND
-      Tree& operator&= ( const Tree&          tree      ) ;
-      Tree& operator&= ( const Decays::iNode& node      ) ;
-      Tree& operator&= ( const Trees&         trees     ) ;
-     // ======================================================================
+      Tree& operator&=( const Tree& tree );
+      Tree& operator&=( const Decays::iNode& node );
+      Tree& operator&=( const Trees& trees );
+      // ======================================================================
     public: // configuration
       // =====================================================================
-      Tree& operator += ( const Decays::Trees::Arrow&       arr  ) ;
-      Tree& operator += ( const Decays::Trees::Oscillation& osc  ) ;
+      Tree& operator+=( const Decays::Trees::Arrow& arr );
+      Tree& operator+=( const Decays::Trees::Oscillation& osc );
       // inclusive
-      Tree& operator += ( const bool                        inc  ) ;
+      Tree& operator+=( const bool inc );
       // negated
-      Tree& operator *= ( const bool                        neg  ) ;
+      Tree& operator*=( const bool neg );
       // marked
-      Tree& operator /= ( const bool                        mark ) ;
+      Tree& operator/=( const bool mark );
       // =====================================================================
     public:
       // =====================================================================
-      const Decays::iNode&       head       () const { return m_head.node () ; }
-      Decays::Trees::Arrow       arrow      () const { return m_arrow        ; }
-      Decays::Trees::Oscillation oscillated () const { return m_oscillated   ; }
-      bool                       inclusive  () const { return m_inclusive    ; }
-      bool                       negated    () const { return m_negated      ; }
-      bool                       marked     () const { return m_marked       ; }
-      bool                       stable     () const { return m_stable       ; }
-      const Trees&  ored     () const { return m_or       ; }
-      const Trees&  anded    () const { return m_and      ; }
-      const Trees&  children () const { return m_children ; }
-      const Trees&  optional () const { return m_optional ; }
+      const Decays::iNode&       head() const { return m_head.node(); }
+      Decays::Trees::Arrow       arrow() const { return m_arrow; }
+      Decays::Trees::Oscillation oscillated() const { return m_oscillated; }
+      bool                       inclusive() const { return m_inclusive; }
+      bool                       negated() const { return m_negated; }
+      bool                       marked() const { return m_marked; }
+      bool                       stable() const { return m_stable; }
+      const Trees&               ored() const { return m_or; }
+      const Trees&               anded() const { return m_and; }
+      const Trees&               children() const { return m_children; }
+      const Trees&               optional() const { return m_optional; }
       // ======================================================================
     public:
       // ======================================================================
-      std::ostream& fillStream( std::ostream& s ) const ;
-      std::string   toString  () const ;
+      std::ostream& fillStream( std::ostream& s ) const;
+      std::string   toString() const;
       // ======================================================================
     private:
       // ======================================================================
       /// the decay head (single node)
-      Decays::Node  m_head ;
+      Decays::Node m_head;
       /// vector of OR-ed  trees
-      Trees m_or            ;
+      Trees m_or;
       /// vector of AND-ed trees
-      Trees m_and           ;
+      Trees m_and;
       // ======================================================================
     private:
       // ======================================================================
       /// the arrow type
-      Decays::Trees::Arrow       m_arrow      ;                   // decay type
+      Decays::Trees::Arrow m_arrow; // decay type
       /// oscillated?
-      Decays::Trees::Oscillation m_oscillated ;                 // oscillated ?
+      Decays::Trees::Oscillation m_oscillated; // oscillated ?
       /// inclusive
-      bool                       m_inclusive  ;                 //    inclusive
+      bool m_inclusive; //    inclusive
       /// negation
-      bool                       m_negated    ;                 //    negation?
+      bool m_negated; //    negation?
       /// mark
-      bool                       m_marked     ;                 //      marked?
+      bool m_marked; //      marked?
       /// stable ?
-      bool                       m_stable     ;                 //      stable?
+      bool m_stable; //      stable?
       // ======================================================================
     private:
       // ======================================================================
       /// children
-      Trees m_children ;                                    //         children
+      Trees m_children; //         children
       /// optional nodes
-      Trees m_optional ;                                    //   optional nodes
+      Trees m_optional; //   optional nodes
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    std::ostream& operator<<( std::ostream& s , const Tree& t ) ;
+    std::ostream& operator<<( std::ostream& s, const Tree& t );
     // ========================================================================
   } // end of namespace Parsers
   // ==========================================================================

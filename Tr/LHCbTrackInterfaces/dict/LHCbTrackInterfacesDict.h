@@ -8,18 +8,17 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DICT_LHCBTRACKINTERFACESDICT_H 
+#ifndef DICT_LHCBTRACKINTERFACESDICT_H
 #define DICT_LHCBTRACKINTERFACESDICT_H 1
 
 #include "Kernel/STChannelID.h"
-#include "TrackInterfaces/ISTClusterPosition.h"
 #include "Kernel/UTChannelID.h"
-#include "TrackInterfaces/IUTClusterPosition.h"
-#include "Kernel/VeloChannelID.h"
-#include "TrackInterfaces/IVeloClusterPosition.h"
 #include "Kernel/VPChannelID.h"
-#include "TrackInterfaces/IVPClusterPosition.h"
+#include "Kernel/VeloChannelID.h"
 #include "TrackInterfaces/IInAcceptance.h"
+#include "TrackInterfaces/ISTClusterPosition.h"
+#include "TrackInterfaces/IUTClusterPosition.h"
+#include "TrackInterfaces/IVPClusterPosition.h"
+#include "TrackInterfaces/IVeloClusterPosition.h"
 
 #endif // DICT_LHCBTRACKINTERFACESDICT_H
-

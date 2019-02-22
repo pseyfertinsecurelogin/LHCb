@@ -17,7 +17,6 @@
 #include "GaudiAlg/Consumer.h"
 #include "STDecodingBaseAlg.h"
 
-
 /** @class STErrorDecoding STErrorDecoding.h public/STErrorDecoding.h
  *
  *
@@ -25,18 +24,16 @@
  *  @date   2007-09-11 (2008-06)
  */
 
-class STErrorDecoding : public Gaudi::Functional::Consumer<void(const LHCb::RawEvent&),
+class STErrorDecoding : public Gaudi::Functional::Consumer<void( const LHCb::RawEvent& ),
                                                            Gaudi::Functional::Traits::BaseClass_t<STDecodingBaseAlg>> {
 public:
   /// Standard constructor
   STErrorDecoding( const std::string& name, ISvcLocator* pSvcLocator );
 
   /// Algorithm execution
-  void operator()(const LHCb::RawEvent&) const override;
+  void operator()( const LHCb::RawEvent& ) const override;
 
 private:
-
-  Gaudi::Property<bool> m_PrintErrorInfo { this, "PrintErrorInfo", false };
-
+  Gaudi::Property<bool> m_PrintErrorInfo{this, "PrintErrorInfo", false};
 };
 #endif // STERRORDECODING_H

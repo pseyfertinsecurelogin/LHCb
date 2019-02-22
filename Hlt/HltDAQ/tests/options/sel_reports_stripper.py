@@ -58,7 +58,6 @@ EventSelector().PrintFreq = 100
 IODataManager().DisablePFNWarning = True
 HistogramPersistencySvc().OutputLevel = 5
 
-
 # Filter nanofied events if the file is HLT2 accepted
 content_filter = HltRoutingBitsFilter('RBFilter')
 content_filter.RequireMask = [0x0, 0x0, 0x80000000]
@@ -67,7 +66,8 @@ decoder = DecoderDB['HltSelReportsDecoder/Hlt2SelReportsDecoder']
 decoder.Properties['OutputLevel'] = LEVEL
 
 stripper = HltSelReportsStripper()
-stripper.InputHltSelReportsLocation = decoder.Outputs["OutputHltSelReportsLocation"]
+stripper.InputHltSelReportsLocation = decoder.Outputs[
+    "OutputHltSelReportsLocation"]
 stripper.OutputHltSelReportsLocation = 'Hlt2/SelReportsFiltered'
 stripper.OutputHltObjectSummariesLocation = (
     str(stripper.OutputHltSelReportsLocation) + '/Candidates')
@@ -94,14 +94,14 @@ writer.SourceID = 2
 writer.InputHltSelReportsLocation = str(stripper.OutputHltSelReportsLocation)
 writer.OutputLevel = LEVEL
 
-
 decoder2 = decoder.clone('HltSelReportsDecoder/SecondDecoder')
 # decoder2.Inputs = {'RawEventLocations': ['DAQ/RawEvent']}
 decoder2.Outputs = {
     'OutputHltSelReportsLocation': 'Hlt2/SelReportsFilteredFromRaw',
-    'OutputHltObjectSummariesLocation': 'Hlt2/SelReportsFilteredFromRaw/Candidates'}
+    'OutputHltObjectSummariesLocation':
+    'Hlt2/SelReportsFilteredFromRaw/Candidates'
+}
 decoder2.Properties['OutputLevel'] = LEVEL
-
 
 topSeq = GaudiSequencer("TopSequence")
 topSeq.Members = [
@@ -114,7 +114,6 @@ topSeq.Members = [
     decoder2.setup(),
 ]
 ApplicationMgr().TopAlg = [topSeq]
-
 
 gaudi = GaudiPython.AppMgr()
 TES = gaudi.evtsvc()
@@ -144,16 +143,16 @@ def safe_str(x):
 def hos_to_pod(hos):
     """Convert HltObjectSummary to plain python objects."""
     return {
-        'summarizedObjectCLID': hos.summarizedObjectCLID(),
+        'summarizedObjectCLID':
+        hos.summarizedObjectCLID(),
         'numericalInfo':
-            {k: safe_str(v) for k, v in hos.numericalInfo().iteritems()},
+        {k: safe_str(v)
+         for k, v in hos.numericalInfo().iteritems()},
         'lhcbIDs': [x.lhcbID() for x in iter_vector(hos.lhcbIDs())],
         'substructure':
-            [hos_to_pod(sub) for sub in
-             iter_vector(hos.substructure())],
+        [hos_to_pod(sub) for sub in iter_vector(hos.substructure())],
         'substructureExtended':
-            [hos_to_pod(sub) for sub in
-             iter_vector(hos.substructureExtended())],
+        [hos_to_pod(sub) for sub in iter_vector(hos.substructureExtended())],
     }
 
 
@@ -172,8 +171,7 @@ def assert_equal(expected, result, msg):
             pprint.pformat(expected).splitlines(),
             pprint.pformat(result).splitlines(),
         )
-        full_msg = ('{}\n    diff:\n{}'
-                    .format(msg, '\n'.join(diff)))
+        full_msg = ('{}\n    diff:\n{}'.format(msg, '\n'.join(diff)))
         raise AssertionError(full_msg)
 
 
@@ -195,20 +193,20 @@ while True:
         continue
 
     # Some stats
-    print('N selections (input, stripped, persisted):      ',
-          inp.size(), out.size(), out2.size())
-    print('N HltObjectSummary (input, stripped, persisted):',
-          inpc.size(), outc.size(), out2c.size())
-    print('Hlt2 SelReports bank size (input, stripped):    ',
-          bank_size(raw), bank_size(raw2))
+    print('N selections (input, stripped, persisted):      ', inp.size(),
+          out.size(), out2.size())
+    print('N HltObjectSummary (input, stripped, persisted):', inpc.size(),
+          outc.size(), out2c.size())
+    print('Hlt2 SelReports bank size (input, stripped):    ', bank_size(raw),
+          bank_size(raw2))
 
     # Check the selection logic (we keep only the requested reports)
     result = set(out.selectionNames())
     expected = set(inp.selectionNames()) & set(stripper.SelectionNames)
     assert_equal(
         expected, result,
-        'The stripped SelReports do not match the expectation'
-        .format(result, expected))
+        'The stripped SelReports do not match the expectation'.format(
+            result, expected))
 
     # Check the deep copying of HltSummaryObjects (i.e. that the cloned
     # reports are the same as the originals)

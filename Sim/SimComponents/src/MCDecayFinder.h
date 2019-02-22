@@ -13,17 +13,17 @@
 
 //#define YYDEBUG 1
 #ifdef YYDEBUG
-#include <stdio.h>
-#include <stdlib.h>
+#  include <stdio.h>
+#  include <stdlib.h>
 #endif
 
 // Include files
 // from STL
 #include <string>
 
+#include "Event/MCParticle.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "MCInterfaces/IMCDecayFinder.h"
-#include "Event/MCParticle.h"
 
 namespace LHCb {
   class IParticlePropertySvc;
@@ -126,29 +126,26 @@ struct yy_buffer_state;
  * this avoids most segfaults
  *
  */
-class MCDecayFinder : public extends<GaudiTool, IMCDecayFinder>
-{
+class MCDecayFinder : public extends<GaudiTool, IMCDecayFinder> {
 public:
   /// Standard Constructor
-  MCDecayFinder( const std::string& type,
-                 const std::string& name,
-                 const IInterface* parent );
+  MCDecayFinder( const std::string& type, const std::string& name, const IInterface* parent );
 
   /// Destructor
-  ~MCDecayFinder( ) override; ///< Destructor
+  ~MCDecayFinder() override; ///< Destructor
 
-  StatusCode initialize( ) override;
+  StatusCode initialize() override;
 
   /// Get/Set the decay string to find
-  std::string decay( ) const override { return m_source; }
-  StatusCode setDecay( std::string decay ) override;
+  std::string decay() const override { return m_source; }
+  StatusCode  setDecay( std::string decay ) override;
 
-  std::string revert( ) const override;
+  std::string revert() const override;
 
   /// Does the described decay exists in the event?
-  bool hasDecay( const LHCb::MCParticle::ConstVector &event ) const override;
-  bool hasDecay( const LHCb::MCParticle::Container &event ) const override;
-  bool hasDecay( ) const override;
+  bool hasDecay( const LHCb::MCParticle::ConstVector& event ) const override;
+  bool hasDecay( const LHCb::MCParticle::Container& event ) const override;
+  bool hasDecay() const override;
 
   /** Try to find the (next) match of the decay in the event.
    *
@@ -159,11 +156,9 @@ public:
    *         parameter, a reference to a const LHCb::MCParticle *.
    *  The particle pointed to by previous_result must be contained in event.
    */
-  bool findDecay( const LHCb::MCParticle::ConstVector& event,
-                  const LHCb::MCParticle*& previous_result ) const override;
-  bool findDecay( const LHCb::MCParticle::Container& event,
-                  const LHCb::MCParticle*& previous_result )  const override;
-  bool findDecay( const LHCb::MCParticle*&previous_result ) const override;
+  bool findDecay( const LHCb::MCParticle::ConstVector& event, const LHCb::MCParticle*& previous_result ) const override;
+  bool findDecay( const LHCb::MCParticle::Container& event, const LHCb::MCParticle*& previous_result ) const override;
+  bool findDecay( const LHCb::MCParticle*& previous_result ) const override;
 
   /** Return the tree pointed at by head as a flat list.
    *
@@ -173,9 +168,8 @@ public:
    *  @param leaf   a bool indicating whether to include all particles or only
    *         the one at the ends of the branches. (Default: all)
    */
-  void descendants( const LHCb::MCParticle *head,
-                    LHCb::MCParticle::ConstVector& result,
-                    bool leaf=false ) const override;
+  void descendants( const LHCb::MCParticle* head, LHCb::MCParticle::ConstVector& result,
+                    bool leaf = false ) const override;
 
   /** Get a list of all the requested members that are present in a decay.
    *
@@ -185,56 +179,79 @@ public:
    *  particles seperated from the decay by a ':' and/or by putting a '^' before
    *  any particle in the decay.
    */
-  void decayMembers( const LHCb::MCParticle *head,
-                     LHCb::MCParticle::ConstVector& members ) const override;
+  void decayMembers( const LHCb::MCParticle* head, LHCb::MCParticle::ConstVector& members ) const override;
 
   /// Get a vector of pairs <mother, products> for all sub-trees.
-  void decaySubTrees( const LHCb::MCParticle *head,
-                      std::vector<std::pair<const LHCb::MCParticle*,
-                                            LHCb::MCParticle::ConstVector  >
-                                 > & subtrees ) const override;
+  void decaySubTrees(
+      const LHCb::MCParticle*                                                         head,
+      std::vector<std::pair<const LHCb::MCParticle*, LHCb::MCParticle::ConstVector>>& subtrees ) const override;
 
 private:
   /// Enumaration types used internally.
-  enum Quarks { empty, up, down, charm, strange, top, bottom, antiup,
-                antidown, anticharm, antistrange, antitop, antibottom };
-  enum Quantums { Q_quantum=1, B_quantum, l_quantum, I_quantum, J_quantum,
-                  S_quantum, L_quantum, G_quantum, C_quantum, P_quantum,
-                  CP_quantum, c_quantum, s_quantum, t_quantum, b_quantum };
-  enum Relations { eq_rel=1, lesseq_rel, greatereq_rel, less_rel, greater_rel,
-                   noteq_rel };
+  enum Quarks {
+    empty,
+    up,
+    down,
+    charm,
+    strange,
+    top,
+    bottom,
+    antiup,
+    antidown,
+    anticharm,
+    antistrange,
+    antitop,
+    antibottom
+  };
+  enum Quantums {
+    Q_quantum = 1,
+    B_quantum,
+    l_quantum,
+    I_quantum,
+    J_quantum,
+    S_quantum,
+    L_quantum,
+    G_quantum,
+    C_quantum,
+    P_quantum,
+    CP_quantum,
+    c_quantum,
+    s_quantum,
+    t_quantum,
+    b_quantum
+  };
+  enum Relations { eq_rel = 1, lesseq_rel, greatereq_rel, less_rel, greater_rel, noteq_rel };
   /// The opaque representation of a particle matcher
   class ParticleMatcher;
 
   /// The opaque representation of the decay chain.
   class Descriptor;
 
-  class DescriptorError
-  {
+  class DescriptorError {
   public:
-    DescriptorError( std::string s ) : msg(s) {}
-    std::string &cause( ) { return msg; }
+    DescriptorError( std::string s ) : msg( s ) {}
+    std::string& cause() { return msg; }
+
   private:
     std::string msg;
   };
 
-  LHCb::IParticlePropertySvc *m_ppSvc = nullptr;
-  std::string m_source = "B0 -> pi+ pi-";
-  Descriptor *m_decay = nullptr;
-  std::vector<ParticleMatcher *> *m_members = nullptr;
-  Gaudi::Property<double> m_resThreshold
-  { this, "ResonanceThreshold", 1e-15*Gaudi::Units::second };
+  LHCb::IParticlePropertySvc*    m_ppSvc   = nullptr;
+  std::string                    m_source  = "B0 -> pi+ pi-";
+  Descriptor*                    m_decay   = nullptr;
+  std::vector<ParticleMatcher*>* m_members = nullptr;
+  Gaudi::Property<double>        m_resThreshold{this, "ResonanceThreshold", 1e-15 * Gaudi::Units::second};
 
-  bool compile( std::string &decay );
+  bool compile( std::string& decay );
 
 #include "mcparser.h"
 
-  int yparse( );
-  void yerror( std::string msg ) { throw DescriptorError(msg); }
+  int  yparse();
+  void yerror( std::string msg ) { throw DescriptorError( msg ); }
 
-  int ylex( );
+  int ylex();
 
-  int yygrowstack( );
+  int yygrowstack();
 
   static const short int ylhs[];
   static const short int ylen[];
@@ -245,24 +262,24 @@ private:
   static const short int ygindex[];
   static const short int ytable[];
   static const short int ycheck[];
-  static int ydebug;
-  static int ynerrs;
-  static int yerrflag;
-  static int ychar;
-  static int ystacksize;
-  static short int *yssp;
-  static YYSTYPE *yvsp;
-  static YYSTYPE yval;
-  static short int *yss;
-  static short int *ysslim;
-  static YYSTYPE *yvs;
+  static int             ydebug;
+  static int             ynerrs;
+  static int             yerrflag;
+  static int             ychar;
+  static int             ystacksize;
+  static short int*      yssp;
+  static YYSTYPE*        yvsp;
+  static YYSTYPE         yval;
+  static short int*      yss;
+  static short int*      ysslim;
+  static YYSTYPE*        yvs;
 #ifdef YYDEBUG
-  static const char * const yname[];
-  static const char * const yrule[];
+  static const char* const yname[];
+  static const char* const yrule[];
 #endif
 
-  ///extra sanity checks to avoid segfaults, R. Lambert 04-03-2009
-  bool sanityCheck(const std::string & decay);
+  /// extra sanity checks to avoid segfaults, R. Lambert 04-03-2009
+  bool sanityCheck( const std::string& decay );
 
 public:
   static YYSTYPE ylval;

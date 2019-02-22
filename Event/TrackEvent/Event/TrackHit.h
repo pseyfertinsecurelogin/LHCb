@@ -16,25 +16,21 @@
 #include <limits>
 
 namespace LHCb {
-  
+
   struct TrackHit {
     TrackHit() = default;
-    TrackHit(Gaudi::XYZPointF beginPoint, Gaudi::XYZPointF endPoint, float errorx, float errory, int layer) 
-      : beginPoint(beginPoint), endPoint(endPoint), errorx(errorx), errory(errory), layer(layer) {}
+    TrackHit( Gaudi::XYZPointF beginPoint, Gaudi::XYZPointF endPoint, float errorx, float errory, int layer )
+        : beginPoint( beginPoint ), endPoint( endPoint ), errorx( errorx ), errory( errory ), layer( layer ) {}
 
-    Gaudi::XYZPointF beginPoint = { 
-      std::numeric_limits<float>::signaling_NaN(),
-      std::numeric_limits<float>::signaling_NaN(),
-      std::numeric_limits<float>::signaling_NaN() 
-    };
-    Gaudi::XYZPointF endPoint = { 
-      std::numeric_limits<float>::signaling_NaN(),
-      std::numeric_limits<float>::signaling_NaN(),
-      std::numeric_limits<float>::signaling_NaN() 
-    };
-    float errorx = std::numeric_limits<float>::signaling_NaN();
-    float errory = std::numeric_limits<float>::signaling_NaN();
-    int layer = std::numeric_limits<int>::max();
+    Gaudi::XYZPointF beginPoint = {std::numeric_limits<float>::signaling_NaN(),
+                                   std::numeric_limits<float>::signaling_NaN(),
+                                   std::numeric_limits<float>::signaling_NaN()};
+    Gaudi::XYZPointF endPoint   = {std::numeric_limits<float>::signaling_NaN(),
+                                 std::numeric_limits<float>::signaling_NaN(),
+                                 std::numeric_limits<float>::signaling_NaN()};
+    float            errorx     = std::numeric_limits<float>::signaling_NaN();
+    float            errory     = std::numeric_limits<float>::signaling_NaN();
+    int              layer      = std::numeric_limits<int>::max();
   };
 
 } // namespace LHCb

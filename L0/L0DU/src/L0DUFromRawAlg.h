@@ -14,12 +14,11 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-//Base
+// Base
 #include "L0Base/L0FromRawBase.h"
 
 // Interfaces
 #include "L0Interfaces/IL0DUFromRawTool.h"
-
 
 /** @class L0DUFromRawAlg L0DUFromRawAlg.h
  *
@@ -36,21 +35,20 @@ public:
   /// Standard constructor
   L0DUFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 protected:
-
   void compareReports();
 
 private:
-  std::string m_L0DUReportLocation = LHCb::L0DUReportLocation::Default ;
-  std::string m_procDataLocation   = LHCb::L0ProcessorDataLocation::L0DU  ;
-  std::string m_fromRawTool = "L0DUFromRawTool" ;
-  IL0DUFromRawTool* m_fromRaw = nullptr;
-  IL0DUFromRawTool* m_fromRaw2 = nullptr;
-  bool m_hlt1 = false;
-  bool m_compare = false;
-  bool m_ensureKnownTCK = false;
+  std::string       m_L0DUReportLocation = LHCb::L0DUReportLocation::Default;
+  std::string       m_procDataLocation   = LHCb::L0ProcessorDataLocation::L0DU;
+  std::string       m_fromRawTool        = "L0DUFromRawTool";
+  IL0DUFromRawTool* m_fromRaw            = nullptr;
+  IL0DUFromRawTool* m_fromRaw2           = nullptr;
+  bool              m_hlt1               = false;
+  bool              m_compare            = false;
+  bool              m_ensureKnownTCK     = false;
 };
 #endif // L0DUFROMRAWALG_H

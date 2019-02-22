@@ -29,8 +29,7 @@
  *  @date   2009-07-30
  */
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   // ==========================================================================
   /** the generic hash-function (in the spirit of boost/hash and TR1)
    *
@@ -42,8 +41,7 @@ namespace LHCb
    *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
    *  @date   2009-07-30
    */
-  inline std::size_t hash_value  ( const LHCb::CaloCellID& id )
-  { return id.hash () ; }
+  inline std::size_t hash_value( const LHCb::CaloCellID& id ) { return id.hash(); }
   // ==========================================================================
 } //                                                      end of namespace LHCb
 // ============================================================================

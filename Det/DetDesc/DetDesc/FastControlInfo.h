@@ -23,16 +23,13 @@
     The simplest implementation of the IFastControl abstract interface,
     derived from the generic class ConditionInfo.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct FastControlInfo: ConditionInfo, virtual IFastControl
-{
+struct FastControlInfo : ConditionInfo, virtual IFastControl {
   /// Constructor
-  FastControlInfo( IDetectorElement* de, const std::string& condition )
-  : ConditionInfo( de, condition ) {}
-
+  FastControlInfo( IDetectorElement* de, const std::string& condition ) : ConditionInfo( de, condition ) {}
 };
 
 #endif // DETDESC_FASTCONTROLINFO_H

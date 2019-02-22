@@ -11,29 +11,27 @@
 #ifndef _UTDAQ_UTStripRepresentation_H
 #define _UTDAQ_UTStripRepresentation_H 1
 
-
 /** @class StripRepresentaiton UTStripRepresentation.h  UTDAQ/UTStripRepresentation
-*
-* Sometimes we number a strip on a tell1 board 0 - 3072
-* This helper class does just that.
-*
-*  @author A. Beiter (based on code by M.Needham)
-*  @date   2018-09-04
-*/
+ *
+ * Sometimes we number a strip on a tell1 board 0 - 3072
+ * This helper class does just that.
+ *
+ *  @author A. Beiter (based on code by M.Needham)
+ *  @date   2018-09-04
+ */
 
 #include <iostream>
 
-namespace UTDAQ{
+namespace UTDAQ {
 
-  class UTStripRepresentation{
+  class UTStripRepresentation {
 
   public:
-
     /** constructor  from int */
-    explicit UTStripRepresentation(unsigned int value); 
+    explicit UTStripRepresentation( unsigned int value );
 
     /** destructor */
-    ~UTStripRepresentation(){}
+    ~UTStripRepresentation() {}
 
     /** cast to int */
     operator int() const;
@@ -42,55 +40,45 @@ namespace UTDAQ{
     unsigned int value() const;
 
     /** Operator overloading for stringoutput */
-    friend std::ostream& operator<< (std::ostream& s, 
-                                     const UTDAQ::UTStripRepresentation& obj)
-    {
-      return obj.fillStream(s);
+    friend std::ostream& operator<<( std::ostream& s, const UTDAQ::UTStripRepresentation& obj ) {
+      return obj.fillStream( s );
     }
 
-    /** Fill the ASCII output stream **/ 
-    std::ostream& fillStream(std::ostream& s) const;
+    /** Fill the ASCII output stream **/
+    std::ostream& fillStream( std::ostream& s ) const;
 
     /** print method for python, not needed in C++ **/
     std::string toString() const;
 
   private:
-
     unsigned int m_value;
-
   };
 
-}
+} // namespace UTDAQ
 
-
-inline UTDAQ::UTStripRepresentation::UTStripRepresentation(unsigned int value):m_value(value){
+inline UTDAQ::UTStripRepresentation::UTStripRepresentation( unsigned int value ) : m_value( value ) {
   // constructor
 }
 
-inline UTDAQ::UTStripRepresentation::operator int() const {
-  return m_value;
-}
+inline UTDAQ::UTStripRepresentation::operator int() const { return m_value; }
 
-inline unsigned int UTDAQ::UTStripRepresentation::value() const{
-  return m_value;
-}
+inline unsigned int UTDAQ::UTStripRepresentation::value() const { return m_value; }
 
-inline std::ostream& UTDAQ::UTStripRepresentation::fillStream(std::ostream& s) const {
+inline std::ostream& UTDAQ::UTStripRepresentation::fillStream( std::ostream& s ) const {
 
-   s << "{ "
-     << "Strip: " << value() << std::endl << "  } ";
+  s << "{ "
+    << "Strip: " << value() << std::endl
+    << "  } ";
 
   return s;
 }
 
 #include <sstream>
 
-inline std::string  UTDAQ::UTStripRepresentation::toString() const{
+inline std::string UTDAQ::UTStripRepresentation::toString() const {
   std::ostringstream o;
-  fillStream(o);
+  fillStream( o );
   return o.str();
 }
 
-
 #endif //  _UTDAQ_UTStripRepresentation_H
- 

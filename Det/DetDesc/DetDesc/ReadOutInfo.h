@@ -21,17 +21,14 @@
     The simplest implementation of the IReadOut abstract interface,
     derived from the generic class ConditionInfo.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct ReadOutInfo: ConditionInfo, virtual IReadOut
-{
+struct ReadOutInfo : ConditionInfo, virtual IReadOut {
 
   /// Constructor
-  ReadOutInfo( IDetectorElement* de, const std::string& condition )
-  : ConditionInfo( de, condition ) {}
-
+  ReadOutInfo( IDetectorElement* de, const std::string& condition ) : ConditionInfo( de, condition ) {}
 };
 
 #endif // DETDESC_READOUTINFO_H

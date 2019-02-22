@@ -39,34 +39,32 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace Decays
-{
-  class Node ;
-  namespace Parsers { class Tree ; }
-}
+namespace Decays {
+  class Node;
+  namespace Parsers {
+    class Tree;
+  }
+} // namespace Decays
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class DecayBase
    *  Base class forimplementation of various decay finders
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-05-22
    */
-  class DecayBase : public GaudiTool
-  {
+  class DecayBase : public GaudiTool {
     // ========================================================================
   public:
     // ========================================================================
     /// the specific finalization
-    StatusCode finalize ()  override;
+    StatusCode finalize() override;
     /// constructor
-    DecayBase
-    ( const std::string& type   ,                   // the actual tool type (?)
-      const std::string& name   ,                   //     the actual tool name
-      const IInterface*  parent ) ;                 //               the parent
+    DecayBase( const std::string& type,    // the actual tool type (?)
+               const std::string& name,    //     the actual tool name
+               const IInterface*  parent ); //               the parent
     /// virtual protected destructor
-    virtual ~DecayBase () ;
+    virtual ~DecayBase();
     // ========================================================================
   protected:
     // ========================================================================
@@ -75,49 +73,43 @@ namespace LoKi
      *  @param input (INPUT) input string
      *  @return status code
      */
-    StatusCode _parse
-    ( Decays::Node& node , std::string input ) const ;
+    StatusCode _parse( Decays::Node& node, std::string input ) const;
     // ========================================================================
     /** parse the tree
      *  @param tree  (OUTPUT) parsed node
      *  @param input (INPUT) input string
      *  @return status code
      */
-    StatusCode _parse
-    ( Decays::Parsers::Tree& tree , std::string input ) const ;
+    StatusCode _parse( Decays::Parsers::Tree& tree, std::string input ) const;
     // ========================================================================
     /** convert the substring ' [ a ]cc ' into ' [ a , aCC ] '
      *  The lines are coded by Sascha Mazurov
      */
-    std::string _makeCC ( std::string input ) const ;
+    std::string _makeCC( std::string input ) const;
     // ========================================================================
   protected:
     // ========================================================================
-    Decays::Node node ( const std::string& descriptor ) const ;
+    Decays::Node node( const std::string& descriptor ) const;
     // ========================================================================
   protected:
     // ========================================================================
-    const LHCb::IParticlePropertySvc* ppSvc () const
-    {
-      if ( UNLIKELY( !m_ppSvc ) ) {
-            m_ppSvc = svc<LHCb::IParticlePropertySvc>
-                          ( "LHCb::ParticlePropertySvc" , true ) ;
-      }
-      return m_ppSvc ;                                                // RETURN
+    const LHCb::IParticlePropertySvc* ppSvc() const {
+      if ( UNLIKELY( !m_ppSvc ) ) { m_ppSvc = svc<LHCb::IParticlePropertySvc>( "LHCb::ParticlePropertySvc", true ); }
+      return m_ppSvc; // RETURN
     }
     // ========================================================================
-    const std::string& defaultNode () const { return m_default_node ; }
-    const std::string& defaultTree () const { return m_default_tree ; }
+    const std::string& defaultNode() const { return m_default_node; }
+    const std::string& defaultTree() const { return m_default_tree; }
     // ========================================================================
   private:
     // ========================================================================
     /// the particle proeprty service
-    mutable const LHCb::IParticlePropertySvc* m_ppSvc ; //  particle properties
+    mutable const LHCb::IParticlePropertySvc* m_ppSvc; //  particle properties
     // ========================================================================
     /// the default node
-    std::string m_default_node ;                            // the default node
+    std::string m_default_node; // the default node
     /// the default tree
-    std::string m_default_tree ;                            // the default tree
+    std::string m_default_tree; // the default tree
     // ========================================================================
   };
   // ==========================================================================

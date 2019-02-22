@@ -21,21 +21,19 @@
  */
 class PixelModule final {
 
- public:
+public:
   /// Constructor
-  PixelModule(const unsigned int number, const bool right)
-      : m_number(number),
-        m_isRight(right) {}
+  PixelModule( const unsigned int number, const bool right ) : m_number( number ), m_isRight( right ) {}
 
   unsigned int number() const { return m_number; }
-  int previous() const { return m_previous; }
-  bool isRight() const { return m_isRight; }
-  float z() const { return m_z; }
+  int          previous() const { return m_previous; }
+  bool         isRight() const { return m_isRight; }
+  float        z() const { return m_z; }
 
-  void setPrevious(const int prev) { m_previous = prev; }
-  void setZ(const float z) { m_z = z; }
+  void setPrevious( const int prev ) { m_previous = prev; }
+  void setZ( const float z ) { m_z = z; }
 
- private:
+private:
   /// Module number
   unsigned int m_number = 999;
   // Number of neighbouring same-side module towards smaller z
@@ -45,4 +43,4 @@ class PixelModule final {
   /// Right or left side of VELO
   bool m_isRight = true;
 };
-#endif  // PIXELMODULE_H
+#endif // PIXELMODULE_H

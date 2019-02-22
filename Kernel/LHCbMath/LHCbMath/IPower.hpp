@@ -17,10 +17,8 @@
 // ============================================================================
 #include "LHCbMath/TypeWrapper.h"
 // ============================================================================
-namespace Gaudi
-{
-  namespace Math
-  {
+namespace Gaudi {
+  namespace Math {
     // ========================================================================
     /** @struct Gaudi::Math::IPower
      *  Template metafunction for compile-time calculation of even, positive
@@ -37,27 +35,24 @@ namespace Gaudi
      *  @author Juan PALACIOS juan.palacios@cern.ch
      *  @date 2006-10-26
      */
-    template<typename TYPE,  typename TypeWrapper<TYPE>::value_type X, int N>
-    struct IPower
-    {
-      enum { value = X * IPower<TYPE, X, N-1>::value };
+    template <typename TYPE, typename TypeWrapper<TYPE>::value_type X, int N>
+    struct IPower {
+      enum { value = X * IPower<TYPE, X, N - 1>::value };
     };
     /// the specialization to stop the compile-time recursion
-    template<typename TYPE, typename TypeWrapper<TYPE>::value_type X>
-    struct IPower<TYPE, X, 1>
-    {
+    template <typename TYPE, typename TypeWrapper<TYPE>::value_type X>
+    struct IPower<TYPE, X, 1> {
       enum { value = X };
     };
     /// the specialization to stop the compile-time recursion
-    template<typename TYPE,  typename TypeWrapper<TYPE>::value_type X>
-    struct IPower<TYPE, X, 0>
-    {
+    template <typename TYPE, typename TypeWrapper<TYPE>::value_type X>
+    struct IPower<TYPE, X, 0> {
       enum { value = 1 };
     };
     // ========================================================================
-  } // Math namespace
+  } // namespace Math
   // ==========================================================================
-} // Gaudi namespace
+} // namespace Gaudi
 // ============================================================================
 // The END
 // ============================================================================

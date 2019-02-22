@@ -13,8 +13,8 @@
 // ============================================================================
 // LoKiCore
 // ============================================================================
-#include "LoKi/Kinematics.h"
 #include "LoKi/WrongMass.h"
+#include "LoKi/Kinematics.h"
 #include "LoKi/ParticleProperties.h"
 // ============================================================================
 /** @file
@@ -40,11 +40,9 @@
  *  @date   2006-03-08
  */
 // ============================================================================
-LoKi::LorentzVector
-LoKi::Kinematics::wrongMass
-( const LoKi::LorentzVector& v    ,
-  const std::string&         name )
-{ return wrongMass ( v , LoKi::Particles::massFromName ( name ) ) ; }
+LoKi::LorentzVector LoKi::Kinematics::wrongMass( const LoKi::LorentzVector& v, const std::string& name ) {
+  return wrongMass( v, LoKi::Particles::massFromName( name ) );
+}
 // ============================================================================
 /*  Use a wrong mass-hypothesis for the given 4-momentum
  *  @param v    vector of 4-momentum
@@ -55,12 +53,8 @@ LoKi::Kinematics::wrongMass
  *  @date   2006-03-08
  */
 // ============================================================================
-LoKi::LorentzVector
-LoKi::Kinematics::wrongMass
-( const LoKi::LorentzVector& v    ,
-  const LHCb::ParticleID&    pid  )
-{
-  return wrongMass ( v , LoKi::Particles::massFromPID( pid ) ) ;
+LoKi::LorentzVector LoKi::Kinematics::wrongMass( const LoKi::LorentzVector& v, const LHCb::ParticleID& pid ) {
+  return wrongMass( v, LoKi::Particles::massFromPID( pid ) );
 }
 // ============================================================================
 /*  Use a wrong mass-hypothesis for the given 4-momenta
@@ -76,16 +70,9 @@ LoKi::Kinematics::wrongMass
  *  @date   2006-03-08
  */
 // ============================================================================
-double
-LoKi::Kinematics::wrongMass
-( const LoKi::LorentzVector& v1    ,
-  const std::string&         name1 ,
-  const LoKi::LorentzVector& v2    ,
-  const std::string&         name2 )
-{
-  return wrongMass
-    ( v1 ,  LoKi::Particles::massFromName ( name1 ) ,
-      v2 ,  LoKi::Particles::massFromName ( name2 ) ) ;
+double LoKi::Kinematics::wrongMass( const LoKi::LorentzVector& v1, const std::string& name1,
+                                    const LoKi::LorentzVector& v2, const std::string& name2 ) {
+  return wrongMass( v1, LoKi::Particles::massFromName( name1 ), v2, LoKi::Particles::massFromName( name2 ) );
 }
 // ============================================================================
 /*  Use a wrong mass-hypothesis for the given 4-momenta
@@ -101,19 +88,11 @@ LoKi::Kinematics::wrongMass
  *  @date   2006-03-08
  */
 // ============================================================================
-double
-LoKi::Kinematics::wrongMass
-( const LoKi::LorentzVector& v1    ,
-  const LHCb::ParticleID&    pid1  ,
-  const LoKi::LorentzVector& v2    ,
-  const LHCb::ParticleID&    pid2  )
-{
-  return wrongMass
-    ( v1 ,  LoKi::Particles::massFromPID ( pid1 ) ,
-      v2 ,  LoKi::Particles::massFromPID ( pid2 ) ) ;
+double LoKi::Kinematics::wrongMass( const LoKi::LorentzVector& v1, const LHCb::ParticleID& pid1,
+                                    const LoKi::LorentzVector& v2, const LHCb::ParticleID& pid2 ) {
+  return wrongMass( v1, LoKi::Particles::massFromPID( pid1 ), v2, LoKi::Particles::massFromPID( pid2 ) );
 }
 // ============================================================================
-
 
 // ============================================================================
 // The END

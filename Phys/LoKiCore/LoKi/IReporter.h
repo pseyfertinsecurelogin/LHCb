@@ -24,7 +24,7 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-class GaudiException ;
+class GaudiException;
 // ============================================================================
 /** @file
  *
@@ -40,41 +40,39 @@ class GaudiException ;
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class IReporter IReporter.h LoKi/IReporter.h
    *
    *  @author Vanya BELYAEV ivelyaev@physics.syr.edu
    *  @date   2003-01-16
    */
-  class IReporter : public extend_interfaces<IErrorTool>
-  {
+  class IReporter : public extend_interfaces<IErrorTool> {
   public:
-    DeclareInterfaceID( IReporter , 5 , 0 ) ;
+    DeclareInterfaceID( IReporter, 5, 0 );
     // ========================================================================
   public:
     // ========================================================================
     /// define maximal number of prints
-    static  void setMaxErrorPrint   ( const std::size_t ) ; // max prints
+    static void setMaxErrorPrint( const std::size_t ); // max prints
     /// define maximal number of warning prints
-    static  void setMaxWarningPrint ( const std::size_t ) ; // max prints
+    static void setMaxWarningPrint( const std::size_t ); // max prints
     // ========================================================================
   public:
     // ========================================================================
     /// maximal number of error   prints
-    static std::size_t maxErrorPrint   () ;
+    static std::size_t maxErrorPrint();
     /// maximal number of warning prints
-    static std::size_t maxWarningPrint () ;
+    static std::size_t maxWarningPrint();
     // ========================================================================
   private:
     // ========================================================================
     /// maximal number of error prints
-    static std::size_t s_maxErrorPrint   ;
+    static std::size_t s_maxErrorPrint;
     /// maximal number of warning prints
-    static std::size_t s_maxWarningPrint ;
+    static std::size_t s_maxWarningPrint;
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

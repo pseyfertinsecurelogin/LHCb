@@ -27,8 +27,7 @@
 // local
 #include "DAQKernel/DecoderCommonBase.h"
 
-namespace Decoder
-{
+namespace Decoder {
   //-----------------------------------------------------------------------------
   /** @class ToolBase DAQToolBase.h DAQKernel/DecoderToolBase.h
    *
@@ -40,8 +39,8 @@ namespace Decoder
    */
   //-----------------------------------------------------------------------------
 
-  using  ToolBase = Decoder::CommonBase<GaudiTool>;
+  using ToolBase = Decoder::CommonBase<GaudiTool>;
 
-}
+} // namespace Decoder
 
 #endif // DAQKERNEL_DECODERTOOLBASE_H

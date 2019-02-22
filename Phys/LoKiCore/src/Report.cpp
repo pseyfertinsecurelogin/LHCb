@@ -16,8 +16,8 @@
 // ============================================================================
 // local
 // ============================================================================
-#include "LoKi/Report.h"
 #include "LoKi/ErrorReport.h"
+#include "LoKi/Report.h"
 // ============================================================================
 /** @file
  *
@@ -41,13 +41,9 @@
  *  @param mx     maximal number of printouts
  */
 // ============================================================================
-StatusCode LoKi::Report::Error
-( const std::string&  msg ,
-  const StatusCode&   st  ,
-  const size_t        mx  )
-{
-  st.ignore() ;
-  return LoKi::ErrorReport::instance().Error( msg , st , mx ) ;
+StatusCode LoKi::Report::Error( const std::string& msg, const StatusCode& st, const size_t mx ) {
+  st.ignore();
+  return LoKi::ErrorReport::instance().Error( msg, st, mx );
 }
 // ============================================================================
 /*  Print the warning  message, return status code
@@ -56,13 +52,9 @@ StatusCode LoKi::Report::Error
  *  @param mx     maximal number of printouts
  */
 // ============================================================================
-StatusCode LoKi::Report::Warning
-( const std::string&  msg ,
-  const StatusCode&   st  ,
-  const size_t        mx  )
-{
-  st.ignore() ;
-  return LoKi::ErrorReport::instance().Warning ( msg , st , mx ) ;
+StatusCode LoKi::Report::Warning( const std::string& msg, const StatusCode& st, const size_t mx ) {
+  st.ignore();
+  return LoKi::ErrorReport::instance().Warning( msg, st, mx );
 }
 // ============================================================================
 /*  Print the message and return status code
@@ -72,13 +64,9 @@ StatusCode LoKi::Report::Warning
  *  @return       status code
  */
 // ============================================================================
-void LoKi::Report::Print
-( const std::string& msg ,
-  const StatusCode&  st  ,
-  const MSG::Level   lev )
-{
-  st.ignore() ;
-  LoKi::ErrorReport::instance().Print( msg , st , lev  ).ignore() ;
+void LoKi::Report::Print( const std::string& msg, const StatusCode& st, const MSG::Level lev ) {
+  st.ignore();
+  LoKi::ErrorReport::instance().Print( msg, st, lev ).ignore();
 }
 // ============================================================================
 /*  Create and (re)-throw the exception
@@ -90,13 +78,9 @@ void LoKi::Report::Print
  *  @return       status code (fictive)
  */
 // ============================================================================
-void LoKi::Report::Exception
-( const std::string    & msg ,
-  const GaudiException & exc ,
-  const StatusCode&      sc  )
-{
-  sc.ignore() ;
-  LoKi::ErrorReport::instance().Exception( msg , exc , sc ) ;
+void LoKi::Report::Exception( const std::string& msg, const GaudiException& exc, const StatusCode& sc ) {
+  sc.ignore();
+  LoKi::ErrorReport::instance().Exception( msg, exc, sc );
 }
 // ============================================================================
 /*  Create and (re)-throw the exception
@@ -108,13 +92,9 @@ void LoKi::Report::Exception
  *  @return       status code (fictive)
  */
 // ============================================================================
-void LoKi::Report::Exception
-( const std::string    & msg ,
-  const std::exception & exc ,
-  const StatusCode&      sc  )
-{
-  sc.ignore() ;
-  LoKi::ErrorReport::instance().Exception( msg , exc , sc ) ;
+void LoKi::Report::Exception( const std::string& msg, const std::exception& exc, const StatusCode& sc ) {
+  sc.ignore();
+  LoKi::ErrorReport::instance().Exception( msg, exc, sc );
 }
 // ============================================================================
 /*  Create and throw the exception
@@ -125,23 +105,16 @@ void LoKi::Report::Exception
  *  @return       status code (fictive)
  */
 // ============================================================================
-void LoKi::Report::Exception
-( const std::string& msg ,
-  const StatusCode&  sc  )
-{
-  sc.ignore() ;
-  LoKi::ErrorReport::instance().Exception( msg , sc ) ;
+void LoKi::Report::Exception( const std::string& msg, const StatusCode& sc ) {
+  sc.ignore();
+  LoKi::ErrorReport::instance().Exception( msg, sc );
 }
 // ============================================================================
 //  make a report
 // ============================================================================
-void LoKi::Report::report      ()
-{
-  LoKi::ErrorReport::instance().report() ;
-}
+void LoKi::Report::report() { LoKi::ErrorReport::instance().report(); }
 // ============================================================================
 
 // ============================================================================
 // The END
 // ============================================================================
-

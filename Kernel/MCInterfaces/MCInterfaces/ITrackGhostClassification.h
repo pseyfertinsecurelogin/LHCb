@@ -16,51 +16,49 @@
 
 #include "Event/Track.h"
 
-namespace LHCb{
+namespace LHCb {
   class LHCbID;
   class GhostTrackInfo;
-}
+} // namespace LHCb
 
-struct ITrackGhostClassification: extend_interfaces<IAlgTool> {
+struct ITrackGhostClassification : extend_interfaces<IAlgTool> {
 
- typedef std::vector<LHCb::LHCbID> LHCbIDs;
- 
- /// Retrieve interface ID
- DeclareInterfaceID(ITrackGhostClassification, 1,0 );
+  typedef std::vector<LHCb::LHCbID> LHCbIDs;
 
- /**
- *  Information on what a ghost track is....
- *  @param aTrack to link
- *  @param tinfo link info 
- *  @return statuscode whether classification was successful
- */
- virtual StatusCode info(const LHCb::Track& aTrack, LHCb::GhostTrackInfo& tinfo) const= 0;
-
- /**
- *  Information on a list of LHCbIDs
- *  @param start first iterator 
- *  @param stop  last iterator
- *  @param tinfo link info
- *  @return statuscode whether classification was successful
- */
- virtual StatusCode info(LHCbIDs::const_iterator& start, 
-                   LHCbIDs::const_iterator& stop, LHCb::GhostTrackInfo& tinfo) const= 0;
+  /// Retrieve interface ID
+  DeclareInterfaceID( ITrackGhostClassification, 1, 0 );
 
   /**
-  *  Check whether this is a ghost .
-  *  @param aTrack to link
-  *  @return bool true if a ghost
-  */
-  virtual bool isGhost(const LHCb::Track& aTrack) const= 0;
+   *  Information on what a ghost track is....
+   *  @param aTrack to link
+   *  @param tinfo link info
+   *  @return statuscode whether classification was successful
+   */
+  virtual StatusCode info( const LHCb::Track& aTrack, LHCb::GhostTrackInfo& tinfo ) const = 0;
+
+  /**
+   *  Information on a list of LHCbIDs
+   *  @param start first iterator
+   *  @param stop  last iterator
+   *  @param tinfo link info
+   *  @return statuscode whether classification was successful
+   */
+  virtual StatusCode info( LHCbIDs::const_iterator& start, LHCbIDs::const_iterator& stop,
+                           LHCb::GhostTrackInfo& tinfo ) const = 0;
 
   /**
    *  Check whether this is a ghost .
    *  @param aTrack to link
    *  @return bool true if a ghost
    */
-  virtual bool isGhost(LHCbIDs::const_iterator& start, 
-                       LHCbIDs::const_iterator& stop) const = 0;
+  virtual bool isGhost( const LHCb::Track& aTrack ) const = 0;
 
+  /**
+   *  Check whether this is a ghost .
+   *  @param aTrack to link
+   *  @return bool true if a ghost
+   */
+  virtual bool isGhost( LHCbIDs::const_iterator& start, LHCbIDs::const_iterator& stop ) const = 0;
 };
 
 #endif

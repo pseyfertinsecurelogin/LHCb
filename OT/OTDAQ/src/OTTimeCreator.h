@@ -31,20 +31,18 @@ class DeOTDetector;
 
 class OTTimeCreator : public GaudiAlgorithm {
 public:
-
   /// Standard constructor
   OTTimeCreator( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode initialize() override; ///< Algorithm initialization
   StatusCode finalize() override;
-  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   // job options
-  std::string m_timeLocation;
-  const DeOTDetector* m_tracker = nullptr;                  ///< Pointer to XML geometry
-  ToolHandle<IOTRawBankDecoder> m_decoder = { "OTRawBankDecoder" };
+  std::string                   m_timeLocation;
+  const DeOTDetector*           m_tracker = nullptr; ///< Pointer to XML geometry
+  ToolHandle<IOTRawBankDecoder> m_decoder = {"OTRawBankDecoder"};
 };
 
 #endif // OTDAQ_OTTIMECREATOR_H

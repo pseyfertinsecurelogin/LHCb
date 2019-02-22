@@ -16,7 +16,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRichHPD.h"
 
-typedef XmlUserDetElemCnv< DeRichHPD > XmlDeRichHPDCnv;
+typedef XmlUserDetElemCnv<DeRichHPD> XmlDeRichHPDCnv;
 DECLARE_CONVERTER( XmlDeRichHPDCnv )
 
 #endif // XMLDERICHHPDCNV_H

@@ -14,13 +14,14 @@
 
 #include "Event/HltDecReports.h"
 
-#include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IAlgTool.h"
 
-namespace LHCb { class HltDecReport ; }
+namespace LHCb {
+  class HltDecReport;
+}
 // ============================================================================
-namespace LoKi 
-{
+namespace LoKi {
   // ==========================================================================
   /** @class IHDRFilterTool IHDRFilterTool.h
    *  Interface class for filters on HltDecReports
@@ -28,18 +29,17 @@ namespace LoKi
    *  @author Rosen Matev
    *  @date   2017-03-24
    */
-  struct GAUDI_API IHDRFilterTool: extend_interfaces<IAlgTool> 
-  {
+  struct GAUDI_API IHDRFilterTool : extend_interfaces<IAlgTool> {
   public:
     // ========================================================================
     /// access to interface id
-    DeclareInterfaceID(IHDRFilterTool, 1, 0);    
+    DeclareInterfaceID( IHDRFilterTool, 1, 0 );
     /// the predicate method
-    virtual bool predicate(const LHCb::HltDecReports& hdr) const = 0;    
+    virtual bool predicate( const LHCb::HltDecReports& hdr ) const = 0;
     // ========================================================================
   };
   // ==========================================================================
-}                                                  // The end of namespace LoKi 
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

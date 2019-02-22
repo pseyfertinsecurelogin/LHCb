@@ -31,11 +31,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2012-01-17
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef ALG_ALLENABLED
      *  simple functor to check if all algorithms from thelist are 'enabled'
@@ -55,7 +53,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AllEnabled                       ALG_ALLENABLED ;
+    typedef LoKi::Algorithms::AllEnabled ALG_ALLENABLED;
     // ========================================================================
     /** @typedef ALG_ALLEXECUTED
      *  simple functor to check if all algorithms from the list are 'executed'
@@ -73,7 +71,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AllExecuted                     ALG_ALLEXECUTED ;
+    typedef LoKi::Algorithms::AllExecuted ALG_ALLEXECUTED;
     // ========================================================================
     /** @typedef ALG_ALLPASSED
      *  simple functor to check if all algorithms from the list passed filter
@@ -93,7 +91,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AllPassed                         ALG_LLPASSED ;
+    typedef LoKi::Algorithms::AllPassed ALG_LLPASSED;
     // ========================================================================
     /** @typedef ALG_ANYENABLED
      *  simple functor to check if any algorithm from thelist is 'enabled'
@@ -113,7 +111,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AnyEnabled                       ALG_ANYENABLED ;
+    typedef LoKi::Algorithms::AnyEnabled ALG_ANYENABLED;
     // ========================================================================
     /** @typedef ALG_ANYEXECUTED
      *  simple functor to check if any algorithm from the list is 'executed'
@@ -131,7 +129,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AnyExecuted                     ALG_ANYEXECUTED ;
+    typedef LoKi::Algorithms::AnyExecuted ALG_ANYEXECUTED;
     // ========================================================================
     /** @typedef ALG_ANYPASSED
      *  simple functor to check if any algorithm from the list passed filter
@@ -151,7 +149,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AnyPassed                         ALG_ANYPASSED ;
+    typedef LoKi::Algorithms::AnyPassed ALG_ANYPASSED;
     // ========================================================================
     /** @typedef ALG_ENABLED
      *  simple functor to check if given algorithm 'enabled'
@@ -171,7 +169,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::Enabled                             ALG_ENABLED ;
+    typedef LoKi::Algorithms::Enabled ALG_ENABLED;
     // ========================================================================
     /** @typedef ALG_EXECUTED
      *  simple functor to check if given algorithm 'executed'
@@ -189,7 +187,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::Executed                           ALG_EXECUTED ;
+    typedef LoKi::Algorithms::Executed ALG_EXECUTED;
     // ========================================================================
     /** @typedef ALG_PASSED
      *  simple functor to check if given algorithm passed filter
@@ -209,7 +207,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::Passed                               ALG_PASSED ;
+    typedef LoKi::Algorithms::Passed ALG_PASSED;
     // ========================================================================
     /** @typedef ALG_NUMENABLED
      *  simple functor to ount algorithms from the list are 'enabled'
@@ -229,7 +227,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::AllEnabled                       ALG_ALLENABLED ;
+    typedef LoKi::Algorithms::AllEnabled ALG_ALLENABLED;
     // ========================================================================
     /** @typedef ALG_NUMEXECUTED
      *  simple functor to count algorithms from the list are 'executed'
@@ -247,7 +245,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::NumExecuted                     ALG_NUMEXECUTED ;
+    typedef LoKi::Algorithms::NumExecuted ALG_NUMEXECUTED;
     // ========================================================================
     /** @typedef ALG_NUMPASSED
      *  simple functor to count algorithms from the list passed filter
@@ -267,9 +265,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    typedef LoKi::Algorithms::NumPassed                         ALG_NUMPASSED ;
+    typedef LoKi::Algorithms::NumPassed ALG_NUMPASSED;
     // ========================================================================
-  } // end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

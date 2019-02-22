@@ -13,15 +13,15 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <string>
 #include <sstream>
+#include <string>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/System.h"
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Hash.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
 // ============================================================================
 // Kernel
 // ============================================================================
@@ -30,11 +30,11 @@
 // local
 // ============================================================================
 #include "LoKi/AuxFunBase.h"
-#include "LoKi/Report.h"
-#include "LoKi/Welcome.h"
 #include "LoKi/Exception.h"
-#include "LoKi/shifts.h"
+#include "LoKi/Report.h"
 #include "LoKi/Services.h"
+#include "LoKi/Welcome.h"
+#include "LoKi/shifts.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -56,48 +56,41 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
   /// static instance counter for all functions
   // ==========================================================================
 #ifdef LOKI_DEBUG
-  static InstanceCounter<LoKi::AuxFunBase>  s_AuxFunBaseCounter  ;
+  static InstanceCounter<LoKi::AuxFunBase> s_AuxFunBaseCounter;
 #endif
   // ==========================================================================
   /// LoKi service
   // ==========================================================================
-  LoKi::Interface<LoKi::ILoKiSvc> s_lokiSvc = LoKi::Interface<LoKi::ILoKiSvc>() ;
+  LoKi::Interface<LoKi::ILoKiSvc> s_lokiSvc = LoKi::Interface<LoKi::ILoKiSvc>();
   // ========================================================================
-}
+} // namespace
 // ============================================================================
 // STATIC: get LoKi service
 // ============================================================================
-const LoKi::Interface<LoKi::ILoKiSvc>& LoKi::AuxFunBase::lokiSvc ()
-{ return s_lokiSvc ; }
+const LoKi::Interface<LoKi::ILoKiSvc>& LoKi::AuxFunBase::lokiSvc() { return s_lokiSvc; }
 // ============================================================================
 // STATIC: set LoKi service
 // ============================================================================
-bool  LoKi::AuxFunBase::setLoKiSvc
-( const LoKi::ILoKiSvc*  svc )
-{
-  s_lokiSvc = svc ;
-  return s_lokiSvc.validPointer() ;
+bool LoKi::AuxFunBase::setLoKiSvc( const LoKi::ILoKiSvc* svc ) {
+  s_lokiSvc = svc;
+  return s_lokiSvc.validPointer();
 }
 // ============================================================================
 // STATIC: set LoKi service
 // ============================================================================
-bool LoKi::AuxFunBase::setLoKiSvc
-( const LoKi::Interface<LoKi::ILoKiSvc>& svc )
-{
-  s_lokiSvc = svc ;
-  return s_lokiSvc.validPointer() ;
+bool LoKi::AuxFunBase::setLoKiSvc( const LoKi::Interface<LoKi::ILoKiSvc>& svc ) {
+  s_lokiSvc = svc;
+  return s_lokiSvc.validPointer();
 }
 // ============================================================================
 // constructor from arguments string
 // ============================================================================
-LoKi::AuxFunBase::AuxFunBase ( )
-{
+LoKi::AuxFunBase::AuxFunBase() {
 #ifdef LOKI_DEBUG
   // increment the instance counter
   LoKi::s_AuxFunBaseCounter.increment();
@@ -106,21 +99,17 @@ LoKi::AuxFunBase::AuxFunBase ( )
 // ============================================================================
 // copy constructor
 // ============================================================================
-LoKi::AuxFunBase::AuxFunBase( const AuxFunBase& func  )
-  : m_event ( func.m_event )
-  , m_cargs ( func.m_cargs )
-{
+LoKi::AuxFunBase::AuxFunBase( const AuxFunBase& func ) : m_event( func.m_event ), m_cargs( func.m_cargs ) {
 #ifdef LOKI_DEBUG
   // increment the instance counter
   LoKi::s_AuxFunBaseCounter.increment();
 #endif
-  LoKi::Welcome::instance() ;
+  LoKi::Welcome::instance();
 }
 // ============================================================================
 // destructor
 // ============================================================================
-LoKi::AuxFunBase::~AuxFunBase()
-{
+LoKi::AuxFunBase::~AuxFunBase() {
 #ifdef LOKI_DEBUG
   // decrement the instance counter
   LoKi::s_AuxFunBaseCounter.decrement();
@@ -133,13 +122,9 @@ LoKi::AuxFunBase::~AuxFunBase()
  *  @return status code
  */
 // ============================================================================
-StatusCode LoKi::AuxFunBase::Error
-( const std::string& msg ,
-  const StatusCode&  sc  ,
-  int mxprint            ) const
-{
-  sc.ignore() ;
-  return LoKi::Report::Error ( objType() + ": \t" + msg  , sc, mxprint ) ;
+StatusCode LoKi::AuxFunBase::Error( const std::string& msg, const StatusCode& sc, int mxprint ) const {
+  sc.ignore();
+  return LoKi::Report::Error( objType() + ": \t" + msg, sc, mxprint );
 }
 // ============================================================================
 /*  print Warning message
@@ -148,13 +133,9 @@ StatusCode LoKi::AuxFunBase::Error
  *  @return status code
  */
 // ============================================================================
-StatusCode LoKi::AuxFunBase::Warning
-( const std::string& msg ,
-  const StatusCode&  sc  ,
-  int mxprint            ) const
-{
-  sc.ignore() ;
-  return LoKi::Report::Warning ( objType() + ": \t " + msg , sc, mxprint ) ;
+StatusCode LoKi::AuxFunBase::Warning( const std::string& msg, const StatusCode& sc, int mxprint ) const {
+  sc.ignore();
+  return LoKi::Report::Warning( objType() + ": \t " + msg, sc, mxprint );
 }
 // ============================================================================
 /*  thrown an exception
@@ -162,15 +143,12 @@ StatusCode LoKi::AuxFunBase::Warning
  *  @param sc   status code
  */
 // ============================================================================
-void LoKi::AuxFunBase::Exception
-( const std::string& msg ,
-  const StatusCode&  sc  ) const
-{
-  sc.ignore() ;
+void LoKi::AuxFunBase::Exception( const std::string& msg, const StatusCode& sc ) const {
+  sc.ignore();
   //
-  LoKi::Report::Error ( objType() + " *EXCEPTION* : \t" + msg  , sc ) ;
+  LoKi::Report::Error( objType() + " *EXCEPTION* : \t" + msg, sc );
   //
-  throw LoKi::Exception ( objType() + ": \t" + msg , sc ) ;
+  throw LoKi::Exception( objType() + ": \t" + msg, sc );
   //
 }
 // ============================================================================
@@ -179,78 +157,72 @@ void LoKi::AuxFunBase::Exception
  *  @restur reference to teh stream
  */
 // ============================================================================
-std::ostream& LoKi::AuxFunBase::fillStream( std::ostream& s ) const
-{
-  s << objType() ;
-  return s ;
+std::ostream& LoKi::AuxFunBase::fillStream( std::ostream& s ) const {
+  s << objType();
+  return s;
 }
 // ============================================================================
 /*  (virtual) printout in form of std::string
  *  @return outptut string
  */
 // ============================================================================
-std::string LoKi::AuxFunBase::printOut() const
-{
-  std::ostringstream s ;
-  fillStream( s ) ;
-  return s.str() ;
+std::string LoKi::AuxFunBase::printOut() const {
+  std::ostringstream s;
+  fillStream( s );
+  return s.str();
 }
 // ============================================================================
 // the actual object type
 // ============================================================================
-std::string LoKi::AuxFunBase::objType () const
-{ return System::typeinfoName ( typeid( *this ) ) ; }
+std::string LoKi::AuxFunBase::objType() const { return System::typeinfoName( typeid( *this ) ); }
 // ============================================================================
 /// unique function ID (hash); see LoKi::genericID
 // ============================================================================
-std::size_t LoKi::AuxFunBase::id () const
-{ return LoKi::genericID ( *this ) ; }
+std::size_t LoKi::AuxFunBase::id() const { return LoKi::genericID( *this ); }
 // ============================================================================
 /*  simple fuction to generate the default generic
  *  (hopefully unique?) ID for the functor
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  */
 // ============================================================================
-std::size_t LoKi::genericID ( const LoKi::AuxFunBase& o )
-{
+std::size_t LoKi::genericID( const LoKi::AuxFunBase& o ) {
   // Use Boost::hash
-  std::size_t _id = boost::hash_value ( o.printOut() ) ;
+  std::size_t _id = boost::hash_value( o.printOut() );
   // make a cyclic shift to 12 bits left
-  return LoKi::Shifts::cyclicShiftLeft ( _id , 12 ) ;
+  return LoKi::Shifts::cyclicShiftLeft( _id, 12 );
 }
 // ============================================================================
 // set the event-ID from LoKi service
 // ============================================================================
-void LoKi::AuxFunBase::setEvent (          ) const
-{
-  LoKi::ILoKiSvc* svc = lokiSvc() ;
-  setEvent ( 0 ) ;
+void LoKi::AuxFunBase::setEvent() const {
+  LoKi::ILoKiSvc* svc = lokiSvc();
+  setEvent( 0 );
   //
-  if ( svc ) { m_event = svc->event() ; }
-  else { Error ( "setEvent(): invalid pointer to LoKi::ILoKiSvc, set 0") ; }
+  if ( svc ) {
+    m_event = svc->event();
+  } else {
+    Error( "setEvent(): invalid pointer to LoKi::ILoKiSvc, set 0" );
+  }
 }
 // ============================================================================
 // check the data for the same event
 // ============================================================================
-bool LoKi::AuxFunBase::sameEvent () const
-{
-  if ( 0 == m_event ) { return  false ; }                    // RETURN
+bool LoKi::AuxFunBase::sameEvent() const {
+  if ( 0 == m_event ) { return false; } // RETURN
   // get the service
-  LoKi::ILoKiSvc* svc = lokiSvc() ;
-  if ( !svc )
-  {
-    Warning ( "sameEvent(): could not check the event, return false ") ;
-    return false ;                                          // RETURN
+  LoKi::ILoKiSvc* svc = lokiSvc();
+  if ( !svc ) {
+    Warning( "sameEvent(): could not check the event, return false " );
+    return false; // RETURN
   }
-  return svc->event() == m_event ;
+  return svc->event() == m_event;
 }
 // ============================================================================
 /* (virtual) printout in form of std::string
  *  @return string representation (must be valid C++)
  */
 // ============================================================================
-std::string LoKi::AuxFunBase::toCpp() const
-{ return objType() + "( " + cargs() + " ) "; }
+std::string LoKi::AuxFunBase::toCpp() const { return objType() + "( " + cargs() + " ) "; }
 // ============================================================================
 /*  output operator of function objects to std::ostream
  *  @param stream reference to the stream
@@ -258,8 +230,7 @@ std::string LoKi::AuxFunBase::toCpp() const
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream& LoKi::operator<<( std::ostream& stream , const AuxFunBase&  obj )
-{ return obj.fillStream ( stream ) ; }
+std::ostream& LoKi::operator<<( std::ostream& stream, const AuxFunBase& obj ) { return obj.fillStream( stream ); }
 // ============================================================================
 /*  output operator of function objects to std::ostream
  *  @param stream reference to the stream
@@ -267,27 +238,22 @@ std::ostream& LoKi::operator<<( std::ostream& stream , const AuxFunBase&  obj )
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream& LoKi::operator<<( MsgStream& stream , const AuxFunBase&  obj )
-{
-  if ( stream.isActive() ) { obj.fillStream( stream.stream() ) ; }
-  return stream ;
+MsgStream& LoKi::operator<<( MsgStream& stream, const AuxFunBase& obj ) {
+  if ( stream.isActive() ) { obj.fillStream( stream.stream() ); }
+  return stream;
 }
 // ============================================================================
 // print it!
 // ============================================================================
-std::string Gaudi::Utils::toString ( const LoKi::AuxFunBase& o )
-{ return o.printOut () ; }
+std::string Gaudi::Utils::toString( const LoKi::AuxFunBase& o ) { return o.printOut(); }
 // ============================================================================
 // print it as C++ object
 // ============================================================================
-std::string Gaudi::Utils::toCpp    ( const LoKi::AuxFunBase& o )
-{ return o.toCpp    () ; }
+std::string Gaudi::Utils::toCpp( const LoKi::AuxFunBase& o ) { return o.toCpp(); }
 // ============================================================================
 // print it!
 // ============================================================================
-std::ostream& Gaudi::Utils::toStream
-( const LoKi::AuxFunBase& o ,
-  std::ostream&           s ) { return o.fillStream( s ) ; }
+std::ostream& Gaudi::Utils::toStream( const LoKi::AuxFunBase& o, std::ostream& s ) { return o.fillStream( s ); }
 // ============================================================================
 // The END
 // ============================================================================

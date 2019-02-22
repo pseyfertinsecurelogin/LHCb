@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef  _UTBoardToBankMap_H
+#ifndef _UTBoardToBankMap_H
 #define _UTBoardToBankMap_H 1
 
 /** @class UTBoardToBankMap UTBoardToBankMap.h
@@ -27,20 +27,16 @@
 class UTBoardToBankMap final {
 
 public:
+  void      addEntry( UTTell1ID aBoard, unsigned int aBank );
+  UTTell1ID findBoard( const unsigned int aBank ) const;
 
- void addEntry(UTTell1ID aBoard, unsigned int aBank);
- UTTell1ID findBoard(const unsigned int aBank) const;
+  // bank to board
+  unsigned int findBank( const UTTell1ID aBoard ) const { return m_bankMapping.at( aBoard ); }
 
- // bank to board
- unsigned int findBank(const UTTell1ID aBoard) const
- { return m_bankMapping.at(aBoard); }
-
- void clear() { m_bankMapping.clear(); }
+  void clear() { m_bankMapping.clear(); }
 
 private:
-
- std::map<UTTell1ID,unsigned int> m_bankMapping;
-
+  std::map<UTTell1ID, unsigned int> m_bankMapping;
 };
 
 #endif // _UTBoardToBankMap_H

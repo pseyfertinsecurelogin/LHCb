@@ -14,10 +14,9 @@
 
 // Include files
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include <string>
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
-
+#include <string>
 
 /** @class EventCountAlg EventCountAlg.h
  *
@@ -34,33 +33,28 @@
  *  @author Robert Lambert
  *  @date   2007-01-08
  */
-class EventCountAlg final : public GaudiAlgorithm ,
-                            virtual public IIncidentListener
-{
+class EventCountAlg final : public GaudiAlgorithm, virtual public IIncidentListener {
 
 public:
-
   /// Standard constructor
   EventCountAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  ~EventCountAlg( ) = default; ///< Destructor
+  ~EventCountAlg() = default; ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
   /// IListener interface to be triggered at begin of event
-  void handle(const Incident&) override { ++m_nHandled; }
+  void handle( const Incident& ) override { ++m_nHandled; }
 
 private:
-
-  ///two integers are used, and a StatEntity isn't defined
-  ///until the last moment.
-  unsigned long long m_nHandled = 0; ///<total events
-  unsigned long long m_nExecuted = 0; ///<number of events reaching this point
-  std::string m_counterName; ///<name of counter, set by option CounterName
-  SmartIF<IIncidentSvc> m_incSvc; ///<the incident service
-
+  /// two integers are used, and a StatEntity isn't defined
+  /// until the last moment.
+  unsigned long long    m_nHandled  = 0; ///< total events
+  unsigned long long    m_nExecuted = 0; ///< number of events reaching this point
+  std::string           m_counterName;   ///< name of counter, set by option CounterName
+  SmartIF<IIncidentSvc> m_incSvc;        ///< the incident service
 };
 
 #endif // EVENTCOUNTHISTO_H

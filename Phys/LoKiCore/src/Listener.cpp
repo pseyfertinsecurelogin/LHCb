@@ -13,8 +13,8 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <vector>
 #include <string>
+#include <vector>
 // ============================================================================
 // GaudiKernrel
 // ============================================================================
@@ -23,8 +23,8 @@
 // ============================================================================
 // local
 // ============================================================================
-#include "LoKi/Listener.h"
 #include "LoKi/ILoKiSvc.h"
+#include "LoKi/Listener.h"
 // ============================================================================
 /** @file Listener.cpp
  *  Implementation file for class : Listener
@@ -37,146 +37,128 @@
  */
 // ============================================================================
 /// local anonymous namespace to hide some technical details
-namespace
-{
+namespace {
   // ==========================================================================
-  auto match_first = [](std::string val) {
-    return [v=std::move(val)]
-           (const std::pair<std::string,long>& x)
-           { return x.first == v; };
+  auto match_first = []( std::string val ) {
+    return [v = std::move( val )]( const std::pair<std::string, long>& x ) { return x.first == v; };
   };
   // ==========================================================================
-  const std::string s_ALL = "ALL" ;
+  const std::string s_ALL = "ALL";
   // ==========================================================================
-} //                                           end of local anonymous namespace
+} // namespace
 // ============================================================================
 // default constructor (empty)
 // ============================================================================
-LoKi::Listener::Listener()
-  : LoKi::AuxFunBase(std::tie())
-{}
+LoKi::Listener::Listener() : LoKi::AuxFunBase( std::tie() ) {}
 // ============================================================================
 // copy constructor
 // ============================================================================
-LoKi::Listener::Listener ( const LoKi::Listener& right )
-  : LoKi::AuxFunBase  ( right          )
-  , IInterface        ( right          )
-  , IIncidentListener ( right          )
-  , extend_interfaces1<IIncidentListener> ( right )
-  , implements1<IIncidentListener>        ( right )
-  , m_incSvc          ( right.m_incSvc )
-{
+LoKi::Listener::Listener( const LoKi::Listener& right )
+    : LoKi::AuxFunBase( right )
+    , IInterface( right )
+    , IIncidentListener( right )
+    , extend_interfaces1<IIncidentListener>( right )
+    , implements1<IIncidentListener>( right )
+    , m_incSvc( right.m_incSvc ) {
   // subscribe to all incidents
   for ( auto& ii : right.m_incidents ) subscribe( ii.first, ii.second ).ignore();
 }
 // ============================================================================
 // MANDATORY: virtual destructor
 // ============================================================================
-LoKi::Listener::~Listener()
-{
-  while ( !m_incidents.empty()  && m_incSvc.validPointer() ) {
-      m_incSvc->removeListener ( this , m_incidents.back().first ) ;
-      m_incidents.pop_back() ;
+LoKi::Listener::~Listener() {
+  while ( !m_incidents.empty() && m_incSvc.validPointer() ) {
+    m_incSvc->removeListener( this, m_incidents.back().first );
+    m_incidents.pop_back();
   }
-  m_incSvc.release() ;
+  m_incSvc.release();
 }
 // ============================================================================
 // assignement
 // ============================================================================
-LoKi::Listener& LoKi::Listener:: operator=( const LoKi::Listener& right )
-{
+LoKi::Listener& LoKi::Listener::operator=( const LoKi::Listener& right ) {
   // avoid self-assignement
-  if ( &right == this ) { return *this ; }
+  if ( &right == this ) { return *this; }
 
   // 0. unsubscribe all own incidents
-  unsubscribe ().ignore() ;
+  unsubscribe().ignore();
 
   //
   // start the actual assignement:
   //
 
   // 1. assign the base
-  LoKi::AuxFunBase::operator= ( right ) ;
+  LoKi::AuxFunBase::operator=( right );
   // 2. copy the service
-  m_incSvc = right.m_incSvc ;
+  m_incSvc = right.m_incSvc;
   // 3. subscribe to all incidents from the right:
-  for ( auto& ii : right.m_incidents )
-  { subscribe ( ii.first, ii.second ).ignore() ; }
+  for ( auto& ii : right.m_incidents ) { subscribe( ii.first, ii.second ).ignore(); }
   //
-  return *this ;
+  return *this;
 }
 // ============================================================================
 // subscribe the incident
 // ============================================================================
-StatusCode LoKi::Listener::subscribe
-( const std::string& incident ,
-  const long         priority )
-{
+StatusCode LoKi::Listener::subscribe( const std::string& incident, const long priority ) {
   // specific incident ?
-  auto ifind = std::find_if
-    ( m_incidents.begin() , m_incidents.end() , match_first ( incident ) ) ;
+  auto ifind = std::find_if( m_incidents.begin(), m_incidents.end(), match_first( incident ) );
   //
-  if ( m_incidents.end() != ifind )
-  {
-    return Warning ( "subscribe: Incident '" + incident + "' already in the list",
-                     StatusCode::SUCCESS ) ;
+  if ( m_incidents.end() != ifind ) {
+    return Warning( "subscribe: Incident '" + incident + "' already in the list", StatusCode::SUCCESS );
   }
   //
-  if ( !m_incSvc )
-  {
-    SmartIF<IIncidentSvc> iis ( lokiSvc().getObject() ) ;
-    m_incSvc = iis ;
+  if ( !m_incSvc ) {
+    SmartIF<IIncidentSvc> iis( lokiSvc().getObject() );
+    m_incSvc = iis;
   }
-  Assert ( !(!m_incSvc) , "Unable to get Incident Service" ) ;
+  Assert( !( !m_incSvc ), "Unable to get Incident Service" );
   //
-  m_incSvc->addListener ( this , incident, priority ) ;
-  m_incidents.emplace_back( incident , priority ) ;
+  m_incSvc->addListener( this, incident, priority );
+  m_incidents.emplace_back( incident, priority );
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
 // unsubscribe the incident
 // ============================================================================
 
-StatusCode LoKi::Listener::unsubscribe ( const std::string& incident )
-{
+StatusCode LoKi::Listener::unsubscribe( const std::string& incident ) {
   // no incidents?
   if ( m_incidents.empty() ) {
-    StatusCode sc ( 810 , true ) ;
-    return Error ( "unsubscribe: Empty list of incidents!", sc ) ;
+    StatusCode sc( 810, true );
+    return Error( "unsubscribe: Empty list of incidents!", sc );
   }
   // all incidents?
   if ( incident.empty() || s_ALL == incident ) {
     //
     if ( !m_incSvc ) {
-      SmartIF<IIncidentSvc> iis ( lokiSvc().getObject() ) ;
-      m_incSvc = iis ;
+      SmartIF<IIncidentSvc> iis( lokiSvc().getObject() );
+      m_incSvc = iis;
     }
-    Assert ( !(!m_incSvc) , "Unable to get IIncident Service" ) ;
+    Assert( !( !m_incSvc ), "Unable to get IIncident Service" );
     //
     while ( !m_incidents.empty() ) {
-      m_incSvc->removeListener ( this , m_incidents.back().first ) ;
-      m_incidents.pop_back() ;
+      m_incSvc->removeListener( this, m_incidents.back().first );
+      m_incidents.pop_back();
     }
   }
   // specific incident ?
-  auto ifind = std::find_if
-    ( m_incidents.begin() , m_incidents.end() , match_first(incident) ) ;
+  auto ifind = std::find_if( m_incidents.begin(), m_incidents.end(), match_first( incident ) );
   if ( m_incidents.end() == ifind ) {
-    StatusCode sc ( 811 , true ) ;
-    return Error ( "unsubscribe: Unknown incident type: '" + incident + "'", sc ) ;
+    StatusCode sc( 811, true );
+    return Error( "unsubscribe: Unknown incident type: '" + incident + "'", sc );
   }
   //
   if ( !m_incSvc ) {
-    SmartIF<IIncidentSvc> iis ( lokiSvc().getObject() ) ;
-    m_incSvc = iis ;
+    SmartIF<IIncidentSvc> iis( lokiSvc().getObject() );
+    m_incSvc = iis;
   }
-  Assert ( !(!m_incSvc) , "Unable to get IIncident Service" ) ;
+  Assert( !( !m_incSvc ), "Unable to get IIncident Service" );
   //
-  m_incSvc->removeListener ( this , incident ) ;
-  m_incidents.erase ( ifind ) ;
+  m_incSvc->removeListener( this, incident );
+  m_incidents.erase( ifind );
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ========================================================================
 

@@ -9,13 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_BOARDUNIT_H
-#define L0MUONKERNEL_BOARDUNIT_H     1
+#define L0MUONKERNEL_BOARDUNIT_H 1
 
+#include "L0MuonKernel/L0MUnit.h"
+#include "L0MuonKernel/ProcUnit.h"
 #include <boost/dynamic_bitset.hpp>
 #include <vector>
-#include "L0MuonKernel/ProcUnit.h"
-#include "L0MuonKernel/L0MUnit.h"
-
 
 namespace L0Muon {
 
@@ -40,30 +39,24 @@ namespace L0Muon {
   class BoardUnit : public L0MUnit {
 
   public:
-
     /// Default Constructor
     BoardUnit();
 
     /// Constructor with a MuonTileID
-    BoardUnit(LHCb::MuonTileID id);
+    BoardUnit( LHCb::MuonTileID id );
 
     /// Constructor from a xml node
-    BoardUnit(DOMNode* pNode);
+    BoardUnit( DOMNode* pNode );
 
     /// Destructor
     ~BoardUnit();
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "BoardUnit";
-    }
+    std::string type() override { return "BoardUnit"; }
 
   private:
-
-
   };
 
+} // namespace L0Muon
 
-}  // namespace L0Muon
-
-#endif      // L0MUONKERNEL_BOARDUNIT_H
+#endif // L0MUONKERNEL_BOARDUNIT_H

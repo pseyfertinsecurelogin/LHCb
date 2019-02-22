@@ -32,10 +32,8 @@ DECLARE_COMPONENT( DumpMCEventAlg )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DumpMCEventAlg::DumpMCEventAlg( const std::string& name,
-                                ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
+DumpMCEventAlg::DumpMCEventAlg( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ) {
   declareProperty( "NumberOfObjectsToPrint", m_numObjects = 5 );
 }
 
@@ -44,7 +42,7 @@ DumpMCEventAlg::DumpMCEventAlg( const std::string& name,
 //=============================================================================
 StatusCode DumpMCEventAlg::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
   m_checker = tool<ICheckTool>( "CheckMCEventTool" );
 
@@ -56,39 +54,35 @@ StatusCode DumpMCEventAlg::initialize() {
 //=============================================================================
 StatusCode DumpMCEventAlg::execute() {
 
-  LHCb::MCHeader* evt =
-    get<LHCb::MCHeader>( LHCb::MCHeaderLocation::Default );
-  info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
-         << *evt << endmsg;
+  LHCb::MCHeader* evt = get<LHCb::MCHeader>( LHCb::MCHeaderLocation::Default );
+  info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n" << *evt << endmsg;
 
   StatusCode sc = m_checker->check();
-  if( sc.isFailure() ) return sc;
+  if ( sc.isFailure() ) return sc;
   info() << "MCVertex/MCParticle tree structure is OK" << endmsg;
 
-  LHCb::MCVertices* verts =
-    get<LHCb::MCVertices>( LHCb::MCVertexLocation::Default );
+  LHCb::MCVertices* verts = get<LHCb::MCVertices>( LHCb::MCVertexLocation::Default );
   info() << "There are " << verts->size() << " Vertices:" << endmsg;
 
-  if( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
+  if ( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
     unsigned int count = 0;
-    for( auto iVert = verts->begin(); iVert != verts->end(); iVert++ ) {
-      if( !msgLevel(MSG::VERBOSE) && m_numObjects < ++count ) break;
-      debug() << "MCVertex " << (*iVert)->key() << ":" << std::endl;
-      (*iVert)->fillStream(debug().stream());
+    for ( auto iVert = verts->begin(); iVert != verts->end(); iVert++ ) {
+      if ( !msgLevel( MSG::VERBOSE ) && m_numObjects < ++count ) break;
+      debug() << "MCVertex " << ( *iVert )->key() << ":" << std::endl;
+      ( *iVert )->fillStream( debug().stream() );
       debug() << endmsg;
     }
   }
 
-  LHCb::MCParticles* parts =
-    get<LHCb::MCParticles>( LHCb::MCParticleLocation::Default );
+  LHCb::MCParticles* parts = get<LHCb::MCParticles>( LHCb::MCParticleLocation::Default );
   info() << "There are " << parts->size() << " Particles:" << endmsg;
 
-  if( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
+  if ( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
     unsigned int count = 0;
-    for(auto iPart = parts->begin(); iPart != parts->end(); iPart++ ) {
-      if( !msgLevel(MSG::VERBOSE) && m_numObjects < ++count ) break;
-      debug() << "MCParticle " << (*iPart)->key() << ":" << std::endl;
-      (*iPart)->fillStream(debug().stream());
+    for ( auto iPart = parts->begin(); iPart != parts->end(); iPart++ ) {
+      if ( !msgLevel( MSG::VERBOSE ) && m_numObjects < ++count ) break;
+      debug() << "MCParticle " << ( *iPart )->key() << ":" << std::endl;
+      ( *iPart )->fillStream( debug().stream() );
       debug() << endmsg;
     }
   }

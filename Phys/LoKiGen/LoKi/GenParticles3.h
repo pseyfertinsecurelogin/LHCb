@@ -37,11 +37,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace GenParticles
-  {
+  namespace GenParticles {
     // ========================================================================
     /** @class Count
      *  simple class which counts how many particles
@@ -54,8 +52,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@itep.ru
      *  @date   2012-01-28
      */
-    class GAUDI_API Count : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API Count : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor from the criteria and "range"
@@ -63,31 +60,27 @@ namespace LoKi
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      Count
-      ( const LoKi::Types::GCuts& cut   ,
-        HepMC::IteratorRange      range ) ;
+      Count( const LoKi::Types::GCuts& cut, HepMC::IteratorRange range );
       /** constructor from the criteria and "range"
        *  @param range search region
        *  @param cut the criteria
        *  @see HepMC::IteratorRange
        */
-      Count
-      ( HepMC::IteratorRange      range ,
-        const LoKi::Types::GCuts& cut   ) ;
+      Count( HepMC::IteratorRange range, const LoKi::Types::GCuts& cut );
       // ======================================================================
       /// MANDATORY: clone method ("virtual contructor")
-      Count * clone() const  override;
+      Count* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* v ) const  override;
+      double operator()( const HepMC::GenParticle* v ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Types::GCut    m_cut   ;
-      HepMC::IteratorRange m_range ;
+      LoKi::Types::GCut    m_cut;
+      HepMC::IteratorRange m_range;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Has
      *  simple class which check the presence of particles
@@ -100,8 +93,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@itep.ru
      *  @date   2012-01-28
      */
-    class GAUDI_API Has : public LoKi::GenTypes::GCuts
-    {
+    class GAUDI_API Has : public LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
       /** constructor from the criteria and "range"
@@ -109,36 +101,31 @@ namespace LoKi
        *  @param range search region
        *  @see HepMC::IteratorRange
        */
-      Has
-      ( const LoKi::Types::GCuts& cut   ,
-        HepMC::IteratorRange      range ) ;
+      Has( const LoKi::Types::GCuts& cut, HepMC::IteratorRange range );
       /** constructor from the criteria and "range"
        *  @param range search region
        *  @param cut the criteria
        *  @see HepMC::IteratorRange
        */
-      Has
-      ( HepMC::IteratorRange      range ,
-        const LoKi::Types::GCuts& cut   ) ;
+      Has( HepMC::IteratorRange range, const LoKi::Types::GCuts& cut );
       // ======================================================================
       /// MANDATORY: clone method ("virtual contructor")
-      Has* clone() const  override;
+      Has* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* v ) const  override;
+      bool operator()( const HepMC::GenParticle* v ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Types::GCut    m_cut   ;
-      HepMC::IteratorRange m_range ;
+      LoKi::Types::GCut    m_cut;
+      HepMC::IteratorRange m_range;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles
+  } // namespace GenParticles
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef GCOUNT
      *  simple functor to count certain particles in HepMC-graph
@@ -158,7 +145,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-28
      */
-    typedef LoKi::GenParticles::Count                                  GCOUNT ;
+    typedef LoKi::GenParticles::Count GCOUNT;
     // ========================================================================
     /** @typedef GHAS
      *  simple functor to check certain particles in HepMC-graph
@@ -176,9 +163,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-28
      */
-    typedef LoKi::GenParticles::Has                                      GHAS ;
+    typedef LoKi::GenParticles::Has GHAS;
     // ========================================================================
-  } // end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

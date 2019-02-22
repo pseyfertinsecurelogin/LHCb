@@ -12,12 +12,11 @@
 #define DETDESCCNV_XMLCNVSVC_H
 
 // Include files
-#include "XmlTools/IXmlSvc.h"
-#include "XmlTools/Evaluator.h"
-#include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/ConversionSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/System.h"
-
+#include "XmlTools/Evaluator.h"
+#include "XmlTools/IXmlSvc.h"
 
 /** @class XmlCnvSvc XmlCnvSvc.h DetDescCnv/XmlCnvSvc.h
  *
@@ -29,7 +28,7 @@
  *  @author Pere Mato
  *  @author Marco Clemencic
  */
-class XmlCnvSvc : public extends<ConversionSvc,IXmlSvc> {
+class XmlCnvSvc : public extends<ConversionSvc, IXmlSvc> {
 
 public:
   /**
@@ -38,8 +37,7 @@ public:
    * @param svc Pointer to service locator interface
    * @return Reference to CdfPersCnvSvc
    */
-  XmlCnvSvc (const std::string& name, ISvcLocator* svc)
-      : base_class(name, svc, XML_StorageType) {}
+  XmlCnvSvc( const std::string& name, ISvcLocator* svc ) : base_class( name, svc, XML_StorageType ) {}
 
   /**
    * Initializes the service
@@ -59,7 +57,6 @@ public:
    */
   StatusCode finalize() override;
 
-
   /**
    * Create an XML address using explicit arguments to identify a single object
    * @param svc_type the service type
@@ -71,12 +68,8 @@ public:
    * @note unsigned long fourth argument can be ignored for XML addresses
    */
   using ConversionSvc::createAddress;
-  StatusCode createAddress(long  svc_type,
-                           const CLID& clid,
-                           const std::string* par,
-                           const unsigned long* /*ip*/,
-                           IOpaqueAddress*& refpAddress) override;
-
+  StatusCode createAddress( long svc_type, const CLID& clid, const std::string* par, const unsigned long* /*ip*/,
+                            IOpaqueAddress*& refpAddress ) override;
 
   ///////////////////////////////////////////////////
   // implementation of the IXmlParserSvc interface //
@@ -88,7 +81,7 @@ public:
    * @param fileName the name of the file to parse
    * @return the document issued from the parsing
    */
-  IOVDOMDocument* parse (const char* fileName) override;
+  IOVDOMDocument* parse( const char* fileName ) override;
 
   /**
    * This method parses XML from a string and produces the corresponding DOM
@@ -96,7 +89,7 @@ public:
    * @param source the string to parse
    * @return the document issued from the parsing
    */
-  IOVDOMDocument* parseString (std::string source) override;
+  IOVDOMDocument* parseString( std::string source ) override;
 
   /**
    * This clears the cache of previously parsed xml files.
@@ -105,7 +98,7 @@ public:
 
   /// Method to remove the lock from a document in the cache or to delete the document
   /// generated from a string.
-  void releaseDoc(IOVDOMDocument* doc) override;
+  void releaseDoc( IOVDOMDocument* doc ) override;
 
   /////////////////////////////////////////////
   // implementation of the IXmlSvc interface //
@@ -136,8 +129,7 @@ public:
    * @param value string which defines the value of the parameter.
    * @return true if success
    */
-  bool addParameter (const std::string& name,
-                     const std::string& value) override;
+  bool addParameter( const std::string& name, const std::string& value ) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
@@ -179,74 +171,58 @@ public:
    */
   bool allowGenericCnv() override { return m_genericConversion; }
 
+private:
+  // -----------------------------------------------------------------------
+  // Useful functions to check units in parameters
+  // -----------------------------------------------------------------------
+  //
+  // The aim of all this is to say whether a given expression has a unit
+  // or not. The language we deal with is the following :
+  //    sum :=   product '+' sum
+  //           | product '-' sum
+  //    product :=   expr '*' product
+  //               | expr '/' product
+  //    expr :=   '-'? alphanumeric_token
+  //            | '-'? function_name? '(' sum ')'
+  // Where ? means that it is optional and | means or. alphanumeric_token
+  // contains only alphanumeric characters, except for a single '-' character
+  // if preceded by a digit and an 'e'
+  //
+  // The way it is implemented is the following :
+  //    - every function receives the string to be parsed and the
+  //  currently interesting part of it (between start or baseIndex
+  //  included and end or lastIndex exculded).
+  //    - the skip* functions return the index of the first character
+  //  following the sum/product/expr. This value is less or equal to end
+  //    - the *HasUnit functions tell whether a given sum/product/expr
+  //  has a unit
+  //
+  // The assumptions made are the following :
+  //    - a sum has a unit if and only if each sub product has one
+  //    - a product has a unit if any sub expr has one (which may be wrong
+  //  if you divide a unit by itself for example)
+  //    - an expression has a unit in only 3 cases :
+  //         o it is of the form -? '(' sum ')' and the sum has one
+  //         o it is of the form '-'? alphanumeric token and the token
+  //  starts with a letter. This statement makes the assumption that this
+  //  token is either describing a unit or is a variable that has a unit
+  //  itself, which may be wrong
+  //         o it is of the form '-'? function_name '(' sum ')' and the function
+  //  is "sqrt" or "abs" and sum has a unit
+  //    - note that the result of a function is supposed to have no unit
+  //  in general
+
+  std::string::size_type skipSum( const std::string& s, std::string::size_type start, std::string::size_type end );
+  std::string::size_type skipProduct( const std::string& s, std::string::size_type start, std::string::size_type end );
+  std::string::size_type skipExpr( const std::string& s, std::string::size_type start, std::string::size_type end );
+
+  bool sumHasUnit( const std::string& s, std::string::size_type baseIndex, std::string::size_type lastIndex );
+  bool productHasUnit( const std::string& s, std::string::size_type baseIndex, std::string::size_type lastIndex );
+  bool exprHasUnit( const std::string& s, std::string::size_type baseIndex, std::string::size_type lastIndex );
 
 private:
-
-// -----------------------------------------------------------------------
-// Useful functions to check units in parameters
-// -----------------------------------------------------------------------
-//
-// The aim of all this is to say whether a given expression has a unit
-// or not. The language we deal with is the following :
-//    sum :=   product '+' sum
-//           | product '-' sum
-//    product :=   expr '*' product
-//               | expr '/' product
-//    expr :=   '-'? alphanumeric_token
-//            | '-'? function_name? '(' sum ')'
-// Where ? means that it is optional and | means or. alphanumeric_token
-// contains only alphanumeric characters, except for a single '-' character
-// if preceded by a digit and an 'e'
-//
-// The way it is implemented is the following :
-//    - every function receives the string to be parsed and the
-//  currently interesting part of it (between start or baseIndex
-//  included and end or lastIndex exculded).
-//    - the skip* functions return the index of the first character
-//  following the sum/product/expr. This value is less or equal to end
-//    - the *HasUnit functions tell whether a given sum/product/expr
-//  has a unit
-//
-// The assumptions made are the following :
-//    - a sum has a unit if and only if each sub product has one
-//    - a product has a unit if any sub expr has one (which may be wrong
-//  if you divide a unit by itself for example)
-//    - an expression has a unit in only 3 cases :
-//         o it is of the form -? '(' sum ')' and the sum has one
-//         o it is of the form '-'? alphanumeric token and the token
-//  starts with a letter. This statement makes the assumption that this
-//  token is either describing a unit or is a variable that has a unit
-//  itself, which may be wrong
-//         o it is of the form '-'? function_name '(' sum ')' and the function
-//  is "sqrt" or "abs" and sum has a unit
-//    - note that the result of a function is supposed to have no unit
-//  in general
-
-  std::string::size_type skipSum (const std::string& s,
-                        std::string::size_type start,
-                        std::string::size_type end);
-  std::string::size_type skipProduct(const std::string& s,
-                            std::string::size_type start,
-                            std::string::size_type end);
-  std::string::size_type skipExpr (const std::string& s,
-                         std::string::size_type start,
-                         std::string::size_type end);
-
-  bool sumHasUnit (const std::string& s,
-                   std::string::size_type baseIndex,
-                   std::string::size_type lastIndex);
-  bool productHasUnit (const std::string& s,
-                       std::string::size_type baseIndex,
-                       std::string::size_type lastIndex);
-  bool exprHasUnit (const std::string& s,
-                    std::string::size_type baseIndex,
-                    std::string::size_type lastIndex);
-
-
-private:
-
   /// Name of the XmlParserSvc to use (option XmlCnvSvc.XmlParserSvc, default "XmlParserSvc")
-  Gaudi::Property<std::string> m_parserSvcName { this, "XmlParserSvc", "XmlParserSvc" };
+  Gaudi::Property<std::string> m_parserSvcName{this, "XmlParserSvc", "XmlParserSvc"};
 
   /// XmlParserSvc used to parse xmlfiles
   SmartIF<IXmlParserSvc> m_parserSvc;
@@ -259,22 +235,18 @@ private:
    * elements in case the corresponding user defined converter is not
    * available
    */
-  Gaudi::Property<bool>  m_genericConversion { this, "AllowGenericConversion", false};
-
+  Gaudi::Property<bool> m_genericConversion{this, "AllowGenericConversion", false};
 
   /**
    * Property specifying the directory containing standard DTD files.
    * This is necessary when parsing XML strings rather than XML files.
    */
-  Gaudi::Property<std::string> m_dtdLocation { this, "DtdLocation" };
-
+  Gaudi::Property<std::string> m_dtdLocation{this, "DtdLocation"};
 
   /**
    * tells whether to check parameters for units or not.
    */
-  Gaudi::Property<bool> m_checkUnits { this, "CheckUnits",  true };
-
-
+  Gaudi::Property<bool> m_checkUnits{this, "CheckUnits", true};
 };
 
-#endif    // DETDESCCNV_XMLCNVSVC_H
+#endif // DETDESCCNV_XMLCNVSVC_H

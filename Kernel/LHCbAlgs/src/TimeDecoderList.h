@@ -14,7 +14,7 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
 
 /** Simple implementation of IEventTimeDecoder forwarding the calls to a list of
  *  other implementations.
@@ -23,15 +23,11 @@
  *  @date   2010-09-23
  */
 
-class TimeDecoderList final : public extends1<GaudiTool, IEventTimeDecoder>
-{
+class TimeDecoderList final : public extends1<GaudiTool, IEventTimeDecoder> {
 
 public:
-
   /// Standard constructor
-  TimeDecoderList(const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent);
+  TimeDecoderList( const std::string& type, const std::string& name, const IInterface* parent );
 
   virtual ~TimeDecoderList() = default; ///< Destructor
 
@@ -44,7 +40,6 @@ public:
   Gaudi::Time getTime() const override;
 
 private:
-
   /// Type of the list of decoder names.
   typedef std::vector<std::string> DecoderNamesType;
 
@@ -56,7 +51,6 @@ private:
 
   /// List of IEventTimeDecoder instances
   DecodersType m_decoders;
-
 };
 
 #endif /* TIMEDECODERLIST_H */

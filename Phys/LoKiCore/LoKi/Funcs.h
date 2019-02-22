@@ -16,10 +16,10 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/FuncCast.h"
 #include "LoKi/Functions.h"
 #include "LoKi/Operators.h"
-#include "LoKi/FuncCast.h"
-#include "LoKi/BasicFunctors.h"
 // ============================================================================
 /** @file
  *
@@ -34,16 +34,14 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-10-31
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Dicts
    *  Helper namespace for the building thee proper dictionries for LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-05-28
    */
-  namespace Dicts
-  {
+  namespace Dicts {
     // ========================================================================
     /** @struct Funcs
      *  The fictive structure used for creation of Reflex dictionaries
@@ -52,20 +50,19 @@ namespace LoKi
      *  @date 2007-05-27
      */
     template <class TYPE>
-    struct Funcs
-    {
+    struct Funcs {
       // ======================================================================
-      typename LoKi::BasicFunctors<TYPE>::Constant               m_101 ;
-      typename LoKi::BasicFunctors<TYPE>::BooleanConstant        m_102 ;
-      typename LoKi::BasicFunctors<TYPE>::PredicateFromPredicate m_103 ;
-      typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction   m_104 ;
+      typename LoKi::BasicFunctors<TYPE>::Constant               m_101;
+      typename LoKi::BasicFunctors<TYPE>::BooleanConstant        m_102;
+      typename LoKi::BasicFunctors<TYPE>::PredicateFromPredicate m_103;
+      typename LoKi::BasicFunctors<TYPE>::FunctionFromFunction   m_104;
       // ======================================================================
-      LoKi::Valid<TYPE>                  m_301  ;
+      LoKi::Valid<TYPE> m_301;
       // ======================================================================
       /// undefined constructor
-      Funcs () ; // undefined constructor
+      Funcs(); // undefined constructor
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct VFuncs
      *  The fictive structure used for creation of Reflex dictionaries
@@ -74,26 +71,25 @@ namespace LoKi
      *  @date 2007-05-27
      */
     template <class TYPE>
-    struct VFuncs
-    {
+    struct VFuncs {
       // ======================================================================
       // "pipe"
-      LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >   m_100 ;
+      LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> m_100;
       // "map"
-      LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<double> > m_101 ;
+      LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<double>> m_101;
       // "funval"
-      LoKi::FunctorFromFunctor<std::vector<TYPE>,double>               m_103 ;
+      LoKi::FunctorFromFunctor<std::vector<TYPE>, double> m_103;
       // "cutval"
-      LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>                 m_104 ;
+      LoKi::FunctorFromFunctor<std::vector<TYPE>, bool> m_104;
       // "source"
-      LoKi::FunctorFromFunctor<void,std::vector<TYPE> >                m_105 ;
+      LoKi::FunctorFromFunctor<void, std::vector<TYPE>> m_105;
       // ======================================================================
       /// undefined constructor
-      VFuncs () ; // undefined constructor
+      VFuncs(); // undefined constructor
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                             end of namespace LoKi::Dicts
+  } // namespace Dicts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

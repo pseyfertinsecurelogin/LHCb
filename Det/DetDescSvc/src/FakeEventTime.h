@@ -36,16 +36,13 @@ public:
   Gaudi::Time getTime() const override;
 
 private:
+  Gaudi::Property<long long> m_startTime{this, "StartTime", 0, "First event time (when simluating them)."};
+  Gaudi::Property<long long> m_timeStep{this, "TimeStep", 0,
+                                        "Event time increment (when simluating event times), 0 means no simulation."};
 
-  Gaudi::Property<long long> m_startTime { this, "StartTime",  0,
-    "First event time (when simluating them)." };
-  Gaudi::Property<long long> m_timeStep { this, "TimeStep",  0,
-    "Event time increment (when simluating event times), 0 means no simulation." };
-
-  Gaudi::Property<unsigned long> m_startRun { this, "StartRun",  0,
-    "First run number to simulate" };
-  Gaudi::Property<unsigned long> m_eventsPerRun { this, "EventsPerRun",  0,
-    "Number of events (calls) before changing run number, 0 means no change" };
+  Gaudi::Property<unsigned long> m_startRun{this, "StartRun", 0, "First run number to simulate"};
+  Gaudi::Property<unsigned long> m_eventsPerRun{
+      this, "EventsPerRun", 0, "Number of events (calls) before changing run number, 0 means no change"};
 
   unsigned long m_evtCount = 0;
 

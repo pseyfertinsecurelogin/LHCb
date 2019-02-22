@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeSubSubCalorimeter.cpp,v 1.3 2009-04-17 13:41:04 cattanem Exp $ 
+// $Id: DeSubSubCalorimeter.cpp,v 1.3 2009-04-17 13:41:04 cattanem Exp $
 // ============================================================================
 #define CALODET_DESUBSUBCALORIMETER_CPP 1
 // ============================================================================
@@ -30,92 +30,86 @@
 // Standard Constructors
 // ============================================================================
 DeSubSubCalorimeter::DeSubSubCalorimeter( const std::string& name )
-  : DetectorElement     ( name )
-    , m_cellSize( 0.0 )
-    , m_xSize(0.0)
-    , m_ySize(0.0)
-    , m_area( -1  )
-{}
+    : DetectorElement( name ), m_cellSize( 0.0 ), m_xSize( 0.0 ), m_ySize( 0.0 ), m_area( -1 ) {}
 
 // ============================================================================
 // Destructor
 // ============================================================================
-DeSubSubCalorimeter::~DeSubSubCalorimeter(){}
-
+DeSubSubCalorimeter::~DeSubSubCalorimeter() {}
 
 // ============================================================================
 /// object identification
 // ============================================================================
-const CLID& DeSubSubCalorimeter::clID() const
-{ return DeSubSubCalorimeter::classID(); }
+const CLID& DeSubSubCalorimeter::clID() const { return DeSubSubCalorimeter::classID(); }
 
 // ============================================================================
 // standard initialization
 // ============================================================================
-StatusCode DeSubSubCalorimeter::initialize(){
+StatusCode DeSubSubCalorimeter::initialize() {
   /// initialize the base class
   StatusCode sc = DetectorElement::initialize();
-  if ( sc.isFailure() ) { return sc ; }
+  if ( sc.isFailure() ) { return sc; }
 
   typedef std::vector<std::string> Parameters;
-  Parameters pars( paramNames() );
+  Parameters                       pars( paramNames() );
   /// cell size
-  auto it = std::find( pars.begin() , pars.end () , std::string("CellSize") );
-  if( pars.end() != it ){
+  auto it = std::find( pars.begin(), pars.end(), std::string( "CellSize" ) );
+  if ( pars.end() != it ) {
     const double value = param<double>( *it );
-    setCellSize( value ) ;
+    setCellSize( value );
     pars.erase( it );
-  }else{ 
-      return StatusCode::FAILURE ; 
+  } else {
+    return StatusCode::FAILURE;
   }
   /// subSubCalo X size
-  auto itx = std::find( pars.begin() , pars.end () , std::string("XSize") );
-  if( pars.end() != itx ){
+  auto itx = std::find( pars.begin(), pars.end(), std::string( "XSize" ) );
+  if ( pars.end() != itx ) {
     const double value = param<double>( *itx );
-    setXSize( value ) ;
+    setXSize( value );
     pars.erase( itx );
-  }else{ 
-    return StatusCode::FAILURE ; 
+  } else {
+    return StatusCode::FAILURE;
   }
   /// subSubCalo Y size
-  auto ity = std::find( pars.begin() , pars.end () , std::string("YSize") );
-  if( pars.end() != ity ){
+  auto ity = std::find( pars.begin(), pars.end(), std::string( "YSize" ) );
+  if ( pars.end() != ity ) {
     const double value = param<double>( *ity );
-    setYSize( value ) ;
+    setYSize( value );
     pars.erase( ity );
-  }else{ 
-    return StatusCode::FAILURE ; 
+  } else {
+    return StatusCode::FAILURE;
   }
-  /// area Id 
-  auto itt = std::find( pars.begin() , pars.end () , std::string("Area") );
-  if( pars.end() != itt ){
+  /// area Id
+  auto itt = std::find( pars.begin(), pars.end(), std::string( "Area" ) );
+  if ( pars.end() != itt ) {
     const int value = param<int>( *itt );
-    setArea( value ) ;
+    setArea( value );
     pars.erase( itt );
-  }else{ 
-      return StatusCode::FAILURE ; 
+  } else {
+    return StatusCode::FAILURE;
   }
-  Assert ( nullptr != geometry() , "DeSubSubcalorimeter: Invalid GeometryInfo" ) ;
+  Assert( nullptr != geometry(), "DeSubSubcalorimeter: Invalid GeometryInfo" );
   return StatusCode::SUCCESS;
 }
 
 // ============================================================================
 // standard printout to STL standard stream
 // ============================================================================
-std::ostream& DeSubSubCalorimeter::printOut( std::ostream& os ) const{
-  os << "\tDeSubSubCalorimeter" << " fullname ='"    << name () << std::endl;
-  os << "\t\t\tCellSize=" << std::setw(12) << m_cellSize << " Area-ID = " << m_area  
-     << " X-center offset : " << xSize()/2. << std::endl;
+std::ostream& DeSubSubCalorimeter::printOut( std::ostream& os ) const {
+  os << "\tDeSubSubCalorimeter"
+     << " fullname ='" << name() << std::endl;
+  os << "\t\t\tCellSize=" << std::setw( 12 ) << m_cellSize << " Area-ID = " << m_area
+     << " X-center offset : " << xSize() / 2. << std::endl;
   return os;
 }
 
 // ============================================================================
 // standard printout to Gaudi standard stream
 // ============================================================================
-MsgStream&    DeSubSubCalorimeter::printOut( MsgStream&    os ) const{
-  os << "\tDeSubSubCalorimeter"  << " fullname ='"    << name ()     << endmsg   ;
-  os << "\t\t\tCellSize=" << std::setw(12) << m_cellSize << " Area-ID = " << m_area  
-     << " X-center offset : " << xSize()/2 << endmsg;
+MsgStream& DeSubSubCalorimeter::printOut( MsgStream& os ) const {
+  os << "\tDeSubSubCalorimeter"
+     << " fullname ='" << name() << endmsg;
+  os << "\t\t\tCellSize=" << std::setw( 12 ) << m_cellSize << " Area-ID = " << m_area
+     << " X-center offset : " << xSize() / 2 << endmsg;
   return os;
 }
-

@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // $Id: $
-#ifndef FTRAWBANKENCODER_H 
+#ifndef FTRAWBANKENCODER_H
 #define FTRAWBANKENCODER_H 1
 
 #include "IFTReadoutTool.h"
@@ -28,15 +28,15 @@
  *  @date   2012-05-11
  */
 class FTRawBankEncoder : public GaudiAlgorithm {
-public: 
+public:
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-  PublicToolHandle<IFTReadoutTool> m_readoutTool = { this, "FTReadoutTool", "FTReadoutTool" };
+  PublicToolHandle<IFTReadoutTool> m_readoutTool = {this, "FTReadoutTool", "FTReadoutTool"};
 
-  Gaudi::Property<std::string> m_inputLocation  {this, "InputLocation"  , LHCb::FTClusterLocation::Default };
-  Gaudi::Property<std::string> m_outputLocation {this, "OutputLocation" , LHCb::RawEventLocation::Default  };
+  Gaudi::Property<std::string> m_inputLocation{this, "InputLocation", LHCb::FTClusterLocation::Default};
+  Gaudi::Property<std::string> m_outputLocation{this, "OutputLocation", LHCb::RawEventLocation::Default};
 };
 #endif // FTRAWBANKENCODER_H

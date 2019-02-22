@@ -14,14 +14,15 @@
 def properties(pid):
     return {
         'name': pid.name(),
-        'threeCharge': int(round(pid.charge()*3)),
+        'threeCharge': int(round(pid.charge() * 3)),
         'hasAnti': pid.selfcc()
-        }
+    }
+
 
 # Generate the PID dictionary and optionally archive.
-def generate(dat = None):
+def generate(dat=None):
     import PartProp.PartPropSvc
-    from GaudiPython.Bindings import AppMgr 
+    from GaudiPython.Bindings import AppMgr
     gaudi = AppMgr()
     ppsvc = gaudi.ppSvc()
 
@@ -32,10 +33,13 @@ def generate(dat = None):
 
     # Archive if requested.
     if dat:
-        with open(dat, 'w') as dat: dat.write(repr(pids))
+        with open(dat, 'w') as dat:
+            dat.write(repr(pids))
     return pids
 
-# Load the PID dictionary.
-try: pids = eval(file('ParticleProperty.dat').read())
-except: pids = generate('ParticleProperty.dat')
 
+# Load the PID dictionary.
+try:
+    pids = eval(file('ParticleProperty.dat').read())
+except:
+    pids = generate('ParticleProperty.dat')

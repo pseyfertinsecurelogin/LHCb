@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef CALOFILLPRSSPDRAWBUFFER_H 
+#ifndef CALOFILLPRSSPDRAWBUFFER_H
 #define CALOFILLPRSSPDRAWBUFFER_H 1
 
 // Include files
@@ -20,49 +20,48 @@
 #include "Event/RawBank.h"
 
 /** @class CaloFillPrsSpdRawBuffer CaloFillPrsSpdRawBuffer.h
- *  
+ *
  *
  *  @author Olivier Callot
  *  @date   2005-01-04
  */
 class CaloFillPrsSpdRawBuffer : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   CaloFillPrsSpdRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 private:
+  void fillDataBank();
 
-  void fillDataBank ( );
+  void fillDataBankShort();
 
-  void fillDataBankShort ( );
+  void fillTriggerBank();
 
-  void fillTriggerBank ( );
+  void fillTriggerBankShort();
 
-  void fillTriggerBankShort ( );
+  void fillPackedBank();
 
-  void fillPackedBank ( );
-
-  std::string m_inputBank;
-  std::string m_prsBank;
-  std::string m_spdBank;
+  std::string             m_inputBank;
+  std::string             m_prsBank;
+  std::string             m_spdBank;
   LHCb::RawBank::BankType m_bankType;
   LHCb::RawBank::BankType m_triggerBankType;
-  int    m_numberOfBanks;
-  int    m_dataCodingType;
+  int                     m_numberOfBanks;
+  int                     m_dataCodingType;
 
   DeCalorimeter* m_calo;
 
   // Statistics
-  
-  double m_totDataSize;
-  double m_totTrigSize;
-  std::vector<double> m_dataSize;
-  int m_nbEvents;
-  std::vector< std::vector<unsigned int> > m_banks;
-  std::vector< std::vector<unsigned int> > m_trigBanks;
+
+  double                                 m_totDataSize;
+  double                                 m_totTrigSize;
+  std::vector<double>                    m_dataSize;
+  int                                    m_nbEvents;
+  std::vector<std::vector<unsigned int>> m_banks;
+  std::vector<std::vector<unsigned int>> m_trigBanks;
 };
 #endif // CALOFILLPRSSPDRAWBUFFER_H

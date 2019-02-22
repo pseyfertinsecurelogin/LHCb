@@ -14,8 +14,8 @@
 #include "Event/MCVertex.h"
 #include "Event/PackedMCVertex.h"
 
-#include "GaudiKernel/DataHandle.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/DataHandle.h"
 
 /**
  * The algorithm provides access to previously packed MC vertices at a TES location.
@@ -25,20 +25,18 @@
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class UnpackMCVertex : public GaudiAlgorithm
-{
+class UnpackMCVertex : public GaudiAlgorithm {
 
 public:
-
   using GaudiAlgorithm::GaudiAlgorithm;
   StatusCode execute() override;
 
 private:
-
-  DataObjectReadHandle<LHCb::PackedMCVertices> m_packedMCVertices{this, "InputName", LHCb::PackedMCVertexLocation::Default};
-  DataObjectWriteHandle<LHCb::MCVertices> m_MCVertices{this, "OutputName", LHCb::MCVertexLocation::Default };
-  Gaudi::Property<bool> m_alwaysOutput {this, "AlwaysCreateOutput", false, "Flag to turn on the creation of output, even when input is missing" };
-
+  DataObjectReadHandle<LHCb::PackedMCVertices> m_packedMCVertices{this, "InputName",
+                                                                  LHCb::PackedMCVertexLocation::Default};
+  DataObjectWriteHandle<LHCb::MCVertices>      m_MCVertices{this, "OutputName", LHCb::MCVertexLocation::Default};
+  Gaudi::Property<bool>                        m_alwaysOutput{this, "AlwaysCreateOutput", false,
+                                       "Flag to turn on the creation of output, even when input is missing"};
 };
 
 #endif // UNPACKMCVERTEX_H

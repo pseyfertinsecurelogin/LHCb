@@ -13,8 +13,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/NodeGrammar.h"
 #include "LoKi/NodeParser.h"
+#include "LoKi/NodeGrammar.h"
 // ============================================================================
 /** @file
  *
@@ -35,34 +35,22 @@
  *  @date 2011-12-08 Spirit2 migration
  */
 // ============================================================================
-StatusCode Decays::Parsers::parse
-( Decays::Node&                   node      ,
-  const std::string&              input     ,
-  const std::vector<std::string>& symbols   ,
-  const std::vector<std::string>& particles ,
-  std::ostream&                   stream    )
-{
+StatusCode Decays::Parsers::parse( Decays::Node& node, const std::string& input,
+                                   const std::vector<std::string>& symbols, const std::vector<std::string>& particles,
+                                   std::ostream& stream ) {
   // ==========================================================================
-  typedef std::string::const_iterator Iterator;
+  typedef std::string::const_iterator   Iterator;
   typedef boost::spirit::qi::space_type Skipper;
 
-  Decays::Nodes::_Node result;
-  Decays::Grammars::Node<Iterator, Skipper> gr(symbols, particles);
-  Iterator begin = input.begin();
-  bool ok =  boost::spirit::qi::phrase_parse
-    ( begin        ,
-      input.end()  ,
-      gr           ,
-      boost::spirit::qi::space , result ) && ( begin == input.end() ) ;
+  Decays::Nodes::_Node                      result;
+  Decays::Grammars::Node<Iterator, Skipper> gr( symbols, particles );
+  Iterator                                  begin = input.begin();
+  bool ok = boost::spirit::qi::phrase_parse( begin, input.end(), gr, boost::spirit::qi::space, result ) &&
+            ( begin == input.end() );
   // ==========================================================================
-  if ( !ok )
-  {
-    stream << "PARSE ERROR at: ##"
-           << std::string ( begin , input.end() )
-           << "##" ;
-  }
+  if ( !ok ) { stream << "PARSE ERROR at: ##" << std::string( begin, input.end() ) << "##"; }
   // ==========================================================================
-  node = result.node() ;
+  node = result.node();
   return StatusCode{ok};
 }
 // ============================================================================

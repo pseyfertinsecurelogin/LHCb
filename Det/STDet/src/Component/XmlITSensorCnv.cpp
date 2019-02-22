@@ -16,5 +16,5 @@
 // ITDet
 #include "STDet/DeITSensor.h"
 
-typedef XmlUserDetElemCnv<DeITSensor >        XmlITSensorCnv;
+typedef XmlUserDetElemCnv<DeITSensor> XmlITSensorCnv;
 DECLARE_CONVERTER( XmlITSensorCnv )

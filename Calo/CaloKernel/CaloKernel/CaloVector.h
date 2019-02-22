@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef     CALOKERNEL_CALOVECTOR_H
-#define     CALOKERNEL_CALOVECTOR_H 1
+#ifndef CALOKERNEL_CALOVECTOR_H
+#define CALOKERNEL_CALOVECTOR_H 1
 // ============================================================================
 // from STL
 // ============================================================================
@@ -42,76 +42,72 @@ namespace LHCb {
  */
 
 template <class CONTENT, class INDEX_ = LHCb::CaloCellID>
-class CaloVector final : private std::vector<CONTENT>
-{
+class CaloVector final : private std::vector<CONTENT> {
 public:
   /// type fo content
-  typedef    CONTENT                              Content                ;
+  typedef CONTENT Content;
   /// own type
-  typedef    std::vector<CONTENT>                 ContVector             ;
-  typedef ContVector                              Vector                 ;
-  typedef typename Vector::iterator               iterator               ;
-  typedef typename Vector::const_iterator         const_iterator         ;
-  typedef typename Vector::reverse_iterator       reverse_iterator       ;
-  typedef typename Vector::const_reverse_iterator const_reverse_iterator ;
-  typedef std::vector<int>                        Indices                ;
+  typedef std::vector<CONTENT>                    ContVector;
+  typedef ContVector                              Vector;
+  typedef typename Vector::iterator               iterator;
+  typedef typename Vector::const_iterator         const_iterator;
+  typedef typename Vector::reverse_iterator       reverse_iterator;
+  typedef typename Vector::const_reverse_iterator const_reverse_iterator;
+  typedef std::vector<int>                        Indices;
 
   /// type for the argument
-  typedef typename boost::call_traits<const INDEX_>::param_type INDEX ;
+  typedef typename boost::call_traits<const INDEX_>::param_type INDEX;
 
 public:
-
   /** constructor:
    *  One specifies a default value,
    *  returned when the index is invalid or non existent.
    *  @param   def   default value to be returned for wrong/non-existing index
    */
-  CaloVector ( Content  def = Content() )  ///< default value
-    : ContVector (   0 )
-    , m_cc_def   ( std::move(def) )
-    , m_index    (   0 )
-  { }
+  CaloVector( Content def = Content() ) ///< default value
+      : ContVector( 0 ), m_cc_def( std::move( def ) ), m_index( 0 ) {}
 
   /// copying is not allowed!
   CaloVector( const CaloVector& ) = delete;
   /// assignment  is not allowed!
-  CaloVector& operator =( const CaloVector& ) = delete;
+  CaloVector& operator=( const CaloVector& ) = delete;
 
   CaloVector( CaloVector&& ) = default;
-  CaloVector& operator =( CaloVector&& ) = default;
+  CaloVector& operator=( CaloVector&& ) = default;
 
   /// following lines from std::vector interface
 
   /// sequential access to content container (const version!)
-  const_iterator             begin () const { return Vector::begin  (); }
+  const_iterator begin() const { return Vector::begin(); }
   /// sequential access to content container (const version!)
-  const_iterator             end   () const { return Vector::end    (); }
+  const_iterator end() const { return Vector::end(); }
   /// sequential access to content container (const version!)
-  const_reverse_iterator     rbegin() const { return Vector::rbegin (); }
+  const_reverse_iterator rbegin() const { return Vector::rbegin(); }
   /// sequential access to content container (const version!)
-  const_reverse_iterator     rend  () const { return Vector::rend   (); }
+  const_reverse_iterator rend() const { return Vector::rend(); }
   /// size of content container
-  typename Vector::size_type size  () const { return Vector::size   (); }
+  typename Vector::size_type size() const { return Vector::size(); }
   /// clear the container
-  void clear () { Vector::clear() ;  m_index.clear(); }
+  void clear() {
+    Vector::clear();
+    m_index.clear();
+  }
 
   /** returns the position in the vector, -1 if not present
    *  @param  id index
    */
-  int index ( INDEX id ) const
-  {
+  int index( INDEX id ) const {
     const unsigned int indx = id.index();
-    return ( indx < m_index.size() ) ? m_index[indx] : -1 ;
+    return ( indx < m_index.size() ) ? m_index[indx] : -1;
   }
 
   /** Access to the content itself using LHCb::CaloCellID as index.
    *  Check the boundaries of the index array.
    *  @param id index
    */
-  inline       Content& operator[]  ( INDEX id )
-  {
+  inline Content& operator[]( INDEX id ) {
     const int indx = index( id );
-    return ( 0 > indx ) ? def() : *(begin()+indx);  //FIXME: indx<0 returns dangling reference
+    return ( 0 > indx ) ? def() : *( begin() + indx ); // FIXME: indx<0 returns dangling reference
   }
 
   /** Access to the content itself using LHCb::CaloCellID as index.
@@ -119,86 +115,76 @@ public:
    *  Check the boundaries of the index array.
    *  @param id index
    */
-  inline const Content& operator[]  ( INDEX id ) const
-  {
+  inline const Content& operator[]( INDEX id ) const {
     const int indx = index( id );
-    return ( 0 > indx ) ? def() : *(begin()+indx) ;  //FIXME: indx<0 returns dangling reference
+    return ( 0 > indx ) ? def() : *( begin() + indx ); // FIXME: indx<0 returns dangling reference
   }
 
   /** Access to the content itself using LHCb::CaloCellID as index.
    *  Check the boundaries of the index array.
    *  @param id index
    */
-  inline       Content& operator()  ( INDEX id )
-  { return (*this)[ id ] ; }
+  inline Content& operator()( INDEX id ) { return ( *this )[id]; }
 
   /** Access to the content itself using LHCb::CaloCellID as index.
    *  (const version)
    *  Check the boundaries of the index array.
    *  @param id index
    */
-  inline const Content& operator()  ( INDEX id ) const
-  { return (*this)[ id ] ; }
+  inline const Content& operator()( INDEX id ) const { return ( *this )[id]; }
 
   /** Add one entry. vector is extended, index vector is updated.
    *  @param content   value to be added into CaloVector
    *  @param id        index
    *  @return          status code
    */
-  void addEntry ( const Content& content , INDEX id )
-  {
-    const unsigned int indx = id.index() ;
-    if ( m_index.size() <= indx  )
-    {
-      const Indices::size_type  num = indx + 1 - m_index.size() ;
-      const Indices::value_type val = -1 ;
-      m_index.insert ( m_index.end() , num  , val ) ;
+  void addEntry( const Content& content, INDEX id ) {
+    const unsigned int indx = id.index();
+    if ( m_index.size() <= indx ) {
+      const Indices::size_type  num = indx + 1 - m_index.size();
+      const Indices::value_type val = -1;
+      m_index.insert( m_index.end(), num, val );
     }
-    m_index[indx] = this -> size();
-    this -> push_back( content );
+    m_index[indx] = this->size();
+    this->push_back( content );
   }
 
   /// set size for intermediate container
-  void setSize ( const unsigned int Num )
-  { m_index.reserve( Num ) ; }
+  void setSize( const unsigned int Num ) { m_index.reserve( Num ); }
 
   /// extended "reserve"
-  void reserve ( const unsigned int Num )
-  { Vector::reserve( Num ) ;  m_index.reserve( Num ) ; }
+  void reserve( const unsigned int Num ) {
+    Vector::reserve( Num );
+    m_index.reserve( Num );
+  }
 
 public:
-
   /// sequential access to content container
-  iterator               begin ()       { return Vector::begin  (); }
+  iterator begin() { return Vector::begin(); }
   /// sequential access to content container
-  iterator               end   ()       { return Vector::end    (); }
+  iterator end() { return Vector::end(); }
   /// sequential access to content container
-  reverse_iterator       rbegin()       { return Vector::rbegin (); }
+  reverse_iterator rbegin() { return Vector::rbegin(); }
   /// sequential access to content container
-  reverse_iterator       rend  ()       { return Vector::rend   (); }
+  reverse_iterator rend() { return Vector::rend(); }
 
 public:
   // ==========================================================================
   /// access to container (useful in python for iteration)
-  inline const Content& at ( const size_t i ) const
-  { return Vector::at ( i ) ; }
+  inline const Content& at( const size_t i ) const { return Vector::at( i ); }
   // ==========================================================================
 protected:
-
   /// get default value
-  inline       Content& def()       { return m_cc_def; }
+  inline Content& def() { return m_cc_def; }
   /// get default value (const version)
   inline const Content& def() const { return m_cc_def; }
 
-
 private:
-
-  Content  m_cc_def ;   ///< default value
-  Indices  m_index  ;   ///< array of indices in the vector
-
+  Content m_cc_def; ///< default value
+  Indices m_index;  ///< array of indices in the vector
 };
 
 // ============================================================================
 // The End
 // ============================================================================
-#endif  ///<  CALOKERNEL_CALOVECTOR_H
+#endif ///<  CALOKERNEL_CALOVECTOR_H

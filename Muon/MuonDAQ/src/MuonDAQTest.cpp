@@ -27,11 +27,11 @@ DECLARE_COMPONENT( MuonDAQTest )
 //=============================================================================
 StatusCode MuonDAQTest::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialize" << endmsg;
-  m_MuonBuffer=tool<IMuonRawBuffer>("MuonRawBuffer");
-  if(!m_MuonBuffer) return Error("Could not instantiate MuonRawBuffer tool");
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialize" << endmsg;
+  m_MuonBuffer = tool<IMuonRawBuffer>( "MuonRawBuffer" );
+  if ( !m_MuonBuffer ) return Error( "Could not instantiate MuonRawBuffer tool" );
   return sc;
 }
 
@@ -40,70 +40,56 @@ StatusCode MuonDAQTest::initialize() {
 //=============================================================================
 StatusCode MuonDAQTest::execute() {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
 
-  SmartDataPtr<LHCb::MuonDigits> digit(eventSvc(),
-                                 LHCb::MuonDigitLocation::MuonDigit);
+  SmartDataPtr<LHCb::MuonDigits> digit( eventSvc(), LHCb::MuonDigitLocation::MuonDigit );
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) {
-    for(const auto& idigit : *digit) {
-      LHCb::MuonTileID digitTile=idigit->key();
-        debug()<< "["  <<  digitTile.layout() << ","
-               <<  digitTile.station() << ","
-               <<  digitTile.region() << ","
-               <<  digitTile.quarter() << ","
-               <<  digitTile.nX() << ","
-               <<  digitTile.nY() << "]" <<"time "<<idigit->TimeStamp()
-               << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
+    for ( const auto& idigit : *digit ) {
+      LHCb::MuonTileID digitTile = idigit->key();
+      debug() << "[" << digitTile.layout() << "," << digitTile.station() << "," << digitTile.region() << ","
+              << digitTile.quarter() << "," << digitTile.nX() << "," << digitTile.nY() << "]"
+              << "time " << idigit->TimeStamp() << endmsg;
     }
   }
   std::vector<LHCb::MuonTileID> decodingTile;
-  m_MuonBuffer->getTile(decodingTile);
-  for(auto jitile=decodingTile.begin();jitile<decodingTile.end();jitile++){
-    LHCb::MuonTileID digitTile=(*jitile);
-    if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-      verbose()<<" ;ist of tile "<< (unsigned int) digitTile<<endmsg;
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug()<< "["  <<  digitTile.layout() << ","
-             <<  digitTile.station() << ","
-             <<  digitTile.region() << ","
-             <<  digitTile.quarter() << ","
-             <<  digitTile.nX() << ","
-             <<  digitTile.nY() << "]" <<endmsg;
+  m_MuonBuffer->getTile( decodingTile );
+  for ( auto jitile = decodingTile.begin(); jitile < decodingTile.end(); jitile++ ) {
+    LHCb::MuonTileID digitTile = ( *jitile );
+    if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) ) verbose() << " ;ist of tile " << (unsigned int)digitTile << endmsg;
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
+      debug() << "[" << digitTile.layout() << "," << digitTile.station() << "," << digitTile.region() << ","
+              << digitTile.quarter() << "," << digitTile.nX() << "," << digitTile.nY() << "]" << endmsg;
   }
 
-  std::vector<std::pair<LHCb::MuonTileID,unsigned int> > decoding;
-  m_MuonBuffer->getTileAndTDC(decoding);
-  for(auto ji=decoding.begin();ji<decoding.end();ji++){
-    std::pair<LHCb::MuonTileID,unsigned int> digit=(*ji);
-    LHCb::MuonTileID digitTile=digit.first;
-    unsigned int time = digit.second;
-    //info()<<" alesia "<<(unsigned int) digitTile<<endmsg;
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug()<< "["  <<  digitTile.layout() << ","
-             <<  digitTile.station() << ","
-             <<  digitTile.region() << ","
-             <<  digitTile.quarter() << ","
-             <<  digitTile.nX() << ","
-             <<  digitTile.nY() << "]" <<" time "<<time<<endmsg;
+  std::vector<std::pair<LHCb::MuonTileID, unsigned int>> decoding;
+  m_MuonBuffer->getTileAndTDC( decoding );
+  for ( auto ji = decoding.begin(); ji < decoding.end(); ji++ ) {
+    std::pair<LHCb::MuonTileID, unsigned int> digit     = ( *ji );
+    LHCb::MuonTileID                          digitTile = digit.first;
+    unsigned int                              time      = digit.second;
+    // info()<<" alesia "<<(unsigned int) digitTile<<endmsg;
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
+      debug() << "[" << digitTile.layout() << "," << digitTile.station() << "," << digitTile.region() << ","
+              << digitTile.quarter() << "," << digitTile.nX() << "," << digitTile.nY() << "]"
+              << " time " << time << endmsg;
   }
-  for(auto idigit=digit->begin();idigit<digit->end();idigit++){
-    LHCb::MuonTileID digitTile=(*idigit)->key();
-    bool found=false;
-    for(auto ji=decoding.begin();ji<decoding.end()&&!found;ji++){
-      std::pair<LHCb::MuonTileID,unsigned int> digitPair=(*ji);
-      LHCb::MuonTileID digitTileDecoded=digitPair.first;
-      unsigned int time = digitPair.second;
-      if(digitTile==digitTileDecoded){
-        if(time!=(*idigit)->TimeStamp()){
-      err()<<"time not correct "<<
-          time<<" "<<(*idigit)->TimeStamp()<<endmsg;
-        }else{ found=true;}
+  for ( auto idigit = digit->begin(); idigit < digit->end(); idigit++ ) {
+    LHCb::MuonTileID digitTile = ( *idigit )->key();
+    bool             found     = false;
+    for ( auto ji = decoding.begin(); ji < decoding.end() && !found; ji++ ) {
+      std::pair<LHCb::MuonTileID, unsigned int> digitPair        = ( *ji );
+      LHCb::MuonTileID                          digitTileDecoded = digitPair.first;
+      unsigned int                              time             = digitPair.second;
+      if ( digitTile == digitTileDecoded ) {
+        if ( time != ( *idigit )->TimeStamp() ) {
+          err() << "time not correct " << time << " " << ( *idigit )->TimeStamp() << endmsg;
+        } else {
+          found = true;
+        }
+      }
     }
-
-    }
-    if(!found)info()<<" not found the digit "<<endmsg;
-
+    if ( !found ) info() << " not found the digit " << endmsg;
   }
   return StatusCode::SUCCESS;
 }

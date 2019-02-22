@@ -41,8 +41,7 @@
  *  @date 2006-02-17
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Geometry LoKi/Geometry.h
    *  Namespace with the collection of useful "geoemtry" functions
@@ -50,8 +49,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-17
    */
-  namespace Geometry
-  {
+  namespace Geometry {
     // ========================================================================
     /** The trivial function, which evaluated the distance
      *  between the point and the line.
@@ -66,10 +64,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-02-17
      */
-    double distance
-    ( const LoKi::Point3D&  point ,
-      const LoKi::Point3D&  p0    ,
-      const LoKi::Vector3D& v0    ) ;
+    double distance( const LoKi::Point3D& point, const LoKi::Point3D& p0, const LoKi::Vector3D& v0 );
     // ========================================================================
     /** The trivial function, which evaluates the distance
      *  between two lines
@@ -84,11 +79,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-02-17
      */
-    double distance
-    ( const LoKi::Point3D&  p1 ,
-      const LoKi::Vector3D& v1 ,
-      const LoKi::Point3D&  p2 ,
-      const LoKi::Vector3D& v2 ) ;
+    double distance( const LoKi::Point3D& p1, const LoKi::Vector3D& v1, const LoKi::Point3D& p2,
+                     const LoKi::Vector3D& v2 );
     // ========================================================================
     /** The trivial function,
      *  which evaluates the distance between two points
@@ -105,12 +97,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-02-17
      */
-    StatusCode chi2
-    ( const LoKi::Point3D&       p1    ,
-      const Gaudi::SymMatrix3x3& cov1  ,
-      const LoKi::Point3D&       p2    ,
-      const Gaudi::SymMatrix3x3& cov2  ,
-      double&                    value ) ;
+    StatusCode chi2( const LoKi::Point3D& p1, const Gaudi::SymMatrix3x3& cov1, const LoKi::Point3D& p2,
+                     const Gaudi::SymMatrix3x3& cov2, double& value );
     // ========================================================================
     /** The trivial function,
      *  which evaluates the distance between two points
@@ -126,15 +114,11 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-02-17
      */
-    StatusCode chi2
-    ( const LoKi::Point3D&       p1    ,
-      const LoKi::Point3D&       p2    ,
-      const Gaudi::SymMatrix3x3& c     ,
-      double&                    value ) ;
+    StatusCode chi2( const LoKi::Point3D& p1, const LoKi::Point3D& p2, const Gaudi::SymMatrix3x3& c, double& value );
     // ========================================================================
-  } // end of the namespace LoKi::Geometry
+  } // namespace Geometry
   // ==========================================================================
-} // end of the namespace LoKi
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

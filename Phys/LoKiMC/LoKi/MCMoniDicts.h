@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_MCMONIDICTS_H 
+#ifndef LOKI_MCMONIDICTS_H
 #define LOKI_MCMONIDICTS_H 1
 // ============================================================================
 // Include files
@@ -20,14 +20,13 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-class StatEntity ;
-namespace AIDA { class IHistogram1D ; }
+class StatEntity;
+namespace AIDA {
+  class IHistogram1D;
+}
 // ============================================================================
-namespace LoKi
-{
-  namespace Dicts 
-  {
-  } // end of namespace LoKi::Dicts
+namespace LoKi {
+  namespace Dicts {} // namespace Dicts
 } // end of namespace LoKi
 // ============================================================================
 // The END

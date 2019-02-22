@@ -25,30 +25,18 @@
  */
 class RateCounter {
 public:
-   /// Standard constructor
-   RateCounter(IHltMonitorSvc* const monSvc, Gaudi::StringKey id)
-      : m_id{id},
-        m_monSvc{monSvc}
-   {
+  /// Standard constructor
+  RateCounter( IHltMonitorSvc* const monSvc, Gaudi::StringKey id ) : m_id{id}, m_monSvc{monSvc} {}
 
-   }
+  virtual ~RateCounter(){}; ///< Destructor
 
-   virtual ~RateCounter( ) { }; ///< Destructor
+  // Count at time t
+  void count( double t ) { m_monSvc->count( m_id, t ); }
 
-   // Count at time t
-   void count(double t) {
-      m_monSvc->count(m_id, t);
-   }
-
-   Gaudi::StringKey id() const
-   {
-      return m_id;
-   }
+  Gaudi::StringKey id() const { return m_id; }
 
 private:
-
-   const Gaudi::StringKey m_id;
-   IHltMonitorSvc* const m_monSvc;
-
+  const Gaudi::StringKey m_id;
+  IHltMonitorSvc* const  m_monSvc;
 };
 #endif // KERNEL_RATECOUNTER_H

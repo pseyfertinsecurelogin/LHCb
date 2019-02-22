@@ -12,45 +12,33 @@
 #define BCMDET_DEBCMSENS_H 1
 
 // Include files
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
 
-
 static const CLID& CLID_DEBcmSens = 14000;
 
-class DeBcmSens: public DetectorElement {
+class DeBcmSens : public DetectorElement {
 
 public:
+  DeBcmSens( int nSensor = 0 );
 
-  DeBcmSens(int nSensor = 0);
+  inline static const CLID& classID() { return CLID_DEBcmSens; }
 
-
-  inline static const CLID& classID(){
-    return CLID_DEBcmSens;
-  }
-
-  inline const CLID& clID() const override {
-    return classID();
-  }
+  inline const CLID& clID() const override { return classID(); }
 
   StatusCode initialize() override;
 
-  inline int sensorNumber() const {
-    return m_SensorNumber;
-  }
+  inline int sensorNumber() const { return m_SensorNumber; }
 
-  void setSensorNumber(int nSensor){
-    m_SensorNumber = nSensor;
-  }
+  void setSensorNumber( int nSensor ) { m_SensorNumber = nSensor; }
 
   int sensitiveVolumeID( const Gaudi::XYZPoint& point ) const override;
 
 private:
   int m_SensorNumber;
-
 };
 
 #endif

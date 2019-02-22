@@ -13,8 +13,8 @@
 /// DetDesc
 #include "DetDesc/DetDesc.h"
 #include "DetDesc/SolidBase.h"
-#include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidTicks.h"
 
 /** @file SolidBase.cpp
  *
@@ -29,11 +29,7 @@
  *  @param Name name of teh solid
  */
 // ============================================================================
-SolidBase::SolidBase( const std::string& Name )
-  : m_name   ( Name     )
-  , m_services (DetDesc::services())
-{
-}
+SolidBase::SolidBase( const std::string& Name ) : m_name( Name ), m_services( DetDesc::services() ) {}
 
 // ============================================================================
 /** - reset solid to its inititial state, remove
@@ -44,9 +40,7 @@ SolidBase::SolidBase( const std::string& Name )
  *  @return  self-reference
  */
 // ============================================================================
-ISolid* SolidBase::reset () {
-  return this;
-}
+ISolid* SolidBase::reset() { return this; }
 
 // ============================================================================
 /** query the interface
@@ -55,16 +49,16 @@ ISolid* SolidBase::reset () {
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidBase::queryInterface( const InterfaceID& ID , void** ppI )
-{
+StatusCode SolidBase::queryInterface( const InterfaceID& ID, void** ppI ) {
   if ( 0 == ppI ) { return StatusCode::FAILURE; }
-  *ppI = 0 ;
-  if      ( ISolid::     interfaceID() == ID )
-    { *ppI = static_cast<ISolid*>     ( this ) ; }
-  else if ( IInterface:: interfaceID() == ID )
-    { *ppI = static_cast<IInterface*> ( this ) ; }
-  else
-    { return StatusCode::FAILURE               ; }
+  *ppI = 0;
+  if ( ISolid::interfaceID() == ID ) {
+    *ppI = static_cast<ISolid*>( this );
+  } else if ( IInterface::interfaceID() == ID ) {
+    *ppI = static_cast<IInterface*>( this );
+  } else {
+    return StatusCode::FAILURE;
+  }
   /// add the reference
   addRef();
   ///
@@ -74,12 +68,12 @@ StatusCode SolidBase::queryInterface( const InterfaceID& ID , void** ppI )
 // ============================================================================
 /// Increment the reference count of Interface instance
 // ============================================================================
-unsigned long SolidBase::addRef  () { return 0; }
+unsigned long SolidBase::addRef() { return 0; }
 
 // ============================================================================
 /// Release Interface instance
 // ============================================================================
-unsigned long SolidBase::release () { return 0; }
+unsigned long SolidBase::release() { return 0; }
 
 // ============================================================================
 /** retrieve the pointer to "the most simplified cover"
@@ -87,12 +81,11 @@ unsigned long SolidBase::release () { return 0; }
  *  @return pointer to the most simplified cover
  */
 // ============================================================================
-const ISolid* SolidBase::coverTop () const
-{
+const ISolid* SolidBase::coverTop() const {
   const ISolid* cov = this;
-  while( cov && cov != cov->cover() ){ cov = cov->cover(); }
-  if( !cov ) { cov = this ; }
-  return cov ;
+  while ( cov && cov != cov->cover() ) { cov = cov->cover(); }
+  if ( !cov ) { cov = this; }
+  return cov;
 }
 
 // ============================================================================
@@ -101,21 +94,14 @@ const ISolid* SolidBase::coverTop () const
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream& SolidBase::printOut ( std::ostream& st ) const
-{
-  return
-    st << " SolidType='"     << typeName () << "'"
-       << " \tname='"        << name     () << "'"
-       << std::endl
-       << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-       << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-       << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-       << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-       << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << std::endl ;
+std::ostream& SolidBase::printOut( std::ostream& st ) const {
+  return st << " SolidType='" << typeName() << "'"
+            << " \tname='" << name() << "'" << std::endl
+            << " BPs: (x,y,z,r,rho)[Min/Max][mm]=(" << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/"
+            << DetDesc::print( xMax() / Gaudi::Units::mm ) << "," << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/"
+            << DetDesc::print( yMax() / Gaudi::Units::mm ) << "," << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/"
+            << DetDesc::print( zMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rMax() / Gaudi::Units::mm ) << ","
+            << DetDesc::print( rhoMax() / Gaudi::Units::mm ) << ") " << std::endl;
 }
 // ============================================================================
 
@@ -125,51 +111,38 @@ std::ostream& SolidBase::printOut ( std::ostream& st ) const
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream&    SolidBase::printOut ( MsgStream&    st ) const
-{
-  return
-    st << " SolidType='"     << typeName () << "'"
-       << " \tname='"        << name     () << "'"
-       << endmsg
-       << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-       << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-       << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-       << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-       << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-       << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
+MsgStream& SolidBase::printOut( MsgStream& st ) const {
+  return st << " SolidType='" << typeName() << "'"
+            << " \tname='" << name() << "'" << endmsg << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
+            << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/" << DetDesc::print( xMax() / Gaudi::Units::mm ) << ","
+            << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/" << DetDesc::print( yMax() / Gaudi::Units::mm ) << ","
+            << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/" << DetDesc::print( zMax() / Gaudi::Units::mm ) << ","
+            << DetDesc::print( rMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rhoMax() / Gaudi::Units::mm )
+            << ") " << endmsg;
 }
 // ============================================================================
-/** Tests whether or not the given line (defined as a point and 
-   *  a direction) intersects or not with the given solid.
-   *  - Line is parametrized with parameter \a t :
-   *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
-   *      - \f$ \vec{p} \f$ is a point on the line
-   *      - \f$ \vec{v} \f$ is a vector along the line
-   *  @param Point initial point for the line
-   *  @param Vector vector along the line
-   *  @return the number of intersection points
-   */
+/** Tests whether or not the given line (defined as a point and
+ *  a direction) intersects or not with the given solid.
+ *  - Line is parametrized with parameter \a t :
+ *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
+ *      - \f$ \vec{p} \f$ is a point on the line
+ *      - \f$ \vec{v} \f$ is a vector along the line
+ *  @param Point initial point for the line
+ *  @param Vector vector along the line
+ *  @return the number of intersection points
+ */
 // ============================================================================
-bool SolidBase::testForIntersection( const Gaudi::XYZPoint & Point      ,
-                                     const Gaudi::XYZVector& Vector     ) const
-{
+bool SolidBase::testForIntersection( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector ) const {
   ISolid::Ticks ticks;
   return 0 != intersectionTicks( Point, Vector, ticks );
 }
 // ============================================================================
-bool SolidBase::testForIntersection( const Gaudi::Polar3DPoint & Point  ,
-                                     const Gaudi::Polar3DVector& Vector ) const
-{
+bool SolidBase::testForIntersection( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector ) const {
   ISolid::Ticks ticks;
   return 0 != intersectionTicks( Point, Vector, ticks );
 }
 // ============================================================================
-bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
-                                     const Gaudi::RhoZPhiVector& Vector ) const
-{
+bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector ) const {
   ISolid::Ticks ticks;
   return 0 != intersectionTicks( Point, Vector, ticks );
 }
@@ -197,46 +170,36 @@ bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint  & Point,
-                                           const Gaudi::XYZVector & Vector,
-                                           const ISolid::Tick& tickMin,
-                                           const ISolid::Tick& tickMax,
-                                           ISolid::Ticks     & ticks) const
-{
-  return intersectionTicksImpl(Point, Vector, tickMin, tickMax, ticks);
+unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                           const Gaudi::Polar3DVector & Vector,
-                                           const ISolid::Tick& tickMin,
-                                           const ISolid::Tick& tickMax,
-                                           ISolid::Ticks     & ticks) const
-{
-  return intersectionTicksImpl(Point, Vector, tickMin, tickMax, ticks);
+unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                           const Gaudi::RhoZPhiVector & Vector,
-                                           const ISolid::Tick& tickMin,
-                                           const ISolid::Tick& tickMax,
-                                           ISolid::Ticks     & ticks) const
-{
-  return intersectionTicksImpl(Point, Vector, tickMin, tickMax, ticks);
+unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                           const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, tickMin, tickMax, ticks );
 }
 // ============================================================================
-template<class aPoint, class aVector>
-unsigned int SolidBase::intersectionTicksImpl( const aPoint  & Point,
-                                               const aVector & Vector,
-                                               const ISolid::Tick& tickMin,
-                                               const ISolid::Tick& tickMax,
-                                               ISolid::Ticks&  ticks) const
-{
+template <class aPoint, class aVector>
+unsigned int SolidBase::intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
+                                               const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const {
   // check for bounding box
-  if( isOutBBox( Point , Vector , tickMin , tickMax ) ) { ticks.clear(); return 0; }
+  if ( isOutBBox( Point, Vector, tickMin, tickMax ) ) {
+    ticks.clear();
+    return 0;
+  }
   // get the ticks (these should all be valid intervals now)
-  intersectionTicks( Point , Vector , ticks );
+  intersectionTicks( Point, Vector, ticks );
   // just adjust the out-of-range intervals
-  return SolidTicks::adjustToTickRange( ticks, tickMin, tickMax ) ;
+  return SolidTicks::adjustToTickRange( ticks, tickMin, tickMax );
 }
 
 // ============================================================================
@@ -259,30 +222,23 @@ unsigned int SolidBase::intersectionTicksImpl( const aPoint  & Point,
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint&  ,
-                                           const Gaudi::XYZVector&,
-                                           ISolid::Ticks&    ticks ) const
-{
-  return intersectionTicksImpl(ticks);
+unsigned int SolidBase::intersectionTicks( const Gaudi::XYZPoint&, const Gaudi::XYZVector&,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint&,
-                                           const Gaudi::Polar3DVector&,
-                                           ISolid::Ticks&    ticks ) const
-{
-  return intersectionTicksImpl(ticks);
+unsigned int SolidBase::intersectionTicks( const Gaudi::Polar3DPoint&, const Gaudi::Polar3DVector&,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( ticks );
 }
 // ============================================================================
-unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint&,
-                                           const Gaudi::RhoZPhiVector&,
-                                           ISolid::Ticks&    ticks ) const
-{
-  return intersectionTicksImpl(ticks);
+unsigned int SolidBase::intersectionTicks( const Gaudi::RhoZPhiPoint&, const Gaudi::RhoZPhiVector&,
+                                           ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( ticks );
 }
 // ============================================================================
 
-unsigned int SolidBase::intersectionTicksImpl( ISolid::Ticks&    ticks ) const
-{
+unsigned int SolidBase::intersectionTicksImpl( ISolid::Ticks& ticks ) const {
   ///  reset the output container
   ticks.clear();
   ///  return container size
@@ -297,112 +253,54 @@ unsigned int SolidBase::intersectionTicksImpl( ISolid::Ticks&    ticks ) const
  *  @return status code
  */
 // ============================================================================
-void SolidBase::checkBP() const
-{
-  const std::string msg("SolidBase("+m_name+")::checkBP(): ");
-  if     ( xMax()   <= xMin() )
-    {
-      MsgStream log( msgSvc() , "Solid" );
-      log << MSG::FATAL
-          << " SolidBase::checkPB "
-          << m_name
-          << " Wrong Bounding Parameters "            << endmsg ;
-      log << MSG::ERROR
-          << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-          << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
-      throw SolidException( msg + "   xMax() <= xMin() "
-                            + DetDesc::print( xMax  () ) + "/"
-                            + DetDesc::print( xMin  () ) );
-    }
-  else if( yMax()   <= yMin() )
-    {
-      MsgStream log( msgSvc() , "Solid" );
-      log << MSG::FATAL
-          << " SolidBase::checkPB "
-          << m_name
-          << " Wrong Bounding Parameters "            << endmsg ;
-      log << MSG::ERROR
-          << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-          << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
-      throw SolidException( msg + "   yMax() <= yMin() "
-                            + DetDesc::print( yMax  () ) + "/"
-                            + DetDesc::print( yMin  () ) ) ;
-    }
-  else if( zMax()   <= zMin() )
-    {
-      MsgStream log( msgSvc() , "Solid" );
-      log << MSG::FATAL
-          << " SolidBase::checkPB "
-          << m_name
-          << " Wrong Bounding Parameters "            << endmsg ;
-      log << MSG::ERROR
-          << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-          << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
-      throw SolidException( msg + "   zMax() <= zMin() "
-                            + DetDesc::print( zMax  () ) + "/"
-                            + DetDesc::print( zMin  () ) );
-    }
-  else if( rMax()   <= 0      )
-    {
-      MsgStream log( msgSvc() , "Solid" );
-      log << MSG::FATAL
-          << " SolidBase::checkPB "
-          << m_name
-          << " Wrong Bounding Parameters "            << endmsg ;
-      log << MSG::ERROR
-          << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-          << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
-      throw SolidException( msg + "   rMax() <=  0     "
-                            + DetDesc::print( rMax  () ) );
-    }
-  else if( rhoMax() <= 0      )
-    {
-      MsgStream log( msgSvc() , "Solid" );
-      log << MSG::FATAL
-          << " SolidBase::checkPB "
-          << m_name
-          << " Wrong Bounding Parameters "            << endmsg ;
-      log << MSG::ERROR
-          << " BPs: (x,y,z,r,rho)[Min/Max][mm]=("
-          << DetDesc::print(   xMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   xMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   yMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   yMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   zMin () / Gaudi::Units::mm )  << "/"
-          << DetDesc::print(   zMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
-          << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
-      throw SolidException( msg + " rhoMax() <=  0     "
-                            + DetDesc::print( rhoMax() ) );
-    }
+void SolidBase::checkBP() const {
+  const std::string msg( "SolidBase(" + m_name + ")::checkBP(): " );
+  if ( xMax() <= xMin() ) {
+    MsgStream log( msgSvc(), "Solid" );
+    log << MSG::FATAL << " SolidBase::checkPB " << m_name << " Wrong Bounding Parameters " << endmsg;
+    log << MSG::ERROR << " BPs: (x,y,z,r,rho)[Min/Max][mm]=(" << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( xMax() / Gaudi::Units::mm ) << "," << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( yMax() / Gaudi::Units::mm ) << "," << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( zMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rMax() / Gaudi::Units::mm ) << ","
+        << DetDesc::print( rhoMax() / Gaudi::Units::mm ) << ") " << endmsg;
+    throw SolidException( msg + "   xMax() <= xMin() " + DetDesc::print( xMax() ) + "/" + DetDesc::print( xMin() ) );
+  } else if ( yMax() <= yMin() ) {
+    MsgStream log( msgSvc(), "Solid" );
+    log << MSG::FATAL << " SolidBase::checkPB " << m_name << " Wrong Bounding Parameters " << endmsg;
+    log << MSG::ERROR << " BPs: (x,y,z,r,rho)[Min/Max][mm]=(" << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( xMax() / Gaudi::Units::mm ) << "," << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( yMax() / Gaudi::Units::mm ) << "," << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( zMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rMax() / Gaudi::Units::mm ) << ","
+        << DetDesc::print( rhoMax() / Gaudi::Units::mm ) << ") " << endmsg;
+    throw SolidException( msg + "   yMax() <= yMin() " + DetDesc::print( yMax() ) + "/" + DetDesc::print( yMin() ) );
+  } else if ( zMax() <= zMin() ) {
+    MsgStream log( msgSvc(), "Solid" );
+    log << MSG::FATAL << " SolidBase::checkPB " << m_name << " Wrong Bounding Parameters " << endmsg;
+    log << MSG::ERROR << " BPs: (x,y,z,r,rho)[Min/Max][mm]=(" << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( xMax() / Gaudi::Units::mm ) << "," << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( yMax() / Gaudi::Units::mm ) << "," << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( zMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rMax() / Gaudi::Units::mm ) << ","
+        << DetDesc::print( rhoMax() / Gaudi::Units::mm ) << ") " << endmsg;
+    throw SolidException( msg + "   zMax() <= zMin() " + DetDesc::print( zMax() ) + "/" + DetDesc::print( zMin() ) );
+  } else if ( rMax() <= 0 ) {
+    MsgStream log( msgSvc(), "Solid" );
+    log << MSG::FATAL << " SolidBase::checkPB " << m_name << " Wrong Bounding Parameters " << endmsg;
+    log << MSG::ERROR << " BPs: (x,y,z,r,rho)[Min/Max][mm]=(" << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( xMax() / Gaudi::Units::mm ) << "," << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( yMax() / Gaudi::Units::mm ) << "," << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( zMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rMax() / Gaudi::Units::mm ) << ","
+        << DetDesc::print( rhoMax() / Gaudi::Units::mm ) << ") " << endmsg;
+    throw SolidException( msg + "   rMax() <=  0     " + DetDesc::print( rMax() ) );
+  } else if ( rhoMax() <= 0 ) {
+    MsgStream log( msgSvc(), "Solid" );
+    log << MSG::FATAL << " SolidBase::checkPB " << m_name << " Wrong Bounding Parameters " << endmsg;
+    log << MSG::ERROR << " BPs: (x,y,z,r,rho)[Min/Max][mm]=(" << DetDesc::print( xMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( xMax() / Gaudi::Units::mm ) << "," << DetDesc::print( yMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( yMax() / Gaudi::Units::mm ) << "," << DetDesc::print( zMin() / Gaudi::Units::mm ) << "/"
+        << DetDesc::print( zMax() / Gaudi::Units::mm ) << "," << DetDesc::print( rMax() / Gaudi::Units::mm ) << ","
+        << DetDesc::print( rhoMax() / Gaudi::Units::mm ) << ") " << endmsg;
+    throw SolidException( msg + " rhoMax() <=  0     " + DetDesc::print( rhoMax() ) );
+  }
   //
   return;
 }
@@ -414,8 +312,6 @@ void SolidBase::checkBP() const
  */
 IMessageSvc* SolidBase::msgSvc() const { return m_services->msgSvc(); }
 
-
 // ============================================================================
 // The End
 // ============================================================================
-

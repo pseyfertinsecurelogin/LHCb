@@ -8,15 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef VELORAWBANKDECODER_H 
+#ifndef VELORAWBANKDECODER_H
 #define VELORAWBANKDECODER_H 1
 
 #include "SiDAQ/SiRawBankDecoder.h"
 #include "VeloClusterWord.h"
 
-
 /** @class VeloRawBankDecoder VeloRawBankDecoder.h
- *  
+ *
  *  Decoder for raw Velo banks
  *
  *  This is a simple type wrapper for a template
@@ -25,7 +24,7 @@
  *
  *  @see VeloClusterWord
  *  @see SiRawBankDecoder
- * 
+ *
  *  @author Kurt Rinnert
  *  @date   2006-02-08
  */

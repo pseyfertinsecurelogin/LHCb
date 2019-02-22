@@ -74,23 +74,19 @@
  *     CaloCheckObjectsAlg from Calo/CaloReco package
  */
 // ============================================================================
-class TESCheck final : public GaudiAlgorithm
-{
- public:
-
+class TESCheck final : public GaudiAlgorithm {
+public:
   using GaudiAlgorithm::GaudiAlgorithm;
 
   /// execute the algorithm itself
-  StatusCode execute()  override;
+  StatusCode execute() override;
 
+private:
+  enum Stores { EvtStore = 0, DetStore, HstStore };
 
- private:
-  enum Stores { EvtStore = 0 , DetStore, HstStore };
-
-  StringArrayProperty   m_inputs { this, "Inputs" ,{} };
-  Gaudi::Property<int>  m_store  { this, "Store"  , Stores::EvtStore };
-  Gaudi::Property<bool> m_stop   { this, "Stop", true };
-
+  StringArrayProperty   m_inputs{this, "Inputs", {}};
+  Gaudi::Property<int>  m_store{this, "Store", Stores::EvtStore};
+  Gaudi::Property<bool> m_stop{this, "Stop", true};
 };
 // ============================================================================
 
@@ -100,13 +96,11 @@ DECLARE_COMPONENT( TESCheck )
 // ============================================================================
 /// execute the algorithm itself
 // ============================================================================
-StatusCode TESCheck::execute()
-{
-  for ( const auto & address : m_inputs.value() )
-  {
+StatusCode TESCheck::execute() {
+  for ( const auto& address : m_inputs.value() ) {
 
     SmartIF<IDataProviderSvc> dp;
-    switch(m_store) {
+    switch ( m_store ) {
     case Stores::DetStore:
       dp = detSvc();
       break;
@@ -118,25 +112,19 @@ StatusCode TESCheck::execute()
       dp = evtSvc();
     }
 
-    SmartDataPtr<DataObject> obj( dp , address ) ;
-    DataObject * o = obj ;
-    if ( !o  )
-    {
-      if ( m_stop.value() ) { return Error ( "Check failed for '" + address + "'" ) ; }
-      if ( msgLevel ( MSG::WARNING ) )
-        Warning ( "Check failed for '" + address  + "'", StatusCode::SUCCESS, 1 ).ignore() ;
-      setFilterPassed(false) ;
-    }
-    else {
-      setFilterPassed(true) ;
-      if ( msgLevel ( MSG::DEBUG ) )
-      {
+    SmartDataPtr<DataObject> obj( dp, address );
+    DataObject*              o = obj;
+    if ( !o ) {
+      if ( m_stop.value() ) { return Error( "Check failed for '" + address + "'" ); }
+      if ( msgLevel( MSG::WARNING ) ) Warning( "Check failed for '" + address + "'", StatusCode::SUCCESS, 1 ).ignore();
+      setFilterPassed( false );
+    } else {
+      setFilterPassed( true );
+      if ( msgLevel( MSG::DEBUG ) ) {
         debug() << "Object address/type : "
-                << "'" << address << "'/'"
-                << System::typeinfoName( typeid( *o ) ) << "'" << endmsg ;
+                << "'" << address << "'/'" << System::typeinfoName( typeid( *o ) ) << "'" << endmsg;
       }
     }
-
   }
 
   return StatusCode::SUCCESS;

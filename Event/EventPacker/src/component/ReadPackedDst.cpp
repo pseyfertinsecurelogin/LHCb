@@ -11,28 +11,28 @@
 // Include files
 
 // from Gaudi
-#include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/SmartIF.h"
 
 // Kernel
 #include "Event/StandardPacker.h"
 
 // Event
-#include "Event/RawEvent.h"
-#include "Event/PackedTrack.h"
+#include "Event/ODIN.h"
+#include "Event/PackedCaloCluster.h"
 #include "Event/PackedCaloHypo.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedRecVertex.h"
-#include "Event/PackedTwoProngVertex.h"
-#include "Event/PackedRichPID.h"
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedTwoProngVertex.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
-#include "Event/PackedCaloCluster.h"
-#include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
-#include "Event/ODIN.h"
+#include "Event/RawEvent.h"
+#include "Event/RecHeader.h"
 #include "Event/RecSummary.h"
 
 // local
@@ -40,7 +40,7 @@
 
 #ifdef _WIN32
 // Disable warning C4355: 'this' : used in base member initializer list
-#pragma warning ( disable : 4355 )
+#  pragma warning( disable : 4355 )
 #endif
 
 //-----------------------------------------------------------------------------
@@ -55,39 +55,35 @@ DECLARE_COMPONENT( ReadPackedDst )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-ReadPackedDst::ReadPackedDst( const std::string& name,
-                              ISvcLocator* pSvcLocator)
-: GaudiAlgorithm ( name , pSvcLocator ),
-  m_odinDecoder("ODINDecodeTool", this)
-{
+ReadPackedDst::ReadPackedDst( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ), m_odinDecoder( "ODINDecodeTool", this ) {
   declareProperty( "InputLocation", m_inputLocation = "/Event/DAQ/DstEvent" );
-  declareProperty( "Postfix",       m_postfix       = "Test" );
+  declareProperty( "Postfix", m_postfix = "Test" );
 }
 //=============================================================================
 // Initialize
 //=============================================================================
-StatusCode ReadPackedDst::initialize()
-{
+StatusCode ReadPackedDst::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
-  if (sc.isFailure()) return sc;
+  if ( sc.isFailure() ) return sc;
 
   // Pass the input RawEvent to the tool
-  sc = Gaudi::Utils::setProperty(&(*m_odinDecoder), "RawEventLocation", m_inputLocation );
-  if (sc.isFailure()) return sc;
+  sc = Gaudi::Utils::setProperty( &( *m_odinDecoder ), "RawEventLocation", m_inputLocation );
+  if ( sc.isFailure() ) return sc;
   // Attach data loader facility
-  m_evtMgr = SmartIF<IDataManagerSvc>(eventSvc());
+  m_evtMgr = SmartIF<IDataManagerSvc>( eventSvc() );
   if ( !m_evtMgr ) return StatusCode::FAILURE;
-  m_addrCreator = serviceLocator()->service("EventPersistencySvc");
+  m_addrCreator = serviceLocator()->service( "EventPersistencySvc" );
   if ( !m_addrCreator ) return StatusCode::FAILURE;
 
   // Pass the Postfix property to the tool
-  return Gaudi::Utils::setProperty(&(*m_odinDecoder), "ODINLocation", LHCb::ODINLocation::Default + m_postfix);
+  return Gaudi::Utils::setProperty( &( *m_odinDecoder ), "ODINLocation", LHCb::ODINLocation::Default + m_postfix );
 }
 //=============================================================================
 // Initialize
 //=============================================================================
 StatusCode ReadPackedDst::finalize() {
-  m_evtMgr = 0;
+  m_evtMgr      = 0;
   m_addrCreator = 0;
   return GaudiAlgorithm::finalize();
 }
@@ -97,40 +93,38 @@ StatusCode ReadPackedDst::finalize() {
 //=============================================================================
 StatusCode ReadPackedDst::execute() {
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   LHCb::RawEvent* dstEvent = get<LHCb::RawEvent>( m_inputLocation );
 
   // Decode the ODIN bank
   m_odinDecoder->execute();
-  if ( !exist<LHCb::ODIN>(LHCb::ODINLocation::Default + m_postfix) ) {
-    return Warning( "ODIN not found" );
-  }
+  if ( !exist<LHCb::ODIN>( LHCb::ODINLocation::Default + m_postfix ) ) { return Warning( "ODIN not found" ); }
 
   const auto& adds = dstEvent->banks( LHCb::RawBank::DstAddress );
-  for (auto itA = adds.begin(); adds.end() != itA; ++itA ) {
-    std::string spars[3];
-    unsigned long ipars[2];
-    unsigned long clid;
-    long styp;
-    char* cptr;
-    const unsigned int* iptr  = (*itA)->data();
-    clid = *iptr++;
-    ipars[0] = *iptr++;
-    ipars[1] = *iptr++;
-    styp = *iptr++;
+  for ( auto itA = adds.begin(); adds.end() != itA; ++itA ) {
+    std::string         spars[3];
+    unsigned long       ipars[2];
+    unsigned long       clid;
+    long                styp;
+    char*               cptr;
+    const unsigned int* iptr = ( *itA )->data();
+    clid                     = *iptr++;
+    ipars[0]                 = *iptr++;
+    ipars[1]                 = *iptr++;
+    styp                     = *iptr++;
 
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Address bank: Class ID " << clid << " par[0] " << ipars[0] << " par[1] " << ipars[1]
-              << " svcType " << std::hex << styp;
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << "Address bank: Class ID " << clid << " par[0] " << ipars[0] << " par[1] " << ipars[1] << " svcType "
+              << std::hex << styp;
 
-    cptr = (char*)iptr;
+    cptr     = (char*)iptr;
     spars[0] = (char*)iptr;
-    cptr += strlen(cptr) + 1;
+    cptr += strlen( cptr ) + 1;
     spars[1] = cptr;
-    cptr += strlen(cptr) + 1;
+    cptr += strlen( cptr ) + 1;
     spars[2] = cptr;
-    if ( msgLevel(MSG::DEBUG) )
+    if ( msgLevel( MSG::DEBUG ) )
       debug() << " par[0]='" << spars[0] << "' par[1]='" << spars[1] << "' par[2]='" << spars[2] << "'" << endmsg;
 
     /*
@@ -148,76 +142,75 @@ StatusCode ReadPackedDst::execute() {
 
   const auto& banks = dstEvent->banks( LHCb::RawBank::DstBank );
   const auto& blobs = dstEvent->banks( LHCb::RawBank::DstData );
-  for (const LHCb::RawBank* bank : banks ) {
-    int version = bank->version();
-    m_size      = bank->size()/4;   // in word
-    m_data      = bank->data();
+  for ( const LHCb::RawBank* bank : banks ) {
+    int version          = bank->version();
+    m_size               = bank->size() / 4; // in word
+    m_data               = bank->data();
     unsigned int classID = nextInt();
-    std::string name = stringFromData();
+    std::string  name    = stringFromData();
 
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Bank nb " << bank->sourceID() << " version " << version << " size " << m_size
-              << " classID " << classID << " name '" << name << "'  nLink " << *m_data
-              << endmsg;
+    if ( msgLevel( MSG::DEBUG ) )
+      debug() << "Bank nb " << bank->sourceID() << " version " << version << " size " << m_size << " classID "
+              << classID << " name '" << name << "'  nLink " << *m_data << endmsg;
 
-    if (  LHCb::CLID_PackedTracks  == classID ) {
+    if ( LHCb::CLID_PackedTracks == classID ) {
 
       LHCb::PackedTracks* tracks = new LHCb::PackedTracks();
       put( tracks, name + m_postfix );
       processLinks( tracks, version );
-      getFromBlob<LHCb::PackedTrack>  ( tracks->tracks() , blobs );
-      getFromBlob<LHCb::PackedState>  ( tracks->states() , blobs );
-      getFromBlob<int>                ( tracks->ids()    , blobs );
-      getFromBlob<std::pair<int,int> >( tracks->extras() , blobs );
+      getFromBlob<LHCb::PackedTrack>( tracks->tracks(), blobs );
+      getFromBlob<LHCb::PackedState>( tracks->states(), blobs );
+      getFromBlob<int>( tracks->ids(), blobs );
+      getFromBlob<std::pair<int, int>>( tracks->extras(), blobs );
 
-    } else if ( LHCb::CLID_PackedRichPIDs        == classID ) {
+    } else if ( LHCb::CLID_PackedRichPIDs == classID ) {
 
       LHCb::PackedRichPIDs* pids = new LHCb::PackedRichPIDs();
       put( pids, name + m_postfix );
       processLinks( pids, version );
-      getFromBlob<LHCb::PackedRichPID> ( pids->data(), blobs );
+      getFromBlob<LHCb::PackedRichPID>( pids->data(), blobs );
 
-    } else if ( LHCb::CLID_PackedMuonPIDs        == classID ) {
+    } else if ( LHCb::CLID_PackedMuonPIDs == classID ) {
 
       LHCb::PackedMuonPIDs* pids = new LHCb::PackedMuonPIDs();
       put( pids, name + m_postfix );
       processLinks( pids, version );
-      getFromBlob<LHCb::PackedMuonPID> ( pids->data(), blobs );
+      getFromBlob<LHCb::PackedMuonPID>( pids->data(), blobs );
 
-    } else if ( LHCb::CLID_PackedCaloHypos       == classID ) {
+    } else if ( LHCb::CLID_PackedCaloHypos == classID ) {
 
       LHCb::PackedCaloHypos* caloHypos = new LHCb::PackedCaloHypos();
       put( caloHypos, name + m_postfix );
       processLinks( caloHypos, version );
-      getFromBlob<LHCb::PackedCaloHypo> ( caloHypos->hypos() , blobs );
-      getFromBlob<long long>            ( caloHypos->refs()  , blobs );
+      getFromBlob<LHCb::PackedCaloHypo>( caloHypos->hypos(), blobs );
+      getFromBlob<long long>( caloHypos->refs(), blobs );
 
-    } else if ( LHCb::CLID_PackedProtoParticles  == classID ) {
+    } else if ( LHCb::CLID_PackedProtoParticles == classID ) {
 
       LHCb::PackedProtoParticles* protos = new LHCb::PackedProtoParticles();
       put( protos, name + m_postfix );
       processLinks( protos, version );
-      getFromBlob<LHCb::PackedProtoParticle> ( protos->protos() , blobs );
-      getFromBlob<long long>                 ( protos->refs()   , blobs );
-      getFromBlob<std::pair<int,int> >       ( protos->extras() , blobs );
+      getFromBlob<LHCb::PackedProtoParticle>( protos->protos(), blobs );
+      getFromBlob<long long>( protos->refs(), blobs );
+      getFromBlob<std::pair<int, int>>( protos->extras(), blobs );
 
-    } else if ( LHCb::CLID_PackedRecVertices     == classID ) {
+    } else if ( LHCb::CLID_PackedRecVertices == classID ) {
 
       LHCb::PackedRecVertices* recVertices = new LHCb::PackedRecVertices();
       put( recVertices, name + m_postfix );
       processLinks( recVertices, version );
-      getFromBlob<LHCb::PackedRecVertex> ( recVertices->vertices() , blobs );
-      getFromBlob<long long>             ( recVertices->refs()     , blobs );
-      getFromBlob<std::pair<int,int> >   ( recVertices->extras()   , blobs );
+      getFromBlob<LHCb::PackedRecVertex>( recVertices->vertices(), blobs );
+      getFromBlob<long long>( recVertices->refs(), blobs );
+      getFromBlob<std::pair<int, int>>( recVertices->extras(), blobs );
 
-    } else if ( LHCb::CLID_PackedTwoProngVertices     == classID ) {
+    } else if ( LHCb::CLID_PackedTwoProngVertices == classID ) {
 
       LHCb::PackedTwoProngVertices* recVertices = new LHCb::PackedTwoProngVertices();
       put( recVertices, name + m_postfix );
       processLinks( recVertices, version );
-      getFromBlob<LHCb::PackedTwoProngVertex> ( recVertices->vertices() , blobs );
-      getFromBlob<long long>                  ( recVertices->refs()     , blobs );
-      getFromBlob<std::pair<int,int> >        ( recVertices->extras()   , blobs );
+      getFromBlob<LHCb::PackedTwoProngVertex>( recVertices->vertices(), blobs );
+      getFromBlob<long long>( recVertices->refs(), blobs );
+      getFromBlob<std::pair<int, int>>( recVertices->extras(), blobs );
 
     } else if ( LHCb::CLID_RecSummary == classID ) {
 
@@ -225,8 +218,7 @@ StatusCode ReadPackedDst::execute() {
       put( summary, name + m_postfix );
       processLinks( summary, version );
       const int nSums = nextInt();
-      for ( int iSum = 0; iSum < nSums; ++iSum )
-      {
+      for ( int iSum = 0; iSum < nSums; ++iSum ) {
         const int key   = nextInt();
         const int value = nextInt();
         summary->addInfo( (LHCb::RecSummary::DataTypes)key, value );
@@ -238,75 +230,72 @@ StatusCode ReadPackedDst::execute() {
       put( recHeader, name + m_postfix );
       processLinks( recHeader, version );
       long long eventNumber = nextInt();
-      eventNumber = (eventNumber << 32) + nextInt();
+      eventNumber           = ( eventNumber << 32 ) + nextInt();
       recHeader->setEvtNumber( eventNumber );
       // Dummy reads from old data when RecHeader contained random seeds.
       // Data encoded after random seeds were removed has nb=0
       unsigned nb = nextInt();
-      for ( unsigned int kk=0 ; nb > kk; ++kk ) {
-        nextInt();
-      }
+      for ( unsigned int kk = 0; nb > kk; ++kk ) { nextInt(); }
       recHeader->setApplicationName( stringFromData() );
       recHeader->setApplicationVersion( stringFromData() );
       recHeader->setRunNumber( nextInt() );
       nb = nextInt();
-      std::pair<std::string, std::string> aPair;
-      std::vector<std::pair<std::string,std::string> > allPairs;
-      for ( unsigned int kk=0; nb > kk; ++kk ) {
-        aPair.first = stringFromData();
+      std::pair<std::string, std::string>              aPair;
+      std::vector<std::pair<std::string, std::string>> allPairs;
+      for ( unsigned int kk = 0; nb > kk; ++kk ) {
+        aPair.first  = stringFromData();
         aPair.second = stringFromData();
         allPairs.emplace_back( aPair );
       }
       recHeader->setCondDBTags( allPairs );
 
-    } else if ( LHCb::CLID_PackedParticles        == classID ) {
+    } else if ( LHCb::CLID_PackedParticles == classID ) {
 
       LHCb::PackedParticles* parts = new LHCb::PackedParticles();
       put( parts, name + m_postfix );
       processLinks( parts, version );
-      getFromBlob<LHCb::PackedParticle> ( parts->data(), blobs );
-      getFromBlob<std::pair<int,int> >  ( parts->extra(), blobs );
-      getFromBlob<long long>            ( parts->daughters(), blobs );
+      getFromBlob<LHCb::PackedParticle>( parts->data(), blobs );
+      getFromBlob<std::pair<int, int>>( parts->extra(), blobs );
+      getFromBlob<long long>( parts->daughters(), blobs );
 
-    } else if ( LHCb::CLID_PackedVertices        == classID ) {
+    } else if ( LHCb::CLID_PackedVertices == classID ) {
 
       LHCb::PackedVertices* verts = new LHCb::PackedVertices();
       put( verts, name + m_postfix );
       processLinks( verts, version );
-      getFromBlob<LHCb::PackedVertex> ( verts->data(), blobs );
-      getFromBlob<long long>          ( verts->outgoingParticles(), blobs );
+      getFromBlob<LHCb::PackedVertex>( verts->data(), blobs );
+      getFromBlob<long long>( verts->outgoingParticles(), blobs );
 
-    } else if ( LHCb::CLID_PackedWeightsVector   == classID ) {
+    } else if ( LHCb::CLID_PackedWeightsVector == classID ) {
 
       LHCb::PackedWeightsVector* weights = new LHCb::PackedWeightsVector();
       put( weights, name + m_postfix );
       processLinks( weights, version );
-      getFromBlob<LHCb::PackedWeights> ( weights->data(),    blobs );
-      getFromBlob<LHCb::PackedWeight>  ( weights->weights(), blobs );
+      getFromBlob<LHCb::PackedWeights>( weights->data(), blobs );
+      getFromBlob<LHCb::PackedWeight>( weights->weights(), blobs );
 
-    } else if ( LHCb::CLID_PackedCaloClusters   == classID ) {
+    } else if ( LHCb::CLID_PackedCaloClusters == classID ) {
 
       LHCb::PackedCaloClusters* clusters = new LHCb::PackedCaloClusters();
       put( clusters, name + m_postfix );
       processLinks( clusters, version );
-      getFromBlob<LHCb::PackedCaloCluster>      ( clusters->data(),    blobs );
-      getFromBlob<LHCb::PackedCaloClusterEntry> ( clusters->entries(), blobs );
+      getFromBlob<LHCb::PackedCaloCluster>( clusters->data(), blobs );
+      getFromBlob<LHCb::PackedCaloClusterEntry>( clusters->entries(), blobs );
 
     } else if ( LHCb::CLID_ProcStatus == classID ) {
 
       LHCb::ProcStatus* procStatus = new LHCb::ProcStatus();
       put( procStatus, name + m_postfix );
       processLinks( procStatus, version );
-      procStatus->setAborted( (nextInt()!=0) );
-      const unsigned int nbAlg = nextInt();
+      procStatus->setAborted( ( nextInt() != 0 ) );
+      const unsigned int                nbAlg = nextInt();
       LHCb::ProcStatus::AlgStatusVector algs;
-      algs.reserve(nbAlg);
-      for ( unsigned int kk = 0 ; nbAlg > kk ; ++kk )
-      {
+      algs.reserve( nbAlg );
+      for ( unsigned int kk = 0; nbAlg > kk; ++kk ) {
         const std::string temp = stringFromData();
-        algs.emplace_back( LHCb::ProcStatus::AlgStatus(temp,nextInt()) );
+        algs.emplace_back( LHCb::ProcStatus::AlgStatus( temp, nextInt() ) );
       }
-      procStatus->setAlgs(algs);
+      procStatus->setAlgs( algs );
 
     } else if ( LHCb::CLID_RawEvent == classID ) {
 
@@ -316,9 +305,9 @@ StatusCode ReadPackedDst::execute() {
       while ( 0 < m_size ) {
         int type     = nextInt();
         int sourceID = nextInt();
-        if ( msgLevel(MSG::DEBUG) )
+        if ( msgLevel( MSG::DEBUG ) )
           debug() << "Read bank " << type << " source " << sourceID << " and add to " << name + m_postfix << endmsg;
-        for (const LHCb::RawBank* bnk : dstEvent->banks( (LHCb::RawBank::BankType)type ) ) {
+        for ( const LHCb::RawBank* bnk : dstEvent->banks( (LHCb::RawBank::BankType)type ) ) {
           if ( bnk->sourceID() == sourceID ) rawEvent->addBank( bnk );
         }
       }
@@ -340,38 +329,36 @@ StatusCode ReadPackedDst::execute() {
 //  Decode a blob to recreate the data
 //=========================================================================
 template <class CLASS>
-void ReadPackedDst::getFromBlob( std::vector<CLASS>& vect,
-                                 LHCb::span<const LHCb::RawBank*> blobs ) {
+void ReadPackedDst::getFromBlob( std::vector<CLASS>& vect, LHCb::span<const LHCb::RawBank*> blobs ) {
   unsigned int totSize = *m_data++;
   unsigned int nObj    = *m_data++;
-  int blobNb           = *m_data++;
+  int          blobNb  = *m_data++;
   m_size -= 3;
   unsigned int extraSize = 0;
-  if ( nObj * sizeof( CLASS) != totSize ) {
+  if ( nObj * sizeof( CLASS ) != totSize ) {
     if ( totSize > nObj * sizeof( CLASS ) ) {
-      if ( ( totSize / nObj ) * nObj == totSize ) {       // extra words per object...
+      if ( ( totSize / nObj ) * nObj == totSize ) { // extra words per object...
         extraSize = ( totSize / nObj ) - sizeof( CLASS );
       }
     }
     if ( 0 == extraSize ) {
-      warning() << "getFromBlob: Total " << totSize << " nObj " << nObj
-                << " of size " << sizeof( CLASS ) << " = " << nObj * sizeof( CLASS)
-                << " *** DOES NOT MATCH ***" << endmsg;
+      warning() << "getFromBlob: Total " << totSize << " nObj " << nObj << " of size " << sizeof( CLASS ) << " = "
+                << nObj * sizeof( CLASS ) << " *** DOES NOT MATCH ***" << endmsg;
     }
   }
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "totSize " << totSize << " nObj " << nObj << " extraSize " << extraSize << " blobNb " << blobNb << endmsg;
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << "totSize " << totSize << " nObj " << nObj << " extraSize " << extraSize << " blobNb " << blobNb
+            << endmsg;
 
   //== First restore a big vector of int in case the data is split into several blobs
-  std::vector<int> tempVect( totSize/4 );  // size in bytes
-  int* temp = &*tempVect.begin();
+  std::vector<int> tempVect( totSize / 4 ); // size in bytes
+  int*             temp = &*tempVect.begin();
 
   while ( totSize > 0 ) {
     const LHCb::RawBank* myBank = blobs[blobNb];
     if ( myBank->sourceID() != blobNb ) {
-      auto itB = std::find_if(blobs.begin(), blobs.end(),
-                              [blobNb](const LHCb::RawBank* bnk)
-                              { return bnk->sourceID() == blobNb; } );
+      auto itB = std::find_if( blobs.begin(), blobs.end(),
+                               [blobNb]( const LHCb::RawBank* bnk ) { return bnk->sourceID() == blobNb; } );
 
       myBank = ( itB != blobs.end() ? *itB : nullptr );
       if ( !myBank ) {
@@ -379,10 +366,9 @@ void ReadPackedDst::getFromBlob( std::vector<CLASS>& vect,
         return;
       }
     }
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Found " <<  myBank->size() << " bytes, need " << totSize << " " << endmsg;
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "Found " << myBank->size() << " bytes, need " << totSize << " " << endmsg;
     memcpy( temp, myBank->data(), myBank->size() );
-    temp    += (myBank->size()/4);
+    temp += ( myBank->size() / 4 );
     totSize -= myBank->size();
     blobNb++;
   }
@@ -390,18 +376,14 @@ void ReadPackedDst::getFromBlob( std::vector<CLASS>& vect,
   //== Now copy to the target vector, changing lines to columns...
   //== and padding with 0 the extra size.
 
-  unsigned int objSize = sizeof( CLASS )/4;
+  unsigned int objSize = sizeof( CLASS ) / 4;
   vect.resize( nObj );
-  int* vectPt = (int*) &*vect.begin();
-  temp   = &*tempVect.begin();
-  for ( unsigned int l = 0 ; nObj > l ; ++l ) {
-    for ( unsigned int k = 0 ; objSize > k ; ++k ) {
-      *vectPt++ =  *(temp + l + nObj * k );
-    }
+  int* vectPt = (int*)&*vect.begin();
+  temp        = &*tempVect.begin();
+  for ( unsigned int l = 0; nObj > l; ++l ) {
+    for ( unsigned int k = 0; objSize > k; ++k ) { *vectPt++ = *( temp + l + nObj * k ); }
     if ( 0 < extraSize ) {
-      for ( unsigned int k = 0 ; extraSize > k ; ++k ) {
-        *vectPt++ =  0;
-      }
+      for ( unsigned int k = 0; extraSize > k; ++k ) { *vectPt++ = 0; }
     }
   }
 }

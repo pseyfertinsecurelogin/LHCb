@@ -18,7 +18,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-
 /** @class IMCVeloFEType IMCVeloFEType.h VeloAlgorithms/IMCVeloFEType.h
  *
  *
@@ -26,20 +25,16 @@
  *  @date   2005-11-16
  */
 
-namespace LHCb
-{
+namespace LHCb {
   class MCVeloFE;
 }
 
-struct IMCVeloFEType : extend_interfaces<IAlgTool>
-{
+struct IMCVeloFEType : extend_interfaces<IAlgTool> {
 
 public:
+  DeclareInterfaceID( IMCVeloFEType, 2, 0 );
 
-  DeclareInterfaceID(IMCVeloFEType, 2, 0 );
-
-  enum Types{ Signal=0, Noise, Other }; // Return the interface ID
-  virtual void FEType(const LHCb::MCVeloFE* fe, int& feType)=0;
-
+  enum Types { Signal = 0, Noise, Other }; // Return the interface ID
+  virtual void FEType( const LHCb::MCVeloFE* fe, int& feType ) = 0;
 };
 #endif // VELOALGORITHMS_IMCVELOFETYPE_H

@@ -41,19 +41,17 @@
  *  @date 2008-06-03
  */
 // ============================================================================
-const HepMC::GenParticle*
-LoKi::GenParticles::oscillated1 ( const HepMC::GenParticle* p )
-{
-  if ( !p  ) { return nullptr ; }
-  const HepMC::GenVertex* pv = p->production_vertex () ;
-  if ( !pv ) { return nullptr ; }
-  if ( 1 != pv->particles_in_size() ) { return nullptr ; }
-  const HepMC::GenParticle* m = *(pv->particles_in_const_begin()) ;
-  if ( !m  ) { return nullptr; }
+const HepMC::GenParticle* LoKi::GenParticles::oscillated1( const HepMC::GenParticle* p ) {
+  if ( !p ) { return nullptr; }
+  const HepMC::GenVertex* pv = p->production_vertex();
+  if ( !pv ) { return nullptr; }
+  if ( 1 != pv->particles_in_size() ) { return nullptr; }
+  const HepMC::GenParticle* m = *( pv->particles_in_const_begin() );
+  if ( !m ) { return nullptr; }
   // oscillated ?
-  if ( p->pdg_id() != -m->pdg_id() ) { return nullptr ; }
+  if ( p->pdg_id() != -m->pdg_id() ) { return nullptr; }
   //
-  return m ;
+  return m;
 }
 // ============================================================================
 /*  check the oscillation for the particle
@@ -62,19 +60,17 @@ LoKi::GenParticles::oscillated1 ( const HepMC::GenParticle* p )
  *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
  *  @date 2008-06-03
  */
-const HepMC::GenParticle*
-LoKi::GenParticles::oscillated2  ( const HepMC::GenParticle* p )
-{
-  if ( !p  ) { return nullptr ; }
-  const HepMC::GenVertex* ev = p->end_vertex () ;
-  if ( !ev ) { return nullptr ; }
-  if ( 1 != ev->particles_out_size() ) { return nullptr ; }
-  const HepMC::GenParticle* d = *(ev->particles_out_const_begin()) ;
-  if ( !d  ) { return nullptr; }
+const HepMC::GenParticle* LoKi::GenParticles::oscillated2( const HepMC::GenParticle* p ) {
+  if ( !p ) { return nullptr; }
+  const HepMC::GenVertex* ev = p->end_vertex();
+  if ( !ev ) { return nullptr; }
+  if ( 1 != ev->particles_out_size() ) { return nullptr; }
+  const HepMC::GenParticle* d = *( ev->particles_out_const_begin() );
+  if ( !d ) { return nullptr; }
   // oscillated ?
-  if ( p->pdg_id() != -d->pdg_id() ) { return nullptr ; }
+  if ( p->pdg_id() != -d->pdg_id() ) { return nullptr; }
   //
-  return d ;
+  return d;
 }
 // ==========================================================================
 // The END

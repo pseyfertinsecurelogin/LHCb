@@ -22,10 +22,8 @@
  *  @date   17/11/2001
  */
 
-class SimpleValidity : public  virtual  IValidity
-{
+class SimpleValidity : public virtual IValidity {
 public:
-
   /** standard constructor
    */
   SimpleValidity();
@@ -34,15 +32,13 @@ public:
    *  @param since "since" time for validity range
    *  @param till  "till"  time for validity range
    */
-  SimpleValidity( const Gaudi::Time& since    ,
-                  const Gaudi::Time& till     );
+  SimpleValidity( const Gaudi::Time& since, const Gaudi::Time& till );
 
   /** (explicit) constructor from other
    *   IValidity object
    *   @param copy another IValidity object
    */
-  explicit
-  SimpleValidity( const IValidity&      copy );
+  explicit SimpleValidity( const IValidity& copy );
 
   /** copy constructor  (deep copy)
    *  @param copy another IValidity object
@@ -52,54 +48,45 @@ public:
   /** assignement from any IValidity object
    *  @param copy another IValidity object
    */
-  SimpleValidity& operator=( const IValidity&      copy );
+  SimpleValidity& operator=( const IValidity& copy );
 
   /** assignement (deep copy)
    *  @param copy another IValidity object
    */
   SimpleValidity& operator=( const SimpleValidity& copy ) = default;
 
-
   /** is the Object valid? (it can be always invalid)
    *  @return true if object valid
    */
-  bool  isValid    () const override;
+  bool isValid() const override;
 
   /** is the Object valid for a given time?
    *  @param  time  tiemto be checked
    *  @return true if objetc is valid for given time
    */
-  bool  isValid    ( const Gaudi::Time&  time ) const override;
+  bool isValid( const Gaudi::Time& time ) const override;
 
   /** since what time the Objest is valid?
    *  @return time "since"
    */
-  inline const Gaudi::Time&
-  validSince () const override { return m_since; }
+  inline const Gaudi::Time& validSince() const override { return m_since; }
 
   /** till  what time the Object is Valid?
    *  @return time "till"
    */
-  inline const Gaudi::Time&
-  validTill  () const override { return m_till ; }
+  inline const Gaudi::Time& validTill() const override { return m_till; }
 
   /// set the validity range of the Object
-  void
-  setValidity       ( const Gaudi::Time& since ,
-                      const Gaudi::Time& till  ) override;
+  void setValidity( const Gaudi::Time& since, const Gaudi::Time& till ) override;
   /// set the validity time of the Object
-  void
-  setValiditySince  ( const Gaudi::Time& since ) override;
+  void setValiditySince( const Gaudi::Time& since ) override;
 
   /// set the validity time of the Object
-  void
-  setValidityTill   ( const Gaudi::Time& till  ) override;
+  void setValidityTill( const Gaudi::Time& till ) override;
 
 private:
-
-  Gaudi::Time m_since ;
-  Gaudi::Time m_till  ;
-
+  Gaudi::Time m_since;
+  Gaudi::Time m_till;
 };
 
 // ============================================================================

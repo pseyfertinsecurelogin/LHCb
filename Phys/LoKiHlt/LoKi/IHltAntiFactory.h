@@ -20,15 +20,13 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/OdinTypes.h"
-#include "LoKi/L0Types.h"
 #include "LoKi/HLTTypes.h"
+#include "LoKi/L0Types.h"
+#include "LoKi/OdinTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class IHltAntiFactory
      *  The functor 'anti'-factory for creation of Hlt-related  LoKi functors
@@ -46,35 +44,34 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivabn.Belyaev@nikhef.nl
      *  @date 2008-09-18
      */
-    struct IHltAntiFactory : extend_interfaces<IAlgTool>
-    {
+    struct IHltAntiFactory : extend_interfaces<IAlgTool> {
       // ======================================================================
-      DeclareInterfaceID( IHltAntiFactory , 2 , 0 ) ;
+      DeclareInterfaceID( IHltAntiFactory, 2, 0 );
       // ======================================================================
       // L0
       // ======================================================================
       /// set the C++ function for LHCb::L0DUReport
-      virtual void set ( const LoKi::Types::L0_Cuts& cut ) = 0 ;
+      virtual void set( const LoKi::Types::L0_Cuts& cut ) = 0;
       /// set the C++ function for LHCb::L0DUReport
-      virtual void set ( const LoKi::Types::L0_Func& cut ) = 0 ;
+      virtual void set( const LoKi::Types::L0_Func& cut ) = 0;
       // ======================================================================
       // O1
       // ======================================================================
       /// set the C++ function for LHCb::ODIN
-      virtual void set ( const LoKi::Types::ODIN_Cuts& cut ) = 0 ;
+      virtual void set( const LoKi::Types::ODIN_Cuts& cut ) = 0;
       /// set the C++ function for LHCb::ODIN
-      virtual void set ( const LoKi::Types::ODIN_Func& cut ) = 0 ;
+      virtual void set( const LoKi::Types::ODIN_Func& cut ) = 0;
       // ======================================================================
       // HLT
       // ======================================================================
       /// set the C++ function for LHCb::HltDecReports
-      virtual void set ( const LoKi::Types::HLT_Cuts& cut ) = 0 ;
+      virtual void set( const LoKi::Types::HLT_Cuts& cut ) = 0;
       /// set the C++ function for LHCb::HltDecREports
-      virtual void set ( const LoKi::Types::HLT_Func& cut ) = 0 ;
+      virtual void set( const LoKi::Types::HLT_Func& cut ) = 0;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

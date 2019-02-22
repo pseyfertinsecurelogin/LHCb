@@ -16,10 +16,10 @@
 #include <string>
 
 // from Gaudi
-#include "GaudiKernel/IAlgTool.h"
-#include "Event/L0ProcessorData.h"
 #include "Event/L0DUConfig.h"
 #include "Event/L0DUReport.h"
+#include "Event/L0ProcessorData.h"
+#include "GaudiKernel/IAlgTool.h"
 
 /** @class IL0DUEmulatorTool IL0DUEmulatorTool.h
  *
@@ -32,10 +32,9 @@ struct IL0DUEmulatorTool : extend_interfaces<IAlgTool> {
   // Declare the interface ID
   DeclareInterfaceID( IL0DUEmulatorTool, 2, 0 );
 
-  virtual StatusCode process(LHCb::L0DUConfig* config,  LHCb::L0ProcessorDatas* datas)=0;
-  virtual StatusCode process(LHCb::L0DUConfig* config,  std::vector<std::string> dataLocs)=0;
-  virtual const LHCb::L0DUReport emulatedReport()=0;
-  virtual const std::vector<unsigned int> bank(unsigned int version)=0;
-
+  virtual StatusCode                      process( LHCb::L0DUConfig* config, LHCb::L0ProcessorDatas* datas )     = 0;
+  virtual StatusCode                      process( LHCb::L0DUConfig* config, std::vector<std::string> dataLocs ) = 0;
+  virtual const LHCb::L0DUReport          emulatedReport()                                                       = 0;
+  virtual const std::vector<unsigned int> bank( unsigned int version )                                           = 0;
 };
 #endif // IL0DUEMULATORTOOL_H

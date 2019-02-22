@@ -573,8 +573,9 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
             if row >= 0:
                 index = self.conditionsStack.index(row, 0)
                 selmodel = self.conditionsStackView.selectionModel()
-                selmodel.select(index, QItemSelectionModel.ClearAndSelect
-                                | QItemSelectionModel.Rows)
+                selmodel.select(
+                    index, QItemSelectionModel.ClearAndSelect
+                    | QItemSelectionModel.Rows)
 
     ## Move the selected condition down in the stack
     def moveDown(self):
@@ -587,8 +588,9 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
             if row < self.conditionsStack.rowCount():
                 index = self.conditionsStack.index(row, 0)
                 selmodel = self.conditionsStackView.selectionModel()
-                selmodel.select(index, QItemSelectionModel.ClearAndSelect
-                                | QItemSelectionModel.Rows)
+                selmodel.select(
+                    index, QItemSelectionModel.ClearAndSelect
+                    | QItemSelectionModel.Rows)
 
     def changedSelection(self, newSelection, oldSelection):
         rows = self.conditionsStackView.selectedIndexes()

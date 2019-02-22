@@ -15,13 +15,12 @@
 #include "Kernel/DifTraj.h"
 #ifdef _WIN32
 // Avoid conflict of Windows macro with std::max
-  #ifndef NOMINMAX
-    #define NOMINMAX
-  #endif
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
 #endif
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class CircleTraj CircleTraj.h Kernel/CircleTraj.h
    *
@@ -35,7 +34,6 @@ namespace LHCb
   class CircleTraj : public Trajectory<double> {
 
   public:
-
     // clone thyself...
     std::unique_ptr<Trajectory<double>> clone() const override;
 
@@ -53,19 +51,19 @@ namespace LHCb
     /// rotate this point around the normal)
     /// Only the component of origin2point perpendicular to normal
     /// is considered!!!...
-    CircleTraj( const Point& origin,// center of circle
-                const Vector& normal, // direction of end
-                const Vector& origin2point, // direction of start
-                const Trajectory<double>::Range& range); // valid range, in radius*deltaphi
+    CircleTraj( const Point&                     origin,       // center of circle
+                const Vector&                    normal,       // direction of end
+                const Vector&                    origin2point, // direction of start
+                const Trajectory<double>::Range& range );      // valid range, in radius*deltaphi
 
     /// Constructor from a center, the directions of the
     /// start and end of the traj wrt. the center, and the radius.
     /// The Traj goes along the 'short' arc from origin+radius*dir1.unit()
     /// at arclength=0 to origin+radius*dir2.unit() at the arclen=length().
-    CircleTraj( const Point& origin,// center of circle
-                const Vector& dir1, // direction of start
-                const Vector& dir2, // direction of end
-                double radius);
+    CircleTraj( const Point&  origin, // center of circle
+                const Vector& dir1,   // direction of start
+                const Vector& dir2,   // direction of end
+                double        radius );
 
     /// Point on the trajectory at arclength from the starting point
     Point position( double arclength ) const override;
@@ -78,10 +76,7 @@ namespace LHCb
 
     /// Create a parabolic approximation to the trajectory
     /// at arclength from the starting point
-    void expansion( double arclength,
-                    Point& p,
-                    Vector& dp,
-                    Vector& ddp ) const override;
+    void expansion( double arclength, Point& p, Vector& dp, Vector& ddp ) const override;
 
     /// Return arclen at which the trajectory is
     /// closest to the specified point
@@ -89,28 +84,23 @@ namespace LHCb
 
     /// distance along the trajectory until deviation from the
     /// 1st order expansion reaches the given tolerance.
-    double distTo1stError( double arclength,
-                           double tolerance,
-                           int pathDirection = +1 ) const override;
+    double distTo1stError( double arclength, double tolerance, int pathDirection = +1 ) const override;
 
     /// distance along trajectory until deviation from the
     /// 2nd order expansion reaches the given tolerance.
-    double distTo2ndError( double arclength,
-                           double tolerance,
-                           int pathDirection = +1 ) const override;
+    double distTo2ndError( double arclength, double tolerance, int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because CircleTraj is parameterized in
     /// arclength.
     using Trajectory<double>::arclength;
-    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
+    double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
 
-  private :
-
+  private:
     Point  m_origin;
     Vector m_normal;
     Vector m_dirStart;
-    double m_radius = 0.;
+    double m_radius       = 0.;
     double m_cbrt6radius2 = 0.;
 
   }; // class CircleTraj

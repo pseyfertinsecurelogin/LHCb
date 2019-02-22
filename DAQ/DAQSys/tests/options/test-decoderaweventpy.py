@@ -16,17 +16,20 @@ from Configurables import EventClockSvc
 importOptions("$STDOPTS/DecodeRawEvent.py")
 
 LHCbApp()
-EventClockSvc(EventTimeDecoder = "OdinTimeDecoder")
+EventClockSvc(EventTimeDecoder="OdinTimeDecoder")
 
-mySeq=GaudiSequencer("Decoding")
-mySeq.OutputLevel=VERBOSE
+mySeq = GaudiSequencer("Decoding")
+mySeq.OutputLevel = VERBOSE
+
 
 def append():
-    for loc,alg in DataOnDemandSvc().AlgMap.iteritems():
-        if ('UT' not in loc) and ('FT' not in loc) and ("VL" not in loc) and ("VP" not in loc):
+    for loc, alg in DataOnDemandSvc().AlgMap.iteritems():
+        if ('UT' not in loc) and ('FT' not in loc) and ("VL" not in loc) and (
+                "VP" not in loc):
             if alg not in mySeq.Members:
-                 mySeq.Members.append(alg)
+                mySeq.Members.append(alg)
+
 
 #make sure ODIN is first, to resolve ST dependencies manually...
 append()
-ApplicationMgr().TopAlg=[mySeq]
+ApplicationMgr().TopAlg = [mySeq]

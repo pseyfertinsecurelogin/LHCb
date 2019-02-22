@@ -31,4 +31,3 @@ from Configurables import MultipleMagneticFieldSvc
 MultipleMagneticFieldSvc().MagneticFieldServices += ["MagneticFieldSvc/MBXWHFieldSvc", \
                                                      "MagneticFieldSvc/MBXWSLFieldSvc", \
                                                      "MagneticFieldSvc/MBXWSRFieldSvc"]
-

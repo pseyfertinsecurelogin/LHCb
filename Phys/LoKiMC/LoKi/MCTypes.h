@@ -26,8 +26,8 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Functions.h"
-#include "LoKi/Selected.h"
 #include "LoKi/RangeList.h"
+#include "LoKi/Selected.h"
 // ============================================================================
 /** @file
  *
@@ -47,8 +47,7 @@
  *                 by $Author$
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace  LoKi::MCTypes LoKi/MCTypes.h
    *
@@ -60,210 +59,196 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2003-05-11
    */
-  namespace MCTypes
-  {
+  namespace MCTypes {
     // ========================================================================
     /// the basic imported type for the sequence of MC-particles
-    typedef LHCb::MCParticle::ConstVector   MCContainer      ;
+    typedef LHCb::MCParticle::ConstVector MCContainer;
     /// the basic imported type for the sequence of MC-vertices
-    typedef LHCb::MCVertex::ConstVector     MCVContainer     ;
+    typedef LHCb::MCVertex::ConstVector MCVContainer;
 
-    typedef LoKi::Selected_<MCContainer>    MCSelected       ;
-    typedef LoKi::Selected_<MCVContainer>   MCVSelected      ;
+    typedef LoKi::Selected_<MCContainer>  MCSelected;
+    typedef LoKi::Selected_<MCVContainer> MCVSelected;
 
     /// the actual type of the sequence of MC-particles
-    typedef MCSelected::Range               MCRange          ;
+    typedef MCSelected::Range MCRange;
     /// the actual type of the sequence of MC-vertices
-    typedef MCVSelected::Range              MCVRange         ;
+    typedef MCVSelected::Range MCVRange;
 
     /// type of 'cuts' for MCParticles       (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate MCCuts ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate MCCuts;
     /// type of 'functions' for <MCParticles  (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Function  MCFunc ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Function MCFunc;
     /// type of 'cuts' for MCParticles       (assignable)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::PredicateFromPredicate MCCut   ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::PredicateFromPredicate MCCut;
     /// type of 'functions' for MCParticles  (assignable)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::FunctionFromFunction   MCFun   ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::FunctionFromFunction MCFun;
 
     /// type of 'cuts' for MCVertices      (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate MCVCuts ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate MCVCuts;
     /// type of 'functions' for MCVertices (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Function  MCVFunc ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Function MCVFunc;
     /// type of 'cuts' for Vertices      (assignable)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::PredicateFromPredicate MCVCut ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::PredicateFromPredicate MCVCut;
     /// type of 'functions' for Vertices (assignable)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::FunctionFromFunction   MCVFun ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::FunctionFromFunction MCVFun;
     // ========================================================================
     // "functional" types for LHCb::MCParticle
     // ========================================================================
     /// type of "map" for LHCb::MCParticle   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Map     MCMaps     ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Map MCMaps;
     /// type of "map" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable_t<MCMaps>                            MCMap      ;
+    typedef LoKi::Assignable_t<MCMaps> MCMap;
     /// type of "pipe" for LHCb::MCParticle   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Pipe    MCPipes    ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Pipe MCPipes;
     /// type of "pipe" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable_t<MCPipes>                           MCPipe     ;
+    typedef LoKi::Assignable_t<MCPipes> MCPipe;
     /// type of "fun-val" for LHCb::MCParticle   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::FunVal  MCFunVals  ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::FunVal MCFunVals;
     /// type of "fun-val" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable_t<MCFunVals>                         MCFunVal   ;
+    typedef LoKi::Assignable_t<MCFunVals> MCFunVal;
     /// type of "cut-val" for LHCb::MCParticle   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::CutVal  MCCutVals  ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::CutVal MCCutVals;
     /// type of "cut-val" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable_t<MCCutVals>                         MCCutVal   ;
+    typedef LoKi::Assignable_t<MCCutVals> MCCutVal;
     /// type of "source" for LHCb::MCParticle   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Source  MCSources  ;
+    typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Source MCSources;
     /// type of "source" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable_t<MCSources>                         MCSource   ;
+    typedef LoKi::Assignable_t<MCSources> MCSource;
     // ========================================================================
     // "functional" types for LHCb::MCVertex
     // ========================================================================
     /// type of "map" for LHCb::MCVertex   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Map       MCVMaps     ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Map MCVMaps;
     /// type of "map" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable_t<MCVMaps>                           MCVMap      ;
+    typedef LoKi::Assignable_t<MCVMaps> MCVMap;
     /// type of "pipe" for LHCb::MCVertex   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Pipe      MCVPipes    ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Pipe MCVPipes;
     /// type of "pipe" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable_t<MCVPipes>                          MCVPipe     ;
+    typedef LoKi::Assignable_t<MCVPipes> MCVPipe;
     /// type of "fun-val" for LHCb::MCVertex   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::FunVal    MCVFunVals  ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::FunVal MCVFunVals;
     /// type of "fun-val" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable_t<MCVFunVals>                        MCVFunVal   ;
+    typedef LoKi::Assignable_t<MCVFunVals> MCVFunVal;
     /// type of "cut-val" for LHCb::MCVertex   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::CutVal    MCVCutVals  ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::CutVal MCVCutVals;
     /// type of "cut-val" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable_t<MCVCutVals>                        MCVCutVal   ;
+    typedef LoKi::Assignable_t<MCVCutVals> MCVCutVal;
     /// type of "source" for LHCb::MCVertex   (interface)
-    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Source    MCVSources  ;
+    typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Source MCVSources;
     /// type of "source" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable_t<MCVSources>                        MCVSource   ;
+    typedef LoKi::Assignable_t<MCVSources> MCVSource;
     // ========================================================================
-  } //                                           end of namespace LoKi::MCTypes
+  } // namespace MCTypes
   // ==========================================================================
-  namespace Types
-  {
+  namespace Types {
     // ========================================================================
     /// the actual type of the sequence of MC-particles
-    typedef LoKi::MCTypes::MCRange  MCRange ;
+    typedef LoKi::MCTypes::MCRange MCRange;
     /// the actual type of the sequence of MC-vertices
-    typedef LoKi::MCTypes::MCVRange MCVRange ;
+    typedef LoKi::MCTypes::MCVRange MCVRange;
     /// type of 'cuts' for MCParticles       (interface)
-    typedef LoKi::MCTypes::MCCuts  MCCuts ;
+    typedef LoKi::MCTypes::MCCuts MCCuts;
     /// type of 'functions' for <MCParticles  (interface)
-    typedef LoKi::MCTypes::MCFunc  MCFunc ;
+    typedef LoKi::MCTypes::MCFunc MCFunc;
     /// type of 'cuts' for MCParticles       (assignable)
-    typedef LoKi::MCTypes::MCCut   MCCut  ;
+    typedef LoKi::MCTypes::MCCut MCCut;
     /// type of 'functions' for MCParticles  (assignable)
-    typedef LoKi::MCTypes::MCFun   MCFun  ;
+    typedef LoKi::MCTypes::MCFun MCFun;
     /// type of 'cuts' for MCVertices        (interface)
-    typedef LoKi::MCTypes::MCVCuts MCVCuts ;
+    typedef LoKi::MCTypes::MCVCuts MCVCuts;
     /// type of 'functions' for MCVertices   (interface)
-    typedef LoKi::MCTypes::MCVFunc MCVFunc ;
+    typedef LoKi::MCTypes::MCVFunc MCVFunc;
     /// type of 'cuts' for Vertices          (assignable)
-    typedef LoKi::MCTypes::MCVCut  MCVCut  ;
+    typedef LoKi::MCTypes::MCVCut MCVCut;
     /// type of 'functions' for Vertices     (assignable)
-    typedef LoKi::MCTypes::MCVFun  MCVFun  ;
+    typedef LoKi::MCTypes::MCVFun MCVFun;
     /// the actual type of the range list
-    typedef LoKi::RangeList_<MCRange>  MCRangeL  ;
+    typedef LoKi::RangeList_<MCRange> MCRangeL;
     /// the actual type of the range list
-    typedef LoKi::RangeList_<MCVRange> MCVRangeL ;
+    typedef LoKi::RangeList_<MCVRange> MCVRangeL;
     // ========================================================================
     // "functional" types for LHCb::MCParticle
     // ========================================================================
     /// type of "map"     for LHCb::MCParticle   (interface)
-    typedef LoKi::MCTypes::MCMaps                MCMaps      ;
+    typedef LoKi::MCTypes::MCMaps MCMaps;
     /// type of "map"     for LHCb::MCParticle   (assignable)
-    typedef LoKi::MCTypes::MCMap                 MCMap       ;
+    typedef LoKi::MCTypes::MCMap MCMap;
     /// type of "pipe"    for LHCb::MCParticle   (interface)
-    typedef LoKi::MCTypes::MCPipes               MCPipes     ;
+    typedef LoKi::MCTypes::MCPipes MCPipes;
     /// type of "pipe"    for LHCb::MCParticle   (assignable)
-    typedef LoKi::MCTypes::MCPipe                MCPipe      ;
+    typedef LoKi::MCTypes::MCPipe MCPipe;
     /// type of "fun-val" for LHCb::MCParticle   (interface)
-    typedef LoKi::MCTypes::MCFunVals             MCFunVals   ;
+    typedef LoKi::MCTypes::MCFunVals MCFunVals;
     /// type of "fun-val" for LHCb::MCParticle   (assignable)
-    typedef LoKi::MCTypes::MCFunVal              MCFunVal    ;
+    typedef LoKi::MCTypes::MCFunVal MCFunVal;
     /// type of "cut-val" for LHCb::MCParticle   (interface)
-    typedef LoKi::MCTypes::MCCutVals             MCCutVals   ;
+    typedef LoKi::MCTypes::MCCutVals MCCutVals;
     /// type of "cut-val" for LHCb::MCParticle   (assignable)
-    typedef LoKi::MCTypes::MCCutVal              MCCutVal    ;
+    typedef LoKi::MCTypes::MCCutVal MCCutVal;
     /// type of "source"  for LHCb::MCParticle   (interface)
-    typedef LoKi::MCTypes::MCSources             MCSources   ;
+    typedef LoKi::MCTypes::MCSources MCSources;
     /// type of "source"  for LHCb::MCParticle   (assignable)
-    typedef LoKi::MCTypes::MCSource              MCSource    ;
+    typedef LoKi::MCTypes::MCSource MCSource;
     // ========================================================================
     // "functional" types for LHCb::MCVertex
     // ========================================================================
     /// type of "map"     for LHCb::MCVertex     (interface)
-    typedef LoKi::MCTypes::MCVMaps               MCVMaps     ;
+    typedef LoKi::MCTypes::MCVMaps MCVMaps;
     /// type of "map"     for LHCb::MCVertex     (assignable)
-    typedef LoKi::MCTypes::MCVMap                MCVMap      ;
+    typedef LoKi::MCTypes::MCVMap MCVMap;
     /// type of "pipe"    for LHCb::MCVertex     (interface)
-    typedef LoKi::MCTypes::MCVPipes              MCVPipes    ;
+    typedef LoKi::MCTypes::MCVPipes MCVPipes;
     /// type of "pipe"    for LHCb::MCVertex     (assignable)
-    typedef LoKi::MCTypes::MCVPipe               MCVPipe     ;
+    typedef LoKi::MCTypes::MCVPipe MCVPipe;
     /// type of "fun-val" for LHCb::MCVertex     (interface)
-    typedef LoKi::MCTypes::MCVFunVals            MCVFunVals  ;
+    typedef LoKi::MCTypes::MCVFunVals MCVFunVals;
     /// type of "fun-val" for LHCb::MCVertex     (assignable)
-    typedef LoKi::MCTypes::MCVFunVal             MCVFunVal   ;
+    typedef LoKi::MCTypes::MCVFunVal MCVFunVal;
     /// type of "cut-val" for LHCb::MCVertex     (interface)
-    typedef LoKi::MCTypes::MCVCutVals            MCVCutVals  ;
+    typedef LoKi::MCTypes::MCVCutVals MCVCutVals;
     /// type of "cut-val" for LHCb::MCVertex     (assignable)
-    typedef LoKi::MCTypes::MCVCutVal             MCVCutVal   ;
+    typedef LoKi::MCTypes::MCVCutVal MCVCutVal;
     /// type of "source"  for LHCb::MCVertex     (interface)
-    typedef LoKi::MCTypes::MCVSources            MCVSources  ;
+    typedef LoKi::MCTypes::MCVSources MCVSources;
     /// type of "source"  for LHCb::MCVertex     (assignable)
-    typedef LoKi::MCTypes::MCVSource             MCVSource   ;
+    typedef LoKi::MCTypes::MCVSource MCVSource;
     // ========================================================================
-  } //                                             end of namespace LoKi::Types
+  } // namespace Types
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   // the specialized printout
   // ==========================================================================
   template <>
-  inline std::ostream&
-  Constant<const LHCb::MCParticle*,bool>::fillStream( std::ostream& s ) const
-  { return s << ( this->m_value ? "MCALL" : "MCNONE"  ) ; }
+  inline std::ostream& Constant<const LHCb::MCParticle*, bool>::fillStream( std::ostream& s ) const {
+    return s << ( this->m_value ? "MCALL" : "MCNONE" );
+  }
   // ==========================================================================
   // the specialized printout
   // ==========================================================================
   template <>
-  inline std::ostream&
-  Constant<const LHCb::MCVertex*,bool>::fillStream  ( std::ostream& s ) const
-  { return s << ( this->m_value ? "MCVALL" : "MCVNONE" ) ; }
+  inline std::ostream& Constant<const LHCb::MCVertex*, bool>::fillStream( std::ostream& s ) const {
+    return s << ( this->m_value ? "MCVALL" : "MCVNONE" );
+  }
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
 // a little bit of streamers
 // ============================================================================
 GAUDI_API
-LHCb::MCParticle::ConstVector
-operator>>
-( const LHCb::MCParticle::ConstVector&    input ,
-  const LoKi::Types::MCCuts&              cuts  ) ;
+LHCb::MCParticle::ConstVector operator>>( const LHCb::MCParticle::ConstVector& input, const LoKi::Types::MCCuts& cuts );
 // ============================================================================
 GAUDI_API
-LHCb::MCParticle::ConstVector
-operator>>
-( const LHCb::MCParticle::Container*      input ,
-  const LoKi::Types::MCCuts&              cuts  ) ;
+LHCb::MCParticle::ConstVector operator>>( const LHCb::MCParticle::Container* input, const LoKi::Types::MCCuts& cuts );
 // ============================================================================
 GAUDI_API
-LHCb::MCParticle::ConstVector
-operator>>
-( const LoKi::MCTypes::MCRange&           input ,
-  const LoKi::Types::MCCuts&              cuts  ) ;
+LHCb::MCParticle::ConstVector operator>>( const LoKi::MCTypes::MCRange& input, const LoKi::Types::MCCuts& cuts );
 // ============================================================================
 GAUDI_API
-LHCb::MCParticle::ConstVector
-operator>>
-( const SmartRefVector<LHCb::MCParticle>& input ,
-  const LoKi::Types::MCCuts&              cuts  ) ;
+LHCb::MCParticle::ConstVector operator>>( const SmartRefVector<LHCb::MCParticle>& input,
+                                          const LoKi::Types::MCCuts&              cuts );
 // ============================================================================
 //                                                                      The END
 // ============================================================================

@@ -14,5 +14,5 @@
 // UTDet
 #include "UTDet/DeUTLayer.h"
 
-typedef XmlUserDetElemCnv<DeUTLayer >        XmlUTLayerCnv;
+typedef XmlUserDetElemCnv<DeUTLayer> XmlUTLayerCnv;
 DECLARE_CONVERTER( XmlUTLayerCnv )

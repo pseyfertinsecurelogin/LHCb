@@ -44,54 +44,41 @@
  *  @param useRootInTES flato to use/ignore root-in-tes
  */
 // ============================================================================
-LoKi::TES::HasRecSummary::HasRecSummary
-( const GaudiAlgorithm* algorithm , 
-  const int             key          ,
-  const std::string&    location     ,
-  const bool            useRootInTES )
-  : LoKi::AuxFunBase ( std::tie ( algorithm , key , location , useRootInTES ) )
-  , LoKi::TES::Exists ( algorithm , location , useRootInTES )
-  , m_key ( key )
-{
-  if  ( location.empty () )
-  { setLocation( LHCb::RecSummaryLocation::Default ) ; }
+LoKi::TES::HasRecSummary::HasRecSummary( const GaudiAlgorithm* algorithm, const int key, const std::string& location,
+                                         const bool useRootInTES )
+    : LoKi::AuxFunBase( std::tie( algorithm, key, location, useRootInTES ) )
+    , LoKi::TES::Exists( algorithm, location, useRootInTES )
+    , m_key( key ) {
+  if ( location.empty() ) { setLocation( LHCb::RecSummaryLocation::Default ); }
 }
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::TES::HasRecSummary*
-LoKi::TES::HasRecSummary::clone () const
-{ return new LoKi::TES::HasRecSummary ( *this ) ; }
+LoKi::TES::HasRecSummary* LoKi::TES::HasRecSummary::clone() const { return new LoKi::TES::HasRecSummary( *this ); }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool LoKi::TES::HasRecSummary::operator() (  ) const
-{
+bool LoKi::TES::HasRecSummary::operator()() const {
   //
-  const LHCb::RecSummary* summary =
-    LoKi::TES::get_<LHCb::RecSummary> ( *this );
+  const LHCb::RecSummary* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
   //
-  if ( NULL == summary )
-  {
-    Error ( "No LHCb::RecSummary is available at '" + location () + "'") ;
-    return false ;
+  if ( NULL == summary ) {
+    Error( "No LHCb::RecSummary is available at '" + location() + "'" );
+    return false;
   }
   //
-  return summary -> hasInfo ( m_key ) ;
+  return summary->hasInfo( m_key );
 }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
-std::ostream&
-LoKi::TES::HasRecSummary::fillStream ( std::ostream& s ) const
-{
+std::ostream& LoKi::TES::HasRecSummary::fillStream( std::ostream& s ) const {
   //
-  s << " HASRECSUMMARY( " << m_key ;
-  if ( !useRootInTES () || LHCb::RecSummaryLocation::Default != location() )
-  { s << ",'" << location() << "'" ; }
-  if ( !useRootInTES () ) { s << ", False " ; }
+  s << " HASRECSUMMARY( " << m_key;
+  if ( !useRootInTES() || LHCb::RecSummaryLocation::Default != location() ) { s << ",'" << location() << "'"; }
+  if ( !useRootInTES() ) { s << ", False "; }
   //
-  return s << " ) " ;
+  return s << " ) ";
 }
 // ============================================================================
 /*  Standard constructor from the key, location and 'rootInTES'
@@ -101,58 +88,43 @@ LoKi::TES::HasRecSummary::fillStream ( std::ostream& s ) const
  *  @param useRootInTES flato to use/ignore root-in-tes
  */
 // ============================================================================
-LoKi::TES::RecSummary::RecSummary
-( const GaudiAlgorithm* algorithm , 
-  const int          key          ,
-  const int          bad          ,
-  const std::string& location     ,
-  const bool         useRootInTES )
-  : LoKi::AuxFunBase ( std::tie ( algorithm , key , bad , location , useRootInTES ) )
-  , LoKi::TES::Contains ( algorithm , location , useRootInTES )
-  , m_key ( key )
-  , m_bad ( bad )
-{
-  if  ( location.empty () )
-  { setLocation( LHCb::RecSummaryLocation::Default ) ; }
+LoKi::TES::RecSummary::RecSummary( const GaudiAlgorithm* algorithm, const int key, const int bad,
+                                   const std::string& location, const bool useRootInTES )
+    : LoKi::AuxFunBase( std::tie( algorithm, key, bad, location, useRootInTES ) )
+    , LoKi::TES::Contains( algorithm, location, useRootInTES )
+    , m_key( key )
+    , m_bad( bad ) {
+  if ( location.empty() ) { setLocation( LHCb::RecSummaryLocation::Default ); }
 }
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::TES::RecSummary*
-LoKi::TES::RecSummary::clone () const
-{ return new LoKi::TES::RecSummary ( *this ) ; }
+LoKi::TES::RecSummary* LoKi::TES::RecSummary::clone() const { return new LoKi::TES::RecSummary( *this ); }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double LoKi::TES::RecSummary::operator() (  ) const
-{
+double LoKi::TES::RecSummary::operator()() const {
   //
-  const LHCb::RecSummary* summary = LoKi::TES::get_<LHCb::RecSummary> ( *this );
+  const LHCb::RecSummary* summary = LoKi::TES::get_<LHCb::RecSummary>( *this );
   //
-  if ( NULL == summary )
-  {
-    Error ( "No LHCb::RecSummary is available at '" + location () + "'") ;
-    return m_bad ;
+  if ( NULL == summary ) {
+    Error( "No LHCb::RecSummary is available at '" + location() + "'" );
+    return m_bad;
   }
   //
-  return summary -> info ( m_key , m_bad ) ;
+  return summary->info( m_key, m_bad );
 }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
-std::ostream&
-LoKi::TES::RecSummary::fillStream ( std::ostream& s ) const
-{
-  s << " RECSUMMARY( " << m_key << "," << m_bad ;
-  if ( !useRootInTES() || LHCb::RecSummaryLocation::Default != location() )
-  { s << ",'" << location() << "'" ; }
-  if ( !useRootInTES() ) { s << ", False " ; }
+std::ostream& LoKi::TES::RecSummary::fillStream( std::ostream& s ) const {
+  s << " RECSUMMARY( " << m_key << "," << m_bad;
+  if ( !useRootInTES() || LHCb::RecSummaryLocation::Default != location() ) { s << ",'" << location() << "'"; }
+  if ( !useRootInTES() ) { s << ", False "; }
   //
-  return s << " ) " ;
+  return s << " ) ";
 }
 // ============================================================================
-
-
 
 // ============================================================================
 // The END

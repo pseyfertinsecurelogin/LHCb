@@ -16,12 +16,10 @@
 #include <string>
 #include <vector>
 
-namespace LHCb
-{
+namespace LHCb {
 
   // Namespace for locations in TDS
-  namespace PackedTwoProngVertexLocation
-  {
+  namespace PackedTwoProngVertexLocation {
     inline const std::string Default = "pRec/Vertex/V0";
   }
 
@@ -32,8 +30,7 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2009-01-21
    */
-  struct PackedTwoProngVertex
-  {
+  struct PackedTwoProngVertex {
 
     int key{0};
     int technique{0};
@@ -77,7 +74,6 @@ namespace LHCb
     unsigned short int lastInfo{0};
     unsigned short int firstPid{0};
     unsigned short int lastPid{0};
-
   };
 
   constexpr CLID CLID_PackedTwoProngVertices = 1554;
@@ -90,32 +86,27 @@ namespace LHCb
    *  @date   2009-01-21
    */
 
-  class PackedTwoProngVertices : public DataObject
-  {
+  class PackedTwoProngVertices : public DataObject {
 
   public:
-
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
   public:
-
-    const CLID& clID()  const override { return PackedTwoProngVertices::classID(); }
-    static  const CLID& classID()     { return CLID_PackedTwoProngVertices;       }
-
-  public:
-
-    std::vector<PackedTwoProngVertex>&       vertices()          { return m_vect; }
-    const std::vector<PackedTwoProngVertex>& vertices() const    { return m_vect; }
-
-    std::vector<long long>&       refs()                         { return m_refs; }
-    const std::vector<long long>& refs() const                   { return m_refs; }
-
-    std::vector<std::pair<int,int> >&       extras()             { return m_extra; }
-    const std::vector<std::pair<int,int> >& extras() const       { return m_extra; }
+    const CLID&        clID() const override { return PackedTwoProngVertices::classID(); }
+    static const CLID& classID() { return CLID_PackedTwoProngVertices; }
 
   public:
+    std::vector<PackedTwoProngVertex>&       vertices() { return m_vect; }
+    const std::vector<PackedTwoProngVertex>& vertices() const { return m_vect; }
 
+    std::vector<long long>&       refs() { return m_refs; }
+    const std::vector<long long>& refs() const { return m_refs; }
+
+    std::vector<std::pair<int, int>>&       extras() { return m_extra; }
+    const std::vector<std::pair<int, int>>& extras() const { return m_extra; }
+
+  public:
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
 
@@ -123,18 +114,16 @@ namespace LHCb
     char packingVersion() const { return m_packingVersion; }
 
   private:
-
-    std::vector<PackedTwoProngVertex>  m_vect;
-    std::vector<long long>             m_refs;
-    std::vector<std::pair<int,int> >   m_extra;
+    std::vector<PackedTwoProngVertex> m_vect;
+    std::vector<long long>            m_refs;
+    std::vector<std::pair<int, int>>  m_extra;
 
     /** Data packing version.
      *  Packing version must be set to 0 by default, for compatibility with
      *  data written before the version was added */
     char m_packingVersion{0};
-
   };
 
-} // End of LHCb namespace
+} // namespace LHCb
 
 #endif // EVENT_PACKEDTWOPRONGVERTEX_H

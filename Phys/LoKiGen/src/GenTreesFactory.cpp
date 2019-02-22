@@ -13,11 +13,11 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/iTree.h"
-#include "LoKi/Trees.h"
-#include "LoKi/GenDecays.h"
 #include "LoKi/GenTreesFactory.h"
+#include "LoKi/GenDecays.h"
 #include "LoKi/ParserFactory.h"
+#include "LoKi/Trees.h"
+#include "LoKi/iTree.h"
 // ============================================================================
 /** @file
  *  Implementation file for function from the file LoKi/GenTreeFactory.h
@@ -33,13 +33,10 @@
  *   @date   2009-05-06
  */
 // ============================================================================
-StatusCode Decays::Trees::factory
-( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree       ,
-  const Decays::iNode&                                    mother     ,
-  const Decays::Trees::Oscillation&                       oscillated )
-{
-  tree = Decays::Trees::GenExclusive ( oscillated , mother ) ;
-  return StatusCode::SUCCESS ;
+StatusCode Decays::Trees::factory( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree,
+                                   const Decays::iNode& mother, const Decays::Trees::Oscillation& oscillated ) {
+  tree = Decays::Trees::GenExclusive( oscillated, mother );
+  return StatusCode::SUCCESS;
 }
 // ==========================================================================
 /* "Factory" to create the proper Tree from the full description
@@ -56,83 +53,75 @@ StatusCode Decays::Trees::factory
  *  @date   2009-05-06
  */
 // ==========================================================================
-StatusCode Decays::Trees::factory
-( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree&           tree       ,
-  const Decays::iNode&                                              mother     ,
-  const Decays::Trees::Oscillation&                                 oscillated ,
-  const Decays::Trees::Arrow&                                       arrow      ,
-  const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& daughters  ,
-  const bool                                                        inclusive  ,
-  const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& optional   ,
-  std::ostream&                                                     stream     )
-{
-  if ( !Decays::Trees::valid( arrow ) )
-  {
-    StatusCode code = StatusCode ( Decays::Trees::InvalidArrow ) ;
-    stream << "ERROR: Invalid arrow : " << arrow << " " << code << '\n' ;
-    return code ;
+StatusCode Decays::Trees::factory( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree,
+                                   const Decays::iNode& mother, const Decays::Trees::Oscillation& oscillated,
+                                   const Decays::Trees::Arrow&                                       arrow,
+                                   const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& daughters,
+                                   const bool                                                        inclusive,
+                                   const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& optional,
+                                   std::ostream&                                                     stream ) {
+  if ( !Decays::Trees::valid( arrow ) ) {
+    StatusCode code = StatusCode( Decays::Trees::InvalidArrow );
+    stream << "ERROR: Invalid arrow : " << arrow << " " << code << '\n';
+    return code;
   }
 
   // decode the arrow
-  const Decays::Trees::Alg alg       = Decays::Trees::algorithm ( arrow ) ;
-  const bool               photos    = Decays::Trees::photos    ( arrow ) ;
-  const bool               decayOnly = Decays::Trees::decayOnly ( arrow ) ;
+  const Decays::Trees::Alg alg       = Decays::Trees::algorithm( arrow );
+  const bool               photos    = Decays::Trees::photos( arrow );
+  const bool               decayOnly = Decays::Trees::decayOnly( arrow );
 
-  if ( inclusive && !optional.empty() )
-  {
-    StatusCode code = StatusCode ( Decays::Trees::InclusiveOptional ) ;
-    stream << "ERROR: 'Inclusive' & 'optional' are mutually exclusive "
-           <<  code << '\n' ;
-    return code ;                                                     // RETURN
+  if ( inclusive && !optional.empty() ) {
+    StatusCode code = StatusCode( Decays::Trees::InclusiveOptional );
+    stream << "ERROR: 'Inclusive' & 'optional' are mutually exclusive " << code << '\n';
+    return code; // RETURN
   }
-  if ( inclusive && photos            )
-  {
-    StatusCode code = StatusCode ( Decays::Trees::InclusivePhotos   ) ;
-    stream << "ERROR: 'Inclusive' & 'photos' are mutually exclusive   "
-           << code << '\n' ;
-    return code ;                                                      // RETURN
+  if ( inclusive && photos ) {
+    StatusCode code = StatusCode( Decays::Trees::InclusivePhotos );
+    stream << "ERROR: 'Inclusive' & 'photos' are mutually exclusive   " << code << '\n';
+    return code; // RETURN
   }
-  if ( !decayOnly )
-  {
-    StatusCode code = StatusCode ( Decays::Trees::InvalidDecayOnly ) ;
-    stream << "ERROR: invalid 'Decay Only' flag                       "
-           << code << '\n' ;
-    return code ;                                                      // RETURN
+  if ( !decayOnly ) {
+    StatusCode code = StatusCode( Decays::Trees::InvalidDecayOnly );
+    stream << "ERROR: invalid 'Decay Only' flag                       " << code << '\n';
+    return code; // RETURN
   }
 
   // create the basic decay tree:
-  Decays::Trees::GenExclusive decay ( mother     ,
-                                      daughters  ,
-                                      alg        ,
-                                      oscillated ) ;
+  Decays::Trees::GenExclusive decay( mother, daughters, alg, oscillated );
   //
-  if ( inclusive && decay.marked() )
-  {
-    StatusCode code = StatusCode ( Decays::Trees::InclusiveMarked ) ;
-    stream << "ERROR: 'Inclusive' & 'marked' can't be properly defined "
-           <<  code << '\n' ;
-    return code ;                                                     // RETURN
+  if ( inclusive && decay.marked() ) {
+    StatusCode code = StatusCode( Decays::Trees::InclusiveMarked );
+    stream << "ERROR: 'Inclusive' & 'marked' can't be properly defined " << code << '\n';
+    return code; // RETURN
   }
 
-  if ( optional.empty() )
-  {
-    if      ( !inclusive )                                   // exclusive decays
+  if ( optional.empty() ) {
+    if ( !inclusive ) // exclusive decays
     {
-      if  ( photos ) { tree = Decays::Trees::GenPhotos ( decay ) ; } // + photos
-      else           { tree =                            decay   ; }
-    }
-    else { tree = Decays::Trees::GenInclusive ( decay ) ; }  // inclusive decays
-  }
-  else                                          // decays with optional elements
+      if ( photos ) {
+        tree = Decays::Trees::GenPhotos( decay );
+      } // + photos
+      else {
+        tree = decay;
+      }
+    } else {
+      tree = Decays::Trees::GenInclusive( decay );
+    }    // inclusive decays
+  } else // decays with optional elements
   {
-    Decays::Trees::GenOptional opt ( decay , optional ) ;
-    if  ( photos ) { tree = Decays::Trees::GenPhotosOptional ( opt) ; } // + photos
-    else           { tree =                                    opt  ; }
-    return StatusCode::SUCCESS ;
+    Decays::Trees::GenOptional opt( decay, optional );
+    if ( photos ) {
+      tree = Decays::Trees::GenPhotosOptional( opt );
+    } // + photos
+    else {
+      tree = opt;
+    }
+    return StatusCode::SUCCESS;
   }
 
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
 /*  "Factory" to create the proper Tree from the parsed tree
@@ -144,15 +133,11 @@ StatusCode Decays::Trees::factory
  *   @date   2009-05-22
  */
 // ============================================================================
-StatusCode Decays::Trees::factory
-( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree   ,
-  const Decays::Parsers::Tree&                            parsed ,
-  std::ostream&                                           stream )
-{
-  return Decays::Parsers::factory ( tree , parsed , stream ) ;        // RETURN
+StatusCode Decays::Trees::factory( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree,
+                                   const Decays::Parsers::Tree& parsed, std::ostream& stream ) {
+  return Decays::Parsers::factory( tree, parsed, stream ); // RETURN
 }
 // ============================================================================
-
 
 // ============================================================================
 // The END

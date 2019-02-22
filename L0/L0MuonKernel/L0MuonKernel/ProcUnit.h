@@ -9,8 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_PROCUNIT_H
-#define L0MUONKERNEL_PROCUNIT_H     1
-
+#define L0MUONKERNEL_PROCUNIT_H 1
 
 #include "L0MuonKernel/L0MUnit.h"
 
@@ -39,27 +38,24 @@ namespace L0Muon {
   class ProcUnit : public L0MUnit {
 
   public:
-
     /// Default constructor
     ProcUnit();
 
     /// Constructor
-    ProcUnit(DOMNode* pNode);
+    ProcUnit( DOMNode* pNode );
 
     /// Destructor
     ~ProcUnit();
 
     /// Return the MuonTileID of the PU
-    LHCb::MuonTileID puId(){return m_mid;}
+    LHCb::MuonTileID puId() { return m_mid; }
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "ProcUnit";
-    }
+    std::string type() override { return "ProcUnit"; }
 
   private:
   };
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_PROCUNIT_H
+#endif // L0MUONKERNEL_PROCUNIT_H

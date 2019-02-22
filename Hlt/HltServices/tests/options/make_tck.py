@@ -19,7 +19,6 @@ from Configurables import LHCbApp
 from Configurables import CondDB
 from Configurables import HltLinePersistenceSvc
 
-
 parser = argparse.ArgumentParser(usage='usage: %(prog)s prescale')
 
 parser.add_argument("prescale", type=float, help="what prescale")
@@ -40,29 +39,28 @@ if not os.path.exists(TCKData):
     os.makedirs(TCKData)
 
 # TCK access service
-accessSvc = ConfigCDBAccessSvc(File=TCKData + '/config.cdb',
-                               Mode='ReadWrite')
+accessSvc = ConfigCDBAccessSvc(File=TCKData + '/config.cdb', Mode='ReadWrite')
 
 # Sequence, actually only a prescaler
 seq = GaudiSequencer("TestSequence")
-prescaler = DeterministicPrescaler("TestScaler",
-                                   AcceptFraction=scale)
+prescaler = DeterministicPrescaler("TestScaler", AcceptFraction=scale)
 seq.Members = [prescaler]
 
 # The HltLinePersistenceSvc (for the TCKLinePersistenceSvc test)
-execfile(os.path.expandvars('$HLTSERVICESROOT/tests/options/'
-                            'line_persistence_svc_cfg.py'))
+execfile(
+    os.path.expandvars('$HLTSERVICESROOT/tests/options/'
+                       'line_persistence_svc_cfg.py'))
 persistence_svc = configure_hlt_svc()
 ApplicationMgr().ExtSvc += [persistence_svc]
 
 # Algorithm to generate the TCK
-gen = HltGenConfig(ConfigTop=[seq.getName()],
-                   ConfigSvc=['ToolSvc', persistence_svc.getFullName()],
-                   ConfigAccessSvc=accessSvc.getName(),
-                   HltType="LHCb_Test",
-                   MooreRelease="v1r0",
-                   Label="Test")
-
+gen = HltGenConfig(
+    ConfigTop=[seq.getName()],
+    ConfigSvc=['ToolSvc', persistence_svc.getFullName()],
+    ConfigAccessSvc=accessSvc.getName(),
+    HltType="LHCb_Test",
+    MooreRelease="v1r0",
+    Label="Test")
 
 # make sure gen is the very first Top algorithm
 ApplicationMgr().TopAlg = [gen.getFullName(), seq]

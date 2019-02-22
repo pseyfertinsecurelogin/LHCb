@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files 
+// Include files
 
 // local
 #include "CompareProtoParticle.h"
@@ -25,26 +25,23 @@ DECLARE_COMPONENT( CompareProtoParticle )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-CompareProtoParticle::CompareProtoParticle( const std::string& name,
-                                            ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
+CompareProtoParticle::CompareProtoParticle( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ) {
   declareProperty( "InputName", m_inputName = LHCb::ProtoParticleLocation::Charged );
-  declareProperty( "TestName" , m_testName  = LHCb::ProtoParticleLocation::Charged+"Test" );
+  declareProperty( "TestName", m_testName = LHCb::ProtoParticleLocation::Charged + "Test" );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode CompareProtoParticle::execute() 
-{
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
- 
-  LHCb::ProtoParticles* old  = get<LHCb::ProtoParticles>( m_inputName  );
-  LHCb::ProtoParticles* test = get<LHCb::ProtoParticles>( m_testName  );
+StatusCode CompareProtoParticle::execute() {
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
+
+  LHCb::ProtoParticles* old  = get<LHCb::ProtoParticles>( m_inputName );
+  LHCb::ProtoParticles* test = get<LHCb::ProtoParticles>( m_testName );
 
   // check and return
-  const LHCb::ProtoParticlePacker packer(this);
+  const LHCb::ProtoParticlePacker packer( this );
   return packer.check( *old, *test );
 }
 

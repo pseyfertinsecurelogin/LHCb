@@ -27,8 +27,7 @@
 // local
 #include "RichFutureKernel/RichCommonBase.h"
 
-namespace Rich::Future
-{
+namespace Rich::Future {
 
   //-----------------------------------------------------------------------------
   /** @class ToolBase RichToolBase.h RichFutureKernel/RichToolBase.h
@@ -41,15 +40,12 @@ namespace Rich::Future
    */
   //-----------------------------------------------------------------------------
 
-  class ToolBase : public CommonBase< GaudiTool >
-  {
+  class ToolBase : public CommonBase<GaudiTool> {
 
   public:
-
     /// Standard constructor
-    ToolBase( const std::string &type, const std::string &name, const IInterface *parent )
-      : CommonBase< GaudiTool >( type, name, parent )
-    {}
+    ToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : CommonBase<GaudiTool>( type, name, parent ) {}
   };
 
 } // namespace Rich::Future

@@ -19,18 +19,24 @@
 // 2008-28-10 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 namespace {
-bool apply(OdinBCIDFilter_details::Comparator_t cmp, long bx, long mask, long value) {
-  switch(cmp) {
-      case OdinBCIDFilter_details::Comparator_t::eq  : return (bx & mask) == value;
-      case OdinBCIDFilter_details::Comparator_t::neq : return (bx & mask) != value;
-      case OdinBCIDFilter_details::Comparator_t::ge  : return (bx & mask) >= value;
-      case OdinBCIDFilter_details::Comparator_t::gt  : return (bx & mask) >  value;
-      case OdinBCIDFilter_details::Comparator_t::le  : return (bx & mask) <= value;
-      case OdinBCIDFilter_details::Comparator_t::lt  : return (bx & mask) <  value;
+  bool apply( OdinBCIDFilter_details::Comparator_t cmp, long bx, long mask, long value ) {
+    switch ( cmp ) {
+    case OdinBCIDFilter_details::Comparator_t::eq:
+      return ( bx & mask ) == value;
+    case OdinBCIDFilter_details::Comparator_t::neq:
+      return ( bx & mask ) != value;
+    case OdinBCIDFilter_details::Comparator_t::ge:
+      return ( bx & mask ) >= value;
+    case OdinBCIDFilter_details::Comparator_t::gt:
+      return ( bx & mask ) > value;
+    case OdinBCIDFilter_details::Comparator_t::le:
+      return ( bx & mask ) <= value;
+    case OdinBCIDFilter_details::Comparator_t::lt:
+      return ( bx & mask ) < value;
+    }
+    throw "IMPOSSIBLE";
   }
-  throw "IMPOSSIBLE";
-}
-}
+} // namespace
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( OdinBCIDFilter )
@@ -40,13 +46,12 @@ DECLARE_COMPONENT( OdinBCIDFilter )
 //=============================================================================
 StatusCode OdinBCIDFilter::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
   //
-  info() << " Filtering criteria : " << ( m_revert ? "!" : "" )
-         << "[(BXID & " << m_mask.value() <<")" << toString(m_comparator.value())
-         << " " << m_value.value() << "]" << endmsg;
+  info() << " Filtering criteria : " << ( m_revert ? "!" : "" ) << "[(BXID & " << m_mask.value() << ")"
+         << toString( m_comparator.value() ) << " " << m_value.value() << "]" << endmsg;
 
   return StatusCode::SUCCESS;
 }
@@ -56,22 +61,22 @@ StatusCode OdinBCIDFilter::initialize() {
 //=============================================================================
 StatusCode OdinBCIDFilter::execute() {
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   ++m_all;
 
   // treat trivial requests
-  setFilterPassed(false);
+  setFilterPassed( false );
 
   // get ODIN
-  LHCb::ODIN* odin = getIfExists<LHCb::ODIN>(LHCb::ODINLocation::Default);
-  if( !odin ) return Error("ODIN cannot be loaded",StatusCode::FAILURE);
+  LHCb::ODIN* odin = getIfExists<LHCb::ODIN>( LHCb::ODINLocation::Default );
+  if ( !odin ) return Error( "ODIN cannot be loaded", StatusCode::FAILURE );
 
-  bool decision = apply(m_comparator,odin->bunchId(),m_mask,m_value);
-  if (m_revert) decision = !decision;
-  if (msgLevel(MSG::DEBUG)) debug() << "Accept event : " << odin->bunchId() << " : " << decision << endmsg;
+  bool decision = apply( m_comparator, odin->bunchId(), m_mask, m_value );
+  if ( m_revert ) decision = !decision;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "Accept event : " << odin->bunchId() << " : " << decision << endmsg;
   setFilterPassed( decision );
-  if (decision) ++m_acc;
+  if ( decision ) ++m_acc;
 
   return StatusCode::SUCCESS;
 }
@@ -80,14 +85,13 @@ StatusCode OdinBCIDFilter::execute() {
 //  Finalize
 //=============================================================================
 StatusCode OdinBCIDFilter::finalize() {
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
-  info() << " Filtering criteria : " << ( m_revert ? "!" : "" )
-         << "[(BXID & " << m_mask.value() <<")" << toString(m_comparator.value())
-         << " " << m_value.value() << "]" << endmsg;
+  info() << " Filtering criteria : " << ( m_revert ? "!" : "" ) << "[(BXID & " << m_mask.value() << ")"
+         << toString( m_comparator.value() ) << " " << m_value.value() << "]" << endmsg;
   info() << "   ---> " << m_acc << " accepted events among " << m_all << endmsg;
 
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
+  return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

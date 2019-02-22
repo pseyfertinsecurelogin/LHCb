@@ -18,7 +18,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-
 /** @class IAlgorithmCorrelations IAlgorithmCorrelations.h Kernel/IAlgorithmCorrelations.h
  *
  *  Tool to print a table of correlations of Bernoullian variables.
@@ -40,19 +39,18 @@ struct IAlgorithmCorrelations : extend_interfaces<IAlgTool> {
   // Return the interface ID
   DeclareInterfaceID( IAlgorithmCorrelations, 2, 0 );
   ///< Set algorithms for which correlations are wanted (column, subject)
-  virtual StatusCode algorithms(const std::vector<std::string>&) = 0 ;
+  virtual StatusCode algorithms( const std::vector<std::string>& ) = 0;
   ///< (optional) Set algorithms to check correlations against (row, object)
-  virtual StatusCode algorithmsRow(const std::vector<std::string>&) = 0 ;
+  virtual StatusCode algorithmsRow( const std::vector<std::string>& ) = 0;
 
   ///< Fill results one by one for each algorithm
-  virtual StatusCode fillResult(const std::string& algo,const bool& result) = 0 ;
+  virtual StatusCode fillResult( const std::string& algo, const bool& result ) = 0;
   ///< Actually tell the tool that we reached the end of the event
-  virtual StatusCode endEvent() = 0 ;
+  virtual StatusCode endEvent() = 0;
 
   ///< Print correlation table
-  virtual StatusCode printTable(void) = 0 ;
+  virtual StatusCode printTable( void ) = 0;
   ///< Print list of results
-  virtual StatusCode printList(void) = 0 ;
-
+  virtual StatusCode printList( void ) = 0;
 };
 #endif // KERNEL_IALGORITHMCORRELATIONS_H

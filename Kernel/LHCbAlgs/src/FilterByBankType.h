@@ -53,11 +53,9 @@
  *  @date   2009-03-06
  *
  */
-class FilterByBankType final : public GaudiAlgorithm
-{
+class FilterByBankType final : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   FilterByBankType( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -65,15 +63,13 @@ public:
   StatusCode initialize() override; ///< Algorithm initialization
 
 private:
-
   /// Internal enum vector of selected bank types
   std::vector<LHCb::RawBank::BankType> m_bankTypes;
 
   // Job options
-  std::string m_inputLocation;          ///< Location in TES of the RawEvent
-  std::vector<std::string> m_bankNames; ///< List of banks to look for.
-  bool m_passSelect;                    ///< Flag to determine selection logic.
-
+  std::string              m_inputLocation; ///< Location in TES of the RawEvent
+  std::vector<std::string> m_bankNames;     ///< List of banks to look for.
+  bool                     m_passSelect;    ///< Flag to determine selection logic.
 };
 
 #endif // FILTERBYRUNEVENT_H

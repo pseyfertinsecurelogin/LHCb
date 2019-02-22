@@ -20,8 +20,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Kinematics.h"
 #include "LoKi/GenTypes.h"
+#include "LoKi/Kinematics.h"
 // ============================================================================
 /** @file
  *
@@ -38,11 +38,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace GenParticles
-  {
+  namespace GenParticles {
     // ========================================================================
     /** @class FlightDistance
      *  evaluator of flight  distance of particle
@@ -52,35 +50,33 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    class GAUDI_API Flight : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API Flight : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor from the flag
        *  @param primary use primary vertex, otherwise use own vertex
        */
-      Flight ( const bool primary = false ) ;
+      Flight( const bool primary = false );
       /// MANDATORY: clone method ("virtual destructor")
-      Flight* clone() const  override;
+      Flight* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
       /// use primary vertex ?
-      bool primary() const { return m_primary ; } // use primary vertex ?
+      bool primary() const { return m_primary; } // use primary vertex ?
       // ======================================================================
     private:
       // ======================================================================
       /// use primary vertex
-      bool m_primary ; // use primary vertex
+      bool m_primary; // use primary vertex
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles
+  } // namespace GenParticles
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @var GFLIGHTPV
      *  evaluator of flight distance from PV
@@ -89,7 +85,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    inline const auto GFLIGHTPV = LoKi::GenParticles::Flight{ true  } ;
+    inline const auto GFLIGHTPV = LoKi::GenParticles::Flight{true};
     // ========================================================================
     /** @var GPVFLIGHT
      *  evaluator of flight distance from PV
@@ -100,7 +96,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    inline const auto GPVFLIGHT = LoKi::GenParticles::Flight{ true } ;
+    inline const auto GPVFLIGHT = LoKi::GenParticles::Flight{true};
     // ========================================================================
     /** @var GFLIGHT
      *  evaluator of flight distance
@@ -112,9 +108,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    inline const auto GFLIGHT  = LoKi::GenParticles::Flight{ false } ;
+    inline const auto GFLIGHT = LoKi::GenParticles::Flight{false};
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

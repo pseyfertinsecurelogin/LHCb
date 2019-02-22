@@ -31,8 +31,7 @@
 // Kernel
 #include "Kernel/RichDetectorType.h"
 
-namespace Rich
-{
+namespace Rich {
 
   /// Total number of PD panels
   static const uint8_t NTotalPDPanels = 4;
@@ -48,8 +47,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum Side : int32_t
-  {
+  enum Side : int32_t {
     InvalidSide = -1, ///< Invalid side
                       // RICH1
     top    = 0,       ///< Upper panel in RICH1
@@ -78,20 +76,17 @@ namespace Rich
   std::string text( const Rich::DetectorType rich, const Rich::Side side );
 
   /// Type for container of of side types
-  typedef std::vector< Side > Sides;
+  typedef std::vector<Side> Sides;
   // using Sides = std::vector<Side>;
 
   /// Access a vector of valid particle ID types
-  const Sides &sides() noexcept;
+  const Sides& sides() noexcept;
 
   /// Implement textual ostream << method for Rich::Side enumeration
-  inline std::ostream &operator<<( std::ostream &s, const Rich::Side &side )
-  {
-    return s << Rich::text( side );
-  }
+  inline std::ostream& operator<<( std::ostream& s, const Rich::Side& side ) { return s << Rich::text( side ); }
 
   /// Type for fixed size arrays with RICH panel information
-  template < typename TYPE >
-  using PanelArray = std::array< TYPE, NPDPanelsPerRICH >;
+  template <typename TYPE>
+  using PanelArray = std::array<TYPE, NPDPanelsPerRICH>;
 
 } // namespace Rich

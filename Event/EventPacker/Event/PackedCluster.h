@@ -10,15 +10,14 @@
 \*****************************************************************************/
 #ifndef EVENT_PACKEDCLUSTER_H
 #define EVENT_PACKEDCLUSTER_H 1
-#include "GaudiKernel/DataObject.h"
-#include "Event/VeloCluster.h"
 #include "Event/STCluster.h"
 #include "Event/UTCluster.h"
+#include "Event/VeloCluster.h"
+#include "GaudiKernel/DataObject.h"
 #include <string>
 #include <vector>
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class PackedCluster PackedCluster.h Event/PackedCluster.h
    *
@@ -27,41 +26,35 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2012-03-05
    */
-  struct PackedCluster
-  {
+  struct PackedCluster {
     unsigned int id{0};
     unsigned int begin{0};
     unsigned int end{0};
     unsigned int sum{0};
     unsigned int sourceID{0};
     unsigned int tell1Channel{0};
-    int spill{0};
+    int          spill{0};
 
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        id, begin, end, sum, sourceID,
-        tell1Channel, spill
-      );
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.io( id, begin, end, sum, sourceID, tell1Channel, spill );
     }
 
-    template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
+    template <typename T>
+    inline void load( T& buf, unsigned int /*version*/ ) {
+      save( buf ); // identical operation until version is incremented
     }
-
   };
 
   constexpr CLID CLID_PackedClusters = 1540;
 
-  namespace PackedClusterLocation
-  {
+  namespace PackedClusterLocation {
     inline const std::string Default = "pRec/Track/Clusters";
-    inline const std::string Velo = "pRec/Velo/Clusters";
-    inline const std::string IT = "pRec/IT/Clusters";
-    inline const std::string TT = "pRec/TT/Clusters";
-    inline const std::string UT = "pRec/UT/Clusters";
-  }
+    inline const std::string Velo    = "pRec/Velo/Clusters";
+    inline const std::string IT      = "pRec/IT/Clusters";
+    inline const std::string TT      = "pRec/TT/Clusters";
+    inline const std::string UT      = "pRec/UT/Clusters";
+  } // namespace PackedClusterLocation
 
   /** @class PackedClusters PackedCluster.h Event/PackedCluster.h
    *
@@ -71,62 +64,45 @@ namespace LHCb
    *  @date   2012-03-05
    */
 
-  class PackedClusters : public DataObject
-  {
+  class PackedClusters : public DataObject {
 
   public:
-
     /// Standard constructor
-    PackedClusters()
-    {
-      m_clusters.reserve ( 100  );
-      m_strips.reserve   ( 1000 );
-      m_adcs.reserve     ( 1000 );
+    PackedClusters() {
+      m_clusters.reserve( 100 );
+      m_strips.reserve( 1000 );
+      m_adcs.reserve( 1000 );
     }
 
   public:
-
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
   public:
-
-    const CLID& clID()  const override { return PackedClusters::classID(); }
-    static  const CLID& classID()     { return CLID_PackedClusters;       }
+    const CLID&        clID() const override { return PackedClusters::classID(); }
+    static const CLID& classID() { return CLID_PackedClusters; }
 
   public:
-
     void addVeloCluster( const LHCb::VeloCluster* vCl );
 
-    void addTTCluster( const LHCb::STCluster* sCl )
-    {
-      addSTCluster( sCl, 0x40000000 );
-    }
+    void addTTCluster( const LHCb::STCluster* sCl ) { addSTCluster( sCl, 0x40000000 ); }
 
-    void addUTCluster( const LHCb::UTCluster* sCl )
-    {
+    void addUTCluster( const LHCb::UTCluster* sCl ) {
       addUTCluster( sCl, 0x50000000 ); // need to find the proper key (JC)
     }
 
-    void addITCluster( const LHCb::STCluster* sCl )
-    {
-      addSTCluster( sCl, 0x60000000 );
-    }
+    void addITCluster( const LHCb::STCluster* sCl ) { addSTCluster( sCl, 0x60000000 ); }
 
-    void addSTCluster( const LHCb::STCluster* sCl,
-                       const unsigned int key );
+    void addSTCluster( const LHCb::STCluster* sCl, const unsigned int key );
 
-    void addUTCluster( const LHCb::UTCluster* uCl,
-                       const unsigned int key );
+    void addUTCluster( const LHCb::UTCluster* uCl, const unsigned int key );
 
   public:
-
     const std::vector<PackedCluster>& clusters() const { return m_clusters; }
-    const std::vector<int>& strips()             const { return m_strips; }
-    const std::vector<unsigned int>& adcs()      const { return m_adcs; }
+    const std::vector<int>&           strips() const { return m_strips; }
+    const std::vector<unsigned int>&  adcs() const { return m_adcs; }
 
   public:
-
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
 
@@ -134,31 +110,30 @@ namespace LHCb
     char packingVersion() const { return m_packingVersion; }
 
     /// Describe serialization of object
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.template save<uint8_t>(m_packingVersion);
-      buf.template save<uint8_t>(version());
-      buf.save(m_clusters);
-      buf.save(m_strips);
-      buf.save(m_adcs);
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.template save<uint8_t>( m_packingVersion );
+      buf.template save<uint8_t>( version() );
+      buf.save( m_clusters );
+      buf.save( m_strips );
+      buf.save( m_adcs );
     }
 
     /// Describe de-serialization of object
-    template<typename T>
-    inline void load(T& buf) {
-      setPackingVersion(buf.template load<uint8_t>());
-      setVersion(buf.template load<uint8_t>());
-      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
-        throw std::runtime_error("PackedClusters packing version is not supported: "
-                                 + std::to_string(m_packingVersion));
+    template <typename T>
+    inline void load( T& buf ) {
+      setPackingVersion( buf.template load<uint8_t>() );
+      setVersion( buf.template load<uint8_t>() );
+      if ( m_packingVersion < 1 || m_packingVersion > defaultPackingVersion() ) {
+        throw std::runtime_error( "PackedClusters packing version is not supported: " +
+                                  std::to_string( m_packingVersion ) );
       }
-      buf.load(m_clusters, m_packingVersion);
-      buf.load(m_strips);
-      buf.load(m_adcs);
+      buf.load( m_clusters, m_packingVersion );
+      buf.load( m_strips );
+      buf.load( m_adcs );
     }
 
   private:
-
     std::vector<PackedCluster> m_clusters;
     std::vector<int>           m_strips;
     std::vector<unsigned int>  m_adcs;
@@ -168,9 +143,8 @@ namespace LHCb
      *  with data written before the packing version was added, to implicitly
      *  define the version as 0 for this data  */
     char m_packingVersion{0};
-
   };
 
-}
+} // namespace LHCb
 
 #endif // EVENT_PACKEDCLUSTER_H

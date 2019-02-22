@@ -9,56 +9,52 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_HltLOCK_H 
+#ifndef LOKI_HltLOCK_H
 #define LOKI_HltLOCK_H 1
 // ============================================================================
 // Include files
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Interface.h"
-#include "LoKi/IHltAntiFactory.h"
 #include "LoKi/Context.h"
+#include "LoKi/IHltAntiFactory.h"
+#include "LoKi/Interface.h"
 // ============================================================================
-namespace LoKi
-{
-  namespace Hybrid
-  {
+namespace LoKi {
+  namespace Hybrid {
     // ========================================================================
-    /** @class HltLock  LoKi/HltLock.h 
-     *  Helper class (sentry) to connent LoKi::Hybrid::IHltAntFactory 
-     *  to HltEngine  
+    /** @class HltLock  LoKi/HltLock.h
+     *  Helper class (sentry) to connent LoKi::Hybrid::IHltAntFactory
+     *  to HltEngine
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-18
      */
-    class HltLock 
-    {
+    class HltLock {
     public:
       // ======================================================================
-      /// contructor : Lock 
-      HltLock  ( const LoKi::Hybrid::IHltAntiFactory* factory , 
-                 const LoKi::Context&                 context ) ; 
+      /// contructor : Lock
+      HltLock( const LoKi::Hybrid::IHltAntiFactory* factory, const LoKi::Context& context );
       /// destrcutor : UnLock
-      virtual ~HltLock () ;                              // destructor : UnLock
+      virtual ~HltLock(); // destructor : UnLock
       // ======================================================================
     private:
       // ======================================================================
-      /// no copy constructor 
-      HltLock ( const HltLock& ) ;                       // no copy constructor 
-      /// no assignement opeartor 
-      HltLock& operator = ( const HltLock& ) ;       // no assignement operator
+      /// no copy constructor
+      HltLock( const HltLock& ); // no copy constructor
+      /// no assignement opeartor
+      HltLock& operator=( const HltLock& ); // no assignement operator
       // ======================================================================
     private:
       // ======================================================================
-      /// the tool itself 
-      LoKi::Interface<LoKi::Hybrid::IHltAntiFactory> m_tool ;  // the tool
+      /// the tool itself
+      LoKi::Interface<LoKi::Hybrid::IHltAntiFactory> m_tool; // the tool
       // ======================================================================
-    } ; 
+    };
     // ========================================================================
- } //                                         The end of namespace LoKi::Hybrid 
-  // ==========================================================================  
-} //                                                  The end of namespace LoKi
+  } // namespace Hybrid
+    // ==========================================================================
+} // namespace LoKi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_HltLOCK_H

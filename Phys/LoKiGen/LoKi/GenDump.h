@@ -16,9 +16,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/Dumper.h"
 #include "LoKi/Filters.h"
 #include "LoKi/GenTypes.h"
-#include "LoKi/Dumper.h"
 // ============================================================================
 /** @file
  *
@@ -35,11 +35,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Functors
-  {
+  namespace Functors {
     // ========================================================================
     /** template specialization of ``dumpers''
      *  @see LoKi::Functors::Dump_
@@ -47,9 +45,8 @@ namespace LoKi
      *  @date   2011-06-03
      */
     template <>
-    std::vector<const HepMC::GenParticle*>
-    Dump_<const HepMC::GenParticle*>::operator()
-      ( const std::vector<const HepMC::GenParticle*>& a ) const ;
+    std::vector<const HepMC::GenParticle*> Dump_<const HepMC::GenParticle*>::
+                                           operator()( const std::vector<const HepMC::GenParticle*>& a ) const;
     // ========================================================================
     /** template specialization of ``dumpers''
      *  @see LoKi::Functors::Dump1_
@@ -57,9 +54,7 @@ namespace LoKi
      *  @date   2012-01-28
      */
     template <>
-    bool
-    Dump1_<const HepMC::GenParticle*,bool>::operator()
-      ( const HepMC::GenParticle* a ) const ;
+    bool Dump1_<const HepMC::GenParticle*, bool>::operator()( const HepMC::GenParticle* a ) const;
     // ========================================================================
     /** template specialization of ``dumpers''
      *  @see LoKi::Functors::Dump1_
@@ -67,11 +62,9 @@ namespace LoKi
      *  @date   2012-01-28
      */
     template <>
-    double
-    Dump1_<const HepMC::GenParticle*,double>::operator()
-      ( const HepMC::GenParticle* a ) const ;
+    double Dump1_<const HepMC::GenParticle*, double>::operator()( const HepMC::GenParticle* a ) const;
     // ========================================================================
-  } //                                          end of namesapce LoKi::Functors
+  } // namespace Functors
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

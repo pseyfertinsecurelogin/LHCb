@@ -11,7 +11,6 @@
 #ifndef L0MUONKERNEL_OLCNV_H
 #define L0MUONKERNEL_OLCNV_H
 
-
 #include "L0MuonKernel/L0BufferCnv.h"
 #include <string>
 
@@ -34,33 +33,29 @@ namespace L0Muon {
   class OLCnv : public L0BufferCnv {
 
   public:
-
     /** Constructor with MuonTileID
 
     @param id : MuonTileID of the PU attached to the converter
 
     */
-    OLCnv(LHCb::MuonTileID id);
+    OLCnv( LHCb::MuonTileID id );
 
     /// Destructor
     ~OLCnv();
 
     /// Give a static type name to the unit : OLDumpUnit
-    std::string type() override {
-      return "OLDumpUnit";
-    }
+    std::string type() override { return "OLDumpUnit"; }
 
     /** Write the event in the output file.
 
         @param ievt : current event number
     */
-    void write(int ievt) override;
+    void write( int ievt ) override;
 
   private:
-
-    TileRegister* m_ol; ///< TileRegister with the optical links at the PU input (formatted as requested by the high stat test).
-
+    TileRegister* m_ol; ///< TileRegister with the optical links at the PU input (formatted as requested by the high
+                        ///< stat test).
   };
 } // namespace L0Muon
 
-#endif    // L0MUONKERNEL_OLCNV_H
+#endif // L0MUONKERNEL_OLCNV_H

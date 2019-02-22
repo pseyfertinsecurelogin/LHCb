@@ -14,13 +14,12 @@
 
 // Include files
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "Event/L0MuonCandidate.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 
-#include "L0MuonKernel/ProcRawCnv.h"
 #include "L0MuonKernel/CtrlRawCnv.h"
 #include "L0MuonKernel/MuonCandidate.h"
-
+#include "L0MuonKernel/ProcRawCnv.h"
 
 /** @class L0MuonFromRawTrans L0MuonFromRawTrans.h component/L0MuonFromRawTrans.h
  *
@@ -29,17 +28,16 @@
  *  @date   2008-01-10
  */
 
-
 class L0MuonFromRawTrans : public GaudiAlgorithm {
 public:
   /// Standard constructor
   L0MuonFromRawTrans( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0MuonFromRawTrans( ); ///< Destructor
+  virtual ~L0MuonFromRawTrans(); ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 protected:
   /// Decode the L0Muon banks and fill the registers of the converters
@@ -53,30 +51,42 @@ protected:
   StatusCode dumpErrors();
 
 private:
-
-
-  static inline std::string timeSlot(int bx)
-  {
+  static inline std::string timeSlot( int bx ) {
     std::string ts;
-    switch (bx) {
-    case -7 : return "Prev7/";
-    case -6 : return "Prev6/";
-    case -5 : return "Prev5/";
-    case -4 : return "Prev4/";
-    case -3 : return "Prev3/";
-    case -2 : return "Prev2/";
-    case -1 : return "Prev1/";
-    case  0 : return "";
-    case  1 : return "Next1/";
-    case  2 : return "Next2/";
-    case  3 : return "Next3/";
-    case  4 : return "Next4/";
-    case  5 : return "Next5/";
-    case  6 : return "Next6/";
-    case  7 : return "Next7/";
-    default : return "Unknown";
+    switch ( bx ) {
+    case -7:
+      return "Prev7/";
+    case -6:
+      return "Prev6/";
+    case -5:
+      return "Prev5/";
+    case -4:
+      return "Prev4/";
+    case -3:
+      return "Prev3/";
+    case -2:
+      return "Prev2/";
+    case -1:
+      return "Prev1/";
+    case 0:
+      return "";
+    case 1:
+      return "Next1/";
+    case 2:
+      return "Next2/";
+    case 3:
+      return "Next3/";
+    case 4:
+      return "Next4/";
+    case 5:
+      return "Next5/";
+    case 6:
+      return "Next6/";
+    case 7:
+      return "Next7/";
+    default:
+      return "Unknown";
     };
-
   };
 
   int m_version;
@@ -84,15 +94,13 @@ private:
   int m_l0EventNumber;
   int m_l0_B_Id;
 
-  std::string  m_configfile;          // Config file name
-  bool m_dumpError  ;
+  std::string m_configfile; // Config file name
+  bool        m_dumpError;
 
-  LHCb::L0MuonCandidate* l0muoncandidate(L0Muon::PMuonCandidate cand, int procVersion);
+  LHCb::L0MuonCandidate* l0muoncandidate( L0Muon::PMuonCandidate cand, int procVersion );
 
-  L0Muon::CtrlRawCnv*  m_ctrlRaw[2];
-  L0Muon::ProcRawCnv*  m_procRaw[4];
-
+  L0Muon::CtrlRawCnv* m_ctrlRaw[2];
+  L0Muon::ProcRawCnv* m_procRaw[4];
 };
-
 
 #endif // COMPONENT_L0MUONFROMRAWTRANS_H

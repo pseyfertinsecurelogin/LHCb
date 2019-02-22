@@ -14,6 +14,6 @@ from Gaudi.Configuration import *
 print "# WARNING: You have imported DecodeRawEvent.py, this is now replaced with a configurable. See savannah task #19106."
 
 from Configurables import DecodeRawEvent
-DecodeRawEvent().DataOnDemand=True
+DecodeRawEvent().DataOnDemand = True
 
-importOptions( "$L0TCK/L0DUConfig.opts" )
+importOptions("$L0TCK/L0DUConfig.opts")

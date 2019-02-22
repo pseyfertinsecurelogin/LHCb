@@ -19,7 +19,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "Kernel/MuonTileID.h"
 
-
 /** @class IL0MuonModifyInputTool IL0MuonModifyInputTool.h L0Interfaces/IL0MuonModifyInputTool.h
  *
  *
@@ -31,7 +30,6 @@ struct IL0MuonModifyInputTool : extend_interfaces<IAlgTool> {
   // Declare the interface ID
   DeclareInterfaceID( IL0MuonModifyInputTool, 2, 0 );
 
-  virtual StatusCode modifyInput(std::vector<LHCb::MuonTileID> &digits)=0;
-
+  virtual StatusCode modifyInput( std::vector<LHCb::MuonTileID>& digits ) = 0;
 };
 #endif // L0INTERFACES_IL0MUONMODIFYINPUTTOOL_H

@@ -27,16 +27,12 @@
 #include "GaudiKernel/Point3DTypes.h"
 
 // Event Model
-namespace LHCb
-{
+namespace LHCb {
   class MCRichSegment;
 }
 
-
-namespace Rich
-{
-  namespace MC
-  {
+namespace Rich {
+  namespace MC {
 
     /** @class IMCTrackInfoTool IRichMCTrackInfoTool.h
      *
@@ -47,9 +43,7 @@ namespace Rich
      *  @date   15/03/2002
      */
 
-    struct IMCTrackInfoTool : extend_interfaces<IAlgTool>
-    {
-
+    struct IMCTrackInfoTool : extend_interfaces<IAlgTool> {
 
       /** static interface identification
        *  @return unique interface identifier
@@ -67,9 +61,7 @@ namespace Rich
        *  @retval true   intersection was successful, returned hitPoint is valid
        *  @retval false  intersection was unsuccessful, returned hitPoint is not valid
        */
-      virtual bool
-      panelIntersectGlobal ( const LHCb::MCRichSegment * segment,
-                             Gaudi::XYZPoint & hitPoint ) const = 0;
+      virtual bool panelIntersectGlobal( const LHCb::MCRichSegment* segment, Gaudi::XYZPoint& hitPoint ) const = 0;
 
       /** Takes the direction information from a MCRichSegment and ray traces it through the
        *  appropriate RICH optical system and computes the intersect points with the HPD
@@ -82,13 +74,10 @@ namespace Rich
        *  @retval true   intersection was successful, returned hitPoint is valid
        *  @retval false  intersection was unsuccessful, returned hitPoint is not valid
        */
-      virtual bool
-      panelIntersectLocal ( const LHCb::MCRichSegment * segment,
-                            Gaudi::XYZPoint & hitPoint ) const = 0;
-
+      virtual bool panelIntersectLocal( const LHCb::MCRichSegment* segment, Gaudi::XYZPoint& hitPoint ) const = 0;
     };
 
-  }
-}
+  } // namespace MC
+} // namespace Rich
 
 #endif // RICHKERNEL_IRICHMCTRACKINFOTOOL_H

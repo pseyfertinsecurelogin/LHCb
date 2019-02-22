@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 /// ==========================================================================
-#ifndef      DETDESC_SOLIDINTERSECTION_H
-#define      DETDESC_SOLIDINTERSECTION_H 1
+#ifndef DETDESC_SOLIDINTERSECTION_H
+#define DETDESC_SOLIDINTERSECTION_H 1
 // STD & STL
 #include <algorithm>
 #include <functional>
@@ -22,7 +22,6 @@
 template <class TYPE>
 class SolidFactory;
 
-
 /** @class SolidIntersection SolidIntersection.h DetDesc/SolidIntersection.h
  *
  *  implementation of boolean solid - intersection of several solids
@@ -31,27 +30,25 @@ class SolidFactory;
  *  @date   xx/xx/xxxx
  */
 
-class SolidIntersection final : public SolidBoolean
-{
+class SolidIntersection final : public SolidBoolean {
   ///
   friend class SolidFactory<SolidIntersection>;
 
 public:
-
   /** constructor
    *  @param name name of the intersection
    *  @param first pointer to first/main solid
    *  @exception SolidException wrong parameters
    */
-  SolidIntersection( const std::string& name , std::unique_ptr<ISolid> first );
+  SolidIntersection( const std::string& name, std::unique_ptr<ISolid> first );
 
-  SolidIntersection ( const SolidIntersection& ) = delete ; ///< no copy
-  SolidIntersection& operator=( const SolidIntersection& ) = delete ; ///< no =
+  SolidIntersection( const SolidIntersection& ) = delete;            ///< no copy
+  SolidIntersection& operator=( const SolidIntersection& ) = delete; ///< no =
 
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
    */
-  std::string typeName () const override { return "SolidIntersection" ; }
+  std::string typeName() const override { return "SolidIntersection"; }
 
   /** - check for the given 3D-point.
    *    Point coordinates are in the local reference
@@ -61,16 +58,15 @@ public:
    *  @param "" point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside ( const Gaudi::XYZPoint   & ) const override;
-  bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
-  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
+  bool isInside( const Gaudi::XYZPoint& ) const override;
+  bool isInside( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside( const Gaudi::RhoZPhiPoint& point ) const override;
   /** add intersections
    *  @param solid pointer         to new solid
    *  @param mtrx  pointer transformation
    *  @return status code
    */
-  StatusCode    intersect( std::unique_ptr<ISolid>   solid                    ,
-                           const Gaudi::Transform3D* mtrx                     );
+  StatusCode intersect( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx );
 
   /** add intersections
    *  @param child    pointer to new solid
@@ -78,27 +74,24 @@ public:
    *  @param rotation rotation
    *  @return status code
    */
-  StatusCode intersect( std::unique_ptr<ISolid>  child                    ,
-                        const Gaudi::XYZPoint&   position                 ,
+  StatusCode intersect( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
                         const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
-protected:
 
+protected:
   /** constructor
    *  @param name name of intersection
    */
   SolidIntersection( const std::string& name = "Anonymous Intersection" );
 
 private:
-
   /**
    * implementation of isInside
    * @param  point reference to any kind of point with x(), y(), z()
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl(const aPoint& point) const;
-
+  bool isInsideImpl( const aPoint& point ) const;
 };
 
 /// ===========================================================================
-#endif  ///< DETDESC_SOLIDINTERSECTION_H
+#endif ///< DETDESC_SOLIDINTERSECTION_H

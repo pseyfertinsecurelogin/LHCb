@@ -38,8 +38,7 @@ class IAlgTool;
  * @author Sebastien Ponce
  * @author Marco Clemencic
  */
-class XmlParserSvc : public extends<Service, IXmlParserSvc, ICondDBInfo>, virtual public xercesc::ErrorHandler
-{
+class XmlParserSvc : public extends<Service, IXmlParserSvc, ICondDBInfo>, virtual public xercesc::ErrorHandler {
 
 public:
   /**
@@ -87,9 +86,9 @@ public:
   void releaseDoc( IOVDOMDocument* doc ) override;
 
   // avoid that base class methods get hidden
+  using extends::error;
   using extends::info;
   using extends::warning;
-  using extends::error;
 
   //////////////////////////////////////////////////////
   // implementation of the SAX ErrorHandler interface //
@@ -180,7 +179,7 @@ private:
    * Thus, a 0 value allows to have a FIFO cache behavior, while a bigger
    * value tends to keep only reused items.
    */
-  Gaudi::Property<unsigned int> m_cacheBehavior { this, "CacheBehavior",  2 };
+  Gaudi::Property<unsigned int> m_cacheBehavior{this, "CacheBehavior", 2};
 
   /**
    * a structure containing a cached document, its birthDate and its utility.
@@ -192,8 +191,8 @@ private:
    */
   struct cachedItem final {
     std::unique_ptr<IOVDOMDocument> document;
-    unsigned int birthDate, utility;
-    int lock;
+    unsigned int                    birthDate, utility;
+    int                             lock;
   };
 
   /**
@@ -214,11 +213,11 @@ private:
   unsigned int m_cacheAge = 0;
 
   /// The maximum number of cached documents
-  Gaudi::Property<unsigned int> m_maxDocNbInCache { this, "MaxDocNbInCache", 10 };
+  Gaudi::Property<unsigned int> m_maxDocNbInCache{this, "MaxDocNbInCache", 10};
 
   /// Name of the service which will provide the xercesc::EntityResolver pointer (option "EntityResolver").
-  Gaudi::Property<std::string> m_resolverName { this, "EntityResolver", "",
-                                                "Name of the tool providing the IXmlEntityResolver interface."};
+  Gaudi::Property<std::string> m_resolverName{this, "EntityResolver", "",
+                                              "Name of the tool providing the IXmlEntityResolver interface."};
 
   /// Pointer to the IXmlEntityResolver tool interface (for bookkeeping).
   IAlgTool* m_resolverTool = nullptr;
@@ -227,7 +226,7 @@ private:
   SmartIF<IXmlEntityResolver> m_resolver;
 
   /// Name of the service which will provide the event time (option "DetectorDataSvc", default = "DetectorDataSvc").
-  Gaudi::Property<std::string> m_detDataSvcName { this, "DetectorDataSvc", "DetectorDataSvc" };
+  Gaudi::Property<std::string> m_detDataSvcName{this, "DetectorDataSvc", "DetectorDataSvc"};
 
   /// Pointer to the detector data service
   SmartIF<IDetDataSvc> m_detDataSvc;
@@ -237,11 +236,11 @@ private:
 
   /// Flag to decide if we measure time...
   // Property to measure overall timing
-  Gaudi::Property<bool> m_measureTime { this,  "MeasureTime", false };
+  Gaudi::Property<bool> m_measureTime{this, "MeasureTime", false};
   // Property to print timing for each parse
-  Gaudi::Property<bool> m_printTime { this,  "PrintTime", false };
-  double m_sumCpu = 0;
-  double m_sumClock = 0;
+  Gaudi::Property<bool> m_printTime{this, "PrintTime", false};
+  double                m_sumCpu   = 0;
+  double                m_sumClock = 0;
 };
 
-#endif    // DETDESCCNV_XMLPARSERSVC_H
+#endif // DETDESCCNV_XMLPARSERSVC_H

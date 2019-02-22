@@ -16,12 +16,14 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/iTree.h"
 #include "LoKi/Trees.h"
+#include "LoKi/iTree.h"
 // ============================================================================
 // forward declarations
 // ============================================================================
-namespace HepMC { class GenParticle ; }
+namespace HepMC {
+  class GenParticle;
+}
 // ============================================================================
 /** @file LoKi/GenTreesFactory.h
  *
@@ -38,13 +40,13 @@ namespace HepMC { class GenParticle ; }
  *
  */
 // ============================================================================
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Parsers  { class Tree ; }
+  namespace Parsers {
+    class Tree;
+  }
   // ==========================================================================
-  namespace Trees
-  {
+  namespace Trees {
     // ========================================================================
     /** "Factory" to create the proper Tree from the full description
      *   @param tree       (OUTPUT) the constructed tree
@@ -59,16 +61,13 @@ namespace Decays
      *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *   @date   2009-05-06
      */
-    StatusCode factory
-    ( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree&           tree       ,
-      const Decays::iNode&                                              mother     ,
-      const Decays::Trees::Oscillation&                                 oscillated ,
-      const Decays::Trees::Arrow&                                       arrow      ,
-      const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& daughters  ,
-      const bool                                                        inclusive  ,
-      const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& optional   ,
-      std::ostream&                                                     stream     ) ;
-      // ========================================================================
+    StatusCode factory( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree, const Decays::iNode& mother,
+                        const Decays::Trees::Oscillation& oscillated, const Decays::Trees::Arrow& arrow,
+                        const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& daughters,
+                        const bool                                                        inclusive,
+                        const Decays::Trees::Types_<const HepMC::GenParticle*>::TreeList& optional,
+                        std::ostream&                                                     stream );
+    // ========================================================================
     /** "Factory" to create the proper Tree from "short" descriptor
      *   @param tree       (OUTPUT) the constructed tree
      *   @param mother     (INPUT)  the mother particle
@@ -77,10 +76,8 @@ namespace Decays
      *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *   @date   2009-05-06
      */
-    StatusCode factory
-    ( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree       ,
-      const Decays::iNode&                                    mother     ,
-      const Decays::Trees::Oscillation&                       oscillated ) ;
+    StatusCode factory( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree, const Decays::iNode& mother,
+                        const Decays::Trees::Oscillation& oscillated );
     // ========================================================================
     /** "Factory" to create the proper Tree from the parsed tree
      *   @param tree       (OUTPUT) the constructed tree
@@ -90,12 +87,10 @@ namespace Decays
      *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *   @date   2009-05-22
      */
-    StatusCode factory
-    ( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree   ,
-      const Decays::Parsers::Tree&                            parsed ,
-      std::ostream&                                           stream ) ;
+    StatusCode factory( Decays::Trees::Types_<const HepMC::GenParticle*>::Tree& tree,
+                        const Decays::Parsers::Tree& parsed, std::ostream& stream );
     // ========================================================================
-  } //                                           end of namespace Decays::Trees
+  } // namespace Trees
   // ==========================================================================
 } //                                                    end of namespace Decays
 // ============================================================================

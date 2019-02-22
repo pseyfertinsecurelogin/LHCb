@@ -31,8 +31,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STTupleToolBase.h STKernel/STTupleToolBase.h
@@ -45,20 +44,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public ST::CommonBase<GaudiTupleTool>
-  {
+  class TupleToolBase : public ST::CommonBase<GaudiTupleTool> {
 
   public:
-
     /// Standard constructor
-    TupleToolBase(const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent )
-      : ST::CommonBase<GaudiTupleTool> ( type, name, parent ) { }
-
+    TupleToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : ST::CommonBase<GaudiTupleTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace ST
 
 #endif // STKERNEL_STHISTOTOOLBASE_H

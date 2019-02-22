@@ -16,7 +16,6 @@ import re
 from hashlib import sha1
 from GitCondDB.IOVs import get_iovs
 
-
 SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
 
 
@@ -36,9 +35,9 @@ def fix_system_refs(data, root, path):
             newpath = os.path.normpath(os.path.join(curr_dir, match.group(2)))
             newpath = os.path.relpath(newpath, root)
         return '{0}"git:/{1}"'.format(match.group(1), newpath)
-    return (SYSTEM_RE.sub(repl, data)
-            .replace('"Conditions/MainCatalog.xml',
-                     '"conddb:/Conditions/MainCatalog.xml'))
+
+    return (SYSTEM_RE.sub(repl, data).replace(
+        '"Conditions/MainCatalog.xml', '"conddb:/Conditions/MainCatalog.xml'))
 
 
 def fix_lines_ends(data):
@@ -61,16 +60,19 @@ def payload_filename(data):
     '''
     return checksum(data)[:10]
 
+
 class DeferredPayload(object):
     '''
     Helper to retrieve payload data only when needed.
     '''
+
     def __init__(self, repository, payload, tag):
         '''
         Prepare the instance with references to the data to extract.
         '''
         self._args = (repository, payload, tag)
         self._data = None
+
     def __str__(self):
         '''
         Return the actual payload data loading it from the repository if not
@@ -80,11 +82,11 @@ class DeferredPayload(object):
             from GitCondDB.GitAccess import gitOpen
             self._data = gitOpen(*self._args).read()
         return self._data
+
     def __repr__(self):
         'Instance representation.'
-        return '{}({}, {}, {})'.format(
-            self.__class__.__name__, *self._args
-        )
+        return '{}({}, {}, {})'.format(self.__class__.__name__, *self._args)
+
 
 def get_payloads(repository, path, since, until, tag='HEAD', deferred=True):
     '''
@@ -98,22 +100,26 @@ def get_payloads(repository, path, since, until, tag='HEAD', deferred=True):
     '''
     for_iov = (since, until)
     if deferred:
+
         def payload_data(payload):
             'helper to prepare the payload_data (deferred)'
             return DeferredPayload(repository, payload, tag)
     else:
         from GitCondDB.GitAccess import gitOpen
+
         def payload_data(payload):
             'helper to prepare the payload_data (immediate)'
             return gitOpen(repository, payload, tag).read()
-    for payload, (since, until) in get_iovs(repository, path, tag,
-                                            for_iov=for_iov):
+
+    for payload, (since, until) in get_iovs(
+            repository, path, tag, for_iov=for_iov):
         yield payload_data(payload), (since, until)
+
 
 def get_payload(repository, path, timestamp, tag='HEAD'):
     '''
     Given a path, extract the payload valid at the given timestamp and return
     it with its IOV, as (payload, (since, until)).
     '''
-    return get_payloads(repository, path,
-                        timestamp, timestamp, tag='HEAD').next()
+    return get_payloads(
+        repository, path, timestamp, timestamp, tag='HEAD').next()

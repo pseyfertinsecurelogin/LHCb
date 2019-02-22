@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef EVENT_OTBANKVERSION_H 
+#ifndef EVENT_OTBANKVERSION_H
 #define EVENT_OTBANKVERSION_H 1
 
 // Include files
@@ -19,8 +19,7 @@
  *  @author Marco Cattaneo
  *  @date   2004-10-26
  */
-namespace OTBankVersion 
-{
- enum versions { DC04=0, v1=1, v2=2, DC06=v2, SIM=63, v3=3, DEFAULT=v3, UNDEFINED=255 };
+namespace OTBankVersion {
+  enum versions { DC04 = 0, v1 = 1, v2 = 2, DC06 = v2, SIM = 63, v3 = 3, DEFAULT = v3, UNDEFINED = 255 };
 }
 #endif // EVENT_OTBANKVERSION_H

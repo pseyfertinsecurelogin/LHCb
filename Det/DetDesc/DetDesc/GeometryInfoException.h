@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef     DETDESC_GEOMETRYINFOEXCEPTION_H
-#define     DETDESC_GEOMETRYINFOEXCEPTION_H 1
+#ifndef DETDESC_GEOMETRYINFOEXCEPTION_H
+#define DETDESC_GEOMETRYINFOEXCEPTION_H 1
 /// GaudiKernel
 #include "GaudiKernel/GaudiException.h"
 ///
@@ -30,29 +30,25 @@ struct IGeometryInfo;
 
 */
 
-class GeometryInfoException : public GaudiException
-{
+class GeometryInfoException : public GaudiException {
 public:
   /// constructor
-  GeometryInfoException( const std::string  & name     ,
-                         const IGeometryInfo * gi   = nullptr ,
-                         const StatusCode   & sc = StatusCode::FAILURE );
+  GeometryInfoException( const std::string& name, const IGeometryInfo* gi = nullptr,
+                         const StatusCode& sc = StatusCode::FAILURE );
   ///
-  GeometryInfoException( const std::string    & name      ,
-                         const GaudiException & ge        ,
-                         const IGeometryInfo   * gi   =  nullptr ,
-                         const StatusCode     & sc = StatusCode::FAILURE ) ;
+  GeometryInfoException( const std::string& name, const GaudiException& ge, const IGeometryInfo* gi = nullptr,
+                         const StatusCode& sc = StatusCode::FAILURE );
   ///
-  std::ostream& printOut( std::ostream& os = std::cerr ) const  override;
-  MsgStream&    printOut( MsgStream&    os             ) const  override;
+  std::ostream& printOut( std::ostream& os = std::cerr ) const override;
+  MsgStream&    printOut( MsgStream& os ) const override;
   ///
   GaudiException* clone() const override;
   ///
 private:
   ///
-  const IGeometryInfo*   m_gie_geometryInfo  ;
+  const IGeometryInfo* m_gie_geometryInfo;
   ///
 };
 ///
 
-#endif  //  DETDESC_GEOMETRYINFOEXCEPTION_H
+#endif //  DETDESC_GEOMETRYINFOEXCEPTION_H

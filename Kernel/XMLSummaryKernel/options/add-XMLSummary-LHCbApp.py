@@ -13,4 +13,4 @@ from Gaudi.Configuration import *
 
 from Configurables import LHCbApp
 
-LHCbApp().XMLSummary="summary.xml"
+LHCbApp().XMLSummary = "summary.xml"

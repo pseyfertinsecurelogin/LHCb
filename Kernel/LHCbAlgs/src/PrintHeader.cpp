@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files 
+// Include files
 
 // from EventSys
 #include "Event/ODIN.h"
@@ -26,45 +26,39 @@
 
 DECLARE_COMPONENT( PrintHeader )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-PrintHeader::PrintHeader( const std::string& name,
-                          ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty("PrintFileName",  m_printFile = false ); 
+PrintHeader::PrintHeader( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
+  declareProperty( "PrintFileName", m_printFile = false );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PrintHeader::execute() 
-{
+StatusCode PrintHeader::execute() {
   // count events
   ++m_nEvents;
 
   // Get event number from the ODIN bank
-  auto * odin = getIfExists<LHCb::ODIN> ( LHCb::ODINLocation::Default );
-  if ( odin )
-  {
-    info() << "Run "     << odin->runNumber()
-           << ", Event " << odin->eventNumber() << endmsg;
-  } else { Warning("No ODIN Header").ignore(); }
-       
-  setFilterPassed(true);
-  
+  auto* odin = getIfExists<LHCb::ODIN>( LHCb::ODINLocation::Default );
+  if ( odin ) {
+    info() << "Run " << odin->runNumber() << ", Event " << odin->eventNumber() << endmsg;
+  } else {
+    Warning( "No ODIN Header" ).ignore();
+  }
+
+  setFilterPassed( true );
+
   return StatusCode::SUCCESS;
 }
 
 //=============================================================================
 //  Finalize
 //=============================================================================
-StatusCode PrintHeader::finalize()
-{
+StatusCode PrintHeader::finalize() {
   info() << "Filtered " << m_nEvents << " events" << endmsg;
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
+  return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

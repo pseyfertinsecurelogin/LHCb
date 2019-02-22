@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 //$Id: CLIDValidDataObject.h,v 1.1 2001-12-11 10:02:20 sponce Exp $
-#ifndef     DETDESC_CLIDVALIDDATAOBJECT_H
-#define     DETDESC_CLIDVALIDDATAOBJECT_H 1 
+#ifndef DETDESC_CLIDVALIDDATAOBJECT_H
+#define DETDESC_CLIDVALIDDATAOBJECT_H 1
 #include "GaudiKernel/ClassID.h"
 
 /// Unique ID of the class

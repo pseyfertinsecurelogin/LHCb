@@ -14,15 +14,15 @@
 #define DETDESCCNV_XMLDETELEMCNV_H
 
 /// Include files
-#include "DetDescCnv/XmlGenericCnv.h"
 #include "DetDesc/DetectorElement.h"
+#include "DetDescCnv/XmlGenericCnv.h"
 
 #include "GaudiKernel/Converter.h"
 
 /// Forward and external declarations
-class     ISvcLocator;
-template <class TYPE> class CnvFactory;
-
+class ISvcLocator;
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlBaseDetElemCnv XmlBaseDetElemCnv.h DetDescCnv/XmlBaseDetElemCnv.h
  *
@@ -37,7 +37,6 @@ template <class TYPE> class CnvFactory;
 class XmlBaseDetElemCnv : public XmlGenericCnv {
 
 public:
-
   /**
    * Initializes the converter - Overrides the default method in XmlGenericCnv
    * @return status depending on the completion of the call
@@ -51,19 +50,18 @@ public:
   static const CLID& classID();
 
 protected:
-
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlBaseDetElemCnv(ISvcLocator* svcs);
+  XmlBaseDetElemCnv( ISvcLocator* svcs );
 
   /**
    * Constructor for this converter
    * @param svc   a ISvcLocator interface to find services
    * @param clsID the type of object the converter is able to convert
    */
-  XmlBaseDetElemCnv(ISvcLocator* svc, const CLID& clsID );
+  XmlBaseDetElemCnv( ISvcLocator* svc, const CLID& clsID );
 
   /**
    * Default destructor
@@ -73,7 +71,7 @@ protected:
   /**
    * Resolves the references of the created transient object.
    */
-  StatusCode fillObjRefs(IOpaqueAddress* pAddress, DataObject* pObject) override;
+  StatusCode fillObjRefs( IOpaqueAddress* pAddress, DataObject* pObject ) override;
 
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
@@ -81,8 +79,7 @@ protected:
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  StatusCode i_createObj (xercesc::DOMElement* element,
-                          DataObject*& refpObject) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -92,9 +89,7 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                        DataObject* refpObject,
-                        IOpaqueAddress* address) override;
+  StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /** This fills the current object for specific child.
    * Specific children are children of children \<specific\>
@@ -106,13 +101,10 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        DetectorElement* refpObject,
-                                        IOpaqueAddress* address) = 0;
-
+  virtual StatusCode i_fillSpecificObj( xercesc::DOMElement* childElement, DetectorElement* refpObject,
+                                        IOpaqueAddress* address ) = 0;
 
 private:
-
   /// Whether to use the generic converter in case a specific one does not exist
   bool m_doGenericCnv;
 
@@ -151,4 +143,3 @@ private:
 };
 
 #endif // DETDESCCNV_XMLDETELEMCNV_H
-

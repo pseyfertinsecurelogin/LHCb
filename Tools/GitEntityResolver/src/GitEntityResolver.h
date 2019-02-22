@@ -31,8 +31,7 @@
 
 // this should be defined in GaudiKernel/Time.h, but the version there is not
 // found by ADL
-namespace Gaudi
-{
+namespace Gaudi {
   using ::operator<;
 }
 
@@ -53,8 +52,7 @@ namespace Gaudi
  *  @date   2016-07-21
  */
 class GitEntityResolver : public extends<AlgTool, IXmlEntityResolver, IFileAccess, ICondDBInfo, IIncidentListener>,
-                          virtual public xercesc::EntityResolver
-{
+                          virtual public xercesc::EntityResolver {
 public:
   GitEntityResolver( const std::string& type, const std::string& name, const IInterface* parent );
 
@@ -93,13 +91,14 @@ public:
 private:
   Gaudi::Property<std::string> m_pathToRepository{this, "PathToRepository", "",
                                                   "path to the git repository to get data from"};
-  Gaudi::Property<std::string> m_commit{this, "Commit", "HEAD", "commit id (or tag, or branch) of the version to use, "
-                                                                "empty means use local files"};
+  Gaudi::Property<std::string> m_commit{this, "Commit", "HEAD",
+                                        "commit id (or tag, or branch) of the version to use, "
+                                        "empty means use local files"};
   Gaudi::Property<std::string> m_detDataSvcName{this, "DetDataSvc", "DetectorDataSvc",
                                                 "name of the IDetDataSvc, used to get the current event time"};
   Gaudi::Property<std::string> m_ignoreRegex{this, "Ignore", "",
                                              "regular expression matching paths that should be ignored"};
-  Gaudi::Property<bool> m_limitToLastCommitTime{this, "LimitToLastCommitTime", false,
+  Gaudi::Property<bool>        m_limitToLastCommitTime{this, "LimitToLastCommitTime", false,
                                                 "force upper limit of IOVs is last commit time"};
 
   /// internal flag used to track if we are using the Git database or checked out files
@@ -108,14 +107,12 @@ private:
   /// Helper class to propagate info about needed IOV.
   struct IOVInfo {
     IOVInfo() = default;
-    IOVInfo( std::string k, const Gaudi::Time& s, const Gaudi::Time& u ) : key( std::move( k ) ), since( s ), until( u )
-    {
-    }
+    IOVInfo( std::string k, const Gaudi::Time& s, const Gaudi::Time& u )
+        : key( std::move( k ) ), since( s ), until( u ) {}
     std::string key   = "";
     Gaudi::Time since = Gaudi::Time::epoch();
     Gaudi::Time until = Gaudi::Time::max();
-    void cut( const IOVInfo& boundary )
-    {
+    void        cut( const IOVInfo& boundary ) {
       since = std::max( since, boundary.since );
       until = std::min( until, boundary.until );
     }
@@ -124,8 +121,7 @@ private:
 
   /// actual implementation of open method, depending on the use of git objects or files
   template <class T>
-  std::pair<open_result_t, IOVInfo> i_open( const T& obj, const std::string& url )
-  {
+  std::pair<open_result_t, IOVInfo> i_open( const T& obj, const std::string& url ) {
     using Git::Helpers::is_dir;
     if ( is_dir( obj ) ) {
       auto info = i_getIOVInfo( url );
@@ -134,10 +130,10 @@ private:
         result.second.cut( info );
         return result;
       } else {
-        return { i_makeIStream( i_listdir( obj, url ) ), IOVInfo{} };
+        return {i_makeIStream( i_listdir( obj, url ) ), IOVInfo{}};
       }
     } else {
-      return { i_makeIStream( obj ), IOVInfo{} };
+      return {i_makeIStream( obj ), IOVInfo{}};
     }
   }
 
@@ -155,7 +151,7 @@ private:
   git_object_ptr i_getData( boost::string_ref url ) const;
 
   struct dir_content {
-    std::string root;
+    std::string              root;
     std::vector<std::string> dirs;
     std::vector<std::string> files;
   };

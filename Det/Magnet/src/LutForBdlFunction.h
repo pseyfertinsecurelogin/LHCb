@@ -66,37 +66,31 @@ or
 
 */
 
-
 class LutForBdlFunction {
 
 public:
-
-  LutForBdlFunction(int nVar, int* nBinVar, double* minVar, double* maxVar);
+  LutForBdlFunction( int nVar, int* nBinVar, double* minVar, double* maxVar );
 
   ~LutForBdlFunction();
 
   void   resetIndexVector();
   int    incrementIndexVector();
-  void   fillTable(double lutValue);
-  double getVariable(int ivar);
-  void   getVariableVector(double* var);
-  double getValueFromTable(double* var);
-  double getInterpolatedValueFromTable(double* var);
-
+  void   fillTable( double lutValue );
+  double getVariable( int ivar );
+  void   getVariableVector( double* var );
+  double getValueFromTable( double* var );
+  double getInterpolatedValueFromTable( double* var );
 
 private:
-
-  void   createVectors();
-  void   deleteVectors();
-  void   createTable();
-  void   deleteTable();
-  void   resetVariableVector();
-  int    tableLocation();
-  void   calculateVariableVector();
-  void   calculateIndexVector(double* var);
-  void   calculateClosestIndexVector(double* var);
-
-
+  void createVectors();
+  void deleteVectors();
+  void createTable();
+  void deleteTable();
+  void resetVariableVector();
+  int  tableLocation();
+  void calculateVariableVector();
+  void calculateIndexVector( double* var );
+  void calculateClosestIndexVector( double* var );
 
   int     m_nVar;
   int*    m_nPointVar;
@@ -107,8 +101,6 @@ private:
 
   int*    m_indexVector;
   double* m_variableVector;
-
 };
 
 #endif // LUTFORBDLFUNCTION_H
-

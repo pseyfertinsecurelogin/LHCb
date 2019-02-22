@@ -20,16 +20,14 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/TES.h"
-#include "LoKi/L0Types.h"
 #include "LoKi/HLTTypes.h"
+#include "LoKi/L0Types.h"
 #include "LoKi/OdinTypes.h"
+#include "LoKi/TES.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace TES
-  {
+  namespace TES {
     // ========================================================================
     /** @class TESGet TESGet.h LoKi/TESGet.h
      *
@@ -37,36 +35,29 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-30
      */
-    struct GAUDI_API TESGet
-    {
+    struct GAUDI_API TESGet {
       // ======================================================================
-      static LoKi::FunctorFromFunctor<void,bool>
-      get ( const LoKi::TES::Get&                                   obj ,
-            const LoKi::Functor<const LHCb::ODIN*,bool>&            cut );
+      static LoKi::FunctorFromFunctor<void, bool> get( const LoKi::TES::Get&                         obj,
+                                                       const LoKi::Functor<const LHCb::ODIN*, bool>& cut );
       // ======================================================================
-      static LoKi::FunctorFromFunctor<void,double>
-      get ( const LoKi::TES::Get&                                   obj ,
-            const LoKi::Functor<const LHCb::ODIN*,double>&          fun );
+      static LoKi::FunctorFromFunctor<void, double> get( const LoKi::TES::Get&                           obj,
+                                                         const LoKi::Functor<const LHCb::ODIN*, double>& fun );
       // ======================================================================
-      static LoKi::FunctorFromFunctor<void,bool>
-      get ( const LoKi::TES::Get&                                   obj ,
-            const LoKi::Functor<const LHCb::L0DUReport*,bool>&      cut );
+      static LoKi::FunctorFromFunctor<void, bool> get( const LoKi::TES::Get&                               obj,
+                                                       const LoKi::Functor<const LHCb::L0DUReport*, bool>& cut );
       // ======================================================================
-      static LoKi::FunctorFromFunctor<void,double>
-      get ( const LoKi::TES::Get&                                   obj ,
-            const LoKi::Functor<const LHCb::L0DUReport*,double>&    fun );
+      static LoKi::FunctorFromFunctor<void, double> get( const LoKi::TES::Get&                                 obj,
+                                                         const LoKi::Functor<const LHCb::L0DUReport*, double>& fun );
       // ======================================================================
-      static LoKi::FunctorFromFunctor<void,bool>
-      get ( const LoKi::TES::Get&                                   obj ,
-            const LoKi::Functor<const LHCb::HltDecReports*,bool>&   cut );
+      static LoKi::FunctorFromFunctor<void, bool> get( const LoKi::TES::Get&                                  obj,
+                                                       const LoKi::Functor<const LHCb::HltDecReports*, bool>& cut );
       // ======================================================================
-      static LoKi::FunctorFromFunctor<void,double>
-      get ( const LoKi::TES::Get&                                   obj ,
-            const LoKi::Functor<const LHCb::HltDecReports*,double>& fun );
+      static LoKi::FunctorFromFunctor<void, double> get( const LoKi::TES::Get&                                    obj,
+                                                         const LoKi::Functor<const LHCb::HltDecReports*, double>& fun );
       // ======================================================================
     };
     // ========================================================================
-  } // end of namespace                                               LoKi::TES
+  } // namespace TES
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

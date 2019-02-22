@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // $Id: lcg_selection.h,v 1.1 2009-02-11 08:18:06 cattanem Exp $
-#ifndef GENEVENT_LCGDICT_H 
+#ifndef GENEVENT_LCGDICT_H
 #define GENEVENT_LCGDICT_H 1
 
 // Additional classes to be added to automatically generated lcgdict
@@ -24,6 +24,6 @@ namespace {
     // begin instantiations
     // end instantiations
   };
-}
+} // namespace
 
 #endif // GENEVENT_LCGDICT_H

@@ -25,22 +25,22 @@ class IConverter;
  * @author Marco Clemencic
  * @date 04/11/2011
  */
-class CondDBDQScanner: public extends<GaudiTool, IDQScanner> {
+class CondDBDQScanner : public extends<GaudiTool, IDQScanner> {
 public:
   using extends::extends;
 
   /// Scan all the Data Quality flags in the give time range in the CondDB.
   /// @return merged list of DQ flags
-  IDQFilter::FlagsType scan(const Gaudi::Time& since, const Gaudi::Time& until) const override;
+  IDQFilter::FlagsType scan( const Gaudi::Time& since, const Gaudi::Time& until ) const override;
 
   StatusCode initialize() override;
   StatusCode finalize() override;
 
 private:
   Gaudi::Property<std::string> m_condPath{this, "ConditionPath", "/Conditions/DQ/Flags",
-    "Path in the Conditions Database where to find the Data Quality condition."};
+                                          "Path in the Conditions Database where to find the Data Quality condition."};
   Gaudi::Property<std::string> m_converterName{this, "Converter", "DetectorPersistencySvc",
-    "Service implementing the IConverter interface."};
+                                               "Service implementing the IConverter interface."};
 
   /// ICondDBReader instance.
   SmartIF<IConverter> m_converter;

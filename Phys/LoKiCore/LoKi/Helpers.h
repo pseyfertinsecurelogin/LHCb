@@ -28,16 +28,14 @@
  *  @date 2006-02-19
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Helpers Helpers.h LoKi/Helpers.h
    *  Namespace with pure technical ("private") helper functions
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-19
    */
-  namespace Helpers
-  {
+  namespace Helpers {
     // ========================================================================
     /** Trivial helper which returns either the first element
      *  of the container, or its default" value (for empty
@@ -48,10 +46,8 @@ namespace LoKi
      *  @date 2006-02-19
      */
     template <class CONTAINER>
-    inline typename CONTAINER::value_type _First
-    ( const CONTAINER& cnt )
-    {
-      return !cnt.empty() ? *cnt.begin() : typename CONTAINER::value_type{} ;
+    inline typename CONTAINER::value_type _First( const CONTAINER& cnt ) {
+      return !cnt.empty() ? *cnt.begin() : typename CONTAINER::value_type{};
     }
     // ========================================================================
     /** Trivial helper which returns either the first element
@@ -63,13 +59,11 @@ namespace LoKi
      *  @date 2006-02-19
      */
     template <class CONTAINER>
-    inline typename CONTAINER::value_type _First
-    ( const CONTAINER* cnt )
-    {
-      return cnt ? _First(*cnt) : typename CONTAINER::value_type{} ;
+    inline typename CONTAINER::value_type _First( const CONTAINER* cnt ) {
+      return cnt ? _First( *cnt ) : typename CONTAINER::value_type{};
     }
     // ========================================================================
-  } // end of namespace LoKi::Helpers
+  } // namespace Helpers
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

@@ -41,11 +41,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Extract
-  {
+  namespace Extract {
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC graph.
@@ -76,10 +74,7 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const LHCb::HepMCEvents* events    ,
-      OUTPUT                   output    ,
-      const PREDICATE&         predicate );
+    inline OUTPUT genParticles( const LHCb::HepMCEvents* events, OUTPUT output, const PREDICATE& predicate );
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC vertex
@@ -91,11 +86,8 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const HepMC::GenVertex* vertex    ,
-      HepMC::IteratorRange    range     ,
-      OUTPUT                  output    ,
-      const PREDICATE&        predicate );
+    inline OUTPUT genParticles( const HepMC::GenVertex* vertex, HepMC::IteratorRange range, OUTPUT output,
+                                const PREDICATE& predicate );
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC vertex
@@ -107,10 +99,7 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const HepMC::GenParticle* particle  ,
-      OUTPUT                    output    ,
-      const PREDICATE&          predicate );
+    inline OUTPUT genParticles( const HepMC::GenParticle* particle, OUTPUT output, const PREDICATE& predicate );
     // ========================================================================
     /** simple function which allow to extract a certain
      *  particles from HepMC graph.
@@ -122,12 +111,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    template <class INPUT,class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( INPUT            first     ,
-      INPUT            last      ,
-      OUTPUT           output    ,
-      const PREDICATE& predicate );
+    template <class INPUT, class OUTPUT, class PREDICATE>
+    inline OUTPUT getGenParticles( INPUT first, INPUT last, OUTPUT output, const PREDICATE& predicate );
     // ========================================================================
     /** Simple function which allow to extract a certain
      *  particles from HepMC graph.
@@ -156,23 +141,17 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( const HepMC::GenEvent* event     ,
-      OUTPUT                 output    ,
-      const PREDICATE&       predicate )
-    {
-      if ( 0 == event ) { return output ; }
-      for ( auto p = event->particles_begin() ;
-            event->particles_end() != p ; ++p )
-      {
-        if ( !predicate ( *p ) ) { continue ; } // CONTINUE
+    inline OUTPUT getGenParticles( const HepMC::GenEvent* event, OUTPUT output, const PREDICATE& predicate ) {
+      if ( 0 == event ) { return output; }
+      for ( auto p = event->particles_begin(); event->particles_end() != p; ++p ) {
+        if ( !predicate( *p ) ) { continue; } // CONTINUE
         //
-        const HepMC::GenParticle* particle = *p ;
-        *output = const_cast<HepMC::GenParticle*> ( particle ) ;
-        ++output ;                                              // NB!
+        const HepMC::GenParticle* particle = *p;
+        *output                            = const_cast<HepMC::GenParticle*>( particle );
+        ++output; // NB!
         //
       }
-      return output ;
+      return output;
     }
     // ========================================================================
     /** simple function which allows to extract a certain
@@ -202,13 +181,9 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( const LHCb::HepMCEvent*  event     ,
-      OUTPUT                   output    ,
-      const PREDICATE&         predicate )
-    {
-      if ( 0 == event ) { return output ; }
-      return getGenParticles ( event->pGenEvt() , output , predicate ) ;
+    inline OUTPUT getGenParticles( const LHCb::HepMCEvent* event, OUTPUT output, const PREDICATE& predicate ) {
+      if ( 0 == event ) { return output; }
+      return getGenParticles( event->pGenEvt(), output, predicate );
     }
     // ========================================================================
     /** simple function which allows to extract a certain
@@ -240,14 +215,9 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( const LHCb::HepMCEvents* events    ,
-      OUTPUT                   output    ,
-      const PREDICATE&         predicate )
-    {
-      if ( 0 == events ) { return output ; }
-      return getGenParticles
-        ( events->begin() , events->end () , output , predicate ) ;
+    inline OUTPUT getGenParticles( const LHCb::HepMCEvents* events, OUTPUT output, const PREDICATE& predicate ) {
+      if ( 0 == events ) { return output; }
+      return getGenParticles( events->begin(), events->end(), output, predicate );
     }
     // ========================================================================
     /** simple function which allows to extract a certain
@@ -260,19 +230,13 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( const HepMC::GenVertex* vertex    ,
-      HepMC::IteratorRange    range     ,
-      OUTPUT                  output    ,
-      const PREDICATE&        predicate )
-    {
-      if ( !vertex ) { return output ; }            // RETURN
-      HepMC::GenVertex* v = const_cast<HepMC::GenVertex*> ( vertex ) ;
-      if ( !v      ) { return output ; }            // RETURN
+    inline OUTPUT getGenParticles( const HepMC::GenVertex* vertex, HepMC::IteratorRange range, OUTPUT output,
+                                   const PREDICATE& predicate ) {
+      if ( !vertex ) { return output; } // RETURN
+      HepMC::GenVertex* v = const_cast<HepMC::GenVertex*>( vertex );
+      if ( !v ) { return output; } // RETURN
       //
-      return  std::copy_if
-        ( v->particles_begin( range ) ,
-          v->particles_end  ( range ) , output , std::cref(predicate) ) ;
+      return std::copy_if( v->particles_begin( range ), v->particles_end( range ), output, std::cref( predicate ) );
     }
     // ========================================================================
     /** simple function which allows to extract a certain
@@ -285,25 +249,16 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( const HepMC::GenParticle* particle  ,
-      OUTPUT                    output    ,
-      const PREDICATE&          predicate )
-    {
-      if ( particle )
-      {
-        output = genParticles
-          ( particle->end_vertex () ,
-            HepMC::descendants      ,
-            output , predicate      ) ;                         // RECURSION
+    inline OUTPUT getGenParticles( const HepMC::GenParticle* particle, OUTPUT output, const PREDICATE& predicate ) {
+      if ( particle ) {
+        output = genParticles( particle->end_vertex(), HepMC::descendants, output, predicate ); // RECURSION
       }
       /// check the particle
-      if ( predicate ( particle ) )
-      {
-        *output = const_cast<HepMC::GenParticle*> ( particle ) ;
-        ++output ;                                              // NB!
+      if ( predicate( particle ) ) {
+        *output = const_cast<HepMC::GenParticle*>( particle );
+        ++output; // NB!
       }
-      return output ;                                           // RETURN
+      return output; // RETURN
     }
     // ========================================================================
     /** simple function which allow to extract a certain
@@ -316,16 +271,10 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    template <class INPUT,class OUTPUT, class PREDICATE>
-    inline OUTPUT getGenParticles
-    ( INPUT            first     ,
-      INPUT            last      ,
-      OUTPUT           output    ,
-      const PREDICATE& predicate )
-    {
-      for ( ; first != last ; ++first )
-      { output = getGenParticles ( *first , output , predicate ) ; }
-      return output ;
+    template <class INPUT, class OUTPUT, class PREDICATE>
+    inline OUTPUT getGenParticles( INPUT first, INPUT last, OUTPUT output, const PREDICATE& predicate ) {
+      for ( ; first != last; ++first ) { output = getGenParticles( *first, output, predicate ); }
+      return output;
     }
     // ========================================================================
     /** simple function which allow to extract a certain
@@ -355,11 +304,9 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const HepMC::GenEvent* event     ,
-      OUTPUT                 output    ,
-      const PREDICATE&       predicate )
-    { return getGenParticles ( event , output , predicate ) ; }
+    inline OUTPUT genParticles( const HepMC::GenEvent* event, OUTPUT output, const PREDICATE& predicate ) {
+      return getGenParticles( event, output, predicate );
+    }
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC graph.
@@ -388,11 +335,9 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const LHCb::HepMCEvent*  event     ,
-      OUTPUT                   output    ,
-      const PREDICATE&         predicate )
-    { return getGenParticles ( event , output , predicate ) ; }
+    inline OUTPUT genParticles( const LHCb::HepMCEvent* event, OUTPUT output, const PREDICATE& predicate ) {
+      return getGenParticles( event, output, predicate );
+    }
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC graph.
@@ -423,11 +368,9 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const LHCb::HepMCEvents* events    ,
-      OUTPUT                   output    ,
-      const PREDICATE&         predicate )
-    { return getGenParticles ( events , output , predicate ) ; }
+    inline OUTPUT genParticles( const LHCb::HepMCEvents* events, OUTPUT output, const PREDICATE& predicate ) {
+      return getGenParticles( events, output, predicate );
+    }
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC vertex
@@ -439,12 +382,10 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const HepMC::GenVertex* vertex    ,
-      HepMC::IteratorRange    range     ,
-      OUTPUT                  output    ,
-      const PREDICATE&        predicate )
-    { return getGenParticles ( vertex , range , output , predicate ) ; }
+    inline OUTPUT genParticles( const HepMC::GenVertex* vertex, HepMC::IteratorRange range, OUTPUT output,
+                                const PREDICATE& predicate ) {
+      return getGenParticles( vertex, range, output, predicate );
+    }
     // ========================================================================
     /** simple function which allows to extract a certain
      *  particles from HepMC vertex
@@ -456,11 +397,9 @@ namespace LoKi
      *  @date   2005-03-26
      */
     template <class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( const HepMC::GenParticle* particle  ,
-      OUTPUT                    output    ,
-      const PREDICATE&          predicate )
-    { return getGenParticles ( particle , output , predicate ) ; }
+    inline OUTPUT genParticles( const HepMC::GenParticle* particle, OUTPUT output, const PREDICATE& predicate ) {
+      return getGenParticles( particle, output, predicate );
+    }
     // ========================================================================
     /** simple function which allow to extract a certain
      *  particles from HepMC graph.
@@ -472,15 +411,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    template <class INPUT,class OUTPUT, class PREDICATE>
-    inline OUTPUT genParticles
-    ( INPUT            first     ,
-      INPUT            last      ,
-      OUTPUT           output    ,
-      const PREDICATE& predicate )
-    { return getGenParticles ( first , last , output , predicate ) ; }
+    template <class INPUT, class OUTPUT, class PREDICATE>
+    inline OUTPUT genParticles( INPUT first, INPUT last, OUTPUT output, const PREDICATE& predicate ) {
+      return getGenParticles( first, last, output, predicate );
+    }
     // ========================================================================
-  } // end of namespace LoKi::Extract
+  } // namespace Extract
 } // end of namespace LoKi
 // ============================================================================
 // The END

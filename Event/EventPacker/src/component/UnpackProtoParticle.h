@@ -23,22 +23,18 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class UnpackProtoParticle : public GaudiAlgorithm
-{
+class UnpackProtoParticle : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   UnpackProtoParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   std::string m_inputName;
   std::string m_outputName;
-  bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
-
+  bool        m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
 };
 
 #endif // UNPACKPROTOPARTICLE_H

@@ -23,8 +23,7 @@
 
 #include "RichUtils/RichDAQFooterPDBase.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   //=============================================================================================
   /** @class ParityFooterTB2006 RichDAQParityFooterTB2006.h
@@ -36,11 +35,9 @@ namespace Rich::DAQ
    */
   //=============================================================================================
 
-  class ParityFooterTB2006 final : public FooterPDBase
-  {
+  class ParityFooterTB2006 final : public FooterPDBase {
 
   public:
-
     /// Standard constructor
     ParityFooterTB2006() : FooterPDBase( 1 ) {}
 
@@ -54,10 +51,7 @@ namespace Rich::DAQ
     inline void setParityWord( const WordType word ) { this->setWord( 0, word ); }
 
     /// Test the parity word
-    inline bool testParityWord( const WordType refWord ) const
-    {
-      return ( refWord == this->parityWord() );
-    }
+    inline bool testParityWord( const WordType refWord ) const { return ( refWord == this->parityWord() ); }
   };
 
 } // namespace Rich::DAQ

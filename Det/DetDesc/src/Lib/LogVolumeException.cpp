@@ -30,13 +30,8 @@
  *  @param sc     status code
  */
 // ============================================================================
-LogVolumeException::LogVolumeException
-( const std::string&    name   ,
-  const ILVolume*       logvol ,
-  const StatusCode&     sc     )
-  : GaudiException( name , "*LogVolumeException*" , sc )
-  , m_logvol ( logvol )
-{}
+LogVolumeException::LogVolumeException( const std::string& name, const ILVolume* logvol, const StatusCode& sc )
+    : GaudiException( name, "*LogVolumeException*", sc ), m_logvol( logvol ) {}
 
 // ============================================================================
 /** standard constructor
@@ -46,14 +41,9 @@ LogVolumeException::LogVolumeException
  *  @param sc     status code
  */
 // ============================================================================
-LogVolumeException::LogVolumeException
-( const std::string&    name   ,
-  const GaudiException& excp   ,
-  const ILVolume*       logvol ,
-  const StatusCode&     sc     )
-  : GaudiException( name , "*LogVolumeException*" , sc , excp )
-  , m_logvol ( logvol )
-{}
+LogVolumeException::LogVolumeException( const std::string& name, const GaudiException& excp, const ILVolume* logvol,
+                                        const StatusCode& sc )
+    : GaudiException( name, "*LogVolumeException*", sc, excp ), m_logvol( logvol ) {}
 
 // ============================================================================
 /** printout to standard STD/STL stream
@@ -61,17 +51,13 @@ LogVolumeException::LogVolumeException
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream& LogVolumeException::printOut
-( std::ostream& os             ) const
-{
+std::ostream& LogVolumeException::printOut( std::ostream& os ) const {
   /// print THIS exception
-  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code() << std::endl ;
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code() << std::endl;
   /// print the logvol
-  os << " Exception logvol: "
-     << m_logvol
-     << std::endl  ;
+  os << " Exception logvol: " << m_logvol << std::endl;
   /// print all previous (linked) exceptions
-  return ( 0 != previous() ) ? previous()->printOut( os ) : os ;
+  return ( 0 != previous() ) ? previous()->printOut( os ) : os;
 }
 
 // ============================================================================
@@ -80,17 +66,13 @@ std::ostream& LogVolumeException::printOut
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream&    LogVolumeException::printOut
-( MsgStream&    os             ) const
-{
+MsgStream& LogVolumeException::printOut( MsgStream& os ) const {
   /// print THIS exception
-  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code() << endmsg ;
+  os << " \t" << tag() << " \t " << message() << "\t StatusCode=" << code() << endmsg;
   /// print the logvol
-  os << " Exception logvol: "
-     << m_logvol
-     << endmsg  ;
+  os << " Exception logvol: " << m_logvol << endmsg;
   /// print all previous (linked) exceptions
-  return ( 0 != previous() ) ? previous()->printOut( os ) : os ;
+  return ( 0 != previous() ) ? previous()->printOut( os ) : os;
 }
 
 // ============================================================================
@@ -98,8 +80,7 @@ MsgStream&    LogVolumeException::printOut
  *  @return pointer to newly created object
  */
 // ============================================================================
-GaudiException* LogVolumeException::clone() const
-{ return new LogVolumeException( *this ); }
+GaudiException* LogVolumeException::clone() const { return new LogVolumeException( *this ); }
 
 // ============================================================================
 // The End

@@ -27,8 +27,7 @@
 // local
 #include "DAQKernel/DecoderCommonBase.h"
 
-namespace Decoder
-{
+namespace Decoder {
   //-----------------------------------------------------------------------------
   /** @class TupleAlgBase DecoderTupleAlgBase.h DAQKernel/DecoderTupleAlgBase.h
    *
@@ -44,7 +43,6 @@ namespace Decoder
 
   using TupleAlgBase = Decoder::CommonBase<GaudiTupleAlg>;
 
-}
-
+} // namespace Decoder
 
 #endif // DAQKERNEL_DECODERTUPLEALGBASE_H

@@ -15,11 +15,10 @@
 // ===========================================================================
 // forward declarations
 // ===========================================================================
-namespace LHCb
-{
-  class MCParticle ;
-  class MCVertex   ;
-}
+namespace LHCb {
+  class MCParticle;
+  class MCVertex;
+} // namespace LHCb
 // ===========================================================================
 /** @file
  *
@@ -35,15 +34,13 @@ namespace LHCb
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::MCTrees
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-11-25
    */
-  namespace MCTrees
-  {
+  namespace MCTrees {
     // ========================================================================
     /** simple function with evaluates to true
      *  if MC particle  originates in the decay
@@ -53,9 +50,7 @@ namespace LoKi
      *  @return true if particle belongd to decay tree of parent
      */
     GAUDI_API
-    bool fromMCTree
-    ( const LHCb::MCParticle* particle  ,
-      const LHCb::MCParticle* parent    ) ;
+    bool fromMCTree( const LHCb::MCParticle* particle, const LHCb::MCParticle* parent );
     // ========================================================================
     /** simple function with evaluates to true
      *  if MC particle  originates in the decay
@@ -65,11 +60,9 @@ namespace LoKi
      *  @return true if particle belongd to decay tree of parent
      */
     GAUDI_API
-    bool fromMCTree
-    ( const LHCb::MCParticle* particle  ,
-      const LHCb::MCVertex*   parent    ) ;
+    bool fromMCTree( const LHCb::MCParticle* particle, const LHCb::MCVertex* parent );
     // ========================================================================
-  } //                                           end of namespace LoKi::MCTrees
+  } // namespace MCTrees
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

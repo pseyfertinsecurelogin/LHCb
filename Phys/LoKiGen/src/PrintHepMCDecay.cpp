@@ -15,8 +15,8 @@
 // ===========================================================================
 // STD & STL
 // ===========================================================================
-#include <string>
 #include <iostream>
+#include <string>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -25,19 +25,19 @@
 // HepMC
 // ============================================================================
 #ifdef __INTEL_COMPILER
-  #pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
+#  pragma warning( disable : 1572 ) // floating-point equality and inequality comparisons are unreliable
+#  pragma warning( push )
 #endif
 #include "HepMC/GenVertex.h"
 #ifdef __INTEL_COMPILER
-  #pragma warning(pop)
+#  pragma warning( pop )
 #endif
 // ============================================================================
 // LoKiCore
 // ============================================================================
 #include "LoKi/ParticleProperties.h"
-#include "LoKi/Report.h"
 #include "LoKi/Primitives.h"
+#include "LoKi/Report.h"
 // ===========================================================================
 // LoKiGen
 // ===========================================================================
@@ -45,8 +45,8 @@
 // ===========================================================================
 // Local
 // ===========================================================================
-#include "LoKi/PrintHepMCDecay.h"
 #include "LoKi/GenOscillated.h"
+#include "LoKi/PrintHepMCDecay.h"
 // ============================================================================
 /** @file
  *
@@ -70,49 +70,35 @@
 // ============================================================================
 // Simple function to print decay in more or less "readable" format
 // ============================================================================
-MsgStream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle*    particle,
-                                         MsgStream&                   stream  ,
-                                         const LoKi::GenTypes::GCuts& cut     ,
-                                         const int                    level   ,
-                                         const std::string&           blank   )
-{
-  if ( stream.isActive() ) {
-    LoKi::PrintHepMC::printDecay( particle, stream.stream(), cut, level, blank );
-  }
-  return stream ;
+MsgStream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, MsgStream& stream,
+                                         const LoKi::GenTypes::GCuts& cut, const int level, const std::string& blank ) {
+  if ( stream.isActive() ) { LoKi::PrintHepMC::printDecay( particle, stream.stream(), cut, level, blank ); }
+  return stream;
 }
 // ============================================================================
 // Simple function to print decay in more or less "readable" format
 // ============================================================================
-std::string LoKi::PrintHepMC::printDecay( const HepMC::GenParticle*    particle,
-                                          const LoKi::GenTypes::GCuts& cut     ,
-                                          const int                    level   ,
-                                          const std::string&           blank   )
-{
-  std::ostringstream stream ;
-  LoKi::PrintHepMC::printDecay ( particle , stream, cut , level , blank ) ;
-  return stream.str() ;
+std::string LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, const LoKi::GenTypes::GCuts& cut,
+                                          const int level, const std::string& blank ) {
+  std::ostringstream stream;
+  LoKi::PrintHepMC::printDecay( particle, stream, cut, level, blank );
+  return stream.str();
 }
 // ============================================================================
 // Simple function to print decay in more or less "readable" format
 // ============================================================================
-std::ostream&
-LoKi::PrintHepMC::printDecay ( const HepMC::GenParticle*    particle ,
-                               std::ostream&                stream   ,
-                               const LoKi::GenTypes::GCuts& cut      ,
-                               const int                    level    ,
-                               const std::string&           blank    )
-{
-  if ( !particle    )
-  {
-    LoKi::Report::Warning ( "LoKi::printDecay, invalid particle" ) ;
-    return stream << " <NULL> " ;                                 // RETURN
+std::ostream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, std::ostream& stream,
+                                            const LoKi::GenTypes::GCuts& cut, const int level,
+                                            const std::string& blank ) {
+  if ( !particle ) {
+    LoKi::Report::Warning( "LoKi::printDecay, invalid particle" );
+    return stream << " <NULL> "; // RETURN
   }
   //
-  if ( !cut( particle ) ) { return stream << blank ; } ;          // RETURN
+  if ( !cut( particle ) ) { return stream << blank; }; // RETURN
   //
-  const HepMC::GenParticle* osc1 = LoKi::GenParticles::oscillated1 ( particle ) ;
-  const HepMC::GenParticle* osc2 = LoKi::GenParticles::oscillated2 ( particle ) ;
+  const HepMC::GenParticle* osc1 = LoKi::GenParticles::oscillated1( particle );
+  const HepMC::GenParticle* osc2 = LoKi::GenParticles::oscillated2( particle );
   //
   // case 1 :
   //      osc1 == osc2 == 0
@@ -127,71 +113,58 @@ LoKi::PrintHepMC::printDecay ( const HepMC::GenParticle*    particle ,
   // case 4 :
   //      osc1 != 0 , osc2 != 0
   //      invalid case
-  if ( osc1 && osc2 )
-  {
-    LoKi::Report::Error ( "LoKi::printDecay, invalid oscillation pattern" ) ;
-    return stream << " <INVALID OSCILLATION PATTERN> " ;               // RETURN
+  if ( osc1 && osc2 ) {
+    LoKi::Report::Error( "LoKi::printDecay, invalid oscillation pattern" );
+    return stream << " <INVALID OSCILLATION PATTERN> "; // RETURN
   }
-  const HepMC::GenParticle* self   = particle ;
-  const HepMC::GenParticle* source = particle ;
-  std::string name ;
+  const HepMC::GenParticle* self   = particle;
+  const HepMC::GenParticle* source = particle;
+  std::string               name;
   if ( osc1 ) {
-    self    = osc1     ;
-    name    = "[" +
-      LoKi::Particles::nameIdFromPID ( LHCb::ParticleID ( self->pdg_id() ) )
-      + "]os''" ;
+    self = osc1;
+    name = "[" + LoKi::Particles::nameIdFromPID( LHCb::ParticleID( self->pdg_id() ) ) + "]os''";
   } else if ( osc2 ) {
-    source = osc2     ;
-    name    = "[" +
-      LoKi::Particles::nameIdFromPID ( LHCb::ParticleID ( self->pdg_id() ) )
-      + "]os'" ;
+    source = osc2;
+    name   = "[" + LoKi::Particles::nameIdFromPID( LHCb::ParticleID( self->pdg_id() ) ) + "]os'";
   } else {
-    name   = LoKi::Particles::nameIdFromPID ( LHCb::ParticleID ( self->pdg_id() ) ) ;
+    name = LoKi::Particles::nameIdFromPID( LHCb::ParticleID( self->pdg_id() ) );
   }
   // get daughters
-  HepMC::GenVertex* ev = source->end_vertex() ;
-  if ( 0 == ev      ) { return stream << " " << name << " " ; }   // RETURN
-  auto begin = ev->particles_begin ( HepMC::children ) ;
-  auto end   = ev->particles_end   ( HepMC::children ) ;
-  if ( end == begin ) { return stream << " " << name << " " ; }  // RETURN
+  HepMC::GenVertex* ev = source->end_vertex();
+  if ( 0 == ev ) { return stream << " " << name << " "; } // RETURN
+  auto begin = ev->particles_begin( HepMC::children );
+  auto end   = ev->particles_end( HepMC::children );
+  if ( end == begin ) { return stream << " " << name << " "; } // RETURN
   // too many levels ?
-  if ( 0 >= level   ) { return stream << " " << name << " " ; }  // RETURN
+  if ( 0 >= level ) { return stream << " " << name << " "; } // RETURN
   // print the decay
-  stream << " ( " << name << " ->  " ;
-  for ( ; begin != end ; ++begin )
-  { LoKi::PrintHepMC::printDecay
-      ( *begin , stream , cut , level - 1 , blank ) ; }          // RECURSION
+  stream << " ( " << name << " ->  ";
+  for ( ; begin != end; ++begin ) {
+    LoKi::PrintHepMC::printDecay( *begin, stream, cut, level - 1, blank );
+  } // RECURSION
   //
-  return stream << " ) " ;                                       // RETURN
+  return stream << " ) "; // RETURN
 }
 // ============================================================================
 //  Simple function to print HepMC decay in more or less "readable" format
 // ============================================================================
-std::ostream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle ,
-                                            std::ostream&             stream   )
-{
-  return LoKi::PrintHepMC::printDecay
-    ( particle , stream ,
-      LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant ( true ) ) ;
+std::ostream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, std::ostream& stream ) {
+  return LoKi::PrintHepMC::printDecay( particle, stream,
+                                       LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant( true ) );
 }
 // ============================================================================
 //  Simple function to print HepMC decay in more or less "readable" format
 // ============================================================================
-MsgStream& LoKi::PrintHepMC::printDecay ( const HepMC::GenParticle* particle ,
-                                          MsgStream&                stream   )
-{
-  return LoKi::PrintHepMC::printDecay
-    ( particle , stream ,
-      LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant ( true ) ) ;
+MsgStream& LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle, MsgStream& stream ) {
+  return LoKi::PrintHepMC::printDecay( particle, stream,
+                                       LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant( true ) );
 }
 // ============================================================================
 //  Simple function to print HepMC decay in more or less "readable" format
 // ============================================================================
-std::string LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle )
-{
-  return LoKi::PrintHepMC::printDecay
-  ( particle ,
-    LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant ( true ) ) ;
+std::string LoKi::PrintHepMC::printDecay( const HepMC::GenParticle* particle ) {
+  return LoKi::PrintHepMC::printDecay( particle,
+                                       LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant( true ) );
 }
 // ============================================================================
 

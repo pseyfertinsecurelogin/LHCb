@@ -17,9 +17,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Objects.h"
-#include "LoKi/GenDump.h"
 #include "LoKi/GenDecayChain.h"
+#include "LoKi/GenDump.h"
+#include "LoKi/Objects.h"
 // ============================================================================
 /** @file
  *
@@ -43,28 +43,19 @@
  */
 // ============================================================================
 template <>
-std::vector<const HepMC::GenParticle*>
-LoKi::Functors::Dump_<const HepMC::GenParticle*>::operator()
-  ( const std::vector<const HepMC::GenParticle*>& a ) const
-{
+std::vector<const HepMC::GenParticle*> LoKi::Functors::Dump_<const HepMC::GenParticle*>::
+                                       operator()( const std::vector<const HepMC::GenParticle*>& a ) const {
   //
-  const unsigned int mx = std::min ( m_dump.nMax() , a.size() ) ;
+  const unsigned int mx = std::min( m_dump.nMax(), a.size() );
   //
-  m_stream << m_dump.open  () ;
+  m_stream << m_dump.open();
   //
-  LoKi::GenDecayChain printer ;
-  printer.print ( a.begin ()             ,
-                  a.begin () + mx        ,
-                  m_stream               ,
-                  '\n'                   ,
-                  LoKi::Objects::_VALID_ ,
-                  LoKi::Objects::_NONE_  ,
-                  " "                    ,
-                  0                      ) ;
+  LoKi::GenDecayChain printer;
+  printer.print( a.begin(), a.begin() + mx, m_stream, '\n', LoKi::Objects::_VALID_, LoKi::Objects::_NONE_, " ", 0 );
   //
-  m_stream << m_dump.close () ;
+  m_stream << m_dump.close();
   //
-  return a ;
+  return a;
 }
 // ============================================================================
 /*  template specialization of ``dumpers''
@@ -74,46 +65,29 @@ LoKi::Functors::Dump_<const HepMC::GenParticle*>::operator()
  */
 // ============================================================================
 template <>
-bool
-LoKi::Functors::Dump1_<const HepMC::GenParticle*,bool>::operator()
-  ( const HepMC::GenParticle* a ) const
-{
+bool LoKi::Functors::Dump1_<const HepMC::GenParticle*, bool>::operator()( const HepMC::GenParticle* a ) const {
   //
-  if ( m_right )
-  {
-    m_stream << m_dump.open  () ;
+  if ( m_right ) {
+    m_stream << m_dump.open();
     //
-    LoKi::GenDecayChain printer ;
-    printer.print ( a                      ,
-                    m_stream               ,
-                    '\n'                   ,
-                    LoKi::Objects::_VALID_ ,
-                    LoKi::Objects::_NONE_  ,
-                    " "                    ,
-                    0                      ) ;
+    LoKi::GenDecayChain printer;
+    printer.print( a, m_stream, '\n', LoKi::Objects::_VALID_, LoKi::Objects::_NONE_, " ", 0 );
     //
-    m_stream << m_dump.close () ;
+    m_stream << m_dump.close();
     //
-    return m_fun ( a ) ;
+    return m_fun( a );
   }
   //
-  auto result = m_fun ( a ) ;
+  auto result = m_fun( a );
   //
-  m_stream << m_dump.open  () ;
+  m_stream << m_dump.open();
   //
-  LoKi::GenDecayChain printer ;
-  printer.print ( a                      ,
-                  m_stream               ,
-                  '\n'                   ,
-                  LoKi::Objects::_VALID_ ,
-                  LoKi::Objects::_NONE_  ,
-                  " "                    ,
-                  0                      ) ;
+  LoKi::GenDecayChain printer;
+  printer.print( a, m_stream, '\n', LoKi::Objects::_VALID_, LoKi::Objects::_NONE_, " ", 0 );
   //
-  m_stream << m_dump.close () ;
+  m_stream << m_dump.close();
   //
-  return result ;
-
+  return result;
 }
 // ============================================================================
 /*  template specialization of ``dumpers''
@@ -123,46 +97,29 @@ LoKi::Functors::Dump1_<const HepMC::GenParticle*,bool>::operator()
  */
 // ============================================================================
 template <>
-double
-LoKi::Functors::Dump1_<const HepMC::GenParticle*,double>::operator()
-  ( const HepMC::GenParticle* a ) const
-{
+double LoKi::Functors::Dump1_<const HepMC::GenParticle*, double>::operator()( const HepMC::GenParticle* a ) const {
   //
-  if ( m_right )
-  {
-    m_stream << m_dump.open  () ;
+  if ( m_right ) {
+    m_stream << m_dump.open();
     //
-    LoKi::GenDecayChain printer ;
-    printer.print ( a                      ,
-                    m_stream               ,
-                    '\n'                   ,
-                    LoKi::Objects::_VALID_ ,
-                    LoKi::Objects::_NONE_  ,
-                    " "                    ,
-                    0                      ) ;
+    LoKi::GenDecayChain printer;
+    printer.print( a, m_stream, '\n', LoKi::Objects::_VALID_, LoKi::Objects::_NONE_, " ", 0 );
     //
-    m_stream << m_dump.close () ;
+    m_stream << m_dump.close();
     //
-    return m_fun ( a ) ;
+    return m_fun( a );
   }
   //
-  auto result = m_fun ( a ) ;
+  auto result = m_fun( a );
   //
-  m_stream << m_dump.open  () ;
+  m_stream << m_dump.open();
   //
-  LoKi::GenDecayChain printer ;
-  printer.print ( a                      ,
-                  m_stream               ,
-                  '\n'                   ,
-                  LoKi::Objects::_VALID_ ,
-                  LoKi::Objects::_NONE_  ,
-                  " "                    ,
-                  0                      ) ;
+  LoKi::GenDecayChain printer;
+  printer.print( a, m_stream, '\n', LoKi::Objects::_VALID_, LoKi::Objects::_NONE_, " ", 0 );
   //
-  m_stream << m_dump.close () ;
+  m_stream << m_dump.close();
   //
-  return result ;
-
+  return result;
 }
 // ============================================================================
 // The END

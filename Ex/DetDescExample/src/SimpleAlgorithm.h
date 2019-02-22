@@ -29,7 +29,7 @@ public:
   /**
    * Constructor: A constructor of this form must be provided.
    */
-  SimpleAlgorithm(const std::string& name, ISvcLocator* pSvcLocator);
+  SimpleAlgorithm( const std::string& name, ISvcLocator* pSvcLocator );
 
   /**
    * The "initialization" of the algorithm.
@@ -55,6 +55,6 @@ public:
    * @param lv the logical volume concerned
    * @param de the name of the detector element associated to lv
    */
-  void dumpPVs (const ILVolume* lv, std::string de);
+  void dumpPVs( const ILVolume* lv, std::string de );
 };
-#endif    // DDEXAMPLE_SIMPLEALGORITHM_H
+#endif // DDEXAMPLE_SIMPLEALGORITHM_H

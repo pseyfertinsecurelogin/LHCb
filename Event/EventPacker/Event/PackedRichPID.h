@@ -12,8 +12,8 @@
 #define EVENT_PACKEDRICHPID_H 1
 
 // STL
-#include <string>
 #include <sstream>
+#include <string>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -23,11 +23,10 @@
 
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 
-namespace LHCb
-{
+namespace LHCb {
   // -----------------------------------------------------------------------
 
   /** @struct PackedRichPID Event/PackedRichPID.h
@@ -37,39 +36,31 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  struct PackedRichPID
-  {
-    int pidResultCode{0};
-    int dllEl{0},dllMu{0},dllPi{0},dllKa{0},dllPr{0};
+  struct PackedRichPID {
+    int       pidResultCode{0};
+    int       dllEl{0}, dllMu{0}, dllPi{0}, dllKa{0}, dllPr{0};
     long long track{-1};
-    int dllBt{0};
+    int       dllBt{0};
     long long key{0};
-    int dllDe{0};
+    int       dllDe{0};
 
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        pidResultCode,
-        dllEl, dllMu, dllPi, dllKa, dllPr,
-        track,
-        dllBt,
-        key,
-        dllDe
-      );
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.io( pidResultCode, dllEl, dllMu, dllPi, dllKa, dllPr, track, dllBt, key, dllDe );
     }
 
-    template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      buf.io(pidResultCode);
-      buf.io(dllEl);
-      buf.io(dllMu);
-      buf.io(dllPi);
-      buf.io(dllKa);
-      buf.io(dllPr);
-      buf.io(track);
-      buf.io(dllBt);
-      buf.io(key);
-      buf.io(dllDe);
+    template <typename T>
+    inline void load( T& buf, unsigned int /*version*/ ) {
+      buf.io( pidResultCode );
+      buf.io( dllEl );
+      buf.io( dllMu );
+      buf.io( dllPi );
+      buf.io( dllKa );
+      buf.io( dllPr );
+      buf.io( track );
+      buf.io( dllBt );
+      buf.io( key );
+      buf.io( dllDe );
 
       // - Example 1, adding fields
       // if (version >= 5) buf.io(dllIon)
@@ -91,11 +82,10 @@ namespace LHCb
   constexpr CLID CLID_PackedRichPIDs = 1561;
 
   /// Namespace for locations in TDS
-  namespace PackedRichPIDLocation
-  {
+  namespace PackedRichPIDLocation {
     inline const std::string Default  = "pRec/Rich/PIDs";
     inline const std::string InStream = "/pRec/Rich/CustomPIDs";
-  }
+  } // namespace PackedRichPIDLocation
 
   /** @class PackedRichPIDs Event/PackedRichPID.h
    *
@@ -104,21 +94,17 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  class PackedRichPIDs : public DataObject
-  {
+  class PackedRichPIDs : public DataObject {
 
   public:
-
     /// Vector of packed objects
     typedef std::vector<LHCb::PackedRichPID> Vector;
 
   public:
-
     /// Default Packing Version
     static char defaultPackingVersion() { return 4; }
 
   public:
-
     /// Class ID
     static const CLID& classID() { return CLID_PackedRichPIDs; }
 
@@ -126,12 +112,11 @@ namespace LHCb
     const CLID& clID() const override { return PackedRichPIDs::classID(); }
 
   public:
-
     /// Write access to the data vector
-    Vector & data()             { return m_vect; }
+    Vector& data() { return m_vect; }
 
     /// Read access to the data vector
-    const Vector & data() const { return m_vect; }
+    const Vector& data() const { return m_vect; }
 
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
@@ -140,33 +125,31 @@ namespace LHCb
     char packingVersion() const { return m_packingVersion; }
 
     /// Describe serialization of object
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.template save<uint8_t>(m_packingVersion);
-      buf.template save<uint8_t>(version());
-      buf.save(m_vect);
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.template save<uint8_t>( m_packingVersion );
+      buf.template save<uint8_t>( version() );
+      buf.save( m_vect );
     }
 
     /// Describe de-serialization of object
-    template<typename T>
-    inline void load(T& buf) {
-      setPackingVersion(buf.template load<uint8_t>());
-      setVersion(buf.template load<uint8_t>());
-      if (m_packingVersion < 4 || m_packingVersion > defaultPackingVersion()) {
-        throw std::runtime_error("PackedRichPIDs packing version is not supported: "
-                                 + std::to_string(m_packingVersion));
+    template <typename T>
+    inline void load( T& buf ) {
+      setPackingVersion( buf.template load<uint8_t>() );
+      setVersion( buf.template load<uint8_t>() );
+      if ( m_packingVersion < 4 || m_packingVersion > defaultPackingVersion() ) {
+        throw std::runtime_error( "PackedRichPIDs packing version is not supported: " +
+                                  std::to_string( m_packingVersion ) );
       }
-      buf.load(m_vect, m_packingVersion);
+      buf.load( m_vect, m_packingVersion );
     }
 
   private:
-
     /// Data packing version
-    char   m_packingVersion{ defaultPackingVersion() };
+    char m_packingVersion{defaultPackingVersion()};
 
     /// The packed data objects
     Vector m_vect;
-
   };
 
   // -----------------------------------------------------------------------
@@ -178,69 +161,52 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  class RichPIDPacker
-  {
+  class RichPIDPacker {
 
   public:
-
     // These are required by the templated algorithms
-    typedef LHCb::RichPID                    Data;
-    typedef LHCb::PackedRichPID        PackedData;
-    typedef LHCb::RichPIDs             DataVector;
+    typedef LHCb::RichPID        Data;
+    typedef LHCb::PackedRichPID  PackedData;
+    typedef LHCb::RichPIDs       DataVector;
     typedef LHCb::PackedRichPIDs PackedDataVector;
-    static const std::string& packedLocation()   { return LHCb::PackedRichPIDLocation::Default; }
-    static const std::string& unpackedLocation() { return LHCb::RichPIDLocation::Default; }
+    static const std::string&    packedLocation() { return LHCb::PackedRichPIDLocation::Default; }
+    static const std::string&    unpackedLocation() { return LHCb::RichPIDLocation::Default; }
 
   private:
-
     /// Default Constructor hidden
     RichPIDPacker() {}
 
   public:
-
     /// Constructor
-    RichPIDPacker( const GaudiAlgorithm * parent ) : m_pack(parent) { }
+    RichPIDPacker( const GaudiAlgorithm* parent ) : m_pack( parent ) {}
 
   public:
-
     /// Pack a RichPID
-    void pack( const Data & pid,
-               PackedData & ppid,
-               PackedDataVector & ppids ) const;
+    void pack( const Data& pid, PackedData& ppid, PackedDataVector& ppids ) const;
 
     /// Pack RichPIDs
-    void pack( const DataVector & pids,
-               PackedDataVector & ppids ) const;
+    void pack( const DataVector& pids, PackedDataVector& ppids ) const;
 
     /// Unpack a single RichPID
-    void unpack( const PackedData       & ppid,
-                 Data                   & pid,
-                 const PackedDataVector & ppids,
-                 DataVector             & pids ) const;
+    void unpack( const PackedData& ppid, Data& pid, const PackedDataVector& ppids, DataVector& pids ) const;
 
     /// Unpack RichPIDs
-    void unpack( const PackedDataVector & ppids,
-                 DataVector             & pids ) const;
+    void unpack( const PackedDataVector& ppids, DataVector& pids ) const;
 
     /// Compare two RichPID containers to check the packing -> unpacking performance
-    StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
+    StatusCode check( const DataVector& dataA, const DataVector& dataB ) const;
 
     /// Compare two MuonPIDs to check the packing -> unpacking performance
-    StatusCode check( const Data & dataA,
-                      const Data & dataB ) const;
+    StatusCode check( const Data& dataA, const Data& dataB ) const;
 
   private:
-
     /// Access the parent algorithm
-    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+    const GaudiAlgorithm& parent() const { return *( m_pack.parent() ); }
 
     /// Check if the given packing version is supported
-    bool isSupportedVer( const char& ver ) const
-    {
+    bool isSupportedVer( const char& ver ) const {
       const bool OK = ( 0 <= ver && ver <= 4 );
-      if ( UNLIKELY(!OK) )
-      {
+      if ( UNLIKELY( !OK ) ) {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;
         throw GaudiException( mess.str(), "RichPIDPacker", StatusCode::FAILURE );
@@ -249,14 +215,12 @@ namespace LHCb
     }
 
   private:
-
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
   };
 
   // -----------------------------------------------------------------------
 
-}
+} // namespace LHCb
 
 #endif // EVENT_PACKEDRICHPID_H

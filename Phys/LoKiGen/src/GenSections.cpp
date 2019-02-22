@@ -21,8 +21,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/GenChild.h"
 #include "LoKi/Combiner.h"
+#include "LoKi/GenChild.h"
 #include "LoKi/GenSections.h"
 // ============================================================================
 /** @file
@@ -38,45 +38,40 @@
  *  @return size of the section container
  */
 // ============================================================================
-size_t Decays::sections ( const HepMC::GenParticle* particle ,
-                          Decays::GenSections&      output  )
-{
+size_t Decays::sections( const HepMC::GenParticle* particle, Decays::GenSections& output ) {
   // trivial case 1
-  if ( 0 == particle )                   { return output.size() ; } // RETURN
+  if ( 0 == particle ) { return output.size(); } // RETURN
   // add the particle itself as one of the section
-  output.push_back ( GenSection ( 1 , particle ) ) ;  // the primitive section
-  if ( 0 == particle->end_vertex() )     { return output.size() ; } // RETURN
+  output.push_back( GenSection( 1, particle ) );               // the primitive section
+  if ( 0 == particle->end_vertex() ) { return output.size(); } // RETURN
   // get all children particles:
-  std::vector<const HepMC::GenParticle*> children ;
-  LoKi::GenChild::daughters ( particle , children ) ;
-  if ( children.empty() )                { return output.size () ; } // RETURN
+  std::vector<const HepMC::GenParticle*> children;
+  LoKi::GenChild::daughters( particle, children );
+  if ( children.empty() ) { return output.size(); } // RETURN
   // get all sections from daughter particles:
-  std::vector<GenSections>  all ( children.size() ) ;
-  for ( size_t index = 0 ; index < children.size() ; ++index )
-  { sections ( children[index] , all[index] ) ; }                // RECURSION
+  std::vector<GenSections> all( children.size() );
+  for ( size_t index = 0; index < children.size(); ++index ) { sections( children[index], all[index] ); } // RECURSION
   //
-  typedef LoKi::Combiner_<GenSections>  Loop   ;
-  typedef Loop::Range                   Range  ;
-  typedef Loop::Select                  Select ;
+  typedef LoKi::Combiner_<GenSections> Loop;
+  typedef Loop::Range                  Range;
+  typedef Loop::Select                 Select;
   // create the proper combiner
-  Loop loop ;
+  Loop loop;
   // fill the combiner with the information
-  for ( const auto& i : all ) { loop.add ( Range ( i ) ) ; }  // Fill the LOOP!
+  for ( const auto& i : all ) { loop.add( Range( i ) ); } // Fill the LOOP!
   ///
   // make the real looping over all combinations of sections
-  for ( ; loop.valid() ; ++loop )
-  {
+  for ( ; loop.valid(); ++loop ) {
     // get the "current" multi-iterator
-    const Select& sel = loop.current() ;
+    const Select& sel = loop.current();
     // construct the section
-    GenSection section ;
-    for ( const auto & s : sel )
-    { section.insert ( section.end() , s->begin() , s->end() ); }
+    GenSection section;
+    for ( const auto& s : sel ) { section.insert( section.end(), s->begin(), s->end() ); }
     // add it into the collection of sections
-    output.push_back ( section ) ;
+    output.push_back( section );
   }
   //
-  return output.size () ;                                          // RETURN
+  return output.size(); // RETURN
 }
 // ============================================================================
 // The END

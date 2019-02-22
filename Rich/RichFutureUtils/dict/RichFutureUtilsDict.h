@@ -15,10 +15,8 @@
 #include "RichFutureUtils/RichGeomPhoton.h"
 #include "RichFutureUtils/RichSIMDGeomPhoton.h"
 
-namespace
-{
-  struct _Instantiations
-  {
+namespace {
+  struct _Instantiations {
 
     // instantiate templated classes
     // Rich::Future::HypoData<float>            obj_1;

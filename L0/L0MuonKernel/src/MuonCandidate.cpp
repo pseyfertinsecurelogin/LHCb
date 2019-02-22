@@ -10,26 +10,26 @@
 \*****************************************************************************/
 // $Id: MuonCandidate.cpp,v 1.6 2008-07-11 15:30:02 jucogan Exp $
 
-#include <cmath>
-#include <vector>
 #include "L0MuonKernel/MuonCandidate.h"
 #include "L0MuonKernel/ProcUtilities.h"
+#include <cmath>
+#include <vector>
 
 #include <iostream>
 
 L0Muon::MuonCandidate::MuonCandidate() {
-  m_colM3  =0;
-  m_rowM3  =0;
-  m_offM2  =0;
-  m_offM1  =0;
-  m_pu     =0;
-  m_quarter=0;
-  m_board  =0;
-  m_pT     =0;
-  m_charge =0;
+  m_colM3   = 0;
+  m_rowM3   = 0;
+  m_offM2   = 0;
+  m_offM1   = 0;
+  m_pu      = 0;
+  m_quarter = 0;
+  m_board   = 0;
+  m_pT      = 0;
+  m_charge  = 0;
 }
 
-L0Muon::MuonCandidate::MuonCandidate(const MuonCandidate& cand) {
+L0Muon::MuonCandidate::MuonCandidate( const MuonCandidate& cand ) {
   m_colM3   = cand.colM3();
   m_rowM3   = cand.rowM3();
   m_offM2   = cand.offM2();
@@ -41,52 +41,50 @@ L0Muon::MuonCandidate::MuonCandidate(const MuonCandidate& cand) {
   m_charge  = cand.charge();
 }
 
+std::string L0Muon::MuonCandidate::dump( std::string tab ) {
+  //   std::string cand="";
+  //   std::string sbuf;
+  //   char buf[16];
 
-std::string L0Muon::MuonCandidate::dump(std::string tab){
-//   std::string cand="";
-//   std::string sbuf;
-//   char buf[16];
+  //   cand += tab+"|----- CAND -------|\n";
+  //   sprintf(buf,"%4d",m_quarter );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   quarter = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_board   );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   board   = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_pu      );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   pu      = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_colM3   );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   colM3   = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_rowM3   );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   rowM3   = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_offM2   );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   offM2   = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_offM1   );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   offM1   = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_pT      );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   pt      = " + sbuf +" |\n";
+  //   sprintf(buf,"%4d",m_charge  );
+  //   sbuf = buf;
+  //   cand +=   tab+"|   charge  = " + sbuf +" |\n";
+  //   cand += tab+"|------------------|\n";
 
-//   cand += tab+"|----- CAND -------|\n";
-//   sprintf(buf,"%4d",m_quarter );
-//   sbuf = buf;
-//   cand +=   tab+"|   quarter = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_board   );
-//   sbuf = buf;
-//   cand +=   tab+"|   board   = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_pu      );
-//   sbuf = buf;
-//   cand +=   tab+"|   pu      = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_colM3   );
-//   sbuf = buf;
-//   cand +=   tab+"|   colM3   = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_rowM3   );
-//   sbuf = buf;
-//   cand +=   tab+"|   rowM3   = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_offM2   );
-//   sbuf = buf;
-//   cand +=   tab+"|   offM2   = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_offM1   );
-//   sbuf = buf;
-//   cand +=   tab+"|   offM1   = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_pT      );
-//   sbuf = buf;
-//   cand +=   tab+"|   pt      = " + sbuf +" |\n";
-//   sprintf(buf,"%4d",m_charge  );
-//   sbuf = buf;
-//   cand +=   tab+"|   charge  = " + sbuf +" |\n";
-//   cand += tab+"|------------------|\n";
-  
-  char buf[128];
-  std::string sign="+";
-  if (m_charge==0) sign="-";
-  std::cout<<sign<<std::endl;
-  sprintf(buf,"%sCand Q%1d PB%02d PU%1d - M3: col=%2d row=%1d - M2 off=%3d - M1 off=%3d - PT=%1s%3d",
-          tab.c_str(),(m_quarter+1),m_board,m_pu,m_colM3,m_rowM3,m_offM2,m_offM1,sign.c_str(),m_pT );
+  char        buf[128];
+  std::string sign = "+";
+  if ( m_charge == 0 ) sign = "-";
+  std::cout << sign << std::endl;
+  sprintf( buf, "%sCand Q%1d PB%02d PU%1d - M3: col=%2d row=%1d - M2 off=%3d - M1 off=%3d - PT=%1s%3d", tab.c_str(),
+           ( m_quarter + 1 ), m_board, m_pu, m_colM3, m_rowM3, m_offM2, m_offM1, sign.c_str(), m_pT );
   std::string cand = buf;
 
   return cand;
-  
 }
 
 // L0Muon::MuonCandidate::MuonTileID boardID(bool debug) const {
@@ -94,7 +92,7 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 //   int region   = m_board/3;
 //   int boardloc = 1+ m_board - region*3;
 //   int boardnx  =  boardloc     & 1;
-//   int boardny  = (boardloc>>1) & 1;  
+//   int boardny  = (boardloc>>1) & 1;
 //   LHCb::MuonTileID boardID(0,MuonLayout(1,1),region,m_quarter,boardnx,boardny);
 //   if(debug)  std::cout<< "L0Muon::MuonCandidate::boardID  " << boardID.toString() <<std::endl;
 // }
@@ -106,21 +104,21 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 //   int puny = (m_pu>>1) & 1;
 //   LHCb::MuonTileID puID(boardID,MuonLayout(2,2),punx,puny);
 //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads"
-//                       <<" pu: "<<m_pu 
+//                       <<" pu: "<<m_pu
 //                       <<" (x: "<<punx <<" , y: "<<puny <<")"
-//                       <<" => puID: " << puID.toString() 
-//                       <<std::endl;  
+//                       <<" => puID: " << puID.toString()
+//                       <<std::endl;
 // }
 
 // // std::vector<LHCb::MuonTileID> L0Muon::MuonCandidate::pads(int procVersion, bool debug) const{
- 
+
 // //   std::vector<LHCb::MuonTileID> tiles;
 
 // //   // MuonTileID of the board where the candidate was found
 // //   int region   = m_board/3;
 // //   int boardloc = 1+ m_board - region*3;
 // //   int boardnx  =  boardloc     & 1;
-// //   int boardny  = (boardloc>>1) & 1;  
+// //   int boardny  = (boardloc>>1) & 1;
 // //   LHCb::MuonTileID boardID(0,MuonLayout(1,1),region,m_quarter,boardnx,boardny);
 // //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads boardID: " << boardID.toString() <<std::endl;
 
@@ -129,9 +127,9 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   int puny = (m_pu>>1) & 1;
 // //   LHCb::MuonTileID puID(boardID,MuonLayout(2,2),punx,puny);
 // //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads"
-// //                       <<" pu: "<<m_pu 
+// //                       <<" pu: "<<m_pu
 // //                       <<" (x: "<<punx <<" , y: "<<puny <<")"
-// //                       <<" => puID: " << puID.toString() 
+// //                       <<" => puID: " << puID.toString()
 // //                       <<std::endl;
 
 // // //   // MuonTileID of the PU where the candidate was found
@@ -140,10 +138,10 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   // MuonTileID of the seed of the candidate (pad in M3)
 // //   LHCb::MuonTileID padM3ID(puID,MuonLayout(48,8),m_colM3,m_rowM3);
 // //   padM3ID.setStation(2);
-// //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads padM3ID: " << padM3ID.toString() 
+// //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads padM3ID: " << padM3ID.toString()
 // //                       << " (col: "<<m_colM3<<" , row: "<<m_rowM3<<" )"
 // //                       <<std::endl;
-  
+
 // //   // MuonTileID of the pad in M2 of the candidate
 // //   // M2 Offset can negative
 // //   int offM2 = m_offM2;
@@ -153,7 +151,7 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   int M2ny = m_rowM3;
 // //   LHCb::MuonTileID padM2ID(puID,MuonLayout(48,8),M2nx,M2ny);
 // //   padM2ID.setStation(1);
-  
+
 // //   // If M2 pad is coming from a upper region, convert it
 // //   if (!padM2ID.isValid()) {
 // //     if ( padM2ID.nX()>=2*padM2ID.layout().xGrid() ) {
@@ -162,7 +160,7 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //         std::cout<<" M2 PAD DOES NOT COVER EXACTLY ONE PAD IN UPPER REGION"<<std::endl;
 // //         std::cout<<" padM2ID= "<<padM2ID.toString()<< "lpads.size()= "<<lpads.size()<<std::endl;
 // //         return tiles;
-        
+
 // //       }
 // //       padM2ID = lpads[0];
 // //     } else {
@@ -172,25 +170,25 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 
 // //   // Extrapolation in M1
 // //   int extrapM1 = L0Muon::extrapolationM1(abs(offM2),procVersion);
-  
+
 // //   extrapM1 = offM2>0 ? extrapM1 : -1*extrapM1;
 // //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads extrapM1 = "<<extrapM1 <<std::endl;
 
 // //   // MuonTileID of the pad in M1 of the candidate
 // //   int offM1 = m_offM1>=0x7 ? m_offM1-0x10 : m_offM1;
 // //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads offM1 = "<<offM1 <<std::endl;
-  
+
 // //   int M1nx = m_colM3+extrapM1;
-// //   int M1ny = m_rowM3;  
+// //   int M1ny = m_rowM3;
 // // // //   if (procVersion==0) {// M1 Offset is expressed with M3 granularity
-// // // //     M1nx += offM1;    
+// // // //     M1nx += offM1;
 // // // //     M1nx =  M1nx >> 1;
 // // // //   } else{              // M1 Offset is expressed with M1 granularity
 // // // //     M1nx =  M1nx >> 1;
 // // // //     M1nx += offM1;
 // // // //   }
 // //   M1nx = L0Muon::addM1Offset(M1nx, offM1, procVersion);
-  
+
 // //   if(debug)  std::cout<< "L0Muon::MuonCandidate::pads M1nx = "<<M1nx <<" M1ny = "<<M1ny <<std::endl;
 // //   LHCb::MuonTileID padM1ID(puID,MuonLayout(24,8),M1nx,M1ny);;
 // //   padM1ID.setStation(0);
@@ -206,7 +204,8 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //       }
 // //       padM1ID = lpads[0];
 // //     } else {
-// //       if(debug)   std::cout << "WARNING: M1 PAD IS NOT VALID: padM1ID= " << padM1ID.toString()  <<" ?? "<<std::endl;
+// //       if(debug)   std::cout << "WARNING: M1 PAD IS NOT VALID: padM1ID= " << padM1ID.toString()  <<" ??
+// "<<std::endl;
 // //     }
 // //   }
 
@@ -214,9 +213,9 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   tiles.push_back(padM1ID);
 // //   tiles.push_back(padM2ID);
 // //   tiles.push_back(padM3ID);
-  
+
 // //   return tiles;
-  
+
 // // }
 
 // // void  L0Muon::xyFromPad(LHCb::MuonTileID pad, double& x, double& y)  {
@@ -229,13 +228,13 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   double l1 = 1210.; //Z position of M1 = 1210.;
 // //   double l2 = 1527.; //Z position of M2 = 1527.;
 // //   double l3 = 1647.; //Z position of M3 = 1647.;
-    
+
 // //   int ns = pad.station();
 // //   int nq = pad.quarter();
 // //   int nr = pad.region();
 // //   int nx = pad.nX();
 // //   int ny = pad.nY();
-    
+
 // //   double nreg = 1.;
 // //   if ( nr == 1) {
 // //     nreg = 2.;
@@ -244,11 +243,11 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   } else if ( nr == 3) {
 // //     nreg = 8.;
 // //   }
-  
+
 // //   double factorX, factorY;
 // //   factorX = 24./double(pad.layout().xGrid());
 // //   factorY = 8./double(pad.layout().yGrid());
-  
+
 // //   x = dx*(nx+0.5)*nreg*factorX;
 // //   y = dy*(ny+0.5)*nreg*factorY;
 // //   if ( ns == 1 ) {
@@ -265,8 +264,8 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //     y = -y;
 // //   } else if ( nq == 3 ) {
 // //     x = -x;
-// //   }    
-    
+// //   }
+
 // // }
 
 // // // Compute pt, theta and phi
@@ -280,10 +279,10 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   std::vector<double> kine;
 // //   double pt,theta,phi;
 
-// //   double d1    = 545.  ; // Z(MAG)-Z(VTX) =  545.  
+// //   double d1    = 545.  ; // Z(MAG)-Z(VTX) =  545.
 // //   double d2    = 665.5 ; // Z(M1)-Z(MAG)  =  665.5
 // //   double d3    = 309.5 ; // Z(M2)-Z(M1)   =  309.5
-// //   double alpha =   1.39; // alpha (KICK?) =    1.39 
+// //   double alpha =   1.39; // alpha (KICK?) =    1.39
 
 // //   double x1=0., y1=0.;// M1 hit coordinates
 // //   double x2=0., y2=0.;// M2 hit coordinates
@@ -332,7 +331,6 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //     }
 // //   }
 
-
 // //   if (debug)    std::cout  <<"---  Utilities::ptcalc: "
 // //                            << " p1 = " <<   p1.toString()
 // //                            << " p2 = " <<   p2.toString()
@@ -351,7 +349,7 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //                            << " ptm= " <<   ptm
 // //                            << " xslope= " <<xslope
 // //                            << " xin= " <<   xin
-// //                            << " pt= " <<    pt 
+// //                            << " pt= " <<    pt
 // //                            << " theta= " << theta
 // //                            << " phi= " << phi
 // //                            << std::endl;
@@ -370,10 +368,10 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //   std::vector<double> kine;
 // //   double pt,theta,phi;
 
-// //   double d1    = 545.  ; // Z(MAG)-Z(VTX) =  545.  
+// //   double d1    = 545.  ; // Z(MAG)-Z(VTX) =  545.
 // //   double d2    = 665.5 ; // Z(M1)-Z(MAG)  =  665.5
 // //   double d3    = 309.5 ; // Z(M2)-Z(M1)   =  309.5
-// //   double alpha =   1.39; // alpha (KICK?) =    1.39 
+// //   double alpha =   1.39; // alpha (KICK?) =    1.39
 
 // //   double x1=0., y1=0.;// M1 hit coordinates
 // //   double x2=0., y2=0.;// M2 hit coordinates
@@ -422,7 +420,6 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //     }
 // //   }
 
-
 // //   if (debug)    std::cout  <<"---  Utilities::ptcalc: "
 // //                            << " p1 = " <<   p1.toString()
 // //                            << " p2 = " <<   p2.toString()
@@ -441,7 +438,7 @@ std::string L0Muon::MuonCandidate::dump(std::string tab){
 // //                            << " ptm= " <<   ptm
 // //                            << " xslope= " <<xslope
 // //                            << " xin= " <<   xin
-// //                            << " pt= " <<    pt 
+// //                            << " pt= " <<    pt
 // //                            << " theta= " << theta
 // //                            << " phi= " << phi
 // //                            << std::endl;

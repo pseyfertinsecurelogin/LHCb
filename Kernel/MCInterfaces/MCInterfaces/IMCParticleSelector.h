@@ -25,11 +25,10 @@ namespace LHCb {
  *  @date   13/3/2002
  */
 
-
 struct IMCParticleSelector : extend_interfaces<IAlgTool> {
 
   /// Static access to interface id
-  DeclareInterfaceID(IMCParticleSelector, 1 , 0);
+  DeclareInterfaceID( IMCParticleSelector, 1, 0 );
 
   /** Method to select or reject a given MCParticle
    *  @param aParticle Pointer to the MCParticle to consider
@@ -45,11 +44,7 @@ struct IMCParticleSelector : extend_interfaces<IAlgTool> {
    *  @retval true  MCParticle is selected
    *  @retval false MCParticle is rejected
    */
-  inline bool operator() ( const LHCb::MCParticle* aParticle ) const
-  {
-    return this->accept(aParticle);
-  }
-
+  inline bool operator()( const LHCb::MCParticle* aParticle ) const { return this->accept( aParticle ); }
 };
 
 #endif // MCINTERFACES_IMCPARTICLESELECTOR_H

@@ -29,11 +29,10 @@
  *  @date   2015-06-25
  */
 
-class GenFSRMerge : public GaudiAlgorithm
-{
- public:
+class GenFSRMerge : public GaudiAlgorithm {
+public:
   // Standard constructor
-  GenFSRMerge(const std::string& name, ISvcLocator* pSvcLocator);
+  GenFSRMerge( const std::string& name, ISvcLocator* pSvcLocator );
 
   // Algorithm initialization, execution and finalization
   StatusCode initialize() override;
@@ -41,20 +40,19 @@ class GenFSRMerge : public GaudiAlgorithm
   StatusCode finalize() override;
 
 private:
-
   // Merge the FSRs of one input file
   virtual StatusCode merge();
 
-  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation","/FileRecords", 
-      "TES location where FSRs are persisted"};
+  Gaudi::Property<std::string> m_fileRecordName{this, "FileRecordLocation", "/FileRecords",
+                                                "TES location where FSRs are persisted"};
   Gaudi::Property<std::string> m_FSRName{this, "FSRName", "/GenFSR", "Name of the genFSR tree"};
 
   // Reference to run records data service
   SmartIF<IDataProviderSvc> m_fileRecordSvc;
   // Tool navigate FSR
-  IFSRNavigator *m_navigatorTool = nullptr;
+  IFSRNavigator* m_navigatorTool = nullptr;
 
-  int m_evtType;
+  int         m_evtType;
   std::string m_genName;
   std::string m_method;
 };

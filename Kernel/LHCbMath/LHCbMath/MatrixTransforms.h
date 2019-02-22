@@ -16,16 +16,16 @@
 // ============================================================================
 // ROOT
 // ============================================================================
+#include "Math/Point3D.h"
 #include "Math/SMatrix.h"
 #include "Math/SVector.h"
-#include "Math/Point3D.h"
-#include "Math/Vector4D.h"
 #include "Math/Vector3D.h"
+#include "Math/Vector4D.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
-#include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/EqualTo.h"
+#include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/MatrixUtils.h"
 // ============================================================================
 /** @file
@@ -47,10 +47,8 @@
  *  @date 2008-01-15
  */
 // ============================================================================
-namespace Gaudi
-{
-  namespace Math
-  {
+namespace Gaudi {
+  namespace Math {
     // ========================================================================
     /** fill  Linear Algebra - vector from 3D-point
      *
@@ -70,17 +68,13 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::SVector<T,3>&
-    geo2LA
-    ( const ROOT::Math::PositionVector3D<C>& source ,
-      ROOT::Math::SVector<T,3>&              dest   )
-    {
-      dest ( 0 ) = source.X () ;
-      dest ( 1 ) = source.Y () ;
-      dest ( 2 ) = source.Z () ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::SVector<T, 3>& geo2LA( const ROOT::Math::PositionVector3D<C>& source,
+                                                    ROOT::Math::SVector<T, 3>&             dest ) {
+      dest( 0 ) = source.X();
+      dest( 1 ) = source.Y();
+      dest( 2 ) = source.Z();
+      return dest;
     }
     // ========================================================================
     /** fill  Linear Algebra - vector from 3D-vector
@@ -101,17 +95,13 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::SVector<T,3>&
-    geo2LA
-    ( const ROOT::Math::DisplacementVector3D<C>& source ,
-      ROOT::Math::SVector<T,3>&                  dest   )
-    {
-      dest ( 0 ) = source.X () ;
-      dest ( 1 ) = source.Y () ;
-      dest ( 2 ) = source.Z () ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::SVector<T, 3>& geo2LA( const ROOT::Math::DisplacementVector3D<C>& source,
+                                                    ROOT::Math::SVector<T, 3>&                 dest ) {
+      dest( 0 ) = source.X();
+      dest( 1 ) = source.Y();
+      dest( 2 ) = source.Z();
+      return dest;
     }
     // ========================================================================
     /** fill  Linear Algebra - vector from 4D-vector
@@ -132,18 +122,14 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::SVector<T,4>&
-    geo2LA
-    ( const ROOT::Math::LorentzVector<C>& source ,
-      ROOT::Math::SVector<T,4>&           dest  )
-    {
-      dest ( 0 ) = source.X () ;
-      dest ( 1 ) = source.Y () ;
-      dest ( 2 ) = source.Z () ;
-      dest ( 3 ) = source.E () ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::SVector<T, 4>& geo2LA( const ROOT::Math::LorentzVector<C>& source,
+                                                    ROOT::Math::SVector<T, 4>&          dest ) {
+      dest( 0 ) = source.X();
+      dest( 1 ) = source.Y();
+      dest( 2 ) = source.Z();
+      dest( 3 ) = source.E();
+      return dest;
     }
     // ========================================================================
     /** fill  Linear Algebra 3-vector from the spatial
@@ -165,17 +151,13 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::SVector<T,3>&
-    geo2LA
-    ( const ROOT::Math::LorentzVector<C>& source ,
-      ROOT::Math::SVector<T,3>&           dest  )
-    {
-      dest ( 0 ) = source.X () ;
-      dest ( 1 ) = source.Y () ;
-      dest ( 2 ) = source.Z () ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::SVector<T, 3>& geo2LA( const ROOT::Math::LorentzVector<C>& source,
+                                                    ROOT::Math::SVector<T, 3>&          dest ) {
+      dest( 0 ) = source.X();
+      dest( 1 ) = source.Y();
+      dest( 2 ) = source.Z();
+      return dest;
     }
     // ========================================================================
     /** fill  3D-point from Linear Algebra vector
@@ -196,17 +178,13 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::PositionVector3D<C>&
-    la2geo
-    ( const ROOT::Math::SVector<T,3>&  source ,
-      ROOT::Math::PositionVector3D<C>& dest   )
-    {
-      dest.SetX ( source ( 0 ) ) ;
-      dest.SetY ( source ( 1 ) ) ;
-      dest.SetZ ( source ( 2 ) ) ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::PositionVector3D<C>& la2geo( const ROOT::Math::SVector<T, 3>& source,
+                                                          ROOT::Math::PositionVector3D<C>& dest ) {
+      dest.SetX( source( 0 ) );
+      dest.SetY( source( 1 ) );
+      dest.SetZ( source( 2 ) );
+      return dest;
     }
     // ========================================================================
     /** fill  3D-vector from Linear Algebra vector
@@ -227,17 +205,13 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::DisplacementVector3D<C>&
-    la2geo
-    ( const ROOT::Math::SVector<T,3>&      source ,
-      ROOT::Math::DisplacementVector3D<C>& dest   )
-    {
-      dest.SetX ( source ( 0 ) ) ;
-      dest.SetY ( source ( 1 ) ) ;
-      dest.SetZ ( source ( 2 ) ) ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::DisplacementVector3D<C>& la2geo( const ROOT::Math::SVector<T, 3>&     source,
+                                                              ROOT::Math::DisplacementVector3D<C>& dest ) {
+      dest.SetX( source( 0 ) );
+      dest.SetY( source( 1 ) );
+      dest.SetZ( source( 2 ) );
+      return dest;
     }
     // ========================================================================
     /** fill  Lorentz vector from Linear Algebra vector
@@ -258,18 +232,14 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline
-    const ROOT::Math::LorentzVector<C>&
-    la2geo
-    ( const ROOT::Math::SVector<T,4>& source ,
-      ROOT::Math::LorentzVector<C>&   dest   )
-    {
-      dest.SetPx ( source ( 0 ) ) ;
-      dest.SetPy ( source ( 1 ) ) ;
-      dest.SetPz ( source ( 2 ) ) ;
-      dest.SetE  ( source ( 3 ) ) ;
-      return dest ;
+    template <class C, class T>
+    inline const ROOT::Math::LorentzVector<C>& la2geo( const ROOT::Math::SVector<T, 4>& source,
+                                                       ROOT::Math::LorentzVector<C>&    dest ) {
+      dest.SetPx( source( 0 ) );
+      dest.SetPy( source( 1 ) );
+      dest.SetPz( source( 2 ) );
+      dest.SetE( source( 3 ) );
+      return dest;
     }
     // ========================================================================
     /** construct similarity("chi2") using 3D-vector
@@ -298,14 +268,11 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline T
-    Similarity
-    ( const ROOT::Math::DisplacementVector3D<C>&                     delta  ,
-      const ROOT::Math::SMatrix<T,3,3,ROOT::Math::MatRepSym<T,3> > & matrix )
-    {
-      ROOT::Math::SVector<T,3> tmp ;
-      return ROOT::Math::Similarity ( geo2LA ( delta , tmp )  , matrix ) ;
+    template <class C, class T>
+    inline T Similarity( const ROOT::Math::DisplacementVector3D<C>&                       delta,
+                         const ROOT::Math::SMatrix<T, 3, 3, ROOT::Math::MatRepSym<T, 3>>& matrix ) {
+      ROOT::Math::SVector<T, 3> tmp;
+      return ROOT::Math::Similarity( geo2LA( delta, tmp ), matrix );
     }
     // ========================================================================
     /** construct similarity("chi2") using 3D-vector
@@ -334,12 +301,11 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline T
-    Similarity
-    ( const ROOT::Math::SMatrix<T,3,3,ROOT::Math::MatRepSym<T,3> > & matrix ,
-      const ROOT::Math::DisplacementVector3D<C>&                     delta  )
-    { return Similarity ( delta , matrix ) ; }
+    template <class C, class T>
+    inline T Similarity( const ROOT::Math::SMatrix<T, 3, 3, ROOT::Math::MatRepSym<T, 3>>& matrix,
+                         const ROOT::Math::DisplacementVector3D<C>&                       delta ) {
+      return Similarity( delta, matrix );
+    }
     // ========================================================================
     /** construct similarity("chi2") using 4D-vector
      *
@@ -367,14 +333,11 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline T
-    Similarity
-    ( const ROOT::Math::LorentzVector<C>&                            delta  ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> > & matrix )
-    {
-      ROOT::Math::SVector<T,4> tmp ;
-      return ROOT::Math::Similarity ( geo2LA( delta , tmp ) , matrix ) ;
+    template <class C, class T>
+    inline T Similarity( const ROOT::Math::LorentzVector<C>&                              delta,
+                         const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& matrix ) {
+      ROOT::Math::SVector<T, 4> tmp;
+      return ROOT::Math::Similarity( geo2LA( delta, tmp ), matrix );
     }
     // ========================================================================
     /** construct similarity("chi2") using 4D-vector
@@ -403,12 +366,11 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class C,class T>
-    inline T
-    Similarity
-    ( const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> > & matrix ,
-      const ROOT::Math::LorentzVector<C>&                            delta  )
-    { return Similarity ( delta , matrix ) ; }
+    template <class C, class T>
+    inline T Similarity( const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& matrix,
+                         const ROOT::Math::LorentzVector<C>&                              delta ) {
+      return Similarity( delta, matrix );
+    }
     // ========================================================================
     /** increment  Position-Vector with 3-component linear vector
      *
@@ -429,12 +391,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class C, class T>
-    inline
-    const ROOT::Math::PositionVector3D<C>&
-    add
-    ( ROOT::Math::PositionVector3D<C>& v1 , const ROOT::Math::SVector<T,3> & v2 )
-    { return v1 += ROOT::Math::PositionVector3D<C>
-        ( v2 ( 0 )  , v2 ( 1 )  , v2 ( 2 ) ) ; }
+    inline const ROOT::Math::PositionVector3D<C>& add( ROOT::Math::PositionVector3D<C>& v1,
+                                                       const ROOT::Math::SVector<T, 3>& v2 ) {
+      return v1 += ROOT::Math::PositionVector3D<C>( v2( 0 ), v2( 1 ), v2( 2 ) );
+    }
     // ========================================================================
     /** increment  Displacement-Vector with 3-component linear vector
      *
@@ -455,12 +415,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class C, class T>
-    inline
-    const ROOT::Math::DisplacementVector3D<C>&
-    add
-    ( ROOT::Math::DisplacementVector3D<C>& v1 , const ROOT::Math::SVector<T,3> & v2 )
-    { return v1 += ROOT::Math::DisplacementVector3D<C>
-        ( v2 ( 0 )  , v2 ( 1 )  , v2 ( 2 ) ) ; }
+    inline const ROOT::Math::DisplacementVector3D<C>& add( ROOT::Math::DisplacementVector3D<C>& v1,
+                                                           const ROOT::Math::SVector<T, 3>&     v2 ) {
+      return v1 += ROOT::Math::DisplacementVector3D<C>( v2( 0 ), v2( 1 ), v2( 2 ) );
+    }
     // ========================================================================
     /** increment  LorentzVector with 4-component linear vector
      *
@@ -481,12 +439,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class C, class T>
-    inline
-    const ROOT::Math::LorentzVector<C>&
-    add
-    ( ROOT::Math::LorentzVector<C>& v1 , const ROOT::Math::SVector<T,4> & v2 )
-    { return v1 += ROOT::Math::LorentzVector<C>
-        ( v2 ( 0 )  , v2 ( 1 )  , v2 ( 2 ) , v2 ( 3 ) ) ; }
+    inline const ROOT::Math::LorentzVector<C>& add( ROOT::Math::LorentzVector<C>&    v1,
+                                                    const ROOT::Math::SVector<T, 4>& v2 ) {
+      return v1 += ROOT::Math::LorentzVector<C>( v2( 0 ), v2( 1 ), v2( 2 ), v2( 3 ) );
+    }
     // ========================================================================
     /** decrement  Position-Vector with 3-component linear vector
      *
@@ -507,12 +463,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class C, class T>
-    inline
-    const ROOT::Math::PositionVector3D<C>&
-    sub
-    ( ROOT::Math::PositionVector3D<C>& v1 , const ROOT::Math::SVector<T,3> & v2 )
-    { return v1 -= ROOT::Math::PositionVector3D<C>
-        ( v2 ( 0 )  , v2 ( 1 )  , v2 ( 2 ) ) ; }
+    inline const ROOT::Math::PositionVector3D<C>& sub( ROOT::Math::PositionVector3D<C>& v1,
+                                                       const ROOT::Math::SVector<T, 3>& v2 ) {
+      return v1 -= ROOT::Math::PositionVector3D<C>( v2( 0 ), v2( 1 ), v2( 2 ) );
+    }
     // ========================================================================
     /** decrement  Displacement-Vector with 3-component linear vector
      *
@@ -533,12 +487,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class C, class T>
-    inline
-    const ROOT::Math::DisplacementVector3D<C>&
-    sub
-    ( ROOT::Math::DisplacementVector3D<C>& v1 , const ROOT::Math::SVector<T,3> & v2 )
-    { return v1 -= ROOT::Math::DisplacementVector3D<C>
-        ( v2 ( 0 )  , v2 ( 1 )  , v2 ( 2 ) ) ; }
+    inline const ROOT::Math::DisplacementVector3D<C>& sub( ROOT::Math::DisplacementVector3D<C>& v1,
+                                                           const ROOT::Math::SVector<T, 3>&     v2 ) {
+      return v1 -= ROOT::Math::DisplacementVector3D<C>( v2( 0 ), v2( 1 ), v2( 2 ) );
+    }
     // ========================================================================
     /** decrement  LorentzVector with 4-component linear vector
      *
@@ -559,12 +511,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class C, class T>
-    inline
-    const ROOT::Math::LorentzVector<C>&
-    sub
-    ( ROOT::Math::LorentzVector<C>& v1 , const ROOT::Math::SVector<T,4> & v2 )
-    { return v1 -= ROOT::Math::LorentzVector<C>
-        ( v2 ( 0 )  , v2 ( 1 )  , v2 ( 2 ) , v2 ( 3 ) ) ; }
+    inline const ROOT::Math::LorentzVector<C>& sub( ROOT::Math::LorentzVector<C>&    v1,
+                                                    const ROOT::Math::SVector<T, 4>& v2 ) {
+      return v1 -= ROOT::Math::LorentzVector<C>( v2( 0 ), v2( 1 ), v2( 2 ), v2( 3 ) );
+    }
     // ========================================================================
     /** increment the symmetric matrix with "symmetrized" part of other matrix
      *
@@ -584,16 +534,14 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T1,class T2,unsigned int D, class R>
-    inline
-    ROOT::Math::SMatrix<T1,D,D,ROOT::Math::MatRepSym<T1,D> >&
-    add
-    ( ROOT::Math::SMatrix<T1,D,D,ROOT::Math::MatRepSym<T1,D> >& matrix ,
-      const ROOT::Math::SMatrix<T2,D,D,R>&                      other  )
-    {
-      for   ( unsigned int i = 0 ; i < D ; ++i )
-      { for ( unsigned int j = i ; j < D ; ++j ) { matrix(i,j) += other(i,j); } }
-      return matrix ;
+    template <class T1, class T2, unsigned int D, class R>
+    inline ROOT::Math::SMatrix<T1, D, D, ROOT::Math::MatRepSym<T1, D>>&
+    add( ROOT::Math::SMatrix<T1, D, D, ROOT::Math::MatRepSym<T1, D>>& matrix,
+         const ROOT::Math::SMatrix<T2, D, D, R>&                      other ) {
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) { matrix( i, j ) += other( i, j ); }
+      }
+      return matrix;
     }
     // ========================================================================
     /** Fill Lorentz vector from 3D displacement vector + Mass
@@ -611,25 +559,20 @@ namespace Gaudi
      *  @author Sean BRISBANE sean.brisbane@cern.ch
      *  @date 2007-11-27
      */
-    template<class T, class C, class M>
-    inline
-    const ROOT::Math::LorentzVector<C>&
-    geo2LA
-    ( const ROOT::Math::SVector<T, 3>& source ,
-      const M                          mass   ,
-      ROOT::Math::LorentzVector<C>&    dest   )
-    {
+    template <class T, class C, class M>
+    inline const ROOT::Math::LorentzVector<C>& geo2LA( const ROOT::Math::SVector<T, 3>& source, const M mass,
+                                                       ROOT::Math::LorentzVector<C>& dest ) {
       // first calculate momentum in carthesian coordinates:
-      const double p = 1/fabs(source(2)) ;
-      const double n = sqrt( 1 + source(0)*source(0)+source(1)*source(1)) ;
-      const double pz = p/n          ;
-      const double px = pz*source(0) ;
-      const double py = pz*source(1) ;
-      dest.SetPx ( px ) ;
-      dest.SetPy ( py ) ;
-      dest.SetPz ( pz ) ;
-      dest.SetE  ( std::sqrt ( p*p + mass*mass ) ) ;
-      return dest ;
+      const double p  = 1 / fabs( source( 2 ) );
+      const double n  = sqrt( 1 + source( 0 ) * source( 0 ) + source( 1 ) * source( 1 ) );
+      const double pz = p / n;
+      const double px = pz * source( 0 );
+      const double py = pz * source( 1 );
+      dest.SetPx( px );
+      dest.SetPy( py );
+      dest.SetPz( pz );
+      dest.SetE( std::sqrt( p * p + mass * mass ) );
+      return dest;
     }
     // ========================================================================
     /** Compute the jacobian for the transformation of a covariance matrix
@@ -656,50 +599,44 @@ namespace Gaudi
      * @author Sean BRISBANE sean.brisbane@cern.ch
      * @date 2007-11-27
      */
-    template <class T,class R, class M >
-    inline void  JacobdP4dMom
-    ( const ROOT::Math::SVector<T,3>& mom  ,
-      const M                         mass ,
-      ROOT::Math::SMatrix<R,4,3>&     J    )
-    {
-      double tx = mom(0) ;
-      double ty = mom(1) ;
-      double qop = mom(2) ;
-      double p  = 1/std::abs(qop) ;
-      double n2 = 1 + tx*tx + ty*ty ;
-      double n  = std::sqrt(n2) ;
-      double n3 = n2*n ;
-      double px = p*tx/n ;
-      double py = p*ty/n ;
-      double pz = p/n ;
-      double E = std::hypot(p,mass) ;
+    template <class T, class R, class M>
+    inline void JacobdP4dMom( const ROOT::Math::SVector<T, 3>& mom, const M mass, ROOT::Math::SMatrix<R, 4, 3>& J ) {
+      double tx  = mom( 0 );
+      double ty  = mom( 1 );
+      double qop = mom( 2 );
+      double p   = 1 / std::abs( qop );
+      double n2  = 1 + tx * tx + ty * ty;
+      double n   = std::sqrt( n2 );
+      double n3  = n2 * n;
+      double px  = p * tx / n;
+      double py  = p * ty / n;
+      double pz  = p / n;
+      double E   = std::hypot( p, mass );
 
-      J(0,0) = p * (1+ty*ty)/n3 ; // dpx/dtx
-      J(0,1) = p * tx * -ty/n3  ; // dpx/dty
-      J(0,2) = -px/qop ;          // dpx/dqop
+      J( 0, 0 ) = p * ( 1 + ty * ty ) / n3; // dpx/dtx
+      J( 0, 1 ) = p * tx * -ty / n3;        // dpx/dty
+      J( 0, 2 ) = -px / qop;                // dpx/dqop
 
-      J(1,0) = p * ty * -tx/n3  ; // dpy/dtx
-      J(1,1) = p * (1+tx*tx)/n3 ; // dpy/dty
-      J(1,2) = -py/qop ;          // dpy/dqop
+      J( 1, 0 ) = p * ty * -tx / n3;        // dpy/dtx
+      J( 1, 1 ) = p * ( 1 + tx * tx ) / n3; // dpy/dty
+      J( 1, 2 ) = -py / qop;                // dpy/dqop
 
-      J(2,0) = pz * -tx/n2 ;      // dpz/dtx
-      J(2,1) = pz * -ty/n2 ;      // dpz/dtx
-      J(2,2) = -pz/qop ;          // dpz/dqop
+      J( 2, 0 ) = pz * -tx / n2; // dpz/dtx
+      J( 2, 1 ) = pz * -ty / n2; // dpz/dtx
+      J( 2, 2 ) = -pz / qop;     // dpz/dqop
 
-      J(3,0) = 0.0          ;     // dE/dtx
-      J(3,1) = 0.0          ;     // dE/dty
-      J(3,2) = p/E * -p/qop ;     // dE/dqop
+      J( 3, 0 ) = 0.0;              // dE/dtx
+      J( 3, 1 ) = 0.0;              // dE/dty
+      J( 3, 2 ) = p / E * -p / qop; // dE/dqop
 
-      return ;
+      return;
     }
     // ========================================================================
-  } // end of namespace Gaudi::Math
+  } // namespace Math
 } // end of namespace Gaudi
 // ============================================================================
-namespace Gaudi
-{
-  namespace Math
-  {
+namespace Gaudi {
+  namespace Math {
     // ========================================================================
     /** @namespace Gaudi::Math::Operators LHCbMath/MatrixTransforms.h
      *
@@ -967,8 +904,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@itep.ru
      *  @date 2008-02-14
      */
-    namespace Operators
-    {
+    namespace Operators {
       // ======================================================================
       /** addition of 3D-vector and the linear algebra vector
        *
@@ -989,31 +925,19 @@ namespace Gaudi
        *  @date   2008-03-05
        */
       template <class C, class T>
-      inline
-      ROOT::Math::PositionVector3D<C>
-      operator+
-      ( const ROOT::Math::PositionVector3D<C>& p1 ,
-        const ROOT::Math::SVector<T,3>&        v2 )
-      {
-        ROOT::Math::PositionVector3D<C> result  ;
-        result.SetXYZ(  p1 . X () + v2 ( 0 ) ,
-                        p1 . Y () + v2 ( 1 ) ,
-                        p1 . Z () + v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::PositionVector3D<C> operator+( const ROOT::Math::PositionVector3D<C>& p1,
+                                                        const ROOT::Math::SVector<T, 3>&       v2 ) {
+        ROOT::Math::PositionVector3D<C> result;
+        result.SetXYZ( p1.X() + v2( 0 ), p1.Y() + v2( 1 ), p1.Z() + v2( 2 ) );
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::PositionVector3D<C>
-      operator+
-      ( const ROOT::Math::PositionVector3D<C>& p1 ,
-        const ROOT::Math::VecExpr<B,T,3>&      v2 )
-      {
-        ROOT::Math::PositionVector3D<C> result  ;
-        result.SetXYZ(  p1 . X () + v2 ( 0 ) ,
-                        p1 . Y () + v2 ( 1 ) ,
-                        p1 . Z () + v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::PositionVector3D<C> operator+( const ROOT::Math::PositionVector3D<C>& p1,
+                                                        const ROOT::Math::VecExpr<B, T, 3>&    v2 ) {
+        ROOT::Math::PositionVector3D<C> result;
+        result.SetXYZ( p1.X() + v2( 0 ), p1.Y() + v2( 1 ), p1.Z() + v2( 2 ) );
+        return result;
       }
       // ========================================================================
       /** addition of 3D-vector and the linear algebra vector
@@ -1035,31 +959,19 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::DisplacementVector3D<C>
-      operator+
-      ( const ROOT::Math::DisplacementVector3D<C>& p1 ,
-        const ROOT::Math::SVector<T,3>&            v2 )
-      {
-        ROOT::Math::DisplacementVector3D<C> result  ;
-        result.SetXYZ(  p1 . X () + v2 ( 0 ) ,
-                        p1 . Y () + v2 ( 1 ) ,
-                        p1 . Z () + v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::DisplacementVector3D<C> operator+( const ROOT::Math::DisplacementVector3D<C>& p1,
+                                                            const ROOT::Math::SVector<T, 3>&           v2 ) {
+        ROOT::Math::DisplacementVector3D<C> result;
+        result.SetXYZ( p1.X() + v2( 0 ), p1.Y() + v2( 1 ), p1.Z() + v2( 2 ) );
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::DisplacementVector3D<C>
-      operator+
-      ( const ROOT::Math::DisplacementVector3D<C>& p1 ,
-        const ROOT::Math::VecExpr<B,T,3>&          v2 )
-      {
-        ROOT::Math::DisplacementVector3D<C> result  ;
-        result.SetXYZ(  p1 . X () + v2 ( 0 ) ,
-                        p1 . Y () + v2 ( 1 ) ,
-                        p1 . Z () + v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::DisplacementVector3D<C> operator+( const ROOT::Math::DisplacementVector3D<C>& p1,
+                                                            const ROOT::Math::VecExpr<B, T, 3>&        v2 ) {
+        ROOT::Math::DisplacementVector3D<C> result;
+        result.SetXYZ( p1.X() + v2( 0 ), p1.Y() + v2( 1 ), p1.Z() + v2( 2 ) );
+        return result;
       }
       // ======================================================================
       /** addition of Lorentz vector and the linear algebra vector
@@ -1081,35 +993,19 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::LorentzVector<C>
-      operator+
-      ( const ROOT::Math::LorentzVector<C>& p1 ,
-        const ROOT::Math::SVector<T,4>&     v2 )
-      {
-        ROOT::Math::LorentzVector<C> result  ;
-        result.SetXYZT
-          (  p1 . Px () + v2 ( 0 ) ,
-             p1 . Py () + v2 ( 1 ) ,
-             p1 . Pz () + v2 ( 2 ) ,
-             p1 . E  () + v2 ( 3 ) ) ;
-        return result ;
+      inline ROOT::Math::LorentzVector<C> operator+( const ROOT::Math::LorentzVector<C>& p1,
+                                                     const ROOT::Math::SVector<T, 4>&    v2 ) {
+        ROOT::Math::LorentzVector<C> result;
+        result.SetXYZT( p1.Px() + v2( 0 ), p1.Py() + v2( 1 ), p1.Pz() + v2( 2 ), p1.E() + v2( 3 ) );
+        return result;
       }
       // ======================================================================
-      template <class C, class B , class T>
-      inline
-      ROOT::Math::LorentzVector<C>
-      operator+
-      ( const ROOT::Math::LorentzVector<C>& p1 ,
-        const ROOT::Math::VecExpr<B,T,4>&   v2 )
-      {
-        ROOT::Math::LorentzVector<C> result  ;
-        result.SetXYZT
-          (  p1 . Px () + v2 ( 0 ) ,
-             p1 . Py () + v2 ( 1 ) ,
-             p1 . Pz () + v2 ( 2 ) ,
-             p1 . E  () + v2 ( 3 ) ) ;
-        return result ;
+      template <class C, class B, class T>
+      inline ROOT::Math::LorentzVector<C> operator+( const ROOT::Math::LorentzVector<C>& p1,
+                                                     const ROOT::Math::VecExpr<B, T, 4>& v2 ) {
+        ROOT::Math::LorentzVector<C> result;
+        result.SetXYZT( p1.Px() + v2( 0 ), p1.Py() + v2( 1 ), p1.Pz() + v2( 2 ), p1.E() + v2( 3 ) );
+        return result;
       }
       // ======================================================================
       /** addition of 3D-vector and the linear algebra vector
@@ -1131,31 +1027,23 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator+
-      ( const ROOT::Math::SVector<T,3>&        v2 ,
-        const ROOT::Math::PositionVector3D<C>& p1 )
-      {
-        ROOT::Math::SVector<T,3> result ( v2 ) ;
-        result ( 0 ) += p1 . X () ;
-        result ( 1 ) += p1 . Y () ;
-        result ( 2 ) += p1 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator+( const ROOT::Math::SVector<T, 3>&       v2,
+                                                  const ROOT::Math::PositionVector3D<C>& p1 ) {
+        ROOT::Math::SVector<T, 3> result( v2 );
+        result( 0 ) += p1.X();
+        result( 1 ) += p1.Y();
+        result( 2 ) += p1.Z();
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator+
-      ( const ROOT::Math::VecExpr<B,T,3>&      v2 ,
-        const ROOT::Math::PositionVector3D<C>& p1 )
-      {
-        ROOT::Math::SVector<T,3> result = v2 ;
-        result ( 0 ) += p1 . X () ;
-        result ( 1 ) += p1 . Y () ;
-        result ( 2 ) += p1 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator+( const ROOT::Math::VecExpr<B, T, 3>&    v2,
+                                                  const ROOT::Math::PositionVector3D<C>& p1 ) {
+        ROOT::Math::SVector<T, 3> result = v2;
+        result( 0 ) += p1.X();
+        result( 1 ) += p1.Y();
+        result( 2 ) += p1.Z();
+        return result;
       }
       // ======================================================================
       /** addition of 3D-vector and the linear algebra vector
@@ -1177,31 +1065,23 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator+
-      ( const ROOT::Math::SVector<T,3>&            v2 ,
-        const ROOT::Math::DisplacementVector3D<C>& p1 )
-      {
-        ROOT::Math::SVector<T,3> result ( v2 ) ;
-        result ( 0 ) += p1 . X () ;
-        result ( 1 ) += p1 . Y () ;
-        result ( 2 ) += p1 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator+( const ROOT::Math::SVector<T, 3>&           v2,
+                                                  const ROOT::Math::DisplacementVector3D<C>& p1 ) {
+        ROOT::Math::SVector<T, 3> result( v2 );
+        result( 0 ) += p1.X();
+        result( 1 ) += p1.Y();
+        result( 2 ) += p1.Z();
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator+
-      ( const ROOT::Math::VecExpr<B,T,3>&          v2 ,
-        const ROOT::Math::DisplacementVector3D<C>& p1 )
-      {
-        ROOT::Math::SVector<T,3> result = v2 ;
-        result ( 0 ) += p1 . X () ;
-        result ( 1 ) += p1 . Y () ;
-        result ( 2 ) += p1 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator+( const ROOT::Math::VecExpr<B, T, 3>&        v2,
+                                                  const ROOT::Math::DisplacementVector3D<C>& p1 ) {
+        ROOT::Math::SVector<T, 3> result = v2;
+        result( 0 ) += p1.X();
+        result( 1 ) += p1.Y();
+        result( 2 ) += p1.Z();
+        return result;
       }
       // ======================================================================
       /** addition of Lorentz vector and the linear algebra vector
@@ -1224,33 +1104,25 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::SVector<T,4>
-      operator+
-      ( const ROOT::Math::SVector<T,4>&     v2 ,
-        const ROOT::Math::LorentzVector<C>& p1 )
-      {
-        ROOT::Math::SVector<T,4> result ( v2 ) ;
-        result ( 0 ) += p1 . Px () ;
-        result ( 1 ) += p1 . Py () ;
-        result ( 2 ) += p1 . Pz () ;
-        result ( 3 ) += p1 . E  () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 4> operator+( const ROOT::Math::SVector<T, 4>&    v2,
+                                                  const ROOT::Math::LorentzVector<C>& p1 ) {
+        ROOT::Math::SVector<T, 4> result( v2 );
+        result( 0 ) += p1.Px();
+        result( 1 ) += p1.Py();
+        result( 2 ) += p1.Pz();
+        result( 3 ) += p1.E();
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::SVector<T,4>
-      operator+
-      ( const ROOT::Math::VecExpr<B,T,4>&   v2 ,
-        const ROOT::Math::LorentzVector<C>& p1 )
-      {
-        ROOT::Math::SVector<T,4> result = v2  ;
-        result ( 0 ) += p1 . Px () ;
-        result ( 1 ) += p1 . Py () ;
-        result ( 2 ) += p1 . Pz () ;
-        result ( 3 ) += p1 . E  () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 4> operator+( const ROOT::Math::VecExpr<B, T, 4>& v2,
+                                                  const ROOT::Math::LorentzVector<C>& p1 ) {
+        ROOT::Math::SVector<T, 4> result = v2;
+        result( 0 ) += p1.Px();
+        result( 1 ) += p1.Py();
+        result( 2 ) += p1.Pz();
+        result( 3 ) += p1.E();
+        return result;
       }
       // ======================================================================
       /** subtraction of 3D-vector and the linear algebra vector
@@ -1272,33 +1144,19 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::PositionVector3D<C>
-      operator-
-      ( const ROOT::Math::PositionVector3D<C>& p1 ,
-        const ROOT::Math::SVector<T,3>&        v2 )
-      {
-        ROOT::Math::PositionVector3D<C> result  ;
-        result.SetXYZ
-          (  p1 . X () - v2 ( 0 ) ,
-             p1 . Y () - v2 ( 1 ) ,
-             p1 . Z () - v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::PositionVector3D<C> operator-( const ROOT::Math::PositionVector3D<C>& p1,
+                                                        const ROOT::Math::SVector<T, 3>&       v2 ) {
+        ROOT::Math::PositionVector3D<C> result;
+        result.SetXYZ( p1.X() - v2( 0 ), p1.Y() - v2( 1 ), p1.Z() - v2( 2 ) );
+        return result;
       }
-     // ======================================================================
-      template <class C, class B , class T>
-      inline
-      ROOT::Math::PositionVector3D<C>
-      operator-
-      ( const ROOT::Math::PositionVector3D<C>& p1 ,
-        const ROOT::Math::VecExpr<B,T,3>&      v2 )
-      {
-        ROOT::Math::PositionVector3D<C> result  ;
-        result.SetXYZ
-          (  p1 . X () - v2 ( 0 ) ,
-             p1 . Y () - v2 ( 1 ) ,
-             p1 . Z () - v2 ( 2 ) ) ;
-        return result ;
+      // ======================================================================
+      template <class C, class B, class T>
+      inline ROOT::Math::PositionVector3D<C> operator-( const ROOT::Math::PositionVector3D<C>& p1,
+                                                        const ROOT::Math::VecExpr<B, T, 3>&    v2 ) {
+        ROOT::Math::PositionVector3D<C> result;
+        result.SetXYZ( p1.X() - v2( 0 ), p1.Y() - v2( 1 ), p1.Z() - v2( 2 ) );
+        return result;
       }
       // ========================================================================
       /** subtraction of 3D-vector and the linear algebra vector
@@ -1320,33 +1178,19 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::DisplacementVector3D<C>
-      operator-
-      ( const ROOT::Math::DisplacementVector3D<C>& p1 ,
-        const ROOT::Math::SVector<T,3>&            v2 )
-      {
-        ROOT::Math::DisplacementVector3D<C> result  ;
-        result.SetXYZ
-          (  p1 . X () - v2 ( 0 ) ,
-             p1 . Y () - v2 ( 1 ) ,
-             p1 . Z () - v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::DisplacementVector3D<C> operator-( const ROOT::Math::DisplacementVector3D<C>& p1,
+                                                            const ROOT::Math::SVector<T, 3>&           v2 ) {
+        ROOT::Math::DisplacementVector3D<C> result;
+        result.SetXYZ( p1.X() - v2( 0 ), p1.Y() - v2( 1 ), p1.Z() - v2( 2 ) );
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::DisplacementVector3D<C>
-      operator-
-      ( const ROOT::Math::DisplacementVector3D<C>& p1 ,
-        const ROOT::Math::VecExpr<B,T,3>&          v2 )
-      {
-        ROOT::Math::DisplacementVector3D<C> result  ;
-        result.SetXYZ
-          (  p1 . X () - v2 ( 0 ) ,
-             p1 . Y () - v2 ( 1 ) ,
-             p1 . Z () - v2 ( 2 ) ) ;
-        return result ;
+      inline ROOT::Math::DisplacementVector3D<C> operator-( const ROOT::Math::DisplacementVector3D<C>& p1,
+                                                            const ROOT::Math::VecExpr<B, T, 3>&        v2 ) {
+        ROOT::Math::DisplacementVector3D<C> result;
+        result.SetXYZ( p1.X() - v2( 0 ), p1.Y() - v2( 1 ), p1.Z() - v2( 2 ) );
+        return result;
       }
       // ======================================================================
       /** subtraction of Lorentz vector and the linear algebra vector
@@ -1368,35 +1212,19 @@ namespace Gaudi
        *  @date   2008-02-14
        */
       template <class C, class T>
-      inline
-      ROOT::Math::LorentzVector<C>
-      operator-
-      ( const ROOT::Math::LorentzVector<C>& p1 ,
-        const ROOT::Math::SVector<T,4>&     v2 )
-      {
-        ROOT::Math::LorentzVector<C> result  ;
-        result.SetXYZT
-          (  p1 . Px () - v2 ( 0 ) ,
-             p1 . Py () - v2 ( 1 ) ,
-             p1 . Pz () - v2 ( 2 ) ,
-             p1 . E  () - v2 ( 3 ) ) ;
-        return result ;
+      inline ROOT::Math::LorentzVector<C> operator-( const ROOT::Math::LorentzVector<C>& p1,
+                                                     const ROOT::Math::SVector<T, 4>&    v2 ) {
+        ROOT::Math::LorentzVector<C> result;
+        result.SetXYZT( p1.Px() - v2( 0 ), p1.Py() - v2( 1 ), p1.Pz() - v2( 2 ), p1.E() - v2( 3 ) );
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::LorentzVector<C>
-      operator-
-      ( const ROOT::Math::LorentzVector<C>& p1 ,
-        const ROOT::Math::VecExpr<B,T,4>&   v2 )
-      {
-        ROOT::Math::LorentzVector<C> result  ;
-        result.SetXYZT
-          (  p1 . Px () - v2 ( 0 ) ,
-             p1 . Py () - v2 ( 1 ) ,
-             p1 . Pz () - v2 ( 2 ) ,
-             p1 . E  () - v2 ( 3 ) ) ;
-        return result ;
+      inline ROOT::Math::LorentzVector<C> operator-( const ROOT::Math::LorentzVector<C>& p1,
+                                                     const ROOT::Math::VecExpr<B, T, 4>& v2 ) {
+        ROOT::Math::LorentzVector<C> result;
+        result.SetXYZT( p1.Px() - v2( 0 ), p1.Py() - v2( 1 ), p1.Pz() - v2( 2 ), p1.E() - v2( 3 ) );
+        return result;
       }
       // ======================================================================
       /** subtract the Lorentz Vector from the Linear Algebra -vector
@@ -1414,33 +1242,25 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class C, class T>
-      inline
-      ROOT::Math::SVector<T,4>
-      operator-
-      ( const ROOT::Math::SVector<T,4>&     v1 ,
-        const ROOT::Math::LorentzVector<C>& v2 )
-      {
-        ROOT::Math::SVector<T,4> result = v1 ;
-        result ( 0 ) -= v2 . Px () ;
-        result ( 1 ) -= v2 . Py () ;
-        result ( 2 ) -= v2 . Pz () ;
-        result ( 3 ) -= v2 . E  () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 4> operator-( const ROOT::Math::SVector<T, 4>&    v1,
+                                                  const ROOT::Math::LorentzVector<C>& v2 ) {
+        ROOT::Math::SVector<T, 4> result = v1;
+        result( 0 ) -= v2.Px();
+        result( 1 ) -= v2.Py();
+        result( 2 ) -= v2.Pz();
+        result( 3 ) -= v2.E();
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::SVector<T,4>
-      operator-
-      ( const ROOT::Math::VecExpr<B,T,4>&   v1 ,
-        const ROOT::Math::LorentzVector<C>& v2 )
-      {
-        ROOT::Math::SVector<T,4> result = v1 ;
-        result ( 0 ) -= v2 . Px () ;
-        result ( 1 ) -= v2 . Py () ;
-        result ( 2 ) -= v2 . Pz () ;
-        result ( 3 ) -= v2 . E  () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 4> operator-( const ROOT::Math::VecExpr<B, T, 4>& v1,
+                                                  const ROOT::Math::LorentzVector<C>& v2 ) {
+        ROOT::Math::SVector<T, 4> result = v1;
+        result( 0 ) -= v2.Px();
+        result( 1 ) -= v2.Py();
+        result( 2 ) -= v2.Pz();
+        result( 3 ) -= v2.E();
+        return result;
       }
       // ======================================================================
       /** subtract the 3D Vector from the Linear Algebra -vector
@@ -1458,31 +1278,23 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class C, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator-
-      ( const ROOT::Math::SVector<T,3>&        v1 ,
-        const ROOT::Math::PositionVector3D<C>& v2 )
-      {
-        ROOT::Math::SVector<T,3> result = v1 ;
-        result ( 0 ) -= v2 . X () ;
-        result ( 1 ) -= v2 . Y () ;
-        result ( 2 ) -= v2 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator-( const ROOT::Math::SVector<T, 3>&       v1,
+                                                  const ROOT::Math::PositionVector3D<C>& v2 ) {
+        ROOT::Math::SVector<T, 3> result = v1;
+        result( 0 ) -= v2.X();
+        result( 1 ) -= v2.Y();
+        result( 2 ) -= v2.Z();
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator-
-      ( const ROOT::Math::VecExpr<B,T,3>&      v1 ,
-        const ROOT::Math::PositionVector3D<C>& v2 )
-      {
-        ROOT::Math::SVector<T,3> result = v1 ;
-        result ( 0 ) -= v2 . X () ;
-        result ( 1 ) -= v2 . Y () ;
-        result ( 2 ) -= v2 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator-( const ROOT::Math::VecExpr<B, T, 3>&    v1,
+                                                  const ROOT::Math::PositionVector3D<C>& v2 ) {
+        ROOT::Math::SVector<T, 3> result = v1;
+        result( 0 ) -= v2.X();
+        result( 1 ) -= v2.Y();
+        result( 2 ) -= v2.Z();
+        return result;
       }
       // ======================================================================
       /** subtract the 3D Vector from the Linear Algebra -vector
@@ -1500,31 +1312,23 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class C, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator-
-      ( const ROOT::Math::SVector<T,3>&            v1 ,
-        const ROOT::Math::DisplacementVector3D<C>& v2 )
-      {
-        ROOT::Math::SVector<T,3> result = v1 ;
-        result ( 0 ) -= v2 . X () ;
-        result ( 1 ) -= v2 . Y () ;
-        result ( 2 ) -= v2 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator-( const ROOT::Math::SVector<T, 3>&           v1,
+                                                  const ROOT::Math::DisplacementVector3D<C>& v2 ) {
+        ROOT::Math::SVector<T, 3> result = v1;
+        result( 0 ) -= v2.X();
+        result( 1 ) -= v2.Y();
+        result( 2 ) -= v2.Z();
+        return result;
       }
       // ======================================================================
       template <class C, class B, class T>
-      inline
-      ROOT::Math::SVector<T,3>
-      operator-
-      ( const ROOT::Math::VecExpr<B,T,3>&          v1 ,
-        const ROOT::Math::DisplacementVector3D<C>& v2 )
-      {
-        ROOT::Math::SVector<T,3> result = v1 ;
-        result ( 0 ) -= v2 . X () ;
-        result ( 1 ) -= v2 . Y () ;
-        result ( 2 ) -= v2 . Z () ;
-        return result ;
+      inline ROOT::Math::SVector<T, 3> operator-( const ROOT::Math::VecExpr<B, T, 3>&        v1,
+                                                  const ROOT::Math::DisplacementVector3D<C>& v2 ) {
+        ROOT::Math::SVector<T, 3> result = v1;
+        result( 0 ) -= v2.X();
+        result( 1 ) -= v2.Y();
+        result( 2 ) -= v2.Z();
+        return result;
       }
       // ======================================================================
       /** multiply the matrix and the Lorenz vector
@@ -1542,27 +1346,17 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class T, class C, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::SMatrix<T,D,4,R>& mrtx ,
-        const ROOT::Math::LorentzVector<C>& vect )
-      {
-        const ROOT::Math::SVector<T,4> vct
-          ( vect . Px () , vect . Py () , vect . Pz () , vect.E () ) ;
-        return mrtx * vct ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::SMatrix<T, D, 4, R>& mrtx,
+                                                  const ROOT::Math::LorentzVector<C>&    vect ) {
+        const ROOT::Math::SVector<T, 4> vct( vect.Px(), vect.Py(), vect.Pz(), vect.E() );
+        return mrtx * vct;
       }
       // ======================================================================
       template <class T, class C, class B, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::Expr<B,T,D,4,R>&  mtrx ,
-        const ROOT::Math::LorentzVector<C>& vect )
-      {
-        const ROOT::Math::SVector<T,4> vct
-          ( vect . Px () , vect . Py () , vect . Pz () , vect.E () ) ;
-        return mtrx * vct ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::Expr<B, T, D, 4, R>& mtrx,
+                                                  const ROOT::Math::LorentzVector<C>&    vect ) {
+        const ROOT::Math::SVector<T, 4> vct( vect.Px(), vect.Py(), vect.Pz(), vect.E() );
+        return mtrx * vct;
       }
       // ======================================================================
       /** multiply the matrix and the Lorenz vector
@@ -1580,27 +1374,17 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class T, class C, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::LorentzVector<C>& vect ,
-        const ROOT::Math::SMatrix<T,4,D,R>& mtrx )
-      {
-        const ROOT::Math::SVector<T,4> vct
-          ( vect . Px () , vect . Py () , vect . Pz () , vect.E () ) ;
-        return vct * mtrx ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::LorentzVector<C>&    vect,
+                                                  const ROOT::Math::SMatrix<T, 4, D, R>& mtrx ) {
+        const ROOT::Math::SVector<T, 4> vct( vect.Px(), vect.Py(), vect.Pz(), vect.E() );
+        return vct * mtrx;
       }
       // ======================================================================
       template <class T, class C, class B, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::LorentzVector<C>& vect ,
-        const ROOT::Math::Expr<B,T,4,D,R>&  mtrx )
-      {
-        const ROOT::Math::SVector<T,4> vct
-          ( vect . Px () , vect . Py () , vect . Pz () , vect.E () ) ;
-        return vct * mtrx ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::LorentzVector<C>&    vect,
+                                                  const ROOT::Math::Expr<B, T, 4, D, R>& mtrx ) {
+        const ROOT::Math::SVector<T, 4> vct( vect.Px(), vect.Py(), vect.Pz(), vect.E() );
+        return vct * mtrx;
       }
       // ======================================================================
       /** multiply the matrix and 3D-vector
@@ -1618,27 +1402,17 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class T, class C, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::SMatrix<T,D,3,R>&        mtrx ,
-        const ROOT::Math::DisplacementVector3D<C>& vect )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return mtrx * vct ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::SMatrix<T, D, 3, R>&     mtrx,
+                                                  const ROOT::Math::DisplacementVector3D<C>& vect ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return mtrx * vct;
       }
       // ======================================================================
       template <class T, class C, class B, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::Expr<B,T,D,3,R>&         mtrx ,
-        const ROOT::Math::DisplacementVector3D<C>& vect )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return mtrx * vct ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::Expr<B, T, D, 3, R>&     mtrx,
+                                                  const ROOT::Math::DisplacementVector3D<C>& vect ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return mtrx * vct;
       }
       // ======================================================================
       /** multiply the matrix and the 3D-vector
@@ -1656,27 +1430,17 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class T, class C, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::DisplacementVector3D<C>& vect ,
-        const ROOT::Math::SMatrix<T,3,D,R>&        mtrx )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return vct * mtrx ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::DisplacementVector3D<C>& vect,
+                                                  const ROOT::Math::SMatrix<T, 3, D, R>&     mtrx ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return vct * mtrx;
       }
       // ======================================================================
       template <class T, class C, class B, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::DisplacementVector3D<C>& vect ,
-        const ROOT::Math::Expr<B,T,3,D,R>&         mtrx )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return vct * mtrx ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::DisplacementVector3D<C>& vect,
+                                                  const ROOT::Math::Expr<B, T, 3, D, R>&     mtrx ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return vct * mtrx;
       }
       // ======================================================================
       /** multiply the matrix and 3D-vector
@@ -1694,27 +1458,17 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class T, class C, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::SMatrix<T,D,3,R>&    mtrx ,
-        const ROOT::Math::PositionVector3D<C>& vect )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return mtrx * vct ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::SMatrix<T, D, 3, R>& mtrx,
+                                                  const ROOT::Math::PositionVector3D<C>& vect ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return mtrx * vct;
       }
       // ======================================================================
       template <class T, class C, class B, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::Expr<B,T,D,3,R>&     mtrx ,
-        const ROOT::Math::PositionVector3D<C>& vect )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . X () ) ;
-        return mtrx * vct ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::Expr<B, T, D, 3, R>& mtrx,
+                                                  const ROOT::Math::PositionVector3D<C>& vect ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.X() );
+        return mtrx * vct;
       }
       // ======================================================================
       /** multiply the matrix and the 3D-vector
@@ -1732,34 +1486,24 @@ namespace Gaudi
        *  @date 2008-03-03
        */
       template <class T, class C, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::PositionVector3D<C>& vect ,
-        const ROOT::Math::SMatrix<T,3,D,R>&    mtrx )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return vct * mtrx ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::PositionVector3D<C>& vect,
+                                                  const ROOT::Math::SMatrix<T, 3, D, R>& mtrx ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return vct * mtrx;
       }
       // ======================================================================
       template <class T, class C, class B, class R, unsigned int D>
-      inline
-      ROOT::Math::SVector<T,D>
-      operator*
-      ( const ROOT::Math::PositionVector3D<C>& vect ,
-        const ROOT::Math::Expr<B,T,3,D,R>&     mtrx )
-      {
-        const ROOT::Math::SVector<T,3> vct
-          ( vect . X () , vect . Y () , vect . Z () ) ;
-        return vct * mtrx ;
+      inline ROOT::Math::SVector<T, D> operator*( const ROOT::Math::PositionVector3D<C>& vect,
+                                                  const ROOT::Math::Expr<B, T, 3, D, R>& mtrx ) {
+        const ROOT::Math::SVector<T, 3> vct( vect.X(), vect.Y(), vect.Z() );
+        return vct * mtrx;
       }
       // ======================================================================
-    } // end of namespace Gaudi::Math::OPerators
+    } // namespace Operators
     // ========================================================================
-  } // end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
-} // end of namespace Gaudi::Math
+} // namespace Gaudi
 // ============================================================================
 // The END
 // ============================================================================

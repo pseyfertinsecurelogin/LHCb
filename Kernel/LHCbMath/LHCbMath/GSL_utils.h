@@ -22,14 +22,12 @@
 // ============================================================================
 // GSL
 // ============================================================================
-#include "gsl/gsl_vector.h"
 #include "gsl/gsl_matrix.h"
+#include "gsl/gsl_vector.h"
 // =============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils
-  {
+  namespace Utils {
     // ========================================================================
     /** print GSL-vector to the stream
      *  @param v the vector
@@ -39,9 +37,7 @@ namespace Gaudi
      *  @date 2012-05-28
      */
     GAUDI_API
-    std::ostream& toStream
-    ( const gsl_vector&  v ,
-      std::ostream&      s ) ;
+    std::ostream& toStream( const gsl_vector& v, std::ostream& s );
     // ========================================================================
     /** print GSL-matrix to the stream
      *  @param m the matrix
@@ -51,23 +47,17 @@ namespace Gaudi
      *  @date 2012-05-28
      */
     GAUDI_API
-    std::ostream& toStream
-    ( const gsl_matrix&  m ,
-      std::ostream&      s ) ;
+    std::ostream& toStream( const gsl_matrix& m, std::ostream& s );
     // ========================================================================
-  } //                                            end of namespace Gaudi::Utils
+  } // namespace Utils
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
 /// print operator
-inline
-std::ostream& operator<<( std::ostream& s , const gsl_vector& v )
-{ return Gaudi::Utils::toStream ( v , s ) ; }
+inline std::ostream& operator<<( std::ostream& s, const gsl_vector& v ) { return Gaudi::Utils::toStream( v, s ); }
 // ============================================================================
 /// print operator
-inline
-std::ostream& operator<<( std::ostream& s , const gsl_matrix& m )
-{ return Gaudi::Utils::toStream ( m , s ) ; }
+inline std::ostream& operator<<( std::ostream& s, const gsl_matrix& m ) { return Gaudi::Utils::toStream( m, s ); }
 // ============================================================================
 // The END
 // ============================================================================

@@ -14,7 +14,7 @@
 #include "boost/lexical_cast.hpp"
 #include <iostream>
 
-namespace UT{
+namespace UT {
 
   /**
    * Template converter from basic anytype to string
@@ -26,13 +26,10 @@ namespace UT{
    * @date 2018-09-04
    */
   template <typename T>
-  std::string toString(const T& type, const unsigned int& digits = 0)
-  {
-    std::string result(boost::lexical_cast<std::string>(type));
-    if (digits != 0)
-    {
-      while(result.size() < digits)
-        result = "0" + result;
+  std::string toString( const T& type, const unsigned int& digits = 0 ) {
+    std::string result( boost::lexical_cast<std::string>( type ) );
+    if ( digits != 0 ) {
+      while ( result.size() < digits ) result = "0" + result;
     }
     return result;
   }
@@ -48,20 +45,19 @@ namespace UT{
    * @date 2018-09-04
    */
   template <typename T>
-  bool fromString(const std::string& mystring, T& type)
-  {
+  bool fromString( const std::string& mystring, T& type ) {
     bool ok;
-    try{
-      ok = true;
-      type = boost::lexical_cast<T>(mystring);
+    try {
+      ok   = true;
+      type = boost::lexical_cast<T>( mystring );
     } // try
-    catch(boost::bad_lexical_cast& e){
+    catch ( boost::bad_lexical_cast& e ) {
       // catch expection if we fail...
       ok = false;
       std::cerr << "ERROR " << e.what() << "** " << mystring << " **" << std::endl;
     } // catch
     return ok;
   }
-}
+} // namespace UT
 
-#endif //UT_UTLEXICALCAUTER_H
+#endif // UT_UTLEXICALCAUTER_H

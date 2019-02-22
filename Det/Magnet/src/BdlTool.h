@@ -22,22 +22,18 @@
 class IMagneticFieldSvc;
 class LutForBdlFunction;
 
-static const InterfaceID IID_PatVTTBdlTool("PatVTTBdlTool", 1 , 0);
+static const InterfaceID IID_PatVTTBdlTool( "PatVTTBdlTool", 1, 0 );
 
 /** @class BdlTool BdlTool.h
  * Field integral using lookup tables.
  * @author Mariusz Witek
  *
-*/
-class BdlTool : public GaudiTool,
-                virtual public IBdlTool {
+ */
+class BdlTool : public GaudiTool, virtual public IBdlTool {
 
 public:
-
   /// Standard Constructor
-  BdlTool(const std::string& type,
-          const std::string& name,
-          const IInterface* parent);
+  BdlTool( const std::string& type, const std::string& name, const IInterface* parent );
 
   /// Standard Destructor
   virtual ~BdlTool();
@@ -49,14 +45,13 @@ public:
   StatusCode finalize() override;
 
   /// Actual operator function
-  double bdlIntegral(double ySlopeVelo,double zOrigin,double zVelo) override;
-  double zBdlMiddle(double ySlopeVelo,double zOrigin,double zVelo) override;
+  double bdlIntegral( double ySlopeVelo, double zOrigin, double zVelo ) override;
+  double zBdlMiddle( double ySlopeVelo, double zOrigin, double zVelo ) override;
 
 protected:
-  void f_bdl(double slopeY, double zOrigin , double zStart, double zStop);
+  void f_bdl( double slopeY, double zOrigin, double zStart, double zStop );
 
 private:
-
   double m_BdlTrack;
   double m_zHalfBdlTrack;
 
@@ -68,7 +63,6 @@ private:
   LutForBdlFunction* m_lutZHalfBdl;
 
   double m_zCenterTT;
-
 };
 
 #endif // MAGNET_BDLTOOL_H

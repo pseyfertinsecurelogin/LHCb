@@ -19,7 +19,7 @@ struct Condition;
 /** the unique interface identifier
  * ( unique interface identifier , major & minor versions)
  */
-static const InterfaceID IID_IConditionInfo( "IConditionInfo" , 2 , 0 );
+static const InterfaceID IID_IConditionInfo( "IConditionInfo", 2, 0 );
 
 ///---------------------------------------------------------------------------
 /** @class IConditionInfo IConditionInfo.h Det/DetDesc/IConditionInfo.h
@@ -31,8 +31,7 @@ static const InterfaceID IID_IConditionInfo( "IConditionInfo" , 2 , 0 );
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct IConditionInfo : virtual IInterface
-{
+struct IConditionInfo : virtual IInterface {
 
   /** retrieve the uniqie interface identifier
    *  @return the unique interface identifier
@@ -40,15 +39,13 @@ struct IConditionInfo : virtual IInterface
   static const InterfaceID& interfaceID() { return IID_IConditionInfo; }
 
   /// Get a pointer to the detector element to which the ConditionInfo belongs
-  virtual IDetectorElement* detElem() const = 0 ;
+  virtual IDetectorElement* detElem() const = 0;
 
   /// Get the name of the associated condition
-  virtual const std::string& conditionName() const = 0 ;
+  virtual const std::string& conditionName() const = 0;
 
   /// Get a pointer to the associated condition
-  virtual Condition* condition() = 0 ;
-
+  virtual Condition* condition() = 0;
 };
 
 #endif // DETDESC_ICONDITIONINFO_H
-

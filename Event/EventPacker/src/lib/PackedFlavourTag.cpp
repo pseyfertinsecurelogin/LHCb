@@ -20,13 +20,9 @@
 
 using namespace LHCb;
 
-void FlavourTagPacker::pack( const Data & ft,
-                             PackedData & pft,
-                             PackedDataVector & pfts ) const
-{
+void FlavourTagPacker::pack( const Data& ft, PackedData& pft, PackedDataVector& pfts ) const {
   const auto ver = pfts.packingVersion();
-  if ( isSupportedVer(ver) )
-  {
+  if ( isSupportedVer( ver ) ) {
 
     // Decision
     pft.decision = ft.decision();
@@ -37,21 +33,15 @@ void FlavourTagPacker::pack( const Data & ft,
     pft.omegaOS    = m_pack.fraction( ft.omegaOS() );
 
     // tagging particle
-    if ( ft.taggedB() )
-    {
-      pft.taggedB = m_pack.reference64( &pfts,
-                                        ft.taggedB()->parent(),
-                                        ft.taggedB()->key() );
-    }
+    if ( ft.taggedB() ) { pft.taggedB = m_pack.reference64( &pfts, ft.taggedB()->parent(), ft.taggedB()->key() ); }
 
     // Taggers
     pft.firstTagger = pfts.taggers().size();
     pfts.taggers().reserve( pfts.taggers().size() + ft.taggers().size() );
-    for ( const auto & T : ft.taggers() )
-    {
+    for ( const auto& T : ft.taggers() ) {
       // make a new packed tagger object
       pfts.taggers().emplace_back( PackedTagger() );
-      auto & ptagger = pfts.taggers().back();
+      auto& ptagger = pfts.taggers().back();
 
       // save data members
       ptagger.type     = T.type();
@@ -61,44 +51,32 @@ void FlavourTagPacker::pack( const Data & ft,
       // tagging particles
       ptagger.firstTagP = pfts.taggeringPs().size();
       pfts.taggeringPs().reserve( pfts.taggeringPs().size() + T.taggerParts().size() );
-      for ( const auto& TP : T.taggerParts() )
-      {
-        if ( TP.target() )
-        {
-          pfts.taggeringPs().push_back( m_pack.reference64( &pfts,
-                                                            TP->parent(),
-                                                            TP->key() ) );
-        }
+      for ( const auto& TP : T.taggerParts() ) {
+        if ( TP.target() ) { pfts.taggeringPs().push_back( m_pack.reference64( &pfts, TP->parent(), TP->key() ) ); }
       }
       ptagger.lastTagP = pfts.taggeringPs().size();
 
       // for packing versions 1 and above add mva and charge to PackedTagger
-      if (ver > 0) {
-        ptagger.mvaValue = m_pack.mva(T.mvaValue());
-        ptagger.charge = m_pack.fraction(T.charge());
+      if ( ver > 0 ) {
+        ptagger.mvaValue = m_pack.mva( T.mvaValue() );
+        ptagger.charge   = m_pack.fraction( T.charge() );
       }
     }
 
     pft.lastTagger = pfts.taggers().size();
-
   }
-
 }
 
-void FlavourTagPacker::pack( const DataVector & fts,
-                             PackedDataVector & pfts ) const
-{
+void FlavourTagPacker::pack( const DataVector& fts, PackedDataVector& pfts ) const {
   const auto ver = pfts.packingVersion();
-  if ( isSupportedVer(ver) )
-  {
+  if ( isSupportedVer( ver ) ) {
 
     pfts.data().reserve( fts.size() );
 
-    for ( const auto * ft : fts )
-    {
+    for ( const auto* ft : fts ) {
       // Make a new packed data object and save
       pfts.data().emplace_back( PackedData() );
-      auto & pft = pfts.data().back();
+      auto& pft = pfts.data().back();
 
       // fill ppart key from part
       pft.key = ft->key();
@@ -106,112 +84,92 @@ void FlavourTagPacker::pack( const DataVector & fts,
       // Pack all the physics information
       pack( *ft, pft, pfts );
     }
-
   }
-
 }
 
-void FlavourTagPacker::unpack( const PackedData       & pft,
-                               Data                   & ft,
-                               const PackedDataVector & pfts,
-                               DataVector             & fts ) const
-{
+void FlavourTagPacker::unpack( const PackedData& pft, Data& ft, const PackedDataVector& pfts, DataVector& fts ) const {
 
   const auto ver = pfts.packingVersion();
-  if ( isSupportedVer(ver) )
-  {
+  if ( isSupportedVer( ver ) ) {
 
     // Decision
     ft.setDecision( pft.decision );
-    ft.setOmega   ( m_pack.fraction(pft.omega) );
+    ft.setOmega( m_pack.fraction( pft.omega ) );
 
     // OS Decision
     ft.setDecisionOS( pft.decisionOS );
-    ft.setOmegaOS   ( m_pack.fraction(pft.omegaOS) );
+    ft.setOmegaOS( m_pack.fraction( pft.omegaOS ) );
 
     // Tagging B
-    if ( -1 != pft.taggedB )
-    {
-      int hintID(0), key(0);
-      if ( m_pack.hintAndKey64( pft.taggedB, &pfts, &fts, hintID, key ) )
-      {
-        SmartRef<LHCb::Particle> ref(&fts,hintID,key);
+    if ( -1 != pft.taggedB ) {
+      int hintID( 0 ), key( 0 );
+      if ( m_pack.hintAndKey64( pft.taggedB, &pfts, &fts, hintID, key ) ) {
+        SmartRef<LHCb::Particle> ref( &fts, hintID, key );
         ft.setTaggedB( ref );
+      } else {
+        parent().Error( "Corrupt FlavourTag Particle SmartRef found" ).ignore();
       }
-      else { parent().Error("Corrupt FlavourTag Particle SmartRef found").ignore(); }
     }
 
     // Taggers
-    std::vector<LHCb::Tagger>& taggers =
-      *(const_cast<std::vector<LHCb::Tagger>*>(&ft.taggers()));
+    std::vector<LHCb::Tagger>& taggers = *( const_cast<std::vector<LHCb::Tagger>*>( &ft.taggers() ) );
     taggers.reserve( pft.lastTagger - pft.firstTagger );
-    for ( auto iT = pft.firstTagger; iT < pft.lastTagger; ++iT )
-    {
+    for ( auto iT = pft.firstTagger; iT < pft.lastTagger; ++iT ) {
       // Reference to packed tagger
-      const auto & ptagger = pfts.taggers()[iT];
+      const auto& ptagger = pfts.taggers()[iT];
 
       // Make a new tagger
       taggers.emplace_back( LHCb::Tagger() );
-      auto & tagger = taggers.back();
+      auto& tagger = taggers.back();
 
       // set the tagger members
-      tagger.setType    ( ptagger.type                   );
-      tagger.setDecision( ptagger.decision               );
-      tagger.setOmega   ( m_pack.fraction(ptagger.omega) );
+      tagger.setType( ptagger.type );
+      tagger.setDecision( ptagger.decision );
+      tagger.setOmega( m_pack.fraction( ptagger.omega ) );
 
       // tagging particles
-      for ( auto iP = ptagger.firstTagP; iP < ptagger.lastTagP; ++iP )
-      {
-        int hintID(0), key(0);
-        if ( m_pack.hintAndKey64( pfts.taggeringPs()[iP],
-                                  &pfts, &fts, hintID, key ) )
-        {
-          SmartRef<LHCb::Particle> ref(&fts,hintID,key);
+      for ( auto iP = ptagger.firstTagP; iP < ptagger.lastTagP; ++iP ) {
+        int hintID( 0 ), key( 0 );
+        if ( m_pack.hintAndKey64( pfts.taggeringPs()[iP], &pfts, &fts, hintID, key ) ) {
+          SmartRef<LHCb::Particle> ref( &fts, hintID, key );
           tagger.addToTaggerParts( ref );
+        } else {
+          parent().Error( "Corrupt FlavourTag Tagging Particle SmartRef found" ).ignore();
         }
-        else { parent().Error("Corrupt FlavourTag Tagging Particle SmartRef found").ignore(); }
       }
 
       // for packing versions 1 and above retrieve mva and charge to PackedTagger
-      if (ver > 0){
-        tagger.setMvaValue( m_pack.mva(ptagger.mvaValue)    );
-        tagger.setCharge  ( m_pack.fraction(ptagger.charge) );
+      if ( ver > 0 ) {
+        tagger.setMvaValue( m_pack.mva( ptagger.mvaValue ) );
+        tagger.setCharge( m_pack.fraction( ptagger.charge ) );
       }
     }
   }
 }
 
-void FlavourTagPacker::unpack( const PackedDataVector & pfts,
-                               DataVector             & fts ) const
-{
+void FlavourTagPacker::unpack( const PackedDataVector& pfts, DataVector& fts ) const {
   const auto ver = pfts.packingVersion();
-  if ( isSupportedVer(ver) )
-  {
+  if ( isSupportedVer( ver ) ) {
 
     fts.reserve( pfts.data().size() );
 
-    for ( const auto & pft : pfts.data() )
-    {
+    for ( const auto& pft : pfts.data() ) {
       // make and save new pid in container
-      auto * ft = new Data();
+      auto* ft = new Data();
       fts.insert( ft, pft.key );
 
       // Fill data from packed object
       unpack( pft, *ft, pfts, fts );
     }
-
   }
 }
 
-StatusCode FlavourTagPacker::check( const DataVector & dataA,
-                                    const DataVector & dataB ) const
-{
+StatusCode FlavourTagPacker::check( const DataVector& dataA, const DataVector& dataB ) const {
   StatusCode sc = StatusCode::SUCCESS;
 
   // Loop over data containers together and compare
-  auto iA(dataA.begin()), iB(dataB.begin());
-  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
-  {
+  auto iA( dataA.begin() ), iB( dataB.begin() );
+  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB ) {
     if ( sc ) sc = check( **iA, **iB );
   }
 
@@ -219,14 +177,12 @@ StatusCode FlavourTagPacker::check( const DataVector & dataA,
   return sc;
 }
 
-StatusCode FlavourTagPacker::check( const Data & dataA,
-                                    const Data & dataB ) const
-{
+StatusCode FlavourTagPacker::check( const Data& dataA, const Data& dataB ) const {
   // assume OK from the start
   bool ok = true;
 
   // checker
-  const DataPacking::DataChecks ch(parent());
+  const DataPacking::DataChecks ch( parent() );
 
   // Checks
 
@@ -247,30 +203,22 @@ StatusCode FlavourTagPacker::check( const Data & dataA,
   ok &= ch.comparePointers( "TaggedB", dataA.taggedB(), dataB.taggedB() );
 
   // Taggers
-  const bool sizeOK = ch.compareInts( "#Taggers",
-                                      dataA.taggers().size(),
-                                      dataB.taggers().size() );
+  const bool sizeOK = ch.compareInts( "#Taggers", dataA.taggers().size(), dataB.taggers().size() );
   ok &= sizeOK;
-  if ( sizeOK )
-  {
-    auto iA(dataA.taggers().begin()), iB(dataB.taggers().begin());
-    for ( ; iA != dataA.taggers().end() && iB != dataB.taggers().end(); ++iA, ++iB )
-    {
-      ok &= ch.compareInts(   "TaggerType",     iA->type(),     iB->type()     );
-      ok &= ch.compareInts(   "TaggerDecision", iA->decision(), iB->decision() );
-      ok &= ch.compareFloats( "TaggerOmega",    iA->omega(),    iB->omega()    );
+  if ( sizeOK ) {
+    auto iA( dataA.taggers().begin() ), iB( dataB.taggers().begin() );
+    for ( ; iA != dataA.taggers().end() && iB != dataB.taggers().end(); ++iA, ++iB ) {
+      ok &= ch.compareInts( "TaggerType", iA->type(), iB->type() );
+      ok &= ch.compareInts( "TaggerDecision", iA->decision(), iB->decision() );
+      ok &= ch.compareFloats( "TaggerOmega", iA->omega(), iB->omega() );
       ok &= ch.compareFloats( "TaggerMVAValue", iA->mvaValue(), iB->mvaValue() );
-      ok &= ch.compareFloats( "TaggerCharge",   iA->charge(),   iB->charge()   );
+      ok &= ch.compareFloats( "TaggerCharge", iA->charge(), iB->charge() );
 
-      const bool pSizeOK = ch.compareInts( "TaggerPSize",
-                                           iA->taggerParts().size(),
-                                           iB->taggerParts().size() );
+      const bool pSizeOK = ch.compareInts( "TaggerPSize", iA->taggerParts().size(), iB->taggerParts().size() );
       ok &= pSizeOK;
-      if ( pSizeOK )
-      {
-        auto iPA(iA->taggerParts().begin()), iPB(iB->taggerParts().begin());
-        for ( ; iPA != iA->taggerParts().end() && iPB != iB->taggerParts().end(); ++iPA, ++iPB )
-        {
+      if ( pSizeOK ) {
+        auto iPA( iA->taggerParts().begin() ), iPB( iB->taggerParts().begin() );
+        for ( ; iPA != iA->taggerParts().end() && iPB != iB->taggerParts().end(); ++iPA, ++iPB ) {
           ok &= ch.comparePointers( "TaggerParts", &**iPA, &**iPB );
         }
       }
@@ -278,18 +226,14 @@ StatusCode FlavourTagPacker::check( const Data & dataA,
   }
 
   // force printout for tests
-  //ok = false;
+  // ok = false;
   // If comparison not OK, print full information
-  if ( !ok )
-  {
-    const std::string loc = ( dataA.parent() && dataA.parent()->registry() ?
-                              dataA.parent()->registry()->identifier() : "Not in TES" );
+  if ( !ok ) {
+    const std::string loc =
+        ( dataA.parent() && dataA.parent()->registry() ? dataA.parent()->registry()->identifier() : "Not in TES" );
     parent().warning() << "Problem with FlavourTag data packing :-" << endmsg
-                       << "  Original FlavourTag key=" << dataA.key()
-                       << " in '" << loc << "'" << endmsg
-                       << dataA << endmsg
-                       << "  Unpacked FlavourTag" << endmsg
-                       << dataB << endmsg;
+                       << "  Original FlavourTag key=" << dataA.key() << " in '" << loc << "'" << endmsg << dataA
+                       << endmsg << "  Unpacked FlavourTag" << endmsg << dataB << endmsg;
   }
 
   return ( ok ? StatusCode::SUCCESS : StatusCode::FAILURE );

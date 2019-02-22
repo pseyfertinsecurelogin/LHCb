@@ -25,8 +25,7 @@
 #include <map>
 #include <ostream>
 
-namespace Rich
-{
+namespace Rich {
 
   //--------------------------------------------------------------------------------
   /** @class Map RichMap.h RichUtils/RichMap.h
@@ -38,20 +37,14 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------
 
-  template < typename KEY,
-             typename VALUE,
-             typename COMPARE = std::less< KEY >,
-             typename ALLOC   = std::allocator< std::pair< const KEY, VALUE > > >
-  class Map : public std::map< KEY, VALUE, COMPARE, ALLOC >
-  {
+  template <typename KEY, typename VALUE, typename COMPARE = std::less<KEY>,
+            typename ALLOC = std::allocator<std::pair<const KEY, VALUE>>>
+  class Map : public std::map<KEY, VALUE, COMPARE, ALLOC> {
   public:
-
     /// Operator overloading for ostream
-    friend inline std::ostream &operator<<( std::ostream &                           str,
-                                            const Map< KEY, VALUE, COMPARE, ALLOC > &m )
-    {
+    friend inline std::ostream& operator<<( std::ostream& str, const Map<KEY, VALUE, COMPARE, ALLOC>& m ) {
       str << "[";
-      for ( const auto &i : m ) { str << " (" << i.first << "," << i.second << ")"; }
+      for ( const auto& i : m ) { str << " (" << i.first << "," << i.second << ")"; }
       return str << " ]";
     }
   };

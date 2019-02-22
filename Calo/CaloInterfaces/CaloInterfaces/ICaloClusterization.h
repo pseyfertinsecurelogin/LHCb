@@ -19,14 +19,13 @@
 #include "GaudiKernel/IAlgTool.h"
 
 // from LHCb
-#include "Kernel/CaloCellID.h"
 #include "CaloKernel/CaloVector.h"
 #include "Event/CaloCluster.h"
 #include "Event/CaloDigit.h"
+#include "Kernel/CaloCellID.h"
 
 // forward declarations
 class DeCalorimeter;
-
 
 /** @class ICaloClusterization ICaloClusterization.h CaloInterfaces/ICaloClusterization.h
  *
@@ -34,8 +33,7 @@ class DeCalorimeter;
  *  @author Victor Egorychev
  *  @date   2008-04-03
  */
-struct  ICaloClusterization : extend_interfaces<IAlgTool>
-{
+struct ICaloClusterization : extend_interfaces<IAlgTool> {
 
   DeclareInterfaceID( ICaloClusterization, 3, 0 );
 
@@ -47,10 +45,8 @@ struct  ICaloClusterization : extend_interfaces<IAlgTool>
    * @ param number of neigbour levels around cell
    * @ return vector of pointers of Calo clusters
    */
-  virtual unsigned int clusterize( std::vector<LHCb::CaloCluster*>&      clusters   ,
-                                   const LHCb::CaloDigits&               digits     ,
-                                   const DeCalorimeter*                  detector   ,
-                                   const std::vector<LHCb::CaloCellID>&  seeds  = {},
-                                   const unsigned int                    level  = 0 ) const = 0 ;
+  virtual unsigned int clusterize( std::vector<LHCb::CaloCluster*>& clusters, const LHCb::CaloDigits& digits,
+                                   const DeCalorimeter* detector, const std::vector<LHCb::CaloCellID>& seeds = {},
+                                   const unsigned int level = 0 ) const = 0;
 };
 #endif // CALOINTERFACES_ICALOCLUSTERIZATION_H

@@ -39,13 +39,12 @@ public:
   /// Standard constructor
   PrintMCDecayTreeAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  IPrintMCDecayTreeTool *m_printTool = nullptr;
-  std::string m_printToolName = "PrintMCDecayTreeTool";
-  std::string m_particleLocation =  LHCb::MCParticleLocation::Default;
-
+  IPrintMCDecayTreeTool* m_printTool        = nullptr;
+  std::string            m_printToolName    = "PrintMCDecayTreeTool";
+  std::string            m_particleLocation = LHCb::MCParticleLocation::Default;
 };
 #endif // PRINTMCDECAYTREEALG_H

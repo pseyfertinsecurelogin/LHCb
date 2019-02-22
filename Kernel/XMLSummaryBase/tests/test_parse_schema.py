@@ -22,30 +22,28 @@
 __author__ = 'Rob Lambert Rob.Lambert@cern.ch'
 # =============================================================================
 
-
 #test I can import it!
-from   XMLSummaryBase import schema
+from XMLSummaryBase import schema
 
-topdir='$XMLSUMMARYBASEROOT/'
-xsdfile='xml/XMLSummary.xsd'
-xmlfile1='xml/Summary_Minimal.xml'
-xmlfile2='xml/Summary_Example.xml'
-
+topdir = '$XMLSUMMARYBASEROOT/'
+xsdfile = 'xml/XMLSummary.xsd'
+xmlfile1 = 'xml/Summary_Minimal.xml'
+xmlfile2 = 'xml/Summary_Example.xml'
 
 #test I can parse the schema
-xsd=schema.Schema(topdir+xsdfile)
+xsd = schema.Schema(topdir + xsdfile)
 print 'schema parsed'
 
 #test the schema can make the default
-sum_default=xsd.create_default(xsd.root())
+sum_default = xsd.create_default(xsd.root())
 if sum_default is None:
     raise AssertionError, 'problem with default summary'
 else:
     print 'created default OK'
 
 #test the schema can parse the examples
-sum_minimal=xsd.parse(topdir+xmlfile1)
-sum_example=xsd.parse(topdir+xmlfile2)
+sum_minimal = xsd.parse(topdir + xmlfile1)
+sum_example = xsd.parse(topdir + xmlfile2)
 print 'parsed example xml OK'
 
 #test that the schema prevents me from doing something stupid

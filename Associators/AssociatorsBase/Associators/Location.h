@@ -14,10 +14,9 @@
 #include <string>
 
 namespace Links {
-inline std::string location(const std::string& location)
-{
-   return "Link/" + (location.compare(0, 7, "/Event/") == 0 ? location.substr(7) : location);
-}
-}
+  inline std::string location( const std::string& location ) {
+    return "Link/" + ( location.compare( 0, 7, "/Event/" ) == 0 ? location.substr( 7 ) : location );
+  }
+} // namespace Links
 
 #endif

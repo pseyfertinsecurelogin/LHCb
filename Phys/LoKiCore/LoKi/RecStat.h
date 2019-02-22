@@ -34,11 +34,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace TES
-  {
+  namespace TES {
     // ========================================================================
     /** @class HasRecSummary
      *  Check the existence of certain record in RecSummary object
@@ -48,8 +46,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @daet 2011-03-24
      */
-    class GAUDI_API HasRecSummary : public LoKi::TES::Exists
-    {
+    class GAUDI_API HasRecSummary : public LoKi::TES::Exists {
     public:
       // ======================================================================
       /** Standard constructor from the key, location and 'rootInTES'
@@ -57,24 +54,21 @@ namespace LoKi
        *  @param location     TES location of LHCb::RecSummary obejct
        *  @param useRootInTES flato to use/ignore root-in-tes
        */
-      HasRecSummary
-        ( const GaudiAlgorithm* algorithm           , 
-          const int             key                 ,
-          const std::string&    location     = ""   ,
-          const bool            useRootInTES = true ) ;
+      HasRecSummary( const GaudiAlgorithm* algorithm, const int key, const std::string& location = "",
+                     const bool useRootInTES = true );
       /// MANDATORY: clone method ("virtual constructor")
-      HasRecSummary* clone () const override;
+      HasRecSummary* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() (  ) const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the key to be used for LHCb::RecSummary::hasInfo method
-      int m_key ; // the key to be used for LHCb::RecSummary::hasInfo method
+      int m_key; // the key to be used for LHCb::RecSummary::hasInfo method
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class RecSummary
      *  Check the content of certain record in RecSummary object
@@ -84,8 +78,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @daet 2011-03-24
      */
-    class GAUDI_API RecSummary : public LoKi::TES::Contains
-    {
+    class GAUDI_API RecSummary : public LoKi::TES::Contains {
     public:
       // ======================================================================
       /** Standard constructor from the key, location and 'rootInTES'
@@ -94,32 +87,27 @@ namespace LoKi
        *  @param location     TES location of LHCb::RecSummary obejct
        *  @param useRootInTES flato to use/ignore root-in-tes
        */
-      RecSummary
-        ( const GaudiAlgorithm* algorithm            , 
-          const int             key                  ,
-          const int             bad                  ,
-          const std::string&    location     = ""    ,
-          const bool            useRootInTES = true  ) ;
+      RecSummary( const GaudiAlgorithm* algorithm, const int key, const int bad, const std::string& location = "",
+                  const bool useRootInTES = true );
       /// MANDATORY: clone method ("virtual constructor")
-      RecSummary* clone () const override;
+      RecSummary* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() (  ) const override;
+      double operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the key to be used for LHCb::RecSummary::info method
-      int m_key ; // the key to be used for LHCb::RecSummary::info method
+      int m_key; // the key to be used for LHCb::RecSummary::info method
       /// the value to be used for LHCb::RecSummary::info method
-      int m_bad ; // the value to be used for LHCb::RecSummary::info method
+      int m_bad; // the value to be used for LHCb::RecSummary::info method
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                               end of namespace LoKi::TES
+  } // namespace TES
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef HASRECSUMMARY
      *  Check the record in LHCb::RecSummary
@@ -134,7 +122,7 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.BElyaev@cern.ch
      *  @date 2011-03-24
      */
-    typedef LoKi::TES::HasRecSummary                            HASRECSUMMARY ;
+    typedef LoKi::TES::HasRecSummary HASRECSUMMARY;
     // ========================================================================
     /** @typedef RECSUMMARY
      *  Get the record from LHCb::RecSummary
@@ -149,9 +137,9 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.BElyaev@cern.ch
      *  @date 2011-03-24
      */
-    typedef LoKi::TES::RecSummary                                  RECSUMMARY ;
+    typedef LoKi::TES::RecSummary RECSUMMARY;
     // ========================================================================
-  } //                                             end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

@@ -10,9 +10,10 @@
 ###############################################################################
 import importUtils
 
+
 #================================================================================
 class genPackage(importUtils.importUtils):
-#--------------------------------------------------------------------------------
+    #--------------------------------------------------------------------------------
     def __init__(self, godPackage):
         importUtils.importUtils.__init__(self)
         self.godPackage = godPackage
@@ -25,9 +26,15 @@ class genPackage(importUtils.importUtils):
         self.excludes = []
         self.doit()
 #--------------------------------------------------------------------------------
+
     def parsePackImport(self, dict):
-        self.parseImport(dict, self.include, self.stdIncludes, self.forwardDeclLHCb, self.forwardDeclGlob, self.forwardIncl)
+        self.parseImport(dict, self.include, self.stdIncludes,
+                         self.forwardDeclLHCb, self.forwardDeclGlob,
+                         self.forwardIncl)
+
+
 #--------------------------------------------------------------------------------
+
     def doit(self):
         self.dict['packagename'] = self.godPackage['attrs']['name']
         self.dict['packagenamespace'] = self.godPackage['attrs']['namespace']

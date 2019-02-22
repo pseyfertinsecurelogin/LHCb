@@ -9,15 +9,14 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-// $Id: $ 
+// $Id: $
 // ============================================================================
-#define  CALODET_TELL1PARAM_CPP 1 
+#define CALODET_TELL1PARAM_CPP 1
 // ============================================================================
 /// Include files
 /// local
-#include "CaloDet/DeCalorimeter.h"
 #include "CaloDet/Tell1Param.h"
-
+#include "CaloDet/DeCalorimeter.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : Tell1Param
@@ -28,9 +27,7 @@
 // ============================================================================
 // Standard creator, initializes variables
 // ============================================================================
-Tell1Param::Tell1Param( int num )
-  : m_number ( num )
-{
+Tell1Param::Tell1Param( int num ) : m_number( num ) {
   m_feCards.clear();
   m_feCards.reserve( 24 );
   m_isPin = false;
@@ -39,6 +36,6 @@ Tell1Param::Tell1Param( int num )
 // ============================================================================
 // Destructor
 // ============================================================================
-Tell1Param::~Tell1Param(){}
+Tell1Param::~Tell1Param() {}
 
 // ============================================================================

@@ -14,7 +14,7 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/IEventTimeDecoder.h" // Interface
 
 /** Simple implementation of IEventTimeDecoder that takes the event
  *  time from LHCb::RecHeader.
@@ -23,14 +23,11 @@
  *  @date   2010-09-23
  */
 
-class RecEventTime final : public extends1<GaudiTool, IEventTimeDecoder>
-{
+class RecEventTime final : public extends1<GaudiTool, IEventTimeDecoder> {
 
 public:
-
   /// Standard constructor
-  RecEventTime(const std::string& type, const std::string& name,
-               const IInterface* parent);
+  RecEventTime( const std::string& type, const std::string& name, const IInterface* parent );
 
   virtual ~RecEventTime() = default; ///< Destructor
 
@@ -40,10 +37,8 @@ public:
   Gaudi::Time getTime() const override;
 
 private:
-
   /// Location of the RecHeader in the transient store.
   std::string m_recHeaderLoc;
-
 };
 
 #endif /* RECEVENTTIME_H */

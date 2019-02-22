@@ -50,8 +50,8 @@
  *  @date 2007-11-27
  */
 // ============================================================================
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-#pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark
+#  pragma warning( disable : 1572 ) // floating-point equality and inequality comparisons are unreliable
 #endif
 // ============================================================================
 /* compare two double numbers with relative precision 'epsilon'
@@ -66,31 +66,33 @@
  *  @date 2007-11-27
  */
 // ============================================================================
-bool LHCb::Math::knuth_equal_to_double
-( const double value1  ,
-  const double value2  ,
-  const double epsilon )
-{
-  return
-    !epsilon    ? 0 == gsl_fcmp ( value1 , value2 , 1.0e-6  ) :
-    0 < epsilon ? 0 == gsl_fcmp ( value1 , value2 , epsilon ) :
-    0 == gsl_fcmp ( value1 , value2 , -epsilon ) ;
+bool LHCb::Math::knuth_equal_to_double( const double value1, const double value2, const double epsilon ) {
+  return !epsilon ? 0 == gsl_fcmp( value1, value2, 1.0e-6 )
+                  : 0 < epsilon ? 0 == gsl_fcmp( value1, value2, epsilon ) : 0 == gsl_fcmp( value1, value2, -epsilon );
 }
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
   /// check the specialization
-  static_assert ( boost::integer_traits<long> ::is_specialized     ,
-                  "boost::integer_traits<long> is not specialized" ) ;
-  static_assert ( boost::integer_traits<int>  ::is_specialized     ,
-                  "boost::integer_traits<int>  is not specialized" ) ;
+  static_assert( boost::integer_traits<long>::is_specialized, "boost::integer_traits<long> is not specialized" );
+  static_assert( boost::integer_traits<int>::is_specialized, "boost::integer_traits<int>  is not specialized" );
   // ==========================================================================
-  const double s_MAX_L =  0.1 + boost::integer_traits<long>::const_max ;
-  const double s_MIN_L = -0.1 - boost::integer_traits<long>::const_max ;
-  const double s_MAX_I =  0.1 + boost::integer_traits<int>::const_max  ;
-  const double s_MIN_I = -0.1 - boost::integer_traits<int>::const_max  ;
+  const double s_MAX_L = 0.1 + boost::integer_traits<long>::const_max;
+  const double s_MIN_L = -0.1 - boost::integer_traits<long>::const_max;
+  const double s_MAX_I = 0.1 + boost::integer_traits<int>::const_max;
+  const double s_MIN_I = -0.1 - boost::integer_traits<int>::const_max;
   // ==========================================================================
+} // namespace
+// ============================================================================
+/*  is the value actually long ?
+ *  @author Vanya BELYAEV Ivan.Belyaev
+ *  @date 2011-07-18
+ */
+// ============================================================================
+bool LHCb::Math::islong( const double x ) {
+  return x <= s_MIN_L
+             ? false
+             : x >= s_MAX_L ? false : LHCb::Math::lomont_compare_double( x, LHCb::Math::round( x ), mULPS_double );
 }
 // ============================================================================
 /*  is the value actually long ?
@@ -98,29 +100,10 @@ namespace
  *  @date 2011-07-18
  */
 // ============================================================================
-bool LHCb::Math::islong ( const double x )
-{
-  return
-    x <= s_MIN_L  ? false :
-    x >= s_MAX_L  ? false :
-    LHCb::Math::lomont_compare_double ( x                       ,
-                                        LHCb::Math::round ( x ) ,
-                                        mULPS_double            ) ;
-}
-// ============================================================================
-/*  is the value actually long ?
- *  @author Vanya BELYAEV Ivan.Belyaev
- *  @date 2011-07-18
- */
-// ============================================================================
-bool LHCb::Math::islong ( const float x )
-{
-  return
-    x <= s_MIN_L  ? false :
-    x >= s_MAX_L  ? false :
-    LHCb::Math::lomont_compare_double ( x                       ,
-                                        LHCb::Math::round ( x ) ,
-                                        mULPS_float             ) ;
+bool LHCb::Math::islong( const float x ) {
+  return x <= s_MIN_L
+             ? false
+             : x >= s_MAX_L ? false : LHCb::Math::lomont_compare_double( x, LHCb::Math::round( x ), mULPS_float );
 }
 // ============================================================================
 /*  is the value actually int ?
@@ -128,14 +111,10 @@ bool LHCb::Math::islong ( const float x )
  *  @date 2011-07-18
  */
 // ============================================================================
-bool LHCb::Math::isint ( const double x )
-{
-  return
-    x <= s_MIN_I  ? false :
-    x >= s_MAX_I  ? false :
-    LHCb::Math::lomont_compare_double ( x                       ,
-                                        LHCb::Math::round ( x ) ,
-                                        mULPS_double            ) ;
+bool LHCb::Math::isint( const double x ) {
+  return x <= s_MIN_I
+             ? false
+             : x >= s_MAX_I ? false : LHCb::Math::lomont_compare_double( x, LHCb::Math::round( x ), mULPS_double );
 }
 // ============================================================================
 /*  is the value actually int ?
@@ -143,14 +122,10 @@ bool LHCb::Math::isint ( const double x )
  *  @date 2011-07-18
  */
 // ============================================================================
-bool LHCb::Math::isint ( const float x )
-{
-  return
-    x <= s_MIN_I  ? false :
-    x >= s_MAX_I  ? false :
-    LHCb::Math::lomont_compare_double ( x                       ,
-                                        LHCb::Math::round ( x ) ,
-                                        mULPS_float             ) ;
+bool LHCb::Math::isint( const float x ) {
+  return x <= s_MIN_I
+             ? false
+             : x >= s_MAX_I ? false : LHCb::Math::lomont_compare_double( x, LHCb::Math::round( x ), mULPS_float );
 }
 // ============================================================================
 /* check if the double value is actually equal to the integer value
@@ -163,13 +138,9 @@ bool LHCb::Math::isint ( const float x )
  *  @date 2008-09-17
  */
 // ============================================================================
-bool LHCb::Math::equal_to_int
-( const double       val   ,
-  const int          ref   ,
-  const unsigned int mULPS )
-{
-  const double tmp = ref ;
-  return LHCb::Math::lomont_compare_double ( val , tmp , mULPS ) ;
+bool LHCb::Math::equal_to_int( const double val, const int ref, const unsigned int mULPS ) {
+  const double tmp = ref;
+  return LHCb::Math::lomont_compare_double( val, tmp, mULPS );
 }
 // ============================================================================
 /*  check if the double value is actually equal to the unsigned integer value
@@ -182,13 +153,9 @@ bool LHCb::Math::equal_to_int
  *  @date 2008-09-17
  */
 // ============================================================================
-bool LHCb::Math::equal_to_uint
-( const double       val   ,
-  const unsigned int ref   ,
-  const unsigned int mULPS )
-{
-  const double tmp = ref ;
-  return LHCb::Math::lomont_compare_double ( val , tmp , mULPS ) ;
+bool LHCb::Math::equal_to_uint( const double val, const unsigned int ref, const unsigned int mULPS ) {
+  const double tmp = ref;
+  return LHCb::Math::lomont_compare_double( val, tmp, mULPS );
 }
 // ============================================================================
 /*  get mantissa and exponent
@@ -200,23 +167,25 @@ bool LHCb::Math::equal_to_uint
  *  @date 2015-07-21
  */
 // ============================================================================
-std::pair<double,int>
-LHCb::Math::frexp10 ( const double x )
-{
+std::pair<double, int> LHCb::Math::frexp10( const double x ) {
   //
-  if ( UNLIKELY ( 0 == x ) )  { return { x , 0 } ; }
+  if ( UNLIKELY( 0 == x ) ) { return {x, 0}; }
   //
-  long double xa = 0 < x ?  x : -x ;
+  long double xa = 0 < x ? x : -x;
   //
-  int q  = (int) std::floor ( std::log10 ( xa ) ) ;
-  if      ( 0 < q ) { xa /= Gaudi::Math::pow ( 10.0L , (unsigned long)           q   ) ; }
-  else if ( 0 > q ) { xa *= Gaudi::Math::pow ( 10.0L , (unsigned long) std::abs( q ) ) ; }
+  int q = (int)std::floor( std::log10( xa ) );
+  if ( 0 < q ) {
+    xa /= Gaudi::Math::pow( 10.0L, (unsigned long)q );
+  } else if ( 0 > q ) {
+    xa *= Gaudi::Math::pow( 10.0L, (unsigned long)std::abs( q ) );
+  }
   //
-  if ( 1 <= xa ) { xa /= 10 ; ++q ; }
+  if ( 1 <= xa ) {
+    xa /= 10;
+    ++q;
+  }
   //
-  return 0 < x ?
-    std::pair{  xa , q } :
-    std::pair{ -xa , q } ;
+  return 0 < x ? std::pair{xa, q} : std::pair{-xa, q};
 }
 // ============================================================================
 /*  get mantissa and binary exponent
@@ -227,12 +196,10 @@ LHCb::Math::frexp10 ( const double x )
  *  @date 2015-07-21
  */
 // ============================================================================
-std::pair<double,int>
-LHCb::Math::frexp2 ( const double x )
-{
-  int    e = 0 ;
-  double m = std::frexp ( x , &e ) ;
-  return { m , e } ;
+std::pair<double, int> LHCb::Math::frexp2( const double x ) {
+  int    e = 0;
+  double m = std::frexp( x, &e );
+  return {m, e};
 }
 // ============================================================================
 /*  get mantissa and exponent
@@ -244,12 +211,11 @@ LHCb::Math::frexp2 ( const double x )
  *  @date 2011-07-18
  */
 // ============================================================================
-double LHCb::Math::frexp10 ( const double  x , long& e )
-{
+double LHCb::Math::frexp10( const double x, long& e ) {
   //
-  const auto r = frexp10 ( x ) ;
-  e    = r.second ;
-  return r.first  ;
+  const auto r = frexp10( x );
+  e            = r.second;
+  return r.first;
 }
 // ============================================================================
 /*  get mantissa and exponent
@@ -261,10 +227,9 @@ double LHCb::Math::frexp10 ( const double  x , long& e )
  *  @date 2011-07-18
  */
 // ============================================================================
-float LHCb::Math::frexp10 ( const float  x , long& e )
-{
-  const double xx = x ;
-  return frexp10 ( xx , e ) ;
+float LHCb::Math::frexp10( const float x, long& e ) {
+  const double xx = x;
+  return frexp10( xx, e );
 }
 // ============================================================================
 /*  round to N-significant digits
@@ -275,24 +240,22 @@ float LHCb::Math::frexp10 ( const float  x , long& e )
  *  @date 2015-07-21
  */
 // ============================================================================
-double LHCb::Math::round_N ( const double x , const unsigned short n )
-{
+double LHCb::Math::round_N( const double x, const unsigned short n ) {
   //
-  if ( 0 == n ) { return 0 ; } // none of correct digits is required
+  if ( 0 == n ) { return 0; } // none of correct digits is required
   //
-  const auto r = frexp10 ( x ) ;
+  const auto r = frexp10( x );
   //
-  const long    e  = r.second -  1 ;
-  const double  m  = r.first  * 10 ;
+  const long   e = r.second - 1;
+  const double m = r.first * 10;
   //
-  const long    ni = n - 1 ;
+  const long ni = n - 1;
   //
-  const double  f1 = Gaudi::Math::pow ( 10.0 , ni )  ;
-  const double  f2 =
-    ni < e ?     Gaudi::Math::pow ( 10.0 , (unsigned long) ( e  - ni ) ) :
-    ni > e ? 1.0/Gaudi::Math::pow ( 10.0 , (unsigned long) ( ni - e  ) ) : 1 ;
-//
-return round ( m * f1 ) * f2 ;
+  const double f1 = Gaudi::Math::pow( 10.0, ni );
+  const double f2 = ni < e ? Gaudi::Math::pow( 10.0, (unsigned long)( e - ni ) )
+                           : ni > e ? 1.0 / Gaudi::Math::pow( 10.0, (unsigned long)( ni - e ) ) : 1;
+  //
+  return round( m * f1 ) * f2;
 }
 // ============================================================================
 /*  round to N-significant digits
@@ -303,13 +266,10 @@ return round ( m * f1 ) * f2 ;
  *  @date 2015-07-21
  */
 // ============================================================================
-float LHCb::Math::round_N ( const float x , const unsigned short n )
-{
-  const double xd = x ;
-  return round_N ( xd , n ) ;
+float LHCb::Math::round_N( const float x, const unsigned short n ) {
+  const double xd = x;
+  return round_N( xd, n );
 }
-
-
 
 // ============================================================================
 // The END

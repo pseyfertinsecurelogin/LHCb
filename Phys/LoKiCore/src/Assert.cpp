@@ -17,8 +17,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Exception.h"
 #include "LoKi/Assert.h"
+#include "LoKi/Exception.h"
 // ============================================================================
 /** @file
  *  Implementation file for function LoKi::throwException
@@ -26,8 +26,7 @@
  *  @date 2007-08-11
  */
 // ============================================================================
-void LoKi::throwException ( const std::string& message )
-{ throw LoKi::Exception ( message ) ; }
+void LoKi::throwException( const std::string& message ) { throw LoKi::Exception( message ); }
 // ============================================================================
 
 // ============================================================================

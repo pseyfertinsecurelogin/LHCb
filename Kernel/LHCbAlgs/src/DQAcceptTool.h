@@ -23,18 +23,16 @@
 struct Condition;
 
 /** @class DQAcceptTool DQAcceptTool.h src/DQAcceptTool.h
-  *
-  *
-  * @author Marco Clemencic
-  * @date 09/02/2012
-  */
-class DQAcceptTool final : public extends1<GaudiTool, IAccept>
-{
+ *
+ *
+ * @author Marco Clemencic
+ * @date 09/02/2012
+ */
+class DQAcceptTool final : public extends1<GaudiTool, IAccept> {
 
 public:
-
   /// Standard constructor
-  DQAcceptTool(const std::string& type, const std::string& name, const IInterface* parent);
+  DQAcceptTool( const std::string& type, const std::string& name, const IInterface* parent );
 
   /// Initialize the tool.
   StatusCode initialize() override;
@@ -45,8 +43,7 @@ public:
   /// Tells if the current event has to be accepted or not, according to the
   virtual bool accept() const override;
 
- private:
-
+private:
   /// Call-back function passed to the UpdateManagerSvc to update the current
   /// filtering status (good or bad).
   StatusCode i_checkFlagsByRun();
@@ -56,7 +53,6 @@ public:
   StatusCode i_checkFlagsByEvent();
 
 private:
-
   /// Path to the used condition object.
   /// Depending on the "ByRun" property it defined the condition to get
   /// the run boundaries or the one for the DQ Flags.
@@ -72,8 +68,8 @@ private:
 
   /// @{
   /// Pointers to the tools.
-  IDQFilter *m_filter = nullptr;
-  IDQScanner *m_scanner = nullptr;
+  IDQFilter*  m_filter  = nullptr;
+  IDQScanner* m_scanner = nullptr;
   /// @}
 
   /// Transient flag updated every time the run condition changes to state
@@ -82,8 +78,7 @@ private:
 
   /// Pointer to condition to use (filled by the UpdateManagerSvc).
   /// @see m_condPath
-  Condition *m_cond = nullptr;
-
+  Condition* m_cond = nullptr;
 };
 
 #endif // SRC_DQACCEPTTOOL_H

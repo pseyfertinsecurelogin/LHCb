@@ -26,11 +26,9 @@
  *  @date 2008-04-21
  */
 // ============================================================================
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Nodes
-  {
+  namespace Nodes {
     // ========================================================================
     /** @class Any
      *  the most simple node in the decay tree:
@@ -38,22 +36,21 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Any : public Decays::iNode
-    {
+    class GAUDI_API Any : public Decays::iNode {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Any* clone () const   override;
+      Any* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
+      bool operator()( const LHCb::ParticleID& /* p */ ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: check the validity
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Pid
      *  The simple node in the decay tree:
@@ -61,48 +58,45 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Pid : public Decays::iNode
-    {
+    class GAUDI_API Pid : public Decays::iNode {
     public:
       // ======================================================================
       /// constructor from the decay item
-      Pid ( const Decays::Decay::Item&     item ) ;
+      Pid( const Decays::Decay::Item& item );
       /// constructor from Particle Property
-      Pid ( const LHCb::ParticleProperty*  item ) ;
+      Pid( const LHCb::ParticleProperty* item );
       /// constructor from ParticleID
-      Pid ( const LHCb::ParticleID&        item ) ;
+      Pid( const LHCb::ParticleID& item );
       /// constructor from Particle name
-      Pid ( const std::string&             item ) ;
+      Pid( const std::string& item );
       /// MANDATORY: clone method ("virtual constructor")
-      Pid* clone () const   override;
+      Pid* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return check ( pid ) ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return check( pid ); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: check the validity
-      bool valid () const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     public:
       // ======================================================================
-      inline bool check ( const LHCb::ParticleID& pid ) const
-      { return pid == m_item.pid() ; }
+      inline bool check( const LHCb::ParticleID& pid ) const { return pid == m_item.pid(); }
       // ======================================================================
     public:
       // ======================================================================
       /// get DaVinci Decay item
-      const Decays::Decay::Item&          item() const { return m_item ; }
+      const Decays::Decay::Item& item() const { return m_item; }
       /// cast to DaVinci decay item
-      operator const Decays::Decay::Item&     () const { return item() ; }
+      operator const Decays::Decay::Item&() const { return item(); }
       // ======================================================================
     private:
       // ======================================================================
       /// the decay item itself
-      Decays::Decay::Item m_item ;                            // the decay item
+      Decays::Decay::Item m_item; // the decay item
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class CC
      *  The simple node in the decay tree:
@@ -110,704 +104,657 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API CC : public Pid
-    {
+    class GAUDI_API CC : public Pid {
     public:
       // ======================================================================
       /// constructor from the decay item
-      CC ( const Decays::Decay::Item&        item ) ;
+      CC( const Decays::Decay::Item& item );
       /// constructor from Particle Property
-      CC ( const LHCb::ParticleProperty*     item ) ;
+      CC( const LHCb::ParticleProperty* item );
       /// constructor from ParticleID
-      CC ( const LHCb::ParticleID&           item ) ;
+      CC( const LHCb::ParticleID& item );
       /// constructor from Particle name
-      CC ( const std::string&                item ) ;
+      CC( const std::string& item );
       /// constructor from node
-      CC ( const Decays::Nodes::Pid& pid  ) ;
+      CC( const Decays::Nodes::Pid& pid );
       /// MANDATORY: clone method ("virtual constructor")
-      CC* clone () const  override;
+      CC* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.abspid() == item().pid().abspid() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.abspid() == item().pid().abspid(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Lepton
      *  The trivial node : it match the Lepton
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Lepton : public Any
-    {
+    class GAUDI_API Lepton : public Any {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Lepton* clone () const  override;
+      Lepton* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isLepton() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.isLepton(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Nu
      *  The trivial node : it match any neutral lepton
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Nu : public Lepton
-    {
+    class GAUDI_API Nu : public Lepton {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Nu* clone () const  override;
+      Nu* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isLepton() && ( 0 == pid.threeCharge() ) ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override {
+        return pid.isLepton() && ( 0 == pid.threeCharge() );
+      }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Ell
      *  The trivial node : it match any charged lepton
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Ell : public Lepton
-    {
+    class GAUDI_API Ell : public Lepton {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Ell* clone () const  override;
+      Ell* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isLepton() && ( 0 != pid.threeCharge() ) ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override {
+        return pid.isLepton() && ( 0 != pid.threeCharge() );
+      }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class EllPlus
      *  The trivial node : it match any positive lepton
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API EllPlus : public Ell
-    {
+    class GAUDI_API EllPlus : public Ell {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      EllPlus* clone () const  override;
+      EllPlus* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isLepton() && ( 0 < pid.threeCharge() ) ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override {
+        return pid.isLepton() && ( 0 < pid.threeCharge() );
+      }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class EllMinus
      *  The trivial node : it match any negative lepton
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API EllMinus : public  Ell
-    {
+    class GAUDI_API EllMinus : public Ell {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      EllMinus* clone () const  override;
+      EllMinus* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isLepton() && ( 0 > pid.threeCharge() ) ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override {
+        return pid.isLepton() && ( 0 > pid.threeCharge() );
+      }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Hadron
      *  The trivial node : it match the Hadron
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Hadron : public Any
-    {
+    class GAUDI_API Hadron : public Any {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Hadron* clone () const  override;
+      Hadron* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isHadron() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.isHadron(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Meson
      *  The trivial node : it match the meson
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Meson : public Hadron
-    {
+    class GAUDI_API Meson : public Hadron {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Meson* clone () const  override;
+      Meson* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isMeson() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.isMeson(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Baryon
      *  The trivial node : it match the Baryon
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Baryon : public Hadron
-    {
+    class GAUDI_API Baryon : public Hadron {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Baryon* clone () const  override;
+      Baryon* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isBaryon() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.isBaryon(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Charged
      *  The trivial node : it match the Charged
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Charged : public Any
-    {
+    class GAUDI_API Charged : public Any {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Charged* clone () const  override;
+      Charged* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return 0 != pid.threeCharge() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return 0 != pid.threeCharge(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Positive
      *  The trivial node : it match the positively charged  particles
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Positive : public Charged
-    {
+    class GAUDI_API Positive : public Charged {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Positive* clone () const  override;
+      Positive* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return 0 < pid.threeCharge() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return 0 < pid.threeCharge(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Negative
      *  The trivial node : it match the negatively charged  particles
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Negative : public Charged
-    {
+    class GAUDI_API Negative : public Charged {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Negative* clone () const   override;
+      Negative* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return 0 > pid.threeCharge() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return 0 > pid.threeCharge(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Neutral
      *  The trivial node : it match the Neutral
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Neutral : public Charged
-    {
+    class GAUDI_API Neutral : public Charged {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Neutral* clone () const  override;
+      Neutral* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return 0 == pid.threeCharge() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return 0 == pid.threeCharge(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Nucleus
      *  The trivial node : it match the Nucleus
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API Nucleus : public Any
-    {
+    class GAUDI_API Nucleus : public Any {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Nucleus* clone () const  override;
+      Nucleus* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.isNucleus() ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.isNucleus(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class HasQuark
      *  The trivial node : it match the quark content
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API HasQuark : public Any
-    {
+    class GAUDI_API HasQuark : public Any {
     public:
       // ======================================================================
       /// constructor from the quark
-      HasQuark ( LHCb::ParticleID::Quark quark ) ;
+      HasQuark( LHCb::ParticleID::Quark quark );
       /// MANDATORY: clone method ("virtual constructor")
-      HasQuark* clone () const   override;
+      HasQuark* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return pid.hasQuark ( m_quark  ) ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return pid.hasQuark( m_quark ); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the default constructor is disabled
-      HasQuark() ;                       // the default constructro is disabled
+      HasQuark(); // the default constructro is disabled
       // ======================================================================
     private:
       // ======================================================================
       /// the quark to be tested
-      LHCb::ParticleID::Quark m_quark ; // the quark to be tested
+      LHCb::ParticleID::Quark m_quark; // the quark to be tested
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class JSpin
      *  The trivial node : it match the 2J+1 spin
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API JSpin : public Any
-    {
+    class GAUDI_API JSpin : public Any {
     public:
       // ======================================================================
-      enum { InvalidSpin = 501 } ;
+      enum { InvalidSpin = 501 };
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the 2J+1
-      JSpin ( const int spin )  ;
+      JSpin( const int spin );
       /// MANDATORY: clone method ("virtual constructor")
-      JSpin* clone () const  override;
+      JSpin* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return spin() == pid.jSpin () ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return spin() == pid.jSpin(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// valid only for positive spin-values
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* /* svc */ ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* /* svc */ ) const override;
       // ======================================================================
     public:
       // ======================================================================
-      int spin() const { return m_spin ; }
+      int spin() const { return m_spin; }
       // ======================================================================
     private:
       // ======================================================================
       /// the j-spin to be tested
-      int m_spin ;                                     // the spin to be tested
+      int m_spin; // the spin to be tested
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class SSpin
      *  The trivial node : it match the 2S+1 spin
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API SSpin : public JSpin
-    {
+    class GAUDI_API SSpin : public JSpin {
     public:
       // ======================================================================
       /// constructor from the 2S+1
-      SSpin ( const int spin )  ;
+      SSpin( const int spin );
       /// MANDATORY: clone method ("virtual constructor")
-      SSpin* clone () const  override;
+      SSpin* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return spin() == pid.sSpin () ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return spin() == pid.sSpin(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class LSpin
      *  The trivial node : it match the 2L+1 spin
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-12
      */
-    class GAUDI_API LSpin : public SSpin
-    {
+    class GAUDI_API LSpin : public SSpin {
     public:
       // ======================================================================
       /// constructor from the 2L+1
-      LSpin ( const int spin )  ;
+      LSpin( const int spin );
       /// MANDATORY: clone method ("virtual constructor")
-      LSpin* clone () const  override;
+      LSpin* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const override
-      { return spin() == pid.lSpin () ; }
+      bool operator()( const LHCb::ParticleID& pid ) const override { return spin() == pid.lSpin(); }
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class CTau
      *  simple pid-checker for particle lifetime (in c*tau units)
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API CTau : public Decays::iNode
-    {
+    class GAUDI_API CTau : public Decays::iNode {
     public:
       // ======================================================================
       /// constructor from c-tau range
-      CTau ( const double                      low      ,
-             const double                      high     ,
-             const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      CTau( const double low, const double high, const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      CTau* clone() const  override;
+      CTau* clone() const override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const  override;
+      bool operator()( const LHCb::ParticleID& pid ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: check the validity
-      bool valid () const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     public:
       // ======================================================================
-      const LHCb::IParticlePropertySvc* ppSvc() const { return m_ppSvc ; }
+      const LHCb::IParticlePropertySvc* ppSvc() const { return m_ppSvc; }
       // ======================================================================
       /// get low  edge
-      double low  () const { return m_low  ; }
+      double low() const { return m_low; }
       /// get high edge
-      double high () const { return m_high ; }
+      double high() const { return m_high; }
       // ======================================================================
-      StatusCode setService ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode setService( const LHCb::IParticlePropertySvc* svc ) const;
       // ======================================================================
     public:
       // ======================================================================
-      typedef std::vector<LHCb::ParticleID>                              PIDs ;
-      const PIDs& accepted () const { return m_accepted ; }
-      const PIDs& rejected () const { return m_rejected ; }
+      typedef std::vector<LHCb::ParticleID> PIDs;
+      const PIDs&                           accepted() const { return m_accepted; }
+      const PIDs&                           rejected() const { return m_rejected; }
       // ======================================================================
     protected:
       // ======================================================================
-      void addToAccepted ( const LHCb::ParticleID& pid ) const ;
-      void addToRejected ( const LHCb::ParticleID& pid ) const ;
+      void addToAccepted( const LHCb::ParticleID& pid ) const;
+      void addToRejected( const LHCb::ParticleID& pid ) const;
       // ======================================================================
     private:
       // ======================================================================
-      typedef SmartIF<LHCb::IParticlePropertySvc> Service ;
+      typedef SmartIF<LHCb::IParticlePropertySvc> Service;
       /// the service :
-      mutable Service m_ppSvc ;                                  // the service
+      mutable Service m_ppSvc; // the service
       // ======================================================================
       /// the list of "accepted" pids
-      mutable PIDs  m_accepted ;                // the list of "accepted" pids
+      mutable PIDs m_accepted; // the list of "accepted" pids
       /// the list of "rejected" pids
-      mutable PIDs  m_rejected  ;                // the list of "rejected" pids
+      mutable PIDs m_rejected; // the list of "rejected" pids
       // ======================================================================
       /// low edge
-      double m_low  ;                                              //  low edge
+      double m_low; //  low edge
       /// high edge
-      double m_high ;                                              // high edge
+      double m_high; // high edge
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ShortLived_
      *  represent simple predicate for short-lived particles
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API ShortLived_ : public CTau
-    {
+    class GAUDI_API ShortLived_ : public CTau {
     public:
       // ======================================================================
       /// constructor with high edge and service
-      ShortLived_ ( const double                      high     ,
-                    const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      ShortLived_( const double high, const LHCb::IParticlePropertySvc* svc = 0 );
       /// constructor service
-      ShortLived_ ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      ShortLived_( const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      ShortLived_* clone() const  override;
+      ShortLived_* clone() const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class LongLived_
      *  represent simple predicate for Long-lived particles
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    struct GAUDI_API LongLived_ : CTau
-    {
+    struct GAUDI_API LongLived_ : CTau {
       // ======================================================================
       /// constructor with high edge and service
-      LongLived_ ( const double                      high     ,
-                   const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      LongLived_( const double high, const LHCb::IParticlePropertySvc* svc = 0 );
       /// constructor service
-      LongLived_ ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      LongLived_( const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      LongLived_* clone() const  override;
+      LongLived_* clone() const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Stable
      *  represent simple predicate for Stable particles
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API Stable : public LongLived_
-    {
+    class GAUDI_API Stable : public LongLived_ {
     public:
       // ======================================================================
       /// constructor service
-      Stable ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      Stable( const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      Stable* clone() const  override;
+      Stable* clone() const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class StableCharged
      *  represent simple predicate for Stable+Charged particles
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API StableCharged : public Stable
-    {
+    class GAUDI_API StableCharged : public Stable {
     public:
       // ======================================================================
       /// constructor service
-      StableCharged ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      StableCharged( const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      StableCharged* clone() const  override;
+      StableCharged* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const  override;
+      bool operator()( const LHCb::ParticleID& pid ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Mass
      *  simple pid-checker for particle mass
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API Mass : public CTau
-    {
+    class GAUDI_API Mass : public CTau {
     public:
       // ======================================================================
       /// constructor from mass-range
-      Mass ( const double                      low      ,
-             const double                      high     ,
-             const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      Mass( const double low, const double high, const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      Mass* clone() const  override;
+      Mass* clone() const override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const  override;
+      bool operator()( const LHCb::ParticleID& pid ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       /// the default constructor is disabled
-      Mass() ;                           // the default constructor is disabled
+      Mass(); // the default constructor is disabled
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Light
      *  simple pid-checker for particle mass
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API Light : public Mass
-    {
+    class GAUDI_API Light : public Mass {
     public:
       // ======================================================================
       /// constructor from mass-range
-      Light ( const double                      high     ,
-              const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      Light( const double high, const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      Light* clone() const  override;
+      Light* clone() const override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       /// the default constructor is disabled
-      Light() ;                          // the default constructor is disabled
+      Light(); // the default constructor is disabled
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Heavy
      *  simple pid-checker for particle mass
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API Heavy : public Mass
-    {
+    class GAUDI_API Heavy : public Mass {
     public:
       // ======================================================================
       /// constructor from mass-range
-      Heavy ( const double                      low      ,
-              const LHCb::IParticlePropertySvc* svc  = 0 ) ;
+      Heavy( const double low, const LHCb::IParticlePropertySvc* svc = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      Heavy* clone() const  override;
+      Heavy* clone() const override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       /// the default constructor is disabled
-      Heavy () ;                         // the default constructor is disabled
+      Heavy(); // the default constructor is disabled
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    /** @class PosID 
-     *  - It matches the particles with positive ID 
-     *  - Useful way to separate e.g. charm particle and charm antiparticle 
+    /** @class PosID
+     *  - It matches the particles with positive ID
+     *  - Useful way to separate e.g. charm particle and charm antiparticle
      *  - Useful mainly in boolean operatios, e.g. <code>Charm & ID+ </code>
-     *  - Charge conjugation could be fragile 
+     *  - Charge conjugation could be fragile
      *  @author Vanya BELYAEV Ivan.Belyaev@iep.ru
      *  @date 2017-02-24
      */
-    class GAUDI_API PosID : public Decays::iNode
-    {
+    class GAUDI_API PosID : public Decays::iNode {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      PosID* clone () const   override;
+      PosID* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
+      bool operator()( const LHCb::ParticleID& /* p */ ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: check the validity
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     };
     // ========================================================================
-    /** @class NegID 
-     *  - It matches the particles with negative ID 
-     *  - Useful way to separate e.g. charm particle and charm antiparticle 
+    /** @class NegID
+     *  - It matches the particles with negative ID
+     *  - Useful way to separate e.g. charm particle and charm antiparticle
      *  - Useful mainly in boolean operatios, e.g. <code>Charm & ID- </code>
-     *  - Charge conjugation could be fragile 
+     *  - Charge conjugation could be fragile
      *  @author Vanya BELYAEV Ivan.Belyaev@iep.ru
      *  @date 2017-02-24
      */
-    class GAUDI_API NegID : public Decays::iNode
-    {
+    class GAUDI_API NegID : public Decays::iNode {
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      NegID* clone () const   override;
+      NegID* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
+      bool operator()( const LHCb::ParticleID& /* p */ ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: check the validity
-      bool valid() const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     };
     // ========================================================================
-    class GAUDI_API Symbol : public Decays::iNode
-    {
-    public :
+    class GAUDI_API Symbol : public Decays::iNode {
+    public:
       // =======================================================================
       /// the constructor from the symbol
-      Symbol ( const std::string& sym ) ;
+      Symbol( const std::string& sym );
       // =======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Symbol* clone() const  override;
+      Symbol* clone() const override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::ParticleID& pid ) const  override;
+      bool operator()( const LHCb::ParticleID& pid ) const override;
       /// MANDATORY: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       /// MANDATORY: check the validity
-      bool valid () const  override;
+      bool valid() const override;
       /// MANDATORY: the proper validation of the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the default constructor is disabled
-      Symbol () ;                        // the default constructor is disabled
+      Symbol(); // the default constructor is disabled
       // ======================================================================
-    private :
+    private:
       // ======================================================================
       /// the actual symbol
-      Decays::Node m_symbol ;
+      Decays::Node m_symbol;
       // ======================================================================
     };
     // ========================================================================
-  } //                                         end of namespace DaVinci::Decays
+  } // namespace Nodes
   // ==========================================================================
-} //                                                   end of namespace DaVinci
+} // namespace Decays
 // ============================================================================
 //                                                                      The END
 // ============================================================================

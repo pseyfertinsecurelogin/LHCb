@@ -8,8 +8,27 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+variables:
+  TARGET_BRANCH: master
+
 check-copyright:
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   script:
-    - curl -o check_copyright.py "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/CopyrightCheck.py?inline=false"
-    - python check_copyright.py origin/master
+    - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
+    - python lb-check-copyright origin/${TARGET_BRANCH}
+
+check-formatting:
+  image: gitlab-registry.cern.ch/lhcb-docker/style-checker
+  script:
+    - if [ ! -e .clang-format ] ; then
+    -   curl -o .clang-format "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/data/default.clang-format?inline=false"
+    -   echo '.clang-format' >> .gitignore
+    -   git add .gitignore
+    - fi
+    - curl -o lb-format "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
+    - python lb-format --format-patch apply-formatting.patch origin/${TARGET_BRANCH}
+  artifacts:
+    paths:
+      - apply-formatting.patch
+    when: on_failure
+    expire_in: 1 week

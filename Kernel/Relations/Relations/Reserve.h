@@ -14,40 +14,37 @@
 // ============================================================================
 // $Log: not supported by cvs2svn $
 // ============================================================================
-#ifndef RELATIONS_RESERVE_H 
+#ifndef RELATIONS_RESERVE_H
 #define RELATIONS_RESERVE_H 1
 // ============================================================================
-// include 
+// include
 // ============================================================================
-// STD & STL  
+// STD & STL
 // ============================================================================
 #include <stddef.h>
 #include <vector>
 // ============================================================================
 
-namespace Relations
-{
+namespace Relations {
   /**
-   *  Helper function to reserve the size of container 
+   *  Helper function to reserve the size of container
    *
-   *  @warning the implementation  is platform dependent! 
+   *  @warning the implementation  is platform dependent!
    *
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   07/02/2002
    */
-  template<class TYPE> 
-  inline void reserve( TYPE &            /* object */ ,
-                       const size_t      /* size   */ ) 
-  {}
-  
-  template<class TYPE>
-  inline void reserve( std::vector<TYPE>&   object    , 
-                       const size_t         size      )   
-  { object.reserve( size ); }
-  
-} ///< end of namespace Relations 
+  template <class TYPE>
+  inline void reserve( TYPE& /* object */, const size_t /* size   */ ) {}
+
+  template <class TYPE>
+  inline void reserve( std::vector<TYPE>& object, const size_t size ) {
+    object.reserve( size );
+  }
+
+} // namespace Relations
 
 // ============================================================================
-// The End 
+// The End
 // ============================================================================
 #endif // RELATIONS_RESERVE_H

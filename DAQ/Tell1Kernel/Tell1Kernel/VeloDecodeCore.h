@@ -21,49 +21,48 @@
  *  @author Tomasz Szumlak
  *  @date   2006-04-11
  */
-namespace VeloTELL1
-{
-  typedef std::vector<unsigned int*> rawVec;
-  typedef std::vector<unsigned int> dataVec;
+namespace VeloTELL1 {
+  typedef std::vector<unsigned int*>                rawVec;
+  typedef std::vector<unsigned int>                 dataVec;
   typedef std::vector<unsigned int>::const_iterator cdatIt;
-  typedef std::vector<unsigned int>::iterator datIt;
-  typedef std::vector<signed int> sdataVec;
-  typedef std::vector<signed int>::const_iterator scdatIt;
-  typedef std::vector<signed int>::iterator sdatIt;
-  typedef std::vector<unsigned int> evtInfo;
-  typedef std::vector<unsigned int> errorInfo;
-  typedef std::vector<evtInfo> allEvt;
-  typedef std::vector<errorInfo> allError;
+  typedef std::vector<unsigned int>::iterator       datIt;
+  typedef std::vector<signed int>                   sdataVec;
+  typedef std::vector<signed int>::const_iterator   scdatIt;
+  typedef std::vector<signed int>::iterator         sdatIt;
+  typedef std::vector<unsigned int>                 evtInfo;
+  typedef std::vector<unsigned int>                 errorInfo;
+  typedef std::vector<evtInfo>                      allEvt;
+  typedef std::vector<errorInfo>                    allError;
 
   // define parameters for bitShifts (was ENUM)
-  constexpr int bitShift8=8;
-  constexpr int bitShift12=12;
-  constexpr int bitShift16=16;
-  constexpr int bitShift19=19;
-  constexpr int bitShift21=21;
-  constexpr int bitShift22=22;
-  constexpr int bitShift24=24;
-  constexpr int bitShift30=30;
-  constexpr int bitShift32=32;
+  constexpr int bitShift8  = 8;
+  constexpr int bitShift12 = 12;
+  constexpr int bitShift16 = 16;
+  constexpr int bitShift19 = 19;
+  constexpr int bitShift21 = 21;
+  constexpr int bitShift22 = 22;
+  constexpr int bitShift24 = 24;
+  constexpr int bitShift30 = 30;
+  constexpr int bitShift32 = 32;
 
   // define parameters for bitMasks (was ENUM)
-  constexpr int bitMask1=0x00000001;
-  constexpr int bitMask2=0x00000003;
-  constexpr int bitMask3=0x00000007;
-  constexpr int bitMask4=0x0000000f;
-  constexpr int bitMask8=0x000000ff;
-  constexpr int bitMask12=0x00000fff;
-  constexpr int bitMask16=0x0000ffff;
-  constexpr int bitMask24=0x00ffffff;
+  constexpr int bitMask1  = 0x00000001;
+  constexpr int bitMask2  = 0x00000003;
+  constexpr int bitMask3  = 0x00000007;
+  constexpr int bitMask4  = 0x0000000f;
+  constexpr int bitMask8  = 0x000000ff;
+  constexpr int bitMask12 = 0x00000fff;
+  constexpr int bitMask16 = 0x0000ffff;
+  constexpr int bitMask24 = 0x00ffffff;
 
   // define parameters for errorBankMarkers (was ENUM)
-  constexpr int EBMarker0=0x00000000;
-  constexpr int EBMarker1=0x00000001;
-  constexpr int EBMarker2=0x00000002;
-  constexpr int EBMarker3=0x00000003;
-  constexpr int EBMarker4=0x00000004;
-  constexpr int EBMarker=0x0000008e;
+  constexpr int EBMarker0 = 0x00000000;
+  constexpr int EBMarker1 = 0x00000001;
+  constexpr int EBMarker2 = 0x00000002;
+  constexpr int EBMarker3 = 0x00000003;
+  constexpr int EBMarker4 = 0x00000004;
+  constexpr int EBMarker  = 0x0000008e;
   //
 
-}
+} // namespace VeloTELL1
 #endif // VELODECODECORE_H

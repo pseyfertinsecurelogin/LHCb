@@ -12,8 +12,8 @@
 
 // from Gaudi
 #include "GaudiKernel/DataStoreItem.h"
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
 
 // from LHCb
 #include "Kernel/ICondDBInfo.h"
@@ -30,23 +30,19 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( LoadDDDB )
 
-
 //=============================================================================
 // Initialization
 //=============================================================================
 StatusCode LoadDDDB::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug() << "==> Initialize" << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialize" << endmsg;
 
   std::vector<LHCb::CondDBNameTagPair> tmp;
   svc<ICondDBInfo>( "XmlParserSvc", true )->defaultTags( tmp );
 
-  for ( auto& item: tmp ) {
-    info() << "Database " << item.first << " tag " << item.second << endmsg;
-  }
+  for ( auto& item : tmp ) { info() << "Database " << item.first << " tag " << item.second << endmsg; }
 
   updMgrSvc(); // trigger the initialization of the Condition Update sub-system
   return StatusCode::SUCCESS;
@@ -57,26 +53,25 @@ StatusCode LoadDDDB::initialize() {
 //=============================================================================
 StatusCode LoadDDDB::execute() {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
 
   info() << "Loading the DDDB" << endmsg;
 
   try {
-    detSvc()->addPreLoadItem(m_treeToLoad);
+    detSvc()->addPreLoadItem( m_treeToLoad );
     detSvc()->preLoad();
-  } catch (GaudiException &x) {
+  } catch ( GaudiException& x ) {
     fatal() << "Caught GaudiException" << endmsg;
     int i = 0;
-    for ( GaudiException *ex = &x; 0 != ex; ex = ex->previous() ) {
-      fatal() << std::string(i++,' ') << " ==> " << ex->what() << endmsg;
+    for ( GaudiException* ex = &x; 0 != ex; ex = ex->previous() ) {
+      fatal() << std::string( i++, ' ' ) << " ==> " << ex->what() << endmsg;
     }
     return StatusCode::FAILURE;
-  } catch (std::exception &x) {
-    fatal() << "Caught exception '" << System::typeinfoName(typeid(x)) << "'"
-              << endmsg;
+  } catch ( std::exception& x ) {
+    fatal() << "Caught exception '" << System::typeinfoName( typeid( x ) ) << "'" << endmsg;
     fatal() << " ==> " << x.what() << endmsg;
     return StatusCode::FAILURE;
-  } catch (...) {
+  } catch ( ... ) {
     fatal() << "Caught unknown exception!!" << endmsg;
     return StatusCode::FAILURE;
   }
@@ -89,6 +84,6 @@ StatusCode LoadDDDB::execute() {
 //=============================================================================
 StatusCode LoadDDDB::finalize() {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Finalize" << endmsg;
+  return GaudiAlgorithm::finalize(); // must be called after all other actions
 }

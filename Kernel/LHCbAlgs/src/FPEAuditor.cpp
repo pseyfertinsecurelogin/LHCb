@@ -8,15 +8,15 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+#include "GaudiKernel/Auditor.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IAuditorSvc.h"
+#include "GaudiKernel/MsgStream.h"
 #include "Kernel/FPEGuard.h"
-#include <vector>
+#include <memory>
 #include <string>
 #include <utility>
-#include <memory>
-#include "GaudiKernel/Auditor.h"
-#include "GaudiKernel/IAuditorSvc.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/MsgStream.h"
+#include <vector>
 
 /** @class FPEMaskProperty FPEAuditor.cpp
  *
@@ -25,22 +25,21 @@
  *  @author Gerhard Raven
  *  @date   09/06/2008
  */
-class FPEMaskProperty
-{
+class FPEMaskProperty {
 public:
-  typedef SimpleProperty<std::vector<std::string> > property_type;
-  FPEMaskProperty()
-  { m_property.declareUpdateHandler(&FPEMaskProperty::updateHandler,this); }
-  FPE::Guard::mask_type value() const { return m_mask;}
-  property_type& property() { return m_property; }
-  FPEMaskProperty& set(const std::vector<std::string>& s)
-  { property().setValue(s); return *this; }
-private:
-  void updateHandler(Property&) {
-    m_mask=FPE::Guard::mask(m_property.value().begin(),m_property.value().end());
+  typedef SimpleProperty<std::vector<std::string>> property_type;
+  FPEMaskProperty() { m_property.declareUpdateHandler( &FPEMaskProperty::updateHandler, this ); }
+  FPE::Guard::mask_type value() const { return m_mask; }
+  property_type&        property() { return m_property; }
+  FPEMaskProperty&      set( const std::vector<std::string>& s ) {
+    property().setValue( s );
+    return *this;
   }
-  property_type m_property;
-  FPE::Guard::mask_type  m_mask{0};
+
+private:
+  void updateHandler( Property& ) { m_mask = FPE::Guard::mask( m_property.value().begin(), m_property.value().end() ); }
+  property_type         m_property;
+  FPE::Guard::mask_type m_mask{0};
 };
 
 /** @class FPEAuditor FPEAuditor.cpp
@@ -77,94 +76,90 @@ ApplicationMgr().ExtSvc.append(AuditorSvc())
  *  @author Gerhard Raven
  *  @date   09/06/2008
  */
-class FPEAuditor final : public Auditor
-{
+class FPEAuditor final : public Auditor {
 
 public:
-
-  FPEAuditor( const std::string& name, ISvcLocator* pSvcLocator);
+  FPEAuditor( const std::string& name, ISvcLocator* pSvcLocator );
 
   ~FPEAuditor() = default;
 
-  StatusCode initialize() override
-  {
-    if (!FPE::Guard::has_working_implementation) { // note: this is a compile-time constant...
-      throw GaudiException("FPEAuditor: no FPE trapping support on this architecture...","",StatusCode::FAILURE);
+  StatusCode initialize() override {
+    if ( !FPE::Guard::has_working_implementation ) { // note: this is a compile-time constant...
+      throw GaudiException( "FPEAuditor: no FPE trapping support on this architecture...", "", StatusCode::FAILURE );
     }
-    if (m_activateSuperGuard) m_superGuard = std::make_unique<FPE::Guard>( m_mask.value() );
+    if ( m_activateSuperGuard ) m_superGuard = std::make_unique<FPE::Guard>( m_mask.value() );
     return StatusCode::SUCCESS;
   }
-  StatusCode finalize() override
-  {
+  StatusCode finalize() override {
     m_superGuard.reset( (FPE::Guard*)0 );
     return StatusCode::SUCCESS;
   }
 
-  void before(StandardEventType type, INamedInterface* i) override { before(type,i->name()); }
-  void before(CustomEventTypeRef   type, INamedInterface* i) override { before(type,i->name()); }
-  void before(StandardEventType type, const std::string& s) override
-  {  std::ostringstream t; t << type;before(t.str(),s); }
-  void before(CustomEventTypeRef eventType, const std::string& s) override
-  {
-    if ( activeAt(eventType) ) {
-      bool veto = ( std::find(m_veto.begin(),m_veto.end(),s) != m_veto.end()) ;
-      m_guards.emplace_back( s, std::make_unique<FPE::Guard>( m_mask.value(), veto) );
+  void before( StandardEventType type, INamedInterface* i ) override { before( type, i->name() ); }
+  void before( CustomEventTypeRef type, INamedInterface* i ) override { before( type, i->name() ); }
+  void before( StandardEventType type, const std::string& s ) override {
+    std::ostringstream t;
+    t << type;
+    before( t.str(), s );
+  }
+  void before( CustomEventTypeRef eventType, const std::string& s ) override {
+    if ( activeAt( eventType ) ) {
+      bool veto = ( std::find( m_veto.begin(), m_veto.end(), s ) != m_veto.end() );
+      m_guards.emplace_back( s, std::make_unique<FPE::Guard>( m_mask.value(), veto ) );
     }
   }
 
-  void after(StandardEventType type, INamedInterface* i, const StatusCode& sc) override
-  {  std::ostringstream t; t << type;after(t.str(),i,sc); }
-  void after(CustomEventTypeRef type, INamedInterface* i, const StatusCode& sc) override
-  {  if(!beforeCannotHaveBeenCalled(type,i)) after(type,i->name(),sc); }
-  void after(StandardEventType type, const std::string& s, const StatusCode& sc) override
-  {  std::ostringstream t; t << type;after(t.str(),s,sc); }
-  void after(CustomEventTypeRef eventType, const std::string& s, const StatusCode&) override
-  {
-    if ( activeAt(eventType) )
-    {
-      if ( m_guards.empty() )
-      {
-        throw GaudiException("FPEAuditor: inbalance of before/after calls...","",StatusCode::FAILURE);
+  void after( StandardEventType type, INamedInterface* i, const StatusCode& sc ) override {
+    std::ostringstream t;
+    t << type;
+    after( t.str(), i, sc );
+  }
+  void after( CustomEventTypeRef type, INamedInterface* i, const StatusCode& sc ) override {
+    if ( !beforeCannotHaveBeenCalled( type, i ) ) after( type, i->name(), sc );
+  }
+  void after( StandardEventType type, const std::string& s, const StatusCode& sc ) override {
+    std::ostringstream t;
+    t << type;
+    after( t.str(), s, sc );
+  }
+  void after( CustomEventTypeRef eventType, const std::string& s, const StatusCode& ) override {
+    if ( activeAt( eventType ) ) {
+      if ( m_guards.empty() ) {
+        throw GaudiException( "FPEAuditor: inbalance of before/after calls...", "", StatusCode::FAILURE );
       }
-      if ( m_guards.back().first != s )
-      { throw GaudiException("FPEAuditor: unexpected stack state...","",StatusCode::FAILURE); }
+      if ( m_guards.back().first != s ) {
+        throw GaudiException( "FPEAuditor: unexpected stack state...", "", StatusCode::FAILURE );
+      }
       m_guards.pop_back();
     }
   }
 
 private:
-
-  bool activeAt(const std::string s) { return ( std::find(m_when.begin(),m_when.end(),s)!=m_when.end() ); }
-  bool beforeCannotHaveBeenCalled(CustomEventType type, INamedInterface *i) {
+  bool activeAt( const std::string s ) { return ( std::find( m_when.begin(), m_when.end(), s ) != m_when.end() ); }
+  bool beforeCannotHaveBeenCalled( CustomEventType type, INamedInterface* i ) {
     // auditing starts 'after' AuditorSvc::initialize has been called
     // but, at that time, the matching 'before' hasn't been called (since
     // we were not yet activated!), so there is no state to restore, i.e.
     // m_guards is empty. So we make an exception to the rule that m_guards
     // cannot be empty for that particular corner case by ignoring the 'after'
     // call (which is the right thing to do ;-)...
-    return m_guards.empty() && type == "Initialize" && SmartIF<IAuditorSvc>(i).isValid();
+    return m_guards.empty() && type == "Initialize" && SmartIF<IAuditorSvc>( i ).isValid();
   }
 
-  mutable MsgStream                                m_log;
-  std::vector<std::pair<std::string,std::unique_ptr<FPE::Guard>>> m_guards;
-  std::unique_ptr<FPE::Guard>                      m_superGuard;
-  FPEMaskProperty                                  m_mask;
-  std::vector<std::string>                         m_when, m_veto;
-  bool                                             m_activateSuperGuard;
+  mutable MsgStream                                                m_log;
+  std::vector<std::pair<std::string, std::unique_ptr<FPE::Guard>>> m_guards;
+  std::unique_ptr<FPE::Guard>                                      m_superGuard;
+  FPEMaskProperty                                                  m_mask;
+  std::vector<std::string>                                         m_when, m_veto;
+  bool                                                             m_activateSuperGuard;
 };
 
 DECLARE_COMPONENT( FPEAuditor )
 
-FPEAuditor::FPEAuditor( const std::string& name, ISvcLocator* pSvcLocator)
-  : Auditor ( name , pSvcLocator )
-  , m_log( msgSvc() , name )
-{
-  declareProperty("TrapOn", m_mask.set(
-    {"DivByZero", "Invalid", "Overflow"}
-  ).property() );
-  declareProperty("ActivateAt", m_when =
-    {"Initialize", "ReInitialize", "Execute", "BeginRun", "EndRun", "Finalize"}
-  );
-  declareProperty("DisableTrapFor", m_veto );
-  declareProperty("EnableGlobal", m_activateSuperGuard = false );
+FPEAuditor::FPEAuditor( const std::string& name, ISvcLocator* pSvcLocator )
+    : Auditor( name, pSvcLocator ), m_log( msgSvc(), name ) {
+  declareProperty( "TrapOn", m_mask.set( {"DivByZero", "Invalid", "Overflow"} ).property() );
+  declareProperty( "ActivateAt", m_when = {"Initialize", "ReInitialize", "Execute", "BeginRun", "EndRun", "Finalize"} );
+  declareProperty( "DisableTrapFor", m_veto );
+  declareProperty( "EnableGlobal", m_activateSuperGuard = false );
 }

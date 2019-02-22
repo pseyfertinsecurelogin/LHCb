@@ -15,7 +15,7 @@
 #include <string>
 
 #ifdef DEBUG_MEMORY_POOL_ALLOCATOR_RELEASER
-#include <iostream>
+#  include <iostream>
 #endif
 
 #include "GaudiKernel/System.h"
@@ -48,7 +48,7 @@ namespace Gaudi {
     /// \note
     /// it is up to the user to set the required level for the messages before
     /// passing the MsgStream to the function.
-    static void releaseMemory(MsgStream &log);
+    static void releaseMemory( MsgStream& log );
 
   private:
     /// Private constructor to have a singleton.
@@ -57,7 +57,7 @@ namespace Gaudi {
     static MemoryPoolAllocatorReleaser& instance();
 
     /// Prototype of the release functions: <code>void f()</code>.
-    typedef bool (*ReleaseFunctionType) ();
+    typedef bool ( *ReleaseFunctionType )();
     /// Typedef for the collection of release functions.
     typedef std::map<ReleaseFunctionType, std::string> ReleaseFuncCollType;
 
@@ -95,20 +95,18 @@ namespace Gaudi {
     /// Register the release function of the template argument class.
     RegisterReleaseFunction() {
       typedef MemoryPoolAllocatorReleaser bar;
-      bar::ReleaseFunctionType f = &T::release_pool;
-      bar &releaser = MemoryPoolAllocatorReleaser::instance();
-      bar::ReleaseFuncCollType &funcMap = releaser.m_releaseFunctions;
-      if (funcMap.find(f) == funcMap.end()) {
-        funcMap[f] = System::typeinfoName(typeid(T));
+      bar::ReleaseFunctionType            f        = &T::release_pool;
+      bar&                                releaser = MemoryPoolAllocatorReleaser::instance();
+      bar::ReleaseFuncCollType&           funcMap  = releaser.m_releaseFunctions;
+      if ( funcMap.find( f ) == funcMap.end() ) {
+        funcMap[f] = System::typeinfoName( typeid( T ) );
 #ifdef DEBUG_MEMORY_POOL_ALLOCATOR_RELEASER
-        std::cout << "RegisterReleaseFunction for "
-                  << System::typeinfoName(typeid(T))
+        std::cout << "RegisterReleaseFunction for " << System::typeinfoName( typeid( T ) )
                   << " count: " << funcMap.size() << std::endl;
 #endif
       }
     }
   };
-}
-
+} // namespace Gaudi
 
 #endif /* GOD_MEMORY_POOL_ALLOCATOR_RELEASER_H */

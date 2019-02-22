@@ -23,11 +23,9 @@
  *  @author Vanay BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-09-21
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef HLT_COUNT_ERRORBITS
      *  simple functor to get the error bits for some lines
@@ -433,7 +431,7 @@ namespace LoKi
      */
     inline const auto HLT_TCK = LoKi::HLT::TrgConfKey{};
     // ========================================================================
-  } // end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

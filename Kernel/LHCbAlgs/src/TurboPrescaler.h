@@ -13,11 +13,11 @@
 
 // Include files
 #include "DetDesc/Condition.h"
+#include "Event/HltDecReports.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/TCK.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/HltDecReports.h"
 
 /** @class TurboPrescaler TurboPrescaler.h
  *
@@ -25,31 +25,26 @@
  *  @author Sean Benson
  *  @date   2016-06-13
  */
-class TurboPrescaler final : public GaudiAlgorithm
-{
+class TurboPrescaler final : public GaudiAlgorithm {
 
- public:
-
+public:
   TurboPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;
-  StatusCode execute   () override;
+  StatusCode execute() override;
 
- private:
-
+private:
   using StringMap = std::map<std::string, double>;
 
- private:
-
+private:
   void getPrescalesFromTCK( unsigned int, StringMap&, StringMap&, StringMap& );
 
-  bool endedWith(const std::string &lineName, const std::string &ending);
+  bool endedWith( const std::string& lineName, const std::string& ending );
 
   void setupPrescalers();
   void updatePrescalers();
 
- private:
-
+private:
   std::string m_scalerName;
   std::string m_postScalerName;
   std::string m_preScalerName;
@@ -60,15 +55,14 @@ class TurboPrescaler final : public GaudiAlgorithm
 
   std::map<std::string, Algorithm*> prescalers;
 
-  IPropertyConfigSvc * m_propertyConfigSvc=nullptr;
-  bool m_filter=false;
-  std::string m_propertyConfigSvcName;
-  std::string m_hltDecReportsLocation;
-  unsigned int m_lastTCK=0;
-  unsigned int m_outputTCK=0;
-  std::map<std::string,double> m_outputPS;
-  std::string m_outRepLoc;
-
+  IPropertyConfigSvc*           m_propertyConfigSvc = nullptr;
+  bool                          m_filter            = false;
+  std::string                   m_propertyConfigSvcName;
+  std::string                   m_hltDecReportsLocation;
+  unsigned int                  m_lastTCK   = 0;
+  unsigned int                  m_outputTCK = 0;
+  std::map<std::string, double> m_outputPS;
+  std::string                   m_outRepLoc;
 };
 
 #endif // TURBOPRESCALER_H

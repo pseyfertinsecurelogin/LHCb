@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-#include "Event/Track.h"
 #include "Event/StandardPacker.h"
+#include "Event/Track.h"
 
 // local
 #include "PackTrack.h"
@@ -27,30 +27,25 @@ DECLARE_COMPONENT( PackTrack )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-  PackTrack::PackTrack( const std::string& name,
-                        ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "InputName" , m_inputName  = LHCb::TrackLocation::Default );
+PackTrack::PackTrack( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
+  declareProperty( "InputName", m_inputName = LHCb::TrackLocation::Default );
   declareProperty( "OutputName", m_outputName = LHCb::PackedTrackLocation::Default );
-  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
-  declareProperty( "DeleteInput",                m_deleteInput  = false     );
-  declareProperty( "EnableCheck",                m_enableCheck  = false     );
+  declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
+  declareProperty( "DeleteInput", m_deleteInput = false );
+  declareProperty( "EnableCheck", m_enableCheck = false );
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PackTrack::execute()
-{
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+StatusCode PackTrack::execute() {
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput &&
-       !exist<LHCb::Tracks>(m_inputName) ) return StatusCode::SUCCESS;
+  if ( !m_alwaysOutput && !exist<LHCb::Tracks>( m_inputName ) ) return StatusCode::SUCCESS;
 
   // Input
-  LHCb::Tracks* tracks = getOrCreate<LHCb::Tracks,LHCb::Tracks>( m_inputName );
+  LHCb::Tracks* tracks = getOrCreate<LHCb::Tracks, LHCb::Tracks>( m_inputName );
 
   // Output
   LHCb::PackedTracks* out = new LHCb::PackedTracks();
@@ -58,17 +53,16 @@ StatusCode PackTrack::execute()
   out->setVersion( 5 );
 
   // Track Packer
-  const LHCb::TrackPacker packer(this);
+  const LHCb::TrackPacker packer( this );
 
   // Pack the tracks
   packer.pack( *tracks, *out );
 
   // Packing checks
-  if ( UNLIKELY(m_enableCheck) )
-  {
+  if ( UNLIKELY( m_enableCheck ) ) {
     // make new unpacked output data object
-    LHCb::Tracks * unpacked = new LHCb::Tracks();
-    put( unpacked, m_inputName+"_PackingCheck" );
+    LHCb::Tracks* unpacked = new LHCb::Tracks();
+    put( unpacked, m_inputName + "_PackingCheck" );
 
     // unpack
     packer.unpack( *out, *unpacked );
@@ -78,35 +72,29 @@ StatusCode PackTrack::execute()
 
     // clean up after checks
     StatusCode sc = evtSvc()->unregisterObject( unpacked );
-    if( sc.isSuccess() )
+    if ( sc.isSuccess() )
       delete unpacked;
     else
-      return Error("Failed to delete test data after unpacking check", sc );
+      return Error( "Failed to delete test data after unpacking check", sc );
   }
 
   // If requested, remove the input data from the TES and delete
-  if ( UNLIKELY(m_deleteInput) )
-  {
+  if ( UNLIKELY( m_deleteInput ) ) {
     const StatusCode sc = evtSvc()->unregisterObject( tracks );
-    if ( sc.isSuccess() )
-    {
+    if ( sc.isSuccess() ) {
       delete tracks;
       tracks = nullptr;
+    } else {
+      return Error( "Failed to delete input data as requested", sc );
     }
-    else
-    {
-      return Error("Failed to delete input data as requested", sc );
-    }
-  }
-  else
-  {
+  } else {
     // Clear the registry address of the unpacked container, to prevent reloading
     auto* pReg = tracks->registry();
-    if (pReg) pReg->setAddress( nullptr );
+    if ( pReg ) pReg->setAddress( nullptr );
   }
 
   // Summary of the size of the PackTracks container
-  counter("# PackedTracks") += out->tracks().size();
+  counter( "# PackedTracks" ) += out->tracks().size();
 
   return StatusCode::SUCCESS;
 }

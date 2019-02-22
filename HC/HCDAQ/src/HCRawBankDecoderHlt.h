@@ -23,16 +23,16 @@ struct Condition;
  */
 
 class HCRawBankDecoderHlt : public Decoder::HistoAlgBase {
- public:
+public:
   /// Standard constructor
-  HCRawBankDecoderHlt(const std::string& name, ISvcLocator* pSvcLocator);
+  HCRawBankDecoderHlt( const std::string& name, ISvcLocator* pSvcLocator );
   /// Destructor
   virtual ~HCRawBankDecoderHlt();
 
-  StatusCode initialize() override;  ///< Algorithm initialization
-  StatusCode execute() override;     ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
- private:
+private:
   Condition* m_cond = nullptr;
 
   /// TES location of output digits.
@@ -46,12 +46,12 @@ class HCRawBankDecoderHlt : public Decoder::HistoAlgBase {
   /// Masking flag for each channel.
 
   enum { nChannels = 64 };
-  std::bitset<2*nChannels> m_masked;
+  std::bitset<2 * nChannels> m_masked;
   /// Station number for each channel.
-  std::array<unsigned int,2*nChannels> m_station;
+  std::array<unsigned int, 2 * nChannels> m_station;
 
   /// Do the decoding.
-  bool decode( const LHCb::RawBank& bank, std::vector<int>& sums) const ;
+  bool decode( const LHCb::RawBank& bank, std::vector<int>& sums ) const;
   /// Retrieve the mapping from the conditions database.
   StatusCode cacheMapping();
 };

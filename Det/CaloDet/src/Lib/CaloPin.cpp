@@ -8,46 +8,34 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#define  CALODET_CALOPIN_CPP 1 
+#define CALODET_CALOPIN_CPP 1
 // ============================================================================
 // Include files
-// CaloDet 
-#include "CaloDet/DeCalorimeter.h"
+// CaloDet
 #include "CaloDet/CaloPin.h"
+#include "CaloDet/DeCalorimeter.h"
 
 //-----------------------------------------------------------------------------
-// Implementation file for class : CaloPin 
+// Implementation file for class : CaloPin
 //
 // 15/11/2006 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
-
 //=============================================================================
 // Standard creator, initializes variables
 //=============================================================================
-CaloPin::CaloPin(LHCb::CaloCellID id )
-  : m_id(id),
-    m_side(-1),
-    m_index(-1),
-    m_area(),
-    m_fCol(),
-    m_fRow(),
-    m_lCol(),
-    m_lRow(),
-    m_leds(),
-    m_cells()
-{
+CaloPin::CaloPin( LHCb::CaloCellID id )
+    : m_id( id ), m_side( -1 ), m_index( -1 ), m_area(), m_fCol(), m_fRow(), m_lCol(), m_lRow(), m_leds(), m_cells() {
   m_cells.clear();
   m_leds.clear();
-  std::stringstream reg("Region ") ;
+  std::stringstream reg( "Region " );
   m_region = reg.str();
-  std::stringstream cod("Code ");
+  std::stringstream cod( "Code " );
   m_code = cod.str();
-
 }
 
 //=============================================================================
-// destructor 
+// destructor
 //=============================================================================
 CaloPin::~CaloPin() {}
 

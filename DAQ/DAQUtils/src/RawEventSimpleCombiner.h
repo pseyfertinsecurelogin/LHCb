@@ -16,8 +16,8 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 /** @class RawEventSimpleCombiner RawEventSimpleCombiner.h
  *  Combines disparate raw events into one new location
@@ -27,31 +27,28 @@
  *  @author Rob Lambert
  *  @date   2013-04-03
  *
- *  2018-07-06 Added functionality that allows to add raw events to an existing one @rcenci  
+ *  2018-07-06 Added functionality that allows to add raw events to an existing one @rcenci
  */
 class RawEventSimpleCombiner : public GaudiAlgorithm {
 public:
   /// Standard constructor
   RawEventSimpleCombiner( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~RawEventSimpleCombiner( );     ///< Destructor
-  StatusCode initialize() override;      ///< Algorithm initialization
-  StatusCode execute() override;         ///< Algorithm execution
+  virtual ~RawEventSimpleCombiner(); ///< Destructor
+  StatusCode initialize() override;  ///< Algorithm initialization
+  StatusCode execute() override;     ///< Algorithm execution
 
 protected:
-
 private:
-
-  std::vector<std::string> m_banksToCopy; //which banks to recombine, default ALL
-  std::vector<std::string> m_inputLocations; //get the banks from where
-  std::string              m_outputLocation; //where to put them, DEFAULT /Event/RawEvent
+  std::vector<std::string> m_banksToCopy;    // which banks to recombine, default ALL
+  std::vector<std::string> m_inputLocations; // get the banks from where
+  std::string              m_outputLocation; // where to put them, DEFAULT /Event/RawEvent
 
   std::vector<LHCb::RawBank::BankType> m_bankTypes;
 
-  Gaudi::Property<bool> m_enableIncrementalMode{ this, "EnableIncrementalMode",false, 
+  Gaudi::Property<bool> m_enableIncrementalMode{
+      this, "EnableIncrementalMode", false,
       "Enable incremental mode, where raw events are added to output raw event (already created)"};
-
 };
-
 
 #endif // TESTS_RAWEVENTSIMPLECOMBINER_H

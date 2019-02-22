@@ -28,35 +28,28 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2012-01-17
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** throw LoKi::Exception
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-08-11
    */
-  void throwException ( const std::string& message ) ;
+  void throwException( const std::string& message );
   // ==========================================================================
   /** assertion
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-08-11
    */
-  inline void Assert
-  ( const bool         assertion ,
-    const std::string& message   )
-  {
-    if ( !assertion ) { throwException ( message ) ; }
+  inline void Assert( const bool assertion, const std::string& message ) {
+    if ( !assertion ) { throwException( message ); }
   }
   // ==========================================================================
   /** assertion
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-08-11
    */
-  inline void Assert
-  ( const bool         assertion ,
-    const char*        message   )
-  {
-    if ( !assertion ) { throwException ( message ) ; }
+  inline void Assert( const bool assertion, const char* message ) {
+    if ( !assertion ) { throwException( message ); }
   }
   // ==========================================================================
   /** assertion
@@ -64,12 +57,8 @@ namespace LoKi
    *  @date 2007-08-11
    */
   template <unsigned int N>
-  inline void Assert
-  ( const bool   assertion   ,
-    const char (&message)[N] )
-  {
-    if ( !assertion )
-    { throwException ( std::string ( message , message + N ) ) ; }
+  inline void Assert( const bool assertion, const char ( &message )[N] ) {
+    if ( !assertion ) { throwException( std::string( message, message + N ) ); }
   }
   // ==========================================================================
 } // end of namespace LoKi

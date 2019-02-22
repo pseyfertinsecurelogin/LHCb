@@ -36,60 +36,49 @@
  *  @date 2010-11-18
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Dump
    *  helper class to implement the dumping
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-11-17
    */
-  class GAUDI_API Dump final
-  {
+  class GAUDI_API Dump final {
   public:
     // ========================================================================
-    Dump  ( const std::string&  open   = ""   ,
-            const std::string&  close  = "\n" ) ;
-    Dump  ( const std::size_t   nmax          ,
-            const std::string&  open   = ""   ,
-            const std::string&  close  = "\n" ) ;
-    Dump  ( const std::string&  open          ,
-            const std::string&  close         ,
-            const std::size_t   nmax          ) ;
-    Dump  ( const std::string&  open          ,
-            const std::size_t   nmax          ,
-            const std::string&  close  = "\n" ) ;
+    Dump( const std::string& open = "", const std::string& close = "\n" );
+    Dump( const std::size_t nmax, const std::string& open = "", const std::string& close = "\n" );
+    Dump( const std::string& open, const std::string& close, const std::size_t nmax );
+    Dump( const std::string& open, const std::size_t nmax, const std::string& close = "\n" );
     // ========================================================================
-    const std::string& open  () const { return  m_open  ; }
-    const std::string& close () const { return  m_close ; }
-    std::size_t        nMax  () const { return  m_nmax  ; }
+    const std::string& open() const { return m_open; }
+    const std::string& close() const { return m_close; }
+    std::size_t        nMax() const { return m_nmax; }
     // ========================================================================
   private:
     // ========================================================================
     /// the opening
-    std::string   m_open   ;                                     // the opening
+    std::string m_open; // the opening
     /// the closing
-    std::string   m_close  ;                                     // the closing
+    std::string m_close; // the closing
     /// max prints
-    std::size_t   m_nmax   ;                                     // max prints
+    std::size_t m_nmax; // max prints
     // ========================================================================
   };
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils
-  {
+  namespace Utils {
     // ========================================================================
     // Dump as C++ object
     GAUDI_API
-    std::string toCpp ( const LoKi::Dump& dump ) ;
+    std::string toCpp( const LoKi::Dump& dump );
     // ========================================================================
-  }
+  } // namespace Utils
   // ==========================================================================
-}
+} // namespace Gaudi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

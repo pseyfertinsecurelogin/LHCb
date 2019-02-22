@@ -23,15 +23,13 @@
  *
  */
 
-namespace TrackParameters
-{
-  constexpr const double hiTolerance     = 1e-40;          ///< High tolerance
-  constexpr const double lowTolerance    = 1e-20;          ///< Low tolerance
-  constexpr const double looseTolerance  = 1e-5;           ///< Loose tolerance
-  constexpr const double propagationTolerance = 1e-6*Gaudi::Units::mm ; ///< Tolerance for extrapolators
-  constexpr const double moliereFactor   = 13.6*Gaudi::Units::MeV; ///< Moliere factor
-}
-
+namespace TrackParameters {
+  constexpr const double hiTolerance          = 1e-40;                    ///< High tolerance
+  constexpr const double lowTolerance         = 1e-20;                    ///< Low tolerance
+  constexpr const double looseTolerance       = 1e-5;                     ///< Loose tolerance
+  constexpr const double propagationTolerance = 1e-6 * Gaudi::Units::mm;  ///< Tolerance for extrapolators
+  constexpr const double moliereFactor        = 13.6 * Gaudi::Units::MeV; ///< Moliere factor
+} // namespace TrackParameters
 
 // -----------------------------------------------------------------------------
 //   end of namespace

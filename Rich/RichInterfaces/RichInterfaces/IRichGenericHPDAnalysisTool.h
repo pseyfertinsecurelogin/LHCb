@@ -30,8 +30,7 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-namespace Rich
-{
+namespace Rich {
   //-----------------------------------------------------------------------------
   /** @class IGenericHPDAnalysisTool RichKernel/IRichGenericHPDAnalysisTool.h
    *
@@ -42,16 +41,13 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class IGenericHPDAnalysisTool : public virtual IAlgTool
-  {
+  class IGenericHPDAnalysisTool : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IGenericHPDAnalysisTool, 1, 0 );
 
   public:
-
     /** @class Result RichKernel/IRichGenericHPDAnalysisTool.h
      *
      *  Results of the HPD analysis
@@ -59,20 +55,17 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   10/10/2009
      */
-    class Result
-    {
+    class Result {
     public:
-
       LHCb::RichSmartID id;      ///< Detector component the result refers to
       std::string       message; ///< Message associated with the result
       StatusCode        status;  ///< StatusCode indicating the severity of the report
     };
 
     /// Type for a list of results
-    using Results = std::vector< Result >;
+    using Results = std::vector<Result>;
 
   public:
-
     /** Applies HPD data analysis to given HPD data
      *
      *  @param hpdID    HPD identifier
@@ -80,9 +73,8 @@ namespace Rich
      *
      *  @return StatusCode indicating if the analysis was successfully run or not
      */
-    virtual StatusCode analyse( const LHCb::RichSmartID           hpdID,
-                                const LHCb::RichSmartID::Vector & smartIDs,
-                                IGenericHPDAnalysisTool::Results &results ) const = 0;
+    virtual StatusCode analyse( const LHCb::RichSmartID hpdID, const LHCb::RichSmartID::Vector& smartIDs,
+                                IGenericHPDAnalysisTool::Results& results ) const = 0;
   };
 
 } // namespace Rich

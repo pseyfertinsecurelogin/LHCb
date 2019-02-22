@@ -13,19 +13,19 @@
 ## @file dst-dump-light
 #
 #  Light version of dst-dump script from Bender-project.
-#  It allows to dump the content of (x,mu,s,r)DST files 
+#  It allows to dump the content of (x,mu,s,r)DST files
 #
 # Usage:
 #
 # @code
 # > dst-dump-light [options] file1 [ file2 [ file3 [ file4 ....'
-# @endcode 
+# @endcode
 #
 # @date   2011-10-24
 # @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 # =============================================================================
 """``Light'' version of dst-dump script from Bender-project.
-It allows to dump the content of (x,u,r)DST files 
+It allows to dump the content of (x,u,r)DST files
 
 Usage:
 
@@ -33,186 +33,172 @@ Usage:
 
 """
 # =============================================================================
-__author__  = 'Vanya BELYAEV Ivan.Belyaev@itep.ru'
-__date__    = "2011-10-24"
+__author__ = 'Vanya BELYAEV Ivan.Belyaev@itep.ru'
+__date__ = "2011-10-24"
 __version__ = ''
-__all__     = ()  ## nothing to import 
+__all__ = ()  ## nothing to import
 # =============================================================================
 import ROOT, sys
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 # =============================================================================
 import argparse
-parser = argparse.ArgumentParser (
-    prog        = 'dst-dump-light' ,
-    description = "The script to dump the content of (x,mu,s,r,...)DSTs",
-    version     = 'dst-dump-light' + __version__
-    )
-parser.add_argument (
-    '-q'                          ,
-    '--quiet'                     ,
-    action  = "store_true"        ,
-    dest    = 'Quiet'             ,
-    help    = "``Quiet'' processing [defaut : %(default)s ]"  ,
-    default = False   
-    )
-parser.add_argument (
-    '-i'                       ,
-    '--import'                 ,
-    dest    = 'ImportOptions'  ,
-    metavar = 'IMPORT'         ,
-    ## action  = Collect          , 
-    nargs   = '*'              ,
-    default = []               , 
-    help    = """List of files to be used for 'importOptions',
+parser = argparse.ArgumentParser(
+    prog='dst-dump-light',
+    description="The script to dump the content of (x,mu,s,r,...)DSTs",
+    version='dst-dump-light' + __version__)
+parser.add_argument(
+    '-q',
+    '--quiet',
+    action="store_true",
+    dest='Quiet',
+    help="``Quiet'' processing [defaut : %(default)s ]",
+    default=False)
+parser.add_argument(
+    '-i',
+    '--import',
+    dest='ImportOptions',
+    metavar='IMPORT',
+    ## action  = Collect          ,
+    nargs='*',
+    default=[],
+    help="""List of files to be used for 'importOptions',
     e.g. input data [default:%(default)s].
-    The files are imported at the end of configuration step"""
-    )
-parser.add_argument (
-    '-n'                          ,
-    '--nevents'                   ,
-    dest    = 'nEvents'           ,
-    type    = int                 , 
-    help    = "Number of events to process " ,
-    default = -1    
-    )
-parser.add_argument (
-    '--dump'                      ,
-    dest    = 'DumpFrequency'     ,
-    type    = int                 , 
-    help    = "Dump  the DST-content every Nth event" ,
-    default = 1000    
-    )
-parser.add_argument (
-    '-0'                          ,
-    '--count-empty'               ,
-    dest    = 'Zeroes'            ,
-    help    = "Count empty/none occurances in statistics?" ,
-    action  = "store_true"       ,
-    default = False    
-    )
-parser.add_argument (
-    '-z'                         ,
-    '--summary'                  ,
-    dest    = 'SummaryFile'      ,
-    help    = "Output file with dst-summary" ,
-    type    = str               , 
-    default = 'dst_summary.txt'    
-    )
-parser.add_argument (
-    '-f'                         ,
-    '--follow'                   ,
-    dest    = 'FollowLinks'      ,
-    help    = "Flag to follow links, useful for packed (u)DST (*)" ,
-    action  = "store_true"       ,
-    default = False    
-    )
-parser.add_argument (
-    '-w'                         ,
-    '--dod'                      ,
-    dest    = 'DataOnDemand'     ,
-    help    = "Dump the known DOD-locations (fragile!), (+)" ,
-    action  = "store_true"       ,
-    default = False    
-    )
-parser.add_argument (
-    '-p'                          ,
-    '--print'                     ,
-    type     = int                , 
-    choices  = range(1,7)         , 
-    dest     = 'OutputLevel'      ,
-    help     = "``OutputLevel'' attribute for ApplicationMgr/MessageSvc [default : %(default)s]"  ,
-    default  = 3                  
-    )
-parser.add_argument (
-    '-m'                          ,
-    '--micro'                     ,
-    action  = "store_true"        ,
-    dest    = 'MicroDST'          ,
-    help    = """``MicroDST''    attribute for DaVinci [default : %(default)s].
-    For some cases it can be deduced from input file name/extension""" ,
-    default = False   
-    )
-parser.add_argument (
-    '-d'                      ,
-    '--datatype'              ,
-    dest    = 'DataType'      ,
-    type    =  str            ,
-    choices = ( '2009' , '2010' , '2011', '2012' , '2015' , '2016' ,  '2017' , '2018', 'Upgrade' ) , 
-    help    = """``DataType''    attribute for DaVinci [default : %(default)s].
-    Often it can be deduced from input file name/extension""" ,
-    default = '2012'  
-    )
-    ## 
-parser.add_argument (
-    '-s'                      ,
-    '--simulation'            ,
-    action  = "store_true"    ,
-    dest    = 'Simulation'    ,
-    help    = """``Simulation''  attribute for DaVinci [default: %(default)s].
-    Often it can be deduced from input file name/extension""" ,
-    default = False   
-    )
-    ##
-parser.add_argument (
-    '-r'                         ,
-    '--root'                     ,
-    type    = str                ,
-    default = ''                 ,
-    dest    = 'RootInTES'        ,
-    help    = """Root-In-TES for uDST [default : %(default)s].
-    For some cases it can be deduced from input file name/extension""" 
-    )
-    ##
-parser.add_argument (
-    '-l'                       ,
-    '--lumi'                   ,
-    action  = "store_true"     ,
-    dest    = 'Lumi'           ,
-    help    = "``Lumi''       attribute for DaVinci [default : %(default)s]",
-    default = False   
-    )
-    ##
-parser.add_argument (
-    '--ignore-dqflags'         ,
-    action  = "store_true"     ,
-    dest    = 'IgnoreDQFlags'  ,
-    help    = "Use ``ALL'', IgnoreDQFlags attribute for LHCbApp [default : %(default)s]",
-    default = False   
-    )
-    ##
-parser.add_argument (
-    '--dddbtag'                  ,
-    dest    = 'DDDBtag'          ,
-    type    = str                , 
-    help    = """DDDBTag attribute for LHCbApp
+    The files are imported at the end of configuration step""")
+parser.add_argument(
+    '-n',
+    '--nevents',
+    dest='nEvents',
+    type=int,
+    help="Number of events to process ",
+    default=-1)
+parser.add_argument(
+    '--dump',
+    dest='DumpFrequency',
+    type=int,
+    help="Dump  the DST-content every Nth event",
+    default=1000)
+parser.add_argument(
+    '-0',
+    '--count-empty',
+    dest='Zeroes',
+    help="Count empty/none occurances in statistics?",
+    action="store_true",
+    default=False)
+parser.add_argument(
+    '-z',
+    '--summary',
+    dest='SummaryFile',
+    help="Output file with dst-summary",
+    type=str,
+    default='dst_summary.txt')
+parser.add_argument(
+    '-f',
+    '--follow',
+    dest='FollowLinks',
+    help="Flag to follow links, useful for packed (u)DST (*)",
+    action="store_true",
+    default=False)
+parser.add_argument(
+    '-w',
+    '--dod',
+    dest='DataOnDemand',
+    help="Dump the known DOD-locations (fragile!), (+)",
+    action="store_true",
+    default=False)
+parser.add_argument(
+    '-p',
+    '--print',
+    type=int,
+    choices=range(1, 7),
+    dest='OutputLevel',
+    help=
+    "``OutputLevel'' attribute for ApplicationMgr/MessageSvc [default : %(default)s]",
+    default=3)
+parser.add_argument(
+    '-m',
+    '--micro',
+    action="store_true",
+    dest='MicroDST',
+    help="""``MicroDST''    attribute for DaVinci [default : %(default)s].
+    For some cases it can be deduced from input file name/extension""",
+    default=False)
+parser.add_argument(
+    '-d',
+    '--datatype',
+    dest='DataType',
+    type=str,
+    choices=('2009', '2010', '2011', '2012', '2015', '2016', '2017', '2018',
+             'Upgrade'),
+    help="""``DataType''    attribute for DaVinci [default : %(default)s].
+    Often it can be deduced from input file name/extension""",
+    default='2012')
+##
+parser.add_argument(
+    '-s',
+    '--simulation',
+    action="store_true",
+    dest='Simulation',
+    help="""``Simulation''  attribute for DaVinci [default: %(default)s].
+    Often it can be deduced from input file name/extension""",
+    default=False)
+##
+parser.add_argument(
+    '-r',
+    '--root',
+    type=str,
+    default='',
+    dest='RootInTES',
+    help="""Root-In-TES for uDST [default : %(default)s].
+    For some cases it can be deduced from input file name/extension""")
+##
+parser.add_argument(
+    '-l',
+    '--lumi',
+    action="store_true",
+    dest='Lumi',
+    help="``Lumi''       attribute for DaVinci [default : %(default)s]",
+    default=False)
+##
+parser.add_argument(
+    '--ignore-dqflags',
+    action="store_true",
+    dest='IgnoreDQFlags',
+    help=
+    "Use ``ALL'', IgnoreDQFlags attribute for LHCbApp [default : %(default)s]",
+    default=False)
+##
+parser.add_argument(
+    '--dddbtag',
+    dest='DDDBtag',
+    type=str,
+    help="""DDDBTag attribute for LHCbApp
     Usually it is not needed for real data and can be extracted from input file for MC""",
-    default = ''                 , 
-    )
-    ##
-parser.add_argument (
-    '--conddbtag'                ,
-    dest    = 'CondDBtag'        ,
-    type    = str                , 
-    help    = """CondDBTag attribute for LHCbApp
+    default='',
+)
+##
+parser.add_argument(
+    '--conddbtag',
+    dest='CondDBtag',
+    type=str,
+    help="""CondDBTag attribute for LHCbApp
     Usually it is not needed for real data and can be extracted from input file for MC""",
-    default = ''                 , 
-    )
-parser.add_argument (
-    "files" ,
-    metavar = "FILE"          ,
-    nargs   = '*'             ,
-    default = []              , 
-    help    = "Input data(&python) files to be processed [default: %(default)s]" )
+    default='',
+)
+parser.add_argument(
+    "files",
+    metavar="FILE",
+    nargs='*',
+    default=[],
+    help="Input data(&python) files to be processed [default: %(default)s]")
 
 # =============================================================================
 
-## eliminate artifacts and parse command-line arguments 
-config = parser.parse_args( [ a for a in sys.argv[1:] if '--' != a ] )
+## eliminate artifacts and parse command-line arguments
+config = parser.parse_args([a for a in sys.argv[1:] if '--' != a])
 
 from GaudiConf.DstDump import dumpDst
-dumpDst ( config )
-
+dumpDst(config)
 
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

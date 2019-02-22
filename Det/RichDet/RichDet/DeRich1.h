@@ -33,15 +33,13 @@ extern const CLID CLID_DERich1;
  *  @date   2004-06-18
  */
 
-class DeRich1 : public DeRich
-{
+class DeRich1 : public DeRich {
 
 public:
-
   /**
    * Constructor for this class
    */
-  DeRich1( const std::string &name = "" );
+  DeRich1( const std::string& name = "" );
 
   /**
    * Default destructor
@@ -52,13 +50,13 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID &clID() const override { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  static const CLID &classID();
+  static const CLID& classID();
 
   /**
    * Specific Rich1 initialisation
@@ -67,7 +65,6 @@ public:
   StatusCode initialize() override;
 
 private:
-
   /// Access the name for a given panel
   const std::string panelName( const Rich::Side panel ) const override;
 

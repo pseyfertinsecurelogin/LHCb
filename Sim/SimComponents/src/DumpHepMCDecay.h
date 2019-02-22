@@ -26,7 +26,7 @@ namespace LHCb {
 namespace HepMC {
   class GenParticle;
   class GenVertex;
-}
+} // namespace HepMC
 
 /** @class DumpHepMCDecay DumpHepMCDecay.h
  *
@@ -36,14 +36,13 @@ namespace HepMC {
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date   2004-02-18
  */
-class DumpHepMCDecay : public GaudiAlgorithm
-{
+class DumpHepMCDecay : public GaudiAlgorithm {
 public:
-
   /// the actual type of container with addresses
-  typedef std::vector<std::string> Addresses ;
+  typedef std::vector<std::string> Addresses;
   /// the actual type of list of PIDs
-  typedef std::vector<int>         PIDs      ;
+  typedef std::vector<int> PIDs;
+
 public:
   /** initialization of the algoritm
    *  @see GaudiAlgorithm
@@ -51,12 +50,13 @@ public:
    *  @see     IAlgorithm
    *  @return status code
    */
-  StatusCode initialize ()  override;
+  StatusCode initialize() override;
   /** execution of the algoritm
    *  @see IAlgorithm
    *  @return status code
    */
-  StatusCode execute    () override;
+  StatusCode execute() override;
+
 public:
   /** print the decay tree of the particle
    *  @param particle pointer to teh particle to be printed
@@ -64,16 +64,13 @@ public:
    *  @param level    decay level
    *  @return statsu code
    */
-  StatusCode printDecay
-  ( const HepMC::GenParticle* particle              ,
-    std::ostream&             stream    = std::cout ,
-    unsigned int              level     = 0         ) const ;
+  StatusCode printDecay( const HepMC::GenParticle* particle, std::ostream& stream = std::cout,
+                         unsigned int level = 0 ) const;
   /** get the particle name in the string fixed form
    *  @param particle pointer to the particle
    *  @param particle name
    */
-  std::string particleName
-  ( const HepMC::GenParticle* particle ) const ;
+  std::string particleName( const HepMC::GenParticle* particle ) const;
 
   /** standard constructor
    *  @see GaudiAlgorithm
@@ -83,29 +80,29 @@ public:
    *  @param name algorithm instance's name
    *  @param iscv pointer to Service Locator
    */
-  DumpHepMCDecay
-  ( const std::string& name ,
-    ISvcLocator*       isvc ) ;
+  DumpHepMCDecay( const std::string& name, ISvcLocator* isvc );
 
   // default constructor   is disabled
   DumpHepMCDecay() = delete;
   // copy constructor      is disabled
-  DumpHepMCDecay           ( const DumpHepMCDecay& ) = delete;
-  // assigenemtn operator  is disabled 
+  DumpHepMCDecay( const DumpHepMCDecay& ) = delete;
+  // assigenemtn operator  is disabled
   DumpHepMCDecay& operator=( const DumpHepMCDecay& ) = delete;
+
 protected:
   // addresses of HepMC events
-  Addresses                     m_addresses ;
+  Addresses m_addresses;
   // particles to be printed
-  PIDs                          m_particles ;
+  PIDs m_particles;
   // quarks to be printes
-  PIDs                          m_quarks    ;
+  PIDs m_quarks;
   // maximal number of levels
-  int                           m_levels    ;
+  int m_levels;
+
 private:
   // pointer to particle property service
   mutable LHCb::IParticlePropertySvc* m_ppSvc;
-} ;
+};
 // ============================================================================
 // The END
 // ============================================================================

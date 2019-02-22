@@ -29,15 +29,15 @@ public:
   /// Standard constructor
   CaloTriggerAdcsFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  Gaudi::Property<std::string> m_outputData { this, "OutputData" };          // Output container
-  Gaudi::Property<std::string> m_pinContainer{ this, "PinContainer" } ;        // Output container for pinData
-  Gaudi::Property<std::string> m_extension { this,  "Extension" };
-  Gaudi::Property<bool> m_statusOnTES{ this,  "StatusOnTES"   , true };
-  ICaloTriggerAdcsFromRaw*    m_l0AdcTool = nullptr;
+  Gaudi::Property<std::string> m_outputData{this, "OutputData"};     // Output container
+  Gaudi::Property<std::string> m_pinContainer{this, "PinContainer"}; // Output container for pinData
+  Gaudi::Property<std::string> m_extension{this, "Extension"};
+  Gaudi::Property<bool>        m_statusOnTES{this, "StatusOnTES", true};
+  ICaloTriggerAdcsFromRaw*     m_l0AdcTool = nullptr;
 };
 
 #endif // CALOTRIGGERADCSFROMRAWALG_H

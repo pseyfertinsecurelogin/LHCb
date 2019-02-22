@@ -33,8 +33,7 @@
 #include "gsl/gsl_errno.h"
 #include "gsl/gsl_spline.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //============================================================================
   /** @class Rich::TabulatedFunction1D RichDet/Rich1DTabFunc.h
@@ -53,63 +52,49 @@ namespace Rich
    */
   //============================================================================
 
-  class TabulatedFunction1D
-  {
+  class TabulatedFunction1D {
 
   public:
-
     /// Typedef for a vector of pointers to TabulatedFunction1D
-    using ConstVector = std::vector< const TabulatedFunction1D * >;
+    using ConstVector = std::vector<const TabulatedFunction1D*>;
 
   protected: // definitions
-
     /// Internal data container type
-    using Data = std::map< double, double >;
+    using Data = std::map<double, double>;
 
   private:
-
     /** Callable class to handle the GSL interpolator free call.
      *  Used in conjugation with std::unique_ptr. */
-    class GSLSpline final
-    {
+    class GSLSpline final {
     public:
-
       /// the deletion operator
-      void operator()( gsl_spline *s ) { gsl_spline_free( s ); }
+      void operator()( gsl_spline* s ) { gsl_spline_free( s ); }
       /// The type for memory management
-      using Ptr = std::unique_ptr< gsl_spline, GSLSpline >;
+      using Ptr = std::unique_ptr<gsl_spline, GSLSpline>;
     };
 
     /** Callable class to handle the GSL accelerator free call.
      *  Used in conjugation with std::unique_ptr. */
-    class GSLAccelerator final
-    {
+    class GSLAccelerator final {
     public:
-
       /// the deletion operator
-      void operator()( gsl_interp_accel *a ) { gsl_interp_accel_free( a ); }
+      void operator()( gsl_interp_accel* a ) { gsl_interp_accel_free( a ); }
       /// The type for memory management
-      using Ptr = std::unique_ptr< gsl_interp_accel, GSLAccelerator >;
+      using Ptr = std::unique_ptr<gsl_interp_accel, GSLAccelerator>;
     };
 
     /// Fast linear interpolator using fixed sized bins
-    template < typename TYPE,
-               typename = typename std::enable_if< std::is_floating_point< TYPE >::value >::type >
-    class LinearInterp final
-    {
+    template <typename TYPE, typename = typename std::enable_if<std::is_floating_point<TYPE>::value>::type>
+    class LinearInterp final {
 
     public:
-
       /// A single bin in the interpolator
-      class Bin final
-      {
+      class Bin final {
       public:
-
         /// Drault constructor
         Bin() = default;
         /// Constructor from bin low/high edges
-        Bin( const TYPE lowX, const TYPE lowY, const TYPE highX, const TYPE highY )
-        {
+        Bin( const TYPE lowX, const TYPE lowY, const TYPE highX, const TYPE highY ) {
           m_minX  = lowX;
           m_maxX  = highX;
           m_slope = ( lowY - highY ) / ( lowX - highX );
@@ -129,34 +114,29 @@ namespace Rich
         inline TYPE maxY() const noexcept { return getY( m_maxX ); }
 
       private:
-
         /// The slope parameter
-        TYPE m_slope { 0 };
+        TYPE m_slope{0};
         /// The constant parameter
-        TYPE m_const { 0 };
+        TYPE m_const{0};
         /// The bin min x
-        TYPE m_minX { 0 };
+        TYPE m_minX{0};
         /// The bin max x
-        TYPE m_maxX { 0 };
+        TYPE m_maxX{0};
 
       public:
-
         /// type for storage of data points
-        typedef std::vector< Bin > Storage;
+        typedef std::vector<Bin> Storage;
       };
 
     public:
-
       /// Clear the interpolator
-      void clear()
-      {
+      void clear() {
         m_data.clear();
         m_incXinv = m_minX = m_maxX = 0;
       }
 
       /// Initialise
-      void init( const TYPE minX, const TYPE maxX, gsl_spline *gslS, const unsigned int nsamples )
-      {
+      void init( const TYPE minX, const TYPE maxX, gsl_spline* gslS, const unsigned int nsamples ) {
         // reset container
         clear();
         // set min and max X
@@ -169,8 +149,7 @@ namespace Rich
         GSLAccelerator::Ptr acc( gsl_interp_accel_alloc() );
         // Fill the data storage
         m_data.reserve( nsamples );
-        for ( unsigned int i = 0; i < nsamples; ++i )
-        {
+        for ( unsigned int i = 0; i < nsamples; ++i ) {
           const TYPE binXmin = std::max( minX, minX + ( i * incX ) );
           const TYPE binXmax = std::min( maxX, binXmin + ( incX ) );
           const TYPE binYmin = gsl_spline_eval( gslS, binXmin, acc.get() );
@@ -180,15 +159,11 @@ namespace Rich
       }
 
     public:
-
       /// Access the value for a given X
       inline TYPE value( const TYPE x ) const noexcept { return m_data[xIndex( x )].getY( x ); }
 
       /// Access the first derivative (slope) at given x
-      inline TYPE firstDerivative( const TYPE x ) const noexcept
-      {
-        return m_data[xIndex( x )].slope();
-      }
+      inline TYPE firstDerivative( const TYPE x ) const noexcept { return m_data[xIndex( x )].slope(); }
 
       /// Access the min X value
       inline TYPE minX() const noexcept { return m_minX; }
@@ -203,22 +178,18 @@ namespace Rich
       inline TYPE maxY() const noexcept { return m_data.back().maxY(); }
 
       /// Compute the intergral for the given range
-      inline TYPE integral( const TYPE from, const TYPE to, const bool weightByX = false ) const
-      {
+      inline TYPE integral( const TYPE from, const TYPE to, const bool weightByX = false ) const {
         TYPE sum = 0;
         // Loop over bins and sum as required
-        for ( const auto &bin : m_data )
-        {
+        for ( const auto& bin : m_data ) {
           // Does this bin span the range at all
-          if ( !( bin.maxX() < from || bin.minX() > to ) )
-          {
+          if ( !( bin.maxX() < from || bin.minX() > to ) ) {
             // get the range for this bin
             const auto bfrom = std::max( from, bin.minX() );
             const auto bto   = std::min( to, bin.maxX() );
             // average height for this trapezoid
-            const auto h =
-              ( !weightByX ? ( bin.getY( bto ) + bin.getY( bfrom ) ) * 0.5 :
-                             ( ( bto * bin.getY( bto ) ) + ( bfrom * bin.getY( bfrom ) ) ) * 0.5 );
+            const auto h = ( !weightByX ? ( bin.getY( bto ) + bin.getY( bfrom ) ) * 0.5
+                                        : ( ( bto * bin.getY( bto ) ) + ( bfrom * bin.getY( bfrom ) ) ) * 0.5 );
             // sum the area (trapezoid)
             sum += ( ( bto - bfrom ) * h );
           }
@@ -227,8 +198,7 @@ namespace Rich
       }
 
       /// Compute the mean value of x in the given range
-      inline TYPE meanX( const TYPE from, const TYPE to ) const
-      {
+      inline TYPE meanX( const TYPE from, const TYPE to ) const {
         const auto bot = integral( from, to );
         return ( fabs( bot ) > 0 ? integral( from, to, true ) / bot : 0 );
       }
@@ -237,33 +207,27 @@ namespace Rich
       inline std::size_t nDataPoints() const noexcept { return m_data.size(); }
 
     private:
-
       /// Get the look up index for a given x
-      inline unsigned int xIndex( const TYPE x ) const noexcept
-      {
-        return ( x <= m_minX ?
-                   0u :
-                   x >= m_maxX ? m_data.size() - 1 : (unsigned int)( ( x - m_minX ) * m_incXinv ) );
+      inline unsigned int xIndex( const TYPE x ) const noexcept {
+        return ( x <= m_minX ? 0u : x >= m_maxX ? m_data.size() - 1 : (unsigned int)( ( x - m_minX ) * m_incXinv ) );
         // return (unsigned int)( (x-m_minX) * m_incXinv );
       }
 
     private:
-
       /// The look up storage of data points
       typename Bin::Storage m_data;
 
       /// 1 / the bin increment
-      TYPE m_incXinv { 0 };
+      TYPE m_incXinv{0};
 
       /// The minimum valid x
-      TYPE m_minX { 0 };
+      TYPE m_minX{0};
 
       /// The maximum valid x
-      TYPE m_maxX { 0 };
+      TYPE m_maxX{0};
     };
 
   public:
-
     /// Default constructor
     TabulatedFunction1D() = default;
 
@@ -277,11 +241,8 @@ namespace Rich
      *  @param size      Number of data points
      *  @param interType GSL Interpolator type
      */
-    TabulatedFunction1D( const double           x[],
-                         const double           y[],
-                         const unsigned int     size,
-                         const gsl_interp_type *interType = gsl_interp_linear )
-    {
+    TabulatedFunction1D( const double x[], const double y[], const unsigned int size,
+                         const gsl_interp_type* interType = gsl_interp_linear ) {
       initInterpolator( x, y, size, interType );
     }
 
@@ -294,10 +255,8 @@ namespace Rich
      *  @param y         Vector of y values
      *  @param interType GSL Interpolator type
      */
-    TabulatedFunction1D( const std::vector< double > &x,
-                         const std::vector< double > &y,
-                         const gsl_interp_type *      interType = gsl_interp_linear )
-    {
+    TabulatedFunction1D( const std::vector<double>& x, const std::vector<double>& y,
+                         const gsl_interp_type* interType = gsl_interp_linear ) {
       initInterpolator( x, y, interType );
     }
 
@@ -306,9 +265,7 @@ namespace Rich
      *  @param data      map containing x(key) and y(data) values
      *  @param interType GSL Interpolator type
      */
-    TabulatedFunction1D( const std::map< double, double > &data,
-                         const gsl_interp_type *           interType = gsl_interp_linear )
-    {
+    TabulatedFunction1D( const std::map<double, double>& data, const gsl_interp_type* interType = gsl_interp_linear ) {
       initInterpolator( data, interType );
     }
 
@@ -317,9 +274,8 @@ namespace Rich
      *  @param data      std::vector containing and pair of x(first) and y(second) values
      *  @param interType GSL Interpolator type
      */
-    TabulatedFunction1D( const std::vector< std::pair< double, double > > &data,
-                         const gsl_interp_type *interType = gsl_interp_linear )
-    {
+    TabulatedFunction1D( const std::vector<std::pair<double, double>>& data,
+                         const gsl_interp_type*                        interType = gsl_interp_linear ) {
       initInterpolator( data, interType );
     }
 
@@ -327,7 +283,6 @@ namespace Rich
     virtual ~TabulatedFunction1D() = default;
 
   public:
-
     /** Create an interpolator that is the product of a list of interpolators
      *
      *  @param funcs   A vector containing pointers to the functions to merge
@@ -337,13 +292,10 @@ namespace Rich
      *  @retval Non-nullptr Interpolator was successfully created
      *  @retval nullptr     Interpolator could not be created
      */
-    static std::unique_ptr< TabulatedFunction1D >
-    combine( const ConstVector &    funcs,
-             const unsigned int     samples   = 100,
-             const gsl_interp_type *interType = gsl_interp_linear );
+    static std::unique_ptr<TabulatedFunction1D> combine( const ConstVector& funcs, const unsigned int samples = 100,
+                                                         const gsl_interp_type* interType = gsl_interp_linear );
 
   private:
-
     /// Check lower bound
     inline bool checkLowerBound( const double x ) const noexcept { return ( minX() <= x ); }
 
@@ -361,22 +313,19 @@ namespace Rich
      *  @param x The x value to check
      *  @return The x value to use
      */
-    inline double sanitiseRange( const double x ) const noexcept
-    {
-      return ( !checkLowerBound( x ) ? rangeWarning( x, minX() ) :
-                                       !checkUpperBound( x ) ? rangeWarning( x, maxX() ) : x );
+    inline double sanitiseRange( const double x ) const noexcept {
+      return ( !checkLowerBound( x ) ? rangeWarning( x, minX() )
+                                     : !checkUpperBound( x ) ? rangeWarning( x, maxX() ) : x );
     }
 
   public:
-
     /** Computes the function value (y) for the given parameter (x) value
      *
      *  @param x The parameter value
      *
      *  @return The value of the function at the given parameter value
      */
-    inline double value( const double x ) const noexcept
-    {
+    inline double value( const double x ) const noexcept {
       // range checking is now performed by the fast interpolator
       // return ( !checkLowerBound(x) ? rangeWarning(x,minY()) :
       //         !checkUpperBound(x) ? rangeWarning(x,maxY()) :
@@ -399,8 +348,7 @@ namespace Rich
      *
      *  @return the mean function value
      */
-    inline double meanX( const double from, const double to ) const
-    {
+    inline double meanX( const double from, const double to ) const {
       return m_fastInterp.meanX( sanitiseRange( from ), sanitiseRange( to ) );
     }
 
@@ -411,8 +359,7 @@ namespace Rich
      *
      *  @return the definite function integral
      */
-    inline double integral( const double from, const double to ) const
-    {
+    inline double integral( const double from, const double to ) const {
       return m_fastInterp.integral( sanitiseRange( from ), sanitiseRange( to ) );
     }
 
@@ -422,8 +369,7 @@ namespace Rich
      *
      *  @return the first derivative
      */
-    inline double firstDerivative( const double x ) const noexcept
-    {
+    inline double firstDerivative( const double x ) const noexcept {
       return m_fastInterp.firstDerivative( sanitiseRange( x ) );
     }
 
@@ -438,10 +384,8 @@ namespace Rich
      *
      *  @return the r.m.s. value
      */
-    double rms( const double               from,
-                const double               to,
-                const unsigned int         samples    = 100,
-                const TabulatedFunction1D *weightFunc = nullptr ) const;
+    double rms( const double from, const double to, const unsigned int samples = 100,
+                const TabulatedFunction1D* weightFunc = nullptr ) const;
 
     /** Computes the standard deviation between the given parameter limits
      *
@@ -454,10 +398,8 @@ namespace Rich
      *
      *  @return the standard deviation
      */
-    double standardDeviation( const double               from,
-                              const double               to,
-                              const unsigned int         samples    = 100,
-                              const TabulatedFunction1D *weightFunc = nullptr ) const;
+    double standardDeviation( const double from, const double to, const unsigned int samples = 100,
+                              const TabulatedFunction1D* weightFunc = nullptr ) const;
 
     /** The minimum parameter value for which the function is defined
      *
@@ -495,8 +437,7 @@ namespace Rich
      *
      *  @return boolean indicating if the parameter is in range
      */
-    inline bool withinInputRange( const double x ) const noexcept
-    {
+    inline bool withinInputRange( const double x ) const noexcept {
       return checkLowerBound( x ) && checkUpperBound( x );
     }
 
@@ -504,7 +445,6 @@ namespace Rich
     inline std::size_t nDataPoints() const noexcept { return m_fastInterp.nDataPoints(); }
 
   public:
-
     /** Initialisation from arrays containing x and y values
      *
      *  Arrays must be of the same size and ordered such that entry i in each
@@ -514,10 +454,8 @@ namespace Rich
      *  @param y         Array of y values
      *  @param size      Number of data points
      */
-    bool initInterpolator( const double           x[],
-                           const double           y[],
-                           const unsigned int     size,
-                           const gsl_interp_type *interType = gsl_interp_linear );
+    bool initInterpolator( const double x[], const double y[], const unsigned int size,
+                           const gsl_interp_type* interType = gsl_interp_linear );
 
     /** Initialisation from std::vectors containing x and y values
      *
@@ -527,26 +465,23 @@ namespace Rich
      *  @param x         Vector of x values
      *  @param y         Vector of y values
      */
-    bool initInterpolator( const std::vector< double > &x,
-                           const std::vector< double > &y,
-                           const gsl_interp_type *      interType = gsl_interp_linear );
+    bool initInterpolator( const std::vector<double>& x, const std::vector<double>& y,
+                           const gsl_interp_type* interType = gsl_interp_linear );
 
     /** Initialisation from a map of x,y values
      *
      *  @param data      map containing x(key) and y(data) values
      */
-    bool initInterpolator( const std::map< double, double > &data,
-                           const gsl_interp_type *           interType = gsl_interp_linear );
+    bool initInterpolator( const std::map<double, double>& data, const gsl_interp_type* interType = gsl_interp_linear );
 
     /** Initialisation from a vector of a pair of x,y values
      *
      *  @param data      std::vector containing and pair of x(first) and y(second) values
      */
-    bool initInterpolator( const std::vector< std::pair< double, double > > &data,
-                           const gsl_interp_type *interType = gsl_interp_linear );
+    bool initInterpolator( const std::vector<std::pair<double, double>>& data,
+                           const gsl_interp_type*                        interType = gsl_interp_linear );
 
   protected: // methods
-
     /// clear the interpolator
     inline void clearInterpolator() { m_fastInterp.clear(); }
 
@@ -554,12 +489,10 @@ namespace Rich
     void initInterpolator();
 
   private: // data
-
     // Fast linear interpolator
-    LinearInterp< double > m_fastInterp;
+    LinearInterp<double> m_fastInterp;
 
   protected:
-
     /// Status flag
     bool m_OK = false;
   };

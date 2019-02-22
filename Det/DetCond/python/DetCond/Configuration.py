@@ -85,8 +85,10 @@ class CondDB(ConfigurableUser):
         """ Use latest CondDB global tag marked with the data type, will override LatestGlobalTagByDataType if set""",
         'QueryGranularity':
         """Granularity of the query in the database (in time units)""",
-        'AllLocalTagsByDataType': '[[deprecated]] Local tags not supported by Git CondDB',
-        'LocalTags': '[[deprecated]] Local tags not supported by Git CondDB',
+        'AllLocalTagsByDataType':
+        '[[deprecated]] Local tags not supported by Git CondDB',
+        'LocalTags':
+        '[[deprecated]] Local tags not supported by Git CondDB',
     }
 
     def addOverlay(self, path):

@@ -13,12 +13,12 @@
 
 #include "GaudiKernel/MsgStream.h"
 
-//From Muon
+// From Muon
 #include "MuonDet/DeMuonChamber.h"
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonKernel/MuonSystemLayout.h"
 
-//Gaudi
+// Gaudi
 #include "GaudiKernel/IDataProviderSvc.h"
 class IMessageSvc;
 
@@ -30,211 +30,169 @@ class IMessageSvc;
  */
 class MuonChamberLayout : public DetectorElement {
 public:
-
   /// Standard constructor
-  MuonChamberLayout(MuonLayout R1,
-                    MuonLayout R2,
-                    MuonLayout R3,
-                    MuonLayout R4,
-                    IDataProviderSvc* detSvc,
-                    IMessageSvc * msgSvc);
+  MuonChamberLayout( MuonLayout R1, MuonLayout R2, MuonLayout R3, MuonLayout R4, IDataProviderSvc* detSvc,
+                     IMessageSvc* msgSvc );
 
   // Void constructor: calls the previous one
   // with dummy DataProvider and default grid Layout
   MuonChamberLayout();
 
-  //Fill the vector with all the chambers
+  // Fill the vector with all the chambers
   StatusCode initialize() override;
 
-  //Copy function
-  void Copy(MuonChamberLayout &lay);
+  // Copy function
+  void Copy( MuonChamberLayout& lay );
 
-  //Fill the vector with all the chambers
-  std::vector<DeMuonChamber*> fillChambersVector(IDataProviderSvc* detSvc);
+  // Fill the vector with all the chambers
+  std::vector<DeMuonChamber*> fillChambersVector( IDataProviderSvc* detSvc );
 
-  //Find the most likely chamber for a given x,y,station set
-  void chamberMostLikely(float x,float y, int station, int& chmb, int& reg) const;
+  // Find the most likely chamber for a given x,y,station set
+  void chamberMostLikely( float x, float y, int station, int& chmb, int& reg ) const;
 
-  //Return the tiles of the neighbor Chambers
-  std::vector<int> neighborChambers(float myX, float myY, int stat, int x_direction, int y_direction) const;
+  // Return the tiles of the neighbor Chambers
+  std::vector<int> neighborChambers( float myX, float myY, int stat, int x_direction, int y_direction ) const;
 
-  //Return the tiles of the neighbor Chambers
-  void returnChambers(int sta, float st_x, float st_y, int x_dir, int y_dir, std::vector<int>& regs, std::vector<int>& chs) const;
+  // Return the tiles of the neighbor Chambers
+  void returnChambers( int sta, float st_x, float st_y, int x_dir, int y_dir, std::vector<int>& regs,
+                       std::vector<int>& chs ) const;
 
-  //Convert tiles in chambers
-  std::vector<DeMuonChamber*> createChambersFromTile(std::vector<LHCb::MuonTileID> mytiles);
+  // Convert tiles in chambers
+  std::vector<DeMuonChamber*> createChambersFromTile( std::vector<LHCb::MuonTileID> mytiles );
 
-  //Returns the chamber number for a shift in X and Y direction
-  void chamberXY(int sx, int sy, int shx, int shy, int reg, std::vector<int> &chamberNumber) const;
+  // Returns the chamber number for a shift in X and Y direction
+  void chamberXY( int sx, int sy, int shx, int shy, int reg, std::vector<int>& chamberNumber ) const;
 
-  //Returns the Tile for a given chamber
-  LHCb::MuonTileID tileChamber(DeMuonChamber* chmb)const;
+  // Returns the Tile for a given chamber
+  LHCb::MuonTileID tileChamber( DeMuonChamber* chmb ) const;
 
-  //Returns the Tile for a given chamber number
-  LHCb::MuonTileID tileChamberNumber(int sta, int reg, int chmbNum) const ;
+  // Returns the Tile for a given chamber number
+  LHCb::MuonTileID tileChamberNumber( int sta, int reg, int chmbNum ) const;
 
+  StatusCode Tile2XYZpos( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay, double& z,
+                          double& deltaz );
 
-  StatusCode Tile2XYZpos(const LHCb::MuonTileID& tile,
-			 double& x, double& deltax,
-			 double& y, double& deltay,
-			 double& z, double& deltaz);
+  // Fill the system grids for a chamber in a given region
+  StatusCode fillSystemGrids( DeMuonChamber* deChmb, int vIdx, int reg );
 
-  //Fill the system grids for a chamber in a given region
-  StatusCode fillSystemGrids(DeMuonChamber *deChmb,
-			     int vIdx, int reg);
+  // Returns the region for a given chamber with numbering scheme
+  // defined in the MuonGeometry.h file
+  int findRegion( int chamber ) const;
 
-  //Returns the region for a given chamber with numbering scheme
-  //defined in the MuonGeometry.h file
-  int findRegion(int chamber) const ;
+  // Returns the grid indexes for a given X,Y couple
+  void gridPosition( float x, float y, int iS, int& idx, int& idy, int& reg ) const;
 
-  //Returns the grid indexes for a given X,Y couple
-  void gridPosition(float x, float y, int iS, int &idx, int &idy, int &reg) const ;
-
-  //Sets the xS, yS reference values (needed for grid computation)
+  // Sets the xS, yS reference values (needed for grid computation)
   void setGridStep();
 
-  //Checks if a region lowering is needed
-  bool shouldLowReg(int idX, int idY, int reg) const;
+  // Checks if a region lowering is needed
+  bool shouldLowReg( int idX, int idY, int reg ) const;
 
-  //Returns the layout
-  MuonLayout layout(int region);
+  // Returns the layout
+  MuonLayout layout( int region );
 
-  //Returns the Data Provider
+  // Returns the Data Provider
   IDataProviderSvc* DataProvider();
 
-  void setXGrid(std::vector<unsigned int> xg);
+  void setXGrid( std::vector<unsigned int> xg );
 
-  void setYGrid(std::vector<unsigned int> yg);
+  void setYGrid( std::vector<unsigned int> yg );
 
-  //Sets the layout
-  void setLayout(int region, MuonLayout lay);
+  // Sets the layout
+  void setLayout( int region, MuonLayout lay );
 
-  //Assigna a given encode to the chamber
-  void setChamberInGrid(int enc, int num);
+  // Assigna a given encode to the chamber
+  void setChamberInGrid( int enc, int num );
 
-  //Reconstruct the encode of a given chamber
-  int getEncode(int idx, int idy, int reg);
+  // Reconstruct the encode of a given chamber
+  int getEncode( int idx, int idy, int reg );
 
-  //Set the data Provider
-  void setDataProvider(IDataProviderSvc* dataPr);
+  // Set the data Provider
+  void setDataProvider( IDataProviderSvc* dataPr );
 
-  //Converts the chamber tile into a chamber number
-  int getChamberNumber(const LHCb::MuonTileID& tile);
+  // Converts the chamber tile into a chamber number
+  int getChamberNumber( const LHCb::MuonTileID& tile );
 
-  //Function for chamber x,y,z retrieval from tile info
-  StatusCode getXYZChamberTile(const LHCb::MuonTileID& tile,
-			       double& x, double& deltax,
-			       double& y, double& deltay,
-			       double& z, double& deltaz,
-			       bool toGlob);
+  // Function for chamber x,y,z retrieval from tile info
+  StatusCode getXYZChamberTile( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay,
+                                double& z, double& deltaz, bool toGlob );
 
   /// get position of a "named" chamber
   /// NOTE: station and region are indexed from 0 (C style)
   /// chamberNum is the real chamber number (from 0)
-  StatusCode getXYZChamber(const int& station,
-                           const int& region,
-                           const int& chamberNum,
-                           double& x, double& deltax,
-                           double& y, double& deltay,
-                           double& z, double& deltaz,
-			   bool toGlob);
+  StatusCode getXYZChamber( const int& station, const int& region, const int& chamberNum, double& x, double& deltax,
+                            double& y, double& deltay, double& z, double& deltaz, bool toGlob );
 
   /// get position of a "named" gasgap
   /// NOTE: station, region and gapNum are indexed from 0 (C style)
   /// chamberNum is the real chamber number (from 0)
-  StatusCode getXYZGasGap(const int& station,
-                          const int& region,
-                          const int& chamberNum,
-                          const int& gapNum,
-                          double& x, double& deltax,
-                          double& y, double& deltay,
-                          double& z, double& deltaz);
+  StatusCode getXYZGasGap( const int& station, const int& region, const int& chamberNum, const int& gapNum, double& x,
+                           double& deltax, double& y, double& deltay, double& z, double& deltaz );
 
   /// get position of chamber or gas gap with caching of results and pointers
   /// NOTE: station, region and gapNum are indexed from 0 (C style)
   /// chamberNum is the real chamber number (from 0)
-  StatusCode getXYZ(const int& station,
-		    const int& region,
-		    const int& chamberNum,
-		    const int& gapNum,
-		    double& x, double& deltax,
-		    double& y, double& deltay,
-		    double& z, double& deltaz,
-		    bool toGlob);
+  StatusCode getXYZ( const int& station, const int& region, const int& chamberNum, const int& gapNum, double& x,
+                     double& deltax, double& y, double& deltay, double& z, double& deltaz, bool toGlob );
 
   /// get xyz of specific pad
-  StatusCode getXYZPad(const LHCb::MuonTileID& tile,
-		       double& x, double& deltax,
-		       double& y, double& deltay,
-		       double& z, double& deltaz);
+  StatusCode getXYZPad( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay, double& z,
+                        double& deltaz );
 
   /// get postion of logical channel (may be multiple chambers)
-  StatusCode getXYZLogical(const LHCb::MuonTileID& tile,
-                           double& x, double& deltax,
-                           double& y, double& deltay,
-                           double& z, double& deltaz);
+  StatusCode getXYZLogical( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay,
+                            double& z, double& deltaz );
 
   /// get xyz of twelfth (useful for defining regions)
-  StatusCode getXYZTwelfth(const LHCb::MuonTileID& tile,
-                           double& x, double& deltax,
-                           double& y, double& deltay,
-                           double& z, double& deltaz);
+  StatusCode getXYZTwelfth( const LHCb::MuonTileID& tile, double& x, double& deltax, double& y, double& deltay,
+                            double& z, double& deltaz );
 
   /// returns the chamber number (same for each station) on the corner of
   /// the region
-  int getTwelfthCorner(const int& region,
-                       const int& twelfth,
-                       const int& chamberNum);
+  int getTwelfthCorner( const int& region, const int& twelfth, const int& chamberNum );
 
   /// get the xIndex and yIndex of the corner chamber in the twelfth
-  void getTwelfthCornerIndex(const int& region,
-                             const int& twelfth,
-                             const int& chamberNum,
-                             int &xPos, int &yPos);
+  void getTwelfthCornerIndex( const int& region, const int& twelfth, const int& chamberNum, int& xPos, int& yPos );
 
+  void localToglobal( const IGeometryInfo* gInfo, const Gaudi::XYZPoint& cent, const Gaudi::XYZPoint& corn, double& dx,
+                      double& dy, double& dz );
 
-  void localToglobal(const IGeometryInfo* gInfo,
-		     const Gaudi::XYZPoint& cent, const Gaudi::XYZPoint& corn,
-		     double &dx, double &dy, double &dz);
+  /// get the chamber number (vector) from the MuonTile
+  std::vector<unsigned int> Tile2ChamberNum( const LHCb::MuonTileID& tile );
 
-  ///get the chamber number (vector) from the MuonTile
-  std::vector<unsigned int> Tile2ChamberNum(const LHCb::MuonTileID& tile);
+  /// get the chamber number (vector) from the logical channel tile
+  std::vector<unsigned int> Logical2ChamberNum( const LHCb::MuonTileID& tile );
 
-  ///get the chamber number (vector) from the logical channel tile
-  std::vector<unsigned int> Logical2ChamberNum(const LHCb::MuonTileID& tile);
-
-  ///get the chamber number (vector) from the twelfth-chamber tile
-  std::vector<unsigned int> Twelfth2ChamberNum(const LHCb::MuonTileID& tile);
+  /// get the chamber number (vector) from the twelfth-chamber tile
+  std::vector<unsigned int> Twelfth2ChamberNum( const LHCb::MuonTileID& tile );
 
 private:
-
   /// Access to Msgstream object
-  inline MsgStream & msgStream() const
-  {
-    if ( !m_msgStream ) m_msgStream = std::make_unique<MsgStream>(m_msgSvc,name());
+  inline MsgStream& msgStream() const {
+    if ( !m_msgStream ) m_msgStream = std::make_unique<MsgStream>( m_msgSvc, name() );
     return *m_msgStream;
   }
 
 private:
   mutable std::unique_ptr<MsgStream> m_msgStream;
-  IMessageSvc* m_msgSvc ;
-  //Chambers
-  std::vector<int> m_offSet;
-  std::vector<unsigned int> m_cgX;
-  std::vector<unsigned int> m_cgY;
+  IMessageSvc*                       m_msgSvc;
+  // Chambers
+  std::vector<int>            m_offSet;
+  std::vector<unsigned int>   m_cgX;
+  std::vector<unsigned int>   m_cgY;
   std::vector<DeMuonChamber*> m_ChVec;
-  std::vector<unsigned int> m_chaVect;
+  std::vector<unsigned int>   m_chaVect;
 
-  //Smallest chmb dimensions
+  // Smallest chmb dimensions
   std::vector<float> m_xS;
   std::vector<float> m_yS;
 
   MuonLayout m_layout[4];
 
-  //ChamberVector as a function of the ixds in the region grid
+  // ChamberVector as a function of the ixds in the region grid
   std::vector<int> m_chamberGrid;
 
-  //My data provider
+  // My data provider
   IDataProviderSvc* m_detSvc;
 
   // size of logical channels
@@ -250,57 +208,48 @@ private:
   bool m_isM1defined;
   //  MuonBasicGeometry* m_baseGeom(IDataProviderSvc* d, IMessageSvc* m);
   std::unique_ptr<MuonBasicGeometry> m_baseGeom;
-
-
 };
 
 // -----------------------------------------------------------------------------
 //   end of class
 // -----------------------------------------------------------------------------
 
-//Returns the Layout
-inline MuonLayout MuonChamberLayout::layout(int region){
-  //Region index starts from 0 (R1 -> idx = 0)
+// Returns the Layout
+inline MuonLayout MuonChamberLayout::layout( int region ) {
+  // Region index starts from 0 (R1 -> idx = 0)
   return m_layout[region];
 }
 
-//Returns the DataProvider
-inline IDataProviderSvc* MuonChamberLayout::DataProvider(){
-  //Data service
+// Returns the DataProvider
+inline IDataProviderSvc* MuonChamberLayout::DataProvider() {
+  // Data service
   return m_detSvc;
 }
 
-//Sets the xGrid
-inline void MuonChamberLayout::setXGrid(std::vector<unsigned int> xg){
-  m_cgX = xg;
-}
+// Sets the xGrid
+inline void MuonChamberLayout::setXGrid( std::vector<unsigned int> xg ) { m_cgX = xg; }
 
-//Set chamber in grid
-inline void MuonChamberLayout::setChamberInGrid(int enc, int num){
-  m_chamberGrid.at(enc) = num;
-}
+// Set chamber in grid
+inline void MuonChamberLayout::setChamberInGrid( int enc, int num ) { m_chamberGrid.at( enc ) = num; }
 
-//Sets the Layout
-inline void MuonChamberLayout::setYGrid(std::vector<unsigned int> yg){
-  m_cgY = yg;
-}
+// Sets the Layout
+inline void MuonChamberLayout::setYGrid( std::vector<unsigned int> yg ) { m_cgY = yg; }
 
-//Sets the Layout
-inline void MuonChamberLayout::setLayout(int region, MuonLayout lay){
-  //Region index starts from 0 (R1 -> idx = 0)
+// Sets the Layout
+inline void MuonChamberLayout::setLayout( int region, MuonLayout lay ) {
+  // Region index starts from 0 (R1 -> idx = 0)
   m_layout[region] = lay;
 }
 
-//Gets the encoding
-inline int MuonChamberLayout::getEncode(int idx, int idy, int reg){
-  //Returns  the encoding of a given chamber
-  int enc = idx+4*m_cgX.at(reg)*idy+m_offSet.at(reg);
+// Gets the encoding
+inline int MuonChamberLayout::getEncode( int idx, int idy, int reg ) {
+  // Returns  the encoding of a given chamber
+  int enc = idx + 4 * m_cgX.at( reg ) * idy + m_offSet.at( reg );
   return enc;
 }
 
-inline void MuonChamberLayout::setDataProvider(IDataProviderSvc* dataPr)
-{
-  //Set the data Provder
+inline void MuonChamberLayout::setDataProvider( IDataProviderSvc* dataPr ) {
+  // Set the data Provder
   m_detSvc = dataPr;
 }
 

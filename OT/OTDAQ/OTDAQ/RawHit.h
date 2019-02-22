@@ -11,40 +11,34 @@
 #ifndef OTDAQ_OTChannelHit_H
 #define OTDAQ_OTChannelHit_H 1
 
-#include <vector>
 #include "GaudiKernel/Range.h"
+#include <vector>
 
-namespace OTDAQ
-{
+namespace OTDAQ {
 
   // Forward declarations
 
   /** @class RawHit RawHit.h
    *
    * The Data Word is a word of 32 bits that containes the data of 2 hits of the
- * OT for the OTDAQ data format
+   * OT for the OTDAQ data format
    *
    * @author Jacopo Nardulli, Wouter Hulsbergen
    * created Wed Nov 14 17:03:07 2007
    *
    */
 
-  class RawHit final
-  {
+  class RawHit final {
   public:
-
     /// Default Constructor
     RawHit() = default;
 
     /// constructor with data word in raw bank buffer
-    RawHit(unsigned short data) : m_data(data) {}
+    RawHit( unsigned short data ) : m_data( data ) {}
 
     /// constructor with word, channel in OTIS (0 -127), tdctime
-    RawHit( unsigned int word,
-            unsigned int channel,
-            unsigned int tdcTime )
-    : RawHit( ( word << wordBits ) + ( channel << ChannelBits ) + ( tdcTime << TimeBits ) )
-    {}
+    RawHit( unsigned int word, unsigned int channel, unsigned int tdcTime )
+        : RawHit( ( word << wordBits ) + ( channel << ChannelBits ) + ( tdcTime << TimeBits ) ) {}
 
     /// Retrieve tdc time
     unsigned int time() const;
@@ -62,23 +56,19 @@ namespace OTDAQ
     bool word() const;
 
     /// Retrieve the contents
-    unsigned short data() const { return m_data ; }
+    unsigned short data() const { return m_data; }
 
   public:
-
     /// Offsets of bitfield dataWord
-    enum dataWordBits{TimeBits     = 0,
-                      ChannelBits  = 8,
-                      OtisBits     = 13,
-                      wordBits     = 15
-    };
+    enum dataWordBits { TimeBits = 0, ChannelBits = 8, OtisBits = 13, wordBits = 15 };
 
     /// Bitmasks for bitfield dataWord
-    enum dataWordMasks{TimeMask     = 0xFFL,
-                       ChannelInOtisMask  = 0x1F00L,
-                       OtisMask     = 0x6000L,
-		       ChannelMask  = ChannelInOtisMask | OtisMask,
-                       wordMask     = 0x8000L
+    enum dataWordMasks {
+      TimeMask          = 0xFFL,
+      ChannelInOtisMask = 0x1F00L,
+      OtisMask          = 0x6000L,
+      ChannelMask       = ChannelInOtisMask | OtisMask,
+      wordMask          = 0x8000L
     };
 
   private:
@@ -87,40 +77,24 @@ namespace OTDAQ
   }; // class RawHit
 
   /// Type for a container of RawHit  objects
-  typedef std::vector<RawHit> RawHitContainer ;
+  typedef std::vector<RawHit> RawHitContainer;
 
   /// Range object for RawHitContainer
-  typedef Gaudi::Range_<RawHitContainer> RawHitRange ;
+  typedef Gaudi::Range_<RawHitContainer> RawHitRange;
 
   // -----------------------------------------------------------------------------
   // end of class
   // -----------------------------------------------------------------------------
 
-  inline unsigned int RawHit::time() const
-  {
-    return (m_data & TimeMask) >> TimeBits;
-  }
+  inline unsigned int RawHit::time() const { return ( m_data & TimeMask ) >> TimeBits; }
 
-  inline unsigned int RawHit::channel() const
-  {
-    return (m_data & ChannelMask) >> ChannelBits;
-  }
+  inline unsigned int RawHit::channel() const { return ( m_data & ChannelMask ) >> ChannelBits; }
 
-  inline unsigned int RawHit::channelInOtis() const
-  {
-    return (m_data & ChannelInOtisMask) >> ChannelBits;
-  }
+  inline unsigned int RawHit::channelInOtis() const { return ( m_data & ChannelInOtisMask ) >> ChannelBits; }
 
-  inline unsigned int RawHit::otis() const
-  {
-    return (m_data & OtisMask) >> OtisBits;
-  }
+  inline unsigned int RawHit::otis() const { return ( m_data & OtisMask ) >> OtisBits; }
 
-  inline bool RawHit::word() const
-  {
-    return 0 != ((m_data & wordMask) >> wordBits);
-  }
-}
+  inline bool RawHit::word() const { return 0 != ( ( m_data & wordMask ) >> wordBits ); }
+} // namespace OTDAQ
 
-
-#endif ///OTDAQ_RawHit_H
+#endif /// OTDAQ_RawHit_H

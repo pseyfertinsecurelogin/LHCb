@@ -16,19 +16,19 @@
 // ============================================================================
 #include "LoKi/MoreFunctions.h"
 // ============================================================================
-#include "LoKi/GenTypes.h"
-#include "LoKi/GenParticles.h"
-#include "LoKi/GenVertices.h"
-#include "LoKi/GenParticleCuts.h"
-#include "LoKi/GenVertexCuts.h"
-#include "LoKi/GenExtract.h"
-#include "LoKi/GenAlgs.h"
-#include "LoKi/GenKinematics.h"
-#include "LoKi/PrintHepMCDecay.h"
 #include "LoKi/BuildGenTrees.h"
+#include "LoKi/GenAlgs.h"
 #include "LoKi/GenChild.h"
-#include "LoKi/IGenHybridFactory.h"
+#include "LoKi/GenExtract.h"
+#include "LoKi/GenKinematics.h"
+#include "LoKi/GenParticleCuts.h"
+#include "LoKi/GenParticles.h"
 #include "LoKi/GenSources.h"
+#include "LoKi/GenTypes.h"
+#include "LoKi/GenVertexCuts.h"
+#include "LoKi/GenVertices.h"
+#include "LoKi/IGenHybridFactory.h"
+#include "LoKi/PrintHepMCDecay.h"
 // ============================================================================
 /** @file LoKi/LoKiGen.h
  *

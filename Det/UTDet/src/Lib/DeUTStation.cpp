@@ -9,10 +9,10 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "UTDet/DeUTStation.h"
+#include "Kernel/UTChannelID.h"
+#include "Kernel/UTNames.h"
 #include "UTDet/DeUTDetector.h"
 #include "UTDet/DeUTLayer.h"
-#include "Kernel/UTNames.h"
-#include "Kernel/UTChannelID.h"
 
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
@@ -31,33 +31,24 @@ using namespace LHCb;
  *
  */
 
-DeUTStation::DeUTStation( std::string name ) :
-  DeUTBaseElement( std::move(name) ),
-  m_id(0u)
-{
-}
+DeUTStation::DeUTStation( std::string name ) : DeUTBaseElement( std::move( name ) ), m_id( 0u ) {}
 
-const CLID& DeUTStation::clID () const
-{
-  return DeUTStation::classID();
-}
+const CLID& DeUTStation::clID() const { return DeUTStation::classID(); }
 
-StatusCode DeUTStation::initialize()
-{
+StatusCode DeUTStation::initialize() {
   // initialize
   StatusCode sc = DeUTBaseElement::initialize();
-  if (sc.isFailure() ){
-    MsgStream msg(msgSvc(), name() );
+  if ( sc.isFailure() ) {
+    MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
-  }
-  else {
+  } else {
     // and the parent
-    m_id = (unsigned int)param<int>("stationID");
+    m_id     = (unsigned int)param<int>( "stationID" );
     m_parent = getParent<parent_type>();
 
-    UTChannelID aChan(UTChannelID::detType::typeUT, this->id(),0,0,0,0);
-    setElementID(aChan);
-    m_nickname = UTNames().StationToString(aChan);
+    UTChannelID aChan( UTChannelID::detType::typeUT, this->id(), 0, 0, 0, 0 );
+    setElementID( aChan );
+    m_nickname = UTNames().StationToString( aChan );
 
     // get the children
     m_layers = getChildren<DeUTStation>();
@@ -66,44 +57,38 @@ StatusCode DeUTStation::initialize()
   return sc;
 }
 
-std::ostream& DeUTStation::printOut( std::ostream& os ) const{
+std::ostream& DeUTStation::printOut( std::ostream& os ) const {
 
   // stream to cout
-  os << " Station: "  << m_id << std::endl;
-  os   << " Nickname: " << m_nickname
-     << std::endl;
+  os << " Station: " << m_id << std::endl;
+  os << " Nickname: " << m_nickname << std::endl;
 
   return os;
 }
 
-MsgStream& DeUTStation::printOut( MsgStream& os ) const{
+MsgStream& DeUTStation::printOut( MsgStream& os ) const {
 
   // stream to Msg service
-  os << " Station : "  << m_id << endmsg;
-  os   << " Nickname: " << m_nickname << endmsg;
+  os << " Station : " << m_id << endmsg;
+  os << " Nickname: " << m_nickname << endmsg;
 
   return os;
 }
 
-
-DeUTLayer* DeUTStation::findLayer(const UTChannelID aChannel)
-{
-  auto iter = std::find_if(m_layers.begin() , m_layers.end(),
-                           [&](const DeUTLayer *l) { return l->contains(aChannel); } );
-  return (iter != m_layers.end() ? *iter: nullptr);
+DeUTLayer* DeUTStation::findLayer( const UTChannelID aChannel ) {
+  auto iter =
+      std::find_if( m_layers.begin(), m_layers.end(), [&]( const DeUTLayer* l ) { return l->contains( aChannel ); } );
+  return ( iter != m_layers.end() ? *iter : nullptr );
 }
 
-
-DeUTLayer* DeUTStation::findLayer(const Gaudi::XYZPoint& point)
-{
-  auto iter = std::find_if(m_layers.begin(), m_layers.end(),
-                           [&](const DeUTLayer *l) { return l->isInside(point); } );
-  return (iter != m_layers.end() ? *iter: nullptr);
+DeUTLayer* DeUTStation::findLayer( const Gaudi::XYZPoint& point ) {
+  auto iter =
+      std::find_if( m_layers.begin(), m_layers.end(), [&]( const DeUTLayer* l ) { return l->isInside( point ); } );
+  return ( iter != m_layers.end() ? *iter : nullptr );
 }
 
-
-double DeUTStation::fractionActive() const
-{
-  return std::accumulate(m_layers.begin(), m_layers.end(), 0.0,  [&](double f,const DeUTLayer* l)
-                         { return f + l->fractionActive(); } )/double(m_layers.size());
+double DeUTStation::fractionActive() const {
+  return std::accumulate( m_layers.begin(), m_layers.end(), 0.0,
+                          [&]( double f, const DeUTLayer* l ) { return f + l->fractionActive(); } ) /
+         double( m_layers.size() );
 }

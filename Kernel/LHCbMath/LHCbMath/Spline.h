@@ -16,10 +16,10 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <vector>
-#include <utility>
-#include <memory>
 #include <limits>
+#include <memory>
+#include <utility>
+#include <vector>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -38,20 +38,18 @@
 // ============================================================================
 // ROOT
 // ============================================================================
-class TH1          ;
-class TH2          ;
-class TGraph       ;
-class TGraphErrors ;
+class TH1;
+class TH2;
+class TGraph;
+class TGraphErrors;
 // ============================================================================
 // GaudiGSL
 // ============================================================================
-namespace Genfun
-{
-  namespace GaudiMathImplementation
-  {
-    class SplineBase ;
+namespace Genfun {
+  namespace GaudiMathImplementation {
+    class SplineBase;
   }
-}
+} // namespace Genfun
 // ============================================================================
 /** @file LHCbMath/Spline.h
  *
@@ -65,80 +63,67 @@ namespace Genfun
  *                 by $author$
  */
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
-    namespace Splines
-    {
+    namespace Splines {
       // ======================================================================
       /// the actual type of "simple" data
-      typedef std::vector<std::pair<double,double> >           DATA    ;
-      typedef std::pair<double,Gaudi::Math::ValueWithError>    PAIR    ;
+      typedef std::vector<std::pair<double, double>>         DATA;
+      typedef std::pair<double, Gaudi::Math::ValueWithError> PAIR;
       /// the actual type of data with errors
-      typedef std::vector<PAIR>                                DATAERR ;
+      typedef std::vector<PAIR> DATAERR;
       // ======================================================================
-      static_assert( std::numeric_limits<unsigned int>::is_specialized ,
+      static_assert( std::numeric_limits<unsigned int>::is_specialized,
                      "std::numeric_limits<unsigne int> is not *NOT* specialized" );
-      const unsigned int max_bin = std::numeric_limits<unsigned int>::max() ;
+      const unsigned int max_bin = std::numeric_limits<unsigned int>::max();
       // ======================================================================
       /** get the values from the histogram
        *  @param first  INPUT the first bin in the range to be considered
        *  @param  end   INPUT  last+1 bin in th eraneg to be considered
        *  @attention  underflow/overflow bins are ignored
        */
-      GAUDI_API DATA    getValues ( const TH1&          histo           ,
-                                    const unsigned int  begin = 1       ,
-                                    const unsigned int  end   = max_bin ) ;
+      GAUDI_API DATA getValues( const TH1& histo, const unsigned int begin = 1, const unsigned int end = max_bin );
       // ======================================================================
       /** get the errors from the histogram
        *  @param first  INPUT the first bin in the range to be considered
        *  @param  end   INPUT  last+1 bin in th eraneg to be considered
        *  @attention  underflow/overflow bins are ignored
        */
-      GAUDI_API DATA    getErrors ( const TH1&          histo           ,
-                                    const unsigned int  begin = 1       ,
-                                    const unsigned int  end   = max_bin ) ;
+      GAUDI_API DATA getErrors( const TH1& histo, const unsigned int begin = 1, const unsigned int end = max_bin );
       // ======================================================================
       /** get the data   from the histogram
        *  @param first  INPUT the first bin in the range to be considered
        *  @param  end   INPUT  last+1 bin in th eraneg to be considered
        *  @attention  underflow/overflow bins are ignored
        */
-      GAUDI_API DATAERR getData   ( const TH1&          histo           ,
-                                    const unsigned int  begin = 1       ,
-                                    const unsigned int  end   = max_bin ) ;
+      GAUDI_API DATAERR getData( const TH1& histo, const unsigned int begin = 1, const unsigned int end = max_bin );
       // ======================================================================
       /** get the values from the graph
        *  @param first  INPUT the first bin in the range to be considered
        *  @param  end   INPUT  last+1 bin in th eraneg to be considered
        */
-      GAUDI_API DATA    getValues ( const TGraph&       graph           ,
-                                    const unsigned int  begin = 0       ,
-                                    const unsigned int  end   = max_bin ) ;
+      GAUDI_API DATA getValues( const TGraph& graph, const unsigned int begin = 0, const unsigned int end = max_bin );
       // ======================================================================
       /** get the values from the graph
        *  @param first  INPUT the first bin in the range to be considered
        *  @param  end   INPUT  last+1 bin in th eraneg to be considered
        */
-      GAUDI_API DATA    getErrors ( const TGraphErrors& graph           ,
-                                    const unsigned int  begin = 0       ,
-                                    const unsigned int  end   = max_bin ) ;
+      GAUDI_API DATA getErrors( const TGraphErrors& graph, const unsigned int begin = 0,
+                                const unsigned int end = max_bin );
       // ======================================================================
       /** get the values from the graph
        *  @param first  INPUT the first bin in the range to be considered
        *  @param  end   INPUT  last+1 bin in th eraneg to be considered
        */
-      GAUDI_API DATAERR getData   ( const TGraphErrors& graph           ,
-                                    const unsigned int  begin = 0       ,
-                                    const unsigned int  end   = max_bin ) ;
+      GAUDI_API DATAERR getData( const TGraphErrors& graph, const unsigned int begin = 0,
+                                 const unsigned int end = max_bin );
       // ======================================================================
       /// get the values from the data vector
-      GAUDI_API DATA    getValues ( const DATAERR&      data  ) ;
+      GAUDI_API DATA getValues( const DATAERR& data );
       /// get the values from the data vector
-      GAUDI_API DATA    getErrors ( const DATAERR&      histo ) ;
+      GAUDI_API DATA getErrors( const DATAERR& histo );
       // ======================================================================
       /** simple lagrange interpolation
        *  @attention it can be CPU-inefficient!
@@ -148,8 +133,7 @@ namespace Gaudi
        *  @see Gaudi::Math::Interpolation::neville
        *  @date 2013-03-15
        */
-      GAUDI_API double
-      interpolate  ( const DATA&    data , const double x ) ;
+      GAUDI_API double interpolate( const DATA& data, const double x );
       // ======================================================================
       /** simple lagrange interpolation
        *  @attention it can be CPU-inefficient!
@@ -159,10 +143,9 @@ namespace Gaudi
        *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2013-03-15
        */
-      GAUDI_API Gaudi::Math::ValueWithError
-      interpolate  ( const DATAERR& data , const double x ) ;
+      GAUDI_API Gaudi::Math::ValueWithError interpolate( const DATAERR& data, const double x );
       // ======================================================================
-    } //                                  end of namespace Gaudi::Math::Splines
+    } // namespace Splines
     // ========================================================================
     /** @class Spline LHCbMath/Spline.h
      *
@@ -176,13 +159,12 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Spline
-    {
+    class GAUDI_API Spline {
       // ======================================================================
     public:
       // ======================================================================
-      typedef Gaudi::Math::Splines::DATA     DATA    ;
-      typedef Gaudi::Math::Splines::DATAERR  DATAERR ;
+      typedef Gaudi::Math::Splines::DATA    DATA;
+      typedef Gaudi::Math::Splines::DATAERR DATAERR;
       // ======================================================================
     public:
       // ======================================================================
@@ -193,12 +175,8 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      Spline
-      ( const DATA&                           data ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = false                           ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ) ;
+      Spline( const DATA& data, const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+              const bool null = false, const double scale = 1, const double shift = 0 );
       // ======================================================================
       /** Standard constructor
        *  @param data  data to be interpolated
@@ -207,12 +185,8 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      Spline
-      ( const DATAERR&                        data ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = false                           ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ) ;
+      Spline( const DATAERR& data, const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+              const bool null = false, const double scale = 1, const double shift = 0 );
       // ======================================================================
       /** Standard constructor
        *  @param histo the histogram to be interpolated
@@ -221,14 +195,9 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      Spline
-      ( const TH1&                            histo                                    ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = true                            ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ,
-        const unsigned int                    begin  = 1  ,
-        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
+      Spline( const TH1& histo, const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+              const bool null = true, const double scale = 1, const double shift = 0, const unsigned int begin = 1,
+              const unsigned int end = std::numeric_limits<unsigned int>::max() );
       // ======================================================================
       /** Standard constructor
        *  @param graph the graph to be interpolated
@@ -237,56 +206,50 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      Spline
-      ( const TGraph&                         graph                                    ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = false                           ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ,
-        const unsigned int                    begin  = 1  ,
-        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
+      Spline( const TGraph& graph, const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+              const bool null = false, const double scale = 1, const double shift = 0, const unsigned int begin = 1,
+              const unsigned int end = std::numeric_limits<unsigned int>::max() );
       // ======================================================================
     public:
       // ======================================================================
-      bool    nullify () const { return   m_null  ; }
-      double  scale   () const { return   m_scale ; }
-      double  shift   () const { return   m_shift ; }
-      double  xmin    () const { return   m_xmin  ; }
-      double  xmax    () const { return   m_xmax  ; }
-      double  vmin    () const { return ( m_xmin - m_shift ) / m_scale ; }
-      double  vmax    () const { return ( m_xmax - m_shift ) / m_scale ; }
+      bool   nullify() const { return m_null; }
+      double scale() const { return m_scale; }
+      double shift() const { return m_shift; }
+      double xmin() const { return m_xmin; }
+      double xmax() const { return m_xmax; }
+      double vmin() const { return ( m_xmin - m_shift ) / m_scale; }
+      double vmax() const { return ( m_xmax - m_shift ) / m_scale; }
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      double operator()  ( const double x    ) const ;
+      double operator()( const double x ) const;
       /// get the derivative
-      double derivative  ( const double x    ) const ;
+      double derivative( const double x ) const;
       /// get the second derivative
-      double derivative2 ( const double x    ) const ;
+      double derivative2( const double x ) const;
       /// get the integral (when applicable)
-      double integral    () const ;
+      double integral() const;
       /// get the integral
-      double integral    ( const double xmin ,
-                           const double xmax ) const ;
+      double integral( const double xmin, const double xmax ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// nullify the content outside limits ?
-      bool    m_null  ; // nullify the content outside limits ?
+      bool m_null; // nullify the content outside limits ?
       /// scale factor for the variable
-      double  m_scale ; // scale factor for the variable
+      double m_scale; // scale factor for the variable
       /// shift for the variable
-      double  m_shift ; // shift for the variable
+      double m_shift; // shift for the variable
       /// low  value (for nullification)
-      double  m_xmin  ; // low value (for nullification)
+      double m_xmin; // low value (for nullification)
       /// high value (for nullification)
-      double  m_xmax  ; // high value (for nullification)
+      double m_xmax; // high value (for nullification)
       // ======================================================================
       /// the actual type of spline object
-      typedef Genfun::GaudiMathImplementation::SplineBase  SPLINE ;
+      typedef Genfun::GaudiMathImplementation::SplineBase SPLINE;
       /// the spline itself
-      std::unique_ptr<SPLINE> m_spline ; // the spline itself
+      std::unique_ptr<SPLINE> m_spline; // the spline itself
       // ======================================================================
     };
     // ========================================================================
@@ -303,12 +266,11 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API SplineErrors
-    {
+    class GAUDI_API SplineErrors {
       // ======================================================================
     public:
       // ======================================================================
-      typedef Gaudi::Math::Splines::DATAERR  DATAERR ;
+      typedef Gaudi::Math::Splines::DATAERR DATAERR;
       // ======================================================================
     public:
       // ======================================================================
@@ -319,12 +281,8 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      SplineErrors
-      ( const DATAERR&                        data ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = false                           ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ) ;
+      SplineErrors( const DATAERR& data, const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+                    const bool null = false, const double scale = 1, const double shift = 0 );
       // ======================================================================
       /** Standard constructor
        *  @param histo the histogram to be interpolated
@@ -333,14 +291,9 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      SplineErrors
-      ( const TH1&                            histo                                    ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = true                            ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ,
-        const unsigned int                    begin  = 1  ,
-        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
+      SplineErrors( const TH1& histo, const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+                    const bool null = true, const double scale = 1, const double shift = 0,
+                    const unsigned int begin = 1, const unsigned int end = std::numeric_limits<unsigned int>::max() );
       // ======================================================================
       /** Standard constructor
        *  @param graph the graph to be interpolated
@@ -349,39 +302,35 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      SplineErrors
-      ( const TGraphErrors&                   graph                                    ,
-        const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima ,
-        const bool                            null   = false                           ,
-        const double                          scale  = 1  ,
-        const double                          shift  = 0  ,
-        const unsigned int                    begin  = 1  ,
-        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
+      SplineErrors( const TGraphErrors&                   graph,
+                    const GaudiMath::Interpolation::Type& type = GaudiMath::Interpolation::Akima,
+                    const bool null = false, const double scale = 1, const double shift = 0,
+                    const unsigned int begin = 1, const unsigned int end = std::numeric_limits<unsigned int>::max() );
       // ======================================================================
     private:
       // ======================================================================
       /// copy    constructor is disabled
-      SplineErrors ( const SplineErrors& ) = delete;  // default constructor is disabled
+      SplineErrors( const SplineErrors& ) = delete; // default constructor is disabled
       /// assignement is disabled
-      SplineErrors& operator= ( const SplineErrors& ) = delete;  // assignement is disabled
+      SplineErrors& operator=( const SplineErrors& ) = delete; // assignement is disabled
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      Gaudi::Math::ValueWithError operator()  ( const double x ) const ;
+      Gaudi::Math::ValueWithError operator()( const double x ) const;
       // ======================================================================
     public:
       // ======================================================================
       /// access to the spline itself
-      const Spline& spline ()  const { return m_spline ; }
-      const Spline& errors ()  const { return m_errors ; }
+      const Spline& spline() const { return m_spline; }
+      const Spline& errors() const { return m_errors; }
       // ======================================================================
     private:
       // ======================================================================
       /// the spline for the values
-      Spline m_spline ; // the spline for the values
+      Spline m_spline; // the spline for the values
       /// the spline for the errors
-      Spline m_errors ; // the spline for the errors
+      Spline m_errors; // the spline for the errors
       // ======================================================================
     };
     // ========================================================================
@@ -393,21 +342,12 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Interp2D final
-    {
+    class GAUDI_API Interp2D final {
       // ========================================================================
     public:
       // ========================================================================
       /// interpolation type
-      enum Type{
-        Nearest    = 0 ,
-        Linear         ,
-        Parabolic      ,
-        Cubic          ,
-        Quartic        ,
-        Quintic        ,
-        Last
-      };
+      enum Type { Nearest = 0, Linear, Parabolic, Cubic, Quartic, Quintic, Last };
       // ========================================================================
     public:
       // ========================================================================
@@ -418,50 +358,41 @@ namespace Gaudi
        *  @param scale the scale for the input variable
        *  @param shift the bias  for the input variable
        */
-      Interp2D
-      ( const TH2&    data                ,
-        const Type&   typex  = Cubic      ,
-        const Type&   typey  = Cubic      ,
-        const bool    null   = true       ,
-        const double  scalex = 1          ,
-        const double  scaley = 1          ,
-        const double  shiftx = 0          ,
-        const double  shifty = 0          ) ;
+      Interp2D( const TH2& data, const Type& typex = Cubic, const Type& typey = Cubic, const bool null = true,
+                const double scalex = 1, const double scaley = 1, const double shiftx = 0, const double shifty = 0 );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      Gaudi::Math::ValueWithError
-      operator()  ( const double x , const double y ) const ;
+      Gaudi::Math::ValueWithError operator()( const double x, const double y ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// the historgam itself
-      const TH2* m_histo  ;  // the histogram itself
+      const TH2* m_histo; // the histogram itself
       /// nullify outside the histogram range ?
-      bool       m_null   ;  // nullify outside the histogram range ?
+      bool m_null; // nullify outside the histogram range ?
       /// interpolation type for X
-      Type       m_typex  ;  //  interpolation type for X
+      Type m_typex; //  interpolation type for X
       /// interpolation type for Y
-      Type       m_typey  ;  //  interpolation type for Y
+      Type m_typey; //  interpolation type for Y
       /// the scale parameter for X
-      double     m_scalex ;  // the scale parameter for X
+      double m_scalex; // the scale parameter for X
       /// the scale parameter for Y
-      double     m_scaley ;  // the scale parameter for Y
+      double m_scaley; // the scale parameter for Y
       /// the shift parameter for X
-      double     m_shiftx ;  // the shift parameter for X
+      double m_shiftx; // the shift parameter for X
       /// the shift parameter for Y
-      double     m_shifty ;  // the shift parameter for Y
+      double m_shifty; // the shift parameter for Y
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Linear
      *  simple linear function that pass through two points
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Linear final
-    {
+    class GAUDI_API Linear final {
     public:
       // ======================================================================
       /** constructor from two points
@@ -470,37 +401,33 @@ namespace Gaudi
        *  @param x2 the second abscissa
        *  @param y2 function value at x2
        */
-      Linear ( const double x1 = 0 ,
-               const double y1 = 0 ,
-               const double x2 = 1 ,
-               const double y2 = 0 ) ;
+      Linear( const double x1 = 0, const double y1 = 0, const double x2 = 1, const double y2 = 0 );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value: y = a*x + b
-      double operator() ( const double x ) const  { return m_a * x + m_b ; }
+      double operator()( const double x ) const { return m_a * x + m_b; }
       // ======================================================================
     public:
       // ======================================================================
       ///  y = a*x + b
-      double a () const { return m_a ; }
+      double a() const { return m_a; }
       ///  y = a*x + b
-      double b () const { return m_b ; }
+      double b() const { return m_b; }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      double  m_a ;
-      double  m_b ;
+      double m_a;
+      double m_b;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class LinearErr
      *  simple linear function that pass through two points
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API LinearErr final
-    {
+    class GAUDI_API LinearErr final {
     public:
       // ======================================================================
       /** constructor from two points
@@ -509,40 +436,36 @@ namespace Gaudi
        *  @param x2 the second abscissa
        *  @param y2 function value at x2
        */
-      LinearErr
-      ( const double                       x1 = 0                             ,
-        const Gaudi::Math::ValueWithError& y1 = Gaudi::Math::ValueWithError() ,
-        const double                       x2 = 1                             ,
-        const Gaudi::Math::ValueWithError& y2 = Gaudi::Math::ValueWithError() ) ;
+      LinearErr( const double x1 = 0, const Gaudi::Math::ValueWithError& y1 = Gaudi::Math::ValueWithError(),
+                 const double x2 = 1, const Gaudi::Math::ValueWithError& y2 = Gaudi::Math::ValueWithError() );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value:
-      Gaudi::Math::ValueWithError operator() ( const double x ) const  ;
+      Gaudi::Math::ValueWithError operator()( const double x ) const;
       // ======================================================================
     public:
       // ======================================================================
       ///  y = a * x  + b
-      double a () const ;
+      double a() const;
       ///  y = a * x + b
-      double b () const ;
+      double b() const;
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      double                      m_x1 ;
-      double                      m_x2 ;
-      Gaudi::Math::ValueWithError m_y1 ;
-      Gaudi::Math::ValueWithError m_y2 ;
+      double                      m_x1;
+      double                      m_x2;
+      Gaudi::Math::ValueWithError m_y1;
+      Gaudi::Math::ValueWithError m_y2;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Parabola
      *  simple parabola function that pass through three points
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Parabola final
-    {
+    class GAUDI_API Parabola final {
     public:
       // ======================================================================
       /** constructor from three points
@@ -553,43 +476,37 @@ namespace Gaudi
        *  @param x3 the third abscissa
        *  @param y3 function value at x3
        */
-      Parabola ( const double x1 = -1 ,
-                 const double y1 =  0 ,
-                 const double x2 =  0 ,
-                 const double y2 =  0 ,
-                 const double x3 =  1 ,
-                 const double y3 =  0 ) ;
+      Parabola( const double x1 = -1, const double y1 = 0, const double x2 = 0, const double y2 = 0,
+                const double x3 = 1, const double y3 = 0 );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value: y = a*x^2 + b*x + c
-      double operator() ( const double x ) const
-      { return ( m_a * x + m_b ) * x + m_c ; }
+      double operator()( const double x ) const { return ( m_a * x + m_b ) * x + m_c; }
       // ======================================================================
     public:
       // ======================================================================
       /// y = a*x^2 + b*x + c
-      double a () const { return m_a ; }
+      double a() const { return m_a; }
       /// y = a*x^2 + b*x + c
-      double b () const { return m_b ; }
+      double b() const { return m_b; }
       /// y = a*x^2 + b*x + c
-      double c () const { return m_c ; }
+      double c() const { return m_c; }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      double  m_a ;
-      double  m_b ;
-      double  m_c ;
+      double m_a;
+      double m_b;
+      double m_c;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ParabolaErr
      *  simple parabola function that pass through three points
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API ParabolaErr final
-    {
+    class GAUDI_API ParabolaErr final {
     public:
       // ======================================================================
       /** constructor from three points
@@ -600,48 +517,44 @@ namespace Gaudi
        *  @param x3 the third abscissa
        *  @param y3 function value at x3
        */
-      ParabolaErr
-      ( const double                       x1 = -1                            ,
-        const Gaudi::Math::ValueWithError& y1 = Gaudi::Math::ValueWithError() ,
-        const double                       x2 = 0                             ,
-        const Gaudi::Math::ValueWithError& y2 = Gaudi::Math::ValueWithError() ,
-        const double                       x3 = 1                             ,
-        const Gaudi::Math::ValueWithError& y3 = Gaudi::Math::ValueWithError() ) ;
+      ParabolaErr( const double x1 = -1, const Gaudi::Math::ValueWithError& y1 = Gaudi::Math::ValueWithError(),
+                   const double x2 = 0, const Gaudi::Math::ValueWithError& y2 = Gaudi::Math::ValueWithError(),
+                   const double x3 = 1, const Gaudi::Math::ValueWithError& y3 = Gaudi::Math::ValueWithError() );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value: y = a*x^2 + b*x + c
-      Gaudi::Math::ValueWithError operator() ( const double x ) const ;
+      Gaudi::Math::ValueWithError operator()( const double x ) const;
       // ======================================================================
     public:
       // ======================================================================
       /// y = a*x^2 + b*x + c
-      double a () const ;
+      double a() const;
       /// y = a*x^2 + b*x + c
-      double b () const ;
+      double b() const;
       /// y = a*x^2 + b*x + c
-      double c () const ;
+      double c() const;
       // ======================================================================
-    private : // input data
+    private: // input data
       // ======================================================================
-      double                      m_x1 ;
-      double                      m_x2 ;
-      double                      m_x3 ;
+      double m_x1;
+      double m_x2;
+      double m_x3;
       //
-      Gaudi::Math::ValueWithError m_y1 ;
-      Gaudi::Math::ValueWithError m_y2 ;
-      Gaudi::Math::ValueWithError m_y3 ;
+      Gaudi::Math::ValueWithError m_y1;
+      Gaudi::Math::ValueWithError m_y2;
+      Gaudi::Math::ValueWithError m_y3;
       // ======================================================================
-    private : // helper data
+    private: // helper data
       // ======================================================================
-      double                      m_d1 ;
-      double                      m_d2 ;
-      double                      m_d3 ;
+      double m_d1;
+      double m_d2;
+      double m_d3;
       // ======================================================================
-    } ;
-  } //                                             end of namespace Gaudi::Math
+    };
+  } // namespace Math
   // ==========================================================================
-} //                                                    end of namesspace Gaudi
+} // namespace Gaudi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

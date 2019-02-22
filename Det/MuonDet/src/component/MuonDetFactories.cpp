@@ -18,7 +18,6 @@ typedef XmlUserConditionCnv<MuonChamberGrid> XmlMuonGridCnv;
 #include "MuonDet/DeMuonChamber.h"
 typedef XmlUserDetElemCnv<DeMuonChamber> XmlDeMuonChamber;
 
-
 #include "MuonDet/DeMuonRegion.h"
 typedef XmlUserDetElemCnv<DeMuonRegion> XmlDeMuonRegion;
 

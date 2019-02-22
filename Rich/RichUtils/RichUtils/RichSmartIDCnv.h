@@ -31,8 +31,7 @@
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
 
-namespace Rich
-{
+namespace Rich {
 
   /** @class SmartIDGlobalOrdering RichSmartIDCnv.h RichUtils/RichSmartIDCnv.h
    *
@@ -74,28 +73,21 @@ namespace Rich
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   05/02/2008
    */
-  class SmartIDGlobalOrdering final
-  {
+  class SmartIDGlobalOrdering final {
 
   public: // definitions and constants
-
     /// The mode in operation to determine ALICE or LHCb data
-    enum PixelMode
-    {
-      AutomaticMode =
-        0,       ///< Automatically determine ALICE or LHCb mode from the RichSmartID (default)
-      ALICEMode, ///< Force ALICE mode (i.e. 256 pixel rows per HPD)
-      LHCbMode   ///< Force LHCb mode  (i.e. 32  pixel rows per HPD)
+    enum PixelMode {
+      AutomaticMode = 0, ///< Automatically determine ALICE or LHCb mode from the RichSmartID (default)
+      ALICEMode,         ///< Force ALICE mode (i.e. 256 pixel rows per HPD)
+      LHCbMode           ///< Force LHCb mode  (i.e. 32  pixel rows per HPD)
     };
 
   public:
-
     /// Constructor from a RichSmartID
-    explicit SmartIDGlobalOrdering( const LHCb::RichSmartID                      id,
-                                    const Rich::SmartIDGlobalOrdering::PixelMode mode =
-                                      Rich::SmartIDGlobalOrdering::AutomaticMode )
-      : m_id( id ), m_mode( mode )
-    {}
+    explicit SmartIDGlobalOrdering( const LHCb::RichSmartID id, const Rich::SmartIDGlobalOrdering::PixelMode mode =
+                                                                    Rich::SmartIDGlobalOrdering::AutomaticMode )
+        : m_id( id ), m_mode( mode ) {}
 
     /// Access the RichSmartID this object represents
     inline LHCb::RichSmartID smartID() const { return m_id; }
@@ -104,14 +96,12 @@ namespace Rich
     inline Rich::SmartIDGlobalOrdering::PixelMode pixelMode() const { return m_mode; }
 
   private:
-
     /** Number of PD columns per PD panel.
      *
      *  Note here 'column' is used in the RICH sense. I.e. a column is vertical
      *  in RICH2 but horizontal in RICH1.
      */
-    inline unsigned int _nPDCols() const
-    {
+    inline unsigned int _nPDCols() const {
       // Eventually these numbers should be in RichDAQDefinitions.h ??
       return ( Rich::Rich1 == smartID().rich() ? 7 : 9 );
     }
@@ -121,8 +111,7 @@ namespace Rich
      *  Note here 'column' is used in the RICH sense. I.e. a column is vertical
      *  in RICH2 but horizontal in RICH1.
      */
-    inline unsigned int _nPDsPerCol() const
-    {
+    inline unsigned int _nPDsPerCol() const {
       // Eventually these numbers should be in RichDAQDefinitions.h ??
       return ( Rich::Rich1 == smartID().rich() ? 14 : 16 );
     }
@@ -140,27 +129,23 @@ namespace Rich
     int _pixelRowNum() const;
 
     /// Returns the 'global' PD number in a RICH column
-    inline int _numInCol() const
-    {
-      return ( ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() ) ?
-                 ( smartID().pdNumInCol() ) :
-                 ( _nPDsPerCol() - 1 - smartID().pdNumInCol() ) );
+    inline int _numInCol() const {
+      return ( ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() )
+                   ? ( smartID().pdNumInCol() )
+                   : ( _nPDsPerCol() - 1 - smartID().pdNumInCol() ) );
     }
 
     /// Returns the 'global' PD column number
     int _pdCol() const;
 
   public:
-
     /// Returns the minimum PD x-coordinate on a panel.
     inline int minPDX() const { return ( 0 ); }
 
     /// Returns the maximum PD x-coordinate on a panel.
-    inline int maxPDX() const
-    {
-      return ( ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() ) ?
-                 ( _nPDsPerCol() ) :
-                 ( _nPDCols() ) );
+    inline int maxPDX() const {
+      return ( ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() ) ? ( _nPDsPerCol() )
+                                                                                        : ( _nPDCols() ) );
     }
 
     /// Returns the total number of PDs on the x-axis.
@@ -170,11 +155,9 @@ namespace Rich
     inline int minPDY() const { return ( 0 ); }
 
     /// Returns the minimum PD y-coordinate on a panel.
-    inline int maxPDY() const
-    {
-      return ( ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() ) ?
-                 ( _nPDCols() ) :
-                 ( _nPDsPerCol() ) );
+    inline int maxPDY() const {
+      return ( ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() ) ? ( _nPDCols() )
+                                                                                        : ( _nPDsPerCol() ) );
     }
 
     /// Returns the total number of PDs on the y-axis.
@@ -217,18 +200,15 @@ namespace Rich
     inline int totalNumInGlobalY() const { return maxGlobalPixelY() - minGlobalPixelY(); }
 
   public:
-
     /** Returns the PD number in column 'offset'.
      *
      *  Used to get the stagger between neighbouring PD columns
      */
-    inline double globalPdNumInColOffset() const
-    {
+    inline double globalPdNumInColOffset() const {
       double Offset;
-      if ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() )
-      { Offset = ( ( smartID().pdCol() + 1 ) % 2 ) * 0.5; }
-      else
-      {
+      if ( Rich::Rich1 == smartID().rich() && Rich::bottom == smartID().panel() ) {
+        Offset = ( ( smartID().pdCol() + 1 ) % 2 ) * 0.5;
+      } else {
         Offset = ( smartID().pdCol() % 2 ) * 0.5;
       }
 
@@ -236,16 +216,10 @@ namespace Rich
     }
 
     /// Returns a 'global' PD column number
-    inline int globalPdX() const
-    {
-      return ( Rich::Rich2 == smartID().rich() ? _pdCol() : _numInCol() );
-    }
+    inline int globalPdX() const { return ( Rich::Rich2 == smartID().rich() ? _pdCol() : _numInCol() ); }
 
     /// Returns a 'global' PD number in column number
-    inline int globalPdY() const
-    {
-      return ( Rich::Rich1 == smartID().rich() ? _pdCol() : _numInCol() );
-    }
+    inline int globalPdY() const { return ( Rich::Rich1 == smartID().rich() ? _pdCol() : _numInCol() ); }
 
     /// Returns a 'global' pixel column number
     int globalPixelX() const;
@@ -267,129 +241,98 @@ namespace Rich
     int localPixelY() const;
 
   public:
-
     /// Overload output to MsgStream
-    friend inline MsgStream &operator<<( MsgStream &os, const SmartIDGlobalOrdering &order )
-    {
+    friend inline MsgStream& operator<<( MsgStream& os, const SmartIDGlobalOrdering& order ) {
       return order.fillStream( os );
     }
 
   private:
-
     /// Print in a human readable way
-    MsgStream &fillStream( MsgStream &os ) const;
+    MsgStream& fillStream( MsgStream& os ) const;
 
   private:
-
-    LHCb::RichSmartID m_id; ///< The RichSmartID
-    PixelMode m_mode; ///< The data mode (Forced ALICE or LHCb, or automatic based on the data)
+    LHCb::RichSmartID m_id;   ///< The RichSmartID
+    PixelMode         m_mode; ///< The data mode (Forced ALICE or LHCb, or automatic based on the data)
   };
 
   // Returns the number of pixel rows per PD (depending on data mode)
-  inline unsigned int SmartIDGlobalOrdering::_nPixelRowsPerPD() const
-  {
-    return ( pixelMode() == ALICEMode ?
-               Rich::DAQ::HPD::MaxDataSizeALICE :
-               pixelMode() == LHCbMode ?
-               Rich::DAQ::HPD::MaxDataSize :
-               smartID().pixelSubRowDataIsValid() ? Rich::DAQ::HPD::MaxDataSizeALICE :
-                                                    Rich::DAQ::HPD::MaxDataSize );
+  inline unsigned int SmartIDGlobalOrdering::_nPixelRowsPerPD() const {
+    return ( pixelMode() == ALICEMode
+                 ? Rich::DAQ::HPD::MaxDataSizeALICE
+                 : pixelMode() == LHCbMode ? Rich::DAQ::HPD::MaxDataSize
+                                           : smartID().pixelSubRowDataIsValid() ? Rich::DAQ::HPD::MaxDataSizeALICE
+                                                                                : Rich::DAQ::HPD::MaxDataSize );
   }
 
   // Returns the PD column offset number
-  inline unsigned int SmartIDGlobalOrdering::_panelPDColOffset() const
-  {
-    return ( Rich::Rich2 == smartID().rich() ?
-               ( Rich::left == smartID().panel() ? _nPDCols() : 0 ) :
-               ( Rich::top == smartID().panel() ? _nPDCols() : 0 ) );
+  inline unsigned int SmartIDGlobalOrdering::_panelPDColOffset() const {
+    return ( Rich::Rich2 == smartID().rich() ? ( Rich::left == smartID().panel() ? _nPDCols() : 0 )
+                                             : ( Rich::top == smartID().panel() ? _nPDCols() : 0 ) );
   }
 
   // Returns the 'global' PD column number
-  inline int SmartIDGlobalOrdering::_pdCol() const
-  {
-    return ( ( Rich::Rich1 == smartID().rich() && Rich::top == smartID().panel() ) ?
-               ( _panelPDColOffset() + _nPDCols() - 1 - smartID().pdCol() ) :
-               ( _panelPDColOffset() + smartID().pdCol() ) );
+  inline int SmartIDGlobalOrdering::_pdCol() const {
+    return ( ( Rich::Rich1 == smartID().rich() && Rich::top == smartID().panel() )
+                 ? ( _panelPDColOffset() + _nPDCols() - 1 - smartID().pdCol() )
+                 : ( _panelPDColOffset() + smartID().pdCol() ) );
   }
 
   /// Returns the maximum 'local' pixel x-coordinate
-  inline int SmartIDGlobalOrdering::maxLocalPixelX() const
-  {
+  inline int SmartIDGlobalOrdering::maxLocalPixelX() const {
     return ( Rich::Rich2 == smartID().rich() ? _nPixelColsPerPD() : _nPixelRowsPerPD() );
   }
 
   /// Returns the maximum 'local' pixel y-coordinate
-  inline int SmartIDGlobalOrdering::maxLocalPixelY() const
-  {
+  inline int SmartIDGlobalOrdering::maxLocalPixelY() const {
     return ( Rich::Rich1 == smartID().rich() ? _nPixelColsPerPD() : _nPixelRowsPerPD() );
   }
 
   // Returns the maximum 'global' pixel x-coordinate
-  inline int SmartIDGlobalOrdering::maxGlobalPixelX() const
-  {
-    return ( Rich::Rich2 == smartID().rich() ?
-               _nPixelColsPerPD() * _nPDCols() * 2 :
-               (int)( _nPixelRowsPerPD() * ( _nPDsPerCol() + 0.5 ) ) );
+  inline int SmartIDGlobalOrdering::maxGlobalPixelX() const {
+    return ( Rich::Rich2 == smartID().rich() ? _nPixelColsPerPD() * _nPDCols() * 2
+                                             : (int)( _nPixelRowsPerPD() * ( _nPDsPerCol() + 0.5 ) ) );
   }
 
   // Returns the maximum 'global' pixel column number with a given PD size.
-  inline int SmartIDGlobalOrdering::maxGlobalPixelX( int sizeX ) const
-  {
-    return ( Rich::Rich2 == smartID().rich() ? sizeX * _nPDCols() * 2 :
-                                               (int)( sizeX * ( _nPDsPerCol() + 0.5 ) ) );
+  inline int SmartIDGlobalOrdering::maxGlobalPixelX( int sizeX ) const {
+    return ( Rich::Rich2 == smartID().rich() ? sizeX * _nPDCols() * 2 : (int)( sizeX * ( _nPDsPerCol() + 0.5 ) ) );
   }
 
   // Returns the maximum 'global' pixel y-coordinate
-  inline int SmartIDGlobalOrdering::maxGlobalPixelY() const
-  {
-    return ( Rich::Rich1 == smartID().rich() ?
-               _nPixelColsPerPD() * _nPDCols() * 2 :
-               (int)( _nPixelRowsPerPD() * ( _nPDsPerCol() + 0.5 ) ) );
+  inline int SmartIDGlobalOrdering::maxGlobalPixelY() const {
+    return ( Rich::Rich1 == smartID().rich() ? _nPixelColsPerPD() * _nPDCols() * 2
+                                             : (int)( _nPixelRowsPerPD() * ( _nPDsPerCol() + 0.5 ) ) );
   }
 
   // Returns the maximum 'global' pixel y-coordinate with a given PD size.
-  inline int SmartIDGlobalOrdering::maxGlobalPixelY( int sizeY ) const
-  {
-    return ( Rich::Rich1 == smartID().rich() ? sizeY * _nPDCols() * 2 :
-                                               (int)( sizeY * ( _nPDsPerCol() + 0.5 ) ) );
+  inline int SmartIDGlobalOrdering::maxGlobalPixelY( int sizeY ) const {
+    return ( Rich::Rich1 == smartID().rich() ? sizeY * _nPDCols() * 2 : (int)( sizeY * ( _nPDsPerCol() + 0.5 ) ) );
   }
 
   // Returns the 'correct' PD pixel row number (ALICE or LHCb mode)
-  inline int SmartIDGlobalOrdering::_pixelRowNum() const
-  {
-    return ( smartID().pixelSubRowDataIsValid() ?
-               ( Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel * smartID().pixelRow() ) +
-                 smartID().pixelSubRow() :
-               smartID().pixelRow() );
+  inline int SmartIDGlobalOrdering::_pixelRowNum() const {
+    return ( smartID().pixelSubRowDataIsValid()
+                 ? ( Rich::DAQ::HPD::NumAlicePixelsPerLHCbPixel * smartID().pixelRow() ) + smartID().pixelSubRow()
+                 : smartID().pixelRow() );
   }
 
   // Returns a 'global' pixel column number
-  inline int SmartIDGlobalOrdering::globalPixelX() const
-  {
-    if ( Rich::Rich1 == smartID().rich() )
-    {
-      return ( ( Rich::bottom == smartID().panel() ? ( _nPixelRowsPerPD() - _pixelRowNum() ) :
-                                                     _pixelRowNum() ) +
-               ( _numInCol() * _nPixelRowsPerPD() ) +
-               (int)( globalPdNumInColOffset() * _nPixelRowsPerPD() ) );
-    }
-    else
-    {
+  inline int SmartIDGlobalOrdering::globalPixelX() const {
+    if ( Rich::Rich1 == smartID().rich() ) {
+      return ( ( Rich::bottom == smartID().panel() ? ( _nPixelRowsPerPD() - _pixelRowNum() ) : _pixelRowNum() ) +
+               ( _numInCol() * _nPixelRowsPerPD() ) + (int)( globalPdNumInColOffset() * _nPixelRowsPerPD() ) );
+    } else {
       return ( smartID().pixelCol() + ( _pdCol() * _nPixelColsPerPD() ) );
     }
   }
 
   // Returns a 'global' pixel row number
-  inline int SmartIDGlobalOrdering::globalPixelY() const
-  {
-    if ( Rich::Rich1 == smartID().rich() )
-    {
-      return ( ( Rich::bottom == smartID().panel() ? ( _nPixelColsPerPD() - smartID().pixelCol() ) :
-                                                     smartID().pixelCol() ) +
-               ( _pdCol() * _nPixelColsPerPD() ) );
-    }
-    else
-    {
+  inline int SmartIDGlobalOrdering::globalPixelY() const {
+    if ( Rich::Rich1 == smartID().rich() ) {
+      return (
+          ( Rich::bottom == smartID().panel() ? ( _nPixelColsPerPD() - smartID().pixelCol() ) : smartID().pixelCol() ) +
+          ( _pdCol() * _nPixelColsPerPD() ) );
+    } else {
       return ( _pixelRowNum() + ( _numInCol() * _nPixelRowsPerPD() ) +
                (int)( globalPdNumInColOffset() * _nPixelRowsPerPD() ) );
     }
@@ -397,44 +340,44 @@ namespace Rich
 
   // Returns a 'global' pixel X coordinate number from a given local coordinate and size of X PD
   // direction.
-  inline int SmartIDGlobalOrdering::globalPixelX( const int localX, const int sizeX ) const
-  {
+  inline int SmartIDGlobalOrdering::globalPixelX( const int localX, const int sizeX ) const {
     return ( Rich::Rich1 == smartID().rich() ?
-               // RICH1
-               ( localX + ( _numInCol() * sizeX ) + (int)( globalPdNumInColOffset() * sizeX ) ) :
-               // RICH2
-               ( localX + ( _pdCol() * sizeX ) ) );
+                                             // RICH1
+                 ( localX + ( _numInCol() * sizeX ) + (int)( globalPdNumInColOffset() * sizeX ) )
+                                             :
+                                             // RICH2
+                 ( localX + ( _pdCol() * sizeX ) ) );
   }
 
   // Returns a 'global' pixel y coordinate from a given local coordinate and size of the y PD
   // direction.
-  inline int SmartIDGlobalOrdering::globalPixelY( const int localY, const int sizeY ) const
-  {
+  inline int SmartIDGlobalOrdering::globalPixelY( const int localY, const int sizeY ) const {
     return ( Rich::Rich1 == smartID().rich() ?
-               // RICH1
-               ( localY + ( _pdCol() * sizeY ) ) :
-               // RICH2
-               ( localY + ( _numInCol() * sizeY ) + (int)( globalPdNumInColOffset() * sizeY ) ) );
+                                             // RICH1
+                 ( localY + ( _pdCol() * sizeY ) )
+                                             :
+                                             // RICH2
+                 ( localY + ( _numInCol() * sizeY ) + (int)( globalPdNumInColOffset() * sizeY ) ) );
   }
 
   // Returns a 'local' pixel column number
-  inline int SmartIDGlobalOrdering::localPixelX() const
-  {
+  inline int SmartIDGlobalOrdering::localPixelX() const {
     return ( Rich::Rich1 == smartID().rich() ?
-               // RICH1
-               _pixelRowNum() :
-               // RICH2
-               smartID().pixelCol() );
+                                             // RICH1
+                 _pixelRowNum()
+                                             :
+                                             // RICH2
+                 smartID().pixelCol() );
   }
 
   // Returns a 'local' pixel row number
-  inline int SmartIDGlobalOrdering::localPixelY() const
-  {
+  inline int SmartIDGlobalOrdering::localPixelY() const {
     return ( Rich::Rich1 == smartID().rich() ?
-               // RICH1
-               smartID().pixelCol() :
-               // RICH2
-               _pixelRowNum() );
+                                             // RICH1
+                 smartID().pixelCol()
+                                             :
+                                             // RICH2
+                 _pixelRowNum() );
   }
 
 } // namespace Rich

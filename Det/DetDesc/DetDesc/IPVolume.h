@@ -8,16 +8,16 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef  DETDESC_IPVOLUME_H
-#define  DETDESC_IPVOLUME_H 1
+#ifndef DETDESC_IPVOLUME_H
+#define DETDESC_IPVOLUME_H 1
 /// STD & STL includes
 #include <iostream>
 #include <string>
 /// GaudiKernel includes
 #include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 /// DetDesc includes
 #include "DetDesc/ILVolume.h"
 #include "DetDesc/ISolid.h"
@@ -25,7 +25,7 @@
 /** Declaration of the interface ID
  * ( unique interface identifier , major & minor versions)
  */
-static const InterfaceID IID_IPVolume( 154 , 5 , 0 );
+static const InterfaceID IID_IPVolume( 154, 5, 0 );
 
 /** @interface IPVolume IPVolume.h "DetDesc/IPVolume.h"
  *
@@ -37,58 +37,56 @@ static const InterfaceID IID_IPVolume( 154 , 5 , 0 );
  *  @author Vanya Belyaev  Ivan.Belyaev@itep.ru
  */
 
-struct IPVolume : virtual IInterface
-{
+struct IPVolume : virtual IInterface {
 
   /** retrieve the unique interface identifier
    *  @return unique interface identifier
    */
   static const InterfaceID& interfaceID() { return IID_IPVolume; }
 
-
   /** retrieve name of the physical volume
    *  (unique within mother logical volume)
    *  @return name of physical volume
    */
-  virtual const std::string&     name       () const = 0;
+  virtual const std::string& name() const = 0;
 
   /**  retrieve the name of associated Logical Volume
    *  @return name of associated Logical Volume
    */
-  virtual const std::string&     lvolumeName() const = 0;
+  virtual const std::string& lvolumeName() const = 0;
 
   /**  retrieve  the C++ pointer to Logical Volume
    *  @return pointer to Logical Volume
    */
-  virtual const ILVolume*        lvolume    () const = 0;
+  virtual const ILVolume* lvolume() const = 0;
 
   /** get the tranformation matrix
    *  @return reference to transformation matrix
    */
-  virtual const Gaudi::Transform3D&  matrix     () const = 0;
+  virtual const Gaudi::Transform3D& matrix() const = 0;
 
   /** get the inverse transformation matrix
    *  @return reference to inverse transformationmatrix
    */
-  virtual const Gaudi::Transform3D&  matrixInv  () const = 0;
+  virtual const Gaudi::Transform3D& matrixInv() const = 0;
 
   /** transform point from  Mother Reference System  to the Local one
    *  @param PointInMother point in Mother Reference System
    *  @return point in local reference system
    */
-  virtual Gaudi::XYZPoint toLocal(const Gaudi::XYZPoint& PointInMother  ) const = 0;
+  virtual Gaudi::XYZPoint toLocal( const Gaudi::XYZPoint& PointInMother ) const = 0;
 
   /** transform point in Local Reference System to the Mother Reference System
    *  @param PointInLocal point in Local Referency System
    *  @return point in mother reference system
    */
-  virtual Gaudi::XYZPoint toMother(const Gaudi::XYZPoint& PointInLocal ) const = 0;
+  virtual Gaudi::XYZPoint toMother( const Gaudi::XYZPoint& PointInLocal ) const = 0;
 
   /** check for 3D-point
    *  @param PointInMother pointin Mother Referency System
    *  @return true if point is inside physical volume
    */
-  virtual bool isInside( const Gaudi::XYZPoint& PointInMother) const = 0;
+  virtual bool isInside( const Gaudi::XYZPoint& PointInMother ) const = 0;
 
   /** Intersection of the physical volume with with line.
    *  The line is parametrized in the local reference system of the mother
@@ -111,11 +109,8 @@ struct IPVolume : virtual IInterface
    *  @param intersections output container
    *  @param threshold threshold value
    */
-  virtual unsigned int intersectLine
-  ( const Gaudi::XYZPoint        & Point         ,
-    const Gaudi::XYZVector       & Vector        ,
-    ILVolume::Intersections & intersections ,
-    const double              threshold     ) const = 0 ;
+  virtual unsigned int intersectLine( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                      ILVolume::Intersections& intersections, const double threshold ) const = 0;
 
   /** Intersection of the physical volume with with line.
    *  The line is parametrized in the local reference system of the mother
@@ -140,13 +135,9 @@ struct IPVolume : virtual IInterface
    *  @param tickMax maximum value of possible Tick
    *  @param Threshold threshold value
    */
-  virtual unsigned int intersectLine
-  ( const Gaudi::XYZPoint        & Point         ,
-    const Gaudi::XYZVector       & Vector        ,
-    ILVolume::Intersections & intersections ,
-    const ISolid::Tick        tickMin       ,
-    const ISolid::Tick        tickMax       ,
-    const double              Threshold     ) const = 0 ;
+  virtual unsigned int intersectLine( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                      ILVolume::Intersections& intersections, const ISolid::Tick tickMin,
+                                      const ISolid::Tick tickMax, const double Threshold ) const = 0;
 
   /** printout to STD/STL stream
    *  @param os STD/STL stream
@@ -163,7 +154,7 @@ struct IPVolume : virtual IInterface
   /** reset to the initial state
    *  @return self-reference
    */
-  virtual IPVolume* reset () = 0 ;
+  virtual IPVolume* reset() = 0;
 
   /** Copy number
    *  for "Regular" case it is an ordering number
@@ -177,14 +168,12 @@ struct IPVolume : virtual IInterface
    *  @param ma misalignment matrix (assumed to be small!!!)
    *  @return the resulting transformation matrix
    */
-  virtual const Gaudi::Transform3D&
-  applyMisAlignment ( const Gaudi::Transform3D& ma ) = 0 ;
+  virtual const Gaudi::Transform3D& applyMisAlignment( const Gaudi::Transform3D& ma ) = 0;
 
   /** reset the  misalignemnt
    *  @return the "nominal" transformation matrix
    */
-  virtual const Gaudi::Transform3D& resetMisAlignment() = 0 ;
-
+  virtual const Gaudi::Transform3D& resetMisAlignment() = 0;
 };
 
 // ============================================================================
@@ -194,8 +183,7 @@ struct IPVolume : virtual IInterface
  *  @return reference to the stream
  */
 // ============================================================================
-inline std::ostream& operator<<( std::ostream& os , const IPVolume& pv )
-{ return pv.printOut( os ); }
+inline std::ostream& operator<<( std::ostream& os, const IPVolume& pv ) { return pv.printOut( os ); }
 
 // ============================================================================
 /** output operator to STD/STL stream
@@ -204,8 +192,9 @@ inline std::ostream& operator<<( std::ostream& os , const IPVolume& pv )
  *  @return reference to the stream
  */
 // ============================================================================
-inline std::ostream& operator<<( std::ostream& os , const IPVolume*  pv )
-{ return pv ? ( os << *pv ) : ( os << " IPVolume* points to NULL " ) ; }
+inline std::ostream& operator<<( std::ostream& os, const IPVolume* pv ) {
+  return pv ? ( os << *pv ) : ( os << " IPVolume* points to NULL " );
+}
 
 // ============================================================================
 /** output operator to Gaudi MsgStream stream
@@ -214,8 +203,7 @@ inline std::ostream& operator<<( std::ostream& os , const IPVolume*  pv )
  *  @return reference to the stream
  */
 // ============================================================================
-inline MsgStream& operator<<( MsgStream& os , const IPVolume& pv )
-{ return pv.printOut( os ); }
+inline MsgStream& operator<<( MsgStream& os, const IPVolume& pv ) { return pv.printOut( os ); }
 
 // ============================================================================
 /** output operator to Gaudi MsgStream stream
@@ -224,10 +212,11 @@ inline MsgStream& operator<<( MsgStream& os , const IPVolume& pv )
  *  @return reference to the stream
  */
 // ============================================================================
-inline MsgStream& operator<<( MsgStream& os , const IPVolume*  pv )
-{ return pv ? ( os << *pv ) : ( os << " IPVolume* points to NULL " ); }
+inline MsgStream& operator<<( MsgStream& os, const IPVolume* pv ) {
+  return pv ? ( os << *pv ) : ( os << " IPVolume* points to NULL " );
+}
 
 // ============================================================================
 // The End
 // ============================================================================
-#endif   ///<   DETDESC_IPVOLUME_H
+#endif ///<   DETDESC_IPVOLUME_H

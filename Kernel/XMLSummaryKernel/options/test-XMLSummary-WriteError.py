@@ -17,6 +17,6 @@ from GaudiConf import IOHelper
 importOptions("$XMLSUMMARYKERNELROOT/options/test-XMLSummary.py")
 
 # Set up the OutputStream that fails to copy an event data file
-FailCopyStream=InputCopyStream()
-FailCopyStream.Output = IOHelper().dressFile('PFN:/SomeFileYouCannotWriteTo.root',"O")
-
+FailCopyStream = InputCopyStream()
+FailCopyStream.Output = IOHelper().dressFile(
+    'PFN:/SomeFileYouCannotWriteTo.root', "O")

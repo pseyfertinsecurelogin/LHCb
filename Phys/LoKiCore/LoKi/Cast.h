@@ -26,15 +26,13 @@
  *  @date 2006-02-20
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Cast Cast.h LoKi/Cast.h
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-17
    */
-  namespace  Cast
-  {
+  namespace Cast {
     // ========================================================================
     /** @struct ConstAway
      *  The trivial function which performs
@@ -43,47 +41,36 @@ namespace LoKi
      *  @date   2006-02-17
      */
     template <class TYPE>
-    struct ConstAway
-    {
-      inline TYPE* operator() ( const TYPE* o ) const
-      { return const_cast<TYPE*>( o ) ; }
-    } ;
+    struct ConstAway {
+      inline TYPE* operator()( const TYPE* o ) const { return const_cast<TYPE*>( o ); }
+    };
     // ========================================================================
     template <class TYPE>
-    struct ConstAway<const TYPE>
-    {
-      inline TYPE* operator() ( const TYPE* o ) const
-      { return const_cast<TYPE*>( o ) ; }
-    } ;
+    struct ConstAway<const TYPE> {
+      inline TYPE* operator()( const TYPE* o ) const { return const_cast<TYPE*>( o ); }
+    };
     // ========================================================================
     template <class TYPE>
-    struct ConstAway<TYPE*>
-    {
-      inline TYPE* operator() ( TYPE* o ) const
-      { return o ; }
-    } ;
+    struct ConstAway<TYPE*> {
+      inline TYPE* operator()( TYPE* o ) const { return o; }
+    };
     // ========================================================================
     template <class TYPE>
-    struct ConstAway<const TYPE*>
-    {
-      inline TYPE* operator() ( const TYPE* o ) const
-      { return const_cast<TYPE*> ( o )  ; }
-    } ;
+    struct ConstAway<const TYPE*> {
+      inline TYPE* operator()( const TYPE* o ) const { return const_cast<TYPE*>( o ); }
+    };
     // ========================================================================
     template <class TYPE>
-    struct ConstAway<const TYPE&>
-    {
-      inline TYPE& operator() ( const TYPE& o ) const
-      { return const_cast<TYPE&>( o )  ; }
-    } ;
+    struct ConstAway<const TYPE&> {
+      inline TYPE& operator()( const TYPE& o ) const { return const_cast<TYPE&>( o ); }
+    };
     // ========================================================================
     template <class TYPE>
-    struct ConstAway<TYPE&>
-    {
-      inline TYPE& operator() ( TYPE& o ) const { return o ; }
-    } ;
+    struct ConstAway<TYPE&> {
+      inline TYPE& operator()( TYPE& o ) const { return o; }
+    };
     // ========================================================================
-  } //                                          end of the namespace LoKi::Cast
+  } // namespace Cast
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

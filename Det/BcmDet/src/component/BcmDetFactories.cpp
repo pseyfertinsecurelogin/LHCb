@@ -18,4 +18,3 @@ typedef XmlUserDetElemCnv<DeBcm> XmlDeBcm;
 
 DECLARE_CONVERTER( XmlDeBcmSens )
 DECLARE_CONVERTER( XmlDeBcm )
-

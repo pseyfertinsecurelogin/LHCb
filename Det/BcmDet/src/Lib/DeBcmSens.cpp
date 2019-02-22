@@ -10,28 +10,20 @@
 \*****************************************************************************/
 #include "BcmDet/DeBcmSens.h"
 
+DeBcmSens::DeBcmSens( int nSensor ) : m_SensorNumber( nSensor ) {}
 
-DeBcmSens::DeBcmSens(int nSensor) :
-  m_SensorNumber(nSensor)
-{
-}
-
-
-StatusCode DeBcmSens::initialize()
-{
+StatusCode DeBcmSens::initialize() {
   StatusCode sc = DetectorElement::initialize();
-  if( sc.isFailure() ) {
+  if ( sc.isFailure() ) {
     MsgStream msg( msgSvc(), name() );
     msg << MSG::ERROR << "Failure to initialize DetectorElement" << endmsg;
-    return sc ;
+    return sc;
   }
-  int sensor = param<int>("sensId");
-  setSensorNumber(sensor);
+  int sensor = param<int>( "sensId" );
+  setSensorNumber( sensor );
   return sc;
 }
 
-int DeBcmSens::sensitiveVolumeID( const Gaudi::XYZPoint& point )const{
-  return isInside( point ) ? sensorNumber() : -1 ;
+int DeBcmSens::sensitiveVolumeID( const Gaudi::XYZPoint& point ) const {
+  return isInside( point ) ? sensorNumber() : -1;
 }
-
-

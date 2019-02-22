@@ -8,33 +8,28 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef KERNEL_MCASSOCIATION_H 
+#ifndef KERNEL_MCASSOCIATION_H
 #define KERNEL_MCASSOCIATION_H 1
 
 // Include files
-namespace LHCb 
-{
+namespace LHCb {
   class MCParticle;
 }
 
 /** @class MCAssociation MCAssociation.h Kernel/MCAssociation.h
- *  
- *  The class MCAssociation holds a single MCParticle and an association 
+ *
+ *  The class MCAssociation holds a single MCParticle and an association
  *  weight relating it to something.
  *
  *  @author V. Gligorov
  *  @date   2007-11-07
  */
 class MCAssociation final {
-public: 
-  MCAssociation( ) = default;
+public:
+  MCAssociation() = default;
 
-  MCAssociation(const LHCb::MCParticle* mcp, 
-                const double weight)
-    : m_associatedMCP(mcp), m_weight(weight)
-  {
-  }
-  
+  MCAssociation( const LHCb::MCParticle* mcp, const double weight ) : m_associatedMCP( mcp ), m_weight( weight ) {}
+
   const LHCb::MCParticle* to() const { return m_associatedMCP; }
 
   const double& weight() const { return m_weight; }
@@ -43,7 +38,6 @@ public:
 
 private:
   const LHCb::MCParticle* m_associatedMCP = nullptr;
-  double m_weight = 0;
-
+  double                  m_weight        = 0;
 };
 #endif // KERNEL_MCASSOCIATION_H

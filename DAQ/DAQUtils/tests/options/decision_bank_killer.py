@@ -37,17 +37,14 @@ from Configurables import HltLinePersistenceSvc
 import GaudiPython
 
 LHCb = GaudiPython.gbl.LHCb
-ALL_RAWBANKS = [LHCb.RawBank.typeName(i)
-                for i in range(LHCb.RawBank.LastType)]
+ALL_RAWBANKS = [LHCb.RawBank.typeName(i) for i in range(LHCb.RawBank.LastType)]
 RAW_BANK_TYPES = [(i, LHCb.RawBank.typeName(i))
                   for i in range(LHCb.RawBank.LastType)]
 DEFAULT_TURBO_BANKS = [
-    'DstData',
-    'HltDecReports', 'HltSelReports', 'HltVertexReports', 'HltTrackReports',
-    'L0DU', 'L0Calo', 'L0PU', 'L0PUFull', 'L0Muon', 'L0CaloFull',
-    'L0MuonCtrlAll', 'L0MuonProcCand', 'L0MuonProcData'
+    'DstData', 'HltDecReports', 'HltSelReports', 'HltVertexReports',
+    'HltTrackReports', 'L0DU', 'L0Calo', 'L0PU', 'L0PUFull', 'L0Muon',
+    'L0CaloFull', 'L0MuonCtrlAll', 'L0MuonProcCand', 'L0MuonProcData'
 ]
-
 
 svc = HltLinePersistenceSvc()
 # Banks for decisions that are not set here are set later (on the first event)
@@ -64,7 +61,6 @@ non_default_raw_bank_types = {
     'Hlt2CharmHadDpToKmPipPip_ForKPiAsymTurboDecision': ALL_RAWBANKS,
 }
 ApplicationMgr().ExtSvc.append(svc.getFullName())
-
 
 # Setup the timing table
 LHCbTimingAuditor('TIMER').addTool(LHCbSequencerTimerTool, name="TIMER")
@@ -101,11 +97,11 @@ killer.ILinePersistenceSvc = svc.getFullName()
 killer.LineFilter.Code = stream_filter.Code
 assert set(killer.AlwaysKeepBanks) == set(['ODIN', 'HltRoutingBits', 'DAQ'])
 
+
 def decreport_pass(name, report):
     """Return whether the decreport would pass the filter above."""
-    return (bool(report.decision()) and
-            report.executionStage() & 0x80 == 0x80 and
-            re.match(r'^Hlt2.*(?<!TurboCalib)Decision$', name))
+    return (bool(report.decision()) and report.executionStage() & 0x80 == 0x80
+            and re.match(r'^Hlt2.*(?<!TurboCalib)Decision$', name))
 
 
 topSeq = GaudiSequencer("TopSequence")
@@ -118,7 +114,6 @@ topSeq.Members = [
 ]
 ApplicationMgr().TopAlg = [topSeq]
 
-
 gaudi = GaudiPython.AppMgr()
 TES = gaudi.evtsvc()
 RawBank = GaudiPython.gbl.LHCb.RawBank
@@ -126,8 +121,10 @@ RawBank = GaudiPython.gbl.LHCb.RawBank
 
 def rawbank_sizes(rawevent):
     """Return (name, size) for each raw bank type."""
+
     def size(i):
         return sum(bank.totalSize() for bank in rawevent.banks(i))
+
     return {name: size(i) for i, name in RAW_BANK_TYPES if size(i) > 0}
 
 
@@ -139,9 +136,9 @@ def assert_equal(expected, result, msg):
             pprint.pformat(expected).splitlines(),
             pprint.pformat(result).splitlines(),
         )
-        full_msg = ('{}\n    diff:\n{}'
-                    .format(msg, '\n'.join(diff)))
+        full_msg = ('{}\n    diff:\n{}'.format(msg, '\n'.join(diff)))
         raise AssertionError(full_msg)
+
 
 # Trick! Disable the killer until we can configure the svc after the first event
 svc_instance = gaudi.service(svc.getFullName(), 'IProperty')
@@ -167,8 +164,10 @@ while True:
 
     if first_event:
         # print(svc_instance.getProperty('RawBankTypes').toString())
-        types = {name: DEFAULT_TURBO_BANKS for name in hdr.decisionNames()
-                 if 'Turbo' in name}
+        types = {
+            name: DEFAULT_TURBO_BANKS
+            for name in hdr.decisionNames() if 'Turbo' in name
+        }
         types.update(non_default_raw_bank_types)
         raw_bank_types = types
         svc_instance.setProperty('RawBankTypes', repr(types))
@@ -178,8 +177,10 @@ while True:
         # don't do any check on the first event
         continue
 
-    decisions = {name: (report.decision(), decreport_pass(name, report))
-                 for name, report in hdr.decReports()}
+    decisions = {
+        name: (report.decision(), decreport_pass(name, report))
+        for name, report in hdr.decReports()
+    }
     all_decisions.append(decisions)
 
     sizes = rawbank_sizes(raw)
@@ -187,31 +188,37 @@ while True:
 
     # # Some stats
     fired = set(name for name, d in hdr.decReports() if d.decision())
-    print('              ',fired)
+    print('              ', fired)
     # print('Original raw event banks:', sorted(sizes.items()))
     # print('Modified raw event banks:', sorted(sizes2.items()))
 
     # Check that what we keep matches the expectation
-    requests = [set(raw_bank_types[name]) for name, report in hdr.decReports()
-                if decreport_pass(name, report)]
+    requests = [
+        set(raw_bank_types[name]) for name, report in hdr.decReports()
+        if decreport_pass(name, report)
+    ]
     requests += [set(killer.AlwaysKeepBanks)]
     requests = set.union(*requests)
     all_requests.append(requests)
     result = sizes2
-    expected = {banktype: size for banktype, size in sizes.items()
-                if banktype in requests}
+    expected = {
+        banktype: size
+        for banktype, size in sizes.items() if banktype in requests
+    }
     print(sizes2.keys())
-    assert_equal(expected, result,
-                 'The kept banks {} do not match the expectation {}.'
-                 .format(result, expected))
+    assert_equal(
+        expected, result,
+        'The kept banks {} do not match the expectation {}.'.format(
+            result, expected))
 
 # Based on the fake test case defined by non_default_raw_bank_types, and the
 # stream filter, we expect to see 5 combinations of possible set of requested
 # raw banks. Given enough input data we have to see all 5.
 combinations_tested = set(map(frozenset, all_requests))
 if len(combinations_tested) != 5:
-    raise RuntimeError('Only these combinations were tested, expected {}:\n{}'
-                       .format(5, pformat(combinations_tested)))
+    raise RuntimeError(
+        'Only these combinations were tested, expected {}:\n{}'.format(
+            5, pformat(combinations_tested)))
 
 # make sure we see at least one of each line alone
 # expected = set(non_default_raw_bank_types.keys())

@@ -14,5 +14,5 @@
 // UTDet
 #include "UTDet/DeUTModule.h"
 
-typedef XmlUserDetElemCnv<DeUTModule>      XmlUTModuleCnv;
+typedef XmlUserDetElemCnv<DeUTModule> XmlUTModuleCnv;
 DECLARE_CONVERTER( XmlUTModuleCnv )

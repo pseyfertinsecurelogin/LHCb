@@ -25,10 +25,9 @@
 // ============================================================================
 #include "GaudiAlg/GaudiHistoAlg.h"
 // ============================================================================
-struct ILVolume     ;  // DETDESC
+struct ILVolume; // DETDESC
 // ============================================================================
-namespace DetDesc
-{
+namespace DetDesc {
   // ==========================================================================
   /** @class VolumeCheckAlg VolumeCheckAlg.h
    *
@@ -122,49 +121,47 @@ namespace DetDesc
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-05-25
    */
-  class VolumeCheck : public GaudiHistoAlg
-  {
+  class VolumeCheck : public GaudiHistoAlg {
   public:
     /** standard algorithm initialization
      *  @see IAlgorithm
      *  @return status code
      */
-    StatusCode initialize ()  override;
+    StatusCode initialize() override;
     /** standard execution of algorithm
      *  @see IAlgorithm
      *  @return status code
      */
-    StatusCode execute    ()  override;
+    StatusCode execute() override;
     /** Standard constructor
      *  @param name name of the algorithm
      *  @param svcloc pointer to Service Locator
      */
-    VolumeCheck
-    ( const std::string& name   ,
-      ISvcLocator*       svcloc ) ;
+    VolumeCheck( const std::string& name, ISvcLocator* svcloc );
+
   private:
     // ========================================================================
     // volume name
-    std::string         m_volumeName     ;
+    std::string m_volumeName;
     // volume itself
-    const ILVolume*     m_volume         ;
+    const ILVolume* m_volume;
 
     // volume limits (for assemblies)
-    double              m_minx           ;
-    double              m_maxx           ;
-    double              m_miny           ;
-    double              m_maxy           ;
-    double              m_minz           ;
-    double              m_maxz           ;
+    double m_minx;
+    double m_maxx;
+    double m_miny;
+    double m_maxy;
+    double m_minz;
+    double m_maxz;
 
     // number of shots
-    int                 m_shotsSphere    ;
-    int                 m_shotsXY        ;
-    int                 m_shotsYZ        ;
-    int                 m_shotsZX        ;
+    int m_shotsSphere;
+    int m_shotsXY;
+    int m_shotsYZ;
+    int m_shotsZX;
 
     // point of shooting for sphere
-    Gaudi::XYZPoint     m_vertex         ;
+    Gaudi::XYZPoint m_vertex;
     // ========================================================================
   };
   // ==========================================================================

@@ -28,8 +28,7 @@
 // local
 #include "Kernel/UTCommonBase.h"
 
-namespace UT
-{
+namespace UT {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase UTToolBase.h UTKernel/UTToolBase.h
@@ -42,20 +41,14 @@ namespace UT
    */
   //-----------------------------------------------------------------------------
 
-  class ToolBase : public UT::CommonBase<GaudiTool>
-  {
+  class ToolBase : public UT::CommonBase<GaudiTool> {
 
   public:
-
     /// Standard constructor
-    ToolBase(const std::string& type, 
-             const std::string& name,
-             const IInterface* parent )
-      : UT::CommonBase<GaudiTool> ( type, name, parent ) { }
-
+    ToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : UT::CommonBase<GaudiTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace UT
 
 #endif // UTKERNEL_UTALGBASE_H

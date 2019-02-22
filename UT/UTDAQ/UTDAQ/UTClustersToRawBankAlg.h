@@ -12,9 +12,9 @@
 #define UTClustersToRawBankAlg_H 1
 
 // from UTL
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 // gaudi
 #include "Kernel/UTCommonBase.h"
@@ -24,10 +24,10 @@
 #include "Event/UTCluster.h"
 #include "UTClustersOnBoard.h"
 
-#include "Kernel/UTDAQDefinitions.h"
-#include "Event/RawBank.h"
 #include "Event/BankWriter.h"
+#include "Event/RawBank.h"
 #include "Kernel/IUTReadoutTool.h"
+#include "Kernel/UTDAQDefinitions.h"
 
 /** @class UTClustersToRawBankAlg UTClustersToRawBankAlg.h
  *
@@ -41,22 +41,22 @@ class UTTell1ID;
 class IUTDAQDataSvc;
 
 #include "UTBoardToBankMap.h"
-namespace LHCb {class RawBank;}
+namespace LHCb {
+  class RawBank;
+}
 
 template <class IReadoutTool = IUTReadoutTool>
 class UTClustersToRawBankAlgT : public UT::CommonBase<GaudiAlgorithm, IReadoutTool> {
 
 public:
-
   /// Standard constructor
-  UTClustersToRawBankAlgT(const std::string& name, ISvcLocator* pSvcLocator);
+  UTClustersToRawBankAlgT( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute() override;       ///< Algorithm execution
-  StatusCode finalize() override;      ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 private:
-
   /// convert string to enum
   StatusCode configureBankType();
 
@@ -64,19 +64,18 @@ private:
   void initEvent();
 
   /// fill the banks
-  StatusCode groupByBoard(const LHCb::UTClusters* clusCont);
+  StatusCode groupByBoard( const LHCb::UTClusters* clusCont );
 
-  unsigned int bankSize(UTClustersOnBoard::ClusterVector& clusCont) const;
+  unsigned int bankSize( UTClustersOnBoard::ClusterVector& clusCont ) const;
 
   unsigned int getPCN() const;
 
   // create a new bank
-  void writeBank(const UTClustersOnBoard::ClusterVector& clusCont ,
-                 LHCb::BankWriter& bWriter,
-                 const UTTell1ID aBoardID);
+  void writeBank( const UTClustersOnBoard::ClusterVector& clusCont, LHCb::BankWriter& bWriter,
+                  const UTTell1ID aBoardID );
 
   Gaudi::Property<std::string> m_rawLocation{this, "rawLocation", LHCb::RawEventLocation::Default};
-  Gaudi::Property<int> m_maxClustersPerPPx{this, "maxClusters", 512};
+  Gaudi::Property<int>         m_maxClustersPerPPx{this, "maxClusters", 512};
 
   std::string m_clusterLocation;
   std::string m_summaryLocation;
@@ -85,13 +84,12 @@ private:
 
   UTBoardToBankMap m_bankMapping;
 
-  std::map<UTTell1ID,UTClustersOnBoard* > m_clusMap;
-  std::vector<UTClustersOnBoard> m_clusVectors;
+  std::map<UTTell1ID, UTClustersOnBoard*> m_clusMap;
+  std::vector<UTClustersOnBoard>          m_clusVectors;
 
-  unsigned int m_overflow = 0;
+  unsigned int m_overflow       = 0;
   unsigned int m_maxClusterSize = 4;
-  unsigned int m_pcn = 128;
-
+  unsigned int m_pcn            = 128;
 };
 
 // Declaration of the backward compatible UTClustersToRawBankAlg class (not templated for the original UT case)

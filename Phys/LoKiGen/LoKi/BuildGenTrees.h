@@ -32,15 +32,13 @@
  *  @date 2006-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   /** @namespace LoKi::GenTrees
    *  useful namespace with utility to build HepMC-trees from flat lists
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2005-01-20
    */
-  namespace GenTrees
-  {
+  namespace GenTrees {
     // ========================================================================
     /** Simple function which 'builds' the trees from flat list
      *
@@ -67,25 +65,23 @@ namespace LoKi
      *  @attention  it could be a bit slow
      */
     template <class PARTICLE, class OUTPUT>
-    inline OUTPUT
-    buildTrees( PARTICLE first, PARTICLE last, OUTPUT output  )
-    {
+    inline OUTPUT buildTrees( PARTICLE first, PARTICLE last, OUTPUT output ) {
       if ( first != last ) {
         // helper function
-        LoKi::GenParticles::FromHepMCTree fromDecay( first , last ) ;
-        using arg_t = decltype(*first);
-        std::copy_if( first, last, output, [&](arg_t p) {
-          fromDecay.remove              ( p ) ;  // remove 'self'
+        LoKi::GenParticles::FromHepMCTree fromDecay( first, last );
+        using arg_t = decltype( *first );
+        std::copy_if( first, last, output, [&]( arg_t p ) {
+          fromDecay.remove( p ); // remove 'self'
           // use the helper function
-          const bool result = fromDecay ( p ) ;
-          fromDecay.add                 ( p ) ;  // add    'self'
-          return !result; // return true if head of decay tree
-        });
+          const bool result = fromDecay( p );
+          fromDecay.add( p ); // add    'self'
+          return !result;     // return true if head of decay tree
+        } );
       }
       return output;
     }
     // ========================================================================
-  } //                                          end of namespace LoKi::GenTrees
+  } // namespace GenTrees
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

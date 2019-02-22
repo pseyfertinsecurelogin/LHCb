@@ -14,7 +14,6 @@
 // Include files
 #include "L0Base/L0AlgBase.h"
 
-
 /** @class L0Filter L0Filter.h
  *
  * L0 decision(s) Filtering
@@ -46,7 +45,8 @@
  *            TCK-independent predefined subTriggers :    'L0Ecal'/'L0Hcal'/'L0Muon'/'Other'
  *            syntax :  orSubTrigger += { "L0Ecal" };
  *
- *     - if orChannels and orSubTriggers are EMPTIES : filter on global decision ( ==>  orChannels += {"ALL" : {"ANY"} };
+ *     - if orChannels and orSubTriggers are EMPTIES : filter on global decision ( ==>  orChannels += {"ALL" : {"ANY"}
+ * };
  *
  *
  *
@@ -62,24 +62,22 @@ public:
   /// Standard constructor
   L0Filter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 protected:
-
 private:
-  std::string toUpper(std::string str);
-  bool isAnother(std::string tck);
+  std::string toUpper( std::string str );
+  bool        isAnother( std::string tck );
 
-  std::string m_l0Location ;              ///< Location of L0 decision
-  std::map<std::string,std::vector<std::string> > m_l0channels ; ///< required (tck,[channels]) (Or-ed)
-  std::string m_trig;
-  unsigned long m_count;
-  unsigned long m_sel;
-  int m_mask;
-  std::vector<std::string> m_l0triggers;
-  bool m_revert;
-
+  std::string                                     m_l0Location; ///< Location of L0 decision
+  std::map<std::string, std::vector<std::string>> m_l0channels; ///< required (tck,[channels]) (Or-ed)
+  std::string                                     m_trig;
+  unsigned long                                   m_count;
+  unsigned long                                   m_sel;
+  int                                             m_mask;
+  std::vector<std::string>                        m_l0triggers;
+  bool                                            m_revert;
 };
 #endif // L0FILTER_H

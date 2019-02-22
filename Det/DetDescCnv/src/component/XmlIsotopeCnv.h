@@ -12,12 +12,12 @@
 #define DETDESCCNV_XMLCNVSVC_XMLISOTOPECNV_H
 
 // generic experiment headers
-#include "DetDescCnv/XmlGenericCnv.h"
 #include "DetDesc/Isotope.h"
+#include "DetDescCnv/XmlGenericCnv.h"
 
 // Forward declarations
-template <class TYPE> class CnvFactory;
-
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlIsotopeCnv
  *
@@ -30,7 +30,6 @@ template <class TYPE> class CnvFactory;
 class XmlIsotopeCnv : public XmlGenericCnv {
 
 public:
-
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
@@ -41,7 +40,7 @@ public:
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlIsotopeCnv (ISvcLocator* svcs);
+  XmlIsotopeCnv( ISvcLocator* svcs );
 
   /**
    * Default destructor
@@ -49,15 +48,13 @@ public:
   virtual ~XmlIsotopeCnv();
 
 protected:
-
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
    * @param element the DOMElement to be used to builds the object
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  StatusCode i_createObj (xercesc::DOMElement* element,
-                          DataObject*& refpObject) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -67,12 +64,9 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                        DataObject* refpObject,
-                                IOpaqueAddress* address) override;
+  StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* refpObject, IOpaqueAddress* address ) override;
 
 private:
-
   // Constant strings for element and parameter names
   const XMLCh* nameString;
   const XMLCh* temperatureString;
@@ -86,7 +80,6 @@ private:
   const XMLCh* lambdaString;
   const XMLCh* tabpropsString;
   const XMLCh* addressString;
-
 };
 
 // ============================================================================

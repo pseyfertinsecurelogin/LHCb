@@ -16,8 +16,8 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/Kernel.h"
 // ============================================================================
 /** @class IAccept Kernel/IAccept.h
  *
@@ -26,14 +26,13 @@
  *  @author Vanya Belyaev
  *  @date   2010-08-02
  */
-struct GAUDI_API IAccept : extend_interfaces<IAlgTool>
-{
+struct GAUDI_API IAccept : extend_interfaces<IAlgTool> {
   // ==========================================================================
   /// InterfaceID
-  DeclareInterfaceID(IAccept, 4, 0);
+  DeclareInterfaceID( IAccept, 4, 0 );
   // ==========================================================================
   /// make a generic selection
-  virtual bool accept () const = 0 ;
+  virtual bool accept() const = 0;
   // ==========================================================================
 };
 // ============================================================================

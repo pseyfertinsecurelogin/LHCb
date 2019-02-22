@@ -9,12 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_PARAM_H 
+#ifndef LOKI_PARAM_H
 #define LOKI_PARAM_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <string>
 // ============================================================================
@@ -22,7 +22,7 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
-// forward declarations 
+// forward declarations
 // ============================================================================
 /* @file LoKi/Param.h
  *
@@ -34,51 +34,49 @@
  * contributions and advices from G.Raven, J.van Tilburg,
  * A.Golutvin, P.Koppenburg have been used in the design.
  *
- * @date 2014-02-02 
+ * @date 2014-02-02
  * @author Vanya BELYAEV Ivan.Belyaev@itep.ru
- *  
+ *
  */
-namespace LoKi 
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Param LoKi/Param.h
-   *  simple representation of "parameter" 
+   *  simple representation of "parameter"
    *  @author Vanya Belyaev
    *  @date   2014-02-02
-   *  @thanks Alexander MAZUROV for regex parsing code 
+   *  @thanks Alexander MAZUROV for regex parsing code
    */
-  class GAUDI_API Param final
-  {
+  class GAUDI_API Param final {
   public:
     // ========================================================================
-    /** Constructor from full specialization 
+    /** Constructor from full specialization
      *  format: 'property[key]/algorithm'
-     *  - property name 
-     *  - key in property, if property is map-property 
-     *  - the (regex)-pattern for the algorithm name 
+     *  - property name
+     *  - key in property, if property is map-property
+     *  - the (regex)-pattern for the algorithm name
      */
-    Param ( const std::string& property  = "" ) ;
+    Param( const std::string& property = "" );
     //
     // ========================================================================
   public:
     // ========================================================================
-    const std::string& property  () const { return m_property  ; }
-    const std::string& key       () const { return m_key       ; }
-    const std::string& algorithm () const { return m_algorithm ; }
+    const std::string& property() const { return m_property; }
+    const std::string& key() const { return m_key; }
+    const std::string& algorithm() const { return m_algorithm; }
     // ========================================================================
   public:
     // ========================================================================
-    /// printout 
-    std::ostream& fillStream ( std::ostream& s ) const ;
+    /// printout
+    std::ostream& fillStream( std::ostream& s ) const;
     // ========================================================================
   private:
     // ========================================================================
-    /// the property name 
-    std::string m_property  ;
-    /// the key name if property is a map 
-    std::string m_key       ;
-    /// the algorithm pattern (if relevant) 
-    std::string m_algorithm ;
+    /// the property name
+    std::string m_property;
+    /// the key name if property is a map
+    std::string m_key;
+    /// the algorithm pattern (if relevant)
+    std::string m_algorithm;
     // ========================================================================
   };
   // ==========================================================================
@@ -87,24 +85,20 @@ namespace LoKi
    *  @param obj object to be printed
    *  @return reference to the stream
    */
-  inline 
-  std::ostream& operator<<( std::ostream& stream , const Param&  obj ) 
-  { return obj.fillStream ( stream ) ; }
+  inline std::ostream& operator<<( std::ostream& stream, const Param& obj ) { return obj.fillStream( stream ); }
   // ==========================================================================
-} //                                                  the end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils 
-  {
+  namespace Utils {
     // ========================================================================
-    GAUDI_API std::string toCpp ( const LoKi::Param& o ) ;
+    GAUDI_API std::string toCpp( const LoKi::Param& o );
     // ========================================================================
-  } 
+  } // namespace Utils
   // ==========================================================================
-} // 
+} // namespace Gaudi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_PARAM_H

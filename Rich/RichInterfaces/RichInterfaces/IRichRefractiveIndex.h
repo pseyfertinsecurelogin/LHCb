@@ -28,8 +28,7 @@
 #include "Kernel/RichRadIntersection.h"
 #include "Kernel/RichRadiatorType.h"
 
-namespace Rich
-{
+namespace Rich {
 
   /** @class IRefractiveIndex IRichRefractiveIndex.h
    *
@@ -40,21 +39,17 @@ namespace Rich
    *  @date   15/03/2002
    */
 
-  class IRefractiveIndex : public virtual IAlgTool
-  {
+  class IRefractiveIndex : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IRefractiveIndex, 1, 0 );
 
   public:
-
     /// Scalar type to use
     using ScType = float;
 
   public:
-
     /** Calculates the refractive index for a given radiator type at a
      *  given photon energy.
      *
@@ -74,9 +69,8 @@ namespace Rich
      *
      *  @return The average refractive index between the two energy bounds
      */
-    virtual ScType refractiveIndex( const Rich::RadiatorType rad,
-                                    const ScType             energyBot,
-                                    const ScType             energyTop ) const = 0;
+    virtual ScType refractiveIndex( const Rich::RadiatorType rad, const ScType energyBot,
+                                    const ScType energyTop ) const = 0;
 
     /** Calculates the average refractive index for a given radiator type
      *  for all visable photon energies.
@@ -94,7 +88,7 @@ namespace Rich
      *
      *  @return The overall average refractive index
      */
-    virtual ScType refractiveIndex( const Rich::RadIntersection::Vector &intersections ) const = 0;
+    virtual ScType refractiveIndex( const Rich::RadIntersection::Vector& intersections ) const = 0;
 
     /** Calculates the refractive index R.M.S. for a given set of radiator intersections
      *  for all visable photon energies.
@@ -103,8 +97,7 @@ namespace Rich
      *
      *  @return The refractive index R.M.S.
      */
-    virtual ScType
-    refractiveIndexRMS( const Rich::RadIntersection::Vector &intersections ) const = 0;
+    virtual ScType refractiveIndexRMS( const Rich::RadIntersection::Vector& intersections ) const = 0;
 
     /** Calculates the refractive index standard deviation  for a given set of radiator
      * intersections for all visable photon energies.
@@ -113,8 +106,7 @@ namespace Rich
      *
      *  @return The refractive index S.D.
      */
-    virtual ScType
-    refractiveIndexSD( const Rich::RadIntersection::Vector &intersections ) const = 0;
+    virtual ScType refractiveIndexSD( const Rich::RadIntersection::Vector& intersections ) const = 0;
 
     /** Calculates the average refractive index for a given set of radiator intersections
      *  for all visable photon energies.
@@ -124,8 +116,7 @@ namespace Rich
      *
      *  @return The overall average refractive index
      */
-    virtual ScType refractiveIndex( const Rich::RadIntersection::Vector &intersections,
-                                    const ScType                         energy ) const = 0;
+    virtual ScType refractiveIndex( const Rich::RadIntersection::Vector& intersections, const ScType energy ) const = 0;
   };
 
 } // namespace Rich

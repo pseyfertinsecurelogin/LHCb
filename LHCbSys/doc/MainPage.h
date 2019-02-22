@@ -31,5 +31,5 @@
  * <b>Additional information:</b>
  * \li <a href="../release.notes"><b>Release notes history</b></a>
  * \li <a href=" http://cern.ch/lhcbdoc/lhcb/"><b>LHCb project Web pages</b></a><p>
- 
+
  */

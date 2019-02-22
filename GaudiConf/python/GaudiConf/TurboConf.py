@@ -18,30 +18,34 @@ import PersistRecoConf
 
 __author__ = "Sean Benson, Rosen Matev"
 
-__all__ = [
-    'TurboConf'
-]
+__all__ = ['TurboConf']
 
 
 class TurboConf(LHCbConfigurableUser):
     """Configure writing/packing/unpacking for Turbo."""
 
     __slots__ = {
-        "DataType":    "",
+        "DataType": "",
         "Simulation": False,
         "PersistReco": False,
         "RunPackedDataDecoder": False,
         "RunPersistRecoUnpacking": False,
         "RootInTES": "/Event/Turbo"
-     }
+    }
 
     _propertyDocDct = {
-       "DataType":    "Flag for backward compatibility with old data",
-       "Simulation": "Flag set to True when running over simulated data",
-       "PersistReco": "Setup PersistReco (overrides some Turbo defaults)",
-       "RunPackedDataDecoder": "If True, decode the raw data bank containing PersistReco data",
-       "RunPersistRecoUnpacking": "If True, unpack the PersistReco containers",
-       "RootInTES": "Where to link the unpacked PersistReco objects under"
+        "DataType":
+        "Flag for backward compatibility with old data",
+        "Simulation":
+        "Flag set to True when running over simulated data",
+        "PersistReco":
+        "Setup PersistReco (overrides some Turbo defaults)",
+        "RunPackedDataDecoder":
+        "If True, decode the raw data bank containing PersistReco data",
+        "RunPersistRecoUnpacking":
+        "If True, unpack the PersistReco containers",
+        "RootInTES":
+        "Where to link the unpacked PersistReco objects under"
     }
 
     __used_configurables__ = [
@@ -112,46 +116,52 @@ class TurboConf(LHCbConfigurableUser):
         # outputLocation is a DataObjectHandleBase, must convert explicitly to str
         DataOnDemandSvc().AlgMap[str(mergeTracks.outputLocation)] = mergeTracks
 
-        linkChargedProtos = DataLink('HltRecProtos',
-                                     What=mergeProtos.outputLocation,
-                                     Target=join(rootintes, 'Rec/ProtoP/Charged'))
+        linkChargedProtos = DataLink(
+            'HltRecProtos',
+            What=mergeProtos.outputLocation,
+            Target=join(rootintes, 'Rec/ProtoP/Charged'))
         DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = linkChargedProtos
 
-        linkTracks = DataLink('HltRecTracks',
-                              What=mergeTracks.outputLocation,
-                              Target=join(rootintes, 'Rec/Track/Best'))
+        linkTracks = DataLink(
+            'HltRecTracks',
+            What=mergeTracks.outputLocation,
+            Target=join(rootintes, 'Rec/Track/Best'))
         DataOnDemandSvc().AlgMap[linkTracks.Target] = linkTracks
 
-        linkNeutralProtos = DataLink('HltRecNeutralProtos',
-                                     What=packing.outputs["Hlt2NeutralProtos"],
-                                     Target=join(rootintes, 'Rec/ProtoP/Neutrals'))
+        linkNeutralProtos = DataLink(
+            'HltRecNeutralProtos',
+            What=packing.outputs["Hlt2NeutralProtos"],
+            Target=join(rootintes, 'Rec/ProtoP/Neutrals'))
         recNeutralProtos = GaudiSequencer("TurboNeutralProtosAsRec")
         recNeutralProtos.Members = [linkNeutralProtos]
         DataOnDemandSvc().AlgMap[linkNeutralProtos.Target] = recNeutralProtos
 
-        linkPVs = DataLink('LinkHltPersistRecoPVs',
-                           What=packing.outputs['Hlt2RecVertices'],
-                           Target=join(rootintes, 'Rec/Vertex/Primary'))
+        linkPVs = DataLink(
+            'LinkHltPersistRecoPVs',
+            What=packing.outputs['Hlt2RecVertices'],
+            Target=join(rootintes, 'Rec/Vertex/Primary'))
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
-        
+
         # 2016 MC is a bit special, as the relations tables are made for the
         # merged protos container in Tesla and this is *expected* to be under
         # /Event, not /Event/Turbo, so we have to make sure the container exists
         # there
         if simulation and datatype == 2016:
             assert rootintes.startswith('/Event/Turbo')
-            linkMergedProtos = DataLink('LinkHltMergedProtos',
-                                        What=mergeProtos.outputLocation,
-                                        Target=join('/Event', mergedProtosLoc)
-                                        )
-            DataOnDemandSvc().AlgMap[linkMergedProtos.Target] = linkMergedProtos
-            
+            linkMergedProtos = DataLink(
+                'LinkHltMergedProtos',
+                What=mergeProtos.outputLocation,
+                Target=join('/Event', mergedProtosLoc))
+            DataOnDemandSvc().AlgMap[linkMergedProtos.
+                                     Target] = linkMergedProtos
+
             # Just in case, we do the same for the merged tracks
-            linkMergedTracks = DataLink('LinkHltMergedTracks',
-                                        What=mergeTracks.outputLocation,
-                                        Target=join('/Event', mergedTracksLoc)
-                                        )
-            DataOnDemandSvc().AlgMap[linkMergedTracks.Target] = linkMergedTracks
+            linkMergedTracks = DataLink(
+                'LinkHltMergedTracks',
+                What=mergeTracks.outputLocation,
+                Target=join('/Event', mergedTracksLoc))
+            DataOnDemandSvc().AlgMap[linkMergedTracks.
+                                     Target] = linkMergedTracks
 
     def _register_tes_root_links(self, rootintes):
         """Link /Event/<stream>/Turbo/p{Phys,Rec} to under /Event/<stream>.
@@ -168,14 +178,16 @@ class TurboConf(LHCbConfigurableUser):
             return
 
         # OutputLevel=ERROR to suppress WARNINGs when the 'What' doesn't exist
-        link_pPhys = DataLink('LinkTurbopPhys',
-                              What=join(rootintes, 'pPhys'),
-                              Target=join(rootinstream, 'pPhys'),
-                              OutputLevel=ERROR)
-        link_pRec = DataLink('LinkTurbopRec',
-                              What=join(rootintes, 'pRec'),
-                              Target=join(rootinstream, 'pRec'),
-                              OutputLevel=ERROR)
+        link_pPhys = DataLink(
+            'LinkTurbopPhys',
+            What=join(rootintes, 'pPhys'),
+            Target=join(rootinstream, 'pPhys'),
+            OutputLevel=ERROR)
+        link_pRec = DataLink(
+            'LinkTurbopRec',
+            What=join(rootintes, 'pRec'),
+            Target=join(rootinstream, 'pRec'),
+            OutputLevel=ERROR)
         DataOnDemandSvc().AlgMap[link_pPhys.Target] = link_pPhys
         DataOnDemandSvc().AlgMap[link_pRec.Target] = link_pRec
 
@@ -186,10 +198,11 @@ class TurboConf(LHCbConfigurableUser):
         trigger raw bank is in DAQ/RawEvent. In DaVinci, the trigger raw bank
         is expected to be in Trigger/RawEvent, so create a symlink.
         """
-        from Configurables import Gaudi__DataLink as DataLink 
-        link_daq = DataLink('LinkDAQRawEvent',
-                            What='/Event/DAQ/RawEvent',
-                            Target='/Event/Trigger/RawEvent')
+        from Configurables import Gaudi__DataLink as DataLink
+        link_daq = DataLink(
+            'LinkDAQRawEvent',
+            What='/Event/DAQ/RawEvent',
+            Target='/Event/Trigger/RawEvent')
         DataOnDemandSvc().AlgMap[link_daq.Target] = link_daq
 
     def _persistrecopacking(self, datatype, rootintes):
@@ -232,9 +245,7 @@ class TurboConf(LHCbConfigurableUser):
         return PersistRecoConf.PersistRecoPacking(
             str(datatype),
             descriptors=packing_descriptors,
-            outputs=packing_outputs
-        )
-
+            outputs=packing_outputs)
 
     def _check_configuration(self):
         """Try to catch mis-configurations and warn the user."""
@@ -255,17 +266,15 @@ class TurboConf(LHCbConfigurableUser):
             log.warning('PersistReco is not available for 2015 data')
 
         if datatype >= 2017 and persistreco:
-            log.warning((
-                'TurboConf().PersistReco should not be set for >= 2017 data\n'
-                'DaVinci jobs should set DaVinci().Turbo instead, otherwise '
-                'use RunPackedDataDecoder and/or RunPersistRecoUnpacking'
-            ))
+            log.warning(
+                ('TurboConf().PersistReco should not be set for >= 2017 data\n'
+                 'DaVinci jobs should set DaVinci().Turbo instead, otherwise '
+                 'use RunPackedDataDecoder and/or RunPersistRecoUnpacking'))
 
         if persistreco and (decode or unpack):
-            log.warning((
-                'TurboConf().PersistReco should not be True together with '
-                'RunPackedDataDecoder and/or RunPersistRecoUnpacking'
-            ))
+            log.warning(
+                ('TurboConf().PersistReco should not be True together with '
+                 'RunPackedDataDecoder and/or RunPersistRecoUnpacking'))
 
     def __apply_configuration__(self):
         self._check_configuration()
@@ -282,7 +291,8 @@ class TurboConf(LHCbConfigurableUser):
             from DAQSys.DecoderClass import Decoder
 
             # Remove standard decoder
-            decoder = DecoderDB.pop("HltPackedDataDecoder/Hlt2PackedDataDecoder")
+            decoder = DecoderDB.pop(
+                "HltPackedDataDecoder/Hlt2PackedDataDecoder")
             assert not decoder.wasUsed(), ('Hlt2PackedDataDecoder was '
                                            'aready setup, cannot remove!')
             # In 2017 the decoder is only used in Tesla (not DaVinci), where we
@@ -293,13 +303,14 @@ class TurboConf(LHCbConfigurableUser):
             packing = PersistRecoConf.PersistRecoPacking(str(datatype))
             decoder = Decoder(
                 "HltPackedDataDecoder/Hlt2PackedDataDecoder",
-                active=True, banks=["DstData"],
+                active=True,
+                banks=["DstData"],
                 inputs={"RawEventLocations": None},
                 outputs=packing.packedLocations(),
-                properties={"ContainerMap":
-                            packing.packedToOutputLocationMap()},
-                conf=DecoderDB
-            )
+                properties={
+                    "ContainerMap": packing.packedToOutputLocationMap()
+                },
+                conf=DecoderDB)
             decoder.setup()
 
         packing = self._persistrecopacking(datatype, rootintes)

@@ -20,12 +20,12 @@
 #include "GaudiAlg/Transformer.h"
 
 #include "Event/HCDigit.h"
-#include "Event/RawEvent.h"
-#include "Event/RawBank.h"
 #include "Event/ODIN.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 
 namespace LHCb {
-class ODIN;
+  class ODIN;
 }
 
 /** @class HCRawBankDecoder.h
@@ -34,36 +34,33 @@ class ODIN;
  *
  */
 
-class HCRawBankDecoder final : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&),
-                                                                          Gaudi::Functional::Traits::BaseClass_t<GaudiHistoAlg>>
-{
- public:
+class HCRawBankDecoder final
+    : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits, LHCb::HCDigits>( const LHCb::RawEvent&,
+                                                                                             const LHCb::ODIN& ),
+                                                 Gaudi::Functional::Traits::BaseClass_t<GaudiHistoAlg>> {
+public:
   /// Standard constructor
-  HCRawBankDecoder(const std::string& name, ISvcLocator* pSvcLocator);
+  HCRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;  ///< Algorithm initialization
+  StatusCode initialize() override; ///< Algorithm initialization
 
   ///< The transform callable
-  std::tuple<LHCb::HCDigits,LHCb::HCDigits>
-  operator()(const LHCb::RawEvent&,const LHCb::ODIN&) const override final;
+  std::tuple<LHCb::HCDigits, LHCb::HCDigits> operator()( const LHCb::RawEvent&,
+                                                         const LHCb::ODIN& ) const override final;
 
- private:
-
+private:
   bool m_skipTrigger;
   bool m_skipAdc;
   bool m_skipErrorBanks;
 
   bool m_monitoring;
 
-  IHistogram2D* m_hLinkErrors;
-  IHistogram2D* m_hTell1Errors;
+  IHistogram2D*              m_hLinkErrors;
+  IHistogram2D*              m_hTell1Errors;
   std::vector<IHistogram1D*> m_hBxDiff;
 
-  void decode(const LHCb::RawBank& bank,
-              LHCb::HCDigits& digits,
-              LHCb::HCDigits& l0_digits) const;
-  void decodeErrorBank(const LHCb::RawBank& bank, const int bxid) const;
-
+  void decode( const LHCb::RawBank& bank, LHCb::HCDigits& digits, LHCb::HCDigits& l0_digits ) const;
+  void decodeErrorBank( const LHCb::RawBank& bank, const int bxid ) const;
 };
 
 #endif

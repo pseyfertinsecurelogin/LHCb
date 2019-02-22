@@ -33,7 +33,6 @@ ConfigCDBAccessSvc(File='TCKData/config.cdb')
 HltConfigSvc().initialTCK = '0x11291600'
 ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
 
-
 from GaudiPython.Bindings import AppMgr
 gaudi = AppMgr()
 gaudi.initialize()
@@ -43,8 +42,8 @@ gaudi.run(1)
 TES = gaudi.evtsvc()
 dr = TES['/Event/Hlt1/DecReports']
 taskID = dr.taskID()
-print ('binaryId = {}, hostInstrSetLevel = {}'
-       .format(taskID & 0xffff, taskID >> 16))
+print('binaryId = {}, hostInstrSetLevel = {}'.format(taskID & 0xffff,
+                                                     taskID >> 16))
 
 assert taskID != 0xffffffff
 

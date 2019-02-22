@@ -28,8 +28,7 @@
 // local
 #include "Kernel/UTCommonBase.h"
 
-namespace UT
-{
+namespace UT {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase UTAlgBase.h UTKernel/UTAlgBase.h
@@ -38,23 +37,18 @@ namespace UT
    *  some basic functionality.
    *
    *  @author Andy Beiter (based on code by Matthew Needham)
-   *  @date  2018-09-04 
+   *  @date  2018-09-04
    */
   //-----------------------------------------------------------------------------
 
-  class AlgBase : public UT::CommonBase<GaudiAlgorithm>
-  {
+  class AlgBase : public UT::CommonBase<GaudiAlgorithm> {
 
   public:
-
     /// Standard constructor
-    AlgBase( const std::string& name,
-             ISvcLocator* pSvcLocator )
-      : UT::CommonBase<GaudiAlgorithm> ( name, pSvcLocator ) { }
-
+    AlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : UT::CommonBase<GaudiAlgorithm>( name, pSvcLocator ) {}
   };
 
-}
-
+} // namespace UT
 
 #endif // UTKERNEL_UTALGBASE_H

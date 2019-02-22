@@ -31,8 +31,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STToolBase.h STKernel/STToolBase.h
@@ -45,20 +44,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class ToolBase : public ST::CommonBase<GaudiTool>
-  {
+  class ToolBase : public ST::CommonBase<GaudiTool> {
 
   public:
-
     /// Standard constructor
-    ToolBase(const std::string& type, 
-             const std::string& name,
-             const IInterface* parent )
-      : ST::CommonBase<GaudiTool> ( type, name, parent ) { }
-
+    ToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : ST::CommonBase<GaudiTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace ST
 
 #endif // STKERNEL_STALGBASE_H

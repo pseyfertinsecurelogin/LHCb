@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DICT_MCINTERFACESDICT_H 
+#ifndef DICT_MCINTERFACESDICT_H
 #define DICT_MCINTERFACESDICT_H 1
 
 // Previously in RichKernel
@@ -17,9 +17,9 @@
 
 // Previously in TrackMCInterfaces
 #include "MCInterfaces/IIdealStateCreator.h"
-#include "MCInterfaces/ITrackGhostClassification.h"
-#include "MCInterfaces/ILHCbIDsToMCParticles.h"
 #include "MCInterfaces/ILHCbIDsToMCHits.h"
+#include "MCInterfaces/ILHCbIDsToMCParticles.h"
+#include "MCInterfaces/ITrackGhostClassification.h"
 
 // Previously in MCEvent
 #include "MCInterfaces/IForcedBDecayTool.h"
@@ -39,9 +39,8 @@
 #include "MCInterfaces/IMCEventTypeFinder.h"
 #include "MCInterfaces/IMCReconstructed.h"
 
-#include "MCInterfaces/IHepMCParticleSelector.h"
-#include "MCInterfaces/IGenCutTool.h"
 #include "MCInterfaces/IFullGenEventCutTool.h"
+#include "MCInterfaces/IGenCutTool.h"
+#include "MCInterfaces/IHepMCParticleSelector.h"
 
 #endif // DICT_MCINTERFACESDICT_H
-

@@ -15,17 +15,17 @@
 
 namespace LHCb {
 
-// forward declaration
-class RawBank;
+  // forward declaration
+  class RawBank;
 
-namespace FTDAQ {
+  namespace FTDAQ {
 
-/**
- * counts number of FT clusters in the given raw banks
- */
-unsigned int nbFTClusters(LHCb::span<const RawBank *> banks);
+    /**
+     * counts number of FT clusters in the given raw banks
+     */
+    unsigned int nbFTClusters( LHCb::span<const RawBank*> banks );
 
-} // namespace FTDAQ
+  } // namespace FTDAQ
 
 } // namespace LHCb
 

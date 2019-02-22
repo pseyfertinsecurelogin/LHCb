@@ -11,9 +11,9 @@
 #ifndef VELOCLUSTERSTORAW_H
 #define VELOCLUSTERSTORAW_H 1
 
-#include <vector>
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include "Event/VeloCluster.h"
 #include "SiDAQ/SiRawBufferWord.h"
@@ -37,23 +37,20 @@ public:
   /// Standard constructor
   VeloClustersToRaw( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;  ///< Algorithm initialization
-  StatusCode execute   () override;  ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
+  unsigned int makeBank( const unsigned int sensor, std::vector<const LHCb::VeloCluster*>::const_iterator& begin );
 
-
-  unsigned int makeBank (const unsigned int sensor, std::vector<const LHCb::VeloCluster*>::const_iterator& begin);
-
-  StatusCode storeBank(const unsigned int sensor, std::vector<const LHCb::VeloCluster*>::const_iterator& begin);
+  StatusCode storeBank( const unsigned int sensor, std::vector<const LHCb::VeloCluster*>::const_iterator& begin );
 
   bool selfTest(); ///< run self test on default locations
 
 private:
-
   // configurable locations in the TES
-  std::string m_clusterLoc;      ///< cluster container input location
-  std::string m_rawEventLoc;     ///< raw bank output location
+  std::string m_clusterLoc;  ///< cluster container input location
+  std::string m_rawEventLoc; ///< raw bank output location
 
   unsigned int m_bankVersion; ///< raw bank version tag
 
@@ -62,9 +59,9 @@ private:
   // long lived containers for performance reasons. Also used to communicate
   // with makeBank() method
   std::vector<const LHCb::VeloCluster*> m_sortedClusters;
-  std::vector<SiDAQ::buffer_word> m_rawData;
-  std::vector<SiDAQ::buffer_word> m_clusterADCBuffer;
-  std::vector<SiDAQ::buffer_word> m_clusterPosBuffer;
+  std::vector<SiDAQ::buffer_word>       m_rawData;
+  std::vector<SiDAQ::buffer_word>       m_clusterADCBuffer;
+  std::vector<SiDAQ::buffer_word>       m_clusterPosBuffer;
 
   LHCb::RawEvent* m_rawEventOut = nullptr;
 
@@ -74,6 +71,5 @@ private:
 
   /// pointer to Velo Detector Element
   DeVelo* m_velo = nullptr;
-
 };
 #endif // VELOCLUSTERSTORAW_H

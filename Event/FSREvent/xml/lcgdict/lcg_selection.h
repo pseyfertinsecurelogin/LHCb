@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // $Id: lcg_selection.h,v 1.4 2010-03-17 21:30:50 raaij Exp $
-#ifndef FSREVENT_LCGDICT_H 
+#ifndef FSREVENT_LCGDICT_H
 #define FSREVENT_LCGDICT_H 1
 
 // Additional classes to be added to automatically generated lcgdict

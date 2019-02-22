@@ -37,31 +37,19 @@
  *  @date 2011-12-08 Spirit2 migration
  */
 // ============================================================================
-StatusCode Decays::Parsers::parse
-( Decays::Parsers::Tree&          tree      ,
-  const std::string&              input     ,
-  const std::vector<std::string>& symbols   ,
-  const std::vector<std::string>& particles ,
-  std::ostream&                   stream    )
-{
+StatusCode Decays::Parsers::parse( Decays::Parsers::Tree& tree, const std::string& input,
+                                   const std::vector<std::string>& symbols, const std::vector<std::string>& particles,
+                                   std::ostream& stream ) {
   // ==========================================================================
-  typedef std::string::const_iterator   Iterator ;
-  typedef boost::spirit::qi::space_type Skipper  ;
+  typedef std::string::const_iterator   Iterator;
+  typedef boost::spirit::qi::space_type Skipper;
 
-  Decays::Grammars::Tree<Iterator, Skipper> gr( symbols , particles ) ;
-  Iterator begin = input.begin();
-  bool ok =  boost::spirit::qi::phrase_parse
-    ( begin       ,
-      input.end() ,
-      gr          ,
-      boost::spirit::qi::space , tree ) && (begin == input.end() ) ;
+  Decays::Grammars::Tree<Iterator, Skipper> gr( symbols, particles );
+  Iterator                                  begin = input.begin();
+  bool ok = boost::spirit::qi::phrase_parse( begin, input.end(), gr, boost::spirit::qi::space, tree ) &&
+            ( begin == input.end() );
   // ==========================================================================
-  if ( !ok )
-  {
-    stream << "PARSE ERROR at: ##"
-           << std::string ( begin , input.end() )
-           << "##" ;
-  }
+  if ( !ok ) { stream << "PARSE ERROR at: ##" << std::string( begin, input.end() ) << "##"; }
   // ==========================================================================
   return StatusCode{ok};
 }

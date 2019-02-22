@@ -20,14 +20,13 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-class StatEntity ;
-namespace AIDA { class IHistogram1D ; }
+class StatEntity;
+namespace AIDA {
+  class IHistogram1D;
+}
 // ============================================================================
-namespace LoKi
-{
-  namespace Dicts
-  {
-  } // end of namespace LoKi::Dicts
+namespace LoKi {
+  namespace Dicts {} // namespace Dicts
 } // end of namespace LoKi
 // ============================================================================
 #endif // LOKI_GENMONIDICTS_H

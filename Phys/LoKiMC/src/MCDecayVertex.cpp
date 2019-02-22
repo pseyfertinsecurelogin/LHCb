@@ -17,8 +17,8 @@
 // ============================================================================
 // Evevt
 // ============================================================================
-#include "Event/MCVertex.h"
 #include "Event/MCParticle.h"
+#include "Event/MCVertex.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -49,16 +49,13 @@
  *  @date 2008-07-10
  */
 // ============================================================================
-const LHCb::MCVertex* LoKi::MCVertices::decayVertex
-( const LHCb::MCParticle* p )
-{
-  if ( 0 == p )                               { return 0 ; } // RETURN
-  typedef SmartRefVector<LHCb::MCVertex> MCVERTICES ;
-  const MCVERTICES& vertices = p->endVertices () ;
-  MCVERTICES::const_iterator idecay =
-    std::find_if ( vertices.begin() , vertices.end() , IsDecay ) ;
-  if ( vertices.end() == idecay )             { return 0 ; } // RETURN
-  return *idecay ;
+const LHCb::MCVertex* LoKi::MCVertices::decayVertex( const LHCb::MCParticle* p ) {
+  if ( 0 == p ) { return 0; } // RETURN
+  typedef SmartRefVector<LHCb::MCVertex> MCVERTICES;
+  const MCVERTICES&                      vertices = p->endVertices();
+  MCVERTICES::const_iterator             idecay   = std::find_if( vertices.begin(), vertices.end(), IsDecay );
+  if ( vertices.end() == idecay ) { return 0; } // RETURN
+  return *idecay;
 }
 // ============================================================================
 // The END

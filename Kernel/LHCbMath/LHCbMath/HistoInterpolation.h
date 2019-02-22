@@ -26,9 +26,9 @@
 // ============================================================================
 // forward declarations
 // ============================================================================
-class TH1 ; // from ROOT
-class TH2 ; // from ROOT
-class TH3 ; // from ROOT
+class TH1; // from ROOT
+class TH2; // from ROOT
+class TH3; // from ROOT
 // ============================================================================
 /** @file HistoInterpolation.h LHCbMath/HistoInterpolation.h
  *  Collection of primitive utilities for hiostorgam interpoaltion
@@ -44,11 +44,9 @@ class TH3 ; // from ROOT
  *                 by $Author$
  */
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** @class HistoInterpolation
      *  Collection of primitive utilities for hiostorgam interpoaltion
@@ -59,14 +57,10 @@ namespace Gaudi
      *  @author Vanya Belyaev
      *  @date   2015-10-12
      */
-    class GAUDI_API HistoInterpolation
-    {
+    class GAUDI_API HistoInterpolation {
     public:
       // ======================================================================
-      enum Type { Nearest   ,
-                  Linear    ,
-                  Quadratic ,
-                  Cubic     } ;
+      enum Type { Nearest, Linear, Quadratic, Cubic };
       // ======================================================================
     public: // 1D interpolation
       // ======================================================================
@@ -78,12 +72,9 @@ namespace Gaudi
        *  @param y1 (INPUT) y-coordinate of the second point  \f$ y(x_1) \f$
        *  @return result of linear interpolation \f$ y(x) \f$
        */
-      static Gaudi::Math::ValueWithError interpolate
-        ( const double x  ,
-          const double x0 ,
-          const double x1 ,
-          const Gaudi::Math::ValueWithError& y0 ,
-          const Gaudi::Math::ValueWithError& y1 ) ;
+      static Gaudi::Math::ValueWithError interpolate( const double x, const double x0, const double x1,
+                                                      const Gaudi::Math::ValueWithError& y0,
+                                                      const Gaudi::Math::ValueWithError& y1 );
       // ======================================================================
       /** quadratic (parabolic)  interpolation between three points
        *  @param x  (INPUT) the x-value
@@ -95,14 +86,10 @@ namespace Gaudi
        *  @param y2 (INPUT) x-coordinate of the third  point \f$ y(x_2) \f$
        *  @return result of  quadratic (parabolic) interpolation  \f$ y(x) \f$
        */
-      static Gaudi::Math::ValueWithError interpolate
-        ( const double                       x  ,
-          const double                       x0 ,
-          const double                       x1 ,
-          const double                       x2 ,
-          const Gaudi::Math::ValueWithError& y0 ,
-          const Gaudi::Math::ValueWithError& y1 ,
-          const Gaudi::Math::ValueWithError& y2 ) ;
+      static Gaudi::Math::ValueWithError interpolate( const double x, const double x0, const double x1, const double x2,
+                                                      const Gaudi::Math::ValueWithError& y0,
+                                                      const Gaudi::Math::ValueWithError& y1,
+                                                      const Gaudi::Math::ValueWithError& y2 );
       // ======================================================================
       /** qubic interpolation between four points
        *  @param x  (INPUT) the x-value
@@ -116,16 +103,11 @@ namespace Gaudi
        *  @param y3 (INPUT) x-coordinate of the third  point \f$ y(x_3) \f$
        *  @return result of  quadratic (parabolic) interpolation  \f$ y(x) \f$
        */
-      static Gaudi::Math::ValueWithError interpolate
-        ( const double                       x  ,
-          const double                       x0 ,
-          const double                       x1 ,
-          const double                       x2 ,
-          const double                       x3 ,
-          const Gaudi::Math::ValueWithError& y0 ,
-          const Gaudi::Math::ValueWithError& y1 ,
-          const Gaudi::Math::ValueWithError& y2 ,
-          const Gaudi::Math::ValueWithError& y3 ) ;
+      static Gaudi::Math::ValueWithError interpolate( const double x, const double x0, const double x1, const double x2,
+                                                      const double x3, const Gaudi::Math::ValueWithError& y0,
+                                                      const Gaudi::Math::ValueWithError& y1,
+                                                      const Gaudi::Math::ValueWithError& y2,
+                                                      const Gaudi::Math::ValueWithError& y3 );
       // ======================================================================
     public: // 2D interpolation
       // ======================================================================
@@ -142,17 +124,10 @@ namespace Gaudi
        *  @param f11 (INPUT) function value for (x1,y1)
        *  @return result of bi-linear interpolation
        */
-      static Gaudi::Math::ValueWithError interpolate
-        ( const double                       x   ,
-          const double                       y   ,
-          const double                       x0  ,
-          const double                       x1  ,
-          const double                       y0  ,
-          const double                       y1  ,
-          const Gaudi::Math::ValueWithError& f00 ,
-          const Gaudi::Math::ValueWithError& f10 ,
-          const Gaudi::Math::ValueWithError& f01 ,
-          const Gaudi::Math::ValueWithError& f11 ) ;
+      static Gaudi::Math::ValueWithError
+      interpolate( const double x, const double y, const double x0, const double x1, const double y0, const double y1,
+                   const Gaudi::Math::ValueWithError& f00, const Gaudi::Math::ValueWithError& f10,
+                   const Gaudi::Math::ValueWithError& f01, const Gaudi::Math::ValueWithError& f11 );
       // ======================================================================
       /** bi-quadratic interpolation on grid
        *  @param x    (INPUT) the x-value
@@ -174,24 +149,13 @@ namespace Gaudi
        *  @param f22  (INPUT) function value for (x2,y2)
        *  @return result of bi-quadrate interpolation
        */
-      static Gaudi::Math::ValueWithError interpolate
-        ( const double                       x   ,
-          const double                       y   ,
-          const double                       x0  ,
-          const double                       x1  ,
-          const double                       x2  ,
-          const double                       y0  ,
-          const double                       y1  ,
-          const double                       y2  ,
-          const Gaudi::Math::ValueWithError& f00 ,
-          const Gaudi::Math::ValueWithError& f10 ,
-          const Gaudi::Math::ValueWithError& f20 ,
-          const Gaudi::Math::ValueWithError& f01 ,
-          const Gaudi::Math::ValueWithError& f11 ,
-          const Gaudi::Math::ValueWithError& f21 ,
-          const Gaudi::Math::ValueWithError& f02 ,
-          const Gaudi::Math::ValueWithError& f12 ,
-          const Gaudi::Math::ValueWithError& f22 ) ;
+      static Gaudi::Math::ValueWithError
+      interpolate( const double x, const double y, const double x0, const double x1, const double x2, const double y0,
+                   const double y1, const double y2, const Gaudi::Math::ValueWithError& f00,
+                   const Gaudi::Math::ValueWithError& f10, const Gaudi::Math::ValueWithError& f20,
+                   const Gaudi::Math::ValueWithError& f01, const Gaudi::Math::ValueWithError& f11,
+                   const Gaudi::Math::ValueWithError& f21, const Gaudi::Math::ValueWithError& f02,
+                   const Gaudi::Math::ValueWithError& f12, const Gaudi::Math::ValueWithError& f22 );
       // ======================================================================
     public:
       // ======================================================================
@@ -207,13 +171,9 @@ namespace Gaudi
        *  is interpolated
        *  @return value of interpolated function/density
        */
-      static Gaudi::Math::ValueWithError interpolate_1D
-        ( const TH1&   h1                   ,
-          const double x                    ,
-          const Type   t           = Linear ,
-          const bool   edges       = true   ,
-          const bool   extrapolate = false  ,
-          const bool   density     = false  ) ;
+      static Gaudi::Math::ValueWithError interpolate_1D( const TH1& h1, const double x, const Type t = Linear,
+                                                         const bool edges = true, const bool extrapolate = false,
+                                                         const bool density = false );
       // ======================================================================
       /** interpolate 2D histogram
        *  @param h2          (INPUT) input histogram
@@ -229,15 +189,10 @@ namespace Gaudi
        *  is interpolated
        *  @return value of interpolated function/density
        */
-      static Gaudi::Math::ValueWithError interpolate_2D
-        ( const TH2&   h1                   ,
-          const double x                    ,
-          const double y                    ,
-          const Type   tx          = Linear ,
-          const Type   ty          = Linear ,
-          const bool   edges       = true   ,
-          const bool   extrapolate = false  ,
-          const bool   density     = false  ) ;
+      static Gaudi::Math::ValueWithError interpolate_2D( const TH2& h1, const double x, const double y,
+                                                         const Type tx = Linear, const Type ty = Linear,
+                                                         const bool edges = true, const bool extrapolate = false,
+                                                         const bool density = false );
       // ======================================================================
       /** interpolate 3D histogram
        *  @param h3          (INPUT) input histogram
@@ -255,23 +210,16 @@ namespace Gaudi
        *  is interpolated
        *  @return value of interpolated function/density
        */
-      static Gaudi::Math::ValueWithError interpolate_3D
-        ( const TH3&   h3                   ,
-          const double x                    ,
-          const double y                    ,
-          const double z                    ,
-          Type         tx          = Linear ,
-          Type         ty          = Linear ,
-          Type         tz          = Linear ,
-          const bool   edges       = true   ,
-          const bool   extrapolate = false  ,
-          const bool   density     = false  ) ;
+      static Gaudi::Math::ValueWithError interpolate_3D( const TH3& h3, const double x, const double y, const double z,
+                                                         Type tx = Linear, Type ty = Linear, Type tz = Linear,
+                                                         const bool edges = true, const bool extrapolate = false,
+                                                         const bool density = false );
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                         The end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
-} //                                                 The end of namespace Gaudi
+} // namespace Gaudi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

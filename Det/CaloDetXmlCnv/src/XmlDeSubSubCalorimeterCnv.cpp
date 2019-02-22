@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlDeSubSubCalorimeterCnv.cpp,v 1.1 2008-06-30 16:45:00 odescham Exp $ 
+// $Id: XmlDeSubSubCalorimeterCnv.cpp,v 1.1 2008-06-30 16:45:00 odescham Exp $
 // ============================================================================
 // CVS tag $Name: not supported by cvs2svn $
 // ============================================================================
@@ -23,37 +23,25 @@
 // Det/CaloDetXmlCnv: new package
 //
 // ============================================================================
-// DetDesc 
-#include  "DetDescCnv/XmlUserDetElemCnv.h"
-// CaloDet 
-#include  "CaloDet/DeSubSubCalorimeter.h"
+// DetDesc
+#include "DetDescCnv/XmlUserDetElemCnv.h"
+// CaloDet
+#include "CaloDet/DeSubSubCalorimeter.h"
 
 // ============================================================================
 /** @file XmlDeSubCalorimeterCnv.cpp
- * 
+ *
  * Instantiation of a static factory class used by clients to create
- * instances of Xml converter for class DeSubCalorimeter 
- * @see DeSubCalorimeter 
+ * instances of Xml converter for class DeSubCalorimeter
+ * @see DeSubCalorimeter
  *
  * @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
 // ============================================================================
 
-/// converter type 
-typedef  XmlUserDetElemCnv<DeSubSubCalorimeter>  XmlDeSubSubCalorimeterCnv;
+/// converter type
+typedef XmlUserDetElemCnv<DeSubSubCalorimeter> XmlDeSubSubCalorimeterCnv;
 DECLARE_CONVERTER( XmlDeSubSubCalorimeterCnv )
 // ============================================================================
-// The End 
+// The End
 // ============================================================================
-
-
-
-
-
-
-
-
-
-
-
-

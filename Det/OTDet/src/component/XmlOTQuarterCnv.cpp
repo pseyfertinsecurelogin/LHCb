@@ -12,8 +12,8 @@
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-/// OTDet 
+/// OTDet
 #include "OTDet/DeOTQuarter.h"
 
-typedef XmlUserDetElemCnv<DeOTQuarter>       XmlOTQuarterCnv;
+typedef XmlUserDetElemCnv<DeOTQuarter> XmlOTQuarterCnv;
 DECLARE_CONVERTER( XmlOTQuarterCnv )

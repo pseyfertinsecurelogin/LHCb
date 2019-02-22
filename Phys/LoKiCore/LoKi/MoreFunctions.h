@@ -15,11 +15,11 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Functions.h"
 #include "LoKi/BiFunctions.h"
-#include "LoKi/Primitives.h"
+#include "LoKi/Functions.h"
 #include "LoKi/Math.h"
 #include "LoKi/Operators.h"
+#include "LoKi/Primitives.h"
 // ============================================================================
 /** @file   MoreFunctions.h LoKi/MoreFunctions.h
  *  An attempt to reshuffle LoKi files to reduce the compilation time

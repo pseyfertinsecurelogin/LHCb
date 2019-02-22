@@ -10,41 +10,33 @@
 \*****************************************************************************/
 #pragma once
 
-#include <string>
-#include <vector>
-#include <tuple>
-#include "GaudiKernel/ParsersFactory.h"
 #include "CFNodeType.h"
+#include "GaudiKernel/ParsersFactory.h"
+#include <string>
+#include <tuple>
+#include <vector>
 
-BOOST_FUSION_ADAPT_STRUCT( NodeDefinition,
-                           (std::string, name)
-                           (std::string, type)
-                           (std::vector<std::string>, children)
-                           (bool, ordered)
-                         )
+BOOST_FUSION_ADAPT_STRUCT( NodeDefinition, ( std::string, name )( std::string, type )( std::vector<std::string>,
+                                                                                       children )( bool, ordered ) )
 
-namespace Gaudi { namespace Parsers {
-  template <typename Iterator, typename Skipper>
-  struct NodeDefGrammar : qi::grammar<Iterator, NodeDefinition(), Skipper> {
-    typedef NodeDefinition ResultT;
-    NodeDefGrammar() : NodeDefGrammar::base_type( NodeDef_literal )
-    {
-      NodeDef_literal = '('
-          >> gstring >> ','
-          >> gstring >> ','
-          >> gvector >> ','
-          >> gbool >> ')';
-    }
-    qi::rule<Iterator, NodeDefinition(), Skipper> NodeDef_literal;
-    StringGrammar<Iterator, Skipper> gstring;
-    BoolGrammar<Iterator, Skipper> gbool;
-    VectorGrammar<Iterator, std::vector<std::string>, Skipper> gvector;
-  };
-  REGISTER_GRAMMAR( NodeDefinition, NodeDefGrammar );
-}}
+namespace Gaudi {
+  namespace Parsers {
+    template <typename Iterator, typename Skipper>
+    struct NodeDefGrammar : qi::grammar<Iterator, NodeDefinition(), Skipper> {
+      typedef NodeDefinition ResultT;
+      NodeDefGrammar() : NodeDefGrammar::base_type( NodeDef_literal ) {
+        NodeDef_literal = '(' >> gstring >> ',' >> gstring >> ',' >> gvector >> ',' >> gbool >> ')';
+      }
+      qi::rule<Iterator, NodeDefinition(), Skipper>              NodeDef_literal;
+      StringGrammar<Iterator, Skipper>                           gstring;
+      BoolGrammar<Iterator, Skipper>                             gbool;
+      VectorGrammar<Iterator, std::vector<std::string>, Skipper> gvector;
+    };
+    REGISTER_GRAMMAR( NodeDefinition, NodeDefGrammar );
+  } // namespace Parsers
+} // namespace Gaudi
 
-namespace std
-{
-  ostream& operator<<( ostream& s, nodeType const & m );
-  ostream& operator<<( ostream& s, NodeDefinition const & m );
-}
+namespace std {
+  ostream& operator<<( ostream& s, nodeType const& m );
+  ostream& operator<<( ostream& s, NodeDefinition const& m );
+} // namespace std

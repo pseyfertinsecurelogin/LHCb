@@ -12,35 +12,33 @@
 #define _ILHCbIDsToMCHits_H
 
 #include "GaudiKernel/IAlgTool.h"
+#include <map>
 #include <utility>
 #include <vector>
-#include <map>
 
 #include "Event/Track.h"
 
-namespace LHCb{
+namespace LHCb {
   class LHCbID;
   class MCParticle;
   class MCHit;
-}
-
+} // namespace LHCb
 
 /** @class ILHCbIDsToMCHits ILHCbIDsToMCHits.h TsaKernel/ILHCbIDsToMCHits.h
-*
-*  Link ids to MCHits
-*
-*  @author M.Needham
-*  @date   31/05/2004
-*/
+ *
+ *  Link ids to MCHits
+ *
+ *  @author M.Needham
+ *  @date   31/05/2004
+ */
 
+struct ILHCbIDsToMCHits : extend_interfaces<IAlgTool> {
 
-struct ILHCbIDsToMCHits: extend_interfaces<IAlgTool> {
-  
   /// Retrieve interface ID
-  DeclareInterfaceID(ILHCbIDsToMCHits, 1, 0 );
+  DeclareInterfaceID( ILHCbIDsToMCHits, 1, 0 );
 
-  typedef std::vector<LHCb::LHCbID> LHCbIDs;
-  typedef std::map<LHCb::MCHit*, unsigned int> LinkMap;
+  typedef std::vector<LHCb::LHCbID>             LHCbIDs;
+  typedef std::map<LHCb::MCHit*, unsigned int>  LinkMap;
   typedef std::pair<LHCb::MCHit*, unsigned int> LinkPair;
 
   /**
@@ -50,9 +48,7 @@ struct ILHCbIDsToMCHits: extend_interfaces<IAlgTool> {
     @param output vector by reference
     @return StatusCode
   */
-  virtual StatusCode link(LHCbIDs::const_iterator& start, 
-                          LHCbIDs::const_iterator& stop, LinkMap& output) const = 0;
-
+  virtual StatusCode link( LHCbIDs::const_iterator& start, LHCbIDs::const_iterator& stop, LinkMap& output ) const = 0;
 
   /**
     Trivial link from list of ALL ids in track to particles contributing
@@ -60,8 +56,7 @@ struct ILHCbIDsToMCHits: extend_interfaces<IAlgTool> {
     @param output vector by reference
     @return StatusCode
   */
-  virtual StatusCode link(const LHCb::Track& aTrack, LinkMap& output) const = 0;
-
+  virtual StatusCode link( const LHCb::Track& aTrack, LinkMap& output ) const = 0;
 
   /**
     Trivial link from single id to particles contributing
@@ -69,8 +64,7 @@ struct ILHCbIDsToMCHits: extend_interfaces<IAlgTool> {
     @param output vector by reference
     @return StatusCode
   */
-  virtual StatusCode link(const LHCb::LHCbID& id, LinkMap& output) const = 0;
-
+  virtual StatusCode link( const LHCb::LHCbID& id, LinkMap& output ) const = 0;
 };
 
 #endif

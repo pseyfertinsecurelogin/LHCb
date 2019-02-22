@@ -19,7 +19,6 @@
 
 #include <optional>
 
-
 /** @class HltvertexReportsWriter HltvertexReportsWriter.h
  *
  *  @author Tomasz Skwarnicki
@@ -30,49 +29,47 @@
  */
 class HltVertexReportsWriter : public GaudiAlgorithm {
 public:
+  enum HeaderIDs { kVersionNumber = 2 };
 
-  enum HeaderIDs { kVersionNumber=2 };
-
-
-  enum SourceIDs { kSourceID_Dummy=0,
-		   kSourceID_Hlt=kSourceID_Dummy,
-		   kSourceID_Hlt1=1,
-		   kSourceID_Hlt2=2,
-		   kSourceID_Max=7,
-		   kSourceID_BitShift=13,
-		   kSourceID_MinorMask=0x1FFF,
-		   kSourceID_MajorMask=0xE000
+  enum SourceIDs {
+    kSourceID_Dummy     = 0,
+    kSourceID_Hlt       = kSourceID_Dummy,
+    kSourceID_Hlt1      = 1,
+    kSourceID_Hlt2      = 2,
+    kSourceID_Max       = 7,
+    kSourceID_BitShift  = 13,
+    kSourceID_MinorMask = 0x1FFF,
+    kSourceID_MajorMask = 0xE000
   };
-
 
   /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  ~HltVertexReportsWriter( ) override = default; ///< Destructor
+  ~HltVertexReportsWriter() override = default; ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   // ----------------------- methods
 
-  std::optional<int> selectionNameToInt(const IANNSvc& ann, const std::string& name) const;
+  std::optional<int> selectionNameToInt( const IANNSvc& ann, const std::string& name ) const;
 
   // ----------------------- data members
 
   /// location of input
-  Gaudi::Property<std::string> m_inputHltVertexReportsLocation { this, "InputHltVertexReportsLocation",  LHCb::HltVertexReportsLocation::Default };
+  Gaudi::Property<std::string> m_inputHltVertexReportsLocation{this, "InputHltVertexReportsLocation",
+                                                               LHCb::HltVertexReportsLocation::Default};
 
   /// location of output
-  Gaudi::Property<std::string> m_outputRawEventLocation { this,  "OutputRawEventLocation", LHCb::RawEventLocation::Default };
+  Gaudi::Property<std::string> m_outputRawEventLocation{this, "OutputRawEventLocation",
+                                                        LHCb::RawEventLocation::Default};
 
   /// SourceID to insert in the bank header
-  Gaudi::Property<int> m_sourceID { this, "SourceID", kSourceID_Dummy };
+  Gaudi::Property<int> m_sourceID{this, "SourceID", kSourceID_Dummy};
 
   /// HltANNSvc for making selection names to int selection ID
   SmartIF<IANNSvc> m_hltANNSvc;
-
 };
 
 #endif // HLTVERTEXREPORTSWRITER_H

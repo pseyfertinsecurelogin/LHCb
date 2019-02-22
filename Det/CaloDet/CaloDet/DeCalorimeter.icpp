@@ -8,25 +8,25 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeCalorimeter.icpp,v 1.5 2008-06-30 16:46:04 odescham Exp $ 
+// $Id: DeCalorimeter.icpp,v 1.5 2008-06-30 16:46:04 odescham Exp $
 // ============================================================================
-#ifndef    CALODET_DECALORIMETER_ICPP
-#define    CALODET_DECALORIMETER_ICPP 1 
-// ============================================================================ 
+#ifndef CALODET_DECALORIMETER_ICPP
+#define CALODET_DECALORIMETER_ICPP 1
+// ============================================================================
 /// GaudiKernel
-// ============================================================================ 
+// ============================================================================
 #include "GaudiKernel/MsgStream.h"
-// ============================================================================ 
-// DetDesc 
-// ============================================================================ 
+// ============================================================================
+// DetDesc
+// ============================================================================
 #include "DetDesc/IGeometryInfo.h"
-// ============================================================================ 
-/// CaloDet 
-// ============================================================================ 
+// ============================================================================
+/// CaloDet
+// ============================================================================
 #include "CaloDet/DeCalorimeter.h"
 #include "CaloDet/DeSubCalorimeter.h"
 #include "CaloDet/DeSubSubCalorimeter.h"
-// ============================================================================ 
+// ============================================================================
 #include "GaudiKernel/System.h"
 
 //----------------------------------------------------------------------------
@@ -36,60 +36,60 @@
 // ============================================================================
 /// Return a reference (tilted) plane
 // ============================================================================
-inline Gaudi::Plane3D DeCalorimeter::plane
-( const CaloPlane::Plane pos) const
-{
-  switch(pos){
-  case CaloPlane::Front     : return plane(m_zOffset-m_zSize/2. );
-  case CaloPlane::ShowerMax : return plane(m_zShowerMax);
-  case CaloPlane::Middle    : return plane(m_zOffset);
-  case CaloPlane::Back      : return plane(m_zOffset+m_zSize/2.);
-  default : return plane(m_zOffset); 
+inline Gaudi::Plane3D DeCalorimeter::plane( const CaloPlane::Plane pos ) const {
+  switch ( pos ) {
+  case CaloPlane::Front:
+    return plane( m_zOffset - m_zSize / 2. );
+  case CaloPlane::ShowerMax:
+    return plane( m_zShowerMax );
+  case CaloPlane::Middle:
+    return plane( m_zOffset );
+  case CaloPlane::Back:
+    return plane( m_zOffset + m_zSize / 2. );
+  default:
+    return plane( m_zOffset );
   }
 }
 // ============================================================================
 /// return a 3D-plane, which contain the given 3D-point in the global system
 // ============================================================================
-inline Gaudi::Plane3D DeCalorimeter::plane
-( const Gaudi::XYZPoint& global ) const 
-{ return plane ( geometry()->toLocal( global ).Z() ) ; }
-// ============================================================================
-/** return parameters of cell, which contains the global point.
- *  the function shodul be a bit more fast and efficent, 
- *  @param globalPoint point to be checked 
- *  @return cell parameters (null if point is not in Calorimter 
- */
-// ============================================================================
-const CellParam* 
-DeCalorimeter::Cell_
-( const Gaudi::XYZPoint& globalPoint ) const
-{
-  // if the point is outside calorimeter
-  const IGeometryInfo* geo = geometry() ;
-  Assert ( 0 != geo , " Unable to extract IGeometryInfo* " ) ;
-  if ( !geo->isInside( globalPoint ) ) { return 0 ; }             // RETURN 
-  // find subcalorimeter
-
-  for(SubCalos::const_iterator is = subCalos().begin() ; is != subCalos().end() ; ++is ){
-    const IGeometryInfo* subGeo = (*is)->geometry() ;
-    if ( !subGeo->isInside( globalPoint ) ) continue;
-    int side = (*is)->side();
-    SubSubCalos subSubCalos = (*is)->subSubCalos();
-    for(SubSubCalos::iterator iss = subSubCalos.begin(); iss != subSubCalos.end() ; ++iss){
-      const IGeometryInfo* subSubGeo = (*iss)->geometry() ;
-      if ( !subSubGeo->isInside( globalPoint ) ) continue;
-      Gaudi::XYZPoint localPoint ( subSubGeo->toLocal ( globalPoint ) );
-      //
-      double xOffset  = -side * (*iss)->xSize()/2.;
-      double cellSize = (*iss)->cellSize();
-      const int Column = (int) ( (localPoint.x()-xOffset) / cellSize + m_firstRowUp ) ;
-      const int Row    = (int) ( localPoint.y()           / cellSize + m_firstRowUp ) ;
-      //
-      int Area = (*iss)->area();
-      return &m_cells[LHCb::CaloCellID( m_caloIndex, Area , Row , Column ) ] ;
-    }
-  }  
-  return 0 ;
+inline Gaudi::Plane3D DeCalorimeter::plane( const Gaudi::XYZPoint& global ) const {
+  return plane( geometry()->toLocal( global ).Z() );
 }
 // ============================================================================
-#endif  // CALODET_DECALORIMETER_ICPP
+/** return parameters of cell, which contains the global point.
+ *  the function shodul be a bit more fast and efficent,
+ *  @param globalPoint point to be checked
+ *  @return cell parameters (null if point is not in Calorimter
+ */
+// ============================================================================
+const CellParam* DeCalorimeter::Cell_( const Gaudi::XYZPoint& globalPoint ) const {
+  // if the point is outside calorimeter
+  const IGeometryInfo* geo = geometry();
+  Assert( 0 != geo, " Unable to extract IGeometryInfo* " );
+  if ( !geo->isInside( globalPoint ) ) { return 0; } // RETURN
+  // find subcalorimeter
+
+  for ( SubCalos::const_iterator is = subCalos().begin(); is != subCalos().end(); ++is ) {
+    const IGeometryInfo* subGeo = ( *is )->geometry();
+    if ( !subGeo->isInside( globalPoint ) ) continue;
+    int         side        = ( *is )->side();
+    SubSubCalos subSubCalos = ( *is )->subSubCalos();
+    for ( SubSubCalos::iterator iss = subSubCalos.begin(); iss != subSubCalos.end(); ++iss ) {
+      const IGeometryInfo* subSubGeo = ( *iss )->geometry();
+      if ( !subSubGeo->isInside( globalPoint ) ) continue;
+      Gaudi::XYZPoint localPoint( subSubGeo->toLocal( globalPoint ) );
+      //
+      double    xOffset  = -side * ( *iss )->xSize() / 2.;
+      double    cellSize = ( *iss )->cellSize();
+      const int Column   = (int)( ( localPoint.x() - xOffset ) / cellSize + m_firstRowUp );
+      const int Row      = (int)( localPoint.y() / cellSize + m_firstRowUp );
+      //
+      int Area = ( *iss )->area();
+      return &m_cells[LHCb::CaloCellID( m_caloIndex, Area, Row, Column )];
+    }
+  }
+  return 0;
+}
+// ============================================================================
+#endif // CALODET_DECALORIMETER_ICPP

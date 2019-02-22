@@ -32,16 +32,14 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ===========================================================================
   /** @namespace LoKi::Adapters LoKi/FuncAdapters.h
    *  Simple namespace with "function adapters"
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-11-25
    */
-  namespace Adapters
-  {
+  namespace Adapters {
     // ========================================================================
     /** @class FunAdapter
      *  The generic templated adapter for the functions
@@ -66,32 +64,28 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
-    template <class TYPE, class TYPE2=double>
-    class FunAdapter : public LoKi::Functor<TYPE,TYPE2>
-    {
+    template <class TYPE, class TYPE2 = double>
+    class FunAdapter : public LoKi::Functor<TYPE, TYPE2> {
       // ======================================================================
     public:
       // ======================================================================
       /// the actual type of the function
-      typedef TYPE2 (*function)( TYPE ) ;
+      typedef TYPE2 ( *function )( TYPE );
       // ======================================================================
     public:
       // ======================================================================
       /// contructor from the function
-      explicit FunAdapter ( function fun )
-        : m_fun  ( fun )
-      {}
+      explicit FunAdapter( function fun ) : m_fun( fun ) {}
       /// MANDATORY: clone method ("virtual constructor")
-      FunAdapter* clone() const override { return new FunAdapter( *this ) ; }
+      FunAdapter* clone() const override { return new FunAdapter( *this ); }
       /// MANDATORY: the only one essential method
-      TYPE2 operator()( typename LoKi::Functor<TYPE,TYPE2>::argument arg ) const override
-      { return m_fun( arg ) ; }
+      TYPE2 operator()( typename LoKi::Functor<TYPE, TYPE2>::argument arg ) const override { return m_fun( arg ); }
       // assignement operator is disabled
       FunAdapter& operator=( const FunAdapter& right ) = delete;
       // ======================================================================
     private:
       // ======================================================================
-      function m_fun ;
+      function m_fun;
       // ======================================================================
     };
     // ========================================================================
@@ -121,8 +115,9 @@ namespace LoKi
    *  @date 2005-03-27
    */
   template <class TYPE>
-  inline LoKi::Adapters::FunAdapter<TYPE,double> aFun ( double (*fun) ( TYPE ) )
-  { return LoKi::Adapters::FunAdapter<TYPE,double> ( fun ) ; }
+  inline LoKi::Adapters::FunAdapter<TYPE, double> aFun( double ( *fun )( TYPE ) ) {
+    return LoKi::Adapters::FunAdapter<TYPE, double>( fun );
+  }
   // ==========================================================================
   /** helper templated function to make easier the
    *  creation of adapter-functors:
@@ -148,8 +143,9 @@ namespace LoKi
    *  @date 2005-03-27
    */
   template <class TYPE>
-  inline LoKi::Adapters::FunAdapter<TYPE,bool> aCut ( bool (*cut) ( TYPE ) )
-  { return LoKi::Adapters::FunAdapter<TYPE,bool> ( cut ) ; }
+  inline LoKi::Adapters::FunAdapter<TYPE, bool> aCut( bool ( *cut )( TYPE ) ) {
+    return LoKi::Adapters::FunAdapter<TYPE, bool>( cut );
+  }
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

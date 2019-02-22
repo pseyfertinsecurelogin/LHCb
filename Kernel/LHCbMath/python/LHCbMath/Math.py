@@ -26,58 +26,60 @@ except ImportError:
     # dummy implementation
     def ROOT6WorkAroundEnabled(id=None):
         return False
+
+
 if ROOT6WorkAroundEnabled('template-autoloading'):
     cppyy.gbl.gSystem.Load('libLHCbMathDict')
 
 # neet to get this first so that all of the other stuff is understood!
 # seems to work since Transform3D isn't a templated class.
 Transform3D = Math.Transform3D
-Plane3D     = Math.Plane3D
-Rotation3D  = Math.Rotation3D
+Plane3D = Math.Plane3D
+Rotation3D = Math.Rotation3D
 RotationZYX = Math.RotationZYX
-RotationX   = Math.RotationX
-RotationY   = Math.RotationY
-RotationZ   = Math.RotationZ
-Quaternion  = Math.Quaternion
+RotationX = Math.RotationX
+RotationY = Math.RotationY
+RotationZ = Math.RotationZ
+Quaternion = Math.Quaternion
 EulerAngles = Math.EulerAngles
-AxisAngle   = Math.AxisAngle
+AxisAngle = Math.AxisAngle
 # 3D vectors and points (double precision)
-XYZVector        = Math.XYZVector
-XYZPoint         = Math.XYZPoint
-Polar3DVector    = Math.Polar3DVector
-Polar3DPoint     = Math.Polar3DPoint
-RhoEtaPhiVector  = Math.RhoEtaPhiVector
-RhoEtaPhiPoint   = Math.RhoEtaPhiPoint
-RhoZPhiVector    = Math.RhoZPhiVector
-RhoZPhiPoint     = Math.RhoZPhiPoint
+XYZVector = Math.XYZVector
+XYZPoint = Math.XYZPoint
+Polar3DVector = Math.Polar3DVector
+Polar3DPoint = Math.Polar3DPoint
+RhoEtaPhiVector = Math.RhoEtaPhiVector
+RhoEtaPhiPoint = Math.RhoEtaPhiPoint
+RhoZPhiVector = Math.RhoZPhiVector
+RhoZPhiPoint = Math.RhoZPhiPoint
 # 3D vectors and points (float)
-XYZVectorF        = Math.XYZVectorF
-XYZPointF         = Math.XYZPointF
-Polar3DVectorF    = Math.Polar3DVectorF
-Polar3DPointF     = Math.Polar3DPointF
-RhoEtaPhiVectorF  = Math.RhoEtaPhiVectorF
-RhoEtaPhiPointF   = Math.RhoEtaPhiPointF
-RhoZPhiVectorF    = Math.RhoZPhiVectorF
-RhoZPhiPointF     = Math.RhoZPhiPointF
+XYZVectorF = Math.XYZVectorF
+XYZPointF = Math.XYZPointF
+Polar3DVectorF = Math.Polar3DVectorF
+Polar3DPointF = Math.Polar3DPointF
+RhoEtaPhiVectorF = Math.RhoEtaPhiVectorF
+RhoEtaPhiPointF = Math.RhoEtaPhiPointF
+RhoZPhiVectorF = Math.RhoZPhiVectorF
+RhoZPhiPointF = Math.RhoZPhiPointF
 # Lorentz vectors
-XYZTVector       = Math.XYZTVector      # LorentzVector<PxPyPzE4D<double> >
-PxPyPzEVector    = Math.PxPyPzEVector   # LorentzVector<PxPyPzE4D<double> >
-PxPyPzMVector    = Math.PxPyPzMVector   # LorentzVector<PxPyPzM4D<double> >
-PtEtaPhiEVector  = Math.PtEtaPhiEVector # LorentzVector<PtEtaPhiE4D<double> >
-PtEtaPhiMVector  = Math.PtEtaPhiMVector # LorentzVector<PtEtaPhiM4D<double> >
+XYZTVector = Math.XYZTVector  # LorentzVector<PxPyPzE4D<double> >
+PxPyPzEVector = Math.PxPyPzEVector  # LorentzVector<PxPyPzE4D<double> >
+PxPyPzMVector = Math.PxPyPzMVector  # LorentzVector<PxPyPzM4D<double> >
+PtEtaPhiEVector = Math.PtEtaPhiEVector  # LorentzVector<PtEtaPhiE4D<double> >
+PtEtaPhiMVector = Math.PtEtaPhiMVector  # LorentzVector<PtEtaPhiM4D<double> >
 # Lorentz vectors (float)
-XYZTVectorF       = Math.XYZTVectorF    # LorentzVector<PxPyPzE4D<float> >
+XYZTVectorF = Math.XYZTVectorF  # LorentzVector<PxPyPzE4D<float> >
 #
 Line = cppyy.gbl.Gaudi.Math.Line
-XYZLine        = Line(XYZPoint, XYZVector)
-Polar3DLine    = Line(Polar3DPoint, Polar3DVector)
-RhoEtaPhiLine  = Line(RhoEtaPhiPoint, RhoEtaPhiVector)
-RhoZPhiLine    = Line(RhoZPhiPoint, RhoZPhiVector)
+XYZLine = Line(XYZPoint, XYZVector)
+Polar3DLine = Line(Polar3DPoint, Polar3DVector)
+RhoEtaPhiLine = Line(RhoEtaPhiPoint, RhoEtaPhiVector)
+RhoZPhiLine = Line(RhoZPhiPoint, RhoZPhiVector)
 #
-XYZLineF       = Line(XYZPointF, XYZVectorF)
-Polar3DLineF   = Line(Polar3DPointF, Polar3DVectorF)
+XYZLineF = Line(XYZPointF, XYZVectorF)
+Polar3DLineF = Line(Polar3DPointF, Polar3DVectorF)
 RhoEtaPhiLineF = Line(RhoEtaPhiPointF, RhoEtaPhiVectorF)
-RhoZPhiLineF   = Line(RhoZPhiPointF, RhoZPhiVectorF)
+RhoZPhiLineF = Line(RhoZPhiPointF, RhoZPhiVectorF)
 #
 GeomFun = cppyy.gbl.Gaudi.Math.GF
 # this causes a seg fault in debug mode:

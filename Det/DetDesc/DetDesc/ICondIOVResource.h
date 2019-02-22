@@ -28,7 +28,7 @@
  */
 class ICondIOVResource : virtual public IInterface {
 public:
-  DeclareInterfaceID(ICondIOVResource, 1, 0);
+  DeclareInterfaceID( ICondIOVResource, 1, 0 );
 
   /**
    * The reserved IOV (via ICondIOVResource::reserve) will stay reserved for the lifetime
@@ -42,10 +42,12 @@ public:
     /// Base class for the implementation specific lock manager.
     /// An implementation of ICondIOVResource will have to subclass LockManager and
     /// return an IOVLock wrapping a LockHandle.
-    struct LockManager { virtual ~LockManager() = default; };
+    struct LockManager {
+      virtual ~LockManager() = default;
+    };
     using LockHandle = std::unique_ptr<LockManager>;
 
-    IOVLock(LockHandle&& lock): m_resourceLock{std::move(lock)} {}
+    IOVLock( LockHandle&& lock ) : m_resourceLock{std::move( lock )} {}
 
   private:
     LockHandle m_resourceLock;

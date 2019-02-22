@@ -11,34 +11,33 @@
 #ifndef GAUDISVC_IOFSRSVC_H
 #define GAUDISVC_IOFSRSVC_H
 
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/Service.h"
-#include "GaudiKernel/StatEntity.h"
-#include "GaudiKernel/Stat.h"
+#include "GaudiKernel/AppReturnCode.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/AppReturnCode.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/Stat.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiUtils/IFileCatalog.h"
 #include "IIOFSRSvc.h"
 
 #include "FSRNavigator.h"
 
 #include "Event/IOFSR.h"
-#include <string>
-#include <vector>
+#include <algorithm>
 #include <list>
 #include <map>
-#include <algorithm>
+#include <string>
 #include <utility>
+#include <vector>
 
-namespace Gaudi
-{
+namespace Gaudi {
   class IIODataManager;
 }
 
-template <class TYPE> class SvcFactory;
-
+template <class TYPE>
+class SvcFactory;
 
 /** @class IOFSRSvc IOFSRSvc.h
  *
@@ -47,28 +46,23 @@ template <class TYPE> class SvcFactory;
  *  @author Robert Lambert
  *  @date   2012-09-27
  */
-class IOFSRSvc : public extends<Service,IIOFSRSvc,IIncidentListener> {
+class IOFSRSvc : public extends<Service, IIOFSRSvc, IIncidentListener> {
 
 public:
-
-
   /// Map of FID to PFN
   typedef std::map<std::string, std::string> FidMap;
-
 
   StatusCode initialize() override;
   StatusCode finalize() override;
 
   StatusCode stop() override;
 
-
-
   IOFSRSvc( const std::string& name, ISvcLocator* svc );
 
   // ==========================================================================
   // IIncindentListener interface
   // ==========================================================================
-  void handle ( const Incident& )  override;
+  void handle( const Incident& ) override;
   // ==========================================================================
 
   // Return map of input GUID : #events for all GUIDs, events read in __creating__ those files
@@ -90,69 +84,62 @@ public:
   LHCb::IOFSR::ProvenanceMap provenanceMap() { return m_provenanceMap; }
 
   // Return list of GUIDs as input for this job
-  std::vector< std::string > parents();
+  std::vector<std::string> parents();
 
   // Return list of GUIDs as input for this job
-  unsigned long long eventsSeen() {return m_eventCount; }
+  unsigned long long eventsSeen() { return m_eventCount; }
 
   // Return list of GUIDs as input for this job, and events read from them
   LHCb::IOFSR::FileEventMap jobInputMap();
 
-
   // return number of events output into a given file in this job
-  unsigned long long jobOutput(const std::string & PFN);
+  unsigned long long jobOutput( const std::string& PFN );
 
-
-  //merge existing IOFSRs into the maps of this service
+  // merge existing IOFSRs into the maps of this service
   StatusCode mergeIOFSRs() override;
 
-  //remove any IOFSR at the top level. To be called before requesting a new FSR.
+  // remove any IOFSR at the top level. To be called before requesting a new FSR.
   StatusCode cleanTopFSR() override;
 
-  //Create a new IOFSR, pass it back so the requesting alg can store as needed
-  LHCb::IOFSR* buildIOFSR(const std::string & outputName);
+  // Create a new IOFSR, pass it back so the requesting alg can store as needed
+  LHCb::IOFSR* buildIOFSR( const std::string& outputName );
 
-  //determine event count reliability, following down the tree
-  //of input/output until something doesn't match
+  // determine event count reliability, following down the tree
+  // of input/output until something doesn't match
   LHCb::IOFSR::StatusFlag traceCountsFlag();
 
-
-  //Create a new IOFSR, store in the TES
-  StatusCode storeIOFSR(const std::string & outputName) override;
-  //Does the accounting all add up OK?
+  // Create a new IOFSR, store in the TES
+  StatusCode storeIOFSR( const std::string& outputName ) override;
+  // Does the accounting all add up OK?
   bool traceCounts() override;
 
-  //print contained information
+  // print contained information
   void print() override;
 
-
 private:
-
-  SmartIF<IIncidentSvc> m_incSvc;
-  SmartIF<Gaudi::IIODataManager> m_ioDataManager; ///the pointer to the data manager service
-  ///type of incident to regard as begin event
+  SmartIF<IIncidentSvc>          m_incSvc;
+  SmartIF<Gaudi::IIODataManager> m_ioDataManager; /// the pointer to the data manager service
+  /// type of incident to regard as begin event
   std::string m_beginIncident;
-  ///type of incident to regard as end event
+  /// type of incident to regard as end event
   std::string m_endIncident;
 
-  StatEntity m_handled; ///simple counter of #handled events
+  StatEntity m_handled; /// simple counter of #handled events
 
+  std::string m_filename; /// the current open filename for reading
 
-  std::string m_filename; ///the current open filename for reading
-
-
-  ///has at least one input file been opened in this job?
+  /// has at least one input file been opened in this job?
   bool m_hasinput;
 
   // Map of input GUID : #events for all GUIDs, events read in creating those files
   // Only for provenenance files, since I don't necessarily know the top GUID
   // not filled except for when merging is requested
-  LHCb::IOFSR::FileEventMap   m_seenByMap;
+  LHCb::IOFSR::FileEventMap m_seenByMap;
 
   // Map of input GUID : #events for all GUIDs, events read in creating those files
   // For all daughter files, since I must know the GUID if the file has been opened
   // not filled except for when merging is requested
-  LHCb::IOFSR::FileEventMap   m_readFromMap;
+  LHCb::IOFSR::FileEventMap m_readFromMap;
 
   // Map of input GUID : #events for all GUIDs, events written to those files
   // Only for provenenance files, since I don't necessarily know the top file's GUID
@@ -168,46 +155,42 @@ private:
   // The provenance map, only filled during merging
   LHCb::IOFSR::ProvenanceMap m_provenanceMap;
 
-
-  ///shorcut to prepare the incident service
+  /// shorcut to prepare the incident service
   StatusCode prepareIncSvc();
 
-  std::string file2GUID(const std::string & filename);
-  std::string AFN2name(const std::string & filename) const;
+  std::string file2GUID( const std::string& filename );
+  std::string AFN2name( const std::string& filename ) const;
 
   /// Map of FID to PFN and PFN -> FID in current job
-  FidMap   m_fidMap;
+  FidMap m_fidMap;
 
-  //total number of events seen so far.
+  // total number of events seen so far.
   unsigned long long m_eventCount;
 
+  std::string m_FileRecordName; ///< location of FileRecords
+  std::string m_FSRName;        ///< specific tag of summary data in FSR
 
-  std::string m_FileRecordName;                 ///< location of FileRecords
-  std::string m_FSRName;                        ///< specific tag of summary data in FSR
-
-  std::string m_ToolName;                       ///< name of tool for navigation
-  IFSRNavigator *m_navigatorTool;               ///< tool navigate FSRs
+  std::string    m_ToolName;      ///< name of tool for navigation
+  IFSRNavigator* m_navigatorTool; ///< tool navigate FSRs
   /// Reference to run records data service
   IDataProviderSvc* m_fileRecordSvc;
 
-  //find the last GUID in the object address
-  std::string address2GUID(const std::string& address);
+  // find the last GUID in the object address
+  std::string address2GUID( const std::string& address );
 
   LHCb::IOFSR::StatusFlag m_trace;
-  bool m_merged;
+  bool                    m_merged;
 
+  bool                    m_overrideStatus;   /// override status at end of job with default. Set by OverrideStatus.
+  std::string             m_defaultStatusStr; /// status to start with if nothing else is known, Set by DefaultStatus
+  LHCb::IOFSR::StatusFlag m_defaultStatus;    /// status to start with if nothing else is known, cast from DefaultStatus
 
-  bool m_overrideStatus; ///override status at end of job with default. Set by OverrideStatus.
-  std::string m_defaultStatusStr; ///status to start with if nothing else is known, Set by DefaultStatus
-  LHCb::IOFSR::StatusFlag m_defaultStatus; ///status to start with if nothing else is known, cast from DefaultStatus
+  bool m_printIOFSR; /// print the whole IOFSR data for inspection in finalize
 
-  bool m_printIOFSR; ///print the whole IOFSR data for inspection in finalize
+  void dumpMap( LHCb::IOFSR::FileEventMap& map ); // print contents of a map as info
 
-  void dumpMap(LHCb::IOFSR::FileEventMap & map); //print contents of a map as info
-
-  void dumpProvenance(const std::string file, const std::string buffer, const unsigned int rec=0); //print contents of a map as info
-
-
+  void dumpProvenance( const std::string file, const std::string buffer,
+                       const unsigned int rec = 0 ); // print contents of a map as info
 };
 
 #endif

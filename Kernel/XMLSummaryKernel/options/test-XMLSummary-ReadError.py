@@ -17,5 +17,4 @@ from GaudiConf import IOHelper
 importOptions("$XMLSUMMARYKERNELROOT/options/test-XMLSummary.py")
 
 # Set up the Event Selector for a file which does not exist
-IOHelper().inputFiles( ['PFN:YouCannotOpenMe.dst'], clear=True)
-
+IOHelper().inputFiles(['PFN:YouCannotOpenMe.dst'], clear=True)

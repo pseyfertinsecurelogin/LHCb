@@ -10,8 +10,8 @@
 \*****************************************************************************/
 #ifndef _STClusterWord_H
 #define _STClusterWord_H
-#include "SiDAQ/SiClusterWord.h"
 #include "Kernel/STBitsPolicy.h"
+#include "SiDAQ/SiClusterWord.h"
 
 typedef SiClusterWord<STBitsPolicy> STClusterWord;
 

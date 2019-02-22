@@ -34,11 +34,9 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class ICoreFactory LoKi/IFunctorFactory.h
      *
@@ -46,9 +44,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-10-19
      */
-    struct ICoreFactory : extend_interfaces<IAlgTool>
-    {
-      DeclareInterfaceID( ICoreFactory , 2 , 0 ) ;
+    struct ICoreFactory : extend_interfaces<IAlgTool> {
+      DeclareInterfaceID( ICoreFactory, 2, 0 );
       // ======================================================================
       // (void->...)
       // ======================================================================
@@ -58,10 +55,7 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&   pycode       ,
-        LoKi::Types::FCut&   cuts         ,
-        const std::string&   context = "" )  = 0 ;
+      virtual StatusCode get( const std::string& pycode, LoKi::Types::FCut& cuts, const std::string& context = "" ) = 0;
       // ======================================================================
       /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
@@ -69,10 +63,7 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&   pycode       ,
-        LoKi::Types::FFun&   cuts         ,
-        const std::string&   context = "" )  = 0 ;
+      virtual StatusCode get( const std::string& pycode, LoKi::Types::FFun& cuts, const std::string& context = "" ) = 0;
       // ======================================================================
       // (double->...)
       // ======================================================================
@@ -82,10 +73,7 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&   pycode       ,
-        LoKi::Types::XCut&   cuts         ,
-        const std::string&   context = "" )  = 0 ;
+      virtual StatusCode get( const std::string& pycode, LoKi::Types::XCut& cuts, const std::string& context = "" ) = 0;
       // ======================================================================
       /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
@@ -93,10 +81,7 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&   pycode       ,
-        LoKi::Types::XFun&   cuts         ,
-        const std::string&   context = "" )  = 0 ;
+      virtual StatusCode get( const std::string& pycode, LoKi::Types::XFun& cuts, const std::string& context = "" ) = 0;
       // ======================================================================
 
       // ======================================================================
@@ -106,10 +91,9 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&  pycode ,
-        LoKi::Types::XMap&  cuts  , // vector<double> -> vector<double>
-        const std::string&   context = "" )  = 0 ;
+      virtual StatusCode get( const std::string& pycode,
+                              LoKi::Types::XMap& cuts, // vector<double> -> vector<double>
+                              const std::string& context = "" ) = 0;
       // ======================================================================
       /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
@@ -117,10 +101,9 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&    pycode       ,
-        LoKi::Types::XFunVal& cuts         , // vetcor<double> -> double
-        const std::string&    context = "" )  = 0 ;
+      virtual StatusCode get( const std::string&    pycode,
+                              LoKi::Types::XFunVal& cuts, // vetcor<double> -> double
+                              const std::string&    context = "" ) = 0;
       // ======================================================================
       /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
@@ -128,14 +111,13 @@ namespace LoKi
        *  @param context context code fragment to be executed
        *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&    pycode       ,
-        LoKi::Types::XSource& cuts         ,  // void -> vector<double>
-        const std::string&    context = "" )  = 0 ;
+      virtual StatusCode get( const std::string&    pycode,
+                              LoKi::Types::XSource& cuts, // void -> vector<double>
+                              const std::string&    context = "" ) = 0;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

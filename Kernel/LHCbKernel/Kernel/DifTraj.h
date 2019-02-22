@@ -26,10 +26,9 @@
  *  @date   2006-02-03
  */
 
-namespace LHCb
-{
+namespace LHCb {
 
-  template<unsigned int N>
+  template <unsigned int N>
   struct DifTraj : Trajectory<double> {
 
     enum { kSize = N };
@@ -39,8 +38,8 @@ namespace LHCb
     using Trajectory<double>::Vector;
     using Trajectory<double>::Point;
 
-    typedef ROOT::Math::SMatrix<double,3,N> Derivative;
-    typedef ROOT::Math::SVector<double,N>   Parameters;
+    typedef ROOT::Math::SMatrix<double, 3, N> Derivative;
+    typedef ROOT::Math::SVector<double, N>    Parameters;
 
     /// Retrieve the derivative of the point at fixed expansion parameter 'mu'
     /// with respect to the parameters used to describe the trajectory
@@ -53,7 +52,7 @@ namespace LHCb
 
     // update the parameters i.e.
     //   parameters += delta...
-    virtual DifTraj<N>& operator+=(const Parameters& delta) = 0;
+    virtual DifTraj<N>& operator+=( const Parameters& delta ) = 0;
   };
 
 } // namespace LHCb

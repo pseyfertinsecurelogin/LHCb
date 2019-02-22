@@ -17,18 +17,18 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
-#include <type_traits>
 #include <iterator>
+#include <type_traits>
 // ============================================================================
 // GauduiKernel
 // ============================================================================
-#include "GaudiKernel/Range.h"
 #include "GaudiKernel/NamedRange.h"
+#include "GaudiKernel/Range.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/iTree.h"
-#define LOKI_REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
+#define LOKI_REQUIRES( ... ) std::enable_if_t<( __VA_ARGS__ ), bool> = true
 // ============================================================================
 /** @file LoKi/DecayFinder.h
  *
@@ -42,8 +42,7 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
   /** @class Finder LoKi/DecayFinder.h
    *
@@ -53,23 +52,22 @@ namespace Decays
    *  @date   2009-06-02
    */
   template <class PARTICLE>
-  class Finder_
-  {
+  class Finder_ {
   protected:
     // ========================================================================
     /// the type for collection
-    typedef typename Decays::iTree_<PARTICLE>::Collection          Collection ;
-    typedef typename Collection::const_iterator                    iterator   ;
+    typedef typename Decays::iTree_<PARTICLE>::Collection Collection;
+    typedef typename Collection::const_iterator           iterator;
     // ========================================================================
   public:
     // ========================================================================
-    typedef Decays::iTree_<PARTICLE>                                    iTree ;
-    typedef Decays::Tree_<PARTICLE>                                      Tree ;
+    typedef Decays::iTree_<PARTICLE> iTree;
+    typedef Decays::Tree_<PARTICLE>  Tree;
     // ========================================================================
   public:
     // ========================================================================
     /// constructor from the tree
-    Finder_ ( const iTree_<PARTICLE>& tree ) : m_tree ( tree ) {}
+    Finder_( const iTree_<PARTICLE>& tree ) : m_tree( tree ) {}
     // ========================================================================
   public:
     // ========================================================================
@@ -94,27 +92,22 @@ namespace Decays
      *  @return true if the specified decay is in the sequnce
      */
     template <typename ITERATOR,
-              LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
-                                              typename std::iterator_traits<ITERATOR>::iterator_category
-                                            >::value )>
-    bool hasDecay( ITERATOR first , ITERATOR last ) const
-    {
-      return std::any_of( first , last , m_tree ) ;
+              LOKI_REQUIRES( std::is_base_of<std::input_iterator_tag,
+                                             typename std::iterator_traits<ITERATOR>::iterator_category>::value )>
+    bool hasDecay( ITERATOR first, ITERATOR last ) const {
+      return std::any_of( first, last, m_tree );
     }
     // ========================================================================
-    bool hasDecay ( const std::vector<PARTICLE>& particles ) const
-    {
-      return this->hasDecay ( particles.begin() , particles.end() ) ;
+    bool hasDecay( const std::vector<PARTICLE>& particles ) const {
+      return this->hasDecay( particles.begin(), particles.end() );
     }
     // ========================================================================
-    bool hasDecay ( const Gaudi::Range_<std::vector<PARTICLE> >& particles ) const
-    {
-      return this->hasDecay ( particles.begin() , particles.end() ) ;
+    bool hasDecay( const Gaudi::Range_<std::vector<PARTICLE>>& particles ) const {
+      return this->hasDecay( particles.begin(), particles.end() );
     }
     // ========================================================================
-    bool hasDecay ( const Gaudi::NamedRange_<std::vector<PARTICLE> >& particles ) const
-    {
-      return this->hasDecay ( particles.begin() , particles.end() ) ;
+    bool hasDecay( const Gaudi::NamedRange_<std::vector<PARTICLE>>& particles ) const {
+      return this->hasDecay( particles.begin(), particles.end() );
     }
     // ========================================================================
   public:
@@ -143,38 +136,25 @@ namespace Decays
      *  @return number of found particles
      */
     template <typename ITERATOR, typename OUTPUT,
-              LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
-                                              typename std::iterator_traits<ITERATOR>::iterator_category
-                                            >::value )>
-    unsigned int  findDecay
-    ( ITERATOR             first  ,
-      ITERATOR             last   ,
-      std::vector<OUTPUT>& output ) const
-    {
-      const unsigned int old_size = output.size() ;
-      (*this)( first , last , std::back_inserter( output ) ) ;
-      return output.size() - old_size ;
+              LOKI_REQUIRES( std::is_base_of<std::input_iterator_tag,
+                                             typename std::iterator_traits<ITERATOR>::iterator_category>::value )>
+    unsigned int findDecay( ITERATOR first, ITERATOR last, std::vector<OUTPUT>& output ) const {
+      const unsigned int old_size = output.size();
+      ( *this )( first, last, std::back_inserter( output ) );
+      return output.size() - old_size;
     }
     // ========================================================================
-    unsigned int findDecay
-    ( const std::vector<PARTICLE>& input ,
-      std::vector<PARTICLE>&       output ) const
-    {
-      return this->findDecay ( input.begin() , input.end() , output ) ;
+    unsigned int findDecay( const std::vector<PARTICLE>& input, std::vector<PARTICLE>& output ) const {
+      return this->findDecay( input.begin(), input.end(), output );
     }
     // ========================================================================
-    unsigned int findDecay
-    ( const Gaudi::Range_<std::vector<PARTICLE> >& input ,
-      std::vector<PARTICLE>&                       output ) const
-    {
-      return this->findDecay ( input.begin() , input.end() , output ) ;
+    unsigned int findDecay( const Gaudi::Range_<std::vector<PARTICLE>>& input, std::vector<PARTICLE>& output ) const {
+      return this->findDecay( input.begin(), input.end(), output );
     }
     // ========================================================================
-    unsigned int findDecay
-    ( const Gaudi::NamedRange_<std::vector<PARTICLE> >& input  ,
-      std::vector<PARTICLE>&                            output ) const
-    {
-      return this->findDecay ( input.begin() , input.end() , output ) ;
+    unsigned int findDecay( const Gaudi::NamedRange_<std::vector<PARTICLE>>& input,
+                            std::vector<PARTICLE>&                           output ) const {
+      return this->findDecay( input.begin(), input.end(), output );
     }
     // ========================================================================
   public:
@@ -203,41 +183,34 @@ namespace Decays
      *  @param  output (OUTPUT) the output iterator for the result
      *  @return advanced output operator
      */
-    template <typename  ITERATOR,typename OUTPUT,
-              LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
-                                              typename std::iterator_traits<ITERATOR>::iterator_category
-                                             >::value )>
-    OUTPUT operator()  ( ITERATOR first  ,
-                         ITERATOR last   ,
-                         OUTPUT   output ) const
-    {
-      const bool valid  = m_tree.valid  () ;
-      if ( !valid ) { return output ; }   // No action for Invalid tree, RETURN
-      const bool marked = m_tree.marked () ;
-      Collection _mark ;
-      for ( ; first != last ; ++first )
-      {
-        if ( marked ) { m_tree.reset() ; }
+    template <typename ITERATOR, typename OUTPUT,
+              LOKI_REQUIRES( std::is_base_of<std::input_iterator_tag,
+                                             typename std::iterator_traits<ITERATOR>::iterator_category>::value )>
+    OUTPUT operator()( ITERATOR first, ITERATOR last, OUTPUT output ) const {
+      const bool valid = m_tree.valid();
+      if ( !valid ) { return output; } // No action for Invalid tree, RETURN
+      const bool marked = m_tree.marked();
+      Collection _mark;
+      for ( ; first != last; ++first ) {
+        if ( marked ) { m_tree.reset(); }
         // OK ?
-        if ( !m_tree.eval ( *first ) ) { continue ; }               // CONTINUE
+        if ( !m_tree.eval( *first ) ) { continue; } // CONTINUE
         // the regular non-marked  descriptor
-        if ( !marked )
-        {
-          *output = *first ; // assign
-          ++output         ; // advance
-          continue         ;                                        // CONTINUE
+        if ( !marked ) {
+          *output = *first; // assign
+          ++output;         // advance
+          continue;         // CONTINUE
         }
         // the descriptor with marked elements
-        _mark.clear() ;
-        m_tree.collect ( _mark ) ;
-        for ( iterator imark = _mark.begin() ; _mark.end() != imark ; ++imark )
-        {
-          *output = *imark ;  // assign
-          ++output         ;  // advance
+        _mark.clear();
+        m_tree.collect( _mark );
+        for ( iterator imark = _mark.begin(); _mark.end() != imark; ++imark ) {
+          *output = *imark; // assign
+          ++output;         // advance
         }
-        _mark.clear() ;
+        _mark.clear();
       }
-      return output ;                                                 // RETURN
+      return output; // RETURN
     }
     // ========================================================================
     /** the major method for selection of particles from some sequence
@@ -262,59 +235,55 @@ namespace Decays
      *  @param  output (OUTPUT) the output container
      *  @return number of added elements
      */
-    template <class INPUT,class OUTPUT>
-    unsigned int  operator()  ( const INPUT&         input  ,
-                                std::vector<OUTPUT>& output ) const
-    {
-      const unsigned int old_size = output.size() ;
+    template <class INPUT, class OUTPUT>
+    unsigned int operator()( const INPUT& input, std::vector<OUTPUT>& output ) const {
+      const unsigned int old_size = output.size();
       // regirect to another method
-      (*this) ( input.begin() , input.end() , std::back_inserter ( output ) ) ;
-      return output.size() - old_size ;
+      ( *this )( input.begin(), input.end(), std::back_inserter( output ) );
+      return output.size() - old_size;
     }
     // ========================================================================
   public:
     // ========================================================================
     /// access to the underlying tree
-    const iTree_<PARTICLE>&     tree () const { return m_tree.tree() ; }
+    const iTree_<PARTICLE>& tree() const { return m_tree.tree(); }
     /// cast operator to the underlyiong tree
-    operator const iTree_<PARTICLE>& () const { return  this->tree() ; }// cast
+    operator const iTree_<PARTICLE>&() const { return this->tree(); } // cast
     /// valid tree?
-    bool valid     () const { return this->tree().valid  () ; }
+    bool valid() const { return this->tree().valid(); }
     /// marked tree?
-    bool marked    () const { return this->tree().marked () ; }
+    bool marked() const { return this->tree().marked(); }
     /// invalid tree?
-    bool operator! () const { return !(this->valid()) ; }
+    bool operator!() const { return !( this->valid() ); }
     /// validate the tree
-    StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const
-    { return m_tree.validate ( svc ) ; }
+    StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const { return m_tree.validate( svc ); }
     // ========================================================================
   private:
     // ========================================================================
     // no default constructor
-    Finder_ () ;                                      // no default constructor
+    Finder_(); // no default constructor
     // ========================================================================
   private:
     // ========================================================================
     /// the actual selection tree
-    Decays::Tree_<PARTICLE> m_tree ;               // the actual selection tree
+    Decays::Tree_<PARTICLE> m_tree; // the actual selection tree
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } // end of namespace Decays
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils
-  {
+  namespace Utils {
     // ========================================================================
     template <class PARTICLE>
-    std::string toCpp ( const Decays::Finder_<PARTICLE>& p )
-    { return toCpp ( p.tree() ) ; }
+    std::string toCpp( const Decays::Finder_<PARTICLE>& p ) {
+      return toCpp( p.tree() );
+    }
     // ========================================================================
-  }
+  } // namespace Utils
   // ==========================================================================
-}
+} // namespace Gaudi
 // ============================================================================
 // The END
 // ============================================================================

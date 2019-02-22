@@ -17,13 +17,9 @@
 // Implementation file for class : HltDecReport
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::HltDecReport::fillStream(std::ostream& s) const
-{
+std::ostream& LHCb::HltDecReport::fillStream( std::ostream& s ) const {
   return s << "{ "
-           << " decision : " << decision()
-           << " errorBits : " << errorBits()
-           << " numberOfCandidates : " << numberOfCandidates()
-           << " executionStage : " << executionStage()
-           << " intDecisionID : " << intDecisionID()
-           << " }" ;
+           << " decision : " << decision() << " errorBits : " << errorBits()
+           << " numberOfCandidates : " << numberOfCandidates() << " executionStage : " << executionStage()
+           << " intDecisionID : " << intDecisionID() << " }";
 }

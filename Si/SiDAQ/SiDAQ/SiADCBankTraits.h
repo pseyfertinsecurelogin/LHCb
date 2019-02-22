@@ -8,9 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef SIDAQ_SIADCBANKTRAITS_H 
+#ifndef SIDAQ_SIADCBANKTRAITS_H
 #define SIDAQ_SIADCBANKTRAITS_H 1
-
 
 namespace SiDAQ {
 
@@ -38,5 +37,5 @@ namespace SiDAQ {
    */
   struct adc_neighboursum_bank_tag {};
 
-}
+} // namespace SiDAQ
 #endif // SIDAQ_SIADCBANKTRAITS_H

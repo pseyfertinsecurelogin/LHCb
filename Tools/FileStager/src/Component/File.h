@@ -12,14 +12,14 @@
 #define FILE_H 1
 
 // std
-#include <vector>
 #include <optional>
+#include <vector>
 
 // boost
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/thread.hpp>
 
 /** @class File File.h
  *
@@ -29,135 +29,95 @@
  */
 class File final {
 public:
+  File( const std::string& original, const std::string& command, const std::string& remote, const std::string& temp );
 
-   File( const std::string& original, const std::string& command,
-         const std::string& remote, const std::string& temp );
+  const std::string& original() const { return m_original; }
 
+  const std::string& command() const { return m_command; }
 
-   const std::string& original() const
-   {
-      return m_original;
-   }
+  const std::string& remote() const { return m_remote; }
 
-   const std::string& command() const
-   {
-      return m_command;
-   }
+  const std::string& temporary() const { return m_temporary; }
 
-   const std::string& remote() const
-   {
-      return m_remote;
-   }
+  const std::vector<std::string>& errorMessages() const { return m_errorMessages; }
 
-   const std::string& temporary() const
-   {
-      return m_temporary;
-   }
+  boost::mutex& openMutex() { return m_openMutex; }
 
-   const std::vector<std::string>& errorMessages() const
-   {
-      return m_errorMessages;
-   }
+  const boost::mutex& openMutex() const { return m_openMutex; }
 
-   boost::mutex& openMutex()
-   {
-      return m_openMutex;
-   }
+  boost::mutex& closeMutex() { return m_closeMutex; }
 
-   const boost::mutex& openMutex() const
-   {
-      return m_openMutex;
-   }
+  const boost::mutex& closeMutex() const { return m_closeMutex; }
 
-   boost::mutex& closeMutex()
-   {
-      return m_closeMutex;
-   }
+  bool staged() const {
+    boost::lock_guard lock( m_internalMutex );
+    return m_staged;
+  }
 
-   const boost::mutex& closeMutex() const
-   {
-      return m_closeMutex;
-   }
+  void setStaged( bool staged ) {
+    boost::lock_guard lock( m_internalMutex );
+    m_staged = staged;
+  }
 
-   bool staged() const
-   {
-      boost::lock_guard lock( m_internalMutex );
-      return m_staged;
-   }
+  bool good() const {
+    boost::lock_guard lock( m_internalMutex );
+    return m_good;
+  }
 
-   void setStaged( bool staged )
-   {
-      boost::lock_guard lock( m_internalMutex );
-      m_staged = staged;
-   }
+  void setGood( bool good ) {
+    boost::lock_guard lock( m_internalMutex );
+    m_good = good;
+  }
 
-   bool good() const
-   {
-      boost::lock_guard lock( m_internalMutex );
-      return m_good;
-   }
+  boost::condition_variable& openCondition() {
+    boost::lock_guard lock( m_internalMutex );
+    return m_openCondition;
+  }
 
-   void setGood( bool good )
-   {
-      boost::lock_guard lock( m_internalMutex );
-      m_good = good;
-   }
+  const boost::condition_variable& openCondition() const {
+    boost::lock_guard lock( m_internalMutex );
+    return m_openCondition;
+  }
 
-   boost::condition_variable& openCondition()
-   {
-      boost::lock_guard lock( m_internalMutex );
-      return m_openCondition;
-   }
+  boost::condition_variable& closeCondition() {
+    boost::lock_guard lock( m_internalMutex );
+    return m_closeCondition;
+  }
 
-   const boost::condition_variable& openCondition() const
-   {
-      boost::lock_guard lock( m_internalMutex );
-      return m_openCondition;
-   }
+  const boost::condition_variable& closeCondition() const {
+    boost::lock_guard lock( m_internalMutex );
+    return m_closeCondition;
+  }
 
-   boost::condition_variable& closeCondition()
-   {
-      boost::lock_guard lock( m_internalMutex );
-      return m_closeCondition;
-   }
+  bool exists() const;
 
-   const boost::condition_variable& closeCondition() const
-   {
-      boost::lock_guard lock( m_internalMutex );
-      return m_closeCondition;
-   }
-
-   bool exists() const;
-
-   boost::uintmax_t size() const;
+  boost::uintmax_t size() const;
 
 private:
+  File& operator=( const File& other );
+  File( const File& other );
 
-   File& operator=( const File& other );
-   File( const File& other );
+  // Data members
+  // The original name of the file
+  const std::string m_original;
+  // The command to be executed to stage this file
+  const std::string m_command;
+  // The filename as passed to lcg-cp
+  const std::string m_remote;
+  // The name of the temporary file
+  const std::string m_temporary;
 
-   // Data members
-   // The original name of the file
-   const std::string m_original;
-   // The command to be executed to stage this file
-   const std::string m_command;
-   // The filename as passed to lcg-cp
-   const std::string m_remote;
-   // The name of the temporary file
-   const std::string m_temporary;
+  // A string to hold possible error messages
+  mutable std::vector<std::string> m_errorMessages;
 
-   // A string to hold possible error messages
-   mutable std::vector<std::string> m_errorMessages;
+  bool                                    m_staged;
+  bool                                    m_good;
+  mutable std::optional<boost::uintmax_t> m_size;
 
-   bool m_staged;
-   bool m_good;
-   mutable std::optional< boost::uintmax_t > m_size;
-
-   mutable boost::mutex m_internalMutex;
-   boost::mutex m_openMutex;
-   boost::mutex m_closeMutex;
-   boost::condition_variable m_openCondition;
-   boost::condition_variable m_closeCondition;
-
+  mutable boost::mutex      m_internalMutex;
+  boost::mutex              m_openMutex;
+  boost::mutex              m_closeMutex;
+  boost::condition_variable m_openCondition;
+  boost::condition_variable m_closeCondition;
 };
 #endif // STAGER_FILE_H

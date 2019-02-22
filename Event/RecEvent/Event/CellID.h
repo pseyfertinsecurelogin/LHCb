@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef EVENT_CLUSTERCELLID_H 
+#ifndef EVENT_CLUSTERCELLID_H
 #define EVENT_CLUSTERCELLID_H 1
 // ============================================================================
 #include "Event/CaloDataFunctor.h"

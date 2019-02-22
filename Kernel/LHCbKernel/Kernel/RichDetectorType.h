@@ -29,8 +29,7 @@
 #include <vector>
 
 //  General namespace for RICH specific definitions documented in RichSide.h
-namespace Rich
-{
+namespace Rich {
 
   /// Number of RICH detectors
   static const uint8_t NRiches = 2;
@@ -42,8 +41,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum DetectorType : int8_t
-  {
+  enum DetectorType : int8_t {
     InvalidDetector = -1, ///< Unspecified Detector
     Rich1           = 0,  ///< RICH1 detector
     Rich2           = 1,  ///< RICH2 detector
@@ -59,20 +57,19 @@ namespace Rich
   std::string text( const Rich::DetectorType detector );
 
   /// Type for container of detector types
-  typedef std::vector< Rich::DetectorType > Detectors;
+  typedef std::vector<Rich::DetectorType> Detectors;
   // using Detectors = std::vector<Rich::DetectorType>;
 
   /// Access a vector of valid detector types
-  const Detectors &detectors() noexcept;
+  const Detectors& detectors() noexcept;
 
   /// Implement textual ostream << method for Rich::DetectorType enumeration
-  inline std::ostream &operator<<( std::ostream &s, const Rich::DetectorType &detector )
-  {
+  inline std::ostream& operator<<( std::ostream& s, const Rich::DetectorType& detector ) {
     return s << Rich::text( detector );
   }
 
   /// Type for fixed size arrays with RICH detector information
-  template < typename TYPE >
-  using DetectorArray = std::array< TYPE, NRiches >;
+  template <typename TYPE>
+  using DetectorArray = std::array<TYPE, NRiches>;
 
 } // namespace Rich

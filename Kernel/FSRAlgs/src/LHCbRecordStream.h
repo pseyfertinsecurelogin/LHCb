@@ -16,21 +16,21 @@
 #include "LHCbOutputStream.h"
 
 /** @class LHCbRecordStream LHCbRecordStream.h
-  * Extension of OutputStream to write run records after last event
-  *
-  * @author  M.Frank
-  * @version 1.0
-  */
-class LHCbRecordStream : public LHCbOutputStream     {
+ * Extension of OutputStream to write run records after last event
+ *
+ * @author  M.Frank
+ * @version 1.0
+ */
+class LHCbRecordStream : public LHCbOutputStream {
 public:
   /// Standard algorithm Constructor
-  LHCbRecordStream(const std::string&, ISvcLocator*);
+  LHCbRecordStream( const std::string&, ISvcLocator* );
   /// Standard Destructor
   virtual ~LHCbRecordStream() {}
   /// Algorithm overload: finalization
   StatusCode finalize() override;
   /// Runrecords do not get written for each event: Event processing hence dummy....
-  StatusCode execute() override {  return StatusCode::SUCCESS; }
+  StatusCode execute() override { return StatusCode::SUCCESS; }
 };
 
 #endif // LHCB_RECORDSTREAM_H

@@ -10,9 +10,9 @@
 \*****************************************************************************/
 /// ===========================================================================
 /// DetDesc
-#include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/GeoInfo.h"
 #include "DetDesc/GeometryInfoPlus.h"
+#include "DetDesc/IGeometryInfo.h"
 
 // ============================================================================
 /** @file GeoInfo.cpp
@@ -31,22 +31,19 @@
  *  @return pointer to IGeometryInfo object
  */
 // ============================================================================
-IGeometryInfo*
-GeoInfo::createGeometryInfo( IDetectorElement* de )
-{ return new GeometryInfoPlus( de ); }
+IGeometryInfo* GeoInfo::createGeometryInfo( IDetectorElement* de ) { return new GeometryInfoPlus( de ); }
 
 // ============================================================================
 /** create "orphan" geometry info object
-   *  @exception GeometryInfoException null IDetectorElement pointer
-   *  @param de pointer to detector element
-   *  @param LV name/address fo logical volume
-   *  @return pointer to IGeometryInfo object
-   */
+ *  @exception GeometryInfoException null IDetectorElement pointer
+ *  @param de pointer to detector element
+ *  @param LV name/address fo logical volume
+ *  @return pointer to IGeometryInfo object
+ */
 // ============================================================================
-IGeometryInfo*
-GeoInfo::createGeometryInfo( IDetectorElement* de  ,
-                             const std::string& LV )
-{ return new GeometryInfoPlus( de , LV ); }
+IGeometryInfo* GeoInfo::createGeometryInfo( IDetectorElement* de, const std::string& LV ) {
+  return new GeometryInfoPlus( de, LV );
+}
 
 // ============================================================================
 /** create regular geometry infor element
@@ -58,19 +55,9 @@ GeoInfo::createGeometryInfo( IDetectorElement* de  ,
  *  @param alignmentPath   address of alignment condition
  */
 // ============================================================================
-IGeometryInfo*
-GeoInfo::createGeometryInfo( IDetectorElement*  de              ,
-                             const std::string& LogVol          ,
-                             const std::string& Support         ,
-                             const std::string& ReplicaNamePath ,
-                             const std::string& alignmentPath)
-{
-  return new GeometryInfoPlus( de,
-                               LogVol,
-                               Support,
-                               ReplicaNamePath,
-                               alignmentPath);
-
+IGeometryInfo* GeoInfo::createGeometryInfo( IDetectorElement* de, const std::string& LogVol, const std::string& Support,
+                                            const std::string& ReplicaNamePath, const std::string& alignmentPath ) {
+  return new GeometryInfoPlus( de, LogVol, Support, ReplicaNamePath, alignmentPath );
 }
 
 // ============================================================================
@@ -83,19 +70,10 @@ GeoInfo::createGeometryInfo( IDetectorElement*  de              ,
  *  @param alignmentPath   address of alignment condition
  */
 // ============================================================================
-IGeometryInfo*
-GeoInfo::createGeometryInfo( IDetectorElement*  de              ,
-                             const std::string& LogVol          ,
-                             const std::string& Support         ,
-                             const ILVolume::ReplicaPath& ReplicaPath,
-                             const std::string& alignmentPath)
-{
-  return new GeometryInfoPlus( de,
-                               LogVol,
-                               Support,
-                               ReplicaPath,
-                               alignmentPath);
-
+IGeometryInfo* GeoInfo::createGeometryInfo( IDetectorElement* de, const std::string& LogVol, const std::string& Support,
+                                            const ILVolume::ReplicaPath& ReplicaPath,
+                                            const std::string&           alignmentPath ) {
+  return new GeometryInfoPlus( de, LogVol, Support, ReplicaPath, alignmentPath );
 }
 
 // ============================================================================

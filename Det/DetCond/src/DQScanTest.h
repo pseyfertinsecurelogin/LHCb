@@ -20,49 +20,47 @@ namespace DetCondTest {
     Gaudi::Time since = Gaudi::Time::epoch(), until = Gaudi::Time::max();
   };
   using IOVList = std::vector<IOV>;
-  std::ostream& operator<<(std::ostream& s, const DetCondTest::IOV& iov);
-}
+  std::ostream& operator<<( std::ostream& s, const DetCondTest::IOV& iov );
+} // namespace DetCondTest
 
 namespace Gaudi {
   namespace Parsers {
     // Note: to be kept in sync with the property in DetCondTest::DQScanTest
-    StatusCode parse(DetCondTest::IOVList& result, const std::string& input);
-  }
-}
+    StatusCode parse( DetCondTest::IOVList& result, const std::string& input );
+  } // namespace Parsers
+} // namespace Gaudi
 
 namespace DetCondTest {
 
-/** @class DQScanTest DQScanTest.h src/DQScanTest.h
-  *
-  * Algorithm to test the behavior of an IDQScanner implementation.
-  *
-  * @author Marco Clemencic
-  * @date 31/01/2012
-  */
-class DQScanTest: public GaudiAlgorithm {
-public:
-  /// Standard constructor
-  using GaudiAlgorithm::GaudiAlgorithm;
+  /** @class DQScanTest DQScanTest.h src/DQScanTest.h
+   *
+   * Algorithm to test the behavior of an IDQScanner implementation.
+   *
+   * @author Marco Clemencic
+   * @date 31/01/2012
+   */
+  class DQScanTest : public GaudiAlgorithm {
+  public:
+    /// Standard constructor
+    using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
 
-private:
+  private:
+    /// Type/name of the IDQScanner instance.
+    /// (property DQScanner)
+    Gaudi::Property<std::string> m_DQScannerName{this, "DQScanner", "CondDBDQScanner",
+                                                 "Type/name of the IDQScanner instance to use."};
 
-  /// Type/name of the IDQScanner instance.
-  /// (property DQScanner)
-  Gaudi::Property<std::string> m_DQScannerName
-  {this, "DQScanner", "CondDBDQScanner", "Type/name of the IDQScanner instance to use."};
+    /// List of IOVs (with time specified in seconds) to try to retrieve (property).
+    Gaudi::Property<IOVList> m_iovs{this, "IOVs", IOVList{}, "List of IOVs (specified in seconds) to scan."};
 
-  /// List of IOVs (with time specified in seconds) to try to retrieve (property).
-  Gaudi::Property<IOVList> m_iovs
-  { this, "IOVs", IOVList{}, "List of IOVs (specified in seconds) to scan."};
+    /// Pointer to the IDQScanner instance.
+    IDQScanner* m_scanner = nullptr;
+  };
 
-  /// Pointer to the IDQScanner instance.
-  IDQScanner *m_scanner = nullptr;
-};
-
-}
+} // namespace DetCondTest
 
 #endif // SRC_DQSCANTEST_H

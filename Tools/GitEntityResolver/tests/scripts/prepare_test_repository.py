@@ -28,6 +28,7 @@ def echo_cmd(func):
     def wrap(*args, **kwargs):
         print args, kwargs
         return func(*args, **kwargs)
+
     return wrap
 
 
@@ -53,8 +54,8 @@ def write_IOVs(iovs, path):
     write a list of (datetime, key) pairs to the IOVs file in path.
     '''
     with open(join(path, 'IOVs'), 'w') as IOVs:
-        IOVs.write(''.join('{0} {1}\n'.format(to_ts(dt), key)
-                           for dt, key in iovs))
+        IOVs.write(''.join(
+            '{0} {1}\n'.format(to_ts(dt), key) for dt, key in iovs))
 
 
 # first argument is destination directory
@@ -68,9 +69,11 @@ src_data = join(dirname(__file__), 'data', 'test_repo')
 copytree(src_data, path)
 
 check_call(['git', 'init', path])
-check_call(['git', 'config', '-f', '.git/config', 'user.name', 'Test User'], cwd=path)
-check_call(['git', 'config', '-f', '.git/config', 'user.email', 'test.user@no.where'],
+check_call(['git', 'config', '-f', '.git/config', 'user.name', 'Test User'],
            cwd=path)
+check_call(
+    ['git', 'config', '-f', '.git/config', 'user.email', 'test.user@no.where'],
+    cwd=path)
 check_call(['git', 'add', '.'], cwd=path)
 env = dict(os.environ)
 env['GIT_COMMITTER_DATE'] = env['GIT_AUTHOR_DATE'] = '1483225200'
@@ -88,19 +91,14 @@ dir2016 = join(path, 'changing.xml', '2016')
 dir2017 = join(path, 'changing.xml', '2017')
 
 makedirs(dirInit, dir2016, dir2017)
-write_IOVs([(EPOCH, 'initial'),
-            (datetime(2016, 1, 1), 2016),
-            (datetime(2017, 1, 1), 2017)],
-           join(path, 'changing.xml'))
+write_IOVs([(EPOCH, 'initial'), (datetime(2016, 1, 1), 2016),
+            (datetime(2017, 1, 1), 2017)], join(path, 'changing.xml'))
 
-copy(join(path, 'changing.xml', 'v0.xml'),
-     join(dirInit, 'v0'))
+copy(join(path, 'changing.xml', 'v0.xml'), join(dirInit, 'v0'))
 write_IOVs([(EPOCH, 'v0')], dirInit)
 
-copy(join(path, 'changing.xml', 'v1.xml'),
-     join(dir2016, 'v1'))
-write_IOVs([(EPOCH, '../initial/v0'),
-            (datetime(2016, 7, 1), 'v1')], dir2016)
+copy(join(path, 'changing.xml', 'v1.xml'), join(dir2016, 'v1'))
+write_IOVs([(EPOCH, '../initial/v0'), (datetime(2016, 7, 1), 'v1')], dir2016)
 
 write_IOVs([(EPOCH, '../2016/v1')], dir2017)
 
@@ -135,5 +133,4 @@ os.makedirs(path + '-overlay')
 with open(join(src_data, 'values.xml')) as in_file:
     with open(join(path + '-overlay', 'values.xml'), 'w') as out_file:
         out_file.write(in_file.read().replace('42', '777'))
-print check_output(['git', 'init'], cwd=path + '-overlay',
-                   stderr=STDOUT)
+print check_output(['git', 'init'], cwd=path + '-overlay', stderr=STDOUT)

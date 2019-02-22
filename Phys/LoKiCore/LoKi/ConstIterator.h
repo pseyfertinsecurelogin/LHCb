@@ -36,8 +36,7 @@
  *  @date 2006-03-29
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @struct ConstIterator
    *  iterator which mimics the behaviour of the
@@ -51,113 +50,110 @@ namespace LoKi
    *  @date 2006-03-15
    */
   template <class ITERATOR>
-  struct ConstIterator : public std::iterator
-  <
-    typename ITERATOR::iterator_category                        , // from the base
-    typename LoKi::Const<typename ITERATOR::value_type>::Value  , // Const!
-    typename ITERATOR::difference_type                          , // from the base
-    typename LoKi::Const<typename ITERATOR::pointer>::Value     , // Const!
-    typename LoKi::Const<typename ITERATOR::reference>::Value     // Const!
-  >
-  {
+  struct ConstIterator : public std::iterator<typename ITERATOR::iterator_category, // from the base
+                                              typename LoKi::Const<typename ITERATOR::value_type>::Value, // Const!
+                                              typename ITERATOR::difference_type,                       // from the base
+                                              typename LoKi::Const<typename ITERATOR::pointer>::Value,  // Const!
+                                              typename LoKi::Const<typename ITERATOR::reference>::Value // Const!
+                                              > {
   protected:
     /// One of the @link iterator_tags tag types@endlink.
-    typedef typename ITERATOR::iterator_category                iterator_category;
+    typedef typename ITERATOR::iterator_category iterator_category;
     /// The type "pointed to" by the iterator.
     typedef typename LoKi::Const<typename ITERATOR::value_type>::Value value_type;
     /// Distance between iterators is represented as this type.
-    typedef typename ITERATOR::difference_type                    difference_type;
+    typedef typename ITERATOR::difference_type difference_type;
     /// This type represents a pointer-to-value_type.
-    typedef typename LoKi::Const<typename ITERATOR::pointer>::Value       pointer;
+    typedef typename LoKi::Const<typename ITERATOR::pointer>::Value pointer;
     /// This type represents a reference-to-value_type.
-    typedef typename LoKi::Const<typename ITERATOR::reference>::Value   reference;
+    typedef typename LoKi::Const<typename ITERATOR::reference>::Value reference;
+
   public:
     /// the default constructor : the base must be  default contrubctible!
     ConstIterator() = default;
     /// the constructor from the base
-    ConstIterator( const ITERATOR& base  ) : m_it ( base ) {} ;
+    ConstIterator( const ITERATOR& base ) : m_it( base ){};
     /// compiler generated copy and assignement are OK
 
     /// the magic starts here
-    pointer   operator->() const { return  m_it.operator->() ; } ;
+    pointer operator->() const { return m_it.operator->(); };
     /// ... and it continues here
-    reference operator* () const { return *m_it              ; } ;
+    reference operator*() const { return *m_it; };
 
     // all other lines are just boring repetitions...
 
     /// pre-incrment
-    ConstIterator& operator++()
-    { ++m_it  ; return *this ; }
+    ConstIterator& operator++() {
+      ++m_it;
+      return *this;
+    }
     /// post-incrment
-    ConstIterator  operator++( int )
-    { ConstIterator tmp(*this) ; m_it++ ; return tmp ; }
+    ConstIterator operator++( int ) {
+      ConstIterator tmp( *this );
+      m_it++;
+      return tmp;
+    }
     /// pre-decrement
-    ConstIterator& operator--()
-    { --m_it  ; return *this ; }
+    ConstIterator& operator--() {
+      --m_it;
+      return *this;
+    }
     /// post-decrement
-    ConstIterator  operator--( int )
-    { ConstIterator tmp(*this) ; m_it-- ; return tmp ; }
+    ConstIterator operator--( int ) {
+      ConstIterator tmp( *this );
+      m_it--;
+      return tmp;
+    }
     //
-    ConstIterator& operator+=( const difference_type offset )
-    { std::advance ( m_it ,      offset ) ; return *this ; } ;
-    //
-    ConstIterator& operator-=( const difference_type offset )
-    { std::advance ( m_it , -1 * offset ) ; return *this ; } ;
-    //
-    difference_type operator-( const      ITERATOR& right ) const
-    { return std::distance( m_it , right ) ; }
-    //
-    difference_type operator-( const ConstIterator& right ) const
-    { return (*this) - right.m_it          ; }
-    //
-    bool operator== ( const      ITERATOR& right ) const
-    { return m_it    == right      ; }
-    //
-    bool operator== ( const ConstIterator& right ) const
-    { return (*this) == right.m_it ; }
-    //
-    bool operator!= ( const      ITERATOR& right ) const
-    { return  !( *this == right )  ; }
-    bool operator!= ( const ConstIterator& right ) const
-    { return  !( *this == right )  ; }
-    //
-    ConstIterator  operator+( const difference_type offset )
-    {
-      ConstIterator tmp(*this) ;
-      return tmp += offset ;
+    ConstIterator& operator+=( const difference_type offset ) {
+      std::advance( m_it, offset );
+      return *this;
     };
     //
-    ConstIterator  operator-( const difference_type offset )
-    {
-      ConstIterator tmp(*this) ;
-      return tmp -= offset ;
+    ConstIterator& operator-=( const difference_type offset ) {
+      std::advance( m_it, -1 * offset );
+      return *this;
     };
     //
-    friend ConstIterator
-    operator+
-    ( const difference_type offset ,
-      const ConstIterator&  right  ) { return right + offset ; } ;
+    difference_type operator-( const ITERATOR& right ) const { return std::distance( m_it, right ); }
     //
-    friend difference_type
-    operator-
-    ( const ITERATOR&      right ,
-      const ConstIterator& left  )
-    { return std::distance ( right ,  left.m_it ) ; }
+    difference_type operator-( const ConstIterator& right ) const { return ( *this ) - right.m_it; }
     //
-    friend bool operator==
-    ( const ITERATOR&      right ,
-      const ConstIterator& left  ) { return right == left ; }
+    bool operator==( const ITERATOR& right ) const { return m_it == right; }
     //
-    friend bool operator!=
-    ( const ITERATOR&      right ,
-      const ConstIterator& left  ) { return right != left ; }
+    bool operator==( const ConstIterator& right ) const { return ( *this ) == right.m_it; }
+    //
+    bool operator!=( const ITERATOR& right ) const { return !( *this == right ); }
+    bool operator!=( const ConstIterator& right ) const { return !( *this == right ); }
+    //
+    ConstIterator operator+( const difference_type offset ) {
+      ConstIterator tmp( *this );
+      return tmp += offset;
+    };
+    //
+    ConstIterator operator-( const difference_type offset ) {
+      ConstIterator tmp( *this );
+      return tmp -= offset;
+    };
+    //
+    friend ConstIterator operator+( const difference_type offset, const ConstIterator& right ) {
+      return right + offset;
+    };
+    //
+    friend difference_type operator-( const ITERATOR& right, const ConstIterator& left ) {
+      return std::distance( right, left.m_it );
+    }
+    //
+    friend bool operator==( const ITERATOR& right, const ConstIterator& left ) { return right == left; }
+    //
+    friend bool operator!=( const ITERATOR& right, const ConstIterator& left ) { return right != left; }
     //
   private:
     // the underlying iterator
-    ITERATOR m_it ; ///< the underlying iterator
+    ITERATOR m_it; ///< the underlying iterator
   };
   // ==========================================================================
-}  // end of namespace LoKi
+} // end of namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

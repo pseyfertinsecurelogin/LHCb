@@ -12,8 +12,8 @@
 #define STFULLDECODING_H 1
 
 // Include files
-#include "Kernel/STAlgBase.h"
 #include "Event/RawBank.h"
+#include "Kernel/STAlgBase.h"
 
 /** @class STFullDecoding STFullDecoding.h
  *
@@ -31,21 +31,18 @@
 class STFullDecoding : public ST::AlgBase {
 
 public:
-
   /// Standard constructor
   STFullDecoding( const std::string& name, ISvcLocator* pSvcLocator );
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   LHCb::RawBank::BankType m_bankType;
 
   // job options
-  bool m_printErrorInfo;           ///< Flag to print out errors from event info
+  bool        m_printErrorInfo;    ///< Flag to print out errors from event info
   std::string m_inputLocation;     ///< Location of RawEvent
   std::string m_outputLocation;    ///< Location of NZS output data, e.g. TTFull
   std::string m_eventInfoLocation; ///< Location of event info data
-
 };
 #endif // STFULLDECODING_H

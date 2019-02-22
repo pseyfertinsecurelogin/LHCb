@@ -24,6 +24,7 @@ IOHelper('MDF').inputFiles(['mdf:' + args.file])
 from Configurables import LHCbApp
 LHCbApp()
 
+
 def events(appmgr):
     TES = appmgr.evtsvc()
     appmgr.run(1)
@@ -31,12 +32,14 @@ def events(appmgr):
         yield TES
         appmgr.run(1)
 
+
 LHCb = GaudiPython.gbl.LHCb
 RAW_BANK_TYPES = [(i, LHCb.RawBank.typeName(i))
                   for i in range(LHCb.RawBank.LastType)]
 
+
 def chunk(s, n=16):
-    return [s[i:i+n] for i in range(0, len(s), n)]
+    return [s[i:i + n] for i in range(0, len(s), n)]
 
 
 def rawbank_dict(rb, fulldata=False):
@@ -51,7 +54,7 @@ def rawbank_dict(rb, fulldata=False):
         'sourceID': rb.sourceID(),
         'data': hash(data) if not fulldata else list(enumerate(chunk(data))),
         'padding': padding,
-        }
+    }
 
 
 def unzip(data):
@@ -87,6 +90,7 @@ std::vector<char> unzip(std::string data) {
         ROOT.gInterpreter.Declare(code)
     return ''.join(ROOT.unzip(data))
 
+
 appMgr = GaudiPython.AppMgr()
 for i_event, TES in enumerate(events(appMgr)):
     raw = TES['DAQ/RawEvent']
@@ -97,8 +101,12 @@ for i_event, TES in enumerate(events(appMgr)):
         print("{}:{}".format(i_event, name))
         # fulldata = (name == 'DstData')
         fulldata = False
-        print(''.join(["    " + x for x in pformat([rawbank_dict(rb, fulldata)
-                      for rb in banks]).splitlines(True)]))
+        print(''.join([
+            "    " + x
+            for x in pformat([rawbank_dict(rb, fulldata)
+                              for rb in banks]).splitlines(True)
+        ]))
         if bank_type == LHCb.RawBank.DstData:
             data = ''.join(rb.data()[:rb.size()] for rb in banks)
-            print("    Uncompressed DstData:\n{}".format(pformat(list(enumerate(chunk(unzip(data)))))))
+            print("    Uncompressed DstData:\n{}".format(
+                pformat(list(enumerate(chunk(unzip(data)))))))

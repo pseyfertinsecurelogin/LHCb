@@ -8,13 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from Configurables import (HLTControlFlowMgr,
-                            HLTEventLoopMgr,
-                            AlgResourcePool,
-                            ConfigurableDummy,
-                            HiveWhiteBoard,
-                            HiveDataBrokerSvc,
-                            )
+from Configurables import (
+    HLTControlFlowMgr,
+    HLTEventLoopMgr,
+    AlgResourcePool,
+    ConfigurableDummy,
+    HiveWhiteBoard,
+    HiveDataBrokerSvc,
+)
 from Gaudi.Configuration import *
 import itertools
 
@@ -30,8 +31,7 @@ for t in Ts:
 for f in Fs:
     f.CFD = False
 
-whiteboard = HiveWhiteBoard("EventDataSvc",
-                            EventSlots=evtslots)
+whiteboard = HiveWhiteBoard("EventDataSvc", EventSlots=evtslots)
 HLTControlFlowMgr().CompositeCFNodes = []
 
 listofnodes = ['NONLAZY_AND', 'NONLAZY_OR', 'LAZY_AND', 'LAZY_OR']
@@ -39,13 +39,19 @@ listofnodes = ['NONLAZY_AND', 'NONLAZY_OR', 'LAZY_AND', 'LAZY_OR']
 helperindex = 0
 for compNode in listofnodes:
     #once with a True node first
-    HLTControlFlowMgr().CompositeCFNodes.append(( compNode + "_TF", compNode, [Ts[helperindex].name(), Fs[helperindex].name()], True ))
+    HLTControlFlowMgr().CompositeCFNodes.append(
+        (compNode + "_TF", compNode,
+         [Ts[helperindex].name(), Fs[helperindex].name()], True))
     helperindex += 1
     #once with a False node first
-    HLTControlFlowMgr().CompositeCFNodes.append(( compNode + "_FT", compNode, [Fs[helperindex].name(), Ts[helperindex].name()], True ))
+    HLTControlFlowMgr().CompositeCFNodes.append(
+        (compNode + "_FT", compNode,
+         [Fs[helperindex].name(), Ts[helperindex].name()], True))
     helperindex += 1
 
-HLTControlFlowMgr().CompositeCFNodes.append(('top', 'NONLAZY_OR', [x[0] for x in HLTControlFlowMgr().CompositeCFNodes] , False))
+HLTControlFlowMgr().CompositeCFNodes.append(
+    ('top', 'NONLAZY_OR', [x[0] for x in HLTControlFlowMgr().CompositeCFNodes],
+     False))
 
 HLTControlFlowMgr().ThreadPoolSize = threads
 HLTControlFlowMgr().OutputLevel = VERBOSE
@@ -57,10 +63,11 @@ HiveDataBrokerSvc().OutputLevel = DEBUG
 
 print(HLTControlFlowMgr().CompositeCFNodes)
 
-app = ApplicationMgr(EvtMax=evtMax,
-               EvtSel= 'NONE',
-               ExtSvc= [whiteboard],
-               EventLoop=HLTControlFlowMgr(),
-               TopAlg= Ts + Fs)
+app = ApplicationMgr(
+    EvtMax=evtMax,
+    EvtSel='NONE',
+    ExtSvc=[whiteboard],
+    EventLoop=HLTControlFlowMgr(),
+    TopAlg=Ts + Fs)
 
 HiveDataBrokerSvc().DataProducers = app.TopAlg

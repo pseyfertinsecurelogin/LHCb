@@ -32,144 +32,127 @@
 // ============================================================================
 // standard constructor
 // ============================================================================
-LoKi::FilterTool::FilterTool
-( const std::string& type   ,   // tool type (?)
-  const std::string& name   ,   // toolinstance name
-  const IInterface*  parent )   // tool's parent
-  : GaudiTool ( type , name , parent )
-// the type/name for LoKi/Bender "hybrid" factory
-  , m_factory ( "<UNSPECIFIED>" )
-// the filter/code criteria itself
-  , m_code   ( "<unspecified>" )
-{
+LoKi::FilterTool::FilterTool( const std::string& type,   // tool type (?)
+                              const std::string& name,   // toolinstance name
+                              const IInterface*  parent ) // tool's parent
+    : GaudiTool( type, name, parent )
+    // the type/name for LoKi/Bender "hybrid" factory
+    , m_factory( "<UNSPECIFIED>" )
+    // the filter/code criteria itself
+    , m_code( "<unspecified>" ) {
   // the factory
-  declareProperty
-    ( "Factory" ,
-      m_factory ,
-      "The type/name of LoKiBender \"hybrid\" factory" )
-    -> declareUpdateHandler ( &LoKi::FilterTool::updateFactory  , this ) ;
+  declareProperty( "Factory", m_factory, "The type/name of LoKiBender \"hybrid\" factory" )
+      ->declareUpdateHandler( &LoKi::FilterTool::updateFactory, this );
   // the code
-  declareProperty
-    ( "Code"    ,
-      m_code    ,
-      "The Bender/Python code to be used" )
-    -> declareUpdateHandler ( &LoKi::FilterTool::updateCode     , this ) ;
+  declareProperty( "Code", m_code, "The Bender/Python code to be used" )
+      ->declareUpdateHandler( &LoKi::FilterTool::updateCode, this );
   // the code
-  declareProperty
-    ( "Preambulo"  ,
-      m_preambulo_ ,
-      "The preambulo to be used for the temporary python script" )
-    -> declareUpdateHandler ( &LoKi::FilterTool::updatePreambulo , this ) ;
+  declareProperty( "Preambulo", m_preambulo_, "The preambulo to be used for the temporary python script" )
+      ->declareUpdateHandler( &LoKi::FilterTool::updatePreambulo, this );
   //
 }
 // ============================================================================
 // add to preambulo
 // ============================================================================
-void LoKi::FilterTool::addToPreambulo
-( const std::string&              item )
-{
-  m_preambulo_.push_back ( item ) ;
-  m_preambulo_updated = true ;
+void LoKi::FilterTool::addToPreambulo( const std::string& item ) {
+  m_preambulo_.push_back( item );
+  m_preambulo_updated = true;
 }
 // ============================================================================
 // sety preambulo
 // ============================================================================
-void LoKi::FilterTool::setPreambulo
-( const std::vector<std::string>& items )
-{
-  m_preambulo_        = items ;
-  m_preambulo_updated = true  ;
+void LoKi::FilterTool::setPreambulo( const std::vector<std::string>& items ) {
+  m_preambulo_        = items;
+  m_preambulo_updated = true;
 }
 // ============================================================================
 // update the factory
 // ============================================================================
-void LoKi::FilterTool::updateFactory ( Property& /* p */ ) // update the factory
+void LoKi::FilterTool::updateFactory( Property& /* p */ ) // update the factory
 {
   // no action if not yet initialized
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
+  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
   //
   // mark as "to-be-updated"
-  m_factory_updated = true ;
+  m_factory_updated = true;
   //
   // postpone the action
-  if ( !m_code_updated || !m_preambulo_updated ) { return ; }
+  if ( !m_code_updated || !m_preambulo_updated ) { return; }
   //
   // perform the actual immediate decoding
   //
-  StatusCode sc = decode () ;
-  Assert ( sc.isSuccess () , "Error from LoKi::FilterTool::decode()" , sc ) ;
+  StatusCode sc = decode();
+  Assert( sc.isSuccess(), "Error from LoKi::FilterTool::decode()", sc );
   //
-  m_code_updated      = false ;
-  m_factory_updated   = false ;
-  m_preambulo_updated = false ;
+  m_code_updated      = false;
+  m_factory_updated   = false;
+  m_preambulo_updated = false;
 }
 // ============================================================================
 // update the code
 // ============================================================================
-void LoKi::FilterTool::updateCode ( Property& /* p */ )    // update the factory
+void LoKi::FilterTool::updateCode( Property& /* p */ ) // update the factory
 {
   // no action if not yet initialized
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
+  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
   //
   // mark as "to-be-updated"
-  m_code_updated = true ;
+  m_code_updated = true;
   //
   // postpone the action
-  if ( !m_factory_updated || !m_preambulo_updated ) { return ; }
+  if ( !m_factory_updated || !m_preambulo_updated ) { return; }
   //
   // perform the actual immediate decoding
   //
-  StatusCode sc = decode  () ;
-  Assert ( sc.isSuccess () , "Error from LoKi::FilterTool::decode()" , sc ) ;
+  StatusCode sc = decode();
+  Assert( sc.isSuccess(), "Error from LoKi::FilterTool::decode()", sc );
   //
-  m_code_updated      = false ;
-  m_factory_updated   = false ;
-  m_preambulo_updated = false ;
+  m_code_updated      = false;
+  m_factory_updated   = false;
+  m_preambulo_updated = false;
 }
 // ============================================================================
 // update the preambulo
 // ============================================================================
-void LoKi::FilterTool::updatePreambulo ( Property& /* p */ )  // update preambulo
+void LoKi::FilterTool::updatePreambulo( Property& /* p */ ) // update preambulo
 {
   //
   // decode the preambulo:
   m_preambulo = boost::algorithm::join( m_preambulo_, "\n" );
   // no further action if not yet initialized
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
+  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
   //
   // mark as "to-be-updated"
-  m_preambulo_updated = true ;
+  m_preambulo_updated = true;
   //
   // postpone the action
-  if ( !m_factory_updated || !m_code_updated ) { return ; }
+  if ( !m_factory_updated || !m_code_updated ) { return; }
   //
   // perform the actual immediate decoding
   //
-  StatusCode sc = decode  () ;
-  Assert ( sc.isSuccess () , "Error from LoKi::FilterTool::decode()" , sc ) ;
+  StatusCode sc = decode();
+  Assert( sc.isSuccess(), "Error from LoKi::FilterTool::decode()", sc );
   //
-  m_code_updated      = false ;
-  m_factory_updated   = false ;
-  m_preambulo_updated = false ;
+  m_code_updated      = false;
+  m_factory_updated   = false;
+  m_preambulo_updated = false;
 }
 // ============================================================================
 // the initialization of the algorithm
 // ============================================================================
-StatusCode LoKi::FilterTool::initialize ()
-{
+StatusCode LoKi::FilterTool::initialize() {
   /// initialize the base
-  StatusCode sc = GaudiTool::initialize () ;
-  if ( sc.isFailure() ) { return sc ; }
+  StatusCode sc = GaudiTool::initialize();
+  if ( sc.isFailure() ) { return sc; }
   // force LoKi service
-  svc<IService>( "LoKiSvc" , true ) ;
+  svc<IService>( "LoKiSvc", true );
   // decode the functor
-  return decode () ;
+  return decode();
 }
 // ============================================================================
 // the finalization of the algorithm
 // ============================================================================
-StatusCode LoKi::FilterTool::finalize ()
-{ return GaudiTool::finalize () ; }
+StatusCode LoKi::FilterTool::finalize() { return GaudiTool::finalize(); }
 // ============================================================================
 // The END
 // ============================================================================

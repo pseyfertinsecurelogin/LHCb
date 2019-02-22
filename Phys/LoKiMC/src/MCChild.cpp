@@ -33,18 +33,15 @@
 // ============================================================================
 // get the number of children
 // ============================================================================
-unsigned int LoKi::MCChild::nChildren
-( const LHCb::MCParticle*   mother )
-{
-  if ( 0 == mother       ) { return 0 ; }                           // RETURN
-  typedef SmartRefVector<LHCb::MCVertex> EVs ;
-  const EVs& evs = mother->endVertices () ;
+unsigned int LoKi::MCChild::nChildren( const LHCb::MCParticle* mother ) {
+  if ( 0 == mother ) { return 0; } // RETURN
+  typedef SmartRefVector<LHCb::MCVertex> EVs;
+  const EVs&                             evs = mother->endVertices();
   // find "LHCb::MCParticle::isDecay" vertex:
-  EVs::const_iterator iev =
-    std::find_if ( evs.begin() , evs.end() , LoKi::MCVertices::IsDecay  ) ;
-  if ( evs.end () == iev ) { return 0 ; }                         // RETURN
-  const LHCb::MCVertex* ev = *iev ;
-  return ev->products().size() ;                                  // RETURN
+  EVs::const_iterator iev = std::find_if( evs.begin(), evs.end(), LoKi::MCVertices::IsDecay );
+  if ( evs.end() == iev ) { return 0; } // RETURN
+  const LHCb::MCVertex* ev = *iev;
+  return ev->products().size(); // RETURN
 }
 // ============================================================================
 /* Trivial accessor to the dautgher particles for the given MC-particle.
@@ -57,22 +54,18 @@ unsigned int LoKi::MCChild::nChildren
  *  @return daughter particle with given index
  */
 // ============================================================================
-const LHCb::MCParticle* LoKi::MCChild::child
-( const LHCb::MCParticle* mother ,
-  const unsigned int      index  )
-{
-  if ( 0 == mother                    ) { return 0      ; }       // RETURN
-  if ( 0 == index                     ) { return mother ; }       // RETURN
-  typedef SmartRefVector<LHCb::MCVertex> EVs ;
-  const EVs& evs = mother->endVertices() ;
+const LHCb::MCParticle* LoKi::MCChild::child( const LHCb::MCParticle* mother, const unsigned int index ) {
+  if ( 0 == mother ) { return 0; }     // RETURN
+  if ( 0 == index ) { return mother; } // RETURN
+  typedef SmartRefVector<LHCb::MCVertex> EVs;
+  const EVs&                             evs = mother->endVertices();
   // find "LHCb::MCParticle::isDecay" vertex:
-  EVs::const_iterator iev =
-    std::find_if ( evs.begin() , evs.end() , LoKi::MCVertices::IsDecay ) ;
-  if ( evs.end () == iev              ) { return 0 ; }            // RETURN
-  const LHCb::MCVertex* ev = *iev ;
-  if ( index > ev->products().size()  ) { return 0 ; }            // RETURN
+  EVs::const_iterator iev = std::find_if( evs.begin(), evs.end(), LoKi::MCVertices::IsDecay );
+  if ( evs.end() == iev ) { return 0; } // RETURN
+  const LHCb::MCVertex* ev = *iev;
+  if ( index > ev->products().size() ) { return 0; } // RETURN
   // get the proper particle:
-  return ev->products()[index-1] ;                                // RETURN
+  return ev->products()[index - 1]; // RETURN
 }
 // ========================================================================
 /*  get all daughters for the given MCparticle
@@ -84,24 +77,20 @@ const LHCb::MCParticle* LoKi::MCChild::child
  *  @date 2007-06-02
  */
 // ========================================================================
-unsigned int LoKi::MCChild::daughters
-( const LHCb::MCParticle*        particle  ,
-  LHCb::MCParticle::ConstVector& output    ,
-  const bool                     decayOnly )
-{
-  if ( !output.empty() ) { output.clear() ; }
-  if ( 0 == particle                ) { return output.size() ;}  // RETURN
-  typedef SmartRefVector<LHCb::MCVertex> EVs ;
-  const EVs& evs = particle->endVertices () ;
-  for ( EVs::const_iterator iev = evs.begin() ; evs.end() != iev ; ++iev )
-  {
-    const LHCb::MCVertex* ev = *iev ;
-    if ( 0 == ev                     ) { continue ; }    // CONTINUE
-    if ( decayOnly && !ev->isDecay() ) { continue ; }    // CONTINUE
-    const SmartRefVector<LHCb::MCParticle>& products = ev->products() ;
-    output.insert ( output.end () , products.begin () , products.end () ) ;
+unsigned int LoKi::MCChild::daughters( const LHCb::MCParticle* particle, LHCb::MCParticle::ConstVector& output,
+                                       const bool decayOnly ) {
+  if ( !output.empty() ) { output.clear(); }
+  if ( 0 == particle ) { return output.size(); } // RETURN
+  typedef SmartRefVector<LHCb::MCVertex> EVs;
+  const EVs&                             evs = particle->endVertices();
+  for ( EVs::const_iterator iev = evs.begin(); evs.end() != iev; ++iev ) {
+    const LHCb::MCVertex* ev = *iev;
+    if ( 0 == ev ) { continue; }                     // CONTINUE
+    if ( decayOnly && !ev->isDecay() ) { continue; } // CONTINUE
+    const SmartRefVector<LHCb::MCParticle>& products = ev->products();
+    output.insert( output.end(), products.begin(), products.end() );
   }
-  return output.size() ;
+  return output.size();
 }
 // ============================================================================
 /** get all descendants for the given MCparticle
@@ -112,33 +101,27 @@ unsigned int LoKi::MCChild::daughters
  *  @date 2007-06-02
  */
 // ============================================================================
-LHCb::MCParticle::ConstVector
-LoKi::MCChild::descendants
-( const LHCb::MCParticle* particle  ,
-  const bool              decayOnly )
-{
-  LHCb::MCParticle::ConstVector result ;
-  if ( 0 == particle                ) { return result  ;}  // RETURN
-  typedef SmartRefVector<LHCb::MCVertex> EVs ;
-  const EVs& evs = particle->endVertices () ;
-  for ( EVs::const_iterator iev = evs.begin() ; evs.end() != iev ; ++iev )
-  {
-    const LHCb::MCVertex* ev = *iev ;
-    if ( 0 == ev                     ) { continue ; }    // CONTINUE
-    if ( decayOnly && !ev->isDecay() ) { continue ; }    // CONTINUE
-    typedef SmartRefVector<LHCb::MCParticle> Ps ;
-    const Ps& ps = ev->products() ;
-    for ( Ps::const_iterator ip = ps.begin() ; ps.end() != ip ; ++ip )
-    {
-      if ( 0 == *ip ) { continue ; }
+LHCb::MCParticle::ConstVector LoKi::MCChild::descendants( const LHCb::MCParticle* particle, const bool decayOnly ) {
+  LHCb::MCParticle::ConstVector result;
+  if ( 0 == particle ) { return result; } // RETURN
+  typedef SmartRefVector<LHCb::MCVertex> EVs;
+  const EVs&                             evs = particle->endVertices();
+  for ( EVs::const_iterator iev = evs.begin(); evs.end() != iev; ++iev ) {
+    const LHCb::MCVertex* ev = *iev;
+    if ( 0 == ev ) { continue; }                     // CONTINUE
+    if ( decayOnly && !ev->isDecay() ) { continue; } // CONTINUE
+    typedef SmartRefVector<LHCb::MCParticle> Ps;
+    const Ps&                                ps = ev->products();
+    for ( Ps::const_iterator ip = ps.begin(); ps.end() != ip; ++ip ) {
+      if ( 0 == *ip ) { continue; }
       // insert the daughter:
-      result.push_back( *ip ) ;
-      const LHCb::MCParticle::ConstVector& v = descendants ( *ip , decayOnly ) ;
+      result.push_back( *ip );
+      const LHCb::MCParticle::ConstVector& v = descendants( *ip, decayOnly );
       // insert all its descendants:
-      result.insert( result.end () , v.begin () , v.end () ) ;
+      result.insert( result.end(), v.begin(), v.end() );
     } // loop over daughter particles
-  } // loop over end-vertices
-  return result ;
+  }   // loop over end-vertices
+  return result;
 }
 // ============================================================================
 /** get all ancestors for the given MCparticle
@@ -149,19 +132,15 @@ LoKi::MCChild::descendants
  *  @date 2007-06-02
  */
 // ============================================================================
-LHCb::MCParticle::ConstVector
-LoKi::MCChild::ancestors
-( const LHCb::MCParticle* particle  )
-{
-  LHCb::MCParticle::ConstVector result ;
-  if ( 0 == particle ) { return result ; }                         // RETURN
-  const LHCb::MCParticle* mother = particle->mother() ;
-  while ( 0 != mother )
-  {
-    result.push_back ( mother ) ;
-    mother = mother->mother() ;
+LHCb::MCParticle::ConstVector LoKi::MCChild::ancestors( const LHCb::MCParticle* particle ) {
+  LHCb::MCParticle::ConstVector result;
+  if ( 0 == particle ) { return result; } // RETURN
+  const LHCb::MCParticle* mother = particle->mother();
+  while ( 0 != mother ) {
+    result.push_back( mother );
+    mother = mother->mother();
   }
-  return result ;
+  return result;
 }
 // ============================================================================
 /*  get all (0 or 1) parents for the given particle
@@ -171,16 +150,13 @@ LoKi::MCChild::ancestors
  *  @date 2007-06-02
  */
 // ============================================================================
-LHCb::MCParticle::ConstVector
-LoKi::MCChild::parents
-( const LHCb::MCParticle* particle  )
-{
-  LHCb::MCParticle::ConstVector result ;
-  if ( 0 == particle ) { return result ; }                      // RETURN
-  const LHCb::MCParticle* mother = particle->mother() ;
-  if ( 0 == mother   ) { return result ; }                      // RETURN
-  result.push_back ( mother ) ;
-  return result ;                                               // RETURN
+LHCb::MCParticle::ConstVector LoKi::MCChild::parents( const LHCb::MCParticle* particle ) {
+  LHCb::MCParticle::ConstVector result;
+  if ( 0 == particle ) { return result; } // RETURN
+  const LHCb::MCParticle* mother = particle->mother();
+  if ( 0 == mother ) { return result; } // RETURN
+  result.push_back( mother );
+  return result; // RETURN
 }
 // ============================================================================
 /*  get the mother particle  (just for completeness of interface)
@@ -190,10 +166,9 @@ LoKi::MCChild::parents
  *  @date 2007-06-02
  */
 // ============================================================================
-const LHCb::MCParticle*
-LoKi::MCChild::mother
-( const LHCb::MCParticle* particle  )
-{ return 0 == particle ? particle : particle->mother() ; }
+const LHCb::MCParticle* LoKi::MCChild::mother( const LHCb::MCParticle* particle ) {
+  return 0 == particle ? particle : particle->mother();
+}
 // ============================================================================
 /*  get all daughters for the given MCparticle
  *  @param particle  MC-particle
@@ -203,14 +178,10 @@ LoKi::MCChild::mother
  *  @date 2007-06-02
  */
 // ============================================================================
-LHCb::MCParticle::ConstVector
-LoKi::MCChild::children
-( const LHCb::MCParticle* particle  ,
-  const bool              decayOnly )
-{
-  LHCb::MCParticle::ConstVector result ;
-  daughters ( particle , result , decayOnly ) ;
-  return result ;
+LHCb::MCParticle::ConstVector LoKi::MCChild::children( const LHCb::MCParticle* particle, const bool decayOnly ) {
+  LHCb::MCParticle::ConstVector result;
+  daughters( particle, result, decayOnly );
+  return result;
 }
 // ============================================================================
 /*  Trivial accessor to the daughter particles for the given MC-particle.
@@ -231,14 +202,11 @@ LoKi::MCChild::children
  *  @date 2007-06-02
  */
 // ============================================================================
-const LHCb::MCParticle*
-LoKi::MCChild::child
-( const LHCb::MCParticle*  particle ,
-  const unsigned int       index1   ,
-  const unsigned int       index2   ,
-  const unsigned int       index3   ,
-  const unsigned int       index4   )
-{ return child ( child ( particle , index1 ) , index2 , index3 , index4 ) ; }
+const LHCb::MCParticle* LoKi::MCChild::child( const LHCb::MCParticle* particle, const unsigned int index1,
+                                              const unsigned int index2, const unsigned int index3,
+                                              const unsigned int index4 ) {
+  return child( child( particle, index1 ), index2, index3, index4 );
+}
 // ============================================================================
 /*  Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle.
@@ -258,13 +226,10 @@ LoKi::MCChild::child
  *  @date 2007-06-02
  */
 // ============================================================================
-const LHCb::MCParticle*
-LoKi::MCChild::child
-( const LHCb::MCParticle*  particle ,
-  const unsigned int       index1   ,
-  const unsigned int       index2   ,
-  const unsigned int       index3   )
-{ return child ( child ( particle , index1 ) , index2 , index3 ) ; }
+const LHCb::MCParticle* LoKi::MCChild::child( const LHCb::MCParticle* particle, const unsigned int index1,
+                                              const unsigned int index2, const unsigned int index3 ) {
+  return child( child( particle, index1 ), index2, index3 );
+}
 // ============================================================================
 /*  Trivial accessor to the daughter "decay" particles for the given
  *  MC-particle.
@@ -283,48 +248,37 @@ LoKi::MCChild::child
  *  @date 2007-06-02
  */
 // ============================================================================
-const LHCb::MCParticle*
-LoKi::MCChild::child
-( const LHCb::MCParticle*  particle ,
-  const unsigned int       index1   ,
-  const unsigned int       index2   )
-{ return child ( child ( particle , index1 ) , index2 ) ; }
+const LHCb::MCParticle* LoKi::MCChild::child( const LHCb::MCParticle* particle, const unsigned int index1,
+                                              const unsigned int index2 ) {
+  return child( child( particle, index1 ), index2 );
+}
 // ========================================================================
-namespace
-{
+namespace {
   // ==========================================================================
-  inline const LHCb::MCParticle* _child
-  ( const LHCb::MCParticle*          particle ,
-    const std::vector<unsigned int>& indices  ,
-    unsigned int                     last     )
-  {
-    if ( 0 == particle   ||
-         indices.empty() ||
-         0 == last       ||
-         indices.size() < last ) { return 0 ; }
+  inline const LHCb::MCParticle* _child( const LHCb::MCParticle* particle, const std::vector<unsigned int>& indices,
+                                         unsigned int last ) {
+    if ( 0 == particle || indices.empty() || 0 == last || indices.size() < last ) { return 0; }
     //
-    switch ( last )
-    {
-    case 1 :
-      return LoKi::MCChild::child ( particle , indices[0] ) ;
-    case 2 :
-      return LoKi::MCChild::child ( particle , indices[0] , indices[1] ) ;
-    case 3 :
-      return LoKi::MCChild::child ( particle , indices[0] , indices[1] , indices[2] ) ;
-    case 4 :
-      return LoKi::MCChild::child ( particle , indices[0] , indices[1] , indices[2] , indices [3] ) ;
+    switch ( last ) {
+    case 1:
+      return LoKi::MCChild::child( particle, indices[0] );
+    case 2:
+      return LoKi::MCChild::child( particle, indices[0], indices[1] );
+    case 3:
+      return LoKi::MCChild::child( particle, indices[0], indices[1], indices[2] );
+    case 4:
+      return LoKi::MCChild::child( particle, indices[0], indices[1], indices[2], indices[3] );
     default:
-      break ;
+      break;
     }
     //
-    const unsigned int next = --last ;
+    const unsigned int next = --last;
     //
-    return LoKi::MCChild::child
-      ( _child ( particle , indices , next ) , indices[ next ] ) ;
+    return LoKi::MCChild::child( _child( particle, indices, next ), indices[next] );
     //
   }
   // ==========================================================================
-}
+} // namespace
 // ============================================================================
 /* Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle
@@ -342,15 +296,11 @@ namespace
  *  @date 2007-06-02
  */
 // ========================================================================
-const LHCb::MCParticle*
-LoKi::MCChild::child
-( const LHCb::MCParticle*          mother  ,
-  const std::vector<unsigned int>& indices )
-{ return _child ( mother , indices , indices.size () ) ; }
+const LHCb::MCParticle* LoKi::MCChild::child( const LHCb::MCParticle*          mother,
+                                              const std::vector<unsigned int>& indices ) {
+  return _child( mother, indices, indices.size() );
+}
 // ========================================================================
-
-
-
 
 // ============================================================================
 // The END

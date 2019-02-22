@@ -14,9 +14,9 @@
 #include <string>
 #include <vector>
 
+#include "GaudiKernel/Plane3DTypes.h"
 #include "Kernel/UTChannelID.h"
 #include "UTDet/DeUTBaseElement.h"
-#include "GaudiKernel/Plane3DTypes.h"
 
 class DeUTSector;
 class DeUTModule;
@@ -33,10 +33,9 @@ class DeUTStation;
 
 static const CLID CLID_DeUTLayer = 9303;
 
-class DeUTLayer : public DeUTBaseElement  {
+class DeUTLayer : public DeUTBaseElement {
 
 public:
-
   typedef std::vector<DeUTSector*> Sectors;
 
   /** parent type */
@@ -49,137 +48,121 @@ public:
   typedef std::vector<child_type*> Children;
 
   /** Constructor */
-  DeUTLayer ( const std::string& name = "" ) ;
+  DeUTLayer( const std::string& name = "" );
 
   /**
-  * Retrieves reference to class identifier
-  * @return the class identifier for this class
-  */
-   static const CLID& classID(){return CLID_DeUTLayer;}
+   * Retrieves reference to class identifier
+   * @return the class identifier for this class
+   */
+  static const CLID& classID() { return CLID_DeUTLayer; }
 
   /**
-  * another reference to class identifier
-  * @return the class identifier for this class
-  */
-  const CLID& clID () const override;
+   * another reference to class identifier
+   * @return the class identifier for this class
+   */
+  const CLID& clID() const override;
 
   /** initialization method
-  * @return Status of initialisation
-  */
+   * @return Status of initialisation
+   */
   StatusCode initialize() override;
 
   /** layer identifier
-  *  @return identifier
-  */
+   *  @return identifier
+   */
   unsigned int id() const;
 
   /** stereo angle
-  *  @return identifier
-  */
+   *  @return identifier
+   */
   double angle() const;
 
   /** cosine stereo angle
-  *  @return identifier
-  */
+   *  @return identifier
+   */
   double cosAngle() const;
 
   /** sine stereo angle
-  *  @return identifier
-  */
+   *  @return identifier
+   */
   double sinAngle() const;
-
 
   /** print to stream */
   std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to stream */
-  MsgStream& printOut( MsgStream& os) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /**  locate module based on a channel id
   @return  module */
-  DeUTModule* findModule(const LHCb::UTChannelID aChannel);
+  DeUTModule* findModule( const LHCb::UTChannelID aChannel );
 
   /** locate module  based on a point
   @return module */
-  DeUTModule* findModule(const Gaudi::XYZPoint& point) ;
+  DeUTModule* findModule( const Gaudi::XYZPoint& point );
 
   /** check whether contains
-  *  @param  aChannel channel
-  *  @return bool
-  */
-  bool contains(const LHCb::UTChannelID aChannel) const override;
+   *  @param  aChannel channel
+   *  @return bool
+   */
+  bool contains( const LHCb::UTChannelID aChannel ) const override;
 
   /** flat vector of sectors
-  * @return vector of sectors
-  */
+   * @return vector of sectors
+   */
   const Sectors& sectors() const;
 
   /** plane corresponding to the sector
-  * @return the plane
-  */
+   * @return the plane
+   */
   Gaudi::Plane3D plane() const;
 
   /**
-  * Nickname for the layer
-  **/
+   * Nickname for the layer
+   **/
   const std::string& nickname() const;
 
   /** vector of children */
   const Children& modules() const;
 
   /**
-  * fraction active channels
-  * @return bool fraction active
-  */
+   * fraction active channels
+   * @return bool fraction active
+   */
   double fractionActive() const;
 
 protected:
-
-  Sectors m_sectors;
+  Sectors     m_sectors;
   std::string m_nickname;
 
- private:
-
+private:
   StatusCode cachePlane();
 
   Gaudi::Plane3D m_plane;
 
-  unsigned int m_id = 0u;
-  double m_angle = 0.0;
-  double m_sinAngle = 0.0;
-  double m_cosAngle =0.0;
+  unsigned int m_id       = 0u;
+  double       m_angle    = 0.0;
+  double       m_sinAngle = 0.0;
+  double       m_cosAngle = 0.0;
 
   /** make flat list of lowest descendents  and also layers*/
   void flatten();
 
-  Children m_modules;
+  Children     m_modules;
   parent_type* m_parent = nullptr;
-
 };
 
-inline unsigned int DeUTLayer::id() const{
-  return m_id;
-}
+inline unsigned int DeUTLayer::id() const { return m_id; }
 
-inline double DeUTLayer::angle() const{
-  return m_angle;
-}
+inline double DeUTLayer::angle() const { return m_angle; }
 
-inline double DeUTLayer::cosAngle() const{
-  return m_cosAngle;
-}
+inline double DeUTLayer::cosAngle() const { return m_cosAngle; }
 
-inline double DeUTLayer::sinAngle() const{
-  return m_sinAngle;
-}
+inline double DeUTLayer::sinAngle() const { return m_sinAngle; }
 
-inline const DeUTLayer::Sectors& DeUTLayer::sectors() const{
-  return m_sectors;
-}
+inline const DeUTLayer::Sectors& DeUTLayer::sectors() const { return m_sectors; }
 
-inline Gaudi::Plane3D DeUTLayer::plane() const {
-  return m_plane;
-}
+inline Gaudi::Plane3D DeUTLayer::plane() const { return m_plane; }
 
 /** ouput operator for class DeUTLayer
  *  @see DeUTLayer
@@ -187,9 +170,7 @@ inline Gaudi::Plane3D DeUTLayer::plane() const {
  *  @param os     reference to STL output stream
  *  @param aLayer reference to DeUTLayer object
  */
-inline std::ostream& operator<<( std::ostream& os , const DeUTLayer* aLayer )
-{ return aLayer->printOut( os ); }
-
+inline std::ostream& operator<<( std::ostream& os, const DeUTLayer* aLayer ) { return aLayer->printOut( os ); }
 
 /** ouput operator for class DeUTLayer
  *  @see DeUTLayer
@@ -197,22 +178,16 @@ inline std::ostream& operator<<( std::ostream& os , const DeUTLayer* aLayer )
  *  @param os     reference to MsgStream output stream
  *  @param aLayer reference to DeUTLayer object
  */
-inline MsgStream& operator<<( MsgStream& os , const DeUTLayer* aLayer )
-{ return aLayer->printOut( os ); }
+inline MsgStream& operator<<( MsgStream& os, const DeUTLayer* aLayer ) { return aLayer->printOut( os ); }
 
-inline const std::string& DeUTLayer::nickname() const{
-  return m_nickname;
-}
+inline const std::string& DeUTLayer::nickname() const { return m_nickname; }
 
 #include "UTDet/DeUTModule.h"
 
-inline bool DeUTLayer::contains(const LHCb::UTChannelID aChannel) const{
-  return (elementID().station() == aChannel.station() &&
-         (elementID().layer() == aChannel.layer())) ;
+inline bool DeUTLayer::contains( const LHCb::UTChannelID aChannel ) const {
+  return ( elementID().station() == aChannel.station() && ( elementID().layer() == aChannel.layer() ) );
 }
 
-inline const DeUTLayer::Children& DeUTLayer::modules() const{
-  return m_modules;
-}
+inline const DeUTLayer::Children& DeUTLayer::modules() const { return m_modules; }
 
 #endif // _DEUTLAYER_H

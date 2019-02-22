@@ -16,5 +16,5 @@
 // TTDet
 #include "STDet/DeTTHalfModule.h"
 
-typedef XmlUserDetElemCnv<DeTTHalfModule>      XmlTTHalfModuleCnv;
+typedef XmlUserDetElemCnv<DeTTHalfModule> XmlTTHalfModuleCnv;
 DECLARE_CONVERTER( XmlTTHalfModuleCnv )

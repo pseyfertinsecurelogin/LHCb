@@ -44,17 +44,12 @@
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::GenKinematics::mass
-( const HepMC::GenParticle* p )
-{
-  if ( !p )
-  {
-    LoKi::Report::Error
-      ("mass(HepMC::GenParticle*),invaild argument,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::GenKinematics::mass( const HepMC::GenParticle* p ) {
+  if ( !p ) {
+    LoKi::Report::Error( "mass(HepMC::GenParticle*),invaild argument,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  return LoKi::Kinematics::mass
-    ( LoKi::LorentzVector ( p->momentum() ) ) ;
+  return LoKi::Kinematics::mass( LoKi::LorentzVector( p->momentum() ) );
 }
 // ============================================================================
 /*  trivial function to evaluate the mass HepMC::GenParticle
@@ -66,26 +61,17 @@ double LoKi::GenKinematics::mass
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::GenKinematics::mass
-( const HepMC::GenParticle* p1 ,
-  const HepMC::GenParticle* p2 )
-{
-  if ( !p1 )
-  {
-    LoKi::Report::Error
-      ("mass(2*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2 ) {
+  if ( !p1 ) {
+    LoKi::Report::Error( "mass(2*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( !p2 )
-  {
-    LoKi::Report::Error
-      ("mass(2*HepMC::GenParticle*),invaild argument 2,return'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( !p2 ) {
+    LoKi::Report::Error( "mass(2*HepMC::GenParticle*),invaild argument 2,return'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
   //
-  return LoKi::Kinematics::mass
-    ( LoKi::LorentzVector ( p1 -> momentum() ) ,
-      LoKi::LorentzVector ( p2 -> momentum() ) ) ;
+  return LoKi::Kinematics::mass( LoKi::LorentzVector( p1->momentum() ), LoKi::LorentzVector( p2->momentum() ) );
 }
 // ============================================================================
 /*  trivial function to evaluate the mass HepMC::GenParticle
@@ -98,34 +84,23 @@ double LoKi::GenKinematics::mass
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::GenKinematics::mass
-( const HepMC::GenParticle* p1 ,
-  const HepMC::GenParticle* p2 ,
-  const HepMC::GenParticle* p3 )
-{
-  if ( !p1 )
-  {
-    LoKi::Report::Error
-      ("mass(3*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2,
+                                  const HepMC::GenParticle* p3 ) {
+  if ( !p1 ) {
+    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( !p2 )
-  {
-    LoKi::Report::Error
-      ("mass(3*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( !p2 ) {
+    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( !p3 )
-  {
-    LoKi::Report::Error
-      ("mass(3*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( !p3 ) {
+    LoKi::Report::Error( "mass(3*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
   //
-  return LoKi::Kinematics::mass
-    ( LoKi::LorentzVector ( p1 -> momentum() ) ,
-      LoKi::LorentzVector ( p2 -> momentum() ) ,
-      LoKi::LorentzVector ( p3 -> momentum() ) ) ;
+  return LoKi::Kinematics::mass( LoKi::LorentzVector( p1->momentum() ), LoKi::LorentzVector( p2->momentum() ),
+                                 LoKi::LorentzVector( p3->momentum() ) );
 }
 // ============================================================================
 /*  trivial function to evaluate the mass HepMC::GenParticle
@@ -139,44 +114,28 @@ double LoKi::GenKinematics::mass
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::GenKinematics::mass
-( const HepMC::GenParticle* p1 ,
-  const HepMC::GenParticle* p2 ,
-  const HepMC::GenParticle* p3 ,
-  const HepMC::GenParticle* p4 )
-{
-  if ( !p1 )
-  {
-    LoKi::Report::Error
-      ("mass(4*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::GenKinematics::mass( const HepMC::GenParticle* p1, const HepMC::GenParticle* p2,
+                                  const HepMC::GenParticle* p3, const HepMC::GenParticle* p4 ) {
+  if ( !p1 ) {
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 1,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( !p2 )
-  {
-    LoKi::Report::Error
-      ("mass(4*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( !p2 ) {
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 2,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( !p3 )
-  {
-    LoKi::Report::Error
-      ("mass(4*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( !p3 ) {
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 3,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( !p4 )
-  {
-    LoKi::Report::Error
-      ("mass(4*HepMC::GenParticle*),invaild argument 4,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( !p4 ) {
+    LoKi::Report::Error( "mass(4*HepMC::GenParticle*),invaild argument 4,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
   //
-  return LoKi::Kinematics::mass
-    ( LoKi::LorentzVector ( p1 -> momentum() ) ,
-      LoKi::LorentzVector ( p2 -> momentum() ) ,
-      LoKi::LorentzVector ( p3 -> momentum() ) ,
-      LoKi::LorentzVector ( p4 -> momentum() ) ) ;
+  return LoKi::Kinematics::mass( LoKi::LorentzVector( p1->momentum() ), LoKi::LorentzVector( p2->momentum() ),
+                                 LoKi::LorentzVector( p3->momentum() ), LoKi::LorentzVector( p4->momentum() ) );
 }
 // ============================================================================
 // The END
 // ============================================================================
-

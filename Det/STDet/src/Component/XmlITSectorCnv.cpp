@@ -16,5 +16,5 @@
 // TTDet
 #include "STDet/DeITSector.h"
 
-typedef XmlUserDetElemCnv<DeITSector >        XmlITSectorCnv;
+typedef XmlUserDetElemCnv<DeITSector> XmlITSectorCnv;
 DECLARE_CONVERTER( XmlITSectorCnv )

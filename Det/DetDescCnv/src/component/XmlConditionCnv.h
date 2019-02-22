@@ -14,7 +14,6 @@
 /// Include files
 #include "DetDescCnv/XmlBaseConditionCnv.h"
 
-
 /** @class XmlConditionCnv
  *
  * XML converter for Conditions.
@@ -27,7 +26,7 @@ public:
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlConditionCnv(ISvcLocator* svcs);
+  XmlConditionCnv( ISvcLocator* svcs );
 
 protected:
   /** This fills the current object for specific child.
@@ -37,10 +36,8 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                Condition* refpObject,
-                                IOpaqueAddress* address) override;
-
+  StatusCode i_fillSpecificObj( xercesc::DOMElement* childElement, Condition* refpObject,
+                                IOpaqueAddress* address ) override;
 };
 
 #endif // DETDESCCNV_XMLCONDITIONCNV_H

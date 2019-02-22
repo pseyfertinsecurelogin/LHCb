@@ -8,9 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef _UTDecoder_H 
-#define _UTDecoder_H 
+#ifndef _UTDecoder_H
+#define _UTDecoder_H
 #include "SiDAQ/SiRawBankDecoder.h"
 #include "UTClusterWord.h"
-typedef SiRawBankDecoder<UTClusterWord > UTDecoder;
+typedef SiRawBankDecoder<UTClusterWord> UTDecoder;
 #endif

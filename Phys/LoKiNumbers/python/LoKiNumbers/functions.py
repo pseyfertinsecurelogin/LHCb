@@ -37,8 +37,8 @@ A.Golutvin, P.Koppenburg have been used in the design.
 
 """
 # =============================================================================
-__author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
-__date__    = ' xxxx-xx-xx '
+__author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
+__date__ = ' xxxx-xx-xx '
 __version__ = " version $Revision$ "
 # =============================================================================
 
@@ -51,103 +51,102 @@ except ImportError:
     # dummy implementation
     def ROOT6WorkAroundEnabled(id=None):
         return False
+
+
 if ROOT6WorkAroundEnabled('template-autoloading'):
     cpp.gSystem.Load('libLoKiNumbersDict')
 
 _d = 'double'
 ## _v = std.vector( _d )
 _v = 'std::vector<double>'
-XFunc     = LoKi.Functor            ( _d , _d   )
-XFun      = LoKi.FunctorFromFunctor ( _d , _d   )
-XCuts     = LoKi.Functor            ( _d , bool )
-XCut      = LoKi.FunctorFromFunctor ( _d , bool )
+XFunc = LoKi.Functor(_d, _d)
+XFun = LoKi.FunctorFromFunctor(_d, _d)
+XCuts = LoKi.Functor(_d, bool)
+XCut = LoKi.FunctorFromFunctor(_d, bool)
 
-XMaps     = LoKi.Functor            ( _v , _v   )
-XMap      = LoKi.FunctorFromFunctor ( _v , _v   )
-XPipes    = XMaps
-XPipe     = XMap
+XMaps = LoKi.Functor(_v, _v)
+XMap = LoKi.FunctorFromFunctor(_v, _v)
+XPipes = XMaps
+XPipe = XMap
 
-XFunVals  = LoKi.Functor            ( _v , _d   )
-XFunVal   = LoKi.FunctorFromFunctor ( _v , _d   )
-XSources  = LoKi.Functor            ( 'void' , _v )
-XSource   = LoKi.FunctorFromFunctor ( 'void' , _v )
+XFunVals = LoKi.Functor(_v, _d)
+XFunVal = LoKi.FunctorFromFunctor(_v, _d)
+XSources = LoKi.Functor('void', _v)
+XSource = LoKi.FunctorFromFunctor('void', _v)
 
+XVCuts = LoKi.Functor(_v, bool)
+XVCut = LoKi.FunctorFromFunctor(_v, bool)
+XCutVals = XVCuts
+XCutVal = XVCut
 
-XVCuts    = LoKi.Functor            ( _v , bool )
-XVCut     = LoKi.FunctorFromFunctor ( _v , bool )
-XCutVals  = XVCuts
-XCutVal   = XVCut
+XTRUE = LoKi.Constant(_d, bool)(True)
+XALL = LoKi.Constant(_d, bool)(True)
+XFALSE = LoKi.Constant(_d, bool)(False)
+XNONE = LoKi.Constant(_d, bool)(False)
 
+XONE = LoKi.Constant(_d, _d)(1.0)
+XZERO = LoKi.Constant(_d, _d)(0.0)
+XNULL = LoKi.Constant(_d, _d)(0.0)
 
-XTRUE     = LoKi.Constant ( _d , bool ) (True)
-XALL      = LoKi.Constant ( _d , bool ) (True)
-XFALSE    = LoKi.Constant ( _d , bool ) (False)
-XNONE     = LoKi.Constant ( _d , bool ) (False)
+XVONE = LoKi.Constant(_v, _d)(1.0)
+XVZERO = LoKi.Constant(_v, _d)(0.0)
 
-XONE      = LoKi.Constant ( _d , _d   ) (1.0)
-XZERO     = LoKi.Constant ( _d , _d   ) (0.0)
-XNULL     = LoKi.Constant ( _d , _d   ) (0.0)
+XVTRUE = LoKi.Constant(_v, bool)(True)
+XVALL = LoKi.Constant(_v, bool)(True)
+XVFALSE = LoKi.Constant(_v, bool)(False)
+XVNONE = LoKi.Constant(_v, bool)(False)
 
-XVONE     = LoKi.Constant ( _v , _d   ) (1.0)
-XVZERO    = LoKi.Constant ( _v , _d   ) (0.0)
+X = LoKi.Identity(_d, _d)()
+XID = X
+XV = LoKi.Identity(_v, _v)()
+XVID = XV
 
-XVTRUE    = LoKi.Constant ( _v , bool ) (True)
-XVALL     = LoKi.Constant ( _v , bool ) (True)
-XVFALSE   = LoKi.Constant ( _v , bool ) (False)
-XVNONE    = LoKi.Constant ( _v , bool ) (False)
-
-X         = LoKi.Identity ( _d , _d   ) ()
-XID       = X
-XV        = LoKi.Identity ( _v , _v   ) ()
-XVID      = XV
-
-
-XVector   = std.vector(_d)
+XVector = std.vector(_d)
 
 # TES checkers
 
 ## @see LoKi::Cuts::EXISTS
-EXISTS    = LoKi.TES.Exists
+EXISTS = LoKi.TES.Exists
 ## @see LoKi::Cuts::CONTAINS
-CONTAINS  = LoKi.TES.Contains
-## @see LoKi:Cuts::SIZE 
-SIZE      = LoKi.TES.Size
+CONTAINS = LoKi.TES.Contains
+## @see LoKi:Cuts::SIZE
+SIZE = LoKi.TES.Size
 ## @see LoKi:Cuts::HASDATA
-HASDATA   = LoKi.TES.HasData
+HASDATA = LoKi.TES.HasData
 ## @see LoKi::Cuts::HRCSUMADC
 HRCSUMADC = LoKi.TES.HrcSumAdc
 ## @see LoKi::Cuts::COUNTER
-COUNTER   = LoKi.TES.Counter
+COUNTER = LoKi.TES.Counter
 ## @see LoKi::Cuts::STAT
-STAT      = LoKi.TES.Stat
+STAT = LoKi.TES.Stat
 
 # RecSummary for Sophie Redford & Andy Powell
 
 ## @see LoKi::Cuts::HASRECSUMMARY
 HASRECSUMMARY = LoKi.TES.HasRecSummary
 ## @see LoKi::Cuts::RECSUMMARY
-RECSUMMARY    = LoKi.TES.RecSummary
+RECSUMMARY = LoKi.TES.RecSummary
 
 ## @see LoKi::Cuts::CHECK
-CHECK     = LoKi.Status.Check
+CHECK = LoKi.Status.Check
 ## @see LoKi::Cuts::ACCEPT
-ACCEPT    = LoKi.Status.Accept
+ACCEPT = LoKi.Status.Accept
 
 # random numbers:
 ## @see LoKi::Cuts::XRANDOM
-XRANDOM   = LoKi.Random.Numbers
+XRANDOM = LoKi.Random.Numbers
 ## @see LoKi::Cuts::XRND
-XRND      = LoKi.Random.Uniform
+XRND = LoKi.Random.Uniform
 ## @see LoKi::Cuts::XRNDM
-XRNDM     = XRND  ( 0 , 1 )
+XRNDM = XRND(0, 1)
 ## @see LoKi::Cuts::XGAUS
-XGAUS     = LoKi.Random.Gaussian
+XGAUS = LoKi.Random.Gaussian
 ## @see LoKi::Cuts::XGAUSS
-XGAUSS    = XGAUS ( 0 , 1 )
+XGAUSS = XGAUS(0, 1)
 ## @see LoKi::Cuts::XRAND_
-XRAND_    = LoKi.Random.Rand
+XRAND_ = LoKi.Random.Rand
 ## @see LoKi::Cuts::XRAND
-XRAND     = LoKi.Random.Rand ( )
+XRAND = LoKi.Random.Rand()
 
 # scalers
 
@@ -156,27 +155,28 @@ XRATE = LoKi.Scalers.RateLimit
 ## @see LoKi::Cuts::XSCALE
 XSCALE = LoKi.Scalers.RandomScale
 ## @see LoKi::Cuts::XSKIP
-XSKIP  = LoKi.Scalers.Skipper
+XSKIP = LoKi.Scalers.Skipper
 
 ## trivia
 
 ## @see LoKi::Cuts::XEMPTY
-XEMPTY    = LoKi.Functors.Empty ( 'double' ) ()
+XEMPTY = LoKi.Functors.Empty('double')()
 ## @see LoKi::Cuts::XSIZE
-XSIZE     = LoKi.Functors.Size  ( 'double' ) ()
+XSIZE = LoKi.Functors.Size('double')()
 
 ## blinders
 
 ## @see LoKi::Cuts::BLIND
-BLIND     = LoKi.Random.Blind
+BLIND = LoKi.Random.Blind
 ## @see LoKi::Cuts::XBLIND
-XBLIND    = LoKi.Random.XBlind
+XBLIND = LoKi.Random.XBlind
 
-XFAKESOURCE   = LoKi.Functors.FakeSource( 'double' )
-                                           
+XFAKESOURCE = LoKi.Functors.FakeSource('double')
+
+
 # =============================================================================
 ## The iterator function for the vector of something
-def _vct_iter_ ( self ) :
+def _vct_iter_(self):
     """
     The iterator function for the vector of something
 
@@ -186,44 +186,47 @@ def _vct_iter_ ( self ) :
 
     """
     _range = self
-    _size  = _range.size()
-    _curr  = 0
-    while _curr < _size :
-        yield _range.at(_curr)                                  ## YIELD
+    _size = _range.size()
+    _curr = 0
+    while _curr < _size:
+        yield _range.at(_curr)  ## YIELD
         _curr += 1
 
-def _vct_prnt_ ( self ) :
+
+def _vct_prnt_(self):
     """
     Print vector as list
     """
     lst = []
-    for item in self : lst += [item]
+    for item in self:
+        lst += [item]
     return str(lst)
 
-if not hasattr ( XVector , "__iter__" ) :
-    XVector. __iter__ = _vct_iter_
-    XVector. __str__  = _vct_prnt_
-    XVector. __repr__ = _vct_prnt_
 
+if not hasattr(XVector, "__iter__"):
+    XVector.__iter__ = _vct_iter_
+    XVector.__str__ = _vct_prnt_
+    XVector.__repr__ = _vct_prnt_
 
-if not hasattr ( Gaudi.Math , 'blind' ) :
+if not hasattr(Gaudi.Math, 'blind'):
     import LHCbMath.Types
 
 ## @see Gaudi::Math::blind
-blind     = Gaudi.Math.blind
+blind = Gaudi.Math.blind
 
 ##
 cpp.Rndm
 
-## @see LoKi::Param 
-PARAM  = cpp.LoKi.Param
+## @see LoKi::Param
+PARAM = cpp.LoKi.Param
+
 
 # =============================================================================
 ## helper function to create ``smart'' RecSumary functor
 #  @see HASRECSUMMARY
 #  @see    RECSUMMARY
 #  @see      CONTAINS
-def  recSummary ( index , location ) :
+def recSummary(index, location):
     """
     Helper function to create ``smart'' RecSummary-fucntor
 
@@ -233,14 +236,14 @@ def  recSummary ( index , location ) :
     #
     from LoKiCore.functions import switch
     #
-    return switch ( HASRECSUMMARY ( index      ) ,
-                    RECSUMMARY    ( index , -1 ) ,
-                    CONTAINS      ( location   ) )
+    return switch(
+        HASRECSUMMARY(index), RECSUMMARY(index, -1), CONTAINS(location))
 
 
 # =============================================================================
-if '__main__' == __name__ :
-    for o in dir() : print o
+if '__main__' == __name__:
+    for o in dir():
+        print o
 
 # =============================================================================
 # The END

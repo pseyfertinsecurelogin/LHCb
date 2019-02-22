@@ -11,11 +11,15 @@
 import os, re
 import argparse
 
-parser = argparse.ArgumentParser(usage = 'usage: %(prog)s file')
+parser = argparse.ArgumentParser(usage='usage: %(prog)s file')
 
-parser.add_argument("--odin", action = 'store_true', dest = "odin", default = False,
-                    help = "Use ODIN to get the TCK")
-parser.add_argument("file", nargs = 1)
+parser.add_argument(
+    "--odin",
+    action='store_true',
+    dest="odin",
+    default=False,
+    help="Use ODIN to get the TCK")
+parser.add_argument("file", nargs=1)
 
 args = parser.parse_args()
 
@@ -33,10 +37,11 @@ app.DDDBtag = 'dddb-20150724'
 IOHelper("MDF").inputFiles(args.file)
 
 # Top level sequence
-topSeq = GaudiSequencer( "TopSequence" )
+topSeq = GaudiSequencer("TopSequence")
 
 from DAQSys.Decoders import DecoderDB
-for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder", "HltDecReportsDecoder/Hlt2DecReportsDecoder"):
+for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder",
+            "HltDecReportsDecoder/Hlt2DecReportsDecoder"):
     decoder = DecoderDB[dec].setup()
     decoder.OutputLevel = 5
     topSeq.Members.append(decoder)

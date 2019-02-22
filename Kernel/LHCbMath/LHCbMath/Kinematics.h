@@ -31,18 +31,15 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date   2008-01-15
  */
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** helper function ("signed sqrt")
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-05-24
      */
-    inline double _sqrt_ ( const double value )
-    { return  0 <= value ? std::sqrt ( value ) : -std::sqrt ( - value ) ; }
+    inline double _sqrt_( const double value ) { return 0 <= value ? std::sqrt( value ) : -std::sqrt( -value ); }
     // ========================================================================
     /** evaluate the dispersion of M^2 from the particle 4-vector and
      *  the covarinace matrix
@@ -61,30 +58,22 @@ namespace Gaudi
      *  @date 2008-01-15
      */
     template <class C, class T>
-    inline double
-    sigma2mass2
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
+    inline double sigma2mass2( const ROOT::Math::LorentzVector<C>&                              momentum,
+                               const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
       // get the vector d(M2)/dp_i :
-      ROOT::Math::SVector<T,4> dM2dp;
-      dM2dp [0] = -2 * momentum.Px () ;
-      dM2dp [1] = -2 * momentum.Py () ;
-      dM2dp [2] = -2 * momentum.Pz () ;
-      dM2dp [3] =  2 * momentum.E  () ;
+      ROOT::Math::SVector<T, 4> dM2dp;
+      dM2dp[0] = -2 * momentum.Px();
+      dM2dp[1] = -2 * momentum.Py();
+      dM2dp[2] = -2 * momentum.Pz();
+      dM2dp[3] = 2 * momentum.E();
       //
-      return ROOT::Math::Similarity ( covariance , dM2dp ) ;
+      return ROOT::Math::Similarity( covariance, dM2dp );
     }
     // ========================================================================
-    template <class C, class T, class B , class R>
-    inline double
-    sigma2mass2
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & matrix     )
-    {
-      return sigma2mass2
-        ( momentum ,
-          ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> > ( matrix ) ) ;
+    template <class C, class T, class B, class R>
+    inline double sigma2mass2( const ROOT::Math::LorentzVector<C>&    momentum,
+                               const ROOT::Math::Expr<B, T, 4, 4, R>& matrix ) {
+      return sigma2mass2( momentum, ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>( matrix ) );
     }
     // ========================================================================
     /** evaluate the dispersion of M from the particle 4-vector and
@@ -106,29 +95,23 @@ namespace Gaudi
      *  @date 2008-01-15
      */
     template <class C, class T>
-    inline double
-    sigma2mass
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
-      const double m2   = momentum.M2 () ;
-      if ( m2   <= 0 ) { return 0 ; }                         // NB! RETURN 0
-      const double s2m2 = sigma2mass2 ( momentum , covariance ) ;
-      if ( s2m2 <= 0 ) { return 0 ; }                         // NB! RETURN 0
+    inline double sigma2mass( const ROOT::Math::LorentzVector<C>&                              momentum,
+                              const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
+      const double m2 = momentum.M2();
+      if ( m2 <= 0 ) { return 0; } // NB! RETURN 0
+      const double s2m2 = sigma2mass2( momentum, covariance );
+      if ( s2m2 <= 0 ) { return 0; } // NB! RETURN 0
       //
-      return 0.25 * s2m2 / m2 ;
+      return 0.25 * s2m2 / m2;
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigma2mass
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
-      const double s2m2 = sigma2mass2 ( momentum , covariance ) ;
-      const double m2   = momentum.M2 () ;
-      if ( 0 != m2 ) { return 0.25 * s2m2 / m2 ; }                    // RETURN
-      return -1.E+24;                                                 // RETURN
+    inline double sigma2mass( const ROOT::Math::LorentzVector<C>&    momentum,
+                              const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
+      const double s2m2 = sigma2mass2( momentum, covariance );
+      const double m2   = momentum.M2();
+      if ( 0 != m2 ) { return 0.25 * s2m2 / m2; } // RETURN
+      return -1.E+24;                             // RETURN
     }
     // ========================================================================
     /** evaluate sigma(M) from the particle 4-vector and
@@ -150,23 +133,17 @@ namespace Gaudi
      *  @date 2008-01-15
      */
     template <class C, class T>
-    inline double
-    sigmamass
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
-      const double s2m = sigma2mass ( momentum , covariance ) ;
-      return _sqrt_ ( s2m ) ;
+    inline double sigmamass( const ROOT::Math::LorentzVector<C>&                              momentum,
+                             const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
+      const double s2m = sigma2mass( momentum, covariance );
+      return _sqrt_( s2m );
     }
     // =========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigmamass
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
-      const double s2m = sigma2mass ( momentum , covariance ) ;
-      return _sqrt_ ( s2m ) ;
+    inline double sigmamass( const ROOT::Math::LorentzVector<C>&    momentum,
+                             const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
+      const double s2m = sigma2mass( momentum, covariance );
+      return _sqrt_( s2m );
     }
     // ========================================================================
     /** evaluate the chi2 of the mass
@@ -190,31 +167,25 @@ namespace Gaudi
      *  @date 2008-01-15
      */
     template <class C, class T>
-    inline double chi2mass
-    ( const double                                                  mass       ,
-      const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
+    inline double chi2mass( const double mass, const ROOT::Math::LorentzVector<C>& momentum,
+                            const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
       // sigma^2(M^2):
-      const double s2 = 1.0 / Gaudi::Math::sigma2mass2 ( momentum , covariance ) ;
+      const double s2 = 1.0 / Gaudi::Math::sigma2mass2( momentum, covariance );
       // delta(M^2)
-      const double dm2 = momentum.M2() - mass * mass ;
+      const double dm2 = momentum.M2() - mass * mass;
       //  (delta^2(M^2))/(sigma^2(M^2))
-      return ( dm2 * dm2 ) * s2 ;
+      return ( dm2 * dm2 ) * s2;
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double chi2mass
-    ( const double                        mass       ,
-      const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
+    inline double chi2mass( const double mass, const ROOT::Math::LorentzVector<C>& momentum,
+                            const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
       // sigma^2(M^2):
-      const double s2 = 1.0 / Gaudi::Math::sigma2mass2 ( momentum , covariance ) ;
+      const double s2 = 1.0 / Gaudi::Math::sigma2mass2( momentum, covariance );
       // delta(M^2)
-      const double dm2 = momentum.M2() - mass * mass ;
+      const double dm2 = momentum.M2() - mass * mass;
       //  (delta^2(M^2))/(sigma^2(M^2))
-      return ( dm2 * dm2 ) * s2 ;
+      return ( dm2 * dm2 ) * s2;
     }
     // ========================================================================
     /** evaluate the dispersion of p from the particle 4-vector and
@@ -234,37 +205,31 @@ namespace Gaudi
      *  @date 2010-05-25
      */
     template <class C, class T>
-    inline double
-    sigma2p
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
+    inline double sigma2p( const ROOT::Math::LorentzVector<C>&                              momentum,
+                           const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
       // get the vector d(p)/dp_i :
-      ROOT::Math::SVector<T,4> dPdP_i;
-      const double P = momentum.P() ;
-      dPdP_i [0] = momentum.Px () / P ;
-      dPdP_i [1] = momentum.Py () / P ;
-      dPdP_i [2] = momentum.Pz () / P ;
-      dPdP_i [3] = 0.0 ;
+      ROOT::Math::SVector<T, 4> dPdP_i;
+      const double              P = momentum.P();
+      dPdP_i[0]                   = momentum.Px() / P;
+      dPdP_i[1]                   = momentum.Py() / P;
+      dPdP_i[2]                   = momentum.Pz() / P;
+      dPdP_i[3]                   = 0.0;
       //
-      return ROOT::Math::Similarity ( covariance , dPdP_i ) ;
+      return ROOT::Math::Similarity( covariance, dPdP_i );
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigma2p
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R>&  covariance )
-    {
+    inline double sigma2p( const ROOT::Math::LorentzVector<C>&    momentum,
+                           const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
       // get the vector d(p)/dp_i :
-      ROOT::Math::SVector<T,4> dPdP_i;
-      const double P = momentum.P() ;
-      dPdP_i [0] = momentum.Px () / P ;
-      dPdP_i [1] = momentum.Py () / P ;
-      dPdP_i [2] = momentum.Pz () / P ;
-      dPdP_i [3] = 0.0 ;
+      ROOT::Math::SVector<T, 4> dPdP_i;
+      const double              P = momentum.P();
+      dPdP_i[0]                   = momentum.Px() / P;
+      dPdP_i[1]                   = momentum.Py() / P;
+      dPdP_i[2]                   = momentum.Pz() / P;
+      dPdP_i[3]                   = 0.0;
       //
-      return ROOT::Math::Similarity ( covariance , dPdP_i ) ;
+      return ROOT::Math::Similarity( covariance, dPdP_i );
     }
     // ========================================================================
     /** evaluate the sigma of |p| from the particle 4-vector and
@@ -284,23 +249,17 @@ namespace Gaudi
      *  @date 2010-05-25
      */
     template <class C, class T>
-    inline double
-    sigmap
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
-      const double s2p = sigma2p ( momentum , covariance ) ;
-      return _sqrt_ ( s2p ) ;
+    inline double sigmap( const ROOT::Math::LorentzVector<C>&                              momentum,
+                          const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
+      const double s2p = sigma2p( momentum, covariance );
+      return _sqrt_( s2p );
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigmap
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
-      const double s2p = sigma2p ( momentum , covariance ) ;
-      return _sqrt_ ( s2p ) ;
+    inline double sigmap( const ROOT::Math::LorentzVector<C>&    momentum,
+                          const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
+      const double s2p = sigma2p( momentum, covariance );
+      return _sqrt_( s2p );
     }
     // ========================================================================
     /** evaluate the dispersion of pt from the particle 4-vector and
@@ -320,37 +279,25 @@ namespace Gaudi
      *  @date 2010-05-25
      */
     template <class C, class T>
-    inline double
-    sigma2pt
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
+    inline double sigma2pt( const ROOT::Math::LorentzVector<C>&                              momentum,
+                            const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
       // get the vector d(pt)/dp_i :
-      const double _Pt = momentum.Pt () ;
-      const double _ax = momentum.Px () / _Pt ;
-      const double _ay = momentum.Py () / _Pt ;
+      const double _Pt = momentum.Pt();
+      const double _ax = momentum.Px() / _Pt;
+      const double _ay = momentum.Py() / _Pt;
       //
-      return
-        covariance ( 0 , 0 ) * _ax * _ax       +
-        covariance ( 0 , 1 ) * _ax * _ay * 2.0 +
-        covariance ( 1 , 1 ) * _ay * _ay       ;
+      return covariance( 0, 0 ) * _ax * _ax + covariance( 0, 1 ) * _ax * _ay * 2.0 + covariance( 1, 1 ) * _ay * _ay;
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigma2pt
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
+    inline double sigma2pt( const ROOT::Math::LorentzVector<C>&    momentum,
+                            const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
       // get the vector d(pt)/dp_i :
-      const double _Pt = momentum.Pt () ;
-      const double _ax = momentum.Px () / _Pt ;
-      const double _ay = momentum.Py () / _Pt ;
+      const double _Pt = momentum.Pt();
+      const double _ax = momentum.Px() / _Pt;
+      const double _ay = momentum.Py() / _Pt;
       //
-      return
-        covariance ( 0 , 0 ) * _ax * _ax       +
-        covariance ( 0 , 1 ) * _ay * _ay * 2.0 +
-        covariance ( 1 , 1 ) * _ay * _ay       ;
+      return covariance( 0, 0 ) * _ax * _ax + covariance( 0, 1 ) * _ay * _ay * 2.0 + covariance( 1, 1 ) * _ay * _ay;
     }
     // ========================================================================
     /** evaluate the sigma of pt from the particle 4-vector and
@@ -370,23 +317,17 @@ namespace Gaudi
      *  @date 2010-05-25
      */
     template <class C, class T>
-    inline double
-    sigmapt
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
-      const double s2pt = sigma2pt ( momentum , covariance ) ;
-      return _sqrt_ ( s2pt ) ;
+    inline double sigmapt( const ROOT::Math::LorentzVector<C>&                              momentum,
+                           const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
+      const double s2pt = sigma2pt( momentum, covariance );
+      return _sqrt_( s2pt );
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigmapt
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
-      const double s2pt = sigma2pt ( momentum , covariance ) ;
-      return _sqrt_ ( s2pt ) ;
+    inline double sigmapt( const ROOT::Math::LorentzVector<C>&    momentum,
+                           const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
+      const double s2pt = sigma2pt( momentum, covariance );
+      return _sqrt_( s2pt );
     }
     // ========================================================================
     /** evaluate the dispersion of rapidity from the particle 4-vector and
@@ -406,42 +347,36 @@ namespace Gaudi
      *  @date 2016-02-12
      */
     template <class C, class T>
-    inline double
-    sigma2y
-    ( const ROOT::Math::LorentzVector<C>&                           momentum   ,
-      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance )
-    {
+    inline double sigma2y( const ROOT::Math::LorentzVector<C>&                              momentum,
+                           const ROOT::Math::SMatrix<T, 4, 4, ROOT::Math::MatRepSym<T, 4>>& covariance ) {
       // get the vector d(Y)/dp_i :
-      ROOT::Math::SVector<T,4> dYdP_i;
-      const double ePpz = 0.5 / ( momentum.E() + momentum.Pz() ) ;
-      const double eMpz = 0.5 / ( momentum.E() - momentum.Pz() ) ;
-      dYdP_i [0] = 0.0 ;
-      dYdP_i [1] = 0.0 ;
-      dYdP_i [2] = ePpz + eMpz ;
-      dYdP_i [3] = ePpz - eMpz ;
+      ROOT::Math::SVector<T, 4> dYdP_i;
+      const double              ePpz = 0.5 / ( momentum.E() + momentum.Pz() );
+      const double              eMpz = 0.5 / ( momentum.E() - momentum.Pz() );
+      dYdP_i[0]                      = 0.0;
+      dYdP_i[1]                      = 0.0;
+      dYdP_i[2]                      = ePpz + eMpz;
+      dYdP_i[3]                      = ePpz - eMpz;
       //
-      return ROOT::Math::Similarity ( covariance , dYdP_i ) ;
+      return ROOT::Math::Similarity( covariance, dYdP_i );
     }
     // ========================================================================
     template <class C, class T, class B, class R>
-    inline double
-    sigma2y
-    ( const ROOT::Math::LorentzVector<C>& momentum   ,
-      const ROOT::Math::Expr<B,T,4,4,R> & covariance )
-    {
+    inline double sigma2y( const ROOT::Math::LorentzVector<C>&    momentum,
+                           const ROOT::Math::Expr<B, T, 4, 4, R>& covariance ) {
       // get the vector d(Y)/dp_i :
-      ROOT::Math::SVector<T,4> dYdP_i;
-      const double ePpz = 0.5 / ( momentum.E() + momentum.Pz() ) ;
-      const double eMpz = 0.5 / ( momentum.E() - momentum.Pz() ) ;
-      dYdP_i [0] = 0.0 ;
-      dYdP_i [1] = 0.0 ;
-      dYdP_i [2] = ePpz + eMpz ;
-      dYdP_i [3] = ePpz - eMpz ;
+      ROOT::Math::SVector<T, 4> dYdP_i;
+      const double              ePpz = 0.5 / ( momentum.E() + momentum.Pz() );
+      const double              eMpz = 0.5 / ( momentum.E() - momentum.Pz() );
+      dYdP_i[0]                      = 0.0;
+      dYdP_i[1]                      = 0.0;
+      dYdP_i[2]                      = ePpz + eMpz;
+      dYdP_i[3]                      = ePpz - eMpz;
       //
-      return ROOT::Math::Similarity ( covariance , dYdP_i ) ;
+      return ROOT::Math::Similarity( covariance, dYdP_i );
     }
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

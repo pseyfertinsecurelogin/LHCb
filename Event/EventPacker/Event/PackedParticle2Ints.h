@@ -12,13 +12,12 @@
 #define EVENT_PACKEDPARTICLE2INTS_H 1
 
 // Include files
-#include<vector>
-#include<string>
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/DataObject.h"
+#include <string>
+#include <vector>
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class PackedParticle2Int PackedParticle2Ints.h Event/PackedParticle2Ints.h
    *
@@ -27,20 +26,18 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2012-01-30
    */
-  class PackedParticle2Int
-  {
+  class PackedParticle2Int {
   public:
     long long key{0};
     long long container{0};
-    int start{0};
-    int end{0};
+    int       start{0};
+    int       end{0};
   };
 
   constexpr CLID CLID_PackedParticle2Ints = 1591;
 
   /// Namespace for locations in TES
-  namespace PackedParticle2IntsLocation
-  {
+  namespace PackedParticle2IntsLocation {
     inline const std::string InStream = "/pPhys/Particle2Int";
   }
 
@@ -51,11 +48,9 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2012-01-30
    */
-  class PackedParticle2Ints : public DataObject
-  {
+  class PackedParticle2Ints : public DataObject {
 
   public:
-
     /// Class ID
     static const CLID& classID() { return CLID_PackedParticle2Ints; }
 
@@ -63,17 +58,14 @@ namespace LHCb
     const CLID& clID() const override { return PackedParticle2Ints::classID(); }
 
   public:
-
     std::vector<PackedParticle2Int>& relations() { return m_relations; }
 
     std::vector<int>& ints() { return m_ints; }
 
   private:
-
     std::vector<PackedParticle2Int> m_relations;
-    std::vector<int> m_ints;
-
+    std::vector<int>                m_ints;
   };
-}
+} // namespace LHCb
 
 #endif // EVENT_PACKEDPARTICLE2INTS_H

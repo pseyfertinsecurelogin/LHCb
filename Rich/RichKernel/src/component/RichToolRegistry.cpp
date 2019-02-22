@@ -24,13 +24,10 @@
 DECLARE_COMPONENT( Rich::ToolRegistry )
 
 // Standard constructor
-Rich::ToolRegistry::ToolRegistry( const std::string &type,
-                                  const std::string &name,
-                                  const IInterface * parent )
-  : GaudiTool( type, name, parent )
-{
+Rich::ToolRegistry::ToolRegistry( const std::string& type, const std::string& name, const IInterface* parent )
+    : GaudiTool( type, name, parent ) {
   // declare interface
-  declareInterface< IToolRegistry >( this );
+  declareInterface<IToolRegistry>( this );
 
   // job option for mapping between nickname and class name
   declareProperty( "Tools", m_names );
@@ -38,9 +35,7 @@ Rich::ToolRegistry::ToolRegistry( const std::string &type,
   // setProperty( "OutputLevel", 1 );
 }
 
-StatusCode
-Rich::ToolRegistry::initialize()
-{
+StatusCode Rich::ToolRegistry::initialize() {
   // Execute the base class initialize
   const StatusCode sc = GaudiTool::initialize();
   if ( sc.isFailure() ) return sc;
@@ -109,37 +104,27 @@ Rich::ToolRegistry::initialize()
   return sc;
 }
 
-void
-Rich::ToolRegistry::setUpTools( const ToolList &toolList )
-{
+void Rich::ToolRegistry::setUpTools( const ToolList& toolList ) {
   // setup tool registry
-  for ( const auto &tool : toolList )
-  {
+  for ( const auto& tool : toolList ) {
     const auto slash = tool.find_first_of( "/" );
-    addEntry( ( slash > 0 ? tool.substr( slash + 1 ) : tool ),
-              ( slash > 0 ? tool.substr( 0, slash ) : tool ) );
+    addEntry( ( slash > 0 ? tool.substr( slash + 1 ) : tool ), ( slash > 0 ? tool.substr( 0, slash ) : tool ) );
   }
 }
 
-const std::string &
-Rich::ToolRegistry::toolType( const std::string &nickname ) const
-{
+const std::string& Rich::ToolRegistry::toolType( const std::string& nickname ) const {
   // Test nickname is valid
-  if ( nickname.empty() )
-  {
+  if ( nickname.empty() ) {
     // Empty nick name !
     Exception( "Received empty tool nickname" );
   }
 
   // test instance name is defined
-  if ( m_myTools[nickname].empty() )
-  {
+  if ( m_myTools[nickname].empty() ) {
     // Don't allow any missing tool entries
     // Exception( "Unknown RICH tool nickname '" + nickname + "'" );
     // or... just assume same as nickname and issue a Warning
-    Warning( "Unknown nickname '" + nickname + "' -> Assuming same class name",
-             StatusCode::SUCCESS )
-      .ignore();
+    Warning( "Unknown nickname '" + nickname + "' -> Assuming same class name", StatusCode::SUCCESS ).ignore();
     addEntry( nickname, nickname );
   }
 
@@ -147,30 +132,24 @@ Rich::ToolRegistry::toolType( const std::string &nickname ) const
   return m_myTools[nickname];
 }
 
-const std::string
-Rich::ToolRegistry::toolName( const std::string &nickname ) const
-{
+const std::string Rich::ToolRegistry::toolName( const std::string& nickname ) const {
   return ( context().empty() ? nickname : context() + "_" + nickname );
 }
 
-void
-Rich::ToolRegistry::addEntry( const std::string &nickname, const std::string &type ) const
-{
-  if ( !m_myTools[nickname].empty() && type != m_myTools[nickname] )
-  {
+void Rich::ToolRegistry::addEntry( const std::string& nickname, const std::string& type ) const {
+  if ( !m_myTools[nickname].empty() && type != m_myTools[nickname] ) {
     std::ostringstream mess;
-    mess << "Nickname '" << nickname << "' mapping changed : '" << m_myTools[nickname] << "' to '"
-         << type + "'";
+    mess << "Nickname '" << nickname << "' mapping changed : '" << m_myTools[nickname] << "' to '" << type + "'";
     // Print info for any tool type changes, other than to the MC
     // association tools as these always change when running on real data
-    if ( "RichMCTruthTool" != nickname && "RichRecMCTruthTool" != nickname )
-    { Print( mess.str(), StatusCode::SUCCESS ).ignore(); }
-    else if ( msgLevel( MSG::DEBUG ) )
-    {
+    if ( "RichMCTruthTool" != nickname && "RichRecMCTruthTool" != nickname ) {
+      Print( mess.str(), StatusCode::SUCCESS ).ignore();
+    } else if ( msgLevel( MSG::DEBUG ) ) {
       debug() << mess.str() << endmsg;
     }
   }
-  if ( msgLevel( MSG::DEBUG ) )
-  { debug() << " Tool nickname '" << nickname << "' maps to type '" << type << "'" << endmsg; }
+  if ( msgLevel( MSG::DEBUG ) ) {
+    debug() << " Tool nickname '" << nickname << "' maps to type '" << type << "'" << endmsg;
+  }
   m_myTools[nickname] = type;
 }

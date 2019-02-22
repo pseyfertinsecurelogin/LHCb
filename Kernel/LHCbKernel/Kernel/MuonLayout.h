@@ -45,18 +45,15 @@ public:
     @param   xgrid  granularity in X
     @param   ygrid  granularity in Y
   */
-  MuonLayout(unsigned int xgrid,unsigned  int ygrid);
+  MuonLayout( unsigned int xgrid, unsigned int ygrid );
   /** Constructor taking X and Y granularities as std::pair
     @param   xygrid  granularity in X
   */
-  MuonLayout(std::pair<unsigned int, unsigned int> xygrid);
+  MuonLayout( std::pair<unsigned int, unsigned int> xygrid );
 
   /// Accessor to MuonLayout grid corresponding to the given MuonTileID
   /// reimplemented from IMuonLayout
-  std::pair<unsigned int, unsigned int>
-          grid(const  LHCb::MuonTileID&) const override {
-    return {xGrid(),yGrid()};
-  }
+  std::pair<unsigned int, unsigned int> grid( const LHCb::MuonTileID& ) const override { return {xGrid(), yGrid()}; }
 
   /// Accessor to X granularity
   unsigned int xGrid() const { return m_xgrid; }
@@ -70,7 +67,7 @@ public:
       @param pad   :  tile defining the area covered
   */
 
-  std::vector<LHCb::MuonTileID> tiles(const LHCb::MuonTileID& pad) const override;
+  std::vector<LHCb::MuonTileID> tiles( const LHCb::MuonTileID& pad ) const override;
 
   /** find a vector of MuonTileID's defined in terms of this MuonLayout
       which are touched by an area around a given MuonTileID defined
@@ -81,8 +78,7 @@ public:
       @param areaY : limits of the search area in Y
   */
 
-  std::vector<LHCb::MuonTileID>
-  tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const override;
+  std::vector<LHCb::MuonTileID> tilesInArea( const LHCb::MuonTileID& pad, int areaX, int areaY ) const override;
 
   /// returns a vector of its MuonTileID's.
   /// Implementation of the IMuonLayout	interface
@@ -92,25 +88,23 @@ public:
 
       @param quarter : the quarter number to look into
   */
-  std::vector<LHCb::MuonTileID> tiles(int quarter) const override;
+  std::vector<LHCb::MuonTileID> tiles( int quarter ) const override;
 
   /** returns a vector of its MuonTileID's in a given quarter and region
 
       @param quarter : the quarter number to look into
       @param region : the region number to look into
   */
-  std::vector<LHCb::MuonTileID> tiles(int quarter, int region) const override;
+  std::vector<LHCb::MuonTileID> tiles( int quarter, int region ) const override;
 
   /// find a tile containing the argument tile
-  LHCb::MuonTileID contains(const LHCb::MuonTileID& pad) const override;
+  LHCb::MuonTileID contains( const LHCb::MuonTileID& pad ) const override;
 
   /// Get tiles touched by pad defined in terms of pregion region number
-  std::vector<LHCb::MuonTileID>
-  tilesInRegion(const LHCb::MuonTileID& pad, int pregion) const override;
+  std::vector<LHCb::MuonTileID> tilesInRegion( const LHCb::MuonTileID& pad, int pregion ) const override;
 
   /// find all the MuonTileID's which are neighbours of the argument tile
-  std::vector<LHCb::MuonTileID>
-  neighbours(const LHCb::MuonTileID& pad) const override;
+  std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction.
@@ -118,8 +112,7 @@ public:
       @param   dirX  horizontal direction in which to look for neighbours
       @param   dirY  vertical direction in which to look for neighbours
   */
-  std::vector<LHCb::MuonTileID>
-  neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY) const override;
+  std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad, int dirX, int dirY ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction.
@@ -128,8 +121,7 @@ public:
       @param   dirY  vertical direction in which to look for neighbours
       @param   depth depth of the band in which to look for neighbours
   */
-  std::vector<LHCb::MuonTileID>
-  neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY, int depth ) const override;
+  std::vector<LHCb::MuonTileID> neighbours( const LHCb::MuonTileID& pad, int dirX, int dirY, int depth ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction. This version takes into account that
@@ -141,69 +133,56 @@ public:
       @param   depthX depth of the band in which to look for neighbours
       @param   depthY depth of the band in which to look for neighbours
   */
-  std::vector<LHCb::MuonTileID>
-  neighboursInArea(const LHCb::MuonTileID& pad, int dirX, int dirY,
-                                    int depthX, int depthY ) const override;
+  std::vector<LHCb::MuonTileID> neighboursInArea( const LHCb::MuonTileID& pad, int dirX, int dirY, int depthX,
+                                                  int depthY ) const override;
 
   /// check if the given MuonTileID is valid for this layout
-  bool isValidID(const LHCb::MuonTileID& mt) const override;
+  bool isValidID( const LHCb::MuonTileID& mt ) const override;
 
   /// check if the layout itself is defined
   bool isDefined() const;
 
   /// printout to std::ostream
-  inline std::ostream& printOut ( std::ostream& ) const ;
+  inline std::ostream& printOut( std::ostream& ) const;
 
   /// printout to MsgStream
-  inline MsgStream&    printOut ( MsgStream&    ) const ;
+  inline MsgStream& printOut( MsgStream& ) const;
 
 private:
   /// find magnification factor of pads in the given region
-  int rfactor (unsigned int nr) const { return 1 << nr; }
+  int rfactor( unsigned int nr ) const { return 1 << nr; }
 
   /** find region for the given pad indices. The pad indices
       are given in terms of the most inner region. If the pad indices
       are not fitting into the layout, the result returned is -1
   */
-  int region (unsigned int bx,unsigned int by) const ;
+  int region( unsigned int bx, unsigned int by ) const;
 
 private:
   unsigned int m_xgrid;
   unsigned int m_ygrid;
-
 };
 
 // print to std::ostream
 inline std::ostream& MuonLayout::printOut( std::ostream& os ) const {
-  os << "(" ;
-  return
-    os <<  xGrid() << ","
-       <<  yGrid() << ")" ;
+  os << "(";
+  return os << xGrid() << "," << yGrid() << ")";
 }
 
 // print to MsgStream
 inline MsgStream& MuonLayout::printOut( MsgStream& os ) const {
-  os << "(" ;
-  return
-    os <<  xGrid() << ","
-       <<  yGrid() << ")" ;
+  os << "(";
+  return os << xGrid() << "," << yGrid() << ")";
 }
 
 // output to MsgStream
-inline MsgStream& operator<<( MsgStream&  os , const MuonLayout& id ) {
-  return id.printOut( os );
-}
+inline MsgStream& operator<<( MsgStream& os, const MuonLayout& id ) { return id.printOut( os ); }
 
 // output to std::ostream
-inline std::ostream& operator<< ( std::ostream& os , const MuonLayout& id ) {
-  return id.printOut( os );
-}
+inline std::ostream& operator<<( std::ostream& os, const MuonLayout& id ) { return id.printOut( os ); }
 
-inline bool operator==(const MuonLayout& ml1, const MuonLayout& ml2) {
-    return ml1.xGrid()==ml2.xGrid() &&
-           ml1.yGrid()==ml2.yGrid();
+inline bool operator==( const MuonLayout& ml1, const MuonLayout& ml2 ) {
+  return ml1.xGrid() == ml2.xGrid() && ml1.yGrid() == ml2.yGrid();
 }
-inline bool operator!=(const MuonLayout& ml1, const MuonLayout& ml2) {
-    return !(ml1 == ml2);
-}
-#endif    // KERNEL_MUONLAYOUT_H
+inline bool operator!=( const MuonLayout& ml1, const MuonLayout& ml2 ) { return !( ml1 == ml2 ); }
+#endif // KERNEL_MUONLAYOUT_H

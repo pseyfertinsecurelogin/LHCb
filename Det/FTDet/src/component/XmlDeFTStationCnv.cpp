@@ -16,7 +16,7 @@
 // FTDet
 #include "FTDet/DeFTStation.h"
 
-typedef XmlUserDetElemCnv<DeFTStation>       XmlDeFTStationCnv;
+typedef XmlUserDetElemCnv<DeFTStation> XmlDeFTStationCnv;
 DECLARE_CONVERTER( XmlDeFTStationCnv )
 
-#endif //XMLDEFTSTATIONCNV_H
+#endif // XMLDEFTSTATIONCNV_H

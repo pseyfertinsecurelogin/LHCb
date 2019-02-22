@@ -17,34 +17,28 @@
 /// @date   2005-04-26
 struct Item final {
   /// Type for the list of user's pointers for the condition.
-  typedef std::pair<BasePtrSetter*,void*> UserPtrType;
+  typedef std::pair<BasePtrSetter*, void*> UserPtrType;
 
   // ------ Item Cons & Dest
 
   /// Constructor for an item representing an object in the data store.
-  Item(std::string objPath, std::unique_ptr<ValidDataObject> overrideObj = nullptr):
-    path(std::move(objPath)), override(std::move(overrideObj))
-  {}
+  Item( std::string objPath, std::unique_ptr<ValidDataObject> overrideObj = nullptr )
+      : path( std::move( objPath ) ), override( std::move( overrideObj ) ) {}
   /// Constructor for an item representing an object in the data store.
-  Item(std::string objPath, UserPtrType dest, std::unique_ptr<ValidDataObject> overrideObj = nullptr):
-    path(std::move(objPath)), override(std::move(overrideObj))
-  {
-    if (dest.first) user_dest_ptrs.push_back(dest);
+  Item( std::string objPath, UserPtrType dest, std::unique_ptr<ValidDataObject> overrideObj = nullptr )
+      : path( std::move( objPath ) ), override( std::move( overrideObj ) ) {
+    if ( dest.first ) user_dest_ptrs.push_back( dest );
   }
 
   /// Constructor for an item representing a generic object.
-  Item(BaseObjectMemberFunction *mf, const std::string tsRoot):
-    vdo(mf->castToValidDataObject()), ptr(mf->castToVoid())
-  {
-    if (vdo && vdo->registry()){
+  Item( BaseObjectMemberFunction* mf, const std::string tsRoot )
+      : vdo( mf->castToValidDataObject() ), ptr( mf->castToVoid() ) {
+    if ( vdo && vdo->registry() ) {
       path = vdo->registry()->identifier();
       // remove the root name if present
-      if ( path[0] == '/'
-           && path.compare(0,tsRoot.size(),tsRoot) == 0 ){
-        path.erase(0,tsRoot.size());
-      }
+      if ( path[0] == '/' && path.compare( 0, tsRoot.size(), tsRoot ) == 0 ) { path.erase( 0, tsRoot.size() ); }
     }
-    memFuncs.emplace_back(mf);
+    memFuncs.emplace_back( mf );
   }
 
   /// Destructor
@@ -55,28 +49,34 @@ struct Item final {
   /// Type used for the collections of items.
   typedef std::vector<Item*> ItemList;
   /// Type used as pointer to an item that is using this one, a \e parent.
-  typedef std::pair<Item*,BaseObjectMemberFunction*> ParentItem;
+  typedef std::pair<Item*, BaseObjectMemberFunction*> ParentItem;
   /// Type for the list of user's pointers for the condition.
   /// Used inside Item to identify a registered member function.
   struct MembFunc final {
     /// Simple constructor.
-    MembFunc(BaseObjectMemberFunction *mf_p): mf(mf_p) { }
+    MembFunc( BaseObjectMemberFunction* mf_p ) : mf( mf_p ) {}
     /// Pointer to the registered member function.
     /// note:  pointers are not deleted because \e owned by the item.
-    BaseObjectMemberFunction *mf;
+    BaseObjectMemberFunction* mf;
     /// List of the items used by this member function
-    ItemList  items;
+    ItemList items;
     /// Time points delimiting the interval of validity of the member function
     /// (intersection of the intervals of validity of the used items).
-    Gaudi::Time              since{1},until{0};
+    Gaudi::Time since{1}, until{0};
     /// Tells if the member function is valid or not at the given time (if not it has to be called).
-    inline bool isValid(const Gaudi::Time &when) {return since <= when && until > when;}
+    inline bool isValid( const Gaudi::Time& when ) { return since <= when && until > when; }
     /// Used to reset the interval of validity to (-inf;+inf)
-    inline void resetIOV() { since = Gaudi::Time::epoch(); until = Gaudi::Time::max(); }
+    inline void resetIOV() {
+      since = Gaudi::Time::epoch();
+      until = Gaudi::Time::max();
+    }
     /// Set the interval of validity to an empty range (so it is invalid regardless of the time used)
-    inline void invalidate() { since = 1; until = 0; }
+    inline void invalidate() {
+      since = 1;
+      until = 0;
+    }
     /// Restrict the current validity range
-    inline void changeValidity(const Gaudi::Time &new_since, const Gaudi::Time &new_until) {
+    inline void changeValidity( const Gaudi::Time& new_since, const Gaudi::Time& new_until ) {
       if ( new_since > since ) since = new_since;
       if ( new_until < until ) until = new_until;
     }
@@ -84,46 +84,48 @@ struct Item final {
   /// Type for the list of the registered member functions.
   typedef std::vector<MembFunc> MembFuncList;
 
-  inline bool isValid(const Gaudi::Time &when) {
-    return since <= when && until > when;
+  inline bool isValid( const Gaudi::Time& when ) { return since <= when && until > when; }
+  inline void resetIOV() {
+    since = Gaudi::Time::epoch();
+    until = Gaudi::Time::max();
   }
-  inline void resetIOV() { since = Gaudi::Time::epoch(); until = Gaudi::Time::max(); }
 
   inline void invalidate() {
-    since = 1; until = 0;
-    for (auto& p : parents) {
-      p.first->find(p.second)->invalidate(); // invalidate m.f. (I'm not checking... let's trust the consitency)
+    since = 1;
+    until = 0;
+    for ( auto& p : parents ) {
+      p.first->find( p.second )->invalidate(); // invalidate m.f. (I'm not checking... let's trust the consitency)
       p.first->invalidate();
     }
   }
 
-  inline void changeValidity(const Gaudi::Time &new_since, const Gaudi::Time &new_until) {
+  inline void changeValidity( const Gaudi::Time& new_since, const Gaudi::Time& new_until ) {
     // set the new limits only if within the current IOV
     bool changed = false;
     if ( new_since > since ) {
-      since = new_since;
+      since   = new_since;
       changed = true;
     }
     if ( new_until < until ) {
-      until = new_until;
+      until   = new_until;
       changed = true;
     }
-    if (changed) { // propagate to parents only if changed
-      for (auto& p : parents ) {
-        p.first->find(p.second)->changeValidity(new_since,new_until);
-                                // change m.f. (I'm not checking... let's trust the consitency)
-        p.first->changeValidity(new_since,new_until);
+    if ( changed ) { // propagate to parents only if changed
+      for ( auto& p : parents ) {
+        p.first->find( p.second )->changeValidity( new_since, new_until );
+        // change m.f. (I'm not checking... let's trust the consitency)
+        p.first->changeValidity( new_since, new_until );
       }
     }
   }
 
-  void purge(MsgStream *log = nullptr);
+  void purge( MsgStream* log = nullptr );
 
   // ------ Item data members
 
   /// Time points delimiting the interval of validity of the item
   /// (intersection of the intervals of validity of the member functions).
-  Gaudi::Time since{1},until{0};
+  Gaudi::Time since{1}, until{0};
 
   /// Item parents: the (item,member_function) pairs that depend on this item
   std::vector<ParentItem> parents;
@@ -132,17 +134,17 @@ struct Item final {
   ItemList children;
 
   /// Path to the object, inside the data store, represented by the item.
-  std::string      path;
+  std::string path;
   /// Path of the persistent version of the object inside the Conditions DataBase.
-  std::string      db_path;
+  std::string db_path;
   /// Pointer to the ValidDataObject interface of the represented object.
-  ValidDataObject  *vdo = nullptr;
+  ValidDataObject* vdo = nullptr;
   /// Void pointer to the represented object, obtained via dynamic_cast (used to unically identify the item)
-  void             *ptr = nullptr;
+  void* ptr = nullptr;
   /// Pointer to the object used to override the object retrieved from the data provider.
   std::unique_ptr<ValidDataObject> override = nullptr;
   /// List of the registered member functions.
-  MembFuncList     memFuncs;
+  MembFuncList memFuncs;
 
   /// Flag used to prevent infinite loops when updating.
   bool updateLock = false;
@@ -150,38 +152,36 @@ struct Item final {
   /// List op setters for user's pointers.
   std::list<UserPtrType> user_dest_ptrs;
 
-  inline StatusCode setUserPointers(DataObject  *pObj, bool force = false)
-  {
-    for (auto pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi){
-      if (!force){
-        if ( pi->first->isNull() ){
-          pi->first->set(pObj);
+  inline StatusCode setUserPointers( DataObject* pObj, bool force = false ) {
+    for ( auto pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi ) {
+      if ( !force ) {
+        if ( pi->first->isNull() ) {
+          pi->first->set( pObj );
           if ( pi->first->isNull() ) return StatusCode::FAILURE; // cannot dynamic_cast
         }
       } else {
-        pi->first->set(pObj);
+        pi->first->set( pObj );
       }
     }
     return StatusCode::SUCCESS;
   }
 
-  inline StatusCode setPointers(DataObject  *pObj, bool force = false)
-  {
-    vdo = dynamic_cast<ValidDataObject*>(pObj);
-    ptr = dynamic_cast<void*>(pObj);
+  inline StatusCode setPointers( DataObject* pObj, bool force = false ) {
+    vdo = dynamic_cast<ValidDataObject*>( pObj );
+    ptr = dynamic_cast<void*>( pObj );
     // This is the first time I get the DataObject, so I set the pointer the user asked me to set
-    return setUserPointers(pObj,force);
+    return setUserPointers( pObj, force );
   }
 
   /// Main method. Used to update the object and all the used ones.
-  StatusCode update(IDataProviderSvc *dp,const Gaudi::Time &when, MsgStream &log, bool inInit = false);
+  StatusCode update( IDataProviderSvc* dp, const Gaudi::Time& when, MsgStream& log, bool inInit = false );
 
   /// Tells if this item represents the given pointer.
-  inline bool match(void *p) const {return p == ptr;}
+  inline bool match( void* p ) const { return p == ptr; }
 
   /// Tells if this item represents object identified by the given pointer.
-  inline bool match(const std::string &p, bool is_path_to_db=false) const {
-    return is_path_to_db ? (p == db_path) : (p == path);
+  inline bool match( const std::string& p, bool is_path_to_db = false ) const {
+    return is_path_to_db ? ( p == db_path ) : ( p == path );
   }
 
   /// Tells if the item does not have parents.
@@ -189,24 +189,20 @@ struct Item final {
   /// Tells if the item does not have parents.
   inline bool isTail() const { return children.empty(); }
   /// Finds the MembFunc object containing the given member function.
-  MembFuncList::iterator find(BaseObjectMemberFunction *mf) {
+  MembFuncList::iterator find( BaseObjectMemberFunction* mf ) {
     return std::find_if( memFuncs.begin(), memFuncs.end(),
-                         [&](MembFuncList::const_reference mi) 
-                         { return mi.mf->match(mf); } );
+                         [&]( MembFuncList::const_reference mi ) { return mi.mf->match( mf ); } );
   }
 
   /// Adds a (item,member_function) pair to the list of parents.
-  inline void addParent(Item* parent, BaseObjectMemberFunction *parentMF) {
+  inline void addParent( Item* parent, BaseObjectMemberFunction* parentMF ) {
     // avoid duplicates in the list
-    const ParentItem pi(parent,parentMF);
-    if (std::find(parents.begin(),parents.end(),pi) == parents.end()){
-      parents.push_back(pi);
-    }
+    const ParentItem pi( parent, parentMF );
+    if ( std::find( parents.begin(), parents.end(), pi ) == parents.end() ) { parents.push_back( pi ); }
   }
 
   /// Adds a child item to the given member function.
   /// Return a pointer to the actual member function if an equivalent one was already registered.
-  BaseObjectMemberFunction * addChild(BaseObjectMemberFunction *thisMF, Item *child);
-
+  BaseObjectMemberFunction* addChild( BaseObjectMemberFunction* thisMF, Item* child );
 };
 #endif // UPDATEMANAGERSVC_ITEM_ICPP

@@ -17,41 +17,33 @@ using namespace DataPacking;
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-template < class PACKER >
-Check<PACKER>::Check( const std::string& name,
-                      ISvcLocator* pSvcLocator )
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "DataA" , m_dataA = PACKER::unpackedLocation()        );
-  declareProperty( "DataB",  m_dataB = PACKER::unpackedLocation()+"Test" );
+template <class PACKER>
+Check<PACKER>::Check( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
+  declareProperty( "DataA", m_dataA = PACKER::unpackedLocation() );
+  declareProperty( "DataB", m_dataB = PACKER::unpackedLocation() + "Test" );
 }
 
-template < class PACKER >
-StatusCode Check<PACKER>::execute()
-{
+template <class PACKER>
+StatusCode Check<PACKER>::execute() {
   // Check data exists at both locations and load it
-  const auto * dataA = this->getIfExists<typename PACKER::DataVector>(m_dataA);
-  const auto * dataB = this->getIfExists<typename PACKER::DataVector>(m_dataB);
+  const auto* dataA = this->getIfExists<typename PACKER::DataVector>( m_dataA );
+  const auto* dataB = this->getIfExists<typename PACKER::DataVector>( m_dataB );
 
-  if ( dataA && dataB )
-  {
+  if ( dataA && dataB ) {
 
     // Compare versions
-    if ( dataA->version() != dataB->version() )
-    {
-      return this->Error( "Containers '"+m_dataA+"' and '"+m_dataB+"' have different versions" );
+    if ( dataA->version() != dataB->version() ) {
+      return this->Error( "Containers '" + m_dataA + "' and '" + m_dataB + "' have different versions" );
     }
 
     // check data sizes
-    if ( dataA->size() != dataB->size() )
-    {
-      return this->Error( "Size of containers '"+m_dataA+"' and '"+m_dataB+"' differs" );
+    if ( dataA->size() != dataB->size() ) {
+      return this->Error( "Size of containers '" + m_dataA + "' and '" + m_dataB + "' differs" );
     }
 
     // compare the containers
     // For the moment just carry on if an error is returned (with a message)
     m_packer.check( *dataA, *dataB ).ignore();
-
   }
 
   // return

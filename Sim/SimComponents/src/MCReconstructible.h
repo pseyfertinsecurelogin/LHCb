@@ -22,10 +22,10 @@
 #define SIMCOMPONENTS_MCReconstructible_H 1
 
 // from STL
-#include <string>
-#include <vector>
 #include <array>
 #include <optional>
+#include <string>
+#include <vector>
 
 // Gaudi
 #include "GaudiKernel/IIncidentListener.h"
@@ -36,12 +36,12 @@
 #include "GaudiAlg/GaudiTool.h"
 
 // Event
-#include "Event/MCTrackInfo.h"
 #include "Event/MCTrackGeomCriteria.h"
+#include "Event/MCTrackInfo.h"
 
 // Interface
-#include "MCInterfaces/IMCReconstructible.h"
 #include "MCInterfaces/IMCParticleSelector.h"
+#include "MCInterfaces/IMCReconstructible.h"
 
 //-----------------------------------------------------------------------------
 /** @class MCReconstructible MCReconstructible.h
@@ -53,11 +53,9 @@
  *  @date   2004-04-28
  */
 //-----------------------------------------------------------------------------
-class MCReconstructible : public extends<GaudiTool, IMCReconstructible, IIncidentListener>
-{
+class MCReconstructible : public extends<GaudiTool, IMCReconstructible, IIncidentListener> {
 
 public:
-
   /// Standard constructor
   using base_class::base_class;
 
@@ -77,11 +75,10 @@ public:
   bool inAcceptance( const LHCb::MCParticle* mcPart ) const override;
 
   /// Is the MCParticle reconstructible as given type
-  bool isReconstructibleAs(const IMCReconstructible::RecCategory& category,
-                           const LHCb::MCParticle* mcPart ) const override;
+  bool isReconstructibleAs( const IMCReconstructible::RecCategory& category,
+                            const LHCb::MCParticle*                mcPart ) const override;
 
 private: // methods
-
   /// Trest acceptance for charged particles
   bool accept_charged( const LHCb::MCParticle* mcPart ) const;
 
@@ -89,9 +86,8 @@ private: // methods
   bool accept_neutral( const LHCb::MCParticle* mcPart ) const;
 
   /// get the MCTrackInfo object
-  inline MCTrackInfo & mcTkInfo() const
-  {
-    if ( UNLIKELY(!m_tkInfo) ) {
+  inline MCTrackInfo& mcTkInfo() const {
+    if ( UNLIKELY( !m_tkInfo ) ) {
       m_tkInfo = std::make_unique<MCTrackInfo>( evtSvc(), msgSvc() );
       if ( !m_tkInfo ) { Exception( "Failed to load MCTrackInfo" ); }
     }
@@ -99,37 +95,34 @@ private: // methods
   }
 
 private: // data
-
   /// Acceptance parameters (neutrals)
   // misc CALO params. Hopefully to go into specific CALO reconstructibility tool
-  double m_zECAL    = 12696.0*Gaudi::Units::mm ;
-  double m_xECALInn = 363.3*Gaudi::Units::mm   ;
-  double m_yECALInn = 363.3*Gaudi::Units::mm   ;
-  double m_xECALOut = 3757.2*Gaudi::Units::mm  ;
-  double m_yECALOut = 3030.0*Gaudi::Units::mm  ;
+  double m_zECAL    = 12696.0 * Gaudi::Units::mm;
+  double m_xECALInn = 363.3 * Gaudi::Units::mm;
+  double m_yECALInn = 363.3 * Gaudi::Units::mm;
+  double m_xECALOut = 3757.2 * Gaudi::Units::mm;
+  double m_yECALOut = 3030.0 * Gaudi::Units::mm;
 
   /// Threshold for Et gammas reconstructibility
-  Gaudi::Property<double> m_lowEt { this, "NeutralEtMin", 200*Gaudi::Units::MeV };
+  Gaudi::Property<double> m_lowEt{this, "NeutralEtMin", 200 * Gaudi::Units::MeV};
 
   /// Allow primary particles
-  Gaudi::Property<bool> m_allowPrimary{ this, "AllowPrimaryParticles", true };
+  Gaudi::Property<bool> m_allowPrimary{this, "AllowPrimaryParticles", true};
 
   /// Pointer to MCTrackInfo object
   mutable std::unique_ptr<MCTrackInfo> m_tkInfo;
 
   /// MCParticle selector
-  IMCParticleSelector * m_mcSel = nullptr;
+  IMCParticleSelector* m_mcSel = nullptr;
 
-  Gaudi::Property<std::vector<std::string>> m_chargedLongCriteria {this, "ChargedLong", {"hasVeloAndT"}};
-  Gaudi::Property<std::vector<std::string>> m_chargedUpstreamCriteria {this, "ChargedUpstream", {"hasVelo", "hasTT"}};
-  Gaudi::Property<std::vector<std::string>> m_chargedDownstreamCriteria {this, "ChargedDownstream", {"hasT", "hasTT"}};
-  Gaudi::Property<std::vector<std::string>> m_chargedVeloCriteria {this, "ChargedVelo", {"hasVelo"}};
-  Gaudi::Property<std::vector<std::string>> m_chargedTCriteria {this, "ChargedTtrack", {"hasT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedLongCriteria{this, "ChargedLong", {"hasVeloAndT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedUpstreamCriteria{this, "ChargedUpstream", {"hasVelo", "hasTT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedDownstreamCriteria{this, "ChargedDownstream", {"hasT", "hasTT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedVeloCriteria{this, "ChargedVelo", {"hasVelo"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedTCriteria{this, "ChargedTtrack", {"hasT"}};
 
   // the std::optional is required to delay the construction...
-  std::array<std::optional<std::pair<IMCReconstructible::RecCategory,
-                                     LHCb::MC::MCTrackGeomCriteria>>,5> m_critMap;
-
+  std::array<std::optional<std::pair<IMCReconstructible::RecCategory, LHCb::MC::MCTrackGeomCriteria>>, 5> m_critMap;
 };
 
 #endif // SIMCOMPONENTS_MCReconstructible_H

@@ -12,8 +12,8 @@
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-/// OTDet 
+/// OTDet
 #include "OTDet/DeOTLayer.h"
 
-typedef XmlUserDetElemCnv<DeOTLayer>       XmlOTLayerCnv;
+typedef XmlUserDetElemCnv<DeOTLayer> XmlOTLayerCnv;
 DECLARE_CONVERTER( XmlOTLayerCnv )

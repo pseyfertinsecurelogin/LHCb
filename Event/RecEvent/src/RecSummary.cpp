@@ -23,8 +23,7 @@
 
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::RecSummary::fillStream(std::ostream& s) const
-{
+std::ostream& LHCb::RecSummary::fillStream( std::ostream& s ) const {
   s << "{ Summary Info :";
 
   s << " nPVs = " << info( LHCb::RecSummary::DataTypes::nPVs, 0 );
@@ -60,8 +59,7 @@ std::ostream& LHCb::RecSummary::fillStream(std::ostream& s) const
   s << " nMuonCoordsS2 = " << info( LHCb::RecSummary::DataTypes::nMuonCoordsS2, 0 );
   s << " nMuonCoordsS3 = " << info( LHCb::RecSummary::DataTypes::nMuonCoordsS3, 0 );
   s << " nMuonCoordsS4 = " << info( LHCb::RecSummary::DataTypes::nMuonCoordsS4, 0 );
-  s << " nMuonTracks = "   << info( LHCb::RecSummary::DataTypes::nMuonTracks, 0 );
+  s << " nMuonTracks = " << info( LHCb::RecSummary::DataTypes::nMuonTracks, 0 );
 
   return s << " }";
 }
-

@@ -28,22 +28,25 @@ TIME_STRING_RE = re.compile(
     r'(?:\.(?P<decimal>[0-9]*))?)?)?'
     r'(?P<utc>UTC|Z)?$')
 
-
 Entry = namedtuple('Entry', ['since', 'key'])
 NestedEntry = namedtuple('NestedEntry', ['since', 'key', 'entries'])
 
 
 class IOV(object):
     __slots__ = ('since', 'until')
+
     def __init__(self, since, until):
         self.since, self.until = since, until
+
     def ovelap(self, other):
         '''
         Check if two IOVs ovelap.
         '''
         return self.intersection(other).isValid()
+
     def intersection(self, other):
         return IOV(max(self.since, other.since), min(self.until, other.until))
+
     def isValid(self):
         return self.since < self.until
 
@@ -74,6 +77,7 @@ def parse_iovs(path):
     and either a key or a pair key and the result of the recursive call of this
     function on the nested level
     '''
+
     def parse_line(l):
         since, key = l.split()
         since = int(since)
@@ -106,7 +110,7 @@ def flatten(iovs, nested=''):
     from os.path import join, normpath
     for entry in iovs:
         try:
-            for item in flatten(entry.entries,join(nested, entry.key)):
+            for item in flatten(entry.entries, join(nested, entry.key)):
                 yield item
         except AttributeError:
             # It's a plain Entry instance, no recursion
@@ -140,9 +144,11 @@ def partition(iovs, since2key):
     from itertools import groupby
     iovs = simplify(iovs)
     groups = groupby(iovs, lambda e: since2key(e.since))
-    return [NestedEntry(entries[0].since, key, entries)
-            for key, entries in [(key, map(_deepen_key, entries))
-                                 for key, entries in groups]]
+    return [
+        NestedEntry(entries[0].since, key, entries)
+        for key, entries in [(key, map(_deepen_key, entries))
+                             for key, entries in groups]
+    ]
 
 
 def partition_by_count(iovs, count, keys=None):
@@ -150,9 +156,12 @@ def partition_by_count(iovs, count, keys=None):
     if keys is None:
         keys = (str(i) for i in count)
     iovs = simplify(iovs)
-    return [NestedEntry(entries[0].since, key, entries)
-            for key, entries in [(keys.next(), map(_deepen_key, entries))
-                                 for entries in islice(iovs, count)]]
+    return [
+        NestedEntry(entries[0].since, key, entries)
+        for key, entries in [(keys.next(), map(_deepen_key, entries))
+                             for entries in islice(iovs, count)]
+    ]
+
 
 def partition_by_month(iovs):
     '''
@@ -201,17 +210,18 @@ def add_iov(iovs, payload_key, since, until):
     from itertools import takewhile, dropwhile, chain
     if not isinstance(iovs, list):
         iovs = list(iovs)
+
     def last(iterable):
         for x in iterable:
             pass
         return x
-    return chain(takewhile(lambda x: x.since < since, iovs),
-                 [Entry(since, payload_key)],
-                 [] if until == IOV_MAX else [
-                     Entry(until,
-                           last(takewhile(lambda x: x.since <= until, iovs))
-                           .key)],
-                 dropwhile(lambda x: x.since <= until, iovs))
+
+    return chain(
+        takewhile(lambda x: x.since < since, iovs),
+        [Entry(since, payload_key)], [] if until == IOV_MAX else
+        [Entry(until,
+               last(takewhile(lambda x: x.since <= until, iovs)).key)],
+        dropwhile(lambda x: x.since <= until, iovs))
 
 
 def to_iov_key(s, default):
@@ -238,12 +248,12 @@ def to_iov_key(s, default):
         else:
             # seconds since epoch UTC, from local time tuple
             t = time.mktime(tm)
-        t = int(t) * 1000000000 # to ns
+        t = int(t) * 1000000000  # to ns
         d = m.group('decimal')
         if d:
             if len(d) < 9:
                 # Add the missing 0s to the decimals
-                d += '0'*(9-len(d))
+                d += '0' * (9 - len(d))
             else:
                 # truncate decimals
                 d = d[:9]
@@ -275,18 +285,23 @@ def _get_iovs(tree, repository, path, tag, bounds, for_iov):
         for until, next_payload in lines:
             if overlap(for_iov, (since, until)):
                 # recurse only if we have an overlap
-                for entry in _get_iovs(tree, repository, payload, tag,
-                                       (max(since, bounds[0]),
-                                        min(until, bounds[1])), for_iov):
+                for entry in _get_iovs(
+                        tree, repository, payload, tag,
+                    (max(since, bounds[0]), min(until, bounds[1])), for_iov):
                     yield entry
             since, payload = until, next_payload
         # handle last line
         if overlap(for_iov, (since, IOV_MAX)):
             for entry in _get_iovs(tree, repository, payload, tag,
-                                   (max(since, bounds[0]), bounds[1]), for_iov):
+                                   (max(since, bounds[0]), bounds[1]),
+                                   for_iov):
                 yield entry
 
-def get_iovs(repository, path, tag='HEAD', for_iov=(IOV_MIN, IOV_MAX),
+
+def get_iovs(repository,
+             path,
+             tag='HEAD',
+             for_iov=(IOV_MIN, IOV_MAX),
              bounds=(IOV_MIN, IOV_MAX)):
     '''
     Return a generator over all the entries (payload and IOV) at a given path
@@ -294,6 +309,5 @@ def get_iovs(repository, path, tag='HEAD', for_iov=(IOV_MIN, IOV_MAX),
     '''
     from GitCondDB.GitAccess import Tree, listFiles
     tree = Tree(listFiles(repository, tag, path))
-    for entry in _get_iovs(tree, repository, path, tag,
-                           bounds, for_iov):
+    for entry in _get_iovs(tree, repository, path, tag, bounds, for_iov):
         yield entry

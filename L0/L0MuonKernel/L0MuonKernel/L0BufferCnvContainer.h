@@ -14,9 +14,8 @@
 
 // Include files
 
-
-#include "L0MuonKernel/L0BufferCnv.h"
 #include "Kernel/MuonTileID.h"
+#include "L0MuonKernel/L0BufferCnv.h"
 
 namespace L0Muon {
 
@@ -33,20 +32,18 @@ namespace L0Muon {
 
   public:
     /// Standard constructor
-    L0BufferCnvContainer( );
-    L0BufferCnvContainer(std::vector<LHCb::MuonTileID> lpus );
+    L0BufferCnvContainer();
+    L0BufferCnvContainer( std::vector<LHCb::MuonTileID> lpus );
 
-    virtual ~L0BufferCnvContainer( ); ///< Destructor
+    virtual ~L0BufferCnvContainer(); ///< Destructor
 
-    void open(std::string path);
+    void open( std::string path );
     void close();
-    void write(int ievt);
+    void write( int ievt );
 
   protected:
-
   private:
-    std::vector<L0Muon::L0BufferCnv *> m_cnvs;
-
+    std::vector<L0Muon::L0BufferCnv*> m_cnvs;
   };
 
 } // namespace L0Muon

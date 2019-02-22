@@ -20,8 +20,6 @@
 // 2011-05-27 : Patrick Robbe
 //-----------------------------------------------------------------------------
 
-LHCb::BeamParameters * BeamForInitialization::s_initialBeamParameters = nullptr ;
+LHCb::BeamParameters* BeamForInitialization::s_initialBeamParameters = nullptr;
 
-LHCb::BeamParameters *& BeamForInitialization::getInitialBeamParameters( ) {
-  return s_initialBeamParameters ;
-}
+LHCb::BeamParameters*& BeamForInitialization::getInitialBeamParameters() { return s_initialBeamParameters; }

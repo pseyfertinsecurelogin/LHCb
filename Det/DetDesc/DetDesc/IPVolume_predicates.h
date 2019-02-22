@@ -8,18 +8,18 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef     DETDESC_IPVOLUME_PREDICATES_H
-#define     DETDESC_IPVOLUME_PREDICATES_H
+#ifndef DETDESC_IPVOLUME_PREDICATES_H
+#define DETDESC_IPVOLUME_PREDICATES_H
 // STD & STL
-#include <iostream>
 #include <functional>
+#include <iostream>
 #include <string_view>
 // Geometry definitions
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
 // DetDesc
-#include "DetDesc/IPVolume.h"
 #include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
 
 /** @file IPVolume_predicates.h
  *  define useful predicate to deal with IPVolume and ILVolume
@@ -37,16 +37,12 @@
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
 
-  /** explict constructor
-   *  @param PointInMotherFrame point in mother reference system
-   */
-static auto IPVolume_isInside = [](Gaudi::XYZPoint PointInMotherFrame)
-{
-    return [pnt=std::move(PointInMotherFrame)](const IPVolume* pv) {
-        return pv && pv->isInside(pnt);
-    };
+/** explict constructor
+ *  @param PointInMotherFrame point in mother reference system
+ */
+static auto IPVolume_isInside = []( Gaudi::XYZPoint PointInMotherFrame ) {
+  return [pnt = std::move( PointInMotherFrame )]( const IPVolume* pv ) { return pv && pv->isInside( pnt ); };
 };
-
 
 /** @class  IPVolume_byName IPVolume_predicates.h
  *  This predicate allows search from a sequence of
@@ -58,14 +54,13 @@ static auto IPVolume_isInside = [](Gaudi::XYZPoint PointInMotherFrame)
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
 
-  /** find physical volume by name
-   *  @param pv pointer to physical volume
-   *  @return true if name matches the given name
-   */
+/** find physical volume by name
+ *  @param pv pointer to physical volume
+ *  @return true if name matches the given name
+ */
 // TODO: add overload for std::string instead of string_ref
-static auto IPVolume_byName = [](std::string_view name) {
-    return [=](const IPVolume* pv)
-           { return pv && name == pv->name(); };
+static auto IPVolume_byName = []( std::string_view name ) {
+  return [=]( const IPVolume* pv ) { return pv && name == pv->name(); };
 };
 
 /** @class IPVolume_accumulateMatrix IPVolume_predicates.h
@@ -75,9 +70,10 @@ static auto IPVolume_byName = [](std::string_view name) {
  * std::accumulate(...)
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
-static auto IPVolume_accumulateMatrix =
-    [](Gaudi::Transform3D& mtrx, const IPVolume* pv) -> decltype(auto)
-    { mtrx = pv->matrix()*mtrx; return mtrx; };
+static auto IPVolume_accumulateMatrix = []( Gaudi::Transform3D& mtrx, const IPVolume* pv ) -> decltype( auto ) {
+  mtrx = pv->matrix() * mtrx;
+  return mtrx;
+};
 
 /** @class IPVolume_fromReplica IPVolume_predicates.h
  *
@@ -86,25 +82,25 @@ static auto IPVolume_accumulateMatrix =
  * used for "std::transform" algorithm
  * @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
-  /** constructor
-   *  @param LV pointer to Logical Volume
-   */
-static auto IPVolume_fromReplica = [](const ILVolume* LV) {
+/** constructor
+ *  @param LV pointer to Logical Volume
+ */
+static auto IPVolume_fromReplica = []( const ILVolume* LV ) {
   /** get pointer to physical volume by replica number
    *  @param replica replica number
    *  @return pointer to physical volume
    */
-    return [m_lv=LV]
-           (const ILVolume::ReplicaType& replica) mutable
-           -> const IPVolume* {
-        if( !m_lv ) return nullptr;
-        const IPVolume* pv = (*m_lv)[replica];
-        if( !pv ) { m_lv = nullptr ; return nullptr ; }
-        m_lv = pv->lvolume();
-        return pv;
-    };
+  return [m_lv = LV]( const ILVolume::ReplicaType& replica ) mutable -> const IPVolume* {
+    if ( !m_lv ) return nullptr;
+    const IPVolume* pv = ( *m_lv )[replica];
+    if ( !pv ) {
+      m_lv = nullptr;
+      return nullptr;
+    }
+    m_lv = pv->lvolume();
+    return pv;
+  };
 };
 
-
 // ============================================================================
-#endif  ///<  DETDESC_IPVOLUME_PREDICATES_H
+#endif ///<  DETDESC_IPVOLUME_PREDICATES_H

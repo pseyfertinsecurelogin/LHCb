@@ -13,17 +13,17 @@ from Configurables import DecodeRawEvent
 
 from DAQSys.Decoders import DecoderDB
 
-for i,v in DecoderDB.iteritems():
-    v.Properties["OutputLevel"]=VERBOSE
+for i, v in DecoderDB.iteritems():
+    v.Properties["OutputLevel"] = VERBOSE
     if "Hlt" in i and "ReportsDecoder" in i:
-        v.Active=False
+        v.Active = False
         #v.Inputs={"InputRawEventLocation":"DAQ/RawEvent"}
-    for b in ["UT","FT","FTCluster","VP","VL"]:
+    for b in ["UT", "FT", "FTCluster", "VP", "VL"]:
         if b in v.Banks:
-            v.Active=False
+            v.Active = False
 
-DecoderDB["MuonRec"].Active=False
-DecoderDB["createODIN"].Active=False
+DecoderDB["MuonRec"].Active = False
+DecoderDB["createODIN"].Active = False
 #DecoderDB["OdinTimeDecoder/ToolSvc.OdinTimeDecoder"].Active=True
 from Configurables import EventClockSvc, OdinTimeDecoder, ODINDecodeTool
 ecs = EventClockSvc()
@@ -31,16 +31,16 @@ ecs.addTool(OdinTimeDecoder, 'EventTimeDecoder')
 ecs.EventTimeDecoder.addTool(ODINDecodeTool)
 ecs.EventTimeDecoder.ODINDecodeTool.RawEventLocations = ['Crazy/RawEvent']
 
-DecodeRawEvent().OverrideInputs=999
+DecodeRawEvent().OverrideInputs = 999
 from Configurables import GaudiSequencer
 #DecodeRawEvent().Sequencer=GaudiSequencer("SPAM")
 
-for i,v in DecoderDB.iteritems():
+for i, v in DecoderDB.iteritems():
     if v.Active:
-       GaudiSequencer("SPAM").Members.append(v.setup())
+        GaudiSequencer("SPAM").Members.append(v.setup())
 
 from Configurables import StoreExplorerAlg
 
-StoreExplorerAlg().Load=True
+StoreExplorerAlg().Load = True
 
-ApplicationMgr().TopAlg=[GaudiSequencer("SPAM"),StoreExplorerAlg()]
+ApplicationMgr().TopAlg = [GaudiSequencer("SPAM"), StoreExplorerAlg()]

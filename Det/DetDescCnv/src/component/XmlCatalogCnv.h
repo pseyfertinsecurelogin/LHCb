@@ -20,8 +20,8 @@
 
 // Forward and external declarations
 class RegistryEntry;
-template <class TYPE> class CnvFactory;
-
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlCatalogCnv
  *
@@ -34,7 +34,6 @@ template <class TYPE> class CnvFactory;
 class XmlCatalogCnv : public XmlGenericCnv {
 
 public:
-
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
@@ -45,7 +44,7 @@ public:
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlCatalogCnv(ISvcLocator* svcs);
+  XmlCatalogCnv( ISvcLocator* svcs );
 
   /**
    * Default destructor
@@ -59,8 +58,7 @@ protected:
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  StatusCode i_createObj (xercesc::DOMElement* element,
-                          DataObject*& refpObject) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -70,9 +68,7 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                        DataObject* refpObject,
-                        IOpaqueAddress* address) override;
+  StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /**
    * This method checks that a converter exists for a given clID.
@@ -80,7 +76,7 @@ protected:
    * is raised.
    * @param clsID the clID to check
    */
-  void checkConverterExistence(const CLID& clsID);
+  void checkConverterExistence( const CLID& clsID );
 
 private:
   /**
@@ -90,10 +86,9 @@ private:
    * @param element the DOMElement of the node concerned
    * @return the CLID for this element
    */
-  CLID getCLID (xercesc::DOMElement* element);
+  CLID getCLID( xercesc::DOMElement* element );
 
 private:
-
   // Constant strings for element and parameter names
   const XMLCh* isotopeString;
   const XMLCh* materialString;
@@ -118,7 +113,6 @@ private:
   const XMLCh* refString;
   const XMLCh* hrefString;
   const XMLCh* nameString;
-
 };
 
 #endif // DETDESCCNV_XMLCNVSVC_XMLCATALOGCNV_H

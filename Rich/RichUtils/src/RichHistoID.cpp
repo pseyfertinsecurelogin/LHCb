@@ -24,13 +24,11 @@
 
 //-----------------------------------------------------------------------------
 
-std::string
-Rich::HistogramID::fullid() const
-{
+std::string Rich::HistogramID::fullid() const {
   std::string fid( "" );
-  if ( rad() != Rich::InvalidRadiator ) { fid += Rich::text( rad() ) + "/"; }
-  else if ( det() != Rich::InvalidDetector )
-  {
+  if ( rad() != Rich::InvalidRadiator ) {
+    fid += Rich::text( rad() ) + "/";
+  } else if ( det() != Rich::InvalidDetector ) {
     fid += Rich::text( det() ) + "/";
   }
   if ( side() != Rich::InvalidSide ) { fid += Rich::text( det(), side() ) + "/"; }
@@ -38,13 +36,11 @@ Rich::HistogramID::fullid() const
   return fid + id();
 }
 
-std::string
-Rich::HistogramID::fullTitle( const std::string &title ) const
-{
+std::string Rich::HistogramID::fullTitle( const std::string& title ) const {
   std::string ftitle( "" );
-  if ( rad() != Rich::InvalidRadiator ) { ftitle += Rich::text( rad() ) + " "; }
-  else if ( det() != Rich::InvalidDetector )
-  {
+  if ( rad() != Rich::InvalidRadiator ) {
+    ftitle += Rich::text( rad() ) + " ";
+  } else if ( det() != Rich::InvalidDetector ) {
     ftitle += Rich::text( det() ) + " ";
   }
   if ( side() != Rich::InvalidSide ) { ftitle += Rich::text( det(), side() ) + " "; }

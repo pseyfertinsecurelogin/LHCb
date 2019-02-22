@@ -15,8 +15,7 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "L0Interfaces/IL0MuonInputTool.h"            // Interface
-
+#include "L0Interfaces/IL0MuonInputTool.h" // Interface
 
 /** @class L0MuonInputTool L0MuonInputTool.h component/L0MuonInputTool.h
  *  Tool to retrieve the muon tiles in input of the L0Muon trigger
@@ -27,20 +26,15 @@
 class L0MuonInputTool : public GaudiTool, virtual public IL0MuonInputTool {
 public:
   /// Standard constructor
-  L0MuonInputTool( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent);
+  L0MuonInputTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~L0MuonInputTool( ); ///< Destructor
-  StatusCode getTiles(std::vector<LHCb::MuonTileID> & tiles, std::string rootInTes="") override;
-  StatusCode getPads(std::vector<LHCb::MuonTileID> & pads, std::string rootInTes="") override;
+  virtual ~L0MuonInputTool(); ///< Destructor
+  StatusCode getTiles( std::vector<LHCb::MuonTileID>& tiles, std::string rootInTes = "" ) override;
+  StatusCode getPads( std::vector<LHCb::MuonTileID>& pads, std::string rootInTes = "" ) override;
 
 protected:
-
 private:
-
   // Options
   std::string m_l0Context; ///< Suffix appended to data location in TES
-
 };
 #endif // COMPONENT_L0MUONINPUTTOOL_H

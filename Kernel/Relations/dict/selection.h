@@ -8,20 +8,20 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: selection.h,v 1.4 2006-06-11 15:23:47 ibelyaev Exp $ 
+// $Id: selection.h,v 1.4 2006-06-11 15:23:47 ibelyaev Exp $
 // ====================================================================
 // CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $
 // ====================================================================
 // $Log: not supported by cvs2svn $
 // ====================================================================
-// Incldue file 
+// Incldue file
 // ====================================================================
-// STD & STL 
+// STD & STL
 // ====================================================================
 #include <string>
 #include <vector>
 // ====================================================================
-// Relations 
+// Relations
 // ====================================================================
 #include "Relations/RelationsDict.h"
 // ====================================================================
@@ -35,20 +35,18 @@
 /** @file
  *
  *  Helper file for building the simplest Reflex dictionaries
- *  
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-05
  */
 
-namespace RelationsDict
-{
-  struct __Instantiations
-  {
-    GaudiDict::Relation1DDict<int,int>           _1 ;
-    GaudiDict::Relation2DDict<std::string,int>   _2 ;
+namespace RelationsDict {
+  struct __Instantiations {
+    GaudiDict::Relation1DDict<int, int>         _1;
+    GaudiDict::Relation2DDict<std::string, int> _2;
   };
-}
+} // namespace RelationsDict
 
 // ====================================================================
-// The END 
+// The END
 // ====================================================================

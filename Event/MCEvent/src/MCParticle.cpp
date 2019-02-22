@@ -21,20 +21,15 @@
 // 2012-11-20 : Chris Jones
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::MCParticle::fillStream(std::ostream& s) const
-{
-  s << "{ Momentum = "     << momentum()
-    << " ParticleID = "    << particleID()
-    << " OriginVertex = "  << originVertex()
+std::ostream& LHCb::MCParticle::fillStream( std::ostream& s ) const {
+  s << "{ Momentum = " << momentum() << " ParticleID = " << particleID() << " OriginVertex = " << originVertex()
     << " EndVertices : #=" << endVertices().size() << " [";
-  for ( const auto & v : endVertices() ) { s << " " << v.target(); }
+  for ( const auto& v : endVertices() ) { s << " " << v.target(); }
   s << " ] }";
   return s;
 }
 
-bool LHCb::MCParticle::hasOscillated() const
-{
+bool LHCb::MCParticle::hasOscillated() const {
   return std::any_of( endVertices().begin(), endVertices().end(),
-                      []( const auto & v )
-                      { return v->type() == LHCb::MCVertex::MCVertexType::OscillatedAndDecay; } );
+                      []( const auto& v ) { return v->type() == LHCb::MCVertex::MCVertexType::OscillatedAndDecay; } );
 }

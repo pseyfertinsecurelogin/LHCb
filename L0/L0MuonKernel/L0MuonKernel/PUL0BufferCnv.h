@@ -11,7 +11,6 @@
 #ifndef L0MUONKERNEL_PUL0BUFFERCNV_H
 #define L0MUONKERNEL_PUL0BUFFERCNV_H
 
-
 #include "L0MuonKernel/L0BufferCnv.h"
 #include <string>
 
@@ -37,37 +36,32 @@ namespace L0Muon {
   class PUL0BufferCnv : public L0BufferCnv {
 
   public:
-
     /** Constructor with MuonTileID
 
     @param id : MuonTileID of the PU attached to the converter
 
     */
-    PUL0BufferCnv(LHCb::MuonTileID id);
+    PUL0BufferCnv( LHCb::MuonTileID id );
 
     /// Destructor
     ~PUL0BufferCnv();
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "L0BufferProcUnit";
-    }
+    std::string type() override { return "L0BufferProcUnit"; }
 
     /** Write the event in the output file
 
         @param ievt : current event number
     */
-    void write(int ievt) override;
+    void write( int ievt ) override;
 
   private:
-
     CandRegisterHandler m_candRegHandler; ///< Handle the register containing the PU candidates
-    TileRegister* m_ol;     ///< Pointer to the TileRegister with the optical links at the PU input
-                            ///< (formatted as in the L0Buffer)
-    TileRegister* m_neigh;  ///< Pointer to the TileRegister with the neighbour data at the PU input
-                            ///< (formatted as in the L0Buffer)
-
+    TileRegister*       m_ol;             ///< Pointer to the TileRegister with the optical links at the PU input
+                                          ///< (formatted as in the L0Buffer)
+    TileRegister* m_neigh;                ///< Pointer to the TileRegister with the neighbour data at the PU input
+                                          ///< (formatted as in the L0Buffer)
   };
 } // namespace L0Muon
 
-#endif    // L0MUONKERNEL_PUL0BUFFERCNV_H
+#endif // L0MUONKERNEL_PUL0BUFFERCNV_H

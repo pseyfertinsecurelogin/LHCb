@@ -22,7 +22,6 @@
 // from LHCbKernel
 #include "Kernel/INormalizeTool.h"
 
-
 /** @class TimingTool TimingTool.h
  *  Tool to get a timing normalisation for the Chrono service
  *  Adapted from BrunelAlgs/TimingAlg by M.Ferro-Luzzi
@@ -30,31 +29,24 @@
  *  @author Marco Cattaneo
  *  @date   2003-11-04
  */
-class TimingTool final : public GaudiTool,
-                         virtual public INormalizeTool
-{
+class TimingTool final : public GaudiTool, virtual public INormalizeTool {
 
 public:
-
   /// Standard constructor
-  TimingTool( const std::string& type,
-              const std::string& name,
-              const IInterface* parent);
+  TimingTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~TimingTool( ) = default; ///< Destructor
+  virtual ~TimingTool() = default; ///< Destructor
 
   StatusCode finalize() override;
 
-  double normalize() override;    ///< Return normalization (in ns)
-  IChronoStatSvc* chronoSvc(); ///< Returns pointer to ChronSvc
-  IRndmGenSvc*    randSvc();   ///< Returns pointer to random number service
+  double          normalize() override; ///< Return normalization (in ns)
+  IChronoStatSvc* chronoSvc();          ///< Returns pointer to ChronSvc
+  IRndmGenSvc*    randSvc();            ///< Returns pointer to random number service
 
 private:
-
-  unsigned int  m_shots; ///< Number of random number shots for normalisation
+  unsigned int    m_shots;         ///< Number of random number shots for normalisation
   IChronoStatSvc* m_CSS = nullptr; ///< Pointer to Chrono service
   IRndmGenSvc*    m_RGS = nullptr; ///< Pointer to Random numbers service
-
 };
 
 #endif // TIMINGTOOL_H

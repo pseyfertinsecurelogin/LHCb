@@ -32,36 +32,27 @@ DECLARE_COMPONENT( RichPIDsFromProtoParticlesAlg )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-RichPIDsFromProtoParticlesAlg::
-RichPIDsFromProtoParticlesAlg( const std::string& name,
-                               ISvcLocator* pSvcLocator)
-: GaudiAlgorithm ( name , pSvcLocator )
-{
-  if ( context() == "HLT" || context() == "Hlt" )
-  {
+RichPIDsFromProtoParticlesAlg::RichPIDsFromProtoParticlesAlg( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ) {
+  if ( context() == "HLT" || context() == "Hlt" ) {
     m_protoPloc  = ProtoParticleLocation::HltCharged;
     m_richPIDloc = RichPIDLocation::HLT;
-  }
-  else
-  {
+  } else {
     m_protoPloc  = ProtoParticleLocation::Charged;
     m_richPIDloc = RichPIDLocation::Default;
   }
-  declareProperty( "InputProtoParticles", m_protoPloc  );
-  declareProperty( "OutputRichPIDs",      m_richPIDloc );
+  declareProperty( "InputProtoParticles", m_protoPloc );
+  declareProperty( "OutputRichPIDs", m_richPIDloc );
 }
 
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode RichPIDsFromProtoParticlesAlg::initialize()
-{
+StatusCode RichPIDsFromProtoParticlesAlg::initialize() {
   const StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
 
-  info() << "Creating RichPIDs '" << m_richPIDloc
-         << "' from ProtoParticles at '"
-         << m_protoPloc << "'" << endmsg;
+  info() << "Creating RichPIDs '" << m_richPIDloc << "' from ProtoParticles at '" << m_protoPloc << "'" << endmsg;
 
   return sc;
 }
@@ -69,46 +60,37 @@ StatusCode RichPIDsFromProtoParticlesAlg::initialize()
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode RichPIDsFromProtoParticlesAlg::execute()
-{
+StatusCode RichPIDsFromProtoParticlesAlg::execute() {
 
   // check data is not already there
-  auto * rpids = getIfExists<RichPIDs>(m_richPIDloc);
-  if ( rpids )
-  {
-    debug() << "Data already exists at '" << m_richPIDloc
-            << "' -> Will NOT replace" << endmsg;
-  }
-  else
-  {
+  auto* rpids = getIfExists<RichPIDs>( m_richPIDloc );
+  if ( rpids ) {
+    debug() << "Data already exists at '" << m_richPIDloc << "' -> Will NOT replace" << endmsg;
+  } else {
 
     // new RichPID container
     rpids = new RichPIDs();
     put( rpids, m_richPIDloc );
 
     // Do ProtoParticles exist
-    const auto * protos = getIfExists<ProtoParticles>( m_protoPloc );
-    if ( protos )
-    {
+    const auto* protos = getIfExists<ProtoParticles>( m_protoPloc );
+    if ( protos ) {
 
       // loop over protos and re-create RichPIDs
-      for ( auto * proto : *protos )
-      {
+      for ( auto* proto : *protos ) {
 
         // get Track pointer
-        const auto * track = proto->track();
-        if ( !track )
-        {
+        const auto* track = proto->track();
+        if ( !track ) {
           Warning( "Charged ProtoParticle has NULL Track pointer" ).ignore();
           continue;
         }
 
         // does this proto have any Rich info in it ?
-        if ( proto->hasInfo(ProtoParticle::additionalInfo::RichPIDStatus) )
-        {
+        if ( proto->hasInfo( ProtoParticle::additionalInfo::RichPIDStatus ) ) {
 
           // new RichPID
-          auto * pid = new RichPID();
+          auto* pid = new RichPID();
 
           // Add to container with same key as Track
           rpids->insert( pid, track->key() );
@@ -119,58 +101,49 @@ StatusCode RichPIDsFromProtoParticlesAlg::execute()
           // copy info
 
           // history word
-          pid->setPidResultCode( static_cast<unsigned int>(proto->info(ProtoParticle::additionalInfo::RichPIDStatus,0)) );
+          pid->setPidResultCode(
+              static_cast<unsigned int>( proto->info( ProtoParticle::additionalInfo::RichPIDStatus, 0 ) ) );
 
           // Track Pointer
           pid->setTrack( track );
 
           // DLLs
-          pid->setParticleDeltaLL(Rich::Electron,       (float)proto->info(ProtoParticle::additionalInfo::RichDLLe, 0));
-          pid->setParticleDeltaLL(Rich::Muon,           (float)proto->info(ProtoParticle::additionalInfo::RichDLLmu,0));
-          pid->setParticleDeltaLL(Rich::Pion,           (float)proto->info(ProtoParticle::additionalInfo::RichDLLpi,0));
-          pid->setParticleDeltaLL(Rich::Kaon,           (float)proto->info(ProtoParticle::additionalInfo::RichDLLk, 0));
-          pid->setParticleDeltaLL(Rich::Proton,         (float)proto->info(ProtoParticle::additionalInfo::RichDLLp, 0));
-          pid->setParticleDeltaLL(Rich::Deuteron,       (float)proto->info(ProtoParticle::additionalInfo::RichDLLd, 0));
-          pid->setParticleDeltaLL(Rich::BelowThreshold, (float)proto->info(ProtoParticle::additionalInfo::RichDLLbt,0));
+          pid->setParticleDeltaLL( Rich::Electron, (float)proto->info( ProtoParticle::additionalInfo::RichDLLe, 0 ) );
+          pid->setParticleDeltaLL( Rich::Muon, (float)proto->info( ProtoParticle::additionalInfo::RichDLLmu, 0 ) );
+          pid->setParticleDeltaLL( Rich::Pion, (float)proto->info( ProtoParticle::additionalInfo::RichDLLpi, 0 ) );
+          pid->setParticleDeltaLL( Rich::Kaon, (float)proto->info( ProtoParticle::additionalInfo::RichDLLk, 0 ) );
+          pid->setParticleDeltaLL( Rich::Proton, (float)proto->info( ProtoParticle::additionalInfo::RichDLLp, 0 ) );
+          pid->setParticleDeltaLL( Rich::Deuteron, (float)proto->info( ProtoParticle::additionalInfo::RichDLLd, 0 ) );
+          pid->setParticleDeltaLL( Rich::BelowThreshold,
+                                   (float)proto->info( ProtoParticle::additionalInfo::RichDLLbt, 0 ) );
 
         } // has rich info
-
       }
 
-      if ( msgLevel(MSG::DEBUG) )
-      {
+      if ( msgLevel( MSG::DEBUG ) ) {
         debug() << "Created XXX" << rpids->size() << " RichPIDs at " << m_richPIDloc << endmsg;
       }
 
+    } else {
+      Warning( "No ProtoParticles at '" + m_protoPloc + "' -> Empty RichPIDs created at '" + m_richPIDloc + "'" )
+          .ignore();
     }
-    else
-    {
-      Warning( "No ProtoParticles at '" + m_protoPloc +
-               "' -> Empty RichPIDs created at '" + m_richPIDloc + "'" ).ignore();
-    }
-
   }
 
   // Final check for inconsistent BelowThreshold/Deuteron information...
   // Deuteron information was added in RichPID version 2
-  if ( rpids && rpids->version() < 2 )
-  {
+  if ( rpids && rpids->version() < 2 ) {
     // Loop over PIDs and look for inconsistent ones
-    for ( auto * rpid : *rpids )
-    {
+    for ( auto* rpid : *rpids ) {
       // Correct the best ID, if its set to Deuteron
-      if ( Rich::Deuteron == rpid->bestParticleID() )
-      {
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Correcting Best PID " << endmsg;
+      if ( Rich::Deuteron == rpid->bestParticleID() ) {
+        if ( msgLevel( MSG::DEBUG ) ) debug() << "Correcting Best PID " << endmsg;
         rpid->setBestParticleID( Rich::BelowThreshold );
       }
       // Move the 'Deuteron' DLL to Below threshold if needed
-      const auto dDLL = rpid->particleDeltaLL(Rich::Deuteron);
-      if ( fabs(dDLL) > 0.0f )
-      {
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Correcting DLLs " << endmsg;
+      const auto dDLL = rpid->particleDeltaLL( Rich::Deuteron );
+      if ( fabs( dDLL ) > 0.0f ) {
+        if ( msgLevel( MSG::DEBUG ) ) debug() << "Correcting DLLs " << endmsg;
         rpid->setParticleDeltaLL( Rich::BelowThreshold, dDLL );
         rpid->setParticleDeltaLL( Rich::Deuteron, 0.0f );
       }

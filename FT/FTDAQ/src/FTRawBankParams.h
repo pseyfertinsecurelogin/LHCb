@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef FTRAWBANKPARAMS_H 
+#ifndef FTRAWBANKPARAMS_H
 #define FTRAWBANKPARAMS_H 1
 #include <cstdint>
 
@@ -26,11 +26,8 @@ namespace FTRawBank {
   static constexpr uint16_t cellMaximum     = 127; // 0 to 127; coded on 7 bits
   static constexpr uint16_t sizeMaximum     = 1;   // 1 bits allocated
 
-  enum BankProperties {
-    NbBanks = 240,
-    NbLinksPerBank = 24
-  };
+  enum BankProperties { NbBanks = 240, NbLinksPerBank = 24 };
 
-}
+} // namespace FTRawBank
 
 #endif // FTRAWBANKPARAMS_H

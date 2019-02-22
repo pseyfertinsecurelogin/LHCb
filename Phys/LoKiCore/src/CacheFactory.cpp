@@ -13,8 +13,8 @@
 // ============================================================================
 // STD&STL
 // ============================================================================
-#include <string>
 #include <sstream>
+#include <string>
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -31,9 +31,8 @@
  *  @param  pytype  the python type (from object)
  */
 // ============================================================================
-namespace
-{
-  const std::hash<std::string> s_hash{} ;
+namespace {
+  const std::hash<std::string> s_hash{};
 }
 // ============================================================================
 /*  calculate the hash for the code flagment
@@ -44,11 +43,9 @@ namespace
  *  @todo replace with sha1
  */
 // ============================================================================
-unsigned int
-LoKi::Cache::makeHash  ( const std::string& code )
-{
+unsigned int LoKi::Cache::makeHash( const std::string& code ) {
   // @todo replace with sha1
-  return s_hash ( code ) ;
+  return s_hash( code );
 }
 // ============================================================================
 /*  helper function to create the code for CacheFactory
@@ -58,14 +55,11 @@ LoKi::Cache::makeHash  ( const std::string& code )
  *  @param  pytype  the python type (from object)
  */
 // ============================================================================
-std::string LoKi::Cache::makeCode ( const std::string&  type    ,
-                                    const std::string&  cppcode ,
-                                    const std::string&  pycode  ,
-                                    const std::string&  pytype  )
-{
-  std::ostringstream s ;
-  makeCode ( s , type , cppcode , pycode , pytype ) ;
-  return s.str() ;
+std::string LoKi::Cache::makeCode( const std::string& type, const std::string& cppcode, const std::string& pycode,
+                                   const std::string& pytype ) {
+  std::ostringstream s;
+  makeCode( s, type, cppcode, pycode, pytype );
+  return s.str();
 }
 // ============================================================================
 /* helper function to create the code for CacheFactory
@@ -76,33 +70,28 @@ std::string LoKi::Cache::makeCode ( const std::string&  type    ,
  *  @param  pytype  the python type (from object)
  */
 // ============================================================================
-std::ostream& LoKi::Cache::makeCode ( std::ostream&       stream  ,
-                                      const std::string&  type    ,
-                                      const std::string&  cppcode ,
-                                      const std::string&  pycode  ,
-                                      const std::string&  pytype  )
-{
+std::ostream& LoKi::Cache::makeCode( std::ostream& stream, const std::string& type, const std::string& cppcode,
+                                     const std::string& pycode, const std::string& pytype ) {
   //
   stream << "\n\n/* ORIGINAL PYTHON CODE\n"
-         << pycode
-         << "\n*/\n"
+         << pycode << "\n*/\n"
          << "\n/* PYTHON OBJECT \n"
-         <<  pytype
-         << "\n*/\n";
+         << pytype << "\n*/\n";
   //
-  const unsigned int n  = LoKi::Cache::makeHash ( pycode ) ;
-  const std::string  nX = ( boost::format("%#x") % n ) .str() ;
+  const unsigned int n  = LoKi::Cache::makeHash( pycode );
+  const std::string  nX = ( boost::format( "%#x" ) % n ).str();
   //
   return stream << "\nnamespace LoKi { namespace Details {\n"
                 << "template<>\n"
-                << type            << "*\n"
-                << "CacheFactory<" << type << "," << nX << ">::create( [[maybe_unused]] const LoKi::Context& context )\n"
-                << " { return ( "  << cppcode << " ).clone() ; } \n"
+                << type << "*\n"
+                << "CacheFactory<" << type << "," << nX
+                << ">::create( [[maybe_unused]] const LoKi::Context& context )\n"
+                << " { return ( " << cppcode << " ).clone() ; } \n"
                 << "}} // end of namespaces LoKi::Details\n"
-                << "\ntypedef " << type    << "  t_" << nX << ";\n"
-                << "DECLARE_LOKI_FUNCTOR(" << "  t_" << nX << ","<< nX << ")\n";
+                << "\ntypedef " << type << "  t_" << nX << ";\n"
+                << "DECLARE_LOKI_FUNCTOR("
+                << "  t_" << nX << "," << nX << ")\n";
 }
-
 
 // ============================================================================
 // The END

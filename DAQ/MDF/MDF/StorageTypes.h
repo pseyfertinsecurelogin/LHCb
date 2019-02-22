@@ -16,4 +16,3 @@
 #include "GaudiKernel/ClassID.h"
 
 #endif // MDF_STORAGETYPES_H
-

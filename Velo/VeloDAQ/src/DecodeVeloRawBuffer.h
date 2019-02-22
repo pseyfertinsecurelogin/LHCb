@@ -13,12 +13,12 @@
 
 #include <string>
 
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "Event/VeloCluster.h"
+#include "Event/VeloLiteCluster.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/DataObjectHandle.h"
 #include "VeloEvent/VeloDecodeStatus.h"
-#include "Event/VeloLiteCluster.h" 
-#include "Event/VeloCluster.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
 
@@ -40,34 +40,31 @@ class IIncidentSvc;
  */
 class DecodeVeloRawBuffer : public Decoder::AlgBase {
 public:
-
   /// Standard constructor
   DecodeVeloRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
-  enum AlgStatusType{
-    OK = 0,
-    BadTELL1IDMapping = 1,
+  enum AlgStatusType {
+    OK                       = 0,
+    BadTELL1IDMapping        = 1,
     UnsupportedBufferVersion = 2,
-    CorruptVeloBuffer = 3,
-    TooManyClusters = 4,
-    HeaderErrorBit = 5,
-    Other = 99
+    CorruptVeloBuffer        = 3,
+    TooManyClusters          = 4,
+    HeaderErrorBit           = 5,
+    Other                    = 99
   };
 
-
 private:
-
   /** Decode raw buffer to lite clusters
    * This decodes the raw buffer to VeloLiteClusters and
    * adds a VeloLiteCluster::FastContainer to the TES.
    *
    * @see VeloLiteCluster
    */
-  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters(LHCb::span<const LHCb::RawBank*> banks,
-				  LHCb::VeloDecodeStatus* decStatus) const;
+  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters( LHCb::span<const LHCb::RawBank*> banks,
+                                                                 LHCb::VeloDecodeStatus*          decStatus ) const;
 
   /** Decode raw buffer to clusters
    * This decodes the raw buffer to VeloClusters and
@@ -75,14 +72,13 @@ private:
    *
    * @see VeloCluster
    */
-  LHCb::VeloClusters decodeToVeloClusters(LHCb::span<const LHCb::RawBank*> banks,
-				  LHCb::VeloDecodeStatus *decStatus);
+  LHCb::VeloClusters decodeToVeloClusters( LHCb::span<const LHCb::RawBank*> banks, LHCb::VeloDecodeStatus* decStatus );
 
   /** Write VeloClusters to stdout
    *
    *  @see VeloCluster
    */
-  void dumpVeloClusters(const LHCb::VeloClusters& clusters) const;
+  void dumpVeloClusters( const LHCb::VeloClusters& clusters ) const;
 
   /** Create empty banks
    *
@@ -96,30 +92,26 @@ private:
    *  if procAbort = true set the ProcStatus to "aborted" to show
    *  this event should be removed from physics streams
    */
-  void failEvent(const std::string &ErrorText,
-                 const std::string &ProcText,
-                 AlgStatusType status,
-                 bool procAborted) const;
+  void failEvent( const std::string& ErrorText, const std::string& ProcText, AlgStatusType status,
+                  bool procAborted ) const;
 
   /** Replace the full clusters for a specific sensor with faked
    *  clusters from the lite container
    */
-  StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
-                                 unsigned int nSensor,
-                                 LHCb::span<const LHCb::RawBank*> banks,
-				 LHCb::VeloDecodeStatus *decStatus);
+  StatusCode replaceFullFromLite( LHCb::VeloClusters& clusters, unsigned int nSensor,
+                                  LHCb::span<const LHCb::RawBank*> banks, LHCb::VeloDecodeStatus* decStatus );
 
   /// Add a fake lite cluster to the full cluster container
-  void makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
-                       LHCb::VeloClusters& fakeClusters) const;
+  void makeFakeCluster( LHCb::VeloLiteCluster const& liteCluster, LHCb::VeloClusters& fakeClusters ) const;
 
 private:
-
   /// data handler for writing lite clusters to the transient event store
-  DataObjectWriteHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = { this,"VeloLiteClustersLocation", LHCb::VeloLiteClusterLocation::Default };
+  DataObjectWriteHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = {this, "VeloLiteClustersLocation",
+                                                                                LHCb::VeloLiteClusterLocation::Default};
 
   /// data handler for writing clusters to the transient event store
-  DataObjectWriteHandle<LHCb::VeloClusters> m_clusters = { this, "VeloClusterLocation", LHCb::VeloClusterLocation::Default  };
+  DataObjectWriteHandle<LHCb::VeloClusters> m_clusters = {this, "VeloClusterLocation",
+                                                          LHCb::VeloClusterLocation::Default};
 
   bool m_decodeToVeloLiteClusters;
   bool m_decodeToVeloClusters;
@@ -155,6 +147,5 @@ private:
 
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;
-
 };
 #endif // DECODEVELORAWBUFFER_H

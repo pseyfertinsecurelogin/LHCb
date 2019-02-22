@@ -24,15 +24,15 @@
 
 namespace Pixel {
 
-/// named constants for module layout
-enum {
-  CHIP_COLUMNS = 256,
-  CHIP_0_END = CHIP_COLUMNS - 1,
-  CHIP_1_START = CHIP_COLUMNS,
-  CHIP_1_END = 2 * CHIP_COLUMNS - 1,
-  CHIP_2_START = 2 * CHIP_COLUMNS,
-};
+  /// named constants for module layout
+  enum {
+    CHIP_COLUMNS = 256,
+    CHIP_0_END   = CHIP_COLUMNS - 1,
+    CHIP_1_START = CHIP_COLUMNS,
+    CHIP_1_END   = 2 * CHIP_COLUMNS - 1,
+    CHIP_2_START = 2 * CHIP_COLUMNS,
+  };
 
-}
+} // namespace Pixel
 
-#endif  // PRPIXELUTILS_H
+#endif // PRPIXELUTILS_H

@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef KERNEL_IDETELEMFINDER_H 
+#ifndef KERNEL_IDETELEMFINDER_H
 #define KERNEL_IDETELEMFINDER_H 1
 
 // Include files
@@ -21,8 +21,8 @@
 struct IDetectorElement;
 
 /** @class IDetElemFinder IDetElemFinder.h Kernel/IDetElemFinder.h
- *  
- *  Interface for a service that provides associations from the path inside the 
+ *
+ *  Interface for a service that provides associations from the path inside the
  *  hierarchy of physical volumes to the corresponding detector element.
  *
  *  @author Marco Clemencic
@@ -35,8 +35,6 @@ struct IDetElemFinder : extend_interfaces<IInterface> {
 
   /// Find the detector element instance associated to a given physical volume path.
   /// Returns 0 if there is no suitable detector element.
-  virtual const IDetectorElement * detectorElementForPath(const std::string &path) const = 0;
-
-
+  virtual const IDetectorElement* detectorElementForPath( const std::string& path ) const = 0;
 };
 #endif // KERNEL_IDETELEMFINDER_H

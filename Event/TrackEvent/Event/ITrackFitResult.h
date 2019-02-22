@@ -12,8 +12,8 @@
 #include <memory>
 
 namespace LHCb {
-struct ITrackFitResult {
-    virtual ~ITrackFitResult() = default;
+  struct ITrackFitResult {
+    virtual ~ITrackFitResult()                             = default;
     virtual std::unique_ptr<ITrackFitResult> clone() const = 0;
-};
-}
+  };
+} // namespace LHCb

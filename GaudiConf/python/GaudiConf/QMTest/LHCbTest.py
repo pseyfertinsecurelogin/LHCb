@@ -12,11 +12,12 @@
 import os, re
 import GaudiTesting.QMTTest
 
+
 class LHCbTest(GaudiTesting.QMTTest.QMTTest):
     '''Extension of the original QMTTest of Gaudi adding checking of the counters and histograms'''
 
     # default values found in the ref for old counters
-    oldCountersDefaults = [ "", "", "1.0000", "0.0000", "1.0000" , "1.0000" ]
+    oldCountersDefaults = ["", "", "1.0000", "0.0000", "1.0000", "1.0000"]
 
     def _floatDiffer(self, ref, val, sensibility):
         '''Compares 2 floats according to sensibility'''
@@ -25,19 +26,25 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if ref == 0.0:
             return abs(val) > sensibility
         else:
-            return abs(ref-val)/max(abs(ref),abs(val)) > sensibility
+            return abs(ref - val) / max(abs(ref), abs(val)) > sensibility
 
-    def validateWithReference(self, stdout=None, stderr=None, result=None,
-                              causes=None, preproc=None, counter_preproc=None):
+    def validateWithReference(self,
+                              stdout=None,
+                              stderr=None,
+                              result=None,
+                              causes=None,
+                              preproc=None,
+                              counter_preproc=None):
         '''Overwrite of the base class method by adding extra checks for counters'''
         # call upper class method
-        super(LHCbTest, self).validateWithReference(stdout, stderr, result, causes, preproc)
+        super(LHCbTest, self).validateWithReference(stdout, stderr, result,
+                                                    causes, preproc)
         # check the counters
-        self._compare(stdout, causes, result, counter_preproc, 'Counters' )
+        self._compare(stdout, causes, result, counter_preproc, 'Counters')
         # check the 1D histograms
-        self._compare(stdout, causes, result, counter_preproc, '1DHistograms' )
+        self._compare(stdout, causes, result, counter_preproc, '1DHistograms')
         # check the 1D profile histograms
-        self._compare(stdout, causes, result, counter_preproc, '1DProfiles' )
+        self._compare(stdout, causes, result, counter_preproc, '1DProfiles')
 
     def _extract(self, s, counter_preproc=None, comp_type='Counters'):
         """
@@ -47,17 +54,22 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         Each counter itself is a list with first element being the counter name and the others counter's values, all as string
         """
         counters = {}
-        if   comp_type == 'Counters' :
-            counterStartRE  = re.compile('^([^. ]*)[. ]+SUCCESS Number of counters : (\d+)$')
-            nCountersIndex  = 2
+        if comp_type == 'Counters':
+            counterStartRE = re.compile(
+                '^([^. ]*)[. ]+SUCCESS Number of counters : (\d+)$')
+            nCountersIndex = 2
             firstValueIndex = 1
-        elif comp_type == '1DHistograms' :
-            counterStartRE  = re.compile('^([^. ]*)[. ]+SUCCESS 1D histograms in directory ([^. ]*) : (\d+)$')
-            nCountersIndex  = 3
+        elif comp_type == '1DHistograms':
+            counterStartRE = re.compile(
+                '^([^. ]*)[. ]+SUCCESS 1D histograms in directory ([^. ]*) : (\d+)$'
+            )
+            nCountersIndex = 3
             firstValueIndex = 2
-        elif comp_type == '1DProfiles' :
-            counterStartRE  = re.compile('^([^. ]*)[. ]+SUCCESS 1D profile histograms in directory ([^. ]*) : (\d+)$')
-            nCountersIndex  = 3
+        elif comp_type == '1DProfiles':
+            counterStartRE = re.compile(
+                '^([^. ]*)[. ]+SUCCESS 1D profile histograms in directory ([^. ]*) : (\d+)$'
+            )
+            nCountersIndex = 3
             firstValueIndex = 2
         if counter_preproc:
             lines = counter_preproc(s)
@@ -78,9 +90,14 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 # note the horrible hack to handle the fact that /Event/ is sometimes omited at the beginning of paths
                 # on top master and future branch behave differently on that, so in order to keep a common reference,
                 # we have to remove /Event/
-                items = [v.strip() for v in lines[n+i+1].strip().replace('/Event/','').split('|') if v.strip() != ""]
+                items = [
+                    v.strip()
+                    for v in lines[n + i +
+                                   1].strip().replace('/Event/', '').split('|')
+                    if v.strip() != ""
+                ]
                 counters[algoName][items[0]] = items[firstValueIndex:]
-            n += i+1
+            n += i + 1
         return counters
 
     def _compareCounterLine(self, ref, value, comp_type):
@@ -94,7 +111,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         sensibility = 0.0001
 
         # Handle counters
-        if comp_type == "Counters" :
+        if comp_type == "Counters":
 
             # special case for efficiency counters
             # these lines contain ')%' and look like look like :
@@ -120,20 +137,22 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                         for n in range(max(2, len(value)), 6):
                             if ref[n] != self.oldCountersDefaults[n]:
                                 return False
-                    else :
+                    else:
                         return False
                 # and finally the rest of the values, with sensibility
                 for n in range(1, len(value)):
-                    if self._floatDiffer(ref[n], value[n], sensibility): return False
+                    if self._floatDiffer(ref[n], value[n], sensibility):
+                        return False
 
         # Handle 1D Histos and Profiles
-        if comp_type == '1DHistograms' or comp_type == '1DProfiles' :
- 
+        if comp_type == '1DHistograms' or comp_type == '1DProfiles':
+
             # First value is count so check without precision
-            if ref[0] != value[0] : return False
+            if ref[0] != value[0]: return False
             # Check rest with given precision
             for n in range(1, len(value)):
-                if self._floatDiffer(ref[n], value[n], sensibility): return False
+                if self._floatDiffer(ref[n], value[n], sensibility):
+                    return False
 
         # If get here return OK
         return True
@@ -159,7 +178,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             # suppose one of the 2 names was cut
             found = False
             for stdoutName in stdoutCounters:
-                if stdoutName.startswith(refName) or refName.startswith(stdoutName):
+                if stdoutName.startswith(refName) or refName.startswith(
+                        stdoutName):
                     counterPairs.append((refName, stdoutName))
                     donestdout.add(stdoutName)
                     found = True
@@ -168,9 +188,9 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
                 continue
             else:
                 onlyref.add(refName)
-        return onlyref, stdoutCounters-donestdout, counterPairs
+        return onlyref, stdoutCounters - donestdout, counterPairs
 
-    def _compare(self, stdout, causes, result, counter_preproc, comp_type ):
+    def _compare(self, stdout, causes, result, counter_preproc, comp_type):
         """
         Compares values of counters/histograms to the reference file
         stdout: the test output
@@ -182,48 +202,63 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if not (lreference and os.path.isfile(lreference)):
             return
         # extract counters from reference and stdout
-        refCounters = self._extract(open(lreference).read(), counter_preproc, comp_type)
-        newCounters = self._extract(stdout,                  counter_preproc, comp_type)
+        refCounters = self._extract(
+            open(lreference).read(), counter_preproc, comp_type)
+        newCounters = self._extract(stdout, counter_preproc, comp_type)
         # diff counters
         refAlgoNames = set(refCounters)
         newAlgoNames = set(newCounters)
         msg = ''
         if refAlgoNames != newAlgoNames:
-            msg += 'Different set of algorithms in '+comp_type+'\n'
+            msg += 'Different set of algorithms in ' + comp_type + '\n'
             if refAlgoNames.difference(newAlgoNames):
-                msg += '    Missing : ' + ', '.join(refAlgoNames.difference(newAlgoNames)) + '\n'
+                msg += '    Missing : ' + ', '.join(
+                    refAlgoNames.difference(newAlgoNames)) + '\n'
             if newAlgoNames.difference(refAlgoNames):
-                msg += '    Extra : '   + ', '.join(newAlgoNames.difference(refAlgoNames)) + '\n'
-            causes.append("Different set of algorithms in "+comp_type)
+                msg += '    Extra : ' + ', '.join(
+                    newAlgoNames.difference(refAlgoNames)) + '\n'
+            causes.append("Different set of algorithms in " + comp_type)
             # make sure we create newref file when there are only counters differences
             if causes:
                 self._createNewRef(stdout)
         for algoName in refAlgoNames.intersection(newAlgoNames):
-            onlyref, onlystdout, counterPairs = self._compareCutSets(set(refCounters[algoName]), set(newCounters[algoName]))
+            onlyref, onlystdout, counterPairs = self._compareCutSets(
+                set(refCounters[algoName]), set(newCounters[algoName]))
             if onlyref or onlystdout:
-                msg += 'Different set of '+comp_type+' for algo %s\n' % algoName
-                msg += ('    Ref has %d '+comp_type+', found %d of them in stdout\n') % (len(refCounters[algoName]), len(newCounters[algoName]))
+                msg += 'Different set of ' + comp_type + ' for algo %s\n' % algoName
+                msg += ('    Ref has %d ' + comp_type +
+                        ', found %d of them in stdout\n') % (len(
+                            refCounters[algoName]), len(newCounters[algoName]))
                 if onlyref:
-                    msg += '    '+comp_type+' in ref and not in stdout : %s\n' % str(sorted(list(onlyref)))
+                    msg += '    ' + comp_type + ' in ref and not in stdout : %s\n' % str(
+                        sorted(list(onlyref)))
                 if onlystdout:
-                    msg += '    '+comp_type+' in stdout and not in ref : %s\n' % str(sorted(list(onlystdout)))
+                    msg += '    ' + comp_type + ' in stdout and not in ref : %s\n' % str(
+                        sorted(list(onlystdout)))
             headerPrinted = False
             for counterNameRef, counterNameStdout in counterPairs:
-                if not self._compareCounterLine( refCounters[algoName][counterNameRef], newCounters[algoName][counterNameStdout], comp_type ):
+                if not self._compareCounterLine(
+                        refCounters[algoName][counterNameRef],
+                        newCounters[algoName][counterNameStdout], comp_type):
                     if not headerPrinted:
-                        msg += 'Different content of '+comp_type+' for algo %s\n' % algoName
+                        msg += 'Different content of ' + comp_type + ' for algo %s\n' % algoName
                         headerPrinted = True
-                    msg += '    (%s ref) %s\n    (%s new) %s\n' % (algoName, ' | '.join([counterNameRef]+refCounters[algoName][counterNameRef]), algoName, ' | '.join([counterNameStdout]+newCounters[algoName][counterNameStdout]))
+                    msg += '    (%s ref) %s\n    (%s new) %s\n' % (
+                        algoName,
+                        ' | '.join([counterNameRef] +
+                                   refCounters[algoName][counterNameRef]),
+                        algoName,
+                        ' | '.join([counterNameStdout] +
+                                   newCounters[algoName][counterNameStdout]))
         if msg:
-            causes.append("Wrong "+comp_type)
+            causes.append("Wrong " + comp_type)
             if type(result) == dict:
-                result[comp_type+"Mismatch"]=msg
+                result[comp_type + "Mismatch"] = msg
             else:
-                result[comp_type+"Mismatch"]=result.Quote(msg)
+                result[comp_type + "Mismatch"] = result.Quote(msg)
             # make sure we create newref file when there are only counters differences
             if causes:
                 self._createNewRef(stdout)
-
 
     def _createNewRef(self, stdout):
         """

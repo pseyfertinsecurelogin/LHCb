@@ -16,15 +16,13 @@
 // ============================================================================
 // Forward declarations
 // ============================================================================
-struct IDVAlgorithm   ;
-class IAlgContextSvc ;
-class IAlgTool       ;
+struct IDVAlgorithm;
+class IAlgContextSvc;
+class IAlgTool;
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Utils
-  {
+  namespace Utils {
     // ========================================================================
     /** get the pointer to the "current" IDVAlgorithm
      *
@@ -44,7 +42,7 @@ namespace Gaudi
      *  @date 2007-12-04
      */
     // ========================================================================
-    IDVAlgorithm* getIDVAlgorithm ( const IAlgContextSvc* svc ) ;
+    IDVAlgorithm* getIDVAlgorithm( const IAlgContextSvc* svc );
     // ========================================================================
     /** get the pointer to the "current" IDVAlgorithm, with a safety check on
      *  the object doing it to check it is a private tool, not a public one,
@@ -66,10 +64,9 @@ namespace Gaudi
      *  @date 2007-12-04
      */
     // ========================================================================
-    IDVAlgorithm* getIDVAlgorithm ( const IAlgContextSvc* svc,
-                                    const IAlgTool * tool ) ;
+    IDVAlgorithm* getIDVAlgorithm( const IAlgContextSvc* svc, const IAlgTool* tool );
     // ========================================================================
-  } //                                            end of namespace Gaudi::Utils
+  } // namespace Utils
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

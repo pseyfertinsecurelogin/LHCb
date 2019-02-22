@@ -9,17 +9,17 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef CALOINTERFACES_ICALOSPLITTOOL_H 
+#ifndef CALOINTERFACES_ICALOSPLITTOOL_H
 #define CALOINTERFACES_ICALOSPLITTOOL_H 1
 // Include files
-// STD & STL 
+// STD & STL
 #include <functional>
 // GaudiKernel
-#include "GaudiKernel/IAlgTool.h"
 #include "Event/CaloHypo.h"
+#include "GaudiKernel/IAlgTool.h"
 /** @class ICaloSplitTool ICaloSplitTool.h CaloInterfaces/ICaloSplitTool.h
  *
- *  An abstract interface for "cluster splitting tools", like 
+ *  An abstract interface for "cluster splitting tools", like
  *     Bulos, or shower-shape fitting or iterative analysis.
  *
  *  @author Vanya Belyaev      Ivan.Belyaev@itep.ru
@@ -27,43 +27,36 @@
  *  @date   19/03/2002
  */
 
-
-namespace LHCb{
-  class     CaloHypo     ;     
+namespace LHCb {
+  class CaloHypo;
 }
 
-struct ICaloSplitTool :  extend_interfaces<IAlgTool>
-{
+struct ICaloSplitTool : extend_interfaces<IAlgTool> {
 
   // OD ALREADY DEFINED AS A KEYEDCONTAINER IN EVENT
-  // useful type definition for output container  
-  //namespace LHCb  {
+  // useful type definition for output container
+  // namespace LHCb  {
   //  typedef std::vector<LHCb::CaloHypo*>  CaloHypos;
   //}
-  
+
   /** static interface identification
    *  @return unique interface identifier
    */
-  DeclareInterfaceID(ICaloSplitTool , 3 , 0 );
-  
-  /** The main processing method 
+  DeclareInterfaceID( ICaloSplitTool, 3, 0 );
+
+  /** The main processing method
    *  @param  hypo   pointer to CaloHypo object to be processed
-   *  @param  hypos  the result of the splitting procedure 
-   *  @return status code 
-   */  
-  virtual StatusCode 
-  process ( LHCb::CaloHypo*  hypo  ,
-            LHCb::CaloHypos& hypos ) const = 0 ;
-  
+   *  @param  hypos  the result of the splitting procedure
+   *  @return status code
+   */
+  virtual StatusCode process( LHCb::CaloHypo* hypo, LHCb::CaloHypos& hypos ) const = 0;
+
   /** The main processing method (functor interface)
    *  @param  hypo   pointer to CaloHypo object to be processed
-   *  @param  hypos  the result of the splitting procedure 
-   *  @return status code 
-   */  
-  virtual StatusCode 
-  operator() ( LHCb::CaloHypo*  hypo  ,
-               LHCb::CaloHypos& hypos ) const = 0 ;
-  
+   *  @param  hypos  the result of the splitting procedure
+   *  @return status code
+   */
+  virtual StatusCode operator()( LHCb::CaloHypo* hypo, LHCb::CaloHypos& hypos ) const = 0;
 };
 
 #endif // CALOINTERFACES_ICALOSPLITTOOL_H

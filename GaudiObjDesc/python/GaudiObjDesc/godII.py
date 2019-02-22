@@ -15,6 +15,7 @@ import genPackage, genClasses, genClassDicts, genNamespaces, genAssocDicts
 from optparse import OptionParser, OptionGroup
 import logging
 
+
 def envOption(value, variable, option):
     """
     Helper function to treat the special value 'env' for some options.
@@ -42,10 +43,12 @@ def envOption(value, variable, option):
             raise KeyError(variable, option)
     return value
 
+
 class godII(object):
     """
     Class implementing the script logic of the GaudiObjDesc tool.
     """
+
     def __init__(self, args=None):
         """
         Initialize the script.
@@ -53,7 +56,7 @@ class godII(object):
         Note that for backward compatibility the list of arguments is the full
         content of sys.argv (which is not what optparse expects).
         """
-        self._parser = None # to make pylint happy
+        self._parser = None  # to make pylint happy
         self._setupOptParser()
         # FIXME: backward compatibility, sys.args[0] should not be in args
         if args:
@@ -61,7 +64,7 @@ class godII(object):
             args = args[1:]
         self.opts, self.args = self._parser.parse_args(args)
 
-        if "VERBOSE" in os.environ :
+        if "VERBOSE" in os.environ:
             logging.basicConfig(level=logging.DEBUG)
         else:
             logging.basicConfig(level=logging.WARNING)
@@ -82,7 +85,8 @@ class godII(object):
 
         # fix options
         if self.opts.classdb is None:
-            self.opts.classdb = os.path.join(self.opts.root, 'xml_files', 'GODsClassDB.xml')
+            self.opts.classdb = os.path.join(self.opts.root, 'xml_files',
+                                             'GODsClassDB.xml')
 
         ####
         # Backward compatibility
@@ -104,10 +108,13 @@ class godII(object):
         self.dtdPath = self.opts.dtd
         try:
             self.xmlDBFile = envOption(self.opts.classdb, 'GODXMLDB', '-x')
-            self.srcOutput = envOption(self.opts.src_output, 'GODDOTHOUT', '-s')
-            self.dictOutput = envOption(self.opts.dict_output, 'GODDICTOUT', '-d')
+            self.srcOutput = envOption(self.opts.src_output, 'GODDOTHOUT',
+                                       '-s')
+            self.dictOutput = envOption(self.opts.dict_output, 'GODDICTOUT',
+                                        '-d')
         except KeyError, x:
-            msg = 'Option "{1} env" used without environment variable {0} declared'.format(*x.args)
+            msg = 'Option "{1} env" used without environment variable {0} declared'.format(
+                *x.args)
             self._parser.error(msg)
 
         # FIXME: backward compatibility, to remove
@@ -126,94 +133,143 @@ class godII(object):
             self._log.warning('deprecated option -l, ignored')
 
     def _setupOptParser(self):
-        p = OptionParser(usage="%prog [options] xml_source(s)",
-                         version="v11r16",
-                         description="Produce c++ source files and dictionary "
-                         "files from xml descriptions.",
-                         epilog="'xml_source(s)' can be either one or more "
-                         "directories where all xml files will be parsed or "
-                         "one or more xml-files which must have the extension "
-                         ".xml")
+        p = OptionParser(
+            usage="%prog [options] xml_source(s)",
+            version="v11r16",
+            description="Produce c++ source files and dictionary "
+            "files from xml descriptions.",
+            epilog="'xml_source(s)' can be either one or more "
+            "directories where all xml files will be parsed or "
+            "one or more xml-files which must have the extension "
+            ".xml")
         p.remove_option('--version')
-        p.add_option('-v', '--version', action='version',
-                     help='show version and exit')
-        p.add_option("-g", "--generate", action="store", type="choice",
-                     metavar='WHAT',
-                     choices=('src', 'dct'),
-                     help="produce only sources ('src') or only dictionaries ('dct')")
-        p.add_option("-i", "--info-file", action="append",
-                     help="add additional file-package-information from './AddImports.txt'")
-        p.add_option('-s', '--src-output', action='store', metavar="DIR",
-                     help='define possible output destination of source code. '
-                     'Use the special value "env" to use the content of the environment '
-                     'variable GODDOTHOUT. [default: %default]')
-        p.add_option('-d', '--dict-output', action='store', metavar="DIR",
-                     help='define possible output destination of source code. '
-                     'Use the special value "env" to use the content of the environment '
-                     'variable GODDICTOUT. [default: %default]')
-        p.add_option('-x', '--classdb', action='store', metavar="CLASSDB",
-                     help='define location of "GODsClassDB.xml", which contains a '
-                     'dictionary of classes and their corresponding include files. '
-                     'Use the special value "env" to use the content of the environment '
-                     'variable GODXMLDB. [default: ${GAUDIOBJDESCROOT}/xml_files/GODsClassDB.xml]')
-        p.add_option('-r', '--root', action='store',
-                     metavar='ROOT_DIR',
-                     help='define the root path to the GOD tools. '
-                     '[default: ${GAUDIOBJDESCROOT}]')
-        p.add_option('-n', '--namespace', action='store',
-                     help='define the default namespace to use if not given in XML. '
-                     '[default: %default]')
-        p.add_option('-t', '--dtd', action='store',
-                     help='path to the DTD file (gdd.dtd). '
-                     '[default: use the value of GODDTDPATH if defined, or find it in the '
-                     'same directory as the xml file]')
-        p.add_option('-p', '--package', action='store',
-                     help='override the package name defined in the XML files')
-        p.add_option('--allocator', action='store', type='choice',
-                     choices=('FROMXML', 'NO', 'BOOST', 'BOOST2', 'DEBUG', 'ORDERED', 'DEFAULT'),
-                     help='chose the type of allocator to use. Allowed values are: '
-                     'FROMXML (use what is specified in the XML, default), '
-                     'NO (never overload operators "new" and "delete"),'
-                     'BOOST (always use Boost singleton pool), '
-                     'BOOST2 (always use Boost singleton pool with a check on delete, slower), '
-                     'DEBUG (same as BOOST2 plus debug print-outs on std::cout), '
-                     'ORDERED (use "ordered_" malloc and free instead of plain ones '
-                     'and generate the static method to release the memory),'
-                     'DEFAULT (alias for BOOST)')
+        p.add_option(
+            '-v', '--version', action='version', help='show version and exit')
+        p.add_option(
+            "-g",
+            "--generate",
+            action="store",
+            type="choice",
+            metavar='WHAT',
+            choices=('src', 'dct'),
+            help="produce only sources ('src') or only dictionaries ('dct')")
+        p.add_option(
+            "-i",
+            "--info-file",
+            action="append",
+            help=
+            "add additional file-package-information from './AddImports.txt'")
+        p.add_option(
+            '-s',
+            '--src-output',
+            action='store',
+            metavar="DIR",
+            help='define possible output destination of source code. '
+            'Use the special value "env" to use the content of the environment '
+            'variable GODDOTHOUT. [default: %default]')
+        p.add_option(
+            '-d',
+            '--dict-output',
+            action='store',
+            metavar="DIR",
+            help='define possible output destination of source code. '
+            'Use the special value "env" to use the content of the environment '
+            'variable GODDICTOUT. [default: %default]')
+        p.add_option(
+            '-x',
+            '--classdb',
+            action='store',
+            metavar="CLASSDB",
+            help='define location of "GODsClassDB.xml", which contains a '
+            'dictionary of classes and their corresponding include files. '
+            'Use the special value "env" to use the content of the environment '
+            'variable GODXMLDB. [default: ${GAUDIOBJDESCROOT}/xml_files/GODsClassDB.xml]'
+        )
+        p.add_option(
+            '-r',
+            '--root',
+            action='store',
+            metavar='ROOT_DIR',
+            help='define the root path to the GOD tools. '
+            '[default: ${GAUDIOBJDESCROOT}]')
+        p.add_option(
+            '-n',
+            '--namespace',
+            action='store',
+            help='define the default namespace to use if not given in XML. '
+            '[default: %default]')
+        p.add_option(
+            '-t',
+            '--dtd',
+            action='store',
+            help='path to the DTD file (gdd.dtd). '
+            '[default: use the value of GODDTDPATH if defined, or find it in the '
+            'same directory as the xml file]')
+        p.add_option(
+            '-p',
+            '--package',
+            action='store',
+            help='override the package name defined in the XML files')
+        p.add_option(
+            '--allocator',
+            action='store',
+            type='choice',
+            choices=('FROMXML', 'NO', 'BOOST', 'BOOST2', 'DEBUG', 'ORDERED',
+                     'DEFAULT'),
+            help='chose the type of allocator to use. Allowed values are: '
+            'FROMXML (use what is specified in the XML, default), '
+            'NO (never overload operators "new" and "delete"),'
+            'BOOST (always use Boost singleton pool), '
+            'BOOST2 (always use Boost singleton pool with a check on delete, slower), '
+            'DEBUG (same as BOOST2 plus debug print-outs on std::cout), '
+            'ORDERED (use "ordered_" malloc and free instead of plain ones '
+            'and generate the static method to release the memory),'
+            'DEFAULT (alias for BOOST)')
+        p.add_option(
+            '--formatter',
+            help='command to use to (re)format the generated files')
 
-        deprecated = OptionGroup(p, "Deprecated Options",
-                                 "These options are deprecated and will be removed "
-                                 "in a future version.")
-        deprecated.add_option('-l', action='store',
-                              dest='deprecated_l', metavar="IGNORED_VALUE",
-                              help='ignored')
-        deprecated.add_option('-o', action='store',
-                              dest='deprecated_o', metavar="OUTPUT_DIR",
-                              help='output directory, use -s or -d instead')
+        deprecated = OptionGroup(
+            p, "Deprecated Options",
+            "These options are deprecated and will be removed "
+            "in a future version.")
+        deprecated.add_option(
+            '-l',
+            action='store',
+            dest='deprecated_l',
+            metavar="IGNORED_VALUE",
+            help='ignored')
+        deprecated.add_option(
+            '-o',
+            action='store',
+            dest='deprecated_o',
+            metavar="OUTPUT_DIR",
+            help='output directory, use -s or -d instead')
 
         p.add_option_group(deprecated)
 
-        p.set_defaults(info_file=[],
-                       src_output=os.curdir,
-                       dict_output=os.curdir,
-                       classdb=None,
-                       root=os.environ.get('GAUDIOBJDESCROOT'),
-                       namespace='LHCb',
-                       allocator='NO',
-                       dtd=os.environ.get("GODDTDPATH")
-                       )
+        p.set_defaults(
+            info_file=[],
+            src_output=os.curdir,
+            dict_output=os.curdir,
+            classdb=None,
+            root=os.environ.get('GAUDIOBJDESCROOT'),
+            namespace='LHCb',
+            allocator='NO',
+            dtd=os.environ.get("GODDTDPATH"))
         self._parser = p
 
-    def findLongestName(self,godPackage):
+    def findLongestName(self, godPackage):
         lname = 0
-        if self.gAssocDicts and 'assoc' in godPackage :
-            lname = len(godPackage['attrs']['name'])+22
-        if 'class' in godPackage :
+        if self.gAssocDicts and 'assoc' in godPackage:
+            lname = len(godPackage['attrs']['name']) + 22
+        if 'class' in godPackage:
             classLName = self.tools.getLongestName(godPackage['class'])
-            if self.gClasses     : lname = max(lname, classLName+2)
-            if self.gClassDicts : lname = max(lname, classLName+9)
-        if self.gNamespaces and 'namespace' in godPackage :
-            lname = max(lname, self.tools.getLongestName(godPackage['namespace'])+2)
+            if self.gClasses: lname = max(lname, classLName + 2)
+            if self.gClassDicts: lname = max(lname, classLName + 9)
+        if self.gNamespaces and 'namespace' in godPackage:
+            lname = max(lname,
+                        self.tools.getLongestName(godPackage['namespace']) + 2)
         return lname
 
     def doit(self):
@@ -231,21 +287,30 @@ class godII(object):
                         srcFiles.append(file)
             elif os.path.isfile(src) and src.split('.')[-1] == 'xml':
                 srcFiles.append(src)
-            else :
-                self._log.error( self.argv0 + ': ERROR: '+src+' passed as source location is neither directory nor a .xml file' )
+            else:
+                self._log.error(
+                    self.argv0 + ': ERROR: ' + src +
+                    ' passed as source location is neither directory nor a .xml file'
+                )
                 sys.exit(1)
 
-        if self.gClasses : gClasses = genClasses.genClasses(self.godRoot)
-        if self.gNamespaces : gNamespaces = genNamespaces.genNamespaces(self.godRoot)
-        if self.gAssocDicts : gAssocDicts = genAssocDicts.genAssocDicts(self.godRoot, self.dictOutput, self.srcOutput)
+        if self.gClasses: gClasses = genClasses.genClasses(self.godRoot)
+        if self.gNamespaces:
+            gNamespaces = genNamespaces.genNamespaces(self.godRoot)
+        if self.gAssocDicts:
+            gAssocDicts = genAssocDicts.genAssocDicts(
+                self.godRoot, self.dictOutput, self.srcOutput)
 
         for srcFile in srcFiles:
 
             #--->PM<--- Needs to be reset each time! Otherwise it doubles the contents for 'instantiations' and 'exclusions'
-            if self.gClassDicts :
-                gClassDicts = genClassDicts.genClassDicts(self.godRoot, self.dictOutput, self.srcOutput)
-                if not self.gClasses : gClasses = genClasses.genClasses(self.godRoot)
-                gNamespaceDict = genClassDicts.genClassDicts(self.godRoot, self.dictOutput, self.srcOutput)
+            if self.gClassDicts:
+                gClassDicts = genClassDicts.genClassDicts(
+                    self.godRoot, self.dictOutput, self.srcOutput)
+                if not self.gClasses:
+                    gClasses = genClasses.genClasses(self.godRoot)
+                gNamespaceDict = genClassDicts.genClassDicts(
+                    self.godRoot, self.dictOutput, self.srcOutput)
 
             gdd = x.parseSource(srcFile)
             godPackage = gdd['package'][0]
@@ -259,38 +324,60 @@ class godII(object):
                 ns = self.default_namespace
                 godPackage['attrs']['namespace'] = ns
 
-
             package = genPackage.genPackage(godPackage)
 
-            self._log.debug( 'Processing package ' + package.dict['packagename'] )
+            self._log.debug('Processing package ' +
+                            package.dict['packagename'])
 
             lname = self.findLongestName(godPackage)
 
-            if 'assoc' in godPackage and self.gAssocDicts :
-                self._log.debug( '  Generating Dictionaries for Associations' )
+            if self.opts.formatter:
+
+                def format(filename):
+                    'reformat the given file'
+                    from subprocess import check_output
+                    check_output(
+                        [self.opts.formatter, '-i', '--style=file', filename])
+            else:
+                format = None
+
+            if 'assoc' in godPackage and self.gAssocDicts:
+                self._log.debug('  Generating Dictionaries for Associations')
                 gAssocDicts.doit(godPackage)
-                self._log.debug( '  - Done' )
+                self._log.debug('  - Done')
 
             if 'namespace' in godPackage:
-                if self.gNamespaces :
-                    self._log.debug( '  Generating Namespaces' )
-                    gNamespaces.doit(package,godPackage['namespace'],self.srcOutput,lname,self.allocatorType)
-                    self._log.debug( '  - Done' )
-                elif self.gClassDicts and [nsitem.get('class') for nsitem in godPackage['namespace']]:
+                if self.gNamespaces:
+                    self._log.debug('  Generating Namespaces')
+                    gNamespaces.doit(package, godPackage['namespace'],
+                                     self.srcOutput, lname, self.allocatorType,
+                                     format)
+                    self._log.debug('  - Done')
+                elif self.gClassDicts and [
+                        nsitem.get('class')
+                        for nsitem in godPackage['namespace']
+                ]:
                     gNamespaceDict.doit(godPackage)
 
             if 'class' in godPackage:
-                if self.gClasses :
-                    self._log.debug( '  Generating Header Files' )
-                    gClasses.doit(package,godPackage['class'],self.srcOutput,lname,self.allocatorType)
-                    self._log.debug( '  - Done' )
+                if self.gClasses:
+                    self._log.debug('  Generating Header Files')
+                    gClasses.doit(
+                        package,
+                        godPackage['class'],
+                        self.srcOutput,
+                        lname,
+                        self.allocatorType,
+                        format=format)
+                    self._log.debug('  - Done')
 
-                if self.gClassDicts :
-                    self._log.debug( '  Generating Dictionaries' )
+                if self.gClassDicts:
+                    self._log.debug('  Generating Dictionaries')
                     gClassDicts.doit(godPackage)
-                    self._log.debug( '  - Done' )
+                    self._log.debug('  - Done')
 
-            self._log.debug( '- Done ' )
+            self._log.debug('- Done ')
+
 
 if __name__ == '__main__':
     g = godII(sys.argv)

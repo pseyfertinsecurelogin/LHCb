@@ -27,13 +27,11 @@
 #include "Kernel/RichRadiatorType.h"
 
 // Event Model
-namespace LHCb
-{
+namespace LHCb {
   class RichTrackSegment;
 }
 
-namespace Rich
-{
+namespace Rich {
 
   /** @class IParticleProperties IRichParticleProperties.h
    *
@@ -44,21 +42,17 @@ namespace Rich
    *  @date   15/03/2002
    */
 
-  class IParticleProperties : public virtual IAlgTool
-  {
+  class IParticleProperties : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IParticleProperties, 1, 0 );
 
   public:
-
     /// Scalar type to use
     using ScType = float;
 
   public:
-
     /** Calculates 'beta' for given particle hypothesis and track momentum
      *
      *  @param ptot    Track segment momentum
@@ -93,8 +87,7 @@ namespace Rich
      *  @return The momentum threshold value, below which no Cherenkov radiation
      *          can be emitted
      */
-    virtual ScType thresholdMomentum( const Rich::ParticleIDType id,
-                                      const Rich::RadiatorType   rad ) const = 0;
+    virtual ScType thresholdMomentum( const Rich::ParticleIDType id, const Rich::RadiatorType rad ) const = 0;
 
     /** Calculates the threshold momentum for a given mass hypothesis
      *  for the given RichTrackSegment
@@ -105,11 +98,10 @@ namespace Rich
      *  @return The momentum threshold value, below which no Cherenkov radiation
      *          can be emitted
      */
-    virtual ScType thresholdMomentum( const Rich::ParticleIDType    id,
-                                      const LHCb::RichTrackSegment &trSeg ) const = 0;
+    virtual ScType thresholdMomentum( const Rich::ParticleIDType id, const LHCb::RichTrackSegment& trSeg ) const = 0;
 
     /// Vector of the mass hypotheses to be considered
-    virtual const Rich::Particles &particleTypes() const = 0;
+    virtual const Rich::Particles& particleTypes() const = 0;
   };
 
 } // namespace Rich

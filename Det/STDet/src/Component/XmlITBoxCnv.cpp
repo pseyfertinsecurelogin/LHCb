@@ -16,5 +16,5 @@
 // TTDet
 #include "STDet/DeITBox.h"
 
-typedef XmlUserDetElemCnv<DeITBox >        XmlITBoxCnv;
+typedef XmlUserDetElemCnv<DeITBox> XmlITBoxCnv;
 DECLARE_CONVERTER( XmlITBoxCnv )

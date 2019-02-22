@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef     __DETDESC_TRANSPORTSVC_TRANSPORTSVCEXCEPTION_H__
-#define     __DETDESC_TRANSPORTSVC_TRANSPORTSVCEXCEPTION_H__ 1
+#ifndef __DETDESC_TRANSPORTSVC_TRANSPORTSVCEXCEPTION_H__
+#define __DETDESC_TRANSPORTSVC_TRANSPORTSVCEXCEPTION_H__ 1
 
 #include "GaudiKernel/GaudiException.h"
 
@@ -17,21 +17,15 @@
 ///  class TransportSvcException: an exception class for Transport Service
 ///
 
-struct TransportSvcException: GaudiException
-{
+struct TransportSvcException : GaudiException {
   /// constructor
-  TransportSvcException( const std::string& Message                           ,
-                         const StatusCode&  statusCode = StatusCode::FAILURE  )
-  : GaudiException( Message , "*TransportSvcException*" , statusCode )
-  {};
+  TransportSvcException( const std::string& Message, const StatusCode& statusCode = StatusCode::FAILURE )
+      : GaudiException( Message, "*TransportSvcException*", statusCode ){};
 
   ///
-  TransportSvcException( const std::string&    Message                             ,
-                         const GaudiException& Exception                           ,
-                         const StatusCode&     statusCode = StatusCode::FAILURE    )
-  : GaudiException( Message , "*TransportSvcException*" , statusCode , Exception )
-  {};
-
+  TransportSvcException( const std::string& Message, const GaudiException& Exception,
+                         const StatusCode& statusCode = StatusCode::FAILURE )
+      : GaudiException( Message, "*TransportSvcException*", statusCode, Exception ){};
 };
 
-#endif  //  __DETDESC_TRANSPORTSVC_TRANSPORTSVCEXCEPTION_H__
+#endif //  __DETDESC_TRANSPORTSVC_TRANSPORTSVCEXCEPTION_H__

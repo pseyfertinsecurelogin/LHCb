@@ -17,7 +17,6 @@
 
 class IDebugTool;
 
-
 /** @class PrintMCTree PrintMCTree.h
  *
  *  Prints the decay tree of all MC particles with a given PID
@@ -30,14 +29,13 @@ public:
   /// Standard constructor
   PrintMCTree( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  IPrintMCDecayTreeTool *m_printMCTree = nullptr;
-  std::vector<std::string> m_particleNames ; ///< particle names
-  std::vector<int> m_particleIDs ;
-  int m_depth = -1 ;  ///< depth of tree
-
+  IPrintMCDecayTreeTool*   m_printMCTree = nullptr;
+  std::vector<std::string> m_particleNames; ///< particle names
+  std::vector<int>         m_particleIDs;
+  int                      m_depth = -1; ///< depth of tree
 };
 #endif // PRINTMCTREE_H

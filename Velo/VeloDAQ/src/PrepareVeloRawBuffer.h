@@ -11,12 +11,12 @@
 #ifndef PREPAREVELORAWBUFFER_H
 #define PREPAREVELORAWBUFFER_H 1
 
-#include <vector>
 #include <algorithm>
 #include <string>
+#include <vector>
 
-#include "VeloEvent/InternalVeloCluster.h"
 #include "SiDAQ/SiRawBankDecoder.h"
+#include "VeloEvent/InternalVeloCluster.h"
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 
@@ -43,27 +43,21 @@ public:
   /// Standard constructor
   PrepareVeloRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PrepareVeloRawBuffer( ); ///< Destructor
+  virtual ~PrepareVeloRawBuffer(); ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   void dumpInputClusters() const;
 
-  unsigned int
-makeBank (std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin,
-	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator end);
-	
+  unsigned int makeBank( std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin,
+                         std::vector<const LHCb::InternalVeloCluster*>::const_iterator end );
 
-void
-storeBank(int sensor,
-	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin,
-	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator end,
-	  LHCb::RawEvent* rawEvent);
+  void storeBank( int sensor, std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin,
+                  std::vector<const LHCb::InternalVeloCluster*>::const_iterator end, LHCb::RawEvent* rawEvent );
+
 private:
-
   // configurable locations in the TES
   std::string m_clusterLoc;
   std::string m_rawEventLoc;
@@ -77,9 +71,9 @@ private:
   // long lived containers for performance reasons. Also used to communicate
   // with makeBank() method
   std::vector<const LHCb::InternalVeloCluster*> m_sortedClusters;
-  std::vector<SiDAQ::buffer_word> m_rawData;
-  std::vector<SiDAQ::buffer_word> m_clusterADCBuffer;
-  std::vector<SiDAQ::buffer_word> m_clusterPosBuffer;
+  std::vector<SiDAQ::buffer_word>               m_rawData;
+  std::vector<SiDAQ::buffer_word>               m_clusterADCBuffer;
+  std::vector<SiDAQ::buffer_word>               m_clusterPosBuffer;
 
   // size of raw bank in bytes, inclding the 4 byte header but
   // *without* the padding bytes at the end
@@ -90,6 +84,5 @@ private:
 
   /// list of sensor numbers to check for empty sensors
   std::vector<int> m_sensorNumbers;
-
 };
 #endif // PREPAREVELORAWBUFFER_H

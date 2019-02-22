@@ -14,8 +14,8 @@
 #include "Event/UTTELL1Data.h"
 
 // Kernel
-#include "Kernel/UTRawBankMap.h"
 #include "Kernel/IUTReadoutTool.h"
+#include "Kernel/UTRawBankMap.h"
 
 // standard
 #include "boost/lexical_cast.hpp"
@@ -39,26 +39,21 @@ DECLARE_COMPONENT( UTPedestalDecoding )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-UTPedestalDecoding::UTPedestalDecoding( const std::string& name,
-                                        ISvcLocator* pSvcLocator)
-  : UT::AlgBase ( name , pSvcLocator )
-{
-  declareUTConfigProperty("InputLocation", m_inputLocation , 
-                          RawEventLocation::Default );
-  declareUTConfigProperty("OutputLocation", m_outputLocation,
-                          UTTELL1DataLocation::UTPedestal );
+UTPedestalDecoding::UTPedestalDecoding( const std::string& name, ISvcLocator* pSvcLocator )
+    : UT::AlgBase( name, pSvcLocator ) {
+  declareUTConfigProperty( "InputLocation", m_inputLocation, RawEventLocation::Default );
+  declareUTConfigProperty( "OutputLocation", m_outputLocation, UTTELL1DataLocation::UTPedestal );
 }
 
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode UTPedestalDecoding::initialize() 
-{
+StatusCode UTPedestalDecoding::initialize() {
   StatusCode sc = UT::AlgBase::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;           // error printed already by GaudiAlgorithm
 
   // bank type
-  m_bankType = UTRawBankMap::stringToType(detType()+"Pedestal");
+  m_bankType = UTRawBankMap::stringToType( detType() + "Pedestal" );
 
   return StatusCode::SUCCESS;
 }
@@ -66,93 +61,88 @@ StatusCode UTPedestalDecoding::initialize()
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode UTPedestalDecoding::execute()
-{
+StatusCode UTPedestalDecoding::execute() {
   RawEvent* raw = get<RawEvent>( m_inputLocation );
 
   // make container of TELL1 boards
   UTTELL1Datas* outputPedestals = new UTTELL1Datas();
-  
+
   // put the object on the transient event store
-  put(outputPedestals, m_outputLocation);
-  
-  // Pick up pedestal bank 
-  const auto& itf = raw->banks(RawBank::BankType(m_bankType));
-  if (msgLevel(MSG::DEBUG)) {
-    debug() << "Starting to decode " << itf.size() << detType() 
-            << "Pedestal bank(s)" <<  endmsg;
+  put( outputPedestals, m_outputLocation );
+
+  // Pick up pedestal bank
+  const auto& itf = raw->banks( RawBank::BankType( m_bankType ) );
+  if ( msgLevel( MSG::DEBUG ) ) {
+    debug() << "Starting to decode " << itf.size() << detType() << "Pedestal bank(s)" << endmsg;
   }
-  
-  for( const LHCb::RawBank* p : itf ) {
-    
-    if (msgLevel(MSG::DEBUG)) {
-      debug() << "Decoding bank of type " << detType() << "Pedestal (TELL1 ID: "
-              << p->sourceID() << ", Size: " << p->size() << " bytes)"<< endmsg;
+
+  for ( const LHCb::RawBank* p : itf ) {
+
+    if ( msgLevel( MSG::DEBUG ) ) {
+      debug() << "Decoding bank of type " << detType() << "Pedestal (TELL1 ID: " << p->sourceID()
+              << ", Size: " << p->size() << " bytes)" << endmsg;
     }
-    
+
     // Check if the board is valid
-    UTTell1ID tell1ID = UTTell1ID((unsigned int)(p->sourceID()), detType()=="UT"); 
-    const UTTell1Board* aBoard =  readoutTool()->findByBoardID(tell1ID);
-    if( !aBoard ) {
-      std::string invalidSource = "Invalid source ID --> skip bank"+
-        boost::lexical_cast<std::string>(p->sourceID());  
-      Warning(invalidSource,StatusCode::SUCCESS,2).ignore(); 
-      ++counter("skipped Banks");
+    UTTell1ID           tell1ID = UTTell1ID( (unsigned int)( p->sourceID() ), detType() == "UT" );
+    const UTTell1Board* aBoard  = readoutTool()->findByBoardID( tell1ID );
+    if ( !aBoard ) {
+      std::string invalidSource = "Invalid source ID --> skip bank" + boost::lexical_cast<std::string>( p->sourceID() );
+      Warning( invalidSource, StatusCode::SUCCESS, 2 ).ignore();
+      ++counter( "skipped Banks" );
       continue;
     }
 
-    // Create an empty tell1 pedestal object  
+    // Create an empty tell1 pedestal object
     UTTELL1Data::Data pedestals;
-    pedestals.resize(noptlinks);
-    for( auto& i : pedestals ) i.resize(nports*nstrips, 0);
+    pedestals.resize( noptlinks );
+    for ( auto& i : pedestals ) i.resize( nports * nstrips, 0 );
 
-    if( (unsigned int)p->size() != sizebankPedestal ){
-      error() << "Wrong bank size for this type!! You should have "
-              << sizebankPedestal << " bytes" << endmsg;
+    if ( (unsigned int)p->size() != sizebankPedestal ) {
+      error() << "Wrong bank size for this type!! You should have " << sizebankPedestal << " bytes" << endmsg;
     }
-      	
+
     // Counters
     unsigned int cntWD = 0; // Word counter, resets for each PP. Range 0 to 191.
-    unsigned int cntPP = 0; // PP-FPGA counter, goes from 0 to 3.    
-   
+    unsigned int cntPP = 0; // PP-FPGA counter, goes from 0 to 3.
+
     // Now loop over all WORDS in a bank
-    for(const unsigned int* w=p->begin<unsigned int>() ; w != p->end<unsigned int>(); ++w ) {
- 			
-      if(cntWD == 192){	// Each 192 words we have a new PP-FPGA
-        cntWD = 0;        
-        ++cntPP;     
+    for ( const unsigned int* w = p->begin<unsigned int>(); w != p->end<unsigned int>(); ++w ) {
+
+      if ( cntWD == 192 ) { // Each 192 words we have a new PP-FPGA
+        cntWD = 0;
+        ++cntPP;
       }
 
-      if (cntWD==0&&msgLevel(MSG::DEBUG)) {	
-        debug() << "#######  Parsing now data from PP " << cntPP 
-                << " ##################" << endmsg; 
+      if ( cntWD == 0 && msgLevel( MSG::DEBUG ) ) {
+        debug() << "#######  Parsing now data from PP " << cntPP << " ##################" << endmsg;
       }
-      
+
       // Unpack the 32-bit word into 8-bit chunks
-      unsigned int p1 = ( *w & mask1);
-      unsigned int p2 = ((*w & mask2)/0x100);
-      unsigned int p3=  ((*w & mask3)/0x10000);
-      unsigned int p4 = ((*w & mask4)/0x1000000);
+      unsigned int p1 = ( *w & mask1 );
+      unsigned int p2 = ( ( *w & mask2 ) / 0x100 );
+      unsigned int p3 = ( ( *w & mask3 ) / 0x10000 );
+      unsigned int p4 = ( ( *w & mask4 ) / 0x1000000 );
 
-      int iPort = cntWD/(nbeetles*nstrips); // range 0 to 1
-      int iWord = (cntWD%(nbeetles*nstrips))/nbeetles; // range: 0 to 32
-      int iBeetle = 2*(cntWD%nbeetles) + nBeetlesPerPPx*cntPP; // range: 0 to 22
-      
-      pedestals[iBeetle][iWord+nstrips*iPort] = p1;
-      pedestals[iBeetle][iWord+nstrips*(iPort+2)] = p2;
-      pedestals[iBeetle+1][iWord+nstrips*iPort] = p3;
-      pedestals[iBeetle+1][iWord+nstrips*(iPort+2)] = p4;
-			
+      int iPort   = cntWD / ( nbeetles * nstrips );                    // range 0 to 1
+      int iWord   = ( cntWD % ( nbeetles * nstrips ) ) / nbeetles;     // range: 0 to 32
+      int iBeetle = 2 * ( cntWD % nbeetles ) + nBeetlesPerPPx * cntPP; // range: 0 to 22
+
+      pedestals[iBeetle][iWord + nstrips * iPort]             = p1;
+      pedestals[iBeetle][iWord + nstrips * ( iPort + 2 )]     = p2;
+      pedestals[iBeetle + 1][iWord + nstrips * iPort]         = p3;
+      pedestals[iBeetle + 1][iWord + nstrips * ( iPort + 2 )] = p4;
+
       ++cntWD;
     } // Loop over all words
 
     // make an empty tell1 data object
-    UTTELL1Data* myPedestals = new UTTELL1Data(pedestals);   
-     
+    UTTELL1Data* myPedestals = new UTTELL1Data( pedestals );
+
     // put into the container, second argument is Tell1 id
-    outputPedestals->insert(myPedestals, int(p->sourceID()));
-      
-  }// end of loop over banks of a certain type
-  
- return StatusCode::SUCCESS;
-} 
+    outputPedestals->insert( myPedestals, int( p->sourceID() ) );
+
+  } // end of loop over banks of a certain type
+
+  return StatusCode::SUCCESS;
+}

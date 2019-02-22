@@ -14,15 +14,13 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include <vector>
-#include <ostream>
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/Nodes.h"
-namespace Decays
-{
+#include <ostream>
+#include <vector>
+namespace Decays {
   // ==========================================================================
-  namespace Parsers
-  {
+  namespace Parsers {
     // ========================================================================
     /** parse the decay node
      *  @param node      (OUTPUT) the decay node
@@ -31,14 +29,10 @@ namespace Decays
      *  @param particles (INPUT)  the list of particle
      *  @param stream    the sterem to report the errors
      */
-    StatusCode parse
-    ( Decays::Node&                   node      ,
-      const std::string&              input     ,
-      const std::vector<std::string>& symbols   ,
-      const std::vector<std::string>& particles ,
-      std::ostream&                   stream    ) ;
+    StatusCode parse( Decays::Node& node, const std::string& input, const std::vector<std::string>& symbols,
+                      const std::vector<std::string>& particles, std::ostream& stream );
     // ========================================================================
-  } // end of namespace Decays::Parsers
+  } // namespace Parsers
   // ==========================================================================
 } // end of namespace Decays
 // ============================================================================

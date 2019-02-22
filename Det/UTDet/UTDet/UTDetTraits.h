@@ -27,42 +27,42 @@ class DeUTSensor;
 
 template <typename TYPE>
 class UTDetTraits {
- public:
+public:
   typedef TYPE parent;
   typedef TYPE child;
 };
 
-template<>
-class UTDetTraits<DeUTStation>{
- public:
+template <>
+class UTDetTraits<DeUTStation> {
+public:
   typedef DeUTDetector parent;
-  typedef DeUTLayer child;
+  typedef DeUTLayer    child;
 };
 
-template<>
-class UTDetTraits<DeUTLayer>{
- public:
+template <>
+class UTDetTraits<DeUTLayer> {
+public:
   typedef DeUTStation parent;
-  typedef DeUTModule child;
+  typedef DeUTModule  child;
 };
 
-template<>
-class UTDetTraits<DeUTModule>{
- public:
-  typedef DeUTLayer parent;
+template <>
+class UTDetTraits<DeUTModule> {
+public:
+  typedef DeUTLayer  parent;
   typedef DeUTSector child;
 };
 
-template<>
-class UTDetTraits<DeUTSector>{
- public:
+template <>
+class UTDetTraits<DeUTSector> {
+public:
   typedef DeUTModule parent;
   typedef DeUTSensor child;
 };
 
-template<>
-class UTDetTraits<DeUTSensor>{
- public:
+template <>
+class UTDetTraits<DeUTSensor> {
+public:
   typedef DeUTSector parent;
   typedef DeUTSensor child;
 };

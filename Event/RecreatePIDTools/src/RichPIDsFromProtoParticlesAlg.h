@@ -39,25 +39,21 @@
  */
 //-----------------------------------------------------------------------------
 
-class RichPIDsFromProtoParticlesAlg : public GaudiAlgorithm
-{
+class RichPIDsFromProtoParticlesAlg : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   RichPIDsFromProtoParticlesAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   /// Input location of ProtoParticles in TES
   std::string m_protoPloc;
 
   /// Output location of RichPIDs in TES
   std::string m_richPIDloc;
-
 };
 
 #endif // GLOBALRECO_RICHPIDSFROMPROTOPARTICLESALG_H

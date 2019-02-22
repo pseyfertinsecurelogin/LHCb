@@ -9,12 +9,11 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_SELECTIONUNIT_H
-#define L0MUONKERNEL_SELECTIONUNIT_H     1
+#define L0MUONKERNEL_SELECTIONUNIT_H 1
 
-#include <map>
-#include "L0MuonKernel/L0MUnit.h"
 #include "L0MuonKernel/CandRegisterHandler.h"
-
+#include "L0MuonKernel/L0MUnit.h"
+#include <map>
 
 namespace L0Muon {
 
@@ -38,15 +37,14 @@ namespace L0Muon {
   class SelectionUnit : public L0MUnit {
 
   public:
-
     /// Default Constructor
     SelectionUnit();
 
     /// Constructor with a MuonTileID
-    SelectionUnit(LHCb::MuonTileID id);
+    SelectionUnit( LHCb::MuonTileID id );
 
     /// Constructor from xml node
-    SelectionUnit(DOMNode* pNode);
+    SelectionUnit( DOMNode* pNode );
 
     /// Destructor
     ~SelectionUnit();
@@ -58,13 +56,10 @@ namespace L0Muon {
     void postexecute() override;
 
   protected:
-
-    std::map<int,CandRegisterHandler> m_candRegHandlerIn; ///< input candidates
-    CandRegisterHandler m_candRegHandlerOut;              ///< output candidates
-
+    std::map<int, CandRegisterHandler> m_candRegHandlerIn;  ///< input candidates
+    CandRegisterHandler                m_candRegHandlerOut; ///< output candidates
   };
 
+} // namespace L0Muon
 
-}  // namespace L0Muon
-
-#endif      // L0MUONKERNEL_SELECTIONUNIT_H
+#endif // L0MUONKERNEL_SELECTIONUNIT_H

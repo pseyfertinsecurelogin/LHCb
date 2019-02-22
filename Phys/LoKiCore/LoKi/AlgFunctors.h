@@ -20,8 +20,8 @@
 // ============================================================================
 // Gaudi Kernel
 // ============================================================================
-#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IAlgorithm.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/ThreadLocalContext.h"
 #include <GaudiKernel/IAlgExecStateSvc.h>
 // ============================================================================
@@ -61,24 +61,22 @@ namespace LoKi {
    *  @date 2008-010-14
    */
   namespace Algorithms {
-      namespace Predicates {
-          // ==========================================================================
-          // filter passed ?
-          inline constexpr auto filterPassed = [](const IAlgorithm* ia) {
-            return ia && ia->execState( Gaudi::Hive::currentContext() ).filterPassed();
-          };
-          // ========================================================================
-          // is enabled ?
-          inline constexpr auto isEnabled = [](const IAlgorithm* ia) {
-            return ia && ia->isEnabled () ;
-          };
-          // ==========================================================================
-          // is executed ?
-          inline constexpr auto isExecuted = []( const IAlgorithm* ia ) {
-            return ia && ia->execState( Gaudi::Hive::currentContext() ).state() == AlgExecState::State::Done;
-          };
-          // ==========================================================================
-      }
+    namespace Predicates {
+      // ==========================================================================
+      // filter passed ?
+      inline constexpr auto filterPassed = []( const IAlgorithm* ia ) {
+        return ia && ia->execState( Gaudi::Hive::currentContext() ).filterPassed();
+      };
+      // ========================================================================
+      // is enabled ?
+      inline constexpr auto isEnabled = []( const IAlgorithm* ia ) { return ia && ia->isEnabled(); };
+      // ==========================================================================
+      // is executed ?
+      inline constexpr auto isExecuted = []( const IAlgorithm* ia ) {
+        return ia && ia->execState( Gaudi::Hive::currentContext() ).state() == AlgExecState::State::Done;
+      };
+      // ==========================================================================
+    } // namespace Predicates
     // =========================================================================
     /** @class Passed
      *  simple check of the certain algorithm to pass the filter
@@ -87,42 +85,38 @@ namespace LoKi {
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API Passed : public LoKi::BasicFunctors<void>::Predicate
-    {
+    class GAUDI_API Passed : public LoKi::BasicFunctors<void>::Predicate {
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      explicit Passed ( const std::string& name ) ;
+      explicit Passed( const std::string& name );
       ~Passed() override;
       /// MANDATORY: clone method ("virtual constructor")
-      Passed* clone() const override { return new Passed ( *this ) ; }
+      Passed* clone() const override { return new Passed( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() () const override ;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override ;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     protected:
       // ======================================================================
       /// set the algorithm
-      const LoKi::Interface<IAlgorithm>& setAlgorithm
-      ( const IAlgorithm* a ) const ;                      // set the algorithm
+      const LoKi::Interface<IAlgorithm>& setAlgorithm( const IAlgorithm* a ) const; // set the algorithm
       /// get the algorithm
-      const LoKi::Interface<IAlgorithm>& algorithm () const
-      { return m_algorithm ; }                             // get the algorithm
+      const LoKi::Interface<IAlgorithm>& algorithm() const { return m_algorithm; } // get the algorithm
       /// get the algorithm name
-      const std::string& algName () const { return m_name ; }
+      const std::string& algName() const { return m_name; }
       /// get the algorithm
-      const LoKi::Interface<IAlgorithm>&
-      getAlgorithm ( const std::string& name ) const ; // get the algorithm
+      const LoKi::Interface<IAlgorithm>& getAlgorithm( const std::string& name ) const; // get the algorithm
       // ======================================================================
     private:
       // ======================================================================
       /// the algorithm name
-      std::string                         m_name      ;
+      std::string m_name;
       /// the algorithm itself
-      mutable LoKi::Interface<IAlgorithm> m_algorithm ;
+      mutable LoKi::Interface<IAlgorithm> m_algorithm;
       // ======================================================================
-    } ;
+    };
     // =========================================================================
     /** @class Enabled
      *  simple check oif the algorithm is enabled
@@ -131,20 +125,19 @@ namespace LoKi {
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API Enabled final : public Passed
-    {
+    class GAUDI_API Enabled final : public Passed {
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      explicit Enabled ( const std::string& name ) ;
+      explicit Enabled( const std::string& name );
       /// MANDATORY: clone method ("virtual constructor")
-      Enabled* clone() const override { return new Enabled ( *this ) ; }
+      Enabled* clone() const override { return new Enabled( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() () const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // =========================================================================
     /** @class Executed
      *  simple check if the algorithm is enabled
@@ -153,20 +146,19 @@ namespace LoKi {
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API Executed final : public Passed
-    {
+    class GAUDI_API Executed final : public Passed {
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      explicit Executed ( const std::string& name ) ;
+      explicit Executed( const std::string& name );
       /// MANDATORY: clone method ("virtual constructor")
-      Executed* clone() const override { return new Executed ( *this ) ; }
+      Executed* clone() const override { return new Executed( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() () const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // =========================================================================
     /** @class Run
      *  A bit complicated action:
@@ -177,108 +169,96 @@ namespace LoKi {
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API Run final : public Passed
-    {
+    class GAUDI_API Run final : public Passed {
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      explicit Run ( const std::string& name ) ;
+      explicit Run( const std::string& name );
       /// MANDATORY: clone method ("virtual constructor")
-      Run* clone() const override { return new Run ( *this ) ; }
+      Run* clone() const override { return new Run( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() () const override;
+      bool operator()() const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     namespace details {
-        // ========================================================================
-        /** @class AlgsFunctorBase
-         *  Base class for Algorithm predicates
-         */
-        // =========================================================================
+      // ========================================================================
+      /** @class AlgsFunctorBase
+       *  Base class for Algorithm predicates
+       */
+      // =========================================================================
 
-        // TODO: AlgsFunctorBase doesn't actually depend on Ret -- so should
-        //       try to move the code to a non-template implemenation to reduce
-        //       code size...
-        template <typename ReturnType>
-        class GAUDI_API AlgsFunctorBase : public LoKi::Functor<void,ReturnType>
-        {
-        public:
-          // ======================================================================
-          /// constructor from algorithm names
-          AlgsFunctorBase ( std::vector<std::string> name ) ;
-          AlgsFunctorBase ( AlgsFunctorBase&& ) = default;
-          AlgsFunctorBase ( const AlgsFunctorBase& ) = default;
-          ~AlgsFunctorBase() override;
-          // ======================================================================
-        protected:
-          // ======================================================================
-          /// the actual type of vector of algorithms
-          bool empty() const { return m_algorithms.empty () ; }
-          /// get the algorithm name
-          const std::string& algName ( const size_t i ) const { return m_names[i] ; }
-          /// get the algorithm
-          LoKi::Interface<IAlgorithm>
-          getAlgorithm ( const std::string& name ) const ; // get the algorithm
-        public:
-          // ======================================================================
-          std::ostream& print( const std::string& name, std::ostream& s) const ;
-          // ======================================================================
-          // ======================================================================
-          auto begin() const { return m_algorithms.begin() ; }
-          auto end()   const { return m_algorithms.end()   ; }
-          /// get the algorithms
-          const auto& algorithms () const { return m_algorithms ; }
-          /// get the algorithm name
-          const std::vector<std::string>& algNames () const { return m_names ; }
-          /// get the algorithms
-          void getAlgorithms () const ; // get the algorithms
-          // ======================================================================
-        private:
-          // ======================================================================
-          /// the algorithm names
-          std::vector<std::string> m_names ;               // the algorithm names
-          /// the algorithms themself
-          mutable std::vector< LoKi::Interface<IAlgorithm> > m_algorithms ;
-          // ======================================================================
-        } ;
+      // TODO: AlgsFunctorBase doesn't actually depend on Ret -- so should
+      //       try to move the code to a non-template implemenation to reduce
+      //       code size...
+      template <typename ReturnType>
+      class GAUDI_API AlgsFunctorBase : public LoKi::Functor<void, ReturnType> {
+      public:
+        // ======================================================================
+        /// constructor from algorithm names
+        AlgsFunctorBase( std::vector<std::string> name );
+        AlgsFunctorBase( AlgsFunctorBase&& )      = default;
+        AlgsFunctorBase( const AlgsFunctorBase& ) = default;
+        ~AlgsFunctorBase() override;
+        // ======================================================================
+      protected:
+        // ======================================================================
+        /// the actual type of vector of algorithms
+        bool empty() const { return m_algorithms.empty(); }
+        /// get the algorithm name
+        const std::string& algName( const size_t i ) const { return m_names[i]; }
+        /// get the algorithm
+        LoKi::Interface<IAlgorithm> getAlgorithm( const std::string& name ) const; // get the algorithm
+      public:
+        // ======================================================================
+        std::ostream& print( const std::string& name, std::ostream& s ) const;
+        // ======================================================================
+        // ======================================================================
+        auto begin() const { return m_algorithms.begin(); }
+        auto end() const { return m_algorithms.end(); }
+        /// get the algorithms
+        const auto& algorithms() const { return m_algorithms; }
+        /// get the algorithm name
+        const std::vector<std::string>& algNames() const { return m_names; }
+        /// get the algorithms
+        void getAlgorithms() const; // get the algorithms
+        // ======================================================================
+      private:
+        // ======================================================================
+        /// the algorithm names
+        std::vector<std::string> m_names; // the algorithm names
+        /// the algorithms themself
+        mutable std::vector<LoKi::Interface<IAlgorithm>> m_algorithms;
+        // ======================================================================
+      };
 
-        template <typename Compose>
-        using result_t = decltype(Compose::execute(std::declval<IAlgorithm**>(),
-                                                   std::declval<IAlgorithm**>()));
+      template <typename Compose>
+      using result_t = decltype( Compose::execute( std::declval<IAlgorithm**>(), std::declval<IAlgorithm**>() ) );
 
-        template <typename Compose>
-        struct GAUDI_API AlgsFunctor final : AlgsFunctorBase<result_t<Compose>> {
-          /// constructor from the algorithm name
-          AlgsFunctor ( std::string name1 ,
-                        std::string name2 )
-              : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
-          AlgsFunctor ( std::string name1 ,
-                        std::string name2 ,
-                        std::string name3 )
-              : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
-          AlgsFunctor( std::string name1 ,
-                       std::string name2 ,
-                       std::string name3 ,
-                       std::string name4 )
-              : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
-          AlgsFunctor( std::vector<std::string> names )
-              : AuxFunBase{ std::tie(names) }
-              , AlgsFunctorBase<result_t<Compose>>( std::move(names) ) {};
-          /// MANDATORY: clone method ("virtual constructor")
-          AlgsFunctor* clone() const override { return new AlgsFunctor ( *this ) ; }
-          /// MANDATORY: the only one essential method
-          result_t<Compose> operator() () const override {
-            if ( this->algNames().size() != this->algorithms().size() ) this->getAlgorithms() ;
-            return Compose::execute( this->begin(), this->end() );
-          }
-          /// OPTIONAL: nice printout
-          std::ostream& fillStream ( std::ostream& s ) const override
-          { return this->print ( Compose::name() , s ) ; }
-
-        };
-    }
+      template <typename Compose>
+      struct GAUDI_API AlgsFunctor final : AlgsFunctorBase<result_t<Compose>> {
+        /// constructor from the algorithm name
+        AlgsFunctor( std::string name1, std::string name2 )
+            : AlgsFunctor( std::vector<std::string>{std::move( name1 ), std::move( name2 )} ) {}
+        AlgsFunctor( std::string name1, std::string name2, std::string name3 )
+            : AlgsFunctor( std::vector<std::string>{std::move( name1 ), std::move( name2 ), std::move( name3 )} ) {}
+        AlgsFunctor( std::string name1, std::string name2, std::string name3, std::string name4 )
+            : AlgsFunctor( std::vector<std::string>{std::move( name1 ), std::move( name2 ), std::move( name3 ),
+                                                    std::move( name4 )} ) {}
+        AlgsFunctor( std::vector<std::string> names )
+            : AuxFunBase{std::tie( names )}, AlgsFunctorBase<result_t<Compose>>( std::move( names ) ){};
+        /// MANDATORY: clone method ("virtual constructor")
+        AlgsFunctor* clone() const override { return new AlgsFunctor( *this ); }
+        /// MANDATORY: the only one essential method
+        result_t<Compose> operator()() const override {
+          if ( this->algNames().size() != this->algorithms().size() ) this->getAlgorithms();
+          return Compose::execute( this->begin(), this->end() );
+        }
+        /// OPTIONAL: nice printout
+        std::ostream& fillStream( std::ostream& s ) const override { return this->print( Compose::name(), s ); }
+      };
+    } // namespace details
     // ========================================================================
     /** @class AnyPassed
      *  simple check of the certain algorithm to pass the filter
@@ -288,14 +268,14 @@ namespace LoKi {
      */
     // =========================================================================
     namespace details {
-        struct AnyPassed {
-            static const char* name() { return "ALG_ANYPASSED" ; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end) {
-                return std::any_of( begin, end, Predicates::filterPassed );
-            }
-        };
-    }
+      struct AnyPassed {
+        static const char* name() { return "ALG_ANYPASSED"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return std::any_of( begin, end, Predicates::filterPassed );
+        }
+      };
+    } // namespace details
     using AnyPassed = details::AlgsFunctor<details::AnyPassed>;
     // ======================================================================
     // ========================================================================
@@ -307,14 +287,14 @@ namespace LoKi {
      */
 
     namespace details {
-        struct AllPassed {
-            static const char* name() { return "ALG_ANYPASSED" ; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end) {
-                return begin!=end && std::all_of( begin, end, Predicates::filterPassed );
-            }
-        };
-    }
+      struct AllPassed {
+        static const char* name() { return "ALG_ANYPASSED"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return begin != end && std::all_of( begin, end, Predicates::filterPassed );
+        }
+      };
+    } // namespace details
     using AllPassed = details::AlgsFunctor<details::AllPassed>;
 
     // ========================================================================
@@ -326,13 +306,14 @@ namespace LoKi {
      */
     // =========================================================================
     namespace details {
-        struct AnyEnabled {
-            static const char* name() { return "ALG_ANYENABLED"; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end)
-            { return std::any_of( begin , end, Predicates::isEnabled ) ; }
-        };
-    }
+      struct AnyEnabled {
+        static const char* name() { return "ALG_ANYENABLED"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return std::any_of( begin, end, Predicates::isEnabled );
+        }
+      };
+    } // namespace details
     using AnyEnabled = details::AlgsFunctor<details::AnyEnabled>;
 
     // ========================================================================
@@ -344,13 +325,14 @@ namespace LoKi {
      */
     // =========================================================================
     namespace details {
-        struct AllEnabled {
-            static const char* name() { return "ALG_ALLENABLED"; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end)
-            { return begin!=end  && std::all_of( begin, end, Predicates::isEnabled ) ; }
-        };
-    }
+      struct AllEnabled {
+        static const char* name() { return "ALG_ALLENABLED"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return begin != end && std::all_of( begin, end, Predicates::isEnabled );
+        }
+      };
+    } // namespace details
     using AllEnabled = details::AlgsFunctor<details::AllEnabled>;
 
     // ========================================================================
@@ -362,13 +344,14 @@ namespace LoKi {
      */
     // =========================================================================
     namespace details {
-        struct AnyExecuted {
-            static const char* name() { return "ALG_ANYEXECUTED"; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end)
-            { return std::any_of( begin, end, Predicates::isExecuted ) ;}
-        };
-    }
+      struct AnyExecuted {
+        static const char* name() { return "ALG_ANYEXECUTED"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return std::any_of( begin, end, Predicates::isExecuted );
+        }
+      };
+    } // namespace details
     using AnyExecuted = details::AlgsFunctor<details::AnyExecuted>;
 
     // ========================================================================
@@ -380,13 +363,14 @@ namespace LoKi {
      */
     // =========================================================================
     namespace details {
-        struct AllExecuted {
-            static const char* name() { return "ALG_ALLEXECUTED"; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end)
-            { return begin!=end  && std::all_of ( begin, end, Predicates::isExecuted ) ; }
-        };
-    }
+      struct AllExecuted {
+        static const char* name() { return "ALG_ALLEXECUTED"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return begin != end && std::all_of( begin, end, Predicates::isExecuted );
+        }
+      };
+    } // namespace details
     using AllExecuted = details::AlgsFunctor<details::AllExecuted>;
     // ========================================================================
     /** @class RunAll
@@ -396,33 +380,29 @@ namespace LoKi {
      */
     // =========================================================================
     namespace details {
-        struct RunAll {
-            static const char* name() { return "ALG_RUNALL" ; }
-            template <typename Iterator>
-            static bool execute(Iterator begin, Iterator end) {
-                return std::all_of( begin, end, [](IAlgorithm* alg) {
-                    if ( UNLIKELY(!alg) ) {
-                      throw GaudiException( "Invalid algorithm!", "RunAll", StatusCode::FAILURE );
-                    }
-                    if ( UNLIKELY(!Predicates::isEnabled( alg )) ) {
-                      throw GaudiException( "Algorithm '" + alg->name() + "' is disabled", "RunAll", StatusCode::SUCCESS );
-                    }
-                    if ( !Predicates::isExecuted ( alg ) ) {
-                      StatusCode sc = alg->sysExecute(Gaudi::Hive::currentContext()) ;  // EXECUTE IT!!!
-                      if ( sc.isFailure() ) {
-                        throw GaudiException("Error from algorithm '" + alg->name() + "' sysExecute", "RunAll", sc );
-                      }
-                    }
-                    //
-                    return Predicates::filterPassed( alg );
-                } );
+      struct RunAll {
+        static const char* name() { return "ALG_RUNALL"; }
+        template <typename Iterator>
+        static bool execute( Iterator begin, Iterator end ) {
+          return std::all_of( begin, end, []( IAlgorithm* alg ) {
+            if ( UNLIKELY( !alg ) ) { throw GaudiException( "Invalid algorithm!", "RunAll", StatusCode::FAILURE ); }
+            if ( UNLIKELY( !Predicates::isEnabled( alg ) ) ) {
+              throw GaudiException( "Algorithm '" + alg->name() + "' is disabled", "RunAll", StatusCode::SUCCESS );
             }
-        };
-    }
+            if ( !Predicates::isExecuted( alg ) ) {
+              StatusCode sc = alg->sysExecute( Gaudi::Hive::currentContext() ); // EXECUTE IT!!!
+              if ( sc.isFailure() ) {
+                throw GaudiException( "Error from algorithm '" + alg->name() + "' sysExecute", "RunAll", sc );
+              }
+            }
+            //
+            return Predicates::filterPassed( alg );
+          } );
+        }
+      };
+    } // namespace details
     using RunAll = details::AlgsFunctor<details::RunAll>;
     // ======================================================================
-
-
 
     // =========================================================================
     /** @class NumPassed
@@ -432,14 +412,14 @@ namespace LoKi {
      *  @date 2008-10-19
      */
     namespace details {
-        struct NumPassed {
-            static const char* name() { return "ALG_NUMPASSED" ; }
-            template <typename Iterator>
-            static double execute(Iterator begin, Iterator end) {
-                return std::count_if( begin, end, Predicates::filterPassed ) ;
-            }
-        };
-    }
+      struct NumPassed {
+        static const char* name() { return "ALG_NUMPASSED"; }
+        template <typename Iterator>
+        static double execute( Iterator begin, Iterator end ) {
+          return std::count_if( begin, end, Predicates::filterPassed );
+        }
+      };
+    } // namespace details
     using NumPassed = details::AlgsFunctor<details::NumPassed>;
     // =========================================================================
     /** @class NumEnabled
@@ -449,14 +429,14 @@ namespace LoKi {
      *  @date 2008-10-19
      */
     namespace details {
-        struct NumEnabled {
-            static const char* name() { return "ALG_NUMENABLED" ; }
-            template <typename Iterator>
-            static double execute(Iterator begin, Iterator end) {
-                return std::count_if( begin, end, Predicates::isEnabled ) ;
-            }
-        };
-    }
+      struct NumEnabled {
+        static const char* name() { return "ALG_NUMENABLED"; }
+        template <typename Iterator>
+        static double execute( Iterator begin, Iterator end ) {
+          return std::count_if( begin, end, Predicates::isEnabled );
+        }
+      };
+    } // namespace details
     using NumEnabled = details::AlgsFunctor<details::NumEnabled>;
     // ========================================================================
     /** @class NumExecuted
@@ -466,19 +446,19 @@ namespace LoKi {
      *  @date 2008-10-19
      */
     namespace details {
-        struct NumExecuted {
-            static const char* name() { return "ALG_NUMEXECUTED" ; }
-            template <typename Iterator>
-            static double execute(Iterator begin, Iterator end) {
-                return std::count_if( begin, end, Predicates::isExecuted ) ;
-            }
-        };
-    }
+      struct NumExecuted {
+        static const char* name() { return "ALG_NUMEXECUTED"; }
+        template <typename Iterator>
+        static double execute( Iterator begin, Iterator end ) {
+          return std::count_if( begin, end, Predicates::isExecuted );
+        }
+      };
+    } // namespace details
     using NumExecuted = details::AlgsFunctor<details::NumExecuted>;
     // ========================================================================
-  } //                                        end of namespace LoKi::Algorithms
+  } // namespace Algorithms
   // ==========================================================================
-} //                                                     end of namaespace LoKi
+} // namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

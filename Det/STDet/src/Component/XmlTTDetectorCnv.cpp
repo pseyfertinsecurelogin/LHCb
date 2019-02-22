@@ -16,5 +16,5 @@
 // TTDet
 #include "STDet/DeTTDetector.h"
 
-typedef XmlUserDetElemCnv<DeTTDetector>       XmlTTDetectorCnv;
+typedef XmlUserDetElemCnv<DeTTDetector> XmlTTDetectorCnv;
 DECLARE_CONVERTER( XmlTTDetectorCnv )

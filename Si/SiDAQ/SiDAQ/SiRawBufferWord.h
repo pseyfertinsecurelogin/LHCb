@@ -8,12 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef SIDAQ_SIRAWBUFFERWORD_H 
+#ifndef SIDAQ_SIRAWBUFFERWORD_H
 #define SIDAQ_SIRAWBUFFERWORD_H 1
 #include <cstdint>
 
 namespace SiDAQ {
-typedef uint32_t buffer_word;
+  typedef uint32_t buffer_word;
 }
 
 #endif // SIDAQ_SIRAWBUFFERWORD_H

@@ -12,12 +12,12 @@
 #define IANNSVC_H 1
 
 // Include files
-#include <string>
-#include <vector>
-#include <utility>
-#include <optional>
-#include "Kernel/IANSvc.h"
 #include "GaudiKernel/VectorMap.h"
+#include "Kernel/IANSvc.h"
+#include <optional>
+#include <string>
+#include <utility>
+#include <vector>
 
 /** @class IANNSvc IANNSvc.h
  *
@@ -42,28 +42,28 @@
  *  @date   2008-01-02
  */
 
-
-struct IANNSvc : extend_interfaces<IANSvc>  {
+struct IANNSvc : extend_interfaces<IANSvc> {
   /// Return the interface ID
-  DeclareInterfaceID(IANNSvc,5,0);
+  DeclareInterfaceID( IANNSvc, 5, 0 );
 
-  typedef IANSvc::major_key_type                      major_key_type;
-  typedef IANSvc::minor_key_type                      minor_key_type;
-  typedef int                                         minor_mapped_type;
-  typedef std::pair<minor_key_type,minor_mapped_type> minor_value_type;
+  typedef IANSvc::major_key_type                       major_key_type;
+  typedef IANSvc::minor_key_type                       minor_key_type;
+  typedef int                                          minor_mapped_type;
+  typedef std::pair<minor_key_type, minor_mapped_type> minor_value_type;
 
   /// the two main functions: map 'major/minor key' -> minor key, value
-  virtual std::optional<minor_value_type>  value(const major_key_type& major, const std::string& minor) const = 0;
+  virtual std::optional<minor_value_type> value( const major_key_type& major, const std::string& minor ) const = 0;
   ///                     and map 'major/minor value' -> minor key, value
-  virtual std::optional<minor_value_type>  value(const major_key_type& major, int minor) const = 0;
+  virtual std::optional<minor_value_type> value( const major_key_type& major, int minor ) const = 0;
 
   /// introspection, i.e. access to what is available: is a major present?
-  bool hasMajor(const major_key_type& major) const override = 0;
+  bool hasMajor( const major_key_type& major ) const override = 0;
   ///                                                  return list of majors
-  std::vector< major_key_type > majors() const override = 0;
+  std::vector<major_key_type> majors() const override = 0;
   ///                                                  return minors for a given major
-  virtual std::vector<minor_value_type> items(const major_key_type& major) const = 0;
+  virtual std::vector<minor_value_type> items( const major_key_type& major ) const = 0;
   ///                                                  optimal return of map for later use without additional lookups
-  virtual GaudiUtils::VectorMap< minor_value_type::first_type, minor_value_type::second_type > item_map(const major_key_type& major) const = 0;
+  virtual GaudiUtils::VectorMap<minor_value_type::first_type, minor_value_type::second_type>
+  item_map( const major_key_type& major ) const = 0;
 };
 #endif // IANNSVC_H

@@ -13,10 +13,8 @@
 
 // Include files
 #include "GaudiKernel/IInterface.h"
-#include <xercesc/parsers/XercesDOMParser.hpp>
 #include "XmlTools/IOVDOMDocument.h"
-
-
+#include <xercesc/parsers/XercesDOMParser.hpp>
 
 /** @class IXmlParserSvc IXmlParserSvc.h DetDescCnv/IXmlParserSvc.h
  *
@@ -28,7 +26,7 @@
 
 struct IXmlParserSvc : extend_interfaces<IInterface> {
 
-   DeclareInterfaceID( IXmlParserSvc, 2 , 0);
+  DeclareInterfaceID( IXmlParserSvc, 2, 0 );
 
   /**
    * This method parses an xml file and produces the corresponding DOM
@@ -37,7 +35,7 @@ struct IXmlParserSvc : extend_interfaces<IInterface> {
    * @param fileName the name of the file to parse
    * @return the document issued from the parsing
    */
-  virtual IOVDOMDocument* parse (const char* fileName) = 0;
+  virtual IOVDOMDocument* parse( const char* fileName ) = 0;
 
   /**
    * This method parses XML from a string and produces the corresponding DOM
@@ -46,7 +44,7 @@ struct IXmlParserSvc : extend_interfaces<IInterface> {
    * @param source the string to parse
    * @return the document issued from the parsing
    */
-  virtual IOVDOMDocument* parseString (std::string source) = 0;
+  virtual IOVDOMDocument* parseString( std::string source ) = 0;
 
   /**
    * This clears the cache of previously parsed xml files.
@@ -55,8 +53,7 @@ struct IXmlParserSvc : extend_interfaces<IInterface> {
 
   /// Method to remove the lock from a document in the cache or to delete the document
   /// generated from a string.
-  virtual void releaseDoc(IOVDOMDocument* doc) = 0;
-
+  virtual void releaseDoc( IOVDOMDocument* doc ) = 0;
 };
 
 #endif // DETDESCCNV_IXMLPARSERSVC_H

@@ -13,6 +13,7 @@ Meta module to generate and expose ConfigurableGenerator classes.
 """
 __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
 
+
 class MetaConfigurableGenerator(type):
     """
     Meta-class for ConfigurablesGenerator.
@@ -20,6 +21,7 @@ class MetaConfigurableGenerator(type):
     Instrument the generated class with the same properties as the Configurable
     class it will generate.
     """
+
     def __new__(cls, name, bases, dct):
         """
         Add the property data members to the generated class and fill the __slots__
@@ -30,13 +32,12 @@ class MetaConfigurableGenerator(type):
         # Set our slots from the  generated configurable class
         # excluding the 'private' slots
         conf = dct["__configurable__"]
-        if conf is not None: # needed to allow that the base class is not bound to any configurable
+        if conf is not None:  # needed to allow that the base class is not bound to any configurable
             slots = conf.__slots__
         else:
             slots = []
-        dct["__slots__"] = tuple([prop
-                                  for prop in slots
-                                  if not prop.startswith("_")])
+        dct["__slots__"] = tuple(
+            [prop for prop in slots if not prop.startswith("_")])
         # generate the class
         return type.__new__(cls, name, bases, dct)
 
@@ -44,7 +45,8 @@ class MetaConfigurableGenerator(type):
         """
         A __setattr__ declaration here forbids modifications of the class object.
         """
-        raise AttributeError("class %s has no attribute '%s'" % (self.__name__, name))
+        raise AttributeError(
+            "class %s has no attribute '%s'" % (self.__name__, name))
 
 
 # The class Configurable has got several data members that are automatically
@@ -56,6 +58,7 @@ class ConfigurableGenerator(object):
     """
     __metaclass__ = MetaConfigurableGenerator
     __configurable__ = None
+
     def __init__(self, **kwargs):
         """
         Initialize the instance properties from the constructor keyword arguments.
@@ -75,7 +78,7 @@ class ConfigurableGenerator(object):
         Generate the configurable instance setting the properties to the values
         in the generator instance.
         """
-        return apply(self.__configurable__, (name,), self._props())
+        return apply(self.__configurable__, (name, ), self._props())
 
     def __call__(self, name):
         """
@@ -85,14 +88,17 @@ class ConfigurableGenerator(object):
         return self.configurable(name)
 
     def __repr__(self):
-        r = "%s(%s)" % (self.__class__.__name__,
-                        ", ".join(["%s = %r" % i for i in self._props().items()]))
+        r = "%s(%s)" % (self.__class__.__name__, ", ".join(
+            ["%s = %r" % i for i in self._props().items()]))
         return r
 
     def __eq__(self, other):
         return ((self.__class__ == other.__class__)
                 and (self._props() == other._props()))
+
+
 # pylint: enable-msg=E1101
+
 
 class _ConfigurableGeneratorsModule(object):
     """
@@ -118,13 +124,16 @@ class _ConfigurableGeneratorsModule(object):
         The created generator is stored in an internal property to avoid to
         generate it more than once.
         """
-        code =  ("\n".join([  "from GaudiConfUtils.ConfigurableGenerators import ConfigurableGenerator"
-                            , "from Gaudi.Configurables import %(name)s"
-                            , "class %(name)s(ConfigurableGenerator):"
-                            , "  '''Generator for configurable class %(name)s'''"
-                            , "  __configurable__ = %(name)s"
-                            ])) % { "name": name }
-        locals = {} # temporary name space
+        code = ("\n".join([
+            "from GaudiConfUtils.ConfigurableGenerators import ConfigurableGenerator",
+            "from Gaudi.Configurables import %(name)s",
+            "class %(name)s(ConfigurableGenerator):",
+            "  '''Generator for configurable class %(name)s'''",
+            "  __configurable__ = %(name)s"
+        ])) % {
+            "name": name
+        }
+        locals = {}  # temporary name space
         try:
             exec code in locals
         except:
@@ -143,10 +152,12 @@ class _ConfigurableGeneratorsModule(object):
         if name not in self.__all__:
             # We raise an AttributeError exception if the configurable could not be found
             # to respect the Python semantic.
-            raise AttributeError("module '%s' does not have attribute '%s'" % (self.__name__, name))
+            raise AttributeError("module '%s' does not have attribute '%s'" %
+                                 (self.__name__, name))
         # create the generator class
         setattr(self, name, self.__makeGenerator__(name))
         return getattr(self, name)
+
 
 # install the facade module instance as a module
 import sys

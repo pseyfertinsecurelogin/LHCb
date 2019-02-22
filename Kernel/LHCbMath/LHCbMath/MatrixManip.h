@@ -22,8 +22,7 @@
  *  @author Juan Palacios
  *  @date   2006-03-28
  */
-namespace Gaudi
-{
+namespace Gaudi {
 
   namespace Math {
 
@@ -40,21 +39,20 @@ namespace Gaudi
      *  @date   2006-03-28
      */
     template <typename M>
-    SMatrix<typename M::value_type, M::kRows, M::kRows,
-            MatRepSym<typename M::value_type, M::kRows> > Symmetrize(const M& rhs) {
+    SMatrix<typename M::value_type, M::kRows, M::kRows, MatRepSym<typename M::value_type, M::kRows>>
+    Symmetrize( const M& rhs ) {
 
-      SMatrix<typename M::value_type, M::kRows, M::kRows,
-        MatRepSym<typename M::value_type, M::kRows> > result;
+      SMatrix<typename M::value_type, M::kRows, M::kRows, MatRepSym<typename M::value_type, M::kRows>> result;
 
       for ( unsigned int i = 0; i < M::kRows; ++i ) {
         for ( unsigned int j = 0; j < M::kRows; ++j ) {
-          if (i<=j) result(i,j) = rhs(i,j);
+          if ( i <= j ) result( i, j ) = rhs( i, j );
         }
       }
       return result;
     }
 
-  }
-}
+  } // namespace Math
+} // namespace Gaudi
 
 #endif // LHCB_MATRIXMANIP_H

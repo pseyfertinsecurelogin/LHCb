@@ -16,11 +16,11 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // local
+#include "Tell1Kernel/VeloDecodeConf.h"
+#include "Tell1Kernel/VeloDecodeCore.h"
+#include "VeloEvent/EvtInfo.h"
 #include "VeloEvent/VeloFullBank.h"
 #include "VeloEvent/VeloTELL1Data.h"
-#include "VeloEvent/EvtInfo.h"
-#include "Tell1Kernel/VeloDecodeCore.h"
-#include "Tell1Kernel/VeloDecodeConf.h"
 #include "VeloFullDecoder.h"
 
 /** @class DecodeVeloFullRawBuffer DecodeVeloFullRawBuffer.h
@@ -37,30 +37,29 @@ public:
   /// Standard constructor
   DecodeVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~DecodeVeloFullRawBuffer( ); ///< Destructor
+  virtual ~DecodeVeloFullRawBuffer(); ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
   StatusCode getData();
   StatusCode decodeData();
 
 protected:
-
   std::string adcContName();
   std::string pedContName();
   std::string decADCName();
   std::string decPedName();
   std::string decHeaderName();
   std::string evtInfoName();
-  void sortAndWriteDecodedData();
-  void setADCDataFlag();
-  void setPedDataFlag();
-  bool adcDataFlag();
-  bool pedDataFlag();
-  void resetMemory();
-  void unsetADCDataFlag();
-  void unsetPedDataFlag();
+  void        sortAndWriteDecodedData();
+  void        setADCDataFlag();
+  void        setPedDataFlag();
+  bool        adcDataFlag();
+  bool        pedDataFlag();
+  void        resetMemory();
+  void        unsetADCDataFlag();
+  void        unsetPedDataFlag();
 
 private:
   // location paths
@@ -81,7 +80,7 @@ private:
   LHCb::VeloTELL1Datas* m_decodedPartialADC;
   LHCb::VeloTELL1Datas* m_decodedPed;
   LHCb::VeloTELL1Datas* m_decodedHeader;
-  EvtInfos* m_evtInfo;
+  EvtInfos*             m_evtInfo;
   // flags
   bool m_adcDataPresent;
   bool m_pedDataPresent;
@@ -103,7 +102,5 @@ private:
   VeloFullDecoder m_PedDecoder;
   // cable order
   std::vector<unsigned int> m_cableOrder;
-
-
 };
 #endif // DECODEVELOFULLRAWBUFFER_H

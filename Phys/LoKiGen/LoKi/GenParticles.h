@@ -20,18 +20,18 @@
 // ============================================================================
 // LHCbKernel
 // ============================================================================
+#include "Kernel/NodesPIDs.h"
 #include "Kernel/ParticleID.h"
 #include "Kernel/iNode.h"
-#include "Kernel/NodesPIDs.h"
 #include "LoKi/iTree.h"
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Constants.h"
 #include "LoKi/BasicFunctors.h"
+#include "LoKi/Constants.h"
 #include "LoKi/Functions.h"
-#include "LoKi/GenTypes.h"
 #include "LoKi/GenChildSelector.h"
+#include "LoKi/GenTypes.h"
 #include "LoKi/PidFunctions.h"
 // ============================================================================
 /** @file
@@ -49,8 +49,7 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::GenParticles GenParticles.h LoKi/GenParticles.h
    *
@@ -60,8 +59,7 @@ namespace LoKi
    *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date   2005-03-26
    */
-  namespace GenParticles
-  {
+  namespace GenParticles {
     // ========================================================================
     /** @class BarCode
      *  the most primitive function - it returns the "barcode"
@@ -73,13 +71,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API BarCode : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API BarCode : LoKi::GenTypes::GFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      BarCode* clone() const override ;
+      BarCode* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
@@ -100,13 +97,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API Identifier : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API Identifier : LoKi::GenTypes::GFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
       Identifier* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
@@ -127,13 +123,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API AbsIdentifier : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API AbsIdentifier : LoKi::GenTypes::GFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
       AbsIdentifier* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
@@ -144,101 +139,97 @@ namespace LoKi
      *  new verison of PID-comparison
      */
     // ========================================================================
-    struct GAUDI_API IsID  : LoKi::GenTypes::GCuts , LoKi::Pids::GetPids
-    {
+    struct GAUDI_API IsID : LoKi::GenTypes::GCuts, LoKi::Pids::GetPids {
       // ======================================================================
-      IsID ( const long                           id  ) ;
-      IsID ( const unsigned long                  id  ) ;
-      IsID ( const LHCb::ParticleID&              id  ) ;
-      IsID ( const std::string&                   id  ) ;
-      IsID ( const std::vector<int>&              ids ) ;
-      IsID ( const std::vector<long>&             ids ) ;
-      IsID ( const std::vector<unsigned int>&     ids ) ;
-      IsID ( const std::vector<unsigned long>&    ids ) ;
-      IsID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsID ( const std::vector<std::string>&      ids ) ;
-      IsID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsID( const long id );
+      IsID( const unsigned long id );
+      IsID( const LHCb::ParticleID& id );
+      IsID( const std::string& id );
+      IsID( const std::vector<int>& ids );
+      IsID( const std::vector<long>& ids );
+      IsID( const std::vector<unsigned int>& ids );
+      IsID( const std::vector<unsigned long>& ids );
+      IsID( const std::vector<LHCb::ParticleID>& ids );
+      IsID( const std::vector<std::string>& ids );
+      IsID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
       IsID* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class IsNotID
      *  new verison of PID-comparison
      */
     // ========================================================================
-    struct GAUDI_API IsNotID : LoKi::GenParticles::IsID
-    {
+    struct GAUDI_API IsNotID : LoKi::GenParticles::IsID {
       // ======================================================================
-      IsNotID ( const long                           id  ) ;
-      IsNotID ( const unsigned long                  id  ) ;
-      IsNotID ( const LHCb::ParticleID&              id  ) ;
-      IsNotID ( const std::string&                   id  ) ;
-      IsNotID ( const std::vector<int>&              ids ) ;
-      IsNotID ( const std::vector<long>&             ids ) ;
-      IsNotID ( const std::vector<unsigned int>&     ids ) ;
-      IsNotID ( const std::vector<unsigned long>&    ids ) ;
-      IsNotID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsNotID ( const std::vector<std::string>&      ids ) ;
-      IsNotID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsNotID( const long id );
+      IsNotID( const unsigned long id );
+      IsNotID( const LHCb::ParticleID& id );
+      IsNotID( const std::string& id );
+      IsNotID( const std::vector<int>& ids );
+      IsNotID( const std::vector<long>& ids );
+      IsNotID( const std::vector<unsigned int>& ids );
+      IsNotID( const std::vector<unsigned long>& ids );
+      IsNotID( const std::vector<LHCb::ParticleID>& ids );
+      IsNotID( const std::vector<std::string>& ids );
+      IsNotID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
       IsNotID* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    struct GAUDI_API IsAbsID : LoKi::GenParticles::IsID
-    {
+    struct GAUDI_API IsAbsID : LoKi::GenParticles::IsID {
       // ======================================================================
-      IsAbsID ( const long                           id  ) ;
-      IsAbsID ( const unsigned long                  id  ) ;
-      IsAbsID ( const LHCb::ParticleID&              id  ) ;
-      IsAbsID ( const std::string&                   id  ) ;
-      IsAbsID ( const std::vector<int>&              ids ) ;
-      IsAbsID ( const std::vector<long>&             ids ) ;
-      IsAbsID ( const std::vector<unsigned int>&     ids ) ;
-      IsAbsID ( const std::vector<unsigned long>&    ids ) ;
-      IsAbsID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsAbsID ( const std::vector<std::string>&      ids ) ;
-      IsAbsID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsAbsID( const long id );
+      IsAbsID( const unsigned long id );
+      IsAbsID( const LHCb::ParticleID& id );
+      IsAbsID( const std::string& id );
+      IsAbsID( const std::vector<int>& ids );
+      IsAbsID( const std::vector<long>& ids );
+      IsAbsID( const std::vector<unsigned int>& ids );
+      IsAbsID( const std::vector<unsigned long>& ids );
+      IsAbsID( const std::vector<LHCb::ParticleID>& ids );
+      IsAbsID( const std::vector<std::string>& ids );
+      IsAbsID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
       IsAbsID* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    struct GAUDI_API IsNotAbsID : LoKi::GenParticles::IsAbsID
-    {
+    struct GAUDI_API IsNotAbsID : LoKi::GenParticles::IsAbsID {
       // ======================================================================
-      IsNotAbsID ( const long                           id  ) ;
-      IsNotAbsID ( const unsigned long                  id  ) ;
-      IsNotAbsID ( const LHCb::ParticleID&              id  ) ;
-      IsNotAbsID ( const std::string&                   id  ) ;
-      IsNotAbsID ( const std::vector<int>&              ids ) ;
-      IsNotAbsID ( const std::vector<long>&             ids ) ;
-      IsNotAbsID ( const std::vector<unsigned int>&     ids ) ;
-      IsNotAbsID ( const std::vector<unsigned long>&    ids ) ;
-      IsNotAbsID ( const std::vector<LHCb::ParticleID>& ids ) ;
-      IsNotAbsID ( const std::vector<std::string>&      ids ) ;
-      IsNotAbsID ( const LoKi::Pids::GetPids&           ids ) ;
+      IsNotAbsID( const long id );
+      IsNotAbsID( const unsigned long id );
+      IsNotAbsID( const LHCb::ParticleID& id );
+      IsNotAbsID( const std::string& id );
+      IsNotAbsID( const std::vector<int>& ids );
+      IsNotAbsID( const std::vector<long>& ids );
+      IsNotAbsID( const std::vector<unsigned int>& ids );
+      IsNotAbsID( const std::vector<unsigned long>& ids );
+      IsNotAbsID( const std::vector<LHCb::ParticleID>& ids );
+      IsNotAbsID( const std::vector<std::string>& ids );
+      IsNotAbsID( const LoKi::Pids::GetPids& ids );
       // ======================================================================
       IsNotAbsID* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Status
      *  the most primitive function - it return the "status"
@@ -250,13 +241,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API Status : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API Status : LoKi::GenTypes::GFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
       Status* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
@@ -273,13 +263,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct GAUDI_API ValidEndVertex : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API ValidEndVertex : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       ValidEndVertex* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
@@ -313,29 +302,25 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23
      */
-    class GAUDI_API MomentumDistance : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API MomentumDistance : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /// constructor from 4 components
-      MomentumDistance ( const double px ,
-                         const double py ,
-                         const double pz ,
-                         const double e  ) ;
+      MomentumDistance( const double px, const double py, const double pz, const double e );
       /** constructor
        *  @param vct the reference 4-momentum
        */
-      MomentumDistance ( const LoKi::LorentzVector& vct ) ;
+      MomentumDistance( const LoKi::LorentzVector& vct );
       /// MANDATORY: clone function ("virtual constructor")
       MomentumDistance* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::LorentzVector m_vct ;
+      LoKi::LorentzVector m_vct;
       // ======================================================================
     };
     // ========================================================================
@@ -357,44 +342,40 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23
      */
-    class GAUDI_API TransverseMomentumRel : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API TransverseMomentumRel : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor from theta and phi
        *  @param theta theta angle for the direction
        *  @param phi phi angle for the direction
        */
-      TransverseMomentumRel ( const double theta ,
-                              const double phi   ) ;
+      TransverseMomentumRel( const double theta, const double phi );
       /** constructor from x,y,z
        *  @param x x-component of the direction vector
        *  @param y y-component of the direction vector
        *  @param z z-component of the direction vector
        */
-      TransverseMomentumRel ( const double x ,
-                              const double y ,
-                              const double z ) ;
+      TransverseMomentumRel( const double x, const double y, const double z );
       /** constructor from direction vector
        *  @param vct direction vertor
        *  @see LoKi::ThreeVector
        */
-      TransverseMomentumRel ( const LoKi::ThreeVector& vct ) ;
+      TransverseMomentumRel( const LoKi::ThreeVector& vct );
       /** constructor from direction vector
        *  @param vct direction vertor
        *  @see LoKi::LorentzVector
        */
-      TransverseMomentumRel ( const LoKi::LorentzVector& vct ) ;
+      TransverseMomentumRel( const LoKi::LorentzVector& vct );
       /// MANDATORY: clone function ("virtual constructor")
       TransverseMomentumRel* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::ThreeVector m_vct ;
+      LoKi::ThreeVector m_vct;
       // ======================================================================
     };
     // ========================================================================
@@ -408,65 +389,68 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    class GAUDI_API FromHepMCTree : public LoKi::GenTypes::GCuts
-    {
+    class GAUDI_API FromHepMCTree : public LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
       /** constructor from particle ("head")
        *  @param p pointer to HepMC::GenParticle
        */
-      FromHepMCTree
-      ( const HepMC::GenParticle* p ) ;
+      FromHepMCTree( const HepMC::GenParticle* p );
       /// constructor from vector of particles
-      FromHepMCTree
-      ( const LoKi::GenTypes::GenContainer& r  ) ;
+      FromHepMCTree( const LoKi::GenTypes::GenContainer& r );
       /// constructor from range of particles
-      FromHepMCTree
-      ( const LoKi::Types::GRange& r  ) ;
+      FromHepMCTree( const LoKi::Types::GRange& r );
       /** constructor from vertex  ("head")
        *  @param v pointer to HepMC::GenParticle
        */
-      FromHepMCTree
-      ( const HepMC::GenVertex*   v ) ;
+      FromHepMCTree( const HepMC::GenVertex* v );
       /// templated constructor
       template <class ITERATOR>
-      FromHepMCTree
-      ( ITERATOR first , ITERATOR last  )
-        : LoKi::GenTypes::GCuts ()
-      { _add ( first , last ) ; }
+      FromHepMCTree( ITERATOR first, ITERATOR last ) : LoKi::GenTypes::GCuts() {
+        _add( first, last );
+      }
       /// MANDATORY: clone method ("virtual constructor")
-      FromHepMCTree* clone() const  override;
+      FromHepMCTree* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       template <class ITERATOR>
-      FromHepMCTree& add ( ITERATOR first , ITERATOR last  )
-      { _add ( first , last ) ; return *this ; }
-      FromHepMCTree& add ( const HepMC::GenParticle*    p )
-      { _add ( p ) ; return *this  ; }
-      FromHepMCTree& add ( const HepMC::GenVertex*      p )
-      { _add ( p ) ; return *this  ; }
-      FromHepMCTree& add ( const LoKi::Types::GRange&   p )
-      { _add ( p.begin() , p.end() ) ; return *this  ; }
-      FromHepMCTree& remove ( const HepMC::GenVertex*   v ) ;
-      FromHepMCTree& remove ( const HepMC::GenParticle* v ) ;
+      FromHepMCTree& add( ITERATOR first, ITERATOR last ) {
+        _add( first, last );
+        return *this;
+      }
+      FromHepMCTree& add( const HepMC::GenParticle* p ) {
+        _add( p );
+        return *this;
+      }
+      FromHepMCTree& add( const HepMC::GenVertex* p ) {
+        _add( p );
+        return *this;
+      }
+      FromHepMCTree& add( const LoKi::Types::GRange& p ) {
+        _add( p.begin(), p.end() );
+        return *this;
+      }
+      FromHepMCTree& remove( const HepMC::GenVertex* v );
+      FromHepMCTree& remove( const HepMC::GenParticle* v );
       // ======================================================================
     protected:
       // ======================================================================
       template <class ITERATOR>
-      void _add ( ITERATOR first , ITERATOR last  )
-      { for ( ; first != last ; ++first ) { _add ( *first ) ; } }
-      void _add ( const HepMC::GenParticle* p ) ;
-      void _add ( const HepMC::GenVertex*   v ) ;
+      void _add( ITERATOR first, ITERATOR last ) {
+        for ( ; first != last; ++first ) { _add( *first ); }
+      }
+      void _add( const HepMC::GenParticle* p );
+      void _add( const HepMC::GenVertex* v );
       // ======================================================================
     private:
       // ======================================================================
-      typedef std::vector<HepMC::GenVertex*> VERTICES ;
-      VERTICES m_vertices ;
+      typedef std::vector<HepMC::GenVertex*> VERTICES;
+      VERTICES                               m_vertices;
       // ======================================================================
     };
     // ========================================================================
@@ -480,24 +464,23 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    class GAUDI_API IsAnAncestor : public LoKi::GenTypes::GCuts
-    {
+    class GAUDI_API IsAnAncestor : public LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
       /** constructor from particle
        *  @param p pointer to HepMC::GenParticle
        */
-      IsAnAncestor ( const HepMC::GenParticle* p ) ;
+      IsAnAncestor( const HepMC::GenParticle* p );
       /// MANDATORY: clone method ("virtual constructor")
-      IsAnAncestor* clone() const  override;
+      IsAnAncestor* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      const HepMC::GenParticle* m_particle ;
+      const HepMC::GenParticle* m_particle;
       // ======================================================================
     };
     // ========================================================================
@@ -507,22 +490,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    class  GAUDI_API HasQuark : public LoKi::GenTypes::GCuts
-    {
+    class GAUDI_API HasQuark : public LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
-      HasQuark (  const LHCb::ParticleID::Quark quark ) ;
+      HasQuark( const LHCb::ParticleID::Quark quark );
       /// clone method (mandatory!)
-      HasQuark* clone() const  override;
+      HasQuark* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
-      LHCb::ParticleID::Quark quark() const { return m_quark ; }
+      std::ostream&           fillStream( std::ostream& s ) const override;
+      LHCb::ParticleID::Quark quark() const { return m_quark; }
       // ======================================================================
-    private :
+    private:
       // ======================================================================
-      LHCb::ParticleID::Quark m_quark ;
+      LHCb::ParticleID::Quark m_quark;
       // ======================================================================
     };
     // ========================================================================
@@ -531,15 +513,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct GAUDI_API IsCharged : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsCharged : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// clone method (mandatory!)
-      IsCharged* clone() const  override;
+      IsCharged* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -548,15 +529,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct GAUDI_API IsNeutral : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsNeutral : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// clone method (mandatory!)
-      IsNeutral* clone() const  override;
+      IsNeutral* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -565,16 +545,15 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct GAUDI_API IsLepton : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsLepton : LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsLepton* clone() const  override;
+      IsLepton* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -583,16 +562,15 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct GAUDI_API IsMeson : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsMeson : LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsMeson* clone() const  override;
+      IsMeson* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -601,15 +579,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct GAUDI_API IsBaryon : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsBaryon : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// clone method (mandatory!)
-      IsBaryon* clone() const  override;
+      IsBaryon* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -618,16 +595,15 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct GAUDI_API IsHadron : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsHadron : LoKi::GenTypes::GCuts {
     public:
       // ======================================================================
       /// clone method (mandatory!)
-      IsHadron* clone() const  override;
+      IsHadron* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -636,15 +612,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    struct GAUDI_API IsNucleus : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API IsNucleus : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// clone method (mandatory!)
-      IsNucleus* clone() const  override;
+      IsNucleus* clone() const override;
       /// the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -654,25 +629,24 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    class GAUDI_API ProperLifeTime : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API ProperLifeTime : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor
        *  @param bad the valut toi be returned for particles
        *  where the evaluation end vertex is not possible
        */
-      ProperLifeTime( const double bad = LoKi::Constants::InfiniteTime ) ;
+      ProperLifeTime( const double bad = LoKi::Constants::InfiniteTime );
       /// clone method (mandatory!)
-      ProperLifeTime* clone() const  override;
+      ProperLifeTime* clone() const override;
       /// the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      double m_bad ;
+      double m_bad;
       // ======================================================================
     };
     // ========================================================================
@@ -681,17 +655,16 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    struct GAUDI_API NominalLifeTime : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API NominalLifeTime : LoKi::GenTypes::GFunc {
       // ======================================================================
       /// clone method (mandatory!)
-      NominalLifeTime* clone() const  override;
+      NominalLifeTime* clone() const override;
       /// the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class AdapterToProductionVertex
      *
@@ -702,28 +675,25 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    class GAUDI_API AdapterToProductionVertex : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API AdapterToProductionVertex : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor from vertex function and "bad" value
        *  @param fun verted function to be used
        *  @param bad the value to be returnedd for invalid vertex
        */
-      AdapterToProductionVertex
-      ( const LoKi::Types::GVFunc& fun ,
-        const double               bad ) ;
+      AdapterToProductionVertex( const LoKi::Types::GVFunc& fun, const double bad );
       /// clone method (mandatory!)
-      AdapterToProductionVertex* clone() const  override;
+      AdapterToProductionVertex* clone() const override;
       /// the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Types::GVFun    m_fun ;
-      double                m_bad ;
+      LoKi::Types::GVFun m_fun;
+      double             m_bad;
       // ======================================================================
     };
     // ========================================================================
@@ -736,28 +706,25 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-08
      */
-    class GAUDI_API AdapterToEndVertex : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API AdapterToEndVertex : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor from vertex function and "bad" value
        *  @param fun verted function to be used
        *  @param bad the value to be returnedd for invalid vertex
        */
-      AdapterToEndVertex
-      ( const LoKi::Types::GVFunc& fun ,
-        const double               bad ) ;
+      AdapterToEndVertex( const LoKi::Types::GVFunc& fun, const double bad );
       /// clone method (mandatory!)
-      AdapterToEndVertex* clone() const  override;
+      AdapterToEndVertex* clone() const override;
       /// the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Types::GVFun    m_fun ;
-      double                m_bad ;
+      LoKi::Types::GVFun m_fun;
+      double             m_bad;
       // ======================================================================
     };
     // ========================================================================
@@ -775,15 +742,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-07
      */
-    struct GAUDI_API ThreeCharge : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API ThreeCharge : LoKi::GenTypes::GFunc {
       // ======================================================================
       /// MANDATORY: clone method ("virtual" constructor")
-      ThreeCharge* clone() const override { return new ThreeCharge(*this) ; }
+      ThreeCharge* clone() const override { return new ThreeCharge( *this ); }
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -824,8 +790,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23
      */
-    class GAUDI_API NInTree : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API NInTree : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /** constructor
@@ -833,14 +798,13 @@ namespace LoKi
        *  @param range  "iterator range", see HepMC::IteratorRange
        *  @see HepMC::IteratorRange
        */
-      NInTree ( const LoKi::GenTypes::GCuts& cut                        ,
-                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      NInTree( const LoKi::GenTypes::GCuts& cut, HepMC::IteratorRange range = HepMC::descendants );
       /// MANDATORY: clone function ("virtual constructor")
-      NInTree* clone() const  override;
+      NInTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     protected:
       // ======================================================================
@@ -850,14 +814,14 @@ namespace LoKi
        *  @param vertex  root of the tree
        *  @return number of particles
        */
-      size_t count( HepMC::GenVertex* vertex ) const ;
+      size_t count( HepMC::GenVertex* vertex ) const;
       // ======================================================================
-    protected: 
+    protected:
       // ======================================================================
-      LoKi::GenTypes::GCut  m_cut   ;
-      HepMC::IteratorRange  m_range ;
+      LoKi::GenTypes::GCut m_cut;
+      HepMC::IteratorRange m_range;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MaxTree
      *  simple evaluator maximal valeu of certain functor in the tree
@@ -877,8 +841,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2018-06-12
      */
-    class GAUDI_API MaxTree : public NInTree
-    {
+    class GAUDI_API MaxTree : public NInTree {
     public:
       // ======================================================================
       /** constructor
@@ -886,21 +849,20 @@ namespace LoKi
        *  @param range  "iterator range", see HepMC::IteratorRange
        *  @see HepMC::IteratorRange
        */
-      MaxTree ( const LoKi::GenTypes::GFunc& fun                        ,
-                const LoKi::GenTypes::GCuts& cut                        ,
-                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      MaxTree( const LoKi::GenTypes::GFunc& fun, const LoKi::GenTypes::GCuts& cut,
+               HepMC::IteratorRange range = HepMC::descendants );
       /// MANDATORY: clone function ("virtual constructor")
-      MaxTree* clone() const  override;
+      MaxTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    protected :
+    protected:
       // ======================================================================
-      LoKi::GenTypes::GFun  m_fun   ;
+      LoKi::GenTypes::GFun m_fun;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MinTree
      *  simple evaluator minimal value of certain functor in the tree
@@ -920,8 +882,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2018-06-12
      */
-    class GAUDI_API MinTree : public MaxTree
-    {
+    class GAUDI_API MinTree : public MaxTree {
     public:
       // ======================================================================
       /** constructor
@@ -929,17 +890,16 @@ namespace LoKi
        *  @param range  "iterator range", see HepMC::IteratorRange
        *  @see HepMC::IteratorRange
        */
-      MinTree ( const LoKi::GenTypes::GFunc& fun                        ,
-                const LoKi::GenTypes::GCuts& cut                        ,
-                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      MinTree( const LoKi::GenTypes::GFunc& fun, const LoKi::GenTypes::GCuts& cut,
+               HepMC::IteratorRange range = HepMC::descendants );
       /// MANDATORY: clone function ("virtual constructor")
-      MinTree* clone() const  override;
+      MinTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class SumTree
      *  simple evaluato of sum over  certain functor values in the tree
@@ -959,8 +919,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2018-06-12
      */
-    class GAUDI_API SumTree : public MinTree
-    {
+    class GAUDI_API SumTree : public MinTree {
     public:
       // ======================================================================
       /** constructor
@@ -968,17 +927,16 @@ namespace LoKi
        *  @param range  "iterator range", see HepMC::IteratorRange
        *  @see HepMC::IteratorRange
        */
-      SumTree ( const LoKi::GenTypes::GFunc& fun                        ,
-                const LoKi::GenTypes::GCuts& cut                        ,
-                HepMC::IteratorRange         range = HepMC::descendants ) ;
+      SumTree( const LoKi::GenTypes::GFunc& fun, const LoKi::GenTypes::GCuts& cut,
+               HepMC::IteratorRange range = HepMC::descendants );
       /// MANDATORY: clone function ("virtual constructor")
-      SumTree* clone() const  override;
+      SumTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MultTree
      *  simple evaluator of the product over  certain functor values in the tree
@@ -998,8 +956,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2018-06-12
      */
-    class GAUDI_API MultTree : public SumTree
-    {
+    class GAUDI_API MultTree : public SumTree {
     public:
       // ======================================================================
       /** constructor
@@ -1007,17 +964,16 @@ namespace LoKi
        *  @param range  "iterator range", see HepMC::IteratorRange
        *  @see HepMC::IteratorRange
        */
-      MultTree ( const LoKi::GenTypes::GFunc& fun                        ,
-                 const LoKi::GenTypes::GCuts& cut                        ,
-                 HepMC::IteratorRange         range = HepMC::descendants ) ;
+      MultTree( const LoKi::GenTypes::GFunc& fun, const LoKi::GenTypes::GCuts& cut,
+                HepMC::IteratorRange range = HepMC::descendants );
       /// MANDATORY: clone function ("virtual constructor")
-      MultTree* clone() const  override;
+      MultTree* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class InTree
      *  The trivial predicate which evaluates to true
@@ -1033,25 +989,25 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2004-05-05
      */
-    class GAUDI_API InTree : public LoKi::GenTypes::GCuts
-    {
+    class GAUDI_API InTree : public LoKi::GenTypes::GCuts {
     public:
       /** standard constructor
        *  @param cut cut to be checked
        */
-      InTree  ( const LoKi::GenTypes::GCuts& cut ) ;
+      InTree( const LoKi::GenTypes::GCuts& cut );
       /// MANDATORY: clone function ("virtual constructor")
-      InTree*       clone() const  override;
+      InTree* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
+
     private:
       // ======================================================================
       /// the criteria itself:
-      LoKi::GenTypes::GCut m_cut ;                       // the criteria itself
+      LoKi::GenTypes::GCut m_cut; // the criteria itself
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Oscillated
      *  Simple class to check the oscillation of the particle
@@ -1062,17 +1018,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nkhef.nl
      *  @date 2008-07-03
      */
-    struct GAUDI_API Oscillated : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API Oscillated : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Oscillated* clone() const  override;
+      Oscillated* clone() const override;
       /// MANDATORY: the only one essential method
-      bool   operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Oscillated1
      *  Simple class to check the oscillation of the particle
@@ -1081,17 +1036,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nkhef.nl
      *  @date 2008-07-03
      */
-    struct Oscillated1 : LoKi::GenTypes::GCuts
-    {
+    struct Oscillated1 : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Oscillated1* clone() const  override;
+      Oscillated1* clone() const override;
       /// MANDATORY: the only one essential method
-      bool   operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Oscillated2
      *  Simple class to check the oscillation of the particle
@@ -1100,17 +1054,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nkhef.nl
      *  @date 2008-07-03
      */
-    struct GAUDI_API Oscillated2 : LoKi::GenTypes::GCuts
-    {
+    struct GAUDI_API Oscillated2 : LoKi::GenTypes::GCuts {
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Oscillated2* clone() const  override;
+      Oscillated2* clone() const override;
       /// MANDATORY: the only one essential method
-      bool   operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: the specific printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class DecNode
      *  simple predicate, which acts on the particleID of the particle
@@ -1119,32 +1072,29 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-12-17
      */
-    class GAUDI_API DecNode
-      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate
-    {
+    class GAUDI_API DecNode : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate {
     public:
       // ======================================================================
       /// constructor from the actual node
-      DecNode ( const Decays::iNode& node ) ;
+      DecNode( const Decays::iNode& node );
       /// MANDATORY: clone method ("virtual constructor")
-      DecNode* clone() const override { return new DecNode ( *this ) ; }
+      DecNode* clone() const override { return new DecNode( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
       /// get the decay node
-      const Decays::iNode& node() const { return m_node.node () ; }
+      const Decays::iNode& node() const { return m_node.node(); }
       /// valid node ?
-      bool valid() const { return m_node.valid() ; }
+      bool valid() const { return m_node.valid(); }
       // validate the node
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const
-      { return m_node.validate ( svc ) ; }
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const { return m_node.validate( svc ); }
       // ======================================================================
     private:
       // ======================================================================
       /// the decay node itself
-      Decays::Node m_node ;                            // the decay node itself
+      Decays::Node m_node; // the decay node itself
       // ======================================================================
     };
     // ========================================================================
@@ -1158,15 +1108,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2016-06-21
      */
-    struct GAUDI_API LongLived : DecNode
-    {
+    struct GAUDI_API LongLived : DecNode {
       // ======================================================================
       /// constructor
-      LongLived () : DecNode ( Decays::Nodes::LongLived_() )  {}
+      LongLived() : DecNode( Decays::Nodes::LongLived_() ) {}
       /// MANDATORY: clone method ("virtual constructor")
-      LongLived* clone() const  override;
+      LongLived* clone() const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -1176,51 +1125,48 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-12-17
      */
-    class GAUDI_API DecTree
-      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate
-    {
+    class GAUDI_API DecTree : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate {
     public:
       // ======================================================================
       /// the actual type of tree (interface
-      typedef Decays::iTree_<const HepMC::GenParticle*> iTree ; // the tree
+      typedef Decays::iTree_<const HepMC::GenParticle*> iTree; // the tree
       // ======================================================================
     private:
       // ======================================================================
       /// the actual type of tree (assignable)
-      typedef Decays::Tree_<const HepMC::GenParticle*>   Tree ; // the tree
+      typedef Decays::Tree_<const HepMC::GenParticle*> Tree; // the tree
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the actual node
-      DecTree ( const iTree& node , const bool autovalidate = true ) ;
+      DecTree( const iTree& node, const bool autovalidate = true );
       /// constructor from the decay descriptor
-      DecTree ( const std::string& descriptor ) ;
+      DecTree( const std::string& descriptor );
       /// MANDATORY: clone method ("virtual constructor")
-      DecTree* clone() const override { return new DecTree ( *this ) ; }
+      DecTree* clone() const override { return new DecTree( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the decay node
-      const iTree& tree() const { return m_tree.tree () ; }
+      const iTree& tree() const { return m_tree.tree(); }
       // ======================================================================
       /// valid tree ?
-      bool valid () const { return m_tree.valid() ; }
+      bool valid() const { return m_tree.valid(); }
       // validate the teh tree
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const
-      { return m_tree.validate ( svc ) ; }
+      StatusCode validate( const LHCb::IParticlePropertySvc* svc ) const { return m_tree.validate( svc ); }
       // reset the collection
-      void reset() const { m_tree.reset() ; }
+      void reset() const { m_tree.reset(); }
       // ======================================================================
     private:
       // ======================================================================
       /// the decay tree itself
-      Tree m_tree ;                                    // the decay tree itself
+      Tree m_tree; // the decay tree itself
       //
-      bool m_autovalidate ;
+      bool m_autovalidate;
       // ======================================================================
     };
     // ========================================================================
@@ -1231,55 +1177,43 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date   2011-12-11
      */
-    class GAUDI_API ChildFun
-      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Function
-    {
+    class GAUDI_API ChildFun : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Function {
     public:
-      ChildFun
-      ( const LoKi::GenTypes::GFunc&    fun       ,
-        const LoKi::GenChild::Selector& selector  ) ;
+      ChildFun( const LoKi::GenTypes::GFunc& fun, const LoKi::GenChild::Selector& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc& fun       ,
-        const std::string&           selector  ) ;
+      ChildFun( const LoKi::GenTypes::GFunc& fun, const std::string& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc&    fun      ,
-        const Decays::IGenDecay::iTree& selector ) ;
+      ChildFun( const LoKi::GenTypes::GFunc& fun, const Decays::IGenDecay::iTree& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc&  fun      ,
-        const Decays::iNode&          selector ) ;
+      ChildFun( const LoKi::GenTypes::GFunc& fun, const Decays::iNode& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc& fun      ,
-        const LoKi::GenTypes::GCuts& selector ) ;
+      ChildFun( const LoKi::GenTypes::GFunc& fun, const LoKi::GenTypes::GCuts& selector );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      ChildFun*  clone() const  override;
+      ChildFun* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL:  specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the function itself
-      LoKi::GenTypes::GFun     m_fun   ;                 // the function itself
+      LoKi::GenTypes::GFun m_fun; // the function itself
       /// the child selector
-      LoKi::GenChild::Selector m_child ;                 //  the child selector
+      LoKi::GenChild::Selector m_child; //  the child selector
       // ======================================================================
     };
     // ========================================================================
@@ -1289,63 +1223,51 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date   2011-12-11
      */
-    class GAUDI_API ChildCut
-      : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate
-    {
+    class GAUDI_API ChildCut : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate {
     public:
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts&    fun       ,
-        const LoKi::GenChild::Selector& selector  ) ;
+      ChildCut( const LoKi::GenTypes::GCuts& fun, const LoKi::GenChild::Selector& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts& fun       ,
-        const std::string&           selector  ) ;
+      ChildCut( const LoKi::GenTypes::GCuts& fun, const std::string& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts&    fun      ,
-        const Decays::IGenDecay::iTree& selector ) ;
+      ChildCut( const LoKi::GenTypes::GCuts& fun, const Decays::IGenDecay::iTree& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts&  fun      ,
-        const Decays::iNode&          selector ) ;
+      ChildCut( const LoKi::GenTypes::GCuts& fun, const Decays::iNode& selector );
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
        */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts&  fun      ,
-        const LoKi::GenTypes::GCuts&  selector ) ;
+      ChildCut( const LoKi::GenTypes::GCuts& fun, const LoKi::GenTypes::GCuts& selector );
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      ChildCut*  clone() const  override;
+      ChildCut* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const HepMC::GenParticle* p ) const  override;
+      bool operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL:  specific printout
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the function itself
-      LoKi::GenTypes::GCut     m_fun   ;                 // the function itself
+      LoKi::GenTypes::GCut m_fun; // the function itself
       /// the child selector
-      LoKi::GenChild::Selector m_child ;                 //  the child selector
+      LoKi::GenChild::Selector m_child; //  the child selector
       // ======================================================================
     };
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles
+  } // namespace GenParticles
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

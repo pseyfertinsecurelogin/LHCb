@@ -21,13 +21,11 @@
  *  @date   2005-10-13
  */
 
-namespace LHCb
-{
-  template<class TYPE>
+namespace LHCb {
+  template <class TYPE>
   class SmartBank final {
 
   public:
-
     typedef const TYPE* iterator;
 
     /**
@@ -35,7 +33,7 @@ namespace LHCb
      * @param data     pointer to data
      * @param dataSize size in bytes
      */
-    SmartBank(unsigned int* data, size_t dataSize);
+    SmartBank( unsigned int* data, size_t dataSize );
 
     /** iterator to start of data
      * @return begin
@@ -48,27 +46,26 @@ namespace LHCb
     iterator end() const;
 
   private:
-
-    TYPE* m_data;
+    TYPE*  m_data;
     size_t m_size;
   };
 
   template <class TYPE>
-  inline typename SmartBank<TYPE>::iterator SmartBank<TYPE>::begin() const{
+  inline typename SmartBank<TYPE>::iterator SmartBank<TYPE>::begin() const {
     return m_data;
   }
 
   template <class TYPE>
-  inline typename SmartBank<TYPE>::iterator SmartBank<TYPE>::end() const{
+  inline typename SmartBank<TYPE>::iterator SmartBank<TYPE>::end() const {
     return begin() + m_size;
   }
 
   template <class TYPE>
-  inline SmartBank<TYPE>::SmartBank(unsigned int* data, size_t dataSize ){
+  inline SmartBank<TYPE>::SmartBank( unsigned int* data, size_t dataSize ) {
 
-    m_data = reinterpret_cast<TYPE*>(data);
-    unsigned int dBytes = sizeof(TYPE)/sizeof(char);
-    m_size = dataSize/dBytes;
+    m_data              = reinterpret_cast<TYPE*>( data );
+    unsigned int dBytes = sizeof( TYPE ) / sizeof( char );
+    m_size              = dataSize / dBytes;
   }
 } // namespace LHCb
 

@@ -22,11 +22,10 @@
 
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 
-namespace LHCb
-{
+namespace LHCb {
   // -----------------------------------------------------------------------
 
   /** @struct PackedVertex Event/PackedVertex.h
@@ -36,21 +35,20 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  struct PackedVertex
-  {
+  struct PackedVertex {
 
     /// Key and possibly container index.
     long long key{0};
 
-    int technique{0};    ///< packed technique
-    int chi2{0};         ///< packed chi^2
-    int nDoF{0};         ///< packed nDOF
+    int technique{0}; ///< packed technique
+    int chi2{0};      ///< packed chi^2
+    int nDoF{0};      ///< packed nDOF
 
     // Position
     int x{0}, y{0}, z{0};
 
     // Covariance matrix
-    int cov00{0}, cov11{0}, cov22{0};
+    int       cov00{0}, cov11{0}, cov22{0};
     short int cov10{0}, cov20{0}, cov21{0};
 
     /// first outgoing particle
@@ -63,21 +61,15 @@ namespace LHCb
     /// last info
     unsigned int lastInfo{0};
 
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        key, technique, chi2, nDoF,
-        x, y, z,
-        cov00, cov11, cov22,
-        cov10, cov20, cov21,
-        firstOutgoingPart, lastOutgoingPart,
-        firstInfo, lastInfo
-      );
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.io( key, technique, chi2, nDoF, x, y, z, cov00, cov11, cov22, cov10, cov20, cov21, firstOutgoingPart,
+              lastOutgoingPart, firstInfo, lastInfo );
     }
-    template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
-     }
+    template <typename T>
+    inline void load( T& buf, unsigned int /*version*/ ) {
+      save( buf ); // identical operation until version is incremented
+    }
   };
 
   // -----------------------------------------------------------------------
@@ -85,11 +77,10 @@ namespace LHCb
   constexpr CLID CLID_PackedVertices = 1582;
 
   /// Namespace for locations in TDS
-  namespace PackedVertexLocation
-  {
-    inline const std::string User = "pPhys/User/Vertices";
+  namespace PackedVertexLocation {
+    inline const std::string User     = "pPhys/User/Vertices";
     inline const std::string InStream = "/pPhys/Vertices";
-  }
+  } // namespace PackedVertexLocation
 
   /** @class PackedVertices Event/PackedVertex.h
    *
@@ -98,11 +89,9 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  class PackedVertices : public DataObject
-  {
+  class PackedVertices : public DataObject {
 
   public:
-
     /// Vector of packed objects
     typedef std::vector<LHCb::PackedVertex> Vector;
 
@@ -110,18 +99,16 @@ namespace LHCb
     typedef std::vector<long long> OutgoingParticles;
 
     /// Packed Extra Info
-    typedef std::pair<int,int> ExtraInfo;
+    typedef std::pair<int, int> ExtraInfo;
 
     /// Packed Extra Info Vector
     typedef std::vector<ExtraInfo> ExtraInfoVector;
 
   public:
-
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
   public:
-
     /// Class ID
     static const CLID& classID() { return CLID_PackedVertices; }
 
@@ -129,18 +116,17 @@ namespace LHCb
     const CLID& clID() const override { return PackedVertices::classID(); }
 
   public:
-
     /// Write access to the data vector
-    Vector & data()             { return m_vect; }
+    Vector& data() { return m_vect; }
 
     /// Read access to the data vector
-    const Vector & data() const { return m_vect; }
+    const Vector& data() const { return m_vect; }
 
     /// Write access to the data vector
-    OutgoingParticles & outgoingParticles()             { return m_parts; }
+    OutgoingParticles& outgoingParticles() { return m_parts; }
 
     /// Read access to the data vector
-    const OutgoingParticles & outgoingParticles() const { return m_parts; }
+    const OutgoingParticles& outgoingParticles() const { return m_parts; }
 
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
@@ -149,41 +135,40 @@ namespace LHCb
     char packingVersion() const { return m_packingVersion; }
 
     /// add an extra info
-    void addExtra( const int a, const int b ) { m_extra.emplace_back( ExtraInfo(a,b) ); }
+    void addExtra( const int a, const int b ) { m_extra.emplace_back( ExtraInfo( a, b ) ); }
 
     /// Write access the extra info
-    ExtraInfoVector& extras()             { return m_extra; }
+    ExtraInfoVector& extras() { return m_extra; }
 
     /// Read access the extra info
     const ExtraInfoVector& extras() const { return m_extra; }
 
     /// Describe serialization of object
-    template<typename T>
-    inline void save(T& buf) const {
-      buf.template save<uint8_t>(m_packingVersion);
-      buf.template save<uint8_t>(version());
-      buf.save(m_vect);
-      buf.save(m_parts);
-      buf.save(m_extra);
+    template <typename T>
+    inline void save( T& buf ) const {
+      buf.template save<uint8_t>( m_packingVersion );
+      buf.template save<uint8_t>( version() );
+      buf.save( m_vect );
+      buf.save( m_parts );
+      buf.save( m_extra );
     }
     /// Describe de-serialization of object
-    template<typename T>
-    inline void load(T& buf) {
-      setPackingVersion(buf.template load<uint8_t>());
-      setVersion(buf.template load<uint8_t>());
-      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
-        throw std::runtime_error("PackedParticles packing version is not supported: "
-                                 + std::to_string(m_packingVersion));
+    template <typename T>
+    inline void load( T& buf ) {
+      setPackingVersion( buf.template load<uint8_t>() );
+      setVersion( buf.template load<uint8_t>() );
+      if ( m_packingVersion < 1 || m_packingVersion > defaultPackingVersion() ) {
+        throw std::runtime_error( "PackedParticles packing version is not supported: " +
+                                  std::to_string( m_packingVersion ) );
       }
-      buf.load(m_vect, m_packingVersion);
-      buf.load(m_parts);
-      buf.load(m_extra, m_packingVersion);
+      buf.load( m_vect, m_packingVersion );
+      buf.load( m_parts );
+      buf.load( m_extra, m_packingVersion );
     }
 
   private:
-
     /// Data packing version
-    char m_packingVersion{ defaultPackingVersion() };
+    char m_packingVersion{defaultPackingVersion()};
 
     /// The packed data objects
     Vector m_vect;
@@ -193,7 +178,6 @@ namespace LHCb
 
     /// Extra info
     ExtraInfoVector m_extra;
-
   };
 
   // -----------------------------------------------------------------------
@@ -205,73 +189,55 @@ namespace LHCb
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  class VertexPacker
-  {
+  class VertexPacker {
 
   public:
-
     // These are required by the templated algorithms
-    typedef LHCb::Vertex                     Data;
-    typedef LHCb::PackedVertex         PackedData;
-    typedef LHCb::Vertices             DataVector;
+    typedef LHCb::Vertex         Data;
+    typedef LHCb::PackedVertex   PackedData;
+    typedef LHCb::Vertices       DataVector;
     typedef LHCb::PackedVertices PackedDataVector;
-    static const std::string& packedLocation()   { return LHCb::PackedVertexLocation::User; }
-    static const std::string& unpackedLocation() { return LHCb::VertexLocation::User; }
+    static const std::string&    packedLocation() { return LHCb::PackedVertexLocation::User; }
+    static const std::string&    unpackedLocation() { return LHCb::VertexLocation::User; }
 
   private:
-
     /// Default Constructor hidden
     VertexPacker() {}
 
   public:
-
     /// Default Constructor
-    VertexPacker( const GaudiAlgorithm * parent ) : m_pack(parent) {}
+    VertexPacker( const GaudiAlgorithm* parent ) : m_pack( parent ) {}
 
   public:
-
     /// Pack a Vertex
-    void pack( const Data & vert,
-               PackedData & pvert,
-               PackedDataVector & pverts ) const;
+    void pack( const Data& vert, PackedData& pvert, PackedDataVector& pverts ) const;
 
     /// Pack Vertices
-    void pack( const DataVector & verts,
-               PackedDataVector & pverts ) const;
+    void pack( const DataVector& verts, PackedDataVector& pverts ) const;
 
     /// Unpack a Vertex
-    void unpack( const PackedData       & pvert,
-                 Data                   & vert,
-                 const PackedDataVector & pverts,
-                 DataVector             & verts ) const;
+    void unpack( const PackedData& pvert, Data& vert, const PackedDataVector& pverts, DataVector& verts ) const;
 
     /// Unpack Vertices
-    void unpack( const PackedDataVector & pverts,
-                 DataVector             & verts ) const;
+    void unpack( const PackedDataVector& pverts, DataVector& verts ) const;
 
     /// Compare two Vertex vectors to check the packing -> unpacking performance
-    StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
+    StatusCode check( const DataVector& dataA, const DataVector& dataB ) const;
 
     /// Compare two Vertices to check the packing -> unpacking performance
-    StatusCode check( const Data & dataA,
-                      const Data & dataB ) const;
+    StatusCode check( const Data& dataA, const Data& dataB ) const;
 
   private:
-
     /// Access the parent algorithm
-    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+    const GaudiAlgorithm& parent() const { return *( m_pack.parent() ); }
 
     /// Safe sqrt ...
-    inline double safe_sqrt( const double x ) const
-    { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+    inline double safe_sqrt( const double x ) const { return ( x > 0 ? std::sqrt( x ) : 0.0 ); }
 
     /// Check if the given packing version is supported
-    bool isSupportedVer( const char& ver ) const
-    {
+    bool isSupportedVer( const char& ver ) const {
       const bool OK = ( 1 == ver );
-      if ( UNLIKELY(!OK) )
-      {
+      if ( UNLIKELY( !OK ) ) {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;
         throw GaudiException( mess.str(), "VertexPacker", StatusCode::FAILURE );
@@ -280,14 +246,12 @@ namespace LHCb
     }
 
   private:
-
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
   };
 
   // -----------------------------------------------------------------------
 
-}
+} // namespace LHCb
 
 #endif // EVENT_PACKEDVERTEX_H

@@ -22,30 +22,30 @@
 #ifndef FASTROOTS_H
 #define FASTROOTS_H
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
-#include <algorithm>
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 // all okay, code will work (tested on x86_64/linux)
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 // all okay, code will work (tested on powerpc/linux)
 #else
-#error "Unknown endianness, please define __LITTLE_ENDIAN__ or __BIG_ENDIAN__."
+#  error "Unknown endianness, please define __LITTLE_ENDIAN__ or __BIG_ENDIAN__."
 #endif
 #if __FLOAT_WORD_ORDER != __BYTE_ORDER__
-#error "Floating point and integer byte order do not match!"
+#  error "Floating point and integer byte order do not match!"
 #endif
 
 // hint to gcc's optimizer that __pure functions have no side effects and
 // depend only on declared input arguments
 #ifdef __pure
-#undef __pure
+#  undef __pure
 #endif
-#if defined(__GNUC__)
-#define __pure __attribute__((const))
+#if defined( __GNUC__ )
+#  define __pure __attribute__( ( const ) )
 #else
-#define __pure
+#  define __pure
 #endif
 
 /** @brief namespace to hold fast root implementations
@@ -60,7 +60,7 @@
  * - reinterpret int32_t/int64_t as float/double
  * - run a couple of iterations of Newton's method to refine the guess
  *
- * The magic number can be calculated as 
+ * The magic number can be calculated as
  *
  * (1 - p) * M * (B - 0.0450465)
  *
@@ -86,221 +86,209 @@ namespace FastRoots {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
-    // forward decls
-    inline float cbrt(float x) noexcept __pure;
-    inline double cbrt(double x) noexcept __pure;
-    inline float invcbrt(float x) noexcept __pure;
-    inline double invcbrt(double x) noexcept __pure;
-    inline float fifthroot(float x) noexcept __pure;
-    inline double fifthroot(double x) noexcept __pure;
-    inline float invfifthroot(float x) noexcept __pure;
-    inline double invfifthroot(double x) noexcept __pure;
+  // forward decls
+  inline float  cbrt( float x ) noexcept __pure;
+  inline double cbrt( double x ) noexcept __pure;
+  inline float  invcbrt( float x ) noexcept __pure;
+  inline double invcbrt( double x ) noexcept __pure;
+  inline float  fifthroot( float x ) noexcept __pure;
+  inline double fifthroot( double x ) noexcept __pure;
+  inline float  invfifthroot( float x ) noexcept __pure;
+  inline double invfifthroot( double x ) noexcept __pure;
 
-    inline float veryfast_hypot(float x, float y) noexcept __pure;
-    inline double veryfast_hypot(double x, double y) noexcept __pure;
+  inline float  veryfast_hypot( float x, float y ) noexcept __pure;
+  inline double veryfast_hypot( double x, double y ) noexcept __pure;
 
-    /** @brief calculate cube root
-     *
-     * @param x	number of which cube root should be computed
-     * @returns cube root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline float cbrt(float x) noexcept
-    {
-	const float xa = std::abs(x);
-	int32_t i = reinterpret_cast<const int32_t&>(xa);
-	i = 0x2a517d47 + i / 3;
-	float r = reinterpret_cast<float&>(i);
-	r -= (r - xa / (r * r)) / 3;
-	r -= (r - xa / (r * r)) / 3;
-	r -= (r - xa / (r * r)) / 3;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate cube root
+   *
+   * @param x	number of which cube root should be computed
+   * @returns cube root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline float cbrt( float x ) noexcept {
+    const float xa = std::abs( x );
+    int32_t     i  = reinterpret_cast<const int32_t&>( xa );
+    i              = 0x2a517d47 + i / 3;
+    float r        = reinterpret_cast<float&>( i );
+    r -= ( r - xa / ( r * r ) ) / 3;
+    r -= ( r - xa / ( r * r ) ) / 3;
+    r -= ( r - xa / ( r * r ) ) / 3;
+    return std::copysign( r, x );
+  }
 
-    /** @brief calculate cube root
-     *
-     * @param x	number of which cube root should be computed
-     * @returns cube root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline double cbrt(double x) noexcept
-    {
-	const double xa = std::abs(x);
-	int64_t i = reinterpret_cast<const int64_t&>(xa);
-	i = 0x2a9f84fe36d22425 + i / 3;
-	double r = reinterpret_cast<double&>(i);
-	r -= (r - xa / (r * r)) / 3;
-	r -= (r - xa / (r * r)) / 3;
-	r -= (r - xa / (r * r)) / 3;
-	r -= (r - xa / (r * r)) / 3;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate cube root
+   *
+   * @param x	number of which cube root should be computed
+   * @returns cube root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline double cbrt( double x ) noexcept {
+    const double xa = std::abs( x );
+    int64_t      i  = reinterpret_cast<const int64_t&>( xa );
+    i               = 0x2a9f84fe36d22425 + i / 3;
+    double r        = reinterpret_cast<double&>( i );
+    r -= ( r - xa / ( r * r ) ) / 3;
+    r -= ( r - xa / ( r * r ) ) / 3;
+    r -= ( r - xa / ( r * r ) ) / 3;
+    r -= ( r - xa / ( r * r ) ) / 3;
+    return std::copysign( r, x );
+  }
 
-    /** @brief calculate inverse cube root
-     *
-     * @param x	number of which inverse cube root should be computed
-     * @returns inverse cube root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline float invcbrt(float x) noexcept
-    {
-	const float xa = std::abs(x);
-	int32_t i = reinterpret_cast<const int32_t&>(xa);
-	i = 0x54a2fa8e - i / 3;
-	float r = reinterpret_cast<float&>(i);
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate inverse cube root
+   *
+   * @param x	number of which inverse cube root should be computed
+   * @returns inverse cube root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline float invcbrt( float x ) noexcept {
+    const float xa = std::abs( x );
+    int32_t     i  = reinterpret_cast<const int32_t&>( xa );
+    i              = 0x54a2fa8e - i / 3;
+    float r        = reinterpret_cast<float&>( i );
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    return std::copysign( r, x );
+  }
 
-    /** @brief calculate inverse cube root
-     *
-     * @param x	number of which inverse cube root should be computed
-     * @returns inverse cube root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline double invcbrt(double x) noexcept
-    {
-	const double xa = std::abs(x);
-	int64_t i = reinterpret_cast<const int64_t&>(xa);
-	i = 0x553f09fc6da44849 - i / 3;
-	double r = reinterpret_cast<double&>(i);
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	r += (r - xa * ((r * r) * (r * r))) / 3;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate inverse cube root
+   *
+   * @param x	number of which inverse cube root should be computed
+   * @returns inverse cube root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline double invcbrt( double x ) noexcept {
+    const double xa = std::abs( x );
+    int64_t      i  = reinterpret_cast<const int64_t&>( xa );
+    i               = 0x553f09fc6da44849 - i / 3;
+    double r        = reinterpret_cast<double&>( i );
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) ) ) / 3;
+    return std::copysign( r, x );
+  }
 
-    /** @brief calculate fifth root
-     *
-     * @param x	number of which fifth root should be computed
-     * @returns fifth root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline float fifthroot(float x) noexcept
-    {
-	const float xa = std::abs(x);
-	int32_t i = reinterpret_cast<const int32_t&>(xa);
-	i = 0x32c82fee + i / 5;
-	float r = reinterpret_cast<float&>(i);
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate fifth root
+   *
+   * @param x	number of which fifth root should be computed
+   * @returns fifth root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline float fifthroot( float x ) noexcept {
+    const float xa = std::abs( x );
+    int32_t     i  = reinterpret_cast<const int32_t&>( xa );
+    i              = 0x32c82fee + i / 5;
+    float r        = reinterpret_cast<float&>( i );
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    return std::copysign( r, x );
+  }
 
-    /** @brief calculate fifth root
-     *
-     * @param x	number of which fifth root should be computed
-     * @returns fifth root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline double fifthroot(double x) noexcept
-    {
-	const double xa = std::abs(x);
-	int64_t i = reinterpret_cast<const int64_t&>(xa);
-	i = 0x3325d2caa82f5e92 + i / 5;
-	double r = reinterpret_cast<double&>(i);
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	r -= (r - xa / ((r * r) * (r * r))) / 5;
-	return std::copysign(r, x);
-    }
-    
-    /** @brief calculate inverse fifth root
-     *
-     * @param x	number of which inverse fifth root should be computed
-     * @returns inverse fifth root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline float invfifthroot(float x) noexcept
-    {
-	const float xa = std::abs(x);
-	int32_t i = reinterpret_cast<const int32_t&>(xa);
-	i = 0x4c2c47e6 - i / 5;
-	float r = reinterpret_cast<float&>(i);
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate fifth root
+   *
+   * @param x	number of which fifth root should be computed
+   * @returns fifth root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline double fifthroot( double x ) noexcept {
+    const double xa = std::abs( x );
+    int64_t      i  = reinterpret_cast<const int64_t&>( xa );
+    i               = 0x3325d2caa82f5e92 + i / 5;
+    double r        = reinterpret_cast<double&>( i );
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    r -= ( r - xa / ( ( r * r ) * ( r * r ) ) ) / 5;
+    return std::copysign( r, x );
+  }
 
-    /** @brief calculate inverse fifth root
-     *
-     * @param x	number of which inverse fifth root should be computed
-     * @returns inverse fifth root of x
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     */
-    inline double invfifthroot(double x) noexcept
-    {
-	const double xa = std::abs(x);
-	int64_t i = reinterpret_cast<const int64_t&>(xa);
-	i = 0x4cb8bc2ffc470ddb - i / 5;
-	double r = reinterpret_cast<double&>(i);
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	r += (r - xa * ((r * r) * (r * r) * (r * r))) / 5;
-	return std::copysign(r, x);
-    }
+  /** @brief calculate inverse fifth root
+   *
+   * @param x	number of which inverse fifth root should be computed
+   * @returns inverse fifth root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline float invfifthroot( float x ) noexcept {
+    const float xa = std::abs( x );
+    int32_t     i  = reinterpret_cast<const int32_t&>( xa );
+    i              = 0x4c2c47e6 - i / 5;
+    float r        = reinterpret_cast<float&>( i );
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    return std::copysign( r, x );
+  }
+
+  /** @brief calculate inverse fifth root
+   *
+   * @param x	number of which inverse fifth root should be computed
+   * @returns inverse fifth root of x
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   */
+  inline double invfifthroot( double x ) noexcept {
+    const double xa = std::abs( x );
+    int64_t      i  = reinterpret_cast<const int64_t&>( xa );
+    i               = 0x4cb8bc2ffc470ddb - i / 5;
+    double r        = reinterpret_cast<double&>( i );
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    r += ( r - xa * ( ( r * r ) * ( r * r ) * ( r * r ) ) ) / 5;
+    return std::copysign( r, x );
+  }
 
 #pragma GCC diagnostic pop // end silence strict aliasing warning
 
-    /** @brief very fast approximation of hypotenuse of a triangle
-     *
-     * @param x	length of one side of triangle
-     * @param y	length of other side of triangle
-     * @returns approximation of sqrt(x^2 + y^2)
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     *
-     * @note this approximation is accurate to about 3.96%.
-     */
-    inline float hypot(float x, float y) noexcept
-    {
-	x = std::abs(x), y = std::abs(y);
-	return 0.96043387010341996525f * std::max(x, y) +
-	    0.39782473475931601382f * std::min(x, y);
-    }
+  /** @brief very fast approximation of hypotenuse of a triangle
+   *
+   * @param x	length of one side of triangle
+   * @param y	length of other side of triangle
+   * @returns approximation of sqrt(x^2 + y^2)
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   *
+   * @note this approximation is accurate to about 3.96%.
+   */
+  inline float hypot( float x, float y ) noexcept {
+    x = std::abs( x ), y = std::abs( y );
+    return 0.96043387010341996525f * std::max( x, y ) + 0.39782473475931601382f * std::min( x, y );
+  }
 
-    /** @brief very fast approximation of hypotenuse of a triangle
-     *
-     * @param x	length of one side of triangle
-     * @param y	length of other side of triangle
-     * @returns approximation of sqrt(x^2 + y^2)
-     *
-     * @author Manuel Schiller <Manuel.Schiller@cern.ch>
-     * @date 2015-02-25
-     *
-     * @note this approximation is accurate to about 3.96%.
-     */
-    inline double hypot(double x, double y) noexcept
-    {
-	x = std::abs(x), y = std::abs(y);
-	return 0.96043387010341996525 * std::max(x, y) +
-	    0.39782473475931601382 * std::min(x, y);
-    }
-}
+  /** @brief very fast approximation of hypotenuse of a triangle
+   *
+   * @param x	length of one side of triangle
+   * @param y	length of other side of triangle
+   * @returns approximation of sqrt(x^2 + y^2)
+   *
+   * @author Manuel Schiller <Manuel.Schiller@cern.ch>
+   * @date 2015-02-25
+   *
+   * @note this approximation is accurate to about 3.96%.
+   */
+  inline double hypot( double x, double y ) noexcept {
+    x = std::abs( x ), y = std::abs( y );
+    return 0.96043387010341996525 * std::max( x, y ) + 0.39782473475931601382 * std::min( x, y );
+  }
+} // namespace FastRoots
 
 #undef __pure
 
