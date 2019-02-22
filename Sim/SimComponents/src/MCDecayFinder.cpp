@@ -12,12 +12,12 @@
 #include <algorithm>
 #include <functional>
 #include <list>
-
-#include "boost/variant.hpp"
+#include <variant>
 
 // from Gaudi
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/compose.h"
 
 // from PartProp
 #include "Kernel/IParticlePropertySvc.h"
@@ -99,44 +99,9 @@ namespace {
     return q * ( id > 0 ? 1 : -1 );
   }
 
-  // FIXME: with version of Gaudi 30r1 or higher, just
-  //  #include "GaudiKernel/compose.h"
-  namespace Compose {
-    template <typename... lambda_ts>
-    struct composer_t;
-
-    template <typename lambda_t>
-    struct composer_t<lambda_t> : lambda_t {
-      composer_t( const lambda_t& lambda ) : lambda_t{lambda} {}
-      composer_t( lambda_t&& lambda ) : lambda_t{std::move( lambda )} {}
-
-      using lambda_t::operator();
-    };
-
-    template <typename lambda_t, typename... more_lambda_ts>
-    struct composer_t<lambda_t, more_lambda_ts...> : lambda_t, composer_t<more_lambda_ts...> {
-      using super_t = composer_t<more_lambda_ts...>;
-
-      template <typename... lambda_ts>
-      composer_t( const lambda_t& lambda, lambda_ts&&... more_lambdas )
-          : lambda_t{lambda}, super_t{std::forward<lambda_ts>( more_lambdas )...} {}
-      template <typename... lambda_ts>
-      composer_t( lambda_t&& lambda, lambda_ts&&... more_lambdas )
-          : lambda_t{std::move( lambda )}, super_t{std::forward<lambda_ts>( more_lambdas )...} {}
-
-      using lambda_t::operator();
-      using super_t:: operator();
-    };
-
-    template <typename... lambda_ts>
-    composer_t<std::decay_t<lambda_ts>...> compose( lambda_ts&&... lambdas ) {
-      return {std::forward<lambda_ts>( lambdas )...};
-    }
-  } // namespace Compose
-
   auto dispatch_variant = []( auto&& variant, auto&&... lambdas ) -> decltype( auto ) {
-    return boost::apply_visitor( Compose::compose( std::forward<decltype( lambdas )>( lambdas )... ),
-                                 std::forward<decltype( variant )>( variant ) );
+    return std::visit( Gaudi::overload( std::forward<decltype( lambdas )>( lambdas )... ),
+                       std::forward<decltype( variant )>( variant ) );
   };
 
 } // namespace
@@ -164,7 +129,7 @@ public:
   bool        getInverse() { return inverse; }
   void        setStable() { stable = true; }
   bool        getStable() { return stable; }
-  bool        getExact() { return !qmark && !inverse && !conjugate && parms.which() == 1; }
+  bool        getExact() { return !qmark && !inverse && !conjugate && parms.index() == 1; }
   void        conjugateID();
   std::string describe();
 
@@ -182,7 +147,7 @@ private:
   struct stdhep_t {
     int id;
   };
-  boost::variant<boost::blank, stdhep_t, quark_t, quantum_t> parms;
+  std::variant<std::monostate, stdhep_t, quark_t, quantum_t> parms;
 
   bool                              lift       = false;
   bool                              empty_f    = false;
@@ -607,7 +572,7 @@ void MCDecayFinder::Descriptor::conjugate( void ) {
 }
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( LHCb::IParticlePropertySvc* ppSvc )
-    : parms{boost::blank{}}, m_ppSvc( ppSvc ) {}
+    : parms{std::monostate{}}, m_ppSvc( ppSvc ) {}
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( std::string* name, LHCb::IParticlePropertySvc* ppSvc )
     : m_ppSvc( ppSvc ) {
@@ -631,7 +596,7 @@ std::string MCDecayFinder::ParticleMatcher::describe() {
   if ( oscillate ) result += '[';
   if ( noscillate ) result += '[';
   if ( inverse ) result += '!';
-  dispatch_variant( parms, [&]( const boost::blank& ) { result += "## MUST NOT COMPILE ##"; },
+  dispatch_variant( parms, [&]( const std::monostate& ) { result += "## MUST NOT COMPILE ##"; },
                     [&]( const stdhep_t& stdhep ) {
                       if ( !m_ppSvc ) return;
                       if ( !m_ppSvc->find( LHCb::ParticleID( stdhep.id ) ) )
@@ -699,7 +664,7 @@ std::string MCDecayFinder::ParticleMatcher::describe() {
 
 bool MCDecayFinder::ParticleMatcher::test( const LHCb::MCParticle* part, LHCb::MCParticle::ConstVector* collect ) {
   bool result = dispatch_variant(
-      parms, [&]( const boost::blank& ) { return true; },
+      parms, [&]( const std::monostate& ) { return true; },
       [&]( const stdhep_t& stdhep ) {
         bool result = ( stdhep.id == part->particleID().pid() );
         if ( conjugate ) {
@@ -751,9 +716,9 @@ bool MCDecayFinder::ParticleMatcher::test( const LHCb::MCParticle* part, LHCb::M
 }
 
 void MCDecayFinder::ParticleMatcher::conjugateID() {
-  dispatch_variant( parms, []( boost::blank& ) {},
+  dispatch_variant( parms, []( const std::monostate& ) {},
                     [&]( stdhep_t& stdhep ) { stdhep.id = this->conjugatedID( stdhep.id ); },
-                    []( const auto& ) {
+                    []( ... ) {
                       throw DescriptorError( "Charge conjugate only allowed"
                                              " on explicit particle or '?'" );
                     } );

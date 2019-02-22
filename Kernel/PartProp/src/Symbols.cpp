@@ -31,7 +31,6 @@
 // Boost
 // ============================================================================
 #include "boost/algorithm/string.hpp"
-#include "boost/regex.hpp"
 // ============================================================================
 /** @file
  *  Implementation file for functions form the file Kernel/Symbols.h

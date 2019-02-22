@@ -68,8 +68,8 @@ namespace {
         // NOTE: if the reference is not found, optionally, a default, can be specified.
         //       eg.  foo.something = @OnlineEnv.somethingelse@somedefault
         if ( !prop.second.empty() && prop.second[0] == '@' ) {
-          static std::regex pattern( "^@([^\\.]+)\\.([^@]+)(@.+)?$" );
-          std::smatch       what;
+          static const std::regex pattern( "^@([^\\.]+)\\.([^@]+)(@.+)?$" );
+          std::smatch             what;
           if ( !std::regex_match( prop.second, what, pattern ) ) {
             throw GaudiException( prop.second, "badly formatted reference property ", StatusCode::FAILURE );
           }

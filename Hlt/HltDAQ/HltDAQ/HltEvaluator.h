@@ -14,10 +14,10 @@
 // Include files
 #include <array>
 #include <functional>
+#include <variant>
 
 // boost
 #include <boost/format.hpp>
-#include <boost/variant.hpp>
 
 // from Gaudi
 #include "DetDesc/Condition.h"
@@ -87,9 +87,9 @@ protected:
   using ODINEval    = Eval<LoKi::Types::ODIN_Cut>;
   using L0Eval      = Eval<LoKi::Types::L0_Cut>;
   using HltEval     = Eval<LoKi::Types::HLT_Cut>;
-  using EvalVariant = boost::variant<ODINEval, L0Eval, HltEval>;
+  using EvalVariant = std::variant<ODINEval, L0Eval, HltEval>;
 
-  class Builder : public boost::static_visitor<StatusCode> {
+  class Builder {
   public:
     Builder( HltEvaluator* parent, std::string expr, std::string title, std::string htitle )
         : m_parent{parent}, m_expr{std::move( expr )}, m_title{std::move( title )}, m_htitle{std::move( htitle )} {}
@@ -120,7 +120,7 @@ protected:
     const std::string m_htitle;
   };
 
-  class Evaluator : public boost::static_visitor<bool> {
+  class Evaluator {
   public:
     Evaluator( HltEvaluator* parent, double t, double weight, double evtTime )
         : m_parent{parent}, m_t{t}, m_weight{weight}, m_evtTime{evtTime} {}
@@ -144,7 +144,7 @@ protected:
     double        m_evtTime;
   };
 
-  struct Deleter : public boost::static_visitor<> {
+  struct Deleter {
     template <typename EVAL>
     void operator()( EVAL& eval ) const {
       eval.predicate.reset();

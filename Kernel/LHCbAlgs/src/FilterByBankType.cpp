@@ -15,7 +15,7 @@
 #include "Event/RawEvent.h"
 
 // For regular expressions
-#include <boost/regex.hpp>
+#include <regex>
 
 // local
 #include "FilterByBankType.h"
@@ -35,57 +35,21 @@ DECLARE_COMPONENT( FilterByBankType )
 // Standard constructor, initializes variables
 //=============================================================================
 FilterByBankType::FilterByBankType( const std::string& name, ISvcLocator* pSvcLocator )
-    : GaudiAlgorithm( name, pSvcLocator ) {
-  m_bankNames.push_back( ".*Error" );
-
-  declareProperty( "InputLocation", m_inputLocation = RawEventLocation::Default );
-  declareProperty( "BankNames", m_bankNames );
-  declareProperty( "PassSelectedEvents", m_passSelect = true );
-}
-
-StatusCode FilterByBankType::initialize() {
-  // Gaudi initialize
-  StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
-
-  // Loop over the list of possible BankTypes
-  info() << ( ( m_passSelect ) ? "Selecting" : "Ignoring" ) << " events with banks: ";
-  for ( unsigned int iBank = 0; iBank < RawBank::LastType; ++iBank ) {
-    const auto bankName = RawBank::typeName( RawBank::BankType( iBank ) );
-    // make an enum vector from the string vector of bank names
-    for ( const auto& BankName : m_bankNames ) {
-      // Use the regular expression
-      boost::regex e( BankName );
-      if ( boost::regex_match( bankName, e ) ) {
-        m_bankTypes.push_back( RawBank::BankType( iBank ) );
-        info() << bankName << "(" << iBank << ")  ";
-      }
-    }
-  }
-  info() << endmsg;
-
-  return sc;
-}
+    : FilterPredicate( name, pSvcLocator, KeyValue{"InputLocation", RawEventLocation::Default} ) {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode FilterByBankType::execute() {
+bool FilterByBankType::operator()( const LHCb::RawEvent& raw ) const {
   // Initialize the select event flag
   bool selectEvent = false;
-
-  // Reset the filter
-  setFilterPassed( !m_passSelect );
-
-  // Get the raw data
-  const auto* raw = get<RawEvent>( m_inputLocation );
 
   // Loop over the bank types
   auto iBankType = m_bankTypes.begin();
   while ( !selectEvent && iBankType < m_bankTypes.end() ) {
 
     // Get the bank in the RawEvent
-    const auto& bank = raw->banks( *iBankType );
+    const auto& bank = raw.banks( *iBankType );
 
     // If bank exist mark the event
     if ( !bank.empty() ) {
@@ -103,9 +67,6 @@ StatusCode FilterByBankType::execute() {
 
   } // end of loop over bank types
 
-  // Change the filter-passed-flag when event is selected
-  if ( selectEvent ) setFilterPassed( m_passSelect );
-
-  return StatusCode::SUCCESS;
+  return selectEvent ? m_passSelect.value() : !m_passSelect.value();
 }
 //=============================================================================

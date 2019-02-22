@@ -48,6 +48,8 @@ public:
     friend bool   operator<( const alias_type& lhs, const alias_type& rhs ) { return lhs.m_alias < rhs.m_alias; }
     std::ostream& print( std::ostream& os ) const;
     std::istream& read( std::istream& is );
+    friend std::ostream& operator<<( std::ostream& os, const alias_type& x ) { return x.print( os ); }
+    friend std::istream& operator>>( std::istream& is, alias_type& x ) { return x.read( is ); }
 
   private:
     std::string m_alias;
@@ -69,8 +71,10 @@ public:
     return ConfigTreeNodeAlias( top.digest(), alias_type( "TAG" ) / tag );
   }
 
-  std::ostream& print( std::ostream& os ) const;
-  std::istream& read( std::istream& is );
+  std::ostream&        print( std::ostream& os ) const;
+  std::istream&        read( std::istream& is );
+  friend std::ostream& operator<<( std::ostream& os, const ConfigTreeNodeAlias& x ) { return x.print( os ); }
+  friend std::istream& operator>>( std::istream& is, ConfigTreeNodeAlias& x ) { return x.read( is ); }
 
   friend bool operator==( const ConfigTreeNodeAlias& lhs, const ConfigTreeNodeAlias& rhs ) {
     return lhs.m_ref == rhs.m_ref && lhs.m_alias == rhs.m_alias;
@@ -87,10 +91,5 @@ private:
   digest_type m_ref = digest_type::createInvalid();
   alias_type  m_alias;
 };
-
-inline std::ostream& operator<<( std::ostream& os, const ConfigTreeNodeAlias& x ) { return x.print( os ); }
-inline std::istream& operator>>( std::istream& is, ConfigTreeNodeAlias& x ) { return x.read( is ); }
-inline std::ostream& operator<<( std::ostream& os, const ConfigTreeNodeAlias::alias_type& x ) { return x.print( os ); }
-inline std::istream& operator>>( std::istream& is, ConfigTreeNodeAlias::alias_type& x ) { return x.read( is ); }
 
 #endif

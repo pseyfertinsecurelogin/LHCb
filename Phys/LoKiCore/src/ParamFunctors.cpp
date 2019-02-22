@@ -11,6 +11,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <regex>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/IAlgContextSvc.h"
@@ -29,17 +31,12 @@
 #include "LoKi/Param.h"
 #include "LoKi/ParamFunctors.h"
 // ============================================================================
-// Boost
-// ============================================================================
-#include <boost/regex.hpp>
-// ============================================================================
 /** @file
  *  Implementation file for class LoKi::Param
  *  @see LoKi::Param
  *
  *  @date 2014-02-02
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
- *  @todo   replace Boost-regex with STD/STL-regex
  *
  *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -81,8 +78,8 @@ namespace {
       if ( 0 == a ) { return false; }
       //
       if ( !m_name.empty() ) {
-        boost::regex pattern( m_name );
-        if ( !boost::regex_match( a->name(), pattern ) ) { return false; }
+        std::regex pattern( m_name );
+        if ( !std::regex_match( a->name(), pattern ) ) { return false; }
       }
       //
       const Property* p = Gaudi::Utils::getProperty( a, m_prop );

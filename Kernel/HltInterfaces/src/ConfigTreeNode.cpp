@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #include "Kernel/ConfigTreeNode.h"
-#include "boost/regex.hpp"
+#include <regex>
 
 #include "GaudiKernel/GaudiException.h"
 
@@ -28,19 +28,19 @@ ConfigTreeNode::ConfigTreeNode( const LeafRef& leaf, const NodeRefs& nodes, std:
 using boost::property_tree::ptree;
 namespace {
   void read_custom( std::istream& is, ptree& top ) {
-    bool                parsing_nodes = false;
-    static boost::regex leaf( "^Leaf: ([a-fA-F0-9]{32})$" ), label( "^Label: (.*)$" ), nodestart( "^Nodes: \\[$" ),
+    bool                    parsing_nodes = false;
+    static const std::regex leaf( "^Leaf: ([a-fA-F0-9]{32})$" ), label( "^Label: (.*)$" ), nodestart( "^Nodes: \\[$" ),
         node( "^ ?([a-fA-F0-9]{32})$" ), nodeend( "^\\]$" );
-    std::string   s;
-    boost::smatch what;
-    auto&         nodes = top.put_child( ptree::path_type( "Nodes" ), ptree{} );
+    std::string s;
+    std::smatch what;
+    auto&       nodes = top.put_child( ptree::path_type( "Nodes" ), ptree{} );
     while ( std::istream::traits_type::not_eof( is.peek() ) ) {
       getline( is, s );
       if ( s.empty() ) continue;
       if ( parsing_nodes ) {
-        if ( boost::regex_match( s, what, nodeend ) ) {
+        if ( std::regex_match( s, what, nodeend ) ) {
           parsing_nodes = false;
-        } else if ( boost::regex_match( s, what, node ) ) {
+        } else if ( std::regex_match( s, what, node ) ) {
           nodes.push_back( std::pair{std::string{}, ptree{what[1].str()}} );
         } else {
           std::cerr << "ConfigTreeNode: read_custom: parsing error while looking for nodes!!! : [" << s << "]"
@@ -49,11 +49,11 @@ namespace {
           return;
         }
       } else {
-        if ( boost::regex_match( s, what, leaf ) ) {
+        if ( std::regex_match( s, what, leaf ) ) {
           top.put( "Leaf", what[1].str() );
-        } else if ( boost::regex_match( s, what, nodestart ) ) {
+        } else if ( std::regex_match( s, what, nodestart ) ) {
           parsing_nodes = true;
-        } else if ( boost::regex_match( s, what, label ) ) {
+        } else if ( std::regex_match( s, what, label ) ) {
           top.put( "Label", what[1].str() );
         } else {
           std::cerr << "ConfigTreeNode: read_custom: parsing error!!! : [" << s << "]" << std::endl;
@@ -75,14 +75,12 @@ namespace {
 
 } // namespace
 
-namespace boost {
-  namespace property_tree {
-    template <>
-    struct translator_between<std::string, ConfigTreeNode::digest_type> {
-      typedef MD5Translator type;
-    };
-  } // namespace property_tree
-} // namespace boost
+namespace boost::property_tree {
+  template <>
+  struct translator_between<std::string, ConfigTreeNode::digest_type> {
+    typedef MD5Translator type;
+  };
+} // namespace boost::property_tree
 
 std::istream& ConfigTreeNode::read( std::istream& is ) {
   ptree top;

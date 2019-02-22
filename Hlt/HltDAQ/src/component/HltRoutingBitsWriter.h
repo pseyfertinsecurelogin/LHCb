@@ -14,9 +14,6 @@
 // Include files
 #include <array>
 
-// boost
-#include <boost/variant.hpp>
-
 // from Gaudi
 #include "DetDesc/Condition.h"
 #include "GaudiAlg/GaudiHistoAlg.h"

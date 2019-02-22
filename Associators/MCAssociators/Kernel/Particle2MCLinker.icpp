@@ -97,7 +97,7 @@ StatusCode Object2MCLinker<SOURCE>::locateAlgorithm( const std::string& algType,
 }
 template <class SOURCE>
 std::string Object2MCLinker<SOURCE>::getGaudiRootInTES() {
-  return boost::apply_visitor( []( const auto* p ) { return p ? p->rootInTES() : std::string{}; }, m_parent );
+  return std::visit( []( const auto* p ) { return p ? p->rootInTES() : std::string{}; }, m_parent );
 }
 template <class SOURCE>
 StatusCode Object2MCLinker<SOURCE>::setAlgInputData( IAlgorithm*& alg, const std::vector<std::string>& inputData ) {

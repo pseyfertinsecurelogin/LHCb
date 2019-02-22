@@ -14,7 +14,7 @@
 // base class
 #include "MapperToolBase.h"
 
-#include <boost/regex.hpp>
+#include <regex>
 
 class IJobOptionsSvc;
 
@@ -114,7 +114,8 @@ private:
     /// Apply the conversion rule to the input string.
     /// If the regex does not match the input, an empty string is returned.
     inline std::string apply( const std::string& input ) const {
-      return boost::regex_replace( input, regexp, format, boost::match_default | boost::format_no_copy );
+      return std::regex_replace( input, regexp, format,
+                                 std::regex_constants::match_default | std::regex_constants::format_no_copy );
     }
 
     /// Helper to create a Rule from a pair of strings.
@@ -122,9 +123,9 @@ private:
 
   private:
     /// Regular expression object.
-    boost::regex regexp;
+    std::regex regexp;
 
-    /// Format string (see Boost documentation).
+    /// Format string (see std documentation).
     std::string format;
   };
 

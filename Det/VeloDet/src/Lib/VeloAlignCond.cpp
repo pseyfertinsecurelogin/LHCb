@@ -15,7 +15,7 @@
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
-#include <boost/regex.hpp>
+#include <regex>
 
 //-----------------------------------------------------------------------------
 // Costructor of VeloAlignCond::PositionPaths
@@ -23,12 +23,11 @@
 // Converts two strings in the format "path/in/TS[param]" to two pairs of string
 VeloAlignCond::PositionPaths::PositionPaths( const std::string& _x, const std::string& _y ) {
   // prepare the reg. exp. parser
-  const std::string rgxp( "^(.*)\\[(.*)\\]$" );
-  boost::regex      e( rgxp );
-  boost::smatch     what;
+  const std::regex e( "^(.*)\\[(.*)\\]$" );
+  std::smatch      what;
   // check X
   if ( !_x.empty() ) {
-    if ( boost::regex_match( _x, what, e ) ) {
+    if ( std::regex_match( _x, what, e ) ) {
       x.first  = what[1];
       x.second = what[2];
     } else {
@@ -41,7 +40,7 @@ VeloAlignCond::PositionPaths::PositionPaths( const std::string& _x, const std::s
   }
   // check Y
   if ( !_y.empty() ) {
-    if ( boost::regex_match( _y, what, e ) ) {
+    if ( std::regex_match( _y, what, e ) ) {
       y.first  = what[1];
       y.second = what[2];
     } else {

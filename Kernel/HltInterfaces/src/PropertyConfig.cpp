@@ -82,35 +82,35 @@ PropertyConfig::Properties PropertyConfig::initProperties( const IProperty& obj 
 #include "boost/property_tree/json_parser.hpp"
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
-#include "boost/regex.hpp"
+#include <regex>
 
 using boost::property_tree::ptree;
 namespace {
   void read_custom( std::istream& is, ptree& top ) {
-    bool                      parsing_properties = false;
-    static const boost::regex propstart( "^Properties: \\[$" ), property( "^ ?'([^']+)':(.*)$" ), propend( "^\\]$" ),
+    bool                    parsing_properties = false;
+    static const std::regex propstart( "^Properties: \\[$" ), property( "^ ?'([^']+)':(.*)$" ), propend( "^\\]$" ),
         topitem( "^(Name|Type|Kind): (.*)$" );
-    boost::smatch what;
-    std::string   s;
-    ptree&        props = top.put_child( "Properties", ptree{} );
+    std::smatch what;
+    std::string s;
+    ptree&      props = top.put_child( "Properties", ptree{} );
     while ( std::istream::traits_type::not_eof( is.peek() ) ) {
       getline( is, s );
       if ( s.empty() ) continue;
       if ( parsing_properties ) {
-        if ( boost::regex_match( s, what, property ) ) {
+        if ( std::regex_match( s, what, property ) ) {
           // props.put(what[1].str(),what[2].str());
           // use add instead of put as Gaudi allows multiple properties with
           // the same name ... surely an oversight...
           props.add( what[1].str(), what[2].str() );
-        } else if ( boost::regex_match( s, what, propend ) ) {
+        } else if ( std::regex_match( s, what, propend ) ) {
           parsing_properties = false;
         } else {
           std::cerr << "parsing error while looking for properties!!! : [" << s << "]" << std::endl;
         }
       } else {
-        if ( boost::regex_match( s, what, topitem ) ) {
+        if ( std::regex_match( s, what, topitem ) ) {
           top.put( what[1].str(), what[2].str() );
-        } else if ( boost::regex_match( s, what, propstart ) ) {
+        } else if ( std::regex_match( s, what, propstart ) ) {
           assert( props.empty() );
           parsing_properties = true;
         } else {
