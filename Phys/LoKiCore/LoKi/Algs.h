@@ -85,7 +85,7 @@ namespace LoKi {
                               OPERATION binop ) {
       // std::iterator_traits<ITER>::reference doesn't work here ;-(
       using value_type = typename std::iterator_traits<ITER>::value_type;
-      using arg_t      = typename std::conditional<std::is_pointer<value_type>::value, value_type,
+      using arg_t      = typename std::conditional<std::is_pointer_v<value_type>, value_type,
                                               typename std::iterator_traits<ITER>::reference>::type;
       return std::accumulate( first, last, result,
                               [&]( RESULT r, arg_t o ) { return predicate( o ) ? binop( r, functor( o ) ) : r; } );

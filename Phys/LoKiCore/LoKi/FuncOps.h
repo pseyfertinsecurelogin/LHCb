@@ -1475,7 +1475,7 @@ namespace LoKi {
       }
       // ======================================================================
       // need to be removed for TYPE==double
-      template <class T2 = TYPE, typename = std::enable_if_t<!std::is_same<T2, double>::value>>
+      template <class T2 = TYPE, typename = std::enable_if_t<!std::is_same_v<T2, double>>>
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<double>>
       __switch__( const CutVal& cut, const Map& fun1, const Map& fun2 ) {
         return LoKi::Switch<std::vector<TYPE>, std::vector<double>>( cut, fun1, fun2 );

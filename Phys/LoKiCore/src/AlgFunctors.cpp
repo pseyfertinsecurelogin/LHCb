@@ -74,7 +74,7 @@ namespace {
 
     template <typename T>
     void push_back( T&& t ) {
-      static_assert( std::tuple_size<T>::value == 2, "Expecting an std::tuple key-value pair" );
+      static_assert( std::tuple_size_v<T> == 2, "Expecting an std::tuple key-value pair" );
       using type   = typename std::decay<typename std::tuple_element<1, T>::type>::type;
       using prop_t = Gaudi::Property<type>;
       if ( !isDefault( std::get<1>( t ) ) )

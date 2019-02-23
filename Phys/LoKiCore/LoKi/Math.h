@@ -363,8 +363,8 @@ namespace LoKi {
 #define LOKI_REQUIRES( ... ) std::enable_if_t<( __VA_ARGS__ ), bool> = true
 
   template <typename Iterator, typename F,
-            LOKI_REQUIRES( std::is_convertible<typename std::iterator_traits<Iterator>::reference,
-                                               LoKi::details::argument_t<F>>::value )>
+            LOKI_REQUIRES( std::is_convertible_v<typename std::iterator_traits<Iterator>::reference,
+                                                 LoKi::details::argument_t<F>> )>
   Iterator select_min( Iterator first, Iterator last, const F& fun ) {
     return std::min_element( first, last, LoKi::compare( fun, fun, std::less{} ) );
   }
@@ -391,8 +391,8 @@ namespace LoKi {
    *  @date   2002-09-05
    */
   template <typename Iterator, typename F,
-            LOKI_REQUIRES( std::is_convertible<typename std::iterator_traits<Iterator>::reference,
-                                               LoKi::details::argument_t<F>>::value )>
+            LOKI_REQUIRES( std::is_convertible_v<typename std::iterator_traits<Iterator>::reference,
+                                                 LoKi::details::argument_t<F>> )>
   Iterator select_max( Iterator first, Iterator last, const F& fun ) {
     return std::max_element( first, last, LoKi::compare( fun, fun, std::less{} ) );
   }
@@ -419,7 +419,7 @@ namespace LoKi {
    *  @date   2002-09-05
    */
   template <typename Sequence, typename F,
-            LOKI_REQUIRES( std::is_convertible<typename Sequence::value_type, LoKi::details::argument_t<F>>::value )>
+            LOKI_REQUIRES( std::is_convertible_v<typename Sequence::value_type, LoKi::details::argument_t<F>> )>
   typename Sequence::value_type select_min( Sequence& sequence, F&& fun ) {
     if ( sequence.begin() == sequence.end() ) { return {}; }
     return *select_min( sequence.begin(), sequence.end(), std::forward<F>( fun ) );
@@ -447,7 +447,7 @@ namespace LoKi {
    *  @date   2002-09-05
    */
   template <typename Sequence, typename F,
-            LOKI_REQUIRES( std::is_convertible<typename Sequence::value_type, LoKi::details::argument_t<F>>::value )>
+            LOKI_REQUIRES( std::is_convertible_v<typename Sequence::value_type, LoKi::details::argument_t<F>> )>
   typename Sequence::value_type select_max( Sequence& sequence, F&& fun ) {
     if ( sequence.begin() == sequence.end() ) { return {}; }
     return *select_max( sequence.begin(), sequence.end(), std::forward<F>( fun ) );
@@ -482,10 +482,10 @@ namespace LoKi {
    *  @date   2005-03-09
    */
   template <typename Iterator, typename Fun, typename Cut,
-            LOKI_REQUIRES( std::is_convertible<typename std::iterator_traits<Iterator>::reference,
-                                               LoKi::details::argument_t<Fun>>::value ),
-            LOKI_REQUIRES( std::is_convertible<typename std::iterator_traits<Iterator>::reference,
-                                               LoKi::details::argument_t<Cut>>::value )>
+            LOKI_REQUIRES( std::is_convertible_v<typename std::iterator_traits<Iterator>::reference,
+                                                 LoKi::details::argument_t<Fun>> ),
+            LOKI_REQUIRES( std::is_convertible_v<typename std::iterator_traits<Iterator>::reference,
+                                                 LoKi::details::argument_t<Cut>> )>
   Iterator select_min( Iterator first, Iterator last, const Fun& fun, const Cut& cut ) {
     // empty sequence (or sequence without selected items)
     first = std::find_if( first, last, std::cref( cut ) );
@@ -533,10 +533,10 @@ namespace LoKi {
    *  @date   2005-03-09
    */
   template <typename Iterator, typename Fun, typename Cut,
-            LOKI_REQUIRES( std::is_convertible<typename std::iterator_traits<Iterator>::reference,
-                                               LoKi::details::argument_t<Fun>>::value ),
-            LOKI_REQUIRES( std::is_convertible<typename std::iterator_traits<Iterator>::reference,
-                                               LoKi::details::argument_t<Cut>>::value )>
+            LOKI_REQUIRES( std::is_convertible_v<typename std::iterator_traits<Iterator>::reference,
+                                                 LoKi::details::argument_t<Fun>> ),
+            LOKI_REQUIRES( std::is_convertible_v<typename std::iterator_traits<Iterator>::reference,
+                                                 LoKi::details::argument_t<Cut>> )>
   Iterator select_max( Iterator first, Iterator last, const Fun& fun, const Cut& cut ) {
     // empty sequence
     first = std::find_if( first, last, std::cref( cut ) );
@@ -728,7 +728,7 @@ namespace LoKi {
     };
     inline constexpr Abs_t _Abs_{};
     // ========================================================================
-    template <class TYPE = void, class TYPE1, class TYPE2 = std::conditional_t<std::is_void<TYPE>::value, TYPE1, TYPE>>
+    template <class TYPE = void, class TYPE1, class TYPE2 = std::conditional_t<std::is_void_v<TYPE>, TYPE1, TYPE>>
     std::vector<TYPE2> _abs_( const std::vector<TYPE1>& vct ) {
       std::vector<TYPE2> res;
       res.reserve( vct.size() );

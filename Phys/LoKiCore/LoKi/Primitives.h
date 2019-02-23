@@ -77,7 +77,7 @@ namespace LoKi {
       // avoid matching the various special members
       template <typename F, typename... Fs,
                 LOKI_REQUIRES( sizeof...( Fs ) != 0 ||
-                               !std::is_base_of<FunctorArray<Signature, N>, std::remove_reference_t<F>>::value )>
+                               !std::is_base_of_v<FunctorArray<Signature, N>, std::remove_reference_t<F>> )>
       FunctorArray( F&& f, Fs&&... fs ) : m_funs{std::forward<F>( f ), std::forward<Fs>( fs )...} {}
       // ========================================================================
       /// evaluate the i-th functor
@@ -1141,9 +1141,10 @@ namespace LoKi {
         struct FirstOrSecond_t : First_t, Second_t {}; // order doesn't matter...
 
         template <typename T>
-        using Second = std::is_base_of<Second_t, typename T::Bind_t>;
+        inline constexpr bool Second_v = std::is_base_of_v<Second_t, typename T::Bind_t>;
         template <typename T>
-        using First = std::is_base_of<First_t, typename T::Bind_t>;
+        inline constexpr bool First_v = std::is_base_of_v<First_t, typename T::Bind_t>;
+
       } // namespace Bind
 
       template <typename Traits_, typename Signature, typename Result = details::result_of_t<Signature>>
@@ -1157,10 +1158,10 @@ namespace LoKi {
          *  @param fun the function
          *  @param val the reference value
          */
-        template <typename T, LOKI_REQUIRES( std::is_constructible<TYPE2, T>::value&& Bind::Second<Traits_>::value )>
+        template <typename T, LOKI_REQUIRES( std::is_constructible_v<TYPE2, T>&& Bind::Second_v<Traits_> )>
         BindBinary( FunctorFromFunctor<TYPE2( TYPE... )> fun, T&& val )
             : AuxFunBase( std::tie( fun, val ) ), m_fun( std::move( fun ) ), m_val( std::forward<T>( val ) ) {}
-        template <typename T, LOKI_REQUIRES( std::is_constructible<TYPE2, T>::value&& Bind::First<Traits_>::value )>
+        template <typename T, LOKI_REQUIRES( std::is_constructible_v<TYPE2, T>&& Bind::First_v<Traits_> )>
         BindBinary( T&& val, FunctorFromFunctor<TYPE2( TYPE... )> fun )
             : AuxFunBase( std::tie( val, fun ) ), m_fun( std::move( fun ) ), m_val( std::forward<T>( val ) ) {}
         // ========================================================================
@@ -1168,13 +1169,13 @@ namespace LoKi {
         BindBinary* clone() const override { return new BindBinary( *this ); }
         /// MANDATORY: the only one essential method :
         Result operator()( details::Param_t<TYPE>... a ) const override {
-          return Bind::Second<Traits_>::value ? Traits_::binaryOp( this->m_fun.fun( a... ), this->m_val )
-                                              : Traits_::binaryOp( this->m_val, this->m_fun.fun( a... ) );
+          return Bind::Second_v<Traits_> ? Traits_::binaryOp( this->m_fun.fun( a... ), this->m_val )
+                                         : Traits_::binaryOp( this->m_val, this->m_fun.fun( a... ) );
         }
         /// OPTIONAL: the specific printout
         std::ostream& fillStream( std::ostream& s ) const override {
-          return Bind::Second<Traits_>::value ? ( s << " (" << this->m_fun << Traits_::infix() << this->m_val << ") " )
-                                              : ( s << " (" << this->m_val << Traits_::infix() << this->m_fun << ") " );
+          return Bind::Second_v<Traits_> ? ( s << " (" << this->m_fun << Traits_::infix() << this->m_val << ") " )
+                                         : ( s << " (" << this->m_val << Traits_::infix() << this->m_fun << ") " );
         }
         // ========================================================================
       private:
@@ -1642,8 +1643,8 @@ namespace LoKi {
        *  @param last end of range
        */
       template <typename Iterator,
-                LOKI_REQUIRES( std::is_base_of<std::input_iterator_tag,
-                                               typename std::iterator_traits<Iterator>::iterator_category>::value )>
+                LOKI_REQUIRES( std::is_base_of_v<std::input_iterator_tag,
+                                                 typename std::iterator_traits<Iterator>::iterator_category> )>
       EqualToList( FunctorFromFunctor<double( TYPE... )> fun, Iterator first, Iterator last )
           : EqualToList( std::move( fun ), std::vector<double>{first, last} ) {}
       // ========================================================================
@@ -1720,8 +1721,8 @@ namespace LoKi {
        *  @param last end of range
        */
       template <typename Iterator,
-                LOKI_REQUIRES( std::is_base_of<std::input_iterator_tag,
-                                               typename std::iterator_traits<Iterator>::iterator_category>::value )>
+                LOKI_REQUIRES( std::is_base_of_v<std::input_iterator_tag,
+                                                 typename std::iterator_traits<Iterator>::iterator_category> )>
       NotEqualToList( FunctorFromFunctor<double( TYPE... )> fun, Iterator first, Iterator last )
           : EqualToList<double( TYPE... )>( std::move( fun ), first, last ) {}
       // ========================================================================
