@@ -21,6 +21,8 @@
 #include "Event/State.h"
 #include "Event/Track.h"
 #include "GaudiKernel/Plane3DTypes.h"
+#include "CaloFutureMatch2D.h"
+#include "CaloFutureMatch3D.h"
 namespace LHCb{
   class CaloPosition  ; // from CaloEvent package 
   class State         ; // from TrackEvent   package
@@ -53,6 +55,12 @@ namespace LHCb{
 struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
 {  
 
+ struct MatchMatrices
+ {
+  CaloFutureMatch2D calo_match_2D;
+  CaloFutureMatch3D calo_match_3D;
+ };
+
  struct MatchResults 
  {
   //this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
@@ -65,6 +73,8 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
   bool match_successful = false;
   //calculated chi2 value - if something goes bad this value is bad()
   double chi2_value = -1;
+  //Match matrices used by match method - contains only state of matricies calulated for calo object
+  MatchMatrices matrices;
  };
 
   /** interface identification
@@ -77,10 +87,9 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
    *  @param calo_obj "calorimeter" object (position)
    *  @param track_obj tracking object (track)
    *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
-   *  @param detector_plane detector's plane - hase to be initialized in calling method
-   *  @param match_state - matching state
+   *  @param old_match_results match results from last iteration step
    */
- virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const bool& is_new_calo_obj, const Gaudi::Plane3D& detector_plane, const LHCb::State& match_state ) const = 0;
+ virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const bool& is_new_calo_obj, const MatchResults& old_match_results ) const = 0;
     
 };
 // ============================================================================
