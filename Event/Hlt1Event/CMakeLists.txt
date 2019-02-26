@@ -9,19 +9,10 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 ################################################################################
-# Package: TrackEvent
+# Package: Hlt1Event
 ################################################################################
-gaudi_subdir(TrackEvent v6r7)
+gaudi_subdir(Hlt1Event v1r0)
 
-gaudi_depends_on_subdirs(GaudiObjDesc
-                         Kernel/LHCbKernel
-                         Event/DigiEvent)
-
-find_package(GSL)
-find_package(ROOT)
-find_package(Rangev3 REQUIRED)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
-
-include(GaudiObjDesc)
+gaudi_depends_on_subdirs(Event/DigiEvent)
 
 gaudi_install_headers(Event)
