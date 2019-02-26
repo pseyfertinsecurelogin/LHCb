@@ -11,7 +11,19 @@
 ################################################################################
 # Package: SOAExtensions
 ################################################################################
-gaudi_subdir(SOAContainer v1r0)
+gaudi_subdir(SOAExtensions v1r0)
+
+gaudi_depends_on_subdirs(Kernel/SOAContainer)
 
 gaudi_install_headers(SOAExtensions)
 # LINK_LIBRARIES (interface lib) Kernel/SOAContainer
+
+find_package(Boost)
+find_package(Rangev3 REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${RANGEV3_INCLUDE_DIR})
+
+gaudi_add_unit_test(TestZipSelection
+                    tests/src/TestSelection.cpp
+                    INCLUDE_DIRS Kernel/SOAContainer
+                    LINK_LIBRARIES GaudiKernel
+                    TYPE Boost)
