@@ -301,7 +301,7 @@ namespace LoKi {
       }
     };
   } // namespace details
-  template <typename F, typename = typename details::is_functor<F>>
+  template <typename F, LOKI_REQUIRES( details::is_functor_v<F> )>
   details::Apply<F> Apply( F&& fun ) {
     return {std::forward<F>( fun )};
   }

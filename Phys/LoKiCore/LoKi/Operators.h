@@ -928,78 +928,78 @@ namespace LoKi {
 // ============================================================================
 namespace LoKi {
   // less
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator<( const Functor<TYPE, TYPE2>& fun1,
                                                      const Functor<void, TYPE2>& fun2 ) {
     return {fun1, LoKi::Value<TYPE, TYPE2>( fun2 )};
   }
   //
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator<( const Functor<void, TYPE2>& fun1,
                                                      const Functor<TYPE, TYPE2>& fun2 ) {
     return {Value<TYPE, TYPE2>( fun1 ), fun2};
   }
 
   // less or equal
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator<=( const Functor<TYPE, TYPE2>& fun1,
                                                              const Functor<void, TYPE2>& fun2 ) {
     return {fun1, LoKi::Value<TYPE, TYPE2>( fun2 )};
   }
   //
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator<=( const Functor<void, TYPE2>& fun1,
                                                              const Functor<TYPE, TYPE2>& fun2 ) {
     return {Value<TYPE, TYPE2>( fun1 ), fun2};
   }
 
   // greater
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator>( const Functor<TYPE, TYPE2>& fun1,
                                                      const Functor<void, TYPE2>& fun2 ) {
     return {Value<TYPE, TYPE2>( fun2 ), fun1};
   }
   //
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator>( const Functor<void, TYPE2>& fun1,
                                                      const Functor<TYPE, TYPE2>& fun2 ) {
     return {fun2, Value<TYPE, TYPE2>( fun1 )};
   }
 
   // greater or equal
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator>=( const Functor<TYPE, TYPE2>& fun1,
                                                              const Functor<void, TYPE2>& fun2 ) {
     return {Value<TYPE, TYPE2>( fun2 ), fun1};
   }
   //
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator>=( const Functor<void, TYPE2>& fun1,
                                                              const Functor<TYPE, TYPE2>& fun2 ) {
     return {fun2, Value<TYPE, TYPE2>( fun1 )};
   }
 
   // equality
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Equal<details::sig_t<TYPE, TYPE2>> operator==( const Functor<TYPE, TYPE2>& fun1,
                                                        const Functor<void, TYPE2>& fun2 ) {
     return {fun1, Value<TYPE, TYPE2>( fun2 )};
   }
   //
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Equal<details::sig_t<TYPE, TYPE2>> operator==( const Functor<void, TYPE2>& fun1,
                                                        const Functor<TYPE, TYPE2>& fun2 ) {
     return {Value<TYPE, TYPE2>( fun1 ), fun2};
   }
 
   // non-equality
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::NotEqual<details::sig_t<TYPE, TYPE2>> operator!=( const Functor<TYPE, TYPE2>& fun1,
                                                           const Functor<void, TYPE2>& fun2 ) {
     return {fun1, Value<TYPE, TYPE2>( fun2 )};
   }
   //
-  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
+  template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::NotEqual<details::sig_t<TYPE, TYPE2>> operator!=( const Functor<void, TYPE2>& fun1,
                                                           const Functor<TYPE, TYPE2>& fun2 ) {
     return {Value<TYPE, TYPE2>( fun1 ), fun2};

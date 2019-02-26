@@ -269,8 +269,11 @@ namespace LoKi {
   namespace details {
 
     template <typename T, typename U>
-    using decays_to = std::conditional_t<std::is_void<U>::value, typename std::is_void<T>::type,
+    using decays_to = std::conditional_t<std::is_void_v<U>, typename std::is_void<T>::type,
                                          typename std::is_convertible<std::decay_t<T>*, U*>::type>;
+
+    template <typename T, typename U>
+    inline constexpr bool decays_to_v = decays_to<T, U>::value;
 
     // is Derived derived from Base<Args...>?
     template <template <typename...> class Base, typename Derived>
@@ -279,15 +282,16 @@ namespace LoKi {
       static std::true_type  test( Base<Args...>* );
       static std::false_type test( void* );
 
-      using type = decltype( test( std::declval<std::decay_t<Derived>*>() ) );
+      using type                  = decltype( test( std::declval<std::decay_t<Derived>*>() ) );
+      static constexpr bool value = type::value;
     };
 
     template <typename T>
-    using is_functor = typename is_derived_from_template_helper<LoKi::Functor, T>::type;
+    inline constexpr bool is_functor_v = is_derived_from_template_helper<LoKi::Functor, T>::value;
 
     // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
     // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
-    template <typename T, LOKI_REQUIRES( is_functor<T>::value )>
+    template <typename T, LOKI_REQUIRES( is_functor_v<T> )>
     struct LF_ {
       using U = std::decay_t<T>;
       template <typename T1, typename T2>
@@ -308,8 +312,7 @@ namespace LoKi {
     using argument_t = typename boost::call_traits<std::add_const_t<type1_t<F>>>::param_type;
 
     template <typename F, typename TYPE1, typename TYPE2>
-    using require_signature =
-        std::enable_if_t<decays_to<type1_t<F>, TYPE1>::value && decays_to<type2_t<F>, TYPE2>::value>;
+    using require_signature = std::enable_if_t<decays_to_v<type1_t<F>, TYPE1> && decays_to_v<type2_t<F>, TYPE2>>;
 
     template <typename Arg, typename Res>
     struct sig_helper {
@@ -369,7 +372,7 @@ namespace LoKi {
   public:
     // ========================================================================
     /// assignment
-    template <typename Arg, LOKI_REQUIRES( std::is_assignable<TYPE2, Arg>::value )>
+    template <typename Arg, LOKI_REQUIRES( std::is_assignable_v<TYPE2, Arg> )>
     Constant& operator=( const Arg& arg ) {
       m_value = arg;
       return *this;
@@ -408,7 +411,7 @@ namespace LoKi {
   public:
     // ========================================================================
     /// assignement
-    template <typename Arg, LOKI_REQUIRES( std::is_assignable<TYPE2, Arg>::value )>
+    template <typename Arg, LOKI_REQUIRES( std::is_assignable_v<TYPE2, Arg> )>
     Constant& operator=( const Arg& arg ) {
       m_value = arg;
       return *this;
