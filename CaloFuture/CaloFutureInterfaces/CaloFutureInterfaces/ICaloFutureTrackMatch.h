@@ -15,6 +15,7 @@
 // STD & STL
 #include <functional>
 #include <utility>
+#include <variant>
 // GaudiKernel 
 #include "GaudiKernel/IAlgTool.h"
 #include "Math/Plane3D.h"
@@ -55,12 +56,6 @@ namespace LHCb{
 struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
 {  
 
- struct MatchMatrices
- {
-  CaloFutureMatch2D calo_match_2D;
-  CaloFutureMatch3D calo_match_3D;
- };
-
  struct MatchResults 
  {
   //this the same or modyfied plane of calorimeter - can be the same like "detector_plane" or different
@@ -74,8 +69,8 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
   bool match_successful = false;
   //calculated chi2 value - if something goes bad this value is bad()
   double chi2_value = -1;
-  //Match matrices used by match method - contains only state of matricies calulated for calo object
-  MatchMatrices matrices;
+  //Match matrix used by match method - contains only state of matricies calulated for calo object
+  std::variant<CaloFutureMatch2D, CaloFutureMatch3D> matrix;
  };
 
   /** interface identification
