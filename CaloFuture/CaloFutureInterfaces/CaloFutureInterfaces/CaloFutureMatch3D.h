@@ -32,14 +32,6 @@ class CaloFutureMatch3D
   inline bool ok() const;
   inline bool inverted() const;
 
-  inline double& operator()( const unsigned int ind );
-  inline double& operator()( const unsigned int ind1, const unsigned int ind2 );
-
-  inline CaloFutureMatch3D& set( const Matrix& m );
-  inline CaloFutureMatch3D& set( const Vector& v );
-  inline CaloFutureMatch3D& setOK( const bool e );
-  inline CaloFutureMatch3D& setInverted( const bool i );
-
   // invert the matrix
   inline bool invert();
 
@@ -97,40 +89,6 @@ bool CaloFutureMatch3D::ok() const
 bool CaloFutureMatch3D::inverted() const 
 { 
  return m_inverted;
-}
-
-double& CaloFutureMatch3D::operator()( const unsigned int ind )
-{ 
- return m_params( ind );
-}
-
-double& CaloFutureMatch3D::operator()( const unsigned int ind1, const unsigned int ind2 )
-{ 
- return m_matrix( ind1, ind2 ); 
-}
-
-CaloFutureMatch3D& CaloFutureMatch3D::set( const CaloFutureMatch3D::Matrix& m )
-{
- m_matrix = m;
- return *this;
-}
-
-CaloFutureMatch3D& CaloFutureMatch3D::set( const CaloFutureMatch3D::Vector& v )
-{
- m_params = v;
- return *this;
-}
-
-CaloFutureMatch3D& CaloFutureMatch3D::setOK( const bool e )
-{
- m_ok = e;
- return *this;
-}
-
-CaloFutureMatch3D& CaloFutureMatch3D::setInverted( const bool i )
-{
- m_inverted = i;
- return *this;
 }
 
 bool CaloFutureMatch3D::invert()
