@@ -69,6 +69,7 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
   LHCb::State state;
   //when true this means there is no point to check another tracks for this calo object
   bool skip_this_calo = false;
+  bool is_new_calo_obj = false;
   //when equal true means that the whole matching process finished with successful ( no fails )
   bool match_successful = false;
   //calculated chi2 value - if something goes bad this value is bad()
@@ -89,7 +90,7 @@ struct  ICaloFutureTrackMatch: extend_interfaces<IAlgTool>
    *  @param is_new_calo_obj when true means we use new calo_obj ( next one from calo objects list )
    *  @param old_match_results match results from last iteration step
    */
- virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const bool& is_new_calo_obj, const MatchResults& old_match_results ) const = 0;
+ virtual MatchResults match( const LHCb::CaloPosition& calo_obj, const LHCb::Track& track_obj, const MatchResults& old_match_results ) const = 0;
     
 };
 // ============================================================================
