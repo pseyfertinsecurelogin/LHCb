@@ -8,17 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/GenericVectorTypes.h"
-#include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "Event/CaloPosition.h"
-#include "Event/State.h"
-#include "DetDesc/Condition.h"
-#include "Kernel/ILHCbMagnetSvc.h"
-
 #ifndef CaloFutureMatch2D_h
 #define CaloFutureMatch2D_h
+
+#include <Math/SVector.h>
+#include <Math/SMatrix.h>
 
 class CaloFutureMatch2D
 {
