@@ -13,6 +13,7 @@
 ################################################################################
 gaudi_subdir(Hlt1Event v1r0)
 
-gaudi_depends_on_subdirs(Event/DigiEvent)
+gaudi_depends_on_subdirs(Event/DigiEvent
+                         Event/TrackEvent)
 
 gaudi_install_headers(Event)

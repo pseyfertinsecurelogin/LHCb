@@ -17,8 +17,11 @@ gaudi_depends_on_subdirs(Event/DigiEvent
                          Event/EventBase
                          Event/TrackEvent
                          Event/Hlt1Event
+                         Kernel/SOAContainer
+                         Det/DetDesc
                          GaudiObjDesc
                          Kernel/LHCbMath
+                         Kernel/LHCbKernel
                          Kernel/PartProp)
 
 include(GaudiObjDesc)
@@ -28,11 +31,11 @@ god_build_headers(xml/*.xml)
 gaudi_add_library(RecEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
-                  INCLUDE_DIRS Event/DigiEvent Event/EventBase
+                  INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer Det/UTDet Det/DetDesc Kernel/LHCbKernel
                   LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib)
 
 god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
-                     INCLUDE_DIRS Event/DigiEvent Event/EventBase
+                     INCLUDE_DIRS Event/DigiEvent Event/EventBase Kernel/SOAContainer Det/UTDet Kernel/LHCbKernel
                      LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib RecEvent)
 

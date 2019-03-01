@@ -68,7 +68,7 @@ namespace LHCb::Event::v2 {
     /// constructor
     RecVertex(const Gaudi::XYZPoint& position,
               const Gaudi::SymMatrix3x3& covMatrix,
-              Chi2PerDoF chi2PerDoF) :
+              const Chi2PerDoF chi2PerDoF) :
     m_position(position), m_covMatrix(covMatrix), m_chi2PerDoF(chi2PerDoF) {}
 
     /// Is the vertex a primary?
