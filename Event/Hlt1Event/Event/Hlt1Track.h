@@ -37,13 +37,19 @@ struct Track {
 SOAFIELD_TRIVIAL( f_velohits, velohits, std::vector<LHCb::VPLightCluster> ); // to PrVeloUT **for forwarding only**
 SOASKIN_TRIVIAL( s_velohits , f_velohits );
 SOAFIELD_TRIVIAL( f_atbeamstate, beamstate, LHCb::State );                   // to PatPV (and IP Filter)
-SOASKIN_TRIVIAL( s_atbeamstate , f_atbeamstate );
+SOASKIN( s_atbeamstate, f_atbeamstate ) {
+  SOASKIN_INHERIT_DEFAULT_METHODS( s_atbeamstate );
+  auto tx() const { return this->beamstate().tx(); }
+  auto ty() const { return this->beamstate().ty(); }
+  auto x() const { return this->beamstate().x(); }
+  auto y() const { return this->beamstate().y(); }
+  auto z() const { return this->beamstate().z(); }
+};
 SOAFIELD_TRIVIAL( f_endofvelostate, velostate, LHCb::State );                // to PrVeloUT
 SOASKIN_TRIVIAL( s_endofvelostate , f_endofvelostate );
 SOAFIELD_TRIVIAL( f_chi2, chisquare, LHCb::Chi2PerDoF );                     // used???????????
 SOASKIN_TRIVIAL( s_chi2 , f_chi2 );
 // TODO: flags and stuff
-
 SOASKIN( IpSelectorSkin, f_velohits, f_atbeamstate ) {
   SOASKIN_INHERIT_DEFAULT_METHODS( IpSelectorSkin );
 };
