@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE( smart_test_name_goes_here )
   [[maybe_unused]] auto another_full_track = semantic_zip<s_track_with_fitres_and_fitqual>( track_with_momentum, foo3 );
   [[maybe_unused]] auto yet_another_full_track = semantic_zip<s_track_with_fitres_and_fitqual>( full_track );
 
-  SelectionView selected_tracks{track_with_momentum, []( auto i ) { return 0 == i.accessor_fitres().q % 2; }};
+  SelectionView<decltype(track_with_momentum)> selected_tracks{track_with_momentum, []( auto i ) { return 0 == i.accessor_fitres().q % 2; }};
 
   BOOST_CHECK_EQUAL( selected_tracks.size(), track_with_momentum.size() / 2 );
 

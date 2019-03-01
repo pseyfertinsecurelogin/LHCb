@@ -74,15 +74,15 @@ struct ExportedSelection {
  * select 65536 objects...
  */
 template <typename CONTAINER, typename IndexSize = uint16_t,
-          typename = typename std::enable_if_t<has_semantic_zip<CONTAINER>::value>>
+          typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
 struct SelectionView {
   // TODO in optimised build we could reduce sizeof(SelectionView) by 40% by
   // using a single pointer in container_t and
   //      using an index_vector type that imposes size()==capacity()
-  using proxy_type = typename CONTAINER::proxy; // make it easier to write generic code
+  using proxy_type = typename std::decay_t<CONTAINER>::proxy; // make it easier to write generic code
                                                 // that can handle both containers and
                                                 // SelectionViews
-  using container_t  = CONTAINER;
+  using container_t  = std::decay_t<CONTAINER>;
   using index_vector = typename std::vector<IndexSize>;
 
   // Custom iterator class for looping through the index vector but
@@ -93,8 +93,8 @@ struct SelectionView {
     using difference_type   = typename index_iter_type::difference_type;
     using iterator_category = std::random_access_iterator_tag;
 
-    container_t&    m_container;
-    index_iter_type m_iter;
+    const container_t& m_container;
+    index_iter_type    m_iter;
 
     value_type const operator*() const { return m_container[*m_iter]; }
 
@@ -134,7 +134,7 @@ struct SelectionView {
     }
   };
 
-  container_t& m_container;
+  const container_t& m_container;
   index_vector m_indices;
 
   ExportedSelection<IndexSize> export_selection() { return {m_indices, m_container.ZipIdentifier()}; }
@@ -153,7 +153,7 @@ struct SelectionView {
    * vector of selected indices.
    */
   template <typename Predicate = details::alwaysTrue>
-  SelectionView( container_t& container, Predicate&& predicate = {}, int reserveCapacity = -1 )
+  SelectionView( const container_t& container, Predicate&& predicate = {}, int reserveCapacity = -1 )
       : m_container{container} {
     if ( UNLIKELY( m_container.size() - 1 > std::numeric_limits<IndexSize>::max() ) ) {
       throw GaudiException{"Index overflow: " + std::to_string( container.size() - 1 ) + " > " +
@@ -179,7 +179,7 @@ struct SelectionView {
     }
   }
 
-  SelectionView( container_t& container, const ExportedSelection<IndexSize>& selection )
+  SelectionView( const container_t& container, const ExportedSelection<IndexSize>& selection )
       : m_container{container}, m_indices{selection.m_indices} {
     if ( selection.ZipIdentifier() != container.ZipIdentifier() ) {
       throw GaudiException( "incompatible selection!!!! ahahah write something more "
@@ -187,7 +187,7 @@ struct SelectionView {
                             details::typename_v<SelectionView>, StatusCode::FAILURE );
     }
   }
-  SelectionView( container_t& container, ExportedSelection<IndexSize>& selection )
+  SelectionView( const container_t& container, ExportedSelection<IndexSize>& selection )
       : m_container{container}, m_indices{selection.m_indices} {
     if ( selection.ZipIdentifier() != container.ZipIdentifier() ) {
       throw GaudiException( "incompatible selection!!!! ahahah write something more "

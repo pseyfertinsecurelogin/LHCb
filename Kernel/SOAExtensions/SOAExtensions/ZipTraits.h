@@ -24,7 +24,7 @@ struct has_semantic_zip {
 
 template <typename VIEW>
 struct has_semantic_zip<ZipContainer<VIEW>> {
-  static constexpr bool value = SOA::Utils::is_view<std::decay_t<VIEW>>::value;
+  static constexpr bool value = SOA::Utils::is_view<std::decay_t<std::decay_t<VIEW>>>::value;
 };
 
 template <typename VIEW>

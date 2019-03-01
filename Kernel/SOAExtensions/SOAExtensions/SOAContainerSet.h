@@ -55,7 +55,7 @@ public:
   template <typename T>
   auto push_back( const T& t )
       -> std::enable_if_t<view::self_type::fields_typelist::size() == 1 &&
-                          std::is_same_v<std::remove_reference_t<T>,
+                          std::is_same_v<std::remove_reference_t<std::remove_const_t<T>>,
                                          typename view::self_type::fields_typelist::template at<0>::type::type>> {
     CONTAINER::emplace_back( std::forward<const T>( t ) );
   }
