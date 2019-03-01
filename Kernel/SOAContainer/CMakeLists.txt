@@ -11,6 +11,8 @@
 ################################################################################
 # Package: SOAContainer
 ################################################################################
+gaudi_subdir(SOAContainer v1r0)
+set_property(DIRECTORY PROPERTY INSTALLS_LOCAL_HEADERS TRUE)
 
 # This uses the upstream SOAContainer repository as submodule.
 
