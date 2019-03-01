@@ -15,19 +15,17 @@
 
 
 namespace LHCb::HLT1::TESLocations {
+// out of PrPixel
     [[maybe_unused]] inline const char* PrPixelHits = "Rec/HLT1/PrPixelHits";
     [[maybe_unused]] inline const char* PrPixelBeamStates = "Rec/HLT1/PrPixelBeamStates";
     [[maybe_unused]] inline const char* PrPixelEndStates = "Rec/HLT1/PrPixelEndStates";
-    [[maybe_unused]] inline const char* PrPixelVeloTracks = "Rec/HLT1/PrPixelVeloTracks";
     [[maybe_unused]] inline const char* PrPixelChiSquares = "Rec/HLT1/PrPixelChiSquares";
 
-    [[maybe_unused]] inline const char* PrPixelHitsSelection = "Rec/HLT1/PrPixelHits_Selection";
-    [[maybe_unused]] inline const char* PrPixelBeamStatesSelection = "Rec/HLT1/PrPixelBeamStates_Selection";
-    [[maybe_unused]] inline const char* PrPixelEndStatesSelection = "Rec/HLT1/PrPixelEndStates_Selection";
-    [[maybe_unused]] inline const char* PrPixelVeloTracksSelection = "Rec/HLT1/PrPixelVeloTracks_Selection";
+// out of IpFilter
+    [[maybe_unused]] inline const char* PrPixelSelection = "Rec/HLT1/PrPixel_Selection";
 
-    [[maybe_unused]] inline const char* PrVeloUtHits = "Rec/HLT1/PrVeloUtHits";
-    [[maybe_unused]] inline const char* PrVeloUtVeloStates = "Rec/HLT1/PrVeloUtVeloStates";
-    [[maybe_unused]] inline const char* PrVeloUtUtStates = "Rec/HLT1/PrVeloUtUtStates";
-    [[maybe_unused]] inline const char* PrVeloUtTracks = "Rec/HLT1/PrVeloUtTracks";
+// out of PrVeloUT
+    [[maybe_unused]] inline const char* PrVeloUtUtHits = "Rec/HLT1/PrVeloUtHits";
+    [[maybe_unused]] inline const char* PrVeloUtVeloHits = "Rec/HLT1/PrVeloUtVeloHits";
+    [[maybe_unused]] inline const char* PrVeloUtStates = "Rec/HLT1/PrVeloUtStates";
 } // namespace LHCb::HL1::TESLocations

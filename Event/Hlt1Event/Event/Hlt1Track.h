@@ -35,10 +35,18 @@ struct Track {
 
 // out of PrPixel
 SOAFIELD_TRIVIAL( f_velohits, velohits, std::vector<LHCb::VPLightCluster> ); // to PrVeloUT **for forwarding only**
+SOASKIN_TRIVIAL( s_velohits , f_velohits );
 SOAFIELD_TRIVIAL( f_atbeamstate, beamstate, LHCb::State );                   // to PatPV (and IP Filter)
+SOASKIN_TRIVIAL( s_atbeamstate , f_atbeamstate );
 SOAFIELD_TRIVIAL( f_endofvelostate, velostate, LHCb::State );                // to PrVeloUT
+SOASKIN_TRIVIAL( s_endofvelostate , f_endofvelostate );
 SOAFIELD_TRIVIAL( f_chi2, chisquare, LHCb::Chi2PerDoF );                     // used???????????
+SOASKIN_TRIVIAL( s_chi2 , f_chi2 );
 // TODO: flags and stuff
+
+SOASKIN( IpSelectorSkin, f_velohits, f_atbeamstate ) {
+  SOASKIN_INHERIT_DEFAULT_METHODS( IpSelectorSkin );
+};
 
 SOASKIN( VeloTrack, f_velohits, f_atbeamstate, f_endofvelostate, f_chi2 ) {
   SOASKIN_INHERIT_DEFAULT_METHODS( VeloTrack );
@@ -46,7 +54,9 @@ SOASKIN( VeloTrack, f_velohits, f_atbeamstate, f_endofvelostate, f_chi2 ) {
 
 // out of PrVeloUT
 SOAFIELD_TRIVIAL( f_uthits, uthits, std::vector<UT::Hit> );                     // to PrForward **for forwarding only**
+SOASKIN_TRIVIAL( s_uthits , f_uthits );
 SOAFIELD_TRIVIAL( f_viewvelohits, velohits, LHCb::span<LHCb::VPLightCluster> ); // to PrForward **for forwarding only**
+SOASKIN_TRIVIAL( s_viewvelohits , f_viewvelohits );
 // SOAFIELD_TRIVIAL( f_endofvelostate, velostate, LHCb::State );                // to PrForward (will add momentum wrt. PrPixel output)
 SOASKIN( VeloUTTrack, f_viewvelohits, f_uthits, f_endofvelostate ) {
   SOASKIN_INHERIT_DEFAULT_METHODS( VeloUTTrack );
