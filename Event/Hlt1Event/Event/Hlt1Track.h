@@ -30,6 +30,18 @@ struct Track {
     const void* ftSegment = nullptr; // TODO: use proper type.
 };
 
+
+namespace details {
+  template <typename T, typename Tag>
+    struct tagged_type{
+      explicit tagged_type(T t) : value(std::move(t)) {}
+      T value;
+      operator T() const { return value; }
+    };
+}
+
+using TrackIndex = details::tagged_type<size_t, struct TrackIndexTag>;
+
 // TODO:
 // benchmark decisions for any of the std::vector below, consider small_vector and static_vector
 

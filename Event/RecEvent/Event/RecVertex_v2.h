@@ -49,8 +49,8 @@ namespace LHCb::Event::v2 {
 
   /// helper class to bundle a Track and its weight
   struct WeightedTrack {
-    WeightedTrack(const size_t t, float w) : track(t), weight(w){};
-    size_t track;
+    WeightedTrack(const LHCb::HLT1::TrackIndex t, float w) : track(t), weight(w){};
+    LHCb::HLT1::TrackIndex track;
     float weight;
   };
 
@@ -58,8 +58,6 @@ namespace LHCb::Event::v2 {
   class RecVertex final {
   public:
 
-    /// local Track type
-    using Track = LHCb::HLT1::Track;
     using RecVertexType = Enum::RecVertex::RecVertexType;
     /// typedef for std::vector of RecVertex
     using Vector = std::vector<RecVertex*>;
@@ -90,7 +88,7 @@ namespace LHCb::Event::v2 {
     void reserve(unsigned int n) { m_tracks.reserve(n); }
 
     /// Add a track to the track list, with the given weight
-    void addToTracks(const size_t track,
+    void addToTracks(const LHCb::HLT1::TrackIndex track,
                      const float weight=1.0) {
       m_tracks.emplace_back(track, weight);
     }
@@ -100,7 +98,7 @@ namespace LHCb::Event::v2 {
      * returns whether the track was found (and erased) or not
      */
     // FIXME: hope I can do without
-    bool removeFromTracks(const size_t track);
+    bool removeFromTracks(const LHCb::HLT1::TrackIndex track);
   
     /// Remove all tracks, and their associated weights, from this vertex
     void clearTracks() {
@@ -108,7 +106,7 @@ namespace LHCb::Event::v2 {
     }
   
     /// Returns a pair containing a bool, indicating if the track was part of this vertex or not, and its associated weight (0 if track not included)
-    std::optional<float> trackWeight(const size_t track) const;
+    std::optional<float> trackWeight(const LHCb::HLT1::TrackIndex track) const;
       
     /// Print this RecVertex in a human readable way
     std::ostream& fillStream(std::ostream& s) const;
