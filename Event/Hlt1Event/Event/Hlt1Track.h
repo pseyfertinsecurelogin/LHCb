@@ -59,7 +59,11 @@ SOASKIN( s_atbeamstate, f_atbeamstate ) {
   auto z() const { return this->beamstate().z(); }
 };
 SOAFIELD_TRIVIAL( f_endofvelostate, velostate, LHCb::State );                // to PrVeloUT
-SOASKIN_TRIVIAL( s_endofvelostate , f_endofvelostate );
+SOASKIN( s_endofvelostate , f_endofvelostate ) {
+  SOASKIN_INHERIT_DEFAULT_METHODS( s_endofvelostate );
+  auto pt() const { return this->velostate().pt(); }
+  auto qOverP() const { return this->velostate().qOverP(); }
+};
 SOAFIELD_TRIVIAL( f_chi2, chisquare, LHCb::Chi2PerDoF );                     // used???????????
 SOASKIN_TRIVIAL( s_chi2 , f_chi2 );
 // TODO: flags and stuff
