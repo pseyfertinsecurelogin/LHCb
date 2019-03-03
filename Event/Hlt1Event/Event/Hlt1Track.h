@@ -49,6 +49,7 @@ using TrackIndex = details::tagged_type<size_t, struct TrackIndexTag>;
 SOAFIELD_TRIVIAL( f_velohits, velohits, std::vector<LHCb::VPLightCluster> ); // to PrVeloUT **for forwarding only**
 SOASKIN_TRIVIAL( s_velohits , f_velohits );
 SOAFIELD_TRIVIAL( f_atbeamstate, beamstate, LHCb::State );                   // to PatPV (and IP Filter)
+SOAFIELD_TRIVIAL( f_trackindex, index, TrackIndex );
 SOASKIN( s_atbeamstate, f_atbeamstate ) {
   SOASKIN_INHERIT_DEFAULT_METHODS( s_atbeamstate );
   auto tx() const { return this->beamstate().tx(); }
@@ -65,6 +66,7 @@ SOASKIN_TRIVIAL( s_chi2 , f_chi2 );
 SOASKIN( IpSelectorSkin, f_velohits, f_atbeamstate ) {
   SOASKIN_INHERIT_DEFAULT_METHODS( IpSelectorSkin );
 };
+SOASKIN_TRIVIAL( s_pvrecotrack, f_atbeamstate, f_chi2, f_trackindex );
 
 SOASKIN( VeloTrack, f_velohits, f_atbeamstate, f_endofvelostate, f_chi2 ) {
   SOASKIN_INHERIT_DEFAULT_METHODS( VeloTrack );
