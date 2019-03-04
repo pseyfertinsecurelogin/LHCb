@@ -51,7 +51,6 @@ VTree:
     will throw a NameError, ValueError, TypeError or AttributeError
 '''
 
-
 __author__ = 'Rob Lambert'
 __date__ = id.split()[3]
 __version__ = id.split()[2]
