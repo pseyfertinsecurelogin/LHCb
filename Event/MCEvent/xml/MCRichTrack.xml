@@ -14,7 +14,6 @@
 <package name="MCEvent">
 
 <!-- **************************************************************************
-  * $Id: MCRichTrack.xml,v 1.4 2006-07-31 15:52:49 cattanem Exp $
   *****************************************************************************
   * XML-description of MCRichTrack class                                      *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *

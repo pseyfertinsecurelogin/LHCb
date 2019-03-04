@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: AlignmentCondition.h,v 1.19 2010-01-11 15:57:16 wouter Exp $
 #ifndef DETDESC_ALIGNMENTCONDITION_H
 #define DETDESC_ALIGNMENTCONDITION_H 1
 

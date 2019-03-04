@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0MuonOverflowTool.h,v 1.1 2010-03-09 16:21:31 jucogan Exp $
 #ifndef COMPONENT_L0MUONOVERFLOWTOOL_H
 #define COMPONENT_L0MUONOVERFLOWTOOL_H 1
 

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeOTStation.cpp,v 1.8 2007-06-09 13:56:49 janos Exp $
 
 /// DetDesc
 #include "DetDesc/IGeometryInfo.h"

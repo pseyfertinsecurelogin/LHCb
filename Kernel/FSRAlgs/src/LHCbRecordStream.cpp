@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RecordStream.cpp,v 1.1 2008/12/10 18:37:36 marcocle Exp $
 #define LHCB_RECORDSTREAM_CPP
 
 // Framework include files

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: GaudiMain.cpp,v 1.9 2009-01-26 12:24:10 cattanem Exp $
 //------------------------------------------------------------------------------
 //
 //  Package    : GaudiConf

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MonUtilities.h,v 1.7 2009-10-13 08:10:57 jucogan Exp $
 #ifndef COMPONENT_MONUTILITIES_H
 #define COMPONENT_MONUTILITIES_H 1
 

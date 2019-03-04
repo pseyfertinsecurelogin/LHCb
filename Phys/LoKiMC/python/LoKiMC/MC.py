@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file LoKiMC/MC.py
 #  collection of utilities for useful 'decoration' of MC-objects
 #
@@ -25,10 +23,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of MC-objects
@@ -45,7 +39,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__ = "2007-08-11"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 
 from LoKiMC.functions import LoKi, LHCb, cpp

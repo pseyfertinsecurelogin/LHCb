@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MCAssociatorsDict.h,v 1.11 2009/09/24 07:13:55 jpalac Exp $
 #ifndef DICT_MCASSOCIATORSDICT_H
 #define DICT_MCASSOCIATORSDICT_H 1
 

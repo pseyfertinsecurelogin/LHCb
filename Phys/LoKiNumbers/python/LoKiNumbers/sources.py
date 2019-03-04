@@ -10,7 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
 # =============================================================================
 ## @file LoKiNumbers/sources.py
 #  The full set of useful objects from LoKiNumbers library
@@ -21,7 +20,7 @@
 Few useful objects from LoKiNumbers library
 """
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
-__version__ = "CVS Tag $Name: not supported by cvs2svn $, version $Revision$ "
+__version__ = " "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

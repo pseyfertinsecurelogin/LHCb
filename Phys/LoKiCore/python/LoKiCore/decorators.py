@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
 #  The set of basic decorator for objects from LoKiCore library
@@ -42,7 +40,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "????-??-??"
-__version__ = "SVN $Revision$ "
+__version__ = ""
 # =============================================================================
 
 import logging

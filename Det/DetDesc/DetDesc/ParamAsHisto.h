@@ -8,11 +8,10 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id:$
 // ============================================================================
 #ifndef DETDESC_PARAMASHISTO_H
 #define DETDESC_PARAMASHISTO_H 1
-// Incldue files
+// Include files
 // ============================================================================
 // DetDesc
 // ============================================================================

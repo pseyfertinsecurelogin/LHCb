@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CtrlCandErrors.h,v 1.4 2008-12-09 18:47:28 cattanem Exp $
 #ifndef CTRLCANDERRORS_H
 #define CTRLCANDERRORS_H 1
 

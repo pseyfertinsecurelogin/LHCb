@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MuonDetDict.h,v 1.4 2009-10-08 15:20:46 asatta Exp $
 // ============================================================================
 #ifndef DICT_MUONDETDICT_H
 #define DICT_MUONDETDICT_H 1

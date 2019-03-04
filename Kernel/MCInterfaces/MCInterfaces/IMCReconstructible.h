@@ -14,7 +14,6 @@
  *  Header file for class : IMCReconstructible
  *
  *  CVS Log :-
- *  $Id: IMCReconstructible.h,v 1.3 2007-06-04 09:58:09 cattanem Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date 28/02/2007

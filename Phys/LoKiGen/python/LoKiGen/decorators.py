@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file LoKiGen/decorators.py
 #  The set of basic decorator for objects from LoKiGen library
 #
@@ -24,10 +22,6 @@
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """
 The set of basic decorators for obejcts from LoKiGen library
@@ -44,7 +38,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "????-??-??"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 
 from LoKiGen.functions import *

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: STDAQDefinitions.h,v 1.6 2009-02-05 13:45:55 jluisier Exp $
 #ifndef _STDAQDefinitions_H
 #define _STDAQDefinitions_H
 

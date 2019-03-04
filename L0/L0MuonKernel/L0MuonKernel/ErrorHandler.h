@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ErrorHandler.h,v 1.5 2009-06-17 16:38:27 jucogan Exp $
 #ifndef L0MUONKERNEL_ERRORHANDLER_H
 #define L0MUONKERNEL_ERRORHANDLER_H 1
 

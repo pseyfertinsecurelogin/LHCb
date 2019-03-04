@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeITStation.h,v 1.4 2008-07-14 07:38:36 mneedham Exp $
 #ifndef _DeITStation_H_
 #define _DeITStation_H_
 

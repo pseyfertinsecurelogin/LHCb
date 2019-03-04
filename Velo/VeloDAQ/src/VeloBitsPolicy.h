@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloBitsPolicy.h,v 1.3 2006-02-23 15:41:50 krinnert Exp $
 #ifndef VELOBITSPOLICY_H
 #define VELOBITSPOLICY_H 1
 

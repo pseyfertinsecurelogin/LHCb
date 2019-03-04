@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: BdlTool.h,v 1.3 2007-10-05 11:50:50 cattanem Exp $
 #ifndef MAGNET_BDLTOOL_H
 #define MAGNET_BDLTOOL_H 1
 

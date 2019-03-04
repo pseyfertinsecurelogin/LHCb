@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MDFTest.cpp,v 1.2 2006-01-10 18:14:29 frankb Exp $
 //------------------------------------------------------------------------------
 //
 //  Description: Main Program for Gaudi applications

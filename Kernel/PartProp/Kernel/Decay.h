@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id$
 // ============================================================================
 #ifndef LHCBKERNEL_DECAY_H
 #define LHCBKERNEL_DECAY_H 1

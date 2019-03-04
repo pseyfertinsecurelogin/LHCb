@@ -15,11 +15,6 @@
 #
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2008-08-03
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $    $
-#
 # =============================================================================
 """
 Helper module for decoration on LHCb::Inpector class
@@ -64,7 +59,7 @@ Inspect the whole application
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.BElyaev@nikhef.nl"
-__version__ = "$Revision$"
+__version__ = ""
 __date__ = " 2008-08-03"
 ## NB: nothing to be imported
 __all__ = ()  # NB: nothing to be imported

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: STTell1Core.h,v 1.4 2010-01-13 13:09:23 akeune Exp $
 #ifndef STTELL1CORE_H
 #define STTELL1CORE_H 1
 

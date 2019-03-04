@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ISTNoiseCalculationTool.h,v 1.2 2009-11-09 17:49:46 mtobin Exp $
 #ifndef KERNEL_ISTNOISECALCULATIONTOOL_H
 #define KERNEL_ISTNOISECALCULATIONTOOL_H 1
 

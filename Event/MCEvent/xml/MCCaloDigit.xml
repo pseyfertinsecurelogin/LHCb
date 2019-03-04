@@ -15,7 +15,6 @@
 <gdd>
   <package name="MCEvent">
 <!-- **************************************************************************
-  * $Id: MCCaloDigit.xml,v 1.1 2005-12-14 15:12:53 cattanem Exp $
   *****************************************************************************
   * XML-description of MCCaloDigit class                                      *
   * author: Vanya Belyaev Ivan.Belyaev@itep.ru                                *

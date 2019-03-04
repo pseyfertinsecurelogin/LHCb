@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeTTLayer.h,v 1.8 2009-03-14 09:18:07 mneedham Exp $
 #ifndef _DeTTLayer_H_
 #define _DeTTLayer_H_
 

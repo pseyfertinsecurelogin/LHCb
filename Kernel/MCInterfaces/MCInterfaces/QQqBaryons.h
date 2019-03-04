@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef MCINTERFACES_QQQBARYONS_H
 #define MCINTERFACES_QQQBARYONS_H 1
 

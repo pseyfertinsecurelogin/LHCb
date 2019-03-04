@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlAlignmentConditionCnv.cpp,v 1.2 2006-12-14 13:14:09 ranjard Exp $
 // Include files
 #ifndef XMLALIGNMENTCONDITION_H
 #define XMLALIGNMENTCONDITION_H 1

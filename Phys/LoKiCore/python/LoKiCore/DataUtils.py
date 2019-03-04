@@ -46,7 +46,7 @@ LoKi project: ``C++ ToolKit for Smart and Friendly Physics Analysis''
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2010-02-12"
-__version__ = "CVS Tag $Name: not supported by cvs2svn $, version $Revision$"
+__version__ = ""
 __all__ = ('setData', 'setInputData', 'extendfile')
 
 

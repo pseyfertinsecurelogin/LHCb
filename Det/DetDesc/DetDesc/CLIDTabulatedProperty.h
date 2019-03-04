@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CLIDTabulatedProperty.h,v 1.2 2003-04-25 08:52:23 sponce Exp $
 #ifndef DETDESC_CLIDTABULATEDPROPERTY_H
 #define DETDESC_CLIDTABULATEDPROPERTY_H 1
 #include "GaudiKernel/ClassID.h"

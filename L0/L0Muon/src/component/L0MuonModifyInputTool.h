@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef COMPONENT_L0MUONMODIFYINPUTTOOL_H
 #define COMPONENT_L0MUONMODIFYINPUTTOOL_H 1
 

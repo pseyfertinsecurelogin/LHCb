@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-///  $Id: XmlBaseConditionCnv.h,v 1.7 2008-01-07 18:25:33 marcocle Exp $
 
 #ifndef DETDESCCNV_XMLCONDITIONCNV_H
 #define DETDESCCNV_XMLCONDITIONCNV_H

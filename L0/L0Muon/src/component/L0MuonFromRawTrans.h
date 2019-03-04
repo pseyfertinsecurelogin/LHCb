@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0MuonFromRawTrans.h,v 1.6 2008-09-04 08:57:02 jucogan Exp $
 #ifndef COMPONENT_L0MUONFROMRAWTRANS_H
 #define COMPONENT_L0MUONFROMRAWTRANS_H 1
 

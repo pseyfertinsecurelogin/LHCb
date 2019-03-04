@@ -8,15 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Range.h,v 1.2 2006-06-12 15:27:28 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, verison $Revision: 1.2 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.1  2006/06/11 15:23:45  ibelyaev
-//  The major  upgrade: see doc/release.notes
-//
-// ============================================================================
 #ifndef RELATIONS_RANGE_H
 #define RELATIONS_RANGE_H 1
 // ============================================================================

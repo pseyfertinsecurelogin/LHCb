@@ -15,7 +15,6 @@
  *  Header file for algorithm base class : ST::AlgBase
  *
  *  CVS Log :-
- *  $Id: STTupleAlgBase.h,v 1.3 2009-03-09 15:14:26 akeune Exp $
  *
  *  @author Matthew Needham
  *  @date   11/10/2008

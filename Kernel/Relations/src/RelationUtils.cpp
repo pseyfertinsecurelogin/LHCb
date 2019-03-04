@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RelationUtils.cpp,v 1.8 2008-02-19 15:26:10 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CLIDAlignmentCondition.h,v 1.1 2005-06-03 10:19:44 jpalac Exp $
 #ifndef DETDESC_CLIDALIGNMENTCONDITION_H
 #define DETDESC_CLIDALIGNMENTCONDITION_H 1
 

@@ -1,4 +1,3 @@
-// $Id: job.opts,v 1.10 2007-03-14 15:50:02 cattanem Exp $
 // Do not use standard options, as we do not need event input
 
 // Set up the detector description

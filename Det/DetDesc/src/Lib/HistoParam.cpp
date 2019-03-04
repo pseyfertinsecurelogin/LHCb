@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: HistoParam.cpp,v 1.3 2009-12-06 19:13:45 dgolubko Exp $
 // ============================================================================
 // Include files
 // ============================================================================

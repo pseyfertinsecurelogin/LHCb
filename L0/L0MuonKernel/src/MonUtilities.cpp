@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MonUtilities.cpp,v 1.6 2009-10-13 08:10:57 jucogan Exp $
 // Include files
 
 #include <sstream>

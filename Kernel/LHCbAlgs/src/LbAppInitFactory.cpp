@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: LbAppInitFactory.cpp,v 1.1 2010-02-12 14:00:30 gcorti Exp $
 // Include files
 #include "GaudiKernel/LoadFactoryEntries.h"
 #include "Kernel/LbAppInit.h"

@@ -40,7 +40,7 @@ Few useful objects from LoKiHlt library
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "2008-10-19"
-__version__ = "Version $Revision: 1.1 $ "
+__version__ = ""
 # =============================================================================
 
 from LoKiNumbers.sources import *

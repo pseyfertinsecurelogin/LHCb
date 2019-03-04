@@ -13,7 +13,6 @@
  *  Header file for tool interface : Rich::IMCTrackInfoTool
  *
  *  CVS Log :-
- *  $Id: IRichMCTrackInfoTool.h,v 1.2 2008-12-11 13:57:00 cattanem Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   15/03/2002

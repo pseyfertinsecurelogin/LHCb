@@ -8,15 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: WEntry.h,v 1.3 2009-04-24 15:26:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.3 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.2  2006/06/11 19:37:02  ibelyaev
-//  remove some extra classes + fix all virtual bases
-//
-// ============================================================================
 #ifndef RELATIONS_WENTRY_H
 #define RELATIONS_WENTRY_H 1
 // ============================================================================

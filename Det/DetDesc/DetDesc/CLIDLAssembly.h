@@ -8,12 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CLIDLAssembly.h,v 1.1 2001-11-18 15:32:43 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// ============================================================================
 #ifndef DETDESC_CLIDLASSEMBLY_H
 #define DETDESC_CLIDLASSEMBLY_H 1
 #include "GaudiKernel/ClassID.h"

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: UnpackTrackFunctional.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
 #ifndef UnpackTrackFunctional_H
 #define UnpackTrackFunctional_H 1
 

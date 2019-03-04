@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: STDetDict.h,v 1.3 2008-08-04 07:23:56 mneedham Exp $
 // ============================================================================
 #ifndef STDET_STDETDICT_H
 #define STDET_STDETDICT_H 1

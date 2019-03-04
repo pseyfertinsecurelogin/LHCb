@@ -13,10 +13,6 @@
 <gdd>
   <package name="DigiEvent">
 <!-- **************************************************************************
-  * $Id: CaloDigitStatus.xml,v 1.2 2008-10-11 10:36:19 mneedham Exp $
-  *****************************************************************************
-  * CVS tag $Name: not supported by cvs2svn $                            
-  *****************************************************************************
   * XML-description of CaloDigitStatus namespace                              *
   * author: Vanya Belyaev Ivan.Belyaev@itep.ru                                *
   * date:   05.02.02                                                          *

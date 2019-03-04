@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlITSensorCnv.cpp,v 1.1 2008-03-14 18:26:40 mneedham Exp $
 
 // DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"

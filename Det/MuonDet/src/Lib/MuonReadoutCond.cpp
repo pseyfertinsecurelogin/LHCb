@@ -8,10 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MuonReadoutCond.cpp,v 1.10 2008-07-12 06:15:40 asatta Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
 #define MUONDET_MUONREADOUTCOND_CPP
 
 // Include files

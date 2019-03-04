@@ -20,7 +20,7 @@ Helper file/module for Kernel/PartProp package
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS Tag $Name: not supported by cvs2svn $, version $Revision$"
+__version__ = ""
 # =============================================================================
 
 # =============================================================================

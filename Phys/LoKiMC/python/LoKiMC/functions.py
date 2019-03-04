@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file functions.py LoKiMC/functions.py
 #  The set of basic functions from LoKiMC library
 #  The file is a part of LoKi and Bender projects
@@ -41,7 +39,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "????-??-??"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

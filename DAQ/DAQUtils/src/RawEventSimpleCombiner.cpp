@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawEventSimpleCombiner.cpp,v 1.1 2009/06/22 15:12:04 tskwarni Exp $
 // Include files
 
 // local

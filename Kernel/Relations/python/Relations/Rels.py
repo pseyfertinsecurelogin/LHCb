@@ -9,9 +9,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# =============================================================================
-# $Id: Rels.py,v 1.2 2008-11-02 16:44:38 ibelyaev Exp $
-# =============================================================================
 """
 Simple module for 'decorations' of various relation tables
 for interactive work in (Gauid)python
@@ -273,16 +270,6 @@ class RelW2D(Rel):
 
 def _write_xml_(lines, lst):
 
-    lines += ['<!-- * $Id: Rels.py,v 1.2 2008-11-02 16:44:38 ibelyaev Exp $ ']
-    lines += [
-        '     * ========================================================================'
-    ]
-    lines += ['     * $CVS tag:$, version $Revision: 1.2 $ ']
-    lines += [
-        '     * ========================================================================'
-    ]
-    lines += ['-->']
-    lines += ['']
     lines += ['<!-- * @file']
     lines += ['     *']
     lines += [
@@ -382,17 +369,10 @@ def _write_xml_(lines, lst):
 
 
 def _write_cpp_(lines, lst, includes=[]):
-    lines += ['// $Id: Rels.py,v 1.2 2008-11-02 16:44:38 ibelyaev Exp $']
     lines += [
         '// ===================================================================='
     ]
-    lines += [
-        '// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $ '
-    ]
-    lines += [
-        '// ===================================================================='
-    ]
-    lines += ['// Incldue files']
+    lines += ['// Include files']
     lines += [
         '// ===================================================================='
     ]

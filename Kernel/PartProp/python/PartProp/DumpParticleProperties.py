@@ -10,7 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id:$
 # =============================================================================
 ## @file DumpParticleProperties.py
 #  Demo-file for interactive work with new Particle Property Service

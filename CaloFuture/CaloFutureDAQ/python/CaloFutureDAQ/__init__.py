@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# $Id: __init__.py,v 1.1 2009-10-27 14:25:15 ibelyaev Exp $
 # =============================================================================
 ## @file CaloFutureDAQ/__init__.py
 #  Helper file to load python modules for CaloFutureDAQ package
@@ -20,7 +19,7 @@ Helper file to load python modules for CaloFutureDAQ package
 """
 # =============================================================================
 __author__ = 'Vanya BELYAEV Ivan.Belyaev@nikhef.nl'
-__version__ = 'CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $'
+__version__ = '1.1'
 # =============================================================================
 
 # =============================================================================

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: SolidPolyHedronHelper.cpp,v 1.14 2009-04-17 08:54:24 cattanem Exp $
 // ===========================================================================
 #include "DetDesc/SolidPolyHedronHelper.h"
 #include <algorithm>

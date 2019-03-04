@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ErrorHandler.cpp,v 1.2 2008-07-11 15:30:48 jucogan Exp $
 // Include files
 
 // local

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ODINTimeFilter.h,v 1.1 2009/10/16 14:16:26 odescham Exp $
 #ifndef ODINTIMEFILTER_H
 #define ODINTIMEFILTER_H 1
 

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: LHCbTimerForSequencer.h,v 1.5 2004/11/25 13:26:26 mato Exp $
 #ifndef LHCBTIMERFORSEQUENCER_H
 
 #  include "GaudiKernel/MsgStream.h"

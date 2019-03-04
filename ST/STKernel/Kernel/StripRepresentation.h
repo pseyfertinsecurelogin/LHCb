@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: StripRepresentation.h,v 1.2 2009-01-22 11:43:44 mneedham Exp $
 #ifndef _STDAQ_StripRepresentation_H
 #define _STDAQ_StripRepresentation_H 1
 

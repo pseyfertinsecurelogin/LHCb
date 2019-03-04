@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ITELL1SensorMap.h,v 1.1 2009-09-08 16:18:42 krinnert Exp $
 #ifndef KERNEL_ITELL1SENSORMAP_H
 #define KERNEL_ITELL1SENSORMAP_H 1
 

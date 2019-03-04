@@ -21,7 +21,7 @@ Helper module to perfom some decorations for CaloFuturerimeter objects
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $"
+__version__ = "1.1"
 # =============================================================================
 __all__ = ()
 # =============================================================================

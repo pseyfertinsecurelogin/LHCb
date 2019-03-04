@@ -11,7 +11,7 @@
 """
 Configuration of the XMLSummarySvc
 """
-__version__ = "$Id: Configuration.py,v 1.4 2009-10-07 13:49:17 rlambert Exp $"
+__version__ = "1.4"
 __author__ = "Rob Lambert"
 
 from Gaudi.Configuration import *

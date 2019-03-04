@@ -8,10 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CaloFutureUtilsDict.h,v 1.5 2010-03-18 13:58:42 ibelyaev Exp $
-// ============================================================================
-// CVS Tag $Name: not supported by cvs2svn $ , version $Revision: 1.5 $
-// ============================================================================
 #ifndef CALOFUTUREUTILS_CALOFUTUREUTILSDICT_H
 #define CALOFUTUREUTILS_CALOFUTUREUTILSDICT_H 1
 // ============================================================================

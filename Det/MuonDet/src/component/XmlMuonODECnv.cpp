@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlMuonODECnv.cpp,v 1.10 2010-03-17 16:19:10 cattanem Exp $
 // Include files
 
 #include <vector>

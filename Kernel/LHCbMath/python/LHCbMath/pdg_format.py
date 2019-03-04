@@ -24,11 +24,6 @@
 #
 # @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 # @date 2015-07-20
-#
-# Version           $Revision$
-# Last modification $Date$
-#                by $Author$
-#
 # =============================================================================
 """ Set of utilities for rounding according to PDG prescription
 see http://pdg.lbl.gov/2010/reviews/rpp2010-rev-rpp-intro.pdf
@@ -45,7 +40,7 @@ Quote:
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2015-07-15"
-__version__ = "$Revision$"
+__version__ = ""
 __all__ = (
     'frexp10',  ## similar to math.frexp but with radix=10
     'round_N',  ## round floaing value to N-significant digits

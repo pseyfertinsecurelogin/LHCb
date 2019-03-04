@@ -16,9 +16,6 @@
 #
 #  @author Vanya BELYAEV Ivan.Belayev@itep.ru
 #  @date 2015-02-13
-#  $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 
 

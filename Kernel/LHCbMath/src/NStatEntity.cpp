@@ -32,10 +32,6 @@
  *  @see StatEntity
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   2015-04-03
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ===========================================================================
 namespace {

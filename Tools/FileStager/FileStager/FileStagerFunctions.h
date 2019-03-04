@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef FILESTAGER_FILESTAGERFUNCTIONS_H
 #define FILESTAGER_FILESTAGERFUNCTIONS_H 1
 

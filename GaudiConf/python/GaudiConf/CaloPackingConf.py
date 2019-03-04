@@ -20,7 +20,7 @@ Helper module to define DST (un)packing rule for Calo Hypo objects
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $"
+__version__ = "1.4"
 # =============================================================================
 __all__ = (
     'CaloDstPackConf',  ## the configurable, responsible for Dst packing

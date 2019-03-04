@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CtrlRawErrors.h,v 1.2 2008-11-07 16:23:38 jucogan Exp $
 #ifndef INCLUDE_CTRLRAWERROR_H
 #define INCLUDE_CTRLRAWERROR_H 1
 

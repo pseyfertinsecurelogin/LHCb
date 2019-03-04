@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawEventPrintout.h,v 1.5 2008-02-05 16:44:18 frankb Exp $
 //====================================================================
 //  RawEventPrintout.h
 //--------------------------------------------------------------------

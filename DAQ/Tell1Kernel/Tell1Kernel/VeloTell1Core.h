@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloTell1Core.h,v 1.6 2009-10-24 13:47:11 szumlat Exp $
 #ifndef VELOTELL1CORE_H
 #define VELOTELL1CORE_H 1
 

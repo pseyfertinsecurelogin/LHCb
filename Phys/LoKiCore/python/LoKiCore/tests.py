@@ -38,7 +38,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV  Ivan.Belyaev@nikhef.nl"
 __date__ = "2007-05-29"
-__version__ = "Verison $Revision$ "
+__version__ = ""
 
 
 # =============================================================================

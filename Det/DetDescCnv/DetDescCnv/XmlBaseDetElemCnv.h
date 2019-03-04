@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-///  $Id: XmlBaseDetElemCnv.h,v 1.6 2009-05-04 14:57:08 ocallot Exp $
 
 #ifndef DETDESCCNV_XMLDETELEMCNV_H
 #define DETDESCCNV_XMLDETELEMCNV_H

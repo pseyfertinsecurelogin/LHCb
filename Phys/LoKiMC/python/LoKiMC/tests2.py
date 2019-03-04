@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file   LoKiMC/tests2.py
 #   Test the problem reported in JIRA:
 #   @see https://its.cern.ch/jira/browse/LHCBPS-1417
@@ -41,7 +39,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Pieter David pieter.david@nikhef.nl"
 __date__ = "2007-05-29"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 
 from LoKiCore.basic import LoKi, std, cpp

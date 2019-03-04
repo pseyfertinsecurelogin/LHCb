@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: StreamDescriptor.h,v 1.7 2008-03-03 20:05:04 frankb Exp $
 //====================================================================
 //  StreamDescriptor.h
 //--------------------------------------------------------------------

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeSubSubCalorimeter.cpp,v 1.3 2009-04-17 13:41:04 cattanem Exp $
 // ============================================================================
 #define CALODET_DESUBSUBCALORIMETER_CPP 1
 // ============================================================================

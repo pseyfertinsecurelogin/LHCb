@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file LoKiMC/graph.py
 #  Simple utilities to vizualize the decay tree
 #
@@ -23,16 +21,8 @@
 #  contributions and advices from G.Raven, J.van Tilburg,
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#  By usage of this code one clearly states the disagreement
-#  with the campain of Dr.O.Callot et al.:
-#    ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2016-01-16
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """Simple utilities to vizualize the decay tree
 
@@ -43,20 +33,11 @@ The package has been designed with the kind help from
 Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg,
 A.Golutvin, P.Koppenburg have been used in the design.
-
-By usage of this code one clearly states the disagreement
-with the campain of Dr.O.Callot et al.:
-``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
-                  $Revision$
-Last modification $Date$
-               by $Author$
-
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2015-01-16"
-__version__ = "$Revision$"
+__version__ = ""
 __all__ = (
     'graph',  ## function to produce graph
     'view',  ## function to produce graph and immediately display it

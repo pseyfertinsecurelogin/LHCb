@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloDecodeCore.h,v 1.1 2007-09-18 07:33:02 cattanem Exp $
 #ifndef VELODECODECORE_H
 #define VELODECODECORE_H 1
 #include <vector>

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: HistoCondition.h,v 1.1 2009-10-23 09:43:13 ibelyaev Exp $
 // ============================================================================
 #ifndef DETDESC_HISTOCONDITION_H
 #define DETDESC_HISTOCONDITION_H 1

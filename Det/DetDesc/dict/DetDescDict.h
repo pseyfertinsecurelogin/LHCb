@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DetDescDict.h,v 1.8 2009-12-05 14:25:47 dgolubko Exp $
 // ============================================================================
 #ifndef DETSYS_DETDICT_H
 #define DETSYS_DETDICT_H 1

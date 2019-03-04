@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file   LoKiGen/tests.py
 #
 #  This file is a part of LoKi project -
@@ -24,10 +22,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """
 The basic tests for LoKiGen package
@@ -44,7 +38,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "2007-05-29"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 
 # temporary

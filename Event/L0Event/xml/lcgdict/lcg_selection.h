@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: lcg_selection.h,v 1.4 2010-03-17 21:30:50 raaij Exp $
 #ifndef L0EVENT_LCGDICT_H
 #define L0EVENT_LCGDICT_H 1
 

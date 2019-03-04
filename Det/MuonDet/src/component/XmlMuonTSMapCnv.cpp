@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlMuonTSMapCnv.cpp,v 1.8 2008-07-12 06:15:40 asatta Exp $
 // Include files
 
 #include <vector>

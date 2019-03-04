@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: AddressTools.cpp,v 1.2 2008-10-28 12:07:10 cattanem Exp $
 // Include files
 
 // local

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: StateVector.cpp,v 1.3 2007-09-17 06:41:45 cattanem Exp $
 
 #include <math.h>
 

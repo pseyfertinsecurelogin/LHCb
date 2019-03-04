@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Get.h,v 1.7 2009-05-25 06:56:41 jpalac Exp $
 // ============================================================================
 #ifndef RELATIONS_GET_H
 #define RELATIONS_GET_H 1

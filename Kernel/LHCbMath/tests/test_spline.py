@@ -15,15 +15,11 @@
 #  Test some spline functionality
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-02-10
-#
-#                    $Revision$
-#  Last modification $Date$
-#  by                $Author$
 # =============================================================================
 """ Test some spline functionality
 """
 # =============================================================================
-__version__ = "$Revision$"
+__version__ = ""
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2015-02-10"
 # =============================================================================

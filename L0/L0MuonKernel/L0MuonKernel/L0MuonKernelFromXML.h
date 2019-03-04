@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0MuonKernelFromXML.h,v 1.5 2008-12-15 10:19:47 cattanem Exp $
 
 #ifndef L0MUONKERNEL_L0MUONKERNELFROMXML_H
 #define L0MUONKERNEL_L0MUONKERNELFROMXML_H 1

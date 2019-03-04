@@ -11,7 +11,7 @@
 """
 High level configuration tools for LHCb applications
 """
-__version__ = "$Id: $"
+__version__ = ""
 __author__ = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 from os import environ

@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file decorators.py LoKiNumbers/decorators.py
 #  The set of basic decorator for objects from LoKiNumberslibrary
 #  The file is a part of LoKi and Bender projects
@@ -24,10 +22,6 @@
 #  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 #  contributions and advices from G.Raven, J.van Tilburg,
 #  A.Golutvin, P.Koppenburg have been used in the design.
-#
-# $Revision$
-# Last modification $Date$
-#                by $Author$
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiNumbers library
@@ -39,16 +33,11 @@ The package has been designed with the kind help from
 Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg,
 A.Golutvin, P.Koppenburg have been used in the design.
-
- $Revision$
- Last modification $Date$
-                by $Author$
-
 """
 # =============================================================================
 __author__ = ' Vanya BELYAEV ibelyaev@physics.syr.edu '
 __date__ = ' xxxx-xx-xx '
-__version__ = ' version $Revision$ '
+__version__ = ''
 # =============================================================================
 
 from LoKiNumbers.functions import *

@@ -38,10 +38,6 @@ class TH3; // from ROOT
  *
  *  @author Vanya Belyaev
  *  @date   2015-10-12
- *
- *  Version           $Revision$
- *  Last mofidication $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace Gaudi {

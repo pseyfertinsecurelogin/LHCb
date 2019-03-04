@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MuonL1Board.cpp,v 1.2 2008-04-02 11:47:48 asatta Exp $
 // Include files
 
 #include <iostream>

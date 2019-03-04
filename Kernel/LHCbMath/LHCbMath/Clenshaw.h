@@ -27,9 +27,6 @@ namespace Gaudi {
     /** Namespace with collection of Clenshaw summation algorithms
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2015-08-06
-     *  Version           $Revision$
-     *  Last modification $Date$
-     *                 by $Author$
      */
     namespace Clenshaw {
       // ======================================================================

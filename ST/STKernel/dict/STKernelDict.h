@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: STKernelDict.h,v 1.17 2010-04-05 09:35:32 mneedham Exp $
 #ifndef DICT_STKERNELDICT_H
 #define DICT_STKERNELDICT_H 1
 

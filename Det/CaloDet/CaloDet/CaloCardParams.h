@@ -8,8 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Log: not supported by cvs2svn $
-
 #ifndef _CALOCARDPARAMS_H_
 #define _CALOCARDPARAMS_H_ 1
 

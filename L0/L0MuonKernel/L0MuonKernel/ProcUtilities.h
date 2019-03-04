@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ProcUtilities.h,v 1.4 2008-12-09 18:47:29 cattanem Exp $
 
 #ifndef L0MUONKERNEL_PROCUTILITIES_H
 #define L0MUONKERNEL_PROCUTILITIES_H 1

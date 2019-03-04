@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-//$Id: ParamException.cpp,v 1.2 2006-01-19 08:51:54 marcocle Exp $
 
 // Include files
 #include "GaudiKernel/StatusCode.h"

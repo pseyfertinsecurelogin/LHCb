@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MuonTSMap.h,v 1.3 2009-07-08 12:42:47 cattanem Exp $
 #ifndef MUONDET_MUONTSMAP_H
 #define MUONDET_MUONTSMAP_H 1
 #include "DetDesc/Condition.h"

@@ -40,7 +40,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__ = "2010-09-27"
-__version__ = "SVN $Revision$ "
+__version__ = ""
 # =============================================================================
 __all__ = (
     'cpp',  ## global C++ namespace

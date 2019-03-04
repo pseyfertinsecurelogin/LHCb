@@ -25,10 +25,6 @@
  *  @see Gaudi::Math::GSL::GSL_Error_Handler
  *  @date 2012-05-27
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 #ifdef __INTEL_COMPILER            // Disable ICC warnings and remarks

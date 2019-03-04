@@ -39,7 +39,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = ' xxxx-xx-xx '
-__version__ = " version $Revision$ "
+__version__ = ""
 # =============================================================================
 
 # Namespaces:

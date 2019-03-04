@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CtrlRawErrors.cpp,v 1.2 2008-09-04 08:25:41 jucogan Exp $
 // Include files
 
 // local

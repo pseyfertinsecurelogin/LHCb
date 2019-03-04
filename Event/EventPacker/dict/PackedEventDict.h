@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: PackedEventDict.h,v 1.6 2010-05-18 09:04:35 jonrob Exp $
 #ifndef DICT_PACKEDEVENTDICT_H
 #define DICT_PACKEDEVENTDICT_H 1
 

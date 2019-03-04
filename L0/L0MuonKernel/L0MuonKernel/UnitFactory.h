@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: UnitFactory.h,v 1.4 2008-12-15 10:19:47 cattanem Exp $
 
 #ifndef L0MUONKERNEL_UNITFACTORY_H
 #define L0MUONKERNEL_UNITFACTORY_H 1

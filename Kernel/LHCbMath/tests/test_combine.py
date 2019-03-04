@@ -19,10 +19,6 @@
 #
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-09-28
-#
-#                    $Revision$
-#  Last modification $Date$
-#  by                $Author$
 # =============================================================================
 """ Test utilities for combining correlated measurements
 - see P.Avery ``Combining measurements with correlated errors'', CBX 95 55
@@ -31,7 +27,7 @@
 """
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2015-09-29"
-__version__ = "$Revision$"
+__version__ = ""
 __all__ = ()
 # =============================================================================
 import ROOT

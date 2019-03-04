@@ -32,10 +32,6 @@
  *
  *  @author Vanya BELYAEV Ivane.Belyaev@itep.ru
  *  @date 2009-06-03
- *
- *  Version           $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace Gaudi {
   // ==========================================================================

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: OdinBCIDFilter.h,v 1.1 2008/10/28 11:20:32 odescham Exp $
 #ifndef COMPONENT_ODINBCIDFILTER_H
 #define COMPONENT_ODINBCIDFILTER_H 1
 

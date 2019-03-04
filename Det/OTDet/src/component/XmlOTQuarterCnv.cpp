@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlOTQuarterCnv.cpp,v 1.2 2006-12-14 13:29:51 ranjard Exp $
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ProcUtilities.cpp,v 1.8 2008-12-16 15:59:50 jucogan Exp $
 
 #include "L0MuonKernel/ProcUtilities.h"
 

@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# $Id$
 # =============================================================================
 ## @file
 #  Helper module for dcoration of various TES-Counters with the proper
@@ -23,11 +22,6 @@
 #
 #  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
 #  @date 2010-11-09
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $    $
-#
 # =============================================================================
 """
 Helper module for decoration of various ``TES-Counters'' with
@@ -39,7 +33,7 @@ the proper mapping interface
 
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@cern.ch"
-__version__ = "$Revision$"
+__version__ = ""
 __date__ = " 2010-11-09"
 ## NB: nothing to be imported
 __all__ = ()  # NB: nothing to be imported

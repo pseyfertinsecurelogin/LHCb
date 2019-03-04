@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0MuonOutputs.h,v 1.12 2010-01-21 08:35:35 jucogan Exp $
 #ifndef COMPONENT_L0MUONOUTPUTS_H
 #define COMPONENT_L0MUONOUTPUTS_H 1
 

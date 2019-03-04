@@ -31,9 +31,6 @@
 /** @file
  *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
  *  @date 2012-05-28
- *                    $Revision$
- *  Last modification $Date$
- *  by                $Author$
  */
 // ============================================================================
 /* print GSL-vector to the stream
