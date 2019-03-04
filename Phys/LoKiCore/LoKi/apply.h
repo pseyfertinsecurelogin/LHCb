@@ -16,6 +16,7 @@
 // ============================================================================
 // STD& STL
 // ============================================================================
+#include <functional>
 #include <vector>
 // ============================================================================
 // GaudiKernel
@@ -48,9 +49,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename TYPE, typename TYPE2, typename... Args>
-  auto apply( const LoKi::Functor<TYPE, TYPE2>& f, Args&&... a ) -> decltype( auto ) {
-    return f( std::forward<Args>( a )... );
+  template <typename F, typename... Args, LOKI_REQUIRES( details::is_functor_v<F> )>
+  decltype( auto ) apply( F&& f, Args&&... a ) {
+    return std::invoke( f, std::forward<Args>( a )... );
   }
   // ==========================================================================
   /** the direct use the function (save one virtual call)
@@ -58,7 +59,7 @@ namespace LoKi {
    *
    *  @code
    *
-   *   const LoKi::FunctorFrinFunctor<TYPE,TYPE2>& functor = ... ;
+   *   const LoKi::FunctorFromFunctor<TYPE,TYPE2>& functor = ... ;
    *
    *   TYPE* object = ... ;
    *
@@ -70,8 +71,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <class TYPE, class TYPE2>
-  auto apply( const LoKi::FunctorFromFunctor<TYPE, TYPE2>& f, TYPE a ) -> decltype( auto ) {
-    return apply( f.fun(), a );
+  decltype( auto ) apply( const LoKi::FunctorFromFunctor<TYPE, TYPE2>& f, TYPE a ) {
+    return LoKi::apply( f.fun(), a );
   }
   // ==========================================================================
   /** Adapter: use the functor through the dereferencing of the argument
@@ -90,8 +91,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <class TYPE, class TYPE2>
-  auto apply( const LoKi::Functor<TYPE, TYPE2>& f, TYPE* a ) -> decltype( auto ) {
-    return apply( f, *a );
+  decltype( auto ) apply( const LoKi::Functor<TYPE, TYPE2>& f, TYPE* a ) {
+    return LoKi::apply( f, *a );
   }
   // ==========================================================================
   /** Adapter: use the functor through dereferencing of the argument
@@ -110,8 +111,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <class TYPE, class TYPE2>
-  auto apply( const LoKi::Functor<TYPE, TYPE2>& f, const TYPE* a ) -> decltype( auto ) {
-    return apply( f, *a );
+  decltype( auto ) apply( const LoKi::Functor<TYPE, TYPE2>& f, const TYPE* a ) {
+    return LoKi::apply( f, *a );
   }
   // ==========================================================================
   /** Adapter: use the functor through adressing of the argument
@@ -130,8 +131,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <class TYPE, class TYPE2>
-  auto apply( const LoKi::Functor<TYPE*, TYPE2>& f, const TYPE& a ) -> decltype( auto ) {
-    return apply( f, &a );
+  decltype( auto ) apply( const LoKi::Functor<TYPE*, TYPE2>& f, const TYPE& a ) {
+    return LoKi::apply( f, &a );
   }
   // ==========================================================================
   /** Adapter: use the functor through adressing of the argument
@@ -150,8 +151,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <class TYPE, class TYPE2>
-  auto apply( const LoKi::Functor<const TYPE*, TYPE2>& f, const TYPE& a ) -> decltype( auto ) {
-    return apply( f, &a );
+  decltype( auto ) apply( const LoKi::Functor<const TYPE*, TYPE2>& f, const TYPE& a ) {
+    return LoKi::apply( f, &a );
   }
   // ==========================================================================
   /** Adapter: use the vector-functor for scalar argument
@@ -170,8 +171,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <class TYPE, class TYPE2>
-  auto apply( const LoKi::Functor<std::vector<TYPE>, TYPE2>& f, const TYPE& a ) -> decltype( auto ) {
-    return apply( f, std::vector<TYPE>( 1, a ) );
+  decltype( auto ) apply( const LoKi::Functor<std::vector<TYPE>, TYPE2>& f, const TYPE& a ) {
+    return LoKi::apply( f, std::vector<TYPE>( 1, a ) );
   }
   // ==========================================================================
   /** Adapter: "vector-use" of the scalar function
@@ -195,10 +196,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class INPUT, class TYPE, class TYPE2, class OUTPUT>
-  auto apply( INPUT first, INPUT last, const LoKi::Functor<TYPE, TYPE2>& fun, OUTPUT out ) {
-    using arg_t = decltype( *first );
-    std::transform( first, last, out, [&]( arg_t arg ) { return apply( fun, arg ); } );
+  template <class INPUT, class F, class OUTPUT, LOKI_REQUIRES( details::is_functor_v<F> )>
+  auto apply( INPUT first, INPUT last, const F& fun, OUTPUT out ) {
+    std::transform( first, last, out, [&]( auto& arg ) { return LoKi::apply( fun, arg ); } );
     return out;
   }
   // ==========================================================================
@@ -220,10 +220,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class INPUT, class TYPE, class TYPE2>
-  void apply( INPUT first, INPUT last, const LoKi::Functor<TYPE, TYPE2>& fun ) {
-    using arg_t = decltype( *first );
-    std::for_each( first, last, [&]( arg_t arg ) { apply( fun, arg ); } );
+  template <typename INPUT, typename F, LOKI_REQUIRES( details::is_functor_v<F> )>
+  void apply( INPUT first, INPUT last, const F& fun ) {
+    std::for_each( first, last, [&]( auto& arg ) { LoKi::apply( fun, arg ); } );
   }
   // ==========================================================================
   /** Adapter: "vector-use" of the scalar predicate/filter
@@ -246,16 +245,15 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class INPUT, class TYPE, class OUTPUT>
-  auto apply_filter( INPUT first, INPUT last, const LoKi::Functor<TYPE, bool>& fun, OUTPUT out ) {
-    using arg_t = decltype( *first );
-    std::copy_if( first, last, out, [&]( arg_t arg ) { return LoKi::apply( fun, arg ); } );
+  template <class INPUT, typename F, class OUTPUT, typename = details::require_result_t<F, bool>>
+  auto apply_filter( INPUT first, INPUT last, const F& fun, OUTPUT out ) {
+    std::copy_if( first, last, out, [&]( auto& arg ) { return LoKi::apply( fun, arg ); } );
     return out;
   }
   // ==========================================================================
   template <class INPUT, class CONTAINER, class OUTPUT>
-  auto apply( const LoKi::Functor<CONTAINER, OUTPUT>& o, INPUT first, INPUT last ) {
-    return LoKi::apply( o, CONTAINER{first, last} );
+  auto apply( const LoKi::Functor<CONTAINER, OUTPUT>& f, INPUT first, INPUT last ) {
+    return LoKi::apply( f, CONTAINER{first, last} );
   }
   // ==========================================================================
   template <class TYPE>

@@ -70,13 +70,13 @@ def _decorate(name=_name):
         name,  ## moduel name
         LoKi.Functor(_gp, 'double'),  ## the base
         LoKi.Dicts.FunCalls(HepMC.GenParticle),  ## call-traits
-        LoKi.Dicts.FuncOps(_gp, _gp))  ## operators&operations
+        LoKi.Dicts.FuncOps(_gp))  ## operators&operations
 
     _decorated |= _LoKiCore.getAndDecorateFunctions(
         name,  ## module name
         LoKi.Functor(_gv, 'double'),  ## the base
         LoKi.Dicts.FunCalls(HepMC.GenVertex),  ## call-traits
-        LoKi.Dicts.FuncOps(_gv, _gv))  ## operators&operations
+        LoKi.Dicts.FuncOps(_gv))  ## operators&operations
 
     # T -> bool
 
@@ -84,13 +84,13 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_gp, bool),  ## the base
         LoKi.Dicts.CutCalls(HepMC.GenParticle),  ## call-traits
-        LoKi.Dicts.CutsOps(_gp, _gp))  ## operators&operations
+        LoKi.Dicts.CutsOps(_gp))  ## operators&operations
 
     _decorated |= _LoKiCore.getAndDecoratePredicates(
         name,  ## module name
         LoKi.Functor(_gv, bool),  ## the base
         LoKi.Dicts.CutCalls(HepMC.GenVertex),  ## call-traits
-        LoKi.Dicts.CutsOps(_gv, _gv))  ## operators&operations
+        LoKi.Dicts.CutsOps(_gv))  ## operators&operations
 
     # functional part
 
@@ -110,11 +110,11 @@ def _decorate(name=_name):
     _decorated |= _LoKiCore.getAndDecoratePipes(
         name,  ## module name
         LoKi.Functor(_vgp, _vgp),  ## the base
-        LoKi.Dicts.PipeOps(_gp, _gp))  ## call-traits
+        LoKi.Dicts.PipeOps(_gp))  ## call-traits
     _decorated |= _LoKiCore.getAndDecoratePipes(
         name,  ## module name
         LoKi.Functor(_vgv, _vgv),  ## the base
-        LoKi.Dicts.PipeOps(_gv, _gv))  ## call-traits
+        LoKi.Dicts.PipeOps(_gv))  ## call-traits
 
     # vector<T> -> double
 
@@ -144,12 +144,12 @@ def _decorate(name=_name):
     _decorated |= _LoKiCore.getAndDecorateSources(
         name,  ## module name
         LoKi.Functor('void', _vgp),  ## the base
-        LoKi.Dicts.SourceOps(_gp, _gp))  ## call-traits
+        LoKi.Dicts.SourceOps(_gp))  ## call-traits
 
     _decorated |= _LoKiCore.getAndDecorateSources(
         name,  ## module name
         LoKi.Functor('void', _vgv),  ## the base
-        LoKi.Dicts.SourceOps(_gv, _gv))  ## call-traits
+        LoKi.Dicts.SourceOps(_gv))  ## call-traits
 
     # decorate pids (Comparison with strings, integers and ParticleID objects:
     for t in (GID, GABSID):

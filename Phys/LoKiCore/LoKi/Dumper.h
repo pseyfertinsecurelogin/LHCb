@@ -62,7 +62,7 @@ namespace LoKi {
        *  @param dump  the dumper
        *  @param stream the stream
        */
-      Dump1_( LoKi::Assignable_t<Fun_> fun, const LoKi::Dump& dump, const bool right = true,
+      Dump1_( LoKi::Assignable_t<Fun_> fun, const LoKi::Dump& dump, bool right = true,
               std::ostream& stream = std::cout )
           : LoKi::AuxFunBase( std::tie( fun, dump, right ) )
           , m_fun( std::move( fun ) )
@@ -97,6 +97,27 @@ namespace LoKi {
       LoKi::Dump m_dump; // the dumper
       // ======================================================================
     };
+    template <typename F>
+    Dump1_( const F&, const LoKi::Dump&, bool, std::ostream& )
+        ->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F&, const LoKi::Dump&, bool )->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F&, const LoKi::Dump& )->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F&, const std::string&, const std::string&, bool, std::ostream& )
+        ->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F&, const std::string&, const std::string&, bool )
+        ->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F&, const std::string&, const std::string& )
+        ->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F&, const std::string& )->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Dump1_( const F& )->Dump1_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+
     // ========================================================================
     template <class TYPE1, class TYPE2>
     TYPE2 LoKi::Functors::Dump1_<TYPE1, TYPE2>::operator()( typename LoKi::Functor<TYPE1, TYPE2>::argument a ) const {
@@ -132,15 +153,13 @@ namespace LoKi {
     // ========================================================================
   } // namespace Functors
   // ==========================================================================
-  template <typename F, typename TYPE1 = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Functors::Dump1_<TYPE1, TYPE2> dump1( F&& fun, const bool right = true,
-                                              const LoKi::Dump& dump = LoKi::Dump() ) {
-    return {std::forward<F>( fun ), dump, right};
+  template <typename F>
+  auto dump1( F&& fun, bool right = true, const LoKi::Dump& dump = LoKi::Dump() ) {
+    return LoKi::Functors::Dump1_{std::forward<F>( fun ), dump, right};
   }
   // ==========================================================================
   template <class TYPE2>
-  const LoKi::Functor<void, TYPE2>& dump1( const LoKi::Functor<void, TYPE2>& fun, const bool /* right */,
-                                           const LoKi::Dump& /* dump  */ ) {
+  const auto& dump1( const LoKi::Functor<void, TYPE2>& fun, const bool /* right */, const LoKi::Dump& /* dump  */ ) {
     return fun;
   }
   // ==========================================================================

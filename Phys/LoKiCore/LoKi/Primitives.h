@@ -135,7 +135,7 @@ namespace LoKi {
         UnaryOp* clone() const override { return new UnaryOp( *this ); }
 
         /// the only one essential method ("function") -- either withour argument
-        Result operator()( Param_t<TYPE>... a ) const override { return Traits_::unaryOp( this->m_fun, a... ); }
+        Result operator()( Param_t<TYPE>... a ) const override { return Traits_::unaryOp( this->m_fun.func(), a... ); }
 
         /// the basic printout method
         std::ostream& fillStream( std::ostream& s ) const override { return Traits_::fillStream( s, this->m_fun ); }
@@ -186,7 +186,7 @@ namespace LoKi {
      */
     namespace Traits {
       struct Not : details::SimpleUnary<std::logical_not<>, Not> {
-        static constexpr const char* name() { return "~"; }
+        static constexpr auto name() { return '~'; }
       };
     } // namespace Traits
     template <typename Signature>
@@ -219,7 +219,7 @@ namespace LoKi {
      */
     namespace Traits {
       struct Negate : details::SimpleUnary<std::negate<>, Negate> {
-        static constexpr const char* name() { return "-"; }
+        static constexpr auto name() { return '-'; }
       };
     } // namespace Traits
     template <typename Signature>
@@ -395,7 +395,7 @@ namespace LoKi {
      */
     namespace Traits {
       struct Less : details::SimpleBinary<std::less<>, Less> {
-        static constexpr const char* name() { return "<"; }
+        static constexpr auto name() { return '<'; }
       };
     } // namespace Traits
     template <typename Signature>
@@ -431,7 +431,7 @@ namespace LoKi {
     namespace Traits {
       template <typename TYPE2>
       struct Equal : details::SimpleBinary<LHCb::Math::Equal_To<TYPE2>, Equal<TYPE2>> {
-        static constexpr const char* name() { return "=="; }
+        static constexpr auto name() { return "=="; }
       };
     } // namespace Traits
     template <typename Signature>
@@ -466,7 +466,7 @@ namespace LoKi {
      */
     namespace Traits {
       struct LessOrEqual : details::SimpleBinary<std::less_equal<>, LessOrEqual> {
-        static constexpr const char* name() { return "<="; }
+        static constexpr auto name() { return "<="; }
       };
     } // namespace Traits
     template <typename Signature>
@@ -547,7 +547,7 @@ namespace LoKi {
 
     namespace Traits {
       struct Plus : details::SimpleBinary<std::plus<>, Plus> {
-        static constexpr const char* name() { return "+"; }
+        static constexpr auto name() { return '+'; }
       };
     } // namespace Traits
 
@@ -583,7 +583,7 @@ namespace LoKi {
 
     namespace Traits {
       struct Minus : details::SimpleBinary<std::minus<>, Minus> {
-        static constexpr const char* name() { return "-"; }
+        static constexpr auto name() { return '-'; }
       };
     } // namespace Traits
 
@@ -620,7 +620,7 @@ namespace LoKi {
 
     namespace Traits {
       struct Divide : details::SimpleBinary<std::divides<>, Divide> {
-        static constexpr const char* name() { return "/"; }
+        static constexpr auto name() { return '/'; }
       };
     } // namespace Traits
 
@@ -656,7 +656,7 @@ namespace LoKi {
 
     namespace Traits {
       struct Multiply : details::SimpleBinary<std::multiplies<>, Multiply> {
-        static constexpr const char* name() { return "*"; }
+        static constexpr auto name() { return '*'; }
       };
     } // namespace Traits
 
@@ -758,7 +758,7 @@ namespace LoKi {
     template <typename Signature>
     class SimpleSwitch;
 
-    template <typename... TYPE, typename TYPE2>
+    template <typename TYPE2, typename... TYPE>
     class SimpleSwitch<TYPE2( TYPE... )> final : public Functor<TYPE2( TYPE... )> {
     public:
       // ========================================================================
@@ -800,6 +800,9 @@ namespace LoKi {
       // ========================================================================
     };
 
+    template <typename Func, typename TYPE2>
+    SimpleSwitch( const Func&, TYPE2, TYPE2 )->SimpleSwitch<TYPE2( LoKi::details::type1_t<Func> )>;
+
     // ==========================================================================
     /** @class Switch
      *
@@ -814,7 +817,7 @@ namespace LoKi {
     template <typename Signature>
     class Switch;
 
-    template <typename... TYPE, typename TYPE2> // def TYPE2=double
+    template <typename... TYPE, typename TYPE2>
     class Switch<TYPE2( TYPE... )> final : public Functor<TYPE2( TYPE... )> {
       using T2 = typename Constant<TYPE2( TYPE... )>::T2;
       // ========================================================================
@@ -909,6 +912,9 @@ namespace LoKi {
       TwoFunctors<TYPE2( TYPE... )> m_two; // the storage of functors
       // ========================================================================
     };
+
+    template <typename Fun, typename Pred>
+    Switch( const Pred&, const Fun&, const Fun& )->Switch<LoKi::details::signature_of_t<Fun>>;
     // ==========================================================================
     /** @class ComposeFunction
      *  The helper class to implement function of function
@@ -1003,26 +1009,26 @@ namespace LoKi {
       /// the actual type of the function
       typedef double ( *Func )( double, double );
       /// constant type
-      using T2 = typename Constant<TYPE2( TYPE... )>::T2;
+      using T2 = typename boost::call_traits<TYPE2>::param_type;
       // ========================================================================
     public:
       // ========================================================================
       /// constructor
       ComposeFunction2( Func func, FunctorFromFunctor<TYPE2( TYPE... )> fun1, FunctorFromFunctor<TYPE2( TYPE... )> fun2,
-                        const std::string& desc = "'fun'" )
-          : m_func( func ), m_two( std::move( fun1 ), std::move( fun2 ) ), m_desc( desc ) {}
+                        std::string desc = "'fun'" )
+          : m_func( func ), m_two( std::move( fun1 ), std::move( fun2 ) ), m_desc( std::move( desc ) ) {}
       /// constructor
-      ComposeFunction2( Func func, FunctorFromFunctor<TYPE2( TYPE... )> fun1, T2 val2,
-                        const std::string& desc = "'fun'" )
-          : ComposeFunction2( func, std::move( fun1 ), Constant<TYPE2( TYPE... )>{std::move( val2 )}, desc ) {}
+      ComposeFunction2( Func func, FunctorFromFunctor<TYPE2( TYPE... )> fun1, T2 val2, std::string desc = "'fun'" )
+          : ComposeFunction2( func, std::move( fun1 ), Constant<TYPE2( TYPE... )>{std::move( val2 )},
+                              std::move( desc ) ) {}
       /// constructor
-      ComposeFunction2( Func func, T2 val1, FunctorFromFunctor<TYPE2( TYPE... )> fun2,
-                        const std::string& desc = "'fun'" )
-          : ComposeFunction2( func, Constant<TYPE2( TYPE... )>{std::move( val1 )}, std::move( fun2 ), desc ) {}
+      ComposeFunction2( Func func, T2 val1, FunctorFromFunctor<TYPE2( TYPE... )> fun2, std::string desc = "'fun'" )
+          : ComposeFunction2( func, Constant<TYPE2( TYPE... )>{std::move( val1 )}, std::move( fun2 ),
+                              std::move( desc ) ) {}
       /// constructor
-      ComposeFunction2( Func func, T2 val1, T2 val2, const std::string& desc = "'fun'" )
+      ComposeFunction2( Func func, T2 val1, T2 val2, std::string desc = "'fun'" )
           : ComposeFunction2( func, Constant<TYPE2( TYPE... )>{std::move( val1 )},
-                              Constant<TYPE2( TYPE... )>{std::move( val2 )}, desc ) {}
+                              Constant<TYPE2( TYPE... )>{std::move( val2 )}, std::move( desc ) ) {}
       /// clone method (mandatory!)
       ComposeFunction2* clone() const override { return new ComposeFunction2( *this ); }
       /// the only one essential method ("function")
@@ -1049,6 +1055,23 @@ namespace LoKi {
       std::string m_desc; // the funtion descrition
       // ========================================================================
     };
+
+    template <typename F>
+    ComposeFunction( double ( * )( double ), const F&, const std::string& )
+        ->ComposeFunction<LoKi::details::signature_of_t<F>>;
+
+    template <typename F1, typename F2,
+              LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
+    ComposeFunction2( double ( * )( double, double ), const F1&, const F2&, const std::string& )
+        ->ComposeFunction2<LoKi::details::signature_of_t<F1, F2>>;
+
+    template <typename F> // , LOKI_REQUIRES( LoKi::details::is_functor_v<F> )>
+    ComposeFunction2( double ( * )( double, double ), const F&, double, const std::string& )
+        ->ComposeFunction2<LoKi::details::signature_of_t<F>>;
+
+    template <typename F, LOKI_REQUIRES( LoKi::details::is_functor_v<F> )>
+    ComposeFunction2( double ( * )( double, double ), double, const std::string&, const F&, const std::string& )
+        ->ComposeFunction2<LoKi::details::signature_of_t<F>>;
 
     // ==========================================================================
     /** @class Compose
@@ -1095,7 +1118,7 @@ namespace LoKi {
    *  @date 2004-02-11
    */
   template <typename TYPE>
-  struct Valid final : Functor<TYPE, bool> {
+  struct Valid final : V2::Functor<bool( TYPE )> {
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
     Valid* clone() const override { return new Valid( *this ); }
@@ -1114,7 +1137,7 @@ namespace LoKi {
    *  @warning this functor does not have a valid <c>toCpp</c> method
    */
   template <typename TYPE>
-  class TheSame final : public Functor<TYPE, bool> {
+  class TheSame final : public V2::Functor<bool( TYPE )> {
   public:
     // ========================================================================
     /// constructor form the value
@@ -1198,7 +1221,7 @@ namespace LoKi {
       template <typename TYPE2>
       struct EqualToValue {
         using Bind_t = details::Bind::FirstOrSecond_t;
-        static constexpr const char* infix() { return "=="; }
+        static constexpr auto infix() { return "=="; }
         template <typename V1, typename V2>
         static bool binaryOp( const V1& v1, const V2& v2 ) {
           LHCb::Math::Equal_To<TYPE2> _cmp;
@@ -1218,7 +1241,7 @@ namespace LoKi {
       template <typename TYPE2>
       struct NotEqualToValue {
         using Bind_t = typename EqualToValue<TYPE2>::Bind_t;
-        static constexpr const char* infix() { return "!="; }
+        static constexpr auto infix() { return "!="; }
         template <typename V1, typename V2>
         static bool binaryOp( const V1& v1, const V2& v2 ) {
           return !EqualToValue<TYPE2>::binaryOp( v1, v2 );
@@ -1237,7 +1260,7 @@ namespace LoKi {
     namespace Traits {
       struct LessThanValue {
         using Bind_t = details::Bind::Second_t;
-        static constexpr const char* infix() { return "<"; }
+        static constexpr auto infix() { return "<"; }
         template <typename V1, typename V2>
         static constexpr bool binaryOp( const V1& v1, const V2& v2 ) {
           return v1 < v2;
@@ -1256,7 +1279,7 @@ namespace LoKi {
       template <typename TYPE2>
       struct LessOrEqualValue {
         using Bind_t = details::Bind::Second_t;
-        static constexpr const char* infix() { return "<="; }
+        static constexpr auto infix() { return "<="; }
         template <typename V1, typename V2>
         static bool binaryOp( const V1& v1, const V2& v2 ) {
           return LessThanValue::binaryOp( v1, v2 ) || EqualToValue<TYPE2>::binaryOp( v1, v2 );
@@ -1275,7 +1298,7 @@ namespace LoKi {
     namespace Traits {
       struct GreaterThanValue {
         using Bind_t = details::Bind::Second_t;
-        static constexpr const char* infix() { return ">"; }
+        static constexpr auto infix() { return ">"; }
         template <typename V1, typename V2>
         static constexpr bool binaryOp( const V1& v1, const V2& v2 ) {
           return v2 < v1;
@@ -1294,7 +1317,7 @@ namespace LoKi {
       template <typename TYPE2>
       struct GreaterOrEqualValue {
         using Bind_t = details::Bind::Second_t;
-        static constexpr const char* infix() { return ">="; }
+        static constexpr auto infix() { return ">="; }
         template <typename V1, typename V2>
         static bool binaryOp( const V1& v1, const V2& v2 ) {
           return GreaterThanValue::binaryOp( v1, v2 ) || EqualToValue<TYPE2>::binaryOp( v1, v2 );
@@ -1313,7 +1336,7 @@ namespace LoKi {
     namespace Traits {
       struct MultiplyByValue {
         using Bind_t = details::Bind::FirstOrSecond_t;
-        static constexpr const char* infix() { return "*"; }
+        static constexpr auto infix() { return "*"; }
         template <typename V1, typename V2>
         static constexpr auto binaryOp( const V1& v1, const V2& v2 ) {
           return v1 * v2;
@@ -1331,7 +1354,7 @@ namespace LoKi {
     namespace Traits {
       struct SumByValue {
         using Bind_t = details::Bind::FirstOrSecond_t;
-        static constexpr const char* infix() { return "+"; }
+        static constexpr auto infix() { return "+"; }
         template <typename V1, typename V2>
         static constexpr auto binaryOp( const V1& v1, const V2& v2 ) {
           return v1 + v2;
@@ -1350,7 +1373,7 @@ namespace LoKi {
       template <typename FirstOrSecond>
       struct BindMinus {
         using Bind_t = FirstOrSecond;
-        static constexpr const char* infix() { return "-"; }
+        static constexpr auto infix() { return "-"; }
         template <typename V1, typename V2>
         static constexpr auto binaryOp( const V1& v1, const V2& v2 ) {
           return v1 - v2;
@@ -1377,7 +1400,7 @@ namespace LoKi {
       template <typename FirstOrSecond>
       struct BindDivide {
         using Bind_t = FirstOrSecond;
-        static constexpr const char* infix() { return "/"; }
+        static constexpr auto infix() { return "/"; }
         template <typename V1, typename V2>
         static constexpr auto binaryOp( const V1& v1, const V2& v2 ) {
           return v1 / v2;
@@ -1425,11 +1448,10 @@ namespace LoKi {
         : m_two( std::move( fun1 ), std::move( fun2 ) ), m_cmp( std::move( cmp ) ) {}
     // ========================================================================
     /** constructor
-     *  @param fun1 the first functor
-     *  @param fun2 the second functor
+     *  @param fun1 the functor
      *  @param cmp the comparison criteria
      */
-    Compare( const Functor<TYPE, TYPE2>& fun1, CMP cmp = {} ) : m_two( fun1, fun1 ), m_cmp( std::move( cmp ) ) {}
+    Compare( const Functor<TYPE, TYPE2>& fun1, CMP cmp = {} ) : Compare( fun1, fun1, cmp ){};
     /// the only one essential method
     bool operator()( argument a1, argument a2 ) const { return m_cmp( m_two.fun1( a1 ), m_two.fun2( a2 ) ); }
     // ========================================================================
@@ -1446,19 +1468,10 @@ namespace LoKi {
     CMP                      m_cmp;
     // ========================================================================
   };
-  // ==========================================================================
-  template <typename TYPE, typename TYPE2, bool>
-  struct Cmp;
-  // ==========================================================================
-  template <typename TYPE, typename TYPE2>
-  struct Cmp<TYPE, TYPE2, true> {
-    typedef Compare<TYPE, std::less<>, TYPE2> Type;
-  };
-  // ==========================================================================
-  template <typename TYPE, typename TYPE2>
-  struct Cmp<TYPE, TYPE2, false> {
-    typedef Compare<TYPE, std::greater<>, TYPE2> Type;
-  };
+
+  template <typename F, typename CMP>
+  Compare( const F&, const F&, CMP )->Compare<LoKi::details::type1_t<F>, CMP>;
+
   // ==========================================================================
   /** @class Identity
    *  the simple trivial functor
@@ -1473,7 +1486,7 @@ namespace LoKi {
     /// MANDATORY": the only one essential method
     TYPE2 operator()( V2::details::Param_t<TYPE> a ) const override { return a; }
     /// OPTIONAL: the nice printout
-    std::ostream& fillStream( std::ostream& s ) const override;
+    std::ostream& fillStream( std::ostream& s ) const override { return s << "I"; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1499,11 +1512,9 @@ namespace LoKi {
    *  @date 2009-11-21
    */
   namespace V2 {
-    template <typename Signature>
-    class InRange;
 
     template <typename... TYPE>
-    class InRange<double( TYPE... )> final : public Functor<bool( TYPE... )> {
+    class InRange final : public Functor<bool( TYPE... )> {
       // ========================================================================
     public:
       // ========================================================================
@@ -1512,7 +1523,7 @@ namespace LoKi {
        *  @param low the low edge
        *  @param high the high edge
        */
-      InRange( const double low, FunctorFromFunctor<double( TYPE... )> fun, const double high )
+      InRange( double low, FunctorFromFunctor<double( TYPE... )> fun, double high )
           : LoKi::AuxFunBase( std::tie( low, fun, high ) ), m_low( low ), m_fun( std::move( fun ) ), m_high( high ) {}
       /// MANDATORY: clone method ("virtual constructor")
       InRange* clone() const override { return new InRange( *this ); }
@@ -1537,6 +1548,10 @@ namespace LoKi {
       // ========================================================================
     };
 
+    // map Functor<double(...)> into InRange(...)
+    template <typename F, typename = LoKi::details::require_result_t<F, double>>
+    InRange( double, const F&, double )->InRange<LoKi::details::type1_t<F>>;
+
     // ==========================================================================
     /** @class InRange2
      *  Helper predicate to represent that the result of functor
@@ -1545,11 +1560,8 @@ namespace LoKi {
      *  @date 2009-11-21
      */
 
-    template <typename Signature>
-    class InRange2;
-
     template <typename... TYPE>
-    class InRange2<double( TYPE... )> final : public Functor<bool( TYPE... )> {
+    class InRange2 final : public Functor<bool( TYPE... )> {
       // ========================================================================
     public:
       // ========================================================================
@@ -1602,7 +1614,12 @@ namespace LoKi {
       FunctorFromFunctor<double( TYPE... )> m_high; //      the high edge
       // ========================================================================
     };
-
+    template <typename F, typename = LoKi::details::require_result_t<F, double>>
+    InRange2( const F&, const F&, const F& )->InRange2<LoKi::details::type1_t<F>>;
+    template <typename F, typename = LoKi::details::require_result_t<F, double>>
+    InRange2( double, const F&, const F& )->InRange2<LoKi::details::type1_t<F>>;
+    template <typename F, typename = LoKi::details::require_result_t<F, double>>
+    InRange2( const F&, const F&, double )->InRange2<LoKi::details::type1_t<F>>;
     // ==========================================================================
     /** @class EqualToList
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -1742,10 +1759,8 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-12-06
      */
-    template <typename Signature>
-    class XScaler;
     template <typename... TYPE>
-    class XScaler<bool( TYPE... )> final : public Functor<bool( TYPE... )> {
+    class XScaler final : public Functor<bool( TYPE... )> {
     public:
       // ========================================================================
       /** constructor from predicate and scale
@@ -1771,6 +1786,8 @@ namespace LoKi {
       FunctorFromFunctor<bool()> m_scaler; // the scaler
       // ========================================================================
     };
+    template <typename F, typename = LoKi::details::require_result_t<F, bool>>
+    XScaler( const F&, const Functor<bool()>& )->XScaler<LoKi::details::type1_t<F>>;
 
     // ==========================================================================
     /** @class Modulo
@@ -1836,6 +1853,7 @@ namespace LoKi {
     } // namespace Traits
     template <typename TYPE>
     using Round = details::UnaryOp<Traits::Round, LoKi::details::sig_t<TYPE, double>>;
+
     // ==========================================================================
     /** @class JBit
      *  get the jth bit of value.
@@ -1847,14 +1865,12 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date 2011-04-02
      */
-    template <typename Signature>
-    class JBit;
     template <typename... TYPE>
-    class JBit<bool( TYPE... )> final : public Functor<bool( TYPE... )> {
+    class JBit final : public Functor<bool( TYPE... )> {
     public:
       // ========================================================================
       /// constructor from the functor
-      JBit( FunctorFromFunctor<double( TYPE... )> fun, const unsigned short j )
+      JBit( FunctorFromFunctor<double( TYPE... )> fun, unsigned short j )
           : LoKi::AuxFunBase( std::tie( fun, j ) ), m_fun( std::move( fun ) ), m_j( j ) {
         //
         static_assert( boost::integer_traits<unsigned long>::is_specialized &&
@@ -1887,6 +1903,9 @@ namespace LoKi {
       // ========================================================================
     };
 
+    template <typename F, typename = LoKi::details::require_result_t<F, double>>
+    JBit( const F&, unsigned short )->JBit<LoKi::details::type1_t<F>>;
+
     // ==========================================================================
     /** @class JBits
      *  get the content between j1 and j2  bit of value.
@@ -1898,10 +1917,8 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date 2011-04-02
      */
-    template <typename Signature>
-    class JBits;
     template <typename... TYPE>
-    class JBits<double( TYPE... )> final : public Functor<double( TYPE... )> {
+    class JBits final : public Functor<double( TYPE... )> {
     public:
       // ========================================================================
       /// constructor from the functor
@@ -1941,6 +1958,8 @@ namespace LoKi {
       unsigned short m_j2; // the index
       // ========================================================================
     };
+    template <typename F>
+    JBits( const F&, unsigned short, unsigned short )->JBits<LoKi::details::type1_t<F>>;
 
     // ==========================================================================
     /** @class JDigit
@@ -1953,10 +1972,8 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date 2017-02-16
      */
-    template <typename Signature>
-    class JDigit;
     template <typename... TYPE>
-    class JDigit<double( TYPE... )> final : public Functor<double( TYPE... )> {
+    class JDigit final : public Functor<double( TYPE... )> {
     public:
       // ========================================================================
       /// constructor from the functor
@@ -1992,6 +2009,8 @@ namespace LoKi {
       unsigned short m_j; // the index
       // ========================================================================
     };
+    template <typename F>
+    JDigit( const F&, unsigned short )->JDigit<LoKi::details::type1_t<F>>;
 
     // ==========================================================================
     /** @class JDigits
@@ -2004,10 +2023,8 @@ namespace LoKi {
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date 2011-04-02
      */
-    template <typename Signature>
-    class JDigits;
     template <typename... TYPE>
-    class JDigits<double( TYPE... )> final : public Functor<double( TYPE... )> {
+    class JDigits final : public Functor<double( TYPE... )> {
     public:
       // ========================================================================
       /// constructor from the functor
@@ -2047,6 +2064,8 @@ namespace LoKi {
       unsigned short m_j2; // the index
       // ========================================================================
     };
+    template <typename F>
+    JDigits( const F&, unsigned short, unsigned short )->JDigits<LoKi::details::type1_t<F>>;
   } // namespace V2
 
   // ==========================================================================
@@ -2141,13 +2160,6 @@ namespace LoKi {
   using JDigit = V2::JDigit<details::sig_t<T, double>>;
   template <typename T>
   using JDigits = V2::JDigits<details::sig_t<T, double>>;
-  // ==========================================================================
-  // OPTIONAL: the nice printout
-  // ==========================================================================
-  template <typename TYPE, typename TYPE2>
-  std::ostream& Identity<TYPE, TYPE2>::fillStream( std::ostream& s ) const {
-    return s << "I";
-  }
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

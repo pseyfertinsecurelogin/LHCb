@@ -55,14 +55,13 @@ namespace {
 // ============================================================================
 // Standard constructor
 // ============================================================================
-LoKi::Base::Base( const std::string& name, const IReporter* reporter )
-    : m_name( name ), m_reporter( reporter ), m_refCount( 0 ) {
+LoKi::Base::Base( const std::string& name, const IReporter* reporter ) : m_name( name ), m_reporter( reporter ) {
   s_BaseCounter.increment();
 }
 // ============================================================================
 // copy constructor
 // ============================================================================
-LoKi::Base::Base( const LoKi::Base& right ) : m_name( right.m_name ), m_reporter( right.m_reporter ), m_refCount( 0 ) {
+LoKi::Base::Base( const LoKi::Base& right ) : m_name( right.m_name ), m_reporter( right.m_reporter ) {
   s_BaseCounter.increment();
 }
 // ============================================================================

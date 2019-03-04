@@ -49,11 +49,7 @@ LoKi::Scalers::RandomScaleV* LoKi::Scalers::RandomScaleV::clone() const {
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool LoKi::Scalers::RandomScaleV::operator()() const { return eval(); }
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Scalers::RandomScaleV::eval() const { return m_uniform( 0 ) <= m_prob; }
+bool LoKi::Scalers::RandomScaleV::operator()() const { return m_uniform( 0 ) <= m_prob; }
 // ============================================================================
 std::ostream& LoKi::Scalers::RandomScaleV::fillStream( std::ostream& s ) const {
   return s << " FSCALE( " << m_prob << " ) ";
@@ -77,11 +73,7 @@ LoKi::Scalers::RandomScale* LoKi::Scalers::RandomScale::clone() const {
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool LoKi::Scalers::RandomScale::operator()( double v ) const { return eval( v ); }
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Scalers::RandomScale::eval( LoKi::Scalers::RandomScale::argument /* v */ ) const { return m_scaler.eval(); }
+bool LoKi::Scalers::RandomScale::operator()( double ) const { return m_scaler.eval(); }
 // ============================================================================
 std::ostream& LoKi::Scalers::RandomScale::fillStream( std::ostream& s ) const {
   return s << " XSCALE( " << m_scaler.prob() << " ) ";
@@ -100,11 +92,7 @@ LoKi::Scalers::SkipperV::SkipperV( const size_t skip ) : LoKi::AuxFunBase( std::
 // ===========================================================================
 LoKi::Scalers::SkipperV* LoKi::Scalers::SkipperV::clone() const { return new LoKi::Scalers::SkipperV( *this ); }
 // ===========================================================================
-// MANDATORY: the only one essential method
-// ===========================================================================
-bool LoKi::Scalers::SkipperV::operator()() const { return eval(); }
-// ===========================================================================
-bool LoKi::Scalers::SkipperV::eval() const {
+bool LoKi::Scalers::SkipperV::operator()() const {
   ( ++m_curr ) %= m_skip;
   return 0 == m_curr;
 }
@@ -128,9 +116,7 @@ LoKi::Scalers::Skipper* LoKi::Scalers::Skipper::clone() const { return new LoKi:
 // ===========================================================================
 // MANDATORY: the only one essential method
 // ===========================================================================
-bool LoKi::Scalers::Skipper::operator()( double v ) const { return eval( v ); }
-// ===========================================================================
-bool LoKi::Scalers::Skipper::eval( double ) const { return m_skipper.eval(); }
+bool LoKi::Scalers::Skipper::operator()( double ) const { return m_skipper.eval(); }
 // ===========================================================================
 std::ostream& LoKi::Scalers::Skipper::fillStream( std::ostream& s ) const {
   return s << " XSKIP ( " << m_skipper.skip() << " ) ";
@@ -281,11 +267,7 @@ LoKi::Scalers::RateLimitV* LoKi::Scalers::RateLimitV::clone() const { return new
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool LoKi::Scalers::RateLimitV::operator()() const { return eval(); }
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Scalers::RateLimitV::eval() const {
+bool LoKi::Scalers::RateLimitV::operator()() const {
   //
   if ( m_rate <= 0 ) { return false; }
 
@@ -407,11 +389,7 @@ LoKi::Scalers::RateLimit* LoKi::Scalers::RateLimit::clone() const { return new L
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool LoKi::Scalers::RateLimit::operator()( argument v ) const { return eval( v ); }
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Scalers::RateLimit::eval( double ) const { return m_rateLimit.eval(); }
+bool LoKi::Scalers::RateLimit::operator()( double ) const { return m_rateLimit.eval(); }
 // ===========================================================================
 std::ostream& LoKi::Scalers::RateLimit::fillStream( std::ostream& s ) const {
   s << "XRATE( " << rate();

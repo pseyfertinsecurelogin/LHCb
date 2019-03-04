@@ -38,10 +38,6 @@ A.Golutvin, P.Koppenburg have been used in the design.
 
 """
 # =============================================================================
-__author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
-__date__ = "????-??-??"
-__version__ = ""
-# =============================================================================
 
 import logging
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -1411,7 +1407,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = yields ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1429,7 +1425,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = process ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1447,7 +1443,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = min_value ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1465,7 +1461,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = max_value ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1483,7 +1479,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = min_abs_value ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1501,7 +1497,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = max_abs_value ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1599,7 +1595,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = min_element ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1617,7 +1613,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = max_element ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1635,7 +1631,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = min_abs_element ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -1653,7 +1649,7 @@ def decorateFunctionOps(funcs, opers):
             >>> fun = ...
             >>> vfun = max_abs_element ( fun )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -2003,7 +1999,7 @@ def decoratePredicateOps(cuts, opers):
             >>> cut = ...
             >>> selector = select( cut )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -2021,7 +2017,7 @@ def decoratePredicateOps(cuts, opers):
             >>> cut = ...
             >>> processor = process( cut )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -2039,7 +2035,7 @@ def decoratePredicateOps(cuts, opers):
             >>> cut = ...
             >>> counter = count( cut )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -2057,7 +2053,7 @@ def decoratePredicateOps(cuts, opers):
             >>> cut = ...
             >>> _has = has( cut )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -2257,7 +2253,7 @@ def getAndDecoratePrimitiveVoids(name):
         name,  ## module name
         LoKi.Functor(_v, _d),  ## the base
         LoKi.Dicts.FunCalls(_v),  ## call-traits
-        LoKi.Dicts.FuncOps(_v, _v)  ## operators
+        LoKi.Dicts.FuncOps(_v)  ## operators
     )
 
     # void -> bool
@@ -2265,7 +2261,7 @@ def getAndDecoratePrimitiveVoids(name):
         name,  ## module name
         LoKi.Functor(_v, _b),  ## the base
         LoKi.Dicts.CutCalls(_v),  ## call-traits
-        LoKi.Dicts.CutsOps(_v, _v)  ## operators
+        LoKi.Dicts.CutsOps(_v)  ## operators
     )
 
     return _decorated
@@ -2450,7 +2446,7 @@ def decorateMaps(funcs, opers):
             >>> functor1 = ...
             >>> functor2 = tee ( functor )
 
-            The concept belongs to Gerhard 'The Great' Raven
+            The concept belongs to Gerhard Raven
 
             Uses:\n
             """
@@ -2661,7 +2657,7 @@ def decorateFunInfo(funcs, infos):
             >>> functor = ...
             >>> logged = logging ( functor )
 
-            The concept belongs to Gerhard ``The Great'' Raven
+            The concept belongs to Gerhard Raven
 
             """
             return infos.__logging__(s, *a)

@@ -59,9 +59,10 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F1, typename F2>
-  LoKi::And<details::signature_of_t<F1, F2>> operator&&( F1&& fun1, F2&& fun2 ) {
-    return {std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
+  template <typename F1, typename F2,
+            LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
+  auto operator&&( F1&& fun1, F2&& fun2 ) {
+    return LoKi::And<details::signature_of_t<F1, F2>>{std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
   }
   // ============================================================================
   /** inline construction of logical 'OR'
@@ -84,9 +85,10 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F1, typename F2>
-  LoKi::Or<details::signature_of_t<F1, F2>> operator||( F1&& fun1, F2&& fun2 ) {
-    return {std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
+  template <typename F1, typename F2,
+            LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
+  auto operator||( F1&& fun1, F2&& fun2 ) {
+    return LoKi::Or<details::signature_of_t<F1, F2>>{std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
   }
   // ============================================================================
   /** inline construction for logical negate
@@ -111,9 +113,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F>
-  LoKi::Not<details::signature_of_t<F>> operator!( F&& fun ) {
-    return {std::forward<F>( fun )};
+  template <typename F, LOKI_REQUIRES( LoKi::details::is_functor_v<F> )>
+  auto operator!( F&& fun ) {
+    return LoKi::Not<details::signature_of_t<F>>{std::forward<F>( fun )};
   }
   // ============================================================================
   /** inline construction for unary negate
@@ -138,9 +140,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F>
-  LoKi::Negate<details::signature_of_t<F>> operator-( F&& fun ) {
-    return {std::forward<F>( fun )};
+  template <typename F, LOKI_REQUIRES( LoKi::details::is_functor_v<F> )>
+  auto operator-( F&& fun ) {
+    return LoKi::Negate<details::signature_of_t<F>>{std::forward<F>( fun )};
   }
   // ============================================================================
   /** inline construction of operator "<"
@@ -163,9 +165,10 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F1, typename F2>
-  LoKi::Less<details::signature_of_t<F1, F2>> operator<( F1&& fun1, F2&& fun2 ) {
-    return {std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
+  template <typename F1, typename F2,
+            LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
+  auto operator<( F1&& fun1, F2&& fun2 ) {
+    return LoKi::Less<details::signature_of_t<F1, F2>>{std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
   }
   // ============================================================================
   /** inline construction of operator "<"
@@ -190,8 +193,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <typename F, typename Sig = details::signature_of_t<F>>
-  LoKi::LessThanValue<Sig> operator<( F&& fun, typename LoKi::V2::Constant<Sig>::T2 val ) {
-    return {std::forward<F>( fun ), std::move( val )};
+  auto operator<( F&& fun, typename LoKi::V2::Constant<Sig>::T2 val ) {
+    return LoKi::LessThanValue<Sig>{std::forward<F>( fun ), std::move( val )};
   }
   // ============================================================================
   /** inline construction for operator "<"
@@ -216,8 +219,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <typename F, typename Sig = details::signature_of_t<F>>
-  LoKi::GreaterThanValue<Sig> operator<( typename LoKi::V2::Constant<Sig>::T2 val, F&& fun ) {
-    return {std::forward<F>( fun ), val};
+  auto operator<( typename LoKi::V2::Constant<Sig>::T2 val, F&& fun ) {
+    return LoKi::GreaterThanValue<Sig>{std::forward<F>( fun ), val};
   }
   // ============================================================================
   /** inline construction for operator ">"
@@ -240,9 +243,10 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F1, typename F2>
-  LoKi::Less<details::signature_of_t<F1, F2>> operator>( F1&& fun1, F2&& fun2 ) {
-    return {std::forward<F2>( fun2 ), std::forward<F1>( fun1 )};
+  template <typename F1, typename F2,
+            LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
+  auto operator>( F1&& fun1, F2&& fun2 ) {
+    return LoKi::Less<details::signature_of_t<F1, F2>>{std::forward<F2>( fun2 ), std::forward<F1>( fun1 )};
   }
   // ============================================================================
   /** inline construction for operator ">"
@@ -266,8 +270,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <typename F, typename Sig = details::signature_of_t<F>>
-  LoKi::GreaterThanValue<Sig> operator>( F&& fun, typename V2::Constant<Sig>::T2 val ) {
-    return {std::forward<F>( fun ), val};
+  auto operator>( F&& fun, typename V2::Constant<Sig>::T2 val ) {
+    return LoKi::GreaterThanValue<Sig>{std::forward<F>( fun ), val};
   }
   // ============================================================================
   /** inline construction of operator ">"
@@ -291,8 +295,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <typename F, typename Sig = details::signature_of_t<F>>
-  LoKi::LessThanValue<Sig> operator>( typename V2::Constant<Sig>::T2 val, F&& fun ) {
-    return {std::forward<F>( fun ), val};
+  auto operator>( typename V2::Constant<Sig>::T2 val, F&& fun ) {
+    return LoKi::LessThanValue<Sig>{std::forward<F>( fun ), val};
   }
   // ============================================================================
   /** inline construction of operator "=="
@@ -315,7 +319,8 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F1, typename F2>
+  template <typename F1, typename F2,
+            LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
   LoKi::Equal<details::signature_of_t<F1, F2>> operator==( F1&& fun1, F2&& fun2 ) {
     return {std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
   }
@@ -764,8 +769,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <typename F, typename Sig = details::signature_of_t<F>>
-  LoKi::Divide2<Sig> operator/( typename V2::Constant<Sig>::T2 val, F&& fun ) {
-    return {std::move( val ), std::forward<F>( fun )};
+  auto operator/( typename V2::Constant<Sig>::T2 val, F&& fun ) {
+    return LoKi::Divide2<Sig>{std::move( val ), std::forward<F>( fun )};
   }
   // ============================================================================
   /** inline construction of operator "*"
@@ -788,9 +793,10 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <typename F1, typename F2>
-  LoKi::Multiply<details::signature_of_t<F1, F2>> operator*( F1&& fun1, F2&& fun2 ) {
-    return {std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
+  template <typename F1, typename F2,
+            LOKI_REQUIRES( LoKi::details::is_functor_v<F1>&& LoKi::details::is_functor_v<F2> )>
+  auto operator*( F1&& fun1, F2&& fun2 ) {
+    return LoKi::Multiply<details::signature_of_t<F1, F2>>{std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
   }
   // ============================================================================
   /** inline construction of operator "*"
@@ -815,8 +821,8 @@ namespace LoKi {
    *  @date 2001-01-23
    */
   template <typename F, typename Sig = details::signature_of_t<F>>
-  LoKi::MultiplyByValue<Sig> operator*( F&& fun, typename V2::Constant<Sig>::T2 val ) {
-    return {std::forward<F>( fun ), std::move( val )};
+  auto operator*( F&& fun, typename V2::Constant<Sig>::T2 val ) {
+    return LoKi::MultiplyByValue<Sig>{std::forward<F>( fun ), std::move( val )};
   }
   // ============================================================================
   /** inline construction of operator "*"
@@ -931,78 +937,78 @@ namespace LoKi {
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator<( const Functor<TYPE, TYPE2>& fun1,
                                                      const Functor<void, TYPE2>& fun2 ) {
-    return {fun1, LoKi::Value<TYPE, TYPE2>( fun2 )};
+    return {fun1, Value{fun2}};
   }
   //
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator<( const Functor<void, TYPE2>& fun1,
                                                      const Functor<TYPE, TYPE2>& fun2 ) {
-    return {Value<TYPE, TYPE2>( fun1 ), fun2};
+    return {Value{fun1}, fun2};
   }
 
   // less or equal
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator<=( const Functor<TYPE, TYPE2>& fun1,
                                                              const Functor<void, TYPE2>& fun2 ) {
-    return {fun1, LoKi::Value<TYPE, TYPE2>( fun2 )};
+    return {fun1, Value{fun2}};
   }
   //
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator<=( const Functor<void, TYPE2>& fun1,
                                                              const Functor<TYPE, TYPE2>& fun2 ) {
-    return {Value<TYPE, TYPE2>( fun1 ), fun2};
+    return {Value{fun1}, fun2};
   }
 
   // greater
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator>( const Functor<TYPE, TYPE2>& fun1,
                                                      const Functor<void, TYPE2>& fun2 ) {
-    return {Value<TYPE, TYPE2>( fun2 ), fun1};
+    return {Value{fun2}, fun1};
   }
   //
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Less<details::sig_t<TYPE, TYPE2>> operator>( const Functor<void, TYPE2>& fun1,
                                                      const Functor<TYPE, TYPE2>& fun2 ) {
-    return {fun2, Value<TYPE, TYPE2>( fun1 )};
+    return {fun2, Value{fun1}};
   }
 
   // greater or equal
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator>=( const Functor<TYPE, TYPE2>& fun1,
                                                              const Functor<void, TYPE2>& fun2 ) {
-    return {Value<TYPE, TYPE2>( fun2 ), fun1};
+    return {Value{fun2}, fun1};
   }
   //
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::LessOrEqual<details::sig_t<TYPE, TYPE2>> operator>=( const Functor<void, TYPE2>& fun1,
                                                              const Functor<TYPE, TYPE2>& fun2 ) {
-    return {fun2, Value<TYPE, TYPE2>( fun1 )};
+    return {fun2, Value{fun1}};
   }
 
   // equality
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Equal<details::sig_t<TYPE, TYPE2>> operator==( const Functor<TYPE, TYPE2>& fun1,
                                                        const Functor<void, TYPE2>& fun2 ) {
-    return {fun1, Value<TYPE, TYPE2>( fun2 )};
+    return {fun1, Value{fun2}};
   }
   //
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::Equal<details::sig_t<TYPE, TYPE2>> operator==( const Functor<void, TYPE2>& fun1,
                                                        const Functor<TYPE, TYPE2>& fun2 ) {
-    return {Value<TYPE, TYPE2>( fun1 ), fun2};
+    return {Value{fun1}, fun2};
   }
 
   // non-equality
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::NotEqual<details::sig_t<TYPE, TYPE2>> operator!=( const Functor<TYPE, TYPE2>& fun1,
                                                           const Functor<void, TYPE2>& fun2 ) {
-    return {fun1, Value<TYPE, TYPE2>( fun2 )};
+    return {fun1, Value{fun2}};
   }
   //
   template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void_v<TYPE> )>
   LoKi::NotEqual<details::sig_t<TYPE, TYPE2>> operator!=( const Functor<void, TYPE2>& fun1,
                                                           const Functor<TYPE, TYPE2>& fun2 ) {
-    return {Value<TYPE, TYPE2>( fun1 ), fun2};
+    return {Value{fun1}, fun2};
   }
 
   // ============================================================================

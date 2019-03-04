@@ -72,9 +72,9 @@ namespace LoKi {
     /// the only one essential method ("function")
     virtual TYPE2 operator()( argument ) const = 0;
     /// the only one essential method ("function")
-    virtual TYPE2 evaluate( argument a ) const { return ( *this )( a ); }
+    TYPE2 evaluate( argument a ) const { return ( *this )( a ); }
     /// the only one essential method ("function")
-    virtual TYPE2 eval( argument a ) const { return ( *this )( a ); }
+    TYPE2 eval( argument a ) const { return ( *this )( a ); }
     /// clone method
     virtual Functor* clone() const = 0;
     /// virtual destructor
@@ -101,7 +101,7 @@ namespace LoKi {
    *  @date 2007-10-30
    */
   template <class TYPE, class TYPE2>
-  class FunctorFromFunctor final : public LoKi::Functor<TYPE, TYPE2> {
+  class FunctorFromFunctor final : public Functor<TYPE, TYPE2> {
   public:
     // ========================================================================
     /// the underlying type of functor
@@ -149,9 +149,25 @@ namespace LoKi {
     std::string toCpp() const override { return m_fun->toCpp(); }
     // ========================================================================
     /// evaluate the function
-    auto fun( typename functor::argument a ) const { return ( *m_fun )( a ); }
+    auto fun( typename functor::argument a ) const { return std::invoke( *m_fun, a ); }
     // accessor to the function
-    inline const functor& func() const { return *m_fun; }
+    const functor& func() const { return *m_fun; }
+    // ========================================================================
+#if 0
+    /// deref operation
+    TYPE2 operator()( TYPE const* a ) const {
+      assert( a != nullptr );
+      return fun( *a );
+    }
+    /// vector operation
+    std::vector<TYPE2> operator()( std::vector<TYPE> const& va ) const {
+      std::vector<TYPE2> vr;
+      vr.reserve( va.size() );
+      std::transform( va.begin(), va.end(), std::back_inserter( vr ),
+                      [&]( typename functor::argument a ) { return this->fun( a ); } );
+      return vr;
+    }
+#endif
     // ========================================================================
   private:
     // ========================================================================
@@ -313,6 +329,9 @@ namespace LoKi {
 
     template <typename F, typename TYPE1, typename TYPE2>
     using require_signature = std::enable_if_t<decays_to_v<type1_t<F>, TYPE1> && decays_to_v<type2_t<F>, TYPE2>>;
+
+    template <typename F, typename ResultType>
+    using require_result_t = std::enable_if_t<decays_to_v<result_t<F>, ResultType>>;
 
     template <typename Arg, typename Res>
     struct sig_helper {

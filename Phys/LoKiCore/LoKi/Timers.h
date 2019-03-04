@@ -163,6 +163,16 @@ namespace LoKi {
       mutable std::once_flag m_first; // the first time?
       // ======================================================================
     };
+
+    template <typename F>
+    Timer_( const F&, const std::string& )->Timer_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+
+    template <typename F>
+    Timer_( const F&, ChronoEntity* timer )->Timer_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+
+    template <typename F>
+    Timer_( const F&, IChronoSvc*, const std::string& )->Timer_<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+
     // ========================================================================
     /// specialization for "sources"
     template <class TYPE2>
@@ -250,9 +260,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-02-02
    */
-  template <typename F, typename TYPE1 = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Functors::Timer_<TYPE1, TYPE2> timer( F&& fun, ChronoEntity* timer ) {
-    return {std::forward<F>( fun ), timer};
+  template <typename F>
+  auto timer( F&& fun, ChronoEntity* timer ) {
+    return LoKi::Functors::Timer_{std::forward<F>( fun ), timer};
   }
   // ==========================================================================
   /** get the timer functor
@@ -262,9 +272,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-02-02
    */
-  template <typename F, typename TYPE1 = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Functors::Timer_<TYPE1, TYPE2> timer( F&& fun, IChronoSvc* svc, const std::string& timer ) {
-    return {fun, svc, timer};
+  template <typename F>
+  auto timer( F&& fun, IChronoSvc* svc, const std::string& timer ) {
+    return LoKi::Functors::Timer_{fun, svc, timer};
   }
   // ==========================================================================
   /** get the timer functor
@@ -274,9 +284,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-02-02
    */
-  template <typename F, typename TYPE1 = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Functors::Timer_<TYPE1, TYPE2> timer( F&& fun, const std::string& timer ) {
-    return {std::forward<F>( fun ), timer};
+  template <typename F>
+  auto timer( F&& fun, const std::string& timer ) {
+    return LoKi::Functors::Timer_{std::forward<F>( fun ), timer};
   }
   // ==========================================================================
   /** get the timer functor
@@ -286,25 +296,25 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-02-02
    */
-  template <typename F, typename TYPE1 = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Functors::Timer_<TYPE1, TYPE2> timer( F&& fun, const LoKi::Timer& timer ) {
-    return {std::forward<F>( fun ), timer.name()};
+  template <typename F>
+  auto timer( F&& fun, const LoKi::Timer& timer ) {
+    return LoKi::Functors::Timer_{std::forward<F>( fun ), timer.name()};
   }
   // ==========================================================================
   /// operator form of timers
-  template <typename F, typename TYPE1 = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::FunctorFromFunctor<TYPE1, TYPE2> operator%( const LoKi::Timer& timer, F&& fun ) {
-    if ( timer.name().empty() ) return std::forward<F>( fun );
-    return LoKi::Functors::Timer_<TYPE1, TYPE2>( std::forward<F>( fun ), timer.name() );
+  template <typename F>
+  auto operator%( const LoKi::Timer& timer, F&& fun ) {
+    if ( timer.name().empty() ) return FunctorFromFunctor{std::forward<F>( fun )};
+    return FunctorFromFunctor{LoKi::Functors::Timer_( std::forward<F>( fun ), timer.name() )};
   }
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
 /// operator form of timers
-template <typename F, typename TYPE1 = LoKi::details::type1_t<F>, typename TYPE2 = LoKi::details::type2_t<F>>
-LoKi::FunctorFromFunctor<TYPE1, TYPE2> operator%( ChronoEntity* timer, F&& fun ) {
-  if ( !timer ) return std::forward<F>( fun );
-  return LoKi::Functors::Timer_<TYPE1, TYPE2>( std::forward<F>( fun ), timer );
+template <typename F>
+auto operator%( ChronoEntity* timer, F&& fun ) {
+  if ( !timer ) return LoKi::FunctorFromFunctor{std::forward<F>( fun )};
+  return LoKi::FunctorFromFunctor{LoKi::Functors::Timer_( std::forward<F>( fun ), timer )};
 }
 // ============================================================================
 //                                                                      The END

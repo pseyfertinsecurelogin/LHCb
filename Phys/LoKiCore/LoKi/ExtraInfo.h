@@ -257,9 +257,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-12-09
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::ExtraInfo::GetSmartInfo<TYPE, TYPE2> info( int index, F&& functor, bool update = false ) {
-    return {index, std::forward<F>( functor ), update};
+  template <typename F>
+  auto info( int index, F&& functor, bool update = false ) {
+    return LoKi::ExtraInfo::GetSmartInfo{index, std::forward<F>( functor ), update};
   }
   // ==========================================================================
 } //                                                      end of namespace LoKi

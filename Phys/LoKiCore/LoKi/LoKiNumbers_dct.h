@@ -201,7 +201,7 @@ namespace LoKi {
      *  @date   2007-12-01
      */
     template <>
-    class PipeOps<double, double> {
+    class PipeOps<double> {
     private:
       // ======================================================================
       typedef double                                TYPE;
@@ -225,12 +225,12 @@ namespace LoKi {
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __rshift__( const Pipe& fun,
                                                                                         const Cuts& fun2 ) {
-        return fun >> LoKi::filter<TYPE>( fun2 );
+        return fun >> LoKi::filter( fun2 );
       }
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<double>> __rshift__( const Pipe& fun,
                                                                                           const Func& fun2 ) {
-        return fun >> LoKi::yields<TYPE>( fun2 );
+        return fun >> LoKi::yields( fun2 );
       }
       // ======================================================================
     public:
@@ -283,7 +283,7 @@ namespace LoKi {
       // _union_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __union__( const Pipe& fun,
                                                                                        const Cuts& fun2 ) {
-        return LoKi::Functors::Union<std::vector<TYPE>, TYPE>( fun, LoKi::filter<TYPE>( fun2 ) );
+        return LoKi::Functors::Union<std::vector<TYPE>, TYPE>( fun, LoKi::filter( fun2 ) );
       }
       // _intersection_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __intersection__( const Pipe& fun,
@@ -293,7 +293,7 @@ namespace LoKi {
       // _intersection_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __intersection__( const Pipe& fun,
                                                                                               const Cuts& fun2 ) {
-        return LoKi::Functors::Intersection<std::vector<TYPE>, TYPE>( fun, LoKi::filter<TYPE>( fun2 ) );
+        return LoKi::Functors::Intersection<std::vector<TYPE>, TYPE>( fun, LoKi::filter( fun2 ) );
       }
       // _difference_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __difference__( const Pipe& fun,
@@ -303,7 +303,7 @@ namespace LoKi {
       // _difference_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __difference__( const Pipe& fun,
                                                                                             const Cuts& fun2 ) {
-        return LoKi::Functors::Difference<std::vector<TYPE>, TYPE>( fun, LoKi::filter<TYPE>( fun2 ) );
+        return LoKi::Functors::Difference<std::vector<TYPE>, TYPE>( fun, LoKi::filter( fun2 ) );
       }
       // _sym_difference_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __sym_difference__( const Pipe& fun,
@@ -313,7 +313,7 @@ namespace LoKi {
       // _sym_difference_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, std::vector<TYPE>> __sym_difference__( const Pipe& fun,
                                                                                                 const Cuts& fun2 ) {
-        return LoKi::Functors::SymDifference<std::vector<TYPE>, TYPE>( fun, LoKi::filter<TYPE>( fun2 ) );
+        return LoKi::Functors::SymDifference<std::vector<TYPE>, TYPE>( fun, LoKi::filter( fun2 ) );
       }
       // _includes_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, bool> __includes__( const Pipe& fun, const Pipe& fun2 ) {
@@ -321,7 +321,7 @@ namespace LoKi {
       }
       // _includes_
       static LoKi::FunctorFromFunctor<std::vector<TYPE>, bool> __includes__( const Pipe& fun, const Cuts& fun2 ) {
-        return LoKi::Functors::Includes<std::vector<TYPE>, TYPE>( fun, LoKi::filter<TYPE>( fun2 ) );
+        return LoKi::Functors::Includes<std::vector<TYPE>, TYPE>( fun, LoKi::filter( fun2 ) );
       }
       // ======================================================================
     };
@@ -375,7 +375,7 @@ namespace LoKi {
      *  @date   2007-11-30
      */
     template <>
-    class SourceOps<double, double> {
+    class SourceOps<double> {
     private:
       // ======================================================================
       typedef double                                TYPE;
@@ -420,11 +420,11 @@ namespace LoKi {
       }
       // __rshift__
       static LoKi::FunctorFromFunctor<void, std::vector<TYPE>> __rshift__( const Source& fun, const Cuts& fun2 ) {
-        return fun >> LoKi::filter<TYPE>( fun2 );
+        return fun >> LoKi::filter( fun2 );
       }
       // __rshift__
       static LoKi::FunctorFromFunctor<void, std::vector<double>> __rshift__( const Source& fun, const Func& fun2 ) {
-        return fun >> LoKi::yields<TYPE>( fun2 );
+        return fun >> LoKi::yields( fun2 );
       }
       // ======================================================================
     public: // add the dumps
@@ -566,10 +566,10 @@ namespace LoKi {
     };
     // ========================================================================
     template <>
-    class FuncOps<void, void> : public FuncOps_<void> {};
+    class FuncOps<void> : public FuncOps_<void> {};
     // ========================================================================
     template <>
-    class CutsOps<void, void> : public CutsOps_<void> {};
+    class CutsOps<void> : public CutsOps_<void> {};
     // ========================================================================
   } // namespace Dicts
   // ==========================================================================
@@ -597,10 +597,10 @@ namespace {
     LoKi::Dicts::FuncOps<std::vector<double>> m_op03;
     LoKi::Dicts::CutsOps<std::vector<double>> m_op04;
     ///
-    LoKi::Dicts::PipeOps<double, double>   m_ex01;
-    LoKi::Dicts::FunValOps<double>         m_ex02;
-    LoKi::Dicts::CutValOps<double>         m_ex03;
-    LoKi::Dicts::SourceOps<double, double> m_ex04;
+    LoKi::Dicts::PipeOps<double>   m_ex01;
+    LoKi::Dicts::FunValOps<double> m_ex02;
+    LoKi::Dicts::CutValOps<double> m_ex03;
+    LoKi::Dicts::SourceOps<double> m_ex04;
     ///
     LoKi::Dicts::FunCalls<double>              m_cs01;
     LoKi::Dicts::CutCalls<double>              m_cs02;
