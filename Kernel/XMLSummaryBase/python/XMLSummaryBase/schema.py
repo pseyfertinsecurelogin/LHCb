@@ -51,6 +51,8 @@ VTree:
     will throw a NameError, ValueError, TypeError or AttributeError
 '''
 
+id = 'xxx schema.py,v 1.5 2009-10-07 13:51:18 rlambert Exp $'
+
 __author__ = 'Rob Lambert'
 __date__ = id.split()[3]
 __version__ = id.split()[2]
