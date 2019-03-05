@@ -13,14 +13,14 @@
 #include "GaudiKernel/ParsersFactory.h"
 #include "GaudiKernel/StatusCode.h"
 #include "boost/algorithm/string/case_conv.hpp"
-#include "boost/regex.hpp"
 #include <iomanip>
+#include <regex>
 #include <string>
 
 TCK& TCK::set( const std::string& s ) {
-  static const boost::regex e( "^(0x[0-9a-fA-F]{8})$" );
-  boost::smatch             what;
-  if ( !boost::regex_match( s, what, e ) ) {
+  static const std::regex e( "^(0x[0-9a-fA-F]{8})$" );
+  std::smatch             what;
+  if ( !std::regex_match( s, what, e ) ) {
     throw GaudiException( "Invalid TCK format", s, StatusCode::FAILURE );
     return *this;
   }

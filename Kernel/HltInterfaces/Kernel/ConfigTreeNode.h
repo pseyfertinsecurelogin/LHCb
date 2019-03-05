@@ -62,6 +62,9 @@ public:
   std::ostream& print( std::ostream& os ) const;
   std::istream& read( std::istream& is );
 
+  friend std::ostream& operator<<( std::ostream& os, const ConfigTreeNode& x ) { return x.print( os ); }
+  friend std::istream& operator>>( std::istream& is, ConfigTreeNode& x ) { return x.read( is ); }
+
   const NodeRefs&    nodes() const { return m_nodes; }
   const LeafRef&     leaf() const { return m_leaf; }
   const std::string& label() const { return m_label; }
@@ -76,8 +79,5 @@ private:
   // m_digest must be last as its value depends on all other members...
   digest_type m_digest = digest_type::compute( str() );
 };
-
-inline std::ostream& operator<<( std::ostream& os, const ConfigTreeNode& x ) { return x.print( os ); }
-inline std::istream& operator>>( std::istream& is, ConfigTreeNode& x ) { return x.read( is ); }
 
 #endif

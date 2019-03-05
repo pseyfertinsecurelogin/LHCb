@@ -12,8 +12,6 @@
 
 #include <algorithm>
 
-#include "boost/regex.hpp"
-
 // from Gaudi
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IIncidentSvc.h"
@@ -220,20 +218,18 @@ void HltConfigSvc::handle( const Incident& /*incident*/ ) {
 // ============================================================================
 #include "GaudiKernel/ParsersFactory.h"
 // ============================================================================
-namespace Gaudi {
-  namespace Parsers {
+namespace Gaudi::Parsers {
 
-    StatusCode parse( std::map<TCK, std::string>& result, const std::string& input ) {
-      result.clear();
-      std::map<std::string, std::string> m;
-      auto                               sc = parse( m, input );
-      if ( sc ) {
-        std::transform( std::begin( m ), std::end( m ), std::inserter( result, std::end( result ) ),
-                        []( const std::pair<std::string, std::string>& i ) {
-                          return std::pair{TCK{i.first}, i.second};
-                        } );
-      }
-      return sc;
+  StatusCode parse( std::map<TCK, std::string>& result, const std::string& input ) {
+    result.clear();
+    std::map<std::string, std::string> m;
+    auto                               sc = parse( m, input );
+    if ( sc ) {
+      std::transform( std::begin( m ), std::end( m ), std::inserter( result, std::end( result ) ),
+                      []( const std::pair<std::string, std::string>& i ) {
+                        return std::pair{TCK{i.first}, i.second};
+                      } );
     }
-  } // namespace Parsers
-} // namespace Gaudi
+    return sc;
+  }
+} // namespace Gaudi::Parsers

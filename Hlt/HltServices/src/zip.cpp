@@ -16,7 +16,6 @@
 #include "boost/iostreams/filter/bzip2.hpp"
 #include "boost/iostreams/filter/zlib.hpp"
 #include "boost/iostreams/slice.hpp"
-#include "boost/regex.hpp"
 #include <boost/crc.hpp> // for boost::crc_32_type
 using namespace std;
 

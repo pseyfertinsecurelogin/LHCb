@@ -10,9 +10,8 @@
 \*****************************************************************************/
 #include "Kernel/ConfigTreeNodeAlias.h"
 #include "GaudiKernel/GaudiException.h"
-#include "boost/regex.hpp"
-
 #include <cassert>
+#include <regex>
 
 using Gaudi::Math::MD5;
 
@@ -27,9 +26,9 @@ ConfigTreeNodeAlias::ConfigTreeNodeAlias( const digest_type& ref, const alias_ty
   // Verify validity rules:
   if ( alias.major() == "TCK" ) {
     //  If TCK, it must of format TCK/0xabcd1234
-    static boost::regex e( "^TCK/(0x[0-9a-fA-F]{8})$" );
-    boost::smatch       what;
-    if ( !boost::regex_match( alias.str(), what, e ) ) {
+    static const std::regex e( "^TCK/(0x[0-9a-fA-F]{8})$" );
+    std::smatch             what;
+    if ( !std::regex_match( alias.str(), what, e ) ) {
       invalidate( "invalid TCK format" );
       return;
     }
@@ -42,9 +41,9 @@ ConfigTreeNodeAlias::ConfigTreeNodeAlias( const digest_type& ref, const alias_ty
     //}
   } else if ( alias.major() == "TOPLEVEL" ) {
     // must have TOPLEVEL/release/runtype/digest
-    static boost::regex e( "^TOPLEVEL/[^/]+/[^/]+/([0-9a-fA-F]{32})$" );
-    boost::smatch       what;
-    if ( !boost::regex_match( alias.str(), what, e ) ) {
+    static const std::regex e( "^TOPLEVEL/[^/]+/[^/]+/([0-9a-fA-F]{32})$" );
+    std::smatch             what;
+    if ( !std::regex_match( alias.str(), what, e ) ) {
       invalidate( "invalid TOPLEVEL format" );
       return;
     }
@@ -71,13 +70,13 @@ std::istream& ConfigTreeNodeAlias::alias_type::read( std::istream& os ) {
 }
 
 std::istream& ConfigTreeNodeAlias::read( std::istream& is ) {
-  static boost::regex ref( "^Ref: ([a-fA-F0-9]{32})$" ), alias( "^Alias: (.*)$" );
+  static const std::regex ref( "^Ref: ([a-fA-F0-9]{32})$" ), alias( "^Alias: (.*)$" );
   while ( std::istream::traits_type::not_eof( is.peek() ) ) {
     std::string s;
     getline( is, s );
-    boost::smatch what;
-    if ( boost::regex_match( s, what, ref ) ) m_ref = digest_type::createFromStringRep( what[1] );
-    if ( boost::regex_match( s, what, alias ) ) m_alias = what[1];
+    std::smatch what;
+    if ( std::regex_match( s, what, ref ) ) m_ref = digest_type::createFromStringRep( what[1] );
+    if ( std::regex_match( s, what, alias ) ) m_alias = what[1];
   }
   assert( !m_ref.invalid() );
   assert( !m_alias.str().empty() );

@@ -62,8 +62,7 @@ StatusCode HltRoutingBitsWriter::decode() {
       std::tie( it, placed ) = m_evaluators.emplace( bit, HltEval{m_hlt_location[1]} );
     }
     assert( placed && it->first == bit );
-    auto builder = Builder{this, expr, title, htitle};
-    return boost::apply_visitor( builder, it->second );
+    return std::visit( Builder{this, expr, title, htitle}, it->second );
   };
 
   // Build the routing bits
@@ -81,7 +80,7 @@ StatusCode HltRoutingBitsWriter::decode() {
 //=============================================================================
 void HltRoutingBitsWriter::zeroEvaluators() {
   Deleter deleter;
-  for ( auto& entry : m_evaluators ) { boost::apply_visitor( deleter, entry.second ); }
+  for ( auto& entry : m_evaluators ) { std::visit( deleter, entry.second ); }
 }
 
 //=============================================================================
@@ -107,7 +106,7 @@ StatusCode HltRoutingBitsWriter::execute() {
 
   // Evaluate the routing bits
   for ( auto& entry : m_evaluators ) {
-    auto result = boost::apply_visitor( evaluator, entry.second );
+    auto result = std::visit( evaluator, entry.second );
     auto bit    = entry.first;
     int  word   = bit / 32;
     if ( result ) bits[word] |= ( 0x01UL << ( bit - 32 * word ) );

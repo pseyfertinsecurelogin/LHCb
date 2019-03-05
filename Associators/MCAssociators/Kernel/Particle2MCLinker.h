@@ -19,7 +19,7 @@
 #include "GaudiKernel/KeyedObject.h"
 #include "GaudiKernel/compose.h"
 
-#include "boost/variant.hpp"
+#include <variant>
 
 #include "Linker/LinkedFrom.h"
 #include "Linker/LinkedTo.h"
@@ -186,47 +186,47 @@ public:
 
 protected:
   const std::string& name() const {
-    return boost::apply_visitor( []( const auto* p ) -> decltype( auto ) { return p->name(); }, m_parent );
+    return std::visit( []( const auto* p ) -> decltype( auto ) { return p->name(); }, m_parent );
   }
   const std::string& context() const {
-    return boost::apply_visitor( []( const auto* p ) -> decltype( auto ) { return p->context(); }, m_parent );
+    return std::visit( []( const auto* p ) -> decltype( auto ) { return p->context(); }, m_parent );
   }
   StatusCode Error( const std::string& err, StatusCode sc ) {
-    return boost::apply_visitor( [&]( const auto* p ) { return p ? p->Error( err, sc ) : sc; }, m_parent );
+    return std::visit( [&]( const auto* p ) { return p ? p->Error( err, sc ) : sc; }, m_parent );
   }
   StatusCode Warning( const std::string& err, StatusCode sc ) {
-    return boost::apply_visitor( [&]( const auto* p ) { return p ? p->Warning( err, sc ) : sc; }, m_parent );
+    return std::visit( [&]( const auto* p ) { return p ? p->Warning( err, sc ) : sc; }, m_parent );
   }
   MsgStream& debug() {
-    return boost::apply_visitor( []( const auto* p ) -> decltype( auto ) { return p->debug(); }, m_parent );
+    return std::visit( []( const auto* p ) -> decltype( auto ) { return p->debug(); }, m_parent );
   }
   MsgStream& err() {
-    return boost::apply_visitor( []( const auto* p ) -> decltype( auto ) { return p->err(); }, m_parent );
+    return std::visit( []( const auto* p ) -> decltype( auto ) { return p->err(); }, m_parent );
   }
   MsgStream& error() {
-    return boost::apply_visitor( []( const auto* p ) -> decltype( auto ) { return p->error(); }, m_parent );
+    return std::visit( []( const auto* p ) -> decltype( auto ) { return p->error(); }, m_parent );
   }
   bool hasValidParent() const {
-    return boost::apply_visitor( []( const auto* p ) { return p != nullptr; }, m_parent );
+    return std::visit( []( const auto* p ) { return p != nullptr; }, m_parent );
   }
 
   IDataProviderSvc* evtSvc() const {
-    return boost::apply_visitor( []( const auto* p ) -> IDataProviderSvc* { return p->evtSvc(); }, m_parent );
+    return std::visit( []( const auto* p ) -> IDataProviderSvc* { return p->evtSvc(); }, m_parent );
   }
   IMessageSvc* msgSvc() const {
-    return boost::apply_visitor( []( const auto* p ) { return p->msgSvc(); }, m_parent );
+    return std::visit( []( const auto* p ) { return p->msgSvc(); }, m_parent );
   }
   ISvcLocator* svcLocator() const {
-    return boost::apply_visitor( compose( []( const AlgTool* p ) { return p->svcLoc(); },
-                                          []( const Algorithm* p ) { return p->svcLoc().get(); } ),
-                                 m_parent );
+    return std::visit( compose( []( const AlgTool* p ) { return p->svcLoc(); },
+                                []( const Algorithm* p ) { return p->svcLoc().get(); } ),
+                       m_parent );
   }
 
-  boost::variant<const GaudiAlgorithm*, const GaudiTool*> m_parent;
-  std::string                                             m_extension;
-  std::string                                             m_linkerAlgType;
-  IAlgorithm*                                             m_linkerAlg = nullptr;
-  std::vector<std::string>                                m_containerList;
+  std::variant<const GaudiAlgorithm*, const GaudiTool*> m_parent;
+  std::string                                           m_extension;
+  std::string                                           m_linkerAlgType;
+  IAlgorithm*                                           m_linkerAlg = nullptr;
+  std::vector<std::string>                              m_containerList;
 
   To     m_linkTo;
   Linker m_linkerTable;
