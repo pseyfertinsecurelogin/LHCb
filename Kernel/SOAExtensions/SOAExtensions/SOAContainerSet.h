@@ -71,29 +71,29 @@ template <template <class> class SKIN, typename... IDeds,
           typename = typename std::enable_if_t<SOA::Utils::ALL(
               SOA::impl::is_skin<SKIN>(),
               has_semantic_zip<typename std::remove_cv_t<typename std::remove_reference_t<IDeds>>>::value... )>>
-auto semantic_zip( IDeds&&... views )
+auto semantic_zip( IDeds&&... views ) {
 #ifndef NDEBUG
-    if ( !are_semantically_compatible( views... ) ) {
-  throw IncompatibleZipException( "zipping from different sets" );
-}
+  if ( !are_semantically_compatible( views... ) ) { throw IncompatibleZipException( "zipping from different sets" ); }
 #endif
 
-using barezip = decltype(
-    zip<SKIN,
-        typename std::conditional_t<std::is_reference_v<IDeds>, const typename std::remove_reference_t<IDeds>::view&,
-                                    const typename std::remove_reference_t<IDeds>::view>...>(
-        std::forward<typename std::conditional_t<std::is_reference_v<IDeds>,
-                                                 const typename std::remove_reference_t<IDeds>::view&,
-                                                 const typename std::remove_reference_t<IDeds>::view>>( views )... ) );
+  using barezip = decltype(
+      zip<SKIN,
+          typename std::conditional_t<std::is_reference_v<IDeds>, const typename std::remove_reference_t<IDeds>::view&,
+                                      const typename std::remove_reference_t<IDeds>::view>...>(
+          std::forward<typename std::conditional_t<std::is_reference_v<IDeds>,
+                                                   const typename std::remove_reference_t<IDeds>::view&,
+                                                   const typename std::remove_reference_t<IDeds>::view>>(
+              views )... ) );
 
-return ZipContainer<barezip>(
-    firstid( views... ),
-    zip<SKIN,
-        typename std::conditional_t<std::is_reference_v<IDeds>, const typename std::remove_reference_t<IDeds>::view&,
-                                    const typename std::remove_reference_t<IDeds>::view>...>(
-        std::forward<typename std::conditional_t<std::is_reference_v<IDeds>,
-                                                 const typename std::remove_reference_t<IDeds>::view&,
-                                                 const typename std::remove_reference_t<IDeds>::view>>( views )... ) );
+  return ZipContainer<barezip>(
+      firstid( views... ),
+      zip<SKIN,
+          typename std::conditional_t<std::is_reference_v<IDeds>, const typename std::remove_reference_t<IDeds>::view&,
+                                      const typename std::remove_reference_t<IDeds>::view>...>(
+          std::forward<typename std::conditional_t<std::is_reference_v<IDeds>,
+                                                   const typename std::remove_reference_t<IDeds>::view&,
+                                                   const typename std::remove_reference_t<IDeds>::view>>(
+              views )... ) );
 }
 
 #endif
