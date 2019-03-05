@@ -103,13 +103,10 @@ auto range = ranges::view::indices;
 
 BOOST_AUTO_TEST_CASE( smart_test_name_goes_here )
 {
-  boost::uuids::uuid tag{boost::uuids::random_generator()()};
-  int k{( tag.data[0] << 8 * 0 ) + ( tag.data[1] << 8 * 1 ) + ( tag.data[2] << 8 * 2 ) + ( tag.data[3] << 8 * 3 )};
-
   ZipContainer<SOA::Container<std::vector, s_track>>   foo1;
-  ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( k );
-  ZipContainer<SOA::Container<std::vector, s_fitres>>  foo2( foo1.ZipIdentifier() );
-  ZipContainer<SOA::Container<std::vector, s_fitqual>> foo3( foo1.ZipIdentifier() );
+  ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( details::ZipIdProvider::getId() );
+  ZipContainer<SOA::Container<std::vector, s_fitres>>  foo2( foo1.zipIdentifier() );
+  ZipContainer<SOA::Container<std::vector, s_fitqual>> foo3( foo1.zipIdentifier() );
   for ( auto i : range( 42 ) ) {
     track t{i * 100.f, i * 2.f, ( 42 - i ) * 100.f, 0.f, 0.f};
     foo1.push_back( t );

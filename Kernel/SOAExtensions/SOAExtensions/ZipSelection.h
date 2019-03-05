@@ -32,6 +32,7 @@
 #include <cstdint> // IWYU pragma: keep
 // IWYU pragma: no_include <bits/stdint-uintn.h>
 #include "GaudiKernel/GaudiException.h"
+#include "SOAExtensions/SOAContainerSet.h"
 
 namespace details {
   // Tag class to allow optimisation when we know the selection is a dummy.
@@ -60,8 +61,8 @@ template <typename IndexSize = uint16_t>
 struct ExportedSelection {
   using index_vector = typename std::vector<IndexSize>;
   index_vector m_indices;
-  int          m_identifier;
-  int          ZipIdentifier() const { return m_identifier; }
+  ZipID        m_identifier;
+  ZipID        zipIdentifier() const { return m_identifier; }
 };
 
 /** @class SelectionView
@@ -137,7 +138,7 @@ struct SelectionView {
   const container_t& m_container;
   index_vector m_indices;
 
-  ExportedSelection<IndexSize> export_selection() { return {m_indices, m_container.ZipIdentifier()}; }
+  ExportedSelection<IndexSize> export_selection() { return {m_indices, m_container.zipIdentifier()}; }
 
   /** Constructor creating a SelectionView from a contiguous storage
    * container.
@@ -155,7 +156,7 @@ struct SelectionView {
   template <typename Predicate = details::alwaysTrue>
   SelectionView( const container_t& container, Predicate&& predicate = {}, int reserveCapacity = -1 )
       : m_container{container} {
-    if ( UNLIKELY( m_container.size() - 1 > std::numeric_limits<IndexSize>::max() ) ) {
+    if (m_container.size() >= typename container_t::size_type(std::numeric_limits<IndexSize>::max())) {
       throw GaudiException{"Index overflow: " + std::to_string( container.size() - 1 ) + " > " +
                                std::to_string( std::numeric_limits<IndexSize>::max() ) +
                                details::typename_v<SelectionView>,
@@ -181,7 +182,7 @@ struct SelectionView {
 
   SelectionView( const container_t& container, const ExportedSelection<IndexSize>& selection )
       : m_container{container}, m_indices{selection.m_indices} {
-    if ( selection.ZipIdentifier() != container.ZipIdentifier() ) {
+    if ( selection.zipIdentifier() != container.zipIdentifier() ) {
       throw GaudiException( "incompatible selection!!!! ahahah write something more "
                             "meaningful!",
                             details::typename_v<SelectionView>, StatusCode::FAILURE );
@@ -189,7 +190,7 @@ struct SelectionView {
   }
   SelectionView( const container_t& container, ExportedSelection<IndexSize>& selection )
       : m_container{container}, m_indices{selection.m_indices} {
-    if ( selection.ZipIdentifier() != container.ZipIdentifier() ) {
+    if ( selection.zipIdentifier() != container.zipIdentifier() ) {
       throw GaudiException( "incompatible selection!!!! ahahah write something more "
                             "meaningful!",
                             details::typename_v<SelectionView>, StatusCode::FAILURE );
