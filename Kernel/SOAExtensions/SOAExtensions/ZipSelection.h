@@ -217,7 +217,7 @@ struct SelectionView {
     // selection on the input selection
     m_indices.reserve( reserveCapacity < 0 ? old_selection.size() : reserveCapacity );
     std::copy_if( old_selection.m_indices.begin(), old_selection.m_indices.end(), std::back_inserter( m_indices ),
-                  [&]( auto i ) { return std::invoke( predicate, m_container[i] ); } );
+                  [&]( auto i ) { return predicate( m_container[i] ); } );
   }
 
   const_iterator begin() const { return {m_container, m_indices.begin()}; }
