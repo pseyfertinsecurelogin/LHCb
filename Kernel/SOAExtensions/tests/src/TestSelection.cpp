@@ -11,9 +11,6 @@
  */
 
 #undef NDEBUG
-#define BOOST_UUID_USE_SSE41 1
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE utestSelection
