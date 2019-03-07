@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawDataConnection.cpp,v 1.5 2008-03-03 20:05:04 frankb Exp $
 #include "MDF/RawDataConnection.h"
 #include "MDF/StreamDescriptor.h"
 #include <iostream>

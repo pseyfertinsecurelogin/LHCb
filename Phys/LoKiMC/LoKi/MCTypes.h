@@ -41,10 +41,6 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-03-10
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi {

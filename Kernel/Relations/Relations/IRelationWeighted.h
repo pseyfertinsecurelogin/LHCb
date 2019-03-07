@@ -8,10 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: IRelationWeighted.h,v 1.7 2009-04-24 15:26:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.7 $
-// ============================================================================
 #ifndef RELATIONS_IRELATIONWeighted_H
 #define RELATIONS_IRELATIONWeighted_H 1
 // ============================================================================

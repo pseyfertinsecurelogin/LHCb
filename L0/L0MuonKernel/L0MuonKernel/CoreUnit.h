@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CoreUnit.h,v 1.12 2010-07-21 12:24:37 jucogan Exp $
 #ifndef L0MUONKERNEL_COREUNIT_H
 #define L0MUONKERNEL_COREUNIT_H 1
 

@@ -23,7 +23,7 @@ Helper module to performs some decorations for LHCb::CaloCellID object
 # =============================================================================
 __author__ = " Vanya BELYAEV Ivan.Belyaev@nikhef.nl "
 __date__ = " 2009-09-28 "
-__version__ = " CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $ "
+__version__ = "1.4"
 # =============================================================================
 __all__ = ()
 # =============================================================================

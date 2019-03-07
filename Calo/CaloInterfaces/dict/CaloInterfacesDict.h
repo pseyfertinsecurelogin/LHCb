@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CaloInterfacesDict.h,v 1.11 2009-11-13 14:08:28 cattanem Exp $
 #ifndef DICT_CALOINTERFACESDICT_H
 #define DICT_CALOINTERFACESDICT_H 1
 

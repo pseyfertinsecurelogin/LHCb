@@ -30,10 +30,6 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $author$
  */
 // ============================================================================
 namespace Gaudi {

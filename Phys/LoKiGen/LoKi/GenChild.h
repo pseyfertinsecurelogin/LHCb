@@ -49,10 +49,6 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi {

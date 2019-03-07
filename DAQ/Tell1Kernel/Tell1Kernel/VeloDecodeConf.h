@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloDecodeConf.h,v 1.3 2008-04-29 11:06:21 szumlat Exp $
 #ifndef VELODECODECONF_H
 #define VELODECODECONF_H 1
 

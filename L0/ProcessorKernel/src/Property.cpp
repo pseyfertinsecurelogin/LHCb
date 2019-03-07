@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Property.cpp,v 1.6 2008-10-28 15:56:01 cattanem Exp $
 
 #include "ProcessorKernel/Property.h"
 

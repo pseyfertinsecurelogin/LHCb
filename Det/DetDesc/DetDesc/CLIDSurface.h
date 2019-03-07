@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CLIDSurface.h,v 1.2 2003-04-25 08:52:23 sponce Exp $
 #ifndef DETDESC_CLIDSURFACE_H
 #define DETDESC_CLIDSURFACE_H 1
 

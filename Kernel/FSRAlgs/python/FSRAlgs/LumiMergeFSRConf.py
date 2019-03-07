@@ -9,7 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # options to run fsr merger
-__version__ = "$Id: LumiMergeFSRConf.py,v 1.1 2010-10-07 16:08:33 panmanj Exp $"
+__version__ = "1.1"
 __author__ = "Jaap Panman"
 
 from os import environ, path

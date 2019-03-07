@@ -40,9 +40,6 @@
  *  @see LHCbMath/MoreFunctions.h
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-26
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace {

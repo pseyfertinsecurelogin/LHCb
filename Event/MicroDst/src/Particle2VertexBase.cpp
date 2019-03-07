@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Particle2VertexBase.cpp,v 1.1 2010/08/19 15:09:43 jpalac Exp $
 // Include files
 // local
 #include "Kernel/Particle2VertexBase.h"

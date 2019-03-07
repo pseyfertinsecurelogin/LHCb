@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef EMPTYEVENTNODECLEANER_H
 #define EMPTYEVENTNODECLEANER_H 1
 

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: IRelationBases.cpp,v 1.5 2008-02-19 15:26:09 ibelyaev Exp $
 // ============================================================================
 // local
 // ============================================================================

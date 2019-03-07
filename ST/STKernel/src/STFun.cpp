@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: STFun.cpp,v 1.1 2008-01-08 10:22:58 mneedham Exp $
 #include "Kernel/STFun.h"
 
 std::pair<double, unsigned int> STFun::position( const SmartRefVector<LHCb::STDigit>& digits, double trim ) {

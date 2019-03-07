@@ -57,10 +57,6 @@ namespace Genfun {
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2013-03-15
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $author$
  */
 // ============================================================================
 namespace Gaudi {

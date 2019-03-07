@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawBankReadoutStatusFilter.h,v 1.1 2007/12/05 13:59:18 odescham Exp $
 #ifndef COMPONENT_RAWBANKREADOUTSTATUSFILTER_H
 #define COMPONENT_RAWBANKREADOUTSTATUSFILTER_H 1
 

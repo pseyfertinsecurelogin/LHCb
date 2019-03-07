@@ -10,7 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id: MaterialBudget.py,v 1.1 2009-11-15 16:46:00 ibelyaev Exp $
 # =============================================================================
 ## @file DetDescChecks/MaterialBidget.py
 #  Helper file to illustrate the usage of Material-Budget algorithm
@@ -22,7 +21,7 @@ Helper file to illustrate the usage of Material-Budget algorithm
 """
 # =============================================================================
 __author__ = 'Vanya BELYAEV Icvan.Belyaev@nikhef.nl'
-__version__ = 'CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $'
+__version__ = '1.1'
 # =============================================================================
 
 from Gaudi.Configuration import *

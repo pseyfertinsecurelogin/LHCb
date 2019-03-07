@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: BankUtilities.cpp,v 1.1 2007-08-27 09:32:24 jucogan Exp $
 
 #include "L0MuonKernel/BankUtilities.h"
 

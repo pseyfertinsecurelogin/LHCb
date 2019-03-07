@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# $Id$
 # =============================================================================
 ## @file  LoKiMC/__init__.py
 #  Helper file to manage LoKiMC package

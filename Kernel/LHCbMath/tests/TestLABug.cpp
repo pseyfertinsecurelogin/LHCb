@@ -25,10 +25,6 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2014-03-16
- *
- *                    $Revision$
- *  LAst modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 int main() {

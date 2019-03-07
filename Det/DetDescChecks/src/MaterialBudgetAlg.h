@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MaterialBudgetAlg.h,v 1.11 2009-11-15 16:46:00 ibelyaev Exp $
 // ============================================================================
 #ifndef DETDESCCHECKS_MaterialBudgetALG_H
 #define DETDESCCHECKS_MaterialBudgetALG_H 1

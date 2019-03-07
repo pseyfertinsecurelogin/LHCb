@@ -20,7 +20,7 @@ Simple 'decorator for nodes'
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV <Ivan.Belyaev@nikhef.nl>"
-__version__ = "version $Revision$"
+__version__ = ""
 # =============================================================================
 
 try:

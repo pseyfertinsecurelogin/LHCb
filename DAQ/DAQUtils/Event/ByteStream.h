@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ByteStream.h,v 1.6 2006/06/27 06:13:03 cattanem Exp $
 #ifndef EVENT_BYTESTREAM_H
 #define EVENT_BYTESTREAM_H 1
 

@@ -15,7 +15,6 @@
  *  Header file for algorithm base class : ST::AlgBase
  *
  *  CVS Log :-
- *  $Id: STToolBase.h,v 1.2 2008-10-16 13:08:02 mneedham Exp $
  *
  *  @author Matthew Needham
  *  @date   11/10/2008

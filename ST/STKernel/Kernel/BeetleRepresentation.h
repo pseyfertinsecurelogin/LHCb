@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: BeetleRepresentation.h,v 1.3 2009-08-20 07:58:46 mneedham Exp $
 #ifndef _STDAQ_BeetleRepresentation_H
 #define _STDAQ_BeetleRepresentation_H 1
 

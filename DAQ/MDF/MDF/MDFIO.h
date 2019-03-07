@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MDFIO.h,v 1.19 2008-05-26 06:16:46 cattanem Exp $
 //  ====================================================================
 //  MDFIO.h
 //  --------------------------------------------------------------------

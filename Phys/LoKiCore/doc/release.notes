@@ -743,7 +743,7 @@
      intersection
      difference
      sym_difference
-     incldues
+     includes
 
  - reshuffle many lines in decorators
 
@@ -1939,7 +1939,7 @@
    new file with contains new trivial objects for VERY efficient
    implementation of LoKi::Extract functions
  - LoKi/LokiCore.h
-   add new incldue
+   add new include
 
 ! 2006-01-23 - Vanya BELYAEV
  - New import: the core part of restructurized LoKi project

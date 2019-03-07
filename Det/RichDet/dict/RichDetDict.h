@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RichDetDict.h,v 1.2 2010-01-12 13:36:17 papanest Exp $
 // ============================================================================
 #ifndef RICHDET_DETDICT_H
 #define RICHDET_DETDICT_H 1

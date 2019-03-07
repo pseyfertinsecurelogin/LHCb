@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: lcgDict.h,v 1.5 2009-06-11 12:03:13 jpalac Exp $
 #ifndef DICT_LCGDICT_H
 #define DICT_LCGDICT_H 1
 

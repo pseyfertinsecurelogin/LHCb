@@ -28,9 +28,6 @@
  *  @see http://www.researchgate.net.publication/2345482_Combining_Measurements_with_Correlated_Errors
  *  @author  Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-09-28
- *  Version           $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 /*  combine two measurements <code>x</code> and <code>y</code>

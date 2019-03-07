@@ -8,13 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: selection.h,v 1.4 2006-06-11 15:23:47 ibelyaev Exp $
 // ====================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $
-// ====================================================================
-// $Log: not supported by cvs2svn $
-// ====================================================================
-// Incldue file
+// Include file
 // ====================================================================
 // STD & STL
 // ====================================================================
@@ -25,7 +20,7 @@
 // ====================================================================
 #include "Relations/RelationsDict.h"
 // ====================================================================
-// Other incldue files: put your own includes here:
+// Other include files: put your own includes here:
 // ====================================================================
 //#include ...
 //#include ...

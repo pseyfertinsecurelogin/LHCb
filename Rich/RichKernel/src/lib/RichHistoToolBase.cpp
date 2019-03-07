@@ -15,7 +15,6 @@
  *  Implementation file for class : RichHistoToolBase
  *
  *  CVS Log :-
- *  $Id: RichHistoToolBase.cpp,v 1.1 2009-08-10 12:12:06 jonrob Exp $
  *
  *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
  *  @date   2002-04-05

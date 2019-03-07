@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0BufferCnvContainer.h,v 1.2 2008-11-07 16:23:38 jucogan Exp $
 #ifndef L0MUONKERNEL_L0BUFFERCNVCONTAINER_H
 #define L0MUONKERNEL_L0BUFFERCNVCONTAINER_H 1
 

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ByteStreamTests.h,v 1.1 2008/07/21 14:50:55 cattanem Exp $
 #ifndef TESTS_BYTESTREAMTESTS_H
 #define TESTS_BYTESTREAMTESTS_H 1
 

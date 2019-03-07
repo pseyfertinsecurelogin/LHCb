@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: PrintHeader.h,v 1.1 2007-03-02 08:49:27 cattanem Exp $
 #ifndef PRINTHEADER_H
 #define PRINTHEADER_H 1
 

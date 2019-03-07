@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlDeVeloPhiTypeCnv.cpp,v 1.2 2006-11-30 07:57:41 cattanem Exp $
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 /// VeloDet

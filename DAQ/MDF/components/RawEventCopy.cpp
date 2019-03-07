@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawEventCopy.cpp,v 1.2 2009-05-25 08:56:21 cattanem Exp $
 // Include files from Gaudi
 #include "Event/RawEvent.h"
 #include "GaudiKernel/Algorithm.h"

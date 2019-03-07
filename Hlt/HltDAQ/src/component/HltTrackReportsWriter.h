@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: HltTrackReportsWriter.h $
 #ifndef HLTTRACKREPORTSWRITER_H
 #define HLTTRACKREPORTSWRITER_H 1
 

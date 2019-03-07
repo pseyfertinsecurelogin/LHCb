@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: SimpleAlgorithm.cpp,v 1.23 2008-10-28 09:55:58 cattanem Exp $
 
 /// Include files
 #include <vector>

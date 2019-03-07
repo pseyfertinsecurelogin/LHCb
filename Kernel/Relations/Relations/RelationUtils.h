@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RelationUtils.h,v 1.8 2008-02-19 15:26:09 ibelyaev Exp $
 // ============================================================================
 #ifndef RELATIONS_RELATIONUTILS_H
 #define RELATIONS_RELATIONUTILS_H 1

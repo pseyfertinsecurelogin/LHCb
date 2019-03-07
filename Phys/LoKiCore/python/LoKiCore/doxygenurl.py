@@ -10,10 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
-# $URL$
-# =============================================================================
 ## @file LoKiCore/doxygenurl.py
 #
 # Simple module to provide access to Doxygen documentation for the various
@@ -36,11 +32,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-22
-#
-#  $Revision$
-#  Last modification $Date$
-#                 by $Author$
-#
 # =============================================================================
 """
 Simple module to provide access to Doxygen documentation for the various
@@ -60,14 +51,9 @@ and the minor helper function
 
   This file is part of LoKi project:
   ``C++ ToolKit for Smart and Friendly Physics Analysis''
-
-$Revision$
-Last modification $Date$
-               by $Author$
-
 """
 # =============================================================================
-__version__ = " SVN $Revision$ "
+__version__ = ""
 __author__ = " Vanya BELYAEV ibelyaev@physics.syr.edu "
 __date__ = " 2007-07-22"
 __all__ = (

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Register.h,v 1.7 2008-11-07 16:19:57 jucogan Exp $
 
 #ifndef PROCESSORKERNEL_REGISTER_H
 #define PROCESSORKERNEL_REGISTER_H 1

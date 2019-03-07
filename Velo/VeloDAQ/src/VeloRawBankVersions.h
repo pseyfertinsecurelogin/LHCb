@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloRawBankVersions.h,v 1.2 2007-09-16 16:56:24 krinnert Exp $
 #ifndef VELORAWBANKVERSIONS_H
 #define VELORAWBANKVERSIONS_H 1
 

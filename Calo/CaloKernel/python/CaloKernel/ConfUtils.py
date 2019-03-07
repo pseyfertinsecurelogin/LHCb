@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id: ConfUtils.py,v 1.4 2010-03-08 01:56:45 odescham Exp $
-# =============================================================================
 ## Useful utulities for building Calo-configurables
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhe.nl
 #  @date 2008-08-04
@@ -21,7 +19,7 @@ Trivial module with few helper utilities to build  Calo-configurables
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $"
+__version__ = "1.4"
 # =============================================================================
 __all__ = (
     'hltContext',  ##    trivial function to check HLT context

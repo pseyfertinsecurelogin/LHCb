@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: EventCountHisto.h,v 1.1 2009-02-11 17:12:33 rlambert Exp $
 #ifndef EVENTCOUNTHISTO_H
 #define EVENTCOUNTHISTO_H 1
 

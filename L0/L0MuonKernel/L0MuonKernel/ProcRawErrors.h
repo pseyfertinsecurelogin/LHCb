@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ProcRawErrors.h,v 1.2 2008-11-07 16:23:39 jucogan Exp $
 #ifndef PROCRAWERROR_H
 #define PROCRAWERROR_H 1
 

@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id: functions.py,v 1.12 2010-05-17 16:01:39 ibelyaev Exp $
-# =============================================================================
 ## @file LoKiHlt/functions.py
 #  The full set of useful objects from LoKiHlt library
 #  The file is a part of LoKi and Bender projects
@@ -22,7 +20,7 @@
 The full set of useful objects from LoKiHlt library
 """
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl   "
-__version__ = " CVS Tag $Name: not supported by cvs2svn $, version $Revision: 1.12 $  "
+__version__ = "1.12"
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

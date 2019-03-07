@@ -17,7 +17,6 @@
 //	Author    : Markus Frank
 //
 //	====================================================================
-// $Id $
 #ifndef EVENT_MCTRUTH_H
 #define EVENT_MCTRUTH_H 1
 

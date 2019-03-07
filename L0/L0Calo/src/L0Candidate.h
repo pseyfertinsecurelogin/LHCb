@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0Candidate.h,v 1.2 2009-10-29 10:52:15 robbep Exp $
 #ifndef L0CALO_L0CANDIDATE_H
 #define L0CALO_L0CANDIDATE_H 1
 

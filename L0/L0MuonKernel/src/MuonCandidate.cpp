@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MuonCandidate.cpp,v 1.6 2008-07-11 15:30:02 jucogan Exp $
 
 #include "L0MuonKernel/MuonCandidate.h"
 #include "L0MuonKernel/ProcUtilities.h"

@@ -8,4 +8,3 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# $Id: __init__.py,v 1.1 2007-11-27 13:38:28 ibelyaev Exp $

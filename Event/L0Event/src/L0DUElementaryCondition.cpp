@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0DUElementaryCondition.cpp,v 1.6 2010-01-20 15:59:06 odescham Exp $
 // Include files
 #include <map>
 #include <sstream>

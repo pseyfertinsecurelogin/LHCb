@@ -8,12 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Reserve.h,v 1.3 2006-06-11 15:23:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// ============================================================================
 #ifndef RELATIONS_RESERVE_H
 #define RELATIONS_RESERVE_H 1
 // ============================================================================

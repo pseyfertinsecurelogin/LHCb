@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawEventCombiner.h,v 1.1 2009/06/22 15:12:04 tskwarni Exp $
 #ifndef LHCB_RAWEVENTSIMPLECOMBINER_H
 #define LHCB_RAWEVENTSIMPLECOMBINER_H 1
 

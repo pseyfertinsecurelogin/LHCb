@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Unit.h,v 1.10 2010-02-04 15:48:40 jucogan Exp $
 
 #ifndef PROCESSORKERNEL_UNIT_H
 #define PROCESSORKERNEL_UNIT_H 1

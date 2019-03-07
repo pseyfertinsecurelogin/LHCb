@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ITimeStampProvider.h,v 1.1 2009-09-08 16:18:42 krinnert Exp $
 #ifndef KERNEL_ITIMESTAMPPROVIDER_H
 #define KERNEL_ITIMESTAMPPROVIDER_H 1
 

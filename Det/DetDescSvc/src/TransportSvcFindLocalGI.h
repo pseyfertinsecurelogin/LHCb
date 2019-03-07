@@ -8,10 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: TransportSvcFindLocalGI.h,v 1.2 2005-12-07 17:15:50 cattanem Exp $
-// ===========================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ===========================================================================
 #ifndef DETDESC_TRANSPORTSVC_TRANSPORTSVCFINDLOCALGI_H
 #define DETDESC_TRANSPORTSVC_TRANSPORTSVCFINDLOCALGI_H 1
 

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef L0MUONKERNEL_L0MPTLUT_H
 #define L0MUONKERNEL_L0MPTLUT_H 1
 

@@ -36,7 +36,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = " CVS Tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $  "
+__version__ = "1.4"
 # =============================================================================
 
 from LoKiHlt.functions import *

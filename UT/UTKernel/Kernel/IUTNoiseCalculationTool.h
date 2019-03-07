@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: IUTNoiseCalculationTool.h,v 1.2 2009-11-09 17:49:46 mtobin Exp $
 #ifndef KERNEL_IUTNOISECALCULATIONTOOL_H
 #define KERNEL_IUTNOISECALCULATIONTOOL_H 1
 

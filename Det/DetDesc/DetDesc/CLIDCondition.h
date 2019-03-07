@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-//$Id: CLIDCondition.h,v 1.1 2001-12-11 10:02:20 sponce Exp $
 #ifndef DETDESC_CLIDCONDITION_H
 #define DETDESC_CLIDCONDITION_H 1
 #include "GaudiKernel/ClassID.h"

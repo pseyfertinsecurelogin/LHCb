@@ -8,13 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Relation1D.h,v 1.13 2009-04-24 15:26:46 ibelyaev Exp $
-// =============================================================================
-// CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.13 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
-// ============================================================================
 #ifndef RELATIONS_Relation1D_H
 #define RELATIONS_Relation1D_H 1
 // ============================================================================

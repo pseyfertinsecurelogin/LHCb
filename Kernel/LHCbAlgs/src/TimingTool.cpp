@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: TimingTool.cpp,v 1.3 2006-11-30 15:57:28 cattanem Exp $
 // Include files
 
 // from Gaudi

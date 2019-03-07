@@ -18,16 +18,10 @@
 #  @see Gaudi::Math::ValueWithError
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2014-06-02
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
-#
-#
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2014-06-02"
-__version__ = "$Revision$"
+__version__ = ""
 # =============================================================================
 __all__ = ('exp', 'expm1', 'log', 'log10', 'log1p', 'sqrt', 'cbrt', 'pow',
            'sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'sech', 'asin', 'acos',

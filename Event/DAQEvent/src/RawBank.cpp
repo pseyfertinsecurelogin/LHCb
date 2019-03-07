@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawBank.cpp,v 1.9 2010-01-15 13:20:13 marcin Exp $
 
 // local
 #include "Event/RawBank.h"

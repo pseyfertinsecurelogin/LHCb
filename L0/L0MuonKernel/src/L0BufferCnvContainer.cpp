@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0BufferCnvContainer.cpp,v 1.3 2007-11-30 08:55:00 jucogan Exp $
 // Include files
 
 #include "L0MuonKernel/BCSUL0BufferCnv.h"

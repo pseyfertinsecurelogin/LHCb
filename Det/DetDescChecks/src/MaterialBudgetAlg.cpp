@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MaterialBudgetAlg.cpp,v 1.12 2009-11-15 16:46:00 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================

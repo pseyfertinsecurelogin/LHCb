@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MagnetCondLocations.h,v 1.2 2008-09-02 09:11:50 cattanem Exp $
 #ifndef MAGNETCONDLOCATIONS_H
 #define MAGNETCONDLOCATIONS_H 1
 

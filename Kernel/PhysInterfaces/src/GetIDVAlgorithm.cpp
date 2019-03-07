@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: GetIDVAlgorithm.cpp,v 1.1 2010-05-14 15:03:46 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================

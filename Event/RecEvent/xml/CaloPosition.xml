@@ -13,7 +13,6 @@
 <gdd>
   <package name="RecEvent">
 <!-- **************************************************************************
-  * $Id: CaloPosition.xml,v 1.8 2007-02-06 12:58:16 cattanem Exp $
   *****************************************************************************
   * XML-description of CaloPosition class                                     *
   * author: Vanya Belyaev Ivan.Belyaev@itep.ru                                *

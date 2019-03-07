@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: PostScaler.h,v 1.1 2007-03-02 08:49:27 cattanem Exp $
 #ifndef POSTSCALER_H
 #define POSTSCALER_H 1
 

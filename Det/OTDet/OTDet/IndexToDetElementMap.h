@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: IndexToDetElementMap.h,v 1.2 2007-06-12 22:49:54 janos Exp $
 #ifndef OTDET_INDEXTODETELEMENTMAP_H
 #define OTDET_INDEXTODETELEMENTMAP_H 1
 

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MDFSelector.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 //====================================================================
 //  MDFSelector.cpp
 //--------------------------------------------------------------------

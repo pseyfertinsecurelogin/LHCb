@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: SequencerTimerTool.h,v 1.7 2005/07/29 16:49:43 hmd Exp $
 #ifndef LHCBSEQUENCERTIMERTOOL_H
 #define LHCBSEQUENCERTIMERTOOL_H 1
 

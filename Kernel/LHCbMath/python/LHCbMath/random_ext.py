@@ -17,10 +17,6 @@
 #
 # @author Vanya BELYAEV
 # @date   2012-04-28
-#
-#                   $Revision$
-# Last modification $Date$
-#                by $Author$
 # =============================================================================
 """
 
@@ -29,7 +25,7 @@ The simple extension for the standard python module random
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
-__version__ = "$Revision$"
+__version__ = ""
 __date__ = "2012-04-28"
 # =============================================================================
 __all__ = (

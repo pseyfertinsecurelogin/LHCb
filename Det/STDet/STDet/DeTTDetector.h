@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DeTTDetector.h,v 1.7 2009-02-27 12:17:50 mneedham Exp $
 #ifndef _DeTTDetector_H_
 #define _DeTTDetector_H_
 

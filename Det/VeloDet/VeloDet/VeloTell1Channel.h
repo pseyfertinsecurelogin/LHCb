@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloTell1Channel.h,v 1.1 2009-03-24 13:28:24 krinnert Exp $
 #ifndef INCLUDE_VELOTELL1CHANNEL_H
 #define INCLUDE_VELOTELL1CHANNEL_H 1
 

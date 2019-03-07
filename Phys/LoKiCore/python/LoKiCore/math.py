@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file LoKiCore/math.py
 #  helper file for redefine the standard mathematical functions
 #  using pseudo-operators
@@ -23,10 +21,6 @@
 #  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 #  contributions and advices from G.Raven, J.van Tilburg,
 #  A.Golutvin, P.Koppenburg have been used in the design.
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-17
@@ -46,7 +40,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "2007-01-17"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision$ "
+__version__ = ""
 # =============================================================================
 import math
 

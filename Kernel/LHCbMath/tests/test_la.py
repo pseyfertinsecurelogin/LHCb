@@ -17,15 +17,11 @@
 #
 #  @author Vanya BELYAEV Ivan.Belyaeve@itep.ru
 #  @date 2014-09-02
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """Tests for some linear algebra studd with ROOT6
 """
 # =============================================================================
-__version__ = "$Revision:"
+__version__ = ""
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2014-09-01"
 __all__ = ()  ## nothing to be imported

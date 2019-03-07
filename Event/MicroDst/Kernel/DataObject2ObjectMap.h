@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: DataObject2ObjectVector.h,v 1.1 2010/08/19 15:09:43 jpalac Exp $
 #ifndef DATAOBJECT2OBJECTMAP_H
 #define DATAOBJECT2OBJECTMAP_H 1
 

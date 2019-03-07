@@ -10,7 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
 # =============================================================================
 ## @file functions.py LoKiMC/trees.py
 #  The set of basic decorator for Tree-objects from LoKiMC library
@@ -40,7 +39,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "????-??-??"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision$ "
+__version__ = ""
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RawDataAddress.h,v 1.9 2007-12-14 11:42:23 frankb Exp $
 #ifndef MDF_RAWDATAADDRESS_H
 #define MDF_RAWDATAADDRESS_H
 

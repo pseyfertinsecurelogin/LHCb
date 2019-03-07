@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-# $Id$
 # =============================================================================
 ## @file  LoKiGen/__init__.py
 #  Helper file to manage LoKiGen package
@@ -23,10 +22,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """
 Helper file to manage LoKiGen package
@@ -43,7 +38,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__ = "2007-05-29"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 import LoKiCore.decorators
 # =============================================================================

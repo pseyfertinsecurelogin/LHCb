@@ -20,10 +20,6 @@
 #
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2014-06-06
-#
-#                    $Revision$
-#  Last modification $Date$
-#  by                $Author$
 # =============================================================================
 """Simple adaptive numerical differentiation (for pyroot/PyRoUts/Ostap/...)
 
@@ -43,7 +39,7 @@ there are also object form:
 >>> print deriv ( 0.1 ) , integ ( 0.1 )
 """
 # =============================================================================
-__version__ = "$Revision$"
+__version__ = ""
 __author__ = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__ = "2014-06-06"
 __all__ = (

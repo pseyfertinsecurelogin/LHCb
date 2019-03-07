@@ -15,7 +15,6 @@
 <gdd>
   <package name="RecEvent">
 <!-- **************************************************************************
-  * $Id: CaloCluster.xml,v 1.7 2010-03-15 11:17:54 ibelyaev Exp $
   *****************************************************************************
   * XML-description of CaloCluster class                                      *
   * author: Vanya Belyaev Ivan.Belyaev@itep.ru                                *

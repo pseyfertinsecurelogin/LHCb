@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: TimingTool.h,v 1.3 2005-09-07 12:23:40 cattanem Exp $
 #ifndef TIMINGTOOL_H
 #define TIMINGTOOL_H 1
 

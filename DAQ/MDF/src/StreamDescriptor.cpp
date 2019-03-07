@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: StreamDescriptor.cpp,v 1.20 2009-12-11 14:50:53 frankb Exp $
 //====================================================================
 //  OnlineEvtSelector.cpp
 //--------------------------------------------------------------------

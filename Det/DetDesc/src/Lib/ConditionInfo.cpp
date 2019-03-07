@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-//$Id: ConditionInfo.cpp,v 1.5 2009-02-02 12:20:22 marcocle Exp $
 
 #include "DetDesc/ConditionInfo.h"
 

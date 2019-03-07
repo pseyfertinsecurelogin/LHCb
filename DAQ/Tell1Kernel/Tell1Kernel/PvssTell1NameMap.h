@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: PvssTell1NameMap.h,v 1.1 2009-09-08 16:18:42 krinnert Exp $
 #ifndef INCLUDE_PVSSTELL1NAMEMAP_H
 #define INCLUDE_PVSSTELL1NAMEMAP_H 1
 #include <map>

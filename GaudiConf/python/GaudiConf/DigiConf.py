@@ -11,7 +11,7 @@
 """
 Configurable for Boole output
 """
-__version__ = "$Id: DigiConf.py,v 1.13 2009-12-17 15:16:11 cattanem Exp $"
+__version__ = "1.13"
 __author__ = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 __all__ = [

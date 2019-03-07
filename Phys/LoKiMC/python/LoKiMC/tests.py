@@ -10,8 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file   LoKiMC/tests.py
 #
 #        This file is a part of LoKi project -
@@ -39,7 +37,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan/Belyaev@itep.ru"
 __date__ = "2007-05-29"
-__version__ = "$Revision$ "
+__version__ = ""
 # =============================================================================
 
 ## import GaudiPython.Pythonizations

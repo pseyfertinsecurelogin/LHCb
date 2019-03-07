@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CaloFillRawBuffer.h,v 1.7 2007-12-06 09:31:24 odescham Exp $
 #ifndef CALOFILLRAWBUFFER_H
 #define CALOFILLRAWBUFFER_H 1
 

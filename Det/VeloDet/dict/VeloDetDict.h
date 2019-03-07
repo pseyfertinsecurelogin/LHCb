@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: VeloDetDict.h,v 1.2 2008-07-11 16:35:58 marcocle Exp $
 // ============================================================================
 #ifndef VELODET_DETDICT_H
 #define VELODET_DETDICT_H 1

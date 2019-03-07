@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: InstanceCounter.cpp,v 1.3 2008-02-29 17:46:30 ibelyaev Exp $
 // ======================================================================
 // Include files
 // ======================================================================

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Pointer.h,v 1.3 2006-06-11 17:46:05 ibelyaev Exp $
 // ============================================================================
 #ifndef RELATIONS_POINTER_H
 #define RELATIONS_POINTER_H 1

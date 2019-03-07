@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef GENEVENT_BEAMFORINITIALIZATION_H
 #define GENEVENT_BEAMFORINITIALIZATION_H 1
 

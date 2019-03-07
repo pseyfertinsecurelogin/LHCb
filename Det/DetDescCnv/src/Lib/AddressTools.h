@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: AddressTools.h,v 1.2 2006-04-10 16:26:46 marcocle Exp $
 #ifndef STREAMS_ADDRESSTOOLS_H
 #define STREAMS_ADDRESSTOOLS_H 1
 
