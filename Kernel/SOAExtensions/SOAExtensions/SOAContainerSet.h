@@ -19,6 +19,7 @@
 #include "ZipTraits.h"
 #include "ZipUtils.h"
 #include <type_traits> // for remove_reference_t, enable_if_t
+#include <tuple>
 #include <utility>     // for forward
 #include <atomic>
 
@@ -78,9 +79,12 @@ public:
   ZipID zipIdentifier() const { return m_identifier; }
 };
 
+// trivial zips with tuple__size 1 are forbidden right now because of a bug in SOAContainer
+// reported upstream, waiting for insights
 template <template <class> class SKIN, typename... IDeds,
           typename = typename std::enable_if_t<SOA::Utils::ALL(
               SOA::impl::is_skin<SKIN>(),
+              std::tuple_size<std::tuple<IDeds...>>::value > 1,
               has_semantic_zip<typename std::remove_cv_t<typename std::remove_reference_t<IDeds>>>::value... )>>
 auto semantic_zip( IDeds&&... views ) {
 #ifndef NDEBUG
