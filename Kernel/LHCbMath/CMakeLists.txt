@@ -247,3 +247,5 @@ gaudi_add_test(QMTest QMTEST)
 if (NOT SANITIZER_ENABLED)
   gaudi_add_unit_test(TestFastMath tests/TestFastMath.cpp LINK_LIBRARIES LHCbMathLib rt)
 endif()
+
+gaudi_add_unit_test(test_md5 tests/test_md5.cpp LINK_LIBRARIES LHCbMathLib TYPE Boost)
