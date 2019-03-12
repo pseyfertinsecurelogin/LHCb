@@ -157,6 +157,10 @@ private:
                                                 "Name of the DetDataSvc, empty means _the same as data provider_"};
   Gaudi::Property<bool>        m_withoutBeginEvent{this, "WithoutBeginEvent", false,
                                             "Whether beginEvent is working or not. E.g. it is not in Hive"};
+  Gaudi::Property<std::string> m_IOVLockLocation{
+      this, "IOVLockLocation", ICondIOVResource::IOVLock::DefaultLocation,
+      "Path in the Transient Event Store where to create an IOVLock during BeginEvent"};
+
   /// The syntax to define a condition is:<BR>
   /// path := type1 name1 = value1; type2 name2 = value2; ...
   Gaudi::Property<std::vector<std::string>> m_conditionsOveridesDesc{
@@ -175,6 +179,9 @@ private:
   /// If the service is not found it is not fatal, but you cannot use the method newEvent()
   /// without the event time parameter (will always fail).
   SmartIF<IDetDataSvc> m_detDataSvc;
+
+  /// Pointer to the Transient Event Store, needed if we have to create an IOVLock entry.
+  SmartIF<IDataProviderSvc> m_evtDataSvc;
 
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;

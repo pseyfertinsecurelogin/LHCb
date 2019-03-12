@@ -104,6 +104,14 @@ StatusCode UpdateManagerSvc::initialize() {
     return sc;
   }
 
+  if ( !m_withoutBeginEvent && !m_IOVLockLocation.empty() ) {
+    m_evtDataSvc = service( "EventDataSvc" );
+    if ( !m_evtDataSvc ) {
+      error() << "cannot get EventDataSvc, needed for IOVLock creation" << endmsg;
+      return StatusCode::FAILURE;
+    }
+  }
+
   // Loop over overridden conditions
   for ( const auto& co : m_conditionsOveridesDesc ) {
     std::string name;
@@ -157,6 +165,7 @@ StatusCode UpdateManagerSvc::finalize() {
   // release the interfaces used
   m_dataProvider.reset();
   m_detDataSvc.reset();
+  m_evtDataSvc.reset();
   if ( m_incidentSvc ) {
     // unregister from the incident svc
     m_incidentSvc->removeListener( this, IncidentType::BeginEvent );
@@ -309,7 +318,11 @@ void UpdateManagerSvc::i_registerCondition( void* obj, BaseObjectMemberFunction*
 StatusCode UpdateManagerSvc::newEvent() {
   if ( detDataSvc() ) {
     if ( detDataSvc()->validEventTime() ) {
-      return newEvent( detDataSvc()->eventTime() );
+      auto lock = std::make_unique<ICondIOVResource::IOVLock>( reserve( detDataSvc()->eventTime() ) );
+      if ( m_evtDataSvc && FSMState() == Gaudi::StateMachine::RUNNING ) {
+        return m_evtDataSvc->registerObject( m_IOVLockLocation.value(), lock.release() );
+      }
+      return StatusCode::SUCCESS;
     } else {
       warning() << "newEvent(): the event time is not defined!" << endmsg;
     }
@@ -318,7 +331,7 @@ StatusCode UpdateManagerSvc::newEvent() {
 }
 StatusCode UpdateManagerSvc::newEvent( const Gaudi::Time& evtTime ) {
   if ( FSMState() < Gaudi::StateMachine::INITIALIZED ) {
-    throw GaudiException( "Service offline", "UpdateManagerSvc::newEvent", StatusCode::FAILURE );
+    throw GaudiException( "Service offline", name() + "::newEvent", StatusCode::FAILURE );
   }
 
   StatusCode sc = StatusCode::SUCCESS;
@@ -328,34 +341,34 @@ StatusCode UpdateManagerSvc::newEvent( const Gaudi::Time& evtTime ) {
     return sc; // no need to update
   }
 
-    // We are in the initialization phase if we are not yet "STARTED"
-    SmartIF<IStateful> globalState( serviceLocator() );
-    const bool         inInit = globalState && ( globalState->FSMState() < Gaudi::StateMachine::INITIALIZED ) &&
-                        ( globalState->targetFSMState() >= Gaudi::StateMachine::INITIALIZED );
-    // The head list may change while updating, I'll loop until it's stable (or a problem occurs)
-    bool head_has_changed = false;
-    do {
-      if ( msgLevel( MSG::DEBUG ) ) { debug() << "newEvent(evtTime): loop over head items" << endmsg; }
-      // first I make a copy of the current head
-      Item::ItemList head_copy( m_head_items );
-      // Start from a clean IOV (I cannot use m_head_X because the head is not stable and they may change)
-      Gaudi::Time head_copy_since( Gaudi::Time::epoch() );
-      Gaudi::Time head_copy_until( Gaudi::Time::max() );
-      MsgStream   item_log( msgSvc(), name() + "::Item" );
-      for ( auto it = head_copy.begin(); it != head_copy.end() && sc.isSuccess(); ++it ) {
-        sc = ( *it )->update( dataProvider(), evtTime, item_log, inInit );
-        if ( sc.isSuccess() ) {
-          if ( head_copy_since < ( *it )->since ) head_copy_since = ( *it )->since;
-          if ( head_copy_until > ( *it )->until ) head_copy_until = ( *it )->until;
-        }
+  // We are in the initialization phase if we are not yet "STARTED"
+  SmartIF<IStateful> globalState( serviceLocator() );
+  const bool         inInit = globalState && ( globalState->FSMState() < Gaudi::StateMachine::INITIALIZED ) &&
+                      ( globalState->targetFSMState() >= Gaudi::StateMachine::INITIALIZED );
+  // The head list may change while updating, I'll loop until it's stable (or a problem occurs)
+  bool head_has_changed = false;
+  do {
+    if ( msgLevel( MSG::DEBUG ) ) { debug() << "newEvent(evtTime): loop over head items" << endmsg; }
+    // first I make a copy of the current head
+    Item::ItemList head_copy( m_head_items );
+    // Start from a clean IOV (I cannot use m_head_X because the head is not stable and they may change)
+    Gaudi::Time head_copy_since( Gaudi::Time::epoch() );
+    Gaudi::Time head_copy_until( Gaudi::Time::max() );
+    MsgStream   item_log( msgSvc(), name() + "::Item" );
+    for ( auto it = head_copy.begin(); it != head_copy.end() && sc.isSuccess(); ++it ) {
+      sc = ( *it )->update( dataProvider(), evtTime, item_log, inInit );
+      if ( sc.isSuccess() ) {
+        if ( head_copy_since < ( *it )->since ) head_copy_since = ( *it )->since;
+        if ( head_copy_until > ( *it )->until ) head_copy_until = ( *it )->until;
       }
-      // now it is safe to set m_head_X
-      m_head_since = head_copy_since;
-      m_head_until = head_copy_until;
+    }
+    // now it is safe to set m_head_X
+    m_head_since = head_copy_since;
+    m_head_until = head_copy_until;
 
-      // check if we need to re-do the loop (success and a change in the head)
-      head_has_changed = sc.isSuccess() && ( head_copy != m_head_items );
-    } while ( head_has_changed );
+    // check if we need to re-do the loop (success and a change in the head)
+    head_has_changed = sc.isSuccess() && ( head_copy != m_head_items );
+  } while ( head_has_changed );
 
   return sc;
 }
@@ -749,7 +762,9 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve( const Gaudi::Time& eventTim
       // still under use
       std::unique_lock updating{m_IOVresource};
       detDataSvc()->setEventTime( eventTime );
-      const_cast<UpdateManagerSvc*>( this )->newEvent( eventTime );
+      if ( !const_cast<UpdateManagerSvc*>( this )->newEvent( eventTime ).isSuccess() ) {
+        throw GaudiException{"failure updating conditions", name() + "::reserve", StatusCode::FAILURE};
+      }
     } // releasing write lock
     // now taking again the read lock. Note that we are still alone in that path
     // as we still hold the need_to_update lock
