@@ -51,7 +51,7 @@ StatusCode UpdateManagerSvc::initialize() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "--- initialize ---" << endmsg;
 
   // find the data provider
-  m_dataProvider = serviceLocator()->service( m_dataProviderName, true );
+  m_dataProvider = service( m_dataProviderName, true );
   if ( !m_dataProvider ) {
     error() << "Unable to get a handle to the data provider" << endmsg;
     return StatusCode::FAILURE;
@@ -69,7 +69,7 @@ StatusCode UpdateManagerSvc::initialize() {
 
   // find the detector data service
   if ( m_detDataSvcName.empty() ) m_detDataSvcName = m_dataProviderName;
-  m_detDataSvc = serviceLocator()->service( m_detDataSvcName, true );
+  m_detDataSvc = service( m_detDataSvcName, true );
   if ( !m_detDataSvc ) {
     warning() << "Unable to get a handle to the detector data service interface:"
                  " all the calls to newEvent(void) will fail!"
@@ -98,8 +98,8 @@ StatusCode UpdateManagerSvc::initialize() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "Got pointer to IncidentSvc" << endmsg;
   m_incidentSvc->addListener( this, IncidentType::BeginEvent );
 
-  m_evtProc = serviceLocator()->service( "ApplicationMgr" );
-  if ( !sc.isSuccess() ) {
+  m_evtProc = service( "ApplicationMgr" );
+  if ( !m_evtProc ) {
     error() << "Cannot find an event processor." << endmsg;
     return sc;
   }
