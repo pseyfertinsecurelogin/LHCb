@@ -323,23 +323,10 @@ StatusCode UpdateManagerSvc::newEvent( const Gaudi::Time& evtTime ) {
 
   StatusCode sc = StatusCode::SUCCESS;
 
-#ifndef WIN32
-  if ( msgLevel( MSG::VERBOSE ) ) verbose() << "newEvent(evtTime): acquiring mutex lock" << endmsg;
-  acquireLock();
-#endif
-
   // Check head validity
   if ( evtTime >= m_head_since && evtTime < m_head_until ) {
-#ifndef WIN32
-    if ( msgLevel( MSG::VERBOSE ) ) verbose() << "newEvent(evtTime): releasing mutex lock" << endmsg;
-    releaseLock();
-#endif
     return sc; // no need to update
   }
-
-#ifndef WIN32
-  try {
-#endif
 
     // We are in the initialization phase if we are not yet "STARTED"
     SmartIF<IStateful> globalState( serviceLocator() );
@@ -369,18 +356,6 @@ StatusCode UpdateManagerSvc::newEvent( const Gaudi::Time& evtTime ) {
       // check if we need to re-do the loop (success and a change in the head)
       head_has_changed = sc.isSuccess() && ( head_copy != m_head_items );
     } while ( head_has_changed );
-
-#ifndef WIN32
-  } catch ( ... ) {
-    if ( msgLevel( MSG::VERBOSE ) )
-      verbose() << "newEvent(evtTime): releasing mutex lock (exception occurred)" << endmsg;
-    releaseLock();
-    throw;
-  }
-
-  if ( msgLevel( MSG::VERBOSE ) ) verbose() << "newEvent(evtTime): releasing mutex lock" << endmsg;
-  releaseLock();
-#endif
 
   return sc;
 }
@@ -730,18 +705,11 @@ void UpdateManagerSvc::handle( const Incident& inc ) {
   }
 }
 
-//=========================================================================
-//  Locking functionalities
-//=========================================================================
 void UpdateManagerSvc::acquireLock() {
-#ifndef WIN32
-  pthread_mutex_lock( &m_busy );
-#endif
+  /// unused, but needed to comply to IUpdateManagerSvc
 }
 void UpdateManagerSvc::releaseLock() {
-#ifndef WIN32
-  pthread_mutex_unlock( &m_busy );
-#endif
+  /// unused, but needed to comply to IUpdateManagerSvc
 }
 
 namespace {

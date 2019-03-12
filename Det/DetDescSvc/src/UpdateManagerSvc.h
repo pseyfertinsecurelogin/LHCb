@@ -84,9 +84,9 @@ public:
   /// Debug method: it dumps the dependency network through the message service (not very readable, for experts only).
   void dump() override;
 
-  /// Force the update manager service to wait before entering the newEvent loop.
+  /// unused, but needed to comply to IUpdateManagerSvc
   void acquireLock() override;
-  /// Let the update manager service enter the newEvent loop.
+  /// unused, but needed to comply to IUpdateManagerSvc
   void releaseLock() override;
 
   /// Remove all the items referring to objects present in the transient store.
@@ -193,11 +193,6 @@ private:
 
   /// Map containing the list of parsed condition definitions
   std::map<std::string, std::unique_ptr<Condition>> m_conditionsOverides;
-
-#ifndef WIN32
-  /// mutex lock used to avoid dependencies corruptions in a multi-thread environment.
-  pthread_mutex_t m_busy = PTHREAD_MUTEX_INITIALIZER;
-#endif
 
   mutable std::shared_timed_mutex m_IOVresource;
   mutable std::mutex              m_IOVreserve_mutex;
