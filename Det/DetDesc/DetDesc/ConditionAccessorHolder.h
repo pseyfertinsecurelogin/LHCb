@@ -16,11 +16,14 @@
 
 #include <GaudiKernel/DataObjectHandle.h>
 #include <GaudiKernel/GaudiException.h>
+#include <GaudiKernel/IUpdateManagerSvc.h>
 #include <GaudiKernel/SmartIF.h>
 #include <GaudiKernel/StatusCode.h>
 
 #include <functional>
 #include <list>
+
+class EventContext;
 
 namespace LHCb::DetDesc {
   // Wrapper around Algorithm or AlgTool that enables it to depend on
