@@ -165,55 +165,57 @@ int main() {
               << vdt::fast_acosf( cosang ) << std::endl;
   }
 
-  // SIMD tests
-  using FPF = LHCb::SIMD::FPF;
-  using namespace LHCb::Math;
-  std::cout << "SIMD float tests (only one element printed) :- " << std::endl;
-  for ( unsigned int iTest = 0; iTest < nTests; ++iTest ) {
-    // tan
-    {
-      const FPF  fx( tru( (float)ran_atan2( gen ), ifp ) ), fy( tru( (float)ran_atan2( gen ), ifp ) );
-      const auto tang( fast_atan2( fx, fy ) );
+  // SIMD(Vc) tests
+  {
+    using FPF = LHCb::SIMD::VC::FPF;
+    using namespace LHCb::Math;
+    std::cout << "SIMD float tests (only one element printed) :- " << std::endl;
+    for ( unsigned int iTest = 0; iTest < nTests; ++iTest ) {
+      // tan
+      {
+        const FPF  fx( tru( (float)ran_atan2( gen ), ifp ) ), fy( tru( (float)ran_atan2( gen ), ifp ) );
+        const auto tang( fast_atan2( fx, fy ) );
 
-      std::cout << std::setprecision( ifp ) << "SIMD(f) fast_atan2(" << fx[0] << "," << fy[0]
-                << ") = " << std::setprecision( fp ) << tru( tang[0], fp ) << std::endl;
-      std::cout << std::setprecision( fp ) << "SIMD(f) fast_tan(" << tru( tang[0], fp )
-                << ") = " << std::setprecision( fp ) << fast_tan( tang )[0] << std::endl;
-    }
-    // exp and log
-    {
-      const FPF x( tru( (float)ran_logexp( gen ), ifp ) );
-      const FPF e = fast_exp( x );
-      const FPF l = fast_log( FPF( tru( e[0], fp ) ) );
-      std::cout << std::setprecision( ifp ) << "SIMD(f) fast_exp(" << x[0] << ") = " << std::setprecision( fp )
-                << tru( e[0], fp ) << std::endl;
-      std::cout << std::setprecision( fp ) << "SIMD(f) fast_log(" << e[0] << ") = " << std::setprecision( fp ) << l[0]
-                << std::endl;
-    }
-    // isqrt
-    {
-      const FPF xx( tru( (float)ran_sqrt( gen ), ifp ) );
-      (void)xx;
-      // const FPF x = fast_isqrt(xx);
-      // std::cout << std::setprecision(ifp) << "SIMD(f) fast_isqrt("<<xx[0]<<") = "
-      //          << std::setprecision(fp) << x[0] << std::endl;
-    }
-    // sin cos
-    {
-      const FPF angle( tru( (float)ran_sincos( gen ), ifp ) );
-      FPF       cosang( 0 ), sinang( 0 );
-      fast_sincos( angle, sinang, cosang );
-      const float sina  = sinang[0];
-      const float cosa  = cosang[0];
-      const FPF   asina = fast_asin( sinang );
-      const FPF   acosa = fast_acos( sinang );
-      std::cout << std::setprecision( ifp ) << "SIMD(f) fast_cossin(" << angle[0] << ") = " << std::setprecision( fp )
-                << tru( sina, fp ) << " " << tru( cosa, fp ) << std::endl;
-      // not implemented yet for SIMD types ...
-      std::cout << std::setprecision( fp ) << "SIMD(f) fast_asin(" << sina << ") = " << std::setprecision( fp )
-                << asina[0] << " " << vdt::fast_asinf( sina ) << std::endl;
-      std::cout << std::setprecision( fp ) << "SIMD(f) fast_acos(" << cosa << ") = " << std::setprecision( fp )
-                << acosa[0] << std::endl;
+        std::cout << std::setprecision( ifp ) << "SIMD(f) fast_atan2(" << fx[0] << "," << fy[0]
+                  << ") = " << std::setprecision( fp ) << tru( tang[0], fp ) << std::endl;
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_tan(" << tru( tang[0], fp )
+                  << ") = " << std::setprecision( fp ) << fast_tan( tang )[0] << std::endl;
+      }
+      // exp and log
+      {
+        const FPF x( tru( (float)ran_logexp( gen ), ifp ) );
+        const FPF e = fast_exp( x );
+        const FPF l = fast_log( FPF( tru( e[0], fp ) ) );
+        std::cout << std::setprecision( ifp ) << "SIMD(f) fast_exp(" << x[0] << ") = " << std::setprecision( fp )
+                  << tru( e[0], fp ) << std::endl;
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_log(" << e[0] << ") = " << std::setprecision( fp ) << l[0]
+                  << std::endl;
+      }
+      // isqrt
+      {
+        const FPF xx( tru( (float)ran_sqrt( gen ), ifp ) );
+        (void)xx;
+        // const FPF x = fast_isqrt(xx);
+        // std::cout << std::setprecision(ifp) << "SIMD(f) fast_isqrt("<<xx[0]<<") = "
+        //          << std::setprecision(fp) << x[0] << std::endl;
+      }
+      // sin cos
+      {
+        const FPF angle( tru( (float)ran_sincos( gen ), ifp ) );
+        FPF       cosang( 0 ), sinang( 0 );
+        fast_sincos( angle, sinang, cosang );
+        const float sina  = sinang[0];
+        const float cosa  = cosang[0];
+        const FPF   asina = fast_asin( sinang );
+        const FPF   acosa = fast_acos( sinang );
+        std::cout << std::setprecision( ifp ) << "SIMD(f) fast_cossin(" << angle[0] << ") = " << std::setprecision( fp )
+                  << tru( sina, fp ) << " " << tru( cosa, fp ) << std::endl;
+        // not implemented yet for SIMD types ...
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_asin(" << sina << ") = " << std::setprecision( fp )
+                  << asina[0] << " " << vdt::fast_asinf( sina ) << std::endl;
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_acos(" << cosa << ") = " << std::setprecision( fp )
+                  << acosa[0] << std::endl;
+      }
     }
   }
 

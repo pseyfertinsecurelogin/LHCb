@@ -29,12 +29,12 @@
 #include "vdt/log.h"
 #include "vdt/sincos.h"
 
-using FloatV = LHCb::SIMD::FPF;
-using IntV   = LHCb::SIMD::UInt32;
+using FloatV = LHCb::SIMD::VC::FPF;
+using IntV   = LHCb::SIMD::VC::UInt32;
 
 class Data {
 public:
-  using Vector = typename LHCb::SIMD::STDVector<Data>;
+  using Vector = typename LHCb::SIMD::VC::STDVector<Data>;
 
 public:
   float  xs, ys, zs;
