@@ -45,8 +45,8 @@ ecs.EventTimeDecoder.TimeStep = 18399600000000000
 
 # Configure algorithms
 ######################
-from Configurables import DetCondTest__CondAccessExample as CondAlg
-from Configurables import DetCondTest__CondAccessExampleWithDerivation as CondAlgDerived
+from Configurables import DetCond__Examples__CondAccessExample as CondAlg
+from Configurables import DetCond__Examples__CondAccessExampleWithDerivation as CondAlgDerived
 
 app = ApplicationMgr(EvtSel="NONE", EvtMax=3, OutputLevel=INFO)
 app.TopAlg = [CondAlg('CondAlg'), CondAlgDerived('CondAlgDerived')]

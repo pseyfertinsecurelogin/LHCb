@@ -15,7 +15,7 @@ gaudi_depends_on_subdirs(Det/DetDesc
                          Kernel/LHCbKernel)
 
 gaudi_add_module(DetCond
-                 src/*.cpp
+                 src/*.cpp examples/*.cpp
                  LINK_LIBRARIES DetDescLib GaudiAlgLib LHCbKernel)
 
 gaudi_install_python_modules()
