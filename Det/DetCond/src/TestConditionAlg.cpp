@@ -15,6 +15,7 @@
 #include "GaudiKernel/Map.h"
 
 #include <DetDesc/ConditionAccessorHolder.h>
+#include <DetDesc/ConditionTransformation.h>
 
 #include <cmath>
 #include <vector>
@@ -290,49 +291,28 @@ namespace DetCondTest {
     Gaudi::Property<std::string> m_srcPath{this, "Source", "TestCondition"};
     ConditionAccessor<MyData>    m_cond{this, "Target", "DerivedCondition"};
 
-    struct ConditionTransformation {
-      virtual ~ConditionTransformation() = default;
-
-      // actual transformation code
-      static MyData transform( const Condition& cond ) {
-        const auto p1 = cond.param<double>( "par1" );
-        const auto p2 = cond.param<double>( "par2" );
-        return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
+    struct MyConditionTransformation : LHCb::DetDesc::ConditionTransformation {
+      MyConditionTransformation( ConditionKey input, ConditionKey output )
+          : LHCb::DetDesc::ConditionTransformation( {input}, std::move( output ) ) {
+        m_inKey = std::move( input );
       }
-
-      void registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds, const ConditionKey& in_path,
-                               const ConditionKey& out_path ) {
-        DataObject* obj = nullptr;
-        StatusCode  sc  = dds->retrieveObject( in_path, obj );
-        if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionTransformation", sc );
-        input = dynamic_cast<Condition*>( obj );
-        if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionTransformation", sc );
-
-        auto tmp = std::make_unique<Condition>();
-        sc       = dds->registerObject( out_path, tmp.get() );
-        if ( !sc ) throw GaudiException( "failed to add " + out_path, "ConditionTransformation", sc );
-        output = tmp.release();
-
-        ums->registerCondition( this, in_path, &ConditionTransformation::handler, input );
-        ums->registerCondition( output, this );
+      void operator()( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
+                       Condition& output ) const override {
+        const auto cond = ctx[m_inKey];
+        const auto p1   = cond->param<double>( "par1" );
+        const auto p2   = cond->param<double>( "par2" );
+        output.payload  = MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2};
       }
-
-      // boilerplate
-      Condition* input  = nullptr;
-      Condition* output = nullptr;
-
-      StatusCode handler() {
-        output->payload = transform( *input );
-        return StatusCode::SUCCESS;
-      }
-    } m_transformer;
+      ConditionKey m_inKey;
+    };
+    std::unique_ptr<MyConditionTransformation> m_transformer;
 
     StatusCode initialize() override {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
-      m_transformer.registerDerivation( service<IUpdateManagerSvc>( "UpdateManagerSvc" ), detSvc(), m_srcPath,
-                                        m_cond.key() );
+      m_transformer = std::make_unique<MyConditionTransformation>( m_srcPath, m_cond.key() );
+      m_transformer->registerTransformation( service<IUpdateManagerSvc>( "UpdateManagerSvc" ), detSvc() );
 
       return sc;
     }

@@ -1,0 +1,53 @@
+/*****************************************************************************\
+* (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           *
+*                                                                             *
+* This software is distributed under the terms of the GNU General Public      *
+* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
+*                                                                             *
+* In applying this licence, CERN does not waive the privileges and immunities *
+* granted to it by virtue of its status as an Intergovernmental Organization  *
+* or submit itself to any jurisdiction.                                       *
+\*****************************************************************************/
+#include <DetDesc/ConditionTransformation.h>
+
+#include <DetDesc/Condition.h>
+#include <GaudiKernel/GaudiException.h>
+#include <GaudiKernel/IDataProviderSvc.h>
+#include <GaudiKernel/IUpdateManagerSvc.h>
+
+#include <memory>
+
+namespace LHCb::DetDesc {
+  ConditionTransformation::ConditionTransformation( std::vector<ConditionKey> inputs, ConditionKey output )
+      : m_outputKey{std::move( output )} {
+    for ( const auto& k : inputs ) m_condContext[k] = nullptr;
+  }
+
+  void ConditionTransformation::registerTransformation( IUpdateManagerSvc* ums, IDataProviderSvc* dds ) {
+    // FIXME: clang-format-7 doesn't understand structured binding
+    // for ( auto& [in_path, input] : m_condContext ) {
+    for ( auto& item : m_condContext ) {
+      auto& in_path = item.first;
+      auto& input   = item.second;
+
+      DataObject* obj = nullptr;
+      auto        sc  = dds->retrieveObject( in_path, obj );
+      if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionTransformation", sc );
+      input = dynamic_cast<Condition*>( obj );
+      if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionTransformation", sc );
+
+      ums->registerCondition( this, in_path, &ConditionTransformation::handler, input );
+    }
+
+    auto tmp = std::make_unique<Condition>();
+    auto sc  = dds->registerObject( m_outputKey, tmp.get() );
+    if ( !sc ) throw GaudiException( "failed to add " + m_outputKey, "ConditionTransformation", sc );
+    m_output = tmp.release();
+    ums->registerCondition( m_output, this );
+  }
+
+  StatusCode ConditionTransformation::handler() {
+    ( *this )( m_outputKey, m_condContext, *m_output );
+    return StatusCode::SUCCESS;
+  }
+} // namespace LHCb::DetDesc
