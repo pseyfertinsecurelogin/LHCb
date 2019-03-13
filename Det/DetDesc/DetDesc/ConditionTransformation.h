@@ -20,22 +20,39 @@ class IDataProviderSvc;
 class Condition;
 
 namespace LHCb::DetDesc {
+  /// Base class for declaration of condition derivations.
+  /// Users are supposed to specialize this class implementing `operator()`.
+  ///
+  /// An example of use can be found in `DetCond/examples/ConditionAccessor.cpp`
   struct ConditionTransformation {
+    /// Class used to access the conditions accessible to the current transformation.
     using ConditionUpdateContext = std::unordered_map<ConditionKey, Condition*>;
 
+    /// Construct a transformation object declaring the list of inputs ConditionKey
+    /// and the output ConditionKey.
     ConditionTransformation( std::vector<ConditionKey> inputs, ConditionKey output );
 
-    virtual ~ConditionTransformation() = default; // required by IUpdateManagerSvc::registerCondition
+    virtual ~ConditionTransformation() = default;
 
+    /// Register this transformation callback to the IUpdateManagerSvc instance.
     void registerTransformation( IUpdateManagerSvc* ums, IDataProviderSvc* dds );
 
+    /// Callback invoked whe an update of the output Condition is required.
+    /// the `ctx` ConditionUpdateContext will be filled with the input conditions,
+    /// the `target` ConditionKey is used to be able to reuse a transformation class
+    /// that behaves differently depending on the requested output, and `output` is
+    /// the Condition instance to update.
     virtual void operator()( const ConditionKey& target, ConditionUpdateContext& ctx, Condition& output ) const = 0;
 
   private:
-    StatusCode handler();
+    /// Internal wrapper around `operator()` required by IUpdateManagerSvc.
+    StatusCode i_handler();
 
+    //@{
+    /// Backend specific variable
     ConditionUpdateContext m_condContext;
     ConditionKey           m_outputKey;
     Condition*             m_output = nullptr;
+    //@}
   };
 } // namespace LHCb::DetDesc

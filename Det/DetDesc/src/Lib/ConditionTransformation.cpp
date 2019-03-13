@@ -36,7 +36,7 @@ namespace LHCb::DetDesc {
       input = dynamic_cast<Condition*>( obj );
       if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionTransformation", sc );
 
-      ums->registerCondition( this, in_path, &ConditionTransformation::handler, input );
+      ums->registerCondition( this, in_path, &ConditionTransformation::i_handler, input );
     }
 
     auto tmp = std::make_unique<Condition>();
@@ -46,7 +46,7 @@ namespace LHCb::DetDesc {
     ums->registerCondition( m_output, this );
   }
 
-  StatusCode ConditionTransformation::handler() {
+  StatusCode ConditionTransformation::i_handler() {
     ( *this )( m_outputKey, m_condContext, *m_output );
     return StatusCode::SUCCESS;
   }
