@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include <DetDesc/ConditionTransformation.h>
+#include <DetDesc/ConditionDerivation.h>
 
 #include <DetDesc/Condition.h>
 #include <GaudiKernel/GaudiException.h>
@@ -18,12 +18,12 @@
 #include <memory>
 
 namespace LHCb::DetDesc {
-  ConditionTransformation::ConditionTransformation( std::vector<ConditionKey> inputs, ConditionKey output )
+  ConditionDerivation::ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output )
       : m_outputKey{std::move( output )} {
     for ( const auto& k : inputs ) m_condContext[k] = nullptr;
   }
 
-  void ConditionTransformation::registerTransformation( IUpdateManagerSvc* ums, IDataProviderSvc* dds ) {
+  void ConditionDerivation::registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds ) {
     // FIXME: clang-format-7 doesn't understand structured binding
     // for ( auto& [in_path, input] : m_condContext ) {
     for ( auto& item : m_condContext ) {
@@ -32,21 +32,21 @@ namespace LHCb::DetDesc {
 
       DataObject* obj = nullptr;
       auto        sc  = dds->retrieveObject( in_path, obj );
-      if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionTransformation", sc );
+      if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionDerivation", sc );
       input = dynamic_cast<Condition*>( obj );
-      if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionTransformation", sc );
+      if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionDerivation", sc );
 
-      ums->registerCondition( this, in_path, &ConditionTransformation::i_handler, input );
+      ums->registerCondition( this, in_path, &ConditionDerivation::i_handler, input );
     }
 
     auto tmp = std::make_unique<Condition>();
     auto sc  = dds->registerObject( m_outputKey, tmp.get() );
-    if ( !sc ) throw GaudiException( "failed to add " + m_outputKey, "ConditionTransformation", sc );
+    if ( !sc ) throw GaudiException( "failed to add " + m_outputKey, "ConditionDerivation", sc );
     m_output = tmp.release();
     ums->registerCondition( m_output, this );
   }
 
-  StatusCode ConditionTransformation::i_handler() {
+  StatusCode ConditionDerivation::i_handler() {
     ( *this )( m_outputKey, m_condContext, *m_output );
     return StatusCode::SUCCESS;
   }

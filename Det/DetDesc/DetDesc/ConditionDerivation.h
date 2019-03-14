@@ -24,18 +24,18 @@ namespace LHCb::DetDesc {
   /// Users are supposed to specialize this class implementing `operator()`.
   ///
   /// An example of use can be found in `DetCond/examples/ConditionAccessor.cpp`
-  struct ConditionTransformation {
+  struct ConditionDerivation {
     /// Class used to access the conditions accessible to the current transformation.
     using ConditionUpdateContext = std::unordered_map<ConditionKey, Condition*>;
 
     /// Construct a transformation object declaring the list of inputs ConditionKey
     /// and the output ConditionKey.
-    ConditionTransformation( std::vector<ConditionKey> inputs, ConditionKey output );
+    ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output );
 
-    virtual ~ConditionTransformation() = default;
+    virtual ~ConditionDerivation() = default;
 
     /// Register this transformation callback to the IUpdateManagerSvc instance.
-    void registerTransformation( IUpdateManagerSvc* ums, IDataProviderSvc* dds );
+    void registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds );
 
     /// Callback invoked whe an update of the output Condition is required.
     /// the `ctx` ConditionUpdateContext will be filled with the input conditions,

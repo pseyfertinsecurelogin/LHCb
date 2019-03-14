@@ -10,7 +10,7 @@
 \*****************************************************************************/
 #include <DetDesc/Condition.h>
 #include <DetDesc/ConditionAccessorHolder.h>
-#include <DetDesc/ConditionTransformation.h>
+#include <DetDesc/ConditionDerivation.h>
 #include <Gaudi/Algorithm.h>
 #include <GaudiKernel/IUpdateManagerSvc.h>
 
@@ -53,11 +53,11 @@ namespace DetCond::Examples {
     };
 
     /// Class holding the code to transform a special input condition to the derived one.
-    struct MyConditionTransformation : LHCb::DetDesc::ConditionTransformation {
+    struct MyConditionDerivation : LHCb::DetDesc::ConditionDerivation {
       // in this case we only take one input condition, but the base class can
       // handle multiple inputs
-      MyConditionTransformation( ConditionKey input, ConditionKey output )
-          : LHCb::DetDesc::ConditionTransformation( {input}, std::move( output ) ) {
+      MyConditionDerivation( ConditionKey input, ConditionKey output )
+          : LHCb::DetDesc::ConditionDerivation( {input}, std::move( output ) ) {
         m_inKey = std::move( input );
       }
       /// Method to produce the derived condition.
@@ -77,7 +77,7 @@ namespace DetCond::Examples {
       }
 
       /// Function converting raw information into a derived condition.
-      // In this example it's a static member of the MyConditionTransformation
+      // In this example it's a static member of the MyConditionDerivation
       // wrapper, but it can live in another library, to be shared with other
       // conditon derivation backends (e.g. DD4hep).
       static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
@@ -95,16 +95,16 @@ namespace DetCond::Examples {
     ConditionAccessor<MyData> m_cond{this, "Target", "DerivedCondition"};
 
     /// Somebody has to own the transformation object.
-    std::unique_ptr<MyConditionTransformation> m_transformer;
+    std::unique_ptr<MyConditionDerivation> m_transformer;
 
     StatusCode initialize() override {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
       // create a transformation object initializing it with source and target ConditionKey
-      m_transformer = std::make_unique<MyConditionTransformation>( m_srcPath, m_cond.key() );
+      m_transformer = std::make_unique<MyConditionDerivation>( m_srcPath, m_cond.key() );
       // attach the transformation object to the UpdateManagerSvc
-      m_transformer->registerTransformation( service<IUpdateManagerSvc>( "UpdateManagerSvc" ), detSvc() );
+      m_transformer->registerDerivation( service<IUpdateManagerSvc>( "UpdateManagerSvc" ), detSvc() );
 
       return sc;
     }
