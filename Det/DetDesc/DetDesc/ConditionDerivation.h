@@ -12,12 +12,14 @@
 
 #include <DetDesc/ConditionKey.h>
 #include <GaudiKernel/StatusCode.h>
+#include <functional>
 #include <unordered_map>
 #include <vector>
 
-class IUpdateManagerSvc;
-class IDataProviderSvc;
 class Condition;
+class IDataProviderSvc;
+class IUpdateManagerSvc;
+class UpdateManagerSvc;
 
 namespace LHCb::DetDesc {
   /// Base class for declaration of condition derivations.
@@ -28,11 +30,27 @@ namespace LHCb::DetDesc {
     /// Class used to access the conditions accessible to the current transformation.
     using ConditionUpdateContext = std::unordered_map<ConditionKey, Condition*>;
 
-    /// Construct a transformation object declaring the list of inputs ConditionKey
-    /// and the output ConditionKey.
-    ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output );
+    /// Type for a user provided callback function.
+    /// The first argument is the ConditionKey of the target and is used to be
+    /// able to reuse a transformation function that behaves differently depending
+    /// on the requested output, The ConditionUpdateContext will be filled with the
+    /// input conditions, and the last argument is the Condition instance to update.
+    using CallbackFunction = std::function<void( const ConditionKey& /* target */, ConditionUpdateContext& /* ctx */,
+                                                 Condition& /* output */ )>;
 
+    /// Construct a transformation object declaring the list of inputs ConditionKey
+    /// and the output ConditionKey, and a callback function to invoke when an
+    /// update of the output Condition is required.
+    ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output, CallbackFunction func );
+
+    /// Althogh one should not specialize this class, a virtual destructor is needed
+    /// to comply to IUpdateManagerSvc requirements.
     virtual ~ConditionDerivation() = default;
+
+  private:
+    // Register and unregister functions are meant to be called only by
+    // UpdateManagerSvc (the derivations manager).
+    friend UpdateManagerSvc;
 
     /// Register this transformation callback to the IUpdateManagerSvc instance.
     void registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds );
@@ -40,16 +58,11 @@ namespace LHCb::DetDesc {
     /// Un-register this transformation callback to the IUpdateManagerSvc instance.
     void unregisterDerivation( IUpdateManagerSvc* ums );
 
-    /// Callback invoked whe an update of the output Condition is required.
-    /// the `ctx` ConditionUpdateContext will be filled with the input conditions,
-    /// the `target` ConditionKey is used to be able to reuse a transformation class
-    /// that behaves differently depending on the requested output, and `output` is
-    /// the Condition instance to update.
-    virtual void operator()( const ConditionKey& target, ConditionUpdateContext& ctx, Condition& output ) const = 0;
-
-  private:
-    /// Internal wrapper around `operator()` required by IUpdateManagerSvc.
+    /// Internal wrapper around the provided function, required by IUpdateManagerSvc.
     StatusCode i_handler();
+
+    /// User provided callback function.
+    CallbackFunction m_func;
 
     //@{
     /// Backend specific variable

@@ -18,8 +18,9 @@
 #include <memory>
 
 namespace LHCb::DetDesc {
-  ConditionDerivation::ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output )
-      : m_outputKey{std::move( output )} {
+  ConditionDerivation::ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output,
+                                            CallbackFunction func )
+      : m_func{std::move( func )}, m_outputKey{std::move( output )} {
     for ( const auto& k : inputs ) m_condContext[k] = nullptr;
   }
 
@@ -49,7 +50,7 @@ namespace LHCb::DetDesc {
   void ConditionDerivation::unregisterDerivation( IUpdateManagerSvc* ums ) { ums->unregister( this ); }
 
   StatusCode ConditionDerivation::i_handler() {
-    ( *this )( m_outputKey, m_condContext, *m_output );
+    m_func( m_outputKey, m_condContext, *m_output );
     return StatusCode::SUCCESS;
   }
 } // namespace LHCb::DetDesc

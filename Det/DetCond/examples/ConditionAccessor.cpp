@@ -52,40 +52,11 @@ namespace DetCond::Examples {
       double p1, p2, v;
     };
 
-    /// Class holding the code to transform a special input condition to the derived one.
-    struct MyConditionDerivation : LHCb::DetDesc::ConditionDerivation {
-      // in this case we only take one input condition, but the base class can
-      // handle multiple inputs
-      MyConditionDerivation( ConditionKey input, ConditionKey output )
-          : LHCb::DetDesc::ConditionDerivation( {input}, std::move( output ) ) {
-        m_inKey = std::move( input );
-      }
-      /// Method to produce the derived condition.
-      // The first argument is not needed in this case, because we do not have
-      // different code depending on the output key.
-      // The actual work can be done by an external call (make_cond in this example)
-      // that can live in another library, to be shared with other conditon derivation
-      // backends (e.g. DD4hep).
-      void operator()( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
-                       Condition& output ) const override {
-        // get the input condition from the context
-        const auto cond = ctx[m_inKey];
-        // use the condition object to compute parameter and fill the output condition
-        const auto p1  = cond->param<double>( "par1" );
-        const auto p2  = cond->param<double>( "par2" );
-        output.payload = make_cond( p1, p2 );
-      }
-
-      /// Function converting raw information into a derived condition.
-      // In this example it's a static member of the MyConditionDerivation
-      // wrapper, but it can live in another library, to be shared with other
-      // conditon derivation backends (e.g. DD4hep).
-      static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
-
-      /// Copy of the input ConditionKey needed to extract the input condition
-      /// from ConditionUpdateContext.
-      ConditionKey m_inKey;
-    };
+    /// Function converting raw information into a derived condition.
+    // In this example it's a static member of the algorithm, but it can live
+    // in another library, to be shared with other conditon derivation backends
+    // (e.g. DD4hep).
+    static MyData make_cond( double p1, double p2 ) { return MyData{p1, p2, std::sqrt( p1 ) + 2.0 * p2 * p2}; }
 
     /// Property used to change the path of the input condition, if needed
     Gaudi::Property<std::string> m_srcPath{this, "Source", "TestCondition"};
@@ -98,10 +69,26 @@ namespace DetCond::Examples {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
+      using ConditionUpdateContext = LHCb::DetDesc::ConditionDerivation::ConditionUpdateContext;
+
+      // Function to adapt the ConditionDerivation::CallbackFunc signature to the
+      // actual function deriving the condition (make_cond in this case).
+      // The first argument is not needed in this case, because we do not have
+      // different code depending on the output key.
+      auto adapter = [key = m_srcPath.value()]( const ConditionKey& /* target */, ConditionUpdateContext& ctx,
+                                                Condition& output ) {
+        // get the input condition from the context
+        const auto cond = ctx[key];
+        // use the condition object to compute parameter and fill the output condition
+        const auto p1  = cond->param<double>( "par1" );
+        const auto p2  = cond->param<double>( "par2" );
+        output.payload = make_cond( p1, p2 );
+      };
       // create a transformation object initializing it with source and target ConditionKey
       // and add it to the IConditionDerivationMgr
       service<LHCb::DetDesc::IConditionDerivationMgr>( "UpdateManagerSvc" )
-          ->push( std::make_unique<MyConditionDerivation>( m_srcPath, m_cond.key() ) );
+          ->push( std::make_unique<LHCb::DetDesc::ConditionDerivation>( std::vector<ConditionKey>{m_srcPath.value()},
+                                                                        m_cond.key(), adapter ) );
 
       return sc;
     }
