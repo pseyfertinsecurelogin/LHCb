@@ -11,8 +11,8 @@
 #include <DetDesc/Condition.h>
 #include <DetDesc/ConditionAccessorHolder.h>
 #include <DetDesc/ConditionDerivation.h>
+#include <DetDesc/IConditionDerivationMgr.h>
 #include <Gaudi/Algorithm.h>
-#include <GaudiKernel/IUpdateManagerSvc.h>
 
 #include <cmath>
 
@@ -94,17 +94,14 @@ namespace DetCond::Examples {
     /// to the input conditions).
     ConditionAccessor<MyData> m_cond{this, "Target", "DerivedCondition"};
 
-    /// Somebody has to own the transformation object.
-    std::unique_ptr<MyConditionDerivation> m_transformer;
-
     StatusCode initialize() override {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
       // create a transformation object initializing it with source and target ConditionKey
-      m_transformer = std::make_unique<MyConditionDerivation>( m_srcPath, m_cond.key() );
-      // attach the transformation object to the UpdateManagerSvc
-      m_transformer->registerDerivation( service<IUpdateManagerSvc>( "UpdateManagerSvc" ), detSvc() );
+      // and add it to the IConditionDerivationMgr
+      service<LHCb::DetDesc::IConditionDerivationMgr>( "UpdateManagerSvc" )
+          ->push( std::make_unique<MyConditionDerivation>( m_srcPath, m_cond.key() ) );
 
       return sc;
     }

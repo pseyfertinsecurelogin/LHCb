@@ -46,6 +46,8 @@ namespace LHCb::DetDesc {
     ums->registerCondition( m_output, this );
   }
 
+  void ConditionDerivation::unregisterDerivation( IUpdateManagerSvc* ums ) { ums->unregister( this ); }
+
   StatusCode ConditionDerivation::i_handler() {
     ( *this )( m_outputKey, m_condContext, *m_output );
     return StatusCode::SUCCESS;

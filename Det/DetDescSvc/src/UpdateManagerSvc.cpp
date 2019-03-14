@@ -20,6 +20,7 @@
 #include "GaudiKernel/System.h"
 
 #include "DetDesc/Condition.h"
+#include "DetDesc/ConditionDerivation.h"
 #include "DetDesc/ValidDataObject.h"
 
 #include <fstream>
@@ -773,4 +774,18 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve( const Gaudi::Time& eventTim
   // return and release the read lock, allowing future updates to take place
   return ICondIOVResource::IOVLock{std::make_unique<UMSLockManager>( std::move( reading ) )};
 }
-//=============================================================================
+
+using namespace LHCb::DetDesc;
+IConditionDerivationMgr::DerivationId UpdateManagerSvc::push( std::unique_ptr<ConditionDerivation> derivation ) {
+  derivation->registerDerivation( this, dataProvider() );
+  m_derivations[m_nextDerivationId] = std::move( derivation );
+  return m_nextDerivationId++;
+}
+std::unique_ptr<ConditionDerivation> UpdateManagerSvc::pop( DerivationId dId ) {
+  auto node = m_derivations.extract( dId );
+  if ( node ) {
+    node.mapped()->unregisterDerivation( this );
+    return std::move( node.mapped() );
+  }
+  return {};
+}

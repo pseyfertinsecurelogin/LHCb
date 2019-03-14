@@ -12,6 +12,7 @@
 #define UPDATEMANAGERSVC_H 1
 
 #include "DetDesc/ICondIOVResource.h"
+#include "DetDesc/IConditionDerivationMgr.h"
 #include "DetDesc/ValidDataObject.h"
 
 #include "GaudiKernel/ClassID.h"
@@ -45,7 +46,8 @@ struct Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc : public extends<Service, IUpdateManagerSvc, IIncidentListener, ICondIOVResource> {
+class UpdateManagerSvc : public extends<Service, IUpdateManagerSvc, IIncidentListener, ICondIOVResource,
+                                        LHCb::DetDesc::IConditionDerivationMgr> {
 public:
   /// Standard constructor
   using base_class::base_class;
@@ -99,6 +101,11 @@ public:
   void handle( const Incident& inc ) override;
 
   ICondIOVResource::IOVLock reserve( const Gaudi::Time& eventTime ) const override;
+
+  //@{
+  DerivationId push( std::unique_ptr<LHCb::DetDesc::ConditionDerivation> derivation ) override;
+  std::unique_ptr<LHCb::DetDesc::ConditionDerivation> pop( DerivationId dId ) override;
+  //@}
 
 protected:
   /// Register a condition for an object
@@ -203,6 +210,9 @@ private:
 
   mutable std::shared_timed_mutex m_IOVresource;
   mutable std::mutex              m_IOVreserve_mutex;
+
+  std::map<DerivationId, std::unique_ptr<LHCb::DetDesc::ConditionDerivation>> m_derivations;
+  DerivationId                                                                m_nextDerivationId = 0;
 };
 
 #include "UpdateManagerSvc.icpp"

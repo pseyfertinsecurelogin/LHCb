@@ -37,6 +37,9 @@ namespace LHCb::DetDesc {
     /// Register this transformation callback to the IUpdateManagerSvc instance.
     void registerDerivation( IUpdateManagerSvc* ums, IDataProviderSvc* dds );
 
+    /// Un-register this transformation callback to the IUpdateManagerSvc instance.
+    void unregisterDerivation( IUpdateManagerSvc* ums );
+
     /// Callback invoked whe an update of the output Condition is required.
     /// the `ctx` ConditionUpdateContext will be filled with the input conditions,
     /// the `target` ConditionKey is used to be able to reuse a transformation class
