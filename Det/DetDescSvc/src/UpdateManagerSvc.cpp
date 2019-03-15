@@ -776,16 +776,15 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve( const Gaudi::Time& eventTim
 }
 
 using namespace LHCb::DetDesc;
-IConditionDerivationMgr::DerivationId UpdateManagerSvc::push( std::unique_ptr<ConditionDerivation> derivation ) {
+IConditionDerivationMgr::DerivationId UpdateManagerSvc::add( std::vector<ConditionKey> inputs, ConditionKey output,
+                                                             ConditionCallbackFunction func ) {
+  auto derivation =
+      std::make_unique<ConditionDerivation>( std::move( inputs ), std::move( output ), std::move( func ) );
   derivation->registerDerivation( this, dataProvider() );
   m_derivations[m_nextDerivationId] = std::move( derivation );
   return m_nextDerivationId++;
 }
-std::unique_ptr<ConditionDerivation> UpdateManagerSvc::pop( DerivationId dId ) {
+void UpdateManagerSvc::remove( DerivationId dId ) {
   auto node = m_derivations.extract( dId );
-  if ( node ) {
-    node.mapped()->unregisterDerivation( this );
-    return std::move( node.mapped() );
-  }
-  return {};
+  if ( node ) { node.mapped()->unregisterDerivation( this ); }
 }

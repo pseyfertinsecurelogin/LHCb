@@ -13,6 +13,7 @@
 #include <DetDesc/ConditionAccessor.h>
 #include <DetDesc/ConditionContext.h>
 #include <DetDesc/ConditionKey.h>
+#include <DetDesc/IConditionDerivationMgr.h>
 
 #include <GaudiKernel/DataObjectHandle.h>
 #include <GaudiKernel/GaudiException.h>
@@ -72,6 +73,20 @@ namespace LHCb::DetDesc {
     // We must also provide a way for a reentrant algorithm to access the
     // condition handling context associated with this event.
     const ConditionContext& getConditionContext( const EventContext& /*ctx*/ ) const { return *m_ctxHandle.get(); }
+
+    // This is not properly part of the ConditionAccessorHolder interface, but it helps
+    // for the migration.
+    IConditionDerivationMgr& conditionDerivationMgr() const {
+      auto cdm = m_ums.as<IConditionDerivationMgr>();
+      if ( !cdm ) throw GaudiException( "cannot access IConditionDerivationMgr", this->name(), StatusCode::FAILURE );
+      return *cdm;
+    }
+    // This is not properly part of the ConditionAccessorHolder interface, but it helps
+    // for the migration.
+    IConditionDerivationMgr::DerivationId addConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output,
+                                                                  ConditionCallbackFunction func ) const {
+      return conditionDerivationMgr().add( std::move( inputs ), std::move( output ), std::move( func ) );
+    }
 
   private:
     // This block of private declarations is an implementation detail of accessors

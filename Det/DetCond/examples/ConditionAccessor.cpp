@@ -10,7 +10,6 @@
 \*****************************************************************************/
 #include <DetDesc/Condition.h>
 #include <DetDesc/ConditionAccessorHolder.h>
-#include <DetDesc/ConditionDerivation.h>
 #include <DetDesc/IConditionDerivationMgr.h>
 #include <Gaudi/Algorithm.h>
 
@@ -69,9 +68,9 @@ namespace DetCond::Examples {
       const auto sc = LHCb::DetDesc::ConditionAccessorHolder<Gaudi::Algorithm>::initialize();
       if ( !sc ) return sc;
 
-      using ConditionUpdateContext = LHCb::DetDesc::ConditionDerivation::ConditionUpdateContext;
+      using ConditionUpdateContext = LHCb::DetDesc::ConditionUpdateContext;
 
-      // Function to adapt the ConditionDerivation::CallbackFunc signature to the
+      // Function to adapt the ConditionCallbackFunc signature to the
       // actual function deriving the condition (make_cond in this case).
       // The first argument is not needed in this case, because we do not have
       // different code depending on the output key.
@@ -84,11 +83,8 @@ namespace DetCond::Examples {
         const auto p2  = cond->param<double>( "par2" );
         output.payload = make_cond( p1, p2 );
       };
-      // create a transformation object initializing it with source and target ConditionKey
-      // and add it to the IConditionDerivationMgr
-      service<LHCb::DetDesc::IConditionDerivationMgr>( "UpdateManagerSvc" )
-          ->push( std::make_unique<LHCb::DetDesc::ConditionDerivation>( std::vector<ConditionKey>{m_srcPath.value()},
-                                                                        m_cond.key(), adapter ) );
+      // add our derivation callback to the IConditionDerivationMgr
+      addConditionDerivation( {m_srcPath.value()}, m_cond.key(), std::move( adapter ) );
 
       return sc;
     }

@@ -11,6 +11,7 @@
 #ifndef UPDATEMANAGERSVC_H
 #define UPDATEMANAGERSVC_H 1
 
+#include "DetDesc/ConditionDerivation.h"
 #include "DetDesc/ICondIOVResource.h"
 #include "DetDesc/IConditionDerivationMgr.h"
 #include "DetDesc/ValidDataObject.h"
@@ -103,8 +104,9 @@ public:
   ICondIOVResource::IOVLock reserve( const Gaudi::Time& eventTime ) const override;
 
   //@{
-  DerivationId push( std::unique_ptr<LHCb::DetDesc::ConditionDerivation> derivation ) override;
-  std::unique_ptr<LHCb::DetDesc::ConditionDerivation> pop( DerivationId dId ) override;
+  DerivationId add( std::vector<LHCb::DetDesc::ConditionKey> inputs, LHCb::DetDesc::ConditionKey output,
+                    LHCb::DetDesc::ConditionCallbackFunction func ) override;
+  void         remove( DerivationId dId ) override;
   //@}
 
 protected:
