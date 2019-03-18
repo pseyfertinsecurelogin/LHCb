@@ -39,9 +39,18 @@ namespace LHCb::DetDesc {
     /// Identifier of a specific derivation object in the manager.
     using DerivationId = std::size_t;
 
+    /// Special DerivationId value to indicate invalid value.
+    static constexpr DerivationId NoDerivation = -1;
+
     /// Add a condition derivation to the manager.
     virtual DerivationId add( std::vector<ConditionKey> inputs, ConditionKey output,
                               ConditionCallbackFunction func ) = 0;
+
+    /// Method to find the DerivationId of the derivation responsible of producing
+    /// the object with ConditionKey `key`.
+    /// If no derivation is registered for that key, the special value NoDerivation
+    /// is returned.
+    virtual DerivationId derivationFor( const ConditionKey& key ) const = 0;
 
     /// Retire a specific condition derivation from the manager.
     virtual void remove( DerivationId dId ) = 0;

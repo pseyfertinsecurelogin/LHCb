@@ -47,6 +47,9 @@ namespace LHCb::DetDesc {
     /// to comply to IUpdateManagerSvc requirements.
     virtual ~ConditionDerivation() = default;
 
+    /// Return the ConditionKey for the target object.
+    const ConditionKey& target() const { return m_outputKey; }
+
   private:
     // Register and unregister functions are meant to be called only by
     // UpdateManagerSvc (the derivations manager).

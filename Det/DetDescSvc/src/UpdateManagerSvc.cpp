@@ -784,6 +784,11 @@ IConditionDerivationMgr::DerivationId UpdateManagerSvc::add( std::vector<Conditi
   m_derivations[m_nextDerivationId] = std::move( derivation );
   return m_nextDerivationId++;
 }
+IConditionDerivationMgr::DerivationId UpdateManagerSvc::derivationFor( const ConditionKey& key ) const {
+  for ( const auto& item : m_derivations )
+    if ( item.second->target() == key ) return item.first;
+  return IConditionDerivationMgr::NoDerivation;
+}
 void UpdateManagerSvc::remove( DerivationId dId ) {
   auto node = m_derivations.extract( dId );
   if ( node ) { node.mapped()->unregisterDerivation( this ); }
