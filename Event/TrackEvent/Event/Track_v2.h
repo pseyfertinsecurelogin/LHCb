@@ -137,7 +137,8 @@ namespace LHCb::Event
                       PrSeeding        = 31, // track produced with the PrSeeding pattern recognition for the upgrade
                       PrMatch          = 32, // track produced with the PrMatch pattern recognition for the upgrade
                       PrDownstream     = 33, // track produced with the PrDownstream pattern recognition for the upgrade
-                      PrVeloUT         = 34) // track produced with the PrVeloUT pattern recognition for the upgrade
+                      PrVeloUT         = 34, // track produced with the PrVeloUT pattern recognition for the upgrade
+		      MuonMatchVeloUT  = 35) // track produced with the MuonMatchVeloUT algorithm for the upgrade
 
       /// Track fit history enumerations
       meta_enum_class(FitHistory, int,
