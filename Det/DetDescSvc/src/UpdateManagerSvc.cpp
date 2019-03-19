@@ -316,11 +316,14 @@ void UpdateManagerSvc::i_registerCondition( void* obj, BaseObjectMemberFunction*
   m_head_since = 1;
   m_head_until = 0;
 }
-StatusCode UpdateManagerSvc::newEvent() {
+
+StatusCode UpdateManagerSvc::newEvent() { return i_newEvent( false ); }
+
+StatusCode UpdateManagerSvc::i_newEvent( bool inBeginEvent ) {
   if ( detDataSvc() ) {
     if ( detDataSvc()->validEventTime() ) {
       auto lock = std::make_unique<ICondIOVResource::IOVLock>( reserve( detDataSvc()->eventTime() ) );
-      if ( m_evtDataSvc && FSMState() == Gaudi::StateMachine::RUNNING ) {
+      if ( inBeginEvent && m_evtDataSvc && FSMState() == Gaudi::StateMachine::RUNNING ) {
         return m_evtDataSvc->registerObject( m_IOVLockLocation.value(), lock.release() );
       }
       return StatusCode::SUCCESS;
@@ -708,7 +711,7 @@ void UpdateManagerSvc::handle( const Incident& inc ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "New BeginEvent incident received" << endmsg;
     StatusCode sc = StatusCode::FAILURE;
     try {
-      sc = UpdateManagerSvc::newEvent();
+      sc = UpdateManagerSvc::i_newEvent( true );
     } catch ( const GaudiException& exc ) { error() << exc << endmsg; } catch ( const std::exception& exc ) {
       error() << "std::exception: " << exc.what() << endmsg;
     } catch ( ... ) { error() << "unknown exception" << endmsg; }

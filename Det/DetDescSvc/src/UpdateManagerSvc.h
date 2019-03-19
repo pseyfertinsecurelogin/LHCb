@@ -131,6 +131,10 @@ protected:
   /// Force an update of all the object depending on the given one for the next event.
   void i_invalidate( void* instance ) override;
 
+  /// Actual implementation of newEvent.
+  /// If inBeginEvent is true and it is requested, create the special IOVLock object.
+  StatusCode i_newEvent( bool inBeginEvent );
+
 private:
 #include "UpdateManagerSvc_Item.icpp"
 
