@@ -16,7 +16,7 @@
 # Author: rlambert
 # Purpose: Test what heppens when you try and read a nonexistent file, verify that the XMLSummary does something sensible in this case.
 # Prerequisites: None
-# Common failure modes, severities and cures: 
+# Common failure modes, severities and cures:
 #               . MAJOR: changes here indicate either a major problem with the xmlsumamry, or a major change in how Gaudi handles failed-to-open-files which needs to be incoprorated in the XMLSummary.
 #######################################################
 -->
@@ -45,7 +45,7 @@ for l in refblock:
   doBreak=False
   ########################################
   #allow mem to change
-  ######################################## 
+  ########################################
   if 'MemoryMaximum' in l:
     #pass
     #do something special
@@ -72,7 +72,10 @@ for l in refblock:
       causes.append('XMLsummary printout error')
       result['xmlsummarykernel.readerror']=result.Quote(l)
       doBreak=True
-  if doBreak: 
+  if doBreak:
     break
 </text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>xmlsummarykernel.exit</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
 </extension>

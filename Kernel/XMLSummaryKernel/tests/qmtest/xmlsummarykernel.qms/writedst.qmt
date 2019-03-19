@@ -15,8 +15,8 @@
 # ...................
 # Author: rlambert
 # Purpose: Check what an XMLSummary for a successful written DST looks like
-# Prerequisites: 
-# Common failure modes, severities and cures: 
+# Prerequisites:
+# Common failure modes, severities and cures:
 #               . MAJOR: any changes in the XML summary indicates a modification in the behaviour of Gaudi which probably has major impact on how XMLSummary needs to be handled
 #######################################################
 -->
@@ -43,7 +43,7 @@ sumblock=sum.read().split('\n')
 for l in refblock:
   ########################################
   #allow mem to change
-  ######################################## 
+  ########################################
   if 'MemoryMaximum' in l:
     pass
     #do something special
@@ -70,7 +70,7 @@ for l in refblock:
           result['xmlsummarykernel.writedst']=result.Quote(restr)
     if not re.search(restr,stdout):
       causes.append('XMLsummary output file error')
-      result['xmlsummarykernel.writedst']=result.Quote(restr) 
+      result['xmlsummarykernel.writedst']=result.Quote(restr)
   ########################################
   #do not allow any other omissions
   ########################################
@@ -83,4 +83,7 @@ for l in refblock:
       result['xmlsummarykernel.writedst']=result.Quote(l)
 
 </text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>xmlsummarykernel.readerror</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
 </extension>
