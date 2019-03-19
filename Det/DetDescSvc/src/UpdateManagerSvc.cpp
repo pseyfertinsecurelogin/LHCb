@@ -324,7 +324,12 @@ StatusCode UpdateManagerSvc::i_newEvent( bool inBeginEvent ) {
     if ( detDataSvc()->validEventTime() ) {
       auto lock = std::make_unique<ICondIOVResource::IOVLock>( reserve( detDataSvc()->eventTime() ) );
       if ( inBeginEvent && m_evtDataSvc && FSMState() == Gaudi::StateMachine::RUNNING ) {
-        return m_evtDataSvc->registerObject( m_IOVLockLocation.value(), lock.release() );
+        auto sc = m_evtDataSvc->registerObject( m_IOVLockLocation.value(), lock.get() );
+        if ( sc )
+          lock.release();
+        else
+          error() << "newEvent(): failed to register " << m_IOVLockLocation.value() << endmsg;
+        return sc;
       }
       return StatusCode::SUCCESS;
     } else {
