@@ -11,6 +11,7 @@
 #include <DetDesc/ConditionDerivation.h>
 
 #include <DetDesc/Condition.h>
+#include <DetDesc/ParamValidDataObject.h>
 #include <GaudiKernel/GaudiException.h>
 #include <GaudiKernel/IDataProviderSvc.h>
 #include <GaudiKernel/IUpdateManagerSvc.h>
@@ -34,7 +35,7 @@ namespace LHCb::DetDesc {
       DataObject* obj = nullptr;
       auto        sc  = dds->retrieveObject( in_path, obj );
       if ( !sc ) throw GaudiException( "failed to retrieve " + in_path, "ConditionDerivation", sc );
-      input = dynamic_cast<Condition*>( obj );
+      input = dynamic_cast<ParamValidDataObject*>( obj );
       if ( !input ) throw GaudiException( "wrong type for " + in_path, "ConditionDerivation", sc );
 
       ums->registerCondition( this, in_path, &ConditionDerivation::i_handler, input );
