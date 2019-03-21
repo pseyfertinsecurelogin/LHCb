@@ -19,7 +19,7 @@
 
 namespace LHCb::DetDesc {
   ConditionDerivation::ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output,
-                                            CallbackFunction func )
+                                            ConditionCallbackFunction func )
       : m_func{std::move( func )}, m_outputKey{std::move( output )} {
     for ( const auto& k : inputs ) m_condContext[k] = nullptr;
   }

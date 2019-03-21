@@ -11,6 +11,7 @@
 #pragma once
 
 #include <DetDesc/ConditionKey.h>
+#include <DetDesc/IConditionDerivationMgr.h>
 #include <GaudiKernel/StatusCode.h>
 #include <functional>
 #include <unordered_map>
@@ -27,21 +28,10 @@ namespace LHCb::DetDesc {
   ///
   /// An example of use can be found in `DetCond/examples/ConditionAccessor.cpp`
   struct ConditionDerivation {
-    /// Class used to access the conditions accessible to the current transformation.
-    using ConditionUpdateContext = std::unordered_map<ConditionKey, Condition*>;
-
-    /// Type for a user provided callback function.
-    /// The first argument is the ConditionKey of the target and is used to be
-    /// able to reuse a transformation function that behaves differently depending
-    /// on the requested output, The ConditionUpdateContext will be filled with the
-    /// input conditions, and the last argument is the Condition instance to update.
-    using CallbackFunction = std::function<void( const ConditionKey& /* target */, ConditionUpdateContext& /* ctx */,
-                                                 Condition& /* output */ )>;
-
     /// Construct a transformation object declaring the list of inputs ConditionKey
     /// and the output ConditionKey, and a callback function to invoke when an
     /// update of the output Condition is required.
-    ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output, CallbackFunction func );
+    ConditionDerivation( std::vector<ConditionKey> inputs, ConditionKey output, ConditionCallbackFunction func );
 
     /// Althogh one should not specialize this class, a virtual destructor is needed
     /// to comply to IUpdateManagerSvc requirements.
@@ -65,7 +55,7 @@ namespace LHCb::DetDesc {
     StatusCode i_handler();
 
     /// User provided callback function.
-    CallbackFunction m_func;
+    ConditionCallbackFunction m_func;
 
     //@{
     /// Backend specific variable
