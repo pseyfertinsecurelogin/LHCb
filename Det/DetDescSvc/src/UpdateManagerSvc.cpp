@@ -309,7 +309,9 @@ void UpdateManagerSvc::i_registerCondition( void* obj, BaseObjectMemberFunction*
     insertInMap( mf_item );
   }
   if ( !mf_item->ptr ) { // the item is known but not its pointer (e.g. after a purge)
-    mf_item->setPointers( mf->castToDataObject() );
+    if ( !mf_item->setPointers( mf->castToDataObject() ) )
+      throw GaudiException( "Failed to set pointers for " + mf_item->path, "UpdateManagerSvc::registerCondition",
+                            StatusCode::FAILURE );
   }
   link( mf_item, mf, cond_item );
   // a new item means that we need an update
