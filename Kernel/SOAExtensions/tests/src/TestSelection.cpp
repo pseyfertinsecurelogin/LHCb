@@ -89,23 +89,16 @@ SOASKIN_TRIVIAL( s_track_with_fitres, f_track, f_fitres );
 SOASKIN_TRIVIAL( s_track_with_fitqual, f_track, f_fitqual );
 SOASKIN_TRIVIAL( s_track_with_fitres_and_fitqual, f_track, f_fitres, f_fitqual );
 
-/// pythonic sugar
-#include "range/v3/all.hpp" // IWYU pragma: keep
-// IWYU pragma : no_include <range/v3/view/indices.hpp>
-// IWYU pragma : no_include <range/v3/view/take_exactly.hpp>
-auto range = ranges::view::indices;
-/// end of sugar
-
 BOOST_AUTO_TEST_CASE( smart_test_name_goes_here ) {
   Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1;
   Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( Zipping::details::ZipIdProvider::getId() );
   Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>>  foo2( foo1.zipIdentifier() );
   Zipping::ZipContainer<SOA::Container<std::vector, s_fitqual>> foo3( foo1.zipIdentifier() );
-  for ( auto i : range( 42 ) ) {
+  for ( auto i = 0; i < 42; ++i ) {
     track t{i * 100.f, i * 2.f, ( 42 - i ) * 100.f, 0.f, 0.f};
     foo1.push_back( t );
     foo2.push_back( fitres{0.f, 0.f, i * 100.f, i} );
-    foo3.push_back( fitqual{0.f, i} );
+    foo3.push_back( fitqual{1.f, i} );
   }
 
   BOOST_CHECK_THROW( Zipping::semantic_zip<s_track_with_fitres>( foo1_alt, foo2 ), Zipping::IncompatibleZipException );
@@ -113,6 +106,8 @@ BOOST_AUTO_TEST_CASE( smart_test_name_goes_here ) {
   auto                  full_track = Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( foo1, foo2, foo3 );
   [[maybe_unused]] auto another_full_track =
       Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( track_with_momentum, foo3 );
+
+  BOOST_CHECK_EQUAL( full_track[0], ( *full_track.begin() ) );
 
   auto exported_selection =
       Zipping::makeSelection( track_with_momentum, []( auto i ) { return 0 == i.accessor_fitres().q % 2; } );
@@ -134,10 +129,9 @@ BOOST_AUTO_TEST_CASE( smart_test_name_goes_here ) {
     BOOST_CHECK_EQUAL( ( *it ).accessor_fitres().q, 2 * keep_track );
     BOOST_CHECK_EQUAL( it - selected_full_tracks.begin(), keep_track );
 
-    // FIXME failing due to bug in testing, not in code.
-    // BOOST_CHECK( (*it) == selected_full_tracks[keep_track]);
-    // BOOST_CHECK_EQUAL( *it, selected_full_tracks[keep_track] );
-    // BOOST_CHECK_EQUAL( selected_full_tracks[keep_track], selected_full_tracks[keep_track] );
+    BOOST_CHECK( ( *it ) == selected_full_tracks[keep_track] );
+    BOOST_CHECK_EQUAL( *it, selected_full_tracks[keep_track] );
+    BOOST_CHECK_EQUAL( selected_full_tracks[keep_track], selected_full_tracks[keep_track] );
     keep_track += 1;
   }
   keep_track = 0;

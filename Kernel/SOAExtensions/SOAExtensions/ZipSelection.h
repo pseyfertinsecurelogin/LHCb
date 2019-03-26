@@ -64,9 +64,9 @@ namespace Zipping {
     using index_vector = typename std::vector<IndexSize>;
     index_vector m_indices{};
     ExportedSelection( ZipID id ) : m_identifier( id ) {}
-    ExportedSelection( const index_vector& indices, const ZipID id ) : m_indices(indices), m_identifier( id ) {}
-    ZipID        m_identifier;
-    ZipID        zipIdentifier() const { return m_identifier; }
+    ExportedSelection( const index_vector& indices, const ZipID id ) : m_indices( indices ), m_identifier( id ) {}
+    ZipID m_identifier;
+    ZipID zipIdentifier() const { return m_identifier; }
   };
 
   /** @class SelectionView
@@ -139,10 +139,12 @@ namespace Zipping {
       }
     };
 
-    const container_t& m_container;
+    const container_t&  m_container;
     const index_vector& m_indices;
 
-    ExportedSelection<IndexSize> export_selection() { return ExportedSelection<IndexSize>{m_indices, m_container.zipIdentifier()}; }
+    ExportedSelection<IndexSize> export_selection() {
+      return ExportedSelection<IndexSize>{m_indices, m_container.zipIdentifier()};
+    }
 
     SelectionView( const container_t& container, const ExportedSelection<IndexSize>& selection )
         : m_container{container}, m_indices{selection.m_indices} {
@@ -276,7 +278,7 @@ namespace Zipping {
   template <typename CONTAINER, typename Predicate = details::alwaysTrue, typename IndexSize = uint16_t>
   ExportedSelection<IndexSize> makeSelection( const CONTAINER& container, Predicate&& predicate = {},
                                               int reserveCapacity = -1 ) {
-    using container_t  = std::decay_t<CONTAINER>;
+    using container_t = std::decay_t<CONTAINER>;
     if ( container.size() >= typename container_t::size_type( std::numeric_limits<IndexSize>::max() ) ) {
       throw GaudiException{"Index overflow: " + std::to_string( container.size() - 1 ) + " > " +
                                std::to_string( std::numeric_limits<IndexSize>::max() ) +
