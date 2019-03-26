@@ -182,6 +182,14 @@ bool LHCb::LinksByKey::nextReference( LHCb::LinkReference& reference ) const {
 }
 
 //=========================================================================
+//  Checks whether a given object has any link
+//=========================================================================
+bool LHCb::LinksByKey::hasEntry( const KeyedObject<int>& obj ) const {
+  int index;
+  return findIndex( obj.index(), index);
+}
+
+//=========================================================================
 // Returns the first key for which the specified reference exists
 //=========================================================================
 int LHCb::LinksByKey::firstSource( LHCb::LinkReference&                              reference,

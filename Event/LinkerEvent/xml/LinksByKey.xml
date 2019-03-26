@@ -71,6 +71,7 @@ m_weight    = weight;
       &DataObject;
       <import name = "Event/LinkReference"/>
       <import name = "GaudiKernel/IDataProviderSvc" />
+      <import name = "GaudiKernel/KeyedObject" />
       <import name = "vector"  std="TRUE"/>
       <import name = "utility" std="TRUE"/>
 
@@ -161,6 +162,13 @@ m_sourceClassID = 0;
         <arg type="LHCb::LinkReference" name="reference" const="FALSE" inout="BOTH"/>
 
       </method>
+
+      <method
+        type      = "bool"
+        name      = "hasEntry"
+        const     = "TRUE"
+        argList   = "const KeyedObject&lt;int&gt; obj"
+        desc      = "Checks whether a given object has any link"/>
 
       <method
         type      = "int"
