@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef YYERRCODE
-#define YYERRCODE 256
+#  define YYERRCODE 256
 #endif
 
 #define NAME 257
@@ -66,11 +66,11 @@
 #define AT_Q 308
 #define AB_Q 309
 union YYSTYPE {
-  std::string *text;
-  double dval;
-  Quarks quarkval;
-  Quantums quantumval;
-  Descriptor *desc;
-  ParticleMatcher *match;
-  std::vector<ParticleMatcher *> *mvect;
-} ;
+  std::string*                   text;
+  double                         dval;
+  Quarks                         quarkval;
+  Quantums                       quantumval;
+  Descriptor*                    desc;
+  ParticleMatcher*               match;
+  std::vector<ParticleMatcher*>* mvect;
+};

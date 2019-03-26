@@ -9,9 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_FORMATTINGUNIT_H
-#define L0MUONKERNEL_FORMATTINGUNIT_H     1
-
-
+#define L0MUONKERNEL_FORMATTINGUNIT_H 1
 
 #include "L0MuonKernel/L0MUnit.h"
 
@@ -54,32 +52,27 @@ namespace L0Muon {
   class FormattingUnit : public L0MUnit {
 
   public:
-
     /// Default Constructor
     FormattingUnit();
 
     /// Constructor with a MuonTileID
-    FormattingUnit(LHCb::MuonTileID id);
+    FormattingUnit( LHCb::MuonTileID id );
 
     /// Destructor
     ~FormattingUnit();
 
     /// Constructor from a xml node
-    FormattingUnit(DOMNode* pNode);
+    FormattingUnit( DOMNode* pNode );
 
     /// Overloads from Unit : perform the data exchange
     void preexecute() override;
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "FormattingUnit";
-    }
+    std::string type() override { return "FormattingUnit"; }
 
   private:
-
-
   };
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_FORMATTINGUNIT_H
+#endif // L0MUONKERNEL_FORMATTINGUNIT_H

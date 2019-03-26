@@ -10,62 +10,61 @@
 \*****************************************************************************/
 
 // local
-#include "LHCbMath/SIMDTypes.h"
 #include "LHCbMath/FastMaths.h"
+#include "LHCbMath/SIMDTypes.h"
 
 // local timing utils
 #include "../Timing.h"
 
 // STL
-#include <random>
-#include <vector>
 #include <iostream>
+#include <random>
 #include <string>
 #include <typeinfo>
+#include <vector>
 
 // VDT
+#include "vdt/atan2.h"
 #include "vdt/exp.h"
 #include "vdt/log.h"
-#include "vdt/atan2.h"
 #include "vdt/sincos.h"
 
-using FloatV = LHCb::SIMD::FPF;
-using IntV   = LHCb::SIMD::UInt32;
+using FloatV = LHCb::SIMD::VC::FPF;
+using IntV   = LHCb::SIMD::VC::UInt32;
 
-class Data
-{
+class Data {
 public:
-  using Vector = typename LHCb::SIMD::STDVector<Data>;
+  using Vector = typename LHCb::SIMD::VC::STDVector<Data>;
+
 public:
   float  xs, ys, zs;
   FloatV xv, yv, zv;
   float  absxs, absys;
   FloatV absxv, absyv;
+
 public:
-  Data() 
-  {
+  Data() {
     // random generator
     static std::default_random_engine gen;
     // Distributions
-    static std::uniform_real_distribution<float> x(-30,30);
-    static std::uniform_real_distribution<float> absx(1e-10,1000);
-    static std::uniform_real_distribution<float> z(-1,1);
+    static std::uniform_real_distribution<float> x( -30, 30 );
+    static std::uniform_real_distribution<float> absx( 1e-10, 1000 );
+    static std::uniform_real_distribution<float> z( -1, 1 );
     // lambda for random
-    auto    f = []() { return    x(gen); };
-    auto absf = []() { return absx(gen); };
-    auto   zf = []() { return    z(gen); };
+    auto f    = []() { return x( gen ); };
+    auto absf = []() { return absx( gen ); };
+    auto zf   = []() { return z( gen ); };
     // fill the data
     // make first entries same as scalar for comparison
-    xv[0]    = xs    = f();
-    yv[0]    = ys    = f();
-    zv[0]    = zs    = zf();
+    xv[0] = xs = f();
+    yv[0] = ys = f();
+    zv[0] = zs = zf();
     absxv[0] = absxs = absf();
     absyv[0] = absys = absf();
     // fill the rest with different random values
-    for ( std::size_t i = 1; i < FloatV::Size; ++i )
-    {
+    for ( std::size_t i = 1; i < FloatV::Size; ++i ) {
       xv[i]    = f();
-      yv[i]    = f();  
+      yv[i]    = f();
       zv[i]    = zf();
       absxv[i] = absf();
       absyv[i] = absf();
@@ -73,37 +72,34 @@ public:
   }
 };
 
-template< typename TYPE, typename DATA, typename FUNC >
-unsigned long long int __attribute__((noinline)) 
-solve( const DATA & dataV, const FUNC & func )
-{
-  unsigned long long int best_dur{ 99999999999999999 };
+template <typename TYPE, typename DATA, typename FUNC>
+unsigned long long int __attribute__( ( noinline ) ) solve( const DATA& dataV, const FUNC& func ) {
+  unsigned long long int best_dur{99999999999999999};
 
   timespec start, end;
 
-  TYPE sum ( 0 );
+  TYPE sum( 0 );
 
   const unsigned int nTests = 1000;
-  for ( unsigned int i = 0; i < nTests; ++i )
-  {
-    sum = TYPE(0);
+  for ( unsigned int i = 0; i < nTests; ++i ) {
+    sum = TYPE( 0 );
 
     // start clock
-    clock_gettime(CLOCK_MONOTONIC_RAW,&start);
+    clock_gettime( CLOCK_MONOTONIC_RAW, &start );
 
     // iterate over the data and run given function
-    for ( const auto& data : dataV ) { sum += func(data); }
+    for ( const auto& data : dataV ) { sum += func( data ); }
 
     // stop clock
-    clock_gettime(CLOCK_MONOTONIC_RAW,&end);
-    
+    clock_gettime( CLOCK_MONOTONIC_RAW, &end );
+
     // get best time
-    const auto duration = time_diff(&start,&end);
+    const auto duration = time_diff( &start, &end );
     if ( duration < best_dur ) { best_dur = duration; }
   }
 
 #ifndef __clang__
-  asm volatile ("" : "+x"(sum));
+  asm volatile( "" : "+x"( sum ) );
 #else
   // clang does not seem to like the above
   std::cout << "Sum = " << sum << std::endl;
@@ -112,11 +108,10 @@ solve( const DATA & dataV, const FUNC & func )
   return best_dur;
 }
 
-const float  scalarSum ( 0 );
-const FloatV simdSum   ( 0 );
+const float  scalarSum( 0 );
+const FloatV simdSum( 0 );
 
-int main ( int /*argc*/, char** /*argv*/ )
-{
+int main( int /*argc*/, char** /*argv*/ ) {
   using namespace LHCb::Math;
   using namespace LHCb::Math::Approx;
 
@@ -124,59 +119,58 @@ int main ( int /*argc*/, char** /*argv*/ )
 
   // Generate the data
   std::cout << "Generating " << nData << " data values" << std::endl;
-  const Data::Vector data(nData);
+  const Data::Vector data( nData );
 
- // ---------------------------------------------------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------------------------------------------------
 
   // Loop to print some values
   // if ( false ) // uncomment to enable
   {
 
-    float  ss(0), sc(0);
-    FloatV vs(0), vc(0);
+    float  ss( 0 ), sc( 0 );
+    FloatV vs( 0 ), vc( 0 );
 
     std::size_t n{0};
-    for ( const auto & d : data )
-    {
+    for ( const auto& d : data ) {
 
-      std::cout << "STD  log(" << d.absxs << ") = " << std::log(d.absxs) << std::endl;
-      std::cout << "VDT  log(" << d.absxs << ") = " << vdt::fast_logf(d.absxs) << std::endl;
-      std::cout << "APX  log(" << d.absxs << ") = " << Approx::approx_log(d.absxs) << std::endl;
-      std::cout << "VAPX log(" << d.absxs << ") = " << Approx::vapprox_log(d.absxs) << std::endl;
-      std::cout << "STD  log(" << d.absxv << ") = " << std::log(d.absxv) << std::endl;
-      std::cout << "VDT  log(" << d.absxv << ") = " << fast_log(d.absxv) << std::endl;
-      std::cout << "APX  log(" << d.absxv << ") = " << approx_log(d.absxv) << std::endl;
-      std::cout << "VAPX log(" << d.absxv << ") = " << vapprox_log(d.absxv) << std::endl;
+      std::cout << "STD  log(" << d.absxs << ") = " << std::log( d.absxs ) << std::endl;
+      std::cout << "VDT  log(" << d.absxs << ") = " << vdt::fast_logf( d.absxs ) << std::endl;
+      std::cout << "APX  log(" << d.absxs << ") = " << Approx::approx_log( d.absxs ) << std::endl;
+      std::cout << "VAPX log(" << d.absxs << ") = " << Approx::vapprox_log( d.absxs ) << std::endl;
+      std::cout << "STD  log(" << d.absxv << ") = " << std::log( d.absxv ) << std::endl;
+      std::cout << "VDT  log(" << d.absxv << ") = " << fast_log( d.absxv ) << std::endl;
+      std::cout << "APX  log(" << d.absxv << ") = " << approx_log( d.absxv ) << std::endl;
+      std::cout << "VAPX log(" << d.absxv << ") = " << vapprox_log( d.absxv ) << std::endl;
       std::cout << std::endl;
 
-      std::cout << "STD  exp(" << d.xs << ") = " << std::exp(d.xs) << std::endl;
-      std::cout << "VDT  exp(" << d.xs << ") = " << vdt::fast_expf(d.xs) << std::endl;
-      std::cout << "APX  exp(" << d.xs << ") = " << Approx::approx_exp(d.xs) << std::endl;
-      std::cout << "VAPX exp(" << d.xs << ") = " << Approx::vapprox_exp(d.xs) << std::endl;
-      std::cout << "STD  exp(" << d.xv << ") = " << std::exp(d.xv) << std::endl;
-      std::cout << "VDT  exp(" << d.xv << ") = " << fast_exp(d.xv) << std::endl;
-      std::cout << "APX  exp(" << d.xv << ") = " << approx_exp(d.xv) << std::endl;
-      std::cout << "VAPX exp(" << d.xv << ") = " << vapprox_exp(d.xv) << std::endl;
+      std::cout << "STD  exp(" << d.xs << ") = " << std::exp( d.xs ) << std::endl;
+      std::cout << "VDT  exp(" << d.xs << ") = " << vdt::fast_expf( d.xs ) << std::endl;
+      std::cout << "APX  exp(" << d.xs << ") = " << Approx::approx_exp( d.xs ) << std::endl;
+      std::cout << "VAPX exp(" << d.xs << ") = " << Approx::vapprox_exp( d.xs ) << std::endl;
+      std::cout << "STD  exp(" << d.xv << ") = " << std::exp( d.xv ) << std::endl;
+      std::cout << "VDT  exp(" << d.xv << ") = " << fast_exp( d.xv ) << std::endl;
+      std::cout << "APX  exp(" << d.xv << ") = " << approx_exp( d.xv ) << std::endl;
+      std::cout << "VAPX exp(" << d.xv << ") = " << vapprox_exp( d.xv ) << std::endl;
       std::cout << std::endl;
 
-      std::cout << "STD sqrt(" << d.absxs << ") = " << std::sqrt(d.absxs) << std::endl;
-      //std::cout << "VDT isqrt(" << d.absxs << ") = " << vdt::fast_isqrtf(d.absxs) << std::endl;
-      std::cout << "STD sqrt(" << d.absxv << ") = " << std::sqrt(d.absxv) << std::endl;
-      //std::cout << "VDT isqrt(" << d.absxv << ") = " << fast_isqrt(d.absxv) << std::endl;
+      std::cout << "STD sqrt(" << d.absxs << ") = " << std::sqrt( d.absxs ) << std::endl;
+      // std::cout << "VDT isqrt(" << d.absxs << ") = " << vdt::fast_isqrtf(d.absxs) << std::endl;
+      std::cout << "STD sqrt(" << d.absxv << ") = " << std::sqrt( d.absxv ) << std::endl;
+      // std::cout << "VDT isqrt(" << d.absxv << ") = " << fast_isqrt(d.absxv) << std::endl;
       std::cout << std::endl;
 
-      std::cout << "STD isqrt(" << d.absxs << ") = " << 1.0f/std::sqrt(d.absxs) << std::endl;
-      std::cout << "VDT isqrt(" << d.absxs << ") = " << vdt::fast_isqrtf(d.absxs) << std::endl;
-      std::cout << "STD isqrt(" << d.absxv << ") = " << FloatV::One()/std::sqrt(d.absxv) << std::endl;
-      std::cout << "VDT isqrt(" << d.absxv << ") = " << fast_isqrt(d.absxv) << std::endl;
+      std::cout << "STD isqrt(" << d.absxs << ") = " << 1.0f / std::sqrt( d.absxs ) << std::endl;
+      std::cout << "VDT isqrt(" << d.absxs << ") = " << vdt::fast_isqrtf( d.absxs ) << std::endl;
+      std::cout << "STD isqrt(" << d.absxv << ") = " << FloatV::One() / std::sqrt( d.absxv ) << std::endl;
+      std::cout << "VDT isqrt(" << d.absxv << ") = " << fast_isqrt( d.absxv ) << std::endl;
       std::cout << std::endl;
-      
-      std::cout << "STD  atan2(" << d.xs << "," << d.ys << ") = " << std::atan2(d.xs,d.ys) << std::endl;
-      std::cout << "VDT  atan2(" << d.xs << "," << d.ys << ") = " << fast_atan2(d.xs,d.ys) << std::endl;
-      std::cout << "VAPX atan2(" << d.xs << "," << d.ys << ") = " << vapprox_atan2(d.xs,d.ys) << std::endl;
-      std::cout << "STD  atan2(" << d.xv << "," << d.yv << ") = " << std::atan2(d.xv,d.yv) << std::endl;
-      std::cout << "VDT  atan2(" << d.xv << "," << d.yv << ") = " << fast_atan2(d.xv,d.yv) << std::endl;
-      std::cout << "VAPX atan2(" << d.xv << "," << d.yv << ") = " << vapprox_atan2(d.xv,d.yv) << std::endl;
+
+      std::cout << "STD  atan2(" << d.xs << "," << d.ys << ") = " << std::atan2( d.xs, d.ys ) << std::endl;
+      std::cout << "VDT  atan2(" << d.xs << "," << d.ys << ") = " << fast_atan2( d.xs, d.ys ) << std::endl;
+      std::cout << "VAPX atan2(" << d.xs << "," << d.ys << ") = " << vapprox_atan2( d.xs, d.ys ) << std::endl;
+      std::cout << "STD  atan2(" << d.xv << "," << d.yv << ") = " << std::atan2( d.xv, d.yv ) << std::endl;
+      std::cout << "VDT  atan2(" << d.xv << "," << d.yv << ") = " << fast_atan2( d.xv, d.yv ) << std::endl;
+      std::cout << "VAPX atan2(" << d.xv << "," << d.yv << ") = " << vapprox_atan2( d.xv, d.yv ) << std::endl;
       std::cout << std::endl;
 
       vdt::fast_sincosf( d.xs, ss, sc );
@@ -195,285 +189,258 @@ int main ( int /*argc*/, char** /*argv*/ )
   {
 
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing exp functions..." << std::endl;
-    
+
     // STD scalar exp
-    auto timeScSTDExp = solve<float>( data, []( const auto & d ) { return std::exp(d.xs); } );
+    auto timeScSTDExp = solve<float>( data, []( const auto& d ) { return std::exp( d.xs ); } );
     std::cout << "Scalar STD  exp  " << timeScSTDExp << std::endl;
-    
+
     // VDT scalar exp
-    auto timeScVDTExp = solve<float>( data, []( const auto & d ) { return vdt::fast_expf(d.xs); } );
+    auto timeScVDTExp = solve<float>( data, []( const auto& d ) { return vdt::fast_expf( d.xs ); } );
     std::cout << "Scalar VDT  exp  " << timeScVDTExp << std::endl;
 
     // approx scalar exp
-    auto timeScAPXExp = solve<float>( data, []( const auto & d ) { return approx_exp(d.absxs); } );
+    auto timeScAPXExp = solve<float>( data, []( const auto& d ) { return approx_exp( d.absxs ); } );
     std::cout << "Scalar APX  exp  " << timeScAPXExp << std::endl;
 
     // v approx scalar exp
-    auto timeScVAPXExp = solve<float>( data, []( const auto & d ) { return vapprox_exp(d.absxs); } );
+    auto timeScVAPXExp = solve<float>( data, []( const auto& d ) { return vapprox_exp( d.absxs ); } );
     std::cout << "Scalar VAPX exp  " << timeScVAPXExp << std::endl;
-    
+
     // STD(Vc) SIMD exp
-    auto timeVcSTDExp = solve<FloatV>( data, []( const auto & d ) { return Vc::exp(d.xv); } );
-    std::cout << "SIMD   STD  exp  " << timeVcSTDExp 
-              << " ( " << timeVcSTDExp/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDExp/timeVcSTDExp << " )"
-              << std::endl;
-    
+    auto timeVcSTDExp = solve<FloatV>( data, []( const auto& d ) { return Vc::exp( d.xv ); } );
+    std::cout << "SIMD   STD  exp  " << timeVcSTDExp << " ( " << timeVcSTDExp / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScSTDExp / timeVcSTDExp << " )" << std::endl;
+
     // STD(Vc) SIMD exp
-    auto timeVcVDTExp = solve<FloatV>( data, []( const auto & d ) { return fast_exp(d.xv); } );
-    std::cout << "SIMD   VDT  exp  " << timeVcVDTExp 
-              << " ( " << timeVcVDTExp/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVDTExp/timeVcVDTExp << " )"
-              << std::endl;
+    auto timeVcVDTExp = solve<FloatV>( data, []( const auto& d ) { return fast_exp( d.xv ); } );
+    std::cout << "SIMD   VDT  exp  " << timeVcVDTExp << " ( " << timeVcVDTExp / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScVDTExp / timeVcVDTExp << " )" << std::endl;
 
     // approx SIMD exp
-    auto timeVcAPXExp = solve<FloatV>( data, []( const auto & d ) { return approx_exp(d.xv); } );
-    std::cout << "SIMD   APX  exp  " << timeVcAPXExp
-              << " ( " <<  timeVcAPXExp/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScAPXExp/timeVcAPXExp << " )"
-              << std::endl;
+    auto timeVcAPXExp = solve<FloatV>( data, []( const auto& d ) { return approx_exp( d.xv ); } );
+    std::cout << "SIMD   APX  exp  " << timeVcAPXExp << " ( " << timeVcAPXExp / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScAPXExp / timeVcAPXExp << " )" << std::endl;
 
     // v approx SIMD exp
-    auto timeVcVAPXExp = solve<FloatV>( data, []( const auto & d ) { return vapprox_exp(d.xv); } );
-    std::cout << "SIMD   VAPX exp  " << timeVcVAPXExp
-              << " ( " <<  timeVcVAPXExp/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVAPXExp/timeVcVAPXExp << " )"
-              << std::endl;
+    auto timeVcVAPXExp = solve<FloatV>( data, []( const auto& d ) { return vapprox_exp( d.xv ); } );
+    std::cout << "SIMD   VAPX exp  " << timeVcVAPXExp << " ( " << timeVcVAPXExp / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVAPXExp / timeVcVAPXExp << " )" << std::endl;
 
-    
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDExp));
-    asm volatile ("" : "+x"(timeScVDTExp));
-    asm volatile ("" : "+x"(timeScAPXExp));
-    asm volatile ("" : "+x"(timeScVAPXExp));
-    asm volatile ("" : "+x"(timeVcSTDExp));
-    asm volatile ("" : "+x"(timeVcVDTExp));
-    asm volatile ("" : "+x"(timeVcAPXExp));
-    asm volatile ("" : "+x"(timeVcVAPXExp));
+    asm volatile( "" : "+x"( timeScSTDExp ) );
+    asm volatile( "" : "+x"( timeScVDTExp ) );
+    asm volatile( "" : "+x"( timeScAPXExp ) );
+    asm volatile( "" : "+x"( timeScVAPXExp ) );
+    asm volatile( "" : "+x"( timeVcSTDExp ) );
+    asm volatile( "" : "+x"( timeVcVDTExp ) );
+    asm volatile( "" : "+x"( timeVcAPXExp ) );
+    asm volatile( "" : "+x"( timeVcVAPXExp ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing log functions..." << std::endl;
-    
+
     // STD scalar log
-    auto timeScSTDLog = solve<float>( data, []( const auto & d ) { return std::log(d.absxs); } );
+    auto timeScSTDLog = solve<float>( data, []( const auto& d ) { return std::log( d.absxs ); } );
     std::cout << "Scalar STD  log  " << timeScSTDLog << std::endl;
 
     // VDT scalar log
-    auto timeScVDTLog = solve<float>( data, []( const auto & d ) { return vdt::fast_logf(d.absxs); } );
+    auto timeScVDTLog = solve<float>( data, []( const auto& d ) { return vdt::fast_logf( d.absxs ); } );
     std::cout << "Scalar VDT  log  " << timeScVDTLog << std::endl;
-    
+
     // approx scalar log
-    auto timeScAPXLog = solve<float>( data, []( const auto & d ) { return approx_log(d.absxs); } );
+    auto timeScAPXLog = solve<float>( data, []( const auto& d ) { return approx_log( d.absxs ); } );
     std::cout << "Scalar APX  log  " << timeScAPXLog << std::endl;
 
     // v approx scalar log
-    auto timeScVAPXLog = solve<float>( data, []( const auto & d ) { return vapprox_log(d.absxs); } );
+    auto timeScVAPXLog = solve<float>( data, []( const auto& d ) { return vapprox_log( d.absxs ); } );
     std::cout << "Scalar VAPX log  " << timeScVAPXLog << std::endl;
 
     // STD(Vc) SIMD log
-    auto timeVcSTDLog = solve<FloatV>( data, []( const auto & d ) { return Vc::log(d.absxv); } );
-    std::cout << "SIMD   STD  log  " << timeVcSTDLog 
-              << " ( " << timeVcSTDLog/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDLog/timeVcSTDLog << " )"
-              << std::endl;
-    
+    auto timeVcSTDLog = solve<FloatV>( data, []( const auto& d ) { return Vc::log( d.absxv ); } );
+    std::cout << "SIMD   STD  log  " << timeVcSTDLog << " ( " << timeVcSTDLog / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScSTDLog / timeVcSTDLog << " )" << std::endl;
+
     // VDT(Vc) SIMD log
-    auto timeVcVDTLog = solve<FloatV>( data, []( const auto & d ) { return fast_log(d.absxv); } );
-    std::cout << "SIMD   VDT  log  " << timeVcVDTLog 
-              << " ( " << timeVcVDTLog/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVDTLog/timeVcVDTLog << " )"
-              << std::endl;
+    auto timeVcVDTLog = solve<FloatV>( data, []( const auto& d ) { return fast_log( d.absxv ); } );
+    std::cout << "SIMD   VDT  log  " << timeVcVDTLog << " ( " << timeVcVDTLog / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScVDTLog / timeVcVDTLog << " )" << std::endl;
 
     // approx SIMD log
-    auto timeVcAPXLog = solve<FloatV>( data, []( const auto & d ) { return approx_log(d.absxv); } );
-    std::cout << "SIMD   APX  log  " << timeVcAPXLog
-              << " ( " <<  timeVcAPXLog/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScAPXLog/timeVcAPXLog << " )"
-              << std::endl;
+    auto timeVcAPXLog = solve<FloatV>( data, []( const auto& d ) { return approx_log( d.absxv ); } );
+    std::cout << "SIMD   APX  log  " << timeVcAPXLog << " ( " << timeVcAPXLog / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScAPXLog / timeVcAPXLog << " )" << std::endl;
 
     // v approx SIMD log
-    auto timeVcVAPXLog = solve<FloatV>( data, []( const auto & d ) { return vapprox_log(d.absxv); } );
-    std::cout << "SIMD   VAPX log  " << timeVcVAPXLog
-              << " ( " <<  timeVcVAPXLog/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVAPXLog/timeVcVAPXLog << " )"
-              << std::endl;
-    
+    auto timeVcVAPXLog = solve<FloatV>( data, []( const auto& d ) { return vapprox_log( d.absxv ); } );
+    std::cout << "SIMD   VAPX log  " << timeVcVAPXLog << " ( " << timeVcVAPXLog / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVAPXLog / timeVcVAPXLog << " )" << std::endl;
+
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDLog));
-    asm volatile ("" : "+x"(timeScVDTLog));
-    asm volatile ("" : "+x"(timeScAPXLog));
-    asm volatile ("" : "+x"(timeScVAPXLog));
-    asm volatile ("" : "+x"(timeVcSTDLog));
-    asm volatile ("" : "+x"(timeVcVDTLog));
-    asm volatile ("" : "+x"(timeVcAPXLog));
-    asm volatile ("" : "+x"(timeVcVAPXLog));
+    asm volatile( "" : "+x"( timeScSTDLog ) );
+    asm volatile( "" : "+x"( timeScVDTLog ) );
+    asm volatile( "" : "+x"( timeScAPXLog ) );
+    asm volatile( "" : "+x"( timeScVAPXLog ) );
+    asm volatile( "" : "+x"( timeVcSTDLog ) );
+    asm volatile( "" : "+x"( timeVcVDTLog ) );
+    asm volatile( "" : "+x"( timeVcAPXLog ) );
+    asm volatile( "" : "+x"( timeVcVAPXLog ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing sqrt functions..." << std::endl;
-    
+
     // STD scalar sqrt
-    auto timeScSTDSqrt = solve<float>( data,  []( const auto & d ) { return std::sqrt(d.absxs); } );
+    auto timeScSTDSqrt = solve<float>( data, []( const auto& d ) { return std::sqrt( d.absxs ); } );
     std::cout << "Scalar STD sqrt  " << timeScSTDSqrt << std::endl;
-    
+
     // STD(Vc) SIMD log
-    auto timeVcSTDSqrt = solve<FloatV>( data, []( const auto & d ) { return std::sqrt(d.absxv); } );
-    std::cout << "SIMD   STD sqrt  " << timeVcSTDSqrt 
-              << " ( " << timeVcSTDSqrt/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDSqrt/timeVcSTDSqrt << " )"
-              << std::endl;
-    
+    auto timeVcSTDSqrt = solve<FloatV>( data, []( const auto& d ) { return std::sqrt( d.absxv ); } );
+    std::cout << "SIMD   STD sqrt  " << timeVcSTDSqrt << " ( " << timeVcSTDSqrt / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDSqrt / timeVcSTDSqrt << " )" << std::endl;
+
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDSqrt));
-    asm volatile ("" : "+x"(timeVcSTDSqrt));
+    asm volatile( "" : "+x"( timeScSTDSqrt ) );
+    asm volatile( "" : "+x"( timeVcSTDSqrt ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing 1/sqrt functions..." << std::endl;
-    
+
     // STD scalar isqrt
-    auto timeScSTDIsqrt = solve<float>( data, []( const auto & d ) { return d.xs/std::sqrt(d.absxs); } );
+    auto timeScSTDIsqrt = solve<float>( data, []( const auto& d ) { return d.xs / std::sqrt( d.absxs ); } );
     std::cout << "Scalar STD isqrt " << timeScSTDIsqrt << std::endl;
-    
+
     // VDT scalar log
-    auto timeScVDTIsqrt = solve<float>( data, []( const auto & d ) { return d.xs*vdt::fast_isqrtf(d.absxs); } );
+    auto timeScVDTIsqrt = solve<float>( data, []( const auto& d ) { return d.xs * vdt::fast_isqrtf( d.absxs ); } );
     std::cout << "Scalar VDT isqrt " << timeScVDTIsqrt << std::endl;
 
     // STD(Vc) SIMD log
-    auto timeVcSTDIsqrt = solve<FloatV>( data, []( const auto & d ) { return d.xv/std::sqrt(d.absxv); } );
-    std::cout << "SIMD   STD isqrt " << timeVcSTDIsqrt 
-              << " ( " << timeVcSTDIsqrt/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDIsqrt/timeVcSTDIsqrt << " )"
-              << std::endl;
-    
+    auto timeVcSTDIsqrt = solve<FloatV>( data, []( const auto& d ) { return d.xv / std::sqrt( d.absxv ); } );
+    std::cout << "SIMD   STD isqrt " << timeVcSTDIsqrt << " ( " << timeVcSTDIsqrt / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDIsqrt / timeVcSTDIsqrt << " )" << std::endl;
+
     // STD(Vc) SIMD log
-    auto timeVcVDTIsqrt = solve<FloatV>( data, []( const auto & d ) { return d.xv*fast_isqrt(d.absxv); } );
-    std::cout << "SIMD   VDT isqrt " << timeVcVDTIsqrt 
-              << " ( " << timeVcVDTIsqrt/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVDTIsqrt/timeVcVDTIsqrt << " )"
-              << std::endl;
-    
+    auto timeVcVDTIsqrt = solve<FloatV>( data, []( const auto& d ) { return d.xv * fast_isqrt( d.absxv ); } );
+    std::cout << "SIMD   VDT isqrt " << timeVcVDTIsqrt << " ( " << timeVcVDTIsqrt / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVDTIsqrt / timeVcVDTIsqrt << " )" << std::endl;
+
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDIsqrt));
-    asm volatile ("" : "+x"(timeScVDTIsqrt));
-    asm volatile ("" : "+x"(timeVcSTDIsqrt));
-    asm volatile ("" : "+x"(timeVcVDTIsqrt));
+    asm volatile( "" : "+x"( timeScSTDIsqrt ) );
+    asm volatile( "" : "+x"( timeScVDTIsqrt ) );
+    asm volatile( "" : "+x"( timeVcSTDIsqrt ) );
+    asm volatile( "" : "+x"( timeVcVDTIsqrt ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing sincos functions..." << std::endl;
 
     // STD scalar sincos
-    auto timeScSTDSinCos = solve<float>( data, []( const auto & d ) { return std::sin(d.xs) + std::cos(d.xs); } );
+    auto timeScSTDSinCos = solve<float>( data, []( const auto& d ) { return std::sin( d.xs ) + std::cos( d.xs ); } );
     std::cout << "Scalar STD sincos " << timeScSTDSinCos << std::endl;
 
     // VDT scalar sincos
-    auto timeScVDTSinCos = solve<float>( data, []( const auto & d ) { float s,c; vdt::fast_sincosf(d.xs,s,c); return s+c; } );
+    auto timeScVDTSinCos = solve<float>( data, []( const auto& d ) {
+      float s, c;
+      vdt::fast_sincosf( d.xs, s, c );
+      return s + c;
+    } );
     std::cout << "Scalar VDT sincos " << timeScVDTSinCos << std::endl;
 
     // STD SIMD sincos
-    auto timeVcSTDSinCos = solve<FloatV>( data, []( const auto & d ) { return std::sin(d.xv) + std::cos(d.xv); } );
-    std::cout << "SIMD   STD sincos " << timeVcSTDSinCos 
-              << " ( " << timeVcSTDSinCos/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDSinCos/timeVcSTDSinCos << " )"
+    auto timeVcSTDSinCos = solve<FloatV>( data, []( const auto& d ) { return std::sin( d.xv ) + std::cos( d.xv ); } );
+    std::cout << "SIMD   STD sincos " << timeVcSTDSinCos << " ( " << timeVcSTDSinCos / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDSinCos / timeVcSTDSinCos << " )"
               << std::endl;
 
     // VDT SIMD sincos
-    auto timeVcVDTSinCos = solve<FloatV>( data, []( const auto & d ) { FloatV s,c; fast_sincos(d.xv,s,c); return s+c; } );
-    std::cout << "SIMD   VDT sincos " << timeVcVDTSinCos 
-              << " ( " << timeVcVDTSinCos/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVDTSinCos/timeVcVDTSinCos << " )"
+    auto timeVcVDTSinCos = solve<FloatV>( data, []( const auto& d ) {
+      FloatV s, c;
+      fast_sincos( d.xv, s, c );
+      return s + c;
+    } );
+    std::cout << "SIMD   VDT sincos " << timeVcVDTSinCos << " ( " << timeVcVDTSinCos / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVDTSinCos / timeVcVDTSinCos << " )"
               << std::endl;
 
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDSinCos));
-    asm volatile ("" : "+x"(timeScVDTSinCos));
-    asm volatile ("" : "+x"(timeVcSTDSinCos));
-    asm volatile ("" : "+x"(timeVcVDTSinCos));
-    
+    asm volatile( "" : "+x"( timeScSTDSinCos ) );
+    asm volatile( "" : "+x"( timeScVDTSinCos ) );
+    asm volatile( "" : "+x"( timeVcSTDSinCos ) );
+    asm volatile( "" : "+x"( timeVcVDTSinCos ) );
+
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing atan2 functions..." << std::endl;
-    
+
     // STD scalar
-    auto timeScSTDAtan2 = solve<float>( data, []( const auto & d ) { return std::atan2(d.xs,d.ys); } );
+    auto timeScSTDAtan2 = solve<float>( data, []( const auto& d ) { return std::atan2( d.xs, d.ys ); } );
     std::cout << "Scalar STD  atan2 " << timeScSTDAtan2 << std::endl;
-    
+
     // VDT scalar
-    auto timeScVDTAtan2 = solve<float>( data, []( const auto & d ) { return fast_atan2(d.xs,d.ys); } );
+    auto timeScVDTAtan2 = solve<float>( data, []( const auto& d ) { return fast_atan2( d.xs, d.ys ); } );
     std::cout << "Scalar VDT  atan2 " << timeScVDTAtan2 << std::endl;
 
     // VAPX scalar
-    auto timeScVAPXAtan2 = solve<float>( data, []( const auto & d ) { return vapprox_atan2(d.xs,d.ys); } );
+    auto timeScVAPXAtan2 = solve<float>( data, []( const auto& d ) { return vapprox_atan2( d.xs, d.ys ); } );
     std::cout << "Scalar VAPX atan2 " << timeScVAPXAtan2 << std::endl;
-    
-    // STD(Vc) SIMD 
-    auto timeVcSTDAtan2 = solve<FloatV>( data, []( const auto & d ) { return std::atan2(d.xv,d.yv); } );
-    std::cout << "SIMD   STD  atan2 " << timeVcSTDAtan2 
-              << " ( " << timeVcSTDAtan2/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDAtan2/timeVcSTDAtan2 << " )"
-              << std::endl;
-    
+
     // STD(Vc) SIMD
-    auto timeVcVDTAtan2 = solve<FloatV>( data, []( const auto & d ) { return fast_atan2(d.xv,d.yv); } );
-    std::cout << "SIMD   VDT  atan2 " << timeVcVDTAtan2
-              << " ( " << timeVcVDTAtan2/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVDTAtan2/timeVcVDTAtan2 << " )"
-              << std::endl;
+    auto timeVcSTDAtan2 = solve<FloatV>( data, []( const auto& d ) { return std::atan2( d.xv, d.yv ); } );
+    std::cout << "SIMD   STD  atan2 " << timeVcSTDAtan2 << " ( " << timeVcSTDAtan2 / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScSTDAtan2 / timeVcSTDAtan2 << " )" << std::endl;
+
+    // STD(Vc) SIMD
+    auto timeVcVDTAtan2 = solve<FloatV>( data, []( const auto& d ) { return fast_atan2( d.xv, d.yv ); } );
+    std::cout << "SIMD   VDT  atan2 " << timeVcVDTAtan2 << " ( " << timeVcVDTAtan2 / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVDTAtan2 / timeVcVDTAtan2 << " )" << std::endl;
 
     // VAPX SIMD
-    auto timeVcVAPXAtan2 = solve<FloatV>( data, []( const auto & d ) { return vapprox_atan2(d.xv,d.yv); } );
-    std::cout << "SIMD   VAPX atan2 " << timeVcVAPXAtan2
-              << " ( " << timeVcVAPXAtan2/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVAPXAtan2/timeVcVAPXAtan2 << " )"
+    auto timeVcVAPXAtan2 = solve<FloatV>( data, []( const auto& d ) { return vapprox_atan2( d.xv, d.yv ); } );
+    std::cout << "SIMD   VAPX atan2 " << timeVcVAPXAtan2 << " ( " << timeVcVAPXAtan2 / FloatV::Size
+              << " per scalar, SpeedUp " << (double)FloatV::Size * timeScVAPXAtan2 / timeVcVAPXAtan2 << " )"
               << std::endl;
-    
+
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDAtan2));
-    asm volatile ("" : "+x"(timeScVDTAtan2));
-    asm volatile ("" : "+x"(timeScVAPXAtan2));
-    asm volatile ("" : "+x"(timeVcSTDAtan2));
-    asm volatile ("" : "+x"(timeVcVDTAtan2));
-    asm volatile ("" : "+x"(timeVcVAPXAtan2));
+    asm volatile( "" : "+x"( timeScSTDAtan2 ) );
+    asm volatile( "" : "+x"( timeScVDTAtan2 ) );
+    asm volatile( "" : "+x"( timeScVAPXAtan2 ) );
+    asm volatile( "" : "+x"( timeVcSTDAtan2 ) );
+    asm volatile( "" : "+x"( timeVcVDTAtan2 ) );
+    asm volatile( "" : "+x"( timeVcVAPXAtan2 ) );
 
     // ---------------------------------------------------------------------------------------------------------------------
-    
+
     std::cout << "testing asin functions..." << std::endl;
-    
+
     // STD scalar asin
-    auto timeScSTDAsin = solve<float>( data, []( const auto & d ) { return std::asin(d.zs); } );
+    auto timeScSTDAsin = solve<float>( data, []( const auto& d ) { return std::asin( d.zs ); } );
     std::cout << "Scalar STD asin " << timeScSTDAsin << std::endl;
-    
+
     // VDT scalar asin
-    auto timeScVDTAsin = solve<float>( data, []( const auto & d ) { return vdt::fast_asinf(d.zs); } );
+    auto timeScVDTAsin = solve<float>( data, []( const auto& d ) { return vdt::fast_asinf( d.zs ); } );
     std::cout << "Scalar VDT asin " << timeScVDTAsin << std::endl;
 
     // STD(Vc) SIMD asin
-    auto timeVcSTDAsin = solve<FloatV>( data, []( const auto & d ) { return std::asin(d.zv); } );
-    std::cout << "SIMD   STD asin " << timeVcSTDAsin 
-              << " ( " << timeVcSTDAsin/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScSTDAsin/timeVcSTDAsin << " )"
-              << std::endl;
-    
+    auto timeVcSTDAsin = solve<FloatV>( data, []( const auto& d ) { return std::asin( d.zv ); } );
+    std::cout << "SIMD   STD asin " << timeVcSTDAsin << " ( " << timeVcSTDAsin / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScSTDAsin / timeVcSTDAsin << " )" << std::endl;
+
     // STD(Vc) SIMD asin
-    auto timeVcVDTAsin = solve<FloatV>( data, []( const auto & d ) { return fast_asin(d.zv); } );
-    std::cout << "SIMD   VDT asin " << timeVcVDTAsin 
-              << " ( " << timeVcVDTAsin/FloatV::Size << " per scalar, SpeedUp "
-              << (double)FloatV::Size*timeScVDTAsin/timeVcVDTAsin << " )"
-              << std::endl;
-    
+    auto timeVcVDTAsin = solve<FloatV>( data, []( const auto& d ) { return fast_asin( d.zv ); } );
+    std::cout << "SIMD   VDT asin " << timeVcVDTAsin << " ( " << timeVcVDTAsin / FloatV::Size << " per scalar, SpeedUp "
+              << (double)FloatV::Size * timeScVDTAsin / timeVcVDTAsin << " )" << std::endl;
+
     // make sure we are not optimized away
-    asm volatile ("" : "+x"(timeScSTDAsin));
-    asm volatile ("" : "+x"(timeScVDTAsin));
-    asm volatile ("" : "+x"(timeVcSTDAsin));
-    asm volatile ("" : "+x"(timeVcVDTAsin));
-    
+    asm volatile( "" : "+x"( timeScSTDAsin ) );
+    asm volatile( "" : "+x"( timeScVDTAsin ) );
+    asm volatile( "" : "+x"( timeVcSTDAsin ) );
+    asm volatile( "" : "+x"( timeVcVDTAsin ) );
+
     // ---------------------------------------------------------------------------------------------------------------------
-    
   }
-  
+
   return 0;
 }

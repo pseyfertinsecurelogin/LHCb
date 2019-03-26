@@ -11,10 +11,10 @@
 #ifndef SRC_BASICDQFILTER_H
 #define SRC_BASICDQFILTER_H 1
 // Include files
+#include <algorithm>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
-#include <algorithm>
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
@@ -30,42 +30,38 @@
  * @author Marco Clemencic
  * @date 04/11/2011
  */
-class BasicDQFilter final : public extends<GaudiTool, IDQFilter>
-{
+class BasicDQFilter final : public extends<GaudiTool, IDQFilter> {
 
 public:
-
   /// Standard constructor
   using extends::extends;
 
   /// Accept the flags if there is not flag set, except the ignored ones
   /// (property IgnoredFlags).
-  bool accept(const FlagsType& flags) const override;
+  bool accept( const FlagsType& flags ) const override;
 
 private:
   struct cmpi {
-      bool operator()(const std::string& a, const std::string& b) const {
-          return std::lexicographical_compare( begin(a), end(a),
-                                               begin(b), end(b),
-                                               [](const char x, const char y) {
-                                                  return std::tolower(x) < std::tolower(y);
-                                               } );
-      }
+    bool operator()( const std::string& a, const std::string& b ) const {
+      return std::lexicographical_compare(
+          begin( a ), end( a ), begin( b ), end( b ),
+          []( const char x, const char y ) { return std::tolower( x ) < std::tolower( y ); } );
+    }
   };
 
   /// Internal storage for ignored flags.
-  std::set<std::string,cmpi> m_ignoredFlags;
+  std::set<std::string, cmpi> m_ignoredFlags;
 
   /// List of flag (names) to ignore during the filtering. The matching is
   /// case-insensitive. (property IgnoredFlags)
-  Gaudi::Property<std::vector<std::string>> m_ignoredFlagsProp
-  { this, "IgnoredFlags", {},
-    [=](auto&) {
-        m_ignoredFlags = { begin(m_ignoredFlagsProp), end(m_ignoredFlagsProp) };
-    },
-    "List of flags to ignore when filtering events" };
-
-
+  Gaudi::Property<std::vector<std::string>> m_ignoredFlagsProp{
+      this,
+      "IgnoredFlags",
+      {},
+      [=]( auto& ) {
+        m_ignoredFlags = {begin( m_ignoredFlagsProp ), end( m_ignoredFlagsProp )};
+      },
+      "List of flags to ignore when filtering events"};
 };
 
 #endif // SRC_BASICDQFILTER_H

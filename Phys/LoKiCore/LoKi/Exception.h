@@ -36,15 +36,13 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   /** @class Exception Exception.h LoKi/Exception.h
    *  Standard exception for LoKi objects
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-12
    */
-  class Exception : public GaudiException
-  {
+  class Exception : public GaudiException {
   public:
     // ========================================================================
     /** Constructor
@@ -53,11 +51,8 @@ namespace LoKi
      *  @param file file name
      *  @param line line number
      */
-    Exception
-    ( const std::string&   Message                       ,
-      const StatusCode &   Code    = StatusCode::FAILURE ,
-      const std::string&   file    = ""                  ,
-      const unsigned long& line    = 0                   ) ;
+    Exception( const std::string& Message, const StatusCode& Code = StatusCode::FAILURE, const std::string& file = "",
+               const unsigned long& line = 0 );
     // ========================================================================
     /** Constructor
      *  @param Message error message
@@ -66,12 +61,8 @@ namespace LoKi
      *  @param file file name
      *  @param line line number
      */
-    Exception
-    ( const std::string&     Message         ,
-      const StatusCode &     Code            ,
-      const GaudiException&  Exception       ,
-      const std::string&     file       = "" ,
-      const unsigned long&   line       = 0  ) ;
+    Exception( const std::string& Message, const StatusCode& Code, const GaudiException& Exception,
+               const std::string& file = "", const unsigned long& line = 0 );
     // ========================================================================
     /** clone operation
      *  @see GaudiException
@@ -85,7 +76,7 @@ namespace LoKi
     Exception();
     // ========================================================================
   }; // end of class Exception
-}// end of namespace  LooK
+} // namespace LoKi
 // ============================================================================
 /** @def LOKI_EXCEPTION
  *
@@ -104,8 +95,7 @@ namespace LoKi
  *  @date 2002-10-29
  */
 // ============================================================================
-#define LOKI_EXCEPTION( message , statuscode )   \
-      throw LoKi::Exception (  message , statuscode , __FILE__ , __LINE__ )
+#define LOKI_EXCEPTION( message, statuscode ) throw LoKi::Exception( message, statuscode, __FILE__, __LINE__ )
 // ============================================================================
 
 // ============================================================================

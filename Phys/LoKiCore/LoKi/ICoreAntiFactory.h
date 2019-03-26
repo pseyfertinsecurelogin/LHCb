@@ -24,11 +24,9 @@
 // ============================================================================
 #include "LoKi/CoreTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class ICoreAntiFactory
      *  The functor 'anti'-factory for creation of 'Core' LoKi functors
@@ -46,37 +44,36 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivabn.Belyaev@nikhef.nl
      *  @date 2008-09-18
      */
-    struct ICoreAntiFactory : extend_interfaces<IAlgTool>
-    {
+    struct ICoreAntiFactory : extend_interfaces<IAlgTool> {
       // ======================================================================
-      DeclareInterfaceID( ICoreAntiFactory, 2 , 0 ) ;
+      DeclareInterfaceID( ICoreAntiFactory, 2, 0 );
       // ======================================================================
       // "void -> ... "
       // ======================================================================
       /// set the C++ predicate for 'void'
-      virtual void set ( const LoKi::Types::FCuts& cut ) = 0 ;
+      virtual void set( const LoKi::Types::FCuts& cut ) = 0;
       /// set the C++ function  for 'void'
-      virtual void set ( const LoKi::Types::FFunc& cut ) = 0 ;
+      virtual void set( const LoKi::Types::FFunc& cut ) = 0;
       // ======================================================================
       // "double -> ... "
       // ======================================================================
       /// set the C++ predicate for 'double'
-      virtual void set ( const LoKi::Types::XCuts& cut ) = 0 ;
+      virtual void set( const LoKi::Types::XCuts& cut ) = 0;
       /// set the C++ function  for 'double'
-      virtual void set ( const LoKi::Types::XFunc& cut ) = 0 ;
+      virtual void set( const LoKi::Types::XFunc& cut ) = 0;
       // ======================================================================
       // some functional stuff:
       // ======================================================================
       /// set: vector<double> -> vector<double>
-      virtual void set ( const LoKi::Types::XMaps&    cut ) = 0 ;
+      virtual void set( const LoKi::Types::XMaps& cut ) = 0;
       /// set: vector<double> ->        double
-      virtual void set ( const LoKi::Types::XFunVals& cut ) = 0 ;
+      virtual void set( const LoKi::Types::XFunVals& cut ) = 0;
       /// set: void  -> vector<double>
-      virtual void set ( const LoKi::Types::XSources& cut ) = 0 ;
+      virtual void set( const LoKi::Types::XSources& cut ) = 0;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

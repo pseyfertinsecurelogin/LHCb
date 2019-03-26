@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef L0INTERFACES_IL0MUONOVERFLOWTOOL_H 
+#ifndef L0INTERFACES_IL0MUONOVERFLOWTOOL_H
 #define L0INTERFACES_IL0MUONOVERFLOWTOOL_H 1
 
 // Include files
@@ -18,7 +18,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 #include "Kernel/MuonTileID.h"
-
 
 /** @class IL0MuonOverflowTool IL0MuonOverflowTool.h L0Interfaces/IL0MuonOverflowTool.h
  *  Interface to access the list of FPGA declaring an overflow
@@ -32,11 +31,10 @@ struct IL0MuonOverflowTool : extend_interfaces<IAlgTool> {
   DeclareInterfaceID( IL0MuonOverflowTool, 2, 0 );
 
   /// Fill the list of quarters with an overflow
-  virtual StatusCode getQuarters(std::vector<int> & quarters, std::string rootInTes="")=0;
+  virtual StatusCode getQuarters( std::vector<int>& quarters, std::string rootInTes = "" ) = 0;
   /// Fill the list of BCSUs (as MuonTileIDs) with an overflow
-  virtual StatusCode getBCSUs(std::vector<LHCb::MuonTileID> & bcsus, std::string rootInTes="")=0;
+  virtual StatusCode getBCSUs( std::vector<LHCb::MuonTileID>& bcsus, std::string rootInTes = "" ) = 0;
   /// Fill the list of PUs (as MuonTileIDs) with an overflow
-  virtual StatusCode getPUs(std::vector<LHCb::MuonTileID> & pus, std::string rootInTes="")=0;
-
+  virtual StatusCode getPUs( std::vector<LHCb::MuonTileID>& pus, std::string rootInTes = "" ) = 0;
 };
 #endif // L0INTERFACES_IL0MUONOVERFLOWTOOL_H

@@ -13,8 +13,8 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <cmath>
 #include <climits>
+#include <cmath>
 #include <limits.h>
 // ============================================================================
 // GaudiKernel
@@ -23,25 +23,25 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
-#include "LHCbMath/MatrixUtils.h"
 #include "LHCbMath/MatrixTransforms.h"
+#include "LHCbMath/MatrixUtils.h"
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Kinematics.h"
 #include "LoKi/Constants.h"
+#include "LoKi/Kinematics.h"
 #include "LoKi/Report.h"
 #include "LoKi/Tensors.h"
 // ============================================================================
 // ROOT
 // ============================================================================
-#ifdef __INTEL_COMPILER         // Disable ICC remark from ROOT GenVector
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
+#ifdef __INTEL_COMPILER             // Disable ICC remark from ROOT GenVector
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
+#  pragma warning( push )
 #endif
 #include "Math/Boost.h"
-#ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
-  #pragma warning(pop)
+#ifdef __INTEL_COMPILER // Re-enable ICC remark 1572
+#  pragma warning( pop )
 #endif
 // ============================================================================
 /** @file
@@ -69,14 +69,8 @@
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::euclidianNorm2
-( const LoKi::LorentzVector& vct )
-{
-  return
-    vct.e() * vct.e() +
-    vct.x() * vct.x() +
-    vct.y() * vct.y() +
-    vct.z() * vct.z() ;
+double LoKi::Kinematics::euclidianNorm2( const LoKi::LorentzVector& vct ) {
+  return vct.e() * vct.e() + vct.x() * vct.x() + vct.y() * vct.y() + vct.z() * vct.z();
 }
 // ============================================================================
 /*  simple function for evaluation of the euclidiam norm
@@ -88,9 +82,7 @@ double LoKi::Kinematics::euclidianNorm2
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::euclidianNorm
-( const LoKi::LorentzVector& vct )
-{ return sqrt ( euclidianNorm2 ( vct )  ) ; }
+double LoKi::Kinematics::euclidianNorm( const LoKi::LorentzVector& vct ) { return sqrt( euclidianNorm2( vct ) ); }
 // ============================================================================
 /*  simple function for evaluation of the square of
  *  the euclidian distance inbetwee 2 LorentzVectors
@@ -102,10 +94,9 @@ double LoKi::Kinematics::euclidianNorm
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::delta2euclidian
-( const LoKi::LorentzVector& vct1 ,
-  const LoKi::LorentzVector& vct2 )
-{ return euclidianNorm2 ( vct1 - vct2 ) ; }
+double LoKi::Kinematics::delta2euclidian( const LoKi::LorentzVector& vct1, const LoKi::LorentzVector& vct2 ) {
+  return euclidianNorm2( vct1 - vct2 );
+}
 // ============================================================================
 /*  simple function which evaluates the transverse
  *  momentum with respect a certain 3D-direction
@@ -116,14 +107,11 @@ double LoKi::Kinematics::delta2euclidian
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::transverseMomentumDir
-( const LoKi::ThreeVector& mom ,
-  const LoKi::ThreeVector& dir )
-{
-  const double dmag2 = dir.Mag2() ;
-  if ( 0 == dmag2 ) { return mom.R() ; }
-  const LoKi::ThreeVector perp = mom - dir * ( mom.Dot( dir ) / dmag2 ) ;
-  return perp.R() ;
+double LoKi::Kinematics::transverseMomentumDir( const LoKi::ThreeVector& mom, const LoKi::ThreeVector& dir ) {
+  const double dmag2 = dir.Mag2();
+  if ( 0 == dmag2 ) { return mom.R(); }
+  const LoKi::ThreeVector perp = mom - dir * ( mom.Dot( dir ) / dmag2 );
+  return perp.R();
 }
 // ============================================================================
 /*  This routine returns the cosine angle theta
@@ -143,19 +131,16 @@ double LoKi::Kinematics::transverseMomentumDir
  *  @date 2004-12-03
  */
 // ============================================================================
-double LoKi::Kinematics::decayAngle_
-( const LoKi::LorentzVector& D ,
-  const LoKi::LorentzVector& M )
-{
+double LoKi::Kinematics::decayAngle_( const LoKi::LorentzVector& D, const LoKi::LorentzVector& M ) {
   // boost the daugter particles to mother center of mass
-  ROOT::Math::Boost   boost ( M.BoostToCM() ) ;
-  const LoKi::LorentzVector pD = boost( D ) ;
+  ROOT::Math::Boost         boost( M.BoostToCM() );
+  const LoKi::LorentzVector pD = boost( D );
   // direction of 3-momentum of daughter in this rest frame
-  const LoKi::ThreeVector v3D =  LoKi::ThreeVector(pD).Unit() ;
+  const LoKi::ThreeVector v3D = LoKi::ThreeVector( pD ).Unit();
   // mother direction
-  const LoKi::ThreeVector v3M =  LoKi::ThreeVector( M).Unit()  ;
+  const LoKi::ThreeVector v3M = LoKi::ThreeVector( M ).Unit();
   // cosine
-  return v3D.Dot( v3M ) ;
+  return v3D.Dot( v3M );
 }
 // ============================================================================
 /*  This routine returns the cosine angle theta
@@ -176,28 +161,22 @@ double LoKi::Kinematics::decayAngle_
  *  @date 2004-12-03
  */
 // ============================================================================
-double LoKi::Kinematics::decayAngle
-( const LoKi::LorentzVector& P ,
-  const LoKi::LorentzVector& Q ,
-  const LoKi::LorentzVector& D )
-{
-  const double pd  = P.Dot  ( D ) ;       // P * D
-  const double pq  = P.Dot  ( Q ) ;       // P * Q
-  const double qd  = Q.Dot  ( D ) ;       // D * Q
-  const double mq2 = Q.M2   (   ) ;       // Q^2
-  const double mp2 = P.M2   (   ) ;       // P^2
-  const double md2 = D.M2   (   ) ;       // D^2
+double LoKi::Kinematics::decayAngle( const LoKi::LorentzVector& P, const LoKi::LorentzVector& Q,
+                                     const LoKi::LorentzVector& D ) {
+  const double pd  = P.Dot( D ); // P * D
+  const double pq  = P.Dot( Q ); // P * Q
+  const double qd  = Q.Dot( D ); // D * Q
+  const double mq2 = Q.M2();     // Q^2
+  const double mp2 = P.M2();     // P^2
+  const double md2 = D.M2();     // D^2
 
-  const double value =
-    ( pq * pq - mq2 * mp2 ) * ( qd * qd - mq2 * md2 ) ;
-  if ( 0 > value )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::decayAngle(P,Q,D):: invalid 4-momenta, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+  const double value = ( pq * pq - mq2 * mp2 ) * ( qd * qd - mq2 * md2 );
+  if ( 0 > value ) {
+    LoKi::Report::Error( "LoKi::Kinematics::decayAngle(P,Q,D):: invalid 4-momenta, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  return ( pd * mq2 - pq * qd ) / ::sqrt ( value ) ;
+  return ( pd * mq2 - pq * qd ) / ::sqrt( value );
 }
 // ============================================================================
 /** simple function which evaluates the magnitude of 3-momentum
@@ -214,26 +193,19 @@ double LoKi::Kinematics::decayAngle
  *  @date 2008-07-27
  */
 // ============================================================================
-double LoKi::Kinematics::restMomentum
-( const LoKi::LorentzVector& v ,
-  const LoKi::LorentzVector& M )
-{
-  const double M2 = M.M2 () ;
-  if ( 0 >= M2 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::restMomentum():: rest-system is not time-like, reuturn InvalidMomentum" );
-    return LoKi::Constants::InvalidMomentum ;
+double LoKi::Kinematics::restMomentum( const LoKi::LorentzVector& v, const LoKi::LorentzVector& M ) {
+  const double M2 = M.M2();
+  if ( 0 >= M2 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::restMomentum():: rest-system is not time-like, reuturn InvalidMomentum" );
+    return LoKi::Constants::InvalidMomentum;
   }
-  const double vM = v.Dot(M) ;
-  const double P2 = vM*vM / M2 - v.M2() ;
-  if ( 0 >  P2 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::restMomentum():: P2 < 0, return InvalidMomentum" );
-    return LoKi::Constants::InvalidMomentum ;
+  const double vM = v.Dot( M );
+  const double P2 = vM * vM / M2 - v.M2();
+  if ( 0 > P2 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::restMomentum():: P2 < 0, return InvalidMomentum" );
+    return LoKi::Constants::InvalidMomentum;
   }
-  return ::sqrt ( P2 ) ;
+  return ::sqrt( P2 );
 }
 // ============================================================================
 /*  simple function which evaluates the energy
@@ -249,19 +221,14 @@ double LoKi::Kinematics::restMomentum
  *  @date 2008-07-27
  */
 // ============================================================================
-double LoKi::Kinematics::restEnergy
-( const LoKi::LorentzVector& v ,
-  const LoKi::LorentzVector& M )
-{
-  const double M2 = M.M2 () ;
-  if ( 0 >= M2 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::restEnergy():: rest-system is not time-like, return InvaildEnergy" );
-    return LoKi::Constants::InvalidEnergy ;
+double LoKi::Kinematics::restEnergy( const LoKi::LorentzVector& v, const LoKi::LorentzVector& M ) {
+  const double M2 = M.M2();
+  if ( 0 >= M2 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::restEnergy():: rest-system is not time-like, return InvaildEnergy" );
+    return LoKi::Constants::InvalidEnergy;
   }
   // evaluate the energy
-  return v.Dot( M ) / ::sqrt ( M2 ) ;
+  return v.Dot( M ) / ::sqrt( M2 );
 }
 // ============================================================================
 /** simple function to evaluate the cosine angle between
@@ -275,78 +242,63 @@ double LoKi::Kinematics::restEnergy
  *  @date 2008-07-27
  */
 // ============================================================================
-double LoKi::Kinematics::cosThetaRest
-( const LoKi::LorentzVector& v1 ,
-  const LoKi::LorentzVector& v2 ,
-  const LoKi::LorentzVector& M  )
-{
-  const double M2 = M.M2 () ;
-  if ( 0 >= M2 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::cosThetaRest():: rest-system is not time-like, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+double LoKi::Kinematics::cosThetaRest( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2,
+                                       const LoKi::LorentzVector& M ) {
+  const double M2 = M.M2();
+  if ( 0 >= M2 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::cosThetaRest():: rest-system is not time-like, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   ///
-  const double v1M  = v1.Dot ( M ) ;
-  const double v2M  = v2.Dot ( M ) ;
-  const double m1_2 = v1.M2  ( )   ;
-  const double m2_2 = v2.M2  ( )   ;
+  const double v1M  = v1.Dot( M );
+  const double v2M  = v2.Dot( M );
+  const double m1_2 = v1.M2();
+  const double m2_2 = v2.M2();
 
   // calculate e1*e2
-  const double e1e2  = v1M * v2M / M2 ;   // calculate e1*e2
+  const double e1e2 = v1M * v2M / M2; // calculate e1*e2
 
   // calculate (|p1|*|p2|)^2
-  const double p1p2_ =
-    ( ( v1M * v1M ) / M2 - m1_2 ) *
-    ( ( v2M * v2M ) / M2 - m2_2 ) ; // calculate (|p1|*|p2|)^2
+  const double p1p2_ = ( ( v1M * v1M ) / M2 - m1_2 ) * ( ( v2M * v2M ) / M2 - m2_2 ); // calculate (|p1|*|p2|)^2
   //
-  if ( 0 >= p1p2_ )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::cosThetaRest():: (|p1|*|p2|)^2 < 0, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+  if ( 0 >= p1p2_ ) {
+    LoKi::Report::Error( "LoKi::Kinematics::cosThetaRest():: (|p1|*|p2|)^2 < 0, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  const double p1p2 = ::sqrt ( p1p2_ ) ;   // |p1|*|p2|
+  const double p1p2 = ::sqrt( p1p2_ ); // |p1|*|p2|
   //
-  const double var = (v1+v2).M2() - m1_2 - m2_2 ;
+  const double var = ( v1 + v2 ).M2() - m1_2 - m2_2;
   //
   // finally evaluate the cosine
-  return ( e1e2 - 0.5 * var ) / p1p2 ;
+  return ( e1e2 - 0.5 * var ) / p1p2;
 }
 // ============================================================================
 // evaluate cos(chi)
 // ============================================================================
-double LoKi::Kinematics::cosDecayAngleChi
-( const LoKi::LorentzVector& d1 ,
-  const LoKi::LorentzVector& d2 ,
-  const LoKi::LorentzVector& h1 ,
-  const LoKi::LorentzVector& h2 )
-{
+double LoKi::Kinematics::cosDecayAngleChi( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                           const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
   // get the intermediate particles D & H
-  const LoKi::LorentzVector D ( d1 + d2 ) ;
-  const LoKi::LorentzVector H ( h1 + h2 ) ;
+  const LoKi::LorentzVector D( d1 + d2 );
+  const LoKi::LorentzVector H( h1 + h2 );
 
   // Evaluator of various tensor expressions:
-  LoKi::Tensors::Epsilon e ;
+  LoKi::Tensors::Epsilon e;
 
   // evaluate the length of normales :
-  const double l1 = e.mag2 ( d1 , d2 , H ) ; // == | [d1,d2,M] |
-  const double l2 = e.mag2 ( h1 , h2 , D ) ; // == | [h1,h2,M] |
+  const double l1 = e.mag2( d1, d2, H ); // == | [d1,d2,M] |
+  const double l2 = e.mag2( h1, h2, D ); // == | [h1,h2,M] |
 
   if ( 0 <= l1 ) {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::cosDecayAngleChi () : L1^2 >= 0, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+    LoKi::Report::Error( "LoKi::Kinematics::cosDecayAngleChi () : L1^2 >= 0, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   if ( 0 <= l2 ) {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::cosDecayAngleChi () : L2^2 >= 0, return InvaildAngle" );
-    return LoKi::Constants::InvalidAngle ;
+    LoKi::Report::Error( "LoKi::Kinematics::cosDecayAngleChi () : L2^2 >= 0, return InvaildAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
 
-  return - e.epsilon ( d1 , d2 , H , h1 , h2 , D ) / ::sqrt ( l1 * l2 ) ;
+  return -e.epsilon( d1, d2, H, h1, h2, D ) / ::sqrt( l1 * l2 );
 }
 // ============================================================================
 /*  evaluate the angle \f$\chi\f$
@@ -359,86 +311,69 @@ double LoKi::Kinematics::cosDecayAngleChi
  *  @date 2008-07-27
  */
 // ============================================================================
-double LoKi::Kinematics::decayAngleChi
-( const LoKi::LorentzVector& d1 ,
-  const LoKi::LorentzVector& d2 ,
-  const LoKi::LorentzVector& h1 ,
-  const LoKi::LorentzVector& h2 )
-{
+double LoKi::Kinematics::decayAngleChi( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                        const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
   //
-  const double cosChi = cosDecayAngleChi ( d1 , d2 , h1 , h2 ) ;
-  if ( LoKi::Constants::InvalidAngle == cosChi )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::decayAngleChi () : invalid cosine, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+  const double cosChi = cosDecayAngleChi( d1, d2, h1, h2 );
+  if ( LoKi::Constants::InvalidAngle == cosChi ) {
+    LoKi::Report::Error( "LoKi::Kinematics::decayAngleChi () : invalid cosine, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  const double sinChi = sinDecayAngleChi ( d1 , d2 , h1 , h2 ) ;
-  if ( LoKi::Constants::InvalidAngle == sinChi )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::decayAngleChi () : invalid   sine, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+  const double sinChi = sinDecayAngleChi( d1, d2, h1, h2 );
+  if ( LoKi::Constants::InvalidAngle == sinChi ) {
+    LoKi::Report::Error( "LoKi::Kinematics::decayAngleChi () : invalid   sine, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  return ::atan2 ( sinChi , cosChi ) ;
+  return ::atan2( sinChi, cosChi );
 }
 // ============================================================================
-double LoKi::Kinematics::sinDecayAngleChi
-( const LoKi::LorentzVector& d1 ,
-  const LoKi::LorentzVector& d2 ,
-  const LoKi::LorentzVector& h1 ,
-  const LoKi::LorentzVector& h2 )
-{
+double LoKi::Kinematics::sinDecayAngleChi( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                           const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
   // ========================================================================
   //  reconstrcut the intermediate particles
-  const LoKi::LorentzVector D ( d1 + d2 ) ;
-  const LoKi::LorentzVector H ( h1 + h2 ) ;
+  const LoKi::LorentzVector D( d1 + d2 );
+  const LoKi::LorentzVector H( h1 + h2 );
   /// Mother Particle
-  const LoKi::LorentzVector M ( D  + H  ) ;
+  const LoKi::LorentzVector M( D + H );
   // ========================================================================
-  const double M2 = M.M2() ;
-  if ( 0 >= M2 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::sinDecayAngleChi():: rest-system is not time-like, return InvalidAngle" ) ;
-    return LoKi::Constants::InvalidAngle ;
+  const double M2 = M.M2();
+  if ( 0 >= M2 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi():: rest-system is not time-like, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   // ========================================================================
   // avaluator of various tensor expressions
-  LoKi::Tensors::Epsilon e ;
+  LoKi::Tensors::Epsilon e;
   // ========================================================================
   // get the length of 4-normales
-  const double l1 = e.mag2 ( d1 , d2 , H ) ; // == | [d1,d2,M] |
-  const double l2 = e.mag2 ( h1 , h2 , D ) ; // == | [h1,h2,M] |
+  const double l1 = e.mag2( d1, d2, H ); // == | [d1,d2,M] |
+  const double l2 = e.mag2( h1, h2, D ); // == | [h1,h2,M] |
 
   if ( 0 <= l1 ) {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::sinDecayAngleChi () : L1^2 >= 0, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : L1^2 >= 0, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   if ( 0 <= l2 ) {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::sinDecayAngleChi () : L2^2 >= 0, return InvaildAngle" );
-    return LoKi::Constants::InvalidAngle ;
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : L2^2 >= 0, return InvaildAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
 
   // try to get the sine
 
-  const double DH = D.Dot ( H ) ;
+  const double DH = D.Dot( H );
 
-  const double var = e ( d1 , d2 , h1 , h2 ) * ( DH * DH - D.M2()*H.M2() ) ;
+  const double var = e( d1, d2, h1, h2 ) * ( DH * DH - D.M2() * H.M2() );
 
-  const double HM    = H.Dot ( M ) ;
-  const double p_H   = HM*HM - H.M2()*M2  ;
+  const double HM  = H.Dot( M );
+  const double p_H = HM * HM - H.M2() * M2;
   if ( 0 >= p_H ) {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::sinDecayAngleChi () : |H| < 0, return InvaildAngle" );
-    return LoKi::Constants::InvalidAngle ;
+    LoKi::Report::Error( "LoKi::Kinematics::sinDecayAngleChi () : |H| < 0, return InvaildAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  return var / ::sqrt ( l1 * l2 * p_H ) ;
+  return var / ::sqrt( l1 * l2 * p_H );
 }
 // ============================================================================
 /*  evaluate the Armenteros-Podolanski variable \f$\mathbf{\alpha}\f$,
@@ -448,11 +383,8 @@ double LoKi::Kinematics::sinDecayAngleChi
  *  @date 2008-09-21
  */
 // ============================================================================
-double LoKi::Kinematics::armenterosPodolanskiX
-( const LoKi::ThreeVector& d1 ,
-  const LoKi::ThreeVector& d2 )
-{
-  return  ( d1.Mag2() - d2.Mag2() ) / ( d1 + d2 ).Mag2() ;
+double LoKi::Kinematics::armenterosPodolanskiX( const LoKi::ThreeVector& d1, const LoKi::ThreeVector& d2 ) {
+  return ( d1.Mag2() - d2.Mag2() ) / ( d1 + d2 ).Mag2();
 }
 // ============================================================================
 /*  evaluate the chi2 of the mass  \f$\chi^2_{M}\f$.
@@ -463,20 +395,13 @@ double LoKi::Kinematics::armenterosPodolanskiX
  *  @date 2008-09-23
  */
 // ============================================================================
-double LoKi::Kinematics::chi2mass
-( const double               mass ,
-  const LoKi::LorentzVector& mom  ,
-  const Gaudi::SymMatrix4x4& cov  )
-{
-  const double dmass2 = mom.M2() - mass * mass ;
+double LoKi::Kinematics::chi2mass( const double mass, const LoKi::LorentzVector& mom, const Gaudi::SymMatrix4x4& cov ) {
+  const double dmass2 = mom.M2() - mass * mass;
 
   // reduced part of the projection matrix
-  Gaudi::Vector4 s_D = { -2 * mom.Px() ,
-                         -2 * mom.Py() ,
-                         -2 * mom.Pz() ,
-                          2 * mom.E () };
+  Gaudi::Vector4 s_D = {-2 * mom.Px(), -2 * mom.Py(), -2 * mom.Pz(), 2 * mom.E()};
   // evaluate chi2:
-  return dmass2*dmass2/ ROOT::Math::Similarity ( s_D , cov );
+  return dmass2 * dmass2 / ROOT::Math::Similarity( s_D, cov );
 }
 // ============================================================================
 /*  @evaluate the (cosine) of tansversity angle, e.g. for decay
@@ -511,28 +436,23 @@ double LoKi::Kinematics::chi2mass
  *  @date 2010-06-02
  */
 // ============================================================================
-double LoKi::Kinematics::cosThetaTr( const LoKi::LorentzVector& d1 ,
-                                     const LoKi::LorentzVector& d2 ,
-                                     const LoKi::LorentzVector& h1 ,
-                                     const LoKi::LorentzVector& h2 )
-{
+double LoKi::Kinematics::cosThetaTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                     const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
 
   // get the intermediate compound particles D
-  const LoKi::LorentzVector D ( d1 + d2 ) ;
+  const LoKi::LorentzVector D( d1 + d2 );
 
   // Evaluator of various tensor expressions:
-  LoKi::Tensors::Epsilon e ;
+  LoKi::Tensors::Epsilon e;
 
   // evaluate the length of normales :
-  const double l2 = e.mag2 ( h1 , h2 , D ) ; // == | [h1,h2,D] |
+  const double l2 = e.mag2( h1, h2, D ); // == | [h1,h2,D] |
   if ( 0 <= l2 ) {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::cosThetaTh () : L^2 >= 0, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+    LoKi::Report::Error( "LoKi::Kinematics::cosThetaTh () : L^2 >= 0, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  return  e.epsilon ( d1 , h1 , h2 , D ) /
-    restMomentum ( d1 , D ) / ::sqrt ( -l2 ) ;
+  return e.epsilon( d1, h1, h2, D ) / restMomentum( d1, D ) / ::sqrt( -l2 );
 }
 // ============================================================================
 /** evaluate the sine of transverse angle phi, e.g. for decay
@@ -559,30 +479,25 @@ double LoKi::Kinematics::cosThetaTr( const LoKi::LorentzVector& d1 ,
  *  @date 2010-06-02
  */
 // ===========================================================================
-double LoKi::Kinematics::cosPhiTr( const LoKi::LorentzVector& d1 ,
-                                   const LoKi::LorentzVector& d2 ,
-                                   const LoKi::LorentzVector& h1 ,
-                                   const LoKi::LorentzVector& h2 )
-{
+double LoKi::Kinematics::cosPhiTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                   const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
 
   // get the intermediate compound particles D & H
-  const LoKi::LorentzVector D ( d1 + d2 ) ;
-  const LoKi::LorentzVector H ( h1 + h2 ) ;
+  const LoKi::LorentzVector D( d1 + d2 );
+  const LoKi::LorentzVector H( h1 + h2 );
 
   // Evaluator of various tensor expressions:
-  LoKi::Tensors::Epsilon e ;
+  LoKi::Tensors::Epsilon e;
 
   // get "4-normal", that is z-axis here
-  LoKi::LorentzVector l  = e ( h1 , h2 , D ) ;
-  const double        l2 = l.M2() ;
-  if ( l2 >= 0 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::cosPhiTr () : L^2 >= 0, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+  LoKi::LorentzVector l  = e( h1, h2, D );
+  const double        l2 = l.M2();
+  if ( l2 >= 0 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::cosPhiTr () : L^2 >= 0, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  return cosThetaRest ( d1 - d1.Dot(l)/l2*l  , H  , D ) ;
+  return cosThetaRest( d1 - d1.Dot( l ) / l2 * l, H, D );
 }
 // ============================================================================
 /** evaluate the sine of transverse angle phi, e.g. for decay
@@ -623,34 +538,25 @@ double LoKi::Kinematics::cosPhiTr( const LoKi::LorentzVector& d1 ,
  *  @date 2010-06-02
  */
 // ============================================================================
-double LoKi::Kinematics::sinPhiTr
-( const LoKi::LorentzVector& d1 ,
-  const LoKi::LorentzVector& d2 ,
-  const LoKi::LorentzVector& h1 ,
-  const LoKi::LorentzVector& h2 )
-{
+double LoKi::Kinematics::sinPhiTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                   const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
   // get the intermediate compound particles D & H
-  const LoKi::LorentzVector D ( d1 + d2 ) ;
-  const LoKi::LorentzVector H ( h1 + h2 ) ;
+  const LoKi::LorentzVector D( d1 + d2 );
+  const LoKi::LorentzVector H( h1 + h2 );
 
   // Evaluator of various tensor expressions:
-  LoKi::Tensors::Epsilon e ;
+  LoKi::Tensors::Epsilon e;
 
   // get "4-normal", that is z-axis here
-  LoKi::LorentzVector l  = e ( h1 , h2 , D ) ;
-  const double        l2 = l.M2() ;
-  if ( l2 >= 0 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::sinPhiTr () : L^2 >= 0, return InvalidAngle" );
-    return LoKi::Constants::InvalidAngle ;
+  LoKi::LorentzVector l  = e( h1, h2, D );
+  const double        l2 = l.M2();
+  if ( l2 >= 0 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::sinPhiTr () : L^2 >= 0, return InvalidAngle" );
+    return LoKi::Constants::InvalidAngle;
   }
   //
-  return - e ( d1 , l , D , H  )
-    / ::sqrt         ( -l2     )
-    / ::sqrt         (  D.M2() )
-    / restMomentum   ( d1 - d1.Dot(l)/l2*l , D )
-    / restMomentum   ( H + D  , D ) ;
+  return -e( d1, l, D, H ) / ::sqrt( -l2 ) / ::sqrt( D.M2() ) / restMomentum( d1 - d1.Dot( l ) / l2 * l, D ) /
+         restMomentum( H + D, D );
 }
 // ============================================================================
 /** evaluate the transverse angle phi, \f$ \phi_{\mathrm{tr}}\f$,
@@ -675,33 +581,27 @@ double LoKi::Kinematics::sinPhiTr
  *  @date 2010-06-02
  */
 // ============================================================================
-double LoKi::Kinematics::anglePhiTr
-( const LoKi::LorentzVector& d1 ,
-  const LoKi::LorentzVector& d2 ,
-  const LoKi::LorentzVector& h1 ,
-  const LoKi::LorentzVector& h2 )
-{
-  const double cosChi = cosPhiTr ( d1 , d2 , h1 , h2 ) ;
-  const double sinChi = sinPhiTr ( d1 , d2 , h1 , h2 ) ;
+double LoKi::Kinematics::anglePhiTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                     const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 ) {
+  const double cosChi = cosPhiTr( d1, d2, h1, h2 );
+  const double sinChi = sinPhiTr( d1, d2, h1, h2 );
   //
-  return ::atan2 ( sinChi , cosChi ) ;
+  return ::atan2( sinChi, cosChi );
 }
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
-  inline double adjust_phi ( double angle )
-  {
-    static const double s_180 = 180 * Gaudi::Units::degree ;
-    static const double s_360 = 360 * Gaudi::Units::degree ;
+  inline double adjust_phi( double angle ) {
+    static const double s_180 = 180 * Gaudi::Units::degree;
+    static const double s_360 = 360 * Gaudi::Units::degree;
     //
-    while ( angle >      s_180 ) { angle -= s_360 ; }
-    while ( angle < -1 * s_180 ) { angle += s_360 ; }
+    while ( angle > s_180 ) { angle -= s_360; }
+    while ( angle < -1 * s_180 ) { angle += s_360; }
     //
-    return angle ;
+    return angle;
   }
   // ==========================================================================
-}
+} // namespace
 // ============================================================================
 /*  trivial function to calculate \f$ \Delta \eta \f$ for two particles
  *  @param p1 the first  particle
@@ -711,9 +611,9 @@ namespace
  *  @date 2012-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::deltaEta
-( const LoKi::LorentzVector& p1 ,
-  const LoKi::LorentzVector& p2 ) { return p1.Eta() - p2.Eta() ; }
+double LoKi::Kinematics::deltaEta( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 ) {
+  return p1.Eta() - p2.Eta();
+}
 // =============================================================================
 /*  trivial function to calculate \f$ \Delta \phi \f$ for two particles
  *  @param p1 the first  particle
@@ -724,14 +624,11 @@ double LoKi::Kinematics::deltaEta
  */
 // =============================================================================
 GAUDI_API
-double LoKi::Kinematics::deltaPhi
-( const LoKi::LorentzVector& p1 ,
-  const LoKi::LorentzVector& p2 )
-{
-  const double phi1 = std::atan2 ( p1.Py () , p1.Px () ) ;
-  const double phi2 = std::atan2 ( p2.Py () , p2.Px () ) ;
+double LoKi::Kinematics::deltaPhi( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 ) {
+  const double phi1 = std::atan2( p1.Py(), p1.Px() );
+  const double phi2 = std::atan2( p2.Py(), p2.Px() );
   //
-  return adjust_phi ( phi1 - phi2 ) ;
+  return adjust_phi( phi1 - phi2 );
 }
 // ============================================================================
 /*  trivial function to calculate \f$ \Delta R^2 \f$ for two particles
@@ -742,15 +639,12 @@ double LoKi::Kinematics::deltaPhi
  *  @date 2012-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::deltaR2
-( const LoKi::LorentzVector& p1 ,
-  const LoKi::LorentzVector& p2 )
-{
+double LoKi::Kinematics::deltaR2( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 ) {
   //
-  const double dphi = deltaPhi ( p1 , p2 ) ;
-  const double deta = deltaEta ( p1 , p2 ) ;
+  const double dphi = deltaPhi( p1, p2 );
+  const double deta = deltaEta( p1, p2 );
   //
-  return dphi * dphi + deta * deta ;
+  return dphi * dphi + deta * deta;
 }
 // ============================================================================
 /*  trivial function to calculate Kullback-Liebler divergency
@@ -764,17 +658,9 @@ double LoKi::Kinematics::deltaR2
  *  @date 2012-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::kullback
-( const LoKi::LorentzVector& p1 ,
-  const Gaudi::SymMatrix4x4& c1 ,
-  const LoKi::LorentzVector& p2 ,
-  const Gaudi::SymMatrix4x4& c2 )
-{
-  return kullback
-    ( p1.Vect()                             ,
-      c1.Sub<Gaudi::SymMatrix3x3> ( 0 , 0 ) ,
-      p2.Vect()                             ,
-      c2.Sub<Gaudi::SymMatrix3x3> ( 0 , 0 ) ) ;
+double LoKi::Kinematics::kullback( const LoKi::LorentzVector& p1, const Gaudi::SymMatrix4x4& c1,
+                                   const LoKi::LorentzVector& p2, const Gaudi::SymMatrix4x4& c2 ) {
+  return kullback( p1.Vect(), c1.Sub<Gaudi::SymMatrix3x3>( 0, 0 ), p2.Vect(), c2.Sub<Gaudi::SymMatrix3x3>( 0, 0 ) );
 }
 // ============================================================================
 /*  trivial function to calculate Kullback-Liebler divergency
@@ -788,29 +674,22 @@ double LoKi::Kinematics::kullback
  *  @date 2012-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::kullback
-( const LoKi::Vector3D&      p1 ,
-  const Gaudi::SymMatrix3x3& c1 ,
-  const LoKi::Vector3D&      p2 ,
-  const Gaudi::SymMatrix3x3& c2 )
-{
+double LoKi::Kinematics::kullback( const LoKi::Vector3D& p1, const Gaudi::SymMatrix3x3& c1, const LoKi::Vector3D& p2,
+                                   const Gaudi::SymMatrix3x3& c2 ) {
   //
-  if ( ( &p1 == &p2 || p1 == p2 ) &&
-       ( &c1 == &c2 || c1 == c2 ) ) { return 0 ; } // the same ?
+  if ( ( &p1 == &p2 || p1 == p2 ) && ( &c1 == &c2 || c1 == c2 ) ) { return 0; } // the same ?
   //
-  Gaudi::SymMatrix3x3 c_1 ( c1 ) ;
-  Gaudi::SymMatrix3x3 c_2 ( c2 ) ;
+  Gaudi::SymMatrix3x3 c_1( c1 );
+  Gaudi::SymMatrix3x3 c_2( c2 );
   //
-  c_1.Invert() ;
-  c_2.Invert() ;
+  c_1.Invert();
+  c_2.Invert();
   //
-  const Gaudi::SymMatrix3x3    diff ( c1  - c2  ) ;
-  const Gaudi::SymMatrix3x3 invDiff ( c_2 - c_1 ) ;
-  const Gaudi::SymMatrix3x3 invSum  ( c_2 + c_1 ) ;
+  const Gaudi::SymMatrix3x3 diff( c1 - c2 );
+  const Gaudi::SymMatrix3x3 invDiff( c_2 - c_1 );
+  const Gaudi::SymMatrix3x3 invSum( c_2 + c_1 );
   //
-  return
-    Gaudi::Math::trace      (   diff * invDiff ) +
-    Gaudi::Math::Similarity ( invSum , p1 - p2 ) ;
+  return Gaudi::Math::trace( diff * invDiff ) + Gaudi::Math::Similarity( invSum, p1 - p2 );
 }
 // ============================================================================
 /*  trivial function to calculate the "mass-distance"
@@ -822,72 +701,47 @@ double LoKi::Kinematics::kullback
  *  @date 2012-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::deltaM2
-( const LoKi::LorentzVector& p1 ,
-  const LoKi::LorentzVector& p2 )
-{
+double LoKi::Kinematics::deltaM2( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 ) {
   //
-  const double m2 =  ( p1 + p2 ).M2() ;
+  const double m2 = ( p1 + p2 ).M2();
   //
   // return ( m2 - 2 * p1.M2() - 2 * p2.M2() ) / m2 ;
   //
-  if ( &p1 == &p2 ) { return 0 ; }
+  if ( &p1 == &p2 ) { return 0; }
   //
-  if ( p1.x () == p2.x () &&  
-       p1.y () == p2.y () && 
-       p1.z () == p2.z () && 
-       p1.e () == p2.e () ) { return 0 ; }
+  if ( p1.x() == p2.x() && p1.y() == p2.y() && p1.z() == p2.z() && p1.e() == p2.e() ) { return 0; }
   //
-  const LoKi::ThreeVector   pp = 0.5 * ( p1.Vect() + p2.Vect() ) ;
+  const LoKi::ThreeVector pp = 0.5 * ( p1.Vect() + p2.Vect() );
   //
-  const double e1 = std::sqrt ( p1.M2() + pp.Mag2() ) ;
-  const double e2 = std::sqrt ( p2.M2() + pp.Mag2() ) ;
+  const double e1 = std::sqrt( p1.M2() + pp.Mag2() );
+  const double e2 = std::sqrt( p2.M2() + pp.Mag2() );
   //
-  const LoKi::LorentzVector v1 { pp.x() , pp.y() , pp.z() , e1 } ;
-  const LoKi::LorentzVector v2 { pp.x() , pp.y() , pp.z() , e2 } ;
+  const LoKi::LorentzVector v1{pp.x(), pp.y(), pp.z(), e1};
+  const LoKi::LorentzVector v2{pp.x(), pp.y(), pp.z(), e2};
   //
-  return ( m2 - ( v1 + v2 ).M2() ) / m2 ;  
+  return ( m2 - ( v1 + v2 ).M2() ) / m2;
   //
 }
 // ============================================================================
 /*  trivial function to calculate the mass-distance
- *  but first assign the same mass fro both momenta 
+ *  but first assign the same mass fro both momenta
  *  @param p1 the first  particle
  *  @param p2 the second particle
- *  @param mass the amss to be assigned 
+ *  @param mass the amss to be assigned
  *  @return mass-difference
  *  @see LoKi::Kinematics::deltaM2
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2018-11-15
  */
 // ============================================================================
-double LoKi::Kinematics::deltaM2 ( const LoKi::LorentzVector& p1 ,
-                                   const LoKi::LorentzVector& p2 , 
-                                   const double mass             )
-{
-  const double e1 = std::sqrt ( mass * mass + p1.Vect().Mag2() ) ;
-  const double e2 = std::sqrt ( mass * mass + p2.Vect().Mag2() ) ;
+double LoKi::Kinematics::deltaM2( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2, const double mass ) {
+  const double e1 = std::sqrt( mass * mass + p1.Vect().Mag2() );
+  const double e2 = std::sqrt( mass * mass + p2.Vect().Mag2() );
   //
-  const LoKi::LorentzVector v1 { p1.x() , p1.y() , p1.z() , e1 } ;
-  const LoKi::LorentzVector v2 { p2.x() , p2.y() , p2.z() , e2 } ;
+  const LoKi::LorentzVector v1{p1.x(), p1.y(), p1.z(), e1};
+  const LoKi::LorentzVector v2{p2.x(), p2.y(), p2.z(), e2};
   //
-  return deltaM2 ( v1 , v2 ) ;
-}  
-// ============================================================================
-/*  trivial function to calculate the delta-angle
- *  @param p1 the first  particle
- *  @param p2 the second particle
- *  @return the angle between vectors
- *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
- *  @date 2012-01-17
- */
-// ============================================================================
-double LoKi::Kinematics::deltaAlpha
-( const LoKi::Vector3D& p1 ,
-  const LoKi::Vector3D& p2 )
-{
-  const double val = p1.Unit().Dot( p2.Unit() ) ;
-  return std::acos ( val ) ;
+  return deltaM2( v1, v2 );
 }
 // ============================================================================
 /*  trivial function to calculate the delta-angle
@@ -898,11 +752,21 @@ double LoKi::Kinematics::deltaAlpha
  *  @date 2012-01-17
  */
 // ============================================================================
-double LoKi::Kinematics::deltaAlpha
-( const LoKi::LorentzVector& p1 ,
-  const LoKi::LorentzVector& p2 )
-{
-  return deltaAlpha ( p1.Vect() , p2.Vect() ) ;
+double LoKi::Kinematics::deltaAlpha( const LoKi::Vector3D& p1, const LoKi::Vector3D& p2 ) {
+  const double val = p1.Unit().Dot( p2.Unit() );
+  return std::acos( val );
+}
+// ============================================================================
+/*  trivial function to calculate the delta-angle
+ *  @param p1 the first  particle
+ *  @param p2 the second particle
+ *  @return the angle between vectors
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date 2012-01-17
+ */
+// ============================================================================
+double LoKi::Kinematics::deltaAlpha( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 ) {
+  return deltaAlpha( p1.Vect(), p2.Vect() );
 }
 // ============================================================================
 /* trivial functon to get the component of "a" parallel to "b"
@@ -913,24 +777,18 @@ double LoKi::Kinematics::deltaAlpha
  *  @date 2015-02-04
  */
 // ============================================================================
-LoKi::ThreeVector
-LoKi::Kinematics::parallel
-( const LoKi::ThreeVector& a ,
-  const LoKi::ThreeVector& b )
-{
+LoKi::ThreeVector LoKi::Kinematics::parallel( const LoKi::ThreeVector& a, const LoKi::ThreeVector& b ) {
   //
-  const double ab = a.Dot ( b ) ;
-  const double b2 = b.Mag2()    ;
-  if ( 0 >= b2 )
-  {
-    LoKi::Report::Error
-      ( "LoKi::Kinematics::parallel () : b^2<=0 return vector a itself" );
-    return a ;
+  const double ab = a.Dot( b );
+  const double b2 = b.Mag2();
+  if ( 0 >= b2 ) {
+    LoKi::Report::Error( "LoKi::Kinematics::parallel () : b^2<=0 return vector a itself" );
+    return a;
   }
   //
-  LoKi::ThreeVector r ( b ) ;
-  r *= ( ab / b2 ) ;
-  return r ;
+  LoKi::ThreeVector r( b );
+  r *= ( ab / b2 );
+  return r;
 }
 // ============================================================================
 /* trivial functon to get the component of "a", transverse to "b"
@@ -941,10 +799,9 @@ LoKi::Kinematics::parallel
  *  @date 2015-02-04
  */
 // ============================================================================
-LoKi::ThreeVector
-LoKi::Kinematics::perpendicular
-( const LoKi::ThreeVector& a ,
-  const LoKi::ThreeVector& b ) { return transverse ( a , b ) ; }
+LoKi::ThreeVector LoKi::Kinematics::perpendicular( const LoKi::ThreeVector& a, const LoKi::ThreeVector& b ) {
+  return transverse( a, b );
+}
 // ============================================================================
 /* trivial functon to get the component of "a", transverse to "b"
  *  @param a (INPUT)  three vector
@@ -954,28 +811,22 @@ LoKi::Kinematics::perpendicular
  *  @date 2015-02-04
  */
 // ============================================================================
-LoKi::ThreeVector
-LoKi::Kinematics::transverse
-( const LoKi::ThreeVector& a ,
-  const LoKi::ThreeVector& b ) { return a - parallel ( a , b ) ; }
+LoKi::ThreeVector LoKi::Kinematics::transverse( const LoKi::ThreeVector& a, const LoKi::ThreeVector& b ) {
+  return a - parallel( a, b );
+}
 // ========================================================================
 
-
 // ============================================================================
-/*  Boost LorentzVector into rest-frame of another Lorentz vector 
- *  @param what   the vextro to be bosted 
- *  @param frame  the 4-vector of the frame 
- *  @return boosted vector 
+/*  Boost LorentzVector into rest-frame of another Lorentz vector
+ *  @param what   the vextro to be bosted
+ *  @param frame  the 4-vector of the frame
+ *  @return boosted vector
  */
 // ============================================================================
-LoKi::LorentzVector LoKi::Kinematics::boost 
-( const LoKi::LorentzVector& what  ,
-  const LoKi::LorentzVector& frame )
-{
-  const ROOT::Math::Boost b { frame.BoostToCM() } ;
-  return b ( what ) ;
+LoKi::LorentzVector LoKi::Kinematics::boost( const LoKi::LorentzVector& what, const LoKi::LorentzVector& frame ) {
+  const ROOT::Math::Boost b{frame.BoostToCM()};
+  return b( what );
 }
 // ============================================================================
 // The END
 // ============================================================================
-

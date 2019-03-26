@@ -13,13 +13,11 @@
 /// Include files
 #include <string>
 /// GaudiKernel
-#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/GaudiException.h"
-
+#include "GaudiKernel/Kernel.h"
 
 /// Error codes used for XmlCnvException handling
-enum Status
-{
+enum Status {
   CANT_QUERY_INTERFACE = 2,
   CANT_RETRIEVE_OBJECT,
   INVALID_CLASS_ID,
@@ -32,23 +30,20 @@ enum Status
 };
 
 ///
-class XmlCnvException: public GaudiException
-{
+class XmlCnvException : public GaudiException {
 public:
   ///
-  inline XmlCnvException( const std::string    & message                       ,
-                          const StatusCode     & sc      = StatusCode::FAILURE );
-  inline XmlCnvException( const std::string    & message                       ,
-                          const GaudiException & ge                            ,
-                          const StatusCode     & sc      = StatusCode::FAILURE );
-  inline XmlCnvException( const std::string& message, const Status sc ): XmlCnvException( message, StatusCode{sc} ) {}
-  inline XmlCnvException( const XmlCnvException& ) ;
+  inline XmlCnvException( const std::string& message, const StatusCode& sc = StatusCode::FAILURE );
+  inline XmlCnvException( const std::string& message, const GaudiException& ge,
+                          const StatusCode& sc = StatusCode::FAILURE );
+  inline XmlCnvException( const std::string& message, const Status sc ) : XmlCnvException( message, StatusCode{sc} ) {}
+  inline XmlCnvException( const XmlCnvException& );
   ///
   virtual inline ~XmlCnvException() throw();
   ///
-  inline const char*       getMessage () const;
-  inline const char*       getType    () const;
-  inline const StatusCode& status     () const;
+  inline const char*       getMessage() const;
+  inline const char*       getType() const;
+  inline const StatusCode& status() const;
   ///
   inline GaudiException* clone() const override;
   ///
@@ -57,19 +52,4 @@ public:
 #include "DetDescCnv/XmlCnvException.icpp"
 ///
 
-
 #endif // DETDESCCNV_XMLCNVSVC_XMLCNVEXCEPTION_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-

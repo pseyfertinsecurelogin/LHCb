@@ -11,14 +11,13 @@
 #ifndef L0MUONKERNEL_L0BUFFERCNV_H
 #define L0MUONKERNEL_L0BUFFERCNV_H
 
-
 #include "Kernel/MuonTileID.h"
-#include "ProcessorKernel/TileRegister.h"
 #include "L0MuonKernel/CandRegisterHandler.h"
-#include <string>
-#include <map>
-#include <vector>
+#include "ProcessorKernel/TileRegister.h"
 #include <fstream>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace L0Muon {
 
@@ -45,19 +44,18 @@ namespace L0Muon {
   class L0BufferCnv {
 
   public:
-
     /** Constructor
 
     @param id : MuonTileID of the FPGA attached to the L0Buffer
 
     */
-    L0BufferCnv(LHCb::MuonTileID id);
+    L0BufferCnv( LHCb::MuonTileID id );
 
     /// Destructor
     virtual ~L0BufferCnv();
 
     /// Get the L0Buffer type
-    virtual std::string type() =0;
+    virtual std::string type() = 0;
 
     /** Open the output file
 
@@ -67,7 +65,7 @@ namespace L0Muon {
 
         @param path : directory where the file should be written
     */
-    void open(std::string path);
+    void open( std::string path );
 
     /// Close the output file.
     void close();
@@ -76,22 +74,20 @@ namespace L0Muon {
 
         @param ievt : current event number
     */
-    virtual void write(int ievt) =0;
+    virtual void write( int ievt ) = 0;
 
     /// Returns MuonTileID associated to the L0Buffer converter.
-    LHCb::MuonTileID mid(){return m_mid;}
-
+    LHCb::MuonTileID mid() { return m_mid; }
 
   protected:
     LHCb::MuonTileID m_mid; ///< MuonTileID of the FPGA associated to the L0Buffer converter
 
     std::ofstream m_file; ///< Output file where the L0Buffer is written
 
-    bool m_valid;         ///< Flag indicating whether the L0Buffer is valid.
-                          ///< Set to true in the constructor of the speciliazed class
-                          ///< if the necessary registers have been found.
-
+    bool m_valid; ///< Flag indicating whether the L0Buffer is valid.
+                  ///< Set to true in the constructor of the speciliazed class
+                  ///< if the necessary registers have been found.
   };
 } // namespace L0Muon
 
-#endif    // L0MUONKERNEL_L0BUFFERCNV_H
+#endif // L0MUONKERNEL_L0BUFFERCNV_H

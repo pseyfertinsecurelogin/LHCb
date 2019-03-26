@@ -20,11 +20,11 @@
  *  @date   2008-07-14
  */
 
-#include <sstream>
 #include <map>
+#include <sstream>
 #include <string>
 
-namespace STBoardMapping{
+namespace STBoardMapping {
 
   typedef std::map<unsigned int, unsigned int> Map;
 
@@ -35,10 +35,10 @@ namespace STBoardMapping{
   const Map& UTSourceIDToNumberMap();
   const Map& UTNumberToSourceIDMap();
 
-  enum endValue {notFound = 999};
+  enum endValue { notFound = 999 };
 
   /** trivial helper to find entries in the map safely */
-  unsigned int find(const unsigned int key, const Map& testMap);
+  unsigned int find( const unsigned int key, const Map& testMap );
 
   /** printout the TT mapping */
   std::string printTTMap();
@@ -50,13 +50,13 @@ namespace STBoardMapping{
   std::string printUTMap();
 
   void ClearUTMap();
-  void AddUTMapEntry(unsigned int sourceID, unsigned int number);
+  void AddUTMapEntry( unsigned int sourceID, unsigned int number );
 
-}
+} // namespace STBoardMapping
 
-inline unsigned int STBoardMapping::find(const unsigned int key, const STBoardMapping::Map& testMap){
-  auto iter = testMap.find(key);
-  return (iter == testMap.end() ? (unsigned int)STBoardMapping::notFound : iter->second);
+inline unsigned int STBoardMapping::find( const unsigned int key, const STBoardMapping::Map& testMap ) {
+  auto iter = testMap.find( key );
+  return ( iter == testMap.end() ? (unsigned int)STBoardMapping::notFound : iter->second );
 }
 
 #endif // STBOARDMAPPING_H

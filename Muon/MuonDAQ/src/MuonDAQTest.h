@@ -13,9 +13,8 @@
 
 // Include files
 
-#include "MuonDAQ/IMuonRawBuffer.h"
 #include "Event/MuonDigit.h"
-
+#include "MuonDAQ/IMuonRawBuffer.h"
 
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -30,8 +29,8 @@ public:
   /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
   IMuonRawBuffer* m_MuonBuffer = nullptr;

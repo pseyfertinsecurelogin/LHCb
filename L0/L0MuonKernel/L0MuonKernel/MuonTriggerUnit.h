@@ -9,12 +9,10 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_MUONTRIGGERUNIT_H
-#define L0MUONKERNEL_MUONTRIGGERUNIT_H     1
+#define L0MUONKERNEL_MUONTRIGGERUNIT_H 1
 
-
-
-#include <vector>
 #include "L0MuonKernel/L0MUnit.h"
+#include <vector>
 
 namespace L0Muon {
 
@@ -37,23 +35,18 @@ namespace L0Muon {
   class MuonTriggerUnit : public L0MUnit {
 
   public:
-
     /// Constructor
     MuonTriggerUnit();
 
     /// Constructor
-    MuonTriggerUnit(DOMNode* pNode);
+    MuonTriggerUnit( DOMNode* pNode );
 
     /// Destructor
     ~MuonTriggerUnit();
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "MuonTriggerUnit";
-    }
-
-
+    std::string type() override { return "MuonTriggerUnit"; }
   };
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_MUONTRIGGERPROCESSORUNIT_H
+#endif // L0MUONKERNEL_MUONTRIGGERPROCESSORUNIT_H

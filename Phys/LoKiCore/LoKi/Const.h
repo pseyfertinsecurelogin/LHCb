@@ -28,8 +28,7 @@
  *  @date 2006-03-29
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @struct Const LoKi/Const.h
    *  Auxillary structure to define "const-traits"
@@ -37,16 +36,19 @@ namespace LoKi
    *  @date   2006-03-29
    */
   template <class TYPE>
-  struct  Const
-  { typedef           std::add_const_t<TYPE>           Value ; } ;
+  struct Const {
+    typedef std::add_const_t<TYPE> Value;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct  Const<TYPE*>
-  { typedef std::add_const_t<TYPE> * const Value ; } ;
+  struct Const<TYPE*> {
+    typedef std::add_const_t<TYPE>* const Value;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct  Const<TYPE&>
-  { typedef std::add_const_t<TYPE> const &       Value ; } ;
+  struct Const<TYPE&> {
+    typedef std::add_const_t<TYPE> const& Value;
+  };
   // ==========================================================================
   /** @struct NonConst LoKi/Const.h
    *  Auxillary structure to define "const-traits"
@@ -54,16 +56,19 @@ namespace LoKi
    *  @date   2010-07-30
    */
   template <class TYPE>
-  struct  NonConst
-  { typedef        std::remove_const_t<TYPE>           Value ; } ;
+  struct NonConst {
+    typedef std::remove_const_t<TYPE> Value;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct  NonConst<TYPE*>
-  { typedef std::remove_const_t<TYPE>*                 Value ; } ;
+  struct NonConst<TYPE*> {
+    typedef std::remove_const_t<TYPE>* Value;
+  };
   // ==========================================================================
   template <class TYPE>
-  struct  NonConst<TYPE&>
-  { typedef std::remove_const_t<TYPE>&                 Value ; } ;
+  struct NonConst<TYPE&> {
+    typedef std::remove_const_t<TYPE>& Value;
+  };
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

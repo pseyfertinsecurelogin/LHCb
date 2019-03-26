@@ -8,14 +8,13 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MCAssociatorsDict.h,v 1.11 2009/09/24 07:13:55 jpalac Exp $
-#ifndef DICT_MCASSOCIATORSDICT_H 
+#ifndef DICT_MCASSOCIATORSDICT_H
 #define DICT_MCASSOCIATORSDICT_H 1
 
 // Include files
 
 /** @file MCAssociatorsDict MCAssociatorsDict.h
- *  
+ *
  *
  *  @author V. Gligorov
  *  @date   2009-02-10
@@ -26,8 +25,7 @@
 #include "Kernel/MCAssociation.h"
 #include <vector>
 
-namespace 
-{ 
+namespace {
   std::vector<MCAssociation> __stdvector_MCAssoc;
 }
 

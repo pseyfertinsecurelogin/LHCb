@@ -22,8 +22,7 @@
 // ============================================================================
 #include "DetDesc/ITransportSvc.h"
 // ============================================================================
-namespace DetDesc
-{
+namespace DetDesc {
   // ==========================================================================
   /** @class IGeometryErrorSvc DetDesc/IGeometryErrorSvc.h
    *
@@ -31,8 +30,7 @@ namespace DetDesc
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-12-14
    */
-  struct IGeometryErrorSvc : virtual IService
-  {
+  struct IGeometryErrorSvc : virtual IService {
     // ========================================================================
     /** set/reset the current "status" of geometry erorrs
      *  @param sc the status code
@@ -40,8 +38,7 @@ namespace DetDesc
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-12-14
      */
-    virtual void setCode
-    ( const StatusCode& sc , const ILVolume*   volume ) = 0 ;
+    virtual void setCode( const StatusCode& sc, const ILVolume* volume ) = 0;
     // ========================================================================
     /** inspect the potential error in intersections
      *  @param  volume   the problematic volume
@@ -51,11 +48,8 @@ namespace DetDesc
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-12-14
      */
-    virtual void inspect
-    ( const ILVolume*                volume ,
-      const Gaudi::XYZPoint&         pnt    ,
-      const Gaudi::XYZVector&        vect   ,
-      const ILVolume::Intersections& cnt    ) = 0 ;
+    virtual void inspect( const ILVolume* volume, const Gaudi::XYZPoint& pnt, const Gaudi::XYZVector& vect,
+                          const ILVolume::Intersections& cnt ) = 0;
     // ========================================================================
     /** report the recovered action in intersections
      *  @param  volume    the problematic volume
@@ -65,11 +59,8 @@ namespace DetDesc
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-12-14
      */
-    virtual void recovered
-    ( const ILVolume* volume    ,
-      const Material* material1 ,
-      const Material* material2 ,
-      const double    delta     ) = 0 ;
+    virtual void recovered( const ILVolume* volume, const Material* material1, const Material* material2,
+                            const double delta ) = 0;
     // ========================================================================
     /** report the skipped intersection
      *  @param  volume   the problematic volume
@@ -78,13 +69,10 @@ namespace DetDesc
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-12-14
      */
-    virtual void skip
-    ( const ILVolume* volume   ,
-      const Material* material ,
-      const double    delta    ) = 0 ;
+    virtual void skip( const ILVolume* volume, const Material* material, const double delta ) = 0;
     // ========================================================================
     /// Retrieve the unique interface ID
-    static const InterfaceID& interfaceID() ;
+    static const InterfaceID& interfaceID();
   };
   // ==========================================================================
 } // end of namespace DetDesc

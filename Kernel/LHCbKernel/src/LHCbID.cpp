@@ -16,17 +16,16 @@
 // 2007-07-11 : Chris Jones
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::LHCbID::fillStream(std::ostream& s) const
-{
+std::ostream& LHCb::LHCbID::fillStream( std::ostream& s ) const {
   s << "{ LHCbID : ";
-  if (isVelo()) { s << veloID(); }
-  if (isVP())   { s << vpID();   }
-  if (isST())   { s << stID();   }
-  if (isUT())   { s << utID();   }
-  if (isOT())   { s << otID();   }
-  if (isRich()) { s << richID(); }
-  if (isCalo()) { s << caloID(); }
-  if (isMuon()) { s << muonID(); }
-  if (isFT())   { s << ftID();   }
+  if ( isVelo() ) { s << veloID(); }
+  if ( isVP() ) { s << vpID(); }
+  if ( isST() ) { s << stID(); }
+  if ( isUT() ) { s << utID(); }
+  if ( isOT() ) { s << otID(); }
+  if ( isRich() ) { s << richID(); }
+  if ( isCalo() ) { s << caloID(); }
+  if ( isMuon() ) { s << muonID(); }
+  if ( isFT() ) { s << ftID(); }
   return s << " }";
 }

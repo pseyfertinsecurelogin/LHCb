@@ -42,19 +42,10 @@
  *  @date 2016-07-23
  */
 // ============================================================================
-double Gaudi::Math::Interpolation::lagrange
-( const std::vector<double>& xs ,
-  const std::vector<double>& ys ,
-  const double               x  )
-{
-  return lagrange ( xs.begin () ,
-                    xs.end   () ,
-                    ys.begin () ,
-                    ys.end   () ,
-                    x           ,
-                    0.0         ,
-                    [] ( double x ) { return x ; } ,
-                    [] ( double y ) { return y ; } ) ;
+double Gaudi::Math::Interpolation::lagrange( const std::vector<double>& xs, const std::vector<double>& ys,
+                                             const double x ) {
+  return lagrange( xs.begin(), xs.end(), ys.begin(), ys.end(), x, 0.0, []( double x ) { return x; },
+                   []( double y ) { return y; } );
 }
 // ============================================================================
 /*  very simple lagrange interpolation
@@ -71,18 +62,9 @@ double Gaudi::Math::Interpolation::lagrange
  *  @date 2016-07-23
  */
 // ============================================================================
-double Gaudi::Math::Interpolation::lagrange
-( const Gaudi::Math::Interpolation::DATA& data ,
-  const double                            x  )
-{
-  return lagrange ( data.begin () ,
-                    data.end   () ,
-                    data.begin () ,
-                    data.end   () ,
-                    x             ,
-                    0.0           ,
-                    [] ( auto i ) { return i.first  ; } ,
-                    [] ( auto i ) { return i.second ; } ) ;
+double Gaudi::Math::Interpolation::lagrange( const Gaudi::Math::Interpolation::DATA& data, const double x ) {
+  return lagrange( data.begin(), data.end(), data.begin(), data.end(), x, 0.0, []( auto i ) { return i.first; },
+                   []( auto i ) { return i.second; } );
 }
 // ============================================================================
 /*  Simple lagrange interpolation
@@ -104,34 +86,23 @@ double Gaudi::Math::Interpolation::lagrange
  *  @date 2016-07-23
  */
 // ============================================================================
-std::pair<double,double>
-Gaudi::Math::Interpolation::lagrange2
-( const std::vector<double>& xs ,
-  const std::vector<double>& ys ,
-  const double               x  ,
-  const unsigned int         iy )
-{
-  const double r = lagrange ( xs.begin () ,
-                              xs.end   () ,
-                              ys.begin () ,
-                              ys.end   () ,
-                              x           ,
-                              0.0         ,
-                              [] ( double x )  { return x ; } ,
-                              [] ( double y )  { return y ; } ) ;
+std::pair<double, double> Gaudi::Math::Interpolation::lagrange2( const std::vector<double>& xs,
+                                                                 const std::vector<double>& ys, const double x,
+                                                                 const unsigned int iy ) {
+  const double r = lagrange( xs.begin(), xs.end(), ys.begin(), ys.end(), x, 0.0, []( double x ) { return x; },
+                             []( double y ) { return y; } );
   //
-  if  ( ys.size() <= iy || xs.size() <= iy ) { return { r , 0. } ; } // RETURN
+  if ( ys.size() <= iy || xs.size() <= iy ) { return {r, 0.}; } // RETURN
   //
-  double  d = 1 ;
-  const unsigned int nx = xs.size() ;
-  const double       xi = xs[iy]    ;
-  for ( unsigned int jx = 0  ; jx < nx ; ++jx )
-  {
-    if ( jx == iy ) { continue ; }
-    const double xj = xs[jx] ;
-    d *= ( x - xj ) / ( xi - xj ) ;
+  double             d  = 1;
+  const unsigned int nx = xs.size();
+  const double       xi = xs[iy];
+  for ( unsigned int jx = 0; jx < nx; ++jx ) {
+    if ( jx == iy ) { continue; }
+    const double xj = xs[jx];
+    d *= ( x - xj ) / ( xi - xj );
   }
-  return { r, d } ;
+  return {r, d};
 }
 // ============================================================================
 /*  Simple lagrange interpolation
@@ -150,33 +121,22 @@ Gaudi::Math::Interpolation::lagrange2
  *  @date 2016-07-23
  */
 // ============================================================================
-std::pair<double,double>
-Gaudi::Math::Interpolation::lagrange2
-( const Gaudi::Math::Interpolation::DATA& data ,
-  const double                            x    ,
-  const unsigned int                      iy   )
-{
-  const double r = lagrange ( data.begin () ,
-                              data.end   () ,
-                              data.begin () ,
-                              data.end   () ,
-                              x             ,
-                              0.0           ,
-                              [] ( auto i ) { return i.first  ; } ,
-                              [] ( auto i ) { return i.second ; } ) ;
+std::pair<double, double> Gaudi::Math::Interpolation::lagrange2( const Gaudi::Math::Interpolation::DATA& data,
+                                                                 const double x, const unsigned int iy ) {
+  const double r = lagrange( data.begin(), data.end(), data.begin(), data.end(), x, 0.0,
+                             []( auto i ) { return i.first; }, []( auto i ) { return i.second; } );
   //
-  if  ( data.size() <= iy ) { return { r , 0. } ; } // RETURN
+  if ( data.size() <= iy ) { return {r, 0.}; } // RETURN
   //
-  double  d = 1 ;
-  const unsigned int nx = data.size()    ;
-  const double       xi = data[iy].first ;
-  for ( unsigned int jx = 0  ; jx < nx ; ++jx )
-  {
-    if ( jx == iy ) { continue ; }
-    const double xj = data[jx].first ;
-    d *= ( x - xj ) / ( xi - xj ) ;
+  double             d  = 1;
+  const unsigned int nx = data.size();
+  const double       xi = data[iy].first;
+  for ( unsigned int jx = 0; jx < nx; ++jx ) {
+    if ( jx == iy ) { continue; }
+    const double xj = data[jx].first;
+    d *= ( x - xj ) / ( xi - xj );
   }
-  return { r, d } ;
+  return {r, d};
 }
 // ============================================================================
 /** very simple Neville's interpolation
@@ -196,16 +156,10 @@ Gaudi::Math::Interpolation::lagrange2
  *  @date 2016-07-23
  */
 // ============================================================================
-double Gaudi::Math::Interpolation::neville
-( const std::vector<double>& xs ,
-  const std::vector<double>& ys ,
-  const double               x  )
-{
-  return neville ( xs.begin() , xs.end  () ,
-                   ys.begin() , ys.end  () ,
-                   x          ,
-                   [] ( double x ) { return x ; } ,
-                   [] ( double y ) { return y ; } ) ;
+double Gaudi::Math::Interpolation::neville( const std::vector<double>& xs, const std::vector<double>& ys,
+                                            const double x ) {
+  return neville( xs.begin(), xs.end(), ys.begin(), ys.end(), x, []( double x ) { return x; },
+                  []( double y ) { return y; } );
 }
 // ============================================================================
 /*  very simple Neville interpolation
@@ -222,16 +176,10 @@ double Gaudi::Math::Interpolation::neville
  *  @date 2016-07-23
  */
 // ============================================================================
-double Gaudi::Math::Interpolation::neville
-( const Gaudi::Math::Interpolation::DATA& data , const double x  )
-{
-  return neville ( data.begin () ,
-                   data.end   () ,
-                   data.begin () ,
-                   data.end   () ,
-                   x             ,
-                   [] ( const std::pair<double,double>& i ) { return i.first  ; } ,
-                   [] ( const std::pair<double,double>& i ) { return i.second ; } );
+double Gaudi::Math::Interpolation::neville( const Gaudi::Math::Interpolation::DATA& data, const double x ) {
+  return neville( data.begin(), data.end(), data.begin(), data.end(), x,
+                  []( const std::pair<double, double>& i ) { return i.first; },
+                  []( const std::pair<double, double>& i ) { return i.second; } );
 }
 // ============================================================================
 /** very simple Neville's interpolation
@@ -252,17 +200,10 @@ double Gaudi::Math::Interpolation::neville
  *  @date 2016-07-23
  */
 // ============================================================================
-std::pair<double,double>
-Gaudi::Math::Interpolation::neville2
-( const std::vector<double>& xs ,
-  const std::vector<double>& ys ,
-  const double               x  )
-{
-  return neville2 ( xs.begin() , xs.end  () ,
-                    ys.begin() , ys.end  () ,
-                    x          ,
-                    [] ( double x ) { return x ; } ,
-                    [] ( double y ) { return y ; } ) ;
+std::pair<double, double> Gaudi::Math::Interpolation::neville2( const std::vector<double>& xs,
+                                                                const std::vector<double>& ys, const double x ) {
+  return neville2( xs.begin(), xs.end(), ys.begin(), ys.end(), x, []( double x ) { return x; },
+                   []( double y ) { return y; } );
 }
 // ============================================================================
 /*  very simple Neville interpolation
@@ -280,23 +221,14 @@ Gaudi::Math::Interpolation::neville2
  *  @date 2016-07-23
  */
 // ============================================================================
-std::pair<double,double>
-Gaudi::Math::Interpolation::neville2
-( const Gaudi::Math::Interpolation::DATA& data , const double x  )
-{
-  return neville2 ( data.begin () ,
-                    data.end   () ,
-                    data.begin () ,
-                    data.end   () ,
-                    x             ,
-                    [] ( const std::pair<double,double>& i ) { return i.first  ; } ,
-                    [] ( const std::pair<double,double>& i ) { return i.second ; } );
+std::pair<double, double> Gaudi::Math::Interpolation::neville2( const Gaudi::Math::Interpolation::DATA& data,
+                                                                const double                            x ) {
+  return neville2( data.begin(), data.end(), data.begin(), data.end(), x,
+                   []( const std::pair<double, double>& i ) { return i.first; },
+                   []( const std::pair<double, double>& i ) { return i.second; } );
 }
 // ============================================================================
-
-
 
 // ============================================================================
 //  The END
 // ============================================================================
-

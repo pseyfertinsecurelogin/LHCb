@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef DICT_PHYSINTERFACESDICT_H 
+#ifndef DICT_PHYSINTERFACESDICT_H
 #define DICT_PHYSINTERFACESDICT_H 1
 // ============================================================================
 // Include files

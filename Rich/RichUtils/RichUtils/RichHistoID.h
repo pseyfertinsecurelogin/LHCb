@@ -30,8 +30,7 @@
 // Gaudi
 #include "GaudiAlg/HistoID.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class HistogramID RichUtils/RichHistoID.h
@@ -55,10 +54,20 @@ namespace Rich
    *  @date   10/02/2010
    */
   //-----------------------------------------------------------------------------
-  class HistogramID final
-  {
+  class HistogramID final {
 
   public:
+    /** Constructor with RICH specific information
+     *  @param id    Histogram string ID
+     *  @param det   The RICH detector
+     *  @param side  The side of the RICH detector
+     *  @param rad   The radiator medium
+     *  @param pid   The mass hypothesis
+     */
+    HistogramID( const std::string& id, const Rich::DetectorType det = Rich::InvalidDetector,
+                 const Rich::Side side = Rich::InvalidSide, const Rich::RadiatorType rad = Rich::InvalidRadiator,
+                 const Rich::ParticleIDType pid = Rich::Unknown )
+        : m_id( id ), m_data( det, side, rad, pid ) {}
 
     /** Constructor with RICH specific information
      *  @param id    Histogram string ID
@@ -67,57 +76,31 @@ namespace Rich
      *  @param rad   The radiator medium
      *  @param pid   The mass hypothesis
      */
-    HistogramID( const std::string &        id,
-                 const Rich::DetectorType   det  = Rich::InvalidDetector,
-                 const Rich::Side           side = Rich::InvalidSide,
-                 const Rich::RadiatorType   rad  = Rich::InvalidRadiator,
-                 const Rich::ParticleIDType pid  = Rich::Unknown )
-      : m_id( id ), m_data( det, side, rad, pid )
-    {}
-
-    /** Constructor with RICH specific information
-     *  @param id    Histogram string ID
-     *  @param det   The RICH detector
-     *  @param side  The side of the RICH detector
-     *  @param rad   The radiator medium
-     *  @param pid   The mass hypothesis
-     */
-    HistogramID( const std::string &        id,
-                 const Rich::Side           side,
-                 const Rich::RadiatorType   rad = Rich::InvalidRadiator,
+    HistogramID( const std::string& id, const Rich::Side side, const Rich::RadiatorType rad = Rich::InvalidRadiator,
                  const Rich::ParticleIDType pid = Rich::Unknown )
-      : m_id( id )
-      , m_data( ( rad == Rich::Rich2Gas ?
-                    Rich::Rich2 :
-                    rad == Rich::Rich1Gas ?
-                    Rich::Rich1 :
-                    rad == Rich::Aerogel ? Rich::Rich1 : Rich::InvalidDetector ),
-                side,
-                rad,
-                pid )
-    {}
+        : m_id( id )
+        , m_data( ( rad == Rich::Rich2Gas
+                        ? Rich::Rich2
+                        : rad == Rich::Rich1Gas ? Rich::Rich1
+                                                : rad == Rich::Aerogel ? Rich::Rich1 : Rich::InvalidDetector ),
+                  side, rad, pid ) {}
 
     /** Constructor with RICH specific information
      *  @param id    Histogram string ID
      *  @param rad   The radiator medium
      *  @param pid   The mass hypothesis
      */
-    HistogramID( const std::string &        id,
-                 const Rich::RadiatorType   rad,
-                 const Rich::ParticleIDType pid = Rich::Unknown )
-      : m_id( id ), m_data( Rich::InvalidDetector, Rich::InvalidSide, rad, pid )
-    {}
+    HistogramID( const std::string& id, const Rich::RadiatorType rad, const Rich::ParticleIDType pid = Rich::Unknown )
+        : m_id( id ), m_data( Rich::InvalidDetector, Rich::InvalidSide, rad, pid ) {}
 
     /** Constructor with RICH specific information
      *  @param id    Histogram string ID
      *  @param pid   The mass hypothesis
      */
-    HistogramID( const std::string &id, const Rich::ParticleIDType pid )
-      : m_id( id ), m_data( Rich::InvalidDetector, Rich::InvalidSide, Rich::InvalidRadiator, pid )
-    {}
+    HistogramID( const std::string& id, const Rich::ParticleIDType pid )
+        : m_id( id ), m_data( Rich::InvalidDetector, Rich::InvalidSide, Rich::InvalidRadiator, pid ) {}
 
   public:
-
     /// Access the Detector type
     inline Rich::DetectorType det() const noexcept { return m_data.det(); }
 
@@ -131,21 +114,19 @@ namespace Rich
     inline Rich::ParticleIDType pid() const noexcept { return m_data.pid(); }
 
   public:
-
     /// Returns the appropriate histogram ID
-    inline const std::string &id() const noexcept { return m_id; }
+    inline const std::string& id() const noexcept { return m_id; }
 
     /// Returns the packed Rich PID info
-    inline const Rich::PackedPIDInfo &packedData() const noexcept { return m_data; }
+    inline const Rich::PackedPIDInfo& packedData() const noexcept { return m_data; }
 
     /// Returns the appropriate histogram ID
     std::string fullid() const;
 
     /// Get the full title, including Detector Info
-    std::string fullTitle( const std::string &title ) const;
+    std::string fullTitle( const std::string& title ) const;
 
   public:
-
     /// implicit conversion to an std::string
     inline operator std::string() const { return fullid(); }
 
@@ -153,7 +134,6 @@ namespace Rich
     inline operator GaudiAlg::HistoID() const { return GaudiAlg::HistoID( fullid() ); }
 
   private:
-
     std::string         m_id;   ///< The ID string
     Rich::PackedPIDInfo m_data; ///< Packed Rich Info
   };
@@ -189,11 +169,9 @@ namespace Rich
    *  @date   05/04/2002
    */
   //-----------------------------------------------------------------------------
-  class HistoID final
-  {
+  class HistoID final {
 
   public:
-
     /// Standard constructor
     HistoID() {}
 
@@ -204,9 +182,7 @@ namespace Rich
      *
      *  @return Full histogram identifier
      */
-    inline Rich::HistogramID operator()( const Rich::RadiatorType rad,
-                                         const std::string &      tag ) const
-    {
+    inline Rich::HistogramID operator()( const Rich::RadiatorType rad, const std::string& tag ) const {
       return Rich::HistogramID( tag, rad );
     }
 
@@ -217,9 +193,7 @@ namespace Rich
      *
      *  @return Full histogram identifier
      */
-    inline Rich::HistogramID operator()( const Rich::DetectorType det,
-                                         const std::string &      tag ) const
-    {
+    inline Rich::HistogramID operator()( const Rich::DetectorType det, const std::string& tag ) const {
       return Rich::HistogramID( tag, det );
     }
 
@@ -231,9 +205,8 @@ namespace Rich
      *
      *  @return Full histogram identifier
      */
-    inline Rich::HistogramID
-    operator()( const Rich::DetectorType det, const Rich::Side side, const std::string &tag ) const
-    {
+    inline Rich::HistogramID operator()( const Rich::DetectorType det, const Rich::Side side,
+                                         const std::string& tag ) const {
       return Rich::HistogramID( tag, det, side );
     }
 
@@ -245,10 +218,8 @@ namespace Rich
      *
      *  @return Full histogram identifier
      */
-    inline Rich::HistogramID operator()( const Rich::RadiatorType   rad,
-                                         const Rich::ParticleIDType pid,
-                                         const std::string &        tag ) const
-    {
+    inline Rich::HistogramID operator()( const Rich::RadiatorType rad, const Rich::ParticleIDType pid,
+                                         const std::string& tag ) const {
       return Rich::HistogramID( tag, rad, pid );
     }
   };

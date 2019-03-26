@@ -14,7 +14,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "Kernel/LHCbID.h"
 
-
 /** @class IUsedLHCbID IUsedLHCbID.h Kernel/IUsedLHCbID.h
  *
  *  interface for testing if a given id is used.
@@ -23,16 +22,15 @@
  *  @date   02/08/2006
  */
 
-struct IUsedLHCbID: extend_interfaces<IAlgTool> {
+struct IUsedLHCbID : extend_interfaces<IAlgTool> {
 
-  DeclareInterfaceID(IUsedLHCbID, 1, 0 );
+  DeclareInterfaceID( IUsedLHCbID, 1, 0 );
 
   /** Test if the LHCbID is used
-  * @param id to be test tested
-  *  @return true if used
-  */
-  virtual bool used(const LHCb::LHCbID id) const = 0;
-
+   * @param id to be test tested
+   *  @return true if used
+   */
+  virtual bool used( const LHCb::LHCbID id ) const = 0;
 };
 
 #endif

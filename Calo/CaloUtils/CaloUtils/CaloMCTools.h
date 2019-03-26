@@ -20,12 +20,12 @@
 // GaudiKernel
 #include "GaudiKernel/Map.h"
 // CaloEvent/Event
-#include "Event/MCCaloHit.h"
-#include "Event/MCCaloDigit.h"
-#include "Event/CaloDigit.h"
-#include "Event/CaloCluster.h"
-#include "Event/CaloHypo.h"
 #include "CaloMCTools1.h"
+#include "Event/CaloCluster.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloHypo.h"
+#include "Event/MCCaloDigit.h"
+#include "Event/MCCaloHit.h"
 
 /** @namespace CaloMCTools CaloMCTools.h Event/CaloMCTools.h
  *
@@ -37,8 +37,7 @@
  *  @date   31/10/2001
  */
 
-namespace CaloMCTools
-{
+namespace CaloMCTools {
   // ==========================================================================
   /** check if the first particle is a "parent" of the second one
    *
@@ -51,16 +50,17 @@ namespace CaloMCTools
    *  @return true if first particle is equivalent to the second one
    *               or it is a "parent" of the second one
    */
-  inline bool isParent( const LHCb::MCParticle* first  ,
-                        const LHCb::MCParticle* second )
-  {
+  inline bool isParent( const LHCb::MCParticle* first, const LHCb::MCParticle* second ) {
     // check arguments
-    if      ( !first || !second ) { return false ; }
-    else if (  first ==  second ) { return true  ; }
+    if ( !first || !second ) {
+      return false;
+    } else if ( first == second ) {
+      return true;
+    }
     // extract the vertex
-    const LHCb::MCVertex*   vertex = second->originVertex() ;
+    const LHCb::MCVertex* vertex = second->originVertex();
     // start the recursion
-    return vertex && isParent( first , vertex->mother() );
+    return vertex && isParent( first, vertex->mother() );
   }
   // ==========================================================================
 
@@ -94,76 +94,61 @@ namespace CaloMCTools
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   30/10/2001
    */
-  struct EnergyFromMCParticle
-  {
+  struct EnergyFromMCParticle {
     ///  the only one essential (and quite useless! :-)) ) method
-    template<class TYPE>
-    inline double operator() ( const TYPE*       /* object   */  ,
-                        const LHCb::MCParticle* /* particle */  ) const
-    { return   -1. * Gaudi::Units::TeV ; }
-    // ==========================================================================
-    inline double operator() ( const LHCb::MCCaloHit*  hit      ,
-                               const LHCb::MCParticle* particle ) const
-    {
-      return ( hit && particle && isParent( particle , hit->particle() ) ) ?
-               hit->activeE() : 0.0 ;
+    template <class TYPE>
+    inline double operator()( const TYPE* /* object   */, const LHCb::MCParticle* /* particle */ ) const {
+      return -1. * Gaudi::Units::TeV;
     }
     // ==========================================================================
-    inline double operator() ( const LHCb::MCCaloDigit*  digit    ,
-                               const LHCb::MCParticle*   particle ) const
-    {
+    inline double operator()( const LHCb::MCCaloHit* hit, const LHCb::MCParticle* particle ) const {
+      return ( hit && particle && isParent( particle, hit->particle() ) ) ? hit->activeE() : 0.0;
+    }
+    // ==========================================================================
+    inline double operator()( const LHCb::MCCaloDigit* digit, const LHCb::MCParticle* particle ) const {
       // trivial checks
-      if( !digit || !particle ) { return 0. ; }
+      if ( !digit || !particle ) { return 0.; }
       // accumulate the energy from the hits
       const auto& hits = digit->hits();
       return std::accumulate( hits.begin(), hits.end(), 0.,
-                              [&](double e, const LHCb::MCCaloHit* hit) {
-                                  return e + (*this)( hit, particle );
-                              });
+                              [&]( double e, const LHCb::MCCaloHit* hit ) { return e + ( *this )( hit, particle ); } );
     }
     // ==========================================================================
-    inline double operator()( const LHCb::CaloDigit*    digit    ,
-                              const LHCb::MCParticle*   particle ) const
-    {
+    inline double operator()( const LHCb::CaloDigit* digit, const LHCb::MCParticle* particle ) const {
       // trivial checks
-      if( !digit || !particle ) { return 0 ; }
+      if ( !digit || !particle ) { return 0; }
       // temporary plug
-      if( !digit->parent()        ) { return 0 ; }
+      if ( !digit->parent() ) { return 0; }
       // get MC truth information
       const LHCb::MCCaloDigit* mcdigit = mcTruth<LHCb::MCCaloDigit>( digit );
       // truth is available?
-      if( !mcdigit ) { return 0 ; }
+      if ( !mcdigit ) { return 0; }
       // go to MC history!
-      return (*this)( mcdigit , particle );
+      return ( *this )( mcdigit, particle );
     }
     // ==========================================================================
-    inline double operator() ( const LHCb::CaloCluster*  cluster  ,
-                               const LHCb::MCParticle*   particle ) const
-    {
+    inline double operator()( const LHCb::CaloCluster* cluster, const LHCb::MCParticle* particle ) const {
       // trivial checks
-      if( !cluster || !particle ) { return 0 ; }
+      if ( !cluster || !particle ) { return 0; }
       // accumulate the energy
       const LHCb::CaloCluster::Entries& entries = cluster->entries();
       return std::accumulate( entries.begin(), entries.end(), 0.,
-                              [&](double energy, const LHCb::CaloCluster::Entry& entry)
-                              { return energy + (*this)( entry.digit() , particle ); } );
+                              [&]( double energy, const LHCb::CaloCluster::Entry& entry ) {
+                                return energy + ( *this )( entry.digit(), particle );
+                              } );
     }
     // ==========================================================================
-    inline double operator() ( const LHCb::CaloHypo*     hypo     ,
-                               const LHCb::MCParticle*   particle ) const
-    {
+    inline double operator()( const LHCb::CaloHypo* hypo, const LHCb::MCParticle* particle ) const {
       // trivial checks
-      if( !hypo || !particle ) { return 0. ; }
+      if ( !hypo || !particle ) { return 0.; }
       const LHCb::CaloHypo::Clusters& clusters = hypo->clusters();
       // accumulate the energy
-      return std::accumulate( clusters.begin(), clusters.end(), 0.,
-                              [&](double energy, const LHCb::CaloCluster* cluster)
-                              { return energy + (*this)( cluster , particle ); } );
+      return std::accumulate(
+          clusters.begin(), clusters.end(), 0.,
+          [&]( double energy, const LHCb::CaloCluster* cluster ) { return energy + ( *this )( cluster, particle ); } );
     }
     // ==========================================================================
   };
-
-
 
   // ==========================================================================
   /**
@@ -193,17 +178,14 @@ namespace CaloMCTools
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   30/10/2001
    */
-  class FromMCParticle
-  {
+  class FromMCParticle {
   public:
     /** constructor
      *  @param particle pointer to MCParticle
      *  @param threshold on active energy deposition
      */
-    FromMCParticle( const LHCb::MCParticle* particle     ,
-                    const double      threshold = 0 )
-      : m_particle  ( particle  )
-      , m_threshold ( threshold )   {} ;
+    FromMCParticle( const LHCb::MCParticle* particle, const double threshold = 0 )
+        : m_particle( particle ), m_threshold( threshold ){};
     /** the only essential method
      *  @param object pointer to the object
      *  @return true if energy deposition from given
@@ -211,10 +193,9 @@ namespace CaloMCTools
      *           the given threshold
      */
     template <class TYPE>
-    inline bool operator() ( const TYPE* object ) const
-    {
-      if( !m_particle || !object ) { return false ; }
-      return m_threshold <  energyfromMCParticle( object , m_particle );
+    inline bool operator()( const TYPE* object ) const {
+      if ( !m_particle || !object ) { return false; }
+      return m_threshold < energyfromMCParticle( object, m_particle );
     }
     ///
     /** the only essential method
@@ -223,20 +204,19 @@ namespace CaloMCTools
      *           MCParticle to this digit exceeds
      *           the given threshold
      */
-    inline bool operator() ( const LHCb::MCCaloDigit* digit ) const
-    {
+    inline bool operator()( const LHCb::MCCaloDigit* digit ) const {
       // check arguments!
-      if( !m_particle || !digit  ) { return false ; }
+      if ( !m_particle || !digit ) { return false; }
       // dramatical speed up!!!
-      if( digit->activeE() < m_threshold       ) { return false ; }
+      if ( digit->activeE() < m_threshold ) { return false; }
       // use general technique
-      return m_threshold <  energyFromMCParticle( digit , m_particle );
+      return m_threshold < energyFromMCParticle( digit, m_particle );
     };
     ///
   private:
     ///
-    const LHCb::MCParticle*    m_particle  ;
-    double                     m_threshold ;
+    const LHCb::MCParticle* m_particle;
+    double                  m_threshold;
     ///
   };
   // ==========================================================================
@@ -259,12 +239,8 @@ namespace CaloMCTools
    *           the given threshold
    */
   template <class TYPE>
-  inline bool
-  fromMCParticle ( const TYPE*       object         ,
-                   const LHCb::MCParticle* particle       ,
-                   const double      threshold  = 0 )
-  {
-    return FromMCParticle{ particle , threshold }( object );
+  inline bool fromMCParticle( const TYPE* object, const LHCb::MCParticle* particle, const double threshold = 0 ) {
+    return FromMCParticle{particle, threshold}( object );
   }
   // ==========================================================================
 
@@ -273,7 +249,7 @@ namespace CaloMCTools
    *  The first element of the pair is the active energy deposition
    *  the second one is the pointer to MCParticle object
    */
-  typedef std::pair<double,const LHCb::MCParticle*>  ParticlePair;
+  typedef std::pair<double, const LHCb::MCParticle*> ParticlePair;
   // ==========================================================================
 
   // ==========================================================================
@@ -300,83 +276,77 @@ namespace CaloMCTools
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   30/10/2001
    */
-  struct  LargestDeposition
-  {
+  struct LargestDeposition {
     /** the only one essential method
      *  it is "trivial" for general class
      */
     template <class TYPE>
-    ParticlePair operator() ( const TYPE* /* obj */ ) const
-    { return ParticlePair( -1 * Gaudi::Units::TeV, nullptr ); }
+    ParticlePair operator()( const TYPE* /* obj */ ) const {
+      return ParticlePair( -1 * Gaudi::Units::TeV, nullptr );
+    }
     ///
 
-    ParticlePair operator()( const LHCb::MCCaloHit* hit ) const
-    {
-      return hit ? ParticlePair( hit->activeE() , hit->particle() ) : ParticlePair();
+    ParticlePair operator()( const LHCb::MCCaloHit* hit ) const {
+      return hit ? ParticlePair( hit->activeE(), hit->particle() ) : ParticlePair();
     }
     // ==========================================================================
 
-    ParticlePair operator() ( const LHCb::MCCaloDigit* digit ) const
-    {
+    ParticlePair operator()( const LHCb::MCCaloDigit* digit ) const {
       // skip NULLs and trivial digits
-      if( !digit || digit->hits().empty() ) { return ParticlePair(); }
+      if ( !digit || digit->hits().empty() ) { return ParticlePair(); }
       const LHCb::MCCaloDigit::Hits& hits = digit->hits();
-      return std::accumulate( hits.begin(), hits.end(), ParticlePair{0,nullptr},
-                              [&](ParticlePair output, const LHCb::MCCaloHit* hit)
-                              {
-                                auto aux =  (*this)(hit);
-                                return aux.first >= output.first ? aux : output ;
+      return std::accumulate( hits.begin(), hits.end(), ParticlePair{0, nullptr},
+                              [&]( ParticlePair output, const LHCb::MCCaloHit* hit ) {
+                                auto aux = ( *this )( hit );
+                                return aux.first >= output.first ? aux : output;
                               } );
     }
 
-    ParticlePair operator() ( const LHCb::CaloDigit* digit ) const
-    {
+    ParticlePair operator()( const LHCb::CaloDigit* digit ) const {
       // skip nulls
-      if( !digit           ) { return ParticlePair() ; }
+      if ( !digit ) { return ParticlePair(); }
       // temporary plug
-      if( !digit->parent() ) { return ParticlePair() ; }
+      if ( !digit->parent() ) { return ParticlePair(); }
       // extract MC truth information
       const LHCb::MCCaloDigit* mcdigit = mcTruth<LHCb::MCCaloDigit>( digit );
-      if( !mcdigit ) { return ParticlePair() ; }
-      return (*this)( mcdigit );
+      if ( !mcdigit ) { return ParticlePair(); }
+      return ( *this )( mcdigit );
     }
     // ==========================================================================
 
-    ParticlePair operator() ( const LHCb::CaloCluster* cluster ) const
-    {
+    ParticlePair operator()( const LHCb::CaloCluster* cluster ) const {
       // skip NULLs and trivial clusters
-      if( !cluster || cluster->entries().empty() ) { return ParticlePair(); }
+      if ( !cluster || cluster->entries().empty() ) { return ParticlePair(); }
       // local map
-      GaudiUtils::Map<const LHCb::MCParticle*,double> auxMap;
+      GaudiUtils::Map<const LHCb::MCParticle*, double> auxMap;
       // fill the local map with information
-      for( const auto& entry : cluster->entries() ) {
-          const LHCb::CaloDigit*     digit    = entry.digit  () ;
-          if( !digit               ) { continue ; }   //   CONTINUE !
-          // temporary plug to avoid crash in mcTruth<> !
-          if( !digit->parent()     ) { continue ; }   //   CONTINUE !
-          const LHCb::MCCaloDigit* mcdigit    = mcTruth<LHCb::MCCaloDigit>( digit );
-          if( !mcdigit )               { continue ; }   //   CONTINUE !
-          // loop over all MC hits
-          for( const auto& hit : mcdigit->hits () ) {
-              const ParticlePair auxPair( (*this)( hit ) );
-              auxMap[ auxPair.second ] += auxPair.first ;
-          } // end of loop over hits in LHCb::MCCaloDigit
-      } // end of loop over Cluster entries
+      for ( const auto& entry : cluster->entries() ) {
+        const LHCb::CaloDigit* digit = entry.digit();
+        if ( !digit ) { continue; } //   CONTINUE !
+        // temporary plug to avoid crash in mcTruth<> !
+        if ( !digit->parent() ) { continue; } //   CONTINUE !
+        const LHCb::MCCaloDigit* mcdigit = mcTruth<LHCb::MCCaloDigit>( digit );
+        if ( !mcdigit ) { continue; } //   CONTINUE !
+        // loop over all MC hits
+        for ( const auto& hit : mcdigit->hits() ) {
+          const ParticlePair auxPair( ( *this )( hit ) );
+          auxMap[auxPair.second] += auxPair.first;
+        } // end of loop over hits in LHCb::MCCaloDigit
+      }   // end of loop over Cluster entries
       // find maximal deposition
-      return std::accumulate( auxMap.begin(), auxMap.end(), ParticlePair{},
-                              // select the maximal contribution
-                              [](ParticlePair output, const std::pair<const LHCb::MCParticle*,double>& map)
-                              { return ( map.first && map.second>output.first ) ?
-                                        std::pair{map.second,map.first} : output ;
-                              } );
-
+      return std::accumulate(
+          auxMap.begin(), auxMap.end(), ParticlePair{},
+          // select the maximal contribution
+          []( ParticlePair output, const std::pair<const LHCb::MCParticle*, double>& map ) {
+            return ( map.first && map.second > output.first ) ? std::pair{map.second, map.first} : output;
+          } );
     }
-  // ==========================================================================
+    // ==========================================================================
   };
 
   constexpr static const auto largestDeposition = LargestDeposition{};
 
-} // The end of namespace CaloMCTools
+} // namespace CaloMCTools
 
 // ============================================================================
 #endif // EVENT_CALOMCTOOLS_H

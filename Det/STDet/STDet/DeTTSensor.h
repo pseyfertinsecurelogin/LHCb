@@ -31,46 +31,34 @@ class DeSTSector;
 
 static const CLID CLID_DeTTSensor = 9130;
 
-class DeTTSensor : public DeSTSensor  {
+class DeTTSensor : public DeSTSensor {
 
 public:
-
   /** parent type */
   typedef STDetTraits<DeTTSensor>::parent parent_type;
 
   /** Constructor */
-  DeTTSensor ( const std::string& name = "" ) ;
+  DeTTSensor( const std::string& name = "" );
 
   /**
-  * Retrieves reference to class identifier
-  * @return the class identifier for this class
-  */
-  static const CLID& classID(){return CLID_DeTTSensor;}
+   * Retrieves reference to class identifier
+   * @return the class identifier for this class
+   */
+  static const CLID& classID() { return CLID_DeTTSensor; }
 
   /**
-  * another reference to class identifier
-  * @return the class identifier for this class
-  */
-  const CLID& clID () const override;
+   * another reference to class identifier
+   * @return the class identifier for this class
+   */
+  const CLID& clID() const override;
 
   /** initialization method
-  * @return Status of initialisation
-  */
+   * @return Status of initialisation
+   */
   StatusCode initialize() override;
 
 private:
-
   parent_type* m_parent;
-
 };
 
-
 #endif // _DeTTSensor_H
-
-
-
-
-
-
-
-

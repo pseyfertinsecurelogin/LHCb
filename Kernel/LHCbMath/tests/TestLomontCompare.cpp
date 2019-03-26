@@ -13,8 +13,8 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <string>
 // ============================================================================
 // GaudiKernel
@@ -27,32 +27,27 @@
  *  @date   2009-05-23
  */
 // ============================================================================
-void _test ( double a , double diff )
-{
-  int n = 0 ;
-  std::cout << "test with a = " << std::setprecision ( 15 ) << a
-            << " \t diff "      << std::setprecision ( 15 ) << diff << std::endl ;
-  do
-  {
-    diff /= 9.0 ;
-    ++n  ;
-    std::cout << " n=" << n
-              << " \t diff=" << std::setprecision ( 15 ) << diff << std::endl ;
-  }
-  while ( !LHCb::Math::lomont_compare_double ( a , a +diff , 1000 ) ) ;
+void _test( double a, double diff ) {
+  int n = 0;
+  std::cout << "test with a = " << std::setprecision( 15 ) << a << " \t diff " << std::setprecision( 15 ) << diff
+            << std::endl;
+  do {
+    diff /= 9.0;
+    ++n;
+    std::cout << " n=" << n << " \t diff=" << std::setprecision( 15 ) << diff << std::endl;
+  } while ( !LHCb::Math::lomont_compare_double( a, a + diff, 1000 ) );
 }
 // ============================================================================
-int main()
-{
-  _test (  1.01     , 3.01e-3 ) ;
-  _test (  1.01e+10 , 3.01e-3 ) ;
-  _test (  1.01e+50 , 3.01e-3 ) ;
-  _test (  1.01e-10 , 3.01e-3 ) ;
-  _test (  1.01e-50 , 3.01e-3 ) ;
-  _test ( -1.01e-10 , 3.01e-3 ) ;
-  _test ( -1.01e-50 , 3.01e-3 ) ;
+int main() {
+  _test( 1.01, 3.01e-3 );
+  _test( 1.01e+10, 3.01e-3 );
+  _test( 1.01e+50, 3.01e-3 );
+  _test( 1.01e-10, 3.01e-3 );
+  _test( 1.01e-50, 3.01e-3 );
+  _test( -1.01e-10, 3.01e-3 );
+  _test( -1.01e-50, 3.01e-3 );
   //
-  return 0 ;
+  return 0;
 }
 // ============================================================================
 // The END

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: RunChangeTest.h,v 1.1 2009-02-03 18:31:03 marcocle Exp $
 #ifndef COMPONENT_RUNCHANGETEST_H
 #define COMPONENT_RUNCHANGETEST_H 1
 
@@ -35,32 +34,27 @@ namespace LHCbAlgsTests {
    *  @author Marco CLEMENCIC
    *  @date   2008-07-24
    */
-  class RunChangeTest final : public GaudiAlgorithm,
-                              virtual public IIncidentListener
-  {
+  class RunChangeTest final : public GaudiAlgorithm, virtual public IIncidentListener {
 
   public:
-
     /// Standard constructor
     RunChangeTest( const std::string& name, ISvcLocator* pSvcLocator );
 
-    virtual ~RunChangeTest( ) = default; ///< Destructor
+    virtual ~RunChangeTest() = default; ///< Destructor
 
-    StatusCode initialize() override;    ///< Algorithm initialization
-    StatusCode execute   () override;    ///< Algorithm execution
-    StatusCode finalize  () override;    ///< Algorithm finalization
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
 
     /// Handle the ChangeRun incident
-    void handle(const Incident& incident) override;
+    void handle( const Incident& incident ) override;
 
   private:
-
     /// used to count the number of calls to decide which case to test
-    size_t m_counter{0};
-    IEventTimeDecoder *m_eventTimeDecoder = nullptr;
-    IIncidentSvc *m_incSvc = nullptr;
-
+    size_t             m_counter{0};
+    IEventTimeDecoder* m_eventTimeDecoder = nullptr;
+    IIncidentSvc*      m_incSvc           = nullptr;
   };
 
-}
+} // namespace LHCbAlgsTests
 #endif // COMPONENT_RUNCHANGETEST_H

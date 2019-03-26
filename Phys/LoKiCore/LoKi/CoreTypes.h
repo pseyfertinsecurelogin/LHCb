@@ -32,8 +32,7 @@
  *  @date 2006-02-10
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::CoreTypes LoKi/CoreTypes.h
    *  The core namespace for some "core"  types
@@ -41,44 +40,43 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-10
    */
-  namespace CoreTypes
-  {
+  namespace CoreTypes {
     // ====================================================================
     /// type of 'cuts' for  'void' (interface)
-    typedef LoKi::Predicate_t<void>                            FCuts  ;
+    typedef LoKi::Predicate_t<void> FCuts;
     /// type of 'functions' 'void' (interface)
-    typedef LoKi::Function_t<void>                             FFunc  ;
+    typedef LoKi::Function_t<void> FFunc;
     /// type of 'cuts' for  'void' (assignable)
-    typedef LoKi::Assignable_t<FCuts>                          FCut   ;
+    typedef LoKi::Assignable_t<FCuts> FCut;
     /// type of 'functions' for LHCb::Particle  (assignable)
-    typedef LoKi::Assignable_t<FFunc>                          FFun   ;
+    typedef LoKi::Assignable_t<FFunc> FFun;
     // ========================================================================
     /// type of 'cuts' for  'double' (interface)
-    typedef LoKi::Predicate_t<double>                          XCuts  ;
+    typedef LoKi::Predicate_t<double> XCuts;
     /// type of 'functions' 'double' (interface)
-    typedef LoKi::Function_t<double>                           XFunc  ;
+    typedef LoKi::Function_t<double> XFunc;
     /// type of 'cuts' for  'double' (assignable)
-    typedef LoKi::Assignable_t<XCuts>                          XCut  ;
+    typedef LoKi::Assignable_t<XCuts> XCut;
     /// type of 'functions' for LHCb::Particle  (assignable)
-    typedef LoKi::Assignable_t<XFunc>                          XFun   ;
+    typedef LoKi::Assignable_t<XFunc> XFun;
     // ========================================================================
     /// maping or filtering : std::vector<double> -> std::vector<double>
-    typedef LoKi::Map_t<double>                                XMaps     ;
-    typedef LoKi::Assignable_t<XMaps>                          XMap      ;
-    ///the same
-    typedef LoKi::Pipe_t<double>                               XPipes    ;
-    typedef LoKi::Assignable_t<XPipes>                         XPipe     ;
+    typedef LoKi::Map_t<double>       XMaps;
+    typedef LoKi::Assignable_t<XMaps> XMap;
+    /// the same
+    typedef LoKi::Pipe_t<double>       XPipes;
+    typedef LoKi::Assignable_t<XPipes> XPipe;
     /// function or element selection: std::vector<double> -> double
-    typedef LoKi::FunVal_t<double>                             XFunVals  ;
-    typedef LoKi::Assignable_t<XFunVals>                       XFunVal   ;
+    typedef LoKi::FunVal_t<double>       XFunVals;
+    typedef LoKi::Assignable_t<XFunVals> XFunVal;
     /// source : void -> std::vector<double>
-    typedef LoKi::Source_t<double>                             XSources  ;
-    typedef LoKi::Assignable_t<XSources>                       XSource   ;
+    typedef LoKi::Source_t<double>       XSources;
+    typedef LoKi::Assignable_t<XSources> XSource;
     /// source : void -> std::vector<double>
-    typedef LoKi::Source_t<double>                             FSources  ;
-    typedef LoKi::Assignable_t<FSources>                       FSource   ;
+    typedef LoKi::Source_t<double>       FSources;
+    typedef LoKi::Assignable_t<FSources> FSource;
     // ========================================================================
-  }  // end of namespace LoKi::CoreTypes
+  } // namespace CoreTypes
   // ==========================================================================
   /** @namespace LoKi::Types
    *  The namespace to collect all basic LoKi types for
@@ -86,25 +84,25 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-10
    */
-  namespace Types
-  {
+  namespace Types {
     using namespace CoreTypes;
-  } //                                             end of namespace LoKi::Types
+  } // namespace Types
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   // the specialized printout
   // ==========================================================================
   template <>
-  inline std::ostream& BooleanConstant_t<void>::fillStream ( std::ostream& s ) const
-  { return s << ( this->m_value ? "FALL" : "FNONE" ) ; }
+  inline std::ostream& BooleanConstant_t<void>::fillStream( std::ostream& s ) const {
+    return s << ( this->m_value ? "FALL" : "FNONE" );
+  }
   // ==========================================================================
   template <>
-  inline std::ostream& Constant_t<double>::fillStream ( std::ostream& s ) const
-  { return s << ( this->m_value ? "XALL" : "XNONE" ) ; }
+  inline std::ostream& Constant_t<double>::fillStream( std::ostream& s ) const {
+    return s << ( this->m_value ? "XALL" : "XNONE" );
+  }
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

@@ -34,11 +34,9 @@
  *  @date   2011-12-11
  */
 // ============================================================================
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Grammars
-  {
+  namespace Grammars {
     // ========================================================================
     // Namespace Aliases
     // ========================================================================
@@ -57,116 +55,65 @@ namespace Decays
      *  @author Alexander Mazurov
      *  @date   2011-12-11
      */
-    template<typename Iterator, typename Skipper>
-    struct Tree: qi::grammar<Iterator, Tree_(), Skipper>
-    {
+    template <typename Iterator, typename Skipper>
+    struct Tree : qi::grammar<Iterator, Tree_(), Skipper> {
       // ======================================================================
-      typedef Tree_ ResultT;
+      typedef Tree_                    ResultT;
       typedef std::vector<std::string> VectorOfStringsT;
       // ======================================================================
-      struct Operations
-      {
+      struct Operations {
         // ====================================================================
-        void operator()( Tree_&       res   ,
-                         const Node_& value ,
-                         bool stable=false  ) const
-        {
-          res = Tree_(value, stable);
-        }
+        void operator()( Tree_& res, const Node_& value, bool stable = false ) const { res = Tree_( value, stable ); }
 
         // Trying to fix %= in semantic action
-        void operator()(Tree_& left, Tree_& right) const {
-          left %= right;
-        }
+        void operator()( Tree_& left, Tree_& right ) const { left %= right; }
         // ====================================================================
       };
       // ======================================================================
-      Tree ( const VectorOfStringsT& symbols   ,
-             const VectorOfStringsT& particles )
-        : Tree::base_type(res)
-        , node( symbols , particles )
-      {
+      Tree( const VectorOfStringsT& symbols, const VectorOfStringsT& particles )
+          : Tree::base_type( res ), node( symbols, particles ) {
         // ====================================================================
         res %= expression;
         // ====================================================================
         expression %= tree | operation | head | unary;
         // ====================================================================
-        head =
-          ( qi::lit("[")
-            >>  node [op(qi::_val, qi::_1)][qi::_val += dt::NotOscillated]
-            >> "]nos"
-            )
-          |
-          ( qi::lit("[")
-            >>  node [op(qi::_val, qi::_1)][qi::_val += dt::Oscillated]
-            >> "]os"
-            )
-          |
-          ( qi::lit("<") >> node[op(qi::_val, qi::_1, true)] >> ">")
-          |
-          node[op(qi::_val, qi::_1)]
-          ;
+        head = ( qi::lit( "[" ) >> node[op( qi::_val, qi::_1 )][qi::_val += dt::NotOscillated] >> "]nos" ) |
+               ( qi::lit( "[" ) >> node[op( qi::_val, qi::_1 )][qi::_val += dt::Oscillated] >> "]os" ) |
+               ( qi::lit( "<" ) >> node[op( qi::_val, qi::_1, true )] >> ">" ) | node[op( qi::_val, qi::_1 )];
         // ====================================================================
-        operation  =
-          ( qi::lit("(")
-            >> expression [qi::_val = qi::_1]
-            >> +(
-                 ("&&" >> expression[qi::_val &= qi::_1])
-                 |
-                 ("||" >> expression[qi::_val |= qi::_1])
-                 )
-            >> ')'
-            )
-          |
-          ( qi::lit("[")
-            >> expression[qi::_val = qi::_1]
-            >> +("," >> expression[qi::_val |= qi::_1])
-            >> "]"
-            ) ;
+        operation =
+            ( qi::lit( "(" ) >> expression[qi::_val = qi::_1] >>
+              +( ( "&&" >> expression[qi::_val &= qi::_1] ) | ( "||" >> expression[qi::_val |= qi::_1] ) ) >> ')' ) |
+            ( qi::lit( "[" ) >> expression[qi::_val = qi::_1] >> +( "," >> expression[qi::_val |= qi::_1] ) >> "]" );
         // ====================================================================
-        tree =
-          qi::lit("(")
-          >> head [ qi::_val = qi::_1]
-          >>  ( qi::lit("==x>")[qi::_val += Decays::Trees::LongDoubleX] |
-                qi::lit("=x>")[qi::_val += Decays::Trees::DoubleX] |
-                qi::lit("--x>")[qi::_val += Decays::Trees::LongSingleX] |
-                qi::lit("-x>")[qi::_val += Decays::Trees::SingleX] |
-                qi::lit("==>")[qi::_val += Decays::Trees::LongDouble] |
-                qi::lit("=>")[qi::_val += Decays::Trees::Double] |
-                qi::lit("-->")[qi::_val += Decays::Trees::LongSingle] |
-                qi::lit("->")[qi::_val += Decays::Trees::Single]
-                )
-          >> expression[qi::_val += qi::_1] // the first child (mandatory!)
-          >> *( expression[qi::_val += qi::_1]
-                |                           // children
-                (qi::lit("{") >> expression [op(qi::_val, qi::_1)] >> "}" )
-                )  // optional
-          >> -(qi::lit("...")[qi::_val += true]) // inclusive
-          >> ')' ;
-        unary =
-          (qi::lit("(") >> expression[qi::_val = qi::_1] >> ")")
-          |
-          ("^" >> expression[qi::_val = qi::_1][qi::_val /= true ])
-          |
-          ("~" >> operation[qi::_val = qi::_1][qi::_val *= true ])
-          |
-          ("~" >> tree[qi::_val = qi::_1][qi::_val *= true ]);
+        tree = qi::lit( "(" ) >> head[qi::_val = qi::_1] >>
+               ( qi::lit( "==x>" )[qi::_val += Decays::Trees::LongDoubleX] |
+                 qi::lit( "=x>" )[qi::_val += Decays::Trees::DoubleX] |
+                 qi::lit( "--x>" )[qi::_val += Decays::Trees::LongSingleX] |
+                 qi::lit( "-x>" )[qi::_val += Decays::Trees::SingleX] |
+                 qi::lit( "==>" )[qi::_val += Decays::Trees::LongDouble] |
+                 qi::lit( "=>" )[qi::_val += Decays::Trees::Double] |
+                 qi::lit( "-->" )[qi::_val += Decays::Trees::LongSingle] |
+                 qi::lit( "->" )[qi::_val += Decays::Trees::Single] ) >>
+               expression[qi::_val += qi::_1]                                          // the first child (mandatory!)
+               >> *( expression[qi::_val += qi::_1] |                                  // children
+                     ( qi::lit( "{" ) >> expression[op( qi::_val, qi::_1 )] >> "}" ) ) // optional
+               >> -( qi::lit( "..." )[qi::_val += true] )                              // inclusive
+               >> ')';
+        unary = ( qi::lit( "(" ) >> expression[qi::_val = qi::_1] >> ")" ) |
+                ( "^" >> expression[qi::_val = qi::_1][qi::_val /= true] ) |
+                ( "~" >> operation[qi::_val = qi::_1][qi::_val *= true] ) |
+                ( "~" >> tree[qi::_val = qi::_1][qi::_val *= true] );
         // ====================================================================
       }
-        // ====================================================================
-        qi::rule<Iterator, Tree_(), Skipper>
-          res        ,
-          expression ,
-          tree       ,
-          head       ,
-          operation  ,
-          unary      ;
-        Node<Iterator, Skipper>  node ;
-        ph::function<Operations> op   ;
-        // ====================================================================
-  } ;
+      // ====================================================================
+      qi::rule<Iterator, Tree_(), Skipper> res, expression, tree, head, operation, unary;
+      Node<Iterator, Skipper>              node;
+      ph::function<Operations>             op;
+      // ====================================================================
+    };
     // ========================================================================
-  } //                                        end of namespace Decays::Grammars
+  } // namespace Grammars
   // ==========================================================================
 } //                                                    end of namespace Decays
 // ============================================================================

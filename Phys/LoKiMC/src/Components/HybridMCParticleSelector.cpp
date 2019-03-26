@@ -29,11 +29,9 @@
 #include "LoKi/IMCHybridFactory.h"
 #include "LoKi/Primitives.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class MCParticleSelector
      *
@@ -54,48 +52,38 @@ namespace LoKi
      *  @date   2004-06-29
      */
     // ============================================================================
-    class MCParticleSelector
-      : public            GaudiTool
-      , virtual public IMCParticleSelector
-    {
+    class MCParticleSelector : public GaudiTool, virtual public IMCParticleSelector {
     public:
       // ======================================================================
       /// initialization of the tool
-      StatusCode initialize ()  override;
+      StatusCode initialize() override;
       /// select
-      bool accept      ( const LHCb::MCParticle* p ) const override
-      { return m_mccut.fun ( p ) ; }
+      bool accept( const LHCb::MCParticle* p ) const override { return m_mccut.fun( p ); }
       /// Test if filter is satisfied (functor interface)
-      virtual bool operator()  ( const LHCb::MCParticle* p ) const
-      { return m_mccut.fun ( p ) ; }
+      virtual bool operator()( const LHCb::MCParticle* p ) const { return m_mccut.fun( p ); }
       /// Standard constructor
-      MCParticleSelector
-      ( const std::string& type,
-        const std::string& name,
-        const IInterface* parent)
-        : GaudiTool ( type , name , parent )
-        , m_mccut   ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant( false ) )
-        , m_code    ( "MCNONE" )
-        , m_factory ("LoKi::Hybrid::MCTool/MCHybridFactory:PUBLIC")
-      {
-        declareInterface<IMCParticleSelector>(this);
-        declareProperty
-          ( "Code"    , m_code    , "Python pseudocode for the filter criteria"  ) ;
-        declareProperty
-          ( "Factory" , m_factory , "Type/Name for C++/Python Hybrid MC-Factory" ) ;
-      } ;
+      MCParticleSelector( const std::string& type, const std::string& name, const IInterface* parent )
+          : GaudiTool( type, name, parent )
+          , m_mccut( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant( false ) )
+          , m_code( "MCNONE" )
+          , m_factory( "LoKi::Hybrid::MCTool/MCHybridFactory:PUBLIC" ) {
+        declareInterface<IMCParticleSelector>( this );
+        declareProperty( "Code", m_code, "Python pseudocode for the filter criteria" );
+        declareProperty( "Factory", m_factory, "Type/Name for C++/Python Hybrid MC-Factory" );
+      };
+
     private:
       // ======================================================================
       // selection criteria itself
-      LoKi::Types::MCCut m_mccut ; ///< selection criteria itself
+      LoKi::Types::MCCut m_mccut; ///< selection criteria itself
       // python pseudo-code
-      std::string       m_code    ; ///< python pseudo-code
+      std::string m_code; ///< python pseudo-code
       // factory type/name
-      std::string       m_factory ; ///< factory type/name
+      std::string m_factory; ///< factory type/name
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } // end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
@@ -105,23 +93,20 @@ DECLARE_COMPONENT( LoKi::Hybrid::MCParticleSelector )
 // ============================================================================
 // initialization of the tool
 // ============================================================================
-StatusCode LoKi::Hybrid::MCParticleSelector::initialize ()
-{
+StatusCode LoKi::Hybrid::MCParticleSelector::initialize() {
   // (1) initialize the base
-  StatusCode  sc = GaudiTool::initialize() ;
-  if ( sc.isFailure() ) { return sc ; }                          // RETURN
+  StatusCode sc = GaudiTool::initialize();
+  if ( sc.isFailure() ) { return sc; } // RETURN
   // (2) get the factory:
-  IMCHybridFactory* factory = tool<IMCHybridFactory> ( m_factory , this ) ;
-  if ( 0 == factory )
-  { return Error ( "Could not locate IMCHybridFactory" ) ; }     // RETURN
+  IMCHybridFactory* factory = tool<IMCHybridFactory>( m_factory, this );
+  if ( 0 == factory ) { return Error( "Could not locate IMCHybridFactory" ); } // RETURN
   // (3) use the factory to get the cuts
-  sc = factory->get (  m_code , m_mccut ) ;
-  if ( sc.isFailure() )
-  { return Error ( "Error from IMCHybridFactory", sc   ) ; }     // RETURN
+  sc = factory->get( m_code, m_mccut );
+  if ( sc.isFailure() ) { return Error( "Error from IMCHybridFactory", sc ); } // RETURN
   //
-  info() << "CUT: '" << m_mccut << "' "<< endmsg ;
+  info() << "CUT: '" << m_mccut << "' " << endmsg;
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
 // The END

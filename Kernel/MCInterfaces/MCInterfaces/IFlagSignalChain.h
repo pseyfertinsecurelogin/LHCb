@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef IFLAGSIGNALCHAIN_H 
+#ifndef IFLAGSIGNALCHAIN_H
 #define IFLAGSIGNALCHAIN_H 1
 
 // Include files
@@ -22,9 +22,8 @@ namespace LHCb {
   class MCParticle;
 }
 
-
 /** @class IFlagSignalChain IFlagSignalChain.h
- *  
+ *
  *
  *  @author Gloria Corti
  *  @date   2015-07-23
@@ -36,6 +35,5 @@ struct IFlagSignalChain : extend_interfaces<IAlgTool> {
 
   /// Set flag if particle is signal or from signal
   virtual void setFromSignalFlag( const LHCb::MCParticle* mcPart ) = 0;
-
 };
 #endif // IFLAGSIGNALCHAIN_H

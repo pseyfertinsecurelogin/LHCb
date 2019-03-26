@@ -54,8 +54,7 @@ public:
 };
 int AnotherClass::call_count = 0;
 
-BOOST_AUTO_TEST_CASE( test )
-{
+BOOST_AUTO_TEST_CASE( test ) {
 
   // Register the two event model classes
   Gaudi::RegisterReleaseFunction<EventModelClass> r1;
@@ -65,21 +64,21 @@ BOOST_AUTO_TEST_CASE( test )
 
   // ensure that the counters are cleared
   EventModelClass::call_count = 0;
-  AnotherClass::call_count = 0;
+  AnotherClass::call_count    = 0;
 
   // call the release_pool methods
   Gaudi::MemoryPoolAllocatorReleaser::releaseMemory();
 
   // check that the counts are correct
-  BOOST_CHECK_EQUAL(EventModelClass::call_count, 1);
-  BOOST_CHECK_EQUAL(AnotherClass::call_count, 1);
+  BOOST_CHECK_EQUAL( EventModelClass::call_count, 1 );
+  BOOST_CHECK_EQUAL( AnotherClass::call_count, 1 );
 
-  MsgStream log(0, "test");
+  MsgStream log( 0, "test" );
   // try once more, with logging
   log << MSG::INFO;
-  Gaudi::MemoryPoolAllocatorReleaser::releaseMemory(log);
+  Gaudi::MemoryPoolAllocatorReleaser::releaseMemory( log );
 
   // check that the counts are correct
-  BOOST_CHECK_EQUAL(EventModelClass::call_count, 2);
-  BOOST_CHECK_EQUAL(AnotherClass::call_count, 2);
+  BOOST_CHECK_EQUAL( EventModelClass::call_count, 2 );
+  BOOST_CHECK_EQUAL( AnotherClass::call_count, 2 );
 }

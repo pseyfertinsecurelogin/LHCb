@@ -20,8 +20,7 @@
 // ============================================================================
 #include "LoKi/KinTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Tensors
    *  Collection of general purpose tensors and operations with them
@@ -29,8 +28,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-0725
    */
-  namespace Tensors
-  {
+  namespace Tensors {
     // ========================================================================
     /** @enum Indices
      *  The list of Lorentz indices
@@ -42,18 +40,18 @@ namespace LoKi
      */
     enum {
       //
-      X    = 0 ,
-      Y    = 1 ,
-      Z    = 2 ,
-      T    = 3 ,
+      X = 0,
+      Y = 1,
+      Z = 2,
+      T = 3,
       //
-      PX   = X ,
-      PY   = Y ,
-      PZ   = Z ,
-      E    = T ,
+      PX = X,
+      PY = Y,
+      PZ = Z,
+      E  = T,
       //
       LAST = 4
-    } ;
+    };
     // ========================================================================
     /** @struct Delta_
      *
@@ -69,10 +67,14 @@ namespace LoKi
      *  @date 2008-0725
      */
     template <unsigned int I, unsigned int J>
-    struct Delta_      { enum { value =  0 } ; } ;
+    struct Delta_ {
+      enum { value = 0 };
+    };
     /// the proper template specialization for diagonal elements
     template <unsigned int I>
-    struct Delta_<I,I> { enum { value =  1 } ; } ;
+    struct Delta_<I, I> {
+      enum { value = 1 };
+    };
     // ========================================================================
     /** @struct  Delta
      *  Kronecker delta: \f$ \delta^i_j \f$
@@ -91,19 +93,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-0725
      */
-    struct Delta
-    {
+    struct Delta {
       // ======================================================================
       /// Kroneker delta
-      inline int delta
-      (  const  size_t i ,
-         const  size_t j ) const { return i == j ; }
+      inline int delta( const size_t i, const size_t j ) const { return i == j; }
       /// Kroneker delta (functional form)
-      inline int operator()
-        ( const size_t i ,
-          const size_t j ) const { return i == j ; }
+      inline int operator()( const size_t i, const size_t j ) const { return i == j; }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @struct G_
      *
@@ -130,13 +127,13 @@ namespace LoKi
      *  @date 2008-0725
      */
     template <unsigned int I, unsigned int J>
-    struct G_          : std::integral_constant<int, 0> {}; 
+    struct G_ : std::integral_constant<int, 0> {};
     /// the proper template specialzation for diagonal elements
     template <unsigned int I>
-    struct G_<I,I>     : std::integral_constant<int,-1> {}; 
+    struct G_<I, I> : std::integral_constant<int, -1> {};
     /// the proper template specialzation for time component
     template <>
-    struct G_<T,T>     : std::integral_constant<int, 1> {}; 
+    struct G_<T, T> : std::integral_constant<int, 1> {};
     // ========================================================================
     /** struct G
      *
@@ -164,22 +161,13 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-0725
      */
-    struct G
-    {
+    struct G {
       // ======================================================================
       /// the only one important function: get the metric
-      inline int  operator ()
-        ( const size_t i ,
-          const size_t j ) const { return g( i, j ) ; }
+      inline int operator()( const size_t i, const size_t j ) const { return g( i, j ); }
       /// the only one important function: get the metric
-      inline int  g
-      ( const size_t i ,
-        const size_t j ) const
-      {
-        return
-          ( i    != j )  ?  0 :
-          ( LAST <= i )  ?  0 :
-          ( T    == i )  ?  1 : -1 ;
+      inline int g( const size_t i, const size_t j ) const {
+        return ( i != j ) ? 0 : ( LAST <= i ) ? 0 : ( T == i ) ? 1 : -1;
       }
       // ======================================================================
     };
@@ -200,89 +188,84 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-0725
      */
-    template <unsigned int I ,
-              unsigned int J ,
-              unsigned int K ,
-              unsigned int L > struct Epsilon_ ;
+    template <unsigned int I, unsigned int J, unsigned int K, unsigned int L>
+    struct Epsilon_;
     // ========================================================================
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J, unsigned int K>
-    struct Epsilon_<I,I,J,K> : std::integral_constant<int, 0> {};
+    struct Epsilon_<I, I, J, K> : std::integral_constant<int, 0> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J, unsigned int K>
-    struct Epsilon_<I,J,I,K> : public Epsilon_<I,I,J,K> {} ;
+    struct Epsilon_<I, J, I, K> : public Epsilon_<I, I, J, K> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J, unsigned int K>
-    struct Epsilon_<I,J,K,I> : public Epsilon_<I,I,J,K> {} ;
+    struct Epsilon_<I, J, K, I> : public Epsilon_<I, I, J, K> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J, unsigned int K>
-    struct Epsilon_<J,I,K,I> : public Epsilon_<I,I,J,K> {} ;
+    struct Epsilon_<J, I, K, I> : public Epsilon_<I, I, J, K> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J, unsigned int K>
-    struct Epsilon_<J,I,I,K> : public Epsilon_<I,I,J,K> {} ;
+    struct Epsilon_<J, I, I, K> : public Epsilon_<I, I, J, K> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J, unsigned int K>
-    struct Epsilon_<J,K,I,I> : public Epsilon_<I,I,J,K> {} ;
+    struct Epsilon_<J, K, I, I> : public Epsilon_<I, I, J, K> {};
     // ========================================================================
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<I,I,J,J> : std::integral_constant<int,0>{};
+    struct Epsilon_<I, I, J, J> : std::integral_constant<int, 0> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<I,J,I,J> : public Epsilon_<I,I,J,J> {} ;
+    struct Epsilon_<I, J, I, J> : public Epsilon_<I, I, J, J> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<I,J,J,I> : public Epsilon_<I,I,J,J> {} ;
+    struct Epsilon_<I, J, J, I> : public Epsilon_<I, I, J, J> {};
     // ========================================================================
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<I,I,I,J> : std::integral_constant<int,0>{};
+    struct Epsilon_<I, I, I, J> : std::integral_constant<int, 0> {};
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<I,I,J,I> : public Epsilon_<I,I,I,J> {} ;
+    struct Epsilon_<I, I, J, I> : public Epsilon_<I, I, I, J> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<I,J,I,I> : public Epsilon_<I,I,I,J> {} ;
+    struct Epsilon_<I, J, I, I> : public Epsilon_<I, I, I, J> {};
     /// stopping criteria for compile-time recursion
     template <unsigned int I, unsigned int J>
-    struct Epsilon_<J,I,I,I> : public Epsilon_<I,I,I,J> {} ;
+    struct Epsilon_<J, I, I, I> : public Epsilon_<I, I, I, J> {};
     // ========================================================================
     /// stopping criteria for compile-time recursion
     template <unsigned int I>
-    struct Epsilon_<I,I,I,I> : std::integral_constant<int,0>{};
+    struct Epsilon_<I, I, I, I> : std::integral_constant<int, 0> {};
     // ========================================================================
     /// stopping criteria for compile-time recursion
     template <>
-    struct Epsilon_<X,Y,Z,T> : std::integral_constant<int,1>{};
+    struct Epsilon_<X, Y, Z, T> : std::integral_constant<int, 1> {};
     // ========================================================================
-    namespace detail
-    {
+    namespace detail {
       // ======================================================================
       /// helper structure for conditional selection
-      template <bool C,int VALUE,class TYPE>
-      struct _Value : std::integral_constant<int,VALUE>{};
+      template <bool C, int VALUE, class TYPE>
+      struct _Value : std::integral_constant<int, VALUE> {};
       // ======================================================================
       /// helper structure for conditional selection
-      template <int VALUE,class TYPE>
-      struct _Value<false,VALUE,TYPE> : std::integral_constant<int, -TYPE::value>{};
+      template <int VALUE, class TYPE>
+      struct _Value<false, VALUE, TYPE> : std::integral_constant<int, -TYPE::value> {};
       // ======================================================================
-    }
+    } // namespace detail
     //  ========================================================================
     /// the generic evaluation of Levi-Chivita elements
-    template <unsigned int I , unsigned int J ,
-              unsigned int K , unsigned int L >
-    struct Epsilon_
-    {
+    template <unsigned int I, unsigned int J, unsigned int K, unsigned int L>
+    struct Epsilon_ {
     private:
       // ======================================================================
       // helper types for permutations
-      typedef Epsilon_<J,I,K,L>  _12 ; // permute the 1st and the 2nd index
-      typedef Epsilon_<I,K,J,L>  _23 ; // permute the 2nd and the 3rd index
-      typedef Epsilon_<I,J,L,K>  _34 ; // permute the 3rd and the 4th index
+      typedef Epsilon_<J, I, K, L> _12; // permute the 1st and the 2nd index
+      typedef Epsilon_<I, K, J, L> _23; // permute the 2nd and the 3rd index
+      typedef Epsilon_<I, J, L, K> _34; // permute the 3rd and the 4th index
       // ======================================================================
     private:
       // ======================================================================
       /// valid indices?
-      enum { valid = ( I != J ) && ( J != K ) && ( K != L )  && ( L != I ) } ;
+      enum { valid = ( I != J ) && ( J != K ) && ( K != L ) && ( L != I ) };
       // ======================================================================
     public:
       // ======================================================================
@@ -290,10 +273,15 @@ namespace LoKi
        *  The most important lines: the actual compile-evaluation
        *  of Levi-Civita symbols
        */
-      enum { value = !valid ? 0 :
-             detail::_Value<(I<J),
-             detail::_Value<(J<K),
-             detail::_Value<(K<L),(L<LAST)?1:0,_34>::value,_23>::value,_12>::value } ;
+      enum {
+        value =
+            !valid
+                ? 0
+                : detail::_Value<( I < J ),
+                                 detail::_Value<( J < K ), detail::_Value<( K < L ), ( L < LAST ) ? 1 : 0, _34>::value,
+                                                _23>::value,
+                                 _12>::value
+      };
       // ======================================================================
     };
     // ========================================================================
@@ -328,25 +316,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-28
      */
-    template <unsigned int I,
-              unsigned int J,
-              unsigned int K,
-              unsigned int L,
-              unsigned int M,
-              unsigned int N>
-    struct Epsilon1_
-    {
-      enum
-        {
-          value = Delta_<I,N>::value * Delta_<J,M>::value * Delta_<K,L>::value
-          +       Delta_<I,M>::value * Delta_<J,L>::value * Delta_<K,N>::value
-          +       Delta_<I,L>::value * Delta_<J,N>::value * Delta_<K,M>::value
-          //
-          -       Delta_<I,L>::value * Delta_<J,M>::value * Delta_<K,N>::value
-          -       Delta_<I,M>::value * Delta_<J,N>::value * Delta_<K,L>::value
-          -       Delta_<I,N>::value * Delta_<J,L>::value * Delta_<K,M>::value
-        } ;
-    } ;
+    template <unsigned int I, unsigned int J, unsigned int K, unsigned int L, unsigned int M, unsigned int N>
+    struct Epsilon1_ {
+      enum {
+        value = Delta_<I, N>::value * Delta_<J, M>::value * Delta_<K, L>::value +
+                Delta_<I, M>::value * Delta_<J, L>::value * Delta_<K, N>::value +
+                Delta_<I, L>::value * Delta_<J, N>::value * Delta_<K, M>::value
+                //
+                - Delta_<I, L>::value * Delta_<J, M>::value * Delta_<K, N>::value -
+                Delta_<I, M>::value * Delta_<J, N>::value * Delta_<K, L>::value -
+                Delta_<I, N>::value * Delta_<J, L>::value * Delta_<K, M>::value
+      };
+    };
     // ========================================================================
     /** @struct Epsilon2_
      *  (Compile-time) evaluation of the tensor product of
@@ -371,57 +352,46 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-28
      */
-    template <unsigned int I,
-              unsigned int J,
-              unsigned int K,
-              unsigned int L>
-    struct Epsilon2_
-    {
-      enum
-        { value = -2 * ( Delta_<I,K>::value * Delta_<J,L>::value -
-                         Delta_<J,K>::value * Delta_<I,L>::value ) } ;
-    } ;
+    template <unsigned int I, unsigned int J, unsigned int K, unsigned int L>
+    struct Epsilon2_ {
+      enum { value = -2 * ( Delta_<I, K>::value * Delta_<J, L>::value - Delta_<J, K>::value * Delta_<I, L>::value ) };
+    };
     // ========================================================================
-    namespace detail 
-    {
+    namespace detail {
       // ====================================================================
       template <class TYPE>
-      struct _TYPES
-      {
-        typedef long double iTYPE ;
-        typedef      double rTYPE ;
+      struct _TYPES {
+        typedef long double iTYPE;
+        typedef double      rTYPE;
       };
-      template <class TYPE> 
-      struct _TYPES< std::complex<TYPE> >
-      {
-        typedef std::complex<double> iTYPE ;
-        typedef std::complex<double> rTYPE ;
-      } ;
+      template <class TYPE>
+      struct _TYPES<std::complex<TYPE>> {
+        typedef std::complex<double> iTYPE;
+        typedef std::complex<double> rTYPE;
+      };
       template <class COORDINATES>
-      struct LVTYPES 
-      {
-        typedef typename _TYPES<typename COORDINATES::Scalar>::iTYPE iTYPE ;
-        typedef typename _TYPES<typename COORDINATES::Scalar>::rTYPE rTYPE ;          
-        typedef ROOT::Math::LorentzVector<COORDINATES>               vTYPE ;
-      } ;  
+      struct LVTYPES {
+        typedef typename _TYPES<typename COORDINATES::Scalar>::iTYPE iTYPE;
+        typedef typename _TYPES<typename COORDINATES::Scalar>::rTYPE rTYPE;
+        typedef ROOT::Math::LorentzVector<COORDINATES>               vTYPE;
+      };
       // ====================================================================
-    }
+    } // namespace detail
     // ========================================================================
     /** @struct Epsilon
      *  Simple implementation of 4D Antisymmetric Levi-Civita symbols
      *   \f$ \epsilon_{\mu\nu\lambda\delta} \f$ and some related operations
      *
-     *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$, that gives  
-     *  - \f$ x == epsilon ( t , y , z ) \f$ 
-     *  - \f$ y == epsilon ( t , z , x ) \f$ 
-     *  - \f$ z == epsilon ( t , x , y ) \f$ 
-     *  - \f$ t == epsilon ( x , y , z ) \f$ 
+     *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$, that gives
+     *  - \f$ x == epsilon ( t , y , z ) \f$
+     *  - \f$ y == epsilon ( t , z , x ) \f$
+     *  - \f$ z == epsilon ( t , x , y ) \f$
+     *  - \f$ t == epsilon ( x , y , z ) \f$
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-0725
      */
-    struct Epsilon
-    {
+    struct Epsilon {
     public:
       // ======================================================================
       /** the major method for evaluation of elements of Levi-Civita tensor
@@ -447,11 +417,10 @@ namespace LoKi
        *  @param l the last   index
        *  @return the value of Levi-Civita symbol
        */
-      inline int operator()
-      ( const unsigned short i ,
-        const unsigned short j ,
-        const unsigned short k ,
-        const unsigned short l ) const { return epsilon ( i , j , k , l ) ; }
+      inline int operator()( const unsigned short i, const unsigned short j, const unsigned short k,
+                             const unsigned short l ) const {
+        return epsilon( i, j, k, l );
+      }
       // ======================================================================
       /** evaluate the tensor product: e*v
        *
@@ -482,12 +451,10 @@ namespace LoKi
        *  @param v the input vector
        *  @return the product (component)
        */
-      inline double operator ()
-        ( const unsigned short       mu     ,
-          const unsigned short       nu     ,
-          const unsigned short       lambda ,
-          const LoKi::LorentzVector& v      ) const
-      { return epsilon ( mu , nu , lambda , v ) ; }
+      inline double operator()( const unsigned short mu, const unsigned short nu, const unsigned short lambda,
+                                const LoKi::LorentzVector& v ) const {
+        return epsilon( mu, nu, lambda, v );
+      }
       // ======================================================================
       /** evaluate the tensor product: e*v1*v2
        *
@@ -519,12 +486,10 @@ namespace LoKi
        *  @param v2 the second vector
        *  @return the product (component)
        */
-      inline double operator()
-        ( const unsigned short       mu ,
-          const unsigned short       nu ,
-          const LoKi::LorentzVector& v1 ,
-          const LoKi::LorentzVector& v2 ) const
-      { return epsilon ( mu , nu , v1 , v2 ) ; }
+      inline double operator()( const unsigned short mu, const unsigned short nu, const LoKi::LorentzVector& v1,
+                                const LoKi::LorentzVector& v2 ) const {
+        return epsilon( mu, nu, v1, v2 );
+      }
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -551,12 +516,10 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product (component)
        */
-      inline double operator()
-        ( const unsigned short       mu ,
-          const LoKi::LorentzVector& v1 ,
-          const LoKi::LorentzVector& v2 ,
-          const LoKi::LorentzVector& v3 ) const
-      { return epsilon ( mu , v1 , v2 , v3 ) ; }
+      inline double operator()( const unsigned short mu, const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2,
+                                const LoKi::LorentzVector& v3 ) const {
+        return epsilon( mu, v1, v2, v3 );
+      }
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -599,11 +562,10 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product (vector)
        */
-      inline LorentzVector operator()
-        ( const LoKi::LorentzVector& v1 ,
-          const LoKi::LorentzVector& v2 ,
-          const LoKi::LorentzVector& v3 ) const
-      { return epsilon ( v1 , v2 , v3 ) ; }
+      inline LorentzVector operator()( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2,
+                                       const LoKi::LorentzVector& v3 ) const {
+        return epsilon( v1, v2, v3 );
+      }
       // ======================================================================
       /** evaluate the e*v1*v2*v3*v4 product
        *
@@ -651,12 +613,10 @@ namespace LoKi
        *  @param v3 the fourth vector
        *  @return the product (vector)
        */
-      inline double operator()
-        ( const LoKi::LorentzVector& v1 ,
-          const LoKi::LorentzVector& v2 ,
-          const LoKi::LorentzVector& v3 ,
-          const LoKi::LorentzVector& v4 ) const
-      { return epsilon ( v1 , v2 , v3 , v4 ) ; }
+      inline double operator()( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2,
+                                const LoKi::LorentzVector& v3, const LoKi::LorentzVector& v4 ) const {
+        return epsilon( v1, v2, v3, v4 );
+      }
       // ======================================================================
       /* evaluate the tensor product: (e*v1*v2*v3)*(e*v4*v5*v6)
        *
@@ -694,14 +654,11 @@ namespace LoKi
        *  @param v6 the sixth  vector
        *  @return the tensor product
        */
-      double operator()
-        ( const LoKi::LorentzVector& v1 ,
-          const LoKi::LorentzVector& v2 ,
-          const LoKi::LorentzVector& v3 ,
-          const LoKi::LorentzVector& v4 ,
-          const LoKi::LorentzVector& v5 ,
-          const LoKi::LorentzVector& v6 ) const
-      { return epsilon ( v1 , v2 , v3 , v4 , v5 , v6 ) ; }
+      double operator()( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2, const LoKi::LorentzVector& v3,
+                         const LoKi::LorentzVector& v4, const LoKi::LorentzVector& v5,
+                         const LoKi::LorentzVector& v6 ) const {
+        return epsilon( v1, v2, v3, v4, v5, v6 );
+      }
       // =====================================================================
     public:
       // ======================================================================
@@ -726,23 +683,21 @@ namespace LoKi
        *  @param l the last   index
        *  @return the value of Levi-Civita symbol
        */
-      static constexpr inline int epsilon 
-      ( const unsigned short i , const unsigned short j ,
-        const unsigned short k , const unsigned short l ) 
-      {
+      static constexpr inline int epsilon( const unsigned short i, const unsigned short j, const unsigned short k,
+                                           const unsigned short l ) {
         /// the regular cases
-        if (  i <  j && j <  k && k <  l && l <  4 ) { return 1 ; } // RETURN
-        if (  i == j || j == k || k == l || l == i ) { return 0 ; } // RETURN
-        if (  i >  3 || j >  3 || k >  3 || l >  3 ) { return 0 ; } // RETURN
+        if ( i < j && j < k && k < l && l < 4 ) { return 1; }     // RETURN
+        if ( i == j || j == k || k == l || l == i ) { return 0; } // RETURN
+        if ( i > 3 || j > 3 || k > 3 || l > 3 ) { return 0; }     // RETURN
         /// permutations are required:
-        if ( i > j  ) { return -epsilon ( j , i , k , l ) ; } // RETURN
-        if ( j > k  ) { return -epsilon ( i , k , j , l ) ; } // RETURN
-        if ( k > l  ) { return -epsilon ( i , j , l , k ) ; } // RETURN
+        if ( i > j ) { return -epsilon( j, i, k, l ); } // RETURN
+        if ( j > k ) { return -epsilon( i, k, j, l ); } // RETURN
+        if ( k > l ) { return -epsilon( i, j, l, k ); } // RETURN
         /// here we can go only if some of number >=4, return 0..
-        return 0 ;
+        return 0;
       }
       // =====================================================================
-    public: // various tensor products 
+    public: // various tensor products
       // ======================================================================
       /** evaluate the tensor product e*v1
        *
@@ -761,13 +716,10 @@ namespace LoKi
        *  @param v the input vector
        *  @return the product (component)
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      epsilon
-      ( const unsigned short                          mu     ,
-        const unsigned short                          nu     ,
-        const unsigned short                          lambda ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v1     ) ;
+      epsilon( const unsigned short mu, const unsigned short nu, const unsigned short lambda,
+               const ROOT::Math::LorentzVector<COORDINATES>& v1 );
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product
        *
@@ -791,13 +743,10 @@ namespace LoKi
        *  @param v2 the second vector
        *  @return the product (component)
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      epsilon
-      ( const unsigned short                          mu ,
-        const unsigned short                          nu ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v2 ) ;
+      epsilon( const unsigned short mu, const unsigned short nu, const ROOT::Math::LorentzVector<COORDINATES>& v1,
+               const ROOT::Math::LorentzVector<COORDINATES>& v2 );
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -824,13 +773,10 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product (component)
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      epsilon
-        ( const unsigned short                          mu ,
-          const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
-          const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
-          const ROOT::Math::LorentzVector<COORDINATES>& v3 ) ;
+      epsilon( const unsigned short mu, const ROOT::Math::LorentzVector<COORDINATES>& v1,
+               const ROOT::Math::LorentzVector<COORDINATES>& v2, const ROOT::Math::LorentzVector<COORDINATES>& v3 );
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -856,12 +802,10 @@ namespace LoKi
        *  @param v3 the third  vector
        *  @return the product vector
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::vTYPE
-      epsilon
-      ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v3 ) ;
+      epsilon( const ROOT::Math::LorentzVector<COORDINATES>& v1, const ROOT::Math::LorentzVector<COORDINATES>& v2,
+               const ROOT::Math::LorentzVector<COORDINATES>& v3 );
       // ======================================================================
       /** evaluate the tensor product: e*v1*v2*v3*v4
        *
@@ -893,13 +837,10 @@ namespace LoKi
        *  @param v4 the fourth vector
        *  @return the tensor product
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      epsilon
-      ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v3 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& v4 ) ;
+      epsilon( const ROOT::Math::LorentzVector<COORDINATES>& v1, const ROOT::Math::LorentzVector<COORDINATES>& v2,
+               const ROOT::Math::LorentzVector<COORDINATES>& v3, const ROOT::Math::LorentzVector<COORDINATES>& v4 );
       // ======================================================================
       /** evaluate the tensor product: (e*a1*a2*a3)*(e*b1*b2*b3)
        *
@@ -946,15 +887,11 @@ namespace LoKi
        *  @param b3 the sixth  vector
        *  @return the tensor product
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      epsilon
-      ( const ROOT::Math::LorentzVector<COORDINATES>& a1 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& a2 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& a3 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& b1 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& b2 ,
-        const ROOT::Math::LorentzVector<COORDINATES>& b3 ) ;        
+      epsilon( const ROOT::Math::LorentzVector<COORDINATES>& a1, const ROOT::Math::LorentzVector<COORDINATES>& a2,
+               const ROOT::Math::LorentzVector<COORDINATES>& a3, const ROOT::Math::LorentzVector<COORDINATES>& b1,
+               const ROOT::Math::LorentzVector<COORDINATES>& b2, const ROOT::Math::LorentzVector<COORDINATES>& b3 );
       // ======================================================================
     public:
       // ======================================================================
@@ -979,12 +916,10 @@ namespace LoKi
        *  @param c the third  vector
        *  @return the magnitude of 4-normal
        */
-      template <class  COORDINATES>
+      template <class COORDINATES>
       static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      mag2
-      ( const ROOT::Math::LorentzVector<COORDINATES>& a ,
-        const ROOT::Math::LorentzVector<COORDINATES>& b ,
-        const ROOT::Math::LorentzVector<COORDINATES>& c ) ;
+      mag2( const ROOT::Math::LorentzVector<COORDINATES>& a, const ROOT::Math::LorentzVector<COORDINATES>& b,
+            const ROOT::Math::LorentzVector<COORDINATES>& c );
       // ======================================================================
     public:
       // ======================================================================
@@ -1003,9 +938,8 @@ namespace LoKi
        *  @param v the input vector
        *  @return the product (component)
        */
-      template <unsigned int I, unsigned int J, unsigned int K, class  COORDINATES>
-      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
-      e_3 ( const ROOT::Math::LorentzVector<COORDINATES>& v ) ;
+      template <unsigned int I, unsigned int J, unsigned int K, class COORDINATES>
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE e_3( const ROOT::Math::LorentzVector<COORDINATES>& v );
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product
        *
@@ -1025,9 +959,8 @@ namespace LoKi
        *  @return the product (component)
        */
       template <unsigned int I, unsigned int J, class COORDINATES>
-      static inline typename detail::LVTYPES<COORDINATES>::rTYPE 
-      e_2 ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
-            const ROOT::Math::LorentzVector<COORDINATES>& v2 ) ;
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      e_2( const ROOT::Math::LorentzVector<COORDINATES>& v1, const ROOT::Math::LorentzVector<COORDINATES>& v2 );
       // ======================================================================
       /** evaluate the e*v1*v2*v3 product
        *
@@ -1049,18 +982,17 @@ namespace LoKi
        *  @return the product (component)
        */
       template <unsigned int I, class COORDINATES>
-      static inline typename detail::LVTYPES<COORDINATES>::rTYPE 
-      e_1 ( const ROOT::Math::LorentzVector<COORDINATES>& v1 ,
-            const ROOT::Math::LorentzVector<COORDINATES>& v2 ,
-            const ROOT::Math::LorentzVector<COORDINATES>& v3 ) ;
+      static inline typename detail::LVTYPES<COORDINATES>::rTYPE
+      e_1( const ROOT::Math::LorentzVector<COORDINATES>& v1, const ROOT::Math::LorentzVector<COORDINATES>& v2,
+           const ROOT::Math::LorentzVector<COORDINATES>& v3 );
       // ======================================================================
     };
     // ========================================================================
-  } // end of namespace LoKi::Tensors
+  } // namespace Tensors
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// LoKiCore  
+// LoKiCore
 // ============================================================================
 #include "LoKi/Tensors.icpp"
 // ============================================================================

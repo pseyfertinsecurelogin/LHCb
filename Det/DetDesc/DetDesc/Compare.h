@@ -17,8 +17,7 @@
 // ============================================================================
 #include "LHCbMath/Lomont.h"
 // ============================================================================
-namespace DetDesc
-{
+namespace DetDesc {
   // ==========================================================================
   /** @var s_tolerance_ULPs
    *  the tolerance in ULPs-units of tick/intersection comparison
@@ -27,7 +26,7 @@ namespace DetDesc
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-12-13
    */
-  const unsigned int s_tolerance_ULPs = 1000 ;
+  const unsigned int s_tolerance_ULPs = 1000;
   // ==========================================================================
   /** Compare double/floating numbers
    *  @see gsl_fcmp
@@ -38,10 +37,8 @@ namespace DetDesc
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-12-13
    */
-  inline int compare( const double x1, const double x2, const unsigned int ULPs )
-  {
-    return LHCb::Math::lomont_compare_double ( x1 , x2 , ULPs ) ? 0 :
-           x1 < x2 ? -1 : 1 ;
+  inline int compare( const double x1, const double x2, const unsigned int ULPs ) {
+    return LHCb::Math::lomont_compare_double( x1, x2, ULPs ) ? 0 : x1 < x2 ? -1 : 1;
   }
   // ==========================================================================
   /** Compare double/floating numbers
@@ -52,8 +49,7 @@ namespace DetDesc
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-12-13
    */
-  inline int compare ( const double x1  , const double x2  )
-  { return DetDesc::compare ( x1 , x2 , s_tolerance_ULPs ) ; }
+  inline int compare( const double x1, const double x2 ) { return DetDesc::compare( x1, x2, s_tolerance_ULPs ); }
   // ==========================================================================
 } //                                                   end of namespace DetDesc
 // ============================================================================

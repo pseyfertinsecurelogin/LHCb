@@ -28,16 +28,15 @@
 
 #ifndef GOD_NOALLOC
 // Memory pool allocator from boost
-#include "GaudiKernel/boost_allocator.h"
-#include <boost/pool/pool_alloc.hpp>
+#  include "GaudiKernel/boost_allocator.h"
+#  include <boost/pool/pool_alloc.hpp>
 // STL MT allocator
-#include <ext/mt_allocator.h>
+#  include <ext/mt_allocator.h>
 // STL Pool allocator
-#include <ext/pool_allocator.h>
+#  include <ext/pool_allocator.h>
 #endif
 
-namespace LHCb
-{
+namespace LHCb {
 
   //--------------------------------------------------------------------------------
   /** @class FastAllocList Kernel/FastAllocList.h
@@ -49,49 +48,38 @@ namespace LHCb
    */
   //--------------------------------------------------------------------------------
 
-  template < typename TYPE, typename ALLOC >
-  class FastAllocList : public std::list< TYPE, ALLOC >
-  {
+  template <typename TYPE, typename ALLOC>
+  class FastAllocList : public std::list<TYPE, ALLOC> {
 
   private:
-
     /// Shortcut to the base class type
-    typedef std::list< TYPE, ALLOC > BaseClass;
+    typedef std::list<TYPE, ALLOC> BaseClass;
 
   public:
-
     /// Default constructor
-    constexpr FastAllocList( ) { }
+    constexpr FastAllocList() {}
 
     /** Constructor with initial size
      *  @param size Initialisation size for list
      */
-    constexpr FastAllocList( const typename BaseClass::size_type size )
-      : BaseClass(size) { }
+    constexpr FastAllocList( const typename BaseClass::size_type size ) : BaseClass( size ) {}
 
     /** Constructor with initial size and initialisation value
      *  @param size Initialisation size for list
      *  @param init Initialisation value
      */
-    constexpr FastAllocList( const typename BaseClass::size_type size,
-                             const TYPE & init )
-      : BaseClass(size,init) { }
+    constexpr FastAllocList( const typename BaseClass::size_type size, const TYPE& init ) : BaseClass( size, init ) {}
 
   public:
-
     /// Operator overloading for ostream
-    friend inline std::ostream& operator << ( std::ostream& str ,
-                                              const FastAllocList<TYPE,ALLOC> & v )
-    {
+    friend inline std::ostream& operator<<( std::ostream& str, const FastAllocList<TYPE, ALLOC>& v ) {
       str << "[ ";
       for ( const auto& i : v ) { str << i << " "; }
       return str << "]";
     }
-
   };
 
-  namespace Boost
-  {
+  namespace Boost {
 
     //--------------------------------------------------------------------------------
     /** @typedef PoolAllocList Kernel/FastAllocList.h
@@ -104,23 +92,20 @@ namespace LHCb
     //--------------------------------------------------------------------------------
 
 #ifndef GOD_NOALLOC
-    template < typename TYPE,
-               typename USERALLOC = boost::default_user_allocator_new_delete,
-               typename MUTEX     = boost::details::pool::default_mutex,
-               unsigned NEXTSIZE  = 32 >
-    using ListPoolAlloc = boost::fast_pool_allocator< TYPE, USERALLOC, MUTEX, NEXTSIZE >;
+    template <typename TYPE, typename USERALLOC = boost::default_user_allocator_new_delete,
+              typename MUTEX = boost::details::pool::default_mutex, unsigned NEXTSIZE = 32>
+    using ListPoolAlloc = boost::fast_pool_allocator<TYPE, USERALLOC, MUTEX, NEXTSIZE>;
 #else
-    template < typename TYPE >
-    using ListPoolAlloc = std::allocator< TYPE >;
+    template <typename TYPE>
+    using ListPoolAlloc = std::allocator<TYPE>;
 #endif
 
-    template < typename TYPE, typename ALLOC = ListPoolAlloc<TYPE> >
-    using PoolAllocList = FastAllocList< TYPE, ALLOC >;
+    template <typename TYPE, typename ALLOC = ListPoolAlloc<TYPE>>
+    using PoolAllocList = FastAllocList<TYPE, ALLOC>;
 
-  }
+  } // namespace Boost
 
-  namespace STL
-  {
+  namespace STL {
 
     //--------------------------------------------------------------------------------
     /** @typedef MTAllocList Kernel/FastAllocList.h
@@ -132,14 +117,14 @@ namespace LHCb
      */
     //--------------------------------------------------------------------------------
 
-    template < typename TYPE,
+    template <typename TYPE,
 #ifndef GOD_NOALLOC
-               typename ALLOC = __gnu_cxx::__mt_alloc< TYPE >
+              typename ALLOC = __gnu_cxx::__mt_alloc<TYPE>
 #else
-               typename ALLOC = std::allocator< TYPE >
+              typename ALLOC = std::allocator<TYPE>
 #endif
-               >
-    using MTAllocList = FastAllocList< TYPE, ALLOC >;
+              >
+    using MTAllocList = FastAllocList<TYPE, ALLOC>;
 
     //--------------------------------------------------------------------------------
     /** @typedef PoolAllocList Kernel/FastAllocList.h
@@ -151,14 +136,14 @@ namespace LHCb
      */
     //--------------------------------------------------------------------------------
 
-    template < typename TYPE,
+    template <typename TYPE,
 #ifndef GOD_NOALLOC
-             typename ALLOC = __gnu_cxx::__pool_alloc< TYPE >
+              typename ALLOC = __gnu_cxx::__pool_alloc<TYPE>
 #else
-             typename ALLOC = std::allocator< TYPE >
+              typename ALLOC = std::allocator<TYPE>
 #endif
-             >
-    using PoolAllocList = FastAllocList< TYPE, ALLOC >;
+              >
+    using PoolAllocList = FastAllocList<TYPE, ALLOC>;
 
     //--------------------------------------------------------------------------------
     /** @typedef List Kernel/FastAllocList.h
@@ -170,12 +155,11 @@ namespace LHCb
      */
     //--------------------------------------------------------------------------------
 
-    template < typename TYPE,
-               typename ALLOC = std::allocator< TYPE > >
-    using List = FastAllocList< TYPE, ALLOC >;
+    template <typename TYPE, typename ALLOC = std::allocator<TYPE>>
+    using List = FastAllocList<TYPE, ALLOC>;
 
-  }
+  } // namespace STL
 
-}
+} // namespace LHCb
 
 #endif // KERNEL_FastAllocList_H

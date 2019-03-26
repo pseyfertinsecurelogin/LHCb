@@ -27,11 +27,10 @@
 // ============================================================================
 // conversion to the string
 // ============================================================================
-std::string Decays::iTree::toString() const
-{
-  std::ostringstream s ;
-  fillStream ( s ) ;
-  return s.str () ;
+std::string Decays::iTree::toString() const {
+  std::ostringstream s;
+  fillStream( s );
+  return s.str();
 }
 // ============================================================================
 /*  The standard output stream operator for the sub-tree
@@ -40,8 +39,7 @@ std::string Decays::iTree::toString() const
  *  @return the reference to the outptu stream
  */
 // ============================================================================
-std::ostream& Decays::operator<< ( std::ostream& s , const iTree& o )
-{ return o.fillStream ( s ) ; }
+std::ostream& Decays::operator<<( std::ostream& s, const iTree& o ) { return o.fillStream( s ); }
 // ============================================================================
 
 // ============================================================================

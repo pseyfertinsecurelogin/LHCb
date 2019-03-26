@@ -20,34 +20,27 @@
 
 #include "Event/RawBank.h"
 
-namespace UTRawBankMap{
+namespace UTRawBankMap {
 
-inline LHCb::RawBank::BankType stringToType(const std::string& type){
+  inline LHCb::RawBank::BankType stringToType( const std::string& type ) {
 
-  // string to bank type
-  LHCb::RawBank::BankType bankType = LHCb::RawBank::Velo;
+    // string to bank type
+    LHCb::RawBank::BankType bankType = LHCb::RawBank::Velo;
 
-  if (type == "UT"){
-    bankType = LHCb::RawBank::UT;
-  } 
-  else if (type == "UTFull"){
-    bankType = LHCb::RawBank::UTFull;
+    if ( type == "UT" ) {
+      bankType = LHCb::RawBank::UT;
+    } else if ( type == "UTFull" ) {
+      bankType = LHCb::RawBank::UTFull;
+    } else if ( type == "UTError" ) {
+      bankType = LHCb::RawBank::UTError;
+    } else if ( type == "UTPedestal" ) {
+      bankType = LHCb::RawBank::UTPedestal;
+    } else {
+      // use the Velo as NULL
+    }
+    return bankType;
   }
-  else if (type == "UTError" ){
-    bankType = LHCb::RawBank::UTError;
-  }
-  else if (type == "UTPedestal" ){
-    bankType = LHCb::RawBank::UTPedestal;
-  }
-  else {
-    // use the Velo as NULL
-  }
-  return  bankType;
-}
 
-
-
-
-}
+} // namespace UTRawBankMap
 
 #endif // _UTRawBankMap_H_

@@ -20,17 +20,14 @@
 // ----------------------------------------------------------------------------
 DECLARE_COMPONENT( BasicDQFilter )
 
-bool BasicDQFilter::accept(const FlagsType& flags) const
-{
-  return std::none_of( flags.begin(), flags.end(),
-                       [&](const auto& f) {
-                             // if the flag is not ignored
-                             if (m_ignoredFlags.find( f.first ) != m_ignoredFlags.end()) {
-                                if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-                                    debug() << "Ignoring flag: " << f.first << endmsg;
-                                return false;
-                             }
-                             return f.second!=0;
-                      } );
+bool BasicDQFilter::accept( const FlagsType& flags ) const {
+  return std::none_of( flags.begin(), flags.end(), [&]( const auto& f ) {
+    // if the flag is not ignored
+    if ( m_ignoredFlags.find( f.first ) != m_ignoredFlags.end() ) {
+      if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "Ignoring flag: " << f.first << endmsg;
+      return false;
+    }
+    return f.second != 0;
+  } );
 }
 // ============================================================================

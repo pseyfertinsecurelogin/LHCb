@@ -30,8 +30,7 @@
 // ============================================================================
 #include "boost/regex.hpp"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::L0
    *  The namespace to keep all L0-related LoKi functors
@@ -43,8 +42,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-09-19
    */
-  namespace L0
-  {
+  namespace L0 {
     // ========================================================================
     /** @class Valid
      *  Simple functor to check the validity of L0DUReport object.
@@ -57,16 +55,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-01-08
      */
-    struct GAUDI_API Valid final
-      : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
-    {
+    struct GAUDI_API Valid final : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate {
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      Valid* clone () const override;
+      Valid* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -78,25 +74,23 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API SumEt final
-      : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function
-    {
+    class GAUDI_API SumEt final : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function {
     public:
       // ======================================================================
       /// constructor from bx-id
-      SumEt ( const int bx = 0  ) ;
+      SumEt( const int bx = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      SumEt* clone () const override { return new SumEt ( *this ) ; }
+      SumEt* clone() const override { return new SumEt( *this ); }
       // ======================================================================
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::L0DUReport* a ) const override;
+      double operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// BX-id
-      int m_bx ;                                                       // BX-id
+      int m_bx; // BX-id
       // ======================================================================
     };
     // ========================================================================
@@ -108,26 +102,24 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API DataValue
-      : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function
-    {
+    class GAUDI_API DataValue : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function {
     public:
       // ======================================================================
       /// constructor form the data name
-      DataValue ( const std::string& name ) ;
+      DataValue( const std::string& name );
       /// MANDATORY: clone method ("virtual constructor")
-      DataValue* clone() const override { return new DataValue ( *this ) ; }
+      DataValue* clone() const override { return new DataValue( *this ); }
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::L0DUReport* a ) const  override;
+      double operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-      const std::string& name() const { return m_name ; }
+      const std::string& name() const { return m_name; }
       // ======================================================================
     private:
       // ======================================================================
       /// data name
-      std::string m_name ;                                         // data name
+      std::string m_name; // data name
       // ======================================================================
     };
     // ========================================================================
@@ -139,17 +131,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API DataDigit final : DataValue
-    {
+    struct GAUDI_API DataDigit final : DataValue {
       // ======================================================================
       /// constructor form the data name
-      DataDigit ( const std::string& name ) ;
+      DataDigit( const std::string& name );
       /// MANDATORY: clone method ("virtual constructor")
-      DataDigit* clone() const override { return new DataDigit ( *this ) ; }
+      DataDigit* clone() const override { return new DataDigit( *this ); }
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::L0DUReport* a ) const override ;
+      double operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override ;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -163,27 +154,24 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API SumDecision final
-      : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
-    {
+    class GAUDI_API SumDecision final : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate {
     public:
       // ======================================================================
       /// constructor from decision mask
-      SumDecision ( const int mask , const int bx = 0 ) ;
+      SumDecision( const int mask, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      SumDecision* clone () const override
-      { return new SumDecision ( *this ) ; }
+      SumDecision* clone() const override { return new SumDecision( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the decision type
-      int m_mask ; //  the decision type
+      int m_mask; //  the decision type
       /// ?
-      int m_bx   ;  // ?
+      int m_bx; // ?
       // ======================================================================
     };
     // ========================================================================
@@ -197,24 +185,22 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API Decision final
-      : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
-    {
+    class GAUDI_API Decision final : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate {
     public:
       // ======================================================================
       /// constructor from decision mask
-      Decision ( const int mask ) ;
+      Decision( const int mask );
       /// MANDATORY: clone method ('virtual constructor')
-      Decision* clone () const override;
+      Decision* clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// the decision mask
-      int m_mask ;                                         // the decision mask
+      int m_mask; // the decision mask
       // ======================================================================
     };
     // ========================================================================
@@ -225,17 +211,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API ForceBit final
-      : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
-    {
+    struct GAUDI_API ForceBit final : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate {
       // ======================================================================
       /// MANDATORY: clone method ('virtual constructor')
-      ForceBit* clone () const override
-      { return new ForceBit ( *this ) ; }
+      ForceBit* clone() const override { return new ForceBit( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -246,16 +229,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API Tck final
-      : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function
-    {
+    struct GAUDI_API Tck final : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function {
       // ======================================================================
       /// MANDATORY: clone method ('virtual constructor')
-      Tck* clone () const override { return new Tck ( *this ) ; }
+      Tck* clone() const override { return new Tck( *this ); }
       /// MANDATORY: the only one essential method
-      double operator() ( const LHCb::L0DUReport* a ) const override ;
+      double operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override ;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -266,17 +247,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API TimingBit final
-      : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
-    {
+    struct GAUDI_API TimingBit final : LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate {
       // ======================================================================
       /// MANDATORY: clone method ('virtual constructor')
-      TimingBit* clone () const override
-      { return new TimingBit ( *this ) ; }
+      TimingBit* clone() const override { return new TimingBit( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -289,60 +267,54 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API ChannelDecision
-      : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
-    {
+    class GAUDI_API ChannelDecision : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate {
     protected:
       // ======================================================================
-      typedef std::vector<std::string>                                  Names ;
-      typedef std::vector<unsigned int>                              Channels ;
+      typedef std::vector<std::string>  Names;
+      typedef std::vector<unsigned int> Channels;
       // ======================================================================
     public:
       // ======================================================================
       /// channel decision by channel name
-      ChannelDecision ( const std::string& channel , const int bx = 0 )
-          : ChannelDecision( std::vector<std::string>{ channel }, bx )  {}
+      ChannelDecision( const std::string& channel, const int bx = 0 )
+          : ChannelDecision( std::vector<std::string>{channel}, bx ) {}
       /// channel decision by channel names  ("OR")
-      ChannelDecision ( const std::vector<std::string>& channels ,
-                        const int bx = 0 ) ;
+      ChannelDecision( const std::vector<std::string>& channels, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      ChannelDecision* clone() const override
-      { return new ChannelDecision ( *this ) ; }
+      ChannelDecision* clone() const override { return new ChannelDecision( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
-      const Channels&    channels () const { return m_channels ; }
-      const Names&       names    () const { return m_names    ; }
+      const Channels& channels() const { return m_channels; }
+      const Names&    names() const { return m_names; }
       // ======================================================================
-      int  bx   () const { return m_bx   ; }
+      int bx() const { return m_bx; }
       // ======================================================================
     protected:
       // ======================================================================
-      unsigned int tckPrev   ()                 const { return m_tckPrev   ; }
-      void     setTckPrev    ( const int tck  ) const { m_tckPrev = tck    ; }
-      void     clearChannels ()                 const { m_channels.clear() ; }
-      void     addChannel    ( unsigned int c ) const
-      { m_channels.push_back ( c ) ; }
-      void     clearNames    ()                 const { m_names.clear() ; }
-      void     addName       ( const std::string& c ) const
-      { m_names.push_back ( c ) ; }
+      unsigned int tckPrev() const { return m_tckPrev; }
+      void         setTckPrev( const int tck ) const { m_tckPrev = tck; }
+      void         clearChannels() const { m_channels.clear(); }
+      void         addChannel( unsigned int c ) const { m_channels.push_back( c ); }
+      void         clearNames() const { m_names.clear(); }
+      void         addName( const std::string& c ) const { m_names.push_back( c ); }
       // ======================================================================
     private:
       // ======================================================================
       /// the channel names
-      mutable Names m_names  ;                             // the channel names
+      mutable Names m_names; // the channel names
       /// channels
-      mutable Channels m_channels ; // the channels
+      mutable Channels m_channels; // the channels
       /// the bx-id
-      int          m_bx      ;                                     // the bx-id
+      int m_bx; // the bx-id
       // cached TCK
-      mutable unsigned int m_tckPrev ;                           // cached  TCK
+      mutable unsigned int m_tckPrev; // cached  TCK
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ChannelPreDecision
      *  Accessor to the channel predecision
@@ -352,23 +324,20 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API ChannelPreDecision : ChannelDecision
-    {
+    struct GAUDI_API ChannelPreDecision : ChannelDecision {
       // ======================================================================
       /// channel decision by channel name
-      ChannelPreDecision ( const std::string& channel , const int bx = 0 ) ;
+      ChannelPreDecision( const std::string& channel, const int bx = 0 );
       /// channel decision by channel names  ("OR")
-      ChannelPreDecision ( const std::vector<std::string>& channels ,
-                           const int bx = 0 ) ;
+      ChannelPreDecision( const std::vector<std::string>& channels, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      ChannelPreDecision* clone() const override
-      { return new ChannelPreDecision ( *this ) ; }
+      ChannelPreDecision* clone() const override { return new ChannelPreDecision( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class TriggerDecision
      *  Accessor to the trigger decision
@@ -378,23 +347,20 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API TriggerDecision : ChannelDecision
-    {
+    struct GAUDI_API TriggerDecision : ChannelDecision {
       // ======================================================================
       /// channel decision by channel name
-      TriggerDecision ( const std::string& channel , const int bx = 0 ) ;
+      TriggerDecision( const std::string& channel, const int bx = 0 );
       /// channel decision by channel names  ("OR")
-      TriggerDecision ( const std::vector<std::string>& channels ,
-                       const int bx = 0 ) ;
+      TriggerDecision( const std::vector<std::string>& channels, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      TriggerDecision* clone() const override
-      { return new TriggerDecision ( *this ) ; }
+      TriggerDecision* clone() const override { return new TriggerDecision( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class ConditionValue
      *  Accessor to the condition value
@@ -404,109 +370,90 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    struct GAUDI_API ConditionValue : ChannelDecision
-    {
+    struct GAUDI_API ConditionValue : ChannelDecision {
       // ======================================================================
       /// channel decision by channel name
-      ConditionValue ( const std::string& channel , const int bx = 0 ) ;
+      ConditionValue( const std::string& channel, const int bx = 0 );
       /// channel decision by channel names  ("OR")
-      ConditionValue ( const std::vector<std::string>& channels ,
-                       const int bx = 0 ) ;
+      ConditionValue( const std::vector<std::string>& channels, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      ConditionValue* clone() const override
-      { return new ConditionValue ( *this ) ; }
+      ConditionValue* clone() const override { return new ConditionValue( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    class GAUDI_API ChannelDecisionSubString : public ChannelDecision
-    {
+    class GAUDI_API ChannelDecisionSubString : public ChannelDecision {
     public:
       // ======================================================================
       /// constructor from substring
-      ChannelDecisionSubString
-      ( const std::string& substr     ,
-        const int          bx     = 0 ) ;
+      ChannelDecisionSubString( const std::string& substr, const int bx = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      ChannelDecisionSubString* clone() const override
-      { return new ChannelDecisionSubString ( *this ) ; }
+      ChannelDecisionSubString* clone() const override { return new ChannelDecisionSubString( *this ); }
       /// MANDATORY: the only one essential methos
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-      const std::string& substr() const { return m_substr ; }
+      const std::string& substr() const { return m_substr; }
       // ======================================================================
     private:
       // ======================================================================
       /// the substring
-      std::string m_substr ;                                   // the substring
+      std::string m_substr; // the substring
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    class GAUDI_API ChannelDecisionRegex : public ChannelDecisionSubString
-    {
+    class GAUDI_API ChannelDecisionRegex : public ChannelDecisionSubString {
     public:
       // ======================================================================
       /// constructor from substring
-      ChannelDecisionRegex
-      ( const std::string& substr     ,
-        const int          bx     = 0 ) ;
+      ChannelDecisionRegex( const std::string& substr, const int bx = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      ChannelDecisionRegex* clone() const override
-      { return new ChannelDecisionRegex ( *this ) ; }
+      ChannelDecisionRegex* clone() const override { return new ChannelDecisionRegex( *this ); }
       /// MANDATORY: the only one essential methos
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-      const boost::regex& expression() const { return m_expression ; }
+      const boost::regex& expression() const { return m_expression; }
       // ======================================================================
     private:
       // ======================================================================
       /// the regular expression
-      boost::regex m_expression ;                     // the regular expression
+      boost::regex m_expression; // the regular expression
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    class GAUDI_API ChannelPreDecisionSubString : public ChannelDecisionSubString
-    {
+    class GAUDI_API ChannelPreDecisionSubString : public ChannelDecisionSubString {
     public:
       // ======================================================================
       /// constructor from substring
-      ChannelPreDecisionSubString
-      ( const std::string& substr     ,
-        const int          bx     = 0 ) ;
+      ChannelPreDecisionSubString( const std::string& substr, const int bx = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      ChannelPreDecisionSubString* clone() const override
-      { return new ChannelPreDecisionSubString ( *this ) ; }
+      ChannelPreDecisionSubString* clone() const override { return new ChannelPreDecisionSubString( *this ); }
       /// MANDATORY: the only one essential methos
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-    class GAUDI_API ChannelPreDecisionRegex : public ChannelDecisionRegex
-    {
+    class GAUDI_API ChannelPreDecisionRegex : public ChannelDecisionRegex {
     public:
       // ======================================================================
       /// constructor from substring
-      ChannelPreDecisionRegex
-      ( const std::string& substr     ,
-        const int          bx     = 0 ) ;
+      ChannelPreDecisionRegex( const std::string& substr, const int bx = 0 );
       /// MANDATORY: clone method ("virtual constructor")
-      ChannelPreDecisionRegex* clone() const override
-      { return new ChannelPreDecisionRegex ( *this ) ; }
+      ChannelPreDecisionRegex* clone() const override { return new ChannelPreDecisionRegex( *this ); }
       /// MANDATORY: the only one essential methos
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class TriggerDecisionSubString
      *  Accessor to the trigger decision
@@ -516,21 +463,19 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API TriggerDecisionSubString : public ChannelDecisionSubString
-    {
+    class GAUDI_API TriggerDecisionSubString : public ChannelDecisionSubString {
     public:
       // ======================================================================
       /// trigger decision by name
-      TriggerDecisionSubString ( const std::string& channel , const int bx = 0 ) ;
+      TriggerDecisionSubString( const std::string& channel, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      TriggerDecisionSubString* clone() const override
-      { return new TriggerDecisionSubString ( *this ) ; }
+      TriggerDecisionSubString* clone() const override { return new TriggerDecisionSubString( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class TriggerDecisionRegex
      *  Accessor to the trigger decision
@@ -540,23 +485,21 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API TriggerDecisionRegex : public ChannelDecisionRegex
-    {
+    class GAUDI_API TriggerDecisionRegex : public ChannelDecisionRegex {
     public:
       // ======================================================================
       /// trigger decision by name
-      TriggerDecisionRegex ( const std::string& channel , const int bx = 0 ) ;
+      TriggerDecisionRegex( const std::string& channel, const int bx = 0 );
       /// MANDATORY: clone method ('virtual constructor')
-      TriggerDecisionRegex* clone() const override
-      { return new TriggerDecisionRegex ( *this ) ; }
+      TriggerDecisionRegex* clone() const override { return new TriggerDecisionRegex( *this ); }
       /// MANDATORY: the only one essential method
-      bool operator() ( const LHCb::L0DUReport* a ) const  override;
+      bool operator()( const LHCb::L0DUReport* a ) const override;
       /// OPTIONAL: the nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                                end of namespace LoKi::L0
+  } // namespace L0
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

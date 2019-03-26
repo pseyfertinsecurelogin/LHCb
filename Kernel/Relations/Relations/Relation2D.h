@@ -8,13 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: Relation2D.h,v 1.13 2009-04-24 15:26:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.13 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
-// ============================================================================
 #ifndef RELATIONS_Relation2D_H
 #define RELATIONS_Relation2D_H 1
 // ============================================================================
@@ -26,18 +19,17 @@
 // ============================================================================
 // from Gaudi
 // ============================================================================
-#include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IInterface.h"
 // ============================================================================
 // From Relations
 // ============================================================================
-#include "Relations/RelationUtils.h"
 #include "Relations/IRelation.h"
 #include "Relations/IRelation2D.h"
 #include "Relations/Relation2.h"
+#include "Relations/RelationUtils.h"
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   /** @class Relation2D Relations/Relation2D.h
    *
    * Templated object which implements bidirectional relations
@@ -45,71 +37,55 @@ namespace LHCb
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   28/01/2002
    */
-  template< class FROM, class TO>
-  class Relation2D
-   : public DataObject
-   , public Relations::BaseTable
-   , public IRelation2D<FROM,TO>
-  {
+  template <class FROM, class TO>
+  class Relation2D : public DataObject, public Relations::BaseTable, public IRelation2D<FROM, TO> {
   public:
     // ========================================================================
     /// shortcut for own type
-    typedef Relation2D<FROM,TO>              OwnType     ;
+    typedef Relation2D<FROM, TO> OwnType;
     /// shortcut for inverse type
-    typedef Relation2D<TO,FROM>              InvType     ;
+    typedef Relation2D<TO, FROM> InvType;
     /// shortcut for "direct"(="main") interface
-    typedef IRelation2D<FROM,TO>             IBase       ;
+    typedef IRelation2D<FROM, TO> IBase;
     /// shortcut for "direct"(="main") interface
-    typedef IRelation<FROM,TO>               IBase1      ;
+    typedef IRelation<FROM, TO> IBase1;
     /// shortcut for "inverse interface  interface
-    typedef IRelation<TO,FROM>               IBase2      ;
+    typedef IRelation<TO, FROM> IBase2;
     /// shortcut for direct subinterface
-    typedef typename IBase::DirectType       DirectType  ;
+    typedef typename IBase::DirectType DirectType;
     /// shortcut for inverse subinterface
-    typedef typename IBase::InverseType      InverseType ;
+    typedef typename IBase::InverseType InverseType;
     /// import "Range" type from the base
-    typedef typename IBase::Range            Range       ;
+    typedef typename IBase::Range Range;
     /// import "From"  type from the base
-    typedef typename IBase::From             From        ;
+    typedef typename IBase::From From;
     /// import "From"  type from the base
-    typedef typename IBase::From_            From_       ;
+    typedef typename IBase::From_ From_;
     /// import "To"    type from the base
-    typedef typename IBase::To_              To_         ;
+    typedef typename IBase::To_ To_;
     /// import "To"    type from the base
-    typedef typename IBase::To               To          ;
+    typedef typename IBase::To To;
     /// shortcut for actual implementation
-    typedef Relations::Relation2<FROM,TO>    Base        ;
+    typedef Relations::Relation2<FROM, TO> Base;
     // shortcut for "direct" interface
-    typedef typename IBase::DirectType       IDirect     ;
+    typedef typename IBase::DirectType IDirect;
     // shortcut for "inverse" interface
-    typedef typename IBase::InverseType      IInverse    ;
+    typedef typename IBase::InverseType IInverse;
     /// the actual type of the entry
-    typedef typename IBase::Entry            Entry       ;
+    typedef typename IBase::Entry Entry;
     // ========================================================================
   public:
     // ========================================================================
     /// Standard/default  constructor
-    Relation2D
-    ( const size_t reserve  = 0 )
-      : DataObject ()
-      , Relations::BaseTable  ()
-      , IBase      ()
-      , m_base     ( reserve )
-    {
+    Relation2D( const size_t reserve = 0 ) : DataObject(), Relations::BaseTable(), IBase(), m_base( reserve ) {
 #ifdef COUNT_INSTANCES
-      Relations::InstanceCounter::instance().increment( type() ) ;
+      Relations::InstanceCounter::instance().increment( type() );
 #endif // COUNT_INSTANCES
     }
     /// constructor from any direct interface
-    Relation2D
-    ( const IDirect& copy  )
-      : DataObject ()
-      , Relations::BaseTable  ()
-      , IBase      ()
-      , m_base     ( copy )
-    {
+    Relation2D( const IDirect& copy ) : DataObject(), Relations::BaseTable(), IBase(), m_base( copy ) {
 #ifdef COUNT_INSTANCES
-      Relations::InstanceCounter::instance().increment( type() ) ;
+      Relations::InstanceCounter::instance().increment( type() );
 #endif // COUNT_INSTANCES
     }
     /** constructor from "inverted interface"
@@ -117,91 +93,69 @@ namespace LHCb
      *  @param flag artificial argument to distinguisch from
      *  copy constructor
      */
-    Relation2D
-    ( const IInverse& inv  ,
-      const int       flag )
-      : DataObject ()
-      , Relations::BaseTable  ()
-      , IBase      ()
-      , m_base     ( inv  , flag )
-    {
+    Relation2D( const IInverse& inv, const int flag )
+        : DataObject(), Relations::BaseTable(), IBase(), m_base( inv, flag ) {
 #ifdef COUNT_INSTANCES
-      Relations::InstanceCounter::instance().increment( type() ) ;
+      Relations::InstanceCounter::instance().increment( type() );
 #endif // COUNT_INSTANCES
     }
     /// copy constructor
-    Relation2D
-    ( const OwnType& copy  )
-      : DataObject    ( copy          )
-      , Relations::BaseTable  ( copy  )
-      , IBase         ( copy          )
-      , m_base        ( copy.m_base  )
-    {
+    Relation2D( const OwnType& copy )
+        : DataObject( copy ), Relations::BaseTable( copy ), IBase( copy ), m_base( copy.m_base ) {
 #ifdef COUNT_INSTANCES
-      Relations::InstanceCounter::instance().increment( type() ) ;
+      Relations::InstanceCounter::instance().increment( type() );
 #endif // COUNT_INSTANCES
     }
     /// destructor (virtual)
-    virtual ~Relation2D()
-    {
+    virtual ~Relation2D() {
 #ifdef COUNT_INSTANCES
-      Relations::InstanceCounter::instance().decrement( type() ) ;
+      Relations::InstanceCounter::instance().decrement( type() );
 #endif // COUNT_INSTANCES
     }
     /// the type name
-    const std::string& type() const
-    {
-      static const std::string s_type( System::typeinfoName( typeid(OwnType) ) ) ;
-      return s_type ;
+    const std::string& type() const {
+      static const std::string s_type( System::typeinfoName( typeid( OwnType ) ) );
+      return s_type;
     }
     /// object identification (static method)
-    static  const CLID& classID()
-    {
-      static const CLID s_clid =
-        Relations::clid( System::typeinfoName( typeid(OwnType) ) );
-      return s_clid ;
+    static const CLID& classID() {
+      static const CLID s_clid = Relations::clid( System::typeinfoName( typeid( OwnType ) ) );
+      return s_clid;
     }
     /// object identification (virtual method)
-    const CLID& clID()     const override { return classID() ; }
+    const CLID& clID() const override { return classID(); }
     // ========================================================================
-  public:  // major functional methods (fast, 100% inline)
+  public: // major functional methods (fast, 100% inline)
     // ========================================================================
     /// retrive all relations from the object (fast,100% inline)
-    inline Range i_relations ( From_ object ) const
-    { return m_base.i_relations ( object ) ; }
+    inline Range i_relations( From_ object ) const { return m_base.i_relations( object ); }
     /// retrive all relations from ALL objects (fast,100% inline)
-    inline Range i_relations () const { return m_base.i_relations () ; }
+    inline Range i_relations() const { return m_base.i_relations(); }
     /// make the relation between 2 objects (fast,100% inline method)
-    inline StatusCode i_relate ( From_ object1 , To_ object2 )
-    {
-      const Entry entry ( object1 , object2 ) ;
-      return i_add ( entry ) ;
+    inline StatusCode i_relate( From_ object1, To_ object2 ) {
+      const Entry entry( object1, object2 );
+      return i_add( entry );
     }
     /// add the entry
-    inline StatusCode i_add ( const Entry& entry )
-    { return m_base.i_add ( entry ) ; }
+    inline StatusCode i_add( const Entry& entry ) { return m_base.i_add( entry ); }
     /// remove the concrete relation between objects (fast,100% inline method)
-    inline StatusCode i_remove ( From_ object1 , To_ object2 )
-    { return m_base.i_remove ( object1 , object2 ) ; }
+    inline StatusCode i_remove( From_ object1, To_ object2 ) { return m_base.i_remove( object1, object2 ); }
     /// remove all relations FROM the defined object (fast,100% inline method)
-    inline   StatusCode i_removeFrom ( From_ object )
-    { return m_base.i_removeFrom ( object ) ; }
+    inline StatusCode i_removeFrom( From_ object ) { return m_base.i_removeFrom( object ); }
     /// remove all relations TO the defined object (fast,100% inline method)
-    inline   StatusCode i_removeTo ( To_ object )
-    { return m_base.i_removeTo( object ) ; }
+    inline StatusCode i_removeTo( To_ object ) { return m_base.i_removeTo( object ); }
     /// remove ALL relations form ALL  object to ALL objects  (fast,100% inline)
-    inline  StatusCode i_clear() { return m_base.i_clear() ; }
+    inline StatusCode i_clear() { return m_base.i_clear(); }
     /// rebuild ALL relations form ALL  object to ALL objects(fast,100% inline)
-    inline  StatusCode i_rebuild() { return m_base.i_rebuild() ; }
+    inline StatusCode i_rebuild() { return m_base.i_rebuild(); }
     /** make the relation between 2 objects (fast,100% inline method)
      *  the call for i_sort() is mandatory
      */
-    inline void i_push ( From_ object1 , To_ object2 )
-    { m_base.i_push    ( object1 , object2 ) ; }
+    inline void i_push( From_ object1, To_ object2 ) { m_base.i_push( object1, object2 ); }
     /** (re)sort the table
      *   mandatory to use after i_push
      */
-    inline  void i_sort() { m_base.i_sort() ; }
+    inline void i_sort() { m_base.i_sort(); }
     // ========================================================================
   public: // merge
     // ========================================================================
@@ -210,110 +164,103 @@ namespace LHCb
      *  @param range the range to be added
      *  @return self-reference
      */
-    Relation2D& merge ( const Range& range )
-    { m_base.merge ( range ) ; return *this ; }
+    Relation2D& merge( const Range& range ) {
+      m_base.merge( range );
+      return *this;
+    }
     /** merge with the sorted range of relations
      *  @attention the range is assumed to be sorted!
      *  @param range the range to be added
      *  @return self-reference
      */
-    Relation2D& imerge ( const typename IInverse::Range& range )
-    { m_base.imerge ( range ) ; return *this ; }
+    Relation2D& imerge( const typename IInverse::Range& range ) {
+      m_base.imerge( range );
+      return *this;
+    }
     /** merge with the sorted range of relations
      *  @attention the range is assumed to be sorted!
      *  @param range the range to be added
      *  @return self-reference
      */
-    Relation2D& operator+=( const Range& range )
-    { return merge ( range ) ; }
+    Relation2D& operator+=( const Range& range ) { return merge( range ); }
     // ========================================================================
   public: // abstract methods from interface
     // ========================================================================
     /// retrive all relations from the given object object
-    Range relations ( From_ object ) const  override
-    { return i_relations( object ) ; }
+    Range relations( From_ object ) const override { return i_relations( object ); }
     /// retrive ALL relations from ALL objects
-    Range relations () const override { return i_relations() ; }
+    Range relations() const override { return i_relations(); }
     /// make the relation between 2 objects
-    StatusCode relate ( From_ object1 , To_ object2 )  override
-    { return i_relate( object1 , object2 ) ; }
+    StatusCode relate( From_ object1, To_ object2 ) override { return i_relate( object1, object2 ); }
     /// add the entry
-    StatusCode add ( const Entry& entry )  override
-    { return i_add ( entry ) ; }
+    StatusCode add( const Entry& entry ) override { return i_add( entry ); }
     /// remove the concrete relation between objects
-    StatusCode   remove ( From_ object1 , To_ object2 )  override
-    { return i_remove( object1 , object2 ) ; }
+    StatusCode remove( From_ object1, To_ object2 ) override { return i_remove( object1, object2 ); }
     /// remove all relations FROM the defined object
-    StatusCode   removeFrom ( From_ object )  override
-    { return i_removeFrom( object ) ; }
+    StatusCode removeFrom( From_ object ) override { return i_removeFrom( object ); }
     /// remove all relations TO the defined object
-    StatusCode   removeTo ( To_ object )  override
-    { return i_removeTo( object ) ; }
+    StatusCode removeTo( To_ object ) override { return i_removeTo( object ); }
     /// remove ALL relations from ALL to ALL objects
-    StatusCode   clear () override { return i_clear() ; }
+    StatusCode clear() override { return i_clear(); }
     /// rebuild ALL relations from ALL  object to ALL objects
-    StatusCode rebuild() override { return i_rebuild () ; }
+    StatusCode rebuild() override { return i_rebuild(); }
     /// update the object after POOL/ROOT reading
-    StatusCode update() override { return i_rebuild() ; }
+    StatusCode update() override { return i_rebuild(); }
     // ========================================================================
   public:
     // ========================================================================
     /// get the "direct" interface
-    inline       typename Base::Direct*  i_direct  ()
-    { return m_base.i_direct() ; }
+    inline typename Base::Direct* i_direct() { return m_base.i_direct(); }
     /// get the "direct" interface  (const-version)
-    inline const typename Base::Direct*  i_direct  () const
-    { return m_base.i_direct() ; }
+    inline const typename Base::Direct* i_direct() const { return m_base.i_direct(); }
     /// get the "inverse" interface
-    inline       typename Base::Inverse* i_inverse ()
-    { return m_base.i_inverse() ; }
+    inline typename Base::Inverse* i_inverse() { return m_base.i_inverse(); }
     /// get the "inverse" interface  (const version)
-    inline const typename Base::Inverse* i_inverse () const
-    { return m_base.i_inverse() ; }
+    inline const typename Base::Inverse* i_inverse() const { return m_base.i_inverse(); }
     // ========================================================================
-  public:  // abstract methods from interface
+  public: // abstract methods from interface
     // ========================================================================
     /// get the "direct" interface
-    DirectType*  direct ()        override { return i_direct() ; }
+    DirectType* direct() override { return i_direct(); }
     /// get the "direct" interface  (const-version)
-    const DirectType*  direct () const  override { return i_direct() ; }
+    const DirectType* direct() const override { return i_direct(); }
     /// get the "inverse" interface
-    InverseType* inverse ()       override { return i_inverse() ; }
+    InverseType* inverse() override { return i_inverse(); }
     /// get the "inverse" interface  (const version)
-    const InverseType* inverse () const override { return i_inverse() ; }
+    const InverseType* inverse() const override { return i_inverse(); }
     // ========================================================================
   public:
     // ========================================================================
     /// query the interface
-    StatusCode queryInterface
-    ( const InterfaceID& id , void** ret ) override
-    {
-      if( 0 == ret  )          { return StatusCode::FAILURE ; } // RETURN !!!
-      if( IInterface::interfaceID()  == id )
-      { *ret = static_cast<IInterface*> ( this ); }
-      else if( IBase::interfaceID()  == id )
-      { *ret = static_cast<IBase*>      ( this ); }
-      else if( IBase1::interfaceID() == id )
-      { *ret = static_cast<IBase1*>     ( this ); }
-      else                     { return StatusCode::FAILURE ; } //  RETURN !!!
+    StatusCode queryInterface( const InterfaceID& id, void** ret ) override {
+      if ( 0 == ret ) { return StatusCode::FAILURE; } // RETURN !!!
+      if ( IInterface::interfaceID() == id ) {
+        *ret = static_cast<IInterface*>( this );
+      } else if ( IBase::interfaceID() == id ) {
+        *ret = static_cast<IBase*>( this );
+      } else if ( IBase1::interfaceID() == id ) {
+        *ret = static_cast<IBase1*>( this );
+      } else {
+        return StatusCode::FAILURE;
+      } //  RETURN !!!
       ///
-      addRef() ;
-      return StatusCode::SUCCESS ;
+      addRef();
+      return StatusCode::SUCCESS;
     }
     /// increase the reference counter
-    unsigned long addRef  () override { return  DataObject::addRef  () ; }
+    unsigned long addRef() override { return DataObject::addRef(); }
     /// release the reference counter
-    unsigned long release () override { return  DataObject::release () ; }
+    unsigned long release() override { return DataObject::release(); }
     // ========================================================================
   public:
     // ========================================================================
     /// POOL identifier
-    static std::string GUID() { return Relations::guid ( classID() ) ; }
+    static std::string GUID() { return Relations::guid( classID() ); }
     // ========================================================================
   private:
     // ========================================================================
     /// assignment operator is disabled
-    Relation2D& operator=( const Relation2D& ) ;
+    Relation2D& operator=( const Relation2D& );
     // ========================================================================
   public:
     // ========================================================================
@@ -323,7 +270,7 @@ namespace LHCb
   private:
     // ========================================================================
     /// the actual relation table
-    Base m_base ;                                  // the actual relation table
+    Base m_base; // the actual relation table
     // ========================================================================
   };
   // ==========================================================================

@@ -26,17 +26,16 @@ public:
   /// Standard constructor
   using GaudiTupleAlg::GaudiTupleAlg;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
 
 private:
   /// ETC name
-  Gaudi::Property<std::string> m_collectionName{ this, "CollectionName", "<not set>"};
+  Gaudi::Property<std::string> m_collectionName{this, "CollectionName", "<not set>"};
   /// L0 channels
-  std::vector<std::string> m_l0channels ;
+  std::vector<std::string> m_l0channels;
 
   long m_events = 0; ///< Number of events
-
 };
 #endif // L0ETC_H

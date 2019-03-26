@@ -13,14 +13,14 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <iostream>
-#include <iomanip>
 #include <cmath>
+#include <iomanip>
+#include <iostream>
 // ============================================================================
 // Boost
 // ============================================================================
-#include "boost/static_assert.hpp"
 #include "boost/assert.hpp"
+#include "boost/static_assert.hpp"
 // ============================================================================
 /** @file
  *  Set of simple tests for various "std::abs" functions
@@ -46,8 +46,7 @@
  * @date 2011-01-14
  */
 // ============================================================================
-int main()
-{
+int main() {
   //
   // It prints:
   //
@@ -64,24 +63,18 @@ int main()
   // Value:  -0.069687886    std::fabs - std::abs :          0       fabs - abs :    0.069687886
   // Value:  0.023229295     std::fabs - std::abs :          0       fabs - abs :    0.023229295
   //
-  double value = 12345. ;
+  double value = 12345.;
   //
-  while ( std::fabs( value ) > 0.05 )
-  {
-    value /= -3.0 ;
-    std::cout
-      << "Value:"
-      << " \t" << std::setprecision ( 8 ) << value
-      << " \tstd::fabs - std::abs : "
-      << " \t" << std::setprecision ( 8 )
-      << ( std::fabs ( value ) - std::abs( int(value) ) )
-      << " \tfabs - abs :  "
-      << " \t" << std::setprecision ( 8 )
-      << ( ::fabs ( value ) - ::abs( int(value) ))
-      << std::endl;
+  while ( std::fabs( value ) > 0.05 ) {
+    value /= -3.0;
+    std::cout << "Value:"
+              << " \t" << std::setprecision( 8 ) << value << " \tstd::fabs - std::abs : "
+              << " \t" << std::setprecision( 8 ) << ( std::fabs( value ) - std::abs( int( value ) ) )
+              << " \tfabs - abs :  "
+              << " \t" << std::setprecision( 8 ) << ( ::fabs( value ) - ::abs( int( value ) ) ) << std::endl;
   }
   // ==========================================================================
-  exit(0) ;                                                             // EXIT
+  exit( 0 ); // EXIT
   // ==========================================================================
 }
 // ============================================================================

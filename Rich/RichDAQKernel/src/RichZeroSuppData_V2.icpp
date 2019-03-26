@@ -27,30 +27,23 @@
 
 //-----------------------------------------------------------------------------
 
-namespace Rich
-{
-  namespace DAQ
-  {
+namespace Rich {
+  namespace DAQ {
 
-    namespace RichZeroSuppDataV2
-    {
+    namespace RichZeroSuppDataV2 {
 
-      template < class Version, class Header, class Footer >
-      void RichZeroSuppData< Version, Header, Footer >::buildData(
-        const LHCb::RichSmartID::Vector &pdHits )
-      {
+      template <class Version, class Header, class Footer>
+      void RichZeroSuppData<Version, Header, Footer>::buildData( const LHCb::RichSmartID::Vector& pdHits ) {
 
         // temporary data map
-        typedef Rich::Map< ShortType, ShortType > DataMap;
-        DataMap                                   dataM;
+        typedef Rich::Map<ShortType, ShortType> DataMap;
+        DataMap                                 dataM;
 
         // Loop over digits
-        for ( const auto &ID : pdHits )
-        {
+        for ( const auto& ID : pdHits ) {
           // Get bit and address
-          const ShortType bit = RichZSPacked_V1::RichZSPacked::bitFromCol( ID.pixelCol() );
-          const ShortType address =
-            RichZSPacked_V1::RichZSPacked::addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
+          const ShortType bit     = RichZSPacked_V1::RichZSPacked::bitFromCol( ID.pixelCol() );
+          const ShortType address = RichZSPacked_V1::RichZSPacked::addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
           this->setBit( dataM[address], bit );
@@ -58,21 +51,18 @@ namespace Rich
 
         // How many words ?
         const ShortType nWords = dataM.size() / 2 + dataM.size() % 2;
-        if ( nWords > MaxDataSize )
-        {
+        if ( nWords > MaxDataSize ) {
           m_tooBig = true;
           return;
         }
 
         // Loop over address / bitfield pairs and fill to data bank
         auto iD = dataM.begin();
-        while ( iD != dataM.end() )
-        {
+        while ( iD != dataM.end() ) {
           const ShortType address0( ( *iD ).first ), field0( ( *iD ).second );
           ShortType       address1( 0 ), field1( 0 );
           ++iD;
-          if ( iD != dataM.end() )
-          {
+          if ( iD != dataM.end() ) {
             address1 = ( *iD ).first;
             field1   = ( *iD ).second;
             ++iD;
@@ -83,11 +73,9 @@ namespace Rich
         }
       }
 
-      template < class Version, class Header, class Footer >
-      ShortType RichZeroSuppData< Version, Header, Footer >::fillRichSmartIDs(
-        LHCb::RichSmartID::Vector &ids,
-        const LHCb::RichSmartID    hpdID ) const
-      {
+      template <class Version, class Header, class Footer>
+      ShortType RichZeroSuppData<Version, Header, Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector& ids,
+                                                                             const LHCb::RichSmartID    hpdID ) const {
 
         // For this implementation the header nEightBitBlocksPlusOne word contains the number of
         // hits
@@ -98,8 +86,7 @@ namespace Rich
 
         // Loop over data fields
         ShortType nDigitsMade = 0;
-        for ( ShortType iData = 0; iData < this->dataSize(); ++iData )
-        {
+        for ( ShortType iData = 0; iData < this->dataSize(); ++iData ) {
 
           // Get packed data data
           const RichZSPacked_V1::RichZSPacked zsData( this->data()[iData] );
@@ -108,17 +95,11 @@ namespace Rich
           {
             const ShortType address = zsData.address0();
             const ShortType bits    = zsData.bitField0();
-            for ( ShortType iB = 0; iB < RichZSPacked_V1::RichZSPackedCode::BitsField; ++iB )
-            {
-              if ( this->isBitOn( bits, iB ) )
-              {
-                ids.emplace_back(
-                  hpdID.rich(),
-                  hpdID.panel(),
-                  hpdID.pdNumInCol(),
-                  hpdID.pdCol(),
-                  RichZSPacked_V1::RichZSPacked::rowFromAddress( address ),
-                  RichZSPacked_V1::RichZSPacked::colFromAddressAndBit( address, iB ) );
+            for ( ShortType iB = 0; iB < RichZSPacked_V1::RichZSPackedCode::BitsField; ++iB ) {
+              if ( this->isBitOn( bits, iB ) ) {
+                ids.emplace_back( hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(),
+                                  RichZSPacked_V1::RichZSPacked::rowFromAddress( address ),
+                                  RichZSPacked_V1::RichZSPacked::colFromAddressAndBit( address, iB ) );
                 ++nDigitsMade;
                 if ( nDigitsMade == digitCount ) break;
               }
@@ -129,17 +110,11 @@ namespace Rich
           {
             const ShortType address = zsData.address1();
             const ShortType bits    = zsData.bitField1();
-            for ( ShortType iB = 0; iB < RichZSPacked_V1::RichZSPackedCode::BitsField; ++iB )
-            {
-              if ( this->isBitOn( bits, iB ) )
-              {
-                ids.emplace_back(
-                  hpdID.rich(),
-                  hpdID.panel(),
-                  hpdID.pdNumInCol(),
-                  hpdID.pdCol(),
-                  RichZSPacked_V1::RichZSPacked::rowFromAddress( address ),
-                  RichZSPacked_V1::RichZSPacked::colFromAddressAndBit( address, iB ) );
+            for ( ShortType iB = 0; iB < RichZSPacked_V1::RichZSPackedCode::BitsField; ++iB ) {
+              if ( this->isBitOn( bits, iB ) ) {
+                ids.emplace_back( hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(),
+                                  RichZSPacked_V1::RichZSPacked::rowFromAddress( address ),
+                                  RichZSPacked_V1::RichZSPacked::colFromAddressAndBit( address, iB ) );
                 ++nDigitsMade;
                 if ( nDigitsMade == digitCount ) break;
               }

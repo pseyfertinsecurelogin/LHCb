@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0MuonOverflowTool.h,v 1.1 2010-03-09 16:21:31 jucogan Exp $
 #ifndef COMPONENT_L0MUONOVERFLOWTOOL_H
 #define COMPONENT_L0MUONOVERFLOWTOOL_H 1
 
@@ -16,8 +15,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 
-#include "L0Interfaces/IL0MuonOverflowTool.h"            // Interface
-
+#include "L0Interfaces/IL0MuonOverflowTool.h" // Interface
 
 /** @class L0MuonOverflowTool L0MuonOverflowTool.h component/L0MuonOverflowTool.h
  *
@@ -29,23 +27,18 @@
 class L0MuonOverflowTool : public GaudiTool, virtual public IL0MuonOverflowTool {
 public:
   /// Standard constructor
-  L0MuonOverflowTool( const std::string& type,
-                      const std::string& name,
-                      const IInterface* parent);
+  L0MuonOverflowTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~L0MuonOverflowTool( ); ///< Destructor
+  virtual ~L0MuonOverflowTool(); ///< Destructor
 
-  StatusCode getQuarters(std::vector<int> & quarters, std::string rootInTes="") override;
-  StatusCode getBCSUs(std::vector<LHCb::MuonTileID> & bcsus, std::string rootInTes="") override;
-  StatusCode getPUs(std::vector<LHCb::MuonTileID> & pus, std::string rootInTes="") override;
+  StatusCode getQuarters( std::vector<int>& quarters, std::string rootInTes = "" ) override;
+  StatusCode getBCSUs( std::vector<LHCb::MuonTileID>& bcsus, std::string rootInTes = "" ) override;
+  StatusCode getPUs( std::vector<LHCb::MuonTileID>& pus, std::string rootInTes = "" ) override;
 
 private:
-
-  void getOverflows(std::vector<LHCb::MuonTileID> & overflows, std::string location);
+  void getOverflows( std::vector<LHCb::MuonTileID>& overflows, std::string location );
 
   // Options
   std::string m_l0Context; ///< Suffix appended to data location in TES
-
-
 };
 #endif // COMPONENT_L0MUONOVERFLOWTOOL_H

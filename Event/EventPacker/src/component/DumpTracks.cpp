@@ -28,34 +28,26 @@ DECLARE_COMPONENT( DumpTracks )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DumpTracks::DumpTracks( const std::string& name,
-                        ISvcLocator* pSvcLocator)
-: GaudiAlgorithm ( name , pSvcLocator )
-{
+DumpTracks::DumpTracks( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiAlgorithm( name, pSvcLocator ) {
   declareProperty( "NumberOfObjectsToPrint", m_numObjects = 5 );
   declareProperty( "TracksLocation", m_tracksLocation = LHCb::TrackLocation::Default );
 }
 
-
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode DumpTracks::execute() 
-{
+StatusCode DumpTracks::execute() {
   LHCb::Tracks* tracksCont = get<LHCb::Tracks>( m_tracksLocation );
 
-  info() << "There are " << tracksCont->size() << " tracks in "
-         << m_tracksLocation << endmsg;
+  info() << "There are " << tracksCont->size() << " tracks in " << m_tracksLocation << endmsg;
 
-  counter("#Tracks") += tracksCont->size();
+  counter( "#Tracks" ) += tracksCont->size();
 
-  if ( msgLevel( MSG::DEBUG ) ) 
-  {
+  if ( msgLevel( MSG::DEBUG ) ) {
     unsigned int numPrinted = 0;
 
-    for ( const LHCb::Track * track : *tracksCont )
-    {
-      if ( !msgLevel(MSG::VERBOSE) && ++numPrinted > m_numObjects ) break;
+    for ( const LHCb::Track* track : *tracksCont ) {
+      if ( !msgLevel( MSG::VERBOSE ) && ++numPrinted > m_numObjects ) break;
       debug() << *track << endmsg;
     }
   }

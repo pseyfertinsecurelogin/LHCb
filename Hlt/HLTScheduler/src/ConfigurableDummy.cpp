@@ -18,9 +18,7 @@ DECLARE_COMPONENT( ConfigurableDummy )
 #define ON_VERBOSE if ( msgLevel( MSG::VERBOSE ) )
 #define VERBOSE_MSG ON_VERBOSE verbose()
 
-
-StatusCode ConfigurableDummy::initialize()
-{
+StatusCode ConfigurableDummy::initialize() {
   auto sc = Algorithm::initialize();
   if ( !sc ) return sc;
 
@@ -49,7 +47,6 @@ StatusCode ConfigurableDummy::initialize()
   return sc;
 }
 
-
 StatusCode ConfigurableDummy::execute() // the execution of the algorithm
 {
 
@@ -61,7 +58,6 @@ StatusCode ConfigurableDummy::execute() // the execution of the algorithm
     DataObject const* obj = inputHandle->get();
     if ( obj == nullptr ) error() << "A read object was a null pointer." << endmsg;
   }
-
 
   VERBOSE_MSG << "outputs number: " << m_outputHandles.size() << endmsg;
   for ( auto& outputHandle : m_outputHandles ) {
@@ -75,4 +71,3 @@ StatusCode ConfigurableDummy::execute() // the execution of the algorithm
 
   return StatusCode::SUCCESS;
 }
-

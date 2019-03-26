@@ -19,9 +19,7 @@
  *  @author Alessia Satta
  *  @date   2007-11-12
  */
-namespace MuonBankVersion
-{
-  enum versions { DC04=0, DC06=1, v1=2 };
+namespace MuonBankVersion {
+  enum versions { DC04 = 0, DC06 = 1, v1 = 2 };
 }
 #endif // EVENT_MUONBANKVERSION_H
-

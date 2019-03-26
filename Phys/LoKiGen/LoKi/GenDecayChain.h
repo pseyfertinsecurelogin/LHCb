@@ -20,9 +20,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/GenTypes.h"
-#include "LoKi/DecayChainBase.h"
 #include "LoKi/BuildGenTrees.h"
+#include "LoKi/DecayChainBase.h"
+#include "LoKi/GenTypes.h"
 // ============================================================================
 /** @file
  *
@@ -39,8 +39,7 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class GenDecayChain
    *  Utility to print the decays
@@ -48,11 +47,10 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
    *  @date   2011-06-03
    */
-  class GAUDI_API GenDecayChain final : public virtual DecayChainBase
-  {
+  class GAUDI_API GenDecayChain final : public virtual DecayChainBase {
   protected:
     // ========================================================================
-   typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant AcceptGen ;
+    typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::BooleanConstant AcceptGen;
     // ========================================================================
   public:
     // ========================================================================
@@ -64,26 +62,18 @@ namespace LoKi
      *  @param bg        color for background for 'marked' lines
      *  @param vertexe   end-vertex info for MC particles to be printed
      */
-    GenDecayChain
-    ( const size_t          maxDepth = 10           ,
-      const bool            vertex   = false        ,
-      const Mode            mode     = LV_WITHPT    ,
-      const MSG::Color&     fg       = MSG::YELLOW  ,
-      const MSG::Color&     bg       = MSG::RED     ,
-      const bool            vertexe  = true         ) ;
+    GenDecayChain( const size_t maxDepth = 10, const bool vertex = false, const Mode mode = LV_WITHPT,
+                   const MSG::Color& fg = MSG::YELLOW, const MSG::Color& bg = MSG::RED, const bool vertexe = true );
     /** Standard constructor
      *  @param vertexe   end-vertex info for MC particles to be printed
      */
-    GenDecayChain
-    ( const LoKi::DecayChainBase& base ,
-      const bool                  vertexe  = true   ) ;
+    GenDecayChain( const LoKi::DecayChainBase& base, const bool vertexe = true );
     // ========================================================================
   public:
     // ========================================================================
     /// print end-vertex info ?
-    bool              vertexe     () const { return m_vertexe  ; }
-    void              setVertexE  (  const bool value )
-    { m_vertexe    = value ; }
+    bool vertexe() const { return m_vertexe; }
+    void setVertexE( const bool value ) { m_vertexe = value; }
     // ========================================================================
   public:
     // ========================================================================
@@ -93,19 +83,9 @@ namespace LoKi
      *  @param stream   reference to output stream
      *  @param term     stream terminator
      */
-    template < class PARTICLE    ,
-               class STREAM      ,
-               class TERMINATOR  ,
-               class ACCEPT      ,
-               class MARK        >
-    STREAM& print ( PARTICLE           first   ,
-                    PARTICLE           last    ,
-                    STREAM&            stream  ,
-                    TERMINATOR         term    ,
-                    const ACCEPT&      accept  ,
-                    const MARK&        mark    ,
-                    const std::string& prefix  ,
-                    const size_t       depth   ) const ;
+    template <class PARTICLE, class STREAM, class TERMINATOR, class ACCEPT, class MARK>
+    STREAM& print( PARTICLE first, PARTICLE last, STREAM& stream, TERMINATOR term, const ACCEPT& accept,
+                   const MARK& mark, const std::string& prefix, const size_t depth ) const;
     // ========================================================================
   public:
     // ========================================================================
@@ -129,101 +109,80 @@ namespace LoKi
      *  @param stream   reference to output stream
      *  @param term     stream terminator
      */
-    template < class STREAM     ,
-               class TERMINATOR ,
-               class ACCEPT     ,
-               class MARK       >
-    STREAM& print ( const HepMC::GenParticle*  particle       ,
-                    STREAM&                    stream         ,
-                    TERMINATOR                 term           ,
-                    const ACCEPT&              accept         ,
-                    const MARK&                mark           ,
-                    const std::string&         prefix  = " "  ,
-                    const size_t               depth   = 0    ) const
-    {
+    template <class STREAM, class TERMINATOR, class ACCEPT, class MARK>
+    STREAM& print( const HepMC::GenParticle* particle, STREAM& stream, TERMINATOR term, const ACCEPT& accept,
+                   const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid particle
-      if ( 0 == particle )
-      {
-        Error ( " HepMC::GenParticle* points to NULL" ) ;
-        return stream ;                             // RETURN
+      if ( 0 == particle ) {
+        Error( " HepMC::GenParticle* points to NULL" );
+        return stream; // RETURN
       }
       //
-      stream << term ;
+      stream << term;
       //
-      const bool marked = mark ( particle ) ;
+      const bool marked = mark( particle );
       //
-      size_t _indent = 0 ;
+      size_t _indent = 0;
       {
         // use colors :-))
-        MarkStream<STREAM> ms ( stream , marked , fg() , bg() ) ;
+        MarkStream<STREAM> ms( stream, marked, fg(), bg() );
         //
-        const std::string   p_name  = name ( LHCb::ParticleID ( particle->pdg_id() ) ) ;
-        const unsigned long l_depth = std::max    ( 3 * ( std::min ( maxDepth() , size_t(20) ) - depth ) , size_t(0) ) ;
-        const std::string   l_blank = blank ( 1 + l_depth ) ;
+        const std::string   p_name  = name( LHCb::ParticleID( particle->pdg_id() ) );
+        const unsigned long l_depth = std::max( 3 * ( std::min( maxDepth(), size_t( 20 ) ) - depth ), size_t( 0 ) );
+        const std::string   l_blank = blank( 1 + l_depth );
         //
-        stream << ( marked ? '*' : ' ' )
-               << depth
-               << prefix
-               << "|->"
-               << p_name
-               << l_blank  ;
+        stream << ( marked ? '*' : ' ' ) << depth << prefix << "|->" << p_name << l_blank;
         //
-        _indent += 2 ;
-        _indent += prefix  . length () ;
-        _indent += 2 ;
-        _indent += p_name  . length () ;
-        _indent += l_blank . length () ;
+        _indent += 2;
+        _indent += prefix.length();
+        _indent += 2;
+        _indent += p_name.length();
+        _indent += l_blank.length();
         //
-        if ( depth >   9 ) { _indent += 1 ; }
-        if ( depth >  99 ) { _indent += 1 ; }
-        if ( depth > 999 ) { _indent += 1 ; }
+        if ( depth > 9 ) { _indent += 1; }
+        if ( depth > 99 ) { _indent += 1; }
+        if ( depth > 999 ) { _indent += 1; }
         //
       }
       //
-      if ( !marked && maxDepth() < depth   )
-      { stream << " ... (max depth)     " ; return stream ; } // RETURN
+      if ( !marked && maxDepth() < depth ) {
+        stream << " ... (max depth)     ";
+        return stream;
+      } // RETURN
       //
-      if ( !marked && !accept ( particle ) )
-      { stream << " ... (skip  by cuts) " ; return stream ; } // RETURN
+      if ( !marked && !accept( particle ) ) {
+        stream << " ... (skip  by cuts) ";
+        return stream;
+      } // RETURN
       //
-      stream << toString( LoKi::LorentzVector( particle->momentum() ) ) ;
-      stream << " #" << toString ( particle->barcode () )
-             << "/"  << toString ( particle->status  () )  ;
+      stream << toString( LoKi::LorentzVector( particle->momentum() ) );
+      stream << " #" << toString( particle->barcode() ) << "/" << toString( particle->status() );
       //
-      HepMC::GenVertex* vertex = particle->production_vertex ();
-      if     ( m_vertex && 0 != vertex )
-      {
+      HepMC::GenVertex* vertex = particle->production_vertex();
+      if ( m_vertex && 0 != vertex ) {
         // use the terminator
-        stream << term     ;
-        stream << blank ( _indent + 5 ) ;
-        stream << " Origin    "
-               << toString ( LoKi::Point3D( vertex -> point3d() ) ) ;
-        stream << " #" << toString ( vertex -> barcode() ) ;
+        stream << term;
+        stream << blank( _indent + 5 );
+        stream << " Origin    " << toString( LoKi::Point3D( vertex->point3d() ) );
+        stream << " #" << toString( vertex->barcode() );
       }
       // print all end-vertices
-      HepMC::GenVertex* evertex = particle->end_vertex() ;
-      if ( m_vertex && m_vertexe && 0 != evertex )
-      {
+      HepMC::GenVertex* evertex = particle->end_vertex();
+      if ( m_vertex && m_vertexe && 0 != evertex ) {
         // use terminator
-        stream << term      ;
-        stream << blank ( _indent + 5 ) ;
-        stream << " EndVertex "
-               << toString( LoKi::Point3D ( evertex -> point3d() ) ) ;
-        stream << " #" << toString ( evertex -> barcode() ) ;
+        stream << term;
+        stream << blank( _indent + 5 );
+        stream << " EndVertex " << toString( LoKi::Point3D( evertex->point3d() ) );
+        stream << " #" << toString( evertex->barcode() );
       }
       //
-      if ( 0 != evertex )
-      {
-        auto begin = evertex->particles_begin ( HepMC::children ) ;
-        auto end   = evertex->particles_end   ( HepMC::children ) ;
-        print ( begin  , end   ,
-                stream , term  ,
-                accept , mark  ,
-                prefix + "   " ,
-                depth  + 1     ) ;
+      if ( 0 != evertex ) {
+        auto begin = evertex->particles_begin( HepMC::children );
+        auto end   = evertex->particles_end( HepMC::children );
+        print( begin, end, stream, term, accept, mark, prefix + "   ", depth + 1 );
       }
       //
-      return stream ;
+      return stream;
     }
     // ========================================================================
     /** print the decay chain for HepMC::GenEvent
@@ -249,36 +208,20 @@ namespace LoKi
      *  @param stream   reference to output stream
      *  @param term     stream terminator
      */
-    template < class STREAM     ,
-               class TERMINATOR ,
-               class ACCEPT     ,
-               class MARK       >
-    STREAM& print ( const HepMC::GenEvent*     event          ,
-                    STREAM&                    stream         ,
-                    TERMINATOR                 term           ,
-                    const ACCEPT&              accept         ,
-                    const MARK&                mark           ,
-                    const std::string&         prefix  = " "  ,
-                    const size_t               depth   = 0    ) const
-    {
+    template <class STREAM, class TERMINATOR, class ACCEPT, class MARK>
+    STREAM& print( const HepMC::GenEvent* event, STREAM& stream, TERMINATOR term, const ACCEPT& accept,
+                   const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid event
-      if ( !event )
-      {
-        Error ( " HepMC::GenEvent* points to NULL" ) ;
-        return stream ;
+      if ( !event ) {
+        Error( " HepMC::GenEvent* points to NULL" );
+        return stream;
       }
       // select the trees
-      LoKi::GenTypes::GenContainer trees ;
-      trees.reserve( event->particles_size() ) ;
-      LoKi::GenTrees::buildTrees
-        ( event->particles_begin () ,
-          event->particles_end   () ,
-          std::back_inserter( trees ) );
+      LoKi::GenTypes::GenContainer trees;
+      trees.reserve( event->particles_size() );
+      LoKi::GenTrees::buildTrees( event->particles_begin(), event->particles_end(), std::back_inserter( trees ) );
       // print the trees
-      return print
-        ( trees.begin () ,
-          trees.end   () ,
-          stream , term , accept , mark , prefix , depth ) ;
+      return print( trees.begin(), trees.end(), stream, term, accept, mark, prefix, depth );
     }
     // ========================================================================
     /** print the decay chain for LHCb::HepMCEvent
@@ -303,27 +246,16 @@ namespace LoKi
      *  @param stream   reference to output stream
      *  @param term     stream terminator
      */
-    template < class STREAM     ,
-               class TERMINATOR ,
-               class ACCEPT     ,
-               class MARK       >
-    STREAM& print ( const LHCb::HepMCEvent*    event          ,
-                    STREAM&                    stream         ,
-                    TERMINATOR                 term           ,
-                    const ACCEPT&              accept         ,
-                    const MARK&                mark           ,
-                    const std::string&         prefix  = " "  ,
-                    const size_t               depth   = 0    ) const
-    {
+    template <class STREAM, class TERMINATOR, class ACCEPT, class MARK>
+    STREAM& print( const LHCb::HepMCEvent* event, STREAM& stream, TERMINATOR term, const ACCEPT& accept,
+                   const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid event
-      if ( !event )
-      {
-        Error ( " LHCb::HepMCEvent* points to NULL" ) ;
-        return stream ;
+      if ( !event ) {
+        Error( " LHCb::HepMCEvent* points to NULL" );
+        return stream;
       }
       // print HepMC::GenEvent
-      return print
-        ( event->pGenEvt() , stream , term , accept , mark , prefix , depth ) ;
+      return print( event->pGenEvt(), stream, term, accept, mark, prefix, depth );
     }
     // ========================================================================
     /** print the decay chain for LHCb::HepMCEvent::Container
@@ -348,70 +280,45 @@ namespace LoKi
      *  @param stream   reference to output stream
      *  @param term     stream terminator
      */
-    template < class STREAM     ,
-               class TERMINATOR ,
-               class ACCEPT     ,
-               class MARK       >
-    STREAM& print ( const LHCb::HepMCEvent::Container* events ,
-                    STREAM&                    stream         ,
-                    TERMINATOR                 term           ,
-                    const ACCEPT&              accept         ,
-                    const MARK&                mark           ,
-                    const std::string&         prefix  = " "  ,
-                    const size_t               depth   = 0    ) const
-    {
+    template <class STREAM, class TERMINATOR, class ACCEPT, class MARK>
+    STREAM& print( const LHCb::HepMCEvent::Container* events, STREAM& stream, TERMINATOR term, const ACCEPT& accept,
+                   const MARK& mark, const std::string& prefix = " ", const size_t depth = 0 ) const {
       // invalid event
-      if ( !events )
-      {
-        Error ( " LHCb::HepMCEvent::Container* points to NULL" ) ;
-        return stream ;
+      if ( !events ) {
+        Error( " LHCb::HepMCEvent::Container* points to NULL" );
+        return stream;
       }
       // print HepMC::GenEvent
-      return print
-        ( events -> begin () ,
-          events -> end   () ,
-          stream , term , accept , mark , prefix , depth ) ;
+      return print( events->begin(), events->end(), stream, term, accept, mark, prefix, depth );
     }
     // ========================================================================
   public:
     // ========================================================================
     /// predefined printout
-    std::string print_
-    ( const HepMC::GenParticle*   p                            ,
-      const LoKi::Types::GCuts&   accept = AcceptGen ( true  ) ,
-      const LoKi::Types::GCuts&   mark   = AcceptGen ( false ) ) const ;
+    std::string print_( const HepMC::GenParticle* p, const LoKi::Types::GCuts& accept = AcceptGen( true ),
+                        const LoKi::Types::GCuts& mark = AcceptGen( false ) ) const;
     /// predefined printout
-    std::string print_
-    ( const LoKi::Types::GRange&  e                     ,
-      const LoKi::Types::GCuts&   accept = AcceptGen ( true  ) ,
-      const LoKi::Types::GCuts&   mark   = AcceptGen ( false ) ) const ;
+    std::string print_( const LoKi::Types::GRange& e, const LoKi::Types::GCuts& accept = AcceptGen( true ),
+                        const LoKi::Types::GCuts& mark = AcceptGen( false ) ) const;
     /// predefined printout
-    std::string print_
-    ( const LoKi::GenTypes::GenContainer&  e                   ,
-      const LoKi::Types::GCuts&   accept = AcceptGen ( true  ) ,
-      const LoKi::Types::GCuts&   mark   = AcceptGen ( false ) ) const ;
+    std::string print_( const LoKi::GenTypes::GenContainer& e, const LoKi::Types::GCuts& accept = AcceptGen( true ),
+                        const LoKi::Types::GCuts& mark = AcceptGen( false ) ) const;
     /// predefined printout
-    std::string print_
-    ( const HepMC::GenEvent*      e                            ,
-      const LoKi::Types::GCuts&   accept = AcceptGen ( true  ) ,
-      const LoKi::Types::GCuts&   mark   = AcceptGen ( false ) ) const ;
+    std::string print_( const HepMC::GenEvent* e, const LoKi::Types::GCuts& accept = AcceptGen( true ),
+                        const LoKi::Types::GCuts& mark = AcceptGen( false ) ) const;
     /// predefined printout
-    std::string print_
-    ( const LHCb::HepMCEvent*     e                            ,
-      const LoKi::Types::GCuts&   accept = AcceptGen ( true  ) ,
-      const LoKi::Types::GCuts&   mark   = AcceptGen ( false ) ) const ;
+    std::string print_( const LHCb::HepMCEvent* e, const LoKi::Types::GCuts& accept = AcceptGen( true ),
+                        const LoKi::Types::GCuts& mark = AcceptGen( false ) ) const;
     /// predefined printout
-    std::string print_
-    ( const LHCb::HepMCEvent::Container* e                     ,
-      const LoKi::Types::GCuts&   accept = AcceptGen ( true  ) ,
-      const LoKi::Types::GCuts&   mark   = AcceptGen ( false ) ) const ;
+    std::string print_( const LHCb::HepMCEvent::Container* e, const LoKi::Types::GCuts& accept = AcceptGen( true ),
+                        const LoKi::Types::GCuts& mark = AcceptGen( false ) ) const;
     // ========================================================================
   private:
     // ========================================================================
     /// print all end-vertices information
-    bool                  m_vertexe ; // print all end-vertices  information
+    bool m_vertexe; // print all end-vertices  information
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
@@ -422,24 +329,12 @@ namespace LoKi
  *  @param term     stream terminator
  */
 // ============================================================================
-template < class PARTICLE    ,
-           class STREAM      ,
-           class TERMINATOR  ,
-           class ACCEPT      ,
-           class MARK        >
-STREAM& LoKi::GenDecayChain::print
-( PARTICLE           first   ,
-  PARTICLE           last    ,
-  STREAM&            stream  ,
-  TERMINATOR         term    ,
-  const ACCEPT&      accept  ,
-  const MARK&        mark    ,
-  const std::string& prefix  ,
-  const size_t       depth   ) const
-{
-  for ( ; first != last ; ++first )
-  { print ( *first , stream , term , accept , mark , prefix , depth ) ; }
-  return stream ;
+template <class PARTICLE, class STREAM, class TERMINATOR, class ACCEPT, class MARK>
+STREAM& LoKi::GenDecayChain::print( PARTICLE first, PARTICLE last, STREAM& stream, TERMINATOR term,
+                                    const ACCEPT& accept, const MARK& mark, const std::string& prefix,
+                                    const size_t depth ) const {
+  for ( ; first != last; ++first ) { print( *first, stream, term, accept, mark, prefix, depth ); }
+  return stream;
 }
 // ============================================================================
 //                                                                      The END

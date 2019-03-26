@@ -16,21 +16,19 @@
 
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 // VectorClass
-#include "VectorClass/vector3d.h"
+#include "vector3d.h"
 
-namespace LHCb
-{
-  namespace Math
-  {
+namespace LHCb {
+  namespace Math {
 
     /** @namespace VectorClass VectorClassTypes.h
      *
      *  Namespace for classes implementing geometrical entities using the
-     *  VectorClass library. Internal implementation choosen to best utilise 
+     *  VectorClass library. Internal implementation choosen to best utilise
      *  the vectorisation capabilities of the library. See
      *
      *  http://www.agner.org/optimize/
@@ -39,8 +37,7 @@ namespace LHCb
      *
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      */
-    namespace VectorClass
-    {
+    namespace VectorClass {
 
       /** @class XYZVector VectorClassTypes.h LHCbMath/VectorClassTypes.h
        *
@@ -54,59 +51,53 @@ namespace LHCb
        *  @author Chris Jones
        *  @date   2015-01-28
        */
-      template < typename FTYPE = float,
-                 typename BASEVEC = typename std::conditional<std::is_same<FTYPE,float>::value,Vec3f,Vec3d>::type >
-      class XYZVector : public BASEVEC
-      {
+      template <typename FTYPE   = float,
+                typename BASEVEC = typename std::conditional<std::is_same<FTYPE, float>::value, Vec3f, Vec3d>::type>
+      class XYZVector : public BASEVEC {
 
       public:
-
         /// The floating point type in use
         using Scalar = FTYPE;
-        
-      public:
 
+      public:
         /// Standard constructor
-        XYZVector( const FTYPE x = 0.0f, 
-                   const FTYPE y = 0.0f,
-                   const FTYPE z = 0.0f ) : BASEVEC(x,y,z) { }
+        XYZVector( const FTYPE x = 0.0f, const FTYPE y = 0.0f, const FTYPE z = 0.0f ) : BASEVEC( x, y, z ) {}
 
         /// Constructor from a Gaudi Point
-        XYZVector( const Gaudi::XYZVector& p ) : BASEVEC( p.x(), p.y(), p.z() ) { }
+        XYZVector( const Gaudi::XYZVector& p ) : BASEVEC( p.x(), p.y(), p.z() ) {}
 
         /// Templated copy constructor
-        template < class TYPE >
-        XYZVector( const TYPE& v ) : BASEVEC(v) { }
-        
+        template <class TYPE>
+        XYZVector( const TYPE& v ) : BASEVEC( v ) {}
+
         /// Implicit conversion back to a Gaudi Vector
-        inline operator Gaudi::XYZVector() const { return { x(), y(), z() }; }
-        
+        inline operator Gaudi::XYZVector() const { return {x(), y(), z()}; }
+
         /// Implement dot method
-        inline FTYPE dot( const XYZVector& v ) const { return dot_product(*this,v); }
+        inline FTYPE dot( const XYZVector& v ) const { return dot_product( *this, v ); }
 
         /// Implement Dot method (alias to dot, to match ROOT...)
-        inline FTYPE Dot( const XYZVector& v ) const { return dot(v); }
-        
+        inline FTYPE Dot( const XYZVector& v ) const { return dot( v ); }
+
         /// Magnitude squared
-        inline FTYPE Mag2() const { return horizontal_add(square(*this)); }
+        inline FTYPE Mag2() const { return horizontal_add( square( *this ) ); }
 
         /// Magnitude squared
         inline FTYPE mag2() const { return Mag2(); }
 
         /// Get the polar R Coordinate
-        inline FTYPE R() const { return std::sqrt(Mag2()); }
+        inline FTYPE R() const { return std::sqrt( Mag2() ); }
 
         /// 3D Cross product
-        inline XYZVector Cross( const XYZVector& v ) const { return cross_product(*this,v); }
+        inline XYZVector Cross( const XYZVector& v ) const { return cross_product( *this, v ); }
 
         /// Returns a normalised unit vector
-        inline XYZVector Unit() const { return normalize_vector(*this); }
+        inline XYZVector Unit() const { return normalize_vector( *this ); }
 
         /// Returns a normalised unit vector
         inline XYZVector unit() const { return Unit(); }
 
       public:
-
         /// X accessor
         inline FTYPE x() const noexcept { return BASEVEC::get_x(); }
 
@@ -126,20 +117,19 @@ namespace LHCb
         inline FTYPE Z() const noexcept { return z(); }
 
         /// Set X Coordinate
-        inline void SetX( const FTYPE x ) noexcept { insert(0,x); }
+        inline void SetX( const FTYPE x ) noexcept { insert( 0, x ); }
 
         /// Set Y Coordinate
-        inline void SetY( const FTYPE y ) noexcept { insert(1,y); }
+        inline void SetY( const FTYPE y ) noexcept { insert( 1, y ); }
 
         /// Set Z Coordinate
-        inline void SetZ( const FTYPE z ) noexcept { insert(2,z); }
+        inline void SetZ( const FTYPE z ) noexcept { insert( 2, z ); }
 
       public:
-
         /// Overload output to ostream
-        friend inline std::ostream& operator << ( std::ostream& os, const XYZVector & v )
-        { return os << "(" << v.x() << "," << v.y() << "," << v.z() << ")"; }
-
+        friend inline std::ostream& operator<<( std::ostream& os, const XYZVector& v ) {
+          return os << "(" << v.x() << "," << v.y() << "," << v.z() << ")";
+        }
       };
 
       /** @class XYZPoint VectorClassTypes.h LHCbMath/VectorClassTypes.h
@@ -154,42 +144,36 @@ namespace LHCb
        *  @author Chris Jones
        *  @date   2015-01-28
        */
-      
-      template < typename FTYPE = float,
-                 typename BASEVEC = typename std::conditional<std::is_same<FTYPE,float>::value,Vec3f,Vec3d>::type >
-      class XYZPoint : public BASEVEC
-      {
+
+      template <typename FTYPE   = float,
+                typename BASEVEC = typename std::conditional<std::is_same<FTYPE, float>::value, Vec3f, Vec3d>::type>
+      class XYZPoint : public BASEVEC {
 
       public:
-        
         /// The floating point type in use
         using Scalar = FTYPE;
 
       public:
-
         /// Standard constructor
-        XYZPoint( const FTYPE x = 0.0f, 
-                  const FTYPE y = 0.0f,
-                  const FTYPE z = 0.0f ) : BASEVEC(x,y,z) { }
+        XYZPoint( const FTYPE x = 0.0f, const FTYPE y = 0.0f, const FTYPE z = 0.0f ) : BASEVEC( x, y, z ) {}
 
         /// Constructor from a Gaudi Point
-        XYZPoint( const Gaudi::XYZPoint& p ) : BASEVEC( p.x(), p.y(), p.z() ) { }
+        XYZPoint( const Gaudi::XYZPoint& p ) : BASEVEC( p.x(), p.y(), p.z() ) {}
 
         /// Templated copy constructor
-        template < class TYPE >
-        XYZPoint( const TYPE& p ) : BASEVEC(p) { }
-        
+        template <class TYPE>
+        XYZPoint( const TYPE& p ) : BASEVEC( p ) {}
+
         /// Implicit conversion back to a Gaudi Point
-        inline operator Gaudi::XYZPoint() const { return { x(), y(), z() }; }
+        inline operator Gaudi::XYZPoint() const { return {x(), y(), z()}; }
 
       public:
-        
         /// X accessor
         inline FTYPE x() const noexcept { return BASEVEC::get_x(); }
-        
+
         /// Y accessor
         inline FTYPE y() const noexcept { return BASEVEC::get_y(); }
-        
+
         /// Z accessor
         inline FTYPE z() const noexcept { return BASEVEC::get_z(); }
 
@@ -203,22 +187,20 @@ namespace LHCb
         inline FTYPE Z() const noexcept { return z(); }
 
         /// Set X Coordinate
-        inline void SetX( const FTYPE x ) noexcept { insert(0,x); }
+        inline void SetX( const FTYPE x ) noexcept { insert( 0, x ); }
 
         /// Set Y Coordinate
-        inline void SetY( const FTYPE y ) noexcept { insert(1,y); }
+        inline void SetY( const FTYPE y ) noexcept { insert( 1, y ); }
 
         /// Set Z Coordinate
-        inline void SetZ( const FTYPE z ) noexcept { insert(2,z); }
+        inline void SetZ( const FTYPE z ) noexcept { insert( 2, z ); }
 
       public:
-
         /// Overload output to ostream
-        friend inline std::ostream& operator << ( std::ostream& os, const XYZPoint & p )
-        { return os << "(" << p.x() << "," << p.y() << "," << p.z() << ")"; }
-
+        friend inline std::ostream& operator<<( std::ostream& os, const XYZPoint& p ) {
+          return os << "(" << p.x() << "," << p.y() << "," << p.z() << ")";
+        }
       };
-
 
       /// Shortcut to double type
       using XYZVectorD = XYZVector<double>;
@@ -230,6 +212,6 @@ namespace LHCb
       /// Shortcut to float type
       using XYZPointF = XYZPoint<float>;
 
-    }
-  }
-}
+    } // namespace VectorClass
+  }   // namespace Math
+} // namespace LHCb

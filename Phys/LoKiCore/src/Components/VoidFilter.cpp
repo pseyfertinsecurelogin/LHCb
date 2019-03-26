@@ -28,8 +28,7 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class VoidFilter
    *  Simple filtering algorithm bases on LoKi/Bender "hybrid" approach
@@ -37,15 +36,14 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
    *  @date 2008-09-23
    */
-  class VoidFilter : public LoKi::FilterAlg
-  {
+  class VoidFilter : public LoKi::FilterAlg {
   public:
     // ========================================================================
     /// the main method: execute
-    StatusCode execute  () override;
+    StatusCode execute() override;
     // ========================================================================
     /// proper finalization
-    StatusCode finalize () override;
+    StatusCode finalize() override;
     // ========================================================================
   public:
     // ========================================================================
@@ -54,11 +52,10 @@ namespace LoKi
      *  @see LoKi::FilterAlg::decode
      *  @see LoKi::FilterAlg::i_decode
      */
-    StatusCode decode () override
-    {
-      StatusCode sc = i_decode<LoKi::Hybrid::ICoreFactory> ( m_cut ) ;
-      Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
-      return StatusCode::SUCCESS ;
+    StatusCode decode() override {
+      StatusCode sc = i_decode<LoKi::Hybrid::ICoreFactory>( m_cut );
+      Assert( sc.isSuccess(), "Unable to decode the functor!" );
+      return StatusCode::SUCCESS;
     }
     // ========================================================================
     /** standard constructor
@@ -70,74 +67,67 @@ namespace LoKi
      *  @param name the algorithm instance name
      *  @param pSvc pointer to Service Locator
      */
-    VoidFilter
-    ( const std::string& name , // the algorithm instance name
-      ISvcLocator*       pSvc ) // pointer to the service locator
-      : LoKi::FilterAlg ( name , pSvc )
-      // the functor itself
-      , m_cut ( LoKi::BasicFunctors<void>::BooleanConstant( false ) )
-    {
+    VoidFilter( const std::string& name, // the algorithm instance name
+                ISvcLocator*       pSvc )      // pointer to the service locator
+        : LoKi::FilterAlg( name, pSvc )
+        // the functor itself
+        , m_cut( LoKi::BasicFunctors<void>::BooleanConstant( false ) ) {
       //
-      StatusCode sc = setProperty ( "Code" , "FNONE" ) ;
-      Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
+      StatusCode sc = setProperty( "Code", "FNONE" );
+      Assert( sc.isSuccess(), "Unable (re)set property 'Code'", sc );
       //
-      sc = setProperty
-        ( "Factory" ,
-          0 == name.find ( "Hlt1" ) ?
-          "LoKi::Hybrid::CoreFactory/Hlt1CoreFactory:PUBLIC" :
-          0 == name.find ( "Hlt2" ) ?
-          "LoKi::Hybrid::CoreFactory/Hlt2CoreFactory:PUBLIC" :
-          "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC"     ) ;
+      sc = setProperty( "Factory", 0 == name.find( "Hlt1" )
+                                       ? "LoKi::Hybrid::CoreFactory/Hlt1CoreFactory:PUBLIC"
+                                       : 0 == name.find( "Hlt2" ) ? "LoKi::Hybrid::CoreFactory/Hlt2CoreFactory:PUBLIC"
+                                                                  : "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" );
       //
-      Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
+      Assert( sc.isSuccess(), "Unable (re)set property 'Factory'", sc );
     }
     // ========================================================================
     /// the copy constructor is disabled
-    VoidFilter ( const VoidFilter& ) = delete ;      // the copy constructor is disabled
+    VoidFilter( const VoidFilter& ) = delete; // the copy constructor is disabled
     /// the assignement operator is disabled
-    VoidFilter& operator=( const VoidFilter& ) = delete ; // the assignement is disabled
+    VoidFilter& operator=( const VoidFilter& ) = delete; // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::Types::FCut    m_cut ;                        // the functor itself
+    LoKi::Types::FCut m_cut; // the functor itself
     // ========================================================================
   };
   // ==========================================================================
-} //                                                  The end of namespace LoKi
+} // namespace LoKi
 // ============================================================================
 // the main method: execute
 // ============================================================================
-StatusCode LoKi::VoidFilter::execute () // the main method: execute
+StatusCode LoKi::VoidFilter::execute() // the main method: execute
 {
-  if ( updateRequired() )
-  {
-    StatusCode sc = decode() ;
-    Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
+  if ( updateRequired() ) {
+    StatusCode sc = decode();
+    Assert( sc.isSuccess(), "Unable to decode the functor!" );
   }
   //
   // use the functor
   //
-  const bool result = m_cut () ;
+  const bool result = m_cut();
   //
   // some statistics
-  counter ("#passed" ) += result ;
+  counter( "#passed" ) += result;
   //
   // set the filter:
-  setFilterPassed ( result ) ;
+  setFilterPassed( result );
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
 // proper finalization
 // ============================================================================
-StatusCode LoKi::VoidFilter::finalize ()
-{
+StatusCode LoKi::VoidFilter::finalize() {
   // reset the functor
   // m_cut = LoKi::BasicFunctors<void>::BooleanConstant ( false )  ;
-  set_code_updated  ( true ) ;
+  set_code_updated( true );
   // finalize the base
-  return LoKi::FilterAlg::finalize () ;
+  return LoKi::FilterAlg::finalize();
 }
 // ========================================================================
 /// the factory (needed for instantiation)

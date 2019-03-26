@@ -8,57 +8,49 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
-#ifndef L0MUONKERNEL_L0MPTLUT_H 
+#ifndef L0MUONKERNEL_L0MPTLUT_H
 #define L0MUONKERNEL_L0MPTLUT_H 1
 
 // Include files
-#include <string>
-#include <map>
 #include "Kernel/MuonTileID.h"
+#include <map>
+#include <string>
 
 /** @class L0MPtLUT L0MPtLUT.h L0MuonKernel/L0MPtLUT.h
- *  
+ *
  *
  *  @author Julien Cogan
  *  @date   2012-04-24
  */
 
-
 class L0MPtLUT {
 
-public: 
-
+public:
   /// Key used in the pt Look Up Table
-  typedef std::map<LHCb::MuonTileID,int> m1ptMap;
+  typedef std::map<LHCb::MuonTileID, int> m1ptMap;
   /// Typdef for l0muon-pt Look Up Table
-  typedef std::map< LHCb::MuonTileID, m1ptMap > m2m1Lut;
+  typedef std::map<LHCb::MuonTileID, m1ptMap> m2m1Lut;
 
-
-public: 
+public:
   /// Standard constructor
-  L0MPtLUT(); 
+  L0MPtLUT();
 
-  virtual ~L0MPtLUT( ); ///< Destructor
+  virtual ~L0MPtLUT(); ///< Destructor
 
-  bool read(std::string filename);
-  int getEncodedPt( LHCb::MuonTileID m2, LHCb::MuonTileID m1);
-  int getEncodedPt( LHCb::MuonTileID m3, LHCb::MuonTileID m2, LHCb::MuonTileID m1);
-  int getAbsEncodedPt( LHCb::MuonTileID m2, LHCb::MuonTileID m1){
-    int encodedpt = getEncodedPt(m2,m1);
-    return (encodedpt&0x7F);
+  bool read( std::string filename );
+  int  getEncodedPt( LHCb::MuonTileID m2, LHCb::MuonTileID m1 );
+  int  getEncodedPt( LHCb::MuonTileID m3, LHCb::MuonTileID m2, LHCb::MuonTileID m1 );
+  int  getAbsEncodedPt( LHCb::MuonTileID m2, LHCb::MuonTileID m1 ) {
+    int encodedpt = getEncodedPt( m2, m1 );
+    return ( encodedpt & 0x7F );
   };
-  double getPtInMeV( LHCb::MuonTileID m2, LHCb::MuonTileID m1){
-    int encodedpt = getEncodedPt(m2,m1);
-    return (encodedpt&0x7F)*40.;
+  double getPtInMeV( LHCb::MuonTileID m2, LHCb::MuonTileID m1 ) {
+    int encodedpt = getEncodedPt( m2, m1 );
+    return ( encodedpt & 0x7F ) * 40.;
   };
-  
 
 protected:
-
 private:
-
   m2m1Lut m_m2m1lut;
-
 };
 #endif // L0MUONKERNEL_L0MPTLUT_H

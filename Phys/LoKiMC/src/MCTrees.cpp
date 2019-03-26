@@ -46,21 +46,16 @@
  *  @return true if particle belongd to decay tree of parent
  */
 // ============================================================================
-bool LoKi::MCTrees::fromMCTree
-( const LHCb::MCParticle* particle  ,
-  const LHCb::MCVertex*   parent    )
-{
-  if ( 0 == particle || 0 == parent ) { return false ; }
-  typedef SmartRefVector<LHCb::MCParticle> Products ;
-  const Products& products = parent->products() ;
-  for ( Products::const_iterator it = products.begin() ;
-        products.end() != it ; ++it )
-  {
-    const LHCb::MCParticle* mcp = *it ;
-    if ( 0 == mcp ) { continue ; }
-    if ( fromMCTree ( particle , mcp ) ) { return true ; }   // RETURN
+bool LoKi::MCTrees::fromMCTree( const LHCb::MCParticle* particle, const LHCb::MCVertex* parent ) {
+  if ( 0 == particle || 0 == parent ) { return false; }
+  typedef SmartRefVector<LHCb::MCParticle> Products;
+  const Products&                          products = parent->products();
+  for ( Products::const_iterator it = products.begin(); products.end() != it; ++it ) {
+    const LHCb::MCParticle* mcp = *it;
+    if ( 0 == mcp ) { continue; }
+    if ( fromMCTree( particle, mcp ) ) { return true; } // RETURN
   }
-  return false ;
+  return false;
 }
 // ============================================================================
 
@@ -73,24 +68,19 @@ bool LoKi::MCTrees::fromMCTree
  *  @return true if particle belongd to decay tree of parent
  */
 // ============================================================================
-bool LoKi::MCTrees::fromMCTree
-( const LHCb::MCParticle* particle  ,
-  const LHCb::MCParticle* parent    )
-{
-  if ( 0 == particle || 0 == parent ) { return false ; }   // RETURN
+bool LoKi::MCTrees::fromMCTree( const LHCb::MCParticle* particle, const LHCb::MCParticle* parent ) {
+  if ( 0 == particle || 0 == parent ) { return false; } // RETURN
 
-  if (      particle ==      parent ) { return true  ; }   // RETURN
+  if ( particle == parent ) { return true; } // RETURN
 
-  typedef SmartRefVector<LHCb::MCVertex> EndVertices ;
-  const EndVertices& endVertices = parent->endVertices() ;
-  for ( EndVertices::const_iterator it = endVertices.begin() ;
-        endVertices.end() != it ; ++it )
-  {
-    const LHCb::MCVertex* mcv = *it ;
-    if ( 0 == mcv ) { continue ; }
-    if ( fromMCTree( particle , mcv ) ) { return true ; }  // RETURN
+  typedef SmartRefVector<LHCb::MCVertex> EndVertices;
+  const EndVertices&                     endVertices = parent->endVertices();
+  for ( EndVertices::const_iterator it = endVertices.begin(); endVertices.end() != it; ++it ) {
+    const LHCb::MCVertex* mcv = *it;
+    if ( 0 == mcv ) { continue; }
+    if ( fromMCTree( particle, mcv ) ) { return true; } // RETURN
   }
-  return false ;
+  return false;
 }
 // ============================================================================
 

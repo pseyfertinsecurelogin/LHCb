@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlTTSensorCnv.cpp,v 1.1 2008-03-14 18:26:41 mneedham Exp $
 
 // DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
@@ -16,5 +15,5 @@
 // TTDet
 #include "STDet/DeTTSensor.h"
 
-typedef XmlUserDetElemCnv<DeTTSensor >        XmlTTSensorCnv;
+typedef XmlUserDetElemCnv<DeTTSensor> XmlTTSensorCnv;
 DECLARE_CONVERTER( XmlTTSensorCnv )

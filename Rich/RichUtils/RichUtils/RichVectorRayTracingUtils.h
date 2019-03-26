@@ -19,8 +19,7 @@
 #include <iostream>
 #include <type_traits>
 
-namespace Rich
-{
+namespace Rich {
 
   /** @namespace RayTracingUtils RichUtils/RayTracingUtils.h
    *
@@ -34,8 +33,7 @@ namespace Rich
    *  @author Chris Jones
    *  @date   2016-03-02
    */
-  namespace RayTracingUtils
-  {
+  namespace RayTracingUtils {
 
     /** Intersect a given direction, from a given point, with a given spherical shell.
      *
@@ -53,21 +51,13 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POSITION,
-               typename DIRECTION,
-               typename COC,
-               typename FTYPE,
-               typename = typename std::enable_if<
-                 !std::is_arithmetic< typename POSITION::Scalar >::value &&
-                 !std::is_arithmetic< typename DIRECTION::Scalar >::value &&
-                 !std::is_arithmetic< typename COC::Scalar >::value &&
-                 !std::is_arithmetic< FTYPE >::value >::type >
-    inline decltype( auto ) intersectSpherical( const POSITION & position,
-                                                const DIRECTION &direction,
-                                                const COC &      CoC,
-                                                const FTYPE      radius,
-                                                POSITION &       intersection )
-    {
+    template <typename POSITION, typename DIRECTION, typename COC, typename FTYPE,
+              typename = typename std::enable_if<!std::is_arithmetic<typename POSITION::Scalar>::value &&
+                                                 !std::is_arithmetic<typename DIRECTION::Scalar>::value &&
+                                                 !std::is_arithmetic<typename COC::Scalar>::value &&
+                                                 !std::is_arithmetic<FTYPE>::value>::type>
+    inline decltype( auto ) intersectSpherical( const POSITION& position, const DIRECTION& direction, const COC& CoC,
+                                                const FTYPE radius, POSITION& intersection ) {
       const FTYPE two( 2.0 ), four( 4.0 ), half( 0.5 );
       // for line sphere intersection look at http://www.realtimerendering.com/int/
       const FTYPE a     = direction.Mag2();
@@ -105,18 +95,13 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POSITION,
-               typename DIRECTION,
-               typename COC,
-               typename FTYPE,
-               typename = typename std::enable_if<
-                 !std::is_arithmetic< typename POSITION::Scalar >::value &&
-                 !std::is_arithmetic< typename DIRECTION::Scalar >::value &&
-                 !std::is_arithmetic< typename COC::Scalar >::value &&
-                 !std::is_arithmetic< FTYPE >::value >::type >
-    inline decltype( auto )
-    reflectSpherical( POSITION &position, DIRECTION &direction, const COC &CoC, const FTYPE radius )
-    {
+    template <typename POSITION, typename DIRECTION, typename COC, typename FTYPE,
+              typename = typename std::enable_if<!std::is_arithmetic<typename POSITION::Scalar>::value &&
+                                                 !std::is_arithmetic<typename DIRECTION::Scalar>::value &&
+                                                 !std::is_arithmetic<typename COC::Scalar>::value &&
+                                                 !std::is_arithmetic<FTYPE>::value>::type>
+    inline decltype( auto ) reflectSpherical( POSITION& position, DIRECTION& direction, const COC& CoC,
+                                              const FTYPE radius ) {
       const FTYPE two( 2.0 ), four( 4.0 ), half( 0.5 );
       const FTYPE a     = direction.Mag2();
       const auto  delta = position - CoC;
@@ -149,19 +134,12 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT,
-               typename VECTOR,
-               typename PLANE,
-               typename FTYPE = typename POINT::Scalar,
-               typename       = typename std::enable_if<
-                 !std::is_arithmetic< typename POINT::Scalar >::value &&
-                 !std::is_arithmetic< typename VECTOR::Scalar >::value &&
-                 !std::is_arithmetic< typename PLANE::Scalar >::value >::type >
-    inline decltype( auto ) intersectPlane( const POINT & position,
-                                            const VECTOR &direction,
-                                            const PLANE & plane,
-                                            POINT &       intersection )
-    {
+    template <typename POINT, typename VECTOR, typename PLANE, typename FTYPE = typename POINT::Scalar,
+              typename = typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value &&
+                                                 !std::is_arithmetic<typename VECTOR::Scalar>::value &&
+                                                 !std::is_arithmetic<typename PLANE::Scalar>::value>::type>
+    inline decltype( auto ) intersectPlane( const POINT& position, const VECTOR& direction, const PLANE& plane,
+                                            POINT& intersection ) {
       const typename FTYPE::mask_type OK( true );
       const FTYPE                     scalar   = direction.Dot( plane.Normal() );
       const FTYPE                     distance = -( plane.Distance( position ) ) / scalar;
@@ -181,16 +159,11 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT,
-               typename VECTOR,
-               typename PLANE,
-               typename FTYPE = typename POINT::Scalar,
-               typename       = typename std::enable_if<
-                 !std::is_arithmetic< typename POINT::Scalar >::value &&
-                 !std::is_arithmetic< typename VECTOR::Scalar >::value &&
-                 !std::is_arithmetic< typename PLANE::Scalar >::value >::type >
-    inline decltype( auto ) reflectPlane( POINT &position, VECTOR &direction, const PLANE &plane )
-    {
+    template <typename POINT, typename VECTOR, typename PLANE, typename FTYPE = typename POINT::Scalar,
+              typename = typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value &&
+                                                 !std::is_arithmetic<typename VECTOR::Scalar>::value &&
+                                                 !std::is_arithmetic<typename PLANE::Scalar>::value>::type>
+    inline decltype( auto ) reflectPlane( POINT& position, VECTOR& direction, const PLANE& plane ) {
       const typename POINT::Scalar    two( 2.0 );
       const typename FTYPE::mask_type OK( true );
       // Plane normal

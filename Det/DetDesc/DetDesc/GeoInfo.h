@@ -27,8 +27,7 @@ struct IGeometryInfo;
  *  @date   10/08/2001
  */
 
-namespace GeoInfo
-{
+namespace GeoInfo {
 
   /** create "ghost" geometry info object
    *  @exception GeometryInfoException null IDetectorElement pointer
@@ -43,8 +42,7 @@ namespace GeoInfo
    *  @param LV name/address fo logical volume
    *  @return pointer to IGeometryInfo object
    */
-  IGeometryInfo* createGeometryInfo( IDetectorElement* de  ,
-                                     const std::string& LV );
+  IGeometryInfo* createGeometryInfo( IDetectorElement* de, const std::string& LV );
 
   /** create regular geometry infor element
    *  @exception GeometryInfoException null IDetectorElement pointer
@@ -54,11 +52,8 @@ namespace GeoInfo
    *  @param ReplicaNamePath replica path/address
    *  @param alignmentPath   address of alignment condition
    */
-  IGeometryInfo* createGeometryInfo( IDetectorElement*  de              ,
-                                     const std::string& LogVol          ,
-                                     const std::string& Support         ,
-                                     const std::string& ReplicaNamePath ,
-                                     const std::string& alignmentPath="");
+  IGeometryInfo* createGeometryInfo( IDetectorElement* de, const std::string& LogVol, const std::string& Support,
+                                     const std::string& ReplicaNamePath, const std::string& alignmentPath = "" );
 
   /** create regular geometry infor element
    *  @exception GeometryInfoException null IDetectorElement pointer
@@ -68,12 +63,9 @@ namespace GeoInfo
    *  @param ReplicaPath     replica path
    *  @param alignmentPath   address of alignment condition
    */
-  IGeometryInfo* createGeometryInfo( IDetectorElement*  de              ,
-                                     const std::string& LogVol          ,
-                                     const std::string& Support         ,
-                                     const ILVolume::ReplicaPath& ReplicaPath,
-                                     const std::string& alignmentPath="");
-}
+  IGeometryInfo* createGeometryInfo( IDetectorElement* de, const std::string& LogVol, const std::string& Support,
+                                     const ILVolume::ReplicaPath& ReplicaPath, const std::string& alignmentPath = "" );
+} // namespace GeoInfo
 
 /// ===========================================================================
 #endif ///< DETDESC_GEOINFO_H

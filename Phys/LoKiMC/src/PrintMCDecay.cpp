@@ -13,8 +13,8 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <string>
 #include <sstream>
+#include <string>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -28,10 +28,10 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/MCExtract.h"
 #include "LoKi/ParticleProperties.h"
 #include "LoKi/Primitives.h"
 #include "LoKi/PrintMCDecay.h"
-#include "LoKi/MCExtract.h"
 #include "LoKi/Report.h"
 // ============================================================================
 /** @file
@@ -52,116 +52,72 @@
 // ============================================================================
 // Simple function to print MC decay in more or less "readable" format
 // ============================================================================
-MsgStream& LoKi::PrintMC::printDecay
-( const LHCb::MCParticle*      particle  ,
-  MsgStream&                   stream    ,
-  const LoKi::MCTypes::MCCuts& cut       ,
-  const bool                   decayOnly ,
-  const int                    level     ,
-  const std::string&           blank     )
-{
-  if ( stream.isActive() )
-  { LoKi::PrintMC::printDecay
-      ( particle , stream.stream() , cut , decayOnly ,level , blank ) ; }
-  return stream ;
+MsgStream& LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, MsgStream& stream,
+                                      const LoKi::MCTypes::MCCuts& cut, const bool decayOnly, const int level,
+                                      const std::string& blank ) {
+  if ( stream.isActive() ) { LoKi::PrintMC::printDecay( particle, stream.stream(), cut, decayOnly, level, blank ); }
+  return stream;
 }
 // ============================================================================
 // Simple function to print MC decay in more or less "readable" format
 // ============================================================================
-std::string LoKi::PrintMC::printDecay
-( const LHCb::MCParticle*      particle  ,
-  const LoKi::MCTypes::MCCuts& cut       ,
-  const bool                   decayOnly ,
-  const int                    level     ,
-  const std::string&           blank     )
-{
-  std::ostringstream stream ;
-  LoKi::PrintMC::printDecay
-    ( particle , stream , cut , decayOnly , level , blank ) ;
-  return stream.str() ;
+std::string LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, const LoKi::MCTypes::MCCuts& cut,
+                                       const bool decayOnly, const int level, const std::string& blank ) {
+  std::ostringstream stream;
+  LoKi::PrintMC::printDecay( particle, stream, cut, decayOnly, level, blank );
+  return stream.str();
 }
 // ============================================================================
 //  Simple function to print MC decay in more or less "readable" format
 // ============================================================================
-std::ostream& LoKi::PrintMC::printDecay
-( const LHCb::MCParticle*      particle  ,
-  std::ostream&                stream    ,
-  const LoKi::MCTypes::MCCuts& cut       ,
-  const bool                   decayOnly ,
-  const int                    level     ,
-  const std::string&           blank     )
-{
-  if ( 0 == particle    )
-  {
-    LoKi::Report::Warning ( "LoKi::printMCDecay, invalid particle" ) ;
-    return stream << " <NULL> " ;                           // RETURN
+std::ostream& LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, std::ostream& stream,
+                                         const LoKi::MCTypes::MCCuts& cut, const bool decayOnly, const int level,
+                                         const std::string& blank ) {
+  if ( 0 == particle ) {
+    LoKi::Report::Warning( "LoKi::printMCDecay, invalid particle" );
+    return stream << " <NULL> "; // RETURN
   }
   //
-  if ( !cut( particle ) ) { return stream << blank ; } ;    // RETURN
+  if ( !cut( particle ) ) { return stream << blank; }; // RETURN
   //
-  typedef std::vector<const LHCb::MCParticle*> MCPs ;
-  MCPs daugs ;
-  LoKi::Extract::getMCChildren
-    ( particle , std::back_inserter( daugs ) , decayOnly ) ;
+  typedef std::vector<const LHCb::MCParticle*> MCPs;
+  MCPs                                         daugs;
+  LoKi::Extract::getMCChildren( particle, std::back_inserter( daugs ), decayOnly );
   // own name
-  std::string name =
-    LoKi::Particles::nameIdFromPID ( particle->particleID() ) ;
-  if ( particle -> hasOscillated() ) { name = "[" + name + "]os" ; }
-  if ( daugs.empty() )
-  { return stream << " " << name << " " ; } ;               // RETURN
+  std::string name = LoKi::Particles::nameIdFromPID( particle->particleID() );
+  if ( particle->hasOscillated() ) { name = "[" + name + "]os"; }
+  if ( daugs.empty() ) { return stream << " " << name << " "; }; // RETURN
   //
-  if ( 0 >= level    ) { return stream << " " << name << " " ; } ; // RETURN
+  if ( 0 >= level ) { return stream << " " << name << " "; }; // RETURN
   // print the decay
-  stream << " ( " << name << ( decayOnly ? " ->" : " -x>" ) ;
-  for ( MCPs::const_iterator id = daugs.begin() ;
-        daugs.end() != id ; ++id )
-  { LoKi::PrintMC::printDecay
-      ( *id , stream , cut , decayOnly , level - 1 , blank ) ; }   // RECURSION
+  stream << " ( " << name << ( decayOnly ? " ->" : " -x>" );
+  for ( MCPs::const_iterator id = daugs.begin(); daugs.end() != id; ++id ) {
+    LoKi::PrintMC::printDecay( *id, stream, cut, decayOnly, level - 1, blank );
+  } // RECURSION
   //
-  return stream << " ) " ;
+  return stream << " ) ";
 }
 // ============================================================================
 //  Simple function to print MC decay in more or less "readable" format
 // ========================================================================
-std::ostream&
-LoKi::PrintMC::printDecay
-( const LHCb::MCParticle* particle  ,
-  std::ostream&           stream    ,
-  const bool              decayOnly )
-{
-  return LoKi::PrintMC::printDecay
-    ( particle ,
-      stream   ,
-      LoKi::BasicFunctors<const  LHCb::MCParticle*>::BooleanConstant ( true ) ,
-      decayOnly ) ;
+std::ostream& LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, std::ostream& stream,
+                                         const bool decayOnly ) {
+  return LoKi::PrintMC::printDecay( particle, stream,
+                                    LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant( true ), decayOnly );
 }
 // ========================================================================
 // Simple function to print MC decay in more or less "readable" format
 // ============================================================================
-MsgStream&
-LoKi::PrintMC::printDecay
-( const LHCb::MCParticle* particle  ,
-  MsgStream&              stream    ,
-  const bool              decayOnly )
-{
-  return LoKi::PrintMC::printDecay
-    ( particle ,
-      stream   ,
-      LoKi::BasicFunctors<const  LHCb::MCParticle*>::BooleanConstant ( true ) ,
-      decayOnly ) ;
+MsgStream& LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, MsgStream& stream, const bool decayOnly ) {
+  return LoKi::PrintMC::printDecay( particle, stream,
+                                    LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant( true ), decayOnly );
 }
 // ========================================================================
 //  Simple function to print MC decay in more or less "readable" format
 // ============================================================================
-std::string
-LoKi::PrintMC::printDecay
-( const LHCb::MCParticle* particle  ,
-  const bool              decayOnly )
-{
-  return LoKi::PrintMC::printDecay
-    ( particle  ,
-      LoKi::BasicFunctors<const  LHCb::MCParticle*>::BooleanConstant ( true ) ,
-      decayOnly ) ;
+std::string LoKi::PrintMC::printDecay( const LHCb::MCParticle* particle, const bool decayOnly ) {
+  return LoKi::PrintMC::printDecay( particle, LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant( true ),
+                                    decayOnly );
 }
 // ============================================================================
 // The END

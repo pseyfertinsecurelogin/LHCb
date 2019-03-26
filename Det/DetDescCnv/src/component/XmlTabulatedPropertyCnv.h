@@ -8,16 +8,16 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef     DETDESCCNV_XMLTABULATEDPROPERTYCNV_H
-#define     DETDESCCNV_XMLTABULATEDPROPERTYCNV_H 1
+#ifndef DETDESCCNV_XMLTABULATEDPROPERTYCNV_H
+#define DETDESCCNV_XMLTABULATEDPROPERTYCNV_H 1
 
 // Include files
-#include "DetDescCnv/XmlGenericCnv.h"
 #include "DetDesc/TabulatedProperty.h"
+#include "DetDescCnv/XmlGenericCnv.h"
 
 // Forward declarations
-template <class TYPE> class CnvFactory;
-
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlTabulatedPropertyCnv
  *
@@ -28,8 +28,7 @@ template <class TYPE> class CnvFactory;
  */
 class XmlTabulatedPropertyCnv : public XmlGenericCnv {
 
- public:
-
+public:
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
@@ -40,23 +39,21 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
-  XmlTabulatedPropertyCnv (ISvcLocator* svcs);
+  XmlTabulatedPropertyCnv( ISvcLocator* svcs );
 
   /**
    * Default destructor
    */
   virtual ~XmlTabulatedPropertyCnv();
 
- protected:
-
+protected:
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
    * @param element the DOMElement to be used to builds the object
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  StatusCode i_createObj (xercesc::DOMElement* element,
-                          DataObject*& refpObject) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   /** This fills the current object for its child childElement.
    * Overrides the default method in XmlGenericCnv
@@ -66,9 +63,7 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                        DataObject* refpObject,
-                        IOpaqueAddress* address) override;
+  StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /** This fills the current object for its child text node childText.
    * Overrides the default method in XmlGenericCnv
@@ -77,9 +72,7 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillObj (xercesc::DOMText* childText,
-                        DataObject* refpObject,
-                        IOpaqueAddress* address) override;
+  StatusCode i_fillObj( xercesc::DOMText* childText, DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /** This processes the current object.
    * Overrides the default method in XmlGenericCnv
@@ -87,11 +80,9 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_processObj (DataObject* refpObject,
-                           IOpaqueAddress* address) override;
+  StatusCode i_processObj( DataObject* refpObject, IOpaqueAddress* address ) override;
 
- private:
-
+private:
   /// user defined unit for the x axe
   double m_xunit;
 
@@ -99,7 +90,6 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
   double m_yunit;
 
 private:
-
   // Constant strings for element and parameter names
   const XMLCh* nameString;
   const XMLCh* typeString;
@@ -110,8 +100,6 @@ private:
   const XMLCh* entryString;
   const XMLCh* xString;
   const XMLCh* yString;
-
 };
 
-
-#endif   // DETDESCCNV_XMLTABULATEDPROPERTYCNV_H
+#endif // DETDESCCNV_XMLTABULATEDPROPERTYCNV_H

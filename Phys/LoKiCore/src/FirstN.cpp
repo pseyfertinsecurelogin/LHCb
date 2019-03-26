@@ -31,79 +31,63 @@
 // ============================================================================
 // constructor
 // ============================================================================
-LoKi::FirstN::FirstN ( const unsigned int N )                    // constructor
-  : m_N ( N )
-{}
+LoKi::FirstN::FirstN( const unsigned int N ) // constructor
+    : m_N( N ) {}
 // ============================================================================
 // printout
 // ============================================================================
-std::ostream&
-LoKi::FirstN::fillStream ( std::ostream& s ) const
-{ return s << " FirstN(" <<  m_N << ") " ; }
+std::ostream& LoKi::FirstN::fillStream( std::ostream& s ) const { return s << " FirstN(" << m_N << ") "; }
 // ============================================================================
 // output operator
 // ============================================================================
-std::ostream&
-LoKi::operator<< ( std::ostream& s , const FirstN& o )
-{ return o.fillStream  ( s ) ; }
+std::ostream& LoKi::operator<<( std::ostream& s, const FirstN& o ) { return o.fillStream( s ); }
 // ============================================================================
 
 // ============================================================================
 // printout
 // ============================================================================
-std::ostream&
-LoKi::Reverse::fillStream ( std::ostream& s ) const
-{ return s << " reverse " ; }
+std::ostream& LoKi::Reverse::fillStream( std::ostream& s ) const { return s << " reverse "; }
 // ============================================================================
 // output operator
 // ============================================================================
-std::ostream&
-LoKi::operator<< ( std::ostream& s , const LoKi::Reverse& o )
-{ return o.fillStream  ( s ) ; }
+std::ostream& LoKi::operator<<( std::ostream& s, const LoKi::Reverse& o ) { return o.fillStream( s ); }
 // ============================================================================
 
 // ============================================================================
 // constructor
 // ============================================================================
-LoKi::Sort::Sort
-( const int  N          , // ALL
-  const bool ascending  )
-  : m_N         ( N         )
-  , m_ascending ( ascending )
-{}
+LoKi::Sort::Sort( const int  N, // ALL
+                  const bool ascending )
+    : m_N( N ), m_ascending( ascending ) {}
 // ============================================================================
 // printout
 // ============================================================================
-std::ostream&
-LoKi::Sort::fillStream ( std::ostream& s ) const
-{
-  s << " Sort(" ;
-  if ( !m_ascending || 0 <= m_N ) { s << "," << m_N     ; }
-  if ( !m_ascending || 0 <= m_N ) { s << "," << "False" ; }
-  return s << ") " ;
+std::ostream& LoKi::Sort::fillStream( std::ostream& s ) const {
+  s << " Sort(";
+  if ( !m_ascending || 0 <= m_N ) { s << "," << m_N; }
+  if ( !m_ascending || 0 <= m_N ) {
+    s << ","
+      << "False";
+  }
+  return s << ") ";
 }
 // ============================================================================
 // output operator
 // ============================================================================
-std::ostream&
-LoKi::operator<< ( std::ostream& s , const LoKi::Sort& o )
-{ return o.fillStream  ( s ) ; }
+std::ostream& LoKi::operator<<( std::ostream& s, const LoKi::Sort& o ) { return o.fillStream( s ); }
 // ============================================================================
 
-
 // ============================================================================
-std::string Gaudi::Utils::toCpp ( const LoKi::FirstN&  f ) 
-{ return "LoKi::FirstN(" + Gaudi::Utils::toCpp ( f.N() ) + ")" ; }
+std::string Gaudi::Utils::toCpp( const LoKi::FirstN& f ) {
+  return "LoKi::FirstN(" + Gaudi::Utils::toCpp( f.N() ) + ")";
+}
 // ============================================================================
-std::string Gaudi::Utils::toCpp ( const LoKi::Sort&    s ) 
-{ return "LoKi::Sort(" + Gaudi::Utils::toCpp ( s.N() ) + "," 
-    + (   s.ascending() ? "true" : "false" ) + ") " ; }
-std::string Gaudi::Utils::toCpp ( const LoKi::Reverse& /* r */ )
-{ return "LoKi::Reverse()" ; }
+std::string Gaudi::Utils::toCpp( const LoKi::Sort& s ) {
+  return "LoKi::Sort(" + Gaudi::Utils::toCpp( s.N() ) + "," + ( s.ascending() ? "true" : "false" ) + ") ";
+}
+std::string Gaudi::Utils::toCpp( const LoKi::Reverse& /* r */ ) { return "LoKi::Reverse()"; }
 // ========================================================================
-
 
 // ============================================================================
 // The EN
 // ============================================================================
-

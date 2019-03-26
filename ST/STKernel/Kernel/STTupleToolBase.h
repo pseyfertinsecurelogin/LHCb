@@ -15,7 +15,6 @@
  *  Header file for algorithm base class : ST::AlgBase
  *
  *  CVS Log :-
- *  $Id: STTupleToolBase.h,v 1.2 2009-03-09 15:14:26 akeune Exp $
  *
  *  @author Matthew Needham
  *  @date   11/10/2008
@@ -31,8 +30,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STTupleToolBase.h STKernel/STTupleToolBase.h
@@ -45,20 +43,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public ST::CommonBase<GaudiTupleTool>
-  {
+  class TupleToolBase : public ST::CommonBase<GaudiTupleTool> {
 
   public:
-
     /// Standard constructor
-    TupleToolBase(const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent )
-      : ST::CommonBase<GaudiTupleTool> ( type, name, parent ) { }
-
+    TupleToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : ST::CommonBase<GaudiTupleTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace ST
 
 #endif // STKERNEL_STHISTOTOOLBASE_H

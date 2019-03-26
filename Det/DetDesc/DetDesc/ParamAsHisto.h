@@ -8,27 +8,24 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id:$ 
 // ============================================================================
-#ifndef DETDESC_PARAMASHISTO_H 
+#ifndef DETDESC_PARAMASHISTO_H
 #define DETDESC_PARAMASHISTO_H 1
-// Incldue files 
+// Include files
 // ============================================================================
 // DetDesc
 // ============================================================================
-#include "DetDesc/HistoParam.h"
 #include "DetDesc/Condition.h"
+#include "DetDesc/HistoParam.h"
 // ============================================================================
-/** @file 
- *  set of helper function for easy extraction of histograms 
- *  (especially in python) from condition objects 
+/** @file
+ *  set of helper function for easy extraction of histograms
+ *  (especially in python) from condition objects
  */
 // ============================================================================
-namespace DetDesc 
-{
+namespace DetDesc {
   // ==========================================================================
-  namespace Params 
-  {
+  namespace Params {
     // ========================================================================
     /** Get a read accessor to 1d histogram parameter of the Condition
      *
@@ -40,10 +37,7 @@ namespace DetDesc
      *  @date   2009-12-01
      */
     GAUDI_API
-    const Histo1D*
-    paramAsHisto1D 
-    ( const Condition   *cond , 
-      const std::string &name ) ;
+    const Histo1D* paramAsHisto1D( const Condition* cond, const std::string& name );
     // ========================================================================
     /** Get a read accessor to 2d histogram parameter of the Condition
      *
@@ -54,16 +48,13 @@ namespace DetDesc
      *  @author Dmitry Golubkov
      *  @date   2009-12-01
      */
-    GAUDI_API 
-    const Histo2D*
-    paramAsHisto2D
-    ( const Condition*   cond , 
-      const std::string &name ) ;
+    GAUDI_API
+    const Histo2D* paramAsHisto2D( const Condition* cond, const std::string& name );
     // ========================================================================
-  } //                                         end of namespace DetDesc::Params
+  } // namespace Params
   // ==========================================================================
 } //                                                   end of namespace DetDesc
 // ============================================================================
-// THE END 
+// THE END
 // ============================================================================
-#endif // DETDESC_PARAMASHISTO_H 
+#endif // DETDESC_PARAMASHISTO_H

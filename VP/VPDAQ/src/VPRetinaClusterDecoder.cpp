@@ -18,11 +18,9 @@
 #include "VPRetinaClusterDecoder.h"
 #include <iomanip>
 
-
 DECLARE_COMPONENT( VPRetinaClusterDecoder )
 
-namespace
-{
+namespace {
   using namespace Pixel;
 }
 
@@ -30,17 +28,14 @@ namespace
 // Standard constructor, initializes variables
 //=============================================================================
 VPRetinaClusterDecoder::VPRetinaClusterDecoder( const std::string& name, ISvcLocator* pSvcLocator )
-    : MultiTransformer( name, pSvcLocator,
-                        KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default},
+    : MultiTransformer( name, pSvcLocator, KeyValue{"RawEventLocation", LHCb::RawEventLocation::Default},
                         {KeyValue{"ClusterLocation", LHCb::VPClusterLocation::Light},
-                         KeyValue{"ClusterOffsets", LHCb::VPClusterLocation::Offsets}} )
-{ }
+                         KeyValue{"ClusterOffsets", LHCb::VPClusterLocation::Offsets}} ) {}
 
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode VPRetinaClusterDecoder::initialize()
-{
+StatusCode VPRetinaClusterDecoder::initialize() {
 
   StatusCode sc = MultiTransformer::initialize();
   if ( sc.isFailure() ) return sc;
@@ -58,21 +53,19 @@ StatusCode VPRetinaClusterDecoder::initialize()
 //============================================================================
 // Rebuild the geometry (in case something changes in the Velo during the run)
 //============================================================================
-StatusCode VPRetinaClusterDecoder::rebuildGeometry()
-{
+StatusCode VPRetinaClusterDecoder::rebuildGeometry() {
   // Delete the existing modules.
   m_modules.clear();
   m_firstModule = 999;
   m_lastModule  = 0;
 
-  int previousLeft   = -1;
-  int previousRight  = -1;
-  const auto sensors = m_vp->sensors();
+  int        previousLeft  = -1;
+  int        previousRight = -1;
+  const auto sensors       = m_vp->sensors();
 
-  m_local_x = sensors.front()->xLocal();
-  m_x_pitch = sensors.front()->xPitch();
-  m_pixel_size = sensors.front()->pixelSize(LHCb::VPChannelID(0, 0, 0, 0)).second;
-
+  m_local_x    = sensors.front()->xLocal();
+  m_x_pitch    = sensors.front()->xPitch();
+  m_pixel_size = sensors.front()->pixelSize( LHCb::VPChannelID( 0, 0, 0, 0 ) ).second;
 
   float ltg_rot_components[9];
   for ( unsigned i = 0; i < 208; ++i ) {
@@ -80,21 +73,20 @@ StatusCode VPRetinaClusterDecoder::rebuildGeometry()
 
     // get the local to global transformation matrix and
     // store it in a flat float array of sixe 12.
-    Gaudi::Rotation3D ltg_rot;
+    Gaudi::Rotation3D     ltg_rot;
     Gaudi::TranslationXYZ ltg_trans;
     sensor->geometry()->toGlobalMatrix().GetDecomposition( ltg_rot, ltg_trans );
     ltg_rot.GetComponents( ltg_rot_components );
     auto& ltg = m_ltg[sensor->sensorNumber()];
-    ltg[0] = ltg_rot_components[0];
-    ltg[1] = ltg_rot_components[1];
-    ltg[2] = ltg_trans.X();
-    ltg[3] = ltg_rot_components[3];
-    ltg[4] = ltg_rot_components[4];
-    ltg[5] = ltg_trans.Y();
-    ltg[6] = ltg_rot_components[6];
-    ltg[7] = ltg_rot_components[7];
-    ltg[8] = ltg_trans.Z();
-
+    ltg[0]    = ltg_rot_components[0];
+    ltg[1]    = ltg_rot_components[1];
+    ltg[2]    = ltg_trans.X();
+    ltg[3]    = ltg_rot_components[3];
+    ltg[4]    = ltg_rot_components[4];
+    ltg[5]    = ltg_trans.Y();
+    ltg[6]    = ltg_rot_components[6];
+    ltg[7]    = ltg_rot_components[7];
+    ltg[8]    = ltg_trans.Z();
 
     // Get the number of the module this sensor is on.
     const unsigned int number = sensor->module();
@@ -123,7 +115,7 @@ StatusCode VPRetinaClusterDecoder::rebuildGeometry()
   // the module pool might have been resized -- make sure
   // all module pointers are valid.
   for ( unsigned int i = 0; i < m_module_pool.size(); ++i ) {
-    PixelModule* module       = &m_module_pool[i];
+    PixelModule* module         = &m_module_pool[i];
     m_modules[module->number()] = module;
   }
 
@@ -134,10 +126,9 @@ StatusCode VPRetinaClusterDecoder::rebuildGeometry()
 // Main execution
 //=============================================================================
 std::tuple<std::vector<LHCb::VPLightCluster>, std::array<unsigned, VeloInfo::Numbers::NOffsets>>
-VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
-{
+VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent ) const {
   auto result = std::tuple<std::vector<LHCb::VPLightCluster>, std::array<unsigned, VeloInfo::Numbers::NOffsets>>{};
-  auto& [pool,offsets] = result;
+  auto& [pool, offsets] = result;
 
   const auto& tBanks = rawEvent.banks( LHCb::RawBank::VPRetinaCluster );
   debug() << "Number of retina cluster raw banks: " << tBanks.size() << "." << endmsg;
@@ -157,27 +148,27 @@ VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   pool.reserve( startSize );
 
   // Loop over VP RawBanks
-  for ( auto iterBank : tBanks) {
+  for ( auto iterBank : tBanks ) {
 
     const unsigned int module = iterBank->sourceID();
-    if ( m_modulesToSkipMask[module-1] ) continue;
+    if ( m_modulesToSkipMask[module - 1] ) continue;
 
-    const unsigned int sensor0 = (module-1) * VP::NSensorsPerModule;
+    const unsigned int sensor0 = ( module - 1 ) * VP::NSensorsPerModule;
 
     const uint32_t* bank = iterBank->data();
 
-    const uint32_t ncluster   = *bank++;
+    const uint32_t ncluster = *bank++;
 
     // Read clusters
     for ( unsigned int i = 0; i < ncluster; ++i ) {
       const uint32_t cluster_word = *bank++;
 
-      const unsigned int sensor = sensor0 + (cluster_word >> 24);
+      const unsigned int sensor = sensor0 + ( cluster_word >> 24 );
 
-      const uint32_t cx =  (cluster_word >> 14) & 0x3FF;
-      const float    fx = ((cluster_word >> 11) & 0x7)/8.f;
-      const uint32_t cy =  (cluster_word >> 3)  & 0xFF;
-      const float    fy =  (cluster_word & 0x7)/8.f;
+      const uint32_t cx = ( cluster_word >> 14 ) & 0x3FF;
+      const float    fx = ( ( cluster_word >> 11 ) & 0x7 ) / 8.f;
+      const uint32_t cy = ( cluster_word >> 3 ) & 0xFF;
+      const float    fy = ( cluster_word & 0x7 ) / 8.f;
 
       const uint32_t chip = cx / CHIP_COLUMNS;
       const uint32_t ccol = cx % CHIP_COLUMNS;
@@ -185,12 +176,12 @@ VPRetinaClusterDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
       LHCb::VPChannelID cid( sensor, chip, ccol, cy );
 
       const float local_x = m_local_x[cx] + fx * m_x_pitch[cx];
-      const float local_y = (cy + 0.5 + fy) * m_pixel_size;
+      const float local_y = ( cy + 0.5 + fy ) * m_pixel_size;
 
-      const auto& ltg = m_ltg[sensor] ;
-      const float gx = (ltg[0] * local_x + ltg[1] * local_y + ltg[2]);
-      const float gy = (ltg[3] * local_x + ltg[4] * local_y + ltg[5]);
-      const float gz = (ltg[6] * local_x + ltg[7] * local_y + ltg[8]);
+      const auto& ltg = m_ltg[sensor];
+      const float gx  = ( ltg[0] * local_x + ltg[1] * local_y + ltg[2] );
+      const float gy  = ( ltg[3] * local_x + ltg[4] * local_y + ltg[5] );
+      const float gz  = ( ltg[6] * local_x + ltg[7] * local_y + ltg[8] );
 
       pool.emplace_back( 1, 1, gx, gy, gz, cid );
 

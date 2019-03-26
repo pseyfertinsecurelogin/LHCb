@@ -13,7 +13,7 @@
 
 #include "Event/RawBank.h"
 
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/FilterPredicate.h"
 
 /** @class FilterByBankType FilterByBankType.h
  *
@@ -53,27 +53,42 @@
  *  @date   2009-03-06
  *
  */
-class FilterByBankType final : public GaudiAlgorithm
-{
+class FilterByBankType final : public Gaudi::Functional::FilterPredicate<bool( const LHCb::RawEvent& )> {
 
 public:
-
   /// Standard constructor
   FilterByBankType( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode execute() override;    ///< Algorithm execution
-  StatusCode initialize() override; ///< Algorithm initialization
+  bool operator()( const LHCb::RawEvent& ) const override; ///< Algorithm execution
 
 private:
-
   /// Internal enum vector of selected bank types
   std::vector<LHCb::RawBank::BankType> m_bankTypes;
 
   // Job options
-  std::string m_inputLocation;          ///< Location in TES of the RawEvent
-  std::vector<std::string> m_bankNames; ///< List of banks to look for.
-  bool m_passSelect;                    ///< Flag to determine selection logic.
-
+  Gaudi::Property<bool> m_passSelect{this, "PassSelectedEvents", true}; ///< Flag to determine selection logic.
+  Gaudi::Property<std::vector<std::string>> m_bankNames{
+      this,
+      "BankNames",
+      {".*Error"},
+      [this]( const Property& ) {
+        // Loop over the list of possible BankTypes
+        info() << ( ( m_passSelect ) ? "Selecting" : "Ignoring" ) << " events with banks: ";
+        for ( unsigned int iBank = 0; iBank < LHCb::RawBank::LastType; ++iBank ) {
+          const auto bankName = LHCb::RawBank::typeName( LHCb::RawBank::BankType( iBank ) );
+          // make an enum vector from the string vector of bank names
+          for ( const auto& BankName : m_bankNames ) {
+            // Use the regular expression
+            std::regex e( BankName );
+            if ( std::regex_match( bankName, e ) ) {
+              m_bankTypes.push_back( LHCb::RawBank::BankType( iBank ) );
+              info() << bankName << "(" << iBank << ")  ";
+            }
+          }
+        }
+        info() << endmsg;
+      },
+      Gaudi::Details::Property::ImmediatelyInvokeHandler{true}}; ///< List of banks to look for.
 };
 
 #endif // FILTERBYRUNEVENT_H

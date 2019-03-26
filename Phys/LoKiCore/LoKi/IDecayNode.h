@@ -34,16 +34,14 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
   /** @class IDecayNode LoKi/IDecayNode.h
    *  Simple factory for creation of decay nodes
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2009-05-22
    */
-  struct IDecayNode : extend_interfaces<IAlgTool>
-  {
+  struct IDecayNode : extend_interfaces<IAlgTool> {
     DeclareInterfaceID( IDecayNode, 2, 0 );
     // ========================================================================
     /** build the node form the node descriptor
@@ -63,7 +61,7 @@ namespace Decays
      *  @param descriptor (INPUT)  node descriptor
      *  @param constructed node
      */
-    virtual Node node ( const std::string& descriptor = "" ) const = 0 ;
+    virtual Node node( const std::string& descriptor = "" ) const = 0;
     // ========================================================================
   }; //                                             end class IDecayNodeFactory
   // ==========================================================================

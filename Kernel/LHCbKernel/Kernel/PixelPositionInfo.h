@@ -15,24 +15,24 @@
 
 namespace LHCb {
 
-/** @struct PixelPositionInfo PixelPositionInfo.h Kernel/PixelPositionInfo.h
- *
- *  Adds 2D position information to a channel identifier
- *
- *  @author Victor Coco
- *  @date   2010-02-01
- */
+  /** @struct PixelPositionInfo PixelPositionInfo.h Kernel/PixelPositionInfo.h
+   *
+   *  Adds 2D position information to a channel identifier
+   *
+   *  @author Victor Coco
+   *  @date   2010-02-01
+   */
 
-template <class ChannelType>
-struct PixelPositionInfo {
-  double x;
-  double y;
-  double dx;
-  double dy;
-};
+  template <class ChannelType>
+  struct PixelPositionInfo {
+    double x;
+    double y;
+    double dx;
+    double dy;
+  };
 
-typedef PixelPositionInfo<VPChannelID> VPPositionInfo; 
+  typedef PixelPositionInfo<VPChannelID> VPPositionInfo;
 
-}
+} // namespace LHCb
 
-#endif  // KERNEL_PIXELPOSITIONINFO_H
+#endif // KERNEL_PIXELPOSITIONINFO_H

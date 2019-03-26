@@ -15,13 +15,11 @@
 #include "GaudiKernel/IService.h"
 #include <set>
 
-//definition of how to store sets of events
-namespace LHCb
-{
-  typedef std::greater<> EventTypeComp;
-  typedef std::set<long unsigned int, EventTypeComp > EventTypeSet;
-}
-
+// definition of how to store sets of events
+namespace LHCb {
+  typedef std::greater<>                             EventTypeComp;
+  typedef std::set<long unsigned int, EventTypeComp> EventTypeSet;
+} // namespace LHCb
 
 /** @class IEvtTypeSvc IEvtTypeSvc.h Kernel/IEvtTypeSvc.h
  *
@@ -37,7 +35,7 @@ namespace LHCb
  */
 struct IEvtTypeSvc : extend_interfaces<IService> {
 
-    DeclareInterfaceID(IEvtTypeSvc, 3 , 0);
+  DeclareInterfaceID( IEvtTypeSvc, 3, 0 );
 
   /// Given an event code number provide its Nick Name as in input table.
   /// If an event type does not exist in the table this method
@@ -56,6 +54,5 @@ struct IEvtTypeSvc : extend_interfaces<IService> {
 
   /// Return all known event types in a unique and ordered std::set
   virtual LHCb::EventTypeSet allTypes( void ) const = 0;
-
 };
 #endif // KERNEL_IEVTTYPESVC_H

@@ -17,9 +17,9 @@
 // ============================================================================
 // LHCbKernel
 // ============================================================================
+#include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-#include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
 /** @file
  *  Implementation file for class LHCb::IParticlePropertySvc
@@ -44,19 +44,16 @@
  *  @date   2008-08-03
  */
 // ============================================================================
-size_t LHCb::ParticleProperties::index
-( const LHCb::ParticleProperty*     property ,
-  const LHCb::IParticlePropertySvc* service  )
-{
-  if ( !property || !service ) { return 0 ; }               // RETURN
+size_t LHCb::ParticleProperties::index( const LHCb::ParticleProperty*     property,
+                                        const LHCb::IParticlePropertySvc* service ) {
+  if ( !property || !service ) { return 0; } // RETURN
   // ==========================================================================
-  auto first = service -> begin () ;
-  auto last  = service -> end   () ;
+  auto first = service->begin();
+  auto last  = service->end();
   // start the binary_search
-  static constexpr auto cmp = LHCb::ParticleProperty::Compare() ;
-  auto ifind = std::lower_bound ( first , last , property , cmp ) ;
-  return
-    last != ifind && !cmp ( *ifind, property ) ?  (ifind-first+1) : 0 ;
+  static constexpr auto cmp   = LHCb::ParticleProperty::Compare();
+  auto                  ifind = std::lower_bound( first, last, property, cmp );
+  return last != ifind && !cmp( *ifind, property ) ? ( ifind - first + 1 ) : 0;
 }
 // ============================================================================
 /* helper utility for mapping of LHCb::ParticleID object into
@@ -76,14 +73,11 @@ size_t LHCb::ParticleProperties::index
  *  @date   2008-08-03
  */
 // ============================================================================
-size_t LHCb::ParticleProperties::index
-( const LHCb::ParticleID&           pid      ,
-  const LHCb::IParticlePropertySvc* service  )
-{
-  if ( !service ) { return 0 ; }               // RETURN
+size_t LHCb::ParticleProperties::index( const LHCb::ParticleID& pid, const LHCb::IParticlePropertySvc* service ) {
+  if ( !service ) { return 0; } // RETURN
   // ==========================================================================
-  const LHCb::ParticleProperty* pp = service->find ( pid ) ;
-  return pp ? LHCb::ParticleProperties::index ( pp , service ) : 0 ;
+  const LHCb::ParticleProperty* pp = service->find( pid );
+  return pp ? LHCb::ParticleProperties::index( pp, service ) : 0;
 }
 // ============================================================================
 /* the inverse mapping of the integer sequential number onto
@@ -102,18 +96,15 @@ size_t LHCb::ParticleProperties::index
  *  @date   2008-08-03
  */
 // ============================================================================
-const LHCb::ParticleProperty*
-LHCb::ParticleProperties::particle
-( const size_t                      index    ,
-  const LHCb::IParticlePropertySvc* service  )
-{
-  if (  0 == index || !service ) { return nullptr ; }                 // RETURN
+const LHCb::ParticleProperty* LHCb::ParticleProperties::particle( const size_t                      index,
+                                                                  const LHCb::IParticlePropertySvc* service ) {
+  if ( 0 == index || !service ) { return nullptr; } // RETURN
   // get the iterators from the service
-  auto first = service -> begin () ;
-  auto last  = service -> end   () ;
-  if ( index > (size_t) std::distance ( first , last ) ) { return 0 ; } // RETURN
-  std::advance ( first , index - 1 ) ;
-  return *first ;                                                   // RETURN
+  auto first = service->begin();
+  auto last  = service->end();
+  if ( index > (size_t)std::distance( first, last ) ) { return 0; } // RETURN
+  std::advance( first, index - 1 );
+  return *first; // RETURN
 }
 // ============================================================================
 /*  the inverse mapping of the integer sequential number onto
@@ -132,14 +123,11 @@ LHCb::ParticleProperties::particle
  *  @date   2008-08-03
  */
 // ============================================================================
-const LHCb::ParticleID LHCb::ParticleProperties::particleID
-( const size_t                      index    ,
-  const LHCb::IParticlePropertySvc* service  )
-{
-  if ( 0 == index || !service ) { return LHCb::ParticleID() ; }   // RETURN
-  const LHCb::ParticleProperty* pp =
-    LHCb::ParticleProperties::particle ( index , service ) ;
-  return pp ? pp->particleID () : LHCb::ParticleID() ;
+const LHCb::ParticleID LHCb::ParticleProperties::particleID( const size_t                      index,
+                                                             const LHCb::IParticlePropertySvc* service ) {
+  if ( 0 == index || !service ) { return LHCb::ParticleID(); } // RETURN
+  const LHCb::ParticleProperty* pp = LHCb::ParticleProperties::particle( index, service );
+  return pp ? pp->particleID() : LHCb::ParticleID();
 }
 // ============================================================================
 /* mapping by pythiaID
@@ -163,25 +151,20 @@ const LHCb::ParticleID LHCb::ParticleProperties::particleID
  *  @date   2008-08-03
  */
 // ============================================================================
-const LHCb::ParticleProperty*
-LHCb::ParticleProperties::byPythiaID
-( const int                         pythia ,
-  const LHCb::IParticlePropertySvc* svc    )
-{
-  if ( !svc ) { return nullptr ; }
+const LHCb::ParticleProperty* LHCb::ParticleProperties::byPythiaID( const int                         pythia,
+                                                                    const LHCb::IParticlePropertySvc* svc ) {
+  if ( !svc ) { return nullptr; }
   // to be efficient
   // 1) try to use PDG-ID (fast, logarithmic search)
-  const LHCb::ParticleProperty* pp =  svc->find ( LHCb::ParticleID ( pythia ) ) ;
+  const LHCb::ParticleProperty* pp = svc->find( LHCb::ParticleID( pythia ) );
   // 2) check the proper pythia ID
-  if ( pp && pythia == pp -> pythiaID () ) { return pp ; }       // RETURN
+  if ( pp && pythia == pp->pythiaID() ) { return pp; } // RETURN
   // 3) use the resular (linear search)
-  auto begin = svc -> begin () ;
-  auto end   = svc -> end   () ;
-  auto found = std::find_if (  begin , end ,
-                    [&](const LHCb::ParticleProperty* pp) {
-                        return pp->pythiaID() == pythia; } );
+  auto begin = svc->begin();
+  auto end   = svc->end();
+  auto found = std::find_if( begin, end, [&]( const LHCb::ParticleProperty* pp ) { return pp->pythiaID() == pythia; } );
   //
-  return found!=end ? *found : nullptr;
+  return found != end ? *found : nullptr;
 }
 // ============================================================================
 /*  mapping by EvtGen-name
@@ -205,26 +188,20 @@ LHCb::ParticleProperties::byPythiaID
  *  @date   2008-08-03
  */
 // ============================================================================
-const LHCb::ParticleProperty*
-LHCb::ParticleProperties::byEvtGenName
-( const std::string&                evtGen ,
-  const LHCb::IParticlePropertySvc* svc    )
-{
-  if ( !svc ) { return nullptr ; }
+const LHCb::ParticleProperty* LHCb::ParticleProperties::byEvtGenName( const std::string&                evtGen,
+                                                                      const LHCb::IParticlePropertySvc* svc ) {
+  if ( !svc ) { return nullptr; }
   // to be more efficient:
   // 1) try to use the regualr name (fast, logarithmic search)
-  const LHCb::ParticleProperty* pp =  svc->find ( evtGen ) ;
+  const LHCb::ParticleProperty* pp = svc->find( evtGen );
   // 2) check the proper evtgen name
-  if ( pp && evtGen == pp->evtGen() ) { return pp ; }       // RETURN
+  if ( pp && evtGen == pp->evtGen() ) { return pp; } // RETURN
   // 3) use the resular (linear search)
-  auto begin = svc -> begin () ;
-  auto end   = svc -> end   () ;
-  auto found =
-    std::find_if (  begin , end ,
-                    [&](const LHCb::ParticleProperty* pp) {
-                        return pp->evtGen() == evtGen; } );
+  auto begin = svc->begin();
+  auto end   = svc->end();
+  auto found = std::find_if( begin, end, [&]( const LHCb::ParticleProperty* pp ) { return pp->evtGen() == evtGen; } );
   //
-  return found!=end ? *found : nullptr;
+  return found != end ? *found : nullptr;
 }
 // ============================================================================
 /*  get all the properties at once
@@ -233,13 +210,9 @@ LHCb::ParticleProperties::byEvtGenName
  */
 // ============================================================================
 LHCb::IParticlePropertySvc::ParticleProperties
-LHCb::ParticleProperties::allProperties
-( const LHCb::IParticlePropertySvc* service )
-{
-  return service ?
-    LHCb::IParticlePropertySvc::ParticleProperties
-    ( service->begin () , service->end() ) :
-    LHCb::IParticlePropertySvc::ParticleProperties () ;
+LHCb::ParticleProperties::allProperties( const LHCb::IParticlePropertySvc* service ) {
+  return service ? LHCb::IParticlePropertySvc::ParticleProperties( service->begin(), service->end() )
+                 : LHCb::IParticlePropertySvc::ParticleProperties();
 }
 // ============================================================================
 // The END

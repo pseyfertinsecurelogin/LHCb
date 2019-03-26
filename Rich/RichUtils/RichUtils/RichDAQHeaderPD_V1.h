@@ -30,8 +30,7 @@
 // numbering
 #include "RichUtils/RichDAQDefinitions.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   /** @namespace Rich::DAQ::RichDAQHeaderV1
    *
@@ -40,8 +39,7 @@ namespace Rich::DAQ
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   2004-12-17
    */
-  namespace RichDAQHeaderV1
-  {
+  namespace RichDAQHeaderV1 {
 
     /** @namespace Rich::DAQ::RichDAQHeaderV1::RichDAQHeaderPDCode
      *
@@ -50,8 +48,7 @@ namespace Rich::DAQ
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   2003-11-06
      */
-    namespace RichDAQHeaderPDCode
-    {
+    namespace RichDAQHeaderPDCode {
 
       /// Number of words in this header
       static const ShortType nHeaderWords = 1;
@@ -70,17 +67,14 @@ namespace Rich::DAQ
       static const ShortType ShiftStartPD  = ShiftZS + BitsZS;
 
       // Create the Masks
-      static const LongType MaskHitCount =
-        ( LongType )( ( ( 1 << BitsHitCount ) - 1 ) << ShiftHitCount );
-      static const LongType MaskL0ID = ( LongType )( ( ( 1 << BitsL0ID ) - 1 ) << ShiftL0ID );
-      static const LongType MaskZS   = ( LongType )( ( ( 1 << BitsZS ) - 1 ) << ShiftZS );
-      static const LongType MaskStartPD =
-        ( LongType )( ( ( 1 << BitsStartPD ) - 1 ) << ShiftStartPD );
+      static const LongType MaskHitCount = ( LongType )( ( ( 1 << BitsHitCount ) - 1 ) << ShiftHitCount );
+      static const LongType MaskL0ID     = ( LongType )( ( ( 1 << BitsL0ID ) - 1 ) << ShiftL0ID );
+      static const LongType MaskZS       = ( LongType )( ( ( 1 << BitsZS ) - 1 ) << ShiftZS );
+      static const LongType MaskStartPD  = ( LongType )( ( ( 1 << BitsStartPD ) - 1 ) << ShiftStartPD );
 
       // Create the max values that can be stored in each field
-      static const ShortType MaxHitCount =
-        ( ShortType )( ( 1 << BitsHitCount ) - 1 ); ///< Max number of hits
-      static const ShortType MaxL0ID = ( ShortType )( ( 1 << BitsL0ID ) - 1 ); ///< Max L0 ID
+      static const ShortType MaxHitCount = ( ShortType )( ( 1 << BitsHitCount ) - 1 ); ///< Max number of hits
+      static const ShortType MaxL0ID     = ( ShortType )( ( 1 << BitsL0ID ) - 1 );     ///< Max L0 ID
 
     } // namespace RichDAQHeaderPDCode
 
@@ -93,130 +87,107 @@ namespace Rich::DAQ
      *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
      *  @date   2003-11-06
      */
-    class RichDAQHeaderPD final : public HeaderPDBase, public LHCb::MemPoolAlloc< RichDAQHeaderPD >
-    {
+    class RichDAQHeaderPD final : public HeaderPDBase, public LHCb::MemPoolAlloc<RichDAQHeaderPD> {
 
     public: // methods
-
       /// Default Constructor
       RichDAQHeaderPD() = default;
 
       /// Constructor from a pointer to a data stream
-      explicit RichDAQHeaderPD( const LongType *data ) : HeaderPDBase( WordType( *( data++ ) ) ) {}
+      explicit RichDAQHeaderPD( const LongType* data ) : HeaderPDBase( WordType( *( data++ ) ) ) {}
 
       /// Constructor from all data
-      RichDAQHeaderPD( const bool      zSupp, ///< Flag indicating if the block is zero suppressed
-                       const Level0ID  l0ID,  ///< The Level 0 hardware identifier
-                       const ShortType dSize, ///< The data size word
+      RichDAQHeaderPD( const bool      zSupp,      ///< Flag indicating if the block is zero suppressed
+                       const Level0ID  l0ID,       ///< The Level 0 hardware identifier
+                       const ShortType dSize,      ///< The data size word
                        const ShortType startPD = 1 ///< New HPD flag
-      )
-      {
+      ) {
         if ( !setStartPD( startPD ) || !setZeroSuppressed( zSupp ) || !setL0ID( l0ID ) ||
-             !setNEightBitBlocksPlusOne( dSize ) )
-        { throw GaudiException( "Data out of range", "*RichDAQHeaderPD*", StatusCode::FAILURE ); }
+             !setNEightBitBlocksPlusOne( dSize ) ) {
+          throw GaudiException( "Data out of range", "*RichDAQHeaderPD*", StatusCode::FAILURE );
+        }
       }
 
     public:
-
       /// Read correct number of data words from given stream
       /// Note, after this call data pointer is incremented to the next word after the header
-      inline void readFromDataStream( const LongType *&data )
-      {
+      inline void readFromDataStream( const LongType*& data ) {
         for ( auto i = 0u; i < nHeaderWords(); ++i ) { setHeaderWord( i, *( data++ ) ); }
       }
 
     public:
-
       /// reset
       inline void reset() { setPrimaryHeaderWord( WordType( 0 ) ); }
 
       /// reset for a new data stream
-      inline void reset( const LongType *data )
-      {
+      inline void reset( const LongType* data ) {
         reset();
         readFromDataStream( data );
       }
 
     public:
-
       /// Set the Level0 ID
-      inline bool setL0ID( const Level0ID l0id )
-      {
-        return (
-          dataInRange( l0id.data(), RichDAQHeaderPDCode::MaxL0ID ) ?
-            set( l0id.data(), RichDAQHeaderPDCode::ShiftL0ID, RichDAQHeaderPDCode::MaskL0ID ) :
-            false );
+      inline bool setL0ID( const Level0ID l0id ) {
+        return ( dataInRange( l0id.data(), RichDAQHeaderPDCode::MaxL0ID )
+                     ? set( l0id.data(), RichDAQHeaderPDCode::ShiftL0ID, RichDAQHeaderPDCode::MaskL0ID )
+                     : false );
       }
 
       /// Retrieve the Level0 ID
-      inline Level0ID l0ID() const
-      {
+      inline Level0ID l0ID() const {
         return Level0ID( ( primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskL0ID ) >>
                          RichDAQHeaderPDCode::ShiftL0ID );
       }
 
       /// Retrieve the number of "8-bit data blocks plus one" with at least one hit
-      inline ShortType nEightBitBlocksPlusOne() const
-      {
+      inline ShortType nEightBitBlocksPlusOne() const {
         return ( ( primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskHitCount ) >>
                  RichDAQHeaderPDCode::ShiftHitCount );
       }
 
       /// Set the number of "8-bit data blocks plus one" with at least one hit
-      inline bool setNEightBitBlocksPlusOne( const ShortType value )
-      {
-        return (
-          dataInRange( value, RichDAQHeaderPDCode::MaxHitCount ) ?
-            set( value, RichDAQHeaderPDCode::ShiftHitCount, RichDAQHeaderPDCode::MaskHitCount ) :
-            false );
+      inline bool setNEightBitBlocksPlusOne( const ShortType value ) {
+        return ( dataInRange( value, RichDAQHeaderPDCode::MaxHitCount )
+                     ? set( value, RichDAQHeaderPDCode::ShiftHitCount, RichDAQHeaderPDCode::MaskHitCount )
+                     : false );
       }
 
       /// Set new PD bit
-      inline bool setStartPD( const ShortType value )
-      {
+      inline bool setStartPD( const ShortType value ) {
         return set( value, RichDAQHeaderPDCode::ShiftStartPD, RichDAQHeaderPDCode::MaskStartPD );
       }
 
       /// Is new PD bit set ?
-      inline bool startPD() const
-      {
+      inline bool startPD() const {
         return ( 0 != ( ( primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskStartPD ) >>
                         RichDAQHeaderPDCode::ShiftStartPD ) );
       }
 
       /// Set the zero suppression info
-      inline bool setZeroSuppressed( const bool zSupp )
-      {
+      inline bool setZeroSuppressed( const bool zSupp ) {
         const ShortType i = ( zSupp ? 1 : 0 );
         return set( i, RichDAQHeaderPDCode::ShiftZS, RichDAQHeaderPDCode::MaskZS );
       }
 
       /// Retrieve the zero suppressed information
-      inline bool zeroSuppressed() const
-      {
-        return ( 0 != ( ( primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskZS ) >>
-                        RichDAQHeaderPDCode::ShiftZS ) );
+      inline bool zeroSuppressed() const {
+        return ( 0 !=
+                 ( ( primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
       }
 
       /// WARNING : This method is not implemented for this class version
-      inline unsigned int nDataWords() const
-      {
-        throw GaudiException(
-          "nDataWords() is not defined. Do Not Use", "RichDAQHeaderV1", StatusCode::FAILURE );
+      inline unsigned int nDataWords() const {
+        throw GaudiException( "nDataWords() is not defined. Do Not Use", "RichDAQHeaderV1", StatusCode::FAILURE );
         return 0;
       }
 
     public: // Static methods to test specific flags in external data blocks
-
       /// Test if this data block is for a zero suppressed HPD
-      inline static bool zeroSuppressed( const LongType *word )
-      {
-        return ( 0 !=
-                 ( ( word[0] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
+      inline static bool zeroSuppressed( const LongType* word ) {
+        return ( 0 != ( ( word[0] & RichDAQHeaderPDCode::MaskZS ) >> RichDAQHeaderPDCode::ShiftZS ) );
       }
 
     public: // methods not properly implemented, but included for compatbility
-
       /// Returns if this header (and the associated footer) are in extended mode or not (compact)
       inline bool extendedFormat() const { return false; }
 
@@ -230,9 +201,7 @@ namespace Rich::DAQ
   } // namespace RichDAQHeaderV1
 
   /// overloaded output to std::ostream
-  inline std::ostream &operator<<( std::ostream &                          os,
-                                   const RichDAQHeaderV1::RichDAQHeaderPD &header )
-  {
+  inline std::ostream& operator<<( std::ostream& os, const RichDAQHeaderV1::RichDAQHeaderPD& header ) {
     os << "HPD header V1 : nHeadW = " << header.nHeaderWords() << " L0ID = " << header.l0ID()
        << " ZS = " << header.zeroSuppressed() << " # hits = " << header.nEightBitBlocksPlusOne();
     return os;

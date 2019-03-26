@@ -16,7 +16,7 @@
   <text>../../options/scheduler_testCF.py</text>
 </set></argument>
 <argument name="validator"><text>
-expected_strings = [ "NONLAZY_AND: moore     0|0",
+expected_strings = [ "NONLAZY_AND: moore     1|1",
                      " LAZY_AND: line2       0|0",
                      "  A3                   0|0",
                      "  A4                   1|1",
@@ -27,13 +27,34 @@ expected_strings = [ "NONLAZY_AND: moore     0|0",
                      "  A5                   0|1",
                      "  NOT: notA1           0|0",
                      "   A1                  0|1",
+                     " ExecReportsWriter     1|1",
+                     "NONLAZY_AND: moore     0|0",
+                     " LAZY_AND: line2       0|0",
+                     "  A3                   0|0",
+                     "  A4                   1|1",
+                     " NONLAZY_OR: decision  0|1",
+                     "  LAZY_OR: line1       0|1",
+                     "   A1                  0|1",
+                     "   A2                  1|1",
+                     "  A5                   0|1",
+                     "  NOT: notA1           0|0",
+                     "   A1                  0|1",
+                     " ExecReportsWriter     0|1",
+                     "ExecReportsWriter   1",
                      "A1                  1",
                      "A2                  1",
                      "A5                  1",
                      "A3                  1",
-                     "A4                  0" ]
+                     "A4                  0",
+                     "ExecReportsWriter   1",
+                     "A1                  1",
+                     "A2                  1",
+                     "A5                  1",
+                     "A3                  1",
+                     "A4                  0",
+                     ]
 
-nodeorder = "ordered nodes: [A3, A4, A5, A1, A2]"
+nodeorder = "ordered nodes: [A3, A4, A5, A1, A2, ExecReportsWriter]"
 
 
 for expected_string in expected_strings:

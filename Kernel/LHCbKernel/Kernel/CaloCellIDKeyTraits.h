@@ -15,8 +15,8 @@
 // Kernel
 #include "Kernel/CaloCellID.h"
 // EventKernel
-#include "GaudiKernel/KeyedTraits.h"
 #include "GaudiKernel/KeyedObject.h"
+#include "GaudiKernel/KeyedTraits.h"
 
 /** @file CaloCellIDKeyTraits.h
  *
@@ -32,8 +32,7 @@
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   15/03/2002
  */
-namespace Containers
-{
+namespace Containers {
   /** Function to be called at each attempt of automatic creation of CaloCellID
    *  object as a KEY for KeyedObjects
    *
@@ -61,10 +60,9 @@ namespace Containers
    *  @date   15/03/2002
    */
   template <>
-  struct key_traits<LHCb::CaloCellID>
-  {
+  struct key_traits<LHCb::CaloCellID> {
     /// Declaration of key-type
-    typedef LHCb::CaloCellID      key_type;
+    typedef LHCb::CaloCellID key_type;
     /// Declaration of keyed object type
     typedef KeyedObject<key_type> obj_type;
 
@@ -72,47 +70,39 @@ namespace Containers
      *  Not implementing on specialization may inhibit the creation
      *  of keys, i.e. then a key must be supplied at insertion time.
      */
-    static key_type makeKey(long k)
-    {
+    static key_type makeKey( long k ) {
       // errorMakeCaloCellIDKey();
       key_type _key;
-      _key.setAll( k ) ;
-      return _key ;
+      _key.setAll( k );
+      return _key;
     };
 
     /// Full unhashed key identifier
-    static long identifier ( const key_type& k )
-    { return k.all   () ; }
+    static long identifier( const key_type& k ) { return k.all(); }
 
     /// Hash function for this key
-    static long hash       ( const key_type& k )
-    { return k.index () ; }
+    static long hash( const key_type& k ) { return k.index(); }
 
     /// Set object key when inserted into the container
-    static void setKey( obj_type* v , const key_type& k )
-    { if ( v ) { v->setKey( k ) ; } ; }
+    static void setKey( obj_type* v, const key_type& k ) {
+      if ( v ) { v->setKey( k ); };
+    }
 
     /** Check the validity of the object's key.
      *  Select if key-checks should be performed by
      *  switching on/off the macro CHECK_KEYED_CONTAINER.
      */
 #ifdef CHECK_KEYED_CONTAINER
-    static bool checkKey(obj_type*    v    , const key_type&    k    )
-    {
-      return (v) ? ( hash( v->key() ) == hash ( k ) ) : false;
-    }
+    static bool checkKey( obj_type* v, const key_type& k ) { return ( v ) ? ( hash( v->key() ) == hash( k ) ) : false; }
 #else
-    static bool checkKey(obj_type* /* v */ , const key_type& /* k */ )
-    {
-      return true;
-    }
+    static bool checkKey( obj_type* /* v */, const key_type& /* k */ ) { return true; }
 #endif
     /// Add reference counter to object when inserted into the container
-    static long addRef  ( obj_type* v ) { return ( v ) ? v->addRef  () : 0 ; }
+    static long addRef( obj_type* v ) { return ( v ) ? v->addRef() : 0; }
     /// Release reference to object
-    static long release ( obj_type* v ) { return ( v ) ? v->release () : 0 ; }
+    static long release( obj_type* v ) { return ( v ) ? v->release() : 0; }
   };
-}
+} // namespace Containers
 
 // ============================================================================
 // The End

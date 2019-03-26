@@ -27,8 +27,7 @@
 // local
 #include "DAQKernel/DecoderCommonBase.h"
 
-namespace Decoder
-{
+namespace Decoder {
   //-----------------------------------------------------------------------------
   /** @class AlgBase DAQAlgBase.h DAQKernel/DecoderAlgBase.h
    *
@@ -42,6 +41,6 @@ namespace Decoder
 
   using AlgBase = Decoder::CommonBase<GaudiAlgorithm>;
 
-}
+} // namespace Decoder
 
 #endif // DAQKERNEL_DECODERALGBASE_H

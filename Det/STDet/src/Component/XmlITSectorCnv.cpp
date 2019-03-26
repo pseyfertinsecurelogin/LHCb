@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlITSectorCnv.cpp,v 1.2 2006-12-14 13:41:07 ranjard Exp $
 
 // DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
@@ -16,5 +15,5 @@
 // TTDet
 #include "STDet/DeITSector.h"
 
-typedef XmlUserDetElemCnv<DeITSector >        XmlITSectorCnv;
+typedef XmlUserDetElemCnv<DeITSector> XmlITSectorCnv;
 DECLARE_CONVERTER( XmlITSectorCnv )

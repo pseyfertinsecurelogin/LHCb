@@ -16,16 +16,16 @@
 #include "GaudiAlg/GaudiTool.h"
 
 // From Event
-#include "Event/RawEvent.h"
 #include "Event/L0CaloCandidate.h"
+#include "Event/RawEvent.h"
 
 // forward declaration
 namespace LHCb {
-  class RawBankReadoutStatus ;
+  class RawBankReadoutStatus;
 }
-class DeCalorimeter ;
+class DeCalorimeter;
 
-static const InterfaceID IID_L0CaloCandidatesFromRawBank ( "L0CaloCandidatesFromRawBank", 4, 0 );
+static const InterfaceID IID_L0CaloCandidatesFromRawBank( "L0CaloCandidatesFromRawBank", 4, 0 );
 
 /** @class L0CaloCandidatesFromRawBank L0CaloCandidatesFromRawBank.h
  *  Tool to convert the Raw Bank L0CaloCandidate to TES containers
@@ -37,35 +37,28 @@ static const InterfaceID IID_L0CaloCandidatesFromRawBank ( "L0CaloCandidatesFrom
  */
 class L0CaloCandidatesFromRawBank : public GaudiTool {
 public:
-
   // Return the interface ID
   static const InterfaceID& interfaceID() { return IID_L0CaloCandidatesFromRawBank; }
 
   /// Standard constructor
-  L0CaloCandidatesFromRawBank( const std::string& type,
-                               const std::string& name,
-                               const IInterface* parent);
+  L0CaloCandidatesFromRawBank( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~L0CaloCandidatesFromRawBank( ); ///< Destructor
+  virtual ~L0CaloCandidatesFromRawBank(); ///< Destructor
 
   StatusCode initialize() override; ///< Initialisation
 
-  void convertRawBankToTES( std::vector<std::vector< unsigned int > >& data,
-                            LHCb::L0CaloCandidates * outFull,
-                            LHCb::L0CaloCandidates * out,
-                            const int version ,
-                            LHCb::RawBankReadoutStatus & readoutStatus );
+  void convertRawBankToTES( std::vector<std::vector<unsigned int>>& data, LHCb::L0CaloCandidates* outFull,
+                            LHCb::L0CaloCandidates* out, const int version, LHCb::RawBankReadoutStatus& readoutStatus );
 
 protected:
-
 private:
-  DeCalorimeter* m_ecal;         ///< ECAL detector element
-  DeCalorimeter* m_hcal;         ///< HCAL detector element
-  double         m_etScale;      ///< Conversion int -> Et.
-  bool           m_doDebugDecoding ; ///< Store intermediate information for debug
-  bool           m_fixFor2016 ;  ///< Fix energy to correspond to 2016 conditions
-  bool           m_simulation ;  ///< Data or MC, relevant only for fixFor2016
+  DeCalorimeter* m_ecal;            ///< ECAL detector element
+  DeCalorimeter* m_hcal;            ///< HCAL detector element
+  double         m_etScale;         ///< Conversion int -> Et.
+  bool           m_doDebugDecoding; ///< Store intermediate information for debug
+  bool           m_fixFor2016;      ///< Fix energy to correspond to 2016 conditions
+  bool           m_simulation;      ///< Data or MC, relevant only for fixFor2016
 
-  int correctedEnergy( const int oldEnergy , const LHCb::CaloCellID & id ) const ;
+  int correctedEnergy( const int oldEnergy, const LHCb::CaloCellID& id ) const;
 };
 #endif // L0CALO_L0CALOCANDIDATESFROMRAWBANK_H

@@ -34,12 +34,12 @@ public:
   /// Standard constructor
   DumpMCEventAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  unsigned int m_numObjects; ///< Number of objects to print
-  ICheckTool*  m_checker = nullptr;    ///< Tool to check event integrity
+  unsigned int m_numObjects;        ///< Number of objects to print
+  ICheckTool*  m_checker = nullptr; ///< Tool to check event integrity
 };
 
 #endif // DUMPMCEVENTALG_H

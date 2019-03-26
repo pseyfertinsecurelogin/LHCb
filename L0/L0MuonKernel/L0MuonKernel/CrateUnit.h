@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 #ifndef L0MUONKERNEL_CRATEUNIT_H
-#define L0MUONKERNEL_CRATEUNIT_H     1
+#define L0MUONKERNEL_CRATEUNIT_H 1
 
 #include "L0MuonKernel/L0MUnit.h"
 
@@ -34,25 +34,21 @@ namespace L0Muon {
   class CrateUnit : public L0MUnit {
 
   public:
-
     /// Default Constructor
     CrateUnit();
 
     /// Constructor from xml
-    CrateUnit(DOMNode* pNode);
+    CrateUnit( DOMNode* pNode );
 
     /// Destructor
     ~CrateUnit();
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "CrateUnit";
-    }
+    std::string type() override { return "CrateUnit"; }
 
   private:
-
   };
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_CRATEUNIT_H
+#endif // L0MUONKERNEL_CRATEUNIT_H

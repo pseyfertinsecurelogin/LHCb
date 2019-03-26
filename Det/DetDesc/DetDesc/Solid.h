@@ -22,8 +22,7 @@
  *  @date   03/08/2001
  */
 
-namespace Solid
-{
+namespace Solid {
   /** @class IsInside Solid.h "DetDesc/Solid.h"
    *
    *  useful class to check if point is inside of
@@ -35,11 +34,10 @@ namespace Solid
 
   template <typename Point>
   auto isInside( Point&& p ) {
-      return [point=std::forward<Point>(p)](const ISolid& solid)
-             { return solid.isInside(point); };
+    return [point = std::forward<Point>( p )]( const ISolid& solid ) { return solid.isInside( point ); };
   }
 
-} ///< end of namespace Solid
+} // namespace Solid
 
 /// ===========================================================================
 #endif ///< DETDESC_SOLID_H

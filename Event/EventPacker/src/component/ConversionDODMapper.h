@@ -14,7 +14,7 @@
 // base class
 #include "MapperToolBase.h"
 
-#include <boost/regex.hpp>
+#include <regex>
 
 class IJobOptionsSvc;
 
@@ -45,21 +45,16 @@ class IJobOptionsSvc;
  * @author Marco Clemencic
  * @date 17/01/2012
  */
-class ConversionDODMapper : public MapperToolBase
-{
+class ConversionDODMapper : public MapperToolBase {
 
 public:
-
   /// Standard constructor
-  ConversionDODMapper( const std::string& type,
-                       const std::string& name,
-                       const IInterface* parent );
+  ConversionDODMapper( const std::string& type, const std::string& name, const IInterface* parent );
 
   /// Initialize the tool instance.
   StatusCode initialize() override;
 
 public:
-
   /// Return the algorithm type/name to produce the requested entry.
   ///
   /// For the given path in the transient store, try to transform it to a source
@@ -71,10 +66,9 @@ public:
   /// Then the TypeNameString of the algorithm instance is returned.
   ///
   /// @see IDODAlgMapper
-  Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path) override;
+  Gaudi::Utils::TypeNameString algorithmForPath( const std::string& path ) override;
 
 public:
-
   /// Instruct the DataOnDemandSvc to create the DataObjects for the
   /// intermediate levels of a path we can handle.
   ///
@@ -83,72 +77,62 @@ public:
   /// create the node.
   ///
   /// @see IDODNodeMapper
-  std::string nodeTypeForPath(const std::string &path) override;
+  std::string nodeTypeForPath( const std::string& path ) override;
 
 private:
-
   /// Convert a string using the configured mapping rules.
   /// All the rules are tried until one matches. If there is no match an empty
   /// string is returned.
-  std::string transform(const std::string &input) const;
+  std::string transform( const std::string& input ) const;
 
   /// Helper function to get the source candidate.
-  DataObject *candidate(const std::string &path) const;
+  DataObject* candidate( const std::string& path ) const;
 
 private:
-
   /// @{
   /// Data members corresponding to properties
-  typedef std::vector<std::pair<std::string, std::string> > RulesMapProp;
-  RulesMapProp m_pathTransfRules; ///!< Transformations
+  typedef std::vector<std::pair<std::string, std::string>> RulesMapProp;
+  RulesMapProp                                             m_pathTransfRules; ///!< Transformations
 
   typedef std::map<CLID, std::string> AlgForTypeMap;
-  AlgForTypeMap m_algTypes; ///!< Algorithms
+  AlgForTypeMap                       m_algTypes; ///!< Algorithms
 
   typedef std::map<std::string, unsigned int> OutLevelsMap;
-  OutLevelsMap m_algOutLevels; ///!< AlgorithmsOutputLevels
+  OutLevelsMap                                m_algOutLevels; ///!< AlgorithmsOutputLevels
 
   std::string m_inputOptionName;  ///< Job option name for inputs
   std::string m_outputOptionName; ///< Job option name for outputs
   /// @}
 
 private:
-
   /// Helper class to manage the regex translation rules.
-  class Rule
-  {
+  class Rule {
   public:
-
     /// Constructor.
-    inline Rule(const std::string& _regexp, const std::string& _format):
-      regexp(_regexp), format(_format) {}
+    inline Rule( const std::string& _regexp, const std::string& _format ) : regexp( _regexp ), format( _format ) {}
 
     /// Apply the conversion rule to the input string.
     /// If the regex does not match the input, an empty string is returned.
-    inline std::string apply(const std::string &input) const
-    {
-      return boost::regex_replace(input, regexp, format, boost::match_default | boost::format_no_copy);
+    inline std::string apply( const std::string& input ) const {
+      return std::regex_replace( input, regexp, format,
+                                 std::regex_constants::match_default | std::regex_constants::format_no_copy );
     }
 
     /// Helper to create a Rule from a pair of strings.
-    inline static Rule make(const std::pair<std::string, std::string> &p)
-    {
-      return Rule(p.first, p.second);
-    }
+    inline static Rule make( const std::pair<std::string, std::string>& p ) { return Rule( p.first, p.second ); }
 
   private:
-
     /// Regular expression object.
-    boost::regex regexp;
+    std::regex regexp;
 
-    /// Format string (see Boost documentation).
+    /// Format string (see std documentation).
     std::string format;
   };
 
   ///@{
   /// List of translation rules
   typedef std::list<Rule> RulesList;
-  RulesList m_rules;
+  RulesList               m_rules;
   ///@}
 };
 

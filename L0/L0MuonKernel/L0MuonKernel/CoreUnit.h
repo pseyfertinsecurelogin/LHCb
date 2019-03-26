@@ -8,20 +8,18 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CoreUnit.h,v 1.12 2010-07-21 12:24:37 jucogan Exp $
 #ifndef L0MUONKERNEL_COREUNIT_H
-#define L0MUONKERNEL_COREUNIT_H     1
-
+#define L0MUONKERNEL_COREUNIT_H 1
 
 // STL includes
 #include <vector>
 //#include "GaudiKernel/MsgStream.h"
 #include "L0MuonKernel/MuonCandidate.h"
 //#include "Event/L0Muon.h"
+#include "L0MuonKernel/CandRegisterHandler.h"
 #include "L0MuonKernel/L0MUnit.h"
 #include "L0MuonKernel/Tower.h"
 #include "ProcessorKernel/TileRegister.h"
-#include "L0MuonKernel/CandRegisterHandler.h"
 
 namespace L0Muon {
 
@@ -47,7 +45,8 @@ namespace L0Muon {
                      - q1(=1,...,4), r1=(1,...,4), x1,y1 refers to the emitting PU,
                      - sta(=1,...,5) refers to the muon station.
                  - example: Crossing_M2_Q1R131_Q1R120
-                 - note: these register are filled in the preexecute phase in the FormattingUnit attached to the emitting PU.
+                 - note: these register are filled in the preexecute phase in the FormattingUnit attached to the
+  emitting PU.
 
   - OUT : Register with candidates
              - name: CAND_PUQ<q>R<r><x,y>,
@@ -76,27 +75,26 @@ namespace L0Muon {
   class CoreUnit : public L0MUnit {
 
   public:
-
     /// Default Constructor
     CoreUnit();
 
     /// Constructor with a MuonTileID
-    CoreUnit(LHCb::MuonTileID id);
+    CoreUnit( LHCb::MuonTileID id );
 
     /// Destructor
     ~CoreUnit();
 
     /// Constructor from a xml node
-    CoreUnit(DOMNode* pNode);
+    CoreUnit( DOMNode* pNode );
 
     /// Set the unit properties
-    void setProperties(std::map<std::string,L0Muon::Property>properties) override;
+    void setProperties( std::map<std::string, L0Muon::Property> properties ) override;
 
     /// Return x foi in station sta
-    int xFoi(int sta);
+    int xFoi( int sta );
 
     /// Return y foi in station sta
-    int yFoi(int sta);
+    int yFoi( int sta );
 
     /// Return the flag for searching candidates without M1
     bool ignoreM1();
@@ -114,13 +112,13 @@ namespace L0Muon {
     bool makeTower();
 
     /// Draw the Tower
-    void drawTower() {m_tower.draw();}
+    void drawTower() { m_tower.draw(); }
 
     /// Initialize a correspondance table used in case M1 is ignored
     void initializeM1TowerMap();
 
     /// Set the DEBUG level flag
-    void setDebugMode(bool debug = true) override;
+    void setDebugMode( bool debug = true ) override;
 
     /// Overloads from Unit : set parameters, initialize the CandRegisterHandler with pointer to the output register
     void initialize() override;
@@ -132,20 +130,23 @@ namespace L0Muon {
     /// Special method to emulate part of the execute method : construct the tower
     bool preprocess();
 
-    /** Special method to emulate part of the execute method : search candidates (the tower has been contrcuted before hand)
+    /** Special method to emulate part of the execute method : search candidates (the tower has been contrcuted before
+       hand)
 
         @param yfoi : vector of 5 elements with FOI in X (1/station)
     */
-    std::vector<L0Muon::PMuonCandidate> process(std::vector<int> xfoi ,std::vector<int> yfoi);
+    std::vector<L0Muon::PMuonCandidate> process( std::vector<int> xfoi, std::vector<int> yfoi );
 
-    /** Special method to emulate part of the execute method : search candidates (the tower has been contrcuted before hand)
+    /** Special method to emulate part of the execute method : search candidates (the tower has been contrcuted before
+       hand)
 
         @param xfoi : pointer to a vector of 5 elements with FOI in X (1/station)
         @param yfoi : pointer to a vector of 5 elements with FOI in X (1/station)
     */
-    std::vector<L0Muon::PMuonCandidate> process(int * xfoi ,int * yfoi);
+    std::vector<L0Muon::PMuonCandidate> process( int* xfoi, int* yfoi );
 
-    /** Special method to emulate part of the execute method : search candidates (the tower has been contrcuted before hand)
+    /** Special method to emulate part of the execute method : search candidates (the tower has been contrcuted before
+       hand)
 
         @param xfoiM1 :  FOI in X  in M1
         @param xfoiM2 :  FOI in X  in M2
@@ -154,26 +155,23 @@ namespace L0Muon {
         @param yfoiM4 :  FOI in Y  in M4
         @param yfoiM5 :  FOI in Y  in M5
     */
-    std::vector<L0Muon::PMuonCandidate> process(int xfoiM1,int xfoiM2,int xfoiM4,int xfoiM5,int yfoiM4,int yfoiM5);
+    std::vector<L0Muon::PMuonCandidate> process( int xfoiM1, int xfoiM2, int xfoiM4, int xfoiM5, int yfoiM4,
+                                                 int yfoiM5 );
 
     /// Give a static type name to the unit
-    std::string type() override {
-      return "CoreUnit";
-    }
+    std::string type() override { return "CoreUnit"; }
 
     /// Set the pointer to the pt Look Up Table
-    void setLUTPointer(L0MPtLUT * plut) override;
+    void setLUTPointer( L0MPtLUT* plut ) override;
 
   private:
-
-    Tower  m_tower;                          ///< Object where the candidate search algorithm is performed
-    std::vector<LHCb::MuonTileID> m_pads;    ///< List of fired pads
-    CandRegisterHandler m_candRegHandlerOut; ///< CandRegisterHandler (pointing to the output register)
+    Tower                         m_tower;             ///< Object where the candidate search algorithm is performed
+    std::vector<LHCb::MuonTileID> m_pads;              ///< List of fired pads
+    CandRegisterHandler           m_candRegHandlerOut; ///< CandRegisterHandler (pointing to the output register)
 
     bool m_ignoreM1; ///< Flag to ignore M1 in the processing
-
   };
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_COREUNIT_H
+#endif // L0MUONKERNEL_COREUNIT_H

@@ -24,8 +24,7 @@
 // LHCbMaths
 #include "LHCbMath/FastMaths.h"
 
-namespace Rich
-{
+namespace Rich {
 
   /** @namespace Rich::SIMD::Maths
    *
@@ -34,8 +33,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   17/10/2017
    */
-  namespace Maths
-  {
+  namespace Maths {
 
     // Import from LHCbMath
     using namespace LHCb::Math;

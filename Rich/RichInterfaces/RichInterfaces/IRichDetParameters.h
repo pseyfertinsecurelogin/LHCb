@@ -27,8 +27,7 @@
 // LHCbKernel
 #include "Kernel/RichRadiatorType.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class IDetParameters IRichDetParameters.h RichKernel/IRichDetParameters.h
@@ -42,11 +41,9 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class IDetParameters : public virtual IAlgTool
-  {
+  class IDetParameters : public virtual IAlgTool {
 
   public:
-
     /** @class RadLimits IRichDetParameters.h RichKernel/IRichDetParameters.h
      *
      *  Helper class for IRichDetParameters to contain HPD acceptance data
@@ -54,11 +51,9 @@ namespace Rich
      *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
      *  @date   2005-01-29
      */
-    class RadLimits
-    {
+    class RadLimits {
 
     public:
-
       /// Default Constructor
       RadLimits() = default;
 
@@ -72,11 +67,9 @@ namespace Rich
        *  @param maxY The maximum y edge of acceptance
        */
       RadLimits( const double minX, const double maxX, const double minY, const double maxY )
-        : m_maxX( maxX ), m_minX( minX ), m_maxY( maxY ), m_minY( minY )
-      {}
+          : m_maxX( maxX ), m_minX( minX ), m_maxY( maxY ), m_minY( minY ) {}
 
     public:
-
       /// Access the minimum x limit
       inline double minX() const noexcept { return m_minX; }
       /// Access the maximum x limit
@@ -87,15 +80,13 @@ namespace Rich
       inline double maxY() const noexcept { return m_maxY; }
 
     private:
-
-      double m_maxX { 0 }; ///< Maximum X limit
-      double m_minX { 0 }; ///< Minimum X limit
-      double m_maxY { 0 }; ///< Maximum Y limit
-      double m_minY { 0 }; ///< Minimum Y limit
+      double m_maxX{0}; ///< Maximum X limit
+      double m_minX{0}; ///< Minimum X limit
+      double m_maxY{0}; ///< Maximum Y limit
+      double m_minY{0}; ///< Minimum Y limit
     };
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IDetParameters, 1, 0 );
 
@@ -141,8 +132,7 @@ namespace Rich
      *          .first  Gives the x limit
      *          .second Gives the y limit
      */
-    virtual const IDetParameters::RadLimits &
-    AvAcceptOuterLimitsLocal( const Rich::RadiatorType rad ) const = 0;
+    virtual const IDetParameters::RadLimits& AvAcceptOuterLimitsLocal( const Rich::RadiatorType rad ) const = 0;
   };
 
 } // namespace Rich

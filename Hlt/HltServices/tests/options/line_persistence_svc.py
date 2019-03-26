@@ -19,8 +19,9 @@ import GaudiPython
 
 HistogramPersistencySvc().OutputLevel = 5
 
-execfile(os.path.expandvars('$HLTSERVICESROOT/tests/options/'
-                            'line_persistence_svc_cfg.py'))
+execfile(
+    os.path.expandvars('$HLTSERVICESROOT/tests/options/'
+                       'line_persistence_svc_cfg.py'))
 svcconf = configure_hlt_svc('TestHltLinePersistenceSvc')
 ApplicationMgr().ExtSvc += [svcconf]
 
@@ -40,11 +41,9 @@ HltConfigSvc().initialTCK = '0x11291600'  # see assign_first_tck.qmt
 HltConfigSvc().ConfigAccessSvc = accessSvc.getFullName()
 ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
 
-
 gaudi = GaudiPython.AppMgr()
 gaudi.config()
 gaudi.initialize()
-
 
 LHCb = GaudiPython.gbl.LHCb
 std = GaudiPython.gbl.std
@@ -80,49 +79,57 @@ def to_bitset(rawbanks):
 
 
 def from_bitset(x):
-    return set(LHCb.RawBank.typeName(i)
-               for i, bit in enumerate(reversed(x.to_string()))
-               if bit == '1')
+    return set(
+        LHCb.RawBank.typeName(i)
+        for i, bit in enumerate(reversed(x.to_string())) if bit == '1')
 
 
 def test_svc(svc, confLocations, confTurboPPLines, confRawBankTypes):
     # Brute force test of all combinations of HDRs and line subsets
     all_lines = sorted(confLocations.keys())
-    all_subsets = list(chain.from_iterable(
-        combinations(all_lines, r) for r in range(len(all_lines) + 1)))
-    all_decisions = list(product(*([[False, True]]*3)))
+    all_subsets = list(
+        chain.from_iterable(
+            combinations(all_lines, r) for r in range(len(all_lines) + 1)))
+    all_decisions = list(product(*([[False, True]] * 3)))
     for subset in all_subsets:
         lines = std_set(subset)
         for decs in all_decisions:
             decisions = dict(zip(all_lines, decs))
             hdr = dummyDecReports(decisions)
 
-            expected = set(chain.from_iterable(
-                confLocations[line] for line in subset if decisions[line]))
+            expected = set(
+                chain.from_iterable(
+                    confLocations[line] for line in subset if decisions[line]))
             result = set(svc.locationsToPersist(hdr, lines))
-            assert result == expected, ("hdr={} lines={} result={} expected={}"
-                                        .format(decisions, subset, result, expected))
+            assert result == expected, (
+                "hdr={} lines={} result={} expected={}".format(
+                    decisions, subset, result, expected))
             # print 'Locations check {} == {}'.format(len(result), len(expected))
 
-            expected = set(chain.from_iterable(
-                confLocations[line] for line in subset
-                if decisions[line] and line in confTurboPPLines))
+            expected = set(
+                chain.from_iterable(
+                    confLocations[line] for line in subset
+                    if decisions[line] and line in confTurboPPLines))
             result = set(svc.turboPPLocationsToPersist(hdr, lines))
-            assert result == expected, ("hdr={} lines={} result={} expected={}"
-                                        .format(decisions, subset, result, expected))
+            assert result == expected, (
+                "hdr={} lines={} result={} expected={}".format(
+                    decisions, subset, result, expected))
             # print 'TurboPPLocations check {} == {}'.format(len(result), len(expected))
 
-            expected = set(chain.from_iterable(
-                confRawBankTypes[line] for line in subset if decisions[line]))
+            expected = set(
+                chain.from_iterable(confRawBankTypes[line] for line in subset
+                                    if decisions[line]))
             result = from_bitset(svc.rawBanksToPersist(hdr, lines))
-            assert result == expected, ("hdr={} lines={} result={} expected={}"
-                                        .format(decisions, subset, result, expected))
+            assert result == expected, (
+                "hdr={} lines={} result={} expected={}".format(
+                    decisions, subset, result, expected))
             # print 'RawBankTypes check {} == {}'.format(len(result), len(expected))
 
     # Test that extra lines in confLocations are not a problem
     hdr = dummyDecReports({
         'Hlt2FirstLineDecision': True,
-        'Hlt2SecondLineDecision': True})
+        'Hlt2SecondLineDecision': True
+    })
     lines = std_set(['Hlt2FirstLineDecision', 'Hlt2SecondLineDecision'])
     result = set(svc.locationsToPersist(hdr, lines))
     assert result == set(confLocations['Hlt2FirstLineDecision'] +
@@ -131,7 +138,8 @@ def test_svc(svc, confLocations, confTurboPPLines, confRawBankTypes):
     # Test failure if line is not in confLocations
     hdr = dummyDecReports({
         'Hlt2SecondLineDecision': True,
-        'Hlt2MissingLineDecision': True})
+        'Hlt2MissingLineDecision': True
+    })
     lines = std_set(['Hlt2FirstLineDecision', 'Hlt2MissingLineDecision'])
     try:
         result = svc.locationsToPersist(hdr, lines)
@@ -141,7 +149,8 @@ def test_svc(svc, confLocations, confTurboPPLines, confRawBankTypes):
     # Test that extra lines in confRawBankTypes are not a problem
     hdr = dummyDecReports({
         'Hlt2FirstLineDecision': True,
-        'Hlt2SecondLineDecision': True})
+        'Hlt2SecondLineDecision': True
+    })
     lines = std_set(['Hlt2FirstLineDecision', 'Hlt2SecondLineDecision'])
     result = from_bitset(svc.rawBanksToPersist(hdr, lines))
     assert result == set(confRawBankTypes['Hlt2FirstLineDecision'] +
@@ -150,7 +159,8 @@ def test_svc(svc, confLocations, confTurboPPLines, confRawBankTypes):
     # Test failure if line is not in confRawBankTypes
     hdr = dummyDecReports({
         'Hlt2SecondLineDecision': True,
-        'Hlt2MissingLineDecision': True})
+        'Hlt2MissingLineDecision': True
+    })
     lines = std_set(['Hlt2FirstLineDecision', 'Hlt2MissingLineDecision'])
     try:
         result = svc.rawBanksToPersist(hdr, lines)
@@ -164,8 +174,10 @@ test_svc(hltsvc, svcconf.Locations, svcconf.TurboPPLines, svcconf.RawBankTypes)
 
 # Test the TCKLinePersistenceSvc
 tcksvc = gaudi.service(tcksvcconf.getFullName(), 'ILinePersistenceSvc')
-mappedLocations = {line: [tcksvcconf.ContainerMap.get(loc, loc) for loc in locs]
-                   for line, locs in svcconf.Locations.items()}
+mappedLocations = {
+    line: [tcksvcconf.ContainerMap.get(loc, loc) for loc in locs]
+    for line, locs in svcconf.Locations.items()
+}
 test_svc(tcksvc, mappedLocations, svcconf.TurboPPLines, svcconf.RawBankTypes)
 
 print 'PASS'  # just a comforting message

@@ -25,31 +25,21 @@ DECLARE_COMPONENT( DataObjectVersionFilter )
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode DataObjectVersionFilter::execute()
-{
+StatusCode DataObjectVersionFilter::execute() {
   bool OK = true;
 
-  try
-  {
-    const DataObject * data = m_loc.getIfExists();
-    if ( data )
-    {
+  try {
+    const DataObject* data = m_loc.getIfExists();
+    if ( data ) {
       const auto ver = (unsigned int)data->version();
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "version = " << ver << endmsg;
+      if ( msgLevel( MSG::DEBUG ) ) debug() << "version = " << ver << endmsg;
       OK = ( ver <= m_maxV.value() && ver >= m_minV.value() );
-    }
-    else
-    {
+    } else {
       OK = false;
     }
-  }
-  catch ( const GaudiException & )
-  {
-    OK = false;
-  }
+  } catch ( const GaudiException& ) { OK = false; }
 
-  setFilterPassed(OK);
+  setFilterPassed( OK );
 
   return StatusCode::SUCCESS;
 }

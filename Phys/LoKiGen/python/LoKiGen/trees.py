@@ -39,46 +39,38 @@ A.Golutvin, P.Koppenburg have been used in the design.
 __author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 # =============================================================================
 
-import LoKiCore.decorators    as      _LoKiCore
+import LoKiCore.decorators as _LoKiCore
 
 # Namespaces:
 from LoKiCore.basic import cpp, std, LoKi
-Decays   = cpp.Decays
+Decays = cpp.Decays
 
 _GP = 'const HepMC::GenParticle*'
 
-_decorated = _LoKiCore.decorateTrees (
-    ( Decays.iTree_        ( _GP ) ,
-      Decays.Tree_         ( _GP ) ,
-      Decays.Trees.Any_    ( _GP ) ,
-      Decays.Trees.None_   ( _GP ) ,
-      Decays.Trees.Stable_ ( _GP ) ,
-      Decays.Trees.GenExclusive  ,
-      Decays.Trees.GenInclusive  ,
-      Decays.Trees.GenOptional   ,
-      Decays.Trees.GenPhotos     ,
-      Decays.Trees.GenPhotosOptional ) , LoKi.Dicts.TreeOps( _GP ) )
+_decorated = _LoKiCore.decorateTrees(
+    (Decays.iTree_(_GP), Decays.Tree_(_GP), Decays.Trees.Any_(_GP),
+     Decays.Trees.None_(_GP), Decays.Trees.Stable_(_GP),
+     Decays.Trees.GenExclusive, Decays.Trees.GenInclusive,
+     Decays.Trees.GenOptional, Decays.Trees.GenPhotos,
+     Decays.Trees.GenPhotosOptional), LoKi.Dicts.TreeOps(_GP))
 
 #print dir( LoKi.Dicts.TreeOps(_GP) )
 
 ## decay trees
-iGTree             = Decays.iTree_        ( _GP )
-GTree              = Decays.Tree_         ( _GP )
-GAny               = Decays.Trees.Any_    ( _GP ) () ## instance!!!
-GNone              = Decays.Trees.None_   ( _GP ) () ## instance!!!
-GStable            = Decays.Trees.Stable_ ( _GP )
-GenExclusive       = Decays.Trees.GenExclusive
-GenInclusive       = Decays.Trees.GenInclusive
-GenOptional        = Decays.Trees.GenOptional
-GenPhotos          = Decays.Trees.GenPhotos
-GenPhotosOptional  = Decays.Trees.GenPhotosOptional
-
+iGTree = Decays.iTree_(_GP)
+GTree = Decays.Tree_(_GP)
+GAny = Decays.Trees.Any_(_GP)()  ## instance!!!
+GNone = Decays.Trees.None_(_GP)()  ## instance!!!
+GStable = Decays.Trees.Stable_(_GP)
+GenExclusive = Decays.Trees.GenExclusive
+GenInclusive = Decays.Trees.GenInclusive
+GenOptional = Decays.Trees.GenOptional
+GenPhotos = Decays.Trees.GenPhotos
+GenPhotosOptional = Decays.Trees.GenPhotosOptional
 
 IGenDecay = Decays.IGenDecay
-GenFinder = _LoKiCore.decorateFinder (
-    IGenDecay.Finder               ,
-    LoKi.Dicts.FinderDicts_(_GP)
-    )
+GenFinder = _LoKiCore.decorateFinder(IGenDecay.Finder,
+                                     LoKi.Dicts.FinderDicts_(_GP))
 
 # =============================================================================
 #if '__main__' == __name__ :

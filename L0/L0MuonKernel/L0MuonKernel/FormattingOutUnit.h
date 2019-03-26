@@ -11,9 +11,9 @@
 #ifndef L0MUONKERNEL_FORMATTINGOUTUNIT_H
 #define L0MUONKERNEL_FORMATTINGOUTUNIT_H
 
-#include <stdio.h>
-#include <boost/dynamic_bitset.hpp>
 #include "L0MuonKernel/L0MUnit.h"
+#include <boost/dynamic_bitset.hpp>
+#include <stdio.h>
 
 namespace L0Muon {
 
@@ -40,7 +40,8 @@ namespace L0Muon {
                      - q1(=1,...,4), r1=(1,...,4), x1,y1 refers to the emitting PU,
                      - sta(=1,...,5) refers to the muon station.
                  - example: Crossing_M2_Q1R131_Q1R120
-                 - note: these register are filled in the preexecute phase in the FormattingUnit attached to the emitting PU.
+                 - note: these register are filled in the preexecute phase in the FormattingUnit attached to the
+  emitting PU.
 
   - OUT : The output TileRegisters of this unit are formatted to follow the content of the L0Buffer (see EDMS 339143).
           - 1 TileRegister with optical link
@@ -62,15 +63,14 @@ namespace L0Muon {
   class FormattingOutUnit : public L0MUnit {
 
   public:
-
     /// Default Constructor
     FormattingOutUnit();
 
     /// Constructor with a MuonTileID
-    FormattingOutUnit(LHCb::MuonTileID id);
+    FormattingOutUnit( LHCb::MuonTileID id );
 
     /// Constructor from xml node
-    FormattingOutUnit(DOMNode* pNode);
+    FormattingOutUnit( DOMNode* pNode );
 
     /// Destructor
     ~FormattingOutUnit();
@@ -80,15 +80,11 @@ namespace L0Muon {
     /// Overloads from Unit : release output registers
     void postexecute() override;
 
-   /// Give a static type name to the unit
-    std::string type() override {
-      return "FormattingOutUnit";
-    }
+    /// Give a static type name to the unit
+    std::string type() override { return "FormattingOutUnit"; }
 
   private:
-
-
   };
 } // namespace L0Muon
 
-#endif    // L0MUONKERNEL_FORMATTINGOUTUNIT_H
+#endif // L0MUONKERNEL_FORMATTINGOUTUNIT_H

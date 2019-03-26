@@ -15,8 +15,8 @@ Created on Jan 28, 2011
 '''
 import unittest
 
-class Test(unittest.TestCase):
 
+class Test(unittest.TestCase):
     def setUp(self):
         unittest.TestCase.setUp(self)
 
@@ -35,7 +35,7 @@ class Test(unittest.TestCase):
 
         self.assert_("MessageSvc" not in allConfigurables)
 
-        gen = MessageSvc(OutputLevel = 1)
+        gen = MessageSvc(OutputLevel=1)
         ms = gen.configurable("MessageSvc")
 
         self.assert_("MessageSvc" in allConfigurables)
@@ -71,7 +71,8 @@ class Test(unittest.TestCase):
         except AttributeError:
             pass
         except Exception, x:
-            self.fail("wrong exception raised assigning to wrong property: %s" % x)
+            self.fail(
+                "wrong exception raised assigning to wrong property: %s" % x)
 
         gen.OutputLevel = 5
 
@@ -82,10 +83,11 @@ class Test(unittest.TestCase):
 
     def test_020_repr(self):
         from GaudiConfUtils.ConfigurableGenerators import MessageSvc
-        gen = MessageSvc(OutputLevel = 7)
+        gen = MessageSvc(OutputLevel=7)
         self.assertEquals(gen, eval(repr(gen)))
+
 
 if __name__ == "__main__":
     import sys
-    unittest.main(testRunner = unittest.TextTestRunner(stream = sys.stdout,
-                                                       verbosity = 2))
+    unittest.main(
+        testRunner=unittest.TextTestRunner(stream=sys.stdout, verbosity=2))

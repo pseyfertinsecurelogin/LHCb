@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRichMultiSolidRadiator.h"
 
-typedef XmlUserDetElemCnv< DeRichMultiSolidRadiator > XmlDeRichMultiSolidRadiatorCnv;
+typedef XmlUserDetElemCnv<DeRichMultiSolidRadiator> XmlDeRichMultiSolidRadiatorCnv;
 DECLARE_CONVERTER( XmlDeRichMultiSolidRadiatorCnv )
 
 #endif // XMLDERICHMULTISOLIDRADIATORCNV_CPP

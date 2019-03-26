@@ -8,15 +8,15 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DICT_CALODAQDICT_H 
+#ifndef DICT_CALODAQDICT_H
 #define DICT_CALODAQDICT_H 1
 
 #include "CaloDAQ/ICaloDataProvider.h"
+#include "CaloDAQ/ICaloDigitFilterTool.h"
 #include "CaloDAQ/ICaloEnergyFromRaw.h"
 #include "CaloDAQ/ICaloL0DataProvider.h"
 #include "CaloDAQ/ICaloReadoutTool.h"
 #include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
 #include "CaloDAQ/ICaloTriggerBitsFromRaw.h"
-#include "CaloDAQ/ICaloDigitFilterTool.h"
 
 #endif // DICT_CALODAQDICT_H

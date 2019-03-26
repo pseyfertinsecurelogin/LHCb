@@ -35,10 +35,9 @@ class DeUTDetector;
 
 static const CLID CLID_DeUTStation = 9302;
 
-class DeUTStation : public DeUTBaseElement  {
+class DeUTStation : public DeUTBaseElement {
 
 public:
-
   /** parent type */
   typedef UTDetTraits<DeUTStation>::parent parent_type;
 
@@ -49,88 +48,81 @@ public:
   typedef std::vector<child_type*> Children;
 
   /** Constructor */
-  DeUTStation ( std::string name = {} ) ;
+  DeUTStation( std::string name = {} );
 
   /**
-  * Retrieves reference to class identifier
-  * @return the class identifier for this class
-  */
-  static const CLID& classID(){return CLID_DeUTStation;}
+   * Retrieves reference to class identifier
+   * @return the class identifier for this class
+   */
+  static const CLID& classID() { return CLID_DeUTStation; }
 
   /**
-  * another reference to class identifier
-  * @return the class identifier for this class
-  */
-  const CLID& clID () const override;
+   * another reference to class identifier
+   * @return the class identifier for this class
+   */
+  const CLID& clID() const override;
 
   /** initialization method
-  * @return Status of initialisation
-  */
+   * @return Status of initialisation
+   */
   StatusCode initialize() override;
 
   /** station identifier
-  *  @return identifier
-  */
+   *  @return identifier
+   */
   unsigned int id() const;
 
   /** print to stream */
   std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to stream */
-  MsgStream& printOut( MsgStream& os) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** check contains channel
-  *  @param  aChannel channel
-  *  @return bool
-  */
-  bool contains(const LHCb::UTChannelID aChannel) const override;
+   *  @param  aChannel channel
+   *  @return bool
+   */
+  bool contains( const LHCb::UTChannelID aChannel ) const override;
 
   /**
-  * Nickname for the station
-  **/
-  const std::string& nickname() const ;
+   * Nickname for the station
+   **/
+  const std::string& nickname() const;
 
   /**  locate the layer based on a channel id
   @return  layer */
-  DeUTLayer* findLayer(const LHCb::UTChannelID aChannel);
+  DeUTLayer* findLayer( const LHCb::UTChannelID aChannel );
 
   /** locate layer based on a point
   @return layer */
-  DeUTLayer* findLayer(const Gaudi::XYZPoint& point) ;
+  DeUTLayer* findLayer( const Gaudi::XYZPoint& point );
 
   /** vector of children */
   const Children& layers() const;
 
   /**
-  * fraction active channels
-  * @return bool fraction active
-  */
+   * fraction active channels
+   * @return bool fraction active
+   */
   double fractionActive() const;
 
 protected:
-
   std::string m_nickname;
 
 private:
-
   unsigned int m_id = 0u;
 
   parent_type* m_parent = nullptr;
-  Children m_layers;
-
+  Children     m_layers;
 };
 
-inline unsigned int DeUTStation::id() const{
-  return m_id;
-}
+inline unsigned int DeUTStation::id() const { return m_id; }
 
-inline bool DeUTStation::contains(const LHCb::UTChannelID aChannel) const{
+inline bool DeUTStation::contains( const LHCb::UTChannelID aChannel ) const {
   return elementID().station() == aChannel.station();
 }
 
-inline const std::string& DeUTStation::nickname() const{
-  return m_nickname;
-}
+inline const std::string& DeUTStation::nickname() const { return m_nickname; }
 
 /** ouput operator for class DeUTStation
  *  @see DeUTStation
@@ -138,9 +130,7 @@ inline const std::string& DeUTStation::nickname() const{
  *  @param os       reference to STL output stream
  *  @param aStation reference to DeUTStation object
  */
-inline std::ostream& operator<<( std::ostream& os , const DeUTStation* aStation )
-{ return aStation->printOut( os ); }
-
+inline std::ostream& operator<<( std::ostream& os, const DeUTStation* aStation ) { return aStation->printOut( os ); }
 
 /** ouput operator for class DeUTStation
  *  @see DeUTStation
@@ -148,11 +138,8 @@ inline std::ostream& operator<<( std::ostream& os , const DeUTStation* aStation 
  *  @param os       reference to MsgStream output stream
  *  @param aStation reference to DeUTStation object
  */
-inline MsgStream& operator<<( MsgStream& os , const DeUTStation* aStation )
-{ return aStation->printOut( os ); }
+inline MsgStream& operator<<( MsgStream& os, const DeUTStation* aStation ) { return aStation->printOut( os ); }
 
-inline const DeUTStation::Children& DeUTStation::layers() const{
-  return m_layers;
-}
+inline const DeUTStation::Children& DeUTStation::layers() const { return m_layers; }
 
 #endif // _DEUTSTATION_H

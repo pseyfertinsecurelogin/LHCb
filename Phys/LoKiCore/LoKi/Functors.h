@@ -16,12 +16,12 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/BasicFunctors.h"
 #include "LoKi/BiFunctions.h"
 #include "LoKi/Filters.h"
-#include "LoKi/Primitives.h"
-#include "LoKi/Operators.h"
 #include "LoKi/Math.h"
-#include "LoKi/BasicFunctors.h"
+#include "LoKi/Operators.h"
+#include "LoKi/Primitives.h"
 #include "LoKi/Sources.h"
 // ============================================================================
 /** @file
@@ -38,7 +38,6 @@
  *  @date 2007-10-31
  */
 // ============================================================================
-
 
 // ============================================================================
 // The END

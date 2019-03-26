@@ -19,12 +19,12 @@
 namespace LHCb {
   class MCHit;
   class MCParticle;
-}
+} // namespace LHCb
 
 namespace AIDA {
   class IHistogram1D;
   class IHistogram2D;
-}
+} // namespace AIDA
 
 struct IMCParticleSelector;
 
@@ -34,14 +34,13 @@ struct IMCParticleSelector;
  *  @author M.Needham
  *  @date 04/12/2008 [revised]
  *  @date   21/10/2000
-*/
+ */
 
-class MCHitMonitor: public GaudiHistoAlg {
+class MCHitMonitor : public GaudiHistoAlg {
 
 public:
-
   /// Constructer
-  MCHitMonitor(const std::string& name, ISvcLocator* pSvcLocator);
+  MCHitMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
   /// intialize
   StatusCode initialize() override;
@@ -53,18 +52,17 @@ public:
   StatusCode finalize() override;
 
 private:
-
   /// init histograms
   void initHistograms();
 
   /// fill histograms
-  StatusCode fillHistograms(const LHCb::MCHit* aHit) const;
+  StatusCode fillHistograms( const LHCb::MCHit* aHit ) const;
 
   /// station number for a given z
-  int getStationID(const double z) const;
+  int getStationID( const double z ) const;
 
   // selector
-  std::string m_selectorName;
+  std::string          m_selectorName;
   IMCParticleSelector* m_selector = nullptr;
 
   std::vector<IHistogram1D*> m_timeOfFlightHistos;
@@ -74,22 +72,22 @@ private:
   mutable std::vector<double> m_energyVec;
 
   // job Options
-  std::string m_MCHitPath;
+  std::string         m_MCHitPath;
   std::vector<double> m_Zstations;
-  double m_Xmax;
-  double m_Ymax;
-  double m_TMax;
-  double m_TMin;
-  double m_EMax;
-  double m_MaxPath;
-  double m_ZTolerance;
-  double m_minPathLength;
-  unsigned int m_nToCollect;
+  double              m_Xmax;
+  double              m_Ymax;
+  double              m_TMax;
+  double              m_TMin;
+  double              m_EMax;
+  double              m_MaxPath;
+  double              m_ZTolerance;
+  double              m_minPathLength;
+  unsigned int        m_nToCollect;
 
   // counters
-  mutable Gaudi::Accumulators::AveragingCounter<> m_betaGamma_counter{ this, "betaGamma" };
-  mutable Gaudi::Accumulators::Counter<> m_DeltaRay_counter{ this, "DeltaRay" };
-  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_numberHits_counter{ this, "numberHits" };
+  mutable Gaudi::Accumulators::AveragingCounter<>             m_betaGamma_counter{this, "betaGamma"};
+  mutable Gaudi::Accumulators::Counter<>                      m_DeltaRay_counter{this, "DeltaRay"};
+  mutable Gaudi::Accumulators::AveragingCounter<unsigned int> m_numberHits_counter{this, "numberHits"};
 };
 
 #endif // TrMCHitMonitor_H

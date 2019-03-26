@@ -17,18 +17,18 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
+#include <array>
+#include <cmath>
 #include <functional>
 #include <utility>
-#include <cmath>
-#include <array>
 // ============================================================================
 // ROOT
 // ============================================================================
+#include "Math/Point3D.h"
 #include "Math/SMatrix.h"
 #include "Math/SVector.h"
-#include "Math/Point3D.h"
-#include "Math/Vector4D.h"
 #include "Math/Vector3D.h"
+#include "Math/Vector4D.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -58,11 +58,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** set all elements of vector equal to some scalar value
      *
@@ -84,12 +82,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D>
-    inline size_t
-    setToScalar
-    ( ROOT::Math::SVector<T,D>& m , const T& value = T() )
-    {
-      std::fill ( m.begin() , m.end() , value ) ;
-      return D ;
+    inline size_t setToScalar( ROOT::Math::SVector<T, D>& m, const T& value = T() ) {
+      std::fill( m.begin(), m.end(), value );
+      return D;
     }
     // ========================================================================
     /** set all elements of matrix equal to some scalar value
@@ -113,12 +108,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R>
-    inline size_t
-    setToScalar
-    ( ROOT::Math::SMatrix<T,D1,D2,R>& m , const T& value = T() )
-    {
-      std::fill ( m.begin() , m.end() , value ) ;
-      return m.end() - m.begin() ;
+    inline size_t setToScalar( ROOT::Math::SMatrix<T, D1, D2, R>& m, const T& value = T() ) {
+      std::fill( m.begin(), m.end(), value );
+      return m.end() - m.begin();
     }
     // ========================================================================
     /** set square matrix to be proportional to unit matrix
@@ -140,15 +132,12 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D, class R>
-    inline size_t
-    setToUnit
-    ( ROOT::Math::SMatrix<T,D,D,R>& m , const T& value = T(1) )
-    {
+    inline size_t setToUnit( ROOT::Math::SMatrix<T, D, D, R>& m, const T& value = T( 1 ) ) {
       /// nullify the matrix:
-      std::fill ( m.begin() , m.end() , T(0.0) ) ;
+      std::fill( m.begin(), m.end(), T( 0.0 ) );
       /// set diagonal elements
-      for ( unsigned int i = 0 ; i < D ; ++i ) { m(i,i) = value ; }
-      return m.end() - m.begin() ;
+      for ( unsigned int i = 0; i < D; ++i ) { m( i, i ) = value; }
+      return m.end() - m.begin();
     }
     // ========================================================================
     /** efficient scale all elements of the matrix
@@ -173,13 +162,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R>
-    inline size_t
-    scale
-    ( ROOT::Math::SMatrix<T,D1,D2,R>& m , const T& value )
-    {
-      typedef typename ROOT::Math::SMatrix<T,D1,D2,R>::iterator iterator ;
-      for ( iterator it = m.begin() ;  m.end() != it ; ++it ) { (*it) *= value ; }
-      return m.end() - m.begin() ;
+    inline size_t scale( ROOT::Math::SMatrix<T, D1, D2, R>& m, const T& value ) {
+      typedef typename ROOT::Math::SMatrix<T, D1, D2, R>::iterator iterator;
+      for ( iterator it = m.begin(); m.end() != it; ++it ) { ( *it ) *= value; }
+      return m.end() - m.begin();
     }
     // ========================================================================
     /** efficient scale all elements of the vector
@@ -200,13 +186,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D>
-    inline size_t
-    scale
-    ( ROOT::Math::SVector<T,D>& m , const T& value )
-    {
-      typedef typename ROOT::Math::SVector<T,D>::iterator iterator ;
-      for ( iterator it = m.begin() ;  m.end() != it ; ++it ) { (*it) *= value ; }
-      return D ;
+    inline size_t scale( ROOT::Math::SVector<T, D>& m, const T& value ) {
+      typedef typename ROOT::Math::SVector<T, D>::iterator iterator;
+      for ( iterator it = m.begin(); m.end() != it; ++it ) { ( *it ) *= value; }
+      return D;
     }
     // ========================================================================
     /** @struct _AbsCompare
@@ -215,11 +198,9 @@ namespace Gaudi
      *  @date 2006-05-25
      */
     template <class T>
-    struct _AbsCompare
-    {
-      inline bool operator() ( const T v1 , const T v2 ) const
-      { return ::fabs( v1 ) < ::fabs( v2 ) ; }
-    } ;
+    struct _AbsCompare {
+      inline bool operator()( const T v1, const T v2 ) const { return ::fabs( v1 ) < ::fabs( v2 ); }
+    };
     // ========================================================================
     /** find the maximal element in matrix
      *  @param m (input) matrix to be studied
@@ -227,11 +208,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R>
-    inline T
-    max_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return *std::max_element ( m.begin() , m.end() ) ; }
+    template <class T, unsigned int D1, unsigned int D2, class R>
+    inline T max_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return *std::max_element( m.begin(), m.end() );
+    }
     // ========================================================================
     /** find the minimal element in matrix
      *  @param m (input) matrix to be studied
@@ -239,11 +219,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R>
-    inline T
-    min_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return *std::min_element ( m.begin() , m.end() ) ; }
+    template <class T, unsigned int D1, unsigned int D2, class R>
+    inline T min_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return *std::min_element( m.begin(), m.end() );
+    }
     // ========================================================================
     /** find the maximal element in vector
      *  @param m (input) vector to be studied
@@ -251,11 +230,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D>
-    inline T
-    max_element
-    ( const ROOT::Math::SVector<T,D>& m )
-    { return *std::max_element ( m.begin() , m.end() ) ; }
+    template <class T, unsigned int D>
+    inline T max_element( const ROOT::Math::SVector<T, D>& m ) {
+      return *std::max_element( m.begin(), m.end() );
+    }
     // ========================================================================
     /** find the minimal element in vector
      *  @param m (input) vector to be studied
@@ -263,11 +241,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D>
-    inline T
-    min_element
-    ( const ROOT::Math::SVector<T,D>& m )
-    { return *std::min_element ( m.begin() , m.end() ) ; }
+    template <class T, unsigned int D>
+    inline T min_element( const ROOT::Math::SVector<T, D>& m ) {
+      return *std::min_element( m.begin(), m.end() );
+    }
     // ========================================================================
     /** find the element in matrix with the maximal absolute value
      *
@@ -290,11 +267,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R>
-    inline T
-    maxabs_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return *std::max_element ( m.begin() , m.end()  , _AbsCompare<T>() ) ; }
+    template <class T, unsigned int D1, unsigned int D2, class R>
+    inline T maxabs_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return *std::max_element( m.begin(), m.end(), _AbsCompare<T>() );
+    }
     // ========================================================================
     /** find the element in matrix with the minimal absolute value
      *  @param m (input) matrix to be studied
@@ -302,11 +278,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R>
-    inline T
-    minabs_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return *std::min_element ( m.begin() , m.end()  , _AbsCompare<T>() ) ; }
+    template <class T, unsigned int D1, unsigned int D2, class R>
+    inline T minabs_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return *std::min_element( m.begin(), m.end(), _AbsCompare<T>() );
+    }
     // ========================================================================
     /** find an index of the  maximal element in matrix
      *  @param m (input) matrix to be studied
@@ -315,25 +290,21 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R, class CMP>
-    inline std::pair<unsigned int,unsigned int>
-    ind_max_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m , CMP cmp )
-    {
-      std::pair<unsigned int,unsigned int> result (0,0) ;
-      T tmp = m(0,0) ;
-      for ( unsigned int i = 0 ; i < D1 ; ++i )
-      {
-        for ( unsigned int j = 0 ; j < D2 ; ++j )
-        {
-          const T val = m(i,j) ;
-          if ( !cmp( tmp , val ) ) { continue ; }
-          tmp = val ;
-          result.first  = i ;
-          result.second = j ;
+    template <class T, unsigned int D1, unsigned int D2, class R, class CMP>
+    inline std::pair<unsigned int, unsigned int> ind_max_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m,
+                                                                  CMP                                      cmp ) {
+      std::pair<unsigned int, unsigned int> result( 0, 0 );
+      T                                     tmp = m( 0, 0 );
+      for ( unsigned int i = 0; i < D1; ++i ) {
+        for ( unsigned int j = 0; j < D2; ++j ) {
+          const T val = m( i, j );
+          if ( !cmp( tmp, val ) ) { continue; }
+          tmp           = val;
+          result.first  = i;
+          result.second = j;
         }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** find an index of the maximal element in symmetric matrix
@@ -343,25 +314,21 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D, class CMP>
-    inline std::pair<unsigned int,unsigned int>
-    ind_max_element
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& m , CMP cmp )
-    {
-      std::pair<unsigned int,unsigned int> result (0,0) ;
-      T tmp = m(0,0) ;
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        for ( unsigned int j = i ; j < D ; ++j )
-        {
-          const T val = m(i,j) ;
-          if ( !cmp ( tmp , val ) ) { continue ; }
-          tmp = val ;
-          result.first  = i ;
-          result.second = j ;
+    template <class T, unsigned int D, class CMP>
+    inline std::pair<unsigned int, unsigned int>
+    ind_max_element( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& m, CMP cmp ) {
+      std::pair<unsigned int, unsigned int> result( 0, 0 );
+      T                                     tmp = m( 0, 0 );
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) {
+          const T val = m( i, j );
+          if ( !cmp( tmp, val ) ) { continue; }
+          tmp           = val;
+          result.first  = i;
+          result.second = j;
         }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** find an index of the  maximal element in matrix
@@ -370,11 +337,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R>
-    inline std::pair<unsigned int,unsigned int>
-    ind_max_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return ind_max_element ( m , std::less{} ) ; }
+    template <class T, unsigned int D1, unsigned int D2, class R>
+    inline std::pair<unsigned int, unsigned int> ind_max_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return ind_max_element( m, std::less{} );
+    }
     // ========================================================================
     /** find an index of the minimal element in matrix
      *  @param m (input) matrix to be studied
@@ -383,25 +349,21 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D1,unsigned int D2, class R, class CMP>
-    inline std::pair<unsigned int,unsigned int>
-    ind_min_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m , CMP cmp )
-    {
-      std::pair<unsigned int,unsigned int> result (0,0) ;
-      T tmp = m(0,0) ;
-      for ( unsigned int i = 0 ; i < D1 ; ++i )
-      {
-        for ( unsigned int j = 0 ; j < D2 ; ++j )
-        {
-          const T val = m(i,j) ;
-          if ( !cmp( val , tmp ) ) { continue ; }
-          tmp = val ;
-          result.first  = i ;
-          result.second = j ;
+    template <class T, unsigned int D1, unsigned int D2, class R, class CMP>
+    inline std::pair<unsigned int, unsigned int> ind_min_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m,
+                                                                  CMP                                      cmp ) {
+      std::pair<unsigned int, unsigned int> result( 0, 0 );
+      T                                     tmp = m( 0, 0 );
+      for ( unsigned int i = 0; i < D1; ++i ) {
+        for ( unsigned int j = 0; j < D2; ++j ) {
+          const T val = m( i, j );
+          if ( !cmp( val, tmp ) ) { continue; }
+          tmp           = val;
+          result.first  = i;
+          result.second = j;
         }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** find an index of the minimal element in symmetric matrix
@@ -411,25 +373,21 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D, class CMP>
-    inline std::pair<unsigned int,unsigned int>
-    ind_min_element
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& m , CMP cmp )
-    {
-      std::pair<unsigned int,unsigned int> result (0,0) ;
-      T tmp = m(0,0) ;
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        for ( unsigned int j = i ; j < D ; ++j )
-        {
-          const T val = m(i,j) ;
-          if ( !cmp ( tmp , val ) ) { continue ; }
-          tmp = val ;
-          result.first  = i ;
-          result.second = j ;
+    template <class T, unsigned int D, class CMP>
+    inline std::pair<unsigned int, unsigned int>
+    ind_min_element( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& m, CMP cmp ) {
+      std::pair<unsigned int, unsigned int> result( 0, 0 );
+      T                                     tmp = m( 0, 0 );
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) {
+          const T val = m( i, j );
+          if ( !cmp( tmp, val ) ) { continue; }
+          tmp           = val;
+          result.first  = i;
+          result.second = j;
         }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** find an index of the minimal element in the matrix
@@ -455,10 +413,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R>
-    inline std::pair<unsigned int,unsigned int>
-    ind_min_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return ind_min_element( m , std::less{} ) ; }
+    inline std::pair<unsigned int, unsigned int> ind_min_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return ind_min_element( m, std::less{} );
+    }
     // ========================================================================
     /** find an index of the maximal element in the vector
      *  @param m (input) vector to be studied
@@ -467,11 +424,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D, class CMP>
-    inline unsigned int
-    ind_max_element
-    ( const ROOT::Math::SVector<T,D>& m , CMP cmp )
-    { return std::max_element( m.begin() , m.end() , cmp ) - m.begin() ; }
+    template <class T, unsigned int D, class CMP>
+    inline unsigned int ind_max_element( const ROOT::Math::SVector<T, D>& m, CMP cmp ) {
+      return std::max_element( m.begin(), m.end(), cmp ) - m.begin();
+    }
     // ========================================================================
     /** find an index of the minimal element in the vector
      *  @param m (input) vector to be studied
@@ -480,11 +436,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D, class CMP>
-    inline unsigned int
-    ind_min_element
-    ( const ROOT::Math::SVector<T,D>& m , CMP cmp )
-    { return std::min_element( m.begin() , m.end() , cmp ) - m.begin() ; }
+    template <class T, unsigned int D, class CMP>
+    inline unsigned int ind_min_element( const ROOT::Math::SVector<T, D>& m, CMP cmp ) {
+      return std::min_element( m.begin(), m.end(), cmp ) - m.begin();
+    }
     // ========================================================================
     /** find an index of the maximal element in the vector
      *  @param m (input) vector to be studied
@@ -492,11 +447,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D>
-    inline unsigned int
-    ind_max_element
-    ( const ROOT::Math::SVector<T,D>& m )
-    { return std::max_element( m.begin() , m.end() ) - m.begin() ; }
+    template <class T, unsigned int D>
+    inline unsigned int ind_max_element( const ROOT::Math::SVector<T, D>& m ) {
+      return std::max_element( m.begin(), m.end() ) - m.begin();
+    }
     // ========================================================================
     /** find an index of the minimal element in the vector
      *  @param m (input) vector to be studied
@@ -504,11 +458,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D>
-    inline unsigned int
-    ind_min_element
-    ( const ROOT::Math::SVector<T,D>& m )
-    { return std::min_element ( m.begin() , m.end() ) - m.begin() ; }
+    template <class T, unsigned int D>
+    inline unsigned int ind_min_element( const ROOT::Math::SVector<T, D>& m ) {
+      return std::min_element( m.begin(), m.end() ) - m.begin();
+    }
     // ========================================================================
     /** find an index of the element with the maximal absolute value
      *
@@ -534,10 +487,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R>
-    inline std::pair<unsigned int,unsigned int>
-    ind_maxabs_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return ind_max_element( m , _AbsCompare<T>() ) ; }
+    inline std::pair<unsigned int, unsigned int> ind_maxabs_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return ind_max_element( m, _AbsCompare<T>() );
+    }
     // ========================================================================
     /** find an index of the element with the minimal absolute value
      *
@@ -563,10 +515,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R>
-    inline std::pair<unsigned int,unsigned int>
-    ind_minabs_element
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m )
-    { return ind_min_element( m , _AbsCompare<T>() ) ; }
+    inline std::pair<unsigned int, unsigned int> ind_minabs_element( const ROOT::Math::SMatrix<T, D1, D2, R>& m ) {
+      return ind_min_element( m, _AbsCompare<T>() );
+    }
     // ========================================================================
     /** find an index of the element with maximal absolute value
      *  @param m (input) vector to be studied
@@ -574,11 +525,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D>
-    inline unsigned int
-    ind_maxabs_element
-    ( const ROOT::Math::SVector<T,D>& m )
-    { return ind_max_element ( m , _AbsCompare<T>() ) ; }
+    template <class T, unsigned int D>
+    inline unsigned int ind_maxabs_element( const ROOT::Math::SVector<T, D>& m ) {
+      return ind_max_element( m, _AbsCompare<T>() );
+    }
     // ========================================================================
     /** find an index of the element with minimal absolute value
      *  @param m (input) vector to be studied
@@ -586,11 +536,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-05-24
      */
-    template <class T,unsigned int D>
-    inline unsigned int
-    ind_minabs_element
-    ( const ROOT::Math::SVector<T,D>& m )
-    { return ind_min_element ( m , _AbsCompare<T>() ) ; }
+    template <class T, unsigned int D>
+    inline unsigned int ind_minabs_element( const ROOT::Math::SVector<T, D>& m ) {
+      return ind_min_element( m, _AbsCompare<T>() );
+    }
     // ========================================================================
     /** evaluate the trace (sum of diagonal elements) of the square matrix
      *
@@ -612,13 +561,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D, class R>
-    inline T
-    trace
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    {
-      T result = m(0,0) ;
-      for ( unsigned int i = 1 ; i < D ; ++i ) { result += m(i,i) ; }
-      return result ;
+    inline T trace( const ROOT::Math::SMatrix<T, D, D, R>& m ) {
+      T result = m( 0, 0 );
+      for ( unsigned int i = 1; i < D; ++i ) { result += m( i, i ); }
+      return result;
     }
     /** evaluate the trace (sum of diagonal elements) of the square matrix
      *
@@ -640,13 +586,10 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class B, class T, unsigned int D, class R>
-    inline T
-    trace
-    ( const ROOT::Math::Expr<B,T,D,D,R>& m )
-    {
-      T result = m(0,0) ;
-      for ( unsigned int i = 1 ; i < D ; ++i ) { result += m(i,i) ; }
-      return result ;
+    inline T trace( const ROOT::Math::Expr<B, T, D, D, R>& m ) {
+      T result = m( 0, 0 );
+      for ( unsigned int i = 1; i < D; ++i ) { result += m( i, i ); }
+      return result;
     }
     // ========================================================================
     /** find the minimal diagonal element
@@ -655,17 +598,13 @@ namespace Gaudi
      *  @return "min" diagonal element (in the sense of comparison criteria)
      */
     template <class T, unsigned int D, class R, class CMP>
-    inline T
-    min_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m , CMP cmp )
-    {
-      T result = m(0,0);
-      for ( unsigned int i = 1 ; i < D ; ++i )
-      {
-        const T value = m(i,i) ;
-        if ( cmp ( value , result ) ) { result = value ; }
+    inline T min_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m, CMP cmp ) {
+      T result = m( 0, 0 );
+      for ( unsigned int i = 1; i < D; ++i ) {
+        const T value = m( i, i );
+        if ( cmp( value, result ) ) { result = value; }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** find the maximal diagonal element
@@ -674,17 +613,13 @@ namespace Gaudi
      *  @return "max" diagonal element (in the sense of comparison criteria)
      */
     template <class T, unsigned int D, class R, class CMP>
-    inline T
-    max_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m , CMP cmp )
-    {
-      T result = m(0,0);
-      for ( unsigned int i = 1 ; i < D ; ++i )
-      {
-        const T value = m(i,i) ;
-        if ( cmp ( result , value ) ) { result = value ; }
+    inline T max_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m, CMP cmp ) {
+      T result = m( 0, 0 );
+      for ( unsigned int i = 1; i < D; ++i ) {
+        const T value = m( i, i );
+        if ( cmp( result, value ) ) { result = value; }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** find the maximal diagonal element of square matrix
@@ -708,10 +643,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D, class R>
-    inline T
-    max_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    { return max_diagonal( m , std::less{} ) ; }
+    inline T max_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m ) {
+      return max_diagonal( m, std::less{} );
+    }
     // ========================================================================
     /** find the maximal diagonal element of the square matrix
      *
@@ -738,10 +672,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D, class R>
-    inline T
-    min_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    { return min_diagonal( m , std::less{} ) ; }
+    inline T min_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m ) {
+      return min_diagonal( m, std::less{} );
+    }
     // ========================================================================
     /** find the diagonal element of square matrix with maximal absolute value
      *
@@ -764,10 +697,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D, class R>
-    inline T
-    maxabs_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    { return max_diagonal( m , _AbsCompare<T>() ) ; }
+    inline T maxabs_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m ) {
+      return max_diagonal( m, _AbsCompare<T>() );
+    }
     // ========================================================================
     /** find the diagonal element of the square matrix with
      *  the minimal absolute value
@@ -794,10 +726,9 @@ namespace Gaudi
      *  @date 2006-05-24
      */
     template <class T, unsigned int D, class R>
-    inline T
-    minabs_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m )
-    { return min_diagonal( m , _AbsCompare<T>() ) ; }
+    inline T minabs_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m ) {
+      return min_diagonal( m, _AbsCompare<T>() );
+    }
     // ========================================================================
     /** count the number of elements in matrix, which satisfy the certain criteria
      *
@@ -830,10 +761,9 @@ namespace Gaudi
      *  @date 2006-04-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R, class P>
-    inline size_t
-    count_if
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m , P pred )
-    { return std::count_if ( m.begin() , m.end() , pred ) ; }
+    inline size_t count_if( const ROOT::Math::SMatrix<T, D1, D2, R>& m, P pred ) {
+      return std::count_if( m.begin(), m.end(), pred );
+    }
     // ========================================================================
     /** count the number of elements in matrix, which satisfy the certain criteria
      *
@@ -870,20 +800,15 @@ namespace Gaudi
      *  @date 2006-04-24
      */
     template <class T, unsigned int D, class P>
-    inline size_t
-    count_if
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& m , P pred )
-    {
-      size_t result = 0 ;
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        if ( pred ( m ( i , i ) ) ) { result += 1 ; }
-        for ( unsigned int j = i + 1 ; j < D ; ++j )
-        {
-          if ( pred (  m ( i , j ) ) ) { result +=2 ; }  // ATTENTION!
+    inline size_t count_if( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& m, P pred ) {
+      size_t result = 0;
+      for ( unsigned int i = 0; i < D; ++i ) {
+        if ( pred( m( i, i ) ) ) { result += 1; }
+        for ( unsigned int j = i + 1; j < D; ++j ) {
+          if ( pred( m( i, j ) ) ) { result += 2; } // ATTENTION!
         }
       }
-      return result ;
+      return result;
     }
     // ========================================================================
     /** count number of diagonal elements in matrix,
@@ -912,14 +837,12 @@ namespace Gaudi
      *  @date 2006-04-24
      */
     template <class T, unsigned int D, class R, class P>
-    inline size_t
-    count_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m , P pred )
-    {
-      size_t result = 0 ;
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      { if ( pred ( m ( i , i ) ) ) { result += 1 ; } }
-      return result ;
+    inline size_t count_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m, P pred ) {
+      size_t result = 0;
+      for ( unsigned int i = 0; i < D; ++i ) {
+        if ( pred( m( i, i ) ) ) { result += 1; }
+      }
+      return result;
     }
     // ========================================================================
     /** check the presence of at least one element which satisfy the
@@ -952,10 +875,9 @@ namespace Gaudi
      *  @date 2006-04-24
      */
     template <class T, unsigned int D1, unsigned int D2, class R, class P>
-    inline bool
-    check_if
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m , P pred )
-    { return m.end() != std::find_if ( m.begin() , m.end() , pred ) ; }
+    inline bool check_if( const ROOT::Math::SMatrix<T, D1, D2, R>& m, P pred ) {
+      return m.end() != std::find_if( m.begin(), m.end(), pred );
+    }
     // ========================================================================
     /** check the presence of at least one diagonal element which satisfy the
      *  criteria
@@ -983,13 +905,11 @@ namespace Gaudi
      *  @date 2006-04-24
      */
     template <class T, unsigned int D, class R, class P>
-    inline bool
-    check_diagonal
-    ( const ROOT::Math::SMatrix<T,D,D,R>& m , P pred )
-    {
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      { if ( pred ( m ( i , i ) ) ) { return true ; } }
-      return false ;
+    inline bool check_diagonal( const ROOT::Math::SMatrix<T, D, D, R>& m, P pred ) {
+      for ( unsigned int i = 0; i < D; ++i ) {
+        if ( pred( m( i, i ) ) ) { return true; }
+      }
+      return false;
     }
     // ========================================================================
     /** check the "equality" of the two matrices by checking
@@ -1029,22 +949,15 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-04-24
      */
-    template <class T1 , class T2 ,
-              unsigned int D1 , unsigned int D2 ,
-              class R1 , class R2 , class P>
-    inline bool
-    equal_if
-    ( const ROOT::Math::SMatrix<T1,D1,D2,R1>& m1 ,
-      const ROOT::Math::SMatrix<T2,D1,D2,R2>& m2 , P pred )
-    {
-      for ( unsigned int i = 0 ; i < D1 ; ++i )
-      {
-        for ( unsigned int j = 0 ; j < D2 ; ++j )
-        {
-          if ( !pred( m1(i,j) , m2(i,j) ) ) { return false ; } // RETURN
+    template <class T1, class T2, unsigned int D1, unsigned int D2, class R1, class R2, class P>
+    inline bool equal_if( const ROOT::Math::SMatrix<T1, D1, D2, R1>& m1, const ROOT::Math::SMatrix<T2, D1, D2, R2>& m2,
+                          P pred ) {
+      for ( unsigned int i = 0; i < D1; ++i ) {
+        for ( unsigned int j = 0; j < D2; ++j ) {
+          if ( !pred( m1( i, j ), m2( i, j ) ) ) { return false; } // RETURN
         }
       }
-      return true ;
+      return true;
     }
     // ========================================================================
     /** check the "equality" of the two matrices by checking
@@ -1082,12 +995,11 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-04-24
      */
-    template <class T,unsigned int D1, unsigned int D2,class R,class P>
-    inline bool
-    equal_if
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& m1 ,
-      const ROOT::Math::SMatrix<T,D1,D2,R>& m2 , P pred )
-    { return std::equal ( m1.begin() , m1.end() , m2.begin() , pred ) ; }
+    template <class T, unsigned int D1, unsigned int D2, class R, class P>
+    inline bool equal_if( const ROOT::Math::SMatrix<T, D1, D2, R>& m1, const ROOT::Math::SMatrix<T, D1, D2, R>& m2,
+                          P pred ) {
+      return std::equal( m1.begin(), m1.end(), m2.begin(), pred );
+    }
     // ========================================================================
     /** check the "equality" of the two vectors
      *  element-by-element: true == pred( m1(i) , m2() )
@@ -1121,12 +1033,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV ibelyaev@itep.ru
      *  @date 2006-04-24
      */
-    template <class T,unsigned int D,class P>
-    inline bool
-    equal_if
-    ( const ROOT::Math::SVector<T,D>& v1 ,
-      const ROOT::Math::SVector<T,D>& v2 , P pred )
-    { return std::equal ( v1.begin() , v1.end() , v2.begin() , pred ) ; }
+    template <class T, unsigned int D, class P>
+    inline bool equal_if( const ROOT::Math::SVector<T, D>& v1, const ROOT::Math::SVector<T, D>& v2, P pred ) {
+      return std::equal( v1.begin(), v1.end(), v2.begin(), pred );
+    }
     // ========================================================================
     // UPDATE
     // =========================================================================
@@ -1139,15 +1049,10 @@ namespace Gaudi
      *  @date 2008-01-10
      */
     template <class T, class T2, unsigned int D>
-    void update
-    ( ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> > & left  ,
-      const ROOT::Math::SVector<T2,D>&                         vect  ,
-      const double                                             scale )
-    {
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        for ( unsigned int j = i ; j < D ; ++j )
-        { left ( i , j ) += scale * vect(i) * vect(j) ; }
+    void update( ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& left,
+                 const ROOT::Math::SVector<T2, D>& vect, const double scale ) {
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) { left( i, j ) += scale * vect( i ) * vect( j ); }
       }
     }
     // =========================================================================
@@ -1160,15 +1065,10 @@ namespace Gaudi
      *  @date 2008-01-10
      */
     template <class T, class B, class T2, unsigned int D>
-    void update
-    ( ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> > & left  ,
-      const ROOT::Math::VecExpr<B,T2,D>&                       vect  ,
-      const double                                             scale )
-    {
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        for ( unsigned int j = i ; j < D ; ++j )
-        { left ( i , j ) += scale * vect(i) * vect(j) ; }
+    void update( ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& left,
+                 const ROOT::Math::VecExpr<B, T2, D>& vect, const double scale ) {
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) { left( i, j ) += scale * vect( i ) * vect( j ); }
       }
     }
     // =========================================================================
@@ -1181,17 +1081,11 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2008-01-10
      */
-    template <class T, class R, class T2, class T3, unsigned int D1,unsigned int D2>
-    void update
-    ( ROOT::Math::SMatrix<T,D1,D2,R>  & left        ,
-      const ROOT::Math::SVector<T2,D1>& vct1        ,
-      const ROOT::Math::SVector<T3,D2>& vct2        ,
-      const double                      scale = 1.0 )
-    {
-      for ( unsigned int i = 0 ; i < D1 ; ++i )
-      {
-        for ( unsigned int j = 0 ; j < D2 ; ++j )
-        { left ( i , j ) += scale * vct1(i) * vct2(j) ; }
+    template <class T, class R, class T2, class T3, unsigned int D1, unsigned int D2>
+    void update( ROOT::Math::SMatrix<T, D1, D2, R>& left, const ROOT::Math::SVector<T2, D1>& vct1,
+                 const ROOT::Math::SVector<T3, D2>& vct2, const double scale = 1.0 ) {
+      for ( unsigned int i = 0; i < D1; ++i ) {
+        for ( unsigned int j = 0; j < D2; ++j ) { left( i, j ) += scale * vct1( i ) * vct2( j ); }
       }
     }
     // =========================================================================
@@ -1203,13 +1097,10 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2008-01-19
      */
-    template<class T, class T1, class T2, class R, unsigned int D1, unsigned int D2>
-    T mult
-    ( const ROOT::Math::SVector<T1,D1>&     vct1  ,
-      const ROOT::Math::SMatrix<T,D1,D2,R>& mtrx  ,
-      const ROOT::Math::SVector<T2,D2>&     vct2  )
-    {
-      return ROOT::Math::Dot ( vct1 , mtrx * vct2 ) ;
+    template <class T, class T1, class T2, class R, unsigned int D1, unsigned int D2>
+    T mult( const ROOT::Math::SVector<T1, D1>& vct1, const ROOT::Math::SMatrix<T, D1, D2, R>& mtrx,
+            const ROOT::Math::SVector<T2, D2>& vct2 ) {
+      return ROOT::Math::Dot( vct1, mtrx * vct2 );
     }
     // =========================================================================
     /** update the symmetric matrix according to the rule m +=  scale * ( m + m^T )
@@ -1221,15 +1112,10 @@ namespace Gaudi
      *  @date 2008-01-10
      */
     template <class T, class T2, class R, unsigned int D>
-    void update
-    ( ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >&   left        ,
-      const ROOT::Math::SMatrix<T2,D,D,R>&                      right       ,
-      const double                                              scale = 1.0 )
-    {
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        for ( unsigned int j = i ; j < D ; ++j )
-        { left ( i , j ) += scale * ( right ( i , j ) + right ( j , i ) ) ; }
+    void update( ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& left,
+                 const ROOT::Math::SMatrix<T2, D, D, R>& right, const double scale = 1.0 ) {
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) { left( i, j ) += scale * ( right( i, j ) + right( j, i ) ); }
       }
     }
     // =========================================================================
@@ -1242,15 +1128,10 @@ namespace Gaudi
      *  @date 2008-01-10
      */
     template <class T, class T2, class B, class R, unsigned int D>
-    void update
-    ( ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >&   left        ,
-      const ROOT::Math::Expr<B,T2,D,D,R>&                       right       ,
-      const double                                              scale = 1.0 )
-    {
-      for ( unsigned int i = 0 ; i < D ; ++i )
-      {
-        for ( unsigned int j = i ; j < D ; ++j )
-        { left ( i , j ) += scale * ( right ( i , j ) + right ( j , i ) ) ; }
+    void update( ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& left,
+                 const ROOT::Math::Expr<B, T2, D, D, R>& right, const double scale = 1.0 ) {
+      for ( unsigned int i = 0; i < D; ++i ) {
+        for ( unsigned int j = i; j < D; ++j ) { left( i, j ) += scale * ( right( i, j ) + right( j, i ) ); }
       }
     }
     // ========================================================================
@@ -1265,13 +1146,12 @@ namespace Gaudi
      *  @date 2015-02-11
      */
     template <class T, unsigned int D>
-    inline int inverse
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& what   ,
-      ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >&       result )
-    {
-      int ifail = 0 ;     result = what.InverseChol ( ifail ) ;
-      if ( 0 != ifail ) { result = what.Inverse     ( ifail ) ; }
-      return ifail ;
+    inline int inverse( const ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>& what,
+                        ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>&       result ) {
+      int ifail = 0;
+      result    = what.InverseChol( ifail );
+      if ( 0 != ifail ) { result = what.Inverse( ifail ); }
+      return ifail;
     }
     // ========================================================================
 
@@ -1284,263 +1164,202 @@ namespace Gaudi
     // Vector operations
     // ========================================================================
     template <class VECTOR>
-    struct VctrOps ;
+    struct VctrOps;
     // ========================================================================
     template <class T, unsigned int D>
-    struct VctrOps < ROOT::Math::SVector<T,D> >
-    {
+    struct VctrOps<ROOT::Math::SVector<T, D>> {
       // a + b
-      static
-      ROOT::Math::SVector<T,D>
-      add  ( const ROOT::Math::SVector<T,D>& a ,
-             const ROOT::Math::SVector<T,D>& b ) { return a + b ; }
+      static ROOT::Math::SVector<T, D> add( const ROOT::Math::SVector<T, D>& a, const ROOT::Math::SVector<T, D>& b ) {
+        return a + b;
+      }
       // a + c
-      static
-      ROOT::Math::SVector<T,D>
-      add  ( const ROOT::Math::SVector<T,D>& a ,
-             const double                    c ) { return a + c ; }
+      static ROOT::Math::SVector<T, D> add( const ROOT::Math::SVector<T, D>& a, const double c ) { return a + c; }
       // a - b
-      static
-      ROOT::Math::SVector<T,D>
-      sub  ( const ROOT::Math::SVector<T,D>& a ,
-             const ROOT::Math::SVector<T,D>& b ) { return a - b ; }
+      static ROOT::Math::SVector<T, D> sub( const ROOT::Math::SVector<T, D>& a, const ROOT::Math::SVector<T, D>& b ) {
+        return a - b;
+      }
       // a - c
-      static
-      ROOT::Math::SVector<T,D>
-      sub  ( const ROOT::Math::SVector<T,D>& a ,
-             const double                    b ) { return a + b ; }
+      static ROOT::Math::SVector<T, D> sub( const ROOT::Math::SVector<T, D>& a, const double b ) { return a + b; }
       // c - a
-      static
-      ROOT::Math::SVector<T,D>
-      rsub ( const ROOT::Math::SVector<T,D>& a ,
-             const double                    c ) { return c - a  ; }
+      static ROOT::Math::SVector<T, D> rsub( const ROOT::Math::SVector<T, D>& a, const double c ) { return c - a; }
     };
     // ========================================================================
     // matrix operations
     // ========================================================================
     template <class VECTOR>
-    struct MtrxOps ;
+    struct MtrxOps;
     // generic matrices
     template <class T, unsigned int D1, unsigned int D2>
-    struct MtrxOps< ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> > >
-    {
-      typedef ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> > MATRIX ;
+    struct MtrxOps<ROOT::Math::SMatrix<T, D1, D2, ROOT::Math::MatRepStd<T, D1, D2>>> {
+      typedef ROOT::Math::SMatrix<T, D1, D2, ROOT::Math::MatRepStd<T, D1, D2>> MATRIX;
       //
       // ======================================================================
       // m + m
-      static MATRIX add  ( const MATRIX& a ,
-                           const MATRIX& b ) { return a + b ; }
+      static MATRIX add( const MATRIX& a, const MATRIX& b ) { return a + b; }
       // m + c
-      static MATRIX add  ( const MATRIX& a ,
-                           const double  c ) { return a + c ; }
+      static MATRIX add( const MATRIX& a, const double c ) { return a + c; }
       // ======================================================================
       // m - m
-      static MATRIX sub  ( const MATRIX& a ,
-                           const MATRIX& b ) { return a - b ; }
+      static MATRIX sub( const MATRIX& a, const MATRIX& b ) { return a - b; }
       // m - c
-      static MATRIX sub  ( const MATRIX& a ,
-                           const double  c ) { return a - c ; }
+      static MATRIX sub( const MATRIX& a, const double c ) { return a - c; }
       // ======================================================================
       // c - m
-      static MATRIX rsub ( const MATRIX& a ,
-                           const double  c ) { return c - a ; }
+      static MATRIX rsub( const MATRIX& a, const double c ) { return c - a; }
       // ======================================================================
     };
     // square matrices
     template <class T, unsigned int D>
-    struct MtrxOps<ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > >
-    {
-      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >      MATRIX ;
-      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >     SYMMATRIX ;
+    struct MtrxOps<ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepStd<T, D, D>>> {
+      typedef ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepStd<T, D, D>> MATRIX;
+      typedef ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>    SYMMATRIX;
       //
       // ======================================================================
       // m + m
-      static MATRIX add  ( const    MATRIX& a ,
-                           const    MATRIX& b ) { return a + b ; }
+      static MATRIX add( const MATRIX& a, const MATRIX& b ) { return a + b; }
       // m + s
-      static MATRIX add  ( const    MATRIX& a ,
-                           const SYMMATRIX& b ) { return a + b ; }
+      static MATRIX add( const MATRIX& a, const SYMMATRIX& b ) { return a + b; }
       // m + c
-      static MATRIX add  ( const    MATRIX& a ,
-                           const    double  b ) { return a + b ; }
+      static MATRIX add( const MATRIX& a, const double b ) { return a + b; }
       // ======================================================================
       // m - m
-      static MATRIX sub  ( const    MATRIX& a ,
-                           const    MATRIX& b ) { return a - b ; }
+      static MATRIX sub( const MATRIX& a, const MATRIX& b ) { return a - b; }
       // m - s
-      static MATRIX sub  ( const    MATRIX& a ,
-                           const SYMMATRIX& b ) { return a - b ; }
+      static MATRIX sub( const MATRIX& a, const SYMMATRIX& b ) { return a - b; }
       // m - c
-      static MATRIX sub  ( const    MATRIX& a ,
-                           const    double  c ) { return a - c ; }
+      static MATRIX sub( const MATRIX& a, const double c ) { return a - c; }
       // ======================================================================
       // s - m
-      static MATRIX rsub ( const    MATRIX& a ,
-                           const SYMMATRIX& b ) { return b - a ; }
+      static MATRIX rsub( const MATRIX& a, const SYMMATRIX& b ) { return b - a; }
       // c - m
-      static MATRIX rsub ( const    MATRIX& a ,
-                           const    double  c ) { return c - a ; }
+      static MATRIX rsub( const MATRIX& a, const double c ) { return c - a; }
 
       // ======================================================================
     };
     // symmetric matrices
     template <class T, unsigned int D>
-    struct MtrxOps<ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> > >
-    {
-      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >      MATRIX ;
-      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > GENMATRIX ;
+    struct MtrxOps<ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>> {
+      typedef ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepSym<T, D>>    MATRIX;
+      typedef ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepStd<T, D, D>> GENMATRIX;
       //
       // ======================================================================
       // s + s
-      static MATRIX    add  ( const    MATRIX& a ,
-                              const    MATRIX& b ) { return a + b ; }
+      static MATRIX add( const MATRIX& a, const MATRIX& b ) { return a + b; }
       // s + m
-      static GENMATRIX add  ( const    MATRIX& a ,
-                              const GENMATRIX& b ) { return a + b ; }
+      static GENMATRIX add( const MATRIX& a, const GENMATRIX& b ) { return a + b; }
       // s + c
-      static MATRIX    add  ( const    MATRIX& a ,
-                              const     double c ) { return a + c ; }
+      static MATRIX add( const MATRIX& a, const double c ) { return a + c; }
       // ======================================================================
       // s - s
-      static MATRIX    sub  ( const    MATRIX& a ,
-                              const    MATRIX& b ) { return a - b ; }
+      static MATRIX sub( const MATRIX& a, const MATRIX& b ) { return a - b; }
       // s - m
-      static GENMATRIX sub  ( const    MATRIX& a ,
-                              const GENMATRIX& b ) { return a - b ; }
+      static GENMATRIX sub( const MATRIX& a, const GENMATRIX& b ) { return a - b; }
       // s - c
-      static MATRIX    sub  ( const    MATRIX& a ,
-                              const     double c ) { return a - c ; }
+      static MATRIX sub( const MATRIX& a, const double c ) { return a - c; }
       // ======================================================================
       // m - s
-      static GENMATRIX rsub ( const    MATRIX& a ,
-                              const GENMATRIX& b ) { return b - a ; }
+      static GENMATRIX rsub( const MATRIX& a, const GENMATRIX& b ) { return b - a; }
       // c - s
-      static MATRIX    rsub ( const    MATRIX& a ,
-                              const     double c ) { return c - a ; }
+      static MATRIX rsub( const MATRIX& a, const double c ) { return c - a; }
       // ======================================================================
     };
     // ========================================================================
     /// multiplication
     template <class OBJ1, class OBJ2>
-    struct MultiplyOp ;
+    struct MultiplyOp;
     // ========================================================================
     // vector * vector
     template <class T, unsigned int D>
-    struct MultiplyOp < ROOT::Math::SVector<T,D>, ROOT::Math::SVector<T,D> >
-    {
+    struct MultiplyOp<ROOT::Math::SVector<T, D>, ROOT::Math::SVector<T, D>> {
       // dot:
-      static
-      double
-      dot ( const ROOT::Math::SVector<T,D> & a ,
-            const ROOT::Math::SVector<T,D> & b )
-      {
-        double result = 0 ;
-        for ( unsigned short i = 0 ; i < D ; ++i ) { result +=  double( a[i] ) * b[i] ; }
-        return result ;
+      static double dot( const ROOT::Math::SVector<T, D>& a, const ROOT::Math::SVector<T, D>& b ) {
+        double result = 0;
+        for ( unsigned short i = 0; i < D; ++i ) { result += double( a[i] ) * b[i]; }
+        return result;
       }
       // cross:
-      static
-      ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
-      cross ( const ROOT::Math::SVector<T,D> & a ,
-              const ROOT::Math::SVector<T,D> & b )
-      {
-        ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > result ;
-        for ( unsigned short i = 0 ; i < D ; ++i )
-        { for ( unsigned short j = 0 ; j < D ; ++j )
-          { result(i,j) = a[i] * b[j] ; } }
-        return result ;
+      static ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepStd<T, D, D>> cross( const ROOT::Math::SVector<T, D>& a,
+                                                                                 const ROOT::Math::SVector<T, D>& b ) {
+        ROOT::Math::SMatrix<T, D, D, ROOT::Math::MatRepStd<T, D, D>> result;
+        for ( unsigned short i = 0; i < D; ++i ) {
+          for ( unsigned short j = 0; j < D; ++j ) { result( i, j ) = a[i] * b[j]; }
+        }
+        return result;
       }
       // multiply
-      static
-      double
-      multiply ( const ROOT::Math::SVector<T,D> & a ,
-                 const ROOT::Math::SVector<T,D> & b ) { return dot ( a , b ) ; }
-    } ;
+      static double multiply( const ROOT::Math::SVector<T, D>& a, const ROOT::Math::SVector<T, D>& b ) {
+        return dot( a, b );
+      }
+    };
     // ========================================================================
     // cross: vector * vector
     template <class T, unsigned int D1, unsigned int D2>
-    struct MultiplyOp < ROOT::Math::SVector<T,D1>, ROOT::Math::SVector<T,D2> >
-    {
+    struct MultiplyOp<ROOT::Math::SVector<T, D1>, ROOT::Math::SVector<T, D2>> {
       //
-      static
-      ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >
-      cross ( const ROOT::Math::SVector<T,D1> & a ,
-              const ROOT::Math::SVector<T,D2> & b )
-      {
-        ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> > result ;
-        for ( unsigned short i = 0 ; i < D1 ; ++i )
-        { for ( unsigned short j = 0 ; j < D2 ; ++j )
-          { result(i,j) = a[i] * b[j] ; } }
-        return result ;
+      static ROOT::Math::SMatrix<T, D1, D2, ROOT::Math::MatRepStd<T, D1, D2>>
+      cross( const ROOT::Math::SVector<T, D1>& a, const ROOT::Math::SVector<T, D2>& b ) {
+        ROOT::Math::SMatrix<T, D1, D2, ROOT::Math::MatRepStd<T, D1, D2>> result;
+        for ( unsigned short i = 0; i < D1; ++i ) {
+          for ( unsigned short j = 0; j < D2; ++j ) { result( i, j ) = a[i] * b[j]; }
+        }
+        return result;
       }
-    } ;
+    };
     // ========================================================================
     // vector * matrix
-    template <class T, unsigned int D, unsigned D2, class  R>
-    struct MultiplyOp<ROOT::Math::SVector<T,D>,ROOT::Math::SMatrix<T,D,D2,R> >
-    {
-      static
-      ROOT::Math::SVector<T,D2>
-      multiply ( const ROOT::Math::SVector<T,D>      & a ,
-                 const ROOT::Math::SMatrix<T,D,D2,R> & b ) { return a * b ; }
-    } ;
+    template <class T, unsigned int D, unsigned D2, class R>
+    struct MultiplyOp<ROOT::Math::SVector<T, D>, ROOT::Math::SMatrix<T, D, D2, R>> {
+      static ROOT::Math::SVector<T, D2> multiply( const ROOT::Math::SVector<T, D>&        a,
+                                                  const ROOT::Math::SMatrix<T, D, D2, R>& b ) {
+        return a * b;
+      }
+    };
     // =======================================================================
     // matrix * matrix
     template <class T, unsigned int D1, unsigned D2, unsigned D3, class R1, class R2>
-    struct MultiplyOp<ROOT::Math::SMatrix<T,D1,D2,R1>,ROOT::Math::SMatrix<T,D2,D3,R2> >
-    {
-      static
-      ROOT::Math::SMatrix<T,D1,D3,ROOT::Math::MatRepStd<T,D1,D3> >
-      multiply  ( const ROOT::Math::SMatrix<T,D1,D2,R1> & a ,
-                  const ROOT::Math::SMatrix<T,D2,D3,R2> & b ) { return a * b ; }
-    } ;
+    struct MultiplyOp<ROOT::Math::SMatrix<T, D1, D2, R1>, ROOT::Math::SMatrix<T, D2, D3, R2>> {
+      static ROOT::Math::SMatrix<T, D1, D3, ROOT::Math::MatRepStd<T, D1, D3>>
+      multiply( const ROOT::Math::SMatrix<T, D1, D2, R1>& a, const ROOT::Math::SMatrix<T, D2, D3, R2>& b ) {
+        return a * b;
+      }
+    };
     // =======================================================================
     // matrix * vector
-    template <class T, unsigned int D, unsigned D2, class  R>
-    struct MultiplyOp <ROOT::Math::SMatrix<T,D,D2,R>,ROOT::Math::SVector<T,D2> >
-    {
-      static
-      ROOT::Math::SVector<T,D>
-      multiply  ( const ROOT::Math::SMatrix<T,D,D2,R> & a ,
-                  const ROOT::Math::SVector<T,D2>     & b ) { return a * b ; }
-    } ;
+    template <class T, unsigned int D, unsigned D2, class R>
+    struct MultiplyOp<ROOT::Math::SMatrix<T, D, D2, R>, ROOT::Math::SVector<T, D2>> {
+      static ROOT::Math::SVector<T, D> multiply( const ROOT::Math::SMatrix<T, D, D2, R>& a,
+                                                 const ROOT::Math::SVector<T, D2>&       b ) {
+        return a * b;
+      }
+    };
     // ========================================================================
 
     // ========================================================================
     template <class OBJ1, class OBJ2>
-    struct EqualityOp ;
+    struct EqualityOp;
     // ========================================================================
     // vector == vector
-    template <class T1,class T2, unsigned int D>
-    struct EqualityOp< ROOT::Math::SVector<T1,D>,ROOT::Math::SVector<T2,D> >
-    {
-      static
-      bool
-      equal ( const ROOT::Math::SVector<T1,D>& v1 ,
-              const ROOT::Math::SVector<T2,D>& v2 )
-      {
-        static const LHCb::Math::Equal_To<ROOT::Math::SVector<T1,D> > m_cmp{} ;
-        return m_cmp ( v1 , v2 ) ;
+    template <class T1, class T2, unsigned int D>
+    struct EqualityOp<ROOT::Math::SVector<T1, D>, ROOT::Math::SVector<T2, D>> {
+      static bool equal( const ROOT::Math::SVector<T1, D>& v1, const ROOT::Math::SVector<T2, D>& v2 ) {
+        static const LHCb::Math::Equal_To<ROOT::Math::SVector<T1, D>> m_cmp{};
+        return m_cmp( v1, v2 );
       }
-    } ;
+    };
     // ========================================================================
     // matrix == matrix
-    template <class T1,class T2, unsigned int D1,unsigned int D2, class R1, class R2>
-    struct EqualityOp< ROOT::Math::SMatrix<T1,D1,D2,R1>,ROOT::Math::SMatrix<T2,D1,D2,R2> >
-    {
-      static
-      bool
-      equal ( const ROOT::Math::SMatrix<T1,D1,D2,R1>& v1 ,
-              const ROOT::Math::SMatrix<T2,D1,D2,R2>& v2 )
-      {
-        static const LHCb::Math::Equal_To<ROOT::Math::SMatrix<T1,D1,D2,R1> > m_cmp{} ;
-        return m_cmp ( v1 , v2 ) ;
+    template <class T1, class T2, unsigned int D1, unsigned int D2, class R1, class R2>
+    struct EqualityOp<ROOT::Math::SMatrix<T1, D1, D2, R1>, ROOT::Math::SMatrix<T2, D1, D2, R2>> {
+      static bool equal( const ROOT::Math::SMatrix<T1, D1, D2, R1>& v1,
+                         const ROOT::Math::SMatrix<T2, D1, D2, R2>& v2 ) {
+        static const LHCb::Math::Equal_To<ROOT::Math::SMatrix<T1, D1, D2, R1>> m_cmp{};
+        return m_cmp( v1, v2 );
       }
-    } ;
+    };
     // ========================================================================
   } //                                                    end of namespace Math
   // ==========================================================================
-} //                                               end of namespace Gaudi::Math
+} // namespace Gaudi
 // ============================================================================
 // The END
 // ============================================================================

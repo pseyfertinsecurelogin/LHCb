@@ -30,11 +30,9 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Trees
-  {
+  namespace Trees {
     // ========================================================================
     /** the type of maching algorithm:
      *
@@ -51,9 +49,9 @@ namespace Decays
      *  @date 2008-04-30
      */
     enum Alg {
-      Daughters         = 0 , // match only for the direct daughters
-      Sections                // match in all graph sections
-    } ;
+      Daughters = 0, // match only for the direct daughters
+      Sections       // match in all graph sections
+    };
     // ======================================================================
     /** @enum Oscillation
      *  simple e-num to distinguish oscillated and non-oscillated particles
@@ -71,12 +69,12 @@ namespace Decays
      */
     enum Oscillation {
       /// no need to check the oscillation flag
-      Undefined = 0 , //   non-defined
+      Undefined = 0, //   non-defined
       /// require the positive oscilaltion flag
-      Oscillated    , //
+      Oscillated, //
       /// require the negative oscilaltion flag
-      NotOscillated   //
-    } ;
+      NotOscillated //
+    };
     // ========================================================================
     /** @enum Arrow
      *  simple enum to mark varios type of arrows for decay descriptors
@@ -93,16 +91,16 @@ namespace Decays
      */
     enum Arrow {
       ///
-      Single       ,   // single arrow        "->"
-      LongSingle   ,   // long single arrow  "-->"
-      Double       ,   // dobule arrow        "=>"
-      LongDouble   ,   // long double arrow  "==>"
-      SingleX      ,   // single arrow       "-x>"
-      LongSingleX  ,   // long single arrow "--x>"
-      DoubleX      ,   // dobule arrow       "=x>"
-      LongDoubleX      // long double arrow "==x>"
+      Single,      // single arrow        "->"
+      LongSingle,  // long single arrow  "-->"
+      Double,      // dobule arrow        "=>"
+      LongDouble,  // long double arrow  "==>"
+      SingleX,     // single arrow       "-x>"
+      LongSingleX, // long single arrow "--x>"
+      DoubleX,     // dobule arrow       "=x>"
+      LongDoubleX  // long double arrow "==x>"
       // =====================================================================
-    } ;
+    };
     // ======================================================================
     /** simple function to extract "decay-only" flag from the arrow
      *  @param   arrow the arrow
@@ -110,7 +108,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-05-06
      */
-    bool decayOnly ( const Arrow& arrow ) ;
+    bool decayOnly( const Arrow& arrow );
     // ========================================================================
     /** simple function to extract "algorithm" flag from the arrow
      *  @param   arrow the arrow
@@ -118,7 +116,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-05-06
      */
-    Alg  algorithm ( const Arrow& arrow ) ;
+    Alg algorithm( const Arrow& arrow );
     // ========================================================================
     /** simple function to extract "photos" flag from the arrow
      *  @param   arrow the arrow
@@ -127,7 +125,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-05-06
      */
-    bool photos    ( const Arrow& arrow ) ;
+    bool photos( const Arrow& arrow );
     /** get the string representation of the arrow
      *  @param    arr the arrow
      *  @return  strnig representation of the arrow
@@ -135,7 +133,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-05-06
      */
-    std::string arrow ( const Arrow& arr ) ;
+    std::string arrow( const Arrow& arr );
     // ========================================================================
     /** valid arrow?
      *  @param   arrow the arrow
@@ -144,7 +142,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-05-06
      */
-    bool valid ( const Arrow& arrow ) ;
+    bool valid( const Arrow& arrow );
     // ========================================================================
     /** valid arrow?
      *  @param   arrow the arrow
@@ -153,9 +151,9 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-05-06
      */
-    bool valid ( const std::string& arrow ) ;
+    bool valid( const std::string& arrow );
     // ========================================================================
-  } // end of namespace Decays::Trees
+  } // namespace Trees
   // ==========================================================================
 } // end of namespace Decays
 // ============================================================================

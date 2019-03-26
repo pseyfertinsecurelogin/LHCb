@@ -18,11 +18,11 @@
 #include "Kernel/FTChannelID.h"
 
 // Local
-#include "DeFTStation.h"
 #include "DeFTLayer.h"
-#include "DeFTQuarter.h"
-#include "DeFTModule.h"
 #include "DeFTMat.h"
+#include "DeFTModule.h"
+#include "DeFTQuarter.h"
+#include "DeFTStation.h"
 
 /** @class DeFTDetector DeFTDetector.h "FTDet/DeFTDetector.h"
  *
@@ -70,17 +70,16 @@
  *  @date   2016-07-18
  */
 
-namespace DeFTDetectorLocation{
-// FT location defined in the XmlDDDB
-inline const std::string Default = "/dd/Structure/LHCb/AfterMagnetRegion/T/FT";
-}
+namespace DeFTDetectorLocation {
+  // FT location defined in the XmlDDDB
+  inline const std::string Default = "/dd/Structure/LHCb/AfterMagnetRegion/T/FT";
+} // namespace DeFTDetectorLocation
 
 constexpr CLID CLID_DeFTDetector = 8601;
 
 class DeFTDetector : public DetectorElement {
 
 public:
-
   static constexpr uint16_t nQuarters = 48;
 
   /// Standard constructor
@@ -110,32 +109,32 @@ public:
   int version() const { return m_FTversion; }
 
   /** @return Vector of pointers to the FT Stations */
-  const std::array<DeFTStation*,3>& stations() const { return m_stations; }
+  const std::array<DeFTStation*, 3>& stations() const { return m_stations; }
 
   /** Find the FT Station where a global point is
    *  @return Pointer to the relevant Station
    */
-  const DeFTStation* findStation(const Gaudi::XYZPoint& point) const;
+  const DeFTStation* findStation( const Gaudi::XYZPoint& point ) const;
 
   /** Find the FT Layer where a global point is
    *  @return Pointer to the relevant Layer
    */
-  const DeFTLayer* findLayer(const Gaudi::XYZPoint& point) const;
+  const DeFTLayer* findLayer( const Gaudi::XYZPoint& point ) const;
 
   /** Find the FT Module where a global point is
    *  @return Pointer to the relevant Module
    */
-  const DeFTQuarter* findQuarter(const Gaudi::XYZPoint& point) const;
+  const DeFTQuarter* findQuarter( const Gaudi::XYZPoint& point ) const;
 
   /** Find the FT Module where a global point is
    *  @return Pointer to the relevant Module
    */
-  const DeFTModule* findModule(const Gaudi::XYZPoint& point) const;
+  const DeFTModule* findModule( const Gaudi::XYZPoint& point ) const;
 
   /** Find the FT Module where a global point is
    *  @return Pointer to the relevant Module
    */
-  const DeFTMat* findMat(const Gaudi::XYZPoint& point) const;
+  const DeFTMat* findMat( const Gaudi::XYZPoint& point ) const;
 
   /** Find the FT Station corresponding to the channel id
    *  @return Pointer to the relevant station
@@ -165,25 +164,22 @@ public:
   /** Find the FT Quarter from the sequential number
    *  @return Pointer to the relevant quarter
    */
-  const DeFTQuarter* quarter( int iQuarter ) const {
-    return m_quarters[iQuarter];
-  };
+  const DeFTQuarter* quarter( int iQuarter ) const { return m_quarters[iQuarter]; };
 
   /**
    * Return a sensitive volume identifier for a given point in the
    * global reference frame. This function is vital for Gauss.
    */
-  int sensitiveVolumeID(const Gaudi::XYZPoint& point) const override {
+  int sensitiveVolumeID( const Gaudi::XYZPoint& point ) const override {
     const DeFTMat* mat = findMat( point );
-    return mat ? mat->sensitiveVolumeID( point ) : -1 ;
+    return mat ? mat->sensitiveVolumeID( point ) : -1;
   }
 
   /** Get a random channelID using a seed between 0 and 1 */
-  LHCb::FTChannelID getRandomChannelFromSeed(const double seed) const;
+  LHCb::FTChannelID getRandomChannelFromSeed( const double seed ) const;
 
   /// Get a random FTChannelID from a pseudoChannel and a seed (useful for the AP noise)
-  LHCb::FTChannelID getRandomChannelFromPseudo(const int pseudoChannel,
-      const double seed) const;
+  LHCb::FTChannelID getRandomChannelFromPseudo( const int pseudoChannel, const double seed ) const;
 
   /// Get the total number of channels in the FT detector
   int nStations() const { return m_nStations; }
@@ -192,15 +188,14 @@ public:
   int nChannels() const { return m_nTotChannels; }
 
 private: // private data members
-
   unsigned int m_FTversion = 0;
 
   /// vector of pointers to stations
-  std::array<DeFTStation*,3> m_stations{{nullptr, nullptr, nullptr}};
-  unsigned int m_nStations;
+  std::array<DeFTStation*, 3> m_stations{{nullptr, nullptr, nullptr}};
+  unsigned int                m_nStations;
 
   /// flact vector of pointers to quarters for fast access
-  std::array<DeFTQuarter*,nQuarters> m_quarters;
+  std::array<DeFTQuarter*, nQuarters> m_quarters;
 
   unsigned int m_nModulesT1;
   unsigned int m_nModulesT2;
@@ -214,38 +209,35 @@ private: // private data members
   /// Use a single MsgStream instance (created in initialize)
   std::unique_ptr<MsgStream> m_msg;
 
-}; //end of class
+}; // end of class
 
 /// Find station methods
-inline const DeFTStation* DeFTDetector::findStation(const LHCb::FTChannelID& aChannel) const {
-  return m_stations[aChannel.station()-1u];
+inline const DeFTStation* DeFTDetector::findStation( const LHCb::FTChannelID& aChannel ) const {
+  return m_stations[aChannel.station() - 1u];
 }
 
 /// Find layer methods
-inline const DeFTLayer* DeFTDetector::findLayer(const LHCb::FTChannelID& aChannel) const {
-  const DeFTStation* s = findStation(aChannel);
-  return s ? s->findLayer(aChannel) : 0;
+inline const DeFTLayer* DeFTDetector::findLayer( const LHCb::FTChannelID& aChannel ) const {
+  const DeFTStation* s = findStation( aChannel );
+  return s ? s->findLayer( aChannel ) : 0;
 }
 
 /// Find quarter methods
-inline const DeFTQuarter* DeFTDetector::findQuarter(const LHCb::FTChannelID& aChannel) const {
-  const DeFTLayer* l = findLayer(aChannel);
-  return l ? l->findQuarter(aChannel) : 0;
+inline const DeFTQuarter* DeFTDetector::findQuarter( const LHCb::FTChannelID& aChannel ) const {
+  const DeFTLayer* l = findLayer( aChannel );
+  return l ? l->findQuarter( aChannel ) : 0;
 }
 
 /// Find module methods
-inline const DeFTModule* DeFTDetector::findModule(const LHCb::FTChannelID& aChannel) const {
-  const DeFTQuarter* q = findQuarter(aChannel);
-  return q ? q->findModule(aChannel) : 0;
+inline const DeFTModule* DeFTDetector::findModule( const LHCb::FTChannelID& aChannel ) const {
+  const DeFTQuarter* q = findQuarter( aChannel );
+  return q ? q->findModule( aChannel ) : 0;
 }
 
 /// Find module methods
-inline const DeFTMat* DeFTDetector::findMat(const LHCb::FTChannelID& aChannel) const {
-  const DeFTModule* m = findModule(aChannel);
-  return m ? m->findMat(aChannel) : 0;
+inline const DeFTMat* DeFTDetector::findMat( const LHCb::FTChannelID& aChannel ) const {
+  const DeFTModule* m = findModule( aChannel );
+  return m ? m->findMat( aChannel ) : 0;
 }
-
-
-
 
 #endif // DEFTDETECTOR_H

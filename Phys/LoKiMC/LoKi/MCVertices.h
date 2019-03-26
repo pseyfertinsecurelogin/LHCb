@@ -16,8 +16,8 @@
 // ============================================================================
 // STL & STD
 // ============================================================================
-#include <string>
 #include <math.h>
+#include <string>
 // ============================================================================
 // Event
 // ============================================================================
@@ -26,10 +26,10 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Functions.h"
-#include "LoKi/Operators.h"
 #include "LoKi/Constants.h"
+#include "LoKi/Functions.h"
 #include "LoKi/MCTypes.h"
+#include "LoKi/Operators.h"
 // ============================================================================
 /** @file
  *
@@ -45,8 +45,7 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace  LoKi::MCVertices MCVertices.h LoKi/MCVertices.h
    *
@@ -54,24 +53,21 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2004-07-07
    */
-  namespace MCVertices
-  {
+  namespace MCVertices {
     // ========================================================================
     /** @class TypeOfMCVertex
      *  evaluator of MC verte type
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    struct GAUDI_API TypeOfMCVertex
-      : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API TypeOfMCVertex : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      TypeOfMCVertex* clone() const  override;
+      TypeOfMCVertex* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -80,15 +76,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    struct GAUDI_API TimeOfFlight : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API TimeOfFlight : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      TimeOfFlight* clone() const  override;
+      TimeOfFlight* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -97,15 +92,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    struct GAUDI_API VertexPositionX : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API VertexPositionX : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      VertexPositionX* clone() const  override;
+      VertexPositionX* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -114,15 +108,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    struct GAUDI_API VertexPositionY : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API VertexPositionY : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      VertexPositionY* clone() const  override;
+      VertexPositionY* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -131,16 +124,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    struct GAUDI_API VertexPositionZ
-      : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API VertexPositionZ : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      VertexPositionZ* clone() const  override;
+      VertexPositionZ* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -149,15 +140,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    struct GAUDI_API VertexTime : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API VertexTime : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      VertexTime* clone() const  override;
+      VertexTime* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -166,15 +156,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    struct GAUDI_API Primary : LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate
-    {
+    struct GAUDI_API Primary : LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate {
       // ======================================================================
       /// clone method (mandatory)
-      Primary* clone() const  override;
+      Primary* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCVertex* v ) const override;
+      bool operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -183,15 +172,14 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    struct GAUDI_API Decay : LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate
-    {
+    struct GAUDI_API Decay : LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate {
       // ======================================================================
       /// clone method (mandatory)
-      Decay* clone() const  override;
+      Decay* clone() const override;
       /// the only one essential method
-      bool operator() ( const LHCb::MCVertex* v ) const override;
+      bool operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -200,29 +188,27 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    class GAUDI_API MCVertexDistance
-      : public LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    class GAUDI_API MCVertexDistance : public LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
     public:
       // ======================================================================
       /** constructor from LoKi::Point3D
        *  @param point 3D-point
        */
-      MCVertexDistance ( const LoKi::Point3D& point ) ;
+      MCVertexDistance( const LoKi::Point3D& point );
       /** constructor from MCVertex
        *  @param point 3D-point
        */
-      MCVertexDistance ( const LHCb::MCVertex*   point ) ;
+      MCVertexDistance( const LHCb::MCVertex* point );
       /// clone method (mandatory!)
-      MCVertexDistance* clone() const  override;
+      MCVertexDistance* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const  override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::Point3D m_point ;
+      LoKi::Point3D m_point;
       // ======================================================================
     };
     // ========================================================================
@@ -236,27 +222,25 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    class GAUDI_API MCVFunAsMCFun
-      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
-    {
+    class GAUDI_API MCVFunAsMCFun : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function {
     public:
       // ======================================================================
       /// constructor from MC Vertex fuction
-      MCVFunAsMCFun ( const LoKi::MCTypes::MCVFunc& func   ) ;
+      MCVFunAsMCFun( const LoKi::MCTypes::MCVFunc& func );
       /// clone method (mandatory!)
-      MCVFunAsMCFun* clone() const  override;
+      MCVFunAsMCFun* clone() const override;
       /// the only one essential method
-      double    operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     protected:
       // ======================================================================
-      const LoKi::MCTypes::MCVFunc& func() const { return m_fun.func() ; }
+      const LoKi::MCTypes::MCVFunc& func() const { return m_fun.func(); }
       // ======================================================================
     private:
       // ======================================================================
-      LoKi::MCTypes::MCVFun m_fun ;
+      LoKi::MCTypes::MCVFun m_fun;
       // ======================================================================
     };
     // ========================================================================
@@ -270,16 +254,10 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    class GAUDI_API MCVFunction : public LoKi::MCVertices::MCVFunAsMCFun
-    {
+    class GAUDI_API MCVFunction : public LoKi::MCVertices::MCVFunAsMCFun {
     public:
       // ======================================================================
-      enum {
-        Regular  =  0 ,
-        Last     = -1 ,
-        Origin   = -2 ,
-        Primary  = -3
-      } ;
+      enum { Regular = 0, Last = -1, Origin = -2, Primary = -3 };
       // ======================================================================
     public:
       // ======================================================================
@@ -290,26 +268,23 @@ namespace LoKi
        *         -2   - the origin vertex
        *         -3   - the primary ertex
        */
-      MCVFunction ( const LoKi::MCTypes::MCVFunc& func  ,
-                    const int                     index ) ;
+      MCVFunction( const LoKi::MCTypes::MCVFunc& func, const int index );
       /// constructor from MC Vertex fuction and vertex selection
-      MCVFunction ( const LoKi::MCTypes::MCVFunc& func  ,
-                    const LoKi::MCTypes::MCVCuts& cuts  ) ;
+      MCVFunction( const LoKi::MCTypes::MCVFunc& func, const LoKi::MCTypes::MCVCuts& cuts );
       /// constructor from MC Vertex fuction and vertex selection
-      MCVFunction ( const LoKi::MCTypes::MCVCuts& cuts  ,
-                    const LoKi::MCTypes::MCVFunc& func  ) ;
+      MCVFunction( const LoKi::MCTypes::MCVCuts& cuts, const LoKi::MCTypes::MCVFunc& func );
       /// clone method (mandatory!)
-      MCVFunction* clone() const  override;
+      MCVFunction* clone() const override;
       /// the only one essential method
-      double    operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      bool                  m_case   ;
-      int                   m_index  ;
-      LoKi::MCTypes::MCVCut m_cut    ;
+      bool                  m_case;
+      int                   m_index;
+      LoKi::MCTypes::MCVCut m_cut;
       // ======================================================================
     };
     // ========================================================================
@@ -318,15 +293,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date   2011-02-14
      */
-    struct GAUDI_API Key : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
-    {
+    struct GAUDI_API Key : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function {
       // ======================================================================
       /// clone method (mandatory)
-      Key* clone() const  override;
+      Key* clone() const override;
       /// the only one essential method
-      double operator() ( const LHCb::MCVertex* v ) const override;
+      double operator()( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -339,20 +313,19 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
      */
-    struct GAUDI_API MCVPFunAsMCFun : MCVFunAsMCFun
-    {
+    struct GAUDI_API MCVPFunAsMCFun : MCVFunAsMCFun {
       // ======================================================================
       /// constructor from MC Vertex fuction
-      MCVPFunAsMCFun ( const LoKi::MCTypes::MCVFunc& func   ) ;
+      MCVPFunAsMCFun( const LoKi::MCTypes::MCVFunc& func );
       /// clone method (mandatory!)
-      MCVPFunAsMCFun* clone() const  override;
+      MCVPFunAsMCFun* clone() const override;
       /// the only one essential method
-      double    operator() ( const LHCb::MCParticle* p ) const  override;
+      double operator()( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     };
-  } //                                        end of namespace LoKi::MCVertices
+  } // namespace MCVertices
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

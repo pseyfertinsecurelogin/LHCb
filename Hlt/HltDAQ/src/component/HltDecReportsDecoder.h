@@ -27,16 +27,15 @@
 class HltDecReportsDecoder : public HltRawBankDecoder<LHCb::HltDecReports> {
 public:
   /// Standard constructor
-  HltDecReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator);
+  HltDecReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
   ///< Algorithm execution
-  LHCb::HltDecReports operator()(const LHCb::RawEvent&) const override;
+  LHCb::HltDecReports operator()( const LHCb::RawEvent& ) const override;
 
 private:
-  enum HeaderIDs { kVersionNumber=2 };
+  enum HeaderIDs { kVersionNumber = 2 };
 
-  template <typename HDRConverter,typename I, typename Table >
-  int decodeHDR(I i, I end,  LHCb::HltDecReports& output, const Table& table) const ;
-
+  template <typename HDRConverter, typename I, typename Table>
+  int decodeHDR( I i, I end, LHCb::HltDecReports& output, const Table& table ) const;
 };
 #endif // HLTDECREPORTSDECODER_H

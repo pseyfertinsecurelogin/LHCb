@@ -15,7 +15,6 @@
 <gdd>
   <package name="DigiEvent">
 <!-- **************************************************************************
-  * $Id: CaloDigit.xml,v 1.6 2009-10-25 14:37:51 ibelyaev Exp $
   *****************************************************************************
   * XML-description of CaloDigit class                                        *
   * author: Vanya Belyaev Ivan.Belyaev@itep.ru                                *

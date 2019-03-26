@@ -41,21 +41,18 @@ namespace OTDAQ {
  */
 
 namespace nTell1s {
- enum nTell1s { v2008 = 48u };
+  enum nTell1s { v2008 = 48u };
 }
 
 namespace nGols {
- enum nGols { v2008 = 9u };
+  enum nGols { v2008 = 9u };
 }
 
 class OTRawBankEncoder : public extends<GaudiTool, IOTRawBankEncoder> {
 
 public:
-
   /// Standard constructor
-  OTRawBankEncoder( const std::string& type,
-		    const std::string& name,
-		    const IInterface* parent );
+  OTRawBankEncoder( const std::string& type, const std::string& name, const IInterface* parent );
 
   /// Tool initialization
   StatusCode initialize() override;
@@ -65,15 +62,15 @@ public:
 
 private:
   /// Some handy typedefs
-  typedef std::vector< OTDAQ::OTBank > OTBanks;
-  typedef std::vector< unsigned int >  OTRawBank;
+  typedef std::vector<OTDAQ::OTBank> OTBanks;
+  typedef std::vector<unsigned int>  OTRawBank;
 
   void createBanks();
 
   /// Returns the bank == Tell1 number for a given channel
   size_t channelToBank( const LHCb::OTChannelID& channel ) const;
   /// Creates a RawBank for a given bank
-  const OTRawBank& createRawBank(const OTDAQ::OTBank& bank) const;
+  const OTRawBank& createRawBank( const OTDAQ::OTBank& bank ) const;
   /// Clear OTBanks and OTRawbank after each event
   void clear() const;
 
@@ -86,7 +83,7 @@ private:
 
 inline size_t OTRawBankEncoder::channelToBank( const LHCb::OTChannelID& channel ) const {
   /// Tells1 start from 1 and go to 48
-  return ( ( channel.station() - 1 )*16 + channel.layer()*4 + ( channel.quarter() + 1 ) );
+  return ( ( channel.station() - 1 ) * 16 + channel.layer() * 4 + ( channel.quarter() + 1 ) );
 }
 
 #endif // OTRAWBANKENCODER_H

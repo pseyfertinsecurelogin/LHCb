@@ -12,15 +12,15 @@
 #define DETDESC_LASSEMBLY_H 1
 // Include files
 // from DetDesc
-#include "DetDesc/IBoxCover.h"
-#include "DetDesc/LogVolBase.h"
 #include "DetDesc/CLIDLAssembly.h"
 #include "DetDesc/DetDesc.h"
+#include "DetDesc/IBoxCover.h"
+#include "DetDesc/LogVolBase.h"
 
 template <class TYPE>
 class DataObjectFactory;
 
-static const std::string EmptyString("");
+static const std::string EmptyString( "" );
 
 /** @class LAssembly LAssembly.h DetDesc/LAssembly.h
  *
@@ -32,27 +32,21 @@ static const std::string EmptyString("");
  *  @date   18/11/2001
  */
 
-class LAssembly : public virtual IBoxCover,
-                  public LogVolBase {
+class LAssembly : public virtual IBoxCover, public LogVolBase {
   /// friend factory for instantiation
   friend class DataObjectFactory<LAssembly>;
 
 public:
-
   /** constructor
    *  @exception LVolumeException wrong paramaters value
    *  @param name name of logical volume
    *  @param sensitivity  name of sensitive detector object (for simulation)
    *  @param magnetic  name of magnetic field object (for simulation)
    */
-  LAssembly( const std::string& name        = "" ,
-             const std::string& sensitivity = "" ,
-             const std::string& magnetic    = "" )
-  : LogVolBase(name,sensitivity,magnetic)
-  {}
+  LAssembly( const std::string& name = "", const std::string& sensitivity = "", const std::string& magnetic = "" )
+      : LogVolBase( name, sensitivity, magnetic ) {}
 
 public:
-
   /** is this volume "Assembly" of other volumes?
    *  @see ILVolume
    *  notion of Assembly Volume is imported from Geant4.
@@ -61,31 +55,27 @@ public:
    *  and pointer to material should be both nulls
    *  @return true if volume is Assembly
    */
-  inline bool
-  isAssembly () const override { return true    ; }
+  inline bool isAssembly() const override { return true; }
 
   /** the solid, associated with the Logical Volume
    *  @see ILVolume
    *  @return the solid, associated with the Logical Volume
    */
-  inline const ISolid*
-  solid      () const override { return nullptr ; }
+  inline const ISolid* solid() const override { return nullptr; }
 
- /** the material, associated with the Logical Volume
+  /** the material, associated with the Logical Volume
    *  For Assembly Volumes material pointes to NULL!
    *  @see ILVolume
    *  @exception LVolumeException no material
    *  @return the material, associated with the Logical Volume
    */
-  inline const Material*
-  material   () const override { return nullptr ; }
+  inline const Material* material() const override { return nullptr; }
 
   /** the material(by name), associated with the Logical Volume
    *  @see ILVolume
    *  @return the material(by name), associated with the Logical Volume
    */
-  inline const std::string&
-  materialName () const override { return EmptyString; }
+  inline const std::string& materialName() const override { return EmptyString; }
 
   /** check for the given 3D-point. Point coordinates are in the
    *  local reference frame of the logical volume
@@ -93,9 +83,7 @@ public:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  inline bool isInside
-  ( const Gaudi::XYZPoint& LocalPoint ) const override
-  { return isInsideDaughter( LocalPoint ) ; }
+  inline bool isInside( const Gaudi::XYZPoint& LocalPoint ) const override { return isInsideDaughter( LocalPoint ); }
 
   /** calculate the daughter path containing the Point in Local frame ,
    *  can be VERY slow for complex geometry,
@@ -106,10 +94,8 @@ public:
    *  @param  pVolumePath  vector of physical volumes
    *  @return status code
    */
-  StatusCode belongsTo
-  ( const Gaudi::XYZPoint&        LocalPoint  ,
-    const int                Level       ,
-    ILVolume::PVolumePath&   pVolumePath ) const override;
+  StatusCode belongsTo( const Gaudi::XYZPoint& LocalPoint, const int Level,
+                        ILVolume::PVolumePath& pVolumePath ) const override;
 
   /** calculate the daughter path containing the Point in Local frame ,
    *  can be VERY slow for complex geometry,
@@ -120,10 +106,8 @@ public:
    *  @param  replicaPath  vector of physical volumes
    *  @return status code
    */
-  StatusCode belongsTo
-  ( const Gaudi::XYZPoint&        LocalPoint  ,
-    const int                Level       ,
-    ILVolume::ReplicaPath&   replicaPath ) const override;
+  StatusCode belongsTo( const Gaudi::XYZPoint& LocalPoint, const int Level,
+                        ILVolume::ReplicaPath& replicaPath ) const override;
 
   /** intersection of the logical volume with with the line \n
    *  The line is parametrized in the local reference system
@@ -145,11 +129,8 @@ public:
    *  @param threshold threshold value
    *  @return number of intersections
    */
-  unsigned int intersectLine
-  ( const Gaudi::XYZPoint        & Point         ,
-    const Gaudi::XYZVector       & Vector        ,
-    ILVolume::Intersections & intersections ,
-    const double              threshold     ) const override;
+  unsigned int intersectLine( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                              ILVolume::Intersections& intersections, const double threshold ) const override;
 
   /** intersection of the logical volume with with the line \n
    *  Theine is parametrized in the local reference system
@@ -173,46 +154,37 @@ public:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  unsigned int intersectLine
-  ( const Gaudi::XYZPoint         & Point         ,
-    const Gaudi::XYZVector        & Vector        ,
-    ILVolume::Intersections  & intersections ,
-    const ISolid::Tick         tickMin       ,
-    const ISolid::Tick         tickMax       ,
-    const double               Threshold     ) const override;
-
+  unsigned int intersectLine( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                              ILVolume::Intersections& intersections, const ISolid::Tick tickMin,
+                              const ISolid::Tick tickMax, const double Threshold ) const override;
 
   /** class/object identifier (static method)
    *  @return unique class identifier
    */
-  static  const CLID& classID ()           ;
+  static const CLID& classID();
 
   /** class/object identification (virtual method)
    *  @return unique class identifier
    */
-  const CLID& clID    ()     const override;
+  const CLID& clID() const override;
 
   /** printout to STD/STL stream
    *  @see ILVolume
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream& printOut
-  ( std::ostream & os = std::cout ) const override;
+  std::ostream& printOut( std::ostream& os = std::cout ) const override;
 
   /** printout to Gaudi MsgStream stream
    *  @see ILVolume
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream
    */
-  MsgStream&    printOut
-  ( MsgStream    & os             ) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
 protected:
-
   /// updates box cover integrating the new BoxCover
-  void updateCover(const IPVolume& box) override;
-
+  void updateCover( const IPVolume& box ) override;
 };
 
 // ============================================================================

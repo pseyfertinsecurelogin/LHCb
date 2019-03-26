@@ -9,12 +9,12 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ===========================================================================
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
 /// Geometry definitions
-#include "GaudiKernel/Transform3DTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Transform3DTypes.h"
 /// DetDesc
 #include "DetDesc/Solid.h"
 #include "DetDesc/SolidChild.h"
@@ -34,10 +34,7 @@
  *  @param Name name of this solid
  */
 // ============================================================================
-SolidChild::SolidChild( const std::string& Name )
-  : SolidBase      ( Name  )
-  , m_sc_simple    ( true  )
-{}
+SolidChild::SolidChild( const std::string& Name ) : SolidBase( Name ), m_sc_simple( true ) {}
 
 // ============================================================================
 /** constructor
@@ -46,74 +43,60 @@ SolidChild::SolidChild( const std::string& Name )
  *  @param Name name of this solid
  */
 // ============================================================================
-SolidChild::SolidChild( std::unique_ptr<ISolid>   solid ,
-                        const Gaudi::Transform3D* mtrx  ,
-                        const std::string&    Name  )
-  : SolidBase      ( Name  )
-  , m_sc_solid     ( std::move(solid) )
-  , m_sc_simple    ( true  )
-{
-  if( !m_sc_solid )
-    { throw SolidException("SolidChild(), ISolid* points to NULL!");}
+SolidChild::SolidChild( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx, const std::string& Name )
+    : SolidBase( Name ), m_sc_solid( std::move( solid ) ), m_sc_simple( true ) {
+  if ( !m_sc_solid ) { throw SolidException( "SolidChild(), ISolid* points to NULL!" ); }
   ///
-  if( mtrx && !(Gaudi::Transform3D() == *mtrx) )
-    { m_sc_matrix    = *mtrx;
-    if( m_sc_matrix) { m_sc_simple = false ; } }
-  else
-    { m_sc_simple = true  ; }
+  if ( mtrx && !( Gaudi::Transform3D() == *mtrx ) ) {
+    m_sc_matrix = *mtrx;
+    if ( m_sc_matrix ) { m_sc_simple = false; }
+  } else {
+    m_sc_simple = true;
+  }
   /// set bounding parameters
   setBP();
   ///
 }
 // ============================================================================
 
-
 // ============================================================================
 /// set bounding parameters
 // ============================================================================
-void SolidChild::setBP()
-{
-  const SolidBase* base = dynamic_cast<SolidBase*> (m_sc_solid.get());
-  if( !base )
-    { throw SolidException("SolidChild::setBP(): ISolid is not SolidBase!");}
-  if( m_sc_simple )
-    {
-      setXMin   ( base->xMin   () );
-      setYMin   ( base->yMin   () );
-      setZMin   ( base->zMin   () );
-      setXMax   ( base->xMax   () );
-      setYMax   ( base->yMax   () );
-      setZMax   ( base->zMax   () );
-      setRMax   ( base->rMax   () );
-      setRhoMax ( base->rhoMax () );
+void SolidChild::setBP() {
+  const SolidBase* base = dynamic_cast<SolidBase*>( m_sc_solid.get() );
+  if ( !base ) { throw SolidException( "SolidChild::setBP(): ISolid is not SolidBase!" ); }
+  if ( m_sc_simple ) {
+    setXMin( base->xMin() );
+    setYMin( base->yMin() );
+    setZMin( base->zMin() );
+    setXMax( base->xMax() );
+    setYMax( base->yMax() );
+    setZMax( base->zMax() );
+    setRMax( base->rMax() );
+    setRhoMax( base->rhoMax() );
+  } else {
+    /// position of center of solid child in the mother reference frame
+    const Gaudi::XYZPoint center = ( *m_sc_matrix ).Inverse() * Gaudi::XYZPoint();
+    if ( !( *m_sc_matrix == Gaudi::Transform3D() ) ) { // rotation
+      setRMax( center.r() + base->rMax() );
+      setRhoMax( std::sqrt( center.perp2() ) + base->rMax() );
+      setZMax( center.z() + base->rMax() );
+      setZMin( center.z() - base->rMax() );
+      setXMax( center.x() + base->rMax() );
+      setXMin( center.x() - base->rMax() );
+      setYMax( center.y() + base->rMax() );
+      setYMin( center.y() - base->rMax() );
+    } else { // no rotation
+      setRMax( center.r() + base->rMax() );
+      setRhoMax( std::sqrt( center.perp2() ) + base->rhoMax() );
+      setZMax( center.z() + base->zMax() );
+      setZMin( center.z() + base->zMin() );
+      setXMax( center.x() + base->xMax() );
+      setXMin( center.x() + base->xMin() );
+      setYMax( center.y() + base->yMax() );
+      setYMin( center.y() + base->yMin() );
     }
-  else
-    {
-      /// position of center of solid child in the mother reference frame
-      const Gaudi::XYZPoint center = (*m_sc_matrix).Inverse() * Gaudi::XYZPoint();
-      if( ! (*m_sc_matrix == Gaudi::Transform3D() ) )
-        { // rotation
-          setRMax  ( center.r    () + base->rMax   () ) ;
-          setRhoMax( std::sqrt(center.perp2()) + base->rMax   () ) ;
-          setZMax  ( center.z    () + base->rMax   () ) ;
-          setZMin  ( center.z    () - base->rMax   () ) ;
-          setXMax  ( center.x    () + base->rMax   () ) ;
-          setXMin  ( center.x    () - base->rMax   () ) ;
-          setYMax  ( center.y    () + base->rMax   () ) ;
-          setYMin  ( center.y    () - base->rMax   () ) ;
-        }
-      else
-        { // no rotation
-          setRMax  ( center.r    () + base->rMax   () ) ;
-          setRhoMax( std::sqrt(center.perp2()) + base->rhoMax () ) ;
-          setZMax  ( center.z    () + base->zMax   () ) ;
-          setZMin  ( center.z    () + base->zMin   () ) ;
-          setXMax  ( center.x    () + base->xMax   () ) ;
-          setXMin  ( center.x    () + base->xMin   () ) ;
-          setYMax  ( center.y    () + base->yMax   () ) ;
-          setYMin  ( center.y    () + base->yMin   () ) ;
-        }
-    }
+  }
   //
   checkBP();
 }
@@ -127,28 +110,20 @@ void SolidChild::setBP()
  *  @param Name name of this solid
  */
 // ============================================================================
-SolidChild::SolidChild
-( std::unique_ptr<ISolid>    solid ,
-  const Gaudi::XYZPoint&     pos   ,
-  const Gaudi::Rotation3D&   rot   ,
-  const std::string&    Name  )
-  : SolidBase      ( Name  )
-  , m_sc_solid     ( std::move(solid) )
-  , m_sc_simple    ( true  )
-{
+SolidChild::SolidChild( std::unique_ptr<ISolid> solid, const Gaudi::XYZPoint& pos, const Gaudi::Rotation3D& rot,
+                        const std::string& Name )
+    : SolidBase( Name ), m_sc_solid( std::move( solid ) ), m_sc_simple( true ) {
   ////
-  if( !solid )
-    { throw SolidException("SolidChild(), ISolid* points to NULL!");}
+  if ( !solid ) { throw SolidException( "SolidChild(), ISolid* points to NULL!" ); }
   ///
-  const Gaudi::XYZPoint NullPoint(0,0,0);
+  const Gaudi::XYZPoint NullPoint( 0, 0, 0 );
   ///
-  if( NullPoint == pos && Gaudi::Rotation3D()==rot )
-    { m_sc_simple = true  ; }
-  else
-    {
-      m_sc_matrix = Gaudi::Transform3D(rot, rot(Gaudi::XYZVector(-1.*pos)) );
-      if( m_sc_matrix ) { m_sc_simple = false ; }
-    }
+  if ( NullPoint == pos && Gaudi::Rotation3D() == rot ) {
+    m_sc_simple = true;
+  } else {
+    m_sc_matrix = Gaudi::Transform3D( rot, rot( Gaudi::XYZVector( -1. * pos ) ) );
+    if ( m_sc_matrix ) { m_sc_simple = false; }
+  }
   /// set bounding parameters
   setBP();
   ///
@@ -160,8 +135,7 @@ SolidChild::SolidChild
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream& SolidChild::printOut     ( std::ostream& os ) const
-{
+std::ostream& SolidChild::printOut( std::ostream& os ) const {
   SolidBase::printOut( os );
   return os << solid();
 }
@@ -172,8 +146,7 @@ std::ostream& SolidChild::printOut     ( std::ostream& os ) const
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream&    SolidChild::printOut     ( MsgStream&    os ) const
-{
+MsgStream& SolidChild::printOut( MsgStream& os ) const {
   SolidBase::printOut( os );
   return os << solid();
 }
@@ -198,48 +171,35 @@ MsgStream&    SolidChild::printOut     ( MsgStream&    os ) const
  *  @return the number of intersection points
  */
 // ============================================================================
-unsigned int SolidChild::intersectionTicks( const Gaudi::XYZPoint&  Point  ,
-                                            const Gaudi::XYZVector& Vector ,
-                                            ISolid::Ticks&     ticks  ) const
-{
-  return intersectionTicksImpl(Point, Vector, ticks);
+unsigned int SolidChild::intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                            ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidChild::intersectionTicks( const Gaudi::Polar3DPoint& Point,
-                                            const Gaudi::Polar3DVector& Vector,
-                                            ISolid::Ticks&              ticks
-                                            ) const
-{
-  return intersectionTicksImpl(Point, Vector, ticks);
+unsigned int SolidChild::intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                            ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-unsigned int SolidChild::intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
-                                            const Gaudi::RhoZPhiVector& Vector,
-                                            ISolid::Ticks&              ticks
-                                            ) const
-{
-  return intersectionTicksImpl(Point, Vector, ticks);
+unsigned int SolidChild::intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                            ISolid::Ticks& ticks ) const {
+  return intersectionTicksImpl( Point, Vector, ticks );
 }
 // ============================================================================
-template<class aPoint, class aVector>
-unsigned int SolidChild::intersectionTicksImpl ( const aPoint&  Point  ,
-                                                 const aVector& Vector ,
-                                                 ISolid::Ticks& ticks  ) const
-{
-  return solid()->
-    intersectionTicks(  simple() ? Point  : matrix() * Point  ,
-                        simple() ? Vector : matrix() * Vector ,
-                        ticks                                 ) ;
+template <class aPoint, class aVector>
+unsigned int SolidChild::intersectionTicksImpl( const aPoint& Point, const aVector& Vector,
+                                                ISolid::Ticks& ticks ) const {
+  return solid()->intersectionTicks( simple() ? Point : matrix() * Point, simple() ? Vector : matrix() * Vector,
+                                     ticks );
 }
 // ============================================================================
 /** reset to the initial ("after constructor") state
  */
 // ============================================================================
-ISolid*  SolidChild::reset()
-{
+ISolid* SolidChild::reset() {
   SolidBase::reset();
-  if( solid() ){ m_sc_solid->reset() ; } ;
-  return this ;
+  if ( solid() ) { m_sc_solid->reset(); };
+  return this;
 }
 
 // ============================================================================
@@ -252,26 +212,15 @@ ISolid*  SolidChild::reset()
  *  @return true if the point is inside the solid
  */
 // ============================================================================
-bool SolidChild::isInside ( const Gaudi::XYZPoint& point) const
-{
-  return isInsideImpl(point);
-}
+bool SolidChild::isInside( const Gaudi::XYZPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidChild::isInside ( const Gaudi::Polar3DPoint& point) const
-{
-  return isInsideImpl(point);
-}
+bool SolidChild::isInside( const Gaudi::Polar3DPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidChild::isInside ( const Gaudi::RhoZPhiPoint& point) const
-{
-  return isInsideImpl(point);
-}
+bool SolidChild::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-template<class aPoint>
-bool SolidChild::isInsideImpl ( const aPoint& point) const
-{
-  return !isOutBBox( point ) && solid()->isInside( simple() ? point 
-                                                            : matrix()*point );
+template <class aPoint>
+bool SolidChild::isInsideImpl( const aPoint& point ) const {
+  return !isOutBBox( point ) && solid()->isInside( simple() ? point : matrix() * point );
 }
 // ============================================================================
 

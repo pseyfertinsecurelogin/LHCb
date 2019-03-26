@@ -36,43 +36,39 @@
  */
 // ============================================================================
 template <>
-bool LoKi::Functors::Dump1_<double,bool>::operator() ( double a ) const
-{
-  if ( m_right )
-  {
-    m_stream << m_dump.open  () ;
-    m_stream << a ;
-    m_stream << m_dump.close () ;
-    return m_fun.fun ( a ) ;
+bool LoKi::Functors::Dump1_<double, bool>::operator()( double a ) const {
+  if ( m_right ) {
+    m_stream << m_dump.open();
+    m_stream << a;
+    m_stream << m_dump.close();
+    return m_fun.fun( a );
   }
   //
-  auto result = m_fun.fun ( a ) ;
+  auto result = m_fun.fun( a );
   //
-  m_stream << m_dump.open  () ;
-  m_stream << a ;
-  m_stream << m_dump.close () ;
+  m_stream << m_dump.open();
+  m_stream << a;
+  m_stream << m_dump.close();
   //
-  return result ;
+  return result;
 }
 // ============================================================================
 template <>
-double LoKi::Functors::Dump1_<double,double>::operator()( double a ) const
-{
-  if ( m_right )
-  {
-    m_stream << m_dump.open  () ;
-    m_stream << a ;
-    m_stream << m_dump.close () ;
-    return m_fun.fun ( a ) ;
+double LoKi::Functors::Dump1_<double, double>::operator()( double a ) const {
+  if ( m_right ) {
+    m_stream << m_dump.open();
+    m_stream << a;
+    m_stream << m_dump.close();
+    return m_fun.fun( a );
   }
   //
-  auto result = m_fun.fun ( a ) ;
+  auto result = m_fun.fun( a );
   //
-  m_stream << m_dump.open  () ;
-  m_stream << a ;
-  m_stream << m_dump.close () ;
+  m_stream << m_dump.open();
+  m_stream << a;
+  m_stream << m_dump.close();
   //
-  return result ;
+  return result;
 }
 // ============================================================================
 // The END

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0Candidate.cpp,v 1.1 2009-10-14 10:18:52 robbep Exp $
 // local
 #include "L0Candidate.h"
 
@@ -22,9 +21,13 @@
 //=====================================================================
 // Functions of the auxilliary class L0Candidate
 //=====================================================================
-void L0Candidate::setCandidate( int et , LHCb::CaloCellID ID ) {
-  m_ID = ID ;
-  if ( 255 >= et ) { m_et = et ; } else { m_et = 255 ; }
+void L0Candidate::setCandidate( int et, LHCb::CaloCellID ID ) {
+  m_ID = ID;
+  if ( 255 >= et ) {
+    m_et = et;
+  } else {
+    m_et = 255;
+  }
 
   // If the cluster is identified by a non-existent cell, one uses the other
   // cells of the cluster in the order:
@@ -34,19 +37,16 @@ void L0Candidate::setCandidate( int et , LHCb::CaloCellID ID ) {
 
   if ( !m_det->valid( ID ) ) {
 
-    LHCb::CaloCellID topCell( ID.calo() , ID.area() , ID.row()+1 , 
-                              ID.col() ) ;
-    m_ID = topCell ;
-    
-    if ( ! m_det -> valid( topCell ) ) {
-      LHCb::CaloCellID rightCell( ID.calo() , ID.area() , ID.row() , 
-                                  ID.col()+1 );
-      m_ID = rightCell ;
-      
-      if ( ! m_det -> valid( rightCell ) ) {
-        LHCb::CaloCellID cornerCell( ID.calo() , ID.area() , ID.row() + 1 , 
-                                     ID.col() + 1 ) ;
-        m_ID = cornerCell ;
+    LHCb::CaloCellID topCell( ID.calo(), ID.area(), ID.row() + 1, ID.col() );
+    m_ID = topCell;
+
+    if ( !m_det->valid( topCell ) ) {
+      LHCb::CaloCellID rightCell( ID.calo(), ID.area(), ID.row(), ID.col() + 1 );
+      m_ID = rightCell;
+
+      if ( !m_det->valid( rightCell ) ) {
+        LHCb::CaloCellID cornerCell( ID.calo(), ID.area(), ID.row() + 1, ID.col() + 1 );
+        m_ID = cornerCell;
       }
     }
   }

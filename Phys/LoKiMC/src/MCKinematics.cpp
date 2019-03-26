@@ -13,9 +13,9 @@
 // ============================================================================
 // LoKiCore
 // ============================================================================
+#include "LoKi/Constants.h"
 #include "LoKi/Kinematics.h"
 #include "LoKi/Report.h"
-#include "LoKi/Constants.h"
 // ============================================================================
 // LoKiMC
 // ============================================================================
@@ -49,17 +49,12 @@
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::MCKinematics::mass
-( const LHCb::MCParticle* p )
-{
-  if ( 0 == p )
-  {
-    LoKi::Report::Error
-      ("mass(LHCb::MCParticle*),invalid argument,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::MCKinematics::mass( const LHCb::MCParticle* p ) {
+  if ( 0 == p ) {
+    LoKi::Report::Error( "mass(LHCb::MCParticle*),invalid argument,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  return LoKi::Kinematics::mass
-    ( p->momentum() ) ;
+  return LoKi::Kinematics::mass( p->momentum() );
 }
 // ============================================================================
 /*  trivial function to evaluate the mass MCParticles
@@ -71,25 +66,16 @@ double LoKi::MCKinematics::mass
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::MCKinematics::mass
-( const LHCb::MCParticle* p1 ,
-  const LHCb::MCParticle* p2 )
-{
-  if ( 0 == p1 )
-  {
-    LoKi::Report::Error
-      ("mass(2*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2 ) {
+  if ( 0 == p1 ) {
+    LoKi::Report::Error( "mass(2*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( 0 == p2 )
-  {
-    LoKi::Report::Error
-      ("mass(2*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( 0 == p2 ) {
+    LoKi::Report::Error( "mass(2*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  return LoKi::Kinematics::mass
-    ( p1 -> momentum() ,
-      p2 -> momentum() ) ;
+  return LoKi::Kinematics::mass( p1->momentum(), p2->momentum() );
 }
 // ============================================================================
 /*  trivial function to evaluate the mass MCParticles
@@ -102,33 +88,20 @@ double LoKi::MCKinematics::mass
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::MCKinematics::mass
-( const LHCb::MCParticle* p1 ,
-  const LHCb::MCParticle* p2 ,
-  const LHCb::MCParticle* p3 )
-{
-  if ( 0 == p1 )
-  {
-    LoKi::Report::Error
-      ("mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2, const LHCb::MCParticle* p3 ) {
+  if ( 0 == p1 ) {
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( 0 == p2 )
-  {
-    LoKi::Report::Error
-      ("mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( 0 == p2 ) {
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( 0 == p3 )
-  {
-    LoKi::Report::Error
-      ("mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( 0 == p3 ) {
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  return LoKi::Kinematics::mass
-    ( p1 -> momentum() ,
-      p2 -> momentum() ,
-      p3 -> momentum() ) ;
+  return LoKi::Kinematics::mass( p1->momentum(), p2->momentum(), p3->momentum() );
 }
 // ============================================================================
 /*  trivial function to evaluate the mass MCParticle
@@ -142,43 +115,26 @@ double LoKi::MCKinematics::mass
  *  @date 2006-01-17
  */
 // ============================================================================
-double LoKi::MCKinematics::mass
-( const LHCb::MCParticle* p1 ,
-  const LHCb::MCParticle* p2 ,
-  const LHCb::MCParticle* p3 ,
-  const LHCb::MCParticle* p4 )
-{
-  if ( 0 == p1 )
-  {
-    LoKi::Report::Error
-      ("mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+double LoKi::MCKinematics::mass( const LHCb::MCParticle* p1, const LHCb::MCParticle* p2, const LHCb::MCParticle* p3,
+                                 const LHCb::MCParticle* p4 ) {
+  if ( 0 == p1 ) {
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 1,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( 0 == p2 )
-  {
-    LoKi::Report::Error
-      ("mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( 0 == p2 ) {
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 2,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( 0 == p3 )
-  {
-    LoKi::Report::Error
-      ("mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( 0 == p3 ) {
+    LoKi::Report::Error( "mass(3*LHCb::MCParticle*),invalid argument 3,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  if ( 0 == p4 )
-  {
-    LoKi::Report::Error
-      ("mass(4*LHCb::MCParticle*),invalid argument 4,return 'InvalidMass'") ;
-    return LoKi::Constants::InvalidMass ;
+  if ( 0 == p4 ) {
+    LoKi::Report::Error( "mass(4*LHCb::MCParticle*),invalid argument 4,return 'InvalidMass'" );
+    return LoKi::Constants::InvalidMass;
   }
-  return LoKi::Kinematics::mass
-    ( p1 -> momentum() ,
-      p2 -> momentum() ,
-      p3 -> momentum() ,
-      p4 -> momentum() ) ;
+  return LoKi::Kinematics::mass( p1->momentum(), p2->momentum(), p3->momentum(), p4->momentum() );
 }
 // ============================================================================
 // The END
 // ============================================================================
-

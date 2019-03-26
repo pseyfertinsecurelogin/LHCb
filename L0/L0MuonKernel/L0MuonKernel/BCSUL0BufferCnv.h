@@ -11,7 +11,6 @@
 #ifndef L0MUONKERNEL_BCSUL0BUFFERCNV_H
 #define L0MUONKERNEL_BCSUL0BUFFERCNV_H
 
-
 #include "L0MuonKernel/L0BufferCnv.h"
 #include <string>
 
@@ -37,34 +36,29 @@ namespace L0Muon {
   class BCSUL0BufferCnv : public L0BufferCnv {
 
   public:
-
     /** Constructor with MuonTileID
 
     @param id : MuonTileID of the BCSU attached to the converter
 
     */
-    BCSUL0BufferCnv(LHCb::MuonTileID id);
+    BCSUL0BufferCnv( LHCb::MuonTileID id );
 
     /// Destructor
     ~BCSUL0BufferCnv();
 
     /// Give a static type name to the unit : L0BufferBCSUnit
-    std::string type() override {
-      return "L0BufferBCSUnit";
-    }
+    std::string type() override { return "L0BufferBCSUnit"; }
 
     /** Write the event in the output file
 
         @param ievt : current event number
     */
-    void write(int ievt) override;
+    void write( int ievt ) override;
 
   private:
-
     CandRegisterHandler m_candRegHandlerPU[4]; ///< Handle the registers with the PU's candidates
-    CandRegisterHandler m_candRegHandler; ///< Handle the register with the BCSU candidates
-
+    CandRegisterHandler m_candRegHandler;      ///< Handle the register with the BCSU candidates
   };
 } // namespace L0Muon
 
-#endif    // L0MUONKERNEL_BCSUL0BUFFERCNV_H
+#endif // L0MUONKERNEL_BCSUL0BUFFERCNV_H

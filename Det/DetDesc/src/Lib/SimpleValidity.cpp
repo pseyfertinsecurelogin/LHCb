@@ -11,8 +11,8 @@
 // ============================================================================
 // Include files
 // GaudiKernel
-#include "GaudiKernel/Time.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
 
 #include "DetDesc/SimpleValidity.h"
 
@@ -30,10 +30,7 @@
 /** standard (default) constructor
  */
 // ============================================================================
-SimpleValidity::SimpleValidity()
-  : m_since ( Gaudi::Time::epoch() )
-  , m_till  ( Gaudi::Time::max() )
-{}
+SimpleValidity::SimpleValidity() : m_since( Gaudi::Time::epoch() ), m_till( Gaudi::Time::max() ) {}
 
 // ============================================================================
 /** standard (default) constructor
@@ -41,11 +38,8 @@ SimpleValidity::SimpleValidity()
  *  @param till  "till"  time for validity range
  */
 // ============================================================================
-SimpleValidity::SimpleValidity( const Gaudi::Time& since ,
-                                const Gaudi::Time& till  )
-  : m_since ( since )
-  , m_till  ( till )
-{}
+SimpleValidity::SimpleValidity( const Gaudi::Time& since, const Gaudi::Time& till )
+    : m_since( since ), m_till( till ) {}
 
 // ============================================================================
 /** (explicit) constructor from other
@@ -53,19 +47,14 @@ SimpleValidity::SimpleValidity( const Gaudi::Time& since ,
  *   @param copy another IValidity object
  */
 // ============================================================================
-SimpleValidity::SimpleValidity( const IValidity& copy )
-  : m_since ( copy.validSince() )
-  , m_till  ( copy.validTill() )
-{}
-
+SimpleValidity::SimpleValidity( const IValidity& copy ) : m_since( copy.validSince() ), m_till( copy.validTill() ) {}
 
 // ============================================================================
 /** assignement from any IValidity object
  *  @param copy another IValidity object
  */
 // ============================================================================
-SimpleValidity& SimpleValidity::operator=( const IValidity&      copy )
-{
+SimpleValidity& SimpleValidity::operator=( const IValidity& copy ) {
   m_since = copy.validSince();
   m_till  = copy.validTill();
   return *this;
@@ -76,8 +65,7 @@ SimpleValidity& SimpleValidity::operator=( const IValidity&      copy )
  *  @return true if object valid
  */
 // ============================================================================
-bool SimpleValidity::isValid    () const
-{ return m_since <= m_till; }
+bool SimpleValidity::isValid() const { return m_since <= m_till; }
 
 // ============================================================================
 /** is the Object valid for a given time?
@@ -85,34 +73,25 @@ bool SimpleValidity::isValid    () const
  *  @return true if objetc is valid for given time
  */
 // ============================================================================
-bool SimpleValidity::isValid( const Gaudi::Time&  time ) const
-{ return ( m_since <= time ) && ( time <= m_till ) ; }
+bool SimpleValidity::isValid( const Gaudi::Time& time ) const { return ( m_since <= time ) && ( time <= m_till ); }
 
 // ============================================================================
 /// set the validity range of the Object
 // ============================================================================
-void SimpleValidity::setValidity( const Gaudi::Time& since ,
-                                  const Gaudi::Time& till  )
-{
+void SimpleValidity::setValidity( const Gaudi::Time& since, const Gaudi::Time& till ) {
   m_since = since;
-  m_till = till;
+  m_till  = till;
 }
 
 // ============================================================================
 /// set the validity time of the Object
 // ============================================================================
-void SimpleValidity::setValiditySince( const Gaudi::Time& since )
-{
-  m_since = since;
-}
+void SimpleValidity::setValiditySince( const Gaudi::Time& since ) { m_since = since; }
 
 // ============================================================================
 /// set the validity time of the Object
 // ============================================================================
-void SimpleValidity::setValidityTill( const Gaudi::Time& till  )
-{
-  m_till = till;
-}
+void SimpleValidity::setValidityTill( const Gaudi::Time& till ) { m_till = till; }
 
 // ============================================================================
 // The End

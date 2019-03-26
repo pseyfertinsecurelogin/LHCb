@@ -44,28 +44,21 @@
  *  @attention  All variables are assumed to be <c>double</c> numbers
  */
 // ============================================================================
-LoKi::Record::Record
-( const Tuples::Tuple& ntuple     ,
-  const char*  format ... )
-  : Tuples::Tuple ( ntuple )
-{
-  if ( valid() )
-  {
+LoKi::Record::Record( const Tuples::Tuple& ntuple, const char* format... ) : Tuples::Tuple( ntuple ) {
+  if ( valid() ) {
     // decode format string into tokens
-    LoKi::Tokens tokens ;
-    LoKi::tokenize( format , tokens , LoKi::Separators );
-    if( !tokens.empty() )
-    {
+    LoKi::Tokens tokens;
+    LoKi::tokenize( format, tokens, LoKi::Separators );
+    if ( !tokens.empty() ) {
       // decode arguments
-      va_list valist ;
-      va_start( valist , format ) ;
+      va_list valist;
+      va_start( valist, format );
       // loop over all tokens
-      StatusCode status = StatusCode::SUCCESS ;
-      for ( LoKi::Tokens::const_iterator token = tokens.begin() ;
-            tokens.end() != token && status.isSuccess() ; ++token )
-      {
-        const double val = va_arg( valist , double );
-        status = tuple() -> column( *token , val ) ;
+      StatusCode status = StatusCode::SUCCESS;
+      for ( LoKi::Tokens::const_iterator token = tokens.begin(); tokens.end() != token && status.isSuccess();
+            ++token ) {
+        const double val = va_arg( valist, double );
+        status           = tuple()->column( *token, val );
       }
       // mandatory !!!
       va_end( valist );
@@ -76,7 +69,9 @@ LoKi::Record::Record
 // ============================================================================
 // destructor
 // ============================================================================
-LoKi::Record::~Record() { if ( valid() ) { tuple()->write() ; } }
+LoKi::Record::~Record() {
+  if ( valid() ) { tuple()->write(); }
+}
 // ============================================================================
 
 // ============================================================================

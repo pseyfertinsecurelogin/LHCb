@@ -35,10 +35,9 @@ def report(fn):
     def wrap(*params, **kwargs):
         call = wrap.callcount = wrap.callcount + 1
         indent = ' ' * __report_indent[0]
-        fc = "%s(%s)" % (
-            fn.__name__,
-            ', '.join([a.__repr__() for a in params] +
-                      ["%s = %s" % (a, repr(b)) for a, b in kwargs.items()]))
+        fc = "%s(%s)" % (fn.__name__, ', '.join(
+            [a.__repr__() for a in params] +
+            ["%s = %s" % (a, repr(b)) for a, b in kwargs.items()]))
         print "%s%s called [#%s]" % (indent, fc, call)
         __report_indent[0] += 1
         ret = fn(*params, **kwargs)
@@ -77,8 +76,8 @@ def dateTimeToValKey(dt):
                   dt.time().second(),
                   dt.time().msec() * 1000)
     delta = dt - _epoch
-    valkey = (delta.days * 24 * 3600 + delta.seconds
-              ) * 1000000000 + delta.microseconds * 1000
+    valkey = (delta.days * 24 * 3600 +
+              delta.seconds) * 1000000000 + delta.microseconds * 1000
     return valkey
 
 

@@ -15,7 +15,6 @@
 // from Gaudi
 #include "GaudiAlg/GaudiHistoAlg.h"
 
-
 /** @class L0AlgBase L0AlgBase.h
  *
  *
@@ -27,32 +26,32 @@ public:
   using GaudiHistoAlg::GaudiHistoAlg;
 
 protected:
-
-/** if algorithm should write L0XXXCandidates on TES
- *  The location will be the "default" location + l0context
- *  as suffix
- */
-  bool writeOnTES() const { return m_writeOnTES ; } ;
+  /** if algorithm should write L0XXXCandidates on TES
+   *  The location will be the "default" location + l0context
+   *  as suffix
+   */
+  bool writeOnTES() const { return m_writeOnTES; };
 
   /** The suffix to append to the default locations where
    *  to store the objects on the TES
    */
-  std::string l0context() const { return m_l0context ; } ;
+  std::string l0context() const { return m_l0context; };
 
   /** returns the location where to write the data on TES
    *  @param[in] standardLocation "default" path where objects are stored
    */
-  std::string dataLocation( const std::string & standardLocation ) const {
-    return ( rootInTES() + standardLocation + l0context() ) ; } ;
+  std::string dataLocation( const std::string& standardLocation ) const {
+    return ( rootInTES() + standardLocation + l0context() );
+  };
 
   /** If algorithm should write the raw banks it emulates
    */
-  bool writeBanks() const { return m_writeBanks ; } ;
+  bool writeBanks() const { return m_writeBanks; };
 
 private:
-  Gaudi::Property<bool> m_writeBanks { this,       "WriteBanks"  , true}; ///< Flag to activate the writing of the raw banks
-  Gaudi::Property<bool> m_writeOnTES { this,       "WriteOnTES"  , false};///< Flag to activate the writing of the Candidates/Report on the TES
-  Gaudi::Property<std::string> m_l0context { this, "L0Context"   , ""};   ///< Suffix appended to the default location in TES
-
+  Gaudi::Property<bool> m_writeBanks{this, "WriteBanks", true}; ///< Flag to activate the writing of the raw banks
+  Gaudi::Property<bool> m_writeOnTES{this, "WriteOnTES",
+                                     false}; ///< Flag to activate the writing of the Candidates/Report on the TES
+  Gaudi::Property<std::string> m_l0context{this, "L0Context", ""}; ///< Suffix appended to the default location in TES
 };
 #endif // L0ALGBASE_H

@@ -28,8 +28,7 @@
 // local
 #include "Kernel/UTCommonBase.h"
 
-namespace UT
-{
+namespace UT {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase UTHistoToolBase.h UTKernel/UTHistoToolBase.h
@@ -42,20 +41,14 @@ namespace UT
    */
   //-----------------------------------------------------------------------------
 
-  class HistoToolBase : public UT::CommonBase<GaudiHistoTool>
-  {
+  class HistoToolBase : public UT::CommonBase<GaudiHistoTool> {
 
   public:
-
     /// Standard constructor
-    HistoToolBase(const std::string& type, 
-             const std::string& name,
-             const IInterface* parent )
-      : UT::CommonBase<GaudiHistoTool> ( type, name, parent ) { }
-
+    HistoToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : UT::CommonBase<GaudiHistoTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace UT
 
 #endif // UTKERNEL_UTHIUTOTOOLBASE_H

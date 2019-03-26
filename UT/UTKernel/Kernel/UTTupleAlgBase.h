@@ -28,8 +28,7 @@
 // local
 #include "Kernel/UTCommonBase.h"
 
-namespace UT
-{
+namespace UT {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase UTTupleBase.h UTKernel/UTTupleBase.h
@@ -42,19 +41,14 @@ namespace UT
    */
   //-----------------------------------------------------------------------------
 
-  class TupleAlgBase : public UT::CommonBase<GaudiTupleAlg>
-  {
+  class TupleAlgBase : public UT::CommonBase<GaudiTupleAlg> {
 
   public:
-    
     /// Standard constructor
-    TupleAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : UT::CommonBase<GaudiTupleAlg> ( name, pSvcLocator ) { }
-    
+    TupleAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : UT::CommonBase<GaudiTupleAlg>( name, pSvcLocator ) {}
   };
-  
-}
 
+} // namespace UT
 
 #endif // UTKERNEL_UTALGBASE_H

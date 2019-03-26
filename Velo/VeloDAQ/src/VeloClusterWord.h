@@ -18,7 +18,7 @@
  *
  *  This class is a simple type wrapper for an
  *  SiClusterWord instantiated with a VeloBitsPoliciy.
- *  
+ *
  * @see SiClusterWord
  * @see VeloBitsPolicy
  *
@@ -28,4 +28,3 @@
 typedef SiClusterWord<VeloBitsPolicy> VeloClusterWord;
 
 #endif
-

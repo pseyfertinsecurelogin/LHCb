@@ -1,0 +1,3 @@
+[submodule "Kernel/SOAContainer/submodules/SOAContainer"]
+	path = Kernel/SOAContainer/submodules/SOAContainer
+	url = https://gitlab.cern.ch/LHCbOpt/SOAContainer.git

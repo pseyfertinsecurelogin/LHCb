@@ -22,15 +22,13 @@
  */
 class MuonPPEventInfo final {
 
-   std::array<unsigned int,8> m_data = { { 0 } };
+  std::array<unsigned int, 8> m_data = {{0}};
 
 public:
+  void setWord( unsigned int i, unsigned int word ) { m_data[i] = word; };
 
-  void setWord(unsigned int i, unsigned int word) { m_data[i]=word; };
-
-  unsigned int getBCN() const { return m_data[0]&0x0FFF; };
-  unsigned int getDetID() const { return m_data[0]&0xF000; }
+  unsigned int getBCN() const { return m_data[0] & 0x0FFF; };
+  unsigned int getDetID() const { return m_data[0] & 0xF000; }
   unsigned int getL0EvtID() const { return m_data[1]; };
-
 };
 #endif // EVENT_MUONPPEVENTINFO_H

@@ -11,10 +11,8 @@
 import os
 import logging
 import shutil
-from GitCondDB.IOVs import (IOV_MIN, IOV_MAX,
-                            parse_iovs, simplify,
-                            add_iov, remove_iovs, write_iovs,
-                            partition_by_month)
+from GitCondDB.IOVs import (IOV_MIN, IOV_MAX, parse_iovs, simplify, add_iov,
+                            remove_iovs, write_iovs, partition_by_month)
 from GitCondDB.Payload import payload_filename
 
 
@@ -46,8 +44,9 @@ def _add_file(data, dest, iov):
     if iov == (IOV_MIN, IOV_MAX):
         return _add_file_no_iov(data, dest)
     if not os.path.exists(dest):
-        logging.warning('limited IOV on new entries not allowed, use full IOV '
-                        'for %s', dest)
+        logging.warning(
+            'limited IOV on new entries not allowed, use full IOV '
+            'for %s', dest)
         _add_file_no_iov(data, dest)
     elif not os.path.isdir(dest):
         # the existing entry covers whole timespan
@@ -70,10 +69,10 @@ def _add_file(data, dest, iov):
             data.append((iov[0], new_payload_name))
             if iov[1] < IOV_MAX:
                 data.append((iov[1], old_payload_name))
-            _write_file(os.path.join(dest, 'IOVs'), '\n'.join(
-                '{0} {1}'.format(since, payload)
-                for since, payload in data
-            ) + '\n')
+            _write_file(
+                os.path.join(dest, 'IOVs'),
+                '\n'.join('{0} {1}'.format(since, payload)
+                          for since, payload in data) + '\n')
     else:
         orig_iovs = parse_iovs(dest)
         key = payload_filename(data)

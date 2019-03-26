@@ -15,9 +15,9 @@
 // from Calo
 #include "CaloUtils/Calo2Dview.h"
 
-class DeCalorimeter ;
-struct ICaloDataProvider ;
-struct ICaloL0DataProvider ;
+class DeCalorimeter;
+struct ICaloDataProvider;
+struct ICaloL0DataProvider;
 
 /** @class L0CaloCheckCalibCte L0CaloCheckCalibCte.h
  *
@@ -32,33 +32,32 @@ public:
   /// Standard constructor
   L0CaloCheckCalibCte( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0CaloCheckCalibCte( ); ///< Destructor
+  virtual ~L0CaloCheckCalibCte(); ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 protected:
-
 private:
   /// Compute L0ADC from ADC
-  int l0adcFromAdc( const int adc , const LHCb::CaloCellID & id ) const ;
+  int l0adcFromAdc( const int adc, const LHCb::CaloCellID& id ) const;
 
   /// Detector Name (Ecal or Hcal), set by job options
-  std::string m_detectorName ;
+  std::string m_detectorName;
 
   /// Name of the readout tool, set by job options
-  std::string m_readoutTool ;
+  std::string m_readoutTool;
 
   /// Name of the L0 readout tool, set by job options
-  std::string m_l0readoutTool ;
+  std::string m_l0readoutTool;
 
   /// Pointer to the Ecal or Hcal Detector Element
-  DeCalorimeter * m_calo = nullptr;
+  DeCalorimeter* m_calo = nullptr;
 
   /// Tool to decode calo banks (ADCs)
-  ICaloDataProvider * m_daq = nullptr;
+  ICaloDataProvider* m_daq = nullptr;
 
   /// Tool to decode calo banks (L0ADCs)
-  ICaloL0DataProvider * m_l0daq = nullptr;
+  ICaloL0DataProvider* m_l0daq = nullptr;
 };
 #endif // L0CALO_L0CALOCHECKCALIBCTE_H

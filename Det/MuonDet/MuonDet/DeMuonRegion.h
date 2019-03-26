@@ -11,8 +11,8 @@
 // ============================================================================
 #ifndef MUONDET_DEMUONREGION_H
 #define MUONDET_DEMUONREGION_H 1
-#include <memory>
 #include "GaudiKernel/MsgStream.h"
+#include <memory>
 
 // Include files
 #include "DetDesc/DetectorElement.h"
@@ -31,30 +31,25 @@
 /// Class ID of DeMuonRegion
 static const CLID CLID_DEMuonRegion = 11005;
 
-class DeMuonRegion: public DetectorElement {
+class DeMuonRegion : public DetectorElement {
 
 public:
   /// Constructor, empty
   DeMuonRegion() = default;
 
-
   inline const CLID& clID() const override { return classID(); }
 
-  static const CLID& classID(){  return CLID_DEMuonRegion;  }
+  static const CLID& classID() { return CLID_DEMuonRegion; }
 
 private:
-
   /// Access to Msgstream object
-  inline MsgStream & msgStream() const
-  {
-    if ( UNLIKELY(!m_msgStream) ) m_msgStream.reset( new MsgStream(msgSvc(),name()));
+  inline MsgStream& msgStream() const {
+    if ( UNLIKELY( !m_msgStream ) ) m_msgStream.reset( new MsgStream( msgSvc(), name() ) );
     return *m_msgStream;
   }
 
 private:
-
   mutable std::unique_ptr<MsgStream> m_msgStream;
-
 };
 
-#endif    // MUONDET_DEMUONREGION_H
+#endif // MUONDET_DEMUONREGION_H

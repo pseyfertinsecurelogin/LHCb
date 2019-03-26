@@ -30,8 +30,7 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class IHPDOccupancyTool RichKernel/IRichHPDOccupancyTool.h
@@ -43,11 +42,9 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class IHPDOccupancyTool : public virtual IAlgTool
-  {
+  class IHPDOccupancyTool : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IHPDOccupancyTool, 1, 0 );
 

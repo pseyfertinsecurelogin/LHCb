@@ -32,11 +32,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class GenEngine GenHybridEngine.h LoKi/GenHybridEngine.h
      *
@@ -53,103 +51,76 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2004-06-30
      */
-    class GenEngine final
-    {
+    class GenEngine final {
     public:
       // ======================================================================
       /// constructor
-      GenEngine () = default;
+      GenEngine() = default;
       // ======================================================================
     public:
       // ======================================================================
       // predicates
       // ======================================================================
       /// add the cut
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GCuts&   cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GCuts& cut ) const;
       /// add the cut
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVCuts&  cut  ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVCuts& cut ) const;
       // ======================================================================
     public:
       // ======================================================================
       // functions
       // ======================================================================
       /// add the function
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GFunc&   func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GFunc& func ) const;
       /// add the function
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVFunc&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVFunc& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // maps
       // ======================================================================
       /// add the map
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GMaps&   func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GMaps& func ) const;
       /// add the map
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVMaps&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVMaps& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // pipes
       // ======================================================================
       /// add the pipe
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GPipes&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GPipes& func ) const;
       /// add the pipe
-      StatusCode process
-      ( const std::string&          name ,
-        const LoKi::Types::GVPipes& func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVPipes& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // fun-vals
       // ======================================================================
       /// add the fun-val
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GFunVals&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GFunVals& func ) const;
       /// add the fun-val
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GVFunVals& func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVFunVals& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // cut-vals
       // ======================================================================
       /// add the fun-val
-      StatusCode process
-      ( const std::string&            name ,
-        const LoKi::Types::GCutVals&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GCutVals& func ) const;
       // ======================================================================
     public:
       // ======================================================================
       // sources
       // ======================================================================
       /// add the source
-      StatusCode process
-      ( const std::string&             name ,
-        const LoKi::Types::GSources&   func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GSources& func ) const;
       /// add the source
-      StatusCode process
-      ( const std::string&             name ,
-        const LoKi::Types::GVSources&  func ) const ;
+      StatusCode process( const std::string& name, const LoKi::Types::GVSources& func ) const;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                            end of namespace LoKi::Hybrid
+  } // namespace Hybrid
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

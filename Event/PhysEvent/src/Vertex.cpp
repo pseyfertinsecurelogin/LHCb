@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 
 #include "Event/Vertex.h"
 
@@ -21,15 +20,12 @@
 // 2012-04-26 : Chris Jones
 //-----------------------------------------------------------------------------
 
-std::ostream& LHCb::Vertex::fillStream(std::ostream& s) const
-{
-  VertexBase::fillStream(s);
-  s << "{ " 
+std::ostream& LHCb::Vertex::fillStream( std::ostream& s ) const {
+  VertexBase::fillStream( s );
+  s << "{ "
     << "Technique         :	" << m_technique << std::endl
     << "OutgoingParticles : " << m_outgoingParticles;
-  const std::string testLocation = 
-    ( parent() && parent()->registry() ?
-      parent()->registry()->identifier() : "" );
+  const std::string testLocation = ( parent() && parent()->registry() ? parent()->registry()->identifier() : "" );
   if ( !testLocation.empty() ) { s << std::endl << "TES=" << testLocation; }
   return s << " }";
 }

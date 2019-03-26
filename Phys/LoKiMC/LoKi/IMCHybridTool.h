@@ -27,8 +27,7 @@
 // ============================================================================
 #include "LoKi/MCTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class IMCHybridTool IMCHybridTool.h LoKi/IMCHybridTool.h
    *
@@ -46,59 +45,58 @@ namespace LoKi
    *  @date   2004-06-29
    *
    */
-  struct GAUDI_API IMCHybridTool : extend_interfaces<IAlgTool>
-  {
+  struct GAUDI_API IMCHybridTool : extend_interfaces<IAlgTool> {
     // ========================================================================
-    DeclareInterfaceID(IMCHybridTool , 6 , 0 ) ;
+    DeclareInterfaceID( IMCHybridTool, 6, 0 );
     // ========================================================================
     // predicates:
     // ========================================================================
     /// set the C++ predicate for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCCuts&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCCuts& cut ) = 0;
     /// set the C++ predicate for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVCuts& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVCuts& cut ) = 0;
     // ========================================================================
     // functions
     // ========================================================================
     /// set the C++ function for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCFunc&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCFunc& cut ) = 0;
     /// set the C++ function for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVFunc& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVFunc& cut ) = 0;
     // ========================================================================
     // maps:
     // ========================================================================
     /// set the C++ map for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCMaps&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCMaps& cut ) = 0;
     /// set the C++ map for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVMaps& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVMaps& cut ) = 0;
     // ========================================================================
     // pipes:
     // ========================================================================
     /// set the C++ pipe for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCPipes&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCPipes& cut ) = 0;
     /// set the C++ pipe for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVPipes& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVPipes& cut ) = 0;
     // ========================================================================
     // fun-vals:
     // ========================================================================
     /// set the C++ fun-val for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCFunVals&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCFunVals& cut ) = 0;
     /// set the C++ fun-val for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVFunVals& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVFunVals& cut ) = 0;
     // ========================================================================
     // cut-vals:
     // ========================================================================
     /// set the C++ cut-val for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCCutVals&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCCutVals& cut ) = 0;
     /// set the C++ cut-val for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVCutVals& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVCutVals& cut ) = 0;
     // ========================================================================
     // sources
     // ========================================================================
     /// set the C++ source for LHCb::MCParticle
-    virtual void set ( const LoKi::Types::MCSources&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCSources& cut ) = 0;
     /// set the C++ source for LHCb::MCVertex
-    virtual void set ( const LoKi::Types::MCVSources& cut ) = 0 ;
+    virtual void set( const LoKi::Types::MCVSources& cut ) = 0;
     // ========================================================================
   };
   // ==========================================================================

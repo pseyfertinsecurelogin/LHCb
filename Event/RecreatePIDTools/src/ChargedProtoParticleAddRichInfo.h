@@ -29,8 +29,8 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // Event
-#include "Event/RichPID.h"
 #include "Event/ProtoParticle.h"
+#include "Event/RichPID.h"
 
 /** @class ChargedProtoParticleAddRichInfo ChargedProtoParticleAddRichInfo.h
  *
@@ -40,36 +40,31 @@
  *  @date 28/08/2009
  */
 
-class ChargedProtoParticleAddRichInfo : public GaudiAlgorithm
-{
+class ChargedProtoParticleAddRichInfo : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   ChargedProtoParticleAddRichInfo( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ChargedProtoParticleAddRichInfo( ); ///< Destructor
+  virtual ~ChargedProtoParticleAddRichInfo(); ///< Destructor
 
-  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   /// Load the RichPIDs and build reverse mappings
   bool getRichData();
 
   /// Add (or update) the RICH information for the given ProtoParticle
-  void updateRICH( LHCb::ProtoParticle * proto ) const;
+  void updateRICH( LHCb::ProtoParticle* proto ) const;
 
 private:
-
   std::string m_protoPath; ///< Location of the ProtoParticles in the TES
   std::string m_richPath;  ///< Location in TES of input RichPIDs
 
   /// mapping type from Track to RichPID data objects
-  typedef std::map<const LHCb::Track *, const LHCb::RichPID *> TrackToRichPID;
+  typedef std::map<const LHCb::Track*, const LHCb::RichPID*> TrackToRichPID;
   /// mapping from Track to RichPID data objects
   TrackToRichPID m_richMap;
-
 };
 
 #endif // GLOBALRECO_ChargedProtoParticleAddRichInfo_H

@@ -30,8 +30,7 @@
 // RichUtils
 #include "RichUtils/RichHistoID.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class HistoToolBase RichHistoToolBase.h RichKernel/RichHistoToolBase.h
@@ -46,15 +45,12 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class HistoToolBase : public Rich::HistoBase< GaudiHistoTool >
-  {
+  class HistoToolBase : public Rich::HistoBase<GaudiHistoTool> {
 
   public:
-
     /// Standard constructor
-    HistoToolBase( const std::string &type, const std::string &name, const IInterface *parent )
-      : Rich::HistoBase< GaudiHistoTool >( type, name, parent )
-    {}
+    HistoToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : Rich::HistoBase<GaudiHistoTool>( type, name, parent ) {}
   };
 
 } // namespace Rich

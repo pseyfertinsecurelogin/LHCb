@@ -9,10 +9,10 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-#include <utility>
-#include <string>
 #include <map>
 #include <sstream>
+#include <string>
+#include <utility>
 
 #include "Event/L0DUConfig.h"
 
@@ -22,46 +22,44 @@
 // 19/10/2007 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
+std::string LHCb::L0DUConfig::summary() {
 
-
-std::string LHCb::L0DUConfig::summary(){
-
-  std::ostringstream s(" ");
+  std::ostringstream s( " " );
   s << " \n"
-    << " <-----  L0DUConfig (" << key()   << " ) " << " --------------->\n";
+    << " <-----  L0DUConfig (" << key() << " ) "
+    << " --------------->\n";
 
   int mask = LHCb::L0DUDecision::Any;
   int typ  = 0x1;
-  while(mask != 0x0){
-    s << "   Emulated Decision (" << LHCb::L0DUDecision::Name[typ] << "): " << emulatedDecision(typ) << '\n';
-    typ  = typ  << 1;
+  while ( mask != 0x0 ) {
+    s << "   Emulated Decision (" << LHCb::L0DUDecision::Name[typ] << "): " << emulatedDecision( typ ) << '\n';
+    typ  = typ << 1;
     mask = mask >> 1;
   }
   s << "   Recipe name : '" << m_recipe << "'\n"
     << "   Algorithm description : " << m_definition << '\n';
-  for(const auto& cond : m_channels) s << cond.second->summary() << '\n';
+  for ( const auto& cond : m_channels ) s << cond.second->summary() << '\n';
   s << " ======= Trigger Sets ";
-  if( !triggers().empty() ){
+  if ( !triggers().empty() ) {
     s << " --> " << triggers().size() << " Trigger sets are defined : " << '\n';
-    for(const auto& t : triggers()) s << t.second->summary();
+    for ( const auto& t : triggers() ) s << t.second->summary();
   }
   return s.str();
 }
 
-
 std::string LHCb::L0DUConfig::description() const {
-  std::ostringstream s(" ");
+  std::ostringstream s( " " );
   s << " \n"
-    << " <-----  L0DUConfig (" << key()   << " ) " << " --------------->\n"
+    << " <-----  L0DUConfig (" << key() << " ) "
+    << " --------------->\n"
     << "   Recipe name : '" << m_recipe << "'\n"
-    << "   Description : " << m_definition <<'\n';
-  for(const auto& cond : m_channels) s << cond.second->description() << '\n';
+    << "   Description : " << m_definition << '\n';
+  for ( const auto& cond : m_channels ) s << cond.second->description() << '\n';
   s << " ======= Trigger Sets ";
-  if(!triggers().empty()){
+  if ( !triggers().empty() ) {
     s << " --> " << triggers().size() << " SubTrigger(s) are defined : \n";
-    for(const auto& t : triggers()) s << t.second->description() ;
+    for ( const auto& t : triggers() ) s << t.second->description();
   }
   s << '\n';
   return s.str();
 }
-

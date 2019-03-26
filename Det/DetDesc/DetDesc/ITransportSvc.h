@@ -30,15 +30,14 @@ struct IGeometryInfo;
  *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
-struct ITransportSvc : extend_interfaces<IService>
-{
+struct ITransportSvc : extend_interfaces<IService> {
   /** Declaration of the unique interface identifier
    *  ( interface id, major version, minor version)
    */
-  DeclareInterfaceID( ITransportSvc , 5 , 0 );
+  DeclareInterfaceID( ITransportSvc, 5, 0 );
 
   /// Create an instance of the accelerator cache
-  virtual std::any createCache() const = 0 ;
+  virtual std::any createCache() const = 0;
 
   /** Estimate the distance between 2 points in units
    *  of radiation length units
@@ -48,13 +47,9 @@ struct ITransportSvc : extend_interfaces<IService>
    *  @param alternativeGeometry source of alternative geometry information
    *  @param geometryGuess a guess for navigation
    */
-  virtual double
-  distanceInRadUnits
-  ( const Gaudi::XYZPoint& point1,
-    const Gaudi::XYZPoint& point2,
-    double            threshold                 = 0,
-    IGeometryInfo*    alternativeGeometry       = nullptr,
-    IGeometryInfo*    geometryGuess             = nullptr  )  const = 0 ;
+  virtual double distanceInRadUnits( const Gaudi::XYZPoint& point1, const Gaudi::XYZPoint& point2, double threshold = 0,
+                                     IGeometryInfo* alternativeGeometry = nullptr,
+                                     IGeometryInfo* geometryGuess       = nullptr ) const = 0;
 
   /** Estimate the distance between 2 points in units
    *  of radiation length units
@@ -67,14 +62,10 @@ struct ITransportSvc : extend_interfaces<IService>
    *  @param alternativeGeometry source of alternative geometry information
    *  @param geometryGuess a guess for navigation
    */
-  virtual double
-  distanceInRadUnits_r
-  ( const Gaudi::XYZPoint& point1,
-    const Gaudi::XYZPoint& point2,
-    std::any&   accelCache,
-    double            threshold                 = 0,
-    IGeometryInfo*    alternativeGeometry       = nullptr,
-    IGeometryInfo*    geometryGuess             = nullptr  )  const = 0 ;
+  virtual double distanceInRadUnits_r( const Gaudi::XYZPoint& point1, const Gaudi::XYZPoint& point2,
+                                       std::any& accelCache, double threshold = 0,
+                                       IGeometryInfo* alternativeGeometry = nullptr,
+                                       IGeometryInfo* geometryGuess       = nullptr ) const = 0;
 
   /** general method ( returns the "full history" of the volume
    *  boundary intersections
@@ -97,16 +88,11 @@ struct ITransportSvc : extend_interfaces<IService>
    *  @param alternativeGeometry  source of alternative geometry information
    *  @param geometryGuess a guess for navigation
    */
-  virtual unsigned long
-  intersections
-  ( const Gaudi::XYZPoint&   point,
-    const Gaudi::XYZVector&  vector,
-    const ISolid::Tick&      tickMin,
-    const ISolid::Tick&      tickMax,
-    ILVolume::Intersections& intersept,
-    double                   threshold           = 0,
-    IGeometryInfo*           alternativeGeometry = nullptr,
-    IGeometryInfo*           geometryGuess       = nullptr ) const = 0;
+  virtual unsigned long intersections( const Gaudi::XYZPoint& point, const Gaudi::XYZVector& vector,
+                                       const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                       ILVolume::Intersections& intersept, double threshold = 0,
+                                       IGeometryInfo* alternativeGeometry = nullptr,
+                                       IGeometryInfo* geometryGuess       = nullptr ) const = 0;
 
   /** general method ( returns the "full history" of the volume
    *  boundary intersections
@@ -129,21 +115,14 @@ struct ITransportSvc : extend_interfaces<IService>
    *  @param alternativeGeometry  source of alternative geometry information
    *  @param geometryGuess a guess for navigation
    */
-  virtual unsigned long
-  intersections_r
-  ( const Gaudi::XYZPoint&   point,
-    const Gaudi::XYZVector&  vector,
-    const ISolid::Tick&      tickMin,
-    const ISolid::Tick&      tickMax,
-    ILVolume::Intersections& intersept,
-    std::any&         accelCache,
-    double                   threshold           = 0,
-    IGeometryInfo*           alternativeGeometry = nullptr,
-    IGeometryInfo*           geometryGuess       = nullptr ) const = 0;
-
+  virtual unsigned long intersections_r( const Gaudi::XYZPoint& point, const Gaudi::XYZVector& vector,
+                                         const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                         ILVolume::Intersections& intersept, std::any& accelCache, double threshold = 0,
+                                         IGeometryInfo* alternativeGeometry = nullptr,
+                                         IGeometryInfo* geometryGuess       = nullptr ) const = 0;
 };
 
 // ============================================================================
 // the End
 // ============================================================================
-#endif  //  GAUDIKERNEL_ITRANSPORTSVC_H
+#endif //  GAUDIKERNEL_ITRANSPORTSVC_H

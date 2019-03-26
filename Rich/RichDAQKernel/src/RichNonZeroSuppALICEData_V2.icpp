@@ -30,31 +30,23 @@
 
 // =================================================================================================
 
-namespace Rich
-{
-  namespace DAQ
-  {
+namespace Rich {
+  namespace DAQ {
 
-    namespace RichNonZeroSuppALICEDataV2
-    {
+    namespace RichNonZeroSuppALICEDataV2 {
 
       // ------------------------------------------------------------------------------------------------
-      template < class Version, class Header, class Footer >
-      void RichNonZeroSuppALICEData< Version, Header, Footer >::buildData(
-        const LHCb::RichSmartID::Vector &digits )
-      {
+      template <class Version, class Header, class Footer>
+      void RichNonZeroSuppALICEData<Version, Header, Footer>::buildData( const LHCb::RichSmartID::Vector& digits ) {
         // Set data words
-        for ( const auto &digit : digits )
-        {
-          const Rich::DAQ::ShortType row =
-            ( NumAlicePixelsPerLHCbPixel * digit.pixelRow() ) + digit.pixelSubRow();
+        for ( const auto& digit : digits ) {
+          const Rich::DAQ::ShortType row = ( NumAlicePixelsPerLHCbPixel * digit.pixelRow() ) + digit.pixelSubRow();
           setPixelActive( row, digit.pixelCol() );
         }
 
         // set footer parity
         // basically, we don't simulate bit errors, so parity word here is just zero
-        if ( this->header().extendedFormat() )
-        { this->setFooter( Footer( 1, typename Footer::WordType( 0 ) ) ); }
+        if ( this->header().extendedFormat() ) { this->setFooter( Footer( 1, typename Footer::WordType( 0 ) ) ); }
 
         // Fill the number of 8 bit words + 1 field in header
         Header head( this->header() );
@@ -64,26 +56,23 @@ namespace Rich
       // ------------------------------------------------------------------------------------------------
 
       // ------------------------------------------------------------------------------------------------
-      template < class Version, class Header, class Footer >
-      Rich::DAQ::ShortType RichNonZeroSuppALICEData< Version, Header, Footer >::calcEightBitword(
-        const LHCb::RichSmartID::Vector &digits ) const
-      {
+      template <class Version, class Header, class Footer>
+      Rich::DAQ::ShortType RichNonZeroSuppALICEData<Version, Header, Footer>::calcEightBitword(
+          const LHCb::RichSmartID::Vector& digits ) const {
         using namespace RichZSPacked_V2;
 
         // temporary data map
-        typedef Rich::Map< Rich::DAQ::ShortType, Rich::DAQ::ShortType > DataMap;
-        DataMap                                                         dataM;
+        typedef Rich::Map<Rich::DAQ::ShortType, Rich::DAQ::ShortType> DataMap;
+        DataMap                                                       dataM;
 
         // Get dummy packed data
         const RichZSPacked zsData;
 
         // Loop over digits
-        for ( const auto &ID : digits )
-        {
+        for ( const auto& ID : digits ) {
           // Get bit and address
-          const Rich::DAQ::ShortType bit = zsData.bitFromCol( ID.pixelCol() );
-          const Rich::DAQ::ShortType address =
-            zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
+          const Rich::DAQ::ShortType bit     = zsData.bitFromCol( ID.pixelCol() );
+          const Rich::DAQ::ShortType address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
           this->setBit( dataM[address], bit );
@@ -95,27 +84,20 @@ namespace Rich
       // ------------------------------------------------------------------------------------------------
 
       // ------------------------------------------------------------------------------------------------
-      template < class Version, class Header, class Footer >
-      Rich::DAQ::ShortType RichNonZeroSuppALICEData< Version, Header, Footer >::fillRichSmartIDs(
-        LHCb::RichSmartID::Vector &ids,
-        const LHCb::RichSmartID    hpdID ) const
-      {
+      template <class Version, class Header, class Footer>
+      Rich::DAQ::ShortType
+      RichNonZeroSuppALICEData<Version, Header, Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector& ids,
+                                                                           const LHCb::RichSmartID    hpdID ) const {
         Rich::DAQ::ShortType nHits = 0;
 
         // reserve size in hit vector
         ids.reserve( 96 );
 
         // Fill with active channels
-        for ( Rich::DAQ::ShortType iRow = 0; iRow < MaxDataSizeALICE; ++iRow )
-        {
-          for ( Rich::DAQ::ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
-          {
-            if ( isPixelActive( iRow, iCol ) )
-            {
-              ids.emplace_back( hpdID.rich(),
-                                hpdID.panel(),
-                                hpdID.pdNumInCol(),
-                                hpdID.pdCol(),
+        for ( Rich::DAQ::ShortType iRow = 0; iRow < MaxDataSizeALICE; ++iRow ) {
+          for ( Rich::DAQ::ShortType iCol = 0; iCol < MaxDataSize; ++iCol ) {
+            if ( isPixelActive( iRow, iCol ) ) {
+              ids.emplace_back( hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(),
                                 iRow / 8, // pixel row
                                 iCol,     // pixel col
                                 iRow % 8  // pixel subrow

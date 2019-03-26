@@ -20,10 +20,10 @@
 #include "GaudiKernel/IDODNodeMapper.h"
 
 // Helpers for printing
-#define ON_VERBOSE  if (UNLIKELY(msgLevel(MSG::VERBOSE)))
-#define ON_DEBUG    if (UNLIKELY(msgLevel(MSG::DEBUG)))
+#define ON_VERBOSE if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
+#define ON_DEBUG if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
 #define LOG_VERBOSE ON_VERBOSE verbose()
-#define LOG_DEBUG   ON_DEBUG   debug()
+#define LOG_DEBUG ON_DEBUG debug()
 
 /** @class MapperToolBase MapperToolBase.h
  *
@@ -32,46 +32,34 @@
  *  @author Chris Jones
  *  @date   2012-03-26
  */
-class MapperToolBase : public extends< GaudiTool,
-                                       IDODAlgMapper,
-                                       IDODNodeMapper >
-{
+class MapperToolBase : public extends<GaudiTool, IDODAlgMapper, IDODNodeMapper> {
 
 public:
-
   /// Standard constructor
   using base_class::base_class;
-
 
   /// Initialize the tool instance.
   StatusCode finalize() override;
 
 protected:
-
   /// Access the Job Option Service
   SmartIF<IJobOptionsSvc>& joSvc() const;
 
   /// Get the Stream name from a data path
-  std::string streamName( const std::string & path ) const;
+  std::string streamName( const std::string& path ) const;
 
   /// Get the stream root from a data path
-  inline std::string streamRoot( const std::string & path ) const
-  {
-    return "/Event/" + streamName(path);
-  }
+  inline std::string streamRoot( const std::string& path ) const { return "/Event/" + streamName( path ); }
 
   /// Make sure a path starts with /Event/
-  inline std::string fixPath( const std::string & path ) const
-  {
-    return path.compare(0,7,"/Event/")!=0 ? "/Event/"+path : path ;
+  inline std::string fixPath( const std::string& path ) const {
+    return path.compare( 0, 7, "/Event/" ) != 0 ? "/Event/" + path : path;
   }
 
 private:
-
   /// Reference to the JobOptionsSvc.
   /// It is needed to configure the Algorithm instances.
   mutable SmartIF<IJobOptionsSvc> m_jos;
-
 };
 
 #endif // MAPPERTOOLBASE_H

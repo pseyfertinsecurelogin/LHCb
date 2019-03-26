@@ -22,7 +22,6 @@
 // local
 #include "OTTimeCreator.h"
 
-
 //-----------------------------------------------------------------------------
 // Implementation file for class : OTTimeCreator
 //
@@ -30,19 +29,17 @@
 //-----------------------------------------------------------------------------
 
 using namespace LHCb;
- 
+
 // Declaration of the tool Factory
 DECLARE_COMPONENT( OTTimeCreator )
-
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-OTTimeCreator::OTTimeCreator(const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
+OTTimeCreator::OTTimeCreator( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ) {
   declareProperty( "OutputLocation", m_timeLocation = OTTimeLocation::Default );
-  declareProperty( "RawBankDecoder", m_decoder ) ;
+  declareProperty( "RawBankDecoder", m_decoder );
 }
 
 //=============================================================================
@@ -51,8 +48,8 @@ OTTimeCreator::OTTimeCreator(const std::string& name, ISvcLocator* pSvcLocator)
 StatusCode OTTimeCreator::initialize() {
 
   StatusCode sc = GaudiAlgorithm::initialize();
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-  
+  if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
+
   // Loading OT Geometry from XML
   m_tracker = getDet<DeOTDetector>( DeOTDetectorLocation::Default );
   m_decoder.retrieve().ignore();
@@ -68,28 +65,28 @@ StatusCode OTTimeCreator::finalize() {
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode OTTimeCreator::execute() 
-{
-  // make OTTime container 
+StatusCode OTTimeCreator::execute() {
+  // make OTTime container
   OTTimes* outputTimes = new OTTimes();
-  outputTimes->reserve(10000);
+  outputTimes->reserve( 10000 );
   // register output buffer to TES
-  put(outputTimes, m_timeLocation);
+  put( outputTimes, m_timeLocation );
 
   // Load all modules.
-  for(const auto& mod : m_tracker->modules() ) {
-    auto ottimes = m_decoder->decodeModule( mod->elementID() ) ;
-    for( auto it = ottimes.begin() ; it != ottimes.end(); ++it) {
-      auto found = std::find_if( ottimes.begin(), it, 
-                                 [&](const LHCb::OTLiteTime& t) { return t.channel()==it->channel(); } );
-      if ( found!=it ) {
+  for ( const auto& mod : m_tracker->modules() ) {
+    auto ottimes = m_decoder->decodeModule( mod->elementID() );
+    for ( auto it = ottimes.begin(); it != ottimes.end(); ++it ) {
+      auto found = std::find_if( ottimes.begin(), it,
+                                 [&]( const LHCb::OTLiteTime& t ) { return t.channel() == it->channel(); } );
+      if ( found != it ) {
         std::ostringstream mess;
         mess << "Found duplicate hit!" << it->channel();
         Warning( mess.str(), StatusCode::FAILURE, 0 ).ignore();
-      } else outputTimes->insert(new OTTime(it->channel(),it->calibratedTime())) ;
+      } else
+        outputTimes->insert( new OTTime( it->channel(), it->calibratedTime() ) );
     }
   }
-  if ( msgLevel( MSG::DEBUG ) ) debug() << " OTTimeCreator created " << outputTimes->size() 
-                                        << " OTTime(s) at " << m_timeLocation << endmsg;
+  if ( msgLevel( MSG::DEBUG ) )
+    debug() << " OTTimeCreator created " << outputTimes->size() << " OTTime(s) at " << m_timeLocation << endmsg;
   return StatusCode::SUCCESS;
 }

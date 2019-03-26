@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ProcCandErrors.h,v 1.4 2008-12-09 18:47:28 cattanem Exp $
-#ifndef PROCCANDERRORS_H 
+#ifndef PROCCANDERRORS_H
 #define PROCCANDERRORS_H 1
 
 #include "L0MuonKernel/ErrorHandler.h"
@@ -21,70 +20,64 @@ namespace L0Muon {
       Class holding the error related to the L0MuonProcCand bank.
 
       It deals with the error encountered in one processing board, i.e. :
-      - discrepancies observed while removing the redundant information in the BCSU 
+      - discrepancies observed while removing the redundant information in the BCSU
       (see the processing board specifications; EDMS 339143)
       - discrepancies observed while removing the redundant information in the TELL1
       (see the L0Muon TELL1 board specifications ; EDMS 818559)
-      The error handlers of this class are filled in ProcCandCnv::decodeBank. 
+      The error handlers of this class are filled in ProcCandCnv::decodeBank.
       - status bits reported by the PUs and the BCSU of the board
       - inconsistent bcid reported by the PUs and the BCSU of the board
 
       @author Julien Cogan
       @date 2008 June the 5th
   */
-  class ProcCandErrors
-  {
-  
+  class ProcCandErrors {
+
   public:
-  
-  
     ProcCandErrors();
-    virtual ~ProcCandErrors();  
-    
-    //std::string counters(std::string tab="");
+    virtual ~ProcCandErrors();
 
-    static std::string header(std::string tab=""){
-      std::string h=tab;
-      h+=" * Errors detected in the L0MuonProcCand Bank";
-      h+="\n"+tab;
-      h+=" Pos   L0EvtNum  L0_B_Id     ";
-      h+="-- BCIDs -  ";
-      h+="  - Status -";
-      h+="\n"+tab;
-      h+=" 0  1   0    1    0    1   ";
-      h+="BCSU 0.....4  ";
-      h+="BCSU 0.....4";
+    // std::string counters(std::string tab="");
+
+    static std::string header( std::string tab = "" ) {
+      std::string h = tab;
+      h += " * Errors detected in the L0MuonProcCand Bank";
+      h += "\n" + tab;
+      h += " Pos   L0EvtNum  L0_B_Id     ";
+      h += "-- BCIDs -  ";
+      h += "  - Status -";
+      h += "\n" + tab;
+      h += " 0  1   0    1    0    1   ";
+      h += "BCSU 0.....4  ";
+      h += "BCSU 0.....4";
       return h;
-    } 
+    }
 
-    //void printCounters(std::string &os, std::string tab="") const;
-    int sumCounters() const ;
+    // void printCounters(std::string &os, std::string tab="") const;
+    int sumCounters() const;
 
     bool inError() const;
-    bool inError(int ipu) const ;
-    int decodingError() const ;
-    int hardwareError() const ;
-    int bcidError() const ;
-    int bcidError(int ipu) const ;
-    int statusError() const ;
-    int statusError(int ipu) const;
-    
+    bool inError( int ipu ) const;
+    int  decodingError() const;
+    int  hardwareError() const;
+    int  bcidError() const;
+    int  bcidError( int ipu ) const;
+    int  statusError() const;
+    int  statusError( int ipu ) const;
+
     ErrorHandler present;
     ErrorHandler decoding;
-    ErrorHandler l0EventNumber;  
-    ErrorHandler l0_B_Id;  
+    ErrorHandler l0EventNumber;
+    ErrorHandler l0_B_Id;
     ErrorHandler bcsu_bcid;
     ErrorHandler pus_bcid[4];
     ErrorHandler bcsu_status;
     ErrorHandler pus_status[4];
-    ErrorHandler errJ,errK,errH,errF;
-    
+    ErrorHandler errJ, errK, errH, errF;
   };
 
-  std::ostream &operator<<(std::ostream &os, const L0Muon::ProcCandErrors &pberr);
+  std::ostream& operator<<( std::ostream& os, const L0Muon::ProcCandErrors& pberr );
 
 } // namespace L0Muon
-
-
 
 #endif // PROCCANDERRORS_H

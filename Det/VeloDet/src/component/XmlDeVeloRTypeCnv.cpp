@@ -8,17 +8,15 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlDeVeloRTypeCnv.cpp,v 1.2 2006-11-30 07:57:41 cattanem Exp $
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-/// VeloDet 
+/// VeloDet
 #include "VeloDet/DeVeloRType.h"
-
 
 /// =======================================================================
 /// Instantiation of a static factory class used by clients to create
 /// instances of this service
 /// =======================================================================
-typedef XmlUserDetElemCnv<DeVeloRType>         XmlDeVeloRTypeCnv;
+typedef XmlUserDetElemCnv<DeVeloRType> XmlDeVeloRTypeCnv;
 DECLARE_CONVERTER( XmlDeVeloRTypeCnv )

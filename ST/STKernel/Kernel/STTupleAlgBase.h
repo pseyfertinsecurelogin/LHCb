@@ -15,7 +15,6 @@
  *  Header file for algorithm base class : ST::AlgBase
  *
  *  CVS Log :-
- *  $Id: STTupleAlgBase.h,v 1.3 2009-03-09 15:14:26 akeune Exp $
  *
  *  @author Matthew Needham
  *  @date   11/10/2008
@@ -31,8 +30,7 @@
 // local
 #include "Kernel/STCommonBase.h"
 
-namespace ST
-{
+namespace ST {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase STTupleBase.h STKernel/STTupleBase.h
@@ -45,19 +43,14 @@ namespace ST
    */
   //-----------------------------------------------------------------------------
 
-  class TupleAlgBase : public ST::CommonBase<GaudiTupleAlg>
-  {
+  class TupleAlgBase : public ST::CommonBase<GaudiTupleAlg> {
 
   public:
-    
     /// Standard constructor
-    TupleAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : ST::CommonBase<GaudiTupleAlg> ( name, pSvcLocator ) { }
-    
+    TupleAlgBase( const std::string& name, ISvcLocator* pSvcLocator )
+        : ST::CommonBase<GaudiTupleAlg>( name, pSvcLocator ) {}
   };
-  
-}
 
+} // namespace ST
 
 #endif // STKERNEL_STALGBASE_H

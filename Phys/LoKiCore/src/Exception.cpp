@@ -41,18 +41,12 @@
  *  @param Code status code
  */
 // ============================================================================
-LoKi::Exception::Exception
-( const std::string&   Message ,
-  const StatusCode &   Code    ,
-  const std::string&   File    ,
-  const unsigned long& Line    )
-  : GaudiException ( Message , "*LoKi::Exception*" , Code )
-{
-  if ( !File.empty() || 0 != Line )
-  {
+LoKi::Exception::Exception( const std::string& Message, const StatusCode& Code, const std::string& File,
+                            const unsigned long& Line )
+    : GaudiException( Message, "*LoKi::Exception*", Code ) {
+  if ( !File.empty() || 0 != Line ) {
     char buf[10];
-    m_message += " in file '" + File + "' at line: " +
-      std::string( buf , buf + sprintf( buf , "%lu" , Line ) );
+    m_message += " in file '" + File + "' at line: " + std::string( buf, buf + sprintf( buf, "%lu", Line ) );
   }
 }
 // ============================================================================
@@ -62,19 +56,12 @@ LoKi::Exception::Exception
  *  @param excpt   "previous"  exception
  */
 // ============================================================================
-LoKi::Exception::Exception
-( const std::string&     Message    ,
-  const StatusCode &     Code       ,
-  const GaudiException&  excpt      ,
-  const std::string&     File       ,
-  const unsigned long&   Line       )
-  : GaudiException ( Message , "*LoKi::Exception*" , Code , excpt )
-{
-  if ( !File.empty() || 0 != Line )
-  {
+LoKi::Exception::Exception( const std::string& Message, const StatusCode& Code, const GaudiException& excpt,
+                            const std::string& File, const unsigned long& Line )
+    : GaudiException( Message, "*LoKi::Exception*", Code, excpt ) {
+  if ( !File.empty() || 0 != Line ) {
     char buf[10];
-    m_message += " in file '" + File + "' at line: " +
-      std::string ( buf , buf + sprintf( buf , "%lu" , Line ) );
+    m_message += " in file '" + File + "' at line: " + std::string( buf, buf + sprintf( buf, "%lu", Line ) );
   };
 }
 // ============================================================================
@@ -83,8 +70,7 @@ LoKi::Exception::Exception
  *  @return the clone
  */
 // ============================================================================
-LoKi::Exception* LoKi::Exception::clone() const
-{ return new LoKi::Exception ( *this ) ; }
+LoKi::Exception* LoKi::Exception::clone() const { return new LoKi::Exception( *this ); }
 // ============================================================================
 // The END
 // ============================================================================

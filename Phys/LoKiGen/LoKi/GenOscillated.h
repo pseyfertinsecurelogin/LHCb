@@ -18,7 +18,9 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
-namespace HepMC { class GenParticle ; }
+namespace HepMC {
+  class GenParticle;
+}
 // ============================================================================
 /** @file
  *
@@ -34,11 +36,9 @@ namespace HepMC { class GenParticle ; }
  *
  */
 // ===========================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace GenParticles
-  {
+  namespace GenParticles {
     // ========================================================================
     /** check the oscillation for the particle
      *  @param p the particle
@@ -47,8 +47,7 @@ namespace LoKi
      *  @date 2008-06-03
      */
     GAUDI_API
-    const HepMC::GenParticle*
-    oscillated1  ( const HepMC::GenParticle* p ) ;
+    const HepMC::GenParticle* oscillated1( const HepMC::GenParticle* p );
     // ========================================================================
     /** check the oscillation for the particle
      *  @param p the particle
@@ -57,10 +56,9 @@ namespace LoKi
      *  @date 2008-06-03
      */
     GAUDI_API
-    const HepMC::GenParticle*
-    oscillated2  ( const HepMC::GenParticle* p ) ;
+    const HepMC::GenParticle* oscillated2( const HepMC::GenParticle* p );
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles
+  } // namespace GenParticles
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

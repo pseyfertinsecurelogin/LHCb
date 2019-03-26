@@ -9,50 +9,48 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
-#include <iostream>
-#include <random>
-#include <iomanip>
-#include <limits>
 #include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <random>
 // ============================================================================
 // VDT
 // ============================================================================
-#include "vdt/sincos.h"
 #include "vdt/asin.h"
+#include "vdt/atan2.h"
+#include "vdt/exp.h"
+#include "vdt/log.h"
+#include "vdt/sincos.h"
 #include "vdt/sqrt.h"
 #include "vdt/tan.h"
-#include "vdt/atan2.h"
-#include "vdt/log.h"
-#include "vdt/exp.h"
 // ============================================================================
 // Local SIMD maths
 // ============================================================================
-#include "LHCbMath/SIMDTypes.h"
 #include "LHCbMath/FastMaths.h"
+#include "LHCbMath/SIMDTypes.h"
 // ============================================================================
 // Vector Class
-#include "VectorClass/instrset.h"
+#include "instrset.h"
 // ============================================================================
 /** @file
  *  Test VDT Math Precision
  */
 // ============================================================================
 // Truncate the give value to a given d.p.
-template < typename TYPE >
-inline TYPE tru( const TYPE x, const unsigned int p )
-{
-  const long long int scale = std::pow(10,p);
-  const long long int sign = ( x > 0 ? 1 : -1 );
-  const long long int i = std::round( std::fabs( x * scale ) );
-  return (TYPE)(i*sign)/scale; 
+template <typename TYPE>
+inline TYPE tru( const TYPE x, const unsigned int p ) {
+  const long long int scale = std::pow( 10, p );
+  const long long int sign  = ( x > 0 ? 1 : -1 );
+  const long long int i     = std::round( std::fabs( x * scale ) );
+  return ( TYPE )( i * sign ) / scale;
 }
 // main program
-int main()
-{
+int main() {
   // get instruction set level of CPU
   const int cpulevel = instrset_detect();
 
@@ -65,169 +63,161 @@ int main()
 
   // test if the CPU supports the compiled level
   // if not, return the code that informs Gaudi the test was not run.
-  if ( cpulevel < complevel ) 
-  {
-    std::cout << "CPU level " << cpulevel 
-              << " does not support compilation level " << complevel 
+  if ( cpulevel < complevel ) {
+    std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel
               << ". Test will not be run." << std::endl;
-    return 77; 
+    return 77;
   }
 
   // random number generator
   std::default_random_engine gen;
 
   // Distributions
-  std::uniform_real_distribution<double> ran_atan2(-0.1,0.1);
-  std::uniform_real_distribution<double> ran_logexp(1e-4,1);
-  std::uniform_real_distribution<double> ran_sqrt(0,100);
-  std::uniform_real_distribution<double> ran_sincos(-M_PI,M_PI);
+  std::uniform_real_distribution<double> ran_atan2( -0.1, 0.1 );
+  std::uniform_real_distribution<double> ran_logexp( 1e-4, 1 );
+  std::uniform_real_distribution<double> ran_sqrt( 0, 100 );
+  std::uniform_real_distribution<double> ran_sincos( -M_PI, M_PI );
 
   // number of tests
   const unsigned int nTests = 100;
-  
+
   // precision for input random numbers
   const auto idp = 10u;
   const auto ifp = 6u;
 
   // precision for results printout
-  //const auto dp = std::numeric_limits<double>::digits10+1;
-  //const auto fp = std::numeric_limits<float >::digits10+1;
+  // const auto dp = std::numeric_limits<double>::digits10+1;
+  // const auto fp = std::numeric_limits<float >::digits10+1;
   // reduce by 1 for AVX2+FMA nightlies slot diffs...
   const auto dp = std::numeric_limits<double>::digits10;
-  const auto fp = std::numeric_limits<float >::digits10;
+  const auto fp = std::numeric_limits<float>::digits10;
   std::cout << "Test Precision : double " << dp << " float " << fp << std::endl;
 
   // run the double tests
   std::cout << "Scalar double tests :- " << std::endl;
-  for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
-  {
+  for ( unsigned int iTest = 0; iTest < nTests; ++iTest ) {
     // atan2
-    const double dx{tru(ran_atan2(gen),idp)}, dy{tru(ran_atan2(gen),idp)};
-    const double tang = tru(vdt::fast_atan2(dx,dy),dp);
-    std::cout << std::setprecision(idp) << "vdt::fast_atan2("<<dx<<","<<dy<<") = " 
-              << std::setprecision(dp) << tang << std::endl;
-    std::cout << std::setprecision(dp) << "vdt::fast_tan("<<tang<<") = " 
-              << std::setprecision(dp) << vdt::fast_tan(tang) << std::endl;
+    const double dx{tru( ran_atan2( gen ), idp )}, dy{tru( ran_atan2( gen ), idp )};
+    const double tang = tru( vdt::fast_atan2( dx, dy ), dp );
+    std::cout << std::setprecision( idp ) << "vdt::fast_atan2(" << dx << "," << dy << ") = " << std::setprecision( dp )
+              << tang << std::endl;
+    std::cout << std::setprecision( dp ) << "vdt::fast_tan(" << tang << ") = " << std::setprecision( dp )
+              << vdt::fast_tan( tang ) << std::endl;
     // exp and log
-    const double x{tru(ran_logexp(gen),idp)};
-    const double e = tru(vdt::fast_exp(x),dp);
-    std::cout << std::setprecision(idp) << "vdt::fast_exp("<<x<<") = " 
-              << std::setprecision(dp) << e << std::endl;
-    std::cout << std::setprecision(dp) << "vdt::fast_log("<<e<<") = " 
-              << std::setprecision(dp) << vdt::fast_log(e) << std::endl;
+    const double x{tru( ran_logexp( gen ), idp )};
+    const double e = tru( vdt::fast_exp( x ), dp );
+    std::cout << std::setprecision( idp ) << "vdt::fast_exp(" << x << ") = " << std::setprecision( dp ) << e
+              << std::endl;
+    std::cout << std::setprecision( dp ) << "vdt::fast_log(" << e << ") = " << std::setprecision( dp )
+              << vdt::fast_log( e ) << std::endl;
     // sqrt
-    const double xx{tru(ran_sqrt(gen),idp)};
-    (void) xx;
-    //std::cout << std::setprecision(idp) << "vdt::fast_isqrt("<<xx<<") = " 
+    const double xx{tru( ran_sqrt( gen ), idp )};
+    (void)xx;
+    // std::cout << std::setprecision(idp) << "vdt::fast_isqrt("<<xx<<") = "
     //          << std::setprecision(dp) << vdt::fast_isqrt(xx) << std::endl;
     // sin cos
-    const double angle{tru(ran_sincos(gen),idp)};
-    double cosang(0), sinang(0);
+    const double angle{tru( ran_sincos( gen ), idp )};
+    double       cosang( 0 ), sinang( 0 );
     vdt::fast_sincos( angle, sinang, cosang );
-    sinang = tru(sinang,dp);    
-    cosang = tru(cosang,dp);
-    std::cout << std::setprecision(idp) << "vdt::fast_cossin("<<angle<<") = " 
-              << std::setprecision(dp) << sinang << " " << cosang << std::endl;
-    std::cout << std::setprecision(dp) << "vdt::fast_asin("<<sinang<<") = " 
-              << std::setprecision(dp) << vdt::fast_asin(sinang) << std::endl;
-    std::cout << std::setprecision(dp) << "vdt::fast_acos("<<cosang<<") = " 
-              << std::setprecision(dp) << vdt::fast_acos(cosang) << std::endl;
+    sinang = tru( sinang, dp );
+    cosang = tru( cosang, dp );
+    std::cout << std::setprecision( idp ) << "vdt::fast_cossin(" << angle << ") = " << std::setprecision( dp ) << sinang
+              << " " << cosang << std::endl;
+    std::cout << std::setprecision( dp ) << "vdt::fast_asin(" << sinang << ") = " << std::setprecision( dp )
+              << vdt::fast_asin( sinang ) << std::endl;
+    std::cout << std::setprecision( dp ) << "vdt::fast_acos(" << cosang << ") = " << std::setprecision( dp )
+              << vdt::fast_acos( cosang ) << std::endl;
   }
 
   // run the float tests
   std::cout << "Scalar float tests :- " << std::endl;
-  for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
-  {
+  for ( unsigned int iTest = 0; iTest < nTests; ++iTest ) {
     // atan2
-    const float fx{tru((float)ran_atan2(gen),ifp)}, fy{tru((float)ran_atan2(gen),ifp)};
-    const float tang = tru(vdt::fast_atan2f(fx,fy),fp);
-    std::cout << std::setprecision(ifp) << "vdt::fast_atan2f("<<fx<<","<<fy<<") = " 
-              << std::setprecision(fp) << tang << std::endl;
-    std::cout << std::setprecision(fp) << "vdt::fast_tanf("<<tang<<") = " 
-              << std::setprecision(fp) <<  vdt::fast_tanf(tang) << std::endl;
+    const float fx{tru( (float)ran_atan2( gen ), ifp )}, fy{tru( (float)ran_atan2( gen ), ifp )};
+    const float tang = tru( vdt::fast_atan2f( fx, fy ), fp );
+    std::cout << std::setprecision( ifp ) << "vdt::fast_atan2f(" << fx << "," << fy << ") = " << std::setprecision( fp )
+              << tang << std::endl;
+    std::cout << std::setprecision( fp ) << "vdt::fast_tanf(" << tang << ") = " << std::setprecision( fp )
+              << vdt::fast_tanf( tang ) << std::endl;
     // exp and log
-    const float x{tru((float)ran_logexp(gen),ifp)};
-    const float e = tru(vdt::fast_expf(x),fp);
-    std::cout << std::setprecision(ifp) << "vdt::fast_expf("<<x<<") = " 
-              << std::setprecision(fp) << e << std::endl;
-    std::cout << std::setprecision(fp) << "vdt::fast_logf("<<e<<") = " 
-              << std::setprecision(fp) << vdt::fast_logf(e) << std::endl;
+    const float x{tru( (float)ran_logexp( gen ), ifp )};
+    const float e = tru( vdt::fast_expf( x ), fp );
+    std::cout << std::setprecision( ifp ) << "vdt::fast_expf(" << x << ") = " << std::setprecision( fp ) << e
+              << std::endl;
+    std::cout << std::setprecision( fp ) << "vdt::fast_logf(" << e << ") = " << std::setprecision( fp )
+              << vdt::fast_logf( e ) << std::endl;
     // isqrt
-    const float xx{tru((float)ran_sqrt(gen),ifp)};
-    (void) xx;
-    //std::cout << std::setprecision(ifp) << "vdt::fast_isqrtf("<<xx<<") = " 
+    const float xx{tru( (float)ran_sqrt( gen ), ifp )};
+    (void)xx;
+    // std::cout << std::setprecision(ifp) << "vdt::fast_isqrtf("<<xx<<") = "
     //          << std::setprecision(fp) << vdt::fast_isqrtf(xx) << std::endl;
     // sin cos
-    const float angle{tru((float)ran_sincos(gen),ifp)};
-    float cosang(0), sinang(0);
+    const float angle{tru( (float)ran_sincos( gen ), ifp )};
+    float       cosang( 0 ), sinang( 0 );
     vdt::fast_sincosf( angle, sinang, cosang );
-    sinang = tru(sinang,fp);
-    cosang = tru(cosang,fp);
-    std::cout << std::setprecision(ifp) << "vdt::fast_cossinf("<<angle<<") = " 
-              << std::setprecision(fp) << sinang << " " << cosang << std::endl;
-    std::cout << std::setprecision(fp) << "vdt::fast_asinf("<<sinang<<") = " 
-              << std::setprecision(fp) << vdt::fast_asinf(sinang) << std::endl;
-    std::cout << std::setprecision(fp) << "vdt::fast_acosf("<<cosang<<") = " 
-              << std::setprecision(fp) << vdt::fast_acosf(cosang) << std::endl;
+    sinang = tru( sinang, fp );
+    cosang = tru( cosang, fp );
+    std::cout << std::setprecision( ifp ) << "vdt::fast_cossinf(" << angle << ") = " << std::setprecision( fp )
+              << sinang << " " << cosang << std::endl;
+    std::cout << std::setprecision( fp ) << "vdt::fast_asinf(" << sinang << ") = " << std::setprecision( fp )
+              << vdt::fast_asinf( sinang ) << std::endl;
+    std::cout << std::setprecision( fp ) << "vdt::fast_acosf(" << cosang << ") = " << std::setprecision( fp )
+              << vdt::fast_acosf( cosang ) << std::endl;
   }
 
-  // SIMD tests
-  using FPF = LHCb::SIMD::FPF;
-  using namespace LHCb::Math;
-  std::cout << "SIMD float tests (only one element printed) :- " << std::endl;
-  for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
+  // SIMD(Vc) tests
   {
-    // tan
-    {
-      const FPF fx(tru((float)ran_atan2(gen),ifp)), fy(tru((float)ran_atan2(gen),ifp));
-      const auto tang( fast_atan2(fx,fy) );
-      
-      std::cout << std::setprecision(ifp) << "SIMD(f) fast_atan2("<<fx[0]<<","<<fy[0]<<") = " 
-                << std::setprecision(fp) << tru(tang[0],fp) << std::endl;
-      std::cout << std::setprecision(fp) << "SIMD(f) fast_tan("<<tru(tang[0],fp)<<") = " 
-                << std::setprecision(fp) <<  fast_tan(tang)[0] << std::endl;
-    }
-    // exp and log
-    {
-      const FPF x( tru((float)ran_logexp(gen),ifp) );
-      const FPF e = fast_exp(x);
-      const FPF l = fast_log( FPF( tru(e[0],fp) ) );
-      std::cout << std::setprecision(ifp) << "SIMD(f) fast_exp("<<x[0]<<") = " 
-                << std::setprecision(fp) << tru(e[0],fp) << std::endl;
-      std::cout << std::setprecision(fp) << "SIMD(f) fast_log("<<e[0]<<") = " 
-                << std::setprecision(fp) << l[0] << std::endl;
-    }
-    // isqrt
-    {
-      const FPF xx( tru((float)ran_sqrt(gen),ifp) );
-      (void) xx;
-      //const FPF x = fast_isqrt(xx);
-      //std::cout << std::setprecision(ifp) << "SIMD(f) fast_isqrt("<<xx[0]<<") = " 
-      //          << std::setprecision(fp) << x[0] << std::endl;
-    }
-    // sin cos
-    {
-      const FPF angle( tru((float)ran_sincos(gen),ifp) );
-      FPF cosang(0), sinang(0);
-      fast_sincos( angle, sinang, cosang );
-      const float sina = sinang[0];
-      const float cosa = cosang[0];
-      const FPF asina = fast_asin(sinang);
-      const FPF acosa = fast_acos(sinang);
-      std::cout << std::setprecision(ifp) << "SIMD(f) fast_cossin("<<angle[0]<<") = " 
-                << std::setprecision(fp) << tru(sina,fp) << " " << tru(cosa,fp) << std::endl;
-      // not implemented yet for SIMD types ...
-      std::cout << std::setprecision(fp) << "SIMD(f) fast_asin("<<sina<<") = " 
-                << std::setprecision(fp) << asina[0] 
-                << " " << vdt::fast_asinf(sina)
-                << std::endl;
-      std::cout << std::setprecision(fp) << "SIMD(f) fast_acos("<<cosa<<") = " 
-                << std::setprecision(fp) << acosa[0] << std::endl;
-      
-    }
+    using FPF = LHCb::SIMD::VC::FPF;
+    using namespace LHCb::Math;
+    std::cout << "SIMD float tests (only one element printed) :- " << std::endl;
+    for ( unsigned int iTest = 0; iTest < nTests; ++iTest ) {
+      // tan
+      {
+        const FPF  fx( tru( (float)ran_atan2( gen ), ifp ) ), fy( tru( (float)ran_atan2( gen ), ifp ) );
+        const auto tang( fast_atan2( fx, fy ) );
 
+        std::cout << std::setprecision( ifp ) << "SIMD(f) fast_atan2(" << fx[0] << "," << fy[0]
+                  << ") = " << std::setprecision( fp ) << tru( tang[0], fp ) << std::endl;
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_tan(" << tru( tang[0], fp )
+                  << ") = " << std::setprecision( fp ) << fast_tan( tang )[0] << std::endl;
+      }
+      // exp and log
+      {
+        const FPF x( tru( (float)ran_logexp( gen ), ifp ) );
+        const FPF e = fast_exp( x );
+        const FPF l = fast_log( FPF( tru( e[0], fp ) ) );
+        std::cout << std::setprecision( ifp ) << "SIMD(f) fast_exp(" << x[0] << ") = " << std::setprecision( fp )
+                  << tru( e[0], fp ) << std::endl;
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_log(" << e[0] << ") = " << std::setprecision( fp ) << l[0]
+                  << std::endl;
+      }
+      // isqrt
+      {
+        const FPF xx( tru( (float)ran_sqrt( gen ), ifp ) );
+        (void)xx;
+        // const FPF x = fast_isqrt(xx);
+        // std::cout << std::setprecision(ifp) << "SIMD(f) fast_isqrt("<<xx[0]<<") = "
+        //          << std::setprecision(fp) << x[0] << std::endl;
+      }
+      // sin cos
+      {
+        const FPF angle( tru( (float)ran_sincos( gen ), ifp ) );
+        FPF       cosang( 0 ), sinang( 0 );
+        fast_sincos( angle, sinang, cosang );
+        const float sina  = sinang[0];
+        const float cosa  = cosang[0];
+        const FPF   asina = fast_asin( sinang );
+        const FPF   acosa = fast_acos( sinang );
+        std::cout << std::setprecision( ifp ) << "SIMD(f) fast_cossin(" << angle[0] << ") = " << std::setprecision( fp )
+                  << tru( sina, fp ) << " " << tru( cosa, fp ) << std::endl;
+        // not implemented yet for SIMD types ...
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_asin(" << sina << ") = " << std::setprecision( fp )
+                  << asina[0] << " " << vdt::fast_asinf( sina ) << std::endl;
+        std::cout << std::setprecision( fp ) << "SIMD(f) fast_acos(" << cosa << ") = " << std::setprecision( fp )
+                  << acosa[0] << std::endl;
+      }
+    }
   }
-
 
   return 0;
 }

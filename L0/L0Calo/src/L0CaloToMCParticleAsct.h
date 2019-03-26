@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0CaloToMCParticleAsct.h,v 1.4 2005-01-12 09:19:38 ocallot Exp $
 #ifndef L0CALOTOMCPARTICLEASCT_H
 #define L0CALOTOMCPARTICLEASCT_H 1
 
@@ -31,12 +30,11 @@ public:
   /// Standard constructor
   L0CaloToMCParticleAsct( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0CaloToMCParticleAsct( ); ///< Destructor
+  virtual ~L0CaloToMCParticleAsct(); ///< Destructor
 
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 protected:
-
 private:
   std::string m_inputContainer;
   double      m_minimalFraction;

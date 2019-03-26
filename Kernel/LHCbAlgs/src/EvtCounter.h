@@ -22,22 +22,16 @@
  *  @author Patrick KOPPENBURG
  *  @date   2004-06-15
  */
-class EvtCounter final : public extends2<GaudiTool,
-                                         IEventCounter,
-                                         IIncidentListener>
-{
+class EvtCounter final : public extends2<GaudiTool, IEventCounter, IIncidentListener> {
 
- public:
-
+public:
   /// Standard constructor
-  EvtCounter( const std::string& type,
-              const std::string& name,
-              const IInterface* parent);
+  EvtCounter( const std::string& type, const std::string& name, const IInterface* parent );
 
   virtual ~EvtCounter() = default; ///< Destructor
 
   /// IListener interface to be triggered at begin of event
-  void handle(const Incident&) override { this->incrementEventCounter(); }
+  void handle( const Incident& ) override { this->incrementEventCounter(); }
 
   /// Initialize method
   StatusCode initialize() override;
@@ -51,12 +45,10 @@ class EvtCounter final : public extends2<GaudiTool,
   /// Set Event counter
   void setEventCounter( unsigned long long n ) override { m_eventCounter = n; }
 
- private:
-
+private:
   unsigned long long m_eventCounter{0}; ///< number of events processed
-  unsigned long long m_initialCount; ///< allow to change the number used for the first event (property InitialCount)
-  bool m_useIncident; ///< whether to increment of BeginEvent incident or not
-
+  unsigned long long m_initialCount;    ///< allow to change the number used for the first event (property InitialCount)
+  bool               m_useIncident;     ///< whether to increment of BeginEvent incident or not
 };
 
 #endif // EVTCOUNTER_H

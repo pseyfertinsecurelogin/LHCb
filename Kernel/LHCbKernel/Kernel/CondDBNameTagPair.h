@@ -14,10 +14,9 @@
 #include <string>
 #include <utility>
 
-namespace LHCb
-{
+namespace LHCb {
   /// DB name, tag pair
-  typedef std::pair<std::string,std::string> CondDBNameTagPair;
-}
+  typedef std::pair<std::string, std::string> CondDBNameTagPair;
+} // namespace LHCb
 
 #endif // KERNEL_CONDDBNAMETAGPAIR_H

@@ -11,8 +11,8 @@
 #ifndef DETDESC_SERVICES_H
 #define DETDESC_SERVICES_H 1
 
-#include <memory>
 #include "GaudiKernel/SmartIF.h"
+#include <memory>
 // Forward declarations
 class ISvcLocator;
 class IDataProviderSvc;
@@ -56,14 +56,12 @@ namespace DetDesc {
      * @exception GaudiException the service could not be located
      * @return pointer to UpdateManagerSvc instance
      */
-    IUpdateManagerSvc* updMgrSvc(bool create = false) const;
-
+    IUpdateManagerSvc* updMgrSvc( bool create = false ) const;
 
     // static acessor
     static ServicesPtr services();
 
   protected:
-
     /** Default constructor */
     Services() = default;
 
@@ -76,9 +74,7 @@ namespace DetDesc {
     mutable SmartIF<IMessageSvc> m_msgSvc;
     /// The Update Manager Service
     mutable SmartIF<IUpdateManagerSvc> m_updMgrSvc;
-
-
-   };
-}
+  };
+} // namespace DetDesc
 
 #endif ///< DETDESC_DETDESC_H

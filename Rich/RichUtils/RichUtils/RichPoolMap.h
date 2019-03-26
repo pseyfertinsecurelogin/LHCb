@@ -30,12 +30,11 @@
 
 #ifndef GOD_NOALLOC
 // boost
-#include "GaudiKernel/boost_allocator.h"
-#include <boost/pool/pool_alloc.hpp>
+#  include "GaudiKernel/boost_allocator.h"
+#  include <boost/pool/pool_alloc.hpp>
 #endif
 
-namespace Rich
-{
+namespace Rich {
 
   //--------------------------------------------------------------------------------
   /** @class PoolMap RichUtils/RichPoolMap.h
@@ -49,32 +48,21 @@ namespace Rich
   //--------------------------------------------------------------------------------
 
 #ifndef GOD_NOALLOC
-  template < typename KEY,
-             typename VALUE,
-             typename USERALLOC = boost::default_user_allocator_new_delete,
-             typename MUTEX     = boost::details::pool::default_mutex,
-             unsigned NEXTSIZE  = 32 >
-  using MapPoolAlloc =
-    boost::fast_pool_allocator< std::pair< const KEY, VALUE >, USERALLOC, MUTEX, NEXTSIZE >;
+  template <typename KEY, typename VALUE, typename USERALLOC = boost::default_user_allocator_new_delete,
+            typename MUTEX = boost::details::pool::default_mutex, unsigned NEXTSIZE = 32>
+  using MapPoolAlloc = boost::fast_pool_allocator<std::pair<const KEY, VALUE>, USERALLOC, MUTEX, NEXTSIZE>;
 #else
-  template < typename KEY, typename VALUE >
-  using MapPoolAlloc = std::allocator< std::pair< const KEY, VALUE > >;
+  template <typename KEY, typename VALUE>
+  using MapPoolAlloc = std::allocator<std::pair<const KEY, VALUE>>;
 #endif
 
-  template < typename KEY,
-             typename VALUE,
-             typename COMPARE = std::less< KEY >,
-             typename ALLOC   = MapPoolAlloc< KEY, VALUE > >
-  class PoolMap : public std::map< KEY, VALUE, COMPARE, ALLOC >
-  {
+  template <typename KEY, typename VALUE, typename COMPARE = std::less<KEY>, typename ALLOC = MapPoolAlloc<KEY, VALUE>>
+  class PoolMap : public std::map<KEY, VALUE, COMPARE, ALLOC> {
   public:
-
     /// Operator overloading for ostream
-    friend inline std::ostream &operator<<( std::ostream &                               str,
-                                            const PoolMap< KEY, VALUE, COMPARE, ALLOC > &m )
-    {
+    friend inline std::ostream& operator<<( std::ostream& str, const PoolMap<KEY, VALUE, COMPARE, ALLOC>& m ) {
       str << "[";
-      for ( const auto &i : m ) { str << " (" << i.first << "," << i.second << ")"; }
+      for ( const auto& i : m ) { str << " (" << i.first << "," << i.second << ")"; }
       return str << " ]";
     }
   };

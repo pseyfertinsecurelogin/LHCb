@@ -9,7 +9,7 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_MCEXTRACTDICTS_H 
+#ifndef LOKI_MCEXTRACTDICTS_H
 #define LOKI_MCEXTRACTDICTS_H 1
 // ============================================================================
 // Include files
@@ -18,30 +18,22 @@
 // ============================================================================
 #include "LoKi/MCTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace MCExtract
-  {
+  namespace MCExtract {
     // ========================================================================
-    /// get MC-particles form decay tree 
-    LHCb::MCParticle::ConstVector
-    mcParticles
-    ( const LHCb::MCParticle*      particle           ,
-      const LoKi::MCTypes::MCCuts& cuts               ,
-      const bool                   decayOnly = true   ) ;
+    /// get MC-particles form decay tree
+    LHCb::MCParticle::ConstVector mcParticles( const LHCb::MCParticle* particle, const LoKi::MCTypes::MCCuts& cuts,
+                                               const bool decayOnly = true );
     // ========================================================================
-    /// get MC-particles from decay tree 
-    LHCb::MCParticle::ConstVector
-    mcParticles 
-    ( const LHCb::MCVertex*        vertex             ,
-      const LoKi::MCTypes::MCCuts& cuts               ,
-      const bool                   decayOnly = true   ) ;
+    /// get MC-particles from decay tree
+    LHCb::MCParticle::ConstVector mcParticles( const LHCb::MCVertex* vertex, const LoKi::MCTypes::MCCuts& cuts,
+                                               const bool decayOnly = true );
     // ========================================================================
-  } //                                         end of namespace LoKi::MCExtract
+  } // namespace MCExtract
   // ==========================================================================
-} //                                                     end of namespacde LoKi
+} // namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_MCEXTRACTDICTS_H

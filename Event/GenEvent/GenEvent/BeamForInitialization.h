@@ -8,12 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
-#ifndef GENEVENT_BEAMFORINITIALIZATION_H 
+#ifndef GENEVENT_BEAMFORINITIALIZATION_H
 #define GENEVENT_BEAMFORINITIALIZATION_H 1
 
 namespace LHCb {
-  class BeamParameters ;
+  class BeamParameters;
 }
 
 /** @class BeamForInitialization BeamForInitialization.h GenEvent/BeamForInitialization.h
@@ -24,12 +23,10 @@ namespace LHCb {
  */
 class BeamForInitialization {
 public:
-  static LHCb::BeamParameters *& getInitialBeamParameters( ) ;
-    
+  static LHCb::BeamParameters*& getInitialBeamParameters();
+
 protected:
-
 private:
-  static LHCb::BeamParameters * s_initialBeamParameters ;
-} ;
+  static LHCb::BeamParameters* s_initialBeamParameters;
+};
 #endif
-

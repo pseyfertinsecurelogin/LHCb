@@ -8,15 +8,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from Configurables import (HLTControlFlowMgr,
-                            HLTEventLoopMgr,
-                            AlgResourcePool,
-                            ConfigurableDummy,
-                            HiveWhiteBoard,
-                            HiveDataBrokerSvc,
-                            )
+from Configurables import (
+    HLTControlFlowMgr,
+    HLTEventLoopMgr,
+    AlgResourcePool,
+    ConfigurableDummy,
+    HiveWhiteBoard,
+    HiveDataBrokerSvc,
+    ExecutionReportsWriter,
+)
 from Gaudi.Configuration import *
-
 
 evtslots = 2
 evtMax = 4
@@ -46,33 +47,37 @@ a5.inpKeys = ['/Event/a1']
 a5.outKeys = ['/Event/a5']
 a5.CFD = True
 
-whiteboard = HiveWhiteBoard("EventDataSvc",
-                            EventSlots=evtslots)
+exerep = ExecutionReportsWriter(
+    "ExecReportsWriter",
+    OutputLevel=DEBUG,
+    PrintFreq=1,
+    DecReportsLocation="/Event/DecReports")
+
+whiteboard = HiveWhiteBoard("EventDataSvc", EventSlots=evtslots)
 
 HLTControlFlowMgr().CompositeCFNodes = [
-             ( 'moore', 'NONLAZY_AND', ['line2', 'decision'], True ),
-             ( 'decision', 'NONLAZY_OR', ['line1', 'A5', 'notA1'], False ),
-             ( 'line1', 'LAZY_OR', ['A1', 'A2'], True ),
-             ( 'line2', 'LAZY_AND', ['A3', 'A4'], True ),
-             ( 'notA1', 'NOT', ['A1'], True ),
+    ('moore', 'NONLAZY_AND', ['line2', 'decision', 'ExecReportsWriter'], True),
+    ('decision', 'NONLAZY_OR', ['line1', 'A5', 'notA1'], False),
+    ('line1', 'LAZY_OR', ['A1', 'A2'], True),
+    ('line2', 'LAZY_AND', ['A3', 'A4'], True),
+    ('notA1', 'NOT', ['A1'], True),
 ]
-HLTControlFlowMgr().AdditionalCFEdges = [ ['A5', 'line1'] ]
+HLTControlFlowMgr().AdditionalCFEdges = [['A5', 'line1']]
 
 HLTControlFlowMgr().ThreadPoolSize = threads
-HLTControlFlowMgr().OutputLevel = DEBUG
+HLTControlFlowMgr().OutputLevel = VERBOSE
 
 HLTEventLoopMgr().ThreadPoolSize = threads
 HLTEventLoopMgr().OutputLevel = DEBUG
 
 HiveDataBrokerSvc().OutputLevel = DEBUG
 
-
-
-app = ApplicationMgr(EvtMax=evtMax,
-               EvtSel='NONE',
-               ExtSvc=[whiteboard],
-               EventLoop=HLTControlFlowMgr(),
-               # EventLoop=HLTEventLoopMgr(),
-               TopAlg=[a1, a2, a3, a4, a5])
+app = ApplicationMgr(
+    EvtMax=evtMax,
+    EvtSel='NONE',
+    ExtSvc=[whiteboard],
+    EventLoop=HLTControlFlowMgr(),
+    # EventLoop=HLTEventLoopMgr(),
+    TopAlg=[a1, a2, a3, a4, a5, exerep])
 
 HiveDataBrokerSvc().DataProducers = app.TopAlg

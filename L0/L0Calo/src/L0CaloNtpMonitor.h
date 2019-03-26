@@ -14,29 +14,27 @@
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
 
-class DeCalorimeter ;
+class DeCalorimeter;
 
 /** @class L0CaloNtpMonitor L0CaloNtpMonitor.h
  *
  *  @author Marie-Helene Schune
  *  @date 2008-02-22
  */
- class L0CaloNtpMonitor : public GaudiTupleAlg {
- public:
+class L0CaloNtpMonitor : public GaudiTupleAlg {
+public:
   /// Standard constructor
-  L0CaloNtpMonitor( const std::string &name , ISvcLocator * pSvcLocator ) ;
+  L0CaloNtpMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0CaloNtpMonitor( ) ; ///< Destructor
+  virtual ~L0CaloNtpMonitor(); ///< Destructor
 
-  StatusCode initialize()  override; ///< Algorithm initialization
-  StatusCode execute   ()  override; ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 protected:
-
 private:
-  std::string              m_inputDataSuffix ;
+  std::string m_inputDataSuffix;
 
-  DeCalorimeter * m_ecal            ; ///< Pointer to Ecal detector element
-  DeCalorimeter * m_hcal            ; ///< Pointer to Hcal detector element
-
+  DeCalorimeter* m_ecal; ///< Pointer to Ecal detector element
+  DeCalorimeter* m_hcal; ///< Pointer to Hcal detector element
 };

@@ -38,10 +38,10 @@ gaudi_add_library(TrackEvent
                   src/*.cpp
                   PUBLIC_HEADERS Event
                   INCLUDE_DIRS GSL Boost ${RANGEV3_INCLUDE_DIR}
-                  LINK_LIBRARIES GSL Boost LHCbKernel)
+                  LINK_LIBRARIES GSL Boost LHCbKernel )
 
 god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
                      INCLUDE_DIRS GSL Boost
-                     LINK_LIBRARIES GSL Boost LHCbKernel TrackEvent)
+                     LINK_LIBRARIES GSL Boost LHCbKernel TrackEvent  )
 

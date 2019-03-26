@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: ProcessPhase.h,v 1.2 2005-01-28 13:18:04 cattanem Exp $
 #ifndef PROCESSPHASE_H
 #define PROCESSPHASE_H
 
@@ -29,20 +28,16 @@ typedef std::vector<std::string> VectorName;
  * @date:   17th December 1999
  */
 
-class ProcessPhase final : public GaudiSequencer
-{
+class ProcessPhase final : public GaudiSequencer {
 
 public:
+  ProcessPhase( const std::string& name, ISvcLocator* svcloc ); ///> Constructor
+  virtual ~ProcessPhase() = default;                            ///> Destructor
 
-	ProcessPhase( const std::string& name, ISvcLocator *svcloc ); ///> Constructor
-	virtual ~ProcessPhase() = default;                            ///> Destructor
-
-        StatusCode initialize() override; ///> Create and initialise sequences of this phase
+  StatusCode initialize() override; ///> Create and initialise sequences of this phase
 
 private:
-
- VectorName m_detList;    ///> List of subdetectors to be processed
-
+  VectorName m_detList; ///> List of subdetectors to be processed
 };
 
-#endif    // PROCESSPHASE_H
+#endif // PROCESSPHASE_H

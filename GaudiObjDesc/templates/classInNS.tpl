@@ -32,6 +32,7 @@
   @@@publicBitfieldEnums@@@
   @@@publicAttributes@@@
   @@@allocatorOperators@@@
+  @@@classOstreamOverload@@@
   protected:
 
   @@@protectedTypedefs@@@
@@ -51,7 +52,6 @@
 
   @@@classTypedefs@@@
   @@@globalTypedefs@@@
-  @@@classOstreamOverload@@@
   @@@enumOstreamOverloads@@@
 
 // -----------------------------------------------------------------------------

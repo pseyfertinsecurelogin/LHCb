@@ -30,12 +30,11 @@
 struct ICondDBInfo : extend_interfaces<IInterface> {
 
   /// InterfaceID
-  DeclareInterfaceID(ICondDBInfo, 2, 0);
+  DeclareInterfaceID( ICondDBInfo, 2, 0 );
 
   /** Get the current default database tags
    *  @param  tags vector of DB name, tag pairs. Empty if DB not available
    */
-  virtual void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const = 0;
-
+  virtual void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const = 0;
 };
 #endif // DETCOND_ICONDDBINFO_H

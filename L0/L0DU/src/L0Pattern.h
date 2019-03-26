@@ -29,36 +29,28 @@
  *  @author Olivier Deschamps
  *  @date   2005-01-28
  */
-class L0Pattern : public GaudiTupleAlg{
+class L0Pattern : public GaudiTupleAlg {
 public:
   /// Standard constructor
   using GaudiTupleAlg::GaudiTupleAlg;
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  void encode(unsigned int data ,  const std::array<unsigned int, L0DUBase::Index::Size> &base);
-
+  void encode( unsigned int data, const std::array<unsigned int, L0DUBase::Index::Size>& base );
 
   // Tools
-  IL0DUConfigProvider* m_config = nullptr;
-  IL0DUEmulatorTool*   m_emulator = nullptr;
-  IL0DUFromRawTool*    m_fromRaw = nullptr;
-  LHCb::L0ProcessorDatas* m_datas = nullptr;
-  unsigned long m_bcid = 0;
+  IL0DUConfigProvider*    m_config   = nullptr;
+  IL0DUEmulatorTool*      m_emulator = nullptr;
+  IL0DUFromRawTool*       m_fromRaw  = nullptr;
+  LHCb::L0ProcessorDatas* m_datas    = nullptr;
+  unsigned long           m_bcid     = 0;
   //
-  Gaudi::Property<std::string> m_emulatorTool
-  { this, "L0DUEmulatorTool"  ,"L0DUEmulatorTool" };
-  Gaudi::Property<std::string> m_fromRawTool
-  { this, "L0DUFromRawTool"   , "L0DUFromRawTool" };
-  Gaudi::Property<std::string> m_configTool
-  { this, "L0DUConfigTool"    , "L0PatternConfig" };
-  Gaudi::Property<std::vector<std::string>> m_list
-  { this, "TCKList"           };
-  Gaudi::Property<bool> m_setbcid
-  { this, "resetBCID", true};
-
-
+  Gaudi::Property<std::string>              m_emulatorTool{this, "L0DUEmulatorTool", "L0DUEmulatorTool"};
+  Gaudi::Property<std::string>              m_fromRawTool{this, "L0DUFromRawTool", "L0DUFromRawTool"};
+  Gaudi::Property<std::string>              m_configTool{this, "L0DUConfigTool", "L0PatternConfig"};
+  Gaudi::Property<std::vector<std::string>> m_list{this, "TCKList"};
+  Gaudi::Property<bool>                     m_setbcid{this, "resetBCID", true};
 };
 #endif // L0PATTERN_H

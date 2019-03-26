@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CLIDVeloAlignCond.h,v 1.1 2008-07-11 16:35:58 marcocle Exp $
-#ifndef VELODET_CLIDVELOALIGNCOND_H 
+#ifndef VELODET_CLIDVELOALIGNCOND_H
 #define VELODET_CLIDVELOALIGNCOND_H 1
 #include "GaudiKernel/ClassID.h"
 

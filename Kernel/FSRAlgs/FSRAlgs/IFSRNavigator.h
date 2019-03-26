@@ -23,8 +23,7 @@
 namespace LHCb {
   class LumiFSR;
   class LumiIntegral;
-}
-
+} // namespace LHCb
 
 /** @class IFSRNavigator IFSRNavigator.h
  *
@@ -34,13 +33,12 @@ namespace LHCb {
  */
 class IFSRNavigator : public extend_interfaces<IAlgTool> {
 public:
-  DeclareInterfaceID(IFSRNavigator, 2, 0 );
+  DeclareInterfaceID( IFSRNavigator, 2, 0 );
 
   // return list of addresses found below the address
-  virtual std::vector< std::string > navigate(std::string, std::string) = 0;
+  virtual std::vector<std::string> navigate( std::string, std::string ) = 0;
 
 protected:
-  virtual void explore(IRegistry* pObj, std::string tag, std::vector< std::string >& addresses) = 0;
-
+  virtual void explore( IRegistry* pObj, std::string tag, std::vector<std::string>& addresses ) = 0;
 };
 #endif // IFSRNAVIGATOR_H

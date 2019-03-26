@@ -22,23 +22,19 @@
  *  @author Olivier Callot
  *  @date   2012-01-23
  */
-class UnpackDecReport : public GaudiAlgorithm
-{
+class UnpackDecReport : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   UnpackDecReport( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   std::string m_inputName;
   std::string m_outputName;
 
-  bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
-
+  bool m_alwaysOutput; ///< Flag to turn on the creation of output, even when input is missing
 };
 
 #endif // UNPACKDECREPORT_H

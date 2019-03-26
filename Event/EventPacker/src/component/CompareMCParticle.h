@@ -15,28 +15,23 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-
 /** @class CompareMCParticle CompareMCParticle.h
  *  Compare two containers of MCParticles
  *
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class CompareMCParticle : public GaudiAlgorithm
-{
+class CompareMCParticle : public GaudiAlgorithm {
 
 public:
-
   /// Standard constructor
   CompareMCParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode execute() override; ///< Algorithm execution
 
 private:
-
   std::string m_inputName;
   std::string m_testName;
-
 };
 
 #endif // COMPAREMCPARTICLE_H

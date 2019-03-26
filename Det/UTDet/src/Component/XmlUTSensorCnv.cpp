@@ -14,5 +14,5 @@
 // UTDet
 #include "UTDet/DeUTSensor.h"
 
-typedef XmlUserDetElemCnv<DeUTSensor >        XmlUTSensorCnv;
+typedef XmlUserDetElemCnv<DeUTSensor> XmlUTSensorCnv;
 DECLARE_CONVERTER( XmlUTSensorCnv )

@@ -32,8 +32,7 @@
  *
  */
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
   /** @class DataCopy
    *  Trivial algorithm to "copy/move" data in TES
@@ -53,25 +52,19 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class DataCopy : public GaudiAlgorithm
-  {
+  class DataCopy : public GaudiAlgorithm {
   public:
     /// standard initialization
-    StatusCode initialize ()  override;
+    StatusCode initialize() override;
     /// the only one essential method
-    StatusCode execute ()  override; // the only one essential method
+    StatusCode execute() override; // the only one essential method
     /// standard constructor
-    DataCopy ( const std::string& name ,
-               ISvcLocator*       pSvc ) ;
+    DataCopy( const std::string& name, ISvcLocator* pSvc );
+
   protected:
-    inline std::string _TESLocation
-    ( const std::string & location     ,
-      const bool          useRootInTES ) const
-    {
+    inline std::string _TESLocation( const std::string& location, const bool useRootInTES ) const {
       // already rootified name :
-      if ( useRootInTES
-           && 0 == location.find ("/Event/"    )
-           && 0 == location.find ( rootInTES() ) ) { return location ; }
+      if ( useRootInTES && 0 == location.find( "/Event/" ) && 0 == location.find( rootInTES() ) ) { return location; }
 
       // The logic is:
       // if no R.I.T., give back location
@@ -83,40 +76,36 @@ namespace Gaudi
       //  "/Event"       -> R.I.T.[:-1]      ("rit")
       //  "/Event/MyObj" -> R.I.T. + "MyObj" ("rit/MyObj")
       //  "MyObj"        -> R.I.T. + "MyObj" ("rit/MyObj")
-      return ( !useRootInTES || rootInTES().empty() ?
-               location
-               :
-               location.empty() || ( location == "/Event" ) ?
-               rootInTES().substr(0,rootInTES().size()-1)
-               :
-               0 == location.find("/Event/") ?
-               rootInTES() + location.substr(7)
-               :
-               rootInTES() + location );
+      return ( !useRootInTES || rootInTES().empty()
+                   ? location
+                   : location.empty() || ( location == "/Event" )
+                         ? rootInTES().substr( 0, rootInTES().size() - 1 )
+                         : 0 == location.find( "/Event/" ) ? rootInTES() + location.substr( 7 )
+                                                           : rootInTES() + location );
     }
     // ========================================================================
   private:
     // ========================================================================
     /// update handler for "What"
-    void handler_1 ( ::Property&  p ) ;            // update handler for "What"
+    void handler_1( ::Property& p ); // update handler for "What"
     /// update handler for "Target"
-    void handler_2 ( ::Property&  p ) ;            // update handler for "Target"
+    void handler_2( ::Property& p ); // update handler for "Target"
     // ========================================================================
   protected:
     // ========================================================================
     /// copy data ?
-    bool m_copy              ;                                    // copy data?
+    bool m_copy; // copy data?
     // ========================================================================
   private:
     // ========================================================================
     /// never fail
-    bool        m_never_fail ;                                 // never fail
+    bool m_never_fail; // never fail
     /// what  to copy
-    std::string m_what       ;                                 //  what to copy
+    std::string m_what; //  what to copy
     /// where to copy
-    std::string m_target     ;                                 // where to copy
+    std::string m_target; // where to copy
     // ========================================================================
-  } ; // end of class DataCopy
+  }; // end of class DataCopy
   // ==========================================================================
   /** @class DataLink
    *  Trivial algorithm to "link" data in TES
@@ -136,126 +125,94 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class DataLink : public Gaudi::DataCopy
-  {
+  class DataLink : public Gaudi::DataCopy {
   public:
     /// standard constructor
-    DataLink ( const std::string& name ,
-               ISvcLocator*       pSvc ) ;
-  } ;
+    DataLink( const std::string& name, ISvcLocator* pSvc );
+  };
 } //                                                     end of namespace Gaudi
 // ============================================================================
-Gaudi::DataCopy::DataCopy
-( const std::string& name ,
-  ISvcLocator*       pSvc )
-  : GaudiAlgorithm ( name , pSvc )
-//
-  , m_copy         ( true )
-  , m_never_fail   ( true )
-  , m_what         ()
-  , m_target       ()
-{
+Gaudi::DataCopy::DataCopy( const std::string& name, ISvcLocator* pSvc )
+    : GaudiAlgorithm( name, pSvc )
+    //
+    , m_copy( true )
+    , m_never_fail( true )
+    , m_what()
+    , m_target() {
   //
-  declareProperty
-    ( "What" ,
-      m_what ,
-      "Data to be copied/linked" ) ->
-    declareUpdateHandler ( &Gaudi::DataCopy::handler_1 , this ) ;
+  declareProperty( "What", m_what, "Data to be copied/linked" )
+      ->declareUpdateHandler( &Gaudi::DataCopy::handler_1, this );
   //
-  declareProperty
-    ( "Target" ,
-      m_target ,
-      "Target for copy/link"     ) ->
-    declareUpdateHandler ( &Gaudi::DataCopy::handler_2 , this ) ;
+  declareProperty( "Target", m_target, "Target for copy/link" )
+      ->declareUpdateHandler( &Gaudi::DataCopy::handler_2, this );
   //
-  declareProperty
-    ( "NeverFail" , m_never_fail , "Never fail" );
+  declareProperty( "NeverFail", m_never_fail, "Never fail" );
 }
 // ============================================================================
 // update handler for property "What"
 // ============================================================================
-void Gaudi::DataCopy::handler_1 ( ::Property&  /* p */ )
-{
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  m_what = _TESLocation ( m_what     , true ) ;
-  Info ( "Change property 'What'   :" + m_what   , StatusCode::SUCCESS ).ignore() ;
+void Gaudi::DataCopy::handler_1( ::Property& /* p */ ) {
+  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
+  m_what = _TESLocation( m_what, true );
+  Info( "Change property 'What'   :" + m_what, StatusCode::SUCCESS ).ignore();
 }
 // ========================================================================
-void Gaudi::DataCopy::handler_2 ( ::Property&  /* p */ )
-{
-  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  m_target = _TESLocation ( m_target , true ) ;
-  Info ( "Change property 'Target' :" + m_target , StatusCode::SUCCESS ).ignore() ;
+void Gaudi::DataCopy::handler_2( ::Property& /* p */ ) {
+  if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
+  m_target = _TESLocation( m_target, true );
+  Info( "Change property 'Target' :" + m_target, StatusCode::SUCCESS ).ignore();
 }
 // ========================================================================
 // standard initialization
 // ========================================================================
-StatusCode Gaudi::DataCopy::initialize ()
-{
+StatusCode Gaudi::DataCopy::initialize() {
   //
-  StatusCode sc = GaudiAlgorithm::initialize () ;
-  if ( sc.isFailure() ) { return sc ; }                 // RETURN
+  StatusCode sc = GaudiAlgorithm::initialize();
+  if ( sc.isFailure() ) { return sc; } // RETURN
   //
-  m_what   = _TESLocation ( m_what   , true ) ;
-  m_target = _TESLocation ( m_target , true ) ;
+  m_what   = _TESLocation( m_what, true );
+  m_target = _TESLocation( m_target, true );
   //
-  if ( m_what.empty()      )
-  { Warning ( "Nothing to be copied"    , StatusCode::SUCCESS ).ignore() ; }
-  if ( m_target.empty()    )
-  { Warning ( "Target is not specified" , StatusCode::SUCCESS ).ignore() ; }
-  if ( m_what  == m_target )
-  { return Warning ( "No need to copy"  , StatusCode::SUCCESS ) ; }
+  if ( m_what.empty() ) { Warning( "Nothing to be copied", StatusCode::SUCCESS ).ignore(); }
+  if ( m_target.empty() ) { Warning( "Target is not specified", StatusCode::SUCCESS ).ignore(); }
+  if ( m_what == m_target ) { return Warning( "No need to copy", StatusCode::SUCCESS ); }
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ========================================================================
 // the main method
 // ========================================================================
-StatusCode Gaudi::DataCopy::execute()
-{
-  StatusCode ok = StatusCode::SUCCESS ;
+StatusCode Gaudi::DataCopy::execute() {
+  StatusCode ok = StatusCode::SUCCESS;
   //
-  if ( m_what   . empty () )
-  { return Warning ( "Nothing to be copied"    , ok ) ; }
-  if ( m_target . empty () )
-  { return Warning ( "Target is not specified" , ok ) ; }
-  if ( m_what  == m_target )
-  { return Warning ( "No need to copy"         , ok ) ; }
+  if ( m_what.empty() ) { return Warning( "Nothing to be copied", ok ); }
+  if ( m_target.empty() ) { return Warning( "Target is not specified", ok ); }
+  if ( m_what == m_target ) { return Warning( "No need to copy", ok ); }
   //
   //
-  SmartDataPtr<DataObject> obj ( evtSvc() , m_what );
-  if ( !obj )
-  {
-    setFilterPassed ( false ) ;
-    return Warning ( "No valid data is found at '" + m_what + "'" ,
-                     m_never_fail ? StatusCode::SUCCESS : StatusCode::FAILURE ) ;
+  SmartDataPtr<DataObject> obj( evtSvc(), m_what );
+  if ( !obj ) {
+    setFilterPassed( false );
+    return Warning( "No valid data is found at '" + m_what + "'",
+                    m_never_fail ? StatusCode::SUCCESS : StatusCode::FAILURE );
   }
   //
-  DataObject* object = obj ;
+  DataObject* object = obj;
   //
-  StatusCode sc =
-    m_copy ?
-    evtSvc () -> registerObject ( m_target , object ) :
-    evtSvc () -> linkObject     ( m_target , object ) ;
+  StatusCode sc = m_copy ? evtSvc()->registerObject( m_target, object ) : evtSvc()->linkObject( m_target, object );
   //
-  if ( sc.isFailure() )
-  {
-    setFilterPassed ( false ) ;
-    return Warning  ( "Unable copy/link " + m_what + " -> " + m_target ,
-                      m_never_fail ? ok : sc ) ;
+  if ( sc.isFailure() ) {
+    setFilterPassed( false );
+    return Warning( "Unable copy/link " + m_what + " -> " + m_target, m_never_fail ? ok : sc );
   }
   //
-  setFilterPassed ( true ) ;
+  setFilterPassed( true );
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
-Gaudi::DataLink::DataLink
-( const std::string& name ,
-  ISvcLocator*       pSvc )
-  : Gaudi::DataCopy ( name , pSvc )
-{
-  m_copy = false ;
+Gaudi::DataLink::DataLink( const std::string& name, ISvcLocator* pSvc ) : Gaudi::DataCopy( name, pSvc ) {
+  m_copy = false;
 }
 // ============================================================================
 DECLARE_COMPONENT( Gaudi::DataCopy )

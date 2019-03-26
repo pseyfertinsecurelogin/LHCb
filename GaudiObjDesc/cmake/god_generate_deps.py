@@ -17,12 +17,17 @@ from xml.dom import minidom
 from os.path import join, basename, splitext, exists
 from optparse import OptionParser
 
+
 def main():
     parser = OptionParser(usage='%prog <cmake file> <xml files...>')
-    parser.add_option('-s', '--src-output', action='store', metavar="DIR",
-                      help='define possible output destination of source code. '
-                      'Use the special value "env" to use the content of the environment '
-                      'variable GODDOTHOUT. [default: %default]')
+    parser.add_option(
+        '-s',
+        '--src-output',
+        action='store',
+        metavar="DIR",
+        help='define possible output destination of source code. '
+        'Use the special value "env" to use the content of the environment '
+        'variable GODDOTHOUT. [default: %default]')
 
     parser.set_defaults(src_output=os.curdir)
 
@@ -38,13 +43,21 @@ def main():
     for xmlfile in xmlfiles:
         key = splitext(basename(xmlfile))[0]
         dom = minidom.parse(xmlfile)
-        elements_filename_set =  [elem.getAttribute('fileName') + '.h' for elem in dom.getElementsByTagName('class') + dom.getElementsByTagName('namespace')  if elem.hasAttribute('fileName')]
-        if len(elements_filename_set)>0:
+        elements_filename_set = [
+            elem.getAttribute('fileName') + '.h'
+            for elem in dom.getElementsByTagName('class') +
+            dom.getElementsByTagName('namespace')
+            if elem.hasAttribute('fileName')
+        ]
+        if len(elements_filename_set) > 0:
             elements = elements_filename_set
         else:
-            elements = [elem.getAttribute('name') + '.h' for elem in dom.getElementsByTagName('class') + dom.getElementsByTagName('namespace')]
-        products[key].update(join(opts.src_output,elem)
-                             for elem in elements)
+            elements = [
+                elem.getAttribute('name') + '.h'
+                for elem in dom.getElementsByTagName('class') +
+                dom.getElementsByTagName('namespace')
+            ]
+        products[key].update(join(opts.src_output, elem) for elem in elements)
 
     old_data = open(cmake_info).read() if exists(cmake_info) else ''
     data = ''
@@ -54,6 +67,7 @@ def main():
                  '    {1})\n').format(key, '\n    '.join(files))
     if data != old_data:
         open(cmake_info, 'w').write(data)
+
 
 if __name__ == '__main__':
     main()

@@ -14,7 +14,6 @@
 // Include files
 #include "GaudiKernel/IAlgTool.h"
 
-
 /** @class INormalizeTool INormalizeTool.h Kernel/INormalizeTool.h
  *  Interface class for generic normalisation tool
  *
@@ -24,7 +23,7 @@
 struct INormalizeTool : extend_interfaces<IAlgTool> {
 
   /// Retrieve interface ID
-  DeclareInterfaceID(INormalizeTool, 2, 0);
+  DeclareInterfaceID( INormalizeTool, 2, 0 );
 
   /// Return a normalization value
   virtual double normalize() = 0;

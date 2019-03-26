@@ -32,8 +32,7 @@ static const CLID CLID_DeFTStation = 8602;
 
 class DeFTStation : public DetectorElement {
 
-public: 
-
+public:
   /// Standard constructor
   using DetectorElement::DetectorElement;
 
@@ -51,33 +50,32 @@ public:
   static const CLID& classID() { return CLID_DeFTStation; }
 
   /** @return stationID */
-  unsigned int stationID() const { return m_stationID;}
+  unsigned int stationID() const { return m_stationID; }
 
   /** @return Vector of pointers to the FT Layers */
-  const std::array<DeFTLayer*,4>&  layers()  const { return m_layers; }
+  const std::array<DeFTLayer*, 4>& layers() const { return m_layers; }
 
-   /** Find the FT Layer where a global point is
+  /** Find the FT Layer where a global point is
    *  @return Pointer to the relevant Layer
    */
-  const DeFTLayer* findLayer(const Gaudi::XYZPoint& point) const;
+  const DeFTLayer* findLayer( const Gaudi::XYZPoint& point ) const;
 
   /** Const method to return the layer for a given channel id
    * @param  aChannel an FT channel id
    * @return pointer to detector element
    */
-  const DeFTLayer* findLayer(const LHCb::FTChannelID& aChannel) const;
+  const DeFTLayer* findLayer( const LHCb::FTChannelID& aChannel ) const;
 
 private: // private data members
-
   /// array of pointers to layers
-  std::array<DeFTLayer*,4> m_layers{{nullptr,nullptr,nullptr, nullptr}};
+  std::array<DeFTLayer*, 4> m_layers{{nullptr, nullptr, nullptr, nullptr}};
 
-  unsigned int m_stationID;      ///< station ID number
+  unsigned int m_stationID; ///< station ID number
 
-}; //end of class
+}; // end of class
 
 /// Find layer methods
-inline const DeFTLayer* DeFTStation::findLayer(const LHCb::FTChannelID& aChannel) const {
+inline const DeFTLayer* DeFTStation::findLayer( const LHCb::FTChannelID& aChannel ) const {
   return m_layers[aChannel.layer()];
 }
 

@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ===========================================================================
-#ifndef     DETDESC_SOLIDCONS_H
-#define     DETDESC_SOLIDCONS_H 1
+#ifndef DETDESC_SOLIDCONS_H
+#define DETDESC_SOLIDCONS_H 1
 // STD and STL
 #include <cmath>
 #include <iostream>
@@ -35,13 +35,11 @@ class SolidFactory;
  *  @author Vanya Belyaev
  */
 
-class SolidCons final : public virtual SolidBase
-{
+class SolidCons final : public virtual SolidBase {
   /// friend factory for instantiation
   friend class SolidFactory<SolidCons>;
 
 public:
-
   /** standard constructor
    *  @param name                  name of conical tube segment
    *  @param ZHalfLength           half-length
@@ -54,22 +52,17 @@ public:
    *  @param CoverModel            covering model
    *  @exception SolidException    wrong parameters range
    */
-  SolidCons( const std::string& name                                  ,
-             const double       ZHalfLength                           ,
-             const double       OuterRadiusAtMinusZ                   ,
-             const double       OuterRadiusAtPlusZ                    ,
-             const double       InnerRadiusAtMinusZ  =   0.0          ,
-             const double       InnerRadiusAtPlusZ   =   0.0          ,
-             const double       StartPhiAngle =   0.0 * Gaudi::Units::degree,
-             const double       DeltaPhiAngle = 360.0 * Gaudi::Units::degree,
-             const int          CoverModel           =   0            );
+  SolidCons( const std::string& name, const double ZHalfLength, const double OuterRadiusAtMinusZ,
+             const double OuterRadiusAtPlusZ, const double InnerRadiusAtMinusZ = 0.0,
+             const double InnerRadiusAtPlusZ = 0.0, const double StartPhiAngle = 0.0 * Gaudi::Units::degree,
+             const double DeltaPhiAngle = 360.0 * Gaudi::Units::degree, const int CoverModel = 0 );
 
   /** - retrieve the conical tube segment  type
    *  - implementation of ISolid abstract interface
    *  @see ISolid
    *  return box type
    */
-  inline std::string typeName () const override { return "SolidCons"; }
+  inline std::string typeName() const override { return "SolidCons"; }
 
   /** - check for the given 3D-point.
    *    Point coordinated are in the local reference
@@ -79,9 +72,9 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside ( const Gaudi::XYZPoint       & point ) const override;
-  bool isInside ( const Gaudi::Polar3DPoint   & point ) const override;
-  bool isInside ( const Gaudi::RhoZPhiPoint   & point ) const override;
+  bool isInside( const Gaudi::XYZPoint& point ) const override;
+  bool isInside( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside( const Gaudi::RhoZPhiPoint& point ) const override;
   /** -\# retrieve the pointer to "simplified" solid - "cover"
    *    - for Model = 0
    *        -\# the cover for the general conical tube segment is
@@ -96,7 +89,7 @@ public:
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  inline const ISolid* cover () const override { return m_cover.get(); }
+  inline const ISolid* cover() const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -106,7 +99,7 @@ public:
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream&  printOut ( std::ostream& os = std::cout )    const override;
+  std::ostream& printOut( std::ostream& os = std::cout ) const override;
 
   /** - printout to Gaudi MsgStream stream
    *  - implementation  of ISolid abstract interface
@@ -116,9 +109,9 @@ public:
    *  @param "" STD/STL stream
    *  @return reference to the stream
    */
-  MsgStream&     printOut ( MsgStream&                   )    const override;
+  MsgStream& printOut( MsgStream& ) const override;
 
-  /** Tests whether or not the given line (defined as a point and 
+  /** Tests whether or not the given line (defined as a point and
    *  a direction) intersects or not with the given solid.
    *  - Line is parametrized with parameter \a t :
    *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
@@ -128,12 +121,9 @@ public:
    *  @param Vector vector along the line
    *  @return the number of intersection points
    */
-  bool testForIntersection( const Gaudi::XYZPoint & Point      ,
-                            const Gaudi::XYZVector& Vector     ) const override;
-  bool testForIntersection( const Gaudi::Polar3DPoint & Point  ,
-                            const Gaudi::Polar3DVector& Vector ) const override;
-  bool testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
-                            const Gaudi::RhoZPhiVector& Vector ) const override;
+  bool testForIntersection( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector ) const override;
+  bool testForIntersection( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector ) const override;
+  bool testForIntersection( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector ) const override;
 
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -154,17 +144,14 @@ public:
    *  @return the number of intersection points
    */
 
-  unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
-                                  const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks  ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                  const Gaudi::Polar3DVector & Vector,
-                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                  const Gaudi::RhoZPhiVector & Vector,
-                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
   /** calculate the intersection points("ticks") of the solid objects
    *  with given line.
@@ -188,213 +175,179 @@ public:
    *  @return the number of intersection points
    */
 
-  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point,
-                                  const Gaudi::XYZVector & Vector,
-                                  const ISolid::Tick& tickMin,
-                                  const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks   ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
-                                  const Gaudi::Polar3DVector & Vector,
-                                  const ISolid::Tick& tickMin,
-                                  const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks   ) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
-                                  const Gaudi::RhoZPhiVector & Vector,
-                                  const ISolid::Tick& tickMin,
-                                  const ISolid::Tick& tickMax,
-                                  ISolid::Ticks& ticks   ) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                  const ISolid::Tick& tickMin, const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks ) const override;
 
   /** inner radius squared at minus Z
    *  @return inner radius squared at minus Z
    */
-  inline double innerRadiusSqrAtMinusZ () const noexcept
-  { return m_cons_innerRadiusMinusZSq ; }
+  inline double innerRadiusSqrAtMinusZ() const noexcept { return m_cons_innerRadiusMinusZSq; }
 
   /** outer radius squared at minus Z
    *  @return outer radius squared at minus Z
    */
-  inline double outerRadiusSqrAtMinusZ () const noexcept
-  { return m_cons_outerRadiusMinusZSq ; }
+  inline double outerRadiusSqrAtMinusZ() const noexcept { return m_cons_outerRadiusMinusZSq; }
 
   /** inner radius at minus Z
    *  @return inner radius at minus Z
    */
-  inline double  innerRadiusAtMinusZ () const noexcept
-  { return m_cons_innerRadiusMinusZ ; }
+  inline double innerRadiusAtMinusZ() const noexcept { return m_cons_innerRadiusMinusZ; }
 
   /** outer radius at minus Z
    *  @return outer radius at minus Z
    */
-  inline double  outerRadiusAtMinusZ () const noexcept
-  { return m_cons_outerRadiusMinusZ ; }
+  inline double outerRadiusAtMinusZ() const noexcept { return m_cons_outerRadiusMinusZ; }
 
   /** inner radius squared at plus Z
    *  @return inner radius squared at plus Z
    */
-  inline double  innerRadiusSqrAtPlusZ  () const noexcept
-  { return m_cons_innerRadiusPlusZSq ; }
+  inline double innerRadiusSqrAtPlusZ() const noexcept { return m_cons_innerRadiusPlusZSq; }
 
   /** outer radius squared at plus Z
    *  @return outer radius squared at plus Z
    */
-  inline double  outerRadiusSqrAtPlusZ  () const noexcept
-  { return m_cons_outerRadiusPlusZSq ; }
+  inline double outerRadiusSqrAtPlusZ() const noexcept { return m_cons_outerRadiusPlusZSq; }
 
   /** inner radius at plus Z
    *  @return inner radius at plus Z
    */
-  inline double  innerRadiusAtPlusZ  () const noexcept
-  { return m_cons_innerRadiusPlusZ  ; }
+  inline double innerRadiusAtPlusZ() const noexcept { return m_cons_innerRadiusPlusZ; }
 
   /** outer radius at plus Z
    *  @return outer radius at plus Z
    */
-  inline double  outerRadiusAtPlusZ  () const noexcept
-  { return m_cons_outerRadiusPlusZ  ; }
+  inline double outerRadiusAtPlusZ() const noexcept { return m_cons_outerRadiusPlusZ; }
 
   /** half length
    *  @return half length
    */
-  inline double  zHalfLength         () const noexcept
-  { return m_cons_zHalfLength       ; }
+  inline double zHalfLength() const noexcept { return m_cons_zHalfLength; }
 
   /** start phi angle
    *  @return  start phi angle
    */
-  inline double  startPhiAngle       () const noexcept
-  { return m_cons_startPhiAngle     ; }
+  inline double startPhiAngle() const noexcept { return m_cons_startPhiAngle; }
 
   /** delta phi
    *  @return delta phi
    */
-  inline double  deltaPhiAngle       () const noexcept
-  { return m_cons_deltaPhiAngle     ; }
+  inline double deltaPhiAngle() const noexcept { return m_cons_deltaPhiAngle; }
 
   /** inner diameter at minus Z
    *  @return inner diameter at minus Z
    */
-  inline double  innerDiameterAtMinusZ () const noexcept
-  { return m_cons_innerRadiusMinusZ * 2 ; }
+  inline double innerDiameterAtMinusZ() const noexcept { return m_cons_innerRadiusMinusZ * 2; }
 
   /** outer radius at minus Z
    *  @return outer radius at minus Z
    */
-  inline double  outerDiameterAtMinusZ () const noexcept
-  { return m_cons_outerRadiusMinusZ * 2 ; }
+  inline double outerDiameterAtMinusZ() const noexcept { return m_cons_outerRadiusMinusZ * 2; }
 
   /**inner radius at plus Z
    * @return inner radius at plus Z
    */
-  inline double  innerDiameterAtPlusZ  () const noexcept
-  { return m_cons_innerRadiusPlusZ  * 2 ; }
+  inline double innerDiameterAtPlusZ() const noexcept { return m_cons_innerRadiusPlusZ * 2; }
 
   /** outer radius at plus Z
    *  @return outer radius at plus Z
    */
-  inline double  outerDiameterAtPlusZ  () const noexcept
-  { return m_cons_outerRadiusPlusZ  * 2 ; }
+  inline double outerDiameterAtPlusZ() const noexcept { return m_cons_outerRadiusPlusZ * 2; }
 
   /** full length
    *  @return full length
    */
-  inline double  zLength               () const noexcept
-  { return m_cons_zHalfLength       * 2 ; }
+  inline double zLength() const noexcept { return m_cons_zHalfLength * 2; }
 
   /** end phi angle
    *  @return end phi angle
    */
-  inline double  endPhiAngle           () const noexcept
-  { return m_cons_startPhiAngle + m_cons_deltaPhiAngle ; }
+  inline double endPhiAngle() const noexcept { return m_cons_startPhiAngle + m_cons_deltaPhiAngle; }
 
 protected:
-
   /** inner radius at given z
    *  @param z z position
    *  @return inner ragius at given z
    */
-  inline double iR_z( const double z ) const ;
+  inline double iR_z( const double z ) const;
 
   /** outer radius at given z
    *  @param z z position
    *  @return outer ragius at given z
    */
-  inline double oR_z( const double z ) const ;
-
+  inline double oR_z( const double z ) const;
 
   /// gap in phi ?
-  bool noPhiGap() const noexcept { return m_noPhiGap ; }
+  bool noPhiGap() const noexcept { return m_noPhiGap; }
 
   /// check if phi is in phi range
-  inline bool insidePhi ( const double phi /* [-pi,pi] */ ) const ;
+  inline bool insidePhi( const double phi /* [-pi,pi] */ ) const;
 
   /** check for phi
    *  @param point to be checked
    *  @return true if point is "inside phi"
    */
   template <class aPoint>
-  inline bool insidePhi ( const aPoint& point ) const ;
+  inline bool insidePhi( const aPoint& point ) const;
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const noexcept override { return 4 ; }
+  Ticks::size_type maxNumberOfTicks() const noexcept override { return 4; }
 
 protected:
-
   /** set bounding parameters
    */
   void setBP();
 
 private:
-
-  SolidCons           ( const SolidCons & );  ///< no copy-constructor
-  SolidCons& operator=( const SolidCons & );  ///< no assignment
+  SolidCons( const SolidCons& );            ///< no copy-constructor
+  SolidCons& operator=( const SolidCons& ); ///< no assignment
 
   /**
    * implementation of isInside
    * @param  point reference to any kind of point with x(), y(), z()
    * @return bool
    */
-  template<class aPoint>
-  bool isInsideImpl(const aPoint& point) const;
+  template <class aPoint>
+  bool isInsideImpl( const aPoint& point ) const;
 
-  template<class aPoint, class aVector>
-  bool testForIntersectionImpl( const aPoint  & Point,
-                                const aVector & Vector ) const;
+  template <class aPoint, class aVector>
+  bool testForIntersectionImpl( const aPoint& Point, const aVector& Vector ) const;
 
-  template<class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint  & Point,
-                                      const aVector & Vector,
-                                      const ISolid::Tick& tickMin,
-                                      const ISolid::Tick& tickMax,
-                                      ISolid::Ticks&  ticks) const;
+  template <class aPoint, class aVector>
+  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, const ISolid::Tick& tickMin,
+                                      const ISolid::Tick& tickMax, ISolid::Ticks& ticks ) const;
 
-  template<class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint  & Point,
-                                      const aVector & Vector,
-                                      ISolid::Ticks& ticks ) const;
-  void createCover();
+  template <class aPoint, class aVector>
+  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  void         createCover();
 
 private:
-
-  double                  m_cons_zHalfLength       {0};
-  double                  m_cons_outerRadiusMinusZ {0};
-  double                  m_cons_outerRadiusPlusZ  {0};
-  double                  m_cons_innerRadiusMinusZ {0};
-  double                  m_cons_innerRadiusPlusZ  {0};
-  double                  m_cons_startPhiAngle     {0};
-  double                  m_cons_deltaPhiAngle     {0};
+  double m_cons_zHalfLength{0};
+  double m_cons_outerRadiusMinusZ{0};
+  double m_cons_outerRadiusPlusZ{0};
+  double m_cons_innerRadiusMinusZ{0};
+  double m_cons_innerRadiusPlusZ{0};
+  double m_cons_startPhiAngle{0};
+  double m_cons_deltaPhiAngle{0};
   ///
-  int                     m_cons_coverModel        {0};
-  bool                    m_noPhiGap               {0};
+  int  m_cons_coverModel{0};
+  bool m_noPhiGap{0};
   // cache squares
-  double                  m_cons_outerRadiusMinusZSq {0};
-  double                  m_cons_outerRadiusPlusZSq  {0};
-  double                  m_cons_innerRadiusMinusZSq {0};
-  double                  m_cons_innerRadiusPlusZSq  {0};
+  double m_cons_outerRadiusMinusZSq{0};
+  double m_cons_outerRadiusPlusZSq{0};
+  double m_cons_innerRadiusMinusZSq{0};
+  double m_cons_innerRadiusPlusZSq{0};
 
   std::unique_ptr<ISolid> m_cover;
 };
@@ -406,13 +359,10 @@ private:
  *  @return inner ragius at given z
  */
 // ===========================================================================
-inline double SolidCons::iR_z( const double z ) const
-{
-  const double a =
-    ( innerRadiusAtPlusZ () - innerRadiusAtMinusZ () ) / zHalfLength ();
-  const double b =
-    ( innerRadiusAtPlusZ () + innerRadiusAtMinusZ () )  ;
-  return 0.5 * ( a * z  + b );
+inline double SolidCons::iR_z( const double z ) const {
+  const double a = ( innerRadiusAtPlusZ() - innerRadiusAtMinusZ() ) / zHalfLength();
+  const double b = ( innerRadiusAtPlusZ() + innerRadiusAtMinusZ() );
+  return 0.5 * ( a * z + b );
 }
 // ===========================================================================
 
@@ -422,13 +372,10 @@ inline double SolidCons::iR_z( const double z ) const
  *  @return outer ragius at given z
  */
 // ===========================================================================
-inline double SolidCons::oR_z( const double z ) const
-{
-  const double a =
-    ( outerRadiusAtPlusZ () - outerRadiusAtMinusZ () ) / zHalfLength ();
-  const double b =
-    ( outerRadiusAtPlusZ () + outerRadiusAtMinusZ () )  ;
-  return 0.5*(a*z+b);
+inline double SolidCons::oR_z( const double z ) const {
+  const double a = ( outerRadiusAtPlusZ() - outerRadiusAtMinusZ() ) / zHalfLength();
+  const double b = ( outerRadiusAtPlusZ() + outerRadiusAtMinusZ() );
+  return 0.5 * ( a * z + b );
 }
 // ===========================================================================
 
@@ -438,14 +385,9 @@ inline double SolidCons::oR_z( const double z ) const
  *  @return true if point is "inside phi"
  */
 // ===========================================================================
-inline bool SolidCons::insidePhi ( const double phi /* [-pi,pi] */ ) const
-{
-  return
-    noPhiGap() ||
-    ( startPhiAngle ()                   <= phi &&
-      startPhiAngle () + deltaPhiAngle() >= phi     ) ||
-    ( startPhiAngle ()                   <= phi + 2*M_PI &&
-      startPhiAngle () + deltaPhiAngle() >= phi + 2*M_PI ) ;
+inline bool SolidCons::insidePhi( const double phi /* [-pi,pi] */ ) const {
+  return noPhiGap() || ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) ||
+         ( startPhiAngle() <= phi + 2 * M_PI && startPhiAngle() + deltaPhiAngle() >= phi + 2 * M_PI );
 }
 
 // ===========================================================================
@@ -454,10 +396,9 @@ inline bool SolidCons::insidePhi ( const double phi /* [-pi,pi] */ ) const
  *  @return true if point is "inside phi"
  */
 // ===========================================================================
-template< class aPoint>
-inline bool SolidCons::insidePhi ( const aPoint& point ) const
-{
-  return noPhiGap() || insidePhi( point.phi() ) ;
+template <class aPoint>
+inline bool SolidCons::insidePhi( const aPoint& point ) const {
+  return noPhiGap() || insidePhi( point.phi() );
 }
 // ===========================================================================
 #endif ///<  DETDESC_SOLIDCONS_H

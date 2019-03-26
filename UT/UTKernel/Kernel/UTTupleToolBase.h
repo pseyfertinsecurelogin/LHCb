@@ -29,8 +29,7 @@
 // local
 #include "Kernel/UTCommonBase.h"
 
-namespace UT
-{
+namespace UT {
 
   //-----------------------------------------------------------------------------
   /** @class AlgBase UTTupleToolBase.h UTKernel/UTTupleToolBase.h
@@ -43,20 +42,14 @@ namespace UT
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public UT::CommonBase<GaudiTupleTool>
-  {
+  class TupleToolBase : public UT::CommonBase<GaudiTupleTool> {
 
   public:
-
     /// Standard constructor
-    TupleToolBase(const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent )
-      : UT::CommonBase<GaudiTupleTool> ( type, name, parent ) { }
-
+    TupleToolBase( const std::string& type, const std::string& name, const IInterface* parent )
+        : UT::CommonBase<GaudiTupleTool>( type, name, parent ) {}
   };
 
-}
-
+} // namespace UT
 
 #endif // UTKERNEL_UTHIUTOTOOLBASE_H

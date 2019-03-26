@@ -27,10 +27,7 @@
 // local
 #include "RichUtils/RichTrackSegment.h"
 
-void
-LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint &   rotPnt,
-                                     const Gaudi::Transform3D &trans )
-{
+void LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint& rotPnt, const Gaudi::Transform3D& trans ) {
   // Entry point
   auto toEntry = entryPoint() - rotPnt;
   // Middle point
@@ -38,17 +35,11 @@ LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint &   rotPnt,
   // exit point
   auto toExit = exitPoint() - rotPnt;
   // set the states
-  setStates( rotPnt + trans( toEntry ),
-             trans( entryMomentum() ),
-             rotPnt + trans( toMid ),
-             trans( middleMomentum() ),
-             rotPnt + trans( toExit ),
-             trans( exitMomentum() ) );
+  setStates( rotPnt + trans( toEntry ), trans( entryMomentum() ), rotPnt + trans( toMid ), trans( middleMomentum() ),
+             rotPnt + trans( toExit ), trans( exitMomentum() ) );
 }
 
-void
-LHCb::RichTrackSegment::updateCachedInfo()
-{
+void LHCb::RichTrackSegment::updateCachedInfo() {
   // compute the cached rotation matrices for the angle calculations
   const auto z = bestMomentum().Unit();
   auto       y = z.Cross( Gaudi::XYZVector( 1, 0, 0 ) );
@@ -88,25 +79,18 @@ LHCb::RichTrackSegment::updateCachedInfo()
   m_rotation2SIMD   = SIMDRotation3D( m_rotation2 );
 }
 
-Gaudi::XYZVector
-LHCb::RichTrackSegment::bestMomentum( const double fractDist ) const
-{
+Gaudi::XYZVector LHCb::RichTrackSegment::bestMomentum( const double fractDist ) const {
   // return the best momentum vector
-  if ( zCoordAt( fractDist ) < middlePoint().z() )
-  {
+  if ( zCoordAt( fractDist ) < middlePoint().z() ) {
     const auto midFrac = fractDist * m_invMidFrac1;
     return ( entryMomentum() * ( 1 - midFrac ) ) + ( middleMomentum() * midFrac );
-  }
-  else
-  {
+  } else {
     const auto midFrac = ( fractDist / m_midFrac2 ) - 1.0;
     return ( middleMomentum() * ( 1 - midFrac ) ) + ( exitMomentum() * midFrac );
   }
 }
 
-std::ostream &
-LHCb::RichTrackSegment::fillStream( std::ostream &s ) const
-{
+std::ostream& LHCb::RichTrackSegment::fillStream( std::ostream& s ) const {
   s << "{ " << std::endl
     << " entryPoint:\t" << entryPoint() << std::endl
     << " middlePoint:\t" << middlePoint() << std::endl

@@ -25,39 +25,49 @@
 // ============================================================================
 #include "LoKi/Reference.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   template <class TYPE>
-  bool same ( const TYPE* o1 , const TYPE* o2           ) { return o1 == o2 ; }
+  bool same( const TYPE* o1, const TYPE* o2 ) {
+    return o1 == o2;
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const TYPE* o1 , const SmartRef<TYPE>& o2 ) { return o1 == o2 ; }
+  bool same( const TYPE* o1, const SmartRef<TYPE>& o2 ) {
+    return o1 == o2;
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const SmartRef<TYPE>& o1 , const TYPE* o2 ) { return o1 == o2 ; }
+  bool same( const SmartRef<TYPE>& o1, const TYPE* o2 ) {
+    return o1 == o2;
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const SmartRef<TYPE>& o1 ,
-              const SmartRef<TYPE>& o2 ) { return o1 == o2.target() ; }
+  bool same( const SmartRef<TYPE>& o1, const SmartRef<TYPE>& o2 ) {
+    return o1 == o2.target();
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const LoKi::Reference<TYPE>& o1 ,
-              const                 TYPE&  o2 ) { return o1 == o2 ; }
+  bool same( const LoKi::Reference<TYPE>& o1, const TYPE& o2 ) {
+    return o1 == o2;
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const                 TYPE&  o1 ,
-              const LoKi::Reference<TYPE>& o2 ) { return o2 == o1 ; }
+  bool same( const TYPE& o1, const LoKi::Reference<TYPE>& o2 ) {
+    return o2 == o1;
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const LoKi::Reference<TYPE>& o1 ,
-              const LoKi::Reference<TYPE>& o2 ) { return o1 == o2 ; }
+  bool same( const LoKi::Reference<TYPE>& o1, const LoKi::Reference<TYPE>& o2 ) {
+    return o1 == o2;
+  }
   // ==========================================================================
   template <class TYPE>
-  bool same ( const TYPE& o1 ,
-              const TYPE& o2 ) { return same ( &o1 , &o2 ) ; }
+  bool same( const TYPE& o1, const TYPE& o2 ) {
+    return same( &o1, &o2 );
+  }
   // ==========================================================================
-}
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

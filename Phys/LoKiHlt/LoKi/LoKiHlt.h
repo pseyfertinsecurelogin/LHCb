@@ -9,22 +9,22 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_LOKIDAQ_H 
+#ifndef LOKI_LOKIDAQ_H
 #define LOKI_LOKIDAQ_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// LoKi 
+// LoKi
 // ============================================================================
-#include "LoKi/HLTTypes.h"
 #include "LoKi/EventNum.h"
 #include "LoKi/EvtNum.h"
 #include "LoKi/HLT.h"
-#include "LoKi/Odin.h"
+#include "LoKi/HLTTypes.h"
 #include "LoKi/L0.h"
+#include "LoKi/Odin.h"
 #include "LoKi/Prescale.h"
 #include "LoKi/TESGet.h"
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_LOKIDAQ_H

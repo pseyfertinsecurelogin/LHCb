@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef UTDETECTORPLOT_H 
+#ifndef UTDETECTORPLOT_H
 #define UTDETECTORPLOT_H 1
 
 /** @class UTDetectorPlot UTDetectorPlot.h Kernel/UTDetectorPlot.h
@@ -27,26 +27,22 @@
 
 class DeUTSector;
 
-namespace UT
-{
-  class UTDetectorPlot: public UT::Histo2DProperties {
+namespace UT {
+  class UTDetectorPlot : public UT::Histo2DProperties {
 
-public:
-
-    struct Bins{
-      int  xBin;
+  public:
+    struct Bins {
+      int xBin;
       int beginBinY;
       int endBinY;
     };
 
-    UTDetectorPlot(const std::string& name, const std::string& title,
-                   const unsigned int xBinsPerSector = 1u);
+    UTDetectorPlot( const std::string& name, const std::string& title, const unsigned int xBinsPerSector = 1u );
 
     ~UTDetectorPlot();
     typedef Bins Bins;
-    Bins toBins(const DeUTSector* sector) const;
-         
+    Bins         toBins( const DeUTSector* sector ) const;
   };
-}
+} // namespace UT
 
-#endif // UTDETECTORPLOT_H 
+#endif // UTDETECTORPLOT_H

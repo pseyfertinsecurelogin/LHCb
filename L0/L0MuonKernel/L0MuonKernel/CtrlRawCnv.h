@@ -14,12 +14,11 @@
 #include "L0MuonKernel/CandRegisterHandler.h"
 #include "L0MuonKernel/CtrlRawErrors.h"
 #include "L0MuonKernel/MuonCandidate.h"
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace L0Muon {
-
 
   /** @class CtrlRawCnv CtrlRawCnv.h  L0MuonKernel/CtrlRawCnv.h
 
@@ -40,24 +39,22 @@ namespace L0Muon {
       @date 2007-09-03
 
   */
-  class CtrlRawCnv  {
+  class CtrlRawCnv {
 
   private:
-
     /// Size in words of the full frame sent by 1 controller board on 1 channel (optical link)
     static const unsigned int board_full_frame_size = 36;
 
     /// Total size in words of the full frame sent by 1 controller board (sum of 2 channels)
-    static const unsigned int board_full_data_size  = board_full_frame_size*2;
+    static const unsigned int board_full_data_size = board_full_frame_size * 2;
 
     /// Size in words of the part of frame containing data sent by 1 controller board on 1 channel (optical link)
-    static const unsigned int board_frame_size      = 23;
+    static const unsigned int board_frame_size = 23;
 
     /// Total size in words of the frame containing data sent by 1 controller board (summed of 2 channels)
-    static const unsigned int board_data_size       = board_frame_size*2 ;
+    static const unsigned int board_data_size = board_frame_size * 2;
 
   public:
-
     /// Default Constructor
     CtrlRawCnv();
 
@@ -65,7 +62,7 @@ namespace L0Muon {
 
     @param side : identifier of the side attached to this converter (0 for A side, 1 for C side)
     */
-    CtrlRawCnv(int side);
+    CtrlRawCnv( int side );
 
     /// Destructor
     ~CtrlRawCnv();
@@ -75,7 +72,7 @@ namespace L0Muon {
         @param iq : index of the quarter in the side (0 to 1)
         @param ib : index of the board (0 to 11)
     */
-    LHCb::MuonTileID mid_BCSU(int iq, int ib);
+    LHCb::MuonTileID mid_BCSU( int iq, int ib );
 
     /// Clear the registers
     void release();
@@ -90,14 +87,14 @@ namespace L0Muon {
 
         @param iq : index of the quarter in the side (0 to 1)
     */
-    int status(int i){return m_candRegHandler[i].getStatus();}
+    int status( int i ) { return m_candRegHandler[i].getStatus(); }
 
     /** Returns the status set by the specified processing board
 
         @param iq : index of the quarter in the side (0 to 1)
         @param ib : index of the board (0 to 11)
     */
-    int status_BCSU(int i,int ib){return m_candRegHandlerBCSU[i][ib].getStatus();}
+    int status_BCSU( int i, int ib ) { return m_candRegHandlerBCSU[i][ib].getStatus(); }
 
     /** Decode the L0MuonRaw bank related to the controller board.
 
@@ -117,40 +114,37 @@ namespace L0Muon {
         @param version : version of the L0MuonCtrlCand bank
         @param mode : decoding mode (<=1: decode only the 1st part of the bank, >1: decode both parts)
     */
-    void decodeBank(const std::vector<unsigned int> &raw, int version, int &RefL0EventNumber, int &RefL0_B_Id);
-    void rawBank(std::vector<unsigned int> &raw, int version);
+    void decodeBank( const std::vector<unsigned int>& raw, int version, int& RefL0EventNumber, int& RefL0_B_Id );
+    void rawBank( std::vector<unsigned int>& raw, int version );
 
-    void dump(const std::vector<unsigned int> &raw);
+    void dump( const std::vector<unsigned int>& raw );
 
-    bool inError(int iq){ return m_errors[iq].inError();}
-    bool decodingError(int iq){ return m_errors[iq].decodingError();}
-    void dumpErrorHeader(int ib, std::string tab="") {std::cout<<m_errors[ib].header(tab)<<std::endl;}
-    void dumpErrorField(int ib, std::string tab="") {std::cout<<tab<<m_errors[ib]<<std::endl;}
-    void dumpErrorCounters(std::string &os);
+    bool inError( int iq ) { return m_errors[iq].inError(); }
+    bool decodingError( int iq ) { return m_errors[iq].decodingError(); }
+    void dumpErrorHeader( int ib, std::string tab = "" ) { std::cout << m_errors[ib].header( tab ) << std::endl; }
+    void dumpErrorField( int ib, std::string tab = "" ) { std::cout << tab << m_errors[ib] << std::endl; }
+    void dumpErrorCounters( std::string& os );
 
-    bool isActiv(){return m_activ;}
+    bool isActiv() { return m_activ; }
 
-    int numberOfDecodedBanks() {return m_n_decoded_banks;}
+    int numberOfDecodedBanks() { return m_n_decoded_banks; }
 
   private:
-
-    void decodeBank_v1(const std::vector<unsigned int> &raw, int &RefL0EventNumber, int &RefL0_B_Id);
-    void decodeBank_v2(const std::vector<unsigned int> &raw, int &RefL0EventNumber, int &RefL0_B_Id);
+    void decodeBank_v1( const std::vector<unsigned int>& raw, int& RefL0EventNumber, int& RefL0_B_Id );
+    void decodeBank_v2( const std::vector<unsigned int>& raw, int& RefL0EventNumber, int& RefL0_B_Id );
 
     bool m_activ;
-    int m_n_decoded_banks;
-    int m_side;
+    int  m_n_decoded_banks;
+    int  m_side;
 
-    enum fpgas {CU,SU};
+    enum fpgas { CU, SU };
 
     // Input candidate registers
     CandRegisterHandler m_candRegHandler[2];
     CandRegisterHandler m_candRegHandlerBCSU[2][12];
 
     CtrlRawErrors m_errors[2];
-
-
   };
 } // namespace L0Muon
 
-#endif    // L0MUONKERNEL_CTRLRAWCNV_H
+#endif // L0MUONKERNEL_CTRLRAWCNV_H

@@ -11,16 +11,20 @@
 """
 Test command line parsing.
 """
-from ..godII import godII # IGNORE:F0401
+from ..godII import godII  # IGNORE:F0401
 
 import os
 
 from nose import SkipTest
 
+
 def setup():
     import GaudiObjDesc
     if 'GAUDIOBJDESCROOT' not in os.environ:
-        os.environ['GAUDIOBJDESCROOT'] = os.path.normpath(os.path.join(GaudiObjDesc.__file__, os.pardir, os.pardir, os.pardir))
+        os.environ['GAUDIOBJDESCROOT'] = os.path.normpath(
+            os.path.join(GaudiObjDesc.__file__, os.pardir, os.pardir,
+                         os.pardir))
+
 
 class CmdLineTestBase(object):
     prog = 'godII.py'
@@ -36,6 +40,7 @@ class CmdLineTestBase(object):
             cls.g = godII([cls.prog] + cls.args)
         except SystemExit, x:
             cls.exit = x
+
 
 class OptionsTestBase(CmdLineTestBase):
     prog = 'godII.py'
@@ -70,15 +75,18 @@ class OptionsTestBase(CmdLineTestBase):
             return self.expected[key]
         else:
             return self._defaults[key]
+
     def check(self, key):
         value = self.get(key)
         expected = self.getExpected(key)
         if type(expected) is bool:
-            assert bool(value) is expected, "found %r, expected %r" % (bool(value), expected)
+            assert bool(value) is expected, "found %r, expected %r" % (
+                bool(value), expected)
         elif hasattr(expected, '__call__'):
             assert expected(self, value), value
         else:
-            assert value == expected, "found %r, expected %r" % (value, expected)
+            assert value == expected, "found %r, expected %r" % (value,
+                                                                 expected)
 
     def test_exit_code(self):
         assert self.exit is None, "execution interrupted (exit code %s)" % self.exit
@@ -89,55 +97,71 @@ class OptionsTestBase(CmdLineTestBase):
         for k in keys:
             yield self.check, k
 
+
 class ExitCodeTestBase(CmdLineTestBase):
-    expected_code = (0,)
+    expected_code = (0, )
+
     def test_exit_code(self):
-        assert self.exit is not None and self.exit.code in self.expected_code, "wrong exit code %s, expected %s" % (self.exit, self.expected_code)
+        assert self.exit is not None and self.exit.code in self.expected_code, "wrong exit code %s, expected %s" % (
+            self.exit, self.expected_code)
+
 
 class TestNoOpts(OptionsTestBase):
     pass
+
 
 class Test_gen_src(OptionsTestBase):
     args = ['-g', 'src']
     expected = {'gClassDicts': False, 'gAssocDicts': False}
 
+
 class Test_gen_dict(OptionsTestBase):
     args = ['-g', 'dct']
     expected = {'gClasses': False, 'gNamespaces': False}
+
 
 class Test_gen_stuff(ExitCodeTestBase):
     args = ['-g', 'stuff']
     expected_code = (1, 2)
 
+
 class Test_version(ExitCodeTestBase):
     args = ['-v']
 
+
 class Test_help(ExitCodeTestBase):
     args = ['-h']
+
 
 class TestBadOpt(ExitCodeTestBase):
     args = ['--bad-option']
     expected_code = (1, 2)
 
+
 class Test_DBFileExtra(OptionsTestBase):
     args = ['-i', 'file1', '-i', 'file2']
     expected = {'xmlDBFileExtra': ['file1', 'file2']}
+
 
 class Test_srcOutput_1(OptionsTestBase):
     args = ['-s', 'some_destination']
     expected = {'srcOutput': 'some_destination'}
 
+
 class Test_srcOutput_env(OptionsTestBase):
     args = ['-s', 'env']
     expected = {'srcOutput': 'some_destination'}
+
     @classmethod
     def setup_all(cls):
         os.environ['GODDOTHOUT'] = 'some_destination'
         super(Test_srcOutput_env, cls).setup_all()
 
+
 class Test_srcOutput_no_env(ExitCodeTestBase):
     args = ['-s', 'env']
     expected_code = (1, 2)
+
     @classmethod
     def setup_all(cls):
         try:
@@ -146,9 +170,11 @@ class Test_srcOutput_no_env(ExitCodeTestBase):
             pass
         super(Test_srcOutput_no_env, cls).setup_all()
 
+
 class Test_dictOutput_1(OptionsTestBase):
     args = ['-d', 'some_destination']
     expected = {'dictOutput': 'some_destination'}
+
 
 class Test_dictOutput_env(OptionsTestBase):
     args = ['-d', 'env']
@@ -159,9 +185,11 @@ class Test_dictOutput_env(OptionsTestBase):
         os.environ['GODDICTOUT'] = 'some_destination'
         super(Test_dictOutput_env, cls).setup_all()
 
+
 class Test_dictOutput_no_env(ExitCodeTestBase):
     args = ['-d', 'env']
     expected_code = (1, 2)
+
     @classmethod
     def setup_all(cls):
         try:
@@ -170,18 +198,28 @@ class Test_dictOutput_no_env(ExitCodeTestBase):
             pass
         super(Test_dictOutput_no_env, cls).setup_all()
 
+
 class Test_deprecated_srcOutput(OptionsTestBase):
     args = ['-g', 'src', '-o', 'some_destination']
-    expected = {'gClassDicts': False, 'gAssocDicts': False,
-                'srcOutput': 'some_destination'}
+    expected = {
+        'gClassDicts': False,
+        'gAssocDicts': False,
+        'srcOutput': 'some_destination'
+    }
+
 
 class Test_deprecated_dictOutput(OptionsTestBase):
     args = ['-g', 'dct', '-o', 'some_destination']
-    expected = {'gClasses': False, 'gNamespaces': False,
-                'dictOutput': 'some_destination'}
+    expected = {
+        'gClasses': False,
+        'gNamespaces': False,
+        'dictOutput': 'some_destination'
+    }
+
 
 class Test_missing_GAUDIOBJDESCROOT(ExitCodeTestBase):
     expected_code = (1, 2)
+
     @classmethod
     def setup_all(cls):
         root = os.environ['GAUDIOBJDESCROOT']
@@ -192,26 +230,34 @@ class Test_missing_GAUDIOBJDESCROOT(ExitCodeTestBase):
         finally:
             os.environ['GAUDIOBJDESCROOT'] = root
 
+
 class Test_godRoot(OptionsTestBase):
     args = ['-r', 'some/path/location']
-    expected = {'godRoot': lambda self, value: value == 'some/path/location/',
-                'xmlDBFile': 'some/path/location/xml_files/GODsClassDB.xml'}
+    expected = {
+        'godRoot': lambda self, value: value == 'some/path/location/',
+        'xmlDBFile': 'some/path/location/xml_files/GODsClassDB.xml'
+    }
+
 
 class Test_xmlDBFile(OptionsTestBase):
     args = ['-x', 'file_x.xml']
     expected = {'xmlDBFile': 'file_x.xml'}
 
+
 class Test_xmlDBFile_env(OptionsTestBase):
     args = ['-x', 'env']
     expected = {'xmlDBFile': 'file_x.xml'}
+
     @classmethod
     def setup_all(cls):
         os.environ['GODXMLDB'] = 'file_x.xml'
         super(Test_xmlDBFile_env, cls).setup_all()
 
+
 class Test_xmlDBFile_no_env(ExitCodeTestBase):
     args = ['-x', 'env']
     expected_code = (1, 2)
+
     @classmethod
     def setup_all(cls):
         try:
@@ -220,34 +266,42 @@ class Test_xmlDBFile_no_env(ExitCodeTestBase):
             pass
         super(Test_xmlDBFile_no_env, cls).setup_all()
 
+
 class Test_allocator(OptionsTestBase):
     args = ['--allocator', 'BOOST']
     expected = {'allocatorType': 'BOOST'}
 
+
 class Test_allocator_unknown(ExitCodeTestBase):
     args = ['--allocator', 'unknown']
     expected_code = (1, 2)
+
 
 class Test_allocator_missing(ExitCodeTestBase):
     # FIXME: the code reached by this test is not needed
     args = ['--allocator', '']
     expected_code = (1, 2)
 
+
 class Test_ignored_opt_l(OptionsTestBase):
     args = ['-l', 'value']
+
 
 class Test_namespace(OptionsTestBase):
     args = ['-n', 'SomeExperiment']
     expected = {'default_namespace': 'SomeExperiment'}
+
 
 class Test_namespace_missing(ExitCodeTestBase):
     # FIXME: the code reached by this test is not needed
     args = ['-n', '']
     expected_code = (1, 2)
 
+
 class Test_dtdPath(OptionsTestBase):
     args = ['-t', 'path/to/gdd.dtd']
     expected = {'dtdPath': 'path/to/gdd.dtd'}
+
 
 class Test_dtdPath_missing(ExitCodeTestBase):
     # FIXME: the code reached by this test is not needed

@@ -8,15 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#include "boost/container/static_vector.hpp"
 #include "GaudiKernel/SerializeSTL.h"
+#include "boost/container/static_vector.hpp"
 
 namespace GaudiUtils {
-template <typename T, std::size_t C>
-std::ostream& operator<<(std::ostream& s, const boost::container::static_vector<T,C>& c )
-{
+  template <typename T, std::size_t C>
+  std::ostream& operator<<( std::ostream& s, const boost::container::static_vector<T, C>& c ) {
     return details::ostream_joiner( s << '[', c, ", " ) << ']';
-}
-}
+  }
+} // namespace GaudiUtils
 
 using GaudiUtils::operator<<;

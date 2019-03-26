@@ -34,6 +34,18 @@ find_path(GOD_DATA_DIR templates/header.tpl
 get_filename_component(_dep_script_loc ${CMAKE_CURRENT_LIST_FILE} PATH)
 set(god_gen_deps_cmd ${PYTHON_EXECUTABLE} ${_dep_script_loc}/god_generate_deps.py)
 
+find_program(GOD_FORMATTING_COMMAND NAMES clang-format-7 lcg-clang-format-7.0.0)
+if(GOD_FORMATTING_COMMAND)
+  set(GOD_FORMATTING_FLAG --formatter ${GOD_FORMATTING_COMMAND})
+  set(GOD_CLANG_FORMAT_STYLE_URL "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/data/default.clang-format?inline=false"
+      CACHE STRING "URL for the clang-format style to use for GaudiObjDesc generated files")
+  if(NOT EXISTS "${CMAKE_BINARY_DIR}/.clang-format")
+    message(STATUS "Dowload clang-format style for GaudiObjDesc generated files")
+    file(DOWNLOAD "${GOD_CLANG_FORMAT_STYLE_URL}" "${CMAKE_BINARY_DIR}/.clang-format")
+  endif()
+endif()
+
+
 # GaudiObjDesc functions
 #-------------------------------------------------------------------------------
 # god_build_headers(pattern1 pattern2 ...
@@ -83,6 +95,7 @@ function(god_build_headers)
     add_custom_command(OUTPUT ${${fname}_generated_files}
                        COMMAND ${env_cmd} --xml ${env_xml}
                          ${god_cmd} -g src -r ${GOD_DATA_DIR} -t ${GOD_DTD_FILE} -s ${dest}
+                           ${GOD_FORMATTING_FLAG}
                            ${xmlfile}
                        ${_gen_deps}
                        DEPENDS ${xmlfile}
@@ -205,4 +218,3 @@ function(god_build_dictionary)
                        INCLUDE_DIRS ${ARG_INCLUDE_DIRS}
                        OPTIONS ${ARG_OPTIONS})
 endfunction()
-

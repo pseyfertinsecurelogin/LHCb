@@ -20,17 +20,10 @@
     An abstract interface to get the readout information of
     a detector element.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-struct IReadOut : virtual IConditionInfo
-{
-
-};
+struct IReadOut : virtual IConditionInfo {};
 
 #endif // DETDESC_IREADOUT_H
-
-
-
-

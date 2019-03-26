@@ -33,8 +33,7 @@
  *  @date 2011-12-16
  */
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
   /** @class IncidentFilter
    *
@@ -52,50 +51,53 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class IncidentFilter : public extends<GaudiAlgorithm, IIncidentListener>
-  {
+  class IncidentFilter : public extends<GaudiAlgorithm, IIncidentListener> {
   public:
     // ========================================================================
     /// standard constructor
     using extends::extends;
     /// standard initialization
-    StatusCode initialize ()  override;
+    StatusCode initialize() override;
     /// standard finalization
-    StatusCode finalize   ()  override;
+    StatusCode finalize() override;
     /// the only one essential method
-    StatusCode execute ()  override; // the only one essential method
+    StatusCode execute() override; // the only one essential method
     // handle the incident
-    void handle ( const Incident& inc ) override;
+    void handle( const Incident& inc ) override;
     // ========================================================================
   protected:
     // ========================================================================
-    void setVeto ( bool value ) { m_veto = value ; }
+    void setVeto( bool value ) { m_veto = value; }
     // ========================================================================
   private:
     // ========================================================================
-    void   subscribe () ;
-    void unsubscribe () ;
+    void subscribe();
+    void unsubscribe();
     // ========================================================================
   private:
     // ========================================================================
-    bool                     m_veto     = false;
-    bool                     m_decision = false;
+    bool m_veto     = false;
+    bool m_decision = false;
     //
-    typedef std::vector<std::string> LIST    ;
-    Gaudi::Property<LIST> m_incidents
-      { this, "Incidents" , {}, [=](auto&) {
-          if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-          if ( m_old_incidents == m_incidents.value()        ) { return ; }
-          // unsubscribe old incidents
-          IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
-          for ( const auto & item :  m_old_incidents )
-          { isvc->removeListener ( this , item ) ; }
-          // subscribe new incidents
-          subscribe() ;
-        }, "Incidents to be handled" };
-    LIST m_old_incidents ;
+    typedef std::vector<std::string> LIST;
+    Gaudi::Property<LIST>            m_incidents{this,
+                                      "Incidents",
+                                      {},
+                                      [=]( auto& ) {
+                                        if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
+                                        if ( m_old_incidents == m_incidents.value() ) { return; }
+                                        // unsubscribe old incidents
+                                        IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" );
+                                        for ( const auto& item : m_old_incidents ) {
+                                          isvc->removeListener( this, item );
+                                        }
+                                        // subscribe new incidents
+                                        subscribe();
+                                      },
+                                      "Incidents to be handled"};
+    LIST                             m_old_incidents;
     // ========================================================================
-  } ; //                                            end of class IncidentFilter
+  }; //                                            end of class IncidentFilter
   // ==========================================================================
   /** @class IncidentVeto
    *
@@ -113,15 +115,13 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  struct IncidentVeto : IncidentFilter
-  {
+  struct IncidentVeto : IncidentFilter {
     // ========================================================================
     /// standard constructor
-    IncidentVeto
-    ( const std::string& name ,
-      ISvcLocator*       pSvc ) ;                       // standard constructor
+    IncidentVeto( const std::string& name,
+                  ISvcLocator*       pSvc ); // standard constructor
     // ========================================================================
-  } ; //                                            end of class IncidentFilter
+  }; //                                            end of class IncidentFilter
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
@@ -130,102 +130,89 @@ namespace Gaudi
 // ============================================================================
 // standard initialization
 // ============================================================================
-StatusCode Gaudi::IncidentFilter::initialize ()
-{
+StatusCode Gaudi::IncidentFilter::initialize() {
   //
-  StatusCode sc = extends::initialize() ;
-  if ( sc.isFailure() ) { return sc ; }
+  StatusCode sc = extends::initialize();
+  if ( sc.isFailure() ) { return sc; }
   //
-  subscribe () ;
+  subscribe();
   //
   return sc;
 }
 // ============================================================================
 // finalize
 // ============================================================================
-StatusCode Gaudi::IncidentFilter::finalize ()
-{
-  unsubscribe () ;
-  return extends::finalize () ;
+StatusCode Gaudi::IncidentFilter::finalize() {
+  unsubscribe();
+  return extends::finalize();
 }
 // ============================================================================
 // subscribe incidents
 // ============================================================================
-void Gaudi::IncidentFilter::subscribe ()
-{
+void Gaudi::IncidentFilter::subscribe() {
   //
-  m_old_incidents.clear () ;
+  m_old_incidents.clear();
   //
-  if ( m_incidents.empty() )
-  { Warning ( "Empty list of incidents", StatusCode::SUCCESS ).ignore() ; return ; }
+  if ( m_incidents.empty() ) {
+    Warning( "Empty list of incidents", StatusCode::SUCCESS ).ignore();
+    return;
+  }
   //
-  IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
+  IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" );
   //
-  for ( const auto & item : m_incidents ) { isvc->addListener ( this , item ) ; }
+  for ( const auto& item : m_incidents ) { isvc->addListener( this, item ); }
   //
-  if ( m_incidents.end() == std::find ( m_incidents.begin       () ,
-                                        m_incidents.end         () ,
-                                        IncidentType::BeginEvent   ) )
-  { isvc->addListener ( this ,  IncidentType::BeginEvent  ) ; }
+  if ( m_incidents.end() == std::find( m_incidents.begin(), m_incidents.end(), IncidentType::BeginEvent ) ) {
+    isvc->addListener( this, IncidentType::BeginEvent );
+  }
   //
-  m_old_incidents = m_incidents ;
+  m_old_incidents = m_incidents;
   //
 }
 // ============================================================================
 // subscribe incidents
 // ============================================================================
-void Gaudi::IncidentFilter::unsubscribe ()
-{
-  m_old_incidents.clear () ;
+void Gaudi::IncidentFilter::unsubscribe() {
+  m_old_incidents.clear();
   //
-  IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
+  IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" );
   //
-  for ( const auto & item : m_old_incidents )
-  { isvc->removeListener ( this , item ) ; }
+  for ( const auto& item : m_old_incidents ) { isvc->removeListener( this, item ); }
   //
-  m_old_incidents = m_incidents ;
+  m_old_incidents = m_incidents;
 }
 // ============================================================================
 // handle the incident
 // ============================================================================
-void Gaudi::IncidentFilter::handle ( const Incident& inc )
-{
+void Gaudi::IncidentFilter::handle( const Incident& inc ) {
   //
   // reset at the begin-event
-  if ( IncidentType::BeginEvent == inc.type() ) { m_decision = m_veto ; }
+  if ( IncidentType::BeginEvent == inc.type() ) { m_decision = m_veto; }
   //
   // look in the list of incidents:
-  if ( m_incidents.end() != std::find ( m_incidents.begin () ,
-                                        m_incidents.end   () ,
-                                        inc.type          () ) )
-  { m_decision = !m_veto ; }
+  if ( m_incidents.end() != std::find( m_incidents.begin(), m_incidents.end(), inc.type() ) ) { m_decision = !m_veto; }
   //
 }
 // ============================================================================
 // execute
 // ============================================================================
-StatusCode Gaudi::IncidentFilter::execute ()
-{
-  setFilterPassed ( m_decision ) ;
-  return StatusCode::SUCCESS ;
+StatusCode Gaudi::IncidentFilter::execute() {
+  setFilterPassed( m_decision );
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
-
 
 // ============================================================================
 // Veto
 // ============================================================================
 // standard constructor
 // ============================================================================
-Gaudi::IncidentVeto::IncidentVeto
-( const std::string& name ,
-  ISvcLocator*       pSvc )                        // standard constructor
-  : Gaudi::IncidentFilter ( name , pSvc )
-{
-  setVeto ( true ) ;
+Gaudi::IncidentVeto::IncidentVeto( const std::string& name,
+                                   ISvcLocator*       pSvc ) // standard constructor
+    : Gaudi::IncidentFilter( name, pSvc ) {
+  setVeto( true );
 }
 // ============================================================================
-
 
 // ============================================================================
 // Factories

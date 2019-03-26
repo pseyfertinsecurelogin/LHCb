@@ -14,17 +14,16 @@
 // Includes
 
 // from Gaudi
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/TaggedBool.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
-#include <utility>
-#include <memory>
 #include <boost/optional.hpp>
+#include <memory>
+#include <utility>
 
-namespace LHCb
-{
+namespace LHCb {
   /** @class Trajectory Trajectory.h
    *
    * This is the base class for the trajectory classes. 'mu' is the expansion
@@ -34,15 +33,16 @@ namespace LHCb
    * @date   01/12/2005
    *
    */
-  template<typename FTYPE = double>
+  template <typename FTYPE = double>
   class Trajectory {
   public:
     using DirNormalized = Gaudi::tagged_bool<struct DirNormalized_tag>;
-    using Range  = std::pair<FTYPE, FTYPE>;
-    using Point  = typename ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<FTYPE>,
-                                                         ROOT::Math::DefaultCoordinateSystemTag>; ///< 3D cartesian point
-    using Vector = typename ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<FTYPE>,
-                                                             ROOT::Math::DefaultCoordinateSystemTag>; ///< Cartesian 3D vector
+    using Range         = std::pair<FTYPE, FTYPE>;
+    using Point         = typename ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<FTYPE>,
+                                                        ROOT::Math::DefaultCoordinateSystemTag>; ///< 3D cartesian point
+    using Vector =
+        typename ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<FTYPE>,
+                                                  ROOT::Math::DefaultCoordinateSystemTag>; ///< Cartesian 3D vector
 
     /// Clone a trajectory...
     virtual std::unique_ptr<Trajectory<FTYPE>> clone() const = 0;
@@ -50,10 +50,10 @@ namespace LHCb
     Trajectory() = default;
 
     /// Constructor taking the values of mu that defined the valid range of the trajectory
-    Trajectory( FTYPE begin, FTYPE end ): m_range(Range(begin,end)) {}
+    Trajectory( FTYPE begin, FTYPE end ) : m_range( Range( begin, end ) ) {}
 
     /// constructer taking a range
-    Trajectory( const Range& range ): m_range(range) {}
+    Trajectory( const Range& range ) : m_range( range ) {}
 
     /// destructor
     virtual ~Trajectory() = default;
@@ -101,24 +101,23 @@ namespace LHCb
 
     /// Distance, along the Trajectory, between Trajectory::position(mu1) and
     /// Trajectory::position(mu2)
-    virtual FTYPE arclength(FTYPE mu1, FTYPE mu2) const = 0 ;
+    virtual FTYPE arclength( FTYPE mu1, FTYPE mu2 ) const = 0;
 
     // Arclength of valid range
-    virtual FTYPE arclength() const { return arclength(beginRange(),endRange()) ; }
+    virtual FTYPE arclength() const { return arclength( beginRange(), endRange() ); }
 
     /// Set the range
     void setRange( FTYPE begin, FTYPE end ) {
-      m_range.first  = begin ;
-      m_range.second = end ;
+      m_range.first  = begin;
+      m_range.second = end;
     }
 
     /// obsolete, must be removed/renamed in inherited classes/clients
-    FTYPE length() const { return arclength() ; };
+    FTYPE length() const { return arclength(); };
     /// obsolete, must be removed/renamed in inherited classes/clients
-    FTYPE arclength(const Point& point) const { return muEstimate(point) ; }
+    FTYPE arclength( const Point& point ) const { return muEstimate( point ); }
 
   protected:
-
     Range m_range;
 
   }; // class Trajectory

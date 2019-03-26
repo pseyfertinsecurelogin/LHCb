@@ -16,10 +16,10 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <stdexcept>
-#include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include <type_traits>
+#include <vector>
 // ============================================================================
 // Gaudi
 // ============================================================================
@@ -40,15 +40,14 @@
  *
  */
 template <typename VISIBLE, typename INTERNAL>
-class FastClusterContainer final
-{
+class FastClusterContainer final {
   // ==========================================================================
   /// static compile-time assertion
-  static_assert( sizeof(VISIBLE) == sizeof(INTERNAL), "Cannot remap data of difference size!" ) ;
+  static_assert( sizeof( VISIBLE ) == sizeof( INTERNAL ), "Cannot remap data of difference size!" );
   // static_assert( std::is_trivially_destructible<VISIBLE>::value, "visible type must be trivially destructable");
-  static_assert( !std::has_virtual_destructor<VISIBLE>::value, "visible type must not have a virtual destructor");
+  static_assert( !std::has_virtual_destructor<VISIBLE>::value, "visible type must not have a virtual destructor" );
   // ==========================================================================
-  typedef typename std::vector<VISIBLE>       VD;
+  typedef typename std::vector<VISIBLE> VD;
 
 public:
   typedef typename VD::value_type             value_type;
@@ -69,16 +68,22 @@ private:
   std::vector<INTERNAL> m_data;
 
   inline std::vector<VISIBLE>& ext() {
-      // type punning
-      union { std::vector<INTERNAL>* i;
-              std::vector<VISIBLE>*  v; };
-      i = &m_data; return *v;
+    // type punning
+    union {
+      std::vector<INTERNAL>* i;
+      std::vector<VISIBLE>*  v;
+    };
+    i = &m_data;
+    return *v;
   }
   inline const std::vector<VISIBLE>& ext() const {
-      // type punning
-      union { const std::vector<INTERNAL>* i;
-              const std::vector<VISIBLE>*  v; };
-      i = &m_data; return *v;
+    // type punning
+    union {
+      const std::vector<INTERNAL>* i;
+      const std::vector<VISIBLE>*  v;
+    };
+    i = &m_data;
+    return *v;
   }
 
 public:
@@ -86,74 +91,74 @@ public:
   FastClusterContainer() = default;
 
   /// return iterator for beginning of mutable sequence
-  iterator begin()                           { return ext().begin();       }
+  iterator begin() { return ext().begin(); }
   /// return iterator for end of mutable sequence
-  iterator end()                             { return ext().end();         }
+  iterator end() { return ext().end(); }
   /// return iterator for beginning of nonmutable sequence
-  const_iterator begin() const               { return ext().begin();       }
+  const_iterator begin() const { return ext().begin(); }
   /// return iterator for end of nonmutable sequence
-  const_iterator end() const                 { return ext().end();         }
+  const_iterator end() const { return ext().end(); }
   /// return iterator for beginning of reversed mutable sequence
-  reverse_iterator rbegin()                  { return ext().rbegin();      }
+  reverse_iterator rbegin() { return ext().rbegin(); }
   /// return iterator for beginning of reversed nonmutable sequence
-  const_reverse_iterator rbegin() const      { return ext().rbegin();      }
+  const_reverse_iterator rbegin() const { return ext().rbegin(); }
   /// return iterator for end of reversed mutable sequence
-  reverse_iterator rend()                    { return ext().rend();        }
+  reverse_iterator rend() { return ext().rend(); }
   /// return iterator for end of reversed nonmutable sequence
-  const_reverse_iterator rend() const        { return ext().rend();        }
+  const_reverse_iterator rend() const { return ext().rend(); }
   /// subscript mutable sequence
-  reference operator[](size_type i)          { return ext().operator[](i); }
+  reference operator[]( size_type i ) { return ext().operator[]( i ); }
   /// subscript nonmutable sequence
-  const_reference operator[](size_type i)const{return ext().operator[](i); }
+  const_reference operator[]( size_type i ) const { return ext().operator[]( i ); }
   /// subscript mutable sequence with checking
-  reference at(size_type i)                  { return ext().at(i);         }
+  reference at( size_type i ) { return ext().at( i ); }
   /// subscript nonmutable sequence with checking
-  const_reference at(size_type i) const      { return ext().at(i);         }
+  const_reference at( size_type i ) const { return ext().at( i ); }
   /// test if sequence is empty
-  bool empty() const                         { return m_data.empty();         }
+  bool empty() const { return m_data.empty(); }
   /// return first element of mutable sequence
-  reference front()                          { return ext().front();       }
+  reference front() { return ext().front(); }
   /// return first element of nonmutable sequence
-  const_reference front() const              { return ext().front();       }
+  const_reference front() const { return ext().front(); }
   /// return last element of mutable sequence
-  reference back()                           { return ext().back();        }
+  reference back() { return ext().back(); }
   /// return last element of nonmutable sequence
-  const_reference back() const               { return ext().back();        }
+  const_reference back() const { return ext().back(); }
   /// insert element at end
-  void push_back(const VISIBLE& val)         { ext().push_back(val);}
+  void push_back( const VISIBLE& val ) { ext().push_back( val ); }
   /// emplace element at end
-  template <typename ... Args>
-  void emplace_back(Args&&... args)          { ext().emplace_back(std::forward<Args>(args)...);}
+  template <typename... Args>
+  void emplace_back( Args&&... args ) {
+    ext().emplace_back( std::forward<Args>( args )... );
+  }
   /// erase element at end
-  void pop_back()                            { m_data.pop_back();      }
+  void pop_back() { m_data.pop_back(); }
 
   /// Return current length of allocated storage
-  size_type size() const                     { return m_data.size();          }
+  size_type size() const { return m_data.size(); }
   /// Return current length of allocated storage
-  size_type capacity() const                 { return m_data.capacity();      }
+  size_type capacity() const { return m_data.capacity(); }
   /// Clear container. Note: No drestructors may be called !
-  void clear()                               { return m_data.clear();         }
+  void clear() { return m_data.clear(); }
   /// Reserve container space
-  void reserve(size_type len)                { return m_data.reserve(len);    }
+  void reserve( size_type len ) { return m_data.reserve( len ); }
   /// Resize container entries
-  void resize(size_type len )                { return m_data.resize(len);     }
+  void resize( size_type len ) { return m_data.resize( len ); }
   /// Resize container entries
-  void resize(size_type len, const VISIBLE& def )
-  {  return m_data.resize(len, *(const INTERNAL*)&def);                       }
+  void resize( size_type len, const VISIBLE& def ) { return m_data.resize( len, *(const INTERNAL*)&def ); }
 
   /// find method
   template <class findPolicy>
-  const_iterator find(const typename findPolicy::comp_type& value) const{
-    auto i = std::equal_range(begin(),end(),value,findPolicy());
-    return (i.first!=i.second) ? i.first : end();
+  const_iterator find( const typename findPolicy::comp_type& value ) const {
+    auto i = std::equal_range( begin(), end(), value, findPolicy() );
+    return ( i.first != i.second ) ? i.first : end();
   }
 
   /// object method, adding a direct access by key using a customised lower_bound (assumes list sorted)
-  const value_type * object( const chan_type & id ) const{
+  const value_type* object( const chan_type& id ) const {
     const_iterator it = find<typename VISIBLE::findPolicy>( id );
-    return it!=end() ? &(*it) : nullptr;
+    return it != end() ? &( *it ) : nullptr;
   }
-
 };
 // ============================================================================
 // The END

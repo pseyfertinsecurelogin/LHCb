@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef COMPONENT_COMPARECALOFUTUREDIGITS_H 
+#ifndef COMPONENT_COMPARECALOFUTUREDIGITS_H
 #define COMPONENT_COMPARECALOFUTUREDIGITS_H 1
 
 // Include files
@@ -28,14 +28,12 @@ public:
   /// Standard constructor
   CompareCaloFutureDigits( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
-  void compareContainers ( const LHCb::CaloDigits& dig1,
-                           const LHCb::CaloDigits& dig2,
-                           double tol) const;
-  
+  void compareContainers( const LHCb::CaloDigits& dig1, const LHCb::CaloDigits& dig2, double tol ) const;
+
   std::string m_extension;
-  bool m_packedRawBuffer;
+  bool        m_packedRawBuffer;
 };
 #endif // COMPONENT_COMPARECALOFUTUREDIGITS_H

@@ -11,7 +11,7 @@
 """
 Test xml parsing.
 """
-from ..godII import xparser # IGNORE:F0401
+from ..godII import xparser  # IGNORE:F0401
 
 import os
 import shutil
@@ -22,9 +22,11 @@ from pprint import pprint
 ### Helpers
 
 # the DTD file is ../../../xml_files/gdd.dtd
-dtdPath = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                        os.pardir, os.pardir, os.pardir,
-                                        'xml_files', 'gdd.dtd'))
+dtdPath = os.path.normpath(
+    os.path.join(
+        os.path.dirname(__file__), os.pardir, os.pardir, os.pardir,
+        'xml_files', 'gdd.dtd'))
+
 
 def buildDir(files, rootdir=os.curdir):
     '''
@@ -55,10 +57,12 @@ def buildDir(files, rootdir=os.curdir):
                 f.write(data)
             f.close()
 
+
 class TempDir(object):
     '''
     Class for easy creation, use and removal of temporary directory structures.
     '''
+
     def __init__(self, files=None):
         self.tmpdir = mkdtemp()
         if files is None:
@@ -74,10 +78,13 @@ class TempDir(object):
         '''
         return os.path.join(self.tmpdir, f)
 
+
 ### Tests
+
 
 def test_dtd_file():
     assert os.path.exists(dtdPath)
+
 
 def test_instantiate():
     parser = xparser.xparser(dtdPath)
@@ -85,15 +92,17 @@ def test_instantiate():
 
 
 def test_parse_minimal():
-    tmp = TempDir({'test.xml':
-'''<?xml version="1.0" encoding="ISO-8859-1"?>
+    tmp = TempDir({
+        'test.xml':
+        '''<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="SomePackage">
     <class name="Class1" author="Somebody" desc="Test class."></class>
   </package>
 </gdd>
-'''})
+'''
+    })
 
     dbfile = tmp('test.xml')
 
@@ -104,20 +113,32 @@ def test_parse_minimal():
     except SystemExit:
         assert False, 'sys.exit() called'
 
-    expected = {'attrs': {'version': '1.0'},
-                'package': [{'attrs': {'name': 'SomePackage'},
-                            'class': [{'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class1',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'}}]}]}
+    expected = {
+        'attrs': {
+            'version': '1.0'
+        },
+        'package': [{
+            'attrs': {
+                'name': 'SomePackage'
+            },
+            'class': [{
+                'attrs': {
+                    'allocator': 'DEFAULT',
+                    'author': 'Somebody',
+                    'contObjectTypeDef': 'FALSE',
+                    'defaultconstructor': 'TRUE',
+                    'defaultdestructor': 'TRUE',
+                    'desc': 'Test class.',
+                    'final': 'FALSE',
+                    'keyedContTypeDef': 'FALSE',
+                    'name': 'Class1',
+                    'serializers': 'TRUE',
+                    'stdVectorTypeDef': 'FALSE',
+                    'virtual': 'TRUE'
+                }
+            }]
+        }]
+    }
 
     print "Expected:"
     pprint(expected)
@@ -126,9 +147,11 @@ def test_parse_minimal():
 
     assert data == expected
 
+
 def test_parse_comment():
-    tmp = TempDir({'test.xml':
-'''<?xml version="1.0" encoding="ISO-8859-1"?>
+    tmp = TempDir({
+        'test.xml':
+        '''<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <!-- this is a comment -->
@@ -136,7 +159,8 @@ def test_parse_comment():
     <class name="Class1" author="Somebody" desc="Test class."></class>
   </package>
 </gdd>
-'''})
+'''
+    })
 
     dbfile = tmp('test.xml')
 
@@ -147,20 +171,32 @@ def test_parse_comment():
     except SystemExit:
         assert False, 'sys.exit() called'
 
-    expected = {'attrs': {'version': '1.0'},
-                'package': [{'attrs': {'name': 'SomePackage'},
-                            'class': [{'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class1',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'}}]}]}
+    expected = {
+        'attrs': {
+            'version': '1.0'
+        },
+        'package': [{
+            'attrs': {
+                'name': 'SomePackage'
+            },
+            'class': [{
+                'attrs': {
+                    'allocator': 'DEFAULT',
+                    'author': 'Somebody',
+                    'contObjectTypeDef': 'FALSE',
+                    'defaultconstructor': 'TRUE',
+                    'defaultdestructor': 'TRUE',
+                    'desc': 'Test class.',
+                    'final': 'FALSE',
+                    'keyedContTypeDef': 'FALSE',
+                    'name': 'Class1',
+                    'serializers': 'TRUE',
+                    'stdVectorTypeDef': 'FALSE',
+                    'virtual': 'TRUE'
+                }
+            }]
+        }]
+    }
 
     print "Expected:"
     pprint(expected)
@@ -171,8 +207,9 @@ def test_parse_comment():
 
 
 def test_parse_many_classes():
-    tmp = TempDir({'test.xml':
-'''<?xml version="1.0" encoding="ISO-8859-1"?>
+    tmp = TempDir({
+        'test.xml':
+        '''<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="SomePackage">
@@ -180,7 +217,8 @@ def test_parse_many_classes():
     <class name="Class2" author="Somebody" desc="Test class."></class>
   </package>
 </gdd>
-'''})
+'''
+    })
 
     dbfile = tmp('test.xml')
 
@@ -191,32 +229,48 @@ def test_parse_many_classes():
     except SystemExit:
         assert False, 'sys.exit() called'
 
-    expected = {'attrs': {'version': '1.0'},
-                'package': [{'attrs': {'name': 'SomePackage'},
-                            'class': [{'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class1',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'}},
-                                      {'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class2',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'}}]}]}
+    expected = {
+        'attrs': {
+            'version': '1.0'
+        },
+        'package': [{
+            'attrs': {
+                'name': 'SomePackage'
+            },
+            'class': [{
+                'attrs': {
+                    'allocator': 'DEFAULT',
+                    'author': 'Somebody',
+                    'contObjectTypeDef': 'FALSE',
+                    'defaultconstructor': 'TRUE',
+                    'defaultdestructor': 'TRUE',
+                    'desc': 'Test class.',
+                    'final': 'FALSE',
+                    'keyedContTypeDef': 'FALSE',
+                    'name': 'Class1',
+                    'serializers': 'TRUE',
+                    'stdVectorTypeDef': 'FALSE',
+                    'virtual': 'TRUE'
+                }
+            },
+                      {
+                          'attrs': {
+                              'allocator': 'DEFAULT',
+                              'author': 'Somebody',
+                              'contObjectTypeDef': 'FALSE',
+                              'defaultconstructor': 'TRUE',
+                              'defaultdestructor': 'TRUE',
+                              'desc': 'Test class.',
+                              'final': 'FALSE',
+                              'keyedContTypeDef': 'FALSE',
+                              'name': 'Class2',
+                              'serializers': 'TRUE',
+                              'stdVectorTypeDef': 'FALSE',
+                              'virtual': 'TRUE'
+                          }
+                      }]
+        }]
+    }
 
     print "Expected:"
     pprint(expected)
@@ -225,9 +279,11 @@ def test_parse_many_classes():
 
     assert data == expected
 
+
 def test_parse_method():
-    tmp = TempDir({'test.xml':
-'''<?xml version="1.0" encoding="ISO-8859-1"?>
+    tmp = TempDir({
+        'test.xml':
+        '''<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="SomePackage">
@@ -240,7 +296,8 @@ def test_parse_method():
     </class>
   </package>
 </gdd>
-'''})
+'''
+    })
 
     dbfile = tmp('test.xml')
 
@@ -251,34 +308,55 @@ def test_parse_method():
     except SystemExit:
         assert False, 'sys.exit() called'
 
-    expected = {'attrs': {'version': '1.0'},
-                'package': [{'attrs': {'name': 'SomePackage'},
-                            'class': [{'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class1',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'},
-                                       'method': [{'attrs': {u'access': u'PUBLIC',
-                                                             u'const': u'FALSE',
-                                                             u'desc': u'a method',
-                                                             u'explicit': u'FALSE',
-                                                             u'friend': u'FALSE',
-                                                             u'noexcept': u'FALSE',
-                                                             u'inline': u'FALSE',
-                                                             u'name': u'doSomething',
-                                                             u'static': u'FALSE',
-                                                             u'type': u'void',
-                                                             u'virtual': u'FALSE',
-                                                             u'override': u'FALSE'},
-                                                   'code': [{'attrs': {'xml:space': 'preserve'},
-                                                             'cont': '\n        // here goes the code\n        '}]}]}]}]}
+    expected = {
+        'attrs': {
+            'version': '1.0'
+        },
+        'package': [{
+            'attrs': {
+                'name': 'SomePackage'
+            },
+            'class': [{
+                'attrs': {
+                    'allocator': 'DEFAULT',
+                    'author': 'Somebody',
+                    'contObjectTypeDef': 'FALSE',
+                    'defaultconstructor': 'TRUE',
+                    'defaultdestructor': 'TRUE',
+                    'desc': 'Test class.',
+                    'final': 'FALSE',
+                    'keyedContTypeDef': 'FALSE',
+                    'name': 'Class1',
+                    'serializers': 'TRUE',
+                    'stdVectorTypeDef': 'FALSE',
+                    'virtual': 'TRUE'
+                },
+                'method': [{
+                    'attrs': {
+                        u'access': u'PUBLIC',
+                        u'const': u'FALSE',
+                        u'desc': u'a method',
+                        u'explicit': u'FALSE',
+                        u'friend': u'FALSE',
+                        u'noexcept': u'FALSE',
+                        u'inline': u'FALSE',
+                        u'name': u'doSomething',
+                        u'static': u'FALSE',
+                        u'type': u'void',
+                        u'virtual': u'FALSE',
+                        u'override': u'FALSE'
+                    },
+                    'code': [{
+                        'attrs': {
+                            'xml:space': 'preserve'
+                        },
+                        'cont':
+                        '\n        // here goes the code\n        '
+                    }]
+                }]
+            }]
+        }]
+    }
 
     print "Expected:"
     pprint(expected)
@@ -287,9 +365,11 @@ def test_parse_method():
 
     assert data == expected
 
+
 def test_parse_method_comment():
-    tmp = TempDir({'test.xml':
-'''<?xml version="1.0" encoding="ISO-8859-1"?>
+    tmp = TempDir({
+        'test.xml':
+        '''<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="SomePackage">
@@ -304,7 +384,8 @@ def test_parse_method_comment():
     </class>
   </package>
 </gdd>
-'''})
+'''
+    })
 
     dbfile = tmp('test.xml')
 
@@ -315,34 +396,55 @@ def test_parse_method_comment():
     except SystemExit:
         assert False, 'sys.exit() called'
 
-    expected = {'attrs': {'version': '1.0'},
-                'package': [{'attrs': {'name': 'SomePackage'},
-                            'class': [{'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class1',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'},
-                                       'method': [{'attrs': {u'access': u'PUBLIC',
-                                                             u'const': u'FALSE',
-                                                             u'desc': u'a method',
-                                                             u'explicit': u'FALSE',
-                                                             u'friend': u'FALSE',
-                                                             u'noexcept': u'FALSE',
-                                                             u'inline': u'FALSE',
-                                                             u'name': u'doSomething',
-                                                             u'static': u'FALSE',
-                                                             u'type': u'void',
-                                                             u'virtual': u'FALSE',
-                                                             u'override': u'FALSE'},
-                                                   'code': [{'attrs': {'xml:space': 'preserve'},
-                                                             'cont': '\n        // here goes the code\n        \n        // other code\n        '}]}]}]}]}
+    expected = {
+        'attrs': {
+            'version': '1.0'
+        },
+        'package': [{
+            'attrs': {
+                'name': 'SomePackage'
+            },
+            'class': [{
+                'attrs': {
+                    'allocator': 'DEFAULT',
+                    'author': 'Somebody',
+                    'contObjectTypeDef': 'FALSE',
+                    'defaultconstructor': 'TRUE',
+                    'defaultdestructor': 'TRUE',
+                    'desc': 'Test class.',
+                    'final': 'FALSE',
+                    'keyedContTypeDef': 'FALSE',
+                    'name': 'Class1',
+                    'serializers': 'TRUE',
+                    'stdVectorTypeDef': 'FALSE',
+                    'virtual': 'TRUE'
+                },
+                'method': [{
+                    'attrs': {
+                        u'access': u'PUBLIC',
+                        u'const': u'FALSE',
+                        u'desc': u'a method',
+                        u'explicit': u'FALSE',
+                        u'friend': u'FALSE',
+                        u'noexcept': u'FALSE',
+                        u'inline': u'FALSE',
+                        u'name': u'doSomething',
+                        u'static': u'FALSE',
+                        u'type': u'void',
+                        u'virtual': u'FALSE',
+                        u'override': u'FALSE'
+                    },
+                    'code': [{
+                        'attrs': {
+                            'xml:space': 'preserve'
+                        },
+                        'cont':
+                        '\n        // here goes the code\n        \n        // other code\n        '
+                    }]
+                }]
+            }]
+        }]
+    }
 
     print "Expected:"
     pprint(expected)
@@ -351,9 +453,11 @@ def test_parse_method_comment():
 
     assert data == expected
 
+
 def test_parse_DataObject():
-    tmp = TempDir({'test.xml':
-'''<?xml version="1.0" encoding="ISO-8859-1"?>
+    tmp = TempDir({
+        'test.xml':
+        '''<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="SomePackage">
@@ -362,7 +466,8 @@ def test_parse_DataObject():
     </class>
   </package>
 </gdd>
-'''})
+'''
+    })
 
     dbfile = tmp('test.xml')
 
@@ -373,24 +478,43 @@ def test_parse_DataObject():
     except SystemExit:
         assert False, 'sys.exit() called'
 
-    expected = {'attrs': {'version': '1.0'},
-                'package': [{'attrs': {'name': 'SomePackage'},
-                            'class': [{'attrs': {'allocator': 'DEFAULT',
-                                                 'author': 'Somebody',
-                                                 'contObjectTypeDef': 'FALSE',
-                                                 'defaultconstructor': 'TRUE',
-                                                 'defaultdestructor': 'TRUE',
-                                                 'desc': 'Test class.',
-                                                 'final': 'FALSE',
-                                                 'keyedContTypeDef': 'FALSE',
-                                                 'name': 'Class1',
-                                                 'serializers': 'TRUE',
-                                                 'stdVectorTypeDef': 'FALSE',
-                                                 'virtual': 'TRUE'},
-                                       'template': [{'attrs': {'name': 'SmartRef',
-                                                               't1': 'THIS'}},
-                                                    {'attrs': {'name': 'SmartRefVector',
-                                                               't1': 'THIS'}}]}]}]}
+    expected = {
+        'attrs': {
+            'version': '1.0'
+        },
+        'package': [{
+            'attrs': {
+                'name': 'SomePackage'
+            },
+            'class': [{
+                'attrs': {
+                    'allocator': 'DEFAULT',
+                    'author': 'Somebody',
+                    'contObjectTypeDef': 'FALSE',
+                    'defaultconstructor': 'TRUE',
+                    'defaultdestructor': 'TRUE',
+                    'desc': 'Test class.',
+                    'final': 'FALSE',
+                    'keyedContTypeDef': 'FALSE',
+                    'name': 'Class1',
+                    'serializers': 'TRUE',
+                    'stdVectorTypeDef': 'FALSE',
+                    'virtual': 'TRUE'
+                },
+                'template': [{
+                    'attrs': {
+                        'name': 'SmartRef',
+                        't1': 'THIS'
+                    }
+                }, {
+                    'attrs': {
+                        'name': 'SmartRefVector',
+                        't1': 'THIS'
+                    }
+                }]
+            }]
+        }]
+    }
 
     print "Expected:"
     pprint(expected)

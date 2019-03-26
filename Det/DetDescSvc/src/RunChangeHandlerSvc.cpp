@@ -12,7 +12,7 @@
 
 DECLARE_COMPONENT( RunChangeHandlerSvc )
 
-#define ON_DEBUG if (msgLevel(MSG::DEBUG))
+#define ON_DEBUG if ( msgLevel( MSG::DEBUG ) )
 #define DEBUG_MSG ON_DEBUG debug()
 
 //-----------------------------------------------------------------------------
@@ -24,39 +24,38 @@ DECLARE_COMPONENT( RunChangeHandlerSvc )
 //=============================================================================
 // Initialize
 //=============================================================================
-StatusCode RunChangeHandlerSvc::initialize(){
+StatusCode RunChangeHandlerSvc::initialize() {
   // base class initialization
   StatusCode sc = Service::initialize();
-  if (!sc.isSuccess()) return sc;
+  if ( !sc.isSuccess() ) return sc;
 
   // local initialization
   DEBUG_MSG << "--- initialize ---" << endmsg;
 
-  incidentSvc()->addListener(this, IncidentType::RunChange);
+  incidentSvc()->addListener( this, IncidentType::RunChange );
   // ensure that we can call evtProc() and updMgrSvc() while in handle
   evtProc();
   updMgrSvc();
 
   // Prepare the list of conditions
-  m_conditions.reserve(m_condDesc.size());
-  for (const auto& condDesc : m_condDesc) {
-    m_conditions.emplace_back(detectorSvc(),condDesc.first,condDesc.second);
-    updMgrSvc()->registerCondition(this,condDesc.first);
+  m_conditions.reserve( m_condDesc.size() );
+  for ( const auto& condDesc : m_condDesc ) {
+    m_conditions.emplace_back( detectorSvc(), condDesc.first, condDesc.second );
+    updMgrSvc()->registerCondition( this, condDesc.first );
   }
   // FIXME: (MCl) This is a hack to be sure that the UMS knows about all the
   // objects we have to modify before we get to the first event.
-  return updMgrSvc()->update(this);
+  return updMgrSvc()->update( this );
 }
 
 //=============================================================================
 // Finalize
 //=============================================================================
-StatusCode RunChangeHandlerSvc::finalize(){
+StatusCode RunChangeHandlerSvc::finalize() {
   // local finalization
   DEBUG_MSG << "--- finalize ---" << endmsg;
 
-  if (m_incSvc)
-    incidentSvc()->removeListener(this, IncidentType::RunChange);
+  if ( m_incSvc ) incidentSvc()->removeListener( this, IncidentType::RunChange );
 
   // release acquired interfaces
   m_evtSvc.reset();
@@ -72,17 +71,18 @@ StatusCode RunChangeHandlerSvc::finalize(){
 //=========================================================================
 // Handle RunChange incident
 //=========================================================================
-void RunChangeHandlerSvc::handle(const Incident &inc) {
+void RunChangeHandlerSvc::handle( const Incident& inc ) {
   DEBUG_MSG << inc.type() << " incident received" << endmsg;
 
-  const RunChangeIncident* rci = dynamic_cast<const RunChangeIncident*>(&inc);
-  if (!rci) {
+  const RunChangeIncident* rci = dynamic_cast<const RunChangeIncident*>( &inc );
+  if ( !rci ) {
     error() << "Cannot dynamic_cast the incident to RunChangeIncident, "
-               "run change ignored" << endmsg;
+               "run change ignored"
+            << endmsg;
     return;
   }
 
-  if (m_currentRun != rci->runNumber()) {
+  if ( m_currentRun != rci->runNumber() ) {
     ON_DEBUG {
       DEBUG_MSG << "Change of run number detected " << m_currentRun;
       DEBUG_MSG << "->" << rci->runNumber() << endmsg;
@@ -94,27 +94,26 @@ void RunChangeHandlerSvc::handle(const Incident &inc) {
 
   m_currentRun = rci->runNumber();
   // update objects
-  update(m_currentRun);
+  update( m_currentRun );
 }
 
 //=========================================================================
 // Flag for update all conditions
 //=========================================================================
-void RunChangeHandlerSvc::update(unsigned long run) {
-  std::lock_guard lock(m_updateMutex); // we cannot run this concurrently
-  FileHasher hasher;
-  std::for_each(m_conditions.begin(), m_conditions.end(),
-                [this, run, &hasher](CondData &cond) {
+void RunChangeHandlerSvc::update( unsigned long run ) {
+  std::lock_guard lock( m_updateMutex ); // we cannot run this concurrently
+  FileHasher      hasher;
+  std::for_each( m_conditions.begin(), m_conditions.end(), [this, run, &hasher]( CondData& cond ) {
     try {
-      const bool update = cond.needsUpdate(run, hasher, m_forceUpdate);
-      if (update) {
+      const bool update = cond.needsUpdate( run, hasher, m_forceUpdate );
+      if ( update ) {
         // notify the UMS and the object that they have to be updated.
-        updMgrSvc()->invalidate(cond.object.ptr());
+        updMgrSvc()->invalidate( cond.object.ptr() );
       }
-    } catch(const std::exception& x) {
+    } catch ( const std::exception& x ) {
       // something went wrong, so we change the exception type and rethrow
       evtProc()->stopRun(); // schedule a stop
-      throw GaudiException(x.what(), name(), StatusCode::FAILURE);
+      throw GaudiException( x.what(), name(), StatusCode::FAILURE );
     }
-  });
+  } );
 }

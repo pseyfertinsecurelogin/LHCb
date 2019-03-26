@@ -14,8 +14,8 @@
 #include <string>
 
 // Base class
-#include "DetDesc/Services.h"
 #include "DetDesc/IConditionInfo.h"
+#include "DetDesc/Services.h"
 
 // Forward declarations
 class IDataProviderSvc;
@@ -30,21 +30,17 @@ class IDataProviderSvc;
  *
  */
 
-class ConditionInfo : virtual public IConditionInfo
-{
+class ConditionInfo : virtual public IConditionInfo {
 
- public:
-
+public:
   /// Constructor
   ConditionInfo( IDetectorElement* de, const std::string& condition );
 
- private:
-
+private:
   /// Get a pointer to the data service responsible for condition data
   IDataProviderSvc* dataSvc() const;
 
- public:
-
+public:
   // Implementation of the IConditionInfo interface
 
   /// Get a pointer to the detector element to which the ConditionInfo belongs
@@ -59,15 +55,13 @@ class ConditionInfo : virtual public IConditionInfo
   // Implementation of the IInterface interface
 
   /// query interface
-  StatusCode queryInterface( const InterfaceID& ID , void** ppI ) override;
+  StatusCode queryInterface( const InterfaceID& ID, void** ppI ) override;
   /// add reference
   unsigned long addRef() override;
   /// release
   unsigned long release() override;
 
-
- private:
-
+private:
   /// Pointer to the detector element to which the ConditionInfo belongs
   IDetectorElement* m_detElem;
 
@@ -82,7 +76,6 @@ class ConditionInfo : virtual public IConditionInfo
 
   /// reference to dataSvc
   DetDesc::ServicesPtr m_services;
-
 };
 
 #endif // DETDESC_CONDITIONINFO_H

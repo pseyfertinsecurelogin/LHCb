@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: SequencerTimerTool.h,v 1.7 2005/07/29 16:49:43 hmd Exp $
 #ifndef LHCBSEQUENCERTIMERTOOL_H
 #define LHCBSEQUENCERTIMERTOOL_H 1
 
@@ -19,7 +18,6 @@
 
 // local
 #include "LHCbTimerForSequencer.h"
-
 
 /** @class LHCbSequencerTimerTool LHCbSequencerTimerTool.h
  *  Implements the time measurement inside a sequencer
@@ -34,24 +32,18 @@
  *  @date   2004-05-19
  */
 
-class LHCbSequencerTimerTool final : public GaudiHistoTool,
-                                     virtual public ISequencerTimerTool
-{
+class LHCbSequencerTimerTool final : public GaudiHistoTool, virtual public ISequencerTimerTool {
 
 public:
-
+  using ISequencerTimerTool::name;
   using ISequencerTimerTool::start;
   using ISequencerTimerTool::stop;
-  using ISequencerTimerTool::name;
 
 public:
-
   /// Standard constructor
-  LHCbSequencerTimerTool( const std::string& type,
-                          const std::string& name,
-                          const IInterface* parent);
+  LHCbSequencerTimerTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~LHCbSequencerTimerTool( ) = default; ///< Destructor
+  virtual ~LHCbSequencerTimerTool() = default; ///< Destructor
 
   /** initialize method, to compute the normalization factor **/
   StatusCode initialize() override;
@@ -66,8 +58,7 @@ public:
   void increaseIndent() override { m_indent += 2; }
 
   /** Decrease the indentation of the name **/
-  void decreaseIndent() override
-  {
+  void decreaseIndent() override {
     m_indent -= 2;
     if ( 0 > m_indent ) m_indent = 0;
   }
@@ -97,18 +88,16 @@ public:
   StatusCode fileIO();
 
 private:
-
-  int m_shots;       ///< Number of shots for CPU normalization
-  bool m_normalised; ///< Is the time scaled to a nominal PIII ?
-  int m_indent{0};   ///< Amount of indentation
+  int                                m_shots;      ///< Number of shots for CPU normalization
+  bool                               m_normalised; ///< Is the time scaled to a nominal PIII ?
+  int                                m_indent{0};  ///< Amount of indentation
   std::vector<LHCbTimerForSequencer> m_timerList;
-  double m_normFactor{0.001}; ///< Factor to convert to standard CPU (1 GHz PIII)
-  double m_speedRatio{0};
-  bool   m_globalTiming;
-  std::string::size_type m_headerSize;   ///< Size of the name field
-  std::string m_summaryFile; ///< Whether to output also to a file
-  std::string m_sep; ///< Separator to use in fileIO, defined by extension of the file
-
+  double                             m_normFactor{0.001}; ///< Factor to convert to standard CPU (1 GHz PIII)
+  double                             m_speedRatio{0};
+  bool                               m_globalTiming;
+  std::string::size_type             m_headerSize;  ///< Size of the name field
+  std::string                        m_summaryFile; ///< Whether to output also to a file
+  std::string                        m_sep;         ///< Separator to use in fileIO, defined by extension of the file
 };
 
 #endif // LHCbSEQUENCERTIMERTOOL_H

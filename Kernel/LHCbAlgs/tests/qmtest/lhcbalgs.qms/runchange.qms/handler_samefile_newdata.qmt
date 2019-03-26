@@ -84,4 +84,7 @@ if outputlines != expected:
     causes.append("output")
     result["GaudiTest.output.found"] = result.Quote("\n".join(outputlines))
 </text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>lhcbalgs.runchange.handler_newfile_samedata</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
 </extension>

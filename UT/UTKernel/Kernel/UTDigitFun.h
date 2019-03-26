@@ -15,16 +15,15 @@
 #include "Kernel/SiChargeFun.h"
 
 /**  specialization for UTDigit */
-namespace SiChargeFun{
-  template <> 
-  inline double charge(LHCb::UTDigit* input) {
-  return double(input->depositedCharge());
+namespace SiChargeFun {
+  template <>
+  inline double charge( LHCb::UTDigit* input ) {
+    return double( input->depositedCharge() );
   }
-  template <> 
-  inline double charge(const LHCb::UTDigit* input) {
-  return double(input->depositedCharge());
- }
-}
-
+  template <>
+  inline double charge( const LHCb::UTDigit* input ) {
+    return double( input->depositedCharge() );
+  }
+} // namespace SiChargeFun
 
 #endif

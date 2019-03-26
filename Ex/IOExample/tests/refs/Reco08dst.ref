@@ -347,7 +347,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 51
- # meas     : 0
  chi2PerDoF : 1.47701
  nDoF       : 44
  GhostProb  : 0.00559479
@@ -408,7 +407,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 36
- # meas     : 0
  chi2PerDoF : 1.26493
  nDoF       : 30
  GhostProb  : -0
@@ -469,7 +467,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 45
- # meas     : 0
  chi2PerDoF : 1.34368
  nDoF       : 39
  GhostProb  : -0
@@ -530,7 +527,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 45
- # meas     : 0
  chi2PerDoF : 1.4946
  nDoF       : 39
  GhostProb  : 0.0148591
@@ -591,7 +587,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 43
- # meas     : 0
  chi2PerDoF : 1.20585
  nDoF       : 37
  GhostProb  : 0.00878837
@@ -758,7 +753,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 50
- # meas     : 0
  chi2PerDoF : 1.98671
  nDoF       : 43
  GhostProb  : 0.0515484
@@ -819,7 +813,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 47
- # meas     : 0
  chi2PerDoF : 1.26432
  nDoF       : 40
  GhostProb  : 0.00727852
@@ -880,7 +873,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 49
- # meas     : 0
  chi2PerDoF : 1.88726
  nDoF       : 42
  GhostProb  : 0.0270484
@@ -941,7 +933,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 50
- # meas     : 0
  chi2PerDoF : 1.31974
  nDoF       : 43
  GhostProb  : -0
@@ -1002,7 +993,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 44
- # meas     : 0
  chi2PerDoF : 8.17676
  nDoF       : 37
  GhostProb  : 0.275995
@@ -1159,7 +1149,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 44
- # meas     : 0
  chi2PerDoF : 1.42968
  nDoF       : 37
  GhostProb  : 0.0141081
@@ -1220,7 +1209,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 43
- # meas     : 0
  chi2PerDoF : 0.667778
  nDoF       : 37
  GhostProb  : 0.0294462
@@ -1281,7 +1269,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 49
- # meas     : 0
  chi2PerDoF : 1.08539
  nDoF       : 42
  GhostProb  : 0.014344
@@ -1342,7 +1329,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 42
- # meas     : 0
  chi2PerDoF : 1.54337
  nDoF       : 36
  GhostProb  : 0.0190922
@@ -1403,7 +1389,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 43
- # meas     : 0
  chi2PerDoF : 7.43694
  nDoF       : 36
  GhostProb  : 0.634361
@@ -1574,7 +1559,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 36
- # meas     : 0
  chi2PerDoF : 31.7575
  nDoF       : 29
  GhostProb  : 0.804295
@@ -1635,7 +1619,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 49
- # meas     : 0
  chi2PerDoF : 0.834266
  nDoF       : 44
  GhostProb  : 0.0554862
@@ -1696,7 +1679,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 38
- # meas     : 0
  chi2PerDoF : 2.55078
  nDoF       : 33
  GhostProb  : 0.332519
@@ -1757,7 +1739,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 46
- # meas     : 0
  chi2PerDoF : 3.62677
  nDoF       : 39
  GhostProb  : 0.349346
@@ -1818,7 +1799,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 45
- # meas     : 0
  chi2PerDoF : 1.3745
  nDoF       : 40
  GhostProb  : -0
@@ -1990,7 +1970,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 34
- # meas     : 0
  chi2PerDoF : 42.8962
  nDoF       : 27
  GhostProb  : 0.949948
@@ -2051,7 +2030,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 48
- # meas     : 0
  chi2PerDoF : 1.07028
  nDoF       : 41
  GhostProb  : 0.0145916
@@ -2112,7 +2090,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 50
- # meas     : 0
  chi2PerDoF : 3.91689
  nDoF       : 43
  GhostProb  : 0.354234
@@ -2173,7 +2150,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 46
- # meas     : 0
  chi2PerDoF : 0.744225
  nDoF       : 41
  GhostProb  : 0.00481578
@@ -2234,7 +2210,6 @@ DumpTracks          DEBUG *** Track ***
  history    : PatForward
  fitstatus  : Fitted
  # ids      : 43
- # meas     : 0
  chi2PerDoF : 0.643287
  nDoF       : 36
  GhostProb  : 0.00728407

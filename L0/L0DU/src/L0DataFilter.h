@@ -14,7 +14,6 @@
 // Include files
 #include "L0Base/L0AlgBase.h"
 
-
 /** @class L0DataFilter L0DataFilter.h
  *
  *
@@ -26,13 +25,13 @@ public:
   /// Standard constructor
   L0DataFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-  std::string m_l0Location;
-  std::string m_logical;
-  std::map<std::string,std::vector<std::string> > m_selection ;
-  bool m_revert;
+  std::string                                     m_l0Location;
+  std::string                                     m_logical;
+  std::map<std::string, std::vector<std::string>> m_selection;
+  bool                                            m_revert;
 };
 #endif // L0DATAFILTER_H

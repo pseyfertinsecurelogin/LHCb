@@ -20,8 +20,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Functions.h"
 #include "LoKi/BasicFunctors.h"
+#include "LoKi/Functions.h"
 // ============================================================================
 /** @file LoKi/Calls.h
  *
@@ -35,11 +35,9 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Dicts
-  {
+  namespace Dicts {
     // ========================================================================
     /** @class FunCalls LoKi/Calls.h
      *
@@ -60,52 +58,45 @@ namespace LoKi
      *  @date   2007-05-29
      */
     template <class TYPE>
-    class FunCalls
-    {
+    class FunCalls {
       // ======================================================================
     private:
       // ======================================================================
-      typedef TYPE                                                Type ;
-      typedef typename LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef TYPE                                                Type;
+      typedef typename LoKi::BasicFunctors<const Type*>::Function Fun;
       typedef LoKi::details::result_t<Fun>                        result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static result_type __call__ ( const Fun& fun  , const Type*           o )
-      { return fun ( o ) ; }
-      static result_type __call__ ( const Fun& fun  , const SmartRef<Type>& o )
-      { return fun ( o ) ; }
+      static result_type __call__( const Fun& fun, const Type* o ) { return fun( o ); }
+      static result_type __call__( const Fun& fun, const SmartRef<Type>& o ) { return fun( o ); }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::ConstVector& o )
-      { return o >> fun  ; }
+      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::ConstVector& o ) {
+        return o >> fun;
+      }
       // __rrshift__
-      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::Vector& o )
-      { return o >> fun  ; }
+      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::Vector& o ) { return o >> fun; }
       // __rrshift__
-      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
-      { return fun ( o ) ; }
+      static result_type __rrshift__( const Fun& fun, const Type* o ) { return fun( o ); }
       // __rrshift__
-      static result_type __rrshift__ ( const Fun& fun  , const SmartRef<Type>& o )
-      { return fun ( o ) ; }
+      static result_type __rrshift__( const Fun& fun, const SmartRef<Type>& o ) { return fun( o ); }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      template <typename F,
-                typename TYPE2 = details::type2_t<F>,
-                typename TYPE3 = std::enable_if_t<std::is_convertible<TYPE2,double>::value
-                                                ||std::is_convertible<TYPE2,bool  >::value,
-                               std::conditional_t<std::is_convertible<TYPE2,double>::value,
-                                                   double, bool > >,
-                typename = std::enable_if_t<std::is_convertible<details::type1_t<F>,double>::value> >
-      static LoKi::FunctorFromFunctor<const Type*,TYPE3> __rshift__
-      ( const Fun& fun  , F&&  o    )
-      { return fun >> o  ; }
+      template <
+          typename F, typename TYPE2 = details::type2_t<F>,
+          typename TYPE3 = std::enable_if_t<std::is_convertible_v<TYPE2, double> || std::is_convertible_v<TYPE2, bool>,
+                                            std::conditional_t<std::is_convertible_v<TYPE2, double>, double, bool>>,
+          typename       = std::enable_if_t<std::is_convertible_v<details::type1_t<F>, double>>>
+      static LoKi::FunctorFromFunctor<const Type*, TYPE3> __rshift__( const Fun& fun, F&& o ) {
+        return fun >> o;
+      }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class CutCalls Calls.h LoKi/Calls.h
      *
@@ -117,36 +108,30 @@ namespace LoKi
      *  @date   2007-05-29
      */
     template <class TYPE>
-    class CutCalls
-    {
+    class CutCalls {
     private:
       // ======================================================================
-      typedef TYPE                                      Type ;
-      typedef typename LoKi::Predicate_t<const Type*>   Fun  ;
-      typedef LoKi::details::result_t<Fun>              result_type;
+      typedef TYPE                                    Type;
+      typedef typename LoKi::Predicate_t<const Type*> Fun;
+      typedef LoKi::details::result_t<Fun>            result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static result_type __call__ ( const Fun& fun  , const Type*  o )
-      { return fun ( o ) ; }
-      static result_type __call__ ( const Fun& fun  , const SmartRef<Type>& o )
-      { return fun ( o ) ; }
+      static result_type __call__( const Fun& fun, const Type* o ) { return fun( o ); }
+      static result_type __call__( const Fun& fun, const SmartRef<Type>& o ) { return fun( o ); }
       // ======================================================================
-      static typename Type::ConstVector __rrshift__
-      ( const Fun& fun  , const typename Type::ConstVector& o ) { return o >> fun  ; }
-      static typename Type::Vector __rrshift__
-      ( const Fun& fun  , const typename Type::Vector&      o ) { return o >> fun  ; }
-      static result_type  __rrshift__( const Fun& fun  , const Type* o )
-      { return fun ( o ) ; }
-      static result_type  __rrshift__( const Fun& fun  , const SmartRef<Type>& o )
-      { return fun ( o ) ; }
+      static typename Type::ConstVector __rrshift__( const Fun& fun, const typename Type::ConstVector& o ) {
+        return o >> fun;
+      }
+      static typename Type::Vector __rrshift__( const Fun& fun, const typename Type::Vector& o ) { return o >> fun; }
+      static result_type           __rrshift__( const Fun& fun, const Type* o ) { return fun( o ); }
+      static result_type           __rrshift__( const Fun& fun, const SmartRef<Type>& o ) { return fun( o ); }
       // ======================================================================
-      static LoKi::Assignable_t<Fun>
-      __rshift__ ( const Fun& fun, const Fun& o ) { return fun >> o  ; }
+      static LoKi::Assignable_t<Fun> __rshift__( const Fun& fun, const Fun& o ) { return fun >> o; }
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                             end of namespace LoKi::Dicts
+  } // namespace Dicts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

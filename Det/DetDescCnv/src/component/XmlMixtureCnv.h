@@ -12,14 +12,14 @@
 #define DETDESCCNV_XMLMIXTURECNV_H
 
 // Include files
-#include "DetDescCnv/XmlGenericCnv.h"
 #include "DetDesc/Mixture.h"
+#include "DetDescCnv/XmlGenericCnv.h"
 #include <string>
 
 // Forward declarations
-class     ISvcLocator;
-template <class TYPE> class CnvFactory;
-
+class ISvcLocator;
+template <class TYPE>
+class CnvFactory;
 
 /** @class XmlLMixtureCnv
  *
@@ -30,13 +30,12 @@ template <class TYPE> class CnvFactory;
  * @author Pere Mato
  */
 class XmlMixtureCnv : public XmlGenericCnv {
- public:
-
+public:
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
-  static const CLID& classID () { return CLID_Mixture; }
+  static const CLID& classID() { return CLID_Mixture; }
 
   /**
    * Constructor for this converter
@@ -49,16 +48,14 @@ class XmlMixtureCnv : public XmlGenericCnv {
    */
   virtual ~XmlMixtureCnv();
 
- protected:
-
+protected:
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
    * @param element the DOMElement to be used to builds the object
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  StatusCode i_createObj (xercesc::DOMElement* element,
-                          DataObject*& refpObject) override;
+  StatusCode i_createObj( xercesc::DOMElement* element, DataObject*& refpObject ) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -68,9 +65,7 @@ class XmlMixtureCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                        DataObject* refpObject,
-                        IOpaqueAddress* address) override;
+  StatusCode i_fillObj( xercesc::DOMElement* childElement, DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /** This processes the current object.
    * Overrides the default method in XmlGenericCnv
@@ -78,8 +73,7 @@ class XmlMixtureCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  StatusCode i_processObj (DataObject* refpObject,
-                           IOpaqueAddress* address) override;
+  StatusCode i_processObj( DataObject* refpObject, IOpaqueAddress* address ) override;
 
   /**
    * This is used to describe the kind of ponderation used so far in the
@@ -89,9 +83,7 @@ class XmlMixtureCnv : public XmlGenericCnv {
    */
   enum MixMode { MM_undefined, MM_byFractionMass, MM_byNAtoms };
 
-
- private:
-
+private:
   /// This tells what kind of ponderation has been used so far in the mixture
   MixMode m_mixMode;
 
@@ -100,11 +92,9 @@ class XmlMixtureCnv : public XmlGenericCnv {
    * @param path the path to be processed
    * @return the result
    */
-  std::string compactPath(std::string path);
-
+  std::string compactPath( std::string path );
 
 private:
-
   // Constant strings for element and parameter names
   const XMLCh* temperatureString;
   const XMLCh* pressureString;
@@ -121,7 +111,6 @@ private:
   const XMLCh* nameString;
   const XMLCh* natomsString;
   const XMLCh* fractionmassString;
-
 };
 
 #endif // DETDESCCNV_XMLCNVSVC_XMLMIXTURECNV_H

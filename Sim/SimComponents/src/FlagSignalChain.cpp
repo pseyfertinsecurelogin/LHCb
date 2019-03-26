@@ -33,8 +33,8 @@ void FlagSignalChain::setFromSignalFlag( const LHCb::MCParticle* mother ) {
 
   for ( auto& v : mother->endVertices() ) {
     for ( const auto& mcpc : v->products() ) {
-      LHCb::MCParticle* mcp = const_cast< LHCb::MCParticle* >( mcpc.target() ) ;
-      mcp->setFromSignal(true);
+      LHCb::MCParticle* mcp = const_cast<LHCb::MCParticle*>( mcpc.target() );
+      mcp->setFromSignal( true );
       setFromSignalFlag( mcpc );
     }
   }

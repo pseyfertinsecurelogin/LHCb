@@ -18,7 +18,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-
 /** @class IRateFromTCK IRateFromTCK.h Kernel/IRateFromTCK.h
  *
  *  Interface for tools that get a rate from a TCK
@@ -26,23 +25,21 @@
  *  @author Patrick Koppenburg
  *  @date   2011-08-10
  */
-struct IRateFromTCK : extend_interfaces<IAlgTool>
-{
+struct IRateFromTCK : extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  DeclareInterfaceID(IRateFromTCK, 3, 0 );
+  DeclareInterfaceID( IRateFromTCK, 3, 0 );
 
-  virtual unsigned int getTCK() const = 0;  ///< retrieve TCK
+  virtual unsigned int getTCK() const = 0; ///< retrieve TCK
 
   /// Get rate of rate limiting algorithm given its instance name (See TCKsh)
-  virtual double rateFromTCK(const std::string& instanceName) const = 0;
+  virtual double rateFromTCK( const std::string& instanceName ) const = 0;
 
   /// Get prescale of prescaler algorithm given its instance name (See TCKsh)
-  virtual double prescaleFromTCK(const std::string& instanceName) const = 0;
+  virtual double prescaleFromTCK( const std::string& instanceName ) const = 0;
 
   /// Update
   virtual StatusCode runUpdate() = 0;
-
 };
 
 #endif // KERNEL_IRATEFROMTCK_H

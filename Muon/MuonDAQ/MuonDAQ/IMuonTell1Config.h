@@ -8,23 +8,21 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef MUONDAQ_IMUONTELL1CONFIG_H 
+#ifndef MUONDAQ_IMUONTELL1CONFIG_H
 #define MUONDAQ_IMUONTELL1CONFIG_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-
 /** @class IMuonTell1Config IMuonTell1Config.h MuonDAQ/IMuonTell1Config.h
- *  
  *
- *  @author 
+ *
+ *  @author
  *  @date   2008-02-29
  */
 struct IMuonTell1Config : extend_interfaces<IAlgTool> {
-  DeclareInterfaceID(  IMuonTell1Config, 2, 0 );
-  virtual StatusCode configTell1(int Tell1) const = 0;
+  DeclareInterfaceID( IMuonTell1Config, 2, 0 );
+  virtual StatusCode configTell1( int Tell1 ) const = 0;
 };
-
 
 #endif // MUONDAQ_IMUONTELL1CONFIG_H

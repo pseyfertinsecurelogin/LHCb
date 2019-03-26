@@ -24,11 +24,9 @@
 #include "LoKi/BasicFunctors.h"
 #include "LoKi/Interface.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Random
-  {
+  namespace Random {
     // ========================================================================
     /** @class Numbers
      *  The generic "random" functor
@@ -53,31 +51,28 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 200803-19
      */
-    class Numbers : public LoKi::BasicFunctors<double>::Function
-    {
+    class Numbers : public LoKi::BasicFunctors<double>::Function {
     public:
       // ======================================================================
       /// constructor from the numbers
-      Numbers ( const  Rndm::Numbers&  numbers     ) ;
+      Numbers( const Rndm::Numbers& numbers );
       /// constructor from the generator and the service
-      Numbers ( const IRndmGen::Param& param       ,
-                IRndmGenSvc*           service = 0 ) ;
+      Numbers( const IRndmGen::Param& param, IRndmGenSvc* service = 0 );
       /// constructor from the generator and the service
-      Numbers ( IRndmGenSvc*           service     ,
-                const IRndmGen::Param& param       ) ;
+      Numbers( IRndmGenSvc* service, const IRndmGen::Param& param );
       /// copy constructor
-      Numbers ( const Numbers& right ) ;
+      Numbers( const Numbers& right );
       // destructor
       ~Numbers() override;
       /// MANDATORY: clone method ("virtual constructor")
       Numbers* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument /* a */ ) const override;
+      double operator()( argument /* a */ ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the params (if are known)
-      virtual const IRndmGen::Param* params() const { return m_param.get() ; }
+      virtual const IRndmGen::Param* params() const { return m_param.get(); }
       // ======================================================================
       /// no assignement operator
       Numbers& operator=( const Numbers& right ) = delete;
@@ -85,18 +80,18 @@ namespace LoKi
     public:
       // ======================================================================
       /// shoot!
-      double shoot () const ;                                    // shoot!
+      double shoot() const; // shoot!
       // ======================================================================
     private:
       // ======================================================================
       /// the random number service
-      mutable LoKi::Interface<IRndmGenSvc>  m_service  ; // the random number service
+      mutable LoKi::Interface<IRndmGenSvc> m_service; // the random number service
       /// the parameters
-      std::unique_ptr<const IRndmGen::Param> m_param    ; // the parameters
+      std::unique_ptr<const IRndmGen::Param> m_param; // the parameters
       /// the source of random numbers
-      mutable Rndm::Numbers                 m_numbers  ; // the source of random numbers
+      mutable Rndm::Numbers m_numbers; // the source of random numbers
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Uniform
      *
@@ -123,46 +118,35 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 200803-19
      */
-    class Uniform : public LoKi::Random::Numbers
-    {
+    class Uniform : public LoKi::Random::Numbers {
     public:
       // ======================================================================
       /// constructor  from the descriptor and the service
-      Uniform
-      ( const Rndm::Flat& flat    ,
-        IRndmGenSvc*      svc = 0 ) ;
+      Uniform( const Rndm::Flat& flat, IRndmGenSvc* svc = 0 );
       /// constructor from service and descriptor
-      Uniform
-      ( IRndmGenSvc*      svc     ,
-        const Rndm::Flat& flat    ) ;
+      Uniform( IRndmGenSvc* svc, const Rndm::Flat& flat );
       /// constructor from low, high and service
-      Uniform
-      ( const double      low   = 0 ,
-        const double      high  = 1 ,
-        IRndmGenSvc*      svc   = 0 ) ;
+      Uniform( const double low = 0, const double high = 1, IRndmGenSvc* svc = 0 );
       /// constructor from service , low and high
-      Uniform
-      ( IRndmGenSvc*      svc       ,
-        const double      low   = 0 ,
-        const double      high  = 1 ) ;
+      Uniform( IRndmGenSvc* svc, const double low = 0, const double high = 1 );
       /// MANDATORY: clone method ("virtual constructor")
       Uniform* clone() const override;
       /// OPTIONAL: nice a nice printout
-      std::ostream& fillStream ( std::ostream& s  ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the params (if are known)
-      const Rndm::Flat* params() const override { return &m_flat ; }
+      const Rndm::Flat* params() const override { return &m_flat; }
       /// cast:
-      operator const Rndm::Flat& () const { return m_flat ; }
+      operator const Rndm::Flat&() const { return m_flat; }
       // ======================================================================
     private:
       // ======================================================================
       /// the descriptor
-      Rndm::Flat m_flat ;
+      Rndm::Flat m_flat;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Gauss
      *
@@ -189,46 +173,35 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 200803-19
      */
-    class Gaussian : public LoKi::Random::Numbers
-    {
+    class Gaussian : public LoKi::Random::Numbers {
     public:
       // ======================================================================
       /// constructor  from the descriptor and the service
-      Gaussian
-      ( const Rndm::Gauss& gauss    ,
-        IRndmGenSvc*       svc  = 0 ) ;
+      Gaussian( const Rndm::Gauss& gauss, IRndmGenSvc* svc = 0 );
       /// constructor from service and descriptor
-      Gaussian
-      ( IRndmGenSvc*       svc      ,
-        const Rndm::Gauss& gauss    ) ;
+      Gaussian( IRndmGenSvc* svc, const Rndm::Gauss& gauss );
       /// constructor from mean, sigma and service
-      Gaussian
-      ( const double      mean  = 0 ,
-        const double      sigma = 1 ,
-        IRndmGenSvc*      svc   = 0 ) ;
+      Gaussian( const double mean = 0, const double sigma = 1, IRndmGenSvc* svc = 0 );
       /// constructor from service , mean and sigma
-      Gaussian
-      ( IRndmGenSvc*      svc       ,
-        const double      mean  = 0 ,
-        const double      sigma = 1 ) ;
+      Gaussian( IRndmGenSvc* svc, const double mean = 0, const double sigma = 1 );
       /// MANDATORY: clone method ("virtual constructor")
-      Gaussian* clone() const  override;
+      Gaussian* clone() const override;
       /// OPTIONAL: nice a nice printout
-      std::ostream& fillStream ( std::ostream& s  ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the params (if are known)
-      const Rndm::Gauss* params() const override { return &m_gauss ; }
+      const Rndm::Gauss* params() const override { return &m_gauss; }
       /// cast:
-      operator const Rndm::Gauss& () const { return m_gauss ; }
+      operator const Rndm::Gauss&() const { return m_gauss; }
       // ======================================================================
     private:
       // ======================================================================
       /// the descriptor
-      Rndm::Gauss m_gauss ;
+      Rndm::Gauss m_gauss;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Rand    LoKi/Random.h
      *
@@ -242,107 +215,99 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-03-19
      */
-    class Rand : public LoKi::BasicFunctors<double>::Function
-    {
+    class Rand : public LoKi::BasicFunctors<double>::Function {
     public:
       // ======================================================================
       /** constructor. If seed is not equal to 0,
        *    the call for <c>srand</c> will be performed
        *  @param seed the seed (if not zero)
        */
-      Rand ( const unsigned int seed = 0 ) ;
+      Rand( const unsigned int seed = 0 );
       /// MANDATORY: clone method ("virtual constructor")
       Rand* clone() const override;
       /// MANDATORY: the only one essential method
-      double   operator() ( argument ) const override;
+      double operator()( argument ) const override;
       /// OPTIONAL: just a nice printout
-      std::ostream& fillStream ( std::ostream& s  ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Blind
      *  Helper class to 'blind' the data
      *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
      *  @date 2010-10-10
      */
-    class Blind : public LoKi::Functor<void,double>
-    {
+    class Blind : public LoKi::Functor<void, double> {
     public:
       // ======================================================================
       /// constructor from the seed , min & max values
-      Blind ( const std::string& seed ,
-              const double       minv ,
-              const double       maxv ) ;
+      Blind( const std::string& seed, const double minv, const double maxv );
       /// constructor from the seed , min & max values
-      explicit Blind ( const std::string& seed ) ;
+      explicit Blind( const std::string& seed );
       /// MANDATORY: clone method ( "virtual construtor")
-      Blind* clone () const override;
+      Blind* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator()( ) const override;
+      double operator()() const override;
       /// OPTIONAL: just a nice printout
-      std::ostream& fillStream ( std::ostream& s  ) const override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
-      const std::string& seed () const { return m_seed ; }
-      double             minv () const { return m_min  ; }
-      double             maxv () const { return m_max  ; }
+      const std::string& seed() const { return m_seed; }
+      double             minv() const { return m_min; }
+      double             maxv() const { return m_max; }
       // ======================================================================
     private:
       // ======================================================================
       /// the hidden return value
-      double      m_result ;                         // the hidden return value
+      double m_result; // the hidden return value
       // ======================================================================
     private:
       // ======================================================================
       /// the seed string
-      std::string m_seed   ;                         // the seed string
+      std::string m_seed; // the seed string
       /// the minimal value
-      double      m_min    ;                         // the minimal value
+      double m_min; // the minimal value
       /// the maximal value
-      double      m_max    ;                         // the maximal value
+      double m_max; // the maximal value
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class XBlind
      *  Helper class to 'blind' the data
      *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
      *  @date 2010-10-10
      */
-    class XBlind : public LoKi::BasicFunctors<double>::Function
-    {
+    class XBlind : public LoKi::BasicFunctors<double>::Function {
     public:
       // ======================================================================
       /// constructor from the seed , min & max values
-      XBlind ( const std::string& seed ,
-              const double       minv ,
-              const double       maxv ) ;
+      XBlind( const std::string& seed, const double minv, const double maxv );
       /// constructor from the seed , min & max values
-      explicit XBlind ( const std::string& seed ) ;
+      explicit XBlind( const std::string& seed );
       /// MANDATORY: clone method ( "virtual construtor")
-      XBlind* clone () const  override;
+      XBlind* clone() const override;
       /// MANDATORY: the only one essential method
-      double  operator() ( argument      a ) const  override;
+      double operator()( argument a ) const override;
       /// OPTIONAL: just a nice printout
-      std::ostream& fillStream ( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
-      const std::string& seed () const { return m_blind.seed () ; }
-      double             minv () const { return m_blind.minv () ; }
-      double             maxv () const { return m_blind.maxv () ; }
+      const std::string& seed() const { return m_blind.seed(); }
+      double             minv() const { return m_blind.minv(); }
+      double             maxv() const { return m_blind.maxv(); }
       // ======================================================================
     private:
       // ======================================================================
       /// the actual functor
-      LoKi::Random::Blind m_blind ;                       // the actual functor
+      LoKi::Random::Blind m_blind; // the actual functor
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } // end of namespace LoKi::Random
+  } // namespace Random
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @typedef XRANDOM
      *
@@ -369,7 +334,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    typedef LoKi::Random::Numbers                               XRANDOM ;
+    typedef LoKi::Random::Numbers XRANDOM;
     // ========================================================================
     /** @typedef XRND
      *  Simple functor which produces the random numbers acording to
@@ -396,7 +361,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    typedef LoKi::Random::Uniform                                 XRND     ;
+    typedef LoKi::Random::Uniform XRND;
     // ========================================================================
     /** @var XRNDM
      *  Simple functor which produces the random numbers acording to
@@ -418,7 +383,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    const LoKi::Random::Uniform                                   XRNDM () ;
+    const LoKi::Random::Uniform XRNDM();
     // ========================================================================
     /** @typedef XGAUS
      *  Simple functor which produces the random numbers acording to
@@ -441,7 +406,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    typedef LoKi::Random::Gaussian                               XGAUS     ;
+    typedef LoKi::Random::Gaussian XGAUS;
     // ========================================================================
     /** @var XGAUSS
      *  Simple functor whcih produces the random numbers acording to
@@ -460,7 +425,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    const LoKi::Random::Gaussian                                XGAUSS () ;
+    const LoKi::Random::Gaussian XGAUSS();
     // ========================================================================
     /** @var XRAND
      *  The trivial functor, whcih produced the random numbers  using the
@@ -479,7 +444,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-03-19
      */
-    const LoKi::Random::Rand                                    XRAND () ;
+    const LoKi::Random::Rand XRAND();
     // ========================================================================
     /** @typedef BLIND
      *  simple 'void'-function useful for varuosu 'blind'-operations
@@ -501,7 +466,7 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date   2010-10-10
      */
-    typedef LoKi::Random::Blind                                  BLIND   ;
+    typedef LoKi::Random::Blind BLIND;
     // ==========================================================================
     /** @typedef XBLIND
      *  simple 'void'-function useful for various 'blind'-operations
@@ -523,9 +488,9 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date   2010-10-10
      */
-    typedef LoKi::Random::XBlind                                XBLIND   ;
+    typedef LoKi::Random::XBlind XBLIND;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

@@ -17,7 +17,9 @@
 #include "CFNodePropertiesParse.h"
 
 // FW includes
+#include "GaudiAlg/FunctionalDetails.h"
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/Counters.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/DataSvc.h"
 #include "GaudiKernel/EventContext.h"
@@ -30,32 +32,27 @@
 #include "GaudiKernel/IHiveWhiteBoard.h"
 #include "GaudiKernel/Memory.h"
 #include "GaudiKernel/ThreadLocalContext.h"
-#include "GaudiKernel/Counters.h"
-#include "GaudiAlg/FunctionalDetails.h"
-
 
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
 #include <fstream>
-#include <map>
-#include <sstream>
 #include <iomanip>
+#include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
-//tbb
+// tbb
+#include "tbb/task.h"
 #include "tbb/task_scheduler_init.h"
 #include "tbb/task_scheduler_observer.h"
-#include "tbb/task.h"
 
-//locals
+// locals
 #include "ControlFlowNode.h"
 
-
-class HLTControlFlowMgr final : public extends<Service, IEventProcessor>
-{
+class HLTControlFlowMgr final : public extends<Service, IEventProcessor> {
 
 public:
   /// Standard Constructor
@@ -88,11 +85,10 @@ private:
   void promoteToExecuted( std::unique_ptr<EventContext> eventContext ) const;
 
   void buildLines();
-  //configuring the execution order
+  // configuring the execution order
   void configureScheduling();
-  //build per-thread state-vector
+  // build per-thread state-vector
   void buildNodeStates();
-
 
 private:
   Gaudi::Property<std::string> m_histPersName{this, "HistogramPersistency", "", ""};
@@ -108,7 +104,7 @@ private:
                                       (format: [ [before, after], [before2, after2] ])"};
   Gaudi::Property<std::set<std::string>> m_definitlyRunThese{
       this, "AdditionalAlgs", {}, "Add algs that do not participate in the control flow but should\
-                                   definitly run, like e.g. a callgrindprofile" };
+                                   definitly run, like e.g. a callgrindprofile"};
 
   Gaudi::Property<int> m_startTimeAtEvt{this, "StartTimeAtEvt", -1, "start timing at this event. Counting from 0. \
                                         Default choice is deduced from #slots and #evts \
@@ -142,35 +138,38 @@ private:
   /// event selector context
   IEvtSelector::Context* m_evtSelContext{nullptr};
 
-  //state vectors for each event, once filled, then copied per event
-  std::vector<NodeState> m_NodeStates;
-  std::vector<uint16_t> m_AlgStates;
+  // state vectors for each event, once filled, then copied per event
+  std::vector<NodeState>                              m_NodeStates;
+  std::vector<uint16_t>                               m_AlgStates;
   std::vector<Gaudi::Accumulators::Counter<uint32_t>> m_AlgExecCounter;
-  using SchedulerStates = decltype(std::pair{m_NodeStates, m_AlgStates});
 
-  //all controlflownodes
+public:
+  using SchedulerStates = decltype( std::pair{m_NodeStates, m_AlgStates} );
+
+private:
+  // all controlflownodes
   std::vector<VNode> m_allVNodes;
-  //all nodes to execute in ordered manner
+  // all nodes to execute in ordered manner
   std::vector<VNode*> m_orderedNodesVec;
-  //highest node
+  // highest node
   VNode* m_motherOfAllNodes;
 
   std::vector<AlgWrapper> m_definitlyRunTheseAlgs;
 
-  //for printing
-  //printable dependency tree (will be built during initialize
+  // for printing
+  // printable dependency tree (will be built during initialize
   std::vector<std::string> m_printableDependencyTree;
   std::vector<std::string> m_AlgNames;
-  //map order of print to order of m_NodeStates and m_allVNodes
+  // map order of print to order of m_NodeStates and m_allVNodes
   std::vector<int> m_mapPrintToNodeStateOrder;
-  //maximum width of the dependencytree
+  // maximum width of the dependencytree
   int m_maxTreeWidth;
 
-  //functions to create m_printableDependencyTree
+  // functions to create m_printableDependencyTree
   void registerStructuredTree();
   void registerTreePrintWidth();
-  //runtime adding of states to print tree and states
-  public:
-  std::stringstream buildStructuredTreeWithStates(std::vector<NodeState> const & states) const;
-  std::stringstream buildAlgsWithStates(std::vector<uint16_t> const & states) const;
+  // runtime adding of states to print tree and states
+public:
+  std::stringstream buildStructuredTreeWithStates( std::vector<NodeState> const& states ) const;
+  std::stringstream buildAlgsWithStates( std::vector<uint16_t> const& states ) const;
 };

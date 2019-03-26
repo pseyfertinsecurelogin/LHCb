@@ -9,91 +9,76 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef LOKI_HltENGINE_H 
+#ifndef LOKI_HltENGINE_H
 #define LOKI_HltENGINE_H 1
 // ============================================================================
 // Include files
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/IHltAntiFactory.h"
 #include "LoKi/Context.h"
+#include "LoKi/IHltAntiFactory.h"
 // ============================================================================
-namespace LoKi 
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Hybrid 
-  {
+  namespace Hybrid {
     // ========================================================================
     /** @class HltEngine LoKi/HltEngine.h
-     *  
+     *
      *  Helper class for implementation of C++/Python "Hybrid" solution
      *
-     *  This file is a part of LoKi project - 
+     *  This file is a part of LoKi project -
      *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
      *
      *  The package has been designed with the kind help from
-     *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
-     *  contributions and advices from G.Raven, J.van Tilburg, 
-     *  A.Golutvin, P.Koppenburg have been used in the 
+     *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+     *  contributions and advices from G.Raven, J.van Tilburg,
+     *  A.Golutvin, P.Koppenburg have been used in the
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-18
      */
-    class HltEngine
-    {
-    public: 
+    class HltEngine {
+    public:
       // ======================================================================
       /// Standard constructor
-      HltEngine () = default; 
+      HltEngine() = default;
       // ======================================================================
-      // destructor 
-      virtual ~HltEngine () = default; // Destructor
-      // ======================================================================      
+      // destructor
+      virtual ~HltEngine() = default; // Destructor
+      // ======================================================================
     public: // L0
       // ======================================================================
-      /// add the cut 
-      StatusCode process 
-      ( const std::string&          name , 
-        const LoKi::Types::L0_Cuts& cut  ) const ;
-      /// add the cut 
-      StatusCode process 
-      ( const std::string&          name , 
-        const LoKi::Types::L0_Func& cut  ) const ;
+      /// add the cut
+      StatusCode process( const std::string& name, const LoKi::Types::L0_Cuts& cut ) const;
+      /// add the cut
+      StatusCode process( const std::string& name, const LoKi::Types::L0_Func& cut ) const;
       // ======================================================================
-    public: // O1 
+    public: // O1
       // ======================================================================
-      /// add the cut 
-      StatusCode process 
-      ( const std::string&          name , 
-        const LoKi::Types::ODIN_Cuts& cut  ) const ;
-      /// add the cut 
-      StatusCode process 
-      ( const std::string&          name , 
-        const LoKi::Types::ODIN_Func& cut  ) const ;
+      /// add the cut
+      StatusCode process( const std::string& name, const LoKi::Types::ODIN_Cuts& cut ) const;
+      /// add the cut
+      StatusCode process( const std::string& name, const LoKi::Types::ODIN_Func& cut ) const;
       // ======================================================================
     public: // HLT
       // ======================================================================
-      /// add the cut 
-      StatusCode process 
-      ( const std::string&           name , 
-        const LoKi::Types::HLT_Cuts& cut  ) const ;
-      /// add the cut 
-      StatusCode process 
-      ( const std::string&           name , 
-        const LoKi::Types::HLT_Func& cut  ) const ;
+      /// add the cut
+      StatusCode process( const std::string& name, const LoKi::Types::HLT_Cuts& cut ) const;
+      /// add the cut
+      StatusCode process( const std::string& name, const LoKi::Types::HLT_Func& cut ) const;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the current context 
-      const LoKi::Context* context () const ;
+      /// get the current context
+      const LoKi::Context* context() const;
       // ======================================================================
     };
     // ========================================================================
-  } //                                        The end of namespace LoKi::Hybrid 
+  } // namespace Hybrid
   // ==========================================================================
-} //                                                  The end of namespace LoKi 
+} // namespace LoKi
 // ============================================================================
-//                                                                      The END  
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_HltENGINE_H

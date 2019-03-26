@@ -17,9 +17,8 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/Vector3DTypes.h"
 
-#include "Trajectory.h"
 #include "GaudiKernel/TaggedBool.h"
-
+#include "Trajectory.h"
 
 /** @class ITrajPoca ITrajPoca.h
  *
@@ -32,7 +31,7 @@
 
 struct ITrajPoca : extend_interfaces<IAlgTool> {
 
-  DeclareInterfaceID(ITrajPoca, 3, 0 );
+  DeclareInterfaceID( ITrajPoca, 3, 0 );
 
   using RestrictRange = Gaudi::tagged_bool<struct RestrictRange_tag>;
 
@@ -42,35 +41,27 @@ struct ITrajPoca : extend_interfaces<IAlgTool> {
   /// is restricted to the range of the trajectory.
   virtual StatusCode minimize( const LHCb::Trajectory<double>& traj1, double& mu1, RestrictRange rRange1,
                                const LHCb::Trajectory<double>& traj2, double& mu2, RestrictRange rRange2,
-                               Gaudi::XYZVector& distance, double precision ) const = 0 ;
+                               Gaudi::XYZVector& distance, double precision ) const = 0;
 
   /// Find point along trajectory at which the distance to point 'p'
   /// is minimum. The precision parameter is the desired numerical accuracy of
   /// the expansion parameter mu. If the restrictrange flag is true, mu is
   /// restricted to the range of the trajectory.
-  virtual StatusCode minimize( const LHCb::Trajectory<double>& traj, double& mu,
-                               RestrictRange  restrictRange,
-                               const Gaudi::XYZPoint& pt,
-                               Gaudi::XYZVector& distance,
-                               double precision ) const = 0;
+  virtual StatusCode minimize( const LHCb::Trajectory<double>& traj, double& mu, RestrictRange restrictRange,
+                               const Gaudi::XYZPoint& pt, Gaudi::XYZVector& distance, double precision ) const = 0;
 
   /// Find points along trajectories at which the distance between the
   /// trajectories is at its minimum. The precision parameter is the desired
   /// numerical accuracy of the expansion parameters mu1 and mu2.
-  StatusCode minimize( const LHCb::Trajectory<double>& traj1, double& mu1,
-                       const LHCb::Trajectory<double>& traj2, double& mu2,
-                       Gaudi::XYZVector& distance, double precision ) const {
-    return minimize( traj1, mu1, RestrictRange{false},
-                     traj2, mu2, RestrictRange{false},
-                     distance, precision );
+  StatusCode minimize( const LHCb::Trajectory<double>& traj1, double& mu1, const LHCb::Trajectory<double>& traj2,
+                       double& mu2, Gaudi::XYZVector& distance, double precision ) const {
+    return minimize( traj1, mu1, RestrictRange{false}, traj2, mu2, RestrictRange{false}, distance, precision );
   }
-
 
   /// Find point along trajectory at which the distance to point 'p'
   /// is minimum. The precision parameter is the desired
   /// numerical accuracy of the expansion parameter mu.
-  StatusCode minimize( const LHCb::Trajectory<double>& traj, double& mu,
-                       const Gaudi::XYZPoint& pt,
+  StatusCode minimize( const LHCb::Trajectory<double>& traj, double& mu, const Gaudi::XYZPoint& pt,
                        Gaudi::XYZVector& distance, double precision ) const {
     return minimize( traj, mu, RestrictRange{false}, pt, distance, precision );
   }

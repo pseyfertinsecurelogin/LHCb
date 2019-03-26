@@ -20,8 +20,8 @@
 // ============================================================================
 // Gaudi Units (previously CLHEP)
 // ============================================================================
-#include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // ============================================================================
 /** @file LoKi/Constants.h
  *
@@ -37,8 +37,7 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Constants LoKi/Constants.h
    *
@@ -47,43 +46,42 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2003-07-10
    */
-  namespace Constants
-  {
+  namespace Constants {
     // ========================================================================
     /// representation of invalid time
-    constexpr double InvalidTime         = -1.e+10 * Gaudi::Units::ns ;
+    constexpr double InvalidTime = -1.e+10 * Gaudi::Units::ns;
     /// representation of invalid/infinite time
-    constexpr double InfiniteTime        =  1.e+10 * Gaudi::Units::ns ;
+    constexpr double InfiniteTime = 1.e+10 * Gaudi::Units::ns;
     /// representation of invalid distance
-    constexpr double InvalidDistance     = -1.e+10 * Gaudi::Units::km ;
+    constexpr double InvalidDistance = -1.e+10 * Gaudi::Units::km;
     /// representation of invalid chi2
-    constexpr double InvalidChi2         = -1.e+10     ;
+    constexpr double InvalidChi2 = -1.e+10;
     /// representation of invalid particle ID
-    constexpr double InvalidID           =      0      ;
+    constexpr double InvalidID = 0;
     /// representation of invalid particle charge
-    constexpr double InvalidCharge       =  -1000      ;
+    constexpr double InvalidCharge = -1000;
     /// representation of invalid PID
-    constexpr double InvalidPID          =      0      ;
+    constexpr double InvalidPID = 0;
     /// representation of invalid confedence level
-    constexpr double InvalidConfLevel    =  -1000      ;
+    constexpr double InvalidConfLevel = -1000;
     /// representation of invalid energy
-    constexpr double InvalidEnergy       =  -1.e+10 * Gaudi::Units::TeV ;
+    constexpr double InvalidEnergy = -1.e+10 * Gaudi::Units::TeV;
     /// representation of invalid momentum
-    constexpr double InvalidMomentum     =  -1.e+10 * Gaudi::Units::TeV ;
+    constexpr double InvalidMomentum = -1.e+10 * Gaudi::Units::TeV;
     /// representation of invalid mass
-    constexpr double InvalidMass         =  -1.e+10 * Gaudi::Units::TeV ;
+    constexpr double InvalidMass = -1.e+10 * Gaudi::Units::TeV;
     /// representation of invalid sine/cosine/angle, etc
-    constexpr double InvalidAngle        =  -1.e+10    ;
+    constexpr double InvalidAngle = -1.e+10;
     /// representation of HUGE distance
-    constexpr double HugeDistance        =   1.e+10 * Gaudi::Units::km  ;
+    constexpr double HugeDistance = 1.e+10 * Gaudi::Units::km;
     /// representation of HUGE chi2
-    constexpr double HugeChi2            =   1.e+10    ;
+    constexpr double HugeChi2 = 1.e+10;
     /// representation of positive INFINITY
-    constexpr double PositiveInfinity    = std::numeric_limits<float>::max() ;
+    constexpr double PositiveInfinity = std::numeric_limits<float>::max();
     /// represetnation of Negative INFINITY
-    constexpr double NegativeInfinity    = -PositiveInfinity ;
+    constexpr double NegativeInfinity = -PositiveInfinity;
     // ========================================================================
-  } //                                         end of namespace LoKi::Constants
+  } // namespace Constants
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

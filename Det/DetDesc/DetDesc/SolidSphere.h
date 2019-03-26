@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ===========================================================================
-#ifndef     DETDESC_SOLIDSPHERE_H
-#define     DETDESC_SOLIDSPHERE_H 1
+#ifndef DETDESC_SOLIDSPHERE_H
+#define DETDESC_SOLIDSPHERE_H 1
 
 #include <memory>
 // DetDesc
@@ -21,7 +21,6 @@
 template <class TYPE>
 class SolidFactory;
 
-
 /** @class SolidSphere SolidSphere.h "DetDesc/SolidSphere.h"
  *
  *  A simple implementation of SPHERE
@@ -29,13 +28,11 @@ class SolidFactory;
  *  @author Vanya Belyaev
  */
 
-class SolidSphere final : public virtual SolidBase
-{
+class SolidSphere final : public virtual SolidBase {
   /// friend factory fo instantiation
   friend class SolidFactory<SolidSphere>;
 
 public:
-
   /** constructor
    *  @param name             name of sphere segment
    *  @param OuterRadius      outer radius of sphere segement
@@ -46,21 +43,18 @@ public:
    *  @param DeltaThetaAngle  delta theta angle
    *  @param CoverModel       covering model
    */
-  SolidSphere( const std::string& name                             ,
-               const double       OuterRadius                      ,
-               const double       InsideRadius    =   0.0          ,
-               const double       StartPhiAngle   =   0.0 * Gaudi::Units::degree,
-               const double       DeltaPhiAngle   = 360.0 * Gaudi::Units::degree,
-               const double       StartThetaAngle =   0.0 * Gaudi::Units::degree,
-               const double       DeltaThetaAngle = 180.0 * Gaudi::Units::degree,
-               const int          CoverModel      =   0            );
+  SolidSphere( const std::string& name, const double OuterRadius, const double InsideRadius = 0.0,
+               const double StartPhiAngle   = 0.0 * Gaudi::Units::degree,
+               const double DeltaPhiAngle   = 360.0 * Gaudi::Units::degree,
+               const double StartThetaAngle = 0.0 * Gaudi::Units::degree,
+               const double DeltaThetaAngle = 180.0 * Gaudi::Units::degree, const int CoverModel = 0 );
 
   /** - retrieve the specific type of the solid
    *  - implementation of ISolid abstract interface
    *  @see ISolid
    *  @return specific type of the solid
    */
-  inline std::string typeName () const override { return "SolidSphere"; }
+  inline std::string typeName() const override { return "SolidSphere"; }
 
   /** - check for the given 3D-point.
    *    Point coordinated are in the local reference
@@ -70,9 +64,9 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside ( const Gaudi::XYZPoint& point ) const override;
-  bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
-  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
+  bool isInside( const Gaudi::XYZPoint& point ) const override;
+  bool isInside( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside( const Gaudi::RhoZPhiPoint& point ) const override;
 
   /** -# retrieve the pointer to "simplified" solid - "cover"
    *  -# implementation of ISolid abstract interface
@@ -99,7 +93,7 @@ public:
    *  @see SolidSphere::m_sphere_coverModel
    *  @return pointer to "simplified" solid - "cover"
    */
-  inline const ISolid* cover () const override { return m_cover.get(); }
+  inline const ISolid* cover() const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation of ISolid abstract interface
@@ -109,7 +103,7 @@ public:
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream& printOut ( std::ostream& os = std::cout ) const override;
+  std::ostream& printOut( std::ostream& os = std::cout ) const override;
 
   /** - printout to Gaudi  stream
    *  - implementation of ISolid abstract interface
@@ -119,7 +113,7 @@ public:
    *  @param os Gaudi stream
    *  @return reference to the stream
    */
-  MsgStream&    printOut ( MsgStream& os ) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** -# calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -141,134 +135,117 @@ public:
    */
 
   using SolidBase::intersectionTicks;
-  unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
-                                  const Gaudi::XYZVector& Vector,
-                                  ISolid::Ticks& ticks  ) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                  const Gaudi::Polar3DVector & Vector,
-                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point, const Gaudi::Polar3DVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
-  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                  const Gaudi::RhoZPhiVector & Vector,
-                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point, const Gaudi::RhoZPhiVector& Vector,
+                                  ISolid::Ticks& ticks ) const override;
 
   /**  return the inner radius of sphere segment
    *  @return the inner radius of sphere segment
    */
-  inline       double               insideRadius   () const
-  { return m_sphere_insideR  ; }
+  inline double insideRadius() const { return m_sphere_insideR; }
 
   /**  return the squared inner radius of sphere segment
    *  @return the squared inner radius of sphere segment
    */
-  inline       double               insideR2   () const
-  { return m_sphere_insideR2 ; }
+  inline double insideR2() const { return m_sphere_insideR2; }
 
   /**  return the outer radius of sphere segment
    *  @return the outer radius of sphere segment
    */
-  inline       double               outerRadius  () const
-  { return m_sphere_outerR  ; }
+  inline double outerRadius() const { return m_sphere_outerR; }
 
   /**  return the squared outer radius of sphere segment
    *  @return the squared outer radius of sphere segment
    */
-  inline       double               outerR2       () const
-  { return m_sphere_outerR2 ; }
+  inline double outerR2() const { return m_sphere_outerR2; }
 
   /**  return the start of phi angle of sphere segment
    *  @return the start of phi angle of sphere segment
    */
-  inline       double               startPhiAngle  () const
-  { return m_sphere_startPhiAngle  ; }
+  inline double startPhiAngle() const { return m_sphere_startPhiAngle; }
 
   /**  return the delta of phi angle of sphere segment
    *  @return the delta of phi angle of sphere segment
    */
-  inline       double               deltaPhiAngle  () const
-  { return m_sphere_deltaPhiAngle  ; }
+  inline double deltaPhiAngle() const { return m_sphere_deltaPhiAngle; }
 
   /**  return the start of theta angle of sphere segment
    *  @return the start of theta angle of sphere segment
    */
-  inline       double               startThetaAngle() const
-  { return m_sphere_startThetaAngle; }
+  inline double startThetaAngle() const { return m_sphere_startThetaAngle; }
 
   /**  return the delta of theta angle of sphere segment
    *  @return the delta of theta angle of sphere segment
    */
-  inline       double               deltaThetaAngle() const
-  { return m_sphere_deltaThetaAngle; }
+  inline double deltaThetaAngle() const { return m_sphere_deltaThetaAngle; }
 
   /**  return the inner diameter of sphere segment
    *  @return the inner diameter of sphere segment
    */
-  inline       double  insideDiameter () const
-  { return insideRadius()    * 2 ; }
+  inline double insideDiameter() const { return insideRadius() * 2; }
 
   /**  return the outer diameter of sphere segment
    *  @return the outer diameter of sphere segment
    */
-  inline       double  outerDiameter  () const
-  { return outerRadius()     * 2 ; }
+  inline double outerDiameter() const { return outerRadius() * 2; }
 
   /**  return the end of phi angle of sphere segment
    *  @return the end of phi angle of sphere segment
    */
-  inline       double  endPhiAngle    () const
-  { return m_sphere_startPhiAngle   + m_sphere_deltaPhiAngle   ; }
+  inline double endPhiAngle() const { return m_sphere_startPhiAngle + m_sphere_deltaPhiAngle; }
 
   /**  return the end of theta angle of sphere segment
    *  @return the end of theta angle of sphere segment
    */
-  inline       double  endThetaAngle  () const
-  { return m_sphere_startThetaAngle + m_sphere_deltaThetaAngle ; }
+  inline double endThetaAngle() const { return m_sphere_startThetaAngle + m_sphere_deltaThetaAngle; }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const override { return 4 ; }
+  Ticks::size_type maxNumberOfTicks() const override { return 4; }
 
 protected:
-
   /// gap in phi   ?
-  bool noPhiGap   () const { return m_noPhiGap   ; }
+  bool noPhiGap() const { return m_noPhiGap; }
   /// gap in theta ?
-  bool noThetaGap () const { return m_noThetaGap ; }
+  bool noThetaGap() const { return m_noThetaGap; }
 
   /** check for R
    *  @param point to be checked
    *  @return true if point is "inside rho"
    */
-  template<class aPoint>
-  inline bool insideR     ( const aPoint& point ) const ;
+  template <class aPoint>
+  inline bool insideR( const aPoint& point ) const;
 
   /** check for phi
    *  @param point to be checked
    *  @return true if point is "inside phi"
    */
-  template<class aPoint>
-  inline bool insidePhi   ( const aPoint& point ) const ;
+  template <class aPoint>
+  inline bool insidePhi( const aPoint& point ) const;
 
   /** check for theta
    *  @param point to be checked
    *  @return true if point is "inside theta"
    */
-  template<class aPoint>
-  inline bool insideTheta ( const aPoint& point ) const ;
+  template <class aPoint>
+  inline bool insideTheta( const aPoint& point ) const;
 
 protected:
-
   /** set bounding parameters
    */
   void setBP();
 
 private:
   //
-  SolidSphere           ( const SolidSphere& );  // no copy-constructor
-  SolidSphere& operator=( const SolidSphere& );  // no assignment
+  SolidSphere( const SolidSphere& );            // no copy-constructor
+  SolidSphere& operator=( const SolidSphere& ); // no assignment
 
   /**
    * implementation of isInside
@@ -276,36 +253,32 @@ private:
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl(const aPoint& point) const;
+  bool isInsideImpl( const aPoint& point ) const;
 
-  template<class aPoint, class aVector>
-  unsigned int intersectionTicksImpl( const aPoint  & Point,
-                                      const aVector & Vector,
-                                      ISolid::Ticks& ticks ) const;
-  void createCover();
+  template <class aPoint, class aVector>
+  unsigned int intersectionTicksImpl( const aPoint& Point, const aVector& Vector, ISolid::Ticks& ticks ) const;
+  void         createCover();
   //
 private:
-
   /// sphere segment parameters
-  double                m_sphere_outerR2         ;
-  double                m_sphere_insideR2        ;
-  double                m_sphere_startPhiAngle   ;
-  double                m_sphere_deltaPhiAngle   ;
-  double                m_sphere_startThetaAngle ;
-  double                m_sphere_deltaThetaAngle ;
+  double m_sphere_outerR2;
+  double m_sphere_insideR2;
+  double m_sphere_startPhiAngle;
+  double m_sphere_deltaPhiAngle;
+  double m_sphere_startThetaAngle;
+  double m_sphere_deltaThetaAngle;
   /// cover model
-  int                   m_sphere_coverModel      ;
+  int m_sphere_coverModel;
   //
-  double                m_sphere_outerR          ;
-  double                m_sphere_insideR         ;
+  double m_sphere_outerR;
+  double m_sphere_insideR;
   //
-  bool                  m_noPhiGap               ;
-  bool                  m_noThetaGap             ;
+  bool m_noPhiGap;
+  bool m_noThetaGap;
   //
   std::unique_ptr<ISolid> m_cover;
 };
 // ===========================================================================
-
 
 // ===========================================================================
 /** check for R
@@ -314,14 +287,13 @@ private:
  */
 // ===========================================================================
 template <class aPoint>
-inline bool SolidSphere::insideR( const aPoint& point ) const
-{
+inline bool SolidSphere::insideR( const aPoint& point ) const {
   const auto r2 = point.mag2();
   return ( r2 <= outerR2() && r2 >= insideR2() );
-  //if(  r2 >  outerR2 () ) { return false ; }
-  //if(  r2 < insideR2 () ) { return false ; }
+  // if(  r2 >  outerR2 () ) { return false ; }
+  // if(  r2 < insideR2 () ) { return false ; }
   // inside!
-  //return true ;
+  // return true ;
 }
 // ===========================================================================
 
@@ -332,17 +304,14 @@ inline bool SolidSphere::insideR( const aPoint& point ) const
  */
 // ===========================================================================
 template <class aPoint>
-inline bool SolidSphere::insidePhi( const aPoint& point ) const
-{
-  if( noPhiGap()                                    ) { return true ; }
-  double phi = point.phi() ;   // [-180,180]
-  if( startPhiAngle ()                   <= phi &&
-      startPhiAngle () + deltaPhiAngle() >= phi     ) { return true ; }
-  phi += 360 * Gaudi::Units::degree ;
-  if( startPhiAngle ()                   <= phi &&
-      startPhiAngle () + deltaPhiAngle() >= phi     ) { return true ; }
+inline bool SolidSphere::insidePhi( const aPoint& point ) const {
+  if ( noPhiGap() ) { return true; }
+  double phi = point.phi(); // [-180,180]
+  if ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) { return true; }
+  phi += 360 * Gaudi::Units::degree;
+  if ( startPhiAngle() <= phi && startPhiAngle() + deltaPhiAngle() >= phi ) { return true; }
   //
-  return false ;
+  return false;
 }
 // ===========================================================================
 
@@ -353,14 +322,12 @@ inline bool SolidSphere::insidePhi( const aPoint& point ) const
  */
 // ===========================================================================
 template <class aPoint>
-inline bool SolidSphere::insideTheta( const aPoint& point ) const
-{
-  if( noThetaGap()                                        ) { return true ; }
-  const double theta = point.theta() ;
-  if( startThetaAngle ()                     <= theta &&
-      startThetaAngle () + deltaThetaAngle() >= theta     ) { return true ; }
+inline bool SolidSphere::insideTheta( const aPoint& point ) const {
+  if ( noThetaGap() ) { return true; }
+  const double theta = point.theta();
+  if ( startThetaAngle() <= theta && startThetaAngle() + deltaThetaAngle() >= theta ) { return true; }
   //
-  return false ;
+  return false;
 }
 // ===========================================================================
 

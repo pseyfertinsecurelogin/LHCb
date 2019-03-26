@@ -33,8 +33,7 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class ODINFilter
    *  Simple filtering algorithm bases on LoKi/Bender "hybrid" framework
@@ -42,13 +41,12 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-06-02
    */
-  class GenFilter : public LoKi::FilterAlg
-  {
+  class GenFilter : public LoKi::FilterAlg {
   public:
     // ========================================================================
     /// the main method: execute
-    StatusCode execute  ()  override;
-    StatusCode finalize ()  override;
+    StatusCode execute() override;
+    StatusCode finalize() override;
     // ========================================================================
   public:
     // ========================================================================
@@ -57,11 +55,10 @@ namespace LoKi
      *  @see LoKi::FilterAlg::decode
      *  @see LoKi::FilterAlg::i_decode
      */
-    StatusCode decode () override
-    {
-      StatusCode sc = i_decode<LoKi::IGenHybridFactory> ( m_cut ) ;
-      Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
-      return StatusCode::SUCCESS ;
+    StatusCode decode() override {
+      StatusCode sc = i_decode<LoKi::IGenHybridFactory>( m_cut );
+      Assert( sc.isSuccess(), "Unable to decode the functor!" );
+      return StatusCode::SUCCESS;
     }
     // ========================================================================
     /** standard constructor
@@ -73,27 +70,25 @@ namespace LoKi
      *  @param name the algorithm instance name
      *  @param pSvc pointer to Service Locator
      */
-    GenFilter
-    ( const std::string& name ,    // the algorithm instance name
-      ISvcLocator*       pSvc ) ; // pointer to the service locator
+    GenFilter( const std::string& name, // the algorithm instance name
+               ISvcLocator*       pSvc );     // pointer to the service locator
     // ========================================================================
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::Types::GCutVal m_cut ; // the functor itself
+    LoKi::Types::GCutVal m_cut; // the functor itself
     /// TES location of LHCb::HepMCEvent::Container object
-    std::string m_location ;     // TES location of LHCb::HepMCEvent::Container
+    std::string m_location; // TES location of LHCb::HepMCEvent::Container
     // ========================================================================
   };
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace
-{
+namespace {
   // ==========================================================================
-  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE{ false };
+  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE{false};
   // ==========================================================================
-}
+} // namespace
 // ============================================================================
 /* standard constructor
  *  @see LoKi::FilterAlg
@@ -105,82 +100,69 @@ namespace
  *  @param pSvc pointer to Service Locator
  */
 // ===========================================================================
-LoKi::GenFilter::GenFilter
-( const std::string& name , // the algorithm instance name
-  ISvcLocator*       pSvc ) // pointer to the service locator
-  : LoKi::FilterAlg ( name , pSvc )
-// the functor itself
-  , m_cut      ( s_NONE )
-// TES location of LHCb::HEpMCEvent::Constainer object
-  , m_location ( LHCb::HepMCEventLocation::Default )
-{
+LoKi::GenFilter::GenFilter( const std::string& name, // the algorithm instance name
+                            ISvcLocator*       pSvc )      // pointer to the service locator
+    : LoKi::FilterAlg( name, pSvc )
+    // the functor itself
+    , m_cut( s_NONE )
+    // TES location of LHCb::HEpMCEvent::Constainer object
+    , m_location( LHCb::HepMCEventLocation::Default ) {
   //
-  declareProperty
-    ( "Location" ,
-      m_location ,
-      "TES location of LHCb::HepMCEvent::Container object" ) ;
+  declareProperty( "Location", m_location, "TES location of LHCb::HepMCEvent::Container object" );
   //
-  StatusCode sc = setProperty ( "Code" , "~GEMPTY" ) ;
-  Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
-  sc = setProperty
-    ( "Factory" , "LoKi::Hybrid::GenTool/GenFactory:PUBLIC" ) ;
-  Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
+  StatusCode sc = setProperty( "Code", "~GEMPTY" );
+  Assert( sc.isSuccess(), "Unable (re)set property 'Code'", sc );
+  sc = setProperty( "Factory", "LoKi::Hybrid::GenTool/GenFactory:PUBLIC" );
+  Assert( sc.isSuccess(), "Unable (re)set property 'Factory'", sc );
 }
 // ============================================================================
 // finalize
 // ============================================================================
-StatusCode LoKi::GenFilter::finalize ()
-{
-  m_cut = s_NONE ;
-  return LoKi::FilterAlg::finalize () ;
+StatusCode LoKi::GenFilter::finalize() {
+  m_cut = s_NONE;
+  return LoKi::FilterAlg::finalize();
 }
 // ============================================================================
 // the main method: execute
 // ============================================================================
-StatusCode LoKi::GenFilter::execute () // the main method: execute
+StatusCode LoKi::GenFilter::execute() // the main method: execute
 {
-  if ( updateRequired() )
-  {
-    StatusCode sc = decode() ;
-    Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
+  if ( updateRequired() ) {
+    StatusCode sc = decode();
+    Assert( sc.isSuccess(), "Unable to decode the functor!" );
   }
   //
   // get HepMC information from TES
   //
-  const LHCb::HepMCEvent::Container* events =
-    get<LHCb::HepMCEvent::Container>( m_location ) ;
-  if ( 0 == events ) { return StatusCode::FAILURE ; }
+  const LHCb::HepMCEvent::Container* events = get<LHCb::HepMCEvent::Container>( m_location );
+  if ( 0 == events ) { return StatusCode::FAILURE; }
   //
   // copy all particles into single vector
   //
-  LoKi::GenTypes::GenContainer particles ;
-  for ( LHCb::HepMCEvent::Container::const_iterator ievent =
-          events->begin() ; events->end() != ievent ; ++ievent )
-  {
-    const LHCb::HepMCEvent* event = *ievent ;
-    if ( 0 == event ) { continue ; }                       // CONTINUE
+  LoKi::GenTypes::GenContainer particles;
+  for ( LHCb::HepMCEvent::Container::const_iterator ievent = events->begin(); events->end() != ievent; ++ievent ) {
+    const LHCb::HepMCEvent* event = *ievent;
+    if ( 0 == event ) { continue; } // CONTINUE
     //
-    const HepMC::GenEvent* evt =  event->pGenEvt() ;
-    if ( 0 == evt   ) { continue ; }                       // CONTINUE
+    const HepMC::GenEvent* evt = event->pGenEvt();
+    if ( 0 == evt ) { continue; } // CONTINUE
     //
-    particles.insert ( particles.end          () ,
-                       evt -> particles_begin () ,
-                       evt -> particles_end   () ) ;
+    particles.insert( particles.end(), evt->particles_begin(), evt->particles_end() );
   }
   //
   // use the functor
   //
-  const bool result = m_cut ( particles ) ;
+  const bool result = m_cut( particles );
   //
   // some statistics
   //
-  counter ("#passed" ) += result ;
+  counter( "#passed" ) += result;
   //
   // set the filter:
   //
-  setFilterPassed ( result ) ;
+  setFilterPassed( result );
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
 /// the factory (needed for instantiation)

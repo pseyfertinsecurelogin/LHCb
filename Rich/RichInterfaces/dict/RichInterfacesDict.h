@@ -11,8 +11,8 @@
 #ifndef DICT_RICHKERNELDICT_H
 #define DICT_RICHKERNELDICT_H 1
 
-#ifdef __INTEL_COMPILER           // Disable ICC remark from ROOT
-#pragma warning( disable : 1572 ) // Floating-point comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark from ROOT
+#  pragma warning( disable : 1572 ) // Floating-point comparisons are unreliable
 #endif
 
 // Interfaces
@@ -34,10 +34,8 @@
 #include "RichInterfaces/IRichToolRegistry.h"
 
 // instanciate templated classes
-namespace
-{
-  struct _Instantiations
-  {
+namespace {
+  struct _Instantiations {
     Rich::IAddBackground::HPDBackgrounds   obj_1;
     Rich::IGenericHPDAnalysisTool::Result  obj_2;
     Rich::IGenericHPDAnalysisTool::Results obj_3;

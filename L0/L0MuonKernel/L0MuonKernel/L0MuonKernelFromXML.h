@@ -8,10 +8,9 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: L0MuonKernelFromXML.h,v 1.5 2008-12-15 10:19:47 cattanem Exp $
 
 #ifndef L0MUONKERNEL_L0MUONKERNELFROMXML_H
-#define L0MUONKERNEL_L0MUONKERNELFROMXML_H     1
+#define L0MUONKERNEL_L0MUONKERNELFROMXML_H 1
 
 #include <string>
 
@@ -29,8 +28,8 @@ namespace L0Muon {
         @author Julien Cogan
         @date  July the 1st 2005
   */
-  void L0MuonKernelFromXML(std::string XmlFileName, bool emulator=true);
+  void L0MuonKernelFromXML( std::string XmlFileName, bool emulator = true );
 
-}  // namespace L0Muon
+} // namespace L0Muon
 
-#endif      // L0MUONKERNEL_L0MUONKERNELFROMXML_H
+#endif // L0MUONKERNEL_L0MUONKERNELFROMXML_H

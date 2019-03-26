@@ -18,8 +18,7 @@
 // ============================================================================
 #include "boost/integer_traits.hpp"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Shifts
    *  Collectoin of utilities and function for "shifting" operations
@@ -27,14 +26,15 @@ namespace LoKi
    *  @author Vanya BEYAEV ibelyaev@physics.syr.edu
    *  @date 2007-07-20
    */
-  namespace Shifts
-  {
+  namespace Shifts {
     // ========================================================================
     /// the generic declaration of non-existing structure
-    template <class TYPE,bool> struct CyclicShiftLeft  ;
+    template <class TYPE, bool>
+    struct CyclicShiftLeft;
     // ========================================================================
     /// the generic definition of non-existing structure
-    template <class TYPE,bool> struct CyclicShiftRight ;
+    template <class TYPE, bool>
+    struct CyclicShiftRight;
     // ========================================================================
     /** @struct CyclisShiftLeft
      *  Simple helper structure to allow the LEFT cyclic shift of bits for
@@ -44,17 +44,13 @@ namespace LoKi
      *  @date 2007-07-20
      */
     template <class TYPE>
-    struct CyclicShiftLeft<TYPE,true>
-    {
-      enum { bSize
-             = boost::integer_traits<TYPE>::digits
-             + boost::integer_traits<TYPE>::is_signed } ;
-      inline TYPE operator () ( TYPE input , unsigned int N ) const
-      {
-        N = N%bSize ;
-        return ( input << N ) | ( input >> ( bSize - N ) ) ;
+    struct CyclicShiftLeft<TYPE, true> {
+      enum { bSize = boost::integer_traits<TYPE>::digits + boost::integer_traits<TYPE>::is_signed };
+      inline TYPE operator()( TYPE input, unsigned int N ) const {
+        N = N % bSize;
+        return ( input << N ) | ( input >> ( bSize - N ) );
       }
-    } ;
+    };
     // ========================================================================
     /** @struct CyclisShiftRight
      *  Simple helper structure to allow the RIGHT cyclic shift of bits for
@@ -64,17 +60,13 @@ namespace LoKi
      *  @date 2007-07-20
      */
     template <class TYPE>
-    struct CyclicShiftRight<TYPE,true>
-    {
-      enum { bSize
-             = boost::integer_traits<TYPE>::digits
-             + boost::integer_traits<TYPE>::is_signed } ;
-      inline TYPE operator() ( TYPE input , unsigned int N ) const
-      {
-        N = N%bSize ;
-        return ( input >> N ) | ( input << ( bSize - N ) ) ;
+    struct CyclicShiftRight<TYPE, true> {
+      enum { bSize = boost::integer_traits<TYPE>::digits + boost::integer_traits<TYPE>::is_signed };
+      inline TYPE operator()( TYPE input, unsigned int N ) const {
+        N = N % bSize;
+        return ( input >> N ) | ( input << ( bSize - N ) );
       }
-    } ;
+    };
     // ========================================================================
     /** helper function for LEFT cycling shifts.
      *
@@ -94,12 +86,9 @@ namespace LoKi
      *  @date 2007-07-20
      */
     template <class TYPE>
-    inline TYPE
-    cyclicShiftLeft
-    ( TYPE input , unsigned int N )
-    {
-      CyclicShiftLeft<TYPE,boost::integer_traits<TYPE>::is_integral> shift ;
-      return shift ( input , N ) ;
+    inline TYPE cyclicShiftLeft( TYPE input, unsigned int N ) {
+      CyclicShiftLeft<TYPE, boost::integer_traits<TYPE>::is_integral> shift;
+      return shift( input, N );
     }
     // ========================================================================
     /** helper function for RIGHT cycling shifts.
@@ -120,12 +109,9 @@ namespace LoKi
      *  @date 2007-07-20
      */
     template <class TYPE>
-    inline TYPE
-    cyclicShiftRight
-    ( TYPE input , unsigned int N )
-    {
-      CyclicShiftRight<TYPE,boost::integer_traits<TYPE>::is_integral> shift ;
-      return shift ( input , N ) ;
+    inline TYPE cyclicShiftRight( TYPE input, unsigned int N ) {
+      CyclicShiftRight<TYPE, boost::integer_traits<TYPE>::is_integral> shift;
+      return shift( input, N );
     }
     // ========================================================================
     /** helper function for cycling shifts
@@ -148,19 +134,13 @@ namespace LoKi
      *  @date 2007-07-20
      */
     template <class TYPE>
-    inline TYPE
-    cyclicShift
-    ( TYPE input , int N )
-    {
-      return
-        ( 0 == N ) ? input :
-        ( 0 <  N ) ?
-        cyclicShiftLeft  ( input ,  N ) : cyclicShiftRight ( input , -N ) ;
+    inline TYPE cyclicShift( TYPE input, int N ) {
+      return ( 0 == N ) ? input : ( 0 < N ) ? cyclicShiftLeft( input, N ) : cyclicShiftRight( input, -N );
     }
     // ========================================================================
-  } // end of the namespace LoKi::Shifts
+  } // namespace Shifts
   // ==========================================================================
-} // end of the namespace LoKi
+} // namespace LoKi
 // ============================================================================
 // The END
 // ============================================================================

@@ -33,8 +33,7 @@
  *  @date 2006-03-10
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ===========================================================================
   /** @class Base
    *
@@ -43,33 +42,29 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-03-09
    */
-  class Base
-  {
+  class Base {
   public:
     // ========================================================================
     /// get the name of base object
-    inline  const std::string& name     () const { return m_name ; }
+    inline const std::string& name() const { return m_name; }
     /// get the type of the base object
-    virtual const std::string& type     () const ;
+    virtual const std::string& type() const;
     /// get the pair "type/name" of the object
-    inline  const std::string& typeName () const
-    {
-      if ( m_typeName.empty() ) { m_typeName = type() + "/" + name() ; }
-      return m_typeName ;
+    inline const std::string& typeName() const {
+      if ( m_typeName.empty() ) { m_typeName = type() + "/" + name(); }
+      return m_typeName;
     }
     // ========================================================================
   protected:
     // ========================================================================
     /// Standard constructor
-    Base
-    ( const std::string& name     = "<Anonymous>" ,
-      const IReporter*   reporter = 0             ) ;
+    Base( const std::string& name = "<Anonymous>", const IReporter* reporter = 0 );
     /// copy constructor
-    Base ( const Base& right ) ;
+    Base( const Base& right );
     /// destructor: virtual and protected:
-    virtual ~Base() ; ///< Destructor
+    virtual ~Base(); ///< Destructor
     /// assignement
-    Base& operator=( const Base& ) ;
+    Base& operator=( const Base& );
     // ========================================================================
   protected:
     // ========================================================================
@@ -96,10 +91,7 @@ namespace LoKi
      *  @param mx     Maximum number of printouts for this message
      *  @return       StatusCode
      */
-    StatusCode Error
-    ( const std::string& msg ,
-      const StatusCode   st  = StatusCode::FAILURE ,
-      const size_t       mx  = 10                  ) const ;
+    StatusCode Error( const std::string& msg, const StatusCode st = StatusCode::FAILURE, const size_t mx = 10 ) const;
     /** Print the warning message and return with the given StatusCode.
      *
      *  Also performs statistical analysis of the error messages and
@@ -123,10 +115,7 @@ namespace LoKi
      *  @param mx     Maximum number of printouts for this message
      *  @return       The given StatusCode
      */
-    StatusCode Warning
-    ( const std::string& msg ,
-      const StatusCode   st  = StatusCode::FAILURE ,
-      const size_t       mx  = 10                  ) const ;
+    StatusCode Warning( const std::string& msg, const StatusCode st = StatusCode::FAILURE, const size_t mx = 10 ) const;
     /** Print the message and return status code
      *  @see MsgStream
      *  @see IMessageSvc
@@ -135,10 +124,8 @@ namespace LoKi
      *  @param st     status code
      *  @param lev    print level
      */
-    void Print
-    ( const std::string& msg ,
-      const StatusCode   st  = StatusCode::SUCCESS ,
-      const MSG::Level   lev = MSG::INFO           ) const ;
+    void Print( const std::string& msg, const StatusCode st = StatusCode::SUCCESS,
+                const MSG::Level lev = MSG::INFO ) const;
     /** Assertion - throw exception, if condition is not fulfilled
      *  @see CaloException
      *  @see GaudiException
@@ -148,12 +135,10 @@ namespace LoKi
      *  @param sc           status code to be returned (artificial)
      *  @return             status code
      */
-    inline void Assert
-    ( const bool         ok                            ,
-      const std::string& message = ""                  ,
-      const StatusCode   sc      = StatusCode::FAILURE ) const
-    {
-      if ( !ok ) { Exception ( message , sc ) ; } ; sc.ignore() ;
+    inline void Assert( const bool ok, const std::string& message = "",
+                        const StatusCode sc = StatusCode::FAILURE ) const {
+      if ( !ok ) { Exception( message, sc ); };
+      sc.ignore();
     }
     /** Assertion - throw exception, if condition is not fulfilled
      *  @see CaloException
@@ -164,12 +149,9 @@ namespace LoKi
      *  @param sc           status code to be returned (artificial)
      *  @return             status code
      */
-    inline void Assert
-    ( const bool         ok                            ,
-      const char*        message                       ,
-      const StatusCode   sc      = StatusCode::FAILURE ) const
-    {
-      if ( !ok ) { Exception ( message , sc ) ; } ; sc.ignore() ;
+    inline void Assert( const bool ok, const char* message, const StatusCode sc = StatusCode::FAILURE ) const {
+      if ( !ok ) { Exception( message, sc ); };
+      sc.ignore();
     }
     /** Create and (re)-throw the exception
      *  @see GaudiException
@@ -178,10 +160,8 @@ namespace LoKi
      *  @param exc    (previous) exception of type GaudiException
      *  @param sc     status code
      */
-    void Exception
-    ( const std::string    & msg                        ,
-      const GaudiException & exc                        ,
-      const StatusCode       sc  = StatusCode::FAILURE  ) const ;
+    void Exception( const std::string& msg, const GaudiException& exc,
+                    const StatusCode sc = StatusCode::FAILURE ) const;
     /** Create and (re)-throw the exception
      *  @see GaudiException
      *  @exception GaudiException always!
@@ -189,40 +169,36 @@ namespace LoKi
      *  @param exc    (previous) exception of type std::exception
      *  @param sc     status code
      */
-    void Exception
-    ( const std::string    & msg                        ,
-      const std::exception & exc                        ,
-      const StatusCode       sc  = StatusCode::FAILURE  ) const ;
+    void Exception( const std::string& msg, const std::exception& exc,
+                    const StatusCode sc = StatusCode::FAILURE ) const;
     /** Create and throw the exception
      *  @see GaudiException
      *  @exception GaudiException always!
      *  @param msg    exception message
      *  @param sc     status code
      */
-    void Exception
-    ( const std::string& msg = "no message"        ,
-      const StatusCode   sc  = StatusCode::FAILURE ) const ;
+    void Exception( const std::string& msg = "no message", const StatusCode sc = StatusCode::FAILURE ) const;
     // ========================================================================
   public:
     /// get the currect reference counter
-    long refCount   () const { return   m_refCount ; }
+    long refCount() const { return m_refCount; }
     /// increment the reference counter
-    long addRef     ()       { return ++m_refCount ; }
+    long addRef() { return ++m_refCount; }
     /// decreemnt the reference counter
-    long release    ()   ; // ATTENTION! object is deleted if refCount==0
+    long release(); // ATTENTION! object is deleted if refCount==0
     // ========================================================================
   private:
     // ========================================================================
     // object name
-    std::string                      m_name     ; //  object name
+    std::string m_name; //  object name
     // "type/name" pair
-    mutable std::string              m_typeName ; // "type/name" pair
+    mutable std::string m_typeName; // "type/name" pair
     // own problem reported
-    LoKi::Interface<LoKi::IReporter> m_reporter ; // own problem reported
+    LoKi::Interface<LoKi::IReporter> m_reporter; // own problem reported
     // reference counter
-    long                             m_refCount ; // reference counter
+    long m_refCount; // reference counter
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

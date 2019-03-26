@@ -24,8 +24,7 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class IToolRegistry IRichToolRegistry.h
@@ -37,11 +36,9 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class IToolRegistry : public virtual IAlgTool
-  {
+  class IToolRegistry : public virtual IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IToolRegistry, 1, 0 );
 
@@ -51,7 +48,7 @@ namespace Rich
      *
      *  @return The class name of the tool associated to the given "nickname"
      */
-    virtual const std::string &toolType( const std::string &nickname ) const = 0;
+    virtual const std::string& toolType( const std::string& nickname ) const = 0;
 
     /** Converts a tool "nickname" into a particular instance name
      *
@@ -61,7 +58,7 @@ namespace Rich
      *
      *  @return The instance name of the tool associated to the given "nickname"
      */
-    virtual const std::string toolName( const std::string &nickname ) const = 0;
+    virtual const std::string toolName( const std::string& nickname ) const = 0;
   };
 
 } // namespace Rich

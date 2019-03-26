@@ -22,24 +22,19 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( FastL0DUFilter )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-FastL0DUFilter::FastL0DUFilter( const std::string& name,
-                                ISvcLocator* pSvcLocator)
-  : L0FromRawBase ( name , pSvcLocator )
-    ,m_count(0)
-    ,m_sel(0)
-{
-  declareProperty( "SourceID"                , m_source = 0 );
-  declareProperty( "ForceNonZeroSupMuons"    , m_noMuonSup = false );
-  declareProperty( "SumEtThreshold"          , m_sumCut   = 0 );
-  declareProperty( "HadronThreshold"         , m_haCut    = 0 );
-  declareProperty( "SpdThreshold"            , m_spdCut   = 0 );
-  declareProperty( "ElectronThreshold"       , m_elCut    = 0 );
-  declareProperty( "MuonThreshold"           , m_muCut    = 0 );
-  declareProperty( "UseDecisionInBank"       , m_useDecInBank = true );
+FastL0DUFilter::FastL0DUFilter( const std::string& name, ISvcLocator* pSvcLocator )
+    : L0FromRawBase( name, pSvcLocator ), m_count( 0 ), m_sel( 0 ) {
+  declareProperty( "SourceID", m_source = 0 );
+  declareProperty( "ForceNonZeroSupMuons", m_noMuonSup = false );
+  declareProperty( "SumEtThreshold", m_sumCut = 0 );
+  declareProperty( "HadronThreshold", m_haCut = 0 );
+  declareProperty( "SpdThreshold", m_spdCut = 0 );
+  declareProperty( "ElectronThreshold", m_elCut = 0 );
+  declareProperty( "MuonThreshold", m_muCut = 0 );
+  declareProperty( "UseDecisionInBank", m_useDecInBank = true );
 }
 
 //=============================================================================
@@ -47,9 +42,9 @@ FastL0DUFilter::FastL0DUFilter( const std::string& name,
 //=============================================================================
 StatusCode FastL0DUFilter::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;              // error printed already by GaudiAlgorithm
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
 
   return StatusCode::SUCCESS;
 }
@@ -59,23 +54,23 @@ StatusCode FastL0DUFilter::initialize() {
 //=============================================================================
 StatusCode FastL0DUFilter::execute() {
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
 
   setFilterPassed( false );
   m_count++;
 
-  LHCb::RawEvent* rawEvt = NULL ;
-  std::string rawLoc="";
-  if( selectRawEventLocation(rawLoc).isFailure()){
-    counter("RawEvent is missing")+=1;
+  LHCb::RawEvent* rawEvt = NULL;
+  std::string     rawLoc = "";
+  if ( selectRawEventLocation( rawLoc ).isFailure() ) {
+    counter( "RawEvent is missing" ) += 1;
     return StatusCode::SUCCESS;
   }
   rawEvt = get<LHCb::RawEvent>( rawLoc );
-  for( const auto& bank : rawEvt->banks(LHCb::RawBank::L0DU) ) {
+  for ( const auto& bank : rawEvt->banks( LHCb::RawBank::L0DU ) ) {
 
-    if( !bank || bank->size() == 0 )continue;
-    if( m_source != bank->sourceID() )continue;
-    if( 1 != bank->version() && 2!= bank->version() ){
+    if ( !bank || bank->size() == 0 ) continue;
+    if ( m_source != bank->sourceID() ) continue;
+    if ( 1 != bank->version() && 2 != bank->version() ) {
       Warning( "Inconsistent L0DU bank version" ).ignore();
       continue;
     }
@@ -83,48 +78,48 @@ StatusCode FastL0DUFilter::execute() {
 
     data += 2;
     // get muon1
-    long muPt = (*data & 0x0000007F);
+    long muPt = ( *data & 0x0000007F );
 
     // jump to 2nd sub-block ...
     // ... assuming no 0-suppression for muon block
     unsigned int offset = 9;
     // ... computing the offset according to non 0-sup #muon
-    if( !m_noMuonSup ){
+    if ( !m_noMuonSup ) {
       data++;
-      unsigned int  nmu       = (*data & 0xF0000000 ) >> 28;
-      offset = 2 + (int) ( (nmu+1)/2 ) + (int) ( (nmu+3)/4 ) ;
+      unsigned int nmu = ( *data & 0xF0000000 ) >> 28;
+      offset           = 2 + (int)( ( nmu + 1 ) / 2 ) + (int)( ( nmu + 3 ) / 4 );
     }
     // here we are
     data += offset;
-    unsigned int rsda       = (*data & 0x0000FFFF );
-    bool dec   = (1 == ((rsda >> 12) & 1)) ? true : false;
+    unsigned int rsda = ( *data & 0x0000FFFF );
+    bool         dec  = ( 1 == ( ( rsda >> 12 ) & 1 ) ) ? true : false;
     // get SumEt, hadron and electron Et
     data += 4;
-    long sumEt   = (*data & 0x00003FFF ) ;
-    long spdMult = (*data & 0x0FFFC000 ) >> 14;
+    long sumEt   = ( *data & 0x00003FFF );
+    long spdMult = ( *data & 0x0FFFC000 ) >> 14;
     data += 1;
-    long elEt  = (*data & 0x000000FF ) ;
+    long elEt = ( *data & 0x000000FF );
     data += 1;
-    long haEt  = (*data & 0x000000FF ) ;
+    long haEt = ( *data & 0x000000FF );
 
     // HARDCODED algorithm --------------------------------------------------------
-    bool newdec = ( haEt >= m_haCut && spdMult >= m_spdCut) || ( muPt >= m_muCut ) ;
+    bool newdec = ( haEt >= m_haCut && spdMult >= m_spdCut ) || ( muPt >= m_muCut );
     // ----------------------------------------------------------------------------
 
     bool decision = m_useDecInBank ? dec : newdec;
 
-    if ( msgLevel( MSG::DEBUG) ){
+    if ( msgLevel( MSG::DEBUG ) ) {
       debug() << " decision : " << decision << endmsg;
       debug() << " SumEt  : " << sumEt << " Threshold : " << m_sumCut << endmsg;
       debug() << " SpdMult: " << spdMult << " Threshold : " << m_spdCut << endmsg;
-      debug() << " el(Et) : " << elEt  << " Threshold : " << m_elCut << endmsg;
-      debug() << " ha(Et) : " << haEt  << " Threshold : " << m_haCut << endmsg;
-      debug() << " mu(Pt) : " << muPt  << " Threshold : " << m_muCut << endmsg;
+      debug() << " el(Et) : " << elEt << " Threshold : " << m_elCut << endmsg;
+      debug() << " ha(Et) : " << haEt << " Threshold : " << m_haCut << endmsg;
+      debug() << " mu(Pt) : " << muPt << " Threshold : " << m_muCut << endmsg;
     }
-    if ( decision  ){
-      setFilterPassed(true);
+    if ( decision ) {
+      setFilterPassed( true );
       m_sel++;
-      if ( msgLevel( MSG::DEBUG) )debug() << " ----> ACCEPT EVENT " << endmsg;
+      if ( msgLevel( MSG::DEBUG ) ) debug() << " ----> ACCEPT EVENT " << endmsg;
     }
   }
 
@@ -136,11 +131,11 @@ StatusCode FastL0DUFilter::execute() {
 //=============================================================================
 StatusCode FastL0DUFilter::finalize() {
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
+  if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Finalize" << endmsg;
 
   info() << "Filtering : " << m_sel << " events among " << m_count << " processed " << endmsg;
 
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
+  return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 
 //=============================================================================

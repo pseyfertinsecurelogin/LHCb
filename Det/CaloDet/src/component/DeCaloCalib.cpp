@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/RndmGenerators.h"
@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeCaloCalib
 //
-// Simple algorithm to overwrite the condDB calibration constant 
+// Simple algorithm to overwrite the condDB calibration constant
 // with arbitrary value (user-defined or gaussian or flat randomly distributed)
 // at the DeCalorimeter initialisation level.
 //
@@ -30,35 +30,29 @@
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( DeCaloCalib )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeCaloCalib::DeCaloCalib( const std::string& name,
-                            ISvcLocator* pSvcLocator)
-  : GaudiTupleAlg ( name , pSvcLocator )
-{
+DeCaloCalib::DeCaloCalib( const std::string& name, ISvcLocator* pSvcLocator ) : GaudiTupleAlg( name, pSvcLocator ) {
 
-  declareProperty( "DetectorName"   , m_detectorName );
-  declareProperty( "Method"         , m_method = "Flat"); // Flat/Gauss/User
-  declareProperty( "Params"         , m_params);           // gauss/flat  parameters
-  declareProperty( "Key"            , m_key = "CellID" ); // 'CellID'/'Index' : for User-defined parameters
-  declareProperty( "deltaGain"      , m_deltas);          // User defined params mapping  <key : value>
-  declareProperty( "EventUpdate"    , m_update = false); // default is update in initialize only
-  declareProperty( "Ntupling"       , m_ntup   = true ); 
-  declareProperty( "DeadChannelList", m_dead);
+  declareProperty( "DetectorName", m_detectorName );
+  declareProperty( "Method", m_method = "Flat" );     // Flat/Gauss/User
+  declareProperty( "Params", m_params );              // gauss/flat  parameters
+  declareProperty( "Key", m_key = "CellID" );         // 'CellID'/'Index' : for User-defined parameters
+  declareProperty( "deltaGain", m_deltas );           // User defined params mapping  <key : value>
+  declareProperty( "EventUpdate", m_update = false ); // default is update in initialize only
+  declareProperty( "Ntupling", m_ntup = true );
+  declareProperty( "DeadChannelList", m_dead );
 
   m_params.push_back( 1.0 );
-  m_params.push_back( 1.0  );
-  m_deltas["Default"] = 1.0 ;
+  m_params.push_back( 1.0 );
+  m_deltas["Default"] = 1.0;
 
-// set default detectorName
-  int idx = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = name.substr( idx, 4 ); 
-  if ( name.substr(idx,3) == "Prs" ) m_detectorName = "Prs";
-  if ( name.substr(idx,3) == "Spd" ) m_detectorName = "Spd";
-
-
+  // set default detectorName
+  int idx        = name.find_last_of( "." ) + 1; // return 0 if '.' not found --> OK !!
+  m_detectorName = name.substr( idx, 4 );
+  if ( name.substr( idx, 3 ) == "Prs" ) m_detectorName = "Prs";
+  if ( name.substr( idx, 3 ) == "Spd" ) m_detectorName = "Spd";
 }
 
 //=============================================================================
@@ -66,75 +60,69 @@ DeCaloCalib::DeCaloCalib( const std::string& name,
 //=============================================================================
 StatusCode DeCaloCalib::initialize() {
   StatusCode sc = GaudiTupleAlg::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+  if ( sc.isFailure() ) return sc;             // error printed already by GaudiAlgorithm
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialize" << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Initialize" << endmsg;
 
-  //get DeCalorimeter
+  // get DeCalorimeter
   if ( "Ecal" == m_detectorName ) {
-    m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
+    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
   } else if ( "Hcal" == m_detectorName ) {
-    m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
+    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
   } else if ( "Prs" == m_detectorName ) {
-    m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
+    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
   } else if ( "Spd" == m_detectorName ) {
-    m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Spd ); 
+    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Spd );
   } else {
     error() << "Unknown Calo detector name " << m_detectorName << endmsg;
     return StatusCode::FAILURE;
   }
 
-  info() << " ======= SIMULATING THE (MIS)Calibration of "<< m_detectorName << " gains  ======= " << endmsg;
-  
-  
+  info() << " ======= SIMULATING THE (MIS)Calibration of " << m_detectorName << " gains  ======= " << endmsg;
+
   // Params
-  m_rndmSvc = service( "RndmGenSvc" , true );
-  
-  double a,b;
-  if( m_method == "Gauss" ){
+  m_rndmSvc = service( "RndmGenSvc", true );
+
+  double a, b;
+  if ( m_method == "Gauss" ) {
     // Gaussian random (mean, rms)
-    info() << "---- Method : gaussian random timing values "<< endmsg;
-    if(m_params.size() != 2)error() << "wrong parameters size" << endmsg;
-    a= *(m_params.begin());
-    b= *(m_params.begin()+1);
+    info() << "---- Method : gaussian random timing values " << endmsg;
+    if ( m_params.size() != 2 ) error() << "wrong parameters size" << endmsg;
+    a = *( m_params.begin() );
+    b = *( m_params.begin() + 1 );
     info() << " mean/sigma = " << a << "/" << b << endmsg;
-    sc = m_shoot.initialize(rndmSvc() , Rndm::Gauss( a , b ));
-    if( !sc.isSuccess() )return sc;
-  }
-  else if(m_method == "Flat"){
+    sc = m_shoot.initialize( rndmSvc(), Rndm::Gauss( a, b ) );
+    if ( !sc.isSuccess() ) return sc;
+  } else if ( m_method == "Flat" ) {
     // Flat random (min, max)
-    info() << "---- Method : flat random timing values "<< endmsg;
-    if(m_params.size() != 2)error() << "wrong parameters size" << endmsg;
-    a= *(m_params.begin());
-    b= *(m_params.begin()+1);
+    info() << "---- Method : flat random timing values " << endmsg;
+    if ( m_params.size() != 2 ) error() << "wrong parameters size" << endmsg;
+    a = *( m_params.begin() );
+    b = *( m_params.begin() + 1 );
     info() << " min/max = " << a << "/" << b << endmsg;
-    sc=m_shoot.initialize(rndmSvc() , Rndm::Flat( a , b ));
-    if( !sc.isSuccess() )return sc;
-  }  
-  else if(m_method == "User"){
-    info() << "---- Method : user-defined timing values "<< endmsg;
+    sc = m_shoot.initialize( rndmSvc(), Rndm::Flat( a, b ) );
+    if ( !sc.isSuccess() ) return sc;
+  } else if ( m_method == "User" ) {
+    info() << "---- Method : user-defined timing values " << endmsg;
     info() << "Timing value have been defined for " << m_deltas.size() << " cells " << endmsg;
-    info() << "Default value [" << m_deltas["Default"] <<  "] will be applied to " 
-           << m_calo->numberOfCells()- m_deltas.size() << " other cells." << endmsg;
-    if( m_key == "CellID" ){
+    info() << "Default value [" << m_deltas["Default"] << "] will be applied to "
+           << m_calo->numberOfCells() - m_deltas.size() << " other cells." << endmsg;
+    if ( m_key == "CellID" ) {
       info() << "The calib values are mapped with KEY = CellID " << endmsg;
-    }
-    else if( m_key == "Index" ){
+    } else if ( m_key == "Index" ) {
       info() << "The calib values are are mapped with KEY = Index" << endmsg;
-    }
-    else{
+    } else {
       error() << "undefined deltaKey : must be either 'CellID' or 'Index' " << endmsg;
-    return StatusCode::FAILURE;
+      return StatusCode::FAILURE;
     }
-  }
-  else{
-    error() << "Method " << m_method << " unknown - should be 'Flat', 'Gauss' or 'User'"<< endmsg;
+  } else {
+    error() << "Method " << m_method << " unknown - should be 'Flat', 'Gauss' or 'User'" << endmsg;
     return StatusCode::FAILURE;
   }
 
   // update cellParams
-  update(); 
-  
+  update();
+
   return sc;
 }
 
@@ -143,10 +131,10 @@ StatusCode DeCaloCalib::initialize() {
 //=============================================================================
 StatusCode DeCaloCalib::execute() {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
 
   // update at each event ?
-  if(m_update)update();
+  if ( m_update ) update();
 
   return StatusCode::SUCCESS;
 }
@@ -155,56 +143,54 @@ StatusCode DeCaloCalib::execute() {
 
 void DeCaloCalib::update() {
   // update cellParams
-  CaloVector<CellParam>& cells = (CaloVector<CellParam>&) m_calo->cellParams(); // no-const conversion
-  std::vector<int> cellids,cellind;
-  std::vector<double> gains,dgains;
-  for(auto & cell : cells){
-    LHCb::CaloCellID id = (cell).cellID() ;
-    if( !m_calo->valid  ( id )  )continue;
-    if( m_calo->isPinId( id )   )continue; 
+  CaloVector<CellParam>& cells = (CaloVector<CellParam>&)m_calo->cellParams(); // no-const conversion
+  std::vector<int>       cellids, cellind;
+  std::vector<double>    gains, dgains;
+  for ( auto& cell : cells ) {
+    LHCb::CaloCellID id = ( cell ).cellID();
+    if ( !m_calo->valid( id ) ) continue;
+    if ( m_calo->isPinId( id ) ) continue;
 
-    long num = m_calo->cellIndex( id );
+    long   num = m_calo->cellIndex( id );
     double dt;
-    long index = id.index();
-    if( m_key == "Index" )index = num;
+    long   index = id.index();
+    if ( m_key == "Index" ) index = num;
 
-    if( isDead( index ) ){
+    if ( isDead( index ) ) {
       dt = 0.;
-      (cell).addQualityFlag(CaloCellQuality::Dead);  
-    }
-    else if( m_method == "User" )
+      ( cell ).addQualityFlag( CaloCellQuality::Dead );
+    } else if ( m_method == "User" )
       dt = delta( index );
     else
       dt = m_shoot();
-    
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
       debug() << num << " Calibration constant for cellID " << id << " : " << dt << endmsg;
-    cell.setCalibration ( dt ) ; //
-    cellids.push_back( id.index()      );
-    cellind.push_back( num             );
-    gains.push_back  ( cell.gain() );
-    dgains.push_back ( cell.calibration());
+    cell.setCalibration( dt ); //
+    cellids.push_back( id.index() );
+    cellind.push_back( num );
+    gains.push_back( cell.gain() );
+    dgains.push_back( cell.calibration() );
   }
 
-  if(!m_ntup)return ;
+  if ( !m_ntup ) return;
   // Ntupling
   StatusCode sc;
-  Tuple ntp = nTuple( 500 + CaloCellCode::CaloNumFromName( m_detectorName),
-                      m_detectorName + "DeCalib" ,CLID_ColumnWiseTuple);
-  int max = m_calo->numberOfCells() ;
-  sc=ntp->farray("cellID"   , cellids  ,"nchannels",max);
-  sc=ntp->farray("index"    , cellind  ,"nchannels",max);
-  sc=ntp->farray("gain"     , gains    ,"nchannels",max);
-  sc=ntp->farray("calib"    , dgains   ,"nchannels",max);
-  sc=ntp->write();
-  if(sc.isFailure())Warning("cannot write NTP").ignore();
+  Tuple      ntp =
+      nTuple( 500 + CaloCellCode::CaloNumFromName( m_detectorName ), m_detectorName + "DeCalib", CLID_ColumnWiseTuple );
+  int max = m_calo->numberOfCells();
+  sc      = ntp->farray( "cellID", cellids, "nchannels", max );
+  sc      = ntp->farray( "index", cellind, "nchannels", max );
+  sc      = ntp->farray( "gain", gains, "nchannels", max );
+  sc      = ntp->farray( "calib", dgains, "nchannels", max );
+  sc      = ntp->write();
+  if ( sc.isFailure() ) Warning( "cannot write NTP" ).ignore();
 }
 
-
-bool DeCaloCalib::isDead(int channel) {
-  return (m_key == "Index" ) ? std::any_of( m_dead.begin(), m_dead.end(),
-                                            [&](int i) { return  channel == i; } )
-       : (m_key == "CellID") ? std::any_of( m_dead.begin(), m_dead.end(),
-                                            [&](int i) { return  channel == ( i & 0x3FFF ) ; })
-       : false;
+bool DeCaloCalib::isDead( int channel ) {
+  return ( m_key == "Index" )
+             ? std::any_of( m_dead.begin(), m_dead.end(), [&]( int i ) { return channel == i; } )
+             : ( m_key == "CellID" )
+                   ? std::any_of( m_dead.begin(), m_dead.end(), [&]( int i ) { return channel == ( i & 0x3FFF ); } )
+                   : false;
 }

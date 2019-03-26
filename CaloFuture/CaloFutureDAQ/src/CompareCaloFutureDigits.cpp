@@ -14,8 +14,8 @@
 #include <math.h> // for fabs() on Windows
 
 // from Gaudi
-#include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 // local
 #include "CompareCaloFutureDigits.h"
@@ -31,21 +31,18 @@ DECLARE_COMPONENT( CompareCaloFutureDigits )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-CompareCaloFutureDigits::CompareCaloFutureDigits( const std::string& name,
-                                      ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty( "Extension",       m_extension = "Test" );
+CompareCaloFutureDigits::CompareCaloFutureDigits( const std::string& name, ISvcLocator* pSvcLocator )
+    : GaudiAlgorithm( name, pSvcLocator ) {
+  declareProperty( "Extension", m_extension = "Test" );
   declareProperty( "PackedRawBuffer", m_packedRawBuffer = false );
 }
-
 
 //=============================================================================
 // Main execution
 //=============================================================================
 StatusCode CompareCaloFutureDigits::execute() {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
+  if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) debug() << "==> Execute" << endmsg;
 
   std::string ecalName = LHCb::CaloDigitLocation::Ecal;
   std::string hcalName = LHCb::CaloDigitLocation::Hcal;
@@ -80,43 +77,33 @@ StatusCode CompareCaloFutureDigits::execute() {
 //=========================================================================
 //  Compare two CaloDigits containers
 //=========================================================================
-void CompareCaloFutureDigits::compareContainers ( const LHCb::CaloDigits& dig1,
-                                            const LHCb::CaloDigits& dig2,
-                                            double tol) const {
+void CompareCaloFutureDigits::compareContainers( const LHCb::CaloDigits& dig1, const LHCb::CaloDigits& dig2,
+                                                 double tol ) const {
   if ( dig1.size() != dig2.size() ) {
-    error() << "Incoherent size : " << dig1.registry()->identifier()
-            << " : " << dig1.size() << " and "
-            << dig2.registry()->identifier() << " : " << dig2.size()
-            << endmsg;
+    error() << "Incoherent size : " << dig1.registry()->identifier() << " : " << dig1.size() << " and "
+            << dig2.registry()->identifier() << " : " << dig2.size() << endmsg;
   } else {
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << "Comparing " << dig1.name()
-              << " and " << dig2.name()
-              << " both sizes = " << dig2.size() << endmsg;
+    if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
+      debug() << "Comparing " << dig1.name() << " and " << dig2.name() << " both sizes = " << dig2.size() << endmsg;
   }
 
   auto it1 = dig1.begin();
   auto it2 = dig2.begin();
   while ( dig1.end() != it1 && dig2.end() != it2 ) {
-    if (  !((*it1)->cellID() ==  (*it2)->cellID()) ||
-          fabs( (*it1)->e() - (*it2)->e() ) > tol ) {
-      info() << "Error in sequence/energy (old-new): "
-             << (*it1)->cellID() << " " << (*it2)->cellID()
-             << format( "  E %7.1f %7.1f %7.2f ",
-                 (*it1)->e()/Gaudi::Units::MeV, (*it2)->e()/Gaudi::Units::MeV ,
-                 (*it1)->e()/Gaudi::Units::MeV - (*it2)->e()/Gaudi::Units::MeV )
+    if ( !( ( *it1 )->cellID() == ( *it2 )->cellID() ) || fabs( ( *it1 )->e() - ( *it2 )->e() ) > tol ) {
+      info() << "Error in sequence/energy (old-new): " << ( *it1 )->cellID() << " " << ( *it2 )->cellID()
+             << format( "  E %7.1f %7.1f %7.2f ", ( *it1 )->e() / Gaudi::Units::MeV, ( *it2 )->e() / Gaudi::Units::MeV,
+                        ( *it1 )->e() / Gaudi::Units::MeV - ( *it2 )->e() / Gaudi::Units::MeV )
              << endmsg;
     } else {
-      if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-        verbose() << (*it1)->cellID() << " "
-                  << (*it2)->cellID() << "  E "
-                  << (*it1)->e()/Gaudi::Units::MeV  << " "
-                  << (*it2)->e()/Gaudi::Units::MeV << endmsg;
+      if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
+        verbose() << ( *it1 )->cellID() << " " << ( *it2 )->cellID() << "  E " << ( *it1 )->e() / Gaudi::Units::MeV
+                  << " " << ( *it2 )->e() / Gaudi::Units::MeV << endmsg;
     }
-    if ( (*it1)->cellID() ==  (*it2)->cellID() ) {
+    if ( ( *it1 )->cellID() == ( *it2 )->cellID() ) {
       it1++;
       it2++;
-    } else if ( (*it1)->cellID() <  (*it2)->cellID() ) {
+    } else if ( ( *it1 )->cellID() < ( *it2 )->cellID() ) {
       it1++;
     } else {
       it2++;

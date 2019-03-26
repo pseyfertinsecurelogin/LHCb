@@ -9,9 +9,9 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <cmath>
 #include <sstream>
@@ -29,153 +29,130 @@
 // ============================================================================
 #include "boost/format.hpp"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for class Gaudi::Math::WStatEntity
  *  @see Gaudi::Math::WStatEntity
  *  @see StatEntity
  *  @author  Vanya Belyaev Ivan.Belyaev@itep.ru
- *  @date 2014-04-07 
+ *  @date 2014-04-07
  */
 // ============================================================================
-namespace 
-{
+namespace {
   // ==========================================================================
-  const LHCb::Math::Zero    <double> s_zero  {} ;
+  const LHCb::Math::Zero<double> s_zero{};
   // ==========================================================================
-}
+} // namespace
 // ============================================================================
-// constructor from StatEntity of values 
+// constructor from StatEntity of values
 // ============================================================================
-Gaudi::Math::WStatEntity::WStatEntity ( const StatEntity& values ) 
-  : m_sum     ( values.sum      () ) 
-  , m_sum2    ( values.sum2     () ) 
-  , m_values  ( values             ) 
-  , m_weights ( values.nEntries () , 
-                values.nEntries () , 
-                values.nEntries () , 1 , 1 ) 
-{}
+Gaudi::Math::WStatEntity::WStatEntity( const StatEntity& values )
+    : m_sum( values.sum() )
+    , m_sum2( values.sum2() )
+    , m_values( values )
+    , m_weights( values.nEntries(), values.nEntries(), values.nEntries(), 1, 1 ) {}
 // ============================================================================
-// update statistics 
+// update statistics
 // ============================================================================
-Gaudi::Math::WStatEntity&
-Gaudi::Math::WStatEntity::add   
-( const double value  ,  
-  const double weight )
-{
-  m_sum     += weight * value         ;
-  m_sum2    += weight * value * value ;  
+Gaudi::Math::WStatEntity& Gaudi::Math::WStatEntity::add( const double value, const double weight ) {
+  m_sum += weight * value;
+  m_sum2 += weight * value * value;
   //
-  if ( !s_zero ( weight ) ) { m_values += value ; }
+  if ( !s_zero( weight ) ) { m_values += value; }
   //
-  m_weights += weight ;
+  m_weights += weight;
   //
-  return *this ;
+  return *this;
 }
 // ============================================================================
 // get the sample mean
 // ============================================================================
-double Gaudi::Math::WStatEntity::mean () const
-{
-  return ( 0 == nEntries () 
-           || s_zero ( m_sum            ) 
-           || s_zero ( m_weights.sum () ) ) ? 0.0 
-    : m_sum / m_weights.sum () ;
+double Gaudi::Math::WStatEntity::mean() const {
+  return ( 0 == nEntries() || s_zero( m_sum ) || s_zero( m_weights.sum() ) ) ? 0.0 : m_sum / m_weights.sum();
 }
 // ============================================================================
 // get the sample mean
 // ============================================================================
-double Gaudi::Math::WStatEntity::meanErr () const
-{
-  const double neff = nEff() ;
-  if ( s_zero ( neff ) ) { return 0 ; }
+double Gaudi::Math::WStatEntity::meanErr() const {
+  const double neff = nEff();
+  if ( s_zero( neff ) ) { return 0; }
   //
-  const double v = dispersion() / neff ;
+  const double v = dispersion() / neff;
   //
-  return v <= 0 ? 0.0 : std::sqrt ( v ) ;
+  return v <= 0 ? 0.0 : std::sqrt( v );
 }
 // ============================================================================
-// calculate dispersion 
+// calculate dispersion
 // ============================================================================
-double Gaudi::Math::WStatEntity::dispersion () const
-{ 
+double Gaudi::Math::WStatEntity::dispersion() const {
   //
-  if ( 1 >= nEntries() || s_zero ( m_weights.sum() ) ) { return 0 ; }
+  if ( 1 >= nEntries() || s_zero( m_weights.sum() ) ) { return 0; }
   //
-  return m_sum2 / m_weights.sum () - Gaudi::Math::pow ( mean() , 2 ) ;
+  return m_sum2 / m_weights.sum() - Gaudi::Math::pow( mean(), 2 );
 }
 // ============================================================================
-// calculate rms 
+// calculate rms
 // ============================================================================
-double Gaudi::Math::WStatEntity::rms () const
-{
-  const double d = dispersion () ;
+double Gaudi::Math::WStatEntity::rms() const {
+  const double d = dispersion();
   //
-  if ( 0 >= d || s_zero ( d ) ) { return 0 ; }
-  return std::sqrt ( d ) ;
+  if ( 0 >= d || s_zero( d ) ) { return 0; }
+  return std::sqrt( d );
 }
 // ============================================================================
-// calculate effectiev number of entries 
+// calculate effectiev number of entries
 // ============================================================================
-double Gaudi::Math::WStatEntity::nEff () const
-{
+double Gaudi::Math::WStatEntity::nEff() const {
   //
-  if ( 0 == nEntries() || s_zero ( m_weights.sum2 () ) ) { return 0 ; }
+  if ( 0 == nEntries() || s_zero( m_weights.sum2() ) ) { return 0; }
   //
-  return Gaudi::Math::pow ( m_weights.sum() , 2 ) /  m_weights.sum2 () ;
+  return Gaudi::Math::pow( m_weights.sum(), 2 ) / m_weights.sum2();
 }
 // ============================================================================
-// reset statistic 
+// reset statistic
 // ============================================================================
-void Gaudi::Math::WStatEntity::reset () 
-{
-  m_sum  = 0 ;
-  m_sum2 = 0 ;
-  m_weights.reset() ;
+void Gaudi::Math::WStatEntity::reset() {
+  m_sum  = 0;
+  m_sum2 = 0;
+  m_weights.reset();
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& Gaudi::Math::WStatEntity::fillStream ( std::ostream& o ) const 
-{
-  boost::format fmt1 ("#=%|-11.5g| Sum=%|-11.5g|" ) ;
-  o << fmt1 % nEff() % m_sum ;
-  boost::format fmt2 ( " Mean=%|#10.4g| +- %|-#10.5g| Min/Max=%|#10.4g|/%|-#10.4g|" ) ;
-  o << fmt2 % mean() % rms() % m_values.min() % m_values.max() ;
-  return o ;
+std::ostream& Gaudi::Math::WStatEntity::fillStream( std::ostream& o ) const {
+  boost::format fmt1( "#=%|-11.5g| Sum=%|-11.5g|" );
+  o << fmt1 % nEff() % m_sum;
+  boost::format fmt2( " Mean=%|#10.4g| +- %|-#10.5g| Min/Max=%|#10.4g|/%|-#10.4g|" );
+  o << fmt2 % mean() % rms() % m_values.min() % m_values.max();
+  return o;
 }
 // ============================================================================
-// convert to tring 
+// convert to tring
 // ============================================================================
-std::string Gaudi::Math::WStatEntity::toString () const
-{
-  std::ostringstream ost ;
-  fillStream ( ost )  ;
-  return ost.str () ;
+std::string Gaudi::Math::WStatEntity::toString() const {
+  std::ostringstream ost;
+  fillStream( ost );
+  return ost.str();
 }
 // ============================================================================
 // add another counter:
 // ============================================================================
-Gaudi::Math::WStatEntity&
-Gaudi::Math::WStatEntity::operator+= 
-( const Gaudi::Math::WStatEntity& value ) 
-{
+Gaudi::Math::WStatEntity& Gaudi::Math::WStatEntity::operator+=( const Gaudi::Math::WStatEntity& value ) {
   //
-  m_sum     += value.m_sum     ;
-  m_sum2    += value.m_sum2    ;
-  m_values  += value.m_values  ;
-  m_weights += value.m_weights ;
+  m_sum += value.m_sum;
+  m_sum2 += value.m_sum2;
+  m_values += value.m_values;
+  m_weights += value.m_weights;
   //
-  return *this ;
+  return *this;
 }
 // ============================================================================
 // add another counter:
 // ============================================================================
-Gaudi::Math::WStatEntity&
-Gaudi::Math::WStatEntity::operator+= 
-( const StatEntity& value ) 
-{ (*this) += WStatEntity ( value ); return *this ; }
-
+Gaudi::Math::WStatEntity& Gaudi::Math::WStatEntity::operator+=( const StatEntity& value ) {
+  ( *this ) += WStatEntity( value );
+  return *this;
+}
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

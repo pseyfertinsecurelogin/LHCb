@@ -21,9 +21,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/ErrorReport.h"
 #include "LoKi/IReporter.h"
 #include "LoKi/Welcome.h"
-#include "LoKi/ErrorReport.h"
 // ============================================================================
 /** @file
  *
@@ -41,8 +41,7 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class Reporter Reporter.h LoKi/Reporter.h
    *
@@ -52,56 +51,38 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2003-01-16
    */
-  class Reporter : public extends< GaudiTool, LoKi::IReporter >
-  {
+  class Reporter : public extends<GaudiTool, LoKi::IReporter> {
   public:
     // ========================================================================
-    StatusCode Error
-    ( const std::string& msg ,
-      const StatusCode   st  ,
-      const size_t       mx  ) const  override
-    {
-      const std::size_t mx_ = std::min ( mx , LoKi::IReporter::maxErrorPrint() ) ;
-      return GaudiTool::Error ( m_printMyAlg ? msg+getMyAlg() : msg , st , mx_ ) ;
+    StatusCode Error( const std::string& msg, const StatusCode st, const size_t mx ) const override {
+      const std::size_t mx_ = std::min( mx, LoKi::IReporter::maxErrorPrint() );
+      return GaudiTool::Error( m_printMyAlg ? msg + getMyAlg() : msg, st, mx_ );
     }
     //
-    StatusCode Warning
-    ( const std::string& msg ,
-      const StatusCode   st  ,
-      const size_t       mx  ) const  override
-    {
-      const std::size_t mx_ = std::min ( mx , LoKi::IReporter::maxWarningPrint () ) ;
-      return GaudiTool::Warning ( m_printMyAlg ? msg+getMyAlg() : msg , st , mx_ ) ;
+    StatusCode Warning( const std::string& msg, const StatusCode st, const size_t mx ) const override {
+      const std::size_t mx_ = std::min( mx, LoKi::IReporter::maxWarningPrint() );
+      return GaudiTool::Warning( m_printMyAlg ? msg + getMyAlg() : msg, st, mx_ );
     }
     //
-    StatusCode Print
-    ( const std::string& msg ,
-      const StatusCode   st  ,
-      const MSG::Level   lev ) const  override
-    { return GaudiTool::Print ( m_printMyAlg ? msg+getMyAlg() : msg , st , lev ) ; }
+    StatusCode Print( const std::string& msg, const StatusCode st, const MSG::Level lev ) const override {
+      return GaudiTool::Print( m_printMyAlg ? msg + getMyAlg() : msg, st, lev );
+    }
     //
-    void       Assert
-    ( const bool         ok      ,
-      const std::string& message ,
-      const StatusCode   sc      ) const  override
-    { GaudiTool::Assert ( ok , m_printMyAlg ? message+getMyAlg() : message , sc ) ; }
+    void Assert( const bool ok, const std::string& message, const StatusCode sc ) const override {
+      GaudiTool::Assert( ok, m_printMyAlg ? message + getMyAlg() : message, sc );
+    }
     //
-    void       Exception
-    ( const std::string    & msg ,
-      const GaudiException & exc ,
-      const StatusCode       sc  ) const  override
-    { GaudiTool::Exception ( m_printMyAlg ? msg+getMyAlg() : msg , exc , sc ) ; }
+    void Exception( const std::string& msg, const GaudiException& exc, const StatusCode sc ) const override {
+      GaudiTool::Exception( m_printMyAlg ? msg + getMyAlg() : msg, exc, sc );
+    }
     //
-    void       Exception
-    ( const std::string    & msg ,
-      const std::exception & exc ,
-      const StatusCode       sc  ) const  override
-    { GaudiTool::Exception ( m_printMyAlg ? msg+getMyAlg() : msg , exc , sc ) ; }
+    void Exception( const std::string& msg, const std::exception& exc, const StatusCode sc ) const override {
+      GaudiTool::Exception( m_printMyAlg ? msg + getMyAlg() : msg, exc, sc );
+    }
     //
-    void       Exception
-    ( const std::string& msg     ,
-      const StatusCode   sc      ) const  override
-    { GaudiTool::Exception ( m_printMyAlg ? msg+getMyAlg() : msg      , sc ) ; }
+    void Exception( const std::string& msg, const StatusCode sc ) const override {
+      GaudiTool::Exception( m_printMyAlg ? msg + getMyAlg() : msg, sc );
+    }
     //
     // ========================================================================
   public:
@@ -110,27 +91,27 @@ namespace LoKi
      *  @see AlgTool
      *  @return status code
      */
-    StatusCode initialize   ()  override
-    {
+    StatusCode initialize() override {
       StatusCode sc = base_class::initialize();
-      if ( sc.isFailure() ) { return sc ; }
+      if ( sc.isFailure() ) { return sc; }
       //
-      LoKi::ErrorReport& rep = LoKi::ErrorReport::instance() ;
-      if ( 0 == rep.reporter() ) { rep.setReporter ( this ).ignore() ; }
+      LoKi::ErrorReport& rep = LoKi::ErrorReport::instance();
+      if ( 0 == rep.reporter() ) { rep.setReporter( this ).ignore(); }
       // locate LoKi service
-      return StatusCode::SUCCESS ;
+      return StatusCode::SUCCESS;
     }
     /** standard finalization
      *  @see AlgTool
      *  @return status code
      */
-    StatusCode finalize     ()  override
-    {
+    StatusCode finalize() override {
       // check for global reporter
       LoKi::ErrorReport& rep = LoKi::ErrorReport::instance();
       // owner for reporter?
-      if ( rep.reporter() == this )
-      { rep.report().ignore() ; rep.setReporter( 0 ).ignore() ; }
+      if ( rep.reporter() == this ) {
+        rep.report().ignore();
+        rep.setReporter( 0 ).ignore();
+      }
       // finalize the base class
       return base_class::finalize();
     }
@@ -140,37 +121,32 @@ namespace LoKi
      *  @param name   tool name
      *  @param parent tool parent
      */
-    Reporter ( const std::string& type   ,
-               const std::string& name   ,
-               const IInterface*  parent )
-      : base_class ( type, name , parent )
-    {
+    Reporter( const std::string& type, const std::string& name, const IInterface* parent )
+        : base_class( type, name, parent ) {
       //
       declareProperty( "PrintMyAlg", m_printMyAlg = true );
       //
-      StatusCode sc = setProperty ( "TypePrint"          , false ) ;
-      Assert ( sc.isSuccess() ,
-               "Unable to set Property 'TypePrint'"      , sc    ) ;
-      sc            = setProperty ( "PropertiesPrint"    , false ) ;
-      Assert ( sc.isSuccess() ,
-               "Unable to set Property 'PropertiesPrint'", sc    ) ;
+      StatusCode sc = setProperty( "TypePrint", false );
+      Assert( sc.isSuccess(), "Unable to set Property 'TypePrint'", sc );
+      sc = setProperty( "PropertiesPrint", false );
+      Assert( sc.isSuccess(), "Unable to set Property 'PropertiesPrint'", sc );
       //
     }
+
   private:
     // ========================================================================
     /// get the correct algorithm context
-    std::string getMyAlg() const
-    {
-      const IAlgContextSvc* asvc = contextSvc();
-      const IAlgorithm* current  = ( asvc ? asvc->currentAlg() : NULL );
+    std::string getMyAlg() const {
+      const IAlgContextSvc* asvc    = contextSvc();
+      const IAlgorithm*     current = ( asvc ? asvc->currentAlg() : NULL );
       return ( current ? " [" + current->name() + "]" : "" );
     }
     // ========================================================================
   private:
     // ========================================================================
-    bool m_printMyAlg ; ///< Print Algorithm Context
+    bool m_printMyAlg; ///< Print Algorithm Context
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

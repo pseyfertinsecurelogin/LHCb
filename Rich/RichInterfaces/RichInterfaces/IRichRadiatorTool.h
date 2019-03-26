@@ -35,8 +35,7 @@
 #include "Kernel/RichRadIntersection.h"
 #include "Kernel/RichRadiatorType.h"
 
-namespace Rich
-{
+namespace Rich {
 
   /** @class IRadiatorTool IRichRadiatorTool.h RichKernel/IRichRadiatorTool.h
    *
@@ -46,11 +45,9 @@ namespace Rich
    *  @date   2006-03-01
    */
 
-  class IRadiatorTool : virtual public IAlgTool
-  {
+  class IRadiatorTool : virtual public IAlgTool {
 
   public:
-
     /// Interface ID
     DeclareInterfaceID( IRadiatorTool, 1, 0 );
 
@@ -67,10 +64,9 @@ namespace Rich
      *
      * @return The number of intersections
      */
-    virtual unsigned int intersections( const Gaudi::XYZPoint &        globalPoint,
-                                        const Gaudi::XYZVector &       globalVector,
+    virtual unsigned int intersections( const Gaudi::XYZPoint& globalPoint, const Gaudi::XYZVector& globalVector,
                                         const Rich::RadiatorType       radiator,
-                                        Rich::RadIntersection::Vector &intersections ) const = 0;
+                                        Rich::RadIntersection::Vector& intersections ) const = 0;
   };
 
 } // namespace Rich

@@ -27,8 +27,7 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/StatusCode.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class Exception RichException.h RichUtils/RichException.h
@@ -40,20 +39,16 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class Exception final : public GaudiException
-  {
+  class Exception final : public GaudiException {
 
   public:
-
     /** Default Constructor
      *
      *  @param ex  exception message
      *  @param sc  status code associated with the exception
      */
-    Exception( const std::string &ex = "unspecified exception",
-               const StatusCode & sc = StatusCode::FAILURE )
-      : GaudiException( ex, "*RichException*", sc )
-    {}
+    Exception( const std::string& ex = "unspecified exception", const StatusCode& sc = StatusCode::FAILURE )
+        : GaudiException( ex, "*RichException*", sc ) {}
 
     /** Constructor from another GaudiException
      *
@@ -61,11 +56,8 @@ namespace Rich
      *  @param Ex          previous exception
      *  @param sc          status code associated with the exception
      */
-    Exception( const std::string &   ex,
-               const GaudiException &Ex,
-               const StatusCode &    sc = StatusCode::FAILURE )
-      : GaudiException( ex, "*RichException*", sc, Ex )
-    {}
+    Exception( const std::string& ex, const GaudiException& Ex, const StatusCode& sc = StatusCode::FAILURE )
+        : GaudiException( ex, "*RichException*", sc, Ex ) {}
 
     /** destructor
      */
@@ -73,7 +65,7 @@ namespace Rich
 
     /** clone (virtual constructor)
      */
-    GaudiException *clone() const override { return new Exception( *this ); }
+    GaudiException* clone() const override { return new Exception( *this ); }
   };
 
 } // namespace Rich

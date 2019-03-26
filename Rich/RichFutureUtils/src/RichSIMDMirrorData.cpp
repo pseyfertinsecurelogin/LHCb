@@ -16,17 +16,13 @@ using namespace Rich::SIMD;
 //=============================================================================
 
 // Update the cached mirror information
-void
-MirrorData::update( const Mirrors &mirrors ) noexcept
-{
+void MirrorData::update( const Mirrors& mirrors ) noexcept {
   // loop over the scalar entries and update as needed
-  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
-  {
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i ) {
     // the mirror pointer
     const auto m = mirrors[i];
     // If changed from before, update
-    if ( UNLIKELY( m != cache_mirrors[i] ) )
-    {
+    if ( UNLIKELY( m != cache_mirrors[i] ) ) {
       // update cache mirror pointer
       cache_mirrors[i] = m;
 

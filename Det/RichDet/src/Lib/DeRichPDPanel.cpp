@@ -25,6 +25,6 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeRichPDPanel::DeRichPDPanel( const std::string &name ) : DeRichBase( name ) {}
+DeRichPDPanel::DeRichPDPanel( const std::string& name ) : DeRichBase( name ) {}
 
 //=============================================================================

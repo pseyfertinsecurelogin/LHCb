@@ -19,8 +19,8 @@
 #include "GaudiAlg/Transformer.h"
 
 // LHCb
-#include "Event/RawEvent.h"
 #include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 #include "Event/VPLightCluster.h"
 #include "Kernel/VPChannelID.h"
 #include "Kernel/VPConstants.h"
@@ -29,8 +29,8 @@
 #include "VPKernel/VeloPixelInfo.h"
 
 // local
-#include "VPRetinaMatrix.h"
 #include "VPRetinaCluster.h"
+#include "VPRetinaMatrix.h"
 
 /** @class VPRetinaClusterCreator VPRetinaClusterCreator.h
  * Algorithm to create RetinaCluster Raw Bank from SuperPixel.
@@ -58,10 +58,7 @@
  * @date   2018-06-20
  */
 
-
-class VPRetinaClusterCreator
-  : public Gaudi::Functional::Transformer< LHCb::RawEvent (const LHCb::RawEvent& )>
-{
+class VPRetinaClusterCreator : public Gaudi::Functional::Transformer<LHCb::RawEvent( const LHCb::RawEvent& )> {
 
 public:
   /// Standard constructor
@@ -74,12 +71,11 @@ public:
   LHCb::RawEvent operator()( const LHCb::RawEvent& ) const override;
 
 private:
-
   /// bank version. (change this every time semantics change!)
   const unsigned int m_bankVersion = 1;
 
   /// make RetinaClusters from bank
-  std::vector<uint32_t> makeRetinaClusters(const uint32_t* bank) const;
+  std::vector<uint32_t> makeRetinaClusters( const uint32_t* bank ) const;
 
   /// Recompute the geometry in case of change
   StatusCode rebuildGeometry();
@@ -89,17 +85,16 @@ private:
 
   /// List of pointers to modules (which contain pointers to their hits)
   std::vector<PixelModule*> m_modules;
-  std::vector<PixelModule> m_module_pool;
+  std::vector<PixelModule>  m_module_pool;
 
   /// Indices of first and last module
   unsigned int m_firstModule;
   unsigned int m_lastModule;
 
-  float m_ltg[16 * VP::NSensors]; // 16*208 = 16*number of sensors
+  float                    m_ltg[16 * VP::NSensors]; // 16*208 = 16*number of sensors
   LHCb::span<const double> m_local_x;
   LHCb::span<const double> m_x_pitch;
-  float m_pixel_size;
+  float                    m_pixel_size;
 };
 
 #endif // VPRETINACLUSTERCREATOR_H
-

@@ -18,8 +18,7 @@
 class LbAppInit;
 class HltConfigSvc;
 
-namespace LHCb
-{
+namespace LHCb {
   /**
    Simple class to record binary (`BINARY_TAG`, AKA `CMTCONFIG`) and host
    information (instruction set as defined in `VectorClass/instrset.h`).
@@ -35,8 +34,7 @@ namespace LHCb
     instructions set is correct in case of checkpointing.
    }
   */
-  class PlatformInfo final
-  {
+  class PlatformInfo final {
   public:
     /// Initialize the instance with build time `BINARY_TAG` and run time CPU
     /// instructions set level (`VectorClass/instrset.h`).
@@ -65,8 +63,7 @@ namespace LHCb
     static std::uint16_t s_hostInstrSetLevel;
 
     /// Helper for a nice print out of the instance content.
-    friend std::ostream& operator<<( std::ostream& s, const PlatformInfo& id )
-    {
+    friend std::ostream& operator<<( std::ostream& s, const PlatformInfo& id ) {
       return s << id.binaryTag() << ':' << id.hostInstrSet();
     }
 
@@ -75,4 +72,4 @@ namespace LHCb
     friend LbAppInit;
     friend HltConfigSvc;
   };
-}
+} // namespace LHCb

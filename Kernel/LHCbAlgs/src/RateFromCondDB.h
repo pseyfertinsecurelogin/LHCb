@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef RateFromCondDB_H 
+#ifndef RateFromCondDB_H
 #define RateFromCondDB_H 1
 
 // CondDB
@@ -18,9 +18,9 @@
 #include "GaudiAlg/GaudiTool.h"
 
 //#include "Kernel/IPropertyConfigSvc.h"
-#include "Kernel/TCK.h"
 #include "Kernel/IRateFromTCK.h"
-static const InterfaceID IID_RateFromCondDB ( "RateFromCondDB", 1, 0 ); // needed as there's no interface
+#include "Kernel/TCK.h"
+static const InterfaceID IID_RateFromCondDB( "RateFromCondDB", 1, 0 ); // needed as there's no interface
 
 /** @class RateFromCondDB RateFromCondDB.h
  *
@@ -37,35 +37,29 @@ class RateFromCondDB final : public GaudiTool
 //, virtual public IRateFromCondDB
 {
 
- public:
-
+public:
   // Return the interface ID
   static const InterfaceID& interfaceID() { return IID_RateFromCondDB; }; // needed as there's no interface
 
   /// Standard constructor
-  RateFromCondDB( const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent);
+  RateFromCondDB( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~RateFromCondDB( ) = default; ///< Destructor
+  virtual ~RateFromCondDB() = default; ///< Destructor
 
   bool initializeCondDB();
 
   /// Get rate from Conditions Database
-  double getRate() const ;
+  double getRate() const;
 
- private:
+private:
+  StatusCode i_updateConditions(); ///< Function extracting data from Condition
 
-  StatusCode i_updateConditions();              ///< Function extracting data from Condition
-
- private:
-
-  Condition *m_condTrigger = nullptr;           ///< Condition for sampling coefficients
-  double m_rate;                                ///< rate in condDB
-  std::string m_condition ;                     ///< ConditionName
-  std::string m_lineRate ;                      ///< Line Rate name in CondDB
-  double m_unit ;                               ///< Unit for rate
-
+private:
+  Condition*  m_condTrigger = nullptr; ///< Condition for sampling coefficients
+  double      m_rate;                  ///< rate in condDB
+  std::string m_condition;             ///< ConditionName
+  std::string m_lineRate;              ///< Line Rate name in CondDB
+  double      m_unit;                  ///< Unit for rate
 };
 
 #endif // RateFromCondDB

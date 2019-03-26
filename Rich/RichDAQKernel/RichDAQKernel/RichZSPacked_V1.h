@@ -26,8 +26,7 @@
 // numberings
 #include "RichUtils/RichDAQDefinitions.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   /** @namespace Rich::DAQ::RichZSPacked_V1
    *
@@ -36,8 +35,7 @@ namespace Rich::DAQ
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   2005-01-12
    */
-  namespace RichZSPacked_V1
-  {
+  namespace RichZSPacked_V1 {
 
     /** @namespace Rich::DAQ::RichZSPacked_V1::RichZSPackedCode
      *
@@ -46,8 +44,7 @@ namespace Rich::DAQ
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   2005-01-12
      */
-    namespace RichZSPackedCode
-    {
+    namespace RichZSPackedCode {
 
       /// Number of bits for each address
       static const IndexType BitsAddress = 7;
@@ -62,11 +59,9 @@ namespace Rich::DAQ
 
       // The masks
       static const LongType MaskField0   = ( LongType )( ( 1 << BitsField ) - 1 ) << ShiftField0;
-      static const LongType MaskAddress0 = ( LongType )( ( 1 << BitsAddress ) - 1 )
-                                           << ShiftAddress0;
+      static const LongType MaskAddress0 = ( LongType )( ( 1 << BitsAddress ) - 1 ) << ShiftAddress0;
       static const LongType MaskField1   = ( LongType )( ( 1 << BitsField ) - 1 ) << ShiftField1;
-      static const LongType MaskAddress1 = ( LongType )( ( 1 << BitsAddress ) - 1 )
-                                           << ShiftAddress1;
+      static const LongType MaskAddress1 = ( LongType )( ( 1 << BitsAddress ) - 1 ) << ShiftAddress1;
 
       // the max value of address and bit-field storable
       static const ShortType MaxField   = ( 1 << BitsField ) - 1;
@@ -85,13 +80,11 @@ namespace Rich::DAQ
      *  @date   2005-01-12
      */
 
-    class RichZSPacked
-    {
+    class RichZSPacked {
 
     public: // methods
-
       /// Copy Constructor
-      RichZSPacked( const RichZSPacked &word ) : m_data( word.data() ) {}
+      RichZSPacked( const RichZSPacked& word ) : m_data( word.data() ) {}
 
       /// Constructor from Rich::DAQ::LongType
       RichZSPacked( const Rich::DAQ::LongType data = 0 ) : m_data( data ) {}
@@ -102,8 +95,7 @@ namespace Rich::DAQ
                     const Rich::DAQ::ShortType address1, ///< Second address to store
                     const Rich::DAQ::ShortType field1    ///< Second bitfield to store
                     )
-        : m_data( 0 )
-      {
+          : m_data( 0 ) {
         setAddress0( address0 );
         setBitField0( field0 );
         setAddress1( address1 );
@@ -120,108 +112,86 @@ namespace Rich::DAQ
       inline operator Rich::DAQ::LongType() const noexcept { return data(); }
 
       /// Set the first address
-      inline void setAddress0( const Rich::DAQ::ShortType address )
-      {
+      inline void setAddress0( const Rich::DAQ::ShortType address ) {
         dataInRange( address, RichZSPackedCode::MaxAddress );
         set( address, RichZSPackedCode::ShiftAddress0, RichZSPackedCode::MaskAddress0 );
       }
 
       /// Set the second address
-      inline void setAddress1( const Rich::DAQ::ShortType address )
-      {
+      inline void setAddress1( const Rich::DAQ::ShortType address ) {
         dataInRange( address, RichZSPackedCode::MaxAddress );
         set( address, RichZSPackedCode::ShiftAddress1, RichZSPackedCode::MaskAddress1 );
       }
 
       /// Set the first bit-field
-      inline void setBitField0( const Rich::DAQ::ShortType field )
-      {
+      inline void setBitField0( const Rich::DAQ::ShortType field ) {
         dataInRange( field, RichZSPackedCode::MaxField );
         set( field, RichZSPackedCode::ShiftField0, RichZSPackedCode::MaskField0 );
       }
 
       /// Set the second bit-field
-      inline void setBitField1( const Rich::DAQ::ShortType field )
-      {
+      inline void setBitField1( const Rich::DAQ::ShortType field ) {
         dataInRange( field, RichZSPackedCode::MaxField );
         set( field, RichZSPackedCode::ShiftField1, RichZSPackedCode::MaskField1 );
       }
 
       /// Retrieve the first address
-      inline Rich::DAQ::ShortType address0() const
-      {
+      inline Rich::DAQ::ShortType address0() const {
         return ( ( data() & RichZSPackedCode::MaskAddress0 ) >> RichZSPackedCode::ShiftAddress0 );
       }
 
       /// Retrieve the first address
-      inline Rich::DAQ::ShortType address1() const
-      {
+      inline Rich::DAQ::ShortType address1() const {
         return ( ( data() & RichZSPackedCode::MaskAddress1 ) >> RichZSPackedCode::ShiftAddress1 );
       }
 
       /// Retrieve the first bit-field
-      inline Rich::DAQ::ShortType bitField0() const
-      {
+      inline Rich::DAQ::ShortType bitField0() const {
         return ( ( data() & RichZSPackedCode::MaskField0 ) >> RichZSPackedCode::ShiftField0 );
       }
 
       /// Retrieve the second bit-field
-      inline Rich::DAQ::ShortType bitField1() const
-      {
+      inline Rich::DAQ::ShortType bitField1() const {
         return ( ( data() & RichZSPackedCode::MaskField1 ) >> RichZSPackedCode::ShiftField1 );
       }
 
     public:
-
       /// Get address from row and column information
       inline static Rich::DAQ::ShortType addressFromRowCol( const Rich::DAQ::ShortType row,
-                                                            const Rich::DAQ::ShortType col )
-      {
+                                                            const Rich::DAQ::ShortType col ) {
         return ( row * 4 + col / RichZSPackedCode::BitsField );
       }
 
       /// Get bit number from column information
-      inline static Rich::DAQ::ShortType bitFromCol( const Rich::DAQ::ShortType col )
-      {
+      inline static Rich::DAQ::ShortType bitFromCol( const Rich::DAQ::ShortType col ) {
         return col % RichZSPackedCode::BitsField;
       }
 
       /// Get column information from address and bit number
       inline static Rich::DAQ::ShortType colFromAddressAndBit( const Rich::DAQ::ShortType address,
-                                                               const Rich::DAQ::ShortType bit )
-      {
+                                                               const Rich::DAQ::ShortType bit ) {
         return bit + RichZSPackedCode::BitsField * ( address % 4 );
       }
 
       /// Get row information from address
-      inline static Rich::DAQ::ShortType rowFromAddress( const Rich::DAQ::ShortType address )
-      {
-        return address / 4;
-      }
+      inline static Rich::DAQ::ShortType rowFromAddress( const Rich::DAQ::ShortType address ) { return address / 4; }
 
     private: // methods
-
       /// Update the internal data
       inline void setData( const Rich::DAQ::LongType data ) noexcept { m_data = data; }
 
       /// Set the data value for a given mask and shift value
-      inline void set( const Rich::DAQ::ShortType value,
-                       const Rich::DAQ::ShortType shift,
-                       const Rich::DAQ::LongType  mask )
-      {
+      inline void set( const Rich::DAQ::ShortType value, const Rich::DAQ::ShortType shift,
+                       const Rich::DAQ::LongType mask ) {
         setData( ( ( value << shift ) & mask ) | ( data() & ~mask ) );
       }
 
       /// tests whether a given value is in range for a given data field
-      inline void dataInRange( const Rich::DAQ::ShortType value,
-                               const Rich::DAQ::ShortType max ) const
-      {
-        if ( value > max )
-          throw GaudiException( "Data out of range", "*RichZSPacked*", StatusCode::FAILURE );
+      inline void dataInRange( const Rich::DAQ::ShortType value, const Rich::DAQ::ShortType max ) const {
+        if ( value > max ) throw GaudiException( "Data out of range", "*RichZSPacked*", StatusCode::FAILURE );
       }
 
     private: // data
-
       /// The data word
       Rich::DAQ::LongType m_data = 0;
     };

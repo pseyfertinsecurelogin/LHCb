@@ -13,7 +13,6 @@
 <gdd>
   <package name="RecEvent">
 <!-- **************************************************************************
-  * $Id: CaloClusterEntry.xml,v 1.4 2006-05-29 15:26:09 odescham Exp $
   *****************************************************************************
   * XML-description of CaloClusterEntry class                                 *
   * author: Vanya Belyaev Ivan.Belyaev@itep.ru                                *

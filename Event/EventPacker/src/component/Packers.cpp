@@ -10,23 +10,23 @@
 \*****************************************************************************/
 #include "PackerBaseAlg.icpp"
 
+#include "Event/PackedCaloAdc.h"
+#include "Event/PackedCaloCluster.h"
+#include "Event/PackedCaloDigit.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMCCaloHit.h"
+#include "Event/PackedMCHit.h"
+#include "Event/PackedMCRichDigitSummary.h"
 #include "Event/PackedMCRichHit.h"
 #include "Event/PackedMCRichOpticalPhoton.h"
 #include "Event/PackedMCRichSegment.h"
 #include "Event/PackedMCRichTrack.h"
-#include "Event/PackedMCCaloHit.h"
-#include "Event/PackedMCHit.h"
-#include "Event/PackedMCRichDigitSummary.h"
 #include "Event/PackedMuonPID.h"
-#include "Event/PackedRichPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 #include "Event/PackedParticle.h"
+#include "Event/PackedRichPID.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
-#include "Event/PackedCaloAdc.h"
-#include "Event/PackedCaloDigit.h"
-#include "Event/PackedCaloCluster.h"
-#include "Event/PackedFlavourTag.h"
-#include "Event/PackedPartToRelatedInfoRelation.h"
 
 template class DataPacking::Pack<LHCb::MCRichHitPacker>;
 typedef DataPacking::Pack<LHCb::MCRichHitPacker> A;
@@ -155,7 +155,3 @@ DECLARE_COMPONENT( Vb )
 template class DataPacking::Pack<LHCb::RelatedInfoRelationsPacker>;
 typedef DataPacking::Pack<LHCb::RelatedInfoRelationsPacker> W;
 DECLARE_COMPONENT( W )
-
-
-
- 

@@ -14,10 +14,10 @@
 // ============================================================================
 // STD and STL
 // ============================================================================
-#include <functional>
 #include <cmath>
-#include <type_traits>
+#include <functional>
 #include <iterator>
+#include <type_traits>
 // ============================================================================
 // MathCore
 // ============================================================================
@@ -27,15 +27,15 @@
 // ============================================================================
 // Event
 // ============================================================================
-#include "Kernel/CaloCellID.h"
+#include "Event/CaloCluster.h"
 #include "Event/CaloClusterEntry.h"
 #include "Event/CaloDigit.h"
 #include "Event/CaloDigitStatus.h"
-#include "Event/CaloCluster.h"
 #include "Event/CaloHypo.h"
+#include "Kernel/CaloCellID.h"
 
 template <class TYPE>
-class SmartRef  ;     // GaudiKernel
+class SmartRef; // GaudiKernel
 
 /** @namespace CaloDataFunctor CaloDataFunctor.h Event/CaloDataFunctor.h
  *
@@ -46,10 +46,8 @@ class SmartRef  ;     // GaudiKernel
  *  @author  Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date    26/11/1999
  */
-namespace LHCb
-{
-  namespace CaloDataFunctor
-  {
+namespace LHCb {
+  namespace CaloDataFunctor {
     // ==========================================================================
     /** @class CellID
      *
@@ -60,30 +58,29 @@ namespace LHCb
      *  @date 2004-10-22
      */
     // ==========================================================================
-    struct CellID_t
-    {
-      template<class TYPE, typename = typename std::enable_if<!std::is_pointer<TYPE>::value>::type>
-      LHCb::CaloCellID operator() ( const TYPE& obj ) const
-      { return obj.cellID() ; }
+    struct CellID_t {
+      template <class TYPE, typename = typename std::enable_if<!std::is_pointer<TYPE>::value>::type>
+      LHCb::CaloCellID operator()( const TYPE& obj ) const {
+        return obj.cellID();
+      }
 
-      template<class TYPE>
-      LHCb::CaloCellID operator() ( const TYPE* obj ) const
-      { return obj ? (*this)(*obj) : LHCb::CaloCellID() ; }
+      template <class TYPE>
+      LHCb::CaloCellID operator()( const TYPE* obj ) const {
+        return obj ? ( *this )( *obj ) : LHCb::CaloCellID();
+      }
 
-      template<class TYPE>
-      LHCb::CaloCellID operator() ( const SmartRef<TYPE> & ref ) const
-      { return (*this)(ref.target()); }
+      template <class TYPE>
+      LHCb::CaloCellID operator()( const SmartRef<TYPE>& ref ) const {
+        return ( *this )( ref.target() );
+      }
 
-      LHCb::CaloCellID operator() ( const LHCb::CaloCellID& id ) const
-      { return id ; } ;
+      LHCb::CaloCellID operator()( const LHCb::CaloCellID& id ) const { return id; };
 
-      LHCb::CaloCellID operator() ( const LHCb::CaloCluster& cluster ) const
-      { return cluster.seed() ; }
+      LHCb::CaloCellID operator()( const LHCb::CaloCluster& cluster ) const { return cluster.seed(); }
 
-      LHCb::CaloCellID operator() ( const LHCb::CaloHypo& hypo ) const
-      { return !hypo.clusters().empty() ? (*this)( hypo.clusters().front() )
-                                        : LHCb::CaloCellID() ; }
-
+      LHCb::CaloCellID operator()( const LHCb::CaloHypo& hypo ) const {
+        return !hypo.clusters().empty() ? ( *this )( hypo.clusters().front() ) : LHCb::CaloCellID();
+      }
     };
     inline constexpr CellID_t CellID{};
     // ==========================================================================
@@ -112,31 +109,29 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    class Over_E_Threshold
-    {
+    class Over_E_Threshold {
     public:
       /** constructor (explicit)
        *  @param threshold   threshold on energy of the object
        */
-      explicit Over_E_Threshold( double threshold = 0.0 )
-        : m_threshold( threshold ) {};
+      explicit Over_E_Threshold( double threshold = 0.0 ) : m_threshold( threshold ){};
       /** compare the energy of the object with threshold value
        *  @param  obj  object
        *  @return result of comparison with threshold
        */
       template <class TYPE>
-      inline bool operator() ( const TYPE& obj  ) const
-      { return obj && obj->e() > m_threshold ; }
+      inline bool operator()( const TYPE& obj ) const {
+        return obj && obj->e() > m_threshold;
+      }
 
-      inline bool operator() ( const LHCb::CaloClusterEntry& obj  ) const
-      {
+      inline bool operator()( const LHCb::CaloClusterEntry& obj ) const {
         return obj.digit() && ( obj.digit()->e() * obj.fraction() > m_threshold );
       };
+
     private:
       double m_threshold{0}; ///< the actual threshold value for the energy
     };
     // ==========================================================================
-
 
     // ==========================================================================
     /** @class EnergyTransverse CaloDataFunctor.h Event/CaloDataFucntor.h
@@ -159,34 +154,27 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template<class DETECTOR >
-    class EnergyTransverse
-    {
+    template <class DETECTOR>
+    class EnergyTransverse {
     public:
       /** constructor
        *  @param detector  "DETECTOR" object
        *  @param deltaZ    z-correction to position of shower maximum
        */
-      EnergyTransverse
-      ( DETECTOR detector     ,
-        double   deltaZ   = 0 )
-        : m_det ( detector )
-        , m_dz  ( deltaZ   ) {}
+      EnergyTransverse( DETECTOR detector, double deltaZ = 0 ) : m_det( detector ), m_dz( deltaZ ) {}
 
       /** calculate the transverse energy of the object
        *  @param  obj   object
        *  @return the transverse energy of the object
        */
       template <typename TYPE>
-      inline double operator () ( const TYPE& obj ) const
-      {
-        return ( obj ?
-                 obj->e() * std::sin( m_det->cellCenter(CellID(obj)).Theta() ) :
-                 0.0 );
+      inline double operator()( const TYPE& obj ) const {
+        return ( obj ? obj->e() * std::sin( m_det->cellCenter( CellID( obj ) ).Theta() ) : 0.0 );
       }
+
     private:
-      mutable DETECTOR m_det  ;  ///< detector element
-      double  m_dz{0}         ;  ///< dz correction
+      mutable DETECTOR m_det;   ///< detector element
+      double           m_dz{0}; ///< dz correction
     };
     // ==========================================================================
 
@@ -207,32 +195,31 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template < class DETECTOR >
-    class Over_Et_Threshold
-    {
+    template <class DETECTOR>
+    class Over_Et_Threshold {
       /// typedef for Et estimator
-      typedef EnergyTransverse<DETECTOR>  ET;
+      typedef EnergyTransverse<DETECTOR> ET;
+
     public:
       /** constructor
        *  @param Detector         "DETECTOR" object
        *  @param Threshold        transverse energy threshold
        *  @param DeltaZ           z-correction to position of shower maximum
        */
-      Over_Et_Threshold ( DETECTOR Detector,
-                          double   Threshold = 0 ,
-                          double   DeltaZ = 0    )
-        : m_et       ( Detector  , DeltaZ )
-        , m_threshold( Threshold          ) {}
+      Over_Et_Threshold( DETECTOR Detector, double Threshold = 0, double DeltaZ = 0 )
+          : m_et( Detector, DeltaZ ), m_threshold( Threshold ) {}
       /** compare the threshold energy of the object with threshold value
        *  @param  obj  object
        *  @return result of comparison with threshold
        */
       template <typename TYPE>
-      inline bool operator() ( const TYPE& obj  ) const
-      { return obj && ( m_et( obj ) > m_threshold ) ; }
+      inline bool operator()( const TYPE& obj ) const {
+        return obj && ( m_et( obj ) > m_threshold );
+      }
+
     private:
-      ET        m_et            ;      ///< e_t estimator
-      double    m_threshold{0}  ;      ///< threshold value for energy
+      ET     m_et;           ///< e_t estimator
+      double m_threshold{0}; ///< threshold value for energy
     };
     // ==========================================================================
 
@@ -261,32 +248,26 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    struct Less_by_Energy_t
-    {
+    struct Less_by_Energy_t {
       /** compare the energy of one object with the energy of
        *  another object
        *  @param obj1   first  object
        *  @param obj2   second object
        *  @return  result of energy comparison
        */
-      template <class TYPE1,class TYPE2 = TYPE1 >
-      inline bool operator() ( const TYPE1& obj1 , const TYPE2& obj2 ) const
-      {
-        return !obj1 || ( obj2 && obj1->e() < obj2->e() ) ;
+      template <class TYPE1, class TYPE2 = TYPE1>
+      inline bool operator()( const TYPE1& obj1, const TYPE2& obj2 ) const {
+        return !obj1 || ( obj2 && obj1->e() < obj2->e() );
       }
-      inline bool operator()
-        ( const LHCb::CaloClusterEntry& obj1 ,
-          const LHCb::CaloClusterEntry& obj2 ) const
-      {
-        return
-          ( !obj1.digit() ) ? true  :
-          ( !obj2.digit() ) ? false :
-          ( obj1.digit()->e() * obj1.fraction() ) <
-          ( obj2.digit()->e() * obj2.fraction() ) ;
+      inline bool operator()( const LHCb::CaloClusterEntry& obj1, const LHCb::CaloClusterEntry& obj2 ) const {
+        return ( !obj1.digit() ) ? true
+                                 : ( !obj2.digit() ) ? false
+                                                     : ( obj1.digit()->e() * obj1.fraction() ) <
+                                                           ( obj2.digit()->e() * obj2.fraction() );
       }
       ///
     };
-    inline constexpr Less_by_Energy_t Less_by_Energy {};
+    inline constexpr Less_by_Energy_t Less_by_Energy{};
     // ==========================================================================
 
     // ==========================================================================
@@ -322,35 +303,30 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template < class DETECTOR >
-    class Less_by_TransverseEnergy
-    {
+    template <class DETECTOR>
+    class Less_by_TransverseEnergy {
       /// useful typedef for Et estimator
-      typedef   EnergyTransverse< DETECTOR >       ET  ;
+      typedef EnergyTransverse<DETECTOR> ET;
+
     public:
       /** constructor
        *  @param Detector "DETECTOR" object
        *  @param DeltaZ   z-correction to position of shower maximum
        */
-      Less_by_TransverseEnergy
-      ( DETECTOR Detector     ,
-        double   DeltaZ   = 0 )
-        : m_et ( Detector , DeltaZ ) {}
+      Less_by_TransverseEnergy( DETECTOR Detector, double DeltaZ = 0 ) : m_et( Detector, DeltaZ ) {}
       /** compare the transverse energy of one object with the
        *  transverse energy of  another object
        *  @param obj1   first  object
        *  @param obj2   second object
        *  @return  result of energy comparison
        */
-      template <typename TYPE, typename TYPE2 >
-      inline bool operator() ( const TYPE&  obj1 ,
-                               const TYPE2& obj2 ) const
-      {
+      template <typename TYPE, typename TYPE2>
+      inline bool operator()( const TYPE& obj1, const TYPE2& obj2 ) const {
         return !obj1 || ( obj2 && ( m_et( obj1 ) < m_et( obj2 ) ) );
       }
-    private:
 
-      ET  m_et  ;      ///< e_t estimator
+    private:
+      ET m_et; ///< e_t estimator
     };
     // ==========================================================================
 
@@ -375,8 +351,7 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    struct Accumulate_Energy_t
-    {
+    struct Accumulate_Energy_t {
     public:
       /** accumulate the energy of the objkect
        *  @param   Energy  accumulated energy
@@ -384,11 +359,11 @@ namespace LHCb
        *  @return  accumulated energy
        */
       template <class TYPE>
-      inline double  operator() ( double&     Energy  ,
-                                  const TYPE& object     ) const
-      { return ( !object ) ? Energy : Energy += object->e() ; }
+      inline double operator()( double& Energy, const TYPE& object ) const {
+        return ( !object ) ? Energy : Energy += object->e();
+      }
     };
-    inline constexpr Accumulate_Energy_t Accumulate_Energy {};
+    inline constexpr Accumulate_Energy_t Accumulate_Energy{};
     // ==========================================================================
 
     // ==========================================================================
@@ -422,28 +397,28 @@ namespace LHCb
      *  @date 26/11/1999
      */
     template <class DETECTOR>
-    class Accumulate_TransverseEnergy
-    {
+    class Accumulate_TransverseEnergy {
       /// useful typedef for Et estimator
-      typedef   EnergyTransverse<DETECTOR>        ET;
+      typedef EnergyTransverse<DETECTOR> ET;
+
     public:
       /** constructor
        *  @param  Detector  "DETECTOR" object
        *  @param  DeltaZ     additional Z-correction to be applied
        */
-      Accumulate_TransverseEnergy ( DETECTOR Detector     ,
-                                    double   DeltaZ   = 0 )
-        : m_et ( Detector , DeltaZ  ) { }
+      Accumulate_TransverseEnergy( DETECTOR Detector, double DeltaZ = 0 ) : m_et( Detector, DeltaZ ) {}
       /** accumulate the transverse energy of the objects
        *  @param   Energy  accumulated transverce energy
        *  @param   obj     object
        *  @return  accumulated transverse energy
        */
       template <typename TYPE>
-      inline double  operator() ( double& Energy  , const TYPE& obj ) const
-      { return ( !obj ) ? Energy : Energy += m_et( obj )  ; }
+      inline double operator()( double& Energy, const TYPE& obj ) const {
+        return ( !obj ) ? Energy : Energy += m_et( obj );
+      }
+
     private:
-      ET        m_et ;    ///< e_t estimator
+      ET m_et; ///< e_t estimator
     };
     // ==========================================================================
 
@@ -457,23 +432,23 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    class IsCaloCellID
-    {
+    class IsCaloCellID {
     public:
       /** constructor
        *  @param CellID  cell identifier to be compared with
        */
-      explicit IsCaloCellID ( const LHCb::CaloCellID& CellID )
-        : m_cellID ( CellID ) { }
+      explicit IsCaloCellID( const LHCb::CaloCellID& CellID ) : m_cellID( CellID ) {}
       /** compare cell identifier of the object with given value
        *  @param obj  object
        *  @return  result of comparison (equality test)
        */
       template <class TYPE>
-      inline bool operator() ( const TYPE& obj ) const
-      { return obj &&  CellID( obj )  == m_cellID ; }
+      inline bool operator()( const TYPE& obj ) const {
+        return obj && CellID( obj ) == m_cellID;
+      }
+
     private:
-      LHCb::CaloCellID  m_cellID ; ///< reference CaloCellID
+      LHCb::CaloCellID m_cellID; ///< reference CaloCellID
     };
     // ==========================================================================
 
@@ -491,22 +466,19 @@ namespace LHCb
      *  @date 26/11/1999
      */
     template <class IT>
-    inline  double clusterEnergy( IT begin , IT end )
-    {
-      double energy = 0 ;
-      for ( ; begin != end ; ++begin )
-      {
+    inline double clusterEnergy( IT begin, IT end ) {
+      double energy = 0;
+      for ( ; begin != end; ++begin ) {
         // get the digit
-        const LHCb::CaloDigit * digit = begin->digit()  ;
+        const LHCb::CaloDigit* digit = begin->digit();
         /// skip nulls
-        if( ! digit ) { continue ; }
+        if ( !digit ) { continue; }
         /// check the status and skip useless digits
-        if( !( begin->status() & LHCb::CaloDigitStatus::UseForEnergy ) )
-        { continue ; }
+        if ( !( begin->status() & LHCb::CaloDigitStatus::UseForEnergy ) ) { continue; }
         // accumulate the energy
-        energy += digit->e() * begin->fraction() ;
+        energy += digit->e() * begin->fraction();
       }
-      return energy ;
+      return energy;
     }
     // ==========================================================================
 
@@ -537,55 +509,56 @@ namespace LHCb
      *  @date 26/11/1999
      */
     template <class IT, class DE>
-    inline StatusCode
-    calculateClusterEXY( IT begin  ,
-                         IT end    ,
-                         DE de     ,
-                         double& e ,
-                         double& x ,
-                         double& y  ){
+    inline StatusCode calculateClusterEXY( IT begin, IT end, DE de, double& e, double& x, double& y ) {
       // reset initial parameters
-      e = 0 ;  x = 0 ; y = 0 ;
+      e = 0;
+      x = 0;
+      y = 0;
       // use counter
-      unsigned num  = 0 ;
+      unsigned num = 0;
       // energy for position
-      double   epos = 0 ;
+      double epos = 0;
       // no detector
-      if( 0 == de                 ) { return StatusCode( 200 )   ; }
+      if ( 0 == de ) { return StatusCode( 200 ); }
       // empty sequence
-      if( 0 == de || begin == end ) { return StatusCode( 201 )   ; }
+      if ( 0 == de || begin == end ) { return StatusCode( 201 ); }
       // explicit loop over all entries
-      for( ; begin != end ; ++begin ){
+      for ( ; begin != end; ++begin ) {
         // extract the digit
-        const LHCb::CaloDigit*       digit  = begin->digit() ;
+        const LHCb::CaloDigit* digit = begin->digit();
         // skip nulls
-        if( 0 == digit                           ) { continue ; }
-        double eDigit = digit->e() * begin->fraction() ;
-        if( ( begin->status() & LHCb::CaloDigitStatus::UseForEnergy   ) !=0 ){
-          e += eDigit    ;        // accumulate digit energy
+        if ( 0 == digit ) { continue; }
+        double eDigit = digit->e() * begin->fraction();
+        if ( ( begin->status() & LHCb::CaloDigitStatus::UseForEnergy ) != 0 ) {
+          e += eDigit; // accumulate digit energy
         }
-        if( ( begin->status() & LHCb::CaloDigitStatus::UseForPosition ) != 0 ) {
-          epos += eDigit ;        // accumulate digit energy for position
-          ++num ;
+        if ( ( begin->status() & LHCb::CaloDigitStatus::UseForPosition ) != 0 ) {
+          epos += eDigit; // accumulate digit energy for position
+          ++num;
           const Gaudi::XYZPoint pos = de->cellCenter( digit->cellID() );
-          x += eDigit * pos.x() ;
-          y += eDigit * pos.y() ;
+          x += eDigit * pos.x();
+          y += eDigit * pos.y();
         }
       }
       // at least one useful digit ?
-      if( 0 == num               ) { return StatusCode( 202 ) ; }
+      if ( 0 == num ) { return StatusCode( 202 ); }
       // accumulated energy is NULL!
-      if( 0 == epos              ) { return StatusCode( 203 ) ; }
+      if ( 0 == epos ) { return StatusCode( 203 ); }
       // rescale x and y
-      if( 0 != epos ) { x /= epos ; }
-      else            { x  = 0    ; }
-      if( 0 != epos ) { y /= epos ; }
-      else            { y  = 0    ; }
+      if ( 0 != epos ) {
+        x /= epos;
+      } else {
+        x = 0;
+      }
+      if ( 0 != epos ) {
+        y /= epos;
+      } else {
+        y = 0;
+      }
       //
-      return StatusCode::SUCCESS ;
+      return StatusCode::SUCCESS;
     }
     // ==========================================================================
-
 
     // ==========================================================================
     /** The special fucntor to CaloCluster class.
@@ -604,27 +577,21 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template<class IT>
-    inline std::pair<IT,IT>
-    clusterCommonDigit( IT begin1 ,
-                        IT end1   ,
-                        IT begin2 ,
-                        IT end2   )
-    {
+    template <class IT>
+    inline std::pair<IT, IT> clusterCommonDigit( IT begin1, IT end1, IT begin2, IT end2 ) {
       // check arguments
-      if( begin2 == end2 ||  begin1 == end1 )
-      { return std::pair<IT,IT>( end1 , end2 ); }
+      if ( begin2 == end2 || begin1 == end1 ) { return std::pair<IT, IT>( end1, end2 ); }
       // loop over the sequences
-      for( IT it1 = begin1 ; end1 != it1 ; ++it1 )
-      {
-        if( !(it1->digit() ) ) { continue ;  }  // skip NULLS !
-        for( IT it2 = begin2 ; end2 != it2 ; ++it2 )
-        {
-          if( it1->digit() == it2->digit() )  // the same digit!
-          { return { it1 , it2 }; }
+      for ( IT it1 = begin1; end1 != it1; ++it1 ) {
+        if ( !( it1->digit() ) ) { continue; } // skip NULLS !
+        for ( IT it2 = begin2; end2 != it2; ++it2 ) {
+          if ( it1->digit() == it2->digit() ) // the same digit!
+          {
+            return {it1, it2};
+          }
         }
       }
-      return { end1 , end2 };
+      return {end1, end2};
     }
     // ==========================================================================
 
@@ -642,14 +609,9 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template<class IT>
-    inline IT
-    clusterLocateDigit( IT begin               ,
-                        IT end                 ,
-                        const LHCb::CaloDigit* digit )
-    {
-      return std::find_if( begin, end,
-                           [&](const auto& arg) { return arg->digit() == digit; } );
+    template <class IT>
+    inline IT clusterLocateDigit( IT begin, IT end, const LHCb::CaloDigit* digit ) {
+      return std::find_if( begin, end, [&]( const auto& arg ) { return arg->digit() == digit; } );
     }
     // ==========================================================================
 
@@ -669,15 +631,10 @@ namespace LHCb
      *  @date 26/11/1999
      */
     template <class IT>
-    inline IT
-    clusterLocateDigit ( IT begin                          ,
-                         IT end                            ,
-                         const LHCb::CaloDigitStatus::Status& st )
-    {
-      return std::find_if( begin, end, [&](const auto& arg) { return  st & arg.status(); } );
+    inline IT clusterLocateDigit( IT begin, IT end, const LHCb::CaloDigitStatus::Status& st ) {
+      return std::find_if( begin, end, [&]( const auto& arg ) { return st & arg.status(); } );
     }
     // ==========================================================================
-
 
     // ==========================================================================
     /** The special functions to create "inverse" comparison criteria
@@ -687,10 +644,9 @@ namespace LHCb
      *  @date 12 May 2002
      */
     template <class Compare>
-    struct Inverse
-    {
+    struct Inverse {
       /// constructor
-      Inverse( const Compare& cmp ) : m_cmp ( cmp ) {};
+      Inverse( const Compare& cmp ) : m_cmp( cmp ){};
       /** the only one essential method
        *  @param arg1 first  argument ("second" for underlying comparison)
        *  @param arg2 second argument ("first"  for underlying comparison)
@@ -698,11 +654,13 @@ namespace LHCb
        *  @date 12 May 2002
        */
       template <typename Arg1, typename Arg2>
-      auto operator() ( Arg1&& arg1 , Arg2&& arg2 ) const
-      { return m_cmp( std::forward<Arg2>(arg2) , std::forward<Arg1>(arg1) ) ;}
+      auto operator()( Arg1&& arg1, Arg2&& arg2 ) const {
+        return m_cmp( std::forward<Arg2>( arg2 ), std::forward<Arg1>( arg1 ) );
+      }
+
     private:
       // underlying comparison criteria
-      Compare  m_cmp;
+      Compare m_cmp;
     };
     // ==========================================================================
 
@@ -724,8 +682,9 @@ namespace LHCb
      *  @endcode
      */
     template <class Compare>
-    inline Inverse<Compare> inverse( const Compare& cmp )
-    { return Inverse<Compare>( cmp ); }
+    inline Inverse<Compare> inverse( const Compare& cmp ) {
+      return Inverse<Compare>( cmp );
+    }
     // ==========================================================================
 
     // ==========================================================================
@@ -734,40 +693,35 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 31/03/2002
      */
-    class DigitFromCalo
-    {
+    class DigitFromCalo {
     public:
       DigitFromCalo() = delete;
       /** constructor
        *  @param calo  calorimeter name
        */
-      explicit DigitFromCalo( const std::string& calo )
-        : m_calo( CaloCellCode::CaloNumFromName( calo ) ) {}
+      explicit DigitFromCalo( const std::string& calo ) : m_calo( CaloCellCode::CaloNumFromName( calo ) ) {}
       /** constructor
        *  @param calo  calorimeter index
        */
-      explicit DigitFromCalo( const int  calo )
-        : m_calo(                                calo   ) {}
+      explicit DigitFromCalo( const int calo ) : m_calo( calo ) {}
       /** the only essential method
        *  @param digit pointer to CaloDigit object
        *  @return true if digit belongs to the predefined calorimeter
        */
-      inline bool operator() ( const LHCb::CaloDigit* digit ) const
-      {
-        return digit && static_cast<int>(digit->cellID().calo()) == m_calo ;
+      inline bool operator()( const LHCb::CaloDigit* digit ) const {
+        return digit && static_cast<int>( digit->cellID().calo() ) == m_calo;
       };
       /** change the currect calorimeter
        *  @param calo new calorimeter name
        */
-      inline void setCalo( const std::string& calo )
-      { setCalo( CaloCellCode::CaloNumFromName( calo ) ); };
+      inline void setCalo( const std::string& calo ) { setCalo( CaloCellCode::CaloNumFromName( calo ) ); };
       /** change the currect calorimeter
        *  @param calo new calorimeter index
        */
-      inline void setCalo( const int  calo ) { m_calo = calo ; };
-    private:
-      int m_calo{0} ;
+      inline void setCalo( const int calo ) { m_calo = calo; };
 
+    private:
+      int m_calo{0};
     };
     // ==========================================================================
 
@@ -779,11 +733,11 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    struct Calo_t
-    {
+    struct Calo_t {
       template <class TYPE>
-      int operator() ( const TYPE& obj ) const
-      { return CellID( obj ).calo() ; }
+      int operator()( const TYPE& obj ) const {
+        return CellID( obj ).calo();
+      }
     };
     inline constexpr Calo_t Calo{};
     // ==========================================================================
@@ -795,19 +749,20 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    class IsFromCalo
-    {
+    class IsFromCalo {
     public:
       IsFromCalo() = delete;
       /// constructor from calorimeter index
-      IsFromCalo  ( int index ) : m_index ( index ) {}
+      IsFromCalo( int index ) : m_index( index ) {}
       /// constructor from calorimeter name
-      IsFromCalo  ( const std::string& name ) : IsFromCalo( CaloCellCode::CaloNumFromName ( name ) ) {}
+      IsFromCalo( const std::string& name ) : IsFromCalo( CaloCellCode::CaloNumFromName( name ) ) {}
       template <class TYPE>
-      bool operator() ( const TYPE& obj ) const
-      { return Calo( obj ) == m_index ; }
+      bool operator()( const TYPE& obj ) const {
+        return Calo( obj ) == m_index;
+      }
+
     private:
-      int        m_index{0} ;
+      int m_index{0};
     };
     // ==========================================================================
 
@@ -819,10 +774,11 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    struct CaloArea_t
-    {
+    struct CaloArea_t {
       template <class TYPE>
-      int operator() ( const TYPE& obj ) const { return CellID( obj ).area() ; }
+      int operator()( const TYPE& obj ) const {
+        return CellID( obj ).area();
+      }
     };
     inline constexpr CaloArea_t CaloArea{};
     // ==========================================================================
@@ -834,19 +790,19 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    class IsFromArea
-    {
+    class IsFromArea {
     public:
       IsFromArea() = delete;
-      explicit IsFromArea  ( int index ) : m_index ( index ) {}
+      explicit IsFromArea( int index ) : m_index( index ) {}
       template <class TYPE>
-      bool operator() ( const TYPE& obj ) const
-      { return CaloArea( obj ) == m_index ; }
+      bool operator()( const TYPE& obj ) const {
+        return CaloArea( obj ) == m_index;
+      }
+
     private:
-      int            m_index{0} ;
+      int m_index{0};
     };
     // ==========================================================================
-
 
     // ==========================================================================
     /** @class CaloRow
@@ -856,12 +812,11 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    struct CaloRow_t
-    {
+    struct CaloRow_t {
       template <class TYPE>
-      int operator() ( const TYPE& obj ) const
-      { return CellID( obj ).row() ; }
-
+      int operator()( const TYPE& obj ) const {
+        return CellID( obj ).row();
+      }
     };
     inline constexpr CaloRow_t CaloRow{};
     // ==========================================================================
@@ -872,15 +827,17 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    class IsFromRow
-    {
+    class IsFromRow {
     public:
       IsFromRow() = delete;
-      explicit IsFromRow   ( int index ) : m_index ( index ) {}
-      template <class TYPE> bool operator() ( const TYPE& obj ) const
-      { return CaloRow( obj ) == m_index ; }
+      explicit IsFromRow( int index ) : m_index( index ) {}
+      template <class TYPE>
+      bool operator()( const TYPE& obj ) const {
+        return CaloRow( obj ) == m_index;
+      }
+
     private:
-      int            m_index{0} ;
+      int m_index{0};
     };
     // ==========================================================================
 
@@ -892,11 +849,11 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    struct CaloColumn_t
-    {
+    struct CaloColumn_t {
       template <class TYPE>
-      int operator() ( const TYPE& obj ) const
-      { return CellID( obj ).col() ; }
+      int operator()( const TYPE& obj ) const {
+        return CellID( obj ).col();
+      }
     };
     inline constexpr CaloColumn_t CaloColumn{};
     // ==========================================================================
@@ -907,15 +864,17 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    class IsFromColumn
-    {
+    class IsFromColumn {
     public:
       IsFromColumn() = delete;
-      IsFromColumn  ( int index ) : m_index   ( index ) {}
-      template <class TYPE> bool operator() ( const TYPE& obj ) const
-      { return CaloClumn( obj ) == m_index ; }
+      IsFromColumn( int index ) : m_index( index ) {}
+      template <class TYPE>
+      bool operator()( const TYPE& obj ) const {
+        return CaloClumn( obj ) == m_index;
+      }
+
     private:
-      int              m_index{0} ;
+      int m_index{0};
     };
     // ==========================================================================
 

@@ -12,10 +12,10 @@
 #define LINKER_LINKERTABLE_H 1
 
 // Include files
-#include "Linker/LinkerRange.h"
-#include "GaudiKernel/ObjectContainerBase.h"
-#include "GaudiKernel/LinkManager.h"
 #include "Event/LinksByKey.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "Linker/LinkerRange.h"
 
 /** @class LinkerTable LinkerTable.h Linker/LinkerTable.h
  *  This is a table, the interface to build LinkerRange.
@@ -26,9 +26,8 @@
 template <class SOURCE, class TARGET>
 class LinkerTable final {
 public:
-
-  typedef          LinkerRange<SOURCE,TARGET>           Range;
-  typedef typename LinkerRange<SOURCE,TARGET>::iterator iterator;
+  typedef LinkerRange<SOURCE, TARGET>                    Range;
+  typedef typename LinkerRange<SOURCE, TARGET>::iterator iterator;
 
   /** retrieve all relations in the table
    *  @return       Range with all relations
@@ -36,18 +35,14 @@ public:
   Range relations() const {
     Range range;
     if ( !m_links ) return range;
-    for (auto iter = m_links->keyIndex().begin();
-          m_links->keyIndex().end() != iter;
-          iter++ ) {
+    for ( auto iter = m_links->keyIndex().begin(); m_links->keyIndex().end() != iter; iter++ ) {
       LHCb::LinkReference curReference;
-      curReference.setNextIndex( (*iter).second );
-      while ( 0 <= curReference.nextIndex()  ) {
-        curReference = m_links->linkReference()[curReference.nextIndex()] ;
+      curReference.setNextIndex( ( *iter ).second );
+      while ( 0 <= curReference.nextIndex() ) {
+        curReference = m_links->linkReference()[curReference.nextIndex()];
         SOURCE* src  = currentSource( iter->first, curReference );
-        if ( src ) {    // ignore int links
-          range.addEntry( src,
-                          currentTarget( curReference ),
-                          curReference.weight() );
+        if ( src ) { // ignore int links
+          range.addEntry( src, currentTarget( curReference ), curReference.weight() );
         }
       }
     }
@@ -62,9 +57,7 @@ public:
     Range range;
     if ( !m_links || !reqSrc ) return range;
     LHCb::LinkReference curReference;
-    bool status = m_links->firstReference( reqSrc->index(),
-                                           reqSrc->parent(),
-                                           curReference   );
+    bool                status = m_links->firstReference( reqSrc->index(), reqSrc->parent(), curReference );
     while ( status ) {
       range.addEntry( reqSrc, currentTarget( curReference ), curReference.weight() );
       status = m_links->nextReference( curReference );
@@ -83,14 +76,11 @@ public:
     if ( !m_links ) return range;
     if ( !reqSrc ) return range;
     LHCb::LinkReference curReference;
-    bool status = m_links->firstReference( reqSrc->index(),
-                                           reqSrc->parent(),
-                                           curReference   );
+    bool                status = m_links->firstReference( reqSrc->index(), reqSrc->parent(), curReference );
     while ( status ) {
       double weight = curReference.weight();
-      if ( ( order && weight >= cut ) ||
-           (!order && weight<= cut ) ) {
-        TARGET* tgt   = currentTarget( curReference );
+      if ( ( order && weight >= cut ) || ( !order && weight <= cut ) ) {
+        TARGET* tgt = currentTarget( curReference );
         range.addEntry( reqSrc, tgt, weight );
       }
       status = m_links->nextReference( curReference );
@@ -101,9 +91,7 @@ public:
   /** load the LinksByKeys object
    *  @param links  pointer to the LinksByKey object
    */
-  void load( const LHCb::LinksByKey* links ) {
-    m_links = links;
-  }
+  void load( const LHCb::LinksByKey* links ) { m_links = links; }
 
 protected:
   /** return the pointer to the TARGET object of the specified reference
@@ -112,10 +100,10 @@ protected:
    */
   TARGET* currentTarget( LHCb::LinkReference& curReference ) const {
     if ( !m_links ) return nullptr;
-    int myLinkID = curReference.linkID();
-    LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
-    ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    return parent ? static_cast<TARGET*>(parent->containedObject( curReference.objectKey() )) : nullptr;
+    int                  myLinkID = curReference.linkID();
+    LinkManager::Link*   link     = m_links->linkMgr()->link( myLinkID );
+    ObjectContainerBase* parent   = dynamic_cast<ObjectContainerBase*>( link->object() );
+    return parent ? static_cast<TARGET*>( parent->containedObject( curReference.objectKey() ) ) : nullptr;
   }
 
   /** return the pointer to the SOURCE object of the specified reference
@@ -123,16 +111,16 @@ protected:
    *  @param  curReference   reference entry to the object in the LinksByKeys
    *  @return pointer to the SOURCE object
    */
- SOURCE* currentSource( int key, LHCb::LinkReference curReference ) const {
+  SOURCE* currentSource( int key, LHCb::LinkReference curReference ) const {
     if ( !m_links ) return nullptr;
     int myLinkID = curReference.srcLinkID();
     if ( 0 > myLinkID ) return nullptr;
-    LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
-    ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    return parent ? static_cast<SOURCE*>(parent->containedObject( key )) : nullptr;
+    LinkManager::Link*   link   = m_links->linkMgr()->link( myLinkID );
+    ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>( link->object() );
+    return parent ? static_cast<SOURCE*>( parent->containedObject( key ) ) : nullptr;
   }
 
 private:
-  const LHCb::LinksByKey*  m_links = nullptr;
+  const LHCb::LinksByKey* m_links = nullptr;
 };
 #endif // LINKER_LINKERTABLE_H

@@ -13,4 +13,4 @@ from Gaudi.Configuration import *
 
 from Configurables import XMLSummary
 
-XMLSummary().XMLSummary="summary.xml"
+XMLSummary().XMLSummary = "summary.xml"

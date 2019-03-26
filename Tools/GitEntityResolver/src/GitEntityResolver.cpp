@@ -24,36 +24,31 @@ DECLARE_COMPONENT( GitEntityResolver )
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 106100
-#include <boost/filesystem/path.hpp>
-namespace
-{
+#  include <boost/filesystem/path.hpp>
+namespace {
   std::string normalize( boost::filesystem::path path ) { return path.lexically_normal().generic_string(); }
-}
+} // namespace
 #else
-#include <regex>
-namespace
-{
+#  include <regex>
+namespace {
   /// helper to normalize relative paths
-  std::string normalize( std::string path )
-  {
+  std::string normalize( std::string path ) {
     // regex for entries to be removed, i.e. "/parent/../" and "/./"
     static const std::regex ignored_re{"(/[^/]+/\\.\\./)|(/\\./)"};
-    std::string old_path;
+    std::string             old_path;
     while ( old_path.length() != path.length() ) {
       old_path.swap( path );
       path = std::regex_replace( old_path, ignored_re, "/" );
     }
     return path;
   }
-}
+} // namespace
 #endif
 
-namespace
-{
+namespace {
 
   template <class RET, class FUNC, class... ARGS>
-  RET git_call( boost::string_ref name, boost::string_ref err_msg, boost::string_ref key, FUNC func, ARGS&&... args )
-  {
+  RET git_call( boost::string_ref name, boost::string_ref err_msg, boost::string_ref key, FUNC func, ARGS&&... args ) {
     typename RET::element_type* tmp = nullptr;
     if ( UNLIKELY( func( &tmp, std::forward<ARGS>( args )... ) ) )
       throw GaudiException( std::string( err_msg ) + " " + std::string( key ) + ": " + giterr_last()->message,
@@ -61,17 +56,15 @@ namespace
     return RET{tmp};
   }
 
-  boost::string_ref strip_prefix( boost::string_ref url )
-  {
+  boost::string_ref strip_prefix( boost::string_ref url ) {
     if ( url.starts_with( "git:" ) ) url = url.substr( 4 ); // strip the "git:" prefix
-    while ( url[0] == '/' ) url          = url.substr( 1 ); // strip optional leading '/'s
+    while ( url[0] == '/' ) url = url.substr( 1 );          // strip optional leading '/'s
     return url;
   }
 
   /// Helper class to manage Xerces-C++ buffers
   struct Blob {
-    Blob( GitEntityResolver::open_result_t&& f )
-    {
+    Blob( GitEntityResolver::open_result_t&& f ) {
       m_size    = f->seekg( 0, std::ifstream::end ).tellg();
       auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
       f->seekg( 0 ).read( reinterpret_cast<std::ifstream::char_type*>( buff ), m_size );
@@ -79,16 +72,14 @@ namespace
     }
     Blob( const Blob& ) = delete;
 
-    ~Blob()
-    {
+    ~Blob() {
       auto tmp = static_cast<const void*>( adopt() );
       if ( tmp ) xercesc::XMLPlatformUtils::fgMemoryManager->deallocate( const_cast<void*>( tmp ) );
     }
 
     const XMLByte* get() { return m_buff; }
-    XMLSize_t size() { return m_size; }
-    const XMLByte* adopt()
-    {
+    XMLSize_t      size() { return m_size; }
+    const XMLByte* adopt() {
       const XMLByte* tmp = m_buff;
       m_buff             = nullptr;
       m_size             = 0;
@@ -97,20 +88,18 @@ namespace
 
   private:
     const XMLByte* m_buff = nullptr;
-    XMLSize_t m_size      = 0;
+    XMLSize_t      m_size = 0;
   };
 
   /// helper to extract the file name from a full path
-  boost::string_ref basename( boost::string_ref path )
-  {
+  boost::string_ref basename( boost::string_ref path ) {
     // note: if '/' is not found, we get npos and npos + 1 is 0
     return path.substr( path.rfind( '/' ) + 1 );
   }
 
   // note: copied from DetCond/src/component/CondDBCommon.cpp
   std::string generateXMLCatalog( const std::string& root, const std::vector<std::string>& dirs,
-                                  const std::vector<std::string>& files )
-  {
+                                  const std::vector<std::string>& files ) {
     std::ostringstream xml; // buffer for the XML
 
     auto name = basename( root );
@@ -139,10 +128,9 @@ namespace
 
     return xml.str();
   }
-}
+} // namespace
 
-std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& info )
-{
+std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& info ) {
   return s << info.key << " [" << info.since << ", " << info.until << ")";
 }
 
@@ -164,8 +152,7 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
         throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", this->name(),
                               StatusCode::FAILURE );
       return res;
-    }}
-{
+    }} {
   // Initialize Git library
   git_libgit2_init();
 
@@ -182,14 +169,12 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
   } );
 }
 
-GitEntityResolver::~GitEntityResolver()
-{
+GitEntityResolver::~GitEntityResolver() {
   // Finalize Git library
   git_libgit2_shutdown();
 }
 
-StatusCode GitEntityResolver::initialize()
-{
+StatusCode GitEntityResolver::initialize() {
   StatusCode sc = base_class::initialize();
   if ( !sc.isSuccess() ) return sc;
 
@@ -269,8 +254,7 @@ StatusCode GitEntityResolver::initialize()
   return sc;
 }
 
-StatusCode GitEntityResolver::finalize()
-{
+StatusCode GitEntityResolver::finalize() {
 
   if ( m_incSvc ) {
     DEBUG_MSG << "deregistering from IncidentSvc" << endmsg;
@@ -286,43 +270,38 @@ StatusCode GitEntityResolver::finalize()
   return base_class::finalize();
 }
 
-void GitEntityResolver::handle( const Incident& )
-{
+void GitEntityResolver::handle( const Incident& ) {
   // disconnect from the repository
   m_repository.reset();
 }
 
-const std::vector<std::string>& GitEntityResolver::protocols() const
-{
+const std::vector<std::string>& GitEntityResolver::protocols() const {
   /// Vector of supported protocols. (for IFileAccess)
   static const std::vector<std::string> s_protocols = {{"git"}};
   return s_protocols;
 }
 
-git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
-{
+git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const {
   std::string rev = m_commit.value() + ":" + normalize( path.to_string() );
   return git_call<git_object_ptr>( name(), "cannot resolve object", rev, git_revparse_single, m_repository.get(),
                                    rev.c_str() );
 }
 
-GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& url )
-{
-  if ( UNLIKELY( !m_detDataSvc ) ) {
-    m_detDataSvc = service<IDetDataSvc>( m_detDataSvcName );
-  }
+GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& url ) {
+  if ( UNLIKELY( !m_detDataSvc ) ) { m_detDataSvc = service<IDetDataSvc>( m_detDataSvcName ); }
   const std::string iovs_url = url + "/IOVs";
   if ( i_exists( iovs_url ) ) {
-    auto data              = i_open( iovs_url ).first;
-    if ( UNLIKELY( !data ) ) throw GaudiException( "cannot access existing file " + iovs_url
-       + ", configuration problem?", name(), StatusCode::FAILURE );
-    const auto when        = m_detDataSvc->eventTime();
+    auto data = i_open( iovs_url ).first;
+    if ( UNLIKELY( !data ) )
+      throw GaudiException( "cannot access existing file " + iovs_url + ", configuration problem?", name(),
+                            StatusCode::FAILURE );
+    const auto        when = m_detDataSvc->eventTime();
     std::int_fast64_t time = when.ns();
     DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
-    std::string line;
+    std::string       line;
     std::int_fast64_t current = 0, since = 0, until = m_lastCommitTime.ns();
-    std::string key;
+    std::string       key;
 
     if ( UNLIKELY( time >= until && FSMState() == Gaudi::StateMachine::RUNNING ) ) {
       std::stringstream msg;
@@ -352,30 +331,26 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
 }
 
 template <>
-GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<std::string>( const std::string& path ) const
-{
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<std::string>( const std::string& path ) const {
   return open_result_t( new std::ifstream{path} );
 }
 
 template <>
-GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr>( const git_object_ptr& obj ) const
-{
-  auto blob = reinterpret_cast<const git_blob*>( obj.get() );
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr>( const git_object_ptr& obj ) const {
+  auto        blob = reinterpret_cast<const git_blob*>( obj.get() );
   std::string str{reinterpret_cast<const char*>( git_blob_rawcontent( blob ) ),
                   static_cast<std::size_t>( git_blob_rawsize( blob ) )};
   return open_result_t( new std::istringstream( str ) );
 }
 
 template <>
-GitEntityResolver::open_result_t
-GitEntityResolver::i_makeIStream<GitEntityResolver::dir_content>( const GitEntityResolver::dir_content& dirlist ) const
-{
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<GitEntityResolver::dir_content>(
+    const GitEntityResolver::dir_content& dirlist ) const {
   return open_result_t( new std::istringstream( generateXMLCatalog( dirlist.root, dirlist.dirs, dirlist.files ) ) );
 }
 
 std::pair<GitEntityResolver::open_result_t, GitEntityResolver::IOVInfo>
-GitEntityResolver::i_open( const std::string& url )
-{
+GitEntityResolver::i_open( const std::string& url ) {
   DEBUG_MSG << "open(\"" << url << "\")" << ( m_useFiles ? " [files]" : "" ) << endmsg;
   auto path = strip_prefix( url );
   if ( UNLIKELY( std::regex_match( path.begin(), path.end(), m_ignore ) ) ) {
@@ -386,8 +361,7 @@ GitEntityResolver::i_open( const std::string& url )
                                 : i_open( i_getData( path ), url );
 }
 
-bool GitEntityResolver::i_exists( const std::string& url ) const
-{
+bool GitEntityResolver::i_exists( const std::string& url ) const {
   bool result = true;
   auto path   = strip_prefix( url );
   if ( UNLIKELY( m_useFiles ) )
@@ -401,12 +375,11 @@ bool GitEntityResolver::i_exists( const std::string& url ) const
   return result;
 }
 
-xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId )
-{
+xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId ) {
 
   // copy Xerces string into std::string
   std::string systemIdString;
-  char* cString = xercesc::XMLString::transcode( systemId );
+  char*       cString = xercesc::XMLString::transcode( systemId );
   if ( cString ) {
     systemIdString = cString;
     xercesc::XMLString::release( &cString );
@@ -426,7 +399,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
   auto data = i_open( url.to_string() );
   if ( UNLIKELY( !data.first ) ) return nullptr;
 
-  Blob blob{std::move( data.first )};
+  Blob       blob{std::move( data.first )};
   const auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
 
   std::unique_ptr<ValidInputSource> src{new ValidInputSource{blob.adopt(), buff_size, systemId, true}};
@@ -434,17 +407,15 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
   return src.release();
 }
 
-void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
-{
+void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
   tags.emplace_back( m_pathToRepository, m_defaultTag );
 }
 
-GitEntityResolver::dir_content GitEntityResolver::i_listdir( const std::string& path, const std::string& url ) const
-{
-  using boost::filesystem::directory_iterator;
+GitEntityResolver::dir_content GitEntityResolver::i_listdir( const std::string& path, const std::string& url ) const {
   using boost::filesystem::directory_entry;
-  using boost::filesystem::is_directory;
+  using boost::filesystem::directory_iterator;
   using boost::filesystem::exists;
+  using boost::filesystem::is_directory;
   dir_content entries;
   entries.root = url;
   std::for_each( directory_iterator( path ), directory_iterator(), [&entries]( const directory_entry& d ) {
@@ -454,14 +425,13 @@ GitEntityResolver::dir_content GitEntityResolver::i_listdir( const std::string& 
   return entries;
 }
 
-GitEntityResolver::dir_content GitEntityResolver::i_listdir( const git_object_ptr& obj, const std::string& url ) const
-{
+GitEntityResolver::dir_content GitEntityResolver::i_listdir( const git_object_ptr& obj, const std::string& url ) const {
   dir_content entries;
-  entries.root             = url;
-  const git_tree* tree     = reinterpret_cast<const git_tree*>( obj.get() );
-  std::size_t max_i        = git_tree_entrycount( tree );
-  const git_tree_entry* te = nullptr;
-  std::string te_url;
+  entries.root                = url;
+  const git_tree*       tree  = reinterpret_cast<const git_tree*>( obj.get() );
+  std::size_t           max_i = git_tree_entrycount( tree );
+  const git_tree_entry* te    = nullptr;
+  std::string           te_url;
 
   for ( std::size_t i = 0; i < max_i; ++i ) {
     te     = git_tree_entry_byindex( tree, i );

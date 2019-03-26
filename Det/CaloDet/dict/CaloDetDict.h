@@ -8,12 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: CaloDetDict.h,v 1.2 2010-03-18 12:40:32 ibelyaev Exp $
 // ============================================================================
-#ifndef DICT_CALODETDICT_H 
+#ifndef DICT_CALODETDICT_H
 #define DICT_CALODETDICT_H 1
 // ============================================================================
-// Incldue files 
+// Include files
 // ============================================================================
 // CaloDet
 // ============================================================================
@@ -21,24 +20,20 @@
 #include "CaloDet/DeSubCalorimeter.h"
 // ============================================================================
 
-
-namespace
-{
+namespace {
   // ==========================================================================
-  struct _Instantiations 
-  {
+  struct _Instantiations {
     // ========================================================================
-    /// fictive constructor 
-    _Instantiations () ;     // fictive constructor 
+    /// fictive constructor
+    _Instantiations(); // fictive constructor
     // ========================================================================
-    /// instantiations 
-    CaloVector<CellParam> m_v1 ;
-    CaloVector<CaloPin>   m_v2 ;
+    /// instantiations
+    CaloVector<CellParam> m_v1;
+    CaloVector<CaloPin>   m_v2;
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
-}
-
+} // namespace
 
 // ============================================================================
 #endif // DICT_CALODETDICT_H

@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: HistoParam.cpp,v 1.3 2009-12-06 19:13:45 dgolubko Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -47,22 +46,18 @@
  *   @date 2009-12-06
  */
 // ============================================================================
-std::string DetDesc::Params::toXMLStr
-( const DetDesc::Params::Histo1D &histo,
-  const std::string& name    ,
-  const std::string& comment ,
-  int  /* precision */ )
-{
-  std::ostringstream out ;
+std::string DetDesc::Params::toXMLStr( const DetDesc::Params::Histo1D& histo, const std::string& name,
+                                       const std::string& comment, int /* precision */ ) {
+  std::ostringstream out;
   //
-  out << "<param name=\"" << name << "\" type=\"Histo1D\"" ;       // open TAG
-  if ( !comment.empty() ) { out << " comment=\"" << comment << '"' ; }
-  out << '>' ;
+  out << "<param name=\"" << name << "\" type=\"Histo1D\""; // open TAG
+  if ( !comment.empty() ) { out << " comment=\"" << comment << '"'; }
+  out << '>';
   // stream the histogram
   ////Gaudi::Utils::toStream ( m_val , out ) ;
-  Gaudi::Utils::toStream ( histo , out ) ;
-  out << "</param>" ;                                           // close TAG
-  return out.str() ;
+  Gaudi::Utils::toStream( histo, out );
+  out << "</param>"; // close TAG
+  return out.str();
 }
 // ============================================================================
 /*   Interface function converting 1d histogram to a custom format string
@@ -73,8 +68,7 @@ std::string DetDesc::Params::toXMLStr
  *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl, Dmitry Golubkov
  *   @date 2009-12-06
  */
-std::string DetDesc::Params::toStr( const DetDesc::Params::Histo1D &histo )
-{ return Gaudi::Utils::toString ( histo ) ; }
+std::string DetDesc::Params::toStr( const DetDesc::Params::Histo1D& histo ) { return Gaudi::Utils::toString( histo ); }
 // ============================================================================
 /*   Interface function converting 2d histogram to xml string
  *   @see class Param
@@ -87,21 +81,17 @@ std::string DetDesc::Params::toStr( const DetDesc::Params::Histo1D &histo )
  *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl, Dmitry Golubkov
  *   @date 2009-12-06
  */
-std::string DetDesc::Params::toXMLStr
-( const DetDesc::Params::Histo2D &histo,
-  const std::string& name    ,
-  const std::string& comment ,
-  int /* precision */ )
-{
-  std::ostringstream out ;
+std::string DetDesc::Params::toXMLStr( const DetDesc::Params::Histo2D& histo, const std::string& name,
+                                       const std::string& comment, int /* precision */ ) {
+  std::ostringstream out;
   //
-  out << "<param name=\"" << name << "\" type=\"Histo2D\"" ;       // open TAG
-  if ( !comment.empty() ) { out << " comment=\"" << comment << '"' ; }
-  out << '>' ;
+  out << "<param name=\"" << name << "\" type=\"Histo2D\""; // open TAG
+  if ( !comment.empty() ) { out << " comment=\"" << comment << '"'; }
+  out << '>';
   // stream the histogram
-  Gaudi::Utils::toStream ( histo, out ) ;
-  out << "</param>" ;                                           // close TAG
-  return out.str() ;
+  Gaudi::Utils::toStream( histo, out );
+  out << "</param>"; // close TAG
+  return out.str();
 }
 // ============================================================================
 /*   Interface function converting 2d histogram to a custom format string
@@ -112,8 +102,7 @@ std::string DetDesc::Params::toXMLStr
  *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl, Dmitry Golubkov
  *   @date 2009-12-06
  */
-std::string DetDesc::Params::toStr( const DetDesc::Params::Histo2D &histo )
-{ return Gaudi::Utils::toString ( histo ) ; }
+std::string DetDesc::Params::toStr( const DetDesc::Params::Histo2D& histo ) { return Gaudi::Utils::toString( histo ); }
 // ============================================================================
 // The END
 // ============================================================================

@@ -18,8 +18,7 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
 
-namespace Rich
-{
+namespace Rich {
 
   /** @namespace Rich::SIMD
    *
@@ -28,8 +27,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   17/10/2017
    */
-  namespace SIMD
-  {
+  namespace SIMD {
 
     // import from LHCbMath
     using namespace LHCb::SIMD;

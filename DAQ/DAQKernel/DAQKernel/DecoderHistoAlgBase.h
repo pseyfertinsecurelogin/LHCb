@@ -27,8 +27,7 @@
 // local
 #include "DAQKernel/DecoderCommonBase.h"
 
-namespace Decoder
-{
+namespace Decoder {
   //-----------------------------------------------------------------------------
   /** @class HistoAlgBase DAQHistoAlgBase.h DAQKernel/DecoderHistoAlgBase.h
    *
@@ -44,6 +43,6 @@ namespace Decoder
 
   using HistoAlgBase = Decoder::CommonBase<GaudiHistoAlg>;
 
-}
+} // namespace Decoder
 
 #endif // DAQKERNEL_DECODERHISTOALGBASE_H

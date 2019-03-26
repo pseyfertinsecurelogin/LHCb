@@ -26,11 +26,9 @@
  *  @date   2008-09-17
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @var ODIN_ALL
      *  the primitive predicate ('accept all')
@@ -40,7 +38,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_ALL = LoKi::Constant<const LHCb::ODIN*,bool>{ true } ;
+    inline const auto ODIN_ALL = LoKi::Constant<const LHCb::ODIN*, bool>{true};
     // ========================================================================
     /** @var ODIN_BUNCH
      *  Simple accessor to bunch id
@@ -78,7 +76,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_BXCURRENT = LoKi::Odin::BunchCurrent{}              ;
+    inline const auto ODIN_BXCURRENT = LoKi::Odin::BunchCurrent{};
     // ========================================================================
     /** @typedef ODIN_BXID
      *  simple checker of bx-id, bx-range or bx-list
@@ -100,7 +98,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    typedef LoKi::Odin::BXId                                        ODIN_BXID ;
+    typedef LoKi::Odin::BXId ODIN_BXID;
     // ========================================================================
     /** @var ODIN_BXTYP
      *  Simple accessor to bunch crossing type
@@ -119,7 +117,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_BXTYP = LoKi::Odin::BXType{}  ;
+    inline const auto ODIN_BXTYP = LoKi::Odin::BXType{};
     // ========================================================================
     /** @var ODIN_CALSTEP
      *  Simple accessor to calibration step
@@ -157,7 +155,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_FORCEBIT = LoKi::Odin::ForceBit {};
+    inline const auto ODIN_FORCEBIT = LoKi::Odin::ForceBit{};
     // ========================================================================
     /** @var ODIN_EVTTYP
      *  Simple accessor to event type
@@ -176,7 +174,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_EVTTYP = LoKi::Odin::EventType{}   ;
+    inline const auto ODIN_EVTTYP = LoKi::Odin::EventType{};
     // ========================================================================
     /** @var ODIN_EVTNUMBER
      *  Simple checkfor event number
@@ -208,7 +206,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2012-02-13
      */
-    typedef LoKi::Odin::EvtNumber                              ODIN_EVTNUMBER ;
+    typedef LoKi::Odin::EvtNumber ODIN_EVTNUMBER;
     // ========================================================================
     /** @typedef ODIN_EVT1
      *  get the event number (modulo)
@@ -226,7 +224,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2012-04-03
      */
-    typedef LoKi::Odin::Evt1                                        ODIN_EVT1 ;
+    typedef LoKi::Odin::Evt1 ODIN_EVT1;
     // ========================================================================
     /** @typedef ODIN_EVT2
      *  get the event number (integer division)
@@ -244,7 +242,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2012-04-03
      */
-    typedef LoKi::Odin::Evt2                                        ODIN_EVT2 ;
+    typedef LoKi::Odin::Evt2 ODIN_EVT2;
     // ========================================================================
     /** @var ODIN_RUNEVT
      *  Simple checkfor event number
@@ -280,7 +278,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2012-02-13
      */
-    typedef LoKi::Odin::RunEvtNumber                              ODIN_RUNEVT ;
+    typedef LoKi::Odin::RunEvtNumber ODIN_RUNEVT;
     // ========================================================================
     /** @var ODIN_RUNEVT
      *  Simple checkfor event number
@@ -316,7 +314,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2012-02-13
      */
-    typedef LoKi::Odin::RunEvtNumber                        ODIN_RUNEVTNUMBER ;
+    typedef LoKi::Odin::RunEvtNumber ODIN_RUNEVTNUMBER;
     // ========================================================================
     /** @var ODIN_ERRBITS
      *  Simple accessor to error bits
@@ -335,7 +333,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_ERRBITS = LoKi::Odin::ErrorBits{} ;
+    inline const auto ODIN_ERRBITS = LoKi::Odin::ErrorBits{};
     // ========================================================================
     /** @var ODIN_FALSE
      *  the primitive predicate ('accept nothing')
@@ -345,7 +343,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_FALSE = LoKi::Constant<const LHCb::ODIN*,bool>{ false } ;
+    inline const auto ODIN_FALSE = LoKi::Constant<const LHCb::ODIN*, bool>{false};
     // ========================================================================
     /** @var ODIN_NONE
      *  the primitive predicate ('accept nothing')
@@ -355,7 +353,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_NONE = LoKi::Constant<const LHCb::ODIN*,bool>{ false } ;
+    inline const auto ODIN_NONE = LoKi::Constant<const LHCb::ODIN*, bool>{false};
     // ========================================================================
     /** @var ODIN_NULL
      *  the primitive function (==0)
@@ -365,7 +363,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_NULL = LoKi::Constant<const LHCb::ODIN*,double>{ 0 } ;
+    inline const auto ODIN_NULL = LoKi::Constant<const LHCb::ODIN*, double>{0};
     // ========================================================================
     /** @var ODIN_ONE
      *  the primitive function (==1)
@@ -374,7 +372,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_ONE = LoKi::Constant<const LHCb::ODIN*,double>{ 1 } ;
+    inline const auto ODIN_ONE = LoKi::Constant<const LHCb::ODIN*, double>{1};
     // ========================================================================
     /** @var ODIN_ORBIT
      *  Simple accessor to orbit
@@ -416,7 +414,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-12
      */
-    typedef LoKi::Odin::Prescale                                ODIN_PRESCALE ;
+    typedef LoKi::Odin::Prescale ODIN_PRESCALE;
     // ========================================================================
     /** @var ODIN_ROTYP
      *  Simple accessor to readout type
@@ -457,7 +455,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    typedef LoKi::Odin::RoutingBits                          ODIN_ROUTINGBITS ;
+    typedef LoKi::Odin::RoutingBits ODIN_ROUTINGBITS;
     // ========================================================================
     /** @var ODIN_RUN
      *  Simple accessor to run number
@@ -497,7 +495,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    typedef LoKi::Odin::RunNumber                              ODIN_RUNNUMBER ;
+    typedef LoKi::Odin::RunNumber ODIN_RUNNUMBER;
     // ========================================================================
     /** @var ODIN_TCK
      *  Simple accessor to trigger configuration key
@@ -516,7 +514,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_TCK = LoKi::Odin::TrgConfKey {};
+    inline const auto ODIN_TCK = LoKi::Odin::TrgConfKey{};
     // ========================================================================
     /** @typedef ODIN_TCKEYS
      *  simple checker of tck, tck-range or tck-list
@@ -538,7 +536,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    typedef LoKi::Odin::Tck                                       ODIN_TCKEYS ;
+    typedef LoKi::Odin::Tck ODIN_TCKEYS;
     // ========================================================================
     /** @typedef ODIN_TIME
      *  Simple check for the time interval for the given event
@@ -564,7 +562,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    typedef LoKi::Odin::InTime                                      ODIN_TIME ;
+    typedef LoKi::Odin::InTime ODIN_TIME;
     // ========================================================================
     /** @var ODIN_TRGTYP
      *  Simple accessor to trigger type
@@ -593,7 +591,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_TRUE = LoKi::Constant<const LHCb::ODIN*,bool>{ true } ;
+    inline const auto ODIN_TRUE = LoKi::Constant<const LHCb::ODIN*, bool>{true};
     // ========================================================================
     /** @var ODIN_ZERO
      *  the primitive function (==0)
@@ -603,9 +601,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    inline const auto ODIN_ZERO = LoKi::Constant<const LHCb::ODIN*,double>{ 0 };
+    inline const auto ODIN_ZERO = LoKi::Constant<const LHCb::ODIN*, double>{0};
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

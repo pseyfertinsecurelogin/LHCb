@@ -15,8 +15,8 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // RecEvent
 // ============================================================================
@@ -24,7 +24,7 @@
 // ============================================================================
 /// forward declarations
 // ============================================================================
-class DeCalorimeter;    // from CaloDet package
+class DeCalorimeter; // from CaloDet package
 // ============================================================================
 /** @class SpreadEstimator SpreadEstimator.h CaloFutureUtils/SpreadEstimator.h
  *
@@ -35,10 +35,9 @@ class DeCalorimeter;    // from CaloDet package
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   22/11/2001
  */
-class SpreadEstimator
-{
+class SpreadEstimator {
   // ==========================================================================
- public:
+public:
   // ==========================================================================
   /** standard/default constructor
    *  @param Det pointer to calorimeter detector
@@ -53,51 +52,48 @@ class SpreadEstimator
    *  @param  cluster  pointer to cluster object
    *  @return status code
    */
-  StatusCode operator() ( LHCb::CaloCluster* cluster ) const ;
+  StatusCode operator()( LHCb::CaloCluster* cluster ) const;
   // ==========================================================================
   /** calculate spread for cluster
    *  @param  cluster  pointer to cluster
    *  @return status code
    */
-  inline StatusCode calculateSpread
-  ( LHCb::CaloCluster* cluster ) const
-  { return (*this)( cluster ); }
+  inline StatusCode calculateSpread( LHCb::CaloCluster* cluster ) const { return ( *this )( cluster ); }
   // ==========================================================================
 public:
   // ==========================================================================
   /** set new value for calorimeter
    *  @param Det pointer to calorimeter detector
    */
-  void setDetector ( const DeCalorimeter* Det ) ;
+  void setDetector( const DeCalorimeter* Det );
   // ==========================================================================
   /** simple accessor to DeCalorimeter object
    *  @return pointer to detector
    */
-  inline const DeCalorimeter* detector    () const
-    { return m_detector    ; }
+  inline const DeCalorimeter* detector() const { return m_detector; }
   // ==========================================================================
   /// get the counter for problematic cases
-  const StatEntity& invalidRatio  () const { return m_ratio  ; }
+  const StatEntity& invalidRatio() const { return m_ratio; }
   /// get the counter for problematic cases
-  const StatEntity& invalidCells  () const { return m_cells  ; }
+  const StatEntity& invalidCells() const { return m_cells; }
   /// get the counter for problematic cases
-  const StatEntity& invalidEnergy () const { return m_energy ; }
+  const StatEntity& invalidEnergy() const { return m_energy; }
   // ==========================================================================
 private:
   // ==========================================================================
   /// the detector elemenet
-  const DeCalorimeter*  m_detector ;                   // the detector elemenet
+  const DeCalorimeter* m_detector; // the detector elemenet
   // ==========================================================================
   /// counter of invalid cells
-  mutable StatEntity m_cells  ;                    // counter for invaild cells
+  mutable StatEntity m_cells; // counter for invaild cells
   /// counter of invalid size ratio
-  mutable StatEntity m_ratio  ;               // counter for invaild size ratio
+  mutable StatEntity m_ratio; // counter for invaild size ratio
   /// counter of invalid energy
-  mutable StatEntity m_energy ;                   // counter for invaild energy
+  mutable StatEntity m_energy; // counter for invaild energy
   // ==========================================================================
-  typedef LHCb::CaloDataFunctor::EnergyTransverse<const DeCalorimeter*> ET ;
+  typedef LHCb::CaloDataFunctor::EnergyTransverse<const DeCalorimeter*> ET;
   /// transverse energy estimator
-  ET m_et ; // transverse energy estimator
+  ET m_et; // transverse energy estimator
   // ==========================================================================
 };
 // ============================================================================

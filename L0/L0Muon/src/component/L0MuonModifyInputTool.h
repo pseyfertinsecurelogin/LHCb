@@ -8,15 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: $
 #ifndef COMPONENT_L0MUONMODIFYINPUTTOOL_H
 #define COMPONENT_L0MUONMODIFYINPUTTOOL_H 1
 
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "L0Interfaces/IL0MuonModifyInputTool.h"            // Interface
 #include "GaudiKernel/RndmGenerators.h"
+#include "L0Interfaces/IL0MuonModifyInputTool.h" // Interface
 
 /** @class L0MuonModifyInputTool L0MuonModifyInputTool.h component/L0MuonModifyInputTool.h
  *
@@ -27,21 +26,17 @@
 class L0MuonModifyInputTool : public GaudiTool, virtual public IL0MuonModifyInputTool {
 public:
   /// Standard constructor
-  L0MuonModifyInputTool( const std::string& type,
-                         const std::string& name,
-                         const IInterface* parent);
+  L0MuonModifyInputTool( const std::string& type, const std::string& name, const IInterface* parent );
 
-  virtual ~L0MuonModifyInputTool( ); ///< Destructor
+  virtual ~L0MuonModifyInputTool(); ///< Destructor
 
-  StatusCode modifyInput(std::vector<LHCb::MuonTileID> &digits) override;
+  StatusCode modifyInput( std::vector<LHCb::MuonTileID>& digits ) override;
   StatusCode initialize() override;
-  StatusCode finalize() override {return StatusCode::SUCCESS;}
+  StatusCode finalize() override { return StatusCode::SUCCESS; }
 
 private:
-
-  IRndmGenSvc * m_randSvc;
-  //double m_params[5][4];
+  IRndmGenSvc* m_randSvc;
+  // double m_params[5][4];
   std::vector<double> m_params;
-
 };
 #endif // COMPONENT_L0MUONMODIFYINPUTTOOL_H

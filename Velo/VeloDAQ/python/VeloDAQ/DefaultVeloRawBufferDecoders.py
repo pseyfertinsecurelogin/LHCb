@@ -25,26 +25,24 @@
 
 from Configurables import DecodeVeloRawBuffer
 
+
 # =============================================================================
 # Instance of DecodeVeloRawBuffer for decoding into VeloLiteClusters
 # =============================================================================
 def DefaultDecoderToVeloLiteClusters(
-    Name                     = 'DecodeVeloRawBufferToVeloLiteClusters',
-    RawEventLocations        = ['Velo/RawEvent', 
-                                'Other/RawEvent',
-                                'DAQ/RawEvent'],
-    VeloClusterLocation      ='Raw/Velo/Clusters',
-    DecodeToVeloClusters     = False,
-    DecodeToVeloLiteClusters = True
-    ):
-    
-    decoder = DecodeVeloRawBuffer( Name )
-    
-    decoder.RawEventLocations        = RawEventLocations
-    decoder.VeloClusterLocation      = VeloClusterLocation
-    decoder.DecodeToVeloClusters     = DecodeToVeloClusters
+        Name='DecodeVeloRawBufferToVeloLiteClusters',
+        RawEventLocations=['Velo/RawEvent', 'Other/RawEvent', 'DAQ/RawEvent'],
+        VeloClusterLocation='Raw/Velo/Clusters',
+        DecodeToVeloClusters=False,
+        DecodeToVeloLiteClusters=True):
+
+    decoder = DecodeVeloRawBuffer(Name)
+
+    decoder.RawEventLocations = RawEventLocations
+    decoder.VeloClusterLocation = VeloClusterLocation
+    decoder.DecodeToVeloClusters = DecodeToVeloClusters
     decoder.DecodeToVeloLiteClusters = DecodeToVeloLiteClusters
-    
+
     return decoder
 
 
@@ -52,22 +50,20 @@ def DefaultDecoderToVeloLiteClusters(
 # Instance of DecodeVeloRawBuffer for decoding into VeloClusters
 # =============================================================================
 def DefaultDecoderToVeloClusters(
-    Name                     = 'DecodeVeloRawBufferToVeloClusters',
-    RawEventLocations        = ['Velo/RawEvent',
-                                'Other/RawEvent',
-                                'DAQ/RawEvent'],
-    VeloClusterLocation      ='Raw/Velo/Clusters',
-    DecodeToVeloClusters     = True,
-    DecodeToVeloLiteClusters = False
-    ):
-    
-    decoder = DecodeVeloRawBuffer( Name )
-    
-    decoder.RawEventLocations        = RawEventLocations
-    decoder.VeloClusterLocation      = VeloClusterLocation
-    decoder.DecodeToVeloClusters     = DecodeToVeloClusters
+        Name='DecodeVeloRawBufferToVeloClusters',
+        RawEventLocations=['Velo/RawEvent', 'Other/RawEvent', 'DAQ/RawEvent'],
+        VeloClusterLocation='Raw/Velo/Clusters',
+        DecodeToVeloClusters=True,
+        DecodeToVeloLiteClusters=False):
+
+    decoder = DecodeVeloRawBuffer(Name)
+
+    decoder.RawEventLocations = RawEventLocations
+    decoder.VeloClusterLocation = VeloClusterLocation
+    decoder.DecodeToVeloClusters = DecodeToVeloClusters
     decoder.DecodeToVeloLiteClusters = DecodeToVeloLiteClusters
-    
+
     return decoder
+
 
 ###############################################################################

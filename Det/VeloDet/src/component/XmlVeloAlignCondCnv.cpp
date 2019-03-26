@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // Include files
-#include "VeloDet/VeloAlignCond.h"
 #include "DetDescCnv/XmlUserConditionCnv.h"
+#include "VeloDet/VeloAlignCond.h"
 
-typedef  XmlUserConditionCnv<VeloAlignCond>  XmlVeloAlignCondCnv;
+typedef XmlUserConditionCnv<VeloAlignCond> XmlVeloAlignCondCnv;
 DECLARE_CONVERTER( XmlVeloAlignCondCnv )

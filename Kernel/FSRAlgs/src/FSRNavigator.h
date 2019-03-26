@@ -15,10 +15,10 @@
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 
-#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
 
-#include "FSRAlgs/IFSRNavigator.h"            // Interface
+#include "FSRAlgs/IFSRNavigator.h" // Interface
 
 /** @class FSRNavigator FSRNavigator.h
  *
@@ -35,14 +35,13 @@ public:
   StatusCode finalize() override;
 
   // return list of addresses found below the address
-  std::vector< std::string > navigate(std::string rootname, std::string tag) override;
+  std::vector<std::string> navigate( std::string rootname, std::string tag ) override;
 
 protected:
-  void explore(IRegistry* pObj, std::string tag, std::vector< std::string >& addresses) override;
+  void explore( IRegistry* pObj, std::string tag, std::vector<std::string>& addresses ) override;
 
 private:
-  std::string m_ToolName;                       ///> name of tool for normalization
-  SmartIF<IDataProviderSvc> m_fileRecordSvc ;  ///> Reference to file records data service
-
+  std::string               m_ToolName;      ///> name of tool for normalization
+  SmartIF<IDataProviderSvc> m_fileRecordSvc; ///> Reference to file records data service
 };
 #endif // FSRNAVIGATOR_H

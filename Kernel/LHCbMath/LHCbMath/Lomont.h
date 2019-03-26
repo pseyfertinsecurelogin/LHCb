@@ -18,11 +18,9 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
-namespace LHCb
-{
+namespace LHCb {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** equality comparison of float numbers using as the metric the maximal
      *  number of Units in the Last Place (ULP).
@@ -72,10 +70,7 @@ namespace LHCb
      *  @date 2008-11-08
      */
     GAUDI_API
-    bool lomont_compare_float
-    ( const float          af      ,
-      const float          bf      ,
-      const unsigned short maxULPs ) ;
+    bool lomont_compare_float( const float af, const float bf, const unsigned short maxULPs );
     // ========================================================================
     /** equality comparison of double numbers using as the metric the maximal
      *  number of Units in the Last Place (ULP).
@@ -113,10 +108,7 @@ namespace LHCb
      *  @date 2008-11-08
      */
     GAUDI_API
-    bool lomont_compare_double
-    ( const double         af      ,
-      const double         bf      ,
-      const unsigned int   maxULPs ) ;
+    bool lomont_compare_double( const double af, const double bf, const unsigned int maxULPs );
     // ========================================================================
     /** @class Lomont
      *  The equality comparison of double numbers using as the metric the maximal
@@ -136,7 +128,8 @@ namespace LHCb
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date 2009-10-22
      */
-    template <class TYPE> class Lomont ;
+    template <class TYPE>
+    class Lomont;
     // ========================================================================
     /** the specialization for float numbers
      *
@@ -158,24 +151,24 @@ namespace LHCb
      *  @date 2009-10-22
      */
     template <>
-    class Lomont<float>
-    {
+    class Lomont<float> {
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from ULPS:
-      constexpr Lomont ( const unsigned short ulps ) : m_ulps ( ulps ) {}
+      constexpr Lomont( const unsigned short ulps ) : m_ulps( ulps ) {}
       // ======================================================================
     public:
       // ======================================================================
       /// the only one important method:
-      inline bool operator () ( const float a , const float b ) const
-      { return LHCb::Math::lomont_compare_float ( a , b , m_ulps ) ; }
+      inline bool operator()( const float a, const float b ) const {
+        return LHCb::Math::lomont_compare_float( a, b, m_ulps );
+      }
       // ======================================================================
     private:
       // ======================================================================
       /// the precision in "units in last place"
-      unsigned short m_ulps ;         // the precision in "units in last place"
+      unsigned short m_ulps; // the precision in "units in last place"
       // ======================================================================
     };
     // ========================================================================
@@ -199,24 +192,24 @@ namespace LHCb
      *  @date 2009-10-22
      */
     template <>
-    class Lomont<double>
-    {
+    class Lomont<double> {
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from ULPS:
-      constexpr Lomont ( const unsigned int ulps ) : m_ulps ( ulps ) {}
+      constexpr Lomont( const unsigned int ulps ) : m_ulps( ulps ) {}
       // ======================================================================
     public:
       // ======================================================================
       /// the only one important method:
-      inline bool operator () ( const double a , const double b ) const
-      { return LHCb::Math::lomont_compare_double ( a , b , m_ulps ) ; }
+      inline bool operator()( const double a, const double b ) const {
+        return LHCb::Math::lomont_compare_double( a, b, m_ulps );
+      }
       // ======================================================================
     private:
       // ======================================================================
       /// the precision in "units in last place"
-      unsigned int m_ulps ;           // the precision in "units in last place"
+      unsigned int m_ulps; // the precision in "units in last place"
       // ======================================================================
     };
     // =======================================================================
@@ -237,7 +230,7 @@ namespace LHCb
      *  @date 2008-11-08
      */
     GAUDI_API
-    float next_float ( const float af , const short ulps ) ;
+    float next_float( const float af, const short ulps );
     // ========================================================================
     /** Get the floating number that representation
      *  is different with respect  to the argument for
@@ -256,7 +249,7 @@ namespace LHCb
      *  @date 2008-11-08
      */
     GAUDI_API
-    double next_double ( const double  af , const short ulps ) ;
+    double next_double( const double af, const short ulps );
     // ========================================================================
     /** "distance" in ULPS between two float values
      *   @param a (INPUT) the first  number
@@ -264,7 +257,7 @@ namespace LHCb
      *   @param "distance" in ULPs
      */
     GAUDI_API
-    long ulps_distance_float  ( const float  a , const float  b ) ;
+    long ulps_distance_float( const float a, const float b );
     // ========================================================================
     /** "distance" in ULPS between two double values
      *   @param a (INPUT) the first  number
@@ -272,9 +265,9 @@ namespace LHCb
      *   @param "distance" in ULPs
      */
     GAUDI_API
-    long ulps_distance_double ( const double a , const double b ) ;
+    long ulps_distance_double( const double a, const double b );
     // ========================================================================
-  } //                                              end of namespace LHCb::Math
+  } // namespace Math
   // ==========================================================================
 } //                                                      end of namespace LHCb
 // ============================================================================

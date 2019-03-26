@@ -9,8 +9,8 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 /// ===========================================================================
-#ifndef       DETDESC_SOLIDSUBTRACTION_H
-#define       DETDESC_SOLIDSUBTRACTION_H 1
+#ifndef DETDESC_SOLIDSUBTRACTION_H
+#define DETDESC_SOLIDSUBTRACTION_H 1
 
 /** STD & STL */
 #include <algorithm>
@@ -32,28 +32,26 @@ class SolidFactory;
  *  @date xx/xx/xxxx
  */
 
-class SolidSubtraction final : public SolidBoolean
-{
+class SolidSubtraction final : public SolidBoolean {
   /// friend factory for instantiation
   friend class SolidFactory<SolidSubtraction>;
 
 public:
-
   /** constructor
    *  @param name name of the intersection
    *  @param first pointer to first/main solid
    */
-  SolidSubtraction( const std::string& name , std::unique_ptr<ISolid> first );
+  SolidSubtraction( const std::string& name, std::unique_ptr<ISolid> first );
 
-  SolidSubtraction           ( const SolidSubtraction& ) = delete ; ///< no copy
-  SolidSubtraction& operator=( const SolidSubtraction& ) = delete ; ///<no =
+  SolidSubtraction( const SolidSubtraction& ) = delete;            ///< no copy
+  SolidSubtraction& operator=( const SolidSubtraction& ) = delete; ///< no =
 
   /** - retrieve the specific type of the solid
    *  - implementation of ISolid interface
    *  @see ISolid
    *  @return specific type of the solid
    */
-  std::string typeName ( ) const override { return "SolidSubtraction" ; }
+  std::string typeName() const override { return "SolidSubtraction"; }
 
   /** - check for the given 3D-point.
    *    Point coordinates are in the local reference
@@ -64,18 +62,16 @@ public:
    *  @return true if the point is inside the solid
    */
 
-  bool isInside ( const Gaudi::XYZPoint& point ) const override;
-  bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
-  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
+  bool isInside( const Gaudi::XYZPoint& point ) const override;
+  bool isInside( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside( const Gaudi::RhoZPhiPoint& point ) const override;
 
   /** subtract child solid to the solid
    *  @param solid pointer to child solid
    *  @param mtrx  pointer to transformation
    *  @return status code
    */
-  StatusCode subtract
-  ( std::unique_ptr<ISolid>  solid ,
-    const Gaudi::Transform3D* mtrx  );
+  StatusCode subtract( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx );
 
   /** subtract child solid from  the solid
    *  @param child    pointer to child solid
@@ -83,29 +79,24 @@ public:
    *  @param rotation rotation
    *  @return status code
    */
-  StatusCode subtract
-  ( std::unique_ptr<ISolid>  child                    ,
-    const Gaudi::XYZPoint&     position                 ,
-    const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() );
+  StatusCode subtract( std::unique_ptr<ISolid> child, const Gaudi::XYZPoint& position,
+                       const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
 
 protected:
-
   /** constructor
    *  @param Name name of the solid subtraction
    */
-  SolidSubtraction( const std::string& Name = "Anonymous Subtraction");
+  SolidSubtraction( const std::string& Name = "Anonymous Subtraction" );
 
 private:
-
   /**
    * implementation of isInside
    * @param  point reference to any kind of point with x(), y(), z()
    * @return bool
    */
   template <class aPoint>
-  bool isInsideImpl(const aPoint& point) const;
-
+  bool isInsideImpl( const aPoint& point ) const;
 };
 
 /// ===========================================================================
-#endif  ///<   DETDESC_SOLIDSUBTRACTION_H
+#endif ///<   DETDESC_SOLIDSUBTRACTION_H

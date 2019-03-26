@@ -30,8 +30,7 @@
 #include <vector>
 
 // General namespace for RICH specific definitions documented in RichSide.h
-namespace Rich
-{
+namespace Rich {
 
   /// Number of RICH radiators
   static const uint8_t NRadiatorTypes = 3;
@@ -43,8 +42,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum RadiatorType : int8_t
-  {
+  enum RadiatorType : int8_t {
     InvalidRadiator = -1, ///< Unspecified radiator type
     Aerogel         = 0,  ///< Aerogel in RICH1
     Rich1Gas        = 1,  ///< Gaseous RICH1 radiator
@@ -68,21 +66,20 @@ namespace Rich
   std::string text( const Rich::RadiatorType radiator );
 
   /// Type for container of radiator types
-  typedef std::vector< Rich::RadiatorType > Radiators;
+  typedef std::vector<Rich::RadiatorType> Radiators;
   // using Radiators = std::vector<Rich::RadiatorType>;
 
   /// Access a vector of all radiator types
-  const Radiators &radiators() noexcept;
+  const Radiators& radiators() noexcept;
 
   /// Implement textual ostream << method for Rich::RadiatorType enumeration
-  inline std::ostream &operator<<( std::ostream &s, const Rich::RadiatorType radiator )
-  {
+  inline std::ostream& operator<<( std::ostream& s, const Rich::RadiatorType radiator ) {
     return s << Rich::text( radiator );
   }
 
   /// Type for fixed size arrays with radiator information
-  template < typename TYPE >
-  using RadiatorArray = std::array< TYPE, NRadiatorTypes >;
+  template <typename TYPE>
+  using RadiatorArray = std::array<TYPE, NRadiatorTypes>;
 
 } // namespace Rich
 

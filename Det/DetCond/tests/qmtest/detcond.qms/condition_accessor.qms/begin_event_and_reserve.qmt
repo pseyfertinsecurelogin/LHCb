@@ -1,0 +1,120 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+    (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="options"><text>
+from Gaudi.Configuration import *
+
+import os
+
+# Prepare detector description
+##############################
+from Configurables import CondDB, DDDBConf, GitEntityResolver
+GitEntityResolver(
+    'GitDDDB',
+    PathToRepository=os.path.join(os.environ.get('TEST_DBS_ROOT'), 'TESTCOND')
+)
+DDDBConf(DataType='2016', DbRoot='git:/lhcb.xml', EnableRunStampCheck=False)
+CondDB(Tags={'DDDB': ''})
+
+@appendPostConfigAction
+def reduce_resolver():
+    '''override some settings from DDDBConf'''
+    from Configurables import XmlParserSvc
+    resolvers = XmlParserSvc().EntityResolver.EntityResolvers
+    resolvers[:] = [r for r in resolvers
+                    if r.name()[8:15] in ('GitDDDB', 'GitOver')]
+
+# Configure fake event time
+###########################
+from Configurables import EventClockSvc, FakeEventTime
+ecs = EventClockSvc()
+ecs.addTool(FakeEventTime, 'EventTimeDecoder')
+# tuned from the content of condition in TESTCOND
+ecs.EventTimeDecoder.StartTime = 1442403000000000000
+ecs.EventTimeDecoder.TimeStep = 18399600000000000
+
+# Make UpdateMAnagerSvc not user BeginIvent incident
+# (similar to multi-threading jobs, requires ReserveIOV)
+from Configurables import UpdateManagerSvc
+UpdateManagerSvc(IOVLockLocation="")
+
+@appendPostConfigAction
+def bindFakeEventTime():
+    '''
+    Ensure that the fake event time is in sync in all parites.
+    '''
+    from Configurables import EventClockSvc, FakeEventTime
+    from Configurables import LHCb__Tests__FakeEventTimeProducer as FET
+    from Configurables import LHCb__DetDesc__ReserveDetDescForEvent as ReserveIOV
+    ecs = EventClockSvc()
+    ecs.addTool(FakeEventTime, "EventTimeDecoder")
+    ecs.InitialTime = ecs.EventTimeDecoder.StartTime
+    odin_path = '/Event/DummyODIN'
+    app = ApplicationMgr()
+    app.TopAlg = [
+        FET('FakeEventTime',
+            ODIN=odin_path,
+            Start=ecs.EventTimeDecoder.StartTime / 1E9,
+            Step=ecs.EventTimeDecoder.TimeStep / 1E9),
+        ReserveIOV('ReserveIOV',
+                   ODIN=odin_path),
+    ] + app.TopAlg
+
+# Configure algorithms
+######################
+from Configurables import DetCond__Examples__CondAccessExample as CondAlg
+from Configurables import DetCond__Examples__CondAccessExampleWithDerivation as CondAlgDerived
+
+app = ApplicationMgr(EvtSel="NONE", EvtMax=3, OutputLevel=INFO)
+app.TopAlg = [CondAlg('CondAlg'), CondAlgDerived('CondAlgDerived')]
+
+</text></argument>
+<argument name="validator"><text>
+stdout = maskPointers(stdout)
+
+findReferenceBlock("""
+ApplicationMgr       INFO Application Manager Started successfully
+CondAlg              INFO condition value: DataObject at 0x########
+Validity: 0.0 -> 1451602800.0
+(double) par1 = 1.3
+(double) par2 = 2.1
+
+CondAlgDerived       INFO condition value: {
+  p1: 1.3
+  p2: 2.1
+  v:  9.96018
+}
+CondAlg              INFO condition value: DataObject at 0x########
+Validity: 1451602800.0 -> 1470002400.0
+(double) par1 = 0.6
+(double) par2 = 1.7
+
+CondAlgDerived       INFO condition value: {
+  p1: 0.6
+  p2: 1.7
+  v:  6.5546
+}
+CondAlg              INFO condition value: DataObject at 0x########
+Validity: 1470002400.0 -> 9223372036.854775807
+(double) par1 = 1.3
+(double) par2 = 2.1
+
+CondAlgDerived       INFO condition value: {
+  p1: 1.3
+  p2: 2.1
+  v:  9.96018
+}
+ApplicationMgr       INFO Application Manager Stopped successfully
+""", stdout=stdout)
+</text></argument>
+</extension>

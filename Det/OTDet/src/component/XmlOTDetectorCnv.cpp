@@ -8,12 +8,11 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlOTDetectorCnv.cpp,v 1.3 2006-12-14 13:29:51 ranjard Exp $
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-/// OTDet 
+/// OTDet
 #include "OTDet/DeOTDetector.h"
 
-typedef XmlUserDetElemCnv<DeOTDetector>       XmlOTDetectorCnv;
+typedef XmlUserDetElemCnv<DeOTDetector> XmlOTDetectorCnv;
 DECLARE_CONVERTER( XmlOTDetectorCnv )

@@ -8,12 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef     DETDESC_VOLUMES_LVOLUME_H
-#define     DETDESC_VOLUMES_LVOLUME_H
+#ifndef DETDESC_VOLUMES_LVOLUME_H
+#define DETDESC_VOLUMES_LVOLUME_H
 
 /// DetDesc  includes
-#include "DetDesc/LogVolBase.h"
 #include "DetDesc/CLIDLVolume.h"
+#include "DetDesc/LogVolBase.h"
 
 /// forward declarations
 template <class TYPE>
@@ -26,13 +26,11 @@ class DataObjectFactory;
  *  @author  Vanya Belyaev Ivan.Belyaev@itep.ru
  */
 
-class LVolume: public LogVolBase
-{
+class LVolume : public LogVolBase {
   /// friend factory for instantiation
   friend class DataObjectFactory<LVolume>;
 
 public:
-
   /** constructor, pointer to ISolid* must be valid!,
    *  overvise constructor throws LogVolumeException!
    *  @exception LVolumeException for wrong parameters set
@@ -42,23 +40,19 @@ public:
    *  @param sensitivity  name of sensitive detector object (for simulation)
    *  @param magnetic     name of magnetic field object (for simulation)
    */
-  LVolume( const std::string& name             ,
-           ISolid*            Solid            ,
-           const std::string& material         ,
-           const std::string& sensitivity = "" ,
-           const std::string& magnetic    = "" );
+  LVolume( const std::string& name, ISolid* Solid, const std::string& material, const std::string& sensitivity = "",
+           const std::string& magnetic = "" );
 
 public:
-
   /** object/class  identification (virtual)
    *  @return uniqie class identifier
    */
-  const CLID& clID    () const  override;
+  const CLID& clID() const override;
 
   /** object/class  identification (static)
    *  @return uniqie class identifier
    */
-  static  const CLID& classID ()       ;
+  static const CLID& classID();
 
   /** is this volume "Assembly" of other volumes?
    *  @see ILVolume
@@ -68,14 +62,13 @@ public:
    *  and pointer to material should be both nulls
    *  @return true if volume is Assembly
    */
-  inline bool isAssembly () const override { return false   ; }
+  inline bool isAssembly() const override { return false; }
 
   /** the solid, associated with the Logical Volume
    *  @see ILVolume
    *  @return the solid, associated with the Logical Volume
    */
-  inline const ISolid*
-  solid () const override { return m_solid.get() ; }
+  inline const ISolid* solid() const override { return m_solid.get(); }
 
   /** the material, associated with the Logical Volume
    *  For Assembly Volumes material pointes to NULL!
@@ -89,8 +82,7 @@ public:
    *  @see ILVolume
    *  @return the material(by name), associated with the Logical Volume
    */
-  inline const std::string&
-  materialName () const override { return m_materialName; }
+  inline const std::string& materialName() const override { return m_materialName; }
 
   /** check for the given 3D-point. Point coordinates are in the
    *  local reference frame of the logical volume
@@ -98,9 +90,7 @@ public:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  inline bool isInside
-  ( const Gaudi::XYZPoint& LocalPoint ) const override
-  { return m_solid->isInside( LocalPoint ) ; }
+  inline bool isInside( const Gaudi::XYZPoint& LocalPoint ) const override { return m_solid->isInside( LocalPoint ); }
 
   /** calculate the daughter path containing the Point in Local frame ,
    *  can be VERY slow for complex geometry,
@@ -111,10 +101,8 @@ public:
    *  @param  pVolumePath  vector of physical volumes
    *  @return status code
    */
-  StatusCode belongsTo
-  ( const Gaudi::XYZPoint&        LocalPoint  ,
-    const int                Level       ,
-    ILVolume::PVolumePath&   pVolumePath ) const override;
+  StatusCode belongsTo( const Gaudi::XYZPoint& LocalPoint, const int Level,
+                        ILVolume::PVolumePath& pVolumePath ) const override;
 
   /** calculate the daughter path containing the Point in Local frame ,
    *  can be VERY slow for complex geometry,
@@ -125,10 +113,8 @@ public:
    *  @param  replicaPath replica path
    *  @return status code
    */
-  StatusCode belongsTo
-  ( const Gaudi::XYZPoint&        LocalPoint  ,
-    const int                Level       ,
-    ILVolume::ReplicaPath&   replicaPath ) const override;
+  StatusCode belongsTo( const Gaudi::XYZPoint& LocalPoint, const int Level,
+                        ILVolume::ReplicaPath& replicaPath ) const override;
 
   /** intersection of the logical volume with with the line \n
    *  The line is parametrized in the local reference system
@@ -150,11 +136,8 @@ public:
    *  @param threshold threshold value
    *  @return number of intersections
    */
-  unsigned int intersectLine
-  ( const Gaudi::XYZPoint        & Point         ,
-    const Gaudi::XYZVector       & Vector        ,
-    ILVolume::Intersections & intersections ,
-    const double              threshold     ) const override;
+  unsigned int intersectLine( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                              ILVolume::Intersections& intersections, const double threshold ) const override;
 
   /** intersection of the logical volume with with the line \n
    *  Theine is parametrized in the local reference system
@@ -178,52 +161,43 @@ public:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  unsigned int intersectLine
-  ( const Gaudi::XYZPoint         & Point         ,
-    const Gaudi::XYZVector        & Vector        ,
-    ILVolume::Intersections  & intersections ,
-    const ISolid::Tick         tickMin       ,
-    const ISolid::Tick         tickMax       ,
-    const double               Threshold     ) const override;
+  unsigned int intersectLine( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                              ILVolume::Intersections& intersections, const ISolid::Tick tickMin,
+                              const ISolid::Tick tickMax, const double Threshold ) const override;
 
   /** printout to STD/STL stream
    *  @see ILVolume
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream& printOut
-  ( std::ostream & os = std::cout ) const override;
+  std::ostream& printOut( std::ostream& os = std::cout ) const override;
 
   /** printout to Gaudi MsgStream stream
    *  @see ILVolume
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream
    */
-  MsgStream&    printOut
-  ( MsgStream    & os             ) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** reset to initial state,
    *  clear chaches, etc...
    *  @see ILVolume
    *  @return self reference
    */
-  inline  ILVolume* reset () override
-  {
+  inline ILVolume* reset() override {
     /// reset the pointed-to solid
-    if( m_solid ) { m_solid->reset() ; }
+    if ( m_solid ) { m_solid->reset(); }
     /// reset the base
-    return LogVolBase::reset() ;
+    return LogVolBase::reset();
   }
 
 private:
-
   /// copy constructor is private!
-  LVolume           ( const LVolume& );
+  LVolume( const LVolume& );
   /// assignment operator is private!
   LVolume& operator=( const LVolume& );
 
 private:
-
   /** Auxillary method  to calculate own intersections
    *  @exception LogVolumeException for wrong parameters or geometry error
    *  @param Point initial point at the line
@@ -234,13 +208,9 @@ private:
    *  @param Threshold threshold value
    *  @return true if line intersects with body
    */
-  bool intersectBody
-  ( const Gaudi::XYZPoint        & Point         ,
-    const Gaudi::XYZVector       & Vector        ,
-    ILVolume::Intersections & intersections ,
-    ISolid::Tick            & tickMin       ,
-    ISolid::Tick            & tickMax       ,
-    const double              Threshold     ) const ;
+  bool intersectBody( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                      ILVolume::Intersections& intersections, ISolid::Tick& tickMin, ISolid::Tick& tickMax,
+                      const double Threshold ) const;
 
   /** Auxillary method  to calculate own intersections
    *  @exception LVolumeException wrong parameters or geometry error
@@ -250,23 +220,18 @@ private:
    *  @param Threshold threshold value
    *  @return true if line intersects with body
    */
-  bool intersectBody
-  ( const Gaudi::XYZPoint&        Point         ,
-    const Gaudi::XYZVector&       Vector        ,
-    ILVolume::Intersections& intersections ,
-    const double             Threshold     ) const ;
+  bool intersectBody( const Gaudi::XYZPoint& Point, const Gaudi::XYZVector& Vector,
+                      ILVolume::Intersections& intersections, const double Threshold ) const;
 
 private:
-
   /// solid
-  std::unique_ptr<ISolid>   m_solid        ;
+  std::unique_ptr<ISolid> m_solid;
   /// material
-  std::string               m_materialName ;
-  const Material*           m_material     ;
-
+  std::string     m_materialName;
+  const Material* m_material;
 };
 
 // ============================================================================
 // The End
 // ============================================================================
-#endif  ///< DETDESC_LVOLUME_H
+#endif ///< DETDESC_LVOLUME_H

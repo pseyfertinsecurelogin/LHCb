@@ -8,16 +8,14 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: XmlDeVeloPhiTypeCnv.cpp,v 1.2 2006-11-30 07:57:41 cattanem Exp $
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-/// VeloDet 
+/// VeloDet
 #include "VeloDet/DeVeloPhiType.h"
-
 
 /// =======================================================================
 /// Instantiation of a static factory class used by clients to create
 /// instances of this service
 /// =======================================================================
-typedef XmlUserDetElemCnv<DeVeloPhiType>         XmlDeVeloPhiTypeCnv;
+typedef XmlUserDetElemCnv<DeVeloPhiType> XmlDeVeloPhiTypeCnv;
 DECLARE_CONVERTER( XmlDeVeloPhiTypeCnv )

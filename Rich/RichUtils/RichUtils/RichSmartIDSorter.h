@@ -27,8 +27,7 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-namespace Rich
-{
+namespace Rich {
 
   //-----------------------------------------------------------------------------
   /** @class SmartIDSorter RichSmartIDSorter.h RichUtils/RichSmartIDSorter.h
@@ -40,14 +39,11 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class SmartIDSorter final
-  {
+  class SmartIDSorter final {
 
   public:
-
     /// Sort the list by detector region
-    inline static void sortByRegion( LHCb::RichSmartID::Vector &smartIDs )
-    {
+    inline static void sortByRegion( LHCb::RichSmartID::Vector& smartIDs ) {
       std::sort( smartIDs.begin(), smartIDs.end(), []( const auto p1, const auto p2 ) {
         // use full class, including data set bits
         // return p1.key() < p2.key();

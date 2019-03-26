@@ -19,7 +19,6 @@
 // interface
 #include "Kernel/ICheckTool.h"
 
-
 /** @class CheckMCEventTool CheckMCEventTool.h
  *  Tool to check integrity of MCEvent structure
  *
@@ -34,7 +33,7 @@ public:
   StatusCode check() override; ///< Perform the check
 
 private:
-  long long m_event = -1;    ///< last event number
+  long long  m_event  = -1;                  ///< last event number
   StatusCode m_status = StatusCode::SUCCESS; ///< Status of last check
 };
 #endif // CHECKMCEVENTTOOL_H

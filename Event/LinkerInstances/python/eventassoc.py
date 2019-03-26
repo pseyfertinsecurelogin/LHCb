@@ -10,10 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 # =============================================================================
-# $Id: eventassoc.py,v 1.8 2007-12-09 20:13:20 ibelyaev Exp $ 
 # =============================================================================
 """
-The helper module for manipulations with Linker objects 
+The helper module for manipulations with Linker objects
 
 WARNING: The module is deprecated, please use  LinkerIntances.eventassoc instead
 
@@ -25,7 +24,7 @@ WARNING: The module is deprecated, please use  LinkerIntances.eventassoc instead
  | from eventassoc import *               | from LinkerInstances.eventassoc import *               |
  | from eventassoc import linkedTo        | from LinkerInstances.eventassoc import linkedTo        |
  | from eventassoc import linkedTo   ax Y | from LinkerInstances.eventassoc import linkedTo   as Y |
- | from eventassoc import linkedFrom      | from LinkerInstances.eventassoc import linkedFrom      |  
+ | from eventassoc import linkedFrom      | from LinkerInstances.eventassoc import linkedFrom      |
  | from eventassoc import linkedFrom as X | from LinkerInstances.eventassoc import linkedFrom as X |
  ---------------------------------------------------------------------------------------------------
 """
@@ -45,19 +44,20 @@ eventassoc.py WARNING  Deprecated module to be removed soon
  | from eventassoc import *               | from LinkerInstances.eventassoc import *               |
  | from eventassoc import linkedTo        | from LinkerInstances.eventassoc import linkedTo        |
  | from eventassoc import linkedTo   ax Y | from LinkerInstances.eventassoc import linkedTo   as Y |
- | from eventassoc import linkedFrom      | from LinkerInstances.eventassoc import linkedFrom      |  
+ | from eventassoc import linkedFrom      | from LinkerInstances.eventassoc import linkedFrom      |
  | from eventassoc import linkedFrom as X | from LinkerInstances.eventassoc import linkedFrom as X |
  ---------------------------------------------------------------------------------------------------
 """
 
 from LinkerInstances.eventassoc import *
-      
+
 # =============================================================================
-if '__main__' == __name__ :
-  print __doc__ 
-  o = dir() 
-  for i in o : print i
-  
+if '__main__' == __name__:
+    print __doc__
+    o = dir()
+    for i in o:
+        print i
+
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

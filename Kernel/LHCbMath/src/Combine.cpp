@@ -28,9 +28,6 @@
  *  @see http://www.researchgate.net.publication/2345482_Combining_Measurements_with_Correlated_Errors
  *  @author  Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-09-28
- *  Version           $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 /*  combine two measurements <code>x</code> and <code>y</code>
@@ -43,15 +40,10 @@
  *  @date 2015-09-28
  */
 // ============================================================================
-Gaudi::Math::ValueWithError
-Gaudi::Math::combine
-( const double               x   ,
-  const double               y   ,
-  const Gaudi::SymMatrix2x2& cov )
-{
-  Gaudi::Vector2 data ( x,y) ;
-  Gaudi::Math::Combine<2> combiner  ( data , cov ) ;
-  return combiner.result() ;
+Gaudi::Math::ValueWithError Gaudi::Math::combine( const double x, const double y, const Gaudi::SymMatrix2x2& cov ) {
+  Gaudi::Vector2          data( x, y );
+  Gaudi::Math::Combine<2> combiner( data, cov );
+  return combiner.result();
 }
 // ============================================================================
 /* combine two measurements <code>x1</code> and <code>x2</code>
@@ -64,21 +56,17 @@ Gaudi::Math::combine
  *  @date 2015-09-28
  */
 // ============================================================================
-Gaudi::Math::ValueWithError
-Gaudi::Math::combine
-( const Gaudi::Math::ValueWithError& x1  ,
-  const Gaudi::Math::ValueWithError& x2  ,
-  const double                       rho )
-{
+Gaudi::Math::ValueWithError Gaudi::Math::combine( const Gaudi::Math::ValueWithError& x1,
+                                                  const Gaudi::Math::ValueWithError& x2, const double rho ) {
   //
-  Gaudi::Vector2      data ( x1.value() , x2.value() ) ;
-  Gaudi::SymMatrix2x2 cov  ;
-  cov ( 0 , 0 ) =     x1.cov2() ;
-  cov ( 0 , 1 ) = rho*std::sqrt( x1.cov2() * x2.cov2() ) ;
-  cov ( 1 , 1 ) =     x2.cov2() ;
+  Gaudi::Vector2      data( x1.value(), x2.value() );
+  Gaudi::SymMatrix2x2 cov;
+  cov( 0, 0 ) = x1.cov2();
+  cov( 0, 1 ) = rho * std::sqrt( x1.cov2() * x2.cov2() );
+  cov( 1, 1 ) = x2.cov2();
   //
-  Gaudi::Math::Combine<2> combiner  ( data , cov ) ;
-  return combiner.result() ;
+  Gaudi::Math::Combine<2> combiner( data, cov );
+  return combiner.result();
 }
 // =========================================================================
 /*  combine two measurements <code>x1</code> and <code>x2</code>
@@ -92,19 +80,16 @@ Gaudi::Math::combine
  *  @date 2015-09-28
  */
 // =========================================================================
-Gaudi::Math::ValueWithError
-Gaudi::Math::combine
-( const Gaudi::Math::ValueWithError& x1   ,
-  const Gaudi::Math::ValueWithError& x2   ,
-  const Gaudi::SymMatrix2x2&         syst )
-{
-  Gaudi::Vector2      data ( x1.value() , x2.value() ) ;
-  Gaudi::SymMatrix2x2 cov  ( syst ) ;
-  cov ( 0 , 0 ) += x1.cov2() ;
-  cov ( 1 , 1 ) += x2.cov2() ;
+Gaudi::Math::ValueWithError Gaudi::Math::combine( const Gaudi::Math::ValueWithError& x1,
+                                                  const Gaudi::Math::ValueWithError& x2,
+                                                  const Gaudi::SymMatrix2x2&         syst ) {
+  Gaudi::Vector2      data( x1.value(), x2.value() );
+  Gaudi::SymMatrix2x2 cov( syst );
+  cov( 0, 0 ) += x1.cov2();
+  cov( 1, 1 ) += x2.cov2();
   //
-  Gaudi::Math::Combine<2> combiner  ( data , cov ) ;
-  return combiner.result() ;
+  Gaudi::Math::Combine<2> combiner( data, cov );
+  return combiner.result();
 }
 // =========================================================================
 

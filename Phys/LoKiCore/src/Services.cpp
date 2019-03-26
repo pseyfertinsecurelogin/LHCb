@@ -21,9 +21,9 @@
 // ============================================================================
 // LoKi
 // ===========================================================================
+#include "LoKi/Report.h"
 #include "LoKi/Services.h"
 #include "LoKi/Welcome.h"
-#include "LoKi/Report.h"
 // ============================================================================
 /** @file
  *
@@ -43,23 +43,18 @@
 // ===========================================================================
 // accessor to unique instance ("Meyer's singleton" pattern)
 // ===========================================================================
-LoKi::Services& LoKi::Services::instance()
-{
+LoKi::Services& LoKi::Services::instance() {
   static LoKi::Services s_instance;
-  return s_instance ;
+  return s_instance;
 }
 // ===========================================================================
 // standard (default) constructor
 // ===========================================================================
-LoKi::Services::Services()
-{
-  LoKi::Welcome::instance() ;
-}
+LoKi::Services::Services() { LoKi::Welcome::instance(); }
 // ===========================================================================
 // release all services
 // ===========================================================================
-StatusCode LoKi::Services::releaseAll()
-{
+StatusCode LoKi::Services::releaseAll() {
   // release services
   m_updateSvc.reset();
   // release services
@@ -77,9 +72,12 @@ StatusCode LoKi::Services::releaseAll()
   // 'release' the service
   m_contextSvc.reset();
   // 'release' the service
-  if (m_lokiSvc) { m_lokiSvc->release(); m_lokiSvc = nullptr; }
+  if ( m_lokiSvc ) {
+    m_lokiSvc->release();
+    m_lokiSvc = nullptr;
+  }
   //
-  return StatusCode::SUCCESS ;
+  return StatusCode::SUCCESS;
 }
 // ===========================================================================
 /*  Print the error  message, return status code
@@ -88,12 +86,8 @@ StatusCode LoKi::Services::releaseAll()
  *  @return       status code
  */
 // ===========================================================================
-StatusCode LoKi::Services::Error
-( const std::string& msg ,
-  const StatusCode   st  ,
-  const size_t       mx  ) const
-{
-  return LoKi::Report::Error(" LoKi::Services " + msg , st , mx );
+StatusCode LoKi::Services::Error( const std::string& msg, const StatusCode st, const size_t mx ) const {
+  return LoKi::Report::Error( " LoKi::Services " + msg, st, mx );
 }
 // ===========================================================================
 /*  Print the warning  message, return status code
@@ -102,86 +96,73 @@ StatusCode LoKi::Services::Error
  *  @return       status code
  */
 // ===========================================================================
-StatusCode LoKi::Services::Warning
-( const std::string& msg  ,
-  const StatusCode   st   ,
-  const size_t       mx   ) const
-{
-  return LoKi::Report::Warning(" LoKi::Services " + msg , st , mx ) ;
+StatusCode LoKi::Services::Warning( const std::string& msg, const StatusCode st, const size_t mx ) const {
+  return LoKi::Report::Warning( " LoKi::Services " + msg, st, mx );
 }
 // ===========================================================================
 // accessor to main LoKi algorithm
 // ===========================================================================
-LoKi::ILoKiSvc* LoKi::Services::lokiSvc () const { return m_lokiSvc ; }
+LoKi::ILoKiSvc* LoKi::Services::lokiSvc() const { return m_lokiSvc; }
 // ===========================================================================
 // set new main LoKi algorithms
 // ===========================================================================
-LoKi::ILoKiSvc* LoKi::Services::setLoKi( LoKi::ILoKiSvc* svc )
-{
+LoKi::ILoKiSvc* LoKi::Services::setLoKi( LoKi::ILoKiSvc* svc ) {
   // add reference to the new algo
-  if ( svc ) { svc -> addRef() ; }
+  if ( svc ) { svc->addRef(); }
   // release all  previously allocated  services
-  releaseAll().ignore() ;
+  releaseAll().ignore();
   // set new algorithm
-  m_lokiSvc = svc ;
+  m_lokiSvc = svc;
   //
   return lokiSvc();
 }
 // ===========================================================================
 // accessor to particle properties service
 // ===========================================================================
-LHCb::IParticlePropertySvc* LoKi::Services::ppSvc     () const
-{
-  return svc(m_ppSvc, m_lokiSvc," LHCb::IParticlePropertySvc* points to NULL, return NULL");
+LHCb::IParticlePropertySvc* LoKi::Services::ppSvc() const {
+  return svc( m_ppSvc, m_lokiSvc, " LHCb::IParticlePropertySvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to context service
 // ===========================================================================
-IAlgContextSvc* LoKi::Services::contextSvc () const
-{
-  return svc(m_contextSvc,m_lokiSvc," IAlgContextSvc* points to NULL, return NULL");
+IAlgContextSvc* LoKi::Services::contextSvc() const {
+  return svc( m_contextSvc, m_lokiSvc, " IAlgContextSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to histogram service
 // ===========================================================================
-IHistogramSvc* LoKi::Services::histoSvc () const
-{
-  return svc(m_histoSvc, m_lokiSvc, " IHistogramSvc* points to NULL, return NULL" );
+IHistogramSvc* LoKi::Services::histoSvc() const {
+  return svc( m_histoSvc, m_lokiSvc, " IHistogramSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Random Numbers Service
 // ===========================================================================
-IRndmGenSvc* LoKi::Services::randSvc () const
-{
-  return svc(m_randSvc, m_lokiSvc, "IRndmGenSvc* points to NULL, return NULL" );
+IRndmGenSvc* LoKi::Services::randSvc() const {
+  return svc( m_randSvc, m_lokiSvc, "IRndmGenSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Event Data Service
 // ===========================================================================
-IDataProviderSvc* LoKi::Services::evtSvc     () const
-{
-  return svc(m_evtSvc,m_lokiSvc, "IDataProviderSvc* points to NULL, return NULL" );
+IDataProviderSvc* LoKi::Services::evtSvc() const {
+  return svc( m_evtSvc, m_lokiSvc, "IDataProviderSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Statistical Service
 // ===========================================================================
-IStatSvc* LoKi::Services::statSvc     () const
-{
-  return svc(m_statSvc,  m_lokiSvc,"IStatSvc* points to NULL, return NULL" );
+IStatSvc* LoKi::Services::statSvc() const {
+  return svc( m_statSvc, m_lokiSvc, "IStatSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Chrono Service
 // ===========================================================================
-IChronoSvc* LoKi::Services::chronoSvc     () const
-{
+IChronoSvc* LoKi::Services::chronoSvc() const {
   return svc( m_chronoSvc, m_lokiSvc, "IChronoSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Chrono Service
 // ===========================================================================
-IUpdateManagerSvc* LoKi::Services::updateSvc     () const
-{
-  return svc( m_updateSvc, m_lokiSvc, "IUpdateManagerSvc* points to NULL, return NULL");
+IUpdateManagerSvc* LoKi::Services::updateSvc() const {
+  return svc( m_updateSvc, m_lokiSvc, "IUpdateManagerSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // The END

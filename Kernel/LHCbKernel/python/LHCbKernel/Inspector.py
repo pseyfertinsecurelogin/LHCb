@@ -15,11 +15,6 @@
 #
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2008-08-03
-#
-#                    $Revision$
-#  Last modification $Date$
-#                 by $    $
-#
 # =============================================================================
 """
 Helper module for decoration on LHCb::Inpector class
@@ -63,19 +58,20 @@ Inspect the whole application
 
 """
 # =============================================================================
-__author__  = "Vanya BELYAEV Ivan.BElyaev@nikhef.nl"
-__version__ = "$Revision$"
-__date__    = " 2008-08-03"
+__author__ = "Vanya BELYAEV Ivan.BElyaev@nikhef.nl"
+__version__ = ""
+__date__ = " 2008-08-03"
 ## NB: nothing to be imported
-__all__     = ()                                   # NB: nothing to be imported
+__all__ = ()  # NB: nothing to be imported
 # =============================================================================
 
 from GaudiPython.Bindings import gbl as _cpp
 
 _Inspector = _cpp.LHCb.Inspector
 
+
 ## helper function for inspection of variosu objects
-def _new_shift_ ( self , obj ) :
+def _new_shift_(self, obj):
     """
     Helper function for inspection of various objects:
 
@@ -84,29 +80,29 @@ def _new_shift_ ( self , obj ) :
 
     """
     iobj = None
-    if   hasattr ( obj , '_isvc' ) and obj._isvc : iobj = obj._isvc
-    elif hasattr ( obj , '_ialg' ) and obj._ialg : iobj = obj._ialg
-    elif hasattr ( obj , '_ip'   ) and obj._ip   : iobj = obj._ip
+    if hasattr(obj, '_isvc') and obj._isvc: iobj = obj._isvc
+    elif hasattr(obj, '_ialg') and obj._ialg: iobj = obj._ialg
+    elif hasattr(obj, '_ip') and obj._ip: iobj = obj._ip
 
-    if not iobj :
-        raise AttributeError, ' cannot find proper valid interface for %s'%obj
+    if not iobj:
+        raise AttributeError, ' cannot find proper valid interface for %s' % obj
 
-    lines = self.inspect ( iobj ).split ('\n')
-    for line in lines : print line
+    lines = self.inspect(iobj).split('\n')
+    for line in lines:
+        print line
 
     return self
+
 
 ## extend the documentation
 _new_shift_.__doc__ += '\n' + _cpp.LHCb.Inspector.inspect.__doc__
 
-
 # backup old init
 _old_init_ = _Inspector.__init__
 
+
 ## new (python-oritnted) constructor for LHCb::Inspector
-def _new_init_ ( self    ,
-                 props   ,
-                 members = ( 'Members' , 'TopAlg' ) ) :
+def _new_init_(self, props, members=('Members', 'TopAlg')):
     """
 
     New (python-oriented) constructor:
@@ -115,36 +111,37 @@ def _new_init_ ( self    ,
 
 
     """
-    if type(props) is str : props = (props,)
-    if type(props) is list or type(props) is tuple :
+    if type(props) is str: props = (props, )
+    if type(props) is list or type(props) is tuple:
         _vct = _cpp.std.vector('std::string')()
-        for p in props : _vct.push_back ( p )
+        for p in props:
+            _vct.push_back(p)
         props = _vct
 
-    if type(members) is str : members = (members,)
-    if type(members) is list or type(members) is tuple :
+    if type(members) is str: members = (members, )
+    if type(members) is list or type(members) is tuple:
         _vct = _cpp.std.vector('std::string')()
-        for p in members : _vct.push_back ( p )
+        for p in members:
+            _vct.push_back(p)
         members = _vct
-    return _old_init_ ( self , props , members )
+    return _old_init_(self, props, members)
+
 
 ## extend the documentation
 _new_init_.__doc__ += '\n' + _old_init_.__doc__
 
-_Inspector.__init__   = _new_init_
+_Inspector.__init__ = _new_init_
 _Inspector.__lshift__ = _new_shift_
 
-
 # =============================================================================
-if '__main__' == __name__ :
+if '__main__' == __name__:
 
-    print 120*'*'
+    print 120 * '*'
     print __doc__
-    print ' Author  : ' , __author__
-    print ' Version : ' , __version__
-    print ' Date    : ' , __date__
-    print 120*'*'
-
+    print ' Author  : ', __author__
+    print ' Version : ', __version__
+    print ' Date    : ', __date__
+    print 120 * '*'
 
 # =============================================================================
 # The END

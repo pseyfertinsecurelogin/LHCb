@@ -18,8 +18,6 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 
-
-
 /** @class IBIntegrator IBIntegrator.h Kernel/IBIntegrator.h
  *  Interface class for field integral tool.
  *
@@ -32,12 +30,8 @@ struct IBIntegrator : extend_interfaces<IAlgTool> {
   DeclareInterfaceID( IBIntegrator, 3, 0 );
 
   /// Get the z of center and the total Bdl
-  virtual StatusCode calculateBdlAndCenter( const Gaudi::XYZPoint& beginPoint,
-                                            const Gaudi::XYZPoint& endPoint,
-                                            const double tX,
-                                            const double tY,
-                                            double& zCenter,
+  virtual StatusCode calculateBdlAndCenter( const Gaudi::XYZPoint& beginPoint, const Gaudi::XYZPoint& endPoint,
+                                            const double tX, const double tY, double& zCenter,
                                             Gaudi::XYZVector& Bdl ) const = 0;
-
 };
 #endif // KERNEL_IBINTEGRATOR_H

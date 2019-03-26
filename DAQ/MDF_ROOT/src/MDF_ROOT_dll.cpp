@@ -21,24 +21,24 @@
 #include <sys/stat.h>
 
 #ifdef _WIN32
-#include <io.h>
-static const int S_IRWXU = (S_IREAD|S_IWRITE);
-#define EXPORT __declspec(dllexport)
+#  include <io.h>
+static const int S_IRWXU = ( S_IREAD | S_IWRITE );
+#  define EXPORT __declspec( dllexport )
 #else
-#include <ctype.h>
-#include <unistd.h>
-#define O_BINARY 0
-#define EXPORT
+#  include <ctype.h>
+#  include <unistd.h>
+#  define O_BINARY 0
+#  define EXPORT
 #endif
 
-#include "TUrl.h"
 #include "TFile.h"
 #include "TSystem.h"
-#include <map>
+#include "TUrl.h"
 #include <iostream>
+#include <map>
 namespace {
 
-  typedef std::map<int,TFile*> FileMap;
+  typedef std::map<int, TFile*> FileMap;
 
   //#define MDF_ROOT_DEBUG
 
@@ -46,22 +46,21 @@ namespace {
     static FileMap s_fileMap;
     return s_fileMap;
   }
-  int root_open(const char *filepath, int flags, unsigned int mode) {
-    TFile* f = nullptr;
-    TUrl url(filepath);
-    TString opts="filetype=raw", proto, spec, tmp=url.GetOptions();
+  int root_open( const char* filepath, int flags, unsigned int mode ) {
+    TFile*  f = nullptr;
+    TUrl    url( filepath );
+    TString opts = "filetype=raw", proto, spec, tmp = url.GetOptions();
 
-    if ( tmp.Length()>0 ) {
+    if ( tmp.Length() > 0 ) {
       opts += "&";
       opts += url.GetOptions();
     }
-    url.SetOptions(opts);
+    url.SetOptions( opts );
     proto = url.GetProtocol();
     if ( proto == "file" || proto == "http" ) {
       spec = filepath;
       spec += "?filetype=raw";
-    }
-    else {
+    } else {
       spec = url.GetUrl();
     }
 #ifdef MDF_ROOT_DEBUG
@@ -70,11 +69,10 @@ namespace {
     std::cout << "   protocol:" << url.GetProtocol() << std::endl;
     std::cout << "   specs:   " << (const char*)spec << std::endl;
 #endif
-    if ( (flags&(O_WRONLY|O_CREAT))!=0 && ((mode&S_IWRITE)!= 0) ) {
-      f = TFile::Open(spec,"RECREATE","",0);
-    }
-    else if ( (flags==O_RDONLY || flags==(O_BINARY|O_RDONLY)) && (mode&S_IREAD)!=0 ) {
-      f = TFile::Open(spec);
+    if ( ( flags & ( O_WRONLY | O_CREAT ) ) != 0 && ( ( mode & S_IWRITE ) != 0 ) ) {
+      f = TFile::Open( spec, "RECREATE", "", 0 );
+    } else if ( ( flags == O_RDONLY || flags == ( O_BINARY | O_RDONLY ) ) && ( mode & S_IREAD ) != 0 ) {
+      f = TFile::Open( spec );
     }
     if ( f && !f->IsZombie() ) {
       static int fd = 0xFEED;
@@ -84,112 +82,107 @@ namespace {
     }
     return -1;
   }
-  int root_close(int fd) {
-    auto i = fileMap().find(fd);
+  int root_close( int fd ) {
+    auto i = fileMap().find( fd );
     if ( i != fileMap().end() ) {
       TFile* f = i->second;
       if ( f ) {
         if ( !f->IsZombie() ) f->Close();
         delete f;
       }
-      fileMap().erase(i);
+      fileMap().erase( i );
       return 0;
     }
     return -1;
   }
-  int root_access(const char *nam, int mode)   {
-    return kFALSE==gSystem->AccessPathName(nam, (mode&S_IWRITE) != 0 ? kWritePermission : kReadPermission) ? 0 : -1;
+  int root_access( const char* nam, int mode ) {
+    return kFALSE == gSystem->AccessPathName( nam, ( mode & S_IWRITE ) != 0 ? kWritePermission : kReadPermission ) ? 0
+                                                                                                                   : -1;
   }
-  int root_unlink(const char*) {  return -1; }
-  long long int root_lseek64(int fd, long long int offset, int how) {
-    auto i = fileMap().find(fd);
+  int           root_unlink( const char* ) { return -1; }
+  long long int root_lseek64( int fd, long long int offset, int how ) {
+    auto i = fileMap().find( fd );
     if ( i != fileMap().end() ) {
-      TFile* f = i->second;
+      TFile*   f = i->second;
       Long64_t off;
-      switch(how) {
+      switch ( how ) {
       case SEEK_SET:
-        f->Seek(offset,TFile::kBeg);
+        f->Seek( offset, TFile::kBeg );
         return f->GetRelOffset();
       case SEEK_CUR:
-        f->Seek(offset,TFile::kCur);
+        f->Seek( offset, TFile::kCur );
         return f->GetRelOffset();
       case SEEK_END:
         off = f->GetRelOffset();
-        f->Seek(offset,TFile::kEnd);
-        return offset==0 && off==f->GetSize() ? off : f->GetRelOffset();
+        f->Seek( offset, TFile::kEnd );
+        return offset == 0 && off == f->GetSize() ? off : f->GetRelOffset();
       }
     }
     return -1;
   }
-  long root_lseek(int s, long offset, int how) {
-    return (long)root_lseek64(s,offset,how);
-  }
-  int root_read(int fd, void *ptr, unsigned int size) {
-    auto i = fileMap().find(fd);
+  long root_lseek( int s, long offset, int how ) { return (long)root_lseek64( s, offset, how ); }
+  int  root_read( int fd, void* ptr, unsigned int size ) {
+    auto i = fileMap().find( fd );
     if ( i != fileMap().end() ) {
       TFile* f = i->second;
-      if ( f->GetBytesRead()+size > f->GetSize() ) {
+      if ( f->GetBytesRead() + size > f->GetSize() ) {
 #ifdef MDF_ROOT_DEBUG
-	std::cout << "TFile::Read> Bytes read:" << f->GetBytesRead()
-		  << " Size:"             << f->GetSize()
-		  << " Relative offset:"  << (long)f->GetRelOffset()
-		  << std::endl;
+        std::cout << "TFile::Read> Bytes read:" << f->GetBytesRead() << " Size:" << f->GetSize()
+                  << " Relative offset:" << (long)f->GetRelOffset() << std::endl;
 #endif
-	return 0;
+        return 0;
       }
-      if ( f->ReadBuffer((char*)ptr,size)==0 )
-        return size;
+      if ( f->ReadBuffer( (char*)ptr, size ) == 0 ) return size;
     }
     return -1;
   }
-  int root_write(int fd, const void *ptr, unsigned int size) {
-    auto i = fileMap().find(fd);
+  int root_write( int fd, const void* ptr, unsigned int size ) {
+    auto i = fileMap().find( fd );
     if ( i != fileMap().end() ) {
-      if ( (*i).second->WriteBuffer((const char*)ptr,size)==0 )
-        return size;
+      if ( ( *i ).second->WriteBuffer( (const char*)ptr, size ) == 0 ) return size;
     }
     return -1;
   }
-  int root_stat(const char*   /* path */, struct stat * /*statbuf */)     { return -1; }
-  int root_stat64(const char* /* path */, struct stat64 * /* statbuf */)  { return -1; }
-  int root_fstat (int /* s */,  struct stat* /* statbuf */)               { return -1; }
-  int root_fstat64(int /* s */, struct stat64* /* statbuf */)             { return -1; }
-  char* root_serror()                             { return (char*)gSystem->GetError(); }
-}
+  int   root_stat( const char* /* path */, struct stat* /*statbuf */ ) { return -1; }
+  int   root_stat64( const char* /* path */, struct stat64* /* statbuf */ ) { return -1; }
+  int   root_fstat( int /* s */, struct stat* /* statbuf */ ) { return -1; }
+  int   root_fstat64( int /* s */, struct stat64* /* statbuf */ ) { return -1; }
+  char* root_serror() { return (char*)gSystem->GetError(); }
+} // namespace
 
-extern "C" EXPORT LHCb::PosixIO* MDF_ROOT()  {
+extern "C" EXPORT LHCb::PosixIO* MDF_ROOT() {
   static LHCb::PosixIO p;
-  if ( !p.open )  {
-    p = {};
-    p.unbuffered  = LHCb::PosixIO::COMPLETE;
-    p.open      = root_open;
-    p.close     = root_close;
-    p.read      = root_read;
-    p.write     = root_write;
-    p.lseek     = root_lseek;
-    p.lseek64   = root_lseek64;
-    p.access    = root_access;
-    p.unlink    = root_unlink;
-    p.stat      = root_stat;
-    p.stat64    = root_stat64;
-    p.fstat     = root_fstat;
-    p.fstat64   = root_fstat64;
+  if ( !p.open ) {
+    p            = {};
+    p.unbuffered = LHCb::PosixIO::COMPLETE;
+    p.open       = root_open;
+    p.close      = root_close;
+    p.read       = root_read;
+    p.write      = root_write;
+    p.lseek      = root_lseek;
+    p.lseek64    = root_lseek64;
+    p.access     = root_access;
+    p.unlink     = root_unlink;
+    p.stat       = root_stat;
+    p.stat64     = root_stat64;
+    p.fstat      = root_fstat;
+    p.fstat64    = root_fstat64;
 
-    p.buffered  = LHCb::PosixIO::NONE;
-    p.fopen     = 0;
-    p.fclose    = 0;
-    p.fwrite    = 0;
-    p.fread     = 0;
-    p.fseek     = 0;
-    p.ftell     = 0;
+    p.buffered = LHCb::PosixIO::NONE;
+    p.fopen    = 0;
+    p.fclose   = 0;
+    p.fwrite   = 0;
+    p.fread    = 0;
+    p.fseek    = 0;
+    p.ftell    = 0;
 #ifdef __linux__
-    p.fseek64   = 0;
-    p.ftell64   = 0;
+    p.fseek64 = 0;
+    p.ftell64 = 0;
 #else
-#ifndef WIN32
-    p.fseek64   = 0;
-    p.ftell64   = 0;
-#endif // WIN32
+#  ifndef WIN32
+    p.fseek64 = 0;
+    p.ftell64 = 0;
+#  endif // WIN32
 #endif
     p.directory = LHCb::PosixIO::NONE;
     p.rmdir     = 0;
@@ -198,12 +191,12 @@ extern "C" EXPORT LHCb::PosixIO* MDF_ROOT()  {
     p.readdir   = 0;
     p.closedir  = 0;
 
-    p.serror    = root_serror;
+    p.serror = root_serror;
 
-    p.setopt    = 0;
+    p.setopt = 0;
 #ifdef _WIN32
-    p.serrno    = 0;
-    p.ioerrno   = 0;
+    p.serrno  = 0;
+    p.ioerrno = 0;
 #endif
   }
   return &p;

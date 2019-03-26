@@ -12,70 +12,52 @@
 
 DECLARE_COMPONENT( PackVeloCluster )
 
-PackVeloCluster::PackVeloCluster(const std::string& name, ISvcLocator* svcLocator)
-  : GaudiAlgorithm(name , svcLocator)
-{
-}
+PackVeloCluster::PackVeloCluster( const std::string& name, ISvcLocator* svcLocator )
+    : GaudiAlgorithm( name, svcLocator ) {}
 
 StatusCode PackVeloCluster::execute() {
-  if (msgLevel(MSG::DEBUG)) {
-    debug() << "==> Execute" << endmsg;
-  }
+  if ( msgLevel( MSG::DEBUG ) ) { debug() << "==> Execute" << endmsg; }
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if (!m_alwaysOutput && !exist<LHCb::VeloClusters>(m_inputName)) {
-    return StatusCode::SUCCESS;
-  }
+  if ( !m_alwaysOutput && !exist<LHCb::VeloClusters>( m_inputName ) ) { return StatusCode::SUCCESS; }
 
   // Check to see if packed output already exists. If it does print a warning and return
-  auto out = getIfExists<LHCb::PackedClusters>(m_outputName);
-  if (out) {
-    return Warning("Packed Clusters already exist at '" + m_outputName + "' -> Abort",
-                   StatusCode::SUCCESS);
+  auto out = getIfExists<LHCb::PackedClusters>( m_outputName );
+  if ( out ) {
+    return Warning( "Packed Clusters already exist at '" + m_outputName + "' -> Abort", StatusCode::SUCCESS );
   }
 
   // Create and save the output container
   out = new LHCb::PackedClusters();
   out->setPackingVersion( LHCb::PackedClusters::defaultPackingVersion() );
-  put(out, m_outputName);
+  put( out, m_outputName );
 
   // Load the input. If not existing just return
-  const auto clusters = getIfExists<LHCb::VeloClusters>(m_inputName);
-  if (!clusters) {
-    return StatusCode::SUCCESS;
-  }
+  const auto clusters = getIfExists<LHCb::VeloClusters>( m_inputName );
+  if ( !clusters ) { return StatusCode::SUCCESS; }
 
   // Pack the clusters
-  for (const auto& cluster : *clusters)
-  {
-    if (msgLevel(MSG::VERBOSE)) {
-      verbose() << "Packing " << cluster << endmsg;
-    }
+  for ( const auto& cluster : *clusters ) {
+    if ( msgLevel( MSG::VERBOSE ) ) { verbose() << "Packing " << cluster << endmsg; }
 
-    out->addVeloCluster(cluster);
+    out->addVeloCluster( cluster );
   }
 
   // If requested, remove the input data from the TES and delete
-  if ( UNLIKELY(m_deleteInput) )
-  {
+  if ( UNLIKELY( m_deleteInput ) ) {
     const StatusCode sc = evtSvc()->unregisterObject( clusters );
-    if ( sc.isSuccess() )
-    {
+    if ( sc.isSuccess() ) {
       delete clusters;
+    } else {
+      return Error( "Failed to delete input data as requested", sc );
     }
-    else
-    {
-      return Error("Failed to delete input data as requested", sc );
-    }
-  }
-  else
-  {
+  } else {
     // Clear the registry address of the unpacked container, to prevent reloading
     clusters->registry()->setAddress( 0 );
   }
 
   // Summary of the size of the packed container
-  counter("# PackedSTClusters") += out->clusters().size();
+  counter( "# PackedSTClusters" ) += out->clusters().size();
 
   return StatusCode::SUCCESS;
 }

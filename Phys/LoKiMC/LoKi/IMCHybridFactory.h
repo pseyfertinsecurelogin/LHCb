@@ -38,18 +38,16 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class IMCHybridFactory IMCHybridFactory.h LoKi/IMCHybridFactory.h
    *  The abstract interface to "hybrid factory"
    *  @author Vanya BELYAEV ibelayev@physics.syr.edu
    *  @date   2007-06-10
    */
-  struct GAUDI_API IMCHybridFactory : extend_interfaces<IAlgTool>
-  {
+  struct GAUDI_API IMCHybridFactory : extend_interfaces<IAlgTool> {
     // ========================================================================
-    DeclareInterfaceID( IMCHybridFactory , 6 , 0 ) ;
+    DeclareInterfaceID( IMCHybridFactory, 6, 0 );
     // ========================================================================
     // predicates:
     // ========================================================================
@@ -59,10 +57,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCCut&  cuts         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCCut& cuts, const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -70,10 +65,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCVCut& cuts         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVCut& cuts, const std::string& context = "" ) = 0;
     // ========================================================================
     // functions:
     // ========================================================================
@@ -83,10 +75,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCFun&  func         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCFun& func, const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -94,10 +83,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCVFun& func         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVFun& func, const std::string& context = "" ) = 0;
     // ========================================================================
     // maps:
     // ========================================================================
@@ -107,10 +93,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCMap&  func         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCMap& func, const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -118,10 +101,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCVMap& func         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVMap& func, const std::string& context = "" ) = 0;
     // ========================================================================
     // pipes:
     // ========================================================================
@@ -131,10 +111,7 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&   pycode       ,
-      LoKi::Types::MCPipe& func         ,
-      const std::string&   context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCPipe& func, const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -142,10 +119,8 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&    pycode       ,
-      LoKi::Types::MCVPipe& func         ,
-      const std::string&    context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVPipe& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
     // fun-vals:
     // ========================================================================
@@ -155,10 +130,8 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&     pycode       ,
-      LoKi::Types::MCFunVal& func         ,
-      const std::string&     context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCFunVal& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -166,10 +139,8 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&      pycode       ,
-      LoKi::Types::MCVFunVal& func         ,
-      const std::string&      context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVFunVal& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
     // cut-vals:
     // ========================================================================
@@ -179,10 +150,8 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&     pycode       ,
-      LoKi::Types::MCCutVal& func         ,
-      const std::string&     context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCCutVal& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -190,10 +159,8 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&      pycode       ,
-      LoKi::Types::MCVCutVal& func         ,
-      const std::string&      context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVCutVal& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
     // sources:
     // ========================================================================
@@ -203,10 +170,8 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&      pycode       ,
-      LoKi::Types::MCSource&  func         ,
-      const std::string&      context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCSource& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
     /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
@@ -214,12 +179,10 @@ namespace LoKi
      *  @param context the code fragment to be pre-executed
      *  @return StatusCode
      */
-    virtual StatusCode get
-    ( const std::string&      pycode       ,
-      LoKi::Types::MCVSource& func         ,
-      const std::string&      context = "" ) = 0 ;
+    virtual StatusCode get( const std::string& pycode, LoKi::Types::MCVSource& func,
+                            const std::string& context = "" ) = 0;
     // ========================================================================
-  } ;
+  };
 } // end of namespace LoKi
 // ============================================================================
 // The END

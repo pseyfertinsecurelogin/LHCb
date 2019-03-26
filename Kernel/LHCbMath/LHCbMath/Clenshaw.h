@@ -17,24 +17,18 @@
 // STD & STL
 // ============================================================================
 #include <cmath>
-#include <utility>
 #include <iterator>
+#include <utility>
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
-  namespace Math
-  {
+  namespace Math {
     // ========================================================================
     /** Namespace with collection of Clenshaw summation algorithms
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2015-08-06
-     *  Version           $Revision$
-     *  Last modification $Date$
-     *                 by $Author$
      */
-    namespace Clenshaw
-    {
+    namespace Clenshaw {
       // ======================================================================
       /** Clenshaw algorithm for summation of monomial series (aka "Horner's rule")
        *  \f$  f_1(x) = \sum_{i=0}^{n} a_i x^i     \f$ and
@@ -81,24 +75,17 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      std::pair<long double,long double>
-      monomial_sum
-      ( ITERATOR          first  ,
-        ITERATOR          last   ,
-        const long double x      )
-      {
-        if ( first == last ) { return std::make_pair(0,0) ; }
+      inline std::pair<long double, long double> monomial_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return std::make_pair( 0, 0 ); }
         //
-        long double p = *first ;
-        long double q = 0      ;
-        while ( ++first != last )
-        {
-          q = std::fma ( x , q ,  p     ) ; // x * q + p       ;
-          p = std::fma ( x , p , *first ) ; // x * p + *first  ;
+        long double p = *first;
+        long double q = 0;
+        while ( ++first != last ) {
+          q = std::fma( x, q, p );      // x * q + p       ;
+          p = std::fma( x, p, *first ); // x * p + *first  ;
         }
         //
-        return std::make_pair ( p , q ) ;
+        return std::make_pair( p, q );
       }
       // ======================================================================
       /** Clenshaw algorithm for summation of Legendre series
@@ -110,31 +97,24 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      legendre_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
+      inline long double legendre_sum( ITERATOR first, ITERATOR last, const long double x ) {
         //
-        if ( first == last ) { return 0 ; }
+        if ( first == last ) { return 0; }
         //
-        long double b2 = 0 ;
-        long double b1 = 0 ;
-        long double b0 = 0 ;
-        while ( first != last )
-        {
-          --last ;
-          const int j          =  last - first ;
-          const long double pj = *last ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
+        while ( first != last ) {
+          --last;
+          const int         j  = last - first;
+          const long double pj = *last;
           //
-          b2 = b1 ;
-          b1 = b0 ;
-          b0 = pj + ( 2 * j + 1 ) * x * b1 / ( j + 1 ) - ( j + 1 ) *  b2 / ( j + 2 ) ;
+          b2 = b1;
+          b1 = b0;
+          b0 = pj + ( 2 * j + 1 ) * x * b1 / ( j + 1 ) - ( j + 1 ) * b2 / ( j + 2 );
         }
         //
-        return b0 ;
+        return b0;
       }
       // ======================================================================
       /** Clenshaw algorithm for summation of Chebyshev series
@@ -146,30 +126,23 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      chebyshev_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double chebyshev_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2 = 0 ;
-        long double b1 = 0 ;
-        long double b0 = 0 ;
-        while ( first != last )
-        {
-          --last  ;
-          b2 = b1 ;
-          b1 = b0 ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
+        while ( first != last ) {
+          --last;
+          b2 = b1;
+          b1 = b0;
           // b0 = (*ia) + 2 * x * b1 - b2 ;
-          b0 = std::fma ( 2 * x , b1 , (*last) - b2 ) ;
+          b0 = std::fma( 2 * x, b1, ( *last ) - b2 );
         }
         //
-        b0 += *first ;
+        b0 += *first;
         //
-        return 0.5 * ( b0 - b2) ;
+        return 0.5 * ( b0 - b2 );
       }
       // ======================================================================
       /** Clenshaw algorithm for summation of Hermite's series
@@ -180,30 +153,23 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      hermite_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double hermite_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2 = 0 ;
-        long double b1 = 0 ;
-        long double b0 = 0 ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
         //
-        unsigned long k = std::distance ( first , last ) ;
-        while ( first != last )
-        {
-          --last  ;
-          b2 = b1 ;
-          b1 = b0 ;
-          b0 = std::fma ( x , b1 , (*last) - k * b2 ) ;
-          --k     ;
+        unsigned long k = std::distance( first, last );
+        while ( first != last ) {
+          --last;
+          b2 = b1;
+          b1 = b0;
+          b0 = std::fma( x, b1, ( *last ) - k * b2 );
+          --k;
         }
         //
-        return std::fma ( x , b1 , (*first) - b2  ) ;
+        return std::fma( x, b1, ( *first ) - b2 );
       }
       // ======================================================================
       // Trigonometric sums
@@ -215,29 +181,22 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      cosine_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double cosine_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2 = 0 ;
-        long double b1 = 0 ;
-        long double b0 = 0 ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
         //
-        const long double cosx = std::cos ( x ) ;
-        while ( first != last )
-        {
-          --last  ;
-          b2 = b1 ;
-          b1 = b0 ;
-          b0 = std::fma ( 2 * cosx  , b1 , *last - b2 ) ;
+        const long double cosx = std::cos( x );
+        while ( first != last ) {
+          --last;
+          b2 = b1;
+          b1 = b0;
+          b0 = std::fma( 2 * cosx, b1, *last - b2 );
         }
         //
-        return std::fma ( cosx ,  b1 , 0.5L * (*first) - b2 ) ;
+        return std::fma( cosx, b1, 0.5L * ( *first ) - b2 );
       }
       // ======================================================================
       /** Clenshaw algorithm for summation of sine-series
@@ -247,32 +206,25 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      sine_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double sine_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2   = 0 ;
-        long double b1   = 0 ;
-        long double b0   = 0 ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
         //
-        long double sinx = std::sin ( x ) ;
-        long double cosx = std::cos ( x ) ;
+        long double sinx = std::sin( x );
+        long double cosx = std::cos( x );
         //
-        while ( 1 < 2 )
-        {
-          b2 = b1 ;
-          b1 = b0 ;
-          if ( first == last ) { break ; }  // BREAK
-          --last  ;   // advace
-          b0 = std::fma ( 2 * cosx  , b1 , *last - b2 ) ;
+        while ( 1 < 2 ) {
+          b2 = b1;
+          b1 = b0;
+          if ( first == last ) { break; } // BREAK
+          --last;                         // advace
+          b0 = std::fma( 2 * cosx, b1, *last - b2 );
         }
         //
-        return b1 * sinx ;
+        return b1 * sinx;
       }
       // ======================================================================
       /** Clenshaw algorithm for summation of Fourier-series
@@ -282,48 +234,41 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      fourier_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double fourier_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2s  = 0 ;
-        long double b1s  = 0 ;
-        long double b0s  = 0 ;
-        long double b2c  = 0 ;
-        long double b1c  = 0 ;
-        long double b0c  = 0 ;
+        long double b2s = 0;
+        long double b1s = 0;
+        long double b0s = 0;
+        long double b2c = 0;
+        long double b1c = 0;
+        long double b0c = 0;
         //
-        long double sinx = std::sin ( x ) ;
-        long double cosx = std::cos ( x ) ;
+        long double sinx = std::sin( x );
+        long double cosx = std::cos( x );
         //
-        while ( first != last )
-        {
+        while ( first != last ) {
           //
           // cosine
           //
-          --last    ;   // advance
-          b2c = b1c ;
-          b1c = b0c ;
-          b0c = std::fma ( 2 * cosx   , b1c , *last - b2c ) ;
+          --last; // advance
+          b2c = b1c;
+          b1c = b0c;
+          b0c = std::fma( 2 * cosx, b1c, *last - b2c );
           //
           // sine
           //
-          b2s = b1s ;
-          b1s = b0s ;
+          b2s = b1s;
+          b1s = b0s;
           //
-          if ( last == first )  { break ; }
+          if ( last == first ) { break; }
           //
-          --last    ;   // advance
-          b0s = std::fma ( 2 * cosx   , b1s , *last - b2s ) ;
+          --last; // advance
+          b0s = std::fma( 2 * cosx, b1s, *last - b2s );
           //
         }
         //
-        return std::fma ( cosx ,  b1c , 0.5 * (*first) - b2c + b1s * sinx ) ;
+        return std::fma( cosx, b1c, 0.5 * ( *first ) - b2c + b1s * sinx );
       }
       // ======================================================================
       /** Clenshaw algorithm for Fejer sums for cosine-series
@@ -336,34 +281,27 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      fejer_cosine_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double fejer_cosine_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2 = 0 ;
-        long double b1 = 0 ;
-        long double b0 = 0 ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
         //
-        const long double cosx = std::cos ( x ) ;
+        const long double cosx = std::cos( x );
         //
-        const unsigned long N = std::distance ( first , last ) ;
-        const long double   d = 1.0L/N ;
-        unsigned long k = 0 ;
-        while ( first  != last )
-        {
-          ++k     ;
-          --last  ;
-          b2 = b1 ;
-          b1 = b0 ;
-          b0 = std::fma ( 2 * cosx  , b1 , ( *last ) * k * d  - b2 ) ;
+        const unsigned long N = std::distance( first, last );
+        const long double   d = 1.0L / N;
+        unsigned long       k = 0;
+        while ( first != last ) {
+          ++k;
+          --last;
+          b2 = b1;
+          b1 = b0;
+          b0 = std::fma( 2 * cosx, b1, ( *last ) * k * d - b2 );
         }
         //
-        return std::fma ( cosx ,  b1 , 0.5L * (*first) - b2 ) ;
+        return std::fma( cosx, b1, 0.5L * ( *first ) - b2 );
       }
       // ======================================================================
       /** Clenshaw algorithm for Fejer sums for sine-series
@@ -376,36 +314,29 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      fejer_sine_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double fejer_sine_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2   = 0 ;
-        long double b1   = 0 ;
-        long double b0   = 0 ;
+        long double b2 = 0;
+        long double b1 = 0;
+        long double b0 = 0;
         //
-        long double sinx = std::sin ( x ) ;
-        long double cosx = std::cos ( x ) ;
+        long double sinx = std::sin( x );
+        long double cosx = std::cos( x );
         //
-        const unsigned long N = std::distance ( first , last ) ;
-        const long double   d = 1.0L/N ;
-        unsigned long       k = 0 ;
+        const unsigned long N = std::distance( first, last );
+        const long double   d = 1.0L / N;
+        unsigned long       k = 0;
         //
-        while ( first != last )
-        {
-          ++k     ;
-          --last  ;
-          b2 = b1 ;
-          b1 = b0 ;
-          b0 = std::fma ( 2 * cosx  , b1 , ( *last ) * k * d - b2 ) ;
+        while ( first != last ) {
+          ++k;
+          --last;
+          b2 = b1;
+          b1 = b0;
+          b0 = std::fma( 2 * cosx, b1, ( *last ) * k * d - b2 );
         }
         //
-        return b1 * sinx ;
+        return b1 * sinx;
       }
       // ======================================================================
       /** Clenshaw algorithm for Fejer sums for Fourier-series
@@ -416,59 +347,52 @@ namespace Gaudi
        *  @date 2015-02-10
        */
       template <class ITERATOR>
-      inline
-      long double
-      fejer_sum
-      ( ITERATOR           first ,
-        ITERATOR           last  ,
-        const long double  x     )
-      {
-        if ( first == last ) { return 0 ; }
+      inline long double fejer_sum( ITERATOR first, ITERATOR last, const long double x ) {
+        if ( first == last ) { return 0; }
         //
-        long double b2s  = 0 ;
-        long double b1s  = 0 ;
-        long double b0s  = 0 ;
-        long double b2c  = 0 ;
-        long double b1c  = 0 ;
-        long double b0c  = 0 ;
+        long double b2s = 0;
+        long double b1s = 0;
+        long double b0s = 0;
+        long double b2c = 0;
+        long double b1c = 0;
+        long double b0c = 0;
         //
-        long double sinx = std::sin ( x ) ;
-        long double cosx = std::cos ( x ) ;
+        long double sinx = std::sin( x );
+        long double cosx = std::cos( x );
         //
-        const unsigned long N = std::distance ( first , last ) ;
-        const long double   d = 1.0L/( N + 1 ) ;
-        unsigned long   k     = 0 ;
-        while ( first != last )
-        {
-          ++k  ;
+        const unsigned long N = std::distance( first, last );
+        const long double   d = 1.0L / ( N + 1 );
+        unsigned long       k = 0;
+        while ( first != last ) {
+          ++k;
           //
           // cosine
           //
-          --last    ;   // advance
-          b2c = b1c ;
-          b1c = b0c ;
-          b0c = std::fma ( 2 * cosx , b1c , ( *last ) * 2 * k * d  - b2c ) ;
+          --last; // advance
+          b2c = b1c;
+          b1c = b0c;
+          b0c = std::fma( 2 * cosx, b1c, ( *last ) * 2 * k * d - b2c );
           //
           // sine
           //
-          b2s = b1s ;
-          b1s = b0s ;
+          b2s = b1s;
+          b1s = b0s;
           //
-          if ( last == first )  { break ; }
+          if ( last == first ) { break; }
           //
-          --last    ;   // advance
-          b0s = std::fma ( 2 * cosx , b1s ,  ( *last ) * 2 * k * d  - b2s ) ;
+          --last; // advance
+          b0s = std::fma( 2 * cosx, b1s, ( *last ) * 2 * k * d - b2s );
           //
         }
         //
-        return std::fma ( cosx ,  b1c , 0.5 * (*first) - b2c + b1s * sinx ) ;
+        return std::fma( cosx, b1c, 0.5 * ( *first ) - b2c + b1s * sinx );
       }
       // ======================================================================
-    } //                             The end of namespace Gaudi::Math::Clenshaw
+    } // namespace Clenshaw
     // ========================================================================
-  } //                                         The end of namespace Gaudi::Math
+  } // namespace Math
   // ==========================================================================
-} //                                                 The end of namespace Gaudi
+} // namespace Gaudi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

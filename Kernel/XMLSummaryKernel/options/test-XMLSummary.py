@@ -21,31 +21,30 @@ from XMLSummaryKernel.Configuration import XMLSummary
 #---------------------------------------------------------------------------
 # Setup read and write of a ROOT dst file
 #---------------------------------------------------------------------------
-ApplicationMgr().HistogramPersistency = "NONE";
-ApplicationMgr().EvtMax = 5;
-EventSelector().PrintFreq = 1;
+ApplicationMgr().HistogramPersistency = "NONE"
+ApplicationMgr().EvtMax = 5
+EventSelector().PrintFreq = 1
 
 # Set up persistency
 LHCbApp()
 
 #Define the input file and output file to copy
-importOptions( "$XMLSUMMARYKERNELROOT/options/RootDst.py")
+importOptions("$XMLSUMMARYKERNELROOT/options/RootDst.py")
 
 #---------------------------------------------------------------------------
 # Add a counting algorithm
 #---------------------------------------------------------------------------
 
-EvtAlg=EventCountAlg("TestCounter")
+EvtAlg = EventCountAlg("TestCounter")
 
-ApplicationMgr().TopAlg+=[EvtAlg]
+ApplicationMgr().TopAlg += [EvtAlg]
 
 #---------------------------------------------------------------------------
 # Setup XMLSummarySvc
 #---------------------------------------------------------------------------
 
-xmlsummary=XMLSummarySvc("CounterSummarySvc")
-xmlsummary.OutputLevel=1
-xmlsummary.UpdateFreq=1
+xmlsummary = XMLSummarySvc("CounterSummarySvc")
+xmlsummary.OutputLevel = 1
+xmlsummary.UpdateFreq = 1
 
-XMLSummary().XMLSummary="summary.xml"
-
+XMLSummary().XMLSummary = "summary.xml"

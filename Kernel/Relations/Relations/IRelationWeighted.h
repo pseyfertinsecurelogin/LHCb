@@ -8,10 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: IRelationWeighted.h,v 1.7 2009-04-24 15:26:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.7 $
-// ============================================================================
 #ifndef RELATIONS_IRELATIONWeighted_H
 #define RELATIONS_IRELATIONWeighted_H 1
 // ============================================================================
@@ -20,8 +16,8 @@
 // Relations
 // ============================================================================
 #include "Relations/IRelationWeightedBase.h"
-#include "Relations/RelationWeightedTypeTraits.h"
 #include "Relations/RelationUtils.h"
+#include "Relations/RelationWeightedTypeTraits.h"
 // ============================================================================
 
 /** @class IRelationWeighted IRelationWeighted.h
@@ -33,51 +29,50 @@
  *  @date   25/01/2002
  */
 
-template< class FROM , class TO , class WEIGHT>
-class IRelationWeighted : public IRelationWeightedBase
-{
+template <class FROM, class TO, class WEIGHT>
+class IRelationWeighted : public IRelationWeightedBase {
 public:
   // ==========================================================================
   /// the type traits structure
-  typedef Relations::RelationWeightedTypeTraits<FROM,TO,WEIGHT> TypeTraits ;
+  typedef Relations::RelationWeightedTypeTraits<FROM, TO, WEIGHT> TypeTraits;
   /// actual "FROM" type
-  typedef typename TypeTraits::From_                  From_            ;
-  typedef typename TypeTraits::From                   From             ;
+  typedef typename TypeTraits::From_ From_;
+  typedef typename TypeTraits::From  From;
   /// actual "TO" type
-  typedef typename TypeTraits::To_                    To_              ;
-  typedef typename TypeTraits::To                     To               ;
+  typedef typename TypeTraits::To_ To_;
+  typedef typename TypeTraits::To  To;
   /// actual "WEIGHT" type
-  typedef typename TypeTraits::Weight_                Weight_          ;
-  typedef typename TypeTraits::Weight                 Weight           ;
+  typedef typename TypeTraits::Weight_ Weight_;
+  typedef typename TypeTraits::Weight  Weight;
   /// iterator type
-  typedef typename TypeTraits::iterator               iterator         ;
+  typedef typename TypeTraits::iterator iterator;
   /// iterator range
-  typedef typename TypeTraits::Range                  Range            ;
+  typedef typename TypeTraits::Range Range;
   /// shortcut to own type
-  typedef IRelationWeighted<FROM,TO,WEIGHT>           OwnType          ;
+  typedef IRelationWeighted<FROM, TO, WEIGHT> OwnType;
   /// shortcut to "direct" type
-  typedef IRelationWeighted<FROM,TO,WEIGHT>           DirectType       ;
+  typedef IRelationWeighted<FROM, TO, WEIGHT> DirectType;
   /// shortcut to "inverse" type
-  typedef IRelationWeighted<TO,FROM,WEIGHT>           InverseType      ;
+  typedef IRelationWeighted<TO, FROM, WEIGHT> InverseType;
   /// get the entry:
-  typedef typename TypeTraits::Entry                  Entry            ;
+  typedef typename TypeTraits::Entry Entry;
   // ==========================================================================
 public:
   // ==========================================================================
   /** retrive all relations from the object
    *  - relations are returned in the form of iterator pair:
-   *  @code 
+   *  @code
    *      IRelation<FROM,TO,WEIGHT>* irel   = ... ;
    *      From_                      object = ... ;
    *      Range r = irel->relations( object );
    *  @endcode
    *  - the number of related objects is:
-   *  @code 
+   *  @code
    *     const unsigned nRel    = r.size() ;
    *     // const unsigned nRel = r.end()  - r.begin() ; // the same!
    *     // const unsigned nRel = r.second - r.first   ; // the same!
-   *  @endcode 
-   *  - the related elements could be retrieved using the explicit loop 
+   *  @endcode
+   *  - the related elements could be retrieved using the explicit loop
    *  @code
    *     for( iterator it = r.begin() ; r.end() != it ; ++it )
    *        {
@@ -87,43 +82,43 @@ public:
    *          Weight weight = it->weight() ; // "weight" of the relation
    *          From   from   = it->from()   ; // again "from" object!
    *        };
-   *  @endcode 
+   *  @endcode
    *  @param  object  the object
    *  @return pair of iterators for output relations
    */
-  virtual Range relations ( From_ object ) const = 0 ;
+  virtual Range relations( From_ object ) const = 0;
   /** retrive ALL relations from ALL objects
-   *  - relations are returned in the form of @p Range object 
-   *  @code 
+   *  - relations are returned in the form of @p Range object
+   *  @code
    *     IRelation<FROM,TO>* irel   = ...    ;
    *     Range r = irel->relations()         ;
-   *  @endcode 
+   *  @endcode
    *  - the total number of relations is:
-   *  @code 
+   *  @code
    *     const unsigned nRel    = r.size()             ;
    *     // const unsigned nRel = r.end()  - r.begin() ; // the same!
    *     // const unsigned nRel = r.second - r.first   ; // the same!
-   *  @endcode 
+   *  @endcode
    *  @return pair of iterators for output relations
    */
-  virtual Range      relations () const = 0 ;
+  virtual Range relations() const = 0;
   /** retrive all relations from the object which has weigth
    *  larger/smaller than the threshold value
-   *  - relations are returned in the form of @p Range object 
-   *  @code 
+   *  - relations are returned in the form of @p Range object
+   *  @code
    *     IRelation<FROM,TO>* irel      = ... ;
    *     From_               object    = ... ;
    *     Weight_             threshold = ... ;
    *     Range r = irel->relations( object , threshold , true );
-   *  @endcode 
+   *  @endcode
    *  - the total number of relations is:
-   *  @code 
+   *  @code
    *     const unsigned nRel    = r.size()             ;
    *     // const unsigned nRel = r.end()  - r.begin() ; // the same!
    *     // const unsigned nRel = r.second - r.first   ; // the same!
-   *  @endcode 
-   *  - the related elements could be retrieved using the explicit loop 
-   *  @code 
+   *  @endcode
+   *  - the related elements could be retrieved using the explicit loop
+   *  @code
    *     for( iterator it = r.begin() ; r.end() != it ; ++it )
    *        {
    *          // extract and use the relation
@@ -132,33 +127,32 @@ public:
    *          Weight weight = it->weight() ; // "weight" of the relation
    *          From   from   = it->from()   ; // again "from" object!
    *        };
-   *  @endcode 
-   *  Here the obtained @p weight will always be larger that @p threshold 
+   *  @endcode
+   *  Here the obtained @p weight will always be larger that @p threshold
    *  @param  object    the object
    *  @param  threshold threshold value for the weight
    *  @param  flag      flag for larger/smaller
    *  @return pair of iterators for output relations
    */
-  virtual Range relations 
-  ( From_ object , Weight_ threshold , const bool flag ) const = 0 ;
+  virtual Range relations( From_ object, Weight_ threshold, const bool flag ) const = 0;
   /** retrive all relations from the object which has weigth
-   *  withing the specified range 
-   *  - relations are returned in the form of @p Range object 
-   *  @code 
+   *  withing the specified range
+   *  - relations are returned in the form of @p Range object
+   *  @code
    *     IRelation<FROM,TO>* irel      = ... ;
    *     From_               object    = ... ;
    *     Weight_             low       =  ... ;
    *     Weight_             high      = ... ;
    *     Range r = irel->inRange ( object , low , high );
-   *  @endcode 
+   *  @endcode
    *  - the total number of relations is:
-   *  @code 
+   *  @code
    *     const unsigned nRel    = r.size()             ;
    *     // const unsigned nRel = r.end()  - r.begin() ; // the same!
    *     // const unsigned nRel = r.second - r.first   ; // the same!
-   *  @endcode 
-   *  - the related elements could be retrieved using the explicit loop 
-   *  @code 
+   *  @endcode
+   *  - the related elements could be retrieved using the explicit loop
+   *  @code
    *     for( iterator it = r.begin() ; r.end() != it ; ++it )
    *        {
    *          // extract and use the relation
@@ -167,21 +161,21 @@ public:
    *          Weight weight = it->weight() ; // "weight" of the relation
    *          From   from   = it->from()   ; // again "from" object!
    *        };
-   *  @endcode 
-   *  Here the obtained @p weight will always be larger that @p threshold 
+   *  @endcode
+   *  Here the obtained @p weight will always be larger that @p threshold
    *  @param  object    the object
    *  @param  low       lower limit of range
    *  @param  high      upper limit of range
    *  @return pair of iterators for output relations
    */
-  virtual Range inRange ( From_ object , Weight_ low , Weight_ high ) const = 0 ;
+  virtual Range inRange( From_ object, Weight_ low, Weight_ high ) const = 0;
   /** make the relation between 2 objects
    *  Example:
    *  @code
    *    IRelation<FROM,TO,WEIGHT>* irel    = ... ;
    *    From_                      object1 = ... ;
    *    To_                        object2 = ... ;
-   *    Weight_                    weight  = ... ; 
+   *    Weight_                    weight  = ... ;
    *    irel->relate( object1 , object2 , weight );
    *  @endcode
    *  @param  object1 the first object
@@ -189,10 +183,9 @@ public:
    *  @param  weight  the weigth for this relation
    *  @return status  code
    */
-  virtual StatusCode relate
-  ( From_ object1 , To_ object2 , Weight_ weight ) = 0 ;
-  /// add the relation entry 
-  virtual StatusCode add    ( const Entry& entry ) = 0 ;
+  virtual StatusCode relate( From_ object1, To_ object2, Weight_ weight ) = 0;
+  /// add the relation entry
+  virtual StatusCode add( const Entry& entry ) = 0;
   /** remove the concrete relation between objects
    *   - if there are no relations between the given object
    *     the error code will be returned
@@ -207,7 +200,7 @@ public:
    *  @param  object2 the second object
    *  @return status  code
    */
-  virtual StatusCode remove ( From_ object1 , To_ object2 ) = 0 ;
+  virtual StatusCode remove( From_ object1, To_ object2 ) = 0;
   /** remove all relations FROM the defined object
    *   - if there are no relations from the given onject
    *     the error code will be returned
@@ -220,7 +213,7 @@ public:
    *  @param  object the object
    *  @return status code
    */
-  virtual StatusCode removeFrom ( From_ object )  = 0 ;
+  virtual StatusCode removeFrom( From_ object ) = 0;
   /** remove all relations TO the defined object
    *   - if there are no relations to the given object
    *     the error code will be returned
@@ -233,10 +226,10 @@ public:
    *  @param  object the object
    *  @return status code
    */
-  virtual StatusCode removeTo ( To_ object )  = 0 ;
+  virtual StatusCode removeTo( To_ object ) = 0;
   /** filter out the relations FROM the defined object, which
    *  have a weight larger(smaller)than the threshold weight
-   *  (driven by boolean third argument) 
+   *  (driven by boolean third argument)
    *  Example:
    *  @code
    *    IRelation<FROM,TO,WEIGHT>* irel      = ... ;
@@ -249,11 +242,10 @@ public:
    *  @param  flag      flag for larger/smaller
    *  @return status code
    */
-  virtual StatusCode filterFrom
-  ( From_ object , Weight_ threshold , const bool flag )  = 0 ;
+  virtual StatusCode filterFrom( From_ object, Weight_ threshold, const bool flag ) = 0;
   /** filter out the relations TO the defined object, which
    *  have a weight larger/smaller than the threshold weight
-   *  (driven by boolean third argument) 
+   *  (driven by boolean third argument)
    *  Example:
    *  @code
    *    IRelation<FROM,TO,WEIGHT>* irel      = ... ;
@@ -266,11 +258,10 @@ public:
    *  @param  flag      flag for larger/smaller
    *  @return status code
    */
-  virtual StatusCode filterTo
-  ( To_ object , Weight_ threshold , const bool flag )  = 0 ;
+  virtual StatusCode filterTo( To_ object, Weight_ threshold, const bool flag ) = 0;
   /** filter out all relations which
    *  have a weight larger/smaller than the threshold weight
-   *  (driven by boolean second argument) 
+   *  (driven by boolean second argument)
    *  Example:
    *  @code
    *    IRelation<FROM,TO,WEIGHT>* irel      = ... ;
@@ -281,7 +272,7 @@ public:
    *  @param  flag      flag for larger/smaller
    *  @return status code
    */
-  virtual StatusCode filter ( Weight_ threshold , const bool flag )  = 0 ;
+  virtual StatusCode filter( Weight_ threshold, const bool flag ) = 0;
   // ==========================================================================
 public:
   // ==========================================================================
@@ -294,17 +285,15 @@ public:
    *  @see IInterface
    *  @return the uniqie interface identifier
    */
-  static const InterfaceID& interfaceID()
-  {
-    static const InterfaceID s_iid =
-      Relations::interfaceID( System::typeinfoName(typeid(OwnType))) ;
-    return s_iid ;
+  static const InterfaceID& interfaceID() {
+    static const InterfaceID s_iid = Relations::interfaceID( System::typeinfoName( typeid( OwnType ) ) );
+    return s_iid;
   }
   // ==========================================================================
 protected:
   // ==========================================================================
   /// destructor (virtual and protected)
-  virtual ~IRelationWeighted(){}
+  virtual ~IRelationWeighted() {}
   // ==========================================================================
 };
 // ============================================================================

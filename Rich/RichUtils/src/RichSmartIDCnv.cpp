@@ -23,9 +23,7 @@
 // local
 #include "RichUtils/RichSmartIDCnv.h"
 
-MsgStream &
-Rich::SmartIDGlobalOrdering::fillStream( MsgStream &os ) const
-{
+MsgStream& Rich::SmartIDGlobalOrdering::fillStream( MsgStream& os ) const {
   return os << "["
             << " pdX=" << globalPdX() << " pdY=" << globalPdY() << " pixX=" << globalPixelX()
             << " pixY=" << globalPixelY() << " ]";

@@ -8,37 +8,31 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef    DETDESC_MATERIALEXCEPTION_H
-#define    DETDESC_MATERIALEXCEPTION_H
+#ifndef DETDESC_MATERIALEXCEPTION_H
+#define DETDESC_MATERIALEXCEPTION_H
 /// GaudiKernel
 #include "GaudiKernel/GaudiException.h"
 //// STL
-#include <iostream>
 #include <exception>
+#include <iostream>
 //
 class Material;
 class MSgStream;
 ///
 
 ///
-class MaterialException: public GaudiException
-{
+class MaterialException : public GaudiException {
   ///
 public:
   ///
-  MaterialException( const std::string    & message     ,
-                     const Material       * mat     = nullptr );
+  MaterialException( const std::string& message, const Material* mat = nullptr );
   ///
-  MaterialException( const std::string    &  message    ,
-                     const GaudiException &  Exception  ,
-                     const Material       *  mat    = nullptr );
+  MaterialException( const std::string& message, const GaudiException& Exception, const Material* mat = nullptr );
   ///
-  std::ostream& printOut ( std::ostream& os = std::cerr ) const override;
-  MsgStream&    printOut ( MsgStream&    os             ) const override;
+  std::ostream& printOut( std::ostream& os = std::cerr ) const override;
+  MsgStream&    printOut( MsgStream& os ) const override;
   ///
-  inline GaudiException* clone() const override {
-    return new MaterialException( *this );
-  }
+  inline GaudiException* clone() const override { return new MaterialException( *this ); }
   ///
 private:
   ///
@@ -47,4 +41,4 @@ private:
 };
 ///
 
-#endif  // DETDESC_MATERIALEXCEPTION_H
+#endif // DETDESC_MATERIALEXCEPTION_H

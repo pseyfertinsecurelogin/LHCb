@@ -15,15 +15,13 @@
 // Include files
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
-#include <vector>
-#include <ostream>
 #include "LoKi/ParserFactory.h"
+#include <ostream>
+#include <vector>
 
-namespace Decays
-{
+namespace Decays {
   // ==========================================================================
-  namespace Parsers
-  {
+  namespace Parsers {
     // ========================================================================
     /** parse the decay tree into the helper structue
      *  @param tree   (OUTPUT) the representation of the decay tree
@@ -32,14 +30,10 @@ namespace Decays
      *  @param paricles the list of particles
      *  @param stream   the stream to report the errors
      */
-    StatusCode parse
-    ( Decays::Parsers::Tree&          tree      ,
-      const std::string&              input     ,
-      const std::vector<std::string>& symbols   ,
-      const std::vector<std::string>& particles ,
-      std::ostream&                   stream    ) ;
+    StatusCode parse( Decays::Parsers::Tree& tree, const std::string& input, const std::vector<std::string>& symbols,
+                      const std::vector<std::string>& particles, std::ostream& stream );
     // ========================================================================
-  } // end of namespace Decays::Parsers
+  } // namespace Parsers
   // ==========================================================================
 } // end of namespace Decays
 // ============================================================================

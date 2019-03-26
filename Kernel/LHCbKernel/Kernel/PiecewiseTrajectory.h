@@ -12,16 +12,15 @@
 #define LHCbKernel_PiecewiseTrajectory_H 1
 
 // Includes
-#include <utility>
-#include <memory>
-#include <deque>
-#include <type_traits>
 #include "Kernel/Trajectory.h"
+#include <deque>
+#include <memory>
+#include <type_traits>
+#include <utility>
 
 // from Gaudi
 
-namespace LHCb
-{
+namespace LHCb {
 
   /** @class PiecewiseTrajectory PiecewiseTrajectory.h
    *
@@ -33,13 +32,16 @@ namespace LHCb
   class PiecewiseTrajectory : public Trajectory<double> {
   public:
     template <typename ITER>
-    PiecewiseTrajectory(ITER begin,ITER end) : Trajectory(0,0) {
-        while (begin!=end) { append(*begin); ++begin; }
+    PiecewiseTrajectory( ITER begin, ITER end ) : Trajectory( 0, 0 ) {
+      while ( begin != end ) {
+        append( *begin );
+        ++begin;
+      }
     }
 
-    PiecewiseTrajectory() :Trajectory(0,0){}
+    PiecewiseTrajectory() : Trajectory( 0, 0 ) {}
 
-    PiecewiseTrajectory(const PiecewiseTrajectory& rhs);
+    PiecewiseTrajectory( const PiecewiseTrajectory& rhs );
 
     // clone thyself...
     std::unique_ptr<Trajectory<double>> clone() const override;
@@ -55,60 +57,50 @@ namespace LHCb
 
     /// Create a parabolic approximation to the trajectory
     /// at mu
-    void expansion( double arclength,
-                    Point& p,
-                    Vector& dp,
-                    Vector& ddp ) const override;
+    void expansion( double arclength, Point& p, Vector& dp, Vector& ddp ) const override;
     /// Determine the distance in arclenghts to the
     /// closest point on the trajectory to a given point
     double muEstimate( const Point& ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the expansion
     /// reaches the given tolerance.
-    double distTo1stError( double arclength,
-                           double tolerance,
-                           int pathDirection = +1 ) const override;
+    double distTo1stError( double arclength, double tolerance, int pathDirection = +1 ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the expansion
     /// reaches the given tolerance.
-    double distTo2ndError( double arclength,
-                           double tolerance,
-                           int pathDirection = +1 ) const override;
-
+    double distTo2ndError( double arclength, double tolerance, int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). .
     using Trajectory<double>::arclength;
-    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
+    double arclength( double mu1, double mu2 ) const override { return mu2 - mu1; }
 
     // functions specific to a PieceWiseTrajectory
     // note: we _will_ assume ownership of the passed Trajectory!
-    void append(std::unique_ptr<Trajectory<double>>);
-    void prepend(std::unique_ptr<Trajectory<double>>);
+    void         append( std::unique_ptr<Trajectory<double>> );
+    void         prepend( std::unique_ptr<Trajectory<double>> );
     unsigned int numberOfPieces() const { return m_traj.size(); }
 
-    std::ostream& print(std::ostream&) const;
+    std::ostream& print( std::ostream& ) const;
 
   private:
-     //                   trajectory                  global mu for start of Traj
-     std::deque<std::pair<std::unique_ptr<Trajectory<double>>,double>> m_traj;
+    //                   trajectory                  global mu for start of Traj
+    std::deque<std::pair<std::unique_ptr<Trajectory<double>>, double>> m_traj;
 
-     // global -> local mapping
-     std::pair<const Trajectory<double>*, double> loc(double mu) const;
+    // global -> local mapping
+    std::pair<const Trajectory<double>*, double> loc( double mu ) const;
 
-     // generic forwarding to local trajectories
-     template <typename FUN> decltype(auto) local(double mu, FUN fun) const
-     {
-        auto j = loc(mu);
-        return fun(j.first,j.second);
-     }
+    // generic forwarding to local trajectories
+    template <typename FUN>
+    decltype( auto ) local( double mu, FUN fun ) const {
+      auto j = loc( mu );
+      return fun( j.first, j.second );
+    }
 
-     typedef double (LHCb::Trajectory<double>::*distFun)(double,double,int) const;
+    typedef double ( LHCb::Trajectory<double>::*distFun )( double, double, int ) const;
 
-     double distToError( double s, double tolerance, int pathDirection,
-                         distFun fun) const;
-
+    double distToError( double s, double tolerance, int pathDirection, distFun fun ) const;
   };
 
-}
+} // namespace LHCb
 #endif

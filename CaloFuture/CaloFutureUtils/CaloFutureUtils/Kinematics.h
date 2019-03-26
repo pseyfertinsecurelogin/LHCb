@@ -9,19 +9,19 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 // ============================================================================
-#ifndef CALOFUTUREUTILS_KINEMATICS_H 
+#ifndef CALOFUTUREUTILS_KINEMATICS_H
 #define CALOFUTUREUTILS_KINEMATICS_H 1
 // ============================================================================
 // Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/Kernel.h"
-#include "GaudiKernel/Vector4DTypes.h"
-#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
 // ============================================================================
-// Event 
+// Event
 // ============================================================================
 #include "Event/CaloPosition.h"
 // ============================================================================
@@ -29,142 +29,119 @@
 // ============================================================================
 #include "LHCbMath/LorentzVectorWithError.h"
 // ============================================================================
-/** @file 
- *  Helper file to collect simple functions to 
- *  (re)calculate various kinmatical properties for CaloFuturerieet robjects 
+/** @file
+ *  Helper file to collect simple functions to
+ *  (re)calculate various kinmatical properties for CaloFuturerieet robjects
  *  @author Vanya BELYAEV Ivan.Belyaev@nikkef.nl
  *  @date 2010-08--29
  *
  */
-namespace CaloFuture 
-{
+namespace CaloFuture {
   // ==========================================================================
-  namespace Kinematics 
-  {
+  namespace Kinematics {
     // ========================================================================
-    /** evaluate 4-momentum of photon hypothesis 
+    /** evaluate 4-momentum of photon hypothesis
      *  for the given calo-position object
-     *  @param calo    (INPUT) calo-position object 
-     *  @param origin  (INPUT) the assumed origin point 
-     *  @return the estimate for the photon 4-momentum 
+     *  @param calo    (INPUT) calo-position object
+     *  @param origin  (INPUT) the assumed origin point
+     *  @return the estimate for the photon 4-momentum
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
      */
-    GAUDI_API Gaudi::LorentzVector momentum 
-    ( const LHCb::CaloPosition& calo   , 
-      const Gaudi::XYZPoint&    origin ) ;
+    GAUDI_API Gaudi::LorentzVector momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin );
     // ========================================================================
-    /** evaluate 4-momentum of photon pythothesis 
+    /** evaluate 4-momentum of photon pythothesis
      *  for the given calo-position object
-     *  @param calo    (INPUT)  calo-position object 
-     *  @param origin  (INPUT)  the assumed origin point 
-     *  @param output  (OUTPUT) the estimate for the photon 4-momentum 
+     *  @param calo    (INPUT)  calo-position object
+     *  @param origin  (INPUT)  the assumed origin point
+     *  @param output  (OUTPUT) the estimate for the photon 4-momentum
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
      */
-    GAUDI_API void momentum 
-    ( const LHCb::CaloPosition& calo   , 
-      const Gaudi::XYZPoint&    origin , 
-      Gaudi::LorentzVector&     output ) ;
+    GAUDI_API void momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                             Gaudi::LorentzVector& output );
     // ========================================================================
-    /** evaluate 4-momentum of photon hypothesis 
+    /** evaluate 4-momentum of photon hypothesis
      *  for the given calo-position object
-     *  @param calo    (INPUT)  calo-position object 
-     *  @param origin  (INPUT)  the assumed origin point 
-     *  @param output  (OUTPUT) the estimate for the photon 4-momentum 
-     *  @param matrix  (OUTPUT) the estimate for the photon covariance matrix 
+     *  @param calo    (INPUT)  calo-position object
+     *  @param origin  (INPUT)  the assumed origin point
+     *  @param output  (OUTPUT) the estimate for the photon 4-momentum
+     *  @param matrix  (OUTPUT) the estimate for the photon covariance matrix
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
      */
-    GAUDI_API void momentum 
-    ( const LHCb::CaloPosition& calo   , 
-      const Gaudi::XYZPoint&    origin , 
-      Gaudi::LorentzVector&     output , 
-      Gaudi::SymMatrix4x4&      matrix ) ;
+    GAUDI_API void momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                             Gaudi::LorentzVector& output, Gaudi::SymMatrix4x4& matrix );
     // ========================================================================
-    /** evaluate 4-momentum of photon hypothesis 
+    /** evaluate 4-momentum of photon hypothesis
      *  for the given calo-position object
-     *  @param calo    (INPUT)  calo-position object 
-     *  @param origin  (INPUT)  the assumed origin point 
-     *  @param output  (OUTPUT) the estimate for the photon 4-momentum 
+     *  @param calo    (INPUT)  calo-position object
+     *  @param origin  (INPUT)  the assumed origin point
+     *  @param output  (OUTPUT) the estimate for the photon 4-momentum
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
      */
-    GAUDI_API void momentum 
-    ( const LHCb::CaloPosition&            calo   , 
-      const Gaudi::XYZPoint&               origin , 
-      Gaudi::Math::LorentzVectorWithError& output ) ;
+    GAUDI_API void momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                             Gaudi::Math::LorentzVectorWithError& output );
     // ========================================================================
     /** add photon 4-momentum for the given calo-position object
-     *  @param calo    (INPUT)  calo-position object 
-     *  @param origin  (INPUT)  the assumed origin point 
+     *  @param calo    (INPUT)  calo-position object
+     *  @param origin  (INPUT)  the assumed origin point
      *  @param output  (UPDATE) the estimate for 4-momentum
-     *  @param matrix  (UPDATE) the estimate for the covariance matrix 
+     *  @param matrix  (UPDATE) the estimate for the covariance matrix
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
      */
-    GAUDI_API void add2momentum 
-    ( const LHCb::CaloPosition& calo   , 
-      const Gaudi::XYZPoint&    origin , 
-      Gaudi::LorentzVector&     output , 
-      Gaudi::SymMatrix4x4&      matrix ) ;
+    GAUDI_API void add2momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                                 Gaudi::LorentzVector& output, Gaudi::SymMatrix4x4& matrix );
     // ========================================================================
     /** add photon 4-momentum for the given calo-position object
      *  for the given calo-position object
-     *  @param calo    (INPUT)  calo-position object 
-     *  @param origin  (INPUT)  the assumed origin point 
-     *  @param output  (OUTPUT) the estimate for the 4-momentum 
-     *  @return status code 
+     *  @param calo    (INPUT)  calo-position object
+     *  @param origin  (INPUT)  the assumed origin point
+     *  @param output  (OUTPUT) the estimate for the 4-momentum
+     *  @return status code
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
      */
-    GAUDI_API void add2momentum 
-    ( const LHCb::CaloPosition&            calo   , 
-      const Gaudi::XYZPoint&               origin , 
-      Gaudi::Math::LorentzVectorWithError& output ) ;
+    GAUDI_API void add2momentum( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                                 Gaudi::Math::LorentzVectorWithError& output );
     // ========================================================================
     /** get the jacobian: d(px,py,pz,E)/d(xc,yc,E)
-     *  @param calo     (INPUT)  calo-position object 
-     *  @param origin   (INPUT)  the assumed origin point 
+     *  @param calo     (INPUT)  calo-position object
+     *  @param origin   (INPUT)  the assumed origin point
      *  @param F11      (OUTPUT) the jacobian d(px,py,pz,E)/d(xc,yc,E)
-     *  @return 4-momentum estimate 
+     *  @return 4-momentum estimate
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
-     */        
-    GAUDI_API Gaudi::LorentzVector jacobian1 
-    ( const LHCb::CaloPosition& calo     , 
-      const Gaudi::XYZPoint&    origin   , 
-      Gaudi::Matrix4x3&         F11      ) ;
+     */
+    GAUDI_API Gaudi::LorentzVector jacobian1( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                                              Gaudi::Matrix4x3& F11 );
     // ========================================================================
     /** get the "jacobian": d(px,py,pz,E)/d(xv,yv,zv)
-     *  @param calo     (INPUT)  calo-position object 
-     *  @param origin   (INPUT)  the assumed origin point 
+     *  @param calo     (INPUT)  calo-position object
+     *  @param origin   (INPUT)  the assumed origin point
      *  @param F12      (OUTPUT) the jacobian d(px,py,pz,E)/d(xv,yv,zv)
-     *  @return 4-momentum estimate 
+     *  @return 4-momentum estimate
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
-     */        
-    GAUDI_API Gaudi::LorentzVector jacobian2 
-    ( const LHCb::CaloPosition& calo     , 
-      const Gaudi::XYZPoint&    origin   , 
-      Gaudi::Matrix4x3&         F12      ) ;
+     */
+    GAUDI_API Gaudi::LorentzVector jacobian2( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                                              Gaudi::Matrix4x3& F12 );
     // ========================================================================
     /** get the jacobians: d(px,py,pz,E)/d(xc,yc,E) and d(px,py,pz,E)/d(xv,yv,zv)
-     *  @param calo     (INPUT)  calo-position object 
-     *  @param origin   (INPUT)  the assumed origin point 
+     *  @param calo     (INPUT)  calo-position object
+     *  @param origin   (INPUT)  the assumed origin point
      *  @param F11      (OUTPUT) the jacobian d(px,py,pz,E)/d(xc,yc,E)
      *  @param F12      (OUTPUT) the jacobian d(px,py,pz,E)/d(xv,yv,zv)
-     *  @return 4-momentum estimate 
+     *  @return 4-momentum estimate
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-08--29
-     */        
-    GAUDI_API Gaudi::LorentzVector jacobians
-    ( const LHCb::CaloPosition& calo     , 
-      const Gaudi::XYZPoint&    origin   , 
-      Gaudi::Matrix4x3&         F11      ,
-      Gaudi::Matrix4x3&         F12      ) ;
+     */
+    GAUDI_API Gaudi::LorentzVector jacobians( const LHCb::CaloPosition& calo, const Gaudi::XYZPoint& origin,
+                                              Gaudi::Matrix4x3& F11, Gaudi::Matrix4x3& F12 );
     // ========================================================================
-  } //                                        end of namespace CaloFuture::Kinematics 
+  } // namespace Kinematics
   // ==========================================================================
-} //                                                      end of namespace CaloFuture 
+} //                                                      end of namespace CaloFuture
 #endif // CALOFUTUREUTILS_KINEMATICS_H

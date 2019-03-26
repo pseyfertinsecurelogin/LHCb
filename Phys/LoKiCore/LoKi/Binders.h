@@ -32,8 +32,7 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-08-17
  */
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi:Binders
    *  collection of various adapters for binding of the LoKi-functions
@@ -44,8 +43,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-08-17
    */
-  namespace Binders
-  {
+  namespace Binders {
     // ========================================================================
     /** @class Binder1st
      *  helper class to bind the first argument of 2-argument LoKi-function
@@ -56,55 +54,45 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-08-17
      */
-    template <class TYPE1,class TYPE2, class TYPE3=double>
-    class Binder1st: public LoKi::Functor<TYPE2,TYPE3>
-    {
+    template <class TYPE1, class TYPE2, class TYPE3 = double>
+    class Binder1st : public LoKi::Functor<TYPE2, TYPE3> {
     private:
       /// the actual type for data-holder
-      typedef typename LoKi::Holder<TYPE1,TYPE2>   Holder_ ;
+      typedef typename LoKi::Holder<TYPE1, TYPE2> Holder_;
       /// the actual type of
-      typedef typename LoKi::Functor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>  Fun_ ;
+      typedef typename LoKi::Functor<LoKi::Holder<TYPE1, TYPE2>, TYPE3> Fun_;
+
     public:
       /// contructor from the function and argument
-      Binder1st
-      ( typename Fun_::first_argument_type value ,
-        const    Fun_&                     fun   )
-        : LoKi::AuxFunBase ( std::tie ( value , fun ) )
-        , m_first ( value )
-        , m_fun   ( fun   )
-      {}
+      Binder1st( typename Fun_::first_argument_type value, const Fun_& fun )
+          : LoKi::AuxFunBase( std::tie( value, fun ) ), m_first( value ), m_fun( fun ) {}
       /// contructor from the function and argument
-      Binder1st
-      ( const    Fun_&                     fun   ,
-        typename Fun_::first_argument_type value )
-        : LoKi::AuxFunBase ( std::tie ( fun , value ) )
-        , m_first ( value )
-        , m_fun   ( fun   )
-      {}
+      Binder1st( const Fun_& fun, typename Fun_::first_argument_type value )
+          : LoKi::AuxFunBase( std::tie( fun, value ) ), m_first( value ), m_fun( fun ) {}
       /// copy constructor
-      Binder1st ( const Binder1st& right )
-        : LoKi::AuxFunBase      ( right )
-        , LoKi::Functor<TYPE2,TYPE3> ( right )
-        , m_first ( right.m_first )
-        , m_fun   ( right.m_fun   )
-      {}
+      Binder1st( const Binder1st& right )
+          : LoKi::AuxFunBase( right )
+          , LoKi::Functor<TYPE2, TYPE3>( right )
+          , m_first( right.m_first )
+          , m_fun( right.m_fun ) {}
       /// MANDATORY: clone method ("virtual constructor")
-      Binder1st* clone() const override { return new Binder1st(*this) ; }
+      Binder1st* clone() const override { return new Binder1st( *this ); }
       /// MANDATORY: the only one essential method
       TYPE3
-      operator() ( typename LoKi::Functor<TYPE2,TYPE3>::argument a ) const override
-      { return m_fun.fun ( Holder_ ( m_first , a ) ) ; }
+      operator()( typename LoKi::Functor<TYPE2, TYPE3>::argument a ) const override {
+        return m_fun.fun( Holder_( m_first, a ) );
+      }
       /// OPTIONAL :: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return s << "Bind1st(" << m_fun << ")" ; }
+      std::ostream& fillStream( std::ostream& s ) const override { return s << "Bind1st(" << m_fun << ")"; }
+
     private:
       // ======================================================================
       // the fixed argument
-      typename Holder_::First m_first ;  ///< the fixed argument
+      typename Holder_::First m_first; ///< the fixed argument
       /// the actual function
-      LoKi::FunctorFromFunctor<LoKi::Holder<TYPE1,TYPE2>,TYPE3> m_fun ; ///< function
+      LoKi::FunctorFromFunctor<LoKi::Holder<TYPE1, TYPE2>, TYPE3> m_fun; ///< function
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Binder2nd
      *  helper class to bind the second argument of 2-argument LoKi-function
@@ -115,54 +103,43 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-08-17
      */
-    template <class TYPE1,class TYPE2,class TYPE3=double>
-    class Binder2nd: public LoKi::Functor<TYPE1,TYPE3>
-    {
+    template <class TYPE1, class TYPE2, class TYPE3 = double>
+    class Binder2nd : public LoKi::Functor<TYPE1, TYPE3> {
     private:
       // ======================================================================
       /// the actual type for data-holder
-      typedef typename LoKi::Holder<TYPE1,TYPE2>   Holder_ ;
+      typedef typename LoKi::Holder<TYPE1, TYPE2> Holder_;
       /// the actual type of
-      typedef typename LoKi::Functor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>  Fun_ ;
+      typedef typename LoKi::Functor<LoKi::Holder<TYPE1, TYPE2>, TYPE3> Fun_;
       // ======================================================================
     public:
       // ======================================================================
       /// contructor from the function and argument
-      Binder2nd
-      ( typename Fun_::second_argument_type value ,
-        const    Fun_&                      fun   )
-        : LoKi::AuxFunBase ( std::tie ( value , fun ) )
-        , m_second ( value )
-        , m_fun    ( fun   )
-      {}
+      Binder2nd( typename Fun_::second_argument_type value, const Fun_& fun )
+          : LoKi::AuxFunBase( std::tie( value, fun ) ), m_second( value ), m_fun( fun ) {}
       /// contructor from the function and argument
-      Binder2nd
-      ( const    Fun_&                      fun   ,
-        typename Fun_::second_argument_type value )
-        : LoKi::AuxFunBase ( std::tie ( fun , value ) )
-        , m_second ( value )
-        , m_fun    ( fun   )
-      {}
+      Binder2nd( const Fun_& fun, typename Fun_::second_argument_type value )
+          : LoKi::AuxFunBase( std::tie( fun, value ) ), m_second( value ), m_fun( fun ) {}
       /// MANDATORY: clone method ("virtual constructor")
-      Binder2nd* clone() const override { return new Binder2nd(*this) ; }
+      Binder2nd* clone() const override { return new Binder2nd( *this ); }
       /// MANDATORY: the only one essential method
       TYPE3
-      operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const override
-      { return m_fun.fun ( Holder_ ( a , m_second ) ) ; }
+      operator()( typename LoKi::Functor<TYPE1, TYPE3>::argument a ) const override {
+        return m_fun.fun( Holder_( a, m_second ) );
+      }
       /// OPTIONAL :: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return s << "Bind2nd(" << m_fun << ")" ; }
+      std::ostream& fillStream( std::ostream& s ) const override { return s << "Bind2nd(" << m_fun << ")"; }
       // ======================================================================
     private:
       // ======================================================================
       // the fixed argument
-      typename Holder_::Second m_second ;  ///< the fixed argument
+      typename Holder_::Second m_second; ///< the fixed argument
       /// the actual function
-      LoKi::FunctorFromFunctor<LoKi::Holder<TYPE1,TYPE2>,TYPE3> m_fun ;
+      LoKi::FunctorFromFunctor<LoKi::Holder<TYPE1, TYPE2>, TYPE3> m_fun;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } // end of namespace LoKi::Binders
+  } // namespace Binders
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

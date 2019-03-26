@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: SimpleAlgorithm.h,v 1.3 2005-12-08 10:02:43 cattanem Exp $
 #ifndef DDEXAMPLE_SIMPLEALGORITHM_H
 #define DDEXAMPLE_SIMPLEALGORITHM_H 1
 
@@ -29,7 +28,7 @@ public:
   /**
    * Constructor: A constructor of this form must be provided.
    */
-  SimpleAlgorithm(const std::string& name, ISvcLocator* pSvcLocator);
+  SimpleAlgorithm( const std::string& name, ISvcLocator* pSvcLocator );
 
   /**
    * The "initialization" of the algorithm.
@@ -55,6 +54,6 @@ public:
    * @param lv the logical volume concerned
    * @param de the name of the detector element associated to lv
    */
-  void dumpPVs (const ILVolume* lv, std::string de);
+  void dumpPVs( const ILVolume* lv, std::string de );
 };
-#endif    // DDEXAMPLE_SIMPLEALGORITHM_H
+#endif // DDEXAMPLE_SIMPLEALGORITHM_H

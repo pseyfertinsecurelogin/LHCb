@@ -8,7 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DICT_CALOFUTUREDAQDICT_H 
+#ifndef DICT_CALOFUTUREDAQDICT_H
 #define DICT_CALOFUTUREDAQDICT_H 1
 
 #include "CaloFutureDAQ/ICaloFutureDigitFilterTool.h"

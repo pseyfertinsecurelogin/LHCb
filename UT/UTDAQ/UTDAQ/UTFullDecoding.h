@@ -12,8 +12,8 @@
 #define UTFULLDECODING_H 1
 
 // Include files
-#include "Kernel/UTAlgBase.h"
 #include "Event/RawBank.h"
+#include "Kernel/UTAlgBase.h"
 
 /** @class UTFullDecoding UTFullDecoding.h
  *
@@ -31,21 +31,18 @@
 class UTFullDecoding : public UT::AlgBase {
 
 public:
-
   /// Standard constructor
   UTFullDecoding( const std::string& name, ISvcLocator* pSvcLocator );
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
-
   LHCb::RawBank::BankType m_bankType;
 
   // job options
-  Gaudi::Property<bool> m_printErrorInfo
-    {this, "PrintErrorInfo", true};///< Flag to print out errors from event info
-  std::string m_inputLocation;     ///< Location of RawEvent
-  std::string m_outputLocation;    ///< Location of NZS output data, e.g. UTFull
-  std::string m_eventInfoLocation; ///< Location of event info data
+  Gaudi::Property<bool> m_printErrorInfo{this, "PrintErrorInfo", true}; ///< Flag to print out errors from event info
+  std::string           m_inputLocation;                                ///< Location of RawEvent
+  std::string           m_outputLocation;                               ///< Location of NZS output data, e.g. UTFull
+  std::string           m_eventInfoLocation;                            ///< Location of event info data
 };
 #endif // UTFULLDECODING_H

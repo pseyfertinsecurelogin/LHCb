@@ -30,26 +30,22 @@ DECLARE_COMPONENT( PreloadGeometryTool )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
-                                          const std::string& name,
-                                          const IInterface* parent )
-: base_class ( type, name , parent )
-{
-  declareInterface<IGenericTool>(this);
+PreloadGeometryTool::PreloadGeometryTool( const std::string& type, const std::string& name, const IInterface* parent )
+    : base_class( type, name, parent ) {
+  declareInterface<IGenericTool>( this );
 }
 
 //=============================================================================
 // Excution method
 //=============================================================================
-void PreloadGeometryTool::execute()
-{
+void PreloadGeometryTool::execute() {
   DataStoreLoadAgent loadAgent;
-  auto dataMgr = service<IDataManagerSvc>("DetectorDataSvc", true);
+  auto               dataMgr = service<IDataManagerSvc>( "DetectorDataSvc", true );
   info() << "Preloading detector geometry..." << endmsg;
-  const auto sc = dataMgr->traverseTree(&loadAgent);
+  const auto sc = dataMgr->traverseTree( &loadAgent );
   if ( sc ) {
-    info() << "Loaded " << loadAgent.loadedObjects() << " objects to depth of "
-           << loadAgent.maxDepth() << " levels" << endmsg;
+    info() << "Loaded " << loadAgent.loadedObjects() << " objects to depth of " << loadAgent.maxDepth() << " levels"
+           << endmsg;
   } else {
     error() << "Problem loading geometry" << endmsg;
   }

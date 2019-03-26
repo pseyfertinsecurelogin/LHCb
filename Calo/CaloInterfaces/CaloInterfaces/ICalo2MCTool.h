@@ -18,7 +18,7 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/IProperty.h"
 
-namespace LHCb{
+namespace LHCb {
   class CaloCluster;
   class CaloDigit;
   class CaloHypo;
@@ -26,7 +26,7 @@ namespace LHCb{
   class Particle;
   class MCParticle;
   class ParticleID;
-}
+} // namespace LHCb
 
 /** @class ICalo2MCTool ICalo2MCTool.h
  *
@@ -34,29 +34,27 @@ namespace LHCb{
  *  @author Olivier Deschamps
  *  @date   2009-07-27
  */
-struct ICalo2MCTool : extend_interfaces<IAlgTool,IProperty>
-{
+struct ICalo2MCTool : extend_interfaces<IAlgTool, IProperty> {
 
   DeclareInterfaceID( ICalo2MCTool, 5, 0 );
 
   // setters
-  virtual ICalo2MCTool* from(const LHCb::CaloDigit*     digit    )=0;
-  virtual ICalo2MCTool* from(const LHCb::CaloCluster*   cluster  )=0;
-  virtual ICalo2MCTool* from(const LHCb::CaloHypo*      hypo     )=0;
-  virtual ICalo2MCTool* from(const LHCb::ProtoParticle* proto    )=0;
-  virtual ICalo2MCTool* from(const LHCb::Particle*      particle )=0;
+  virtual ICalo2MCTool* from( const LHCb::CaloDigit* digit )     = 0;
+  virtual ICalo2MCTool* from( const LHCb::CaloCluster* cluster ) = 0;
+  virtual ICalo2MCTool* from( const LHCb::CaloHypo* hypo )       = 0;
+  virtual ICalo2MCTool* from( const LHCb::ProtoParticle* proto ) = 0;
+  virtual ICalo2MCTool* from( const LHCb::Particle* particle )   = 0;
   // getters
-  virtual const LHCb::MCParticle* bestMC() const = 0;
-  virtual const LHCb::MCParticle* maxMC() const = 0;
-  virtual const LHCb::MCParticle* findMC(LHCb::ParticleID id, double threshold = 0. ) const = 0;
-  virtual const LHCb::MCParticle* findMCOrBest(LHCb::ParticleID id, double threshold = 0. ) const = 0;
-  virtual const LHCb::MCParticle* findMC(std::string name, double threshold = 0. ) const = 0;
-  virtual const LHCb::MCParticle* findMCOrBest(std::string name, double threshold = 0. ) const = 0;
-  virtual double weight(const LHCb::MCParticle*) const  = 0;
-  virtual double quality(const LHCb::MCParticle*) const = 0;
-  virtual std::string descriptor() const = 0;
-  virtual bool isCalo(LHCb::Particle* particle) const = 0;
-  virtual bool isPureNeutralCalo(const LHCb::Particle* particle) const = 0;
-
+  virtual const LHCb::MCParticle* bestMC() const                                                   = 0;
+  virtual const LHCb::MCParticle* maxMC() const                                                    = 0;
+  virtual const LHCb::MCParticle* findMC( LHCb::ParticleID id, double threshold = 0. ) const       = 0;
+  virtual const LHCb::MCParticle* findMCOrBest( LHCb::ParticleID id, double threshold = 0. ) const = 0;
+  virtual const LHCb::MCParticle* findMC( std::string name, double threshold = 0. ) const          = 0;
+  virtual const LHCb::MCParticle* findMCOrBest( std::string name, double threshold = 0. ) const    = 0;
+  virtual double                  weight( const LHCb::MCParticle* ) const                          = 0;
+  virtual double                  quality( const LHCb::MCParticle* ) const                         = 0;
+  virtual std::string             descriptor() const                                               = 0;
+  virtual bool                    isCalo( LHCb::Particle* particle ) const                         = 0;
+  virtual bool                    isPureNeutralCalo( const LHCb::Particle* particle ) const        = 0;
 };
 #endif // ICALO2MCTOOL_H

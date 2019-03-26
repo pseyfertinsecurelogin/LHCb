@@ -19,34 +19,30 @@
 
 namespace VPDataFunctor {
 
-template <class TYPE1, class TYPE2 = TYPE1>
-struct Less_by_Channel final {
-  /** Compare the channel of one object with the channel of another object
-   *  @param obj1   first object
-   *  @param obj2   second object
-   *  @return  result of the comparison
-   */
-  inline bool operator()(TYPE1 obj1, TYPE2 obj2) const {
-    return (!obj1) ? true :
-           (!obj2) ? false :
-           obj1->channelID() < obj2->channelID();
-  }
-};
+  template <class TYPE1, class TYPE2 = TYPE1>
+  struct Less_by_Channel final {
+    /** Compare the channel of one object with the channel of another object
+     *  @param obj1   first object
+     *  @param obj2   second object
+     *  @return  result of the comparison
+     */
+    inline bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
+      return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->channelID() < obj2->channelID();
+    }
+  };
 
-template <class TYPE1, class TYPE2 = TYPE1>
-struct Less_by_Key final {
-  /** Compare the key of one object with the key of another object
-   *  @param obj1   first object
-   *  @param obj2   second object
-   *  @return  result of the comparison
-   */
-  inline bool operator()(TYPE1 obj1, TYPE2 obj2) const {
-    return (!obj1) ? true :
-           (!obj2) ? false :
-           obj1->key() < obj2->key();
-  }
-};
+  template <class TYPE1, class TYPE2 = TYPE1>
+  struct Less_by_Key final {
+    /** Compare the key of one object with the key of another object
+     *  @param obj1   first object
+     *  @param obj2   second object
+     *  @return  result of the comparison
+     */
+    inline bool operator()( TYPE1 obj1, TYPE2 obj2 ) const {
+      return ( !obj1 ) ? true : ( !obj2 ) ? false : obj1->key() < obj2->key();
+    }
+  };
 
-}
+} // namespace VPDataFunctor
 
 #endif // _VPDataFunctor_H

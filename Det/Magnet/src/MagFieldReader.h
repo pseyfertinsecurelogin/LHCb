@@ -8,7 +8,6 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MagFieldReader.h,v 1.8 2008-07-03 10:35:16 ahicheur Exp $
 #ifndef MAGFIELDREADER_H
 #define MAGFIELDREADER_H 1
 
@@ -21,7 +20,6 @@
 
 // Forward references
 class IMagneticFieldSvc;
-
 
 /** @class MagFieldReader MagFieldReader.h
  *  @param An Algorithm to read and plot magnetic filed maps
@@ -37,34 +35,26 @@ public:
   /// Standard constructor
   MagFieldReader( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MagFieldReader( ){ }; ///< Destructor
+  virtual ~MagFieldReader(){}; ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize   () override;    ///< Algorithm finalization
-  void TestBdl();
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override;   ///< Algorithm finalization
+  void       TestBdl();
 
 protected:
-
 private:
-
   // Pointer to the magnetic field service
   IMagneticFieldSvc* m_pIMF;
   //  IMagneticFieldSvc* m_pIAF;
-
-
-
 
   // range and steps in z to get the magnetic field
   double m_zMin, m_zMax, m_step;
 
   // range in x and y
-  double m_xMin, m_xMax, m_yMin, m_yMax;
+  double      m_xMin, m_xMax, m_yMin, m_yMax;
   std::string m_FieldServiceName; ///< Indicate the name of the service to be tested (default is MagneticFieldSvc)
-  bool m_testbdl; ///< Test field integral for random "track" slopes
-  int m_nInt; ///< number of field integrals to generate
-
-
-
+  bool        m_testbdl;          ///< Test field integral for random "track" slopes
+  int         m_nInt;             ///< number of field integrals to generate
 };
 #endif // MAGFIELDREADER_H

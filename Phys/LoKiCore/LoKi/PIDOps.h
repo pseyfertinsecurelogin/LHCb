@@ -20,103 +20,66 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/BasicFunctors.h"
 #include "LoKi/Functions.h"
 #include "LoKi/Operators.h"
-#include "LoKi/BasicFunctors.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace Dicts
-  {
+  namespace Dicts {
     // ========================================================================
     /** @class PIDOps PIDOps.h LoKi/PIDOps.h
      *  @author Vanya BELYAEV
      *  @date   2007-05-29
      */
     template <class FUNCTION>
-    class PIDOps
-    {
+    class PIDOps {
     private:
       // ======================================================================
-      typedef FUNCTION                                Function ;
-      typedef typename FUNCTION::argument_type        Argument ;
-      typedef typename LoKi::BasicFunctors<Argument>::PredicateFromPredicate Result ;
-      typedef typename LoKi::BasicFunctors<Argument>::Function Other    ;
+      typedef FUNCTION                                                       Function;
+      typedef typename FUNCTION::argument_type                               Argument;
+      typedef typename LoKi::BasicFunctors<Argument>::PredicateFromPredicate Result;
+      typedef typename LoKi::BasicFunctors<Argument>::Function               Other;
       // ======================================================================
     public:
       // ======================================================================
       /// ==
       // ======================================================================
-      static Result __eq__ ( const Function& self, const long other )
-      { return self == other ; }
-      static Result __eq__ ( const Function& self, const LHCb::ParticleID& other )
-      { return self == other ; }
-      static Result __eq__ ( const Function& self, const std::string&      other )
-      { return self == other ; }
-      static Result __eq__ ( const Function& self, const Other& other )
-      { return self == other ; }
+      static Result __eq__( const Function& self, const long other ) { return self == other; }
+      static Result __eq__( const Function& self, const LHCb::ParticleID& other ) { return self == other; }
+      static Result __eq__( const Function& self, const std::string& other ) { return self == other; }
+      static Result __eq__( const Function& self, const Other& other ) { return self == other; }
       //
-      static Result __eq__ ( const Function& self, const std::vector<int>& other )
-      { return self == other ; }
-      static Result __eq__ ( const Function& self, const std::vector<unsigned int>& other )
-      { return self == other ; }
-      static Result __eq__ ( const Function& self, const std::vector<std::string>& other )
-      { return self == other ; }
-      static Result __eq__ ( const Function& self, const std::vector<LHCb::ParticleID>& other )
-      { return self == other ; }
+      static Result __eq__( const Function& self, const std::vector<int>& other ) { return self == other; }
+      static Result __eq__( const Function& self, const std::vector<unsigned int>& other ) { return self == other; }
+      static Result __eq__( const Function& self, const std::vector<std::string>& other ) { return self == other; }
+      static Result __eq__( const Function& self, const std::vector<LHCb::ParticleID>& other ) { return self == other; }
       // ======================================================================
       // !=
       // ======================================================================
-      static Result
-      __ne__ ( const Function&         self  ,
-               const long              other ) { return self != other ; }
-      static Result
-      __ne__ ( const Function&         self  ,
-               const LHCb::ParticleID& other ) { return self != other ; }
-      static Result
-      __ne__ ( const Function&         self  ,
-               const std::string&      other ) { return self != other ; }
-      static Result
-      __ne__ ( const Function&         self  ,
-               const Other&            other ) { return self != other ; }
+      static Result __ne__( const Function& self, const long other ) { return self != other; }
+      static Result __ne__( const Function& self, const LHCb::ParticleID& other ) { return self != other; }
+      static Result __ne__( const Function& self, const std::string& other ) { return self != other; }
+      static Result __ne__( const Function& self, const Other& other ) { return self != other; }
       //
-      static Result
-      __ne__ ( const Function&         self  ,
-               const std::vector<int>& other ) { return self != other ; }
-      static Result
-      __ne__ ( const Function&         self  ,
-               const std::vector<unsigned int>&     other )
-      { return self != other ; }
-      static Result
-      __ne__ ( const Function&         self  ,
-               const std::vector<std::string>&      other )
-      { return self != other ; }
-      static Result
-      __ne__ ( const Function&         self  ,
-               const std::vector<LHCb::ParticleID>& other )
-      { return self != other ; }
+      static Result __ne__( const Function& self, const std::vector<int>& other ) { return self != other; }
+      static Result __ne__( const Function& self, const std::vector<unsigned int>& other ) { return self != other; }
+      static Result __ne__( const Function& self, const std::vector<std::string>& other ) { return self != other; }
+      static Result __ne__( const Function& self, const std::vector<LHCb::ParticleID>& other ) { return self != other; }
       // ======================================================================
       // in_list
       // ======================================================================
-      static Result
-      __in_list__ ( const Function&         self  ,
-                    const std::vector<int>& other ) { return self == other ; }
-      static Result
-      __in_list__ ( const Function&         self  ,
-                    const std::vector<unsigned int>&     other )
-      { return self == other ; }
-      static Result
-      __in_list__ ( const Function&         self  ,
-                    const std::vector<std::string>&      other )
-      { return self == other ; }
-      static Result
-      __in_list__ ( const Function&         self  ,
-                    const std::vector<LHCb::ParticleID>& other )
-      { return self == other ; }
-    } ;
+      static Result __in_list__( const Function& self, const std::vector<int>& other ) { return self == other; }
+      static Result __in_list__( const Function& self, const std::vector<unsigned int>& other ) {
+        return self == other;
+      }
+      static Result __in_list__( const Function& self, const std::vector<std::string>& other ) { return self == other; }
+      static Result __in_list__( const Function& self, const std::vector<LHCb::ParticleID>& other ) {
+        return self == other;
+      }
+    };
     // ========================================================================
-  } //                                             end of namespace LoKi::Dicts
+  } // namespace Dicts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

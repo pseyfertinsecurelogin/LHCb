@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 ###############################################################################
 # (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
@@ -19,217 +19,207 @@
 Helper module to define DST (un)packing rule for Calo Hypo objects
 """
 # =============================================================================
-__author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $"
+__author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
+__version__ = "1.4"
 # =============================================================================
 __all__ = (
-    'CaloDstPackConf'     ,  ## the configurable, responsible for Dst packing   
-    'CaloDstUnPackConf'      ## the configurable, responsible for Dst unpacking   
-    )
+    'CaloDstPackConf',  ## the configurable, responsible for Dst packing
+    'CaloDstUnPackConf'  ## the configurable, responsible for Dst unpacking
+)
 # =============================================================================
-from      Gaudi.Configuration import *
+from Gaudi.Configuration import *
 from LHCbKernel.Configuration import *
+
 
 # =============================================================================
 ## @class CaloDstPackConf
-#  the configurable for packing of Calorimeter objects on Dst 
+#  the configurable for packing of Calorimeter objects on Dst
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date  2009-10-10
-class CaloDstPackConf ( ConfigurableUser ) :
+class CaloDstPackConf(ConfigurableUser):
     """
-    Class/Configurable to define Dst-packing rules for Calorimeter objects 
+    Class/Configurable to define Dst-packing rules for Calorimeter objects
     """
     ##define slots
     __slots__ = {
-        'Sequence'     : None      , ## The sequence to be appended
-        'Hypos'        : [ 'Photons'      ,
-                           'Electrons'    ,
-                           'MergedPi0s'   ,
-                           'SplitPhotons'
-                           ]       , ## The list of hypos to be packed 
-        'Enable'        : False    , ## Enable/disable the packing 
-        'OutputLevel'   : INFO     , ## The global output level
-        'AlwaysCreate'  : False    , ## Abort/continue if missing input to packers
-        'ClearRegistry' : True     , ## Clear the registry of the inut data after packing 
-        'EnableChecks'  : False
-       }
+        'Sequence': None,  ## The sequence to be appended
+        'Hypos': ['Photons', 'Electrons', 'MergedPi0s',
+                  'SplitPhotons'],  ## The list of hypos to be packed
+        'Enable': False,  ## Enable/disable the packing
+        'OutputLevel': INFO,  ## The global output level
+        'AlwaysCreate': False,  ## Abort/continue if missing input to packers
+        'ClearRegistry':
+        True,  ## Clear the registry of the inut data after packing
+        'EnableChecks': False
+    }
     ## documentation lines
     _propetyDocDct = {
-        'Sequence'    : """ The sequence to be appended    """ , 
-        'Hypos'       : """ the list of hypos to be packed """ , 
-        'Enable'      : """ Enable/disable the packing     """ , 
-        "OutputLevel" : """ The global output level        """ ,
-        'AlwaysCreate': """ Flags whether to create output packed objects even if input missing """,
-        'ClearRegistry':""" Flag to turn on the clearing of the registry for input data """,
-        "EnableChecks": """ Enable packing checks """ 
-        }
-    
+        'Sequence':
+        """ The sequence to be appended    """,
+        'Hypos':
+        """ the list of hypos to be packed """,
+        'Enable':
+        """ Enable/disable the packing     """,
+        "OutputLevel":
+        """ The global output level        """,
+        'AlwaysCreate':
+        """ Flags whether to create output packed objects even if input missing """,
+        'ClearRegistry':
+        """ Flag to turn on the clearing of the registry for input data """,
+        "EnableChecks":
+        """ Enable packing checks """
+    }
+
     ## Check the configuration
-    def checkConfiguration ( self ) :
+    def checkConfiguration(self):
         """
         Check the configuration
         """
-        if not self.isPropertySet ('Sequence') and self.getProp('Enable') :
+        if not self.isPropertySet('Sequence') and self.getProp('Enable'):
             log.error('CaloDstPackConf: Sequence is not set!')
             raise AttributeError, 'CaloDstPackConf: Sequence is not set!'
-        
-        if not self.getProp('Sequence')        and self.getProp('Enable') : 
+
+        if not self.getProp('Sequence') and self.getProp('Enable'):
             log.error('CaloDstPackConf: Sequence is invalid')
             raise AttributeError, 'CaloDstPackConf: Sequence is invalid'
-        
+
     ## apply the configuration
-    def applyConf ( self ) :
+    def applyConf(self):
         """
-        Apply the configuration 
+        Apply the configuration
         """
         self.checkConfiguration()
-        
-        log.info ('CaloDstPackConf: Apply Calo Dst-Packing Configuration ')
-        log.info ( self )
 
-        if not self.getProp('Enable') : return
-        
-        caloHypoDstPack (
-            self.getProp ('Sequence'    )  ,
-            self.getProp ('Enable'      )  ,
-            self.getProp ('Hypos'       )  ,
-            self.getProp ('OutputLevel' )  ,
-            self.getProp ('AlwaysCreate')  ,
-            self.getProp ('ClearRegistry') ,
-            self.getProp ('EnableChecks')
-            )
+        log.info('CaloDstPackConf: Apply Calo Dst-Packing Configuration ')
+        log.info(self)
+
+        if not self.getProp('Enable'): return
+
+        caloHypoDstPack(
+            self.getProp('Sequence'), self.getProp('Enable'),
+            self.getProp('Hypos'), self.getProp('OutputLevel'),
+            self.getProp('AlwaysCreate'), self.getProp('ClearRegistry'),
+            self.getProp('EnableChecks'))
+
 
 # =============================================================================
 ## @class CaloDstUnPackConf
-#  The configurable for unpacking of Calorimeter objects from Dst 
+#  The configurable for unpacking of Calorimeter objects from Dst
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date  2009-10-10
-class CaloDstUnPackConf ( ConfigurableUser ) :
+class CaloDstUnPackConf(ConfigurableUser):
     """
-    Class/Configurable to define Dst-unpacking rules for Calorimeter objects 
+    Class/Configurable to define Dst-unpacking rules for Calorimeter objects
     """
     ##define slots
     __slots__ = {
-        'Hypos'       : [ 'Photons'      ,
-                          'Electrons'    ,
-                          'MergedPi0s'   ,
-                          'SplitPhotons'
-                          ]       , ## The list of hypos to be packed 
-        'Enable'      : False     , ## Enable/disable the packing 
-        'OutputLevel' : INFO      , ## The global output level
-        }
+        'Hypos': ['Photons', 'Electrons', 'MergedPi0s',
+                  'SplitPhotons'],  ## The list of hypos to be packed
+        'Enable': False,  ## Enable/disable the packing
+        'OutputLevel': INFO,  ## The global output level
+    }
     ## documentation lines
     _propetyDocDct = {
-        'Hypos'       : """ the list of hypos to be packed """  , 
-        'Enable'      : """ Enable/disable the packing     """  , 
-        "OutputLevel" : """ The global output level        """
-        }
+        'Hypos': """ the list of hypos to be packed """,
+        'Enable': """ Enable/disable the packing     """,
+        "OutputLevel": """ The global output level        """
+    }
 
-   ## Check the configuration
-    def checkConfiguration ( self ) :
+    ## Check the configuration
+    def checkConfiguration(self):
         """
         Check the configuration
         """
-        pass 
+        pass
 
     ## apply the configuration
-    def applyConf ( self ) :
+    def applyConf(self):
         """
-        Apply the configuration 
+        Apply the configuration
         """
         self.checkConfiguration()
 
-        log.info ('CaloDstUnPackConf: Apply Calo Dst-UnPacking Configuration ')
-        log.info ( self )
+        log.info('CaloDstUnPackConf: Apply Calo Dst-UnPacking Configuration ')
+        log.info(self)
 
-        if not self.getProp('Enable') : return
+        if not self.getProp('Enable'): return
 
-        caloHypoDstUnPack (
-            self.getProp ('Enable'      ) ,
-            self.getProp ('Hypos'       ) ,
-            self.getProp ('OutputLevel' ) 
-            )
+        caloHypoDstUnPack(
+            self.getProp('Enable'), self.getProp('Hypos'),
+            self.getProp('OutputLevel'))
 
-## define Dst packing rules 
-def caloHypoDstPack (
-    sequence                      , 
-    enable                        ,
-    hypos    = [ 'Electrons'    ,
-                 'Photons'      ,
-                 'MergedPi0s'   ,
-                 'SplitPhotons' ] ,
-    level    = INFO               ,  
-    alwaysCreate  = False         ,
-    clearRegistry = True          ,
-    enableChecks  = False
-    ) :
+
+## define Dst packing rules
+def caloHypoDstPack(
+        sequence,
+        enable,
+        hypos=['Electrons', 'Photons', 'MergedPi0s', 'SplitPhotons'],
+        level=INFO,
+        alwaysCreate=False,
+        clearRegistry=True,
+        enableChecks=False):
     """
     Define the Dst-packing rules
 
     """
-    if not enable :
+    if not enable:
         log.debug('CaloHypoDstPack: the packing is disabled')
         return None
-    
+
     from Configurables import PackCaloHypo
-    
-    for hypo in hypos :
-        _name   = 'Pack'       + hypo
-        _input  =  'Rec/Calo/' + hypo  
+
+    for hypo in hypos:
+        _name = 'Pack' + hypo
+        _input = 'Rec/Calo/' + hypo
         _output = 'pRec/Calo/' + hypo
-        _alg    = PackCaloHypo(
-            name               = _name         ,
-            AlwaysCreateOutput = alwaysCreate  ,
-            InputName          = _input        ,
-            OutputName         = _output       ,
-            OutputLevel        = level         ,
-            ClearRegistry      = clearRegistry ,
-            EnableCheck        = enableChecks  )
-        sequence.Members .append ( _alg )
-        log.debug ('CaloHypoDstPack: add %s ' % _alg.getFullName() )
+        _alg = PackCaloHypo(
+            name=_name,
+            AlwaysCreateOutput=alwaysCreate,
+            InputName=_input,
+            OutputName=_output,
+            OutputLevel=level,
+            ClearRegistry=clearRegistry,
+            EnableCheck=enableChecks)
+        sequence.Members.append(_alg)
+        log.debug('CaloHypoDstPack: add %s ' % _alg.getFullName())
+
 
 # ==============================================================================
-## define Dst-unpacking rules 
-def caloHypoDstUnPack (
-    enable                        ,
-    hypos    = [ 'Electrons'    ,
-                 'Photons'      ,
-                 'MergedPi0s'   ,
-                 'SplitPhotons' ] ,
-    level    = INFO  
-    ) :
+## define Dst-unpacking rules
+def caloHypoDstUnPack(
+        enable,
+        hypos=['Electrons', 'Photons', 'MergedPi0s', 'SplitPhotons'],
+        level=INFO):
     """
-    Define Dst-unpacking rules 
+    Define Dst-unpacking rules
     """
 
-    if not enable :
+    if not enable:
         log.debug('CaloHypoDstUnPack: the unpacking is disabled')
         return None
-    
-    from Configurables        import UnpackCaloHypo
+
+    from Configurables import UnpackCaloHypo
     from CaloKernel.ConfUtils import onDemand
 
-    for hypo in hypos :
-        _name    = 'Unpack'     + hypo 
-        _input   = 'pRec/Calo/' + hypo
-        _output  =  'Rec/Calo/' + hypo  
-        _alg    = UnpackCaloHypo(
-            name        = _name   ,
-            InputName   = _input  ,
-            OutputName  = _output ,
-            OutputLevel = level   )
-        onDemand ( _alg.OutputName , _alg ) 
-        log.debug ('CaloHypoDstUnPack: add %s ' % _alg.getFullName() )
-
+    for hypo in hypos:
+        _name = 'Unpack' + hypo
+        _input = 'pRec/Calo/' + hypo
+        _output = 'Rec/Calo/' + hypo
+        _alg = UnpackCaloHypo(
+            name=_name,
+            InputName=_input,
+            OutputName=_output,
+            OutputLevel=level)
+        onDemand(_alg.OutputName, _alg)
+        log.debug('CaloHypoDstUnPack: add %s ' % _alg.getFullName())
 
 
 ## ============================================================================
-if '__main__' == __name__ :
+if '__main__' == __name__:
     print __doc__
     print __author__
     print __version__
 
-    
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

@@ -26,8 +26,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/KinTypes.h"
 #include "LoKi/Constants.h"
+#include "LoKi/KinTypes.h"
 // ============================================================================
 /** @file
  *
@@ -43,8 +43,7 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ===========================================================================
   /** @namespace LoKi::Kinematics
    *  collection of few trivial functions for kinematical evaluations
@@ -52,8 +51,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-01-17
    */
-  namespace Kinematics
-  {
+  namespace Kinematics {
     // ========================================================================
     /** simple function for evaluation of the euclidian norm
      *  for LorentzVectors:
@@ -67,7 +65,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    GAUDI_API double euclidianNorm2 ( const LoKi::LorentzVector& vct ) ;
+    GAUDI_API double euclidianNorm2( const LoKi::LorentzVector& vct );
     // ========================================================================
     /** simple function for evaluation of the euclidian norm
      *  for LorentzVectors
@@ -81,7 +79,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    GAUDI_API double euclidianNorm ( const LoKi::LorentzVector& vct ) ;
+    GAUDI_API double euclidianNorm( const LoKi::LorentzVector& vct );
     // ========================================================================
     /** simple function for evaluation of the square of
      *  the euclidian distance in between two Lorentz-vectors:
@@ -100,8 +98,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    GAUDI_API double delta2euclidian ( const LoKi::LorentzVector& vct1 ,
-                                       const LoKi::LorentzVector& vct2 ) ;
+    GAUDI_API double delta2euclidian( const LoKi::LorentzVector& vct1, const LoKi::LorentzVector& vct2 );
     // ========================================================================
     /** simple function which evaluates the transverse
      *  momentum with respect a certain 3D-direction:
@@ -116,8 +113,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    GAUDI_API double transverseMomentumDir ( const LoKi::ThreeVector& mom ,
-                                             const LoKi::ThreeVector& dir ) ;
+    GAUDI_API double transverseMomentumDir( const LoKi::ThreeVector& mom, const LoKi::ThreeVector& dir );
     // ========================================================================
     /** simple function which evaluates the transverse
      *  momentum with respect a certain 3D-direction:
@@ -132,9 +128,9 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    inline double transverseMomentumDir( const LoKi::LorentzVector& mom ,
-                                         const LoKi::ThreeVector&   dir )
-    { return transverseMomentumDir ( mom.Vect() , dir ) ; }
+    inline double transverseMomentumDir( const LoKi::LorentzVector& mom, const LoKi::ThreeVector& dir ) {
+      return transverseMomentumDir( mom.Vect(), dir );
+    }
     // ========================================================================
     /** trivial function to evaluate the mass of 4-vector
      *  @param mom lorenz vector
@@ -142,7 +138,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    inline double mass( const LoKi::LorentzVector& mom ) { return mom.M() ; }
+    inline double mass( const LoKi::LorentzVector& mom ) { return mom.M(); }
     // ========================================================================
     /** trivial function to evaluate the mass of 4-vectors
      *  @param v1  the first lorenz vector
@@ -151,8 +147,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    inline double mass( const LoKi::LorentzVector& v1 ,
-                        const LoKi::LorentzVector& v2 ) { return mass( v1 + v2 ) ; }
+    inline double mass( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2 ) { return mass( v1 + v2 ); }
     // ========================================================================
     /** trivial function to evaluate the mass of 4-vectors
      *  @param v1  the first  lorenz vector
@@ -162,14 +157,11 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    inline double mass( const LoKi::LorentzVector& v1 ,
-                        const LoKi::LorentzVector& v2 ,
-                        const LoKi::LorentzVector& v3 )
-    {
-      LoKi::LorentzVector v0( v1 ) ;
-      v0 += v2 ;
-      v0 += v3 ;
-      return mass ( v0 ) ;
+    inline double mass( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2, const LoKi::LorentzVector& v3 ) {
+      LoKi::LorentzVector v0( v1 );
+      v0 += v2;
+      v0 += v3;
+      return mass( v0 );
     }
     // ========================================================================
     /** trivial function to evaluate the mass of 4-vectors
@@ -181,16 +173,13 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    inline double mass( const LoKi::LorentzVector& v1 ,
-                        const LoKi::LorentzVector& v2 ,
-                        const LoKi::LorentzVector& v3 ,
-                        const LoKi::LorentzVector& v4 )
-    {
-      LoKi::LorentzVector v0( v1 ) ;
-      v0 += v2 ;
-      v0 += v3 ;
-      v0 += v4 ;
-      return mass ( v0 ) ;
+    inline double mass( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2, const LoKi::LorentzVector& v3,
+                        const LoKi::LorentzVector& v4 ) {
+      LoKi::LorentzVector v0( v1 );
+      v0 += v2;
+      v0 += v3;
+      v0 += v4;
+      return mass( v0 );
     }
     // ========================================================================
     /** the simple function which adds a 4-momenta of all (MC)Particles
@@ -253,14 +242,11 @@ namespace LoKi
      *  @return sum of 4-momenta of all particles
      */
     template <class OBJECT>
-    inline LoKi::LorentzVector addMomenta( OBJECT begin,
-                                           OBJECT end,
-                                           LoKi::LorentzVector result = LoKi::LorentzVector() )
-    {
-      using arg_t = decltype(*begin);
+    inline LoKi::LorentzVector addMomenta( OBJECT begin, OBJECT end,
+                                           LoKi::LorentzVector result = LoKi::LorentzVector() ) {
+      using arg_t = decltype( *begin );
       return std::accumulate( begin, end, result,
-                              [](LoKi::LorentzVector r, arg_t arg)
-                              { return arg ? r + arg->momentum() : r ; } );
+                              []( LoKi::LorentzVector r, arg_t arg ) { return arg ? r + arg->momentum() : r; } );
     }
     // ========================================================================
     /** the simple function which adds a 4-momenta of all (MC)Particles
@@ -298,16 +284,11 @@ namespace LoKi
      *  @return sum of 4-momenta of all particles
      */
     template <class OBJECT, class PREDICATE>
-    inline LoKi::LorentzVector addMomenta ( OBJECT              first       ,
-                                            OBJECT              last        ,
-                                            PREDICATE           cut         ,
-                                            LoKi::LorentzVector result = {} )
-    {
-      using ref = decltype(*first);
-      return std::accumulate( first, last, std::move(result),
-                              [&](LoKi::LorentzVector r, ref i)
-                              { return ( i && cut(i) ) ? r + i->momentum()
-                                                       : r ; } );
+    inline LoKi::LorentzVector addMomenta( OBJECT first, OBJECT last, PREDICATE cut, LoKi::LorentzVector result = {} ) {
+      using ref = decltype( *first );
+      return std::accumulate( first, last, std::move( result ), [&]( LoKi::LorentzVector r, ref i ) {
+        return ( i && cut( i ) ) ? r + i->momentum() : r;
+      } );
     }
     // ========================================================================
     /** the simple function which adds a 4-momenta of all (MC)Particles
@@ -344,9 +325,9 @@ namespace LoKi
      *  @return sum of 4-momenta of all particles
      */
     template <class OBJECTS>
-    inline LoKi::LorentzVector addMomenta ( const OBJECTS&      seq         ,
-                                            LoKi::LorentzVector result = {} )
-    { return addMomenta ( seq.begin() , seq.end() , std::move(result) ) ; }
+    inline LoKi::LorentzVector addMomenta( const OBJECTS& seq, LoKi::LorentzVector result = {} ) {
+      return addMomenta( seq.begin(), seq.end(), std::move( result ) );
+    }
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -378,9 +359,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-12-03
      */
-    GAUDI_API double decayAngle( const LoKi::LorentzVector& P ,
-                                 const LoKi::LorentzVector& Q ,
-                                 const LoKi::LorentzVector& D ) ;
+    GAUDI_API double decayAngle( const LoKi::LorentzVector& P, const LoKi::LorentzVector& Q,
+                                 const LoKi::LorentzVector& D );
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -412,10 +392,10 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-12-03
      */
-    inline double cosDecayAngle( const LoKi::LorentzVector& P ,
-                                 const LoKi::LorentzVector& Q ,
-                                 const LoKi::LorentzVector& D )
-    { return decayAngle ( P , Q, D ) ; }
+    inline double cosDecayAngle( const LoKi::LorentzVector& P, const LoKi::LorentzVector& Q,
+                                 const LoKi::LorentzVector& D ) {
+      return decayAngle( P, Q, D );
+    }
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -437,9 +417,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-12-03
      */
-    inline double decayAngle( const LoKi::LorentzVector& D ,
-                              const LoKi::LorentzVector& M )
-    { return decayAngle ( LoKi::LorentzVector (0,0,0,2*M.E()) , M , D ) ; }
+    inline double decayAngle( const LoKi::LorentzVector& D, const LoKi::LorentzVector& M ) {
+      return decayAngle( LoKi::LorentzVector( 0, 0, 0, 2 * M.E() ), M, D );
+    }
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -461,9 +441,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-12-03
      */
-    inline double cosDecayAngle( const LoKi::LorentzVector& D ,
-                                 const LoKi::LorentzVector& M )
-    { return decayAngle ( D , M ) ; }
+    inline double cosDecayAngle( const LoKi::LorentzVector& D, const LoKi::LorentzVector& M ) {
+      return decayAngle( D, M );
+    }
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -481,8 +461,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-12-03
      */
-    double decayAngle_ ( const LoKi::LorentzVector& D ,
-                         const LoKi::LorentzVector& M ) ;
+    double decayAngle_( const LoKi::LorentzVector& D, const LoKi::LorentzVector& M );
     // ========================================================================
     /** simple function which evaluates the magnitude of 3-momentum
      *  of particle "v" in the rest system of particle "M"
@@ -500,8 +479,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API double restMomentum ( const LoKi::LorentzVector& v ,
-                                    const LoKi::LorentzVector& M ) ;
+    GAUDI_API double restMomentum( const LoKi::LorentzVector& v, const LoKi::LorentzVector& M );
     // ========================================================================
     /** simple function which evaluates the energy
      *  of particle "v" in the rest system of particle "M"
@@ -518,8 +496,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API double restEnergy ( const LoKi::LorentzVector& v ,
-                                  const LoKi::LorentzVector& M ) ;
+    GAUDI_API double restEnergy( const LoKi::LorentzVector& v, const LoKi::LorentzVector& M );
     // ========================================================================
     /** simple function to evaluate the cosine angle between
      *  two directions (v1 and v2) in the rest system of M
@@ -554,9 +531,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API double cosThetaRest ( const LoKi::LorentzVector& v1 ,
-                                    const LoKi::LorentzVector& v2 ,
-                                    const LoKi::LorentzVector& M  ) ;
+    GAUDI_API double cosThetaRest( const LoKi::LorentzVector& v1, const LoKi::LorentzVector& v2,
+                                   const LoKi::LorentzVector& M );
     // ========================================================================
     /** evaluate the angle \f$\chi\f$
      *  beween two decay planes,
@@ -579,10 +555,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API double decayAngleChi ( const LoKi::LorentzVector& d1 ,
-                                     const LoKi::LorentzVector& d2 ,
-                                     const LoKi::LorentzVector& h1 ,
-                                     const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double decayAngleChi( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                    const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** evaluate \f$\cos \chi\f$, where \f$\chi\f$ if the angle
      *  beween two decay planes, formed by particles d1&d2
@@ -599,7 +573,7 @@ namespace LoKi
      *     { \sqrt{ \left[ -L_D^2 \right]\left[ -L_H^2 \right] }},
      &   =
      *   - \frac{
-	   *     \epsilon_{ijkl}d_1^{j}d_2^{k}\left(h_1+h_2\right)^l
+           *     \epsilon_{ijkl}d_1^{j}d_2^{k}\left(h_1+h_2\right)^l
      *     \epsilon_{imnp}h_1^{m}h_2^{n}\left(d_1+d_2\right)^p }
      *     { \sqrt{ \left[ -L_D^2 \right]\left[ -L_H^2 \right] }},
      *  \f]
@@ -622,10 +596,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API double cosDecayAngleChi( const LoKi::LorentzVector& d1 ,
-                                       const LoKi::LorentzVector& d2 ,
-                                       const LoKi::LorentzVector& h1 ,
-                                       const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double cosDecayAngleChi( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                       const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** evaluate \f$\sin\chi\f$, where \f$\chi\f$ is the angle
      *  beween two decay planes,
@@ -641,16 +613,16 @@ namespace LoKi
      *   \epsilon_{\mu\nu\lambda\delta}
      *   L_D^{\mu}L_H^{\nu}H^{\lambda}M^{\delta} }
      *   { \sqrt{
-	   *   \left[ -L_D^2 \right]\left[ -L_H^2 \right]
+     *   \left[ -L_D^2 \right]\left[ -L_H^2 \right]
      *   \left[ \left( H\ cdot M\right)^2-H^2M^2 \right]
      *   }} = \frac {
      *   \epsilon_{\mu\nu\lambda\delta}
      *   d_1^{\mu}d_2^{\nu}h_1^{\lambda}h_2^{\delta}
      *   \left( \left( D \cdot H \right)^2 - D^2H^2 \right) }
      *   { \sqrt{
-	   *   \left[ -L_D^2 \right]\left[ -L_H^2    \right]
+     *   \left[ -L_D^2 \right]\left[ -L_H^2    \right]
      *   \left[ \left(H\cdot M\right)^2-H^2M^2 \right]
-	   *   }},
+     *   }},
      *  \f]
      *  where "4-normales" are defined as:
      *  \f$
@@ -678,10 +650,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API double sinDecayAngleChi( const LoKi::LorentzVector& d1 ,
-                                       const LoKi::LorentzVector& d2 ,
-                                       const LoKi::LorentzVector& h1 ,
-                                       const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double sinDecayAngleChi( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                       const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** evaluate the Armenteros-Podolanski variable \f$\mathbf{\alpha}\f$,
      *  defined as:
@@ -718,8 +688,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    GAUDI_API double armenterosPodolanskiX( const LoKi::ThreeVector& d1 ,
-                                            const LoKi::ThreeVector& d2 ) ;
+    GAUDI_API double armenterosPodolanskiX( const LoKi::ThreeVector& d1, const LoKi::ThreeVector& d2 );
     // ========================================================================
     /** evaluate the Armenteros-Podolanski variable \f$\mathbf{\alpha}\f$,
      *  defined as:
@@ -756,9 +725,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    inline double armenterosPodolanskiX ( const LoKi::LorentzVector& d1 ,
-                                          const LoKi::LorentzVector& d2 )
-    { return armenterosPodolanskiX ( d1.Vect () , d2. Vect() ) ; }
+    inline double armenterosPodolanskiX( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2 ) {
+      return armenterosPodolanskiX( d1.Vect(), d2.Vect() );
+    }
     // ========================================================================
     /** evaluate the chi2 of the mass  \f$\chi^2_{M}\f$.
      *
@@ -777,9 +746,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-23
      */
-    GAUDI_API double chi2mass( const double               mass ,
-                               const LoKi::LorentzVector& mom  ,
-                               const Gaudi::SymMatrix4x4& cov  ) ;
+    GAUDI_API double chi2mass( const double mass, const LoKi::LorentzVector& mom, const Gaudi::SymMatrix4x4& cov );
     // ========================================================================
     /** @evaluate the (cosine) of tansversity angle,
      *  \f$ \cos \theta_{\mathrm{tr}}\f$,
@@ -813,10 +780,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-06-02
      */
-    GAUDI_API double cosThetaTr ( const LoKi::LorentzVector& d1 ,
-                                  const LoKi::LorentzVector& d2 ,
-                                  const LoKi::LorentzVector& h1 ,
-                                  const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double cosThetaTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                 const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** evaluate the cosine of transverse angle phi,
      *  \f$ \cos \phi_{\mathrm{tr}}\f$, e.g. for decay
@@ -842,10 +807,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-06-02
      */
-    GAUDI_API double cosPhiTr ( const LoKi::LorentzVector& d1 ,
-                                const LoKi::LorentzVector& d2 ,
-                                const LoKi::LorentzVector& h1 ,
-                                const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double cosPhiTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                               const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** evaluate the sine of transverse angle phi, \f$ \sin \phi_{\mathrm{tr}}\f$,
      *  e.g. for decay
@@ -885,10 +848,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-06-02
      */
-    GAUDI_API double sinPhiTr ( const LoKi::LorentzVector& d1 ,
-                                const LoKi::LorentzVector& d2 ,
-                                const LoKi::LorentzVector& h1 ,
-                                const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double sinPhiTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                               const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** evaluate the transverse angle phi, \f$ \phi_{\mathrm{tr}}\f$,
      *  e.g. for decay
@@ -912,10 +873,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-06-02
      */
-    GAUDI_API double anglePhiTr ( const LoKi::LorentzVector& d1 ,
-                                  const LoKi::LorentzVector& d2 ,
-                                  const LoKi::LorentzVector& h1 ,
-                                  const LoKi::LorentzVector& h2 ) ;
+    GAUDI_API double anglePhiTr( const LoKi::LorentzVector& d1, const LoKi::LorentzVector& d2,
+                                 const LoKi::LorentzVector& h1, const LoKi::LorentzVector& h2 );
     // ========================================================================
     /** trivial functon to get the component of "a", transverse to "b"
      *  @param a (INPUT)  three vector
@@ -924,8 +883,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-04
      */
-    GAUDI_API LoKi::ThreeVector transverse ( const LoKi::ThreeVector& a ,
-                                             const LoKi::ThreeVector& b ) ;
+    GAUDI_API LoKi::ThreeVector transverse( const LoKi::ThreeVector& a, const LoKi::ThreeVector& b );
     // ========================================================================
     /** trivial functon to get the component of "a", transverse to "b"
      *  @param a (INPUT)  three vector
@@ -934,8 +892,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-04
      */
-    GAUDI_API LoKi::ThreeVector perpendicular ( const LoKi::ThreeVector& a ,
-                                                const LoKi::ThreeVector& b ) ;
+    GAUDI_API LoKi::ThreeVector perpendicular( const LoKi::ThreeVector& a, const LoKi::ThreeVector& b );
     // ========================================================================
     /** trivial functon to get the component of "a" parallel to "b"
      *  @param a (INPUT)  three vector
@@ -944,8 +901,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-04
      */
-    GAUDI_API LoKi::ThreeVector parallel ( const LoKi::ThreeVector& a ,
-                                           const LoKi::ThreeVector& b ) ;
+    GAUDI_API LoKi::ThreeVector parallel( const LoKi::ThreeVector& a, const LoKi::ThreeVector& b );
     // ========================================================================
     /** trivial function to calculate \f$ \Delta \phi \f$ for two particles
      *  @param p1 the first  particle
@@ -954,8 +910,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double deltaPhi ( const LoKi::LorentzVector& p1 ,
-                                const LoKi::LorentzVector& p2 );
+    GAUDI_API double deltaPhi( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 );
     // ========================================================================
     /** trivial function to calculate \f$ \Delta \eta \f$ for two particles
      *  @param p1 the first  particle
@@ -964,8 +919,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double deltaEta ( const LoKi::LorentzVector& p1 ,
-                                const LoKi::LorentzVector& p2 );
+    GAUDI_API double deltaEta( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 );
     // ========================================================================
     /** trivial function to calculate \f$ \Delta R^2 \f$ for two particles
      *  @param p1 the first  particle
@@ -974,8 +928,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double deltaR2 ( const LoKi::LorentzVector& p1 ,
-                               const LoKi::LorentzVector& p2 );
+    GAUDI_API double deltaR2( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 );
     // ========================================================================
     /** trivial function to calculate Kullback-Liebler divergency
      *  @param p1 the first  particle
@@ -987,38 +940,33 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double kullback ( const LoKi::LorentzVector& p1 ,
-                                const Gaudi::SymMatrix4x4& c1 ,
-                                const LoKi::LorentzVector& p2 ,
-                                const Gaudi::SymMatrix4x4& c2 ) ;
+    GAUDI_API double kullback( const LoKi::LorentzVector& p1, const Gaudi::SymMatrix4x4& c1,
+                               const LoKi::LorentzVector& p2, const Gaudi::SymMatrix4x4& c2 );
     // ========================================================================
     /** trivial function to calculate the mass-distance
-     *  \f$ (m^2_{12} - m^2_{mid} ) / m^2_{12} \f$, 
+     *  \f$ (m^2_{12} - m^2_{mid} ) / m^2_{12} \f$,
      *  where \f#offset is \f$ m2 \f$ calculated using mid-momentum
-     *   \f$ \vec{p}_{mid} = \frac{1}{2}\left( \vec{p}_1 + \vec{p}_2\right)\f$ 
-     *   for both particles 
+     *   \f$ \vec{p}_{mid} = \frac{1}{2}\left( \vec{p}_1 + \vec{p}_2\right)\f$
+     *   for both particles
      *  @param p1 the first  particle
      *  @param p2 the second particle
      *  @return mass-distance
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double deltaM2 ( const LoKi::LorentzVector& p1 ,
-                               const LoKi::LorentzVector& p2 ) ;
+    GAUDI_API double deltaM2( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 );
     // ========================================================================
     /** trivial function to calculate the mass-distance
-     *  but first assign the same mass fro both momenta 
+     *  but first assign the same mass fro both momenta
      *  @param p1 the first  particle
      *  @param p2 the second particle
-     *  @param mass the amss to be assigned 
+     *  @param mass the amss to be assigned
      *  @return mass-distance
      *  @see LoKi::Kinematics::deltaM2
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2018-11-15
      */
-    GAUDI_API double deltaM2 ( const LoKi::LorentzVector& p1 ,
-                               const LoKi::LorentzVector& p2 , 
-                               const double mass             ) ;
+    GAUDI_API double deltaM2( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2, const double mass );
     // ========================================================================
     /** trivial function to calculate the delta-angle
      *  @param p1 the first  particle
@@ -1027,8 +975,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double deltaAlpha ( const LoKi::LorentzVector& p1 ,
-                                  const LoKi::LorentzVector& p2 ) ;
+    GAUDI_API double deltaAlpha( const LoKi::LorentzVector& p1, const LoKi::LorentzVector& p2 );
     // ========================================================================
     /** trivial function to calculate the delta-angle
      *  @param p1 the first  particle
@@ -1037,8 +984,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double deltaAlpha ( const LoKi::Vector3D& p1 ,
-                                  const LoKi::Vector3D& p2 ) ;
+    GAUDI_API double deltaAlpha( const LoKi::Vector3D& p1, const LoKi::Vector3D& p2 );
     // ========================================================================
     /** trivial function to calculate Kullback-Liebler divergency
      *  @param p1 the first  particle
@@ -1050,10 +996,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-17
      */
-    GAUDI_API double kullback ( const LoKi::Vector3D&      p1 ,
-                                const Gaudi::SymMatrix3x3& c1 ,
-                                const LoKi::Vector3D&      p2 ,
-                                const Gaudi::SymMatrix3x3& c2 ) ;
+    GAUDI_API double kullback( const LoKi::Vector3D& p1, const Gaudi::SymMatrix3x3& c1, const LoKi::Vector3D& p2,
+                               const Gaudi::SymMatrix3x3& c2 );
     // ========================================================================
     /** easy creation of 4-momentum from 3-momenutm and energy
      *  @param v3     (INPUT) 3-momentum
@@ -1062,9 +1006,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-05
      */
-    inline LoKi::LorentzVector fourMomentum ( const LoKi::Vector3D& v3     ,
-                                              const double          energy )
-    { return LoKi::LorentzVector ( v3.X() , v3.Y() , v3.Z() , energy ) ; }
+    inline LoKi::LorentzVector fourMomentum( const LoKi::Vector3D& v3, const double energy ) {
+      return LoKi::LorentzVector( v3.X(), v3.Y(), v3.Z(), energy );
+    }
     // ========================================================================
     /** easy creation of 4-momentum from 3-momentum and energy
      *  @param energy (INPUT) the energy
@@ -1073,44 +1017,37 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-05
      */
-    inline LoKi::LorentzVector fourMomentum ( const double          energy ,
-                                              const LoKi::Vector3D& v3     )
-    { return LoKi::LorentzVector ( v3.X() , v3.Y() , v3.Z() , energy ) ; }    
-    // ========================================================================
-    /** easy creation of 4-momentum from 3-momentum and mass 
-     *  @param v3 (INPUT) 3-momentum
-     *  @param m  (INPUT) the mass 
-     *  @return 4-momentum
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     */    
-    inline LoKi::LorentzVector v4FromV3 ( const LoKi::Vector3D& v3 ,
-                                          const double          m  )
-    {
-      const double energy = 0 <= m ? 
-        std::sqrt ( v3.Mag2()  + m * m ) : - std::sqrt ( v3.Mag2()  + m * m ) ;
-      return fourMomentum ( v3 , energy ) ;
+    inline LoKi::LorentzVector fourMomentum( const double energy, const LoKi::Vector3D& v3 ) {
+      return LoKi::LorentzVector( v3.X(), v3.Y(), v3.Z(), energy );
     }
     // ========================================================================
-    /** easy creation of 4-momentum from 3-momentum and mass 
+    /** easy creation of 4-momentum from 3-momentum and mass
      *  @param v3 (INPUT) 3-momentum
-     *  @param m  (INPUT) the mass 
+     *  @param m  (INPUT) the mass
      *  @return 4-momentum
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     */    
-    inline LoKi::LorentzVector v4FromV3 ( const double          m  , 
-                                          const LoKi::Vector3D& v3 )
-    { return v4FromV3 ( v3  , m ) ; }
-    // ========================================================================
-    /** boost Lorentz vector into  rest-frame of another Lorentz vector 
-     *  @param what   the vextro to be bosted 
-     *  @param frame  the 4-vector of the frame 
-     *  @return boosted vector 
      */
-    GAUDI_API LoKi::LorentzVector boost 
-    ( const LoKi::LorentzVector& what  ,
-      const LoKi::LorentzVector& frame ) ;  
+    inline LoKi::LorentzVector v4FromV3( const LoKi::Vector3D& v3, const double m ) {
+      const double energy = 0 <= m ? std::sqrt( v3.Mag2() + m * m ) : -std::sqrt( v3.Mag2() + m * m );
+      return fourMomentum( v3, energy );
+    }
     // ========================================================================
-  } //                                        end of namespace LoKi::Kinematics
+    /** easy creation of 4-momentum from 3-momentum and mass
+     *  @param v3 (INPUT) 3-momentum
+     *  @param m  (INPUT) the mass
+     *  @return 4-momentum
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     */
+    inline LoKi::LorentzVector v4FromV3( const double m, const LoKi::Vector3D& v3 ) { return v4FromV3( v3, m ); }
+    // ========================================================================
+    /** boost Lorentz vector into  rest-frame of another Lorentz vector
+     *  @param what   the vextro to be bosted
+     *  @param frame  the 4-vector of the frame
+     *  @return boosted vector
+     */
+    GAUDI_API LoKi::LorentzVector boost( const LoKi::LorentzVector& what, const LoKi::LorentzVector& frame );
+    // ========================================================================
+  } // namespace Kinematics
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

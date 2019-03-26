@@ -27,8 +27,7 @@
 // ============================================================================
 #include "LoKi/GenTypes.h"
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @class IGenHybridTool LoKi/IGenHybridTool.h
    *
@@ -45,57 +44,56 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2004-06-29
    */
-  struct GAUDI_API IGenHybridTool : extend_interfaces<IAlgTool>
-  {
+  struct GAUDI_API IGenHybridTool : extend_interfaces<IAlgTool> {
     // ========================================================================
-    DeclareInterfaceID( IGenHybridTool , 5 , 0 ) ;
+    DeclareInterfaceID( IGenHybridTool, 5, 0 );
     // ========================================================================
     // predicates:
     // ========================================================================
     /// set the C++ predicate for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GCuts&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GCuts& cut ) = 0;
     /// set the C++ predicate for HepMC::GenVertex
-    virtual void set ( const LoKi::Types::GVCuts&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::GVCuts& cut ) = 0;
     // ========================================================================
     // functions
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GFunc&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GFunc& cut ) = 0;
     /// set the C++ function for HepMC::GenVertex
-    virtual void set ( const LoKi::Types::GVFunc&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::GVFunc& cut ) = 0;
     // ========================================================================
     // maps
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GMaps&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GMaps& cut ) = 0;
     /// set the C++ function for HepMC::GenVertex
-    virtual void set ( const LoKi::Types::GVMaps&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::GVMaps& cut ) = 0;
     // ========================================================================
     // pipes
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GPipes&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GPipes& cut ) = 0;
     /// set the C++ function for HepMC::GenVertex
-    virtual void set ( const LoKi::Types::GVPipes&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::GVPipes& cut ) = 0;
     // ========================================================================
     // fun-vals
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GFunVals&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GFunVals& cut ) = 0;
     /// set the C++ function for HepMC::GenVertex
-    virtual void set ( const LoKi::Types::GVFunVals&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::GVFunVals& cut ) = 0;
     // ========================================================================
     // cut-vals
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GCutVals&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GCutVals& cut ) = 0;
     // ========================================================================
     // sources
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
-    virtual void set ( const LoKi::Types::GSources&   cut ) = 0 ;
+    virtual void set( const LoKi::Types::GSources& cut ) = 0;
     /// set the C++ function for HepMC::GenVertex
-    virtual void set ( const LoKi::Types::GVSources&  cut ) = 0 ;
+    virtual void set( const LoKi::Types::GVSources& cut ) = 0;
     // ========================================================================
   };
   // ==========================================================================

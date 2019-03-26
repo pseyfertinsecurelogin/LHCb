@@ -19,8 +19,7 @@
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
 // ============================================================================
-namespace Gaudi
-{
+namespace Gaudi {
   // ==========================================================================
   /** @class DataRemove
    *  Trivial algorithm to remove data in the TES
@@ -28,48 +27,37 @@ namespace Gaudi
    *  @date 2012-11-08
    */
   // ==========================================================================
-  class DataRemove final : public GaudiAlgorithm
-  {
+  class DataRemove final : public GaudiAlgorithm {
   public:
     // ========================================================================
     /// the only one essential method
-    StatusCode execute ()  override;
+    StatusCode execute() override;
     // ========================================================================
     /// standard constructor
-    DataRemove ( const std::string& name ,
-                 ISvcLocator*       pSvc ) ;
+    DataRemove( const std::string& name, ISvcLocator* pSvc );
     // ========================================================================
   private:
     std::string m_dataLocation;
     // ========================================================================
-  } ; // end of class DataRemove
+  }; // end of class DataRemove
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-Gaudi::DataRemove::DataRemove( const std::string& name ,
-                               ISvcLocator*       pSvc )
-  : GaudiAlgorithm ( name , pSvc )
-{
+Gaudi::DataRemove::DataRemove( const std::string& name, ISvcLocator* pSvc ) : GaudiAlgorithm( name, pSvc ) {
   declareProperty( "DataLocation", m_dataLocation = "" );
 }
 // ========================================================================
 // the main method
 // ========================================================================
-StatusCode Gaudi::DataRemove::execute()
-{
-  if ( !m_dataLocation.empty() )
-  {
-    DataObject * data = getIfExists<DataObject>( m_dataLocation );
-    if ( data )
-    {
+StatusCode Gaudi::DataRemove::execute() {
+  if ( !m_dataLocation.empty() ) {
+    DataObject* data = getIfExists<DataObject>( m_dataLocation );
+    if ( data ) {
       const StatusCode sc = evtSvc()->unregisterObject( data );
-      if ( sc.isSuccess() )
-      {
+      if ( sc.isSuccess() ) {
         delete data;
         data = nullptr;
-      }
-      else
-      {
+      } else {
         return Error( "Failed to delete input data " + m_dataLocation, sc );
       }
     }

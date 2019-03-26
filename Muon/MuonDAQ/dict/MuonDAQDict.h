@@ -8,8 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: MuonDAQDict.h,v 1.1 2007-11-28 14:48:15 cattanem Exp $
-#ifndef DICT_MUONDAQDICT_H 
+#ifndef DICT_MUONDAQDICT_H
 #define DICT_MUONDAQDICT_H 1
 
 #include "MuonDAQ/IMuonRawBuffer.h"

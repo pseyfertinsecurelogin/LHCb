@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRichSphMirror.h"
 
-typedef XmlUserDetElemCnv< DeRichSphMirror > XmlDeRichSphMirrorCnv;
+typedef XmlUserDetElemCnv<DeRichSphMirror> XmlDeRichSphMirrorCnv;
 DECLARE_CONVERTER( XmlDeRichSphMirrorCnv )
 
 #endif // XMLDERICHSPHMIRRORCNV_H

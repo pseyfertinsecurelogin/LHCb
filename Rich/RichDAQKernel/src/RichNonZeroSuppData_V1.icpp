@@ -27,33 +27,24 @@
 
 // =================================================================================================
 
-namespace Rich
-{
-  namespace DAQ
-  {
+namespace Rich {
+  namespace DAQ {
 
-    namespace RichNonZeroSuppDataV1
-    {
+    namespace RichNonZeroSuppDataV1 {
 
-      template < class Version, class Header, class Footer >
-      ShortType RichNonZeroSuppData< Version, Header, Footer >::fillRichSmartIDs(
-        LHCb::RichSmartID::Vector &ids,
-        const LHCb::RichSmartID    hpdID ) const
-      {
+      template <class Version, class Header, class Footer>
+      ShortType RichNonZeroSuppData<Version, Header, Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector& ids,
+                                                                                const LHCb::RichSmartID hpdID ) const {
         ShortType nHits( 0 );
 
         // reserve size in hit vector ( guess )
         ids.reserve( 96 );
 
         // Fill with active channels
-        for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
-        {
-          for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
-          {
-            if ( isPixelActive( iRow, iCol ) )
-            {
-              ids.emplace_back(
-                hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(), iRow, iCol );
+        for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow ) {
+          for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol ) {
+            if ( isPixelActive( iRow, iCol ) ) {
+              ids.emplace_back( hpdID.rich(), hpdID.panel(), hpdID.pdNumInCol(), hpdID.pdCol(), iRow, iCol );
               ++nHits;
             }
           }

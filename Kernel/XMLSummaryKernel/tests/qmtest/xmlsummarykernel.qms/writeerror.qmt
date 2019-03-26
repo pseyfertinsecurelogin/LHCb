@@ -16,7 +16,7 @@
 # Author: rlambert
 # Purpose: Keep track fo what XMLSUmmary stores on a write error (trying to write to an unopenable file).
 # Prerequisites: None
-# Common failure modes, severities and cures: 
+# Common failure modes, severities and cures:
 #               . MINOR: Any changes here indicate a change in how Gaudi handles truing to write unwritable files
 #######################################################
 -->
@@ -45,7 +45,7 @@ for l in refblock:
   doBreak=False
   ########################################
   #allow mem to change
-  ######################################## 
+  ########################################
   if 'MemoryMaximum' in l:
     #pass
     #do something special
@@ -72,7 +72,10 @@ for l in refblock:
       causes.append('XMLsummary printout error')
       result['xmlsummarykernel.writeerror']=result.Quote(l)
       doBreak=True
-  if doBreak: 
+  if doBreak:
     break
 </text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>xmlsummarykernel.writedst</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
 </extension>

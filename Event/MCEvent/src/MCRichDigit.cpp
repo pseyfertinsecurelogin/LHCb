@@ -21,13 +21,10 @@
 
 #include "Event/MCRichDigit.h"
 
-std::ostream& LHCb::MCRichDigit::fillStream(std::ostream& s) const
-{
-  s << "{ " << "hits :";
-  for ( const auto & H : m_hits )
-  {
-    s << " [ " << H.history() << " " << *H.mcRichHit() << " ]";
-  }
+std::ostream& LHCb::MCRichDigit::fillStream( std::ostream& s ) const {
+  s << "{ "
+    << "hits :";
+  for ( const auto& H : m_hits ) { s << " [ " << H.history() << " " << *H.mcRichHit() << " ]"; }
   s << std::endl;
   s << "history : " << m_history << std::endl << " }";
   return s;

@@ -24,8 +24,7 @@
 // Kernel
 #include "RichUtils/RichDAQFooterPDBase.h"
 
-namespace Rich::DAQ
-{
+namespace Rich::DAQ {
 
   //=============================================================================================
   /** @class NullFooter RichDAQNullFooter.h
@@ -37,11 +36,9 @@ namespace Rich::DAQ
    */
   //=============================================================================================
 
-  class NullFooter final : public FooterPDBase, public LHCb::MemPoolAlloc< NullFooter >
-  {
+  class NullFooter final : public FooterPDBase, public LHCb::MemPoolAlloc<NullFooter> {
 
   public:
-
     /// Does this foot have a parity word ?
     inline bool hasParityWord() const noexcept { return false; }
 

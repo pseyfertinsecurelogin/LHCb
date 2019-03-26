@@ -21,12 +21,11 @@ class UTTell1ID;
  *
  *  @author A. Beiter (based on code by M.Needham)
  *  @date   2018-09-04
-*/
+ */
 
+namespace UTDAQ {
 
-namespace UTDAQ{
-
-  typedef std::pair<UTTell1ID,unsigned int> chanPair;
+  typedef std::pair<UTTell1ID, unsigned int> chanPair;
 
   typedef unsigned int rawInt;
 
@@ -37,7 +36,7 @@ namespace UTDAQ{
   static constexpr unsigned int adcMask = 0xff;
 
   /// version of the decoding software
-  enum version { inValidVersion = -1, v1 = 0, v2 = 1 , v3 = 2 , v4 = 3};
+  enum version { inValidVersion = -1, v1 = 0, v2 = 1, v3 = 2, v4 = 3 };
 
   /// n strips per ppx
   static constexpr unsigned int nStripPerPPx = 768u;
@@ -48,35 +47,31 @@ namespace UTDAQ{
   /// invalid pcn
   static constexpr unsigned int inValidPcn = 200u;
 
-
   /// TELL1 links
-  static constexpr unsigned int noptlinks = 24u;
-  static constexpr unsigned int nheaders = 3u;
-  static constexpr unsigned int nbeetles = 3u;
-  static constexpr unsigned int nports = 4u;
-  static constexpr unsigned int nstrips = 32u;
+  static constexpr unsigned int noptlinks      = 24u;
+  static constexpr unsigned int nheaders       = 3u;
+  static constexpr unsigned int nbeetles       = 3u;
+  static constexpr unsigned int nports         = 4u;
+  static constexpr unsigned int nstrips        = 32u;
   static constexpr unsigned int nBeetlesPerPPx = 6u;
-  static constexpr unsigned int mask1= 0x000000ff;
-  static constexpr unsigned int mask2= 0x0000ff00;
-  static constexpr unsigned int mask3= 0x00ff0000;
-  static constexpr unsigned int mask4= 0xff000000;
+  static constexpr unsigned int mask1          = 0x000000ff;
+  static constexpr unsigned int mask2          = 0x0000ff00;
+  static constexpr unsigned int mask3          = 0x00ff0000;
+  static constexpr unsigned int mask4          = 0xff000000;
 
   /// Store the number of strips in each sector
-  enum StripsInSector{
-    nStripsInUTSector=512u
-  };
-
+  enum StripsInSector { nStripsInUTSector = 512u };
 
   // Non-Zero suppressed specific
-  static constexpr unsigned int nwordsFull = 896u;
-  static constexpr unsigned int sizebankFull = nwordsFull*4;
+  static constexpr unsigned int nwordsFull   = 896u;
+  static constexpr unsigned int sizebankFull = nwordsFull * 4;
 
   // Pedestal specific
-  static constexpr unsigned int nwordsPedestal = 768u;
-  static constexpr unsigned int sizebankPedestal = nwordsPedestal*4;
+  static constexpr unsigned int nwordsPedestal   = 768u;
+  static constexpr unsigned int sizebankPedestal = nwordsPedestal * 4;
 
   /// Event Info
-  static constexpr unsigned int npp = 4u;
+  static constexpr unsigned int npp   = 4u;
   static constexpr unsigned int ninfo = 32u;
 
   //// min size of error bank
@@ -85,6 +80,6 @@ namespace UTDAQ{
   /// max sixr of error bank
   static constexpr unsigned int maxErrorBankWords = 56u;
 
-}
+} // namespace UTDAQ
 
 #endif // _UTDAQDefinitions_H

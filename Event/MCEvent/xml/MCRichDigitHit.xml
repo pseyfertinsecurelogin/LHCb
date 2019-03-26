@@ -14,7 +14,6 @@
 <package name="MCEvent">
 
 <!-- **************************************************************************
-  * $Id: MCRichDigitHit.xml,v 1.2 2008-02-27 14:09:27 jonrob Exp $
   *****************************************************************************
   * XML-description of MCRichDigitHit class                                   *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *

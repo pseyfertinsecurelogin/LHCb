@@ -20,9 +20,9 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Kinematics.h"
-#include "LoKi/GenTypes.h"
 #include "LoKi/GenChildSelector.h"
+#include "LoKi/GenTypes.h"
+#include "LoKi/Kinematics.h"
 // ============================================================================
 /** @file
  *
@@ -39,11 +39,9 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  namespace GenParticles
-  {
+  namespace GenParticles {
     // ========================================================================
     /** @class FourMomentum
      *  base class for implementation of many function dealing
@@ -51,81 +49,68 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-06-17
      */
-    class GAUDI_API FourMomentum : public LoKi::GenTypes::GFunc
-    {
+    class GAUDI_API FourMomentum : public LoKi::GenTypes::GFunc {
     public:
       // ======================================================================
       /// constructor from one
-      FourMomentum ( const LoKi::GenChild::Selector& c1 ) ;
+      FourMomentum( const LoKi::GenChild::Selector& c1 );
       /// constructor from two selectors
-      FourMomentum ( const LoKi::GenChild::Selector& c1 ,
-                     const LoKi::GenChild::Selector& c2 ) ;
+      FourMomentum( const LoKi::GenChild::Selector& c1, const LoKi::GenChild::Selector& c2 );
       /// constructor from three selectors
-      FourMomentum ( const LoKi::GenChild::Selector& c1 ,
-                     const LoKi::GenChild::Selector& c2 ,
-                     const LoKi::GenChild::Selector& c3 ) ;
+      FourMomentum( const LoKi::GenChild::Selector& c1, const LoKi::GenChild::Selector& c2,
+                    const LoKi::GenChild::Selector& c3 );
       /// constructor from four selectors
-      FourMomentum ( const LoKi::GenChild::Selector& c1 ,
-                     const LoKi::GenChild::Selector& c2 ,
-                     const LoKi::GenChild::Selector& c3 ,
-                     const LoKi::GenChild::Selector& c4 ) ;
+      FourMomentum( const LoKi::GenChild::Selector& c1, const LoKi::GenChild::Selector& c2,
+                    const LoKi::GenChild::Selector& c3, const LoKi::GenChild::Selector& c4 );
       /// contructor from list of selectors
-      FourMomentum ( const LoKi::GenChild::Selector::Vector& cs ) ;
+      FourMomentum( const LoKi::GenChild::Selector::Vector& cs );
       // ======================================================================
       /// constructor from one selector
-      FourMomentum ( const LoKi::GenTypes::GCuts&    c1 ) ;
+      FourMomentum( const LoKi::GenTypes::GCuts& c1 );
       /// constructor from two selectors
-      FourMomentum ( const LoKi::GenTypes::GCuts&    c1 ,
-                     const LoKi::GenTypes::GCuts&    c2 ) ;
+      FourMomentum( const LoKi::GenTypes::GCuts& c1, const LoKi::GenTypes::GCuts& c2 );
       /// constructor from three selectors
-      FourMomentum ( const LoKi::GenTypes::GCuts&    c1 ,
-                     const LoKi::GenTypes::GCuts&    c2 ,
-                     const LoKi::GenTypes::GCuts&    c3 ) ;
+      FourMomentum( const LoKi::GenTypes::GCuts& c1, const LoKi::GenTypes::GCuts& c2, const LoKi::GenTypes::GCuts& c3 );
       /// constructor from four selectors
-      FourMomentum ( const LoKi::GenTypes::GCuts&    c1 ,
-                     const LoKi::GenTypes::GCuts&    c2 ,
-                     const LoKi::GenTypes::GCuts&    c3 ,
-                     const LoKi::GenTypes::GCuts&    c4 ) ;
+      FourMomentum( const LoKi::GenTypes::GCuts& c1, const LoKi::GenTypes::GCuts& c2, const LoKi::GenTypes::GCuts& c3,
+                    const LoKi::GenTypes::GCuts& c4 );
       /// default constructor
-      FourMomentum () = default;
+      FourMomentum() = default;
       // ======================================================================
     public:
       // ======================================================================
       /// evaluate the full four momentum of combination
-      LoKi::LorentzVector momentum ( const HepMC::GenParticle* p ) const ;
+      LoKi::LorentzVector momentum( const HepMC::GenParticle* p ) const;
       /**  get the rapidity y
        *  \f$ y = \frac{1}{2}\log \frac{ E + p_z }{ E - p_z } \f$
        */
-      double  y   ( const LoKi::LorentzVector& lv ) const ;
+      double y( const LoKi::LorentzVector& lv ) const;
       /**  get the rapidity y0
        *  \f$ y_0 = \frac{1}{2}\log \frac{ E + p }{ E - p } \f$
        */
-      double  y0     ( const LoKi::LorentzVector& lv ) const ;
+      double y0( const LoKi::LorentzVector& lv ) const;
       // get the angle phi
-      double  phi    ( const LoKi::LorentzVector& lv ) const ;
+      double phi( const LoKi::LorentzVector& lv ) const;
       // get the pseudorapidity
-      double  eta    ( const LoKi::LorentzVector& lv ) const ;
+      double eta( const LoKi::LorentzVector& lv ) const;
       // get beta-factor
-      double  beta   ( const LoKi::LorentzVector& lv ) const ;
+      double beta( const LoKi::LorentzVector& lv ) const;
       // get gamma-factor
-      double  gamma  ( const LoKi::LorentzVector& lv ) const ;
+      double gamma( const LoKi::LorentzVector& lv ) const;
       // get beta*gamma-factor
-      double  bgamma ( const LoKi::LorentzVector& lv ) const ;
+      double bgamma( const LoKi::LorentzVector& lv ) const;
       // ======================================================================
     protected:
       // ======================================================================
       /// base class printput
-      std::ostream& print_
-      ( std::ostream&      s  ,
-        const std::string& n1 ,
-        const std::string& n2 ) const ;
+      std::ostream& print_( std::ostream& s, const std::string& n1, const std::string& n2 ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual list of selectors
-      LoKi::GenChild::Selector::Vector m_children ;
+      LoKi::GenChild::Selector::Vector m_children;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Mass
      *  evaluator of the 'Mass for particle and/or combination of daughters
@@ -136,19 +121,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Mass : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Mass : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      Mass* clone() const  override;
+      Mass* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Energy
      *  evaluator of the 'Energy for particle and/or combination of daughters
@@ -159,19 +143,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Energy : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Energy : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructor
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual constructor")
-      Energy* clone() const  override;
+      Energy* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Momentum
      *  evaluator of the 3-momentum for particle and/or combination of daughters
@@ -182,19 +165,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Momentum : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Momentum : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base class constructor
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      Momentum* clone() const  override;
+      Momentum* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MomentumX
      *  evaluator of the x-momentum for particle and/or combination of daughters
@@ -205,19 +187,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API MomentumX : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API MomentumX : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      MomentumX* clone() const  override;
+      MomentumX* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MomentumY
      *  evaluator of the x-momentum for particle and/or combination of daughters
@@ -228,19 +209,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API MomentumY : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API MomentumY : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// constructor from one selectors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      MomentumY* clone() const  override;
+      MomentumY* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class MomentumZ
      *  evaluator of the x-momentum for particle and/or combination of daughters
@@ -251,19 +231,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API MomentumZ : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API MomentumZ : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      MomentumZ* clone() const  override;
+      MomentumZ* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class TransverseMomentum
      *  evaluator of the x-momentum for particle and/or combination of daughters
@@ -274,19 +253,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API TransverseMomentum : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API TransverseMomentum : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual constructor")
-      TransverseMomentum* clone() const  override;
+      TransverseMomentum* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class PseudoRapidity
      *  evaluator of the x-momentum for particle and/or combination of daughters
@@ -297,19 +275,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API PseudoRapidity : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API PseudoRapidity : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual constructor")
-      PseudoRapidity* clone() const  override;
+      PseudoRapidity* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Rapidity
      *  evaluator of the rapidity for particle and/or combination of daughters
@@ -322,19 +299,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Rapidity : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Rapidity : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      Rapidity* clone() const  override;
+      Rapidity* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Rapidity0
      *  evaluator of the rapidity0 for particle and/or combination of daughters
@@ -347,19 +323,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Rapidity0 : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Rapidity0 : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      Rapidity0* clone() const  override;
+      Rapidity0* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Phi
      *  evaluator of the \f$\phi\f$ for particle and/or combination of daughters
@@ -370,19 +345,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Phi : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Phi : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      Phi* clone() const  override;
+      Phi* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Theta
      *  evaluator of the \f$\phi\f$ for particle and/or combination of daughters
@@ -393,19 +367,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    struct GAUDI_API Theta : LoKi::GenParticles::FourMomentum
-    {
+    struct GAUDI_API Theta : LoKi::GenParticles::FourMomentum {
       // ======================================================================
       /// forward to base-class constructors
       using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
-      Theta* clone() const  override;
+      Theta* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Beta
      *  evaluator of the \f$\beta\f$ for particle and/or combination of daughters
@@ -415,23 +388,22 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-04-14
      */
-    struct GAUDI_API Beta : LoKi::GenTypes::GFunc
-    {
+    struct GAUDI_API Beta : LoKi::GenTypes::GFunc {
       /// MANDATORY: clone method ("virtual destructor")
-      Beta* clone() const  override;
+      Beta* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
       // get beta-factor
-      double  beta      ( const HepMC::GenParticle* p ) const ;
+      double beta( const HepMC::GenParticle* p ) const;
       // get gamma-factor
-      double  gamma     ( const HepMC::GenParticle* p ) const ;
+      double gamma( const HepMC::GenParticle* p ) const;
       // get beta*gamma-factor
-      double  betagamma ( const HepMC::GenParticle* p ) const ;
+      double betagamma( const HepMC::GenParticle* p ) const;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class Gamma
      *  evaluator of the \f$\gamma\f$ for particle and/or combination of daughters
@@ -441,17 +413,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-04-14
      */
-    struct GAUDI_API Gamma : LoKi::GenParticles::Beta
-    {
+    struct GAUDI_API Gamma : LoKi::GenParticles::Beta {
       // ======================================================================
       /// MANDATORY: clone method ("virtual destructor")
-      Gamma* clone() const  override;
+      Gamma* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class BetaGamma
      *  evaluator of the \f$\beta\gamma\f$ for particle and/or combination of daughters
@@ -463,17 +434,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-04-14
      */
-    struct GAUDI_API BetaGamma : LoKi::GenParticles::Beta
-    {
+    struct GAUDI_API BetaGamma : LoKi::GenParticles::Beta {
       // ======================================================================
       /// MANDATORY: clone method ("virtual destructor")
-      BetaGamma* clone() const  override;
+      BetaGamma* clone() const override;
       /// MANDATORY: the only one essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s )const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class DeltaPhi
      *  Simple evaluator of "DeltaPhi" for the particle
@@ -483,37 +453,36 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class GAUDI_API DeltaPhi : public LoKi::GenParticles::Phi
-    {
+    class GAUDI_API DeltaPhi : public LoKi::GenParticles::Phi {
     public:
       // ======================================================================
       /// constructor from the angle
-      DeltaPhi ( const double phi ) ;
+      DeltaPhi( const double phi );
       /// constructor from the vector
-      DeltaPhi ( const LoKi::ThreeVector&   v ) ;
+      DeltaPhi( const LoKi::ThreeVector& v );
       /// constructor from the vector
-      DeltaPhi ( const LoKi::LorentzVector& v ) ;
+      DeltaPhi( const LoKi::LorentzVector& v );
       /// constructor from the particle
-      DeltaPhi ( const HepMC::GenParticle*  p ) ;
+      DeltaPhi( const HepMC::GenParticle* p );
       /// MANDATORY: clone method ("virtual constructor")
-      DeltaPhi* clone() const  override;
+      DeltaPhi* clone() const override;
       /// MANDATORY: the only essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the phi
-      double phi0 () const { return m_phi ; }                  // get the phi
-      double dphi ( const HepMC::GenParticle* p ) const ;
+      double phi0() const { return m_phi; } // get the phi
+      double dphi( const HepMC::GenParticle* p ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// the angle itself
-      double                  m_phi  ;                      // the angle itself
+      double m_phi; // the angle itself
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class DeltaEta
      *  Simple evaluator of "DeltaEta" for the particle
@@ -523,35 +492,34 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class GAUDI_API DeltaEta : public LoKi::GenParticles::PseudoRapidity
-    {
+    class GAUDI_API DeltaEta : public LoKi::GenParticles::PseudoRapidity {
     public:
       // ======================================================================
       /// constructor from the eta
-      DeltaEta ( const double eta ) ;
+      DeltaEta( const double eta );
       /// constructor from the vector
-      DeltaEta ( const LoKi::ThreeVector&   v ) ;
+      DeltaEta( const LoKi::ThreeVector& v );
       /// constructor from the vector
-      DeltaEta ( const LoKi::LorentzVector& v ) ;
+      DeltaEta( const LoKi::LorentzVector& v );
       /// constructor from the particle
-      DeltaEta ( const HepMC::GenParticle*  p ) ;
+      DeltaEta( const HepMC::GenParticle* p );
       /// MANDATORY: clone method ("virtual constructor")
-      DeltaEta* clone() const  override;
+      DeltaEta* clone() const override;
       /// MANDATORY: the only essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
       /// get the eta
-      double eta0 () const { return m_eta ; }
-      double deta ( const HepMC::GenParticle* p ) const ;
+      double eta0() const { return m_eta; }
+      double deta( const HepMC::GenParticle* p ) const;
       // ======================================================================
     private:
       // ======================================================================
       /// the angle itself
-      double                             m_eta  ; // the angle itself
+      double m_eta; // the angle itself
       // ======================================================================
-    } ;
+    };
     // ========================================================================
     /** @class DeltaR2
      *  Simple evaluator of "DeltaPhi**2+ DeltaEta**2"
@@ -568,42 +536,40 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class GAUDI_API DeltaR2 : public LoKi::GenParticles::DeltaPhi
-    {
+    class GAUDI_API DeltaR2 : public LoKi::GenParticles::DeltaPhi {
     public:
       // ======================================================================
       /// constructor from eta & phi
-      DeltaR2 ( const double eta , const double phi ) ;
+      DeltaR2( const double eta, const double phi );
       /// constructor from the vector
-      DeltaR2 ( const LoKi::ThreeVector&   v ) ;
+      DeltaR2( const LoKi::ThreeVector& v );
       /// constructor from the vector
-      DeltaR2 ( const LoKi::LorentzVector& v ) ;
+      DeltaR2( const LoKi::LorentzVector& v );
       /// constructor from the particle
-      DeltaR2 ( const HepMC::GenParticle* p ) ;
+      DeltaR2( const HepMC::GenParticle* p );
       /// MANDATORY: clone method ("virtual constructor")
-      DeltaR2* clone() const  override;
+      DeltaR2* clone() const override;
       /// MANDATORY: the only essential method
-      double operator() ( const HepMC::GenParticle* p ) const  override;
+      double operator()( const HepMC::GenParticle* p ) const override;
       /// OPTIONAL: "SHORT" representation
-      std::ostream& fillStream( std::ostream& s ) const  override;
+      std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the eta
-      double eta0 () const { return m_deta.eta0()  ; }
-      double deta ( const HepMC::GenParticle* p ) const { return m_deta.deta ( p )  ; }
+      double eta0() const { return m_deta.eta0(); }
+      double deta( const HepMC::GenParticle* p ) const { return m_deta.deta( p ); }
       // ======================================================================
     private:
       // ======================================================================
       /// the actual evaluator of delta eta
-      LoKi::GenParticles::DeltaEta m_deta ; // the actual evaluator of delta eta
+      LoKi::GenParticles::DeltaEta m_deta; // the actual evaluator of delta eta
       // ======================================================================
-    } ;
+    };
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles
+  } // namespace GenParticles
   // ==========================================================================
-  namespace Cuts
-  {
+  namespace Cuts {
     // ========================================================================
     /** @var GM
      *  evaluator of particle mass
@@ -647,7 +613,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GENERGY = LoKi::GenParticles::Energy                 ;
+    using GENERGY = LoKi::GenParticles::Energy;
     // ========================================================================
     /** @var GP
      *  evaluator of particle momentum
@@ -658,7 +624,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GP =LoKi::GenParticles::Momentum{} ;
+    inline const auto GP = LoKi::GenParticles::Momentum{};
     // ========================================================================
     /** @typedef GMOMENTUM
      *  evaluator of particle momentum
@@ -681,7 +647,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GPX = LoKi::GenParticles::MomentumX{} ;
+    inline const auto GPX = LoKi::GenParticles::MomentumX{};
     // ========================================================================
     /** @typedef GMOMX
      *  evaluator of particle momentum
@@ -692,7 +658,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GMOMX = LoKi::GenParticles::MomentumX    ;
+    using GMOMX = LoKi::GenParticles::MomentumX;
     // ========================================================================
     /** @var GPY
      *  evaluator of particle momentum
@@ -703,7 +669,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GPY = LoKi::GenParticles::MomentumY{} ;
+    inline const auto GPY = LoKi::GenParticles::MomentumY{};
     // ========================================================================
     /** @typedef GMOMY
      *  evaluator of particle momentum
@@ -736,7 +702,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GMOMZ = LoKi::GenParticles::MomentumZ              ;
+    using GMOMZ = LoKi::GenParticles::MomentumZ;
     // ========================================================================
     /** @var GPT
      *  evaluator of particle transverse momentum
@@ -769,7 +735,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GETA = LoKi::GenParticles::PseudoRapidity{} ;
+    inline const auto GETA = LoKi::GenParticles::PseudoRapidity{};
     // ========================================================================
     /** @typedef GPSEUDORAPIDITY
      *  evaluator of particle transverse momentum
@@ -780,7 +746,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GPSEUDORAPIDITY = LoKi::GenParticles::PseudoRapidity               ;
+    using GPSEUDORAPIDITY = LoKi::GenParticles::PseudoRapidity;
     // ========================================================================
     /** @var GY
      *  evaluator of particle rapidity
@@ -793,7 +759,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GY = LoKi::GenParticles::Rapidity{} ;
+    inline const auto GY = LoKi::GenParticles::Rapidity{};
     // ========================================================================
     /** @typedef GRAPIDITY
      *  evaluator of particle rapidity
@@ -806,7 +772,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GRAPIDITY = LoKi::GenParticles::Rapidity   ;
+    using GRAPIDITY = LoKi::GenParticles::Rapidity;
     // ========================================================================
     /** @var GY0
      *  evaluator of particle rapidity0
@@ -819,7 +785,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GY0 = LoKi::GenParticles::Rapidity0{}  ;
+    inline const auto GY0 = LoKi::GenParticles::Rapidity0{};
     // ========================================================================
     /** @typedef GRAPIDITY0
      *  evaluator of particle rapidity0
@@ -832,7 +798,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GRAPIDITY0 = LoKi::GenParticles::Rapidity0               ;
+    using GRAPIDITY0 = LoKi::GenParticles::Rapidity0;
     // ========================================================================
     /** @var GPHI
      *  evaluator of particle \f$\phi\f$
@@ -843,7 +809,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GPHI =  LoKi::GenParticles::Phi{} ;
+    inline const auto GPHI = LoKi::GenParticles::Phi{};
     // ========================================================================
     /** @typedef GASYMUTH
      *  evaluator of particle \f$\phi\f$
@@ -854,7 +820,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    using GASYMUTH = LoKi::GenParticles::Phi                   ;
+    using GASYMUTH = LoKi::GenParticles::Phi;
     // ========================================================================
     /** @var GTHETA
      *  evaluator of particle \f$\theta\f$
@@ -865,7 +831,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    inline const auto GTHETA = LoKi::GenParticles::Theta{} ;
+    inline const auto GTHETA = LoKi::GenParticles::Theta{};
     // ========================================================================
     /** @typedef GPOLAR
      *  evaluator of particle \f$\theta\f$
@@ -876,37 +842,37 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    typedef LoKi::GenParticles::Theta                                  GPOLAR ;
+    typedef LoKi::GenParticles::Theta GPOLAR;
     // ========================================================================
     /** @typedef GDPHI
      *  evaluator of \f$\Delta\phi\f$
      *  @see LoKi::GenParticles::DeltaPhi
      */
-    typedef LoKi::GenParticles::DeltaPhi                                GDPHI ;
+    typedef LoKi::GenParticles::DeltaPhi GDPHI;
     // ========================================================================
     /** @typedef GDETA
      *  evaluator of \f$\Delta\eta\f$
      *  @see LoKi::GenParticles::DeltaEta
      */
-    typedef LoKi::GenParticles::DeltaEta                                GDETA ;
+    typedef LoKi::GenParticles::DeltaEta GDETA;
     // ========================================================================
     /** @typedef GDR2
      *  evaluator of \f$\Delta\eta^2+\Delta\phi^2\f$
      *  @see LoKi::GenParticles::DeltaR2
      */
-    typedef LoKi::GenParticles::DeltaR2                                  GDR2 ;
+    typedef LoKi::GenParticles::DeltaR2 GDR2;
     // ========================================================================
     /** @var GBETA
      *  get \f$\beta\f$ for the particle
      *  @see LoKi::GenParticles::Beta
      */
-    inline const auto GBETA = LoKi::GenParticles::Beta{}          ;
+    inline const auto GBETA = LoKi::GenParticles::Beta{};
     // ========================================================================
     /** @var GGAMMA
      *  get \f$\gamma\f$ for the particle
      *  @see LoKi::GenParticles::Gamma
      */
-    inline const auto GGAMMA = LoKi::GenParticles::Gamma{}              ;
+    inline const auto GGAMMA = LoKi::GenParticles::Gamma{};
     // ========================================================================
     /** @var GBETAGAMMA
      *  get \f$\beta\gamma\f$ for the particle
@@ -918,15 +884,15 @@ namespace LoKi
      *  get \f$\beta\gamma\f$ for the particle
      *  @see LoKi::GenParticles::BetaGamma
      */
-    inline const auto GBGAMMA = LoKi::GenParticles::BetaGamma{}        ;
+    inline const auto GBGAMMA = LoKi::GenParticles::BetaGamma{};
     // ========================================================================
     /** @var GBG
      *  get \f$\beta\gamma\f$ for the particle
      *  @see LoKi::GenParticles::BetaGamma
      */
-    inline const auto GBG = LoKi::GenParticles::BetaGamma{}  ;
+    inline const auto GBG = LoKi::GenParticles::BetaGamma{};
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts
+  } // namespace Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

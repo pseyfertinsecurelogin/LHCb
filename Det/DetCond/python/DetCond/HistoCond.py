@@ -17,11 +17,11 @@
 # =============================================================================
 """
 Decorate the Condition object with functions to extract 1d and 2d-histograms, and
-define functions to convert 1d and 2d histograms to Condition parameter strings.  
+define functions to convert 1d and 2d histograms to Condition parameter strings.
 """
 # =============================================================================
 __author__ = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl and Dmitry Golubkov"
-__version__ = "CVS Tag $Name: not supported by cvs2svn $, verison $Revision: 1.1 $"
+___version__ = "1.1"
 # =============================================================================
 # export nothing
 __all__ = ()  ## export nothing

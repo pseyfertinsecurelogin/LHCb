@@ -23,24 +23,20 @@ namespace LHCbAlgsTest {
    * @author Marco Clemencic
    * @date 03/10/2011
    */
-  class PrintEventTime: public GaudiAlgorithm
-  {
+  class PrintEventTime : public GaudiAlgorithm {
 
   public:
-
     /// Standard constructor
-    PrintEventTime(const std::string& name, ISvcLocator* pSvcLocator);
+    PrintEventTime( const std::string& name, ISvcLocator* pSvcLocator );
     virtual ~PrintEventTime() = default; ///< Destructor
 
-    StatusCode initialize() override;    ///< Algorithm initialization
-    StatusCode execute   () override;    ///< Algorithm execution
-    StatusCode finalize  () override;    ///< Algorithm finalization
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
 
   private:
-
     SmartIF<IDetDataSvc> m_detDataSvc;
-
   };
 
-}
+} // namespace LHCbAlgsTest
 #endif // SRC_PRINTEVENTTIME_H

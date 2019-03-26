@@ -71,7 +71,7 @@ IOHelper("MDF", "MDF").inputFiles(files)
 from Configurables import createODIN
 from Configurables import bankKiller
 hlt_banks = ['HltRoutingBits']
-killer = bankKiller('RemoveRoutingBits',  BankTypes=hlt_banks)
+killer = bankKiller('RemoveRoutingBits', BankTypes=hlt_banks)
 
 topSeq = GaudiSequencer("TopSequence")
 # topSeq.Members = [createODIN(), killer]

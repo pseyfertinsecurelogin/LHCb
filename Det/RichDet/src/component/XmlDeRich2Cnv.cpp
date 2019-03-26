@@ -15,7 +15,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "RichDet/DeRich2.h"
 
-typedef XmlUserDetElemCnv< DeRich2 > XmlDeRich2Cnv;
+typedef XmlUserDetElemCnv<DeRich2> XmlDeRich2Cnv;
 DECLARE_CONVERTER( XmlDeRich2Cnv )
 
 #endif // XMLDERICH2CNV_H

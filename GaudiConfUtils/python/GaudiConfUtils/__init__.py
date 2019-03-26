@@ -20,10 +20,7 @@ from Utils import configurableExists
 from Utils import filterConfigurables
 from Utils import getConfigurablesFromModule
 
-__all__ = ('isIterable',
-           'isConfigurable',
-           'configurableExists',
-           'filterConfigurables',
-           'getConfigurablesFromModule')
+__all__ = ('isIterable', 'isConfigurable', 'configurableExists',
+           'filterConfigurables', 'getConfigurablesFromModule')
 
 __author__ = 'Juan Palacios palacios@physik.uzh.ch'

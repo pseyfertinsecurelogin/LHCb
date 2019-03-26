@@ -11,12 +11,12 @@
 // ===========================================================================
 #include <iostream>
 #include <string>
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#ifdef __INTEL_COMPILER             // Disable ICC remark
+#  pragma warning( disable : 1572 ) // Floating-point equality and inequality comparisons are unreliable
 #endif
 #include "DetDesc/Solid.h"
-#include "DetDesc/SolidIntersection.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidIntersection.h"
 
 // ============================================================================
 /** @file
@@ -34,11 +34,8 @@
  *  @param first pointer to first/main solid
  */
 // ============================================================================
-SolidIntersection::SolidIntersection( const std::string& name  ,
-                                      std::unique_ptr<ISolid> first )
-  : SolidBase    ( name         )
-  , SolidBoolean ( name , std::move(first) )
-{}
+SolidIntersection::SolidIntersection( const std::string& name, std::unique_ptr<ISolid> first )
+    : SolidBase( name ), SolidBoolean( name, std::move( first ) ) {}
 // ============================================================================
 
 // ============================================================================
@@ -46,37 +43,23 @@ SolidIntersection::SolidIntersection( const std::string& name  ,
  *  @param name name of the intersection
  */
 // ============================================================================
-SolidIntersection::SolidIntersection( const std::string& name )
-  : SolidBase    ( name )
-  , SolidBoolean ( name )
-{}
+SolidIntersection::SolidIntersection( const std::string& name ) : SolidBase( name ), SolidBoolean( name ) {}
 // ============================================================================
 
 // ============================================================================
-bool SolidIntersection::isInside( const Gaudi::XYZPoint   & point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidIntersection::isInside( const Gaudi::XYZPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidIntersection::isInside( const Gaudi::Polar3DPoint& point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidIntersection::isInside( const Gaudi::Polar3DPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
-bool SolidIntersection::isInside( const Gaudi::RhoZPhiPoint   & point ) const
-{
-  return isInsideImpl(point);
-}
+bool SolidIntersection::isInside( const Gaudi::RhoZPhiPoint& point ) const { return isInsideImpl( point ); }
 // ============================================================================
 template <class aPoint>
-bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
-{
+bool SolidIntersection::isInsideImpl( const aPoint& point ) const {
   ///  is point inside the "main" volume?
   if ( !first()->isInside( point ) ) { return false; }
   /// return the 'and' of all children
   auto c = children();
-  return std::all_of( begin(c) , end(c),
-                      Solid::isInside( point ) );
+  return std::all_of( begin( c ), end( c ), Solid::isInside( point ) );
 }
 
 // ============================================================================
@@ -86,9 +69,9 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
  *  @return status code
  */
 // ============================================================================
-StatusCode  SolidIntersection::intersect( std::unique_ptr<ISolid> solid       ,
-                                          const Gaudi::Transform3D* mtrx      )
-{  return addChild( std::move(solid) , mtrx ); }
+StatusCode SolidIntersection::intersect( std::unique_ptr<ISolid> solid, const Gaudi::Transform3D* mtrx ) {
+  return addChild( std::move( solid ), mtrx );
+}
 
 // ============================================================================
 /** add intersections
@@ -98,10 +81,9 @@ StatusCode  SolidIntersection::intersect( std::unique_ptr<ISolid> solid       ,
  *  @return status code
  */
 // ============================================================================
-StatusCode  SolidIntersection::intersect
-( std::unique_ptr<ISolid> solid  ,
-  const Gaudi::XYZPoint&     position ,
-  const Gaudi::Rotation3D&    rotation )
-{ return addChild( std::move(solid) , position , rotation ) ; }
+StatusCode SolidIntersection::intersect( std::unique_ptr<ISolid> solid, const Gaudi::XYZPoint& position,
+                                         const Gaudi::Rotation3D& rotation ) {
+  return addChild( std::move( solid ), position, rotation );
+}
 
 // ============================================================================

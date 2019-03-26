@@ -11,8 +11,7 @@
 
 #pragma once
 
-namespace Rich::Maths::FastRoots
-{
+namespace Rich::Maths::FastRoots {
 
   //-----------------------------------------------------------------------
   // Cube Roots
@@ -29,10 +28,8 @@ namespace Rich::Maths::FastRoots
       Gives the correct result (inf) for x = inf.
       Gives the correct result (NaN) for x = NaN.
   */
-  inline float vfast_cbrt( const float x0 )
-  {
-    union
-    {
+  inline float vfast_cbrt( const float x0 ) {
+    union {
       int   ix;
       float x;
     };
@@ -49,10 +46,8 @@ namespace Rich::Maths::FastRoots
        increased accuracy.
        The relative error ranges from 0 to +0.00000116.
   */
-  inline float fast_cbrt( const float x0 )
-  {
-    union
-    {
+  inline float fast_cbrt( const float x0 ) {
+    union {
       int   ix;
       float x;
     };
@@ -82,10 +77,8 @@ namespace Rich::Maths::FastRoots
       Gives the correct result (inf) for x = inf.
       Gives the correct result (NaN) for x = NaN.
   */
-  float vfast_sqrt( const float x0 )
-  {
-    union
-    {
+  float vfast_sqrt( const float x0 ) {
+    union {
       int   ix;
       float x;
     };
@@ -99,11 +92,9 @@ namespace Rich::Maths::FastRoots
       increased accuracy.
       The relative error ranges from 0 to +0.00000023.
   */
-  template < class TYPE >
-  TYPE fast_sqrt( const TYPE x0 )
-  {
-    union
-    {
+  template <class TYPE>
+  TYPE fast_sqrt( const TYPE x0 ) {
+    union {
       int   ix;
       float x;
     };

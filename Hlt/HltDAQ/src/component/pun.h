@@ -23,21 +23,21 @@
 //
 
 template <typename Out, typename In>
-constexpr Out pun_to(In src) {
-  static_assert(sizeof(In)==sizeof(Out),"In and Out types must have same size");
-  static_assert(std::is_same<std::decay_t<Out>,unsigned int>::value
-                || std::is_same<std::decay_t<In>,unsigned int>::value,
-                "Either In or Out must be unsigned int");
-  static_assert(!std::is_same<std::decay_t<Out>,std::decay_t<In>>::value,
-                "Identy punning not allowed -- just remove the punning!");
+constexpr Out pun_to( In src ) {
+  static_assert( sizeof( In ) == sizeof( Out ), "In and Out types must have same size" );
+  static_assert( std::is_same<std::decay_t<Out>, unsigned int>::value ||
+                     std::is_same<std::decay_t<In>, unsigned int>::value,
+                 "Either In or Out must be unsigned int" );
+  static_assert( !std::is_same<std::decay_t<Out>, std::decay_t<In>>::value,
+                 "Identy punning not allowed -- just remove the punning!" );
   Out dest{0};
-  std::memcpy(&dest,&src,sizeof(Out));
+  std::memcpy( &dest, &src, sizeof( Out ) );
   return dest;
 }
 
-template<>
-constexpr unsigned int pun_to<unsigned int,double>(double in) {
-  return pun_to<unsigned int>(static_cast<float>(in));
+template <>
+constexpr unsigned int pun_to<unsigned int, double>( double in ) {
+  return pun_to<unsigned int>( static_cast<float>( in ) );
 }
 
 #endif

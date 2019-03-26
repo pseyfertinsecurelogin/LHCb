@@ -16,7 +16,7 @@
 // FTDet
 #include "FTDet/DeFTQuarter.h"
 
-typedef XmlUserDetElemCnv<DeFTQuarter>       XmlDeFTQuarterCnv;
+typedef XmlUserDetElemCnv<DeFTQuarter> XmlDeFTQuarterCnv;
 DECLARE_CONVERTER( XmlDeFTQuarterCnv )
 
-#endif //XMLDEFTQUARTERCNV_H
+#endif // XMLDEFTQUARTERCNV_H
