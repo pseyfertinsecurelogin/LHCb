@@ -62,7 +62,9 @@ namespace Zipping {
   template <typename IndexSize = uint16_t>
   struct ExportedSelection {
     using index_vector = typename std::vector<IndexSize>;
-    index_vector m_indices;
+    index_vector m_indices{};
+    ExportedSelection( ZipID id ) : m_identifier( id ) {}
+    ExportedSelection( const index_vector& indices, const ZipID id ) : m_indices(indices), m_identifier( id ) {}
     ZipID        m_identifier;
     ZipID        zipIdentifier() const { return m_identifier; }
   };
@@ -138,49 +140,9 @@ namespace Zipping {
     };
 
     const container_t& m_container;
-    index_vector       m_indices;
+    const index_vector& m_indices;
 
-    ExportedSelection<IndexSize> export_selection() { return {m_indices, m_container.zipIdentifier()}; }
-
-    /** Constructor creating a SelectionView from a contiguous storage
-     * container.
-     *
-     *  By default all elements of the input span are marked as selected.
-     *
-     *  @param container       Contiguous storage container that this
-     * selection refers to.
-     *  @param predicate       Optional predicate applied to elements of the
-     * input container.
-     *  @param reserveCapacity Optional estimate of the number of elements
-     * that will be selected by predicate, which is used to initialise the
-     * vector of selected indices.
-     */
-    template <typename Predicate = details::alwaysTrue>
-    SelectionView( const container_t& container, Predicate&& predicate = {}, int reserveCapacity = -1 )
-        : m_container{container} {
-      if ( m_container.size() >= typename container_t::size_type( std::numeric_limits<IndexSize>::max() ) ) {
-        throw GaudiException{"Index overflow: " + std::to_string( container.size() - 1 ) + " > " +
-                                 std::to_string( std::numeric_limits<IndexSize>::max() ) +
-                                 details::typename_v<SelectionView>,
-                             details::typename_v<SelectionView>, StatusCode::FAILURE};
-      }
-
-      if constexpr ( std::is_same_v<Predicate, details::alwaysTrue> ) {
-        m_indices.resize( m_container.size() );
-        // container_t is contiguous so we just need {0 ..
-        // container.size()-1}
-        std::iota( m_indices.begin(), m_indices.end(), 0 );
-      } else if constexpr ( std::is_same_v<Predicate, details::alwaysFalse> ) {
-        if ( reserveCapacity >= 0 ) { m_indices.reserve( reserveCapacity ); }
-      } else {
-        m_indices.reserve( reserveCapacity < 0 ? m_container.size() : reserveCapacity );
-        auto offset = 0;
-        for ( auto const i : m_container ) {
-          if ( std::invoke( predicate, i ) ) { m_indices.push_back( offset ); }
-          ++offset;
-        }
-      }
-    }
+    ExportedSelection<IndexSize> export_selection() { return ExportedSelection<IndexSize>{m_indices, m_container.zipIdentifier()}; }
 
     SelectionView( const container_t& container, const ExportedSelection<IndexSize>& selection )
         : m_container{container}, m_indices{selection.m_indices} {
@@ -189,37 +151,6 @@ namespace Zipping {
                               "meaningful!",
                               details::typename_v<SelectionView>, StatusCode::FAILURE );
       }
-    }
-    SelectionView( const container_t& container, ExportedSelection<IndexSize>& selection )
-        : m_container{container}, m_indices{selection.m_indices} {
-      if ( selection.zipIdentifier() != container.zipIdentifier() ) {
-        throw GaudiException( "incompatible selection!!!! ahahah write something more "
-                              "meaningful!",
-                              details::typename_v<SelectionView>, StatusCode::FAILURE );
-      }
-    }
-
-    /** Constructor creating a SelectionView from another SelectionView,
-     * optionally applying an extra selection.
-     *
-     *  By default the same elements of the underlying storage are selected.
-     *
-     *  @param old_selection   Other SelectionView object to copy.
-     *  @param predicate       Optional predicate to further filter the input
-     * selection.
-     *  @param reserveCapacity Optional estimate of the number of elements
-     * that will be selected by predicate, which is used to initialise the
-     * vector of selected indices.
-     */
-    template <typename Predicate>
-    SelectionView( SelectionView const& old_selection, Predicate&& predicate, int reserveCapacity = -1 )
-        : m_container{old_selection.m_container} {
-      // It's imposed that old_selection has the same IndexSize as us, so we
-      // don't need to do any overflow checking apply an additional
-      // selection on the input selection
-      m_indices.reserve( reserveCapacity < 0 ? old_selection.size() : reserveCapacity );
-      std::copy_if( old_selection.m_indices.begin(), old_selection.m_indices.end(), std::back_inserter( m_indices ),
-                    [&]( auto i ) { return predicate( m_container[i] ); } );
     }
 
     const_iterator begin() const { return {m_container, m_indices.begin()}; }
@@ -248,8 +179,12 @@ namespace Zipping {
     friend bool operator!=( SelectionView const& lhs, SelectionView const& rhs ) { return !( lhs == rhs ); }
 
     template <typename Predicate>
-    SelectionView select( Predicate&& p, int reserveCapacity = -1 ) const {
-      return SelectionView{*this, std::forward<Predicate>( p ), reserveCapacity};
+    ExportedSelection<IndexSize> select( Predicate&& predicate, int reserveCapacity = -1 ) const {
+      ExportedSelection<IndexSize> retval{m_container.zipIdentifier()};
+      retval.m_indices.reserve( reserveCapacity < 0 ? m_indices.size() : reserveCapacity );
+      std::copy_if( m_indices.begin(), m_indices.end(), std::back_inserter( retval.m_indices ),
+                    [&]( auto i ) { return predicate( m_container[i] ); } );
+      return retval;
     }
 
     // Set operations -- these throw if two SelectionViews that point to
@@ -337,6 +272,36 @@ namespace Zipping {
       return ret;
     }
   };
+
+  template <typename CONTAINER, typename Predicate = details::alwaysTrue, typename IndexSize = uint16_t>
+  ExportedSelection<IndexSize> makeSelection( const CONTAINER& container, Predicate&& predicate = {},
+                                              int reserveCapacity = -1 ) {
+    using container_t  = std::decay_t<CONTAINER>;
+    if ( container.size() >= typename container_t::size_type( std::numeric_limits<IndexSize>::max() ) ) {
+      throw GaudiException{"Index overflow: " + std::to_string( container.size() - 1 ) + " > " +
+                               std::to_string( std::numeric_limits<IndexSize>::max() ) +
+                               details::typename_v<SelectionView<container_t>>,
+                           details::typename_v<SelectionView<container_t>>, StatusCode::FAILURE};
+    }
+    ExportedSelection<IndexSize> retval( container.zipIdentifier() );
+
+    if constexpr ( std::is_same_v<Predicate, details::alwaysTrue> ) {
+      retval.m_indices.resize( container.size() );
+      // container_t is contiguous so we just need {0 ..
+      // container.size()-1}
+      std::iota( retval.m_indices.begin(), retval.m_indices.end(), 0 );
+    } else if constexpr ( std::is_same_v<Predicate, details::alwaysFalse> ) {
+      if ( reserveCapacity >= 0 ) { retval.m_indices.reserve( reserveCapacity ); }
+    } else {
+      retval.m_indices.reserve( reserveCapacity < 0 ? container.size() : reserveCapacity );
+      auto offset = 0;
+      for ( auto const i : container ) {
+        if ( std::invoke( predicate, i ) ) { retval.m_indices.push_back( offset ); }
+        ++offset;
+      }
+    }
+    return retval;
+  }
 
   // Template parameter deduction guides
   template <typename T, typename... Args>
