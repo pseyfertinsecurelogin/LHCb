@@ -95,10 +95,10 @@ auto range = ranges::view::indices;
 /// end of sugar
 
 BOOST_AUTO_TEST_CASE( smart_test_name_goes_here ) {
-  ZipContainer<SOA::Container<std::vector, s_track>>   foo1;
-  ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( details::ZipIdProvider::getId() );
-  ZipContainer<SOA::Container<std::vector, s_fitres>>  foo2( foo1.zipIdentifier() );
-  ZipContainer<SOA::Container<std::vector, s_fitqual>> foo3( foo1.zipIdentifier() );
+  Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1;
+  Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( Zipping::details::ZipIdProvider::getId() );
+  Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>>  foo2( foo1.zipIdentifier() );
+  Zipping::ZipContainer<SOA::Container<std::vector, s_fitqual>> foo3( foo1.zipIdentifier() );
   for ( auto i : range( 42 ) ) {
     track t{i * 100.f, i * 2.f, ( 42 - i ) * 100.f, 0.f, 0.f};
     foo1.push_back( t );
@@ -106,17 +106,18 @@ BOOST_AUTO_TEST_CASE( smart_test_name_goes_here ) {
     foo3.push_back( fitqual{0.f, i} );
   }
 
-  BOOST_CHECK_THROW( semantic_zip<s_track_with_fitres>( foo1_alt, foo2 ), IncompatibleZipException );
-  auto                  track_with_momentum = semantic_zip<s_track_with_fitres>( foo1, foo2 );
-  auto                  full_track          = semantic_zip<s_track_with_fitres_and_fitqual>( foo1, foo2, foo3 );
-  [[maybe_unused]] auto another_full_track = semantic_zip<s_track_with_fitres_and_fitqual>( track_with_momentum, foo3 );
+  BOOST_CHECK_THROW( Zipping::semantic_zip<s_track_with_fitres>( foo1_alt, foo2 ), Zipping::IncompatibleZipException );
+  auto                  track_with_momentum = Zipping::semantic_zip<s_track_with_fitres>( foo1, foo2 );
+  auto                  full_track = Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( foo1, foo2, foo3 );
+  [[maybe_unused]] auto another_full_track =
+      Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( track_with_momentum, foo3 );
 
-  SelectionView<decltype( track_with_momentum )> selected_tracks{
+  Zipping::SelectionView<decltype( track_with_momentum )> selected_tracks{
       track_with_momentum, []( auto i ) { return 0 == i.accessor_fitres().q % 2; }};
 
   auto exported_selection = selected_tracks.export_selection();
 
-  SelectionView<decltype( full_track )> selected_full_tracks(full_track,exported_selection);
+  Zipping::SelectionView<decltype( full_track )> selected_full_tracks( full_track, exported_selection );
 
   BOOST_CHECK_EQUAL( selected_tracks.size(), track_with_momentum.size() / 2 );
 

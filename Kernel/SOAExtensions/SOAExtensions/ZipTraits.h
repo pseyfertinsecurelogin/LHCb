@@ -14,27 +14,30 @@
 #define ZipTraits_h 1
 #include "SOAContainer/SOAUtils.h" // for is_view
 #include <type_traits>             // for decay_t
-template <typename CONTAINER>
-class ZipContainer;
 
-namespace details {
+namespace Zipping {
+  template <typename CONTAINER>
+  class ZipContainer;
+
+  namespace details {
+    template <typename T>
+    struct has_semantic_zip_helper {
+      static constexpr bool value = false;
+    };
+
+    template <typename VIEW>
+    struct has_semantic_zip_helper<ZipContainer<VIEW>> {
+      static constexpr bool value = SOA::Utils::is_view<std::decay_t<VIEW>>::value;
+    };
+  } // namespace details
   template <typename T>
-  struct has_semantic_zip_helper {
-    static constexpr bool value = false;
+  struct has_semantic_zip {
+    // remove const and reference from ZipContainer before going one level deeper
+    static constexpr bool value = details::has_semantic_zip_helper<std::decay_t<T>>::value;
   };
 
   template <typename VIEW>
-  struct has_semantic_zip_helper<ZipContainer<VIEW>> {
-    static constexpr bool value = SOA::Utils::is_view<std::decay_t<VIEW>>::value;
-  };
-} // namespace details
-template <typename T>
-struct has_semantic_zip {
-  // remove const and reference from ZipContainer before going one level deeper
-  static constexpr bool value = details::has_semantic_zip_helper<std::decay_t<T>>::value;
-};
-
-template <typename VIEW>
-constexpr static bool has_semantic_zip_v = has_semantic_zip<VIEW>::value;
+  constexpr static bool has_semantic_zip_v = has_semantic_zip<VIEW>::value;
+} // namespace Zipping
 
 #endif

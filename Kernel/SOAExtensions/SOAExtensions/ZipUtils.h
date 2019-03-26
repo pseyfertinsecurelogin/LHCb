@@ -16,16 +16,18 @@
 #include "ZipTraits.h"             // IWYU pragma: keep
 #include <type_traits>             // for enable_if_t
 
-template <typename FIRST, typename SECOND, typename... OTHERS,
-          typename = typename std::enable_if_t<SOA::Utils::ALL( has_semantic_zip_v<FIRST>, has_semantic_zip_v<SECOND>,
-                                                                has_semantic_zip_v<OTHERS>... )>>
-bool are_semantically_compatible( FIRST& first, SECOND& second, OTHERS&... others ) {
-  return ( first.zipIdentifier() == second.zipIdentifier() ) && ( are_semantically_compatible( first, others... ) );
-}
+namespace Zipping {
+  template <typename FIRST, typename SECOND, typename... OTHERS,
+            typename = typename std::enable_if_t<SOA::Utils::ALL( has_semantic_zip_v<FIRST>, has_semantic_zip_v<SECOND>,
+                                                                  has_semantic_zip_v<OTHERS>... )>>
+  bool are_semantically_compatible( FIRST& first, SECOND& second, OTHERS&... others ) {
+    return ( first.zipIdentifier() == second.zipIdentifier() ) && ( are_semantically_compatible( first, others... ) );
+  }
 
-template <typename FIRST, typename = typename std::enable_if_t<has_semantic_zip_v<FIRST>>>
-bool are_semantically_compatible( FIRST& /*unused*/ ) {
-  return true;
-}
+  template <typename FIRST, typename = typename std::enable_if_t<has_semantic_zip_v<FIRST>>>
+  bool are_semantically_compatible( FIRST& /*unused*/ ) {
+    return true;
+  }
+} // namespace Zipping
 
 #endif
