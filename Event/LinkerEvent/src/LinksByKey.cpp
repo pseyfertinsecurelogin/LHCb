@@ -186,7 +186,7 @@ bool LHCb::LinksByKey::nextReference( LHCb::LinkReference& reference ) const {
 //=========================================================================
 bool LHCb::LinksByKey::hasEntry( const KeyedObject<int>& obj ) const {
   int index;
-  return findIndex( obj.index(), index);
+  return findIndex( obj.index(), index );
 }
 
 //=========================================================================
