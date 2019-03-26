@@ -17,6 +17,8 @@
 #include "DetDesc/ParamException.h"
 #include "DetDesc/ParamList.h"
 
+#include <any>
+
 /** @class ParamValidDataObject ParamValidDataObject.h DetDesc/ParamValidDataObject.h
  *
  *  A DataObject implementing the IParamSetEditor and IValidity
@@ -160,6 +162,9 @@ private:
 
   ParamList  m_paramList;
   CommentMap m_comments;
+
+public:
+  std::any payload;
 };
 
 #endif // DETDESC_PARAMVALIDDATAOBJECT_H

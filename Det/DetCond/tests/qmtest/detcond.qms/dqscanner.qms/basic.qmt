@@ -30,7 +30,7 @@ def toTimeStampNS(dt):
 dddbConf = DDDBConf()
 
 cdb = CondDB()
-cdb.addLayer(os.environ.get('TEST_DQFLAGS_ROOT'))
+cdb.addLayer(os.path.join(os.environ.get('TEST_DBS_ROOT'), 'DQFLAGS'))
 cdb.Tags["DDDB"] = "dddb-20171030-2"
 
 ecs = EventClockSvc(InitialTime=toTimeStampNS(datetime(2012,1,1,12)))

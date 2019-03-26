@@ -20,6 +20,7 @@
 #include "GaudiKernel/System.h"
 
 #include "DetDesc/Condition.h"
+#include "DetDesc/ConditionDerivation.h"
 #include "DetDesc/ValidDataObject.h"
 
 #include <fstream>
@@ -51,7 +52,7 @@ StatusCode UpdateManagerSvc::initialize() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "--- initialize ---" << endmsg;
 
   // find the data provider
-  m_dataProvider = serviceLocator()->service( m_dataProviderName, true );
+  m_dataProvider = service( m_dataProviderName, true );
   if ( !m_dataProvider ) {
     error() << "Unable to get a handle to the data provider" << endmsg;
     return StatusCode::FAILURE;
@@ -69,7 +70,7 @@ StatusCode UpdateManagerSvc::initialize() {
 
   // find the detector data service
   if ( m_detDataSvcName.empty() ) m_detDataSvcName = m_dataProviderName;
-  m_detDataSvc = serviceLocator()->service( m_detDataSvcName, true );
+  m_detDataSvc = service( m_detDataSvcName, true );
   if ( !m_detDataSvc ) {
     warning() << "Unable to get a handle to the detector data service interface:"
                  " all the calls to newEvent(void) will fail!"
@@ -98,10 +99,18 @@ StatusCode UpdateManagerSvc::initialize() {
   if ( msgLevel( MSG::DEBUG ) ) debug() << "Got pointer to IncidentSvc" << endmsg;
   m_incidentSvc->addListener( this, IncidentType::BeginEvent );
 
-  m_evtProc = serviceLocator()->service( "ApplicationMgr" );
-  if ( !sc.isSuccess() ) {
+  m_evtProc = service( "ApplicationMgr" );
+  if ( !m_evtProc ) {
     error() << "Cannot find an event processor." << endmsg;
     return sc;
+  }
+
+  if ( !m_withoutBeginEvent && !m_IOVLockLocation.empty() ) {
+    m_evtDataSvc = service( "EventDataSvc" );
+    if ( !m_evtDataSvc ) {
+      error() << "cannot get EventDataSvc, needed for IOVLock creation" << endmsg;
+      return StatusCode::FAILURE;
+    }
   }
 
   // Loop over overridden conditions
@@ -157,6 +166,7 @@ StatusCode UpdateManagerSvc::finalize() {
   // release the interfaces used
   m_dataProvider.reset();
   m_detDataSvc.reset();
+  m_evtDataSvc.reset();
   if ( m_incidentSvc ) {
     // unregister from the incident svc
     m_incidentSvc->removeListener( this, IncidentType::BeginEvent );
@@ -299,17 +309,31 @@ void UpdateManagerSvc::i_registerCondition( void* obj, BaseObjectMemberFunction*
     insertInMap( mf_item );
   }
   if ( !mf_item->ptr ) { // the item is known but not its pointer (e.g. after a purge)
-    mf_item->setPointers( mf->castToDataObject() );
+    if ( !mf_item->setPointers( mf->castToDataObject() ) )
+      throw GaudiException( "Failed to set pointers for " + mf_item->path, "UpdateManagerSvc::registerCondition",
+                            StatusCode::FAILURE );
   }
   link( mf_item, mf, cond_item );
   // a new item means that we need an update
   m_head_since = 1;
   m_head_until = 0;
 }
-StatusCode UpdateManagerSvc::newEvent() {
+
+StatusCode UpdateManagerSvc::newEvent() { return i_newEvent( false ); }
+
+StatusCode UpdateManagerSvc::i_newEvent( bool inBeginEvent ) {
   if ( detDataSvc() ) {
     if ( detDataSvc()->validEventTime() ) {
-      return newEvent( detDataSvc()->eventTime() );
+      auto lock = std::make_unique<ICondIOVResource::IOVLock>( reserve( detDataSvc()->eventTime() ) );
+      if ( inBeginEvent && m_evtDataSvc && FSMState() == Gaudi::StateMachine::RUNNING ) {
+        auto sc = m_evtDataSvc->registerObject( m_IOVLockLocation.value(), lock.get() );
+        if ( sc )
+          lock.release();
+        else
+          error() << "newEvent(): failed to register " << m_IOVLockLocation.value() << endmsg;
+        return sc;
+      }
+      return StatusCode::SUCCESS;
     } else {
       warning() << "newEvent(): the event time is not defined!" << endmsg;
     }
@@ -318,69 +342,44 @@ StatusCode UpdateManagerSvc::newEvent() {
 }
 StatusCode UpdateManagerSvc::newEvent( const Gaudi::Time& evtTime ) {
   if ( FSMState() < Gaudi::StateMachine::INITIALIZED ) {
-    throw GaudiException( "Service offline", "UpdateManagerSvc::newEvent", StatusCode::FAILURE );
+    throw GaudiException( "Service offline", name() + "::newEvent", StatusCode::FAILURE );
   }
 
   StatusCode sc = StatusCode::SUCCESS;
 
-#ifndef WIN32
-  if ( msgLevel( MSG::VERBOSE ) ) verbose() << "newEvent(evtTime): acquiring mutex lock" << endmsg;
-  acquireLock();
-#endif
-
   // Check head validity
   if ( evtTime >= m_head_since && evtTime < m_head_until ) {
-#ifndef WIN32
-    if ( msgLevel( MSG::VERBOSE ) ) verbose() << "newEvent(evtTime): releasing mutex lock" << endmsg;
-    releaseLock();
-#endif
     return sc; // no need to update
   }
 
-#ifndef WIN32
-  try {
-#endif
-
-    // We are in the initialization phase if we are not yet "STARTED"
-    SmartIF<IStateful> globalState( serviceLocator() );
-    const bool         inInit = globalState && ( globalState->FSMState() < Gaudi::StateMachine::INITIALIZED ) &&
-                        ( globalState->targetFSMState() >= Gaudi::StateMachine::INITIALIZED );
-    // The head list may change while updating, I'll loop until it's stable (or a problem occurs)
-    bool head_has_changed = false;
-    do {
-      if ( msgLevel( MSG::DEBUG ) ) { debug() << "newEvent(evtTime): loop over head items" << endmsg; }
-      // first I make a copy of the current head
-      Item::ItemList head_copy( m_head_items );
-      // Start from a clean IOV (I cannot use m_head_X because the head is not stable and they may change)
-      Gaudi::Time head_copy_since( Gaudi::Time::epoch() );
-      Gaudi::Time head_copy_until( Gaudi::Time::max() );
-      MsgStream   item_log( msgSvc(), name() + "::Item" );
-      for ( auto it = head_copy.begin(); it != head_copy.end() && sc.isSuccess(); ++it ) {
-        sc = ( *it )->update( dataProvider(), evtTime, item_log, inInit );
-        if ( sc.isSuccess() ) {
-          if ( head_copy_since < ( *it )->since ) head_copy_since = ( *it )->since;
-          if ( head_copy_until > ( *it )->until ) head_copy_until = ( *it )->until;
-        }
+  // We are in the initialization phase if we are not yet "STARTED"
+  SmartIF<IStateful> globalState( serviceLocator() );
+  const bool         inInit = globalState && ( globalState->FSMState() < Gaudi::StateMachine::INITIALIZED ) &&
+                      ( globalState->targetFSMState() >= Gaudi::StateMachine::INITIALIZED );
+  // The head list may change while updating, I'll loop until it's stable (or a problem occurs)
+  bool head_has_changed = false;
+  do {
+    if ( msgLevel( MSG::DEBUG ) ) { debug() << "newEvent(evtTime): loop over head items" << endmsg; }
+    // first I make a copy of the current head
+    Item::ItemList head_copy( m_head_items );
+    // Start from a clean IOV (I cannot use m_head_X because the head is not stable and they may change)
+    Gaudi::Time head_copy_since( Gaudi::Time::epoch() );
+    Gaudi::Time head_copy_until( Gaudi::Time::max() );
+    MsgStream   item_log( msgSvc(), name() + "::Item" );
+    for ( auto it = head_copy.begin(); it != head_copy.end() && sc.isSuccess(); ++it ) {
+      sc = ( *it )->update( dataProvider(), evtTime, item_log, inInit );
+      if ( sc.isSuccess() ) {
+        if ( head_copy_since < ( *it )->since ) head_copy_since = ( *it )->since;
+        if ( head_copy_until > ( *it )->until ) head_copy_until = ( *it )->until;
       }
-      // now it is safe to set m_head_X
-      m_head_since = head_copy_since;
-      m_head_until = head_copy_until;
+    }
+    // now it is safe to set m_head_X
+    m_head_since = head_copy_since;
+    m_head_until = head_copy_until;
 
-      // check if we need to re-do the loop (success and a change in the head)
-      head_has_changed = sc.isSuccess() && ( head_copy != m_head_items );
-    } while ( head_has_changed );
-
-#ifndef WIN32
-  } catch ( ... ) {
-    if ( msgLevel( MSG::VERBOSE ) )
-      verbose() << "newEvent(evtTime): releasing mutex lock (exception occurred)" << endmsg;
-    releaseLock();
-    throw;
-  }
-
-  if ( msgLevel( MSG::VERBOSE ) ) verbose() << "newEvent(evtTime): releasing mutex lock" << endmsg;
-  releaseLock();
-#endif
+    // check if we need to re-do the loop (success and a change in the head)
+    head_has_changed = sc.isSuccess() && ( head_copy != m_head_items );
+  } while ( head_has_changed );
 
   return sc;
 }
@@ -719,7 +718,7 @@ void UpdateManagerSvc::handle( const Incident& inc ) {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "New BeginEvent incident received" << endmsg;
     StatusCode sc = StatusCode::FAILURE;
     try {
-      sc = UpdateManagerSvc::newEvent();
+      sc = UpdateManagerSvc::i_newEvent( true );
     } catch ( const GaudiException& exc ) { error() << exc << endmsg; } catch ( const std::exception& exc ) {
       error() << "std::exception: " << exc.what() << endmsg;
     } catch ( ... ) { error() << "unknown exception" << endmsg; }
@@ -730,18 +729,11 @@ void UpdateManagerSvc::handle( const Incident& inc ) {
   }
 }
 
-//=========================================================================
-//  Locking functionalities
-//=========================================================================
 void UpdateManagerSvc::acquireLock() {
-#ifndef WIN32
-  pthread_mutex_lock( &m_busy );
-#endif
+  /// unused, but needed to comply to IUpdateManagerSvc
 }
 void UpdateManagerSvc::releaseLock() {
-#ifndef WIN32
-  pthread_mutex_unlock( &m_busy );
-#endif
+  /// unused, but needed to comply to IUpdateManagerSvc
 }
 
 namespace {
@@ -781,7 +773,9 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve( const Gaudi::Time& eventTim
       // still under use
       std::unique_lock updating{m_IOVresource};
       detDataSvc()->setEventTime( eventTime );
-      const_cast<UpdateManagerSvc*>( this )->newEvent( eventTime );
+      if ( !const_cast<UpdateManagerSvc*>( this )->newEvent( eventTime ).isSuccess() ) {
+        throw GaudiException{"failure updating conditions", name() + "::reserve", StatusCode::FAILURE};
+      }
     } // releasing write lock
     // now taking again the read lock. Note that we are still alone in that path
     // as we still hold the need_to_update lock
@@ -790,4 +784,22 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve( const Gaudi::Time& eventTim
   // return and release the read lock, allowing future updates to take place
   return ICondIOVResource::IOVLock{std::make_unique<UMSLockManager>( std::move( reading ) )};
 }
-//=============================================================================
+
+using namespace LHCb::DetDesc;
+IConditionDerivationMgr::DerivationId UpdateManagerSvc::add( std::vector<ConditionKey> inputs, ConditionKey output,
+                                                             ConditionCallbackFunction func ) {
+  auto derivation =
+      std::make_unique<ConditionDerivation>( std::move( inputs ), std::move( output ), std::move( func ) );
+  derivation->registerDerivation( this, dataProvider() );
+  m_derivations[m_nextDerivationId] = std::move( derivation );
+  return m_nextDerivationId++;
+}
+IConditionDerivationMgr::DerivationId UpdateManagerSvc::derivationFor( const ConditionKey& key ) const {
+  for ( const auto& item : m_derivations )
+    if ( item.second->target() == key ) return item.first;
+  return IConditionDerivationMgr::NoDerivation;
+}
+void UpdateManagerSvc::remove( DerivationId dId ) {
+  auto node = m_derivations.extract( dId );
+  if ( node ) { node.mapped()->unregisterDerivation( this ); }
+}

@@ -11,7 +11,9 @@
 #ifndef UPDATEMANAGERSVC_H
 #define UPDATEMANAGERSVC_H 1
 
+#include "DetDesc/ConditionDerivation.h"
 #include "DetDesc/ICondIOVResource.h"
+#include "DetDesc/IConditionDerivationMgr.h"
 #include "DetDesc/ValidDataObject.h"
 
 #include "GaudiKernel/ClassID.h"
@@ -45,7 +47,8 @@ struct Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc : public extends<Service, IUpdateManagerSvc, IIncidentListener, ICondIOVResource> {
+class UpdateManagerSvc : public extends<Service, IUpdateManagerSvc, IIncidentListener, ICondIOVResource,
+                                        LHCb::DetDesc::IConditionDerivationMgr> {
 public:
   /// Standard constructor
   using base_class::base_class;
@@ -84,9 +87,9 @@ public:
   /// Debug method: it dumps the dependency network through the message service (not very readable, for experts only).
   void dump() override;
 
-  /// Force the update manager service to wait before entering the newEvent loop.
+  /// unused, but needed to comply to IUpdateManagerSvc
   void acquireLock() override;
-  /// Let the update manager service enter the newEvent loop.
+  /// unused, but needed to comply to IUpdateManagerSvc
   void releaseLock() override;
 
   /// Remove all the items referring to objects present in the transient store.
@@ -99,6 +102,13 @@ public:
   void handle( const Incident& inc ) override;
 
   ICondIOVResource::IOVLock reserve( const Gaudi::Time& eventTime ) const override;
+
+  //@{
+  DerivationId add( std::vector<LHCb::DetDesc::ConditionKey> inputs, LHCb::DetDesc::ConditionKey output,
+                    LHCb::DetDesc::ConditionCallbackFunction func ) override;
+  DerivationId derivationFor( const LHCb::DetDesc::ConditionKey& key ) const override;
+  void         remove( DerivationId dId ) override;
+  //@}
 
 protected:
   /// Register a condition for an object
@@ -120,6 +130,10 @@ protected:
 
   /// Force an update of all the object depending on the given one for the next event.
   void i_invalidate( void* instance ) override;
+
+  /// Actual implementation of newEvent.
+  /// If inBeginEvent is true and it is requested, create the special IOVLock object.
+  StatusCode i_newEvent( bool inBeginEvent );
 
 private:
 #include "UpdateManagerSvc_Item.icpp"
@@ -157,6 +171,10 @@ private:
                                                 "Name of the DetDataSvc, empty means _the same as data provider_"};
   Gaudi::Property<bool>        m_withoutBeginEvent{this, "WithoutBeginEvent", false,
                                             "Whether beginEvent is working or not. E.g. it is not in Hive"};
+  Gaudi::Property<std::string> m_IOVLockLocation{
+      this, "IOVLockLocation", ICondIOVResource::IOVLock::DefaultLocation,
+      "Path in the Transient Event Store where to create an IOVLock during BeginEvent"};
+
   /// The syntax to define a condition is:<BR>
   /// path := type1 name1 = value1; type2 name2 = value2; ...
   Gaudi::Property<std::vector<std::string>> m_conditionsOveridesDesc{
@@ -176,6 +194,9 @@ private:
   /// without the event time parameter (will always fail).
   SmartIF<IDetDataSvc> m_detDataSvc;
 
+  /// Pointer to the Transient Event Store, needed if we have to create an IOVLock entry.
+  SmartIF<IDataProviderSvc> m_evtDataSvc;
+
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
 
@@ -194,13 +215,11 @@ private:
   /// Map containing the list of parsed condition definitions
   std::map<std::string, std::unique_ptr<Condition>> m_conditionsOverides;
 
-#ifndef WIN32
-  /// mutex lock used to avoid dependencies corruptions in a multi-thread environment.
-  pthread_mutex_t m_busy = PTHREAD_MUTEX_INITIALIZER;
-#endif
-
   mutable std::shared_timed_mutex m_IOVresource;
   mutable std::mutex              m_IOVreserve_mutex;
+
+  std::map<DerivationId, std::unique_ptr<LHCb::DetDesc::ConditionDerivation>> m_derivations;
+  DerivationId                                                                m_nextDerivationId = 0;
 };
 
 #include "UpdateManagerSvc.icpp"
