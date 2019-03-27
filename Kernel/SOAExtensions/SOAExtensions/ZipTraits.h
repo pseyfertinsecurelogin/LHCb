@@ -30,6 +30,11 @@ namespace Zipping {
       static constexpr bool value = SOA::Utils::is_view<std::decay_t<VIEW>>::value;
     };
   } // namespace details
+
+  /** type trait to identify ZipContainers as such
+   *
+   * has_semantic_zip qualifies if a type can be argument or return value of Zipping::semantic_zip.
+   */
   template <typename T>
   struct has_semantic_zip {
     // remove const and reference from ZipContainer before going one level deeper

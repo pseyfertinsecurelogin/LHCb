@@ -14,8 +14,8 @@
 #define IncompatibleZipException_H 1
 #include <exception> // IWYU pragma: keep
 // IWYU pragma: no_include <bits/exception.h>
-#include <string>      // for string, allocator
-#include <string_view> // for string_view
+#include <string>
+#include <string_view>
 
 namespace Zipping {
   class IncompatibleZipException final : public std::exception {

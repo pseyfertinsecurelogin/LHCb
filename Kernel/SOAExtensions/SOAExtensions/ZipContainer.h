@@ -12,107 +12,95 @@
 
 #ifndef ZipContainer_h
 #define ZipContainer_h
-#include "IncompatibleZipException.h" // for IncompatibleZipException
-#include "SOAContainer/SOASkin.h"     // for is_skin
-#include "SOAContainer/SOAUtils.h"    // for ALL, is_view
-#include "SOAContainer/SOAView.h"     // for zip
+#include "IncompatibleZipException.h"
+#include "SOAContainer/SOASkin.h"
+#include "SOAContainer/SOAUtils.h"
+#include "SOAContainer/SOAView.h"
 #include "ZipTraits.h"
 #include "ZipUtils.h"
-#include <atomic>
 #include <tuple>
-#include <type_traits> // for remove_reference_t, enable_if_t
-#include <utility>     // for forward
+#include <type_traits>
+#include <utility>
 
 namespace Zipping {
-  struct ZipID {
-    explicit ZipID( uint64_t t ) : value( t ) {}
-    uint64_t value;
-    // assuming most of what can be done with uint64_t doesn't make sense as a family identifier
-    explicit operator uint64_t() const { return value; }
-    bool     operator==( const ZipID other ) { return value == other.value; }
-    bool     operator!=( const ZipID other ) { return value != other.value; }
-  };
-
-  namespace details {
-    class ZipIdProvider {
-    private:
-      inline static std::atomic_uint64_t generator;
-
-    public:
-      static ZipID getId() { return ZipID( generator.fetch_add( 1 ) ); }
-    };
-  } // namespace details
-
-  template <typename FIRST, typename... OTHERS>
-  ZipID firstid( FIRST& first, OTHERS&... /*unused*/ ) {
-    return first.zipIdentifier();
-  }
-
   template <typename CONTAINER>
   class ZipContainer : public CONTAINER {
+    // types and usings
   public:
-    using view = CONTAINER;
+    using view_t = CONTAINER;
 
-    template <typename... Args>
-    ZipContainer( ZipID ID, Args&&... args ) : CONTAINER( args... ), m_identifier( ID ) {}
+    // Zip functionality methods
+  public:
+    ZipFamilyNumber zipIdentifier() const { return m_family_id; }
 
-    template <typename Arg, typename... Args,
-              typename = typename std::enable_if_t<!std::is_same_v<ZipID, std::decay_t<Arg>>>>
-    ZipContainer( Arg&& arg, Args&&... args )
-        : CONTAINER( arg, args... ), m_identifier( details::ZipIdProvider::getId() ) {}
+  private:
+    ZipFamilyNumber m_family_id;
 
-    ZipContainer() : CONTAINER(), m_identifier( details::ZipIdProvider::getId() ) {}
+    // constructors
+  public:
+    // ZipContainer can be constructed with a specific ZipFamilyNumber, all other constructor arguments
+    // are forwarded to the underlying SOAContainer-type. (Sorry for the cumbersome phrasing `SOAContainer-type` is to
+    // make explicit that this may not be an SOA::Container, but also an SOA::View.
+    template <typename... ARGS>
+    ZipContainer( ZipFamilyNumber id, ARGS&&... args ) : CONTAINER( std::forward<ARGS>(args)... ), m_family_id( id ) {}
 
+    // If the first constructor argument is not a ZipFamilyNumber, generate a new ZipFamilyNumber and consider
+    // all constructor arguments as SOAContainer-type constructor arguments.
+    template <typename ARG, typename... ARGS,
+              typename = typename std::enable_if_t<!std::is_same_v<ZipFamilyNumber, std::decay_t<ARG>>>>
+    ZipContainer( ARG&& arg, ARGS&&... args )
+        : CONTAINER( arg, args... ), m_family_id( details::ZipFamilyNumberGenerator::generate() ) {}
+
+    // Default constructor generates a new ZipFamilyNumber and default constructs the underlying SOAContainer-type.
+    ZipContainer() : CONTAINER(), m_family_id( details::ZipFamilyNumberGenerator::generate() ) {}
+
+    // convenience helpers
+  public:
     template <typename T>
     auto push_back( T&& t )
-        -> std::enable_if_t<view::self_type::fields_typelist::size() == 1 &&
+        -> std::enable_if_t<view_t::self_type::fields_typelist::size() == 1 &&
                             std::is_same_v<std::remove_reference_t<T>,
-                                           typename view::self_type::fields_typelist::template at<0>::type::type>> {
+                                           typename view_t::self_type::fields_typelist::template at<0>::type::type>> {
       CONTAINER::emplace_back( std::forward<T>( t ) );
     }
     template <typename T>
     auto push_back( const T& t )
-        -> std::enable_if_t<view::self_type::fields_typelist::size() == 1 &&
+        -> std::enable_if_t<view_t::self_type::fields_typelist::size() == 1 &&
                             std::is_same_v<std::remove_reference_t<T>,
-                                           typename view::self_type::fields_typelist::template at<0>::type::type>> {
+                                           typename view_t::self_type::fields_typelist::template at<0>::type::type>> {
       CONTAINER::emplace_back( std::forward<const T>( t ) );
     }
-
-  private:
-    ZipID m_identifier;
-
-  public:
-    ZipID zipIdentifier() const { return m_identifier; }
   };
 
-  template <template <class> class SKIN, typename... IDeds,
-            typename = typename std::enable_if_t<SOA::Utils::ALL(
-                SOA::impl::is_skin<SKIN>(),
-                has_semantic_zip<typename std::remove_cv_t<typename std::remove_reference_t<IDeds>>>::value... )>>
-  auto semantic_zip( IDeds&&... views ) {
+  template <
+      template <class> class SKIN, typename... ZIPCONTAINER,
+      typename = typename std::enable_if_t<SOA::Utils::ALL(
+          SOA::impl::is_skin<SKIN>(),
+          has_semantic_zip<typename std::remove_cv_t<typename std::remove_reference_t<ZIPCONTAINER>>>::value... )>>
+  auto semantic_zip( ZIPCONTAINER&&... views ) {
 #ifndef NDEBUG
-    if ( !are_semantically_compatible( views... ) ) {
-      throw IncompatibleZipException( "zipping from different container family" );
+    if ( !areSemanticallyCompatible( views... ) ) {
+      throw IncompatibleZipException( "zipping from different container families" );
     }
 #endif
 
-    using barezip =
-        decltype( zip<SKIN, typename std::conditional_t<std::is_reference_v<IDeds>,
-                                                        const typename std::remove_reference_t<IDeds>::view&,
-                                                        const typename std::remove_reference_t<IDeds>::view>...>(
-            std::forward<typename std::conditional_t<std::is_reference_v<IDeds>,
-                                                     const typename std::remove_reference_t<IDeds>::view&,
-                                                     const typename std::remove_reference_t<IDeds>::view>>(
+    using barezip = decltype(
+        zip<SKIN, typename std::conditional_t<std::is_reference_v<ZIPCONTAINER>,
+                                              const typename std::remove_reference_t<ZIPCONTAINER>::view_t&,
+                                              const typename std::remove_reference_t<ZIPCONTAINER>::view_t>...>(
+            std::forward<typename std::conditional_t<std::is_reference_v<ZIPCONTAINER>,
+                                                     const typename std::remove_reference_t<ZIPCONTAINER>::view_t&,
+                                                     const typename std::remove_reference_t<ZIPCONTAINER>::view_t>>(
                 views )... ) );
 
     return ZipContainer<barezip>(
-        firstid( views... ),
-        zip<SKIN, typename std::conditional_t<std::is_reference_v<IDeds>,
-                                              const typename std::remove_reference_t<IDeds>::view&,
-                                              const typename std::remove_reference_t<IDeds>::view>...>(
-            std::forward<typename std::conditional_t<std::is_reference_v<IDeds>,
-                                                     const typename std::remove_reference_t<IDeds>::view&,
-                                                     const typename std::remove_reference_t<IDeds>::view>>(
+        familyNumber( views... ),
+        zip<SKIN, typename std::conditional_t<std::is_reference_v<ZIPCONTAINER>,
+                                              const typename std::remove_reference_t<ZIPCONTAINER>::view_t&,
+                                              const typename std::remove_reference_t<ZIPCONTAINER>::view_t>...>(
+            std::forward<typename std::conditional_t<std::is_reference_v<ZIPCONTAINER>,
+                                                     const typename std::remove_reference_t<ZIPCONTAINER>::view_t&,
+                                                     const typename std::remove_reference_t<ZIPCONTAINER>::view_t>>(
                 views )... ) );
   }
 } // namespace Zipping

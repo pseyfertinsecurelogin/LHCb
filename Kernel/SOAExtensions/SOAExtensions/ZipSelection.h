@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration
+ * (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
  *
  * This software is distributed under the terms of the GNU General Public
  * Licence version 3 (GPL Version 3), copied verbatim in the file "LICENSE".
@@ -10,24 +10,25 @@
  * or submit itself to any jurisdiction.
  */
 
-// with some changes
+// mostly copy and paste from Pr::Selection
 
 #ifndef ZIP_SELECTION
 #define ZIP_SELECTION 1
-#include "ZipTraits.h"          // for is_IDed
-#include <algorithm>            // for is_sorted, copy_if, includes, set_di...
-#include <boost/type_index.hpp> // for type_id_with_cvr
-#include <cassert>              // for assert
-#include <cstddef>              // for size_t
-#include <exception>            // IWYU pragma: keep
-#include <functional>           // for invoke
-#include <iterator>             // for back_inserter, random_access_iterato...
-#include <limits>               // for numeric_limits
-#include <numeric>              // for iota
-#include <string>               // for string, operator+, to_string
-#include <type_traits>          // for enable_if_t, false_type, true_type
-#include <utility>              // for forward
-#include <vector>               // for vector, allocator
+#include "ZipTraits.h"
+#include "ZipUtils.h"
+#include <algorithm>
+#include <boost/type_index.hpp>
+#include <cassert>
+#include <cstddef>
+#include <exception> // IWYU pragma: keep
+#include <functional>
+#include <iterator>
+#include <limits>
+#include <numeric>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 // IWYU pragma: no_include <bits/exception.h>
 #include <cstdint> // IWYU pragma: keep
 // IWYU pragma: no_include <bits/stdint-uintn.h>
@@ -59,36 +60,89 @@ namespace Zipping {
     }
   } // namespace details
 
+  /** @class ExportedSelection ZipSelection.h
+   *
+   * Exchange format for selections.
+   *
+   *  @tparam IndexSize The type used to represent indices into the underlying
+   *  contiguous storage. Defaults to uint16_t, meaning by default you can only
+   *  select 65536 objects...
+   */
   template <typename IndexSize = uint16_t>
   struct ExportedSelection {
+    // usings and types
     using index_vector = typename std::vector<IndexSize>;
-    index_vector m_indices{};
-    ExportedSelection( ZipID id ) : m_identifier( id ) {}
-    ExportedSelection( const index_vector& indices, const ZipID id ) : m_indices( indices ), m_identifier( id ) {}
-    ZipID m_identifier;
-    ZipID zipIdentifier() const { return m_identifier; }
+
+    // data members
+    ZipFamilyNumber m_family_id;
+    index_vector    m_indices{};
+
+    // An ExportedSelection must always refer to an existing container family. Thus default construction is disabled.
+    // For convenience, construction can be done with a ZipFamilyNumber or a Container.
+    ExportedSelection() = delete;
+
+    ExportedSelection( ZipFamilyNumber id ) : m_family_id( id ) {}
+
+    template <typename CONTAINER,
+              typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
+    ExportedSelection( const CONTAINER& container, Zipping::details::alwaysFalse )
+        : m_family_id{container.zipIdentifier()} {}
+
+    template <typename CONTAINER,
+              typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
+    ExportedSelection( const CONTAINER& container, Zipping::details::alwaysTrue )
+        : m_family_id{container.zipIdentifier()}, m_indices( container.size(), IndexSize{} ) {
+      std::iota( m_indices.begin(), m_indices.end(), 0 );
+    }
+
+    // copy constructor
+    ExportedSelection( const ExportedSelection& other ) = default;
+
+    // direct data construction
+    template <typename INDEX_VECTOR,
+              typename = typename std::enable_if_t<std::is_same_v<std::decay_t<INDEX_VECTOR>, index_vector>>>
+    ExportedSelection( const INDEX_VECTOR&& indices, const ZipFamilyNumber id )
+        : m_indices( std::forward<INDEX_VECTOR>( indices ) ), m_family_id( id ) {}
+
+    ZipFamilyNumber zipIdentifier() const { return m_family_id; }
   };
 
   /** @class SelectionView
    *
-   *  TODO: update docs
+   * Allows to access selected element of a ZipContainer ("storage container"
+   * in the following). Not intended as exchange format on TES, exchange via
+   * `export_selection` and constructor. The backend behaviour is a container
+   * of indices through which container access (selection[42],
+   * selection.begin(), selection.begin()+5) is redirected.
+   *
+   * Does not own either the "data" nor the "selection".
+   *
+   * Should get created from an ExportedSelection, by means of makeSelection
+   * below as initial creation.
    *
    *  @tparam CONTAINER The "selected" container (most likely an SOA::View)
    *  @tparam IndexSize The type used to represent indices into the underlying
-   * contiguous storage. Defaults to uint16_t, meaning by default you can only
-   * select 65536 objects...
+   *  contiguous storage. Defaults to uint16_t, meaning by default you can only
+   *  select 65536 objects...
    */
+
   template <typename CONTAINER, typename IndexSize = uint16_t,
             typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
   struct SelectionView {
     // TODO in optimised build we could reduce sizeof(SelectionView) by 40% by
     // using a single pointer in container_t and
     //      using an index_vector type that imposes size()==capacity()
+
+    // usings and types
     using proxy_type = typename std::decay_t<CONTAINER>::proxy; // make it easier to write generic code
                                                                 // that can handle both containers and
                                                                 // SelectionViews
     using container_t  = std::decay_t<CONTAINER>;
     using index_vector = typename std::vector<IndexSize>;
+
+    // data members
+    const container_t&  m_container;
+    const index_vector& m_indices;
 
     // Custom iterator class for looping through the index vector but
     // dereferencing to values in the actual container
@@ -139,20 +193,19 @@ namespace Zipping {
       }
     };
 
-    const container_t&  m_container;
-    const index_vector& m_indices;
-
     ExportedSelection<IndexSize> export_selection() {
       return ExportedSelection<IndexSize>{m_indices, m_container.zipIdentifier()};
     }
 
     SelectionView( const container_t& container, const ExportedSelection<IndexSize>& selection )
         : m_container{container}, m_indices{selection.m_indices} {
+#ifndef NDEBUG
       if ( selection.zipIdentifier() != container.zipIdentifier() ) {
         throw GaudiException( "incompatible selection!!!! ahahah write something more "
                               "meaningful!",
                               details::typename_v<SelectionView>, StatusCode::FAILURE );
       }
+#endif
     }
 
     const_iterator begin() const { return {m_container, m_indices.begin()}; }
@@ -173,15 +226,29 @@ namespace Zipping {
       return m_container[m_indices[i]];
     }
 
-    // TODO: CHECKME
     friend bool operator==( SelectionView const& lhs, SelectionView const& rhs ) {
       return lhs.m_container == rhs.m_container && lhs.m_indices == rhs.m_indices;
     }
 
     friend bool operator!=( SelectionView const& lhs, SelectionView const& rhs ) { return !( lhs == rhs ); }
 
+
+    /** 
+     * Refine a selection.
+     *
+     * @param predicate: the selection criterion, typically a lambda or function pointer.
+     *                    FIXME: at the moment this does not invoke
+     *                    std::invoke, thus not allowing SOA-Proxy methods due
+     *                    to corner cases in proxy forwarding that turned out
+     *                    problematic with templated proxy constructors that
+     *                    forward to underlying data constructors.
+     * @param reserveCapacity: anticipated number of selected objects. If no
+     *                         "correct" guess is available, prefer to guess too
+     *                         high rather than too low.
+     * @returns A new Exported selection. I.e. the existing SelectionView is not modified.
+     */
     template <typename Predicate>
-    ExportedSelection<IndexSize> select( Predicate&& predicate, int reserveCapacity = -1 ) const {
+    [[nodiscard]] ExportedSelection<IndexSize> select( Predicate&& predicate, int reserveCapacity = -1 ) const {
       ExportedSelection<IndexSize> retval{m_container.zipIdentifier()};
       retval.m_indices.reserve( reserveCapacity < 0 ? m_indices.size() : reserveCapacity );
       std::copy_if( m_indices.begin(), m_indices.end(), std::back_inserter( retval.m_indices ),
@@ -193,7 +260,7 @@ namespace Zipping {
     // different underlying storage are provided.
     //
     // TODO: abstract away that selections can be of different type from the
-    // same containerset
+    // same container family
     friend SelectionView set_union( SelectionView const& s1, SelectionView const& s2 ) {
       details::check_for_set_operation( s1, s2,
                                         "set_union" ); // check s1 and s2 are valid and compatible
@@ -285,12 +352,10 @@ namespace Zipping {
                                details::typename_v<SelectionView<container_t>>,
                            details::typename_v<SelectionView<container_t>>, StatusCode::FAILURE};
     }
-    ExportedSelection<IndexSize> retval( container.zipIdentifier() );
+    ExportedSelection<IndexSize> retval( container.zipIdentifier(), details::alwaysFalse{} );
 
     if constexpr ( std::is_same_v<Predicate, details::alwaysTrue> ) {
       retval.m_indices.resize( container.size() );
-      // container_t is contiguous so we just need {0 ..
-      // container.size()-1}
       std::iota( retval.m_indices.begin(), retval.m_indices.end(), 0 );
     } else if constexpr ( std::is_same_v<Predicate, details::alwaysFalse> ) {
       if ( reserveCapacity >= 0 ) { retval.m_indices.reserve( reserveCapacity ); }
@@ -307,7 +372,7 @@ namespace Zipping {
 
   // Template parameter deduction guides
   template <typename T, typename... Args>
-  SelectionView( T, Args... )->SelectionView<typename T::value_type>;
+  SelectionView( T, Args... )->SelectionView<T>;
 
   namespace details {
     // Helpers for requireSelection<S> below

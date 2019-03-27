@@ -72,7 +72,7 @@ struct fitqual {
   float       chi2;
   int         dof;
   friend bool operator==( const fitqual& lhs, const fitqual& rhs ) {
-    return lhs.dof == rhs.dof && ( fabs( lhs.chi2 - rhs.chi2 ) / ( lhs.chi2 + rhs.chi2 ) < 0.01 );
+    return lhs.dof == rhs.dof && ( std::abs( lhs.chi2 - rhs.chi2 ) / ( lhs.chi2 + rhs.chi2 ) < 0.01 );
   }
   friend std::ostream& operator<<( std::ostream& stream, const fitqual& t ) {
     char buf[100];
@@ -91,7 +91,7 @@ SOASKIN_TRIVIAL( s_track_with_fitres_and_fitqual, f_track, f_fitres, f_fitqual )
 
 BOOST_AUTO_TEST_CASE( smart_test_name_goes_here ) {
   Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1;
-  Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( Zipping::details::ZipIdProvider::getId() );
+  Zipping::ZipContainer<SOA::Container<std::vector, s_track>>   foo1_alt( Zipping::details::ZipIdProvider::generate() );
   Zipping::ZipContainer<SOA::Container<std::vector, s_fitres>>  foo2( foo1.zipIdentifier() );
   Zipping::ZipContainer<SOA::Container<std::vector, s_fitqual>> foo3( foo1.zipIdentifier() );
   for ( auto i = 0; i < 42; ++i ) {
