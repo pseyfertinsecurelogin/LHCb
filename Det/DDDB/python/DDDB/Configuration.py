@@ -1,5 +1,5 @@
 ###############################################################################
-# (c) Copyright 2000-2018 CERN for the benefit of the LHCb Collaboration      #
+# (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration      #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
 # Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   #
@@ -18,7 +18,6 @@ import os
 
 from DetCond.Configuration import CondDB
 from datetime import datetime, timedelta
-import xmlrpclib
 
 from Gaudi.Configuration import *
 from Configurables import (XmlCnvSvc, XmlParserSvc, EntityResolverDispatcher,
@@ -75,8 +74,6 @@ class DDDBConf(ConfigurableUser):
         "2012",
         "Simulation":
         False,
-        "AutoTags":
-        False,
         "InitialTime":
         "Safe",
         "OnlineMode":
@@ -93,8 +90,6 @@ class DDDBConf(ConfigurableUser):
         """ Symbolic name for the data type. Allowed values: ["2018", "2017", "2016", "2015", "2013", "2012", "2011", "2010", "2009","2008","Upgrade"] """,
         'Simulation':
         """ Boolean flag to select the simulation or real-data configuration """,
-        'AutoTags':
-        """ Perform automatic resolution of CondDB tags """,
         'InitialTime':
         """ How to set the initial time. None/'Safe' uses a list of dummy times for each year and sets that time. 'Now' uses the current time. Sepcifying a number assumes that is a time in utc.""",
         'OnlineMode':
@@ -210,55 +205,18 @@ class DDDBConf(ConfigurableUser):
             if not sim:
                 log.info("%s data is _always_ simulation", dataType)
 
-        if not self.getProp('AutoTags'):
-            # calls the specific configuration function for the requested data type
-            self.__data_types_handlers__[dataType](self)
-            # by default, use the latest DQFLAGS tag for the requested data type
-            # (unless already set by a data type handler)
-            if not self.getProp("Simulation") and dataType not in ("Upgrade"):
-                self.__set_tag__(["DQFLAGS"], "<latest:{0}>".format(dataType))
-        else:
-            log.info("Ariadne driven configuration requested for CondDB")
-            datatype = self.getProp("DataType")
-            cond_type = 'LHCBCONDTag' if not self.getProp(
-                "Simulation") else 'SIMCONDTag'
-            question = {
-                'detector_type': datatype,
-                'DDDBTag': None,
-                cond_type: None,
-                'DQFLAGSTag': None
-            }
-            self.__auto_tags_conf__(question, criterion='latest_LHCBCOND_DDDB')
+        # calls the specific configuration function for the requested data type
+        self.__data_types_handlers__[dataType](self)
+        # by default, use the latest DQFLAGS tag for the requested data type
+        # (unless already set by a data type handler)
+        if not self.getProp("Simulation") and dataType not in ("Upgrade"):
+            self.__set_tag__(["DQFLAGS"], "<latest:{0}>".format(dataType))
 
         # Get particle properties table from condDB
         from Configurables import LHCb__ParticlePropertySvc
         LHCb__ParticlePropertySvc(
             ParticlePropertiesFile='git:///param/ParticleTable.txt')
 
-    def __auto_tags_conf__(self, question, criterion):
-        """ Automatic configuration of CondDB tags through the Ariadne system """
-
-        log.debug("Connecting to Ariadne XMLRPC gateway...")
-        proxy = xmlrpclib.ServerProxy(
-            "http://ariadne-lhcb.cern.ch/xmlrpc/", allow_none=True)
-
-        log.info("Querying Ariadne for a configuration thread...")
-        log.debug("Question to Ariadne: %s" % question)
-        response = proxy.aquery(question, criterion)
-        log.info("Got response from Ariadne, configuring CondDB..")
-        log.debug("Response from Ariadne is: %s" % question)
-
-        cond_type = 'LHCBCONDTag' if not self.getProp(
-            "Simulation") else 'SIMCONDTag'
-        for p in ['DDDB', cond_type.rstrip('Tag'), 'DQFLAGS']:
-            tag = response.get(p + 'Tag')
-            if not tag:
-                raise RuntimeError(
-                    "No tag found in Ariadne's response for partition %s" % p)
-            CondDB().Tags[p] = tag
-            log.info(
-                "Ariadne driven configuration: Tag '%s' is set for partition '%s'"
-                % (tag, p))
 
     def __set_tag__(self, partitions, tag):
         cdb = CondDB()
