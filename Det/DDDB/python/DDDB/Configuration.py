@@ -217,7 +217,6 @@ class DDDBConf(ConfigurableUser):
         LHCb__ParticlePropertySvc(
             ParticlePropertiesFile='git:///param/ParticleTable.txt')
 
-
     def __set_tag__(self, partitions, tag):
         cdb = CondDB()
         online = False
