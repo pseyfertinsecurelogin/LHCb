@@ -192,10 +192,9 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks( const RawEvent&              
     if ( errorBank ) {
       const unsigned bankpcn = decoder.header().pcn();
       if ( pcn != bankpcn && !m_skipErrors ) {
-        debug() << "Expected " << pcn << " found " << bankpcn << endmsg;
-        if ( msgLevel( MSG::DEBUG ) )
-          Warning( "PCNs out of sync sourceID " + std::to_string( ( *iterBank )->sourceID() ), StatusCode::SUCCESS, 2 )
-              .ignore();
+        if ( msgLevel( MSG::DEBUG ) ) debug() << "Expected " << pcn << " found " << bankpcn << endmsg;
+        Warning( "PCNs out of sync sourceID " + std::to_string( ( *iterBank )->sourceID() ), StatusCode::SUCCESS, 2 )
+            .ignore();
         m_skippedBanks += 1;
         continue;
       }
