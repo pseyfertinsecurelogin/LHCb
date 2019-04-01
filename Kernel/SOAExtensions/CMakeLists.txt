@@ -37,3 +37,11 @@ gaudi_add_module( SOAExtensionExamples examples/src/*.cpp
   INCLUDE_DIRS GaudiAlg Kernel/SOAContainer Kernel/SOAExtensions Event/TrackEvent cppgsl
   LINK_LIBRARIES GaudiAlgLib
   )
+
+
+gaudi_add_test(QMTest QMTEST
+  ENVIRONMENT
+  BINARY_TAG=${BINARY_TAG}
+  STDOPTS=${CMAKE_CURRENT_SOURCE_DIR}/options
+  JOBOPTSEARCHPATH+=${CMAKE_CURRENT_SOURCE_DIR}/options
+  PYTHONPATH+=${CMAKE_CURRENT_SOURCE_DIR}/tests/qmtest)
