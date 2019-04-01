@@ -18,13 +18,9 @@ gaudi_depends_on_subdirs(GaudiObjDesc
 
 include(GaudiObjDesc)
 
-god_build_headers(xml/*.xml)
-
 gaudi_add_library(LinkerEvent
                   src/*.cpp
-                  PUBLIC_HEADERS Linker
+                  PUBLIC_HEADERS Linker Event
                   LINK_LIBRARIES LHCbKernel)
 
-god_build_dictionary(xml/*.xml
-                     LINK_LIBRARIES LHCbKernel LinkerEvent)
-
+gaudi_add_dictionary(LinkerEvent dict/lcgDict.h dict/lcg_selection.xml LINK_LIBRARIES LinkerEvent)
