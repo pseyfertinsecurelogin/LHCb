@@ -57,9 +57,6 @@ namespace LoKi {
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
-      // ======================================================================
-      /// get the result ;
-      bool eval( /* argument v = 0 */ ) const override; //      get the result
       /// get the probability
       double prob() const { return m_prob; } // get the probability
       // ======================================================================
@@ -93,9 +90,6 @@ namespace LoKi {
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
-      // ======================================================================
-      /// get the result ;
-      bool eval( /* argument v */ ) const override; // get the result
       /// get skip rate
       size_t skip() const { return m_skip; }
       // ======================================================================
@@ -169,9 +163,6 @@ namespace LoKi {
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
-      // ======================================================================
-      /// get the result ;
-      bool eval( /* argument v = 0 */ ) const override; // get the result
       /// get the rate
       double rate() const { return m_rate; } // get the rate
       /// get the actual limiter type
@@ -241,11 +232,6 @@ namespace LoKi {
       /// OPTIONAL: nice printout
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
-    public:
-      // ======================================================================
-      /// get the result ;
-      bool eval( double v = 0 ) const override; // get the result ;
-      // ======================================================================
     private:
       // ======================================================================
       /// Random scale
@@ -272,11 +258,6 @@ namespace LoKi {
       bool operator()( argument v ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream( std::ostream& s ) const override;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the result ;
-      bool eval( argument v = 0 ) const override; // get the result ;
       // ======================================================================
     private:
       // ======================================================================
@@ -323,9 +304,6 @@ namespace LoKi {
       std::ostream& fillStream( std::ostream& s ) const override;
       // ======================================================================
     public:
-      // ======================================================================
-      /// get the result ;
-      bool eval( argument v = 0 ) const override; // get the result ;
       // ======================================================================
       /// get the rate
       double rate() const { return m_rateLimit.rate(); }

@@ -17,11 +17,7 @@
 // ============================================================================
 // local
 // ============================================================================
-#include "LoKi/BasicFunctors.h"
-#include "LoKi/Dumper.h"
 #include "LoKi/Filters.h"
-#include "LoKi/Primitives.h"
-#include "LoKi/Scalers.h"
 // ============================================================================
 /** @file
  *  Implementation file for classes form namesapce LoKi::Functors

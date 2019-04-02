@@ -61,30 +61,30 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_d, _d),  ## the base
         LoKi.Dicts.FunCalls(_d),  ## call-traits
-        LoKi.Dicts.FuncOps(_d, _d))  ## operators
+        LoKi.Dicts.FuncOps(_d))  ## operators
     # vector<double> -> double
     _decorated |= _LoKiCore.getAndDecorateFunctions(
         name,  ## module name
         LoKi.Functor(_v, _d),  ## the base
         LoKi.Dicts.FunCalls(_v),  ## call-traits
-        LoKi.Dicts.FuncOps(_v, _v))  ## operators
+        LoKi.Dicts.FuncOps(_v))  ## operators
     # double -> bool
     _decorated |= _LoKiCore.getAndDecoratePredicates(
         name,  ## module name
         LoKi.Functor(_d, bool),  ## the base
         LoKi.Dicts.CutCalls(_d),  ## call-traits
-        LoKi.Dicts.CutsOps(_d, _d))  ## operators
+        LoKi.Dicts.CutsOps(_d))  ## operators
     # vector<double> -> bool
     _decorated |= _LoKiCore.getAndDecoratePredicates(
         name,  ## module name
         LoKi.Functor(_v, bool),  ## the base
         LoKi.Dicts.CutCalls(_v),  ## call-traits
-        LoKi.Dicts.CutsOps(_v, _v))  ## operators
+        LoKi.Dicts.CutsOps(_v))  ## operators
     # vector<double> -> vector<double>
     _decorated |= _LoKiCore.getAndDecorateMaps(
         name,  ## module name
         LoKi.Functor(_v, _v),  ## the base
-        LoKi.Dicts.PipeOps(_d, _d))  ## stremers
+        LoKi.Dicts.PipeOps(_d))  ## stremers
     # vector<double> -> double
     _decorated |= _LoKiCore.getAndDecorateMaps(
         name,  ## module name
@@ -95,7 +95,7 @@ def _decorate(name=_name):
     _decorated |= _LoKiCore.getAndDecorateMaps(
         name,  ## module name
         LoKi.Functor('void', _v),  ## the base
-        LoKi.Dicts.SourceOps(_d, _d))  ## stremers
+        LoKi.Dicts.SourceOps(_d))  ## stremers
 
     return _decorated
 
@@ -114,14 +114,14 @@ def decorateVoids(name=_name):
         name,  ## module name
         LoKi.Functor(_v, _d),  ## the base
         LoKi.Dicts.FunCalls(_v),  ## call-traits
-        LoKi.Dicts.FuncOps(_v, _v))  ## operators
+        LoKi.Dicts.FuncOps(_v))  ## operators
 
     # void -> bool
     _decorated |= _LoKiCore.getAndDecoratePredicates(
         name,  ## module name
         LoKi.Functor(_v, _b),  ## the base
         LoKi.Dicts.CutCalls(_v),  ## call-traits
-        LoKi.Dicts.CutsOps(_v, _v))  ## operators
+        LoKi.Dicts.CutsOps(_v))  ## operators
 
     return _decorated
 

@@ -196,7 +196,7 @@ namespace LoKi {
     // own problem reported
     LoKi::Interface<LoKi::IReporter> m_reporter; // own problem reported
     // reference counter
-    long m_refCount; // reference counter
+    long m_refCount = 0; // reference counter
     // ========================================================================
   };
   // ==========================================================================

@@ -115,6 +115,10 @@ namespace LoKi {
       LoKi::CounterDef m_cntdef; // counter description
       // ======================================================================
     };
+    template <typename F>
+    Counter( const F& cut, StatEntity* stat )->Counter<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Counter( const F& cut, const LoKi::CounterDef& cnt )->Counter<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
     // ========================================================================
     template <class TYPE2>
     class Counter<void, TYPE2> : public LoKi::Functor<void, TYPE2> {
@@ -228,7 +232,11 @@ namespace LoKi {
       LoKi::Histo m_hdef; // histogram description
       // ======================================================================
     };
-    // ========================================================================
+    template <typename F>
+    Plot( const F&, AIDA::IHistogram1D* )->Plot<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+    template <typename F>
+    Plot( const F&, const LoKi::Histo& )->Plot<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+
     template <class TYPE2>
     class Plot<void, TYPE2> : public LoKi::Functor<void, TYPE2> {
     public:
@@ -352,6 +360,11 @@ namespace LoKi {
       std::string m_prefix; // the prefix
       // ======================================================================
     };
+
+    template <typename F>
+    Printer( const F&, std::ostream&, const std::string& suffix, const std::string& )
+        ->Printer<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
+
     // ========================================================================
     template <class TYPE2>
     class Printer<void, TYPE2> : public LoKi::Functor<void, TYPE2> {
@@ -435,9 +448,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Counter<TYPE, TYPE2> monitor( F&& cut, StatEntity* entity ) {
-    return {std::forward<F>( cut ), entity};
+  template <typename F>
+  auto monitor( F&& cut, StatEntity* entity ) {
+    return LoKi::Monitoring::Counter{std::forward<F>( cut ), entity};
   }
   // ==========================================================================
   /** helper function for creation of monitored predicate
@@ -458,39 +471,14 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Counter<TYPE, TYPE2> monitor( F&& cut, StatEntity& entity ) {
-    return {std::forward<F>( cut ), &entity};
+  template <typename F>
+  auto monitor( F&& cut, StatEntity& entity ) {
+    return LoKi::Monitoring::Counter{std::forward<F>( cut ), &entity};
   }
   // ==========================================================================
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Counter<TYPE, TYPE2> monitor( F&& cut, const LoKi::CounterDef& cnt ) {
-    return {std::forward<F>( cut ), cnt};
-  }
-  // ==========================================================================
-  /** helper function for creation of monitored function
-   *
-   *  @code
-   *
-   *  // some function
-   *  Fun fun = ... ;
-   *
-   *  // for monitoring mode, decorate it with self-monitoring abilities:
-   *  if ( monitoring )
-   *   {
-   *     AIDA::IHistogram1D* histo = ... ;
-   *     fun = monitor ( fun , histo ) ; ;
-   *   }
-   *
-   *
-   *  @endcode
-   *
-   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-   *  @date 2007-06-14
-   */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> monitor( F&& cut, AIDA::IHistogram1D* histo ) {
-    return {std::forward<F>( cut ), histo};
+  template <typename F>
+  auto monitor( F&& cut, const LoKi::CounterDef& cnt ) {
+    return LoKi::Monitoring::Counter{std::forward<F>( cut ), cnt};
   }
   // ==========================================================================
   /** helper function for creation of monitored function
@@ -513,9 +501,34 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> monitor( F&& cut, const LoKi::Histo& histo ) {
-    return {std::forward<F>( cut ), histo};
+  template <typename F>
+  auto monitor( F&& cut, AIDA::IHistogram1D* histo ) {
+    return LoKi::Monitoring::Plot{std::forward<F>( cut ), histo};
+  }
+  // ==========================================================================
+  /** helper function for creation of monitored function
+   *
+   *  @code
+   *
+   *  // some function
+   *  Fun fun = ... ;
+   *
+   *  // for monitoring mode, decorate it with self-monitoring abilities:
+   *  if ( monitoring )
+   *   {
+   *     AIDA::IHistogram1D* histo = ... ;
+   *     fun = monitor ( fun , histo ) ; ;
+   *   }
+   *
+   *
+   *  @endcode
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2007-06-14
+   */
+  template <typename F>
+  auto monitor( F&& cut, const LoKi::Histo& histo ) {
+    return LoKi::Monitoring::Plot{std::forward<F>( cut ), histo};
   }
   // ==========================================================================
   /** helper function for creation of monitored function
@@ -538,9 +551,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> plot( F&& cut, AIDA::IHistogram1D* histo ) {
-    return {std::forward<F>( cut ), histo};
+  template <typename F>
+  auto plot( F&& cut, AIDA::IHistogram1D* histo ) {
+    return LoKi::Monitoring::Plot{std::forward<F>( cut ), histo};
   }
   // ==========================================================================
   /** helper function for creation of monitored function
@@ -569,9 +582,8 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> plot( F&& cut, const std::string& path, const Gaudi::Histo1DDef& histo,
-                                            IHistogramSvc* hsvc ) {
+  template <typename F>
+  auto plot( F&& cut, const std::string& path, const Gaudi::Histo1DDef& histo, IHistogramSvc* hsvc ) {
     return plot( std::forward<F>( cut ), LoKi::HistoBook::book( path, histo, hsvc ) );
   }
   // ==========================================================================
@@ -602,9 +614,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> plot( F&& cut, const std::string& dir, const GaudiAlg::ID& id,
-                                            const Gaudi::Histo1DDef& histo, IHistogramSvc* hsvc = nullptr ) {
+  template <typename F>
+  auto plot( F&& cut, const std::string& dir, const GaudiAlg::ID& id, const Gaudi::Histo1DDef& histo,
+             IHistogramSvc* hsvc = nullptr ) {
     return plot( std::forward<F>( cut ), LoKi::HistoBook::book( dir, id, histo, hsvc ) );
   }
   // ==========================================================================
@@ -635,15 +647,14 @@ namespace LoKi {
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> plot( F&& cut, const Gaudi::Histo1DDef& histo, const GaudiAlg::ID& id,
-                                            const IAlgContextSvc* csvc = nullptr ) {
+  template <typename F>
+  auto plot( F&& cut, const Gaudi::Histo1DDef& histo, const GaudiAlg::ID& id, const IAlgContextSvc* csvc = nullptr ) {
     return plot( std::forward<F>( cut ), LoKi::HistoBook::book( histo, id, csvc ) );
   }
   // ==========================================================================
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Plot<TYPE, TYPE2> plot( F&& cut, const LoKi::Histo& hid ) {
-    return {std::forward<F>( cut ), hid};
+  template <typename F>
+  auto plot( F&& cut, const LoKi::Histo& hid ) {
+    return LoKi::Monitoring::Plot{std::forward<F>( cut ), hid};
   }
   // ==========================================================================
   /** helper function to instantiate the monitored functor
@@ -663,10 +674,10 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2008-02-29
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Printer<TYPE, TYPE2> print( F&& fun, std::ostream& stream = std::cout,
-                                                const std::string& suffix = "\n", const std::string& prefix = "" ) {
-    return {std::forward<F>( fun ), stream, suffix, prefix};
+  template <typename F>
+  auto print( F&& fun, std::ostream& stream = std::cout, const std::string& suffix = "\n",
+              const std::string& prefix = "" ) {
+    return LoKi::Monitoring::Printer{std::forward<F>( fun ), stream, suffix, prefix};
   }
   // ==========================================================================
   /** helper function to instantiate the monitored functor
@@ -687,10 +698,9 @@ namespace LoKi {
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2008-02-29
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  LoKi::Monitoring::Printer<TYPE, TYPE2> monitor( F&& fun, std::ostream& stream = std::cout,
-                                                  const std::string& suffix = "\n", const std::string& prefix = "" ) {
-    return print( std::forward<F>( fun ), stream, suffix, prefix );
+  template <typename F>
+  auto monitor( F&& fun, std::ostream& stream = std::cout, std::string suffix = "\n", std::string prefix = "" ) {
+    return print( std::forward<F>( fun ), stream, std::move( suffix ), std::move( prefix ) );
   }
   // ==========================================================================
 } // end of namespace LoKi

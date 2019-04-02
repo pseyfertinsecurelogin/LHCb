@@ -63,7 +63,7 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_o1, 'double'),  ## the base
         LoKi.Dicts.FunCalls(o1),  ## call-traits
-        LoKi.Dicts.FuncOps(_o1, _o1))  ## operators&operations
+        LoKi.Dicts.FuncOps(_o1))  ## operators&operations
 
     # "function" : L0 -> double
 
@@ -71,7 +71,7 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_l0, 'double'),  ## the base
         LoKi.Dicts.FunCalls(l0),  ## call-traits
-        LoKi.Dicts.FuncOps(_l0, _l0))  ## operators&operations
+        LoKi.Dicts.FuncOps(_l0))  ## operators&operations
 
     # "function" : HLT -> double
 
@@ -79,7 +79,7 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_hlt, 'double'),  ## the base
         LoKi.Dicts.FunCalls(hlt),  ## call-traits
-        LoKi.Dicts.FuncOps(_hlt, _hlt))  ## operators&operations
+        LoKi.Dicts.FuncOps(_hlt))  ## operators&operations
 
     # "predicate/cut" :  ODIN -> bool
 
@@ -87,7 +87,7 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_o1, bool),  ## the base
         LoKi.Dicts.CutCalls(o1),  ## call-traits
-        LoKi.Dicts.CutsOps(_o1, _o1))  ## operators&operations
+        LoKi.Dicts.CutsOps(_o1))  ## operators&operations
 
     # "predicate/cut" :  L0 -> bool
 
@@ -95,14 +95,14 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_l0, bool),  ## the base
         LoKi.Dicts.CutCalls(l0),  ## call-traits
-        LoKi.Dicts.CutsOps(_l0, _l0))  ## operators&operations
+        LoKi.Dicts.CutsOps(_l0))  ## operators&operations
 
     # "predicate/cut" :  HLT -> bool
     _decorated |= _LoKiCore.getAndDecoratePredicates(
         name,  ## module name
         LoKi.Functor(_hlt, bool),  ## the base
         LoKi.Dicts.CutCalls(hlt),  ## call-traits
-        LoKi.Dicts.CutsOps(_hlt, _hlt))  ## operators&operations
+        LoKi.Dicts.CutsOps(_hlt))  ## operators&operations
 
     ##
 

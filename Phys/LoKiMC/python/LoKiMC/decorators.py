@@ -133,7 +133,7 @@ def _decorate(name=_name):
         name,  ## modulr name
         LoKi.Functor(_mcp, 'double'),  ## the base
         LoKi.Dicts.FunCalls(LHCb.MCParticle),  ## call-traits
-        LoKi.Dicts.FuncOps(_mcp, _mcp))  ## operators&operations
+        LoKi.Dicts.FuncOps(_mcp))  ## operators&operations
 
     # MCVertex -> double
 
@@ -141,7 +141,7 @@ def _decorate(name=_name):
         name,  ## moduel name
         LoKi.Functor(_mcv, 'double'),  ## the base
         LoKi.Dicts.FunCalls(LHCb.MCVertex),  ## call-traits
-        LoKi.Dicts.FuncOps(_mcv, _mcv))  ## operators&operations
+        LoKi.Dicts.FuncOps(_mcv))  ## operators&operations
 
     # MCParticle -> bool
 
@@ -149,7 +149,7 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_mcp, bool),  ## the base
         LoKi.Dicts.CutCalls(LHCb.MCParticle),  ## call-traits
-        LoKi.Dicts.CutsOps(_mcp, _mcp))  ## operators&operations
+        LoKi.Dicts.CutsOps(_mcp))  ## operators&operations
 
     # MCVertex -> bool
 
@@ -157,7 +157,7 @@ def _decorate(name=_name):
         name,  ## module name
         LoKi.Functor(_mcv, bool),  ## the base
         LoKi.Dicts.CutCalls(LHCb.MCVertex),  ## call-traits
-        LoKi.Dicts.CutsOps(_mcv, _mcv))  ## operators&operations
+        LoKi.Dicts.CutsOps(_mcv))  ## operators&operations
 
     ## functional part:
 
@@ -177,11 +177,11 @@ def _decorate(name=_name):
     _decorated |= _LoKiCore.getAndDecoratePipes(
         name,  ## module name
         LoKi.Functor(_vp, _vp),  ## the base
-        LoKi.Dicts.PipeOps(_mcp, _mcp))  ## call-traits
+        LoKi.Dicts.PipeOps(_mcp))  ## call-traits
     _decorated |= _LoKiCore.getAndDecoratePipes(
         name,  ## module name
         LoKi.Functor(_vv, _vv),  ## the base
-        LoKi.Dicts.PipeOps(_mcv, _mcv))  ## call-traits
+        LoKi.Dicts.PipeOps(_mcv))  ## call-traits
 
     # vector<T> -> double
 
@@ -210,11 +210,11 @@ def _decorate(name=_name):
     _decorated |= _LoKiCore.getAndDecorateSources(
         name,  ## module name
         LoKi.Functor('void', _vp),  ## the base
-        LoKi.Dicts.SourceOps(_mcp, _mcp))  ## call-traits
+        LoKi.Dicts.SourceOps(_mcp))  ## call-traits
     _decorated |= _LoKiCore.getAndDecorateSources(
         name,  ## module name
         LoKi.Functor('void', _vv),  ## the base
-        LoKi.Dicts.SourceOps(_mcv, _mcv))  ## call-traits
+        LoKi.Dicts.SourceOps(_mcv))  ## call-traits
 
     ## primitive voids:
 

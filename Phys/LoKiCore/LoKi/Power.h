@@ -89,6 +89,8 @@ namespace LoKi {
     int m_val; // the power
     // ========================================================================
   };
+  template <typename F>
+  Power( const F&, int )->Power<LoKi::details::type1_t<F>, LoKi::details::type2_t<F>>;
   // ==========================================================================
   template <class TYPE2>
   class Power<void, TYPE2> final : public LoKi::Functor<void, TYPE2> {
@@ -138,9 +140,9 @@ namespace LoKi {
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
    */
-  template <typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  inline LoKi::Power<TYPE, TYPE2> pow( F&& fun, int val ) {
-    return {std::forward<F>( fun ), val};
+  template <typename F>
+  auto pow( F&& fun, int val ) {
+    return LoKi::Power{std::forward<F>( fun ), val};
   }
   // ==========================================================================
   /** powN for LoKi functions
@@ -149,9 +151,9 @@ namespace LoKi {
    *  @author Gerhard Raven gerhard.raven@nikhef.nl
    *  @date   2016-09-10
    */
-  template <int N, typename F, typename TYPE = details::type1_t<F>, typename TYPE2 = details::type2_t<F>>
-  inline LoKi::Power<TYPE, TYPE2> pow( F&& fun ) {
-    return {std::forward<F>( fun ), N};
+  template <int N, typename F>
+  auto pow( F&& fun ) {
+    return LoKi::Power{std::forward<F>( fun ), N};
   }
 
   // ==========================================================================
@@ -161,11 +163,7 @@ namespace LoKi {
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
    */
-  // C++14: template <typename F> constexpr auto pow2<F> = pow<2,F>;
-  template <typename F>
-  auto pow2( F&& f ) -> decltype( pow( f, 2 ) ) {
-    return pow( std::forward<F>( f ), 2 );
-  }
+  constexpr auto pow2 = []( auto&& f ) { return pow( std::forward<decltype( f )>( f ), 2 ); };
   // ==========================================================================
   /** pow3 for LoKi functions
    *  @see LoKi::pow
@@ -173,11 +171,7 @@ namespace LoKi {
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
    */
-  // C++14: template <typename F> constexpr auto pow3<F> = pow<3,F>;
-  template <typename F>
-  auto pow3( F&& f ) -> decltype( pow( f, 3 ) ) {
-    return pow( std::forward<F>( f ), 3 );
-  }
+  constexpr auto pow3 = []( auto&& f ) { return pow( std::forward<decltype( f )>( f ), 3 ); };
   // ==========================================================================
   /** pow4 for LoKi functions
    *  @see LoKi::pow
@@ -185,11 +179,7 @@ namespace LoKi {
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
    */
-  // C++14: template <typename F> constexpr auto pow3<F> = pow<4,F>;
-  template <typename F>
-  auto pow4( F&& f ) -> decltype( pow( f, 4 ) ) {
-    return pow( std::forward<F>( f ), 4 );
-  }
+  constexpr auto pow4 = []( auto&& f ) { return pow( std::forward<decltype( f )>( f ), 4 ); };
   // ==========================================================================
   /** square for LoKi functions
    *  @see LoKi::pow
@@ -197,11 +187,7 @@ namespace LoKi {
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
    */
-  // C++14: template <typename F> constexpr auto square<F> = pow<2,F>;
-  template <typename F>
-  auto square( F&& f ) -> decltype( pow( f, 2 ) ) {
-    return pow2( std::forward<F>( f ) );
-  }
+  constexpr auto square = []( auto&& f ) { return pow2( std::forward<decltype( f )>( f ) ); };
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

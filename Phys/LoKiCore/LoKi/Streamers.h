@@ -70,10 +70,9 @@
  */
 template <typename F1, typename F2, typename TYPE = LoKi::details::type1_t<F1>,
           typename TYPE1 = LoKi::details::type2_t<F1>, typename TYPE2 = LoKi::details::type2_t<F2>,
-          typename = LoKi::details::require_signature<F1, TYPE, TYPE1>,
           typename = LoKi::details::require_signature<F2, TYPE1, TYPE2>>
-LoKi::Compose<TYPE, TYPE1, TYPE2> operator>>( F1&& fun1, F2&& fun2 ) {
-  return {std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
+auto operator>>( F1&& fun1, F2&& fun2 ) {
+  return LoKi::Compose<TYPE, TYPE1, TYPE2>{std::forward<F1>( fun1 ), std::forward<F2>( fun2 )};
 }
 // ============================================================================
 /** the streamer for two predicates is "logical AND" for the predicates
@@ -95,9 +94,8 @@ LoKi::Compose<TYPE, TYPE1, TYPE2> operator>>( F1&& fun1, F2&& fun2 ) {
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <typename F1, typename F2, typename TYPE = LoKi::details::type1_t<F1, F2>,
-          typename = LoKi::details::require_signature<F1, TYPE, bool>,
-          typename = LoKi::details::require_signature<F2, TYPE, bool>>
+template <typename F1, typename F2, typename = LoKi::details::require_result_t<F1, bool>,
+          typename = LoKi::details::require_result_t<F2, bool>>
 auto operator>>( F1&& cut1, F2&& cut2 ) {
   return std::forward<F1>( cut1 ) && std::forward<F2>( cut2 );
 }
@@ -252,14 +250,16 @@ TYPE2 operator>>( typename LoKi::Functor<TYPE, TYPE2>::argument a, const LoKi::F
 }
 // ============================================================================
 /// use "light" range as input vector
-template <class CONTAINER, class OUTPUT>
-OUTPUT operator>>( const Gaudi::Range_<CONTAINER>& a, const LoKi::Functor<CONTAINER, OUTPUT>& o ) {
+template <class CONTAINER, class C, class OUTPUT,
+          typename = std::enable_if_t<std::is_convertible_v<typename CONTAINER::value_type, typename C::value_type>>>
+OUTPUT operator>>( const Gaudi::Range_<CONTAINER>& a, const LoKi::Functor<C, OUTPUT>& o ) {
   return LoKi::apply( o, a );
 }
 // ============================================================================
 /// use "light" range as input vector
-template <class CONTAINER, class OUTPUT>
-OUTPUT operator>>( const Gaudi::NamedRange_<CONTAINER>& a, const LoKi::Functor<CONTAINER, OUTPUT>& o ) {
+template <class CONTAINER, class C, class OUTPUT,
+          typename = std::enable_if_t<std::is_convertible_v<typename CONTAINER::value_type, typename C::value_type>>>
+OUTPUT operator>>( const Gaudi::NamedRange_<CONTAINER>& a, const LoKi::Functor<C, OUTPUT>& o ) {
   return LoKi::apply( o, a );
 }
 // ============================================================================
@@ -386,31 +386,28 @@ std::vector<TYPE*> operator>>( const std::vector<TYPE*>&                        
 // ============================================================================
 // source with the gate
 // ============================================================================
-template <typename F1, typename F2, typename TYPE = typename LoKi::details::type1_t<F1>,
-          typename TYPE2 = typename LoKi::details::type2_t<F1>::value_type,
-          typename       = LoKi::details::require_signature<F1, TYPE, std::vector<TYPE2>>,
-          typename       = LoKi::details::require_signature<F2, void, bool>>
-LoKi::FunctorFromFunctor<TYPE, std::vector<TYPE2>> operator>>( F1&& source, F2&& gate ) {
-  return std::forward<F1>( source ) >> LoKi::gate<TYPE2>( std::forward<F2>( gate ) );
+template <typename F1, typename F2, typename TYPE2 = typename LoKi::details::type2_t<F1>::value_type,
+          typename = LoKi::details::require_result_t<F1, std::vector<TYPE2>>,
+          typename = LoKi::details::require_signature<F2, void, bool>>
+auto operator>>( F1&& source, F2&& gate ) {
+  return LoKi::FunctorFromFunctor{std::forward<F1>( source ) >> LoKi::gate<TYPE2>( std::forward<F2>( gate ) )};
 }
 
 // ============================================================================
 // dumping to the stream
 // ============================================================================
-template <typename F, typename TYPE = typename LoKi::details::type1_t<F>,
-          typename TYPE2 = typename LoKi::details::type2_t<F>::value_type,
-          typename       = LoKi::details::require_signature<F, TYPE, std::vector<TYPE2>>>
-LoKi::FunctorFromFunctor<TYPE, std::vector<TYPE2>> operator>>( F&& pipe, std::ostream& stream ) {
-  return std::forward<F>( pipe ) >> LoKi::Functors::Dump_<TYPE2>( stream );
+template <typename F, typename TYPE2 = typename LoKi::details::type2_t<F>::value_type,
+          typename = LoKi::details::require_result_t<F, std::vector<TYPE2>>>
+auto operator>>( F&& pipe, std::ostream& stream ) {
+  return LoKi::FunctorFromFunctor{std::forward<F>( pipe ) >> LoKi::Functors::Dump_<TYPE2>( stream )};
 }
 // ============================================================================
 // dumping to the stream
 // ============================================================================
-template <typename F, typename TYPE = typename LoKi::details::type1_t<F>,
-          typename TYPE2 = typename LoKi::details::type2_t<F>::value_type,
-          typename       = LoKi::details::require_signature<F, TYPE, std::vector<TYPE2>>>
-LoKi::FunctorFromFunctor<TYPE, std::vector<TYPE2>> operator>>( F&& pipe, const LoKi::Dump& dump ) {
-  return std::forward<F>( pipe ) >> LoKi::Functors::Dump_<TYPE2>( dump );
+template <typename F, typename TYPE2 = typename LoKi::details::type2_t<F>::value_type,
+          typename = LoKi::details::require_result_t<F, std::vector<TYPE2>>>
+auto operator>>( F&& pipe, const LoKi::Dump& dump ) {
+  return LoKi::FunctorFromFunctor{std::forward<F>( pipe ) >> LoKi::Functors::Dump_<TYPE2>( dump )};
 }
 
 // ============================================================================
