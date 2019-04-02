@@ -103,7 +103,7 @@ namespace LHCb {
                   const Zipping::ExportedSelection<>& e ) const override {
         auto z = Zipping::semantic_zip<::Examples::Harvester_OutputSkin>( p1, p2 );
 
-        Zipping::SelectionView<decltype( z )> apple_input( &z, e );
+        Zipping::SelectionView apple_input( &z, e );
 
         auto refined_exported_selection =
             apple_input.select( [&]( auto apple ) { return apple.weight() > m_minWeight; } );

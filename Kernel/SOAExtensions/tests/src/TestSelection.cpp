@@ -121,9 +121,9 @@ BOOST_AUTO_TEST_CASE( basic_zip_and_selection_operations ) {
   auto exported_selection =
       Zipping::makeSelection( &track_with_momentum, []( auto i ) { return 0 == i.accessor_fitres().q % 2; } );
 
-  Zipping::SelectionView<decltype( track_with_momentum )> selected_tracks{&track_with_momentum, exported_selection};
+  Zipping::SelectionView selected_tracks{&track_with_momentum, exported_selection};
 
-  Zipping::SelectionView<decltype( full_track )> selected_full_tracks( &full_track, exported_selection );
+  Zipping::SelectionView selected_full_tracks( &full_track, exported_selection );
 
   auto crosscheck = selected_full_tracks.export_selection();
 
