@@ -139,9 +139,10 @@ private:
   IEvtSelector::Context* m_evtSelContext{nullptr};
 
   // state vectors for each event, once filled, then copied per event
-  std::vector<NodeState>                              m_NodeStates;
-  std::vector<uint16_t>                               m_AlgStates;
-  std::vector<Gaudi::Accumulators::Counter<uint32_t>> m_AlgExecCounter;
+  std::vector<NodeState>                                      m_NodeStates;
+  std::vector<uint16_t>                                       m_AlgStates;
+  std::vector<Gaudi::Accumulators::Counter<uint32_t>>         m_AlgExecCounters;
+  std::vector<Gaudi::Accumulators::BinomialCounter<uint32_t>> m_NodeStateCounters;
 
 public:
   using SchedulerStates = decltype( std::pair{m_NodeStates, m_AlgStates} );
@@ -170,6 +171,7 @@ private:
   void registerTreePrintWidth();
   // runtime adding of states to print tree and states
 public:
-  std::stringstream buildStructuredTreeWithStates( std::vector<NodeState> const& states ) const;
+  template <typename printable>
+  std::stringstream buildPrintableStateTree( std::vector<printable> const& states ) const;
   std::stringstream buildAlgsWithStates( std::vector<uint16_t> const& states ) const;
 };
