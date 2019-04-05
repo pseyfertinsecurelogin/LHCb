@@ -13,7 +13,7 @@
 
 // Additional classes to be added to automatically generated lcgdict
 
-#include "Event/LinksByKey.h"
 #include "Event/LinkReference.h"
+#include "Event/LinksByKey.h"
 
 #endif // LINKEREVENT_LCGDICT_H

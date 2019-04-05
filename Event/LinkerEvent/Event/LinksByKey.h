@@ -114,7 +114,7 @@ namespace LHCb {
      *   - tgtindex is the index of the target item in the target container
      *   - weight is the weight of the current link
      */
-    template<typename Function>
+    template <typename Function>
     void applyToAllLinks( Function&& func ) const;
 
     /**
@@ -126,7 +126,7 @@ namespace LHCb {
      *   - tgtindex is the index of the target item in the target container
      *   - weight is the weight of the current link
      */
-    template<typename Function>
+    template <typename Function>
     void applyToLinks( unsigned int srcIndex, Function&& func ) const;
 
   protected:
@@ -138,7 +138,7 @@ namespace LHCb {
      * Internal helper function applying the given function to all links of the
      * chain given by refIndex
      */
-    template<typename Function>
+    template <typename Function>
     void internalApply( unsigned int srcIndex, int refIndex, Function&& func ) const;
 
   private:
@@ -204,28 +204,24 @@ inline void LHCb::LinksByKey::reset() {
   m_linkReference.clear();
 }
 
-template<typename Function>
+template <typename Function>
 void LHCb::LinksByKey::internalApply( unsigned int srcIndex, int refIndex, Function&& func ) const {
   while ( 0 <= refIndex ) {
     auto& reference = m_linkReference[refIndex];
-    func(srcIndex, (unsigned int)reference.objectKey(), reference.weight());
+    func( srcIndex, (unsigned int)reference.objectKey(), reference.weight() );
     refIndex = reference.nextIndex();
   }
 }
 
-template<typename Function>
+template <typename Function>
 void LHCb::LinksByKey::applyToAllLinks( Function&& func ) const {
-  for ( auto [srcIndex, refIndex] : m_keyIndex ) {
-    internalApply(srcIndex, refIndex, func);
-  }
+  for ( auto [srcIndex, refIndex] : m_keyIndex ) { internalApply( srcIndex, refIndex, func ); }
 }
 
-template<typename Function>
+template <typename Function>
 void LHCb::LinksByKey::applyToLinks( unsigned int srcIndex, Function&& func ) const {
   int key;
-  if ( findIndex(srcIndex, key) ) {
-    internalApply(srcIndex, m_keyIndex[key].second, func);
-  }
+  if ( findIndex( srcIndex, key ) ) { internalApply( srcIndex, m_keyIndex[key].second, func ); }
 }
 
 #endif /// LinkerEvent_LinksByKey_H
