@@ -29,7 +29,7 @@ StatusCode ExecutionReportsWriter::execute( EventContext const& evtCtx ) const {
 
   if ( UNLIKELY( evtCtx.evt() % m_printFreq == 0 ) ) {
     DEBUG_MSG << m_schedulerPtr->buildAlgsWithStates( AlgStates ).str() << endmsg;
-    DEBUG_MSG << m_schedulerPtr->buildStructuredTreeWithStates( NodeStates ).str() << endmsg;
+    DEBUG_MSG << m_schedulerPtr->buildPrintableStateTree( NodeStates ).str() << endmsg;
   }
   m_outputHandle.put( decltype( NodeStates ){NodeStates} ); // write down something better?
   return StatusCode::SUCCESS;

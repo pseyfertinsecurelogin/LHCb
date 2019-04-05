@@ -173,11 +173,14 @@ StatusCode HLTControlFlowMgr::finalize() {
   StatusCode sc;
 
   // print the counters
-  info() << boost::format{"\n | Name of Algorithm %|50t| | Execution Count\n"};
-  for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_AlgExecCounter, m_AlgNames ) ) {
+  info() << boost::format{"\n | Name of Algorithm %|51t| | Execution Count\n"};
+  for ( auto const& [ctr, name] : Gaudi::Functional::details::zip::range( m_AlgExecCounters, m_AlgNames ) ) {
     ctr.print( info(), name ) << '\n';
   }
-  info() << std::endl;
+  info() << endmsg;
+
+  // print the counters
+  info() << buildPrintableStateTree( m_NodeStateCounters ).str() << endmsg;
 
   // Save Histograms Now
   if ( m_histoPersSvc ) {
@@ -288,13 +291,17 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
 
     // printing
     if ( msgLevel( MSG::VERBOSE ) && createdEvts % m_printFreq == 0 ) {
-      verbose() << buildStructuredTreeWithStates( NodeStates ).str() << endmsg;
+      verbose() << buildPrintableStateTree( NodeStates ).str() << endmsg;
       verbose() << buildAlgsWithStates( AlgStates ).str() << endmsg;
     }
 
     // update algorithm execution counters
-    for ( auto const& [ctr, as] : Gaudi::Functional::details::zip::range( m_AlgExecCounter, AlgStates ) )
+    for ( auto const& [ctr, as] : Gaudi::Functional::details::zip::range( m_AlgExecCounters, AlgStates ) )
       if ( as ) ctr++;
+
+    // update node state counters
+    for ( auto const& [ctr, ns] : Gaudi::Functional::details::zip::range( m_NodeStateCounters, NodeStates ) )
+      if ( ns.executionCtr == 0 ) ctr += ns.passed; // only add when actually executed
 
     // update scheduler state
     promoteToExecuted( std::move( evtContext ) );
@@ -702,7 +709,7 @@ void HLTControlFlowMgr::configureScheduling() {
 
   m_AlgStates = decltype( m_AlgStates )( allAlgos.size() );
 
-  m_AlgExecCounter = decltype( m_AlgExecCounter )( allAlgos.size() );
+  m_AlgExecCounters = decltype( m_AlgExecCounters )( allAlgos.size() );
 
   // end of Data depdendency handling
 
@@ -741,6 +748,9 @@ void HLTControlFlowMgr::buildNodeStates() {
                          }},
                 vNode );
   }
+
+  // prepare counters
+  m_NodeStateCounters = decltype( m_NodeStateCounters )( m_NodeStates.size() );
 }
 
 // monitoring and printing functions --------------------------------------------------
@@ -780,7 +790,8 @@ void HLTControlFlowMgr::registerTreePrintWidth() {
 }
 
 // build the full tree
-std::stringstream HLTControlFlowMgr::buildStructuredTreeWithStates( std::vector<NodeState> const& states ) const {
+template <typename printable>
+std::stringstream HLTControlFlowMgr::buildPrintableStateTree( std::vector<printable> const& states ) const {
   assert( !m_printableDependencyTree.empty() );
   std::stringstream ss;
   ss << '\n';
