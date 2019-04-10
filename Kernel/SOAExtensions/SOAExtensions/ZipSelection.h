@@ -49,7 +49,12 @@ namespace Zipping {
 
   /** @class ExportedSelection ZipSelection.h
    *
-   * Exchange format for selections.
+   * @brief Exchange format for selections.
+   *
+   * Should normally be created with Zipping::makeSelection and used through
+   * Zipping::SelectionView. The ExportedSelection is intended to be written to
+   * TES and passed between algorithms. It facilitates creating a selection on
+   * one Zipping::ZipContainer and applied to another Zipping::ZipContainer.
    *
    *  @tparam IndexSize The type used to represent indices into the underlying
    *  contiguous storage. Defaults to uint16_t, meaning by default you can only
@@ -58,26 +63,41 @@ namespace Zipping {
   template <typename IndexSize = uint16_t>
   struct ExportedSelection final {
     // usings and types
-    using index_vector = typename std::vector<IndexSize>;
+    using index_vector = typename std::vector<IndexSize>; ///< type of indices
 
     // data members
-    ZipFamilyNumber m_zipIdentifier;
-    index_vector    m_indices{};
+    ZipFamilyNumber m_zipIdentifier; ///< Number of the container family this selection applies to
+    index_vector    m_indices{};     ///< indices of selected elements
 
     // An ExportedSelection must always refer to an existing container family. Thus default construction is disabled.
     // For convenience, construction can be done with a ZipFamilyNumber or a Container.
-    ExportedSelection() = delete;
+    ExportedSelection() = delete; ///< default constructor deleted
 
     // alwaysFalse is not default'ed here to make the default explicit at call side.
     // no True option available in this option
+    /// Constructor from a container family number, defaults to zero selected elements
     ExportedSelection( ZipFamilyNumber id, Zipping::details::alwaysFalse /*only for type, value unused*/ )
         : m_zipIdentifier( id ) {}
 
+    /**
+     * @brief constructor from an existing container with no selection
+     *
+     * @tparam CONTAINER (deduced) type of Zipping::ZipContainer that is referenced
+     * @param container  referenced container
+     * @param            unused input (purely for type deduction and verbose call code)
+     */
     template <typename CONTAINER,
               typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
     ExportedSelection( const CONTAINER& container, Zipping::details::alwaysFalse /*only for type, value unused*/ )
         : m_zipIdentifier{container.zipIdentifier()} {}
 
+    /**
+     * @brief constructor from an existing container selecting everything
+     *
+     * @tparam CONTAINER (deduced) type of Zipping::ZipContainer that is referenced
+     * @param container  referenced container
+     * @param            unused input (purely for type deduction and verbose call code)
+     */
     template <typename CONTAINER,
               typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
     ExportedSelection( const CONTAINER& container, Zipping::details::alwaysTrue /*only for type, value unused*/ )
@@ -94,6 +114,7 @@ namespace Zipping {
     ExportedSelection&
     operator=( ExportedSelection&& ) noexcept( std::is_nothrow_move_constructible<index_vector>::value ) = default;
 
+    /// comparison of ExportedSelection (same family and same selected indices)
     bool operator==( const ExportedSelection& other ) const {
       return m_zipIdentifier == other.m_zipIdentifier && m_indices == other.m_indices;
     }
@@ -105,11 +126,28 @@ namespace Zipping {
     ExportedSelection( INDEX_VECTOR&& indices, const ZipFamilyNumber id )
         : m_zipIdentifier( id ), m_indices( std::forward<INDEX_VECTOR>( indices ) ) {}
 
+    /**
+     * @brief Semantic validation method
+     *
+     * Meant for library internal usage but provided publically anyway.
+     *
+     * @return Zipping::ZipFamilyNumber of the containers to which this application can be applied.
+     */
     ZipFamilyNumber zipIdentifier() const { return m_zipIdentifier; }
 
+    /// number of selected elements
     std::size_t size() const { return m_indices.size(); }
-    bool        empty() const { return m_indices.empty(); }
+    /// check if zero elements are selected
+    bool empty() const { return m_indices.empty(); }
 
+    /**
+     * @brief Provide a selection of all elements that are contained in both input selections
+     *
+     * (Set theoretical) intersection of the input selections. Performs semantic validation in debug build.
+     *
+     * @param s1 a Zipping::ExportedSelection
+     * @param s2 a Zipping::ExportedSelection
+     */
     friend ExportedSelection set_intersection( ExportedSelection const& s1, ExportedSelection const& s2 ) {
 #ifndef DNDEBUG
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
@@ -125,6 +163,14 @@ namespace Zipping {
       return retval;
     }
 
+    /**
+     * @brief Provide a selection of all elements that are contained in at least one input selections
+     *
+     * (Set theoretical) union of the input selections. Performs semantic validation in debug build.
+     *
+     * @param s1 a Zipping::ExportedSelection
+     * @param s2 a Zipping::ExportedSelection
+     */
     friend ExportedSelection set_union( ExportedSelection const& s1, ExportedSelection const& s2 ) {
 #ifndef DNDEBUG
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
@@ -144,6 +190,14 @@ namespace Zipping {
       return retval;
     }
 
+    /**
+     * @brief Provide a selection of all elements that are contained in s1 but not s2
+     *
+     * (Set theoretical) difference of the input selections. Performs semantic validation in debug build.
+     *
+     * @param s1 a Zipping::ExportedSelection
+     * @param s2 a Zipping::ExportedSelection
+     */
     friend ExportedSelection set_difference( ExportedSelection const& s1, ExportedSelection const& s2 ) {
 #ifndef DNDEBUG
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
@@ -161,6 +215,14 @@ namespace Zipping {
       return retval;
     }
 
+    /**
+     * @brief Provide a selection of all elements that are contained in exactly one of s1 and s2
+     *
+     * (Set theoretical) symmetric difference of the input selections. Performs semantic validation in debug build.
+     *
+     * @param s1 a Zipping::ExportedSelection
+     * @param s2 a Zipping::ExportedSelection
+     */
     friend ExportedSelection set_symmetric_difference( ExportedSelection const& s1, ExportedSelection const& s2 ) {
 #ifndef DNDEBUG
       if ( s1.zipIdentifier() != s2.zipIdentifier() ) {
@@ -225,7 +287,8 @@ namespace Zipping {
     using index_vector = typename std::vector<IndexSize>;
 
     // data members
-    gsl::not_null<const container_t*>  m_container;
+    gsl::not_null<const container_t*> m_container; ///< Container from which elements are selected
+    /// Container of selected indices (member of a Zipping::ExportedSelection)
     gsl::not_null<const index_vector*> m_indices;
 
     // Custom iterator class for looping through the index vector but
@@ -279,11 +342,23 @@ namespace Zipping {
       }
     };
 
+    /**
+     * @brief Create an ExportedSelection for further exchange
+     *
+     * This creates a copy of the ExportedSelection from which the SelectionView got created.
+     *
+     * @return An ExportedSelection (no internal references/pointers to objects that might go out of context)
+     */
     ExportedSelection<IndexSize> export_selection() {
       return ExportedSelection<IndexSize>( *m_indices, m_container->zipIdentifier() );
     }
 
-    // take pointer to avoid construction from temporary
+    /**
+     * @brief Turn ExportedSelection into SelectionView that grants access to container elements.
+     *
+     * @param container ZipContainer with the actual data
+     * @param selection ExportedSelection with the elements that are to be accessed
+     */
     SelectionView( const container_t* container, const ExportedSelection<IndexSize>& selection )
         : m_container{container}, m_indices{&selection.m_indices} {
 #ifndef NDEBUG
@@ -294,28 +369,75 @@ namespace Zipping {
 #endif
     }
 
+    /**
+     * @brief iterator to the first selected element
+     *
+     * const in any case since SelectionView only provide a look, no touch, at the data
+     */
     const_iterator begin() const { return {m_container, m_indices->begin()}; }
+    /**
+     * @brief const iterator to the first selected element (same as begin(), but provided for stl container conformity)
+     */
     const_iterator cbegin() const { return {m_container, m_indices->cbegin()}; }
 
+    /**
+     * @brief iterator to the after-last selected element
+     *
+     * const in any case since SelectionView only provide a look, no touch, at the data
+     */
     const_iterator end() const { return {m_container, m_indices->end()}; }
+    /**
+     * @brief const iterator to the after-last selected element (same as end(), provided for stl container conformity)
+     */
     const_iterator cend() const { return {m_container, m_indices->cend()}; }
 
+    /**
+     * @brief last selected element
+     */
     proxy_type const back() const { return ( *m_container )[m_indices->back()]; }
+    /**
+     * @brief first selected element
+     */
     proxy_type const front() const { return ( *m_container )[m_indices->front()]; }
 
+    /**
+     * @brief number of selected elements
+     */
     std::size_t size() const { return m_indices->size(); }
 
+    /**
+     * @brief if the selection is empty (true: zero selected elements; false: more than zero elements)
+     */
     bool empty() const { return m_indices->empty(); }
 
-    proxy_type const operator[]( std::size_t i ) const {
-      assert( i < size() );
-      return ( *m_container )[( *m_indices )[i]];
+    /**
+     * @brief the n-th selected element
+     */
+    proxy_type const operator[]( std::size_t n ) const {
+      assert( n < size() );
+      return ( *m_container )[( *m_indices )[n]];
     }
 
+    /**
+     * @brief Compares two selection views (requires the *same* backing container)
+     *
+     * The comparison falls back to equality of the selected indices and falls back to the == operator of the underlying
+     * SOA::View.
+     *
+     * @return true if the SelectionViews are equal
+     */
     friend bool operator==( SelectionView const& lhs, SelectionView const& rhs ) {
       return lhs.m_container == rhs.m_container && ( *lhs.m_indices ) == ( *rhs.m_indices );
     }
 
+    /**
+     * @brief Compares two selection views (requires the *same* backing container)
+     *
+     * The comparison falls back to equality of the selected indices and falls back to the == operator of the underlying
+     * SOA::View.
+     *
+     * @return true if the SelectionViews are unequal
+     */
     friend bool operator!=( SelectionView const& lhs, SelectionView const& rhs ) { return !( lhs == rhs ); }
 
     /**
@@ -342,6 +464,20 @@ namespace Zipping {
     }
   };
 
+  /**
+   * @brief standard method to create a selection
+   *
+   * This creates an `ExportedSelection`. To immediately use the selection (as
+   * `SelectionView`), create a SelectionView manually.
+   *
+   * @tparam CONTAINER  type of `Zipping::ZipContainer`from which objects will be selected (automatically detected)
+   * @tparam Predicate  callable type to specify the selection (automatically detected)
+   * @tparam IndexSize  variable type for indexing (default uint16_t is good enough for 65536 input objects)
+   * @param container   container from which objects are selected
+   * @param predicate   selection criterion, typically a lambda `[](auto obj) -> bool { ... return ...;}`
+   *
+   * @return ExportedSelection to select objects for which the predicate returns true.
+   */
   template <typename CONTAINER, typename Predicate = details::alwaysTrue, typename IndexSize = uint16_t>
   ExportedSelection<IndexSize> makeSelection( const CONTAINER* container, Predicate&& predicate = {},
                                               int reserveCapacity = -1 ) {

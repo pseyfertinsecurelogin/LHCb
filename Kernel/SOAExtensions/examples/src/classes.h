@@ -65,9 +65,9 @@ namespace Examples {
 
     float m_vitaminC; ///< vitamin C content of the apple, in mol.
 
-    /// equality operator (same as for apple, not meant to be realistic c++ but convenience in example)
+    /// equality operator (same as for Examples::Apple, not meant to be realistic c++ but convenience in example)
     bool operator==( const NutritionalContent& other ) const { return &other == this; }
-    /// inequality operator (same as for apple, not meant to be realistic c++ but convenience in example)
+    /// inequality operator (same as for Examples::Apple, not meant to be realistic c++ but convenience in example)
     bool operator!=( const NutritionalContent& other ) const { return &other != this; }
   };
 
@@ -83,11 +83,16 @@ namespace Examples {
    * existing data.
    */
   struct MarketValue {
-    float m_looks; /// how good it looks to the consumer on a scale from 0 to 10.
+    /// how good it looks to the consumer on a scale from 0 to 10.
+    float m_looks;
+    /// getter for the apple's looks
     float looks() { return m_looks; }
-    void  setLooks( float l ) { m_looks = l; }
-    bool  operator==( const MarketValue& other ) const { return &other == this; }
-    bool  operator!=( const MarketValue& other ) const { return &other != this; }
+    /// setter for the apple's looks
+    void setLooks( float l ) { m_looks = l; }
+    /// equality operator (same as for Examples::Apple, not meant to be realistic c++ but convenience in example)
+    bool operator==( const MarketValue& other ) const { return &other == this; }
+    /// inequality operator (same as for Examples::Apple, not meant to be realistic c++ but convenience in example)
+    bool operator!=( const MarketValue& other ) const { return &other != this; }
   };
 
   // SOA::Field s are the harder part to understand about the SOAContainer

@@ -10,8 +10,7 @@
  * or submit itself to any jurisdiction.
  */
 
-/** @file ZipContainer.h
- *
+/** @file
  * ZipContainer framework. Contains wrappers around SOA::Container and
  * SOA::View types. This provides semantics for zipping that encodes if two
  * containers are intended to be zipped together. E.g. RICH PID for downstream
@@ -57,6 +56,8 @@ namespace Zipping {
    * ZipContainer wrap SOA::View types to add a ZipFamilyNumber data member.
    * The templated base class SOA::View may be an owning SOA::Container or a
    * non-owning SOA::View.
+   *
+   * @see Kernel/SOAExtensions/SOAExtensions/ZipContainer.h for the overall idea.
    *
    * @tparam CONTAINER wrapped SOA::View type
    */
@@ -152,6 +153,17 @@ namespace Zipping {
     }
   };
 
+  /**
+   * @brief zip multiple ZipContainer to one, with semantic checks in debug build.
+   *
+   * @see Kernel/SOAExtensions/SOAExtensions/ZipContainer.h for the overall idea.
+   *
+   * @tparam SKIN         SOAContainer skin of the resulting zip (user provided)
+   * @tparam ZIPCONTAINER input ZipContainer types (deduced)
+   * @param views         input ZipContainer
+   *
+   * @return the zipped view - SOAContainer's zip output with ZipFamilyNumber
+   */
   template <
       template <class> class SKIN, typename... ZIPCONTAINER,
       typename = typename std::enable_if_t<SOA::Utils::ALL(
