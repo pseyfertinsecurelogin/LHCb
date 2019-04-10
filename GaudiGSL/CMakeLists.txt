@@ -10,7 +10,7 @@
 ###############################################################################
 gaudi_subdir(GaudiGSL)
 
-gaudi_depends_on_subdirs(GaudiAlg)
+gaudi_depends_on_subdirs(GaudiAlg GaudiUtils)
 
 find_package(CLHEP)
 find_package(GSL)
@@ -35,6 +35,9 @@ gaudi_add_library(GaudiGSLLib src/Lib/*.cpp
                   INCLUDE_DIRS GSL CLHEP
                   PUBLIC_HEADERS GaudiGSL GaudiMath)
 gaudi_add_module(GaudiGSL src/Components/*.cpp
+                 LINK_LIBRARIES GaudiGSLLib)
+
+gaudi_add_module(GaudiGSLExamples examples/src/*.cpp
                  LINK_LIBRARIES GaudiGSLLib)
 
 #---Dictionaries------------------------------------------------------------
