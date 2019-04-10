@@ -21,26 +21,28 @@
 /// Forward references
 struct IFuncMinimum;
 
-//-----------------------------------------------------------------------------
-/**  @class FuncMinimumIAlg FuncMinimumIAlg.h
- *   @file Algorithm file for the class IFuncMinimum
- *   @see GaudiGSL/IFuncMinimum.h
- *   @author Kirill Miklyaev kirillm@iris1.itep.ru
- *   @date   2002-09-14
- */
-//-----------------------------------------------------------------------------
+namespace GaudiGSL::Examples {
+  //-----------------------------------------------------------------------------
+  /**  @class FuncMinimumIAlg FuncMinimumIAlg.h
+   *   @file Algorithm file for the class IFuncMinimum
+   *   @see GaudiGSL/IFuncMinimum.h
+   *   @author Kirill Miklyaev kirillm@iris1.itep.ru
+   *   @date   2002-09-14
+   */
+  //-----------------------------------------------------------------------------
 
-class FuncMinimumIAlg : public Algorithm {
+  class FuncMinimumIAlg : public Algorithm {
 
-public:
-  using Algorithm::Algorithm;
+  public:
+    using Algorithm::Algorithm;
 
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
-  StatusCode finalize() override;   ///< Algorithm finalization
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
 
-private:
-  IFuncMinimum* m_privateTool;
-  IFuncMinimum* m_publicTool;
-};
+  private:
+    IFuncMinimum* m_privateTool;
+    IFuncMinimum* m_publicTool;
+  };
+} // namespace GaudiGSL::Examples
 #endif // ALGTOOLS_FUNCMINIMUMIALG_H

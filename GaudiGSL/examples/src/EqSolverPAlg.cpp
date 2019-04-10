@@ -27,6 +27,7 @@
 //-----------------------------------------------------------------------------
 
 using namespace Genfun;
+using namespace GaudiGSL::Examples;
 
 // Declaration of the Algorithm Factory
 DECLARE_COMPONENT( EqSolverPAlg )

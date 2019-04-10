@@ -33,6 +33,8 @@
 namespace CLHEP {}
 using namespace CLHEP;
 
+using namespace GaudiGSL::Examples;
+
 //-----------------------------------------------------------------------------
 /** @file Implementation file for class : FuncMinimumIAlg
  *  @see FuncMinimumIAlg.h

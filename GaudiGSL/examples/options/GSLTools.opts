@@ -28,29 +28,29 @@ ToolSvc.EqSolver.Residual  = 1e-7;
 //--------------------------------------------------------------
 // EqSolverIAlg
 //--------------------------------------------------------------
-ApplicationMgr.TopAlg  += { "EqSolverIAlg" }  ;
+ApplicationMgr.TopAlg  += { "GaudiGSL::Examples::EqSolverIAlg/EqSolverIAlg" }  ;
 EqSolverIAlg.OutputLevel     = 3;
 //--------------------------------------------------------------
 // EqSolverGenAlg
 //--------------------------------------------------------------
-ApplicationMgr.TopAlg  += { "EqSolverGenAlg" }  ;
+ApplicationMgr.TopAlg  += { "GaudiGSL::Examples::EqSolverGenAlg/EqSolverGenAlg" }  ;
 EqSolverGenAlg.OutputLevel   = 3;
 //--------------------------------------------------------------
 // EqSolverPAlg
 //--------------------------------------------------------------
-ApplicationMgr.TopAlg  += { "EqSolverPAlg" }  ;
+ApplicationMgr.TopAlg  += { "GaudiGSL::Examples::EqSolverPAlg/EqSolverPAlg" }  ;
 EqSolverPAlg.OutputLevel   = 3;
 
 // Choose algorithm for multidimensional minimization:
 // (conjugate_fr = gsl_multimin_fdfminimizer_conjugate_fr         ,
 //  conjugate_pr = gsl_multimin_fdfminimizer_conjugate_pr         ,
 //  vector_bfgs = gsl_multimin_fdfminimizer_vector_bfgs           ,
-//  steepest_descent = gsl_multimin_fdfminimizer_steepest_descent ) 
+//  steepest_descent = gsl_multimin_fdfminimizer_steepest_descent )
 
 /// declare type of the algorithm for the multidimensional minimization
 ToolSvc.FuncMinimum.Algorithm = "conjugate_pr" ;
 /// declare maximum of iteration
-ToolSvc.FuncMinimum.Iteration = 10000          ; 
+ToolSvc.FuncMinimum.Iteration = 10000          ;
 /// declare the absolute tolerance for the Euclidean norm of the gradient
 ToolSvc.FuncMinimum.Gradient  = 1e-10          ;
 /// declare the size of the first trial step
@@ -63,18 +63,15 @@ FuncMinimumIAlg.OutputLevel     = 3;
 //--------------------------------------------------------------
 // FuncMinimumIAlg
 //--------------------------------------------------------------
-ApplicationMgr.TopAlg  += { "FuncMinimumIAlg" }  ;
+ApplicationMgr.TopAlg  += { "GaudiGSL::Examples::FuncMinimumIAlg/FuncMinimumIAlg" }  ;
 FuncMinimumIAlg.OutputLevel     = 3;
 //--------------------------------------------------------------
 // FuncMinimumGenAlg
 //--------------------------------------------------------------
-ApplicationMgr.TopAlg  += { "FuncMinimumGenAlg" }  ;
+ApplicationMgr.TopAlg  += { "GaudiGSL::Examples::FuncMinimumGenAlg/FuncMinimumGenAlg" }  ;
 FuncMinimumGenAlg.OutputLevel   = 3;
 //--------------------------------------------------------------
 // FunMinimumPAlg
 //--------------------------------------------------------------
-ApplicationMgr.TopAlg  += { "FuncMinimumPAlg" }  ;
+ApplicationMgr.TopAlg  += { "GaudiGSL::Examples::FuncMinimumPAlg/FuncMinimumPAlg" }  ;
 FuncMinimumPAlg.OutputLevel   = 3;
-
-
-

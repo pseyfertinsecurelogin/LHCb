@@ -38,6 +38,7 @@
 //-----------------------------------------------------------------------------
 
 using namespace Genfun;
+using namespace GaudiGSL::Examples;
 
 // Handle CLHEP 2.0.x move to CLHEP namespace
 namespace CLHEP {}

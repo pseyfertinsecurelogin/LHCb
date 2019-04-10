@@ -21,26 +21,28 @@
 /// Forward references
 struct IEqSolver;
 
-//-----------------------------------------------------------------------------
-/**  @class EqSolverIAlg EqSolver.h
- *   @file Algorithm file for the class IEqSolver
- *   @see GaudiGSL/IEqSolver.h
- *   @author Kirill Miklyaev kirillm@iris1.itep.ru
- *   @date   2003-07-07
- */
-//-----------------------------------------------------------------------------
+namespace GaudiGSL::Examples {
+  //-----------------------------------------------------------------------------
+  /**  @class EqSolverIAlg EqSolver.h
+   *   @file Algorithm file for the class IEqSolver
+   *   @see GaudiGSL/IEqSolver.h
+   *   @author Kirill Miklyaev kirillm@iris1.itep.ru
+   *   @date   2003-07-07
+   */
+  //-----------------------------------------------------------------------------
 
-class EqSolverIAlg : public Algorithm {
+  class EqSolverIAlg : public Algorithm {
 
-public:
-  using Algorithm::Algorithm;
+  public:
+    using Algorithm::Algorithm;
 
-  StatusCode initialize() override; ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
-  StatusCode finalize() override;   ///< Algorithm finalization
+    StatusCode initialize() override; ///< Algorithm initialization
+    StatusCode execute() override;    ///< Algorithm execution
+    StatusCode finalize() override;   ///< Algorithm finalization
 
-private:
-  IEqSolver* m_privateTool;
-  IEqSolver* m_publicTool;
-};
+  private:
+    IEqSolver* m_privateTool;
+    IEqSolver* m_publicTool;
+  };
+} // namespace GaudiGSL::Examples
 #endif // ALGTOOLS_EQSOLVERIALG_H
