@@ -231,9 +231,9 @@ FTLiteClusters FTRawBankDecoder::decode<5>( LHCb::span<const LHCb::RawBank*> ban
   return clus;
 }
 
-template <unsigned int version>
+template <unsigned int vrsn>
 FTLiteClusters FTRawBankDecoder::decode( LHCb::span<const LHCb::RawBank*> banks, unsigned int nClusters ) const {
-  static_assert( version == 2 || version == 3 );
+  static_assert( vrsn == 2 || vrsn == 3 );
   FTLiteClusters clus{nClusters};
   for ( const LHCb::RawBank* bank : banks ) {
     int      source  = bank->sourceID();
@@ -273,7 +273,7 @@ FTLiteClusters FTRawBankDecoder::decode( LHCb::span<const LHCb::RawBank*> banks,
         continue;
       }
 
-      if constexpr ( version == 3u ) {
+      if constexpr ( vrsn == 3u ) {
 
         for ( auto it = first; it < first + nClus; ++it ) {
           short int c        = *it;
@@ -381,8 +381,8 @@ FTLiteClusters FTRawBankDecoder::decode( LHCb::span<const LHCb::RawBank*> banks,
             }
           }    // last cluster added
         }      // end loop over clusters in one sipm
-      } else { // bank version == 2
-        static_assert( version == 2 );
+      } else { // bank vrsn == 2
+        static_assert( vrsn == 2 );
         // normal clustering without any modification to clusters, should work for encoder=2
         for ( auto it = first; it < first + nClus; ++it ) {
           short int c        = *it;
@@ -412,15 +412,15 @@ FTLiteClusters FTRawBankDecoder::operator()( const LHCb::RawEvent& rawEvent ) co
   ;
 
   // Testing the bank version
-  unsigned int version = banks[0]->version();
+  unsigned int vrsn = banks[0]->version();
   if ( msgLevel( MSG::DEBUG ) )
-    debug() << "Bank version=v" << version << " with decoding version=v" << m_decodingVersion.toString() << endmsg;
+    debug() << "Bank version=v" << vrsn << " with decoding version=v" << m_decodingVersion.toString() << endmsg;
 
   // Check if decoding version corresponds with bank version (only for first bank).
   // Special case for v5 data that is decoded as v4. This possibility is added
   // temporarily to test the tracking performance versus decoding speed.
-  if ( UNLIKELY( version != m_decodingVersion ) && !( version == 5u && m_decodingVersion == 4u ) ) {
-    error() << "Bank version=v" << version << " is not compatible with decoding "
+  if ( UNLIKELY( vrsn != m_decodingVersion ) && !( vrsn == 5u && m_decodingVersion == 4u ) ) {
+    error() << "Bank version=v" << vrsn << " is not compatible with decoding "
             << "version=v" << m_decodingVersion.toString() << endmsg;
     throw GaudiException( "Wrong decoding version", "FTRawBankDecoder", StatusCode::FAILURE );
   }
@@ -439,7 +439,7 @@ FTLiteClusters FTRawBankDecoder::operator()( const LHCb::RawEvent& rawEvent ) co
     case 6:
       return decode<6>( banks, nClusters );
     default:
-      throw GaudiException( "Unknown decoder version: " + std::to_string( version ), __FILE__, StatusCode::FAILURE );
+      throw GaudiException( "Unknown decoder version: " + std::to_string( vrsn ), __FILE__, StatusCode::FAILURE );
     };
   }( LHCb::FTDAQ::nbFTClusters( banks ) );
 

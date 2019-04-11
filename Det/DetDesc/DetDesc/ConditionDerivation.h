@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <vector>
 
-class Condition;
+struct Condition;
 class IDataProviderSvc;
 class IUpdateManagerSvc;
 class UpdateManagerSvc;

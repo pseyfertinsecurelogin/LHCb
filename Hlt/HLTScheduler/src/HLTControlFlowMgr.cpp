@@ -10,11 +10,35 @@
 \*****************************************************************************/
 #include "HLTControlFlowMgr.h"
 #include "GaudiKernel/IDataSelector.h"
+#include "GaudiKernel/SerializeSTL.h"
 
 // Instantiation of a static factory class used by clients to create instances of this service
 DECLARE_COMPONENT( HLTControlFlowMgr )
+namespace GaudiUtils {
+  // operator<< overloads for variant nodes
+  std::ostream& operator<<( std::ostream& os, VNode const& node ) { return os << getNameOfVNode( node ); }
 
+  template <nodeType Type>
+  std::ostream& operator<<( std::ostream& os, CompositeNode<Type> const& node ) {
+    return os << node.m_name;
+  }
+
+  std::ostream& operator<<( std::ostream& os, NodeState const& state ) {
+    return os << state.executionCtr << "|" << state.passed;
+  }
+
+  // be able to print vectors of ordered nodes correctly
+  std::ostream& operator<<( std::ostream& os, VNode const* node ) { return os << getNameOfVNode( *node ); }
+
+  template <typename Key, typename Compare, typename Allocator>
+  std::ostream& operator<<( std::ostream& os, std::set<Key, Compare, Allocator> const& x ) {
+    return GaudiUtils::details::ostream_joiner( os << "{", x, ", " ) << "}";
+  }
+} // namespace GaudiUtils
 namespace {
+
+  using GaudiUtils::operator<<;
+
   template <typename fun>
   class Wrapper final : public tbb::task {
     fun m_f;
@@ -278,13 +302,13 @@ StatusCode HLTControlFlowMgr::executeEvent( void* createdEvts_IntPtr ) {
     }
 
     for ( VNode* execNode : m_orderedNodesVec ) {
-      std::visit( overload{[&]( BasicNode& bNode ) {
-                             if ( bNode.requested( NodeStates ) ) {
-                               bNode.execute( NodeStates, AlgStates, *evtContext, m_algExecStateSvc, appmgr );
-                               bNode.notifyParents( NodeStates );
+      std::visit( overload{[&, ns = std::ref( NodeStates ), as = std::ref( AlgStates )]( BasicNode& bNode ) {
+                             if ( bNode.requested( ns.get() ) ) {
+                               bNode.execute( ns.get(), as.get(), *evtContext, m_algExecStateSvc, appmgr );
+                               bNode.notifyParents( ns.get() );
                              }
                            },
-                           []( auto& ) {}},
+                           []( ... ) {}},
                   *execNode );
     }
     m_algExecStateSvc->updateEventStatus( false, *evtContext );
@@ -507,55 +531,6 @@ void HLTControlFlowMgr::promoteToExecuted( std::unique_ptr<EventContext> eventCo
   m_createEventCond.notify_all();
 }
 
-namespace {
-  template <typename T>
-  std::ostream& operator<<( std::ostream& os, std::vector<T> const& x ) {
-    if ( x.empty() ) {
-      os << "[]";
-      return os;
-    }
-    os << "[" << x.front();
-    std::for_each( next( begin( x ) ), end( x ), [&]( auto i ) { os << ", " << i; } );
-    os << "]";
-    return os;
-  }
-
-  template <typename T>
-  std::ostream& operator<<( std::ostream& os, std::set<T> const& x ) {
-    if ( x.empty() ) {
-      os << "{}";
-      return os;
-    }
-    os << "{" << *x.begin();
-    std::for_each( next( begin( x ) ), end( x ), [&]( auto i ) { os << ", " << i; } );
-    os << "}";
-    return os;
-  }
-
-  // operator<< overloads for variant nodes
-  std::ostream& operator<<( std::ostream& os, VNode const& node ) {
-    os << getNameOfVNode( node );
-    return os;
-  }
-
-  template <nodeType Type>
-  std::ostream& operator<<( std::ostream& os, CompositeNode<Type> const& node ) {
-    os << node.m_name;
-    return os;
-  }
-
-  std::ostream& operator<<( std::ostream& os, NodeState const& state ) {
-    os << state.executionCtr << "|" << state.passed;
-    return os;
-  }
-
-  // be able to print vectors of ordered nodes correctly
-  std::ostream& operator<<( std::ostream& os, VNode const* node ) {
-    os << getNameOfVNode( *node );
-    return os;
-  }
-} // namespace
-
 // scheduling functionality----------------------------------------------------
 
 void HLTControlFlowMgr::buildLines() { // here lines are configured, filled into the node vector m_allVNodes and
@@ -699,7 +674,7 @@ void HLTControlFlowMgr::configureScheduling() {
                              }
                            }
                          },
-                         []( auto& ) {}},
+                         []( ... ) {}},
                 *vnode );
   }
 
@@ -801,6 +776,9 @@ std::stringstream HLTControlFlowMgr::buildPrintableStateTree( std::vector<printa
   }
   return ss;
 }
+
+template std::stringstream
+HLTControlFlowMgr::buildPrintableStateTree<NodeState>( std::vector<NodeState> const& states ) const;
 
 // build the AlgState printout
 std::stringstream HLTControlFlowMgr::buildAlgsWithStates( std::vector<uint16_t> const& states ) const {

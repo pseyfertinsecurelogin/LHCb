@@ -87,7 +87,7 @@ namespace LHCb {
       const auto ijk010 = m_Nxyz_V[0] * ( m_Nxyz_V[1] * _k + _j + 1 ) + _i;
       const auto ijk011 = m_Nxyz_V[0] * ( m_Nxyz_V[1] * ( _k + 1 ) + _j + 1 ) + _i;
 
-      const auto h1 = abc - Vec4f( _i, _j, _k, 0.0 );
+      const auto h1 = abc - Vec4f( _i, _j, _k, 0.0f );
       const auto h0 = 1.0f - h1;
 
       const auto h1x( h1[0] ), h1y( h1[1] ), h1z( h1[2] );

@@ -116,7 +116,7 @@ StatusCode GenFSRMerge::merge() {
   }
 
   LHCb::GenFSR* genFSRMerged = new LHCb::GenFSR();
-  put( m_fileRecordSvc, genFSRMerged, m_fileRecordName + m_FSRName );
+  put( m_fileRecordSvc, genFSRMerged, m_fileRecordName.value() + m_FSRName.value() );
 
   genFSRMerged->initializeInfos();
 
@@ -142,7 +142,7 @@ StatusCode GenFSRMerge::merge() {
   }
 
   // read back genFSR from TS
-  LHCb::GenFSR* topGenFSR = getIfExists<LHCb::GenFSR>( m_fileRecordSvc, m_fileRecordName + m_FSRName );
+  LHCb::GenFSR* topGenFSR = getIfExists<LHCb::GenFSR>( m_fileRecordSvc, m_fileRecordName.value() + m_FSRName.value() );
   if ( msgLevel( MSG::DEBUG ) ) debug() << *topGenFSR << endmsg;
 
   // clean up original FSRs
@@ -152,7 +152,7 @@ StatusCode GenFSRMerge::merge() {
 
     genFSR = getIfExists<LHCb::GenFSR>( m_fileRecordSvc, genRecordAddress );
 
-    if ( genFSR == nullptr ) {
+    if ( !genFSR ) {
       if ( msgLevel( MSG::ERROR ) ) error() << genRecordAddress << " not found" << endmsg;
     } else {
       if ( msgLevel( MSG::VERBOSE ) ) verbose() << genRecordAddress << " found" << endmsg;

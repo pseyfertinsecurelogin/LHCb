@@ -281,14 +281,10 @@ namespace LHCb {
       /**
        * Function used only for debug ordering check
        */
+#ifndef NDEBUG
       template <typename COMPARE>
       bool is_sorted( const COMPARE& compare ) const {
-#ifdef NDEBUG
-        static_assert( always_false<COMPARE>::value,
-                       "this function can be called only on debug mode (NDEBUG should not be defined)" );
-        return true;
-#else
-
+        //
         // Zip the ids and hits together
         auto zipped = ranges::view::zip( m_ids, m_hits );
 
@@ -305,8 +301,8 @@ namespace LHCb {
         };
 
         return std::is_sorted( zipped.begin(), zipped.end(), pred );
-#endif
       }
+#endif
 
       auto offsets() const { return m_offsets; }
 

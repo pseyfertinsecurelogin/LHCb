@@ -214,8 +214,8 @@ public:
 }; // end of class CompositeNode
 
 // ----------DEFINITION OF SCHEDULING UTILITIES---------------------------------------
-template <template <typename> class Container>
-std::optional<VNode*> findVNodeInContainer( std::string_view name, Container<VNode>& container ) {
+template <typename Container, typename = std::enable_if_t<std::is_same_v<typename Container::value_type, VNode>>>
+std::optional<VNode*> findVNodeInContainer( std::string_view name, Container& container ) {
   auto it = std::find_if( std::begin( container ), std::end( container ),
                           [name]( auto& cnode ) { return getNameOfVNode( cnode ) == name; } );
   if ( it != std::end( container ) ) {
