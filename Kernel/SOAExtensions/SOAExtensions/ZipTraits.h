@@ -27,9 +27,7 @@ namespace Zipping {
      * @tparam T any other type than a Zipping::ZipContainer
      */
     template <typename T>
-    struct has_semantic_zip_helper {
-      static constexpr bool value = false;
-    };
+    struct has_semantic_zip_helper : std::false_type {};
 
     /**
      * @brief template specialization of helper type for Zipping::has_semantic_zip. Not intended for use outside
@@ -38,9 +36,8 @@ namespace Zipping {
      * @tparam SOA::View that is wrapped in a Zipping::ZipContainer
      */
     template <typename VIEW>
-    struct has_semantic_zip_helper<ZipContainer<VIEW>> {
-      static constexpr bool value = SOA::Utils::is_view<std::decay_t<VIEW>>::value;
-    };
+    struct has_semantic_zip_helper<ZipContainer<VIEW>>
+        : std::bool_constant<SOA::Utils::is_view<std::decay_t<VIEW>>::value> {};
   } // namespace details
 
   /** @class has_semantic_zip ZipTraits.h
@@ -49,11 +46,10 @@ namespace Zipping {
    *
    * @tparam type of which availability of 'Zipping::semantic_zip' is queried
    */
+
+  // remove const and reference from ZipContainer before going one level deeper
   template <typename T>
-  struct has_semantic_zip {
-    // remove const and reference from ZipContainer before going one level deeper
-    static constexpr bool value = details::has_semantic_zip_helper<std::decay_t<T>>::value;
-  };
+  using has_semantic_zip = details::has_semantic_zip_helper<std::decay_t<T>>;
 
   /**
    * @brief Type trait value to ZipContainers. Whether or not a type can be argument/return to 'semantic_zip'.

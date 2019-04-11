@@ -86,10 +86,6 @@ struct fitqual {
 SOAFIELD_TRIVIAL( f_fitqual, accessor_fitqual, fitqual );
 SOASKIN_TRIVIAL( s_fitqual, f_fitqual );
 
-SOASKIN_TRIVIAL( s_track_with_fitres, f_track, f_fitres );
-SOASKIN_TRIVIAL( s_track_with_fitqual, f_track, f_fitqual );
-SOASKIN_TRIVIAL( s_track_with_fitres_and_fitqual, f_track, f_fitres, f_fitqual );
-
 /// pythonic sugar
 #include "range/v3/all.hpp" // IWYU pragma: keep
 // IWYU pragma : no_include <range/v3/view/indices.hpp>
@@ -109,12 +105,11 @@ BOOST_AUTO_TEST_CASE( basic_zip_and_selection_operations ) {
     foo3.push_back( fitqual{0.f, i} );
   }
 
-  BOOST_CHECK_THROW( Zipping::semantic_zip<s_track_with_fitres>( foo1_alt, foo2 ), Zipping::IncompatibleZipException );
-  auto                  track_with_momentum = Zipping::semantic_zip<s_track_with_fitres>( foo1, foo2 );
-  [[maybe_unused]] auto full_track = Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( foo1, foo2, foo3 );
-  [[maybe_unused]] auto another_full_track =
-      Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( track_with_momentum, foo3 );
-  [[maybe_unused]] auto yet_another_full_track = Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( full_track );
+  BOOST_CHECK_THROW( Zipping::semantic_zip( foo1_alt, foo2 ), Zipping::IncompatibleZipException );
+  auto                  track_with_momentum    = Zipping::semantic_zip( foo1, foo2 );
+  [[maybe_unused]] auto full_track             = Zipping::semantic_zip( foo1, foo2, foo3 );
+  [[maybe_unused]] auto another_full_track     = Zipping::semantic_zip( track_with_momentum, foo3 );
+  [[maybe_unused]] auto yet_another_full_track = Zipping::semantic_zip( full_track );
 
   BOOST_CHECK_EQUAL( full_track[0], ( *full_track.begin() ) );
 
@@ -182,7 +177,7 @@ BOOST_AUTO_TEST_CASE( stlalgs ) {
     foo3.push_back( fitqual{0.f, i} );
   }
 
-  auto                         foo_all = Zipping::semantic_zip<s_track_with_fitres_and_fitqual>( foo1, foo2, foo3 );
+  auto                         foo_all = Zipping::semantic_zip( foo1, foo2, foo3 );
   Zipping::ExportedSelection<> e =
       Zipping::makeSelection( &foo_all, []( auto f ) { return f.accessor_fitres().q % 2 == 0; } );
   Zipping::SelectionView foo_sel( &foo_all, e );

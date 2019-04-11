@@ -15,7 +15,6 @@
 #include <exception> // IWYU pragma: keep
 // IWYU pragma: no_include <bits/exception.h>
 #include <string>
-#include <string_view>
 
 namespace Zipping {
   /** @class IncompatibleZipException
@@ -29,7 +28,7 @@ namespace Zipping {
     /// default constructor deleted, intention is to always provide details
     IncompatibleZipException() = default;
     /// constructor with additional method
-    IncompatibleZipException( std::string_view&& s ) : m_message( s ) {}
+    IncompatibleZipException( std::string s ) : m_message( std::move( s ) ) {}
     /// print the contained message with details
     std::string message() { return m_message; }
   };

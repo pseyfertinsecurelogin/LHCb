@@ -40,8 +40,10 @@ namespace Zipping {
 
   namespace details {
     // Tag class to allow optimisation when we know the selection is a dummy.
-    struct alwaysTrue {};
-    struct alwaysFalse {};
+    struct alwaysTrue_t {};
+    inline constexpr alwaysTrue_t alwaysTrue = alwaysTrue_t{};
+    struct alwaysFalse_t {};
+    inline constexpr alwaysFalse_t alwaysFalse = alwaysFalse_t{};
 
     template <typename T>
     inline auto const typename_v = boost::typeindex::type_id_with_cvr<T>().pretty_name();
@@ -69,14 +71,10 @@ namespace Zipping {
     ZipFamilyNumber m_zipIdentifier; ///< Number of the container family this selection applies to
     index_vector    m_indices{};     ///< indices of selected elements
 
-    // An ExportedSelection must always refer to an existing container family. Thus default construction is disabled.
-    // For convenience, construction can be done with a ZipFamilyNumber or a Container.
-    ExportedSelection() = delete; ///< default constructor deleted
-
     // alwaysFalse is not default'ed here to make the default explicit at call side.
     // no True option available in this option
     /// Constructor from a container family number, defaults to zero selected elements
-    ExportedSelection( ZipFamilyNumber id, Zipping::details::alwaysFalse /*only for type, value unused*/ )
+    ExportedSelection( ZipFamilyNumber id, Zipping::details::alwaysFalse_t /*only for type, value unused*/ )
         : m_zipIdentifier( id ) {}
 
     /**
@@ -86,9 +84,8 @@ namespace Zipping {
      * @param container  referenced container
      * @param            unused input (purely for type deduction and verbose call code)
      */
-    template <typename CONTAINER,
-              typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
-    ExportedSelection( const CONTAINER& container, Zipping::details::alwaysFalse /*only for type, value unused*/ )
+    template <typename CONTAINER, typename = std::enable_if_t<has_semantic_zip_v<std::decay_t<CONTAINER>>>>
+    ExportedSelection( const CONTAINER& container, Zipping::details::alwaysFalse_t /*only for type, value unused*/ )
         : m_zipIdentifier{container.zipIdentifier()} {}
 
     /**
@@ -98,9 +95,8 @@ namespace Zipping {
      * @param container  referenced container
      * @param            unused input (purely for type deduction and verbose call code)
      */
-    template <typename CONTAINER,
-              typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
-    ExportedSelection( const CONTAINER& container, Zipping::details::alwaysTrue /*only for type, value unused*/ )
+    template <typename CONTAINER, typename = std::enable_if_t<has_semantic_zip_v<std::decay_t<CONTAINER>>>>
+    ExportedSelection( const CONTAINER& container, Zipping::details::alwaysTrue_t /*only for type, value unused*/ )
         : m_zipIdentifier{container.zipIdentifier()}, m_indices( container.size(), IndexSize{} ) {
       std::iota( m_indices.begin(), m_indices.end(), 0 );
     }
@@ -115,14 +111,14 @@ namespace Zipping {
     operator=( ExportedSelection&& ) noexcept( std::is_nothrow_move_constructible<index_vector>::value ) = default;
 
     /// comparison of ExportedSelection (same family and same selected indices)
-    bool operator==( const ExportedSelection& other ) const {
-      return m_zipIdentifier == other.m_zipIdentifier && m_indices == other.m_indices;
+    friend bool operator==( ExportedSelection const& lhs, ExportedSelection const& rhs ) {
+      return lhs.m_zipIdentifier == rhs.m_zipIdentifier && lhs.m_indices == rhs.m_indices;
     }
 
     // direct data construction
     // NB: INDEX_VECTOR may be const
     template <typename INDEX_VECTOR,
-              typename = typename std::enable_if_t<std::is_same_v<std::decay_t<INDEX_VECTOR>, index_vector>>>
+              typename = std::enable_if_t<std::is_same_v<std::decay_t<INDEX_VECTOR>, index_vector>>>
     ExportedSelection( INDEX_VECTOR&& indices, const ZipFamilyNumber id )
         : m_zipIdentifier( id ), m_indices( std::forward<INDEX_VECTOR>( indices ) ) {}
 
@@ -155,7 +151,7 @@ namespace Zipping {
                               details::typename_v<ExportedSelection<>>, StatusCode::FAILURE );
       }
 #endif
-      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse{}};
+      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse};
       retval.m_indices.reserve( std::min( s1.size(), s2.size() ) );
       // Use std::set_intersection to combine s1.m_indices and s2.m_indices into a new index container
       std::set_intersection( s1.m_indices.begin(), s1.m_indices.end(), s2.m_indices.begin(), s2.m_indices.end(),
@@ -181,7 +177,7 @@ namespace Zipping {
       if ( s1.empty() ) { return s2; }
       if ( s2.empty() ) { return s1; }
 
-      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse{}};
+      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse};
       std::size_t         est_csize = std::max( s1.m_indices.back(), s2.m_indices.back() ) + 1;
       retval.m_indices.reserve( std::min( est_csize, s1.size() + s2.size() ) );
       // Use std::set_union to combine s1.m_indices and s2.m_indices into a new index container
@@ -207,7 +203,7 @@ namespace Zipping {
 #endif
       if ( s2.empty() ) { return s1; }
 
-      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse{}};
+      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse};
       retval.m_indices.reserve( s1.size() );
       // Use std::set_difference to combine s1.m_indices and s2.m_indices into a new index container
       std::set_difference( s1.m_indices.begin(), s1.m_indices.end(), s2.m_indices.begin(), s2.m_indices.end(),
@@ -233,7 +229,7 @@ namespace Zipping {
       if ( s1.empty() ) { return s2; }
       if ( s2.empty() ) { return s1; }
 
-      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse{}};
+      ExportedSelection<> retval{s1.zipIdentifier(), Zipping::details::alwaysFalse};
       std::size_t         est_csize = std::max( s1.m_indices.back(), s2.m_indices.back() ) + 1;
       retval.m_indices.reserve( std::min( est_csize, s1.size() + s2.size() ) );
       // Use std::set_symmetric_difference to combine s1.m_indices and s2.m_indices into a new index container
@@ -273,7 +269,7 @@ namespace Zipping {
    */
 
   template <typename CONTAINER, typename IndexSize = uint16_t,
-            typename = typename std::enable_if_t<has_semantic_zip<std::decay_t<CONTAINER>>::value>>
+            typename = std::enable_if_t<has_semantic_zip_v<std::decay_t<CONTAINER>>>>
   struct SelectionView {
     // TODO in optimised build we could reduce sizeof(SelectionView) by 40% by
     // using a single pointer in container_t and
@@ -298,7 +294,7 @@ namespace Zipping {
       using value_type        = typename CONTAINER::proxy;
       using difference_type   = typename index_iter_type::difference_type;
       using iterator_category = std::random_access_iterator_tag;
-      // FIXME: provide these to enable STL algorithms
+      // provide these to enable STL algorithms
       using pointer   = const value_type*; // for iterator_traits
       using reference = const value_type&; // for iterator_traits
 
@@ -378,7 +374,7 @@ namespace Zipping {
     /**
      * @brief const iterator to the first selected element (same as begin(), but provided for stl container conformity)
      */
-    const_iterator cbegin() const { return {m_container, m_indices->cbegin()}; }
+    const_iterator cbegin() const { return begin(); }
 
     /**
      * @brief iterator to the after-last selected element
@@ -389,7 +385,7 @@ namespace Zipping {
     /**
      * @brief const iterator to the after-last selected element (same as end(), provided for stl container conformity)
      */
-    const_iterator cend() const { return {m_container, m_indices->cend()}; }
+    const_iterator cend() const { return end(); }
 
     /**
      * @brief last selected element
@@ -456,7 +452,7 @@ namespace Zipping {
      */
     template <typename Predicate>
     [[nodiscard]] ExportedSelection<IndexSize> select( Predicate&& predicate, int reserveCapacity = -1 ) const {
-      ExportedSelection<IndexSize> retval( m_container->zipIdentifier(), details::alwaysFalse{} );
+      ExportedSelection<IndexSize> retval( m_container->zipIdentifier(), details::alwaysFalse );
       retval.m_indices.reserve( reserveCapacity < 0 ? m_indices->size() : reserveCapacity );
       std::copy_if( m_indices->begin(), m_indices->end(), std::back_inserter( retval.m_indices ),
                     [&]( auto i ) { return predicate( ( *m_container )[i] ); } );
@@ -478,7 +474,7 @@ namespace Zipping {
    *
    * @return ExportedSelection to select objects for which the predicate returns true.
    */
-  template <typename CONTAINER, typename Predicate = details::alwaysTrue, typename IndexSize = uint16_t>
+  template <typename CONTAINER, typename Predicate = details::alwaysTrue_t, typename IndexSize = uint16_t>
   ExportedSelection<IndexSize> makeSelection( const CONTAINER* container, Predicate&& predicate = {},
                                               int reserveCapacity = -1 ) {
     using container_t = std::decay_t<CONTAINER>;
@@ -488,12 +484,12 @@ namespace Zipping {
                                details::typename_v<SelectionView<container_t>>,
                            details::typename_v<SelectionView<container_t>>, StatusCode::FAILURE};
     }
-    ExportedSelection<IndexSize> retval( container->zipIdentifier(), details::alwaysFalse{} );
+    ExportedSelection<IndexSize> retval( container->zipIdentifier(), details::alwaysFalse );
 
-    if constexpr ( std::is_same_v<Predicate, details::alwaysTrue> ) {
+    if constexpr ( std::is_same_v<std::decay_t<Predicate>, details::alwaysTrue_t> ) {
       retval.m_indices.resize( container->size() );
       std::iota( retval.m_indices.begin(), retval.m_indices.end(), 0 );
-    } else if constexpr ( std::is_same_v<Predicate, details::alwaysFalse> ) {
+    } else if constexpr ( std::is_same_v<std::decay_t<Predicate>, details::alwaysFalse_t> ) {
       if ( reserveCapacity >= 0 ) { retval.m_indices.reserve( reserveCapacity ); }
     } else {
       retval.m_indices.reserve( reserveCapacity < 0 ? container->size() : reserveCapacity );
@@ -534,13 +530,13 @@ namespace Zipping {
   }
 
   template <typename S, typename = requireSelection<S>>
-  bool equal_values( S const& lhs, typename S::container_t rhs ) {
+  bool equal_values( S const& lhs, typename S::container_t const& rhs ) {
     return std::equal( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
   }
 
   template <typename S, typename = requireSelection<S>>
-  bool equal_values( typename S::container_t lhs, S const& rhs ) {
-    return std::equal( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
+  bool equal_values( typename S::container_t const& lhs, S const& rhs ) {
+    return equal_values( rhs, lhs );
   }
 } // namespace Zipping
 
