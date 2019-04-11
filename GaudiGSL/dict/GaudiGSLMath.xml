@@ -1,0 +1,36 @@
+<!--
+    (c) Copyright 2000-2019 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+<lcgdict>
+  <selection>
+  <class pattern="GaudiMath::*">
+    <field name="m_ws" transient="true"/>
+  </class>
+  <class pattern="Genfun::GaudiMath*">
+    <field name="m_ws" transient="true"/>
+  </class>
+  <class name="Genfun::GaudiMathImplementation::SplineBase">
+    <field name = "m_spline" transient = "true"/>
+    <field name = "m_accel" transient = "true"/>
+  </class>
+  </selection>
+
+  <exclusion>
+    <!-- already in CLHEPRflx -->
+    <class name="Genfun::AbsFunction"/>
+    <!-- These are typedef to vector<double> and cause problems. -->
+    <class pattern="Genfun::GaudiMathImplementation::Numerical*Integral::Points"/>
+    <class pattern="Genfun::GaudiMathImplementation::*::Data1D" />
+    <!-- There are causing troubles on Windows (VC9) -->
+    <class pattern="gsl_interp*"/>
+    <class name="gsl_spline"/>
+    <class name="Genfun::GaudiMathImplementation::details::gsl_deleter"/>
+  </exclusion>
+</lcgdict>
