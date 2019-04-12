@@ -81,7 +81,7 @@ class LHCbApp(LHCbConfigurableUser):
         'ThreadPoolSize':
         """ If EnableHive is set, size of the thread pool (default cpu_count) """,
         "Scheduler":
-        "Choose between AvalancheScheduler, HLTEventLoopMgr, HLTControlFlowMgr",
+        "Choose between AvalancheScheduler, HLTControlFlowMgr",
         'OnlineMode':
         """ Set to True for online jobs like monitoring. Default is False """
     }
@@ -276,11 +276,7 @@ class LHCbApp(LHCbConfigurableUser):
         if not whiteboard.isPropertySet('EventSlots'):
             whiteboard.EventSlots = 10
         ApplicationMgr().ExtSvc.insert(0, whiteboard)
-        if self.getProp("Scheduler") == "HLTEventLoopMgr":
-            from Configurables import HLTEventLoopMgr
-            eventloopmgr = HLTEventLoopMgr()
-            self.propagateProperty('ThreadPoolSize', eventloopmgr)
-        elif self.getProp("Scheduler") == "HLTControlFlowMgr":
+        if self.getProp("Scheduler") == "HLTControlFlowMgr":
             from Configurables import HLTControlFlowMgr
             eventloopmgr = HLTControlFlowMgr()
             self.propagateProperty('ThreadPoolSize', eventloopmgr)

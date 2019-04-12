@@ -10,7 +10,6 @@
 ###############################################################################
 from Configurables import (
     HLTControlFlowMgr,
-    HLTEventLoopMgr,
     AlgResourcePool,
     ConfigurableDummy,
     HiveWhiteBoard,
@@ -67,9 +66,6 @@ HLTControlFlowMgr().AdditionalCFEdges = [['A5', 'line1']]
 HLTControlFlowMgr().ThreadPoolSize = threads
 HLTControlFlowMgr().OutputLevel = VERBOSE
 
-HLTEventLoopMgr().ThreadPoolSize = threads
-HLTEventLoopMgr().OutputLevel = DEBUG
-
 HiveDataBrokerSvc().OutputLevel = DEBUG
 
 app = ApplicationMgr(
@@ -77,7 +73,6 @@ app = ApplicationMgr(
     EvtSel='NONE',
     ExtSvc=[whiteboard],
     EventLoop=HLTControlFlowMgr(),
-    # EventLoop=HLTEventLoopMgr(),
     TopAlg=[a1, a2, a3, a4, a5, exerep])
 
 HiveDataBrokerSvc().DataProducers = app.TopAlg
