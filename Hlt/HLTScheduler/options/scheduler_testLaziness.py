@@ -10,7 +10,6 @@
 ###############################################################################
 from Configurables import (
     HLTControlFlowMgr,
-    HLTEventLoopMgr,
     AlgResourcePool,
     ConfigurableDummy,
     HiveWhiteBoard,
@@ -55,9 +54,6 @@ HLTControlFlowMgr().CompositeCFNodes.append(
 
 HLTControlFlowMgr().ThreadPoolSize = threads
 HLTControlFlowMgr().OutputLevel = VERBOSE
-
-HLTEventLoopMgr().ThreadPoolSize = threads
-HLTEventLoopMgr().OutputLevel = DEBUG
 
 HiveDataBrokerSvc().OutputLevel = DEBUG
 

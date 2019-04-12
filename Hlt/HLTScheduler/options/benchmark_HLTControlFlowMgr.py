@@ -14,7 +14,6 @@ from Configurables import (
     ConfigurableDummy,
     HiveWhiteBoard,
     HiveDataBrokerSvc,
-    HLTEventLoopMgr,
     CallgrindProfile,
     CPUCruncher,
 )
@@ -54,7 +53,6 @@ else:
 
 #concurrency conf
 HLTControlFlowMgr().ThreadPoolSize = threads
-HLTEventLoopMgr().ThreadPoolSize = threads
 
 whiteboard = HiveWhiteBoard("EventDataSvc", EventSlots=evtslots)
 
@@ -129,7 +127,6 @@ app = ApplicationMgr(
     EvtMax=evtMax,
     EvtSel='NONE',
     ExtSvc=[whiteboard],
-    # EventLoop=HLTEventLoopMgr(),
     EventLoop=HLTControlFlowMgr(),
     TopAlg=DPs + BNodes)
 
