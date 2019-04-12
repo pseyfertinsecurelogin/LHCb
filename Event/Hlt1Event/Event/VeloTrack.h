@@ -78,6 +78,9 @@ namespace LHCb::Hlt1Event {
         m_VeloHitContainer.push_back(hit);
         m_VeloLHCbIDContainer.push_back(id);
       }
+      const auto& lhcbIDs() const {
+        return m_VeloLHCbIDContainer;
+      }
     };
 
     /** @class VeloHitBlockField
@@ -150,8 +153,8 @@ namespace LHCb::Hlt1Event {
         assert( m_state.checkLocation( LHCb::State::ClosestToBeam ) );
       }
 
-      auto slopes() const { return m_state.slopes(); }
-      auto position() const { return m_state.position(); }
+      [[deprecated]] auto slopes() const { return m_state.slopes(); }
+      [[deprecated]] auto position() const { return m_state.position(); }
       auto errX2() const { return m_state.errX2(); }
       auto errY2() const { return m_state.errY2(); }
       auto x() const { return m_state.x(); }
@@ -173,6 +176,8 @@ namespace LHCb::Hlt1Event {
       operator const LHCb::State&() const { return this->closestToBeamState(); }
       operator LHCb::State&() { return this->closestToBeamState(); }
     };
+
+    SOASKIN_TRIVIAL( VeloTrack, ClosestToBeamStateField, VeloHitBlockField );
 
   } // namespace v1
 } // namespace LHCb::Hlt1Event
